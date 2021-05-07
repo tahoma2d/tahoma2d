@@ -1,0 +1,6 @@
+<fxlayout help_file="SoftLightIno.pdf">
+  <page name="Soft Light Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+  </page>
+</fxlayout>

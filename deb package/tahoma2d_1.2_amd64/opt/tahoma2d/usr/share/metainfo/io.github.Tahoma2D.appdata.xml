@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>io.github.Tahoma2D</id>
+  <launchable type="desktop-id">io.github.Tahoma2D.desktop</launchable>
+  <name>Tahoma2D</name>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>BSD-3-Clause</project_license>
+  <developer_name>Tahoma2D</developer_name>
+  <summary>2D animation</summary>
+  <description>
+    <p>
+      This is software for producing 2D and stop motion animation.
+    </p>
+    <p>
+      Tahoma2D is based on OpenToonz which itself is based on "Toonz",
+      developed by Digital Video S.p.A. in Italy and customized by
+      Studio Ghibli.
+    </p>
+  </description>
+  <url type="homepage">https://tahoma2d.org</url>
+  <url type="bugtracker">https://github.com/turtletooth/tahoma2d/issues</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/flathub/io.github.Tahoma2D/master/screenshot1.png</image>
+    </screenshot>
+  </screenshots>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="1.1.0" date="2020-10-06"></release>
+  </releases>
+</component>

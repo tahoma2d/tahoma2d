@@ -1,0 +1,8 @@
+<fxlayout>
+  <page name="Backlit">
+    <control>value</control>
+    <control>color</control>
+    <control>fade</control>
+  </page>
+
+</fxlayout>

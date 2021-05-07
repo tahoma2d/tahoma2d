@@ -1,0 +1,588 @@
+This is the Debian package of the VP8 video codec library
+
+Packaged by Sebastian Dröge <slomo@debian.org>
+
+It was downloaded from http://www.webmproject.org/
+
+Upstream author:
+  Google, Inc.
+
+==========================================================================
+
+For the main source code and the content of the binary packages the first
+part of this file applies.
+
+
+Copyright:
+  For everything not listed below:
+    Copyright (c) 2010, Google, Inc.
+    Copyright (c) 2010 The VP8 project authors.
+
+  For md5_utils.[ch]:
+    Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991.
+
+
+Patent Rights Grant:
+
+  "This implementation" means the copyrightable works distributed by
+  Google as part of the WebM Project.
+
+  Google hereby grants to you a perpetual, worldwide, non-exclusive,
+  no-charge, royalty-free, irrevocable (except as stated in this section)
+  patent license to make, have made, use, offer to sell, sell, import,
+  transfer, and otherwise run, modify and propagate the contents of this
+  implementation of VP8, where such license applies only to those patent
+  claims, both currently owned by Google and acquired in the future,
+  licensable by Google that are necessarily infringed by this
+  implementation of VP8. This grant does not include claims that would be
+  infringed only as a consequence of further modification of this
+  implementation. If you or your agent or exclusive licensee institute or
+  order or agree to the institution of patent litigation against any
+  entity (including a cross-claim or counterclaim in a lawsuit) alleging
+  that this implementation of VP8 or any code incorporated within this
+  implementation of VP8 constitutes direct or contributory patent
+  infringement, or inducement of patent infringement, then any patent
+  rights granted to you under this License for this implementation of VP8
+  shall terminate as of the date such litigation is filed.
+
+
+License:
+
+  For everything not listed below:
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are
+    met:
+    
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in
+      the documentation and/or other materials provided with the
+      distribution.
+
+    * Neither the name of Google nor the names of its contributors may
+      be used to endorse or promote products derived from this software
+      without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+  For md5_utils.[ch]:
+    This code implements the MD5 message-digest algorithm.
+    The algorithm is due to Ron Rivest.  This code was
+    written by Colin Plumb in 1993, no copyright is claimed.
+    This code is in the public domain; do with it what you wish.
+
+
+==========================================================================
+
+For examples/includes there are different copyright holders and licenses
+but the code in there is only used to build the API documentation.
+
+
+Copyright:
+
+  For examples/includes/ASCIIMathPHP-2.0:
+    Copyright (c) 2004 Peter Jipsen http://www.chapman.edu/~jipsen
+    Copyright (c) 2006 Kee-Lin Steven Chan (kc56@cornell.edu)
+
+  For examples/includes/geshi/*:
+    Copyright (C) 2004 - 2007 Nigel McNie
+    Copyright (C) 2007 - 2008 Benny Baumann
+
+  For examples/includes/geshi/contrib/cssgen2.php:
+    Copyright (C) 2008 revulon@gmail.com
+
+  For examples/includes/geshi/contrib/aliased.php:
+    Copyright (C) 2006 Ross Golder <ross@golder.org>
+
+  For examples/includes/geshi/doc/phpdoc.ini:
+    Copyright 2002, Greg Beaver <cellog@users.sourceforge.net>
+
+  For examples/includes/geshi/geshi/z80.php:
+    Copyright (c) 2007-2008 Benny Baumann (http://www.omorphia.de/)
+
+  For examples/includes/geshi/geshi/boo.php:
+    Copyright (c) 2007 Marcus Griep (http://www.xpdm.us)
+
+  For examples/includes/geshi/geshi/latex.php:
+    Copyright (c) 2006 efi, Matthias Pospiech (matthias@pospiech.eu), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/qbasic.php:
+    Copyright (c) 2004 Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/div.php:
+    Copyright (c) 2005 Gabriel Lorenzo (http://ermakina.gazpachito.net)
+
+  For examples/includes/geshi/geshi/modula3.php:
+    Copyright (c) 2009 mbishop (mbishop@esoteriq.org)
+
+  For examples/includes/geshi/geshi/lisp.php:
+    Copyright (c) 2004 Roberto Rossi (http://rsoftware.altervista.org), Nigel McNie (http://qbnz.com/highlighter
+
+  For examples/includes/geshi/geshi/mysql.php:
+    Copyright (c) 2008 Marjolein Katsma (http://blog.marjoleinkatsma.com/)
+
+  For examples/includes/geshi/geshi/ocaml-brief.php:
+    Copyright (c) 2005 Flaie, Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/visualfoxpro.php:
+    Copyright (c) 2004 Roberto Armellin, Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/dot.php:
+    Copyright (c) 2007 Adrien Friggeri (http://www.friggeri.net)
+
+  For examples/includes/geshi/geshi/sdlbasic.php:
+    Copyright (c) 2005 Roberto Rossi (http://rsoftware.altervista.org)
+
+  For examples/includes/geshi/geshi/pascal.php:
+    Copyright (c) 2004 Tux (http://tux.a4.cz/), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/sas.php:
+    Copyright (c) 2004 Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/cpp.php:
+    Copyright (c) 2004 Dennis Bayer, Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/lotusscript.php:
+    Copyright (c) 2008 Richard Civil (info@richardcivil.net), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/tsql.php:
+    Copyright (c) 2006 Duncan Lock (http://dflock.co.uk/), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/oobas.php:
+    Copyright (c) 2004 Roberto Rossi (http://rsoftware.altervista.org), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/applescript.php:
+    Copyright (c) Stephan Klimek (http://www.initware.org)
+
+  For examples/includes/geshi/geshi/text.php:
+    Copyright (c) 2006 Sean Hanna
+
+  For examples/includes/geshi/geshi/mpasm.php:
+    Copyright (c) 2004 Bakalex, Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/lsl2.php:
+    Copyright (c) 2009 William Fry
+
+  For examples/includes/geshi/geshi/asm.php:
+    Copyright (c) 2004 Tux (http://tux.a4.cz/), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/java5.php:
+    Copyright (c) 2004 Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/providex.php:
+    Copyright (c) 2008 Coastal Logix (http://www.coastallogix.com)
+
+  For examples/includes/geshi/geshi/gml.php:
+    Copyright (c) 2005 Jose Jorge Enriquez Rodriguez (http://www.zonamakers.com)
+
+  For examples/includes/geshi/geshi/oracle11.php:
+    Copyright (c) 2004 Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/nsis.php:
+    Copyright (c) 2005 deguix, 2004 Tux (http://tux.a4.cz/), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/typoscript.php:
+    Copyright (c) 2005 Jan-Philipp Halle (http://www.jphalle.de/)
+
+  For examples/includes/geshi/geshi/thinbasic.php:
+    Copyright (c) 2006 Eros Olmi (http://www.thinbasic.com), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/scala.php:
+    Copyright (c) 2008 Franco Lombardo, Benny Baumann
+
+  For examples/includes/geshi/geshi/caddcl.php:
+    Copyright (c) 2004 Roberto Rossi (http://rsoftware.altervista.org), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/reg.php:
+    Copyright (c) 2006 Sean Hanna
+
+  For examples/includes/geshi/geshi/smalltalk.php:
+    Copyright (c) 2005 Bananeweizen (www.bananeweizen.de)
+
+  For examples/includes/geshi/geshi/objc.php:
+    Copyright (c) 2008 Quinn Taylor, 2004 M. Uli Kusterer, Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/delphi.php:
+    Copyright (c) 2004 Jorja Norbert, Benny Baumann (BenBE@omorphia.de), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/bnf.php:
+    Copyright (c) 2006 Rowan Rodrik van der Molen (http://www.bigsmoke.us/)
+
+  For examples/includes/geshi/geshi/winbatch.php:
+    Copyright (c) 2004 Craig Storey (craig.xcottawa.ca)
+
+  For examples/includes/geshi/geshi/freebasic.php:
+    Copyright (c) 2005 Roberto Rossi (http://rsoftware.altervista.org)
+
+  For examples/includes/geshi/geshi/lscript.php:
+    Copyright (c) 2008 Beau McGuigan (http://www.arendedwinter.com)
+
+  For examples/includes/geshi/geshi/inno.php:
+    Copyright (c) 2004 Jorja Norbert, Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/c_mac.php:
+    Copyright (c) 2004 M. Uli Kusterer, Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/verilog.php:
+    Copyright (c) 2008 Guenter Dannoritzer
+
+  For examples/includes/geshi/geshi/asp.php:
+    Copyright (c) 2004 Amit Gupta (http://blog.igeek.info/), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/apache.php:
+    Copyright (c) 2004 Tux (http://tux.a4.cz/), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/cil.php:
+    Copyright (c) 2007 Marcus Griep (http://www.xpdm.us)
+
+  For examples/includes/geshi/geshi/autoit.php:
+    Copyright (c) 2006 and to GESHi ;)
+
+  For examples/includes/geshi/geshi/intercal.php:
+    Copyright (c) 2008 Benny Baumann (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/lotusformulas.php:
+    Copyright (c) 2008 Richard Civil (info@richardcivil.net), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/klonecpp.php:
+    Copyright (c) Synchronic
+
+  For examples/includes/geshi/geshi/email.php:
+    Copyright (c) 2008 Benny Baumann (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/robots.php:
+    Copyright (c) 2006 Christian Lescuyer http://xtian.goelette.info
+
+  For examples/includes/geshi/geshi/locobasic.php:
+    Copyright (c) 2009 Nacho Cabanes (http://www.nachocabanes.com)
+
+  For examples/includes/geshi/geshi/groovy.php:
+    Copyright (c) 2006 Ivan F. Villanueva B.(http://www.artificialidea.com)
+
+  For examples/includes/geshi/geshi/sql.php:
+    Copyright (c) 2004 Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/pic16.php:
+    Copyright (c) 2008 Ohmikron Corp. (http://www.ohmikron.com/)
+
+  For examples/includes/geshi/geshi/io.php:
+    Copyright (c) 2006 Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/mirc.php:
+    Copyright (c) 2006 Alberto de Areba
+
+  For examples/includes/geshi/geshi/mxml.php:
+    Copyright (c) 2007 David Spurr (http://www.defusion.org.uk/)
+
+  For examples/includes/geshi/geshi/fortran.php:
+    Copyright (c) 2006 Cetric Arrabie
+
+  For examples/includes/geshi/geshi/povray.php:
+    Copyright (c) 2007 Carl Fürstenberg
+
+  For examples/includes/geshi/geshi/smarty.php:
+    Copyright (c) 2004 Alan Juden, Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/make.php:
+    Copyright (c) 2008 Neil Bird
+
+  For examples/includes/geshi/geshi/xorg_conf.php:
+    Copyright (c) 2008 Milian Wolff (http://milianw.de)
+
+  For examples/includes/geshi/geshi/glsl.php:
+    Copyright (c) 2008 Benny Baumann (BenBE@omorphia.de)
+
+  For examples/includes/geshi/geshi/cobol.php:
+    Copyright (c) 2007-2008 BenBE (http://www.omorphia.de/)
+
+  For examples/includes/geshi/geshi/klonec.php:
+    Copyright (c) Synchronic
+
+  For examples/includes/geshi/geshi/gettext.php:
+    Copyright (c) 2008 Milian Wolff
+
+  For examples/includes/geshi/geshi/m68k.php:
+    Copyright (c) 2007 Benny Baumann (http://www.omorphia.de/), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/gnuplot.php:
+    Copyright (c) 2008 Milian Wolff (http://milianw.de)
+
+  For examples/includes/geshi/geshi/python.php:
+    Copyright (c) 2004 Roberto Rossi (http://rsoftware.altervista.org), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/teraterm.php:
+    Copyright (c) 2008 Boris Maisuradze (http://logmett.com)
+
+  For examples/includes/geshi/geshi/bf.php:
+    Copyright (c) 2008 Benny Baumann (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/cpp-qt.php:
+    Copyright (c) 2006 Iulian M
+
+  For examples/includes/geshi/geshi/actionscript3.php:
+    Copyright (c) 2007 Jordi Boggiano (http://www.seld.be/), Benny Baumann (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/dcs.php:
+    Copyright (c) 2009 Stelio Passaris (http://stelio.net/stiki/GeSHi)
+
+  For examples/includes/geshi/geshi/cfm.php:
+    Copyright (c) 2006 Diego
+
+  For examples/includes/geshi/geshi/d.php:
+    Copyright (c) 2005 Thomas Kuehne (http://thomas.kuehne.cn/)
+
+  For examples/includes/geshi/geshi/rails.php:
+    Copyright (c) 2005 Moises Deniz
+
+  For examples/includes/geshi/geshi/rebol.php:
+    Copyright (c) 2004-2005 Lecanu Guillaume (Guillaume@LyA.fr)
+
+  For examples/includes/geshi/geshi/vb.php:
+    Copyright (c) 2004 Roberto Rossi (http://rsoftware.altervista.org)
+
+  For examples/includes/geshi/geshi/ruby.php:
+    Copyright (c) 2007 Moises Deniz
+
+  For examples/includes/geshi/geshi/ini.php:
+    Copyright (c) 2005 deguix
+
+  For examples/includes/geshi/geshi/blitzbasic.php:
+    Copyright (c) 2005 Pedraig O`Connel (http://moonsword.info)
+
+  For examples/includes/geshi/geshi/javascript.php:
+    Copyright (c) 2004 Ben Keen (ben.keen@gmail.com), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/xml.php:
+    Copyright (c) 2004 Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/powershell.php:
+    Copyright (c) 2008 Frode Aarebrot (http://www.aarebrot.net)
+
+  For examples/includes/geshi/geshi/scheme.php:
+    Copyright (c) 2005 Jon Raphaelson, Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/xpp.php:
+    Copyright (c) 2007 Simon Butcher (http://simon.butcher.name/)
+
+  For examples/includes/geshi/geshi/lolcode.php:
+    Copyright (c) 2008 Benny Baumann (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/java.php:
+    Copyright (c) 2004 Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/idl.php:
+    Copyright (c) 2006 Cedric Bosdonnat
+
+  For examples/includes/geshi/geshi/php.php:
+    Copyright (c) 2004 Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/vhdl.php:
+    Copyright (c) 2005 Alexander Krause
+
+  For examples/includes/geshi/geshi/bash.php:
+    Copyright (c) 2004 Andreas Gohr, Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/prolog.php:
+    Copyright (c) 2008 Benny Baumann (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/basic4gl.php:
+    Copyright (c) 2004 Matthew Webb (http://matthew-4gl.wikispaces.com)
+
+  For examples/includes/geshi/geshi/plsql.php:
+    Copyright (c) 2006 Victor Engmark (http://l0b0.net/)
+
+  For examples/includes/geshi/geshi/csharp.php:
+    Copyright (c) 2004 Alan Juden, Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/actionscript.php:
+    Copyright (c) 2004 Steffen Krause, Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/tcl.php:
+    Copyright (c) 2004 Reid van Melle (sorry@nowhere)
+
+  For examples/includes/geshi/geshi/apt_sources.php:
+    Copyright (c) 2008 Milian Wolff (http://milianw.de)
+
+  For examples/includes/geshi/geshi/haskell.php:
+    Copyright (c) 2005 Flaie, Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/dos.php:
+    Copyright (c) 2005 Alessandro Staltari (http://www.geocities.com/SiliconValley/Vista/8155/)
+
+  For examples/includes/geshi/geshi/html4strict.php:
+    Copyright (c) 2004 Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/whitespace.php:
+    Copyright (c) 2008 Benny Baumann (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/oracle8.php:
+    Copyright (c) 2004 Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/kixtart.php:
+    Copyright (c) 2007 Riley McArdle (http://www.glyff.net/)
+
+  For examples/includes/geshi/geshi/per.php:
+    Copyright (c) 2007 Lars Gersmann
+
+  For examples/includes/geshi/geshi/vbnet.php:
+    Copyright (c) 2004 Alan Juden, Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/genero.php:
+    Copyright (c) 2007 Lars Gersmann, Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/lua.php:
+    Copyright (c) 2004 Roberto Rossi (http://rsoftware.altervista.org), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/scilab.php:
+    Copyright (c) 2008 Christophe David (geshi@christophedavid.org)
+
+  For examples/includes/geshi/geshi/hq9plus.php:
+    Copyright (c) 2008 Benny Baumann (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/diff.php:
+    Copyright (c) 2004 Fuchsia Open Source Solutions (http://www.fuchsia.se/)
+
+  For examples/includes/geshi/geshi/cadlisp.php:
+    Copyright (c) 2004 Roberto Rossi (http://rsoftware.altervista.org), Nigel McNie (http://qbnz.com/blog)
+
+  For examples/includes/geshi/geshi/progress.php:
+    Copyright (c) 2008 Marco Aurelio de Pasqual, Benny Baumann (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/matlab.php:
+    Copyright (c) 2004 Florian Knorn (http://www.florian-knorn.com)
+
+  For examples/includes/geshi/geshi/c.php:
+    Copyright (c) 2004 Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/css.php:
+    Copyright (c) 2004 Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/vim.php:
+    Copyright (c) 2008 Swaroop C H (http://www.swaroopch.com)
+
+  For examples/includes/geshi/geshi/visualprolog.php:
+    Copyright (c) 2008 Thomas Linder Puls (puls@pdc.dk)
+
+  For examples/includes/geshi/geshi/cfdg.php:
+    Copyright (c) 2006 John Horigan http://www.ozonehouse.com/john/
+
+  For examples/includes/geshi/geshi/abap.php:
+    Copyright (c) 2007 Andres Picazo
+
+  For examples/includes/geshi/geshi/perl.php:
+    Copyright (c) 2004 Andreas Gohr, Ben Keen (http://www.benjaminkeen.org/), Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/ada.php:
+    Copyright (c) 2004 Tux (http://tux.a4.cz/), Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/pixelbender.php:
+    Copyright (c) 2008 Richard Olsson (richardolsson.se)
+
+  For examples/includes/geshi/geshi/ocaml.php:
+    Copyright (c) 2005 Flaie, Nigel McNie (http://qbnz.com/highlighter)
+
+  For examples/includes/geshi/geshi/php-brief.php:
+    Copyright (c) 2004 Nigel McNie (http://qbnz.com/highlighter/)
+
+  For examples/includes/geshi/geshi/eiffel.php:
+    Copyright (c) 2005 Zoran Simic
+
+  For examples/includes/geshi/geshi/avisynth.php:
+    Copyright (c) 2008 Ryan Jones
+
+  For examples/includes/HTML-Toc-0.91:
+    Copyright (c) 2001 Freddy Vulto
+
+  For examples/includes/PHP-Markdown-Extra-1.2.3,
+      examples/includes/PHP-SmartyPants-1.5.1e:
+    Copyright (c) 2004-2008 Michel Fortin
+    Copyright (c) 2003-2006 John Gruber
+
+Licenses:
+
+  For examples/includes/ASCIIMathPHP-2.0:
+    
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or (at
+    your option) any later version.
+    This program is distributed in the hope that it will be useful, but 
+    WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+    or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License 
+    (at http://www.gnu.org/copyleft/gpl.html) for more details.
+
+    On Debian GNU/Linux systems, the complete text of the GNU General Public
+    License Version 2 can be found in `/usr/share/common-licenses/GPL-2'.
+
+  For examples/includes/geshi:
+
+    GeSHi is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    GeSHi is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with GeSHi; if not, write to the Free Software Foundation,
+    Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
+
+    On Debian GNU/Linux systems, the complete text of the GNU General Public
+    License Version 2 can be found in `/usr/share/common-licenses/GPL-2'.
+
+  For examples/includes/HTML-Toc-0.91:
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the Artistic License, which comes with Perl.
+    
+    On Debian GNU/Linux systems, the complete text of the Artistic License
+    can be found in `/usr/share/common-licenses/Artistic'
+
+  For examples/includes/PHP-Markdown-Extra-1.2.3,
+      examples/includes/PHP-SmartyPants-1.5.1e:
+    
+    All rights reserved.
+    
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are
+    met:
+    
+    * Redistributions of source code must retain the above copyright notice,
+      this list of conditions and the following disclaimer.
+      
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+
+    * Neither the name "Markdown" nor the names of its contributors may
+      be used to endorse or promote products derived from this software
+      without specific prior written permission.
+
+    This software is provided by the copyright holders and contributors "as
+    is" and any express or implied warranties, including, but not limited
+    to, the implied warranties of merchantability and fitness for a
+    particular purpose are disclaimed. In no event shall the copyright owner
+    or contributors be liable for any direct, indirect, incidental, special,
+    exemplary, or consequential damages (including, but not limited to,
+    procurement of substitute goods or services; loss of use, data, or
+    profits; or business interruption) however caused and on any theory of
+    liability, whether in contract, strict liability, or tort (including
+    negligence or otherwise) arising in any way out of the use of this
+    software, even if advised of the possibility of such damage.
+

@@ -1,0 +1,7 @@
+<fxlayout help_file="DensityIno.pdf">
+  <page name="Density Ino">
+    <control>density</control>
+    <separator label=""/>
+      <control>reference</control>
+  </page>
+</fxlayout>

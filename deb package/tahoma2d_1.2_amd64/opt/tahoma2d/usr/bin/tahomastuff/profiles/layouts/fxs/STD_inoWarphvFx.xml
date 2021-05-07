@@ -1,0 +1,10 @@
+<fxlayout help_file="WarpHVIno.pdf">
+  <page name="Warp HV Ino">
+	<control>h_ref_mode</control>
+	<control>h_maxlen</control>
+	<control>v_ref_mode</control>
+	<control>v_maxlen</control>
+	<control>alpha_rendering</control>
+	<control>anti_aliasing</control>
+  </page>
+</fxlayout>

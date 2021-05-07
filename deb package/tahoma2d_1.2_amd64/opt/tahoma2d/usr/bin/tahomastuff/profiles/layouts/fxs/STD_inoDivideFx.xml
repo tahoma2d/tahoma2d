@@ -1,0 +1,6 @@
+<fxlayout help_file="DivideIno.pdf">
+  <page name="Divide Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+  </page>
+</fxlayout>

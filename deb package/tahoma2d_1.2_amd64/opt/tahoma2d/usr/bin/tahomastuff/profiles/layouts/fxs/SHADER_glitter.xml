@@ -1,0 +1,9 @@
+<fxlayout>
+  <page name="Glitter">
+    <control>threshold</control>
+    <control>brightness</control>
+    <control>radius</control>
+    <control>angle</control>
+    <control>halo</control>
+  </page>
+</fxlayout>

@@ -1,0 +1,8 @@
+<fxlayout help_file="MedianFilterIno.pdf">
+  <page name="Median Filter Ino">
+    <control>radius</control>
+    <control>channel</control>
+    <separator label=""/>
+      <control>reference</control>
+  </page>
+</fxlayout>

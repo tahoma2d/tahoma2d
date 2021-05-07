@@ -1,0 +1,6 @@
+<fxlayout help_file="LinearLightIno.pdf">
+  <page name="Linear Light Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+  </page>
+</fxlayout>

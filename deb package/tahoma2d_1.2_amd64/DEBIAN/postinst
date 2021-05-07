@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+# Quirinux-DEB Postinstall 1.0
+#
+# Autor: Charlie Martínez
+#
+#	Otorga permisos a la carpeta que contiene el programa.
+#	Crea el enlace simbólico.
+
+## Permisos para uso del directorio en /opt/tahoma2d
+chmod -R 755 /opt/tahoma2d
+
+## Variable para el enlace simbólico al ejecutable
+FILE="/usr/local/bin/tahoma2d"
+
+## Si NO existe un "enlace simbólico" (-h) previo...
+if [ ! -h ${FILE} ]; then
+	## Crea un nuevo enlace simbólico
+	ln -s /opt/tahoma2d/tahoma2d ${FILE}
+fi
+

@@ -1,0 +1,6 @@
+<fxlayout>
+  <page name="Darken">
+     <control>matte</control>
+  </page>
+
+</fxlayout>

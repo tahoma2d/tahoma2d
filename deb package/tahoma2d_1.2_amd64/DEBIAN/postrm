@@ -1,0 +1,11 @@
+#!/bin/bash
+
+## Variable para el enlace simbólico al ejecutable
+FILE="/usr/local/bin/tahoma2d"
+
+## Si existe el enlace simbólico...
+if [ -h ${FILE} ]; then
+	## Borra el enlace simbólico creado en la instalacion..
+	rm ${FILE}
+fi
+

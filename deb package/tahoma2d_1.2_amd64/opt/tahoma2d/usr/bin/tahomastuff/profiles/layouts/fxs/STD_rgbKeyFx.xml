@@ -1,0 +1,11 @@
+<fxlayout>
+  <page name="RGB Key">
+    <control>color</control>
+    <control>r_range</control>
+    <control>g_range</control>
+    <control>b_range</control>
+    <control>invert</control>
+  </page>
+
+
+</fxlayout>

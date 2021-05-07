@@ -1,0 +1,6 @@
+<fxlayout>
+  <page name="Posterize">
+    <control>levels</control>
+  </page>
+ 
+</fxlayout>

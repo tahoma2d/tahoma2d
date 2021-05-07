@@ -1,0 +1,12 @@
+<fxlayout help_file="SpinBlurIno.pdf">
+  <page name="Spin Blur Ino">
+    <control>center</control>
+    <control>radius</control>
+    <control>blur</control>
+    <control>type</control>
+    <control>alpha_rendering</control>
+    <separator label=""/>
+      <control>anti_alias</control>
+      <control>reference</control>
+  </page>
+</fxlayout>

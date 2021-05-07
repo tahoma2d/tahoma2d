@@ -1,0 +1,10 @@
+Tahoma2D ships with FFmpeg, and uses FFmpeg through command line commands.
+Tahoma2D does not directly use FFmpeg libraries or code.
+
+As of July 2020, Tahoma2D is shipping with FFmpeg 4.3 LGPL version from https://ffmpeg.zeranoe.com/builds/
+
+FFmpeg source code can be found at:
+https://github.com/tahoma2d/FFmpeg
+or 
+https://github.com/FFmpeg/FFmpeg
+

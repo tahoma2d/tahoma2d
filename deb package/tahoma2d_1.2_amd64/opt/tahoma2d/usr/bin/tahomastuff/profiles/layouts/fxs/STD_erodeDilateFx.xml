@@ -1,0 +1,8 @@
+<fxlayout>
+  <page name="Erode/Dilate">
+    <control>radius</control>
+    <control>type</control>
+  </page>
+
+
+</fxlayout>

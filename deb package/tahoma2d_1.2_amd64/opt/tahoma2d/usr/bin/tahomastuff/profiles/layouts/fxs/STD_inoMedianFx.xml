@@ -1,0 +1,8 @@
+<fxlayout help_file="MedianIno.pdf">
+  <page name="Median Ino">
+    <control>radius</control>
+    <control>channel</control>
+    <separator label=""/>
+      <control>reference</control>
+  </page>
+</fxlayout>

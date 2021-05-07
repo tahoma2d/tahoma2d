@@ -1,0 +1,31 @@
+[Desktop Entry]
+Type=Application
+Name=Tahoma 2D 
+Comment=2D animation
+Icon=io.github.Tahoma2D
+Exec=tahoma2d
+Categories=Graphics;
+Terminal=false
+
+Name[de]=Tahoma 2D 
+Name[es]=Tahoma 2D 
+Name[gl]=Tahoma 2D 
+Name[fr]=Tahoma 2D 
+Name[pt]=Tahoma 2D 
+Name[it]=Tahoma 2D 
+Name[ru]=Tahoma 2D 
+
+Comment=2d Digital Animation and Stop Motion
+Comment[de]=2d Digitale Animation und Stop Motion
+Comment[es]=Animación 2d Digital y Stop Motion
+Comment[gl]=2d Animación dixital e Stop Motion
+Comment[fr]=Animation numérique 2D et Stop Motion
+Comment[pt]=Animação Digital 2d e Stop Motion
+Comment[it]=Animazione digitale 2d e stop motion
+Comment[ru]=2d цифровая анимация и покадровая анимация
+
+GenericName=Dragonframe;Toon Boom;Harmony;TV Paint;
+
+
+
+

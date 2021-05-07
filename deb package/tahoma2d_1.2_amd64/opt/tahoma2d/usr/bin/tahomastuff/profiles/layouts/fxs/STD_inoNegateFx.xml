@@ -1,0 +1,8 @@
+<fxlayout help_file="NegateIno.pdf">
+  <page name="Negate Ino">
+    <control>red</control>
+    <control>green</control>
+    <control>blue</control>
+    <control>alpha</control>
+  </page>
+</fxlayout>

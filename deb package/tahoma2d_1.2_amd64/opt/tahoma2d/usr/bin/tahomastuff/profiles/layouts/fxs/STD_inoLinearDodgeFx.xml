@@ -1,0 +1,6 @@
+<fxlayout help_file="LinearDodgeIno.pdf">
+  <page name="Linear Dodge Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+  </page>
+</fxlayout>

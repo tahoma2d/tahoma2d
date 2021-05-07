@@ -1,0 +1,8 @@
+<fxlayout>
+  <page name="RGB Fade">
+     <control>color</control>
+     <control>intensity</control>
+
+  </page>
+
+</fxlayout>

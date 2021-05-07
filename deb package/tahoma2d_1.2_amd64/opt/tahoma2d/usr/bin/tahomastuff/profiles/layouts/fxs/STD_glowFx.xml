@@ -1,0 +1,9 @@
+<fxlayout>
+  <page name="Glow">
+    <control>value</control>
+    <control>brightness</control>
+    <control>color</control>
+    <control>fade</control>
+  </page>
+
+</fxlayout>

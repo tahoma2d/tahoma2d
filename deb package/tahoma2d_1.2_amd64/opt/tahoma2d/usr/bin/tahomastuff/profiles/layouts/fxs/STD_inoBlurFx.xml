@@ -1,0 +1,7 @@
+<fxlayout help_file="BlurIno.pdf">
+  <page name="Blur Ino">
+    <control>radius</control>
+    <separator label=""/>
+      <control>reference</control>
+  </page>
+</fxlayout>

@@ -1,0 +1,11 @@
+<fxlayout>
+  <page name="Clouds">
+    <control>type</control>
+    <control>size</control>
+    <control>evolution</control>
+    <control>colors</control>
+    <control>min</control>
+    <control>max</control>
+  </page>
+
+</fxlayout>

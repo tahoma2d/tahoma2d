@@ -1,0 +1,50 @@
+<html lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <title>TileFx Iwa</title>
+    </head>
+<body bgcolor="#f5f5f5" text="#220011">
+<h1><img src = ".\img\fx_iwa_tile.png" width = 30 height = 30 >   TileFx Iwa</h1>
+
+<h4>● Overview</h4>
+This effect arranges the Source image in tiles.<br>
+The existing "Tile" effect of Tahoma2D has been enhanced in the following ways:
+<UL>
+<LI>Now it is possible to specify the repeat range with respect to the Camera Box, in addition to the<br>
+object Bounding Box.</LI>
+<LI>Now it is possible to specify the number of repetitions and the number of sheets, separately for top,<br>
+bottom, left and right.</LI>
+<LI>Now it is possible to specify the separate margin widths for horizontal and vertical directions.</LI>
+</UL>
+
+<h4>● Input port</h4>
+<UL>
+<LI><b>Source</b> : Connect the Source image.</LI>
+</UL>
+
+<h4>● Parameters</h4>
+<UL>
+<LI><b>Input Size</b> : Specify the range to be repeated.<br>
+"Bounding Box"&nbsp&nbspRepeats the area within the bounding box of the Source image.<br>
+"Camera Box"&nbsp&nbsp&nbspRepeat the area within the "Camera Box". In other words, the repeated images will<br>
+be placed outside the camera.
+</LI><br>
+<LI><b>Left Quantity</b> : Specify the number of repetitions to the left.<br>
+"No Tile"&nbsp&nbspIt will not repeat the tiles.<br>
+"1 Tile"&nbsp&nbsp&nbspIt will repeat the image only 1 time.<br>
+"Mutiple Tiles"&nbspIt will repeat the image indefinitely within the specified range.
+</LI>
+<LI><b>Right Quantity</b> : Specify the number of repetitions to the right. (See Left Quantity).</LI>
+<LI><b>Mirror Horizontally</b> : When active, tiles arranged in the horizontal direction will be flipped<br>
+horizontally every other time.</LI>
+<LI><b>Horizontal Margin</b> : The horizontal margin of the tile (unit). It can have a negative value.</LI>
+<LI><b>Top Quantity</b> : Specify the number of times to repeat upwards. (See Left Quantity).</LI>
+<LI><b>Bottom Quantity</b> : Specify the number of times to repeat downwards. (See Left Quantity).</LI>
+<LI><b>Mirror Vertically</b> : When active, tiles arranged in the vertical direction will be flipped upside<br>
+down every other time.</LI>
+<LI><b>Vertical Margin</b> : The vertical margin of the tile (unit). It can have a negative value.</LI>
+</UL>
+
+</body>
+
+</html>

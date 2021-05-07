@@ -1,0 +1,8 @@
+<fxlayout>
+  <page name="Checkerboard">
+        <control>color1</control>
+        <control>color2</control>
+        <control>size</control>
+  </page>
+
+</fxlayout>

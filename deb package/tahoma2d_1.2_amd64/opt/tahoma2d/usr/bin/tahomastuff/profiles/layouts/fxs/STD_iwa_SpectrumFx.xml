@@ -1,0 +1,18 @@
+<fxlayout help_file="SpectrumIwa.html">
+	<page name="Spectrum Iwa">
+ 	<vbox>
+		<control>intensity</control>
+		<control>refractiveIndex</control>
+		<control>thickMax</control>
+		<control>thickMin</control>
+		<control>RGamma</control>
+		<control>GGamma</control>
+		<control>BGamma</control>
+		<control>loopSpectrumFadeWidth</control>
+		<control>spectrumShift</control>
+		<control>lensFactor</control>
+		<control>lightThres</control>
+		<control>lightIntensity</control>
+  	</vbox>
+  	</page>
+</fxlayout>

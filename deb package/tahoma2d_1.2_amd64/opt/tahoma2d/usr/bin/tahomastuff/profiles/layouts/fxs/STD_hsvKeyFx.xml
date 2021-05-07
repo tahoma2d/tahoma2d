@@ -1,0 +1,13 @@
+<fxlayout>
+  <page name="HSV Key">
+    <control>h</control>
+    <control>s</control>
+    <control>v</control>
+    <control>h_range</control>
+    <control>s_range</control>
+    <control>v_range</control>
+    <control>invert</control>
+  </page>
+
+
+</fxlayout>

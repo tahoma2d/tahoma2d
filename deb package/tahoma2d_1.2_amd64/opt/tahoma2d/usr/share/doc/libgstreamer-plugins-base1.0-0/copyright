@@ -1,0 +1,1120 @@
+This package was debianized by David I. Lehn <dlehn@debian.org> on
+Mon, 15 Jan 2001 18:21:37 -0500.
+
+It was downloaded from <http://gstreamer.freedesktop.org/>.
+
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Gstreamer Base Plugins 1.0
+Upstream-Contact: gstreamer-devel@lists.freedesktop.org
+Source: http://gstreamer.freedesktop.org
+
+Files: ext/alsa/gstalsa.c
+ gst-libs/gst/audio/gstaudiocdsrc.c
+ gst-libs/gst/audio/gstaudiocdsrc.h
+ gst-libs/gst/audio/mixerutils.h
+ gst-libs/gst/pbutils/descriptions.c
+ gst-libs/gst/pbutils/descriptions.h
+ gst-libs/gst/pbutils/gstpluginsbaseversion.c
+ gst-libs/gst/pbutils/missing-plugins.c
+ gst-libs/gst/pbutils/missing-plugins.h
+ gst-libs/gst/pbutils/pbutils.c
+ gst-libs/gst/pbutils/pbutils.h
+ gst-libs/gst/tag/lang.c
+ gst-libs/gst/tag/licenses.c
+ gst-libs/gst/tag/mklangtables.c
+ gst-libs/gst/tag/mklicensestables.c
+ gst/subparse/gstssaparse.c
+ gst/subparse/gstssaparse.h
+ gst/subparse/tmplayerparse.c
+ gst/subparse/tmplayerparse.h
+ tests/check/elements/alsa.c
+ tests/check/elements/audiorate.c
+ tests/check/elements/playbin.c
+ tests/check/elements/subparse.c
+ tests/check/elements/textoverlay.c
+ tests/check/gst/typefindfunctions.c
+ tests/check/libs/gstlibscpp.cc
+ tests/check/libs/pbutils.c
+ tests/check/libs/rtp.c
+ tests/check/libs/tag.c
+ tests/icles/test-textoverlay.c
+Copyright: 2005, Tim-Philipp Müller <tim centricular net>
+  2005-2006, Tim-Philipp Müller <tim centricular net>
+  2006, Tim-Philipp Müller <tim centricular net>
+  2006-2008, Tim-Philipp Müller <tim centricular net>
+  2006-2011, Tim-Philipp Müller <tim centricular net>
+  2007, Tim-Philipp Müller <tim centricular net>
+  2009, Tim-Philipp Müller <tim centricular net>
+  2010, Tim-Philipp Müller <tim centricular net>
+  2011, Tim-Philipp Müller <tim centricular net>
+License: LGPL-2+
+
+Files: ext/cdparanoia/gstcdparanoiasrc.c
+ ext/ogg/gstogg.c
+ ext/vorbis/gstivorbisdec.c
+ ext/vorbis/gstvorbis.c
+ ext/vorbis/gstvorbisdec.h
+ ext/vorbis/gstvorbisenc.c
+ ext/vorbis/gstvorbisenc.h
+ gst-libs/gst/audio/audio.c
+ gst-libs/gst/audio/audio.h
+ gst-libs/gst/audio/gstaudiofilter.h
+ gst-libs/gst/video/gstvideofilter.h
+ gst/audiorate/gstaudiorate.c
+ gst/audiorate/gstaudiorate.h
+ gst/tcp/gsttcpclientsink.h
+ gst/tcp/gsttcpplugin.c
+ gst/videorate/gstvideorate.c
+ gst/videorate/gstvideorate.h
+ gst/videoscale/gstvideoscale.h
+ gst/videotestsrc/videotestsrc.c
+ tests/icles/playback/decodetest.c
+ tests/icles/playback/test2.c
+ tests/icles/playback/test3.c
+ tests/icles/playback/test4.c
+ tests/icles/playback/test5.c
+ tests/icles/playback/test6.c
+Copyright: <1999> Erik Walthinsen <omega@cse.ogi.edu>
+License: LGPL-2+
+
+Files: gst-libs/gst/audio/mixer.c
+ gst-libs/gst/audio/mixer.h
+ gst-libs/gst/audio/mixeroptions.c
+ gst-libs/gst/audio/mixeroptions.h
+ gst-libs/gst/audio/mixertrack.c
+ gst-libs/gst/audio/mixertrack.h
+ gst-libs/gst/interfaces/tuner.c
+ gst-libs/gst/interfaces/tuner.h
+ gst-libs/gst/interfaces/tunerchannel.c
+ gst-libs/gst/interfaces/tunerchannel.h
+ gst-libs/gst/interfaces/tunernorm.c
+ gst-libs/gst/interfaces/tunernorm.h
+ gst-libs/gst/riff/riff-ids.h
+ gst-libs/gst/riff/riff-media.c
+ gst-libs/gst/riff/riff-media.h
+ gst-libs/gst/riff/riff-read.c
+ gst-libs/gst/riff/riff-read.h
+ gst-libs/gst/riff/riff.c
+ gst-libs/gst/video/colorbalance.c
+ gst-libs/gst/video/colorbalance.h
+ gst-libs/gst/video/colorbalancechannel.c
+ gst-libs/gst/video/colorbalancechannel.h
+ gst/audioconvert/audioconvert.h
+ gst/audioconvert/gstchannelmix.h
+Copyright: 2003, Ronald Bultje <rbultje@ronald.bitfreak.net>
+  2004, Ronald Bultje <rbultje@ronald.bitfreak.net>
+License: LGPL-2+
+
+Files: ext/pango/gsttextoverlay.h
+ ext/vorbis/gstvorbiscommon.c
+ ext/vorbis/gstvorbiscommon.h
+ gst-libs/gst/audio/streamvolume.c
+ gst-libs/gst/audio/streamvolume.h
+ gst/audioconvert/gstfastrandom.h
+ gst/audioresample/speex_resampler_double.c
+ gst/audioresample/speex_resampler_float.c
+ gst/audioresample/speex_resampler_int.c
+ gst/audioresample/speex_resampler_wrapper.h
+ gst/playback/gststreamsynchronizer.c
+ gst/playback/gststreamsynchronizer.h
+ gst/playback/gstsubtitleoverlay.c
+ gst/playback/gstsubtitleoverlay.h
+ tests/examples/gio/giosrc-mounting.c
+Copyright: 2007-2008, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+  2008, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+  2009, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+  2010, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+  2011, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: LGPL-2+
+
+Files: ext/alsa/gstalsasink.h
+ ext/alsa/gstalsasrc.c
+ ext/alsa/gstalsasrc.h
+ ext/ogg/gstogg.h
+ ext/ogg/gstoggaviparse.c
+ ext/ogg/gstoggdemux.c
+ ext/ogg/gstoggdemux.h
+ ext/ogg/vorbis_parse.h
+ ext/theora/gsttheoraenc.c
+ ext/theora/gsttheoraenc.h
+ gst-libs/gst/audio/gstaudioringbuffer.c
+ gst-libs/gst/rtsp/gstrtspextension.h
+ tests/check/libs/libsabi.c
+ tests/examples/playback/playback-test.c
+ tests/examples/seek/jsseek.c
+Copyright: 2004, Wim Taymans <wim@fluendo.com>
+  2005, Wim Taymans <wim@fluendo.com>
+  2006, Wim Taymans <wim@fluendo.com>
+  2007, Wim Taymans <wim@fluendo.com>
+License: LGPL-2+
+
+Files: ext/cdparanoia/gstcdparanoiasrc.h
+ gst-libs/gst/audio/gstaudiobasesink.c
+ gst-libs/gst/audio/gstaudiobasesink.h
+ gst-libs/gst/audio/gstaudiobasesrc.c
+ gst-libs/gst/audio/gstaudiobasesrc.h
+ gst-libs/gst/audio/gstaudioclock.c
+ gst-libs/gst/audio/gstaudioclock.h
+ gst-libs/gst/audio/gstaudioringbuffer.h
+ gst-libs/gst/audio/gstaudiosink.c
+ gst-libs/gst/audio/gstaudiosink.h
+ gst-libs/gst/audio/gstaudiosrc.c
+ gst-libs/gst/audio/gstaudiosrc.h
+ gst/adder/gstadder.c
+ gst/adder/gstadder.h
+Copyright: 1999, Erik Walthinsen <omega@cse.ogi.edu>
+  1999-2000, Erik Walthinsen <omega@cse.ogi.edu>
+License: LGPL-2+
+
+Files: gst-libs/gst/fft/_kiss_fft_guts_f32.h
+ gst-libs/gst/fft/_kiss_fft_guts_f64.h
+ gst-libs/gst/fft/_kiss_fft_guts_s16.h
+ gst-libs/gst/fft/_kiss_fft_guts_s32.h
+ gst-libs/gst/fft/kiss_fft_f32.c
+ gst-libs/gst/fft/kiss_fft_f64.c
+ gst-libs/gst/fft/kiss_fft_s16.c
+ gst-libs/gst/fft/kiss_fft_s32.c
+ gst-libs/gst/fft/kiss_fftr_f32.c
+ gst-libs/gst/fft/kiss_fftr_f64.c
+ gst-libs/gst/fft/kiss_fftr_s16.c
+ gst-libs/gst/fft/kiss_fftr_s32.c
+Copyright: 2003-2004, Mark Borgerding
+License: BSD (2 clause)
+
+Files: gst/gdp/gstgdp.c
+ gst/gdp/gstgdpdepay.c
+ gst/gdp/gstgdpdepay.h
+ gst/gdp/gstgdppay.c
+ gst/gdp/gstgdppay.h
+ tests/check/elements/gdpdepay.c
+ tests/check/elements/gdppay.c
+ tests/check/elements/multifdsink.c
+ tests/check/elements/multisocketsink.c
+ tests/check/elements/videorate.c
+ tests/check/pipelines/streamheader.c
+ tests/check/pipelines/vorbisdec.c
+Copyright: 2006, Thomas Vander Stichele <thomas at apestaart dot org>
+  2007, Thomas Vander Stichele <thomas at apestaart dot org>
+License: LGPL-2+
+
+Files: gst-libs/gst/rtsp/gstrtspdefs.c
+ gst-libs/gst/rtsp/gstrtspdefs.h
+ gst-libs/gst/rtsp/gstrtspmessage.c
+ gst-libs/gst/rtsp/gstrtspmessage.h
+ gst-libs/gst/rtsp/gstrtsprange.c
+ gst-libs/gst/rtsp/gstrtsprange.h
+ gst-libs/gst/rtsp/gstrtsptransport.h
+ gst-libs/gst/rtsp/gstrtspurl.c
+ gst-libs/gst/rtsp/gstrtspurl.h
+ gst-libs/gst/sdp/gstsdp.h
+ gst-libs/gst/sdp/gstsdpmessage.c
+ gst-libs/gst/sdp/gstsdpmessage.h
+Copyright: <2005-2006> Wim Taymans <wim@fluendo.com>
+License: MIT/X11 (BSD like) LGPL-2+
+
+Files: gst-libs/gst/rtsp/gstrtsp.h
+ gst-libs/gst/rtsp/gstrtspextension.c
+ tests/examples/app/appsrc-ra.c
+ tests/examples/app/appsrc-seekable.c
+ tests/examples/app/appsrc-stream.c
+ tests/examples/app/appsrc-stream2.c
+ tests/examples/seek/stepping.c
+ tests/examples/seek/stepping2.c
+ tests/icles/playbin-text.c
+ tests/icles/test-box.c
+ tests/icles/test-scale.c
+Copyright: 2007, Wim Taymans <wim.taymans@gmail.com>
+  2008, Wim Taymans <wim.taymans@gmail.com>
+  2009, Wim Taymans <wim.taymans@gmail.com>
+License: LGPL-2+
+
+Files: gst-libs/gst/fft/gstfft.c
+ gst-libs/gst/fft/gstfft.h
+ gst-libs/gst/fft/gstfftf32.c
+ gst-libs/gst/fft/gstfftf32.h
+ gst-libs/gst/fft/gstfftf64.c
+ gst-libs/gst/fft/gstfftf64.h
+ gst-libs/gst/fft/gstffts16.c
+ gst-libs/gst/fft/gstffts16.h
+ gst-libs/gst/fft/gstffts32.c
+ gst-libs/gst/fft/gstffts32.h
+Copyright: <2007> Sebastian Dröge <slomo@circular-chaos.org>
+License: LGPL-2+
+
+Files: gst-libs/gst/rtp/gstrtppayloads.c
+ gst-libs/gst/rtp/gstrtppayloads.h
+ gst/playback/gstplay-enum.c
+ gst/playback/gstplay-enum.h
+ gst/playback/gstplayback.c
+ gst/playback/gstplayback.h
+ gst/playback/gstplaysink.h
+ gst/playback/gsturidecodebin.c
+ tests/examples/snapshot/snapshot.c
+ tests/icles/playback/test7.c
+Copyright: <2007> Wim Taymans <wim.taymans@gmail.com>
+License: LGPL-2+
+
+Files: gst-libs/gst/pbutils/encoding-profile.c
+ gst-libs/gst/pbutils/encoding-profile.h
+ gst-libs/gst/pbutils/encoding-target.c
+ gst-libs/gst/pbutils/encoding-target.h
+ gst/encoding/gstencodebin.c
+ gst/encoding/gstencodebin.h
+ gst/encoding/gststreamcombiner.c
+ gst/encoding/gststreamcombiner.h
+ gst/encoding/gststreamsplitter.c
+ gst/encoding/gststreamsplitter.h
+Copyright: 2009, Edward Hervey <edward.hervey@collabora.co.uk>
+  2009, Nokia Corporation
+  2009-2010, Edward Hervey <edward.hervey@collabora.co.uk>
+  2009-2010, Nokia Corporation
+  2010, Edward Hervey <edward.hervey@collabora.co.uk>
+  2010, Nokia Corporation
+License: LGPL-2+
+
+Files: sys/ximage/ximagepool.c
+ sys/ximage/ximagepool.h
+ sys/ximage/ximagesink.c
+ sys/ximage/ximagesink.h
+ sys/xvimage/xvimagepool.c
+ sys/xvimage/xvimagepool.h
+ sys/xvimage/xvimagesink.c
+ sys/xvimage/xvimagesink.h
+ tests/icles/stress-videooverlay.c
+Copyright: <2005> Julien Moutte <julien@moutte.net>
+License: LGPL-2+
+
+Files: ext/alsa/gstalsamixer.c
+ ext/alsa/gstalsamixer.h
+ ext/alsa/gstalsamixerelement.c
+ ext/alsa/gstalsamixerelement.h
+ ext/alsa/gstalsamixeroptions.c
+ ext/alsa/gstalsamixeroptions.h
+ ext/alsa/gstalsamixertrack.c
+ ext/alsa/gstalsamixertrack.h
+Copyright: 2003, Leif Johnson <leif@ambient.2y.net>
+License: LGPL-2+
+
+Files: gst/gdp/dp-private.h
+ gst/tcp/gstmultifdsink.h
+ gst/tcp/gsttcp.h
+ gst/tcp/gsttcpclientsrc.h
+ gst/tcp/gsttcpserversink.c
+ gst/tcp/gsttcpserversink.h
+ gst/tcp/gsttcpserversrc.h
+Copyright: <1999> Erik Walthinsen <omega@cse.ogi.edu>
+  <2004> Thomas Vander Stichele <thomas at apestaart dot org>
+License: LGPL-2+
+
+Files: gst-libs/gst/audio/gstaudiometa.c
+ gst-libs/gst/audio/gstaudiometa.h
+ gst-libs/gst/video/gstvideometa.c
+ gst-libs/gst/video/gstvideometa.h
+ gst-libs/gst/video/gstvideopool.c
+ gst-libs/gst/video/gstvideopool.h
+ gst-libs/gst/video/video.h
+Copyright: <2011> Wim Taymans <wim.taymans@gmail.com>
+License: LGPL-2+
+
+Files: ext/theora/gsttheora.c
+ ext/theora/gsttheoradec.c
+ ext/theora/gsttheoradec.h
+ ext/vorbis/gstvorbisdec.c
+ gst-libs/gst/tag/gstid3tag.c
+ gst-libs/gst/tag/gsttageditingprivate.h
+ gst-libs/gst/tag/gstvorbistag.c
+Copyright: 2003, Benjamin Otte <in7y118@public.uni-hamburg.de>
+  2004, Benjamin Otte <in7y118@public.uni-hamburg.de>
+License: LGPL-2+
+
+Files: gst/gio/gstgio.c
+ gst/gio/gstgiobasesink.c
+ gst/gio/gstgiobasesrc.c
+ gst/gio/gstgiosink.c
+ gst/gio/gstgiosrc.c
+ gst/gio/gstgiostreamsink.c
+ gst/gio/gstgiostreamsrc.c
+Copyright: 2007, Rene Stadler <mail@renestadler.de>
+  2007, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+  2007-2009, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: LGPL-2+
+
+Files: gst/gio/gstgio.h
+ gst/gio/gstgiobasesink.h
+ gst/gio/gstgiobasesrc.h
+ gst/gio/gstgiosink.h
+ gst/gio/gstgiosrc.h
+ gst/gio/gstgiostreamsink.h
+ gst/gio/gstgiostreamsrc.h
+Copyright: 2007, Rene Stadler <mail@renestadler.de>
+  2007, Sebastian Dröge <slomo@circular-chaos.org>
+  2007-2009, Sebastian Dröge <slomo@circular-chaos.org>
+License: LGPL-2+
+
+Files: gst-libs/gst/tag/gstexiftag.c
+ gst-libs/gst/tag/gsttageditingprivate.c
+ gst-libs/gst/tag/xmpwriter.c
+ gst-libs/gst/tag/xmpwriter.h
+ tests/check/elements/appsrc.c
+ tests/check/libs/xmpwriter.c
+ tests/check/pipelines/capsfilter-renegotiation.c
+Copyright: 2010, Thiago Santos <thiago.sousa.santos@collabora.co.uk>
+  2011, Thiago Santos <thiago.sousa.santos@collabora.co.uk>
+License: LGPL-2+
+
+Files: gst/videoscale/vs_4tap.h
+ gst/videoscale/vs_image.c
+ gst/videoscale/vs_image.h
+ gst/videoscale/vs_lanczos.c
+ gst/videoscale/vs_scanline.c
+ gst/videoscale/vs_scanline.h
+Copyright: 2005, David A. Schleef <ds@schleef.org>
+  2005-2012, David A. Schleef <ds@schleef.org>
+  2011, David A. Schleef <ds@schleef.org>
+License: BSD (2 clause)
+
+Files: tests/check/elements/adder.c
+ tests/check/elements/audiotestsrc.c
+ tests/check/elements/volume.c
+ tests/check/elements/vorbisdec.c
+ tests/check/elements/vorbistag.c
+ tests/check/generic/states.c
+Copyright: <2005> Thomas Vander Stichele <thomas at apestaart dot org>
+License: LGPL-2+
+
+Files: ext/ogg/gstoggstream.h
+ gst-libs/gst/app/gstappsink.h
+ gst-libs/gst/app/gstappsrc.h
+ gst-libs/gst/glib-compat-private.h
+ gst/app/gstapp.c
+ gst/videoconvert/videoconvert.h
+Copyright: 2005, David Schleef <ds@schleef.org>
+  2007, David Schleef <ds@schleef.org>
+  2009, David Schleef <ds@schleef.org>
+  2010, David Schleef <ds@schleef.org>
+License: LGPL-2+
+
+Files: gst/audioresample/arch.h
+ gst/audioresample/fixed_arm4.h
+ gst/audioresample/fixed_arm5e.h
+ gst/audioresample/fixed_debug.h
+ gst/audioresample/fixed_generic.h
+Copyright: 2003, Jean-Marc Valin */
+  2004, Jean-Marc Valin */
+License: BSD (3 clause)
+
+Files: gst/tcp/gstmultihandlesink.h
+ gst/tcp/gstmultisocketsink.h
+ gst/tcp/gsttcpclientsink.c
+ gst/tcp/gsttcpclientsrc.c
+ gst/tcp/gsttcpserversrc.c
+Copyright: <1999> Erik Walthinsen <omega@cse.ogi.edu>
+  <2004> Thomas Vander Stichele <thomas at apestaart dot org>
+  <2011> Collabora Ltd
+License: LGPL-2+
+
+Files: gst-libs/gst/pbutils/gstdiscoverer.c
+ gst-libs/gst/pbutils/gstdiscoverer.h
+ gst-libs/gst/pbutils/pbutils-private.h
+ tests/examples/encoding/encoding.c
+ tools/gst-discoverer.c
+Copyright: 2009, Edward Hervey <edward.hervey@collabora.co.uk>
+  2010, Edward Hervey <edward.hervey@collabora.co.uk>
+License: LGPL-2+
+
+Files: ext/pango/gstclockoverlay.c
+ ext/pango/gstclockoverlay.h
+ ext/pango/gsttimeoverlay.c
+ ext/pango/gsttimeoverlay.h
+Copyright: <1999> Erik Walthinsen <omega@cse.ogi.edu>
+  <2005> Tim-Philipp Müller <tim@centricular.net>
+License: LGPL-2+
+
+Files: gst/playback/gstplaysinkaudioconvert.c
+ gst/playback/gstplaysinkaudioconvert.h
+ gst/playback/gstplaysinkvideoconvert.c
+ gst/playback/gstplaysinkvideoconvert.h
+Copyright: <2011> Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: LGPL-2+
+
+Files: gst/audioconvert/plugin.c
+ gst/audioconvert/plugin.h
+ tests/check/pipelines/theoraenc.c
+ tests/check/pipelines/vorbisenc.c
+Copyright: 2004, Andy Wingo <wingo at pobox.com>
+  2006, Andy Wingo <wingo at pobox.com>
+License: LGPL-2+
+
+Files: ext/vorbis/gstvorbisdeclib.c
+ ext/vorbis/gstvorbisdeclib.h
+ gst-libs/gst/audio/gstaudioencoder.c
+ gst-libs/gst/audio/gstaudioencoder.h
+Copyright: 2010, Mark Nauwelaerts <mark.nauwelaerts@collabora.co.uk>
+  2010, Nokia Corporation.
+  2011, Mark Nauwelaerts <mark.nauwelaerts@collabora.co.uk>
+  2011, Nokia Corporation.
+License: LGPL-2+
+
+Files: gst/audioconvert/gstaudioquantize.c
+ gst/audioconvert/gstaudioquantize.h
+ tests/check/libs/fft.c
+ tests/check/pipelines/gio.c
+Copyright: 2007, Sebastian Dröge <slomo@circular-chaos.org>
+License: LGPL-2+
+
+Files: gst/audiotestsrc/gstaudiotestsrc.c
+ gst/audiotestsrc/gstaudiotestsrc.h
+ tests/check/libs/discoverer.c
+ tests/examples/fft/fftrange.c
+Copyright: 2005, Stefan Kost <ensonic@users.sf.net>
+  2011, Stefan Kost <ensonic@users.sf.net>
+License: LGPL-2+
+
+Files: common/coverage/coverage-report-entry.pl
+ common/coverage/coverage-report.pl
+ common/coverage/coverage-report.xsl
+Copyright: 2006, Daniel Berrange
+License: GPL-2+
+
+Files: gst/subparse/gstsubparse.h
+ gst/videotestsrc/gstvideotestsrc.c
+ gst/videotestsrc/gstvideotestsrc.h
+Copyright: <1999> Erik Walthinsen <omega@cse.ogi.edu>
+  <2002> David A. Schleef <ds@schleef.org>
+License: LGPL-2+
+
+Files: ext/theora/gsttheoraparse.c
+ ext/theora/gsttheoraparse.h
+ ext/vorbis/gstvorbisparse.c
+Copyright: 2006, Andy Wingo <wingo@pobox.com>
+  <2004> Thomas Vander Stichele <thomas at apestaart dot org>
+License: LGPL-2+
+
+Files: tests/examples/dynamic/sprinkle.c
+ tests/examples/dynamic/sprinkle2.c
+ tests/examples/dynamic/sprinkle3.c
+Copyright: <2009> Wim Taymans <wim dot taymans at gmail dot com>
+License: LGPL-2+
+
+Files: ext/alsa/gstalsa.h
+ ext/alsa/gstalsadeviceprobe.h
+ ext/alsa/gstalsaplugin.c
+Copyright: 2001, CodeFactory AB
+  2001, Thomas Nyberg <thomas@codefactory.se>
+  2001-2002, Andy Wingo <apwingo@eos.ncsu.edu>
+  2003, Benjamin Otte <in7y118@public.uni-hamburg.de>
+License: LGPL-2+
+
+Files: gst/videoscale/vs_fill_borders.c
+ gst/videoscale/vs_fill_borders.h
+Copyright: 2010, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: BSD (2 clause)
+
+Files: gst/tcp/gstmultihandlesink.c
+ gst/tcp/gstmultisocketsink.c
+Copyright: 2006, Wim Taymans <wim at fluendo dot com>
+  <1999> Erik Walthinsen <omega@cse.ogi.edu>
+  <2004> Thomas Vander Stichele <thomas at apestaart dot org>
+  <2011> Collabora Ltd
+License: LGPL-2+
+
+Files: sys/ximage/ximage.c
+ sys/xvimage/xvimage.c
+Copyright: <2003> Julien Moutte <julien@moutte.net>
+License: LGPL-2+
+
+Files: gst-libs/gst/video/gstvideosink.c
+ gst-libs/gst/video/gstvideosink.h
+Copyright: <2003> Julien Moutte <julien@moutte.net>
+  <2009> Tim-Philipp Müller <tim centricular net>
+License: LGPL-2+
+
+Files: ext/vorbis/gstvorbisparse.h
+ tests/examples/audio/volume.c
+Copyright: <2004> Thomas Vander Stichele <thomas at apestaart dot org>
+License: LGPL-2+
+
+Files: gst-libs/gst/rtp/gstrtpbasedepayload.h
+ gst-libs/gst/rtp/gstrtpbuffer.h
+Copyright: <2005> Philippe Khalaf <burger@speedy.org>
+License: LGPL-2+
+
+Files: gst-libs/gst/rtp/gstrtpbasepayload.c
+ gst-libs/gst/rtp/gstrtpbasepayload.h
+Copyright: <2005> Wim Taymans <wim@fluendo.com>
+License: LGPL-2+
+
+Files: gst-libs/gst/rtp/gstrtpbaseaudiopayload.c
+ gst-libs/gst/rtp/gstrtpbaseaudiopayload.h
+Copyright: <2006> Philippe Khalaf <philippe.kalaf@collabora.co.uk>
+License: LGPL-2+
+
+Files: gst-libs/gst/rtp/gstrtcpbuffer.c
+ gst-libs/gst/rtp/gstrtcpbuffer.h
+Copyright: <2007> Wim Taymans <wim@fluendo.com>
+License: LGPL-2+
+
+Files: tests/icles/test-colorkey.c
+ tests/icles/test-videooverlay.c
+Copyright: <2008> Stefan Kost <ensonic@users.sf.net>
+License: LGPL-2+
+
+Files: tests/check/elements/encodebin.c
+ tests/check/libs/profile.c
+Copyright: <2009> Edward Hervey <edward.hervey@collabora.co.uk>
+License: LGPL-2+
+
+Files: tests/examples/overlay/qtgv-videooverlay.cpp
+ tests/examples/overlay/qtgv-videooverlay.h
+Copyright: <2010> Alexander Bokovoy <ab@samba.org>
+License: LGPL-2+
+
+Files: tests/examples/encoding/gstcapslist.c
+ tests/examples/encoding/gstcapslist.h
+Copyright: <2010> Edward Hervey <edward.hervey@collabora.co.uk>
+License: LGPL-2+
+
+Files: tests/examples/overlay/gtk-videooverlay.c
+ tests/examples/overlay/qt-videooverlay.cpp
+Copyright: <2010> Stefan Kost <ensonic@users.sf.net>
+License: LGPL-2+
+
+Files: gst-libs/gst/pbutils/codec-utils.c
+ gst-libs/gst/pbutils/codec-utils.h
+Copyright: 2010, Arun Raghavan <arun.raghavan@collabora.co.uk>
+License: LGPL-2+
+
+Files: gst-libs/gst/app/gstappsink.c
+ gst-libs/gst/app/gstappsrc.c
+Copyright: 2007, David Schleef <ds@schleef.org>
+  2008, Wim Taymans <wim.taymans@gmail.com>
+License: LGPL-2+
+
+Files: gst-libs/gst/audio/gstaudiodecoder.c
+ gst-libs/gst/audio/gstaudiodecoder.h
+Copyright: 2009, Igalia S.L
+  2011, Mark Nauwelaerts <mark.nauwelaerts@collabora.co.uk>
+  2011, Nokia Corporation.
+License: LGPL-2+
+
+Files: gst-libs/gst/audio/gstaudioiec61937.c
+ gst-libs/gst/audio/gstaudioiec61937.h
+Copyright: 2011, Intel Corporation
+License: LGPL-2+
+
+Files: gst-libs/gst/tag/gsttagdemux.c
+ gst-libs/gst/tag/gsttagdemux.h
+Copyright: 2005, Jan Schmidt <thaytan@mad.scientist.com>
+  2006, Tim-Philipp Müller <tim centricular net>
+  2006-2007, Tim-Philipp Müller <tim centricular net>
+License: LGPL-2+
+
+Files: tests/check/libs/mixer.c
+ tests/check/libs/navigation.c
+Copyright: 2007, Jan Schmidt <thaytan@noraisin.net>
+  2009, Jan Schmidt <thaytan@noraisin.net>
+License: LGPL-2+
+
+Files: gst/subparse/mpl2parse.c
+ gst/subparse/mpl2parse.h
+Copyright: 2006, Kamil Pawlowski <kamilpe gmail com>
+License: LGPL-2+
+
+Files: ext/ogg/gstogmparse.c
+ gst-libs/gst/audio/mixerutils.c
+Copyright: 2003-2004, Ronald Bultje <rbultje@ronald.bitfreak.net>
+  2004, Ronald Bultje <rbultje@ronald.bitfreak.net>
+  2005-2006, Tim-Philipp Müller <tim centricular net>
+  2006, Tim-Philipp Müller <tim centricular net>
+License: LGPL-2+
+
+Files: gst-libs/gst/pbutils/install-plugins.c
+ gst-libs/gst/pbutils/install-plugins.h
+Copyright: 2006, Ryan Lortie <desrt desrt ca>
+  2007, Tim-Philipp Müller <tim centricular net>
+License: LGPL-2+
+
+Files: tests/check/elements/playbin-compressed.c
+ tests/check/libs/audio.c
+Copyright: 2006, Tim-Philipp Müller <tim centricular net>
+  2010, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+  2011, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: LGPL-2+
+
+Files: ext/ogg/gstoggmux.c
+ ext/ogg/gstoggmux.h
+Copyright: 2004, Wim Taymans <wim@fluendo.com>
+  2006, Thomas Vander Stichele <thomas at apestaart dot org>
+License: LGPL-2+
+
+Files: gst/audioconvert/audioconvert.c
+ gst/audioconvert/gstaudioconvert.h
+Copyright: 2005, Wim Taymans <wim at fluendo dot com>
+License: LGPL-2+
+
+Files: gst/videoscale/vs_4tap.c
+Copyright: 2005, David A. Schleef <ds@schleef.org>
+  2009, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: BSD (2 clause)
+
+Files: gst/audioresample/fixed_bfin.h
+Copyright: 2005, Analog Devices
+License: BSD (3 clause)
+
+Files: ext/ogg/vorbis_parse.c
+Copyright: 2003, Commonwealth Scientific and Industrial Research
+License: BSD (3 clause)
+
+Files: gst/audioresample/resample_sse.h
+Copyright: 2007-2008, Jean-Marc Valin
+  2008, Thorvald Natvig
+License: BSD (3 clause)
+
+Files: gst/audioresample/speex_resampler.h
+Copyright: 2007, Jean-Marc Valin
+License: BSD (3 clause)
+
+Files: gst/audioresample/resample.c
+Copyright: 2007-2008, Jean-Marc Valin
+  2008, Thorvald Natvig
+License: BSD (3 clause)
+
+Files: ltmain.sh
+Copyright: 1996-2001, 2003-2006
+License: GPL-2+
+
+Files: gst/playback/gstplaysink.c
+Copyright: ((GstPlayChain *))
+  <2007> Wim Taymans <wim.taymans@gmail.com>
+  <2011> Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: LGPL-2+
+
+Files: gst-libs/gst/video/gstvideofilter.c
+Copyright: <1999> Erik Walthinsen <omega@cse.ogi.edu>
+  <2003> David Schleef <ds@schleef.org>
+License: LGPL-2+
+
+Files: ext/pango/gstbasetextoverlay.c
+Copyright: <1999> Erik Walthinsen <omega@cse.ogi.edu>
+  <2003> David Schleef <ds@schleef.org>
+  <2006-2008> Tim-Philipp Müller <tim centricular net>
+  <2006> Julien Moutte <julien@moutte.net>
+  <2006> Zeeshan Ali <zeeshan.ali@nokia.com>
+  <2009> Young-Ho Cha <ganadist@gmail.com>
+License: LGPL-2+
+
+Files: ext/pango/gsttextoverlay.c
+Copyright: <1999> Erik Walthinsen <omega@cse.ogi.edu>
+  <2003> David Schleef <ds@schleef.org>
+  <2006-2008> Tim-Philipp Müller <tim centricular net>
+  <2006> Julien Moutte <julien@moutte.net>
+  <2006> Zeeshan Ali <zeeshan.ali@nokia.com>
+  <2009> Young-Ho Cha <ganadist@gmail.com>
+  <2011> Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: LGPL-2+
+
+Files: gst-libs/gst/audio/gstaudiofilter.c
+Copyright: <1999> Erik Walthinsen <omega@cse.ogi.edu>
+  <2003> David Schleef <ds@schleef.org>
+  <2007> Tim-Philipp Müller <tim centricular net>
+License: LGPL-2+
+
+Files: ext/pango/gsttextrender.c
+Copyright: <1999> Erik Walthinsen <omega@cse.ogi.edu>
+  <2003> David Schleef <ds@schleef.org>
+  <2009> Young-Ho Cha <ganadist@gmail.com>
+License: LGPL-2+
+
+Files: gst/tcp/gstmultifdsink.c
+Copyright: 2006, Wim Taymans <wim at fluendo dot com>
+  <1999> Erik Walthinsen <omega@cse.ogi.edu>
+  <2004> Thomas Vander Stichele <thomas at apestaart dot org>
+License: LGPL-2+
+
+Files: gst/audioresample/gstaudioresample.h
+Copyright: <1999> Erik Walthinsen <omega@cse.ogi.edu>
+  <2007-2008> Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: LGPL-2+
+
+Files: tests/icles/playback/test.c
+Copyright: <1999> Erik Walthinsen <omega@cse.ogi.edu>
+  <2007> Wim Taymans <wim.taymans@gmail.com>
+License: LGPL-2+
+
+Files: gst-libs/gst/video/video.c
+Copyright: 2007, David A. Schleef <ds@schleef.org>
+  <1999> Erik Walthinsen <omega@cse.ogi.edu>
+License: LGPL-2+
+
+Files: gst/videoscale/gstvideoscale.c
+Copyright: 2005-2012, David Schleef <ds@schleef.org>
+  <1999> Erik Walthinsen <omega@cse.ogi.edu>
+License: LGPL-2+
+
+Files: gst/videoconvert/gstvideoconvert.c
+Copyright: 2003, Ronald Bultje <rbultje@ronald.bitfreak.net>
+  2010, David Schleef <ds@schleef.org>
+  <1999> Erik Walthinsen <omega@cse.ogi.edu>
+License: LGPL-2+
+
+Files: gst/videoconvert/gstvideoconvert.h
+Copyright: 2003, Ronald Bultje <rbultje@ronald.bitfreak.net>
+  <1999> Erik Walthinsen <omega@cse.ogi.edu>
+License: LGPL-2+
+
+Files: gst/subparse/gstsubparse.c
+Copyright: 2004, Ronald S. Bultje <rbultje@ronald.bitfreak.net>
+  2006, Tim-Philipp Müller <tim centricular net>
+  <1999> Erik Walthinsen <omega@cse.ogi.edu>
+License: LGPL-2+
+
+Files: gst/volume/gstvolume.h
+Copyright: 2010, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+  <1999> Erik Walthinsen <omega@cse.ogi.edu>
+License: LGPL-2+
+
+Files: gst/gdp/dataprotocol.c
+Copyright: 2004,2006, Thomas Vander Stichele <thomas at apestaart dot org>
+  <1999> Erik Walthinsen <omega@cse.ogi.edu>
+License: LGPL-2+
+
+Files: gst/videotestsrc/videotestsrc.h
+Copyright: <2003> David A. Schleef <ds@schleef.org>
+License: LGPL-2+
+
+Files: tests/check/libs/video.c
+Copyright: <2003> David A. Schleef <ds@schleef.org>
+  <2006> Jan Schmidt <thaytan@mad.scientist.com>
+  <2008,2011> Tim-Philipp Müller <tim centricular net>
+  <2012> Collabora Ltd. <tim.muller@collabora.co.uk>
+License: LGPL-2+
+
+Files: gst-libs/gst/rtp/gstrtpbasedepayload.c
+Copyright: <2005> Nokia Corporation <kai.vehmanen@nokia.com>
+  <2005> Philippe Khalaf <burger@speedy.org>
+License: LGPL-2+
+
+Files: gst-libs/gst/rtp/gstrtpbuffer.c
+Copyright: <2005> Philippe Khalaf <burger@speedy.org>
+  <2006> Wim Taymans <wim@fluendo.com>
+License: LGPL-2+
+
+Files: tests/check/elements/audioresample.c
+Copyright: <2005> Thomas Vander Stichele <thomas at apestaart dot org>
+  <2006> Tim-Philipp Müller <tim at centricular net>
+License: LGPL-2+
+
+Files: tests/check/elements/videotestsrc.c
+Copyright: <2005> Thomas Vander Stichele <thomas at apestaart dot org>
+  <2006> Tim-Philipp Müller <tim centricular net>
+License: LGPL-2+
+
+Files: tests/check/elements/audioconvert.c
+Copyright: <2005> Thomas Vander Stichele <thomas at apestaart dot org>
+  <2007> Tim-Philipp Müller <tim centricular net>
+License: LGPL-2+
+
+Files: tests/check/libs/audiocdsrc.c
+Copyright: <2005> Tim-Philipp Müller <tim centricular net>
+License: LGPL-2+
+
+Files: tests/check/generic/clock-selection.c
+Copyright: <2005> Wim Taymans <wim at fluendo dot com>
+License: LGPL-2+
+
+Files: gst/playback/gstdecodebin2.c
+Copyright: <2006> Edward Hervey <edward@fluendo.com>
+  <2009> Sebastian Dröge <sebastian.droege@collabora.co.uk>
+  <2011> Hewlett-Packard Development Company, L.P
+License: LGPL-2+
+
+Files: ext/vorbis/gstvorbistag.h
+Copyright: <2006> James Livingston <doclivingston@gmail.com>
+License: LGPL-2+
+
+Files: tests/examples/dynamic/addstream.c
+Copyright: <2007> Wim Taymans <wim dot taymans at gmail dot com>
+License: LGPL-2+
+
+Files: gst/playback/gstplaybin2.c
+Copyright: <2007> Wim Taymans <wim.taymans@gmail.com>
+  <2011> Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: LGPL-2+
+
+Files: tests/examples/dynamic/codec-select.c
+Copyright: <2008> Wim Taymans <wim dot taymans at gmail dot com>
+License: LGPL-2+
+
+Files: tests/check/elements/videoscale.c
+Copyright: <2009-2010> Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: LGPL-2+
+
+Files: gst/playback/gstrawcaps.h
+Copyright: <2009> Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: LGPL-2+
+
+Files: gst/encoding/gstsmartencoder.h
+Copyright: <2010> Edward Hervey <bilboed@bilboed.com>
+License: LGPL-2+
+
+Files: gst/encoding/gstsmartencoder.c
+Copyright: <2010> Edward Hervey <bilboed@gmail.com>
+License: LGPL-2+
+
+Files: gst/playback/gstplaysinkconvertbin.h
+Copyright: <2011> Sebastian Dröge <sebastian.droege@collabora.co.uk>
+  <2011> Vincent Penquerc'h <vincent.penquerch@collabora.co.uk>
+License: LGPL-2+
+
+Files: gst/playback/gstplaysinkconvertbin.c
+Copyright: <2011> Sebastian Dröge <sebastian.droege@collabora.co.uk>
+  <2011> Vincent Penquerch <vincent.penquerch@collabora.co.uk>
+License: LGPL-2+
+
+Files: ext/alsa/gstalsadeviceprobe.c
+Copyright: 2001, CodeFactory AB
+  2001, Thomas Nyberg <thomas@codefactory.se>
+  2001-2002, Andy Wingo <apwingo@eos.ncsu.edu>
+  2003, Benjamin Otte <in7y118@public.uni-hamburg.de>
+  2005, Tim-Philipp Müller <tim centricular net>
+License: LGPL-2+
+
+Files: tests/check/libs/rtsp.c
+Copyright: 2010, Andy Wingo <wingo@oblong.com>
+License: LGPL-2+
+
+Files: tests/check/pipelines/simple-launch-lines.c
+Copyright: 2005, Andy Wingo <wingo@pobox.com>
+License: LGPL-2+
+
+Files: gst/volume/gstvolume.c
+Copyright: 1999-2001, Erik Walthinsen <omega@cse.ogi.edu>
+  2005, Andy Wingo <wingo@pobox.com>
+  2010, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: LGPL-2+
+
+Files: tests/check/elements/appsink.c
+Copyright: 2009, Axis Communications AB, LUND, SWEDEN
+License: LGPL-2+
+
+Files: gst/typefind/gsttypefindfunctions.c
+Copyright: 2003, Benjamin Otte <in7y118@public.uni-hamburg.de>
+  2005-2009, Tim-Philipp Müller <tim centricular net>
+  2009, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: LGPL-2+
+
+Files: gst/audioconvert/gstaudioconvert.c
+Copyright: 2003, Benjamin Otte <in7y118@public.uni-hamburg.de>
+  2005, Thomas Vander Stichele <thomas at apestaart dot org>
+  2011, Wim Taymans <wim.taymans at gmail dot com>
+License: LGPL-2+
+
+Files: gst-libs/gst/tag/tag.h
+Copyright: 2003, Benjamin Otte <in7y118@public.uni-hamburg.de>
+  2006-2011, Tim-Philipp Müller <tim centricular net>
+License: LGPL-2+
+
+Files: ext/libvisual/visual.c
+Copyright: 2004, Benjamin Otte <otte@gnome.org>
+License: LGPL-2+
+
+Files: gst-libs/gst/video/convertframe.c
+Copyright: 2005, Tim-Philipp Müller <tim centricular net>
+  2010, Brandon Lewis <brandon.lewis@collabora.co.uk>
+  2010, Edward Hervey <edward.hervey@collabora.co.uk>
+License: LGPL-2+
+
+Files: gst-libs/gst/tag/gsttagmux.c
+Copyright: 2006, Christophe Fergeau <teuf@gnome.org>
+  2006, Sebastian Dröge <slomo@circular-chaos.org>
+  2006, Tim-Philipp Müller <tim centricular net>
+  2009, Pioneers of the Inevitable <songbird@songbirdnest.com>
+License: LGPL-2+
+
+Files: gst-libs/gst/tag/gsttagmux.h
+Copyright: 2006, Christophe Fergeau <teuf@gnome.org>
+  2006,2011, Tim-Philipp Müller <tim centricular net>
+  2009, Pioneers of the Inevitable <songbird@songbirdnest.com>
+License: LGPL-2+
+
+Files: gst-libs/gst/pbutils/gstdiscoverer-types.c
+Copyright: 2010, Collabora Multimedia
+License: LGPL-2+
+
+Files: gst/audioresample/gstaudioresample.c
+Copyright: 1999, Erik Walthinsen <omega@cse.ogi.edu>
+  2003-2004, David A. Schleef <ds@schleef.org>
+  2007-2008, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: LGPL-2+
+
+Files: gst-libs/gst/interfaces/navigation.h
+Copyright: 2003, David A. Schleef <ds@schleef.org>
+  2003, Ronald Bultje <rbultje@ronald.bitfreak.net>
+License: LGPL-2+
+
+Files: gst/videoconvert/videoconvert.c
+Copyright: 2010, David Schleef <ds@schleef.org>
+  2010, Sebastian Dröge <sebastian.droege@collabora.co.uk>
+License: LGPL-2+
+
+Files: ext/ogg/gstoggstream.c
+Copyright: 2006, Tim-Philipp Müller <tim centricular net>
+  2009, David Schleef <ds@schleef.org>
+License: LGPL-2+
+
+Files: gst/gdp/dataprotocol.h
+Copyright: 1999, Erik Walthinsen <omega@cse.ogi.edu>
+  2004,2006, Thomas Vander Stichele <thomas at apestaart dot org>
+License: LGPL-2+
+
+Files: gst-libs/gst/gettext.h
+Copyright: 1995-1998, 2000-2002, Free Software Foundation, Inc
+License: LGPL-2+
+
+Files: tests/check/elements/decodebin.c
+Copyright: 2006, Tim-Philipp Müller <tim centricular net>
+  2011, Hewlett-Packard Development Company, L.P
+License: LGPL-2+
+
+Files: tests/check/pipelines/oggmux.c
+Copyright: 2006, James Livingston <doclivingston at gmail.com>
+License: LGPL-2+
+
+Files: ext/vorbis/gstvorbistag.c
+Copyright: 2006, James Livingston <doclivingston@gmail.com>
+License: LGPL-2+
+
+Files: gst-libs/gst/tag/id3v2.h
+Copyright: 2005, Jan Schmidt <thaytan@mad.scientist.com>
+License: LGPL-2+
+
+Files: gst-libs/gst/tag/id3v2.c
+Copyright: 2002-2003, Scott Wheeler <wheeler@kde.org> (portions from taglib)
+  2005, Jan Schmidt <thaytan@mad.scientist.com>
+License: LGPL-2+
+
+Files: gst-libs/gst/tag/id3v2frames.c
+Copyright: 2002-2003, Scott Wheeler <wheeler@kde.org> (portions from taglib)
+  2005, Jan Schmidt <thaytan@mad.scientist.com>
+  2006-2008, Tim-Philipp Müller <tim centricular net>
+License: LGPL-2+
+
+Files: gst-libs/gst/interfaces/navigation.c
+Copyright: 2003, Ronald Bultje <rbultje@ronald.bitfreak.net>
+  2007-2009, Jan Schmidt <thaytan@noraisin.net>
+License: LGPL-2+
+
+Files: tests/icles/input-selector-test.c
+Copyright: 2003, Julien Moutte <julien@moutte.net>
+License: LGPL-2+
+
+Files: gst-libs/gst/video/videooverlay.h
+Copyright: 2003, Julien Moutte <julien@moutte.net>
+  2003, Ronald Bultje <rbultje@ronald.bitfreak.net>
+  2011, Tim-Philipp Müller <tim@centricular.net>
+License: LGPL-2+
+
+Files: tests/check/pipelines/basetime.c
+Copyright: 2009, Maemo Multimedia <multimedia at maemo dot org>
+License: LGPL-2+
+
+Files: ext/ogg/gstoggparse.c
+Copyright: 2005, Michael Smith <msmith@fluendo.com>
+License: LGPL-2+
+
+Files: gst-libs/gst/video/videoorientation.h
+Copyright: 2006, Nokia <stefan.kost@nokia.com
+License: LGPL-2+
+
+Files: gst-libs/gst/video/videoorientation.c
+Copyright: 2006, Nokia <stefan.kost@nokia.com>
+License: LGPL-2+
+
+Files: gst/audioconvert/gstchannelmix.c
+Copyright: 2004, Ronald Bultje <rbultje@ronald.bitfreak.net>
+  2008, Sebastian Dröge <slomo@circular-chaos.org>
+License: LGPL-2+
+
+Files: gst-libs/gst/video/videooverlay.c
+Copyright: 2003, Ronald Bultje <rbultje@ronald.bitfreak.net>
+  2011, Tim-Philipp Müller <tim@centricular.net>
+License: LGPL-2+
+
+Files: gst-libs/gst/tag/tags.c
+Copyright: 2005, Ross Burton <ross@burtonini.com>
+  2006-2008, Tim-Philipp Müller <tim centricular net>
+License: LGPL-2+
+
+Files: gst-libs/gst/tag/gstxmptag.c
+Copyright: 2010, Stefan Kost <stefan.kost@nokia.com>
+  2010, Thiago Santos <thiago.sousa.santos@collabora.co.uk>
+License: LGPL-2+
+
+Files: tests/examples/audio/audiomix.c
+Copyright: 2011, Stefan Sauer <ensonic@users.sf.net>
+License: LGPL-2+
+
+Files: gst/subparse/qttextparse.h
+Copyright: 2009, Thiago Santos <thiago.sousa.santos collabora co uk>
+License: LGPL-2+
+
+Files: gst/subparse/qttextparse.c
+Copyright: 2009, Thiago Santos <thiago.sousa.santos collabora co uk>>
+License: LGPL-2+
+
+Files: gst-libs/gst/gst-i18n-plugin.h
+Copyright: 2004, Thomas Vander Stichele <thomas@apestaart.org>
+License: LGPL-2+
+
+Files: tests/check/elements/libvisual.c
+Copyright: 2007, Tim-Philipp Müller <tim at centricular net>
+License: LGPL-2+
+
+Files: ext/alsa/gstalsasink.c
+Copyright: 2005, Wim Taymans <wim@fluendo.com>
+  2006, Tim-Philipp Müller <tim centricular net>
+License: LGPL-2+
+
+Files: tests/examples/playrec/playrec.c
+Copyright: 2010, Wim Taymans <wim.taymans@collabora.co.uk>
+License: LGPL-2+
+
+Files: gst/subparse/samiparse.c
+Copyright: 2006, Young-Ho Cha <ganadist at chollian net>
+License: LGPL-2+
+
+Files: gst/subparse/samiparse.h
+Copyright: 2006, Young-Ho Cha <ganadist chollian net>
+License: LGPL-2+
+
+Files: gst-libs/gst/rtsp/gstrtspconnection.h
+Copyright: <2005,2009> Wim Taymans <wim.taymans@gmail.com>
+License: MIT/X11 (BSD like) LGPL-2+
+
+Files: gst-libs/gst/rtsp/gstrtsptransport.c
+Copyright: <2005-2007> Wim Taymans <wim@fluendo.com>
+License: MIT/X11 (BSD like) LGPL-2+
+
+Files: gst-libs/gst/rtsp/gstrtspconnection.c
+Copyright: <2005-2009> Wim Taymans <wim.taymans@gmail.com>
+License: MIT/X11 (BSD like) LGPL-2+
+
+Copyright:
+
+    This package is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This package is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this package; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+On Debian GNU/Linux systems, the complete text of the GNU Lesser General
+Public License can be found in `/usr/share/common-licenses/LGPL'.
+

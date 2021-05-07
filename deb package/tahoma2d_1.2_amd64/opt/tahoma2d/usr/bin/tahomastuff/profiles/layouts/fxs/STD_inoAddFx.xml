@@ -1,0 +1,12 @@
+<fxlayout help_file="AddIno.pdf">
+  <page name="Add Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+    <separator/>
+    <control>linear</control>
+    <vbox modeSensitive="linear" mode="1">
+      <control>gamma</control>
+      <control>premultiplied</control>
+    </vbox>
+  </page>
+</fxlayout>

@@ -1,0 +1,7 @@
+<fxlayout>
+  <page name="Radial Blur GPU">
+    <control>center</control>
+    <control>radius</control>
+    <control>blur</control>
+  </page>
+</fxlayout>

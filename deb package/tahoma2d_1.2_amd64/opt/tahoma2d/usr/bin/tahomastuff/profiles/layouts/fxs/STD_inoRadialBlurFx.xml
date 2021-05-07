@@ -1,0 +1,12 @@
+<fxlayout help_file="RadialBlurIno.pdf">
+  <page name="Radial Blur Ino">
+    <control>center</control>
+    <control>radius</control>
+    <control>blur</control>
+    <control>twist</control>
+    <control>alpha_rendering</control>
+    <separator label=""/>
+      <control>anti_alias</control>
+      <control>reference</control>
+  </page>
+</fxlayout>

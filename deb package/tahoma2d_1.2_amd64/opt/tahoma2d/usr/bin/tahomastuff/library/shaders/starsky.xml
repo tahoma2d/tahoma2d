@@ -1,0 +1,29 @@
+<MainProgram>
+  <Name>
+    SHADER_starsky
+  </Name>
+  <ProgramFile>
+    "programs/starsky.frag"
+  </ProgramFile>
+</MainProgram>
+
+<Parameters>
+  <Parameter>
+    rgba color
+    <Default>
+      128 0 255 255
+    </Default>
+  </Parameter>
+  <Parameter>
+    float time
+  </Parameter>
+  <Parameter>
+    float brightness
+    <Default>
+      1
+    </Default>
+    <Range>
+      0 10
+    </Range>
+  </Parameter>
+</Parameters>

@@ -1,0 +1,10 @@
+<fxlayout help_file="FogIno.pdf">
+  <page name="Fog Ino">
+    <control>radius</control>
+    <control>curve</control>
+    <control>power</control>
+    <control>threshold_min</control>
+    <control>threshold_max</control>
+    <control>alpha_rendering</control>
+  </page>
+</fxlayout>

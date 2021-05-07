@@ -1,0 +1,6 @@
+<fxlayout help_file="ScreenIno.pdf">
+  <page name="Screen Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+  </page>
+</fxlayout>

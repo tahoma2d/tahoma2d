@@ -1,0 +1,11 @@
+<fxlayout help_file="LevelMasterIno.pdf">
+  <page name="Level Master Ino">
+    <control decimals="4">in</control>
+    <control decimals="4">out</control>
+    <control>gamma</control>
+    <control>alpha_rendering</control>
+    <separator label=""/>
+      <control>anti_alias</control>
+      <control>reference</control>
+  </page>
+</fxlayout>

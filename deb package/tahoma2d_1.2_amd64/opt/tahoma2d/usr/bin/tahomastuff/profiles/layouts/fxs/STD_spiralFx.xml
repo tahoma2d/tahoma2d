@@ -1,0 +1,10 @@
+<fxlayout>
+  <page name="Spiral">
+    <control>type</control>
+    <control>colors</control>
+    <control>freq</control>
+    <control>phase</control>
+  </page>
+
+
+</fxlayout>

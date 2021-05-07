@@ -1,0 +1,10 @@
+<fxlayout>
+  <page name="RGBA Cut">
+     <control>r_range</control>
+     <control>g_range</control>
+     <control>b_range</control>
+     <control>m_range</control>
+
+  </page>
+
+</fxlayout>

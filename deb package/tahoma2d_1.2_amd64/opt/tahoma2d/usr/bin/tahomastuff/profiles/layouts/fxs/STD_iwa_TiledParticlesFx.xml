@@ -1,0 +1,176 @@
+<fxlayout help_file="particlesFx.html">
+  <page name="Source">
+  <vbox>
+        <control>rendermode</control>
+
+       <separator label="Base"/>
+       	<hbox>
+        <control>base_ctrl</control>
+        <control>margin</control>
+        </hbox>
+        <control>curl</control>
+       	<hbox>
+        <control>curl_ctrl</control>
+        <control>curl_ctrl_2</control>
+        </hbox>
+        <control>triangleSize</control>
+       <separator label="Flap Behavior"/>
+        <control>flap_ctrl</control>
+        <control>flap_velocity</control>
+        <control>flap_dir_sensitivity</control>
+
+       <separator label="Light Direction"/>
+        <control>light_theta</control>
+        <control>light_phi</control>
+
+       <separator label="Source"/>
+       <hbox>
+        <control>source_ctrl</control>
+        <control>bright_thres</control>
+       </hbox>
+       <control>source_gradation</control>
+        <control>center</control>
+        <hbox>
+        <control>length</control>
+        <control>height</control>
+        </hbox>
+  </vbox>
+  
+   <vbox>
+      <separator label="Particle Generation"/>
+        <hbox>
+        <control>starting_frame</control>
+        <control>birth_rate</control>
+        </hbox>
+        <hbox>
+        <control>step</control>
+        <control>random_seed</control>
+        </hbox>
+   </vbox>
+
+  <vbox>
+      <separator label="Particle"/>
+      <control>animation</control>
+    </vbox>
+
+  </page>
+  <page name="Birth Params">
+    <vbox>
+      <separator label="Speed"/>
+        <control>speed</control>
+        <control>speed_ctrl</control>
+        <control>speed_size</control>
+
+        <control>speed_angle</control>
+        <hbox>
+        <control>speeda_ctrl</control>
+        <control>speeda_use_gradient</control>
+        </hbox>
+
+    </vbox>
+    <vbox>
+      <separator label="Size, Mass and Orientation"/>
+        <control>scale</control>
+        <control>scale_ctrl</control>
+        <control>scale_ctrl_all</control>
+        <control>mass</control>     
+        <control>rot</control>
+        <control>rot_ctrl</control> 
+      <separator label="Trail"/>
+        <control>trail</control>
+        <control>trail_step</control>
+      <separator label="Lifetime"/>
+        <control>lifetime</control>
+        <control>lifetime_ctrl</control>
+        <control>column_lifetime</control>
+      <separator label="Top Layer"/>
+        <control>top_layer</control>
+    </vbox>
+  </page>
+
+
+  <page name="Environment">
+    <vbox>
+      <separator label="Gravity"/>
+        <hbox>
+        <control>gravity</control>
+        <control>gravity_angle</control>
+        </hbox>
+        <hbox>
+        <control>gravity_ctrl</control>
+        <control>gravityBufferFrame</control>
+        </hbox>
+      <separator label="Friction"/>
+        <hbox>
+        <control>friction</control>
+        <control>friction_ctrl</control>
+        </hbox>
+      <separator label="Wind"/>
+        <hbox>
+        <control>wind</control>
+        <control>wind_angle</control>
+        </hbox>
+    </vbox>
+    <vbox>
+      <separator label="Scattering"/>
+        <control>scattering_x</control>
+        <control>scattering_y</control>
+        <hbox>
+        <control>scattering_x_ctrl</control>
+        <control>scattering_y_ctrl</control>
+        </hbox>
+        <control>swing_mode</control>
+        <control>swing</control>
+    </vbox>
+  </page>
+
+  <page name="Animation">
+    <vbox>
+      <separator label="Rotation"/>
+        <control>spin_speed</control>
+        <control>spin_random</control>
+        <control>spin_swing_mode</control>
+        <control>spin_swing</control>
+        <control>path_aim</control>
+    </vbox>
+    <vbox>
+      <separator label="Opacity"/>
+        <control>opacity</control>
+        <control>opacity_ctrl</control>
+        <hbox>
+        <control>fade_in</control>
+        <control>fade_out</control>
+        </hbox>
+        <control>trail_opacity</control>
+      <separator label="Size Increase"/>
+        <control>scale_step</control>
+        <control>scale_step_ctrl</control>
+    </vbox>
+  </page>
+  <page name="Colors">
+       <separator label="Birth Color"/>
+        <control>birth_color</control>
+        <control>birth_color_ctrl</control>
+        <control>birth_color_spread</control>
+        <control>birth_color_fade</control>
+        <control>pick_color_for_every_frame</control>
+      <separator label="Fade-in Color"/>
+        <control>fadein_color</control>
+        <control>fadein_color_ctrl</control>
+        <hbox>
+        <control>fadein_color_spread</control>
+        <control>fadein_color_range</control>
+        </hbox>
+        <control>fadein_color_fade</control>
+      <separator label="Fade-out Color"/>
+        <control>fadeout_color</control>
+        <control>fadeout_color_ctrl</control>
+        <hbox>
+        <control>fadeout_color_spread</control>
+        <control>fadeout_color_range</control>
+        </hbox>
+        <control>fadeout_color_fade</control>
+  
+  </page>
+
+</fxlayout>

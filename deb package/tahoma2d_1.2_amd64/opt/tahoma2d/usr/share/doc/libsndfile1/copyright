@@ -1,0 +1,113 @@
+This package was debianized by H. S. Teoh <hsteoh@debian.org> on
+Mon, 28 Aug 2000 12:41:14 -0400.
+
+It was downloaded from: http://www.mega-nerd.com/libsndfile/
+
+Upstream Author: Erik de Castro Lopo <erikd@mega-nerd.com>
+
+
+The upstream source tarball has a library source directory (src), a test suite
+directory (tests), a directory of utility programs (programs) and a directory
+of example code (examples).
+
+
+The majority of the library src/ directory is copyright as:
+
+  Copyright (c) 1999-2009 Erik de Castro Lopo
+  Copyright (c) 2002 Xiph.org Foundation
+  Copyright (C) 2003 Ross Bencina <rbencina@iprimus.com.au>
+  Copyright (C) 2004 Paavo Jumppanen
+  Copyright (C) 2004 Tobias Gehrig <tgehrig@ira.uka.de>
+  Copyright (C) 2004-2005 David Viens <davidv@plogue.com>
+  Copyright (C) 2006 Paul Davis <paul@linuxaudiosystems.com>
+  Copyright (C) 2007 John ffitch
+  Copyright (C) 2007 Reuben Thomas
+  Copyright (c) 2007 <robs@users.sourceforge.net>
+
+  LGPL licenced. The complete text of the LGPL license can be found in
+  /usr/share/common-licenses/LGPL-2.1+ on Debian systems.
+
+
+
+The directory src/GSM610/ is copyright as:
+
+  Copyright 1992, 1993, 1994 by Jutta Degener and Carsten Bormann,
+  Technische Universitaet Berlin
+
+  Any use of this software is permitted provided that this notice is not
+  removed and that neither the authors nor the Technische Universitaet Berlin
+  are deemed to have made any representations as to the suitability of this
+  software for any purpose nor are held responsible for any defects of
+  this software.  THERE IS ABSOLUTELY NO WARRANTY FOR THIS SOFTWARE.
+
+  As a matter of courtesy, the authors request to be informed about uses
+  this software has found, about bugs in this software, and about any
+  improvements that may be of general interest.
+
+  Berlin, 28.11.1994
+  Jutta Degener
+  Carsten Bormann
+
+
+
+The directory src/G72x/ is  copyright as:
+
+  This source code is a product of Sun Microsystems, Inc. and is provided
+  for unrestricted use.  Users may copy or modify this source code without
+  charge.
+ 
+  SUN SOURCE CODE IS PROVIDED AS IS WITH NO WARRANTIES OF ANY KIND INCLUDING
+  THE WARRANTIES OF DESIGN, MERCHANTIBILITY AND FITNESS FOR A PARTICULAR
+  PURPOSE, OR ARISING FROM A COURSE OF DEALING, USAGE OR TRADE PRACTICE.
+ 
+  Sun source code is provided with no support and without any obligation on
+  the part of Sun Microsystems, Inc. to assist in its use, correction,
+  modification or enhancement.
+ 
+  SUN MICROSYSTEMS, INC. SHALL HAVE NO LIABILITY WITH RESPECT TO THE
+  INFRINGEMENT OF COPYRIGHTS, TRADE SECRETS OR ANY PATENTS BY THIS SOFTWARE
+  OR ANY PART THEREOF.
+ 
+  In no event will Sun Microsystems, Inc. be liable for any lost revenue
+  or profits or other special, indirect and consequential damages, even if
+  Sun has been advised of the possibility of such damages.
+ 
+  Sun Microsystems, Inc.
+  2550 Garcia Avenue
+  Mountain View, California  94043
+
+
+
+The example and utility programs are copyright as:
+
+  Copyright (C) 2001-2009 Erik de Castro Lopo <erikd@mega-nerd.com>
+  Copyright (C) 2007 Jonatan Liljedahl <lijon@kymatica.com>
+  Copyright (C) 2008 George Blood Audio
+
+  All rights reserved.
+ 
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are
+  met:
+ 
+      * Redistributions of source code must retain the above copyright
+        notice, this list of conditions and the following disclaimer.
+      * Redistributions in binary form must reproduce the above copyright
+        notice, this list of conditions and the following disclaimer in
+        the documentation and/or other materials provided with the
+        distribution.
+      * Neither the author nor the names of any contributors may be used
+        to endorse or promote products derived from this software without
+        specific prior written permission.
+ 
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

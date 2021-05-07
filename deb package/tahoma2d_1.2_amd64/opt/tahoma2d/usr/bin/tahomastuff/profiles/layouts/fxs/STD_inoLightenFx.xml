@@ -1,0 +1,6 @@
+<fxlayout help_file="LightenIno.pdf">
+  <page name="Lighten Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+  </page>
+</fxlayout>

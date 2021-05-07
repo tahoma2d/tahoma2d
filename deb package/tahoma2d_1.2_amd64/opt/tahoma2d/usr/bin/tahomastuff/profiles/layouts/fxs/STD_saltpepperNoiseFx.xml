@@ -1,0 +1,7 @@
+<fxlayout>
+  <page name="Salt Pepper Noise">
+    <control>Intensity</control>
+    <control>Animate</control>
+  </page>
+
+</fxlayout>

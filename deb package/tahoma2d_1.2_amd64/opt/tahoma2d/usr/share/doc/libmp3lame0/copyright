@@ -1,0 +1,169 @@
+Format: http://anonscm.debian.org/viewvc/dep/web/deps/dep5.mdwn?revision=174&view=markup
+Upstream-Name: LAME
+Upstream-Contact: lame-dev@lists.sourceforge.net
+Source: http://lame.sourceforge.net/
+
+Files: *
+Copyright: © 1998, Michael Cheng
+           © 1999-2001, Mark Taylor
+           © 1999-2002, Albert L. Faber
+           © 1999-2005, Takehiro Tominaga
+           © 1999-2007, The LAME Project
+           © 2000-2005, Alexander Leidinger
+           © 2000-2005, Elecard Ltd.
+           © 2000-2005, Gabriel Bouvigne
+           © 2000-2005, Marie Orlova
+           © 2000-2005, Peter Gubanov
+           © 2000-2005, Vitaly Ivanov
+           © 2000-2008, Gabriel Bouvigne
+           © 2000-2008, Robert Hegemann
+           © 2000, Don Melton
+           © 2000, Frank Klemm
+           © 2001-2002, Naoki Shibata
+           © 2001, John Dahlstrom
+           © 2001, Jonathan Dee
+           © 2001, Ralf Kempkens
+           © 2002, Per Bolmstedt
+           © 2003, Olcios
+License: LGPL-2+
+
+Files: ACM/*
+       libmp3lame/gain_analysis.c
+       libmp3lame/gain_analysis.h
+Copyright: © 2001, David Robinson
+           © 2001, Glen Sawyer
+           © 2002, Steve Lhomme <steve.lhomme at free.fr>
+           © 2003, Gabriel Bouvigne
+           © 2003, Milan Cutka
+License: LGPL-2.1+
+
+Files: ACM/tinyxml/*
+Copyright: © 2000-2002, Lee Thomason (www.grinninglizard.com)
+License: zlib/libpng
+ This software is provided 'as-is', without any express or implied
+ warranty. In no event will the authors be held liable for any
+ damages arising from the use of this software.
+ .
+ Permission is granted to anyone to use this software for any
+ purpose, including commercial applications, and to alter it and
+ redistribute it freely, subject to the following restrictions:
+ .
+ 1. The origin of this software must not be misrepresented; you must
+ not claim that you wrote the original software. If you use this
+ software in a product, an acknowledgment in the product documentation
+ would be appreciated but is not required.
+ .
+ 2. Altered source versions must be plainly marked as such, and
+ must not be misrepresented as being the original software.
+ .
+ 3. This notice may not be removed or altered from any source
+ distribution.
+
+Files: ACM/ADbg/*
+Copyright: © 2001, Steve Lhomme
+License: BSD-3-clause
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ .
+ - Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+ .
+ - Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+ .
+ - The name of the author may not be used to endorse or promote products derived
+ from this software without specific prior written permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+ OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+ OF SUCH DAMAGE.
+
+Files: libmp3lame/i386/*
+Copyright: © 1999, Keiichi SAKAI
+           © 1999, shigeo
+           © 1999, URURI
+License: LGPL-2+
+Comment:
+ Though the license information is not explicitly given, these files are from
+ an open source MP3 encoder named gogo-no-coda, which is based off of LAME.
+ The gogo-no-coda developers (the developers mentioned above) have released
+ their work under LGPL-2. A copy of the source code to gogo-no-coda can be
+ downloaded from http://homepage2.nifty.com/kei-i/petit/petit313.tgz (as of
+ 07-26-2011).
+
+Files: libmp3lame/fft.c
+Copyright: © 1988-1993, Ron Mayer
+           © 1999-2000, Takehiro Tominaga
+License: GPL-1+
+Comment:
+ No version of the GPL is explicitly given.
+
+Files: debian/*
+Copyright: © 2005-2015, Fabian Greffrath <fabian@debian.org>
+           © 2009-2011, Andres Mejia <amejia@debian.org>
+License: LGPL-2+
+
+Files: misc/auenc
+Copyright: © 1999, Gerhard Wesp
+License: GPL-1+
+Comment:
+ No version of the GPL is explicitly given.
+
+License: GPL-1+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 1 of the License, or
+ (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License version 1 can be found in `/usr/share/common-licenses/GPL-1'.
+
+License: LGPL-2+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Library General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later version.
+ .
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Library General Public License for more details.
+ .
+ You should have received a copy of the GNU Library General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ .
+ On Debian systems, the complete text of the GNU Library General
+ Public License can be found in `/usr/share/common-licenses/LGPL-2'.
+
+License: LGPL-2.1+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ .
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ .
+ You should have received a copy of the GNU Lesser General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ .
+ On Debian systems, the complete text of the GNU Lesser General
+ Public License can be found in `/usr/share/common-licenses/LGPL-2.1'.

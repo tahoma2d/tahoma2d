@@ -1,0 +1,20 @@
+<fxlayout help_file="MotionBlurIwa.html">
+	<page name="Motion Blur Iwa">
+ 	<vbox>
+		<control>motionObjectType</control>
+		<vbox modeSensitive="motionObjectType" mode="1,2,4">
+		<control>motionObjectIndex</control>
+		</vbox>
+		<control>shutterStart</control>
+		<control>startValue</control>
+		<control>startCurve</control>
+		<control>shutterEnd</control>
+		<control>endValue</control>
+		<control>endCurve</control>
+		<control>traceResolution</control>
+		<control>hardness</control>
+		<control>zanzoMode</control>
+		<control>premultiType</control>
+  	</vbox>
+  	</page>
+</fxlayout>

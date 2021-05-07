@@ -1,0 +1,10 @@
+<fxlayout>
+  <page name="Texture">
+    <control>indexes</control>
+    <control>keep</control>
+   <control>mode</control>
+    <control>value</control>
+  </page>
+
+
+</fxlayout>

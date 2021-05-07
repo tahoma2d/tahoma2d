@@ -1,0 +1,19 @@
+<fxlayout help_file="HLSAdjustIno.pdf">
+  <page name="HLS Adjust Ino">
+    <separator label="Pivot"/>
+    <control>pivot_hue</control>
+    <control>pivot_lightness</control>
+    <control>pivot_saturation</control>
+    <separator label="Scale"/>
+    <control>scale_hue</control>
+    <control>scale_lightness</control>
+    <control>scale_saturation</control>
+    <separator label="Shift"/>
+    <control>shift_hue</control>
+    <control>shift_lightness</control>
+    <control>shift_saturation</control>
+    <separator label=""/>
+      <control>anti_alias</control>
+      <control>reference</control>
+  </page>
+</fxlayout>
