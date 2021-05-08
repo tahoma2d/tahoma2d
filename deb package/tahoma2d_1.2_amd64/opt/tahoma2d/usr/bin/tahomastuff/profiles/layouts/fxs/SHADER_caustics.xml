@@ -1,9 +1,0 @@
-<fxlayout>
-  <page name="Caustics">
-    <control>color</control>
-    <control>intensity</control>
-    <control>time</control>
-  </page>
-
-
-</fxlayout>

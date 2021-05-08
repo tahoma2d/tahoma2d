@@ -1,6 +1,0 @@
-<fxlayout help_file="HardMixIno.pdf">
-  <page name="Hard Mix Ino">
-    <control>opacity</control>
-    <control>clipping_mask</control>
-  </page>
-</fxlayout>

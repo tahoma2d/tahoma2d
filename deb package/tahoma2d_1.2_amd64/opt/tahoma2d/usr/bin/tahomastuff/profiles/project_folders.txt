@@ -1,7 +1,0 @@
-inputs
-drawings
-scenes
-extras
-outputs
-palettes
-stopmotion

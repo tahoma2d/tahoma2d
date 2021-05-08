@@ -1,8 +1,0 @@
-<fxlayout>
-	<page name="Bloom Iwa">
-		<control>gamma</control>
-		<control>gain</control>
-		<control>size</control>
-		<control>alpha_rendering</control>
-	</page>
-</fxlayout>

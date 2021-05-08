@@ -1,8 +1,0 @@
-<fxlayout>
-  <page name="Fireball">
-    <control>color1</control>
-    <control>color2</control>
-    <control>detail</control>
-    <control>time</control>
-  </page>
-</fxlayout>

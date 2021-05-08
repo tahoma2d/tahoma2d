@@ -1,8 +1,0 @@
-<fxlayout>
-  <page name="Directional Blur Iwa">
-    <control>angle</control>
-    <control>intensity</control>
-    <control>bidirectional</control>
-    <control>filterType</control>
-  </page>
-</fxlayout>
