@@ -87,7 +87,7 @@ ShortcutViewer::~ShortcutViewer() {}
 
 void ShortcutViewer::setAction(QAction *action) {
   m_action = action;
-  setKeySequence(m_action->shortcut());
+  setKeySequence(m_action ? m_action->shortcut() : 0);
   setFocus();
 }
 
