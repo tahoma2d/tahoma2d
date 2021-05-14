@@ -1,5 +1,10 @@
 #!/bin/bash
-export QTDIR=/usr/local/opt/qt
+if [ -d /usr/local/Cellar/qt@5 ]
+then
+   export QTDIR=/usr/local/opt/qt@5
+else
+   export QTDIR=/usr/local/opt/qt
+fi
 export TOONZDIR=toonz/build/toonz
 
 # If found, use Xcode Release build
@@ -17,7 +22,7 @@ fi
 cp -R stuff $TOONZDIR/Tahoma2D.app/tahomastuff
 chmod -R 777 $TOONZDIR/Tahoma2D.app/tahomastuff
 
-if [ -d thirdparty/ffmpeg/bin ]
+if [ -d thirdparty/apps/ffmpeg/bin ]
 then
    echo ">>> Copying FFmpeg to $TOONZDIR/Tahoma2D.app/ffmpeg"
    if [ -d $TOONZDIR/Tahoma2D.app/ffmpeg ]
@@ -25,7 +30,20 @@ then
       # In case of prior builds, replace ffmpeg folder
       rm -rf $TOONZDIR/Tahoma2D.app/ffmpeg
    fi
-   cp -R thirdparty/ffmpeg/bin $TOONZDIR/Tahoma2D.app/ffmpeg
+   mkdir $TOONZDIR/Tahoma2D.app/ffmpeg
+   cp -R thirdparty/apps/ffmpeg/bin/ffmpeg thirdparty/apps/ffmpeg/bin/ffprobe $TOONZDIR/Tahoma2D.app/ffmpeg
+fi
+
+if [ -d thirdparty/apps/rhubarb ]
+then
+   echo ">>> Copying Rhubarb Lip Sync to $TOONZDIR/Tahoma2D.app/rhubarb"
+   if [ -d $TOONZDIR/Tahoma2D.app/rhubarb ]
+   then
+      # In case of prior builds, replace rhubarb folder
+      rm -rf $TOONZDIR/Tahoma2D.app/rhubarb
+   fi
+   mkdir $TOONZDIR/Tahoma2D.app/rhubarb
+   cp -R thirdparty/apps/rhubarb/rhubarb thirdparty/apps/rhubarb/res $TOONZDIR/Tahoma2D.app/rhubarb
 fi
 
 if [ -d thirdparty/canon/Framework ]
@@ -72,3 +90,4 @@ echo ">>> Creating Tahoma2D-osx.dmg"
 $QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -dmg -verbose=0
 
 mv $TOONZDIR/Tahoma2D.dmg $TOONZDIR/../Tahoma2D-osx.dmg
+

@@ -33,6 +33,8 @@ class DVAPI TFxAttributes {
 
   /*-- MotionBlurなどのFxのために、オブジェクトの軌跡のデータを取得する --*/
   QList<TPointD> m_motionPoints;
+  // to maintain backward compatibility in the fx
+  int m_fxVersion;
 
 public:
   TFxAttributes();
@@ -62,6 +64,8 @@ public:
     m_motionPoints = motionPoints;
   }
   QList<TPointD> getMotionPoints() { return m_motionPoints; }
+  void setFxVersion(int version) { m_fxVersion = version; }
+  int getFxVersion() const { return m_fxVersion; };
 
   // Group management
 

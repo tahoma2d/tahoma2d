@@ -468,13 +468,11 @@ void TSystem::readDirectory_DirItems(QStringList &dst, const TFilePath &path) {
 
 #ifdef _WIN32
   // equivalent to sorting with QDir::LocaleAware
-  struct strCompare {
-    bool operator()(const QString &s1, const QString &s2) const {
-      return QString::localeAwareCompare(s1, s2) < 0;
-    }
+  auto const strCompare = [](const QString &s1, const QString &s2) {
+    return QString::localeAwareCompare(s1, s2) < 0;
   };
 
-  std::set<QString, strCompare> entries;
+  std::set<QString, decltype(strCompare)> entries(strCompare);
 
   WIN32_FIND_DATA find_dir_data;
   QString dir_search_path = dir.absolutePath() + "\\*";
@@ -805,6 +803,18 @@ bool TSystem::doesExistFileOrLevel(const TFilePath &fp) {
     TFilePathSet::iterator it, end = files.end();
     for (it = files.begin(); it != end; ++it) {
       if (it->getLevelNameW() == fp.getLevelNameW()) return true;
+// On case insensitive systems like Windows/OSX, we need to
+// compare using all the same case to confirm it is unique
+// We'll force this for Linux as well since the project might
+// be shared on other platforms.
+#ifdef _WIN32
+      if (_wcsicmp(it->getLevelNameW().c_str(), fp.getLevelNameW().c_str()) ==
+          0)
+        return true;
+#else
+      if (toLower(it->getLevelNameW()) == toLower(fp.getLevelNameW()))
+        return true;
+#endif
     }
   } else if (fp.getType() == "psd") {
     QString name(QString::fromStdWString(fp.getWideName()));
@@ -1032,6 +1042,20 @@ bool TSystem::showDocument(const TFilePath &path) {
   system(cmd.c_str());
   return true;
 #endif
+}
+
+QString TSystem::findFileLocation(QStringList folderList, QString fileName) {
+  if (folderList.isEmpty()) return "";
+
+  QStringList::iterator it;
+  for (it = folderList.begin(); it != folderList.end(); it++) {
+    QString path = *it + "/" + fileName;
+    TFilePath fp(path);
+    if (TSystem::doesExistFileOrLevel(fp) && !TFileStatus(fp).isDirectory())
+      return *it;
+  }
+
+  return "";
 }
 
 #else

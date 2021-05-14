@@ -301,7 +301,8 @@ TImage *TTool::touchImage() {
   bool animationSheetEnabled      = pref->isAnimationSheetEnabled();
   bool isAutoStretchEnabled       = pref->isAutoStretchEnabled();
   bool isAutoRenumberEnabled      = pref->isAutorenumberEnabled();
-  bool isCreateInHoldCellsEnabled = pref->isCreationInHoldCellsEnabled();
+  bool isCreateInHoldCellsEnabled =
+      isAutoCreateEnabled && pref->isCreationInHoldCellsEnabled();
 
   TFrameHandle *currentFrame    = m_application->getCurrentFrame();
   TXshLevelHandle *currentLevel = m_application->getCurrentLevel();
@@ -349,6 +350,13 @@ TImage *TTool::touchImage() {
   TXshSimpleLevel *sl = cell.getSimpleLevel();
 
   if (sl) {
+    // For Single Frame levels, don't create anything
+    std::vector<TFrameId> fids;
+    sl->getFids(fids);
+    if (fids.size() == 1 && (fids[0].getNumber() == TFrameId::EMPTY_FRAME ||
+                             fids[0].getNumber() == TFrameId::NO_FRAME))
+      return 0;
+
     // If for some reason there is no palette, try and set a default one now.
     if (!sl->getPalette() &&
         (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL)) {
@@ -721,8 +729,9 @@ TFrameId TTool::getCurrentFid() const {
 
 //-----------------------------------------------------------------------------
 
-TAffine TTool::getCurrentColumnMatrix() const {
-  return getColumnMatrix(m_application->getCurrentColumn()->getColumnIndex());
+TAffine TTool::getCurrentColumnMatrix(int frame) const {
+  return getColumnMatrix(m_application->getCurrentColumn()->getColumnIndex(),
+                         frame);
 }
 
 //-----------------------------------------------------------------------------
@@ -759,12 +768,12 @@ TAffine TTool::getCurrentObjectParentMatrix() const {
 
 //-----------------------------------------------------------------------------
 
-TAffine TTool::getColumnMatrix(int columnIndex) const {
+TAffine TTool::getColumnMatrix(int columnIndex, int frame) const {
   if (!m_application) return TAffine();
 
   TFrameHandle *fh = m_application->getCurrentFrame();
   if (fh->isEditingLevel()) return TAffine();
-  int frame    = fh->getFrame();
+  if (frame < 0) frame = fh->getFrame();
   TXsheet *xsh = m_application->getCurrentXsheet()->getXsheet();
   TStageObjectId columnObjId =
       (columnIndex >= 0)
@@ -1062,6 +1071,7 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
           sl->getPath().getType() == "gif" ||
           sl->getPath().getType() == "mp4" ||
           sl->getPath().getType() == "webm" ||
+          sl->getPath().getType() == "mov" ||
           sl->is16BitChannelLevel() ||  // Inherited by previous
                                         // implementation.
                                         // Could be fixed?
@@ -1070,6 +1080,20 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
 
         return (enable(false),
                 QObject::tr("The current level is not editable."));
+
+      // For Single Frame raster levels, don't allow new levels to be created
+      if (levelType == OVL_XSHLEVEL && !filmstrip) {
+        std::vector<TFrameId> fids;
+        sl->getFids(fids);
+        if (fids.size() == 1 && (fids[0].getNumber() == TFrameId::EMPTY_FRAME ||
+                                 fids[0].getNumber() == TFrameId::NO_FRAME)) {
+          TXshCell cell = xsh->getCell(rowIndex, columnIndex);
+          if (cell.isEmpty())
+            return (enable(false),
+                    QObject::tr("The current tool cannot be used on empty "
+                                "frames of a Single Frame level."));
+        }
+      }
     }
   }
 

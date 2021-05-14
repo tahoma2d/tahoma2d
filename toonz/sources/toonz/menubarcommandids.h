@@ -45,6 +45,8 @@
 #define MI_NewNoteLevel "MI_NewNoteLevel"
 #define MI_RemoveEmptyColumns "MI_RemoveEmptyColumns"
 #define MI_NewProject "MI_NewProject"
+#define MI_OpenRecentProject "MI_OpenRecentProject"
+#define MI_LoadProject "MI_LoadProject"
 #define MI_ProjectSettings "MI_ProjectSettings"
 #define MI_SaveDefaultSettings "MI_SaveDefaultSettings"
 #define MI_OutputSettings "MI_OutputSettings"
@@ -265,6 +267,7 @@
 #define MI_CollectAssets "MI_CollectAssets"
 #define MI_ImportScenes "MI_ImportScenes"
 #define MI_ExportScenes "MI_ExportScenes"
+#define MI_ExportCurrentScene "MI_ExportCurrentScene"
 
 #define MI_SelectRowKeyframes "MI_SelectRowKeyframes"
 #define MI_SelectColumnKeyframes "MI_SelectColumnKeyframes"

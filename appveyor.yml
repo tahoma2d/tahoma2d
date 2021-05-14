@@ -1,4 +1,4 @@
-version: 1.1.0{build}
+version: 1.2.0{build}
 pull_requests:
   do_not_increment_build_number: true
 skip_tags: true
@@ -10,7 +10,7 @@ clone_depth: 1
 # C:\Qt\5.9 is mapped to C:\Qt\5.9.n for backward compatibility
 install:
 - cmd: >-
-    choco install opencv
+    choco install opencv --version=4.5.1
     
     cd thirdparty
 
@@ -54,12 +54,34 @@ after_build:
 
     copy /Y ..\..\thirdparty\libjpeg-turbo64\dist\turbojpeg.dll %CONFIGURATION%\Tahoma2D
 
-    copy /Y "C:\Tools\opencv\build\x64\vc14\bin\opencv_world412.dll" %CONFIGURATION%\Tahoma2D
+    copy /Y "C:\Tools\opencv\build\x64\vc14\bin\opencv_world451.dll" %CONFIGURATION%\Tahoma2D
 
     mkdir "%CONFIGURATION%\Tahoma2D\tahomastuff"
 
     xcopy /Y /E ..\..\stuff "%CONFIGURATION%\Tahoma2D\tahomastuff"
     
+    curl -fsSL -o ffmpeg-4.3.1-win64-static-lgpl.zip https://github.com/tahoma2d/FFmpeg/releases/download/v4.3.1/ffmpeg-4.3.1-win64-static-lgpl.zip
+    
+    7z x ffmpeg-4.3.1-win64-static-lgpl.zip
+    
+    mkdir %CONFIGURATION%\Tahoma2D\ffmpeg
+
+    copy /Y ffmpeg-4.3.1-win64-static-lgpl\bin\ffmpeg.exe %CONFIGURATION%\Tahoma2D\ffmpeg
+    
+    copy /Y ffmpeg-4.3.1-win64-static-lgpl\bin\ffprobe.exe %CONFIGURATION%\Tahoma2D\ffmpeg
+
+    curl -fsSL -o rhubarb-lip-sync-tahoma2d-win.zip https://github.com/tahoma2d/rhubarb-lip-sync/releases/download/v1.10.2/rhubarb-lip-sync-tahoma2d-win.zip
+    
+    7z x rhubarb-lip-sync-tahoma2d-win.zip
+    
+    mkdir %CONFIGURATION%\Tahoma2D\rhubarb
+    
+    copy /Y rhubarb-lip-sync-tahoma2d-win\rhubarb.exe %CONFIGURATION%\Tahoma2D\rhubarb
+
+    mkdir %CONFIGURATION%\Tahoma2D\rhubarb\res
+    
+    xcopy /Y /E rhubarb-lip-sync-tahoma2d-win\res "%CONFIGURATION%\Tahoma2D\rhubarb\res"
+
 artifacts:
 - path: toonz\$(PLATFORM)\$(CONFIGURATION)
   name: Tahoma2D

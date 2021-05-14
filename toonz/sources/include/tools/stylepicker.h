@@ -57,14 +57,15 @@ public:
 
   /*-- (StylePickerTool内で)LineとAreaを切り替えてPickできる。mode: 0=Area,
    * 1=Line, 2=Line&Areas(default)  --*/
-  int pickStyleId(const TPointD &point, double radius2 = 1, int mode = 2) const;
+  int pickStyleId(const TPointD &point, double radius, double scale2,
+                  int mode = 2) const;
 
   /*--- Toonz Raster LevelのToneを拾う。 ---*/
   int pickTone(const TPointD &pos) const;
 
   // per pli come sopra, ma ritorna il maincolor
   // per tzp e fullcolor ritorna il colore effettivo del pixel
-  TPixel32 pickColor(const TPointD &point, double radius2 = 1) const;
+  TPixel32 pickColor(const TPointD &point, double radius, double scale2) const;
   TPixel32 pickAverageColor(const TRectD &rect) const;
 
   // ritorna il colore medio presente nell'area della finestra corrente openGL

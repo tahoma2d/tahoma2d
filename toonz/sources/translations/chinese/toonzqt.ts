@@ -173,11 +173,15 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>A/R</source>
-        <translation>A/R</translation>
+        <translation type="vanished">A/R</translation>
     </message>
     <message>
         <source>&lt;custom&gt;</source>
         <translation>&lt;定制&gt;</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -247,11 +251,38 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>N/S</source>
-        <translation>上下</translation>
+        <translation type="vanished">上下</translation>
     </message>
     <message>
         <source>E/W</source>
-        <translation>左右</translation>
+        <translation type="vanished">左右</translation>
+    </message>
+    <message>
+        <source>Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>X</source>
+        <translation type="unfinished">X</translation>
+    </message>
+</context>
+<context>
+    <name>ColorField</name>
+    <message>
+        <source>R:</source>
+        <translation type="obsolete">R:</translation>
+    </message>
+    <message>
+        <source>G:</source>
+        <translation type="obsolete">G:</translation>
+    </message>
+    <message>
+        <source>B:</source>
+        <translation type="obsolete">B:</translation>
+    </message>
+    <message>
+        <source>A:</source>
+        <translation type="obsolete">A:</translation>
     </message>
 </context>
 <context>
@@ -393,7 +424,7 @@ Possibly the preset file has been corrupted</source>
 <context>
     <name>DVGui::LineEdit</name>
     <message>
-        <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
+        <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
         <translation>文件名不能包含如下的任一字符: /\:*?&quot;&lt;&gt;|.</translation>
     </message>
 </context>
@@ -405,7 +436,11 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>OpenToonz</source>
-        <translation>OpenToonz</translation>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -416,7 +451,11 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>OpenToonz</source>
-        <translation>OpenToonz</translation>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -431,6 +470,18 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>Channel:</source>
         <translation>通道:</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation type="unfinished">范围:</translation>
+    </message>
+    <message>
+        <source>Output:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -615,7 +666,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>&amp;Next frame</source>
-        <translation>下一帧(&amp;N)</translation>
+        <translation type="vanished">下一帧(&amp;N)</translation>
     </message>
     <message>
         <source>&amp;Last Frame</source>
@@ -724,6 +775,27 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>&amp;Reset View</source>
         <translation>重置视图(&amp;R)</translation>
+    </message>
+    <message>
+        <source>This value is different than the scene framerate.
+Control click to reset.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot set the scene fps to a negative value.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Next Frame</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -976,6 +1048,10 @@ Possibly the preset file has been corrupted</source>
         <source>Step</source>
         <translation>步长</translation>
     </message>
+    <message>
+        <source>Link/Unlink Handles</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FunctionSelection</name>
@@ -1079,6 +1155,14 @@ Possibly the preset file has been corrupted</source>
     </message>
 </context>
 <context>
+    <name>FunctionSheetColumnHeadViewer</name>
+    <message>
+        <source>Some key(s) in this parameter loses original reference in expression.
+Manually changing any keyframe will clear the warning.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FunctionToolbar</name>
     <message>
         <source>Value</source>
@@ -1106,6 +1190,11 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>Plastic Skeleton</source>
         <translation>塑料骨架</translation>
+    </message>
+    <message>
+        <source>Some key(s) in this parameter loses original reference in expression.
+Manually changing any keyframe will clear the warning.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1143,11 +1232,11 @@ Possibly the preset file has been corrupted</source>
     <name>FxColumnPainter</name>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>断开摄影表的连接(&amp;D)</translation>
+        <translation type="vanished">断开摄影表的连接(&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>连接到摄影表(&amp;C)</translation>
+        <translation type="vanished">连接到摄影表(&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Paste Add</source>
@@ -1168,6 +1257,14 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>&amp;Cache FX</source>
         <translation>缓存特效(&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Disconnect from Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Connect to Scene</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1209,11 +1306,11 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>断开摄影表的连接(&amp;D)</translation>
+        <translation type="vanished">断开摄影表的连接(&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>连接到摄影表(&amp;C)</translation>
+        <translation type="vanished">连接到摄影表(&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Create Linked FX</source>
@@ -1251,20 +1348,36 @@ Possibly the preset file has been corrupted</source>
         <source>&amp;Cache FX</source>
         <translation>缓存特效(&amp;C)</translation>
     </message>
+    <message>
+        <source>&amp;Disconnect from Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Connect to Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FxPalettePainter</name>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>断开摄影表的连接(&amp;D)</translation>
+        <translation type="vanished">断开摄影表的连接(&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>连接到摄影表(&amp;C)</translation>
+        <translation type="vanished">连接到摄影表(&amp;C)</translation>
     </message>
     <message>
         <source>&amp;Preview</source>
         <translation>预览(&amp;P)</translation>
+    </message>
+    <message>
+        <source>&amp;Disconnect from Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Connect to Scene</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1289,11 +1402,19 @@ Possibly the preset file has been corrupted</source>
     <name>FxSchematicPort</name>
     <message>
         <source>&amp;Disconnect from Xsheet</source>
-        <translation>断开摄影表的连接(&amp;D)</translation>
+        <translation type="vanished">断开摄影表的连接(&amp;D)</translation>
     </message>
     <message>
         <source>&amp;Connect to Xsheet</source>
-        <translation>连接到摄影表(&amp;C)</translation>
+        <translation type="vanished">连接到摄影表(&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Disconnect from Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Connect to Scene</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1321,7 +1442,11 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>FxSchematicXSheetNode</name>
     <message>
         <source>XSheet</source>
-        <translation>摄影表</translation>
+        <translation type="vanished">摄影表</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1367,11 +1492,15 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>XSheet</source>
-        <translation>摄影表</translation>
+        <translation type="vanished">摄影表</translation>
     </message>
     <message>
         <source>X</source>
         <translation type="vanished">X</translation>
+    </message>
+    <message>
+        <source>Scene</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1437,7 +1566,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
 <context>
     <name>LineEdit</name>
     <message>
-        <source>A file name cannot contains any of the following chracters: /\:*?&quot;&lt;&gt;|.</source>
+        <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
         <translation type="vanished">文件名能包含如下的任一字符: /\:*?&quot;&lt;&gt;|.</translation>
     </message>
 </context>
@@ -1578,15 +1707,15 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>Style Name</source>
-        <translation>样式名称</translation>
+        <translation type="vanished">样式名称</translation>
     </message>
     <message>
         <source>StudioPalette Name</source>
-        <translation>工作室调色板名称</translation>
+        <translation type="vanished">工作室调色板名称</translation>
     </message>
     <message>
         <source>Both Names</source>
-        <translation>双方名称</translation>
+        <translation type="vanished">双方名称</translation>
     </message>
     <message>
         <source>Overwrite</source>
@@ -1612,6 +1741,58 @@ Select FX nodes and related links before copying or cutting the selection you wa
         <source>)</source>
         <translation>)</translation>
     </message>
+    <message>
+        <source>&amp;Save As Default Vector Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Save As Default Smart Raster Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Save As Default Raster Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Save As Default Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stay on Current Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drag this icon to a Studio or Project palette to add it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Style Index</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save palette with a different name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save the palette.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save the palette as the default for new levels of the current level type.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to save palette.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide New Style Button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show New Style Button</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PaletteViewerGUI::PageViewer</name>
@@ -1635,6 +1816,15 @@ Select FX nodes and related links before copying or cutting the selection you wa
         <source>Name Editor</source>
         <translation>名字编辑器</translation>
     </message>
+    <message>
+        <source> + </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style 0 is set to full transparent. 
+It can&apos;t be changed.  Ever.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PalettesScanPopup</name>
@@ -1654,6 +1844,10 @@ Select FX nodes and related links before copying or cutting the selection you wa
         <source>&lt;files&gt;</source>
         <translation>&lt;文件&gt;</translation>
     </message>
+    <message>
+        <source>Failed to import palette.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ParamViewer</name>
@@ -1666,7 +1860,11 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>ParamsPageSet</name>
     <message>
         <source>Fx Help</source>
-        <translation>特效帮助</translation>
+        <translation type="vanished">特效帮助</translation>
+    </message>
+    <message>
+        <source>View help page</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1842,7 +2040,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>Palette</source>
-        <translation>调色板</translation>
+        <translation type="vanished">调色板</translation>
     </message>
     <message>
         <source>Apply</source>
@@ -2303,6 +2501,38 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <source>That is a reserved file name and cannot be used.</source>
         <translation>被保留的文件名不可使用。</translation>
     </message>
+    <message>
+        <source>Click &amp; Drag Palette into Studio Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plain color</source>
+        <comment>CustomStyleChooserPage</comment>
+        <translation type="unfinished">纯色</translation>
+    </message>
+    <message>
+        <source>Plain color</source>
+        <comment>TextureStyleChooserPage</comment>
+        <translation type="unfinished">纯色</translation>
+    </message>
+    <message>
+        <source>There are no unused styles.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>and %1 more styles.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Erasing unused styles with following indices. Are you sure?
+
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Erase</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -2408,6 +2638,10 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <message>
         <source>Reset to default</source>
         <translation type="vanished">重新初始化</translation>
+    </message>
+    <message>
+        <source>Autopaint for Lines</source>
+        <translation type="obsolete">线自动上色</translation>
     </message>
 </context>
 <context>
@@ -2626,6 +2860,10 @@ Are you sure ?</source>
         <source>Convert</source>
         <translation>转换</translation>
     </message>
+    <message>
+        <source>Failed to save palette.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
@@ -2718,15 +2956,15 @@ Apply</source>
     </message>
     <message>
         <source>[CLEANUP]  </source>
-        <translation>[清稿]  </translation>
+        <translation type="vanished">[清稿]  </translation>
     </message>
     <message>
         <source>[STUDIO]  </source>
-        <translation>[工作室]  </translation>
+        <translation type="vanished">[工作室]  </translation>
     </message>
     <message>
         <source>[LEVEL]  </source>
-        <translation>[层级]  </translation>
+        <translation type="vanished">[层级]  </translation>
     </message>
     <message>
         <source>- Style is Not Valid -</source>
@@ -2788,36 +3026,53 @@ Apply</source>
         <source>Palette</source>
         <translation>调色板</translation>
     </message>
+    <message>
+        <source>Cleanup </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Studio </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Level </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleEditorGUI::ColorChannelControl</name>
     <message>
         <source>R</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>G</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>B</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>A</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>H</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>S</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>V</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha controls the transparency. 
+Zero is fully transparent.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2852,6 +3107,13 @@ Apply</source>
     <message>
         <source>Reset to default</source>
         <translation>重新初始化</translation>
+    </message>
+</context>
+<context>
+    <name>StyleIndexLineEdit</name>
+    <message>
+        <source>current</source>
+        <translation type="obsolete">当前</translation>
     </message>
 </context>
 <context>
@@ -2943,6 +3205,10 @@ Apply</source>
     <message>
         <source>Channel:</source>
         <translation type="vanished">通道:</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation type="obsolete">范围:</translation>
     </message>
 </context>
 <context>

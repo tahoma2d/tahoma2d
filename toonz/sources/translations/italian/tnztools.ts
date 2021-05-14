@@ -13,11 +13,11 @@
     </message>
     <message>
         <source>E/W:</source>
-        <translation>E/O:</translation>
+        <translation type="vanished">E/O:</translation>
     </message>
     <message>
         <source>N/S:</source>
-        <translation>N/S:</translation>
+        <translation type="vanished">N/S:</translation>
     </message>
     <message>
         <source>Z:</source>
@@ -87,6 +87,14 @@
         <source>Table</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>X:</source>
+        <translation type="unfinished">X:</translation>
+    </message>
+    <message>
+        <source>Y:</source>
+        <translation type="unfinished">Y:</translation>
+    </message>
 </context>
 <context>
     <name>BrushTool</name>
@@ -142,16 +150,8 @@
 <context>
     <name>BrushToolOptionsBox</name>
     <message>
-        <source>Preset Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Cancel</source>
-        <translation type="unfinished">Annullare</translation>
+        <translation type="obsolete">Annullare</translation>
     </message>
 </context>
 <context>
@@ -159,6 +159,34 @@
     <message>
         <source>Auto Select Drawing</source>
         <translation>Selezione Automatica dei Disegni</translation>
+    </message>
+    <message>
+        <source>Snap</source>
+        <translation type="unfinished">Calamita</translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rectangular</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Freehand</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Low</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Med</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>High</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -170,13 +198,6 @@
     <message>
         <source>Set Nonlinear Control Point</source>
         <translation>Imposta un punto di Controllo Non Lineare</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::StyleIndexLineEdit</name>
-    <message>
-        <source>current</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -195,19 +216,19 @@
     </message>
     <message>
         <source>Lock Center E/W</source>
-        <translation>Blocca il Centro E/O</translation>
+        <translation type="vanished">Blocca il Centro E/O</translation>
     </message>
     <message>
         <source>Lock Center N/S</source>
-        <translation>Blocca il Centro N/S</translation>
+        <translation type="vanished">Blocca il Centro N/S</translation>
     </message>
     <message>
         <source>Lock Position E/W</source>
-        <translation>Blocca la Posizione E/O</translation>
+        <translation type="vanished">Blocca la Posizione E/O</translation>
     </message>
     <message>
         <source>Lock Position N/S</source>
-        <translation>Blocca la Posizione N/S</translation>
+        <translation type="vanished">Blocca la Posizione N/S</translation>
     </message>
     <message>
         <source>Lock Rotation</source>
@@ -235,7 +256,7 @@
     </message>
     <message>
         <source>E/W and N/S Positions</source>
-        <translation>Posizioni E/O e N/S</translation>
+        <translation type="vanished">Posizioni E/O e N/S</translation>
     </message>
     <message>
         <source>Z Position</source>
@@ -305,6 +326,26 @@
         <source>All</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Lock Center X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lock Center Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lock Position X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lock Position Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>X and Y Positions</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>EraserTool</name>
@@ -366,6 +407,26 @@
     </message>
     <message>
         <source>Lines &amp; Areas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Segment</source>
+        <translation type="unfinished">Segmento</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -433,6 +494,30 @@
     </message>
     <message>
         <source>Maximum Gap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distance:</source>
+        <translation type="unfinished">Distanza:</translation>
+    </message>
+    <message>
+        <source>Style Index:</source>
+        <translation type="unfinished">Indice dello Stile:</translation>
+    </message>
+    <message>
+        <source>Gaps:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ingore Gaps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fill Gaps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close and Fill</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -894,6 +979,18 @@ Procedere?</translation>
         <source>Med</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>MultiArc</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation type="unfinished">Liscio</translation>
+    </message>
+    <message>
+        <source>Draw Under</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PumpTool</name>
@@ -918,11 +1015,11 @@ Procedere?</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation>Sì</translation>
+        <translation type="vanished">Sì</translation>
     </message>
     <message>
         <source>No</source>
-        <translation>No</translation>
+        <translation type="vanished">No</translation>
     </message>
     <message>
         <source>The copied selection cannot be pasted in the current drawing.</source>
@@ -1025,18 +1122,6 @@ Procedere?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1   Level : %2  Frame : %3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Modify Stroke Tool</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Modify Spline</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Deform Raster</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1098,6 +1183,18 @@ Procedere?</translation>
     </message>
     <message>
         <source>The selection cannot be moved. It is not editable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snap At Intersection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It is not possible to animate unlinked motion paths.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The current tool cannot be used on empty frames of a Single Frame level.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1275,11 +1372,11 @@ Procedere?</translation>
     </message>
     <message>
         <source>E/W:</source>
-        <translation>E/O:</translation>
+        <translation type="vanished">E/O:</translation>
     </message>
     <message>
         <source>N/S:</source>
-        <translation>N/S:</translation>
+        <translation type="vanished">N/S:</translation>
     </message>
     <message>
         <source>Thickness</source>
@@ -1296,6 +1393,14 @@ Procedere?</translation>
     <message>
         <source>Position</source>
         <translation type="unfinished">Posizione</translation>
+    </message>
+    <message>
+        <source>X:</source>
+        <translation type="unfinished">X:</translation>
+    </message>
+    <message>
+        <source>Y:</source>
+        <translation type="unfinished">Y:</translation>
     </message>
 </context>
 <context>
@@ -1345,6 +1450,13 @@ Procedere?</translation>
     </message>
     <message>
         <source>Inverse Kinematics</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StyleIndexLineEdit</name>
+    <message>
+        <source>current</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1548,6 +1660,22 @@ moved to the end of the first page of the palette.</source>
         <source>Bevel join</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Draw Under</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Fill</source>
+        <translation type="unfinished">Riempimento Automatico</translation>
+    </message>
+    <message>
+        <source>Auto Group</source>
+        <translation type="unfinished">Raggruppa Automaticamente</translation>
+    </message>
 </context>
 <context>
     <name>TrackerTool</name>
@@ -1667,6 +1795,10 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Bevel join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Include Intersection</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

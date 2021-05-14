@@ -35,9 +35,9 @@ using namespace std;
 
 /* Version-related strings added to project files, in reversed chronological
  * order */
-const std::wstring prjSuffix[4] = {L"_otprj", L"_prj63ml", L"_prj6", L"_prj"};
-const std::wstring xmlExt       = L".xml";
-const int prjSuffixCount        = 4;
+const std::wstring OTprjSuffix[4] = {L"_otprj", L"_prj63ml", L"_prj6", L"_prj"};
+const std::wstring xmlExt         = L".xml";
+const int OTprjSuffixCount        = 4;
 
 //===================================================================
 /*! Default inputs folder: is used to save all scanned immage.*/
@@ -125,16 +125,20 @@ std::wstring getProjectSuffix(const TFilePath &path) {
 TFilePath getProjectFile(const TFilePath &fp) {
   const std::wstring &fpName     = fp.getWideName();
   const std::wstring &folderName = fp.getParentDir().getWideName();
+
+  // Look for a tahoma project file
   std::wstring tahoma            = L"tahomaproject";
   QDir dir(fp.getQString());
   TFilePath path = fp + (tahoma + xmlExt);
   if (TFileStatus(path).doesExist()) return path;
-  for (int i = 0; i < prjSuffixCount; ++i) {
-    path = fp + (fpName + prjSuffix[i] + xmlExt);
+
+  // Look for compatible OpenToonz project files
+  for (int i = 0; i < OTprjSuffixCount; ++i) {
+    path = fp + (fpName + OTprjSuffix[i] + xmlExt);
     if (TFileStatus(path).doesExist()) return path;
 
     QStringList filters;
-    filters << "*" + QString::fromStdWString(prjSuffix[i] + xmlExt);
+    filters << "*" + QString::fromStdWString(OTprjSuffix[i] + xmlExt);
     QStringList prjfiles =
         dir.entryList(filters, QDir::Files, (QDir::Time | QDir::Reversed));
     if (prjfiles.size()) return fp + TFilePath(prjfiles[0]);
@@ -149,16 +153,20 @@ TFilePath getProjectFile(const TFilePath &fp) {
 //! this function updates it to the most recent; otherwise,
 //! it is left untouched.
 TFilePath getLatestVersionProjectPath(const TFilePath &path) {
+  // Always return a tahoma project file
   return path.withName(L"tahomaproject");
+
+/*
   const std::wstring &suffix = getProjectSuffix(path);
-  for (int i = 1; i < prjSuffixCount; ++i)
-    if (suffix == prjSuffix[i]) {
+  for (int i = 1; i < OTprjSuffixCount; ++i)
+    if (suffix == OTprjSuffix[i]) {
       const std::wstring &name = path.getWideName();
       int pos                  = name.size() - suffix.size();
-      return path.withName(path.getWideName().substr(0, pos) + prjSuffix[0]);
+      return path.withName(path.getWideName().substr(0, pos) + OTprjSuffix[0]);
     }
 
   return path;
+*/
 }
 
 //===================================================================
@@ -202,12 +210,18 @@ bool isFolderUnderVersionControl(const TFilePath &folderPath) {
 void hideOlderProjectFiles(const TFilePath &folderPath) {
   const std::wstring &name = folderPath.getWideName();
 
+  // Tahoma does not have older project files, for now...
+  // Don't do anything
+  return;
+
+/*
   TFilePath path;
-  for (int i = 0; i < prjSuffixCount; ++i) {
-    path = folderPath + (name + prjSuffix[i] + xmlExt);
+  for (int i = 0; i < OTprjSuffixCount; ++i) {
+    path = folderPath + (name + OTprjSuffix[i] + xmlExt);
     if (TFileStatus(path).doesExist())
       TSystem::renameFile(path.withType("xml_"), path);
   }
+*/
 }
 
 //===================================================================
@@ -470,6 +484,16 @@ bool TProject::getUseScenePath(string folderName) const {
 }
 
 //-------------------------------------------------------------------
+
+void TProject::setUseSubScenePath(bool on) {
+  m_useSubScenePath = on;
+
+  setUseScenePath("drawings", m_useSubScenePath);
+  setUseScenePath("extras", m_useSubScenePath);
+  setUseScenePath("inputs", m_useSubScenePath);
+}
+
+//-------------------------------------------------------------------
 /*! Returns the index of the folder specified in the path \b folderDir.
         Returns -1 if \b folderDir isn't a folder of the project.
 */
@@ -660,6 +684,7 @@ void TProject::load(const TFilePath &projectPath) {
   m_folderNames.clear();
   m_folders.clear();
   m_useScenePathFlags.clear();
+  m_useSubScenePath = false;
   delete m_sprop;
   m_sprop = new TSceneProperties();
 
@@ -670,6 +695,7 @@ void TProject::load(const TFilePath &projectPath) {
   string tagName;
   if (!is.matchTag(tagName) || tagName != "project") return;
 
+  bool useSubScenePath = false;
   while (is.matchTag(tagName)) {
     if (tagName == "folders") {
       while (is.matchTag(tagName)) {
@@ -679,6 +705,9 @@ void TProject::load(const TFilePath &projectPath) {
           setFolder(name, path);
           string useScenePath = is.getTagAttribute("useScenePath");
           setUseScenePath(name, useScenePath == "yes");
+          if (useScenePath == "yes" &&
+              (name == "drawings" || name == "extras" || name == "inputs"))
+            useSubScenePath = true;
         } else
           throw TException("expected <folder>");
       }
@@ -698,6 +727,8 @@ void TProject::load(const TFilePath &projectPath) {
       is.matchEndTag();
     }
   }
+
+  setUseSubScenePath(useSubScenePath);
 }
 
 //-------------------------------------------------------------------
@@ -713,9 +744,12 @@ void TProject::load(const TFilePath &projectPath) {
 bool TProject::isAProjectPath(const TFilePath &fp) {
   if (fp.isAbsolute() && fp.getType() == "xml") {
     const std::wstring &fpName = fp.getWideName();
+    // Check if it's a tahoma project
     if (fpName == L"tahomaproject") return true;
-    for (int i = 0; i < prjSuffixCount; ++i)
-      if (fpName.find(prjSuffix[i]) != std::wstring::npos) return true;
+
+    // Check if it is a compatiable OpenToonz project
+    for (int i = 0; i < OTprjSuffixCount; ++i)
+      if (fpName.find(OTprjSuffix[i]) != std::wstring::npos) return true;
   }
 
   return false;
@@ -841,10 +875,10 @@ TFilePath TProjectManager::projectPathToProjectName(
 
   // keep allowing for older project types
   std::wstring fpName = projectPath.getWideName();
-  for (int i = 0; i < prjSuffixCount; ++i) {
-    //	  std::wstring::size_type const i = fpName.find(prjSuffix[i]);
-    if (fpName.find(prjSuffix[i]) != std::wstring::npos)
-      return TFilePath(fpName.substr(0, fpName.find(prjSuffix[i])));
+  for (int i = 0; i < OTprjSuffixCount; ++i) {
+    //	  std::wstring::size_type const i = fpName.find(OTprjSuffix[i]);
+    if (fpName.find(OTprjSuffix[i]) != std::wstring::npos)
+      return TFilePath(fpName.substr(0, fpName.find(OTprjSuffix[i])));
   }
   return projectFolder.withoutParentDir();
 }

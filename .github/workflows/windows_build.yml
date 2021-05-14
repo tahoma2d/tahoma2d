@@ -1,0 +1,79 @@
+name: Tahoma2D Windows Build
+
+on: [push, pull_request]
+
+jobs:
+  Windows:
+    runs-on: windows-2016
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Install Dependencies
+        run: |
+          ci-scripts\windows\tahoma-install.bat
+      - name: Get CanonSDK
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          curl -H "Authorization: token ${{ secrets.TAHOMA2D_TOKEN }}" -H "Accept:application/octet-stream" -fsSL -o EDSDK_v131231_Windows.zip https://api.github.com/repos/tahoma2d/CanonSDK/releases/assets/25267396
+          7z x EDSDK_v131231_Windows.zip -oEDSDK_v131231_Windows
+          move EDSDK_v131231_Windows\EDSDK\Header thirdparty\canon
+          move EDSDK_v131231_Windows\EDSDK_64\Dll thirdparty\canon
+          move EDSDK_v131231_Windows\EDSDK_64\Library thirdparty\canon
+      - name: Get 3rd Party Apps
+        run: |
+          ci-scripts\windows\tahoma-get3rdpartyapps.bat
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+      - name: Build Tahoma2D
+        run: |
+          ci-scripts\windows\tahoma-build.bat
+      - name: Create Package
+        run: |
+          ci-scripts\windows\tahoma-buildpkg.bat
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Tahoma2D-win.zip
+          path: toonz\build\Tahoma2D-win.zip
+      - uses: actions/upload-artifact@v1
+        with:
+          name: debug-symbols.zip
+          path: toonz\build\debug-symbols.zip
+      - name: Get Nightly Release Date
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        run: |
+          chcp 65001 #set code page to utf-8
+          echo ("NIGHTLYDATE=" + (Get-Date -format "yyyy-MM-dd")) >> $env:GITHUB_ENV
+          echo ("NIGHTLYDATETIME=" + (Get-Date -format "yyyy-MM-dd HH:mm:ss UTC")) >> $env:GITHUB_ENV
+      - name: Update Latest Nightly Release
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifactErrorsFailBuild: false
+          artifacts: toonz\build\Tahoma2D-win.zip,toonz\build\debug-symbols.zip
+          artifactContentType: "raw"
+          body: ${{ github.event.head_commit.message }}
+          name: Lastest Nightly ${{ env.NIGHTLYDATE }}
+          prerelease: true
+          replacesArtifacts: true
+          tag: nightly
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Nightlies Release
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifactErrorsFailBuild: false
+          artifacts: toonz\build\Tahoma2D-win.zip,toonz\build\debug-symbols.zip
+          artifactContentType: "raw"
+          body: ${{ github.event.head_commit.message }}
+          name: ${{ env.NIGHTLYDATETIME }}
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          owner: tahoma2d	  
+          prerelease: true
+          replacesArtifacts: true
+          repo: tahoma2d_nightlies
+          tag: nightly-${{ github.sha }}
+          token: ${{ secrets.TAHOMA2D_TOKEN }}

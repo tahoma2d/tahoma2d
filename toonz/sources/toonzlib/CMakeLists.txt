@@ -160,6 +160,8 @@ set(HEADERS
     ../include/toonz/vectorizerparameters.h
     ../include/toutputproperties.h
     ../include/toonz/preferencesitemids.h
+    ../include/toonz/txsheetcolumnchange.h
+    ../include/toonz/expressionreferencemonitor.h
 )
 
 set(SOURCES

@@ -252,6 +252,17 @@ void FileBrowserPopup::onOkPressed() {
         return;
       }
     } else {
+      if (m_forSaving && m_browser->getFilterTypes().contains("tnz")) {
+        TProjectManager *pm = TProjectManager::instance();
+        TFilePath currentPrjDir =
+            pm->getCurrentProject()->getProjectPath().getParentDir();
+        if (!currentPrjDir.isAncestorOf(*pt)) {
+          DVGui::warning(QObject::tr(
+              "You cannot save a scene outside of the current project's folder."));
+          return;
+        }
+      }
+
       if (!m_isDirectoryOnly)
         pathSet.insert(*pt);
       else {

@@ -328,17 +328,20 @@ void TopBar::loadMenubar() {
   QMenu *projectManagementMenu = fileMenu->addMenu(tr("Project Management"));
   {
     addMenuItem(projectManagementMenu, MI_NewProject);
+    addMenuItem(projectManagementMenu, MI_LoadProject);
+    addMenuItem(projectManagementMenu, MI_OpenRecentProject);
+    projectManagementMenu->addSeparator();
     addMenuItem(projectManagementMenu, MI_ProjectSettings);
-    projectManagementMenu->addSeparator();
     addMenuItem(projectManagementMenu, MI_SaveDefaultSettings);
-    projectManagementMenu->addSeparator();
-    addMenuItem(projectManagementMenu, MI_ClearRecentProject);
+    // projectManagementMenu->addSeparator();
+    // addMenuItem(projectManagementMenu, MI_ClearRecentProject);
   }
   fileMenu->addSeparator();
   QMenu *importMenu = fileMenu->addMenu(tr("Import"));
   { addMenuItem(importMenu, MI_ImportMagpieFile); }
   QMenu *exportMenu = fileMenu->addMenu(tr("Export"));
   {
+    addMenuItem(exportMenu, MI_ExportCurrentScene);
     addMenuItem(exportMenu, MI_SoundTrack);
     addMenuItem(exportMenu, MI_ExportXDTS);
     addMenuItem(exportMenu, MI_StopMotionExportImageSequence);
@@ -667,7 +670,7 @@ void TopBar::loadMenubar() {
   addMenuItem(helpMenu, MI_OpenWhatsNew);
   addMenuItem(helpMenu, MI_OpenCommunityForum);
   helpMenu->addSeparator();
-  addMenuItem(helpMenu, MI_SupportTahoma2D);
+  //  addMenuItem(helpMenu, MI_SupportTahoma2D);
   addMenuItem(helpMenu, MI_OpenReportABug);
   helpMenu->addSeparator();
   addMenuItem(helpMenu, MI_About);

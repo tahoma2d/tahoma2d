@@ -177,7 +177,7 @@ void convertFromVI(const TLevelReaderP &lr, const TPaletteP &plt,
   }
   maxBbox = maxBbox.enlarge(2);
   if (width)  // calcolo l'affine
-    aff   = TScale((double)width / maxBbox.getLx());
+    aff = TScale((double)width / maxBbox.getLx());
   maxBbox = aff * maxBbox;
 
   for (i = 0; i < (int)images.size(); i++) {
@@ -365,6 +365,7 @@ int main(int argc, char *argv[]) {
 
   TEnv::setRootVarName(rootVarName);
   TEnv::setSystemVarPrefix(systemVarPrefix);
+  TEnv::setApplicationFileName(argv[0]);
   TFilePath fp = TEnv::getStuffDir();
 
   string msg;

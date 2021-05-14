@@ -65,6 +65,7 @@ void MyFileSystemWatcher::addPaths(const QStringList &paths, bool onlyNewPath) {
   if (paths.isEmpty()) return;
   for (int p = 0; p < paths.size(); p++) {
     QString path = paths.at(p);
+    if (path.isEmpty() || path.isNull()) continue;
     // if the path is not watched yet, try to start watching it
     if (!m_watchedPath.contains(path)) {
       // symlink path will not be watched

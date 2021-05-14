@@ -552,6 +552,13 @@ void PreferencesPopup::onShowQuickToolbarClicked() {
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onModifyExpressionOnMovingReferencesChanged() {
+  TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
+      "modifyExpressionOnMovingReferences");
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onBlankCountChanged() {
   TApp::instance()->getCurrentScene()->notifyPreferenceChanged("BlankCount");
 }
@@ -1035,9 +1042,11 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {defaultProjectPath, tr("Default Project Path:")},
 
       // Import / Export
-      {ffmpegPath, tr("FFmpeg Path:")},
-      {ffmpegTimeout, tr("FFmpeg Timeout:")},
-      {fastRenderPath, tr("Fast Render Path:")},
+      {ffmpegPath, tr("Executable Directory:")},
+      {ffmpegTimeout, tr("Import/Export Timeout (seconds):")},
+      {fastRenderPath, tr("Fast Render Output Directory:")},
+      {rhubarbPath, tr("Executable Directory:")},
+      {rhubarbTimeout, tr("Analyze Audio Timeout (seconds):")},
 
       // Drawing
       {scanLevelType, tr("Scan File Format:")},
@@ -1066,7 +1075,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
        tr("Use higher DPI for calculations - Slower but more accurate")},
 
       // Tools
-      {dropdownShortcutsCycleOptions, tr("Dropdown Shortcuts:")},
+      // {dropdownShortcutsCycleOptions, tr("Dropdown Shortcuts:")}, // removed
       {FillOnlysavebox, tr("Use the TLV Savebox to Limit Filling Operations")},
       {multiLayerStylePickerEnabled,
        tr("Multi Layer Style Picker: Switch Levels by Picking")},
@@ -1075,6 +1084,8 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {cursorOutlineEnabled, tr("Show Cursor Size Outlines")},
       {levelBasedToolsDisplay, tr("Toolbar Display Behaviour:")},
       {useCtrlAltToResizeBrush, tr("Use Ctrl+Alt to Resize Brush")},
+      {temptoolswitchtimer,
+       tr("Temporary Tool Switch Shortcut Hold Time (ms):")},
 
       // Xsheet
       {xsheetLayoutPreference, tr("Column Header Layout*:")},
@@ -1104,6 +1115,9 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       // Animation
       {keyframeType, tr("Default Interpolation:")},
       {animationStep, tr("Animation Step:")},
+      {modifyExpressionOnMovingReferences,
+       tr("[Experimental Feature] ") +
+           tr("Automatically Modify Expression On Moving Referenced Objects")},
 
       // Preview
       {blanksCount, tr("Blank Frames:")},
@@ -1200,9 +1214,9 @@ QList<ComboBoxItem> PreferencesPopup::getComboItemList(
       {NumberingSystem, {{tr("Incremental"), 0}, {tr("Animation Sheet"), 1}}},
       {vectorSnappingTarget,
        {{tr("Strokes"), 0}, {tr("Guides"), 1}, {tr("All"), 2}}},
-      {dropdownShortcutsCycleOptions,
-       {{tr("Open the dropdown to display all options"), 0},
-        {tr("Cycle through the available options"), 1}}},
+      //{dropdownShortcutsCycleOptions,
+      // {{tr("Open the dropdown to display all options"), 0},
+      //  {tr("Cycle through the available options"), 1}}},
       {cursorBrushType,
        {{tr("Small"), "Small"},
         {tr("Large"), "Large"},
@@ -1257,9 +1271,9 @@ PreferencesPopup::PreferencesPopup()
   m_categoryList = new QListWidget(this);
   QStringList categories;
   categories << tr("General") << tr("Interface") << tr("Visualization")
-             << tr("Loading") << tr("Saving") << tr("Import/Export")
-             << tr("Drawing") << tr("Tools") << tr("Scene") << tr("Animation")
-             << tr("Preview") << tr("Onion Skin") << tr("Colors")
+             << tr("Loading") << tr("Saving") << tr("Drawing") << tr("Tools")
+             << tr("Scene") << tr("Animation") << tr("Preview")
+             << tr("Onion Skin") << tr("Colors") << tr("3rd Party Apps")
              << tr("Version Control") << tr("Touch/Tablet Settings");
   m_categoryList->addItems(categories);
   m_categoryList->setFixedWidth(160);
@@ -1272,7 +1286,6 @@ PreferencesPopup::PreferencesPopup()
   m_stackedWidget->addWidget(createVisualizationPage());
   m_stackedWidget->addWidget(createLoadingPage());
   m_stackedWidget->addWidget(createSavingPage());
-  m_stackedWidget->addWidget(createImportExportPage());
   m_stackedWidget->addWidget(createDrawingPage());
   m_stackedWidget->addWidget(createToolsPage());
   m_stackedWidget->addWidget(createXsheetPage());
@@ -1280,6 +1293,7 @@ PreferencesPopup::PreferencesPopup()
   m_stackedWidget->addWidget(createPreviewPage());
   m_stackedWidget->addWidget(createOnionSkinPage());
   m_stackedWidget->addWidget(createColorsPage());
+  m_stackedWidget->addWidget(createImportExportPage());
   m_stackedWidget->addWidget(createVersionControlPage());
   m_stackedWidget->addWidget(createTouchTabletPage());
   // createImportPrefsPage() must always be last
@@ -1591,6 +1605,8 @@ QWidget* PreferencesPopup::createSavingPage() {
   insertUI(resetUndoOnSavingLevel, lay);
   insertUI(doNotShowPopupSaveScene, lay);
 
+  insertUI(fastRenderPath, lay);
+
   lay->setRowStretch(lay->rowCount(), 1);
   widget->setLayout(lay);
   return widget;
@@ -1607,26 +1623,21 @@ QWidget* PreferencesPopup::createImportExportPage() {
   QWidget* widget  = new QWidget(this);
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
-
-  putLabel(
-      tr("Tahoma2D can use FFmpeg for additional file formats.\n") +
-          tr("FFmpeg is bundled with Tahoma2D,\n") +
-          tr("but you can provide the path to a different ffmpeg location."),
-      lay);
-  insertUI(ffmpegPath, lay);
-
-  putLabel(tr("Number of seconds to wait for FFmpeg to complete processing the "
-              "output:"),
+  putLabel(tr("External applications used by Tahoma2D.\nThese come bundled "
+              "with Tahoma2D, but you can set path to a different version."),
            lay);
-  putLabel(
-      tr("Note: FFmpeg begins working once all images have been processed."),
-      lay);
-  insertUI(ffmpegTimeout, lay);
 
-  putLabel(tr("Please indicate where you would like exports from Fast "
-              "Render (MP4) to go."),
-           lay);
-  insertUI(fastRenderPath, lay);
+  QGridLayout* ffmpegOptionsLay = insertGroupBox(tr("FFmpeg"), lay);
+  {
+    insertUI(ffmpegPath, ffmpegOptionsLay);
+    insertUI(ffmpegTimeout, ffmpegOptionsLay);
+  }
+
+  QGridLayout* rhubarbOptionsLay = insertGroupBox(tr("Rhubarb Lip Sync"), lay);
+  {
+    insertUI(rhubarbPath, rhubarbOptionsLay);
+    insertUI(rhubarbTimeout, rhubarbOptionsLay);
+  }
 
   lay->setRowStretch(lay->rowCount(), 1);
   insertFootNote(lay);
@@ -1646,13 +1657,16 @@ QWidget* PreferencesPopup::createDrawingPage() {
   insertUI(newLevelSizeToCameraSizeEnabled, lay);
   insertDualUIs(DefLevelWidth, DefLevelHeight, lay);
   // insertUI(DefLevelDpi, lay);
+  QGridLayout* creationLay = insertGroupBox(
+    tr("Frame Creation Options"), lay);
+  {
+    insertUI(NumberingSystem, creationLay, getComboItemList(NumberingSystem));
+    insertUI(EnableAutoStretch, creationLay);
+    insertUI(EnableAutoRenumber, creationLay);
+  }
   QGridLayout* autoCreationLay = insertGroupBoxUI(EnableAutocreation, lay);
   {
-    insertUI(NumberingSystem, autoCreationLay,
-             getComboItemList(NumberingSystem));
-    insertUI(EnableAutoStretch, autoCreationLay);
     insertUI(EnableCreationInHoldCells, autoCreationLay);
-    insertUI(EnableAutoRenumber, autoCreationLay);
   }
   insertUI(vectorSnappingTarget, lay, getComboItemList(vectorSnappingTarget));
   insertUI(saveUnpaintedInCleanup, lay);
@@ -1691,8 +1705,8 @@ QWidget* PreferencesPopup::createToolsPage() {
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
 
-  insertUI(dropdownShortcutsCycleOptions, lay,
-           getComboItemList(dropdownShortcutsCycleOptions));
+  // insertUI(dropdownShortcutsCycleOptions, lay,
+  //         getComboItemList(dropdownShortcutsCycleOptions));
   insertUI(FillOnlysavebox, lay);
   insertUI(multiLayerStylePickerEnabled, lay);
   QGridLayout* cursorOptionsLay = insertGroupBox(tr("Cursor Options"), lay);
@@ -1706,6 +1720,7 @@ QWidget* PreferencesPopup::createToolsPage() {
   insertUI(levelBasedToolsDisplay, lay,
            getComboItemList(levelBasedToolsDisplay));
   // insertUI(useCtrlAltToResizeBrush, lay);
+  insertUI(temptoolswitchtimer, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
   widget->setLayout(lay);
@@ -1767,9 +1782,15 @@ QWidget* PreferencesPopup::createAnimationPage() {
 
   insertUI(keyframeType, lay, getComboItemList(keyframeType));
   insertUI(animationStep, lay);
+  insertUI(modifyExpressionOnMovingReferences, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
   widget->setLayout(lay);
+
+  m_onEditedFuncMap.insert(
+      modifyExpressionOnMovingReferences,
+      &PreferencesPopup::onModifyExpressionOnMovingReferencesChanged);
+
   return widget;
 }
 
@@ -1890,7 +1911,7 @@ QWidget* PreferencesPopup::createVersionControlPage() {
 
   insertUI(SVNEnabled, lay);
   insertUI(automaticSVNFolderRefreshEnabled, lay);
-  insertUI(latestVersionCheckEnabled, lay);
+//  insertUI(latestVersionCheckEnabled, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
   insertFootNote(lay);
@@ -2103,16 +2124,17 @@ void PreferencesPopup::onImport() {
     // -- Settings
     destDir = ToonzFolder::getMyModuleDir();
     if (useLegacy)
-      srcDir = oldStuffPath + (L"profiles/layouts/settings." +
-                               TSystem::getUserName().toStdWString());
+      srcDir = oldStuffPath + TFilePath(L"profiles/layouts/settings." +
+                                        TSystem::getUserName().toStdWString());
     else
-      srcDir = oldStuffPath +
-               (L"profiles/users/" + TSystem::getUserName().toStdWString());
+      srcDir = oldStuffPath + TFilePath(L"profiles/users/" +
+                                        TSystem::getUserName().toStdWString());
     if (!TFileStatus(srcDir).doesExist())
       DVGui::warning("Failed to process Settings.\nCould not find " +
                      srcDir.getQString());
     else {
-      QString origFfmpegPath = Preferences::instance()->getFfmpegPath();
+      QString origFfmpegPath  = Preferences::instance()->getFfmpegPath();
+      QString origRhubarbPath = Preferences::instance()->getRhubarbPath();
 
       QFileInfoList fil = QDir(toQString(srcDir)).entryInfoList();
       int i;
@@ -2133,11 +2155,12 @@ void PreferencesPopup::onImport() {
       // it to find it again otherwise it will point to old location
       Preferences::instance()->load();
       Preferences::instance()->setValue(ffmpegPath, origFfmpegPath);
+      Preferences::instance()->setValue(rhubarbPath, origRhubarbPath);
     }
 
     if (useLegacy) {
       // -- Environment variables
-      srcDir = oldStuffPath + L"profiles/env";
+      srcDir = oldStuffPath + TFilePath("profiles/env");
       if (!TFileStatus(srcDir).doesExist())
         DVGui::warning("Failed to process Env.\nCould not find " +
                        srcDir.getQString());
@@ -2195,14 +2218,14 @@ void PreferencesPopup::onImport() {
   // --- Room Layouts
   //-------------------
   if (m_importRoomsCB->isChecked()) {
-    destDir = ToonzFolder::getMyModuleDir() + L"layouts/Default";
+    destDir = ToonzFolder::getMyModuleDir() + TFilePath("layouts/Default");
     if (useLegacy)
-      srcDir = oldStuffPath + (L"profiles/layouts/personal/Default." +
-                               TSystem::getUserName().toStdWString());
+      srcDir = oldStuffPath + TFilePath(L"profiles/layouts/personal/Default." +
+                                        TSystem::getUserName().toStdWString());
     else
-      srcDir = oldStuffPath +
-               (L"profiles/users/" + TSystem::getUserName().toStdWString() +
-                L"/layouts/Default");
+      srcDir = oldStuffPath + TFilePath(L"profiles/users/" +
+                                        TSystem::getUserName().toStdWString() +
+                                        L"/layouts/Default");
     if (!TFileStatus(srcDir).doesExist())
       DVGui::warning("Failed to process Room Layouts.\nCould not find " +
                      srcDir.getQString());
@@ -2210,8 +2233,9 @@ void PreferencesPopup::onImport() {
       MainWindow* mainWin =
           qobject_cast<MainWindow*>(TApp::instance()->getMainWindow());
 
-      mainWin->resetRoomsLayout();
-
+      mainWin->setSaveSettingsOnQuit(false);
+      TSystem::rmDirTree(destDir);
+      TSystem::mkDir(destDir);
       TSystem::copyDir(destDir, srcDir, true);
     }
   }

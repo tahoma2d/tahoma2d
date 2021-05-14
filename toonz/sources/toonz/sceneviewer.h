@@ -215,6 +215,8 @@ class SceneViewer final : public GLWidgetForHighDpi,
 
   bool m_firstInitialized = true;
 
+  QAction *m_keyAction;
+
 public:
   enum ReferenceMode {
     NORMAL_REFERENCE   = 1,
@@ -439,6 +441,9 @@ protected:
 
   void registerContext();
 
+private:
+  void doQuit();
+
 public slots:
 
   void resetSceneViewer();
@@ -484,7 +489,7 @@ public slots:
   void onContextAboutToBeDestroyed();
   void onNewStopMotionImageReady();
   void onStopMotionLiveViewStopped();
-  void onPreferenceChanged(const QString& prefName);
+  void onPreferenceChanged(const QString &prefName);
 
 signals:
 
@@ -498,6 +503,7 @@ signals:
   void refreshNavi();
   // for updating the titlebar
   void previewToggled();
+  void viewerDestructing();
 };
 
 // Functions

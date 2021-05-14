@@ -129,7 +129,7 @@ AudioRecordingPopup::AudioRecordingPopup()
       recordGridLay->addWidget(new QLabel(tr(" ")), 1, 0, Qt::AlignCenter);
       recordGridLay->addWidget(m_audioLevelsDisplay, 2, 0, 1, 4,
                                Qt::AlignCenter);
-      QHBoxLayout *recordLay = new QHBoxLayout(this);
+      QHBoxLayout *recordLay = new QHBoxLayout();
       recordLay->setSpacing(4);
       recordLay->setContentsMargins(0, 0, 0, 0);
       {
@@ -140,7 +140,7 @@ AudioRecordingPopup::AudioRecordingPopup()
         recordLay->addStretch();
       }
       recordGridLay->addLayout(recordLay, 3, 0, 1, 4, Qt::AlignCenter);
-      QHBoxLayout *playLay = new QHBoxLayout(this);
+      QHBoxLayout *playLay = new QHBoxLayout();
       playLay->setSpacing(4);
       playLay->setContentsMargins(0, 0, 0, 0);
       {
@@ -175,7 +175,11 @@ AudioRecordingPopup::AudioRecordingPopup()
   m_probe->setSource(m_audioRecorder);
   QAudioEncoderSettings audioSettings;
   audioSettings.setCodec("audio/PCM");
-  audioSettings.setSampleRate(44100);
+  // setting the sample rate to some value (like 44100)
+  // may cause divide-by-zero crash in QAudioDeviceInfo::nearestFormat()
+  // so here we set the value to -1, as the documentation says;
+  // "A value of -1 indicates the encoder should make an optimal choice"
+  audioSettings.setSampleRate(-1);
   audioSettings.setChannelCount(1);
   audioSettings.setBitRate(16);
   audioSettings.setEncodingMode(QMultimedia::ConstantBitRateEncoding);

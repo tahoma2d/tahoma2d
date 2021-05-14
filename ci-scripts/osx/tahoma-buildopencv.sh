@@ -1,7 +1,8 @@
+#!/bin/bash
 cd thirdparty
 
 echo ">>> Cloning opencv"
-git clone https://github.com/opencv/opencv.git
+git clone https://github.com/tahoma2d/opencv
 
 cd opencv
 echo "*" >| .gitignore
@@ -12,7 +13,7 @@ then
 fi
 cd build
 
-echo ">>> Cmaking openv"
+echo ">>> Cmaking opencv"
 cmake -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_JASPER=OFF \
       -DBUILD_JPEG=OFF \

@@ -10,6 +10,7 @@
 #include "filebrowsermodel.h"
 #include "dvdirtreeview.h"
 #include "mainwindow.h"
+#include "filebrowserpopup.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -60,9 +61,7 @@ ProjectPopup::ProjectPopup(bool isModal)
   m_prjNameLabel        = new QLabel(tr("Project Name:"), this);
   m_pathFieldLabel      = new QLabel(tr("Create Project In:"), this);
   m_nameFld             = new LineEdit();
-  m_recentProjectLayout = new QGridLayout(this);
-  m_recentProjectLayout->setSpacing(2);
-  m_recentProjectLayout->setMargin(4);
+  m_nameAsLabel         = new QLabel();
   m_projectLocationFld =
       new DVGui::FileField(this, getDocumentsPath().getQString());
   QString defaultProjectLocation =
@@ -72,6 +71,22 @@ ProjectPopup::ProjectPopup(bool isModal)
   }
 
   m_nameFld->setMaximumHeight(WidgetHeight);
+  m_nameAsLabel->setMaximumHeight(WidgetHeight);
+
+  m_showSettingsButton = new QPushButton("", this);
+  m_showSettingsButton->setObjectName("menuToggleButton");
+  m_showSettingsButton->setFixedSize(15, 15);
+  m_showSettingsButton->setIcon(createQIcon("menu_toggle"));
+  m_showSettingsButton->setCheckable(true);
+  m_showSettingsButton->setChecked(false);
+  m_showSettingsButton->setFocusPolicy(Qt::NoFocus);
+
+  m_useSubSceneCbs =
+      new CheckBox("*Separate assets into scene sub-folders");
+  m_useSubSceneCbs->setMaximumHeight(WidgetHeight);
+
+  m_settingsLabel = new QLabel(tr("Settings"), this);
+  m_settingsBox   = createSettingsBox();
 
   //----layout
   m_topLayout->setMargin(5);
@@ -85,6 +100,7 @@ ProjectPopup::ProjectPopup(bool isModal)
       upperLayout->addWidget(m_prjNameLabel, 0, 0,
                              Qt::AlignRight | Qt::AlignVCenter);
       upperLayout->addWidget(m_nameFld, 0, 1);
+      upperLayout->addWidget(m_nameAsLabel, 0, 1);
 
       upperLayout->addWidget(m_pathFieldLabel, 1, 0,
                              Qt::AlignRight | Qt::AlignVCenter);
@@ -93,6 +109,38 @@ ProjectPopup::ProjectPopup(bool isModal)
     upperLayout->setColumnStretch(0, 0);
     upperLayout->setColumnStretch(1, 1);
 
+    m_topLayout->addLayout(upperLayout);
+
+    QHBoxLayout *settingsLabelLay = new QHBoxLayout();
+    settingsLabelLay->setMargin(0);
+    settingsLabelLay->setSpacing(3);
+    {
+      settingsLabelLay->addWidget(m_showSettingsButton, 0);
+      settingsLabelLay->addWidget(m_settingsLabel, 0);
+      settingsLabelLay->addStretch(1);
+    }
+    m_topLayout->addLayout(settingsLabelLay, 0);
+    m_topLayout->addWidget(m_settingsBox, 0);
+  }
+
+  bool ret = connect(m_showSettingsButton, SIGNAL(toggled(bool)), m_settingsBox,
+                     SLOT(setVisible(bool)));
+
+  pm->addListener(this);
+}
+//-----------------------------------------------------------------------------
+
+QFrame *ProjectPopup::createSettingsBox() {
+  QFrame *projectSettingsBox = new QFrame(this);
+  projectSettingsBox->setObjectName("ProjectSettingsBox");
+
+  TProjectManager *pm = TProjectManager::instance();
+
+  QGridLayout *lay = new QGridLayout();
+  lay->setMargin(5);
+  lay->setHorizontalSpacing(5);
+  lay->setVerticalSpacing(10);
+  {
     std::vector<std::string> folderNames;
     pm->getFolderNames(folderNames);
     int i;
@@ -101,48 +149,52 @@ ProjectPopup::ProjectPopup(bool isModal)
       QString qName    = QString::fromStdString(name);
       FileField *ff    = new FileField(0, qName);
       m_folderFlds.append(qMakePair(name, ff));
-      // upperLayout->addWidget(new QLabel("+" + qName, this), i + 2, 0,
-      //                       Qt::AlignRight | Qt::AlignVCenter);
-      upperLayout->addWidget(ff, i + 3, 1);
-      ff->hide();
+      bool assetFolder = false;
+      if (qName == "drawings" || qName == "extras" || qName == "inputs")
+        assetFolder = true;
+      QLabel *label = new QLabel("+" + qName + (assetFolder ? "*" : ""), this);
+      lay->addWidget(label, i + 4, 0, Qt::AlignRight | Qt::AlignVCenter);
+      lay->addWidget(ff, i + 4, 1);
     }
+/*
     std::vector<std::tuple<QString, std::string>> cbs = {
         std::make_tuple(tr("Append $scenepath to +drawings"),
                         TProject::Drawings),
         std::make_tuple(tr("Append $scenepath to +inputs"), TProject::Inputs),
-        std::make_tuple(tr("Append $scenepath to +extras"), TProject::Extras)};
-    int currentRow = upperLayout->rowCount();
+        std::make_tuple(tr("Append $scenepath to +extras"), TProject::Extras) };
+    int currentRow = lay->rowCount();
 
     for (int i = 0; i < cbs.size(); ++i) {
       auto const &name       = std::get<0>(cbs[i]);
       auto const &folderName = std::get<1>(cbs[i]);
       CheckBox *cb           = new CheckBox(name);
       cb->setMaximumHeight(WidgetHeight);
-      upperLayout->addWidget(cb, currentRow + i, 1);
+      lay->addWidget(cb, currentRow + i, 1);
       m_useScenePathCbs.append(qMakePair(folderName, cb));
       cb->hide();
     }
-    m_topLayout->addLayout(upperLayout);
-    m_projectGB = new QGroupBox(tr("Recent Projects"), this);
-    m_projectGB->setLayout(m_recentProjectLayout);
-    m_projectGB->setAlignment(Qt::AlignLeft);
-    m_topLayout->addWidget(m_projectGB);
-    m_projectGB->hide();
+*/
+    int currentRow = lay->rowCount();
+    lay->addWidget(m_useSubSceneCbs, currentRow, 1);
   }
 
-  pm->addListener(this);
+  projectSettingsBox->setLayout(lay);
+
+  return projectSettingsBox;
 }
 
 //-----------------------------------------------------------------------------
 
 void ProjectPopup::updateFieldsFromProject(TProject *project) {
   m_nameFld->setText(toQString(project->getName()));
+  m_nameAsLabel->setText(toQString(project->getName()));
   int i;
   for (i = 0; i < m_folderFlds.size(); i++) {
     std::string folderName = m_folderFlds[i].first;
     TFilePath path         = project->getFolder(folderName);
     m_folderFlds[i].second->setPath(toQString(path));
   }
+/*
   for (i = 0; i < m_useScenePathCbs.size(); i++) {
     std::string folderName = m_useScenePathCbs[i].first;
     Qt::CheckState cbState =
@@ -152,6 +204,10 @@ void ProjectPopup::updateFieldsFromProject(TProject *project) {
     cb->setCheckState(cbState);
     cb->blockSignals(signalesAlreadyBlocked);
   }
+*/
+  m_useSubSceneCbs->blockSignals(true);
+  m_useSubSceneCbs->setChecked(project->getUseSubScenePath());
+  m_useSubSceneCbs->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -163,12 +219,16 @@ void ProjectPopup::updateProjectFromFields(TProject *project) {
     TFilePath folderPath(m_folderFlds[i].second->getPath().toStdWString());
     project->setFolder(folderName, folderPath);
   }
+/*
   for (i = 0; i < m_useScenePathCbs.size(); i++) {
     std::string folderName = m_useScenePathCbs[i].first;
     int cbState            = m_useScenePathCbs[i].second->checkState();
     bool useScenePath      = cbState == Qt::Checked;
     project->setUseScenePath(folderName, cbState);
   }
+*/
+  bool useScenePath = m_useSubSceneCbs->isChecked();
+  project->setUseSubScenePath(useScenePath);
   TProjectManager::instance()->notifyProjectChanged();
 }
 
@@ -196,25 +256,30 @@ void ProjectPopup::showEvent(QShowEvent *) {
 //-----------------------------------------------------------------------------
 
 ProjectSettingsPopup::ProjectSettingsPopup() : ProjectPopup(false) {
-  setWindowTitle(tr("Switch Project"));
+  setWindowTitle(tr("Project Settings"));
 
-  m_prjNameLabel->hide();
+  //  m_prjNameLabel->hide();
   m_nameFld->hide();
   m_choosePrjLabel->hide();
-  m_pathFieldLabel->setText(tr("Project:"));
+  m_pathFieldLabel->hide();
+  m_projectLocationFld->hide();
+  m_showSettingsButton->hide();
+  m_settingsLabel->hide();
 
   int i;
   for (i = 0; i < m_folderFlds.size(); i++) {
     FileField *ff = m_folderFlds[i].second;
     connect(ff, SIGNAL(pathChanged()), this, SLOT(onFolderChanged()));
   }
+/*
   for (i = 0; i < m_useScenePathCbs.size(); i++) {
     CheckBox *cb = m_useScenePathCbs[i].second;
     connect(cb, SIGNAL(stateChanged(int)), this,
             SLOT(onUseSceneChekboxChanged(int)));
   }
-  connect(m_projectLocationFld, &DVGui::FileField::pathChanged, this,
-          &ProjectSettingsPopup::projectChanged);
+  */
+  connect(m_useSubSceneCbs, SIGNAL(stateChanged(int)), this,
+          SLOT(onUseSceneChekboxChanged(int)));
 }
 
 //-----------------------------------------------------------------------------
@@ -341,74 +406,6 @@ void ProjectSettingsPopup::showEvent(QShowEvent *) {
   TProjectP currentProject = TProjectManager::instance()->getCurrentProject();
   updateFieldsFromProject(currentProject.getPointer());
 
-  if (m_recentProjectLayout) {
-    while (m_recentProjectLayout->count() > 0) {
-      QLayoutItem *item = m_recentProjectLayout->takeAt(0);
-      QWidget *widget   = item->widget();
-      if (widget) delete widget;
-      delete item;
-    }
-  }
-
-  RecentFiles *recent = RecentFiles::instance();
-  QList<QString> recentProjects =
-      recent->getFilesNameList(RecentFiles::Project);
-
-  TProjectManager *pm = TProjectManager::instance();
-  static QPixmap closeProjectPixmap(
-      svgToPixmap(getIconThemePath("actions/18/folder_project.svg")));
-  // setPixmap(closeProjectPixmap);
-  int i = 0;
-  for (auto path : recentProjects) {
-    TFilePath projectPath(path);
-    if (TSystem::doesExistFileOrLevel(projectPath) &&
-        pm->isProject(projectPath)) {
-      QLabel *folderLabel = new QLabel(this);
-      folderLabel->setPixmap(closeProjectPixmap);
-      folderLabel->setFixedWidth(20);
-      folderLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-      m_recentProjectLayout->addWidget(folderLabel, i, 0, Qt::AlignRight);
-      // int slashCount    = path.count("\\");
-      // QString lookFor   = slashCount > 0 ? "\\" : "//";
-      QString labelText = QString::fromStdString(projectPath.getName());
-      // if (labelText.count(lookFor) > 4) {
-      //  while (labelText.count(lookFor) > 4) {
-      //    int firstIndex = labelText.indexOf(lookFor, 0);
-      //    labelText.remove(0, firstIndex + 1);
-      //  }
-      //  labelText.insert(0, "..." + lookFor);
-      //}
-      ClickableProjectLabel *projectLabel =
-          new ClickableProjectLabel(labelText, this);
-      projectLabel->setPath(path);
-      projectLabel->setToolTip(path);
-      m_recentProjectLayout->addWidget(projectLabel, i, 1, Qt::AlignLeft);
-      connect(projectLabel, &ClickableProjectLabel::onMouseRelease, [=]() {
-        m_projectLocationFld->blockSignals(true);
-        m_projectLocationFld->setPath(projectLabel->getPath());
-        m_projectLocationFld->blockSignals(false);
-        projectChanged();
-      });
-      i++;
-    }
-  }
-  if (recentProjects.size() > 0) {
-    m_projectGB->show();
-    m_recentProjectLayout->setColumnStretch(0, 0);
-    m_recentProjectLayout->setColumnStretch(1, 10);
-  } else
-    m_projectGB->hide();
-
-  m_nameFld->setText("");
-
-  m_projectLocationFld->blockSignals(true);
-  m_projectLocationFld->setPath(TProjectManager::instance()
-                                    ->getCurrentProjectPath()
-                                    .getParentDir()
-                                    .getQString());
-  m_oldPath = TFilePath(m_projectLocationFld->getPath());
-  m_projectLocationFld->blockSignals(false);
-
   QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
   sizePolicy.setHorizontalStretch(0);
   sizePolicy.setVerticalStretch(0);
@@ -452,7 +449,9 @@ ProjectCreatePopup::ProjectCreatePopup() : ProjectPopup(true) {
 
   m_prjNameLabel->show();
   m_nameFld->show();
+  m_nameAsLabel->hide();
   m_choosePrjLabel->hide();
+  m_settingsBox->setVisible(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -531,26 +530,30 @@ void ProjectCreatePopup::showEvent(QShowEvent *) {
     fldName = QString::fromStdString(m_folderFlds[i].first);
     m_folderFlds[i].second->setPath(fldName);
   }
+/*
   for (i = 0; i < m_useScenePathCbs.size(); i++) {
     CheckBox *cb                = m_useScenePathCbs[i].second;
     bool signalesAlreadyBlocked = cb->blockSignals(true);
     cb->setChecked(false);
     cb->blockSignals(signalesAlreadyBlocked);
   }
+*/
+  m_useSubSceneCbs->blockSignals(true);
+  m_useSubSceneCbs->setChecked(false);
+  m_useSubSceneCbs->blockSignals(false);
+
   QString defaultProjectLocation =
       Preferences::instance()->getDefaultProjectPath();
   if (TSystem::doesExistFileOrLevel(TFilePath(defaultProjectLocation))) {
     m_projectLocationFld->setPath(defaultProjectLocation);
   }
   m_nameFld->setText("");
+  m_nameAsLabel->setText("");
 
-  resize(600, 150);
   QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
   sizePolicy.setHorizontalStretch(0);
   sizePolicy.setVerticalStretch(0);
   setSizePolicy(sizePolicy);
-  setMinimumSize(QSize(600, 150));
-  setMaximumSize(QSize(600, 150));
   setFixedSize(width(), height());
   setSizeGripEnabled(false);
 }
@@ -593,3 +596,87 @@ void ClickableProjectLabel::leaveEvent(QEvent *) {
 
 OpenPopupCommandHandler<ProjectCreatePopup> openProjectCreatePopup(
     MI_NewProject);
+
+//-----------------------------------------------------------------------------
+
+class OpenRecentProjectCommandHandler final : public MenuItemHandler {
+public:
+  OpenRecentProjectCommandHandler() : MenuItemHandler(MI_OpenRecentProject) {}
+  void execute() override {
+    QAction *act = CommandManager::instance()->getAction(MI_OpenRecentProject);
+    DVMenuAction *menu = dynamic_cast<DVMenuAction *>(act->menu());
+    int index          = menu->getTriggeredActionIndex();
+
+    TProjectManager *pm = TProjectManager::instance();
+    TFilePath fp        = TFilePath(
+        RecentFiles::instance()->getFilePath(index, RecentFiles::Project));
+
+    if (!pm->isProject(fp)) {
+      DVGui::warning(tr("Project could not be found."));
+      return;
+    }
+
+    if (!IoCmd::saveSceneIfNeeded(QObject::tr("Open Recent Project"))) return;
+
+    TFilePath path = pm->projectFolderToProjectPath(fp);
+
+    if (path == pm->getCurrentProjectPath()) return;
+
+    pm->setCurrentProjectPath(path);
+
+    TProject *projectP =
+        TProjectManager::instance()->getCurrentProject().getPointer();
+
+    // In case the project file was upgraded to current version, save it now
+    if (projectP->getProjectPath() != path) {
+      projectP->save();
+    }
+    RecentFiles::instance()->addFilePath(fp.getQString(), RecentFiles::Project);
+    IoCmd::newScene();
+  }
+} OpenRecentProjectCommandHandler;
+
+//-----------------------------------------------------------------------------
+
+class LoadProjectCommandHandler final : public MenuItemHandler {
+public:
+  LoadProjectCommandHandler() : MenuItemHandler(MI_LoadProject) {}
+  void execute() override {
+    TProjectManager *pm = TProjectManager::instance();
+    TFilePath fp;
+
+    static GenericLoadFilePopup *popup = 0;
+    if (popup == 0) {
+      popup = new GenericLoadFilePopup(QObject::tr("Open Project"));
+      popup->setFileMode(true);
+    }
+
+    fp = popup->getPath();
+    if (fp == TFilePath()) return;
+
+    if (!pm->isProject(fp)) {
+      DVGui::warning(
+          tr("No project found at this location. Please select another "
+             "location."));
+      return;
+    }
+
+    if (!IoCmd::saveSceneIfNeeded(QObject::tr("Load Project"))) return;
+
+    TFilePath path = pm->projectFolderToProjectPath(fp);
+
+    if (path == pm->getCurrentProjectPath()) return;
+
+    pm->setCurrentProjectPath(path);
+
+    TProject *projectP =
+        TProjectManager::instance()->getCurrentProject().getPointer();
+
+    // In case the project file was upgraded to current version, save it now
+    if (projectP->getProjectPath() != path) {
+      projectP->save();
+    }
+    RecentFiles::instance()->addFilePath(fp.getQString(), RecentFiles::Project);
+    IoCmd::newScene();
+  }
+} LoadProjectCommandHandler;

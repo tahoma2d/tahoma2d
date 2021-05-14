@@ -62,7 +62,7 @@ $ rm /usr/local/lib/cmake/glew
 These steps will put the Tahoma2D repository under /Users/yourlogin/Documents.
 ```
 $ cd ~/Documents   #or where you want to store the repository#
-$ git clone https://github.com/turtletooth/tahoma2d
+$ git clone https://github.com/tahoma2d/tahoma2d
 $ cd tahoma2d
 $ git lfs pull
 $ cd thirdparty/boost

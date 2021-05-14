@@ -59,7 +59,7 @@ void TFilmstripSelection::enableCommands() {
       (type == PLI_XSHLEVEL || type == TZP_XSHLEVEL || type == MESH_XSHLEVEL ||
        (type == OVL_XSHLEVEL && path.getType() != "psd" &&
         path.getType() != "gif" && path.getType() != "mp4" &&
-        path.getType() != "webm"));
+        path.getType() != "webm" && path.getType() != "mov"));
 
   TRasterImageP ri = (TRasterImageP)sl->getSimpleLevel()->getFrame(
       sl->getSimpleLevel()->getFirstFid(), false);
@@ -239,10 +239,15 @@ void TFilmstripSelection::copyFrames() {
 void TFilmstripSelection::cutFrames() {
   TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
   if (sl) {
+    int firstSelectedIndex = sl->fid2index(*m_selectedFrames.begin());
+    assert(firstSelectedIndex >= 0);
     FilmstripCmd::cut(sl, m_selectedFrames);
     selectNone();
-    TApp::instance()->getCurrentFrame()->setFid(sl->getFirstFid());
-    select(sl->getFirstFid());
+    TFrameId fId = (firstSelectedIndex == 0)
+                       ? sl->getFirstFid()
+                       : sl->getFrameId(firstSelectedIndex - 1);
+    TApp::instance()->getCurrentFrame()->setFid(fId);
+    select(fId);
   }
 }
 

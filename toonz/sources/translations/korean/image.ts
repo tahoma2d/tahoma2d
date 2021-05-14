@@ -232,14 +232,6 @@ Please try raising the FFmpeg timeout in Preferences.</source>
         <translation>8(그레이 스케일)</translation>
     </message>
     <message>
-        <source>32(RGBM)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>64(RGBM)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Orientation</source>
         <translation>방향</translation>
     </message>
@@ -274,6 +266,14 @@ Please try raising the FFmpeg timeout in Preferences.</source>
     <message>
         <source>Right Bottom</source>
         <translation>오른쪽 하단</translation>
+    </message>
+    <message>
+        <source>32(RGBA)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>64(RGBA)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

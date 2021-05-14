@@ -119,7 +119,8 @@ bool isAreadOnlyLevel(const TFilePath &path) {
       (path.getDots() == ".." &&
        (path.getType() == "tlv" || path.getType() == "tpl"))) {
     if (path.getType() == "psd" || path.getType() == "gif" ||
-        path.getType() == "mp4" || path.getType() == "webm")
+        path.getType() == "mp4" || path.getType() == "webm" ||
+        path.getType() == "mov")
       return true;
     if (!TSystem::doesExistFileOrLevel(path)) return false;
     TFileStatus fs(path);
@@ -840,10 +841,15 @@ void TXshSimpleLevel::eraseFrame(const TFrameId &fid) {
   getHookSet()->eraseFrame(fid);
 
   ImageManager *im = ImageManager::instance();
+  TImageCache *ic  = TImageCache::instance();
   {
     im->unbind(getImageId(fid, Normal));
     im->unbind(getImageId(fid, Scanned));
     im->unbind(getImageId(fid, CleanupPreview));
+    // remove icon cache as well
+    ic->remove(getIconId(fid, Normal));
+    ic->remove(getIconId(fid, Scanned));
+    ic->remove(getIconId(fid, CleanupPreview));
 
     if (m_type == PLI_XSHLEVEL) im->unbind(rasterized(getImageId(fid)));
 
@@ -858,13 +864,17 @@ void TXshSimpleLevel::eraseFrame(const TFrameId &fid) {
 
 void TXshSimpleLevel::clearFrames() {
   ImageManager *im = ImageManager::instance();
-
+  TImageCache *ic  = TImageCache::instance();
   // Unbind frames
   FramesSet::iterator ft, fEnd = m_frames.end();
   for (ft = m_frames.begin(); ft != fEnd; ++ft) {
     im->unbind(getImageId(*ft, Scanned));
     im->unbind(getImageId(*ft, Cleanupped));
     im->unbind(getImageId(*ft, CleanupPreview));
+    // remove icon cache as well
+    ic->remove(getIconId(*ft, Normal));
+    ic->remove(getIconId(*ft, Scanned));
+    ic->remove(getIconId(*ft, CleanupPreview));
 
     if (m_type == PLI_XSHLEVEL) im->unbind(rasterized(getImageId(*ft)));
 
@@ -1168,8 +1178,10 @@ void TXshSimpleLevel::load() {
   } else {
     // Not a scan + cleanup level
 
-    if (m_path.getType() == "psd" &&
-        this->getScene()->getVersionNumber().first < 71)
+    // Loading PSD files via load level command needs to convert layerID in the
+    // file path to layer name here. The conversion is not needed on loading
+    // scene as the file path loaded from the scene file is already converted.
+    if (m_path.getType() == "psd" && !this->getScene()->isLoading())
       m_path = getLevelPathAndSetNameWithPsdLevelName(this);
 
     TFilePath path = getScene()->decodeFilePath(m_path);
@@ -2455,7 +2467,7 @@ bool TXshSimpleLevel::isFrameReadOnly(TFrameId fid) {
     TFilePath fullPath   = getScene()->decodeFilePath(m_path);
     std::string fileType = fullPath.getType();
     if (fileType == "psd" || fileType == "gif" || fileType == "mp4" ||
-        fileType == "webm")
+        fileType == "webm" || fileType == "mov")
       return true;
     TFilePath path =
         fullPath.getDots() == ".." ? fullPath.withFrame(fid) : fullPath;

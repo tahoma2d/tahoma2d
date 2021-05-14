@@ -796,7 +796,11 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
     , m_editPreviewSubCamera(false)
     , m_locator(NULL)
     , m_isLocator(false)
-    , m_isBusyOnTabletMove(false) {
+    , m_isBusyOnTabletMove(false)
+    , m_mousePanning(0)
+    , m_mouseZooming(0)
+    , m_mouseRotating(0)
+    , m_keyAction(0) {
   m_visualSettings.m_sceneProperties =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
   m_stopMotion = StopMotion::instance();
@@ -852,6 +856,8 @@ SceneViewer::~SceneViewer() {
 
   int ret = l_contexts.erase(m_currentContext);
   if (ret) TGLDisplayListsManager::instance()->releaseContext(m_currentContext);
+
+  emit viewerDestructing();
 }
 
 //-------------------------------------------------------------------------------
@@ -1203,6 +1209,9 @@ void SceneViewer::onStopMotionLiveViewStopped() {
 void SceneViewer::onPreferenceChanged(const QString &prefName) {
   if (prefName == "ColorCalibration") {
     if (Preferences::instance()->isColorCalibrationEnabled()) {
+      // if the window is so shriked that the gl widget is empty,
+      // showEvent can be called before creating the context.
+      if (!context()) return;
       makeCurrent();
       if (!m_lutCalibrator)
         m_lutCalibrator = new LutCalibrator();
@@ -1241,6 +1250,8 @@ void SceneViewer::initializeGL() {
     resizeGL(width(), height());
     update();
   }
+  // re-computing the display list for the table
+  m_tableDLId = -1;
 }
 
 //-----------------------------------------------------------------------------
@@ -3117,8 +3128,9 @@ void SceneViewer::posToColumnIndexes(const TPointD &p,
   OnionSkinMask osm      = app->getCurrentOnionSkin()->getOnionSkinMask();
 
   TPointD pos = TPointD(p.x - width() / 2, p.y - height() / 2);
-  Stage::Picker picker(getViewMatrix(), pos, m_visualSettings);
-  picker.setDistance(distance);
+  Stage::Picker picker(getViewMatrix(), pos, m_visualSettings,
+                       getDevPixRatio());
+  picker.setMinimumDistance(distance);
 
   TXshSimpleLevel::m_rasterizePli = 0;
 
@@ -3156,8 +3168,9 @@ int SceneViewer::posToRow(const TPointD &p, double distance,
   OnionSkinMask osm   = app->getCurrentOnionSkin()->getOnionSkinMask();
 
   TPointD pos = TPointD(p.x - width() / 2, p.y - height() / 2);
-  Stage::Picker picker(getViewMatrix(), pos, m_visualSettings);
-  picker.setDistance(distance);
+  Stage::Picker picker(getViewMatrix(), pos, m_visualSettings,
+                       getDevPixRatio());
+  picker.setMinimumDistance(distance);
 
   if (app->getCurrentFrame()->isEditingLevel()) {
     Stage::visit(picker, app->getCurrentLevel()->getLevel(),
@@ -3545,6 +3558,8 @@ void SceneViewer::onContextAboutToBeDestroyed() {
   makeCurrent();
   m_lutCalibrator->cleanup();
   doneCurrent();
+  disconnect(context(), SIGNAL(aboutToBeDestroyed()), this,
+             SLOT(onContextAboutToBeDestroyed()));
 }
 
 //-----------------------------------------------------------------------------

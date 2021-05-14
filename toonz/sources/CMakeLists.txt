@@ -102,6 +102,7 @@ endif()
 option(WITH_SYSTEM_LZO "Use the system LZO library instead of 'thirdpary'" ${_init_SYSTEM_LZO})
 option(WITH_SYSTEM_SUPERLU "Use the system SuperLU library instead of 'thirdpary'" ${_init_SYSTEM_SUPERLU})
 option(WITH_CANON "Build with Canon DSLR support - Requires Canon SDK" OFF)
+option(WITH_CRASHRPT "Build CrashRpt support - Requires CrashRpt Library" OFF)
 
 # avoid using again
 option_defaults_clear()
@@ -144,7 +145,7 @@ if(BUILD_ENV_MSVC)
         return()
     endif()
     set(QT_LIB_PATH ${QT_PATH})
-    set(CMAKE_PREFIX_PATH "${QT_PATH}/lib/cmake/")
+    set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};${QT_PATH}/lib/cmake/")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4251")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251")
     add_definitions(
@@ -158,12 +159,12 @@ elseif(BUILD_ENV_APPLE)
     endif()
     message("PLATFORM:" ${PLATFORM})
     if(PLATFORM EQUAL 64)
-        set(QT_PATH "~/Qt5.9.2/5.9.2/clang_64/lib" CACHE PATH "Qt installation directory")
-        # set(QT_PATH "/usr/local/Cellar/qt/5.15.0/lib" CACHE PATH "Qt installation directory")
+        set(QT_PATH "~/Qt5.9.2/5.9.2/clang_${PLATFORM}/lib" CACHE PATH "Qt installation directory")
         set(QT_LIB_PATH "${QT_PATH}/")
-        set(CMAKE_PREFIX_PATH "${QT_LIB_PATH}cmake/")
-
-        message("CMAKE_PREFIX_PATH:" ${CMAKE_PREFIX_PATH})
+        set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};${QT_LIB_PATH}cmake/")
+        foreach(path ${CMAKE_PREFIX_PATH})
+          message("CMAKE_PREFIX_PATH: " ${path})
+        endforeach(path)
         add_definitions(
             -DMACOSX
             -Di386
@@ -277,6 +278,12 @@ if(BUILD_ENV_MSVC)
     add_definitions(
         -DGLUT_NO_LIB_PRAGMA
     )
+
+	if(WITH_CRASHRPT)
+		include_directories(
+			${SDKROOT}/crashrpt/include
+		)
+	endif()
 endif()
 
 if(BUILD_ENV_MSVC)
@@ -370,6 +377,10 @@ if(BUILD_ENV_MSVC)
     endif()
     set(MYPAINT_LIB_INCLUDE_DIRS ${SDKROOT}/libmypaint/dist/${PLATFORM}/include/libmypaint)
     set(MYPAINT_LIB_LDFLAGS ${SDKROOT}/libmypaint/dist/${PLATFORM}/libmypaint.lib)
+
+	if(WITH_CRASHRPT)
+		set(CRASHRPT_LIB ${SDKROOT}/crashrpt/CrashRpt1500.lib)
+	endif()
 elseif(BUILD_ENV_APPLE)
     find_library(GLUT_LIB GLUT)
     find_library(GL_LIB OpenGL)
@@ -395,7 +406,11 @@ elseif(BUILD_ENV_APPLE)
     if(GLEW-NOTFOUND)
         pkg_check_modules(GLEW REQUIRED glew)
     endif()
-    set(GLEW_LIB ${GLEW_LIBRARIES})
+    if (TARGET GLEW::GLEW)
+      set(GLEW_LIB GLEW::GLEW)
+    else()
+      set(GLEW_LIB ${GLEW_LIBRARIES})
+    endif()
 
     pkg_check_modules(LZ4_LIB REQUIRED liblz4)
 
@@ -487,7 +502,7 @@ elseif(BUILD_ENV_UNIXLIKE)
         pkg_check_modules(FREETYPE REQUIRED freetype2)
     endif()
     # Can be 'libmypaint' or 'libmypaint-1.x'
-    pkg_search_module(MYPAINT_LIB REQUIRED libmypaint libmypaint-1.3>=1.3)
+    pkg_search_module(MYPAINT_LIB REQUIRED libmypaint)
 
     find_library(TURBOJPEG_LIB turbojpeg)
     message("**************** turbojpeg lib:" ${TURBOJPEG_LIB})

@@ -8,16 +8,89 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
-        run: bash ./ci-scripts/osx/tahoma-install.sh
+        run: |
+          ci-scripts/osx/tahoma-install.sh
+          brew install ccache
+          mkdir /Users/runner/.ccache
+      - uses: actions/cache@v2
+        with:
+          path: |
+            /Users/runner/.ccache
+            /Users/runner/work/tahoma2d/taoma2d/thirdparty/aom
+            /Users/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg
+            /Users/runner/work/tahoma2d/taoma2d/thirdparty/opencv
+          key: ${{ runner.os }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-
+      - name: Get CanonSDK
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          wget --header="Authorization: token ${{ secrets.TAHOMA2D_TOKEN }}" --header="Accept:application/octet-stream" -O EDSDK_v131231_Macintosh.zip https://api.github.com/repos/tahoma2d/CanonSDK/releases/assets/25267390
+          unzip EDSDK_v131231_Macintosh.zip -d EDSDK_v131231_Macintosh
+          unzip EDSDK_v131231_Macintosh/Macintosh.dmg.zip -d EDSDK_v131231_Macintosh
+          7z x EDSDK_v131231_Macintosh/Macintosh.dmg -oEDSDK_v131231_Macintosh
+          mv EDSDK_v131231_Macintosh/Macintosh/EDSDK/* thirdparty/canon
+          cd thirdparty/canon/framework/EDSDK.framework/Versions
+          rm Current
+          ln -s A Current
+          cd ..
+          rm Resources EDSDK
+          ln -s Versions/Current/Resources Resources
+          ln -s Versions/Current/EDSDK EDSDK
+      - name: Get 3rd Party Apps
+        run: |
+          ci-scripts/osx/tahoma-get3rdpartyapps.sh
       - name: Build ffmpeg
-        run: bash ./ci-scripts/osx/tahoma-buildffmpeg.sh
+        run: |
+          export PATH="/usr/local/opt/ccache/libexec:$PATH"
+          ci-scripts/osx/tahoma-buildffmpeg.sh
       - name: Build OpenCV
-        run: bash ./ci-scripts/osx/tahoma-buildopencv.sh
+        run: |
+          export PATH="/usr/local/opt/ccache/libexec:$PATH"
+          ci-scripts/osx/tahoma-buildopencv.sh
       - name: Build Tahoma2D
-        run: bash ./ci-scripts/osx/tahoma-build.sh
+        run: |
+          export PATH="/usr/local/opt/ccache/libexec:$PATH"
+          ci-scripts/osx/tahoma-build.sh
       - name: Create Package
         run: bash ./ci-scripts/osx/tahoma-buildpkg.sh
       - uses: actions/upload-artifact@v1
         with:
           name: Tahoma2D-osx.dmg
           path: toonz/build/Tahoma2D-osx.dmg
+      - name: Get Nightly Release Date
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        run: |
+          echo "NIGHTLYDATE=$(date '+%Y-%m-%d')" >> $GITHUB_ENV
+          echo "NIGHTLYDATETIME=$(date '+%Y-%m-%d %H:%M:%S %Z')" >> $GITHUB_ENV
+      - name: Update Latest Nightly Release
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifactErrorsFailBuild: false
+          artifacts: toonz/build/Tahoma2D-osx.dmg
+          artifactContentType: "raw"
+          body: ${{ github.event.head_commit.message }}
+          name: Lastest Nightly ${{ env.NIGHTLYDATE }}
+          prerelease: true
+          replacesArtifacts: true
+          tag: nightly
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Nightlies Release
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifactErrorsFailBuild: false
+          artifacts: toonz/build/Tahoma2D-osx.dmg
+          artifactContentType: "raw"
+          body: ${{ github.event.head_commit.message }}
+          name: ${{ env.NIGHTLYDATETIME }}
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          owner: tahoma2d	  
+          prerelease: true
+          replacesArtifacts: true
+          repo: tahoma2d_nightlies
+          tag: nightly-${{ github.sha }}
+          token: ${{ secrets.TAHOMA2D_TOKEN }}

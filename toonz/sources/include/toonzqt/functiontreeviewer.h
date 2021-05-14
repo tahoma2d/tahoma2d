@@ -34,6 +34,7 @@ class TXsheet;
 class TParamContainer;
 class TFxHandle;
 class TObjectHandle;
+class TXsheetHandle;
 
 class FunctionTreeView;
 class FunctionViewer;
@@ -70,7 +71,7 @@ class FunctionViewer;
   TnzExt library).
 */
 
-class FunctionTreeModel final : public TreeModel, public TParamObserver {
+class DVAPI FunctionTreeModel final : public TreeModel, public TParamObserver {
   Q_OBJECT
 
 public:
@@ -85,6 +86,7 @@ to
 
     virtual bool isActive() const   = 0;
     virtual bool isAnimated() const = 0;
+    virtual bool isIgnored() const  = 0;
   };
 
   //----------------------------------------------------------------------------------
@@ -104,6 +106,7 @@ to
 
     bool isActive() const override;
     bool isAnimated() const override;
+    bool isIgnored() const override;
 
     virtual QString getShortName() const { return m_name; }
     virtual QString getLongName() const { return m_name; }
@@ -153,9 +156,9 @@ color, which
   //----------------------------------------------------------------------------------
 
   //! The model item representing a channel (i.e. a real-valued function).
-  class Channel final : public ParamWrapper,
-                        public Item,
-                        public TParamObserver {
+  class DVAPI Channel final : public ParamWrapper,
+                              public Item,
+                              public TParamObserver {
     FunctionTreeModel *m_model;  //!< (\p not \p owned) Reference to the model
     ChannelGroup
         *m_group;  //!< (\p not \p owned) Reference to the enclosing group
@@ -189,6 +192,7 @@ color, which
     void setIsActive(bool active);
 
     bool isAnimated() const override;
+    bool isIgnored() const override;
 
     bool isCurrent() const;
     void setIsCurrent(bool current);
@@ -313,7 +317,7 @@ public:
 
 //=============================================================================
 
-class FxChannelGroup final : public FunctionTreeModel::ChannelGroup {
+class DVAPI FxChannelGroup final : public FunctionTreeModel::ChannelGroup{
 public:
   TFx *m_fx;
 
@@ -337,7 +341,8 @@ public:
 
 //=============================================================================
 
-class StageObjectChannelGroup final : public FunctionTreeModel::ChannelGroup {
+class DVAPI StageObjectChannelGroup final
+    : public FunctionTreeModel::ChannelGroup {
 public:
   TStageObject *m_stageObject;  //!< (not owned) Referenced stage object
   FunctionTreeModel::ChannelGroup
@@ -381,6 +386,8 @@ class FunctionTreeView final : public TreeView {
   QColor m_textColor;  // text color (black)
   Q_PROPERTY(QColor TextColor READ getTextColor WRITE setTextColor)
 
+  TXsheetHandle *m_xshHandle;
+
 public:
   FunctionTreeView(FunctionViewer *parent);
 
@@ -391,6 +398,9 @@ public:
   void setTextColor(const QColor &color) { m_textColor = color; }
   QColor getTextColor() const { return m_textColor; }
   FunctionViewer *getViewer() { return m_viewer; }
+
+  void setXsheetHandle(TXsheetHandle *xshHandle) { m_xshHandle = xshHandle; }
+  TXsheetHandle *getXsheetHandle() { return m_xshHandle; }
 
 protected:
   void onClick(TreeModel::Item *item, const QPoint &itemPos,

@@ -450,8 +450,7 @@ void ShiftTraceTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       m_gadget = RotateGadget;
     }
 
-    int row = getViewer()->posToRow(e.m_pos, getPixelSize() * getPixelSize(),
-                                    false, true);
+    int row = getViewer()->posToRow(e.m_pos, 5.0, false, true);
     if (row >= 0) {
       int index         = -1;
       TApplication *app = TTool::getApplication();
@@ -530,15 +529,17 @@ void ShiftTraceTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
     m_oldPos            = pos;
     m_aff[m_ghostIndex] = TTranslation(delta) * m_aff[m_ghostIndex];
   } else if (m_gadget == ScaleGadget) {
-    TAffine aff = getGhostAff();
-    TPointD c   = aff * m_center[m_ghostIndex];
-    TPointD a   = m_oldPos - c;
-    TPointD b   = pos - c;
+    TAffine aff  = getGhostAff();
+    TPointD c    = m_center[m_ghostIndex];
+    TPointD a    = aff.inv() * m_oldPos - c;
+    TPointD b    = aff.inv() * pos - c;
+    TPointD imgC = aff * m_center[m_ghostIndex];
+
     if (e.isShiftPressed())
-      m_aff[m_ghostIndex] = m_oldAff * TScale(b.x / a.x, b.y / a.y);
+      m_aff[m_ghostIndex] = TScale(imgC, b.x / a.x, b.y / a.y) * m_oldAff;
     else {
       double scale        = std::max(b.x / a.x, b.y / a.y);
-      m_aff[m_ghostIndex] = m_oldAff * TScale(scale, scale);
+      m_aff[m_ghostIndex] = TScale(imgC, scale) * m_oldAff;
     }
   }
 

@@ -310,6 +310,9 @@ CleanupPopup::CleanupPopup()
   m_imgViewBox->setChecked(false);
   m_imageViewer->setVisible(false);
   m_imageViewer->resize(406, 306);
+  ImagePainter::VisualSettings settings;
+  settings.m_bg = 0x80000;  // set to white regardless of the flipbook bg
+  m_imageViewer->setVisual(settings);
 
   //---layout
   QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -563,7 +566,8 @@ bool CleanupPopup::analyzeCleanupList() {
       }
 
       // Prompt user for file conflict resolution
-      clt.m_resolution = Resolution(m_overwriteDialog->execute(&clt.m_outputPath));
+      clt.m_resolution =
+          Resolution(m_overwriteDialog->execute(&clt.m_outputPath));
       switch (clt.m_resolution) {
       case CANCEL:
         return false;
@@ -1253,7 +1257,9 @@ void CleanupPopup::cleanupFrame() {
       // Update the level data about the cleanupped frame
       sl->setFrameStatus(fid,
                          sl->getFrameStatus(fid) | TXshSimpleLevel::Cleanupped);
-      sl->setFrame(fid, TImageP());  // Invalidate the old image data
+
+      // sl->setFrame(fid, TImageP());  // Invalidate the old image data
+      sl->setFrame(fid, ti);  // replace with the new image data
 
       // Output the cleanupped image to disk
       try {

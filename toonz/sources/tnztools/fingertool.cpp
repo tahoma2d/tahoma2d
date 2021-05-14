@@ -565,7 +565,7 @@ void FingerTool::pick(const TPointD &pos) {
 
   int styleId =
       picker.pickStyleId(TScale(1.0 / subsampling) * pos + TPointD(-0.5, -0.5),
-                         getPixelSize() * getPixelSize(), modeValue);
+                         getPixelSize() * getPixelSize(), 1.0, modeValue);
 
   if (styleId < 0) return;
 

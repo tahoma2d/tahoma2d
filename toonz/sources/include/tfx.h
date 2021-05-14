@@ -503,6 +503,9 @@ public:
   // parameter is loaded. Do nothing by default.
   virtual void onObsoleteParamLoaded(const std::string &paramName) {}
 
+  void setFxVersion(int);
+  int getFxVersion() const;
+
 public:
   // Id-related functions
 

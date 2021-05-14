@@ -794,7 +794,12 @@ bool TApp::eventFilter(QObject *watched, QEvent *e) {
   }
   if (e->type() == QEvent::KeyRelease) {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
-    if (keyEvent->key() == Qt::Key_Space) {
+    std::string keyStr  = QKeySequence(keyEvent->key() + keyEvent->modifiers())
+                             .toString()
+                             .toStdString();
+    QAction *action = CommandManager::instance()->getActionFromShortcut(keyStr);
+    std::string actionId = CommandManager::instance()->getIdFromAction(action);
+    if (actionId == T_Hand || actionId == T_Zoom || actionId == T_Rotate) {
       if (!keyEvent->isAutoRepeat()) {
         SceneViewer *viewer = getActiveViewer();
         if (viewer) {
@@ -860,6 +865,12 @@ void TApp::setStatusBarFrameInfo(QString text) {
 
 void TApp::showMessage(QString message) {
   if (m_statusBar) m_statusBar->showMessage(message, 2000);
+}
+
+//-----------------------------------------------------------------------------
+
+void TApp::refreshStatusBar() {
+  if (m_statusBar) m_statusBar->refreshStatusBar();
 }
 
 //-----------------------------------------------------------------------------

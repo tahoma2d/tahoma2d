@@ -167,6 +167,19 @@ TPoint TFont::drawChar(QImage &outImage, TPoint &unused, wchar_t charcode,
     return TPoint(0, 0);
   }
 
+  // Workaround for unix when the user using the space character:
+  // alphaMapForGlyph with a space character returns an invalid
+  // QImage for some reason.
+  // Bug 3604: https://github.com/opentoonz/opentoonz/issues/3604
+#ifdef Q_OS_UNIX
+  if (chars[0] == L' ') {
+      outImage = QImage(raw.averageCharWidth(), raw.ascent() + raw.descent(),
+                        QImage::Format_Grayscale8);
+      outImage.fill(255);
+      return getDistance(charcode, nextCharCode);
+  }
+#endif
+
   QImage image = raw.alphaMapForGlyph(indices[0], QRawFont::PixelAntialiasing);
   if (image.format() != QImage::Format_Indexed8 &&
       image.format() != QImage::Format_Alpha8)

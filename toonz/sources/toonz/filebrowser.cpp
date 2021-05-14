@@ -146,7 +146,7 @@ QMutex levelFileMutex;
 
 inline bool isMultipleFrameType(std::string type) {
   return (type == "tlv" || type == "tzl" || type == "pli" || type == "avi" ||
-          type == "gif" || type == "mp4" || type == "webm");
+          type == "gif" || type == "mp4" || type == "webm" || type == "mov");
 }
 
 //=============================================================================
@@ -401,7 +401,7 @@ void FileBrowser::onFwdButtonPushed() {
 void FileBrowser::clearHistory() {
   int size = m_indexHistoryList.size();
   // leave the last item
-  for (int i        = 1; i < size; i++) m_indexHistoryList.removeLast();
+  for (int i = 1; i < size; i++) m_indexHistoryList.removeLast();
   m_currentPosition = 0;
   refreshHistoryButtons();
 }
@@ -1145,7 +1145,7 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
   for (i = 0; i < (int)files.size(); i++) {
     TFileType::Type type = TFileType::getInfo(files[i]);
     if (areResources && !TFileType::isResource(type)) areResources = false;
-    if (!areScenes && TFileType::isScene(type)) areScenes          = true;
+    if (!areScenes && TFileType::isScene(type)) areScenes = true;
   }
 
   bool areFullcolor = true;
@@ -1166,8 +1166,8 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
     if (clickedFile != TFilePath() && clickedFile.getType() == "tnz")
       title = tr("Load As Sub-Scene");
     else
-      title         = tr("Load");
-    QAction *action = new QAction(title, menu);
+      title = tr("Load");
+    QAction *action = new QAction(QIcon(createQIcon("import")), title, menu);
     ret             = ret &&
           connect(action, SIGNAL(triggered()), this, SLOT(loadResources()));
     menu->addAction(action);
@@ -1216,8 +1216,9 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
     if (!areFullcolor) menu->addSeparator();
   }
   if (files.size() == 1 && files[0].getType() != "tnz") {
-    QAction *action = new QAction(tr("Rename"), menu);
-    ret             = ret && connect(action, SIGNAL(triggered()), this,
+    QAction *action =
+        new QAction(QIcon(createQIcon("rename")), tr("Rename"), menu);
+    ret = ret && connect(action, SIGNAL(triggered()), this,
                          SLOT(renameAsToonzLevel()));
     menu->addAction(action);
   }
@@ -1691,7 +1692,7 @@ namespace {
 
 bool parsePathName(const QString &fullpath, QString &parentPath, QString &name,
                    QString &format) {
-  int index              = fullpath.lastIndexOf('\\');
+  int index = fullpath.lastIndexOf('\\');
   if (index == -1) index = fullpath.lastIndexOf('/');
 
   QString filename;

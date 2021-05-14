@@ -37,6 +37,10 @@
 
 #include "tenv.h"
 
+#include "tools/toolcommandids.h"
+#include "tools/cursormanager.h"
+#include "tools/cursors.h"
+
 #include <QPainter>
 #include <QScrollBar>
 #include <QMouseEvent>
@@ -1285,9 +1289,6 @@ void XsheetViewer::keyPressEvent(QKeyEvent *event) {
         locals.scrollHorizTo(x, visibleRect);
       }
       break;
-    case Qt::Key_Space:
-      m_panningArmed = true;
-      break;
     }
     break;
   }
@@ -1302,8 +1303,6 @@ void XsheetViewer::keyReleaseEvent(QKeyEvent *event) {
     m_columnArea->onControlPressed(false);
     m_layerFooterPanel->onControlPressed(false);
   }
-  if (event->key() == Qt::Key_Space && !event->isAutoRepeat())
-    m_panningArmed = false;
 }
 //-----------------------------------------------------------------------------
 
@@ -1668,8 +1667,8 @@ void XsheetViewer::changeWindowTitle() {
   QString sceneName = QString::fromStdWString(scene->getSceneName());
   if (sceneName.isEmpty()) sceneName = tr("Untitled");
   if (app->getCurrentScene()->getDirtyFlag()) sceneName += QString("*");
-  QString name      = tr("Scene: ") + sceneName;
   QString separator = "   |   ";
+  QString name      = tr("Scene: ") + sceneName;
   int frameCount    = scene->getFrameCount();
   name = name + separator + tr(std::to_string(frameCount).c_str()) +
          (frameCount == 1 ? tr(" Frame") : tr(" Frames"));
@@ -1683,7 +1682,7 @@ void XsheetViewer::changeWindowTitle() {
   TXshLevel *level = app->getCurrentLevel()->getLevel();
   if (level) {
     QString levelName = QString::fromStdWString(level->getName());
-    name += separator + tr("  Level: ") + levelName;
+    name += separator + tr("Level: ") + levelName;
   }
   // cell selection range
   if ((TSelection *)getCellSelection() ==
@@ -1691,12 +1690,12 @@ void XsheetViewer::changeWindowTitle() {
       !getCellSelection()->isEmpty()) {
     int r0, r1, c0, c1;
     getCellSelection()->getSelectedCells(r0, c0, r1, c1);
-    name += separator + tr("   Selected: ") + QString::number(r1 - r0 + 1) +
+    name += separator + tr("Selected: ") + QString::number(r1 - r0 + 1) +
             ((r1 - r0 + 1 == 1) ? tr(" frame : ") : tr(" frames * ")) +
             QString::number(c1 - c0 + 1) +
             ((c1 - c0 + 1 == 1) ? tr(" column") : tr(" columns"));
   }
-  TApp::instance()->setStatusBarFrameInfo(name);
+  TApp::instance()->setStatusBarFrameInfo("|   " + name);
   parentWidget()->setWindowTitle(name);
 }
 
@@ -1833,6 +1832,39 @@ QColor XsheetViewer::getSelectedColumnTextColor() const {
                             (int)currentColumnPixel.g,
                             (int)currentColumnPixel.b, 255);
   return currentColumnColor;
+}
+
+//-----------------------------------------------------------------------------
+
+bool XsheetViewer::event(QEvent *e) {
+  if (e->type() != QEvent::KeyPress && e->type() != QEvent::ShortcutOverride &&
+      e->type() != QEvent::KeyRelease)
+    return QFrame::event(e);
+
+  QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+
+  std::string keyStr = QKeySequence(keyEvent->key() + keyEvent->modifiers())
+                           .toString()
+                           .toStdString();
+  QAction *action = CommandManager::instance()->getActionFromShortcut(keyStr);
+  std::string actionId = CommandManager::instance()->getIdFromAction(action);
+
+  if (actionId != T_Hand) return QFrame::event(e);
+
+  if (e->type() == QEvent::KeyPress || e->type() == QEvent::ShortcutOverride) {
+    m_panningArmed = true;
+    action->setEnabled(false);
+    m_cellArea->updateCursor();
+    e->accept();
+    return true;
+  } else if (e->type() == QEvent::KeyRelease) {
+    if (!keyEvent->isAutoRepeat()) m_panningArmed = false;
+    action->setEnabled(true);
+    m_cellArea->updateCursor();
+    e->accept();
+    return true;
+  }
+  return QFrame::event(e);
 }
 
 //=============================================================================

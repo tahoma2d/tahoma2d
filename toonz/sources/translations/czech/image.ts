@@ -48,7 +48,7 @@
 <context>
     <name>PngWriterProperties</name>
     <message>
-        <location filename="../../image/png/tiio_png.cpp" line="738"/>
+        <location filename="../../image/png/tiio_png.cpp" line="746"/>
         <source>Alpha Channel</source>
         <translation>Alfa kanál</translation>
     </message>
@@ -56,7 +56,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="177"/>
+        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="214"/>
         <source>FFmpeg timed out.
 Please check the file for errors.
 If the file doesn&apos;t play or is incomplete, 
@@ -70,52 +70,52 @@ zkuste, prosím, zvednout dobu pro vypršení pro FFmpeg v Nastavení.</translat
 <context>
     <name>SgiWriterProperties</name>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1231"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1229"/>
         <source>Bits Per Pixel</source>
         <translation>Bitů na obrazový bod (pixel)</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1232"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1230"/>
         <source>24 bits</source>
         <translation>24 bitů</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1233"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1231"/>
         <source>32 bits</source>
         <translation>32 bitů</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1234"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1232"/>
         <source>48 bits</source>
         <translation>48 bitů</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1235"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1233"/>
         <source>64 bits</source>
         <translation>64 bitů</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1236"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1234"/>
         <source>8 bits (Greyscale)</source>
         <translation>8 bitů (odstíny šedi)</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1237"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1235"/>
         <source>Endianess</source>
         <translation>Endian</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1238"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1236"/>
         <source>Big Endian</source>
         <translation>Velký Endian</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1239"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1237"/>
         <source>Little Endian</source>
         <translation>Malý Endian</translation>
     </message>
     <message>
-        <location filename="../../image/sgi/filesgi.cpp" line="1240"/>
+        <location filename="../../image/sgi/filesgi.cpp" line="1238"/>
         <source>RLE-Compressed</source>
         <translation>Komprimace RLE</translation>
     </message>
@@ -282,14 +282,22 @@ zkuste, prosím, zvednout dobu pro vypršení pro FFmpeg v Nastavení.</translat
         <translation> 8 (odstíny šedi)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="737"/>
         <source>32(RGBM)</source>
-        <translation>32 (RGBM)</translation>
+        <translation type="vanished">32 (RGBM)</translation>
+    </message>
+    <message>
+        <source>64(RGBM)</source>
+        <translation type="vanished">64 (RGBM)</translation>
+    </message>
+    <message>
+        <location filename="../../image/tif/tiio_tif.cpp" line="737"/>
+        <source>32(RGBA)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="738"/>
-        <source>64(RGBM)</source>
-        <translation>64 (RGBM)</translation>
+        <source>64(RGBA)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="739"/>

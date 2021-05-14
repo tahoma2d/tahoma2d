@@ -492,7 +492,7 @@ LevelSettingsPopup::LevelSettingsPopup()
     m_topLayout->addWidget(dpiBox);
     dpiBox->hide();
 
-    QHBoxLayout* resLayout = new QHBoxLayout(this);
+    QHBoxLayout* resLayout = new QHBoxLayout();
     resLayout->addWidget(imageResTitle);
     resLayout->addWidget(m_imageResLabel);
     resLayout->addStretch();
@@ -948,7 +948,7 @@ void LevelSettingsPopup::onNameChanged() {
   QString text = m_nameFld->text();
   if (text.length() == 0) {
     error("The name " + text +
-          " you entered for the level is not valid.\n Please enter a different "
+          " you entered for the level is not valid.\nPlease enter a different "
           "name.");
     m_nameFld->setFocus();
     return;
@@ -1038,13 +1038,36 @@ void LevelSettingsPopup::onPathChanged() {
     }
   }
   if (lvlWithSamePath) {
+    /*
+        QString question;
+
+        question = "The path you entered for the level " +
+                   QString(::to_string(lvlWithSamePath->getName()).c_str()) +
+                   "is already used: this may generate some conflicts in the
+       file "
+                   "management.\nAre you sure you want to assign the same path
+       to "
+                   "two different levels?";
+        int ret = DVGui::MsgBox(question, QObject::tr("Yes"),
+       QObject::tr("No"));
+        if (ret == 0 || ret == 2) {
+          m_pathFld->setPath(toQString(oldPath));
+          return;
+        }
+    */
+    error(
+        tr("The file you entered is already used by another level.\nPlease "
+           "choose a different file"));
+    m_pathFld->setPath(toQString(oldPath));
+    return;
+  }
+
+  if (sl && sl->getDirtyFlag()) {
     QString question;
 
-    question = "The path you entered for the level " +
-               QString(::to_string(lvlWithSamePath->getName()).c_str()) +
-               "is already used: this may generate some conflicts in the file "
-               "management.\nAre you sure you want to assign the same path to "
-               "two different levels?";
+    question =
+        "The level has unsaved changes that will be lost when you change the "
+        "path.\nAre you sure you want to change the path?";
     int ret = DVGui::MsgBox(question, QObject::tr("Yes"), QObject::tr("No"));
     if (ret == 0 || ret == 2) {
       m_pathFld->setPath(toQString(oldPath));

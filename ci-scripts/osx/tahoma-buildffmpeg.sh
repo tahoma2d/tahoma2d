@@ -1,7 +1,32 @@
+#!/bin/bash
 cd thirdparty
 
+echo ">>> Cloning aom"
+mkdir aom
+cd aom
+echo "*" >| .gitignore
+
+git clone https://aomedia.googlesource.com/aom
+
+if [ ! -d build ]
+then
+   mkdir build
+fi
+cd build
+
+echo ">>> CMaking aom"
+cmake ../aom
+
+echo ">>> Making aom"
+make
+
+echo ">>> Installing aom"
+sudo make install
+
+cd ../..
+
 echo ">>> Cloning ffmpeg"
-git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+git clone https://github.com/tahoma2d/ffmpeg
 
 cd ffmpeg
 echo "*" >| .gitignore
@@ -48,36 +73,3 @@ make -j7 # runs 7 jobs in parallel
 echo ">>> Installing ffmpeg (shared)"
 sudo make install
 
-echo ">>> Configuring to build ffmpeg (static)"
-make clean
-
-export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
-export SDKROOT=`xcrun --show-sdk-path`
-./configure  --prefix=/usr/local \
-      --pkg-config-flags="--static" \
-      --enable-static \
-      --disable-shared \
-      --enable-pic \
-      --disable-shared \
-      --enable-pthreads \
-      --enable-version3 \
-      --enable-videotoolbox \
-      --enable-avresample \
-      --enable-libaom \
-      --enable-libxml2 \
-      --enable-libvpx \
-      --disable-ffplay \
-      --disable-sdl2 \
-      --disable-libjack \
-      --disable-indev=jack
-
-echo ">>> Building ffmpeg (static)"
-make -j7 # runs 7 jobs in parallel
-
-echo ">>> Installing to tahoma2d/thirdparty/ffmpeg/bin"
-if [ ! -d bin ]
-then
-   mkdir bin
-fi
-
-cp ffmpeg ffprobe bin/

@@ -7,24 +7,96 @@ jobs:
     runs-on: ubuntu-16.04
     strategy:
       matrix:
-        compiler: [ clang ]
+        compiler: [ gcc, clang ]
         include:
+          - compiler: gcc
+            cc: gcc
+            cxx: g++
           - compiler: clang
             cc: clang
             cxx: clang++
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
-        run: bash ./ci-scripts/linux/tahoma-install.sh
+        run: |
+          ci-scripts/linux/tahoma-install.sh
+          sudo apt-get install ccache
+      - uses: actions/cache@v2
+        with:
+          path: |
+            /home/runner/.ccache
+            /home/runner/work/tahoma2d/taoma2d/thirdparty/openh264
+            /home/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg
+            /home/runner/work/tahoma2d/taoma2d/thirdparty/opencv
+          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.compiler }}-
+            ${{ runner.os }}-
       - name: Build ffmpeg
-        run: bash ./ci-scripts/linux/tahoma-buildffmpeg.sh
+        run: |
+          export CC="ccache ${{ matrix.cc }}"
+          export CXX="ccache ${{ matrix.cxx }}"
+          ci-scripts/linux/tahoma-buildffmpeg.sh
       - name: Build OpenCV
-        run: bash ./ci-scripts/linux/tahoma-buildopencv.sh
+        run: |
+          export CC="ccache ${{ matrix.cc }}"
+          export CXX="ccache ${{ matrix.cxx }}"
+          ci-scripts/linux/tahoma-buildopencv.sh
+      - name: Build libmypaint
+        run: |
+          export CC="ccache ${{ matrix.cc }}"
+          export CXX="ccache ${{ matrix.cxx }}"
+          ci-scripts/linux/tahoma-buildlibmypaint.sh
       - name: Build Tahoma2D
-        run: bash ./ci-scripts/linux/tahoma-build.sh
+        run: |
+          export CC="ccache ${{ matrix.cc }}"
+          export CXX="ccache ${{ matrix.cxx }}"
+          ci-scripts/linux/tahoma-build.sh
+      - name: Get 3rd Party Apps
+        run: |
+          ci-scripts/linux/tahoma-get3rdpartyapps.sh
       - name: Create Package
-        run: bash ./ci-scripts/linux/tahoma-buildpkg.sh
+        run: |
+          ci-scripts/linux/tahoma-buildpkg.sh
+          mv toonz/build/Tahoma2D-linux.tar.gz toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
       - uses: actions/upload-artifact@v1
         with:
-          name: Tahoma2D-linux.tar.gz
-          path: toonz/build/Tahoma2D-linux.tar.gz
+          name: Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
+          path: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
+      - name: Get Nightly Release Date
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        run: |
+          echo "NIGHTLYDATE=$(date '+%Y-%m-%d')" >> $GITHUB_ENV
+          echo "NIGHTLYDATETIME=$(date '+%Y-%m-%d %H:%M:%S %Z')" >> $GITHUB_ENV
+      - name: Update Latest Nightly Release
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifactErrorsFailBuild: false
+          artifacts: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
+          artifactContentType: "raw"
+          body: ${{ github.event.head_commit.message }}
+          name: Lastest Nightly ${{ env.NIGHTLYDATE }}
+          prerelease: true
+          replacesArtifacts: true
+          tag: nightly
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Nightlies Release
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifactErrorsFailBuild: false
+          artifacts: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
+          artifactContentType: "raw"
+          body: ${{ github.event.head_commit.message }}
+          name: ${{ env.NIGHTLYDATETIME }}
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          owner: tahoma2d	  
+          prerelease: true
+          replacesArtifacts: true
+          repo: tahoma2d_nightlies
+          tag: nightly-${{ github.sha }}
+          token: ${{ secrets.TAHOMA2D_TOKEN }}

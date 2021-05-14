@@ -13,6 +13,8 @@
 #include "toonzqt/gutil.h"
 #include "toonzqt/imageutils.h"
 #include "toonzqt/dvscrollwidget.h"
+#include "toonzqt/fxselection.h"
+#include "stageobjectselection.h"
 
 // TnzLib includes
 #include "toonz/txsheethandle.h"
@@ -33,6 +35,7 @@
 
 #include "tools/cursormanager.h"
 #include "tools/cursors.h"
+#include "tools/toolcommandids.h"
 
 // Qt includes
 #include <QGraphicsSceneMouseEvent>
@@ -240,15 +243,15 @@ void SchematicSceneViewer::mousePressEvent(QMouseEvent *me) {
   m_oldScenePos = mapToScene(m_oldWinPos);
 
   if (m_buttonState == Qt::LeftButton) {
-    if (m_cursorMode == CursorMode::Zoom) {
+    if (m_cursorMode == CursorMode::Hand || m_panningArmed) {
+      m_mousePanPoint = m_touchDevice == QTouchDevice::TouchScreen
+        ? mapToScene(me->pos())
+        : me->pos() * getDevPixRatio();
+      m_panning = true;
+      return;
+    } else if (m_cursorMode == CursorMode::Zoom) {
       m_zoomPoint = me->pos();
       m_zooming   = true;
-      return;
-    } else if (m_cursorMode == CursorMode::Hand || m_panningArmed) {
-      m_mousePanPoint = m_touchDevice == QTouchDevice::TouchScreen
-                            ? mapToScene(me->pos())
-                            : me->pos() * getDevPixRatio();
-      m_panning = true;
       return;
     }
   } else if (m_buttonState == Qt::MidButton) {
@@ -348,9 +351,6 @@ void SchematicSceneViewer::mouseDoubleClickEvent(QMouseEvent *event) {
 //------------------------------------------------------------------
 
 void SchematicSceneViewer::keyPressEvent(QKeyEvent *ke) {
-  if (ke->key() == Qt::Key_Space) {
-    m_panningArmed = true;
-  }
   ke->ignore();
   QGraphicsView::keyPressEvent(ke);
   if (!ke->isAccepted()) SchematicZoomer(this).exec(ke);
@@ -359,10 +359,6 @@ void SchematicSceneViewer::keyPressEvent(QKeyEvent *ke) {
 //------------------------------------------------------------------
 
 void SchematicSceneViewer::keyReleaseEvent(QKeyEvent *ke) {
-  if (ke->key() == Qt::Key_Space && !ke->isAutoRepeat()) {
-    m_panningArmed = false;
-  }
-
   QGraphicsView::keyReleaseEvent(ke);
 }
 
@@ -397,12 +393,12 @@ void SchematicSceneViewer::wheelEvent(QWheelEvent *me) {
 
   default:  // Qt::MouseEventSynthesizedByQt,
             // Qt::MouseEventSynthesizedByApplication
-    {
-      std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
-                   "Qt::MouseEventSynthesizedByApplication"
-                << std::endl;
-      break;
-    }
+  {
+    std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
+                 "Qt::MouseEventSynthesizedByApplication"
+              << std::endl;
+    break;
+  }
 
   }  // end switch
 
@@ -435,8 +431,9 @@ void SchematicSceneViewer::zoomQt(bool zoomin, bool resetView) {
 #endif
   if ((scale2 < 100000 || !zoomin) && (scale2 > 0.001 * 0.05 || zoomin)) {
     double oldZoomScale = sqrt(scale2);
-    double zoomScale    = resetView ? 1 : ImageUtils::getQuantizedZoomFactor(
-                                           oldZoomScale, zoomin);
+    double zoomScale =
+        resetView ? 1
+                  : ImageUtils::getQuantizedZoomFactor(oldZoomScale, zoomin);
     QMatrix scale =
         QMatrix().scale(zoomScale / oldZoomScale, zoomScale / oldZoomScale);
 
@@ -701,10 +698,9 @@ bool SchematicSceneViewer::event(QEvent *e) {
   }
   */
 
-  if (e->type() == QEvent::Gesture &&
-      CommandManager::instance()
-          ->getAction(MI_TouchGestureControl)
-          ->isChecked()) {
+  if (e->type() == QEvent::Gesture && CommandManager::instance()
+                                          ->getAction(MI_TouchGestureControl)
+                                          ->isChecked()) {
     gestureEvent(static_cast<QGestureEvent *>(e));
     return true;
   }
@@ -717,6 +713,45 @@ bool SchematicSceneViewer::event(QEvent *e) {
     m_gestureActive = true;
     return true;
   }
+
+  if (e->type() != QEvent::KeyPress && e->type() != QEvent::ShortcutOverride &&
+      e->type() != QEvent::KeyRelease)
+    return QGraphicsView::event(e);
+
+  QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+
+  std::string keyStr = QKeySequence(keyEvent->key() + keyEvent->modifiers())
+                           .toString()
+                           .toStdString();
+  QAction *action = CommandManager::instance()->getActionFromShortcut(keyStr);
+  std::string actionId = CommandManager::instance()->getIdFromAction(action);
+
+  if (actionId != T_Hand) return QGraphicsView::event(e);
+
+  if (e->type() == QEvent::KeyPress || e->type() == QEvent::ShortcutOverride) {
+    m_panningArmed = true;
+    action->setEnabled(false);
+    setToolCursor(this, ToolCursor::PanCursor);
+    e->accept();
+    return true;
+  } else if (e->type() == QEvent::KeyRelease) {
+    if (!keyEvent->isAutoRepeat()) m_panningArmed = false;
+    action->setEnabled(true);
+    switch (m_cursorMode) {
+    case CursorMode::Hand:
+      setToolCursor(this, ToolCursor::PanCursor);
+      break;
+    case CursorMode::Zoom:
+      setToolCursor(this, ToolCursor::ZoomCursor);
+      break;
+    default:
+      setToolCursor(this, ToolCursor::StrokeSelectCursor);
+      break;
+    }
+    e->accept();
+    return true;
+  }
+
   return QGraphicsView::event(e);
 }
 
@@ -792,6 +827,18 @@ SchematicViewer::SchematicViewer(QWidget *parent)
           SIGNAL(doExplodeChild(QList<TStageObjectId>)));
   connect(m_stageScene, SIGNAL(editObject()), this, SIGNAL(editObject()));
   connect(m_fxScene, SIGNAL(editObject()), this, SIGNAL(editObject()));
+
+  connect(m_fxScene->getFxSelection(), SIGNAL(doDelete()), this,
+          SLOT(deleteFxs()));
+  connect(m_stageScene->getStageSelection(), SIGNAL(doDelete()), this,
+          SLOT(deleteStageObjects()));
+
+  connect(m_fxScene->getFxSelection(),
+          SIGNAL(columnPasted(const QList<TXshColumnP> &)), this,
+          SIGNAL(columnPasted(const QList<TXshColumnP> &)));
+  connect(m_stageScene->getStageSelection(),
+          SIGNAL(columnPasted(const QList<TXshColumnP> &)), this,
+          SIGNAL(columnPasted(const QList<TXshColumnP> &)));
 
   m_viewer->setScene(m_stageScene);
   m_fxToolbar->hide();
@@ -942,10 +989,10 @@ void SchematicViewer::createActions() {
 
     QIcon nodeSizeIcon =
         createQIcon(m_maximizedNode ? "minimizenodes" : "maximizenodes");
-    m_nodeSize =
-        new QAction(nodeSizeIcon, m_maximizedNode ? tr("&Minimize Nodes")
-                                                  : tr("&Maximize Nodes"),
-                    m_commonToolbar);
+    m_nodeSize = new QAction(
+        nodeSizeIcon,
+        m_maximizedNode ? tr("&Minimize Nodes") : tr("&Maximize Nodes"),
+        m_commonToolbar);
     connect(m_nodeSize, SIGNAL(triggered()), this, SLOT(changeNodeSize()));
 
     QIcon selectModeIcon = createQIcon("selection_schematic");
@@ -1219,3 +1266,15 @@ void SchematicViewer::zoomModeEnabled() { setCursorMode(CursorMode::Zoom); }
 //------------------------------------------------------------------
 
 void SchematicViewer::handModeEnabled() { setCursorMode(CursorMode::Hand); }
+
+//------------------------------------------------------------------
+
+void SchematicViewer::deleteFxs() {
+  emit doDeleteFxs(m_fxScene->getFxSelection());
+}
+
+//------------------------------------------------------------------
+
+void SchematicViewer::deleteStageObjects() {
+  emit doDeleteStageObjects(m_stageScene->getStageSelection());
+}

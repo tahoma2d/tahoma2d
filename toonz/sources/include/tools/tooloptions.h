@@ -155,15 +155,15 @@ private:
   QHBoxLayout *hLayout() { return m_panel->hLayout(); }
   QLabel *addLabel(TProperty *p);
 
-  void visit(TDoubleProperty *p);
-  void visit(TDoublePairProperty *p);
-  void visit(TIntPairProperty *p);
-  void visit(TIntProperty *p);
-  void visit(TBoolProperty *p);
-  void visit(TStringProperty *p);
-  void visit(TEnumProperty *p);
-  void visit(TStyleIndexProperty *p);
-  void visit(TPointerProperty *p);
+  void visit(TDoubleProperty *p) override;
+  void visit(TDoublePairProperty *p) override;
+  void visit(TIntPairProperty *p) override;
+  void visit(TIntProperty *p) override;
+  void visit(TBoolProperty *p) override;
+  void visit(TStringProperty *p) override;
+  void visit(TEnumProperty *p) override;
+  void visit(TStyleIndexProperty *p) override;
+  void visit(TPointerProperty *p) override;
 };
 
 //***********************************************************************************************

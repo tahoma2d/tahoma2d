@@ -171,7 +171,7 @@ TreeModel::~TreeModel() { delete m_rootItem; }
 //------------------------------------------------------------------------------------------------------------------
 
 void TreeModel::setExpandedItem(const QModelIndex &index, bool expanded) {
-  m_view->setExpanded(index, expanded);
+  if (m_view) m_view->setExpanded(index, expanded);
 }
 
 //------------------------------------------------------------------------------------------------------------------
@@ -185,6 +185,10 @@ void TreeModel::endRefresh() {
   int i;
   QList<Item *>::iterator it;
 
+  // comment out as no subclass of TreeModel reimplement removeRows() for now
+  // and it causes assertion failure on calling beginRemoveRows() when deleting
+  // the last column in the xsheet
+  /*
   for (i = m_itemsToDelete.size() - 1; i >= 0; i--) {
     int row          = m_itemsToDelete[i]->getRow();
     Item *parentItem = m_itemsToDelete[i]->getParent();
@@ -192,10 +196,11 @@ void TreeModel::endRefresh() {
         parentItem ? parentItem->createIndex() : QModelIndex();
 
     beginRemoveRows(parentIndex, row, row);
-    removeRow(row, parentIndex);  // NOTE: This is currently doing NOTHING? (see
+    removeRows(row, 1, parentIndex);  // NOTE: This is currently doing NOTHING?
+  (see
                                   // Qt's manual)
     endRemoveRows();
-  }
+  }*/
 
   qDeleteAll(m_itemsToDelete);
   m_itemsToDelete.clear();
@@ -320,7 +325,7 @@ void TreeModel::setRootItem_NoFree(Item *rootItem) {
 //---------------------------------------------------------------------------------------------------------------
 
 void TreeModel::setRowHidden(int row, const QModelIndex &parent, bool hide) {
-  m_view->setRowHidden(row, parent, hide);
+  if (m_view) m_view->setRowHidden(row, parent, hide);
 }
 
 //====================================================================================================

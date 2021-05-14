@@ -5,6 +5,8 @@
 // -----------------------------------------------------------------------------
 // This inherits from NEUTRAL theme, when updating NEUTRAL make sure to check
 // changes against LIGHT.
+//
+// NOTE: Compile Neutral.less before this.
 // -----------------------------------------------------------------------------
 
 // Override
@@ -42,10 +44,7 @@
 // -----------------------------------------------------------------------------
 
 // Container
-@scrollbar-bg-color:                darken(@bg, 5);
-@scrollbar-handle-bg-color:         darken(@bg, 28);
-@scrollbar-handle-bg-color-hover:   darken(@scrollbar-handle-bg-color, 10);
-@scrollbar-handle-bg-color-pressed: darken(@scrollbar-handle-bg-color-hover, 15);
+@scrollbar-handle-bg-color:         darken(@bg, 15);
 
 // -----------------------------------------------------------------------------
 // Titlebars
@@ -194,7 +193,7 @@
 @xsheet-NotEmptyColumn-color:               @xsheet-bg-color;
 @xsheet-SelectedEmptyCell-color:            fade(mix(lighten(@xsheet-EmptyCell-color, -20), @cellHighlightTintColor, 80), 50);
 
-@xsheet-LevelColumn-color:                  #9ed49e;
+@xsheet-LevelColumn-color:                  #a1cea1;
 @xsheet-VectorColumn-color:                 #d39ab5;
 @xsheet-ChildColumn-color:                  #cca3cc;
 @xsheet-FullColorColumn-color:              #b0cbdd;
@@ -234,7 +233,10 @@
 @function-panel-bg-color: @schematic-viewer-bg-color;
 @function-panel-OtherCurves-color: rgb(218, 218, 218);
 @function-panel-Text-color: @text-color;
+
 @function-panel-Sub-color: #fff;
 @function-panel-Selected-color: #ffe033;
+@function-IgnoredKeyFrame-color: rgb(203,87,101);
+@function-IgnoredInbetween-color: rgb(194,156,146);
 
 @function-SelectedKeyFrame-color:  mix(shade(@function-KeyFrame-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);

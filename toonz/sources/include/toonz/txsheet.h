@@ -13,6 +13,7 @@
 // TnzLib includes
 #include "toonz/txshcolumn.h"
 #include "toonz/txshlevel.h"
+#include "toonz/txsheetcolumnchange.h"
 
 #include "cellposition.h"
 
@@ -50,6 +51,8 @@ class TXshSoundColumn;
 class TXshNoteSet;
 class TFrameId;
 class Orientation;
+class TXsheetColumnChangeObserver;
+class ExpressionReferenceMonitor;
 
 //=============================================================================
 
@@ -159,6 +162,8 @@ private:
   int m_cameraColumnIndex;
   TXshColumn *m_cameraColumn;
 
+  TXsheetColumnChangeObserver *m_observer;
+
   DECLARE_CLASS_CODE
 
 public:
@@ -236,15 +241,15 @@ public:
   */
   void removeCells(int row, int col, int rowCount = 1);
 
-  /*! If column identified by index \b \e col is not empty, is a \b TXshCellColumn and is not
-    locked, clear \b \e rowCount cells starting from \b \e row and it recalls TXshCellColumn::clearCells().
-    Clears cells and it shifts remaining cells. Xsheet's frame count is updated.
-    \sa removeCells(), insertCells()
-*/ void
-  clearCells(int row, int col, int rowCount = 1);
+  /*! If column identified by index \b \e col is not empty, is a \b
+    TXshCellColumn and is not locked, clear \b \e rowCount cells starting from
+    \b \e row and it recalls TXshCellColumn::clearCells(). Clears cells and it
+    shifts remaining cells. Xsheet's frame count is updated. \sa removeCells(),
+    insertCells()
+*/ void clearCells(int row, int col, int rowCount = 1);
   /*! Clears xsheet. It sets to default values all xsheet elements contained in
    * struct \b TXsheetImp.
-  */
+   */
   void clearAll();
   /*! Returns cell range of column identified by index \b \e col and set \b \e
      r0 and \b \e r1 respectively to first and last not empty cell, it then
@@ -432,7 +437,7 @@ frame duplication.
   /*! Exposes level \b \e xl in xsheet starting from cell identified by \b \e
      row and \b \e col.
           Returns the number of the inserted cells.
-  */
+   */
   int exposeLevel(int row, int col, TXshLevel *xl, bool overwrite = false);
 
   // cutomized exposseLevel used from LoadLevel command
@@ -461,7 +466,7 @@ frame duplication.
   */
   void saveData(TOStream &os) override;
   /*! Inserts an empty column in \b \e index calling \b insertColumn().
-  */
+   */
   void insertColumn(int index,
                     TXshColumn::ColumnType type = TXshColumn::eLevelType);
   /*! Insert \b \e column in column \b \e index. Insert column in the column
@@ -497,10 +502,10 @@ in TXsheetImp.
      calls
           \b TColumnSetT::getColumnCount().
           \sa getColumn() and getMaxFrame().
-  */
+   */
   int getColumnCount() const;
   /*! Returns first not empty column index in xsheet.
-  */
+   */
   int getFirstFreeColumnIndex() const;
 
   TSoundTrack *makeSound(SoundProperties *properties, int col = -1);
@@ -569,6 +574,14 @@ in TXsheetImp.
 
   void setCameraColumnLocked(bool locked) { m_cameraColumn->lock(locked); }
   bool isCameraColumnLocked() { return m_cameraColumn->isLocked(); }
+
+  ExpressionReferenceMonitor *getExpRefMonitor() const;
+  void setObserver(TXsheetColumnChangeObserver *observer);
+
+  void notify(const TXsheetColumnChange &change);
+  void notifyFxAdded(const std::vector<TFx *> &fxs);
+  void notifyStageObjectAdded(const TStageObjectId id);
+  bool isReferenceManagementIgnored(TDoubleParam *);
 
 protected:
   bool checkCircularReferences(TXsheet *childCandidate);

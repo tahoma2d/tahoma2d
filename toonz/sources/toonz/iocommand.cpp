@@ -20,6 +20,7 @@
 #include "versioncontrol.h"
 #include "cachefxcommand.h"
 #include "xdtsio.h"
+#include "expressionreferencemanager.h"
 
 // TnzTools includes
 #include "tools/toolhandle.h"
@@ -670,6 +671,16 @@ void ChildLevelResourceImporter::process(TXshSimpleLevel *sl) {
     sl->load();
   } catch (...) {
   }
+
+  // Check if the scene saved with the previous version AND the premultiply
+  // option is set to PNG level setting
+  if (m_childScene->getVersionNumber() <
+      VersionNumber(71, 1)) {  // V1.4 = 71.0 , V1.5 = 71.1
+    if (!path.isEmpty() && path.getType() == "png" &&
+        sl->getProperties()->doPremultiply())
+      sl->getProperties()->setDoPremultiply(false);
+  }
+
   sl->release();
 }
 
@@ -1370,6 +1381,13 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
               .arg(toQString(scenePath.getParentDir())));
     return false;
   }
+
+  // notify user if the scene will be saved including any "broken" expression
+  // reference
+  if (!ExpressionReferenceManager::instance()->askIfParamIsIgnoredOnSave(
+          saveSubxsheet))
+    return false;
+
   if (!overwrite && TFileStatus(scenePath).doesExist()) {
     QString question;
     question = QObject::tr(
@@ -1983,6 +2001,31 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
       scene->getCurrentCamera()->setRes(camRes);
       app->getCurrentScene()->setDirtyFlag(true);
       app->getCurrentXsheet()->notifyXsheetChanged();
+    }
+  }
+
+  // Check if the scene saved with the previous version AND the premultiply
+  // option is set to PNG level setting
+  if (scene->getVersionNumber() <
+      VersionNumber(71, 1)) {  // V1.4 = 71.0 , V1.5 = 71.1
+    QStringList modifiedPNGLevelNames;
+    std::vector<TXshLevel *> levels;
+    scene->getLevelSet()->listLevels(levels);
+    for (auto level : levels) {
+      if (!level || !level->getSimpleLevel()) continue;
+      TFilePath path = level->getPath();
+      if (path.isEmpty() || path.getType() != "png") continue;
+      if (level->getSimpleLevel()->getProperties()->doPremultiply()) {
+        level->getSimpleLevel()->getProperties()->setDoPremultiply(false);
+        modifiedPNGLevelNames.append(QString::fromStdWString(level->getName()));
+      }
+    }
+    if (!modifiedPNGLevelNames.isEmpty()) {
+      DVGui::info(QObject::tr("The Premultiply options in the following levels "
+                              "are disabled, since PNG files are premultiplied "
+                              "on loading in the current version: %1")
+                      .arg(modifiedPNGLevelNames.join(", ")));
+      app->getCurrentScene()->setDirtyFlag(true);
     }
   }
 
@@ -3025,7 +3068,7 @@ public:
 
     if (sl && sl->getPath().getType() == "pli")
       sl->save(palettePath, TFilePath(), true);
-    else if (sl->getType() & FULLCOLOR_TYPE)
+    else if (sl && sl->getType() & FULLCOLOR_TYPE)
       FullColorPalette::instance()->savePalette(scene);
     else
       StudioPalette::instance()->save(palettePath, palette);

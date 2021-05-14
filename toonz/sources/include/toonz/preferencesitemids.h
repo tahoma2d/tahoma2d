@@ -74,6 +74,8 @@ enum PreferencesItemId {
   ffmpegPath,
   ffmpegTimeout,
   fastRenderPath,
+  rhubarbPath,
+  rhubarbTimeout,
 
   //----------
   // Drawing
@@ -99,7 +101,7 @@ enum PreferencesItemId {
 
   //----------
   // Tools
-  dropdownShortcutsCycleOptions,
+  // dropdownShortcutsCycleOptions, // removed
   FillOnlysavebox,
   multiLayerStylePickerEnabled,
   cursorBrushType,
@@ -107,6 +109,7 @@ enum PreferencesItemId {
   cursorOutlineEnabled,
   levelBasedToolsDisplay,
   useCtrlAltToResizeBrush,
+  temptoolswitchtimer,
 
   //----------
   // Xsheet
@@ -131,6 +134,7 @@ enum PreferencesItemId {
   // Animation
   keyframeType,
   animationStep,
+  modifyExpressionOnMovingReferences,
 
   //----------
   // Preview

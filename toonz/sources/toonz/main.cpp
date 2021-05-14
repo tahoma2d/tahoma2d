@@ -1,4 +1,7 @@
 // Soli Deo gloria
+#ifdef WITH_CRASHRPT
+#include <tchar.h>
+#endif
 
 // Tnz6 includes
 #include "mainwindow.h"
@@ -8,6 +11,7 @@
 #include "previewfxmanager.h"
 #include "cleanupsettingspopup.h"
 #include "filebrowsermodel.h"
+#include "expressionreferencemanager.h"
 
 // TnzTools includes
 #include "tools/tool.h"
@@ -62,6 +66,10 @@
 #include "tfont.h"
 
 #include "kis_tablet_support_win8.h"
+
+#ifdef WITH_CRASHRPT
+#include "CrashRpt.h"
+#endif
 
 #ifdef MACOSX
 #include "tipc.h"
@@ -242,6 +250,12 @@ static void script_output(int type, const QString &value) {
 }
 
 //-----------------------------------------------------------------------------
+#ifdef WITH_CRASHRPT
+LPCWSTR convertToLPCWSTR(std::string str) {
+  std::wstring stemp = std::wstring(str.begin(), str.end());
+  return stemp.c_str();
+}
+#endif
 
 int main(int argc, char *argv[]) {
 #ifdef Q_OS_WIN
@@ -314,8 +328,8 @@ int main(int argc, char *argv[]) {
     argc = 1;
   }
 
-// Enables high-DPI scaling. This attribute must be set before QApplication is
-// constructed. Available from Qt 5.6.
+  // Enables high-DPI scaling. This attribute must be set before QApplication is
+  // constructed. Available from Qt 5.6.
 #if QT_VERSION >= 0x050600
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
@@ -467,11 +481,7 @@ int main(int argc, char *argv[]) {
   fmt.setStencil(true);
   QGLFormat::setDefaultFormat(fmt);
 
-// seems this function should be called at all systems
-// perhaps in some GLUT-implementations initalization is mere formality
-#if defined(LINUX) || defined(_WIN32)
   glutInit(&argc, argv);
-#endif
 
   splash.showMessage(offsetStr + "Initializing environment...",
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
@@ -483,6 +493,23 @@ int main(int argc, char *argv[]) {
 
   // Toonz environment
   initToonzEnv(argumentPathValues);
+
+#ifdef WITH_CRASHRPT
+  CR_INSTALL_INFO pInfo;
+  memset(&pInfo, 0, sizeof(CR_INSTALL_INFO));
+  pInfo.cb = sizeof(CR_INSTALL_INFO);
+  pInfo.pszAppName = convertToLPCWSTR(TEnv::getApplicationName());
+  pInfo.pszAppVersion = convertToLPCWSTR(TEnv::getApplicationVersion());
+  TFilePath crashrptCache =
+    ToonzFolder::getCacheRootFolder() + TFilePath("crashrpt");
+  pInfo.pszErrorReportSaveDir =
+    convertToLPCWSTR(crashrptCache.getQString().toStdString());
+  // Install all available exception handlers.
+  // Don't send reports automaticall, store locally
+  pInfo.dwFlags |= CR_INST_ALL_POSSIBLE_HANDLERS | CR_INST_DONT_SEND_REPORT;
+
+  crInstall(&pInfo);
+#endif
 
   // Initialize thread components
   TThread::init();
@@ -640,7 +667,10 @@ int main(int argc, char *argv[]) {
 
   /*-- Layoutファイル名をMainWindowのctorに渡す --*/
   MainWindow w(argumentLayoutFileName);
-  w.setWindowState(Qt::WindowMaximized);
+
+  TFilePath fp = ToonzFolder::getModuleFile("mainwindow.ini");
+  QSettings settings(toQString(fp), QSettings::IniFormat);
+  w.restoreGeometry(settings.value("MainWindowGeometry").toByteArray());
 
   if (isRunScript) {
     // load script
@@ -706,9 +736,7 @@ int main(int argc, char *argv[]) {
   }
   a.processEvents();
 
-  TFilePath fp = ToonzFolder::getModuleFile("mainwindow.ini");
-  QSettings settings(toQString(fp), QSettings::IniFormat);
-  w.restoreGeometry(settings.value("MainWindowGeometry").toByteArray());
+  ExpressionReferenceManager::instance()->init();
 
 #ifndef MACOSX
   // Workaround for the maximized window case: Qt delivers two resize events,
@@ -728,9 +756,14 @@ int main(int argc, char *argv[]) {
 
   a.setQuitOnLastWindowClosed(false);
   // a.connect(&a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()));
-  if (Preferences::instance()->isLatestVersionCheckEnabled())
-    w.checkForUpdates();
+//  if (Preferences::instance()->isLatestVersionCheckEnabled())
+//    w.checkForUpdates();
   DvDirModel::instance()->forceRefresh();
+
+  // Disable the layout temporarily to avoid redistribution of panes that is
+  // executed during resizeEvents that are being called. It will reenable when
+  // the resizeEvent() is called
+  w.getCurrentRoom()->dockLayout()->setEnabled(false);
   w.show();
 
   // Show floating panels only after the main window has been shown
@@ -810,6 +843,10 @@ int main(int argc, char *argv[]) {
 
   a.installEventFilter(TApp::instance());
 
+  // Disable the layout temporarily to avoid redistribution of panes that is
+  // executed during resizeEvents that are being called. It will reenable when
+  // the resizeEvent() is called
+  w.getCurrentRoom()->dockLayout()->setEnabled(false);
   int ret = a.exec();
 
   TUndoManager::manager()->reset();
@@ -819,6 +856,10 @@ int main(int argc, char *argv[]) {
   if (consoleAttached) {
     ::FreeConsole();
   }
+#endif
+
+#ifdef WITH_CRASHRPT
+  crUninstall();
 #endif
 
   return ret;

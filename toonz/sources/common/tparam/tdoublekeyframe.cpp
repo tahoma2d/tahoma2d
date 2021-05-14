@@ -57,7 +57,7 @@ void TDoubleKeyframe::saveData(TOStream &os) const {
   // Dirty resolution. Because the degree sign is converted to unexpected
   // string...
   if (QString::fromStdWString(L"\u00b0").toStdString() == unitName)
-    unitName = "\\u00b0";
+    unitName = "degrees";
   switch (m_type) {
   case Constant:
   case Exponential:
@@ -157,6 +157,9 @@ void TDoubleKeyframe::loadData(TIStream &is) {
     break;
   }
   if (!is.matchEndTag()) throw TException(tagName + " : missing endtag");
-  if (m_unitName == "default") m_unitName = "";
-  m_isKeyframe                            = true;
+  if (m_unitName == "default")
+    m_unitName = "";
+  else if (m_unitName == "degrees")
+    m_unitName = "\u00b0";
+  m_isKeyframe = true;
 }

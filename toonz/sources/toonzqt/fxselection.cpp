@@ -35,7 +35,7 @@ bool canGroup(TFx *fx) {
   TOutputFx *ofx = dynamic_cast<TOutputFx *>(fx);
   return (!xfx && !ofx);
 }
-}
+}  // namespace
 
 //=========================================================
 //
@@ -156,10 +156,11 @@ bool FxSelection::isSelected(SchematicLink *link) {
 //---------------------------------------------------------
 
 void FxSelection::deleteSelection() {
-  std::list<TFxP, std::allocator<TFxP>> fxList = m_selectedFxs.toStdList();
-  TFxCommand::deleteSelection(fxList, m_selectedLinks.toStdList(),
-                              m_selectedColIndexes.toStdList(), m_xshHandle,
-                              m_fxHandle);
+  emit doDelete();
+  // std::list<TFxP, std::allocator<TFxP>> fxList = m_selectedFxs.toStdList();
+  // TFxCommand::deleteSelection(fxList, m_selectedLinks.toStdList(),
+  //                            m_selectedColIndexes.toStdList(), m_xshHandle,
+  //                            m_fxHandle);
 }
 
 //---------------------------------------------------------
@@ -210,9 +211,21 @@ void FxSelection::pasteSelection() {
             TPointD(ssv->getOldScenePos().x(), ssv->getOldScenePos().y());
     }
 
+    if (!columns.isEmpty()) {
+      // make sure that the levels contained in the pasted column nodes are
+      // registered in the scene cast it may rename the level if there is
+      // another level with the same name
+      TUndoManager::manager()->beginBlock();
+      emit columnPasted(columns);
+    }
+
     TFxCommand::pasteFxs(fxs.toStdList(), zeraryFxColumnSize.toStdMap(),
                          columns.toStdList(), m_pastePosition, m_xshHandle,
                          m_fxHandle);
+
+    if (!columns.isEmpty()) {
+      TUndoManager::manager()->endBlock();
+    }
 
     if (m_schematicScene) {
       selectNone();
@@ -262,6 +275,10 @@ bool FxSelection::insertPasteSelection() {
     if (!auto_.m_destruct) {
         auto_.m_destruct = true;
         TUndoManager::manager()->beginBlock();
+      // make sure that the levels contained in the pasted column nodes are
+      // registered in the scene cast it may rename the level if there is
+      // another level with the same name
+      emit columnPasted(columns);
     }
 
     TFxCommand::insertPasteFxs(selectedLinks[i], fxs.toStdList(),
@@ -348,8 +365,13 @@ bool FxSelection::replacePasteSelection() {
     if (fxs.empty() && columns.empty()) return true;
 
     // auto ends the undo block in its destructor
-    if (!auto_.m_destruct)
+    if (!auto_.m_destruct) {
       auto_.m_destruct = true, TUndoManager::manager()->beginBlock();
+      // make sure that the levels contained in the pasted column nodes are
+      // registered in the scene cast it may rename the level if there is
+      // another level with the same name
+      emit columnPasted(columns);
+    }
 
     TFx *inFx = m_selectedFxs[i].getPointer();
     TFxCommand::replacePasteFxs(inFx, fxs.toStdList(),
@@ -524,8 +546,8 @@ bool FxSelection::isConnected() {
     TColumnFx *cfx  = dynamic_cast<TColumnFx *>(selectedFx);
     if (!cfx && !internalFxs->containsFx(selectedFx)) return false;
     TZeraryColumnFx *zfx = dynamic_cast<TZeraryColumnFx *>(selectedFx);
-    if (zfx) selectedFx  = zfx->getZeraryFx();
-    connected            = connected && visitedFxs.contains(selectedFx);
+    if (zfx) selectedFx = zfx->getZeraryFx();
+    connected = connected && visitedFxs.contains(selectedFx);
   }
   return connected;
 }
@@ -535,14 +557,14 @@ bool FxSelection::isConnected() {
 void FxSelection::visitFx(TFx *fx, QList<TFx *> &visitedFxs) {
   if (visitedFxs.contains(fx)) return;
   TZeraryColumnFx *zfx = dynamic_cast<TZeraryColumnFx *>(fx);
-  if (zfx) fx          = zfx->getZeraryFx();
+  if (zfx) fx = zfx->getZeraryFx();
   if (!canGroup(fx)) return;
   visitedFxs.append(fx);
   int i;
   for (i = 0; i < fx->getInputPortCount(); i++) {
     TFx *inputFx              = fx->getInputPort(i)->getFx();
     TZeraryColumnFx *onputZFx = dynamic_cast<TZeraryColumnFx *>(inputFx);
-    if (onputZFx) inputFx     = onputZFx->getZeraryFx();
+    if (onputZFx) inputFx = onputZFx->getZeraryFx();
     if (!inputFx) continue;
     bool canBeGrouped = !inputFx->getAttributes()->isGrouped() ||
                         (inputFx->getAttributes()->getEditingGroupId() ==

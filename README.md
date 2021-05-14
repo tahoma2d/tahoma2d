@@ -1,7 +1,6 @@
 # Tahoma2D
 
-[![](https://ci.appveyor.com/api/projects/status/mnc3mepksux9kvap/branch/master?svg=true)](https://ci.appveyor.com/project/turtletooth/tahoma2d)
-[![](https://travis-ci.com/turtletooth/tahoma2d.svg?branch=master)](https://travis-ci.com/turtletooth/tahoma2d)
+[![](https://ci.appveyor.com/api/projects/status/mnc3mepksux9kvap/branch/master?svg=true)](https://ci.appveyor.com/project/tahoma2d/tahoma2d)
 
 ## What is Tahoma2D?
 
@@ -16,7 +15,7 @@ Please refer to the Tahoma2D site at <https://tahoma2d.org/download>.
 
 ## Installation
 
-Please download the latest release at <https://github.com/turtletooth/tahoma2d/releases>.
+Please download the latest release at <https://github.com/tahoma2d/tahoma2d/releases>.
 
 ## How to Build Locally
 
@@ -31,7 +30,7 @@ Can't develop but still want to help? Help us test individual Pull Requests befo
 ## Community
 
 - To share tips or to troubleshoot, join the [Google Tahoma2D Users forum](hhttps://groups.google.com/g/tahoma2d)
-- If you found a bug with the software after troubleshooting, or are a developer, search the [Github issues](https://github.com/turtletooth/tahoma2d/issues) and post there.
+- If you found a bug with the software after troubleshooting, or are a developer, search the [Github issues](https://github.com/tahoma2d/tahoma2d/issues) and post there.
 
 ## Licensing
 

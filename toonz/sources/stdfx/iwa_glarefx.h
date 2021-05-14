@@ -35,12 +35,21 @@ class Iwa_GlareFx : public TStandardRasterFx {
 protected:
   TRasterFxPort m_source;
   TRasterFxPort m_iris;
-  // rendering mode (filter preview / render)
+  // rendering mode (filter preview / render / iris)
   TIntEnumParamP m_renderMode;
+  TIntEnumParamP m_irisMode;
+
+  TDoubleParamP m_irisScale;
+  TDoubleParamP m_irisGearEdgeCount;
+  TIntParamP m_irisRandomSeed;
+  TDoubleParamP m_irisSymmetry;
+  TIntEnumParamP m_irisAppearance;
+
   TDoubleParamP m_intensity;
   TDoubleParamP m_size;
 
   TDoubleParamP m_rotation;
+  TDoubleParamP m_aberration;
 
   TDoubleParamP m_noise_factor;
   TDoubleParamP m_noise_size;
@@ -48,15 +57,32 @@ protected:
   TDoubleParamP m_noise_evolution;
   TPointParamP m_noise_offset;
 
-  enum { RendeMode_FilterPreview = 0, RendeMode_Render };
+  enum { RendeMode_FilterPreview = 0, RendeMode_Render, RenderMode_Iris };
+
+  enum {
+    Iris_InputImage = 0,
+    Iris_Square,
+    Iris_Hexagon,
+    Iris_Octagon,
+    Iris_GearShape
+  };
+
+  enum {
+    Appearance_ThinLine,
+    Appearance_MediumLine,
+    Appearance_ThickLine,
+    Appearance_Fill,
+  };
 
   double getSizePixelAmount(const double val, const TAffine affine);
+
+  void drawPresetIris(TRaster32P irisRas, double irisSize, const double frame);
 
   // Resize / flip the iris image according to the size ratio.
   // Normalize the brightness of the iris image.
   // Enlarge the iris to the output size.
   void convertIris(kiss_fft_cpx *kissfft_comp_iris_before, const int &dimIris,
-                   const TRectD &irisBBox, const TTile &irisTile);
+                   const TRectD &irisBBox, const TRasterP irisRaster);
 
   void powerSpectrum2GlarePattern(const double frame, const TAffine affine,
                                   kiss_fft_cpx *spectrum, double3 *glare,

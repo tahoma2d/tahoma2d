@@ -282,6 +282,8 @@ public:
   QString getFfmpegPath() const { return getStringValue(ffmpegPath); }
   int getFfmpegTimeout() { return getIntValue(ffmpegTimeout); }
   QString getFastRenderPath() const { return getStringValue(fastRenderPath); }
+  QString getRhubarbPath() const { return getStringValue(rhubarbPath); }
+  int getRhubarbTimeout() { return getIntValue(rhubarbTimeout); }
 
   // Drawing  tab
   QString getScanLevelType() const { return getStringValue(scanLevelType); }
@@ -322,9 +324,9 @@ public:
   }
 
   // Tools Tab
-  bool getDropdownShortcutsCycleOptions() {
-    return getIntValue(dropdownShortcutsCycleOptions) == 1;
-  }
+  // bool getDropdownShortcutsCycleOptions() {
+  //  return getIntValue(dropdownShortcutsCycleOptions) == 1;
+  //}
   bool getFillOnlySavebox() const { return getBoolValue(FillOnlysavebox); }
   bool isMultiLayerStylePickerEnabled() const {
     return getBoolValue(multiLayerStylePickerEnabled);
@@ -341,6 +343,9 @@ public:
   }
   bool useCtrlAltToResizeBrushEnabled() const {
     return getBoolValue(useCtrlAltToResizeBrush);
+  }
+  int getTempToolSwitchtimer() const {
+    return getIntValue(temptoolswitchtimer);
   }
 
   // Xsheet  tab
@@ -397,6 +402,9 @@ public:
   // Animation  tab
   int getKeyframeType() const { return getIntValue(keyframeType); }
   int getAnimationStep() const { return getIntValue(animationStep); }
+  bool isModifyExpressionOnMovingReferencesEnabled() const {
+    return getBoolValue(modifyExpressionOnMovingReferences);
+  }
 
   // Preview  tab
   void getBlankValues(int &bCount, TPixel32 &bColor) const {

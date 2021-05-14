@@ -22,6 +22,10 @@
 // TnzCore includes
 #include "tcommon.h"
 
+#include "tools/toolcommandids.h"
+#include "tools/cursormanager.h"
+#include "tools/cursors.h"
+
 // Qt includes
 #include <QPainter>
 #include <QPainterPath>
@@ -1187,7 +1191,7 @@ void FunctionPanel::mousePressEvent(QMouseEvent *e) {
   m_dragTool = 0;
 
   if (e->button() == Qt::MidButton ||
-      (e->button() == Qt::LeftButton && m_spacePressed)) {
+      (e->button() == Qt::LeftButton && m_panningArmed)) {
     // mid mouse click => panning
     bool xLocked = e->pos().x() <= m_valueAxisX;
     bool yLocked = e->pos().y() <= m_valueAxisX;
@@ -1425,26 +1429,14 @@ void FunctionPanel::mouseDoubleClickEvent(QMouseEvent *) { fitGraphToWindow(); }
 //-----------------------------------------------------------------------------
 
 void FunctionPanel::keyPressEvent(QKeyEvent *e) {
-  if (e->key() == Qt::Key::Key_Space) {
-    m_spacePressed = true;
-    e->accept();
-    return;
-  }
   FunctionPanelZoomer(this).exec(e);
-}
-
-//-----------------------------------------------------------------------------
-
-void FunctionPanel::keyReleaseEvent(QKeyEvent *e) {
-  if (e->key() == Qt::Key::Key_Space && !e->isAutoRepeat())
-    m_spacePressed = false;
-    // accept intentionally not called here.
 }
 
 //-----------------------------------------------------------------------------
 
 void FunctionPanel::enterEvent(QEvent *) {
   m_cursor.visible = true;
+  m_panningArmed   = false;
   update();
 }
 
@@ -1452,7 +1444,8 @@ void FunctionPanel::enterEvent(QEvent *) {
 
 void FunctionPanel::leaveEvent(QEvent *) {
   m_cursor.visible = false;
-  m_spacePressed   = false;
+  m_panningArmed   = false;
+  setCursor(Qt::ArrowCursor);
   update();
 }
 
@@ -1799,4 +1792,37 @@ QColor FunctionPanel::getChannelColor(QString name, bool active) {
     color = QColor("darkcyan");
   if (!active) color.setAlpha(180);
   return color;
+}
+
+//-----------------------------------------------------------------------------
+
+bool FunctionPanel::event(QEvent *e) {
+  if (e->type() != QEvent::KeyPress && e->type() != QEvent::ShortcutOverride &&
+      e->type() != QEvent::KeyRelease)
+    return QDialog::event(e);
+
+  QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+
+  std::string keyStr = QKeySequence(keyEvent->key() + keyEvent->modifiers())
+                           .toString()
+                           .toStdString();
+  QAction *action = CommandManager::instance()->getActionFromShortcut(keyStr);
+  std::string actionId = CommandManager::instance()->getIdFromAction(action);
+
+  if (actionId != T_Hand) return QDialog::event(e);
+
+  if (e->type() == QEvent::KeyPress || e->type() == QEvent::ShortcutOverride) {
+    m_panningArmed = true;
+    action->setEnabled(false);
+    setToolCursor(this, ToolCursor::PanCursor);
+    e->accept();
+    return true;
+  } else if (e->type() == QEvent::KeyRelease) {
+    if (!keyEvent->isAutoRepeat()) m_panningArmed = false;
+    action->setEnabled(true);
+    setCursor(Qt::ArrowCursor);
+    e->accept();
+    return true;
+  }
+  return QDialog::event(e);
 }

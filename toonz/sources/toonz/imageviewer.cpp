@@ -954,9 +954,11 @@ void ImageViewer::pickColor(QMouseEvent *event, bool putValueToStyleEditor) {
       TPointD(0.5 * imgRect.getLx() + pos.x, 0.5 * imgRect.getLy() + pos.y);
 
   TPixel32 pix;
-  if (m_lutCalibrator && m_lutCalibrator->isValid())
-    pix = picker.pickColor(pos + TPointD(-0.5, -0.5));
-  else
+  if (m_lutCalibrator && m_lutCalibrator->isValid()) {
+    // for specifiying pixel range on picking vector
+    double scale2 = getViewAff().det();
+    pix = picker.pickColor(pos + TPointD(-0.5, -0.5), 10.0, scale2);
+  } else
     pix = picker.pickColor(area);
 
   if (!img->raster() || imgRect.contains(imagePos)) {
@@ -1343,6 +1345,8 @@ void ImageViewer::onContextAboutToBeDestroyed() {
   makeCurrent();
   m_lutCalibrator->cleanup();
   doneCurrent();
+  disconnect(context(), SIGNAL(aboutToBeDestroyed()), this,
+             SLOT(onContextAboutToBeDestroyed()));
 }
 
 //-----------------------------------------------------------------------------
@@ -1350,6 +1354,9 @@ void ImageViewer::onContextAboutToBeDestroyed() {
 void ImageViewer::onPreferenceChanged(const QString& prefName) {
     if (prefName == "ColorCalibration") {
         if (Preferences::instance()->isColorCalibrationEnabled()) {
+            // if the window is so shriked that the gl widget is empty,
+            // showEvent can be called before creating the context.
+            if (!context()) return;
             makeCurrent();
             if (!m_lutCalibrator)
                 m_lutCalibrator = new LutCalibrator();

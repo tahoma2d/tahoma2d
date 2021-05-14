@@ -486,15 +486,19 @@ void FilmstripFrames::hideEvent(QHideEvent *) {
   // active viewer change
   disconnect(app, SIGNAL(activeViewerChanged()), this, SLOT(getViewer()));
 
-  // if the level strip is floating during shutting down Tahoma2D
-  // it can cause a crash disconnecting from the viewer which was already
-  // destroyed.  Checking the fps is a janky way to ensure the viewer is 
-  // stil relevant.
-  if (m_viewer && m_viewer->getFPS() > -100) { 
-    disconnect(m_viewer, SIGNAL(onZoomChanged()), this, SLOT(update()));
-    disconnect(m_viewer, SIGNAL(refreshNavi()), this, SLOT(update()));
-    m_viewer = nullptr;
-  }
+  disconnectViewer();
+}
+
+//-----------------------------------------------------------------------------
+
+void FilmstripFrames::disconnectViewer() {
+  if (!m_viewer) return;
+
+  disconnect(m_viewer, SIGNAL(onZoomChanged()), this, SLOT(update()));
+  disconnect(m_viewer, SIGNAL(refreshNavi()), this, SLOT(update()));
+  disconnect(m_viewer, SIGNAL(viewerDestructing()), this,
+             SLOT(disconnectViewer()));
+  m_viewer = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -502,10 +506,7 @@ void FilmstripFrames::hideEvent(QHideEvent *) {
 void FilmstripFrames::getViewer() {
   bool viewerChanged = false;
   if (m_viewer != TApp::instance()->getActiveViewer()) {
-    if (m_viewer) {
-      disconnect(m_viewer, SIGNAL(onZoomChanged()), this, SLOT(update()));
-      disconnect(m_viewer, SIGNAL(refreshNavi()), this, SLOT(update()));
-    }
+    disconnectViewer();
     viewerChanged = true;
   }
 
@@ -514,6 +515,8 @@ void FilmstripFrames::getViewer() {
   if (m_viewer && viewerChanged) {
     connect(m_viewer, SIGNAL(onZoomChanged()), this, SLOT(update()));
     connect(m_viewer, SIGNAL(refreshNavi()), this, SLOT(update()));
+    connect(m_viewer, SIGNAL(viewerDestructing()), this,
+            SLOT(disconnectViewer()));
     update();
   }
 }
@@ -780,21 +783,21 @@ void FilmstripFrames::drawFrameIcon(QPainter &p, const QRect &r, int index,
         p.setPen(Qt::black);
         p.drawLine(x0 - 1, y0, x0 - 1, y1);
 
-        QPixmap inbetweenPixmap(
-            svgToPixmap(":Resources/filmstrip_inbetween.svg"));
+          QRectF txtRect(y0 + 1, -x1, y1 - y0 - 1, x1 - x0 + 1);
+                 QFontMetricsF tmpFm(p.font());
+                 QRectF bbox = tmpFm.boundingRect(
+                     txtRect, Qt::AlignBottom | Qt::AlignHCenter, tr("INBETWEEN"));
+                 double ratio = std::min(1.0, txtRect.width() / bbox.width());
 
-        if (r.height() - 6 < inbetweenPixmap.height()) {
-          QSize rectSize(inbetweenPixmap.size());
-          rectSize.setHeight(r.height() - 6);
-          inbetweenPixmap = inbetweenPixmap.scaled(
-              rectSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-        }
-
-        p.drawPixmap(
-            x0 + 2,
-            y1 - inbetweenPixmap.height() / inbetweenPixmap.devicePixelRatio() -
-                3,
-            inbetweenPixmap);
+                 p.save();
+                 p.setRenderHint(QPainter::TextAntialiasing);
+                 p.rotate(90.0);
+                 p.scale(ratio, 1.0);
+                 p.drawText(QRectF(txtRect.left() / ratio, txtRect.top(),
+                                   txtRect.width() / ratio, txtRect.height()),
+                            tr("INBETWEEN"),
+                            QTextOption(Qt::AlignBottom | Qt::AlignHCenter));
+                 p.restore();
       } else {
         int x1 = r.right();
         int x0 = r.left();
@@ -851,6 +854,20 @@ void FilmstripFrames::mousePressEvent(QMouseEvent *event) {
   TFrameId fid = index2fid(index);
 
   TXshSimpleLevel *sl = getLevel();
+
+  if (!sl) return;
+
+  // If accessed after 1st frame on a Single Frame level
+  // Block movement so we can't create new images
+  if (index > 0) {
+    std::vector<TFrameId> fids;
+    sl->getFids(fids);
+    if (fids.empty() ||
+        (fids.size() == 1 && (fids[0].getNumber() == TFrameId::EMPTY_FRAME ||
+                              fids[0].getNumber() == TFrameId::NO_FRAME)))
+      return;
+  }
+
   int frameHeight = m_iconSize.height() + fs_frameSpacing + fs_iconMarginTop +
                     fs_iconMarginBottom;
   int frameWidth = m_iconSize.width() + fs_frameSpacing + fs_iconMarginLR +
@@ -1131,6 +1148,11 @@ void FilmstripFrames::keyPressEvent(QKeyEvent *event) {
   std::vector<TFrameId> fids;
   level->getFids(fids);
   if (fids.empty()) return;
+  // Do not allow movement on Single Frame levels
+  if (fids.empty() ||
+      (fids.size() == 1 && (fids[0].getNumber() == TFrameId::EMPTY_FRAME ||
+                            fids[0].getNumber() == TFrameId::NO_FRAME)))
+    return;
 
   // If on a level frame pass the frame id after the last frame to allow
   // creating a new frame with the down arrow key
@@ -1271,7 +1293,8 @@ void FilmstripFrames::contextMenuEvent(QContextMenuEvent *event) {
   if (sl &&
       (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL ||
        (sl->getType() == OVL_XSHLEVEL && sl->getPath().getType() != "gif" &&
-        sl->getPath().getType() != "mp4" && sl->getPath().getType() != "webm")))
+        sl->getPath().getType() != "mp4" && sl->getPath().getType() != "webm" &&
+        sl->getPath().getType() != "mov")))
     menu->addAction(cm->getAction(MI_RevertToLastSaved));
   menu->addSeparator();
   createSelectLevelMenu(menu);
@@ -1676,7 +1699,7 @@ void Filmstrip::updateCurrentLevelComboItem() {
   }
 
   for (int i = 0; i < m_levels.size(); i++) {
-    TXshSimpleLevel* tempLevel = m_levels[i];
+    TXshSimpleLevel *tempLevel = m_levels[i];
       std::wstring currName = currentLevel->getName();
       int type = tempLevel->getType();
       if (type < 0 || type > MESH_XSHLEVEL) break;

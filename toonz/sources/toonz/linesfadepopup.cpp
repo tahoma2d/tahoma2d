@@ -161,7 +161,7 @@ LinesFadePopup::LinesFadePopup()
                                        QSizePolicy::MinimumExpanding));
   scrollArea->setWidget(topWidget);
 
-  QGridLayout *topLayout = new QGridLayout(this);
+  QGridLayout *topLayout = new QGridLayout();
   topWidget->setLayout(topLayout);
 
   //------------------------- Parameters --------------------------

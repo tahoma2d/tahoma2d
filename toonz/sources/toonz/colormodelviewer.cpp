@@ -303,11 +303,13 @@ void ColorModelViewer::pick(const QPoint &p) {
                 TPointD(viewP.x() - m_imageViewer->width() / 2,
                         -viewP.y() + m_imageViewer->height() / 2);
 
+  double scale2 = m_imageViewer->getViewAff().det();
   /*---
           カレントToolに合わせてPickモードを変更
           0=Area, 1=Line, 2=Line&Areas(default)
   ---*/
-  int styleIndex = picker.pickStyleId(pos + TPointD(-0.5, -0.5), 1, m_mode);
+  int styleIndex =
+      picker.pickStyleId(pos + TPointD(-0.5, -0.5), 1, scale2, m_mode);
 
   if (styleIndex < 0) return;
 

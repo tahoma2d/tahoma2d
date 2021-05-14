@@ -8,7 +8,6 @@ assignees: ''
 ---
 
 <!-- Please search for existing issues to avoid creating duplicates. -->
-<!-- And please test using the latest nightly build to make sure your issue has not already been fixed: https://github.com/turtletooth/tahoma2d/releases/tag/nightly/ -->
 
 **Describe the bug**
 A clear and concise description of what the bug is.
@@ -19,8 +18,12 @@ List steps to reproduce the behavior.
 2.
 3.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Screenshots, short videos or logs**
+If applicable, add screenshots or links to short videos to help explain your problem or provide logs or dmp files if it's a crash.
+
+<!--Crash logs or dmp files may be found under the following:-->
+<!-- Windows crash dmp: C:\Users\yourusername\AppData\Local\Tahoma2D\Tahoma2D\cache\crashrpt\xxxx\crashdump.dmp -->
+<!-- macOS crash logs: Console App -> User Reports.  Look for Tahoma2D crash report -->
 
 **Device Information:**
  - OS: [e.g. Windows]

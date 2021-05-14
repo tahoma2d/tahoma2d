@@ -109,9 +109,10 @@ void getDefaultLevelFormats(LevelFormatVector &lfv) {
     lfv[1].m_options.m_premultiply = true;
 
     // for all PNG files, set premultiply by default
-    lfv[2].m_name                  = Preferences::tr("PNG");
-    lfv[2].m_pathFormat            = QRegExp("..*\\.png", Qt::CaseInsensitive);
-    lfv[2].m_options.m_premultiply = true;
+    // UPDATE : from V1.5, PNG images are premultiplied on loading
+    // lfv[2].m_name                  = Preferences::tr("PNG");
+    // lfv[2].m_pathFormat            = QRegExp("..*\\.png",
+    // Qt::CaseInsensitive); lfv[2].m_options.m_premultiply = true;
   }
 }
 
@@ -193,6 +194,32 @@ void getValue(QSettings &settings,
     getValue(settings, lfv[lf]);
   }
   settings.endArray();
+
+  // from OT V1.5, PNG images are premultiplied on loading.
+  // Leaving the premultiply option will cause unwanted double operation.
+  // So, check the loaded options and modify it "silently".
+  bool changed                   = false;
+  LevelFormatVector::iterator it = lfv.begin();
+  while (it != lfv.end()) {
+    if ((*it).m_name == Preferences::tr("PNG") &&
+        (*it).m_pathFormat == QRegExp("..*\\.png", Qt::CaseInsensitive) &&
+        (*it).m_options.m_premultiply == true) {
+      LevelOptions defaultValue;
+      defaultValue.m_premultiply = true;
+      // if other parameters are the same as deafault, just erase the item
+      if ((*it).m_options == defaultValue) it = lfv.erase(it);
+      // if there are some adjustments by user, then disable only premultiply
+      // option
+      else {
+        (*it).m_options.m_premultiply = false;
+        ++it;
+      }
+      changed = true;
+    } else
+      ++it;
+  }
+  // overwrite the setting
+  if (changed) _setValue(settings, lfv);
 }
 
 }  // namespace
@@ -446,9 +473,12 @@ void Preferences::definePreferenceItems() {
 
   // Import / Export
   define(ffmpegPath, "ffmpegPath", QMetaType::QString, "");
-  define(ffmpegTimeout, "ffmpegTimeout", QMetaType::Int, 600, 1,
+  define(ffmpegTimeout, "ffmpegTimeout", QMetaType::Int, 0, 0,
          std::numeric_limits<int>::max());
   define(fastRenderPath, "fastRenderPath", QMetaType::QString, "desktop");
+  define(rhubarbPath, "rhubarbPath", QMetaType::QString, "");
+  define(rhubarbTimeout, "rhubarbTimeout", QMetaType::Int, 0, 0,
+         std::numeric_limits<int>::max());
 
   // Drawing
   define(scanLevelType, "scanLevelType", QMetaType::QString, "tif");
@@ -485,9 +515,10 @@ void Preferences::definePreferenceItems() {
          QMetaType::Bool, false);
 
   // Tools
-  define(dropdownShortcutsCycleOptions, "dropdownShortcutsCycleOptions",
-         QMetaType::Int,
-         1);  // Cycle through the available options (changed from bool to int)
+  // define(dropdownShortcutsCycleOptions, "dropdownShortcutsCycleOptions",
+  //       QMetaType::Int,
+  //       1);  // Cycle through the available options (changed from bool to
+  //       int)
   define(FillOnlysavebox, "FillOnlysavebox", QMetaType::Bool, false);
   define(multiLayerStylePickerEnabled, "multiLayerStylePickerEnabled",
          QMetaType::Bool, false);
@@ -498,6 +529,8 @@ void Preferences::definePreferenceItems() {
          0);  // Default
   define(useCtrlAltToResizeBrush, "useCtrlAltToResizeBrush", QMetaType::Bool,
          true);
+  define(temptoolswitchtimer, "temptoolswitchtimer", QMetaType::Int, 500, 1,
+         std::numeric_limits<int>::max());
 
   // Xsheet
   define(xsheetLayoutPreference, "xsheetLayoutPreference", QMetaType::QString,
@@ -532,6 +565,8 @@ void Preferences::definePreferenceItems() {
   // Animation
   define(keyframeType, "keyframeType", QMetaType::Int, 2);  // Linear
   define(animationStep, "animationStep", QMetaType::Int, 1, 1, 500);
+  define(modifyExpressionOnMovingReferences,
+         "modifyExpressionOnMovingReferences", QMetaType::Bool, false);
 
   // Preview
   define(blanksCount, "blanksCount", QMetaType::Int, 0, 0, 1000);

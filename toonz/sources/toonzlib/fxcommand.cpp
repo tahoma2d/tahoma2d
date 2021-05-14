@@ -1947,7 +1947,7 @@ void DeleteLinksUndo::redo() const {
       outputFx->getInputPort(index)->setFx(0);
   }
 
-  m_xshHandle->notifyXsheetChanged();
+  if (m_isLastInRedoBlock) m_xshHandle->notifyXsheetChanged();
 }
 
 //------------------------------------------------------
@@ -2012,7 +2012,7 @@ void DeleteLinksUndo::undo() const {
     }
   }
 
-  m_xshHandle->notifyXsheetChanged();
+  if (m_isLastInBlock) m_xshHandle->notifyXsheetChanged();
 }
 
 //------------------------------------------------------
@@ -2051,6 +2051,7 @@ static void deleteLinks(const std::list<TFxCommand::Link> &links,
                         TXsheetHandle *xshHandle) {
   std::unique_ptr<FxCommandUndo> undo(new DeleteLinksUndo(links, xshHandle));
   if (undo->isConsistent()) {
+    undo->m_isLastInRedoBlock = false;
     undo->redo();
     TUndoManager::manager()->add(undo.release());
   }
@@ -2245,7 +2246,8 @@ void DeleteFxOrColumnUndo::redo() const {
   // Perform operation
   FxCommandUndo::removeFxOrColumn(xsh, m_fx.getPointer(), m_colIdx);
 
-  m_xshHandle->notifyXsheetChanged();  // Add the rest...
+  if (m_isLastInRedoBlock)
+    m_xshHandle->notifyXsheetChanged();  // Add the rest...
 }
 
 //-------------------------------------------------------------
@@ -2296,7 +2298,7 @@ void DeleteFxOrColumnUndo::undo() const {
 
     // Re-establish fx links
     DeleteLinksUndo::undo();
-  } else  // Already covered by DeleteLinksUndo::undo()
+  } else if (m_isLastInBlock)  // Already covered by DeleteLinksUndo::undo()
     m_xshHandle->notifyXsheetChanged();  // in the other branch
 }
 
@@ -2327,6 +2329,9 @@ static void deleteFxs(const std::list<TFxP> &fxs, TXsheetHandle *xshHandle,
     std::unique_ptr<FxCommandUndo> undo(
         new DeleteFxOrColumnUndo(*ft, xshHandle, fxHandle));
     if (undo->isConsistent()) {
+      // prevent emiting xsheetChanged signal for every undos which will cause
+      // multiple triggers of preview rendering
+      undo->m_isLastInRedoBlock = false;
       undo->redo();
       TUndoManager::manager()->add(undo.release());
     }
@@ -2377,6 +2382,9 @@ static void deleteColumns(const std::list<int> &columns,
     std::unique_ptr<FxCommandUndo> undo(
         new DeleteFxOrColumnUndo(cols[c]->getIndex(), xshHandle, fxHandle));
     if (undo->isConsistent()) {
+      // prevent emiting xsheetChanged signal for every undos which will cause
+      // multiple triggers of preview rendering
+      undo->m_isLastInRedoBlock = false;
       undo->redo();
       undoManager->add(undo.release());
     }
@@ -2395,8 +2403,7 @@ void TFxCommand::deleteSelection(const std::list<TFxP> &fxs,
                                  TXsheetHandle *xshHandle,
                                  TFxHandle *fxHandle) {
   // Prepare selected fxs - column fxs would be done twice if the corresponding
-  // columns have
-  // been supplied for deletion too
+  // columns have been supplied for deletion too
   ::FilterColumnFxs filterColumnFxs;
 
   std::list<TFxP> filteredFxs(fxs);
@@ -2407,11 +2414,13 @@ void TFxCommand::deleteSelection(const std::list<TFxP> &fxs,
   // Perform deletions
   TUndoManager::manager()->beginBlock();
 
-  deleteColumns(columns, xshHandle, fxHandle);
-  deleteFxs(filteredFxs, xshHandle, fxHandle);
-  deleteLinks(links, xshHandle);
+  if (!columns.empty()) deleteColumns(columns, xshHandle, fxHandle);
+  if (!filteredFxs.empty()) deleteFxs(filteredFxs, xshHandle, fxHandle);
+  if (!links.empty()) deleteLinks(links, xshHandle);
 
   TUndoManager::manager()->endBlock();
+  // emit xsheetChanged once here
+  xshHandle->notifyXsheetChanged();
 }
 
 //**********************************************************************

@@ -30,6 +30,9 @@
 #include "toutputproperties.h"
 #include "toonz/imagestyles.h"
 #include "tproperty.h"
+#include "toonz/levelset.h"
+#include "toonz/txshsimplelevel.h"
+#include "toonz/levelproperties.h"
 
 // TnzSound includes
 #include "tnzsound.h"
@@ -226,6 +229,35 @@ void tcomposerRunOutOfContMemHandler(unsigned long size) {
   TImageCache::instance()->clear(true);
   exit(2);
 }
+
+// Check if the scene saved with the previous version AND the premultiply option
+// is set to PNG level setting
+void UnsetPremultiplyOptionsInPngLevels(ToonzScene *scene) {
+  if (scene->getVersionNumber() <
+      VersionNumber(71, 1)) {  // V1.4 = 71.0 , V1.5 = 71.1
+    QStringList modifiedPNGLevelNames;
+    std::vector<TXshLevel *> levels;
+    scene->getLevelSet()->listLevels(levels);
+    for (auto level : levels) {
+      if (!level || !level->getSimpleLevel()) continue;
+      TFilePath path = level->getPath();
+      if (path.isEmpty() || path.getType() != "png") continue;
+      if (level->getSimpleLevel()->getProperties()->doPremultiply()) {
+        level->getSimpleLevel()->getProperties()->setDoPremultiply(false);
+        modifiedPNGLevelNames.append(QString::fromStdWString(level->getName()));
+      }
+    }
+    if (!modifiedPNGLevelNames.isEmpty()) {
+      std::string msg =
+          "The Premultiply options in the following levels are disabled, since "
+          "PNG files are premultiplied on loading in the current version:" +
+          modifiedPNGLevelNames.join(", ").toStdString();
+      cout << msg << endl;
+      m_userLog->info(msg);
+    }
+  }
+}
+
 }  // namespace
 
 //==============================================================================================
@@ -406,7 +438,7 @@ static std::pair<int, int> generateMovie(ToonzScene *scene, const TFilePath &fp,
   r0 = r0 - 1;
   r1 = r1 - 1;
 
-  if (r0 < 0) r0                                 = 0;
+  if (r0 < 0) r0 = 0;
   if (r1 < 0 || r1 >= scene->getFrameCount()) r1 = scene->getFrameCount() - 1;
   string msg;
   assert(r1 >= r0);
@@ -663,6 +695,7 @@ int main(int argc, char *argv[]) {
   // questo definisce la registry root e inizializza TEnv
   TEnv::setRootVarName(rootVarName);
   TEnv::setSystemVarPrefix(systemVarPrefix);
+  TEnv::setApplicationFileName(argv[0]);
 
   QCoreApplication::setOrganizationName("Tahoma2D");
   QCoreApplication::setOrganizationDomain("");
@@ -724,7 +757,7 @@ int main(int argc, char *argv[]) {
   TVectorBrushStyle::setRootDir(libraryFolder);
   TPalette::setRootDir(libraryFolder);
   TImageStyle::setLibraryDir(libraryFolder);
-  TFilePath cacheRoot                = ToonzFolder::getCacheRootFolder();
+  TFilePath cacheRoot = ToonzFolder::getCacheRootFolder();
   if (cacheRoot.isEmpty()) cacheRoot = TEnv::getStuffDir() + "cache";
   TImageCache::instance()->setRootDir(cacheRoot);
   // #endif
@@ -818,6 +851,10 @@ int main(int argc, char *argv[]) {
       m_userLog->error(msg);
       // return false;
     }
+
+    // Check if the scene saved with the previous version AND the premultiply
+    // option is set to PNG level setting
+    UnsetPremultiplyOptionsInPngLevels(scene);
 
     msg = "scene loaded";
     cout << "scene loaded" << endl;
@@ -991,8 +1028,8 @@ int main(int argc, char *argv[]) {
     DVGui::info(QString::fromStdString(msg));
     TImageCache::instance()->clear(true);
   } catch (TException &e) {
-    msg = "Untrapped exception: " + ::to_string(e.getMessage()), cout << msg
-                                                                      << endl;
+    msg = "Untrapped exception: " + ::to_string(e.getMessage()),
+    cout << msg << endl;
     m_userLog->error(msg);
     TImageCache::instance()->clear(true);
   } catch (...) {

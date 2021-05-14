@@ -1051,7 +1051,10 @@ static void removeEmptyColumns() {
     if (!column || column->isEmpty()) indices.insert(i);
   }
 
-  if (indices.size()) ColumnCmd::deleteColumns(indices, false, false);
+  if (indices.empty()) return;
+  if (!ColumnCmd::checkExpressionReferences(indices)) return;
+
+  ColumnCmd::deleteColumns(indices, false, false);
 
   app->getCurrentXsheet()->notifyXsheetChanged();
 }

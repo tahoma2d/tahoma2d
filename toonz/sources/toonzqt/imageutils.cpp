@@ -7,6 +7,10 @@
 #include "toonzqt/dvdialog.h"
 #include "toonzqt/gutil.h"
 
+// Qt Includes:
+#include <QScreen>
+#include <QWindow>
+
 // TnzLib includes
 #include "toonz/preferences.h"
 #include "toonz/namebuilder.h"
@@ -430,7 +434,7 @@ static void convertFromVI(const TLevelReaderP &lr, const TPaletteP &plt,
   maxBbox = maxBbox.enlarge(2);
   TAffine aff;
   if (width)  // calcolo l'affine
-    aff   = TScale((double)width / maxBbox.getLx());
+    aff = TScale((double)width / maxBbox.getLx());
   maxBbox = aff * maxBbox;
 
   for (i = 0; i < (int)images.size(); i++) {
@@ -467,9 +471,8 @@ static void convertFromFullRaster(
     const TRop::ResampleFilterType &resType, FrameTaskNotifier *frameNotifier,
     const TPixel &bgColor, bool removeDotBeforeFrameNumber = false) {
   std::vector<TFrameId> frames = _frames;
-  if (frames.empty() &&
-      lr->loadInfo()->getFrameCount() ==
-          1)  // e' una immagine singola, non un livello
+  if (frames.empty() && lr->loadInfo()->getFrameCount() ==
+                            1)  // e' una immagine singola, non un livello
     frames.push_back(TFrameId());
 
   for (int i = 0; i < (int)frames.size(); i++) {
@@ -850,9 +853,8 @@ bool ShortcutZoomer::exec(QKeyEvent *event) {
   if (key == Qt::Key_Control || key == Qt::Key_Shift || key == Qt::Key_Alt)
     return false;
 
-  key =
-      key |
-      event->modifiers() & (~0xf0000000);  // Ignore if the key is a numpad key
+  key = key | event->modifiers() &
+                  (~0xf0000000);  // Ignore if the key is a numpad key
 
   return (key == showHideFullScreenKey)
              ? toggleFullScreen()
@@ -893,9 +895,7 @@ FullScreenWidget::FullScreenWidget(QWidget *parent) : QWidget(parent) {
   setLayout(layout);
 
 #ifdef _WIN32
-  // http://doc.qt.io/qt-5/windows-issues.html#fullscreen-opengl-based-windows
-  winId();
-  QWindowsWindowFunctions::setHasBorderInFullScreen(windowHandle(), true);
+  this->winId();
 #endif
 }
 
@@ -908,23 +908,149 @@ void FullScreenWidget::setWidget(QWidget *widget) {
   if ((m_widget = widget)) layout->addWidget(m_widget);
 }
 
-//---------------------------------------------------------------------------------
+//=============================================================
+bool FullScreenWidget::toggleFullScreen(
+    //=============================================================
 
-bool FullScreenWidget::toggleFullScreen(bool quit) {
-  if (windowState() & Qt::WindowFullScreen) {
-    hide();
-    setWindowFlags(windowFlags() & ~(Qt::Window | Qt::WindowStaysOnTopHint));
-    showNormal();
-    m_widget->setFocus();
-    return true;
-  } else if (!quit) {
-    setWindowFlags(windowFlags() | Qt::Window | Qt::WindowStaysOnTopHint);
-    showFullScreen();
+    const bool kfApplicationQuitInProgress)  // Indicates whether the
+                                             // application is quiting.
 
-    return true;
+/*
+ *  DESCRIPTION:
+ *
+ * Entering full screen has to be done manually in order to avoid having the
+ * window placed on the wrong monitor on systems running X11 with multiple
+ * monitors.
+ */
+{
+  // Initialize the return value.
+  bool fFullScreenStateToggled = false;
+
+  // Define some constants for setting and clearing window flags.
+  const Qt::WindowFlags kwfFullScreenWidgetFlags =
+      Qt::Window |              // <-- Make the widget become a window.
+      Qt::FramelessWindowHint;  // <-- Full screen windows have no border.
+
+  const Qt::WindowFlags kwfFullScreenWidgetExcludedFlagsMask =
+      (Qt::WindowFlags)~Qt::WindowTitleHint;  // <-- Full screen windows have no
+                                              // titlebar.
+
+  // Determine whether to enter or leave full screen mode
+  if (this->windowState() & Qt::WindowFullScreen) {
+    this->hide();
+
+    this->setWindowFlags(this->windowFlags() & ~kwfFullScreenWidgetFlags);
+
+    this->showNormal();
+
+    this->m_widget->setFocus();
+
+    // Set the return value to indicate that the full screen mode has been
+    // changed.
+    fFullScreenStateToggled = true;
+  } else {
+    // There's no point to switching into full screen if the
+    // application is in the process of quiting.
+    if (!kfApplicationQuitInProgress) {
+      //==============================================================
+      //
+      //  NOTE:
+      //
+      //    This new way of going into full screen mode does things manually in
+      //    order to bypass Qt's incorrect policy of always relocating a widget
+      //    to desktop coordinates (0,0) when the widget becomes a window via
+      //    setting the Qt::Window flag.
+      //
+      //    This makes full screen mode work MUCH better on X11 systems with
+      //    multiple displays.
+      //
+      //==============================================================
+      //
+      //  STRATEGY:
+      //
+      //    1.    Obtain the rectangle of the screen that the widgets host
+      //    window is on. This has to be done first, otherwise the CORRECT
+      //    screen info can potentially become unavailable in the following
+      //    steps.
+      //
+      //    2.    Manually set all the necessary flags for the full screen
+      //    window attributes and state. Qt WILL hide the widget/window when
+      //    this is done.
+      //
+      //    3.    Set the window geometry/rect to be the same as the screen from
+      //    Step 1.
+      //
+      //    4.    Make the window visible again.
+      //
+      //---------------------------------------------------
+      // STEP 1:
+
+      // Get the window widget that contains this widget.
+      QWidget *ptrWindowWidget = this->window();
+      if (ptrWindowWidget) {
+        // Get the access to the QWindow object of the containing window.
+        QWindow *ptrContainingQWindow = ptrWindowWidget->windowHandle();
+        if (ptrContainingQWindow) {
+          // Get access to the screen the window is on.
+          QScreen *ptrScreenThisWindowIsOn = ptrContainingQWindow->screen();
+          if (ptrScreenThisWindowIsOn) {
+#if !defined(_WIN32)
+            // Get the geometry rect for the correct screen.
+            QRect qrcScreen = ptrScreenThisWindowIsOn->geometry();
+
+            //---------------------------------------------------
+            // STEP 2:
+
+            // Set the window flags to be frameless and with no titlebar.
+            //
+            // This call will turn the widget into a "window", and HIDE it. This
+            // is because Qt always hides a widget when it transforms a widget
+            //  into a window, or turns a window into a widget.
+            //
+            this->setWindowFlags(
+                (this->windowFlags() & kwfFullScreenWidgetExcludedFlagsMask) |
+                kwfFullScreenWidgetFlags);
+
+            // Set the window state flag to indicate that it's now in fullscreen
+            // mode.
+            // If this state flag isn't set, the test for whether to enter or
+            // leave full screen mode won't work correctly.
+            this->setWindowState(Qt::WindowFullScreen);
+
+            //---------------------------------------------------
+            // STEP 3:
+
+            // Set the window to the geometry rect of the correct screen.
+            this->setGeometry(qrcScreen);
+
+            //---------------------------------------------------
+            // STEP 4:
+
+            // Make the window visible. This also causes all the changes to the
+            // widget's flags, state and geometry that was just set to take
+            // effect.
+            this->show();
+#else
+            this->setWindowFlags(this->windowFlags() | Qt::Window);
+            this->window()->windowHandle()->setScreen(ptrScreenThisWindowIsOn);
+
+            // http://doc.qt.io/qt-5/windows-issues.html#fullscreen-opengl-based-windows
+            QWindowsWindowFunctions::setHasBorderInFullScreen(
+                this->windowHandle(), true);
+
+            this->showFullScreen();
+#endif
+          }
+        }
+      }
+
+      // Set the return value to indicate that the full screen mode has been
+      // changed.
+      fFullScreenStateToggled = true;
+    }
   }
 
-  return false;
+  return (fFullScreenStateToggled);
 }
 
-}  // imageutils
+ }  // namespace ImageUtils

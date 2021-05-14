@@ -383,8 +383,7 @@ void SkeletonTool::leftButtonDown(const TPointD &ppos, const TMouseEvent &e) {
   if (m_device < 0) {
     // No gadget clicked.  Select the column
     std::vector<int> columnIndexes;
-    getViewer()->posToColumnIndexes(e.m_pos, columnIndexes, getPixelSize() * getPixelSize(),
-                                    false);
+    getViewer()->posToColumnIndexes(e.m_pos, columnIndexes, 5.0, false);
     if (!columnIndexes.empty()) {
       int columnIndex;
       columnIndex = columnIndexes.back();
@@ -1056,8 +1055,7 @@ void SkeletonTool::drawHooks() {
     // otherColumn = "picked" column not connected
     TPointD parentProbePos = getViewer()->worldToPos(m_parentProbe);
     std::vector<int> indexes;
-    getViewer()->posToColumnIndexes(parentProbePos, indexes,
-                                    getPixelSize() * 10, false);
+    getViewer()->posToColumnIndexes(parentProbePos, indexes, 10.0, false);
     for (int i = (int)indexes.size() - 1; i >= 0; i--) {
       if (connectedColumns.count(indexes[i]) == 0) {
         otherColumn = indexes[i];

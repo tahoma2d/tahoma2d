@@ -26,6 +26,7 @@ class RenameCellField final : public QLineEdit {
   int m_row;
   int m_col;
   XsheetViewer *m_viewer;
+  bool m_isRenamingCell;
 
 public:
   RenameCellField(QWidget *parent, XsheetViewer *viewer);
@@ -34,6 +35,8 @@ public:
   void showInRowCol(int row, int col, bool multiColumnSelected = false);
 
   bool isLocatedAt(int row, int col) { return row == m_row && col == m_col; }
+
+  bool isRenamingCell() { return m_isRenamingCell; }
 
 protected:
   void focusOutEvent(QFocusEvent *) override;
@@ -45,6 +48,10 @@ protected:
 
   void renameCell();
   void renameSoundTextColumn(TXshSoundTextColumn *sndTextCol, const QString &s);
+
+  void moveCellSelection(int direction);
+  void onTabPressed();
+  void onBacktabPressed();
 
 protected slots:
   void onReturnPressed();
@@ -134,6 +141,11 @@ public:
     m_renameCell->showInRowCol(row, col, multiColumnSelected);
   }
   void hideRenameField() { m_renameCell->hide(); }
+  bool isRenamingCell() {
+    return m_renameCell && m_renameCell->isRenamingCell();
+  }
+
+  void updateCursor();
 
 protected:
   void paintEvent(QPaintEvent *) override;

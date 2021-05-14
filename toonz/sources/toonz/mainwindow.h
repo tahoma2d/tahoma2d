@@ -104,7 +104,7 @@ public:
   void onUpgradeTabPro();
   void onAbout();
   void onOpenOnlineManual();
-  void onSupportTahoma2D();
+  // void onSupportTahoma2D();
   void onOpenWhatsNew();
   void onOpenCommunityForum();
   void onOpenReportABug();
@@ -116,103 +116,16 @@ public:
   Room *getCurrentRoom() const;
   void refreshWriteSettings();
 
-  /*-- Animate tool + mode switching shortcuts --*/
-  void toggleEditNextMode();
-  void toggleEditPosition();
-  void toggleEditRotation();
-  void toggleEditNextScale();
-  void toggleEditNextShear();
-  void toggleEditNextCenter();
-  void toggleEditNextAll();
-
-  /*-- Selection tool + mode switching shortcuts --*/
-  void toggleSelectionNextType();
-  void toggleSelectionRectangular();
-  void toggleSelectionFreehand();
-  void toggleSelectionPolyline();
-
-  /*-- Geometric tool + shape switching shortcuts --*/
-  void toggleGeometricNextShape();
-  void toggleGeometricRectangle();
-  void toggleGeometricCircle();
-  void toggleGeometricEllipse();
-  void toggleGeometricLine();
-  void toggleGeometricPolyline();
-  void toggleGeometricArc();
-  void toggleGeometricMultiArc();
-  void toggleGeometricPolygon();
-
-  /*-- Type tool + style switching shortcuts --*/
-  void toggleTypeNextStyle();
-  void toggleTypeOblique();
-  void toggleTypeRegular();
-  void toggleTypeBoldOblique();
-  void toggleTypeBold();
-
-  /*-- Fill tool + mode switching shortcuts --*/
-  void toggleFillNextType();
-  void toggleFillNormal();
-  void toggleFillRectangular();
-  void toggleFillFreehand();
-  void toggleFillPolyline();
-  void toggleFillNextMode();
-  void toggleFillAreas();
-  void toggleFillLines();
-  void toggleFillLinesAndAreas();
-
-  /*-- Eraser tool + type switching shortcuts --*/
-  void toggleEraserNextType();
-  void toggleEraserNormal();
-  void toggleEraserRectangular();
-  void toggleEraserFreehand();
-  void toggleEraserPolyline();
-  void toggleEraserSegment();
-
-  /*-- Tape tool + type/mode switching shortcuts --*/
-  void toggleTapeNextType();
-  void toggleTapeNormal();
-  void toggleTapeRectangular();
-  void toggleTapeNextMode();
-  void toggleTapeEndpointToEndpoint();
-  void toggleTapeEndpointToLine();
-  void toggleTapeLineToLine();
-
-  /*-- Style Picker tool + mode switching shortcuts --*/
-  void togglePickStyleNextMode();
-  void togglePickStyleAreas();
-  void togglePickStyleLines();
-  void togglePickStyleLinesAndAreas();
-
-  /*-- RGB Picker tool + type switching shortcuts --*/
-  void toggleRGBPickerNextType();
-  void toggleRGBPickerNormal();
-  void toggleRGBPickerRectangular();
-  void toggleRGBPickerFreehand();
-  void toggleRGBPickerPolyline();
-
-  /*-- Skeleton tool + mode switching shortcuts --*/
-  void ToggleSkeletonNextMode();
-  void ToggleSkeletonBuildSkeleton();
-  void ToggleSkeletonAnimate();
-  void ToggleSkeletonInverseKinematics();
-
-  /*-- Plastic tool + mode switching shortcuts --*/
-  void TogglePlasticNextMode();
-  void TogglePlasticEditMesh();
-  void TogglePlasticPaintRigid();
-  void TogglePlasticBuildSkeleton();
-  void TogglePlasticAnimate();
-
-  /*-- Brush Tool + mode switching shortcuts --*/
-  void ToggleBrushAutoFillOff();
-  void ToggleBrushAutoFillOn();
-
   void onNewVectorLevelButtonPressed();
   void onNewToonzRasterLevelButtonPressed();
   void onNewRasterLevelButtonPressed();
   void clearCacheFolder();
 
   QString getLayoutName() { return m_layoutName; }
+
+  void setSaveSettingsOnQuit(bool allowSave) {
+    m_saveSettingsOnQuit = allowSave;
+  }
 
 protected:
   void showEvent(QShowEvent *) override;
@@ -230,75 +143,94 @@ private:
   Room *createFXRoom();
   Room *createBrowserRoom();
 
-  QAction *createAction(const char *id, const QString &name,
+  QAction *createAction(const char *id, const char *name,
                         const QString &defaultShortcut, QString newStatusTip,
-                        CommandType type = MenuFileCommandType);
-  QAction *createRightClickMenuAction(const char *id, const QString &name,
+                        CommandType type = MenuFileCommandType,
+                        const char *iconSVGName = "");
+  QAction *createRightClickMenuAction(const char *id, const char *name,
                                       const QString &defaultShortcut,
+                                      const char *iconSVGName = "",
                                       QString newStatusTip = "");
-  QAction *createMenuFileAction(const char *id, const QString &name,
+  QAction *createMenuFileAction(const char *id, const char *name,
                                 const QString &defaultShortcut,
+                                const char *iconSVGName = "",
                                 QString newStatusTip = "");
-  QAction *createMenuEditAction(const char *id, const QString &name,
+  QAction *createMenuEditAction(const char *id, const char *name,
                                 const QString &defaultShortcut,
+                                const char *iconSVGName = "",
                                 QString newStatusTip = "");
-  QAction *createMenuScanCleanupAction(const char *id, const QString &name,
+  QAction *createMenuScanCleanupAction(const char *id, const char *name,
                                        const QString &defaultShortcut,
+                                       const char *iconSVGName = "",
                                        QString newStatusTip = "");
-  QAction *createMenuLevelAction(const char *id, const QString &name,
+  QAction *createMenuLevelAction(const char *id, const char *name,
                                  const QString &defaultShortcut,
+                                 const char *iconSVGName = "",
                                  QString newStatusTip = "");
-  QAction *createMenuXsheetAction(const char *id, const QString &name,
+  QAction *createMenuXsheetAction(const char *id, const char *name,
                                   const QString &defaultShortcut,
+                                  const char *iconSVGName = "",
                                   QString newStatusTip = "");
-  QAction *createMenuCellsAction(const char *id, const QString &name,
+  QAction *createMenuCellsAction(const char *id, const char *name,
                                  const QString &defaultShortcut,
+                                 const char *iconSVGName = "",
                                  QString newStatusTip = "");
-  QAction *createMenuViewAction(const char *id, const QString &name,
+  QAction *createMenuViewAction(const char *id, const char *name,
                                 const QString &defaultShortcut,
+                                const char *iconSVGName = "",
                                 QString newStatusTip = "");
-  QAction *createMenuWindowsAction(const char *id, const QString &name,
+  QAction *createMenuWindowsAction(const char *id, const char *name,
                                    const QString &defaultShortcut,
+                                   const char *iconSVGName = "",
                                    QString newStatusTip = "");
 
-  QAction *createMenuPlayAction(const char *id, const QString &name,
+  QAction *createMenuPlayAction(const char *id, const char *name,
                                 const QString &defaultShortcut,
+                                const char *iconSVGName = "",
                                 QString newStatusTip = "");
-  QAction *createMenuRenderAction(const char *id, const QString &name,
+  QAction *createMenuRenderAction(const char *id, const char *name,
                                   const QString &defaultShortcut,
+                                  const char *iconSVGName = "",
                                   QString newStatusTip = "");
-  QAction *createMenuHelpAction(const char *id, const QString &name,
+  QAction *createMenuHelpAction(const char *id, const char *name,
                                 const QString &defaultShortcut,
+                                const char *iconSVGName = "",
                                 QString newStatusTip = "");
-  QAction *createRGBAAction(const char *id, const QString &name,
+  QAction *createRGBAAction(const char *id, const char *name,
                             const QString &defaultShortcut,
+                            const char *iconSVGName = "",
                             QString newStatusTip = "");
-  QAction *createFillAction(const char *id, const QString &name,
+  QAction *createFillAction(const char *id, const char *name,
                             const QString &defaultShortcut,
+                            const char *iconSVGName = "",
                             QString newStatusTip = "");
-  QAction *createMenuAction(const char *id, const QString &name,
+  QAction *createMenuAction(const char *id, const char *name,
                             QList<QString> list, QString newStatusTip = "");
-  QAction *createToggle(const char *id, const QString &name,
+  QAction *createToggle(const char *id, const char *name,
                         const QString &defaultShortcut, bool startStatus,
-                        CommandType type, QString newStatusTip = "");
+                        CommandType type, const char *iconSVGName = "",
+                        QString newStatusTip = "");
   QAction *createToolAction(const char *id, const char *iconName,
-                            const QString &name, const QString &defaultShortcut,
+                            const char *name, const QString &defaultShortcut,
                             QString newStatusTip = "");
-  QAction *createViewerAction(const char *id, const QString &name,
+  QAction *createViewerAction(const char *id, const char *name,
                               const QString &defaultShortcut,
+                              const char *iconSVGName = "",
                               QString newStatusTip = "");
   // For command bar, no shortcut keys
-  QAction *createVisualizationButtonAction(const char *id, const QString &name,
+  QAction *createVisualizationButtonAction(const char *id, const char *name,
+                                           const char *iconSVGName = "",
                                            QString newStatusTip = "");
 
-  QAction *createMiscAction(const char *id, const QString &name,
+  QAction *createMiscAction(const char *id, const char *name,
                             const char *defaultShortcut,
                             QString newStatusTip = "");
-  QAction *createToolOptionsAction(const char *id, const QString &name,
+  QAction *createToolOptionsAction(const char *id, const char *name,
                                    const QString &defaultShortcut,
                                    QString newStatusTip = "");
-  QAction *createStopMotionAction(const char *id, const QString &name,
+  QAction *createStopMotionAction(const char *id, const char *name,
                                   const QString &defaultShortcut,
+                                  const char *iconSVGName = "",
                                   QString newStatusTip = "");
 
 protected slots:

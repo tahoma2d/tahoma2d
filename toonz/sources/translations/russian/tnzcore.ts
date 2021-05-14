@@ -30,7 +30,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../common/tvrender/tpalette.cpp" line="250"/>
+        <location filename="../../common/tvrender/tpalette.cpp" line="254"/>
         <source>colors</source>
         <translation>цвета</translation>
     </message>
@@ -51,12 +51,12 @@
 <context>
     <name>TCenterLineStrokeStyle</name>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="888"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="862"/>
         <source>Constant</source>
         <translation>Постоянная</translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="921"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="895"/>
         <source>Thickness</source>
         <translation>Толщина</translation>
     </message>
@@ -64,12 +64,12 @@
 <context>
     <name>TRasterImagePatternStrokeStyle</name>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1026"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1000"/>
         <source>Distance</source>
         <translation>Расстояние</translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1028"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1002"/>
         <source>Rotation</source>
         <translation>Вращение</translation>
     </message>
@@ -77,12 +77,12 @@
 <context>
     <name>TVectorImagePatternStrokeStyle</name>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1470"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1410"/>
         <source>Distance</source>
         <translation>Расстояние</translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1472"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1412"/>
         <source>Rotation</source>
         <translation>Вращение</translation>
     </message>

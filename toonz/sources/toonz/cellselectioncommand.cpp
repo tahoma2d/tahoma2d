@@ -1534,7 +1534,8 @@ void CloneLevelUndo::cloneLevels() const {
       if (srcSl->getPath().getType() == "psd" ||
           srcSl->getPath().getType() == "gif" ||
           srcSl->getPath().getType() == "mp4" ||
-          srcSl->getPath().getType() == "webm")
+          srcSl->getPath().getType() == "webm" ||
+          srcSl->getPath().getType() == "mov")
         continue;
 
       const TFilePath &srcPath = srcSl->getPath();

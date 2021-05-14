@@ -496,7 +496,6 @@ void DockLayout::redistribute(bool allowFixedItems) {
       widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
       widget->setMinimumSize(0, 0);
     }
-    m_regions.front()->calculateExtremalSizes();
   }
 
   // Finally, apply Region geometries found
