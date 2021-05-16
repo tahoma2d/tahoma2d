@@ -272,6 +272,7 @@ TSoundTrackP TSoundTrackReaderWav::load() {
         //#endif
         break;
       case 24:
+        // NOTE: This effectively changes from 24bit to 32bit bitPerSample
         if (!TNZ_LITTLE_ENDIAN) {
           UCHAR *begin = (UCHAR *)track->getRawData();
           for (int i = 0; i < (int)(sampleCount * fmtChunk->m_chans); ++i) {

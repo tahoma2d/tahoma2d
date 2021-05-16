@@ -474,31 +474,32 @@ public:
   typedef TINT32 ChannelValueType;
   typedef TMono24Sample ChannelSampleType;
 
-  TMono24Sample(TINT32 v = 0) : value(tcrop<TINT32>(v, -8388608, 8388607)) {}
+  TMono24Sample(TINT32 v = 0)
+      : value(tcrop<TINT32>(v, -2147483648, 2147483647)) {}
   ~TMono24Sample(){};
 
   static bool isSampleSigned() { return true; }
-  static int getBitPerSample() { return 24; }
+  static int getBitPerSample() { return 32; }  // We converted on import
 
   inline TINT32 getValue(TSound::Channel) const { return value; }
 
   inline void setValue(TSound::Channel /*chan*/, TINT32 v) {
-    value = tcrop<TINT32>(v, -8388608, 8388607);
+    value = tcrop<TINT32>(v, -2147483648, 2147483647);
   }
 
   inline double getPressure(TSound::Channel chan) const {
-    return (getValue(chan));
+    return (getValue(chan) << 8);  // Drop back to 24bit
   }
 
   inline TMono24Sample &operator+=(const TMono24Sample &s) {
     int iVal = value + s.value;
-    value    = tcrop(iVal, -8388608, 8388607);
+    value    = tcrop<TINT32>(iVal, -2147483648, 2147483647);
     return *this;
   }
 
   inline TMono24Sample &operator*=(double a) {
     int iVal = (int)(value * a);
-    value    = tcrop(iVal, -8388608, 8388607);
+    value    = tcrop<TINT32>(iVal, -2147483648, 2147483647);
     return *this;
   }
 
@@ -506,8 +507,8 @@ public:
 
   static TMono24Sample mix(const TMono24Sample &s1, double a1,
                            const TMono24Sample &s2, double a2) {
-    return TMono24Sample(
-        tcrop((int)(s1.value * a1 + s2.value * a2), -8388608, 8388607));
+    return TMono24Sample(tcrop<TINT32>((int)(s1.value * a1 + s2.value * a2),
+                                       -2147483648, 2147483647));
   }
 
   static inline TMono24Sample from(const TMono8UnsignedSample &sample);
@@ -538,14 +539,14 @@ public:
   typedef TMono24Sample ChannelSampleType;
 
   TStereo24Sample(TINT32 lchan = 0, TINT32 rchan = 0) {
-    channel[0] = tcrop<TINT32>(lchan, -8388608, 8388607);
-    channel[1] = tcrop<TINT32>(rchan, -8388608, 8388607);
+    channel[0] = tcrop<TINT32>(lchan, -2147483648, 2147483647);
+    channel[1] = tcrop<TINT32>(rchan, -2147483648, 2147483647);
   }
 
   ~TStereo24Sample(){};
 
   static bool isSampleSigned() { return true; }
-  static int getBitPerSample() { return 24; }
+  static int getBitPerSample() { return 32; }  // We converted on import
 
   inline TINT32 getValue(TSound::Channel chan) const {
     assert(chan <= 1);
@@ -554,26 +555,26 @@ public:
 
   inline void setValue(TSound::Channel chan, TINT32 v) {
     assert(chan <= 1);
-    channel[chan] = tcrop<TINT32>(v, -8388608, 8388607);
+    channel[chan] = tcrop<TINT32>(v, -2147483648, 2147483647);
   }
 
   inline double getPressure(TSound::Channel chan) const {
-    return (getValue(chan));
+    return (getValue(chan) << 8);  // Drop back to 24bit
   }
 
   inline TStereo24Sample &operator+=(const TStereo24Sample &s) {
     int iLeftVal  = channel[0] + s.channel[0];
     int iRightVal = channel[1] + s.channel[1];
-    channel[0]    = tcrop(iLeftVal, -8388608, 8388607);
-    channel[1]    = tcrop(iRightVal, -8388608, 8388607);
+    channel[0]    = tcrop<TINT32>(iLeftVal, -2147483648, 2147483647);
+    channel[1]    = tcrop<TINT32>(iRightVal, -2147483648, 2147483647);
     return *this;
   }
 
   inline TStereo24Sample &operator*=(double a) {
     int iLeftVal  = (int)(a * channel[0]);
     int iRightVal = (int)(a * channel[1]);
-    channel[0]    = tcrop(iLeftVal, -8388608, 8388607);
-    channel[1]    = tcrop(iRightVal, -8388608, 8388607);
+    channel[0]    = tcrop<TINT32>(iLeftVal, -2147483648, 2147483647);
+    channel[1]    = tcrop<TINT32>(iRightVal, -2147483648, 2147483647);
     return *this;
   }
 
@@ -583,10 +584,11 @@ public:
 
   static TStereo24Sample mix(const TStereo24Sample &s1, double a1,
                              const TStereo24Sample &s2, double a2) {
-    return TStereo24Sample(tcrop((int)(s1.channel[0] * a1 + s2.channel[0] * a2),
-                                 -8388608, 8388607),
-                           tcrop((int)(s1.channel[1] * a1 + s2.channel[1] * a2),
-                                 -8388608, 8388607));
+    return TStereo24Sample(
+        tcrop<TINT32>((int)(s1.channel[0] * a1 + s2.channel[0] * a2),
+                      -2147483648, 2147483647),
+        tcrop<TINT32>((int)(s1.channel[1] * a1 + s2.channel[1] * a2),
+                      -2147483648, 2147483647));
   }
 
   static inline TStereo24Sample from(const TMono8UnsignedSample &sample);
@@ -802,7 +804,7 @@ inline TMono8SignedSample TMono8SignedSample::from(
 
 inline TMono8SignedSample TMono8SignedSample::from(
     const TMono24Sample &sample) {
-  int val = (sample.getValue(TSound::LEFT) >> 16);
+  int val = (sample.getValue(TSound::LEFT) >> 24);
   return TMono8SignedSample(val);
 }
 
@@ -811,7 +813,7 @@ inline TMono8SignedSample TMono8SignedSample::from(
 inline TMono8SignedSample TMono8SignedSample::from(
     const TStereo24Sample &sample) {
   int val =
-      (sample.getValue(TSound::LEFT) + sample.getValue(TSound::RIGHT)) >> 17;
+      (sample.getValue(TSound::LEFT) + sample.getValue(TSound::RIGHT)) >> 25;
   return TMono8SignedSample(val);
 }
 
@@ -883,7 +885,7 @@ inline TMono8UnsignedSample TMono8UnsignedSample::from(
 inline TMono8UnsignedSample TMono8UnsignedSample::from(
     const TMono24Sample &sample) {
   return TMono8UnsignedSample(
-      (unsigned char)(sample.getValue(TSound::MONO) >> 16) + 128);
+      (unsigned char)(sample.getValue(TSound::MONO) >> 24) + 128);
 }
 
 //------------------------------------------------------------------------------
@@ -893,7 +895,7 @@ inline TMono8UnsignedSample TMono8UnsignedSample::from(
   return TMono8UnsignedSample(
       (unsigned char)((sample.getValue(TSound::LEFT) +
                        sample.getValue(TSound::RIGHT)) >>
-                      17) +
+                      25) +
       128);
 }
 
@@ -970,7 +972,7 @@ inline TStereo8SignedSample TStereo8SignedSample::from(
 
 inline TStereo8SignedSample TStereo8SignedSample::from(
     const TMono24Sample &sample) {
-  int srcval = sample.getValue(TSound::LEFT) >> 16;
+  int srcval = sample.getValue(TSound::LEFT) >> 24;
   return TStereo8SignedSample(srcval, srcval);
 }
 
@@ -979,7 +981,7 @@ inline TStereo8SignedSample TStereo8SignedSample::from(
 inline TStereo8SignedSample TStereo8SignedSample::from(
     const TStereo24Sample &sample) {
   int srcval =
-      (sample.getValue(TSound::LEFT) + sample.getValue(TSound::RIGHT)) >> 17;
+      (sample.getValue(TSound::LEFT) + sample.getValue(TSound::RIGHT)) >> 25;
   return TStereo8SignedSample(srcval, srcval);
 }
 
@@ -1057,7 +1059,7 @@ inline TStereo8UnsignedSample TStereo8UnsignedSample::from(
 
 inline TStereo8UnsignedSample TStereo8UnsignedSample::from(
     const TMono24Sample &sample) {
-  int srcval = (sample.getValue(TSound::LEFT) >> 16) + 128;
+  int srcval = (sample.getValue(TSound::LEFT) >> 24) + 128;
   return TStereo8UnsignedSample(srcval, srcval);
 }
 
@@ -1066,7 +1068,7 @@ inline TStereo8UnsignedSample TStereo8UnsignedSample::from(
 inline TStereo8UnsignedSample TStereo8UnsignedSample::from(
     const TStereo24Sample &sample) {
   int srcval =
-      ((sample.getValue(TSound::LEFT) + sample.getValue(TSound::RIGHT)) >> 17) +
+      ((sample.getValue(TSound::LEFT) + sample.getValue(TSound::RIGHT)) >> 25) +
       128;
   return TStereo8UnsignedSample(srcval, srcval);
 }
@@ -1132,7 +1134,7 @@ inline TMono16Sample TMono16Sample::from(const TStereo16Sample &sample) {
 //------------------------------------------------------------------------------
 
 inline TMono16Sample TMono16Sample::from(const TMono24Sample &sample) {
-  int srcval = (sample.getValue(TSound::LEFT) >> 8);
+  int srcval = (sample.getValue(TSound::LEFT) >> 16);
   return TMono16Sample(srcval);
 }
 
@@ -1140,7 +1142,7 @@ inline TMono16Sample TMono16Sample::from(const TMono24Sample &sample) {
 
 inline TMono16Sample TMono16Sample::from(const TStereo24Sample &sample) {
   int srcval =
-      ((sample.getValue(TSound::LEFT) + sample.getValue(TSound::RIGHT)) >> 9);
+      ((sample.getValue(TSound::LEFT) + sample.getValue(TSound::RIGHT)) >> 17);
   return TMono16Sample(srcval);
 }
 
@@ -1209,7 +1211,7 @@ inline TStereo16Sample TStereo16Sample::from(const TStereo16Sample &sample) {
 //------------------------------------------------------------------------------
 
 inline TStereo16Sample TStereo16Sample::from(const TMono24Sample &sample) {
-  int srcval = (sample.getValue(TSound::LEFT) >> 8);
+  int srcval = (sample.getValue(TSound::LEFT) >> 16);
   return TStereo16Sample(srcval, srcval);
 }
 
@@ -1217,7 +1219,7 @@ inline TStereo16Sample TStereo16Sample::from(const TMono24Sample &sample) {
 
 inline TStereo16Sample TStereo16Sample::from(const TStereo24Sample &sample) {
   int srcval =
-      ((sample.getValue(TSound::LEFT) + sample.getValue(TSound::RIGHT)) >> 9);
+      ((sample.getValue(TSound::LEFT) + sample.getValue(TSound::RIGHT)) >> 17);
   return TStereo16Sample(srcval, srcval);
 }
 
