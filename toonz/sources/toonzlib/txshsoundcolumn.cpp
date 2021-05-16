@@ -970,7 +970,7 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
   }
 
 #ifdef _WIN32
-  if (format.m_sampleRate > 44100) format.m_sampleRate = 44100;
+  if (format.m_sampleRate > 48000) format.m_sampleRate = 48000;
 #else
   QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
   if (info.deviceName().length() == 0) throw TSoundDeviceException(TSoundDeviceException::NoDevice,

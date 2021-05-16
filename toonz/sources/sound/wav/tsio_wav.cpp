@@ -290,6 +290,17 @@ TSoundTrackP TSoundTrackReaderWav::load() {
         }
         //#endif
         break;
+      case 32:
+        if (!TNZ_LITTLE_ENDIAN) {
+          swapAndCopySamples((short *)dataChunk->m_samples.get(),
+                             (short *)track->getRawData(),
+                             sampleCount * fmtChunk->m_chans);
+        } else {
+          memcpy((void *)track->getRawData(),
+                 (void *)(dataChunk->m_samples.get()),
+                 sampleCount * fmtChunk->m_bytesPerSample);
+        }
+        break;
       }
     }
 

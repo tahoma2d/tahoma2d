@@ -819,8 +819,12 @@ TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(TUINT32 sampleRate,
 
   if (bitPerSample <= 8)
     bitPerSample = 8;
-  else if ((bitPerSample > 8 && bitPerSample < 16) || bitPerSample >= 16)
+  else if (bitPerSample <= 16)
     bitPerSample = 16;
+  else if (bitPerSample <= 24)
+    bitPerSample = 24;
+  else
+    bitPerSample = 32;
 
   if (bitPerSample >= 16)
     fmt.m_signedSample = true;
@@ -1715,8 +1719,12 @@ TSoundTrackFormat TSoundInputDevice::getPreferredFormat(TUINT32 sampleRate,
 
   if (bitPerSample <= 8)
     bitPerSample = 8;
-  else if ((bitPerSample > 8 && bitPerSample < 16) || bitPerSample >= 16)
+  else if (bitPerSample <= 16)
     bitPerSample = 16;
+  else if (bitPerSample <= 24)
+    bitPerSample = 24;
+  else
+    bitPerSample = 32;
 
   if (bitPerSample >= 16)
     fmt.m_signedSample = true;
