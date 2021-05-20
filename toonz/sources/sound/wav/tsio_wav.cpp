@@ -4,6 +4,7 @@
 #include "tsio_wav.h"
 #include "tsystem.h"
 #include "tfilepath_io.h"
+#include "tsop.h"
 
 using namespace std;
 
@@ -302,6 +303,15 @@ TSoundTrackP TSoundTrackReaderWav::load() {
                  sampleCount * fmtChunk->m_bytesPerSample);
         }
         break;
+      }
+
+      // Convert all WAV to 32bit PCM
+      if (fmtChunk->m_bitPerSample != 32 || fmtChunk->m_encodingType != WAVE_FORMAT_PCM) {
+        TSoundTrackP origTrack = track;
+        TSoundTrackFormat fmt = track->getFormat();
+        fmt.m_bitPerSample = 32;
+        fmt.m_formatType = WAVE_FORMAT_PCM;
+        track = TSop::convert(origTrack, fmt);
       }
     }
 

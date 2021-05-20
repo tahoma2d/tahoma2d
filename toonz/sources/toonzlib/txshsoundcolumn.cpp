@@ -1116,7 +1116,8 @@ TSoundTrackP TXshSoundColumn::mixingTogether(
 
   // Per ora perche mov vuole solo 16 bit
   TSoundTrackFormat fmt                            = mix->getFormat();
-  if (fmt.m_bitPerSample != 16) fmt.m_bitPerSample = 16;
+  if (fmt.m_bitPerSample != 32) fmt.m_bitPerSample = 32;
+  if (fmt.m_formatType != WAVE_FORMAT_PCM) fmt.m_formatType = WAVE_FORMAT_PCM;
   mix                                              = TSop::convert(mix, fmt);
   return mix;
 }
