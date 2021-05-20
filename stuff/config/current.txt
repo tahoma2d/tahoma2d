@@ -846,67 +846,130 @@
   <item>"STD_inoColorBurnFx"	"Color Burn Ino"	</item>
   <item>"STD_inoColorBurnFx.opacity"	"Opacity"	</item>
   <item>"STD_inoColorBurnFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoColorBurnFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoColorBurnFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoColorBurnFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoColorDodgeFx"	"Color Dodge Ino"	</item>
   <item>"STD_inoColorDodgeFx.opacity"	"Opacity"	</item>
   <item>"STD_inoColorDodgeFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoColorDodgeFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoColorDodgeFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoColorDodgeFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoCrossDissolveFx"	"Cross Dissolve Ino"	</item>
   <item>"STD_inoCrossDissolveFx.opacity"	"Opacity"	</item>
   <item>"STD_inoCrossDissolveFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoCrossDissolveFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoCrossDissolveFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoCrossDissolveFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoDarkenFx"	"Darken Ino"	</item>
   <item>"STD_inoDarkenFx.opacity"	"Opacity"	</item>
   <item>"STD_inoDarkenFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoDarkenFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoDarkenFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoDarkenFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoDarkerColorFx"	"Darker Color Ino"	</item>
   <item>"STD_inoDarkerColorFx.opacity"	"Opacity"	</item>
   <item>"STD_inoDarkerColorFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoDarkerColorFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoDarkerColorFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoDarkerColorFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoDivideFx"	"Divide Ino"	</item>
   <item>"STD_inoDivideFx.opacity"	"Opacity"	</item>
   <item>"STD_inoDivideFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoDivideFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoDivideFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoDivideFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoHardLightFx"	"Hard Light Ino"	</item>
   <item>"STD_inoHardLightFx.opacity"	"Opacity"	</item>
   <item>"STD_inoHardLightFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoHardLightFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoHardLightFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoHardLightFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoHardMixFx"	"Hard Mix Ino"	</item>
   <item>"STD_inoHardMixFx.opacity"	"Opacity"	</item>
   <item>"STD_inoHardMixFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoHardMixFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoHardMixFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoHardMixFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoLightenFx"	"Lighten Ino"	</item>
   <item>"STD_inoLightenFx.opacity"	"Opacity"	</item>
   <item>"STD_inoLightenFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoLightenFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoLightenFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoLightenFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoLighterColorFx"	"Lighter Color Ino"	</item>
   <item>"STD_inoLighterColorFx.opacity"	"Opacity"	</item>
   <item>"STD_inoLighterColorFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoLighterColorFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoLighterColorFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoLighterColorFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoLinearBurnFx"	"Linear Burn Ino"	</item>
   <item>"STD_inoLinearBurnFx.opacity"	"Opacity"	</item>
   <item>"STD_inoLinearBurnFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoLinearBurnFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoLinearBurnFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoLinearBurnFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoLinearDodgeFx"	"Linear Dodge Ino"	</item>
   <item>"STD_inoLinearDodgeFx.opacity"	"Opacity"	</item>
   <item>"STD_inoLinearDodgeFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoLinearDodgeFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoLinearDodgeFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoLinearDodgeFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoLinearLightFx"	"Linear Light Ino"	</item>
   <item>"STD_inoLinearLightFx.opacity"	"Opacity"	</item>
   <item>"STD_inoLinearLightFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoLinearLightFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoLinearLightFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoLinearLightFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoMultiplyFx"	"Multiply Ino"	</item>
   <item>"STD_inoMultiplyFx.opacity"	"Opacity"	</item>
   <item>"STD_inoMultiplyFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoMultiplyFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoMultiplyFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoMultiplyFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoOverFx"	"Over Ino"	</item>
   <item>"STD_inoOverFx.opacity"	"Opacity"	</item>
   <item>"STD_inoOverFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoOverFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoOverFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoOverFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoOverlayFx"	"Overlay Ino"	</item>
   <item>"STD_inoOverlayFx.opacity"	"Opacity"	</item>
   <item>"STD_inoOverlayFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoOverlayFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoOverlayFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoOverlayFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoPinLightFx"	"Pin Light Ino"	</item>
   <item>"STD_inoPinLightFx.opacity"	"Opacity"	</item>
   <item>"STD_inoPinLightFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoPinLightFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoPinLightFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoPinLightFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoScreenFx"	"Screen Ino"	</item>
   <item>"STD_inoScreenFx.opacity"	"Opacity"	</item>
   <item>"STD_inoScreenFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoScreenFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoScreenFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoScreenFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoSoftLightFx"	"Soft Light Ino"	</item>
   <item>"STD_inoSoftLightFx.opacity"	"Opacity"	</item>
   <item>"STD_inoSoftLightFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoSoftLightFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoSoftLightFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoSoftLightFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoSubtractFx"	"Subtract Ino"	</item>
   <item>"STD_inoSubtractFx.opacity"	"Opacity"	</item>
   <item>"STD_inoSubtractFx.clipping_mask"	"Clipping Mask"	</item>
   <item>"STD_inoSubtractFx.alpha_rendering"	"Alpha Rendering"	</item>
+  <item>"STD_inoSubtractFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoSubtractFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoSubtractFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoVividLightFx"	"Vivid Light Ino"	</item>
   <item>"STD_inoVividLightFx.opacity"	"Opacity"	</item>
   <item>"STD_inoVividLightFx.clipping_mask"	"Clipping Mask"	</item>
+  <item>"STD_inoVividLightFx.linear"	"Linear Color Space"	</item>
+  <item>"STD_inoVividLightFx.gamma"	"Gamma"	</item>
+  <item>"STD_inoVividLightFx.premultiplied"	"Source is Premultiplied"	</item>
   <item>"STD_inoBlurFx"	"Blur Ino"	</item>
   <item>"STD_inoBlurFx.radius"	"Radius"	</item>
   <item>"STD_inoBlurFx.reference"	"Reference"	</item>
