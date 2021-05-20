@@ -313,8 +313,9 @@ void TSoundOutputDevice::setLooping(bool loop) { m_imp->setLooping(loop); }
 
 TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(TUINT32 sampleRate,
                                                          int channelCount,
-                                                         int bitPerSample) {
-  TSoundTrackFormat fmt(sampleRate, bitPerSample, channelCount, true);
+                                                         int bitPerSample,
+                                                         int formatType) {
+  TSoundTrackFormat fmt(sampleRate, bitPerSample, channelCount, true, formatType);
   return fmt;
 }
 
@@ -323,7 +324,7 @@ TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(TUINT32 sampleRate,
 TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(
     const TSoundTrackFormat &format) {
   return getPreferredFormat(format.m_sampleRate, format.m_channelCount,
-                            format.m_bitPerSample);
+                            format.m_bitPerSample, format.m_formatType);
 }
 
 //==============================================================================
@@ -435,7 +436,8 @@ bool TSoundInputDevice::supportsVolume() { return true; }
 
 TSoundTrackFormat TSoundInputDevice::getPreferredFormat(TUINT32 sampleRate,
                                                         int channelCount,
-                                                        int bitPerSample) {
+                                                        int bitPerSample,
+                                                        int formatType) {
   TSoundTrackFormat fmt;
   return fmt;
 }
@@ -448,7 +450,7 @@ TSoundTrackFormat TSoundInputDevice::getPreferredFormat(
 try {
 */
   return getPreferredFormat(format.m_sampleRate, format.m_channelCount,
-                            format.m_bitPerSample);
+                            format.m_bitPerSample, format.m_formatType);
   /*}
 
 catch (TSoundDeviceException &e) {

@@ -19,6 +19,10 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
+#ifndef _WIN32
+#define WAVE_FORMAT_PCM 1
+#endif
+
 //=========================================================
 
 namespace TSound {
