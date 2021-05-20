@@ -249,9 +249,9 @@ TSoundTrackP TSoundTrackReaderWav::load() {
     TINT32 sampleCount = dataChunk->m_length / fmtChunk->m_bytesPerSample;
     bool signedSample  = (fmtChunk->m_bitPerSample != 8);
 
-    track = TSoundTrack::create((int)fmtChunk->m_sampleRate,
-                                fmtChunk->m_bitPerSample, fmtChunk->m_chans,
-                                sampleCount, signedSample);
+    track = TSoundTrack::create(
+        (int)fmtChunk->m_sampleRate, fmtChunk->m_bitPerSample,
+        fmtChunk->m_chans, sampleCount, signedSample, fmtChunk->m_encodingType);
 
     if (track) {
       switch (fmtChunk->m_bitPerSample) {
