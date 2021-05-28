@@ -62,6 +62,18 @@ jobs:
         run: |
           echo "NIGHTLYDATE=$(date '+%Y-%m-%d')" >> $GITHUB_ENV
           echo "NIGHTLYDATETIME=$(date '+%Y-%m-%d %H:%M:%S %Z')" >> $GITHUB_ENV
+      - name: Create/Update Nightlies Tag
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        run: |
+          git remote add nightly_repo https://tahoma2d:${{ secrets.TAHOMA2D_TOKEN }}@github.com/tahoma2d/tahoma2d_nightlies.git
+          git config lfs.https://tahoma2d:${{ secrets.TAHOMA2D_TOKEN }}@github.com/tahoma2d/tahoma2d_nightlies.git.lfs.locksverify false
+          git fetch --unshallow
+          git tag -f nightly
+          git push -f origin nightly
+          git tag -f nightly-${{ github.sha }}
+          git config --unset-all http.https://github.com/.extraheader
+          git push -f nightly_repo nightly-${{ github.sha }}
+          git remote rm nightly_repo
       - name: Update Latest Nightly Release
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         uses: ncipollo/release-action@v1
@@ -76,16 +88,6 @@ jobs:
           replacesArtifacts: true
           tag: nightly
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create Nightlies Tag
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-        run: |
-          git remote add nightly_repo https://tahoma2d:${{ secrets.TAHOMA2D_TOKEN }}@github.com/tahoma2d/tahoma2d_nightlies.git
-          git config lfs.https://tahoma2d:${{ secrets.TAHOMA2D_TOKEN }}@github.com/tahoma2d/tahoma2d_nightlies.git.lfs.locksverify false
-          git config --unset-all http.https://github.com/.extraheader
-          git fetch --unshallow
-          git tag -f nightly-${{ github.sha }}
-          git push -f nightly_repo nightly-${{ github.sha }}
-          git remote rm nightly_repo
       - name: Create Nightlies Release
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         uses: ncipollo/release-action@v1
