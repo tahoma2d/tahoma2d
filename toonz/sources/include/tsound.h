@@ -19,6 +19,10 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
+#ifndef _WIN32
+#define WAVE_FORMAT_PCM 1
+#endif
+
 //=========================================================
 
 namespace TSound {
@@ -53,13 +57,16 @@ public:
   int m_bitPerSample;    // numero di bit per campione
   int m_channelCount;    // numero di canali
   bool m_signedSample;
+  int m_formatType;
 
   TSoundTrackFormat(TUINT32 sampleRate = 0, int bitPerSample = 0,
-                    int channelCount = 0, bool signedSample = true)
+                    int channelCount = 0, bool signedSample = true,
+                    int formatType = WAVE_FORMAT_PCM)
       : m_sampleRate(sampleRate)
       , m_bitPerSample(bitPerSample)
       , m_channelCount(channelCount)
-      , m_signedSample(signedSample) {}
+      , m_signedSample(signedSample)
+      , m_formatType(formatType) {}
 
   ~TSoundTrackFormat() {}
 
@@ -84,6 +91,7 @@ protected:
   int m_bitPerSample;    // numero di bit per campione
   TINT32 m_sampleCount;  // numero di campioni
   int m_channelCount;    // numero di canali
+  int m_formatType;
 
   TSoundTrack *m_parent;  // nel caso di sotto-traccie
 
@@ -93,11 +101,12 @@ protected:
   TSoundTrack();
 
   TSoundTrack(TUINT32 sampleRate, int bitPerSample, int channelCount,
-              int sampleSize, TINT32 sampleCount, bool isSampleSigned);
+              int sampleSize, TINT32 sampleCount, bool isSampleSigned,
+              int formatType);
 
   TSoundTrack(TUINT32 sampleRate, int bitPerSample, int channelCount,
               int sampleSize, TINT32 sampleCount, UCHAR *buffer,
-              TSoundTrack *parent);
+              TSoundTrack *parent, int formatType);
 
 public:
   /*!
@@ -107,11 +116,13 @@ signedSample must be true for tracks whose samples are signed
 */
   static TSoundTrackP create(TUINT32 sampleRate, int bitPerSample,
                              int channelCount, TINT32 sampleCount,
-                             bool signedSample = true);
+                             bool signedSample = true,
+                             int formatType    = WAVE_FORMAT_PCM);
 
   static TSoundTrackP create(TUINT32 sampleRate, int bitPerSample,
                              int channelCount, TINT32 sampleCount, void *buffer,
-                             bool signedSample = true);
+                             bool signedSample = true,
+                             int formatType    = WAVE_FORMAT_PCM);
 
   /*!
 Create a new soundtrack according to the format and number of samples
@@ -136,6 +147,7 @@ specified as inputs
   int getChannelCount() const { return m_channelCount; }
   int getBitPerSample() const { return m_bitPerSample; }
   TINT32 getSampleCount() const { return m_sampleCount; }
+  int getFormatType() const { return m_formatType; }
 
   //! Returns the duration of the soundtrack in seconds.
   double getDuration() const;
@@ -297,7 +309,7 @@ Returns true if on the machine there is an audio card installed correctly
 
   //! Returns the best format supported near the given parameters
   TSoundTrackFormat getPreferredFormat(TUINT32 sampleRate, int channelCount,
-                                       int bitPerSample);
+                                       int bitPerSample, int formatType);
 
   //! Returns the best format supported near the given format
   TSoundTrackFormat getPreferredFormat(const TSoundTrackFormat &);
@@ -366,7 +378,7 @@ Returns true if on the machine there is an audio card installed correctly
 
   //! Returns the best format supported near the given parameters
   TSoundTrackFormat getPreferredFormat(TUINT32 sampleRate, int channelCount,
-                                       int bitPerSample);
+                                       int bitPerSample, int formatType);
 
   //! Returns the best format supported near the given format
   TSoundTrackFormat getPreferredFormat(const TSoundTrackFormat &);

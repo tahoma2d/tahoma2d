@@ -4,6 +4,7 @@
 #include "tsio_wav.h"
 #include "tsystem.h"
 #include "tfilepath_io.h"
+#include "tsop.h"
 
 using namespace std;
 
@@ -249,9 +250,9 @@ TSoundTrackP TSoundTrackReaderWav::load() {
     TINT32 sampleCount = dataChunk->m_length / fmtChunk->m_bytesPerSample;
     bool signedSample  = (fmtChunk->m_bitPerSample != 8);
 
-    track = TSoundTrack::create((int)fmtChunk->m_sampleRate,
-                                fmtChunk->m_bitPerSample, fmtChunk->m_chans,
-                                sampleCount, signedSample);
+    track = TSoundTrack::create(
+        (int)fmtChunk->m_sampleRate, fmtChunk->m_bitPerSample,
+        fmtChunk->m_chans, sampleCount, signedSample, fmtChunk->m_encodingType);
 
     if (track) {
       switch (fmtChunk->m_bitPerSample) {
@@ -272,6 +273,7 @@ TSoundTrackP TSoundTrackReaderWav::load() {
         //#endif
         break;
       case 24:
+        // NOTE: This effectively changes from 24bit to 32bit bitPerSample
         if (!TNZ_LITTLE_ENDIAN) {
           UCHAR *begin = (UCHAR *)track->getRawData();
           for (int i = 0; i < (int)(sampleCount * fmtChunk->m_chans); ++i) {
@@ -290,6 +292,26 @@ TSoundTrackP TSoundTrackReaderWav::load() {
         }
         //#endif
         break;
+      case 32:
+        if (!TNZ_LITTLE_ENDIAN) {
+          swapAndCopySamples((short *)dataChunk->m_samples.get(),
+                             (short *)track->getRawData(),
+                             sampleCount * fmtChunk->m_chans);
+        } else {
+          memcpy((void *)track->getRawData(),
+                 (void *)(dataChunk->m_samples.get()),
+                 sampleCount * fmtChunk->m_bytesPerSample);
+        }
+        break;
+      }
+
+      // Convert all WAV to 32bit PCM
+      if (fmtChunk->m_bitPerSample != 32 || fmtChunk->m_encodingType != WAVE_FORMAT_PCM) {
+        TSoundTrackP origTrack = track;
+        TSoundTrackFormat fmt = track->getFormat();
+        fmt.m_bitPerSample = 32;
+        fmt.m_formatType = WAVE_FORMAT_PCM;
+        track = TSop::convert(origTrack, fmt);
       }
     }
 

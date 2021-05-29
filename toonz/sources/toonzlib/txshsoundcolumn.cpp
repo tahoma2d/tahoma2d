@@ -949,6 +949,7 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
         format.m_signedSample = f.m_signedSample;
         format.m_bitPerSample = f.m_bitPerSample;
         bitsPerSample         = f.m_bitPerSample;
+        format.m_formatType   = f.m_formatType;
       }
       if (f.m_channelCount > channels) {
         format.m_channelCount = f.m_channelCount;
@@ -958,6 +959,8 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
         format.m_bitPerSample = f.m_bitPerSample;
         bitsPerSample         = f.m_bitPerSample;
       }
+      if (format.m_formatType > f.m_formatType)
+        format.m_formatType = f.m_formatType;
     }
   }
 
@@ -967,10 +970,11 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
     format.m_bitPerSample = 16;
     format.m_channelCount = 1;
     format.m_signedSample = true;
+    format.m_formatType   = WAVE_FORMAT_PCM;
   }
 
 #ifdef _WIN32
-  if (format.m_sampleRate > 44100) format.m_sampleRate = 44100;
+  if (format.m_sampleRate > 48000) format.m_sampleRate = 48000;
 #else
   QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
   if (info.deviceName().length() == 0) throw TSoundDeviceException(TSoundDeviceException::NoDevice,
@@ -1051,15 +1055,14 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
 
     if (s1 > 0 && s1 >= s0) {
       soundTrack = soundTrack->extract(s0, s1);
-
-      // Copy the sound track
-      overallSoundTrack->copy(
-          soundTrack,
-          int((levelStartFrame - fromFrame) *
-              samplePerFrame));  // The int cast is IMPORTANT, since
-    }                            // there are 2 overloads (int & double)
-  }                              // with DIFFERENT SCALES. We mean the
-                                 // SAMPLES-BASED one.
+      if (format.m_formatType == WAVE_FORMAT_PCM)
+        overallSoundTrack->copy(
+            soundTrack, int((levelStartFrame - fromFrame) * samplePerFrame));
+      else
+        overallSoundTrack->copy(
+            soundTrack, double((levelStartFrame - fromFrame) * samplePerFrame));
+    }
+  }
   return overallSoundTrack;
 }
 
@@ -1113,7 +1116,8 @@ TSoundTrackP TXshSoundColumn::mixingTogether(
 
   // Per ora perche mov vuole solo 16 bit
   TSoundTrackFormat fmt                            = mix->getFormat();
-  if (fmt.m_bitPerSample != 16) fmt.m_bitPerSample = 16;
+  if (fmt.m_bitPerSample != 32) fmt.m_bitPerSample = 32;
+  if (fmt.m_formatType != WAVE_FORMAT_PCM) fmt.m_formatType = WAVE_FORMAT_PCM;
   mix                                              = TSop::convert(mix, fmt);
   return mix;
 }

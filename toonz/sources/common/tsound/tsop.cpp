@@ -298,7 +298,8 @@ T *resampleT(T &src, TINT32 sampleRate, FLT_TYPE flt_type) {
   T *dst = new TSoundTrackT<SampleType>(
       sampleRate, src.getChannelCount(),
       (TINT32)(src.getSampleCount() *
-               (sampleRate / (double)src.getSampleRate())));
+               (sampleRate / (double)src.getSampleRate())),
+      src.getFormatType());
 
   double src_rad, f, src_f0, src_to_f;
   double weight, weightsum;
@@ -483,6 +484,35 @@ public:
 
     return TSoundTrackP(dst);
   }
+
+  TSoundTrackP compute(const TSoundTrackMono32 &src) override {
+    TSoundTrackMono32 *dst = resampleT(const_cast<TSoundTrackMono32 &>(src),
+                                       m_sampleRate, m_filterType);
+
+    return TSoundTrackP(dst);
+  }
+
+  TSoundTrackP compute(const TSoundTrackStereo32 &src) override {
+    TSoundTrackStereo32 *dst = resampleT(const_cast<TSoundTrackStereo32 &>(src),
+                                         m_sampleRate, m_filterType);
+
+    return TSoundTrackP(dst);
+  }
+
+  TSoundTrackP compute(const TSoundTrackMono32float &src) override {
+    TSoundTrackMono32float *dst = resampleT(
+        const_cast<TSoundTrackMono32float &>(src), m_sampleRate, m_filterType);
+
+    return TSoundTrackP(dst);
+  }
+
+  TSoundTrackP compute(const TSoundTrackStereo32float &src) override {
+    TSoundTrackStereo32float *dst =
+        resampleT(const_cast<TSoundTrackStereo32float &>(src), m_sampleRate,
+                  m_filterType);
+
+    return TSoundTrackP(dst);
+  }
 };
 
 //==============================================================================
@@ -559,6 +589,34 @@ TSoundTrackP doConvertWithoutResamplingT(SRC *src,
     return dstS24;
   }
 
+  TSoundTrackMono32 *dstM32 =
+      dynamic_cast<TSoundTrackMono32 *>(dst.getPointer());
+  if (dstM32) {
+    convertSamplesT(*dstM32, *src);
+    return dstM32;
+  }
+
+  TSoundTrackStereo32 *dstS32 =
+      dynamic_cast<TSoundTrackStereo32 *>(dst.getPointer());
+  if (dstS32) {
+    convertSamplesT(*dstS32, *src);
+    return dstS32;
+  }
+
+  TSoundTrackMono32float *dstM32f =
+      dynamic_cast<TSoundTrackMono32float *>(dst.getPointer());
+  if (dstM32f) {
+    convertSamplesT(*dstM32f, *src);
+    return dstM32f;
+  }
+
+  TSoundTrackStereo32float *dstS32f =
+      dynamic_cast<TSoundTrackStereo32float *>(dst.getPointer());
+  if (dstS32f) {
+    convertSamplesT(*dstS32f, *src);
+    return dstS32f;
+  }
+
   return 0;
 }
 
@@ -601,6 +659,22 @@ public:
   }
 
   TSoundTrackP compute(const TSoundTrackStereo24 &src) override {
+    return doConvertWithoutResamplingT(&src, m_format);
+  }
+
+  TSoundTrackP compute(const TSoundTrackMono32 &src) override {
+    return doConvertWithoutResamplingT(&src, m_format);
+  }
+
+  TSoundTrackP compute(const TSoundTrackStereo32 &src) override {
+    return doConvertWithoutResamplingT(&src, m_format);
+  }
+
+  TSoundTrackP compute(const TSoundTrackMono32float &src) override {
+    return doConvertWithoutResamplingT(&src, m_format);
+  }
+
+  TSoundTrackP compute(const TSoundTrackStereo32float &src) override {
     return doConvertWithoutResamplingT(&src, m_format);
   }
 };
@@ -754,8 +828,9 @@ TSoundTrackP doReverb(TSoundTrackT<T> *src, double delayTime,
   TINT32 dstSampleCount =
       src->getSampleCount() + (TINT32)(src->getSampleRate() * extendTime);
 
-  TSoundTrackT<T> *dst = new TSoundTrackT<T>(
-      src->getSampleRate(), src->getChannelCount(), dstSampleCount);
+  TSoundTrackT<T> *dst =
+      new TSoundTrackT<T>(src->getSampleRate(), src->getChannelCount(),
+                          dstSampleCount, src->getFormatType());
 
   TINT32 sampleRate = (TINT32)src->getSampleRate();
   TINT32 k          = (TINT32)(sampleRate * delayTime);
@@ -844,6 +919,26 @@ public:
     return doReverb(const_cast<TSoundTrackStereo24 *>(&src), m_delayTime,
                     m_decayFactor, m_extendTime);
   }
+
+  TSoundTrackP compute(const TSoundTrackMono32 &src) override {
+    return doReverb(const_cast<TSoundTrackMono32 *>(&src), m_delayTime,
+                    m_decayFactor, m_extendTime);
+  }
+
+  TSoundTrackP compute(const TSoundTrackStereo32 &src) override {
+    return doReverb(const_cast<TSoundTrackStereo32 *>(&src), m_delayTime,
+                    m_decayFactor, m_extendTime);
+  }
+
+  TSoundTrackP compute(const TSoundTrackMono32float &src) override {
+    return doReverb(const_cast<TSoundTrackMono32float *>(&src), m_delayTime,
+                    m_decayFactor, m_extendTime);
+  }
+
+  TSoundTrackP compute(const TSoundTrackStereo32float &src) override {
+    return doReverb(const_cast<TSoundTrackStereo32float *>(&src), m_delayTime,
+                    m_decayFactor, m_extendTime);
+  }
 };
 
 //==============================================================================
@@ -863,8 +958,9 @@ TSoundTrackP TSop::reverb(TSoundTrackP src, double delayTime,
 template <class T>
 TSoundTrackP doGate(TSoundTrackT<T> *src, double threshold, double holdTime,
                     double /*releaseTime*/) {
-  TSoundTrackT<T> *dst = new TSoundTrackT<T>(
-      src->getSampleRate(), src->getChannelCount(), src->getSampleCount());
+  TSoundTrackT<T> *dst =
+      new TSoundTrackT<T>(src->getSampleRate(), src->getChannelCount(),
+                          src->getSampleCount(), src->getFormatType());
 
   double sampleExcursion_inv =
       1.0 / (double)(src->getMaxPressure(0, src->getSampleCount() - 1, 0) -
@@ -951,6 +1047,26 @@ public:
     return doGate(const_cast<TSoundTrackStereo24 *>(&src), m_threshold,
                   m_holdTime, m_releaseTime);
   }
+
+  TSoundTrackP compute(const TSoundTrackMono32 &src) override {
+    return doGate(const_cast<TSoundTrackMono32 *>(&src), m_threshold,
+                  m_holdTime, m_releaseTime);
+  }
+
+  TSoundTrackP compute(const TSoundTrackStereo32 &src) override {
+    return doGate(const_cast<TSoundTrackStereo32 *>(&src), m_threshold,
+                  m_holdTime, m_releaseTime);
+  }
+
+  TSoundTrackP compute(const TSoundTrackMono32float &src) override {
+    return doGate(const_cast<TSoundTrackMono32float *>(&src), m_threshold,
+                  m_holdTime, m_releaseTime);
+  }
+
+  TSoundTrackP compute(const TSoundTrackStereo32float &src) override {
+    return doGate(const_cast<TSoundTrackStereo32float *>(&src), m_threshold,
+                  m_holdTime, m_releaseTime);
+  }
 };
 
 //==============================================================================
@@ -995,8 +1111,9 @@ TSoundTrackP doEcho(TSoundTrackT<T> *src, double delayTime, double decayFactor,
   TINT32 dstSampleCount =
       src->getSampleCount() + (TINT32)(src->getSampleRate() * extendTime);
 
-  TSoundTrackT<T> *dst = new TSoundTrackT<T>(
-      src->getSampleRate(), src->getChannelCount(), dstSampleCount);
+  TSoundTrackT<T> *dst =
+      new TSoundTrackT<T>(src->getSampleRate(), src->getChannelCount(),
+                          dstSampleCount, src->getFormatType());
 
   TINT32 sampleRate = (TINT32)src->getSampleRate();
   TINT32 k          = (TINT32)(sampleRate * delayTime);
@@ -1104,6 +1221,35 @@ void TSop::echo(TSoundTrackP &dst, const TSoundTrackP &src, double delayTime,
                 srcS24 = dynamic_cast<TSoundTrackStereo24 *>(src.getPointer());
                 if (srcS24)
                   dst = doEcho(srcS24, delayTime, decayFactor, extendTime);
+                else {
+                  TSoundTrackMono32 *srcM32;
+                  srcM32 = dynamic_cast<TSoundTrackMono32 *>(src.getPointer());
+                  if (srcM32)
+                    dst = doEcho(srcM32, delayTime, decayFactor, extendTime);
+                  else {
+                    TSoundTrackStereo32 *srcS32;
+                    srcS32 =
+                        dynamic_cast<TSoundTrackStereo32 *>(src.getPointer());
+                    if (srcS32)
+                      dst = doEcho(srcS32, delayTime, decayFactor, extendTime);
+                    else {
+                      TSoundTrackMono32float *srcM32f;
+                      srcM32f = dynamic_cast<TSoundTrackMono32float *>(
+                          src.getPointer());
+                      if (srcM32f)
+                        dst =
+                            doEcho(srcM32f, delayTime, decayFactor, extendTime);
+                      else {
+                        TSoundTrackStereo32float *srcS32f;
+                        srcS32f = dynamic_cast<TSoundTrackStereo32float *>(
+                            src.getPointer());
+                        if (srcS32f)
+                          dst = doEcho(srcS32f, delayTime, decayFactor,
+                                       extendTime);
+                      }
+                    }
+                  }
+                }
               }
             }
           }
@@ -1194,8 +1340,9 @@ TSoundTrackP mixT(TSoundTrackT<T> *st1, double a1, TSoundTrackT<T> *st2,
                   double a2) {
   TINT32 sampleCount = std::max(st1->getSampleCount(), st2->getSampleCount());
 
-  TSoundTrackT<T> *dst = new TSoundTrackT<T>(
-      st1->getSampleRate(), st1->getChannelCount(), sampleCount);
+  TSoundTrackT<T> *dst =
+      new TSoundTrackT<T>(st1->getSampleRate(), st1->getChannelCount(),
+                          sampleCount);  // , st1->getFormatType());
 
   T *dstSample = dst->samples();
   T *endDstSample =
@@ -1297,6 +1444,40 @@ public:
                  dynamic_cast<TSoundTrackStereo24 *>(m_sndtrack.getPointer()),
                  m_alpha2));
   }
+
+  TSoundTrackP compute(const TSoundTrackMono32 &src) override {
+    assert(src.getFormat() == m_sndtrack->getFormat());
+
+    return (mixT(const_cast<TSoundTrackMono32 *>(&src), m_alpha1,
+                 dynamic_cast<TSoundTrackMono32 *>(m_sndtrack.getPointer()),
+                 m_alpha2));
+  }
+
+  TSoundTrackP compute(const TSoundTrackStereo32 &src) override {
+    assert(src.getFormat() == m_sndtrack->getFormat());
+
+    return (mixT(const_cast<TSoundTrackStereo32 *>(&src), m_alpha1,
+                 dynamic_cast<TSoundTrackStereo32 *>(m_sndtrack.getPointer()),
+                 m_alpha2));
+  }
+
+  TSoundTrackP compute(const TSoundTrackMono32float &src) override {
+    assert(src.getFormat() == m_sndtrack->getFormat());
+
+    return (
+        mixT(const_cast<TSoundTrackMono32float *>(&src), m_alpha1,
+             dynamic_cast<TSoundTrackMono32float *>(m_sndtrack.getPointer()),
+             m_alpha2));
+  }
+
+  TSoundTrackP compute(const TSoundTrackStereo32float &src) override {
+    assert(src.getFormat() == m_sndtrack->getFormat());
+
+    return (
+        mixT(const_cast<TSoundTrackStereo32float *>(&src), m_alpha1,
+             dynamic_cast<TSoundTrackStereo32float *>(m_sndtrack.getPointer()),
+             m_alpha2));
+  }
 };
 
 TSoundTrackP TSop::mix(const TSoundTrackP &st1, const TSoundTrackP &st2,
@@ -1324,8 +1505,8 @@ TSoundTrackP doFadeIn(const TSoundTrackT<T> &track, double riseFactor) {
   assert(sampleCount);
   int channelCount = track.getChannelCount();
 
-  TSoundTrackT<T> *out =
-      new TSoundTrackT<T>(track.getSampleRate(), channelCount, sampleCount);
+  TSoundTrackT<T> *out = new TSoundTrackT<T>(
+      track.getSampleRate(), channelCount, sampleCount, track.getFormatType());
 
   double val[2], step[2];
 
@@ -1373,6 +1554,10 @@ public:
   TSoundTrackP compute(const TSoundTrackStereo16 &) override;
   TSoundTrackP compute(const TSoundTrackMono24 &) override;
   TSoundTrackP compute(const TSoundTrackStereo24 &) override;
+  TSoundTrackP compute(const TSoundTrackMono32 &) override;
+  TSoundTrackP compute(const TSoundTrackStereo32 &) override;
+  TSoundTrackP compute(const TSoundTrackMono32float &) override;
+  TSoundTrackP compute(const TSoundTrackStereo32float &) override;
 
   double m_riseFactor;
 };
@@ -1428,6 +1613,29 @@ TSoundTrackP TSoundTrackFaderIn::compute(const TSoundTrackStereo24 &track) {
 
 //------------------------------------------------------------------------------
 
+TSoundTrackP TSoundTrackFaderIn::compute(const TSoundTrackMono32 &track) {
+  return doFadeIn(track, m_riseFactor);
+}
+//------------------------------------------------------------------------------
+
+TSoundTrackP TSoundTrackFaderIn::compute(const TSoundTrackStereo32 &track) {
+  return doFadeIn(track, m_riseFactor);
+}
+
+//------------------------------------------------------------------------------
+
+TSoundTrackP TSoundTrackFaderIn::compute(const TSoundTrackMono32float &track) {
+  return doFadeIn(track, m_riseFactor);
+}
+//------------------------------------------------------------------------------
+
+TSoundTrackP TSoundTrackFaderIn::compute(
+    const TSoundTrackStereo32float &track) {
+  return doFadeIn(track, m_riseFactor);
+}
+
+//------------------------------------------------------------------------------
+
 TSoundTrackP TSop::fadeIn(const TSoundTrackP src, double riseFactor) {
   TSoundTrackFaderIn *fader = new TSoundTrackFaderIn(riseFactor);
   TSoundTrackP out          = src->apply(fader);
@@ -1449,8 +1657,8 @@ TSoundTrackP doFadeOut(const TSoundTrackT<T> &track, double decayFactor) {
   assert(sampleCount);
   int channelCount = track.getChannelCount();
 
-  TSoundTrackT<T> *out =
-      new TSoundTrackT<T>(track.getSampleRate(), channelCount, sampleCount);
+  TSoundTrackT<T> *out = new TSoundTrackT<T>(
+      track.getSampleRate(), channelCount, sampleCount, track.getFormatType());
 
   double val[2], step[2];
   ChannelValueType chan[2];
@@ -1495,6 +1703,10 @@ public:
   TSoundTrackP compute(const TSoundTrackStereo16 &) override;
   TSoundTrackP compute(const TSoundTrackMono24 &) override;
   TSoundTrackP compute(const TSoundTrackStereo24 &) override;
+  TSoundTrackP compute(const TSoundTrackMono32 &) override;
+  TSoundTrackP compute(const TSoundTrackStereo32 &) override;
+  TSoundTrackP compute(const TSoundTrackMono32float &) override;
+  TSoundTrackP compute(const TSoundTrackStereo32float &) override;
 
   double m_decayFactor;
 };
@@ -1550,6 +1762,29 @@ TSoundTrackP TSoundTrackFaderOut::compute(const TSoundTrackStereo24 &track) {
 
 //------------------------------------------------------------------------------
 
+TSoundTrackP TSoundTrackFaderOut::compute(const TSoundTrackMono32 &track) {
+  return doFadeOut(track, m_decayFactor);
+}
+//------------------------------------------------------------------------------
+
+TSoundTrackP TSoundTrackFaderOut::compute(const TSoundTrackStereo32 &track) {
+  return doFadeOut(track, m_decayFactor);
+}
+
+//------------------------------------------------------------------------------
+
+TSoundTrackP TSoundTrackFaderOut::compute(const TSoundTrackMono32float &track) {
+  return doFadeOut(track, m_decayFactor);
+}
+//------------------------------------------------------------------------------
+
+TSoundTrackP TSoundTrackFaderOut::compute(
+    const TSoundTrackStereo32float &track) {
+  return doFadeOut(track, m_decayFactor);
+}
+
+//------------------------------------------------------------------------------
+
 TSoundTrackP TSop::fadeOut(const TSoundTrackP src, double decayFactor) {
   TSoundTrackFaderOut *fader = new TSoundTrackFaderOut(decayFactor);
   TSoundTrackP out           = src->apply(fader);
@@ -1590,7 +1825,8 @@ TSoundTrackP doCrossFade(const TSoundTrackT<T> &track1, TSoundTrackT<T> *track2,
   }
 
   TSoundTrackT<T> *out =
-      new TSoundTrackT<T>(track2->getSampleRate(), channelCount, sampleCount);
+      new TSoundTrackT<T>(track2->getSampleRate(), channelCount, sampleCount,
+                          track2->getFormatType());
 
   T *psample = out->samples();
   T *end     = psample + out->getSampleCount();
@@ -1627,6 +1863,10 @@ public:
   TSoundTrackP compute(const TSoundTrackStereo16 &) override;
   TSoundTrackP compute(const TSoundTrackMono24 &) override;
   TSoundTrackP compute(const TSoundTrackStereo24 &) override;
+  TSoundTrackP compute(const TSoundTrackMono32 &) override;
+  TSoundTrackP compute(const TSoundTrackStereo32 &) override;
+  TSoundTrackP compute(const TSoundTrackMono32float &) override;
+  TSoundTrackP compute(const TSoundTrackStereo32float &) override;
 
   TSoundTrackP m_st;
   double m_crossFactor;
@@ -1707,6 +1947,42 @@ TSoundTrackP TSoundTrackCrossFader::compute(const TSoundTrackStereo24 &src) {
 
 //------------------------------------------------------------------------------
 
+TSoundTrackP TSoundTrackCrossFader::compute(const TSoundTrackMono32 &src) {
+  assert(src.getFormat() == m_st->getFormat());
+  return doCrossFade(src, dynamic_cast<TSoundTrackMono32 *>(m_st.getPointer()),
+                     m_crossFactor);
+}
+
+//------------------------------------------------------------------------------
+
+TSoundTrackP TSoundTrackCrossFader::compute(const TSoundTrackStereo32 &src) {
+  assert(src.getFormat() == m_st->getFormat());
+  return doCrossFade(src,
+                     dynamic_cast<TSoundTrackStereo32 *>(m_st.getPointer()),
+                     m_crossFactor);
+}
+
+//------------------------------------------------------------------------------
+
+TSoundTrackP TSoundTrackCrossFader::compute(const TSoundTrackMono32float &src) {
+  assert(src.getFormat() == m_st->getFormat());
+  return doCrossFade(src,
+                     dynamic_cast<TSoundTrackMono32float *>(m_st.getPointer()),
+                     m_crossFactor);
+}
+
+//------------------------------------------------------------------------------
+
+TSoundTrackP TSoundTrackCrossFader::compute(
+    const TSoundTrackStereo32float &src) {
+  assert(src.getFormat() == m_st->getFormat());
+  return doCrossFade(
+      src, dynamic_cast<TSoundTrackStereo32float *>(m_st.getPointer()),
+      m_crossFactor);
+}
+
+//------------------------------------------------------------------------------
+
 TSoundTrackP TSop::crossFade(const TSoundTrackP src1, const TSoundTrackP src2,
                              double crossFactor) {
   TSoundTrackCrossFader *fader = new TSoundTrackCrossFader(src2, crossFactor);
@@ -1755,7 +2031,8 @@ TSoundTrackP doCrossFadeOverWrite(const TSoundTrackT<T> &track1,
   }
 
   TSoundTrackT<T> *out =
-      new TSoundTrackT<T>(track2->getSampleRate(), channelCount, sampleCountT2);
+      new TSoundTrackT<T>(track2->getSampleRate(), channelCount, sampleCountT2,
+                          track2->getFormatType());
 
   T *psample = out->samples();
   T *end     = psample + sampleCount;
@@ -1793,6 +2070,10 @@ public:
   TSoundTrackP compute(const TSoundTrackStereo16 &) override;
   TSoundTrackP compute(const TSoundTrackMono24 &) override;
   TSoundTrackP compute(const TSoundTrackStereo24 &) override;
+  TSoundTrackP compute(const TSoundTrackMono32 &) override;
+  TSoundTrackP compute(const TSoundTrackStereo32 &) override;
+  TSoundTrackP compute(const TSoundTrackMono32float &) override;
+  TSoundTrackP compute(const TSoundTrackStereo32float &) override;
 
   TSoundTrackP m_st;
   double m_crossFactor;
@@ -1873,6 +2154,45 @@ TSoundTrackP TSoundTrackCrossFaderOverWrite::compute(
   assert(src.getFormat() == m_st->getFormat());
   return doCrossFadeOverWrite(
       src, dynamic_cast<TSoundTrackStereo24 *>(m_st.getPointer()),
+      m_crossFactor);
+}
+
+//------------------------------------------------------------------------------
+
+TSoundTrackP TSoundTrackCrossFaderOverWrite::compute(
+    const TSoundTrackMono32 &src) {
+  assert(src.getFormat() == m_st->getFormat());
+  return doCrossFadeOverWrite(
+      src, dynamic_cast<TSoundTrackMono32 *>(m_st.getPointer()), m_crossFactor);
+}
+
+//------------------------------------------------------------------------------
+
+TSoundTrackP TSoundTrackCrossFaderOverWrite::compute(
+    const TSoundTrackStereo32 &src) {
+  assert(src.getFormat() == m_st->getFormat());
+  return doCrossFadeOverWrite(
+      src, dynamic_cast<TSoundTrackStereo32 *>(m_st.getPointer()),
+      m_crossFactor);
+}
+
+//------------------------------------------------------------------------------
+
+TSoundTrackP TSoundTrackCrossFaderOverWrite::compute(
+    const TSoundTrackMono32float &src) {
+  assert(src.getFormat() == m_st->getFormat());
+  return doCrossFadeOverWrite(
+      src, dynamic_cast<TSoundTrackMono32float *>(m_st.getPointer()),
+      m_crossFactor);
+}
+
+//------------------------------------------------------------------------------
+
+TSoundTrackP TSoundTrackCrossFaderOverWrite::compute(
+    const TSoundTrackStereo32float &src) {
+  assert(src.getFormat() == m_st->getFormat());
+  return doCrossFadeOverWrite(
+      src, dynamic_cast<TSoundTrackStereo32float *>(m_st.getPointer()),
       m_crossFactor);
 }
 
