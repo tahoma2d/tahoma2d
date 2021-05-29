@@ -63,6 +63,13 @@ public:
     text = text.replace("&&", "&");
     setText(0, text);
     QString shortcut = m_action->shortcut().toString();
+#ifdef MACOSX
+    shortcut = shortcut.replace("Ctrl", QString::fromStdWString(L"\u2318"));
+    shortcut = shortcut.replace("Shift", QString::fromStdWString(L"\u21e7"));
+    shortcut = shortcut.replace("Alt", QString::fromStdWString(L"\u2325"));
+    shortcut = shortcut.replace("Meta", QString::fromStdWString(L"\u2303"));
+    shortcut = shortcut.replace("+", "");
+#endif
     setText(1, shortcut);
   }
   QAction *getAction() const { return m_action; }

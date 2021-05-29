@@ -150,16 +150,12 @@ void StatusBar::updateInfoText() {
 QString trModKey(QString key) {
 #ifdef MACOSX
   // Convert Windows key modifier to macOS modifier
-  if (key == "Ctrl")  // Command
-    return QString::fromStdWString(L"\u2318");
-  else if (key == "Shift")
-    return QString::fromStdWString(L"\u21e7");
-  else if (key == "Alt")
-    return QString::fromStdWString(L"\u2325");
-//  else if (key == "???") // Control
-//    return QString::fromStdWString(L"\u2303");
+  key = key.replace("Ctrl", QString::fromStdWString(L"\u2318"));
+  key = key.replace("Shift", QString::fromStdWString(L"\u21e7"));
+  key = key.replace("Alt", QString::fromStdWString(L"\u2325"));
+  key = key.replace("Meta", QString::fromStdWString(L"\u2303"));
+  key = key.replace("+", "");
 #endif
-
   return key;
 }
 
@@ -191,7 +187,7 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                .arg(cmd2TextSeparator) +
            spacer +
            tr("%1%2Scale Symmetrically from Center w/ Proportion Lock")
-               .arg(trModKey("Shift") + "+" + trModKey("Alt"))
+               .arg(trModKey("Shift+Alt"))
                .arg(cmdTextSeparator)});
   lMap.insert({"T_Edit", tr("Animate Tool: Modifies the position, "
                             "rotation and size of the current column")});
@@ -207,7 +203,7 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                        .arg(cmd2TextSeparator) +
                    spacer +
                    tr("%1%2Add / Remove Vanishing Point")
-                       .arg(trModKey("Ctrl") + "+" + trModKey("Alt"))
+                       .arg(trModKey("Ctrl+Alt"))
                        .arg(cmdTextSeparator) +
                    spacer +
                    tr("%1%2Draw to Vanishing Point")
@@ -215,7 +211,7 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                        .arg(cmd2TextSeparator) +
                    spacer +
                    tr("%1%2Allow or Disallow Snapping")
-                       .arg(trModKey("Ctrl") + "+" + trModKey("Shift"))
+                       .arg(trModKey("Ctrl+Shift"))
                        .arg(cmdTextSeparator)});
   lMap.insert({"T_BrushSmartRaster",
                tr("Brush Tool : Draws in the work area freehand") + spacer +
@@ -228,7 +224,7 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                        .arg(cmd2TextSeparator) +
                    spacer +
                    tr("%1%2Add / Remove Vanishing Point")
-                       .arg(trModKey("Ctrl") + "+" + trModKey("Alt"))
+                       .arg(trModKey("Ctrl+Alt"))
                        .arg(cmdTextSeparator) +
                    spacer +
                    tr("%1%2Draw to Vanishing Point")
@@ -245,7 +241,7 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                        .arg(cmd2TextSeparator) +
                    spacer +
                    tr("%1%2Add / Remove Vanishing Point")
-                       .arg(trModKey("Ctrl") + "+" + trModKey("Alt"))
+                       .arg(trModKey("Ctrl+Alt"))
                        .arg(cmdTextSeparator) +
                    spacer +
                    tr("%1%2Draw to Vanishing Point")
@@ -285,7 +281,7 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
   lMap.insert({"T_GeometricVector",
                tr("Geometry Tool: Draws geometric shapes") + spacer +
                    tr("%1%2Allow or Disallow Snapping")
-                       .arg(trModKey("Ctrl") + "+" + trModKey("Shift"))
+                       .arg(trModKey("Ctrl+Shift"))
                        .arg(cmdTextSeparator)});
   lMap.insert({"T_GeometricVectorRectangle",
                tr("Geometry Tool: Draws geometric shapes") + spacer +
@@ -298,7 +294,7 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                        .arg(cmd2TextSeparator) +
                    spacer +
                    tr("%1%2Allow or Disallow Snapping")
-                       .arg(trModKey("Ctrl") + "+" + trModKey("Shift"))
+                       .arg(trModKey("Ctrl+Shift"))
                        .arg(cmdTextSeparator)});
   lMap.insert({"T_GeometricVectorEllipse",
                tr("Geometry Tool: Draws geometric shapes") + spacer +
@@ -311,7 +307,7 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                        .arg(cmd2TextSeparator) +
                    spacer +
                    tr("%1%2Allow or Disallow Snapping")
-                       .arg(trModKey("Ctrl") + "+" + trModKey("Shift"))
+                       .arg(trModKey("Ctrl+Shift"))
                        .arg(cmdTextSeparator)});
   lMap.insert(
       {"T_GeometricVectorPolyline",
@@ -327,7 +323,7 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                .arg(cmd2TextSeparator) +
            spacer +
            tr("%1%2Allow or Disallow Snapping")
-               .arg(trModKey("Ctrl") + "+" + trModKey("Shift"))
+               .arg(trModKey("Ctrl+Shift"))
                .arg(cmdTextSeparator)});
   lMap.insert({"T_Type", tr("Type Tool: Adds text")});
   lMap.insert({"T_PaintBrush",
