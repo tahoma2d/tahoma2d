@@ -338,6 +338,20 @@ TopToBottomOrientation::TopToBottomOrientation() {
   addRect(PredefinedRect::NOTE_ICON,
           QRect(QPoint(0, 0), QSize(CELL_WIDTH - 2, CELL_HEIGHT - 2)));
 
+  QRect autoCreate, createInHold, autoStretch;
+
+  autoCreate = QRect(0, 0, 17, 17);
+  addRect(PredefinedRect::AUTO_CREATE_AREA, autoCreate);
+  addRect(PredefinedRect::AUTO_CREATE, autoCreate.adjusted(1, 1, 0, 0));
+
+  createInHold = QRect(0, 0, 17, 17);
+  addRect(PredefinedRect::CREATE_IN_HOLD_AREA, createInHold);
+  addRect(PredefinedRect::CREATE_IN_HOLD, createInHold.adjusted(1, 1, 0, 0));
+
+  autoStretch = QRect(0, 0, 17, 17);
+  addRect(PredefinedRect::AUTO_STRETCH_AREA, autoStretch);
+  addRect(PredefinedRect::AUTO_STRETCH, autoStretch.adjusted(1, 1, 0, 0));
+
   // Layer header panel
   addRect(PredefinedRect::LAYER_HEADER_PANEL, QRect(0, 0, -1, -1));   // hide
   addRect(PredefinedRect::PANEL_EYE, QRect(0, 0, -1, -1));            // hide
@@ -1115,7 +1129,22 @@ LeftToRightOrientation::LeftToRightOrientation() {
       QRect(0, 0, LAYER_HEADER_WIDTH + 2, LAYER_FOOTER_PANEL_HEIGHT));
   addRect(PredefinedRect::LAYER_FOOTER_PANEL, layerFooterPanel);
 
-  QRect zoomSlider, zoomIn, zoomOut, noteArea;  // addLevel,
+  QRect zoomSlider, zoomIn, zoomOut, noteArea, autoCreate, createInHold,
+      autoStretch;  // addLevel,
+
+  autoCreate = QRect(1, 0, 16, LAYER_FOOTER_PANEL_HEIGHT);
+  addRect(PredefinedRect::AUTO_CREATE_AREA, autoCreate);
+  addRect(PredefinedRect::AUTO_CREATE, autoCreate.adjusted(1, 1, 0, 0));
+
+  createInHold =
+      QRect(autoCreate.right() + 1, 0, 16, LAYER_FOOTER_PANEL_HEIGHT);
+  addRect(PredefinedRect::CREATE_IN_HOLD_AREA, createInHold);
+  addRect(PredefinedRect::CREATE_IN_HOLD, createInHold.adjusted(1, 1, 0, 0));
+
+  autoStretch =
+      QRect(createInHold.right() + 1, 0, 16, LAYER_FOOTER_PANEL_HEIGHT);
+  addRect(PredefinedRect::AUTO_STRETCH_AREA, autoStretch);
+  addRect(PredefinedRect::AUTO_STRETCH, autoStretch.adjusted(1, 1, 0, 0));
 
   zoomSlider =
       QRect(layerFooterPanel.width() - 100, 0, 81, LAYER_FOOTER_PANEL_HEIGHT);

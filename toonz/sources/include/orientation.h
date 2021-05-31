@@ -137,7 +137,13 @@ enum class PredefinedRect {
   // ADD_LEVEL_AREA,
   // ADD_LEVEL,
   FOOTER_NOTE_OBJ_AREA,
-  FOOTER_NOTE_AREA
+  FOOTER_NOTE_AREA,
+  AUTO_CREATE_AREA,
+  AUTO_CREATE,
+  CREATE_IN_HOLD_AREA,
+  CREATE_IN_HOLD,
+  AUTO_STRETCH_AREA,
+  AUTO_STRETCH
 };
 enum class PredefinedLine {
   LOCKED,              //! dotted vertical line when cell is locked
