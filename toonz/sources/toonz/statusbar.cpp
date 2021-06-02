@@ -331,6 +331,10 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                    spacer +
                    tr("%1%2Fix small fill gaps with click+dragged style")
                        .arg(trModKey("Ctrl"))
+                       .arg(cmdTextSeparator) +
+                   spacer +
+                   tr("%1%2Selects style on current drawing")
+                       .arg(trModKey("Shift"))
                        .arg(cmdTextSeparator)});
   lMap.insert(
       {"T_Fill", tr("Fill Tool: Fills drawing areas with the current style")});

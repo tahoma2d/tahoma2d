@@ -490,6 +490,12 @@ void PaintBrushTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
         int styleIdUnderCursor              = getStyleUnderCursor(m_mousePos);
         if (styleIdUnderCursor > 0) styleId = styleIdUnderCursor;
         m_task                              = FINGER;
+      } else if (e.isShiftPressed()) {
+        int styleIdUnderCursor = getStyleUnderCursor(m_mousePos);
+        if (styleIdUnderCursor > 0) {
+          styleId = styleIdUnderCursor;
+          getApplication()->setCurrentLevelStyleIndex(styleId);
+        }
       }
 
       TTileSetCM32 *tileSet = new TTileSetCM32(ras->getSize());
