@@ -38,6 +38,9 @@
 // For Qt translation support
 #include <QCoreApplication>
 
+#include "tools/stylepicker.h"
+#include "toonzqt/styleselection.h"
+
 using namespace ToolUtils;
 
 #define LINES L"Lines"
@@ -280,6 +283,10 @@ class PaintBrushTool final : public TTool {
 
   double m_minThick, m_maxThick;
 
+  Tasks m_task;
+
+  int getStyleUnderCursor(const TPointD &pos);
+
 public:
   PaintBrushTool();
 
@@ -338,6 +345,7 @@ PaintBrushTool::PaintBrushTool()
     , m_onlyEmptyAreas("Selective", false)     // W_ToolOptions_Selective
     , m_firstTime(true)
     , m_pressure("Pressure", true)
+    , m_task(PAINTBRUSH)
     , m_workingFrameId(TFrameId()) {
   m_rasThickness.setNonLinearSlider();
 
@@ -457,6 +465,7 @@ bool PaintBrushTool::onPropertyChanged(std::string propertyName) {
 
 void PaintBrushTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
   fixMousePos(pos);
+  m_task      = PAINTBRUSH;
   m_selecting = true;
   TImageP image(getImage(true));
   if (m_colorType.getValue() == LINES) m_colorTypeBrush = INK;
@@ -475,11 +484,18 @@ void PaintBrushTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       if (m_pressure.getValue() && e.m_pressure == 1.0)
         thickness = m_rasThickness.getValue().first;
 
-      int styleId   = TTool::getApplication()->getCurrentLevelStyleIndex();
+      int styleId = TTool::getApplication()->getCurrentLevelStyleIndex();
+
+      if (e.isCtrlPressed()) {
+        int styleIdUnderCursor              = getStyleUnderCursor(m_mousePos);
+        if (styleIdUnderCursor > 0) styleId = styleIdUnderCursor;
+        m_task                              = FINGER;
+      }
+
       TTileSetCM32 *tileSet = new TTileSetCM32(ras->getSize());
       m_tileSaver           = new TTileSaverCM32(ras, tileSet);
       m_rasterTrack         = new RasterStrokeGenerator(
-          ras, PAINTBRUSH, m_colorTypeBrush, styleId,
+          ras, m_task, m_colorTypeBrush, styleId,
           TThickPoint(m_mousePos + convert(ras->getCenter()), thickness),
           m_onlyEmptyAreas.getValue(), 0, false);
       /*-- 現在のFidを記憶 --*/
@@ -508,6 +524,13 @@ void PaintBrushTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
               ? computeThickness(e.m_pressure, m_rasThickness) * 2
               : maxThick;
 
+      // If we were using FINGER mode before, but stopped mid drag, end previous
+      // stroke and switch
+      if (m_task == FINGER && !e.isCtrlPressed()) {
+        finishBrush(thickness);
+        leftButtonDown(pos, e);
+      }
+
       m_rasterTrack->add(TThickPoint(
           m_mousePos + convert(ri->getRaster()->getCenter()), thickness));
       m_tileSaver->save(m_rasterTrack->getLastRect());
@@ -521,6 +544,7 @@ void PaintBrushTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
 void PaintBrushTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
   if (!m_selecting) return;
+  m_task = PAINTBRUSH;
 
   fixMousePos(pos);
 
@@ -550,6 +574,7 @@ void PaintBrushTool::onEnter() {
 
   m_minThick = m_rasThickness.getValue().first;
   m_maxThick = m_rasThickness.getValue().second;
+  m_task     = PAINTBRUSH;
 
   if ((TToonzImageP)getImage(false))
     m_cursor = ToolCursor::PenCursor;
@@ -562,6 +587,7 @@ void PaintBrushTool::onEnter() {
 void PaintBrushTool::onLeave() {
   m_minThick = 0;
   m_maxThick = 0;
+  m_task     = PAINTBRUSH;
 }
 
 //-----------------------------------------------------------------------------
@@ -628,4 +654,28 @@ void PaintBrushTool::finishBrush(double pressureValue) {
   }
 
   m_selecting = false;
+}
+
+int PaintBrushTool::getStyleUnderCursor(const TPointD &pos) {
+  int modeValue = 2;  // Stylepicker modes: 0=AREAS, 1=LINES, 2=ALL
+
+  TImageP image   = getImage(false);
+  TToonzImageP ti = image;
+  TXshSimpleLevel *level =
+      getApplication()->getCurrentLevel()->getSimpleLevel();
+  if (!ti || !level) return -1;
+
+  if (!m_viewer->getGeometry().contains(pos)) return -1;
+
+  int subsampling = level->getImageSubsampling(getCurrentFid());
+
+  StylePicker picker(image);
+
+  int styleId =
+      picker.pickStyleId(TScale(1.0 / subsampling) * pos,
+                         getPixelSize() * getPixelSize(), 1.0, modeValue);
+
+  if (styleId <= 0) return -1;
+
+  return styleId;
 }

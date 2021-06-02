@@ -327,7 +327,11 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                .arg(cmdTextSeparator)});
   lMap.insert({"T_Type", tr("Type Tool: Adds text")});
   lMap.insert({"T_PaintBrush",
-               tr("Smart Raster Painter: Paints areas in Smart Raster leves")});
+               tr("Smart Raster Painter: Paints areas in Smart Raster leves") +
+                   spacer +
+                   tr("%1%2Fix small fill gaps with click+dragged style")
+                       .arg(trModKey("Ctrl"))
+                       .arg(cmdTextSeparator)});
   lMap.insert(
       {"T_Fill", tr("Fill Tool: Fills drawing areas with the current style")});
   lMap.insert({"T_Eraser", tr("Eraser: Erases lines and areas")});
