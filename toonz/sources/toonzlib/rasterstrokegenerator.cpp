@@ -9,7 +9,7 @@ RasterStrokeGenerator::RasterStrokeGenerator(const TRasterCM32P &raster,
                                              Tasks task, ColorType colorType,
                                              int styleId, const TThickPoint &p,
                                              bool selective, int selectedStyle,
-                                             bool keepAntialias,
+                                             bool lockAlpha, bool keepAntialias,
                                              bool isPaletteOrder)
     : m_raster(raster)
     , m_boxOfRaster(TRect(raster->getSize()))
@@ -21,7 +21,8 @@ RasterStrokeGenerator::RasterStrokeGenerator(const TRasterCM32P &raster,
     , m_selectedStyle(selectedStyle)
     , m_keepAntiAlias(keepAntialias)
     , m_doAnArc(false)
-    , m_isPaletteOrder(isPaletteOrder) {
+    , m_isPaletteOrder(isPaletteOrder)
+    , m_modifierLockAlpha(lockAlpha) {
   TThickPoint pp = p;
   m_points.push_back(pp);
   if (task == ERASE) m_styleId = m_eraseStyle;
@@ -253,8 +254,10 @@ void RasterStrokeGenerator::placeOver(const TRasterCM32P &out,
         }
       } else if (m_task == PAINTBRUSH) {
         if (!inPix->isPureInk()) continue;
-        bool changePaint =
-            !m_selective || (m_selective && outPix->getPaint() == 0);
+        int paintIdx     = outPix->getPaint();
+        bool changePaint = (!m_selective && !m_modifierLockAlpha) ||
+                           (m_selective && paintIdx == 0) ||
+                           (m_modifierLockAlpha && paintIdx != 0);
         if (m_colorType == INK)
           *outPix = TPixelCM32(inPix->getInk(), outPix->getPaint(),
                                outPix->getTone());

@@ -1494,9 +1494,13 @@ PaintbrushToolOptionsBox::PaintbrushToolOptionsBox(QWidget *parent, TTool *tool,
   m_colorMode = dynamic_cast<ToolOptionCombo *>(m_controls.value("Mode:"));
   m_selectiveMode =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Selective"));
+  m_lockAlphaMode =
+      dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Lock Alpha"));
 
-  if (m_colorMode->getProperty()->getValue() == L"Lines")
+  if (m_colorMode->getProperty()->getValue() == L"Lines") {
     m_selectiveMode->setVisible(false);
+    m_lockAlphaMode->setVisible(false);
+  }
 
   bool ret = connect(m_colorMode, SIGNAL(currentIndexChanged(int)), this,
                      SLOT(onColorModeChanged(int)));
@@ -1517,6 +1521,7 @@ void PaintbrushToolOptionsBox::onColorModeChanged(int index) {
   const TEnumProperty::Range &range = m_colorMode->getProperty()->getRange();
   bool enabled                      = range[index] != L"Lines";
   m_selectiveMode->setVisible(enabled);
+  m_lockAlphaMode->setVisible(enabled);
 }
 
 //=============================================================================

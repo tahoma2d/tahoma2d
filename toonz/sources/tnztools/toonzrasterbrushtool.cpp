@@ -458,7 +458,7 @@ public:
     TToonzImageP image = getImage();
     TRasterCM32P ras   = image->getRaster();
     RasterStrokeGenerator m_rasterTrack(ras, BRUSH, NONE, m_styleId,
-                                        m_points[0], m_selective, 0,
+                                        m_points[0], m_selective, 0, false,
                                         !m_isPencil, m_isPaletteOrder);
     if (m_isPaletteOrder) {
       QSet<int> aboveStyleIds;
@@ -1388,7 +1388,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
                              thickness);
       m_rasterTrack = new RasterStrokeGenerator(
           ras, BRUSH, NONE, m_styleId, thickPoint, drawOrder != OverAll, 0,
-          !m_pencil.getValue(), drawOrder == PaletteOrder);
+          false, !m_pencil.getValue(), drawOrder == PaletteOrder);
 
       if (drawOrder == PaletteOrder)
         m_rasterTrack->setAboveStyleIds(aboveStyleIds);
