@@ -1382,7 +1382,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
       if (!updateRect.isEmpty()) {
         // ras->extract(updateRect)->copy(m_workRas->extract(updateRect));
         m_toonz_brush->updateDrawing(ri->getRaster(), m_backupRas, m_strokeRect,
-                                     m_styleId);
+                                     m_styleId, m_modifierLockAlpha.getValue());
       }
       m_lastRect = m_strokeRect;
 
@@ -1699,7 +1699,7 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
     if (!updateRect.isEmpty()) {
       // ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
       m_toonz_brush->updateDrawing(ras, m_backupRas, m_strokeSegmentRect,
-                                   m_styleId);
+                                   m_styleId, m_modifierLockAlpha.getValue());
     }
     m_lastRect = m_strokeRect;
 
@@ -1864,7 +1864,7 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
     if (!updateRect.isEmpty()) {
       // ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
       m_toonz_brush->updateDrawing(ras, m_backupRas, m_strokeSegmentRect,
-                                   m_styleId);
+                                   m_styleId, m_modifierLockAlpha.getValue());
     }
     TPointD thickOffset(m_maxCursorThick * 0.5,
                         m_maxCursorThick * 0.5);  // TODO
