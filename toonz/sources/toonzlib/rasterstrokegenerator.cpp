@@ -199,8 +199,13 @@ void RasterStrokeGenerator::placeOver(const TRasterCM32P &out,
       if (m_task == BRUSH) {
         int inTone  = inPix->getTone();
         int outTone = outPix->getTone();
-        if (inPix->isPureInk() && !m_selective) {
+        if (inPix->isPureInk() && !m_selective && !m_modifierLockAlpha) {
           *outPix = TPixelCM32(inPix->getInk(), outPix->getPaint(), inTone);
+          continue;
+        }
+        if (m_modifierLockAlpha && !outPix->isPureInk() &&
+            outPix->getPaint() == 0 && outPix->getTone() == 255) {
+          *outPix = TPixelCM32(outPix->getInk(), outPix->getPaint(), outTone);
           continue;
         }
         if (outPix->isPureInk() && m_selective) {
