@@ -181,7 +181,7 @@ static TRect drawBluredBrush(const TToonzImageP &ti, TStroke *stroke, int thick,
     TRect chunkBox = brush.getBoundFromPoints(points);
     brush.addArc(points[0], points[1], points[2], 1, 1);
     brush.updateDrawing(ti->getRaster(), backupRas, chunkBox, styleId,
-                        selective);
+                        selective, false);
   }
 
   delete s;
