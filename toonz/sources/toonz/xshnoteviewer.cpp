@@ -459,12 +459,8 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
     , m_noteButton(nullptr)
     , m_precNoteButton(nullptr)
     , m_nextNoteButton(nullptr)
-    , m_autoCreateButton(nullptr)
-    , m_createInHoldButton(nullptr)
-    , m_autoStretchButton(nullptr)
     , m_frameDisplayStyleCombo(nullptr)
     , m_layerHeaderPanel(nullptr) {
-  const Orientation *o = m_viewer->orientation();
 
   setFrameStyle(QFrame::StyledPanel);
   setObjectName("cornerWidget");
@@ -474,9 +470,6 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
   m_precNoteButton         = new QToolButton(this);
   m_nextNoteButton         = new QToolButton(this);
   m_newLevelButton         = new QToolButton(this);
-  m_autoCreateButton       = new QToolButton(this);
-  m_createInHoldButton     = new QToolButton(this);
-  m_autoStretchButton      = new QToolButton(this);
   m_frameDisplayStyleCombo = new QComboBox(this);
   m_layerHeaderPanel       = new LayerHeaderPanel(m_viewer, this);
 
@@ -518,34 +511,6 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
   m_nextNoteButton->setIcon(createQIcon("nextkey"));
   m_nextNoteButton->setToolTip(tr("Next Memo"));
 
-  m_autoCreateButton->setObjectName("ToolbarToolButton");
-  m_autoCreateButton->setFixedSize(o->rect(PredefinedRect::AUTO_CREATE).size());
-  m_autoCreateButton->setIconSize(QSize(16, 16));
-  m_autoCreateButton->setIcon(createQIcon("auto_create"));
-  m_autoCreateButton->setToolTip(
-      tr("Toggles the auto-creation of frames when drawing in blank cells on "
-         "the timeline/xsheet."));
-  m_autoCreateButton->setCheckable(true);
-
-  m_createInHoldButton->setObjectName("ToolbarToolButton");
-  m_createInHoldButton->setFixedSize(
-      o->rect(PredefinedRect::CREATE_IN_HOLD).size());
-  m_createInHoldButton->setIconSize(QSize(16, 16));
-  m_createInHoldButton->setIcon(createQIcon("create_in_hold"));
-  m_createInHoldButton->setToolTip(
-      tr("Toggles the auto-creation of frames when drawing in held cells on "
-         "the timeline/xsheet."));
-  m_createInHoldButton->setCheckable(true);
-
-  m_autoStretchButton->setObjectName("ToolbarToolButton");
-  m_autoStretchButton->setFixedSize(
-      o->rect(PredefinedRect::AUTO_STRETCH).size());
-  m_autoStretchButton->setIconSize(QSize(16, 16));
-  m_autoStretchButton->setIcon(createQIcon("auto_stretch"));
-  m_autoStretchButton->setToolTip(
-      tr("Toggles the auto-stretch of a frame to the next frame."));
-  m_autoStretchButton->setCheckable(true);
-
   QStringList frameDisplayStyles;
   frameDisplayStyles << tr("Frame") << tr("Sec Frame") << tr("6sec Sheet")
                      << tr("3sec Sheet");
@@ -572,21 +537,6 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
         });
 
   ret =
-      ret && connect(m_autoCreateButton, &QToolButton::clicked, [=]() {
-        CommandManager::instance()->getAction("MI_ToggleAutoCreate")->trigger();
-      });
-  ret = ret && connect(m_createInHoldButton, &QToolButton::clicked, [=]() {
-          CommandManager::instance()
-              ->getAction("MI_ToggleCreationInHoldCells")
-              ->trigger();
-        });
-  ret = ret && connect(m_autoStretchButton, &QToolButton::clicked, [=]() {
-          CommandManager::instance()
-              ->getAction("MI_ToggleAutoStretch")
-              ->trigger();
-        });
-
-  ret =
       ret && connect(m_frameDisplayStyleCombo, SIGNAL(currentIndexChanged(int)),
                      this, SLOT(onFrameDisplayStyleChanged(int)));
 
@@ -609,9 +559,6 @@ void NoteArea::removeLayout() {
   currentLayout->removeWidget(m_precNoteButton);
   currentLayout->removeWidget(m_nextNoteButton);
   currentLayout->removeWidget(m_newLevelButton);
-  currentLayout->removeWidget(m_autoCreateButton);
-  currentLayout->removeWidget(m_createInHoldButton);
-  currentLayout->removeWidget(m_autoStretchButton);
   currentLayout->removeWidget(m_frameDisplayStyleCombo);
   currentLayout->removeWidget(m_layerHeaderPanel);
   delete currentLayout;
@@ -641,16 +588,6 @@ void NoteArea::createLayout() {
 
       mainLayout->addStretch(1);
 
-      QHBoxLayout *AutoCreatebuttonsLayout = new QHBoxLayout();
-      AutoCreatebuttonsLayout->setMargin(0);
-      AutoCreatebuttonsLayout->setSpacing(0);
-      {
-        AutoCreatebuttonsLayout->addWidget(m_autoCreateButton, 0);
-        AutoCreatebuttonsLayout->addWidget(m_createInHoldButton, 0);
-        AutoCreatebuttonsLayout->addWidget(m_autoStretchButton, 0);
-      }
-      mainLayout->addLayout(AutoCreatebuttonsLayout, 0);
-
       QHBoxLayout *buttonsLayout = new QHBoxLayout();
       buttonsLayout->setMargin(0);
       buttonsLayout->setSpacing(0);
@@ -674,16 +611,10 @@ void NoteArea::createLayout() {
     m_precNoteButton->hide();
     m_nextNoteButton->hide();
     m_noteButton->hide();
-    m_autoCreateButton->hide();
-    m_createInHoldButton->hide();
-    m_autoStretchButton->hide();
   } else {
     m_precNoteButton->show();
     m_nextNoteButton->show();
     m_noteButton->show();
-    m_autoCreateButton->show();
-    m_createInHoldButton->show();
-    m_autoStretchButton->show();
   }
 }
 
@@ -703,19 +634,6 @@ void NoteArea::updateButtons() {
     if (count > currentNoteIndex + 1) m_nextNoteButton->setEnabled(true);
     if (currentNoteIndex > 0) m_precNoteButton->setEnabled(true);
   }
-}
-
-void NoteArea::paintEvent(QPaintEvent *event) {
-  m_autoCreateButton->setChecked(CommandManager::instance()
-                                     ->getAction("MI_ToggleAutoCreate")
-                                     ->isChecked());
-  m_createInHoldButton->setChecked(
-      CommandManager::instance()
-          ->getAction("MI_ToggleCreationInHoldCells")
-          ->isChecked());
-  m_autoStretchButton->setChecked(CommandManager::instance()
-                                      ->getAction("MI_ToggleAutoStretch")
-                                      ->isChecked());
 }
 
 //-----------------------------------------------------------------------------

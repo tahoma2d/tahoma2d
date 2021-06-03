@@ -16,8 +16,6 @@
 
 #include "toonzqt/gutil.h"
 
-#include <QToolButton>
-
 using XsheetGUI::ColumnArea;
 
 LayerFooterPanel::LayerFooterPanel(XsheetViewer *viewer, QWidget *parent,
@@ -39,54 +37,8 @@ LayerFooterPanel::LayerFooterPanel(XsheetViewer *viewer, QWidget *parent,
   m_frameZoomSlider->setValue(m_viewer->getFrameZoomFactor());
   m_frameZoomSlider->setToolTip(tr("Zoom in/out of timeline"));
 
-  m_autoCreateButton   = new QToolButton(this);
-  m_createInHoldButton = new QToolButton(this);
-  m_autoStretchButton  = new QToolButton(this);
-
-  m_autoCreateButton->setObjectName("ToolbarToolButton");
-  m_autoCreateButton->setFixedSize(o->rect(PredefinedRect::AUTO_CREATE).size());
-  m_autoCreateButton->setIconSize(QSize(15, 15));
-  m_autoCreateButton->setIcon(createQIcon("auto_create"));
-  m_autoCreateButton->setToolTip(
-      tr("Toggles the auto-creation of frames when drawing in blank cells on "
-         "the timeline/xsheet."));
-  m_autoCreateButton->setCheckable(true);
-
-  m_createInHoldButton->setObjectName("ToolbarToolButton");
-  m_createInHoldButton->setFixedSize(
-      o->rect(PredefinedRect::CREATE_IN_HOLD).size());
-  m_createInHoldButton->setIconSize(QSize(15, 15));
-  m_createInHoldButton->setIcon(createQIcon("create_in_hold"));
-  m_createInHoldButton->setToolTip(
-      tr("Toggles the auto-creation of frames when drawing in held cells on "
-         "the timeline/xsheet."));
-  m_createInHoldButton->setCheckable(true);
-
-  m_autoStretchButton->setObjectName("ToolbarToolButton");
-  m_autoStretchButton->setFixedSize(
-      o->rect(PredefinedRect::AUTO_STRETCH).size());
-  m_autoStretchButton->setIconSize(QSize(15, 15));
-  m_autoStretchButton->setIcon(createQIcon("auto_stretch"));
-  m_autoStretchButton->setToolTip(
-      tr("Toggles the auto-stretch of a frame to the next frame."));
-  m_autoStretchButton->setCheckable(true);
-
   connect(m_frameZoomSlider, SIGNAL(valueChanged(int)), this,
           SLOT(onFrameZoomSliderValueChanged(int)));
-
-  connect(m_autoCreateButton, &QToolButton::clicked, [=]() {
-    CommandManager::instance()->getAction("MI_ToggleAutoCreate")->trigger();
-  });
-
-  connect(m_createInHoldButton, &QToolButton::clicked, [=]() {
-    CommandManager::instance()
-        ->getAction("MI_ToggleCreationInHoldCells")
-        ->trigger();
-  });
-
-  connect(m_autoStretchButton, &QToolButton::clicked, [=]() {
-    CommandManager::instance()->getAction("MI_ToggleAutoStretch")->trigger();
-  });
 }
 
 LayerFooterPanel::~LayerFooterPanel() {}
@@ -148,22 +100,6 @@ void LayerFooterPanel::paintEvent(QPaintEvent *event) {
   //    svgToPixmap(":Resources/new_level_rollover.svg");
   // const QRect addLevelImgRect = o->rect(PredefinedRect::ADD_LEVEL);
 
-  m_autoCreateButton->setGeometry(o->rect(PredefinedRect::AUTO_CREATE));
-  m_autoCreateButton->setChecked(CommandManager::instance()
-                                     ->getAction("MI_ToggleAutoCreate")
-                                     ->isChecked());
-
-  m_createInHoldButton->setGeometry(o->rect(PredefinedRect::CREATE_IN_HOLD));
-  m_createInHoldButton->setChecked(
-      CommandManager::instance()
-          ->getAction("MI_ToggleCreationInHoldCells")
-          ->isChecked());
-
-  m_autoStretchButton->setGeometry(o->rect(PredefinedRect::AUTO_STRETCH));
-  m_autoStretchButton->setChecked(CommandManager::instance()
-                                      ->getAction("MI_ToggleAutoStretch")
-                                      ->isChecked());
-
   p.setRenderHint(QPainter::SmoothPixmapTransform, true);
   if (m_zoomInHighlighted)
     p.drawPixmap(zoomInImgRect, zoomInRollover);
@@ -184,8 +120,6 @@ void LayerFooterPanel::paintEvent(QPaintEvent *event) {
 
   QLine line = {leftSide(shorter(zoomOutImgRect)).translated(-4, 0)};
   p.drawLine(line);
-  QLine line2 = {leftSide(shorter(noteObjRect)).translated(-4, 0)};
-  p.drawLine(line2);
 }
 
 void LayerFooterPanel::showOrHide(const Orientation *o) {

@@ -126,9 +126,6 @@ class NoteArea final : public QFrame {
   QToolButton *m_nextNoteButton;
   QToolButton *m_precNoteButton;
   QToolButton *m_newLevelButton;
-  QToolButton *m_autoCreateButton;
-  QToolButton *m_createInHoldButton;
-  QToolButton *m_autoStretchButton;
 
   QComboBox *m_frameDisplayStyleCombo;
 
@@ -154,8 +151,6 @@ protected slots:
   void onXsheetOrientationChanged(const Orientation *orientation);
 
 protected:
-  void paintEvent(QPaintEvent *event) override;
-
   void removeLayout();
   void createLayout();
 };

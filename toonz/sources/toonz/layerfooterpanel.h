@@ -28,7 +28,6 @@ class LayerFooterPanel final : public QWidget {
   bool m_zoomInHighlighted  = false;
   bool m_zoomOutHighlighted = false;
   // bool m_addLevelHighlighted = false;
-  QToolButton *m_autoCreateButton, *m_createInHoldButton, *m_autoStretchButton;
 
 private:
   XsheetViewer *m_viewer;
