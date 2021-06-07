@@ -388,7 +388,7 @@ public:
 
   void updateField(double value) override;
 
-  QSize getPreferedSize() override { return QSize(260, 28); }
+  QSize getPreferedSize() override { return QSize(260, 26); }
   void setPrecision(int precision) override;
 
 protected slots:
@@ -534,11 +534,14 @@ signals:
 class DVAPI ModeSensitiveBox final : public QWidget {
   Q_OBJECT
   QList<int> m_modes;
+  int m_currentMode;
 
 public:
   ModeSensitiveBox(QWidget *parent, ModeChangerParamField *modeChanger,
                    QList<int> modes);
+  ModeSensitiveBox(QWidget *parent, QCheckBox *checkBox);
   QList<int> modes() { return m_modes; }
+  bool isActive() { return m_modes.contains(m_currentMode); }
 protected slots:
   void onModeChanged(int mode);
 };
@@ -612,7 +615,7 @@ public:
                 int frame) override;
   void update(int frame) override;
 
-  QSize getPreferedSize() override { return QSize(50, 20); }
+  QSize getPreferedSize() override { return QSize(50, 19); }
 
 protected slots:
   void onChange(bool isDragging = false);

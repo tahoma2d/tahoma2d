@@ -83,6 +83,8 @@ set(HEADERS
     iwa_fractalnoisefx.h
     iwa_rainbow_intensity.h
     iwa_rainbowfx.h
+    iwa_bokeh_advancedfx.h
+    iwa_bokeh_util.h
 )
 
 if(OpenCV_FOUND)
@@ -275,6 +277,8 @@ set(SOURCES
     iwa_glarefx.cpp
     iwa_fractalnoisefx.cpp
     iwa_rainbowfx.cpp
+    iwa_bokeh_advancedfx.cpp
+    iwa_bokeh_util.cpp
 )
 
 if(OpenCV_FOUND)

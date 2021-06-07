@@ -22,6 +22,7 @@
     STD_inoSpinBlurFx
     STD_iwa_BokehFx
     STD_iwa_BokehRefFx
+    STD_iwa_BokehAdvancedFx
   </Blur>
   <Distort>
     STD_freeDistortFx

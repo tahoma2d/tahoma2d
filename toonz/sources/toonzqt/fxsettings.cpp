@@ -43,6 +43,8 @@
 
 #include <QDesktopServices>
 #include <QUrl>
+#include <QGuiApplication>
+#include <QScreen>
 
 using namespace DVGui;
 
@@ -249,7 +251,6 @@ void ParamsPage::setPageField(TIStream &is, const TFxP &fx, bool isVertical) {
       if (shrinkStr != "" || modeSensitiveStr != "") {
         QWidget *tmpWidget;
         if (shrinkStr != "") {
-          tmpWidget           = new QWidget(this);
           shrink              = QString::fromStdString(shrinkStr).toInt();
           std::string label   = is.getTagAttribute("label");
           QCheckBox *checkBox = new QCheckBox(this);
@@ -262,9 +263,7 @@ void ParamsPage::setPageField(TIStream &is, const TFxP &fx, bool isVertical) {
           int currentRow = m_mainLayout->rowCount();
           m_mainLayout->addLayout(sepLay, currentRow, 0, 1, 2);
           m_mainLayout->setRowStretch(currentRow, 0);
-          //--- signal-slot connection
-          connect(checkBox, SIGNAL(toggled(bool)), tmpWidget,
-                  SLOT(setVisible(bool)));
+          tmpWidget = new ModeSensitiveBox(this, checkBox);
           checkBox->setChecked(shrink == 1);
           tmpWidget->setVisible(shrink == 1);
         } else {  // modeSensitiveStr != ""
@@ -421,7 +420,7 @@ void ParamsPage::setPageField(TIStream &is, const TFxP &fx, bool isVertical) {
           throw TException("unexpected tag " + tagName);
       }
       /*-- 表示コントロールをconnect --*/
-      if (controller_bpf) {
+      if (controller_bpf && (!on_items.isEmpty() || !off_items.isEmpty())) {
         /*-- ラベルとWidgetを両方表示/非表示 --*/
         for (int i = 0; i < on_items.size(); i++) {
           connect(controller_bpf, SIGNAL(toggled(bool)), on_items[i],
@@ -433,6 +432,8 @@ void ParamsPage::setPageField(TIStream &is, const TFxP &fx, bool isVertical) {
                   SLOT(setHidden(bool)));
           off_items[i]->show();
         }
+        connect(controller_bpf, SIGNAL(toggled(bool)), this,
+                SIGNAL(preferredPageSizeChanged()));
       } else
         std::cout << "controller_bpf NOT found!" << std::endl;
     } else
@@ -448,11 +449,8 @@ void ParamsPage::setPageField(TIStream &is, const TFxP &fx, bool isVertical) {
 
 void ParamsPage::setPageSpace() {
   if (m_fields.count() != 0) {
-    QWidget *spaceWidget = new QWidget();
 
     int currentRow = m_mainLayout->rowCount();
-    m_mainLayout->addWidget(spaceWidget, currentRow, 0, 1, 2);
-
     for (int i = 0; i < currentRow; i++) m_mainLayout->setRowStretch(i, 0);
     m_mainLayout->setRowStretch(currentRow, 1);
   }
@@ -636,29 +634,25 @@ void updateMaximumPageSize(QGridLayout *layout, int &maxLabelWidth,
     }
   }
 
+  int itemCount = 0;
   /*-- Widget側の最適な縦サイズおよび横幅の最大値を得る --*/
-  QMap<int, int> heightsByMode;
-  int maxModeHeight = 0;
   for (int r = 0; r < layout->rowCount(); r++) {
     /*-- Column1にある可能性のあるもの：ParamField, Histogram, Layout,
      * RgbLinkButtons --*/
 
     QLayoutItem *item = layout->itemAtPosition(r, 1);
-    if (!item) continue;
+    if (!item || (item->widget() && item->widget()->isHidden())) continue;
 
     ModeSensitiveBox *box = dynamic_cast<ModeSensitiveBox *>(item->widget());
     if (box) {
+      if (!box->isActive()) continue;
       // if (box->isHidden()) continue;
       QGridLayout *innerLay = dynamic_cast<QGridLayout *>(box->layout());
       if (!innerLay) continue;
       int tmpHeight = 0;
       updateMaximumPageSize(innerLay, maxLabelWidth, maxWidgetWidth, tmpHeight);
-      for (int mode : box->modes()) {
-        heightsByMode[mode] += tmpHeight;
-        maxModeHeight = std::max(maxModeHeight, heightsByMode[mode]);
-      }
+      fieldsHeight += tmpHeight;
 
-      // attempt to align the label column
       innerLay->setColumnMinimumWidth(0, maxLabelWidth);
       continue;
     }
@@ -666,10 +660,10 @@ void updateMaximumPageSize(QGridLayout *layout, int &maxLabelWidth,
     QSize itemSize = getItemSize(item);
     if (maxWidgetWidth < itemSize.width()) maxWidgetWidth = itemSize.width();
     fieldsHeight += itemSize.height();
+    itemCount++;
   }
-  if (maxModeHeight > 0) fieldsHeight += maxModeHeight;
 
-  if (layout->rowCount() > 1) fieldsHeight += (layout->rowCount() - 1) * 10;
+  if (itemCount >= 1) fieldsHeight += itemCount * 10;
 }
 };  // namespace
 
@@ -1585,10 +1579,17 @@ void FxSettings::onViewModeChanged(QAction *triggeredAct) {
 //-----------------------------------------------------------------------------
 
 void FxSettings::onPreferredSizeChanged(QSize pvBestSize) {
+  DockWidget *popup = dynamic_cast<DockWidget *>(parentWidget());
+  if (!popup || !popup->isFloating()) return;
+
   QSize popupBestSize = pvBestSize;
 
+  static int maximumHeight =
+      (QGuiApplication::primaryScreen()->geometry().height()) * 0.9;
+
   // Set minimum size, just in case
-  popupBestSize.setHeight(std::max(popupBestSize.height(), 85));
+  popupBestSize.setHeight(
+      std::min(std::max(popupBestSize.height(), 85), maximumHeight));
   popupBestSize.setWidth(std::max(popupBestSize.width(), 390));
 
   if (m_toolBar->isVisible()) {
@@ -1597,13 +1598,10 @@ void FxSettings::onPreferredSizeChanged(QSize pvBestSize) {
         std::max(popupBestSize.width(), m_viewer->width() + 13));
   }
 
-  DockWidget *popup = dynamic_cast<DockWidget *>(parentWidget());
-  if (popup && popup->isFloating()) {
-    QRect geom = popup->geometry();
-    geom.setSize(popupBestSize);
-    popup->setGeometry(geom);
-    popup->update();
-  }
+  QRect geom = popup->geometry();
+  geom.setSize(popupBestSize);
+  popup->setGeometry(geom);
+  popup->update();
 }
 
 //-----------------------------------------------------------------------------
