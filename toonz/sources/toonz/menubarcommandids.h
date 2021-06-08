@@ -467,4 +467,9 @@
 #define MI_FlipPrevGuideStroke "MI_FlipPrevGuideStroke"
 
 #define MI_ExportXDTS "MI_ExportXDTS"
+
+#define MI_ToggleAutoCreate "MI_ToggleAutoCreate"
+#define MI_ToggleCreationInHoldCells "MI_ToggleCreationInHoldCells"
+#define MI_ToggleAutoStretch "MI_ToggleAutoStretch"
+
 #endif

@@ -2460,6 +2460,21 @@ void MainWindow::defineActions() {
                              QT_TR_NOOP("&Save As Default Palette"), "", "",
                              tr("Save the current style palette as the default "
                              "for new levels of the current level type."));
+  createToggle(MI_ToggleAutoCreate, QT_TR_NOOP("Toggle Auto-Creation"), "",
+               Preferences::instance()->isAutoCreateEnabled(),
+               MiscCommandType, "auto_create",
+               tr("Toggles the auto-creation of frames when drawing in blank "
+                  "cells on the timeline/xsheet."));
+  createToggle(MI_ToggleCreationInHoldCells,
+               QT_TR_NOOP("Toggle Creation In Hold Cells"), "",
+               Preferences::instance()->isCreationInHoldCellsEnabled(),
+               MiscCommandType, "create_in_hold",
+               tr("Toggles the auto-creation of frames when drawing in held "
+                  "cells on the timeline/xsheet."));
+  createToggle(MI_ToggleAutoStretch, QT_TR_NOOP("Toggle Auto-Stretch"), "",
+               Preferences::instance()->isAutoStretchEnabled(),
+               MiscCommandType, "auto_stretch",
+               tr("Toggles the auto-stretch of a frame to the next frame"));
 
   // Tools
 
