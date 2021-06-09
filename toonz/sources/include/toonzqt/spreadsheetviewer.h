@@ -70,8 +70,9 @@ private:
   void connectScrollbars();
   void disconnectScrollbars();
 
-  void handleScroll(QPoint &offset);
+  void handleScroll(QPoint &offset, int senderMaximum, int senderValue);
   void onScroll(const CellPositionRatio &offset);
+  bool exactScroll(const int senderMaximum, const int senderValue);
 
   void prepareToScrollRatio(const CellPositionRatio &offset);
 

@@ -67,26 +67,55 @@ void FrameScroller::onVScroll(int y) {
   QPoint offset(0, y - m_lastY);
   if (isSyncing()) return;
   m_lastY = y;
+
+  int senderMaximum     = 0;
+  QScrollBar *scrollBar = dynamic_cast<QScrollBar *>(sender());
+  if (scrollBar) senderMaximum = scrollBar->maximum();
+
   setSyncing(true);
-  handleScroll(offset);
+  handleScroll(offset, senderMaximum, y);
   setSyncing(false);
 }
 void FrameScroller::onHScroll(int x) {
   QPoint offset(x - m_lastX, 0);
   if (isSyncing()) return;
   m_lastX = x;
+
+  int senderMaximum     = 0;
+  QScrollBar *scrollBar = dynamic_cast<QScrollBar *>(sender());
+  if (scrollBar) senderMaximum = scrollBar->maximum();
+
   setSyncing(true);
-  handleScroll(offset);
+  handleScroll(offset, senderMaximum, x);
   setSyncing(false);
 }
 
 static QList<FrameScroller *> frameScrollers;
 
-void FrameScroller::handleScroll(QPoint &offset) {
+void FrameScroller::handleScroll(QPoint &offset, int senderMaximum,
+                                 int senderValue) {
   if ((m_orientation->isVerticalTimeline() && offset.x()) ||
       (!m_orientation->isVerticalTimeline() &&
        offset.y()))  // only synchronize changes by frames axis
     return;
+
+  // If the scroller has the same maximum size, assume it as the scroll bar in
+  // the neighbor panel with the same height & scale. In such case just set the
+  // same value as the sender without zoom adjusting whichi may cause error due
+  // to rounding off.
+  QList<FrameScroller *> scrollBarCue;
+  for (auto frameScroller : frameScrollers)
+    if (frameScroller != this) {
+      if (!frameScroller->isSyncing()) {
+        if (!frameScroller->exactScroll(senderMaximum, senderValue)) {
+          // If the size is different from the sender, then put it in the cue
+          // for adjusting offset and scrolling.
+          scrollBarCue.append(frameScroller);
+        }
+      }
+    }
+
+  if (scrollBarCue.isEmpty()) return;
 
   QPointF offsetF(offset);
   // In case of a zoomed viewer is sending this out, adjust the
@@ -95,16 +124,32 @@ void FrameScroller::handleScroll(QPoint &offset) {
 
   CellPositionRatio ratio = orientation()->xyToPositionRatio(offsetF);
 
-  for (int i = 0; i < frameScrollers.size(); i++)
-    if (frameScrollers[i] != this) {
-      if (!frameScrollers[i]->isSyncing()) {
-        frameScrollers[i]->onScroll(ratio);
+  for (auto frameScroller : scrollBarCue)
+    if (frameScroller != this) {
+      if (!frameScroller->isSyncing()) {
+        frameScroller->onScroll(ratio);
         break;
       }
     }
 }
 
 void adjustScrollbar(QScrollBar *scrollBar, int add);
+
+// Check if the scroll bar has the same size as the sender and just put the
+// value
+bool FrameScroller::exactScroll(const int senderMaximum,
+                                const int senderValue) {
+  QScrollBar *scrollBar = (m_orientation->isVerticalTimeline())
+                              ? m_scrollArea->verticalScrollBar()
+                              : m_scrollArea->horizontalScrollBar();
+
+  if (scrollBar->maximum() == senderMaximum) {
+    scrollBar->setValue(senderValue);
+    return true;
+  }
+
+  return false;
+}
 
 void FrameScroller::onScroll(const CellPositionRatio &ratio) {
   QPointF offset = orientation()->positionRatioToXY(ratio);

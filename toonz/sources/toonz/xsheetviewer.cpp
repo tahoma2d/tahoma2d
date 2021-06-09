@@ -1589,6 +1589,7 @@ void XsheetViewer::updateColumnArea() {
 //-----------------------------------------------------------------------------
 
 void XsheetViewer::updateCellColumnAree() {
+  if (!m_isComputingSize) refreshContentSize(0, 0);
   m_columnArea->update(m_columnArea->visibleRegion());
   m_cellArea->update(m_cellArea->visibleRegion());
 }
@@ -1596,6 +1597,7 @@ void XsheetViewer::updateCellColumnAree() {
 //-----------------------------------------------------------------------------
 
 void XsheetViewer::updateCellRowAree() {
+  if (!m_isComputingSize) refreshContentSize(0, 0);
   m_rowArea->update(m_rowArea->visibleRegion());
   m_cellArea->update(m_cellArea->visibleRegion());
 }
