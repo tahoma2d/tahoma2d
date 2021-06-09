@@ -179,6 +179,7 @@ protected:
   TBoolProperty m_pencil;
   TBoolProperty m_pressure;
   TDoubleProperty m_modifierSize;
+  TBoolProperty m_modifierLockAlpha;
 
   RasterStrokeGenerator *m_rasterTrack;
   TTileSetCM32 *m_tileSet;

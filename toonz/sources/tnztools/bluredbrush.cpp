@@ -27,7 +27,8 @@ QImage rasterToQImage(const TRasterP &ras, bool premultiplied = false) {
 //----------------------------------------------------------------------------------
 // drawOrderMode : 0=OverAll, 1=UnderAll, 2=PaletteOrder
 void putOnRasterCM(const TRasterCM32P &out, const TRaster32P &in, int styleId,
-                   int drawOrderMode, const QSet<int> &aboveStyleIds) {
+                   int drawOrderMode, bool lockAlpha,
+                   const QSet<int> &aboveStyleIds) {
   if (!out.getPointer() || !in.getPointer()) return;
   assert(out->getSize() == in->getSize());
   int x, y;
@@ -43,6 +44,12 @@ void putOnRasterCM(const TRasterCM32P &out, const TRaster32P &in, int styleId,
         TPixel32 *inPix = &in->pixels(y)[x];
         if (inPix->m == 0) continue;
         TPixelCM32 *outPix = &out->pixels(y)[x];
+        if (lockAlpha && !outPix->isPureInk() && outPix->getPaint() == 0 &&
+            outPix->getTone() == 255) {
+          *outPix = TPixelCM32(outPix->getInk(), outPix->getPaint(),
+                               outPix->getTone());
+          continue;
+        }
         bool sameStyleId   = styleId == outPix->getInk();
         // line with the same style : multiply tones
         // line with different style : pick darker tone
@@ -66,6 +73,12 @@ void putOnRasterCM(const TRasterCM32P &out, const TRaster32P &in, int styleId,
         TPixel32 *inPix = &in->pixels(y)[x];
         if (inPix->m == 0) continue;
         TPixelCM32 *outPix = &out->pixels(y)[x];
+        if (lockAlpha && !outPix->isPureInk() && outPix->getPaint() == 0 &&
+            outPix->getTone() == 255) {
+          *outPix = TPixelCM32(outPix->getInk(), outPix->getPaint(),
+                               outPix->getTone());
+          continue;
+        }
         bool sameStyleId   = styleId == outPix->getInk();
         // line with the same style : multiply tones
         // line with different style : pick darker tone
@@ -83,6 +96,12 @@ void putOnRasterCM(const TRasterCM32P &out, const TRaster32P &in, int styleId,
         TPixel32 *inPix = &in->pixels(y)[x];
         if (inPix->m == 0) continue;
         TPixelCM32 *outPix = &out->pixels(y)[x];
+        if (lockAlpha && !outPix->isPureInk() && outPix->getPaint() == 0 &&
+            outPix->getTone() == 255) {
+          *outPix = TPixelCM32(outPix->getInk(), outPix->getPaint(),
+                               outPix->getTone());
+          continue;
+        }
         bool sameStyleId   = styleId == outPix->getInk();
         // line with the same style : multiply tones
         // line with different style : pick darker tone
@@ -365,7 +384,7 @@ void BluredBrush::eraseDrawing(const TRasterP ras, const TRasterP rasBackup,
 void BluredBrush::updateDrawing(const TRasterCM32P rasCM,
                                 const TRasterCM32P rasBackupCM,
                                 const TRect &bbox, int styleId,
-                                int drawOrderMode) const {
+                                int drawOrderMode, bool lockAlpha) const {
   if (!rasCM) return;
 
   TRect rasRect    = rasCM->getBounds();
@@ -374,7 +393,7 @@ void BluredBrush::updateDrawing(const TRasterCM32P rasCM,
 
   rasCM->copy(rasBackupCM->extract(targetRect), targetRect.getP00());
   putOnRasterCM(rasCM->extract(targetRect), m_ras->extract(targetRect), styleId,
-                drawOrderMode, m_aboveStyleIds);
+                drawOrderMode, lockAlpha, m_aboveStyleIds);
 }
 
 //----------------------------------------------------------------------------------

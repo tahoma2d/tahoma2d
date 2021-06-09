@@ -1494,9 +1494,13 @@ PaintbrushToolOptionsBox::PaintbrushToolOptionsBox(QWidget *parent, TTool *tool,
   m_colorMode = dynamic_cast<ToolOptionCombo *>(m_controls.value("Mode:"));
   m_selectiveMode =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Selective"));
+  m_lockAlphaMode =
+      dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Lock Alpha"));
 
-  if (m_colorMode->getProperty()->getValue() == L"Lines")
+  if (m_colorMode->getProperty()->getValue() == L"Lines") {
     m_selectiveMode->setVisible(false);
+    m_lockAlphaMode->setVisible(false);
+  }
 
   bool ret = connect(m_colorMode, SIGNAL(currentIndexChanged(int)), this,
                      SLOT(onColorModeChanged(int)));
@@ -1517,6 +1521,7 @@ void PaintbrushToolOptionsBox::onColorModeChanged(int index) {
   const TEnumProperty::Range &range = m_colorMode->getProperty()->getRange();
   bool enabled                      = range[index] != L"Lines";
   m_selectiveMode->setVisible(enabled);
+  m_lockAlphaMode->setVisible(enabled);
 }
 
 //=============================================================================
@@ -1900,16 +1905,18 @@ void BrushToolOptionsBox::filterControls() {
   for (QMap<std::string, QLabel *>::iterator it = m_labels.begin();
        it != m_labels.end(); it++) {
     bool isModifier = (it.key().substr(0, 8) == "Modifier");
-    bool isCommon   = (it.key() == "Pressure" || it.key() == "Preset:");
-    bool visible    = isCommon || (isModifier == showModifiers);
+    bool isCommon   = (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
+                     it.key() == "Preset:");
+    bool visible = isCommon || (isModifier == showModifiers);
     it.value()->setVisible(visible);
   }
 
   for (QMap<std::string, ToolOptionControl *>::iterator it = m_controls.begin();
        it != m_controls.end(); it++) {
     bool isModifier = (it.key().substr(0, 8) == "Modifier");
-    bool isCommon   = (it.key() == "Pressure" || it.key() == "Preset:");
-    bool visible    = isCommon || (isModifier == showModifiers);
+    bool isCommon   = (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
+                     it.key() == "Preset:");
+    bool visible = isCommon || (isModifier == showModifiers);
     if (QWidget *widget = dynamic_cast<QWidget *>(it.value()))
       widget->setVisible(visible);
   }

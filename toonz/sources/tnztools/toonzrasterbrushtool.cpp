@@ -58,6 +58,7 @@ TEnv::IntVar BrushPressureSensitivity("InknpaintBrushPressureSensitivity", 1);
 TEnv::DoubleVar RasterBrushHardness("RasterBrushHardness", 100);
 TEnv::DoubleVar RasterBrushModifierSize("RasterBrushModifierSize", 0);
 TEnv::StringVar RasterBrushPreset("RasterBrushPreset", "<custom>");
+TEnv::IntVar BrushLockAlpha("InknpaintBrushLockAlpha", 0);
 
 //-------------------------------------------------------------------
 #define CUSTOM_WSTR L"<custom>"
@@ -438,12 +439,13 @@ class RasterBrushUndo final : public TRasterUndo {
   bool m_isPaletteOrder;
   bool m_isPencil;
   bool m_isStraight;
+  bool m_modifierLockAlpha;
 
 public:
   RasterBrushUndo(TTileSetCM32 *tileSet, const std::vector<TThickPoint> &points,
                   int styleId, bool selective, TXshSimpleLevel *level,
                   const TFrameId &frameId, bool isPencil, bool isFrameCreated,
-                  bool isLevelCreated, bool isPaletteOrder,
+                  bool isLevelCreated, bool isPaletteOrder, bool lockAlpha,
                   bool isStraight = false)
       : TRasterUndo(tileSet, level, frameId, isFrameCreated, isLevelCreated, 0)
       , m_points(points)
@@ -451,15 +453,16 @@ public:
       , m_selective(selective)
       , m_isPencil(isPencil)
       , m_isStraight(isStraight)
-      , m_isPaletteOrder(isPaletteOrder) {}
+      , m_isPaletteOrder(isPaletteOrder)
+      , m_modifierLockAlpha(lockAlpha) {}
 
   void redo() const override {
     insertLevelAndFrameIfNeeded();
     TToonzImageP image = getImage();
     TRasterCM32P ras   = image->getRaster();
-    RasterStrokeGenerator m_rasterTrack(ras, BRUSH, NONE, m_styleId,
-                                        m_points[0], m_selective, 0,
-                                        !m_isPencil, m_isPaletteOrder);
+    RasterStrokeGenerator m_rasterTrack(
+        ras, BRUSH, NONE, m_styleId, m_points[0], m_selective, 0,
+        m_modifierLockAlpha, !m_isPencil, m_isPaletteOrder);
     if (m_isPaletteOrder) {
       QSet<int> aboveStyleIds;
       getAboveStyleIdSet(m_styleId, image->getPalette(), aboveStyleIds);
@@ -490,21 +493,23 @@ class RasterBluredBrushUndo final : public TRasterUndo {
   int m_maxThick;
   double m_hardness;
   bool m_isStraight;
+  bool m_modifierLockAlpha;
 
 public:
   RasterBluredBrushUndo(TTileSetCM32 *tileSet,
                         const std::vector<TThickPoint> &points, int styleId,
-                        DrawOrder drawOrder, TXshSimpleLevel *level,
-                        const TFrameId &frameId, int maxThick, double hardness,
-                        bool isFrameCreated, bool isLevelCreated,
-                        bool isStraight = false)
+                        DrawOrder drawOrder, bool lockAlpha,
+                        TXshSimpleLevel *level, const TFrameId &frameId,
+                        int maxThick, double hardness, bool isFrameCreated,
+                        bool isLevelCreated, bool isStraight = false)
       : TRasterUndo(tileSet, level, frameId, isFrameCreated, isLevelCreated, 0)
       , m_points(points)
       , m_styleId(styleId)
       , m_drawOrder(drawOrder)
       , m_maxThick(maxThick)
       , m_isStraight(isStraight)
-      , m_hardness(hardness) {}
+      , m_hardness(hardness)
+      , m_modifierLockAlpha(lockAlpha) {}
 
   void redo() const override {
     if (m_points.size() == 0) return;
@@ -527,7 +532,8 @@ public:
     points.push_back(m_points[0]);
     TRect bbox = brush.getBoundFromPoints(points);
     brush.addPoint(m_points[0], 1);
-    brush.updateDrawing(ras, ras, bbox, m_styleId, (int)m_drawOrder);
+    brush.updateDrawing(ras, ras, bbox, m_styleId, (int)m_drawOrder,
+                        m_modifierLockAlpha);
     if (m_isStraight) {
       points.clear();
       points.push_back(m_points[0]);
@@ -535,7 +541,8 @@ public:
       points.push_back(m_points[2]);
       bbox = brush.getBoundFromPoints(points);
       brush.addArc(m_points[0], m_points[1], m_points[2], 1, 1);
-      brush.updateDrawing(ras, backupRas, bbox, m_styleId, (int)m_drawOrder);
+      brush.updateDrawing(ras, backupRas, bbox, m_styleId, (int)m_drawOrder,
+                          m_modifierLockAlpha);
     } else if (m_points.size() > 1) {
       points.clear();
       points.push_back(m_points[0]);
@@ -543,7 +550,8 @@ public:
       bbox = brush.getBoundFromPoints(points);
       brush.addArc(m_points[0], (m_points[1] + m_points[0]) * 0.5, m_points[1],
                    1, 1);
-      brush.updateDrawing(ras, backupRas, bbox, m_styleId, (int)m_drawOrder);
+      brush.updateDrawing(ras, backupRas, bbox, m_styleId, (int)m_drawOrder,
+                          m_modifierLockAlpha);
       int i;
       for (i = 1; i + 2 < (int)m_points.size(); i = i + 2) {
         points.clear();
@@ -552,7 +560,8 @@ public:
         points.push_back(m_points[i + 2]);
         bbox = brush.getBoundFromPoints(points);
         brush.addArc(m_points[i], m_points[i + 1], m_points[i + 2], 1, 1);
-        brush.updateDrawing(ras, backupRas, bbox, m_styleId, (int)m_drawOrder);
+        brush.updateDrawing(ras, backupRas, bbox, m_styleId, (int)m_drawOrder,
+                            m_modifierLockAlpha);
       }
     }
     ToolUtils::updateSaveBox();
@@ -855,7 +864,8 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
     , m_presetsLoaded(false)
     , m_targetType(targetType)
     , m_workingFrameId(TFrameId())
-    , m_notifier(0) {
+    , m_notifier(0)
+    , m_modifierLockAlpha("Lock Alpha", false) {
   bind(targetType);
 
   m_rasThickness.setNonLinearSlider();
@@ -865,6 +875,7 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
   m_prop[0].bind(m_smooth);
   m_prop[0].bind(m_drawOrder);
   m_prop[0].bind(m_modifierSize);
+  m_prop[0].bind(m_modifierLockAlpha);
   m_prop[0].bind(m_pencil);
   m_pencil.setId("PencilMode");
 
@@ -879,6 +890,7 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
   m_preset.setId("BrushPreset");
   m_preset.addValue(CUSTOM_WSTR);
   m_pressure.setId("PressureSensitivity");
+  m_modifierLockAlpha.setId("LockAlpha");
 }
 
 //-------------------------------------------------------------------------------------------------------
@@ -1072,6 +1084,7 @@ void ToonzRasterBrushTool::updateTranslation() {
   m_preset.setItemUIName(CUSTOM_WSTR, tr("<custom>"));
   m_pencil.setQStringName(tr("Pencil"));
   m_pressure.setQStringName(tr("Pressure"));
+  m_modifierLockAlpha.setQStringName(tr("Lock Alpha"));
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -1369,7 +1382,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
       if (!updateRect.isEmpty()) {
         // ras->extract(updateRect)->copy(m_workRas->extract(updateRect));
         m_toonz_brush->updateDrawing(ri->getRaster(), m_backupRas, m_strokeRect,
-                                     m_styleId);
+                                     m_styleId, m_modifierLockAlpha.getValue());
       }
       m_lastRect = m_strokeRect;
 
@@ -1388,7 +1401,8 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
                              thickness);
       m_rasterTrack = new RasterStrokeGenerator(
           ras, BRUSH, NONE, m_styleId, thickPoint, drawOrder != OverAll, 0,
-          !m_pencil.getValue(), drawOrder == PaletteOrder);
+          m_modifierLockAlpha.getValue(), !m_pencil.getValue(),
+          drawOrder == PaletteOrder);
 
       if (drawOrder == PaletteOrder)
         m_rasterTrack->setAboveStyleIds(aboveStyleIds);
@@ -1418,7 +1432,8 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
       m_tileSaver->save(m_strokeRect);
       m_bluredBrush->addPoint(point, 1);
       m_bluredBrush->updateDrawing(ri->getRaster(), m_backupRas, m_strokeRect,
-                                   m_styleId, drawOrder);
+                                   m_styleId, drawOrder,
+                                   m_modifierLockAlpha.getValue());
       m_lastRect = m_strokeRect;
 
       std::vector<TThickPoint> pts;
@@ -1684,7 +1699,7 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
     if (!updateRect.isEmpty()) {
       // ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
       m_toonz_brush->updateDrawing(ras, m_backupRas, m_strokeSegmentRect,
-                                   m_styleId);
+                                   m_styleId, m_modifierLockAlpha.getValue());
     }
     m_lastRect = m_strokeRect;
 
@@ -1771,7 +1786,8 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
       invalidateRect += ToolUtils::getBounds(points, maxThickness) - rasCenter;
 
       m_bluredBrush->updateDrawing(ti->getRaster(), m_backupRas, bbox,
-                                   m_styleId, m_drawOrder.getIndex());
+                                   m_styleId, m_drawOrder.getIndex(),
+                                   m_modifierLockAlpha.getValue());
       m_strokeRect += bbox;
     }
   }
@@ -1848,7 +1864,7 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
     if (!updateRect.isEmpty()) {
       // ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
       m_toonz_brush->updateDrawing(ras, m_backupRas, m_strokeSegmentRect,
-                                   m_styleId);
+                                   m_styleId, m_modifierLockAlpha.getValue());
     }
     TPointD thickOffset(m_maxCursorThick * 0.5,
                         m_maxCursorThick * 0.5);  // TODO
@@ -1935,7 +1951,8 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
           m_tileSet, m_rasterTrack->getPointsSequence(),
           m_rasterTrack->getStyleId(), m_rasterTrack->isSelective(),
           simLevel.getPointer(), frameId, m_pencil.getValue(), m_isFrameCreated,
-          m_isLevelCreated, m_rasterTrack->isPaletteOrder(), m_isStraight));
+          m_isLevelCreated, m_rasterTrack->isPaletteOrder(),
+          m_rasterTrack->isAlphaLocked(), m_isStraight));
     }
     delete m_rasterTrack;
     m_rasterTrack = 0;
@@ -2001,7 +2018,8 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
             ToolUtils::getBounds(points, maxThickness) - rasCenter;
 
         m_bluredBrush->updateDrawing(ti->getRaster(), m_backupRas, bbox,
-                                     m_styleId, m_drawOrder.getIndex());
+                                     m_styleId, m_drawOrder.getIndex(),
+                                     m_modifierLockAlpha.getValue());
         m_strokeRect += bbox;
       }
       if (!m_isStraight && m_points.size() > 1) {
@@ -2029,7 +2047,8 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
       m_tileSaver->save(bbox);
       m_bluredBrush->addArc(points[0], points[1], points[2], 1, 1);
       m_bluredBrush->updateDrawing(ti->getRaster(), m_backupRas, bbox,
-                                   m_styleId, m_drawOrder.getIndex());
+                                   m_styleId, m_drawOrder.getIndex(),
+                                   m_modifierLockAlpha.getValue());
 
       invalidateRect += ToolUtils::getBounds(points, maxThickness) - rasCenter;
 
@@ -2045,9 +2064,9 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
     if (m_tileSet->getTileCount() > 0) {
       TUndoManager::manager()->add(new RasterBluredBrushUndo(
           m_tileSet, m_points, m_styleId, (DrawOrder)m_drawOrder.getIndex(),
-          simLevel.getPointer(), frameId, m_rasThickness.getValue().second,
-          m_hardness.getValue() * 0.01, m_isFrameCreated, m_isLevelCreated,
-          m_isStraight));
+          m_modifierLockAlpha.getValue(), simLevel.getPointer(), frameId,
+          m_rasThickness.getValue().second, m_hardness.getValue() * 0.01,
+          m_isFrameCreated, m_isLevelCreated, m_isStraight));
     }
   }
   delete m_tileSaver;
@@ -2356,6 +2375,7 @@ bool ToonzRasterBrushTool::onPropertyChanged(std::string propertyName) {
   BrushPressureSensitivity = m_pressure.getValue();
   RasterBrushHardness      = m_hardness.getValue();
   RasterBrushModifierSize  = m_modifierSize.getValue();
+  BrushLockAlpha           = m_modifierLockAlpha.getValue();
 
   // Recalculate/reset based on changed settings
   if (propertyName == m_rasThickness.getName()) {
@@ -2427,6 +2447,7 @@ void ToonzRasterBrushTool::loadPreset() {
     m_pencil.setValue(preset.m_pencil);
     m_pressure.setValue(preset.m_pressure);
     m_modifierSize.setValue(preset.m_modifierSize);
+    m_modifierLockAlpha.setValue(preset.m_modifierLockAlpha);
 
     // Recalculate based on updated presets
     m_minThick = m_rasThickness.getValue().first;
@@ -2448,12 +2469,13 @@ void ToonzRasterBrushTool::addPreset(QString name) {
   preset.m_min = m_rasThickness.getValue().first;
   preset.m_max = m_rasThickness.getValue().second;
 
-  preset.m_smooth       = m_smooth.getValue();
-  preset.m_hardness     = m_hardness.getValue();
-  preset.m_drawOrder    = m_drawOrder.getIndex();
-  preset.m_pencil       = m_pencil.getValue();
-  preset.m_pressure     = m_pressure.getValue();
-  preset.m_modifierSize = m_modifierSize.getValue();
+  preset.m_smooth            = m_smooth.getValue();
+  preset.m_hardness          = m_hardness.getValue();
+  preset.m_drawOrder         = m_drawOrder.getIndex();
+  preset.m_pencil            = m_pencil.getValue();
+  preset.m_pressure          = m_pressure.getValue();
+  preset.m_modifierSize      = m_modifierSize.getValue();
+  preset.m_modifierLockAlpha = m_modifierLockAlpha.getValue();
 
   // Pass the preset to the manager
   m_presetsManager.addPreset(preset);
@@ -2491,6 +2513,7 @@ void ToonzRasterBrushTool::loadLastBrush() {
   m_pressure.setValue(BrushPressureSensitivity ? 1 : 0);
   m_smooth.setValue(BrushSmooth);
   m_modifierSize.setValue(RasterBrushModifierSize);
+  m_modifierLockAlpha.setValue(BrushLockAlpha ? 1 : 0);
 
   // Recalculate based on prior values
   m_minThick = m_rasThickness.getValue().first;
