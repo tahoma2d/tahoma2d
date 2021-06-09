@@ -235,6 +235,58 @@ public:
   }
 } insertSceneFrameCommand;
 
+//=============================================================================
+
+class ToggleAutoCreateCommand final : public MenuItemHandler {
+public:
+  ToggleAutoCreateCommand() : MenuItemHandler(MI_ToggleAutoCreate) {}
+  void execute() override {
+    bool currentAutoCreateEnabled =
+        Preferences::instance()->isAutoCreateEnabled();
+    if (CommandManager::instance()
+            ->getAction(MI_ToggleAutoCreate)
+            ->isChecked() == currentAutoCreateEnabled)
+      return;
+    Preferences::instance()->setValue(EnableAutocreation,
+                                      !currentAutoCreateEnabled);
+  }
+} ToggleAutoCreateCommand;
+
+//=============================================================================
+
+class ToggleCreationInHoldCellsCommand final : public MenuItemHandler {
+public:
+  ToggleCreationInHoldCellsCommand()
+      : MenuItemHandler(MI_ToggleCreationInHoldCells) {}
+  void execute() override {
+    bool currentCreationInHoldCells =
+        Preferences::instance()->isCreationInHoldCellsEnabled();
+    if (CommandManager::instance()
+            ->getAction(MI_ToggleCreationInHoldCells)
+            ->isChecked() == currentCreationInHoldCells)
+      return;
+    Preferences::instance()->setValue(EnableCreationInHoldCells,
+                                      !currentCreationInHoldCells);
+  }
+} ToggleCreationInHoldCellsCommand;
+
+//=============================================================================
+
+class ToggleAutoStretchCommand final : public MenuItemHandler {
+public:
+  ToggleAutoStretchCommand() : MenuItemHandler(MI_ToggleAutoStretch) {}
+  void execute() override {
+    bool currentAutoStretchEnabled =
+        Preferences::instance()->isAutoStretchEnabled();
+    if (CommandManager::instance()
+            ->getAction(MI_ToggleAutoStretch)
+            ->isChecked() == currentAutoStretchEnabled)
+      return;
+    Preferences::instance()->setValue(EnableAutoStretch,
+                                      !currentAutoStretchEnabled);
+  }
+} ToggleAutoStretchCommand;
+
 //*****************************************************************************
 //    RemoveSceneFrame  command
 //*****************************************************************************

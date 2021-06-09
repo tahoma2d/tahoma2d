@@ -1,5 +1,9 @@
   <commandbar>
 
+    <command>MI_ToggleAutoCreate</command>
+    <command>MI_ToggleCreationInHoldCells</command>
+    <command>MI_ToggleAutoStretch</command>
+    <separator/>
     <command>MI_NewVectorLevel</command>
     <command>MI_NewToonzRasterLevel</command>
     <command>MI_NewRasterLevel</command>
@@ -13,7 +17,7 @@
     <command>MI_Collapse</command> 
     <command>MI_OpenChild</command>
     <command>MI_CloseChild</command>
-    <command>MI_ToggleEditInPlace</command>    
-    
+    <command>MI_ToggleEditInPlace</command>
+
   </commandbar>
 

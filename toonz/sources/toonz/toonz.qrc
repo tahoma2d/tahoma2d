@@ -312,6 +312,12 @@
 		<file>icons/dark/actions/16/save_all_levels.svg</file>
 		<file>icons/dark/actions/16/replace_level.svg</file>
 		<file>icons/dark/actions/16/export_level.svg</file>
+    <file>icons/dark/actions/16/auto_create.svg</file>
+    <file>icons/dark/actions/16/auto_create_on.svg</file>
+    <file>icons/dark/actions/16/auto_stretch.svg</file>
+    <file>icons/dark/actions/16/auto_stretch_on.svg</file>
+    <file>icons/dark/actions/16/create_in_hold.svg</file>
+    <file>icons/dark/actions/16/create_in_hold_on.svg</file>
 
 		<file>icons/dark/actions/16/on_1s.svg</file>
 		<file>icons/dark/actions/16/on_2s.svg</file>
