@@ -520,6 +520,8 @@ void PaintBrushTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
           styleId = styleIdUnderCursor;
           getApplication()->setCurrentLevelStyleIndex(styleId);
         }
+        m_selecting = false;
+        return;
       }
 
       TTileSetCM32 *tileSet = new TTileSetCM32(ras->getSize());
