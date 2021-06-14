@@ -109,6 +109,8 @@ private:
   int m_readIndex;
   std::vector<TThickPoint> m_rawPoints;
   std::vector<TThickPoint> m_outputPoints;
+  int m_resampledIndex;
+  std::vector<TThickPoint> m_resampledPoints;
 };
 //************************************************************************
 //   Toonz Raster Brush Tool declaration
