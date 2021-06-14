@@ -45,6 +45,7 @@ TEnv::DoubleVar GeometricRasterSize("InknpaintGeometricRasterSize", 1);
 TEnv::StringVar GeometricType("InknpaintGeometricType", "Rectangle");
 TEnv::IntVar GeometricEdgeCount("InknpaintGeometricEdgeCount", 3);
 TEnv::IntVar GeometricSelective("InknpaintGeometricSelective", 0);
+TEnv::IntVar GeometricRotate("InknpaintGeometricRotate", 0);
 TEnv::IntVar GeometricGroupIt("InknpaintGeometricGroupIt", 0);
 TEnv::IntVar GeometricAutofill("InknpaintGeometricAutofill", 0);
 TEnv::IntVar GeometricSmooth("InknpaintGeometricSmooth", 0);
@@ -377,6 +378,7 @@ public:
   TDoubleProperty m_hardness;
   TEnumProperty m_type;
   TIntProperty m_edgeCount;
+  TBoolProperty m_rotate;
   TBoolProperty m_autogroup;
   TBoolProperty m_autofill;
   TBoolProperty m_smooth;
@@ -406,6 +408,7 @@ public:
       , m_opacity("Opacity:", 0, 100, 100)
       , m_hardness("Hardness:", 0, 100, 100)
       , m_edgeCount("Polygon Sides:", 3, 15, 3)
+      , m_rotate("rotate", false)
       , m_autogroup("Auto Group", false)
       , m_autofill("Auto Fill", false)
       , m_smooth("Smooth", false)
@@ -427,6 +430,7 @@ public:
     m_prop[0].bind(m_type);
 
     m_prop[0].bind(m_edgeCount);
+    m_prop[0].bind(m_rotate);
     if (targetType & TTool::Vectors) {
       m_prop[0].bind(m_autogroup);
       m_prop[0].bind(m_autofill);
@@ -465,6 +469,7 @@ public:
     m_prop[1].bind(m_miterJoinLimit);
 
     m_selective.setId("Selective");
+    m_rotate.setId("Rotate");
     m_autogroup.setId("AutoGroup");
     m_autofill.setId("Autofill");
     m_smooth.setId("Smooth");
@@ -488,6 +493,7 @@ public:
     m_opacity.setQStringName(tr("Opacity:"));
     m_hardness.setQStringName(tr("Hardness:"));
     m_edgeCount.setQStringName(tr("Polygon Sides:"));
+    m_rotate.setQStringName(tr("Rotate"));
     m_autogroup.setQStringName(tr("Auto Group"));
     m_autofill.setQStringName(tr("Auto Fill"));
     m_smooth.setQStringName(tr("Smooth"));
@@ -981,12 +987,29 @@ protected:
   bool m_active;
   bool m_firstTime;
 
+  // for both rotation and move
+  bool m_isRotatingOrMoving;
+  bool m_wasCtrlPressed;
+  TStroke *m_rotatedStroke;
+  TPointD m_originalCursorPos;
+  TPointD m_currentCursorPos;
+  TPixel32 m_color;
+
+  // for rotation
+  double m_lastRotateAngle;
+  TPointD m_rotateCenter;
+
+  // for move
+  TPointD m_lastMoveStrokePos;
+
 public:
   GeometricTool(int targetType)
       : TTool("T_Geometric")
       , m_primitive(0)
       , m_param(targetType)
       , m_active(false)
+      , m_isRotatingOrMoving(false)
+      , m_rotatedStroke(0)
       , m_firstTime(true) {
     bind(targetType);
     if ((targetType & TTool::RasterImage) || (targetType & TTool::ToonzImage)) {
@@ -1013,6 +1036,7 @@ public:
   }
 
   ~GeometricTool() {
+    delete m_rotatedStroke;
     std::map<std::wstring, Primitive *>::iterator it;
     for (it = m_primitiveTable.begin(); it != m_primitiveTable.end(); ++it)
       delete it->second;
@@ -1061,6 +1085,10 @@ public:
       getViewer()->doPickGuideStroke(p);
       return;
     }
+    if (m_isRotatingOrMoving) {
+      addStroke();
+      return;
+    }
     if (m_primitive) m_primitive->leftButtonDown(p, e);
     invalidate();
   }
@@ -1086,6 +1114,9 @@ public:
 
   void onImageChanged() override {
     if (m_primitive) m_primitive->onImageChanged();
+    m_isRotatingOrMoving = false;
+    delete m_rotatedStroke;
+    m_rotatedStroke = 0;
     invalidate();
   }
 
@@ -1095,6 +1126,64 @@ public:
   }
 
   void mouseMove(const TPointD &p, const TMouseEvent &e) override {
+    m_currentCursorPos = p;
+    if (m_isRotatingOrMoving) {
+      // move
+      if (e.isCtrlPressed()) {
+        // if ctrl wasn't pressed, it means the user has switched from
+        // rotation to move. Thus, re-initiate move-relevant variables
+        if (!m_wasCtrlPressed) {
+          m_wasCtrlPressed = true;
+
+          m_originalCursorPos = m_currentCursorPos;
+          m_lastMoveStrokePos = TPointD(0, 0);
+        }
+
+        // move the stroke to the original location
+        double x = -m_lastMoveStrokePos.x;
+        double y = -m_lastMoveStrokePos.y;
+        m_rotatedStroke->transform(TTranslation(x, y));
+
+        // move the stroke according to current mouse position
+        double dx           = m_currentCursorPos.x - m_originalCursorPos.x;
+        double dy           = m_currentCursorPos.y - m_originalCursorPos.y;
+        m_lastMoveStrokePos = TPointD(dx, dy);
+        m_rotatedStroke->transform(TTranslation(dx, dy));
+        invalidate();
+        return;
+      }
+
+      // if ctrl was pressed, it means the user has switched from
+      // move to rotation. Thus, re-initiate rotation-relevant variables
+      if (m_wasCtrlPressed) {
+        m_wasCtrlPressed = false;
+
+        m_lastRotateAngle   = 0;
+        m_originalCursorPos = m_currentCursorPos;
+        TRectD bbox         = m_rotatedStroke->getBBox();
+        m_rotateCenter      = 0.5 * (bbox.getP11() + bbox.getP00());
+      }
+
+      // rotate
+      // first, rotate the stroke back to original
+      m_rotatedStroke->transform(TRotation(m_rotateCenter, -m_lastRotateAngle));
+
+      // then, rotate it according to mouse position
+      // this formula is from: https://stackoverflow.com/a/31334882
+      TPointD center = m_rotateCenter;
+      TPointD org    = m_originalCursorPos;
+      TPointD cur    = m_currentCursorPos;
+      double angle1  = atan2(cur.y - center.y, cur.x - center.x);
+      double angle2  = atan2(org.y - center.y, org.x - center.x);
+      double angle   = (angle1 - angle2) * 180 / 3.14;
+      if (e.isShiftPressed()) {
+        angle = ((int)angle / 45) * 45;
+      }
+      m_rotatedStroke->transform(TRotation(m_rotateCenter, angle));
+      m_lastRotateAngle = angle;
+      invalidate();
+      return;
+    }
     if (m_primitive) m_primitive->mouseMove(p, e);
   }
 
@@ -1105,6 +1194,7 @@ public:
       m_param.m_opacity.setValue(GeometricOpacity);
       m_param.m_hardness.setValue(GeometricBrushHardness);
       m_param.m_selective.setValue(GeometricSelective ? 1 : 0);
+      m_param.m_rotate.setValue(GeometricRotate ? 1 : 0);
       m_param.m_autogroup.setValue(GeometricGroupIt ? 1 : 0);
       m_param.m_smooth.setValue(GeometricSmooth ? 1 : 0);
       m_param.m_autofill.setValue(GeometricAutofill ? 1 : 0);
@@ -1147,6 +1237,11 @@ public:
   }
 
   void onDeactivate() override {
+    if (m_isRotatingOrMoving) {
+      tglColor(m_color);
+      drawStrokeCenterline(*m_rotatedStroke, sqrt(tglGetPixelSize2()));
+      return;
+    }
     if (m_primitive) m_primitive->onDeactivate();
   }
 
@@ -1156,6 +1251,11 @@ public:
   }
 
   void draw() override {
+    if (m_isRotatingOrMoving) {
+      tglColor(m_color);
+      drawStrokeCenterline(*m_rotatedStroke, sqrt(tglGetPixelSize2()));
+      return;
+    }
     if (m_primitive) m_primitive->draw();
   }
 
@@ -1192,6 +1292,8 @@ public:
       }
     } else if (propertyName == m_param.m_edgeCount.getName())
       GeometricEdgeCount = m_param.m_edgeCount.getValue();
+    else if (propertyName == m_param.m_rotate.getName())
+      GeometricRotate = m_param.m_rotate.getValue();
     else if (propertyName == m_param.m_autogroup.getName()) {
       if (!m_param.m_autogroup.getValue()) {
         m_param.m_autofill.setValue(false);
@@ -1254,8 +1356,46 @@ public:
 
   void addStroke() {
     if (!m_primitive) return;
-    TStroke *stroke = m_primitive->makeStroke();
-    if (!stroke) return;
+    //TStroke *stroke = m_primitive->makeStroke();
+    //if (!stroke) return;
+
+    TStroke *stroke = 0;
+    if (!m_isRotatingOrMoving) {
+      stroke = m_primitive->makeStroke();
+      if (!stroke) return;
+
+      if (m_param.m_rotate.getValue()) {
+        m_isRotatingOrMoving = true;
+        m_rotatedStroke      = stroke;
+        TRectD bbox          = stroke->getBBox();
+        m_rotateCenter       = 0.5 * (bbox.getP11() + bbox.getP00());
+        m_originalCursorPos  = m_currentCursorPos;
+        m_lastRotateAngle    = 0;
+        m_lastMoveStrokePos  = TPointD(0, 0);
+        m_wasCtrlPressed     = false;
+
+        const TTool::Application *app = TTool::getApplication();
+        if (!app) {
+          m_color = TPixel32::Red;
+          return;
+        }
+
+        const TColorStyle *style = app->getCurrentLevelStyle();
+        if (!style) {
+          m_color = TPixel32::Red;
+          return;
+        }
+
+        m_color = style->getAverageColor();
+
+        return;
+      }
+    } else {
+      stroke               = m_rotatedStroke;
+      m_isRotatingOrMoving = false;
+      m_rotatedStroke      = 0;
+    }
+
 
     TStroke::OutlineOptions &options = stroke->outlineOptions();
     options.m_capStyle               = m_param.m_capStyle.getIndex();
