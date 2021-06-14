@@ -429,6 +429,8 @@ bool Region::checkWidgetsToBeFixedWidth(std::vector<QWidget *> &widgets) {
         m_item->objectName() == "StopMotionController") {
       widgets.push_back(m_item);
       return true;
+    } else if (m_item->objectName() == "ToolBar") {
+      return true;
     } else
       return false;
   }
