@@ -520,6 +520,8 @@ void PaintBrushTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
           styleId = styleIdUnderCursor;
           getApplication()->setCurrentLevelStyleIndex(styleId);
         }
+        m_selecting = false;
+        return;
       }
 
       TTileSetCM32 *tileSet = new TTileSetCM32(ras->getSize());
@@ -558,7 +560,8 @@ void PaintBrushTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
       // If we were using FINGER mode before, but stopped mid drag, end previous
       // stroke and switch
       if (m_task == FINGER && !e.isCtrlPressed()) {
-        finishBrush(thickness);
+        double pressure = m_pressure.getValue() && e.isTablet() ? e.m_pressure : 0.5;
+        finishBrush(pressure);
         leftButtonDown(pos, e);
       }
 
@@ -630,7 +633,7 @@ void PaintBrushTool::onActivate() { onEnter(); }
 
 void PaintBrushTool::onDeactivate() {
   /*--マウスドラッグ中(m_selecting=true)にツールが切り替わったときに描画の終了処理を行う---*/
-  if (m_selecting) finishBrush(1);
+  if (m_selecting) finishBrush(1.0);
 }
 
 //-----------------------------------------------------------------------------
