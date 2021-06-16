@@ -26,7 +26,7 @@ rename ffmpeg-4.3.1-win64-static-lgpl ffmpeg
 echo ">>> Getting Rhubarb Lip Sync"
 
 IF EXIST rhubarb rmdir /S /Q rhubarb
-curl -fsSL -o rhubarb-lip-sync-tahoma2d-win.zip https://github.com/tahoma2d/rhubarb-lip-sync/releases/download/v1.10.2/rhubarb-lip-sync-tahoma2d-win.zip
+curl -fsSL -o rhubarb-lip-sync-tahoma2d-win.zip https://github.com/tahoma2d/rhubarb-lip-sync/releases/download/v1.10.3/rhubarb-lip-sync-tahoma2d-win.zip
 7z x rhubarb-lip-sync-tahoma2d-win.zip
 rename rhubarb-lip-sync-tahoma2d-win rhubarb
 
