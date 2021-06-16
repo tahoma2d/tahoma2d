@@ -30,6 +30,7 @@ IF EXIST C:\tools\opencv (
 
 IF EXIST ..\..\thirdparty\canon\Header (
    copy /Y ..\..\thirdparty\canon\Dll\EDSDK.dll Tahoma2D
+   copy /Y ..\..\thirdparty\canon\Dll\EdsImage.dll Tahoma2D
 )
 
 IF EXIST ..\..\thirdparty\crashrpt\include (
