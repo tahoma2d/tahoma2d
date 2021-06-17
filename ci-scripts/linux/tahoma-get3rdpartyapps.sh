@@ -23,6 +23,6 @@ if [ -d rhubarb ]
 then
    rm -rf rhubarb ]
 fi
-wget https://github.com/tahoma2d/rhubarb-lip-sync/releases/download/v1.10.2/rhubarb-lip-sync-tahoma2d-linux.zip
+wget https://github.com/tahoma2d/rhubarb-lip-sync/releases/download/v1.10.3/rhubarb-lip-sync-tahoma2d-linux.zip
 unzip rhubarb-lip-sync-tahoma2d-linux.zip -d rhubarb
 
