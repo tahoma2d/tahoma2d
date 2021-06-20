@@ -31,12 +31,12 @@ QString computeBackgroundStyleSheetString(QColor color) {
   QVariant vR(color.red());
   QVariant vG(color.green());
   QVariant vB(color.blue());
-  QVariant vA(color.alpha());
-  return QString("#noteTextEdit { border-image: 0; background: rgbm(") +
-         vR.toString() + QString(",") + vG.toString() + QString(",") +
-         vB.toString() + QString(",") + vA.toString() + QString("); }");
+  QVariant vA(color.alphaF());
+  return QString(
+             "#noteTextEdit { border-image: 0; background: rgba(%1,%2,%3,%4);}")
+      .arg(vR.toString(), vG.toString(), vB.toString(), vA.toString());
 }
-}
+}  // namespace
 
 //=============================================================================
 
@@ -869,4 +869,4 @@ void FooterNoteArea::onFrameDisplayStyleChanged(int id) {
 
 //-----------------------------------------------------------------------------
 
-}  // namespace XsheetGUI;
+}  // namespace XsheetGUI
