@@ -1532,7 +1532,7 @@ void LinearRangeFxGadget::leftButtonUp(const TPointD &pos,
 
 //=============================================================================
 
-class RayLitFxGadget final : public FxGadget {
+class CompassFxGadget final : public FxGadget {
   TPointParamP m_center;
 
   enum HANDLE { Body = 0, Near, Far, None } m_handle = None;
@@ -1540,9 +1540,11 @@ class RayLitFxGadget final : public FxGadget {
   TPointD m_clickedPos, m_mousePos;
   TPointD m_targetPos, m_anotherPos;
 
+  bool m_isSpin;
+
 public:
-  RayLitFxGadget(FxGadgetController *controller,
-                 const TPointParamP &centerPoint);
+  CompassFxGadget(FxGadgetController *controller,
+                  const TPointParamP &centerPoint, bool isSpin = false);
 
   void draw(bool picking) override;
 
@@ -1553,16 +1555,16 @@ public:
 
 //---------------------------------------------------------------------------
 
-RayLitFxGadget::RayLitFxGadget(FxGadgetController *controller,
-                               const TPointParamP &centerPoint)
-    : FxGadget(controller, 3), m_center(centerPoint) {
+CompassFxGadget::CompassFxGadget(FxGadgetController *controller,
+                                 const TPointParamP &centerPoint, bool isSpin)
+    : FxGadget(controller, 3), m_center(centerPoint), m_isSpin(isSpin) {
   addParam(centerPoint->getX());
   addParam(centerPoint->getY());
 }
 
 //---------------------------------------------------------------------------
 
-void RayLitFxGadget::draw(bool picking) {
+void CompassFxGadget::draw(bool picking) {
   auto setColorById = [&](int id) {
     if (isSelected(id))
       glColor3dv(m_selectedColor);
@@ -1615,6 +1617,7 @@ void RayLitFxGadget::draw(bool picking) {
     double angle = std::atan2(-center.y, -center.x) * M_180_PI;
     double theta = M_180_PI * lineInterval / dCenter;
 
+    // draw guides
     glColor3d(0, 0, 1);
     glLineStipple(1, 0x00FF);
     glEnable(GL_LINE_STIPPLE);
@@ -1622,14 +1625,26 @@ void RayLitFxGadget::draw(bool picking) {
     glTranslated(center.x, center.y, 0);
     glRotated(angle, 0, 0, 1);
     for (int i = -3; i <= 3; i++) {
-      if (i == 0) continue;
-      glPushMatrix();
-      glRotated(theta * (double)i, 0, 0, 1);
-      glBegin(GL_LINES);
-      glVertex2d(dCenter - lineHalf, 0.0);
-      glVertex2d(dCenter + lineHalf, 0.0);
-      glEnd();
-      glPopMatrix();
+      if (!m_isSpin) {  // radial direction
+        if (i == 0) continue;
+        glPushMatrix();
+        glRotated(theta * (double)i, 0, 0, 1);
+        glBegin(GL_LINES);
+        glVertex2d(dCenter - lineHalf, 0.0);
+        glVertex2d(dCenter + lineHalf, 0.0);
+        glEnd();
+        glPopMatrix();
+      } else {  // rotational direction
+        if (i == 3 || i == -3) continue;
+        double tmpRad  = dCenter + (double)i * lineInterval;
+        double d_angle = (lineInterval / dCenter) * 6.0 / 10.0;
+        glBegin(GL_LINE_STRIP);
+        for (int r = -5; r <= 5; r++) {
+          double tmpAngle = (double)r * d_angle;
+          glVertex2d(tmpRad * std::cos(tmpAngle), tmpRad * std::sin(tmpAngle));
+        }
+        glEnd();
+      }
     }
 
     glPopMatrix();
@@ -1663,7 +1678,7 @@ void RayLitFxGadget::draw(bool picking) {
 
 //---------------------------------------------------------------------------
 
-void RayLitFxGadget::leftButtonDown(const TPointD &pos, const TMouseEvent &) {
+void CompassFxGadget::leftButtonDown(const TPointD &pos, const TMouseEvent &) {
   m_handle = (HANDLE)m_selected;
   if (m_handle == None) return;
   m_clickedPos = pos;
@@ -1672,7 +1687,7 @@ void RayLitFxGadget::leftButtonDown(const TPointD &pos, const TMouseEvent &) {
 
 //---------------------------------------------------------------------------
 
-void RayLitFxGadget::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
+void CompassFxGadget::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   if (m_handle == None) return;
   TPointD d = pos - m_clickedPos;
 
@@ -1695,7 +1710,7 @@ void RayLitFxGadget::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
 //---------------------------------------------------------------------------
 
-void RayLitFxGadget::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
+void CompassFxGadget::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
   m_handle = None;
 }
 
@@ -1979,9 +1994,15 @@ FxGadget *FxGadgetController::allocateGadget(const TParamUIConcept &uiConcept) {
     break;
   }
 
-  case TParamUIConcept::RAYLIT: {
+  case TParamUIConcept::COMPASS: {
     assert(uiConcept.m_params.size() == 1);
-    gadget = new RayLitFxGadget(this, uiConcept.m_params[0]);
+    gadget = new CompassFxGadget(this, uiConcept.m_params[0]);
+    break;
+  }
+
+  case TParamUIConcept::COMPASS_SPIN: {
+    assert(uiConcept.m_params.size() == 1);
+    gadget = new CompassFxGadget(this, uiConcept.m_params[0], true);
     break;
   }
 

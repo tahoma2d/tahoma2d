@@ -72,7 +72,7 @@ public:
     concepts[1].m_params.push_back(m_radius);
     concepts[1].m_params.push_back(m_p);
 
-    concepts[2].m_type = TParamUIConcept::RAYLIT;
+    concepts[2].m_type = TParamUIConcept::COMPASS;
     concepts[2].m_params.push_back(m_p);
   }
 };
