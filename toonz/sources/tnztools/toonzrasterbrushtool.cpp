@@ -679,7 +679,8 @@ static void CatmullRomInterpolate(const TThickPoint &P0, const TThickPoint &P1,
 
 //--------------------------------------------------------------------------------------------------
 
-static void Smooth(std::vector<TThickPoint> &points, int radius) {
+static void Smooth(std::vector<TThickPoint>& points, const int radius,
+    const int readIndex, const int level) {
   int n = (int)points.size();
   if (radius < 1 || n < 3) {
     return;
@@ -689,7 +690,10 @@ static void Smooth(std::vector<TThickPoint> &points, int radius) {
 
   float d = 1.0f / (radius * 2 + 1);
 
-  for (int i = 1; i < n - 1; ++i) {
+  int endSamples = 10;
+  int startId = std::max(readIndex - endSamples * 3 - radius * level, 1);
+
+  for (int i = startId; i < n - 1; ++i) {
     int lower = i - radius;
     int upper = i + radius;
 
@@ -716,15 +720,17 @@ static void Smooth(std::vector<TThickPoint> &points, int radius) {
     result.push_back(total);
   }
 
-  for (int i = 1; i < n - 1; ++i) {
-    points[i].x     = result[i - 1].x;
-    points[i].y     = result[i - 1].y;
-    points[i].thick = result[i - 1].thick;
+  auto result_itr = result.begin();
+  for (int i = startId; i < n - 1; ++i, ++result_itr) {
+      points[i].x = (*result_itr).x;
+      points[i].y = (*result_itr).y;
+      points[i].thick = (*result_itr).thick;
   }
 
   if (points.size() >= 3) {
     std::vector<TThickPoint> pts;
-    CatmullRomInterpolate(points[0], points[0], points[1], points[2], 10, pts);
+    CatmullRomInterpolate(points[0], points[0], points[1], points[2],
+        endSamples, pts);
     std::vector<TThickPoint>::iterator it = points.begin() + 1;
     points.insert(it, pts.begin(), pts.end());
 
@@ -745,6 +751,8 @@ void SmoothStroke::beginStroke(int smooth) {
   m_readIndex   = -1;
   m_rawPoints.clear();
   m_outputPoints.clear();
+  m_resampledIndex = 0;
+  m_resampledPoints.clear();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -773,6 +781,8 @@ void SmoothStroke::clearPoints() {
   m_readIndex   = -1;
   m_outputPoints.clear();
   m_rawPoints.clear();
+  m_resampledIndex = 0;
+  m_resampledPoints.clear();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -805,26 +815,39 @@ void SmoothStroke::generatePoints() {
     return;
   }
 
-  std::vector<TThickPoint> smoothedPoints;
+  std::vector<TThickPoint> smoothedPoints = m_resampledPoints;
   // Add more stroke samples before applying the smoothing
   // This is because the raw inputs points are too few to support smooth result,
   // especially on stroke ends
-  smoothedPoints.push_back(m_rawPoints.front());
-  for (int i = 1; i < n; ++i) {
-    const TThickPoint &p1 = m_rawPoints[i - 1];
-    const TThickPoint &p2 = m_rawPoints[i];
-    const TThickPoint &p0 = i - 2 >= 0 ? m_rawPoints[i - 2] : p1;
-    const TThickPoint &p3 = i + 1 < n ? m_rawPoints[i + 1] : p2;
+  int resampleStartId = m_resampledIndex;
+  for (int i = resampleStartId; i < n - 1; ++i) {
+      const TThickPoint& p1 = m_rawPoints[i];
+      const TThickPoint& p2 = m_rawPoints[i + 1];
+      const TThickPoint& p0 = i - 1 >= 0 ? m_rawPoints[i - 1] : p1;
+      const TThickPoint& p3 = i + 2 < n ? m_rawPoints[i + 2] : p2;
 
-    int samples = 8;
-    CatmullRomInterpolate(p0, p1, p2, p3, samples, smoothedPoints);
-    smoothedPoints.push_back(p2);
+      std::vector<TThickPoint> tmpResampled;
+      tmpResampled.push_back(p1);
+      // define subsample amount according to distance between points
+      int samples = std::min((int)tdistance(p1, p2), 8);
+      if (samples >= 1)
+          CatmullRomInterpolate(p0, p1, p2, p3, samples, tmpResampled);
+
+      if (i + 2 < n) {
+          m_resampledIndex = i + 1;
+          std::copy(tmpResampled.begin(), tmpResampled.end(),
+              std::back_inserter(m_resampledPoints));
+      }
+      std::copy(tmpResampled.begin(), tmpResampled.end(),
+          std::back_inserter(smoothedPoints));
   }
+  smoothedPoints.push_back(m_rawPoints.back());
   // Apply the 1D box filter
   // Multiple passes result in better quality and fix the stroke ends break
   // issue
-  for (int i = 0; i < 3; ++i) {
-    Smooth(smoothedPoints, m_smooth);
+  // level is passed to define range where the points are smoothed
+  for (int level = 2; level >= 0; --level) {
+      Smooth(smoothedPoints, m_smooth, m_readIndex, level);
   }
   // Compare the new smoothed stroke with old one
   // Enable the output for unchanged parts
