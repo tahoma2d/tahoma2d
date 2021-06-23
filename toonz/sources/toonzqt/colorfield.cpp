@@ -10,13 +10,42 @@
 #include "tcolorstyles.h"
 #include "trop.h"
 #include "toonzqt/lutcalibrator.h"
+#include "styledata.h"
 
+// Qt includes
+#include <QApplication>
+#include <QClipboard>
 #include <QLayout>
 #include <QPainter>
 #include <QMouseEvent>
 #include <QLabel>
 
 using namespace DVGui;
+
+namespace {
+
+void drawChessBoard(QPainter &p) {
+  for (int x = 0; x < 4; x++) {
+    for (int y = 0; y < 4; y++) {
+      QColor col((x + y) % 2 == 0 ? Qt::black : Qt::white);
+      p.fillRect(x * 4, y * 4, 4, 4, col);
+    }
+  }
+}
+
+QPixmap getIconPm(const QColor &color) {
+  QPixmap retPm(16, 16);
+  if (color.alpha() == 255) {
+    retPm.fill(color);
+    return retPm;
+  }
+  QPainter p(&retPm);
+  drawChessBoard(p);
+  p.fillRect(0, 0, 16, 16, color);
+  return retPm;
+}
+
+}  // namespace
 
 //=============================================================================
 /*! \class DVGui::StyleSample
@@ -505,6 +534,51 @@ void ColorField::hideEvent(QHideEvent *) {
 }
 
 //-----------------------------------------------------------------------------
+
+void ColorField::contextMenuEvent(QContextMenuEvent *event) {
+  bool hasColor = QApplication::clipboard()->mimeData()->hasColor();
+  const StyleData *data =
+      dynamic_cast<const StyleData *>(QApplication::clipboard()->mimeData());
+
+  QMenu menu(this);
+  if (hasColor) {  // pasting QColor
+    QColor color = qvariant_cast<QColor>(
+        QApplication::clipboard()->mimeData()->colorData());
+    QAction *action = new QAction(tr("Paste Color"), this);
+    action->setIcon(QIcon(getIconPm(color)));
+    action->setData(color);
+
+    connect(action, SIGNAL(triggered()), this, SLOT(onPasteColor()));
+    menu.addAction(action);
+    menu.addSeparator();
+  } else if (data && data->getStyleCount() > 0) {  // pasting styles colors
+    // show 10 styles in maximum
+    int styleCount = std::min(10, data->getStyleCount());
+    for (int i = 0; i < styleCount; i++) {
+      QString styleName = QString::fromStdWString(data->getStyle(i)->getName());
+      TPixel32 color    = data->getStyle(i)->getMainColor();
+      QColor _color(color.r, color.g, color.b, color.m);
+
+      QAction *action =
+          new QAction(tr("Paste Color of %1").arg(styleName), this);
+      action->setIcon(QIcon(getIconPm(_color)));
+      action->setData(_color);
+
+      connect(action, SIGNAL(triggered()), this, SLOT(onPasteColor()));
+      menu.addAction(action);
+    }
+    menu.addSeparator();
+  }
+
+  QAction *copyAction = new QAction(tr("Copy Color"), this);
+  connect(copyAction, SIGNAL(triggered()), this, SLOT(onCopyColor()));
+  menu.addAction(copyAction);
+
+  menu.exec(event->globalPos());
+  event->accept();
+}
+
+//-----------------------------------------------------------------------------
 /*! If current red channel value of color is different from \b value set it,
                 change \b StyleSample color and emit signal \b
    colorChanged(const TPixel32 &).
@@ -562,6 +636,28 @@ void ColorField::onAlphaChannelChanged(int value, bool isDragging) {
   m_color = TPixel32(m_color.r, m_color.g, m_color.b, value);
   m_colorSample->setColor(m_color);
   emit colorChanged(m_color, isDragging);
+}
+
+//-----------------------------------------------------------------------------
+
+void ColorField::onPasteColor() {
+  QColor color = qobject_cast<QAction *>(sender())->data().value<QColor>();
+
+  m_color = TPixel32(color.red(), color.green(), color.blue(), color.alpha());
+  if (!m_alphaChannel->isVisible()) m_color.m = 255;
+  m_colorSample->setColor(m_color);
+  updateChannels();
+  emit colorChanged(m_color, false);
+}
+
+//-----------------------------------------------------------------------------
+
+void ColorField::onCopyColor() {
+  QColor color(m_color.r, m_color.g, m_color.b, m_color.m);
+
+  QMimeData *data = new QMimeData();
+  data->setColorData(color);
+  QApplication::clipboard()->setMimeData(data);
 }
 
 //-----------------------------------------------------------------------------
