@@ -187,6 +187,7 @@
   <item>"STD_colorRaylitFx.intensity"		"Intensity"	</item>
   <item>"STD_colorRaylitFx.decay"		"Decay"		</item>
   <item>"STD_colorRaylitFx.smoothness"		"Smoothness"	</item>
+  <item>"STD_colorRaylitFx.radius"		"Radius"		</item>
   <item>"STD_colorRaylitFx.includeInput"	"Keep Image"	</item>
 
   <item>"STD_erodeDilateFx"			"Erode/Dilate"	</item>
@@ -370,6 +371,7 @@
   <item>"STD_raylitFx.intensity"	"Intensity"	</item>
   <item>"STD_raylitFx.decay"		"Decay"		</item>
   <item>"STD_raylitFx.smoothness"	"Smoothness"	</item>
+  <item>"STD_raylitFx.radius"		"Radius"		</item>
   <item>"STD_raylitFx.includeInput"	"Keep Image"	</item>
   <item>"STD_raylitFx.invert"		"Invert"	</item>
 
