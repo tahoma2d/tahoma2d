@@ -1102,9 +1102,9 @@ void BokehUtils::interpolateExposureAndConvertToRGB(
 
     // convert exposure by layer hardness
     if (layerHardnessRatio != 1.0) {
-      result.x = std::pow(result.x, layerHardnessRatio);
-      result.y = std::pow(result.y, layerHardnessRatio);
-      result.z = std::pow(result.z, layerHardnessRatio);
+      result.x = std::pow(result.x / result.w, layerHardnessRatio) * result.w;
+      result.y = std::pow(result.y / result.w, layerHardnessRatio) * result.w;
+      result.z = std::pow(result.z / result.w, layerHardnessRatio) * result.w;
     }
 
     // in case the result is replaced by the upper layer pixel
