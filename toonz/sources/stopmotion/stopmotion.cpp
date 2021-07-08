@@ -1228,8 +1228,8 @@ void StopMotion::previousName() {
 
   std::wstring levelName;
 
-  // if the current level name is non-sequencial, then try to switch the last
-  // sequencial level in the scene.
+  // if the current level name is non-sequential, then try to switch the last
+  // sequential level in the scene.
   if (!nameCreator->setCurrent(m_levelName.toStdWString())) {
     TLevelSet *levelSet =
         TApp::instance()->getCurrentScene()->getScene()->getLevelSet();

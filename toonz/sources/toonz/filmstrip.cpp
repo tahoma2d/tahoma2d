@@ -705,11 +705,11 @@ void FilmstripFrames::paintEvent(QPaintEvent *evt) {
           fid.getNumber() == TFrameId::NO_FRAME) {
         text = QString("Single Frame");
       }
-      // for sequencial frame (with letter)
+      // for sequential frame (with letter)
       else if (Preferences::instance()->isShowFrameNumberWithLettersEnabled()) {
         text = fidToFrameNumberWithLetter(fid.getNumber());
       }
-      // for sequencial frame
+      // for sequential frame
       else {
         char letter = fid.getLetter();
         text        = QString::number(fid.getNumber()).rightJustified(4, '0') +

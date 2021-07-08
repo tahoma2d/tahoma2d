@@ -217,7 +217,7 @@ DvDirModelNode *DvDirModelFileFolderNode::makeChild(std::wstring name) {
 DvDirModelFileFolderNode *DvDirModelFileFolderNode::createNode(
     DvDirModelNode *parent, const TFilePath &path) {
   DvDirModelFileFolderNode *node;
-  // check the project nodes under the Poject Root Node
+  // check the project nodes under the Project Root Node
   if (  // QString::fromStdWString(parent->getName()).startsWith("Project root")
       // &&
       TProjectManager::instance()->isProject(path))
@@ -491,7 +491,7 @@ void DvDirVersionControlNode::getChildrenNames(
 //-----------------------------------------------------------------------------
 
 void DvDirVersionControlNode::setIsUnderVersionControl(bool value) {
-  // Set the flags and enable/disable renaming accordling
+  // Set the flags and enable/disable renaming accordingly
   m_isUnderVersionControl = value;
   enableRename(!value);
 }

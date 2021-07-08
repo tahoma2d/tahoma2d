@@ -471,7 +471,7 @@ void Iwa_PNPerspectiveFx::calcPNNormal_CPU(double4 *out_host,
                                               currentOffsetNoisePos[0].y,
                                               currentEvolution);
             }
-            // use center cell id if points are in the differnt cells
+            // use center cell id if points are in the different cells
             else {
               TPointD currentCenterNoisePos =
                   (noisePos - currentOffset) * (1.0 / currentSize);
@@ -517,7 +517,7 @@ void Iwa_PNPerspectiveFx::calcPNNormal_CPU(double4 *out_host,
       cam_vec         = normalize(cam_vec);
       if (p.renderMode == PN_Params::WarpHV ||
           p.renderMode == PN_Params::WarpHV2) {
-        // relfected vector from the plane
+        // reflected vector from the plane
         double alpha        = dot(normal, cam_vec);
         double3 reflect_cam = {
             2.0 * alpha * normal.x - cam_vec.x,

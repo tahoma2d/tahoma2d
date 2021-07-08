@@ -2523,7 +2523,7 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
       p.drawLine(target + QPoint(5, 2), target + QPoint(8, 2));
     }
     if (pegbar->isCycleEnabled()) {
-      // the row zigzag bellow the button
+      // the row zigzag below the button
       int ymax = m_viewer->rowToFrameAxis(r1 + 1);
       int qy   = icon_frameAxis + 12;
       int zig  = 2;
@@ -3004,7 +3004,7 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
       if (pegbar->getKeyframeSpan(row, r0, e0, r1, e1) &&
           getEaseHandles(
               r0, r1, e0, e1, rh0,
-              rh1)) {  // triangles in the segment betweeen key frames
+              rh1)) {  // triangles in the segment between key frames
         if (rh0 == row)
           m_tooltip = tr("Click and drag to set the acceleration range");
         else if (rh1 == row)

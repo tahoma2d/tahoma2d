@@ -92,7 +92,7 @@ TPanel::TPanel(QWidget *parent, Qt::WindowFlags flags,
 //-----------------------------------------------------------------------------
 
 TPanel::~TPanel() {
-  // On quitting, save the floating panel's geomtry and state in order to
+  // On quitting, save the floating panel's geometry and state in order to
   // restore them when opening the floating panel next time
   if (isFloating()) {
     TFilePath savePath =

@@ -109,7 +109,7 @@ ComboViewerPanel::ComboViewerPanel(QWidget *parent, Qt::WFlags flags)
   //  This code should be removed after updating Qt.
   //  Qt may crash in handling WM_SIZE of m_sceneViewer in splash.finish(&w)
   //  in main.cpp. To suppress sending WM_SIZE, set window position here.
-  //  WM_SIZE will not be sent if window poistion is not changed.
+  //  WM_SIZE will not be sent if window position is not changed.
   ::SetWindowPos(reinterpret_cast<HWND>(m_sceneViewer->winId()), HWND_TOP, 0, 0,
                  0, 0, SWP_NOMOVE | SWP_NOSIZE);
 #endif

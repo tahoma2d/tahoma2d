@@ -299,7 +299,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     // So, in such case set m_tabletEvent = FALSE and let the mousePressEvent to
     // work.
     if (e->button() == Qt::LeftButton) {
-      // Proces the 1st tabletPress encountered and ignore back-to-back
+      // Process the 1st tabletPress encountered and ignore back-to-back
       // tabletPress events. Treat it as if it happened so a following
       // mousePressEvent gets ignored
       if (m_tabletState == Released || m_tabletState == None) {

@@ -419,7 +419,7 @@ void SchematicSceneViewer::wheelEvent(QWheelEvent *me) {
 void SchematicSceneViewer::zoomQt(bool zoomin, bool resetView) {
   if (resetView) {
     resetMatrix();
-    // reseting will set view to the center of items bounding
+    // resetting will set view to the center of items bounding
     centerOn(scene()->itemsBoundingRect().center());
     return;
   }
@@ -1037,7 +1037,7 @@ void SchematicViewer::createActions() {
 
       // Switch display of stage schematic's output port
       switchPort =
-          new QAction(tr("&Swtich output port display mode"), m_stageToolbar);
+          new QAction(tr("&Switch output port display mode"), m_stageToolbar);
       switchPort->setCheckable(true);
       switchPort->setChecked(m_stageScene->isShowLetterOnPortFlagEnabled());
       QIcon switchPortIcon = createQIcon("switchport");
@@ -1202,7 +1202,7 @@ void SchematicViewer::setStageSchematicViewed(bool isStageSchematic) {
 }
 
 //------------------------------------------------------------------
-// called when the signals xshLevelChanged or objectSwitched is emited
+// called when the signals xshLevelChanged or objectSwitched is emitted
 void SchematicViewer::updateScenes() {
   TStageObjectId id = m_stageScene->getCurrentObject();
   if (id.isColumn()) {

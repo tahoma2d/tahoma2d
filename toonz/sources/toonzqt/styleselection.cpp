@@ -1641,7 +1641,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-/*! remove link from studio palette. Delete the global and the orginal names.
+/*! remove link from studio palette. Delete the global and the original names.
  * return true if something changed
  */
 void TStyleSelection::removeLink() {

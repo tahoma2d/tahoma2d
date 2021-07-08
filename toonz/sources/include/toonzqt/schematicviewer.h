@@ -90,7 +90,7 @@ protected:
   //! Returns \b true if no nodes intersects \b rect.
   bool isAnEmptyZone(const QRectF &rect);
   //! Returns a vector containing all nodes which had their bounding rects
-  //! conatined in \b node bounding
+  //! contained in \b node bounding
   //! rect enlarged of 10.
   QVector<SchematicNode *> getPlacedNode(SchematicNode *node);
 

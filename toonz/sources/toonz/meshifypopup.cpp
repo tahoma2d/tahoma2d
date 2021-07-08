@@ -537,7 +537,7 @@ public:
     } else if (m_xsh) {
       // Build reference change affines
 
-      // EXPLANATION: RasterPainter receives an affine specifiying the reference
+      // EXPLANATION: RasterPainter receives an affine specifying the reference
       // change
       // from world coordinates to the OpenGL viewport, where (0,0) corresponds
       // to the
@@ -867,7 +867,7 @@ TMeshImageP meshify(const TXshCell &cell, const MeshifyOptions &options) {
     slDpi = sl->getDpi();
     locals::checkEmptyDpi(slDpi);
 
-    // Due to a Toonz bug when loading a PLI, slDpi may actually aquire the
+    // Due to a Toonz bug when loading a PLI, slDpi may actually acquire the
     // camera dpi -
     // but it's always shown to be at the STANDARD world DPI, Stage::inch -
     // plus, the

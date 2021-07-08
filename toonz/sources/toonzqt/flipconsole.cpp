@@ -1438,7 +1438,7 @@ void FlipConsole::enableBlanks(bool state) {
 }
 
 //-----------------------------------------------------------------------------
-/*! call consoleOwner->onDrawFrame() intead of emitting drawFrame signal
+/*! call consoleOwner->onDrawFrame() instead of emitting drawFrame signal
  */
 void FlipConsole::showCurrentFrame() {
   m_consoleOwner->onDrawFrame(m_currentFrame, m_settings);

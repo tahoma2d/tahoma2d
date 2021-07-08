@@ -30,7 +30,7 @@ using namespace std;
 #define MAX_FLOAT 3.40282e+38;
 
 //---------------------------------------------------------------------------------------------------------
-// Costructor
+// Constructor
 CObjectTracker::CObjectTracker(int imW, int imH, bool _colorimage,
                                bool _att_background, bool _man_occlusion) {
   att_background = _att_background;
@@ -353,7 +353,7 @@ void CObjectTracker::FindWightsAndCOM(TRaster32P *frame, float(*histogram)) {
 
   std::unique_ptr<float[]> weights(new float[HISTOGRAM_LENGTH]);
 
-  // weigths
+  // weights
   for (i = 0; i < HISTOGRAM_LENGTH; i++) {
     if (histogram[i] > 0.0)
       weights[i] = sqrt(m_sTrackingObject.initHistogram[i] / histogram[i]);

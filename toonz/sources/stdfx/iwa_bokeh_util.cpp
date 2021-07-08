@@ -552,7 +552,7 @@ void BokehUtils::defineSegemntDepth(
         // amount
         if (std::abs(i - histo[i].belongingSegmentValue) >
             std::abs(i - h))  // the current segment value has
-                              // proirity, if the distance is the same
+                              // priority, if the distance is the same
           errorModAmount +=
               (std::abs(i - histo[i].belongingSegmentValue) - std::abs(i - h)) *
               histo[i].pix_amount;
@@ -578,7 +578,7 @@ void BokehUtils::defineSegemntDepth(
       // belongingSegmentValue
       if (std::abs(h - histo[h].belongingSegmentValue) >
           std::abs(h - tmpBestNewSegVal))  // the current segment value has
-        // proirity, if the distance is the same
+        // priority, if the distance is the same
         histo[h].belongingSegmentValue = tmpBestNewSegVal;
     }
   }

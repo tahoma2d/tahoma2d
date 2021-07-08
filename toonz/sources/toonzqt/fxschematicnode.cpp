@@ -1695,7 +1695,7 @@ void FxSchematicPort::mouseReleaseEvent(QGraphicsSceneMouseEvent *me) {
   TZeraryColumnFx *colFx = dynamic_cast<TZeraryColumnFx *>(targetOwnerFx);
   if (colFx) targetOwnerFx = colFx->getZeraryFx();
 
-  // if the target fx has no dynamic port or has dinamic ports but the tatgert
+  // if the target fx has no dynamic port or has dynamic ports but the target
   // port is not an input port: do nothing!
   if (!targetOwnerFx || !targetOwnerFx->hasDynamicPortGroups() ||
       targetPort->getType() != eFxInputPort) {
@@ -1718,7 +1718,7 @@ void FxSchematicPort::mouseReleaseEvent(QGraphicsSceneMouseEvent *me) {
   int groupedPortCount = groupedPorts.size();
   if (targetOwnerFx != m_ownerFx && me->modifiers() == Qt::ControlModifier &&
       linkTo(targetPort, true)) {
-    // trying to link different fxs insertin the new link and shifting the
+    // trying to link different fxs inserting the new link and shifting the
     // others
     int targetIndex = getIndex(targetFxPort, groupedPorts);
     if (targetIndex == -1) {

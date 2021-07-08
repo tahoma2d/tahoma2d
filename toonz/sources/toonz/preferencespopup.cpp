@@ -1259,7 +1259,7 @@ inline T PreferencesPopup::getUI(PreferencesItemId id) {
 }
 
 //**********************************************************************************
-//    PrefencesPopup's  constructor
+//    PreferencesPopup's  constructor
 //**********************************************************************************
 
 PreferencesPopup::PreferencesPopup()

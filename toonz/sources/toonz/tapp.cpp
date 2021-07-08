@@ -506,7 +506,7 @@ void TApp::onXsheetSwitched() {
   // update xsheetlevel
   updateXshLevel();
 
-  // no Fx is setted to current.
+  // no Fx is set to current.
   m_currentFx->setFx(0);
 }
 

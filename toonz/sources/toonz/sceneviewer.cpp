@@ -1835,7 +1835,7 @@ void SceneViewer::drawOverlay() {
     // outside the draw() methods:
     // using special style there was a conflict between the draw() methods of
     // the tool
-    // and the genaration of the icon inside the style editor (makeIcon()) which
+    // and the generation of the icon inside the style editor (makeIcon()) which
     // use
     // another glContext
     if (tool->getName() == "T_RGBPicker") tool->onImageChanged();
@@ -1903,9 +1903,9 @@ void SceneViewer::paintGL() {
   }
 #endif
 #ifdef MACOSX
-  // followin lines are necessary to solve a problem on iMac20
+  // following lines are necessary to solve a problem on iMac20
   // It seems that for some errors in the openGl implementation, buffers are not
-  // set corretly.
+  // set correctly.
   if (m_isMouseEntered && m_forceGlFlush) {
     m_isMouseEntered = false;
     m_forceGlFlush   = false;

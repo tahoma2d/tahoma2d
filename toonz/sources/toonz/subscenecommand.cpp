@@ -692,7 +692,7 @@ std::set<int> explodeStageObjects(
                    objGroupData, groupId);
   }
 
-  // add colums;
+  // add columns;
   FxDag *innerDag            = subXsh->getFxDag();
   FxDag *outerDag            = xsh->getFxDag();
   TStageObjectId tmpParentId = parentId;
@@ -2485,13 +2485,13 @@ void SubsceneCmd::explode(int index) {
           childLevel->getXsheet(), index, removeColumn, ret == 2))
     return;
 
-  // Collect column stage object informations
+  // Collect column stage object information
   TStageObjectId colId    = TStageObjectId::ColumnId(index);
   TStageObjectId parentId = xsh->getStageObjectParent(colId);
   TStageObject *obj = xsh->getStageObjectTree()->getStageObject(colId, false);
   assert(obj);
 
-  // Collect StageObjects group informations
+  // Collect StageObjects group information
   QStack<int> objGroupIds;
   QStack<std::wstring> objGroupNames;
   int objEditingGroup = obj->getEditingGroupId();
@@ -2515,7 +2515,7 @@ void SubsceneCmd::explode(int index) {
   TFx *columnFx       = column->getFx();
   TFxAttributes *attr = columnFx->getAttributes();
 
-  // Collect Fx group informations
+  // Collect Fx group information
   QStack<int> fxGroupIds;
   QStack<std::wstring> fxGroupNames;
   int fxEditingGroup = attr->getEditingGroupId();

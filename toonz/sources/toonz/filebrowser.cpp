@@ -704,7 +704,7 @@ void FileBrowser::setFolder(const TFilePath &fp, bool expandNode,
 }
 
 //-----------------------------------------------------------------------------
-/*! process when inputting the folder which is not regitered in the folder tree
+/*! process when inputting the folder which is not registered in the folder tree
    (e.g. UNC path in Windows)
  */
 void FileBrowser::setUnregisteredFolder(const TFilePath &fp) {
@@ -908,7 +908,7 @@ QVariant FileBrowser::getItemData(int index, DataType dataType,
   if (index < 0 || index >= (int)m_items.size()) return QVariant();
   Item &item = m_items[index];
   if (dataType == Name) {
-    // show two dots( ".." ) for the paret directory item
+    // show two dots( ".." ) for the parent directory item
     if (item.m_path == m_folder.getParentDir())
       return QString("..");
     else
@@ -2077,7 +2077,7 @@ void FileBrowser::onSelectedItems(const std::set<int> &indexes) {
   }
 
   // reuse the list of TFrameId in order to skip loadInfo() when loading the
-  // level with sequencial frames.
+  // level with sequential frames.
   emit filePathsSelected(filePaths, frameIDs);
 }
 

@@ -1059,7 +1059,7 @@ void ShaderFx::doCompute(TTile &tile, double frame,
 
     // Input tiles are NOT supplied to OpenGL here - but rather just before
     // drawing.
-    // It's probably beacuse a uniform integer variable must have already been
+    // It's probably because a uniform integer variable must have already been
     // bound
     // to prepare the associated sampler variable in the linkes program...
   }

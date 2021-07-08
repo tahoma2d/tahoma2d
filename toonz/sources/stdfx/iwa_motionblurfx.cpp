@@ -870,7 +870,7 @@ bool Iwa_MotionBlurCompFx::doGetBBox(double frame, TRectD &bBox,
     return false;
   }
 
-  /* Rough implemetation - return infinite size if the background is connected
+  /* Rough implementation - return infinite size if the background is connected
    */
   if (m_background.isConnected()) {
     bool _ret = m_background->doGetBBox(frame, bBox, info);

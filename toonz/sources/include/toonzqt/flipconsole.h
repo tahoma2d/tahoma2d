@@ -259,7 +259,7 @@ public:
               const QString &customizeId,
               FlipConsoleOwner *consoleOwner,  // call
                                                // consoleOwner->onDrawFrame()
-                                               // intead of emitting drawFrame
+                                               // instead of emitting drawFrame
                                                // signal
               bool enableBlanks = false);
   void enableBlanks(bool state);

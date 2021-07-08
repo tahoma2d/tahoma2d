@@ -172,7 +172,7 @@ DVAPI void quickPut(const TRasterP &out, const TRasterCM32P &up,
                     const TPixel32 &globalColorScale = TPixel::Black,
                     bool inksOnly                    = false);
 
-// for trasparency check, ink check and paint check
+// for transparency check, ink check and paint check
 
 class CmappedQuickputSettings {
 public:

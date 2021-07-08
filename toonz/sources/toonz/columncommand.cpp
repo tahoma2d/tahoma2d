@@ -1211,7 +1211,7 @@ void ColumnCmd::clearCells(int index) {
 // - If onlyColumns is true, it means that only columns with specified indices
 // will be removed.
 // - If onlyColumns is false, it means that the relevant pegbars will be removed
-// as well (when collapsing collumns).
+// as well (when collapsing columns).
 // - Note that relevant Fxs will be removed / collapsed regardless of
 // onlyColumns.
 // - When checkInvert is true, check references both side from the main xsheet

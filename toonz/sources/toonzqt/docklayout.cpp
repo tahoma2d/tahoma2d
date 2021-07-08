@@ -1655,7 +1655,7 @@ DockPlaceholder *DockDecoAllocator::newPlaceholder(DockWidget *owner, Region *r,
 
 //------------------------------------------------------
 
-// BuildGeometry() method should not be called inside the base contructor -
+// BuildGeometry() method should not be called inside the base constructor -
 // because it's a virtual method.
 // So we provide this little inline...
 DockPlaceholder *DockDecoAllocator::newPlaceBuilt(DockWidget *owner, Region *r,

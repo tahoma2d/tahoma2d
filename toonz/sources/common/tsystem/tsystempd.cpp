@@ -196,7 +196,7 @@ bool TSystem::memoryShortage() {
          memStatus.ullTotalVirtual *
              0.6;  // if total memory used by this process(WorkingSetSize) is
 // half of max allocatable memory
-//(ullTotalVirtual: on 32bits machines, tipically it's 2GB)
+//(ullTotalVirtual: on 32bits machines, typically it's 2GB)
 // It's better "to stay large"; for values >0.6 this function may
 // returns that there is memory, but for fragmentation the malloc fails the
 // same!
@@ -243,7 +243,7 @@ TINT64 TSystem::getFreeMemorySize(bool onlyPhisicalMemory) {
 
   // check for virtual memory
   int numberOfResources =
-      swapctl(SC_GETNSWP, 0); /* get number of swapping resources configued */
+      swapctl(SC_GETNSWP, 0); /* get number of swapping resources configured */
 
   if (numberOfResources == 0) return 0;
 

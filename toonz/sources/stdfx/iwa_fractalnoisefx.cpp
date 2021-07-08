@@ -191,7 +191,7 @@ void Iwa_FractalNoiseFx::doCompute(TTile &tile, double frame,
             getSamplePos(x, y, outDim, out_buf, gen, scale, param);
         // multiply affine transformation
         samplePos = currentAff * samplePos;
-        // adjust postion for the block pattern
+        // adjust position for the block pattern
         if (param.noiseType == Block)
           samplePos = TPointD(std::floor(samplePos.x) + 0.5,
                               std::floor(samplePos.y) + 0.5);

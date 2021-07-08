@@ -1186,7 +1186,7 @@ DEFINE_CLASS_CODE(TStroke, 15)
 
 //-----------------------------------------------------------------------------
 
-// Costructor
+// Constructor
 TStroke::TStroke() : TSmartObject(m_classCode) {
   vector<TThickPoint> p(3);
   p[0] = TThickPoint(0, 0, 0);

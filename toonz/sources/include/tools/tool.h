@@ -366,7 +366,7 @@ public:
   /*!
           Picks a region of the scene, using an OpenGL projection matrix to
           restrict drawing to a small regionaround \p p of the viewport.
-          Retuns -1 if no object's view has been changed.
+          Returns -1 if no object's view has been changed.
   */
   int pick(const TPointD &p);
   bool isPicking() const { return m_picking; }
