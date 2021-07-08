@@ -1987,7 +1987,7 @@ void Filmstrip::load(QSettings &settings) {
 //-----------------------------------------------------------------------------
 
 InbetweenDialog::InbetweenDialog(QWidget *parent)
-    : Dialog(TApp::instance()->getMainWindow(), true, "InBeetween") {
+    : Dialog(TApp::instance()->getMainWindow(), true, "InBetween") {
   setWindowTitle(tr("Inbetween"));
 
   QString linear(tr("Linear"));
