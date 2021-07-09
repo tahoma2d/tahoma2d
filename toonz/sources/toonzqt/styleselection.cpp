@@ -1179,7 +1179,7 @@ void TStyleSelection::pasteStylesValues(bool pasteName, bool pasteColor) {
       else {  // !pasteName
         pastedStyle->setGlobalName(dstGlobalName);
         pastedStyle->setOriginalName(dstOriginalName);
-        if (dstType == LINKEDSTYLE) pastedStyle->setIsEditedFlag(true);
+        pastedStyle->setIsEditedFlag(dstType == LINKEDSTYLE);
 
         // put back the name
         page->getStyle(indexInPage)->setName(styleName);
