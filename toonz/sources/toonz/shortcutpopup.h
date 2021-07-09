@@ -76,6 +76,8 @@ public slots:
                             QTreeWidgetItem *previous);
   void onShortcutChanged();
 
+  void onItemClicked(const QModelIndex &);
+
 signals:
   void actionSelected(QAction *);
   void searched(bool haveResult);
