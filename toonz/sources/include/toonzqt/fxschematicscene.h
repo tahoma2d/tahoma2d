@@ -184,6 +184,8 @@ private:
   void updatePositionOnResize(TFx *fx, bool maximizedNode);
   void removeRetroLinks(TFx *fx, double &maxX);
 
+  bool isAnEmptyZone_withParentFx(const QRectF &rect, const TFx *parent);
+
 signals:
   void showPreview(TFxP);
   void cacheFx(TFxP);

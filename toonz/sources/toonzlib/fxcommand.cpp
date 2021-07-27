@@ -1011,6 +1011,12 @@ void DuplicateFxUndo::initialize() {
 
     m_dupFx = fx;
   }
+
+  // place duplicated nodes lower-right position from the original ones
+  if (fx->getAttributes()->getDagNodePos() != TConst::nowhere) {
+    TPointD dupFxPos = fx->getAttributes()->getDagNodePos() + TPointD(50, 50);
+    m_dupFx->getAttributes()->setDagNodePos(dupFxPos);
+  }
 }
 
 //-------------------------------------------------------------
