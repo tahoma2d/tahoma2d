@@ -3,6 +3,8 @@
 #ifndef T_FILL_INCLUDED
 #define T_FILL_INCLUDED
 
+#include "txsheet.h"
+
 class TPalette;
 
 #undef DVAPI
@@ -28,6 +30,7 @@ public:
   TPoint m_p;
   TPalette *m_palette;
   bool m_prevailing;
+  bool m_referenced;
 
   FillParameters()
       : m_styleId(0)
@@ -39,7 +42,8 @@ public:
       , m_p()
       , m_shiftFill(false)
       , m_palette(0)
-      , m_prevailing(true) {}
+      , m_prevailing(true)
+      , m_referenced(false) {}
   FillParameters(const FillParameters &params)
       : m_styleId(params.m_styleId)
       , m_fillType(params.m_fillType)
@@ -50,7 +54,8 @@ public:
       , m_p(params.m_p)
       , m_shiftFill(params.m_shiftFill)
       , m_palette(params.m_palette)
-      , m_prevailing(params.m_prevailing) {}
+      , m_prevailing(params.m_prevailing)
+      , m_referenced(params.m_referenced) {}
 };
 
 //=============================================================================
@@ -65,7 +70,8 @@ class TTileSaverFullColor;
 DVAPI bool fill(const TRasterCM32P &r, const FillParameters &params,
                 TTileSaverCM32 *saver = 0, bool fillGaps = false,
                 bool closeGaps = false, int closeStyleIndex = -1,
-                double autoCloseDistance = -1.0);
+                double autoCloseDistance = -1.0, TXsheet *xsheet = 0,
+                int frameIndex = -1);
 
 DVAPI void fill(const TRaster32P &ras, const TRaster32P &ref,
                 const FillParameters &params, TTileSaverFullColor *saver = 0);

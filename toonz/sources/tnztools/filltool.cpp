@@ -69,6 +69,7 @@ TEnv::IntVar FillSelective("InknpaintFillSelective", 0);
 TEnv::IntVar FillOnion("InknpaintFillOnion", 0);
 TEnv::IntVar FillSegment("InknpaintFillSegment", 0);
 TEnv::IntVar FillRange("InknpaintFillRange", 0);
+TEnv::IntVar FillReferenced("InknpaintFillReferenced", 0);
 
 TEnv::StringVar RasterGapSetting("RasterGapSetting", "Ignore Gaps");
 extern TEnv::DoubleVar AutocloseDistance;
@@ -452,6 +453,8 @@ class RasterFillUndo final : public TRasterUndo {
   bool m_saveboxOnly, m_closeGaps, m_fillGaps;
   double m_autoCloseDistance;
   int m_closeStyleIndex;
+  TXsheet *m_xsheet;
+  int m_frameIndex;
 
 public:
   /*RasterFillUndo(TTileSetCM32 *tileSet, TPoint fillPoint,
@@ -466,14 +469,17 @@ public:
   RasterFillUndo(TTileSetCM32 *tileSet, const FillParameters &params,
                  TXshSimpleLevel *sl, const TFrameId &fid, bool saveboxOnly,
                  bool fillGaps, bool closeGaps, int closeStyleIndex,
-                 double autoCloseDistance)
+                 double autoCloseDistance, TXsheet *xsheet = 0,
+                 int frameIndex = -1)
       : TRasterUndo(tileSet, sl, fid, false, false, 0)
       , m_params(params)
       , m_closeGaps(closeGaps)
       , m_fillGaps(fillGaps)
       , m_autoCloseDistance(autoCloseDistance)
       , m_closeStyleIndex(closeStyleIndex)
-      , m_saveboxOnly(saveboxOnly) {}
+      , m_saveboxOnly(saveboxOnly)
+      , m_xsheet(xsheet)
+      , m_frameIndex(frameIndex) {}
 
   void redo() const override {
     TToonzImageP image = getImage();
@@ -489,12 +495,14 @@ public:
     if (m_params.m_fillType == ALL || m_params.m_fillType == AREAS) {
       if (m_params.m_shiftFill) {
         FillParameters aux(m_params);
-        aux.m_styleId    = (m_params.m_styleId == 0) ? 1 : 0;
-        recomputeSavebox = fill(r, aux, 0, m_fillGaps, m_closeGaps,
-                                m_closeStyleIndex, m_autoCloseDistance);
+        aux.m_styleId = (m_params.m_styleId == 0) ? 1 : 0;
+        recomputeSavebox =
+            fill(r, aux, 0, m_fillGaps, m_closeGaps, m_closeStyleIndex,
+                 m_autoCloseDistance, m_xsheet, m_frameIndex);
       }
-      recomputeSavebox = fill(r, m_params, 0, m_fillGaps, m_closeGaps,
-                              m_closeStyleIndex, m_autoCloseDistance);
+      recomputeSavebox =
+          fill(r, m_params, 0, m_fillGaps, m_closeGaps, m_closeStyleIndex,
+               m_autoCloseDistance, m_xsheet, m_frameIndex);
     }
     if (m_params.m_fillType == ALL || m_params.m_fillType == LINES) {
       if (m_params.m_segment)
@@ -504,6 +512,7 @@ public:
     }
 
     if (recomputeSavebox) ToolUtils::updateSaveBox();
+
 
     TTool::Application *app = TTool::getApplication();
     if (app) {
@@ -1138,15 +1147,23 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
     // !autoPaintLines will temporary disable autopaint line feature
     if (plt && hasAutoInks(plt) && autopaintLines) params.m_palette = plt;
 
+    int frameIndex = app->getCurrentFrame()->getFrameIndex();
+
+    TXsheetHandle *xsh = app->getCurrentXsheet();
+    TXsheet *xsheet =
+        params.m_referenced && !app->getCurrentFrame()->isEditingLevel() && xsh
+            ? xsh->getXsheet()
+            : 0;
+
     if (params.m_fillType == ALL || params.m_fillType == AREAS) {
       if (isShiftFill) {
         FillParameters aux(params);
         aux.m_styleId = (params.m_styleId == 0) ? 1 : 0;
-        recomputeSavebox =
-            fill(ras, aux, &tileSaver, fillGaps, closeGaps, closeStyleIndex);
+        recomputeSavebox = fill(ras, aux, &tileSaver, fillGaps, closeGaps,
+                                closeStyleIndex, -1.0, xsheet, frameIndex);
       }
-      recomputeSavebox =
-          fill(ras, params, &tileSaver, fillGaps, closeGaps, closeStyleIndex);
+      recomputeSavebox = fill(ras, params, &tileSaver, fillGaps, closeGaps,
+                              closeStyleIndex, -1.0, xsheet, frameIndex);
     }
     if (params.m_fillType == ALL || params.m_fillType == LINES) {
       if (params.m_segment)
@@ -1166,7 +1183,7 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
       TUndoManager::manager()->add(new RasterFillUndo(
           tileSet, params, sl, fid,
           Preferences::instance()->getFillOnlySavebox(), fillGaps, closeGaps,
-          closeStyleIndex, AutocloseDistance));
+          closeStyleIndex, AutocloseDistance, xsheet, frameIndex));
     }
 
     // instead of updateFrame :
@@ -1962,7 +1979,8 @@ FillTool::FillTool(int targetType)
     , m_rasterGapDistance("Distance:", 1, 100, 10)
     , m_closeRasterGaps("Gaps:")
     , m_firstTime(true)
-    , m_autopaintLines("Autopaint Lines", true) {
+    , m_autopaintLines("Autopaint Lines", true)
+    , m_referenced("Refer Visible", false) {
   m_rectFill           = new AreaFillTool(this);
   m_normalLineFillTool = new NormalLineFillTool(this);
 
@@ -1994,6 +2012,7 @@ FillTool::FillTool(int targetType)
   m_closeRasterGaps.addValue(CLOSEANDFILLGAPS);
 
   m_prop.bind(m_onion);
+  if (targetType == TTool::ToonzImage) m_prop.bind(m_referenced);
   m_prop.bind(m_frameRange);
   if (targetType == TTool::VectorImage) {
     m_prop.bind(m_maxGapDistance);
@@ -2007,6 +2026,7 @@ FillTool::FillTool(int targetType)
   m_fillType.setId("Type");
   m_colorType.setId("Mode");
   m_autopaintLines.setId("AutopaintLines");
+  m_referenced.setId("Refer Visible");
 }
 //-----------------------------------------------------------------------------
 
@@ -2051,6 +2071,7 @@ void FillTool::updateTranslation() {
   m_colorType.setItemUIName(ALL, tr("Lines & Areas"));
 
   m_onion.setQStringName(tr("Onion Skin"));
+  m_referenced.setQStringName(tr("Refer Visible"));
   m_fillDepth.setQStringName(tr("Fill Depth"));
   m_segment.setQStringName(tr("Segment"));
   m_maxGapDistance.setQStringName(tr("Maximum Gap"));
@@ -2075,6 +2096,7 @@ FillParameters FillTool::getFillParameters() const {
   params.m_segment      = m_segment.getValue();
   params.m_minFillDepth = (int)m_fillDepth.getValue().first;
   params.m_maxFillDepth = (int)m_fillDepth.getValue().second;
+  params.m_referenced   = m_referenced.getValue();
   return params;
 }
 
@@ -2371,6 +2393,8 @@ bool FillTool::onPropertyChanged(std::string propertyName) {
         }
       }
     }
+  } else if (propertyName == m_referenced.getName()) {
+    FillReferenced = (int)(m_referenced.getValue());
   }
 
   /*--- fillType, frameRange, selective, colorTypeが変わったとき ---*/
@@ -2575,6 +2599,7 @@ void FillTool::onActivate() {
     m_onion.setValue(FillOnion ? 1 : 0);
     m_segment.setValue(FillSegment ? 1 : 0);
     m_frameRange.setValue(FillRange ? 1 : 0);
+    m_referenced.setValue(FillReferenced ? 1 : 0);
     m_firstTime = false;
 
     if (m_fillType.getValue() != NORMALFILL) {
