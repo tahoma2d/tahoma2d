@@ -841,9 +841,10 @@ void inkFill(const TRasterCM32P &r, const TPoint &pin, int ink, int searchRay,
 //-----------------------------------------------------------------------------
 
 void fullColorFill(const TRaster32P &ras, const FillParameters &params,
-                   TTileSaverFullColor *saver) {
+                   TTileSaverFullColor *saver, TXsheet *xsheet,
+                   int frameIndex) {
   int oldy, xa, xb, xc, xd, dy, oldxd, oldxc;
-  TPixel32 *pix, *limit, *pix0, *oldpix;
+  TPixel32 *pix, *limit, *pix0, *oldpix, *refpix, *oldrefpix;
   int x = params.m_p.x, y = params.m_p.y;
 
   TRect bbbox = ras->getBounds();
@@ -855,6 +856,18 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
   TPixel32 color = plt->getStyle(params.m_styleId)->getMainColor();
 
   if (clickedPosColor == color) return;
+
+  TRaster32P refRas;
+
+  if (xsheet) {
+    ToonzScene *scene = xsheet->getScene();
+    TCamera *camera   = scene->getCurrentCamera();
+    TDimension bbox   = camera->getRes();
+    refRas.create(bbox);
+    refRas->clear();
+    scene->renderFrame(refRas, frameIndex);
+    clickedPosColor = *(refRas->pixels(y) + x);
+  }
 
   int fillDepth =
       params.m_shiftFill ? params.m_maxFillDepth : params.m_minFillDepth;
@@ -868,8 +881,12 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
   std::stack<FillSeed> seeds;
   std::map<int, std::vector<std::pair<int, int>>> segments;
 
-  fullColorFindSegment(ras, params.m_p, xa, xb, color, clickedPosColor,
-                       fillDepth);
+  if (!xsheet)
+    fullColorFindSegment(ras, params.m_p, xa, xb, color, clickedPosColor,
+                         fillDepth);
+  else
+    fullColorFindSegment(refRas, params.m_p, xa, xb, color, clickedPosColor,
+                         fillDepth);
 
   segments[y].push_back(std::pair<int, int>(xa, xb));
   seeds.push(FillSeed(xa, xb, y, 1));
@@ -893,6 +910,11 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
     // left end of the fill seed pixels
     oldpix = ras->pixels(oldy) + xa;
 
+    if (xsheet) {
+      refpix    = refRas->pixels(y) + xa;
+      oldrefpix = refRas->pixels(oldy) + xa;
+    }
+
     x     = xa;
     oldxd = (std::numeric_limits<int>::min)();
     oldxc = (std::numeric_limits<int>::max)();
@@ -903,12 +925,21 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
       // check if the target is already in the range to be filled
       if (segments.find(y) != segments.end())
         test = isPixelInSegment(segments[y], x);
-
-      if (*pix != color && !test &&
-          floodCheck(clickedPosColor, pix, oldpix, fillDepth)) {
+      bool canPaint = false;
+      if (!xsheet)
+        canPaint = *pix != color && !test &&
+                   floodCheck(clickedPosColor, pix, oldpix, fillDepth);
+      else
+        canPaint = *refpix != color && !test &&
+                   floodCheck(clickedPosColor, refpix, oldrefpix, fillDepth);
+      if (canPaint) {
         // compute horizontal range to be filled
-        fullColorFindSegment(ras, TPoint(x, y), xc, xd, color, clickedPosColor,
-                             fillDepth);
+        if (!xsheet)
+          fullColorFindSegment(ras, TPoint(x, y), xc, xd, color,
+                               clickedPosColor, fillDepth);
+        else
+          fullColorFindSegment(refRas, TPoint(x, y), xc, xd, color,
+                               clickedPosColor, fillDepth);
         // insert segment to be filled
         insertSegment(segments[y], std::pair<int, int>(xc, xd));
         // create new fillSeed to invert direction, if needed
@@ -924,10 +955,18 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
         // jump to the next pixel to the right end of the range
         pix += xd - x + 1;
         oldpix += xd - x + 1;
+        if (xsheet) {
+          refpix += xd - x + 1;
+          oldrefpix += xd - x + 1;
+        }
         x += xd - x + 1;
       } else {
         pix++;
         oldpix++, x++;
+        if (xsheet) {
+          refpix++;
+          oldrefpix++;
+        }
       }
     }
     // insert filled range as new fill seed

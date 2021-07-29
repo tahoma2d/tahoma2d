@@ -21,6 +21,7 @@ class FullColorFillTool final : public QObject, public TTool {
   TDoublePairProperty m_fillDepth;
   TPropertyGroup m_prop;
   TPointD m_clickPoint;
+  TBoolProperty m_referenced;
 
 public:
   FullColorFillTool();
