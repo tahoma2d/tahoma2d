@@ -1310,7 +1310,7 @@ void SequencePainter::processSequence(TXshSimpleLevel *sl, int firstFidx,
     TXshCell cell = cellList[i].second;
     TFrameId fid  = cell.getFrameId();
     TImageP img   = cell.getImage(true);
-    double t      = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    double t      = m > 1 ? (double)i / (double)(m - 1) : 1.0;
     process(img, backwardidx ? 1 - t : t, sl, fid, row);
     // Setto il fid come corrente per notificare il cambiamento dell'immagine
     if (app) {
@@ -2170,6 +2170,7 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
     m_onionStyleId = pickOnionColor(pos);
     if (m_onionStyleId > 0) app->setCurrentLevelStyleIndex(m_onionStyleId);
   } else if (m_frameRange.getValue()) {
+    bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
     if (!m_firstClick) {
       // PRIMO CLICK
       // if (app->getCurrentFrame()->isEditingScene())
@@ -2178,10 +2179,7 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       m_firstClick   = true;
       m_firstPoint   = pos;
       m_firstFrameId = m_veryFirstFrameId = getCurrentFid();
-
-      m_firstFrameIdx = -1;
-      if (app->getCurrentFrame()->isEditingScene())
-        m_firstFrameIdx = app->getCurrentFrame()->getFrameIndex();
+      m_firstFrameIdx = app->getCurrentFrame()->getFrameIndex();
 
       // gmt. NON BISOGNA DISEGNARE DENTRO LE CALLBACKS!!!!
       // drawCross(m_firstPoint, 6);
@@ -2199,14 +2197,19 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       MultiFiller filler(m_firstPoint, pos, params, m_autopaintLines.getValue(),
                          m_closeRasterGaps.getIndex() > 0,
                          m_closeRasterGaps.getIndex() > 1, closeStyleIndex);
-      if (app->getCurrentFrame()->isEditingLevel())
+      if (isEditingLevel)
         filler.processSequence(m_level.getPointer(), m_firstFrameId, fid);
       else
         filler.processSequence(m_level.getPointer(), m_firstFrameIdx,
                                m_lastFrameIdx);
       if (e.isShiftPressed()) {
         m_firstPoint   = pos;
-        m_firstFrameId = getCurrentFid();
+        if (isEditingLevel)
+          m_firstFrameId = getCurrentFid();
+        else {
+          m_firstFrameIdx = m_lastFrameIdx + 1;
+          app->getCurrentFrame()->setFrame(m_firstFrameIdx);
+        }
       } else {
         m_firstClick = false;
         if (app->getCurrentFrame()->isEditingScene()) {
