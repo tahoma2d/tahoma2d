@@ -14,7 +14,6 @@
 #include "toonz/txshsimplelevel.h"
 
 #include "toonz/toonzscene.h"
-#include "toonz/tcamera.h"
 
 #include <stack>
 
@@ -411,7 +410,7 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   TPixel32 *refpix, *oldrefpix;
   int oldy, xa, xb, xc, xd, dy;
   int oldxc, oldxd;
-  int tone, oldtone, matte, oldmatte;
+  int tone, oldtone;
   TPoint p = params.m_p;
   int x = p.x, y = p.y;
   int paint = params.m_styleId;
@@ -445,23 +444,25 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   if (params.m_emptyOnly && (tempRaster->pixels(p.y) + p.x)->getPaint() != 0)
     return false;
 
-  TRaster32P refRaster;
+  TRaster32P refRaster(bbbox.getSize());
   TPixel32 clickedPosColor, color(255, 255, 255);
 
   std::map<int, std::vector<std::pair<int, int>>> segments;
 
   if (xsheet) {
     ToonzScene *scene = xsheet->getScene();
-    TCamera *camera   = scene->getCurrentCamera();
-    TDimension bbox   = camera->getRes();
-    refRaster.create(bbox);
-    refRaster->clear();
     scene->renderFrame(refRaster, frameIndex);
+
+    refRaster->lock();
+
     refpix          = refRaster->pixels(p.y) + p.x;
     clickedPosColor = *refpix;
 
-    if (params.m_emptyOnly && clickedPosColor != TPixel32(0, 0, 0, 0))
+    if (params.m_emptyOnly && clickedPosColor != TPixel32(0, 0, 0, 0)) {
+      refRaster->unlock();
       return false;
+    }
+
   }
 
   assert(fillDepth >= 0 && fillDepth < 16);
@@ -610,10 +611,16 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   }
 
   bool saveBoxChanged = false;
-  for (int i = 0; i < 4; i++) {
-    if (!((*borderPix[i]) == borderIndex[i])) {
-      saveBoxChanged = true;
-      break;
+
+  if (xsheet) {
+    refRaster->unlock();
+    saveBoxChanged = true;
+  } else {
+    for (int i = 0; i < 4; i++) {
+      if (!((*borderPix[i]) == borderIndex[i])) {
+        saveBoxChanged = true;
+        break;
+      }
     }
   }
 
@@ -857,15 +864,12 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
 
   if (clickedPosColor == color) return;
 
-  TRaster32P refRas;
+  TRaster32P refRas(bbbox.getSize());
 
   if (xsheet) {
     ToonzScene *scene = xsheet->getScene();
-    TCamera *camera   = scene->getCurrentCamera();
-    TDimension bbox   = camera->getRes();
-    refRas.create(bbox);
-    refRas->clear();
     scene->renderFrame(refRas, frameIndex);
+    refRas->lock();
     clickedPosColor = *(refRas->pixels(y) + x);
   }
 
@@ -972,6 +976,8 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
     // insert filled range as new fill seed
     if (oldxd > 0) seeds.push(FillSeed(oldxc, oldxd, y, dy));
   }
+
+  if (xsheet) refRas->unlock();
 
   // pixels are actually filled here
   TPixel32 premultiColor = premultiply(color);
