@@ -1104,7 +1104,7 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
 void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
             bool isShiftFill, TXshSimpleLevel *sl, const TFrameId &fid,
             bool autopaintLines, bool fillGaps = false, bool closeGaps = false,
-            int closeStyleIndex = -1) {
+            int closeStyleIndex = -1, int frameIndex = -1) {
   TTool::Application *app = TTool::getApplication();
   if (!app) return;
 
@@ -1146,8 +1146,6 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
 
     // !autoPaintLines will temporary disable autopaint line feature
     if (plt && hasAutoInks(plt) && autopaintLines) params.m_palette = plt;
-
-    int frameIndex = app->getCurrentFrame()->getFrameIndex();
 
     TXsheetHandle *xsh = app->getCurrentXsheet();
     TXsheet *xsheet =
@@ -1222,9 +1220,11 @@ vi->computeRegion(pos, params.m_styleId);*/
 class SequencePainter {
 public:
   virtual void process(TImageP img /*, TImageLocation &imgloc*/, double t,
-                       TXshSimpleLevel *sl, const TFrameId &fid) = 0;
+                       TXshSimpleLevel *sl, const TFrameId &fid,
+                       int frameIdx = -1) = 0;
   void processSequence(TXshSimpleLevel *sl, TFrameId firstFid,
                        TFrameId lastFid);
+  void processSequence(TXshSimpleLevel *sl, int firstFidx, int lastFidx);
   virtual ~SequencePainter() {}
 };
 
@@ -1267,6 +1267,54 @@ void SequencePainter::processSequence(TXshSimpleLevel *sl, TFrameId firstFid,
         app->getCurrentFrame()->setFrame(fid.getNumber());
       else
         app->getCurrentFrame()->setFid(fid);
+      TTool *tool = app->getCurrentTool()->getTool();
+      if (tool) tool->notifyImageChanged(fid);
+    }
+  }
+  TUndoManager::manager()->endBlock();
+}
+
+//-----------------------------------------------------------------------------
+
+void SequencePainter::processSequence(TXshSimpleLevel *sl, int firstFidx,
+                                      int lastFidx) {
+  if (!sl) return;
+
+  bool backwardidx = false;
+  if (firstFidx > lastFidx) {
+    std::swap(firstFidx, lastFidx);
+    backwardidx = true;
+  }
+
+  TTool::Application *app = TTool::getApplication();
+  TFrameId lastFrameId;
+  int col = app->getCurrentColumn()->getColumnIndex();
+  int row;
+
+  std::vector<std::pair<int, TXshCell>> cellList;
+
+  for (row = firstFidx; row <= lastFidx; row++) {
+    TXshCell cell = app->getCurrentXsheet()->getXsheet()->getCell(row, col);
+    if (cell.isEmpty()) continue;
+    TFrameId fid = cell.getFrameId();
+    if (lastFrameId == fid) continue;  // Skip held cells
+    cellList.push_back(std::pair<int, TXshCell>(row, cell));
+    lastFrameId = fid;
+  }
+
+  int m = cellList.size();
+
+  TUndoManager::manager()->beginBlock();
+  for (int i = 0; i < m; i++) {
+    row           = cellList[i].first;
+    TXshCell cell = cellList[i].second;
+    TFrameId fid  = cell.getFrameId();
+    TImageP img   = cell.getImage(true);
+    double t      = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    process(img, backwardidx ? 1 - t : t, sl, fid, row);
+    // Setto il fid come corrente per notificare il cambiamento dell'immagine
+    if (app) {
+      app->getCurrentFrame()->setFrame(row);
       TTool *tool = app->getCurrentTool()->getTool();
       if (tool) tool->notifyImageChanged(fid);
     }
@@ -1331,8 +1379,8 @@ public:
     m_lastImage->addStroke(lastStroke);
   }
 
-  void process(TImageP img, double t, TXshSimpleLevel *sl,
-               const TFrameId &fid) override {
+  void process(TImageP img, double t, TXshSimpleLevel *sl, const TFrameId &fid,
+               int frameIdx) override {
     if (!m_firstImage) {
       TPointD p0 = m_firstRect.getP00() * (1 - t) + m_lastRect.getP00() * t;
       TPointD p1 = m_firstRect.getP11() * (1 - t) + m_lastRect.getP11() * t;
@@ -1393,11 +1441,11 @@ public:
       , m_fillGaps(fillGaps)
       , m_closeStyleIndex(closeStyleIndex)
       , m_closeGaps(closeGaps) {}
-  void process(TImageP img, double t, TXshSimpleLevel *sl,
-               const TFrameId &fid) override {
+  void process(TImageP img, double t, TXshSimpleLevel *sl, const TFrameId &fid,
+               int frameIdx) override {
     TPointD p = m_firstPoint * (1 - t) + m_lastPoint * t;
     doFill(img, p, m_params, false, sl, fid, m_autopaintLines, m_fillGaps,
-           m_closeGaps, m_closeStyleIndex);
+           m_closeGaps, m_closeStyleIndex, frameIdx);
   }
 };
 
@@ -2130,6 +2178,11 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       m_firstClick   = true;
       m_firstPoint   = pos;
       m_firstFrameId = m_veryFirstFrameId = getCurrentFid();
+
+      m_firstFrameIdx = -1;
+      if (app->getCurrentFrame()->isEditingScene())
+        m_firstFrameIdx = app->getCurrentFrame()->getFrameIndex();
+
       // gmt. NON BISOGNA DISEGNARE DENTRO LE CALLBACKS!!!!
       // drawCross(m_firstPoint, 6);
       invalidate();
@@ -2140,11 +2193,17 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       // consume the mouse press event in advance.
       qApp->processEvents();
       // SECONDO CLICK
-      TFrameId fid = getCurrentFid();
+      TFrameId fid   = getCurrentFid();
+      m_lastFrameIdx = app->getCurrentFrame()->getFrameIndex();
+
       MultiFiller filler(m_firstPoint, pos, params, m_autopaintLines.getValue(),
                          m_closeRasterGaps.getIndex() > 0,
                          m_closeRasterGaps.getIndex() > 1, closeStyleIndex);
-      filler.processSequence(m_level.getPointer(), m_firstFrameId, fid);
+      if (app->getCurrentFrame()->isEditingLevel())
+        filler.processSequence(m_level.getPointer(), m_firstFrameId, fid);
+      else
+        filler.processSequence(m_level.getPointer(), m_firstFrameIdx,
+                               m_lastFrameIdx);
       if (e.isShiftPressed()) {
         m_firstPoint   = pos;
         m_firstFrameId = getCurrentFid();
@@ -2169,7 +2228,7 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       doFill(getImage(true), pos, params, e.isShiftPressed(),
              m_level.getPointer(), getCurrentFid(), m_autopaintLines.getValue(),
              m_closeRasterGaps.getIndex() > 0, m_closeRasterGaps.getIndex() > 1,
-             closeStyleIndex);
+             closeStyleIndex, app->getCurrentFrame()->getFrameIndex());
       invalidate();
     }
   }

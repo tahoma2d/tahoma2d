@@ -114,6 +114,8 @@ class FillTool final : public QObject, public TTool {
   // disabled
   TBoolProperty m_autopaintLines;
 
+  int m_firstFrameIdx, m_lastFrameIdx;
+
 public:
   FillTool(int targetType);
 
