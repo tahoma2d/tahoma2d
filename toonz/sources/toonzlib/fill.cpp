@@ -14,6 +14,7 @@
 #include "toonz/txshsimplelevel.h"
 
 #include "toonz/toonzscene.h"
+#include "toonz/tcamera.h"
 
 #include <stack>
 
@@ -451,8 +452,13 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
 
   if (xsheet) {
     ToonzScene *scene = xsheet->getScene();
-    scene->renderFrame(refRaster, frameIndex);
-
+    TCamera *camera   = scene->getCurrentCamera();
+    TRaster32P tmpRaster(camera->getRes());
+    scene->renderFrame(tmpRaster, frameIndex);
+    TPoint offset((refRaster->getLx() - tmpRaster->getLx()) / 2,
+                  (refRaster->getLy() - tmpRaster->getLy()) / 2);
+    refRaster->fill(color);
+    refRaster->copy(tmpRaster, offset);
     refRaster->lock();
 
     refpix          = refRaster->pixels(p.y) + p.x;
@@ -868,7 +874,14 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
 
   if (xsheet) {
     ToonzScene *scene = xsheet->getScene();
-    scene->renderFrame(refRas, frameIndex);
+    TCamera *camera   = scene->getCurrentCamera();
+    TRaster32P tmpRaster(camera->getRes());
+    scene->renderFrame(tmpRaster, frameIndex);
+    TPoint offset((refRas->getLx() - tmpRaster->getLx()) / 2,
+                  (refRas->getLy() - tmpRaster->getLy()) / 2);
+    refRas->fill(color);
+    refRas->copy(tmpRaster, offset);
+
     refRas->lock();
     clickedPosColor = *(refRas->pixels(y) + x);
   }
