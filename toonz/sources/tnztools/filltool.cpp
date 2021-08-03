@@ -453,6 +453,7 @@ class RasterFillUndo final : public TRasterUndo {
   bool m_saveboxOnly, m_closeGaps, m_fillGaps;
   double m_autoCloseDistance;
   int m_closeStyleIndex;
+  TRectD m_savebox;
 
 public:
   /*RasterFillUndo(TTileSetCM32 *tileSet, TPoint fillPoint,
@@ -467,14 +468,15 @@ public:
   RasterFillUndo(TTileSetCM32 *tileSet, const FillParameters &params,
                  TXshSimpleLevel *sl, const TFrameId &fid, bool saveboxOnly,
                  bool fillGaps, bool closeGaps, int closeStyleIndex,
-                 double autoCloseDistance)
+                 double autoCloseDistance, TRectD savebox)
       : TRasterUndo(tileSet, sl, fid, false, false, 0)
       , m_params(params)
       , m_closeGaps(closeGaps)
       , m_fillGaps(fillGaps)
       , m_autoCloseDistance(autoCloseDistance)
       , m_closeStyleIndex(closeStyleIndex)
-      , m_saveboxOnly(saveboxOnly) {}
+      , m_saveboxOnly(saveboxOnly)
+      , m_savebox(savebox) {}
 
   void redo() const override {
     TToonzImageP image = getImage();
@@ -482,8 +484,7 @@ public:
     bool recomputeSavebox = false;
     TRasterCM32P r;
     if (m_saveboxOnly) {
-      TRectD temp = image->getBBox();
-      TRect ttemp = convert(temp);
+      TRect ttemp = convert(m_savebox);
       r           = image->getRaster()->extract(ttemp);
     } else
       r = image->getRaster();
@@ -1106,8 +1107,8 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
     TPoint offs(0, 0);
     TRasterCM32P ras = ti->getRaster();
 
+    TRectD bbox = ti->getBBox();
     if (params.m_fillOnlySavebox) {
-      TRectD bbox = ti->getBBox();
       TRect ibbox = convert(bbox);
       offs        = ibbox.getP00();
       ras         = ti->getRaster()->extract(ibbox);
@@ -1168,7 +1169,7 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
         }
       TUndoManager::manager()->add(new RasterFillUndo(
           tileSet, params, sl, fid, params.m_fillOnlySavebox, fillGaps,
-          closeGaps, closeStyleIndex, AutocloseDistance));
+          closeGaps, closeStyleIndex, AutocloseDistance, bbox));
     }
 
     // instead of updateFrame :
