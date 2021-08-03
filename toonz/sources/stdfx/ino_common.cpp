@@ -288,8 +288,12 @@ void TBlendForeBackRasterFx::doCompute(TTile& tile, double frame,
   /* ------ 画像生成 ---------------------------------------- */
   TRasterP dn_ras, up_ras;
   this->computeUpAndDown(tile, frame, rs, dn_ras, up_ras);
-  if (!dn_ras || !up_ras) {
+  if (!up_ras) {
     return;
+  }
+  // blend on the empty raster if the back port is not active
+  if (!dn_ras) {
+    dn_ras = tile.getRaster();
   }
   /* ------ 動作パラメータを得る ---------------------------- */
   const double up_opacity =
@@ -546,7 +550,11 @@ fxをreplaceすると、
   }
   /* ------ up接続かつdown切断の時 -------------------------- */
   if (up_is && !down_is) {
-    this->m_up->compute(tile, frame, rs);
+    TTile upTile;
+    this->m_up->allocateAndCompute(upTile, tile.m_pos,
+                                   tile.getRaster()->getSize(),
+                                   tile.getRaster(), frame, rs);
+    up_ras = upTile.getRaster();
     return;
   }
   /* ------ down接続時 downのみ描画して... ------------------ */
