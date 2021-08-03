@@ -124,7 +124,7 @@ else if \b fillInks is false fill only paint delimited by ink;
 else fill ink and paint in region contained in spline.
 */
   void strokeFill(TStroke *s, int color, bool onlyUnfilled, bool fillPaints,
-                  bool fillInks);
+                  bool fillInks, const TRect &saveRect);
 };
 
 class DVAPI FullColorAreaFiller {
