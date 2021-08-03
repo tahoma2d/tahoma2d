@@ -281,14 +281,16 @@ class RasterSegmentEraseUndo final : public TRasterUndo {
   double m_autoCloseDistance;
   int m_closeStyleIndex;
   TPoint m_point;
+  TRectD m_savebox;
 
 public:
   RasterSegmentEraseUndo(TTileSetCM32 *tileSet, TPoint point,
                          TXshSimpleLevel *sl, const TFrameId &fid,
-                         bool saveboxOnly)
+                         bool saveboxOnly, TRectD savebox)
       : TRasterUndo(tileSet, sl, fid, false, false, 0)
       , m_point(point)
-      , m_saveboxOnly(saveboxOnly) {}
+      , m_saveboxOnly(saveboxOnly)
+      , m_savebox(savebox) {}
 
   void redo() const override {
     TToonzImageP image = getImage();
@@ -296,8 +298,7 @@ public:
     bool recomputeSavebox = false;
     TRasterCM32P r;
     if (m_saveboxOnly) {
-      TRectD temp = image->getBBox();
-      TRect ttemp = convert(temp);
+      TRect ttemp = convert(m_savebox);
       r           = image->getRaster()->extract(ttemp);
     } else
       r = image->getRaster();
@@ -364,8 +365,8 @@ bool eraseSegment(const TImageP &img, const TPointD &pos, TXshSimpleLevel *sl,
     TPoint offs(0, 0);
     TRasterCM32P ras = ti->getRaster();
 
+    TRectD bbox = ti->getBBox();
     if (eraseOnlySavebox) {
-      TRectD bbox = ti->getBBox();
       TRect ibbox = convert(bbox);
       offs        = ibbox.getP00();
       ras         = ti->getRaster()->extract(ibbox);
@@ -407,7 +408,7 @@ bool eraseSegment(const TImageP &img, const TPointD &pos, TXshSimpleLevel *sl,
           t->m_rasterBounds = t->m_rasterBounds + offs;
         }
       TUndoManager::manager()->add(new RasterSegmentEraseUndo(
-          tileSet, newPoint, sl, fid, eraseOnlySavebox));
+          tileSet, newPoint, sl, fid, eraseOnlySavebox, bbox));
     }
 
     // instead of updateFrame :
