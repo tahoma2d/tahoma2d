@@ -824,6 +824,16 @@ TPointD EraserTool::fixMousePos(TPointD pos, bool precise) {
 //------------------------------------------------------------------------
 
 void EraserTool::draw() {
+  if (m_eraseType.getValue() == SEGMENTERASE && m_eraseOnlySavebox.getValue()) {
+    TToonzImageP ti = (TToonzImageP)getImage(false);
+    if (ti) {
+      TRectD bbox =
+          ToonzImageUtils::convertRasterToWorld(convert(ti->getBBox()), ti);
+      drawRect(bbox.enlarge(0.5) * ti->getSubsampling(), TPixel32::Black,
+               0x5555, true);
+    }
+  }
+
   /*-- MouseLeave時に赤点が描かれるのを防ぐ --*/
   if (m_pointSize == -1 && m_cleanerSize == 0) return;
 
