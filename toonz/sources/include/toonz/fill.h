@@ -28,6 +28,7 @@ public:
   TPoint m_p;
   TPalette *m_palette;
   bool m_prevailing;
+  bool m_fillOnlySavebox;
 
   FillParameters()
       : m_styleId(0)
@@ -39,7 +40,8 @@ public:
       , m_p()
       , m_shiftFill(false)
       , m_palette(0)
-      , m_prevailing(true) {}
+      , m_prevailing(true)
+      , m_fillOnlySavebox(false) {}
   FillParameters(const FillParameters &params)
       : m_styleId(params.m_styleId)
       , m_fillType(params.m_fillType)
@@ -50,7 +52,8 @@ public:
       , m_p(params.m_p)
       , m_shiftFill(params.m_shiftFill)
       , m_palette(params.m_palette)
-      , m_prevailing(params.m_prevailing) {}
+      , m_prevailing(params.m_prevailing)
+      , m_fillOnlySavebox(params.m_fillOnlySavebox) {}
 };
 
 //=============================================================================

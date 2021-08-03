@@ -69,6 +69,7 @@ TEnv::IntVar FillSelective("InknpaintFillSelective", 0);
 TEnv::IntVar FillOnion("InknpaintFillOnion", 0);
 TEnv::IntVar FillSegment("InknpaintFillSegment", 0);
 TEnv::IntVar FillRange("InknpaintFillRange", 0);
+TEnv::IntVar FillOnlySavebox("InknpaintFillOnlySavebox", 0);
 
 TEnv::StringVar RasterGapSetting("RasterGapSetting", "Ignore Gaps");
 extern TEnv::DoubleVar AutocloseDistance;
@@ -1103,7 +1104,7 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
     TPoint offs(0, 0);
     TRasterCM32P ras = ti->getRaster();
 
-    if (Preferences::instance()->getFillOnlySavebox()) {
+    if (params.m_fillOnlySavebox) {
       TRectD bbox = ti->getBBox();
       TRect ibbox = convert(bbox);
       offs        = ibbox.getP00();
@@ -1164,9 +1165,8 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
           t->m_rasterBounds = t->m_rasterBounds + offs;
         }
       TUndoManager::manager()->add(new RasterFillUndo(
-          tileSet, params, sl, fid,
-          Preferences::instance()->getFillOnlySavebox(), fillGaps, closeGaps,
-          closeStyleIndex, AutocloseDistance));
+          tileSet, params, sl, fid, params.m_fillOnlySavebox, fillGaps,
+          closeGaps, closeStyleIndex, AutocloseDistance));
     }
 
     // instead of updateFrame :
@@ -1962,7 +1962,8 @@ FillTool::FillTool(int targetType)
     , m_rasterGapDistance("Distance:", 1, 100, 10)
     , m_closeRasterGaps("Gaps:")
     , m_firstTime(true)
-    , m_autopaintLines("Autopaint Lines", true) {
+    , m_autopaintLines("Autopaint Lines", true)
+    , m_fillOnlySavebox("Savebox", false) {
   m_rectFill           = new AreaFillTool(this);
   m_normalLineFillTool = new NormalLineFillTool(this);
 
@@ -1999,7 +2000,11 @@ FillTool::FillTool(int targetType)
     m_prop.bind(m_maxGapDistance);
     m_maxGapDistance.setId("MaxGapDistance");
   }
-  if (targetType == TTool::ToonzImage) m_prop.bind(m_autopaintLines);
+  if (targetType == TTool::ToonzImage) {
+    m_prop.bind(m_fillOnlySavebox);
+    m_prop.bind(m_autopaintLines);
+  }
+
   m_selective.setId("Selective");
   m_onion.setId("OnionSkin");
   m_frameRange.setId("FrameRange");
@@ -2007,6 +2012,7 @@ FillTool::FillTool(int targetType)
   m_fillType.setId("Type");
   m_colorType.setId("Mode");
   m_autopaintLines.setId("AutopaintLines");
+  m_fillOnlySavebox.setId("FillOnlySavebox");
 }
 //-----------------------------------------------------------------------------
 
@@ -2055,6 +2061,7 @@ void FillTool::updateTranslation() {
   m_segment.setQStringName(tr("Segment"));
   m_maxGapDistance.setQStringName(tr("Maximum Gap"));
   m_autopaintLines.setQStringName(tr("Autopaint Lines"));
+  m_fillOnlySavebox.setQStringName(tr("Savebox"));
   m_rasterGapDistance.setQStringName(tr("Distance:"));
   m_closeStyleIndex.setQStringName(tr("Style Index:"));
   m_closeRasterGaps.setQStringName(tr("Gaps:"));
@@ -2070,11 +2077,12 @@ FillParameters FillTool::getFillParameters() const {
   int styleId      = TTool::getApplication()->getCurrentLevelStyleIndex();
   params.m_styleId = styleId;
   /*---紛らわしいことに、colorTypeをfillTypeに名前を変えて保存している。間違いではない。---*/
-  params.m_fillType     = m_colorType.getValue();
-  params.m_emptyOnly    = m_selective.getValue();
-  params.m_segment      = m_segment.getValue();
-  params.m_minFillDepth = (int)m_fillDepth.getValue().first;
-  params.m_maxFillDepth = (int)m_fillDepth.getValue().second;
+  params.m_fillType        = m_colorType.getValue();
+  params.m_emptyOnly       = m_selective.getValue();
+  params.m_segment         = m_segment.getValue();
+  params.m_minFillDepth    = (int)m_fillDepth.getValue().first;
+  params.m_maxFillDepth    = (int)m_fillDepth.getValue().second;
+  params.m_fillOnlySavebox = m_fillOnlySavebox.getValue();
   return params;
 }
 
@@ -2372,6 +2380,9 @@ bool FillTool::onPropertyChanged(std::string propertyName) {
       }
     }
   }
+  if (propertyName == m_fillOnlySavebox.getName()) {
+    FillOnlySavebox = (int)(m_fillOnlySavebox.getValue());
+  }
 
   /*--- fillType, frameRange, selective, colorTypeが変わったとき ---*/
   if (rectPropChangedflag && m_fillType.getValue() != NORMALFILL) {
@@ -2434,7 +2445,7 @@ void FillTool::onFrameSwitched() {
 //-----------------------------------------------------------------------------
 
 void FillTool::draw() {
-  if (Preferences::instance()->getFillOnlySavebox()) {
+  if (m_fillOnlySavebox.getValue()) {
     TToonzImageP ti = (TToonzImageP)getImage(false);
     if (ti) {
       TRectD bbox =
@@ -2575,6 +2586,7 @@ void FillTool::onActivate() {
     m_onion.setValue(FillOnion ? 1 : 0);
     m_segment.setValue(FillSegment ? 1 : 0);
     m_frameRange.setValue(FillRange ? 1 : 0);
+    m_fillOnlySavebox.setValue(FillOnlySavebox ? 1 : 0);
     m_firstTime = false;
 
     if (m_fillType.getValue() != NORMALFILL) {

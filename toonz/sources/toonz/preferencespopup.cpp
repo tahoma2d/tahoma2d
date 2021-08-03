@@ -1076,7 +1076,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
 
       // Tools
       // {dropdownShortcutsCycleOptions, tr("Dropdown Shortcuts:")}, // removed
-      {FillOnlysavebox, tr("Use the TLV Savebox to Limit Filling Operations")},
+      // {FillOnlysavebox, tr("Use the TLV Savebox to Limit Filling Operations")}, // Moved to tools that need it
       {multiLayerStylePickerEnabled,
        tr("Multi Layer Style Picker: Switch Levels by Picking")},
       {cursorBrushType, tr("Basic Cursor Type:")},
@@ -1707,7 +1707,7 @@ QWidget* PreferencesPopup::createToolsPage() {
 
   // insertUI(dropdownShortcutsCycleOptions, lay,
   //         getComboItemList(dropdownShortcutsCycleOptions));
-  insertUI(FillOnlysavebox, lay);
+  // insertUI(FillOnlysavebox, lay);
   insertUI(multiLayerStylePickerEnabled, lay);
   QGridLayout* cursorOptionsLay = insertGroupBox(tr("Cursor Options"), lay);
   {
@@ -1725,8 +1725,8 @@ QWidget* PreferencesPopup::createToolsPage() {
   lay->setRowStretch(lay->rowCount(), 1);
   widget->setLayout(lay);
 
-  m_onEditedFuncMap.insert(FillOnlysavebox,
-                           &PreferencesPopup::notifySceneChanged);
+  //  m_onEditedFuncMap.insert(FillOnlysavebox,
+  //                           &PreferencesPopup::notifySceneChanged);
   m_onEditedFuncMap.insert(levelBasedToolsDisplay,
                            &PreferencesPopup::onLevelBasedToolsDisplayChanged);
 
