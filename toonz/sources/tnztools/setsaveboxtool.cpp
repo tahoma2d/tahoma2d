@@ -221,9 +221,6 @@ void SetSaveboxTool::draw() {
   else
     bbox = m_modifiedRect;
 
-  drawRect(bbox * image->getSubsampling(), TPixel32::Black, 0x5555, true);
-  tglColor(TPixel32(90, 90, 90));
-
   double pixelSize = m_tool->getPixelSize();
   TPointD p00      = bbox.getP00();
   TPointD p11      = bbox.getP11();
@@ -233,13 +230,50 @@ void SetSaveboxTool::draw() {
   TPointD p11_10   = (bbox.getP11() + bbox.getP10()) * 0.5;
   TPointD p00_01   = (bbox.getP00() + bbox.getP01()) * 0.5;
   TPointD p00_10   = (bbox.getP00() + bbox.getP10()) * 0.5;
-  TPointD size(pixelSize * 4, pixelSize * 4);
-  tglDrawRect(TRectD(p00 - size, p00 + size));
-  tglDrawRect(TRectD(p11 - size, p11 + size));
-  tglDrawRect(TRectD(p01 - size, p01 + size));
-  tglDrawRect(TRectD(p10 - size, p10 + size));
-  tglDrawRect(TRectD(p11_01 - size, p11_01 + size));
-  tglDrawRect(TRectD(p11_10 - size, p11_10 + size));
-  tglDrawRect(TRectD(p00_01 - size, p00_01 + size));
-  tglDrawRect(TRectD(p00_10 - size, p00_10 + size));
+
+  TPixel32 frameColor(210, 210, 210);
+  TPixel32 frameColor2(0, 0, 0);
+
+  // Draw bounding box
+  drawRect(bbox, frameColor, 0xF0F0, true);
+
+  // Top left control box
+  TPointD tl(p01.x - pixelSize, p01.y + pixelSize);
+  drawSquare(tl, pixelSize * 4, frameColor);
+  drawSquare(p01, pixelSize * 4, frameColor2);
+
+  // Middle left control box
+  TPointD ml(p00_01.x - pixelSize, p00_01.y + pixelSize);
+  drawSquare(ml, pixelSize * 4, frameColor);
+  drawSquare(p00_01, pixelSize * 4, frameColor2);
+
+  // Bottom left control box
+  TPointD bl(p00.x - pixelSize, p00.y + pixelSize);
+  drawSquare(bl, pixelSize * 4, frameColor);
+  drawSquare(p00, pixelSize * 4, frameColor2);
+
+  // Top right control box
+  TPointD tr(p11.x - pixelSize, p11.y + pixelSize);
+  drawSquare(tr, pixelSize * 4, frameColor);
+  drawSquare(p11, pixelSize * 4, frameColor2);
+
+  // Middle right control box
+  TPointD mr(p11_10.x - pixelSize, p11_10.y + pixelSize);
+  drawSquare(mr, pixelSize * 4, frameColor);
+  drawSquare(p11_10, pixelSize * 4, frameColor2);
+
+  // Bottom right control box
+  TPointD br(p10.x - pixelSize, p10.y + pixelSize);
+  drawSquare(br, pixelSize * 4, frameColor);
+  drawSquare(p10, pixelSize * 4, frameColor2);
+
+  // Middle top control box
+  TPointD mt(p11_01.x - pixelSize, p11_01.y + pixelSize);
+  drawSquare(mt, pixelSize * 4, frameColor);
+  drawSquare(p11_01, pixelSize * 4, frameColor2);
+
+  // Middle bottom control box
+  TPointD mb(p00_10.x - pixelSize, p00_10.y + pixelSize);
+  drawSquare(mb, pixelSize * 4, frameColor);
+  drawSquare(p00_10, pixelSize * 4, frameColor2);
 }
