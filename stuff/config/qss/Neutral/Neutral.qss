@@ -1729,6 +1729,7 @@ SchematicViewer {
   qproperty-ActiveOutputColor: #6491be;
   qproperty-OtherOutputColor: #8f9c9e;
   qproperty-XsheetColor: #a4a4bf;
+  qproperty-PassThroughColor: #bdbdbd;
   qproperty-NormalFxColor: #8d9caf;
   qproperty-MacroFxColor: #ae8ca5;
   qproperty-ImageAdjustFxColor: #9c9ab4;

@@ -44,6 +44,7 @@
 #include <QMenu>
 #include <QApplication>
 #include <QGraphicsSceneContextMenuEvent>
+#include <QStack>
 
 TEnv::IntVar IconifyFxSchematicNodes("IconifyFxSchematicNodes", 0);
 
@@ -659,6 +660,9 @@ FxSchematicNode *FxSchematicScene::createFxSchematicNode(TFx *fx) {
     return new FxSchematicXSheetNode(this, xfx);
   else if (TOutputFx *ofx = dynamic_cast<TOutputFx *>(fx))
     return new FxSchematicOutputNode(this, ofx);
+  else if (fx && fx->getFxType().find("nothingFx") !=
+                     std::string::npos)  // pass-through node
+    return new FxSchematicPassThroughNode(this, fx);
   else
     return new FxSchematicNormalFxNode(this, fx);
 }
@@ -1855,35 +1859,54 @@ void FxSchematicScene::onEditGroup() {
 
 //------------------------------------------------------------------
 
-void FxSchematicScene::highlightLinks(FxSchematicNode *node, bool value) {
-  int i, portCount = node->getInputPortCount();
-  // SchematicLink* ghostLink = m_supportLinks.getDisconnectionLink(eGhost);
-  for (i = 0; i < portCount; i++) {
-    FxSchematicPort *port = node->getInputPort(i);
-    int j, linkCount = port->getLinkCount();
-    for (j = 0; j < linkCount; j++) {
-      SchematicLink *link = port->getLink(j);
-      if (!link) continue;
-      if (m_disconnectionLinks.isABridgeLink(link)) continue;
-      link->setHighlighted(value);
-      link->update();
-      m_highlightedLinks.push_back(link);
+void FxSchematicScene::highlightLinks(FxSchematicNode *node, bool value,
+                                      SearchDirection direction) {
+  int i;
+  if (direction == Both || direction == Input) {
+    int portCount = node->getInputPortCount();
+    // SchematicLink* ghostLink = m_supportLinks.getDisconnectionLink(eGhost);
+    for (i = 0; i < portCount; i++) {
+      FxSchematicPort *port = node->getInputPort(i);
+      int j, linkCount = port->getLinkCount();
+      for (j = 0; j < linkCount; j++) {
+        SchematicLink *link = port->getLink(j);
+        if (!link) continue;
+        if (m_disconnectionLinks.isABridgeLink(link)) continue;
+        link->setHighlighted(value);
+        link->update();
+        m_highlightedLinks.push_back(link);
+
+        if (FxSchematicPassThroughNode *ptNode =
+                dynamic_cast<FxSchematicPassThroughNode *>(
+                    link->getOtherNode(node)))
+          highlightLinks(ptNode, value, Input);
+      }
     }
   }
 
-  FxSchematicPort *port = node->getOutputPort();
-  if (port) {
-    int linkCount = port->getLinkCount();
-    for (i = 0; i < linkCount; i++) {
-      SchematicLink *link = port->getLink(i);
-      if (!link) continue;
-      if (m_disconnectionLinks.isABridgeLink(link)) continue;
-      link->setHighlighted(value);
-      link->update();
-      m_highlightedLinks.push_back(link);
+  if (direction == Both || direction == Output) {
+    FxSchematicPort *port = node->getOutputPort();
+    if (port) {
+      int linkCount = port->getLinkCount();
+      for (i = 0; i < linkCount; i++) {
+        SchematicLink *link = port->getLink(i);
+        if (!link) continue;
+        if (m_disconnectionLinks.isABridgeLink(link)) continue;
+        link->setHighlighted(value);
+        link->update();
+        m_highlightedLinks.push_back(link);
+
+        if (FxSchematicPassThroughNode *ptNode =
+                dynamic_cast<FxSchematicPassThroughNode *>(
+                    link->getOtherNode(node)))
+          highlightLinks(ptNode, value, Output);
+      }
     }
   }
-  port = node->getLinkPort();
+
+  if (direction != Both) return;
+
+  FxSchematicPort *port = node->getLinkPort();
   if (port) {
     SchematicLink *link = port->getLink(0);
     if (link && !m_disconnectionLinks.isABridgeLink(link)) {
