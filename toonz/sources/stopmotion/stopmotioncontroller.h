@@ -8,6 +8,8 @@
 #include "toonzqt/dvdialog.h"
 #include "toonzqt/lineedit.h"
 
+#include "tfilepath.h"
+
 // TnzQt includes
 #include "toonzqt/tabbar.h"
 #include "toonzqt/gutil.h"
@@ -72,20 +74,20 @@ class IntLineEdit;
 class FrameNumberLineEdit : public DVGui::LineEdit {
   Q_OBJECT
   /* having two validators and switch them according to the preferences*/
-  QIntValidator *m_intValidator;
-  QRegExpValidator *m_regexpValidator;
+  QRegExpValidator *m_regexpValidator, *m_regexpValidator_alt;
 
   void updateValidator();
   QString m_textOnFocusIn;
 
 public:
-  FrameNumberLineEdit(QWidget *parent = 0, int value = 1);
+  FrameNumberLineEdit(QWidget* parent = 0, TFrameId fId = TFrameId(1),
+                      bool acceptLetter = true);
   ~FrameNumberLineEdit() {}
 
   /*! Set text in field to \b value. */
-  void setValue(int value);
+  void setValue(TFrameId fId);
   /*! Return an integer with text field value. */
-  int getValue();
+  TFrameId getValue();
 
 protected:
   /*! If focus is lost and current text value is out of range emit signal

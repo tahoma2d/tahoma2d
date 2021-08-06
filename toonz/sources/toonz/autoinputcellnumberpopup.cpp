@@ -196,9 +196,9 @@ AutoInputCellNumberPopup::AutoInputCellNumberPopup()
              "AutoInputCellNumberPopup") {
   setWindowTitle(tr("Auto Input Cell Number"));
 
-  m_from      = new FrameNumberLineEdit(this);
+  m_from      = new FrameNumberLineEdit(this, TFrameId(1), false);
   m_increment = new DVGui::IntLineEdit(this, 0, 0);
-  m_to        = new FrameNumberLineEdit(this);
+  m_to        = new FrameNumberLineEdit(this, TFrameId(1), false);
   m_interval  = new DVGui::IntLineEdit(this, 0, 0);
   m_step      = new DVGui::IntLineEdit(this, 1, 1);
   m_repeat    = new DVGui::IntLineEdit(this, 1, 1);
@@ -301,8 +301,8 @@ void AutoInputCellNumberPopup::doExecute(bool overwrite) {
   }
   AutoInputCellNumberUndo *undo = new AutoInputCellNumberUndo(
       m_increment->getValue(), m_interval->getValue(), m_step->getValue(),
-      m_repeat->getValue(), m_from->getValue(), m_to->getValue(), r0, r1,
-      overwrite, columnIndices, levels);
+      m_repeat->getValue(), m_from->getValue().getNumber(),
+      m_to->getValue().getNumber(), r0, r1, overwrite, columnIndices, levels);
   // if no cells will be arranged, then return
   if (undo->rowsCount() == 0) {
     DVGui::MsgBox(DVGui::WARNING,
