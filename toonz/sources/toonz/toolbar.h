@@ -21,7 +21,7 @@ class Toolbar final : public QToolBar {
   struct {
     const char *toolName;
     bool isSeparator;
-    bool collapsable;
+    bool collapsible;
     QAction *action;
   } m_buttonLayout[33] = {
       {T_Edit, false, false, 0},       {T_Selection, false, false, 0},
