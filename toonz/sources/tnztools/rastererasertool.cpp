@@ -73,6 +73,7 @@ TEnv::IntVar EraseRange("InknpaintEraseRange", 0);
 TEnv::StringVar EraseColorType("InknpaintEraseColorType", "Lines");
 TEnv::DoubleVar EraseHardness("EraseHardness", 100);
 TEnv::IntVar ErasePencil("InknpaintErasePencil", 0);
+TEnv::IntVar EraseOnlySavebox("InknpaintEraseOnlySavebox", 0);
 
 namespace {
 
@@ -280,14 +281,16 @@ class RasterSegmentEraseUndo final : public TRasterUndo {
   double m_autoCloseDistance;
   int m_closeStyleIndex;
   TPoint m_point;
+  TRectD m_savebox;
 
 public:
   RasterSegmentEraseUndo(TTileSetCM32 *tileSet, TPoint point,
                          TXshSimpleLevel *sl, const TFrameId &fid,
-                         bool saveboxOnly)
+                         bool saveboxOnly, TRectD savebox)
       : TRasterUndo(tileSet, sl, fid, false, false, 0)
       , m_point(point)
-      , m_saveboxOnly(saveboxOnly) {}
+      , m_saveboxOnly(saveboxOnly)
+      , m_savebox(savebox) {}
 
   void redo() const override {
     TToonzImageP image = getImage();
@@ -295,8 +298,7 @@ public:
     bool recomputeSavebox = false;
     TRasterCM32P r;
     if (m_saveboxOnly) {
-      TRectD temp = image->getBBox();
-      TRect ttemp = convert(temp);
+      TRect ttemp = convert(m_savebox);
       r           = image->getRaster()->extract(ttemp);
     } else
       r = image->getRaster();
@@ -353,17 +355,18 @@ void eraseStroke(const TToonzImageP &ti, TStroke *stroke,
 
 //-----------------------------------------------------------------------------
 
-void eraseSegment(const TImageP &img, const TPointD &pos, TXshSimpleLevel *sl,
-                  const TFrameId &fid, bool selective, int styleId) {
+bool eraseSegment(const TImageP &img, const TPointD &pos, TXshSimpleLevel *sl,
+                  const TFrameId &fid, bool selective, int styleId,
+                  bool eraseOnlySavebox) {
   TTool::Application *app = TTool::getApplication();
-  if (!app) return;
+  if (!app) return false;
 
   if (TToonzImageP ti = TToonzImageP(img)) {
     TPoint offs(0, 0);
     TRasterCM32P ras = ti->getRaster();
 
-    if (Preferences::instance()->getFillOnlySavebox()) {
-      TRectD bbox = ti->getBBox();
+    TRectD bbox = ti->getBBox();
+    if (eraseOnlySavebox) {
       TRect ibbox = convert(bbox);
       offs        = ibbox.getP00();
       ras         = ti->getRaster()->extract(ibbox);
@@ -372,7 +375,7 @@ void eraseSegment(const TImageP &img, const TPointD &pos, TXshSimpleLevel *sl,
     bool recomputeSavebox = false;
     TPalette *plt         = ti->getPalette();
 
-    if (!ras.getPointer() || ras->isEmpty()) return;
+    if (!ras.getPointer() || ras->isEmpty()) return false;
 
     ras->lock();
 
@@ -391,7 +394,7 @@ void eraseSegment(const TImageP &img, const TPointD &pos, TXshSimpleLevel *sl,
     TRect rasRect(ras->getSize());
     if (!rasRect.contains(newPoint)) {
       ras->unlock();
-      return;
+      return false;
     }
 
     inkSegment(ras, newPoint, 0, 2.51, true, &tileSaver, true);
@@ -405,14 +408,13 @@ void eraseSegment(const TImageP &img, const TPointD &pos, TXshSimpleLevel *sl,
           t->m_rasterBounds = t->m_rasterBounds + offs;
         }
       TUndoManager::manager()->add(new RasterSegmentEraseUndo(
-          tileSet, newPoint, sl, fid,
-          Preferences::instance()->getFillOnlySavebox()));
+          tileSet, newPoint, sl, fid, eraseOnlySavebox, bbox));
     }
 
     // instead of updateFrame :
 
     TXshLevel *xl = app->getCurrentLevel()->getLevel();
-    if (!xl) return;
+    if (!xl) return false;
 
     TXshSimpleLevel *sl = xl->getSimpleLevel();
     sl->getProperties()->setDirtyFlag(true);
@@ -425,6 +427,8 @@ void eraseSegment(const TImageP &img, const TPointD &pos, TXshSimpleLevel *sl,
 
   TTool *t = app->getCurrentTool()->getTool();
   if (t) t->notifyImageChanged();
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -652,6 +656,7 @@ private:
   TBoolProperty m_multi;
   TBoolProperty m_pencil;
   TEnumProperty m_colorType;
+  TBoolProperty m_eraseOnlySavebox;
 
   Type m_type;
 
@@ -729,7 +734,8 @@ EraserTool::EraserTool(std::string name)
     , m_isXsheetCell(false)
     , m_firstTime(true)
     , m_workingFrameId(TFrameId())
-    , m_isLeftButtonPressed(false) {
+    , m_isLeftButtonPressed(false)
+    , m_eraseOnlySavebox("Savebox", false) {
   bind(TTool::ToonzImage);
 
   m_toolSize.setNonLinearSlider();
@@ -752,6 +758,7 @@ EraserTool::EraserTool(std::string name)
   m_prop.bind(m_invertOption);
   m_prop.bind(m_multi);
   m_prop.bind(m_pencil);
+  m_prop.bind(m_eraseOnlySavebox);
 
   m_currentStyle.setId("Selective");
   m_invertOption.setId("Invert");
@@ -759,6 +766,7 @@ EraserTool::EraserTool(std::string name)
   m_pencil.setId("PencilMode");
   m_colorType.setId("Mode");
   m_eraseType.setId("Type");
+  m_eraseOnlySavebox.setId("EraseOnlySavebox");
 }
 
 //------------------------------------------------------------------------
@@ -783,6 +791,7 @@ void EraserTool::updateTranslation() {
   m_invertOption.setQStringName(tr("Invert"));
   m_multi.setQStringName(tr("Frame Range"));
   m_pencil.setQStringName(tr("Pencil Mode"));
+  m_eraseOnlySavebox.setQStringName(tr("Savebox"));
 }
 
 //-------------------------------------------------------------------------------------------------------
@@ -818,6 +827,16 @@ TPointD EraserTool::fixMousePos(TPointD pos, bool precise) {
 //------------------------------------------------------------------------
 
 void EraserTool::draw() {
+  if (m_eraseType.getValue() == SEGMENTERASE && m_eraseOnlySavebox.getValue()) {
+    TToonzImageP ti = (TToonzImageP)getImage(false);
+    if (ti) {
+      TRectD bbox =
+          ToonzImageUtils::convertRasterToWorld(convert(ti->getBBox()), ti);
+      drawRect(bbox.enlarge(0.5) * ti->getSubsampling(),
+               TPixel32(210, 210, 210), 0xF0F0, true);
+    }
+  }
+
   /*-- MouseLeave時に赤点が描かれるのを防ぐ --*/
   if (m_pointSize == -1 && m_cleanerSize == 0) return;
 
@@ -1293,6 +1312,7 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
   if (!m_selecting) return;
   TImageP image(getImage(true));
   if (TToonzImageP ti = image) {
+    bool updateSavebox = true;
     if (m_eraseType.getValue() == RECTERASE) {
       if (m_selectingRect.x0 > m_selectingRect.x1)
         std::swap(m_selectingRect.x1, m_selectingRect.x0);
@@ -1552,6 +1572,7 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
         TRasterCM32P ras = ti->getRaster();
         if (!ras) return;
 
+        updateSavebox = false;
         for (int i = 0; i < length; i++) {
           TPointD lengthAt = stroke->getPointAtLength(i);
           TPointD tmpPos(lengthAt);
@@ -1561,8 +1582,9 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
           TPixelCM32 pix = ras->pixels(ipos.y)[ipos.x];
           if ((selective && pix.getInk() != styleId) || pix.isPurePaint())
             continue;
-          eraseSegment(getImage(true), tmpPos, sl, getCurrentFid(), selective,
-                       styleId);
+          updateSavebox |=
+              eraseSegment(getImage(true), tmpPos, sl, getCurrentFid(),
+                           selective, styleId, m_eraseOnlySavebox.getValue());
         }
 
         TPointD mousePos = pos;
@@ -1571,7 +1593,7 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
         invalidate();
       }
     }
-    ToolUtils::updateSaveBox();
+    if (updateSavebox) ToolUtils::updateSaveBox();
   }
 
   m_selecting = false;
@@ -1694,6 +1716,8 @@ bool EraserTool::onPropertyChanged(std::string propertyName) {
     EraseHardness = m_hardness.getValue();
     m_brushPad    = ToolUtils::getBrushPad(m_toolSize.getValue(),
                                         m_hardness.getValue() * 0.01);
+  } else if (propertyName == m_eraseOnlySavebox.getName()) {
+    EraseOnlySavebox = (int)(m_eraseOnlySavebox.getValue());
   }
 
   if (propertyName == m_hardness.getName() ||
@@ -1769,6 +1793,7 @@ void EraserTool::onEnter() {
     m_multi.setValue(EraseRange ? 1 : 0);
     m_hardness.setValue(EraseHardness);
     m_pencil.setValue(ErasePencil);
+    m_eraseOnlySavebox.setValue(EraseOnlySavebox ? 1 : 0);
     m_firstTime = false;
   }
   double x = m_toolSize.getValue();
@@ -1870,6 +1895,7 @@ void EraserTool::doMultiSegmentEraser(const TImageP &img, double t,
   //  ColorController::instance()->switchToLevelPalette();
   int styleId    = TTool::getApplication()->getCurrentLevelStyleIndex();
   bool selective = m_currentStyle.getValue();
+  bool updateSavebox = false;
   if (t == 0) {
     TStroke *stroke = firstImage->getStroke(0);
     int length      = (int)stroke->getLength();
@@ -1887,7 +1913,9 @@ void EraserTool::doMultiSegmentEraser(const TImageP &img, double t,
       if (!ras->getBounds().contains(ipos)) continue;
       TPixelCM32 pix = ras->pixels(ipos.y)[ipos.x];
       if ((selective && pix.getInk() != styleId) || pix.isPurePaint()) continue;
-      eraseSegment(img, tmpPos, sl.getPointer(), fid, selective, styleId);
+      updateSavebox |=
+          eraseSegment(img, tmpPos, sl.getPointer(), fid, selective, styleId,
+                       m_eraseOnlySavebox.getValue());
     }
   }
 
@@ -1908,7 +1936,9 @@ void EraserTool::doMultiSegmentEraser(const TImageP &img, double t,
       if (!ras->getBounds().contains(ipos)) continue;
       TPixelCM32 pix = ras->pixels(ipos.y)[ipos.x];
       if ((selective && pix.getInk() != styleId) || pix.isPurePaint()) continue;
-      eraseSegment(img, tmpPos, sl.getPointer(), fid, selective, styleId);
+      updateSavebox |=
+          eraseSegment(img, tmpPos, sl.getPointer(), fid, selective, styleId,
+                       m_eraseOnlySavebox.getValue());
     }
   } else {
     assert(firstImage->getStrokeCount() == 1);
@@ -1931,9 +1961,12 @@ void EraserTool::doMultiSegmentEraser(const TImageP &img, double t,
       if (!ras->getBounds().contains(ipos)) continue;
       TPixelCM32 pix = ras->pixels(ipos.y)[ipos.x];
       if ((selective && pix.getInk() != styleId) || pix.isPurePaint()) continue;
-      eraseSegment(img, tmpPos, sl.getPointer(), fid, selective, styleId);
+      updateSavebox |=
+          eraseSegment(img, tmpPos, sl.getPointer(), fid, selective, styleId,
+                       m_eraseOnlySavebox.getValue());
     }
   }
+  if (updateSavebox) ToolUtils::updateSaveBox();
 
   TTool::Application *app = TTool::getApplication();
   if (!app) return;

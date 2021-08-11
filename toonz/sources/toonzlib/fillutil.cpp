@@ -37,6 +37,28 @@ void computeSeeds(const TRasterCM32P &r, TStroke *stroke,
 
 //-----------------------------------------------------------------------------
 
+void clampStrokeToRec(TStroke *stroke, const TRect &bbox) {
+  for (int i = 0; i < stroke->getControlPointCount(); i++) {
+    TThickPoint tp = stroke->getControlPoint(i);
+    TPoint p(tp.x, tp.y);
+    if (!bbox.contains(p)) {
+      if (p.x < bbox.x0)
+        tp.x = bbox.x0;
+      else if (p.x > bbox.x1)
+        tp.x = bbox.x1;
+
+      if (p.y < bbox.y0)
+        tp.y = bbox.y0;
+      else if (p.y > bbox.y1)
+        tp.y = bbox.y1;
+
+      stroke->setControlPoint(i, tp);
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void fillArea(const TRasterCM32P &ras, TRegion *r, int colorId,
               bool onlyUnfilled, bool fillPaints, bool fillInks) {
   TRect bbox = convert(r->getBBox());
@@ -289,11 +311,13 @@ bool AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
 //-----------------------------------------------------------------------------
 
 void AreaFiller::strokeFill(TStroke *stroke, int colorId, bool onlyUnfilled,
-                            bool fillPaints, bool fillInks) {
+                            bool fillPaints, bool fillInks,
+                            const TRect &saveRect) {
   stroke->transform(TTranslation(convert(m_ras->getCenter())));
   m_ras->lock();
 
   std::vector<std::pair<TPoint, int>> seeds;
+  clampStrokeToRec(stroke, saveRect);
   computeSeeds(m_ras, stroke, seeds);
 
   TVectorImage app;

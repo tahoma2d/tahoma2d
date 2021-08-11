@@ -2032,6 +2032,8 @@ EraserToolOptionsBox::EraserToolOptionsBox(QWidget *parent, TTool *tool,
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Frame Range"));
   m_pencilMode =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Pencil Mode"));
+  m_eraseOnlySavebox =
+      dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Savebox"));
 
   bool ret = true;
   if (m_pencilMode) {
@@ -2061,6 +2063,13 @@ EraserToolOptionsBox::EraserToolOptionsBox(QWidget *parent, TTool *tool,
           m_colorModeLabel->setEnabled(false);
       }
       m_invertMode->setEnabled(false);
+  }
+
+  if (m_eraseOnlySavebox) {
+    if (m_toolType->getProperty()->getValue() == L"Segment")
+      m_eraseOnlySavebox->setEnabled(true);
+    else
+      m_eraseOnlySavebox->setEnabled(false);
   }
 
   if (m_colorMode && m_colorMode->getProperty()->getValue() == L"Areas") {
@@ -2100,6 +2109,7 @@ void EraserToolOptionsBox::onToolTypeChanged(int index) {
       m_colorModeLabel->setDisabled(isSegment);
   }
   m_invertMode->setEnabled(!isSegment && value);
+  if (m_eraseOnlySavebox) m_eraseOnlySavebox->setEnabled(isSegment);
 }
 
 //-----------------------------------------------------------------------------
