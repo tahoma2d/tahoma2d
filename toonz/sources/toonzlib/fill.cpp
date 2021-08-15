@@ -458,8 +458,9 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
     TCamera *camera   = scene->getCurrentCamera();
     TRaster32P tmpRaster(camera->getRes());
     scene->renderFrame(tmpRaster, frameIndex);
-    TPoint offset((refRaster->getLx() - tmpRaster->getLx()) / 2,
-                  (refRaster->getLy() - tmpRaster->getLy()) / 2);
+    TPoint offset((params.m_imageSize.lx - tmpRaster->getLx()) / 2,
+                  (params.m_imageSize.ly - tmpRaster->getLy()) / 2);
+    offset -= params.m_imageOffset;
     refRaster->fill(color);
     refRaster->copy(tmpRaster, offset);
     refRaster->lock();

@@ -32,6 +32,8 @@ public:
   bool m_prevailing;
   bool m_fillOnlySavebox;
   bool m_referenced;
+  TDimension m_imageSize;
+  TPoint m_imageOffset;
 
   FillParameters()
       : m_styleId(0)
@@ -58,7 +60,9 @@ public:
       , m_palette(params.m_palette)
       , m_prevailing(params.m_prevailing)
       , m_fillOnlySavebox(params.m_fillOnlySavebox)
-      , m_referenced(params.m_referenced) {}
+      , m_referenced(params.m_referenced)
+      , m_imageSize(params.m_imageSize)
+      , m_imageOffset(params.m_imageOffset) {}
 };
 
 //=============================================================================

@@ -1122,6 +1122,10 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
       ras         = ti->getRaster()->extract(ibbox);
     }
 
+    // Save image dimension in case we are working in a savebox and need it
+    params.m_imageSize   = ti->getSize();
+    params.m_imageOffset = offs;
+
     bool recomputeSavebox = false;
     TPalette *plt         = ti->getPalette();
 
