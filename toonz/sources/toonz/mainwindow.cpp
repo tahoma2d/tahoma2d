@@ -1784,6 +1784,10 @@ void MainWindow::defineActions() {
                        "shortcuts", tr("Change the shortcuts of Tahoma2D."));
   createMenuFileAction(MI_PrintXsheet, QT_TR_NOOP("&Print Xsheet"), "",
                        "printer", tr("Print the scene's exposure sheet."));
+
+  createMenuFileAction(MI_ExportXsheetPDF, QT_TR_NOOP("&Export Xsheet to PDF"),
+                       "");
+
   createMenuFileAction(
       MI_ExportXDTS,
       QT_TRANSLATE_NOOP("MainWindow",

@@ -469,6 +469,7 @@
 
 #define MI_ExportXDTS "MI_ExportXDTS"
 #define MI_ExportTvpJson "MI_ExportTvpJson"
+#define MI_ExportXsheetPDF "MI_ExportXsheetPDF"
 
 #define MI_ToggleAutoCreate "MI_ToggleAutoCreate"
 #define MI_ToggleCreationInHoldCells "MI_ToggleCreationInHoldCells"
