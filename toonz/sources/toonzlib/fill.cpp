@@ -56,7 +56,8 @@ inline TPoint nearestInkNotDiagonal(const TRasterCM32P &r, const TPoint &p) {
 
 // Calculates the endpoints for the line of pixels in which to fill
 bool calcFillRow(const TRasterCM32P &r, const TPoint &p, int &xa, int &xb,
-                 int paint, TPalette *palette, bool prevailing = true) {
+                 int paint, TPalette *palette, bool prevailing = true,
+                 bool emptyOnly = false) {
   int tone, oldtone;
   TPixelCM32 *pix, *pix0, *limit, *tmp_limit;
 
@@ -70,6 +71,7 @@ bool calcFillRow(const TRasterCM32P &r, const TPoint &p, int &xa, int &xb,
   tone    = oldtone;
   for (; pix <= limit; pix++) {
     if (pix->getPaint() == paint) break;
+    if (emptyOnly && pix->getPaint() != 0) break;
     tone = pix->getTone();
     if (tone == 0) break;
     // prevent fill area from protruding behind the colored line
@@ -120,6 +122,7 @@ bool calcFillRow(const TRasterCM32P &r, const TPoint &p, int &xa, int &xb,
   tone    = oldtone;
   for (pix--; pix >= limit; pix--) {
     if (pix->getPaint() == paint) break;
+    if (emptyOnly && pix->getPaint() != 0) break;
     tone = pix->getTone();
     if (tone == 0) break;
     // prevent fill area from protruding behind the colored line
@@ -468,7 +471,6 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
       refRaster->unlock();
       return false;
     }
-
   }
 
   assert(fillDepth >= 0 && fillDepth < 16);
@@ -505,10 +507,11 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
 
   std::stack<FillSeed> seeds;
 
-  bool fillIt = !xsheet ? calcFillRow(tempRaster, p, xa, xb, paint,
-                                      params.m_palette, params.m_prevailing)
-                        : calcRefFillRow(refRaster, p, xa, xb, color,
-                                         clickedPosColor, fillDepth);
+  bool fillIt =
+      !xsheet ? calcFillRow(tempRaster, p, xa, xb, paint, params.m_palette,
+                            params.m_prevailing, params.m_emptyOnly)
+              : calcRefFillRow(refRaster, p, xa, xb, color, clickedPosColor,
+                               fillDepth);
   if (fillIt) fillRow(tempRaster, p, xa, xb, paint, params.m_palette, saver);
   if (xsheet) segments[y].push_back(std::pair<int, int>(xa, xb));
   seeds.push(FillSeed(xa, xb, y, 1));
@@ -555,7 +558,8 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
         tone    = threshTone(*pix, fillDepth);
         // the last condition is added in order to prevent fill area from
         // protruding behind the colored line
-        canPaint = pix->getPaint() != paint && tone <= oldtone && tone != 0 &&
+        canPaint = pix->getPaint() != paint && tone <= oldtone &&
+                   (!params.m_emptyOnly || pix->getPaint() == 0) && tone != 0 &&
                    (pix->getPaint() != pix->getInk() ||
                     pix->getPaint() == paintAtClickedPos);
       } else {

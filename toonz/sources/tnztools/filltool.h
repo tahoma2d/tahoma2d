@@ -57,6 +57,7 @@ private:
   bool m_onion;
   bool m_isLeftButtonPressed;
   bool m_autopaintLines;
+  bool m_fillOnlySavebox;
 
 public:
   AreaFillTool(TTool *Parent);
@@ -72,7 +73,8 @@ public:
                     bool closeGaps, int closeStyleIndex);
   void onImageChanged();
   bool onPropertyChanged(bool multi, bool onlyUnfilled, bool onion, Type type,
-                         std::wstring colorType, bool autopaintLines);
+                         std::wstring colorType, bool autopaintLines,
+                         bool fillOnlySavebox);
   void onActivate();
   void onEnter();
 };
@@ -113,6 +115,7 @@ class FillTool final : public QObject, public TTool {
   // For the raster fill tool, autopaint lines is optional and can be temporary
   // disabled
   TBoolProperty m_autopaintLines;
+  TBoolProperty m_fillOnlySavebox;
 
   int m_firstFrameIdx, m_lastFrameIdx;
 

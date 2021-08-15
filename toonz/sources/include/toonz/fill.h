@@ -30,6 +30,7 @@ public:
   TPoint m_p;
   TPalette *m_palette;
   bool m_prevailing;
+  bool m_fillOnlySavebox;
   bool m_referenced;
 
   FillParameters()
@@ -43,6 +44,7 @@ public:
       , m_shiftFill(false)
       , m_palette(0)
       , m_prevailing(true)
+      , m_fillOnlySavebox(false)
       , m_referenced(false) {}
   FillParameters(const FillParameters &params)
       : m_styleId(params.m_styleId)
@@ -55,6 +57,7 @@ public:
       , m_shiftFill(params.m_shiftFill)
       , m_palette(params.m_palette)
       , m_prevailing(params.m_prevailing)
+      , m_fillOnlySavebox(params.m_fillOnlySavebox)
       , m_referenced(params.m_referenced) {}
 };
 
@@ -128,7 +131,7 @@ else if \b fillInks is false fill only paint delimited by ink;
 else fill ink and paint in region contained in spline.
 */
   void strokeFill(TStroke *s, int color, bool onlyUnfilled, bool fillPaints,
-                  bool fillInks);
+                  bool fillInks, const TRect &saveRect);
 };
 
 class DVAPI FullColorAreaFiller {
