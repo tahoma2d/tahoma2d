@@ -332,14 +332,14 @@ QGroupBox {
   &::handle{
     &:horizontal {
       margin: @slider-handle-margin;
-    width: @slider-handle-width;
-    image: url('@{img-url}/@{slider-handle-img}');
-    &:disabled {
-      image: url('@{img-url}/@{slider-handle-img-disabled}');
+      width: @slider-handle-width;
+      image: url('@{img-url}/@{slider-handle-img}');
+      &:disabled {
+        image: url('@{img-url}/@{slider-handle-img-disabled}');
       }
     }
     &:vertical {
-      margin: -1 -2;
+      margin: @slider-v-handle-margin;
       height: @slider-handle-width;
       image: url('@{img-url}/@{slider-v-handle-img}');
       &:disabled {
