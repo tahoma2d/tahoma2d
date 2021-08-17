@@ -184,6 +184,9 @@ private:
   void updateSplinePositionOnResize(TStageObjectSpline *spl,
                                     bool maximizedNode);
 
+  // snap to neighbor nodes on dragging
+  void updateSnapTarget(QGraphicsItem *item) override;
+
 protected:
   void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
   void mousePressEvent(QGraphicsSceneMouseEvent *me) override;

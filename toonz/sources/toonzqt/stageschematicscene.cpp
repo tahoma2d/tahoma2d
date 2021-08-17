@@ -1312,3 +1312,50 @@ void StageSchematicScene::onNodeChangedSize() {
   if (resizingNodes) return;
   updateScene();
 }
+
+//------------------------------------------------------------------
+// snap to neighbor nodes on dragging
+void StageSchematicScene::updateSnapTarget(QGraphicsItem *item) {
+  clearSnapTargets();
+  StageSchematicNode *node = dynamic_cast<StageSchematicNode *>(item);
+  if (!node) return;
+
+  int portCount = node->getChildCount();
+  for (int i = 0; i < portCount; i++) {
+    StageSchematicNodePort *port = node->getChildPort(i);
+    int j, linkCount = port->getLinkCount();
+    for (j = 0; j < linkCount; j++) {
+      SchematicLink *link = port->getLink(j);
+      if (!link) continue;
+      SchematicNode *otherNode = link->getOtherNode(node);
+      if (otherNode && !otherNode->isSelected()) {
+        QPointF targetPos =
+            otherNode->scenePos() -
+            QPointF(node->boundingRect().width() + SchematicScene::snapHSpacing,
+                    0);
+        addSnapTarget(targetPos, node->boundingRect(),
+                      link->getOtherPort(port)->getLinkEndPoint(),
+                      port->getLinkEndPoint() - node->scenePos());
+      }
+    }
+  }
+
+  StageSchematicNodePort *port = node->getParentPort();
+  if (port) {
+    int linkCount = port->getLinkCount();
+    for (int i = 0; i < linkCount; i++) {
+      SchematicLink *link = port->getLink(i);
+      if (!link) continue;
+      SchematicNode *otherNode = link->getOtherNode(node);
+      if (otherNode && !otherNode->isSelected()) {
+        QPointF targetPos =
+            otherNode->scenePos() + QPointF(otherNode->boundingRect().width() +
+                                                SchematicScene::snapHSpacing,
+                                            0);
+        addSnapTarget(targetPos, node->boundingRect(),
+                      link->getOtherPort(port)->getLinkEndPoint(),
+                      port->getLinkEndPoint() - node->scenePos());
+      }
+    }
+  }
+}

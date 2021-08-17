@@ -57,6 +57,7 @@ class QTouchEvent;
 class QGestureEvent;
 class FxSelection;
 class StageObjectSelection;
+class SnapTargetItem;
 
 //====================================================
 namespace {
@@ -72,6 +73,8 @@ enum CursorMode { Select, Zoom, Hand };
 class DVAPI SchematicScene : public QGraphicsScene {
   Q_OBJECT
 
+  QPointF m_mousePos, m_clickedPos;
+
 public:
   SchematicScene(QWidget *parent);
   ~SchematicScene();
@@ -82,9 +85,20 @@ public:
   virtual void reorderScene() = 0;
   virtual void updateScene()  = 0;
 
+  QPointF mousePos() { return m_mousePos; }
+  void setMousePos(QPointF pos) { m_mousePos = pos; }
+  virtual void updateSnapTarget(QGraphicsItem *item){};
+  QPointF clickedPos() { return m_clickedPos; }
+  void setClickedPos(QPointF pos) { m_clickedPos = pos; }
+  void computeSnap(SchematicNode *node, QPointF &delta, bool enable);
+
 protected:
   QList<SchematicLink *> m_highlightedLinks;
   enum GridDimension { eLarge, eSmall };
+  QList<SnapTargetItem *> m_snapTargets;
+
+  static int snapVInterval;
+  static int snapHSpacing;
 
 protected:
   //! Returns \b true if no nodes intersects \b rect.
@@ -97,6 +111,9 @@ protected:
   void showEvent(QShowEvent *se);
   void hideEvent(QHideEvent *se);
 
+  void addSnapTarget(const QPointF &pos, const QRectF &rect,
+                     const QPointF &theOtherEndPos, const QPointF &endPos);
+  void clearSnapTargets();
 protected slots:
 
   virtual void onSelectionSwitched(TSelection *, TSelection *) {}

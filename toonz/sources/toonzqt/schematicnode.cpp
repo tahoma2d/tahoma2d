@@ -1141,7 +1141,25 @@ void SchematicNode::paint(QPainter *painter,
 void SchematicNode::mouseMoveEvent(QGraphicsSceneMouseEvent *me) {
   QList<QGraphicsItem *> items = scene()->selectedItems();
   if (items.empty()) return;
-  QPointF delta         = me->scenePos() - me->lastScenePos();
+  QPointF delta = me->scenePos() - m_scene->mousePos();
+  // QPointF delta         = me->scenePos() - me->lastScenePos();
+
+  if (me->modifiers() & Qt::ShiftModifier) {
+    QPointF deltaFromStart = me->scenePos() - m_scene->clickedPos();
+    if (std::abs(deltaFromStart.x()) > std::abs(deltaFromStart.y()))
+      deltaFromStart.setY(0.0);
+    else
+      deltaFromStart.setX(0.0);
+    delta = m_scene->clickedPos() + deltaFromStart - m_scene->mousePos();
+  }
+
+  // snap to neighbor nodes
+  bool ctrlPressed = me->modifiers() & Qt::ControlModifier;
+  dynamic_cast<SchematicScene *>(scene())->computeSnap(this, delta,
+                                                       ctrlPressed);
+
+  m_scene->setMousePos(m_scene->mousePos() + delta);
+
   QGraphicsView *viewer = scene()->views()[0];
   for (auto const &item : items) {
     SchematicNode *node = dynamic_cast<SchematicNode *>(item);
@@ -1169,6 +1187,11 @@ void SchematicNode::mousePressEvent(QGraphicsSceneMouseEvent *me) {
       setSelected(false);
   }
   onClicked();
+
+  m_scene->setMousePos(me->scenePos());
+  m_scene->setClickedPos(me->scenePos());
+
+  m_scene->updateSnapTarget(this);
 }
 
 //--------------------------------------------------------
@@ -1176,6 +1199,8 @@ void SchematicNode::mousePressEvent(QGraphicsSceneMouseEvent *me) {
 void SchematicNode::mouseReleaseEvent(QGraphicsSceneMouseEvent *me) {
   if (me->modifiers() != Qt::ControlModifier && me->button() != Qt::RightButton)
     QGraphicsItem::mouseReleaseEvent(me);
+
+  m_scene->updateSnapTarget(nullptr);
 }
 
 //--------------------------------------------------------
@@ -1238,4 +1263,47 @@ void SchematicNode::updateLinksGeometry() {
   QMap<int, SchematicPort *>::iterator it;
   for (it = m_ports.begin(); it != m_ports.end(); ++it)
     it.value()->updateLinksGeometry();
+}
+
+//========================================================
+//
+// class SnapTargetItem
+//
+//========================================================
+
+SnapTargetItem::SnapTargetItem(const QPointF &pos, const QRectF &rect,
+                               const QPointF &theOtherEndPos,
+                               const QPointF &portEndOffset)
+    : m_rect(rect)
+    , m_theOtherEndPos(theOtherEndPos)
+    , m_portEndOffset(portEndOffset) {
+  setFlag(QGraphicsItem::ItemIsMovable, false);
+  setFlag(QGraphicsItem::ItemIsSelectable, false);
+  setFlag(QGraphicsItem::ItemIsFocusable, false);
+  setZValue(3.0);
+  setPos(pos);
+  setVisible(false);
+}
+
+QRectF SnapTargetItem::boundingRect() const {
+  QRectF linkRect(m_theOtherEndPos - scenePos(), m_portEndOffset);
+  return m_rect.united(linkRect);
+}
+
+void SnapTargetItem::paint(QPainter *painter,
+                           const QStyleOptionGraphicsItem *option,
+                           QWidget *widget) {
+  painter->setPen(QPen(Qt::magenta, 1, Qt::DashDotLine));
+  painter->drawRect(m_rect);
+
+  QPointF startPos = m_theOtherEndPos - scenePos();
+  QPointF endPos   = m_portEndOffset;
+  QPointF p0((endPos.x() + startPos.x()) * 0.5, startPos.y());
+  QPointF p1(p0.x(), endPos.y());
+  QPointF p2(endPos);
+
+  QPainterPath path(startPos);
+  path.cubicTo(p0, p1, p2);
+  painter->setRenderHint(QPainter::Antialiasing, true);
+  painter->drawPath(path);
 }

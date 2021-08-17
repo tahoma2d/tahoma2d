@@ -2209,5 +2209,57 @@ bool FxSchematicScene::isAnEmptyZone_withParentFx(const QRectF &rect,
       }
     }
   }
-  return true;
+ return true;
+}
+
+//------------------------------------------------------------------
+// update snap targets on click node
+void FxSchematicScene::updateSnapTarget(QGraphicsItem *item) {
+  clearSnapTargets();
+  FxSchematicNode *node = dynamic_cast<FxSchematicNode *>(item);
+  if (!node) return;
+
+  // find input connections
+  int portCount = node->getInputPortCount();
+  for (int i = 0; i < portCount; i++) {
+    FxSchematicPort *port = node->getInputPort(i);
+    int j, linkCount = port->getLinkCount();
+    for (j = 0; j < linkCount; j++) {
+      SchematicLink *link = port->getLink(j);
+      if (!link) continue;
+      if (m_disconnectionLinks.isABridgeLink(link)) continue;
+      SchematicNode *otherNode = link->getOtherNode(node);
+      if (otherNode && !otherNode->isSelected()) {
+        QPointF targetPos =
+            otherNode->scenePos() + QPointF(otherNode->boundingRect().width() +
+                                                SchematicScene::snapHSpacing,
+                                            0);
+
+        addSnapTarget(targetPos, node->boundingRect(),
+                      link->getOtherPort(port)->getLinkEndPoint(),
+                      port->getLinkEndPoint() - node->scenePos());
+      }
+    }
+  }
+
+  // find output connections
+  FxSchematicPort *port = node->getOutputPort();
+  if (port) {
+    int linkCount = port->getLinkCount();
+    for (int i = 0; i < linkCount; i++) {
+      SchematicLink *link = port->getLink(i);
+      if (!link) continue;
+      if (m_disconnectionLinks.isABridgeLink(link)) continue;
+      SchematicNode *otherNode = link->getOtherNode(node);
+      if (otherNode && !otherNode->isSelected()) {
+        QPointF targetPos =
+            otherNode->scenePos() -
+            QPointF(node->boundingRect().width() + SchematicScene::snapHSpacing,
+                    0);
+        addSnapTarget(targetPos, node->boundingRect(),
+                      link->getOtherPort(port)->getLinkEndPoint(),
+                      port->getLinkEndPoint() - node->scenePos());
+      }
+    }
+  }
 }
