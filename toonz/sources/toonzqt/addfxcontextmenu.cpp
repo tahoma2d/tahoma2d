@@ -564,9 +564,9 @@ void AddFxContextMenu::onAddFx(QAction *action) {
     if (fx->isZerary() &&
         fx->getAttributes()->getDagNodePos() != TConst::nowhere) {
       TXsheet *xsh = m_app->getCurrentXsheet()->getXsheet();
-      TXshZeraryFxColumn *column =
-          xsh->getColumn(m_app->getCurrentColumn()->getColumnIndex())
-              ->getZeraryFxColumn();
+      int col      = m_app->getCurrentColumn()->getColumnIndex();
+      if (col < 0) col = 0;
+      TXshZeraryFxColumn *column = xsh->getColumn(col)->getZeraryFxColumn();
       if (column)
         column->getZeraryColumnFx()->getAttributes()->setDagNodePos(
             fx->getAttributes()->getDagNodePos());

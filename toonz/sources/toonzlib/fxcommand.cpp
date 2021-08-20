@@ -936,6 +936,8 @@ void TFxCommand::addFx(TFx *newFx, const QList<TFxP> &fxs, TApplication *app,
                        int col, int row) {
   if (!newFx) return;
 
+  if (col < 0) col = 0;
+
   std::unique_ptr<FxCommandUndo> undo(
       new InsertFxUndo(newFx, row, col, fxs, QList<Link>(), app, false));
   if (!undo->isConsistent()) return;
