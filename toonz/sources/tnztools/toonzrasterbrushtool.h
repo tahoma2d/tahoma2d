@@ -165,6 +165,7 @@ public:
   // Tools.
   bool isPencilModeActive() override;
 
+  void onCanvasSizeChanged();
   void onColorStyleChanged();
   bool askRead(const TRect &rect) override;
   bool askWrite(const TRect &rect) override;
@@ -259,7 +260,7 @@ public:
   ToonzRasterBrushToolNotifier(ToonzRasterBrushTool *tool);
 
 protected slots:
-  // void onCanvasSizeChanged() { m_tool->onCanvasSizeChanged(); }
+  void onCanvasSizeChanged() { m_tool->onCanvasSizeChanged(); }
   void onColorStyleChanged() { m_tool->onColorStyleChanged(); }
 };
 
