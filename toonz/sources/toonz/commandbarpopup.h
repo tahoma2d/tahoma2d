@@ -52,6 +52,9 @@ public:
 
   void searchItems(const QString& searchWord = QString());
 
+public slots:
+  void onItemClicked(const QModelIndex&);
+
 private:
   void displayAll(QTreeWidgetItem* item);
   void hideAll(QTreeWidgetItem* item);

@@ -332,6 +332,9 @@ CommandBarListTree::CommandBarListTree(QWidget* parent) : QTreeWidget(parent) {
   CommandBarSeparatorItem* sep = new CommandBarSeparatorItem(0);
   sep->setToolTip(0, QObject::tr("[Drag&Drop] to copy separator to toolbar"));
   addTopLevelItem(sep);
+
+  connect(this, SIGNAL(clicked(const QModelIndex&)), this,
+          SLOT(onItemClicked(const QModelIndex&)));
 }
 
 //-----------------------------------------------------------------------------
@@ -455,6 +458,12 @@ void CommandBarListTree::searchItems(const QString& searchWord) {
   }
 
   update();
+}
+
+//-----------------------------------------------------------------------------
+
+void CommandBarListTree::onItemClicked(const QModelIndex& index) {
+  isExpanded(index) ? collapse(index) : expand(index);
 }
 
 //=============================================================================
