@@ -2621,7 +2621,8 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
                                     m_doOnRelease == ToggleAllTransparency ||
                                     m_doOnRelease == OpenSettings)) ||
         m_doOnRelease == TogglePreviewVisible ||
-        m_doOnRelease == ToggleAllPreviewVisible)
+        m_doOnRelease == ToggleAllPreviewVisible ||
+        m_doOnRelease == ToggleLock || m_doOnRelease == ToggleAllLock)
       app->getCurrentXsheet()->notifyXsheetChanged();
     update();
     m_doOnRelease = 0;
