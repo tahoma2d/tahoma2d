@@ -855,7 +855,14 @@ void FilmstripFrames::mousePressEvent(QMouseEvent *event) {
 
   TXshSimpleLevel *sl = getLevel();
 
+  CommandManager::instance()->enable(MI_CanvasSize, false);
+
   if (!sl) return;
+
+  bool isRasterLevel =
+      (sl->getType() == TZP_XSHLEVEL || sl->getType() == OVL_XSHLEVEL ||
+       sl->getType() == TZI_XSHLEVEL);
+  CommandManager::instance()->enable(MI_CanvasSize, isRasterLevel);
 
   // If accessed after 1st frame on a Single Frame level
   // Block movement so we can't create new images

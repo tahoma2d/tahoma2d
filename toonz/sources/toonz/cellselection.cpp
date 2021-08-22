@@ -1585,7 +1585,6 @@ void TCellSelection::selectCell(int row, int col) {
 
 void TCellSelection::selectNone() {
   m_range = Range();
-  CommandManager::instance()->enable(MI_CanvasSize, false);
 }
 
 //-----------------------------------------------------------------------------

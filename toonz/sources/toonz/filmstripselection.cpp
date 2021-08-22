@@ -146,11 +146,6 @@ void TFilmstripSelection::select(const TFrameId &fid, bool selected) {
   if (tool) tool->setSelectedFrames(m_selectedFrames);
 
   TXshSimpleLevel *sl = app->getCurrentLevel()->getSimpleLevel();
-  bool rasterLevel    = sl->getType() == TZP_XSHLEVEL ||
-                     sl->getType() == OVL_XSHLEVEL ||
-                     sl->getType() == TZI_XSHLEVEL;
-
-  CommandManager::instance()->enable(MI_CanvasSize, rasterLevel);
 }
 
 //-----------------------------------------------------------------------------
@@ -165,7 +160,6 @@ void TFilmstripSelection::selectNone() {
   m_selectedFrames.clear();
   updateInbetweenRange();
   TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
-  CommandManager::instance()->enable(MI_CanvasSize, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -180,10 +174,6 @@ void TFilmstripSelection::selectAll() {
   updateInbetweenRange();
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   tool->setSelectedFrames(m_selectedFrames);
-  bool rasterLevel = sl->getType() == TZP_XSHLEVEL ||
-                     sl->getType() == OVL_XSHLEVEL ||
-                     sl->getType() == TZI_XSHLEVEL;
-  CommandManager::instance()->enable(MI_CanvasSize, rasterLevel);
   notifyView();
 }
 
@@ -204,9 +194,6 @@ void TFilmstripSelection::invertSelection() {
   updateInbetweenRange();
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   tool->setSelectedFrames(m_selectedFrames);
-  if (sl->getType() == TZP_XSHLEVEL || sl->getType() == OVL_XSHLEVEL ||
-      sl->getType() == TZI_XSHLEVEL)
-    CommandManager::instance()->enable(MI_CanvasSize, true);
   notifyView();
 }
 
