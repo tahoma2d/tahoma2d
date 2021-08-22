@@ -586,6 +586,12 @@ void TApp::onXshLevelSwitched(TXshLevel *) {
       bool isRasterLevel = (simpleLevel->getType() == TZP_XSHLEVEL ||
                             simpleLevel->getType() == OVL_XSHLEVEL ||
                             simpleLevel->getType() == TZI_XSHLEVEL);
+      if (isRasterLevel && (simpleLevel->getPath().getType() == "psd" ||
+                            simpleLevel->getPath().getType() == "gif" ||
+                            simpleLevel->getPath().getType() == "mp4" ||
+                            simpleLevel->getPath().getType() == "webm" ||
+                            simpleLevel->getPath().getType() == "mov"))
+        isRasterLevel = false;
       CommandManager::instance()->enable(MI_CanvasSize, isRasterLevel);
 
       return;
