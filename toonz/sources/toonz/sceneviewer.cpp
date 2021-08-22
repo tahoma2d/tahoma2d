@@ -1862,16 +1862,14 @@ void SceneViewer::drawCheckNotices() {
   QStringList checkTexts;
 
   if (mask & ToonzCheck::eTransparency)
-    checkTexts.append(tr("Transparency Check ENABLED"));
-  if (mask & ToonzCheck::eInk) checkTexts.append(tr("Ink Check ENABLED"));
-  if (mask & ToonzCheck::eInk1) checkTexts.append(tr("Ink#1 Check ENABLED"));
-  if (mask & ToonzCheck::ePaint) checkTexts.append(tr("Paint Check ENABLED"));
-  if (mask & ToonzCheck::eInksOnly)
-    checkTexts.append(tr("Inks Only Check ENABLED"));
-  if (mask & ToonzCheck::eBlackBg)
-    checkTexts.append(tr("Black BG Check ENABLED"));
-  if (mask & ToonzCheck::eGap) checkTexts.append(tr("Fill Check ENABLED"));
-  if (mask & ToonzCheck::eAutoclose) checkTexts.append(tr("Gap Check ENABLED"));
+    checkTexts.append(tr("*Transparency Check*"));
+  if (mask & ToonzCheck::eInk) checkTexts.append(tr("*Ink Check*"));
+  if (mask & ToonzCheck::eInk1) checkTexts.append(tr("*Ink#1 Check*"));
+  if (mask & ToonzCheck::ePaint) checkTexts.append(tr("*Paint Check*"));
+  if (mask & ToonzCheck::eInksOnly) checkTexts.append(tr("*Inks Only Check*"));
+  if (mask & ToonzCheck::eBlackBg) checkTexts.append(tr("*Black BG Check*"));
+  if (mask & ToonzCheck::eGap) checkTexts.append(tr("*Fill Check*"));
+  if (mask & ToonzCheck::eAutoclose) checkTexts.append(tr("*Gap Check*"));
 
   if (!checkTexts.size()) return;
 
