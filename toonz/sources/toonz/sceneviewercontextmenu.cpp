@@ -226,6 +226,8 @@ SceneViewerContextMenu::SceneViewerContextMenu(SceneViewer *parent)
   // Brush size outline
   CursorOutlineToggleGui::addCursorOutlineCommand(this);
 
+  CheckIndicatorToggleGui::addCheckIndicatorCommand(this);
+
   // preview
   if (parent->isPreviewEnabled()) {
     addSeparator();
@@ -546,4 +548,42 @@ void CursorOutlineToggleGui::CursorOutlineToggleHandler::activate() {
 
 void CursorOutlineToggleGui::CursorOutlineToggleHandler::deactivate() {
   CursorOutlineToggle::enableCursorOutline(false);
+}
+
+class CheckIndicatorToggle : public MenuItemHandler {
+public:
+  CheckIndicatorToggle() : MenuItemHandler(MI_CheckIndicator) {}
+  void execute() {
+    QAction *action = CommandManager::instance()->getAction(MI_CheckIndicator);
+    if (!action) return;
+    bool checked = action->isChecked();
+    enableCheckIndicator(checked);
+  }
+
+  static void enableCheckIndicator(bool enable = true) {
+    Preferences::instance()->setValue(checkIndicatorEnabled, enable);
+  }
+} CheckIndicatorToggle;
+
+void CheckIndicatorToggleGui::addCheckIndicatorCommand(QMenu *menu) {
+  static CheckIndicatorToggleHandler switcher;
+  if (Preferences::instance()->isCheckIndicatorEnabled()) {
+    QAction *hideCheckIndicator =
+        menu->addAction(QString(QObject::tr("Hide Check Indicators")));
+    menu->connect(hideCheckIndicator, SIGNAL(triggered()), &switcher,
+                  SLOT(deactivate()));
+  } else {
+    QAction *showCheckIndicator =
+        menu->addAction(QString(QObject::tr("Show Check Indicators")));
+    menu->connect(showCheckIndicator, SIGNAL(triggered()), &switcher,
+                  SLOT(activate()));
+  }
+}
+
+void CheckIndicatorToggleGui::CheckIndicatorToggleHandler::activate() {
+  CheckIndicatorToggle::enableCheckIndicator(true);
+}
+
+void CheckIndicatorToggleGui::CheckIndicatorToggleHandler::deactivate() {
+  CheckIndicatorToggle::enableCheckIndicator(false);
 }

@@ -1019,6 +1019,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {colorCalibrationLutPaths,
        tr("3DLUT File for [%1]:")
            .arg(LutManager::instance()->getMonitorName())},
+      {checkIndicatorEnabled, tr("Show Check Indicators")},
 
       // Visualization
       {show0ThickLines, tr("Show Lines with Thickness 0")},
@@ -1462,6 +1463,7 @@ QWidget* PreferencesPopup::createInterfacePage() {
   insertUI(moveCurrentFrameByClickCellArea, lay);
   insertUI(actualPixelViewOnSceneEditingMode, lay);
   // insertUI(levelNameOnEachMarkerEnabled, lay);
+  insertUI(checkIndicatorEnabled, lay);
   insertUI(showRasterImagesDarkenBlendedInViewer, lay);
   // insertUI(showFrameNumberWithLetters, lay);
   insertUI(iconSize, lay);

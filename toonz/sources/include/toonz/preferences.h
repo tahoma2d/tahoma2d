@@ -235,6 +235,10 @@ public:
   void setColorCalibrationLutPath(QString monitorName, QString path);
   QString getColorCalibrationLutPath(QString &monitorName) const;
 
+  bool isCheckIndicatorEnabled() const {
+    return getBoolValue(checkIndicatorEnabled);
+  }
+
   // Visualization  tab
   bool getShow0ThickLines() const { return getBoolValue(show0ThickLines); }
   bool getRegionAntialias() const { return getBoolValue(regionAntialias); }

@@ -2475,6 +2475,9 @@ void MainWindow::defineActions() {
                Preferences::instance()->isAutoStretchEnabled(),
                MiscCommandType, "auto_stretch",
                tr("Toggles the auto-stretch of a frame to the next frame"));
+  createToggle(MI_CheckIndicator, QT_TR_NOOP("Toggle Check Indicators"), "",
+               Preferences::instance()->isCheckIndicatorEnabled(),
+               RightClickMenuCommandType);
 
   // Tools
 

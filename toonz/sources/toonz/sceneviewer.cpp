@@ -1854,6 +1854,8 @@ void SceneViewer::drawOverlay() {
 void SceneViewer::drawCheckNotices() {
   if (m_previewMode) return;
 
+  if (!Preferences::instance()->isCheckIndicatorEnabled()) return;
+
   ToonzCheck *tc = ToonzCheck::instance();
   int mask       = tc->getChecks();
 
