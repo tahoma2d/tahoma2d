@@ -350,6 +350,7 @@ protected:
   void drawCameraStand();
   void drawPreview();
   void drawOverlay();
+  void drawCheckNotices();
 
   void drawScene();
   void drawToolGadgets();

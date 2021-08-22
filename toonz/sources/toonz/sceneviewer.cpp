@@ -1851,6 +1851,47 @@ void SceneViewer::drawOverlay() {
 
 //-----------------------------------------------------------------------------
 
+void SceneViewer::drawCheckNotices() {
+  if (m_previewMode) return;
+
+  ToonzCheck *tc = ToonzCheck::instance();
+  int mask       = tc->getChecks();
+
+  if (!mask) return;
+
+  QStringList checkTexts;
+
+  if (mask & ToonzCheck::eTransparency)
+    checkTexts.append(tr("Transparency Check ENABLED"));
+  if (mask & ToonzCheck::eInk) checkTexts.append(tr("Ink Check ENABLED"));
+  if (mask & ToonzCheck::eInk1) checkTexts.append(tr("Ink#1 Check ENABLED"));
+  if (mask & ToonzCheck::ePaint) checkTexts.append(tr("Paint Check ENABLED"));
+  if (mask & ToonzCheck::eInksOnly)
+    checkTexts.append(tr("Inks Only Check ENABLED"));
+  if (mask & ToonzCheck::eBlackBg)
+    checkTexts.append(tr("Black BG Check ENABLED"));
+  if (mask & ToonzCheck::eGap) checkTexts.append(tr("Fill Check ENABLED"));
+  if (mask & ToonzCheck::eAutoclose) checkTexts.append(tr("Gap Check ENABLED"));
+
+  if (!checkTexts.size()) return;
+
+  int x0, x1, y0, y1;
+  rect().getCoords(&x0, &y0, &x1, &y1);
+  x0 = (-(x1 / 2)) + 15;
+  y0 = ((y1 / 2)) - 25;
+
+  glPushMatrix();
+  glScaled(2, 2, 2);
+  glColor3d(1.0, 0.0, 0.0);
+  for (int i = 0; i < checkTexts.size(); i++) {
+    int y = (y0 / 2) - (i * 10);
+    tglDrawText(TPointD((x0 / 2), y), checkTexts[i].toStdString());
+  }
+  glPopMatrix();
+}
+
+//-----------------------------------------------------------------------------
+
 static void drawFpsGraph(int t0, int t1) {
   glDisable(GL_BLEND);
   static std::deque<std::pair<int, int>> times;
@@ -1974,6 +2015,8 @@ void SceneViewer::paintGL() {
   drawOverlay();
 
   drawDisableScissor();
+
+  drawCheckNotices();
 
   // Il freezed e' attivo ed e' in stato "update": faccio il grab del viewer.
   if (m_freezedStatus == UPDATE_FREEZED) {
