@@ -154,17 +154,15 @@ void RowArea::drawRows(QPainter &p, int r0, int r1) {
       p.setPen(m_viewer->getTextColor());
 
     QPoint basePoint = m_viewer->positionToXY(CellPosition(r, -1));
-    if (!m_viewer->orientation()->isVerticalTimeline())
+    if (!o->isVerticalTimeline())
       basePoint.setY(0);
     else
       basePoint.setX(0);
-    QRect labelRect = m_viewer->orientation()
-                          ->rect(PredefinedRect::FRAME_LABEL)
-                          .translated(basePoint);
+    QRect labelRect =
+        o->rect(PredefinedRect::FRAME_LABEL).translated(basePoint);
     labelRect.adjust(-frameAdj.x() / 2, -frameAdj.y() / 2, -frameAdj.x() / 2,
                      -frameAdj.y() / 2);
-    int align = m_viewer->orientation()->dimension(
-        PredefinedDimension::FRAME_LABEL_ALIGN);
+    int align = o->dimension(PredefinedDimension::FRAME_LABEL_ALIGN);
     // display time and/or frame number
     z++;
     switch (m_viewer->getFrameDisplayStyle()) {
@@ -275,7 +273,6 @@ void RowArea::drawPlayRangeBackground(QPainter &p, int r0, int r1) {
   const Orientation *o = m_viewer->orientation();
   TXsheet *xsh         = m_viewer->getXsheet();
   QPoint frameAdj      = m_viewer->getFrameZoomAdjustment();
-  QRect playRangeRect  = o->rect(PredefinedRect::PLAY_RANGE);
 
   int playR0, playR1, step;
   XsheetGUI::getPlayRange(playR0, playR1, step);

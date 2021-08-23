@@ -460,7 +460,10 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
     , m_precNoteButton(nullptr)
     , m_nextNoteButton(nullptr)
     , m_frameDisplayStyleCombo(nullptr)
-    , m_layerHeaderPanel(nullptr) {
+    , m_layerHeaderPanel(nullptr)
+    , m_hamburgerButton(nullptr)
+    , m_popup(nullptr)
+    , m_currentLayout(nullptr) {
 
   setFrameStyle(QFrame::StyledPanel);
   setObjectName("cornerWidget");
@@ -518,7 +521,7 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
   m_frameDisplayStyleCombo->setCurrentIndex(
       (int)m_viewer->getFrameDisplayStyle());
   m_frameDisplayStyleCombo->hide();
-  // layout
+
   createLayout();
 
   // signal-slot connections
@@ -551,22 +554,54 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
 //-----------------------------------------------------------------------------
 
 void NoteArea::removeLayout() {
-  QLayout *currentLayout = layout();
-  if (!currentLayout) return;
+  if (!m_currentLayout) return;
 
-  // currentLayout->removeWidget(m_flipOrientationButton);
-  currentLayout->removeWidget(m_noteButton);
-  currentLayout->removeWidget(m_precNoteButton);
-  currentLayout->removeWidget(m_nextNoteButton);
-  currentLayout->removeWidget(m_newLevelButton);
-  currentLayout->removeWidget(m_frameDisplayStyleCombo);
-  currentLayout->removeWidget(m_layerHeaderPanel);
-  delete currentLayout;
+  // m_currentLayout->removeWidget(m_flipOrientationButton);
+  m_currentLayout->removeWidget(m_noteButton);
+  m_currentLayout->removeWidget(m_precNoteButton);
+  m_currentLayout->removeWidget(m_nextNoteButton);
+  m_currentLayout->removeWidget(m_frameDisplayStyleCombo);
+  m_currentLayout->removeWidget(m_layerHeaderPanel);
+  delete m_currentLayout;
+  m_currentLayout = nullptr;
+
+  const Orientation *o = m_viewer->orientation();
+  bool noteInPopup     = o->flag(PredefinedFlag::NOTE_AREA_IN_POPUP);
+  if (!noteInPopup && m_popup) {
+    QLayout *panelLayout = layout();
+    if (panelLayout) {
+      panelLayout->removeWidget(m_hamburgerButton);
+      delete panelLayout;
+    }
+    m_hamburgerButton->hide();
+    m_popup->hide();
+  }
 }
 
 void NoteArea::createLayout() {
   const Orientation *o = m_viewer->orientation();
   QRect rect           = o->rect(PredefinedRect::NOTE_AREA);
+  bool noteInPopup     = o->flag(PredefinedFlag::NOTE_AREA_IN_POPUP);
+
+  if (noteInPopup) {
+    if (!m_popup) {
+      m_hamburgerButton = new QPushButton(this);
+      m_hamburgerButton->setFixedSize(30, 30);
+      m_hamburgerButton->setIcon(createQIcon("menu"));
+      m_popup = new QWidget(this, Qt::Popup);
+      m_popup->hide();
+      m_popup->setFixedHeight(85);
+      connect(m_hamburgerButton, SIGNAL(clicked(bool)), this,
+              SLOT(onClickHamburger()));
+    }
+    QVBoxLayout *lay = new QVBoxLayout();
+    lay->setMargin(5);
+    lay->setSpacing(5);
+    lay->addWidget(m_hamburgerButton, 1, Qt::AlignCenter);
+    setLayout(lay);
+    m_hamburgerButton->show();
+  }
+  QWidget *targetWidget = (noteInPopup) ? m_popup : this;
 
   setFixedSize(rect.size());
 
@@ -596,7 +631,7 @@ void NoteArea::createLayout() {
         buttonsLayout->addWidget(m_noteButton, 0, centerAlign);
         buttonsLayout->addWidget(m_nextNoteButton, 0);
       }
-      mainLayout->addLayout(buttonsLayout, 0);
+      mainLayout->addLayout(buttonsLayout, 1);
 
       mainLayout->addWidget(m_frameDisplayStyleCombo, 0);
     }
@@ -604,7 +639,8 @@ void NoteArea::createLayout() {
 
     panelLayout->addWidget(m_layerHeaderPanel);
   }
-  setLayout(panelLayout);
+  targetWidget->setLayout(panelLayout);
+  m_currentLayout = panelLayout;
 
   m_layerHeaderPanel->showOrHide(o);
   if (!o->isVerticalTimeline()) {
@@ -689,6 +725,13 @@ void NoteArea::precNote() {
 void NoteArea::onFrameDisplayStyleChanged(int id) {
   m_viewer->setFrameDisplayStyle((XsheetViewer::FrameDisplayStyle)id);
   m_viewer->updateRows();
+}
+
+void NoteArea::onClickHamburger() {
+  m_popup->move(
+      m_hamburgerButton->mapToGlobal(m_hamburgerButton->rect().center()));
+  m_popup->show();
+  m_popup->updateGeometry();
 }
 
 //=============================================================================

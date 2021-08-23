@@ -80,6 +80,26 @@
 
 namespace {
 
+const bool checkContainsSingleLevel(TXshColumn *column) {
+  TXshLevel *level           = nullptr;
+  TXshCellColumn *cellColumn = column->getCellColumn();
+  if (cellColumn) {
+    int i, r0, r1;
+    cellColumn->getRange(r0, r1);
+    for (i = r0; i <= r1; i++) {
+      TXshCell cell = cellColumn->getCell(i);
+      if (cell.isEmpty()) continue;
+      TXshLevel *lvl = cell.m_level.getPointer();
+      if (!level)
+        level = lvl;
+      else if (lvl != level)
+        return false;
+    }
+    return level != nullptr;
+  }
+  return false;
+}
+
 bool selectionContainTlvImage(TCellSelection *selection, TXsheet *xsheet,
                               bool onlyTlv = false) {
   int r0, r1, c0, c1;
@@ -1241,10 +1261,16 @@ void CellArea::drawCells(QPainter &p, const QRect toBeUpdated) {
     bool isSoundColumn     = false;
     bool isPaletteColumn   = false;
     bool isSoundTextColumn = false;
+    bool showLevelName     = true;
     if (isColumn) {
       isSoundColumn     = column->getSoundColumn() != 0;
       isPaletteColumn   = column->getPaletteColumn() != 0;
       isSoundTextColumn = column->getSoundTextColumn() != 0;
+      if (Preferences::instance()->getLevelNameDisplayType() ==
+          Preferences::ShowLevelNameOnColumnHeader)
+        showLevelName =
+            (isSoundColumn || isPaletteColumn || isSoundTextColumn ||
+             !checkContainsSingleLevel(column));
     }
     // check if the column is reference
     bool isReference = true;
@@ -1283,7 +1309,7 @@ void CellArea::drawCells(QPainter &p, const QRect toBeUpdated) {
       else if (isSoundTextColumn)
         drawSoundTextCell(p, row, col);
       else
-        drawLevelCell(p, row, col, isReference);
+        drawLevelCell(p, row, col, isReference, showLevelName);
     }
 
     // draw vertical line
@@ -1737,7 +1763,8 @@ void CellArea::drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
 
 //-----------------------------------------------------------------------------
 
-void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
+void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
+                             bool showLevelName) {
   const Orientation *o = m_viewer->orientation();
 
   TXsheet *xsh  = m_viewer->getXsheet();
@@ -1957,6 +1984,12 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
 
     QLine continueLine = o->line(which).translated(xy);
     continueLine.setP2(QPoint(continueLine.x2(), continueLine.y2()) - frameAdj);
+
+    if (!showLevelName) {
+      penColor.setAlphaF(0.5);
+      p.setPen(penColor);
+    }
+
     p.drawLine(continueLine);
   }
   // draw frame number
@@ -1987,13 +2020,16 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference) {
       fnum = QString::fromStdString(frameNumber);
     }
 
-    p.drawText(nameRect, Qt::AlignRight | Qt::AlignBottom, fnum);
+    int alignFlag =
+        ((showLevelName) ? Qt::AlignRight | Qt::AlignBottom : Qt::AlignCenter);
+    p.drawText(nameRect, alignFlag, fnum);
   }
 
   // draw level name
-  if (!sameLevel ||
-      (isAfterMarkers && !isSimpleView &&
-       Preferences::instance()->isLevelNameOnEachMarkerEnabled())) {
+  if (showLevelName &&
+      (!sameLevel ||
+       (isAfterMarkers && !isSimpleView &&
+        Preferences::instance()->isLevelNameOnEachMarkerEnabled()))) {
     std::wstring levelName = cell.m_level->getName();
     QString text           = QString::fromStdWString(levelName);
     QFontMetrics fm(font);
@@ -3008,9 +3044,8 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
       double e0, e1;
       int rh0, rh1;
       if (pegbar->getKeyframeSpan(row, r0, e0, r1, e1) &&
-          getEaseHandles(
-              r0, r1, e0, e1, rh0,
-              rh1)) {  // triangles in the segment between key frames
+          getEaseHandles(r0, r1, e0, e1, rh0,
+                         rh1)) {  // triangles in the segment between key frames
         if (rh0 == row)
           m_tooltip = tr("Click and drag to set the acceleration range");
         else if (rh1 == row)

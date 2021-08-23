@@ -126,19 +126,25 @@ FunctionViewer::FunctionViewer(QWidget *parent, Qt::WFlags flags)
 
   //---- layout
 
+  QString layout = Preferences::instance()->getLoadedXsheetLayout();
+  bool toolBarOnBottom =
+      layout == QString("Minimum") &&
+      Preferences::instance()->isExpandFunctionHeaderEnabled() &&
+      m_toggleStart !=
+          Preferences::FunctionEditorToggle::ShowFunctionSpreadsheetInPopup;
+
   m_leftLayout = new QVBoxLayout();
   m_leftLayout->setMargin(0);
   m_leftLayout->setSpacing(0);
   {
-    m_leftLayout->addWidget(m_toolbar);
-    if (Preferences::instance()->isShowQuickToolbarEnabled() &&
-        Preferences::instance()->isExpandFunctionHeaderEnabled()) {
-      m_spacing = 65;
-    } else
-      m_spacing = 35;
-
-    QString layout = Preferences::instance()->getLoadedXsheetLayout();
-    if (layout == QString("Compact")) m_spacing -= 18;
+    if (!toolBarOnBottom) m_leftLayout->addWidget(m_toolbar);
+    m_spacing = 35;
+    if (layout == QString("Compact"))
+      m_spacing -= 18;
+    else if (toolBarOnBottom) {
+      m_spacing = 3;  // m_spacing is used for the height of spacer widget
+      m_leftLayout->addSpacing(m_spacing);
+    }
 
     if (m_toggleStart !=
         Preferences::FunctionEditorToggle::ShowGraphEditorInPopup)
@@ -146,6 +152,8 @@ FunctionViewer::FunctionViewer(QWidget *parent, Qt::WFlags flags)
     if (m_toggleStart !=
         Preferences::FunctionEditorToggle::ShowFunctionSpreadsheetInPopup)
       m_leftLayout->addWidget(m_numericalColumns);
+    // display the toolbar on the bottom in Minimum layout
+    if (toolBarOnBottom) m_leftLayout->addWidget(m_toolbar);
   }
 
   leftPanel->setLayout(m_leftLayout);
@@ -209,13 +217,25 @@ FunctionViewer::FunctionViewer(QWidget *parent, Qt::WFlags flags)
 
   assert(ret);
   if (m_toggleStart ==
-      Preferences::FunctionEditorToggle::ShowGraphEditorInPopup) {
-    m_functionGraph->hide();
-    m_leftLayout->setSpacing(m_spacing);
-  }
-  if (m_toggleStart ==
-      Preferences::FunctionEditorToggle::ShowFunctionSpreadsheetInPopup)
+      Preferences::FunctionEditorToggle::ShowFunctionSpreadsheetInPopup) {
     m_numericalColumns->hide();
+    if (QSpacerItem *spacer = m_leftLayout->itemAt(0)->spacerItem())
+      spacer->changeSize(0, 0);
+  } else {
+    bool toolBarVisible =
+        Preferences::instance()->isShowQuickToolbarEnabled() &&
+        Preferences::instance()->isExpandFunctionHeaderEnabled();
+    if (QSpacerItem *spacer = m_leftLayout->itemAt(0)->spacerItem()) {
+      spacer->changeSize(1, m_spacing + ((toolBarVisible) ? 10 : 0),
+                         QSizePolicy::Fixed, QSizePolicy::Fixed);
+      spacer->invalidate();
+    } else
+      m_leftLayout->setSpacing(m_spacing + ((toolBarVisible) ? 30 : 0));
+    if (m_toggleStart ==
+        Preferences::FunctionEditorToggle::ShowGraphEditorInPopup) {
+      m_functionGraph->hide();
+    }
+  }
   m_toggleStatus = FunctionEditorToggleStatus;
 }
 
@@ -235,46 +255,40 @@ void FunctionViewer::showEvent(QShowEvent *) {
   bool ret = true;
 
   if (m_xshHandle) {
-    ret = connect(m_xshHandle, SIGNAL(xsheetChanged()), this,
-                  SLOT(refreshModel())) &&
-          ret;
-    ret = connect(m_xshHandle, SIGNAL(xsheetSwitched()), this,
-                  SLOT(rebuildModel())) &&
-          ret;
+    ret = ret && connect(m_xshHandle, SIGNAL(xsheetChanged()), this,
+                         SLOT(refreshModel()));
+    ret = ret && connect(m_xshHandle, SIGNAL(xsheetSwitched()), this,
+                         SLOT(rebuildModel()));
   }
 
   if (m_frameHandle) {
-    ret = connect(m_frameHandle, SIGNAL(frameSwitched()), this,
-                  SLOT(propagateExternalSetFrame())) &&
-          ret;
-
-    ret = connect(m_frameHandle, SIGNAL(triggerNextKeyframe(QWidget *)),
-                  m_toolbar, SLOT(onNextKeyframe(QWidget *))) &&
-          ret;
-    ret = connect(m_frameHandle, SIGNAL(triggerPrevKeyframe(QWidget *)),
-                  m_toolbar, SLOT(onPrevKeyframe(QWidget *))) &&
-          ret;
+    ret = ret && connect(m_frameHandle, SIGNAL(frameSwitched()), this,
+                         SLOT(propagateExternalSetFrame()));
+    ret = ret && connect(m_frameHandle, SIGNAL(triggerNextKeyframe(QWidget *)),
+                         m_toolbar, SLOT(onNextKeyframe(QWidget *)));
+    ret = ret && connect(m_frameHandle, SIGNAL(triggerPrevKeyframe(QWidget *)),
+                         m_toolbar, SLOT(onPrevKeyframe(QWidget *)));
   }
 
   if (m_objectHandle) {
-    ret = connect(m_objectHandle, SIGNAL(objectSwitched()), this,
-                  SLOT(onStageObjectSwitched())) &&
-          ret;
-    ret = connect(m_objectHandle, SIGNAL(objectChanged(bool)), this,
-                  SLOT(onStageObjectChanged(bool))) &&
-          ret;
+    ret = ret && connect(m_objectHandle, SIGNAL(objectSwitched()), this,
+                         SLOT(onStageObjectSwitched()));
+    ret = ret && connect(m_objectHandle, SIGNAL(objectChanged(bool)), this,
+                         SLOT(onStageObjectChanged(bool)));
   }
 
   if (m_fxHandle)
-    ret =
-        connect(m_fxHandle, SIGNAL(fxSwitched()), this, SLOT(onFxSwitched())) &&
-        ret;
+    ret = ret &&
+          connect(m_fxHandle, SIGNAL(fxSwitched()), this, SLOT(onFxSwitched()));
 
   // display animated channels when the scene is switched
-  if (m_sceneHandle)
-    ret = connect(m_sceneHandle, SIGNAL(sceneSwitched()), m_treeView,
-                  SLOT(displayAnimatedChannels())) &&
-          ret;
+  if (m_sceneHandle) {
+    ret = ret && connect(m_sceneHandle, SIGNAL(sceneSwitched()), m_treeView,
+                         SLOT(displayAnimatedChannels()));
+    ret = ret &&
+          connect(m_sceneHandle, SIGNAL(preferenceChanged(const QString &)),
+                  this, SLOT(onPreferenceChanged(const QString &)));
+  }
 
   assert(ret);
 
@@ -295,18 +309,7 @@ void FunctionViewer::showEvent(QShowEvent *) {
   }
 
   if (m_fxHandle) ftm->setCurrentFx(m_fxHandle->getFx());
-  if (m_toggleStart ==
-      Preferences::FunctionEditorToggle::ToggleBetweenGraphAndSpreadsheet) {
-    if (m_toggleStatus == 1) {
-      m_numericalColumns->hide();
-      m_functionGraph->show();
-      m_leftLayout->setSpacing(0);
-    } else {
-      m_functionGraph->hide();
-      m_numericalColumns->show();
-      m_leftLayout->setSpacing(m_spacing);
-    }
-  }
+  onPreferenceChanged("");
 }
 
 //-----------------------------------------------------------------------------
@@ -509,13 +512,28 @@ void FunctionViewer::toggleMode() {
       m_functionGraph->hide();
       m_numericalColumns->show();
       m_numericalColumns->setFocus();
-      m_leftLayout->setSpacing(m_spacing);
+      bool toolBarVisible =
+          Preferences::instance()->isShowQuickToolbarEnabled() &&
+          Preferences::instance()->isExpandFunctionHeaderEnabled();
+      if (QSpacerItem *spacer = m_leftLayout->itemAt(0)->spacerItem()) {
+        spacer->changeSize(1, m_spacing + ((toolBarVisible) ? 10 : 0),
+                           QSizePolicy::Fixed, QSizePolicy::Fixed);
+        spacer->invalidate();
+        m_numericalColumns->updateHeaderHeight();
+        m_leftLayout->setSpacing(0);
+      } else
+        m_leftLayout->setSpacing(m_spacing + ((toolBarVisible) ? 30 : 0));
+      updateGeometry();
       m_toggleStatus = 0;
     } else {
       m_functionGraph->show();
       m_functionGraph->setFocus();
       m_numericalColumns->hide();
       m_leftLayout->setSpacing(0);
+      if (QSpacerItem *spacer = m_leftLayout->itemAt(0)->spacerItem()) {
+        spacer->changeSize(0, 0);
+        spacer->invalidate();
+      }
       m_toggleStatus = 1;
     }
   }
@@ -647,6 +665,45 @@ void FunctionViewer::doSwitchCurrentObject(TStageObject *obj) {
     m_columnHandle->setColumnIndex(id.getIndex());
   else
     m_objectHandle->setObjectId(id);
+}
+
+//-----------------------------------------------------------------------------
+
+void FunctionViewer::onPreferenceChanged(const QString &prefName) {
+  if (prefName != "XSheetToolbar" && !prefName.isEmpty()) return;
+  if (!Preferences::instance()->isExpandFunctionHeaderEnabled()) return;
+  if (m_toggleStart ==
+      Preferences::FunctionEditorToggle::ShowFunctionSpreadsheetInPopup)
+    return;
+
+  if (m_toggleStart ==
+          Preferences::FunctionEditorToggle::ToggleBetweenGraphAndSpreadsheet &&
+      m_toggleStatus == 1) {
+    m_numericalColumns->hide();
+    m_functionGraph->show();
+    m_leftLayout->setSpacing(0);
+    if (QSpacerItem *spacer = m_leftLayout->itemAt(0)->spacerItem()) {
+      spacer->changeSize(0, 0);
+      spacer->invalidate();
+    }
+    return;
+  }
+
+  // spreadsheet is shown
+  bool toolBarVisible =
+      Preferences::instance()->isShowQuickToolbarEnabled() &&
+      Preferences::instance()->isExpandFunctionHeaderEnabled();
+  m_functionGraph->hide();
+  m_numericalColumns->show();
+  if (QSpacerItem *spacer = m_leftLayout->itemAt(0)->spacerItem()) {
+    spacer->changeSize(1, m_spacing + ((toolBarVisible) ? 10 : 0),
+                       QSizePolicy::Fixed, QSizePolicy::Fixed);
+    spacer->invalidate();
+    m_numericalColumns->updateHeaderHeight();
+    m_leftLayout->setSpacing(0);
+  } else
+    m_leftLayout->setSpacing(m_spacing + ((toolBarVisible) ? 30 : 0));
+  updateGeometry();
 }
 
 //-----------------------------------------------------------------------------

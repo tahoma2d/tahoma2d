@@ -175,6 +175,7 @@ the tree or
 
   void setName(const std::string &name);
   std::string getName() const;
+  bool hasSpecifiedName() { return m_name != ""; }
 
   bool hasSpecifiedName() const { return m_name != ""; }
 

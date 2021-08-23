@@ -408,12 +408,8 @@ void Preferences::definePreferenceItems() {
          QMetaType::Bool, true);
   define(actualPixelViewOnSceneEditingMode, "actualPixelViewOnSceneEditingMode",
          QMetaType::Bool, false);
-  define(levelNameOnEachMarkerEnabled, "levelNameOnEachMarkerEnabled",
-         QMetaType::Bool, false);
   define(showRasterImagesDarkenBlendedInViewer,
          "showRasterImagesDarkenBlendedInViewer", QMetaType::Bool, false);
-  define(showFrameNumberWithLetters, "showFrameNumberWithLetters",
-         QMetaType::Bool, false);
   define(iconSize, "iconSize", QMetaType::QSize, QSize(80, 45), QSize(10, 10),
          QSize(400, 400));
   define(viewShrink, "viewShrink", QMetaType::Int, 1, 1, 20);
@@ -576,6 +572,12 @@ void Preferences::definePreferenceItems() {
          true);
   define(currentColumnColor, "currentColumnColor", QMetaType::QColor,
          QColor(Qt::yellow));
+  // define(levelNameOnEachMarkerEnabled, "levelNameOnEachMarkerEnabled",
+  //  QMetaType::Bool, false);
+  define(levelNameDisplayType, "levelNameDisplayType", QMetaType::Int,
+         0);  // default
+  define(showFrameNumberWithLetters, "showFrameNumberWithLetters",
+         QMetaType::Bool, false);
 
   // Animation
   define(keyframeType, "keyframeType", QMetaType::Int, 2);  // Linear
@@ -763,6 +765,16 @@ void Preferences::resolveCompatibility() {
       setValue(NumberingSystem, 1);
       break;
     }
+  }
+  // "levelNameOnEachMarkerEnabled" is changed to "levelNameDisplayType", adding
+  // a new option
+  if (m_settings->contains("levelNameOnEachMarkerEnabled") &&
+      !m_settings->contains("levelNameDisplayType")) {
+    if (m_settings->value("levelNameOnEachMarkerEnabled")
+            .toBool())  // show level name on each marker
+      setValue(levelNameDisplayType, ShowLevelNameOnEachMarker);
+    else  // Default (level name on top of each cell block)
+      setValue(levelNameDisplayType, ShowLevelName_Default);
   }
 }
 

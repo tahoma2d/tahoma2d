@@ -203,7 +203,8 @@ enum class PredefinedFlag {
   THUMBNAIL_AREA_BORDER,
   THUMBNAIL_AREA_VISIBLE,
   CAMERA_ICON_VISIBLE,
-  VOLUME_AREA_VERTICAL
+  VOLUME_AREA_VERTICAL,
+  NOTE_AREA_IN_POPUP
 };
 
 // Knows everything about geometry of a particular orientation.
