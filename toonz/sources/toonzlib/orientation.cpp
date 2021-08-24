@@ -988,7 +988,7 @@ LeftToRightOrientation::LeftToRightOrientation() {
                 CELL_HEIGHT - KEY_ICON_HEIGHT - 2, KEY_ICON_WIDTH,
                 KEY_ICON_HEIGHT);
   addRect(PredefinedRect::KEY_ICON, keyRect);
-  addRect(PredefinedRect::CAMERA_KEY_ICON, keyRect);
+  addRect(PredefinedRect::CAMERA_KEY_ICON, keyRect.adjusted(0, -4, 0, -4));
   QRect nameRect = cellRect.adjusted(4, 4, -6, 0);
   addRect(PredefinedRect::CELL_NAME, nameRect);
   addRect(PredefinedRect::CELL_NAME_WITH_KEYFRAME, nameRect);

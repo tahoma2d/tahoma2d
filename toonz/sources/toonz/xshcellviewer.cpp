@@ -1707,11 +1707,17 @@ void CellArea::drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
                             ->rect(PredefinedRect::FRAME_MARKER_AREA)
                             .translated(xy)
                             .translated(-frameAdj / 2);
-  if (isKeyFrame)
+  if (isKeyFrame) {
+    if (isCamera && !m_viewer->orientation()->isVerticalTimeline() &&
+        m_viewer->getFrameZoomFactor() <=
+            m_viewer->orientation()->dimension(
+                PredefinedDimension::SCALE_THRESHOLD))
+      dotRect.adjust(0, -3, 0, -3);
+
     m_viewer->drawPredefinedPath(p, PredefinedPath::FRAME_MARKER_DIAMOND,
                                  dotRect.adjusted(1, 1, 1, 1).center(), color,
                                  outlineColor);
-  else {
+  } else {
     // move to column center
     if (m_viewer->orientation()->isVerticalTimeline()) {
       PredefinedLine which =
