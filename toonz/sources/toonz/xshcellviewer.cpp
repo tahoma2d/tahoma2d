@@ -2433,18 +2433,18 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
           int handleRow0, handleRow1;
           if (getEaseHandles(segmentRow0, segmentRow1, ease0, ease1, handleRow0,
                              handleRow1)) {
+            QRect easeRect = tmpKeyRect;
+            if (o->isVerticalTimeline()) easeRect.adjust(-2, 0, -2, 0);
             QPoint topLeft =
                 m_viewer->positionToXY(CellPosition(handleRow0, col));
-            m_viewer->drawPredefinedPath(
-                p, PredefinedPath::BEGIN_EASE_TRIANGLE,
-                tmpKeyRect.translated(topLeft).center(), keyFrameColor,
-                outline);
+            m_viewer->drawPredefinedPath(p, PredefinedPath::BEGIN_EASE_TRIANGLE,
+                                         easeRect.translated(topLeft).center(),
+                                         keyFrameColor, outline);
 
             topLeft = m_viewer->positionToXY(CellPosition(handleRow1, col));
-            m_viewer->drawPredefinedPath(
-                p, PredefinedPath::END_EASE_TRIANGLE,
-                tmpKeyRect.translated(topLeft).center(), keyFrameColor,
-                outline);
+            m_viewer->drawPredefinedPath(p, PredefinedPath::END_EASE_TRIANGLE,
+                                         easeRect.translated(topLeft).center(),
+                                         keyFrameColor, outline);
           }
         }
         // skip to next segment
