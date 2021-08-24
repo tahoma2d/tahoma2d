@@ -296,6 +296,11 @@ class DVAPI SchematicViewer final : public QWidget {
   QColor m_xsheetColor;
   Q_PROPERTY(QColor XsheetColor READ getXsheetColor WRITE setXsheetColor)
 
+  // Pass Through node
+  QColor m_passThroughColor;
+  Q_PROPERTY(QColor PassThroughColor READ getPassThroughColor WRITE
+                 setPassThroughColor)
+
   // Fx nodes
   QColor m_normalFx;
   Q_PROPERTY(QColor NormalFxColor READ getNormalFxColor WRITE setNormalFxColor)
@@ -473,6 +478,10 @@ public:
   // Xsheet node
   void setXsheetColor(const QColor &color) { m_xsheetColor = color; }
   QColor getXsheetColor() const { return m_xsheetColor; }
+
+  // Pass Through node
+  void setPassThroughColor(const QColor &color) { m_passThroughColor = color; }
+  QColor getPassThroughColor() const { return m_passThroughColor; }
 
   // Fx nodes
   QColor getNormalFxColor() const { return m_normalFx; }

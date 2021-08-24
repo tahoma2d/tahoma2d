@@ -1528,7 +1528,9 @@ ColorParameterSelector::ColorParameterSelector(QWidget *parent)
     , m_index(-1)
     , m_chipSize(21, 21)
     , m_chipOrigin(0, 1)
-    , m_chipDelta(21, 0) {}
+    , m_chipDelta(21, 0) {
+  setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+}
 
 //-----------------------------------------------------------------------------
 
@@ -1592,6 +1594,14 @@ void ColorParameterSelector::mousePressEvent(QMouseEvent *event) {
     emit colorParamChanged();
     update();
   }
+}
+
+//-----------------------------------------------------------------------------
+
+QSize ColorParameterSelector::sizeHint() const {
+  return QSize(m_chipOrigin.x() + (m_colors.size() - 1) * m_chipDelta.x() +
+                   m_chipSize.width(),
+               m_chipOrigin.y() + m_chipSize.height());
 }
 
 //*****************************************************************************
@@ -3135,9 +3145,6 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   m_toolBar->setMovable(false);
   m_toolBar->setMaximumHeight(22);
   m_toolBar->addWidget(m_colorParameterSelector);
-
-  m_colorParameterSelector->setMinimumWidth(150);
-  m_colorParameterSelector->setFixedHeight(22);
 
   QMenu *menu   = new QMenu();
   m_wheelAction = new QAction(tr("Wheel"), this);

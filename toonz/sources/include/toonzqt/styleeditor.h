@@ -449,6 +449,8 @@ signals:
 protected:
   void paintEvent(QPaintEvent *) override;
   void mousePressEvent(QMouseEvent *) override;
+
+  QSize sizeHint() const override;
 };
 
 //=============================================================================

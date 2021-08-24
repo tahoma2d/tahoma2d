@@ -43,6 +43,7 @@
         <file>Resources/spline_parent_port.svg</file>
         <file>Resources/fxport_red.svg</file>
         <file>Resources/fxport_blue.svg</file>
+        <file>Resources/fxport_pt_red.svg</file>
         <file>Resources/cachefx.png</file>
         <file>Resources/schematic_link.svg</file>
         <file>Resources/schematic_link_small.svg</file>

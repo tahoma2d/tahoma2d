@@ -169,7 +169,6 @@ set(SOURCES
     autoclose.cpp
     autopos.cpp
     captureparameters.cpp
-	cellpositionratio.cpp
     childstack.cpp
     cleanupcolorstyles.cpp
     cleanuppalette.cpp

@@ -847,6 +847,16 @@ void MeasuredDoubleParamField::onChange(bool dragging) {
 
 void MeasuredDoubleParamField::onKeyToggled() { onKeyToggle(); }
 
+//-----------------------------------------------------------------------------
+
+void MeasuredDoubleParamField::setPrecision(int precision) {
+  double min, max;
+  m_measuredDoubleField->getRange(min, max);
+  m_measuredDoubleField->setDecimals(precision);
+  // update slider
+  m_measuredDoubleField->setRange(min, max);
+}
+
 //=============================================================================
 // MeasuredRangeParamField
 //-----------------------------------------------------------------------------
@@ -1294,14 +1304,30 @@ ModeSensitiveBox::ModeSensitiveBox(QWidget *parent,
                                    ModeChangerParamField *modeChanger,
                                    QList<int> modes)
     : QWidget(parent), m_modes(modes) {
+  m_currentMode = m_modes.first();
   connect(modeChanger, SIGNAL(modeChanged(int)), this,
           SLOT(onModeChanged(int)));
+}
+
+ModeSensitiveBox::ModeSensitiveBox(QWidget *parent, QCheckBox *checkBox)
+    : QWidget(parent) {
+  m_modes << 1;
+  connect(
+      checkBox, &QCheckBox::stateChanged, this,
+      [=]() { onModeChanged(checkBox->isChecked() ? 1 : 0); },
+      Qt::AutoConnection);
 }
 
 //-----------------------------------------------------------------------------
 
 void ModeSensitiveBox::onModeChanged(int modeValue) {
-  setVisible(m_modes.contains(modeValue));
+  bool wasVisible = isVisible();
+  m_currentMode   = modeValue;
+  if (wasVisible == m_modes.contains(modeValue)) return;
+  setVisible(!wasVisible);
+
+  ParamsPage *paramsPage = dynamic_cast<ParamsPage *>(parentWidget());
+  if (paramsPage) emit paramsPage->preferredPageSizeChanged();
 }
 
 //=============================================================================

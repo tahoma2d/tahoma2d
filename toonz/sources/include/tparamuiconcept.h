@@ -65,8 +65,10 @@ public:
                    // [TDoubleParamP] }
     LINEAR_RANGE,  // A band-like range between two points.
                    // { [2 TPointParamP] }
+    COMPASS,       // a line widget pointing toward some point. [TPointParamP]
+    COMPASS_SPIN,  // ... with guides in rotational direction.
 
-    RAYLIT,
+    RAINBOW_WIDTH,
 
     TYPESCOUNT
   };

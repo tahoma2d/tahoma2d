@@ -286,6 +286,7 @@ private:
   ToonzScene(const ToonzScene &);
   ToonzScene &operator=(const ToonzScene &);
 
+public:
   // if the option is set in the preferences,
   // remove the scene numbers("c####_") from the file name
   std::wstring getLevelNameWithoutSceneNumber(std::wstring orgName);

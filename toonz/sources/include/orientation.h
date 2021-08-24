@@ -116,10 +116,11 @@ enum class PredefinedRect {
   FILTER_COLOR,        //! where to show layer's filter color
   CONFIG_AREA,  //! clickable area larger than the config icon, containing it
   CONFIG,       //! the config icon itself
-  CAMERA_CONFIG_AREA,  //! config area for the camera column
-  CAMERA_CONFIG,       //! the config icon for camera column
-  FRAME_MARKER_AREA,   //! Cell's frame indicator
-  FRAME_INDICATOR,     //! Row # indicator
+  CAMERA_CONFIG_AREA,        //! config area for the camera column
+  CAMERA_CONFIG,             //! the config icon for camera column
+  FRAME_MARKER_AREA,         //! Cell's frame indicator
+  CAMERA_FRAME_MARKER_AREA,  //! Cell's frame indicator for camera column
+  FRAME_INDICATOR,           //! Row # indicator
   ZOOM_SLIDER_AREA,
   ZOOM_SLIDER,
   ZOOM_IN_AREA,
@@ -155,7 +156,8 @@ enum class PredefinedDimension {
   ONION_TURN,            //! onion handle turn in degrees
   QBOXLAYOUT_DIRECTION,  //! direction of QBoxLayout
   CENTER_ALIGN,          //! horizontal / vertical align
-  CAMERA_LAYER           //! width of a camera column / height of camera row
+  CAMERA_LAYER,          //! width of a camera column / height of camera row
+  SCALE_THRESHOLD        //! scale threshold to simplify the view
 };
 enum class PredefinedPath {
   DRAG_HANDLE_CORNER,   //! triangle corner at drag sidebar
@@ -218,11 +220,11 @@ protected:
 public:
   virtual ~Orientation(){};
   virtual CellPosition xyToPosition(const QPoint &xy,
-                                    const ColumnFan *fan) const = 0;
+                                    const ColumnFan *fan) const           = 0;
   virtual QPoint positionToXY(const CellPosition &position,
-                              const ColumnFan *fan) const                = 0;
-  virtual CellPositionRatio xyToPositionRatio(const QPoint &xy) const    = 0;
-  virtual QPoint positionRatioToXY(const CellPositionRatio &ratio) const = 0;
+                              const ColumnFan *fan) const                 = 0;
+  virtual CellPositionRatio xyToPositionRatio(const QPointF &xy) const    = 0;
+  virtual QPointF positionRatioToXY(const CellPositionRatio &ratio) const = 0;
 
   virtual int colToLayerAxis(int layer, const ColumnFan *fan) const = 0;
   virtual int rowToFrameAxis(int frame) const = 0;

@@ -24,6 +24,7 @@ class FxSchematicGroupEditor;
 class FxSchematicMacroEditor;
 class TMacroFx;
 
+enum SearchDirection { Both = 0, Input, Output };
 //==================================================================
 //
 // FXSchematic
@@ -178,11 +179,16 @@ private:
   void placeNodeAndParents(TFx *fx, double x, double &maxX, double &maxY);
 
   QPointF nearestPoint(const QPointF &point);
-  void highlightLinks(FxSchematicNode *node, bool value);
+
+  void highlightLinks(FxSchematicNode *node, bool value,
+                      SearchDirection direction = Both);
+
   void updatePosition(FxSchematicNode *node, const TPointD &pos);
   void simulateInsertSelection(SchematicLink *link, bool connect);
   void updatePositionOnResize(TFx *fx, bool maximizedNode);
   void removeRetroLinks(TFx *fx, double &maxX);
+
+  bool isAnEmptyZone_withParentFx(const QRectF &rect, const TFx *parent);
 
 signals:
   void showPreview(TFxP);
