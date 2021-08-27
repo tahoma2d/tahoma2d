@@ -3498,6 +3498,7 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell) {
 
     if (selectionContainRasterImage(m_viewer->getCellSelection(),
                                     m_viewer->getXsheet())) {
+      menu.addAction(cmdManager->getAction(MI_CanvasSize));
       QMenu *editImageMenu = new QMenu(tr("Edit Image"), this);
       {
         editImageMenu->addAction(cmdManager->getAction(MI_AdjustLevels));
@@ -3505,7 +3506,6 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell) {
         editImageMenu->addAction(
             cmdManager->getAction(MI_BrightnessAndContrast));
         editImageMenu->addAction(cmdManager->getAction(MI_Antialias));
-        editImageMenu->addAction(cmdManager->getAction(MI_CanvasSize));
       }
       menu.addMenu(editImageMenu);
 

@@ -11,6 +11,7 @@
 #include "cellselection.h"
 #include "sceneviewer.h"
 #include "statusbar.h"
+#include "menubarcommandids.h"
 
 // TnzTools includes
 #include "tools/tool.h"
@@ -566,6 +567,7 @@ void TApp::onColumnIndexSwitched() {
 
 void TApp::onXshLevelSwitched(TXshLevel *) {
   TXshLevel *level = m_currentLevel->getLevel();
+  CommandManager::instance()->enable(MI_CanvasSize, false);
   if (level) {
     TXshSimpleLevel *simpleLevel = level->getSimpleLevel();
 
@@ -580,6 +582,17 @@ void TApp::onXshLevelSwitched(TXshLevel *) {
       if (simpleLevel->getType() == OVL_XSHLEVEL && currentPalette &&
           currentPalette->isCleanupPalette())
         m_paletteController->editCleanupPalette();
+
+      bool isRasterLevel = (simpleLevel->getType() == TZP_XSHLEVEL ||
+                            simpleLevel->getType() == OVL_XSHLEVEL ||
+                            simpleLevel->getType() == TZI_XSHLEVEL);
+      if (isRasterLevel && (simpleLevel->getPath().getType() == "psd" ||
+                            simpleLevel->getPath().getType() == "gif" ||
+                            simpleLevel->getPath().getType() == "mp4" ||
+                            simpleLevel->getPath().getType() == "webm" ||
+                            simpleLevel->getPath().getType() == "mov"))
+        isRasterLevel = false;
+      CommandManager::instance()->enable(MI_CanvasSize, isRasterLevel);
 
       return;
     }
