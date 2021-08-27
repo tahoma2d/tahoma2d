@@ -40,6 +40,8 @@
 #include "toonz/preferences.h"
 #include "toonz/tstageobjectid.h"
 
+#include "../toonz/xsheetviewer.h"
+
 // TnzBase includes
 #include "tfx.h"
 #include "tfxattributes.h"
@@ -1396,10 +1398,11 @@ public:
   void execute() override {
     TColumnSelection *selection = dynamic_cast<TColumnSelection *>(
         TApp::instance()->getCurrentSelection()->getSelection());
-    TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
-    int cc             = TApp::instance()->getCurrentColumn()->getColumnIndex();
-    bool sound_changed = false;
-    TTool *tool        = TApp::instance()->getCurrentTool()->getTool();
+    TXsheet *xsh          = TApp::instance()->getCurrentXsheet()->getXsheet();
+    XsheetViewer *xviewer = TApp::instance()->getCurrentXsheetViewer();
+    int cc                = xviewer->getClickedColumn();
+    bool sound_changed    = false;
+    TTool *tool           = TApp::instance()->getCurrentTool()->getTool();
     TTool::Viewer *viewer = tool ? tool->getViewer() : nullptr;
     bool viewer_changed   = false;
 
