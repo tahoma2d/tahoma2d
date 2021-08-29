@@ -1515,6 +1515,7 @@ public:
 
   void initialize(TPanel *panel) override {
     MotionPathPanel *motionPathPanel = new MotionPathPanel(panel);
+    panel->setMinimumSize(300, 400);
     panel->setWidget(motionPathPanel);
     panel->setWindowTitle(QObject::tr("Motion Paths"));
     panel->setIsMaximizable(false);
