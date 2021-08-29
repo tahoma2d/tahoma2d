@@ -946,7 +946,8 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
     return (enable(true), QString());
 
   // Check against camera column
-  if (!filmstrip && columnIndex < 0 && (targetType & TTool::EmptyTarget) &&
+  if (!filmstrip && !spline && columnIndex < 0 &&
+      (targetType & TTool::EmptyTarget) &&
       (m_name == T_Type || m_name == T_Geometric || m_name == T_Brush))
     return (enable(false), QString());
 
