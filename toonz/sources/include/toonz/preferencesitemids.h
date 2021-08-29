@@ -46,7 +46,7 @@ enum PreferencesItemId {
   interfaceFontStyle,
   colorCalibrationEnabled,
   colorCalibrationLutPaths,
-  checkIndicatorEnabled,
+  viewerIndicatorEnabled,
 
   //----------
   // Visualization

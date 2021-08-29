@@ -65,10 +65,10 @@ public slots:
 
 }  // Namespace CursorOutlineToggleGui
 
-namespace CheckIndicatorToggleGui {
-void addCheckIndicatorCommand(QMenu *menu);
+namespace ViewerIndicatorToggleGui {
+void addViewerIndicatorCommand(QMenu *menu);
 
-class CheckIndicatorToggleHandler : public QObject {
+class ViewerIndicatorToggleHandler : public QObject {
   Q_OBJECT
 
 public slots:
@@ -76,6 +76,6 @@ public slots:
   void deactivate();
 };
 
-}  // Namespace CheckIndicatorToggleGui
+}  // Namespace ViewerIndicatorToggleGui
 
 #endif

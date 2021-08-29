@@ -1634,22 +1634,9 @@ void SceneViewer::drawOverlay() {
 
     TXsheet *xsh         = TApp::instance()->getCurrentXsheet()->getXsheet();
     TStageObjectId objId = app->getCurrentObject()->getObjectId();
-    bool isMotionPath    = false;
-
-    if (objId == xsh->getStageObjectTree()->getMotionPathViewerId() &&
-        app->getCurrentObject()->isSpline()) {
-      isMotionPath = true;
-      int x0, x1, y0, y1;
-      rect().getCoords(&x0, &y0, &x1, &y1);
-      x0 = (-(x1 / 2)) + 15;
-      y0 = ((y1 / 2)) - 25;
-      glPushMatrix();
-      glScaled(3, 3, 3);
-      glColor3d(1.0, 0.0, 0.0);
-      tglDrawText(TPointD(x0 / 3, y0 / 3),
-                  tr("Motion Path Selected").toStdWString());
-      glPopMatrix();
-    }
+    bool isMotionPath =
+        (objId == xsh->getStageObjectTree()->getMotionPathViewerId() &&
+         app->getCurrentObject()->isSpline());
 
     // draw camera
     if (!isMotionPath && viewCameraToggle.getStatus() &&
@@ -1735,10 +1722,6 @@ void SceneViewer::drawOverlay() {
     else
       m_FPS = 0;
 
-    if (m_freezedStatus != NO_FREEZED) {
-      tglColor(TPixel32::Red);
-      tglDrawText(TPointD(0, 0), "FROZEN");
-    }
     assert(glGetError() == GL_NO_ERROR);
 
   }  //! cameraTest
@@ -1851,27 +1834,36 @@ void SceneViewer::drawOverlay() {
 
 //-----------------------------------------------------------------------------
 
-void SceneViewer::drawCheckNotices() {
-  if (m_previewMode) return;
-
-  if (!Preferences::instance()->isCheckIndicatorEnabled()) return;
-
-  ToonzCheck *tc = ToonzCheck::instance();
-  int mask       = tc->getChecks();
-
-  if (!mask) return;
+void SceneViewer::drawViewerIndicators() {
+  if (!Preferences::instance()->isViewerIndicatorEnabled()) return;
 
   QStringList checkTexts;
 
-  if (mask & ToonzCheck::eTransparency)
-    checkTexts.append(tr("*Transparency Check*"));
-  if (mask & ToonzCheck::eInk) checkTexts.append(tr("*Ink Check*"));
-  if (mask & ToonzCheck::eInk1) checkTexts.append(tr("*Ink#1 Check*"));
-  if (mask & ToonzCheck::ePaint) checkTexts.append(tr("*Paint Check*"));
-  if (mask & ToonzCheck::eInksOnly) checkTexts.append(tr("*Inks Only Check*"));
-  if (mask & ToonzCheck::eBlackBg) checkTexts.append(tr("*Black BG Check*"));
-  if (mask & ToonzCheck::eGap) checkTexts.append(tr("*Fill Check*"));
-  if (mask & ToonzCheck::eAutoclose) checkTexts.append(tr("*Gap Check*"));
+  // Frozen Viewer Indicator
+  if (m_freezedStatus) checkTexts.append(tr("FROZEN"));
+
+  // Motion Path Indicator
+  TApp *app            = TApp::instance();
+  TStageObjectId objId = app->getCurrentObject()->getObjectId();
+  TXsheet *xsh         = app->getCurrentXsheet()->getXsheet();
+  if (objId == xsh->getStageObjectTree()->getMotionPathViewerId() &&
+      app->getCurrentObject()->isSpline())
+    checkTexts.append(tr("Motion Path Selected"));
+
+  // Check Indicators (disabled in Preview mode)
+  ToonzCheck *tc = ToonzCheck::instance();
+  int mask       = tc->getChecks();
+  if (!m_previewMode && mask) {
+    if (mask & ToonzCheck::eTransparency)
+      checkTexts.append(tr("Transparency Check"));
+    if (mask & ToonzCheck::eInk) checkTexts.append(tr("Ink Check"));
+    if (mask & ToonzCheck::eInk1) checkTexts.append(tr("Ink#1 Check"));
+    if (mask & ToonzCheck::ePaint) checkTexts.append(tr("Paint Check"));
+    if (mask & ToonzCheck::eInksOnly) checkTexts.append(tr("Inks Only Check"));
+    if (mask & ToonzCheck::eBlackBg) checkTexts.append(tr("Black BG Check"));
+    if (mask & ToonzCheck::eGap) checkTexts.append(tr("Fill Check"));
+    if (mask & ToonzCheck::eAutoclose) checkTexts.append(tr("Gap Check"));
+  }
 
   if (!checkTexts.size()) return;
 
@@ -1995,6 +1987,8 @@ void SceneViewer::paintGL() {
     if (!m_isPicking && m_lutCalibrator && m_lutCalibrator->isValid())
       m_lutCalibrator->onEndDraw(m_fbo);
 
+    drawViewerIndicators();
+
     return;
   }
 
@@ -2016,7 +2010,7 @@ void SceneViewer::paintGL() {
 
   drawDisableScissor();
 
-  drawCheckNotices();
+  drawViewerIndicators();
 
   // Il freezed e' attivo ed e' in stato "update": faccio il grab del viewer.
   if (m_freezedStatus == UPDATE_FREEZED) {

@@ -226,7 +226,7 @@ SceneViewerContextMenu::SceneViewerContextMenu(SceneViewer *parent)
   // Brush size outline
   CursorOutlineToggleGui::addCursorOutlineCommand(this);
 
-  CheckIndicatorToggleGui::addCheckIndicatorCommand(this);
+  ViewerIndicatorToggleGui::addViewerIndicatorCommand(this);
 
   // preview
   if (parent->isPreviewEnabled()) {
@@ -550,40 +550,40 @@ void CursorOutlineToggleGui::CursorOutlineToggleHandler::deactivate() {
   CursorOutlineToggle::enableCursorOutline(false);
 }
 
-class CheckIndicatorToggle : public MenuItemHandler {
+class ViewerIndicatorToggle : public MenuItemHandler {
 public:
-  CheckIndicatorToggle() : MenuItemHandler(MI_CheckIndicator) {}
+  ViewerIndicatorToggle() : MenuItemHandler(MI_ViewerIndicator) {}
   void execute() {
-    QAction *action = CommandManager::instance()->getAction(MI_CheckIndicator);
+    QAction *action = CommandManager::instance()->getAction(MI_ViewerIndicator);
     if (!action) return;
     bool checked = action->isChecked();
-    enableCheckIndicator(checked);
+    enableViewerIndicator(checked);
   }
 
-  static void enableCheckIndicator(bool enable = true) {
-    Preferences::instance()->setValue(checkIndicatorEnabled, enable);
+  static void enableViewerIndicator(bool enable = true) {
+    Preferences::instance()->setValue(viewerIndicatorEnabled, enable);
   }
-} CheckIndicatorToggle;
+} ViewerIndicatorToggle;
 
-void CheckIndicatorToggleGui::addCheckIndicatorCommand(QMenu *menu) {
-  static CheckIndicatorToggleHandler switcher;
-  if (Preferences::instance()->isCheckIndicatorEnabled()) {
-    QAction *hideCheckIndicator =
-        menu->addAction(QString(QObject::tr("Hide Check Indicators")));
-    menu->connect(hideCheckIndicator, SIGNAL(triggered()), &switcher,
+void ViewerIndicatorToggleGui::addViewerIndicatorCommand(QMenu *menu) {
+  static ViewerIndicatorToggleHandler switcher;
+  if (Preferences::instance()->isViewerIndicatorEnabled()) {
+    QAction *hideViewerIndicator =
+        menu->addAction(QString(QObject::tr("Hide Viewer Indicators")));
+    menu->connect(hideViewerIndicator, SIGNAL(triggered()), &switcher,
                   SLOT(deactivate()));
   } else {
-    QAction *showCheckIndicator =
-        menu->addAction(QString(QObject::tr("Show Check Indicators")));
-    menu->connect(showCheckIndicator, SIGNAL(triggered()), &switcher,
+    QAction *showViewerIndicator =
+        menu->addAction(QString(QObject::tr("Show Viewer Indicators")));
+    menu->connect(showViewerIndicator, SIGNAL(triggered()), &switcher,
                   SLOT(activate()));
   }
 }
 
-void CheckIndicatorToggleGui::CheckIndicatorToggleHandler::activate() {
-  CheckIndicatorToggle::enableCheckIndicator(true);
+void ViewerIndicatorToggleGui::ViewerIndicatorToggleHandler::activate() {
+  ViewerIndicatorToggle::enableViewerIndicator(true);
 }
 
-void CheckIndicatorToggleGui::CheckIndicatorToggleHandler::deactivate() {
-  CheckIndicatorToggle::enableCheckIndicator(false);
+void ViewerIndicatorToggleGui::ViewerIndicatorToggleHandler::deactivate() {
+  ViewerIndicatorToggle::enableViewerIndicator(false);
 }

@@ -441,7 +441,8 @@ void Preferences::definePreferenceItems() {
   setCallBack(linearUnits, &Preferences::setUnits);
   setCallBack(cameraUnits, &Preferences::setCameraUnits);
 
-  define(checkIndicatorEnabled, "checkIndicatorEnabled", QMetaType::Bool, true);
+  define(viewerIndicatorEnabled, "viewerIndicatorEnabled", QMetaType::Bool,
+         true);
 
   // Visualization
   define(show0ThickLines, "show0ThickLines", QMetaType::Bool, true);

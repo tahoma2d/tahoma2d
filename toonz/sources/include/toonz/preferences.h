@@ -235,8 +235,8 @@ public:
   void setColorCalibrationLutPath(QString monitorName, QString path);
   QString getColorCalibrationLutPath(QString &monitorName) const;
 
-  bool isCheckIndicatorEnabled() const {
-    return getBoolValue(checkIndicatorEnabled);
+  bool isViewerIndicatorEnabled() const {
+    return getBoolValue(viewerIndicatorEnabled);
   }
 
   // Visualization  tab

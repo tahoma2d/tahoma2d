@@ -244,7 +244,7 @@
 #define MI_OnionSkin "MI_OnionSkin"
 #define MI_ZeroThick "MI_ZeroThick"
 #define MI_CursorOutline "MI_CursorOutline"
-#define MI_CheckIndicator "MI_CheckIndicator"
+#define MI_ViewerIndicator "MI_ViewerIndicator"
 
 //#define MI_LoadResourceFile       "MI_LoadResourceFile"
 #define MI_DuplicateFile "MI_DuplicateFile"
