@@ -985,11 +985,11 @@ LeftToRightOrientation::LeftToRightOrientation() {
   addRect(PredefinedRect::DRAG_HANDLE_CORNER,
           QRect(0, 0, CELL_WIDTH, CELL_DRAG_HEIGHT));
   QRect keyRect((CELL_WIDTH - KEY_ICON_WIDTH) / 2,
-                CELL_HEIGHT - KEY_ICON_HEIGHT - 2, KEY_ICON_WIDTH,
+                CELL_HEIGHT - KEY_ICON_HEIGHT - 3, KEY_ICON_WIDTH,
                 KEY_ICON_HEIGHT);
   addRect(PredefinedRect::KEY_ICON, keyRect);
-  addRect(PredefinedRect::CAMERA_KEY_ICON, keyRect.adjusted(0, -4, 0, -4));
-  QRect nameRect = cellRect.adjusted(4, 4, -6, 0);
+  addRect(PredefinedRect::CAMERA_KEY_ICON, keyRect.adjusted(0, -3, 0, -3));
+  QRect nameRect = cellRect.adjusted(4, 3, -6, -1);
   addRect(PredefinedRect::CELL_NAME, nameRect);
   addRect(PredefinedRect::CELL_NAME_WITH_KEYFRAME, nameRect);
   addRect(PredefinedRect::END_EXTENDER,
