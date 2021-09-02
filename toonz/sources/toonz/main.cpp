@@ -412,7 +412,12 @@ int main(int argc, char *argv[]) {
 
   // Enable to render smooth icons on high dpi monitors
   a.setAttribute(Qt::AA_UseHighDpiPixmaps);
-
+#if defined(_WIN32) && QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+  // Compress tablet events with application attributes instead of implementing
+  // the delay-timer by ourselves
+  a.setAttribute(Qt::AA_CompressHighFrequencyEvents);
+  a.setAttribute(Qt::AA_CompressTabletEvents);
+#endif
   // Set the app's locale for numeric stuff to standard C. This is important for
   // atof() and similar
   // calls that are locale-dependant.
