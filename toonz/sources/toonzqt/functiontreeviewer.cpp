@@ -712,8 +712,12 @@ void FunctionTreeModel::Channel::setParam(const TParamP &param) {
 /*! in order to show the expression name in the tooltip
  */
 QString FunctionTreeModel::Channel::getExprRefName() const {
-  QString tmpName = QString(QString::fromStdWString(
-      TStringTable::translate(m_paramNamePref + m_param->getName())));
+  QString tmpName;
+  if (m_param->hasUILabel())
+    tmpName = QString::fromStdString(m_param->getUILabel());
+  else
+    tmpName = QString::fromStdWString(
+        TStringTable::translate(m_paramNamePref + m_param->getName()));
   /*--- stage
    * objectパラメータの場合、TableにあわせてtmpNameを代表的なExpression名にする---*/
   StageObjectChannelGroup *stageGroup =

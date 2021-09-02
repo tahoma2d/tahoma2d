@@ -33,8 +33,11 @@
 
 #include "../stdfx/motionawarebasefx.h"
 #include "../stdfx/textawarebasefx.h"
+#include "../stdfx/globalcontrollablefx.h"
 
 #include "toonz/scenefx.h"
+
+#include <QList>
 
 /*
   TODO: Some parts of the following render-tree building procedure should be
@@ -548,6 +551,8 @@ public:
   // (at least) of a particle Fx
   int m_particleDescendentCount;
 
+  QList<std::wstring> m_globalControlledFx;
+
 public:
   FxBuilder(ToonzScene *scene, TXsheet *xsh, double frame, int whichLevels,
             bool isPreview = false, bool expandXSheet = true);
@@ -1002,6 +1007,24 @@ PlacedFx FxBuilder::makePFfromUnaryFx(TFx *fx) {
   TFx *inputFx = fx->getInputPort(0)->getFx();
   if (!inputFx) return PlacedFx();
 
+  // global controllable fx
+  if (fx->getAttributes()->hasGlobalControl() &&
+      !m_globalControlledFx.contains(fx->getFxId())) {
+    GlobalControllableFx *gcFx = dynamic_cast<GlobalControllableFx *>(fx);
+    double val                 = gcFx->getGrobalControlValue(m_frame);
+    if (val < 1.0) {
+      m_globalControlledFx.append(fx->getFxId());
+      // insert cross disolve fx and mix with the input fx
+      TFxP blendFx = TFx::create("blendFx");
+      blendFx->connect("Source1", fx);
+      blendFx->connect("Source2", inputFx);
+      // set the global intensity value to the cross disolve fx
+      dynamic_cast<TDoubleParam *>(blendFx->getParams()->getParam("value"))
+          ->setDefaultValue(val * 100.0);
+      return makePF(blendFx.getPointer());
+    }
+  }
+
   PlacedFx pf = makePF(inputFx);  // Build sub-render-tree
   if (!pf.m_fx) return PlacedFx();
 
@@ -1066,6 +1089,26 @@ PlacedFx FxBuilder::makePFfromGenericFx(TFx *fx) {
     if (inputFx) return makePF(inputFx.getPointer());
 
     return pf;
+  }
+
+  // global controllable fx
+  if (fx->getAttributes()->hasGlobalControl() &&
+      !m_globalControlledFx.contains(fx->getFxId())) {
+    GlobalControllableFx *gcFx = dynamic_cast<GlobalControllableFx *>(fx);
+    double val                 = gcFx->getGrobalControlValue(m_frame);
+    if (val < 1.0) {
+      TFxP inputFx = fx->getInputPort(fx->getPreferredInputPort())->getFx();
+      if (!inputFx) return pf;
+      m_globalControlledFx.append(fx->getFxId());
+      // insert cross disolve fx and mix with the input fx
+      TFxP blendFx = TFx::create("blendFx");
+      blendFx->connect("Source1", fx);
+      blendFx->connect("Source2", inputFx.getPointer());
+      // set the global intensity value to the cross disolve fx
+      dynamic_cast<TDoubleParam *>(blendFx->getParams()->getParam("value"))
+          ->setDefaultValue(val * 100.0);
+      return makePF(blendFx.getPointer());
+    }
   }
 
   // Multi-input fxs are always cloned - since at least one of its input ports

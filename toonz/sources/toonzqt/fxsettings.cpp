@@ -446,6 +446,44 @@ void ParamsPage::setPageField(TIStream &is, const TFxP &fx, bool isVertical) {
 }
 
 //-----------------------------------------------------------------------------
+// add a slider for global control
+void ParamsPage::addGlobalControl(const TFxP &fx) {
+  if (!fx->getAttributes()->hasGlobalControl()) return;
+
+  std::string name = "globalIntensity";
+
+  TParamP param = fx->getParams()->getParam(name);
+  if (!param) return;
+
+  assert(param->hasUILabel());
+  QString str       = QString::fromStdString(param->getUILabel());
+  ParamField *field = ParamField::create(this, str, param);
+  if (!field) return;
+
+  int currentRow = m_mainLayout->rowCount();
+  if (!m_fields.isEmpty()) {
+    Separator *sep = new Separator("", this);
+    m_mainLayout->addWidget(sep, currentRow, 0, 1, 2);
+    m_mainLayout->setRowStretch(currentRow, 0);
+    currentRow = m_mainLayout->rowCount();
+  }
+
+  m_fields.push_back(field);
+  QLabel *label = new QLabel(str, this);
+  label->setObjectName("FxSettingsLabel");
+  m_mainLayout->addWidget(label, currentRow, 0,
+                          Qt::AlignRight | Qt::AlignVCenter);
+  m_mainLayout->addWidget(field, currentRow, 1);
+
+  connect(field, SIGNAL(currentParamChanged()), m_paramViewer,
+          SIGNAL(currentFxParamChanged()));
+  connect(field, SIGNAL(actualParamChanged()), m_paramViewer,
+          SIGNAL(actualFxParamChanged()));
+  connect(field, SIGNAL(paramKeyToggle()), m_paramViewer,
+          SIGNAL(paramKeyChanged()));
+}
+
+//-----------------------------------------------------------------------------
 
 void ParamsPage::setPageSpace() {
   if (m_fields.count() != 0) {
@@ -917,7 +955,14 @@ void ParamsPageSet::createPage(TIStream &is, const TFxP &fx, int index) {
   if (pageName == "") pageName = "page";
 
   ParamsPage *paramsPage = new ParamsPage(this, m_parent);
-  paramsPage->setPage(is, fx);
+
+  bool isFirstPageOfFx;
+  if (index < 0)
+    isFirstPageOfFx = (m_pagesList->count() == 0);
+  else  // macro fx case
+    isFirstPageOfFx = !(m_pageFxIndexTable.values().contains(index));
+
+  paramsPage->setPage(is, fx, isFirstPageOfFx);
 
   connect(paramsPage, SIGNAL(preferredPageSizeChanged()), this,
           SLOT(recomputePreferredSize()));
