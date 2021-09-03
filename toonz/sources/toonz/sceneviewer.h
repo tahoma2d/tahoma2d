@@ -168,6 +168,7 @@ class SceneViewer final : public GLWidgetForHighDpi,
 
   bool m_isPicking;
   bool m_canShowPerspectiveGrids = false;
+  bool m_showViewerIndicators    = true;
 
   TRaster32P m_3DSideL;
   TRaster32P m_3DSideR;
@@ -350,6 +351,7 @@ protected:
   void drawCameraStand();
   void drawPreview();
   void drawOverlay();
+  void drawViewerIndicators();
 
   void drawScene();
   void drawToolGadgets();
