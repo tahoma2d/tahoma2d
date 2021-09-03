@@ -891,7 +891,16 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
       }
   }
 
-  if (Preferences::instance()->isAutoCreateEnabled()) {
+  bool spline = m_application->getCurrentObject()->isSpline();
+
+  if (spline) {
+    // If editing a motion path, find vector version of the current tool
+    if (!(targetType & VectorImage)) {
+      TTool *tool = this;
+      tool        = TTool::getTool(m_name, VectorImage);
+      if (tool && tool != this) return tool->updateEnabled();
+    }
+  } else if (Preferences::instance()->isAutoCreateEnabled()) {
     // If not in Level editor, let's use our current cell from the xsheet to
     // find the nearest level before it
     if (levelType == NO_XSHLEVEL &&
@@ -929,8 +938,6 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
     }
   }
 
-  bool spline = m_application->getCurrentObject()->isSpline();
-
   bool filmstrip = m_application->getCurrentFrame()->isEditingLevel();
 
   /*-- MultiLayerStylePickerONのときは、現状に関わらず使用可能 --*/
@@ -939,7 +946,8 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
     return (enable(true), QString());
 
   // Check against camera column
-  if (!filmstrip && columnIndex < 0 && (targetType & TTool::EmptyTarget) &&
+  if (!filmstrip && !spline && columnIndex < 0 &&
+      (targetType & TTool::EmptyTarget) &&
       (m_name == T_Type || m_name == T_Geometric || m_name == T_Brush))
     return (enable(false), QString());
 
