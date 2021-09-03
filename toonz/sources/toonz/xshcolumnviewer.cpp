@@ -995,6 +995,8 @@ void ColumnArea::DrawHeader::drawColumnNumber() const {
 
   int valign = o->isVerticalTimeline() ? Qt::AlignVCenter : Qt::AlignBottom;
 
+  if (!o->isVerticalTimeline()) pos.adjust(0, -1, 0, -1);
+
   p.drawText(pos, Qt::AlignHCenter | valign | Qt::TextSingleLine,
              QString::number(col + 1));
 }
@@ -1072,7 +1074,11 @@ void ColumnArea::DrawHeader::drawColumnName() const {
     return;
   }
 
-  p.drawText(columnName.adjusted(leftadj, 0, rightadj, 0),
+  int vertAdj = 0;
+
+  if (!o->isVerticalTimeline()) vertAdj = col < 0 || isEmpty ? -4 : -1;
+
+  p.drawText(columnName.adjusted(leftadj, vertAdj, rightadj, vertAdj),
              Qt::AlignLeft | valign | Qt::TextSingleLine,
              QString(name.c_str()));
 }
