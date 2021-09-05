@@ -1,5 +1,5 @@
 #!/bin/bash
-source /opt/qt59/bin/qt59-env.sh
+source /opt/qt515/bin/qt515-env.sh
 
 echo ">>> Temporary install of Tahoma2D"
 export BUILDDIR=$(pwd)/toonz/build

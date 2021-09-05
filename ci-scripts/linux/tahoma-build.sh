@@ -11,7 +11,7 @@ then
 fi
 cd build
 
-source /opt/qt59/bin/qt59-env.sh
+source /opt/qt515/bin/qt515-env.sh
 
 cmake ../sources \
     -DWITH_SYSTEM_SUPERLU:BOOL=OFF
