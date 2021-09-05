@@ -60,7 +60,7 @@ class ExpressionReferenceMonitor;
 //    TXsheet  declaration
 //****************************************************************************************
 
-//! This is the base class for an xsheet. An Xsheet is composed of colums of
+//! This is the base class for an xsheet. An Xsheet is composed of columns of
 //! frames.
 /*!
 Inherits \b TSmartObject and \b TPersist.
@@ -76,7 +76,7 @@ ToonzScene.
 
                 For purposes of this class, a Column is a graphics layer, and a
 row is a frame number.
-                (Whether horizontal or vertial is a matter of displaying).
+                (Whether horizontal or vertical is a matter of displaying).
 
                 A \b column \b set contains all xsheet columns. A collection of
 functions, concerning column
@@ -591,7 +591,7 @@ private:
   TXsheet(const TXsheet &);
   TXsheet &operator=(const TXsheet &);
 
-  /*! Return column in index if exists, overwise create a new column;
+  /*! Return column in index if exists, otherwise create a new column;
 if column exist and is empty check \b isSoundColumn and return right type.
 */
   TXshColumn *touchColumn(int index,

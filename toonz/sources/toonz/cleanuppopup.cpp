@@ -1008,7 +1008,7 @@ QString CleanupPopup::setupLevel() {
       app->getPaletteController()->getCurrentLevelPalette()->setPalette(
           palette.getPointer());
 
-    // Notify the xsheet that the level has changed visual type informations
+    // Notify the xsheet that the level has changed visual type information
     // (either the level type,
     // cleanup status, etc)
     app->getCurrentXsheet()->notifyXsheetChanged();
@@ -1475,7 +1475,7 @@ CleanupPopup::OverwriteDialog::OverwriteDialog()
 
     suffixLayout->addWidget(m_suffix);
   }
-  addLayout(suffixLayout);  // Couldnt' place it right after allocation,
+  addLayout(suffixLayout);  // Couldn't place it right after allocation,
                             // DVGui::Dialog::addLayout() crashed...
   // Option 5: NOPAINT_ONLY
   radioButton = new QRadioButton(this);

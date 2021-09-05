@@ -392,7 +392,7 @@ void FileSelection::convertFiles() {
   static ConvertPopup *popup = new ConvertPopup(false);
   if (popup->isConverting()) {
     DVGui::info(QObject::tr(
-        "A convertion task is in progress! wait until it stops or cancel it"));
+        "A conversion task is in progress! wait until it stops or cancel it"));
     return;
   }
   popup->setFiles(files);

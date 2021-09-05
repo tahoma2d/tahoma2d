@@ -324,7 +324,7 @@ void AutoInputCellNumberPopup::doExecute(bool overwrite) {
     cellSelection->selectCells(r0, c0, r0 + undo->rowsCount() - 1, c1);
     TApp::instance()->getCurrentSelection()->notifySelectionChanged();
   }
-  // If exection is properly completed, then close this popup
+  // If execution is properly completed, then close this popup
   close();
 }
 
@@ -388,7 +388,7 @@ bool AutoInputCellNumberPopup::getTarget(std::vector<int> &columnIndices,
   // something must be selected
   if (selection->isEmpty()) return false;
 
-  // selection must be cells or collumns
+  // selection must be cells or columns
   TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(selection);
   TColumnSelection *columnSelection =
       dynamic_cast<TColumnSelection *>(selection);

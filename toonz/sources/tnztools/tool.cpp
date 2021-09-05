@@ -629,7 +629,7 @@ TTool::Application *TTool::getApplication() {
 //-----------------------------------------------------------------------------
 
 /*! Notify change of current image: update icon and notify level change.
-    If current object is a spline commit spline chenged.
+    If current object is a spline commit spline changed.
     If current mode is EditingLevel touch current frame.
 */
 void TTool::notifyImageChanged() {

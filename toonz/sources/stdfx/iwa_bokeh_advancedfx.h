@@ -3,7 +3,7 @@
 // Iwa_BokehAdvancedFx
 // Advanced version of Bokeh Fx Iwa
 // - Enabled to set different hardness for each layer
-// - Enabled to apply the depth referene image for each layer
+// - Enabled to apply the depth reference image for each layer
 //----------------------------------------
 
 #ifndef IWA_BOKEH_ADVANCED_H

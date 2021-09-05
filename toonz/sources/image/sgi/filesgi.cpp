@@ -11,7 +11,7 @@
 #include "tsystem.h"
 #include "tpixelgr.h"
 #include "../compatibility/tfile_io.h"
-#ifdef LINUX
+#if defined(LINUX) || defined(FREEBSD)
 //#define _XOPEN_SOURCE_EXTENDED
 #include <string.h>
 #endif

@@ -943,7 +943,7 @@ void ArrowToolOptionsBox::updateStageObjectComboItems() {
 }
 
 //------------------------------------------------------------------------------
-/*! syncronize the current item in the combobox to the selected stage object
+/*! synchronize the current item in the combobox to the selected stage object
  */
 void ArrowToolOptionsBox::syncCurrentStageObjectComboItem() {
   TStageObjectId curObjId = m_objHandle->getObjectId();

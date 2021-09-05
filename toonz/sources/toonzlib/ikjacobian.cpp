@@ -1552,7 +1552,7 @@ void Jacobian::CalcDeltaThetasSDLS() {
     // Calculate the dTheta from pure pseudoinverse considerations
     double scale =
         alpha *
-        wiInv;  // This times i-th column of V is the psuedoinverse response
+        wiInv;  // This times i-th column of V is the pseudoinverse response
     dPreTheta.LoadScaled(V.GetColumnPtr(i), scale);
     // Now rescale the dTheta values.
     double max     = dPreTheta.MaxAbs();

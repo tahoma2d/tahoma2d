@@ -102,6 +102,7 @@ endif()
 option(WITH_SYSTEM_LZO "Use the system LZO library instead of 'thirdpary'" ${_init_SYSTEM_LZO})
 option(WITH_SYSTEM_SUPERLU "Use the system SuperLU library instead of 'thirdpary'" ${_init_SYSTEM_SUPERLU})
 option(WITH_CANON "Build with Canon DSLR support - Requires Canon SDK" OFF)
+option(WITH_TRANSLATION "Generate translation projects as well" ON)
 option(WITH_CRASHRPT "Build CrashRpt support - Requires CrashRpt Library" OFF)
 
 # avoid using again
@@ -201,6 +202,11 @@ elseif(BUILD_ENV_UNIXLIKE)
     endif()
     if(CMAKE_SYSTEM_NAME MATCHES "Linux")
         add_definitions(-DLINUX)
+    elseif(CMAKE_SYSTEM_NAME MATCHES "^.*BSD$|DragonFly")
+        set(BUILD_TARGET_BSD ON)
+        add_definitions(-D_BSD_SOURCE -DFREEBSD)
+        include_directories("/usr/local/include/")
+        message(STATUS "Configuring for BSD system")
     elseif(NOT BUILD_TARGET_WIN)
         message(WARNING "Support for generic Unix (Not Apple or Linux) isn't yet working!")
     endif()
@@ -273,7 +279,8 @@ if(BUILD_ENV_MSVC)
         SYSTEM
         ${SDKROOT}/freeglut/include
         ${SDKROOT}/zlib-1.2.8
-        ${SDKROOT}/LibJPEG/jpeg-9
+        #${SDKROOT}/LibJPEG/jpeg-9
+        ${SDKROOT}/libjpeg-turbo/include
     )
     add_definitions(
         -DGLUT_NO_LIB_PRAGMA
@@ -297,7 +304,7 @@ else()
 endif()
 
 include_directories(
-    ${SDKROOT}/libjpeg-turbo64/include
+#    ${SDKROOT}/libjpeg-turbo64/include
     ${OpenCV_INCLUDE_DIRS}
 )
 
@@ -352,7 +359,9 @@ if(BUILD_ENV_MSVC)
         optimized ${SDKROOT}/zlib-1.2.8/lib/zlib-1.2.8_${MSVC_LIB_VERSION}${PLATFORM2}.lib
         debug ${SDKROOT}/zlib-1.2.8/lib/zlib-1.2.8_${MSVC_LIB_VERSION}${PLATFORM2}d.lib
     )
-    set(JPEG_LIB ${SDKROOT}/LibJPEG/jpeg-9/lib/LibJPEG-9_${MSVC_LIB_VERSION}${PLATFORM2}.lib)
+    #set(JPEG_LIB ${SDKROOT}/LibJPEG/jpeg-9/lib/LibJPEG-9_${MSVC_LIB_VERSION}${PLATFORM2}.lib)
+    set(JPEG_LIB ${SDKROOT}/libjpeg-turbo/lib/jpeg-static_${MSVC_LIB_VERSION}${PLATFORM2}.lib)
+    set(TURBOJPEG_LIB ${SDKROOT}/libjpeg-turbo/lib/turbojpeg-static_${MSVC_LIB_VERSION}${PLATFORM2}.lib)
     set(TIFF_INCLUDE_DIR ${SDKROOT}/tiff-4.0.3/libtiff)
     set(TIFF_LIB
         optimized ${SDKROOT}/tiff-4.0.3/lib/LibTIFF-4.0.3_${MSVC_LIB_VERSION}${PLATFORM2}.lib
@@ -367,7 +376,6 @@ if(BUILD_ENV_MSVC)
     set(SUPERLU_LIB ${SDKROOT}/superlu/SuperLU_${MSVC_LIB_VERSION}_${PLATFORM}.lib)
     set(OPENBLAS_LIB ${SDKROOT}/openblas/libopenblas_${PLATFORM}.lib)
     set(USB_LIB)  # unused
-    set(TURBOJPEG_LIB ${SDKROOT}/libjpeg-turbo64/lib/turbojpeg.lib)
     if (WITH_CANON)
         if(BUILD_ENV_APPLE)
             set(CANON_LIB ${SDKROOT}/canon/Framework/EDSDK.framework)
@@ -454,7 +462,9 @@ elseif(BUILD_ENV_UNIXLIKE)
     endif()
     find_library(Z_LIB z)
 
-    find_package(TIFF REQUIRED)
+    if(NOT BUILD_TARGET_BSD)
+        find_package(TIFF REQUIRED)
+    endif()
     find_package(PNG REQUIRED)
     set(PNG_LIB ${PNG_LIBRARY})
     message("******* libpng:" ${PNG_LIB})
@@ -602,26 +612,28 @@ if(BUILD_ENV_MSVC AND MSVC_VERSION EQUAL 1800)
     add_compile_options("/wd4819")
 endif()
 
-# generate Qt translations and messages
-set(LANGUAGES japanese italian french spanish chinese german russian korean czech)
+if(WITH_TRANSLATION)
+    # generate Qt translations and messages
+    set(LANGUAGES japanese italian french spanish chinese german russian korean czech)
 
-function(add_translation module)
-    set(translation)
-    foreach(lang ${LANGUAGES})
-        set(name "${CMAKE_SOURCE_DIR}/translations/${lang}/${module}.ts")
-        list(APPEND translation ${name})
-        set_source_files_properties(${name} PROPERTIES
-            OUTPUT_LOCATION "${CMAKE_BINARY_DIR}/loc/${lang}"
+    function(add_translation module)
+        set(translation)
+        foreach(lang ${LANGUAGES})
+            set(name "${CMAKE_SOURCE_DIR}/translations/${lang}/${module}.ts")
+            list(APPEND translation ${name})
+            set_source_files_properties(${name} PROPERTIES
+                OUTPUT_LOCATION "${CMAKE_BINARY_DIR}/loc/${lang}"
+            )
+        endforeach()
+
+        qt5_create_translation(message ${translation} ${ARGN})
+
+        add_custom_target("translation_${module}" DEPENDS ${message})
+        set_target_properties("translation_${module}" PROPERTIES
+            EXCLUDE_FROM_DEFAULT_BUILD TRUE
         )
-    endforeach()
-
-    qt5_create_translation(message ${translation} ${ARGN})
-
-    add_custom_target("translation_${module}" DEPENDS ${message})
-    set_target_properties("translation_${module}" PROPERTIES
-        EXCLUDE_FROM_DEFAULT_BUILD TRUE
-    )
-endfunction()
+    endfunction()
+endif()
 
 set(CMAKE_C_FLAGS "${C_WARNINGS} ${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CXX_WARNINGS} ${CMAKE_CXX_FLAGS}")

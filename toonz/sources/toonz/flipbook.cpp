@@ -1407,7 +1407,7 @@ void FlipBook::freezePreview() {
 
   m_freezed = true;
 
-  // sync the button state when triggered by shotcut
+  // sync the button state when triggered by shortcut
   if (m_freezeButton) m_freezeButton->setPressed(true);
 }
 
@@ -1420,7 +1420,7 @@ void FlipBook::unfreezePreview() {
 
   m_freezed = false;
 
-  // sync the button state when triggered by shotcut
+  // sync the button state when triggered by shortcut
   if (m_freezeButton) m_freezeButton->setPressed(false);
 }
 
@@ -2212,7 +2212,7 @@ void FlipBook::loadAndCacheAllTlvImages(Level level, int fromFrame,
 FlipBook *viewFile(const TFilePath &path, int from, int to, int step,
                    int shrink, TSoundTrack *snd, FlipBook *flipbook,
                    bool append, bool isToonzOutput) {
-  // In case the step and shrink informations are invalid, load them from
+  // In case the step and shrink information are invalid, load them from
   // preferences
   if (step == -1 || shrink == -1) {
     int _step = 1, _shrink = 1;

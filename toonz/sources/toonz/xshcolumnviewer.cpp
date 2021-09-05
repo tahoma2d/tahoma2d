@@ -1608,7 +1608,7 @@ void ColumnArea::drawSoundColumnHead(QPainter &p, int col) {  // AREA
   drawHeader.drawColumnName();
   drawHeader.drawColumnNumber();
   // Sound columns don't have an image. Passing in an image
-  // for arguement, but it will be ignored.
+  // for argument, but it will be ignored.
   static QPixmap iconignored;
   drawHeader.drawThumbnail(iconignored);
   drawHeader.drawPegbarName();

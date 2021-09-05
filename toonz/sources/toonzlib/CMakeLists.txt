@@ -328,7 +328,9 @@ if(BUILD_TARGET_WIN)
     )
 endif()
 
-add_translation(toonzlib ${HEADERS} ${SOURCES})
+if(WITH_TRANSLATION)
+    add_translation(toonzlib ${HEADERS} ${SOURCES})
+endif()
 
 qt5_wrap_cpp(SOURCES ${MOC_HEADERS})
 

@@ -204,7 +204,7 @@ public:
                 Return current image viewer.
 */
 /*! \fn TAffine ImageViewer::getViewAff()
-                Return current viewer matrix trasformation.
+                Return current viewer matrix transformation.
 */
 
 ImageViewer::ImageViewer(QWidget *parent, FlipBook *flipbook,
@@ -632,7 +632,7 @@ void ImageViewer::paintGL() {
 }
 
 //------------------------------------------------------------------------------
-/*! Add to current trasformation matrix a \b delta traslation.
+/*! Add to current transformation matrix a \b delta traslation.
  */
 void ImageViewer::panQt(const QPoint &delta) {
   if (delta == QPoint()) return;
@@ -664,7 +664,7 @@ void ImageViewer::panQt(const QPoint &delta) {
 }
 
 //-----------------------------------------------------------------------------
-/*! Add to current trasformation matrix a \b center traslation matched with a
+/*! Add to current transformation matrix a \b center traslation matched with a
                 scale of factor \b factor. Apply a zoom of factor \b factor with
    center
                 \b center.
@@ -955,7 +955,7 @@ void ImageViewer::pickColor(QMouseEvent *event, bool putValueToStyleEditor) {
 
   TPixel32 pix;
   if (m_lutCalibrator && m_lutCalibrator->isValid()) {
-    // for specifiying pixel range on picking vector
+    // for specifying pixel range on picking vector
     double scale2 = getViewAff().det();
     pix = picker.pickColor(pos + TPointD(-0.5, -0.5), 10.0, scale2);
   } else
@@ -1248,7 +1248,7 @@ void ImageViewer::fitView() {
 }
 
 //-----------------------------------------------------------------------------
-/*! Update image viewer, reset current matrix trasformation, current position
+/*! Update image viewer, reset current matrix transformation, current position
                 and update view.
 */
 void ImageViewer::updateImageViewer() {

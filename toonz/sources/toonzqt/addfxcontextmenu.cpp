@@ -415,7 +415,7 @@ bool AddFxContextMenu::loadPreset(const std::string &name, QMenu *insertFxGroup,
 
       // This is a workaround to set the bold style to the first element of this
       // menu
-      // Setting a font directly to a QAction is not enought; style sheet
+      // Setting a font directly to a QAction is not enough; style sheet
       // definitions
       // preval over QAction font settings.
       inserMenu->setObjectName("fxMenu");

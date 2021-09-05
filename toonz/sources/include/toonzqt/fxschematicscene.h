@@ -138,8 +138,8 @@ public:
   void simulateDisconnectSelection(bool disconnect);
 
   //! Updates all Group Editors containing fx.
-  //! Each fx is only in one group, but each gruop can contains othe group. All
-  //! nested Groups must be updated.
+  //! Each fx is only in one group, but each gruop can contains other group.
+  // All nested Groups must be updated.
   void updateNestedGroupEditors(FxSchematicNode *node, const QPointF &newPos);
   void closeInnerMacroEditor(int groupId);
   void resizeNodes(bool maximizedNode);

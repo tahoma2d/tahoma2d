@@ -780,7 +780,7 @@ LoadLevelPopup::LoadLevelPopup()
   LevelOptions options;
   setLevelProperties(options);
 
-  //"FILE DOES NOT EXIST" lavel
+  //"FILE DOES NOT EXIST" label
   m_notExistLabel->setObjectName("FileDoesNotExistLabel");
   m_notExistLabel->hide();
 
@@ -990,7 +990,7 @@ void LoadLevelPopup::onNameSetEditted() {
 //-----------------------------------------------------------------------
 
 void LoadLevelPopup::updatePosTo() {
-  // calcurate how mane frames to be occupied in the xsheet
+  // calculate how many frames to be occupied in the xsheet
   TFilePath fp = getCurrentPath();
 
   if (QString::fromStdString(fp.getType()) == "tpl") {
@@ -1031,7 +1031,7 @@ void LoadLevelPopup::updatePosTo() {
       frameLength = xTo - xFrom + 1;
     } else {
       std::vector<TFrameId> fIds = getCurrentFIds();
-      //--- If loading the level with sequencial files, reuse the list of
+      //--- If loading the level with sequential files, reuse the list of
       // TFrameId
       if (fIds.size() != 0) {
         if (m_stepCombo->currentIndex() == 0)  // Step = Auto
@@ -1200,7 +1200,7 @@ bool LoadLevelPopup::execute() {
       std::vector<TFrameId> fIds = getCurrentFIds();
       TFrameId firstFrame;
       TFrameId lastFrame;
-      // if the level is sequencial and there is a reusable list of TFrameId
+      // if the level is sequential and there is a reusable list of TFrameId
       if (fIds.size() != 0) {
         firstFrame = fIds[0];
         lastFrame  = fIds[fIds.size() - 1];
@@ -2109,7 +2109,7 @@ bool ReplaceParentDirectoryPopup::execute() {
       }
     }
   } else {
-    // calcurate scene length
+    // calculate scene length
     int frameLength           = xsh->getFrameCount();
     std::set<int>::iterator i = m_columnRange.begin();
     while (i != m_columnRange.end()) {

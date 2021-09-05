@@ -163,7 +163,7 @@ void Toolbar::updateToolbar() {
         (m_toolbarLevel & LEVELCOLUMN_XSHLEVEL))
       enable = true;
 
-    if (!m_isExpanded && m_buttonLayout[idx].collapsable) continue;
+    if (!m_isExpanded && m_buttonLayout[idx].collapsible) continue;
 
     if (!m_buttonLayout[idx].action) {
       if (m_buttonLayout[idx].isSeparator)

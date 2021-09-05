@@ -45,7 +45,7 @@ bool Ffmpeg::checkFfmpeg() {
   folderList.append("./" +
                     QString::fromStdString(TEnv::getApplicationFileName()) +
                     ".app/ffmpeg");  // ffmpeg folder
-#elif defined LINUX
+#elif defined(LINUX) || defined(FREEBSD)
   // Need to account for symbolic links
   folderList.append(TEnv::getWorkingDirectory().getQString() +
                     "/ffmpeg");  // ffmpeg folder
@@ -83,7 +83,7 @@ bool Ffmpeg::checkFfprobe() {
   folderList.append("./" +
                     QString::fromStdString(TEnv::getApplicationFileName()) +
                     ".app/ffmpeg");  // ffmpeg folder
-#elif defined LINUX
+#elif defined(LINUX) || defined(FREEBSD)
   // Need to account for symbolic links
   folderList.append(TEnv::getWorkingDirectory().getQString() +
                     "/ffmpeg");  // ffmpeg folder

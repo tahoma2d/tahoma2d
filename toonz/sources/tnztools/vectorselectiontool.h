@@ -153,7 +153,7 @@ public:
   void applyTransform(FourPoints bbox) override;
   void addTransformUndo() override;
 
-  /*! Trasform whole level and add undo. */
+  /*! Transform whole level and add undo. */
   void transformWholeLevel();
   bool isFlip();
 

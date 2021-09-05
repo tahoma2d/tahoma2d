@@ -138,7 +138,7 @@ The default value is XY.
 The Keyframe struct define a keyframe.
 A keyframe allows to define object values in a specific frame.
    Keyframes are the starting and ending points of a transition in a scene.
-   Its parameters are taken as references to make changes on the paramters of
+   Its parameters are taken as references to make changes on the parameters of
 other frames,
    as:
 
@@ -317,7 +317,7 @@ object.
   //! Returns true if \e frame is a keyframe for all channels.
   bool isFullKeyframe(int frame) const;
 
-  //! Returns true if \e frame is a keyframe for all channels with exeption of
+  //! Returns true if \e frame is a keyframe for all channels with execption of
   //! global scale channel.
   bool is52FullKeyframe(int frame) const;
 
@@ -439,7 +439,7 @@ Doesn't delete \e this.
 */
   void detachFromParent();
 
-  //! Makes all children of \e this childern of \e parentId.
+  //! Makes all children of \e this children of \e parentId.
   void attachChildrenToParent(const TStageObjectId &parentId);
 
   //! Resets the area position setting internal time of the object and of all
@@ -449,8 +449,8 @@ Doesn't delete \e this.
   /*!
 Return true if current object is visible, if object position in z-axis is
 less than 1000; othrwise return false.
-  \n Set \b TAffine \b aff to current object trasformation matrix computed
-  using camera and object trasformation matrix,
+  \n Set \b TAffine \b aff to current object transformation matrix computed
+  using camera and object transformation matrix,
 \b cameraAff, \b objectAff, and using camera and object position in z-axis,
 \b cameraZ, \b objectZ.
 \n \b objectZ default value is zero, big value describe the nearest camera

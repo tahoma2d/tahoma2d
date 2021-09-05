@@ -277,7 +277,7 @@ protected slots:
   void onFrameSwitched() { updateStatus(); }
   // update the object list in combobox
   void updateStageObjectComboItems();
-  // syncronize the current item in the combobox to the selected stage object
+  // synchronize the current item in the combobox to the selected stage object
   void syncCurrentStageObjectComboItem();
   // change the current stage object when user changes it via combobox by hand
   void onCurrentStageObjectComboActivated(int index);

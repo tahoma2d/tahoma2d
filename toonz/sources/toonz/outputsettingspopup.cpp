@@ -827,7 +827,7 @@ QFrame *OutputSettingsPopup::createMoreSettingsBox() {
     lay->addWidget(m_frameRateFld, 3, 1, Qt::AlignLeft | Qt::AlignVCenter);
     lay->addWidget(new QLabel(tr("(linked to Scene Settings)"), this), 3, 2, 1,
                    2, Qt::AlignLeft | Qt::AlignVCenter);
-    // Strech
+    // Stretch
     lay->addWidget(new QLabel(tr("Stretch from FPS:"), this), 4, 0,
                    Qt::AlignRight | Qt::AlignVCenter);
     lay->addWidget(m_stretchFromFld, 4, 1, Qt::AlignLeft | Qt::AlignVCenter);

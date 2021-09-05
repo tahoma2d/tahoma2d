@@ -235,7 +235,7 @@ void Iwa_BloomFx::doCompute(TTile &tile, double frame,
   // that the gaussian blur (x 2) and the blur by rotation resampling (x sqrt2)
   double blurScale    = 1.0 + (double)blurRadius;
   double no_blur_size = size / (blurScale * 1.5);
-  // find the mimimum "power of 2" value which is the same as or larger than the
+  // find the minimum "power of 2" value which is the same as or larger than the
   // filter size
   int level         = 1;
   double power_of_2 = 1.0;

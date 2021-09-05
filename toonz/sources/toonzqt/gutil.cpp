@@ -284,7 +284,7 @@ QIcon createQIcon(const char *iconSVGName, bool useFullOpacity) {
   const qreal baseOpacity     = useFullOpacity ? 1 : 0.8;
   const qreal disabledOpacity = 0.15;
 
-  // Psuedo state name strings
+  // Pseudo state name strings
   QString overStr = QString(iconSVGName) + "_over";
   QString onStr   = QString(iconSVGName) + "_on";
 

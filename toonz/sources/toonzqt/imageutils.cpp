@@ -627,7 +627,7 @@ void convert(const TFilePath &source, const TFilePath &dest,
                   TRop::Triangle, frameNotifier, bgColor,
                   removeDotBeforeFrameNumber);
   else if (srcExt == "pli")
-    // assert(!"Conversion from pli files is currently diabled");
+    // assert(!"Conversion from pli files is currently disabled");
     convertFromVector(lr, lw, frames, frameNotifier);
   else
     convertFromFullRaster(lr, lw, frames, TAffine(), TRop::Triangle,
@@ -913,7 +913,7 @@ bool FullScreenWidget::toggleFullScreen(
     //=============================================================
 
     const bool kfApplicationQuitInProgress)  // Indicates whether the
-                                             // application is quiting.
+                                             // application is quitting.
 
 /*
  *  DESCRIPTION:
@@ -950,7 +950,7 @@ bool FullScreenWidget::toggleFullScreen(
     fFullScreenStateToggled = true;
   } else {
     // There's no point to switching into full screen if the
-    // application is in the process of quiting.
+    // application is in the process of quitting.
     if (!kfApplicationQuitInProgress) {
       //==============================================================
       //

@@ -245,7 +245,7 @@ get the stroke nearest at point
 // Gmt. VA TOLTO IL PRIMA POSSIBILE.
 // E' una pessima cosa rendere platform dependent l'interfaccia pubblica di una
 // classe cosi' importante come la VectorImage
-#if defined(LINUX) || defined(MACOSX)
+#if defined(LINUX) || defined(FREEBSD) || defined(MACOSX)
   void render(const TVectorRenderData &rd, TRaster32P &ras);
 #endif
 
@@ -299,7 +299,7 @@ get the stroke nearest at point
 
   /*! Includes a (transformed) copy of imgs in this. If setSelected==true then
      selects imported strokes.
-          It also includes the color informations.
+          It also includes the color information.
           Try to assign the same stroke ids (if unused)
   */
   void enableRegionComputing(bool enabled, bool notIntersectingStrokes);
@@ -310,8 +310,8 @@ get the stroke nearest at point
   void enableMinimizeEdges(bool enabled);
   /*! Creates a new Image using the selected strokes. If removeFlag==true then
      removes selected strokes
-      It includes (in the new image) the color informations too.
-          It mantains stroke ids.
+      It includes (in the new image) the color information too.
+          It maintains stroke ids.
   */
   TVectorImageP splitSelected(bool removeFlag);
 
@@ -428,7 +428,7 @@ public:
 //-----------------------------------------------------------------------------
 
 // GMT: DA TOGLIERE. vedi sopra
-#ifdef LINUX
+#if defined(LINUX) || defined(FREEBSD)
 DVAPI void hardRenderVectorImage(const TVectorRenderData &rd, TRaster32P &r,
                                  const TVectorImageP &vimg);
 #endif

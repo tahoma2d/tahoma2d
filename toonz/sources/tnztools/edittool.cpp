@@ -1708,7 +1708,7 @@ bool EditTool::onPropertyChanged(std::string propertyName) {
 
 int EditTool::getCursorId() const {
   int ret;
-  // cursor for controling the fx gadget
+  // cursor for controlling the fx gadget
   if (m_highlightedDevice >= 1000)
     ret = ToolCursor::FxGadgetCursor;
   else if (transformEnabled()) {

@@ -268,7 +268,7 @@ list_node *list_root::pop(list_node *clp_old) {
 
 class brush_curve_blur {
 public:
-  /* constructer */
+  /* constructor */
   brush_curve_blur(void) {
     int32_t ii;
 
@@ -290,7 +290,7 @@ public:
       this->_da_pixel[ii] = 0.0;
     }
   }
-  /* constructer */
+  /* constructor */
   ~brush_curve_blur(void) { this->mem_free(); }
 
   /* パラメータ設定 */
@@ -528,7 +528,7 @@ int brush_curve_blur::save(double d_xp, double d_yp, const char *cp_fname) {
     /* ピクセル位置から近点位置保存 */
     if (fprintf(fp, "%g %g\n", d_xp + this->_dp_xp[ii],
                 d_yp + this->_dp_yp[ii]) < 0) {
-      pri_funct_err_bttvr("Error : fprintf(avarage x y) returns minus");
+      pri_funct_err_bttvr("Error : fprintf(average x y) returns minus");
       fclose(fp);
       return NG;
     }
@@ -3026,7 +3026,7 @@ void pixel_line_root::exec09_same_way_expand(
                        clp_select->get_i32_count_max());
   }
 
-  /* 各端点(one,anohter)ごと
+  /* 各端点(one,another)ごと
      同方向線分となる端点の近点を探し、
      それらの合成ベクトルによる角度との差を一時保管する */
   for (clp_line = (pixel_line_node *)this->get_clp_first(), ii = 0;
@@ -3049,7 +3049,7 @@ void pixel_line_root::exec09_same_way_expand(
     }
   }
 
-  /* 各端点(one,anohter)ごと
+  /* 各端点(one,another)ごと
      伸ばした線分を、一時保管した角度に曲げる */
   i32_count_one     = 0;
   i32_count_another = 0;

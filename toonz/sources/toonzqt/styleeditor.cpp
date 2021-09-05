@@ -647,7 +647,7 @@ QPixmap makeSquareShading(const ColorModel &color, ColorChannel channel,
 
 HexagonalColorWheel::HexagonalColorWheel(QWidget *parent)
     : GLWidgetForHighDpi(parent)
-    , m_bgColor(128, 128, 128)  // defaul value in case this value does not set
+    , m_bgColor(128, 128, 128)  // default value in case this value does not set
                                 // in the style sheet
 {
   setObjectName("HexagonalColorWheel");
@@ -708,7 +708,7 @@ void HexagonalColorWheel::initializeGL() {
   glClearColor(color.redF(), color.greenF(), color.blueF(), color.alphaF());
 
   // Without the following lines, the wheel in a floating style editor
-  // dissapears on switching the room due to context switching.
+  // disappears on switching the room due to context switching.
   if (m_firstInitialized)
     m_firstInitialized = false;
   else {

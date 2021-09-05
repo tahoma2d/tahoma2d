@@ -200,7 +200,7 @@ void makeChessBackground(const TRaster32P &ras) {
 
 //==========================================
 //
-//    Image-to-Icon convertion methods
+//    Image-to-Icon conversion methods
 //
 //------------------------------------------
 
@@ -1576,7 +1576,7 @@ void IconGenerator::invalidate(TXshLevel *xl, const TFrameId &fid,
     id += "_small";
     if (iconsMap.find(id) == iconsMap.end()) return;
 
-    // Not-filmstrip icons diable all checks
+    // Not-filmstrip icons disable all checks
     IconGenerator::Settings oldSettings = m_settings;
     m_settings.m_transparencyCheck      = false;
     m_settings.m_inkIndex               = -1;

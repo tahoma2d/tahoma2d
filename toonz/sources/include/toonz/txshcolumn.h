@@ -40,7 +40,7 @@ class TFx;
    \b TXshCellColumn, \b TXshSoundColumn and TXshPaletteColumn.
 
    The class contains all features about a generic xsheet column and gives
-   all methods to access to these informations.
+   all methods to access to these information.
 
    The createEmpty() static method creates an new empty column.
 
