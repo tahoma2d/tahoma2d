@@ -222,7 +222,10 @@ DrawableTextureDataP TTexturesStorage::getTextureData(
 
   // If there is no known associated display lists space, the texture cannot be
   // stored.
-  if (dlSpaceId < 0) return DrawableTextureDataP();
+  //  if (dlSpaceId < 0) return DrawableTextureDataP();
+
+  // If from an offline display, let's see if found under display 0
+  if (dlSpaceId < 0) dlSpaceId = 0;
 
   QMutexLocker locker(&l_mutex);
 

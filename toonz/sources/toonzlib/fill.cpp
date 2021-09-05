@@ -457,13 +457,18 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
     ToonzScene *scene = xsheet->getScene();
     TCamera *camera   = scene->getCurrentCamera();
     TRaster32P tmpRaster(camera->getRes());
-    scene->renderFrame(tmpRaster, frameIndex);
+
+    // Render for reference
+    scene->renderFrame(tmpRaster, frameIndex, xsheet, false, false, true);
+
+    refRaster->lock();
+
     TPoint offset((params.m_imageSize.lx - tmpRaster->getLx()) / 2,
                   (params.m_imageSize.ly - tmpRaster->getLy()) / 2);
     offset -= params.m_imageOffset;
+
     refRaster->fill(color);
     refRaster->copy(tmpRaster, offset);
-    refRaster->lock();
 
     refpix          = refRaster->pixels(p.y) + p.x;
     clickedPosColor = *refpix;
@@ -881,13 +886,15 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
     ToonzScene *scene = xsheet->getScene();
     TCamera *camera   = scene->getCurrentCamera();
     TRaster32P tmpRaster(camera->getRes());
-    scene->renderFrame(tmpRaster, frameIndex);
+    scene->renderFrame(tmpRaster, frameIndex, xsheet, false, false, true);
+
+    refRas->lock();
+
     TPoint offset((refRas->getLx() - tmpRaster->getLx()) / 2,
                   (refRas->getLy() - tmpRaster->getLy()) / 2);
     refRas->fill(color);
     refRas->copy(tmpRaster, offset);
 
-    refRas->lock();
     clickedPosColor = *(refRas->pixels(y) + x);
   }
 

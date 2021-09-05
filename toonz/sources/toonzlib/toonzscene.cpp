@@ -709,7 +709,8 @@ int ToonzScene::getFrameCount() const {
 //-----------------------------------------------------------------------------
 
 void ToonzScene::renderFrame(const TRaster32P &ras, int row, const TXsheet *xsh,
-                             bool checkFlags) const {
+                             bool checkFlags, bool forSceneIcon,
+                             bool forReference) const {
   if (xsh == 0) xsh = getXsheet();
 
   TCamera *camera        = xsh->getStageObjectTree()->getCurrentCamera();
@@ -738,7 +739,9 @@ void ToonzScene::renderFrame(const TRaster32P &ras, int row, const TXsheet *xsh,
 
     ImagePainter::VisualSettings vs;
     vs.m_plasticVisualSettings.m_drawMeshesWireframe = false;
-    vs.m_forSceneIcon                                = true;
+    vs.m_forSceneIcon                                = forSceneIcon;
+    vs.m_forReference                                = forReference;
+    vs.m_sceneProperties = xsh->getScene()->getProperties();
 
     Stage::RasterPainter painter(ras->getSize(), viewAff, clipRect, vs,
                                  checkFlags);
