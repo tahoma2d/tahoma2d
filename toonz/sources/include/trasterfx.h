@@ -38,7 +38,7 @@ class TPalette;
 //******************************************************************************
 
 /*!
-  \brief    Data class containing the relevant additional informations needed in
+  \brief    Data class containing the relevant additional information needed in
             a render process.
 
   \details  This class stores most of the data required by Toonz and single fxs
@@ -55,7 +55,7 @@ class TPalette;
   render
             on the default reference.
 
-  \sa       TRasterFx::compute() for further informations.
+  \sa       TRasterFx::compute() for further information.
 */
 
 class DVAPI TRenderSettings {

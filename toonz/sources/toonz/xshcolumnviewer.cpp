@@ -995,6 +995,8 @@ void ColumnArea::DrawHeader::drawColumnNumber() const {
 
   int valign = o->isVerticalTimeline() ? Qt::AlignVCenter : Qt::AlignBottom;
 
+  if (!o->isVerticalTimeline()) pos.adjust(0, -1, 0, -1);
+
   p.drawText(pos, Qt::AlignHCenter | valign | Qt::TextSingleLine,
              QString::number(col + 1));
 }
@@ -1072,7 +1074,11 @@ void ColumnArea::DrawHeader::drawColumnName() const {
     return;
   }
 
-  p.drawText(columnName.adjusted(leftadj, 0, rightadj, 0),
+  int vertAdj = 0;
+
+  if (!o->isVerticalTimeline()) vertAdj = col < 0 || isEmpty ? -4 : -1;
+
+  p.drawText(columnName.adjusted(leftadj, vertAdj, rightadj, vertAdj),
              Qt::AlignLeft | valign | Qt::TextSingleLine,
              QString(name.c_str()));
 }
@@ -1602,7 +1608,7 @@ void ColumnArea::drawSoundColumnHead(QPainter &p, int col) {  // AREA
   drawHeader.drawColumnName();
   drawHeader.drawColumnNumber();
   // Sound columns don't have an image. Passing in an image
-  // for arguement, but it will be ignored.
+  // for argument, but it will be ignored.
   static QPixmap iconignored;
   drawHeader.drawThumbnail(iconignored);
   drawHeader.drawPegbarName();
@@ -2194,9 +2200,6 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
       TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
       return;
     }
-    // set the clicked column to current
-    else
-      m_viewer->setCurrentColumn(m_col);
 
     TXshColumn *column = xsh->getColumn(m_col);
     bool isEmpty       = !column || column->isEmpty();
@@ -2212,17 +2215,22 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
 
     // clicking on the camera column
     if (m_col < 0) {
-      // lock button
-      if (o->rect(PredefinedRect::CAMERA_LOCK_AREA).contains(mouseInCell) &&
-          event->button() == Qt::LeftButton)
-        m_doOnRelease = isCtrlPressed ? ToggleAllLock : ToggleLock;
-      // config button
-      else if (o->rect(PredefinedRect::CAMERA_CONFIG_AREA)
-                   .contains(mouseInCell) &&
-               event->button() == Qt::LeftButton)
-        m_doOnRelease = OpenSettings;
-      // clicking another area means column selection
-      else {
+      if (o->rect(PredefinedRect::CAMERA_LOCK_AREA).contains(mouseInCell)) {
+        // lock button
+        if (event->button() == Qt::LeftButton)
+          m_doOnRelease = isCtrlPressed ? ToggleAllLock : ToggleLock;
+        else
+          return;
+      } else if (o->rect(PredefinedRect::CAMERA_CONFIG_AREA)
+                     .contains(mouseInCell)) {
+        // config button
+        if (event->button() == Qt::LeftButton)
+          m_doOnRelease = OpenSettings;
+        else
+          return;
+      } else {
+        // clicking another area means column selection
+        m_viewer->setCurrentColumn(m_col);
         if (m_viewer->getColumnSelection()->isColumnSelected(m_col) &&
             event->button() == Qt::RightButton)
           return;
@@ -2239,52 +2247,55 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
            && (o->rect(PredefinedRect::LAYER_NUMBER).contains(mouseInCell) ||
                o->rect(PredefinedRect::LAYER_NAME).contains(mouseInCell)))) {
         setDragTool(XsheetGUI::DragTool::makeColumnMoveTool(m_viewer));
-      }
-      // lock button
-      else if (o->rect(PredefinedRect::LOCK_AREA).contains(mouseInCell) &&
-               event->button() == Qt::LeftButton) {
-        m_doOnRelease = isCtrlPressed ? ToggleAllLock : ToggleLock;
-      }
-      // preview button
-      else if (o->rect(PredefinedRect::EYE_AREA).contains(mouseInCell) &&
-               event->button() == Qt::LeftButton) {
-        if (column->getSoundTextColumn()) {
-          // do nothing
-        } else {
-          m_doOnRelease =
-              isCtrlPressed ? ToggleAllPreviewVisible : TogglePreviewVisible;
-          if (column->getSoundColumn())
-            TApp::instance()->getCurrentXsheet()->notifyXsheetSoundChanged();
-        }
-      }
-      // camstand button
-      else if (o->rect(PredefinedRect::PREVIEW_LAYER_AREA)
-                   .contains(mouseInCell) &&
-               event->button() == Qt::LeftButton) {
-        if (column->getPaletteColumn() || column->getSoundTextColumn()) {
-          // do nothing
-        } else {
-          m_doOnRelease =
-              isCtrlPressed ? ToggleAllTransparency : ToggleTransparency;
-          if (!o->flag(PredefinedFlag::CONFIG_AREA_VISIBLE) &&
-              !column->getSoundColumn())
-            startTransparencyPopupTimer(event);
-        }
-      }
-      // config button
-      else if (o->rect(PredefinedRect::CONFIG_AREA).contains(mouseInCell) &&
-               event->button() == Qt::LeftButton) {
-        TXshZeraryFxColumn *zColumn =
-            dynamic_cast<TXshZeraryFxColumn *>(column);
-
-        if (column && (zColumn || column->getPaletteColumn() ||
-                       column->getSoundTextColumn())) {
-          // do nothing
+      } else if (o->rect(PredefinedRect::LOCK_AREA).contains(mouseInCell)) {
+        // lock button
+        if (event->button() == Qt::LeftButton)
+          m_doOnRelease = isCtrlPressed ? ToggleAllLock : ToggleLock;
+        else
+          return;
+      } else if (o->rect(PredefinedRect::EYE_AREA).contains(mouseInCell)) {
+        // preview button
+        if (event->button() == Qt::LeftButton) {
+          if (column->getSoundTextColumn()) {
+            // do nothing
+          } else {
+            m_doOnRelease =
+                isCtrlPressed ? ToggleAllPreviewVisible : TogglePreviewVisible;
+            if (column->getSoundColumn())
+              TApp::instance()->getCurrentXsheet()->notifyXsheetSoundChanged();
+          }
         } else
-          m_doOnRelease = OpenSettings;
-      }
-      // sound column
-      else if (column && column->getSoundColumn()) {
+          return;
+      } else if (o->rect(PredefinedRect::PREVIEW_LAYER_AREA)
+                     .contains(mouseInCell)) {
+        // camstand button
+        if (event->button() == Qt::LeftButton) {
+          if (column->getPaletteColumn() || column->getSoundTextColumn()) {
+            // do nothing
+          } else {
+            m_doOnRelease =
+                isCtrlPressed ? ToggleAllTransparency : ToggleTransparency;
+            if (!o->flag(PredefinedFlag::CONFIG_AREA_VISIBLE) &&
+                !column->getSoundColumn())
+              startTransparencyPopupTimer(event);
+          }
+        } else
+          return;
+      } else if (o->rect(PredefinedRect::CONFIG_AREA).contains(mouseInCell)) {
+        // config button
+        if (event->button() == Qt::LeftButton) {
+          TXshZeraryFxColumn *zColumn =
+              dynamic_cast<TXshZeraryFxColumn *>(column);
+
+          if (column && (zColumn || column->getPaletteColumn() ||
+                         column->getSoundTextColumn())) {
+            // do nothing
+          } else
+            m_doOnRelease = OpenSettings;
+        } else
+          return;
+      } else if (column && column->getSoundColumn()) {
+        // sound column
         if (o->rect(PredefinedRect::SOUND_ICON).contains(mouseInCell)) {
           TXshSoundColumn *s = column->getSoundColumn();
           if (s) {
@@ -2314,9 +2325,9 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
           setDragTool(XsheetGUI::DragTool::makeVolumeDragTool(m_viewer));
         else
           setDragTool(XsheetGUI::DragTool::makeColumnSelectionTool(m_viewer));
-      }
-      // clicking another area means column selection
-      else {
+      } else {
+        // clicking another area means column selection
+        m_viewer->setCurrentColumn(m_col);
         if (m_viewer->getColumnSelection()->isColumnSelected(m_col) &&
             event->button() == Qt::RightButton)
           return;
@@ -2378,6 +2389,7 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
         TApp::instance()->getCurrentFx()->setFx(fx);
       }
     } else {
+      m_viewer->setCurrentColumn(m_col);
       if (m_viewer->getColumnSelection()->isColumnSelected(m_col) &&
           event->button() == Qt::RightButton)
         return;
@@ -2388,6 +2400,7 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
     update();
 
   } else if (event->button() == Qt::MidButton) {
+    m_viewer->setCurrentColumn(m_col);
     m_pos       = event->pos();
     m_isPanning = true;
   }
@@ -2621,7 +2634,8 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
                                     m_doOnRelease == ToggleAllTransparency ||
                                     m_doOnRelease == OpenSettings)) ||
         m_doOnRelease == TogglePreviewVisible ||
-        m_doOnRelease == ToggleAllPreviewVisible)
+        m_doOnRelease == ToggleAllPreviewVisible ||
+        m_doOnRelease == ToggleLock || m_doOnRelease == ToggleAllLock)
       app->getCurrentXsheet()->notifyXsheetChanged();
     update();
     m_doOnRelease = 0;
@@ -2678,7 +2692,6 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
 
   bool isCamera = col < 0;
 
-  m_viewer->setCurrentColumn(col);
   TXsheet *xsh       = m_viewer->getXsheet();
   QPoint topLeft     = m_viewer->positionToXY(CellPosition(0, col));
   QPoint mouseInCell = event->pos() - topLeft;

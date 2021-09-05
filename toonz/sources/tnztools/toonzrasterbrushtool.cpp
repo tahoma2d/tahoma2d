@@ -2555,6 +2555,13 @@ bool ToonzRasterBrushTool::isPencilModeActive() {
   return getTargetType() == TTool::ToonzImage && m_pencil.getValue();
 }
 
+//---------------------------------------------------------------------------------------------------
+
+void ToonzRasterBrushTool::onCanvasSizeChanged() {
+  onDeactivate();
+  setWorkAndBackupImages();
+}
+
 //------------------------------------------------------------------
 
 void ToonzRasterBrushTool::onColorStyleChanged() {
@@ -2608,6 +2615,11 @@ ToonzRasterBrushToolNotifier::ToonzRasterBrushToolNotifier(
     ToonzRasterBrushTool *tool)
     : m_tool(tool) {
   if (TTool::Application *app = m_tool->getApplication()) {
+    if (TXshLevelHandle *levelHandle = app->getCurrentLevel()) {
+      bool ret = connect(levelHandle, SIGNAL(xshCanvasSizeChanged()), this,
+                         SLOT(onCanvasSizeChanged()));
+      assert(ret);
+    }
     if (TPaletteHandle *paletteHandle = app->getCurrentPalette()) {
       bool ret;
       ret = connect(paletteHandle, SIGNAL(colorStyleChanged(bool)), this,

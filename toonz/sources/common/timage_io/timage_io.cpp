@@ -24,7 +24,7 @@
 #ifdef _WIN32
 #include <io.h>
 #endif
-#ifdef LINUX
+#if defined(LINUX) || defined(FREEBSD)
 #include <unistd.h>
 #endif
 

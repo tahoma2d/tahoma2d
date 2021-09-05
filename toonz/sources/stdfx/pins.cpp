@@ -141,7 +141,7 @@ void subCompute(TRasterFxPort &m_input, TTile &tile, double frame,
   //#ifdef _WIN32
   offScreenRendering.makeCurrent();
 //#else
-//#if defined(LINUX) || defined(MACOSX)
+//#if defined(LINUX) || defined(FREEBSD) || defined(MACOSX)
 // offScreenRendering.m_offlineGL->makeCurrent();
 //#endif
 #endif

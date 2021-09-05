@@ -112,7 +112,7 @@ Until then we just follow the Win32/OSX layout.
 
 The `~/.config/Tahoma2D/` directory contains your settings, work and other files.
 
-Initialize this path with the folling commands:
+Initialize this path with the following commands:
 
 ```
 $ mkdir -p $HOME/.config/Tahoma2D

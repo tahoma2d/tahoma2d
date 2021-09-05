@@ -675,6 +675,7 @@ public:
 
   TXsheet *getXsheet() const;
   int getCurrentColumn() const;
+  int getClickedColumn() const;
   int getCurrentRow() const;
   //! Restituisce la \b objectId corrispondente alla colonna \b col
   TStageObjectId getObjectId(int col) const;
@@ -1274,6 +1275,9 @@ public:
   virtual void load(QSettings &settings) override;
 
   QString getXsheetLayout() const { return m_xsheetLayout; }
+  // returns a list of frame amount per page displayable in the current size
+  QList<int> availableFramesPerPage();
+  void zoomToFramesPerPage(int frames);
 
 protected:
   void scrollToColumn(int col);
@@ -1325,12 +1329,12 @@ public slots:
   void resetXsheetNotes();
 
   void onOrientationChanged(const Orientation *newOrientation);
-  void onPrepareToScrollOffset(const QPoint &offset);
-  void onZoomScrollAdjust(QPoint &offset, bool toZoom);
+  void onPrepareToScrollOffset(const QPointF &offset);
+  void onZoomScrollAdjust(QPointF &offset, bool toZoom);
 
   void setFrameZoomFactor(int f) { m_frameZoomFactor = f; }
   int getFrameZoomFactor() const;
-  int getFrameZoomAdjustment();
+  QPoint getFrameZoomAdjustment();
 
   void zoomOnFrame(int frame, int factor);
 };

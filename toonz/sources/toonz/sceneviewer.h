@@ -168,6 +168,7 @@ class SceneViewer final : public GLWidgetForHighDpi,
 
   bool m_isPicking;
   bool m_canShowPerspectiveGrids = false;
+  bool m_showViewerIndicators    = true;
 
   TRaster32P m_3DSideL;
   TRaster32P m_3DSideR;
@@ -350,6 +351,7 @@ protected:
   void drawCameraStand();
   void drawPreview();
   void drawOverlay();
+  void drawViewerIndicators();
 
   void drawScene();
   void drawToolGadgets();
@@ -400,10 +402,10 @@ protected:
   void mouseZoom(const TMouseEvent &e);
   void mouseRotate(const TMouseEvent &e);
 
-  // overriden from TTool::Viewer
+  // overridden from TTool::Viewer
   void pan(const TPointD &delta) override { panQt(QPointF(delta.x, delta.y)); }
 
-  // overriden from TTool::Viewer
+  // overridden from TTool::Viewer
   void zoom(const TPointD &center, double factor) override;
   void rotate(const TPointD &center, double angle) override;
   void rotate3D(double dPhi, double dTheta) override;

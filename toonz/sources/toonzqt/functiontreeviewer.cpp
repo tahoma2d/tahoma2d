@@ -6,7 +6,7 @@
 #include "tfilepath_io.h"
 #include "tfunctorinvoker.h"
 
-// TnzBase incudes
+// TnzBase includes
 #include "tunit.h"
 #include "tparamcontainer.h"
 #include "tparamset.h"

@@ -202,7 +202,7 @@ DVAPI TINT64 getMemorySize(bool onlyPhisicalMemory);
 /*! return true if not enough memory. It can happen for 2 reasons:
       1) free phisical memory is close to 0;
       2) the calling process has allocated the maximum amount of memory  allowed
-   for a single process(tipically, for a 32 bits machine, 2GB)*/
+   for a single process(typically, for a 32 bits machine, 2GB)*/
 
 DVAPI bool memoryShortage();
 

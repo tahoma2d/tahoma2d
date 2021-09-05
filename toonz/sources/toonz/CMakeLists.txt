@@ -367,7 +367,9 @@ set(SOURCES
 	cameracapturelevelcontrol.cpp
 )
 
-add_translation(toonz ${HEADERS} ${SOURCES})
+if(WITH_TRANSLATION)
+    add_translation(toonz ${HEADERS} ${SOURCES})
+endif()
 
 set(OBJCSOURCES filebrowsermodel.cpp)
 
@@ -525,7 +527,7 @@ if(BUILD_ENV_APPLE)
     message("CMAKE_RUNTIME_OUTPUT_DIRECTORY:" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endif()
 
-# copy utilty executables onto the directory after build
+# copy utility executables onto the directory after build
 if(LZODRIVER_FOUND)
     add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:lzocompress> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS lzocompress)
     add_custom_command(TARGET Tahoma2D POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:lzodecompress> ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} DEPENDS lzodecompress)

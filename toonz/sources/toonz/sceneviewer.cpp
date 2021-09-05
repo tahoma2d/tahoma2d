@@ -1,5 +1,5 @@
 
-#ifdef LINUX
+#if defined(LINUX) || defined(FREEBSD)
 #define GL_GLEXT_PROTOTYPES
 #endif
 
@@ -1634,22 +1634,9 @@ void SceneViewer::drawOverlay() {
 
     TXsheet *xsh         = TApp::instance()->getCurrentXsheet()->getXsheet();
     TStageObjectId objId = app->getCurrentObject()->getObjectId();
-    bool isMotionPath    = false;
-
-    if (objId == xsh->getStageObjectTree()->getMotionPathViewerId() &&
-        app->getCurrentObject()->isSpline()) {
-      isMotionPath = true;
-      int x0, x1, y0, y1;
-      rect().getCoords(&x0, &y0, &x1, &y1);
-      x0 = (-(x1 / 2)) + 15;
-      y0 = ((y1 / 2)) - 25;
-      glPushMatrix();
-      glScaled(3, 3, 3);
-      glColor3d(1.0, 0.0, 0.0);
-      tglDrawText(TPointD(x0 / 3, y0 / 3),
-                  tr("Motion Path Selected").toStdWString());
-      glPopMatrix();
-    }
+    bool isMotionPath =
+        (objId == xsh->getStageObjectTree()->getMotionPathViewerId() &&
+         app->getCurrentObject()->isSpline());
 
     // draw camera
     if (!isMotionPath && viewCameraToggle.getStatus() &&
@@ -1735,10 +1722,6 @@ void SceneViewer::drawOverlay() {
     else
       m_FPS = 0;
 
-    if (m_freezedStatus != NO_FREEZED) {
-      tglColor(TPixel32::Red);
-      tglDrawText(TPointD(0, 0), "FROZEN");
-    }
     assert(glGetError() == GL_NO_ERROR);
 
   }  //! cameraTest
@@ -1835,7 +1818,7 @@ void SceneViewer::drawOverlay() {
     // outside the draw() methods:
     // using special style there was a conflict between the draw() methods of
     // the tool
-    // and the genaration of the icon inside the style editor (makeIcon()) which
+    // and the generation of the icon inside the style editor (makeIcon()) which
     // use
     // another glContext
     if (tool->getName() == "T_RGBPicker") tool->onImageChanged();
@@ -1847,6 +1830,56 @@ void SceneViewer::drawOverlay() {
       tglDrawSegment(TPointD(0, -4), TPointD(0, 5));
     }
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void SceneViewer::drawViewerIndicators() {
+  if (!Preferences::instance()->isViewerIndicatorEnabled()) return;
+
+  QStringList checkTexts;
+
+  // Frozen Viewer Indicator
+  if (m_freezedStatus) checkTexts.append(tr("FROZEN"));
+
+  // Motion Path Indicator
+  TApp *app            = TApp::instance();
+  TStageObjectId objId = app->getCurrentObject()->getObjectId();
+  TXsheet *xsh         = app->getCurrentXsheet()->getXsheet();
+  if (objId == xsh->getStageObjectTree()->getMotionPathViewerId() &&
+      app->getCurrentObject()->isSpline())
+    checkTexts.append(tr("Motion Path Selected"));
+
+  // Check Indicators (disabled in Preview mode)
+  ToonzCheck *tc = ToonzCheck::instance();
+  int mask       = tc->getChecks();
+  if (!m_previewMode && mask) {
+    if (mask & ToonzCheck::eTransparency)
+      checkTexts.append(tr("Transparency Check"));
+    if (mask & ToonzCheck::eInk) checkTexts.append(tr("Ink Check"));
+    if (mask & ToonzCheck::eInk1) checkTexts.append(tr("Ink#1 Check"));
+    if (mask & ToonzCheck::ePaint) checkTexts.append(tr("Paint Check"));
+    if (mask & ToonzCheck::eInksOnly) checkTexts.append(tr("Inks Only Check"));
+    if (mask & ToonzCheck::eBlackBg) checkTexts.append(tr("Black BG Check"));
+    if (mask & ToonzCheck::eGap) checkTexts.append(tr("Fill Check"));
+    if (mask & ToonzCheck::eAutoclose) checkTexts.append(tr("Gap Check"));
+  }
+
+  if (!checkTexts.size()) return;
+
+  int x0, x1, y0, y1;
+  rect().getCoords(&x0, &y0, &x1, &y1);
+  x0 = (-(x1 / 2)) + 15;
+  y0 = ((y1 / 2)) - 25;
+
+  glPushMatrix();
+  glScaled(2, 2, 2);
+  glColor3d(1.0, 0.0, 0.0);
+  for (int i = 0; i < checkTexts.size(); i++) {
+    int y = (y0 / 2) - (i * 10);
+    tglDrawText(TPointD((x0 / 2), y), checkTexts[i].toStdString());
+  }
+  glPopMatrix();
 }
 
 //-----------------------------------------------------------------------------
@@ -1903,9 +1936,9 @@ void SceneViewer::paintGL() {
   }
 #endif
 #ifdef MACOSX
-  // followin lines are necessary to solve a problem on iMac20
+  // following lines are necessary to solve a problem on iMac20
   // It seems that for some errors in the openGl implementation, buffers are not
-  // set corretly.
+  // set correctly.
   if (m_isMouseEntered && m_forceGlFlush) {
     m_isMouseEntered = false;
     m_forceGlFlush   = false;
@@ -1954,6 +1987,8 @@ void SceneViewer::paintGL() {
     if (!m_isPicking && m_lutCalibrator && m_lutCalibrator->isValid())
       m_lutCalibrator->onEndDraw(m_fbo);
 
+    drawViewerIndicators();
+
     return;
   }
 
@@ -1974,6 +2009,8 @@ void SceneViewer::paintGL() {
   drawOverlay();
 
   drawDisableScissor();
+
+  drawViewerIndicators();
 
   // Il freezed e' attivo ed e' in stato "update": faccio il grab del viewer.
   if (m_freezedStatus == UPDATE_FREEZED) {

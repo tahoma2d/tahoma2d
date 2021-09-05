@@ -378,7 +378,7 @@ int main(int argc, char *argv[]) {
   a.setAttribute(Qt::AA_UseDesktopOpenGL, true);
 #endif
 
-  // Some Qt objects are destroyed badly withouth a living qApp. So, we must
+  // Some Qt objects are destroyed badly without a living qApp. So, we must
   // enforce a way to either
   // postpone the application destruction until the very end, OR ensure that
   // sensible objects are
@@ -412,10 +412,15 @@ int main(int argc, char *argv[]) {
 
   // Enable to render smooth icons on high dpi monitors
   a.setAttribute(Qt::AA_UseHighDpiPixmaps);
-
+#if defined(_WIN32) && QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+  // Compress tablet events with application attributes instead of implementing
+  // the delay-timer by ourselves
+  a.setAttribute(Qt::AA_CompressHighFrequencyEvents);
+  a.setAttribute(Qt::AA_CompressTabletEvents);
+#endif
   // Set the app's locale for numeric stuff to standard C. This is important for
   // atof() and similar
-  // calls that are locale-dependant.
+  // calls that are locale-dependent.
   setlocale(LC_NUMERIC, "C");
 
 // Set current directory to the bundle/application path - this is needed to have

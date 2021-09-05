@@ -26,7 +26,7 @@ string escape(string v) {
   for (;;) {
 // Removing escaping of apostrophe from Windows and OSX as it's not needed and
 // causes problems
-#ifdef LINUX
+#if defined(LINUX) || defined(FREEBSD)
     i = v.find_first_of("\\\'\"", i);
 #else
     i = v.find_first_of("\\\"", i);
@@ -1154,7 +1154,7 @@ TIStream &TIStream::operator>>(TPersist *&v) {
 //---------------------------------------------------------------
 
 bool TIStream::matchEndTag() {
-  if (m_imp->m_tagStack.empty()) throw TException("tag stack emtpy");
+  if (m_imp->m_tagStack.empty()) throw TException("tag stack empty");
   if (!m_imp->matchTag()) return false;
   if (m_imp->m_currentTag.m_type != StreamTag::EndTag) return false;
   if (m_imp->m_currentTag.m_name != m_imp->m_tagStack.back())

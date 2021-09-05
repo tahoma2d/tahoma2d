@@ -89,7 +89,7 @@ protected:
   std::set<TFilePath> m_selectedPaths;  //!< Paths in the active selection.
   TFilePath m_currentProjectPath;       //!< Path of current project.
   //!  \deprecated  Should not be cached...
-  // keep TFrameId list in order to speed up the loading of sequencial files
+  // keep TFrameId list in order to speed up the loading of sequential files
   std::list<std::vector<TFrameId>> m_currentFIdsSet;
   FileBrowser *m_browser;
 
@@ -322,7 +322,7 @@ protected slots:
   void onWhiteTranspClicked();
 
 private:
-  // update the fields acording to the current Path
+  // update the fields according to the current Path
   void updateBottomGUI(void);
   // if some option in the preferences is selected, load the level with removing
   // six letters of the scene name from the level name

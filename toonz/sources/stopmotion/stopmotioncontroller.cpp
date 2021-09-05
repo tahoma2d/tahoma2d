@@ -828,7 +828,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_captureFramesCombo->setCurrentIndex(
       m_stopMotion->getCaptureNumberOfFrames() - 1);
 
-  // should choosing the file type is disabled for simplicty
+  // should choosing the file type is disabled for simplicity
   // too many options can be a bad thing
   m_fileTypeCombo          = new QComboBox(this);
   m_fileFormatOptionButton = new QPushButton(tr("Options"), this);

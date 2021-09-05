@@ -12,7 +12,6 @@
 #include "tconvert.h"
 
 #include <time.h>
-#include <sys/timeb.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
@@ -66,6 +65,27 @@
 #include <QUrl>
 #endif
 
+#ifdef FREEBSD
+#define PLATFORM FREEBSD
+#include <sys/param.h>
+#include <sys/sched.h>
+#include <sys/sysctl.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/proc.h>
+#include <sys/vmmeter.h>
+#include <vm/vm_param.h>
+#include <grp.h>
+#include <utime.h>
+#include <stdio.h>
+#include <dirent.h>
+#include <sys/mount.h>
+#include <pwd.h>
+#include <dlfcn.h>
+#define pagetok(__nb) ((__nb) * (getpagesize()))
+#endif
+
+
 #if defined(MACOSX)
 #define PLATFORM MACOSX
 #include <grp.h>
@@ -73,7 +93,6 @@
 #include <sys/param.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <sys/timeb.h>  // for ftime
 #include <stdio.h>
 #include <unistd.h>
 #include <dirent.h>
@@ -177,7 +196,7 @@ bool TSystem::memoryShortage() {
          memStatus.ullTotalVirtual *
              0.6;  // if total memory used by this process(WorkingSetSize) is
 // half of max allocatable memory
-//(ullTotalVirtual: on 32bits machines, tipically it's 2GB)
+//(ullTotalVirtual: on 32bits machines, typically it's 2GB)
 // It's better "to stay large"; for values >0.6 this function may
 // returns that there is memory, but for fragmentation the malloc fails the
 // same!
@@ -188,6 +207,11 @@ bool TSystem::memoryShortage() {
   return false;
 
 #elif defined(LINUX)
+
+  // to be done...
+  return false;
+
+#elif defined(FREEBSD)
 
   // to be done...
   return false;
@@ -219,7 +243,7 @@ TINT64 TSystem::getFreeMemorySize(bool onlyPhisicalMemory) {
 
   // check for virtual memory
   int numberOfResources =
-      swapctl(SC_GETNSWP, 0); /* get number of swapping resources configued */
+      swapctl(SC_GETNSWP, 0); /* get number of swapping resources configured */
 
   if (numberOfResources == 0) return 0;
 
@@ -253,6 +277,31 @@ TINT64 TSystem::getFreeMemorySize(bool onlyPhisicalMemory) {
     assert(!"sysinfo function failed");
   }
   free(sysInfo);
+
+#elif defined(FREEBSD)
+
+  TINT64 ret = 0;
+  size_t size;
+#ifdef __OpenBSD__
+  int mib[] = {CTL_VM, VM_UVMEXP};
+  struct uvmexp  uvmexp;
+#else
+  int mib[] = {CTL_VM, VM_TOTAL};
+  struct vmtotal vmtotal;
+#endif
+
+#ifdef __OpenBSD__
+  size = sizeof(uvmexp);
+  if (sysctl(mib, 2, &uvmexp, &size, NULL, 0) < 0)
+    return (ret);
+  ret = pagetok((guint64)uvmexp.free);
+#else
+  size = sizeof(vmtotal);
+  if (sysctl(mib, 2, &vmtotal, &size, NULL, 0) < 0)
+    return (ret);
+  ret = pagetok(vmtotal.t_free);
+#endif
+  return ret;
 
 #elif defined(MACOSX)
 
@@ -383,6 +432,32 @@ TINT64 TSystem::getMemorySize(bool onlyPhisicalMemory) {
     assert(!"sysinfo function failed");
 
   free(sysInfo);
+  return ret;
+
+#elif defined(FREEBSD)
+
+  TINT64 ret = 0;
+  size_t size;
+#ifdef __OpenBSD__
+  int mib[] = {CTL_VM, VM_UVMEXP};
+  struct uvmexp  uvmexp;
+#else
+  int mib[] = {CTL_VM, VM_TOTAL};
+  struct vmtotal vmtotal;
+#endif
+
+#ifdef __OpenBSD__
+  size = sizeof(uvmexp);
+  if (sysctl(mib, 2, &uvmexp, &size, NULL, 0) < 0)
+    return (ret);
+  ret = pagetok((guint64)uvmexp.npages);
+#else
+  size = sizeof(vmtotal);
+  if (sysctl(mib, 2, &vmtotal, &size, NULL, 0) < 0)
+    return (ret);
+  /* cheat : rm = tot used, add free to get total */
+  ret = pagetok(vmtotal.t_rm + vmtotal.t_free);
+#endif
   return ret;
 
 #elif defined(MACOSX)

@@ -415,7 +415,7 @@ bool AddFxContextMenu::loadPreset(const std::string &name, QMenu *insertFxGroup,
 
       // This is a workaround to set the bold style to the first element of this
       // menu
-      // Setting a font directly to a QAction is not enought; style sheet
+      // Setting a font directly to a QAction is not enough; style sheet
       // definitions
       // preval over QAction font settings.
       inserMenu->setObjectName("fxMenu");
@@ -556,6 +556,7 @@ void AddFxContextMenu::onAddFx(QAction *action) {
       m_currentCursorScenePos.setY(0);
     }
 
+    // the signal xsheetChanged is to be emitted in this function
     TFxCommand::addFx(fx, fxs, m_app,
                       m_app->getCurrentColumn()->getColumnIndex(),
                       m_app->getCurrentFrame()->getFrameIndex());
@@ -564,15 +565,15 @@ void AddFxContextMenu::onAddFx(QAction *action) {
     if (fx->isZerary() &&
         fx->getAttributes()->getDagNodePos() != TConst::nowhere) {
       TXsheet *xsh = m_app->getCurrentXsheet()->getXsheet();
-      TXshZeraryFxColumn *column =
-          xsh->getColumn(m_app->getCurrentColumn()->getColumnIndex())
-              ->getZeraryFxColumn();
+      int col      = m_app->getCurrentColumn()->getColumnIndex();
+      if (col < 0) col = 0;
+      TXshZeraryFxColumn *column = xsh->getColumn(col)->getZeraryFxColumn();
       if (column)
         column->getZeraryColumnFx()->getAttributes()->setDagNodePos(
             fx->getAttributes()->getDagNodePos());
+      m_app->getCurrentXsheet()->notifyXsheetChanged();
     }
 
-    m_app->getCurrentXsheet()->notifyXsheetChanged();
     // memorize the latest operation
     m_app->getCurrentFx()->setPreviousActionString(QString("A ") +
                                                    action->data().toString());

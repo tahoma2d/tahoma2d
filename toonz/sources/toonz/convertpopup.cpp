@@ -117,7 +117,7 @@ void ConvertPopup::Converter::run() {
     TFilePath sourceLevelPath = sc->decodeFilePath(m_parent->m_srcFilePaths[i]);
     QString levelName = QString::fromStdString(sourceLevelPath.getLevelName());
 
-    // check already exsistent levels
+    // check already existent levels
     TFilePath dstFilePath =
         m_parent->getDestinationFilePath(m_parent->m_srcFilePaths[i]);
 

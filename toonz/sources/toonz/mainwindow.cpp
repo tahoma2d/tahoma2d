@@ -1693,8 +1693,8 @@ QAction *MainWindow::createToolAction(const char *id, const char *iconName,
   action->setActionGroup(m_toolsActionGroup);
   action->setStatusTip(newStatusTip);
 
-  // When the viewer is maximized (not fullscreen) the toolbar is hided and the
-  // action are disabled,
+  // When the viewer is maximized (not fullscreen) the toolbar is hidden and the
+  // actions are disabled,
   // so the tool shortcuts don't work.
   // Adding tool actions to the main window solve this problem!
   addAction(action);
@@ -2475,6 +2475,9 @@ void MainWindow::defineActions() {
                Preferences::instance()->isAutoStretchEnabled(),
                MiscCommandType, "auto_stretch",
                tr("Toggles the auto-stretch of a frame to the next frame"));
+  createToggle(MI_ViewerIndicator, QT_TR_NOOP("Toggle Viewer Indicators"), "",
+               Preferences::instance()->isViewerIndicatorEnabled(),
+               RightClickMenuCommandType);
 
   // Tools
 
@@ -2947,7 +2950,7 @@ void MainWindow::defineActions() {
   // Following actions are for adding "Visualization" menu items to the command
   // bar. They are separated from the original actions in order to avoid
   // assigning shortcut keys. They must be triggered only from pressing buttons
-  // in the command bar. Assinging shortcut keys and registering as MenuItem
+  // in the command bar. Assigning shortcut keys and registering as MenuItem
   // will break a logic of ShortcutZoomer. So here we register separate items
   // and bypass the command.
   createVisualizationButtonAction(VB_ViewReset, QT_TR_NOOP("Reset View"),

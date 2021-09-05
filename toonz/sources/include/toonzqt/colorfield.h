@@ -181,12 +181,15 @@ protected:
   void mousePressEvent(QMouseEvent *event) override;
   void mouseDoubleClickEvent(QMouseEvent *event) override;
   void hideEvent(QHideEvent *) override;
+  void contextMenuEvent(QContextMenuEvent *event) override;
 
 protected slots:
   void onRedChannelChanged(int value, bool isDragging);
   void onGreenChannelChanged(int value, bool isDragging);
   void onBlueChannelChanged(int value, bool isDragging);
   void onAlphaChannelChanged(int value, bool isDragging);
+  void onPasteColor();
+  void onCopyColor();
 
 signals:
   void editingChanged(const TPixel32 &, bool isEditing);

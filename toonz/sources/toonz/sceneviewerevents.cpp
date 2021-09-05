@@ -249,7 +249,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
   if (m_freezedStatus != NO_FREEZED) return;
 
   m_tabletEvent = true;
-#ifdef LINUX
+#if defined(LINUX) || defined(FREEBSD)
   // For Linux, ignore pressure when not actively pressing
   // Means we are hovering
   if (m_tabletState != None)
@@ -299,7 +299,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     // So, in such case set m_tabletEvent = FALSE and let the mousePressEvent to
     // work.
     if (e->button() == Qt::LeftButton) {
-      // Proces the 1st tabletPress encountered and ignore back-to-back
+      // Process the 1st tabletPress encountered and ignore back-to-back
       // tabletPress events. Treat it as if it happened so a following
       // mousePressEvent gets ignored
       if (m_tabletState == Released || m_tabletState == None) {
@@ -314,7 +314,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
       m_tabletEvent = false;
 #endif
 
-#ifdef LINUX
+#if defined(LINUX) || defined(FREEBSD)
     // for Linux, create context menu on right click here.
     // could possibly merge with OSX code above
     if (e->button() == Qt::RightButton) {
@@ -361,6 +361,13 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     }
 #endif
     QPointF curPos = e->posF() * getDevPixRatio();
+#if defined(_WIN32) && QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+    // Use the application attribute Qt::AA_CompressTabletEvents instead of the
+    // delay timer
+    if (curPos != m_lastMousePos) {
+      TMouseEvent mouseEvent;
+      initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
+#else
     // It seems that the tabletEvent is called more often than mouseMoveEvent.
     // So I fire the interval timer in order to limit the following process
     // to be called in 50fps in maximum.
@@ -371,6 +378,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
       TMouseEvent mouseEvent;
       initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
       QTimer::singleShot(20, this, SLOT(releaseBusyOnTabletMove()));
+#endif
       // cancel stroke to prevent drawing while floating
       // 23/1/2018 There is a case that the pressure becomes zero at the start
       // and the end of stroke. For such case, stroke should not be cancelled.

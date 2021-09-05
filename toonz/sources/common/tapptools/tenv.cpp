@@ -223,7 +223,7 @@ public:
   void setWorkingDirectory() {
     QString workingDirectoryTmp = QDir::currentPath();
 
-#ifdef LINUX
+#if defined(LINUX) || defined(FREEBSD)
     QString appPath =
         workingDirectoryTmp + "/" + QCoreApplication::applicationName();
     QDir appDir(appPath);
@@ -331,7 +331,7 @@ public:
 
 //=========================================================
 //
-// varaible manager (singleton)
+// variable manager (singleton)
 //
 //=========================================================
 
@@ -516,7 +516,7 @@ void TEnv::setApplicationFileName(std::string appFileName) {
 #ifdef MACOSX
   if (fp.getWideName().find(L".app"))
     for (int i = 0; i < 3; i++) fp = fp.getParentDir();
-#elif LINUX
+#elif defined(LINUX) || defined(FREEBSD)
   if (fp.getWideName().find(L".appimage"))
     for (int i = 0; i < 2; i++) fp = fp.getParentDir();
 #endif

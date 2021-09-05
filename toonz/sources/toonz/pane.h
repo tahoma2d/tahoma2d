@@ -275,7 +275,7 @@ public:
   virtual void setViewType(int viewType){};
 
   virtual bool widgetInThisPanelIsFocused() {
-    // by default, chech if the panel content itself has focus
+    // by default, check if the panel content itself has focus
     if (widget())
       return widget()->hasFocus();
     else

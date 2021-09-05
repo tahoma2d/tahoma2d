@@ -1,6 +1,5 @@
 cd thirdparty
 
-copy /Y LibJPEG\jpeg-9\jconfig.vc LibJPEG\jpeg-9\jconfig.h
 copy /Y tiff-4.0.3\libtiff\tif_config.vc.h tiff-4.0.3\libtiff\tif_config.h
 copy /Y tiff-4.0.3\libtiff\tiffconf.vc.h tiff-4.0.3\libtiff\tiffconf.h
 copy /Y libpng-1.6.21\scripts\pnglibconf.h.prebuilt libpng-1.6.21\pnglibconf.h

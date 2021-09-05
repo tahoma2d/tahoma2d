@@ -441,6 +441,9 @@ void Preferences::definePreferenceItems() {
   setCallBack(linearUnits, &Preferences::setUnits);
   setCallBack(cameraUnits, &Preferences::setCameraUnits);
 
+  define(viewerIndicatorEnabled, "viewerIndicatorEnabled", QMetaType::Bool,
+         true);
+
   // Visualization
   define(show0ThickLines, "show0ThickLines", QMetaType::Bool, true);
   define(regionAntialias, "regionAntialias", QMetaType::Bool, false);
@@ -456,6 +459,9 @@ void Preferences::definePreferenceItems() {
          QMetaType::Int, 0);  // On Demand
   define(columnIconLoadingPolicy, "columnIconLoadingPolicy", QMetaType::Int,
          (int)LoadAtOnce);
+  define(autoRemoveUnusedLevels, "autoRemoveUnusedLevels", QMetaType::Bool,
+         false);
+
   //"levelFormats" need to be handle separately
 
   // Saving

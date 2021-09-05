@@ -42,9 +42,13 @@
 #include "./sgi/tiio_sgi.h"
 #include "./tga/tiio_tga.h"
 #include "./png/tiio_png.h"
+/* Can't build this on FreeBSD: libtiff requires internal API access.
+ * Probably some one get luck to fix this. */
+#ifndef FREEBSD
 #include "./tif/tiio_tif.h"
 #include "./tzp/tiio_tzp.h"
 #include "./tzp/tiio_plt.h"
+#endif
 #include "./psd/tiio_psd.h"
 #include "./avi/tiio_avi.h"
 #include "./pli/tiio_pli.h"
@@ -80,6 +84,9 @@ void initImageIo(bool lightVersion) {
   TLevelReader::define("tlv", TLevelReaderTzl::create);
   TFileType::declare("tlv", TFileType::CMAPPED_LEVEL);
 
+/* Can't build this on FreeBSD: libtiff requires internal API access.
+ * Probably some one get luck to fix this. */
+#ifndef FREEBSD
   Tiio::defineReaderMaker("tzp", Tiio::makeTzpReader);
   Tiio::defineWriterMaker("tzp", Tiio::makeTzpWriter, false);
   TFileType::declare("tzp", TFileType::CMAPPED_IMAGE);
@@ -94,6 +101,7 @@ void initImageIo(bool lightVersion) {
   Tiio::defineReaderMaker("plt", Tiio::makePltReader);
   Tiio::defineWriterMaker("plt", Tiio::makePltWriter, false);
   TFileType::declare("plt", TFileType::RASTER_IMAGE);
+#endif
 
   TLevelWriter::define("psd", TLevelWriterPsd::create, false);
   TLevelReader::define("psd", TLevelReaderPsd::create);
@@ -115,6 +123,9 @@ void initImageIo(bool lightVersion) {
   TFileType::declare("tga", TFileType::RASTER_IMAGE);
   Tiio::defineWriterProperties("tga", new Tiio::TgaWriterProperties());
 
+/* Can't build this on FreeBSD: libtiff requires internal API access.
+ * Probably some one get luck to fix this. */
+#ifndef FREEBSD
   Tiio::defineReaderMaker("tif", Tiio::makeTifReader);
   Tiio::defineWriterMaker("tif", Tiio::makeTifWriter, true);
   TFileType::declare("tif", TFileType::RASTER_IMAGE);
@@ -124,6 +135,7 @@ void initImageIo(bool lightVersion) {
   Tiio::defineWriterMaker("tiff", Tiio::makeTifWriter, false);
   TFileType::declare("tiff", TFileType::RASTER_IMAGE);
   Tiio::defineWriterProperties("tiff", new Tiio::TifWriterProperties());
+#endif
 
   Tiio::defineReaderMaker("sgi", Tiio::makeSgiReader);
   Tiio::defineWriterMaker("sgi", Tiio::makeSgiWriter, false);

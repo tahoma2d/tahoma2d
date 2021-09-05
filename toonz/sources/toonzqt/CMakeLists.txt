@@ -202,7 +202,9 @@ set(SOURCES
 
 set(RESOURCES toonzqt.qrc)
 
-add_translation(toonzqt ${HEADERS} ${SOURCES})
+if(WITH_TRANSLATION)
+    add_translation(toonzqt ${HEADERS} ${SOURCES})
+endif()
 
 get_target_property(QW_LOC Qt5::Widgets INTERFACE_INCLUDE_DIRECTORIES)
 

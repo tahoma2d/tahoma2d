@@ -46,6 +46,7 @@ enum PreferencesItemId {
   interfaceFontStyle,
   colorCalibrationEnabled,
   colorCalibrationLutPaths,
+  viewerIndicatorEnabled,
 
   //----------
   // Visualization
@@ -62,6 +63,7 @@ enum PreferencesItemId {
   initialLoadTlvCachingBehavior,
   columnIconLoadingPolicy,
   levelFormats,  // need to be handle separately
+  autoRemoveUnusedLevels,
 
   //----------
   // Saving

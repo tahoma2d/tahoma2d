@@ -14,6 +14,7 @@
 #include "toonz/txshpalettelevel.h"
 #include "toonz/preferences.h"
 #include "toonz/sceneproperties.h"
+#include "toutputproperties.h"
 #include "toonzqt/tselectionhandle.h"
 #include "toonzqt/icongenerator.h"
 #include "cellselection.h"
@@ -44,6 +45,7 @@
 #include <QPainter>
 #include <QScrollBar>
 #include <QMouseEvent>
+#include <QMainWindow>
 
 TEnv::IntVar FrameDisplayStyleInXsheetRowArea(
     "FrameDisplayStyleInXsheetRowArea", 0);
@@ -364,6 +366,10 @@ const Orientation *XsheetViewer::orientation() const {
 
 void XsheetViewer::flipOrientation() {
   m_orientation = orientation()->next();
+
+  int factor = (m_orientation->isVerticalTimeline()) ? m_frameZoomFactor : 100;
+  TApp::instance()->getCurrentXsheet()->notifyZoomScaleChanged(factor);
+
   emit orientationChanged(orientation());
 }
 
@@ -417,9 +423,15 @@ void XsheetViewer::positionSections() {
   m_rowScrollArea->setGeometry(o->frameLayerRect(
       bodyFrame.adjusted(0, -XsheetGUI::SCROLLBAR_WIDTH), headerLayer));
 
-  m_layerFooterPanel->setGeometry(0,
-                                  m_columnScrollArea->geometry().bottom() + 1,
-                                  m_columnScrollArea->width(), 14);
+  if (o->isVerticalTimeline()) {
+    m_layerFooterPanel->setGeometry(m_columnScrollArea->geometry().right() + 1,
+                                    m_columnScrollArea->geometry().top(), 14,
+                                    m_columnScrollArea->height());
+  } else {
+    m_layerFooterPanel->setGeometry(0,
+                                    m_columnScrollArea->geometry().bottom() + 1,
+                                    m_columnScrollArea->width(), 14);
+  }
 
   m_layerFooterPanel->showOrHide(o);
 }
@@ -481,6 +493,14 @@ TXsheet *XsheetViewer::getXsheet() const {
 
 int XsheetViewer::getCurrentColumn() const {
   return TApp::instance()->getCurrentColumn()->getColumnIndex();
+}
+
+//-----------------------------------------------------------------------------
+
+int XsheetViewer::getClickedColumn() const {
+  if (!m_columnArea) return -1;
+
+  return m_columnArea->getClickedColumn();
 }
 
 //-----------------------------------------------------------------------------
@@ -585,24 +605,36 @@ void XsheetViewer::scroll(QPoint delta) {
 
 //-----------------------------------------------------------------------------
 
-void XsheetViewer::onPrepareToScrollOffset(const QPoint &offset) {
-  refreshContentSize(offset.x(), offset.y());
+void XsheetViewer::onPrepareToScrollOffset(const QPointF &offset) {
+  refreshContentSize((int)offset.x(), (int)offset.y());
 }
 
 //-----------------------------------------------------------------------------
 
-void XsheetViewer::onZoomScrollAdjust(QPoint &offset, bool toZoom) {
-  int frameZoomFactor = getFrameZoomFactor();
+void XsheetViewer::onZoomScrollAdjust(QPointF &offset, bool toZoom) {
+  double frameZoomFactor = (double)getFrameZoomFactor();
 
-  // toZoom = true: Adjust standardized offset down to zoom factor
-  // toZoom = false: Adjust zoomed offset up to standardized offset
-  int newX;
-  if (toZoom)
-    newX = (offset.x() * frameZoomFactor) / 100;
-  else
-    newX = (offset.x() * 100) / frameZoomFactor;
+  if (orientation()->isVerticalTimeline()) {
+    // toZoom = true: Adjust standardized offset down to zoom factor
+    // toZoom = false: Adjust zoomed offset up to standardized offset
+    double newY;
+    if (toZoom)
+      newY = (offset.y() * frameZoomFactor) / 100.0;
+    else
+      newY = (offset.y() * 100.0) / frameZoomFactor;
 
-  offset.setX(newX);
+    offset.setY(newY);
+  } else {
+    // toZoom = true: Adjust standardized offset down to zoom factor
+    // toZoom = false: Adjust zoomed offset up to standardized offset
+    double newX;
+    if (toZoom)
+      newX = (offset.x() * frameZoomFactor) / 100.0;
+    else
+      newX = (offset.x() * 100.0) / frameZoomFactor;
+
+    offset.setX(newX);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -781,7 +813,9 @@ CellPosition XsheetViewer::xyToPosition(const QPoint &point) const {
 
   ColumnFan *fan = xsh->getColumnFan(o);
 
-  if (!o->isVerticalTimeline())
+  if (o->isVerticalTimeline())
+    usePoint.setY((usePoint.y() * 100) / getFrameZoomFactor());
+  else
     usePoint.setX((usePoint.x() * 100) / getFrameZoomFactor());
 
   if (o->isVerticalTimeline()) return o->xyToPosition(usePoint, fan);
@@ -817,7 +851,9 @@ QPoint XsheetViewer::positionToXY(const CellPosition &pos) const {
   ColumnFan *fan  = xsh->getColumnFan(o);
   QPoint usePoint = o->positionToXY(pos, fan);
 
-  if (!o->isVerticalTimeline())
+  if (o->isVerticalTimeline())
+    usePoint.setY((usePoint.y() * getFrameZoomFactor()) / 100);
+  else
     usePoint.setX((usePoint.x() * getFrameZoomFactor()) / 100);
 
   if (o->isVerticalTimeline()) return usePoint;
@@ -851,8 +887,8 @@ int XsheetViewer::columnToLayerAxis(int layer) const {
 }
 int XsheetViewer::rowToFrameAxis(int frame) const {
   int result = orientation()->rowToFrameAxis(frame);
-  if (!orientation()->isVerticalTimeline())
-    result = (result * getFrameZoomFactor()) / 100;
+  // if (!orientation()->isVerticalTimeline())
+  result = (result * getFrameZoomFactor()) / 100;
   return result;
 }
 
@@ -1051,6 +1087,8 @@ void XsheetViewer::showEvent(QShowEvent *) {
   updateAllAree();
 
   changeWindowTitle();
+
+  xsheetHandle->notifyZoomScaleChanged(m_frameZoomFactor);
 }
 
 //-----------------------------------------------------------------------------
@@ -1096,6 +1134,8 @@ void XsheetViewer::hideEvent(QHideEvent *) {
 
   disconnect(IconGenerator::instance(), SIGNAL(iconGenerated()), this,
              SLOT(updateColumnArea()));
+
+  xsheetHandle->notifyZoomScaleChanged(100);
 }
 
 //-----------------------------------------------------------------------------
@@ -1279,10 +1319,12 @@ void XsheetViewer::keyPressEvent(QKeyEvent *event) {
 
       break;
     case Qt::Key_End:
-      if (orientation()->isVerticalTimeline())
-        locals.scrollVertTo((frameCount + 1) * orientation()->cellHeight(),
-                            visibleRect);
-      else {
+      if (orientation()->isVerticalTimeline()) {
+        int y = (((frameCount + 1) * orientation()->cellHeight()) *
+                 getFrameZoomFactor()) /
+                100;
+        locals.scrollVertTo(y, visibleRect);
+      } else {
         int x = (((frameCount + 1) * orientation()->cellWidth()) *
                  getFrameZoomFactor()) /
                 100;
@@ -1555,6 +1597,7 @@ void XsheetViewer::updateColumnArea() {
 //-----------------------------------------------------------------------------
 
 void XsheetViewer::updateCellColumnAree() {
+  if (!m_isComputingSize) refreshContentSize(0, 0);
   m_columnArea->update(m_columnArea->visibleRegion());
   m_cellArea->update(m_cellArea->visibleRegion());
 }
@@ -1562,6 +1605,7 @@ void XsheetViewer::updateCellColumnAree() {
 //-----------------------------------------------------------------------------
 
 void XsheetViewer::updateCellRowAree() {
+  if (!m_isComputingSize) refreshContentSize(0, 0);
   m_rowArea->update(m_rowArea->visibleRegion());
   m_cellArea->update(m_cellArea->visibleRegion());
 }
@@ -1765,6 +1809,7 @@ void XsheetViewer::save(QSettings &settings) const {
   settings.setValue("orientation", orientation()->name());
   settings.setValue("frameZoomFactor", m_frameZoomFactor);
 }
+
 void XsheetViewer::load(QSettings &settings) {
   QVariant zoomFactor = settings.value("frameZoomFactor");
   QVariant name       = settings.value("orientation");
@@ -1792,20 +1837,92 @@ TPanel *createXsheetViewer(QWidget *parent)
 */
 
 //----------------------------------------------------------------
+
+QList<int> XsheetViewer::availableFramesPerPage() {
+  int frameRate = TApp::instance()
+                      ->getCurrentScene()
+                      ->getScene()
+                      ->getProperties()
+                      ->getOutputProperties()
+                      ->getFrameRate();
+  // 1sec, 1.5sec, 2sec, 3sec, 4sec, 6sec
+  QList<int> ret;
+  ret << frameRate;
+  if (frameRate % 2 == 0) ret << frameRate * 3 / 2;
+  ret << frameRate * 2;
+  ret << frameRate * 3;
+  ret << frameRate * 4;
+  ret << frameRate * 6;
+
+  // visible area size
+  int size = (orientation()->isVerticalTimeline())
+                 ? m_cellScrollArea->viewport()->height()
+                 : m_cellScrollArea->viewport()->width();
+  int scaleMin = (orientation()->isVerticalTimeline()) ? 50 : 20;
+  int scaleMax = 100;
+
+  int frameMin = (int)std::ceil(
+      (double)size /
+      ((double)orientation()->dimension(PredefinedDimension::FRAME) *
+       (double)scaleMax / 100.0));
+  int frameMax = (int)std::floor(
+      (double)size /
+      ((double)orientation()->dimension(PredefinedDimension::FRAME) *
+       (double)scaleMin / 100.0));
+
+  for (auto itr = ret.begin(); itr != ret.end();) {
+    // erase unavailable items
+    if (*itr < frameMin || *itr > frameMax) {
+      itr = ret.erase(itr);
+      continue;
+    }
+    itr++;
+  }
+  return ret;
+}
+
+//----------------------------------------------------------------
+
+void XsheetViewer::zoomToFramesPerPage(int frames) {
+  int size = (orientation()->isVerticalTimeline())
+                 ? m_cellScrollArea->viewport()->height()
+                 : m_cellScrollArea->viewport()->width();
+  int frameDim = orientation()->dimension(PredefinedDimension::FRAME);
+
+  double scale = (double)size / ((double)frameDim * (double)frames);
+
+  // convert to factor value
+  int factor;
+  if (orientation()->isVerticalTimeline())
+    factor = (int)std::round((0.2 + (scale - 0.5) * 8.0 / 5.0) * 100);
+  else
+    factor = (int)std::round(scale * 100);
+
+  zoomOnFrame(getCurrentRow(), factor);
+}
+
+//----------------------------------------------------------------
 int XsheetViewer::getFrameZoomFactor() const {
-  if (orientation()->isVerticalTimeline()) return 100;
+  if (orientation()->isVerticalTimeline())
+    return 50 + (m_frameZoomFactor - 20) * 5 / 8;
 
   return m_frameZoomFactor;
 }
 
-int XsheetViewer::getFrameZoomAdjustment() {
-  if (orientation()->isVerticalTimeline()) return 0;
+QPoint XsheetViewer::getFrameZoomAdjustment() {
+  // if (orientation()->isVerticalTimeline()) return 0;
 
   QRect frameRect = orientation()->rect(PredefinedRect::FRAME_HEADER);
-  int adj         = frameRect.width() -
-            ((frameRect.width() * getFrameZoomFactor()) / 100) - 1;
-
-  return std::max(0, adj);
+  int adj;
+  if (orientation()->isVerticalTimeline()) {
+    adj = frameRect.height() -
+          ((frameRect.height() * getFrameZoomFactor()) / 100) - 1;
+    return QPoint(0, std::max(0, adj));
+  } else {
+    adj = frameRect.width() -
+          ((frameRect.width() * getFrameZoomFactor()) / 100) - 1;
+    return QPoint(std::max(0, adj), 0);
+  }
 }
 
 void XsheetViewer::zoomOnFrame(int frame, int factor) {
@@ -1816,11 +1933,11 @@ void XsheetViewer::zoomOnFrame(int frame, int factor) {
 
   QPoint xyNew = positionToXY(CellPosition(frame, -1));
 
-  int viewShift = xyNew.x() - xyOrig.x();
-
-  scroll(QPoint(viewShift, 0));
+  scroll(xyNew - xyOrig);
 
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  if (orientation()->isVerticalTimeline())
+    TApp::instance()->getCurrentXsheet()->notifyZoomScaleChanged(factor);
   m_rowArea->update();
 }
 

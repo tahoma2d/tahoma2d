@@ -358,6 +358,8 @@ public:
 
   QPixmap getColumnIcon(int columnIndex);
 
+  int getClickedColumn() { return m_col; }
+
   class Pixmaps {
   public:
     static const QPixmap &sound();

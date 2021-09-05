@@ -705,11 +705,11 @@ void FilmstripFrames::paintEvent(QPaintEvent *evt) {
           fid.getNumber() == TFrameId::NO_FRAME) {
         text = QString("Single Frame");
       }
-      // for sequencial frame (with letter)
+      // for sequential frame (with letter)
       else if (Preferences::instance()->isShowFrameNumberWithLettersEnabled()) {
         text = fidToFrameNumberWithLetter(fid.getNumber());
       }
-      // for sequencial frame
+      // for sequential frame
       else {
         char letter = fid.getLetter();
         text        = QString::number(fid.getNumber()).rightJustified(4, '0') +
@@ -855,7 +855,14 @@ void FilmstripFrames::mousePressEvent(QMouseEvent *event) {
 
   TXshSimpleLevel *sl = getLevel();
 
+  CommandManager::instance()->enable(MI_CanvasSize, false);
+
   if (!sl) return;
+
+  bool isRasterLevel =
+      (sl->getType() == TZP_XSHLEVEL || sl->getType() == OVL_XSHLEVEL ||
+       sl->getType() == TZI_XSHLEVEL);
+  CommandManager::instance()->enable(MI_CanvasSize, isRasterLevel);
 
   // If accessed after 1st frame on a Single Frame level
   // Block movement so we can't create new images
@@ -1980,7 +1987,7 @@ void Filmstrip::load(QSettings &settings) {
 //-----------------------------------------------------------------------------
 
 InbetweenDialog::InbetweenDialog(QWidget *parent)
-    : Dialog(TApp::instance()->getMainWindow(), true, "InBeetween") {
+    : Dialog(TApp::instance()->getMainWindow(), true, "InBetween") {
   setWindowTitle(tr("Inbetween"));
 
   QString linear(tr("Linear"));

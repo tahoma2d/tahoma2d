@@ -116,11 +116,11 @@ public:
       const TFilePath path) const;  //!< Builds the path to be used during a
                                     //!< level import operation.
 
-  /*! \details  If convertion is required, a new level file will be created
+  /*! \details  If conversion is required, a new level file will be created
           and \p levelPath will be substituted with its new path.
 
 \return   Whether the level doesn't need to be converted or
-          the convertion succeeded.                                           */
+          the conversion succeeded.                                           */
 
   bool convertLevelIfNeeded(TFilePath &levelPath);  //!< Checks if the given
                                                     //! levelPath is a file path
@@ -170,7 +170,7 @@ Return scene frame count.
   int getFrameCount() const;
 
   /*!
-Returs frame count stored in the scene header.
+Returns frame count stored in the scene header.
 Quicker than load(fp); getFrameCount()
 */
   int loadFrameCount(const TFilePath &fp);
@@ -251,7 +251,7 @@ If \b scene is in +scenes/name.tnz return name,
   //! gets the contentHistory. possibly creates a new one (if createIfNeeded)
   TContentHistory *getContentHistory(bool createIfNeeded = false);
 
-  // shifts camera offet, returning old value; usend for steroscophy
+  // shifts camera offset, returning old value; usend for steroscophy
   double shiftCameraX(double val);
 
   void setVersionNumber(VersionNumber version) { m_versionNumber = version; }
@@ -266,7 +266,7 @@ If \b scene is in +scenes/name.tnz return name,
 private:
   TFilePath m_scenePath;  //!< Full path to the scene file (.tnz).
 
-  ChildStack *m_childStack;  //!< Xsheet hierachy.
+  ChildStack *m_childStack;  //!< Xsheet hierarchy.
   TSceneProperties *m_properties;
   TLevelSet *m_levelSet;
   TProject *m_project;
@@ -287,6 +287,7 @@ private:
   ToonzScene(const ToonzScene &);
   ToonzScene &operator=(const ToonzScene &);
 
+public:
   // if the option is set in the preferences,
   // remove the scene numbers("c####_") from the file name
   std::wstring getLevelNameWithoutSceneNumber(std::wstring orgName);

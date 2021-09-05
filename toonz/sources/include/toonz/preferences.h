@@ -235,6 +235,10 @@ public:
   void setColorCalibrationLutPath(QString monitorName, QString path);
   QString getColorCalibrationLutPath(QString &monitorName) const;
 
+  bool isViewerIndicatorEnabled() const {
+    return getBoolValue(viewerIndicatorEnabled);
+  }
+
   // Visualization  tab
   bool getShow0ThickLines() const { return getBoolValue(show0ThickLines); }
   bool getRegionAntialias() const { return getBoolValue(regionAntialias); }
@@ -269,6 +273,9 @@ public:
   int matchLevelFormat(const TFilePath &fp)
       const;  //!< Returns the \a nonnegative index of the first level format
               //!  matching the specified file path, <I>or \p -1 if none</I>.
+  bool isAutoRemoveUnusedLevelsEnabled() const {
+    return isAutoExposeEnabled() && getBoolValue(autoRemoveUnusedLevels);
+  }
 
   // Saving tab
   TPixel getRasterBackgroundColor() const {

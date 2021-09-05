@@ -1019,6 +1019,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {colorCalibrationLutPaths,
        tr("3DLUT File for [%1]:")
            .arg(LutManager::instance()->getMonitorName())},
+      {viewerIndicatorEnabled, tr("Show Viewer Indicators")},
 
       // Visualization
       {show0ThickLines, tr("Show Lines with Thickness 0")},
@@ -1027,6 +1028,8 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       // Loading
       {importPolicy, tr("Default File Import Behavior:")},
       {autoExposeEnabled, tr("Expose Loaded Levels in the Scene")},
+      {autoRemoveUnusedLevels,
+       tr("Automatically Remove Unused Levels From Scene Cast")},
       {subsceneFolderEnabled, tr("Create Sub-folder when Importing Sub-Scene")},
       {removeSceneNumberFromLoadedLevelName,
        tr("Automatically Remove Scene Number from Loaded Level Name")},
@@ -1257,7 +1260,7 @@ inline T PreferencesPopup::getUI(PreferencesItemId id) {
 }
 
 //**********************************************************************************
-//    PrefencesPopup's  constructor
+//    PreferencesPopup's  constructor
 //**********************************************************************************
 
 PreferencesPopup::PreferencesPopup()
@@ -1462,6 +1465,7 @@ QWidget* PreferencesPopup::createInterfacePage() {
   insertUI(moveCurrentFrameByClickCellArea, lay);
   insertUI(actualPixelViewOnSceneEditingMode, lay);
   // insertUI(levelNameOnEachMarkerEnabled, lay);
+  insertUI(viewerIndicatorEnabled, lay);
   insertUI(showRasterImagesDarkenBlendedInViewer, lay);
   // insertUI(showFrameNumberWithLetters, lay);
   insertUI(iconSize, lay);
@@ -1535,7 +1539,8 @@ QWidget* PreferencesPopup::createLoadingPage() {
   setupLayout(lay);
 
   insertUI(importPolicy, lay, getComboItemList(importPolicy));
-  insertUI(autoExposeEnabled, lay);
+  QGridLayout* autoExposeLay = insertGroupBoxUI(autoExposeEnabled, lay);
+  { insertUI(autoRemoveUnusedLevels, autoExposeLay); }
   insertUI(subsceneFolderEnabled, lay);
   insertUI(removeSceneNumberFromLoadedLevelName, lay);
   // insertUI(IgnoreImageDpi, lay);
