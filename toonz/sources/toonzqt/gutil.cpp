@@ -320,7 +320,7 @@ QIcon createQIcon(const char *iconSVGName, bool useFullOpacity,
   QIcon icon;
 
 #ifdef _WIN32
-  bool showIconInMenu = Preferences::instance()->getBoolValue(showIconsInMenu);
+  bool showIconInMenu = false; //Preferences::instance()->getBoolValue(showIconsInMenu);
   // set transparent icon
   if (isForMenuItem &&
       themeIconPixmap.size() == QSize(16 * devPixRatio, 16 * devPixRatio) &&

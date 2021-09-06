@@ -1415,7 +1415,7 @@ QAction *MainWindow::createAction(const char *id, const char *name,
   QAction *action = new DVAction(tr(name), this);
 
 #if !defined(_WIN32)
-  bool visible = Preferences::instance()->getBoolValue(showIconsInMenu);
+  bool visible = false; //Preferences::instance()->getBoolValue(showIconsInMenu);
   action->setIconVisibleInMenu(visible);
 #endif
 
@@ -1435,7 +1435,6 @@ QAction *MainWindow::createAction(const char *id, const char *name,
     // do nothing for other platforms
   } else
     action->setIcon(createQIcon(iconSVGName, false, true));
-  action->setIconVisibleInMenu(false);
   addAction(action);
 #ifdef MACOSX
   // To prevent the wrong menu items (due to MacOS menu naming conventions),
@@ -1681,7 +1680,7 @@ QAction *MainWindow::createToggle(const char *id, const char *name,
   if (!iconSVGName || !*iconSVGName) action->setIcon(QIcon());
 #if defined(_WIN32)
   else {
-    bool visible = Preferences::instance()->getBoolValue(showIconsInMenu);
+    bool visible = false; //Preferences::instance()->getBoolValue(showIconsInMenu);
     action->setIconVisibleInMenu(visible);
   }
 #endif

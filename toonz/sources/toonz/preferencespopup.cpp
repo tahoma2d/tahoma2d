@@ -1477,7 +1477,7 @@ QWidget* PreferencesPopup::createInterfacePage() {
   // insertUI(interfaceFontStyle, lay, buildFontStyleList());
   QGridLayout* colorCalibLay = insertGroupBoxUI(colorCalibrationEnabled, lay);
   { insertUI(colorCalibrationLutPaths, colorCalibLay); }
-  insertUI(showIconsInMenu, lay);
+//  insertUI(showIconsInMenu, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
   insertFootNote(lay);
