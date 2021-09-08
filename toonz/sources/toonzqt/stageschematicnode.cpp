@@ -1583,10 +1583,13 @@ void StageSchematicNode::onHandleReleased() {
 StageSchematicPegbarNode::StageSchematicPegbarNode(StageSchematicScene *scene,
                                                    TStageObject *pegbar)
     : StageSchematicNode(scene, pegbar, 90, 18, false, false) {
+  SchematicViewer *viewer = scene->getSchematicViewer();
+
   std::string name = m_stageObject->getFullName();
   std::string id   = m_stageObject->getId().toString();
   m_name           = QString::fromStdString(name);
   m_nameItem       = new SchematicName(this, 72, 20);
+  m_nameItem->setDefaultTextColor(viewer->getTextColor());
   m_nameItem->setName(m_name);
   m_nameItem->setPos(16, -1);
   m_nameItem->setZValue(2);
@@ -1728,6 +1731,7 @@ StageSchematicColumnNode::StageSchematicColumnNode(StageSchematicScene *scene,
                        SLOT(onChangedSize(bool)));
 
   m_nameItem = new SchematicName(this, 54, 20);
+  m_nameItem->setDefaultTextColor(viewer->getTextColor());
   m_nameItem->setName(m_name);
   m_nameItem->setPos(16, -1);
   m_nameItem->setZValue(2);
@@ -2027,10 +2031,13 @@ void StageSchematicColumnNode::onCameraStandToggleClicked(int state) {
 StageSchematicCameraNode::StageSchematicCameraNode(StageSchematicScene *scene,
                                                    TStageObject *pegbar)
     : StageSchematicNode(scene, pegbar, 90, 18, false, false) {
+  SchematicViewer *viewer = scene->getSchematicViewer();
+
   std::string name = m_stageObject->getFullName();
   m_name           = QString::fromStdString(name);
 
   m_nameItem = new SchematicName(this, 54, 20);
+  m_nameItem->setDefaultTextColor(viewer->getTextColor());
   m_nameItem->setName(m_name);
 
   m_nameItem->setPos(16, -2);
@@ -2106,6 +2113,8 @@ void StageSchematicCameraNode::onNameChanged() {
 StageSchematicSplineNode::StageSchematicSplineNode(StageSchematicScene *scene,
                                                    TStageObjectSpline *spline)
     : SchematicNode(scene), m_spline(spline), m_isOpened(false) {
+  SchematicViewer *viewer = scene->getSchematicViewer();
+
   m_width  = 90;
   m_height = 18;
   assert(spline);
@@ -2123,6 +2132,7 @@ StageSchematicSplineNode::StageSchematicSplineNode(StageSchematicScene *scene,
   std::string name = m_spline->getName();
   m_splineName     = QString::fromStdString(name);
   m_nameItem       = new SchematicName(this, 72, 20);
+  m_nameItem->setDefaultTextColor(viewer->getTextColor());
   m_nameItem->setName(m_splineName);
   m_nameItem->setPos(16, -1);
   m_nameItem->setZValue(2);
@@ -2239,6 +2249,8 @@ StageSchematicGroupNode::StageSchematicGroupNode(
     : StageSchematicNode(scene, root, 90, 18, true)
     , m_root(root)
     , m_groupedObj(groupedObj) {
+  SchematicViewer *viewer = scene->getSchematicViewer();
+
   int i;
   for (i   = 0; i < m_groupedObj.size(); i++) m_groupedObj[i]->addRef();
   bool ret = true;
@@ -2246,6 +2258,7 @@ StageSchematicGroupNode::StageSchematicGroupNode(
   m_name            = QString::fromStdWString(name);
 
   m_nameItem = new SchematicName(this, 72, 20);
+  m_nameItem->setDefaultTextColor(viewer->getTextColor());
   m_nameItem->setName(m_name);
   m_nameItem->setPos(16, -1);
   m_nameItem->setZValue(2);

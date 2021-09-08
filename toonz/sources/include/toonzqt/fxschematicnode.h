@@ -609,17 +609,21 @@ class FxPassThroughPainter final : public QObject, public QGraphicsItem {
   Q_INTERFACES(QGraphicsItem)
 
   double m_width, m_height;
+  QString m_name;
+  bool m_showName;
 
   FxSchematicPassThroughNode *m_parent;
 
 public:
   FxPassThroughPainter(FxSchematicPassThroughNode *parent, double width,
-                       double height);
+                       double height, const QString &name, bool showName);
   ~FxPassThroughPainter();
 
   QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
              QWidget *widget = 0) override;
+  void setName(const QString &name) { m_name = name; }
+  void setShowName(bool showName) { m_showName = showName; }
 
 protected:
   void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
@@ -632,6 +636,8 @@ protected:
 class FxSchematicPassThroughNode final : public FxSchematicNode {
   Q_OBJECT
 
+  bool m_showName;
+
   FxPassThroughPainter *m_passThroughPainter;
 
 public:
@@ -641,9 +647,15 @@ public:
   QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
              QWidget *widget = 0) override;
+  bool isOpened() override { return false; }
 
 protected:
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *me) override;
   void mousePressEvent(QGraphicsSceneMouseEvent *me) override;
+
+protected slots:
+
+  void onNameChanged();
 };
 
 #endif  // FXSCHEMATICNODE_H
