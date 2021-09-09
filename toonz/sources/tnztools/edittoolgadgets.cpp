@@ -2084,6 +2084,15 @@ EditToolGadgets::DragTool *FxGadgetController::createDragTool(int gadgetId) {
 //---------------------------------------------------------------------------
 
 TAffine FxGadgetController::getMatrix() {
+  TFx *fx = m_fxHandle ? m_fxHandle->getFx() : 0;
+  if (fx) {
+    int referenceColumnIndex = fx->getReferenceColumnIndex();
+    if (referenceColumnIndex == -1)
+      return m_tool->getMatrix().inv();
+    else if (referenceColumnIndex != m_tool->getColumnIndex())
+      return m_tool->getMatrix().inv() *
+             m_tool->getColumnMatrix(referenceColumnIndex, -1);
+  }
   return m_tool->getMatrix().inv() * m_tool->getCurrentColumnMatrix();
 }
 
