@@ -32,6 +32,7 @@ then
    fi
    mkdir $TOONZDIR/Tahoma2D.app/ffmpeg
    cp -R thirdparty/apps/ffmpeg/bin/ffmpeg thirdparty/apps/ffmpeg/bin/ffprobe $TOONZDIR/Tahoma2D.app/ffmpeg
+   chmod -R 755 $TOONZDIR/Tahoma2D.app/ffmpeg
 fi
 
 if [ -d thirdparty/apps/rhubarb ]
@@ -44,6 +45,7 @@ then
    fi
    mkdir $TOONZDIR/Tahoma2D.app/rhubarb
    cp -R thirdparty/apps/rhubarb/rhubarb thirdparty/apps/rhubarb/res $TOONZDIR/Tahoma2D.app/rhubarb
+   chmod -R 755 $TOONZDIR/Tahoma2D.app/rhubarb
 fi
 
 if [ -d thirdparty/canon/Framework ]
@@ -54,6 +56,7 @@ then
       mkdir $TOONZDIR/Tahoma2D.app/Contents/Frameworks
    fi
    cp -R thirdparty/canon/Framework/ $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+   chmod -R 755 $TOONZDIR/Tahoma2D.app/Contents/Frameworks/EDSDK.framework
 fi
 
 echo ">>> Configuring Tahoma2D.app for deployment"
