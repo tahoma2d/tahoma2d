@@ -150,7 +150,8 @@ the specified
 32-bit raster.
 */
   void renderFrame(const TRaster32P &ras, int row, const TXsheet *xsh = 0,
-                   bool checkFlags = true) const;
+                   bool checkFlags = true, bool forSceneIcon = true,
+                   bool forReference = false) const;
 
   /*!
 Performs a camera-stand render of the specified xsheet in the specified

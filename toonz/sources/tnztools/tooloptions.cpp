@@ -1558,7 +1558,8 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
     , m_fillDepthField(0)
     , m_gapSliderLabel(0)
     , m_styleIndexLabel(0)
-    , m_segmentMode(0) {
+    , m_segmentMode(0)
+    , m_referenced(0) {
   TPropertyGroup *props = tool->getProperties(0);
   assert(props->getPropertyCount() > 0);
 
@@ -1579,6 +1580,8 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Segment"));
   m_onionMode =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Onion Skin"));
+  m_referenced =
+      dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Refer Visible"));
   m_multiFrameMode =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Frame Range"));
   m_autopaintMode =
@@ -1622,6 +1625,7 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
         m_multiFrameMode->isChecked())
       m_onionMode->setEnabled(false);
     if (m_autopaintMode) m_autopaintMode->setEnabled(false);
+    m_referenced->setEnabled(false);
   }
   if (m_toolType->getProperty()->getValue() != L"Normal") {
     if (m_segmentMode) m_segmentMode->setEnabled(false);
@@ -1658,6 +1662,7 @@ void FillToolOptionsBox::onColorModeChanged(int index) {
   }
   enabled = range[index] != L"Lines" && !m_multiFrameMode->isChecked();
   m_onionMode->setEnabled(enabled);
+  m_referenced->setEnabled(enabled);
   checkGapSettingsVisibility();
 }
 
@@ -1715,6 +1720,7 @@ void FillToolOptionsBox::checkGapSettingsVisibility() {
 void FillToolOptionsBox::onToolTypeChanged(int index) {
   const TEnumProperty::Range &range = m_toolType->getProperty()->getRange();
   bool enabled                      = range[index] == L"Normal";
+  m_referenced->setEnabled(enabled);
   if (m_segmentMode)
     m_segmentMode->setEnabled(
         enabled ? m_colorMode->getProperty()->getValue() != L"Areas" : false);

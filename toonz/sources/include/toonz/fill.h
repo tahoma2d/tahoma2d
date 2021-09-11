@@ -3,6 +3,8 @@
 #ifndef T_FILL_INCLUDED
 #define T_FILL_INCLUDED
 
+#include "txsheet.h"
+
 class TPalette;
 
 #undef DVAPI
@@ -29,6 +31,9 @@ public:
   TPalette *m_palette;
   bool m_prevailing;
   bool m_fillOnlySavebox;
+  bool m_referenced;
+  TDimension m_imageSize;
+  TPoint m_imageOffset;
 
   FillParameters()
       : m_styleId(0)
@@ -41,7 +46,8 @@ public:
       , m_shiftFill(false)
       , m_palette(0)
       , m_prevailing(true)
-      , m_fillOnlySavebox(false) {}
+      , m_fillOnlySavebox(false)
+      , m_referenced(false) {}
   FillParameters(const FillParameters &params)
       : m_styleId(params.m_styleId)
       , m_fillType(params.m_fillType)
@@ -53,7 +59,10 @@ public:
       , m_shiftFill(params.m_shiftFill)
       , m_palette(params.m_palette)
       , m_prevailing(params.m_prevailing)
-      , m_fillOnlySavebox(params.m_fillOnlySavebox) {}
+      , m_fillOnlySavebox(params.m_fillOnlySavebox)
+      , m_referenced(params.m_referenced)
+      , m_imageSize(params.m_imageSize)
+      , m_imageOffset(params.m_imageOffset) {}
 };
 
 //=============================================================================
@@ -68,7 +77,8 @@ class TTileSaverFullColor;
 DVAPI bool fill(const TRasterCM32P &r, const FillParameters &params,
                 TTileSaverCM32 *saver = 0, bool fillGaps = false,
                 bool closeGaps = false, int closeStyleIndex = -1,
-                double autoCloseDistance = -1.0);
+                double autoCloseDistance = -1.0, TXsheet *xsheet = 0,
+                int frameIndex = -1);
 
 DVAPI void fill(const TRaster32P &ras, const TRaster32P &ref,
                 const FillParameters &params, TTileSaverFullColor *saver = 0);
@@ -87,7 +97,8 @@ void DVAPI fillautoInks(TRasterCM32P &r, TRect &rect,
                         const TRasterCM32P &rbefore, TPalette *plt);
 
 void DVAPI fullColorFill(const TRaster32P &ras, const FillParameters &params,
-                         TTileSaverFullColor *saver = 0);
+                         TTileSaverFullColor *saver = 0, TXsheet *xsheet = 0,
+                         int frameIndex = -1);
 
 //=============================================================================
 //! The class AreaFiller allows to fill a raster area, delimited by rect or

@@ -9,6 +9,7 @@
 #include "toonz/levelproperties.h"
 #include "toonz/preferences.h"
 #include "toonz/txsheethandle.h"
+#include "toonz/tframehandle.h"
 
 #include "tools/toolhandle.h"
 #include "tools/toolutils.h"
@@ -21,6 +22,7 @@ using namespace ToolUtils;
 
 TEnv::IntVar FullColorMinFillDepth("InknpaintFullColorMinFillDepth", 4);
 TEnv::IntVar FullColorMaxFillDepth("InknpaintFullColorMaxFillDepth", 12);
+TEnv::IntVar FullColorFillReferenced("InknpaintFullColorFillReferenced", 0);
 
 namespace {
 
@@ -31,13 +33,18 @@ namespace {
 class FullColorFillUndo final : public TFullColorRasterUndo {
   FillParameters m_params;
   bool m_saveboxOnly;
+  TXsheet *m_xsheet;
+  int m_frameIndex;
 
 public:
   FullColorFillUndo(TTileSetFullColor *tileSet, const FillParameters &params,
-                    TXshSimpleLevel *sl, const TFrameId &fid, bool saveboxOnly)
+                    TXshSimpleLevel *sl, const TFrameId &fid, bool saveboxOnly,
+                    TXsheet *xsheet = 0, int frameIndex = -1)
       : TFullColorRasterUndo(tileSet, sl, fid, false, false, 0)
       , m_params(params)
-      , m_saveboxOnly(saveboxOnly) {}
+      , m_saveboxOnly(saveboxOnly)
+      , m_xsheet(xsheet)
+      , m_frameIndex(frameIndex) {}
 
   void redo() const override {
     TRasterImageP image = getImage();
@@ -50,7 +57,7 @@ public:
     } else
       r = image->getRaster();
 
-    fullColorFill(r, m_params);
+    fullColorFill(r, m_params, 0, m_xsheet, m_frameIndex);
 
     TTool::Application *app = TTool::getApplication();
     if (app) {
@@ -75,7 +82,8 @@ public:
 //-----------------------------------------------------------------------------
 
 void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
-            bool isShiftFill, TXshSimpleLevel *sl, const TFrameId &fid) {
+            bool isShiftFill, TXshSimpleLevel *sl, const TFrameId &fid,
+            TXsheet *xsheet, int frameIndex) {
   TTool::Application *app = TTool::getApplication();
   if (!app || !sl) return;
 
@@ -106,7 +114,7 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
       return;
     }
 
-    fullColorFill(ras, params, &tileSaver);
+    fullColorFill(ras, params, &tileSaver, xsheet, frameIndex);
 
     if (tileSaver.getTileSet()->getTileCount() != 0) {
       static int count = 0;
@@ -138,13 +146,17 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
 //-----------------------------------------------------------------------------
 
 FullColorFillTool::FullColorFillTool()
-    : TTool("T_Fill"), m_fillDepth("Fill Depth", 0, 15, 4, 12) {
+    : TTool("T_Fill")
+    , m_fillDepth("Fill Depth", 0, 15, 4, 12)
+    , m_referenced("Refer Visible", false) {
   bind(TTool::RasterImage);
   m_prop.bind(m_fillDepth);
+  m_prop.bind(m_referenced);
 }
 
 void FullColorFillTool::updateTranslation() {
   m_fillDepth.setQStringName(tr("Fill Depth"));
+  m_referenced.setQStringName(tr("Refer Visible"));
 }
 
 FillParameters FullColorFillTool::getFillParameters() const {
@@ -153,6 +165,7 @@ FillParameters FullColorFillTool::getFillParameters() const {
   params.m_styleId      = styleId;
   params.m_minFillDepth = (int)m_fillDepth.getValue().first;
   params.m_maxFillDepth = (int)m_fillDepth.getValue().second;
+  params.m_referenced   = m_referenced.getValue();
 
   if (m_level) params.m_palette = m_level->getPalette();
   return params;
@@ -161,11 +174,21 @@ FillParameters FullColorFillTool::getFillParameters() const {
 void FullColorFillTool::leftButtonDown(const TPointD &pos,
                                        const TMouseEvent &e) {
   m_clickPoint  = pos;
-  TXshLevel *xl = TTool::getApplication()->getCurrentLevel()->getLevel();
+  TApplication *app = TTool::getApplication();
+  TXshLevel *xl = app->getCurrentLevel()->getLevel();
   m_level       = xl ? xl->getSimpleLevel() : 0;
   FillParameters params = getFillParameters();
+
+  int frameIndex = app->getCurrentFrame()->getFrameIndex();
+
+  TXsheetHandle *xsh = app->getCurrentXsheet();
+  TXsheet *xsheet =
+    params.m_referenced && !app->getCurrentFrame()->isEditingLevel() && xsh
+    ? xsh->getXsheet()
+    : 0;
+
   doFill(getImage(true), pos, params, e.isShiftPressed(), m_level.getPointer(),
-         getCurrentFid());
+         getCurrentFid(), xsheet, frameIndex);
   invalidate();
 }
 
@@ -190,8 +213,18 @@ void FullColorFillTool::leftButtonDrag(const TPointD &pos,
     }
   } else
     return;
+
+  TApplication *app = TTool::getApplication();
+  int frameIndex    = app->getCurrentFrame()->getFrameIndex();
+
+  TXsheetHandle *xsh = app->getCurrentXsheet();
+  TXsheet *xsheet =
+      params.m_referenced && !app->getCurrentFrame()->isEditingLevel() && xsh
+          ? xsh->getXsheet()
+          : 0;
+
   doFill(img, pos, params, e.isShiftPressed(), m_level.getPointer(),
-         getCurrentFid());
+         getCurrentFid(), xsheet, frameIndex);
   invalidate();
 }
 

@@ -795,7 +795,7 @@ void RasterPainter::onImage(const Stage::Player &player) {
   TStageObject *obj =
       ::plasticDeformedObj(player, m_vs.m_plasticVisualSettings);
   if (obj && QThread::currentThread() == qGuiApp->thread() &&
-      !m_vs.m_forSceneIcon) {
+      (!m_vs.m_forSceneIcon || m_vs.m_forReference)) {
     flushRasterImages();
     ::onPlasticDeformedImage(obj, player, m_vs, m_viewAff);
   } else {
@@ -809,6 +809,8 @@ void RasterPainter::onImage(const Stage::Player &player) {
     else if (TToonzImageP ti = img)
       onToonzImage(ti.getPointer(), player);
     else if (TMeshImageP mi = img) {
+      // Never draw mesh when building reference image
+      if (m_vs.m_forReference) return;
       flushRasterImages();
       ::onMeshImage(mi.getPointer(), player, m_vs, m_viewAff);
     }

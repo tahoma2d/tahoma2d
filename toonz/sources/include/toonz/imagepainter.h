@@ -67,6 +67,8 @@ public:
   bool m_drawBlankFrame;
   bool m_useChecks;  //!< whether to consider  paint check and ink check
   bool m_forSceneIcon = false;  // whether it is rendered for the scene icons
+  bool m_forReference =
+      false;  // whether it is rendered for reference operations
 public:
   VisualSettings();
 

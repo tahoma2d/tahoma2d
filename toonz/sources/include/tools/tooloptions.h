@@ -504,6 +504,7 @@ class FillToolOptionsBox final : public ToolOptionsBox {
   ToolOptionSlider *m_rasterGapSlider;
   StyleIndexFieldAndChip *m_styleIndex;
   QLabel *m_gapSliderLabel, *m_styleIndexLabel, *m_rasterGapLabel;
+  ToolOptionCheckbox *m_referenced;
 
 public:
   FillToolOptionsBox(QWidget *parent, TTool *tool, TPaletteHandle *pltHandle,

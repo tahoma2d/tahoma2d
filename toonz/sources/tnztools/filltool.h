@@ -103,6 +103,7 @@ class FillTool final : public QObject, public TTool {
   TStyleIndexProperty m_closeStyleIndex;
   AreaFillTool *m_rectFill;
   NormalLineFillTool *m_normalLineFillTool;
+  TBoolProperty m_referenced;
 
   TPropertyGroup m_prop;
   std::pair<int, int> m_currCell;
@@ -115,6 +116,8 @@ class FillTool final : public QObject, public TTool {
   // disabled
   TBoolProperty m_autopaintLines;
   TBoolProperty m_fillOnlySavebox;
+
+  int m_firstFrameIdx, m_lastFrameIdx;
 
 public:
   FillTool(int targetType);
