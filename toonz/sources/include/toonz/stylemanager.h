@@ -48,7 +48,6 @@ public:
 
 private:
   QList<PatternData> m_patterns;
-  TFilePath m_rootPath;
   TFilePath m_stylesFolder;
   QString m_filters;
   QSize m_chipSize;
@@ -65,9 +64,6 @@ public:
 
   int getPatternCount();
   PatternData getPattern(int index);
-
-  static TFilePath getRootPath();
-  static void setRootPath(const TFilePath &rootPath);
 
   void loadItems();
 

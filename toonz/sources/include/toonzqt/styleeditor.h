@@ -532,7 +532,6 @@ protected:
   QPoint m_chipOrigin;
   QSize m_chipSize;
   int m_chipPerRow;
-  static TFilePath m_rootPath;
 
 public:
   StyleChooserPage(QWidget *parent = 0);
@@ -547,8 +546,6 @@ public:
 
   //! \see StyleEditor::setRootPath()
   // TOGLIERE
-  static void setRootPath(const TFilePath &rootPath);
-  static TFilePath getRootPath() { return m_rootPath; }
 
 protected:
   int m_currentIndex;
@@ -659,13 +656,11 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   //! and style.
 
   PlainColorPage *m_plainColorPage;
-  StyleChooserPage *m_textureStylePage;
   StyleEditorPage *m_specialStylePage;
-  StyleChooserPage *m_customStylePage;
-  StyleChooserPage *m_vectorBrushesStylePage;
-  StyleChooserPage *m_mypaintBrushesStylePage;
   SettingsPage *m_settingsPage;
+  QScrollArea *m_textureArea;
   QScrollArea *m_vectorArea;
+  QScrollArea *m_rasterArea;
   QAction *m_wheelAction;
   QAction *m_hsvAction;
   QAction *m_alphaAction;
@@ -682,6 +677,25 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   bool m_enabledFirstAndLastTab;
   bool m_colorPageIsVertical = true;
 
+  std::vector<QPushButton *> m_textureButtons;
+  std::vector<QPushButton *> m_vectorButtons;
+  std::vector<QPushButton *> m_rasterButtons;
+
+  std::vector<QLabel *> m_textureLabels;
+  std::vector<QLabel *> m_vectorLabels;
+  std::vector<QLabel *> m_rasterLabels;
+
+  enum StylePageType {
+    Texture,
+    VectorGenerated,
+    VectorCustom,
+    VectorBrush,
+    Raster
+  };
+  std::vector<StyleEditorPage *> m_texturePages;
+  std::vector<StyleEditorPage *> m_vectorPages;
+  std::vector<StyleEditorPage *> m_rasterPages;
+
 public:
   StyleEditor(PaletteController *, QWidget *parent = 0);
   ~StyleEditor();
@@ -696,12 +710,6 @@ public:
   TPalette *getPalette() { return m_paletteHandle->getPalette(); }
   int getStyleIndex() { return m_paletteHandle->getStyleIndex(); }
 
-  /*! rootPath generally is STUFFDIR/Library. Contains directories 'textures'
-     and
-                  'custom styles' */
-  // TOGLIERE
-  void setRootPath(const TFilePath &rootPath);
-
   void enableAutopaintToggle(bool enabled) {
     m_settingsPage->enableAutopaintToggle(enabled);
   }
@@ -711,6 +719,9 @@ public:
   virtual void load(QSettings &settings) override;
 
   void updateColorCalibration();
+
+  void createStylePage(StylePageType pageType, TFilePath styleFolder,
+                       QString filters = QString("*"));
 
 protected:
   /*! Return false if style is linked and style must be set to null.*/
@@ -770,16 +781,15 @@ protected slots:
 
   void onParamStyleChanged(bool isDragging);
 
-  void onSpecialButtonToggled(bool on);
-  void onCustomButtonToggled(bool on);
-  void onVectorBrushButtonToggled(bool on);
   void onHexChanged();
   void onHexEdited(const QString &text);
   void onHideMenu();
 
 private:
   QFrame *createBottomWidget();
+  QFrame *createTexturePage();
   QFrame *createVectorPage();
+  QFrame *createRasterPage();
   void updateTabBar();
 
   void copyEditedStyleToPalette(bool isDragging);

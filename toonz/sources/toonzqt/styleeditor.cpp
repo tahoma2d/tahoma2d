@@ -1905,10 +1905,6 @@ void PlainColorPage::onWheelSliderReleased()
 //    StyleChooserPage  implementation
 //*****************************************************************************
 
-TFilePath StyleChooserPage::m_rootPath;
-
-//-----------------------------------------------------------------------------
-
 StyleChooserPage::StyleChooserPage(QWidget *parent)
     : StyleEditorPage(parent)
     , m_chipOrigin(5, 3)
@@ -2005,30 +2001,32 @@ void StyleChooserPage::mousePressEvent(QMouseEvent *event) {
 
 void StyleChooserPage::mouseReleaseEvent(QMouseEvent *event) {}
 
-//-----------------------------------------------------------------------------
-// TOGLIERE
-void StyleChooserPage::setRootPath(const TFilePath &rootPath) {
-  m_rootPath = rootPath;
-}
-
 //*****************************************************************************
 //    CustomStyleChooser  definition
 //*****************************************************************************
 
 class CustomStyleChooserPage final : public StyleChooserPage {
-public:
-  CustomStyleChooserPage(QWidget *parent = 0) : StyleChooserPage(parent) {}
+  TFilePath m_stylesFolder;
+  QString m_filters;
+  CustomStyleManager *m_styleManager;
 
-  static CustomStyleManager *styleManager();
+public:
+  CustomStyleChooserPage(TFilePath stylesFolder = TFilePath(),
+                         QString filters = QString(), QWidget *parent = 0)
+      : StyleChooserPage(parent) {
+    m_stylesFolder = stylesFolder;
+    m_filters      = filters;
+    m_styleManager = new CustomStyleManager(m_stylesFolder, m_filters);
+  }
 
   bool event(QEvent *e) override;
 
   void showEvent(QShowEvent *) override {
-    connect(styleManager(), SIGNAL(patternAdded()), this, SLOT(computeSize()));
-    styleManager()->loadItems();
+    connect(m_styleManager, SIGNAL(patternAdded()), this, SLOT(computeSize()));
+    m_styleManager->loadItems();
   }
   void hideEvent(QHideEvent *) override {
-    disconnect(styleManager(), SIGNAL(patternAdded()), this,
+    disconnect(m_styleManager, SIGNAL(patternAdded()), this,
                SLOT(computeSize()));
   }
   bool loadIfNeeded() override { return false; }  // serve?
@@ -2039,7 +2037,7 @@ else return false;
   */
 
   int getChipCount() const override {
-    return styleManager()->getPatternCount() + 1;
+    return m_styleManager->getPatternCount() + 1;
   }
 
   void drawChip(QPainter &p, QRect rect, int index) override {
@@ -2050,7 +2048,7 @@ else return false;
       index -= 1;
       assert(0 <= index && index <= getChipCount());
       CustomStyleManager::PatternData pattern =
-          styleManager()->getPattern(index);
+          m_styleManager->getPattern(index);
       if (pattern.m_image && !pattern.m_image->isNull())
         p.drawImage(rect, *pattern.m_image);
     }
@@ -2060,24 +2058,15 @@ else return false;
 
 //-----------------------------------------------------------------------------
 
-CustomStyleManager *CustomStyleChooserPage::styleManager() {
-  static const QString filters("*.pli *.tif *.png *.tga *.tiff *.sgi *.rgb");
-  static CustomStyleManager theManager(TFilePath("custom styles"), filters);
-  return &theManager;
-}
-
-//-----------------------------------------------------------------------------
-
 bool CustomStyleChooserPage::event(QEvent *e) {
   // Intercept tooltip events
   if (e->type() != QEvent::ToolTip) return StyleChooserPage::event(e);
 
   // see StyleChooserPage::paintEvent
-  CustomStyleManager *manager = styleManager();
   QHelpEvent *he              = static_cast<QHelpEvent *>(e);
 
   int chipIdx   = posToIndex(he->pos());
-  int chipCount = manager->getPatternCount();
+  int chipCount = m_styleManager->getPatternCount();
   if (chipIdx == 0) {
     QToolTip::showText(he->globalPos(),
                        QObject::tr("Plain color", "CustomStyleChooserPage"));
@@ -2085,7 +2074,8 @@ bool CustomStyleChooserPage::event(QEvent *e) {
     chipIdx--;
     if (chipIdx < 0 || chipIdx >= chipCount) return false;
 
-    CustomStyleManager::PatternData pattern = manager->getPattern(chipIdx);
+    CustomStyleManager::PatternData pattern =
+        m_styleManager->getPattern(chipIdx);
     QToolTip::showText(he->globalPos(),
                        QString::fromStdString(pattern.m_patternName));
   }
@@ -2102,16 +2092,16 @@ void CustomStyleChooserPage::onSelect(int index) {
     emit styleSelected(cs);
   } else {
     index--;
-    CustomStyleManager::PatternData pattern = styleManager()->getPattern(index);
+    CustomStyleManager::PatternData pattern = m_styleManager->getPattern(index);
 
     if (m_currentIndex < 0) return;
 
     std::string name = pattern.m_patternName;
     if (pattern.m_isVector) {
-      TVectorImagePatternStrokeStyle cs(name);
+      TVectorImagePatternStrokeStyle cs(m_stylesFolder, name);
       emit styleSelected(cs);
     } else {
-      TRasterImagePatternStrokeStyle cs(name);
+      TRasterImagePatternStrokeStyle cs(m_stylesFolder, name);
       emit styleSelected(cs);
     }
   }
@@ -2122,27 +2112,34 @@ void CustomStyleChooserPage::onSelect(int index) {
 //*****************************************************************************
 
 class VectorBrushStyleChooserPage final : public StyleChooserPage {
-public:
-  VectorBrushStyleChooserPage(QWidget *parent = 0) : StyleChooserPage(parent) {
-    m_chipSize = QSize(60, 25);
-  }
+  TFilePath m_stylesFolder;
+  QString m_filters;
+  CustomStyleManager *m_styleManager;
 
-  static CustomStyleManager *styleManager();
+public:
+  VectorBrushStyleChooserPage(TFilePath stylesFolder = TFilePath(),
+                              QString filters = QString(), QWidget *parent = 0)
+      : StyleChooserPage(parent) {
+    m_stylesFolder = stylesFolder;
+    m_filters      = filters;
+    m_chipSize     = QSize(60, 25);
+    m_styleManager = new CustomStyleManager(m_stylesFolder, m_filters);
+  }
 
   bool event(QEvent *e) override;
 
   void showEvent(QShowEvent *) override {
-    connect(styleManager(), SIGNAL(patternAdded()), this, SLOT(computeSize()));
-    styleManager()->loadItems();
+    connect(m_styleManager, SIGNAL(patternAdded()), this, SLOT(computeSize()));
+    m_styleManager->loadItems();
   }
   void hideEvent(QHideEvent *) override {
-    disconnect(styleManager(), SIGNAL(patternAdded()), this,
+    disconnect(m_styleManager, SIGNAL(patternAdded()), this,
                SLOT(computeSize()));
   }
   bool loadIfNeeded() override { return false; }
 
   int getChipCount() const override {
-    return styleManager()->getPatternCount() + 1;
+    return m_styleManager->getPatternCount() + 1;
   }
 
   void drawChip(QPainter &p, QRect rect, int index) override;
@@ -2151,27 +2148,19 @@ public:
 
 //-----------------------------------------------------------------------------
 
-CustomStyleManager *VectorBrushStyleChooserPage::styleManager() {
-  static CustomStyleManager theManager(TFilePath("vector brushes"), "*.pli",
-                                       QSize(60, 25));
-  return &theManager;
-}
-
-//-----------------------------------------------------------------------------
-
 bool VectorBrushStyleChooserPage::event(QEvent *e) {
   // Intercept tooltip events
   if (e->type() != QEvent::ToolTip) return StyleChooserPage::event(e);
 
   // see StyleChooserPage::paintEvent
-  CustomStyleManager *manager = styleManager();
   QHelpEvent *he              = static_cast<QHelpEvent *>(e);
 
   int chipIdx = posToIndex(he->pos()), chipCount = getChipCount();
   if (chipIdx < 0 || chipIdx >= chipCount) return false;
 
   if (chipIdx > 0) {
-    CustomStyleManager::PatternData pattern = manager->getPattern(chipIdx - 1);
+    CustomStyleManager::PatternData pattern =
+        m_styleManager->getPattern(chipIdx - 1);
     QToolTip::showText(he->globalPos(),
                        QString::fromStdString(pattern.m_patternName));
   } else
@@ -2191,7 +2180,7 @@ void VectorBrushStyleChooserPage::drawChip(QPainter &p, QRect rect, int index) {
   } else {
     assert(0 <= index && index < getChipCount());
     CustomStyleManager::PatternData pattern =
-        styleManager()->getPattern(index - 1);
+        m_styleManager->getPattern(index - 1);
     p.drawImage(rect, *pattern.m_image);
   }
 }
@@ -2204,7 +2193,7 @@ void VectorBrushStyleChooserPage::onSelect(int index) {
   if (index > 0) {
     --index;
 
-    CustomStyleManager::PatternData pattern = styleManager()->getPattern(index);
+    CustomStyleManager::PatternData pattern = m_styleManager->getPattern(index);
 
     if (m_currentIndex < 0) return;
 
@@ -2212,7 +2201,7 @@ void VectorBrushStyleChooserPage::onSelect(int index) {
     assert(pattern.m_isVector);
     if (!pattern.m_isVector) return;
 
-    TVectorBrushStyle cs(name);
+    TVectorBrushStyle cs(m_stylesFolder, name);
     emit styleSelected(cs);
   } else {
     TSolidColorStyle cs(TPixel32::Black);
@@ -2232,11 +2221,18 @@ struct Texture {
 //-----------------------------------------------------------------------------
 
 class TextureStyleChooserPage final : public StyleChooserPage {
-  static std::vector<Texture> m_textures;
-  static bool m_loaded;
+  std::vector<Texture> m_textures;
+  bool m_loaded = false;
+  TFilePath m_stylesFolder;
+  QString m_filters;
 
 public:
-  TextureStyleChooserPage(QWidget *parent = 0) : StyleChooserPage(parent) {}
+  TextureStyleChooserPage(TFilePath stylesFolder = TFilePath(),
+                          QString filters = QString(), QWidget *parent = 0)
+      : StyleChooserPage(parent) {
+    m_stylesFolder = stylesFolder;
+    m_filters      = filters;
+  }
 
   bool loadIfNeeded() override {
     if (!m_loaded) {
@@ -2249,8 +2245,8 @@ public:
 
   int getChipCount() const override { return m_textures.size() + 1; }
 
-  static void loadTexture(const TFilePath &fp);
-  static void loadItems();
+  void loadTexture(const TFilePath &fp);
+  void loadItems();
 
   void drawChip(QPainter &p, QRect rect, int index) override {
     if (index == 0) {
@@ -2267,11 +2263,6 @@ public:
 
   bool event(QEvent *e) override;
 };
-
-//-----------------------------------------------------------------------------
-
-std::vector<Texture> TextureStyleChooserPage::m_textures;
-bool TextureStyleChooserPage::m_loaded(false);
 
 //-----------------------------------------------------------------------------
 
@@ -2316,11 +2307,10 @@ void TextureStyleChooserPage::loadTexture(const TFilePath &fp) {
 
 void TextureStyleChooserPage::loadItems() {
   m_textures.clear();
-  if (getRootPath() == TFilePath()) return;
-  TFilePath texturePath = getRootPath() + "textures";
+  if (m_stylesFolder == TFilePath()) return;
   TFilePathSet fps;
   try {
-    fps = TSystem::readDirectory(texturePath);
+    fps = TSystem::readDirectory(m_stylesFolder);
   } catch (...) {
     return;
   }
@@ -2344,8 +2334,9 @@ void TextureStyleChooserPage::onSelect(int index) {
     --index;
     assert(0 <= index && index < (int)m_textures.size());
 
-    TTextureStyle style(m_textures[index].m_raster,
-                        TFilePath(m_textures[index].m_name.toStdWString()));
+    TTextureStyle style(
+        m_textures[index].m_raster,
+        m_stylesFolder + TFilePath(m_textures[index].m_name.toStdWString()));
     emit styleSelected(style);
   } else {
     TSolidColorStyle cs(TPixel32::Black);
@@ -2385,22 +2376,27 @@ bool TextureStyleChooserPage::event(QEvent *e) {
 //*****************************************************************************
 
 class MyPaintBrushStyleChooserPage final : public StyleChooserPage {
+  std::vector<TMyPaintBrushStyle> m_brushes;
+  bool m_loaded = false;
+  TFilePath m_stylesFolder;
+  QString m_filters;
+
 public:
   struct Brush {
     TRasterP m_raster;
     QString m_name;
   };
 
-private:
-  static std::vector<TMyPaintBrushStyle> m_brushes;
-
 public:
-  MyPaintBrushStyleChooserPage(QWidget *parent = 0) : StyleChooserPage(parent) {
-    m_chipSize = QSize(64, 64);
+  MyPaintBrushStyleChooserPage(TFilePath stylesFolder = TFilePath(),
+                               QString filters = QString(), QWidget *parent = 0)
+      : StyleChooserPage(parent) {
+    m_stylesFolder = stylesFolder;
+    m_filters      = filters;
+    m_chipSize     = QSize(64, 64);
   }
 
   bool loadIfNeeded() override {
-    static bool m_loaded = false;
     if (!m_loaded) {
       loadItems();
       m_loaded = true;
@@ -2411,7 +2407,7 @@ public:
 
   int getChipCount() const override { return m_brushes.size() + 1; }
 
-  static void loadItems();
+  void loadItems();
 
   void drawChip(QPainter &p, QRect rect, int index) override {
     assert(0 <= index && index <= (int)m_brushes.size());
@@ -2441,7 +2437,8 @@ public:
       if (index == 0) {
         toolTip = QObject::tr("Plain color", "MyPaintBrushStyleChooserPage");
       } else if (index > 0 && index <= (int)m_brushes.size()) {
-        toolTip = m_brushes[index - 1].getPath().getQString();
+        toolTip =
+            m_brushes[index - 1].getPath().withoutParentDir().getQString();
       }
       QToolTip::showText(helpEvent->globalPos(), toolTip);
       e->accept();
@@ -2452,24 +2449,22 @@ public:
 
 //-----------------------------------------------------------------------------
 
-std::vector<TMyPaintBrushStyle> MyPaintBrushStyleChooserPage::m_brushes;
-
-//-----------------------------------------------------------------------------
-
 void MyPaintBrushStyleChooserPage::loadItems() {
   m_brushes.clear();
-  std::set<TFilePath> brushFiles;
 
-  TFilePathSet dirs = TMyPaintBrushStyle::getBrushesDirs();
-  for (TFilePathSet::iterator i = dirs.begin(); i != dirs.end(); ++i) {
-    TFileStatus fs(*i);
-    if (fs.doesExist() && fs.isDirectory()) {
-      TFilePathSet files = TSystem::readDirectoryTree(*i, false, true);
-      for (TFilePathSet::iterator j = files.begin(); j != files.end(); ++j)
-        if (j->getType() == TMyPaintBrushStyle::getBrushType())
-          brushFiles.insert(*j - *i);
-    }
+  if (m_stylesFolder == TFilePath()) return;
+  std::set<TFilePath> brushFiles;
+  TFilePathSet fps;
+  try {
+    fps = TSystem::readDirectory(m_stylesFolder);
+  } catch (...) {
+    return;
   }
+  if (fps.empty()) return;
+  int count = 0;
+  for (TFilePathSet::iterator it = fps.begin(); it != fps.end(); it++)
+    if (it->getType() == TMyPaintBrushStyle::getBrushType())
+      brushFiles.insert(*it);
 
   // reserve memory to avoid reallocation
   m_brushes.reserve(brushFiles.size());
@@ -2485,11 +2480,16 @@ void MyPaintBrushStyleChooserPage::loadItems() {
 class SpecialStyleChooserPage final : public StyleChooserPage {
   static std::vector<std::pair<int, QImage *>> m_customStyles;
   static bool m_loaded;
+  static TFilePath m_stylesFolder;
+  static QString m_filters;
 
 public:
-  SpecialStyleChooserPage(QWidget *parent          = 0,
-                          const TFilePath &rootDir = TFilePath())
-      : StyleChooserPage(parent) {}
+  SpecialStyleChooserPage(TFilePath stylesFolder = TFilePath(),
+                          QString filters = QString(), QWidget *parent = 0)
+      : StyleChooserPage(parent) {
+    m_stylesFolder = stylesFolder;
+    m_filters      = filters;
+  }
 
   bool loadIfNeeded() override {
     if (!m_loaded) {
@@ -2507,6 +2507,11 @@ public:
   void onSelect(int index) override;
   bool event(QEvent *e) override;
 };
+
+//-----------------------------------------------------------------------------
+
+TFilePath SpecialStyleChooserPage::m_stylesFolder;
+QString SpecialStyleChooserPage::m_filters;
 
 //-----------------------------------------------------------------------------
 
@@ -3096,7 +3101,6 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   setFocusPolicy(Qt::NoFocus);
   // TOGLIERE
   TFilePath libraryPath = ToonzFolder::getLibraryFolder();
-  setRootPath(libraryPath);
 
   m_styleBar = new DVGui::TabBar(this);
   m_styleBar->setDrawBase(false);
@@ -3110,21 +3114,35 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   m_colorParameterSelector = new ColorParameterSelector(this);
 
   m_plainColorPage          = new PlainColorPage(0);
-  m_textureStylePage        = new TextureStyleChooserPage(0);
-  m_specialStylePage        = new SpecialStyleChooserPage(0);
-  m_customStylePage         = new CustomStyleChooserPage(0);
-  m_vectorBrushesStylePage  = new VectorBrushStyleChooserPage(0);
-  m_mypaintBrushesStylePage = new MyPaintBrushStyleChooserPage(0);
+  m_specialStylePage        = new SpecialStyleChooserPage();
   m_settingsPage            = new SettingsPage(0);
 
   QWidget *emptyPage = new StyleEditorPage(0);
+
+  // Create Style Pages
+  createStylePage(StylePageType::Texture, libraryPath + TFilePath("textures"));
+  createStylePage(StylePageType::VectorGenerated, TFilePath());
+  createStylePage(StylePageType::VectorCustom,
+                  libraryPath + TFilePath("custom styles"),
+                  QString("*.pli *.tif *.png *.tga *.tiff *.sgi *.rgb"));
+  createStylePage(StylePageType::VectorBrush,
+                  libraryPath + TFilePath("vector brushes"), QString("*.pli"));
+
+  TFilePathSet dirs = TMyPaintBrushStyle::getBrushesDirs();
+  for (TFilePathSet::iterator i = dirs.begin(); i != dirs.end(); ++i) {
+    TFileStatus fs(*i);
+    if (fs.doesExist() && fs.isDirectory())
+      createStylePage(StylePageType::Raster, *i, QString("*.myb"));
+  }
 
   // For the plainColorPage and the settingsPage
   // I create a "fake" QScrollArea (without ScrollingBar
   // in order to use the styleSheet to stylish its background
   QScrollArea *plainArea   = makeChooserPageWithoutScrollBar(m_plainColorPage);
-  QScrollArea *textureArea = makeChooserPage(m_textureStylePage);
-  QScrollArea *mypaintBrushesArea = makeChooserPage(m_mypaintBrushesStylePage);
+  QScrollArea *textureOutsideArea =
+      makeChooserPageWithoutScrollBar(createTexturePage());
+  QScrollArea *rasterOutsideArea =
+      makeChooserPageWithoutScrollBar(createRasterPage());
   QScrollArea *settingsArea = makeChooserPageWithoutScrollBar(m_settingsPage);
   QScrollArea *vectorOutsideArea =
       makeChooserPageWithoutScrollBar(createVectorPage());
@@ -3132,9 +3150,9 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
 
   m_styleChooser = new QStackedWidget(this);
   m_styleChooser->addWidget(plainArea);
-  m_styleChooser->addWidget(textureArea);
+  m_styleChooser->addWidget(textureOutsideArea);
   m_styleChooser->addWidget(vectorOutsideArea);
-  m_styleChooser->addWidget(mypaintBrushesArea);
+  m_styleChooser->addWidget(rasterOutsideArea);
   m_styleChooser->addWidget(settingsArea);
   m_styleChooser->addWidget(makeChooserPageWithoutScrollBar(emptyPage));
   m_styleChooser->setFocusPolicy(Qt::NoFocus);
@@ -3227,21 +3245,33 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
                        SLOT(setPage(int)));
   ret = ret && connect(m_colorParameterSelector, SIGNAL(colorParamChanged()),
                        this, SLOT(onColorParamChanged()));
-  ret = ret &&
-        connect(m_textureStylePage, SIGNAL(styleSelected(const TColorStyle &)),
-                this, SLOT(selectStyle(const TColorStyle &)));
-  ret = ret &&
-        connect(m_specialStylePage, SIGNAL(styleSelected(const TColorStyle &)),
-                this, SLOT(selectStyle(const TColorStyle &)));
-  ret = ret &&
-        connect(m_customStylePage, SIGNAL(styleSelected(const TColorStyle &)),
-                this, SLOT(selectStyle(const TColorStyle &)));
-  ret = ret && connect(m_vectorBrushesStylePage,
-                       SIGNAL(styleSelected(const TColorStyle &)), this,
-                       SLOT(selectStyle(const TColorStyle &)));
-  ret = ret && connect(m_mypaintBrushesStylePage,
-                       SIGNAL(styleSelected(const TColorStyle &)), this,
-                       SLOT(selectStyle(const TColorStyle &)));
+
+  std::vector<StyleEditorPage *>::iterator itP = m_texturePages.begin();
+  std::vector<QPushButton *>::iterator itB     = m_textureButtons.begin();
+  for (; itP != m_texturePages.end(); itP++, itB++) {
+    ret = ret && connect(*itP, SIGNAL(styleSelected(const TColorStyle &)), this,
+                         SLOT(selectStyle(const TColorStyle &)));
+
+    ret = ret &&
+          connect(*itB, SIGNAL(toggled(bool)), *itP, SLOT(setVisible(bool)));
+  }
+  itP = m_vectorPages.begin();
+  itB = m_vectorButtons.begin();
+  for (; itP != m_vectorPages.end(); itP++, itB++) {
+    ret = ret && connect(*itP, SIGNAL(styleSelected(const TColorStyle &)), this,
+                         SLOT(selectStyle(const TColorStyle &)));
+
+    ret = ret &&
+          connect(*itB, SIGNAL(toggled(bool)), *itP, SLOT(setVisible(bool)));
+  }
+  itP = m_rasterPages.begin();
+  itB = m_rasterButtons.begin();
+  for (; itP != m_rasterPages.end(); itP++, itB++) {
+    ret = ret && connect(*itP, SIGNAL(styleSelected(const TColorStyle &)), this,
+                         SLOT(selectStyle(const TColorStyle &)));
+    ret = ret &&
+          connect(*itB, SIGNAL(toggled(bool)), *itP, SLOT(setVisible(bool)));
+  }
   ret = ret && connect(m_settingsPage, SIGNAL(paramStyleChanged(bool)), this,
                        SLOT(onParamStyleChanged(bool)));
   ret = ret && connect(m_plainColorPage,
@@ -3365,20 +3395,55 @@ QFrame *StyleEditor::createBottomWidget() {
 
 //-----------------------------------------------------------------------------
 
+QFrame *StyleEditor::createTexturePage() {
+  QFrame *textureOutsideFrame = new QFrame(this);
+  textureOutsideFrame->setMinimumWidth(50);
+
+  /* ------ layout ------ */
+  QVBoxLayout *textureOutsideLayout = new QVBoxLayout();
+  textureOutsideLayout->setMargin(0);
+  textureOutsideLayout->setSpacing(0);
+  textureOutsideLayout->setSizeConstraint(QLayout::SetNoConstraint);
+  {
+    QVBoxLayout *textureLayout = new QVBoxLayout();
+    textureLayout->setMargin(0);
+    textureLayout->setSpacing(0);
+    textureLayout->setSizeConstraint(QLayout::SetNoConstraint);
+    {
+      std::vector<StyleEditorPage *>::iterator itP = m_texturePages.begin();
+      std::vector<QLabel *>::iterator itL          = m_textureLabels.begin();
+      std::vector<QPushButton *>::iterator itB     = m_textureButtons.begin();
+      for (; itP != m_texturePages.end(); itP++, itL++, itB++) {
+        QHBoxLayout *setLabelLay = new QHBoxLayout();
+        setLabelLay->setMargin(0);
+        setLabelLay->setSpacing(3);
+        {
+          setLabelLay->addWidget(*itB, 0);
+          setLabelLay->addWidget(*itL, 0);
+          setLabelLay->addStretch(1);
+        }
+        textureLayout->addLayout(setLabelLay);
+        textureLayout->addWidget(*itP);
+      }
+      textureLayout->addStretch();
+    }
+    QFrame *textureFrame = new QFrame(this);
+    textureFrame->setMinimumWidth(50);
+    textureFrame->setLayout(textureLayout);
+    m_textureArea = makeChooserPage(textureFrame);
+    m_textureArea->setMinimumWidth(50);
+    textureOutsideLayout->addWidget(m_textureArea);
+  }
+  textureOutsideFrame->setLayout(textureOutsideLayout);
+
+  return textureOutsideFrame;
+}
+
+//-----------------------------------------------------------------------------
+
 QFrame *StyleEditor::createVectorPage() {
   QFrame *vectorOutsideFrame = new QFrame(this);
   vectorOutsideFrame->setMinimumWidth(50);
-
-  QPushButton *specialButton     = new QPushButton(tr("Generated"), this);
-  QPushButton *customButton      = new QPushButton(tr("Trail"), this);
-  QPushButton *vectorBrushButton = new QPushButton(tr("Vector Brush"), this);
-
-  specialButton->setCheckable(true);
-  customButton->setCheckable(true);
-  vectorBrushButton->setCheckable(true);
-  specialButton->setChecked(true);
-  customButton->setChecked(true);
-  vectorBrushButton->setChecked(true);
 
   /* ------ layout ------ */
   QVBoxLayout *vectorOutsideLayout = new QVBoxLayout();
@@ -3386,23 +3451,27 @@ QFrame *StyleEditor::createVectorPage() {
   vectorOutsideLayout->setSpacing(0);
   vectorOutsideLayout->setSizeConstraint(QLayout::SetNoConstraint);
   {
-    QHBoxLayout *vectorButtonLayout = new QHBoxLayout();
-    vectorButtonLayout->setSizeConstraint(QLayout::SetNoConstraint);
-    {
-      vectorButtonLayout->addWidget(specialButton);
-      vectorButtonLayout->addWidget(customButton);
-      vectorButtonLayout->addWidget(vectorBrushButton);
-    }
-    vectorOutsideLayout->addLayout(vectorButtonLayout);
-
     QVBoxLayout *vectorLayout = new QVBoxLayout();
     vectorLayout->setMargin(0);
     vectorLayout->setSpacing(0);
     vectorLayout->setSizeConstraint(QLayout::SetNoConstraint);
     {
-      vectorLayout->addWidget(m_specialStylePage);
-      vectorLayout->addWidget(m_customStylePage);
-      vectorLayout->addWidget(m_vectorBrushesStylePage);
+      std::vector<StyleEditorPage *>::iterator itP = m_vectorPages.begin();
+      std::vector<QLabel *>::iterator itL          = m_vectorLabels.begin();
+      std::vector<QPushButton *>::iterator itB     = m_vectorButtons.begin();
+      for (; itP != m_vectorPages.end(); itP++, itL++, itB++) {
+        QHBoxLayout *setLabelLay = new QHBoxLayout();
+        setLabelLay->setMargin(0);
+        setLabelLay->setSpacing(3);
+        {
+          setLabelLay->addWidget(*itB, 0);
+          setLabelLay->addWidget(*itL, 0);
+          setLabelLay->addStretch(1);
+        }
+        vectorLayout->addLayout(setLabelLay);
+        vectorLayout->addWidget(*itP);
+      }
+      vectorLayout->addStretch();
     }
     QFrame *vectorFrame = new QFrame(this);
     vectorFrame->setMinimumWidth(50);
@@ -3413,16 +3482,53 @@ QFrame *StyleEditor::createVectorPage() {
   }
   vectorOutsideFrame->setLayout(vectorOutsideLayout);
 
-  /* ------ signal-slot connections ------ */
-  bool ret = true;
-  ret      = ret && connect(specialButton, SIGNAL(toggled(bool)), this,
-                       SLOT(onSpecialButtonToggled(bool)));
-  ret = ret && connect(customButton, SIGNAL(toggled(bool)), this,
-                       SLOT(onCustomButtonToggled(bool)));
-  ret = ret && connect(vectorBrushButton, SIGNAL(toggled(bool)), this,
-                       SLOT(onVectorBrushButtonToggled(bool)));
-  assert(ret);
   return vectorOutsideFrame;
+}
+
+//-----------------------------------------------------------------------------
+
+QFrame *StyleEditor::createRasterPage() {
+  QFrame *rasterOutsideFrame = new QFrame(this);
+  rasterOutsideFrame->setMinimumWidth(50);
+
+  /* ------ layout ------ */
+  QVBoxLayout *rasterOutsideLayout = new QVBoxLayout();
+  rasterOutsideLayout->setMargin(0);
+  rasterOutsideLayout->setSpacing(0);
+  rasterOutsideLayout->setSizeConstraint(QLayout::SetNoConstraint);
+  {
+    QVBoxLayout *rasterLayout = new QVBoxLayout();
+    rasterLayout->setMargin(0);
+    rasterLayout->setSpacing(0);
+    rasterLayout->setSizeConstraint(QLayout::SetNoConstraint);
+    {
+      std::vector<StyleEditorPage *>::iterator itP = m_rasterPages.begin();
+      std::vector<QLabel *>::iterator itL          = m_rasterLabels.begin();
+      std::vector<QPushButton *>::iterator itB     = m_rasterButtons.begin();
+      for (; itP != m_rasterPages.end(); itP++, itL++, itB++) {
+        QHBoxLayout *setLabelLay = new QHBoxLayout();
+        setLabelLay->setMargin(0);
+        setLabelLay->setSpacing(3);
+        {
+          setLabelLay->addWidget(*itB, 0);
+          setLabelLay->addWidget(*itL, 0);
+          setLabelLay->addStretch(1);
+        }
+        rasterLayout->addLayout(setLabelLay);
+        rasterLayout->addWidget(*itP);
+      }
+      rasterLayout->addStretch();
+    }
+    QFrame *rasterFrame = new QFrame(this);
+    rasterFrame->setMinimumWidth(50);
+    rasterFrame->setLayout(rasterLayout);
+    m_rasterArea = makeChooserPage(rasterFrame);
+    m_rasterArea->setMinimumWidth(50);
+    rasterOutsideLayout->addWidget(m_rasterArea);
+  }
+  rasterOutsideFrame->setLayout(rasterOutsideLayout);
+
+  return rasterOutsideFrame;
 }
 
 //-----------------------------------------------------------------------------
@@ -3603,12 +3709,6 @@ void StyleEditor::onCleanupStyleChanged(bool isDragging) {
   if (!m_cleanupPaletteHandle) return;
 
   onStyleChanged(isDragging);
-}
-
-//-----------------------------------------------------------------------------
-// TOGLIERE
-void StyleEditor::setRootPath(const TFilePath &rootPath) {
-  m_textureStylePage->setRootPath(rootPath);
 }
 
 //-----------------------------------------------------------------------------
@@ -4061,30 +4161,6 @@ void StyleEditor::onHexChanged() {
 
 //-----------------------------------------------------------------------------
 
-void StyleEditor::onSpecialButtonToggled(bool on) {
-  m_specialStylePage->setVisible(on);
-  m_vectorArea->widget()->resize(m_vectorArea->widget()->sizeHint());
-  qApp->processEvents();
-}
-
-//-----------------------------------------------------------------------------
-
-void StyleEditor::onCustomButtonToggled(bool on) {
-  m_customStylePage->setVisible(on);
-  m_vectorArea->widget()->resize(m_vectorArea->widget()->sizeHint());
-  qApp->processEvents();
-}
-
-//-----------------------------------------------------------------------------
-
-void StyleEditor::onVectorBrushButtonToggled(bool on) {
-  m_vectorBrushesStylePage->setVisible(on);
-  m_vectorArea->widget()->resize(m_vectorArea->widget()->sizeHint());
-  qApp->processEvents();
-}
-
-//-----------------------------------------------------------------------------
-
 void StyleEditor::save(QSettings &settings) const {
   settings.setValue("isVertical", m_plainColorPage->getIsVertical());
   int visibleParts = 0;
@@ -4131,4 +4207,83 @@ void StyleEditor::load(QSettings &settings) {
 
 void StyleEditor::updateColorCalibration() {
   m_plainColorPage->updateColorCalibration();
+}
+
+void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
+                                  QString filters) {
+  if (styleFolder != TFilePath()) {
+    // Load subfolders first
+    try {
+      QStringList fpList;
+      TSystem::readDirectory_DirItems(fpList, styleFolder);
+
+      QStringList::iterator fpListIt;
+      for (fpListIt = fpList.begin(); fpListIt != fpList.end(); fpListIt++)
+        createStylePage(pageType, styleFolder + TFilePath(*fpListIt), filters);
+
+    } catch (...) {
+      // Do nothing
+    }
+
+    // Let's look for files
+    TFilePathSet fps;
+    try {
+      QDir patternDir(QString::fromStdWString(styleFolder.getWideString()));
+      patternDir.setNameFilters(filters.split(' '));
+
+      TSystem::readDirectory(fps, patternDir);
+    } catch (...) {
+      return;
+    }
+
+    if (fps.empty()) return;
+  }
+
+  QString label = styleFolder.withoutParentDir().getQString();
+  label[0]      = label[0].toUpper();
+  if (pageType == StylePageType::Raster &&
+      !styleFolder.getQString().contains("mypaint brushes"))
+    label += tr(" (External)");
+  QPushButton *button = new QPushButton("", this);
+  button->setObjectName("menuToggleButton");
+  button->setFixedSize(15, 15);
+  button->setIcon(createQIcon("menu_toggle"));
+  button->setCheckable(true);
+  button->setChecked(true);
+  button->setFocusPolicy(Qt::NoFocus);
+
+  switch (pageType) {
+  case StylePageType::Texture: {
+    m_texturePages.push_back(new TextureStyleChooserPage(styleFolder, filters));
+    m_textureLabels.push_back(new QLabel(label, this));
+    m_textureButtons.push_back(button);
+    break;
+  }
+  case StylePageType::VectorGenerated: {
+    m_vectorPages.push_back(m_specialStylePage);
+    m_vectorLabels.push_back(new QLabel("Generated"));
+    m_vectorButtons.push_back(button);
+    break;
+  }
+  case StylePageType::VectorCustom: {
+    m_vectorPages.push_back(new CustomStyleChooserPage(styleFolder, filters));
+    m_vectorLabels.push_back(new QLabel(label, this));
+    m_vectorButtons.push_back(button);
+    break;
+  }
+  case StylePageType::VectorBrush: {
+    m_vectorPages.push_back(
+        new VectorBrushStyleChooserPage(styleFolder, filters));
+    m_vectorLabels.push_back(new QLabel(label, this));
+    m_vectorButtons.push_back(button);
+    break;
+  }
+  case StylePageType::Raster: {
+    m_rasterLabels.push_back(new QLabel(label));
+    m_rasterPages.push_back(
+        new MyPaintBrushStyleChooserPage(styleFolder, filters));
+    m_rasterButtons.push_back(button);
+    break;
+  }
+  }
 }

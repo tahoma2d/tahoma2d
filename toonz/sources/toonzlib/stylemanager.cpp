@@ -27,10 +27,6 @@
 
 namespace {
 
-TFilePath rootPath;
-
-//-----------------------------------------------------------------------------
-
 void convertRaster32ToImage(TRaster32P ras, QImage *image) {
   int lx = ras->getLx();
   int ly = ras->getLy();
@@ -236,25 +232,12 @@ CustomStyleManager::PatternData CustomStyleManager::getPattern(int index) {
 
 //-----------------------------------------------------------------------------
 
-TFilePath CustomStyleManager::getRootPath() { return ::rootPath; }
-
-//-----------------------------------------------------------------------------
-
-void CustomStyleManager::setRootPath(const TFilePath &rootPath) {
-  ::rootPath = rootPath;
-}
-
-//-----------------------------------------------------------------------------
-
 void CustomStyleManager::loadItems() {
   // Build the folder to be read
-  const TFilePath &rootFP(getRootPath());
 
-  assert(rootFP != TFilePath());
-  if (rootFP == TFilePath()) return;
+  if (m_stylesFolder == TFilePath()) return;
 
-  QDir patternDir(
-      QString::fromStdWString((rootFP + m_stylesFolder).getWideString()));
+  QDir patternDir(QString::fromStdWString(m_stylesFolder.getWideString()));
   patternDir.setNameFilters(m_filters.split(' '));
 
   // Read the said folder

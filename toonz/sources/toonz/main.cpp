@@ -200,8 +200,6 @@ static void initToonzEnv(QHash<QString, QString> &argPathValues) {
   TVectorImagePatternStrokeStyle::setRootDir(library);
   TVectorBrushStyle::setRootDir(library);
 
-  CustomStyleManager::setRootPath(library);
-
   // sembra indispensabile nella lettura dei .tab 2.2:
   TPalette::setRootDir(library);
   TImageStyle::setLibraryDir(library);
