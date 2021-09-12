@@ -644,6 +644,7 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   QPushButton
       *m_autoButton;  //!< "Auto Apply" checkbox on the right panel side.
   QPushButton *m_applyButton;  //!< "Apply" button on the right panel side.
+  QToolButton *m_styleSetsButton;
 
   QToolBar *m_toolBar;                               //!< Lower toolbar.
   ColorParameterSelector *m_colorParameterSelector;  //!< Secondary color
@@ -696,6 +697,10 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   std::vector<StyleEditorPage *> m_vectorPages;
   std::vector<StyleEditorPage *> m_rasterPages;
 
+  QMenu *m_textureMenu;
+  QMenu *m_vectorMenu;
+  QMenu *m_rasterMenu;
+
 public:
   StyleEditor(PaletteController *, QWidget *parent = 0);
   ~StyleEditor();
@@ -722,6 +727,8 @@ public:
 
   void createStylePage(StylePageType pageType, TFilePath styleFolder,
                        QString filters = QString("*"));
+
+  void createStyleMenus();
 
 protected:
   /*! Return false if style is linked and style must be set to null.*/
@@ -784,6 +791,27 @@ protected slots:
   void onHexChanged();
   void onHexEdited(const QString &text);
   void onHideMenu();
+  void onPageChanged(int index);
+
+  void onToggleTextureSet(bool checked);
+  void onToggleVectorSet(bool checked);
+  void onToggleRasterSet(bool checked);
+
+  void onShowAllTextureSet();
+  void onShowAllVectorSet();
+  void onShowAllRasterSet();
+
+  void onHideAllTextureSet();
+  void onHideAllVectorSet();
+  void onHideAllRasterSet();
+
+  void onCollapseAllTextureSet();
+  void onCollapseAllVectorSet();
+  void onCollapseAllRasterSet();
+
+  void onExpandAllTextureSet();
+  void onExpandAllVectorSet();
+  void onExpandAllRasterSet();
 
 private:
   QFrame *createBottomWidget();
