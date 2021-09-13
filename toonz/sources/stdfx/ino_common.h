@@ -57,29 +57,31 @@ protected:
   TBoolParamP m_alpha_rendering;  // optional
 
   void dryComputeUpAndDown(TRectD& rect, double frame,
-    const TRenderSettings& rs,
-    bool upComputesWholeTile = false);
+                           const TRenderSettings& rs,
+                           bool upComputesWholeTile = false);
 
   void doComputeFx(TRasterP& dn_ras_out, const TRasterP& up_ras,
-    const TPoint& pos, const double up_opacity,
-    const double gamma);
+                   const TPoint& pos, const double up_opacity,
+                   const double gamma);
 
   template <class T, class Q>
   void nonlinearTmpl(TRasterPT<T> dn_ras_out, const TRasterPT<T>& up_ras,
-    const double up_opacity);
+                     const double up_opacity);
 
   template <class T, class Q>
   void linearTmpl(TRasterPT<T> dn_ras_out, const TRasterPT<T>& up_ras,
-    const double up_opacity, const double gamma);
+                  const double up_opacity, const double gamma);
 
+  // when compute in xyz color space, do not clamp channel values in the kernel
   virtual void brendKernel(double& dnr, double& dng, double& dnb, double& dna,
-    const double up_, double upg, double upb, double upa,
-    const double upopacity,
-    const bool alpha_rendering_sw = true) = 0;
+                           const double up_, double upg, double upb, double upa,
+                           const double upopacity,
+                           const bool alpha_rendering_sw = true,
+                           const bool is_xyz             = false) = 0;
 
   void computeUpAndDown(TTile& tile, double frame, const TRenderSettings& rs,
-    TRasterP& dn_ras, TRasterP& up_ras,
-    bool upComputesWholeTile = false);
+                        TRasterP& dn_ras, TRasterP& up_ras,
+                        bool upComputesWholeTile = false);
 
 public:
   TBlendForeBackRasterFx(bool clipping_mask, bool has_alpha_option = false);
