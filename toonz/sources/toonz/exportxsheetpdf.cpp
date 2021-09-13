@@ -1498,7 +1498,7 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
   m_serialFrameNumberCB =
       new QCheckBox(tr("Put Serial Frame Numbers Over Pages"), this);
   m_levelNameOnBottomCB =
-      new QCheckBox(tr("Print Level Names On The Botom"), this);
+      new QCheckBox(tr("Print Level Names On The Bottom"), this);
   m_sceneNameEdit = new QLineEdit(this);
   m_memoEdit      = new QTextEdit(this);
 
@@ -1572,86 +1572,97 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
     }
     mainLay->addLayout(previewLay, 1);
 
-    QVBoxLayout* controlLay = new QVBoxLayout();
-    controlLay->setMargin(10);
-    controlLay->setSpacing(10);
+    QVBoxLayout* rightLay = new QVBoxLayout();
+    rightLay->setMargin(0);
+    rightLay->setSpacing(10);
     {
-      QGroupBox* tmplGBox = new QGroupBox(tr("Template Settings"), this);
-
-      QGridLayout* tmplLay = new QGridLayout();
-      tmplLay->setMargin(10);
-      tmplLay->setHorizontalSpacing(5);
-      tmplLay->setVerticalSpacing(10);
+      QScrollArea* scrollArea = new QScrollArea(this);
+      scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+      QWidget* scrollPanel    = new QWidget(this);
+      QVBoxLayout* controlLay = new QVBoxLayout();
+      controlLay->setMargin(20);
+      controlLay->setSpacing(10);
       {
-        tmplLay->addWidget(new QLabel(tr("Template:"), this), 0, 0,
-                           Qt::AlignRight | Qt::AlignVCenter);
-        tmplLay->addWidget(m_templateCombo, 0, 1, 1, 2,
-                           Qt::AlignLeft | Qt::AlignVCenter);
+        QGroupBox* tmplGBox = new QGroupBox(tr("Template Settings"), this);
 
-        tmplLay->addWidget(new QLabel(tr("Line color:"), this), 1, 0,
-                           Qt::AlignRight | Qt::AlignVCenter);
-        tmplLay->addWidget(m_lineColorFld, 1, 1, 1, 2);
-
-        tmplLay->addWidget(new QLabel(tr("Template font:"), this), 2, 0,
-                           Qt::AlignRight | Qt::AlignVCenter);
-        tmplLay->addWidget(m_templateFontCB, 2, 1, 1, 2,
-                           Qt::AlignLeft | Qt::AlignVCenter);
-
-        tmplLay->addWidget(new QLabel(tr("Logo:"), this), 3, 0,
-                           Qt::AlignRight | Qt::AlignTop);
-        tmplLay->addWidget(m_logoTxtRB, 3, 1);
-        tmplLay->addWidget(m_logoTextEdit, 3, 2);
-        tmplLay->addWidget(m_logoImgRB, 4, 1);
-        tmplLay->addWidget(m_logoImgPathField, 4, 2);
-
-        tmplLay->addWidget(m_serialFrameNumberCB, 5, 0, 1, 3);
-      }
-      tmplLay->setColumnStretch(2, 1);
-      tmplGBox->setLayout(tmplLay);
-      controlLay->addWidget(tmplGBox, 0);
-
-      QGroupBox* exportGBox = new QGroupBox(tr("Export Settings"), this);
-
-      QGridLayout* exportLay = new QGridLayout();
-      exportLay->setMargin(10);
-      exportLay->setHorizontalSpacing(5);
-      exportLay->setVerticalSpacing(10);
-      {
-        exportLay->addWidget(new QLabel(tr("Output area:"), this), 0, 0,
+        QGridLayout* tmplLay = new QGridLayout();
+        tmplLay->setMargin(10);
+        tmplLay->setHorizontalSpacing(5);
+        tmplLay->setVerticalSpacing(10);
+        {
+          tmplLay->addWidget(new QLabel(tr("Template:"), this), 0, 0,
                              Qt::AlignRight | Qt::AlignVCenter);
-        exportLay->addWidget(m_exportAreaCombo, 0, 1);
-        exportLay->addWidget(m_pageInfoLbl, 0, 2);
+          tmplLay->addWidget(m_templateCombo, 0, 1, 1, 2,
+                             Qt::AlignLeft | Qt::AlignVCenter);
 
-        exportLay->addWidget(new QLabel(tr("Output font:"), this), 1, 0,
+          tmplLay->addWidget(new QLabel(tr("Line color:"), this), 1, 0,
                              Qt::AlignRight | Qt::AlignVCenter);
-        exportLay->addWidget(m_contentsFontCB, 1, 1, 1, 2,
+          tmplLay->addWidget(m_lineColorFld, 1, 1, 1, 2);
+
+          tmplLay->addWidget(new QLabel(tr("Template font:"), this), 2, 0,
+                             Qt::AlignRight | Qt::AlignVCenter);
+          tmplLay->addWidget(m_templateFontCB, 2, 1, 1, 2,
                              Qt::AlignLeft | Qt::AlignVCenter);
 
-        exportLay->addWidget(m_addDateTimeCB, 2, 0, 1, 3,
-                             Qt::AlignLeft | Qt::AlignVCenter);
-        exportLay->addWidget(m_addScenePathCB, 3, 0, 1, 3,
-                             Qt::AlignLeft | Qt::AlignVCenter);
-        exportLay->addWidget(m_drawSoundCB, 4, 0, 1, 3,
-                             Qt::AlignLeft | Qt::AlignVCenter);
-        exportLay->addWidget(m_addSceneNameCB, 5, 0, 1, 2,
-                             Qt::AlignLeft | Qt::AlignVCenter);
-        exportLay->addWidget(m_sceneNameEdit, 5, 2,
-                             Qt::AlignLeft | Qt::AlignVCenter);
-        exportLay->addWidget(m_levelNameOnBottomCB, 6, 0, 1, 3,
-                             Qt::AlignLeft | Qt::AlignVCenter);
-
-        exportLay->addWidget(new QLabel(tr("Memo:"), this), 7, 0,
+          tmplLay->addWidget(new QLabel(tr("Logo:"), this), 3, 0,
                              Qt::AlignRight | Qt::AlignTop);
-        exportLay->addWidget(m_memoEdit, 7, 1, 1, 2);
-      }
-      exportLay->setColumnStretch(2, 1);
-      exportGBox->setLayout(exportLay);
-      controlLay->addWidget(exportGBox, 0);
+          tmplLay->addWidget(m_logoTxtRB, 3, 1);
+          tmplLay->addWidget(m_logoTextEdit, 3, 2);
+          tmplLay->addWidget(m_logoImgRB, 4, 1);
+          tmplLay->addWidget(m_logoImgPathField, 4, 2);
 
-      controlLay->addStretch(1);
+          tmplLay->addWidget(m_serialFrameNumberCB, 5, 0, 1, 3);
+        }
+        tmplLay->setColumnStretch(2, 1);
+        tmplGBox->setLayout(tmplLay);
+        controlLay->addWidget(tmplGBox, 0);
+
+        QGroupBox* exportGBox = new QGroupBox(tr("Export Settings"), this);
+
+        QGridLayout* exportLay = new QGridLayout();
+        exportLay->setMargin(10);
+        exportLay->setHorizontalSpacing(5);
+        exportLay->setVerticalSpacing(10);
+        {
+          exportLay->addWidget(new QLabel(tr("Output area:"), this), 0, 0,
+                               Qt::AlignRight | Qt::AlignVCenter);
+          exportLay->addWidget(m_exportAreaCombo, 0, 1);
+          exportLay->addWidget(m_pageInfoLbl, 0, 2);
+
+          exportLay->addWidget(new QLabel(tr("Output font:"), this), 1, 0,
+                               Qt::AlignRight | Qt::AlignVCenter);
+          exportLay->addWidget(m_contentsFontCB, 1, 1, 1, 2,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+
+          exportLay->addWidget(m_addDateTimeCB, 2, 0, 1, 3,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+          exportLay->addWidget(m_addScenePathCB, 3, 0, 1, 3,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+          exportLay->addWidget(m_drawSoundCB, 4, 0, 1, 3,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+          exportLay->addWidget(m_addSceneNameCB, 5, 0, 1, 2,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+          exportLay->addWidget(m_sceneNameEdit, 5, 2,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+          exportLay->addWidget(m_levelNameOnBottomCB, 6, 0, 1, 3,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+
+          exportLay->addWidget(new QLabel(tr("Memo:"), this), 7, 0,
+                               Qt::AlignRight | Qt::AlignTop);
+          exportLay->addWidget(m_memoEdit, 7, 1, 1, 2);
+        }
+        exportLay->setColumnStretch(2, 1);
+        exportGBox->setLayout(exportLay);
+        controlLay->addWidget(exportGBox, 0);
+
+        controlLay->addStretch(1);
+      }
+      scrollPanel->setLayout(controlLay);
+      scrollArea->setWidget(scrollPanel);
+      rightLay->addWidget(scrollArea, 1);
 
       QGridLayout* saveLay = new QGridLayout();
-      saveLay->setMargin(5);
+      saveLay->setMargin(15);
       saveLay->setHorizontalSpacing(5);
       saveLay->setVerticalSpacing(10);
       {
@@ -1664,12 +1675,10 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
         saveLay->addWidget(m_fileNameFld, 1, 1,
                            Qt::AlignLeft | Qt::AlignVCenter);
       }
-      controlLay->addLayout(saveLay, 0);
-
-      controlLay->addSpacing(20);
+      rightLay->addLayout(saveLay, 0);
 
       QHBoxLayout* btnLay = new QHBoxLayout();
-      btnLay->setMargin(0);
+      btnLay->setMargin(10);
       btnLay->setSpacing(10);
       {
         btnLay->addStretch(1);
@@ -1677,9 +1686,9 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
         btnLay->addWidget(exportPngBtn, 0);
         btnLay->addWidget(cancelBtn, 0);
       }
-      controlLay->addLayout(btnLay, 0);
+      rightLay->addLayout(btnLay, 0);
     }
-    mainLay->addLayout(controlLay, 0);
+    mainLay->addLayout(rightLay, 0);
   }
   m_topLayout->addLayout(mainLay, 1);
 
