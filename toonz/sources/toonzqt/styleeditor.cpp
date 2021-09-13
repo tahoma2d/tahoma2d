@@ -1971,6 +1971,14 @@ void StyleChooserPage::computeSize() {
 
 //-----------------------------------------------------------------------------
 
+void StyleChooserPage::onRemoveFavorite() { removeFavorite(); }
+
+//-----------------------------------------------------------------------------
+
+void StyleChooserPage::onAddFavorite() { addFavorite(); };
+
+//-----------------------------------------------------------------------------
+
 int StyleChooserPage::posToIndex(const QPoint &pos) const {
   if (m_chipPerRow == 0) return -1;
 
@@ -1988,6 +1996,8 @@ int StyleChooserPage::posToIndex(const QPoint &pos) const {
 //-----------------------------------------------------------------------------
 
 void StyleChooserPage::mousePressEvent(QMouseEvent *event) {
+  if (event->button() == Qt::RightButton) return;
+
   QPoint pos       = event->pos();
   int currentIndex = posToIndex(pos);
   if (currentIndex < 0) return;
@@ -2000,6 +2010,63 @@ void StyleChooserPage::mousePressEvent(QMouseEvent *event) {
 //-----------------------------------------------------------------------------
 
 void StyleChooserPage::mouseReleaseEvent(QMouseEvent *event) {}
+
+//-----------------------------------------------------------------------------
+
+void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
+  if (!isFavorite() && !allowFavorite()) return;
+
+  QPoint pos       = event->pos();
+  int currentIndex = posToIndex(pos);
+  if (currentIndex <= 0) return;  // Can't add No Style to Favorites
+  m_currentIndex = currentIndex;
+
+  QMenu *menu     = new QMenu(this);
+  QAction *action = new QAction(this);
+  if (isFavorite()) {
+    action->setText(tr("Remove from Favorites"));
+    connect(action, SIGNAL(triggered()), SLOT(onRemoveFavorite()));
+  } else {
+    action->setText(tr("Add to Favorites"));
+    connect(action, SIGNAL(triggered()), SLOT(onAddFavorite()));
+  }
+  menu->addAction(action);
+  menu->exec(event->globalPos());
+}
+
+//-----------------------------------------------------------------------------
+
+bool StyleChooserPage::copyToFavorites(TFilePathSet srcFiles,
+                                       TFilePath destDir) {
+  if (srcFiles.empty()) return false;
+
+  if (!TFileStatus(destDir).doesExist()) try {
+      TSystem::mkDir(destDir);
+    } catch (...) {
+      return false;
+    }
+
+  TFilePathSet::iterator it;
+  for (it = srcFiles.begin(); it != srcFiles.end(); it++) try {
+      TSystem::copyFile((destDir + it->withoutParentDir()), *it, true);
+    } catch (...) {
+    }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool StyleChooserPage::deleteFromFavorites(TFilePathSet targetFiles) {
+  if (targetFiles.empty()) return false;
+
+  TFilePathSet::iterator it;
+  for (it = targetFiles.begin(); it != targetFiles.end(); it++) try {
+      if (!TSystem::doesExistFileOrLevel(*it)) return false;
+      TSystem::deleteFile(*it);
+    } catch (...) {
+    }
+}
 
 //*****************************************************************************
 //    CustomStyleChooser  definition
@@ -2035,6 +2102,7 @@ if(!m_loaded) {loadItems(); m_loaded=true;return true;}
 else return false;
 }
   */
+  void loadItems() { m_styleManager->loadItems(); }
 
   int getChipCount() const override {
     return m_styleManager->getPatternCount() + 1;
@@ -2054,6 +2122,11 @@ else return false;
     }
   }
   void onSelect(int index) override;
+
+  void removeFavorite() override;
+  void addFavorite() override;
+
+  bool isLoading() { return m_styleManager->isLoading(); }
 };
 
 //-----------------------------------------------------------------------------
@@ -2107,6 +2180,55 @@ void CustomStyleChooserPage::onSelect(int index) {
   }
 }
 
+//-----------------------------------------------------------------------------
+
+void CustomStyleChooserPage::removeFavorite() {
+  if (!isFavorite()) return;
+
+  int index = m_currentIndex - 1;
+  if (index < 0) return;
+
+  CustomStyleManager::PatternData pattern = m_styleManager->getPattern(index);
+  std::string name                        = pattern.m_patternName;
+
+  TFilePathSet fileList;
+
+  QDir patternDir(m_stylesFolder.getQString());
+  patternDir.setNameFilters(
+      QStringList(QString::fromStdString(name) + ".*" +
+                  QString::fromStdString(pattern.m_path.getType())));
+  TSystem::readDirectory(fileList, patternDir, false);
+
+  bool deleted = deleteFromFavorites(fileList);
+  if (deleted) emit favoritesUpdated("custom");
+}
+
+//-----------------------------------------------------------------------------
+
+void CustomStyleChooserPage::addFavorite() {
+  if (isFavorite()) return;
+
+  int index = m_currentIndex - 1;
+  if (index < 0) return;
+
+  CustomStyleManager::PatternData pattern = m_styleManager->getPattern(index);
+  std::string name                        = pattern.m_patternName;
+
+  TFilePathSet fileList;
+
+  QDir patternDir(m_stylesFolder.getQString());
+  patternDir.setNameFilters(
+      QStringList(QString::fromStdString(name) + ".*" +
+                  QString::fromStdString(pattern.m_path.getType())));
+  TSystem::readDirectory(fileList, patternDir, false);
+
+  TFilePath myFavoritesPath =
+      ToonzFolder::getMyFavoritesFolder() + TFilePath("library/vector brushes");
+
+  bool added = copyToFavorites(fileList, myFavoritesPath);
+  if (added) emit favoritesUpdated("custom");
+}
+
 //*****************************************************************************
 //    VectorBrushStyleChooser  definition
 //*****************************************************************************
@@ -2144,6 +2266,11 @@ public:
 
   void drawChip(QPainter &p, QRect rect, int index) override;
   void onSelect(int index) override;
+
+  void removeFavorite() override;
+  void addFavorite() override;
+
+  bool isLoading() { return m_styleManager->isLoading(); }
 };
 
 //-----------------------------------------------------------------------------
@@ -2209,6 +2336,55 @@ void VectorBrushStyleChooserPage::onSelect(int index) {
   }
 }
 
+//-----------------------------------------------------------------------------
+
+void VectorBrushStyleChooserPage::removeFavorite() {
+  if (!isFavorite()) return;
+
+  int index = m_currentIndex - 1;
+  if (index < 0) return;
+
+  CustomStyleManager::PatternData pattern = m_styleManager->getPattern(index);
+  std::string name                        = pattern.m_patternName;
+
+  TFilePathSet fileList;
+
+  QDir patternDir(m_stylesFolder.getQString());
+  patternDir.setNameFilters(
+      QStringList(QString::fromStdString(name) + ".*" +
+                  QString::fromStdString(pattern.m_path.getType())));
+  TSystem::readDirectory(fileList, patternDir, false);
+
+  bool deleted = deleteFromFavorites(fileList);
+  if (deleted) emit favoritesUpdated("custom");
+}
+
+//-----------------------------------------------------------------------------
+
+void VectorBrushStyleChooserPage::addFavorite() {
+  if (isFavorite()) return;
+
+  int index = m_currentIndex - 1;
+  if (index < 0) return;
+
+  CustomStyleManager::PatternData pattern = m_styleManager->getPattern(index);
+  std::string name                        = pattern.m_patternName;
+
+  TFilePathSet fileList;
+
+  QDir patternDir(m_stylesFolder.getQString());
+  patternDir.setNameFilters(
+      QStringList(QString::fromStdString(name) + ".*" +
+                  QString::fromStdString(pattern.m_path.getType())));
+  TSystem::readDirectory(fileList, patternDir, false);
+
+  TFilePath myFavoritesPath =
+      ToonzFolder::getMyFavoritesFolder() + TFilePath("library/vector brushes");
+
+  bool added = copyToFavorites(fileList, myFavoritesPath);
+  if (added) emit favoritesUpdated("custom");
+}
+
 //*****************************************************************************
 //    TextureStyleChooser  definition
 //*****************************************************************************
@@ -2216,6 +2392,7 @@ void VectorBrushStyleChooserPage::onSelect(int index) {
 struct Texture {
   TRasterP m_raster;
   QString m_name;
+  TFilePath m_path;
 };
 
 //-----------------------------------------------------------------------------
@@ -2262,6 +2439,9 @@ public:
   void onSelect(int index) override;
 
   bool event(QEvent *e) override;
+
+  void removeFavorite() override;
+  void addFavorite() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -2271,7 +2451,7 @@ void TextureStyleChooserPage::loadTexture(const TFilePath &fp) {
     TRaster32P ras(25, 25);
     TTextureStyle::fillCustomTextureIcon(ras);
     // ras->fill(TPixel::Blue);
-    Texture customText = {ras, QString("")};
+    Texture customText = {ras, QString(""), fp};
 
     m_textures.push_back(customText);
     return;
@@ -2298,7 +2478,7 @@ void TextureStyleChooserPage::loadTexture(const TFilePath &fp) {
     TRop::resample(texture, ras32, sc);
   }
 
-  Texture text = {texture, QString::fromStdWString(fp.getLevelNameW())};
+  Texture text = {texture, QString::fromStdWString(fp.getLevelNameW()), fp};
 
   m_textures.push_back(text);
 }
@@ -2369,6 +2549,43 @@ bool TextureStyleChooserPage::event(QEvent *e) {
     e->accept();
   }
   return StyleChooserPage::event(e);
+}
+
+//-----------------------------------------------------------------------------
+
+void TextureStyleChooserPage::removeFavorite() {
+  if (!isFavorite()) return;
+
+  int index = m_currentIndex - 1;
+  if (index < 0) return;
+
+  TFilePathSet fileList;
+  QString name = m_textures[index].m_name;
+  if (name == QString()) return;
+  fileList.push_back(m_textures[index].m_path);
+
+  bool deleted = deleteFromFavorites(fileList);
+  if (deleted) emit favoritesUpdated("textures");
+}
+
+//-----------------------------------------------------------------------------
+
+void TextureStyleChooserPage::addFavorite() {
+  if (isFavorite()) return;
+
+  int index = m_currentIndex - 1;
+  if (index < 0) return;
+
+  TFilePathSet fileList;
+  QString name = m_textures[index].m_name;
+  if (name == QString()) return;
+  fileList.push_back(m_textures[index].m_path);
+
+  TFilePath myFavoritesPath =
+      ToonzFolder::getMyFavoritesFolder() + TFilePath("library/textures");
+
+  bool added = copyToFavorites(fileList, myFavoritesPath);
+  if (added) emit favoritesUpdated("textures");
 }
 
 //*****************************************************************************
@@ -2445,6 +2662,9 @@ public:
     }
     return StyleChooserPage::event(e);
   }
+
+  void removeFavorite() override;
+  void addFavorite() override;
 };
 
 //-----------------------------------------------------------------------------
@@ -2471,6 +2691,45 @@ void MyPaintBrushStyleChooserPage::loadItems() {
   for (std::set<TFilePath>::iterator i = brushFiles.begin();
        i != brushFiles.end(); ++i)
     m_brushes.push_back(TMyPaintBrushStyle(*i));
+}
+
+//-----------------------------------------------------------------------------
+
+void MyPaintBrushStyleChooserPage::removeFavorite() {
+  if (!isFavorite()) return;
+
+  int index = m_currentIndex - 1;
+  if (index < 0) return;
+
+  TFilePathSet fileList;
+  std::string name = m_brushes[index].getPath().getName();
+  fileList.push_back(m_brushes[index].getPath());
+  fileList.push_back(
+      m_brushes[index].getPath().withName(name + "_prev").withType("png"));
+
+  bool deleted = deleteFromFavorites(fileList);
+  if (deleted) emit favoritesUpdated("raster");
+}
+
+//-----------------------------------------------------------------------------
+
+void MyPaintBrushStyleChooserPage::addFavorite() {
+  if (isFavorite()) return;
+
+  int index = m_currentIndex - 1;
+  if (index < 0) return;
+
+  TFilePathSet fileList;
+  std::string name = m_brushes[index].getPath().getName();
+  fileList.push_back(m_brushes[index].getPath());
+  fileList.push_back(
+      m_brushes[index].getPath().withName(name + "_prev").withType("png"));
+
+  TFilePath myFavoritesPath =
+      ToonzFolder::getMyFavoritesFolder() + TFilePath("library/raster brushes");
+
+  bool added = copyToFavorites(fileList, myFavoritesPath);
+  if (added) emit favoritesUpdated("raster");
 }
 
 //*****************************************************************************
@@ -3100,7 +3359,8 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
     , m_editedStyle(0) {
   setFocusPolicy(Qt::NoFocus);
   // TOGLIERE
-  TFilePath libraryPath = ToonzFolder::getLibraryFolder();
+  TFilePath libraryPath     = ToonzFolder::getLibraryFolder();
+  TFilePath myFavoritesPath = ToonzFolder::getMyFavoritesFolder() + "library";
 
   m_styleBar = new DVGui::TabBar(this);
   m_styleBar->setDrawBase(false);
@@ -3120,6 +3380,16 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   QWidget *emptyPage = new StyleEditorPage(0);
 
   // Create Style Pages
+  // Load Favorites first so they appear first in all lists
+  createStylePage(StylePageType::Texture,
+                  myFavoritesPath + TFilePath("textures"), QString("*"), true);
+  createStylePage(StylePageType::VectorCustom,
+                  myFavoritesPath + TFilePath("vector brushes"),
+                  QString("*.pli *.tif *.png *.tga *.tiff *.sgi *.rgb"), true);
+  createStylePage(StylePageType::Raster,
+                  myFavoritesPath + TFilePath("raster brushes"), QString("*"),
+                  true);
+  // Load library pages
   createStylePage(StylePageType::Texture, libraryPath + TFilePath("textures"));
   createStylePage(StylePageType::VectorGenerated, TFilePath());
   createStylePage(StylePageType::VectorCustom,
@@ -3262,6 +3532,9 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
     ret = ret && connect(*itP, SIGNAL(styleSelected(const TColorStyle &)), this,
                          SLOT(selectStyle(const TColorStyle &)));
 
+    ret = ret && connect(*itP, SIGNAL(favoritesUpdated(QString)), this,
+                         SLOT(updateFavorites(QString)));
+
     ret = ret &&
           connect(*itB, SIGNAL(toggled(bool)), *itP, SLOT(setVisible(bool)));
   }
@@ -3271,6 +3544,9 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
     ret = ret && connect(*itP, SIGNAL(styleSelected(const TColorStyle &)), this,
                          SLOT(selectStyle(const TColorStyle &)));
 
+    ret = ret && connect(*itP, SIGNAL(favoritesUpdated(QString)), this,
+                         SLOT(updateFavorites(QString)));
+
     ret = ret &&
           connect(*itB, SIGNAL(toggled(bool)), *itP, SLOT(setVisible(bool)));
   }
@@ -3279,6 +3555,10 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   for (; itP != m_rasterPages.end(); itP++, itB++) {
     ret = ret && connect(*itP, SIGNAL(styleSelected(const TColorStyle &)), this,
                          SLOT(selectStyle(const TColorStyle &)));
+
+    ret = ret && connect(*itP, SIGNAL(favoritesUpdated(QString)), this,
+                         SLOT(updateFavorites(QString)));
+
     ret = ret &&
           connect(*itB, SIGNAL(toggled(bool)), *itP, SLOT(setVisible(bool)));
   }
@@ -4243,40 +4523,49 @@ void StyleEditor::updateColorCalibration() {
 //-----------------------------------------------------------------------------
 
 void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
-                                  QString filters) {
+                                  QString filters, bool isFavorite) {
+  TFilePathSet fps;
   if (styleFolder != TFilePath()) {
     // Load subfolders first
     try {
       QStringList fpList;
-      TSystem::readDirectory_DirItems(fpList, styleFolder);
+      if (TFileStatus(styleFolder).doesExist())
+        TSystem::readDirectory_DirItems(fpList, styleFolder);
 
       QStringList::iterator fpListIt;
       for (fpListIt = fpList.begin(); fpListIt != fpList.end(); fpListIt++)
-        createStylePage(pageType, styleFolder + TFilePath(*fpListIt), filters);
+        createStylePage(pageType, styleFolder + TFilePath(*fpListIt), filters,
+                        isFavorite);
 
     } catch (...) {
       // Do nothing
     }
 
     // Let's look for files
-    TFilePathSet fps;
     try {
       QDir patternDir(QString::fromStdWString(styleFolder.getWideString()));
       patternDir.setNameFilters(filters.split(' '));
 
-      TSystem::readDirectory(fps, patternDir);
+      if (TFileStatus(styleFolder).doesExist())
+        TSystem::readDirectory(fps, patternDir);
     } catch (...) {
       return;
     }
 
-    if (fps.empty()) return;
+    if (fps.empty() && !isFavorite) return;
   }
 
-  QString label = styleFolder.withoutParentDir().getQString();
-  label[0]      = label[0].toUpper();
-  if (pageType == StylePageType::Raster &&
+  QString labelText = isFavorite
+                          ? tr("My Favorites")
+                          : pageType == StylePageType::VectorGenerated
+                                ? tr("Generated")
+                                : styleFolder.withoutParentDir().getQString();
+  labelText[0] = labelText[0].toUpper();
+  if (!isFavorite && pageType == StylePageType::Raster &&
       !styleFolder.getQString().contains("mypaint brushes"))
-    label += tr(" (External)");
+    labelText += tr(" (External)");
+  QLabel *label = new QLabel(labelText, this);
+
   QPushButton *button = new QPushButton("", this);
   button->setObjectName("menuToggleButton");
   button->setFixedSize(15, 15);
@@ -4287,35 +4576,85 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
 
   switch (pageType) {
   case StylePageType::Texture: {
-    m_texturePages.push_back(new TextureStyleChooserPage(styleFolder, filters));
-    m_textureLabels.push_back(new QLabel(label, this));
+    TextureStyleChooserPage *newPage =
+        new TextureStyleChooserPage(styleFolder, filters);
+    if (isFavorite)
+      newPage->setFavorite(true);
+    else
+      newPage->setAllowFavorite(true);
+    m_texturePages.push_back(newPage);
+    m_textureLabels.push_back(label);
     m_textureButtons.push_back(button);
+
+    if (isFavorite && fps.size() == 0) {
+      newPage->setHidden(true);
+      label->setHidden(true);
+      button->setHidden(true);
+      button->setDisabled(true);
+    }
     break;
   }
   case StylePageType::VectorGenerated: {
     m_vectorPages.push_back(m_specialStylePage);
-    m_vectorLabels.push_back(new QLabel("Generated"));
+    m_vectorLabels.push_back(label);
     m_vectorButtons.push_back(button);
     break;
   }
   case StylePageType::VectorCustom: {
-    m_vectorPages.push_back(new CustomStyleChooserPage(styleFolder, filters));
-    m_vectorLabels.push_back(new QLabel(label, this));
+    CustomStyleChooserPage *newPage =
+        new CustomStyleChooserPage(styleFolder, filters);
+    if (isFavorite)
+      newPage->setFavorite(true);
+    else
+      newPage->setAllowFavorite(true);
+    m_vectorPages.push_back(newPage);
+    m_vectorLabels.push_back(label);
     m_vectorButtons.push_back(button);
+
+    if (isFavorite && fps.size() == 0) {
+      newPage->setHidden(true);
+      label->setHidden(true);
+      button->setHidden(true);
+      button->setDisabled(true);
+    }
     break;
   }
   case StylePageType::VectorBrush: {
-    m_vectorPages.push_back(
-        new VectorBrushStyleChooserPage(styleFolder, filters));
-    m_vectorLabels.push_back(new QLabel(label, this));
+    VectorBrushStyleChooserPage *newPage =
+        new VectorBrushStyleChooserPage(styleFolder, filters);
+    if (isFavorite)
+      newPage->setFavorite(true);
+    else
+      newPage->setAllowFavorite(true);
+    m_vectorPages.push_back(newPage);
+    m_vectorLabels.push_back(label);
     m_vectorButtons.push_back(button);
+
+    if (isFavorite && fps.size() == 0) {
+      newPage->setHidden(true);
+      label->setHidden(true);
+      button->setHidden(true);
+      button->setDisabled(true);
+    }
     break;
   }
   case StylePageType::Raster: {
-    m_rasterLabels.push_back(new QLabel(label));
-    m_rasterPages.push_back(
-        new MyPaintBrushStyleChooserPage(styleFolder, filters));
+    MyPaintBrushStyleChooserPage *newPage =
+        new MyPaintBrushStyleChooserPage(styleFolder, filters);
+    if (isFavorite)
+      newPage->setFavorite(true);
+    else
+      newPage->setAllowFavorite(true);
+    m_rasterPages.push_back(newPage);
+    m_rasterLabels.push_back(label);
     m_rasterButtons.push_back(button);
+
+    if (isFavorite && fps.size() == 0) {
+      newPage->setHidden(true);
+      label->setHidden(true);
+      button->setHidden(true);
+      button->setDisabled(true);
+    }
     break;
   }
   }
@@ -4338,6 +4677,10 @@ void StyleEditor::createStyleMenus() {
             SLOT(onToggleTextureSet(bool)));
 
     m_textureMenu->addAction(action);
+
+    // Favorites should be 1st
+    if (label->text() == "My Favorites")
+      action->setVisible(!m_textureButtons[0]->isHidden());
   }
   m_textureMenu->addSeparator();
   action = new QAction(tr("Show All"), this);
@@ -4363,6 +4706,10 @@ void StyleEditor::createStyleMenus() {
     connect(action, SIGNAL(toggled(bool)), this, SLOT(onToggleVectorSet(bool)));
 
     m_vectorMenu->addAction(action);
+
+    // Favorites should be 1st
+    if (label->text() == "My Favorites")
+      action->setVisible(!m_vectorButtons[0]->isHidden());
   }
   m_vectorMenu->addSeparator();
   action = new QAction(tr("Show All"), this);
@@ -4388,6 +4735,10 @@ void StyleEditor::createStyleMenus() {
     connect(action, SIGNAL(toggled(bool)), this, SLOT(onToggleRasterSet(bool)));
 
     m_rasterMenu->addAction(action);
+
+    // Favorites should be 1st
+    if (label->text() == "My Favorites")
+      action->setVisible(!m_rasterButtons[0]->isHidden());
   }
   m_rasterMenu->addSeparator();
   action = new QAction(tr("Show All"), this);
@@ -4454,7 +4805,7 @@ void StyleEditor::onShowAllTextureSet() {
     index++;
     if (index > m_texturePages.size()) break;
     QAction *action = *it;
-    action->setChecked(true);
+    if (action->isEnabled()) action->setChecked(true);
   }
 }
 
@@ -4469,7 +4820,7 @@ void StyleEditor::onShowAllVectorSet() {
     index++;
     if (index > m_vectorPages.size()) break;
     QAction *action = *it;
-    action->setChecked(true);
+    if (action->isEnabled()) action->setChecked(true);
   }
 }
 
@@ -4485,6 +4836,7 @@ void StyleEditor::onShowAllRasterSet() {
     if (index > m_rasterPages.size()) break;
     QAction *action = *it;
     action->setChecked(true);
+    if (action->isEnabled()) action->setChecked(true);
   }
 }
 
@@ -4499,7 +4851,7 @@ void StyleEditor::onHideAllTextureSet() {
     index++;
     if (index > m_texturePages.size()) break;
     QAction *action = *it;
-    action->setChecked(false);
+    if (action->isEnabled()) action->setChecked(false);
   }
 }
 
@@ -4514,7 +4866,7 @@ void StyleEditor::onHideAllVectorSet() {
     index++;
     if (index > m_vectorPages.size()) break;
     QAction *action = *it;
-    action->setChecked(false);
+    if (action->isEnabled()) action->setChecked(false);
   }
 }
 
@@ -4529,7 +4881,7 @@ void StyleEditor::onHideAllRasterSet() {
     index++;
     if (index > m_rasterPages.size()) break;
     QAction *action = *it;
-    action->setChecked(false);
+    if (action->isEnabled()) action->setChecked(false);
   }
 }
 
@@ -4539,7 +4891,7 @@ void StyleEditor::onCollapseAllTextureSet() {
   std::vector<QPushButton *>::iterator it;
   for (it = m_textureButtons.begin(); it != m_textureButtons.end(); it++) {
     QPushButton *button = *it;
-    button->setChecked(false);
+    if (button->isEnabled() && button->isVisible()) button->setChecked(false);
   }
 }
 
@@ -4549,7 +4901,7 @@ void StyleEditor::onCollapseAllVectorSet() {
   std::vector<QPushButton *>::iterator it;
   for (it = m_vectorButtons.begin(); it != m_vectorButtons.end(); it++) {
     QPushButton *button = *it;
-    button->setChecked(false);
+    if (button->isEnabled() && button->isVisible()) button->setChecked(false);
   }
 }
 
@@ -4559,7 +4911,7 @@ void StyleEditor::onCollapseAllRasterSet() {
   std::vector<QPushButton *>::iterator it;
   for (it = m_rasterButtons.begin(); it != m_rasterButtons.end(); it++) {
     QPushButton *button = *it;
-    button->setChecked(false);
+    if (button->isEnabled() && button->isVisible()) button->setChecked(false);
   }
 }
 
@@ -4569,7 +4921,7 @@ void StyleEditor::onExpandAllTextureSet() {
   std::vector<QPushButton *>::iterator it;
   for (it = m_textureButtons.begin(); it != m_textureButtons.end(); it++) {
     QPushButton *button = *it;
-    button->setChecked(true);
+    if (button->isEnabled() && button->isVisible()) button->setChecked(true);
   }
 }
 
@@ -4579,7 +4931,7 @@ void StyleEditor::onExpandAllVectorSet() {
   std::vector<QPushButton *>::iterator it;
   for (it = m_vectorButtons.begin(); it != m_vectorButtons.end(); it++) {
     QPushButton *button = *it;
-    button->setChecked(true);
+    if (button->isEnabled() && button->isVisible()) button->setChecked(true);
   }
 }
 
@@ -4589,6 +4941,64 @@ void StyleEditor::onExpandAllRasterSet() {
   std::vector<QPushButton *>::iterator it;
   for (it = m_rasterButtons.begin(); it != m_rasterButtons.end(); it++) {
     QPushButton *button = *it;
-    button->setChecked(true);
+    if (button->isEnabled() && button->isVisible()) button->setChecked(true);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void StyleEditor::updateFavorites(QString pageType) {
+  if (pageType == "textures") {
+    TextureStyleChooserPage *page =
+        dynamic_cast<TextureStyleChooserPage *>(m_texturePages[0]);
+    page->loadItems();
+    int chipSize = page->getChipCount();
+    if (chipSize > 1) {
+      page->setHidden(false);
+      m_textureLabels[0]->setHidden(false);
+      m_textureButtons[0]->setHidden(false);
+      m_textureButtons[0]->setDisabled(false);
+    } else {
+      page->setHidden(true);
+      m_textureLabels[0]->setHidden(true);
+      m_textureButtons[0]->setHidden(true);
+      m_textureButtons[0]->setDisabled(true);
+    }
+    m_textureMenu->actions()[0]->setVisible(!m_textureButtons[0]->isHidden());
+  } else if (pageType == "custom") {
+    CustomStyleChooserPage *page =
+        dynamic_cast<CustomStyleChooserPage *>(m_vectorPages[0]);
+    page->loadItems();
+    int chipSize = page->getChipCount();
+    if (chipSize > 1 || page->isLoading()) {
+      page->setHidden(false);
+      m_vectorLabels[0]->setHidden(false);
+      m_vectorButtons[0]->setHidden(false);
+      m_vectorButtons[0]->setDisabled(false);
+    } else {
+      page->setHidden(true);
+      m_vectorLabels[0]->setHidden(true);
+      m_vectorButtons[0]->setHidden(true);
+      m_vectorButtons[0]->setDisabled(true);
+    }
+    m_vectorMenu->actions()[0]->setVisible(!m_vectorButtons[0]->isHidden());
+  } else if (pageType == "raster") {
+    MyPaintBrushStyleChooserPage *page =
+        dynamic_cast<MyPaintBrushStyleChooserPage *>(m_rasterPages[0]);
+    page->loadItems();
+    int chipSize = page->getChipCount();
+    if (chipSize > 1) {
+      page->setHidden(false);
+      m_rasterLabels[0]->setHidden(false);
+      m_rasterButtons[0]->setHidden(false);
+      m_rasterButtons[0]->setDisabled(false);
+    } else {
+      page->setHidden(true);
+      m_rasterLabels[0]->setHidden(true);
+      m_rasterButtons[0]->setHidden(true);
+      m_rasterButtons[0]->setDisabled(true);
+    }
+    m_rasterMenu->actions()[0]->setVisible(!m_rasterButtons[0]->isHidden());
+  }
+  update();
 }

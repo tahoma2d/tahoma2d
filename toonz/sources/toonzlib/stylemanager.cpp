@@ -190,6 +190,7 @@ void CustomStyleManager::StyleLoaderTask::run() {
 	convertRaster32ToImage(ras, image);
 #endif
 
+    m_data.m_path        = m_fp;
     m_data.m_patternName = m_fp.getName();
     m_data.m_isVector    = (m_fp.getType() == "pli" || m_fp.getType() == "svg");
     m_data.m_image       = image;
@@ -202,6 +203,7 @@ void CustomStyleManager::StyleLoaderTask::run() {
 void CustomStyleManager::StyleLoaderTask::onFinished(
     TThread::RunnableP sender) {
   // On the main thread...
+  m_manager->loadItemFinished();
   if (m_data.m_image)  // Everything went ok
   {
     m_manager->m_patterns.push_back(m_data);
@@ -215,7 +217,10 @@ void CustomStyleManager::StyleLoaderTask::onFinished(
 
 CustomStyleManager::CustomStyleManager(const TFilePath &stylesFolder,
                                        QString filters, QSize chipSize)
-    : m_stylesFolder(stylesFolder), m_filters(filters), m_chipSize(chipSize) {
+    : m_stylesFolder(stylesFolder)
+    , m_filters(filters)
+    , m_chipSize(chipSize)
+    , m_activeLoads(0) {
   m_executor.setMaxActiveTasks(1);
 }
 
@@ -268,6 +273,8 @@ void CustomStyleManager::loadItems() {
   }
 
   // For each (now new) file entry, generate a fetching task
-  for (TFilePathSet::iterator it = fps.begin(); it != fps.end(); it++)
+  for (TFilePathSet::iterator it = fps.begin(); it != fps.end(); it++) {
+    m_activeLoads++;
     m_executor.addTask(new StyleLoaderTask(this, *it));
+  }
 }

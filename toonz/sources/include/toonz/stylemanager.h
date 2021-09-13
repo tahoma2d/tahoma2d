@@ -39,8 +39,13 @@ public:
     QImage *m_image;
     std::string m_patternName;
     bool m_isVector;
+    TFilePath m_path;
 
-    PatternData() : m_image(0), m_patternName(""), m_isVector(false) {}
+    PatternData()
+        : m_image(0)
+        , m_patternName("")
+        , m_isVector(false)
+        , m_path(TFilePath()) {}
   };
 
   class StyleLoaderTask;
@@ -54,6 +59,7 @@ private:
 
   TThread::Executor m_executor;
   bool m_started;
+  int m_activeLoads;
 
 public:
   CustomStyleManager(const TFilePath &stylesFolder, QString filters = QString(),
@@ -66,6 +72,13 @@ public:
   PatternData getPattern(int index);
 
   void loadItems();
+
+  void loadItemFinished() {
+    m_activeLoads--;
+    if (m_activeLoads < 0) m_activeLoads = 0;
+  };
+
+  int isLoading() { return m_activeLoads > 0; }
 
 private:
   void addPattern(const TFilePath &path);

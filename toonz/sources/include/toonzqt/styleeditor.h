@@ -419,8 +419,17 @@ signals:
                 Inherited by \b PlainColorPage and \b StyleChooserPage.
 */
 class StyleEditorPage : public QFrame {
+  bool m_favorite      = false;
+  bool m_allowFavorite = false;
+
 public:
   StyleEditorPage(QWidget *parent);
+
+  void setFavorite(bool favorite) { m_favorite = favorite; }
+  bool isFavorite() { return m_favorite; }
+
+  void setAllowFavorite(bool allow) { m_allowFavorite = allow; }
+  bool allowFavorite() { return m_allowFavorite; }
 };
 
 //=============================================================================
@@ -544,8 +553,11 @@ public:
   virtual void drawChip(QPainter &p, QRect rect, int index) = 0;
   virtual void onSelect(int index) {}
 
-  //! \see StyleEditor::setRootPath()
-  // TOGLIERE
+  virtual void removeFavorite(){};
+  virtual void addFavorite() {}
+
+  bool copyToFavorites(TFilePathSet srcFiles, TFilePath destDir);
+  bool deleteFromFavorites(TFilePathSet targetFiles);
 
 protected:
   int m_currentIndex;
@@ -558,10 +570,15 @@ protected:
   void mousePressEvent(QMouseEvent *event) override;
   void mouseMoveEvent(QMouseEvent *event) override {}
   void mouseReleaseEvent(QMouseEvent *event) override;
+  void contextMenuEvent(QContextMenuEvent *event) override;
+
 protected slots:
   void computeSize();
+  void onRemoveFavorite();
+  void onAddFavorite();
 signals:
   void styleSelected(const TColorStyle &style);
+  void favoritesUpdated(QString pageType);
 };
 
 //=============================================================================
@@ -726,7 +743,7 @@ public:
   void updateColorCalibration();
 
   void createStylePage(StylePageType pageType, TFilePath styleFolder,
-                       QString filters = QString("*"));
+                       QString filters = QString("*"), bool isFavorite = false);
 
   void createStyleMenus();
 
@@ -812,6 +829,8 @@ protected slots:
   void onExpandAllTextureSet();
   void onExpandAllVectorSet();
   void onExpandAllRasterSet();
+
+  void updateFavorites(QString pageType);
 
 private:
   QFrame *createBottomWidget();
