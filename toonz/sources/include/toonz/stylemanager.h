@@ -88,4 +88,26 @@ signals:
   void patternAdded();
 };
 
+//------------------------------------------------------
+
+// singleton
+class DVAPI TStyleManager {
+  std::vector<std::pair<TFilePath, QString>> m_styleFolders;
+  std::vector<CustomStyleManager *> m_styleManagers;
+
+  TStyleManager() {}
+
+public:
+  static TStyleManager *instance() {
+    static TStyleManager theInstance;
+    return &theInstance;
+  }
+
+  ~TStyleManager() {}
+
+  CustomStyleManager *getCustomStyleManager(TFilePath stylesFolder,
+                                            QString filters = QString("*"),
+                                            QSize chipSize  = QSize(30, 30));
+};
+
 #endif  // STYLEMANAGER_H

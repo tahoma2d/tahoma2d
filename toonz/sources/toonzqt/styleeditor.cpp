@@ -2083,7 +2083,8 @@ public:
       : StyleChooserPage(parent) {
     m_stylesFolder = stylesFolder;
     m_filters      = filters;
-    m_styleManager = new CustomStyleManager(m_stylesFolder, m_filters);
+    m_styleManager = TStyleManager::instance()->getCustomStyleManager(
+        m_stylesFolder, m_filters);
   }
 
   bool event(QEvent *e) override;
@@ -2245,7 +2246,8 @@ public:
     m_stylesFolder = stylesFolder;
     m_filters      = filters;
     m_chipSize     = QSize(60, 25);
-    m_styleManager = new CustomStyleManager(m_stylesFolder, m_filters);
+    m_styleManager = TStyleManager::instance()->getCustomStyleManager(
+        m_stylesFolder, m_filters);
   }
 
   bool event(QEvent *e) override;

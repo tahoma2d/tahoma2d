@@ -278,3 +278,29 @@ void CustomStyleManager::loadItems() {
     m_executor.addTask(new StyleLoaderTask(this, *it));
   }
 }
+
+//********************************************************************************
+//    StyleManager definition
+//********************************************************************************
+
+//---------------------------------------------------------
+
+CustomStyleManager *TStyleManager::getCustomStyleManager(TFilePath stylesFolder,
+                                                         QString filters,
+                                                         QSize chipSize) {
+  std::pair<TFilePath, QString> styleFolderKey =
+      std::pair<TFilePath, QString>(stylesFolder, filters);
+
+  // Return the manager if it was previously created
+  for (int index = 0; index < m_styleFolders.size(); index++) {
+    if (m_styleFolders[index] == styleFolderKey) return m_styleManagers[index];
+  }
+
+  // Create the manager if one was not found
+  CustomStyleManager *cm =
+      new CustomStyleManager(stylesFolder, filters, chipSize);
+  m_styleManagers.push_back(cm);
+  m_styleFolders.push_back(styleFolderKey);
+
+  return cm;
+}
