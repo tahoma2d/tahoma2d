@@ -1076,10 +1076,41 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
           new ToolOptionCheckbox(rasterSelectionTool, modifySetSaveboxProp);
   }
 
+  m_hFlipButton = new QPushButton(this);
+  m_vFlipButton = new QPushButton(this);
+
+  m_leftRotateButton  = new QPushButton(this);
+  m_rightRotateButton = new QPushButton(this);
+
+  m_hFlipButton->setFixedSize(QSize(20, 20));
+  m_vFlipButton->setFixedSize(QSize(20, 20));
+
+  m_leftRotateButton->setFixedSize(QSize(20, 20));
+  m_rightRotateButton->setFixedSize(QSize(20, 20));
+
+  m_hFlipButton->setIcon(createQIcon("fliphoriz"));
+  m_hFlipButton->setIconSize(QSize(20, 20));
+  m_vFlipButton->setIcon(createQIcon("flipvert"));
+  m_vFlipButton->setIconSize(QSize(20, 20));
+  m_leftRotateButton->setIcon(createQIcon("rotateleft"));
+  m_leftRotateButton->setIconSize(QSize(20, 20));
+  m_rightRotateButton->setIcon(createQIcon("rotateright"));
+  m_rightRotateButton->setIconSize(QSize(20, 20));
+
+  m_hFlipButton->setToolTip(tr("Flip Selection Horizontally"));
+  m_vFlipButton->setToolTip(tr("Flip Selection Vertically"));
+  m_leftRotateButton->setToolTip(tr("Rotate Selection Left"));
+  m_rightRotateButton->setToolTip(tr("Rotate Selection Right"));
+
   m_scaleXLabel->setEnabled(false);
   m_scaleYLabel->setEnabled(false);
   m_moveXLabel->setEnabled(false);
   m_moveYLabel->setEnabled(false);
+
+  m_hFlipButton->setEnabled(false);
+  m_vFlipButton->setEnabled(false);
+  m_leftRotateButton->setEnabled(false);
+  m_rightRotateButton->setEnabled(false);
 
   //--- layout ----
 
@@ -1089,8 +1120,10 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
                        0);
   hLayout()->addWidget(m_scaleXLabel, 0);
   hLayout()->addWidget(m_scaleXField, 10);
+  hLayout()->addWidget(m_hFlipButton);
   hLayout()->addWidget(m_scaleYLabel, 0);
   hLayout()->addWidget(m_scaleYField, 10);
+  hLayout()->addWidget(m_vFlipButton);
   hLayout()->addSpacing(4);
   hLayout()->addWidget(m_scaleLink, 0);
 
@@ -1098,6 +1131,8 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
 
   hLayout()->addWidget(rotIconView, 0);
   hLayout()->addWidget(m_rotationField, 10);
+  hLayout()->addWidget(m_leftRotateButton);
+  hLayout()->addWidget(m_rightRotateButton);
 
   addSeparator();
 
@@ -1191,6 +1226,10 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
           SLOT(receiveMouseMove(QMouseEvent *)));
   connect(m_moveYLabel, SIGNAL(onMouseRelease(QMouseEvent *)), m_moveYField,
           SLOT(receiveMouseRelease(QMouseEvent *)));
+  connect(m_hFlipButton, SIGNAL(clicked()), SLOT(onFlipHorizontal()));
+  connect(m_vFlipButton, SIGNAL(clicked()), SLOT(onFlipVertical()));
+  connect(m_leftRotateButton, SIGNAL(clicked()), SLOT(onRotateLeft()));
+  connect(m_rightRotateButton, SIGNAL(clicked()), SLOT(onRotateRight()));
   // assert(ret);
 
   updateStatus();
@@ -1222,6 +1261,11 @@ void SelectionToolOptionsBox::updateStatus() {
   m_moveYField->updateStatus();
   m_moveYLabel->setEnabled(m_moveYField->isEnabled());
 
+  m_hFlipButton->setEnabled(m_scaleXField->isEnabled());
+  m_vFlipButton->setEnabled(m_scaleXField->isEnabled());
+  m_leftRotateButton->setEnabled(m_rotationField->isEnabled());
+  m_rightRotateButton->setEnabled(m_rotationField->isEnabled());
+
   if (m_isVectorSelction) {
     m_thickChangeField->updateStatus();
     onPropertyChanged();
@@ -1252,6 +1296,38 @@ void SelectionToolOptionsBox::onScaleYValueChanged(bool addToUndo) {
 
 void SelectionToolOptionsBox::onSetSaveboxCheckboxChanged(bool) {
   updateStatus();
+}
+
+//-----------------------------------------------------------------------------
+
+void SelectionToolOptionsBox::onFlipHorizontal() {
+  m_scaleXField->setValue(m_scaleXField->getValue() * -1);
+  m_scaleXField->applyChange(true);
+
+  onScaleXValueChanged(true);
+}
+
+//-----------------------------------------------------------------------------
+
+void SelectionToolOptionsBox::onFlipVertical() {
+  m_scaleYField->setValue(m_scaleYField->getValue() * -1);
+  m_scaleYField->applyChange(true);
+
+  onScaleYValueChanged(true);
+}
+
+//-----------------------------------------------------------------------------
+
+void SelectionToolOptionsBox::onRotateLeft() {
+  m_rotationField->setValue(m_rotationField->getValue() + 90);
+  m_rotationField->applyChange(true);
+}
+
+//-----------------------------------------------------------------------------
+
+void SelectionToolOptionsBox::onRotateRight() {
+  m_rotationField->setValue(m_rotationField->getValue() - 90);
+  m_rotationField->applyChange(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -2032,7 +2108,7 @@ EraserToolOptionsBox::EraserToolOptionsBox(QWidget *parent, TTool *tool,
     m_hardnessLabel = m_labels.value(m_hardnessField->propertyName());
   m_colorMode  = dynamic_cast<ToolOptionCombo *>(m_controls.value("Mode:"));
   if (m_colorMode)
-      m_colorModeLabel = m_labels.value(m_colorMode->propertyName());
+    m_colorModeLabel = m_labels.value(m_colorMode->propertyName());
   m_invertMode = dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Invert"));
   m_multiFrameMode =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Frame Range"));
@@ -2064,11 +2140,11 @@ EraserToolOptionsBox::EraserToolOptionsBox(QWidget *parent, TTool *tool,
   }
 
   if (m_toolType && m_toolType->getProperty()->getValue() == L"Segment") {
-      if (m_colorMode) {
-          m_colorMode->setEnabled(false);
-          m_colorModeLabel->setEnabled(false);
-      }
-      m_invertMode->setEnabled(false);
+    if (m_colorMode) {
+      m_colorMode->setEnabled(false);
+      m_colorModeLabel->setEnabled(false);
+    }
+    m_invertMode->setEnabled(false);
   }
 
   if (m_eraseOnlySavebox) {
@@ -2111,8 +2187,8 @@ void EraserToolOptionsBox::onToolTypeChanged(int index) {
   m_multiFrameMode->setEnabled(value);
   bool isSegment = range[index] == L"Segment";
   if (m_colorMode) {
-      m_colorMode->setDisabled(isSegment);
-      m_colorModeLabel->setDisabled(isSegment);
+    m_colorMode->setDisabled(isSegment);
+    m_colorModeLabel->setDisabled(isSegment);
   }
   m_invertMode->setEnabled(!isSegment && value);
   if (m_eraseOnlySavebox) m_eraseOnlySavebox->setEnabled(isSegment);

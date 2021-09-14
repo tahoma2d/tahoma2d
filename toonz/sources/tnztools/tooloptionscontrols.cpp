@@ -1343,10 +1343,10 @@ SelectionRotationField::SelectionRotationField(SelectionTool *tool,
 
 //-----------------------------------------------------------------------------
 
-void SelectionRotationField::onChange(TMeasuredValue *fld, bool addToUndo) {
+bool SelectionRotationField::applyChange(bool addToUndo) {
   if (!m_tool || !m_tool->isEnabled() ||
       (m_tool->isSelectionEmpty() && !m_tool->isLevelType()))
-    return;
+    return false;
 
   DragSelectionTool::DragTool *rotationTool = createNewRotationTool(m_tool);
 
@@ -1362,6 +1362,15 @@ void SelectionRotationField::onChange(TMeasuredValue *fld, bool addToUndo) {
   if (!m_tool->isLevelType() && addToUndo) rotationTool->addTransformUndo();
 
   setCursorPosition(0);
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void SelectionRotationField::onChange(TMeasuredValue *fld, bool addToUndo) {
+  if (!m_tool->isEnabled()) return;
+  if (!applyChange(addToUndo)) return;
 }
 
 //-----------------------------------------------------------------------------

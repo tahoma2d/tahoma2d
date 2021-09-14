@@ -50,6 +50,9 @@
 		<file>icons/dark/actions/16/butt_cap.svg</file>
 		<file>icons/dark/actions/16/miter_join.svg</file>
 
+		<file>icons/dark/actions/16/rotateleft.svg</file>
+		<file>icons/dark/actions/16/rotateright.svg</file>
+
 		<!-- File / Common -->
 		<file>icons/dark/actions/16/menu.svg</file>
 		<file>icons/dark/actions/16/export.svg</file>
