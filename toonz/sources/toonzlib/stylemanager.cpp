@@ -10,6 +10,11 @@
 #include "tsystem.h"
 #include "tvectorgl.h"
 
+#include "toonzqt/gutil.h"
+
+#include "toonz/imagestyles.h"
+#include "toonz/mypaintbrushstyle.h"
+
 // Qt includes
 #include <QDir>
 #include <QImage>
@@ -203,12 +208,11 @@ void CustomStyleManager::StyleLoaderTask::run() {
 void CustomStyleManager::StyleLoaderTask::onFinished(
     TThread::RunnableP sender) {
   // On the main thread...
-  m_manager->loadItemFinished();
   if (m_data.m_image)  // Everything went ok
   {
     m_manager->m_patterns.push_back(m_data);
-    emit m_manager->patternAdded();
   }
+  m_manager->loadItemFinished();
 }
 
 //********************************************************************************
@@ -226,6 +230,14 @@ CustomStyleManager::CustomStyleManager(const TFilePath &stylesFolder,
 
 //-----------------------------------------------------------------------------
 
+void CustomStyleManager::loadItemFinished() {
+  m_activeLoads--;
+  if (m_activeLoads < 0) m_activeLoads = 0;
+  if (!m_activeLoads) emit itemsUpdated();
+};
+
+//-----------------------------------------------------------------------------
+
 int CustomStyleManager::getPatternCount() { return m_patterns.size(); }
 
 //-----------------------------------------------------------------------------
@@ -239,8 +251,7 @@ CustomStyleManager::PatternData CustomStyleManager::getPattern(int index) {
 
 void CustomStyleManager::loadItems() {
   // Build the folder to be read
-
-  if (m_stylesFolder == TFilePath()) return;
+  if (m_activeLoads || m_stylesFolder == TFilePath()) return;
 
   QDir patternDir(QString::fromStdWString(m_stylesFolder.getWideString()));
   patternDir.setNameFilters(m_filters.split(' '));
@@ -257,6 +268,7 @@ void CustomStyleManager::loadItems() {
   TFilePathSet newFps;
   TFilePathSet::iterator it;
   int i;
+  bool patternsUpdated = false;
   for (i = 0; i < m_patterns.size(); i++) {
     PatternData data = m_patterns.at(i);
     for (it = fps.begin(); it != fps.end(); ++it) {
@@ -268,15 +280,203 @@ void CustomStyleManager::loadItems() {
     if (it == fps.end()) {
       m_patterns.removeAt(i);
       i--;
+      patternsUpdated = true;
     } else
       fps.erase(it);  // The style is not new, so don't generate tasks for it
   }
 
   // For each (now new) file entry, generate a fetching task
+  // NOTE: after all adds have finished, a separate itemsUpdated() signal is
+  // emitted
   for (TFilePathSet::iterator it = fps.begin(); it != fps.end(); it++) {
     m_activeLoads++;
     m_executor.addTask(new StyleLoaderTask(this, *it));
   }
+
+  if (patternsUpdated && !fps.size()) emit itemsUpdated();
+}
+
+//********************************************************************************
+//    TextureStyleManager implementation
+//********************************************************************************
+
+TextureStyleManager::TextureStyleManager(const TFilePath &stylesFolder,
+                                         QString filters, QSize chipSize)
+    : m_stylesFolder(stylesFolder), m_filters(filters), m_chipSize(chipSize) {}
+
+//-----------------------------------------------------------------------------
+
+int TextureStyleManager::getTextureCount() { return m_textures.size(); }
+
+//-----------------------------------------------------------------------------
+
+TextureStyleManager::TextureData TextureStyleManager::getTexture(int index) {
+  return (index < 0 || index >= m_textures.size()) ? TextureData()
+                                                   : m_textures[index];
+}
+
+//-----------------------------------------------------------------------------
+
+void TextureStyleManager::loadItems() {
+  // Build the folder to be read
+
+  if (m_stylesFolder == TFilePath()) return;
+
+  QDir patternDir(QString::fromStdWString(m_stylesFolder.getWideString()));
+  patternDir.setNameFilters(m_filters.split(' '));
+
+  // Read the said folder
+  TFilePathSet fps;
+  try {
+    TSystem::readDirectory(fps, patternDir);
+  } catch (...) {
+    return;
+  }
+
+  // Delete textures no longer in the folder
+  TFilePathSet newFps;
+  TFilePathSet::iterator it;
+  int i;
+  bool texturesUpdated = false;
+  for (i = 0; i < m_textures.size(); i++) {
+    TextureData data = m_textures.at(i);
+    for (it = fps.begin(); it != fps.end(); ++it) {
+      if (data.m_textureName == it->getName()) break;
+    }
+
+    if (it == fps.end()) {
+      // Custom style is always removed and added back again later
+      // Don't treat it as a refresh
+      if (m_textures[i].m_path != TFilePath()) texturesUpdated = true;
+      m_textures.removeAt(i);
+      i--;
+    } else
+      fps.erase(it);  // The style is not new, so don't generate tasks for it
+  }
+
+  // For each (now new) file entry, load it
+  for (TFilePathSet::iterator it = fps.begin(); it != fps.end(); it++) {
+    loadTexture(*it);
+    texturesUpdated = true;
+  }
+
+  loadTexture(TFilePath());  // custom texture
+
+  if (texturesUpdated) emit itemsUpdated();
+}
+
+//-----------------------------------------------------------------------------
+
+void TextureStyleManager::loadTexture(TFilePath &fp) {
+  if (fp == TFilePath()) {
+    TRaster32P ras(25, 25);
+    TTextureStyle::fillCustomTextureIcon(ras);
+    TextureData customText;
+    customText.m_raster      = ras;
+    customText.m_textureName = std::string("");
+    customText.m_path        = fp;
+
+    m_textures.push_back(customText);
+    return;
+  }
+
+  TRasterP ras;
+  TImageReader::load(fp, ras);
+  if (!ras || ras->getLx() < 2 || ras->getLy() < 2) return;
+
+  TRaster32P ras32 = ras;
+  if (!ras32) return;
+
+  TDimension d(2, 2);
+  while (d.lx < 256 && d.lx * 2 <= ras32->getLx()) d.lx *= 2;
+  while (d.ly < 256 && d.ly * 2 <= ras32->getLy()) d.ly *= 2;
+
+  TRaster32P texture;
+  if (d == ras32->getSize())
+    texture = ras32;
+  else {
+    texture = TRaster32P(d);
+    TScale sc((double)texture->getLx() / ras32->getLx(),
+              (double)texture->getLy() / ras32->getLy());
+    TRop::resample(texture, ras32, sc);
+  }
+
+  TextureData text;
+  text.m_raster      = texture;
+  text.m_textureName = fp.getLevelName();
+  text.m_path        = fp;
+
+  m_textures.push_back(text);
+}
+
+//********************************************************************************
+//    BrushStyleManager implementation
+//********************************************************************************
+
+BrushStyleManager::BrushStyleManager(const TFilePath &stylesFolder,
+                                     QString filters, QSize chipSize)
+    : m_stylesFolder(stylesFolder), m_filters(filters), m_chipSize(chipSize) {}
+
+//-----------------------------------------------------------------------------
+
+int BrushStyleManager::getBrushCount() { return m_brushes.size(); }
+
+//-----------------------------------------------------------------------------
+
+BrushStyleManager::BrushData BrushStyleManager::getBrush(int index) {
+  return (index < 0 || index >= m_brushes.size()) ? BrushData()
+                                                  : m_brushes[index];
+}
+
+//-----------------------------------------------------------------------------
+
+void BrushStyleManager::loadItems() {
+  // Build the folder to be read
+
+  if (m_stylesFolder == TFilePath()) return;
+
+  QDir patternDir(QString::fromStdWString(m_stylesFolder.getWideString()));
+  patternDir.setNameFilters(m_filters.split(' '));
+
+  // Read the said folder
+  TFilePathSet fps;
+  try {
+    TSystem::readDirectory(fps, patternDir);
+  } catch (...) {
+    return;
+  }
+
+  // Delete brushes no longer in the folder
+  TFilePathSet newFps;
+  TFilePathSet::iterator it;
+  int i;
+  bool brushesUpdated = false;
+  for (i = 0; i < m_brushes.size(); i++) {
+    BrushData data = m_brushes.at(i);
+    for (it = fps.begin(); it != fps.end(); ++it) {
+      if (data.m_brushName == it->getName()) break;
+    }
+
+    if (it == fps.end()) {
+      m_brushes.removeAt(i);
+      i--;
+      brushesUpdated = true;
+    } else
+      fps.erase(it);  // The style is not new, so don't generate tasks for it
+  }
+
+  // For each (now new) file entry, load it now
+  for (TFilePathSet::iterator it = fps.begin(); it != fps.end(); it++) {
+    BrushData brush;
+    brush.m_brush     = TMyPaintBrushStyle(*it);
+    brush.m_brushName = it->getLevelName();
+    brush.m_path      = *it;
+
+    m_brushes.push_back(brush);
+    brushesUpdated = true;
+  }
+
+  if (brushesUpdated) emit itemsUpdated();
 }
 
 //********************************************************************************
@@ -292,15 +492,57 @@ CustomStyleManager *TStyleManager::getCustomStyleManager(TFilePath stylesFolder,
       std::pair<TFilePath, QString>(stylesFolder, filters);
 
   // Return the manager if it was previously created
-  for (int index = 0; index < m_styleFolders.size(); index++) {
-    if (m_styleFolders[index] == styleFolderKey) return m_styleManagers[index];
+  for (int index = 0; index < m_customStyleFolders.size(); index++) {
+    if (m_customStyleFolders[index] == styleFolderKey)
+      return m_customStyleManagers[index];
   }
 
   // Create the manager if one was not found
   CustomStyleManager *cm =
       new CustomStyleManager(stylesFolder, filters, chipSize);
-  m_styleManagers.push_back(cm);
-  m_styleFolders.push_back(styleFolderKey);
+  m_customStyleManagers.push_back(cm);
+  m_customStyleFolders.push_back(styleFolderKey);
 
   return cm;
+}
+
+TextureStyleManager *TStyleManager::getTextureStyleManager(
+    TFilePath stylesFolder, QString filters, QSize chipSize) {
+  std::pair<TFilePath, QString> styleFolderKey =
+      std::pair<TFilePath, QString>(stylesFolder, filters);
+
+  // Return the manager if it was previously created
+  for (int index = 0; index < m_textureStyleFolders.size(); index++) {
+    if (m_textureStyleFolders[index] == styleFolderKey)
+      return m_textureStyleManagers[index];
+  }
+
+  // Create the manager if one was not found
+  TextureStyleManager *tm =
+      new TextureStyleManager(stylesFolder, filters, chipSize);
+  m_textureStyleManagers.push_back(tm);
+  m_textureStyleFolders.push_back(styleFolderKey);
+
+  return tm;
+}
+
+BrushStyleManager *TStyleManager::getBrushStyleManager(TFilePath stylesFolder,
+                                                       QString filters,
+                                                       QSize chipSize) {
+  std::pair<TFilePath, QString> styleFolderKey =
+      std::pair<TFilePath, QString>(stylesFolder, filters);
+
+  // Return the manager if it was previously created
+  for (int index = 0; index < m_brushStyleFolders.size(); index++) {
+    if (m_brushStyleFolders[index] == styleFolderKey)
+      return m_brushStyleManagers[index];
+  }
+
+  // Create the manager if one was not found
+  BrushStyleManager *rm =
+      new BrushStyleManager(stylesFolder, filters, chipSize);
+  m_brushStyleManagers.push_back(rm);
+  m_brushStyleFolders.push_back(styleFolderKey);
+
+  return rm;
 }

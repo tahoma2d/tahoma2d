@@ -419,13 +419,13 @@ signals:
                 Inherited by \b PlainColorPage and \b StyleChooserPage.
 */
 class StyleEditorPage : public QFrame {
+public:
   bool m_favorite      = false;
   bool m_allowFavorite = false;
 
-public:
   StyleEditorPage(QWidget *parent);
 
-  void setFavorite(bool favorite) { m_favorite = favorite; }
+  virtual void setFavorite(bool favorite) { m_favorite = favorite; }
   bool isFavorite() { return m_favorite; }
 
   void setAllowFavorite(bool allow) { m_allowFavorite = allow; }
@@ -555,6 +555,7 @@ public:
 
   virtual void removeFavorite(){};
   virtual void addFavorite() {}
+  virtual void updateFavorite(){};
 
   bool copyToFavorites(TFilePathSet srcFiles, TFilePath destDir);
   bool deleteFromFavorites(TFilePathSet targetFiles);
@@ -576,9 +577,11 @@ protected slots:
   void computeSize();
   void onRemoveFavorite();
   void onAddFavorite();
+  void onUpdateFavorite();
 signals:
   void styleSelected(const TColorStyle &style);
   void favoritesUpdated(QString pageType);
+  void refreshFavorites(QString pageType);
 };
 
 //=============================================================================
@@ -830,7 +833,8 @@ protected slots:
   void onExpandAllVectorSet();
   void onExpandAllRasterSet();
 
-  void updateFavorites(QString pageType);
+  void onReloadFavorites(QString pageType);
+  void onUpdateFavorites(QString pageType);
 
 private:
   QFrame *createBottomWidget();
