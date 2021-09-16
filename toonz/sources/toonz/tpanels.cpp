@@ -500,6 +500,7 @@ PaletteViewerPanel::PaletteViewerPanel(QWidget *parent)
   m_paletteViewer->setXsheetHandle(app->getCurrentXsheet());
   // for clearing cache when paste style command called from the StyleSelection
   m_paletteViewer->setLevelHandle(app->getCurrentLevel());
+  m_paletteViewer->setApplication(app);
 
   TSceneHandle *sceneHandle = app->getCurrentScene();
   bool ret = connect(sceneHandle, SIGNAL(sceneSwitched()), this,

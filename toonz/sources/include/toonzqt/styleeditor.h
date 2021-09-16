@@ -422,6 +422,7 @@ class StyleEditorPage : public QFrame {
 public:
   bool m_favorite      = false;
   bool m_allowFavorite = false;
+  StyleEditor *m_editor;
 
   StyleEditorPage(QWidget *parent);
 
@@ -552,6 +553,7 @@ public:
 
   virtual void drawChip(QPainter &p, QRect rect, int index) = 0;
   virtual void onSelect(int index) {}
+  virtual void onAddNewStyle(int index) {}
 
   virtual void removeFavorite(){};
   virtual void addFavorite() {}
@@ -580,8 +582,9 @@ protected slots:
   void onUpdateFavorite();
 signals:
   void styleSelected(const TColorStyle &style);
-  void favoritesUpdated(QString pageType);
-  void refreshFavorites(QString pageType);
+  void addStyleToPalette(const TColorStyle &style);
+  void favoritesUpdated();
+  void refreshFavorites();
 };
 
 //=============================================================================
@@ -721,6 +724,9 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   QMenu *m_vectorMenu;
   QMenu *m_rasterMenu;
 
+  bool m_isAltPressed  = false;
+  bool m_isCtrlPressed = false;
+
 public:
   StyleEditor(PaletteController *, QWidget *parent = 0);
   ~StyleEditor();
@@ -750,6 +756,11 @@ public:
 
   void createStyleMenus();
 
+  bool isAltPressed() { return m_isAltPressed; }
+  bool isCtrlPressed() { return m_isCtrlPressed; }
+
+  void clearSelection();
+
 protected:
   /*! Return false if style is linked and style must be set to null.*/
   bool setStyle(TColorStyle *currentStyle);
@@ -777,6 +788,9 @@ protected:
 protected:
   void showEvent(QShowEvent *) override;
   void hideEvent(QHideEvent *) override;
+  void keyPressEvent(QKeyEvent *event) override;
+  void keyReleaseEvent(QKeyEvent *event) override;
+  void enterEvent(QEvent *event) override;
 
 protected slots:
 
@@ -798,6 +812,7 @@ protected slots:
   void onColorChanged(const ColorModel &, bool isDragging);
 
   void selectStyle(const TColorStyle &style);
+  void addToPalette(const TColorStyle &style);
 
   void applyButtonClicked();
   void autoCheckChanged(bool value);
@@ -833,8 +848,8 @@ protected slots:
   void onExpandAllVectorSet();
   void onExpandAllRasterSet();
 
-  void onReloadFavorites(QString pageType);
-  void onUpdateFavorites(QString pageType);
+  void onReloadFavorites();
+  void onUpdateFavorites();
 
 private:
   QFrame *createBottomWidget();

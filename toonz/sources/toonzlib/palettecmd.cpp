@@ -330,8 +330,8 @@ public:
 
 //-----------------------------------------------------------------------------
 
-void PaletteCmd::createStyle(TPaletteHandle *paletteHandle,
-                             TPalette::Page *page) {
+int PaletteCmd::createStyle(TPaletteHandle *paletteHandle,
+                            TPalette::Page *page) {
   int index         = paletteHandle->getStyleIndex();
   TPalette *palette = paletteHandle->getPalette();
   int newIndex;
@@ -383,6 +383,8 @@ void PaletteCmd::createStyle(TPaletteHandle *paletteHandle,
   paletteHandle->notifyPaletteChanged();
   TUndoManager::manager()->add(new CreateStyleUndo(
       paletteHandle, page->getIndex(), page->getStyleId(newIndex)));
+
+  return newStyleId;
 }
 
 //=============================================================================

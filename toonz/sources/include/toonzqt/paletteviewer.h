@@ -5,6 +5,7 @@
 
 #include "paletteviewergui.h"
 #include "toonz/tpalettehandle.h"
+#include "toonz/tapplication.h"
 
 #undef DVAPI
 #undef DVVAR
@@ -80,6 +81,11 @@ public:
   bool getIsFrozen() { return m_frozen; }
   void setIsFrozen(bool frozen);
 
+  void setApplication(TApplication *app) { m_app = app; }
+  TApplication *getApplication() { return m_app; }
+
+  int geCurrentPageIndex() { return m_currentIndexPage; }
+
 protected:
   TPaletteHandle *m_paletteHandle;
   TFrameHandle *m_frameHandle;
@@ -88,6 +94,7 @@ protected:
 
   QScrollArea *m_pageViewerScrollArea;
   PaletteViewerGUI::PageViewer *m_pageViewer;
+  int m_currentIndexPage;
   TabBarContainter *m_tabBarContainer;
   PaletteTabBar *m_pagesBar;
 
@@ -113,6 +120,8 @@ protected:
   QToolButton *m_lockPaletteToolButton;
   QToolButton *m_freezePaletteToolButton;
   bool m_frozen = false;
+
+  TApplication *m_app;
 
 protected:
   void createTabBar();
@@ -140,6 +149,8 @@ protected:
 
   void showEvent(QShowEvent *) override;
   void hideEvent(QHideEvent *) override;
+
+  void enterEvent(QEvent *) override;
 
   void dragEnterEvent(QDragEnterEvent *event) override;
   void dropEvent(QDropEvent *event) override;

@@ -38,7 +38,7 @@ DVAPI void arrangeStyles(TPaletteHandle *paletteHandle, int dstPageIndex,
                          int dstIndexInPage, int srcPageIndex,
                          const std::set<int> &srcIndicesInPage);
 
-DVAPI void createStyle(TPaletteHandle *paletteHandle, TPalette::Page *page);
+DVAPI int createStyle(TPaletteHandle *paletteHandle, TPalette::Page *page);
 
 DVAPI void addStyles(TPaletteHandle *paletteHandle, int pageIndex,
                      int indexInPage, const std::vector<TColorStyle *> &styles);

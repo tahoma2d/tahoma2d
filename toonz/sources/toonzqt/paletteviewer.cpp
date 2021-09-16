@@ -24,6 +24,8 @@
 #include "toonz/txshlevelhandle.h"
 #include "toonz/txshleveltypes.h"
 
+#include "../include/toonz/palettecontroller.h"
+
 // TnzCore includes
 #include "tconvert.h"
 #include "tsystem.h"
@@ -867,6 +869,12 @@ void PaletteViewer::hideEvent(QHideEvent *) {
 }
 
 //-----------------------------------------------------------------------------
+
+void PaletteViewer::enterEvent(QEvent *) {
+  getApplication()->getPaletteController()->setCurrentPaletteViewer(this);
+}
+
+//-----------------------------------------------------------------------------
 /*! If currente palette viewer exist verify event data, if is a PaletteData or
 has urls accept event.
 */
@@ -1018,6 +1026,7 @@ void PaletteViewer::clearStyleSelection() { m_pageViewer->clearSelection(); }
 void PaletteViewer::setPageView(int currentIndexPage) {
   TPalette *palette    = getPalette();
   TPalette::Page *page = palette ? palette->getPage(currentIndexPage) : 0;
+  m_currentIndexPage   = palette ? currentIndexPage : 0;
   m_pageViewer->setPage(page);
 }
 

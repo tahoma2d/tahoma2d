@@ -7,6 +7,8 @@
 #include "tcommon.h"
 #include "tpixel.h"
 
+#include "toonzqt/paletteviewer.h"
+
 // Qt includes
 #include <QObject>
 
@@ -55,6 +57,8 @@ class DVAPI PaletteController final : public QObject {
   TPalette *m_defaultToonzRaster;
   TPalette *m_defaultRaster;
 
+  PaletteViewer *m_currentPaletteViewer;
+
 public:
   PaletteController();
   ~PaletteController();
@@ -91,6 +95,11 @@ public:
   void notifyStylePassivePicked(const int ink, const int paint,
                                 const int tone) {
     emit stylePassivePicked(ink, paint, tone);
+  }
+
+  PaletteViewer *getCurrentPaletteViewer() { return m_currentPaletteViewer; }
+  void setCurrentPaletteViewer(PaletteViewer *viewer) {
+    m_currentPaletteViewer = viewer;
   }
 
 public slots:
