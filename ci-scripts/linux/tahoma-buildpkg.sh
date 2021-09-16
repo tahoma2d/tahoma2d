@@ -44,6 +44,7 @@ then
    fi
    mkdir -p Tahoma2D/ffmpeg
    cp -R ../../thirdparty/apps/ffmpeg/bin/ffmpeg ../../thirdparty/apps/ffmpeg/bin/ffprobe Tahoma2D/ffmpeg
+   chmod -R 755 Tahoma2D/ffmpeg
 fi
 
 if [ -d ../../thirdparty/apps/rhubarb ]
@@ -55,6 +56,7 @@ then
    fi
    mkdir -p Tahoma2D/rhubarb
    cp -R ../../thirdparty/apps/rhubarb/rhubarb ../../thirdparty/apps/rhubarb/res Tahoma2D/rhubarb
+   chmod 755 -R Tahoma2D/rhubarb
 fi
 
 echo ">>> Creating Tahoma2D/Tahoma2D.AppImage"
