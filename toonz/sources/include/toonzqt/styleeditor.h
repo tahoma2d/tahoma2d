@@ -582,6 +582,10 @@ public:
   bool copyToFavorites(TFilePathSet srcFiles, TFilePath destDir);
   bool deleteFromFavorites(TFilePathSet targetFiles);
 
+  void processContextMenuEvent(QContextMenuEvent *event) {
+    contextMenuEvent(event);
+  }
+
 protected:
   int m_currentIndex;
 
@@ -601,6 +605,7 @@ protected slots:
   void onRemoveAllFavorites();
   void onAddFavorite();
   void onAddStyle();
+  void onAddAllStyles();
   void onUpdateFavorite();
 signals:
   void styleSelected(const TColorStyle &style);
@@ -775,8 +780,10 @@ public:
 
   void clearSelection();
 
-  bool isSelectingExcluding(StyleEditorPage *excludePage);
-  bool isSelecting() { return isSelectingExcluding(0); }
+  bool isSelecting();
+  bool isSelectingFavorites();
+  bool isSelectingFavoritesOnly();
+  bool isSelectingNonFavoritesOnly();
 
   void addToPalette(const TColorStyle &style);
 
@@ -811,6 +818,8 @@ protected:
   void keyReleaseEvent(QKeyEvent *event) override;
   void enterEvent(QEvent *event) override;
   void mousePressEvent(QMouseEvent *event) override;
+  void contextMenuEvent(QContextMenuEvent *event) override;
+  void focusInEvent(QFocusEvent *event) override;
 
 protected slots:
 

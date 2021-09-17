@@ -2049,6 +2049,16 @@ void StyleChooserPage::onAddStyle() {
 
 //-----------------------------------------------------------------------------
 
+void StyleChooserPage::onAddAllStyles() {
+  m_selection.clear();
+  for (int index = 1; index < getChipCount(); index++)
+    m_selection.push_back(index);
+  addSelectedStyles(m_selection);
+  m_selection.clear();
+}
+
+//-----------------------------------------------------------------------------
+
 void StyleChooserPage::onUpdateFavorite() { updateFavorite(); };
 
 //-----------------------------------------------------------------------------
@@ -2117,55 +2127,64 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
   QPoint pos       = event->pos();
   int currentIndex = posToIndex(pos);
 
-  bool isSelecting = m_editor->isSelecting();
-
-  if (currentIndex < 0 && !isSelecting) return;
-
   QMenu *menu = new QMenu(this);
   QAction *action;
 
-  action = new QAction(this);
-  if (isSelecting) {
+  if (m_editor->isSelecting()) {
+    action = new QAction(this);
     action->setText(tr("Add Selected to Palette"));
     connect(action, SIGNAL(triggered()), m_editor, SLOT(onAddSelectedStyles()));
-  } else {
-    m_currentIndex = currentIndex;
-    action->setText(tr("Add to Palette"));
-    connect(action, SIGNAL(triggered()), this, SLOT(onAddStyle()));
-  }
-  menu->addAction(action);
+    menu->addAction(action);
 
-  action = new QAction(this);
-  if (isFavorite()) {
-    if (isSelecting) {
+    action = new QAction(this);
+    if (m_editor->isSelectingFavoritesOnly()) {
       action->setText(tr("Remove Selected from Favorites"));
       connect(action, SIGNAL(triggered()), m_editor,
               SLOT(onRemoveSelectedFavorites()));
-      // If there are any selections in other pages, disable this option
-      if (m_editor->isSelectingExcluding(this)) action->setDisabled(true);
     } else {
-      m_currentIndex = currentIndex;
-      action->setText(tr("Remove from Favorites"));
-      connect(action, SIGNAL(triggered()), this, SLOT(onRemoveFavorite()));
-    }
-  } else {
-    if (isSelecting) {
       action->setText(tr("Add Selected to Favorites"));
       connect(action, SIGNAL(triggered()), m_editor,
               SLOT(onAddSelectedFavorites()));
-    } else {
-      m_currentIndex = currentIndex;
-      action->setText(tr("Add to Favorites"));
-      connect(action, SIGNAL(triggered()), this, SLOT(onAddFavorite()));
+      // Disable if selecting favorites also
+      if (m_editor->isSelectingFavorites()) action->setDisabled(true);
     }
+    menu->addAction(action);
+
+    if (!menu->isEmpty()) menu->exec(event->globalPos());
+    return;
+  }
+
+  if (currentIndex < 0) return;
+
+  m_currentIndex = currentIndex;
+
+  action = new QAction(this);
+  action->setText(tr("Add to Palette"));
+  connect(action, SIGNAL(triggered()), this, SLOT(onAddStyle()));
+  menu->addAction(action);
+
+  action = new QAction(this);
+  if (isFavorite()) {
+    m_currentIndex = currentIndex;
+    action->setText(tr("Remove from Favorites"));
+    connect(action, SIGNAL(triggered()), this, SLOT(onRemoveFavorite()));
+  } else {
+    m_currentIndex = currentIndex;
+    action->setText(tr("Add to Favorites"));
+    connect(action, SIGNAL(triggered()), this, SLOT(onAddFavorite()));
   }
   menu->addAction(action);
 
-  if (isFavorite()) {
-    menu->addSeparator();
+  menu->addSeparator();
 
+  action = new QAction(this);
+  action->setText(tr("Add Set to Palette"));
+  connect(action, SIGNAL(triggered()), this, SLOT(onAddAllStyles()));
+  menu->addAction(action);
+
+  if (isFavorite()) {
     action = new QAction(this);
-    action->setText(tr("Remove All from Favorites"));
+    action->setText(tr("Remove Set from Favorites"));
     connect(action, SIGNAL(triggered()), this, SLOT(onRemoveAllFavorites()));
     menu->addAction(action);
   }
@@ -2418,7 +2437,7 @@ void CustomStyleChooserPage::addSelectedFavorites(std::vector<int> selection) {
     TSystem::readDirectory(fileList, patternDir, false);
 
     TFilePath myFavoritesPath = ToonzFolder::getMyFavoritesFolder() +
-                                TFilePath("library/vector brushes");
+                                TFilePath("library/vector styles");
 
     added |= copyToFavorites(fileList, myFavoritesPath);
   }
@@ -2610,7 +2629,7 @@ void VectorBrushStyleChooserPage::addSelectedFavorites(
     TSystem::readDirectory(fileList, patternDir, false);
 
     TFilePath myFavoritesPath = ToonzFolder::getMyFavoritesFolder() +
-                                TFilePath("library/vector brushes");
+                                TFilePath("library/vector styles");
 
     added |= copyToFavorites(fileList, myFavoritesPath);
   }
@@ -2958,7 +2977,7 @@ void MyPaintBrushStyleChooserPage::addSelectedFavorites(
     fileList.push_back(brush.m_path.withName(name + "_prev").withType("png"));
 
     TFilePath myFavoritesPath = ToonzFolder::getMyFavoritesFolder() +
-                                TFilePath("library/raster brushes");
+                                TFilePath("library/raster styles");
 
     added |= copyToFavorites(fileList, myFavoritesPath);
   }
@@ -3138,7 +3157,7 @@ void SpecialStyleChooserPage::addSelectedFavorites(std::vector<int> selection) {
     std::string name = std::to_string(tagId);
 
     TFilePath myFavoritesPath = ToonzFolder::getMyFavoritesFolder() +
-                                TFilePath("library/vector brushes");
+                                TFilePath("library/vector styles");
 
     TFilePath genFile =
         myFavoritesPath +
@@ -3664,12 +3683,11 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   // Load Favorites first so they appear first in all lists
   createStylePage(StylePageType::Texture,
                   myFavoritesPath + TFilePath("textures"), QString("*"), true);
-  createStylePage(StylePageType::VectorCustom,
-                  myFavoritesPath + TFilePath("vector brushes"),
-                  QString("*.pli *.tif *.png *.tga *.tiff *.sgi *.rgb *.gen"),
-                  true);
+  createStylePage(
+      StylePageType::VectorCustom, myFavoritesPath + TFilePath("vector styles"),
+      QString("*.pli *.tif *.png *.tga *.tiff *.sgi *.rgb *.gen"), true);
   createStylePage(StylePageType::Raster,
-                  myFavoritesPath + TFilePath("raster brushes"),
+                  myFavoritesPath + TFilePath("raster styles"),
                   QString("*.myb"), true);
   // Load library pages
   createStylePage(StylePageType::Texture, libraryPath + TFilePath("textures"));
@@ -4194,21 +4212,58 @@ void StyleEditor::keyPressEvent(QKeyEvent *event) {
 //-----------------------------------------------------------------------------
 
 void StyleEditor::keyReleaseEvent(QKeyEvent *event) {
-  m_isAltPressed  = false;
-  m_isCtrlPressed = false;
+  switch (event->key()) {
+  case Qt::Key_Alt:
+    m_isAltPressed = false;
+    break;
+  case Qt::Key_Control:
+    m_isCtrlPressed = false;
+    break;
+  }
 }
 
 //-----------------------------------------------------------------------------
 
-void StyleEditor::enterEvent(QEvent *event) { setFocus(Qt::MouseFocusReason); };
+void StyleEditor::enterEvent(QEvent *event) {
+  Qt::KeyboardModifiers modkeys = QGuiApplication::queryKeyboardModifiers();
+
+  setFocus(Qt::MouseFocusReason);
+  m_isAltPressed  = modkeys.testFlag(Qt::AltModifier);
+  m_isCtrlPressed = modkeys.testFlag(Qt::ControlModifier);
+};
+
+//-----------------------------------------------------------------------------
+
+void StyleEditor::focusInEvent(QFocusEvent *event) {
+  Qt::KeyboardModifiers modkeys = QGuiApplication::queryKeyboardModifiers();
+  m_isAltPressed                = modkeys.testFlag(Qt::AltModifier);
+  m_isCtrlPressed               = modkeys.testFlag(Qt::ControlModifier);
+}
 
 //-----------------------------------------------------------------------------
 
 void StyleEditor::mousePressEvent(QMouseEvent *event) {
+  if (event->button() == Qt::RightButton) return;
+
   if (!m_isCtrlPressed) {
     clearSelection();
     update();
   }
+}
+//-----------------------------------------------------------------------------
+
+void StyleEditor::contextMenuEvent(QContextMenuEvent *event) {
+  int tab = m_styleBar->currentIndex();
+
+  StyleChooserPage *page;
+  if (tab == 1)  // Textures tab
+    page = new TextureStyleChooserPage(TFilePath(), QString(), this);
+  else if (tab == 2)  // Vector tab
+    page = new CustomStyleChooserPage(TFilePath(), QString(), this);
+  else if (tab == 3)  // Raster tab
+    page = new MyPaintBrushStyleChooserPage(TFilePath(), QString(), this);
+
+  page->processContextMenuEvent(event);
 }
 
 //-----------------------------------------------------------------------------
@@ -4234,20 +4289,91 @@ void StyleEditor::clearSelection() {
 
 //-----------------------------------------------------------------------------
 
-bool StyleEditor::isSelectingExcluding(StyleEditorPage *excludePage) {
-  for (int i = 0; i < m_texturePages.size(); i++) {
-    if (excludePage && m_texturePages[i] == excludePage) continue;
-    if (m_texturePages[i]->getSelection().size() > 0) return true;
+bool StyleEditor::isSelecting() {
+  int tab = m_styleBar->currentIndex();
+
+  if (tab == 1) {
+    for (int i = 0; i < m_texturePages.size(); i++) {
+      if (m_texturePages[i]->getSelection().size() > 0) return true;
+    }
+  } else if (tab == 2) {
+    for (int i = 0; i < m_vectorPages.size(); i++) {
+      if (m_vectorPages[i]->getSelection().size() > 0) return true;
+    }
+  } else if (tab == 3) {
+    for (int i = 0; i < m_rasterPages.size(); i++) {
+      if (m_rasterPages[i]->getSelection().size() > 0) return true;
+    }
+  }
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
+bool StyleEditor::isSelectingFavorites() {
+  int tab = m_styleBar->currentIndex();
+
+  bool ret = false;
+
+  if (tab == 1)
+    return (m_texturePages[0]->getSelection().size() > 0);
+  else if (tab == 2)
+    return (m_vectorPages[0]->getSelection().size() > 0);
+  else if (tab == 3)
+    return (m_rasterPages[0]->getSelection().size() > 0);
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool StyleEditor::isSelectingFavoritesOnly() {
+  int tab = m_styleBar->currentIndex();
+
+  bool ret = false;
+
+  if (tab == 1) {
+    if (m_texturePages[0]->getSelection().size() == 0) return false;
+    for (int i = 1; i < m_texturePages.size(); i++) {
+      if (m_texturePages[i]->getSelection().size() > 0) return false;
+    }
+  } else if (tab == 2) {
+    if (m_vectorPages[0]->getSelection().size() == 0) return false;
+    for (int i = 1; i < m_vectorPages.size(); i++) {
+      if (m_vectorPages[i]->getSelection().size() > 0) return false;
+    }
+  } else if (tab == 3) {
+    if (m_rasterPages[0]->getSelection().size() == 0) return false;
+    for (int i = 1; i < m_rasterPages.size(); i++) {
+      if (m_rasterPages[i]->getSelection().size() > 0) return false;
+    }
   }
 
-  for (int i = 0; i < m_vectorPages.size(); i++) {
-    if (excludePage && m_vectorPages[i] == excludePage) continue;
-    if (m_vectorPages[i]->getSelection().size() > 0) return true;
-  }
+  return true;
+}
 
-  for (int i = 0; i < m_rasterPages.size(); i++) {
-    if (excludePage && m_rasterPages[i] == excludePage) continue;
-    if (m_rasterPages[i]->getSelection().size() > 0) return true;
+//-----------------------------------------------------------------------------
+
+bool StyleEditor::isSelectingNonFavoritesOnly() {
+  int tab = m_styleBar->currentIndex();
+
+  bool ret = false;
+
+  if (tab == 1) {
+    if (m_texturePages[0]->getSelection().size() >= 0) return false;
+    for (int i = 1; i < m_texturePages.size(); i++) {
+      if (m_texturePages[i]->getSelection().size() > 0) return true;
+    }
+  } else if (tab == 2) {
+    if (m_vectorPages[0]->getSelection().size() >= 0) return false;
+    for (int i = 1; i < m_vectorPages.size(); i++) {
+      if (m_vectorPages[i]->getSelection().size() > 0) return true;
+    }
+  } else if (tab == 3) {
+    if (m_rasterPages[0]->getSelection().size() >= 0) return false;
+    for (int i = 1; i < m_rasterPages.size(); i++) {
+      if (m_rasterPages[i]->getSelection().size() > 0) return true;
+    }
   }
 
   return false;
