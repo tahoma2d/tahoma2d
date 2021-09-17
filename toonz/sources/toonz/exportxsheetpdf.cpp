@@ -86,6 +86,11 @@ TEnv::IntVar XShPdfExportLogoPreference("XShPdfExportLogoPreference", 0);
 TEnv::StringVar XShPdfExportLogoText("XShPdfExportLogoText", "");
 // logo image path
 TEnv::StringVar XShPdfExportImgPath("XShPdfExportImgPath", "");
+// continuous line threshold
+TEnv::IntVar XShPdfExportContinuousLineThres("XShPdfExportContinuousLineThres",
+                                             0);
+
+using namespace XSheetPDFTemplateParamIDs;
 
 namespace {
 const int PDF_Resolution = 400;
@@ -148,31 +153,45 @@ QString getFrameNumberWithLetters(int frame) {
 }
 
 void decoSceneInfo(QPainter& painter, QRect rect,
-                   QMap<XSheetPDFDataType, QRect>& dataRects) {
+                   QMap<XSheetPDFDataType, QRect>& dataRects, bool) {
   dataRects[Data_SceneName] = painter.transform().mapRect(rect);
 }
 
 void decoTimeInfo(QPainter& painter, QRect rect,
-                  QMap<XSheetPDFDataType, QRect>& dataRects) {
+                  QMap<XSheetPDFDataType, QRect>& dataRects, bool doTranslate) {
+  QString plusStr, secStr, frmStr;
+  if (doTranslate) {
+    plusStr = QObject::tr("+", "XSheetPDF");
+    secStr  = QObject::tr("'", "XSheetPDF:second");
+    frmStr  = QObject::tr("\"", "XSheetPDF:frame");
+  } else {
+    plusStr = "+";
+    secStr  = "'";
+    frmStr  = "\"";
+  }
+
   painter.save();
   {
     QFont font = painter.font();
     font.setPixelSize(rect.height() / 2 - mm2px(1));
     font.setLetterSpacing(QFont::PercentageSpacing, 100);
+    while (font.pixelSize() > mm2px(2)) {
+      if (QFontMetrics(font).boundingRect(plusStr).width() < rect.width() / 12)
+        break;
+      font.setPixelSize(font.pixelSize() - mm2px(0.2));
+    }
     painter.setFont(font);
 
     QRect labelRect(0, 0, rect.width() / 2, rect.height() / 2);
     QRect dataRect(0, 0, rect.width() / 2, rect.height());
-    painter.drawText(labelRect, Qt::AlignRight | Qt::AlignVCenter,
-                     QObject::tr("'", "XSheetPDF:second"));
+    painter.drawText(labelRect, Qt::AlignRight | Qt::AlignVCenter, secStr);
     dataRects[Data_Second] = painter.transform().mapRect(dataRect);
     painter.translate(labelRect.width(), 0);
-    painter.drawText(labelRect, Qt::AlignRight | Qt::AlignVCenter,
-                     QObject::tr("\"", "XSheetPDF:frame"));
+    painter.drawText(labelRect.adjusted(0, 0, 0, -mm2px(0.5)),
+                     Qt::AlignRight | Qt::AlignVCenter, frmStr);
     dataRects[Data_Frame] = painter.transform().mapRect(dataRect);
     painter.translate(0, labelRect.height());
-    painter.drawText(labelRect, Qt::AlignLeft | Qt::AlignVCenter,
-                     QObject::tr("+", "XSheetPDF"));
+    painter.drawText(labelRect, Qt::AlignLeft | Qt::AlignVCenter, plusStr);
   }
   painter.restore();
 }
@@ -180,52 +199,58 @@ void decoTimeInfo(QPainter& painter, QRect rect,
 // Display the total pages over the current page.
 // This format is odd in terms of fraction, but can be seen in many Japanese
 // studios.
-void decoSheetInfoInv(QPainter& painter, QRect rect,
-                      QMap<XSheetPDFDataType, QRect>& dataRects) {
+void doDecoSheetInfo(QPainter& painter, QRect rect,
+                     QMap<XSheetPDFDataType, QRect>& dataRects,
+                     bool doTranslate, bool inv) {
+  QString totStr, thStr;
+  if (doTranslate) {
+    totStr = QObject::tr("TOT", "XSheetPDF");
+    thStr  = QObject::tr("th", "XSheetPDF");
+  } else {
+    totStr = "TOT";
+    thStr  = "th";
+  }
+  QString upperStr             = (inv) ? totStr : thStr;
+  QString bottomStr            = (inv) ? thStr : totStr;
+  XSheetPDFDataType upperType  = (inv) ? Data_TotalPages : Data_CurrentPage;
+  XSheetPDFDataType bottomType = (inv) ? Data_CurrentPage : Data_TotalPages;
+
   painter.save();
   {
     QFont font = painter.font();
     font.setPixelSize(rect.height() / 2 - mm2px(1));
     font.setLetterSpacing(QFont::PercentageSpacing, 100);
+    while (font.pixelSize() > mm2px(2)) {
+      if (QFontMetrics(font).boundingRect(totStr).width() < rect.width() / 6)
+        break;
+      font.setPixelSize(font.pixelSize() - mm2px(0.2));
+    }
     painter.setFont(font);
 
     painter.drawLine(rect.topRight(), rect.bottomLeft());
     QRect labelRect(0, 0, rect.width() / 2, rect.height() / 2);
-    painter.drawText(labelRect, Qt::AlignRight | Qt::AlignVCenter,
-                     QObject::tr("TOT", "XSheetPDF"));
-    dataRects[Data_TotalPages] = painter.transform().mapRect(
+    painter.drawText(labelRect, Qt::AlignRight | Qt::AlignVCenter, upperStr);
+    dataRects[upperType] = painter.transform().mapRect(
         labelRect.adjusted(0, 0, -labelRect.width() / 4, mm2px(1)));
     painter.translate(labelRect.width(), labelRect.height());
-    painter.drawText(labelRect, Qt::AlignRight | Qt::AlignVCenter,
-                     QObject::tr("th", "XSheetPDF"));
-    dataRects[Data_CurrentPage] = painter.transform().mapRect(
+    painter.drawText(labelRect.adjusted(0, 0, -mm2px(0.5), 0),
+                     Qt::AlignRight | Qt::AlignVCenter, bottomStr);
+    dataRects[bottomType] = painter.transform().mapRect(
         labelRect.adjusted(0, -mm2px(1), -labelRect.width() / 4, 0));
   }
   painter.restore();
 }
 
-void decoSheetInfo(QPainter& painter, QRect rect,
-                   QMap<XSheetPDFDataType, QRect>& dataRects) {
-  painter.save();
-  {
-    QFont font = painter.font();
-    font.setPixelSize(rect.height() / 2 - mm2px(1));
-    font.setLetterSpacing(QFont::PercentageSpacing, 100);
-    painter.setFont(font);
+void decoSheetInfoInv(QPainter& painter, QRect rect,
+                      QMap<XSheetPDFDataType, QRect>& dataRects,
+                      bool doTranslate) {
+  doDecoSheetInfo(painter, rect, dataRects, doTranslate, true);
+}
 
-    painter.drawLine(rect.topRight(), rect.bottomLeft());
-    QRect labelRect(0, 0, rect.width() / 2, rect.height() / 2);
-    painter.drawText(labelRect, Qt::AlignRight | Qt::AlignVCenter,
-                     QObject::tr("th", "XSheetPDF"));
-    dataRects[Data_CurrentPage] = painter.transform().mapRect(
-        labelRect.adjusted(0, 0, -labelRect.width() / 4, mm2px(1)));
-    painter.translate(labelRect.width(), labelRect.height());
-    painter.drawText(labelRect, Qt::AlignRight | Qt::AlignVCenter,
-                     QObject::tr("TOT", "XSheetPDF"));
-    dataRects[Data_TotalPages] = painter.transform().mapRect(
-        labelRect.adjusted(0, -mm2px(1), -labelRect.width() / 4, 0));
-  }
-  painter.restore();
+void decoSheetInfo(QPainter& painter, QRect rect,
+                   QMap<XSheetPDFDataType, QRect>& dataRects,
+                   bool doTranslate) {
+  doDecoSheetInfo(painter, rect, dataRects, doTranslate, false);
 }
 
 QPageSize::PageSizeId str2PageSizeId(const QString& str) {
@@ -260,6 +285,7 @@ XSheetPDFDataType dataStr2Type(const QString& str) {
 
   return map.value(str, Data_Invalid);
 }
+
 }  // namespace
 //---------------------------------------------------------
 
@@ -291,13 +317,13 @@ void XSheetPDFTemplate::drawGrid(QPainter& painter, int colAmount, int colWidth,
             painter.setPen(thickPen);
           else
             painter.setPen(thinPen);
-          painter.translate(0, param("RowHeight"));
+          painter.translate(0, param(RowHeight));
           painter.drawLine(0, 0, blockWidth, 0);
         }
       }
       painter.restore();
 
-      painter.translate(0, param("1SecHeight"));
+      painter.translate(0, param(OneSecHeight));
       painter.setPen(thickPen);
       painter.drawLine(0, 0, blockWidth, 0);
     }
@@ -309,7 +335,32 @@ void XSheetPDFTemplate::drawGrid(QPainter& painter, int colAmount, int colWidth,
     painter.setPen(thinPen);
     for (int kc = 0; kc < colAmount; kc++) {
       painter.translate(colWidth, 0);
-      painter.drawLine(0, 0, 0, param("1SecHeight") * 3);
+      painter.drawLine(0, 0, 0, param(OneSecHeight) * 3);
+    }
+    painter.restore();
+  }
+  painter.restore();
+}
+
+void XSheetPDFTemplate::drawHeaderGrid(QPainter& painter, int colAmount,
+                                       int colWidth, int blockWidth) {
+  // Cells Block header
+  painter.save();
+  {
+    // horizontal lines
+    painter.setPen(thinPen);
+    painter.drawLine(0, param(HeaderHeight) / 2, blockWidth,
+                     param(HeaderHeight) / 2);
+    painter.setPen(thickPen);
+    painter.drawLine(0, param(HeaderHeight), blockWidth, param(HeaderHeight));
+    // vertical lines
+    painter.setPen(thinPen);
+    painter.save();
+    {
+      for (int col = 1; col < colAmount; col++) {
+        painter.translate(colWidth, 0);
+        painter.drawLine(0, param(HeaderHeight) / 2, 0, param(HeaderHeight));
+      }
     }
   }
   painter.restore();
@@ -320,7 +371,7 @@ void XSheetPDFTemplate::registerColLabelRects(QPainter& painter, int colAmount,
   painter.save();
   {
     for (int kc = 0; kc < colAmount; kc++) {
-      QRect labelRect(0, 0, colWidth, param("HeaderHeight") / 2);
+      QRect labelRect(0, 0, colWidth, param(HeaderHeight) / 2);
       labelRect = painter.transform().mapRect(labelRect);
 
       if (bodyId == 0) {
@@ -339,10 +390,10 @@ void XSheetPDFTemplate::registerColLabelRects(QPainter& painter, int colAmount,
   // register bottom rects
   painter.save();
   {
-    painter.translate(0, param("BodyHeight") - param("HeaderHeight") / 2);
+    painter.translate(0, param(BodyHeight) - param(HeaderHeight) / 2);
 
     for (int kc = 0; kc < colAmount; kc++) {
-      QRect labelRect(0, 0, colWidth, param("HeaderHeight") / 2);
+      QRect labelRect(0, 0, colWidth, param(HeaderHeight) / 2);
       labelRect = painter.transform().mapRect(labelRect);
 
       if (bodyId == 0) {
@@ -359,7 +410,7 @@ void XSheetPDFTemplate::registerColLabelRects(QPainter& painter, int colAmount,
 
 void XSheetPDFTemplate::registerCellRects(QPainter& painter, int colAmount,
                                           int colWidth, int bodyId) {
-  int heightAdj = (param("1SecHeight") - param("RowHeight") * 24) / 2;
+  int heightAdj = (param(OneSecHeight) - param(RowHeight) * 24) / 2;
   painter.save();
   {
     for (int kc = 0; kc < colAmount; kc++) {
@@ -371,7 +422,7 @@ void XSheetPDFTemplate::registerCellRects(QPainter& painter, int colAmount,
           painter.save();
           {
             for (int f = 1; f <= 24; f++) {
-              QRect cellRect(0, 0, colWidth, param("RowHeight"));
+              QRect cellRect(0, 0, colWidth, param(RowHeight));
               // fill gap between the doubled lines between seconds
               if (sec != 0 && f == 1)
                 cellRect.adjust(0, -heightAdj, 0, 0);
@@ -379,11 +430,11 @@ void XSheetPDFTemplate::registerCellRects(QPainter& painter, int colAmount,
                 cellRect.adjust(0, 0, 0, heightAdj);
 
               colCellRects.append(painter.transform().mapRect(cellRect));
-              painter.translate(0, param("RowHeight"));
+              painter.translate(0, param(RowHeight));
             }
           }
           painter.restore();
-          painter.translate(0, param("1SecHeight"));
+          painter.translate(0, param(OneSecHeight));
         }
       }
       painter.restore();
@@ -401,7 +452,7 @@ void XSheetPDFTemplate::registerCellRects(QPainter& painter, int colAmount,
 
 void XSheetPDFTemplate::registerSoundRects(QPainter& painter, int colWidth,
                                            int bodyId) {
-  int heightAdj = (param("1SecHeight") - param("RowHeight") * 24) / 2;
+  int heightAdj = (param(OneSecHeight) - param(RowHeight) * 24) / 2;
   painter.save();
   {
     painter.save();
@@ -410,7 +461,7 @@ void XSheetPDFTemplate::registerSoundRects(QPainter& painter, int colWidth,
         painter.save();
         {
           for (int f = 1; f <= 24; f++) {
-            QRect cellRect(0, 0, colWidth, param("RowHeight"));
+            QRect cellRect(0, 0, colWidth, param(RowHeight));
             // fill gap between the doubled lines between seconds
             if (sec != 0 && f == 1)
               cellRect.adjust(0, -heightAdj, 0, 0);
@@ -418,11 +469,11 @@ void XSheetPDFTemplate::registerSoundRects(QPainter& painter, int colWidth,
               cellRect.adjust(0, 0, 0, heightAdj);
 
             m_soundCellRects.append(painter.transform().mapRect(cellRect));
-            painter.translate(0, param("RowHeight"));
+            painter.translate(0, param(RowHeight));
           }
         }
         painter.restore();
-        painter.translate(0, param("1SecHeight"));
+        painter.translate(0, param(OneSecHeight));
       }
     }
     painter.restore();
@@ -440,60 +491,47 @@ void XSheetPDFTemplate::drawKeyBlock(QPainter& painter, int framePage,
 
   painter.save();
   {
-    // Key Animation Block header
-    painter.setPen(thinPen);
-    painter.drawLine(0, param("HeaderHeight") / 2, m_p.keyBlockWidth,
-                     param("HeaderHeight") / 2);
-    painter.setPen(thickPen);
-    painter.drawLine(0, param("HeaderHeight"), m_p.keyBlockWidth,
-                     param("HeaderHeight"));
-    QRect labelRect(0, 0, m_p.keyBlockWidth, param("HeaderHeight") / 2);
-    painter.drawText(labelRect, Qt::AlignCenter,
-                     QObject::tr("ACTION", "XSheetPDF"));
+    drawHeaderGrid(painter, param(KeyColAmount), param(KeyColWidth),
+                   m_p.keyBlockWidth);
 
-    painter.save();
-    {
-      painter.setPen(thinPen);
-      painter.translate(0, param("HeaderHeight") / 2);
+    if (m_info.exportArea == Area_Actions) {
       painter.save();
       {
-        for (int kc = 0; kc < param("KeyColAmount"); kc++) {
-          painter.translate(param("KeyColWidth"), 0);
-          painter.drawLine(0, 0, 0, param("HeaderHeight") / 2);
-        }
-      }
-      painter.restore();
-
-      if (m_info.exportArea == Area_Actions) {
+        painter.translate(0, param(HeaderHeight) / 2);
         // register actions rects.
-        registerColLabelRects(painter, columnsInPage(), param("KeyColWidth"),
+        registerColLabelRects(painter, columnsInPage(), param(KeyColWidth),
                               bodyId);
       }
+      painter.restore();
     }
-    painter.restore();
+
+    QRect labelRect(0, 0, m_p.keyBlockWidth, param(HeaderHeight) / 2);
+    QString actionLabel = (param(TranslateBodyLabel, 1) == 1)
+                              ? QObject::tr("ACTION", "XSheetPDF")
+                              : "ACTION";
+    painter.drawText(labelRect, Qt::AlignCenter, actionLabel);
 
     painter.save();
     {
-      painter.translate(0, param("HeaderHeight"));
+      painter.translate(0, param(HeaderHeight));
 
       // Key Animation Block
-      drawGrid(painter, param("KeyColAmount"), param("KeyColWidth"),
+      drawGrid(painter, param(KeyColAmount), param(KeyColWidth),
                m_p.keyBlockWidth);
 
       if (m_info.exportArea == Area_Actions)
         // register cell rects.
-        registerCellRects(painter, columnsInPage(), param("KeyColWidth"),
-                          bodyId);
+        registerCellRects(painter, columnsInPage(), param(KeyColWidth), bodyId);
 
       // frame numbers
       painter.save();
       {
-        if (param("LastKeyColWidth") > 0) {
-          font.setPixelSize(param("RowHeight") - mm2px(2));
-          font.setLetterSpacing(QFont::PercentageSpacing, 100);
-          painter.setFont(font);
+        font.setPixelSize(param(RowHeight) - mm2px(2));
+        font.setLetterSpacing(QFont::PercentageSpacing, 100);
+        painter.setFont(font);
 
-          painter.translate(param("KeyColAmount") * param("KeyColWidth"), 0);
+        if (param(LastKeyColWidth) > 0) {
+          painter.translate(param(KeyColAmount) * param(KeyColWidth), 0);
           for (int sec = 0; sec < 3; sec++) {
             painter.save();
             {
@@ -501,19 +539,44 @@ void XSheetPDFTemplate::drawKeyBlock(QPainter& painter, int framePage,
                 if (f % 2 == 0) {
                   int frame = bodyId * 72 + sec * 24 + f;
                   if (m_info.serialFrameNumber)
-                    frame += param("FrameLength") * framePage;
+                    frame += param(FrameLength) * framePage;
                   QRect frameLabelRect(0, 0,
-                                       param("LastKeyColWidth") - mm2px(0.5),
-                                       param("RowHeight"));
+                                       param(LastKeyColWidth) - mm2px(0.5),
+                                       param(RowHeight));
                   painter.drawText(frameLabelRect,
                                    Qt::AlignRight | Qt::AlignVCenter,
                                    QString::number(frame));
                 }
-                painter.translate(0, param("RowHeight"));
+                painter.translate(0, param(RowHeight));
               }
             }
             painter.restore();
-            painter.translate(0, param("1SecHeight"));
+            painter.translate(0, param(OneSecHeight));
+          }
+        }
+        // draw frame numbers on the left side of the block
+        else {
+          painter.translate(-param(KeyColWidth) * 2, 0);
+          for (int sec = 0; sec < 3; sec++) {
+            painter.save();
+            {
+              for (int f = 1; f <= 24; f++) {
+                if (f % 2 == 0) {
+                  int frame = bodyId * 72 + sec * 24 + f;
+                  if (m_info.serialFrameNumber)
+                    frame += param(FrameLength) * framePage;
+                  QRect frameLabelRect(0, 0,
+                                       param(KeyColWidth) * 2 - mm2px(0.5),
+                                       param(RowHeight));
+                  painter.drawText(frameLabelRect,
+                                   Qt::AlignRight | Qt::AlignVCenter,
+                                   QString::number(frame));
+                }
+                painter.translate(0, param(RowHeight));
+              }
+            }
+            painter.restore();
+            painter.translate(0, param(OneSecHeight));
           }
         }
       }
@@ -523,7 +586,7 @@ void XSheetPDFTemplate::drawKeyBlock(QPainter& painter, int framePage,
 
     painter.translate(m_p.keyBlockWidth, 0);
     painter.setPen(thinPen);
-    painter.drawLine(0, 0, 0, param("BodyHeight"));
+    painter.drawLine(0, 0, 0, param(BodyHeight));
   }
   painter.restore();
 }
@@ -533,10 +596,17 @@ void XSheetPDFTemplate::drawDialogBlock(QPainter& painter, const int framePage,
   QFont font = painter.font();
   font.setPixelSize(m_p.bodylabelTextSize_Large);
   font.setLetterSpacing(QFont::PercentageSpacing, 100);
+  QRect labelRect(0, 0, param(DialogColWidth), param(HeaderHeight));
+  QString serifLabel =
+      (param(TranslateBodyLabel, 1) == 1) ? QObject::tr("S", "XSheetPDF") : "S";
+  while (font.pixelSize() > mm2px(1)) {
+    if (QFontMetrics(font).boundingRect(serifLabel).width() <
+        labelRect.width() - mm2px(1))
+      break;
+    font.setPixelSize(font.pixelSize() - mm2px(0.5));
+  }
   painter.setFont(font);
-
-  QRect labelRect(0, 0, param("DialogColWidth"), param("HeaderHeight"));
-  painter.drawText(labelRect, Qt::AlignCenter, QObject::tr("S", "XSheetPDF"));
+  painter.drawText(labelRect, Qt::AlignCenter, serifLabel);
 
   // triangle shapes at every half seconds
   static const QPointF points[3] = {
@@ -544,15 +614,15 @@ void XSheetPDFTemplate::drawDialogBlock(QPainter& painter, const int framePage,
       QPointF(mm2px(-2.8), mm2px(1.25)),
       QPointF(mm2px(-2.8), mm2px(-1.25)),
   };
-  static const QRect secLabelRect(0, 0, param("DialogColWidth") - mm2px(1.0),
-                                  param("RowHeight"));
+  QRect secLabelRect(0, 0, param(DialogColWidth) - mm2px(1.0),
+                     param(RowHeight));
 
   painter.save();
   {
-    font.setPixelSize(param("RowHeight") - mm2px(1.5));
+    font.setPixelSize(param(RowHeight) - mm2px(1.5));
     painter.setFont(font);
 
-    painter.translate(0, param("HeaderHeight"));
+    painter.translate(0, param(HeaderHeight));
     painter.save();
     {
       for (int sec = 1; sec <= 3; sec++) {
@@ -560,7 +630,7 @@ void XSheetPDFTemplate::drawDialogBlock(QPainter& painter, const int framePage,
         {
           painter.setBrush(painter.pen().color());
           painter.setPen(Qt::NoPen);
-          painter.translate(param("DialogColWidth"), param("RowHeight") * 12);
+          painter.translate(param(DialogColWidth), param(RowHeight) * 12);
           painter.drawPolygon(points, 3);
         }
         painter.restore();
@@ -568,28 +638,28 @@ void XSheetPDFTemplate::drawDialogBlock(QPainter& painter, const int framePage,
         {
           int second = bodyId * 3 + sec;
           if (m_info.serialFrameNumber)
-            second += framePage * param("FrameLength") / 24;
-          painter.translate(0, param("RowHeight") * ((sec == 3) ? 23 : 23.5));
+            second += framePage * param(FrameLength) / 24;
+          painter.translate(0, param(RowHeight) * ((sec == 3) ? 23 : 23.5));
           painter.drawText(secLabelRect, Qt::AlignRight | Qt::AlignVCenter,
                            QString::number(second));
         }
         painter.restore();
-        painter.translate(0, param("1SecHeight"));
+        painter.translate(0, param(OneSecHeight));
       }
     }
     painter.restore();
 
     // register sound cells
     if (m_info.drawSound)
-      registerSoundRects(painter, param("DialogColWidth"), bodyId);
+      registerSoundRects(painter, param(DialogColWidth), bodyId);
   }
   painter.restore();
 
   painter.save();
   {
     painter.setPen(thinPen);
-    painter.translate(param("DialogColWidth"), 0);
-    painter.drawLine(0, 0, 0, param("BodyHeight"));
+    painter.translate(param(DialogColWidth), 0);
+    painter.drawLine(0, 0, 0, param(BodyHeight));
   }
   painter.restore();
 }
@@ -602,58 +672,45 @@ void XSheetPDFTemplate::drawCellsBlock(QPainter& painter, int bodyId) {
 
   painter.save();
   {
-    // Cells Block header
-    painter.save();
-    {
-      // horizontal lines
-      painter.setPen(thinPen);
-      painter.drawLine(0, param("HeaderHeight") / 2, m_p.cellsBlockWidth,
-                       param("HeaderHeight") / 2);
-      painter.setPen(thickPen);
-      painter.drawLine(0, param("HeaderHeight"), m_p.cellsBlockWidth,
-                       param("HeaderHeight"));
-      // vertical lines
-      painter.setPen(thinPen);
+    drawHeaderGrid(painter, param(CellsColAmount), param(CellsColWidth),
+                   m_p.cellsBlockWidth);
+
+    if (m_info.exportArea == Area_Cells) {
       painter.save();
       {
-        for (int col = 1; col < param("CellsColAmount"); col++) {
-          painter.translate(param("CellsColWidth"), 0);
-          painter.drawLine(0, param("HeaderHeight") / 2, 0,
-                           param("HeaderHeight"));
-        }
-      }
-      painter.restore();
-
-      if (m_info.exportArea == Area_Cells) {
-        painter.translate(0, param("HeaderHeight") / 2);
+        painter.translate(0, param(HeaderHeight) / 2);
         // register cell rects
-        registerColLabelRects(painter, columnsInPage(), param("CellsColWidth"),
+        registerColLabelRects(painter, columnsInPage(), param(CellsColWidth),
                               bodyId);
       }
+      painter.restore();
     }
-    painter.restore();
 
-    QRect labelRect(0, 0, m_p.cellsBlockWidth, param("HeaderHeight") / 2);
-    painter.drawText(labelRect, Qt::AlignCenter,
-                     QObject::tr("CELL", "XSheetPDF"));
+    if (param(DrawCellsHeaderLabel, 1) == 1) {
+      QRect labelRect(0, 0, m_p.cellsBlockWidth, param(HeaderHeight) / 2);
+      QString cellsLabel = (param(TranslateBodyLabel, 1) == 1)
+                               ? QObject::tr("CELL", "XSheetPDF")
+                               : "CELL";
+      painter.drawText(labelRect, Qt::AlignCenter, cellsLabel);
+    }
 
     painter.save();
     {
-      painter.translate(0, param("HeaderHeight"));
+      painter.translate(0, param(HeaderHeight));
       // Cells Block
-      drawGrid(painter, param("CellsColAmount") - 1, param("CellsColWidth"),
+      drawGrid(painter, param(CellsColAmount) - 1, param(CellsColWidth),
                m_p.cellsBlockWidth);
 
       if (m_info.exportArea == Area_Cells)
         // register cell rects.
-        registerCellRects(painter, columnsInPage(), param("CellsColWidth"),
+        registerCellRects(painter, columnsInPage(), param(CellsColWidth),
                           bodyId);
     }
     painter.restore();
 
     painter.setPen(thinPen);
     painter.translate(m_p.cellsBlockWidth, 0);
-    painter.drawLine(0, 0, 0, param("BodyHeight"));
+    painter.drawLine(0, 0, 0, param(BodyHeight));
   }
   painter.restore();
 }
@@ -669,23 +726,40 @@ void XSheetPDFTemplate::drawCameraBlock(QPainter& painter) {
     // Camera Block header
     painter.save();
     {
-      // horizontal lines
-      painter.setPen(thickPen);
-      painter.drawLine(0, param("HeaderHeight"), m_p.cameraBlockWidth,
-                       param("HeaderHeight"));
+      QString cameraLabel = (param(TranslateBodyLabel, 1) == 1)
+                                ? QObject::tr("CAMERA", "XSheetPDF")
+                                : "CAMERA";
+      if (param(DrawCameraHeaderGrid, 0) == 1) {
+        drawHeaderGrid(painter, param(CameraColAmount), param(CameraColWidth),
+                       m_p.cameraBlockWidth);
+        if (param(DrawCameraHeaderLabel, 1) == 1) {
+          font.setPixelSize(m_p.bodylabelTextSize_Small);
+          painter.setFont(font);
+          QRect labelRect(0, 0, m_p.cameraBlockWidth, param(HeaderHeight) / 2);
+          painter.drawText(labelRect, Qt::AlignCenter, cameraLabel);
+        }
+      } else {
+        // horizontal lines
+        painter.setPen(thickPen);
+        painter.drawLine(0, param(HeaderHeight), m_p.cameraBlockWidth,
+                         param(HeaderHeight));
 
-      QRect labelRect(0, 0, m_p.cameraBlockWidth, param("HeaderHeight"));
-      painter.drawText(labelRect, Qt::AlignCenter,
-                       QObject::tr("CAMERA", "XSheetPDF"));
+        if (param(DrawCameraHeaderLabel, 1) == 1) {
+          font.setPixelSize(m_p.bodylabelTextSize_Large);
+          painter.setFont(font);
+          QRect labelRect(0, 0, m_p.cameraBlockWidth, param(HeaderHeight));
+          painter.drawText(labelRect, Qt::AlignCenter, cameraLabel);
+        }
+      }
     }
     painter.restore();
 
-    if (param("DrawCameraGrid", 1) != 0 || !m_useExtraColumns) {
+    if (param(DrawCameraGrid, 1) != 0 || m_useExtraColumns) {
       painter.save();
       {
-        painter.translate(0, param("HeaderHeight"));
+        painter.translate(0, param(HeaderHeight));
         // Cells Block
-        drawGrid(painter, param("CameraColAmount") - 1, param("CameraColWidth"),
+        drawGrid(painter, param(CameraColAmount) - 1, param(CameraColWidth),
                  m_p.cameraBlockWidth);
       }
       painter.restore();
@@ -700,12 +774,12 @@ void XSheetPDFTemplate::drawXsheetBody(QPainter& painter, int framePage,
   painter.save();
   {
     painter.setPen(thickPen);
-    painter.drawRect(QRect(0, 0, param("BodyWidth"), param("BodyHeight")));
+    painter.drawRect(QRect(0, 0, param(BodyWidth), param(BodyHeight)));
 
     drawKeyBlock(painter, framePage, bodyId);
     painter.translate(m_p.keyBlockWidth, 0);
     drawDialogBlock(painter, framePage, bodyId);
-    painter.translate(param("DialogColWidth"), 0);
+    painter.translate(param(DialogColWidth), 0);
     drawCellsBlock(painter, bodyId);
     painter.translate(m_p.cellsBlockWidth, 0);
     drawCameraBlock(painter);
@@ -716,10 +790,10 @@ void XSheetPDFTemplate::drawXsheetBody(QPainter& painter, int framePage,
 void XSheetPDFTemplate::drawInfoHeader(QPainter& painter) {
   painter.save();
   {
-    painter.translate(param("InfoOriginLeft"), param("InfoOriginTop"));
+    painter.translate(param(InfoOriginLeft), param(InfoOriginTop));
     painter.setPen(thinPen);
     QFont font = painter.font();
-    font.setPixelSize(param("InfoTitleHeight") - mm2px(2));
+    font.setPixelSize(param(InfoTitleHeight) - mm2px(2));
     font.setLetterSpacing(QFont::PercentageSpacing, 200);
     painter.setFont(font);
     // draw each info
@@ -728,23 +802,23 @@ void XSheetPDFTemplate::drawInfoHeader(QPainter& painter) {
       painter.drawLine(0, 0, 0, m_p.infoHeaderHeight);
       // 3 horizontal lines
       painter.drawLine(0, 0, info.width, 0);
-      painter.drawLine(0, param("InfoTitleHeight"), info.width,
-                       param("InfoTitleHeight"));
+      painter.drawLine(0, param(InfoTitleHeight), info.width,
+                       param(InfoTitleHeight));
       painter.drawLine(0, m_p.infoHeaderHeight, info.width,
                        m_p.infoHeaderHeight);
 
       // label
-      QRect labelRect(0, 0, info.width, param("InfoTitleHeight"));
+      QRect labelRect(0, 0, info.width, param(InfoTitleHeight));
       adjustSpacing(painter, labelRect.width(), info.label);
       painter.drawText(labelRect, Qt::AlignCenter, info.label);
 
       if (info.decoFunc) {
         painter.save();
         {
-          painter.translate(0, param("InfoTitleHeight"));
+          painter.translate(0, param(InfoTitleHeight));
           (*info.decoFunc)(painter,
-                           QRect(0, 0, info.width, param("InfoBodyHeight")),
-                           m_dataRects);
+                           QRect(0, 0, info.width, param(InfoBodyHeight)),
+                           m_dataRects, param(TranslateInfoLabel, 1));
         }
         painter.restore();
       }
@@ -785,7 +859,7 @@ void XSheetPDFTemplate::drawContinuousLine(QPainter& painter, QRect rect,
 void XSheetPDFTemplate::drawCellNumber(QPainter& painter, QRect rect,
                                        TXshCell& cell) {
   QFont font = painter.font();
-  font.setPixelSize(param("RowHeight") - mm2px(1));
+  font.setPixelSize(param(RowHeight) - mm2px(1));
   font.setLetterSpacing(QFont::PercentageSpacing, 100);
   painter.setFont(font);
 
@@ -899,8 +973,8 @@ void XSheetPDFTemplate::drawSound(QPainter& painter, int framePage) {
   }
 
   // obtain frame range to be printed in the current page
-  int printFrameR0 = framePage * param("FrameLength");
-  int printFrameR1 = printFrameR0 + param("FrameLength") - 1;
+  int printFrameR0 = framePage * param(FrameLength);
+  int printFrameR1 = printFrameR0 + param(FrameLength) - 1;
 
   // return if the current page is out of range
   if (r1 < printFrameR0 || printFrameR1 < r0) return;
@@ -959,10 +1033,10 @@ void XSheetPDFTemplate::setInfo(const XSheetPDFFormatInfo& info) {
   thickPen = QPen(info.lineColor, mm2px(0.5), Qt::SolidLine, Qt::FlatCap,
                   Qt::MiterJoin);
   // check if it should use extra columns
-  if (info.exportArea == Area_Cells && param("ExtraCellsColAmount", 0) > 0) {
+  if (info.exportArea == Area_Cells && param(ExtraCellsColAmount, 0) > 0) {
     int colsInScene   = m_columns.size();
-    int colsInPage    = param("CellsColAmount");
-    int colsInPage_Ex = param("CellsColAmount") + param("ExtraCellsColAmount");
+    int colsInPage    = param(CellsColAmount);
+    int colsInPage_Ex = param(CellsColAmount) + param(ExtraCellsColAmount);
     auto getPageNum   = [&](int cip) {
       int ret = colsInScene / cip;
       if (colsInScene % cip != 0 || colsInScene == 0) ret += 1;
@@ -996,10 +1070,10 @@ void XSheetPDFTemplate::drawXsheetTemplate(QPainter& painter, int framePage,
     // draw Info header
     drawInfoHeader(painter);
 
-    painter.translate(0, param("BodyTop"));
-    for (int bId = 0; bId < param("BodyAmount"); bId++) {
+    painter.translate(0, param(BodyTop));
+    for (int bId = 0; bId < param(BodyAmount); bId++) {
       drawXsheetBody(painter, framePage, bId);
-      painter.translate(param("BodyWidth") + param("BodyHMargin"), 0);
+      painter.translate(param(BodyWidth) + param(BodyHMargin), 0);
     }
   }
   painter.restore();
@@ -1007,6 +1081,18 @@ void XSheetPDFTemplate::drawXsheetTemplate(QPainter& painter, int framePage,
 
 void XSheetPDFTemplate::drawXsheetContents(QPainter& painter, int framePage,
                                            int parallelPage, bool isPreview) {
+  auto checkContinuous = [&](const TXshLevelColumn* column, int f, int r) {
+    TXshCell cell = column->getCell(f);
+    // check subsequent cells and see if more than 3 cells continue.
+    int tmp_r = r + 1;
+    for (int tmp_f = f + 1; tmp_f <= f + 3; tmp_f++, tmp_r++) {
+      if (tmp_f == m_duration) return false;
+      if (tmp_r % 72 == 0) return false;  // step over to the next body
+      if (column->getCell(tmp_f) != cell) return false;
+    }
+    return true;
+  };
+
   // draw soundtrack
   drawSound(painter, framePage);
 
@@ -1015,7 +1101,7 @@ void XSheetPDFTemplate::drawXsheetContents(QPainter& painter, int framePage,
   painter.setFont(m_info.contentsFontFamily);
   int colsInPage = columnsInPage();
   int startColId = colsInPage * parallelPage;
-  int startFrame = param("FrameLength") * framePage;
+  int startFrame = param(FrameLength) * framePage;
   int c          = 0, r;
   for (int colId = startColId; c < colsInPage; c++, colId++) {
     if (colId == m_columns.size()) break;
@@ -1031,8 +1117,10 @@ void XSheetPDFTemplate::drawXsheetContents(QPainter& painter, int framePage,
       columnName = QString::fromStdWString(level->getName());
 
     TXshCell prevCell;
+    bool drawCLFlag;
+
     r = 0;
-    for (int f = startFrame; r < param("FrameLength"); r++, f++) {
+    for (int f = startFrame; r < param(FrameLength); r++, f++) {
       // draw level name
       if (r % 72 == 0)
         drawLevelName(painter, m_colLabelRects[c][r / 72], columnName);
@@ -1047,11 +1135,17 @@ void XSheetPDFTemplate::drawXsheetContents(QPainter& painter, int framePage,
 
       // cotinuous line
       if (r != 0 && r != 72 && prevCell == cell) {
-        drawContinuousLine(painter, m_cellRects[c][r], cell.isEmpty());
+        if (drawCLFlag)
+          drawContinuousLine(painter, m_cellRects[c][r], cell.isEmpty());
       }
       // draw cell
       else {
         drawCellNumber(painter, m_cellRects[c][r], cell);
+        drawCLFlag = (m_info.continuousLineMode == Line_Always)
+                         ? true
+                         : (m_info.continuousLineMode == Line_None)
+                               ? false
+                               : checkContinuous(column, f, r);
       }
       prevCell = cell;
 
@@ -1078,7 +1172,7 @@ void XSheetPDFTemplate::drawXsheetContents(QPainter& painter, int framePage,
         framePage == 0) {
       // define the preferable font size
       int lines =
-          std::max(m_info.memoText.count("\n") + 1, param("MemoLinesAmount"));
+          std::max(m_info.memoText.count("\n") + 1, param(MemoLinesAmount));
       int lineSpacing = m_dataRects.value(Data_Memo).height() / lines;
       int pixelSize   = lineSpacing;
       while (1) {
@@ -1136,8 +1230,8 @@ void XSheetPDFTemplate::drawXsheetContents(QPainter& painter, int framePage,
     font.setPixelSize(m_dataRects.value(Data_CurrentPage).height() -
                       mm2px(0.5));
     painter.setFont(font);
-    painter.drawText(m_dataRects.value(Data_CurrentPage), Qt::AlignLeft,
-                     curStr);
+    painter.drawText(m_dataRects.value(Data_CurrentPage),
+                     Qt::AlignLeft | Qt::AlignVCenter, curStr);
   }
   if (m_dataRects.contains(Data_SceneName) && !m_info.sceneNameText.isEmpty()) {
     int pixelSize = m_dataRects.value(Data_SceneName).height() - mm2px(1);
@@ -1190,8 +1284,8 @@ QPixmap XSheetPDFTemplate::initializePreview() {
 }
 
 int XSheetPDFTemplate::framePageCount() {
-  int ret = m_duration / param("FrameLength");
-  if (m_duration % param("FrameLength") != 0 || m_duration == 0) ret += 1;
+  int ret = m_duration / param(FrameLength);
+  if (m_duration % param(FrameLength) != 0 || m_duration == 0) ret += 1;
   return ret;
 }
 
@@ -1206,15 +1300,15 @@ int XSheetPDFTemplate::parallelPageCount() {
 
 int XSheetPDFTemplate::columnsInPage() {
   if (m_info.exportArea == Area_Actions) {
-    int colsInPage = param("KeyColAmount");
-    if (param("LastKeyColWidth") > 0) colsInPage++;
+    int colsInPage = param(KeyColAmount);
+    if (param(LastKeyColWidth) > 0) colsInPage++;
     return colsInPage;
   }
 
   // CELLS
   if (m_useExtraColumns)
-    return param("CellsColAmount") + param("ExtraCellsColAmount", 0);
-  return param("CellsColAmount");
+    return param(CellsColAmount) + param(ExtraCellsColAmount, 0);
+  return param(CellsColAmount);
 }
 
 QSize XSheetPDFTemplate::logoPixelSize() {
@@ -1263,21 +1357,21 @@ XSheetPDFTemplate_B4_6sec::XSheetPDFTemplate_B4_6sec(
   addInfo(mm2px(26), QObject::tr("SHEET", "XSheetPDF"), decoSheetInfo);
 
   m_p.keyBlockWidth =
-      param("KeyColWidth") * param("KeyColAmount") + param("LastKeyColWidth");
-  m_p.cellsBlockWidth  = param("CellsColWidth") * param("CellsColAmount");
-  m_p.cameraBlockWidth = param("CameraColWidth") * param("CameraColAmount");
-  m_p.infoHeaderHeight = param("InfoTitleHeight") + param("InfoBodyHeight");
-  m_p.bodylabelTextSize_Large = param("HeaderHeight") - mm2px(3);
-  m_p.bodylabelTextSize_Small = param("HeaderHeight") / 2 - mm2px(1);
+      param(KeyColWidth) * param(KeyColAmount) + param(LastKeyColWidth);
+  m_p.cellsBlockWidth         = param(CellsColWidth) * param(CellsColAmount);
+  m_p.cameraBlockWidth        = param(CameraColWidth) * param(CameraColAmount);
+  m_p.infoHeaderHeight        = param(InfoTitleHeight) + param(InfoBodyHeight);
+  m_p.bodylabelTextSize_Large = param(HeaderHeight) - mm2px(3);
+  m_p.bodylabelTextSize_Small = param(HeaderHeight) / 2 - mm2px(1);
 
   // data rects
-  int infoBottom = param("InfoOriginTop") + param("InfoTitleHeight") +
-                   param("InfoBodyHeight");
+  int infoBottom =
+      param(InfoOriginTop) + param(InfoTitleHeight) + param(InfoBodyHeight);
   m_dataRects[Data_Memo] = QRect(mm2px(0), infoBottom + mm2px(1), mm2px(239),
-                                 param("BodyTop") - infoBottom - mm2px(3));
+                                 param(BodyTop) - infoBottom - mm2px(3));
   m_dataRects[Data_DateTimeAndScenePath] = m_dataRects[Data_Memo];
   m_dataRects[Data_Logo] =
-      QRect(mm2px(0), mm2px(0), param("InfoOriginLeft"), infoBottom);
+      QRect(mm2px(0), mm2px(0), param(InfoOriginLeft), infoBottom);
 }
 
 //---------------------------------------------------------
@@ -1307,24 +1401,30 @@ XSheetPDFTemplate_Custom::XSheetPDFTemplate_Custom(
 
     s.beginGroup("Number");
     {
-      for (auto key : s.childKeys()) m_params.insert(key, s.value(key).toInt());
+      for (auto key : s.childKeys())
+        m_params.insert(key.toStdString(), s.value(key).toInt());
     }
     s.endGroup();
 
     s.beginGroup("Length");
     {
       for (auto key : s.childKeys())
-        m_params.insert(key, mm2px(s.value(key).toDouble()));
+        m_params.insert(key.toStdString(), mm2px(s.value(key).toDouble()));
     }
     s.endGroup();
 
-    int size = s.beginReadArray("InfoFormats");
+    bool translateInfo = param(TranslateInfoLabel, 1) == 1;
+    int size           = s.beginReadArray("InfoFormats");
     for (int i = 0; i < size; ++i) {
       s.setArrayIndex(i);
       XSheetPDF_InfoFormat infoFormat;
       infoFormat.width = mm2px(s.value("width").toDouble());
-      infoFormat.label =
-          QObject::tr(s.value("label").toString().toLocal8Bit(), "XSheetPDF");
+      if (translateInfo)
+        infoFormat.label =
+            QObject::tr(s.value("label").toString().toLocal8Bit(), "XSheetPDF");
+      else
+        infoFormat.label = s.value("label").toString();
+
       infoFormat.decoFunc =
           infoType2DecoFunc(s.value("infoType", "").toString());
       m_p.array_Infos.append(infoFormat);
@@ -1353,12 +1453,12 @@ XSheetPDFTemplate_Custom::XSheetPDFTemplate_Custom(
   s.endGroup();
 
   m_p.keyBlockWidth =
-      param("KeyColWidth") * param("KeyColAmount") + param("LastKeyColWidth");
-  m_p.cellsBlockWidth  = param("CellsColWidth") * param("CellsColAmount");
-  m_p.cameraBlockWidth = param("CameraColWidth") * param("CameraColAmount");
-  m_p.infoHeaderHeight = param("InfoTitleHeight") + param("InfoBodyHeight");
-  m_p.bodylabelTextSize_Large = param("HeaderHeight") - mm2px(3);
-  m_p.bodylabelTextSize_Small = param("HeaderHeight") / 2 - mm2px(1);
+      param(KeyColWidth) * param(KeyColAmount) + param(LastKeyColWidth);
+  m_p.cellsBlockWidth         = param(CellsColWidth) * param(CellsColAmount);
+  m_p.cameraBlockWidth        = param(CameraColWidth) * param(CameraColAmount);
+  m_p.infoHeaderHeight        = param(InfoTitleHeight) + param(InfoBodyHeight);
+  m_p.bodylabelTextSize_Large = param(HeaderHeight) - mm2px(3);
+  m_p.bodylabelTextSize_Small = param(HeaderHeight) / 2 - mm2px(1);
 
   m_valid = true;
 }
@@ -1481,11 +1581,12 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
     , m_currentTmpl(nullptr) {
   setWindowTitle(tr("Export Xsheet PDF"));
 
-  m_previewPane     = new XsheetPdfPreviewPane(this);
-  m_pathFld         = new DVGui::FileField();
-  m_fileNameFld     = new QLineEdit(this);
-  m_templateCombo   = new QComboBox(this);
-  m_exportAreaCombo = new QComboBox(this);
+  m_previewPane         = new XsheetPdfPreviewPane(this);
+  m_pathFld             = new DVGui::FileField();
+  m_fileNameFld         = new QLineEdit(this);
+  m_templateCombo       = new QComboBox(this);
+  m_exportAreaCombo     = new QComboBox(this);
+  m_continuousLineCombo = new QComboBox(this);
 
   m_pageInfoLbl  = new QLabel(this);
   m_lineColorFld = new DVGui::ColorField(this, false, TPixel32(128, 128, 128));
@@ -1534,6 +1635,11 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
       "background:white;\ncolor:black;\nborder:1 solid black;");
   m_memoEdit->setFixedHeight(150);
   m_sceneNameEdit->setFixedWidth(100);
+
+  m_continuousLineCombo->addItem(tr("Always"), Line_Always);
+  m_continuousLineCombo->addItem(tr("More Than 3 Continuous Cells"),
+                                 Line_MoreThan3s);
+  m_continuousLineCombo->addItem(tr("None"), Line_None);
 
   QStringList filters;
   for (QByteArray& format : QImageReader::supportedImageFormats())
@@ -1634,22 +1740,27 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
           exportLay->addWidget(m_contentsFontCB, 1, 1, 1, 2,
                                Qt::AlignLeft | Qt::AlignVCenter);
 
-          exportLay->addWidget(m_addDateTimeCB, 2, 0, 1, 3,
-                               Qt::AlignLeft | Qt::AlignVCenter);
-          exportLay->addWidget(m_addScenePathCB, 3, 0, 1, 3,
-                               Qt::AlignLeft | Qt::AlignVCenter);
-          exportLay->addWidget(m_drawSoundCB, 4, 0, 1, 3,
-                               Qt::AlignLeft | Qt::AlignVCenter);
-          exportLay->addWidget(m_addSceneNameCB, 5, 0, 1, 2,
-                               Qt::AlignLeft | Qt::AlignVCenter);
-          exportLay->addWidget(m_sceneNameEdit, 5, 2,
-                               Qt::AlignLeft | Qt::AlignVCenter);
-          exportLay->addWidget(m_levelNameOnBottomCB, 6, 0, 1, 3,
+          exportLay->addWidget(new QLabel(tr("Continuous line:"), this), 2, 0,
+                               Qt::AlignRight | Qt::AlignVCenter);
+          exportLay->addWidget(m_continuousLineCombo, 2, 1, 1, 2,
                                Qt::AlignLeft | Qt::AlignVCenter);
 
-          exportLay->addWidget(new QLabel(tr("Memo:"), this), 7, 0,
+          exportLay->addWidget(m_addDateTimeCB, 3, 0, 1, 3,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+          exportLay->addWidget(m_addScenePathCB, 4, 0, 1, 3,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+          exportLay->addWidget(m_drawSoundCB, 5, 0, 1, 3,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+          exportLay->addWidget(m_addSceneNameCB, 6, 0, 1, 2,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+          exportLay->addWidget(m_sceneNameEdit, 6, 2,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+          exportLay->addWidget(m_levelNameOnBottomCB, 7, 0, 1, 3,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+
+          exportLay->addWidget(new QLabel(tr("Memo:"), this), 8, 0,
                                Qt::AlignRight | Qt::AlignTop);
-          exportLay->addWidget(m_memoEdit, 7, 1, 1, 2);
+          exportLay->addWidget(m_memoEdit, 8, 1, 1, 2);
         }
         exportLay->setColumnStretch(2, 1);
         exportGBox->setLayout(exportLay);
@@ -1703,6 +1814,8 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
 
   connect(m_exportAreaCombo, SIGNAL(activated(int)), this,
           SLOT(updatePreview()));
+  connect(m_continuousLineCombo, SIGNAL(activated(int)), this,
+          SLOT(updatePreview()));
   connect(m_lineColorFld, SIGNAL(colorChanged(const TPixel32&, bool)), this,
           SLOT(updatePreview()));
   connect(m_templateFontCB, SIGNAL(currentFontChanged(const QFont&)), this,
@@ -1733,6 +1846,24 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
           SLOT(updatePreview()));
   connect(m_prev, SIGNAL(clicked(bool)), this, SLOT(onPrev()));
   connect(m_next, SIGNAL(clicked(bool)), this, SLOT(onNext()));
+
+  // The following lines are "translation word book" listing the words which may
+  // appear in the template
+
+  // info item labels
+  QObject::tr("EPISODE", "XSheetPDF");
+  QObject::tr("SEQ.", "XSheetPDF");
+  QObject::tr("SCENE", "XSheetPDF");
+  QObject::tr("TIME", "XSheetPDF");
+  QObject::tr("NAME", "XSheetPDF");
+  QObject::tr("SHEET", "XSheetPDF");
+  QObject::tr("TITLE", "XSheetPDF");
+  QObject::tr("CAMERAMAN", "XSheetPDF");
+  // template name
+  tr("B4 size, 3 seconds sheet");
+  tr("B4 size, 6 seconds sheet");
+  tr("A3 size, 3 seconds sheet");
+  tr("A3 size, 6 seconds sheet");
 }
 
 ExportXsheetPdfPopup::~ExportXsheetPdfPopup() {
@@ -1857,6 +1988,11 @@ void ExportXsheetPdfPopup::saveSettings() {
   XShPdfExportLogoPreference = (m_logoTxtRB->isChecked()) ? 0 : 1;
   XShPdfExportLogoText       = m_logoTextEdit->text().toStdString();
   XShPdfExportImgPath        = m_logoImgPathField->getPath().toStdString();
+
+  ContinuousLineMode clMode =
+      (ContinuousLineMode)(m_continuousLineCombo->currentData().toInt());
+  XShPdfExportContinuousLineThres =
+      (clMode == Line_Always) ? 0 : (clMode == Line_None) ? -1 : 3;
 }
 
 // load settings from the user env file on ctor
@@ -1885,6 +2021,14 @@ void ExportXsheetPdfPopup::loadSettings() {
   m_logoImgRB->setChecked(XShPdfExportLogoPreference == 1);
   m_logoTextEdit->setText(QString::fromStdString(XShPdfExportLogoText));
   m_logoImgPathField->setPath(QString::fromStdString(XShPdfExportImgPath));
+
+  ContinuousLineMode clMode = (XShPdfExportContinuousLineThres == 0)
+                                  ? Line_Always
+                                  : (XShPdfExportContinuousLineThres == -1)
+                                        ? Line_None
+                                        : Line_MoreThan3s;
+  m_continuousLineCombo->setCurrentIndex(
+      m_continuousLineCombo->findData(clMode));
 
   m_logoTextEdit->setEnabled(m_logoTxtRB->isChecked());
   m_logoImgPathField->setEnabled(m_logoImgRB->isChecked());
@@ -1938,6 +2082,8 @@ void ExportXsheetPdfPopup::setInfo() {
       (m_addSceneNameCB->isChecked()) ? m_sceneNameEdit->text() : "";
 
   info.exportArea = (ExportArea)(m_exportAreaCombo->currentData().toInt());
+  info.continuousLineMode =
+      (ContinuousLineMode)(m_continuousLineCombo->currentData().toInt());
   info.templateFontFamily = m_templateFontCB->currentFont().family();
   info.contentsFontFamily = m_contentsFontCB->currentFont().family();
   info.memoText           = m_memoEdit->toPlainText();

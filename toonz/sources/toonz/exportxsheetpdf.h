@@ -32,7 +32,42 @@ class QRadioButton;
 class QLineEdit;
 class QIntValidator;
 
-// シートに記載する情報
+// parameters which can be defined in template files
+namespace XSheetPDFTemplateParamIDs {
+// numbers
+const std::string BodyAmount            = "BodyAmount";
+const std::string KeyColAmount          = "KeyColAmount";
+const std::string CellsColAmount        = "CellsColAmount";
+const std::string CameraColAmount       = "CameraColAmount";
+const std::string FrameLength           = "FrameLength";
+const std::string MemoLinesAmount       = "MemoLinesAmount";
+const std::string ExtraCellsColAmount   = "ExtraCellsColAmount";
+const std::string DrawCameraGrid        = "DrawCameraGrid";
+const std::string DrawCameraHeaderGrid  = "DrawCameraHeaderGrid";
+const std::string DrawCameraHeaderLabel = "DrawCameraHeaderLabel";
+const std::string DrawCellsHeaderLabel  = "DrawCellsHeaderLabel";
+const std::string TranslateBodyLabel    = "TranslateBodyLabel";
+const std::string TranslateInfoLabel    = "TranslateInfoLabel";
+// lengths
+const std::string BodyWidth       = "BodyWidth";
+const std::string BodyHeight      = "BodyHeight";
+const std::string BodyHMargin     = "BodyHMargin";
+const std::string BodyTop         = "BodyTop";
+const std::string HeaderHeight    = "HeaderHeight";
+const std::string KeyColWidth     = "KeyColWidth";
+const std::string LastKeyColWidth = "LastKeyColWidth";
+const std::string DialogColWidth  = "DialogColWidth";
+const std::string CellsColWidth   = "CellsColWidth";
+const std::string CameraColWidth  = "CameraColWidth";
+const std::string RowHeight       = "RowHeight";
+const std::string OneSecHeight    = "1SecHeight";
+const std::string InfoOriginLeft  = "InfoOriginLeft";
+const std::string InfoOriginTop   = "InfoOriginTop";
+const std::string InfoTitleHeight = "InfoTitleHeight";
+const std::string InfoBodyHeight  = "InfoBodyHeight";
+};  // namespace XSheetPDFTemplateParamIDs
+
+// ids for various information area
 enum XSheetPDFDataType {
   Data_Memo = 0,
   Data_Second,
@@ -45,9 +80,11 @@ enum XSheetPDFDataType {
   Data_Invalid
 };
 
-typedef void(*DecoFunc)(QPainter&, QRect, QMap<XSheetPDFDataType, QRect>&);
+typedef void (*DecoFunc)(QPainter&, QRect, QMap<XSheetPDFDataType, QRect>&,
+                         bool);
 
 enum ExportArea { Area_Actions = 0, Area_Cells };
+enum ContinuousLineMode { Line_Always = 0, Line_MoreThan3s, Line_None };
 
 struct XSheetPDFFormatInfo {
   QColor lineColor;
@@ -63,6 +100,7 @@ struct XSheetPDFFormatInfo {
   bool drawSound;
   bool serialFrameNumber;
   bool drawLevelNameOnBottom;
+  ContinuousLineMode continuousLineMode;
 };
 
 class XSheetPDFTemplate {
@@ -85,7 +123,7 @@ protected:
     int infoHeaderHeight;
   } m_p;
 
-  QMap<QString, int> m_params;
+  QMap<std::string, int> m_params;
 
   QPen thinPen, thickPen;
 
@@ -108,6 +146,8 @@ protected:
     const double ratio = 0.8);
 
   void drawGrid(QPainter& painter, int colAmount, int colWidth, int blockWidth);
+  void drawHeaderGrid(QPainter& painter, int colAmount, int colWidth,
+                      int blockWidth);
 
   void registerColLabelRects(QPainter& painter, int colAmount, int colWidth,
     int bodyId);
@@ -139,8 +179,8 @@ protected:
   void drawLogo(QPainter& painter);
   void drawSound(QPainter& painter, int framePage);
 
-  int param(const QString& id, int defaultValue = 0) {
-    if (!m_params.contains(id)) std::cout << id.toStdString() << std::endl;
+  int param(const std::string& id, int defaultValue = 0) {
+    if (!m_params.contains(id)) std::cout << id << std::endl;
     return m_params.value(id, defaultValue);
   }
 
@@ -222,7 +262,7 @@ class ExportXsheetPdfPopup final : public DVGui::Dialog {
   XsheetPdfPreviewArea* m_previewArea;
   DVGui::FileField* m_pathFld;
   QLineEdit* m_fileNameFld;
-  QComboBox *m_templateCombo, *m_exportAreaCombo;
+  QComboBox *m_templateCombo, *m_exportAreaCombo, *m_continuousLineCombo;
   DVGui::ColorField* m_lineColorFld;
 
   QCheckBox *m_addDateTimeCB, *m_addScenePathCB, *m_drawSoundCB,
