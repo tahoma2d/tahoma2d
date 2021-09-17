@@ -9,6 +9,8 @@
 #include "tvectorrenderdata.h"
 #include "tsystem.h"
 #include "tvectorgl.h"
+#include "traster.h"
+#include "tcolorstyles.h"
 
 #include "toonzqt/gutil.h"
 
@@ -289,11 +291,41 @@ void CustomStyleManager::loadItems() {
   // NOTE: after all adds have finished, a separate itemsUpdated() signal is
   // emitted
   for (TFilePathSet::iterator it = fps.begin(); it != fps.end(); it++) {
-    m_activeLoads++;
-    m_executor.addTask(new StyleLoaderTask(this, *it));
+    TFilePath file = *it;
+    // bogus file for internally generated styles
+    if (file.getType() == "gen") {
+      loadGeneratedStyle(file);
+    } else {
+      m_activeLoads++;
+      m_executor.addTask(new StyleLoaderTask(this, *it));
+    }
   }
 
   if (patternsUpdated && !fps.size()) emit itemsUpdated();
+}
+
+//-----------------------------------------------------------------------------
+
+void CustomStyleManager::loadGeneratedStyle(TFilePath file) {
+  PatternData pattern;
+
+  QString name          = QString::fromStdString(file.getName());
+  QStringList nameParts = name.split("-");
+  int tagId             = std::stoi(nameParts[1].toStdString());
+
+  TColorStyle *style = TColorStyle::create(tagId);
+  TDimension chipSize(m_chipSize.width(), m_chipSize.height());
+  QImage *image =
+      new QImage(m_chipSize.width(), m_chipSize.height(), QImage::Format_RGB32);
+
+  convertRaster32ToImage(style->getIcon(chipSize), image);
+
+  pattern.m_path        = file;
+  pattern.m_patternName = nameParts[0].toStdString();
+  pattern.m_isGenerated = true;
+  pattern.m_image       = image;
+
+  m_patterns.push_back(pattern);
 }
 
 //********************************************************************************

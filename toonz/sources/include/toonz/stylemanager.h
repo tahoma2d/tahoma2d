@@ -42,12 +42,14 @@ public:
     QImage *m_image;
     std::string m_patternName;
     bool m_isVector;
+    bool m_isGenerated;
     TFilePath m_path;
 
     PatternData()
         : m_image(0)
         , m_patternName("")
         , m_isVector(false)
+        , m_isGenerated(false)
         , m_path(TFilePath()) {}
   };
 
@@ -77,6 +79,8 @@ public:
   void loadItems();
 
   void loadItemFinished();
+
+  void loadGeneratedStyle(TFilePath file);
 
   int isLoading() { return m_activeLoads > 0; }
 

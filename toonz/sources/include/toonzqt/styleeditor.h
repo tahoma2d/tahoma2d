@@ -424,6 +424,8 @@ public:
   bool m_allowFavorite = false;
   StyleEditor *m_editor;
 
+  std::vector<int> m_selection;
+
   StyleEditorPage(QWidget *parent);
 
   virtual void setFavorite(bool favorite) { m_favorite = favorite; }
@@ -431,6 +433,9 @@ public:
 
   void setAllowFavorite(bool allow) { m_allowFavorite = allow; }
   bool allowFavorite() { return m_allowFavorite; }
+
+  void clearSelection() { m_selection.clear(); }
+  std::vector<int> getSelection() { return m_selection; }
 };
 
 //=============================================================================
@@ -535,6 +540,15 @@ public slots:
 
                 Inherits \b StyleEditorPage.
 */
+enum StylePageType {
+  Unknown = 0,
+  Texture,
+  VectorGenerated,
+  VectorCustom,
+  VectorBrush,
+  Raster
+};
+
 class StyleChooserPage : public StyleEditorPage {
   Q_OBJECT
 
@@ -542,22 +556,28 @@ protected:
   QPoint m_chipOrigin;
   QSize m_chipSize;
   int m_chipPerRow;
+  StylePageType m_pageType = StylePageType::Unknown;
 
 public:
   StyleChooserPage(QWidget *parent = 0);
 
   QSize getChipSize() const { return m_chipSize; }
 
+  void setPageType(StylePageType pageType) { m_pageType = pageType; }
+  StylePageType getPageType() { return m_pageType; }
+
   virtual bool loadIfNeeded()      = 0;
   virtual int getChipCount() const = 0;
 
   virtual void drawChip(QPainter &p, QRect rect, int index) = 0;
   virtual void onSelect(int index) {}
-  virtual void onAddNewStyle(int index) {}
 
   virtual void removeFavorite(){};
+  virtual void removeSelectedFavorites(std::vector<int> selection){};
   virtual void addFavorite() {}
+  virtual void addSelectedFavorites(std::vector<int> selection){};
   virtual void updateFavorite(){};
+  virtual void addSelectedStyles(std::vector<int> selection){};
 
   bool copyToFavorites(TFilePathSet srcFiles, TFilePath destDir);
   bool deleteFromFavorites(TFilePathSet targetFiles);
@@ -578,11 +598,12 @@ protected:
 protected slots:
   void computeSize();
   void onRemoveFavorite();
+  void onRemoveAllFavorites();
   void onAddFavorite();
+  void onAddStyle();
   void onUpdateFavorite();
 signals:
   void styleSelected(const TColorStyle &style);
-  void addStyleToPalette(const TColorStyle &style);
   void favoritesUpdated();
   void refreshFavorites();
 };
@@ -680,7 +701,6 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   //! and style.
 
   PlainColorPage *m_plainColorPage;
-  StyleEditorPage *m_specialStylePage;
   SettingsPage *m_settingsPage;
   QScrollArea *m_textureArea;
   QScrollArea *m_vectorArea;
@@ -709,13 +729,6 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   std::vector<QLabel *> m_vectorLabels;
   std::vector<QLabel *> m_rasterLabels;
 
-  enum StylePageType {
-    Texture,
-    VectorGenerated,
-    VectorCustom,
-    VectorBrush,
-    Raster
-  };
   std::vector<StyleEditorPage *> m_texturePages;
   std::vector<StyleEditorPage *> m_vectorPages;
   std::vector<StyleEditorPage *> m_rasterPages;
@@ -752,7 +765,8 @@ public:
   void updateColorCalibration();
 
   void createStylePage(StylePageType pageType, TFilePath styleFolder,
-                       QString filters = QString("*"), bool isFavorite = false);
+                       QString filters = QString("*"), bool isFavorite = false,
+                       int dirDepth = 0);
 
   void createStyleMenus();
 
@@ -760,6 +774,11 @@ public:
   bool isCtrlPressed() { return m_isCtrlPressed; }
 
   void clearSelection();
+
+  bool isSelectingExcluding(StyleEditorPage *excludePage);
+  bool isSelecting() { return isSelectingExcluding(0); }
+
+  void addToPalette(const TColorStyle &style);
 
 protected:
   /*! Return false if style is linked and style must be set to null.*/
@@ -791,6 +810,7 @@ protected:
   void keyPressEvent(QKeyEvent *event) override;
   void keyReleaseEvent(QKeyEvent *event) override;
   void enterEvent(QEvent *event) override;
+  void mousePressEvent(QMouseEvent *event) override;
 
 protected slots:
 
@@ -812,7 +832,6 @@ protected slots:
   void onColorChanged(const ColorModel &, bool isDragging);
 
   void selectStyle(const TColorStyle &style);
-  void addToPalette(const TColorStyle &style);
 
   void applyButtonClicked();
   void autoCheckChanged(bool value);
@@ -850,6 +869,10 @@ protected slots:
 
   void onReloadFavorites();
   void onUpdateFavorites();
+
+  void onRemoveSelectedFavorites();
+  void onAddSelectedFavorites();
+  void onAddSelectedStyles();
 
 private:
   QFrame *createBottomWidget();
