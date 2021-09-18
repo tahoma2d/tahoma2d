@@ -214,7 +214,7 @@ void CustomStyleManager::StyleLoaderTask::onFinished(
   {
     m_manager->m_patterns.push_back(m_data);
   }
-  m_manager->loadItemFinished();
+  m_manager->loadItemFinished(m_data.m_path);
 }
 
 //********************************************************************************
@@ -223,19 +223,19 @@ void CustomStyleManager::StyleLoaderTask::onFinished(
 
 CustomStyleManager::CustomStyleManager(const TFilePath &stylesFolder,
                                        QString filters, QSize chipSize)
-    : m_stylesFolder(stylesFolder)
-    , m_filters(filters)
-    , m_chipSize(chipSize)
-    , m_activeLoads(0) {
+    : m_stylesFolder(stylesFolder), m_filters(filters), m_chipSize(chipSize) {
   m_executor.setMaxActiveTasks(1);
 }
 
 //-----------------------------------------------------------------------------
 
-void CustomStyleManager::loadItemFinished() {
-  m_activeLoads--;
-  if (m_activeLoads < 0) m_activeLoads = 0;
-  if (!m_activeLoads) emit itemsUpdated();
+void CustomStyleManager::loadItemFinished(TFilePath file) {
+  std::vector<TFilePath>::iterator it =
+      std::find(m_activeLoads.begin(), m_activeLoads.end(), file);
+  if (it != m_activeLoads.end()) m_activeLoads.erase(it);
+  m_itemsLoaded++;
+  if (!m_activeLoads.size() && !TStyleManager::instance()->isLoading())
+    TStyleManager::instance()->signalLoadsFinished();
 };
 
 //-----------------------------------------------------------------------------
@@ -253,7 +253,7 @@ CustomStyleManager::PatternData CustomStyleManager::getPattern(int index) {
 
 void CustomStyleManager::loadItems() {
   // Build the folder to be read
-  if (m_activeLoads || m_stylesFolder == TFilePath()) return;
+  if (m_stylesFolder == TFilePath()) return;
 
   QDir patternDir(QString::fromStdWString(m_stylesFolder.getWideString()));
   patternDir.setNameFilters(m_filters.split(' '));
@@ -274,9 +274,7 @@ void CustomStyleManager::loadItems() {
   for (i = 0; i < m_patterns.size(); i++) {
     PatternData data = m_patterns.at(i);
     for (it = fps.begin(); it != fps.end(); ++it) {
-      if (data.m_patternName == it->getName() &&
-          data.m_isVector == (it->getType() == "pli"))
-        break;
+      if (data.m_path.getLevelName() == it->getLevelName()) break;
     }
 
     if (it == fps.end()) {
@@ -295,13 +293,17 @@ void CustomStyleManager::loadItems() {
     // bogus file for internally generated styles
     if (file.getType() == "gen") {
       loadGeneratedStyle(file);
+      patternsUpdated = true;
     } else {
-      m_activeLoads++;
-      m_executor.addTask(new StyleLoaderTask(this, *it));
+      std::vector<TFilePath>::iterator it =
+          std::find(m_activeLoads.begin(), m_activeLoads.end(), file);
+      if (it != m_activeLoads.end()) continue;
+      m_activeLoads.push_back(file);
+      m_executor.addTask(new StyleLoaderTask(this, file));
     }
   }
 
-  if (patternsUpdated && !fps.size()) emit itemsUpdated();
+  if (patternsUpdated && !m_activeLoads.size()) emit itemsUpdated();
 }
 
 //-----------------------------------------------------------------------------
@@ -373,7 +375,7 @@ void TextureStyleManager::loadItems() {
   for (i = 0; i < m_textures.size(); i++) {
     TextureData data = m_textures.at(i);
     for (it = fps.begin(); it != fps.end(); ++it) {
-      if (data.m_textureName == it->getName()) break;
+      if (data.m_path.getLevelName() == it->getLevelName()) break;
     }
 
     if (it == fps.end()) {
@@ -435,7 +437,7 @@ void TextureStyleManager::loadTexture(TFilePath &fp) {
 
   TextureData text;
   text.m_raster      = texture;
-  text.m_textureName = fp.getLevelName();
+  text.m_textureName = fp.getName();
   text.m_path        = fp;
 
   m_textures.push_back(text);
@@ -486,7 +488,7 @@ void BrushStyleManager::loadItems() {
   for (i = 0; i < m_brushes.size(); i++) {
     BrushData data = m_brushes.at(i);
     for (it = fps.begin(); it != fps.end(); ++it) {
-      if (data.m_brushName == it->getName()) break;
+      if (data.m_path.getLevelName() == it->getLevelName()) break;
     }
 
     if (it == fps.end()) {
@@ -501,7 +503,7 @@ void BrushStyleManager::loadItems() {
   for (TFilePathSet::iterator it = fps.begin(); it != fps.end(); it++) {
     BrushData brush;
     brush.m_brush     = TMyPaintBrushStyle(*it);
-    brush.m_brushName = it->getLevelName();
+    brush.m_brushName = it->getName();
     brush.m_path      = *it;
 
     m_brushes.push_back(brush);
@@ -538,6 +540,8 @@ CustomStyleManager *TStyleManager::getCustomStyleManager(TFilePath stylesFolder,
   return cm;
 }
 
+//---------------------------------------------------------
+
 TextureStyleManager *TStyleManager::getTextureStyleManager(
     TFilePath stylesFolder, QString filters, QSize chipSize) {
   std::pair<TFilePath, QString> styleFolderKey =
@@ -558,6 +562,8 @@ TextureStyleManager *TStyleManager::getTextureStyleManager(
   return tm;
 }
 
+//---------------------------------------------------------
+
 BrushStyleManager *TStyleManager::getBrushStyleManager(TFilePath stylesFolder,
                                                        QString filters,
                                                        QSize chipSize) {
@@ -577,4 +583,28 @@ BrushStyleManager *TStyleManager::getBrushStyleManager(TFilePath stylesFolder,
   m_brushStyleFolders.push_back(styleFolderKey);
 
   return rm;
+}
+
+//---------------------------------------------------------
+
+bool TStyleManager::isLoading() {
+  std::vector<CustomStyleManager *>::iterator it;
+  for (it = m_customStyleManagers.begin(); it != m_customStyleManagers.end();
+       it++) {
+    CustomStyleManager *cm = *it;
+    if (cm->isLoading()) return true;
+  }
+
+  return false;
+}
+
+//---------------------------------------------------------
+
+void TStyleManager::signalLoadsFinished() {
+  std::vector<CustomStyleManager *>::iterator it;
+  for (it = m_customStyleManagers.begin(); it != m_customStyleManagers.end();
+       it++) {
+    CustomStyleManager *cm = *it;
+    if (cm->hasLoadedItems()) cm->signalLoadDone();
+  }
 }

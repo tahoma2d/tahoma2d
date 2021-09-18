@@ -64,7 +64,8 @@ private:
 
   TThread::Executor m_executor;
   bool m_started;
-  int m_activeLoads;
+  std::vector<TFilePath> m_activeLoads;
+  int m_itemsLoaded;
 
 public:
   CustomStyleManager(const TFilePath &stylesFolder, QString filters = QString(),
@@ -78,11 +79,16 @@ public:
 
   void loadItems();
 
-  void loadItemFinished();
+  void loadItemFinished(TFilePath file);
 
   void loadGeneratedStyle(TFilePath file);
 
-  int isLoading() { return m_activeLoads > 0; }
+  bool isLoading() { return m_activeLoads.size() > 0; }
+  bool hasLoadedItems() { return m_itemsLoaded > 0; }
+  void signalLoadDone() {
+    m_itemsLoaded = 0;
+    emit itemsUpdated();
+  }
 
 private:
   void addPattern(const TFilePath &path);
@@ -211,6 +217,9 @@ public:
   BrushStyleManager *getBrushStyleManager(TFilePath stylesFolder,
                                           QString filters = QString("*"),
                                           QSize chipSize  = QSize(30, 30));
+
+  bool isLoading();
+  void signalLoadsFinished();
 };
 
 #endif  // STYLEMANAGER_H

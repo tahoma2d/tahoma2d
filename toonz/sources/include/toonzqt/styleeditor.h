@@ -601,6 +601,7 @@ protected:
 
 protected slots:
   void computeSize();
+  void onTogglePage(bool toggled);
   void onRemoveFavorite();
   void onRemoveAllFavorites();
   void onAddFavorite();

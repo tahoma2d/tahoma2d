@@ -2004,6 +2004,13 @@ void StyleChooserPage::computeSize() {
 
 //-----------------------------------------------------------------------------
 
+void StyleChooserPage::onTogglePage(bool toggled) {
+  if (toggled) computeSize();
+  setVisible(toggled);
+}
+
+//-----------------------------------------------------------------------------
+
 void StyleChooserPage::onRemoveFavorite() {
   if (!isFavorite() || m_currentIndex <= 0) return;
 
@@ -2719,8 +2726,9 @@ void TextureStyleChooserPage::onSelect(int index) {
 
     if (m_currentIndex < 0) return;
 
-    TTextureStyle style(texture.m_raster,
-                        m_stylesFolder + TFilePath(texture.m_textureName));
+    TTextureStyle style(
+        texture.m_raster,
+        m_stylesFolder + TFilePath(texture.m_path.getLevelName()));
     emit styleSelected(style);
   }
 }
@@ -2734,8 +2742,9 @@ void TextureStyleChooserPage::addSelectedStyles(std::vector<int> selection) {
     TextureStyleManager::TextureData texture =
         m_styleManager->getTexture(selection[i] - 1);
 
-    TTextureStyle style(texture.m_raster,
-                        m_stylesFolder + TFilePath(texture.m_textureName));
+    TTextureStyle style(
+        texture.m_raster,
+        m_stylesFolder + TFilePath(texture.m_path.getLevelName()));
     m_editor->addToPalette(style);
   }
 }
@@ -2781,7 +2790,6 @@ void TextureStyleChooserPage::removeSelectedFavorites(
     TFilePathSet fileList;
     TextureStyleManager::TextureData texture =
         m_styleManager->getTexture(selection[i] - 1);
-    std::string name = texture.m_textureName;
     if (texture.m_path == TFilePath()) continue;
     fileList.push_back(texture.m_path);
 
@@ -2801,7 +2809,6 @@ void TextureStyleChooserPage::addSelectedFavorites(std::vector<int> selection) {
     TFilePathSet fileList;
     TextureStyleManager::TextureData texture =
         m_styleManager->getTexture(selection[i] - 1);
-    std::string name = texture.m_textureName;
     if (texture.m_path == TFilePath()) continue;
     fileList.push_back(texture.m_path);
 
@@ -3839,7 +3846,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
                          SLOT(onUpdateFavorites()));
 
     ret = ret &&
-          connect(*itB, SIGNAL(toggled(bool)), *itP, SLOT(setVisible(bool)));
+          connect(*itB, SIGNAL(toggled(bool)), *itP, SLOT(onTogglePage(bool)));
   }
   itP = m_vectorPages.begin();
   itB = m_vectorButtons.begin();
@@ -3854,7 +3861,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
                          SLOT(onUpdateFavorites()));
 
     ret = ret &&
-          connect(*itB, SIGNAL(toggled(bool)), *itP, SLOT(setVisible(bool)));
+          connect(*itB, SIGNAL(toggled(bool)), *itP, SLOT(onTogglePage(bool)));
   }
   itP = m_rasterPages.begin();
   itB = m_rasterButtons.begin();
@@ -3869,7 +3876,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
                          SLOT(onUpdateFavorites()));
 
     ret = ret &&
-          connect(*itB, SIGNAL(toggled(bool)), *itP, SLOT(setVisible(bool)));
+          connect(*itB, SIGNAL(toggled(bool)), *itP, SLOT(onTogglePage(bool)));
   }
   ret = ret && connect(m_settingsPage, SIGNAL(paramStyleChanged(bool)), this,
                        SLOT(onParamStyleChanged(bool)));
@@ -4979,6 +4986,7 @@ void StyleEditor::onHideMenu() {
 //-----------------------------------------------------------------------------
 
 void StyleEditor::onPageChanged(int index) {
+  onUpdateFavorites();
   m_styleSetsButton->setDisabled(false);
   switch (index) {
   case 1:  // Texture
@@ -5624,49 +5632,58 @@ void StyleEditor::onUpdateFavorites() {
         dynamic_cast<TextureStyleChooserPage *>(m_texturePages[0]);
     int chipSize = page->getChipCount();
     if (chipSize > 2) {
-      page->setHidden(false);
+      m_textureButtons[0]->setDisabled(false);
+      m_textureMenu->actions()[0]->setVisible(true);
+      if (!m_textureMenu->actions()[0]->isChecked()) return;
       m_textureLabels[0]->setHidden(false);
       m_textureButtons[0]->setHidden(false);
-      m_textureButtons[0]->setDisabled(false);
+      if (m_textureButtons[0]->isChecked()) page->setHidden(false);
     } else {
-      page->setHidden(true);
+      m_textureButtons[0]->setDisabled(true);
+      m_textureMenu->actions()[0]->setVisible(false);
+      if (!m_textureMenu->actions()[0]->isChecked()) return;
       m_textureLabels[0]->setHidden(true);
       m_textureButtons[0]->setHidden(true);
-      m_textureButtons[0]->setDisabled(true);
+      page->setHidden(true);
     }
-    m_textureMenu->actions()[0]->setVisible(!m_textureButtons[0]->isHidden());
   } else if (tab == 2) {  // Vector tab
     CustomStyleChooserPage *page =
         dynamic_cast<CustomStyleChooserPage *>(m_vectorPages[0]);
     int chipSize = page->getChipCount();
     if (chipSize > 1 || page->isLoading()) {
-      page->setHidden(false);
+      m_vectorButtons[0]->setDisabled(false);
+      m_vectorMenu->actions()[0]->setVisible(true);
+      if (!m_vectorMenu->actions()[0]->isChecked()) return;
       m_vectorLabels[0]->setHidden(false);
       m_vectorButtons[0]->setHidden(false);
-      m_vectorButtons[0]->setDisabled(false);
+      if (m_vectorButtons[0]->isChecked()) page->setHidden(false);
     } else {
-      page->setHidden(true);
+      m_vectorButtons[0]->setDisabled(true);
+      m_vectorMenu->actions()[0]->setVisible(false);
+      if (!m_vectorMenu->actions()[0]->isChecked()) return;
       m_vectorLabels[0]->setHidden(true);
       m_vectorButtons[0]->setHidden(true);
-      m_vectorButtons[0]->setDisabled(true);
+      page->setHidden(true);
     }
-    m_vectorMenu->actions()[0]->setVisible(!m_vectorButtons[0]->isHidden());
   } else if (tab == 3) {  // Raster tab
     MyPaintBrushStyleChooserPage *page =
         dynamic_cast<MyPaintBrushStyleChooserPage *>(m_rasterPages[0]);
     int chipSize = page->getChipCount();
     if (chipSize > 1) {
-      page->setHidden(false);
+      m_rasterButtons[0]->setDisabled(false);
+      m_rasterMenu->actions()[0]->setVisible(true);
+      if (!m_rasterMenu->actions()[0]->isChecked()) return;
       m_rasterLabels[0]->setHidden(false);
       m_rasterButtons[0]->setHidden(false);
-      m_rasterButtons[0]->setDisabled(false);
+      if (m_rasterButtons[0]->isChecked()) page->setHidden(false);
     } else {
-      page->setHidden(true);
+      m_rasterButtons[0]->setDisabled(true);
+      m_rasterMenu->actions()[0]->setVisible(false);
+      if (!m_rasterMenu->actions()[0]->isChecked()) return;
       m_rasterLabels[0]->setHidden(true);
       m_rasterButtons[0]->setHidden(true);
-      m_rasterButtons[0]->setDisabled(true);
+      page->setHidden(true);
     }
-    m_rasterMenu->actions()[0]->setVisible(!m_rasterButtons[0]->isHidden());
   }
   update();
 }
