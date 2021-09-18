@@ -787,6 +787,9 @@ public:
 
   void addToPalette(const TColorStyle &style);
 
+  QStringList savePageStates(StylePageType pageType) const;
+  void loadPageStates(StylePageType pageType, QStringList pageStateData);
+
 protected:
   /*! Return false if style is linked and style must be set to null.*/
   bool setStyle(TColorStyle *currentStyle);

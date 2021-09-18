@@ -5009,6 +5009,90 @@ void StyleEditor::onHexChanged() {
 }
 
 //-----------------------------------------------------------------------------
+QStringList StyleEditor::savePageStates(StylePageType pageType) const {
+  QStringList pageStateData;
+  QString pageData;
+
+  if (pageType == StylePageType::Texture) {
+    for (int i = 0; i < m_texturePages.size(); i++) {
+      QString label = m_textureLabels[i]->text();
+      QString hidden =
+          m_textureMenu->actions()[i]->isChecked() ? "false" : "true";
+      QString collapsed = m_textureButtons[i]->isChecked() ? "false" : "true";
+      if (hidden == "false" && collapsed == "false")
+        continue;  // Default state, don't save
+      pageData = label + ":" + hidden + ":" + collapsed;
+      pageStateData.push_back(pageData);
+    }
+  } else if (pageType == StylePageType::VectorCustom) {
+    for (int i = 0; i < m_vectorPages.size(); i++) {
+      QString label = m_vectorLabels[i]->text();
+      QString hidden =
+          m_vectorMenu->actions()[i]->isChecked() ? "false" : "true";
+      QString collapsed = m_vectorButtons[i]->isChecked() ? "false" : "true";
+      if (hidden == "false" && collapsed == "false")
+        continue;  // Default state, don't save
+      pageData = label + ":" + hidden + ":" + collapsed;
+      pageStateData.push_back(pageData);
+    }
+  } else if (pageType == StylePageType::Raster) {
+    for (int i = 0; i < m_rasterPages.size(); i++) {
+      QString label = m_rasterLabels[i]->text();
+      QString hidden =
+          m_rasterMenu->actions()[i]->isChecked() ? "false" : "true";
+      QString collapsed = m_rasterButtons[i]->isChecked() ? "false" : "true";
+      if (hidden == "false" && collapsed == "false")
+        continue;  // Default state, don't save
+      pageData = label + ":" + hidden + ":" + collapsed;
+      pageStateData.push_back(pageData);
+    }
+  }
+
+  return pageStateData;
+}
+
+void StyleEditor::loadPageStates(StylePageType pageType,
+                                 QStringList pageStateData) {
+  for (int i = 0; i < pageStateData.size(); i++) {
+    QStringList pageInfo(pageStateData[i].split(":"));
+    if (pageInfo.size() != 3) continue;
+
+    if (pageType == StylePageType::Texture) {
+      for (int b = 0; b < m_textureButtons.size(); b++) {
+        if (m_textureLabels[b]->text() != pageInfo[0]) continue;
+        QPushButton *button = m_textureButtons[b];
+        QAction *action     = m_textureMenu->actions()[b];
+        if (pageInfo[2] == "true")
+          button->setChecked(false);  // page collapsed -> checked is false
+        if (pageInfo[1] == "true")
+          action->setChecked(false);  // page hidden -> checked is false
+        break;
+      }
+    } else if (pageType == StylePageType::VectorCustom) {
+      for (int b = 0; b < m_vectorButtons.size(); b++) {
+        if (m_vectorLabels[b]->text() != pageInfo[0]) continue;
+        QPushButton *button = m_vectorButtons[b];
+        QAction *action     = m_vectorMenu->actions()[b];
+        if (pageInfo[2] == "true")
+          button->setChecked(false);  // page collapsed -> checked is false
+        if (pageInfo[1] == "true")
+          action->setChecked(false);  // page hidden -> checked is false
+        break;
+      }
+    } else if (pageType == StylePageType::Raster) {
+      for (int b = 0; b < m_rasterButtons.size(); b++) {
+        if (m_rasterLabels[b]->text() != pageInfo[0]) continue;
+        QPushButton *button = m_rasterButtons[b];
+        QAction *action     = m_rasterMenu->actions()[b];
+        if (pageInfo[2] == "true")
+          button->setChecked(false);  // page collapsed -> checked is false
+        if (pageInfo[1] == "true")
+          action->setChecked(false);  // page hidden -> checked is false
+        break;
+      }
+    }
+  }
+}
 
 void StyleEditor::save(QSettings &settings) const {
   settings.setValue("isVertical", m_plainColorPage->getIsVertical());
@@ -5019,6 +5103,11 @@ void StyleEditor::save(QSettings &settings) const {
   if (m_rgbAction->isChecked()) visibleParts |= 0x08;
   settings.setValue("visibleParts", visibleParts);
   settings.setValue("splitterState", m_plainColorPage->getSplitterState());
+  settings.setValue("texturePageStates",
+                    savePageStates(StylePageType::Texture));
+  settings.setValue("vectorPageStates",
+                    savePageStates(StylePageType::VectorCustom));
+  settings.setValue("rasterPageStates", savePageStates(StylePageType::Raster));
 }
 void StyleEditor::load(QSettings &settings) {
   QVariant isVertical = settings.value("isVertical");
@@ -5050,6 +5139,19 @@ void StyleEditor::load(QSettings &settings) {
   QVariant splitterState = settings.value("splitterState");
   if (splitterState.canConvert(QVariant::ByteArray))
     m_plainColorPage->setSplitterState(splitterState.toByteArray());
+
+  QVariant texturePageStates = settings.value("texturePageStates");
+  if (texturePageStates.canConvert(QVariant::StringList))
+    loadPageStates(StylePageType::Texture, texturePageStates.toStringList());
+
+  QVariant vectorPageStates = settings.value("vectorPageStates");
+  if (vectorPageStates.canConvert(QVariant::StringList))
+    loadPageStates(StylePageType::VectorCustom,
+                   vectorPageStates.toStringList());
+
+  QVariant rasterPageStates = settings.value("rasterPageStates");
+  if (rasterPageStates.canConvert(QVariant::StringList))
+    loadPageStates(StylePageType::Raster, rasterPageStates.toStringList());
 }
 
 //-----------------------------------------------------------------------------
