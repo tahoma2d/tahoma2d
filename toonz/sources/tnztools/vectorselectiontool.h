@@ -150,7 +150,7 @@ public:
   VectorDeformTool(VectorSelectionTool *tool);
   ~VectorDeformTool();
 
-  void applyTransform(FourPoints bbox) override;
+  void applyTransform(FourPoints bbox, bool onFastDragging = false) override;
   void addTransformUndo() override;
 
   /*! Transform whole level and add undo. */
@@ -225,8 +225,8 @@ class VectorScaleTool final : public VectorDeformTool {
 public:
   VectorScaleTool(VectorSelectionTool *tool, ScaleType type);
 
-  TPointD transform(int index,
-                    TPointD newPos) override;  //!< Returns scale value.
+  TPointD transform(int index, TPointD newPos, bool onFastDragging = false)
+      override;  //!< Returns scale value.
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &e) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override;

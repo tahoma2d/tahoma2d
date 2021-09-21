@@ -437,6 +437,15 @@ void Preferences::definePreferenceItems() {
   define(colorCalibrationLutPaths, "colorCalibrationLutPaths",
          QMetaType::QVariantMap, QVariantMap());
 
+  // hide menu icons by default in macOS since the icon color may not match with
+  // the system color theme
+//#ifdef Q_OS_MACOS
+  bool defIconsVisible = false;
+//#else
+//  bool defIconsVisible = true;
+//#endif
+  define(showIconsInMenu, "showIconsInMenu", QMetaType::Bool, defIconsVisible);
+
   setCallBack(pixelsOnly, &Preferences::setPixelsOnly);
   setCallBack(linearUnits, &Preferences::setUnits);
   setCallBack(cameraUnits, &Preferences::setCameraUnits);

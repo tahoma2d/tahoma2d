@@ -116,7 +116,8 @@ QPixmap DVAPI recolorPixmap(
     QPixmap pixmap, QColor color = Preferences::instance()->getIconTheme()
                                        ? Qt::black
                                        : Qt::white);
-QIcon DVAPI createQIcon(const char *iconSVGName, bool useFullOpacity = false);
+QIcon DVAPI createQIcon(const char *iconSVGName, bool useFullOpacity = false,
+                        bool isForMenuItem = false);
 QIcon DVAPI createQIconPNG(const char *iconPNGName);
 QIcon DVAPI createQIconOnOffPNG(const char *iconPNGName, bool withOver = true);
 QIcon DVAPI createTemporaryIconFromName(const char *commandName);

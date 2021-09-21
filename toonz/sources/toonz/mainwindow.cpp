@@ -1413,6 +1413,12 @@ QAction *MainWindow::createAction(const char *id, const char *name,
                                   QString newStatusTip, CommandType type,
                                   const char *iconSVGName) {
   QAction *action = new DVAction(tr(name), this);
+
+#if !defined(_WIN32)
+  bool visible = false; //Preferences::instance()->getBoolValue(showIconsInMenu);
+  action->setIconVisibleInMenu(visible);
+#endif
+
   // In Qt5.15.2 - Windows, QMenu stylesheet has alignment issue when one item
   // has icon and another has not one. (See
   // https://bugreports.qt.io/browse/QTBUG-90242 for details.) To avoid the
@@ -1428,8 +1434,7 @@ QAction *MainWindow::createAction(const char *id, const char *name,
 #endif
     // do nothing for other platforms
   } else
-    action->setIcon(createQIcon(iconSVGName));
-  action->setIconVisibleInMenu(false);
+    action->setIcon(createQIcon(iconSVGName, false, true));
   addAction(action);
 #ifdef MACOSX
   // To prevent the wrong menu items (due to MacOS menu naming conventions),
@@ -1673,6 +1678,12 @@ QAction *MainWindow::createToggle(const char *id, const char *name,
                                  iconSVGName);
   // Remove if the icon is not set. Checkbox will be drawn by style sheet.
   if (!iconSVGName || !*iconSVGName) action->setIcon(QIcon());
+#if defined(_WIN32)
+  else {
+    bool visible = false; //Preferences::instance()->getBoolValue(showIconsInMenu);
+    action->setIconVisibleInMenu(visible);
+  }
+#endif
   action->setCheckable(true);
   if (startStatus == true) action->trigger();
   bool ret =
@@ -2978,7 +2989,7 @@ void MainWindow::defineActions() {
   menuAct =
       createMiscAction(MI_RefreshTree, QT_TR_NOOP("Refresh Folder Tree"), "");
   menuAct->setIconText(tr("Refresh"));
-  menuAct->setIcon(createQIcon("refresh"));
+  menuAct->setIcon(createQIcon("refresh", false, true));
   createMiscAction("A_FxSchematicToggle",
                    QT_TR_NOOP("Toggle FX/Stage schematic"), "");
   // createAction(MI_SavePreview, QT_TR_NOOP("&Save Preview"), "");
