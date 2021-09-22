@@ -217,4 +217,9 @@ protected:
 
 QString DVAPI operator+(const QString &a, const TFilePath &fp);
 
+//-----------------------------------------------------------------------------
+// This is used to translate Windows keys to macOS keys
+//
+QString DVAPI trModKey(QString key);
+
 #endif  // GUTIL_H

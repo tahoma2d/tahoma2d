@@ -918,6 +918,7 @@ StyleEditorPanel::StyleEditorPanel(QWidget *parent) : TPanel(parent) {
       new StyleEditor(TApp::instance()->getPaletteController(), this);
   setWidget(m_styleEditor);
 
+  m_styleEditor->setApplication(TApp::instance());
   m_styleEditor->setLevelHandle(TApp::instance()->getCurrentLevel());
   setMinimumWidth(200);
   resize(340, 630);

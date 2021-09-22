@@ -608,3 +608,90 @@ void TStyleManager::signalLoadsFinished() {
     if (cm->hasLoadedItems()) cm->signalLoadDone();
   }
 }
+
+//---------------------------------------------------------
+
+TFilePathSet TStyleManager::getCustomStyleFolders() {
+  TFilePathSet fps;
+
+  std::vector<CustomStyleManager *>::iterator it;
+  for (it = m_customStyleManagers.begin(); it != m_customStyleManagers.end();
+       it++) {
+    CustomStyleManager *cm = *it;
+    fps.push_back(cm->stylesFolder());
+  }
+
+  return fps;
+}
+
+//---------------------------------------------------------
+
+TFilePathSet TStyleManager::getTextureStyleFolders() {
+  TFilePathSet fps;
+
+  std::vector<TextureStyleManager *>::iterator it;
+  for (it = m_textureStyleManagers.begin(); it != m_textureStyleManagers.end();
+       it++) {
+    TextureStyleManager *tm = *it;
+    fps.push_back(tm->stylesFolder());
+  }
+
+  return fps;
+}
+
+//---------------------------------------------------------
+
+TFilePathSet TStyleManager::getBrushStyleFolders() {
+  TFilePathSet fps;
+
+  std::vector<BrushStyleManager *>::iterator it;
+  for (it = m_brushStyleManagers.begin(); it != m_brushStyleManagers.end();
+       it++) {
+    BrushStyleManager *rm = *it;
+    fps.push_back(rm->stylesFolder());
+  }
+
+  return fps;
+}
+
+//---------------------------------------------------------
+
+void TStyleManager::removeCustomStyleFolder(TFilePath styleFolder) {
+  std::vector<std::pair<TFilePath, QString>>::iterator it;
+  int i = 0;
+  for (int i = 0; i < m_customStyleFolders.size(); i++) {
+    std::pair<TFilePath, QString> fpInfo = m_customStyleFolders[i];
+    if (fpInfo.first != styleFolder) continue;
+    m_customStyleFolders.erase(m_customStyleFolders.begin() + i);
+    m_customStyleManagers.erase(m_customStyleManagers.begin() + i);
+    break;
+  }
+}
+
+//---------------------------------------------------------
+
+void TStyleManager::removeTextureStyleFolder(TFilePath styleFolder) {
+  std::vector<std::pair<TFilePath, QString>>::iterator it;
+  int i = 0;
+  for (int i = 0; i < m_textureStyleFolders.size(); i++) {
+    std::pair<TFilePath, QString> fpInfo = m_textureStyleFolders[i];
+    if (fpInfo.first != styleFolder) continue;
+    m_textureStyleFolders.erase(m_textureStyleFolders.begin() + i);
+    m_textureStyleManagers.erase(m_textureStyleManagers.begin() + i);
+    break;
+  }
+}
+
+//---------------------------------------------------------
+
+void TStyleManager::removeBrushStyleFolder(TFilePath styleFolder) {
+  std::vector<std::pair<TFilePath, QString>>::iterator it;
+  int i = 0;
+  for (int i = 0; i < m_brushStyleFolders.size(); i++) {
+    std::pair<TFilePath, QString> fpInfo = m_brushStyleFolders[i];
+    if (fpInfo.first != styleFolder) continue;
+    m_brushStyleFolders.erase(m_brushStyleFolders.begin() + i);
+    m_brushStyleManagers.erase(m_brushStyleManagers.begin() + i);
+    break;
+  }
+}

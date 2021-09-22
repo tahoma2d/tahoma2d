@@ -53,6 +53,7 @@ public:
   virtual void setCurrentLevelStyleIndex(int index,
                                          bool forceUpdate = false) = 0;
   virtual void refreshStatusBar()                                  = 0;
+  virtual void showMessage(QString message, int duration = 2000) = 0;
 };
 
 #endif  // TAPPLICATION_H

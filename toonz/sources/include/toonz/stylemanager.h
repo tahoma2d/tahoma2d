@@ -218,6 +218,14 @@ public:
                                           QString filters = QString("*"),
                                           QSize chipSize  = QSize(30, 30));
 
+  TFilePathSet getCustomStyleFolders();
+  TFilePathSet getTextureStyleFolders();
+  TFilePathSet getBrushStyleFolders();
+
+  void removeCustomStyleFolder(TFilePath styleFolder);
+  void removeTextureStyleFolder(TFilePath styleFolder);
+  void removeBrushStyleFolder(TFilePath styleFolder);
+
   bool isLoading();
   void signalLoadsFinished();
 };

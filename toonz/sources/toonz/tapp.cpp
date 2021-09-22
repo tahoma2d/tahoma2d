@@ -876,8 +876,8 @@ void TApp::setStatusBarFrameInfo(QString text) {
 
 //-----------------------------------------------------------------------------
 
-void TApp::showMessage(QString message) {
-  if (m_statusBar) m_statusBar->showMessage(message, 2000);
+void TApp::showMessage(QString message, int duration) {
+  if (m_statusBar) m_statusBar->showMessage(message, duration);
 }
 
 //-----------------------------------------------------------------------------
