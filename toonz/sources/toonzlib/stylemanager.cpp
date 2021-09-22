@@ -394,7 +394,8 @@ void TextureStyleManager::loadItems() {
     texturesUpdated = true;
   }
 
-  loadTexture(TFilePath());  // custom texture
+  TFilePath *empty = new TFilePath();
+  loadTexture(*empty);  // custom texture
 
   if (texturesUpdated) emit itemsUpdated();
 }
