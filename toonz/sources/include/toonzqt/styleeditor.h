@@ -954,9 +954,9 @@ protected slots:
   void onHideMenu();
   void onPageChanged(int index);
 
-  void onToggleTextureSet(bool checked);
-  void onToggleVectorSet(bool checked);
-  void onToggleRasterSet(bool checked);
+  void onToggleTextureSet(int checkedState);
+  void onToggleVectorSet(int checkedState);
+  void onToggleRasterSet(int checkedState);
 
   void onShowAllTextureSet();
   void onShowAllVectorSet();

@@ -5479,9 +5479,9 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
     button->setChecked(true);
     button->setFocusPolicy(Qt::NoFocus);
 
-    QAction *menuAction = new QAction(label->text(), this);
-    menuAction->setCheckable(true);
-    menuAction->setChecked(true);
+    QCheckBox *checkBox = new QCheckBox(label->text(), this);
+    checkBox->setChecked(true);
+    checkBox->setCheckable(true);
 
     switch (pageType) {
     case StylePageType::Texture: {
@@ -5512,13 +5512,15 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       label->setContextMenuPolicy(Qt::CustomContextMenu);
       connect(label, SIGNAL(customContextMenuRequested(const QPoint &)),
               newPage, SLOT(onLabelContextMenu(const QPoint &)));
+      connect(checkBox, SIGNAL(stateChanged(int)), this,
+              SLOT(onToggleTextureSet(int)));
+
+      QWidgetAction *menuAction = new QWidgetAction(m_textureMenu);
+      menuAction->setDefaultWidget(checkBox);
 
       // Favorites should be 1st
       if (label->text() == "My Favorites")
         menuAction->setVisible(!m_textureButtons[0]->isHidden());
-
-      connect(menuAction, SIGNAL(toggled(bool)), this,
-              SLOT(onToggleTextureSet(bool)));
 
       m_textureMenu->insertAction(
           m_textureMenu->actions()[m_texturePages.size() - 1], menuAction);
@@ -5544,13 +5546,15 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       label->setContextMenuPolicy(Qt::CustomContextMenu);
       connect(label, SIGNAL(customContextMenuRequested(const QPoint &)),
               newPage, SLOT(onLabelContextMenu(const QPoint &)));
+      connect(checkBox, SIGNAL(stateChanged(int)), this,
+              SLOT(onToggleVectorSet(int)));
+
+      QWidgetAction *menuAction = new QWidgetAction(m_vectorMenu);
+      menuAction->setDefaultWidget(checkBox);
 
       // Favorites should be 1st
       if (label->text() == "My Favorites")
         menuAction->setVisible(!m_vectorButtons[0]->isHidden());
-
-      connect(menuAction, SIGNAL(toggled(bool)), this,
-              SLOT(onToggleVectorSet(bool)));
 
       m_vectorMenu->insertAction(
           m_vectorMenu->actions()[m_vectorPages.size() - 1], menuAction);
@@ -5584,13 +5588,15 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       label->setContextMenuPolicy(Qt::CustomContextMenu);
       connect(label, SIGNAL(customContextMenuRequested(const QPoint &)),
               newPage, SLOT(onLabelContextMenu(const QPoint &)));
+      connect(checkBox, SIGNAL(stateChanged(int)), this,
+              SLOT(onToggleVectorSet(int)));
+
+      QWidgetAction *menuAction = new QWidgetAction(m_vectorMenu);
+      menuAction->setDefaultWidget(checkBox);
 
       // Favorites should be 1st
       if (label->text() == "My Favorites")
         menuAction->setVisible(!m_vectorButtons[0]->isHidden());
-
-      connect(menuAction, SIGNAL(toggled(bool)), this,
-              SLOT(onToggleVectorSet(bool)));
 
       m_vectorMenu->insertAction(
           m_vectorMenu->actions()[m_vectorPages.size() - 1], menuAction);
@@ -5624,13 +5630,15 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       label->setContextMenuPolicy(Qt::CustomContextMenu);
       connect(label, SIGNAL(customContextMenuRequested(const QPoint &)),
               newPage, SLOT(onLabelContextMenu(const QPoint &)));
+      connect(checkBox, SIGNAL(stateChanged(int)), this,
+              SLOT(onToggleVectorSet(int)));
+
+      QWidgetAction *menuAction = new QWidgetAction(m_vectorMenu);
+      menuAction->setDefaultWidget(checkBox);
 
       // Favorites should be 1st
       if (label->text() == "My Favorites")
         menuAction->setVisible(!m_vectorButtons[0]->isHidden());
-
-      connect(menuAction, SIGNAL(toggled(bool)), this,
-              SLOT(onToggleVectorSet(bool)));
 
       m_vectorMenu->insertAction(
           m_vectorMenu->actions()[m_vectorPages.size() - 1], menuAction);
@@ -5664,13 +5672,15 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       label->setContextMenuPolicy(Qt::CustomContextMenu);
       connect(label, SIGNAL(customContextMenuRequested(const QPoint &)),
               newPage, SLOT(onLabelContextMenu(const QPoint &)));
+      connect(checkBox, SIGNAL(stateChanged(int)), this,
+              SLOT(onToggleRasterSet(int)));
+
+      QWidgetAction *menuAction = new QWidgetAction(m_rasterMenu);
+      menuAction->setDefaultWidget(checkBox);
 
       // Favorites should be 1st
       if (label->text() == "My Favorites")
-        menuAction->setVisible(!m_vectorButtons[0]->isHidden());
-
-      connect(menuAction, SIGNAL(toggled(bool)), this,
-              SLOT(onToggleRasterSet(bool)));
+        menuAction->setVisible(!m_rasterButtons[0]->isHidden());
 
       m_rasterMenu->insertAction(
           m_rasterMenu->actions()[m_rasterPages.size() - 1], menuAction);
@@ -5700,61 +5710,89 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
 //-----------------------------------------------------------------------------
 
 void StyleEditor::initializeStyleMenus() {
-  QAction *action;
-  std::vector<ClickableLabel *>::iterator it;
+  QPushButton *button;
+  QWidgetAction *menuAction;
 
   m_textureMenu = new QMenu(this);
   m_textureMenu->addSeparator();
-  action = new QAction(tr("Show All"), this);
-  connect(action, SIGNAL(triggered()), this, SLOT(onShowAllTextureSet()));
-  m_textureMenu->addAction(action);
-  action = new QAction(tr("Hide All"), this);
-  connect(action, SIGNAL(triggered()), this, SLOT(onHideAllTextureSet()));
-  m_textureMenu->addAction(action);
-  action = new QAction(tr("Collapse All"), this);
-  connect(action, SIGNAL(triggered()), this, SLOT(onCollapseAllTextureSet()));
-  m_textureMenu->addAction(action);
-  action = new QAction(tr("Expand All"), this);
-  connect(action, SIGNAL(triggered()), this, SLOT(onExpandAllTextureSet()));
-  m_textureMenu->addAction(action);
+  button = new QPushButton(tr("Show All"), this);
+  connect(button, SIGNAL(clicked()), this, SLOT(onShowAllTextureSet()));
+  menuAction = new QWidgetAction(m_textureMenu);
+  menuAction->setDefaultWidget(button);
+  m_textureMenu->addAction(menuAction);
+  button = new QPushButton(tr("Hide All"), this);
+  connect(button, SIGNAL(clicked()), this, SLOT(onHideAllTextureSet()));
+  menuAction = new QWidgetAction(m_textureMenu);
+  menuAction->setDefaultWidget(button);
+  m_textureMenu->addAction(menuAction);
+  button = new QPushButton(tr("Collapse All"), this);
+  connect(button, SIGNAL(clicked()), this, SLOT(onCollapseAllTextureSet()));
+  menuAction = new QWidgetAction(m_textureMenu);
+  menuAction->setDefaultWidget(button);
+  m_textureMenu->addAction(menuAction);
+  button = new QPushButton(tr("Expand All"), this);
+  connect(button, SIGNAL(clicked()), this, SLOT(onExpandAllTextureSet()));
+  menuAction = new QWidgetAction(m_textureMenu);
+  menuAction->setDefaultWidget(button);
+  m_textureMenu->addAction(menuAction);
 
   m_vectorMenu = new QMenu(this);
   m_vectorMenu->addSeparator();
-  action = new QAction(tr("Show All"), this);
-  connect(action, SIGNAL(triggered()), this, SLOT(onShowAllVectorSet()));
-  m_vectorMenu->addAction(action);
-  action = new QAction(tr("Hide All"), this);
-  connect(action, SIGNAL(triggered()), this, SLOT(onHideAllVectorSet()));
-  m_vectorMenu->addAction(action);
-  action = new QAction(tr("Collapse All"), this);
-  connect(action, SIGNAL(triggered()), this, SLOT(onCollapseAllVectorSet()));
-  m_vectorMenu->addAction(action);
-  action = new QAction(tr("Expand All"), this);
-  connect(action, SIGNAL(triggered()), this, SLOT(onExpandAllVectorSet()));
-  m_vectorMenu->addAction(action);
+  button = new QPushButton(tr("Show All"), this);
+  connect(button, SIGNAL(clicked()), this, SLOT(onShowAllVectorSet()));
+  menuAction = new QWidgetAction(m_vectorMenu);
+  menuAction->setDefaultWidget(button);
+  m_vectorMenu->addAction(menuAction);
+  button = new QPushButton(tr("Hide All"), this);
+  connect(button, SIGNAL(clicked()), this, SLOT(onHideAllVectorSet()));
+  menuAction = new QWidgetAction(m_vectorMenu);
+  menuAction->setDefaultWidget(button);
+  m_vectorMenu->addAction(menuAction);
+  button = new QPushButton(tr("Collapse All"), this);
+  connect(button, SIGNAL(clicked()), this, SLOT(onCollapseAllVectorSet()));
+  menuAction = new QWidgetAction(m_vectorMenu);
+  menuAction->setDefaultWidget(button);
+  m_vectorMenu->addAction(menuAction);
+  button = new QPushButton(tr("Expand All"), this);
+  connect(button, SIGNAL(clicked()), this, SLOT(onExpandAllVectorSet()));
+  menuAction = new QWidgetAction(m_vectorMenu);
+  menuAction->setDefaultWidget(button);
+  m_vectorMenu->addAction(menuAction);
 
   m_rasterMenu = new QMenu(this);
   m_rasterMenu->addSeparator();
-  action = new QAction(tr("Show All"), this);
-  connect(action, SIGNAL(triggered()), this, SLOT(onShowAllRasterSet()));
-  m_rasterMenu->addAction(action);
-  action = new QAction(tr("Hide All"), this);
-  connect(action, SIGNAL(triggered()), this, SLOT(onHideAllRasterSet()));
-  m_rasterMenu->addAction(action);
-  action = new QAction(tr("Collapse All"), this);
-  connect(action, SIGNAL(triggered()), this, SLOT(onCollapseAllRasterSet()));
-  m_rasterMenu->addAction(action);
-  action = new QAction(tr("Expand All"), this);
-  connect(action, SIGNAL(triggered()), this, SLOT(onExpandAllRasterSet()));
-  m_rasterMenu->addAction(action);
+  button = new QPushButton(tr("Show All"), this);
+  connect(button, SIGNAL(clicked()), this, SLOT(onShowAllRasterSet()));
+  menuAction = new QWidgetAction(m_rasterMenu);
+  menuAction->setDefaultWidget(button);
+  m_rasterMenu->addAction(menuAction);
+  button = new QPushButton(tr("Hide All"), this);
+  connect(button, SIGNAL(clicked()), this, SLOT(onHideAllRasterSet()));
+  menuAction = new QWidgetAction(m_rasterMenu);
+  menuAction->setDefaultWidget(button);
+  m_rasterMenu->addAction(menuAction);
+  button = new QPushButton(tr("Collapse All"), this);
+  connect(button, SIGNAL(clicked()), this, SLOT(onCollapseAllRasterSet()));
+  menuAction = new QWidgetAction(m_rasterMenu);
+  menuAction->setDefaultWidget(button);
+  m_rasterMenu->addAction(menuAction);
+  button = new QPushButton(tr("Expand All"), this);
+  connect(button, SIGNAL(clicked()), this, SLOT(onExpandAllRasterSet()));
+  menuAction = new QWidgetAction(m_rasterMenu);
+  menuAction->setDefaultWidget(button);
+  m_rasterMenu->addAction(menuAction);
 }
 
 //-----------------------------------------------------------------------------
 
-void StyleEditor::onToggleTextureSet(bool checked) {
-  QAction *action = qobject_cast<QAction *>(sender());
+void StyleEditor::onToggleTextureSet(int checkedState) {
+  bool checked = checkedState == Qt::Checked;
 
-  int index = m_textureMenu->actions().indexOf(action);
+  QCheckBox *action = qobject_cast<QCheckBox *>(sender());
+  QString s         = action->text();
+  int index;
+  for (index = 0; index < m_texturePages.size(); index++)
+    if (m_texturePages[index]->getStyleSetName() == s) break;
   if (index >= m_texturePages.size()) return;
   m_textureButtons[index]->setVisible(checked);
   m_textureLabels[index]->setVisible(checked);
@@ -5764,10 +5802,14 @@ void StyleEditor::onToggleTextureSet(bool checked) {
 
 //-----------------------------------------------------------------------------
 
-void StyleEditor::onToggleVectorSet(bool checked) {
-  QAction *action = qobject_cast<QAction *>(sender());
+void StyleEditor::onToggleVectorSet(int checkedState) {
+  bool checked = checkedState == Qt::Checked;
 
-  int index = m_vectorMenu->actions().indexOf(action);
+  QCheckBox *action = qobject_cast<QCheckBox *>(sender());
+  QString s         = action->text();
+  int index;
+  for (index = 0; index < m_vectorPages.size(); index++)
+    if (m_vectorPages[index]->getStyleSetName() == s) break;
   if (index >= m_vectorPages.size()) return;
   m_vectorButtons[index]->setVisible(checked);
   m_vectorLabels[index]->setVisible(checked);
@@ -5777,10 +5819,14 @@ void StyleEditor::onToggleVectorSet(bool checked) {
 
 //-----------------------------------------------------------------------------
 
-void StyleEditor::onToggleRasterSet(bool checked) {
-  QAction *action = qobject_cast<QAction *>(sender());
+void StyleEditor::onToggleRasterSet(int checkedState) {
+  bool checked = checkedState == Qt::Checked;
 
-  int index = m_rasterMenu->actions().indexOf(action);
+  QCheckBox *action = qobject_cast<QCheckBox *>(sender());
+  QString s         = action->text();
+  int index;
+  for (index = 0; index < m_rasterPages.size(); index++)
+    if (m_rasterPages[index]->getStyleSetName() == s) break;
   if (index >= m_rasterPages.size()) return;
   m_rasterButtons[index]->setVisible(checked);
   m_rasterLabels[index]->setVisible(checked);
@@ -5798,8 +5844,11 @@ void StyleEditor::onShowAllTextureSet() {
   for (it = actions.begin(); it != actions.end(); it++) {
     index++;
     if (index > m_texturePages.size()) break;
-    QAction *action = *it;
-    if (action->isEnabled()) action->setChecked(true);
+    QWidgetAction *action = qobject_cast<QWidgetAction *>(*it);
+    if (action->isEnabled()) {
+      QCheckBox *checkBox = dynamic_cast<QCheckBox *>(action->defaultWidget());
+      checkBox->setChecked(true);
+    }
   }
 }
 
@@ -5813,8 +5862,11 @@ void StyleEditor::onShowAllVectorSet() {
   for (it = actions.begin(); it != actions.end(); it++) {
     index++;
     if (index > m_vectorPages.size()) break;
-    QAction *action = *it;
-    if (action->isEnabled()) action->setChecked(true);
+    QWidgetAction *action = qobject_cast<QWidgetAction *>(*it);
+    if (action->isEnabled()) {
+      QCheckBox *checkBox = dynamic_cast<QCheckBox *>(action->defaultWidget());
+      checkBox->setChecked(true);
+    }
   }
 }
 
@@ -5828,9 +5880,11 @@ void StyleEditor::onShowAllRasterSet() {
   for (it = actions.begin(); it != actions.end(); it++) {
     index++;
     if (index > m_rasterPages.size()) break;
-    QAction *action = *it;
-    action->setChecked(true);
-    if (action->isEnabled()) action->setChecked(true);
+    QWidgetAction *action = qobject_cast<QWidgetAction *>(*it);
+    if (action->isEnabled()) {
+      QCheckBox *checkBox = dynamic_cast<QCheckBox *>(action->defaultWidget());
+      checkBox->setChecked(true);
+    }
   }
 }
 
@@ -5844,8 +5898,11 @@ void StyleEditor::onHideAllTextureSet() {
   for (it = actions.begin(); it != actions.end(); it++) {
     index++;
     if (index > m_texturePages.size()) break;
-    QAction *action = *it;
-    if (action->isEnabled()) action->setChecked(false);
+    QWidgetAction *action = qobject_cast<QWidgetAction *>(*it);
+    if (action->isEnabled()) {
+      QCheckBox *checkBox = dynamic_cast<QCheckBox *>(action->defaultWidget());
+      checkBox->setChecked(false);
+    }
   }
 }
 
@@ -5859,8 +5916,11 @@ void StyleEditor::onHideAllVectorSet() {
   for (it = actions.begin(); it != actions.end(); it++) {
     index++;
     if (index > m_vectorPages.size()) break;
-    QAction *action = *it;
-    if (action->isEnabled()) action->setChecked(false);
+    QWidgetAction *action = qobject_cast<QWidgetAction *>(*it);
+    if (action->isEnabled()) {
+      QCheckBox *checkBox = dynamic_cast<QCheckBox *>(action->defaultWidget());
+      checkBox->setChecked(false);
+    }
   }
 }
 
@@ -5874,8 +5934,11 @@ void StyleEditor::onHideAllRasterSet() {
   for (it = actions.begin(); it != actions.end(); it++) {
     index++;
     if (index > m_rasterPages.size()) break;
-    QAction *action = *it;
-    if (action->isEnabled()) action->setChecked(false);
+    QWidgetAction *action = qobject_cast<QWidgetAction *>(*it);
+    if (action->isEnabled()) {
+      QCheckBox *checkBox = dynamic_cast<QCheckBox *>(action->defaultWidget());
+      checkBox->setChecked(false);
+    }
   }
 }
 
@@ -5998,15 +6061,19 @@ void StyleEditor::onUpdateFavorites() {
 
   if (chipSize >= minChipCount || page->isLoading()) {
     button->setDisabled(false);
-    menu->actions()[0]->setVisible(true);
-    if (!menu->actions()[0]->isChecked()) return;
+    QWidgetAction *action = qobject_cast<QWidgetAction *>(menu->actions()[0]);
+    action->setVisible(true);
+    QCheckBox *checkBox = dynamic_cast<QCheckBox *>(action->defaultWidget());
+    if (!checkBox->isChecked()) return;
     label->setHidden(false);
     button->setHidden(false);
     if (button->isChecked()) page->setHidden(false);
   } else {
     button->setDisabled(true);
-    menu->actions()[0]->setVisible(false);
-    if (!menu->actions()[0]->isChecked()) return;
+    QWidgetAction *action = qobject_cast<QWidgetAction *>(menu->actions()[0]);
+    action->setVisible(false);
+    QCheckBox *checkBox = dynamic_cast<QCheckBox *>(action->defaultWidget());
+    if (!checkBox->isChecked()) return;
     label->setHidden(true);
     button->setHidden(true);
     page->setHidden(true);
@@ -6312,7 +6379,7 @@ void StyleEditor::createNewStyleSet(StylePageType pageType, TFilePath pagePath,
     break;
   }
   case StylePageType::VectorCustom: {
-    filters = "*.pli *.tif *.png *.tga *.tiff *.sgi *.rgb *.gen";
+    filters   = "*.pli *.tif *.png *.tga *.tiff *.sgi *.rgb *.gen";
     pageIndex = 2;
     break;
   }
