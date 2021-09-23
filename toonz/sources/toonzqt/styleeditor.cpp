@@ -2468,7 +2468,8 @@ bool StyleChooserPage::copyFilesToStyleFolder(TFilePathSet srcFiles,
 
   if (!TFileStatus(destDir).doesExist()) try {
       TSystem::mkDir(destDir);
-    } catch (...) {
+    } catch (TSystemException se) {
+      DVGui::warning(QString::fromStdWString(se.getMessage()));
       return false;
     }
 
@@ -2577,7 +2578,7 @@ bool CustomStyleChooserPage::event(QEvent *e) {
   if (e->type() != QEvent::ToolTip) return StyleChooserPage::event(e);
 
   // see StyleChooserPage::paintEvent
-  QHelpEvent *he              = static_cast<QHelpEvent *>(e);
+  QHelpEvent *he = static_cast<QHelpEvent *>(e);
 
   int chipIdx   = posToIndex(he->pos());
   int chipCount = m_styleManager->getPatternCount();
@@ -2782,7 +2783,7 @@ bool VectorBrushStyleChooserPage::event(QEvent *e) {
   if (e->type() != QEvent::ToolTip) return StyleChooserPage::event(e);
 
   // see StyleChooserPage::paintEvent
-  QHelpEvent *he              = static_cast<QHelpEvent *>(e);
+  QHelpEvent *he = static_cast<QHelpEvent *>(e);
 
   int chipIdx = posToIndex(he->pos()), chipCount = getChipCount();
   if (chipIdx < 0 || chipIdx >= chipCount) return false;
@@ -3441,6 +3442,13 @@ void SpecialStyleChooserPage::addSelectedStylesToSet(std::vector<int> selection,
         setPath +
         TFilePath(cs->getDescription() + "-" + QString::fromStdString(name))
             .withType("gen");
+
+    try {
+      if (!TFileStatus(setPath).doesExist()) TSystem::mkDir(setPath);
+    } catch (TSystemException se) {
+      DVGui::warning(QString::fromStdWString(se.getMessage()));
+      return;
+    }
 
     try {
       TSystem::touchFile(genFile);
