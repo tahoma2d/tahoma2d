@@ -2024,12 +2024,14 @@ void StyleChooserPage::onTogglePage(bool toggled) {
 void StyleChooserPage::onRemoveStyleFromSet() {
   if (m_currentIndex <= 0) return;
 
-  int ret = DVGui::MsgBox(
-      QObject::tr("Removing a Style will permanently delete the style file. "
-                  "This cannot be undone!\nAre you sure?")
-          .arg(getStyleSetName()),
-      QObject::tr("Ok"), QObject::tr("Cancel"));
-  if (ret == 0 || ret == 2) return;
+  if (!isMyFavoriteSet()) {
+    int ret = DVGui::MsgBox(
+        QObject::tr("Removing a Style will permanently delete the style file. "
+                    "This cannot be undone!\nAre you sure?")
+            .arg(getStyleSetName()),
+        QObject::tr("Ok"), QObject::tr("Cancel"));
+    if (ret == 0 || ret == 2) return;
+  }
 
   m_selection.clear();
   m_selection.push_back(m_currentIndex);
@@ -2040,12 +2042,15 @@ void StyleChooserPage::onRemoveStyleFromSet() {
 //-----------------------------------------------------------------------------
 
 void StyleChooserPage::onEmptySet() {
-  int ret = DVGui::MsgBox(
-      QObject::tr("Emptying Set \"%1\" will permanently delete all style files "
-                  "for this set. This cannot be undone!\nAre you sure?")
-          .arg(getStyleSetName()),
-      QObject::tr("Ok"), QObject::tr("Cancel"));
-  if (ret == 0 || ret == 2) return;
+  if (!isMyFavoriteSet()) {
+    int ret = DVGui::MsgBox(
+        QObject::tr(
+            "Emptying Set \"%1\" will permanently delete all style files "
+            "for this set. This cannot be undone!\nAre you sure?")
+            .arg(getStyleSetName()),
+        QObject::tr("Ok"), QObject::tr("Cancel"));
+    if (ret == 0 || ret == 2) return;
+  }
 
   m_selection.clear();
   for (int index = 1; index < getChipCount(); index++)
@@ -2141,12 +2146,15 @@ void StyleChooserPage::onReloadStyleSet() { loadItems(); }
 //-----------------------------------------------------------------------------
 
 void StyleChooserPage::onRemoveStyleSet() {
-  int ret = DVGui::MsgBox(
-      QObject::tr("Removing Style Set \"%1\" will permanently delete all style "
-                  "files for this set. This cannot be undone!\nAre you sure?")
-          .arg(getStyleSetName()),
-      QObject::tr("Ok"), QObject::tr("Cancel"));
-  if (ret == 0 || ret == 2) return;
+  if (!isMyFavoriteSet()) {
+    int ret = DVGui::MsgBox(
+        QObject::tr(
+            "Removing Style Set \"%1\" will permanently delete all style "
+            "files for this set. This cannot be undone!\nAre you sure?")
+            .arg(getStyleSetName()),
+        QObject::tr("Ok"), QObject::tr("Cancel"));
+    if (ret == 0 || ret == 2) return;
+  }
 
   try {
     TSystem::rmDirTree(m_stylesFolder);
@@ -5454,13 +5462,16 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
   if (isFavorite || !fps.empty() ||
       pageType == StylePageType::VectorGenerated || dirDepth > 0) {
     // Set up style set page
-    bool isExternal = false;
+    bool isExternal      = false;
+    bool isMyFavoriteSet = false;
+
+    if (isFavorite && dirDepth == 0) isMyFavoriteSet = true;
+
     QString labelText =
         (pageType == StylePageType::VectorGenerated
              ? tr("Generated")
-             : (isFavorite && dirDepth == 0)
-                   ? tr("My Favorites")
-                   : styleFolder.withoutParentDir().getQString());
+             : (isMyFavoriteSet) ? tr("My Favorites")
+                                 : styleFolder.withoutParentDir().getQString());
     if (isFavorite && dirDepth > 0)
       labelText += tr(" (Favorites)");
     else if (!isFavorite && pageType == StylePageType::Raster &&
@@ -5492,6 +5503,7 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       if (!isFavorite || dirDepth > 0) newPage->setAllowFavorite(true);
       if (dirDepth == 0 || isExternal) newPage->setAllowPageDelete(false);
       newPage->setExternal(isExternal);
+      newPage->setMyFavoriteSet(isMyFavoriteSet);
       m_texturePages.push_back(newPage);
       m_textureLabels.push_back(label);
       m_textureButtons.push_back(button);
@@ -5519,7 +5531,7 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       menuAction->setDefaultWidget(checkBox);
 
       // Favorites should be 1st
-      if (label->text() == "My Favorites")
+      if (isMyFavoriteSet)
         menuAction->setVisible(!m_textureButtons[0]->isHidden());
 
       m_textureMenu->insertAction(
@@ -5533,6 +5545,7 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       newPage->setAllowFavorite(true);
       newPage->setAllowPageDelete(false);
       newPage->setExternal(false);
+      newPage->setMyFavoriteSet(isMyFavoriteSet);
       m_vectorPages.push_back(newPage);
       m_vectorLabels.push_back(label);
       m_vectorButtons.push_back(button);
@@ -5553,7 +5566,7 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       menuAction->setDefaultWidget(checkBox);
 
       // Favorites should be 1st
-      if (label->text() == "My Favorites")
+      if (isMyFavoriteSet)
         menuAction->setVisible(!m_vectorButtons[0]->isHidden());
 
       m_vectorMenu->insertAction(
@@ -5568,6 +5581,7 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       if (!isFavorite || dirDepth > 0) newPage->setAllowFavorite(true);
       if (dirDepth == 0 || isExternal) newPage->setAllowPageDelete(false);
       newPage->setExternal(isExternal);
+      newPage->setMyFavoriteSet(isMyFavoriteSet);
       m_vectorPages.push_back(newPage);
       m_vectorLabels.push_back(label);
       m_vectorButtons.push_back(button);
@@ -5595,7 +5609,7 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       menuAction->setDefaultWidget(checkBox);
 
       // Favorites should be 1st
-      if (label->text() == "My Favorites")
+      if (isMyFavoriteSet)
         menuAction->setVisible(!m_vectorButtons[0]->isHidden());
 
       m_vectorMenu->insertAction(
@@ -5610,6 +5624,7 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       if (!isFavorite || dirDepth > 0) newPage->setAllowFavorite(true);
       if (dirDepth == 0 || isExternal) newPage->setAllowPageDelete(false);
       newPage->setExternal(isExternal);
+      newPage->setMyFavoriteSet(isMyFavoriteSet);
       m_vectorPages.push_back(newPage);
       m_vectorLabels.push_back(label);
       m_vectorButtons.push_back(button);
@@ -5637,7 +5652,7 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       menuAction->setDefaultWidget(checkBox);
 
       // Favorites should be 1st
-      if (label->text() == "My Favorites")
+      if (isMyFavoriteSet)
         menuAction->setVisible(!m_vectorButtons[0]->isHidden());
 
       m_vectorMenu->insertAction(
@@ -5652,6 +5667,7 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       if (!isFavorite || dirDepth > 0) newPage->setAllowFavorite(true);
       if (dirDepth == 0 || isExternal) newPage->setAllowPageDelete(false);
       newPage->setExternal(isExternal);
+      newPage->setMyFavoriteSet(isMyFavoriteSet);
       m_rasterPages.push_back(newPage);
       m_rasterLabels.push_back(label);
       m_rasterButtons.push_back(button);
@@ -5679,7 +5695,7 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       menuAction->setDefaultWidget(checkBox);
 
       // Favorites should be 1st
-      if (label->text() == "My Favorites")
+      if (isMyFavoriteSet)
         menuAction->setVisible(!m_rasterButtons[0]->isHidden());
 
       m_rasterMenu->insertAction(
@@ -6236,12 +6252,14 @@ void StyleEditor::onRemoveSelectedStyleFromSet() {
   int tab = m_styleBar->currentIndex();
   if (tab < 1 || tab > 3) return;
 
-  int ret =
-      DVGui::MsgBox(QObject::tr("Removing the selected Styles will permanently "
-                                "delete style files from their sets. "
-                                "This cannot be undone!\nAre you sure?"),
-                    QObject::tr("Ok"), QObject::tr("Cancel"));
-  if (ret == 0 || ret == 2) return;
+  if (!isSelectingFavoritesOnly()) {
+    int ret = DVGui::MsgBox(
+        QObject::tr("Removing the selected Styles will permanently "
+                    "delete style files from their sets. "
+                    "This cannot be undone!\nAre you sure?"),
+        QObject::tr("Ok"), QObject::tr("Cancel"));
+    if (ret == 0 || ret == 2) return;
+  }
 
   std::vector<StyleChooserPage *> *pages;
   if (tab == 1)

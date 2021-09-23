@@ -555,6 +555,7 @@ protected:
   bool m_allowPageDelete;
 
   bool m_favorite      = false;
+  bool m_myFavoriteSet = false;
   bool m_allowFavorite = false;
   bool m_external      = false;
 
@@ -570,6 +571,9 @@ public:
 
   virtual void setFavorite(bool favorite) { m_favorite = favorite; }
   bool isFavorite() { return m_favorite; }
+
+  void setMyFavoriteSet(bool myFavorite) { m_myFavoriteSet = myFavorite; }
+  bool isMyFavoriteSet() { return m_myFavoriteSet; }
 
   void setAllowFavorite(bool allow) { m_allowFavorite = allow; }
   bool allowFavorite() { return m_allowFavorite; }
