@@ -2447,6 +2447,13 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
     action->setDisabled(true);
   menu->addAction(action);
 
+  action = new QAction(this);
+  action->setText(tr("Scan for Style Set Changes"));
+  connect(action, SIGNAL(triggered()), m_editor, SLOT(onScanStyleSetChanges()));
+  menu->addAction(action);
+
+  menu->addSeparator();
+
   if (m_styleSetName != "Unknown Style Set") {
     action = new QAction(this);
     action->setText(tr("Remove '%1' Style Set").arg(m_styleSetName));
@@ -4003,27 +4010,31 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   // Create Style Pages
   // Load Favorites first so they appear first in all lists
   createStylePage(StylePageType::Texture,
-                  myFavoritesPath + TFilePath("textures"), QString("*"), true);
-  createStylePage(
-      StylePageType::VectorCustom, myFavoritesPath + TFilePath("vector styles"),
-      QString("*.pli *.tif *.png *.tga *.tiff *.sgi *.rgb *.gen"), true);
+                  myFavoritesPath + TFilePath("textures"),
+                  getStylePageFilter(StylePageType::Texture), true);
+  createStylePage(StylePageType::VectorCustom,
+                  myFavoritesPath + TFilePath("vector styles"),
+                  getStylePageFilter(StylePageType::VectorCustom), true);
   createStylePage(StylePageType::Raster,
                   myFavoritesPath + TFilePath("raster styles"),
-                  QString("*.myb"), true);
+                  getStylePageFilter(StylePageType::Raster), true);
   // Load library pages
-  createStylePage(StylePageType::Texture, libraryPath + TFilePath("textures"));
+  createStylePage(StylePageType::Texture, libraryPath + TFilePath("textures"),
+                  getStylePageFilter(StylePageType::Texture));
   createStylePage(StylePageType::VectorGenerated, TFilePath());
   createStylePage(StylePageType::VectorCustom,
                   libraryPath + TFilePath("custom styles"),
-                  QString("*.pli *.tif *.png *.tga *.tiff *.sgi *.rgb *.gen"));
+                  getStylePageFilter(StylePageType::VectorCustom));
   createStylePage(StylePageType::VectorBrush,
-                  libraryPath + TFilePath("vector brushes"), QString("*.pli"));
+                  libraryPath + TFilePath("vector brushes"),
+                  getStylePageFilter(StylePageType::VectorBrush));
 
   TFilePathSet dirs = TMyPaintBrushStyle::getBrushesDirs();
   for (TFilePathSet::iterator i = dirs.begin(); i != dirs.end(); ++i) {
     TFileStatus fs(*i);
     if (fs.doesExist() && fs.isDirectory())
-      createStylePage(StylePageType::Raster, *i, QString("*.myb"));
+      createStylePage(StylePageType::Raster, *i,
+                      getStylePageFilter(StylePageType::Raster));
   }
 
   // For the plainColorPage and the settingsPage
@@ -5450,6 +5461,27 @@ void StyleEditor::updateColorCalibration() {
 
 //-----------------------------------------------------------------------------
 
+QString StyleEditor::getStylePageFilter(StylePageType pageType) {
+  switch (pageType) {
+  case StylePageType::Texture:
+    return "*";
+    break;
+  case StylePageType::VectorCustom:
+    return "*.pli *.tif *.png *.tga *.tiff *.sgi *.rgb *.gen";
+    break;
+  case StylePageType::VectorBrush:
+    return "*.pli";
+    break;
+  case StylePageType::Raster:
+    return "*.myb";
+    break;
+  }
+
+  return "";
+}
+
+//-----------------------------------------------------------------------------
+
 void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
                                   QString filters, bool isFavorite,
                                   int dirDepth) {
@@ -5506,6 +5538,7 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
     case StylePageType::Texture: {
       TextureStyleChooserPage *newPage =
           new TextureStyleChooserPage(styleFolder, filters, this);
+      newPage->setFolderDepth(dirDepth);
       newPage->setStyleSetName(label->text());
       if (isFavorite) newPage->setFavorite(true);
       if (!isFavorite || dirDepth > 0) newPage->setAllowFavorite(true);
@@ -5549,6 +5582,7 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
     case StylePageType::VectorGenerated: {
       SpecialStyleChooserPage *newPage =
           new SpecialStyleChooserPage(TFilePath(), QString(), this);
+      newPage->setFolderDepth(dirDepth);
       newPage->setStyleSetName(label->text());
       newPage->setAllowFavorite(true);
       newPage->setAllowPageDelete(false);
@@ -5584,6 +5618,7 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
     case StylePageType::VectorCustom: {
       CustomStyleChooserPage *newPage =
           new CustomStyleChooserPage(styleFolder, filters, this);
+      newPage->setFolderDepth(dirDepth);
       newPage->setStyleSetName(label->text());
       if (isFavorite) newPage->setFavorite(true);
       if (!isFavorite || dirDepth > 0) newPage->setAllowFavorite(true);
@@ -5627,6 +5662,7 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
     case StylePageType::VectorBrush: {
       VectorBrushStyleChooserPage *newPage =
           new VectorBrushStyleChooserPage(styleFolder, filters, this);
+      newPage->setFolderDepth(dirDepth);
       newPage->setStyleSetName(label->text());
       if (isFavorite) newPage->setFavorite(true);
       if (!isFavorite || dirDepth > 0) newPage->setAllowFavorite(true);
@@ -5670,6 +5706,7 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
     case StylePageType::Raster: {
       MyPaintBrushStyleChooserPage *newPage =
           new MyPaintBrushStyleChooserPage(styleFolder, filters, this);
+      newPage->setFolderDepth(dirDepth);
       newPage->setStyleSetName(label->text());
       if (isFavorite) newPage->setFavorite(true);
       if (!isFavorite || dirDepth > 0) newPage->setAllowFavorite(true);
@@ -6385,6 +6422,95 @@ void StyleEditor::onAddNewStyleSet() {
 
 //-----------------------------------------------------------------------------
 
+void StyleEditor::onScanStyleSetChanges() {
+  int tab = m_styleBar->currentIndex();
+  if (tab < 1 || tab > 3) return;
+
+  TFilePath libPath = ToonzFolder::getLibraryFolder();
+  TFilePath favoritesLibPath =
+      ToonzFolder::getMyFavoritesFolder() + TFilePath("library");
+  StylePageType pageType;
+
+  TFilePathSet fps;
+
+  std::vector<StyleChooserPage *> *pages;
+  if (tab == 1) {
+    pages    = &m_texturePages;
+    pageType = StylePageType::Texture;
+
+    fps.push_back(libPath + TFilePath("textures"));
+    fps.push_back(favoritesLibPath + TFilePath("textures"));
+  } else if (tab == 2) {
+    pages    = &m_vectorPages;
+    pageType = StylePageType::VectorCustom;
+
+    fps.push_back(libPath + TFilePath("custom styles"));
+    fps.push_back(libPath + TFilePath("vector brushes"));
+    fps.push_back(favoritesLibPath + TFilePath("vector styles"));
+  } else if (tab == 3) {
+    pages    = &m_rasterPages;
+    pageType = StylePageType::Raster;
+
+    fps.push_back(favoritesLibPath + TFilePath("raster styles"));
+
+    TFilePathSet dirs = TMyPaintBrushStyle::getBrushesDirs();
+    if (!dirs.empty()) fps.merge(dirs);
+  }
+
+  QString filters = getStylePageFilter(pageType);
+
+  QStringList fpList;
+  try {
+    QStringList tmpList;
+    QStringList::iterator tmpIt;
+
+    TFilePathSet::iterator fpsIt;
+    for (fpsIt = fps.begin(); fpsIt != fps.end(); fpsIt++) {
+      if (!TFileStatus(*fpsIt).doesExist()) continue;
+      tmpList.clear();
+      TSystem::readDirectory_DirItems(tmpList, *fpsIt);
+      for (tmpIt = tmpList.begin(); tmpIt != tmpList.end(); tmpIt++)
+        fpList.push_back((TFilePath(*fpsIt) + TFilePath(*tmpIt)).getQString());
+    }
+  } catch (...) {
+  }
+
+  // Let's remove anything that was deleted while excluding what still exists
+  std::vector<StyleChooserPage *>::reverse_iterator rit;
+  int i = pages->size();
+  for (rit = pages->rbegin(); rit != pages->rend(); rit++) {
+    StyleChooserPage *page = *rit;
+    TFilePath styleFolder  = page->getStylesFolder();
+    i--;
+    if (styleFolder.isEmpty()) continue;  // likely the Generated set
+    if (i == 0 || page->isRootFolder()) {
+      page->loadItems();
+      continue;
+    }
+    QStringList::iterator sit =
+        std::find(fpList.begin(), fpList.end(), styleFolder.getQString());
+    if (sit != fpList.end()) {
+      fpList.erase(sit);
+      page->loadItems();
+      continue;
+    }
+    removeStyleSetAtIndex(i, tab);
+  }
+
+  // Add anything new that is left in the list
+  QStringList::iterator fpListIt;
+  for (fpListIt = fpList.begin(); fpListIt != fpList.end(); fpListIt++) {
+    TFilePath fp(*fpListIt);
+    if (tab == 2)
+      pageType = (libPath + TFilePath("vector brushes")).isAncestorOf(fp)
+                     ? StylePageType::VectorBrush
+                     : StylePageType::VectorCustom;
+    createNewStyleSet(pageType, fp, false);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void StyleEditor::createNewStyleSet(StylePageType pageType, TFilePath pagePath,
                                     bool isFavorite) {
   if (pagePath == TFilePath()) return;
@@ -6399,27 +6525,21 @@ void StyleEditor::createNewStyleSet(StylePageType pageType, TFilePath pagePath,
   QString filters;
   int pageIndex;
   switch (pageType) {
-  case StylePageType::Texture: {
-    filters   = "*";
+  case StylePageType::Texture:
     pageIndex = 1;
     break;
-  }
-  case StylePageType::VectorCustom: {
-    filters   = "*.pli *.tif *.png *.tga *.tiff *.sgi *.rgb *.gen";
+  case StylePageType::VectorCustom:
     pageIndex = 2;
     break;
-  }
-  case StylePageType::VectorBrush: {
-    filters   = "*.pli";
+  case StylePageType::VectorBrush:
     pageIndex = 2;
     break;
-  }
-  case StylePageType::Raster: {
-    filters   = "*.myb";
+  case StylePageType::Raster:
     pageIndex = 3;
     break;
   }
-  }
+
+  filters = getStylePageFilter(pageType);
 
   createStylePage(pageType, pagePath, filters, isFavorite, 1);
 
@@ -6446,6 +6566,8 @@ void StyleEditor::createNewStyleSet(StylePageType pageType, TFilePath pagePath,
   }
   }
   delete oldPage;
+
+  update();
 }
 
 //-----------------------------------------------------------------------------

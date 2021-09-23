@@ -551,6 +551,7 @@ protected:
   int m_chipPerRow;
   StylePageType m_pageType = StylePageType::Unknown;
   TFilePath m_stylesFolder;
+  int m_folderDepth;
   QString m_styleSetName;
   bool m_allowPageDelete;
 
@@ -580,6 +581,9 @@ public:
 
   virtual void setExternal(bool external) { m_external = external; }
   bool isExternal() { return m_external; }
+
+  void setFolderDepth(int depth) { m_folderDepth = depth; }
+  bool isRootFolder() { return !m_folderDepth; }
 
   void clearSelection() { m_selection.clear(); }
   std::vector<int> getSelection() { return m_selection; }
@@ -889,6 +893,8 @@ public:
 
   void updatePage(int pageIndex);
 
+  QString getStylePageFilter(StylePageType pageType);
+
 protected:
   /*! Return false if style is linked and style must be set to null.*/
   bool setStyle(TColorStyle *currentStyle);
@@ -988,6 +994,7 @@ protected slots:
   void onRemoveSelectedStyleFromSet();
 
   void onAddNewStyleSet();
+  void onScanStyleSetChanges();
 
 private:
   QFrame *createBottomWidget();
