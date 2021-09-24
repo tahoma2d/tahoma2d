@@ -2167,7 +2167,7 @@ void ExportXsheetPdfPopup::updatePreview() {
 void ExportXsheetPdfPopup::onExport() {
   ToonzScene* scene = TApp::instance()->getCurrentScene()->getScene();
 
-  if (m_sceneNameEdit->text().isEmpty()) {
+  if (m_fileNameFld->text().isEmpty()) {
     DVGui::MsgBoxInPopup(DVGui::WARNING, tr("Please specify the file name."));
     return;
   }
@@ -2237,7 +2237,7 @@ void ExportXsheetPdfPopup::onExport() {
 void ExportXsheetPdfPopup::onExportPNG() {
   ToonzScene* scene = TApp::instance()->getCurrentScene()->getScene();
 
-  if (m_sceneNameEdit->text().isEmpty()) {
+  if (m_fileNameFld->text().isEmpty()) {
     DVGui::MsgBoxInPopup(DVGui::WARNING, tr("Please specify the file name."));
     return;
   }
