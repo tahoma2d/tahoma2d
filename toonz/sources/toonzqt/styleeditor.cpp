@@ -3027,7 +3027,13 @@ void TextureStyleChooserPage::onSelect(int index) {
     TTextureStyle style(
         texture.m_raster,
         m_stylesFolder + TFilePath(texture.m_path.getLevelName()));
+
+    if (texture.m_path == TFilePath()) style.setIsCustom(true);
+
     emit styleSelected(style);
+
+    // If selecting Custom Style, switch to Settings page automatically
+    if (style.isCustom()) emit customStyleSelected();
   }
 }
 
@@ -3044,7 +3050,14 @@ void TextureStyleChooserPage::addSelectedStylesToPalette(
     TTextureStyle style(
         texture.m_raster,
         m_stylesFolder + TFilePath(texture.m_path.getLevelName()));
+
+    if (texture.m_path == TFilePath()) style.setIsCustom(true);
+
     m_editor->addToPalette(style);
+
+    // If selecting Custom Style, only, switch to Settings page automatically
+    if (style.isCustom())
+      emit customStyleSelected();
   }
 }
 
@@ -3749,6 +3762,11 @@ void SettingsPage::setStyle(const TColorStyleP &editedStyle) {
             editedStyle->getParamValue(TColorStyle::TFilePath_tag(), p)
                 .getWideString()));
 
+        if (!m_editedStyle->isCustom()) {
+          label->hide();
+          fileField->hide();
+        }
+
         ret = QObject::connect(fileField, SIGNAL(pathChanged()), this,
                                SLOT(onValueChanged())) &&
               ret;
@@ -3849,6 +3867,14 @@ void SettingsPage::updateValues() {
       fileField->setPath(QString::fromStdWString(
           m_editedStyle->getParamValue(TColorStyle::TFilePath_tag(), p)
               .getWideString()));
+
+      if (!m_editedStyle->isCustom()) {
+        m_paramsLayout->itemAtPosition(p, 0)->widget()->hide();
+        fileField->hide();
+      } else {
+        m_paramsLayout->itemAtPosition(p, 0)->widget()->show();
+        fileField->show();
+      }
 
       break;
     }
@@ -5593,6 +5619,9 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       connect(checkBox, SIGNAL(stateChanged(int)), this,
               SLOT(onToggleTextureSet(int)));
 
+      connect(newPage, SIGNAL(customStyleSelected()), this,
+              SLOT(onSwitchToSettings()));
+
       QWidgetAction *menuAction = new QWidgetAction(m_textureMenu);
       menuAction->setDefaultWidget(checkBox);
 
@@ -6533,6 +6562,10 @@ void StyleEditor::onScanStyleSetChanges() {
     createNewStyleSet(pageType, fp, false);
   }
 }
+
+//-----------------------------------------------------------------------------
+
+void StyleEditor::onSwitchToSettings() { m_styleBar->setCurrentIndex(4); }
 
 //-----------------------------------------------------------------------------
 

@@ -651,6 +651,7 @@ protected slots:
 signals:
   void styleSelected(const TColorStyle &style);
   void refreshFavorites();
+  void customStyleSelected();
 };
 
 //=============================================================================
@@ -1035,6 +1036,7 @@ protected slots:
 
   void onAddNewStyleSet();
   void onScanStyleSetChanges();
+  void onSwitchToSettings();
 
 private:
   QFrame *createBottomWidget();
