@@ -330,6 +330,16 @@ void CustomStyleManager::loadGeneratedStyle(TFilePath file) {
   m_patterns.push_back(pattern);
 }
 
+//-----------------------------------------------------------------------------
+
+void CustomStyleManager::setStyleFolder(TFilePath styleFolder) {
+  m_stylesFolder = styleFolder;
+
+  for (int i = 0; i < m_patterns.size(); i++)
+    m_patterns[i].m_path =
+        styleFolder + TFilePath(m_patterns[i].m_path.getLevelName());
+}
+
 //********************************************************************************
 //    TextureStyleManager implementation
 //********************************************************************************
@@ -444,6 +454,16 @@ void TextureStyleManager::loadTexture(TFilePath &fp) {
   m_textures.push_back(text);
 }
 
+//-----------------------------------------------------------------------------
+
+void TextureStyleManager::setStyleFolder(TFilePath styleFolder) {
+  m_stylesFolder = styleFolder;
+
+  for (int i = 0; i < m_textures.size(); i++)
+    m_textures[i].m_path =
+        styleFolder + TFilePath(m_textures[i].m_path.getLevelName());
+}
+
 //********************************************************************************
 //    BrushStyleManager implementation
 //********************************************************************************
@@ -512,6 +532,16 @@ void BrushStyleManager::loadItems() {
   }
 
   if (brushesUpdated) emit itemsUpdated();
+}
+
+//-----------------------------------------------------------------------------
+
+void BrushStyleManager::setStyleFolder(TFilePath styleFolder) {
+  m_stylesFolder = styleFolder;
+
+  for (int i = 0; i < m_brushes.size(); i++)
+    m_brushes[i].m_path =
+        styleFolder + TFilePath(m_brushes[i].m_path.getLevelName());
 }
 
 //********************************************************************************
@@ -695,4 +725,88 @@ void TStyleManager::removeBrushStyleFolder(TFilePath styleFolder) {
     m_brushStyleManagers.erase(m_brushStyleManagers.begin() + i);
     break;
   }
+}
+
+//---------------------------------------------------------
+
+void TStyleManager::changeStyleSetFolder(CustomStyleManager *styleManager,
+                                         TFilePath newPath) {
+  std::pair<TFilePath, QString> oldKey(styleManager->stylesFolder(),
+                                       styleManager->getFilters());
+  std::pair<TFilePath, QString> newKey(newPath, styleManager->getFilters());
+
+  std::vector<std::pair<TFilePath, QString>>::iterator it;
+  int i;
+  for (it = m_customStyleFolders.begin(); it != m_customStyleFolders.end();
+       it++) {
+    if (*it == oldKey) {
+      m_customStyleFolders.erase(it);
+      break;
+    }
+    i++;
+  }
+
+  if (i < m_customStyleManagers.size())
+    m_customStyleManagers.erase(m_customStyleManagers.begin() + i);
+
+  styleManager->setStyleFolder(newPath);
+  m_customStyleFolders.push_back(newKey);
+  m_customStyleManagers.push_back(styleManager);
+  styleManager->loadItems();
+}
+
+//---------------------------------------------------------
+
+void TStyleManager::changeStyleSetFolder(TextureStyleManager *styleManager,
+                                         TFilePath newPath) {
+  std::pair<TFilePath, QString> oldKey(styleManager->stylesFolder(),
+                                       styleManager->getFilters());
+  std::pair<TFilePath, QString> newKey(newPath, styleManager->getFilters());
+
+  std::vector<std::pair<TFilePath, QString>>::iterator it;
+  int i;
+  for (it = m_textureStyleFolders.begin(); it != m_textureStyleFolders.end();
+       it++) {
+    if (*it == oldKey) {
+      m_textureStyleFolders.erase(it);
+      break;
+    }
+    i++;
+  }
+
+  if (i < m_textureStyleManagers.size())
+    m_textureStyleManagers.erase(m_textureStyleManagers.begin() + i);
+
+  styleManager->setStyleFolder(newPath);
+  m_textureStyleFolders.push_back(newKey);
+  m_textureStyleManagers.push_back(styleManager);
+  styleManager->loadItems();
+}
+
+//---------------------------------------------------------
+
+void TStyleManager::changeStyleSetFolder(BrushStyleManager *styleManager,
+                                         TFilePath newPath) {
+  std::pair<TFilePath, QString> oldKey(styleManager->stylesFolder(),
+                                       styleManager->getFilters());
+  std::pair<TFilePath, QString> newKey(newPath, styleManager->getFilters());
+
+  std::vector<std::pair<TFilePath, QString>>::iterator it;
+  int i;
+  for (it = m_brushStyleFolders.begin(); it != m_brushStyleFolders.end();
+       it++) {
+    if (*it == oldKey) {
+      m_brushStyleFolders.erase(it);
+      break;
+    }
+    i++;
+  }
+
+  if (i < m_brushStyleManagers.size())
+    m_brushStyleManagers.erase(m_brushStyleManagers.begin() + i);
+
+  styleManager->setStyleFolder(newPath);
+  m_brushStyleFolders.push_back(newKey);
+  m_brushStyleManagers.push_back(styleManager);
+  styleManager->loadItems();
 }

@@ -561,7 +561,7 @@ protected:
   bool m_external      = false;
 
 public:
-  StyleChooserPage(QWidget *parent = 0);
+  StyleChooserPage(TFilePath styleFolder, QWidget *parent = 0);
 
   QSize getChipSize() const { return m_chipSize; }
 
@@ -601,6 +601,10 @@ public:
                                       TFilePath setPath){};
   virtual void updateFavorite(){};
   virtual void addSelectedStylesToPalette(std::vector<int> selection){};
+
+  virtual void changeStyleSetFolder(TFilePath newPath) {
+    m_stylesFolder = newPath;
+  }
 
   bool copyFilesToStyleFolder(TFilePathSet srcFiles, TFilePath destDir);
   bool deleteFilesFromStyleFolder(TFilePathSet targetFiles);
@@ -642,6 +646,7 @@ protected slots:
   void onUpdateFavorite();
   void onRemoveStyleSet();
   void onReloadStyleSet();
+  void onRenameStyleSet();
   void onLabelContextMenu(const QPoint &pos);
 signals:
   void styleSelected(const TColorStyle &style);
@@ -717,6 +722,35 @@ protected:
 
 signals:
   void click();
+};
+
+//=============================================================================
+// RenameStyleSet
+//-----------------------------------------------------------------------------
+
+class RenameStyleSet final : public QLineEdit {
+  Q_OBJECT
+
+protected:
+  StyleChooserPage *m_page;
+  StyleEditor *m_editor;
+
+  bool m_validatingName;
+
+public:
+  RenameStyleSet(QWidget *parent);
+  ~RenameStyleSet() {}
+
+  void show(const QRect &rect);
+
+  void setStyleSetPage(StyleChooserPage *page) { m_page = page; }
+  void setEditor(StyleEditor *editor) { m_editor = editor; }
+
+protected:
+  void focusOutEvent(QFocusEvent *) override;
+
+protected slots:
+  void renameSet();
 };
 
 //=============================================================================
@@ -833,6 +867,8 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   bool m_isAltPressed  = false;
   bool m_isCtrlPressed = false;
 
+  RenameStyleSet *m_renameStyleSet;
+
 public:
   StyleEditor(PaletteController *, QWidget *parent = 0);
   ~StyleEditor();
@@ -883,8 +919,10 @@ public:
 
   void createNewStyleSet(StylePageType pageType, TFilePath pagePath,
                          bool isFavorite);
-  void removeStyleSet(QString styleSetName);
+  void removeStyleSet(StyleChooserPage *styleSetPage);
   void removeStyleSetAtIndex(int index, int pageIndex);
+  void editStyleSetName(StyleChooserPage *styleSetPage);
+  void renameStyleSet(StyleChooserPage *styleSetPage, QString newName);
 
   std::vector<StyleChooserPage *> getStyleSetList(StylePageType pageType);
 
@@ -894,6 +932,8 @@ public:
   void updatePage(int pageIndex);
 
   QString getStylePageFilter(StylePageType pageType);
+
+  bool isStyleNameValid(QString name, StylePageType pageType, bool isFavorite);
 
 protected:
   /*! Return false if style is linked and style must be set to null.*/

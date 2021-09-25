@@ -71,8 +71,10 @@ public:
   CustomStyleManager(const TFilePath &stylesFolder, QString filters = QString(),
                      QSize chipSize = QSize(30, 30));
 
+  void setStyleFolder(TFilePath styleFolder);
   const TFilePath &stylesFolder() const { return m_stylesFolder; }
   QSize getChipSize() const { return m_chipSize; }
+  QString getFilters() const { return m_filters; }
 
   int getPatternCount();
   PatternData getPattern(int index);
@@ -125,8 +127,10 @@ public:
                       QString filters = QString(),
                       QSize chipSize  = QSize(30, 30));
 
+  void setStyleFolder(TFilePath styleFolder);
   const TFilePath &stylesFolder() const { return m_stylesFolder; }
   QSize getChipSize() const { return m_chipSize; }
+  QString getFilters() const { return m_filters; }
 
   int getTextureCount();
   TextureData getTexture(int index);
@@ -168,8 +172,10 @@ public:
   BrushStyleManager(const TFilePath &stylesFolder, QString filters = QString(),
                     QSize chipSize = QSize(30, 30));
 
+  void setStyleFolder(TFilePath styleFolder);
   const TFilePath &stylesFolder() const { return m_stylesFolder; }
   QSize getChipSize() const { return m_chipSize; }
+  QString getFilters() const { return m_filters; }
 
   int getBrushCount();
   BrushData getBrush(int index);
@@ -228,6 +234,12 @@ public:
 
   bool isLoading();
   void signalLoadsFinished();
+
+  void changeStyleSetFolder(CustomStyleManager *styleManager,
+                            TFilePath newPath);
+  void changeStyleSetFolder(TextureStyleManager *styleManager,
+                            TFilePath newPath);
+  void changeStyleSetFolder(BrushStyleManager *styleManager, TFilePath newPath);
 };
 
 #endif  // STYLEMANAGER_H

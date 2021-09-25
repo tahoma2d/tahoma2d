@@ -63,6 +63,7 @@
 #include <QMenu>
 #include <QOpenGLFramebufferObject>
 #include <QWidgetAction>
+#include <QScrollBar>
 
 #include <sstream>
 
@@ -1913,13 +1914,13 @@ void PlainColorPage::onWheelSliderReleased()
 //    StyleChooserPage  implementation
 //*****************************************************************************
 
-StyleChooserPage::StyleChooserPage(QWidget *parent)
+StyleChooserPage::StyleChooserPage(TFilePath styleFolder, QWidget *parent)
     : StyleEditorPage(parent)
     , m_chipOrigin(5, 3)
     , m_chipSize(25, 25)
     , m_chipPerRow(0)
     , m_currentIndex(-1)
-    , m_stylesFolder(TFilePath())
+    , m_stylesFolder(styleFolder)
     , m_styleSetName("Unknown Style Set")
     , m_allowPageDelete(true)
     , m_favorite(false)
@@ -2145,6 +2146,10 @@ void StyleChooserPage::onReloadStyleSet() { loadItems(); }
 
 //-----------------------------------------------------------------------------
 
+void StyleChooserPage::onRenameStyleSet() { m_editor->editStyleSetName(this); }
+
+//-----------------------------------------------------------------------------
+
 void StyleChooserPage::onRemoveStyleSet() {
   if (!isMyFavoriteSet()) {
     int ret = DVGui::MsgBox(
@@ -2163,7 +2168,7 @@ void StyleChooserPage::onRemoveStyleSet() {
     return;
   }
 
-  m_editor->removeStyleSet(getStyleSetName());
+  m_editor->removeStyleSet(this);
 }
 
 //-----------------------------------------------------------------------------
@@ -2440,6 +2445,13 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
   menu->addAction(action);
 
   action = new QAction(this);
+  action->setText(tr("Rename Style Set..."));
+  connect(action, SIGNAL(triggered()), this, SLOT(onRenameStyleSet()));
+  if (isMyFavoriteSet() || isRootFolder() || isExternal())
+    action->setDisabled(true);
+  menu->addAction(action);
+
+  action = new QAction(this);
   action->setText(tr("Reload Style Set"));
   connect(action, SIGNAL(triggered()), this, SLOT(onReloadStyleSet()));
   if (m_pageType == StylePageType::VectorGenerated ||
@@ -2513,9 +2525,8 @@ class CustomStyleChooserPage final : public StyleChooserPage {
 public:
   CustomStyleChooserPage(TFilePath stylesFolder = TFilePath(),
                          QString filters = QString(), QWidget *parent = 0)
-      : StyleChooserPage(parent) {
+      : StyleChooserPage(stylesFolder, parent) {
     setPageType(StylePageType::VectorCustom);
-    m_stylesFolder = stylesFolder;
     m_filters      = filters;
     m_styleManager = TStyleManager::instance()->getCustomStyleManager(
         m_stylesFolder, m_filters);
@@ -2574,6 +2585,10 @@ else return false;
                               TFilePath setPath) override;
   void updateFavorite() override { emit refreshFavorites(); };
   void addSelectedStylesToPalette(std::vector<int> selection) override;
+  void changeStyleSetFolder(TFilePath newPath) override {
+    TStyleManager::instance()->changeStyleSetFolder(m_styleManager, newPath);
+    m_stylesFolder = newPath;
+  };
 
   bool isLoading() override { return m_styleManager->isLoading(); }
 };
@@ -2735,9 +2750,8 @@ class VectorBrushStyleChooserPage final : public StyleChooserPage {
 public:
   VectorBrushStyleChooserPage(TFilePath stylesFolder = TFilePath(),
                               QString filters = QString(), QWidget *parent = 0)
-      : StyleChooserPage(parent) {
+      : StyleChooserPage(stylesFolder, parent) {
     setPageType(StylePageType::VectorBrush);
-    m_stylesFolder = stylesFolder;
     m_filters      = filters;
     m_chipSize     = QSize(60, 25);
     m_styleManager = TStyleManager::instance()->getCustomStyleManager(
@@ -2779,6 +2793,10 @@ public:
   void addSelectedStylesToSet(std::vector<int> selection,
                               TFilePath setPath) override;
   void addSelectedStylesToPalette(std::vector<int> selection) override;
+  void changeStyleSetFolder(TFilePath newPath) override {
+    TStyleManager::instance()->changeStyleSetFolder(m_styleManager, newPath);
+    m_stylesFolder = newPath;
+  };
 
   bool isLoading() override { return m_styleManager->isLoading(); }
 };
@@ -2928,9 +2946,8 @@ class TextureStyleChooserPage final : public StyleChooserPage {
 public:
   TextureStyleChooserPage(TFilePath stylesFolder = TFilePath(),
                           QString filters = QString(), QWidget *parent = 0)
-      : StyleChooserPage(parent) {
+      : StyleChooserPage(stylesFolder, parent) {
     setPageType(StylePageType::Texture);
-    m_stylesFolder = stylesFolder;
     m_filters      = filters;
     m_styleManager = TStyleManager::instance()->getTextureStyleManager(
         m_stylesFolder, m_filters);
@@ -2985,6 +3002,10 @@ public:
                               TFilePath setPath) override;
   void updateFavorite() override { emit refreshFavorites(); };
   void addSelectedStylesToPalette(std::vector<int> selection) override;
+  void changeStyleSetFolder(TFilePath newPath) override {
+    TStyleManager::instance()->changeStyleSetFolder(m_styleManager, newPath);
+    m_stylesFolder = newPath;
+  };
 };
 
 //-----------------------------------------------------------------------------
@@ -3108,9 +3129,8 @@ class MyPaintBrushStyleChooserPage final : public StyleChooserPage {
 public:
   MyPaintBrushStyleChooserPage(TFilePath stylesFolder = TFilePath(),
                                QString filters = QString(), QWidget *parent = 0)
-      : StyleChooserPage(parent) {
+      : StyleChooserPage(stylesFolder, parent) {
     setPageType(StylePageType::Raster);
-    m_stylesFolder = stylesFolder;
     m_filters      = filters;
     m_chipSize     = QSize(64, 64);
     m_styleManager = TStyleManager::instance()->getBrushStyleManager(
@@ -3164,6 +3184,10 @@ public:
                               TFilePath setPath) override;
   void updateFavorite() override { emit refreshFavorites(); };
   void addSelectedStylesToPalette(std::vector<int> selection) override;
+  void changeStyleSetFolder(TFilePath newPath) override {
+    TStyleManager::instance()->changeStyleSetFolder(m_styleManager, newPath);
+    m_stylesFolder = newPath;
+  };
 };
 
 //-----------------------------------------------------------------------------
@@ -3281,10 +3305,9 @@ class SpecialStyleChooserPage final : public StyleChooserPage {
 public:
   SpecialStyleChooserPage(TFilePath stylesFolder = TFilePath(),
                           QString filters = QString(), QWidget *parent = 0)
-      : StyleChooserPage(parent) {
+      : StyleChooserPage(stylesFolder, parent) {
     setPageType(StylePageType::VectorGenerated);
-    m_stylesFolder = stylesFolder;
-    m_filters      = filters;
+    m_filters = filters;
   }
 
   ~SpecialStyleChooserPage() {
@@ -3989,6 +4012,9 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   TFilePath libraryPath     = ToonzFolder::getLibraryFolder();
   TFilePath myFavoritesPath = ToonzFolder::getMyFavoritesFolder() + "library";
 
+  m_renameStyleSet = new RenameStyleSet(this);
+  m_renameStyleSet->hide();
+
   m_styleBar = new DVGui::TabBar(this);
   m_styleBar->setDrawBase(false);
   m_styleBar->setObjectName("StyleEditorTabBar");
@@ -4512,7 +4538,6 @@ void StyleEditor::keyReleaseEvent(QKeyEvent *event) {
 void StyleEditor::enterEvent(QEvent *event) {
   Qt::KeyboardModifiers modkeys = QGuiApplication::queryKeyboardModifiers();
 
-  setFocus(Qt::MouseFocusReason);
   m_isAltPressed  = modkeys.testFlag(Qt::AltModifier);
   m_isCtrlPressed = modkeys.testFlag(Qt::ControlModifier);
 };
@@ -6572,7 +6597,7 @@ void StyleEditor::createNewStyleSet(StylePageType pageType, TFilePath pagePath,
 
 //-----------------------------------------------------------------------------
 
-void StyleEditor::removeStyleSet(QString styleSetName) {
+void StyleEditor::removeStyleSet(StyleChooserPage *styleSetPage) {
   int tab = m_styleBar->currentIndex();
   if (tab < 1 || tab > 3) return;
 
@@ -6588,7 +6613,7 @@ void StyleEditor::removeStyleSet(QString styleSetName) {
   std::vector<StyleChooserPage *>::iterator it;
   for (it = pages->begin() + 1; it != pages->end(); it++) {
     StyleChooserPage *page = *it;
-    if (page->getStyleSetName() == styleSetName) {
+    if (page == styleSetPage) {
       removeStyleSetAtIndex(i, tab);
       break;
     }
@@ -6654,6 +6679,100 @@ void StyleEditor::removeStyleSetAtIndex(int index, int pageIndex) {
 
 //-----------------------------------------------------------------------------
 
+void StyleEditor::editStyleSetName(StyleChooserPage *styleSetPage) {
+  int tab = m_styleBar->currentIndex();
+  if (tab < 1 || tab > 3) return;
+
+  std::vector<ClickableLabel *> *labels;
+  QScrollArea *scrollArea;
+  if (tab == 1) {
+    labels     = &m_textureLabels;
+    scrollArea = m_textureArea;
+  } else if (tab == 2) {
+    labels     = &m_vectorLabels;
+    scrollArea = m_vectorArea;
+  } else if (tab == 3) {
+    labels     = &m_rasterLabels;
+    scrollArea = m_rasterArea;
+  }
+
+  std::vector<ClickableLabel *>::iterator it;
+  ClickableLabel *label;
+  int i = 0;
+  for (it = labels->begin(); it != labels->end(); it++) {
+    label = *it;
+    if (label->text() == styleSetPage->getStyleSetName()) break;
+    i++;
+  }
+
+  if (i >= labels->size()) return;
+  m_renameStyleSet->setStyleSetPage(styleSetPage);
+
+  QScrollBar *vScrollBar = scrollArea->verticalScrollBar();
+  int v                  = vScrollBar->value();
+  QRect rect             = label->rect();
+  QPoint topLeft         = label->pos() - QPoint(0, v) + QPoint(-4, 19);
+  ;
+  rect.moveTopLeft(topLeft);
+  m_renameStyleSet->show(rect);
+}
+
+//-----------------------------------------------------------------------------
+
+void StyleEditor::renameStyleSet(StyleChooserPage *styleSetPage,
+                                 QString newName) {
+  int tab = m_styleBar->currentIndex();
+  if (tab < 1 || tab > 3) return;
+
+  std::vector<ClickableLabel *> *labels;
+  QMenu *menu;
+  if (tab == 1) {
+    labels = &m_textureLabels;
+    menu   = m_textureMenu;
+  } else if (tab == 2) {
+    labels = &m_vectorLabels;
+    menu   = m_vectorMenu;
+  } else if (tab == 3) {
+    labels = &m_rasterLabels;
+    menu   = m_rasterMenu;
+  }
+
+  std::vector<ClickableLabel *>::iterator it;
+  ClickableLabel *label;
+  int i = 0;
+  for (it = labels->begin(); it != labels->end(); it++) {
+    label = *it;
+    if (label->text() == styleSetPage->getStyleSetName()) break;
+    i++;
+  }
+
+  if (i >= labels->size()) return;
+
+  TFilePath newPath =
+      styleSetPage->getStylesFolder().withName(newName.toStdWString());
+
+  try {
+    TSystem::copyDir(newPath, styleSetPage->getStylesFolder());
+    TSystem::rmDirTree(styleSetPage->getStylesFolder());
+  } catch (TSystemException se) {
+    DVGui::warning(QString::fromStdWString(se.getMessage()));
+    return;
+  }
+
+  if (styleSetPage->isFavorite()) newName += tr(" (Favorites)");
+  styleSetPage->changeStyleSetFolder(newPath);
+  styleSetPage->setStyleSetName(newName);
+  label->setText(newName);
+
+  QWidgetAction *action = qobject_cast<QWidgetAction *>(menu->actions()[i]);
+  QCheckBox *checkBox   = dynamic_cast<QCheckBox *>(action->defaultWidget());
+  checkBox->setText(newName);
+
+  update();
+}
+
+//-----------------------------------------------------------------------------
+
 std::vector<StyleChooserPage *> StyleEditor::getStyleSetList(
     StylePageType pageType) {
   if (pageType == StylePageType::Texture)
@@ -6666,6 +6785,68 @@ std::vector<StyleChooserPage *> StyleEditor::getStyleSetList(
     return m_rasterPages;
 }
 
+bool StyleEditor::isStyleNameValid(QString name, StylePageType pageType,
+                                   bool isFavorite) {
+  TFilePath path, altPath;
+  bool checkAltPath = false;
+  QFileInfo fi(name);
+
+  if (!isValidFileName(fi.baseName())) {
+    error(
+        tr("Style Set Name cannot be empty or contain any of the following "
+           "characters:\n \\ / : * ? \" < > |"));
+    return false;
+  }
+
+  if (isReservedFileName_message(fi.baseName())) return false;
+
+  if (isFavorite) {
+    path = ToonzFolder::getMyFavoritesFolder() + TFilePath("library");
+
+    if (pageType == StylePageType::Texture)
+      path += TFilePath("textures");
+    else if (pageType == StylePageType::VectorBrush ||
+             pageType == StylePageType::VectorCustom) {
+      pageType = StylePageType::VectorCustom;
+      path += TFilePath("vector styles");
+    } else if (pageType == StylePageType::Raster)
+      path += TFilePath("raster styles");
+  } else {
+    path    = ToonzFolder::getLibraryFolder();
+    altPath = path;
+
+    if (pageType == StylePageType::Texture)
+      path += TFilePath("textures");
+    else if (pageType == StylePageType::VectorBrush) {
+      pageType = StylePageType::VectorBrush;
+      path += TFilePath("vector brushes");
+      altPath += TFilePath("custom styles");
+      checkAltPath = true;
+    } else if (pageType == StylePageType::VectorCustom) {
+      path += TFilePath("custom styles");
+      altPath += TFilePath("vector brushes");
+      checkAltPath = true;
+    } else if (pageType == StylePageType::Raster)
+      path += TFilePath("mypaint brushes");
+  }
+
+  path += TFilePath(name);
+  if (checkAltPath) altPath += TFilePath(name);
+
+  TFileStatus fp(path), altFp(altPath);
+
+  if (fp.doesExist() || (checkAltPath && altFp.doesExist()) ||
+      (name == tr("Generated") && (pageType == StylePageType::VectorBrush ||
+                                   pageType == StylePageType::VectorCustom))) {
+    DVGui::error(tr("Style Set Name already exists. Please try another name."));
+    return false;
+  }
+
+  return true;
+}
+
+//=============================================================================
+// NewStyleSetPopup
 //-----------------------------------------------------------------------------
 
 NewStyleSetPopup::NewStyleSetPopup(StylePageType pageType, QWidget *parent)
@@ -6768,22 +6949,10 @@ void NewStyleSetPopup::onFavoriteToggled() {
 //-----------------------------------------------------------------------------
 
 void NewStyleSetPopup::createStyleSet() {
-  TFilePath path, altPath;
-  bool checkAltPath = false;
-
-  QFileInfo fi(m_nameFld->text());
+  TFilePath path;
   bool isFavorite = m_isFavorite->isChecked();
 
-  if (!isValidFileName(fi.baseName())) {
-    error(
-        tr("Style Set Name cannot be empty or contain any of the following "
-           "characters:\n \\ / : * ? \" < > |"));
-    m_nameFld->setFocus();
-    m_nameFld->selectAll();
-    return;
-  }
-
-  if (isReservedFileName_message(fi.baseName())) {
+  if (!m_editor->isStyleNameValid(m_nameFld->text(), m_pageType, isFavorite)) {
     m_nameFld->setFocus();
     m_nameFld->selectAll();
     return;
@@ -6800,38 +6969,20 @@ void NewStyleSetPopup::createStyleSet() {
     } else if (m_raster->isChecked())
       path += TFilePath("raster styles");
   } else {
-    path    = ToonzFolder::getLibraryFolder();
-    altPath = path;
+    path = ToonzFolder::getLibraryFolder();
 
     if (m_texture->isChecked())
       path += TFilePath("textures");
     else if (m_vectorBrush->isChecked()) {
       m_pageType = StylePageType::VectorBrush;
       path += TFilePath("vector brushes");
-      altPath += TFilePath("custom styles");
-      checkAltPath = true;
     } else if (m_vectorCustom->isChecked()) {
       path += TFilePath("custom styles");
-      altPath += TFilePath("vector brushes");
-      checkAltPath = true;
     } else if (m_raster->isChecked())
       path += TFilePath("mypaint brushes");
   }
 
   path += TFilePath(m_nameFld->text());
-  if (checkAltPath) altPath += TFilePath(m_nameFld->text());
-
-  TFileStatus fp(path), altFp(altPath);
-
-  if (fp.doesExist() || (checkAltPath && altFp.doesExist()) ||
-      (m_nameFld->text() == tr("Generated") &&
-       (m_pageType == StylePageType::VectorBrush ||
-        m_pageType == StylePageType::VectorCustom))) {
-    DVGui::error(tr("Style Set Name already exists. Please try another name."));
-    m_nameFld->setFocus();
-    m_nameFld->selectAll();
-    return;
-  }
 
   m_editor->createNewStyleSet(m_pageType, path, isFavorite);
 
@@ -6848,6 +6999,8 @@ void NewStyleSetPopup::createStyleSet() {
 }
 
 //=============================================================================
+// ClickableLabel
+//-----------------------------------------------------------------------------
 
 ClickableLabel::ClickableLabel(const QString &text, QWidget *parent,
                                Qt::WindowFlags f)
@@ -6862,4 +7015,87 @@ ClickableLabel::~ClickableLabel() {}
 void ClickableLabel::mousePressEvent(QMouseEvent *event) {
   if (event->button() == Qt::RightButton) return;
   emit click();
+}
+
+//=============================================================================
+// RenameStyleSet
+//-----------------------------------------------------------------------------
+
+RenameStyleSet::RenameStyleSet(QWidget *parent) : QLineEdit(parent) {
+  m_editor = dynamic_cast<StyleEditor *>(parent);
+
+  setFixedSize(200, 20);
+  connect(this, SIGNAL(returnPressed()), SLOT(renameSet()));
+}
+
+//-----------------------------------------------------------------------------
+
+void RenameStyleSet::show(const QRect &rect) {
+  if (!m_page) return;
+
+  move(rect.topLeft());
+  QString fontName = Preferences::instance()->getInterfaceFont();
+  if (fontName == "") {
+#ifdef _WIN32
+    fontName = "Arial";
+#else
+    fontName = "Helvetica";
+#endif
+  }
+  static QFont font(fontName, -1, QFont::Normal);
+  setFont(font);
+
+  QString name = m_page->getStyleSetName().replace(tr(" (Favorites)"), "");
+
+  setText(name);
+  selectAll();
+
+  m_validatingName = false;
+  QWidget::show();
+  raise();
+  setFocus();
+}
+
+//-----------------------------------------------------------------------------
+
+void RenameStyleSet::renameSet() {
+  if (!m_page ||
+      text() == m_page->getStyleSetName().replace(tr(" (Favorites)"), "")) {
+    setText("");
+    hide();
+    return;
+  }
+
+  m_validatingName = true;
+  bool isNameValid = m_editor->isStyleNameValid(text(), m_page->getPageType(),
+                                                m_page->isFavorite());
+  m_validatingName = false;
+
+  if (!isNameValid) {
+    setText(m_page->getStyleSetName().replace(tr(" (Favorites)"), ""));
+    setFocus();
+    selectAll();
+    return;
+  }
+
+  QString newName = text();
+
+  setText("");
+  hide();
+
+  m_editor->renameStyleSet(m_page, newName);
+}
+
+//-----------------------------------------------------------------------------
+
+void RenameStyleSet::focusOutEvent(QFocusEvent *e) {
+  if (!m_validatingName) {
+    std::wstring newName = text().toStdWString();
+    if (!newName.empty())
+      renameSet();
+    else
+      hide();
+  }
+
+  QLineEdit::focusOutEvent(e);
 }
