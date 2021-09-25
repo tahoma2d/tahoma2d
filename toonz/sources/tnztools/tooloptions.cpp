@@ -549,6 +549,32 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   m_zField->setPrecision(4);
   m_noScaleZField->setPrecision(4);
 
+  m_hFlipButton = new QPushButton(this);
+  m_vFlipButton = new QPushButton(this);
+
+  m_leftRotateButton = new QPushButton(this);
+  m_rightRotateButton = new QPushButton(this);
+
+  m_hFlipButton->setFixedSize(QSize(20, 20));
+  m_vFlipButton->setFixedSize(QSize(20, 20));
+
+  m_leftRotateButton->setFixedSize(QSize(20, 20));
+  m_rightRotateButton->setFixedSize(QSize(20, 20));
+
+  m_hFlipButton->setIcon(createQIcon("fliphoriz"));
+  m_hFlipButton->setIconSize(QSize(20, 20));
+  m_vFlipButton->setIcon(createQIcon("flipvert"));
+  m_vFlipButton->setIconSize(QSize(20, 20));
+  m_leftRotateButton->setIcon(createQIcon("rotateleft"));
+  m_leftRotateButton->setIconSize(QSize(20, 20));
+  m_rightRotateButton->setIcon(createQIcon("rotateright"));
+  m_rightRotateButton->setIconSize(QSize(20, 20));
+
+  m_hFlipButton->setToolTip(tr("Flip Object Horizontally"));
+  m_vFlipButton->setToolTip(tr("Flip Object Vertically"));
+  m_leftRotateButton->setToolTip(tr("Rotate Object Left"));
+  m_rightRotateButton->setToolTip(tr("Rotate Object Right"));
+
   bool splined                        = isCurrentObjectSplined();
   if (splined != m_splined) m_splined = splined;
   setSplined(m_splined);
@@ -637,6 +663,8 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
         rotLay->addWidget(m_rotationLabel, 0);
         rotLay->addSpacing(LABEL_SPACING);
         rotLay->addWidget(m_rotationField, 10);
+        rotLay->addWidget(m_leftRotateButton);
+        rotLay->addWidget(m_rightRotateButton);
 
         rotLay->addSpacing(ITEM_SPACING);
         rotLay->addWidget(new DVGui::Separator("", this, false));
@@ -666,6 +694,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
         scaleLay->addWidget(m_scaleHLabel, 0);
         scaleLay->addSpacing(LABEL_SPACING);
         scaleLay->addWidget(m_scaleHField, 10);
+        scaleLay->addWidget(m_hFlipButton);
         scaleLay->addWidget(m_lockScaleHCheckbox, 0);
 
         scaleLay->addSpacing(ITEM_SPACING);
@@ -673,6 +702,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
         scaleLay->addWidget(m_scaleVLabel, 0);
         scaleLay->addSpacing(LABEL_SPACING);
         scaleLay->addWidget(m_scaleVField, 10);
+        scaleLay->addWidget(m_vFlipButton);
         scaleLay->addWidget(m_lockScaleVCheckbox, 0);
 
         scaleLay->addSpacing(ITEM_SPACING);
@@ -793,6 +823,11 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   connectLabelAndField(m_nsCenterLabel, m_nsCenterField);
 
   onCurrentAxisChanged(activeAxisProp->getIndex());
+
+  connect(m_hFlipButton, SIGNAL(clicked()), SLOT(onFlipHorizontal()));
+  connect(m_vFlipButton, SIGNAL(clicked()), SLOT(onFlipVertical()));
+  connect(m_leftRotateButton, SIGNAL(clicked()), SLOT(onRotateLeft()));
+  connect(m_rightRotateButton, SIGNAL(clicked()), SLOT(onRotateRight()));
 }
 
 //-----------------------------------------------------------------------------
@@ -1002,6 +1037,34 @@ void ArrowToolOptionsBox::onCurrentAxisChanged(int axisId) {
     m_axisOptionWidgets[a]->setVisible(a == axisId || axisId == AllAxis);
 
   m_pickWidget->setVisible(axisId == AllAxis);
+}
+
+//-----------------------------------------------------------------------------
+
+void ArrowToolOptionsBox::onFlipHorizontal() {
+  m_scaleHField->setValue(m_scaleHField->getValue() * -1);
+  emit m_scaleHField->measuredValueChanged(m_scaleHField->getMeasuredValue());
+}
+
+//-----------------------------------------------------------------------------
+
+void ArrowToolOptionsBox::onFlipVertical() {
+  m_scaleVField->setValue(m_scaleVField->getValue() * -1);
+  emit m_scaleVField->measuredValueChanged(m_scaleVField->getMeasuredValue());
+}
+
+//-----------------------------------------------------------------------------
+
+void ArrowToolOptionsBox::onRotateLeft() {
+  m_rotationField->setValue(m_rotationField->getValue() + 90);
+  emit m_rotationField->measuredValueChanged(m_rotationField->getMeasuredValue());
+}
+
+//-----------------------------------------------------------------------------
+
+void ArrowToolOptionsBox::onRotateRight() {
+  m_rotationField->setValue(m_rotationField->getValue() - 90);
+  emit m_rotationField->measuredValueChanged(m_rotationField->getMeasuredValue());
 }
 
 //=============================================================================

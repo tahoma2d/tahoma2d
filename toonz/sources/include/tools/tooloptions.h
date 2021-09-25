@@ -255,6 +255,10 @@ class ArrowToolOptionsBox final : public ToolOptionsBox {
 
   ToolOptionCheckbox *m_globalKey;
 
+  // Flip buttons
+  QPushButton *m_hFlipButton, *m_vFlipButton, *m_leftRotateButton,
+      *m_rightRotateButton;
+
   // enables adjusting value by dragging on the label
   void connectLabelAndField(ClickableLabel *label, MeasuredValueField *field);
 
@@ -283,6 +287,11 @@ protected slots:
   void onCurrentStageObjectComboActivated(int index);
 
   void onCurrentAxisChanged(int);
+
+  void onFlipHorizontal();
+  void onFlipVertical();
+  void onRotateLeft();
+  void onRotateRight();
 };
 
 //=============================================================================
