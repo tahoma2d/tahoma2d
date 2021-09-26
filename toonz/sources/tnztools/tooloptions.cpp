@@ -7,6 +7,7 @@
 #include "tools/toolhandle.h"
 #include "tools/toolcommandids.h"
 
+#include "edittool.h"
 #include "selectiontool.h"
 #include "vectorselectiontool.h"
 #include "rasterselectiontool.h"
@@ -391,6 +392,8 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   setObjectName("toolOptionsPanel");
   setFixedHeight(26);
 
+  EditTool *editTool = dynamic_cast<EditTool *>(tool);
+
   m_axisOptionWidgets = new QWidget *[AllAxis];
 
   /* --- General Parts --- */
@@ -552,7 +555,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   m_hFlipButton = new QPushButton(this);
   m_vFlipButton = new QPushButton(this);
 
-  m_leftRotateButton = new QPushButton(this);
+  m_leftRotateButton  = new QPushButton(this);
   m_rightRotateButton = new QPushButton(this);
 
   m_hFlipButton->setFixedSize(QSize(20, 20));
@@ -828,6 +831,11 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   connect(m_vFlipButton, SIGNAL(clicked()), SLOT(onFlipVertical()));
   connect(m_leftRotateButton, SIGNAL(clicked()), SLOT(onRotateLeft()));
   connect(m_rightRotateButton, SIGNAL(clicked()), SLOT(onRotateRight()));
+
+  connect(editTool, SIGNAL(clickFlipHorizontal()), SLOT(onFlipHorizontal()));
+  connect(editTool, SIGNAL(clickFlipVertical()), SLOT(onFlipVertical()));
+  connect(editTool, SIGNAL(clickRotateLeft()), SLOT(onRotateLeft()));
+  connect(editTool, SIGNAL(clickRotateRight()), SLOT(onRotateRight()));
 }
 
 //-----------------------------------------------------------------------------
@@ -1057,14 +1065,16 @@ void ArrowToolOptionsBox::onFlipVertical() {
 
 void ArrowToolOptionsBox::onRotateLeft() {
   m_rotationField->setValue(m_rotationField->getValue() + 90);
-  emit m_rotationField->measuredValueChanged(m_rotationField->getMeasuredValue());
+  emit m_rotationField->measuredValueChanged(
+      m_rotationField->getMeasuredValue());
 }
 
 //-----------------------------------------------------------------------------
 
 void ArrowToolOptionsBox::onRotateRight() {
   m_rotationField->setValue(m_rotationField->getValue() - 90);
-  emit m_rotationField->measuredValueChanged(m_rotationField->getMeasuredValue());
+  emit m_rotationField->measuredValueChanged(
+      m_rotationField->getMeasuredValue());
 }
 
 //=============================================================================
@@ -1293,6 +1303,13 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
   connect(m_vFlipButton, SIGNAL(clicked()), SLOT(onFlipVertical()));
   connect(m_leftRotateButton, SIGNAL(clicked()), SLOT(onRotateLeft()));
   connect(m_rightRotateButton, SIGNAL(clicked()), SLOT(onRotateRight()));
+
+  connect(selectionTool, SIGNAL(clickFlipHorizontal()),
+          SLOT(onFlipHorizontal()));
+  connect(selectionTool, SIGNAL(clickFlipVertical()), SLOT(onFlipVertical()));
+  connect(selectionTool, SIGNAL(clickRotateLeft()), SLOT(onRotateLeft()));
+  connect(selectionTool, SIGNAL(clickRotateRight()), SLOT(onRotateRight()));
+
   // assert(ret);
 
   updateStatus();
@@ -3090,3 +3107,75 @@ void ToolOptions::onStageObjectChange() {
   ToolOptionsBox *panel = it->second;
   panel->onStageObjectChange();
 }
+
+//***********************************************************************************
+//    Command instantiation
+//***********************************************************************************
+
+class FlipHorizontalCommandHandler final : public MenuItemHandler {
+public:
+  FlipHorizontalCommandHandler(CommandId cmdId) : MenuItemHandler(cmdId) {}
+  void execute() override {
+    TTool::Application *app = TTool::getApplication();
+    TTool *tool             = app->getCurrentTool()->getTool();
+    if (!tool) return;
+    if (tool->getName() == T_Edit) {
+      EditTool *editTool = dynamic_cast<EditTool *>(tool);
+      emit editTool->clickFlipHorizontal();
+    } else if (tool->getName() == T_Selection) {
+      SelectionTool *selectionTool = dynamic_cast<SelectionTool *>(tool);
+      emit selectionTool->clickFlipHorizontal();
+    }
+  }
+} flipHorizontalCHInstance("A_ToolOption_FlipHorizontal");
+
+class FlipVerticalCommandHandler final : public MenuItemHandler {
+public:
+  FlipVerticalCommandHandler(CommandId cmdId) : MenuItemHandler(cmdId) {}
+  void execute() override {
+    TTool::Application *app = TTool::getApplication();
+    TTool *tool             = app->getCurrentTool()->getTool();
+    if (!tool) return;
+    if (tool->getName() == T_Edit) {
+      EditTool *editTool = dynamic_cast<EditTool *>(tool);
+      emit editTool->clickFlipVertical();
+    } else if (tool->getName() == T_Selection) {
+      SelectionTool *selectionTool = dynamic_cast<SelectionTool *>(tool);
+      emit selectionTool->clickFlipVertical();
+    }
+  }
+} flipVerticalCHInstance("A_ToolOption_FlipVertical");
+
+class RotateLeftCommandHandler final : public MenuItemHandler {
+public:
+  RotateLeftCommandHandler(CommandId cmdId) : MenuItemHandler(cmdId) {}
+  void execute() override {
+    TTool::Application *app = TTool::getApplication();
+    TTool *tool             = app->getCurrentTool()->getTool();
+    if (!tool) return;
+    if (tool->getName() == T_Edit) {
+      EditTool *editTool = dynamic_cast<EditTool *>(tool);
+      emit editTool->clickRotateLeft();
+    } else if (tool->getName() == T_Selection) {
+      SelectionTool *selectionTool = dynamic_cast<SelectionTool *>(tool);
+      emit selectionTool->clickRotateLeft();
+    }
+  }
+} rotateLeftCHInstance("A_ToolOption_RotateLeft");
+
+class RotateRightCommandHandler final : public MenuItemHandler {
+public:
+  RotateRightCommandHandler(CommandId cmdId) : MenuItemHandler(cmdId) {}
+  void execute() override {
+    TTool::Application *app = TTool::getApplication();
+    TTool *tool             = app->getCurrentTool()->getTool();
+    if (!tool) return;
+    if (tool->getName() == T_Edit) {
+      EditTool *editTool = dynamic_cast<EditTool *>(tool);
+      emit editTool->clickRotateRight();
+    } else if (tool->getName() == T_Selection) {
+      SelectionTool *selectionTool = dynamic_cast<SelectionTool *>(tool);
+      emit selectionTool->clickRotateRight();
+    }
+  }
+} rotateRightCHInstance("A_ToolOption_RotateRight");
