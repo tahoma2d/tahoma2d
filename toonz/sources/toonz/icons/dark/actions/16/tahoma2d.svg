@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16px"
+   height="16px"
+   version="1.1"
+   xml:space="preserve"
+   style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"
+   id="svg10"
+   sodipodi:docname="tahoma2d.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"><metadata
+   id="metadata16"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+   id="defs14" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1776"
+   inkscape:window-height="924"
+   id="namedview12"
+   showgrid="true"
+   inkscape:zoom="45.6875"
+   inkscape:cx="8"
+   inkscape:cy="8.1071639"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="svg10"><inkscape:grid
+     type="xygrid"
+     id="grid823" /></sodipodi:namedview>
+    
+    
+<path
+   style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.25;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1"
+   d="M 1,1 V 15 H 15 V 1 Z M 2,2 H 9 L 2,3 Z M 14,2 V 14 H 2 V 4 Z"
+   id="rect881"
+   inkscape:connector-curvature="0"
+   sodipodi:nodetypes="cccccccccccccc" /><path
+   style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.25;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1"
+   d="M 10.030687,5.6615521 14,5 V 7 L 11,7.5048656 V 14 h -1 z"
+   id="rect890"
+   inkscape:connector-curvature="0"
+   sodipodi:nodetypes="ccccccc" /><path
+   style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.25;stroke-miterlimit:2;stroke-dasharray:none;stroke-opacity:1"
+   d="M 2,7 7.0208156,6.1631974 7,14 H 5 V 8.5253077 L 2,9 Z"
+   id="rect892"
+   inkscape:connector-curvature="0"
+   sodipodi:nodetypes="ccccccc" /></svg>

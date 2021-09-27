@@ -1024,6 +1024,57 @@ QPixmap DvDirModelNetworkNode::getPixmap(bool isOpen) const {
 
 //=============================================================================
 //
+// DvDirModelStuffFolderNode [Tahoma2D]
+//
+//-----------------------------------------------------------------------------
+
+DvDirModelStuffFolderNode::DvDirModelStuffFolderNode(DvDirModelNode *parent)
+    : DvDirModelNode(parent, L"Tahoma2D") {
+  m_nodeType = "StuffFolder";
+}
+
+//-----------------------------------------------------------------------------
+
+void DvDirModelStuffFolderNode::refreshChildren() {
+  m_childrenValid = true;
+  if (!m_children.empty()) clearPointerContainer(m_children);
+
+  DvDirModelSpecialFileFolderNode *child = new DvDirModelSpecialFileFolderNode(
+      this, L"Library", ToonzFolder::getLibraryFolder());
+  child->setPixmap(
+      recolorPixmap(svgToPixmap(getIconThemePath("actions/16/library.svg"))));
+  addChild(child);
+
+  child = new DvDirModelSpecialFileFolderNode(
+      this, L"Fx Macros",
+      ToonzFolder::getFxPresetFolder() + TFilePath("presets/macroFx"));
+  child->setPixmap(
+      recolorPixmap(svgToPixmap(getIconThemePath("actions/16/fx_logo.svg"))));
+  addChild(child);
+
+  child = new DvDirModelSpecialFileFolderNode(this, L"Fx Plugins",
+                                              ToonzFolder::getPluginsFolder());
+  child->setPixmap(
+      recolorPixmap(svgToPixmap(getIconThemePath("actions/16/plugins.svg"))));
+  addChild(child);
+
+  child = new DvDirModelSpecialFileFolderNode(
+      this, L"Sudio Palettes", ToonzFolder::getStudioPaletteFolder());
+  child->setPixmap(
+      recolorPixmap(svgToPixmap(getIconThemePath("actions/16/palette.svg"))));
+  addChild(child);
+}
+
+//-----------------------------------------------------------------------------
+
+QPixmap DvDirModelStuffFolderNode::getPixmap(bool isOpen) const {
+  QIcon icon            = createQIcon("tahoma2d");
+  static QPixmap pixmap = icon.pixmap(16);
+  return pixmap;
+}
+
+//=============================================================================
+//
 // DvDirModelRootNode [Root]
 //
 //-----------------------------------------------------------------------------
@@ -1070,12 +1121,14 @@ void DvDirModelRootNode::refreshChildren() {
     m_specialNodes.push_back(child);
     addChild(child);
 
-    child = new DvDirModelSpecialFileFolderNode(
-        this, L"Library", ToonzFolder::getLibraryFolder());
-    child->setPixmap(
-        recolorPixmap(svgToPixmap(getIconThemePath("actions/16/library.svg"))));
-    m_specialNodes.push_back(child);
-    addChild(child);
+    DvDirModelStuffFolderNode *childstuff = new DvDirModelStuffFolderNode(this);
+    for (int i = 0; i < childstuff->getChildCount(); i++) {
+      DvDirModelSpecialFileFolderNode *node =
+          dynamic_cast<DvDirModelSpecialFileFolderNode *>(
+              childstuff->getChild(i));
+      m_specialNodes.push_back(node);
+    }
+    addChild(childstuff);
 
     addChild(new DvDirModelHistoryNode(this));
 
