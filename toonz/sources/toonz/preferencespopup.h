@@ -81,6 +81,7 @@ private:
   // For importing preferences from a different installation
   DVGui::FileField* m_importPrefpath;
   QCheckBox* m_importPrefsCB;
+  QCheckBox* m_importFavoritesCB;
   QCheckBox* m_importRoomsCB;
   QCheckBox* m_importProjectsCB;
   QCheckBox* m_importFxPluginsCB;
