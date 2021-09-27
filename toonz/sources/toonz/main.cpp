@@ -233,6 +233,9 @@ project->setUseScenePath(TProject::Extras, false);
   TFilePath cacheDir               = ToonzFolder::getCacheRootFolder();
   if (cacheDir.isEmpty()) cacheDir = TEnv::getStuffDir() + "cache";
   TImageCache::instance()->setRootDir(cacheDir);
+
+  TFilePath favoritesDir = ToonzFolder::getMyFavoritesFolder();
+  if (!TFileStatus(favoritesDir).doesExist()) TSystem::mkDir(favoritesDir);
 }
 
 //-----------------------------------------------------------------------------

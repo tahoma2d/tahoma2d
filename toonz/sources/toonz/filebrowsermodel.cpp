@@ -1077,6 +1077,13 @@ void DvDirModelRootNode::refreshChildren() {
     m_specialNodes.push_back(child);
     addChild(child);
 
+    child = new DvDirModelSpecialFileFolderNode(
+        this, L"Favorites", ToonzFolder::getMyFavoritesFolder());
+    child->setPixmap(recolorPixmap(
+        svgToPixmap(getIconThemePath("actions/16/favorites.svg"))));
+    m_specialNodes.push_back(child);
+    addChild(child);
+
     addChild(new DvDirModelHistoryNode(this));
 
     TProjectManager *pm          = TProjectManager::instance();

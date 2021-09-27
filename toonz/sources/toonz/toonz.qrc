@@ -133,8 +133,9 @@
 		<file>icons/dark/actions/16/fb_down.svg</file>
 		<file>icons/dark/actions/16/viewlist.svg</file>
 		<file>icons/dark/actions/16/viewicon.svg</file>
+    <file>icons/dark/actions/16/favorites.svg</file>
 
-		<file>icons/dark/actions/18/folder_project_root.svg</file>
+    <file>icons/dark/actions/18/folder_project_root.svg</file>
 		<file>icons/dark/actions/60/folder_browser.svg</file>
 		<file>icons/dark/actions/60/folder_browser_link.svg</file>
 		<file>icons/dark/actions/60/folder_browser_up.svg</file>
