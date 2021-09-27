@@ -772,7 +772,8 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
   assert(m_scene);
   assert(lcfx);
   assert(lcfx->getColumn());
-  if (!lcfx || !lcfx->getColumn()) return PlacedFx();
+  if (!lcfx || !lcfx->getColumn() || lcfx->getColumn()->isEmpty())
+    return PlacedFx();
 
   if (!lcfx->getColumn()->isPreviewVisible())  // This is the 'eye' icon
                                                // property in the column header
@@ -785,7 +786,9 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
   int levelFrame = cell.m_frameId.getNumber() - 1;
 
   /*--  ParticlesFxに繋がっておらず、空セルの場合は 中身無しを返す --*/
-  if (m_particleDescendentCount == 0 && cell.isEmpty()) return PlacedFx();
+  // -> even if the cell is empty, pass the affine infotmation of the column to
+  // the subsequent nodes
+  // if (m_particleDescendentCount == 0 && cell.isEmpty()) return PlacedFx();
 
   if (m_whichLevels == TOutputProperties::AnimatedOnly) {
     // In case only 'animated levels' are selected to be rendered, exclude all
@@ -796,6 +799,12 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
     // it anywhere :\ ?
 
     TXshLevel *xl = cell.m_level.getPointer();
+    // if the cell is empty, use a level of the first occupied cell instead.
+    if (!xl) {
+      int r0, r1;
+      if (lcfx->getColumn()->getRange(r0, r1) > 0)
+        xl = lcfx->getColumn()->getCell(r0).m_level.getPointer();
+    }
 
     /*-- ParticleFxのTextureポートに繋がっていない場合 --*/
     if (m_particleDescendentCount == 0) {
@@ -816,11 +825,14 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
   // common (image) levels
   PlacedFx pf;
   pf.m_columnIndex = lcfx->getColumn()->getIndex();
-  pf.m_fx          = lcfx;
-
   // Build column placement
   bool columnVisible =
       getColumnPlacement(pf, m_xsh, m_frame, pf.m_columnIndex, m_isPreview);
+
+  // if the cell is empty, only inherits its placement
+  if ((m_particleDescendentCount == 0 && cell.isEmpty())) return pf;
+
+  pf.m_fx = lcfx;
 
   /*-- subXsheetのとき、その中身もBuildFxを実行 --*/
   if (!cell.isEmpty() && cell.m_level->getChildLevel()) {
@@ -876,17 +888,14 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
        * 空セルのとき、Dpiアフィン変換には、その素材が入っている一番上のセルのものを使う
        * --*/
       TXshLevelColumn *column = lcfx->getColumn();
-      int i;
-      for (i = 0; i < column->getRowCount(); i++) {
-        TXshCell dpiCell = lcfx->getColumn()->getCell(i);
-        if (dpiCell.isEmpty()) continue;
 
-        sl = dpiCell.m_level->getSimpleLevel();
-        if (!sl) break;
-
-        TAffine dpiAff = ::getDpiAffine(sl, dpiCell.m_frameId, true);
-        pf.m_fx        = TFxUtil::makeAffine(pf.m_fx, dpiAff);
-        break;
+      int r0, r1;
+      if (column->getRange(r0, r1) > 0)
+        sl = column->getCell(r0).m_level->getSimpleLevel();
+      if (sl) {
+        TAffine dpiAff =
+            ::getDpiAffine(sl, column->getCell(r0).m_frameId, true);
+        pf.m_fx = TFxUtil::makeAffine(pf.m_fx, dpiAff);
       }
     }
 
@@ -941,15 +950,24 @@ PlacedFx FxBuilder::makePF(TZeraryColumnFx *zcfx) {
     return PlacedFx();
 
   TXshCell cell = zcfx->getColumn()->getCell(tfloor(m_frame));
-  if (cell.isEmpty()) return PlacedFx();
 
   // Build
   PlacedFx pf;
   pf.m_columnIndex = zcfx->getColumn()->getIndex();
+
+  // Add the column placement NaAffineFx
+  if (!getColumnPlacement(pf, m_xsh, m_frame, pf.m_columnIndex, m_isPreview))
+    return PlacedFx();
+
+  // if the cell is empty, only inherits its placement
+  if (cell.isEmpty()) return pf;
+
+  // set m_fx only when the current cell is not empty
   pf.m_fx =
       fx->clone(false);  // Detach the fx with a clone. Why? It's typically done
                          // to build fx connections in the render-tree freely.
                          // Here, it's used just for particles, I guess...
+
   // Deal with input sub-trees
   for (int i = 0; i < fx->getInputPortCount(); ++i) {
     // Note that only particles should end up here, currently
@@ -990,11 +1008,7 @@ PlacedFx FxBuilder::makePF(TZeraryColumnFx *zcfx) {
     }
   }
 
-  // Add the column placement NaAffineFx
-  if (getColumnPlacement(pf, m_xsh, m_frame, pf.m_columnIndex, m_isPreview))
-    return pf;
-  else
-    return PlacedFx();
+  return pf;
 }
 
 //-------------------------------------------------------------------
@@ -1026,7 +1040,9 @@ PlacedFx FxBuilder::makePFfromUnaryFx(TFx *fx) {
   }
 
   PlacedFx pf = makePF(inputFx);  // Build sub-render-tree
-  if (!pf.m_fx) return PlacedFx();
+  if (pf.m_columnIndex < 0) return PlacedFx();
+  // inherit the column placement even if the current cell is empty
+  if (!pf.m_fx) return pf;
 
   if (fx->getAttributes()->isEnabled()) {
     // Fx is enabled, so insert it in the render-tree
@@ -1123,7 +1139,10 @@ PlacedFx FxBuilder::makePFfromGenericFx(TFx *fx) {
     if (TFxP inputFx = fx->getInputPort(i)->getFx()) {
       PlacedFx inputPF = makePF(inputFx.getPointer());
       inputFx          = inputPF.m_fx;
-      if (!inputFx) continue;
+      // check the column index instead of inputFx
+      // so that the firstly-found input column always inherits
+      // its placement even if the current cell is empty.
+      if (inputPF.m_columnIndex < 0) continue;
 
       if (firstInput) {
         firstInput = false;
@@ -1152,7 +1171,11 @@ PlacedFx FxBuilder::makePFfromGenericFx(TFx *fx) {
           }
         }
 
-      } else {
+        if (!inputFx) continue;
+
+      } else if (!inputFx)
+        continue;
+      else {
         // The follow-ups traduce their PlacedFx::m_aff into an NaAffineFx,
         // instead
         inputFx = getFxWithColumnMovements(inputPF);
