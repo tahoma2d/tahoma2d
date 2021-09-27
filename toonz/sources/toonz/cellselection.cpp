@@ -3013,6 +3013,13 @@ static void dRenumberCells(int col, int r0, int r1) {
         levelsTable[sl].push_back(std::make_pair(oldFid, newFid));
     }
   }
+  auto getNextLetter = [](const QString &letter) {
+    if (letter.isEmpty()) return QString('a');
+    QByteArray byteArray = letter.toUtf8();
+    // return incrementing the last letter
+    byteArray.data()[byteArray.size() - 1]++;
+    return QString::fromUtf8(byteArray);
+  };
 
   // Ensure renumber consistency in case some destination fid would overwrite
   // some unrenumbered fid in the level
@@ -3022,8 +3029,7 @@ static void dRenumberCells(int col, int r0, int r1) {
       if (cellsMap.find(it->second) == cellsMap.end() &&
           it->first.getSimpleLevel()->isFid(it->second.getFrameId())) {
         TFrameId &fid = it->second.m_frameId;
-        fid           = TFrameId(fid.getNumber(),
-                       fid.getLetter() ? fid.getLetter() + 1 : 'a',
+        fid = TFrameId(fid.getNumber(), getNextLetter(fid.getLetter()),
                        fid.getZeroPadding(), fid.getStartSeqInd());
       }
     }
@@ -3218,8 +3224,8 @@ static void createNewDrawing(TXsheet *xsh, int row, int col,
   TFrameId fid(row + 1);
   if (sl->isFid(fid)) {
     fid = TFrameId(fid.getNumber(), 'a');
-    while (fid.getLetter() < 'z' && sl->isFid(fid))
-      fid = TFrameId(fid.getNumber(), fid.getLetter() + 1);
+    while (fid.getLetter().toUtf8().at(0) < 'z' && sl->isFid(fid))
+      fid = TFrameId(fid.getNumber(), fid.getLetter().toUtf8().at(0) + 1);
   }
   // add the new frame
   sl->setFrame(fid, sl->createEmptyFrame());

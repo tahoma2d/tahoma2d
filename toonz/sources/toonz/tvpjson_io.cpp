@@ -250,12 +250,13 @@ void TvpJsonLayer::build(int index, ToonzScene* scene, TXshCellColumn* column) {
       if (Preferences::instance()->isShowFrameNumberWithLettersEnabled())
         instance_name = getFrameNumberWithLetters(fid.getNumber());
       else {
-        std::string frameNumber("");
+        QString frameNumber("");
         // set number
-        if (fid.getNumber() >= 0) frameNumber = std::to_string(fid.getNumber());
+        if (fid.getNumber() >= 0)
+          frameNumber = QString::number(fid.getNumber());
         // add letter
-        if (fid.getLetter() != 0) frameNumber.append(1, fid.getLetter());
-        instance_name = QString::fromStdString(frameNumber);
+        if (!fid.getLetter().isEmpty()) frameNumber += fid.getLetter();
+        instance_name = frameNumber;
       }
 
       fid.setZeroPadding(frameFormats[cell.m_level.getPointer()].first);

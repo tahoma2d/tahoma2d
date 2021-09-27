@@ -874,7 +874,8 @@ void XSheetPDFTemplate::drawCellNumber(QPainter& painter, QRect rect,
       str = getFrameNumberWithLetters(cell.m_frameId.getNumber());
     } else {
       str = QString::number(cell.m_frameId.getNumber());
-      if (cell.m_frameId.getLetter() != '\0') str += cell.m_frameId.getLetter();
+      if (!cell.m_frameId.getLetter().isEmpty())
+        str += cell.m_frameId.getLetter();
     }
     painter.drawText(rect, Qt::AlignCenter, str);
   }

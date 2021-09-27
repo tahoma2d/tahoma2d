@@ -301,7 +301,8 @@ void parse(const QString &text, std::wstring &levelName, TFrameId &fid) {
   QRegExp spaces("\\t|\\s");
   QRegExp numbers("\\d+");
   QRegExp characters("[^\\d+]");
-  QRegExp fidWithSuffix("([0-9]+)([a-z]?)");
+  QRegExp fidWithSuffix(TFilePath::fidRegExpStr());
+  // QRegExp fidWithSuffix("([0-9]+)([a-z]?)");
   QString str = text;
 
   // remove final spaces
@@ -320,9 +321,8 @@ void parse(const QString &text, std::wstring &levelName, TFrameId &fid) {
       fid       = TFrameId(str.toInt());
     } else if (fidWithSuffix.exactMatch(str)) {
       levelName = L"";
-      fid       = TFrameId(
-          fidWithSuffix.cap(1).toInt(),
-          fidWithSuffix.cap(2) == "" ? 0 : fidWithSuffix.cap(2).toLatin1()[0]);
+      fid       = TFrameId(fidWithSuffix.cap(1).toInt(), fidWithSuffix.cap(2));
+      // fidWithSuffix.cap(2) == "" ? 0 : fidWithSuffix.cap(2).toLatin1()[0]);
     } else if (str.contains(characters)) {
       levelName = text.toStdWString();
       fid       = TFrameId::NO_FRAME;
@@ -336,9 +336,8 @@ void parse(const QString &text, std::wstring &levelName, TFrameId &fid) {
     } else if (fidWithSuffix.exactMatch(lastString)) {
       QString firstString = str.left(lastSpaceIndex);
       levelName           = firstString.toStdWString();
-      fid                 = TFrameId(
-          fidWithSuffix.cap(1).toInt(),
-          fidWithSuffix.cap(2) == "" ? 0 : fidWithSuffix.cap(2).toLatin1()[0]);
+      fid = TFrameId(fidWithSuffix.cap(1).toInt(), fidWithSuffix.cap(2));
+      // fidWithSuffix.cap(2) == "" ? 0 : fidWithSuffix.cap(2).toLatin1()[0]);
     } else if (lastString.contains(characters)) {
       levelName = text.toStdWString();
       fid       = TFrameId::NO_FRAME;
@@ -654,9 +653,9 @@ void RenameCellField::showInRowCol(int row, int col, bool multiColumnSelected) {
                     : QString::fromStdWString(levelName) + QString(" ") +
                           m_viewer->getFrameNumberWithLetters(fid.getNumber()));
     else {
-      std::string frameNumber("");
-      if (fid.getNumber() > 0) frameNumber = std::to_string(fid.getNumber());
-      if (fid.getLetter() != 0) frameNumber.append(1, fid.getLetter());
+      QString frameNumber("");
+      if (fid.getNumber() > 0) frameNumber = QString::number(fid.getNumber());
+      if (!fid.getLetter().isEmpty()) frameNumber += fid.getLetter();
 
       // get text from sound text level
       if (cell.m_level->getType() == TXshLevelType::SND_TXT_XSHLEVEL) {
@@ -669,12 +668,12 @@ void RenameCellField::showInRowCol(int row, int col, bool multiColumnSelected) {
       }
       // other level types
       else {
-        setText((frameNumber.empty())
+        setText((frameNumber.isEmpty())
                     ? QString::fromStdWString(levelName)
                     : (multiColumnSelected)
-                          ? QString::fromStdString(frameNumber)
+                          ? frameNumber
                           : QString::fromStdWString(levelName) + QString(" ") +
-                                QString::fromStdString(frameNumber));
+                                frameNumber);
       }
     }
     selectAll();
@@ -762,8 +761,8 @@ void RenameCellField::renameSoundTextColumn(TXshSoundTextColumn *sndTextCol,
 //-----------------------------------------------------------------------------
 
 void RenameCellField::renameCell() {
-  QString s            = text();
-  std::wstring newName = s.toStdWString();
+  QString newName = text();
+  // std::wstring newName = s.toStdWString();
 
   setText("");
 
@@ -777,16 +776,16 @@ void RenameCellField::renameCell() {
       xsheet->getColumn(m_col)->getSoundTextColumn()) {
     TXshSoundTextColumn *sndTextCol =
         xsheet->getColumn(m_col)->getSoundTextColumn();
-    renameSoundTextColumn(sndTextCol, s);
+    renameSoundTextColumn(sndTextCol, newName);
     return;
   }
 
   // convert the last one digit of the frame number to alphabet
   // Ex.  12 -> 1B    21 -> 2A   30 -> 3
   if (Preferences::instance()->isShowFrameNumberWithLettersEnabled())
-    parse_with_letter(QString::fromStdWString(newName), levelName, fid);
+    parse_with_letter(newName, levelName, fid);
   else {
-    parse(QString::fromStdWString(newName), levelName, fid);
+    parse(newName, levelName, fid);
   }
   bool animationSheetEnabled =
       Preferences::instance()->isAnimationSheetEnabled();
@@ -2012,12 +2011,12 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     if (Preferences::instance()->isShowFrameNumberWithLettersEnabled())
       fnum = m_viewer->getFrameNumberWithLetters(fid.getNumber());
     else {
-      std::string frameNumber("");
+      QString frameNumber("");
       // set number
-      if (fid.getNumber() >= 0) frameNumber = std::to_string(fid.getNumber());
+      if (fid.getNumber() >= 0) frameNumber = QString::number(fid.getNumber());
       // add letter
-      if (fid.getLetter() != 0) frameNumber.append(1, fid.getLetter());
-      fnum = QString::fromStdString(frameNumber);
+      if (!fid.getLetter().isEmpty()) frameNumber += fid.getLetter();
+      fnum = frameNumber;
     }
 
     int alignFlag =
@@ -2351,9 +2350,9 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
     TFrameId fid = cell.m_frameId;
 
     std::wstring levelName = cell.m_level->getName();
-    std::string frameNumber("");
-    if (fid.getNumber() > 0) frameNumber = std::to_string(fid.getNumber());
-    if (fid.getLetter() != 0) frameNumber.append(1, fid.getLetter());
+    // QString frameNumber("");
+    // if (fid.getNumber() > 0) frameNumber = QString::number(fid.getNumber());
+    // if (fid.getLetter() != 0) frameNumber += fid.getLetter();
 
     QRect nameRect =
         o->rect(PredefinedRect::CELL_NAME).translated(QPoint(x, y));
@@ -2395,13 +2394,12 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
         numberStr = m_viewer->getFrameNumberWithLetters(fid.getNumber());
         p.drawText(nameRect, Qt::AlignRight | Qt::AlignBottom, numberStr);
       } else {
-        std::string frameNumber("");
+        QString frameNumber("");
         // set number
-        if (fid.getNumber() > 0) frameNumber = std::to_string(fid.getNumber());
+        if (fid.getNumber() > 0) frameNumber = QString::number(fid.getNumber());
         // add letter
-        if (fid.getLetter() != 0) frameNumber.append(1, fid.getLetter());
-        numberStr = QString::fromStdString(frameNumber);
-        p.drawText(nameRect, Qt::AlignRight | Qt::AlignBottom, numberStr);
+        if (!fid.getLetter().isEmpty()) frameNumber += fid.getLetter();
+        p.drawText(nameRect, Qt::AlignRight | Qt::AlignBottom, frameNumber);
       }
     }
 
@@ -3085,14 +3083,13 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
               : QString::fromStdWString(levelName) + QString(" ") +
                     m_viewer->getFrameNumberWithLetters(fid.getNumber());
     } else {
-      std::string frameNumber("");
-      if (fid.getNumber() >= 0) frameNumber = std::to_string(fid.getNumber());
-      if (fid.getLetter() != 0) frameNumber.append(1, fid.getLetter());
+      QString frameNumber("");
+      if (fid.getNumber() >= 0) frameNumber = QString::number(fid.getNumber());
+      if (!fid.getLetter().isEmpty()) frameNumber += fid.getLetter();
       m_tooltip =
-          QString((frameNumber.empty())
-                      ? QString::fromStdWString(levelName)
-                      : QString::fromStdWString(levelName) + QString(" ") +
-                            QString::fromStdString(frameNumber));
+          QString((frameNumber.isEmpty()) ? QString::fromStdWString(levelName)
+                                          : QString::fromStdWString(levelName) +
+                                                QString(" ") + frameNumber);
     }
   } else if (isSoundColumn &&
              o->rect(PredefinedRect::PREVIEW_TRACK)

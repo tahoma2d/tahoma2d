@@ -32,6 +32,7 @@ class QPushButton;
 class QComboBox;
 class QGroupBox;
 class QCheckBox;
+class FrameNumberLineEdit;
 
 namespace DVGui {
 class ColorField;
@@ -266,11 +267,11 @@ class LoadLevelPopup final : public FileBrowserPopup {
   Q_OBJECT
 
   QFrame *m_subsequenceFrame;
-  DVGui::IntLineEdit *m_fromFrame, *m_toFrame;
+  FrameNumberLineEdit *m_fromFrame, *m_toFrame;
 
   QWidget *m_arrLvlPropWidget;
   QFrame *m_arrangementFrame;
-  DVGui::IntLineEdit *m_xFrom, *m_xTo;
+  FrameNumberLineEdit *m_xFrom, *m_xTo;
   QComboBox *m_stepCombo, *m_incCombo;
   DVGui::IntLineEdit *m_posFrom, *m_posTo;
 

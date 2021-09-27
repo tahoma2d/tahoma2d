@@ -891,9 +891,9 @@ TXshLevel *loadLevel(ToonzScene *scene,
                      const IoCmd::LoadResourceArguments::ResourceData &rd,
                      const TFilePath &castFolder, int row0, int &col0, int row1,
                      int &col1, bool expose, std::vector<TFrameId> &fIds,
-                     int xFrom = -1, int xTo = -1, std::wstring levelName = L"",
-                     int step = -1, int inc = -1, int frameCount = -1,
-                     bool doesFileActuallyExist = true) {
+                     TFrameId xFrom = TFrameId(), TFrameId xTo = TFrameId(),
+                     std::wstring levelName = L"", int step = -1, int inc = -1,
+                     int frameCount = -1, bool doesFileActuallyExist = true) {
   TFilePath actualPath = scene->decodeFilePath(rd.m_path);
 
   LoadLevelUndo *undo                  = 0;
@@ -1022,12 +1022,15 @@ TXshLevel *loadLevel(ToonzScene *scene,
 // loadResource(scene, path, castFolder, row, col, expose)
 //---------------------------------------------------------------------------
 
-TXshLevel *loadResource(
-    ToonzScene *scene, const IoCmd::LoadResourceArguments::ResourceData &rd,
-    const TFilePath &castFolder, int row0, int &col0, int row1, int &col1,
-    bool expose, std::vector<TFrameId> fIds = std::vector<TFrameId>(),
-    int xFrom = -1, int xTo = -1, std::wstring levelName = L"", int step = -1,
-    int inc = -1, int frameCount = -1, bool doesFileActuallyExist = true) {
+TXshLevel *loadResource(ToonzScene *scene,
+                        const IoCmd::LoadResourceArguments::ResourceData &rd,
+                        const TFilePath &castFolder, int row0, int &col0,
+                        int row1, int &col1, bool expose,
+                        std::vector<TFrameId> fIds = std::vector<TFrameId>(),
+                        TFrameId xFrom = TFrameId(), TFrameId xTo = TFrameId(),
+                        std::wstring levelName = L"", int step = -1,
+                        int inc = -1, int frameCount = -1,
+                        bool doesFileActuallyExist = true) {
   IoCmd::LoadResourceArguments::ResourceData actualRd(rd);
   actualRd.m_path = scene->decodeFilePath(rd.m_path);
 

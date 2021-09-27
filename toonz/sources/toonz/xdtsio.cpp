@@ -60,21 +60,23 @@ void XdtsHeader::write(QJsonObject &json) const {
 //-----------------------------------------------------------------------------
 
 TFrameId XdtsFrameDataItem::str2Fid(const QString &str) const {
+  if (str.isEmpty()) return TFrameId::EMPTY_FRAME;
   bool ok;
   int frame = str.toInt(&ok);
   if (ok) return TFrameId(frame);
-  // separate the last word as suffix
-  frame = str.left(str.size() - 1).toInt(&ok);
-  if (!ok) return TFrameId(-1);                              // EMPTY
-  if (!str[str.size() - 1].isLetter()) return TFrameId(-1);  // EMPTY
-  char c = str[str.size() - 1].toLatin1();
-
-  return TFrameId(frame, c);
+  QString regExpStr = QString("^%1$").arg(TFilePath::fidRegExpStr());
+  QRegExp rx(regExpStr);
+  int pos = rx.indexIn(str);
+  if (pos < 0) return TFrameId();
+  if (rx.cap(2).isEmpty())
+    return TFrameId(rx.cap(1).toInt());
+  else
+    return TFrameId(rx.cap(1).toInt(), rx.cap(2));
 }
 
 QString XdtsFrameDataItem::fid2Str(const TFrameId &fid) const {
-  if (fid.getLetter() == 0) return QString::number(fid.getNumber());
-  return QString::number(fid.getNumber()) + QString(fid.getLetter());
+  if (fid.getLetter().isEmpty()) return QString::number(fid.getNumber());
+  return QString::number(fid.getNumber()) + fid.getLetter();
 }
 
 void XdtsFrameDataItem::read(const QJsonObject &json) {

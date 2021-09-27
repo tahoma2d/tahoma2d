@@ -119,7 +119,7 @@ TLevelWriterGif::~TLevelWriterGif() {
 TImageWriterP TLevelWriterGif::getFrameWriter(TFrameId fid) {
   // if (IOError != 0)
   //	throw TImageException(m_path, buildGifExceptionString(IOError));
-  if (fid.getLetter() != 0) return TImageWriterP(0);
+  if (!fid.getLetter().isEmpty()) return TImageWriterP(0);
   int index            = fid.getNumber();
   TImageWriterGif *iwg = new TImageWriterGif(m_path, index, this);
   return TImageWriterP(iwg);
@@ -224,7 +224,7 @@ TLevelP TLevelReaderGif::loadInfo() {
 TImageReaderP TLevelReaderGif::getFrameReader(TFrameId fid) {
   // if (IOError != 0)
   //	throw TImageException(m_path, buildAVIExceptionString(IOError));
-  if (fid.getLetter() != 0) return TImageReaderP(0);
+  if (!fid.getLetter().isEmpty()) return TImageReaderP(0);
   int index            = fid.getNumber();
   TImageReaderGif *irm = new TImageReaderGif(m_path, index, this, m_info);
   return TImageReaderP(irm);

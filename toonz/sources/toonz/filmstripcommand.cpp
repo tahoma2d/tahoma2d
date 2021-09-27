@@ -1341,6 +1341,17 @@ public:
   int getHistoryType() override { return HistoryType::FilmStrip; }
 };
 
+QString getNextLetter(const QString &letter) {
+  // 空なら a を返す
+  if (letter.isEmpty()) return QString('a');
+  // 1文字かつ z または Z ならEmptyを返す
+  if (letter == 'z' || letter == 'Z') return QString();
+  QByteArray byteArray = letter.toUtf8();
+  // それ以外の場合、最後の文字をとにかく１進めて返す
+  byteArray.data()[byteArray.size() - 1]++;
+  return QString::fromUtf8(byteArray);
+};
+
 }  // namespace
 
 //=============================================================================
@@ -1487,10 +1498,10 @@ void FilmstripCmd::renumber(
       // make sure that srcFid has not been used. add a letter if this is needed
       if (tmp.count(tarFid) > 0) {
         do {
-          char letter = tarFid.getLetter();
-          tarFid = TFrameId(tarFid.getNumber(), letter == 0 ? 'a' : letter + 1);
-        } while (tarFid.getLetter() <= 'z' && tmp.count(tarFid) > 0);
-        if (tarFid.getLetter() > 'z') {
+          tarFid =
+              TFrameId(tarFid.getNumber(), getNextLetter(tarFid.getLetter()));
+        } while (!tarFid.getLetter().isEmpty() && tmp.count(tarFid) > 0);
+        if (tarFid.getLetter().isEmpty()) {
           // todo: error message
           return;
         }
@@ -2763,13 +2774,9 @@ void FilmstripCmd::renumberDrawing(TXshSimpleLevel *sl, const TFrameId &oldFid,
   if (it == fids.end()) return;
   TFrameId newFid = desiredNewFid;
   while (std::find(fids.begin(), fids.end(), newFid) != fids.end()) {
-    char letter = newFid.getLetter();
-    if (letter == 'z') return;
-    if (letter == 0)
-      letter = 'a';
-    else
-      letter++;
-    newFid = TFrameId(newFid.getNumber(), letter);
+    QString nextLetter = getNextLetter(newFid.getLetter());
+    if (nextLetter.isEmpty()) return;
+    newFid = TFrameId(newFid.getNumber(), nextLetter);
   }
   *it = newFid;
   if (Preferences::instance()->isSyncLevelRenumberWithXsheetEnabled()) {

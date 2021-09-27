@@ -127,7 +127,7 @@ public:
   std::vector<TXshLevel *> loadedLevels;  //!< [\p Out]     Levels loaded by
                                           //! resource loading procedures.
 
-  int xFrom, xTo;
+  TFrameId xFrom, xTo;
   std::wstring levelName;
   int step, inc, frameCount;
   bool doesFileActuallyExist;

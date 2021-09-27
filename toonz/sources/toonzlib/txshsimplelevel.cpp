@@ -485,7 +485,8 @@ int TXshSimpleLevel::guessStep() const {
 
   TFrameId firstFid = *ft++, secondFid = *ft++;
 
-  if (firstFid.getLetter() != 0 || secondFid.getLetter() != 0) return 1;
+  if (!firstFid.getLetter().isEmpty() || !secondFid.getLetter().isEmpty())
+    return 1;
 
   int step = secondFid.getNumber() - firstFid.getNumber();
   if (step == 1) return 1;
@@ -494,7 +495,7 @@ int TXshSimpleLevel::guessStep() const {
   // (cerco di limitare il numero di volte in cui devo controllare tutta la
   // lista)
   TFrameId lastFid = *m_frames.rbegin();
-  if (lastFid.getLetter() != 0) return 1;
+  if (!lastFid.getLetter().isEmpty()) return 1;
 
   if (lastFid.getNumber() != firstFid.getNumber() + step * (frameCount - 1))
     return 1;
@@ -502,7 +503,7 @@ int TXshSimpleLevel::guessStep() const {
   for (int i = 2; ft != m_frames.end(); ++ft, ++i) {
     const TFrameId &fid = *ft;
 
-    if (fid.getLetter() != 0) return 1;
+    if (!fid.getLetter().isEmpty()) return 1;
 
     if (fid.getNumber() != firstFid.getNumber() + step * i) return 1;
   }

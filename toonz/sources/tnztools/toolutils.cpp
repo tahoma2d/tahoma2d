@@ -1827,6 +1827,15 @@ bool ToolUtils::doUpdateXSheet(TXshSimpleLevel *sl,
 
 bool ToolUtils::renumberForInsertFId(TXshSimpleLevel *sl, const TFrameId &fid,
                                      const TFrameId &maxFid, TXsheet *xsh) {
+  auto getNextLetter = [](const QString &letter) {
+    if (letter.isEmpty()) return QString('a');
+    if (letter == 'z' || letter == 'Z') return QString();
+    QByteArray byteArray = letter.toUtf8();
+    // return incrementing the last letter
+    byteArray.data()[byteArray.size() - 1]++;
+    return QString::fromUtf8(byteArray);
+  };
+
   std::vector<TFrameId> fids;
   std::vector<TFrameId> oldFrames;
   sl->getFids(oldFrames);
@@ -1840,10 +1849,10 @@ bool ToolUtils::renumberForInsertFId(TXshSimpleLevel *sl, const TFrameId &fid,
   for (auto itr = fidsSet.upper_bound(maxFid); itr != fidsSet.end(); ++itr) {
     if (*itr > tmpFid) break;
     fIdsToBeShifted.push_back(*itr);
-    if (fid.getLetter()) {
-      if ((*itr).getLetter() < 'z')
-        tmpFid = TFrameId((*itr).getNumber(),
-                          ((*itr).getLetter()) ? (*itr).getLetter() + 1 : 'a');
+    if (!fid.getLetter().isEmpty()) {
+      QString nextLetter = getNextLetter((*itr).getLetter());
+      if (!nextLetter.isEmpty())
+        tmpFid = TFrameId((*itr).getNumber(), nextLetter);
       else
         tmpFid = TFrameId((*itr).getNumber() + 1);
     } else
@@ -1854,11 +1863,10 @@ bool ToolUtils::renumberForInsertFId(TXshSimpleLevel *sl, const TFrameId &fid,
 
   for (TFrameId &tmpFid : fids) {
     if (fIdsToBeShifted.contains(tmpFid)) {
-      if (fid.getLetter()) {
-        if (tmpFid.getLetter() < 'z')
-          tmpFid =
-              TFrameId(tmpFid.getNumber(),
-                       (tmpFid.getLetter()) ? tmpFid.getLetter() + 1 : 'a');
+      if (!fid.getLetter().isEmpty()) {
+        QString nextLetter = getNextLetter(tmpFid.getLetter());
+        if (!nextLetter.isEmpty())
+          tmpFid = TFrameId(tmpFid.getNumber(), nextLetter);
         else
           tmpFid = TFrameId(tmpFid.getNumber() + 1);
       } else

@@ -102,8 +102,8 @@ TFrameId getNewFrameId(TXshSimpleLevel *sl, int row) {
   TFrameId fid(row + 1);
   if (sl->isFid(fid)) {
     fid = TFrameId(fid.getNumber(), 'a');
-    while (fid.getLetter() < 'z' && sl->isFid(fid))
-      fid = TFrameId(fid.getNumber(), fid.getLetter() + 1);
+    while (fid.getLetter().toUtf8().at(0) < 'z' && sl->isFid(fid))
+      fid = TFrameId(fid.getNumber(), fid.getLetter().toUtf8().at(0) + 1);
   }
   return fid;
 }
@@ -123,9 +123,15 @@ TFrameId getDesiredFId(TXshCellColumn *column, int r0, TXshSimpleLevel *sl,
     if (neighborFId.isEmptyFrame()) neighborFId = tmpFId;
     if (maxFId < tmpFId) maxFId = tmpFId;
   }
-  if (maxFId.getLetter() && maxFId.getLetter() < 'z' && maxFId == neighborFId)
-    return TFrameId(maxFId.getNumber(), maxFId.getLetter() + 1);
-  else
+
+  QByteArray suffix = maxFId.getLetter().toUtf8();
+  // increment letter
+  if (suffix.size() == 1 &&
+      ((suffix.at(0) >= 'A' && suffix.at(0) < 'Z') ||
+       (suffix.at(0) >= 'a' && suffix.at(0) < 'z')) &&
+      maxFId == neighborFId) {
+    return TFrameId(maxFId.getNumber(), suffix.at(0) + 1);
+  } else
     return TFrameId(maxFId.getNumber() + 1);
 }
 

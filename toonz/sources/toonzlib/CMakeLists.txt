@@ -162,6 +162,7 @@ set(HEADERS
     ../include/toonz/preferencesitemids.h
     ../include/toonz/txsheetcolumnchange.h
     ../include/toonz/expressionreferencemonitor.h
+    ../include/toonz/filepathproperties.h
 )
 
 set(SOURCES
@@ -320,6 +321,7 @@ set(SOURCES
     txshmeshcolumn.cpp
     textureutils.cpp
     boardsettings.cpp
+    filepathproperties.cpp
 )
 
 if(BUILD_TARGET_WIN)

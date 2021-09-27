@@ -16,11 +16,12 @@ namespace DVGui {
 class FileField;
 class LineEdit;
 class CheckBox;
-}
+}  // namespace DVGui
 
 class QComboBox;
 class QGridLayout;
 class QGroupBox;
+class QButtonGroup;
 
 //=============================================================================
 // ProjectPopup
@@ -46,6 +47,11 @@ protected:
   QFrame *m_settingsBox;
   QPushButton *m_showSettingsButton;
 
+  // file path settings
+  QButtonGroup *m_rulePreferenceBG;
+  DVGui::CheckBox *m_acceptNonAlphabetSuffixCB;
+  QComboBox *m_letterCountCombo;
+
 public:
   ProjectPopup(bool isModal);
   // da TProjectManager::Listener
@@ -60,6 +66,9 @@ public:
 
 protected:
   void showEvent(QShowEvent *) override;
+
+protected slots:
+  void onRulePreferenceToggled(int);
 };
 
 //=============================================================================
@@ -75,8 +84,7 @@ public:
   ProjectSettingsPopup();
 
 public slots:
-  void onFolderChanged();
-  void onUseSceneChekboxChanged(int);
+  void onSomethingChanged();
   void projectChanged();
   void onProjectChanged() override;
 

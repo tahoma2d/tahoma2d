@@ -551,7 +551,7 @@ public:
     int i;
     for (i = 1; i < count; i++)
       if (m_sourceCells[i].m_level != cell.m_level ||
-          m_sourceCells[i].m_frameId.getLetter() != 0)
+          !m_sourceCells[i].m_frameId.getLetter().isEmpty())
         return;
 
     // check if all the selected cells have the same frame number

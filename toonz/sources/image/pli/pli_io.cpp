@@ -29,7 +29,7 @@ typedef TVectorImage::IntersectionBranch IntersectionBranch;
 TNZ_LITTLE_ENDIAN undefined !!
 #endif
 
-    static const int c_majorVersionNumber = 120;
+    static const int c_majorVersionNumber = 150;
 static const int c_minorVersionNumber     = 0;
 
 /*=====================================================================*/
@@ -58,8 +58,8 @@ inline double doubleFromUlong1(TUINT32 hi, TUINT32 lo) {
   l[1] = hi;
   l[0] = lo;
 #else
-  l[0]             = hi;
-  l[1]             = lo;
+  l[0] = hi;
+  l[1] = lo;
 #endif
 
   return *(double *)l;  // - 1;
@@ -84,8 +84,8 @@ public:
 #if TNZ_LITTLE_ENDIAN
     app = n;
 #else
-    UCHAR *uc      = (UCHAR *)&n;
-    app            = *(uc) | (*(uc + 1)) << 8 | (*(uc + 2)) << 16 | (*(uc + 3)) << 24;
+    UCHAR *uc = (UCHAR *)&n;
+    app = *(uc) | (*(uc + 1)) << 8 | (*(uc + 2)) << 16 | (*(uc + 3)) << 24;
 #endif
     write((char *)&app, sizeof(TUINT32));
     return *this;
@@ -669,15 +669,27 @@ void ParsedPliImp::loadInfo(bool readPlt, TPalette *&palette,
       USHORT frame;
       m_iChan >> frame;
 
-      char letter = 0;
-      if (m_majorVersionNumber > 6 ||
-          (m_majorVersionNumber == 6 && m_minorVersionNumber >= 6))
-        m_iChan >> letter;
+      QByteArray suffix;
+      if (m_majorVersionNumber >= 150) {
+        TUINT32 suffixLength;
+        m_iChan >> suffixLength;
+        if ((int)suffixLength > 0) {
+          suffix.resize(suffixLength);
+          m_iChan.read(suffix.data(), suffixLength);
+        }
+      } else {
+        char letter = 0;
+        if (m_majorVersionNumber > 6 ||
+            (m_majorVersionNumber == 6 && m_minorVersionNumber >= 6))
+          m_iChan >> letter;
+        if (letter > 0) suffix = QByteArray(&letter, 1);
+      }
 
-      m_frameOffsInFile[TFrameId(frame, letter)] = m_iChan.tellg();
+      m_frameOffsInFile[TFrameId(frame, QString::fromUtf8(suffix))] =
+          m_iChan.tellg();
 
       // m_iChan.seekg(m_tagLength, ios::cur);
-      m_iChan.seekg(m_tagLength - 2, ios::cur);
+      if (m_majorVersionNumber < 150) m_iChan.seekg(m_tagLength - 2, ios::cur);
     } else if (type == PliTag::STYLE_NGOBJ) {
       m_iChan.seekg(pos, ios::beg);
       TagElem *tagElem = readTag();
@@ -798,7 +810,7 @@ ImageTag *ParsedPliImp::loadFrame(const TFrameId &frameNumber) {
   // PliTag *tag;
   USHORT type = PliTag::IMAGE_BEGIN_GOBJ;
   USHORT frame;
-  char letter;
+  QByteArray suffix;
   TFrameId frameId;
 
   // cerco il frame
@@ -813,13 +825,21 @@ ImageTag *ParsedPliImp::loadFrame(const TFrameId &frameNumber) {
     while ((type = readTagHeader()) != PliTag::END_CNTRL) {
       if (type == PliTag::IMAGE_BEGIN_GOBJ) {
         m_iChan >> frame;
-        if (m_majorVersionNumber > 6 ||
-            (m_majorVersionNumber == 6 && m_minorVersionNumber >= 6))
-          m_iChan >> letter;
-        else
-          letter = 0;
+        if (m_majorVersionNumber >= 150) {
+          TUINT32 suffixLength;
+          m_iChan >> suffixLength;
+          suffix.resize(suffixLength);
+          m_iChan.read(suffix.data(), suffixLength);
+        } else {
+          char letter = 0;
+          if (m_majorVersionNumber > 6 ||
+              (m_majorVersionNumber == 6 && m_minorVersionNumber >= 6)) {
+            m_iChan >> letter;
+            if (letter > 0) suffix = QByteArray(&letter, 1);
+          }
+        }
 
-        frameId                    = TFrameId(frame, letter);
+        frameId                    = TFrameId(frame, QString::fromUtf8(suffix));
         m_frameOffsInFile[frameId] = m_iChan.tellg();
         if (frameId == frameNumber) break;
       } else
@@ -1056,15 +1076,16 @@ inline bool ParsedPliImp::readDynamicData(TINT32 &val, TUINT32 &bufOffs) {
   case 4:
     if (m_isIrixEndian) {
       val = (m_buf[bufOffs + 3] | (m_buf[bufOffs + 2] << 8) |
-            (m_buf[bufOffs + 1] << 16) | (m_buf[bufOffs] << 24)) & 0x7fffffff;
+             (m_buf[bufOffs + 1] << 16) | (m_buf[bufOffs] << 24)) &
+            0x7fffffff;
       if (m_buf[bufOffs] & 0x80) {
         val        = -val;
         isNegative = true;
       }
     } else {
       val = (m_buf[bufOffs] | (m_buf[bufOffs + 1] << 8) |
-            (m_buf[bufOffs + 2] << 16) |
-            (m_buf[bufOffs + 3] << 24)) & 0x7fffffff;
+             (m_buf[bufOffs + 2] << 16) | (m_buf[bufOffs + 3] << 24)) &
+            0x7fffffff;
       if (m_buf[bufOffs + 3] & 0x80) {
         val        = -val;
         isNegative = true;
@@ -1466,7 +1487,7 @@ UINT ParsedPliImp::readRasterData(TRaster32P &r, TUINT32 &bufOffs) {
 /*=====================================================================*/
 
 inline void getLongValFromFloat(double val, TINT32 &intVal, TUINT32 &decVal) {
-  intVal              = (TINT32)val;
+  intVal = (TINT32)val;
   if (val < 0) decVal = (TUINT32)((double)((-val) - (-intVal)) * 65536.0);
   /*if (intVal<(0x1<<7))
 intVal|=(0x1<<7);
@@ -1614,11 +1635,25 @@ PliTag *ParsedPliImp::readImageTag() {
   bufOffs += 2;
 
   int headerLength = 2;
-  char letter      = 0;
-  if (m_majorVersionNumber > 6 ||
-      (m_majorVersionNumber == 6 && m_minorVersionNumber >= 6)) {
-    letter = (char)m_buf[bufOffs++];
-    ++headerLength;
+
+  QByteArray suffix;
+  if (m_majorVersionNumber >= 150) {
+    TUINT32 suffixLength;
+    readTUINT32Data(suffixLength, bufOffs);
+    headerLength += 4;
+    if (suffixLength > 0) {
+      suffix = QByteArray((char *)m_buf.get() + bufOffs, suffixLength);
+      bufOffs += suffixLength;
+      headerLength += suffixLength;
+    }
+  } else {
+    char letter = 0;
+    if (m_majorVersionNumber > 6 ||
+        (m_majorVersionNumber == 6 && m_minorVersionNumber >= 6)) {
+      letter = (char)m_buf[bufOffs++];
+      ++headerLength;
+      if (letter > 0) suffix = QByteArray(&letter, 1);
+    }
   }
 
   TUINT32 numObjects = (m_tagLength - headerLength) / m_currDynamicTypeBytesNum;
@@ -1638,7 +1673,8 @@ PliTag *ParsedPliImp::readImageTag() {
         assert(false);
 
   std::unique_ptr<ImageTag[]> tag(
-      new ImageTag(TFrameId(frame, letter), numObjects, std::move(object)));
+      new ImageTag(TFrameId(frame, QString::fromUtf8(suffix)), numObjects,
+                   std::move(object)));
   return tag.release();
 }
 
@@ -1655,8 +1691,8 @@ inline double doubleFromUlong(TUINT32 q) {
   l[1] = 0x3FF00000 | (q >> 12);
   l[0] = (q & 0xFFE) << 20;
 #else
-  l[0]             = 0x3FF00000 | (q >> 12);
-  l[1]             = (q & 0xFFE) << 20;
+  l[0] = 0x3FF00000 | (q >> 12);
+  l[1] = (q & 0xFFE) << 20;
 #endif
 
   return *(double *)l - 1;
@@ -1700,7 +1736,7 @@ PliTag *ParsedPliImp::readIntersectionDataTag() {
     readUShortData(style, bufOffs);
     branchArray[i].m_style = style;
     /*
-*/
+     */
     if (m_buf[bufOffs] & 0x80)  // in un numero double tra 0 e 1, il bit piu'
                                 // significativo e' sempre 0
     // sfrutto questo bit; se e' 1, vuol dire che il valore e' 0.0 o 1.0 in un
@@ -1981,7 +2017,7 @@ TUINT32 ParsedPliImp::writePaletteWithAlphaTag(PaletteWithAlphaTag *tag) {
 
 inline void ParsedPliImp::WRITE_UCHAR_FROM_DOUBLE(double dval) {
   assert(m_oChan);
-  int ival             = tround(dval);
+  int ival = tround(dval);
   if (ival > 255) ival = 255;
   assert(ival >= 0);
   *m_oChan << (UCHAR)ival;
@@ -2128,10 +2164,24 @@ TUINT32 ParsedPliImp::writeImageTag(ImageTag *tag) {
   TUINT32 *objectOffset, offset, tagLength;
   int maxval = 0, minval = 100000;
 
-  writeTagHeader((UCHAR)PliTag::IMAGE_BEGIN_GOBJ, 3);
-  *m_oChan << (USHORT)tag->m_numFrame.getNumber();
-  *m_oChan << tag->m_numFrame.getLetter();
-
+  QByteArray suffix    = tag->m_numFrame.getLetter().toUtf8();
+  TUINT32 suffixLength = suffix.size();
+  UINT fIdTagLength;
+  if (m_majorVersionNumber >= 150) {  // write the suffix length before data
+    fIdTagLength = 2 + 4 + suffixLength;
+    writeTagHeader((UCHAR)PliTag::IMAGE_BEGIN_GOBJ, fIdTagLength);
+    *m_oChan << (USHORT)tag->m_numFrame.getNumber();
+    *m_oChan << suffixLength;
+    if (suffixLength > 0) m_oChan->writeBuf(suffix.data(), suffixLength);
+  } else {  // write only the first byte
+    fIdTagLength = 3;
+    writeTagHeader((UCHAR)PliTag::IMAGE_BEGIN_GOBJ, fIdTagLength);
+    *m_oChan << (USHORT)tag->m_numFrame.getNumber();
+    if (suffixLength > 0)
+      m_oChan->writeBuf(suffix.data(), 1);
+    else
+      *m_oChan << (UCHAR)0;
+  }
   m_currDynamicTypeBytesNum = 3;
 
   objectOffset = new TUINT32[tag->m_numObjects];
@@ -2155,12 +2205,23 @@ TUINT32 ParsedPliImp::writeImageTag(ImageTag *tag) {
 
   setDynamicTypeBytesNum(minval, maxval);
 
-  tagLength = tag->m_numObjects * m_currDynamicTypeBytesNum + 3;
+  tagLength = tag->m_numObjects * m_currDynamicTypeBytesNum + fIdTagLength;
+  // tagLength = tag->m_numObjects * m_currDynamicTypeBytesNum + 3;
 
   offset = writeTagHeader((UCHAR)PliTag::IMAGE_GOBJ, tagLength);
 
+  suffix = tag->m_numFrame.getLetter().toUtf8();
   *m_oChan << (USHORT)tag->m_numFrame.getNumber();
-  *m_oChan << tag->m_numFrame.getLetter();
+
+  if (m_majorVersionNumber >= 150) {  // write the suffix length before data
+    *m_oChan << suffixLength;
+    if (suffixLength > 0) m_oChan->writeBuf(suffix.data(), suffixLength);
+  } else {  // write only the first byte
+    if (suffixLength > 0)
+      m_oChan->writeBuf(suffix.data(), 1);
+    else
+      *m_oChan << (UCHAR)0;
+  }
 
   for (i = 0; i < tag->m_numObjects; i++) writeDynamicData(objectOffset[i]);
 
@@ -2420,29 +2481,29 @@ TUINT32 ParsedPliImp::writeGeometricTransformationTag(
   if (objectOffset > (unsigned int)maxval) maxval = (int)objectOffset;
 
   getLongValFromFloat(tag->m_affine.a11, intVal[0], decVal[0]);
-  if (intVal[0] < minval) minval               = (int)intVal[0];
-  if (intVal[0] > maxval) maxval               = (int)intVal[0];
+  if (intVal[0] < minval) minval = (int)intVal[0];
+  if (intVal[0] > maxval) maxval = (int)intVal[0];
   if (decVal[0] > (unsigned int)maxval) maxval = (int)decVal[0];
   getLongValFromFloat(tag->m_affine.a12, intVal[1], decVal[1]);
   if (decVal[1] > (unsigned int)maxval) maxval = (int)decVal[1];
-  if (intVal[1] < minval) minval               = (int)intVal[1];
-  if (intVal[1] > maxval) maxval               = (int)intVal[1];
+  if (intVal[1] < minval) minval = (int)intVal[1];
+  if (intVal[1] > maxval) maxval = (int)intVal[1];
   getLongValFromFloat(tag->m_affine.a13, intVal[2], decVal[2]);
   if (decVal[2] > (unsigned int)maxval) maxval = (int)decVal[2];
-  if (intVal[2] < minval) minval               = (int)intVal[2];
-  if (intVal[2] > maxval) maxval               = (int)intVal[2];
+  if (intVal[2] < minval) minval = (int)intVal[2];
+  if (intVal[2] > maxval) maxval = (int)intVal[2];
   getLongValFromFloat(tag->m_affine.a21, intVal[3], decVal[3]);
   if (decVal[3] > (unsigned int)maxval) maxval = (int)decVal[3];
-  if (intVal[3] < minval) minval               = (int)intVal[3];
-  if (intVal[3] > maxval) maxval               = (int)intVal[3];
+  if (intVal[3] < minval) minval = (int)intVal[3];
+  if (intVal[3] > maxval) maxval = (int)intVal[3];
   getLongValFromFloat(tag->m_affine.a22, intVal[4], decVal[4]);
   if (decVal[4] > (unsigned int)maxval) maxval = (int)decVal[4];
-  if (intVal[4] < minval) minval               = (int)intVal[4];
-  if (intVal[4] > maxval) maxval               = (int)intVal[4];
+  if (intVal[4] < minval) minval = (int)intVal[4];
+  if (intVal[4] > maxval) maxval = (int)intVal[4];
   getLongValFromFloat(tag->m_affine.a23, intVal[5], decVal[5]);
   if (decVal[5] > (unsigned int)maxval) maxval = (int)decVal[5];
-  if (intVal[5] < minval) minval               = (int)intVal[5];
-  if (intVal[5] > maxval) maxval               = (int)intVal[5];
+  if (intVal[5] < minval) minval = (int)intVal[5];
+  if (intVal[5] > maxval) maxval = (int)intVal[5];
 
   setDynamicTypeBytesNum(minval, maxval);
 
@@ -2479,11 +2540,11 @@ TUINT32 ParsedPliImp::writeDoublePairTag(DoublePairTag *tag) {
 
   getLongValFromFloat(tag->m_first, xIntVal, xDecVal);
   getLongValFromFloat(tag->m_second, yIntVal, yDecVal);
-  if (xIntVal < minval) minval      = (int)xIntVal;
-  if (xIntVal > maxval) maxval      = (int)xIntVal;
+  if (xIntVal < minval) minval = (int)xIntVal;
+  if (xIntVal > maxval) maxval = (int)xIntVal;
   if ((int)xDecVal > maxval) maxval = (int)xDecVal;
-  if (yIntVal < minval) minval      = (int)yIntVal;
-  if (yIntVal > maxval) maxval      = (int)yIntVal;
+  if (yIntVal < minval) minval = (int)yIntVal;
+  if (yIntVal > maxval) maxval = (int)yIntVal;
   if ((int)yDecVal > maxval) maxval = (int)yDecVal;
 
   setDynamicTypeBytesNum(minval, maxval);
@@ -2635,10 +2696,16 @@ void ParsedPli::getVersion(UINT &majorVersionNumber,
 /*=====================================================================*/
 
 void ParsedPli::setVersion(UINT majorVersionNumber, UINT minorVersionNumber) {
-  if (imp->m_versionLocked) return;
+  if (imp->m_versionLocked) {
+    // accept only when settings higher versions
+    if ((imp->m_majorVersionNumber > majorVersionNumber) ||
+        (imp->m_majorVersionNumber == majorVersionNumber &&
+         imp->m_minorVersionNumber >= minorVersionNumber))
+      return;
+  }
   if (majorVersionNumber >= 120) imp->m_versionLocked = true;
-  imp->m_majorVersionNumber                           = majorVersionNumber;
-  imp->m_minorVersionNumber                           = minorVersionNumber;
+  imp->m_majorVersionNumber = majorVersionNumber;
+  imp->m_minorVersionNumber = minorVersionNumber;
 }
 
 /*=====================================================================*/
