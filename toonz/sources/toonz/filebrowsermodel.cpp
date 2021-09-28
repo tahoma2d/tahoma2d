@@ -20,6 +20,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QDirIterator>
+#include <QStandardPaths>
 
 #ifdef _WIN32
 #include <shlobj.h>
@@ -76,6 +77,14 @@ TFilePath getDesktopPath() {
   if (!dir.cd("Desktop")) return TFilePath();
   return TFilePath(dir.absolutePath().toStdString());
 #endif
+}
+
+// Downloads Path
+TFilePath getDownloadsPath() {
+  QStringList stdLocs =
+      QStandardPaths::standardLocations(QStandardPaths::DownloadLocation);
+  if (stdLocs.isEmpty()) return TFilePath();
+  return TFilePath(stdLocs[0]);
 }
 }  // namespace
 
@@ -1118,6 +1127,13 @@ void DvDirModelRootNode::refreshChildren() {
         new DvDirModelSpecialFileFolderNode(this, L"Desktop", getDesktopPath());
     child->setPixmap(
         recolorPixmap(svgToPixmap(getIconThemePath("actions/16/desktop.svg"))));
+    m_specialNodes.push_back(child);
+    addChild(child);
+
+    child = new DvDirModelSpecialFileFolderNode(this, L"Downloads",
+                                                getDownloadsPath());
+    child->setPixmap(recolorPixmap(
+        svgToPixmap(getIconThemePath("actions/16/downloads.svg"))));
     m_specialNodes.push_back(child);
     addChild(child);
 
