@@ -1701,7 +1701,7 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
         m_multiFrameMode->isChecked())
       m_onionMode->setEnabled(false);
     if (m_autopaintMode) m_autopaintMode->setEnabled(false);
-    m_referenced->setEnabled(false);
+    if (m_referenced) m_referenced->setEnabled(false);
   }
   if (m_toolType->getProperty()->getValue() != L"Normal") {
     if (m_segmentMode) m_segmentMode->setEnabled(false);
@@ -1738,7 +1738,7 @@ void FillToolOptionsBox::onColorModeChanged(int index) {
   }
   enabled = range[index] != L"Lines" && !m_multiFrameMode->isChecked();
   m_onionMode->setEnabled(enabled);
-  m_referenced->setEnabled(enabled);
+  if (m_referenced) m_referenced->setEnabled(enabled);
   checkGapSettingsVisibility();
 }
 
@@ -1796,7 +1796,7 @@ void FillToolOptionsBox::checkGapSettingsVisibility() {
 void FillToolOptionsBox::onToolTypeChanged(int index) {
   const TEnumProperty::Range &range = m_toolType->getProperty()->getRange();
   bool enabled                      = range[index] == L"Normal";
-  m_referenced->setEnabled(enabled);
+  if (m_referenced) m_referenced->setEnabled(enabled);
   if (m_segmentMode)
     m_segmentMode->setEnabled(
         enabled ? m_colorMode->getProperty()->getValue() != L"Areas" : false);
