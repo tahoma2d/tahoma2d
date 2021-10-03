@@ -41,6 +41,7 @@ DVAPI TFilePath getFirstProjectsFolder();
 DVAPI TFilePath getStudioPaletteFolder();
 DVAPI TFilePath getFxPresetFolder();
 DVAPI TFilePath getLibraryFolder();
+DVAPI TFilePath getPluginsFolder();
 DVAPI TFilePath getReslistPath(bool forCleanup);
 DVAPI TFilePath getCacheRootFolder();
 DVAPI TFilePath getProfileFolder();

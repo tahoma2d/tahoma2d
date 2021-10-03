@@ -598,6 +598,7 @@ void FileBrowser::refreshCurrentFolderItems() {
         if (it->getType() != "tnz" && it->getType() != "scr" &&
             it->getType() != "tnzbat" && it->getType() != "mpath" &&
             it->getType() != "curve" && it->getType() != "tpl" &&
+            it->getType() != "macrofx" && it->getType() != "plugin" &&
             TFileType::getInfo(*it) == TFileType::UNKNOW_FILE)
           continue;
       } else if (!m_filter.contains(QString::fromStdString(it->getType())))

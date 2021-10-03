@@ -304,6 +304,16 @@ public:
 
 //-----------------------------------------------------------------------------
 
+class DvDirModelStuffFolderNode final : public DvDirModelNode {
+public:
+  DvDirModelStuffFolderNode(DvDirModelNode *parent);
+  void refreshChildren() override;
+  QPixmap getPixmap(bool isOpen) const override;
+  bool isFolder() const override { return true; }
+};
+
+//-----------------------------------------------------------------------------
+
 class DvDirModelRootNode final : public DvDirModelNode {
   std::vector<DvDirModelFileFolderNode *> m_versionControlNodes;
   std::vector<DvDirModelProjectNode *> m_projectNodes;
