@@ -1068,7 +1068,7 @@ void DvDirModelStuffFolderNode::refreshChildren() {
   addChild(child);
 
   child = new DvDirModelSpecialFileFolderNode(
-      this, L"Sudio Palettes", ToonzFolder::getStudioPaletteFolder());
+      this, L"Studio Palettes", ToonzFolder::getStudioPaletteFolder());
   child->setPixmap(
       recolorPixmap(svgToPixmap(getIconThemePath("actions/16/palette.svg"))));
   addChild(child);
