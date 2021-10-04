@@ -22,7 +22,7 @@ Building Tahoma2D from source requires the following dependencies:
 $ sudo apt-get install build-essential git cmake freeglut3-dev libboost-all-dev libegl1-mesa-dev libfreetype6-dev libgles2-mesa-dev libglew-dev libglib2.0-dev libjpeg-dev libjpeg-turbo8-dev libjson-c-dev liblz4-dev liblzma-dev liblzo2-dev libpng-dev libsuperlu-dev pkg-config qt5-default qtbase5-dev libqt5svg5-dev qtscript5-dev qttools5-dev qttools5-dev-tools libqt5opengl5-dev qtmultimedia5-dev qtwayland5 libqt5multimedia5-plugins
 ```
 
-Find a PPA respository for Qt 5.9 or later and install the following:
+Find a PPA repository for Qt 5.9 or later and install the following:
 ```
 $ sudo apt-get install -y qt59multimedia qt59script qt59serialport qt59svg qt59tools
 ```
