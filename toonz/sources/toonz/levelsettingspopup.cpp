@@ -982,6 +982,7 @@ void LevelSettingsPopup::onNameChanged() {
           " you entered for the level is already used.\nPlease enter a "
           "different name.");
     m_nameFld->setFocus();
+    TUndoManager::manager()->endBlock();
     return;
   }
 
