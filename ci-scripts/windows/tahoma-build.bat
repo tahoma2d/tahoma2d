@@ -13,13 +13,13 @@ REM Setup for local builds
 set MSVCVERSION="Visual Studio 16 2019"
 set BOOST_ROOT=C:\boost\boost_1_74_0
 set OPENCV_DIR=C:\opencv\451\build
-set QT_PATH=C:\Qt\5.15.2\msvc2019_64
+set QT_PATH=C:\Qt\5.11.3\msvc2015_64
 
 REM These are effective when running from Actions
 IF EXIST C:\local\boost_1_74_0 set BOOST_ROOT=C:\local\boost_1_74_0
 IF EXIST C:\tools\opencv set OPENCV_DIR=C:\tools\opencv\build
-IF EXIST D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.15\msvc2019_64 (
-	set QT_PATH=D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.15\msvc2019_64
+IF EXIST D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.11\msvc2015_64 (
+	set QT_PATH=D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.11\msvc2015_64
 )
 
 set WITH_CANON=N
