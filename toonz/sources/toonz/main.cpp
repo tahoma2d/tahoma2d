@@ -859,7 +859,9 @@ int main(int argc, char *argv[]) {
 #endif
 #endif
 
-#ifdef _WIN32
+// Windows Ink Support was introduce into Qt 5.12 so disable
+// our version when compiling with it
+#if defined(_WIN32) && QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
   if (Preferences::instance()->isWinInkEnabled()) {
     KisTabletSupportWin8 *penFilter = new KisTabletSupportWin8();
     if (penFilter->init()) {
