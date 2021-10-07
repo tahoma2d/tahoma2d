@@ -374,8 +374,9 @@ int main(int argc, char *argv[]) {
 
 #ifdef Q_OS_WIN
   //	Since currently Tahoma does not work with OpenGL of software or
-  // angle,
-  //	force Qt to use desktop OpenGL
+  // angle,	force Qt to use desktop OpenGL
+  // FIXME: This options should be called before constructing the application.
+  // Thus, ANGLE seems to be enabled as of now.
   a.setAttribute(Qt::AA_UseDesktopOpenGL, true);
 #endif
 
@@ -734,6 +735,19 @@ int main(int argc, char *argv[]) {
     QWindowsWindowFunctions::setHasBorderInFullScreen(w.windowHandle(), true);
 #endif
 
+    // Qt have started to support Windows Ink from 5.12.
+    // Unlike WinTab API used in Qt 5.9 the tablet behaviors are different and
+    // are (at least, for OT) problematic. The customized Qt5.15.2 are made with
+    // cherry-picking the WinTab feature to be officially introduced from 6.0.
+    // See https://github.com/shun-iwasawa/qt5/releases/tag/v5.15.2_wintab for
+    // details. The following feature can only be used with the customized Qt,
+    // with WITH_WINTAB build option, and in Windows-x64 build.
+
+#ifdef WITH_WINTAB
+  bool useQtNativeWinInk = Preferences::instance()->isQtNativeWinInkEnabled();
+  QWindowsWindowFunctions::setWinTabEnabled(!useQtNativeWinInk);
+#endif
+
   splash.showMessage(offsetStr + "Loading style sheet...",
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
@@ -846,7 +860,9 @@ int main(int argc, char *argv[]) {
 #endif
 #endif
 
-#ifdef _WIN32
+// Windows Ink Support was introduce into Qt 5.12 so disable
+// our version when compiling with it
+#if defined(_WIN32) && QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
   if (Preferences::instance()->isWinInkEnabled()) {
     KisTabletSupportWin8 *penFilter = new KisTabletSupportWin8();
     if (penFilter->init()) {

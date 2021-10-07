@@ -639,6 +639,8 @@ void Preferences::definePreferenceItems() {
   // TounchGestureControl // Touch Gesture is a checkable command and not in
   // preferences.ini
   define(winInkEnabled, "winInkEnabled", QMetaType::Bool, false);
+  // This option will be shown & available only when WITH_WINTAB is defined
+  define(useQtNativeWinInk, "useQtNativeWinInk", QMetaType::Bool, false);
 
   // Others (not appeared in the popup)
   // Shortcut popup settings

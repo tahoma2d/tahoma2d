@@ -107,6 +107,11 @@ TFilePath ToonzFolder::getFxPresetFolder() {
   return fp;
 }
 
+TFilePath ToonzFolder::getPluginsFolder() {
+  TFilePath fp = getStuffDir() + TFilePath("plugins");
+  return fp;
+}
+
 TFilePath ToonzFolder::getCacheRootFolder() {
   static enum STATE { FIRSTTIME, OK, NG } state = FIRSTTIME;
   QString cacheDir =

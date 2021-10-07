@@ -7,6 +7,7 @@
 #include "tools/toolhandle.h"
 #include "tools/toolcommandids.h"
 
+#include "edittool.h"
 #include "selectiontool.h"
 #include "vectorselectiontool.h"
 #include "rasterselectiontool.h"
@@ -391,6 +392,8 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   setObjectName("toolOptionsPanel");
   setFixedHeight(26);
 
+  EditTool *editTool = dynamic_cast<EditTool *>(tool);
+
   m_axisOptionWidgets = new QWidget *[AllAxis];
 
   /* --- General Parts --- */
@@ -549,6 +552,32 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   m_zField->setPrecision(4);
   m_noScaleZField->setPrecision(4);
 
+  m_hFlipButton = new QPushButton(this);
+  m_vFlipButton = new QPushButton(this);
+
+  m_leftRotateButton  = new QPushButton(this);
+  m_rightRotateButton = new QPushButton(this);
+
+  m_hFlipButton->setFixedSize(QSize(20, 20));
+  m_vFlipButton->setFixedSize(QSize(20, 20));
+
+  m_leftRotateButton->setFixedSize(QSize(20, 20));
+  m_rightRotateButton->setFixedSize(QSize(20, 20));
+
+  m_hFlipButton->setIcon(createQIcon("fliphoriz"));
+  m_hFlipButton->setIconSize(QSize(20, 20));
+  m_vFlipButton->setIcon(createQIcon("flipvert"));
+  m_vFlipButton->setIconSize(QSize(20, 20));
+  m_leftRotateButton->setIcon(createQIcon("rotateleft"));
+  m_leftRotateButton->setIconSize(QSize(20, 20));
+  m_rightRotateButton->setIcon(createQIcon("rotateright"));
+  m_rightRotateButton->setIconSize(QSize(20, 20));
+
+  m_hFlipButton->setToolTip(tr("Flip Object Horizontally"));
+  m_vFlipButton->setToolTip(tr("Flip Object Vertically"));
+  m_leftRotateButton->setToolTip(tr("Rotate Object Left"));
+  m_rightRotateButton->setToolTip(tr("Rotate Object Right"));
+
   bool splined                        = isCurrentObjectSplined();
   if (splined != m_splined) m_splined = splined;
   setSplined(m_splined);
@@ -637,6 +666,8 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
         rotLay->addWidget(m_rotationLabel, 0);
         rotLay->addSpacing(LABEL_SPACING);
         rotLay->addWidget(m_rotationField, 10);
+        rotLay->addWidget(m_leftRotateButton);
+        rotLay->addWidget(m_rightRotateButton);
 
         rotLay->addSpacing(ITEM_SPACING);
         rotLay->addWidget(new DVGui::Separator("", this, false));
@@ -666,6 +697,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
         scaleLay->addWidget(m_scaleHLabel, 0);
         scaleLay->addSpacing(LABEL_SPACING);
         scaleLay->addWidget(m_scaleHField, 10);
+        scaleLay->addWidget(m_hFlipButton);
         scaleLay->addWidget(m_lockScaleHCheckbox, 0);
 
         scaleLay->addSpacing(ITEM_SPACING);
@@ -673,6 +705,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
         scaleLay->addWidget(m_scaleVLabel, 0);
         scaleLay->addSpacing(LABEL_SPACING);
         scaleLay->addWidget(m_scaleVField, 10);
+        scaleLay->addWidget(m_vFlipButton);
         scaleLay->addWidget(m_lockScaleVCheckbox, 0);
 
         scaleLay->addSpacing(ITEM_SPACING);
@@ -793,6 +826,16 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
   connectLabelAndField(m_nsCenterLabel, m_nsCenterField);
 
   onCurrentAxisChanged(activeAxisProp->getIndex());
+
+  connect(m_hFlipButton, SIGNAL(clicked()), SLOT(onFlipHorizontal()));
+  connect(m_vFlipButton, SIGNAL(clicked()), SLOT(onFlipVertical()));
+  connect(m_leftRotateButton, SIGNAL(clicked()), SLOT(onRotateLeft()));
+  connect(m_rightRotateButton, SIGNAL(clicked()), SLOT(onRotateRight()));
+
+  connect(editTool, SIGNAL(clickFlipHorizontal()), SLOT(onFlipHorizontal()));
+  connect(editTool, SIGNAL(clickFlipVertical()), SLOT(onFlipVertical()));
+  connect(editTool, SIGNAL(clickRotateLeft()), SLOT(onRotateLeft()));
+  connect(editTool, SIGNAL(clickRotateRight()), SLOT(onRotateRight()));
 }
 
 //-----------------------------------------------------------------------------
@@ -1002,6 +1045,36 @@ void ArrowToolOptionsBox::onCurrentAxisChanged(int axisId) {
     m_axisOptionWidgets[a]->setVisible(a == axisId || axisId == AllAxis);
 
   m_pickWidget->setVisible(axisId == AllAxis);
+}
+
+//-----------------------------------------------------------------------------
+
+void ArrowToolOptionsBox::onFlipHorizontal() {
+  m_scaleHField->setValue(m_scaleHField->getValue() * -1);
+  emit m_scaleHField->measuredValueChanged(m_scaleHField->getMeasuredValue());
+}
+
+//-----------------------------------------------------------------------------
+
+void ArrowToolOptionsBox::onFlipVertical() {
+  m_scaleVField->setValue(m_scaleVField->getValue() * -1);
+  emit m_scaleVField->measuredValueChanged(m_scaleVField->getMeasuredValue());
+}
+
+//-----------------------------------------------------------------------------
+
+void ArrowToolOptionsBox::onRotateLeft() {
+  m_rotationField->setValue(m_rotationField->getValue() + 90);
+  emit m_rotationField->measuredValueChanged(
+      m_rotationField->getMeasuredValue());
+}
+
+//-----------------------------------------------------------------------------
+
+void ArrowToolOptionsBox::onRotateRight() {
+  m_rotationField->setValue(m_rotationField->getValue() - 90);
+  emit m_rotationField->measuredValueChanged(
+      m_rotationField->getMeasuredValue());
 }
 
 //=============================================================================
@@ -1230,6 +1303,13 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
   connect(m_vFlipButton, SIGNAL(clicked()), SLOT(onFlipVertical()));
   connect(m_leftRotateButton, SIGNAL(clicked()), SLOT(onRotateLeft()));
   connect(m_rightRotateButton, SIGNAL(clicked()), SLOT(onRotateRight()));
+
+  connect(selectionTool, SIGNAL(clickFlipHorizontal()),
+          SLOT(onFlipHorizontal()));
+  connect(selectionTool, SIGNAL(clickFlipVertical()), SLOT(onFlipVertical()));
+  connect(selectionTool, SIGNAL(clickRotateLeft()), SLOT(onRotateLeft()));
+  connect(selectionTool, SIGNAL(clickRotateRight()), SLOT(onRotateRight()));
+
   // assert(ret);
 
   updateStatus();
@@ -1701,7 +1781,7 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
         m_multiFrameMode->isChecked())
       m_onionMode->setEnabled(false);
     if (m_autopaintMode) m_autopaintMode->setEnabled(false);
-    m_referenced->setEnabled(false);
+    if (m_referenced) m_referenced->setEnabled(false);
   }
   if (m_toolType->getProperty()->getValue() != L"Normal") {
     if (m_segmentMode) m_segmentMode->setEnabled(false);
@@ -1738,7 +1818,7 @@ void FillToolOptionsBox::onColorModeChanged(int index) {
   }
   enabled = range[index] != L"Lines" && !m_multiFrameMode->isChecked();
   m_onionMode->setEnabled(enabled);
-  m_referenced->setEnabled(enabled);
+  if (m_referenced) m_referenced->setEnabled(enabled);
   checkGapSettingsVisibility();
 }
 
@@ -1796,7 +1876,7 @@ void FillToolOptionsBox::checkGapSettingsVisibility() {
 void FillToolOptionsBox::onToolTypeChanged(int index) {
   const TEnumProperty::Range &range = m_toolType->getProperty()->getRange();
   bool enabled                      = range[index] == L"Normal";
-  m_referenced->setEnabled(enabled);
+  if (m_referenced) m_referenced->setEnabled(enabled);
   if (m_segmentMode)
     m_segmentMode->setEnabled(
         enabled ? m_colorMode->getProperty()->getValue() != L"Areas" : false);
@@ -3027,3 +3107,75 @@ void ToolOptions::onStageObjectChange() {
   ToolOptionsBox *panel = it->second;
   panel->onStageObjectChange();
 }
+
+//***********************************************************************************
+//    Command instantiation
+//***********************************************************************************
+
+class FlipHorizontalCommandHandler final : public MenuItemHandler {
+public:
+  FlipHorizontalCommandHandler(CommandId cmdId) : MenuItemHandler(cmdId) {}
+  void execute() override {
+    TTool::Application *app = TTool::getApplication();
+    TTool *tool             = app->getCurrentTool()->getTool();
+    if (!tool) return;
+    if (tool->getName() == T_Edit) {
+      EditTool *editTool = dynamic_cast<EditTool *>(tool);
+      emit editTool->clickFlipHorizontal();
+    } else if (tool->getName() == T_Selection) {
+      SelectionTool *selectionTool = dynamic_cast<SelectionTool *>(tool);
+      emit selectionTool->clickFlipHorizontal();
+    }
+  }
+} flipHorizontalCHInstance("A_ToolOption_FlipHorizontal");
+
+class FlipVerticalCommandHandler final : public MenuItemHandler {
+public:
+  FlipVerticalCommandHandler(CommandId cmdId) : MenuItemHandler(cmdId) {}
+  void execute() override {
+    TTool::Application *app = TTool::getApplication();
+    TTool *tool             = app->getCurrentTool()->getTool();
+    if (!tool) return;
+    if (tool->getName() == T_Edit) {
+      EditTool *editTool = dynamic_cast<EditTool *>(tool);
+      emit editTool->clickFlipVertical();
+    } else if (tool->getName() == T_Selection) {
+      SelectionTool *selectionTool = dynamic_cast<SelectionTool *>(tool);
+      emit selectionTool->clickFlipVertical();
+    }
+  }
+} flipVerticalCHInstance("A_ToolOption_FlipVertical");
+
+class RotateLeftCommandHandler final : public MenuItemHandler {
+public:
+  RotateLeftCommandHandler(CommandId cmdId) : MenuItemHandler(cmdId) {}
+  void execute() override {
+    TTool::Application *app = TTool::getApplication();
+    TTool *tool             = app->getCurrentTool()->getTool();
+    if (!tool) return;
+    if (tool->getName() == T_Edit) {
+      EditTool *editTool = dynamic_cast<EditTool *>(tool);
+      emit editTool->clickRotateLeft();
+    } else if (tool->getName() == T_Selection) {
+      SelectionTool *selectionTool = dynamic_cast<SelectionTool *>(tool);
+      emit selectionTool->clickRotateLeft();
+    }
+  }
+} rotateLeftCHInstance("A_ToolOption_RotateLeft");
+
+class RotateRightCommandHandler final : public MenuItemHandler {
+public:
+  RotateRightCommandHandler(CommandId cmdId) : MenuItemHandler(cmdId) {}
+  void execute() override {
+    TTool::Application *app = TTool::getApplication();
+    TTool *tool             = app->getCurrentTool()->getTool();
+    if (!tool) return;
+    if (tool->getName() == T_Edit) {
+      EditTool *editTool = dynamic_cast<EditTool *>(tool);
+      emit editTool->clickRotateRight();
+    } else if (tool->getName() == T_Selection) {
+      SelectionTool *selectionTool = dynamic_cast<SelectionTool *>(tool);
+      emit selectionTool->clickRotateRight();
+    }
+  }
+} rotateRightCHInstance("A_ToolOption_RotateRight");

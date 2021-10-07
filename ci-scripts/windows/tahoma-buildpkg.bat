@@ -62,10 +62,10 @@ IF EXIST ..\..\thirdparty\apps\rhubarb (
 echo ">>> Configuring Tahoma2D.exe for deployment"
 
 REM Setup for local builds
-set QT_PATH=C:\Qt\5.15.2\msvc2019_64
+set QT_PATH=C:\Qt\5.9.7\msvc2017_64
 
 REM These are effective when running from Actions/Appveyor
-IF EXIST D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.15\msvc2019_64 set QT_PATH=D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.15\msvc2019_64
+IF EXIST D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.9\msvc2017_64 set QT_PATH=D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.9\msvc2017_64
 
 %QT_PATH%\bin\windeployqt.exe Tahoma2D\Tahoma2D.exe
 

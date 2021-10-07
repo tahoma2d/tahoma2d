@@ -1165,7 +1165,11 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       // Touch / Tablet Settings
       // TounchGestureControl // Touch Gesture is a checkable command and not in
       // preferences.ini
-      {winInkEnabled, tr("Enable Windows Ink Support* (EXPERIMENTAL)")}};
+      {winInkEnabled, tr("Enable Windows Ink Support* (EXPERIMENTAL)")},
+      {useQtNativeWinInk,
+       tr("Use Qt's Native Windows Ink Support*\n(CAUTION: This options is for "
+          "maintenance purpose. \n Do not activate this option or the tablet "
+          "won't work properly.)")}};
 
   return uiStringTable.value(id, QString());
 }
@@ -1933,7 +1937,7 @@ QWidget* PreferencesPopup::createVersionControlPage() {
 
 QWidget* PreferencesPopup::createTouchTabletPage() {
   bool winInkAvailable = false;
-#ifdef _WIN32
+#if defined(_WIN32) && QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
   winInkAvailable = KisTabletSupportWin8::isAvailable();
 #endif
 
@@ -1949,6 +1953,9 @@ QWidget* PreferencesPopup::createTouchTabletPage() {
 
   lay->addWidget(enableTouchGestures, 0, 0, 1, 2);
   if (winInkAvailable) insertUI(winInkEnabled, lay);
+#ifdef WITH_WINTAB
+  insertUI(useQtNativeWinInk, lay);
+#endif
 
   lay->setRowStretch(lay->rowCount(), 1);
   if (winInkAvailable) insertFootNote(lay);
