@@ -1070,7 +1070,9 @@ void PreviewFxInstance::doOnRenderRasterCompleted(
   /*-- 16bpcで計算された場合、結果をDitheringする --*/
   TRasterP rasA = renderData.m_rasA;
   TRasterP rasB = renderData.m_rasB;
-  if (rasA->getPixelSize() == 8)  // render in 64 bits
+  // dither the 16bpc image IF the "30bit display" prefernce option is OFF
+  if (rasA->getPixelSize() == 8 &&
+      !Preferences::instance()->is30bitDisplayEnabled())  // render in 64 bits
   {
     TRaster32P auxA(rasA->getLx(), rasA->getLy());
     TRop::convert(auxA, rasA);  // dithering

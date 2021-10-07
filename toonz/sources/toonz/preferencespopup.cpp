@@ -271,6 +271,89 @@ Preferences::LevelFormat PreferencesPopup::FormatProperties::levelFormat()
 }
 
 //**********************************************************************************
+//   PreferencesPopup::Display30bitCheckerView  implementation
+//**********************************************************************************
+
+PreferencesPopup::Display30bitChecker::GLView::GLView(QWidget* parent,
+                                                      bool is30bit)
+    : QOpenGLWidget(parent), m_is30bit(is30bit) {
+  setFixedSize(500, 100);
+#if QT_VERSION >= 0x051000
+  if (m_is30bit) setTextureFormat(TGL_TexFmt10);
+#endif
+}
+
+void PreferencesPopup::Display30bitChecker::GLView::initializeGL() {
+  initializeOpenGLFunctions();
+  glClear(GL_COLOR_BUFFER_BIT);
+}
+void PreferencesPopup::Display30bitChecker::GLView::resizeGL(int width,
+                                                             int height) {
+  glViewport(0, 0, width, height);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0, 1, 0, 1, -1, 1);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+}
+void PreferencesPopup::Display30bitChecker::GLView::paintGL() {
+  initializeOpenGLFunctions();
+  glPushMatrix();
+  glBegin(GL_QUADS);
+  glColor3d(0.071, 0.153, 0.0);
+  glVertex3d(0, 0, 0);
+  glVertex3d(0, 1, 0);
+  glColor3d(0.141, 0.239, 0.0);
+  glVertex3d(1, 1, 0);
+  glVertex3d(1, 0, 0);
+  glEnd();
+  glPopMatrix();
+}
+
+//-------------------------
+
+PreferencesPopup::Display30bitChecker::Display30bitChecker(
+    PreferencesPopup* parent)
+    : QDialog(parent) {
+  setModal(true);
+  m_currentDefaultFormat = QSurfaceFormat::defaultFormat();
+
+  setWindowTitle(tr("Check 30bit display availability"));
+
+  QSurfaceFormat sFmt = m_currentDefaultFormat;
+  sFmt.setRedBufferSize(10);
+  sFmt.setGreenBufferSize(10);
+  sFmt.setBlueBufferSize(10);
+  sFmt.setAlphaBufferSize(2);
+  QSurfaceFormat::setDefaultFormat(sFmt);
+
+  GLView* view8bit      = new GLView(this, false);
+  GLView* view10bit     = new GLView(this, true);
+  QPushButton* closeBtn = new QPushButton(tr("Close"), this);
+  QString infoLabel     = tr(
+      "If the lower gradient looks smooth and has no banding compared to the upper gradient,\n\
+30bit display is available in the current configuration.");
+
+  QVBoxLayout* lay = new QVBoxLayout();
+  lay->setMargin(10);
+  lay->setSpacing(10);
+  {
+    lay->addWidget(view8bit);
+    lay->addWidget(view10bit);
+    lay->addWidget(new QLabel(infoLabel, this));
+    lay->addWidget(closeBtn, 0, Qt::AlignCenter);
+  }
+  setLayout(lay);
+  lay->setSizeConstraint(QLayout::SetFixedSize);
+
+  connect(closeBtn, SIGNAL(clicked()), this, SLOT(accept()));
+}
+
+PreferencesPopup::Display30bitChecker::~Display30bitChecker() {
+  QSurfaceFormat::setDefaultFormat(m_currentDefaultFormat);
+}
+
+//**********************************************************************************
 //    PreferencesPopup  implementation
 //**********************************************************************************
 
@@ -691,6 +774,13 @@ void PreferencesPopup::onLutPathChanged() {
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onCheck30bitDisplay() {
+  Display30bitChecker checker(this);
+  checker.exec();
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onAddLevelFormat() {
   bool ok            = true;
   QString formatName = DVGui::getText(tr("New Level Format"),
@@ -1016,6 +1106,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {colorCalibrationLutPaths,
        tr("3DLUT File for [%1]:")
            .arg(LutManager::instance()->getMonitorName())},
+      {displayIn30bit, tr("30bit Display*")},
       {showIconsInMenu, tr("Show Icons In Menu*")},
       {viewerIndicatorEnabled, tr("Show Viewer Indicators")},
 
@@ -1456,11 +1547,14 @@ QWidget* PreferencesPopup::createInterfacePage() {
   for (const QString& name : m_pref->getLanguageList())
     languageItemList.push_back(ComboBoxItem(name, name));
 
+  QPushButton* check30bitBtn = new QPushButton(tr("Check Availability"));
+
   QWidget* widget  = new QWidget(this);
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
 
   insertUI(CurrentStyleSheetName, lay, styleSheetItemList);
+  int row = lay->rowCount();
 
   // lay->addWidget(new QLabel(tr("Icon Theme*:"), this), 2, 0,
   //               Qt::AlignRight | Qt::AlignVCenter);
@@ -1488,6 +1582,11 @@ QWidget* PreferencesPopup::createInterfacePage() {
   // insertUI(interfaceFontStyle, lay, buildFontStyleList());
   QGridLayout* colorCalibLay = insertGroupBoxUI(colorCalibrationEnabled, lay);
   { insertUI(colorCalibrationLutPaths, colorCalibLay); }
+#if QT_VERSION >= 0x051000
+  insertUI(displayIn30bit, lay);
+  row = lay->rowCount();
+  lay->addWidget(check30bitBtn, row - 1, 3);
+#endif
 //  insertUI(showIconsInMenu, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
@@ -1504,6 +1603,8 @@ QWidget* PreferencesPopup::createInterfacePage() {
   ret      = ret && connect(TApp::instance()->getCurrentScene(),
                        SIGNAL(pixelUnitSelected(bool)), this,
                        SLOT(onPixelUnitExternallySelected(bool)));
+  ret      = ret && connect(check30bitBtn, SIGNAL(clicked()), this,
+                       SLOT(onCheck30bitDisplay()));
   assert(ret);
 
   m_onEditedFuncMap.insert(CurrentStyleSheetName,

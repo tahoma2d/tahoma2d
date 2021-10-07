@@ -163,34 +163,33 @@ inline TRectD getImageBoundsD(const TImageP &img) {
 FlipBook::FlipBook(QWidget *parent, QString viewerTitle,
                    std::vector<int> flipConsoleButtonMask, UCHAR flags,
                    bool isColorModel)  //, bool showOnlyPlayBackgroundButton)
-    : QWidget(parent),
-      m_viewerTitle(viewerTitle),
-      m_levelNames(),
-      m_levels(),
-      m_playSound(false),
-      m_snd(0),
-      m_player(0)
-      //, m_doCompare(false)
-      ,
-      m_currentFrameToSave(0),
-      m_lw(),
-      m_lr(),
-      m_loadPopup(0),
-      m_savePopup(0),
-      m_shrink(1),
-      m_isPreviewFx(false),
-      m_previewedFx(0),
-      m_previewXsh(0),
-      m_previewUpdateTimer(this),
-      m_xl(0),
-      m_title1(),
-      m_poolIndex(-1),
-      m_freezed(false),
-      m_loadbox(),
-      m_dim(),
-      m_loadboxes(),
-      m_freezeButton(0),
-      m_flags(flags) {
+    : QWidget(parent)
+    , m_viewerTitle(viewerTitle)
+    , m_levelNames()
+    , m_levels()
+    , m_playSound(false)
+    , m_snd(0)
+    , m_player(0)
+    //, m_doCompare(false)
+    , m_currentFrameToSave(0)
+    , m_lw()
+    , m_lr()
+    , m_loadPopup(0)
+    , m_savePopup(0)
+    , m_shrink(1)
+    , m_isPreviewFx(false)
+    , m_previewedFx(0)
+    , m_previewXsh(0)
+    , m_previewUpdateTimer(this)
+    , m_xl(0)
+    , m_title1()
+    , m_poolIndex(-1)
+    , m_freezed(false)
+    , m_loadbox()
+    , m_dim()
+    , m_loadboxes()
+    , m_freezeButton(0)
+    , m_flags(flags) {
   setAcceptDrops(true);
   setFocusPolicy(Qt::StrongFocus);
 
@@ -1103,7 +1102,7 @@ void FlipBook::setLevel(const TFilePath &fp, TPalette *palette, int from,
         fromIndex = level->begin()->first.getNumber();
         toIndex   = (--level->end())->first.getNumber();
         if (m_imageViewer->isColorModel())
-          current           = m_flipConsole->getCurrentFrame();
+          current = m_flipConsole->getCurrentFrame();
         incrementalIndexing = true;
       } else {
         TLevel::Iterator it = level->begin();
@@ -1141,10 +1140,9 @@ void FlipBook::setLevel(const TFilePath &fp, TPalette *palette, int from,
       levelToPush.m_incrementalIndexing = incrementalIndexing;
 
       int formatIdx = Preferences::instance()->matchLevelFormat(fp);
-      if (formatIdx >= 0 &&
-          Preferences::instance()
-              ->levelFormat(formatIdx)
-              .m_options.m_premultiply) {
+      if (formatIdx >= 0 && Preferences::instance()
+                                ->levelFormat(formatIdx)
+                                .m_options.m_premultiply) {
         levelToPush.m_premultiply = true;
       }
 
@@ -1594,6 +1592,9 @@ TImageP FlipBook::getCurrentImage(int frame) {
       ir->setRegion(m_loadbox);
       lx = m_loadbox.getLx();
     }
+
+    if (Preferences::instance()->is30bitDisplayEnabled())
+      ir->enable16BitRead(true);
 
     TImageP img = ir->load();
 
@@ -2146,7 +2147,7 @@ void FlipBook::minimize(bool doMinimize) {
 */
 void FlipBook::loadAndCacheAllTlvImages(Level level, int fromFrame,
                                         int toFrame) {
-  TFilePath fp                                   = level.m_fp;
+  TFilePath fp = level.m_fp;
   if (!m_lr || (fp != m_lr->getFilePath())) m_lr = TLevelReaderP(fp);
   if (!m_lr) return;
 
@@ -2223,7 +2224,7 @@ FlipBook *viewFile(const TFilePath &path, int from, int to, int step,
   if (step == -1 || shrink == -1) {
     int _step = 1, _shrink = 1;
     Preferences::instance()->getViewValues(_shrink, _step);
-    if (step == -1) step     = _step;
+    if (step == -1) step = _step;
     if (shrink == -1) shrink = _shrink;
   }
 
