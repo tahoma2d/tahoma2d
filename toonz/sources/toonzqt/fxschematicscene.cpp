@@ -2194,8 +2194,12 @@ bool FxSchematicScene::isAnEmptyZone_withParentFx(const QRectF &rect,
     if (fxNode && fxNode->isA(eXSheetFx)) continue;
     // check only the fxs sharing the same parent
     if (!fxNode) continue;
-    for (int p = 0; p < fxNode->getInputPortCount(); p++) {
-      if (parent == fxNode->getFx()->getInputPort(p)->getFx()) {
+    TFx *fx = fxNode->getFx();
+    if (TZeraryColumnFx *zfx = dynamic_cast<TZeraryColumnFx *>(fx))
+      fx = zfx->getZeraryFx();
+    if (!fx || fx == parent) continue;
+    for (int p = 0; p < fx->getInputPortCount(); p++) {
+      if (parent == fx->getInputPort(p)->getFx()) {
         if (node->boundingRect().translated(node->scenePos()).intersects(rect))
           return false;
         else
