@@ -199,6 +199,7 @@ void decoTimeInfo(QPainter& painter, QRect rect,
 // Display the total pages over the current page.
 // This format is odd in terms of fraction, but can be seen in many Japanese
 // studios.
+
 void doDecoSheetInfo(QPainter& painter, QRect rect,
                      QMap<XSheetPDFDataType, QRect>& dataRects,
                      bool doTranslate, bool inv) {
@@ -337,7 +338,6 @@ void XSheetPDFTemplate::drawGrid(QPainter& painter, int colAmount, int colWidth,
       painter.translate(colWidth, 0);
       painter.drawLine(0, 0, 0, param(OneSecHeight) * 3);
     }
-    painter.restore();
   }
   painter.restore();
 }
@@ -362,6 +362,7 @@ void XSheetPDFTemplate::drawHeaderGrid(QPainter& painter, int colAmount,
         painter.drawLine(0, param(HeaderHeight) / 2, 0, param(HeaderHeight));
       }
     }
+    painter.restore();					  
   }
   painter.restore();
 }
@@ -596,6 +597,7 @@ void XSheetPDFTemplate::drawDialogBlock(QPainter& painter, const int framePage,
   QFont font = painter.font();
   font.setPixelSize(m_p.bodylabelTextSize_Large);
   font.setLetterSpacing(QFont::PercentageSpacing, 100);
+
   QRect labelRect(0, 0, param(DialogColWidth), param(HeaderHeight));
   QString serifLabel =
       (param(TranslateBodyLabel, 1) == 1) ? QObject::tr("S", "XSheetPDF") : "S";
