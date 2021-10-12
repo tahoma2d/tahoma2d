@@ -241,6 +241,7 @@ public:
   double m_z;         //!< Z value for this fx's column
   double m_so;        //!< Same as above, for stacking order
   int m_columnIndex;  //!< This fx's column index
+  bool m_isPostXsheetNode;
 
   TFxP m_fx;      //!< The referenced fx
   TAffine m_aff;  //!<
@@ -254,14 +255,16 @@ public:
       , m_columnIndex(-1)
       , m_fx(0)
       , m_aff()
-      , m_leftXsheetPort(0) {}
+      , m_leftXsheetPort(0)
+      , m_isPostXsheetNode(false) {}
   explicit PlacedFx(const TFxP &fx)
       : m_z(0)
       , m_so(0)
       , m_columnIndex(-1)
       , m_fx(fx)
       , m_aff()
-      , m_leftXsheetPort(0) {}
+      , m_leftXsheetPort(0)
+      , m_isPostXsheetNode(false) {}
 
   bool operator<(const PlacedFx &pf) const {
     return (m_z < pf.m_z)
@@ -712,13 +715,21 @@ PlacedFx FxBuilder::makePF(TFx *fx) {
 
 PlacedFx FxBuilder::makePF(TXsheetFx *fx) {
   if (!m_expandXSheet)  // Xsheet expansion is typically blocked for render-tree
-                        // building of
-    return PlacedFx(fx);  // post-xsheet fxs only.
+                        // building of post-xsheet fxs only.
+  {
+    PlacedFx ret(fx);
+    ret.m_isPostXsheetNode = true;
+    return ret;
+  }
 
   // Expand the render-tree from terminal fxs
   TFxSet *fxs = m_xsh->getFxDag()->getTerminalFxs();
   int m       = fxs->getFxCount();
-  if (m == 0) return PlacedFx();
+  if (m == 0) {
+    PlacedFx ret;
+    ret.m_isPostXsheetNode = true;
+    return ret;
+  }
 
   std::vector<PlacedFx> pfs(m);
   int i;
@@ -759,7 +770,9 @@ PlacedFx FxBuilder::makePF(TXsheetFx *fx) {
     }
   }
 
-  return PlacedFx(currentFx);
+  PlacedFx ret(currentFx);
+  ret.m_isPostXsheetNode = true;
+  return ret;
 }
 
 //-------------------------------------------------------------------
@@ -1052,7 +1065,7 @@ PlacedFx FxBuilder::makePFfromUnaryFx(TFx *fx) {
   }
 
   PlacedFx pf = makePF(inputFx);  // Build sub-render-tree
-  if (pf.m_columnIndex < 0) return PlacedFx();
+  if (pf.m_columnIndex < 0 && !pf.m_isPostXsheetNode) return PlacedFx();
   // inherit the column placement even if the current cell is empty
   if (!pf.m_fx) return pf;
 
@@ -1161,16 +1174,17 @@ PlacedFx FxBuilder::makePFfromGenericFx(TFx *fx) {
       // check the column index instead of inputFx
       // so that the firstly-found input column always inherits
       // its placement even if the current cell is empty.
-      if (inputPF.m_columnIndex < 0) continue;
+      if (inputPF.m_columnIndex < 0 && !inputPF.m_isPostXsheetNode) continue;
 
       if (firstInput) {
         firstInput = false;
 
         // The first found input PlacedFx carries its placement infos up
-        pf.m_aff         = inputPF.m_aff;
-        pf.m_columnIndex = inputPF.m_columnIndex;
-        pf.m_z           = inputPF.m_z;
-        pf.m_so          = inputPF.m_so;
+        pf.m_aff              = inputPF.m_aff;
+        pf.m_columnIndex      = inputPF.m_columnIndex;
+        pf.m_z                = inputPF.m_z;
+        pf.m_so               = inputPF.m_so;
+        pf.m_isPostXsheetNode = inputPF.m_isPostXsheetNode;
 
         /*-- 軌跡を取得するBinaryFxの場合 --*/
         if (pf.m_fx->getAttributes()->isSpeedAware()) {
