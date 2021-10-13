@@ -513,21 +513,21 @@ int TTextureStyle::getParamCount() const { return 8; }
 QString TTextureStyle::getParamNames(int index) const {
   switch (index) {
   case 0:
-    return "Use As Pattern";
-  case 1:
-    return "Position";
-  case 2:
-    return "Scale";
-  case 3:
-    return "Rotation(degrees)";
-  case 4:
-    return "X displ";
-  case 5:
-    return "Y displ";
-  case 6:
-    return "Contrast";
-  case 7:
     return "Load From File";
+  case 1:
+    return "Use As Pattern";
+  case 2:
+    return "Position";
+  case 3:
+    return "Scale";
+  case 4:
+    return "Rotation(degrees)";
+  case 5:
+    return "X displ";
+  case 6:
+    return "Y displ";
+  case 7:
+    return "Contrast";
   default:
     assert(false);
   }
@@ -538,25 +538,25 @@ QString TTextureStyle::getParamNames(int index) const {
 //-------------------------------------------------------------------
 
 void TTextureStyle::getParamRange(int index, double &min, double &max) const {
-  assert(index > 1);
+  assert(index > 2);
   switch (index) {
-  case 2:
+  case 3:
     min = 0.15;
     max = 10;
     break;
-  case 3:
+  case 4:
     min = -180;
     max = 180;
-    break;
-  case 4:
-    min = -500;
-    max = 500;
     break;
   case 5:
     min = -500;
     max = 500;
     break;
   case 6:
+    min = -500;
+    max = 500;
+    break;
+  case 7:
     min = 0.01;
     max = 10;
     break;
@@ -569,11 +569,11 @@ void TTextureStyle::getParamRange(int index, double &min, double &max) const {
 
 TColorStyle::ParamType TTextureStyle::getParamType(int index) const {
   assert(0 <= index && index < getParamCount());
-  if (index == 0)
+  if (index == 1)
     return TColorStyle::BOOL;
-  else if (index == 1)
+  else if (index == 2)
     return TColorStyle::ENUM;
-  else if (index == 7)
+  else if (index == 0)
     return TColorStyle::FILEPATH;
   return TColorStyle::DOUBLE;
 }
@@ -581,12 +581,12 @@ TColorStyle::ParamType TTextureStyle::getParamType(int index) const {
 //-----------------------------------------------------------------------------
 
 void TTextureStyle::getParamRange(int index, QStringList &enumItems) const {
-  assert(index == 1 || index == 7);
-  if (index == 1)
+  assert(index == 2 || index == 0);
+  if (index == 2)
     enumItems << "FIXED"
               << "AUTOMATIC"
               << "RANDOM";
-  else if (index == 7)
+  else if (index == 0)
     enumItems << "bmp"
               << "jpg"
               << "png"
@@ -598,24 +598,24 @@ void TTextureStyle::getParamRange(int index, QStringList &enumItems) const {
 //-------------------------------------------------------------------------
 
 bool TTextureStyle::getParamValue(TColorStyle::bool_tag, int index) const {
-  assert(index == 0);
+  assert(index == 1);
   return m_params.m_isPattern;
 }
 
 //---------------------------------------------------
 
 double TTextureStyle::getParamValue(TColorStyle::double_tag, int index) const {
-  assert(index > 1);
+  assert(index > 2);
   switch (index) {
-  case 2:
-    return m_params.m_scale;
   case 3:
-    return m_params.m_rotation;
+    return m_params.m_scale;
   case 4:
-    return m_params.m_displacement.x;
+    return m_params.m_rotation;
   case 5:
-    return m_params.m_displacement.y;
+    return m_params.m_displacement.x;
   case 6:
+    return m_params.m_displacement.y;
+  case 7:
     return m_params.m_contrast;
   default:
     assert(false);
@@ -625,14 +625,14 @@ double TTextureStyle::getParamValue(TColorStyle::double_tag, int index) const {
 
 TFilePath TTextureStyle::getParamValue(TColorStyle::TFilePath_tag,
                                        int index) const {
-  assert(index == 7);
+  assert(index == 0);
   return m_texturePath;
 }
 
 //-------------------------------------------------------------------
 
 int TTextureStyle::getParamValue(TColorStyle::int_tag, int index) const {
-  assert(index == 1);
+  assert(index == 2);
 
   return m_params.m_type;
 }
@@ -640,7 +640,7 @@ int TTextureStyle::getParamValue(TColorStyle::int_tag, int index) const {
 //-------------------------------------------------------------------
 
 void TTextureStyle::setParamValue(int index, const TFilePath &value) {
-  assert(index == 7);
+  assert(index == 0);
   m_texturePath = value;
   setAverageColor();
 }
@@ -648,7 +648,7 @@ void TTextureStyle::setParamValue(int index, const TFilePath &value) {
 //-----------------------------------------------------------------
 
 void TTextureStyle::setParamValue(int index, int value) {
-  assert(index == 1);
+  assert(index == 2);
 
   m_params.m_type = (TTextureParams::TYPE)value;
 }
@@ -656,37 +656,37 @@ void TTextureStyle::setParamValue(int index, int value) {
 //-------------------------------------------------------------------
 
 void TTextureStyle::setParamValue(int index, bool value) {
-  assert(index == 0);
+  assert(index == 1);
   m_params.m_isPattern = value;
 }
 
 //--------------------------------------------------------------------------
 
 void TTextureStyle::setParamValue(int index, double value) {
-  assert(index > 1);
+  assert(index > 0);
   switch (index) {
-  case 0:
+  case 1:
     m_params.m_isPattern = (((int)value == 0) ? false : true);
     break;
-  case 1:
+  case 2:
     m_params.m_type =
         (((int)value == 0) ? TTextureParams::FIXED
                            : ((int)value == 1) ? TTextureParams::AUTOMATIC
                                                : TTextureParams::RANDOM);
     break;
-  case 2:
+  case 3:
     m_params.m_scale = value;
     break;
-  case 3:
+  case 4:
     m_params.m_rotation = value;
     break;
-  case 4:
+  case 5:
     m_params.m_displacement.x = value;
     break;
-  case 5:
+  case 6:
     m_params.m_displacement.y = value;
     break;
-  case 6:
+  case 7:
     m_params.m_contrast = value;
     break;
   default:

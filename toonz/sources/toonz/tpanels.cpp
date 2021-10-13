@@ -500,6 +500,7 @@ PaletteViewerPanel::PaletteViewerPanel(QWidget *parent)
   m_paletteViewer->setXsheetHandle(app->getCurrentXsheet());
   // for clearing cache when paste style command called from the StyleSelection
   m_paletteViewer->setLevelHandle(app->getCurrentLevel());
+  m_paletteViewer->setApplication(app);
 
   TSceneHandle *sceneHandle = app->getCurrentScene();
   bool ret = connect(sceneHandle, SIGNAL(sceneSwitched()), this,
@@ -917,6 +918,7 @@ StyleEditorPanel::StyleEditorPanel(QWidget *parent) : TPanel(parent) {
       new StyleEditor(TApp::instance()->getPaletteController(), this);
   setWidget(m_styleEditor);
 
+  m_styleEditor->setApplication(TApp::instance());
   m_styleEditor->setLevelHandle(TApp::instance()->getCurrentLevel());
   setMinimumWidth(200);
   resize(340, 630);

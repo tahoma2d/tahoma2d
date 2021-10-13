@@ -927,13 +927,28 @@ TPixel32 TTextureStyle::getMainColor() const
 //*************************************************************************************
 
 TRasterImagePatternStrokeStyle::TRasterImagePatternStrokeStyle()
-    : m_level(), m_name(""), m_space(0), m_rotation(0) {}
+    : m_level(), m_name(""), m_space(0), m_rotation(0) {
+  m_basePath = getRootDir();
+}
 
 //-----------------------------------------------------------------------------
 
 TRasterImagePatternStrokeStyle::TRasterImagePatternStrokeStyle(
     const std::string &patternName)
     : m_level(), m_name(patternName), m_space(20), m_rotation(0) {
+  m_basePath = getRootDir();
+  if (m_name != "") loadLevel(m_name);
+}
+
+//-----------------------------------------------------------------------------
+
+TRasterImagePatternStrokeStyle::TRasterImagePatternStrokeStyle(
+    TFilePath basePath, const std::string &patternName)
+    : m_level()
+    , m_name(patternName)
+    , m_space(20)
+    , m_rotation(0)
+    , m_basePath(basePath) {
   if (m_name != "") loadLevel(m_name);
 }
 
@@ -1070,11 +1085,11 @@ void TRasterImagePatternStrokeStyle::loadLevel(const std::string &patternName) {
   m_name = patternName;
 
   // getRootDir() e' nulla se non si e' chiamata la setRoot(..)
-  assert(!getRootDir().isEmpty());
+  assert(!m_basePath.isEmpty());
 
   // leggo tutti i livelli contenuti
   TFilePathSet fps;
-  TSystem::readDirectory(fps, getRootDir());
+  TSystem::readDirectory(fps, m_basePath);
 
   // prendo il primo livello il cui nome sia patternName
   // (puo' essere un pli, ma anche un png, ecc.)
@@ -1324,13 +1339,28 @@ void TRasterImagePatternStrokeStyle::getObsoleteTagIds(
 //*************************************************************************************
 
 TVectorImagePatternStrokeStyle::TVectorImagePatternStrokeStyle()
-    : m_level(), m_name(""), m_space(0), m_rotation(0) {}
+    : m_level(), m_name(""), m_space(0), m_rotation(0) {
+  m_basePath = getRootDir();
+}
 
 //-----------------------------------------------------------------------------
 
 TVectorImagePatternStrokeStyle::TVectorImagePatternStrokeStyle(
     const std::string &patternName)
     : m_level(), m_name(patternName), m_space(20), m_rotation(0) {
+  m_basePath = getRootDir();
+  loadLevel(patternName);
+}
+
+//-----------------------------------------------------------------------------
+
+TVectorImagePatternStrokeStyle::TVectorImagePatternStrokeStyle(
+    TFilePath basePath, const std::string &patternName)
+    : m_level()
+    , m_name(patternName)
+    , m_space(20)
+    , m_rotation(0)
+    , m_basePath(basePath) {
   loadLevel(patternName);
 }
 
@@ -1459,9 +1489,9 @@ void TVectorImagePatternStrokeStyle::setParamValue(int index, double value) {
 void TVectorImagePatternStrokeStyle::loadLevel(const std::string &patternName) {
   m_level = TLevelP();
   m_name  = patternName;
-  assert(!getRootDir()
-              .isEmpty());  // se e' vuota, non si e' chiamata la setRoot(..)
-  TFilePath fp = getRootDir() + (patternName + ".pli");
+  assert(
+      !m_basePath.isEmpty());  // se e' vuota, non si e' chiamata la setRoot(..)
+  TFilePath fp = m_basePath + (patternName + ".pli");
   TLevelReaderP lr(fp);
   m_level = lr->loadInfo();
   TLevel::Iterator frameIt;

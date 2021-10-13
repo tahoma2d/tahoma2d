@@ -9,6 +9,7 @@
 #include "tpixel.h"
 #include "tpalette.h"
 #include "saveloadqsettings.h"
+#include "../toonz/tapplication.h"
 
 // TnzLib includes
 #include "toonz/tpalettehandle.h"
@@ -22,6 +23,7 @@
 #include "toonzqt/colorfield.h"
 #include "toonzqt/tabbar.h"
 #include "toonzqt/glwidget_for_highdpi.h"
+#include "toonzqt/dvdialog.h"
 
 // Qt includes
 #include <QWidget>
@@ -34,6 +36,8 @@
 #include <QPointF>
 #include <QSettings>
 #include <QSplitter>
+#include <QRadioButton>
+#include <QLabel>
 
 #undef DVAPI
 #undef DVVAR
@@ -420,6 +424,10 @@ signals:
 */
 class StyleEditorPage : public QFrame {
 public:
+  StyleEditor *m_editor;
+
+  std::vector<int> m_selection;
+
   StyleEditorPage(QWidget *parent);
 };
 
@@ -525,6 +533,15 @@ public slots:
 
                 Inherits \b StyleEditorPage.
 */
+enum StylePageType {
+  Unknown = 0,
+  Texture,
+  VectorGenerated,
+  VectorCustom,
+  VectorBrush,
+  Raster
+};
+
 class StyleChooserPage : public StyleEditorPage {
   Q_OBJECT
 
@@ -532,23 +549,75 @@ protected:
   QPoint m_chipOrigin;
   QSize m_chipSize;
   int m_chipPerRow;
-  static TFilePath m_rootPath;
+  StylePageType m_pageType = StylePageType::Unknown;
+  TFilePath m_stylesFolder;
+  int m_folderDepth;
+  QString m_styleSetName;
+  bool m_allowPageDelete;
+
+  bool m_favorite      = false;
+  bool m_myFavoriteSet = false;
+  bool m_allowFavorite = false;
+  bool m_external      = false;
 
 public:
-  StyleChooserPage(QWidget *parent = 0);
+  StyleChooserPage(TFilePath styleFolder, QWidget *parent = 0);
 
   QSize getChipSize() const { return m_chipSize; }
 
-  virtual bool loadIfNeeded()      = 0;
+  TFilePath getStylesFolder() { return m_stylesFolder; }
+
+  void setPageType(StylePageType pageType) { m_pageType = pageType; }
+  StylePageType getPageType() { return m_pageType; }
+
+  virtual void setFavorite(bool favorite) { m_favorite = favorite; }
+  bool isFavorite() { return m_favorite; }
+
+  void setMyFavoriteSet(bool myFavorite) { m_myFavoriteSet = myFavorite; }
+  bool isMyFavoriteSet() { return m_myFavoriteSet; }
+
+  void setAllowFavorite(bool allow) { m_allowFavorite = allow; }
+  bool allowFavorite() { return m_allowFavorite; }
+
+  virtual void setExternal(bool external) { m_external = external; }
+  bool isExternal() { return m_external; }
+
+  void setFolderDepth(int depth) { m_folderDepth = depth; }
+  bool isRootFolder() { return !m_folderDepth; }
+
+  void clearSelection() { m_selection.clear(); }
+  std::vector<int> getSelection() { return m_selection; }
+
+  virtual void loadItems() {}
+  virtual bool loadIfNeeded() = 0;
+  virtual bool isLoading() { return false; }
   virtual int getChipCount() const = 0;
 
   virtual void drawChip(QPainter &p, QRect rect, int index) = 0;
   virtual void onSelect(int index) {}
 
-  //! \see StyleEditor::setRootPath()
-  // TOGLIERE
-  static void setRootPath(const TFilePath &rootPath);
-  static TFilePath getRootPath() { return m_rootPath; }
+  virtual void removeSelectedStylesFromSet(std::vector<int> selection){};
+  virtual void addSelectedStylesToSet(std::vector<int> selection,
+                                      TFilePath setPath){};
+  virtual void updateFavorite(){};
+  virtual void addSelectedStylesToPalette(std::vector<int> selection){};
+
+  virtual void changeStyleSetFolder(TFilePath newPath) {
+    m_stylesFolder = newPath;
+  }
+
+  bool copyFilesToStyleFolder(TFilePathSet srcFiles, TFilePath destDir);
+  bool deleteFilesFromStyleFolder(TFilePathSet targetFiles);
+
+  void processContextMenuEvent(QContextMenuEvent *event) {
+    contextMenuEvent(event);
+  }
+
+  void setStyleSetName(QString name) { m_styleSetName = name; }
+  QString getStyleSetName() { return m_styleSetName; }
+
+  void setAllowPageDelete(bool allowDelete) { m_allowPageDelete = allowDelete; }
+  bool canDeletePage() { return m_allowPageDelete; }
 
 protected:
   int m_currentIndex;
@@ -561,10 +630,28 @@ protected:
   void mousePressEvent(QMouseEvent *event) override;
   void mouseMoveEvent(QMouseEvent *event) override {}
   void mouseReleaseEvent(QMouseEvent *event) override;
+  void contextMenuEvent(QContextMenuEvent *event) override;
+  void enterEvent(QEvent *event) override;
+
 protected slots:
   void computeSize();
+  void onTogglePage(bool toggled);
+  void onRemoveStyleFromSet();
+  void onEmptySet();
+  void onAddStyleToFavorite();
+  void onAddStyleToPalette();
+  void onCopyStyleToSet();
+  void onMoveStyleToSet();
+  void onAddSetToPalette();
+  void onUpdateFavorite();
+  void onRemoveStyleSet();
+  void onReloadStyleSet();
+  void onRenameStyleSet();
+  void onLabelContextMenu(const QPoint &pos);
 signals:
   void styleSelected(const TColorStyle &style);
+  void refreshFavorites();
+  void customStyleSelected();
 };
 
 //=============================================================================
@@ -620,11 +707,89 @@ private slots:
 using namespace StyleEditorGUI;
 
 //=============================================================================
+// Clickable Label
+//-----------------------------------------------------------------------------
+
+class ClickableLabel : public QLabel {
+  Q_OBJECT
+
+public:
+  ClickableLabel(const QString &text, QWidget *parent = nullptr,
+                 Qt::WindowFlags f = Qt::WindowFlags());
+  ~ClickableLabel();
+
+protected:
+  void mousePressEvent(QMouseEvent *event);
+
+signals:
+  void click();
+};
+
+//=============================================================================
+// RenameStyleSet
+//-----------------------------------------------------------------------------
+
+class RenameStyleSet final : public QLineEdit {
+  Q_OBJECT
+
+protected:
+  StyleChooserPage *m_page;
+  StyleEditor *m_editor;
+
+  bool m_validatingName;
+
+public:
+  RenameStyleSet(QWidget *parent);
+  ~RenameStyleSet() {}
+
+  void show(const QRect &rect);
+
+  void setStyleSetPage(StyleChooserPage *page) { m_page = page; }
+  void setEditor(StyleEditor *editor) { m_editor = editor; }
+
+protected:
+  void focusOutEvent(QFocusEvent *) override;
+
+protected slots:
+  void renameSet();
+};
+
+//=============================================================================
+// New Style Set Popup
+//-----------------------------------------------------------------------------
+
+class NewStyleSetPopup : public DVGui::Dialog {
+  Q_OBJECT
+
+protected:
+  DVGui::LineEdit *m_nameFld;
+  DVGui::CheckBox *m_isFavorite;
+  QButtonGroup *m_styleSetType;
+  QRadioButton *m_texture, *m_vectorCustom, *m_vectorBrush, *m_raster;
+  StyleEditor *m_editor;
+
+  StylePageType m_pageType;
+
+public:
+  NewStyleSetPopup(StylePageType pageType, QWidget *parent);
+
+protected:
+  void showEvent(QShowEvent *event) override { m_nameFld->setFocus(); }
+
+public slots:
+  void createStyleSet();
+
+private slots:
+  void onFavoriteToggled();
+};
+
+//=============================================================================
 // StyleEditor
 //-----------------------------------------------------------------------------
 
 class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   Q_OBJECT
+  TApplication *m_app;
 
   PaletteController *m_paletteController;
   TPaletteHandle *m_paletteHandle;
@@ -647,6 +812,7 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   QPushButton
       *m_autoButton;  //!< "Auto Apply" checkbox on the right panel side.
   QPushButton *m_applyButton;  //!< "Apply" button on the right panel side.
+  QToolButton *m_styleSetsButton;
 
   QToolBar *m_toolBar;                               //!< Lower toolbar.
   ColorParameterSelector *m_colorParameterSelector;  //!< Secondary color
@@ -659,13 +825,10 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   //! and style.
 
   PlainColorPage *m_plainColorPage;
-  StyleChooserPage *m_textureStylePage;
-  StyleEditorPage *m_specialStylePage;
-  StyleChooserPage *m_customStylePage;
-  StyleChooserPage *m_vectorBrushesStylePage;
-  StyleChooserPage *m_mypaintBrushesStylePage;
   SettingsPage *m_settingsPage;
+  QScrollArea *m_textureArea;
   QScrollArea *m_vectorArea;
+  QScrollArea *m_rasterArea;
   QAction *m_wheelAction;
   QAction *m_hsvAction;
   QAction *m_alphaAction;
@@ -682,9 +845,37 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   bool m_enabledFirstAndLastTab;
   bool m_colorPageIsVertical = true;
 
+  QScrollArea *m_textureOutsideArea;
+  QScrollArea *m_rasterOutsideArea;
+  QScrollArea *m_vectorOutsideArea;
+
+  std::vector<QPushButton *> m_textureButtons;
+  std::vector<QPushButton *> m_vectorButtons;
+  std::vector<QPushButton *> m_rasterButtons;
+
+  std::vector<ClickableLabel *> m_textureLabels;
+  std::vector<ClickableLabel *> m_vectorLabels;
+  std::vector<ClickableLabel *> m_rasterLabels;
+
+  std::vector<StyleChooserPage *> m_texturePages;
+  std::vector<StyleChooserPage *> m_vectorPages;
+  std::vector<StyleChooserPage *> m_rasterPages;
+
+  QMenu *m_textureMenu;
+  QMenu *m_vectorMenu;
+  QMenu *m_rasterMenu;
+
+  bool m_isAltPressed  = false;
+  bool m_isCtrlPressed = false;
+
+  RenameStyleSet *m_renameStyleSet;
+
 public:
   StyleEditor(PaletteController *, QWidget *parent = 0);
   ~StyleEditor();
+
+  void setApplication(TApplication *app) { m_app = app; }
+  TApplication *getApplication() { return m_app; }
 
   void setPaletteHandle(TPaletteHandle *paletteHandle);
   TPaletteHandle *getPaletteHandle() const { return m_paletteHandle; }
@@ -696,12 +887,6 @@ public:
   TPalette *getPalette() { return m_paletteHandle->getPalette(); }
   int getStyleIndex() { return m_paletteHandle->getStyleIndex(); }
 
-  /*! rootPath generally is STUFFDIR/Library. Contains directories 'textures'
-     and
-                  'custom styles' */
-  // TOGLIERE
-  void setRootPath(const TFilePath &rootPath);
-
   void enableAutopaintToggle(bool enabled) {
     m_settingsPage->enableAutopaintToggle(enabled);
   }
@@ -711,6 +896,45 @@ public:
   virtual void load(QSettings &settings) override;
 
   void updateColorCalibration();
+
+  void createStylePage(StylePageType pageType, TFilePath styleFolder,
+                       QString filters = QString("*"), bool isFavorite = false,
+                       int dirDepth = 0);
+
+  void initializeStyleMenus();
+
+  bool isAltPressed() { return m_isAltPressed; }
+  bool isCtrlPressed() { return m_isCtrlPressed; }
+
+  void clearSelection();
+
+  bool isSelecting();
+  bool isSelectingFavorites();
+  bool isSelectingFavoritesOnly();
+  bool isSelectingNonFavoritesOnly();
+
+  void addToPalette(const TColorStyle &style);
+
+  QStringList savePageStates(StylePageType pageType) const;
+  void loadPageStates(StylePageType pageType, QStringList pageStateData);
+
+  void createNewStyleSet(StylePageType pageType, TFilePath pagePath,
+                         bool isFavorite);
+  void removeStyleSet(StyleChooserPage *styleSetPage);
+  void removeStyleSetAtIndex(int index, int pageIndex);
+  void editStyleSetName(StyleChooserPage *styleSetPage);
+  void renameStyleSet(StyleChooserPage *styleSetPage, QString newName);
+
+  std::vector<StyleChooserPage *> getStyleSetList(StylePageType pageType);
+
+  void setUpdated(TFilePath setPath);
+  TFilePath getSetStyleFolder(QString setName);
+
+  void updatePage(int pageIndex);
+
+  QString getStylePageFilter(StylePageType pageType);
+
+  bool isStyleNameValid(QString name, StylePageType pageType, bool isFavorite);
 
 protected:
   /*! Return false if style is linked and style must be set to null.*/
@@ -739,6 +963,12 @@ protected:
 protected:
   void showEvent(QShowEvent *) override;
   void hideEvent(QHideEvent *) override;
+  void keyPressEvent(QKeyEvent *event) override;
+  void keyReleaseEvent(QKeyEvent *event) override;
+  void enterEvent(QEvent *event) override;
+  void mousePressEvent(QMouseEvent *event) override;
+  void contextMenuEvent(QContextMenuEvent *event) override;
+  void focusInEvent(QFocusEvent *event) override;
 
 protected slots:
 
@@ -770,16 +1000,49 @@ protected slots:
 
   void onParamStyleChanged(bool isDragging);
 
-  void onSpecialButtonToggled(bool on);
-  void onCustomButtonToggled(bool on);
-  void onVectorBrushButtonToggled(bool on);
   void onHexChanged();
   void onHexEdited(const QString &text);
   void onHideMenu();
+  void onPageChanged(int index);
+
+  void onToggleTextureSet(int checkedState);
+  void onToggleVectorSet(int checkedState);
+  void onToggleRasterSet(int checkedState);
+
+  void onShowAllTextureSet();
+  void onShowAllVectorSet();
+  void onShowAllRasterSet();
+
+  void onHideAllTextureSet();
+  void onHideAllVectorSet();
+  void onHideAllRasterSet();
+
+  void onCollapseAllTextureSet();
+  void onCollapseAllVectorSet();
+  void onCollapseAllRasterSet();
+
+  void onExpandAllTextureSet();
+  void onExpandAllVectorSet();
+  void onExpandAllRasterSet();
+
+  void onUpdateFavorites();
+
+  void onRemoveSelectedStylesFromFavorites();
+  void onAddSelectedStylesToFavorites();
+  void onAddSelectedStylesToPalette();
+  void onCopySelectedStylesToSet();
+  void onMoveSelectedStylesToSet();
+  void onRemoveSelectedStyleFromSet();
+
+  void onAddNewStyleSet();
+  void onScanStyleSetChanges();
+  void onSwitchToSettings();
 
 private:
   QFrame *createBottomWidget();
+  QFrame *createTexturePage();
   QFrame *createVectorPage();
+  QFrame *createRasterPage();
   void updateTabBar();
 
   void copyEditedStyleToPalette(bool isDragging);

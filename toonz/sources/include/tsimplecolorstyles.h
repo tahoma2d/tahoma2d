@@ -232,10 +232,13 @@ protected:
   TLevelP m_level;
   std::string m_name;
   double m_space, m_rotation;
+  TFilePath m_basePath;
 
 public:
   TRasterImagePatternStrokeStyle();
   TRasterImagePatternStrokeStyle(const std::string &patternName);
+  TRasterImagePatternStrokeStyle(TFilePath basePath,
+                                 const std::string &patternName);
 
   bool isRegionStyle() const override { return false; }
   bool isStrokeStyle() const override { return true; }
@@ -308,10 +311,13 @@ protected:
   TLevelP m_level;
   std::string m_name;
   double m_space, m_rotation;
+  TFilePath m_basePath;
 
 public:
   TVectorImagePatternStrokeStyle();
   TVectorImagePatternStrokeStyle(const std::string &patternName);
+  TVectorImagePatternStrokeStyle(TFilePath basePath,
+                                 const std::string &patternName);
 
   bool isRegionStyle() const override { return false; }
   bool isStrokeStyle() const override { return true; }

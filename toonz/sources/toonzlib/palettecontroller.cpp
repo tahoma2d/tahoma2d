@@ -51,7 +51,8 @@ PaletteController::PaletteController()
     , m_colorSample()
     , m_defaultRaster(0)
     , m_defaultToonzRaster(0)
-    , m_defaultVector(0) {
+    , m_defaultVector(0)
+    , m_currentPaletteViewer(0) {
   m_currentLevelPalette   = new TPaletteHandle;
   m_currentCleanupPalette = new TPaletteHandle;
   m_currentPalette        = new TPaletteHandle;

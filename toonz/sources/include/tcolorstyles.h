@@ -133,6 +133,8 @@ private:
       m_pickedPosition;  // picked position from color model by using style
                          // picker tool with "organize palette" option.
 
+  bool m_isCustom;  // for Custom Texture
+
 protected:
   TRaster32P m_icon;  //!< Icon shown on TPalette viewers.
   bool m_validIcon;   //!< Icon's validity status.
@@ -233,6 +235,9 @@ The \a global name contains information about palette id.
   }
   void setPickedPosition(const PickedPosition &pos) { m_pickedPosition = pos; }
   PickedPosition getPickedPosition() const { return m_pickedPosition; }
+
+  void setIsCustom(bool isCustom) { m_isCustom = isCustom; }
+  bool isCustom() const { return m_isCustom; }
 
   // Color-related functions
 

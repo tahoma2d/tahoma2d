@@ -200,8 +200,6 @@ static void initToonzEnv(QHash<QString, QString> &argPathValues) {
   TVectorImagePatternStrokeStyle::setRootDir(library);
   TVectorBrushStyle::setRootDir(library);
 
-  CustomStyleManager::setRootPath(library);
-
   // sembra indispensabile nella lettura dei .tab 2.2:
   TPalette::setRootDir(library);
   TImageStyle::setLibraryDir(library);
@@ -235,6 +233,9 @@ project->setUseScenePath(TProject::Extras, false);
   TFilePath cacheDir               = ToonzFolder::getCacheRootFolder();
   if (cacheDir.isEmpty()) cacheDir = TEnv::getStuffDir() + "cache";
   TImageCache::instance()->setRootDir(cacheDir);
+
+  TFilePath favoritesDir = ToonzFolder::getMyFavoritesFolder();
+  if (!TFileStatus(favoritesDir).doesExist()) TSystem::mkDir(favoritesDir);
 }
 
 //-----------------------------------------------------------------------------

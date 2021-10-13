@@ -50,7 +50,8 @@ TColorStyle::TColorStyle()
     , m_icon(0)
     , m_validIcon(false)
     , m_isEditedFromOriginal(false)
-    , m_pickedPosition() {}
+    , m_pickedPosition()
+    , m_isCustom(false) {}
 
 //-------------------------------------------------------------------
 
@@ -67,7 +68,8 @@ TColorStyle::TColorStyle(const TColorStyle &other)
     , m_enabled(other.m_enabled)
     , m_validIcon(false)
     , m_isEditedFromOriginal(other.m_isEditedFromOriginal)
-    , m_pickedPosition(other.m_pickedPosition) {}
+    , m_pickedPosition(other.m_pickedPosition)
+    , m_isCustom(other.m_isCustom) {}
 
 //-------------------------------------------------------------------
 
@@ -81,6 +83,7 @@ TColorStyle &TColorStyle::operator=(const TColorStyle &other) {
   m_validIcon            = false;
   m_isEditedFromOriginal = other.m_isEditedFromOriginal;
   m_pickedPosition       = other.m_pickedPosition;
+  m_isCustom             = other.m_isCustom;
 
   return *this;
 }
@@ -104,6 +107,7 @@ bool TColorStyle::operator==(const TColorStyle &cs) const {
   if (m_isEditedFromOriginal != cs.getIsEditedFlag()) return false;
   if (m_pickedPosition != cs.getPickedPosition()) return false;
   if (m_flags != cs.getFlags()) return false;
+  if (m_isCustom != cs.isCustom()) return false;
 
   for (int p = 0; p < colorParamCount; ++p)
     if (getColorParamValue(p) != cs.getColorParamValue(p)) return false;

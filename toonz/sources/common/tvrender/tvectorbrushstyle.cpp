@@ -169,13 +169,25 @@ const TColorStyle *VectorBrushProp::getColorStyle() const { return m_style; }
 //    Vector Brush Style  implementation
 //**********************************************************************
 
-TVectorBrushStyle::TVectorBrushStyle() : m_colorCount(0) {}
+TVectorBrushStyle::TVectorBrushStyle() : m_colorCount(0) {
+  m_basePath = getRootDir();
+}
 
 //-----------------------------------------------------------------
 
 TVectorBrushStyle::TVectorBrushStyle(const std::string &brushName,
                                      TVectorImageP vi)
     : m_brush(vi) {
+  m_basePath = getRootDir();
+  loadBrush(brushName);
+}
+
+//-----------------------------------------------------------------
+
+TVectorBrushStyle::TVectorBrushStyle(TFilePath basePath,
+                                     const std::string &brushName,
+                                     TVectorImageP vi)
+    : m_brush(vi), m_basePath(basePath) {
   loadBrush(brushName);
 }
 
@@ -193,7 +205,7 @@ void TVectorBrushStyle::loadBrush(const std::string &brushName) {
 
   if (!m_brush) {
     // Load the image associated with fp
-    TFilePath fp(m_rootDir + TFilePath(brushName + ".pli"));
+    TFilePath fp(m_basePath + TFilePath(brushName + ".pli"));
 
     TLevelReaderP lr(fp);
     TLevelP level = lr->loadInfo();

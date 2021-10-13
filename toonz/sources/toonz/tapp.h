@@ -206,7 +206,7 @@ public:
 
   XsheetViewer *getCurrentXsheetViewer() const { return m_xsheetViewer; }
 
-  void showMessage(QString message);
+  void showMessage(QString message, int duration = 2000) override;
   void sendShowTitleBars(bool on, bool force = false);
   bool getShowTitleBars() { return m_showTitleBars; }
   void setShowTitleBars(bool on);

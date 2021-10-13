@@ -1999,29 +1999,33 @@ QWidget* PreferencesPopup::createImportPrefsPage() {
     m_importPrefsCB->setChecked(true);
     importOptions->addWidget(m_importPrefsCB, 3, 1);
 
+    m_importFavoritesCB = new QCheckBox(tr("Favorites"), this);
+    m_importFavoritesCB->setChecked(true);
+    importOptions->addWidget(m_importFavoritesCB, 4, 1);
+
     m_importRoomsCB = new QCheckBox(tr("Room Layouts"), this);
     m_importRoomsCB->setChecked(true);
-    importOptions->addWidget(m_importRoomsCB, 4, 1);
+    importOptions->addWidget(m_importRoomsCB, 5, 1);
 
     m_importProjectsCB = new QCheckBox(tr("Sandbox and Projects"), this);
     m_importProjectsCB->setChecked(true);
-    importOptions->addWidget(m_importProjectsCB, 5, 1);
+    importOptions->addWidget(m_importProjectsCB, 6, 1);
 
     m_importFxPluginsCB = new QCheckBox(tr("Fx and Plugins"), this);
     m_importFxPluginsCB->setChecked(true);
-    importOptions->addWidget(m_importFxPluginsCB, 6, 1);
+    importOptions->addWidget(m_importFxPluginsCB, 7, 1);
 
     m_importStudioPalettesCB = new QCheckBox(tr("Studio Palettes"), this);
     m_importStudioPalettesCB->setChecked(true);
-    importOptions->addWidget(m_importStudioPalettesCB, 7, 1);
+    importOptions->addWidget(m_importStudioPalettesCB, 8, 1);
 
     m_importLibraryCB = new QCheckBox(tr("Library"), this);
     m_importLibraryCB->setChecked(true);
-    importOptions->addWidget(m_importLibraryCB, 8, 1);
+    importOptions->addWidget(m_importLibraryCB, 9, 1);
 
     m_importToonzfarmCB = new QCheckBox(tr("Toonzfarm"), this);
     m_importToonzfarmCB->setChecked(true);
-    importOptions->addWidget(m_importToonzfarmCB, 9, 1);
+    importOptions->addWidget(m_importToonzfarmCB, 10, 1);
   }
 
   QPushButton* importBtn = new QPushButton(tr("Import"));
@@ -2159,7 +2163,9 @@ void PreferencesPopup::onImport() {
         TFilePath src  = srcDir + fi.fileName().toStdWString(),
                   dest = destDir + fi.fileName().toStdWString();
         if (fi.isDir()) {
-          if (fi.fileName() == QString("layouts")) continue;
+          if (fi.fileName() == QString("layouts") ||
+              fi.fileName() == QString("favorites"))
+            continue;
           TSystem::copyDir(dest, src, true);
         } else
           TSystem::copyFile(dest, src, true);
@@ -2227,6 +2233,17 @@ void PreferencesPopup::onImport() {
                            srcDir + L"outputpresets", true);
       }
     }
+  }
+  //-------------------
+  // --- Favorites
+  //-------------------
+  if (m_importFavoritesCB->isChecked()) {
+    destDir = ToonzFolder::getMyFavoritesFolder();
+    srcDir  = oldStuffPath +
+             TFilePath(L"profiles/users/" +
+                       TSystem::getUserName().toStdWString() + L"/favorites");
+    if (TFileStatus(srcDir).doesExist())
+      TSystem::copyDir(destDir, srcDir, true);
   }
   //-------------------
   // --- Room Layouts

@@ -95,8 +95,9 @@
 		<file>icons/dark/actions/16/orientation_v.svg</file>
 		<file>icons/dark/actions/16/load_as_sub_xsheet.svg</file>
 		<file>icons/dark/actions/16/scene_export.svg</file>
+		<file>icons/dark/actions/16/stylesets.svg</file>
 
-		<!-- Arrange -->
+    <!-- Arrange -->
 		<file>icons/dark/actions/16/move_back_one.svg</file>
 		<file>icons/dark/actions/16/move_forward_one.svg</file>
 		<file>icons/dark/actions/16/move_to_back.svg</file>
@@ -136,8 +137,9 @@
 		<file>icons/dark/actions/16/fb_down.svg</file>
 		<file>icons/dark/actions/16/viewlist.svg</file>
 		<file>icons/dark/actions/16/viewicon.svg</file>
+    <file>icons/dark/actions/16/favorites.svg</file>
 
-		<file>icons/dark/actions/18/folder_project_root.svg</file>
+    <file>icons/dark/actions/18/folder_project_root.svg</file>
 		<file>icons/dark/actions/60/folder_browser.svg</file>
 		<file>icons/dark/actions/60/folder_browser_link.svg</file>
 		<file>icons/dark/actions/60/folder_browser_up.svg</file>

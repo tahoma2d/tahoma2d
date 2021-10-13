@@ -140,6 +140,10 @@ TFilePath ToonzFolder::getMyReslistPath(bool forCleanup) {
   return getMyModuleDir() + (forCleanup ? "cleanupreslist.txt" : "reslist.txt");
 }
 
+TFilePath ToonzFolder::getMyFavoritesFolder() {
+  return getMyModuleDir() + "favorites";
+}
+
 TFilePath ToonzFolder::getTemplateModuleDir() {
   return getModulesDir() + "settings";
 }

@@ -28,10 +28,13 @@ class DVAPI TVectorBrushStyle final : public TColorStyle {
   std::string m_brushName;
   TVectorImageP m_brush;
   int m_colorCount;
+  TFilePath m_basePath;
 
 public:
   TVectorBrushStyle();
   TVectorBrushStyle(const std::string &brushName,
+                    TVectorImageP vi = TVectorImageP());
+  TVectorBrushStyle(TFilePath basePath, const std::string &brushName,
                     TVectorImageP vi = TVectorImageP());
   ~TVectorBrushStyle();
 

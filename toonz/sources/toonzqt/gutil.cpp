@@ -740,3 +740,17 @@ void ToolBarContainer::paintEvent(QPaintEvent *event) { QPainter p(this); }
 QString operator+(const QString &a, const TFilePath &fp) {
   return a + QString::fromStdWString(fp.getWideString());
 }
+
+//=============================================================================
+
+QString trModKey(QString key) {
+#ifdef MACOSX
+  // Convert Windows key modifier to macOS modifier
+  key = key.replace("Ctrl", QString::fromStdWString(L"\u2318"));
+  key = key.replace("Shift", QString::fromStdWString(L"\u21e7"));
+  key = key.replace("Alt", QString::fromStdWString(L"\u2325"));
+  key = key.replace("Meta", QString::fromStdWString(L"\u2303"));
+  key = key.replace("+", "");
+#endif
+  return key;
+}
