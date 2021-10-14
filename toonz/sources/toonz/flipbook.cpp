@@ -791,15 +791,19 @@ void FlipBook::onButtonPressed(FlipConsole::EGadget button) {
       clonedImg->setPalette(ti->getPalette());
     }
     TImageCache::instance()->add(QString("TnzCompareImg"), clonedImg);
+    // to update the histogram of compare snapshot image
+    m_imageViewer->invalidateCompHisto();
     break;
   }
 
   case FlipConsole::eCompare:
-    if ((TVectorImageP)getCurrentImage(m_flipConsole->getCurrentFrame())) {
+    if (m_flipConsole->isChecked(FlipConsole::eCompare) &&
+        (TVectorImageP)getCurrentImage(m_flipConsole->getCurrentFrame())) {
       DVGui::warning(
           tr("It is not possible to take or compare snapshots for Toonz vector "
              "levels."));
-      m_flipConsole->setChecked(FlipConsole::eCompare, false);
+      // cancel the button pressing
+      m_flipConsole->pressButton(FlipConsole::eCompare);
       return;
     }
     break;
