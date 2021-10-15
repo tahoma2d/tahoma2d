@@ -4,7 +4,9 @@
 #define STUDIOPALETTEVIEWER_H
 
 #include "toonz/studiopalette.h"
+#include "toonz/tapplication.h"
 #include "toonz/tproject.h"
+#include "toonzqt/paletteviewer.h"
 #include "toonzqt/dvdialog.h"
 
 #include <QTreeWidget>
@@ -218,6 +220,8 @@ class DVAPI StudioPaletteViewer final : public QSplitter {
   StudioPaletteTreeViewer *m_studioPaletteTreeViewer;
   PaletteViewer *m_studioPaletteViewer;
 
+  TApplication *m_app;
+
 public:
   StudioPaletteViewer(QWidget *parent, TPaletteHandle *studioPaletteHandle,
                       TPaletteHandle *levelPaletteHandle,
@@ -230,6 +234,12 @@ public:
 
   int getViewMode() const;
   void setViewMode(int mode);
+
+  void setApplication(TApplication *app) {
+    m_app = app;
+    if (m_studioPaletteViewer) m_studioPaletteViewer->setApplication(app);
+  }
+  TApplication *getApplication() { return m_app; }
 };
 
 //-----------------------------------------------------------------------------
