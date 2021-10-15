@@ -786,8 +786,10 @@ void FlipBook::onButtonPressed(FlipConsole::EGadget button) {
     TImageP clonedImg;
     if (ri)
       clonedImg = TRasterImageP(ri->getRaster()->clone());
-    else
+    else {
       clonedImg = TToonzImageP(ti->getRaster()->clone(), ti->getSavebox());
+      clonedImg->setPalette(ti->getPalette());
+    }
     TImageCache::instance()->add(QString("TnzCompareImg"), clonedImg);
     break;
   }

@@ -268,9 +268,10 @@ void Painter::flushRasterImages(const TRect &loadbox, double compareX,
     if ((TToonzImageP)refimg || (TRasterImageP)refimg) {
       // draw left/up part of the screen...
       TRasterP raux, rref;
-      if ((TToonzImageP)refimg)
-        rref = ((TToonzImageP)refimg)->getCMapped();
-      else
+      if ((TToonzImageP)refimg) {
+        rref      = ((TToonzImageP)refimg)->getCMapped();
+        m_palette = refimg->getPalette();
+      } else
         rref = ((TRasterImageP)refimg)->getRaster();
 
       TRect rect = loadbox;
