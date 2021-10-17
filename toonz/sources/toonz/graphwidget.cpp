@@ -318,8 +318,7 @@ QPointF GraphWidget::getInvertedPoint(QPointF p) {
     y *= 0.5;
   }
 
-  else
-    return QPointF(x, height() - y);
+  return QPointF(x, height() - y);
 }
 
 //-----------------------------------------------------------------------------
