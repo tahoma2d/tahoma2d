@@ -19,6 +19,8 @@
 #include <sys/types.h>
 #include <string.h>
 
+#include <QSettings>
+
 //===================================================================
 
 //-------------------------------------------------------------------
@@ -142,6 +144,10 @@ TFilePath searchPalette(TFilePath path, std::wstring paletteId) {
 bool studioPaletteHasBeenReferred = false;
 
 static std::map<std::wstring, TFilePath> table;
+// table loaded from the cache. verify once before storing in the table
+static std::map<std::wstring, TFilePath> table_cached;
+
+const std::string pathTableFileName = "palette_paths.ini";
 
 //-------------------------------------------------------------------
 }  // namespace
@@ -172,6 +178,19 @@ StudioPalette::StudioPalette() {
           getLevelPalettesRoot().getParentDir());
     } catch (...) {
     }
+  }
+
+  // load [global id] - [path] table file
+  TFilePath rootFps[2] = {m_root, getProjectPalettesRoot()};
+  for (auto rootFp : rootFps) {
+    if (rootFp.isEmpty()) continue;
+    TFilePath tablePath = rootFp + pathTableFileName;
+    if (!TFileStatus(tablePath).doesExist()) continue;
+    QSettings tableSettings(QString::fromStdWString(tablePath.getWideString()),
+                            QSettings::IniFormat);
+    for (auto key : tableSettings.allKeys())
+      table_cached[key.toStdWString()] =
+          rootFp + TFilePath(tableSettings.value(key, "").toString());
   }
 }
 
@@ -270,6 +289,7 @@ void StudioPalette::movePalette(const TFilePath &dstPath,
   }
   std::wstring id = readPaletteGlobalName(dstPath);
   table.erase(id);
+  removeEntry(id);
   FolderListenerManager::instance()->notifyFolderChanged(
       dstPath.getParentDir());
   notifyMove(dstPath, srcPath);
@@ -496,12 +516,27 @@ static void foobar(std::wstring paletteId) { table.erase(paletteId); }
 TFilePath StudioPalette::getPalettePath(std::wstring paletteId) {
   std::map<std::wstring, TFilePath>::iterator it = table.find(paletteId);
   if (it != table.end()) return it->second;
-  TFilePath fp = searchPalette(m_root, paletteId);
-  if (fp == TFilePath()) {
-    fp = searchPalette(getProjectPalettesRoot(), paletteId);
+  TFilePath fp;
+  // not found in the verified table, then check for the cached table
+  it = table_cached.find(paletteId);
+  // found in the cached table
+  if (it != table_cached.end()) {
+    fp = it->second;
+    // verify if cached path is correct
+    if (fp.getType() != "tpl" ||
+        readPaletteGlobalName(it->second) != paletteId) {
+      fp = TFilePath();
+      // erase the entry
+      it = table_cached.erase(it);
+      removeEntry(paletteId);
+    }
   }
-  if (fp == TFilePath()) {
-    fp = searchPalette(getPersonalPalettesRoot(), paletteId);
+  if (fp.isEmpty()) {
+    fp = searchPalette(m_root, paletteId);
+    if (fp.isEmpty()) fp = searchPalette(getProjectPalettesRoot(), paletteId);
+    if (fp.isEmpty()) fp = searchPalette(getPersonalPalettesRoot(), paletteId);
+
+    addEntry(paletteId, fp);
   }
   table[paletteId] = fp;
   return fp;
@@ -554,7 +589,7 @@ bool StudioPalette::updateLinkedColors(TPalette *palette) {
     it                  = table.find(paletteId);
     TPalette *spPalette = 0;
     if (it == table.end()) {
-      spPalette = StudioPalette::instance()->getPalette(paletteId);
+      spPalette = getPalette(paletteId);
       if (!spPalette) continue;
       table[paletteId] = spPalette;
       // spPalette->release();
@@ -679,4 +714,38 @@ void StudioPalette::notifyPaletteChange(const TFilePath &palette) {
   for (std::vector<Listener *>::iterator it = m_listeners.begin();
        it != m_listeners.end(); ++it)
     (*it)->onStudioPaletteChange(palette);
+}
+
+//-------------------------------------------------------------------
+
+void StudioPalette::removeEntry(const std::wstring paletteId) {
+  TFilePath rootFps[2] = {m_root, getProjectPalettesRoot()};
+  for (auto rootFp : rootFps) {
+    if (rootFp.isEmpty()) continue;
+    TFilePath tablePath = rootFp + pathTableFileName;
+    if (!TFileStatus(tablePath).doesExist()) continue;
+    QSettings tableSettings(QString::fromStdWString(tablePath.getWideString()),
+                            QSettings::IniFormat);
+    if (tableSettings.contains(QString::fromStdWString(paletteId))) {
+      tableSettings.remove(QString::fromStdWString(paletteId));
+      break;
+    }
+  }
+}
+
+//-------------------------------------------------------------------
+
+void StudioPalette::addEntry(const std::wstring paletteId,
+                             const TFilePath &path) {
+  TFilePath rootFps[2] = {m_root, getProjectPalettesRoot()};
+  for (auto rootFp : rootFps) {
+    if (rootFp.isEmpty()) continue;
+    if (!rootFp.isAncestorOf(path)) continue;
+
+    TFilePath tablePath = rootFp + pathTableFileName;
+    QSettings tableSettings(QString::fromStdWString(tablePath.getWideString()),
+                            QSettings::IniFormat);
+    QString pathValue = (path - rootFp).getQString();
+    tableSettings.setValue(QString::fromStdWString(paletteId), pathValue);
+  }
 }

@@ -123,7 +123,11 @@ public:
         ->setCenter(m_objId, m_frame, m_center, m_oldCenter);
   }
   void leftButtonUp(const TPointD &pos, const TMouseEvent &) override {
-    if ((m_lockCenterX && m_lockCenterY) || m_firstPos == pos) return;
+    if (m_firstPos == pos) return;
+    leftButtonUp();
+  }
+  void leftButtonUp() override {
+    if (m_lockCenterX && m_lockCenterY) return;
     TTool::getApplication()
         ->getCurrentTool()
         ->getTool()
@@ -234,7 +238,11 @@ public:
   }
 
   void leftButtonUp(const TPointD &pos, const TMouseEvent &) override {
-    if (!m_isStarted || m_firstPos == pos)
+    if (m_firstPos == pos) return;
+    leftButtonUp();
+  }
+  void leftButtonUp() override {
+    if (!m_isStarted)
       return;
     else
       m_isStarted = false;
@@ -1497,7 +1505,14 @@ m_foo.setFxHandle(getApplication()->getCurrentFx());
 
 //=============================================================================
 
-void EditTool::onDeactivate() {}
+void EditTool::onDeactivate() {
+  if (m_dragTool) {
+    m_dragTool->leftButtonUp();
+    TUndoManager::manager()->endBlock();
+    delete m_dragTool;
+    m_dragTool = nullptr;
+  }
+}
 
 //-----------------------------------------------------------------------------
 

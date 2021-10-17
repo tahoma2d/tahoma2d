@@ -176,6 +176,8 @@ the tree or
   void setName(const std::string &name);
   std::string getName() const;
 
+  bool hasSpecifiedName() const { return m_name != ""; }
+
   //! Returns the id's full name, ie the name of the object with its id
   //! appended.
   std::string getFullName() const;

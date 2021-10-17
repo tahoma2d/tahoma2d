@@ -136,11 +136,12 @@ void Iwa_BokehFx::doCompute(TTile& tile, double frame,
   //----------------------------
   // Compute the input tiles first
   QMap<int, TTile*> sourceTiles;
+  TRenderSettings infoOnInput(settings);
+  infoOnInput.m_bpp = 64;
   for (auto index : sourceIndices) {
     TTile* layerTile = new TTile();
     m_layerParams[index].m_source->allocateAndCompute(
-        *layerTile, _rectOut.getP00(), dimOut, tile.getRaster(), frame,
-        settings);
+        *layerTile, _rectOut.getP00(), dimOut, 0, frame, infoOnInput);
     sourceTiles[index] = layerTile;
   }
 

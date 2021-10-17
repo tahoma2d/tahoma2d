@@ -496,7 +496,7 @@ void TBlendForeBackRasterFx::linearTmpl(TRasterPT<T> dn_ras_out,
       to_xyz(upXYZ, upBGR);
 
       brendKernel(dnXYZ[0], dnXYZ[1], dnXYZ[2], dna, upXYZ[0], upXYZ[1],
-                  upXYZ[2], upa, tmp_opacity, alpha_rendering_sw);
+                  upXYZ[2], upa, tmp_opacity, alpha_rendering_sw, true);
 
       to_bgr(dnBGR, dnXYZ);
 

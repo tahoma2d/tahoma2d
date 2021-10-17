@@ -1784,11 +1784,18 @@ void MainWindow::defineActions() {
                        "shortcuts", tr("Change the shortcuts of Tahoma2D."));
   createMenuFileAction(MI_PrintXsheet, QT_TR_NOOP("&Print Xsheet"), "",
                        "printer", tr("Print the scene's exposure sheet."));
+
+  createMenuFileAction(MI_ExportXsheetPDF, QT_TR_NOOP("&Export Xsheet to PDF"),
+                       "");
+
   createMenuFileAction(
       MI_ExportXDTS,
       QT_TRANSLATE_NOOP("MainWindow",
                         "Export Exchange Digital Time Sheet (XDTS)"),
       "");
+  createMenuFileAction(
+      MI_ExportTvpJson,
+      QT_TRANSLATE_NOOP("MainWindow", "Export TVPaint JSON File"), "");
   createMenuFileAction("MI_RunScript", QT_TR_NOOP("Run Script..."), "",
                        "run_script", tr("Run a script to perform a series of actions on a scene."));
   createMenuFileAction("MI_OpenScriptConsole",

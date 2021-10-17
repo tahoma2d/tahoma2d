@@ -85,6 +85,7 @@ set(HEADERS
     iwa_rainbowfx.h
     iwa_bokeh_advancedfx.h
     iwa_bokeh_util.h
+    globalcontrollablefx.h
 )
 
 if(OpenCV_FOUND)

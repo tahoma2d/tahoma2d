@@ -146,11 +146,13 @@ void Iwa_BokehRefFx::doCompute(TTile& tile, double frame,
   // rasterList.append(allocateRasterAndLock<double4>(&source_buff, dimOut));
 
   LayerValue layerValue;
+  TRenderSettings infoOnInput(settings);
+  infoOnInput.m_bpp = 64;
   // source tile is used only in this focus.
   // normalized source image data is stored in source_buff.
   layerValue.sourceTile = new TTile();
   m_source->allocateAndCompute(*layerValue.sourceTile, rectOut.getP00(), dimOut,
-                               tile.getRaster(), frame, settings);
+                               0, frame, infoOnInput);
 
   // - - - iris image - - -
   // Get the original size of Iris image

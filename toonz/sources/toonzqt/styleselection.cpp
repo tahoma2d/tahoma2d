@@ -1807,7 +1807,7 @@ void TStyleSelection::getBackOriginalStyle() {
     } else
       spPalette = palIt->second.getPointer();
 
-    // j is StudioPaletteID
+    // j is StyleID
     int j = std::stoi(gname.substr(k + 1));
 
     if (spPalette && 0 <= j && j < spPalette->getStyleCount()) {

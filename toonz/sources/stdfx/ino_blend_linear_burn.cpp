@@ -14,8 +14,10 @@ public:
   void brendKernel(double& dnr, double& dng, double& dnb, double& dna,
                    const double upr, double upg, double upb, double upa,
                    const double up_opacity,
-                   const bool alpha_rendering_sw = true) override {
-    igs::color::linear_burn(dnr, dng, dnb, dna, upr, upg, upb, upa, up_opacity);
+                   const bool alpha_rendering_sw = true,
+                   const bool is_xyz             = false) override {
+    igs::color::linear_burn(dnr, dng, dnb, dna, upr, upg, upb, upa, up_opacity,
+                            !is_xyz);
   }
 };
 FX_PLUGIN_IDENTIFIER(ino_blend_linear_burn, "inoLinearBurnFx");

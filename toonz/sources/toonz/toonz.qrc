@@ -175,7 +175,8 @@
 		<file>icons/dark/mimetypes/60/svg_icon.svg</file>
 		<file>icons/dark/mimetypes/60/audio_icon.svg</file>
 		<file>icons/dark/mimetypes/60/script_icon.svg</file>
-		<file>icons/dark/mimetypes/60/broken_icon.svg</file>
+    <file>icons/dark/mimetypes/60/broken_icon.svg</file>
+    <file>icons/dark/mimetypes/60/json_icon.svg</file>
 
 		<!-- Render -->
 		<file>icons/dark/actions/16/render.svg</file>

@@ -66,7 +66,7 @@ namespace {
 bool myLess(const TFilePath &l, const TFilePath &r) {
   return l.getFrame() < r.getFrame();
 }
-}
+}  // namespace
 
 //-----------------------------------------------------------
 
@@ -184,7 +184,7 @@ TLevelWriter::TLevelWriter(const TFilePath &path, TPropertyGroup *prop)
     , m_path(path)
     , m_properties(prop)
     , m_contentHistory(0) {
-  string ext              = path.getType();
+  string ext = path.getType();
   if (!prop) m_properties = Tiio::makeWriterProperties(ext);
 }
 
@@ -282,8 +282,12 @@ void TLevelWriter::renumberFids(const std::map<TFrameId, TFrameId> &table) {
           QString::fromStdWString(m_path.getParentDir().getWideString()));
       parentDir.setFilter(QDir::Files);
 
-      QStringList nameFilters(QString::fromStdWString(m_path.getWideName()) +
-                              ".*." + QString::fromStdString(m_path.getType()));
+      QStringList nameFilters;
+      // check for both period and underscore
+      nameFilters << QString::fromStdWString(m_path.getWideName()) + ".*." +
+                         QString::fromStdString(m_path.getType())
+                  << QString::fromStdWString(m_path.getWideName()) + "_*." +
+                         QString::fromStdString(m_path.getType());
       parentDir.setNameFilters(nameFilters);
 
       TFilePathSet fpset;

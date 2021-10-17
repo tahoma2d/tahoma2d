@@ -134,12 +134,11 @@ public:
   }
 
   void leftButtonUp(const TPointD &pos, const TMouseEvent &e) override {
-    // precise control with pressing Alt key
-    if (e.isAltPressed()) {
-      TPointD precisePos = m_firstPos + (pos - m_firstPos) * 0.1;
-      m_gadget->leftButtonUp(getMatrix() * precisePos, e);
-    } else
-      m_gadget->leftButtonUp(getMatrix() * pos, e);
+    leftButtonUp();
+  }
+
+  void leftButtonUp() override {
+    m_gadget->leftButtonUp();
     m_gadget->commitUndo();
   }
 };
@@ -274,7 +273,6 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
 };
 
 //---------------------------------------------------------------------------
@@ -322,10 +320,6 @@ void PointFxGadget::leftButtonDrag(const TPointD &pos, const TMouseEvent &) {
   if (m_yParam) setValue(m_yParam, pos.y);
 }
 
-//---------------------------------------------------------------------------
-
-void PointFxGadget::leftButtonUp(const TPointD &pos, const TMouseEvent &) {}
-
 //=============================================================================
 
 class RadiusFxGadget final : public FxGadget {
@@ -345,7 +339,6 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
 };
 
 //---------------------------------------------------------------------------
@@ -390,10 +383,6 @@ void RadiusFxGadget::leftButtonDrag(const TPointD &pos, const TMouseEvent &) {
   setValue(m_radius, norm(pos - getCenter()));
 }
 
-//---------------------------------------------------------------------------
-
-void RadiusFxGadget::leftButtonUp(const TPointD &pos, const TMouseEvent &) {}
-
 //=============================================================================
 
 class DistanceFxGadget final : public FxGadget {
@@ -422,7 +411,6 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
 };
 
 //---------------------------------------------------------------------------
@@ -474,10 +462,6 @@ void DistanceFxGadget::leftButtonDrag(const TPointD &pos, const TMouseEvent &) {
   setValue(m_distance, v);
 }
 
-//---------------------------------------------------------------------------
-
-void DistanceFxGadget::leftButtonUp(const TPointD &pos, const TMouseEvent &) {}
-
 //=============================================================================
 
 class AngleFxGadget final : public FxGadget {
@@ -492,7 +476,6 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
 };
 
 //---------------------------------------------------------------------------
@@ -547,10 +530,6 @@ void AngleFxGadget::leftButtonDrag(const TPointD &pos, const TMouseEvent &) {
   setValue(m_param, phi * M_180_PI);
 }
 
-//---------------------------------------------------------------------------
-
-void AngleFxGadget::leftButtonUp(const TPointD &pos, const TMouseEvent &) {}
-
 //=============================================================================
 
 class AngleRangeFxGadget final : public FxGadget {
@@ -571,7 +550,7 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonUp() override;
 };
 
 //---------------------------------------------------------------------------
@@ -712,9 +691,7 @@ void AngleRangeFxGadget::leftButtonDrag(const TPointD &pos,
 
 //---------------------------------------------------------------------------
 
-void AngleRangeFxGadget::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
-  m_handle = None;
-}
+void AngleRangeFxGadget::leftButtonUp() { m_handle = None; }
 
 //=============================================================================
 
@@ -731,7 +708,6 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override {}
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override {}
 };
 
 //---------------------------------------------------------------------------
@@ -797,7 +773,6 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override {}
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override {}
 };
 
 //---------------------------------------------------------------------------
@@ -876,7 +851,6 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override {}
 };
 
 //---------------------------------------------------------------------------
@@ -1017,7 +991,6 @@ public:
     setValue(m_phiParam, phi * M_180_PI);
     setValue(m_lengthParam, length);
   }
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override {}
 };
 
 //=============================================================================
@@ -1073,7 +1046,6 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override {}
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override {}
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override {}
 };
 
 //=============================================================================
@@ -1196,7 +1168,7 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonUp() override;
 };
 
 //---------------------------------------------------------------------------
@@ -1338,9 +1310,7 @@ void QuadFxGadget::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
 //---------------------------------------------------------------------------
 
-void QuadFxGadget::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
-  m_handle = None;
-}
+void QuadFxGadget::leftButtonUp() { m_handle = None; }
 
 //=============================================================================
 
@@ -1361,7 +1331,7 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonUp() override;
 };
 
 //---------------------------------------------------------------------------
@@ -1525,10 +1495,7 @@ void LinearRangeFxGadget::leftButtonDrag(const TPointD &pos,
 
 //---------------------------------------------------------------------------
 
-void LinearRangeFxGadget::leftButtonUp(const TPointD &pos,
-                                       const TMouseEvent &) {
-  m_handle = None;
-}
+void LinearRangeFxGadget::leftButtonUp() { m_handle = None; }
 
 //=============================================================================
 
@@ -1550,7 +1517,7 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
+  void leftButtonUp() override;
 };
 
 //---------------------------------------------------------------------------
@@ -1710,9 +1677,7 @@ void CompassFxGadget::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
 //---------------------------------------------------------------------------
 
-void CompassFxGadget::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
-  m_handle = None;
-}
+void CompassFxGadget::leftButtonUp() { m_handle = None; }
 
 //=============================================================================
 
@@ -1738,7 +1703,6 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &) override;
-  void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
 };
 
 //---------------------------------------------------------------------------
@@ -1803,11 +1767,6 @@ void RainbowWidthFxGadget::leftButtonDrag(const TPointD &pos,
 
   setValue(m_widthScale, std::min(max, std::max(min, scale)));
 }
-
-//---------------------------------------------------------------------------
-
-void RainbowWidthFxGadget::leftButtonUp(const TPointD &pos,
-                                        const TMouseEvent &) {}
 
 //*************************************************************************************
 //    FxGadgetController  implementation
@@ -2084,6 +2043,15 @@ EditToolGadgets::DragTool *FxGadgetController::createDragTool(int gadgetId) {
 //---------------------------------------------------------------------------
 
 TAffine FxGadgetController::getMatrix() {
+  TFx *fx = m_fxHandle ? m_fxHandle->getFx() : 0;
+  if (fx) {
+    int referenceColumnIndex = fx->getReferenceColumnIndex();
+    if (referenceColumnIndex == -1)
+      return m_tool->getMatrix().inv();
+    else if (referenceColumnIndex != m_tool->getColumnIndex())
+      return m_tool->getMatrix().inv() *
+             m_tool->getColumnMatrix(referenceColumnIndex, -1);
+  }
   return m_tool->getMatrix().inv() * m_tool->getCurrentColumnMatrix();
 }
 
