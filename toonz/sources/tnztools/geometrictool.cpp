@@ -1,4 +1,5 @@
 
+#include "geometrictool.h"
 
 #include "toonz/tpalettehandle.h"
 #include "tools/toolhandle.h"
@@ -21,6 +22,7 @@
 #include "tenv.h"
 #include "bluredbrush.h"
 #include "toonz/ttileset.h"
+#include "toonz/ttilesaver.h"
 #include "toonz/toonzimageutils.h"
 #include "toonz/tstageobject.h"
 #include "toonz/tstageobjectspline.h"
@@ -28,8 +30,11 @@
 #include "toonzqt/dvdialog.h"
 #include "toonz/trasterimageutils.h"
 #include "toonz/preferences.h"
+#include "tpixelutils.h"
 #include "historytypes.h"
 #include "toonzvectorbrushtool.h"
+
+#include "toonz/mypaintbrushstyle.h"
 
 // For Qt translation support
 #include <QCoreApplication>
@@ -58,6 +63,10 @@ TEnv::IntVar GeometricMiterValue("InknpaintGeometricMiterValue", 4);
 TEnv::IntVar GeometricSnap("InknpaintGeometricSnap", 0);
 TEnv::IntVar GeometricSnapSensitivity("InknpaintGeometricSnapSensitivity", 0);
 TEnv::IntVar GeometricDrawBehind("InknpaintGeometricDrawBehind", 0);
+TEnv::DoubleVar GeometricModifierSize("InknpaintGeometricModifierSize", 0);
+TEnv::IntVar GeometricModifierEraser("InknpaintGeometricModifierEraser", 0);
+TEnv::IntVar GeometricModifierJoinStyle("InknpaintGeometricModifierJoinStyle",
+                                        0);
 
 //-------------------------------------------------------------------
 
@@ -188,6 +197,104 @@ static TRect drawBluredBrush(const TToonzImageP &ti, TStroke *stroke, int thick,
   delete s;
   return rectRender;
 }
+
+//=========================================================================================================
+
+class UndoMyPaintBrushCM32 final : public TRasterUndo {
+  TPoint m_offset;
+  QString m_id;
+  std::string m_primitiveName;
+
+public:
+  UndoMyPaintBrushCM32(TTileSetCM32 *tileSet, TXshSimpleLevel *level,
+                       const TFrameId &frameId, bool isFrameCreated,
+                       bool isLevelCreated, const TRasterCM32P &ras,
+                       const TPoint &offset, std::string primitiveName)
+      : TRasterUndo(tileSet, level, frameId, isFrameCreated, isLevelCreated, 0)
+      , m_offset(offset)
+      , m_primitiveName(primitiveName) {
+    static int counter = 0;
+    m_id = QString("UndoMyPaintBrushCM32") + QString::number(counter++);
+    TImageCache::instance()->add(m_id.toStdString(),
+                                 TToonzImageP(ras, TRect(ras->getSize())));
+  }
+
+  ~UndoMyPaintBrushCM32() { TImageCache::instance()->remove(m_id); }
+
+  void redo() const override {
+    insertLevelAndFrameIfNeeded();
+
+    TToonzImageP image = getImage();
+    TRasterCM32P ras   = image->getRaster();
+
+    TImageP srcImg =
+        TImageCache::instance()->get(m_id.toStdString(), false)->cloneImage();
+    TToonzImageP tSrcImg = srcImg;
+    assert(tSrcImg);
+    ras->copy(tSrcImg->getRaster(), m_offset);
+    ToolUtils::updateSaveBox();
+    TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
+    notifyImageChanged();
+  }
+
+  int getSize() const override {
+    return sizeof(*this) + TRasterUndo::getSize();
+  }
+
+  QString getToolName() override {
+    return QString("Geometric Tool : %1")
+        .arg(QString::fromStdString(m_primitiveName));
+  }
+  int getHistoryType() override { return HistoryType::BrushTool; }
+};
+
+//-----------------------------------------------------------------------------
+
+class UndoMyPaintBrushFullColor final : public ToolUtils::TFullColorRasterUndo {
+  TPoint m_offset;
+  QString m_id;
+  std::string m_primitiveName;
+
+public:
+  UndoMyPaintBrushFullColor(TTileSetFullColor *tileSet, TXshSimpleLevel *level,
+                            const TFrameId &frameId, bool isFrameCreated,
+                            bool isLevelCreated, const TRasterP &ras,
+                            const TPoint &offset, std::string primitiveName)
+      : ToolUtils::TFullColorRasterUndo(tileSet, level, frameId, isFrameCreated,
+                                        isLevelCreated, 0)
+      , m_offset(offset)
+      , m_primitiveName(primitiveName) {
+    static int counter = 0;
+    m_id = QString("UndoMyPaintBrushFullColor") + QString::number(counter++);
+    TImageCache::instance()->add(m_id.toStdString(), TRasterImageP(ras));
+  }
+
+  ~UndoMyPaintBrushFullColor() { TImageCache::instance()->remove(m_id); }
+
+  void redo() const override {
+    insertLevelAndFrameIfNeeded();
+
+    TRasterImageP image = getImage();
+    TRasterP ras        = image->getRaster();
+
+    TRasterImageP tSrcImg =
+        TImageCache::instance()->get(m_id.toStdString(), false);
+    ras->copy(tSrcImg->getRaster(), m_offset);
+    ToolUtils::updateSaveBox();
+    TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
+    notifyImageChanged();
+  }
+
+  int getSize() const override {
+    return sizeof(*this) + ToolUtils::TFullColorRasterUndo::getSize();
+  }
+
+  QString getToolName() override {
+    return QString("Geometric Tool : %1")
+        .arg(QString::fromStdString(m_primitiveName));
+  }
+  int getHistoryType() override { return HistoryType::BrushTool; }
+};
 
 //-----------------------------------------------------------------------------
 
@@ -391,6 +498,9 @@ public:
   TEnumProperty m_snapSensitivity;
   TBoolProperty m_sendToBack;
   TPropertyGroup m_prop[2];
+  TDoubleProperty m_modifierSize;
+  TBoolProperty m_modifierEraser;
+  TEnumProperty m_modifierJoinStyle;
 
   int m_targetType;
 
@@ -420,13 +530,20 @@ public:
       , m_snap("Snap", false)
       , m_snapSensitivity("Sensitivity:")
       , m_sendToBack("Draw Under", 0)
-      , m_targetType(targetType) {
+      , m_targetType(targetType)
+      , m_modifierSize("ModifierSize", -3, 3, 0, true)
+      , m_modifierEraser("ModifierEraser", false)
+      , m_modifierJoinStyle("ModifierJoin") {
     if (targetType & TTool::Vectors) m_prop[0].bind(m_toolSize);
     if (targetType & TTool::ToonzImage || targetType & TTool::RasterImage) {
+      m_prop[0].bind(m_modifierSize);
       m_prop[0].bind(m_rasterToolSize);
       m_prop[0].bind(m_hardness);
     }
-    if (targetType & TTool::RasterImage) m_prop[0].bind(m_opacity);
+    if (targetType & TTool::RasterImage) {
+      m_prop[0].bind(m_opacity);
+      m_prop[0].bind(m_modifierEraser);
+    }
     m_prop[0].bind(m_type);
 
     m_prop[0].bind(m_edgeCount);
@@ -462,10 +579,17 @@ public:
     m_joinStyle.addValue(BEVEL_WSTR, QString::fromStdWString(BEVEL_WSTR));
     m_joinStyle.setId("Join");
 
+    m_modifierJoinStyle.addValue(MITER_WSTR,
+                                 QString::fromStdWString(MITER_WSTR));
+    m_modifierJoinStyle.addValue(ROUNDJ_WSTR,
+                                 QString::fromStdWString(ROUNDJ_WSTR));
+    m_modifierJoinStyle.setId("Join");
+
     m_miterJoinLimit.setId("Miter");
 
     m_prop[1].bind(m_capStyle);
     m_prop[1].bind(m_joinStyle);
+    m_prop[1].bind(m_modifierJoinStyle);
     m_prop[1].bind(m_miterJoinLimit);
 
     m_selective.setId("Selective");
@@ -499,6 +623,8 @@ public:
     m_smooth.setQStringName(tr("Smooth"));
     m_selective.setQStringName(tr("Selective"));
     m_pencil.setQStringName(tr("Pencil Mode"));
+    m_modifierSize.setQStringName(tr("Size"));
+    m_modifierEraser.setQStringName(tr("Eraser"));
 
     m_capStyle.setQStringName(tr("Cap"));
     m_capStyle.setItemUIName(BUTT_WSTR, tr("Butt cap"));
@@ -509,6 +635,10 @@ public:
     m_joinStyle.setItemUIName(MITER_WSTR, tr("Miter join"));
     m_joinStyle.setItemUIName(ROUNDJ_WSTR, tr("Round join"));
     m_joinStyle.setItemUIName(BEVEL_WSTR, tr("Bevel join"));
+
+    m_modifierJoinStyle.setQStringName(tr("Join"));
+    m_modifierJoinStyle.setItemUIName(MITER_WSTR, tr("Miter join"));
+    m_modifierJoinStyle.setItemUIName(ROUNDJ_WSTR, tr("Round join"));
 
     m_miterJoinLimit.setQStringName(tr("Miter:"));
     m_snap.setQStringName(tr("Snap"));
@@ -531,6 +661,7 @@ protected:
   bool m_isEditing, m_rasterTool, m_isPrompting, m_doSnap;
   GeometricTool *m_tool;
   PrimitiveParam *m_param;
+  bool m_isMyPaintStyleSelected;
 
 public:
   Primitive(PrimitiveParam *param, GeometricTool *tool, bool rasterTool)
@@ -538,7 +669,8 @@ public:
       , m_tool(tool)
       , m_isEditing(false)
       , m_rasterTool(rasterTool)
-      , m_isPrompting(false) {}
+      , m_isPrompting(false)
+      , m_isMyPaintStyleSelected(false) {}
 
   double getThickness() const {
     if (m_rasterTool)
@@ -548,6 +680,9 @@ public:
   }
 
   void setIsPrompting(bool value) { m_isPrompting = value; }
+  void setMyPaintStyleSelected(bool myPaintSelected) {
+    m_isMyPaintStyleSelected = myPaintSelected;
+  }
 
   virtual std::string getName() const = 0;
 
@@ -978,7 +1113,7 @@ public:
 // Geometric Tool
 //-----------------------------------------------------------------------------
 
-class GeometricTool final : public TTool {
+class GeometricTool final : public TTool, public RasterController {
 protected:
   Primitive *m_primitive;
   std::map<std::wstring, Primitive *> m_primitiveTable;
@@ -1002,6 +1137,14 @@ protected:
   // for move
   TPointD m_lastMoveStrokePos;
 
+  bool m_isMyPaintStyleSelected;
+  GeometricToolNotifier *m_notifier;
+
+  TTileSaverCM32 *m_tileSaverCM32;
+  TTileSaverFullColor *m_tileSaverFullColor;
+  TRaster32P m_workRaster;
+  TRect m_strokeRect, m_lastRect, m_strokeSegmentRect;
+
 public:
   GeometricTool(int targetType)
       : TTool("T_Geometric")
@@ -1010,7 +1153,11 @@ public:
       , m_active(false)
       , m_isRotatingOrMoving(false)
       , m_rotatedStroke(0)
-      , m_firstTime(true) {
+      , m_firstTime(true)
+      , m_isMyPaintStyleSelected(false)
+      , m_notifier(0)
+      , m_tileSaverCM32(0)
+      , m_tileSaverFullColor(0) {
     bind(targetType);
     if ((targetType & TTool::RasterImage) || (targetType & TTool::ToonzImage)) {
       addPrimitive(new RectanglePrimitive(&m_param, this, true));
@@ -1188,9 +1335,13 @@ public:
   }
 
   void onActivate() override {
+    if (!m_notifier) m_notifier = new GeometricToolNotifier(this);
+
     if (m_firstTime) {
       m_param.m_toolSize.setValue(GeometricSize);
       m_param.m_rasterToolSize.setValue(GeometricRasterSize);
+      m_param.m_modifierSize.setValue(GeometricModifierSize);
+      m_param.m_modifierEraser.setValue(GeometricModifierEraser ? 1 : 0);
       m_param.m_opacity.setValue(GeometricOpacity);
       m_param.m_hardness.setValue(GeometricBrushHardness);
       m_param.m_selective.setValue(GeometricSelective ? 1 : 0);
@@ -1207,6 +1358,7 @@ public:
       m_param.m_pencil.setValue(GeometricPencil ? 1 : 0);
       m_param.m_capStyle.setIndex(GeometricCapStyle);
       m_param.m_joinStyle.setIndex(GeometricJoinStyle);
+      m_param.m_modifierJoinStyle.setIndex(GeometricModifierJoinStyle);
       m_param.m_miterJoinLimit.setValue(GeometricMiterValue);
       m_firstTime = false;
       m_param.m_snap.setValue(GeometricSnap);
@@ -1282,7 +1434,11 @@ public:
         GeometricRasterSize = m_param.m_rasterToolSize.getValue();
       else
         GeometricSize = m_param.m_toolSize.getValue();
-    } else if (propertyName == m_param.m_type.getName()) {
+    } else if (propertyName == m_param.m_modifierSize.getName())
+      GeometricModifierSize = m_param.m_modifierSize.getValue();
+    else if (propertyName == m_param.m_modifierEraser.getName())
+      GeometricModifierEraser = m_param.m_modifierEraser.getValue();
+    else if (propertyName == m_param.m_type.getName()) {
       std::wstring typeCode = m_param.m_type.getValue();
       GeometricType         = ::to_string(typeCode);
       if (typeCode != m_typeCode) {
@@ -1330,6 +1486,8 @@ public:
       GeometricCapStyle = m_param.m_capStyle.getIndex();
     else if (propertyName == m_param.m_joinStyle.getName())
       GeometricJoinStyle = m_param.m_joinStyle.getIndex();
+    else if (propertyName == m_param.m_modifierJoinStyle.getName())
+      GeometricModifierJoinStyle = m_param.m_modifierJoinStyle.getIndex();
     else if (propertyName == m_param.m_miterJoinLimit.getName())
       GeometricMiterValue = m_param.m_miterJoinLimit.getValue();
     else if (propertyName == m_param.m_sendToBack.getName())
@@ -1356,8 +1514,8 @@ public:
 
   void addStroke() {
     if (!m_primitive) return;
-    //TStroke *stroke = m_primitive->makeStroke();
-    //if (!stroke) return;
+    // TStroke *stroke = m_primitive->makeStroke();
+    // if (!stroke) return;
 
     TStroke *stroke = 0;
     if (!m_isRotatingOrMoving) {
@@ -1396,19 +1554,22 @@ public:
       m_rotatedStroke      = 0;
     }
 
-
-    TStroke::OutlineOptions &options = stroke->outlineOptions();
-    options.m_capStyle               = m_param.m_capStyle.getIndex();
-    options.m_joinStyle              = m_param.m_joinStyle.getIndex();
-    options.m_miterUpper             = m_param.m_miterJoinLimit.getValue();
-
     TImage *image = getImage(true);
     TToonzImageP ti(image);
     TVectorImageP vi(image);
     TRasterImageP ri(image);
+
+    TStroke::OutlineOptions &options = stroke->outlineOptions();
+    options.m_capStyle               = m_param.m_capStyle.getIndex();
+    options.m_joinStyle              = isMyPaintStyleSelected() && (ti || ri)
+                              ? m_param.m_modifierJoinStyle.getIndex()
+                              : m_param.m_joinStyle.getIndex();
+    options.m_miterUpper = m_param.m_miterJoinLimit.getValue();
+
     TXshSimpleLevel *sl =
         TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
     TFrameId id = getCurrentFid();
+
     /*-- ToonzImageの場合 --*/
     if (ti) {
       int styleId    = TTool::getApplication()->getCurrentLevelStyleIndex();
@@ -1419,7 +1580,17 @@ public:
       stroke->setStyle(styleId);
       double hardness = m_param.m_hardness.getValue() * 0.01;
       TRect savebox;
-      if (hardness == 1 || m_param.m_pencil.getValue()) {
+      if (isMyPaintStyleSelected()) {
+        double modifierSize              = m_param.m_modifierSize.getValue();
+        TMyPaintBrushStyle *mypaintStyle = dynamic_cast<TMyPaintBrushStyle *>(
+            getApplication()->getCurrentLevelStyle());
+        bool isMiterJoin = m_param.m_modifierJoinStyle.getValue() == MITER_WSTR;
+        TRasterCM32P ras = ti->getRaster();
+
+        savebox = drawMyPaintBrushCM32(
+            ras, stroke, modifierSize, isMiterJoin, mypaintStyle, sl, id,
+            m_isFrameCreated, m_isLevelCreated, m_primitive->getName());
+      } else if (hardness == 1 || m_param.m_pencil.getValue()) {
         TUndoManager::manager()->add(new UndoRasterPencil(
             sl, id, stroke, selective, filled, !m_param.m_pencil.getValue(),
             m_isFrameCreated, m_isLevelCreated, m_primitive->getName()));
@@ -1515,7 +1686,26 @@ public:
       double opacity  = m_param.m_opacity.getValue() * 0.01;
       double hardness = m_param.m_hardness.getValue() * 0.01;
       TRect savebox;
-      if (hardness == 1) {
+
+      if (isMyPaintStyleSelected()) {
+        double modifierSize    = m_param.m_modifierSize.getValue();
+        double modifierOpacity = m_param.m_opacity.getValue();
+        bool modifierEraser    = m_param.m_modifierEraser.getValue();
+        bool isMiterJoin = m_param.m_modifierJoinStyle.getValue() == MITER_WSTR;
+
+        TMyPaintBrushStyle *mypaintStyle = dynamic_cast<TMyPaintBrushStyle *>(
+            getApplication()->getCurrentLevelStyle());
+
+        TRasterP ras = ri->getRaster();
+
+        savebox = drawMyPaintBrushFullColor(
+            ras, ri->getPalette(), stroke, modifierSize, isMiterJoin,
+            modifierOpacity, modifierEraser, mypaintStyle, sl, id,
+            m_isFrameCreated, m_isLevelCreated, m_primitive->getName());
+
+        delete m_tileSaverFullColor;
+        m_tileSaverFullColor = 0;
+      } else if (hardness == 1) {
         TUndoManager::manager()->add(new UndoFullColorPencil(
             sl, id, stroke, opacity, true, m_isFrameCreated, m_isLevelCreated));
         savebox = TRasterImageUtils::addStroke(ri, stroke, TRectD(), opacity);
@@ -1532,12 +1722,353 @@ public:
     notifyImageChanged();
     m_active = false;
   }
+
+  TRect drawMyPaintBrushCM32(TRasterCM32P ras, TStroke *stroke,
+                             double modifierSize, bool isMiterJoin,
+                             TMyPaintBrushStyle *mypaintStyle,
+                             TXshSimpleLevel *level, TFrameId frameId,
+                             bool isFrameCreated, bool isLevelCreated,
+                             std::string primitiveName) {
+    TTileSetCM32 *tileSet = new TTileSetCM32(ras->getSize());
+    m_tileSaverCM32       = new TTileSaverCM32(ras, tileSet);
+    m_workRaster          = TRaster32P(ras->getSize());
+
+    TStroke *s       = new TStroke(*stroke);
+    TPointD riCenter = ras->getCenterD();
+    s->transform(TTranslation(riCenter));
+    int styleId = s->getStyle();
+
+    TRasterCM32P backupRas = ras->clone();
+    m_workRaster->lock();
+    m_workRaster->clear();
+
+    mypaint::Brush mypaintBrush;
+    {  // applyToonzBrushSettings
+      mypaintBrush.fromBrush(mypaintStyle->getBrush());
+      double size = modifierSize * log(2.0);
+      float baseSize =
+          mypaintBrush.getBaseValue(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC);
+      mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
+                                baseSize + size);
+    }
+
+    MyPaintToonzBrush *toonz_brush =
+        new MyPaintToonzBrush(m_workRaster, *this, mypaintBrush);
+
+    // When drawing strokes, these shapes allow for hard angles.  To do this,
+    // we'll draw stroke in sections as if there are multiple strokes
+    bool drawHardAngles =
+        isMiterJoin &&
+        (primitiveName == "Rectangle" || primitiveName == "Polyline" ||
+         primitiveName == "MultiArc" || primitiveName == "Polygon");
+
+    // For closed shapes, MyPaint will draw the stroke with rounded angles by
+    // default except at start/end points. Shift starting point to 2nd point of
+    // stroke so 1st point will be rounded also
+    bool shiftStartPoint = s->isSelfLoop() && !drawHardAngles;
+
+    toonz_brush->beginStroke();
+
+    m_strokeRect.empty();
+    m_lastRect.empty();
+
+    int cpCount = s->getControlPointCount();
+    double t;
+    TPointD pos;
+    TRect updateRect;
+    int i = shiftStartPoint ? 1 : 0;
+    for (; i < cpCount; i++) {
+      t   = s->getParameterAtControlPoint(i);
+      pos = s->getPoint(t);
+      m_strokeSegmentRect.empty();
+      toonz_brush->strokeTo(pos, 0.5, 10.0);
+      updateRect = m_strokeSegmentRect * ras->getBounds();
+      if (!updateRect.isEmpty())
+        toonz_brush->updateDrawing(ras, backupRas, m_strokeSegmentRect, styleId,
+                                   false);
+      m_lastRect = m_strokeRect;
+
+      if (drawHardAngles) {
+        m_strokeSegmentRect.empty();
+        toonz_brush->endStroke();
+        updateRect = m_strokeSegmentRect * ras->getBounds();
+        if (!updateRect.isEmpty())
+          toonz_brush->updateDrawing(ras, backupRas, m_strokeSegmentRect,
+                                     styleId, false);
+        toonz_brush->beginStroke();
+        toonz_brush->strokeTo(pos, 0.5, 10.0);
+      }
+    }
+    if (shiftStartPoint) {
+      i   = 1;
+      t   = s->getParameterAtControlPoint(i);
+      pos = s->getPoint(t);
+      m_strokeSegmentRect.empty();
+      toonz_brush->strokeTo(pos, 0.5, 10.0);
+      updateRect = m_strokeSegmentRect * ras->getBounds();
+      if (!updateRect.isEmpty())
+        toonz_brush->updateDrawing(ras, backupRas, m_strokeSegmentRect, styleId,
+                                   false);
+      m_lastRect = m_strokeRect;
+    }
+
+    m_strokeSegmentRect.empty();
+    toonz_brush->endStroke();
+    updateRect = m_strokeSegmentRect * ras->getBounds();
+    if (!updateRect.isEmpty())
+      toonz_brush->updateDrawing(ras, backupRas, m_strokeSegmentRect, styleId,
+                                 false);
+
+    m_workRaster->unlock();
+
+    if (!m_strokeRect.isEmpty()) {
+      TRasterCM32P subras = ras->extract(m_strokeRect)->clone();
+      TUndoManager::manager()->add(new UndoMyPaintBrushCM32(
+          tileSet, level, frameId, isFrameCreated, isLevelCreated, subras,
+          m_strokeRect.getP00(), primitiveName));
+    }
+
+    delete toonz_brush;
+    delete s;
+    delete m_tileSaverCM32;
+    m_tileSaverCM32 = 0;
+
+    return m_strokeRect;
+  }
+
+  TRect drawMyPaintBrushFullColor(TRasterP ras, TPalette *palette,
+                                  TStroke *stroke, double modifierSize,
+                                  bool isMiterJoin, double modifierOpacity,
+                                  bool modifierEraser,
+                                  TMyPaintBrushStyle *mypaintStyle,
+                                  TXshSimpleLevel *level, TFrameId frameId,
+                                  bool isFrameCreated, bool isLevelCreated,
+                                  std::string primitiveName) {
+    TTileSetFullColor *tileSet = new TTileSetFullColor(ras->getSize());
+    m_tileSaverFullColor       = new TTileSaverFullColor(ras, tileSet);
+    m_workRaster               = TRaster32P(ras->getSize());
+
+    TStroke *s       = new TStroke(*stroke);
+    TPointD riCenter = ras->getCenterD();
+    s->transform(TTranslation(riCenter));
+    int styleId = s->getStyle();
+
+    mypaint::Brush mypaintBrush;
+    {  // applyToonzBrushSettings
+
+      double size    = modifierSize * log(2.0);
+      double opacity = 0.01 * modifierOpacity;
+
+      TColorStyle *colorStyle = palette->getStyle(styleId);
+      TPixel32 currentColor   = colorStyle->getMainColor();
+
+      TPixelD color = PixelConverter<TPixelD>::from(currentColor);
+      double colorH = 0.0;
+      double colorS = 0.0;
+      double colorV = 0.0;
+      RGB2HSV(color.r, color.g, color.b, &colorH, &colorS, &colorV);
+
+      mypaintBrush.fromBrush(mypaintStyle->getBrush());
+
+      float baseSize =
+          mypaintBrush.getBaseValue(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC);
+      mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
+                                baseSize + size);
+
+      float baseOpacity =
+          mypaintBrush.getBaseValue(MYPAINT_BRUSH_SETTING_OPAQUE);
+      mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_OPAQUE,
+                                baseOpacity * opacity);
+
+      mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_COLOR_H, colorH / 360.0);
+      mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_COLOR_S, colorS);
+      mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_COLOR_V, colorV);
+
+      if (modifierEraser)
+        mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_ERASER, 1.0);
+    }
+
+    TRasterP backupRas = ras->clone();
+
+    m_workRaster->lock();
+    m_workRaster->clear();
+
+    MyPaintToonzBrush *toonz_brush =
+        new MyPaintToonzBrush(m_workRaster, *this, mypaintBrush);
+
+    // When drawing strokes, these shapes allow for hard angles.  To do this,
+    // we'll draw stroke in sections as if there are multiple strokes
+    bool drawHardAngles =
+        isMiterJoin &&
+        (primitiveName == "Rectangle" || primitiveName == "Polyline" ||
+         primitiveName == "MultiArc" || primitiveName == "Polygon");
+
+    // For closed shapes, MyPaint will draw the stroke with rounded angles by
+    // default except at start/end points. Shift starting point to 2nd point of
+    // stroke so 1st point will be rounded also
+    bool shiftStartPoint = s->isSelfLoop() && !drawHardAngles;
+
+    toonz_brush->beginStroke();
+
+    m_strokeRect.empty();
+    m_lastRect.empty();
+
+    int cpCount = s->getControlPointCount();
+    double t;
+    TPointD pos;
+    TRect updateRect;
+    int i = shiftStartPoint ? 1 : 0;
+    for (; i < cpCount; i++) {
+      t   = s->getParameterAtControlPoint(i);
+      pos = s->getPoint(t);
+      m_strokeSegmentRect.empty();
+      toonz_brush->strokeTo(pos, 0.5, 10.0);
+      updateRect = m_strokeSegmentRect * ras->getBounds();
+      if (!updateRect.isEmpty())
+        ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
+
+      if (drawHardAngles) {
+        toonz_brush->endStroke();
+        updateRect = m_strokeSegmentRect * ras->getBounds();
+        if (!updateRect.isEmpty())
+          ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
+        toonz_brush->beginStroke();
+        toonz_brush->strokeTo(pos, 0.5, 10.0);
+      }
+    }
+    if (shiftStartPoint) {
+      i   = 1;
+      t   = s->getParameterAtControlPoint(i);
+      pos = s->getPoint(t);
+      m_strokeSegmentRect.empty();
+      toonz_brush->strokeTo(pos, 0.5, 10.0);
+      updateRect = m_strokeSegmentRect * ras->getBounds();
+      if (!updateRect.isEmpty())
+        ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
+    }
+
+    toonz_brush->endStroke();
+    updateRect = m_strokeSegmentRect * ras->getBounds();
+    if (!updateRect.isEmpty())
+      ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
+
+    m_workRaster->unlock();
+
+    if (!m_strokeRect.isEmpty()) {
+      TRasterP subras = ras->extract(m_strokeRect)->clone();
+      TUndoManager::manager()->add(new UndoMyPaintBrushFullColor(
+          tileSet, level, frameId, isFrameCreated, isLevelCreated, subras,
+          m_strokeRect.getP00(), primitiveName));
+    }
+
+    delete toonz_brush;
+    delete s;
+    delete m_tileSaverFullColor;
+    m_tileSaverFullColor = 0;
+
+    return m_strokeRect;
+  }
+
+  void updateFullColorWorkRaster(const TRect &rect) {
+    if (rect.isEmpty()) return;
+
+    TRasterImageP ri = TImageP(getImage(false, 1));
+    if (!ri) return;
+
+    TRasterP ras = ri->getRaster();
+
+    const int denominator = 8;
+    TRect enlargedRect    = rect + m_lastRect;
+    int dx                = (enlargedRect.getLx() - 1) / denominator + 1;
+    int dy                = (enlargedRect.getLy() - 1) / denominator + 1;
+
+    if (m_lastRect.isEmpty()) {
+      enlargedRect.x0 -= dx;
+      enlargedRect.y0 -= dy;
+      enlargedRect.x1 += dx;
+      enlargedRect.y1 += dy;
+
+      TRect _rect = enlargedRect * ras->getBounds();
+      if (_rect.isEmpty()) return;
+
+      m_workRaster->extract(_rect)->copy(ras->extract(_rect));
+    } else {
+      if (enlargedRect.x0 < m_lastRect.x0) enlargedRect.x0 -= dx;
+      if (enlargedRect.y0 < m_lastRect.y0) enlargedRect.y0 -= dy;
+      if (enlargedRect.x1 > m_lastRect.x1) enlargedRect.x1 += dx;
+      if (enlargedRect.y1 > m_lastRect.y1) enlargedRect.y1 += dy;
+
+      TRect _rect = enlargedRect * ras->getBounds();
+      if (_rect.isEmpty()) return;
+
+      TRect _lastRect    = m_lastRect * ras->getBounds();
+      QList<TRect> rects = ToolUtils::splitRect(_rect, _lastRect);
+      for (int i = 0; i < rects.size(); i++) {
+        m_workRaster->extract(rects[i])->copy(ras->extract(rects[i]));
+      }
+    }
+
+    m_lastRect = enlargedRect;
+  }
+
+  bool isMyPaintStyleSelected() override { return m_isMyPaintStyleSelected; }
+
+  void onColorStyleChanged() {
+    TTool::Application *app = getApplication();
+    TMyPaintBrushStyle *mpbs =
+        dynamic_cast<TMyPaintBrushStyle *>(app->getCurrentLevelStyle());
+    m_isMyPaintStyleSelected = (mpbs) ? true : false;
+    if (m_primitive)
+      m_primitive->setMyPaintStyleSelected(m_isMyPaintStyleSelected);
+    getApplication()->getCurrentTool()->notifyToolChanged();
+  }
+
+  bool askRead(const TRect &rect) override { return askWrite(rect); }
+
+  bool askWrite(const TRect &rect) override {
+    if (rect.isEmpty()) return true;
+
+    m_strokeRect += rect;
+    m_strokeSegmentRect += rect;
+
+    if (m_tileSaverCM32)
+      m_tileSaverCM32->save(rect);
+    else if (m_tileSaverFullColor) {
+      updateFullColorWorkRaster(rect);
+      m_tileSaverFullColor->save(rect);
+    }
+    return true;
+  }
 };
 
 GeometricTool GeometricVectorTool(TTool::Vectors | TTool::EmptyTarget);
 GeometricTool GeometricRasterTool(TTool::ToonzImage | TTool::EmptyTarget);
 GeometricTool GeometricRasterFullColorTool(TTool::RasterImage |
                                            TTool::EmptyTarget);
+
+//-------------------------------------------------------------------------------------------------------------
+
+GeometricToolNotifier::GeometricToolNotifier(GeometricTool *tool)
+    : m_tool(tool) {
+  if (TTool::Application *app = m_tool->getApplication()) {
+    if (TPaletteHandle *paletteHandle = app->getCurrentPalette()) {
+      bool ret;
+      ret = connect(paletteHandle, SIGNAL(colorStyleChanged(bool)), this,
+                    SLOT(onColorStyleChanged()));
+      ret = ret && connect(paletteHandle, SIGNAL(colorStyleSwitched()), this,
+                           SLOT(onColorStyleChanged()));
+      ret = ret && connect(paletteHandle, SIGNAL(paletteSwitched()), this,
+                           SLOT(onColorStyleChanged()));
+    }
+  }
+  onColorStyleChanged();
+}
+
+//-------------------------------------------------------------------------------------------------------------
+
+void GeometricToolNotifier::onColorStyleChanged() {
+  m_tool->onColorStyleChanged();
+}
 
 //-------------------------------------------------------------------------------------------------------------
 

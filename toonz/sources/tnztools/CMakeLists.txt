@@ -8,6 +8,7 @@ set(MOC_HEADERS
     skeletonsubtools.h
     tooloptionscontrols.h
     toonzrasterbrushtool.h
+	geometrictool.h
     viewtools.h
     selectiontool.h
     edittool.h

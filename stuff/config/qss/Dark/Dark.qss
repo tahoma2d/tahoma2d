@@ -1939,18 +1939,21 @@ PopupButton::menu-indicator:disabled {
   image: url('../Medium/imgs/white/combo_downarrow_disabled.svg');
 }
 #Cap,
-#Join {
+#Join,
+#ModifierJoin {
   padding: 0 4 0 -8;
   max-width: 32;
   min-width: 32;
 }
 #Cap QMenu,
-#Join QMenu {
+#Join QMenu,
+#ModifierJoin QMenu {
   max-width: 28;
   min-width: 28;
 }
 #Cap QMenu::item,
-#Join QMenu::item {
+#Join QMenu::item,
+#ModifierJoin QMenu::item {
   max-width: 28;
   min-width: 28;
   padding: 0;

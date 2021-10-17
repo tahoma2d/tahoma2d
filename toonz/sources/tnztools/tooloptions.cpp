@@ -1528,11 +1528,48 @@ GeometricToolOptionsBox::GeometricToolOptionsBox(QWidget *parent, TTool *tool,
           SLOT(onJoinStyleChanged(int)));
 
   assert(ret);
+  filterControls();
+}
+
+//-----------------------------------------------------------------------------
+
+void GeometricToolOptionsBox::filterControls() {
+  // show or hide widgets which modify imported brush (mypaint)
+  bool isMyPaintSelected = m_tool->isMyPaintStyleSelected();
+
+  for (QMap<std::string, QLabel *>::iterator it = m_labels.begin();
+       it != m_labels.end(); it++) {
+    bool visible =
+        !isMyPaintSelected || (m_tool->getTargetType() & TTool::Vectors)
+            ? (it.key().substr(0, 8) != "Modifier")
+            : ((it.key().substr(0, 8) == "Modifier") ||
+               (it.key() == "Opacity:") || (it.key() == "Shape:") ||
+               (it.key() == "Polygon Sides:") || (it.key() == "rotate") ||
+               (it.key() == "Snap") || (it.key() == "Draw Under") ||
+               (it.key() == "Smooth"));
+    it.value()->setVisible(visible);
+  }
+
+  for (QMap<std::string, ToolOptionControl *>::iterator it = m_controls.begin();
+       it != m_controls.end(); it++) {
+    bool visible =
+        !isMyPaintSelected || (m_tool->getTargetType() & TTool::Vectors)
+            ? (it.key().substr(0, 8) != "Modifier")
+            : ((it.key().substr(0, 8) == "Modifier") ||
+               (it.key() == "Opacity:") || (it.key() == "Shape:") ||
+               (it.key() == "Polygon Sides:") || (it.key() == "rotate") ||
+               (it.key() == "Snap") || (it.key() == "Draw Under") ||
+               (it.key() == "Smooth"));
+    if (QWidget *widget = dynamic_cast<QWidget *>(it.value()))
+      widget->setVisible(visible);
+  }
 }
 
 //-----------------------------------------------------------------------------
 
 void GeometricToolOptionsBox::updateStatus() {
+  filterControls();
+
   QMap<std::string, ToolOptionControl *>::iterator it;
   for (it = m_controls.begin(); it != m_controls.end(); it++)
     it.value()->updateStatus();
@@ -2056,9 +2093,7 @@ void BrushToolOptionsBox::filterControls() {
         dynamic_cast<FullColorBrushTool *>(m_tool);
     showModifiers = fullColorBrushTool->getBrushStyle();
   } else if (m_tool->getTargetType() & TTool::ToonzImage) {
-    ToonzRasterBrushTool *toonzRasterBrushTool =
-        dynamic_cast<ToonzRasterBrushTool *>(m_tool);
-    showModifiers = toonzRasterBrushTool->isMyPaintStyleSelected();
+    showModifiers = m_tool->isMyPaintStyleSelected();
   } else {  // (m_tool->getTargetType() & TTool::Vectors)
     m_snapSensitivityCombo->setHidden(!m_snapCheckbox->isChecked());
     return;
@@ -2186,7 +2221,7 @@ EraserToolOptionsBox::EraserToolOptionsBox(QWidget *parent, TTool *tool,
       dynamic_cast<ToolOptionSlider *>(m_controls.value("Hardness:"));
   if (m_hardnessField)
     m_hardnessLabel = m_labels.value(m_hardnessField->propertyName());
-  m_colorMode  = dynamic_cast<ToolOptionCombo *>(m_controls.value("Mode:"));
+  m_colorMode = dynamic_cast<ToolOptionCombo *>(m_controls.value("Mode:"));
   if (m_colorMode)
     m_colorModeLabel = m_labels.value(m_colorMode->propertyName());
   m_invertMode = dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Invert"));
