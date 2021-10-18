@@ -773,24 +773,38 @@ void ToonzVectorBrushTool::leftButtonDown(const TPointD &pos,
   if (!m_isPath && simLevel) {
     m_assistantPoints = simLevel->getProperties()->getVanishingPoints();
     if (e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed()) {
-      m_addingAssistant = true;
-      bool deletedPoint = false;
+      m_modifyingAssistant = true;
+      m_assistantIndex     = -1;
+      m_deleteAssistant    = true;  // Assume deleting unless we move it
       for (int i = 0; i < m_assistantPoints.size(); i++) {
-        if (areAlmostEqual(m_assistantPoints.at(i).x, pos.x, 6) &&
-            areAlmostEqual(m_assistantPoints.at(i).y, pos.y, 6)) {
-          TRectD pointRect = TRectD(
-              m_assistantPoints.at(i).x - 15, m_assistantPoints.at(i).y - 15,
-              m_assistantPoints.at(i).x + 15, m_assistantPoints.at(i).x + 15);
-          m_assistantPoints.erase(m_assistantPoints.begin() + i);
-          deletedPoint = true;
-          invalidate(pointRect);
-          break;
+        if (areAlmostEqual(m_assistantPoints.at(i).x, pos.x, 12) &&
+            areAlmostEqual(m_assistantPoints.at(i).y, pos.y, 12)) {
+          // We're over an assistant...we are either deleting or moving
+          m_assistantIndex = i;
+          return;
         }
       }
-      if (!deletedPoint) m_assistantPoints.push_back(pos);
+      m_assistantPoints.push_back(pos);
+      m_assistantIndex  = m_assistantPoints.size() - 1;
+      m_deleteAssistant = false;
       simLevel->getProperties()->setVanishingPoints(m_assistantPoints);
       level->setDirtyFlag(true);
       invalidate();
+      return;
+    }
+    if (e.isAltPressed() && e.isShiftPressed() && !e.isCtrlPressed()) {
+      m_modifyingAssistant               = true;
+      std::vector<TPointD> pointsToClear = m_assistantPoints;
+      m_assistantPoints.clear();
+      for (auto point : pointsToClear) {
+        TRectD pointRect =
+            TRectD(point.x - 3, point.y - 3, point.x + 3, point.y + 3);
+        invalidate(pointRect);
+      }
+      simLevel->getProperties()->setVanishingPoints(m_assistantPoints);
+      level->setDirtyFlag(true);
+      invalidate();
+
       return;
     }
   }
@@ -831,11 +845,27 @@ void ToonzVectorBrushTool::leftButtonDrag(const TPointD &pos,
     return;
   }
 
-  if (!m_isPath &&
-      ((e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed()) ||
-       m_addingAssistant)) {
+  if (m_modifyingAssistant) {
+    TXshLevel *level = getApplication()->getCurrentLevel()->getLevel();
+    if (level == NULL) return;
+    TXshSimpleLevelP simLevel = level->getSimpleLevel();
+
+    if (e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed()) {
+      if (m_assistantIndex < 0) return;
+
+      m_assistantPoints.at(m_assistantIndex).x = pos.x;
+      m_assistantPoints.at(m_assistantIndex).y = pos.y;
+      m_deleteAssistant                        = false;
+
+      simLevel->getProperties()->setVanishingPoints(m_assistantPoints);
+      level->setDirtyFlag(true);
+      invalidate();
+      return;
+    }
+
     return;
   }
+
   TRectD invalidateRect;
 
   m_lastPoint           = pos;
@@ -1058,10 +1088,27 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
     return;
   }
 
-  if (!m_isPath &&
-      ((e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed()) ||
-       m_addingAssistant)) {
-    m_addingAssistant = false;
+  if (m_modifyingAssistant) {
+    if (m_deleteAssistant) {
+      TXshLevel *level = getApplication()->getCurrentLevel()->getLevel();
+      if (level) {
+        TXshSimpleLevelP simLevel = level->getSimpleLevel();
+
+        TRectD pointRect =
+            TRectD(m_assistantPoints.at(m_assistantIndex).x - 15,
+                   m_assistantPoints.at(m_assistantIndex).y - 15,
+                   m_assistantPoints.at(m_assistantIndex).x + 15,
+                   m_assistantPoints.at(m_assistantIndex).x + 15);
+        m_assistantPoints.erase(m_assistantPoints.begin() + m_assistantIndex);
+        invalidate(pointRect);
+        simLevel->getProperties()->setVanishingPoints(m_assistantPoints);
+        level->setDirtyFlag(true);
+        invalidate();
+      }
+    }
+    m_modifyingAssistant = false;
+    m_assistantIndex     = -1;
+    m_deleteAssistant    = false;
     return;
   }
 
@@ -1114,8 +1161,6 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
     notifyImageChanged();
     TUndoManager::manager()->add(undo);
 
-    m_addingAssistant = false;
-
     return;
   }
 
@@ -1124,7 +1169,6 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
     m_styleId = 0;
     m_track.clear();
 
-    m_addingAssistant = false;
     return;
   }
 
@@ -1278,7 +1322,6 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
   assert(stroke);
   m_track.clear();
   m_toggleSnap      = false;
-  m_addingAssistant = false;
 }
 
 //--------------------------------------------------------------------------------------------------

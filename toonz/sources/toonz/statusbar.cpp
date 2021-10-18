@@ -191,12 +191,16 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                        .arg(trModKey("Ctrl"))
                        .arg(cmd2TextSeparator) +
                    spacer +
-                   tr("%1%2Add / Remove Vanishing Point")
+                   tr("%1%2Add / Move / Remove Vanishing Point")
                        .arg(trModKey("Ctrl+Alt"))
-                       .arg(cmdTextSeparator) +
+                       .arg(cmd2TextSeparator) +
                    spacer +
                    tr("%1%2Draw to Vanishing Point")
                        .arg(trModKey("Alt"))
+                       .arg(cmd2TextSeparator) +
+                   spacer +
+                   tr("%1%2Clear All Vanishing Points")
+                       .arg(trModKey("Shift+Alt"))
                        .arg(cmd2TextSeparator) +
                    spacer +
                    tr("%1%2Allow or Disallow Snapping")
@@ -206,36 +210,44 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                tr("Brush Tool : Draws in the work area freehand") + spacer +
                    tr("%1%2Straight Lines")
                        .arg(trModKey("Shift"))
-                       .arg(cmd2TextSeparator) +
+                       .arg(cmdTextSeparator) +
                    spacer +
                    tr("%1%2Straight Lines Snapped to Angles")
                        .arg(trModKey("Ctrl"))
-                       .arg(cmd2TextSeparator) +
+                       .arg(cmdTextSeparator) +
                    spacer +
-                   tr("%1%2Add / Remove Vanishing Point")
+                   tr("%1%2Add / Move / Remove Vanishing Point")
                        .arg(trModKey("Ctrl+Alt"))
                        .arg(cmdTextSeparator) +
                    spacer +
                    tr("%1%2Draw to Vanishing Point")
                        .arg(trModKey("Alt"))
-                       .arg(cmd2TextSeparator)});
+                       .arg(cmdTextSeparator) +
+                   spacer +
+                   tr("%1%2Clear All Vanishing Points")
+                       .arg(trModKey("Shift+Alt"))
+                       .arg(cmdTextSeparator)});
   lMap.insert({"T_BrushRaster",
                tr("Brush Tool : Draws in the work area freehand") + spacer +
                    tr("%1%2Straight Lines")
                        .arg(trModKey("Shift"))
-                       .arg(cmd2TextSeparator) +
+                       .arg(cmdTextSeparator) +
                    spacer +
                    tr("%1%2Straight Lines Snapped to Angles")
                        .arg(trModKey("Ctrl"))
-                       .arg(cmd2TextSeparator) +
+                       .arg(cmdTextSeparator) +
                    spacer +
-                   tr("%1%2Add / Remove Vanishing Point")
+                   tr("%1%2Add / Move / Remove Vanishing Point")
                        .arg(trModKey("Ctrl+Alt"))
                        .arg(cmdTextSeparator) +
                    spacer +
                    tr("%1%2Draw to Vanishing Point")
                        .arg(trModKey("Alt"))
-                       .arg(cmd2TextSeparator)});
+                       .arg(cmdTextSeparator) +
+                   spacer +
+                   tr("%1%2Clear All Vanishing Points")
+                       .arg(trModKey("Shift+Alt"))
+                       .arg(cmdTextSeparator)});
   lMap.insert({"T_Geometric", tr("Geometry Tool: Draws geometric shapes")});
   lMap.insert({"T_GeometricRectangle",
                tr("Geometry Tool: Draws geometric shapes") + spacer +

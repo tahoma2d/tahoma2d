@@ -214,7 +214,9 @@ protected:
   bool m_propertyUpdating = false;
 
   std::vector<TPointD> m_assistantPoints;
-  bool m_addingAssistant = false;
+  bool m_modifyingAssistant = false;
+  int m_assistantIndex      = -1;
+  bool m_deleteAssistant    = false;
   TPointD m_firstPoint;
   TPointD m_lastPoint;
   int m_highlightAssistant = -1;
