@@ -67,6 +67,8 @@ TEnv::DoubleVar GeometricModifierSize("InknpaintGeometricModifierSize", 0);
 TEnv::IntVar GeometricModifierEraser("InknpaintGeometricModifierEraser", 0);
 TEnv::IntVar GeometricModifierJoinStyle("InknpaintGeometricModifierJoinStyle",
                                         0);
+TEnv::DoubleVar GeometricModifierPressure("InknpaintGeometricModifierPressure",
+                                          0.5);
 
 //-------------------------------------------------------------------
 
@@ -501,6 +503,7 @@ public:
   TDoubleProperty m_modifierSize;
   TBoolProperty m_modifierEraser;
   TEnumProperty m_modifierJoinStyle;
+  TDoubleProperty m_modifierPressure;
 
   int m_targetType;
 
@@ -533,12 +536,14 @@ public:
       , m_targetType(targetType)
       , m_modifierSize("ModifierSize", -3, 3, 0, true)
       , m_modifierEraser("ModifierEraser", false)
-      , m_modifierJoinStyle("ModifierJoin") {
+      , m_modifierJoinStyle("ModifierJoin")
+      , m_modifierPressure("ModifierPressure", -0.49, 0.5, 0) {
     if (targetType & TTool::Vectors) m_prop[0].bind(m_toolSize);
     if (targetType & TTool::ToonzImage || targetType & TTool::RasterImage) {
       m_prop[0].bind(m_modifierSize);
       m_prop[0].bind(m_rasterToolSize);
       m_prop[0].bind(m_hardness);
+      m_prop[0].bind(m_modifierPressure);
     }
     if (targetType & TTool::RasterImage) {
       m_prop[0].bind(m_opacity);
@@ -625,6 +630,7 @@ public:
     m_pencil.setQStringName(tr("Pencil Mode"));
     m_modifierSize.setQStringName(tr("Size"));
     m_modifierEraser.setQStringName(tr("Eraser"));
+    m_modifierPressure.setQStringName(tr("Pressure"));
 
     m_capStyle.setQStringName(tr("Cap"));
     m_capStyle.setItemUIName(BUTT_WSTR, tr("Butt cap"));
@@ -1342,6 +1348,7 @@ public:
       m_param.m_rasterToolSize.setValue(GeometricRasterSize);
       m_param.m_modifierSize.setValue(GeometricModifierSize);
       m_param.m_modifierEraser.setValue(GeometricModifierEraser ? 1 : 0);
+      m_param.m_modifierPressure.setValue(GeometricModifierPressure);
       m_param.m_opacity.setValue(GeometricOpacity);
       m_param.m_hardness.setValue(GeometricBrushHardness);
       m_param.m_selective.setValue(GeometricSelective ? 1 : 0);
@@ -1438,6 +1445,8 @@ public:
       GeometricModifierSize = m_param.m_modifierSize.getValue();
     else if (propertyName == m_param.m_modifierEraser.getName())
       GeometricModifierEraser = m_param.m_modifierEraser.getValue();
+    else if (propertyName == m_param.m_modifierPressure.getName())
+      GeometricModifierPressure = m_param.m_modifierPressure.getValue();
     else if (propertyName == m_param.m_type.getName()) {
       std::wstring typeCode = m_param.m_type.getValue();
       GeometricType         = ::to_string(typeCode);
@@ -1581,15 +1590,17 @@ public:
       double hardness = m_param.m_hardness.getValue() * 0.01;
       TRect savebox;
       if (isMyPaintStyleSelected()) {
-        double modifierSize              = m_param.m_modifierSize.getValue();
+        double modifierSize     = m_param.m_modifierSize.getValue();
+        double modifierPressure = m_param.m_modifierPressure.getValue();
         TMyPaintBrushStyle *mypaintStyle = dynamic_cast<TMyPaintBrushStyle *>(
             getApplication()->getCurrentLevelStyle());
         bool isMiterJoin = m_param.m_modifierJoinStyle.getValue() == MITER_WSTR;
         TRasterCM32P ras = ti->getRaster();
 
         savebox = drawMyPaintBrushCM32(
-            ras, stroke, modifierSize, isMiterJoin, mypaintStyle, sl, id,
-            m_isFrameCreated, m_isLevelCreated, m_primitive->getName());
+            ras, stroke, modifierSize, modifierPressure, isMiterJoin,
+            mypaintStyle, sl, id, m_isFrameCreated, m_isLevelCreated,
+            m_primitive->getName());
       } else if (hardness == 1 || m_param.m_pencil.getValue()) {
         TUndoManager::manager()->add(new UndoRasterPencil(
             sl, id, stroke, selective, filled, !m_param.m_pencil.getValue(),
@@ -1688,9 +1699,10 @@ public:
       TRect savebox;
 
       if (isMyPaintStyleSelected()) {
-        double modifierSize    = m_param.m_modifierSize.getValue();
-        double modifierOpacity = m_param.m_opacity.getValue();
-        bool modifierEraser    = m_param.m_modifierEraser.getValue();
+        double modifierSize     = m_param.m_modifierSize.getValue();
+        double modifierPressure = m_param.m_modifierPressure.getValue();
+        double modifierOpacity  = m_param.m_opacity.getValue();
+        bool modifierEraser     = m_param.m_modifierEraser.getValue();
         bool isMiterJoin = m_param.m_modifierJoinStyle.getValue() == MITER_WSTR;
 
         TMyPaintBrushStyle *mypaintStyle = dynamic_cast<TMyPaintBrushStyle *>(
@@ -1699,8 +1711,8 @@ public:
         TRasterP ras = ri->getRaster();
 
         savebox = drawMyPaintBrushFullColor(
-            ras, ri->getPalette(), stroke, modifierSize, isMiterJoin,
-            modifierOpacity, modifierEraser, mypaintStyle, sl, id,
+            ras, ri->getPalette(), stroke, modifierSize, modifierPressure,
+            isMiterJoin, modifierOpacity, modifierEraser, mypaintStyle, sl, id,
             m_isFrameCreated, m_isLevelCreated, m_primitive->getName());
 
         delete m_tileSaverFullColor;
@@ -1724,8 +1736,8 @@ public:
   }
 
   TRect drawMyPaintBrushCM32(TRasterCM32P ras, TStroke *stroke,
-                             double modifierSize, bool isMiterJoin,
-                             TMyPaintBrushStyle *mypaintStyle,
+                             double modifierSize, double modifierPressure,
+                             bool isMiterJoin, TMyPaintBrushStyle *mypaintStyle,
                              TXshSimpleLevel *level, TFrameId frameId,
                              bool isFrameCreated, bool isLevelCreated,
                              std::string primitiveName) {
@@ -1772,6 +1784,8 @@ public:
     m_strokeRect.empty();
     m_lastRect.empty();
 
+    double pressure = 0.5 + modifierPressure;
+
     int cpCount = s->getControlPointCount();
     double t;
     TPointD pos;
@@ -1781,7 +1795,7 @@ public:
       t   = s->getParameterAtControlPoint(i);
       pos = s->getPoint(t);
       m_strokeSegmentRect.empty();
-      toonz_brush->strokeTo(pos, 0.5, 10.0);
+      toonz_brush->strokeTo(pos, pressure, 10.0);
       updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty())
         toonz_brush->updateDrawing(ras, backupRas, m_strokeSegmentRect, styleId,
@@ -1796,7 +1810,7 @@ public:
           toonz_brush->updateDrawing(ras, backupRas, m_strokeSegmentRect,
                                      styleId, false);
         toonz_brush->beginStroke();
-        toonz_brush->strokeTo(pos, 0.5, 10.0);
+        toonz_brush->strokeTo(pos, pressure, 10.0);
       }
     }
     if (shiftStartPoint) {
@@ -1804,7 +1818,7 @@ public:
       t   = s->getParameterAtControlPoint(i);
       pos = s->getPoint(t);
       m_strokeSegmentRect.empty();
-      toonz_brush->strokeTo(pos, 0.5, 10.0);
+      toonz_brush->strokeTo(pos, pressure, 10.0);
       updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty())
         toonz_brush->updateDrawing(ras, backupRas, m_strokeSegmentRect, styleId,
@@ -1838,8 +1852,8 @@ public:
 
   TRect drawMyPaintBrushFullColor(TRasterP ras, TPalette *palette,
                                   TStroke *stroke, double modifierSize,
-                                  bool isMiterJoin, double modifierOpacity,
-                                  bool modifierEraser,
+                                  double modifierPressure, bool isMiterJoin,
+                                  double modifierOpacity, bool modifierEraser,
                                   TMyPaintBrushStyle *mypaintStyle,
                                   TXshSimpleLevel *level, TFrameId frameId,
                                   bool isFrameCreated, bool isLevelCreated,
@@ -1913,6 +1927,8 @@ public:
     m_strokeRect.empty();
     m_lastRect.empty();
 
+    double pressure = 0.5 + modifierPressure;
+
     int cpCount = s->getControlPointCount();
     double t;
     TPointD pos;
@@ -1922,7 +1938,7 @@ public:
       t   = s->getParameterAtControlPoint(i);
       pos = s->getPoint(t);
       m_strokeSegmentRect.empty();
-      toonz_brush->strokeTo(pos, 0.5, 10.0);
+      toonz_brush->strokeTo(pos, pressure, 10.0);
       updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty())
         ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
@@ -1933,7 +1949,7 @@ public:
         if (!updateRect.isEmpty())
           ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
         toonz_brush->beginStroke();
-        toonz_brush->strokeTo(pos, 0.5, 10.0);
+        toonz_brush->strokeTo(pos, pressure, 10.0);
       }
     }
     if (shiftStartPoint) {
@@ -1941,7 +1957,7 @@ public:
       t   = s->getParameterAtControlPoint(i);
       pos = s->getPoint(t);
       m_strokeSegmentRect.empty();
-      toonz_brush->strokeTo(pos, 0.5, 10.0);
+      toonz_brush->strokeTo(pos, pressure, 10.0);
       updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty())
         ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
