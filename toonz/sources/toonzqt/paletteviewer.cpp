@@ -105,7 +105,8 @@ PaletteViewer::PaletteViewer(QWidget *parent, PaletteViewType viewType,
     , m_lockPaletteAction(0)
     , m_frozen(false)
     , m_freezePaletteToolButton(0)
-    , m_lockPaletteToolButton(0) {
+    , m_lockPaletteToolButton(0)
+    , m_app(0) {
   setObjectName("OnePixelMarginFrame");
   setFrameStyle(QFrame::StyledPanel);
 
@@ -871,7 +872,7 @@ void PaletteViewer::hideEvent(QHideEvent *) {
 //-----------------------------------------------------------------------------
 
 void PaletteViewer::enterEvent(QEvent *) {
-  getApplication()->getPaletteController()->setCurrentPaletteViewer(this);
+  if (m_app) m_app->getPaletteController()->setCurrentPaletteViewer(this);
 }
 
 //-----------------------------------------------------------------------------

@@ -699,6 +699,7 @@ StudioPaletteViewerPanel::StudioPaletteViewerPanel(QWidget *parent)
       this, m_studioPaletteHandle,
       app->getPaletteController()->getCurrentLevelPalette(),
       app->getCurrentFrame(), app->getCurrentXsheet(), app->getCurrentLevel());
+  m_studioPaletteViewer->setApplication(app);
   setWidget(m_studioPaletteViewer);
 }
 
