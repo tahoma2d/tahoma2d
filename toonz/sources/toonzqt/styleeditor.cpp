@@ -2282,7 +2282,7 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
   QMenu *menu = new QMenu(this);
   QAction *action;
 
-  std::vector<StyleChooserPage *> styleSets =
+  std::vector<StyleChooserPage *> *styleSets =
       m_editor->getStyleSetList(m_pageType);
 
   if (m_editor->isSelecting()) {
@@ -2307,8 +2307,8 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
     menu->addAction(action);
 
     QMenu *styleSetMenu = new QMenu(tr("Copy Selected to Style Set..."), this);
-    for (int i = 1; i < styleSets.size(); i++) {
-      StyleChooserPage *page = styleSets[i];
+    for (int i = 1; i < styleSets->size(); i++) {
+      StyleChooserPage *page = styleSets->at(i);
       QAction *subAction     = new QAction(page->getStyleSetName());
       subAction->setData(page->getStyleSetName());
       connect(subAction, SIGNAL(triggered()), m_editor,
@@ -2318,12 +2318,12 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
         subAction->setDisabled(true);
       styleSetMenu->addAction(subAction);
     }
-    if (styleSets.size() < 2) styleSetMenu->setDisabled(true);
+    if (styleSets->size() < 2) styleSetMenu->setDisabled(true);
     menu->addMenu(styleSetMenu);
 
     styleSetMenu = new QMenu(tr("Move Selected to Style Set..."), this);
-    for (int i = 1; i < styleSets.size(); i++) {
-      StyleChooserPage *page = styleSets[i];
+    for (int i = 1; i < styleSets->size(); i++) {
+      StyleChooserPage *page = styleSets->at(i);
       QAction *subAction     = new QAction(page->getStyleSetName());
       subAction->setData(page->getStyleSetName());
       connect(subAction, SIGNAL(triggered()), m_editor,
@@ -2333,7 +2333,7 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
         subAction->setDisabled(true);
       styleSetMenu->addAction(subAction);
     }
-    if (styleSets.size() < 2 || m_pageType == StylePageType::VectorGenerated)
+    if (styleSets->size() < 2 || m_pageType == StylePageType::VectorGenerated)
       styleSetMenu->setDisabled(true);
     menu->addMenu(styleSetMenu);
 
@@ -2341,8 +2341,8 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
     action->setText(tr("Remove Selected from Sets"));
     connect(action, SIGNAL(triggered()), m_editor,
             SLOT(onRemoveSelectedStyleFromSet()));
-    for (int i = 1; i < styleSets.size(); i++) {
-      StyleChooserPage *page = styleSets[i];
+    for (int i = 1; i < styleSets->size(); i++) {
+      StyleChooserPage *page = styleSets->at(i);
       if (page->getSelection().size() &&
           (page->isExternal() ||
            page->getPageType() == StylePageType::VectorGenerated)) {
@@ -2377,8 +2377,8 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
     menu->addAction(action);
 
     QMenu *styleSetMenu = new QMenu(tr("Copy to Style Set..."), this);
-    for (int i = 1; i < styleSets.size(); i++) {
-      StyleChooserPage *page = styleSets[i];
+    for (int i = 1; i < styleSets->size(); i++) {
+      StyleChooserPage *page = styleSets->at(i);
       QAction *subAction     = new QAction(page->getStyleSetName());
       subAction->setData(page->getStyleSetName());
       connect(subAction, SIGNAL(triggered()), this, SLOT(onCopyStyleToSet()));
@@ -2389,13 +2389,13 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
     }
     if (m_currentIndex == 0 || (m_pageType == StylePageType::Texture &&
                                 m_currentIndex == getChipCount() - 1) ||
-        styleSets.size() <= 2)
+        styleSets->size() <= 2)
       styleSetMenu->setDisabled(true);
     menu->addMenu(styleSetMenu);
 
     styleSetMenu = new QMenu(tr("Move to Style Set..."), this);
-    for (int i = 1; i < styleSets.size(); i++) {
-      StyleChooserPage *page = styleSets[i];
+    for (int i = 1; i < styleSets->size(); i++) {
+      StyleChooserPage *page = styleSets->at(i);
       QAction *subAction     = new QAction(page->getStyleSetName());
       subAction->setData(page->getStyleSetName());
       connect(subAction, SIGNAL(triggered()), this, SLOT(onMoveStyleToSet()));
@@ -2406,7 +2406,7 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
     }
     if (m_currentIndex == 0 || (m_pageType == StylePageType::Texture &&
                                 m_currentIndex == getChipCount() - 1) ||
-        m_pageType == StylePageType::VectorGenerated || styleSets.size() <= 2)
+        m_pageType == StylePageType::VectorGenerated || styleSets->size() <= 2)
       styleSetMenu->setDisabled(true);
     menu->addMenu(styleSetMenu);
 
@@ -2506,12 +2506,17 @@ bool StyleChooserPage::copyFilesToStyleFolder(TFilePathSet srcFiles,
 bool StyleChooserPage::deleteFilesFromStyleFolder(TFilePathSet targetFiles) {
   if (targetFiles.empty()) return false;
 
+  bool filesDeleted = false;
+
   TFilePathSet::iterator it;
   for (it = targetFiles.begin(); it != targetFiles.end(); it++) try {
-      if (!TSystem::doesExistFileOrLevel(*it)) return false;
+      if (!TSystem::doesExistFileOrLevel(*it)) continue;
       TSystem::deleteFile(*it);
+      filesDeleted = true;
     } catch (...) {
     }
+
+  return filesDeleted;
 }
 
 //*****************************************************************************
@@ -6806,16 +6811,20 @@ void StyleEditor::renameStyleSet(StyleChooserPage *styleSetPage,
 
 //-----------------------------------------------------------------------------
 
-std::vector<StyleChooserPage *> StyleEditor::getStyleSetList(
+std::vector<StyleChooserPage *> *StyleEditor::getStyleSetList(
     StylePageType pageType) {
+  std::vector<StyleChooserPage *> *pages;
+
   if (pageType == StylePageType::Texture)
-    return m_texturePages;
+    pages = &m_texturePages;
   else if (pageType == StylePageType::VectorBrush ||
            pageType == StylePageType::VectorCustom ||
            pageType == StylePageType::VectorGenerated)
-    return m_vectorPages;
+    pages = &m_vectorPages;
   else if (pageType == StylePageType::Raster)
-    return m_rasterPages;
+    pages = &m_rasterPages;
+
+  return pages;
 }
 
 bool StyleEditor::isStyleNameValid(QString name, StylePageType pageType,

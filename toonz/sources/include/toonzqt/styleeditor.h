@@ -925,7 +925,7 @@ public:
   void editStyleSetName(StyleChooserPage *styleSetPage);
   void renameStyleSet(StyleChooserPage *styleSetPage, QString newName);
 
-  std::vector<StyleChooserPage *> getStyleSetList(StylePageType pageType);
+  std::vector<StyleChooserPage *> *getStyleSetList(StylePageType pageType);
 
   void setUpdated(TFilePath setPath);
   TFilePath getSetStyleFolder(QString setName);
