@@ -530,6 +530,8 @@ transformation.
   void tweenGuideStrokeToSelected();
   void flipGuideStrokeDirection(int mode);
 
+  virtual bool isMyPaintStyleSelected() { return false; }
+
 public:
   struct CellOps {
     int r0;

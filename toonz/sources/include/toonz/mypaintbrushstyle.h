@@ -54,13 +54,10 @@ public:
   const mypaint::Brush &getBrush() const { return m_brushModified; }
   const TRasterP &getPreview() const { return m_preview; }
 
-  TStrokeProp *makeStrokeProp(const TStroke * /* stroke */) override {
-    return 0;
-  }
-  TRegionProp *makeRegionProp(const TRegion * /* region */) override {
-    return 0;
-  }
-  bool isRegionStyle() const override { return false; }
+  TStrokeProp *makeStrokeProp(const TStroke * /* stroke */) override;
+  TRegionProp *makeRegionProp(const TRegion * /* region */) override;
+
+  bool isRegionStyle() const override { return true; }
   bool isStrokeStyle() const override { return true; }
 
   bool hasMainColor() const override { return true; }

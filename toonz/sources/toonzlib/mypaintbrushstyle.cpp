@@ -3,12 +3,15 @@
 
 #include <QStandardPaths>
 
+#include "tstroke.h"
 #include "tfilepath_io.h"
 #include "timage_io.h"
 #include "trop.h"
 #include "tsystem.h"
 #include "tvectorimage.h"
 #include "tpixelutils.h"
+#include "tstrokeprop.h"
+
 #include "toonz/toonzscene.h"
 
 #include "toonz/mypaintbrushstyle.h"
@@ -274,6 +277,25 @@ void TMyPaintBrushStyle::makeIcon(const TDimension &d) {
       *p                        = blend(*p, color, 0.5);
     }
   }
+}
+
+//-----------------------------------------------------------------
+
+TStrokeProp *TMyPaintBrushStyle::makeStrokeProp(const TStroke *stroke) {
+  // For Vector rendering, treat MyPaint brushes as a solid stroke
+  TSolidColorStyle *color = new TSolidColorStyle();
+  color->addRef();
+  color->setMainColor(getAverageColor());
+  return new OutlineStrokeProp(stroke, color);
+}
+
+//-----------------------------------------------------------------
+
+TRegionProp *TMyPaintBrushStyle::makeRegionProp(const TRegion *region) {
+  TSolidColorStyle *color = new TSolidColorStyle();
+  color->addRef();
+  color->setMainColor(getAverageColor());
+  return color->makeRegionProp(region);
 }
 
 //------------------------------------------------------------

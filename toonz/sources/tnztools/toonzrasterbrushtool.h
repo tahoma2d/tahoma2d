@@ -169,7 +169,7 @@ public:
   void onColorStyleChanged();
   bool askRead(const TRect &rect) override;
   bool askWrite(const TRect &rect) override;
-  bool isMyPaintStyleSelected() { return m_isMyPaintStyleSelected; }
+  bool isMyPaintStyleSelected() override { return m_isMyPaintStyleSelected; }
 
 protected:
   TPropertyGroup m_prop[2];
