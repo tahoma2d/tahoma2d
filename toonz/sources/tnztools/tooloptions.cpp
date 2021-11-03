@@ -19,6 +19,7 @@
 //#include "rgbpickertool.h"
 #include "rulertool.h"
 #include "shifttracetool.h"
+#include "perspectivetool.h"
 
 // TnzQt includes
 #include "toonzqt/dvdialog.h"
@@ -335,6 +336,16 @@ void ToolOptionControlBuilder::visit(TStyleIndexProperty *p) {
 
 void ToolOptionControlBuilder::visit(TPointerProperty *p) {
   assert(!"not implemented");
+}
+
+//-----------------------------------------------------------------------------
+
+void ToolOptionControlBuilder::visit(TColorChipProperty *p) {
+  QLabel *label = addLabel(p);
+  m_panel->addLabel(p->getName(), label);
+  ColorChipCombo *chipCombo = new ColorChipCombo(m_tool, p);
+  hLayout()->addWidget(chipCombo, 0);
+  m_panel->addControl(chipCombo);
 }
 
 //=============================================================================
@@ -2894,6 +2905,99 @@ void ShiftTraceToolOptionBox::onAfterRadioBtnClicked() {
 }
 
 //=============================================================================
+//
+// PerspectiveGridToolOptionBox classes
+//
+//=============================================================================
+
+class PerspectiveGridToolOptionBox::PresetNamePopup final
+    : public DVGui::Dialog {
+  DVGui::LineEdit *m_nameFld;
+
+public:
+  PresetNamePopup() : Dialog(0, true) {
+    setWindowTitle(tr("Preset Name"));
+    m_nameFld = new DVGui::LineEdit();
+    addWidget(m_nameFld);
+
+    QPushButton *okBtn = new QPushButton(tr("OK"), this);
+    okBtn->setDefault(true);
+    QPushButton *cancelBtn = new QPushButton(tr("Cancel"), this);
+    connect(okBtn, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(cancelBtn, SIGNAL(clicked()), this, SLOT(reject()));
+
+    addButtonBarWidget(okBtn, cancelBtn);
+  }
+
+  QString getName() { return m_nameFld->text(); }
+  void removeName() { m_nameFld->setText(QString("")); }
+};
+
+//=============================================================================
+// PerspectiveGridToolOptionBox
+//-----------------------------------------------------------------------------
+
+PerspectiveGridToolOptionBox::PerspectiveGridToolOptionBox(
+    QWidget *parent, TTool *tool, TPaletteHandle *pltHandle,
+    ToolHandle *toolHandle)
+    : ToolOptionsBox(parent), m_tool(tool), m_presetNamePopup(0) {
+  setFrameStyle(QFrame::StyledPanel);
+  setFixedHeight(26);
+
+  TPropertyGroup *props = tool->getProperties(0);
+  assert(props->getPropertyCount() > 0);
+
+  ToolOptionControlBuilder builder(this, tool, pltHandle, toolHandle);
+  if (tool && tool->getProperties(0)) tool->getProperties(0)->accept(builder);
+
+  m_presetCombo = dynamic_cast<ToolOptionCombo *>(m_controls.value("Preset:"));
+
+  // Preset +/- buttons
+  m_addPresetButton    = new QPushButton(QString("+"));
+  m_removePresetButton = new QPushButton(QString("-"));
+
+  m_addPresetButton->setFixedSize(QSize(20, 20));
+  m_removePresetButton->setFixedSize(QSize(20, 20));
+
+  hLayout()->addWidget(m_addPresetButton);
+  hLayout()->addWidget(m_removePresetButton);
+
+  connect(m_addPresetButton, SIGNAL(clicked()), this, SLOT(onAddPreset()));
+  connect(m_removePresetButton, SIGNAL(clicked()), this,
+          SLOT(onRemovePreset()));
+
+  m_layout->addStretch(1);
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::onAddPreset() {
+  // Initialize preset name popup
+  if (!m_presetNamePopup) m_presetNamePopup = new PresetNamePopup;
+
+  if (!m_presetNamePopup->getName().isEmpty()) m_presetNamePopup->removeName();
+
+  // Retrieve the preset name
+  bool ret = m_presetNamePopup->exec();
+  if (!ret) return;
+
+  QString name(m_presetNamePopup->getName());
+  m_presetNamePopup->removeName();
+
+  static_cast<PerspectiveTool *>(m_tool)->addPreset(name);
+
+  m_presetCombo->loadEntries();
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::onRemovePreset() {
+  static_cast<PerspectiveTool *>(m_tool)->removePreset();
+
+  m_presetCombo->loadEntries();
+}
+
+//=============================================================================
 // ZoomToolOptionBox
 //-----------------------------------------------------------------------------
 
@@ -3083,7 +3187,10 @@ void ToolOptions::onToolSwitched() {
         panel                  = p;
         RulerTool *rt          = dynamic_cast<RulerTool *>(tool);
         if (rt) rt->setToolOptionsBox(p);
-      } else if (tool->getName() == T_StylePicker)
+      } else if (tool->getName() == T_PerspectiveGrid)
+        panel =
+            new PerspectiveGridToolOptionBox(this, tool, currPalette, currTool);
+      else if (tool->getName() == T_StylePicker)
         panel = new StylePickerToolOptionsBox(0, tool, currPalette, currTool,
                                               app->getPaletteController());
       else if (tool->getName() == "T_ShiftTrace")

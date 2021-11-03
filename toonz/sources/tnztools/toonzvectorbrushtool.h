@@ -213,11 +213,8 @@ protected:
 
   bool m_propertyUpdating = false;
 
-  std::vector<TPointD> m_assistantPoints;
-  bool m_addingAssistant = false;
   TPointD m_firstPoint;
   TPointD m_lastPoint;
-  int m_highlightAssistant = -1;
 };
 
 #endif  // TOONZVECTORBRUSHTOOL_H

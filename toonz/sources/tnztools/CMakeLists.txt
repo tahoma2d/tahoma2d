@@ -32,6 +32,7 @@ set(HEADERS
     stylepickertool.h
     toonzvectorbrushtool.h
     vectorselectiontool.h
+	perspectivetool.h
     ../include/tools/RGBpicker.h
     ../include/tools/cursormanager.h
     ../include/tools/cursors.h
@@ -103,6 +104,7 @@ set(SOURCES
     rulertool.cpp
     mypainttoonzbrush.cpp
     shifttracetool.cpp
+	perspectivetool.cpp
     toonzrasterbrushtool.cpp
 	toonzvectorbrushtool.cpp
 )

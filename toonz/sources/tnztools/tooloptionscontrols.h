@@ -275,6 +275,23 @@ public slots:
 
 //-----------------------------------------------------------------------------
 
+class ColorChipCombo final : public QComboBox, public ToolOptionControl {
+  Q_OBJECT
+
+protected:
+  TColorChipProperty *m_property;
+
+public:
+  ColorChipCombo(TTool *tool, TColorChipProperty *property);
+  void updateStatus() override;
+
+public slots:
+  void onActivated(int index);
+  void doSetCurrentIndex(int);
+};
+
+//-----------------------------------------------------------------------------
+
 //! The ToolOptionMeasuredDoubleField class implements toolbar controls for
 //! double properties that need to be displayed with a measure.
 /*!

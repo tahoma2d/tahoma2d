@@ -20,7 +20,8 @@ enum {
   Schematic,
   Palette,
   Xsheet,
-  FilmStrip
+  FilmStrip,
+  PerspectiveGridTool
 };
 }
 

@@ -32,6 +32,7 @@ private:
   void visit(TEnumProperty* p) override;
   void visit(TStyleIndexProperty* p) override {}
   void visit(TPointerProperty* p) override {}
+  void visit(TColorChipProperty* p) override {}
 };
 
 //=============================================================================

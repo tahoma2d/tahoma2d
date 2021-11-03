@@ -2557,6 +2557,9 @@ void MainWindow::defineActions() {
                    "animate a level"));
   createToolAction(T_Ruler, "ruler", QT_TR_NOOP("Ruler Tool"), "",
                    tr("Ruler Tool: Measure distances on the canvas"));
+  createToolAction(T_PerspectiveGrid, "perspective_grid",
+                   QT_TR_NOOP("Perspective Grid Tool"), "",
+                   tr("Perspective Grid Tool: Set up perspective grids"));
   createToolAction(T_Finger, "finger", QT_TR_NOOP("Finger Tool"), "",
                    tr("Finger Tool: Smudges small areas to cover with line"));
 

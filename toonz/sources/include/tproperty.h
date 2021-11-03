@@ -4,6 +4,7 @@
 #define TPROPERTY_INCLUDED
 
 #include "tconvert.h"
+#include "tpixel.h"
 
 #include <cstdint>
 
@@ -36,6 +37,7 @@ class DVAPI TDoublePairProperty;
 class DVAPI TIntPairProperty;
 class DVAPI TStyleIndexProperty;
 class DVAPI TPointerProperty;
+class DVAPI TColorChipProperty;
 
 class TIStream;
 class TOStream;
@@ -55,6 +57,7 @@ public:
     virtual void visit(TIntPairProperty *p)    = 0;
     virtual void visit(TStyleIndexProperty *p) = 0;
     virtual void visit(TPointerProperty *p)    = 0;
+    virtual void visit(TColorChipProperty *p)  = 0;
     virtual ~Visitor() {}
   };
 
@@ -423,6 +426,102 @@ public:
 private:
   Range m_range;
   Items m_items;
+  int m_index;
+};
+
+//---------------------------------------------------------
+
+class DVAPI TColorChipProperty final : public TProperty {
+public:
+  struct ColorChip {
+    QString UIName;
+    TPixel32 pixelColor;
+
+    ColorChip(const QString &name   = QString(),
+              const TPixel32 &color = TPixel32(0, 0, 0))
+        : UIName(name), pixelColor(color) {}
+  };
+  typedef std::vector<ColorChip> ColorChips;
+
+  TColorChipProperty(const std::string &name) : TProperty(name), m_index(-1) {}
+
+  TProperty *clone() const override { return new TColorChipProperty(*this); }
+
+  int indexOf(const std::wstring &value) {
+    ColorChips::const_iterator it;
+    for (it = m_chips.begin(); it != m_chips.end(); it++) {
+      ColorChip chip = *it;
+      if (chip.UIName == QString::fromStdWString(value)) break;
+    }
+    return (it == m_chips.end()) ? -1 : it - m_chips.begin();
+  }
+
+  int indexOf(TPixel32 color) {
+    ColorChips::const_iterator it;
+    for (it = m_chips.begin(); it != m_chips.end(); it++) {
+      ColorChip chip = *it;
+      if (chip.pixelColor == color) break;
+    }
+    return (it == m_chips.end()) ? -1 : it - m_chips.begin();
+  }
+
+  bool isValue(const std::wstring &value) { return (indexOf(value) != -1); }
+
+  void addValue(std::wstring value, const TPixel32 &color) {
+    if (m_index == -1) m_index = 0;
+    m_chips.push_back(ColorChip(QString::fromStdWString(value), color));
+  }
+
+  void setItemUIName(std::wstring value, const QString &name) {
+    int index = indexOf(value);
+    if (index < 0 || index >= (int)m_chips.size()) throw RangeError();
+    m_chips[index].UIName = name;
+  }
+
+  void deleteAllValues() {
+    m_chips.clear();
+    m_index = -1;
+  }
+
+  void setIndex(int index) {
+    if (index < 0 || index >= (int)m_chips.size()) throw RangeError();
+    m_index = index;
+  }
+
+  void setValue(const std::wstring &value) {
+    int idx = indexOf(value);
+    if (idx < 0) throw RangeError();
+    m_index = idx;
+  }
+
+  void setColor(TPixel32 color) {
+    int idx = indexOf(color);
+    if (idx < 0) throw RangeError();
+    m_index = idx;
+  }
+
+  int getCount() const { return (int)m_chips.size(); }
+
+  const ColorChips &getColorChips() const { return m_chips; }
+
+  std::wstring getValue() const {
+    return (m_index < 0) ? L"" : m_chips[m_index].UIName.toStdWString();
+  }
+  std::string getValueAsString() override {
+    return (m_index < 0) ? "" : m_chips[m_index].UIName.toStdString();
+  }
+  TPixel32 getColorValue() const {
+    return (m_index < 0) ? TPixel32(0, 0, 0) : m_chips[m_index].pixelColor;
+  }
+
+  int getIndex() const { return m_index; }
+
+  void accept(Visitor &v) override { v.visit(this); }
+
+  void assignUIName(TProperty *refP) override;
+
+private:
+  ColorChips m_chips;
   int m_index;
 };
 

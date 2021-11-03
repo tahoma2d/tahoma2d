@@ -564,6 +564,53 @@ void StyleIndexFieldAndChip::updateColor() { repaint(); }
 
 //=============================================================================
 
+ColorChipCombo::ColorChipCombo(TTool *tool, TColorChipProperty *property)
+    : QComboBox()
+    , ToolOptionControl(tool, property->getName())
+    , m_property(property) {
+  setObjectName(QString::fromStdString(property->getName()));
+  setFixedHeight(20);
+  setSizeAdjustPolicy(QComboBox::AdjustToContents);
+  m_property->addListener(this);
+
+  const TColorChipProperty::ColorChips &chips = m_property->getColorChips();
+  for (int i = 0; i < chips.size(); ++i) {
+    TPixel32 color = chips[i].pixelColor;
+    QPixmap pixmap(10, 10);
+    pixmap.fill(QColor(color.r, color.g, color.b));
+    addItem(QIcon(pixmap), chips[i].UIName);
+  }
+  setCurrentIndex(0);
+  updateStatus();
+  connect(this, SIGNAL(activated(int)), this, SLOT(onActivated(int)));
+}
+
+//-----------------------------------------------------------------------------
+
+void ColorChipCombo::updateStatus() {
+  int index = m_property->getIndex();
+  if (index >= 0 && index != currentIndex()) setCurrentIndex(index);
+}
+
+//-----------------------------------------------------------------------------
+
+void ColorChipCombo::onActivated(int index) {
+  const TColorChipProperty::ColorChips &chips = m_property->getColorChips();
+  if (index < 0 || index >= (int)chips.size()) return;
+
+  std::wstring item = chips[index].UIName.toStdWString();
+  m_property->setValue(item);
+  notifyTool();
+}
+
+//-----------------------------------------------------------------------------
+
+void ColorChipCombo::doSetCurrentIndex(int index) {
+  if (isVisible()) setCurrentIndex(index);
+}
+
+//=============================================================================
+
 ToolOptionParamRelayField::ToolOptionParamRelayField(
     TTool *tool, TDoubleParamRelayProperty *property, int decimals)
     : MeasuredDoubleLineEdit()

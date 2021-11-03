@@ -29,6 +29,7 @@
 #define T_Rotate "T_Rotate"
 #define T_Hand "T_Hand"
 #define T_Ruler "T_Ruler"
+#define T_PerspectiveGrid "T_PerspectiveGrid"
 #define T_Finger "T_Finger"
 
 #endif  // TOOL_COMMAND_IDS_H

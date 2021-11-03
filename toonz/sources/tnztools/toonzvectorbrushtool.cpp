@@ -43,6 +43,8 @@
 #include "tgl.h"
 #include "trop.h"
 
+#include "perspectivetool.h"
+
 #ifdef Q_OS_WIN
 #include <WinUser.h>  // for Sleep
 #endif
@@ -661,15 +663,6 @@ void ToonzVectorBrushTool::onActivate() {
   }
   resetFrameRange();
   // TODO:app->editImageOrSpline();
-  TXshLevelHandle *level = getApplication()->getCurrentLevel();
-  TXshSimpleLevel *sl;
-  if (level) sl = level->getSimpleLevel();
-  if (sl) {
-    if (sl->getProperties()->getVanishingPoints() != m_assistantPoints) {
-      m_assistantPoints = sl->getProperties()->getVanishingPoints();
-      invalidate();
-    }
-  }
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -695,15 +688,6 @@ void ToonzVectorBrushTool::onDeactivate() {
 //--------------------------------------------------------------------------------------------------
 
 bool ToonzVectorBrushTool::preLeftButtonDown() {
-  TXshLevelHandle *level = getApplication()->getCurrentLevel();
-  TXshSimpleLevel *sl;
-  if (level) sl = level->getSimpleLevel();
-  if (sl) {
-    if (sl->getProperties()->getVanishingPoints() != m_assistantPoints) {
-      m_assistantPoints = sl->getProperties()->getVanishingPoints();
-      invalidate();
-    }
-  }
   if (getViewer() && getViewer()->getGuidedStrokePickerMode()) return false;
 
   touchImage();
@@ -767,33 +751,6 @@ void ToonzVectorBrushTool::leftButtonDown(const TPointD &pos,
     m_active = false;
     return;
   }
-  TXshSimpleLevelP simLevel;
-
-  if (!m_isPath && level) simLevel = level->getSimpleLevel();
-  if (!m_isPath && simLevel) {
-    m_assistantPoints = simLevel->getProperties()->getVanishingPoints();
-    if (e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed()) {
-      m_addingAssistant = true;
-      bool deletedPoint = false;
-      for (int i = 0; i < m_assistantPoints.size(); i++) {
-        if (areAlmostEqual(m_assistantPoints.at(i).x, pos.x, 6) &&
-            areAlmostEqual(m_assistantPoints.at(i).y, pos.y, 6)) {
-          TRectD pointRect = TRectD(
-              m_assistantPoints.at(i).x - 15, m_assistantPoints.at(i).y - 15,
-              m_assistantPoints.at(i).x + 15, m_assistantPoints.at(i).x + 15);
-          m_assistantPoints.erase(m_assistantPoints.begin() + i);
-          deletedPoint = true;
-          invalidate(pointRect);
-          break;
-        }
-      }
-      if (!deletedPoint) m_assistantPoints.push_back(pos);
-      simLevel->getProperties()->setVanishingPoints(m_assistantPoints);
-      level->setDirtyFlag(true);
-      invalidate();
-      return;
-    }
-  }
 
   m_firstPoint = pos;
   m_lastPoint  = pos;
@@ -831,11 +788,6 @@ void ToonzVectorBrushTool::leftButtonDrag(const TPointD &pos,
     return;
   }
 
-  if (!m_isPath &&
-      ((e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed()) ||
-       m_addingAssistant)) {
-    return;
-  }
   TRectD invalidateRect;
 
   m_lastPoint           = pos;
@@ -864,30 +816,47 @@ void ToonzVectorBrushTool::leftButtonDrag(const TPointD &pos,
 
     // now let's get the angle of each of the assistant points
     std::vector<double> anglesToAssistants;
-    for (auto point : m_assistantPoints) {
-      double newDenominator = point.x - m_firstPoint.x;
-      double newNumerator   = point.y - m_firstPoint.y;
-      if (areAlmostEqual(newDenominator, 0.0, 0.0001)) {
-        newDenominator = newDenominator < 0 ? -0.0001 : 0.0001;
-      }
-      if (areAlmostEqual(newNumerator, 0.0, 0.0001)) {
-        newNumerator = newNumerator < 0 ? -0.0001 : 0.0001;
-      }
-
-      double newSlope = (newNumerator / newDenominator);
-      double newAngle = std::atan(newSlope) * (180 / 3.14159);
-      anglesToAssistants.push_back(newAngle);
-    }
-
-    // figure out which angle is closer
     TPointD pointToUse = TPointD(0.0, 0.0);
-    double difference  = 360;
 
-    for (int i = 0; i < anglesToAssistants.size(); i++) {
-      double newDifference = abs(angle - anglesToAssistants.at(i));
-      if (newDifference < difference || (180 - newDifference) < difference) {
-        difference = std::min(newDifference, (180 - newDifference));
-        pointToUse = m_assistantPoints.at(i);
+    PerspectiveTool *perspectiveTool = dynamic_cast<PerspectiveTool *>(
+        TTool::getTool("T_PerspectiveGrid", TTool::VectorImage));
+    if (perspectiveTool) {
+      TPointD dpiScale = getViewer()->getDpiScale();
+      TPointD refPoint = m_firstPoint;
+      refPoint.x *= dpiScale.x;
+      refPoint.y *= dpiScale.y;
+
+      std::vector<PerspectiveObject *> perspectiveObjs =
+          perspectiveTool->getPerspectiveObjects();
+      for (auto data : perspectiveObjs) {
+        TPointD point = data->getReferencePoint(refPoint);
+        point.x /= dpiScale.x;
+        point.y /= dpiScale.y;
+        double newDenominator = point.x - m_firstPoint.x;
+        double newNumerator   = point.y - m_firstPoint.y;
+        if (areAlmostEqual(newDenominator, 0.0, 0.0001)) {
+          newDenominator = newDenominator < 0 ? -0.0001 : 0.0001;
+        }
+        if (areAlmostEqual(newNumerator, 0.0, 0.0001)) {
+          newNumerator = newNumerator < 0 ? -0.0001 : 0.0001;
+        }
+
+        double newSlope = (newNumerator / newDenominator);
+        double newAngle = std::atan(newSlope) * (180 / 3.14159);
+        anglesToAssistants.push_back(newAngle);
+      }
+
+      // figure out which angle is closer
+      double difference = 360;
+
+      for (int i = 0; i < anglesToAssistants.size(); i++) {
+        double newDifference = abs(angle - anglesToAssistants.at(i));
+        if (newDifference < difference || (180 - newDifference) < difference) {
+          difference = std::min(newDifference, (180 - newDifference));
+          pointToUse = perspectiveObjs.at(i)->getReferencePoint(refPoint);
+          pointToUse.x /= dpiScale.x;
+          pointToUse.y /= dpiScale.y;
+        }
       }
     }
 
@@ -1058,13 +1027,6 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
     return;
   }
 
-  if (!m_isPath &&
-      ((e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed()) ||
-       m_addingAssistant)) {
-    m_addingAssistant = false;
-    return;
-  }
-
   bool nonShiftStraight = false;
   if ((e.isAltPressed() && !e.isCtrlPressed() && !e.isShiftPressed()) ||
       (!e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed())) {
@@ -1114,8 +1076,6 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
     notifyImageChanged();
     TUndoManager::manager()->add(undo);
 
-    m_addingAssistant = false;
-
     return;
   }
 
@@ -1124,7 +1084,6 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
     m_styleId = 0;
     m_track.clear();
 
-    m_addingAssistant = false;
     return;
   }
 
@@ -1278,7 +1237,6 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
   assert(stroke);
   m_track.clear();
   m_toggleSnap      = false;
-  m_addingAssistant = false;
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1609,34 +1567,6 @@ void ToonzVectorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
     m_minThick = m_thickness.getValue().first;
     m_maxThick = m_thickness.getValue().second;
   }
-  if (e.isAltPressed() && e.isCtrlPressed() && !e.isShiftPressed()) {
-    if (m_highlightAssistant != -1 &&
-        m_highlightAssistant < m_assistantPoints.size()) {
-      TRectD pointRect =
-          TRectD(m_assistantPoints.at(m_highlightAssistant).x - 15,
-                 m_assistantPoints.at(m_highlightAssistant).y - 15,
-                 m_assistantPoints.at(m_highlightAssistant).x + 15,
-                 m_assistantPoints.at(m_highlightAssistant).x + 15);
-      invalidate(pointRect);
-    }
-    m_highlightAssistant = -1;
-    for (int i = 0; i < m_assistantPoints.size(); i++) {
-      if (areAlmostEqual(m_assistantPoints.at(i).x, pos.x, 6) &&
-          areAlmostEqual(m_assistantPoints.at(i).y, pos.y, 6)) {
-        m_highlightAssistant = i;
-        break;
-      }
-    }
-  } else if (m_highlightAssistant != -1 &&
-             m_highlightAssistant < m_assistantPoints.size()) {
-    TRectD pointRect =
-        TRectD(m_assistantPoints.at(m_highlightAssistant).x - 15,
-               m_assistantPoints.at(m_highlightAssistant).y - 15,
-               m_assistantPoints.at(m_highlightAssistant).x + 15,
-               m_assistantPoints.at(m_highlightAssistant).x + 15);
-    invalidate(pointRect);
-    m_highlightAssistant = -1;
-  }
 }
 
 //-------------------------------------------------------------------------------------------------------------
@@ -1815,20 +1745,6 @@ void ToonzVectorBrushTool::draw() {
     }
   }
 
-  if (m_assistantPoints.size() > 0) {
-    for (int i = 0; i < m_assistantPoints.size(); i++) {
-      if (m_highlightAssistant == i) {
-        glColor3d(1.0, 0.0, 0.0);
-        tglDrawDisk(m_assistantPoints.at(i), 8.0);
-      } else {
-        glColor3d(0.0, 1.0, 0.0);
-        tglDrawCircle(m_assistantPoints.at(i), 3.0);
-        glColor3d(1.0, 1.0, 0.0);
-        tglDrawCircle(m_assistantPoints.at(i), 5.0);
-      }
-    }
-  }
-
   // frame range
   if (m_firstStroke) {
     glColor3d(1.0, 0.0, 0.0);
@@ -1886,16 +1802,6 @@ void ToonzVectorBrushTool::onEnter() {
     m_currentColor = TPixel32::Black;
   }
   m_active = img;
-
-  TXshLevelHandle *level = getApplication()->getCurrentLevel();
-  TXshSimpleLevel *sl;
-  if (level) sl = level->getSimpleLevel();
-  if (sl) {
-    if (sl->getProperties()->getVanishingPoints() != m_assistantPoints) {
-      m_assistantPoints = sl->getProperties()->getVanishingPoints();
-      invalidate();
-    }
-  }
 }
 
 //----------------------------------------------------------------------------------------------------------

@@ -67,6 +67,7 @@ class MeasuredValueField;
 class PaletteController;
 class ClickableLabel;
 class StyleIndexFieldAndChip;
+class ColorChipCombo;
 
 class QLabel;
 class QPushButton;
@@ -164,6 +165,7 @@ private:
   void visit(TEnumProperty *p) override;
   void visit(TStyleIndexProperty *p) override;
   void visit(TPointerProperty *p) override;
+  void visit(TColorChipProperty *p) override;
 };
 
 //***********************************************************************************************
@@ -737,6 +739,37 @@ protected slots:
   void onPrevRadioBtnClicked();
   void onAfterRadioBtnClicked();
   void updateColors();
+};
+
+//=============================================================================
+//
+// PerspectiveToolOptionBox
+// shown only when "Edit Perspective" mode is active
+//
+//=============================================================================
+
+class PerspectiveGridToolOptionBox final : public ToolOptionsBox {
+  Q_OBJECT
+
+  TTool *m_tool;
+
+  ToolOptionCombo *m_presetCombo;
+  QPushButton *m_addPresetButton;
+  QPushButton *m_removePresetButton;
+
+private:
+  class PresetNamePopup;
+  PresetNamePopup *m_presetNamePopup;
+
+public:
+  PerspectiveGridToolOptionBox(QWidget *parent, TTool *tool,
+                               TPaletteHandle *pltHandle,
+                               ToolHandle *toolHandle);
+
+protected slots:
+
+  void onAddPreset();
+  void onRemovePreset();
 };
 
 //=============================================================================

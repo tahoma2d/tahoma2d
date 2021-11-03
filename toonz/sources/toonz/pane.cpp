@@ -9,11 +9,14 @@
 #include "saveloadqsettings.h"
 
 #include "toonzqt/gutil.h"
+#include "toonzqt/dvdialog.h"
 
 // TnzLib includes
 #include "toonz/preferences.h"
 #include "toonz/toonzfolders.h"
 #include "toonz/tscenehandle.h"
+
+#include "tools/toolhandle.h"
 
 // TnzCore includes
 #include "tsystem.h"
@@ -40,29 +43,11 @@
 
 extern TEnv::StringVar EnvSafeAreaName;
 extern TEnv::IntVar CameraViewTransparency;
-extern TEnv::IntVar IsometricLeftAngle;
-extern TEnv::IntVar IsometricRightAngle;
-extern TEnv::IntVar IsometricLeftStep;
-extern TEnv::IntVar IsometricRightStep;
 extern TEnv::IntVar ShowRuleOfThirds;
 extern TEnv::IntVar ShowGoldenRatio;
-extern TEnv::IntVar ShowIsometricGrid;
-extern TEnv::IntVar ShowHorizontalGrid;
-extern TEnv::IntVar ShowVerticalGrid;
-extern TEnv::IntVar VerticalSpacing;
-extern TEnv::IntVar HorizontalSpacing;
 extern TEnv::IntVar ShowFieldGuide;
 extern TEnv::IntVar GuideOpacity;
-extern TEnv::IntVar HorizontalOffset;
-extern TEnv::IntVar VerticalOffset;
-extern TEnv::IntVar ShowHorizon;
-extern TEnv::IntVar HorizonAngle;
-extern TEnv::IntVar HorizonStep;
-extern TEnv::IntVar HorizonOffset;
-extern TEnv::IntVar ShowVanishingPointRays;
-extern TEnv::IntVar VanishingPointRayAngles;
-extern TEnv::IntVar VanishingPointRayOpacity;
-
+extern TEnv::IntVar ShowPerspectiveGrids;
 //=============================================================================
 // TPanel
 //-----------------------------------------------------------------------------
@@ -452,309 +437,18 @@ TPanelTitleBarButtonForGrids::TPanelTitleBarButtonForGrids(
     emit updateViewer();
   });
 
-  QGroupBox* vanishingCheckbox = new QGroupBox(tr("Vanishing Point Rays"), this);
-  vanishingCheckbox->setCheckable(true);
-  vanishingCheckbox->setChecked(ShowVanishingPointRays != 0);
-  connect(vanishingCheckbox, &QGroupBox::toggled, [=](bool value) {
-      ShowVanishingPointRays = value == true ? 1 : 0;
-      emit updateViewer();
-      });
-
-  QSlider* vanishingAngleSlider = new QSlider(this);
-  vanishingAngleSlider->setRange(5, 90);
-  vanishingAngleSlider->setValue(VanishingPointRayAngles);
-  vanishingAngleSlider->setOrientation(Qt::Horizontal);
-  vanishingAngleSlider->setMinimumWidth(300);
-  QLabel* vanishingAngleLabel = new QLabel(this);
-  vanishingAngleLabel->setText(tr("Angle: ") +
-      QString::number(VanishingPointRayAngles));
-  connect(vanishingAngleSlider, &QSlider::valueChanged, [=](int value) {
-      VanishingPointRayAngles = value;
-      vanishingAngleLabel->setText(tr("Angle: ") +
-          QString::number(VanishingPointRayAngles));
-      emit updateViewer();
-      });
-
-  QSlider* vanishingOpacitySlider = new QSlider(this);
-  vanishingOpacitySlider->setRange(1, 100);
-  vanishingOpacitySlider->setValue(VanishingPointRayOpacity);
-  vanishingOpacitySlider->setOrientation(Qt::Horizontal);
-  QLabel* vanishingOpacityLabel = new QLabel(this);
-  vanishingOpacityLabel->setText(tr("Opacity: ") +
-      QString::number(VanishingPointRayOpacity));
-  connect(vanishingOpacitySlider, &QSlider::valueChanged, [=](int value) {
-      VanishingPointRayOpacity = value;
-      vanishingOpacityLabel->setText(tr("Opacity: ") +
-          QString::number(VanishingPointRayOpacity));
-      emit updateViewer();
-      });
-
-  QGridLayout* vanishingLayout = new QGridLayout(this);
-  vanishingLayout->addWidget(vanishingAngleLabel, 0, 0, Qt::AlignRight);
-  vanishingAngleLabel->setFixedWidth(110);
-  vanishingAngleLabel->setAlignment(Qt::AlignRight);
-  vanishingLayout->addWidget(vanishingAngleSlider, 0, 1);
-  vanishingLayout->addWidget(vanishingOpacityLabel, 1, 0, Qt::AlignRight);
-  vanishingLayout->addWidget(vanishingOpacitySlider, 1, 1);
-  vanishingCheckbox->setLayout(vanishingLayout);
-
-  QGroupBox *horizontalCheckbox = new QGroupBox(tr("Horizontal Grid"), this);
-  horizontalCheckbox->setCheckable(true);
-  horizontalCheckbox->setChecked(ShowHorizontalGrid != 0);
-  connect(horizontalCheckbox, &QGroupBox::toggled, [=](bool value) {
-    ShowHorizontalGrid = value == true ? 1 : 0;
+  QCheckBox *perspectiveCheckbox = new QCheckBox(tr("Perspective Grids"), this);
+  perspectiveCheckbox->setChecked(ShowPerspectiveGrids != 0);
+  connect(perspectiveCheckbox, &QCheckBox::stateChanged, [=](int value) {
+    ShowPerspectiveGrids = value > 0 ? 1 : 0;
     emit updateViewer();
-  });
-
-  QSlider *horizontalSpacingSlider = new QSlider(this);
-  horizontalSpacingSlider->setRange(10, 250);
-  horizontalSpacingSlider->setValue(HorizontalSpacing);
-  horizontalSpacingSlider->setOrientation(Qt::Horizontal);
-  QLabel *horizontalSpacingLabel = new QLabel(this);
-  horizontalSpacingLabel->setText(tr("Spacing: ") +
-                                  QString::number(HorizontalSpacing));
-  connect(horizontalSpacingSlider, &QSlider::valueChanged, [=](int value) {
-    HorizontalSpacing = value;
-    horizontalSpacingLabel->setText(tr("Spacing: ") +
-                                    QString::number(HorizontalSpacing));
-    emit updateViewer();
-  });
-
-  QSlider *horizontalOffsetSlider = new QSlider(this);
-  horizontalOffsetSlider->setRange(-100, 100);
-  horizontalOffsetSlider->setValue(HorizontalOffset);
-  horizontalOffsetSlider->setOrientation(Qt::Horizontal);
-  QLabel *horizontalOffsetLabel = new QLabel(this);
-  horizontalOffsetLabel->setText(tr("Offset: ") +
-                                 QString::number(HorizontalOffset));
-  connect(horizontalOffsetSlider, &QSlider::valueChanged, [=](int value) {
-    HorizontalOffset = value;
-    horizontalOffsetLabel->setText(tr("Offset: ") +
-                                   QString::number(HorizontalOffset));
-    emit updateViewer();
-  });
-
-  QGridLayout *horizontalLayout = new QGridLayout(this);
-  horizontalLayout->addWidget(horizontalSpacingLabel, 0, 0, Qt::AlignRight);
-  horizontalSpacingLabel->setFixedWidth(110);
-  horizontalSpacingLabel->setAlignment(Qt::AlignRight);
-  horizontalLayout->addWidget(horizontalSpacingSlider, 0, 1);
-  horizontalLayout->addWidget(horizontalOffsetLabel, 1, 0, Qt::AlignRight);
-  horizontalLayout->addWidget(horizontalOffsetSlider, 1, 1);
-  horizontalCheckbox->setLayout(horizontalLayout);
-
-  QGroupBox *verticalCheckbox = new QGroupBox(tr("Vertical Grid"), this);
-  verticalCheckbox->setCheckable(true);
-  verticalCheckbox->setChecked(ShowVerticalGrid != 0);
-  connect(verticalCheckbox, &QGroupBox::toggled, [=](bool value) {
-    ShowVerticalGrid = value == true ? 1 : 0;
-    emit updateViewer();
-  });
-
-  QSlider *verticalSpacingSlider = new QSlider(this);
-  verticalSpacingSlider->setRange(10, 250);
-  verticalSpacingSlider->setValue(VerticalSpacing);
-  verticalSpacingSlider->setOrientation(Qt::Horizontal);
-  verticalSpacingSlider->setMinimumWidth(300);
-  QLabel *verticalSpacingLabel = new QLabel(this);
-  verticalSpacingLabel->setText(tr("Spacing: ") +
-                                QString::number(VerticalSpacing));
-  connect(verticalSpacingSlider, &QSlider::valueChanged, [=](int value) {
-    VerticalSpacing = value;
-    verticalSpacingLabel->setText(tr("Spacing: ") +
-                                  QString::number(VerticalSpacing));
-    emit updateViewer();
-  });
-
-  QSlider *verticalOffsetSlider = new QSlider(this);
-  verticalOffsetSlider->setRange(-100, 100);
-  verticalOffsetSlider->setValue(VerticalOffset);
-  verticalOffsetSlider->setOrientation(Qt::Horizontal);
-  QLabel *verticalOffsetLabel = new QLabel(this);
-  verticalOffsetLabel->setText(tr("Offset: ") +
-                               QString::number(VerticalOffset));
-  connect(verticalOffsetSlider, &QSlider::valueChanged, [=](int value) {
-    VerticalOffset = value;
-    verticalOffsetLabel->setText(tr("Offset: ") +
-                                 QString::number(VerticalOffset));
-    emit updateViewer();
-  });
-
-  QGridLayout *verticalLayout = new QGridLayout(this);
-  verticalLayout->addWidget(verticalSpacingLabel, 0, 0, Qt::AlignRight);
-  verticalSpacingLabel->setFixedWidth(110);
-  verticalSpacingLabel->setAlignment(Qt::AlignRight);
-  verticalLayout->addWidget(verticalSpacingSlider, 0, 1);
-  verticalLayout->addWidget(verticalOffsetLabel, 1, 0, Qt::AlignRight);
-  verticalLayout->addWidget(verticalOffsetSlider, 1, 1);
-  verticalCheckbox->setLayout(verticalLayout);
-
-  
-    QGroupBox* horizonCheckbox = new QGroupBox(tr("Horizon"), this);
-    horizonCheckbox->setCheckable(true);
-    horizonCheckbox->setChecked(ShowHorizon != 0);
-    connect(horizonCheckbox, &QGroupBox::toggled, [=](bool value) {
-        ShowHorizon = value == true ? 1 : 0;
-        emit updateViewer();
-        });
-
-    QSlider* horizonAngleSlider = new QSlider(this);
-    horizonAngleSlider->setRange(-90, 90);
-    horizonAngleSlider->setValue(HorizonAngle);
-    horizonAngleSlider->setOrientation(Qt::Horizontal);
-    horizonAngleSlider->setMinimumWidth(300);
-    QLabel* horizonAngleLabel = new QLabel(this);
-    horizonAngleLabel->setText(tr("Angle: ") +
-        QString::number(HorizonAngle));
-    connect(horizonAngleSlider, &QSlider::valueChanged, [=](int value) {
-        HorizonAngle = value;
-        horizonAngleLabel->setText(tr("Angle: ") +
-            QString::number(HorizonAngle));
-        emit updateViewer();
-        });
-
-    QSlider* horizonStepSlider = new QSlider(this);
-    horizonStepSlider->setRange(2, 100);
-    horizonStepSlider->setValue(HorizonStep);
-    horizonStepSlider->setOrientation(Qt::Horizontal);
-    QLabel* horizonStepLabel = new QLabel(this);
-    horizonStepLabel->setText(tr("Step: ") +
-        QString::number(HorizonStep));
-    connect(horizonStepSlider, &QSlider::valueChanged, [=](int value) {
-        HorizonStep = value;
-        horizonStepLabel->setText(tr("Step: ") +
-            QString::number(HorizonStep));
-        emit updateViewer();
-        });
-
-    QSlider* horizonOffsetSlider = new QSlider(this);
-    horizonOffsetSlider->setRange(-1000, 1000);
-    horizonOffsetSlider->setValue(HorizonOffset);
-    horizonOffsetSlider->setOrientation(Qt::Horizontal);
-    QLabel* horizonOffsetLabel = new QLabel(this);
-    horizonOffsetLabel->setText(tr("Offset: ") +
-        QString::number(HorizonOffset));
-    connect(horizonOffsetSlider, &QSlider::valueChanged, [=](int value) {
-        HorizonOffset = value;
-        horizonOffsetLabel->setText(tr("Offset: ") +
-            QString::number(HorizonOffset));
-        emit updateViewer();
-        });
-
-    QGridLayout* horizonLayout = new QGridLayout(this);
-    horizonLayout->addWidget(horizonAngleLabel, 0, 0, Qt::AlignRight);
-    horizonAngleLabel->setFixedWidth(110);
-    horizonAngleLabel->setAlignment(Qt::AlignRight);
-    horizonLayout->addWidget(horizonAngleSlider, 0, 1);
-    horizonLayout->addWidget(horizonStepLabel, 1, 0, Qt::AlignRight);
-    horizonLayout->addWidget(horizonStepSlider, 1, 1);
-    horizonLayout->addWidget(horizonOffsetLabel, 2, 0, Qt::AlignRight);
-    horizonLayout->addWidget(horizonOffsetSlider, 2, 1);
-    horizonCheckbox->setLayout(horizonLayout);
-  
-
-  QGroupBox *isometricCheckbox = new QGroupBox(tr("Isometric Grid"), this);
-  isometricCheckbox->setCheckable(true);
-  isometricCheckbox->setChecked(ShowIsometricGrid != 0);
-  connect(isometricCheckbox, &QGroupBox::toggled, [=](int value) {
-    ShowIsometricGrid = value == true ? 1 : 0;
-    emit updateViewer();
-  });
-
-  QSlider *leftAngleSlider = new QSlider(this);
-  leftAngleSlider->setRange(10, 89);
-  leftAngleSlider->setValue(IsometricLeftAngle);
-  leftAngleSlider->setOrientation(Qt::Horizontal);
-  QLabel *leftAngleLabel = new QLabel(this);
-  leftAngleLabel->setText(tr("Left Angle: ") +
-                          QString::number(IsometricLeftAngle));
-  connect(leftAngleSlider, &QSlider::valueChanged, [=](int value) {
-    IsometricLeftAngle = value;
-    leftAngleLabel->setText(tr("Left Angle: ") +
-                            QString::number(IsometricLeftAngle));
-    emit updateViewer();
-  });
-
-  QSlider *rightAngleSlider = new QSlider(this);
-  rightAngleSlider->setRange(10, 89);
-  rightAngleSlider->setValue(IsometricRightAngle);
-  rightAngleSlider->setOrientation(Qt::Horizontal);
-  QLabel *rightAngleLabel = new QLabel(this);
-  rightAngleLabel->setText(tr("Right Angle: ") +
-                           QString::number(IsometricRightAngle));
-  connect(rightAngleSlider, &QSlider::valueChanged, [=](int value) {
-    IsometricRightAngle = value;
-    rightAngleLabel->setText(tr("Right Angle: ") +
-                             QString::number(IsometricRightAngle));
-    emit updateViewer();
-  });
-
-  QSlider *leftStepSlider = new QSlider(this);
-  leftStepSlider->setRange(1, 100);
-  leftStepSlider->setValue(IsometricLeftStep / 5);
-  leftStepSlider->setOrientation(Qt::Horizontal);
-  QLabel *leftStepLabel = new QLabel(this);
-  leftStepLabel->setText(tr("Left Spacing: ") +
-                         QString::number(IsometricLeftStep));
-  connect(leftStepSlider, &QSlider::valueChanged, [=](int value) {
-    IsometricLeftStep = value * 5;
-    leftStepLabel->setText(tr("Left Spacing: ") +
-                           QString::number(IsometricLeftStep));
-    emit updateViewer();
-  });
-
-  QSlider *rightStepSlider = new QSlider(this);
-  rightStepSlider->setRange(1, 100);
-  rightStepSlider->setValue(IsometricRightStep / 5);
-  rightStepSlider->setOrientation(Qt::Horizontal);
-  QLabel *rightStepLabel = new QLabel(this);
-  rightStepLabel->setText(tr("Right Spacing: ") +
-                          QString::number(IsometricRightStep));
-  connect(rightStepSlider, &QSlider::valueChanged, [=](int value) {
-    IsometricRightStep = value * 5;
-    rightStepLabel->setText(tr("Right Spacing: ") +
-                            QString::number(IsometricRightStep));
-    emit updateViewer();
-  });
-
-  QGridLayout *isometricLayout = new QGridLayout(this);
-  leftAngleLabel->setFixedWidth(110);
-  leftAngleLabel->setAlignment(Qt::AlignRight);
-  isometricLayout->addWidget(leftAngleLabel, 0, 0, Qt::AlignRight);
-  isometricLayout->addWidget(leftAngleSlider, 0, 1);
-  isometricLayout->addWidget(leftStepLabel, 1, 0, Qt::AlignRight);
-  isometricLayout->addWidget(leftStepSlider, 1, 1);
-  isometricLayout->addWidget(rightAngleLabel, 2, 0, Qt::AlignRight);
-  isometricLayout->addWidget(rightAngleSlider, 2, 1);
-  isometricLayout->addWidget(rightStepLabel, 3, 0, Qt::AlignRight);
-  isometricLayout->addWidget(rightStepSlider, 3, 1);
-
-  isometricCheckbox->setLayout(isometricLayout);
-
-  QSlider *guideOpacitySlider = new QSlider(this);
-  guideOpacitySlider->setRange(10, 100);
-  guideOpacitySlider->setValue(GuideOpacity);
-  guideOpacitySlider->setOrientation(Qt::Horizontal);
-  QLabel *guideOpacityLabel = new QLabel(this);
-  guideOpacityLabel->setText(tr("Opacity: ") + QString::number(GuideOpacity));
-  connect(guideOpacitySlider, &QSlider::valueChanged, [=](int value) {
-    GuideOpacity = value;
-    guideOpacityLabel->setText(tr("Opacity: ") + QString::number(GuideOpacity));
-    emit updateViewer();
-  });
+    });
 
   gridLayout->addWidget(thirdsCheckbox, 0, 0, 1, 2);
   gridLayout->addWidget(goldenRationCheckbox, 1, 0, 1, 2);
   gridLayout->addWidget(fieldGuideCheckbox, 2, 0, 1, 2);
-  gridLayout->addWidget(horizontalCheckbox, 3, 0, 1, 2);
-  gridLayout->addWidget(verticalCheckbox, 4, 0, 1, 2);
+  gridLayout->addWidget(perspectiveCheckbox, 3, 0, 1, 2);
 
-  gridLayout->addWidget(horizonCheckbox, 5, 0, 1, 2);
-  gridLayout->addWidget(isometricCheckbox, 6, 0, 1, 2);
-  
-  gridLayout->addWidget(guideOpacityLabel, 7, 0);
-  gridLayout->addWidget(guideOpacitySlider, 7, 1);
-  gridLayout->addWidget(vanishingCheckbox, 8, 0, 1, 2);
   gridWidget->setLayout(gridLayout);
   gridsAction->setDefaultWidget(gridWidget);
   m_menu->addAction(gridsAction);
