@@ -51,6 +51,7 @@
 #include <QScrollArea>
 #include <QPropertyAnimation>
 #include <QSpacerItem>
+#include <QEvent>
 //-----------------------------------------------------------------------------
 namespace {
 
@@ -453,6 +454,8 @@ QFrame *OutputSettingsPopup::createGeneralSettingsBox(bool isPreview) {
     Tiio::Writer::getSupportedFormats(formats, true);
     formats.sort();
     m_fileFormat->addItems(formats);
+    m_fileFormat->setFocusPolicy(Qt::StrongFocus);
+    m_fileFormat->installEventFilter(this);
   }
 
   //-----
@@ -558,6 +561,8 @@ QFrame *OutputSettingsPopup::createCameraSettingsBox(bool isPreview) {
     m_cameraSettings    = new CameraSettingsPopup();
     cameraParametersBox = new QFrame(this);
     cameraParametersBox->setObjectName("OutputSettingsCameraBox");
+    m_outputCameraOm->setFocusPolicy(Qt::StrongFocus);
+    m_outputCameraOm->installEventFilter(this);
   } else {
     // Subcamera checkbox
     m_subcameraChk = new DVGui::CheckBox(tr("Use Sub-Camera"));
@@ -702,6 +707,15 @@ QFrame *OutputSettingsPopup::createAdvancedSettingsBox(bool isPreview) {
                      << tr("Small");
   m_rasterGranularityOm->addItems(granularityChoices);
 
+  m_resampleBalanceOm->setFocusPolicy(Qt::StrongFocus);
+  m_channelWidthOm->setFocusPolicy(Qt::StrongFocus);
+  m_threadsComboOm->setFocusPolicy(Qt::StrongFocus);
+  m_rasterGranularityOm->setFocusPolicy(Qt::StrongFocus);
+  m_resampleBalanceOm->installEventFilter(this);
+  m_channelWidthOm->installEventFilter(this);
+  m_threadsComboOm->installEventFilter(this);
+  m_rasterGranularityOm->installEventFilter(this);
+
   //-----
 
   QVBoxLayout *lay = new QVBoxLayout();
@@ -789,6 +803,8 @@ QFrame *OutputSettingsPopup::createMoreSettingsBox() {
   QStringList dominantField;
   dominantField << tr("Odd (NTSC)") << tr("Even (PAL)") << tr("None");
   m_dominantFieldOm->addItems(dominantField);
+  m_dominantFieldOm->setFocusPolicy(Qt::StrongFocus);
+  m_dominantFieldOm->installEventFilter(this);
   m_stretchFromFld->setRange(1, 1000);
   m_stretchToFld->setRange(1, 1000);
   m_stretchFromFld->setDecimals(2);
@@ -798,6 +814,8 @@ QFrame *OutputSettingsPopup::createMoreSettingsBox() {
   multimediaTypes << tr("None") << tr("Fx Schematic Flows")
                   << tr("Fx Schematic Terminal Nodes");
   m_multimediaOm->addItems(multimediaTypes);
+  m_multimediaOm->setFocusPolicy(Qt::StrongFocus);
+  m_multimediaOm->installEventFilter(this);
   m_stereoShift->setEnabled(false);
 
   //-----
@@ -933,6 +951,16 @@ void OutputSettingsPopup::hideEvent(QHideEvent *e) {
   }
   Dialog::hideEvent(e);
   m_hideAlreadyCalled = true;
+}
+
+//-----------------------------------------------------------------------------
+// ignore wheelevent on comboboxes
+bool OutputSettingsPopup::eventFilter(QObject *obj, QEvent *e) {
+  if (e->type() == QEvent::Wheel) {
+    QComboBox *combo = qobject_cast<QComboBox *>(obj);
+    if (combo && !combo->hasFocus()) return true;
+  }
+  return QObject::eventFilter(obj, e);
 }
 
 //-----------------------------------------------------------------------------

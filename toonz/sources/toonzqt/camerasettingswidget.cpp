@@ -245,6 +245,9 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
   m_fspChk->setToolTip(tr("Force Squared Pixel"));
   m_fspChk->setObjectName("ForceSquaredPixelButton");
   m_fspChk->setIcon(createQIcon("squarepixel"));
+
+  m_presetListOm->setFocusPolicy(Qt::StrongFocus);
+  m_presetListOm->installEventFilter(this);
   m_addPresetBtn->setObjectName("PushButton_NoPadding");
   m_removePresetBtn->setObjectName("PushButton_NoPadding");
 
@@ -536,6 +539,11 @@ bool CameraSettingsWidget::eventFilter(QObject *obj, QEvent *e) {
              (obj == m_xResFld ||
               obj == m_yResFld))  // dotPrev, fld = xres|yres
       m_inchPrev->setChecked(true);
+  }
+  // ignore wheelevent on the combobox
+  else if (e->type() == QEvent::Wheel) {
+    QComboBox *combo = qobject_cast<QComboBox *>(obj);
+    if (combo && !combo->hasFocus()) return true;
   }
 
   return QObject::eventFilter(obj, e);
