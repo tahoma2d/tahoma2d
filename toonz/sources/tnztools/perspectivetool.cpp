@@ -991,11 +991,8 @@ void PerspectiveTool::deleteSelectedObjects() {
 
   std::set<int>::reverse_iterator rit = selectedObjects.rbegin();
   for (; rit != selectedObjects.rend(); rit++) {
-    m_lastPreset.erase(std::find(m_lastPreset.begin(), m_lastPreset.end(),
-                                 m_perspectiveObjs[*rit]));
-    m_perspectiveObjs.erase(std::find(m_perspectiveObjs.begin(),
-                                      m_perspectiveObjs.end(),
-                                      m_perspectiveObjs[*rit]));
+    m_lastPreset.erase(m_lastPreset.begin() + *rit);
+    m_perspectiveObjs.erase(m_perspectiveObjs.begin() + *rit);
   }
 
   m_selection.selectNone();
