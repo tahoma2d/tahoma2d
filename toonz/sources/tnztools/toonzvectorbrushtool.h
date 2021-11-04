@@ -163,6 +163,7 @@ protected:
   TEnumProperty m_capStyle;
   TEnumProperty m_joinStyle;
   TIntProperty m_miterJoinLimit;
+  TBoolProperty m_snapGrid;
 
   StrokeGenerator m_track;
   StrokeGenerator m_rangeTrack;
@@ -215,6 +216,8 @@ protected:
 
   TPointD m_firstPoint;
   TPointD m_lastPoint;
+
+  int m_perspectiveIndex = -1;
 };
 
 #endif  // TOONZVECTORBRUSHTOOL_H

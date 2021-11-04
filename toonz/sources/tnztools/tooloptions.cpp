@@ -2114,7 +2114,7 @@ void BrushToolOptionsBox::filterControls() {
        it != m_labels.end(); it++) {
     bool isModifier = (it.key().substr(0, 8) == "Modifier");
     bool isCommon   = (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
-                     it.key() == "Preset:");
+                     it.key() == "Preset:" || it.key() == "Grid");
     bool visible = isCommon || (isModifier == showModifiers);
     it.value()->setVisible(visible);
   }
@@ -2123,7 +2123,7 @@ void BrushToolOptionsBox::filterControls() {
        it != m_controls.end(); it++) {
     bool isModifier = (it.key().substr(0, 8) == "Modifier");
     bool isCommon   = (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
-                     it.key() == "Preset:");
+                     it.key() == "Preset:" || it.key() == "Grid");
     bool visible = isCommon || (isModifier == showModifiers);
     if (QWidget *widget = dynamic_cast<QWidget *>(it.value()))
       widget->setVisible(visible);
