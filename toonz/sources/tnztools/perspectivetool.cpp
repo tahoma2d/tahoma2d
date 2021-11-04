@@ -717,6 +717,7 @@ TPointD calculateHandlePos(TPointD handlePos, TPointD pivotPos,
                 std::pow((centerPoint.y - newPivotPos.y), 2));
   double dNewCenterHandle = dOrigPivotHandle + dCenterNewPivot;
   double dratio           = dCenterNewPivot / dNewCenterHandle;
+  if (dratio == 0) dratio = 0.001;
   newHandlePos.x = (newPivotPos.x - ((1 - dratio) * centerPoint.x)) / dratio;
   newHandlePos.y = (newPivotPos.y - ((1 - dratio) * centerPoint.y)) / dratio;
 
@@ -743,11 +744,13 @@ TPointD calculateCenterPoint(TPointD leftHandlePos, TPointD leftPivotPos,
                   (rightHandlePos.y - rightPivotPos.y)) -
                  ((leftHandlePos.y - leftPivotPos.y) *
                   (rightHandlePos.x - rightPivotPos.x));
-  newCenterPoint.x = xNum / denom;
-  newCenterPoint.y = yNum / denom;
+  if (denom == 0) denom = 0.001;
+  newCenterPoint.x      = xNum / denom;
+  newCenterPoint.y      = yNum / denom;
 
   return newCenterPoint;
 }
+
 void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   if (!m_perspectiveObjs.size()) return;
 
@@ -1184,6 +1187,7 @@ void VanishingPointPerspective::draw(SceneViewer *viewer, TRectD cameraRect) {
 
   double step            = getSpacing();
   int rays               = isHorizon() ? 360 : (360 / step);
+  if (rays == 0) rays    = 1;
   if (!isHorizon()) step = 360.0 / (double)rays;
 
   double startAngle = 270.0 + getRotation();
@@ -1198,10 +1202,11 @@ void VanishingPointPerspective::draw(SceneViewer *viewer, TRectD cameraRect) {
 
   int raySpacing = 0;
   if (isHorizon()) {
-    double sinAngle               = std::sin((270 + step) * (3.14159 / 180));
-    double cosAngle               = std::cos((270 + step) * (3.14159 / 180));
-    if (cosAngle == 0.0) cosAngle = 0.001;
-    double slope                  = sinAngle / cosAngle;
+    double sinAngle             = std::sin((270 + step) * (3.14159 / 180));
+    double cosAngle             = std::cos((270 + step) * (3.14159 / 180));
+    if (cosAngle == 0) cosAngle = 0.001;
+    double slope                = sinAngle / cosAngle;
+    if (slope == 0) slope       = 0.001;
     raySpacing = std::abs((int)((totalDistance - p.y) / slope));
     if (!raySpacing) raySpacing = 1;
   }
