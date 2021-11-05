@@ -303,8 +303,13 @@ void PerspectiveControls::drawControls() {
 
   TPointD centerPoint = m_perspective->getCenterPoint();
 
+  glLineWidth(1.5);
+
+  glLineStipple(1, 0xFFFF);
+  glEnable(GL_LINE_STIPPLE);
+
   // Draw rotation control
-  glColor3d(0.5, 0.5, 0.5);
+  glColor3d(0.70, 0.70, 0.70);
   tglDrawSegment(centerPoint, m_rotationPos);
   tglDrawCircle(m_rotationPos, m_handleRadius);
   if (m_active) glColor3d(1.0, 1.0, 0.0);
@@ -313,7 +318,7 @@ void PerspectiveControls::drawControls() {
   // Draw spacing control
   if (m_perspective->getType() != PerspectiveType::Line ||
       m_perspective->isParallel()) {
-    glColor3d(0.5, 0.5, 0.5);
+    glColor3d(0.70, 0.70, 0.70);
     tglDrawSegment(centerPoint, m_spacingPos);
     tglDrawCircle(m_spacingPos, m_handleRadius);
     if (m_active) glColor3d(1.0, 1.0, 0.0);
@@ -321,25 +326,25 @@ void PerspectiveControls::drawControls() {
   }
 
   if (m_perspective->getType() == PerspectiveType::VanishingPoint) {
-    glColor3d(0.5, 0.5, 0.5);
+    glColor3d(0.70, 0.70, 0.70);
     tglDrawSegment(m_leftPivotPos, m_leftHandlePos);
     tglDrawCircle(m_leftHandlePos, m_handleRadius);
     if (m_active) glColor3d(1.0, 1.0, 0.0);
     tglDrawDisk(m_leftHandlePos, m_handleRadius - 2);
 
-    glColor3d(0.5, 0.5, 0.5);
+    glColor3d(0.70, 0.70, 0.70);
     tglDrawSegment(centerPoint, m_leftPivotPos);
     tglDrawCircle(m_leftPivotPos, m_handleRadius);
     if (m_active) glColor3d(1.0, 1.0, 0.0);
     tglDrawDisk(m_leftPivotPos, m_handleRadius - 2);
 
-    glColor3d(0.5, 0.5, 0.5);
+    glColor3d(0.70, 0.70, 0.70);
     tglDrawSegment(m_rightPivotPos, m_rightHandlePos);
     tglDrawCircle(m_rightHandlePos, m_handleRadius);
     if (m_active) glColor3d(1.0, 1.0, 0.0);
     tglDrawDisk(m_rightHandlePos, m_handleRadius - 2);
 
-    glColor3d(0.5, 0.5, 0.5);
+    glColor3d(0.70, 0.70, 0.70);
     tglDrawSegment(centerPoint, m_rightPivotPos);
     tglDrawCircle(m_rightPivotPos, m_handleRadius);
     if (m_active) glColor3d(1.0, 1.0, 0.0);
@@ -347,10 +352,12 @@ void PerspectiveControls::drawControls() {
   }
 
   // Draw center/move control
-  glColor3d(0.5, 0.5, 0.5);
+  glColor3d(0.70, 0.70, 0.70);
   tglDrawCircle(centerPoint, m_handleRadius);
   if (m_active) glColor3d(0.0, 1.0, 0.0);
   tglDrawDisk(centerPoint, m_handleRadius - 2);
+
+  glDisable(GL_LINE_STIPPLE);
 }
 
 //----------------------------------------------------------------------------------------------------------
