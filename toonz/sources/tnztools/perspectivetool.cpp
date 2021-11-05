@@ -863,17 +863,7 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
     TPointD rightPivotPos  = mainObj->getRightPivotPos();
     TPointD rightHandlePos = mainObj->getRightHandlePos();
 
-    if (m_isLeftPivoting) {
-      TPointD newPos = leftPivotPos + dPos;
-      mainObj->setLeftPivotPos(newPos);
-
-      // Also move Left Handle
-      leftHandlePos =
-          calculateHandlePos(leftHandlePos, leftPivotPos, dPos, centerPoint);
-      mainObj->setLeftHandlePos(leftHandlePos);
-
-      applyToSelection = false;
-    } else if (m_isLeftMoving) {
+    if (m_isLeftMoving) {
       TPointD newPos = leftHandlePos + dPos;
       mainObj->setLeftHandlePos(newPos);
 
@@ -891,16 +881,6 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
       // Check Right Handle
       rightHandlePos = calculateHandlePos(rightHandlePos, rightPivotPos,
                                           TPointD(0.0, 0.0), centerPoint);
-      mainObj->setRightHandlePos(rightHandlePos);
-
-      applyToSelection = false;
-    } else if (m_isRightPivoting) {
-      TPointD newPos = rightPivotPos + dPos;
-      mainObj->setRightPivotPos(newPos);
-
-      // Also move Right Handle
-      rightHandlePos =
-          calculateHandlePos(rightHandlePos, rightPivotPos, dPos, centerPoint);
       mainObj->setRightHandlePos(rightHandlePos);
 
       applyToSelection = false;
@@ -923,6 +903,26 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
       leftHandlePos = calculateHandlePos(leftHandlePos, leftPivotPos,
                                          TPointD(0.0, 0.0), centerPoint);
       mainObj->setLeftHandlePos(leftHandlePos);
+
+      applyToSelection = false;
+    } else if (m_isLeftPivoting) {
+      TPointD newPos = leftPivotPos + dPos;
+      mainObj->setLeftPivotPos(newPos);
+
+      // Also move Left Handle
+      leftHandlePos =
+          calculateHandlePos(leftHandlePos, leftPivotPos, dPos, centerPoint);
+      mainObj->setLeftHandlePos(leftHandlePos);
+
+      applyToSelection = false;
+    } else if (m_isRightPivoting) {
+      TPointD newPos = rightPivotPos + dPos;
+      mainObj->setRightPivotPos(newPos);
+
+      // Also move Right Handle
+      rightHandlePos =
+          calculateHandlePos(rightHandlePos, rightPivotPos, dPos, centerPoint);
+      mainObj->setRightHandlePos(rightHandlePos);
 
       applyToSelection = false;
     }
