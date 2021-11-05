@@ -49,7 +49,12 @@ public:
   void setCenterPoint(TPointD point) { m_centerPoint = point; }
   TPointD getCenterPoint() { return m_centerPoint; }
 
-  void setRotation(double angle) { m_rotation = angle; }
+  void setRotation(double angle) {
+    // Normalize the angle between 0 and 360
+    int a                          = (int)angle % 360;
+    m_rotation                     = (double)a + (angle - (int)angle);
+    if (m_rotation < 0) m_rotation = 360.0 + m_rotation;
+  }
   virtual double getRotation() { return m_rotation; }
 
   void setParallel(bool isParallel) { m_parallel = isParallel; }
@@ -479,6 +484,8 @@ protected:
   bool m_isRightMoving;
 
   TPointD m_mousePos, m_firstPos;
+
+  double m_totalSpacing;
 
   int m_mainControlIndex;
 

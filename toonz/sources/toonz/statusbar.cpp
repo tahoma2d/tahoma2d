@@ -344,15 +344,20 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
   lMap.insert({"T_Zoom", tr("Zoom Tool: Zooms viewer")});
   lMap.insert({"T_Rotate", tr("Rotate Tool: Rotate the workspace")});
   lMap.insert({"T_Ruler", tr("Ruler Tool: Measures distances on the canvas")});
-  lMap.insert({"T_PerspectiveGrid",
-               tr("Perspective Grid Tool: Set up perspective grids") + spacer +
-                   tr("%1%2Move Perspective Objects")
-                       .arg(trModKey("Shift"))
-                       .arg(cmdTextSeparator) +
-                   spacer +
-                   tr("%1%2Select multiple Perspective Objects")
-                       .arg(trModKey("Ctrl+Click/Drag"))
-                       .arg(cmdTextSeparator)});
+  lMap.insert(
+      {"T_PerspectiveGrid",
+       tr("Perspective Grid Tool: Set up perspective grids") + spacer +
+           tr("%1%2Move Perspective Objects")
+               .arg(trModKey("Shift"))
+               .arg(cmdTextSeparator) +
+           spacer +
+           tr("%1%2Select multiple Perspective Objects")
+               .arg(trModKey("Ctrl+Click/Drag"))
+               .arg(cmdTextSeparator) +
+           spacer +
+           tr("%1%2Snap rotation & space/lock center movement to horizon")
+               .arg(trModKey("Alt"))
+               .arg(cmdTextSeparator)});
   lMap.insert(
       {"T_Finger", tr("Finger Tool: Smudges small areas to cover with line")});
   lMap.insert({"T_Dummy", tr("This tool doesn't work on this layer type.")});

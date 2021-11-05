@@ -562,6 +562,8 @@ void PerspectiveTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
   m_isRightMoving   = false;
   m_selecting       = false;
 
+  m_totalSpacing = 0;
+
   m_firstPos = pos;
 
   int controlIdx = -1;
@@ -758,6 +760,21 @@ TPointD calculateCenterPoint(TPointD leftHandlePos, TPointD leftPivotPos,
   return newCenterPoint;
 }
 
+TPointD calculateHorizonPoint(TPointD firstPoint, double rotation,
+                              double distance) {
+  TPointD refPoint;
+
+  double theta = rotation * (3.14159 / 180);
+
+  double yLength = std::sin(theta) * distance;
+  double xLength = std::cos(theta) * distance;
+
+  refPoint.x = firstPoint.x + xLength;
+  refPoint.y = firstPoint.y + yLength;
+
+  return refPoint;
+}
+
 void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   if (!m_perspectiveObjs.size()) return;
 
@@ -815,12 +832,30 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
     if (a2 < eps || b2 < eps) return;
 
     dAngle = asin(cross(a, b) / sqrt(a2 * b2)) * M_180_PI;
+
+    if (e.isAltPressed()) {
+      m_totalSpacing += dAngle;
+      if (std::abs(m_totalSpacing) >= 10) {
+        dAngle         = m_totalSpacing < 0 ? -45 : 45;
+        m_totalSpacing = 0;
+      } else
+        dAngle = 0;
+    }
   } else if (m_isSpacing) {
     double da = std::sqrt(std::pow(centerPoint.x - m_firstPos.x, 2) +
                           std::pow(centerPoint.y - m_firstPos.y, 2));
     double db = std::sqrt(std::pow(centerPoint.x - pos.x, 2) +
                           std::pow(centerPoint.y - pos.y, 2));
     dSpace = da - db;
+
+    if (e.isAltPressed()) {
+      m_totalSpacing += dSpace;
+      if (std::abs(m_totalSpacing) >= 10) {
+        dSpace         = m_totalSpacing < 0 ? -10 : 10;
+        m_totalSpacing = 0;
+      } else
+        dSpace = 0;
+    }
   } else if (!m_isShifting &&
              mainObj->getType() == PerspectiveType::VanishingPoint) {
     TPointD leftPivotPos   = mainObj->getLeftPivotPos();
@@ -843,8 +878,14 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
       mainObj->setLeftHandlePos(newPos);
 
       // Also move Center Point
-      centerPoint = calculateCenterPoint(newPos, leftPivotPos, rightHandlePos,
-                                         rightPivotPos);
+      if (mainObj->isHorizon() && e.isAltPressed()) {
+        TPointD otherHorizonPoint =
+            calculateHorizonPoint(centerPoint, mainObj->getRotation(), 100);
+        centerPoint = calculateCenterPoint(newPos, leftPivotPos, centerPoint,
+                                           otherHorizonPoint);
+      } else
+        centerPoint = calculateCenterPoint(newPos, leftPivotPos, rightHandlePos,
+                                           rightPivotPos);
       mainObj->setCenterPoint(centerPoint);
 
       // Check Right Handle
@@ -868,8 +909,14 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
       mainObj->setRightHandlePos(newPos);
 
       // Also move Center Point
-      centerPoint = calculateCenterPoint(leftHandlePos, leftPivotPos, newPos,
-                                         rightPivotPos);
+      if (mainObj->isHorizon() && e.isAltPressed()) {
+        TPointD otherHorizonPoint =
+            calculateHorizonPoint(centerPoint, mainObj->getRotation(), 100);
+        centerPoint = calculateCenterPoint(centerPoint, otherHorizonPoint,
+                                           newPos, rightPivotPos);
+      } else
+        centerPoint = calculateCenterPoint(leftHandlePos, leftPivotPos, newPos,
+                                           rightPivotPos);
       mainObj->setCenterPoint(centerPoint);
 
       // Check Left Handle
@@ -890,6 +937,22 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
         obj->shiftPerspectiveObject(dPos);
       else if (m_isCenterMoving) {  // Moving
         TPointD objCenterPoint = obj->getCenterPoint();
+
+        if (obj->isHorizon() && e.isAltPressed()) {
+          double distance =
+              std::sqrt(std::pow(dPos.x, 2) + std::pow(dPos.y, 2));
+          double rotation = mainObj->getRotation();
+          if (rotation != 90 && rotation != 270) {
+            if (dPos.x < 0) distance *= -1;
+            if (rotation > 90 && rotation < 270) distance *= -1;
+          } else if ((rotation == 90 && dPos.y < 0) ||
+                     (rotation == 270 && dPos.y > 0))
+            distance *= -1;
+          TPointD newCenter =
+              calculateHorizonPoint(objCenterPoint, rotation, distance);
+          dPos = newCenter - objCenterPoint;
+        }
+
         obj->setCenterPoint(objCenterPoint + dPos);
 
         // Also Move Left and Right Handles
