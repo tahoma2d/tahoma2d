@@ -982,6 +982,31 @@ void PerspectiveTool::invalidateControl(int controlIdx) {
 
 //----------------------------------------------------------------------------------------------
 
+void PerspectiveTool::onEnter() {
+  if (!m_selection.isEmpty()) return;
+
+  for (int i = 0; i < m_perspectiveObjs.size(); i++)
+    if (m_perspectiveObjs[i]->isActive()) m_selection.select(i);
+
+  if (!m_selection.isEmpty()) m_selection.makeCurrent();
+}
+
+//----------------------------------------------------------------------------------------------
+
+void PerspectiveTool::onDeactivate() {
+  if (m_selection.isEmpty()) return;
+
+  for (int i = 0; i < m_perspectiveObjs.size(); i++)
+    if (m_perspectiveObjs[i]->isActive()) {
+      m_perspectiveObjs[i]->setActive(false);
+      invalidateControl(i);
+    }
+  m_selection.selectNone();
+  m_mainControlIndex = -1;
+}
+
+//----------------------------------------------------------------------------------------------
+
 void PerspectiveTool::deleteSelectedObjects() {
   if (m_selection.isEmpty()) return;
 
@@ -1006,6 +1031,7 @@ void PerspectiveTool::deleteSelectedObjects() {
   }
 
   m_selection.selectNone();
+  m_mainControlIndex = -1;
 
   m_undo->setRedoData(m_perspectiveObjs);
   TUndoManager::manager()->add(m_undo);

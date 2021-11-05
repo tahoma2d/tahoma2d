@@ -431,6 +431,7 @@ public:
   void setPerspectiveObjects(std::vector<PerspectiveObject *> objs) {
     m_perspectiveObjs = objs;
     m_selection.selectNone();
+    m_mainControlIndex = -1;
   }
   std::vector<PerspectiveObject *> getPerspectiveObjects() {
     return m_perspectiveObjs;
@@ -440,6 +441,9 @@ public:
       std::vector<PerspectiveObject *> perspectiveSet);
 
   void invalidateControl(int controlIndex);
+
+  void onEnter() override;
+  void onDeactivate() override;
 
   void initPresets();
   void loadPreset();
