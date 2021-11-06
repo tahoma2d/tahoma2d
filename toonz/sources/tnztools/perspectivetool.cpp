@@ -726,7 +726,6 @@ TPointD calculateHandlePos(TPointD handlePos, TPointD pivotPos,
                 std::pow((centerPoint.y - newPivotPos.y), 2));
   double dNewCenterHandle = dOrigPivotHandle + dCenterNewPivot;
   double dratio           = dCenterNewPivot / dNewCenterHandle;
-  if (dratio == 0) dratio = 0.001;
   newHandlePos.x = (newPivotPos.x - ((1 - dratio) * centerPoint.x)) / dratio;
   newHandlePos.y = (newPivotPos.y - ((1 - dratio) * centerPoint.y)) / dratio;
 
@@ -753,9 +752,8 @@ TPointD calculateCenterPoint(TPointD leftHandlePos, TPointD leftPivotPos,
                   (rightHandlePos.y - rightPivotPos.y)) -
                  ((leftHandlePos.y - leftPivotPos.y) *
                   (rightHandlePos.x - rightPivotPos.x));
-  if (denom == 0) denom = 0.001;
-  newCenterPoint.x      = xNum / denom;
-  newCenterPoint.y      = yNum / denom;
+  newCenterPoint.x = xNum / denom;
+  newCenterPoint.y = yNum / denom;
 
   return newCenterPoint;
 }
@@ -868,14 +866,17 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
       mainObj->setLeftHandlePos(newPos);
 
       // Also move Center Point
+      TPointD newCenterPoint;
       if (mainObj->isHorizon() && e.isAltPressed()) {
         TPointD otherHorizonPoint =
             calculateHorizonPoint(centerPoint, mainObj->getRotation(), 100);
-        centerPoint = calculateCenterPoint(newPos, leftPivotPos, centerPoint,
-                                           otherHorizonPoint);
+        newCenterPoint = calculateCenterPoint(newPos, leftPivotPos, centerPoint,
+                                              otherHorizonPoint);
       } else
-        centerPoint = calculateCenterPoint(newPos, leftPivotPos, rightHandlePos,
-                                           rightPivotPos);
+        newCenterPoint = calculateCenterPoint(newPos, leftPivotPos,
+                                              rightHandlePos, rightPivotPos);
+      if (!std::isnan(newCenterPoint.x) && !std::isnan(newCenterPoint.y))
+        centerPoint = newCenterPoint;
       mainObj->setCenterPoint(centerPoint);
 
       // Check Right Handle
@@ -887,16 +888,18 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
     } else if (m_isRightMoving) {
       TPointD newPos = rightHandlePos + dPos;
       mainObj->setRightHandlePos(newPos);
-
       // Also move Center Point
+      TPointD newCenterPoint;
       if (mainObj->isHorizon() && e.isAltPressed()) {
         TPointD otherHorizonPoint =
             calculateHorizonPoint(centerPoint, mainObj->getRotation(), 100);
-        centerPoint = calculateCenterPoint(centerPoint, otherHorizonPoint,
-                                           newPos, rightPivotPos);
+        newCenterPoint = calculateCenterPoint(centerPoint, otherHorizonPoint,
+                                              newPos, rightPivotPos);
       } else
-        centerPoint = calculateCenterPoint(leftHandlePos, leftPivotPos, newPos,
-                                           rightPivotPos);
+        newCenterPoint = calculateCenterPoint(leftHandlePos, leftPivotPos,
+                                              newPos, rightPivotPos);
+      if (!std::isnan(newCenterPoint.x) && !std::isnan(newCenterPoint.y))
+        centerPoint = newCenterPoint;
       mainObj->setCenterPoint(centerPoint);
 
       // Check Left Handle
