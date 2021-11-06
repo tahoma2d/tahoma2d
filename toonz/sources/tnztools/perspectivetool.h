@@ -369,8 +369,9 @@ public:
 class VanishingPointPerspective final : public PerspectiveObject {
 public:
   VanishingPointPerspective()
-      : PerspectiveObject(PerspectiveType::VanishingPoint, TPointD(0, 0), 0.0,
-                          10, false, 30, TPixel::Magenta, false) {
+      : PerspectiveObject(PerspectiveType::VanishingPoint) {
+    setSpacing(10);
+    setParallel(false);
     setMaxSpacing(180);
     setRotationPos(TPointD(40, -20));
   };
@@ -395,7 +396,9 @@ public:
 
 class LinePerspective final : public PerspectiveObject {
 public:
-  LinePerspective() : PerspectiveObject(PerspectiveType::Line){};
+  LinePerspective() : PerspectiveObject(PerspectiveType::Line) {
+    setSpacing(30);
+  };
   ~LinePerspective(){};
 
   void draw(SceneViewer *viewer, TRectD cameraRect) override;

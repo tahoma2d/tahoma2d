@@ -913,7 +913,7 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
                           std::pow(centerPoint.y - m_firstPos.y, 2));
     double db = std::sqrt(std::pow(centerPoint.x - pos.x, 2) +
                           std::pow(centerPoint.y - pos.y, 2));
-    dSpace = da - db;
+    dSpace = db - da;
 
     if (e.isAltPressed()) {
       m_totalSpacing += dSpace;
