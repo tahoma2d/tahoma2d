@@ -98,7 +98,7 @@ class PerspectiveControls {
   TPointD m_cursorPos;
   bool m_active;
 
-  int m_handleRadius = 7;
+  double m_handleRadius = 10;
   // Common Controls
   TPointD m_rotationPos = TPointD(40, 0);
   TPointD m_spacingPos  = TPointD(0, -40);

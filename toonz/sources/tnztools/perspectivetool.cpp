@@ -303,60 +303,129 @@ void PerspectiveControls::drawControls() {
 
   TPointD centerPoint = m_perspective->getCenterPoint();
 
+  double unit = sqrt(tglGetPixelSize2());
+  unit *= getDevPixRatio();
+
+  double circleRadius = m_handleRadius * unit;
+  double diskRadius   = (m_handleRadius - 2) * unit;
+
   glLineWidth(1.5);
 
   glLineStipple(1, 0xFFFF);
   glEnable(GL_LINE_STIPPLE);
 
-  // Draw rotation control
+  glEnable(GL_BLEND);
+  glEnable(GL_LINE_SMOOTH);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  // Draw Rotation control
   glColor3d(0.70, 0.70, 0.70);
   tglDrawSegment(centerPoint, m_rotationPos);
-  tglDrawCircle(m_rotationPos, m_handleRadius);
+  tglDrawCircle(m_rotationPos, circleRadius);
   if (m_active) glColor3d(1.0, 1.0, 0.0);
-  tglDrawDisk(m_rotationPos, m_handleRadius - 2);
+  tglDrawDisk(m_rotationPos, diskRadius);
+  glColor3d(0.50, 0.50, 0.50);
+  tglDrawCircle(m_rotationPos, (m_handleRadius - 6) * unit);
 
-  // Draw spacing control
+  // Draw Spacing control
   if (m_perspective->getType() != PerspectiveType::Line ||
       m_perspective->isParallel()) {
     glColor3d(0.70, 0.70, 0.70);
     tglDrawSegment(centerPoint, m_spacingPos);
-    tglDrawCircle(m_spacingPos, m_handleRadius);
+    tglDrawCircle(m_spacingPos, circleRadius);
     if (m_active) glColor3d(1.0, 1.0, 0.0);
-    tglDrawDisk(m_spacingPos, m_handleRadius - 2);
+    tglDrawDisk(m_spacingPos, diskRadius);
+    glColor3d(0.50, 0.50, 0.50);
+    tglDrawSegment(m_spacingPos + unit * TPointD(-4, 4),
+                   m_spacingPos + unit * TPointD(-4, -4));
+    tglDrawSegment(m_spacingPos + unit * TPointD(0, 4),
+                   m_spacingPos + unit * TPointD(0, -4));
+    tglDrawSegment(m_spacingPos + unit * TPointD(4, 4),
+                   m_spacingPos + unit * TPointD(4, -4));
   }
 
   if (m_perspective->getType() == PerspectiveType::VanishingPoint) {
+    // Draw Left Handle
     glColor3d(0.70, 0.70, 0.70);
     tglDrawSegment(m_leftPivotPos, m_leftHandlePos);
-    tglDrawCircle(m_leftHandlePos, m_handleRadius);
+    tglDrawCircle(m_leftHandlePos, circleRadius);
     if (m_active) glColor3d(1.0, 1.0, 0.0);
-    tglDrawDisk(m_leftHandlePos, m_handleRadius - 2);
+    tglDrawDisk(m_leftHandlePos, diskRadius);
+    TPointD p1, p2, p3;
+    double dx    = m_leftPivotPos.x - m_leftHandlePos.x;
+    double dy    = m_leftPivotPos.y - m_leftHandlePos.y;
+    double slope = dy / dx;
+    double angle = std::isnan(slope) ? 0 : std::atan(slope);
+    if (m_leftHandlePos.x > centerPoint.x) angle += (180 * (3.14159 / 180));
+    p1.y = std::sin(angle) * 5;
+    p1.x = std::cos(angle) * 5;
+    angle += (120 * (3.14159 / 180));
+    p2.y = std::sin(angle) * 5;
+    p2.x = std::cos(angle) * 5;
+    angle += (120 * (3.14159 / 180));
+    p3.y = std::sin(angle) * 5;
+    p3.x = std::cos(angle) * 5;
+    glColor3d(0.50, 0.50, 0.50);
+    tglDrawSegment(m_leftHandlePos + p1 * unit, m_leftHandlePos + p2 * unit);
+    tglDrawSegment(m_leftHandlePos + p2 * unit, m_leftHandlePos + p3 * unit);
+    tglDrawSegment(m_leftHandlePos + p3 * unit, m_leftHandlePos + p1 * unit);
 
-    glColor3d(0.70, 0.70, 0.70);
-    tglDrawSegment(centerPoint, m_leftPivotPos);
-    tglDrawCircle(m_leftPivotPos, m_handleRadius);
-    if (m_active) glColor3d(1.0, 1.0, 0.0);
-    tglDrawDisk(m_leftPivotPos, m_handleRadius - 2);
-
+    // Draw Right Handle
     glColor3d(0.70, 0.70, 0.70);
     tglDrawSegment(m_rightPivotPos, m_rightHandlePos);
-    tglDrawCircle(m_rightHandlePos, m_handleRadius);
+    tglDrawCircle(m_rightHandlePos, circleRadius);
     if (m_active) glColor3d(1.0, 1.0, 0.0);
-    tglDrawDisk(m_rightHandlePos, m_handleRadius - 2);
+    tglDrawDisk(m_rightHandlePos, diskRadius);
+    dx    = m_rightPivotPos.x - m_rightHandlePos.x;
+    dy    = m_rightPivotPos.y - m_rightHandlePos.y;
+    slope = dy / dx;
+    angle = std::isnan(slope) ? 0 : std::atan(slope);
+    if (m_rightHandlePos.x > centerPoint.x) angle += (180 * (3.14159 / 180));
+    p1.y = std::sin(angle) * 5;
+    p1.x = std::cos(angle) * 5;
+    angle += (120 * (3.14159 / 180));
+    p2.y = std::sin(angle) * 5;
+    p2.x = std::cos(angle) * 5;
+    angle += (120 * (3.14159 / 180));
+    p3.y = std::sin(angle) * 5;
+    p3.x = std::cos(angle) * 5;
+    glColor3d(0.50, 0.50, 0.50);
+    tglDrawSegment(m_rightHandlePos + p1 * unit, m_rightHandlePos + p2 * unit);
+    tglDrawSegment(m_rightHandlePos + p2 * unit, m_rightHandlePos + p3 * unit);
+    tglDrawSegment(m_rightHandlePos + p3 * unit, m_rightHandlePos + p1 * unit);
 
+    // Draw Left Pivot
+    glColor3d(0.70, 0.70, 0.70);
+    tglDrawSegment(centerPoint, m_leftPivotPos);
+    tglDrawCircle(m_leftPivotPos, circleRadius);
+    if (m_active) glColor3d(1.0, 1.0, 0.0);
+    tglDrawDisk(m_leftPivotPos, diskRadius);
+    glColor3d(0.50, 0.50, 0.50);
+    tglDrawDisk(m_leftPivotPos, 2.0 * unit);
+
+    // Draw Right Pivot
     glColor3d(0.70, 0.70, 0.70);
     tglDrawSegment(centerPoint, m_rightPivotPos);
-    tglDrawCircle(m_rightPivotPos, m_handleRadius);
+    tglDrawCircle(m_rightPivotPos, circleRadius);
     if (m_active) glColor3d(1.0, 1.0, 0.0);
-    tglDrawDisk(m_rightPivotPos, m_handleRadius - 2);
+    tglDrawDisk(m_rightPivotPos, diskRadius);
+    glColor3d(0.50, 0.50, 0.50);
+    tglDrawDisk(m_rightPivotPos, 2.0 * unit);
   }
 
-  // Draw center/move control
+  // Draw Center Point
   glColor3d(0.70, 0.70, 0.70);
-  tglDrawCircle(centerPoint, m_handleRadius);
+  tglDrawCircle(centerPoint, circleRadius);
   if (m_active) glColor3d(0.0, 1.0, 0.0);
-  tglDrawDisk(centerPoint, m_handleRadius - 2);
+  tglDrawDisk(centerPoint, diskRadius);
+  glColor3d(0.50, 0.50, 0.50);
+  tglDrawSegment(centerPoint + unit * TPointD(-12, 0),
+                 centerPoint + unit * TPointD(12, 0));
+  tglDrawSegment(centerPoint + unit * TPointD(0, 12),
+                 centerPoint + unit * TPointD(0, -12));
 
+  glDisable(GL_LINE_SMOOTH);
+  glDisable(GL_BLEND);
   glDisable(GL_LINE_STIPPLE);
 }
 
