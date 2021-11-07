@@ -1336,6 +1336,7 @@ void VanishingPointPerspective::draw(SceneViewer *viewer, TRectD cameraRect) {
   glEnable(GL_BLEND);
   glEnable(GL_LINE_SMOOTH);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glLineWidth(1.0f);
 
   TPointD p = getCenterPoint();
 
@@ -1350,26 +1351,36 @@ void VanishingPointPerspective::draw(SceneViewer *viewer, TRectD cameraRect) {
   double distanceToBottom = std::abs(p.y - bounds.y0);
   double xDistance        = std::max(distanceToLeft, distanceToRight);
   double yDistance        = std::max(distanceToTop, distanceToBottom);
+  double distance         = std::max(xDistance, yDistance);
   double totalDistance =
-      std::sqrt(std::pow(xDistance, 2) + std::pow(yDistance, 2));
+      std::sqrt(std::pow(distance, 2) + std::pow(distance, 2));
 
   double step            = getSpacing();
-  int rays               = isHorizon() ? 360 : (360 / step);
+  int rays               = isHorizon() ? totalDistance : (360 / step);
   if (rays == 0) rays    = 1;
   if (!isHorizon()) step = 360.0 / (double)rays;
 
   double startAngle = 270.0 + getRotation();
   double endAngle   = (isHorizon() ? 180.0 : 90.0) + getRotation();
 
-  // Draw starting angle
-  double yLength = std::sin(startAngle * (3.14159 / 180)) * totalDistance;
-  double xLength = std::cos(startAngle * (3.14159 / 180)) * totalDistance;
-  end.x          = p.x + xLength;
-  end.y          = p.y + yLength;
-  tglDrawSegment(p, end);
+  double yLength, xLength;
 
   int raySpacing = 0;
   if (isHorizon()) {
+    // Draw horizon line
+    yLength = std::sin(getRotation() * (3.14159 / 180)) * totalDistance;
+    xLength = std::cos(getRotation() * (3.14159 / 180)) * totalDistance;
+    end.x   = p.x + xLength;
+    end.y   = p.y + yLength;
+    tglDrawSegment(p, end);
+    yLength =
+        std::sin((180.0 + getRotation()) * (3.14159 / 180)) * totalDistance;
+    xLength =
+        std::cos((180.0 + getRotation()) * (3.14159 / 180)) * totalDistance;
+    end.x = p.x + xLength;
+    end.y = p.y + yLength;
+    tglDrawSegment(p, end);
+
     double sinAngle             = std::sin((270 + step) * (3.14159 / 180));
     double cosAngle             = std::cos((270 + step) * (3.14159 / 180));
     if (cosAngle == 0) cosAngle = 0.001;
@@ -1381,8 +1392,11 @@ void VanishingPointPerspective::draw(SceneViewer *viewer, TRectD cameraRect) {
 
   double lAngle = startAngle;
   double rAngle = startAngle;
-  for (i = 2; i <= rays; i++) {
+  for (i = 1; i <= rays; i++) {
     bool drawRight = true;
+
+    TPointD lStartPoint = p, rStartPoint = p, lowerCenterPoint = p,
+            lowerRefPoint = p;
 
     if (isHorizon()) {
       double angle =
@@ -1390,18 +1404,28 @@ void VanishingPointPerspective::draw(SceneViewer *viewer, TRectD cameraRect) {
           (3.14159 / 180);
       rAngle = getRotation() + 360 + angle;
       lAngle = getRotation() + 180 - angle;
-    } else {
-      rAngle += step;
-      lAngle -= step;
 
+      if (step < 60) {
+        double dlower = (60 - step);
+
+        lowerCenterPoint.y = p.y + ::sin(startAngle * (3.14159 / 180)) * dlower;
+        lowerCenterPoint.x = p.x + ::cos(startAngle * (3.14159 / 180)) * dlower;
+        yLength            = std::sin(getRotation() * (3.14159 / 180)) * dlower;
+        xLength            = std::cos(getRotation() * (3.14159 / 180)) * dlower;
+        lowerRefPoint.x    = lowerCenterPoint.x + xLength;
+        lowerRefPoint.y    = lowerCenterPoint.y + yLength;
+      }
+    } else {
       // No need to draw right side if left side already drawn
       int e = endAngle * 1000;
       int l = lAngle * 1000.0;
       int r = (rAngle - 360.0) * 1000.0;
-      if (l == e || r == e || l == r)
-        drawRight = false;
-      else if (l < e)
-        break;
+      if (i != 1) {
+        if (l == e || r == e || l == r)
+          drawRight = false;
+        else if (l < e)
+          break;
+      }
     }
 
     // Draw left of startAngle
@@ -1409,17 +1433,28 @@ void VanishingPointPerspective::draw(SceneViewer *viewer, TRectD cameraRect) {
     xLength = std::cos(lAngle * (3.14159 / 180)) * totalDistance;
     end.x   = p.x + xLength;
     end.y   = p.y + yLength;
-    tglDrawSegment(p, end);
+    if (lowerCenterPoint != p)
+      lStartPoint =
+          calculateCenterPoint(end, p, lowerCenterPoint, lowerRefPoint);
+    tglDrawSegment(lStartPoint, end);
 
-    // When overlaps, no need to draw right side if left side already drawn
-    if (!drawRight) break;
+    if (i > 1) {
+      // When overlaps, no need to draw right side if left side already drawn
+      if (!drawRight) break;
 
-    // Draw right of startAngle
-    yLength = std::sin(rAngle * (3.14159 / 180)) * totalDistance;
-    xLength = std::cos(rAngle * (3.14159 / 180)) * totalDistance;
-    end.x   = p.x + xLength;
-    end.y   = p.y + yLength;
-    tglDrawSegment(p, end);
+      // Draw right of startAngle
+      yLength = std::sin(rAngle * (3.14159 / 180)) * totalDistance;
+      xLength = std::cos(rAngle * (3.14159 / 180)) * totalDistance;
+      end.x   = rStartPoint.x + xLength;
+      end.y   = rStartPoint.y + yLength;
+      if (lowerCenterPoint != p)
+        rStartPoint =
+            calculateCenterPoint(end, p, lowerCenterPoint, lowerRefPoint);
+      tglDrawSegment(rStartPoint, end);
+    }
+
+    rAngle += step;
+    lAngle -= step;
   }
 
   glDisable(GL_LINE_SMOOTH);
@@ -1480,8 +1515,9 @@ void LinePerspective::draw(SceneViewer *viewer, TRectD cameraRect) {
   double distanceToBottom = std::abs(p.y - bounds.y0);
   double xDistance        = std::max(distanceToLeft, distanceToRight);
   double yDistance        = std::max(distanceToTop, distanceToBottom);
+  double distance         = std::max(xDistance, yDistance);
   double totalDistance =
-      std::sqrt(std::pow(xDistance, 2) + std::pow(yDistance, 2));
+      std::sqrt(std::pow(distance, 2) + std::pow(distance, 2));
 
   double theta = getRotation() * (3.14159 / 180);
 
