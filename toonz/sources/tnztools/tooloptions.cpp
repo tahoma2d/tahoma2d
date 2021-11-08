@@ -2959,14 +2959,55 @@ PerspectiveGridToolOptionBox::PerspectiveGridToolOptionBox(
   m_addPresetButton->setFixedSize(QSize(20, 20));
   m_removePresetButton->setFixedSize(QSize(20, 20));
 
+  m_perspectiveType =
+      dynamic_cast<ToolOptionCombo *>(m_controls.value("Type:"));
+  m_parallel = dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Parallel"));
+  m_advancedControls =
+      dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Advanced Controls"));
+
   hLayout()->addWidget(m_addPresetButton);
   hLayout()->addWidget(m_removePresetButton);
 
   connect(m_addPresetButton, SIGNAL(clicked()), this, SLOT(onAddPreset()));
   connect(m_removePresetButton, SIGNAL(clicked()), this,
           SLOT(onRemovePreset()));
-
+  connect(m_perspectiveType, SIGNAL(currentIndexChanged(int)), this,
+          SLOT(onPerspectiveTypeChanged(int)));
   m_layout->addStretch(1);
+
+  filterControls();
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::filterControls() {
+  PerspectiveTool *perspectiveTool = dynamic_cast<PerspectiveTool *>(m_tool);
+
+  std::vector<PerspectiveObject *> objs =
+      perspectiveTool->getPerspectiveObjects();
+  bool isVanishingSelected =
+      m_perspectiveType->getProperty()->getValue() == L"Vanishing Point";
+  bool isLineSelected = m_perspectiveType->getProperty()->getValue() == L"Line";
+  for (int i = 0; i < objs.size(); i++) {
+    if (!objs[i]->isActive()) continue;
+    if (objs[i]->getType() == PerspectiveType::VanishingPoint)
+      isVanishingSelected = true;
+    else if (objs[i]->getType() == PerspectiveType::Line)
+      isLineSelected = true;
+  }
+
+  m_parallel->setEnabled(isLineSelected);
+  m_advancedControls->setEnabled(isVanishingSelected);
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::updateStatus() {
+  filterControls();
+
+  QMap<std::string, ToolOptionControl *>::iterator it;
+  for (it = m_controls.begin(); it != m_controls.end(); it++)
+    it.value()->updateStatus();
 }
 
 //-----------------------------------------------------------------------------
@@ -2995,6 +3036,12 @@ void PerspectiveGridToolOptionBox::onRemovePreset() {
   static_cast<PerspectiveTool *>(m_tool)->removePreset();
 
   m_presetCombo->loadEntries();
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::onPerspectiveTypeChanged(int index) {
+  filterControls();
 }
 
 //=============================================================================

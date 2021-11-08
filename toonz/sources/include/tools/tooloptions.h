@@ -757,19 +757,25 @@ class PerspectiveGridToolOptionBox final : public ToolOptionsBox {
   QPushButton *m_addPresetButton;
   QPushButton *m_removePresetButton;
 
+  ToolOptionCombo *m_perspectiveType;
+  ToolOptionCheckbox *m_parallel, *m_advancedControls;
+
 private:
   class PresetNamePopup;
   PresetNamePopup *m_presetNamePopup;
+  void filterControls();
 
 public:
   PerspectiveGridToolOptionBox(QWidget *parent, TTool *tool,
                                TPaletteHandle *pltHandle,
                                ToolHandle *toolHandle);
+  void updateStatus();
 
 protected slots:
 
   void onAddPreset();
   void onRemovePreset();
+  void onPerspectiveTypeChanged(int);
 };
 
 //=============================================================================

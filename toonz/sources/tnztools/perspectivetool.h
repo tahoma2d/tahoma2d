@@ -97,6 +97,7 @@ class PerspectiveControls {
   PerspectiveData *m_perspective;
   TPointD m_cursorPos;
   bool m_active;
+  bool m_showAdvanced;
 
   double m_handleRadius = 10;
   // Common Controls
@@ -111,7 +112,7 @@ class PerspectiveControls {
 
 public:
   PerspectiveControls(PerspectiveData *perspective)
-      : m_perspective(perspective), m_active(false) {}
+      : m_perspective(perspective), m_active(false), m_showAdvanced(false) {}
   ~PerspectiveControls() {}
 
   void setCursorPos(TPointD pos) { m_cursorPos = pos; }
@@ -119,6 +120,9 @@ public:
 
   void setActive(bool active) { m_active = active; }
   bool isActive() { return m_active; }
+
+  void setShowAdvancedControls(bool show) { m_showAdvanced = show; }
+  bool showAdvancedControls() { return m_showAdvanced; }
 
   void setRotationPos(TPointD pos) { m_rotationPos = pos; }
   TPointD getRotationPos() { return m_rotationPos; }
@@ -161,7 +165,7 @@ public:
   }
 
   bool isOverLeftPivot() {
-    if (!m_perspective ||
+    if (!m_showAdvanced || !m_perspective ||
         m_perspective->getType() != PerspectiveType::VanishingPoint)
       return false;
 
@@ -170,7 +174,7 @@ public:
   }
 
   bool isOverLeftHandle() {
-    if (!m_perspective ||
+    if (!m_showAdvanced || !m_perspective ||
         m_perspective->getType() != PerspectiveType::VanishingPoint)
       return false;
 
@@ -179,7 +183,7 @@ public:
   }
 
   bool isOverRightPivot() {
-    if (!m_perspective ||
+    if (!m_showAdvanced || !m_perspective ||
         m_perspective->getType() != PerspectiveType::VanishingPoint)
       return false;
 
@@ -188,7 +192,7 @@ public:
   }
 
   bool isOverRightHandle() {
-    if (!m_perspective ||
+    if (!m_showAdvanced || !m_perspective ||
         m_perspective->getType() != PerspectiveType::VanishingPoint)
       return false;
 
@@ -251,7 +255,7 @@ public:
                     TPointD centerPoint = TPointD(0, 0), double rotation = 0.0,
                     double spacing = 100.0, bool horizon = false,
                     double opacity = 30.0, TPixel32 color = TPixel::Magenta,
-                    bool parallel = true)
+                    bool parallel = true, bool showAdvanced = false)
       : PerspectiveData(perspectiveType, centerPoint, rotation, spacing,
                         horizon, opacity, color, parallel)
       , PerspectiveControls(this){};
@@ -468,6 +472,7 @@ protected:
   TBoolProperty m_horizon;
   TBoolProperty m_parallel;
   TEnumProperty m_preset;
+  TBoolProperty m_advancedControls;
 
   std::vector<PerspectiveObject *> m_perspectiveObjs;
   std::vector<PerspectiveObject *> m_lastPreset;

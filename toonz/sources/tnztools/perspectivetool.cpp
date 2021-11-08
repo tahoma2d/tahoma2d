@@ -21,6 +21,9 @@
 
 #include <QDebug>
 
+TEnv::IntVar PerspectiveToolAdvancedControls("PerspectiveToolAdvancedControls",
+                                             0);
+
 PerspectiveTool perspectiveTool;
 
 //----------------------------------------------------------------------------------------------------------
@@ -344,7 +347,8 @@ void PerspectiveControls::drawControls() {
                    m_spacingPos + unit * TPointD(4, -4));
   }
 
-  if (m_perspective->getType() == PerspectiveType::VanishingPoint) {
+  if (m_perspective->getType() == PerspectiveType::VanishingPoint &&
+      m_showAdvanced) {
     // Draw Left Handle
     glColor3d(0.70, 0.70, 0.70);
     tglDrawSegment(m_leftPivotPos, m_leftHandlePos);
@@ -457,6 +461,7 @@ PerspectiveTool::PerspectiveTool()
     , m_color("Color:")
     , m_horizon("Horizon", false)
     , m_parallel("Parallel", false)
+    , m_advancedControls("Advanced Controls", false)
     , m_preset("Preset:")
     , m_presetsLoaded(false)
     , m_modified(false)
@@ -478,6 +483,7 @@ PerspectiveTool::PerspectiveTool()
   m_prop.bind(m_color);
   m_prop.bind(m_horizon);
   m_prop.bind(m_parallel);
+  m_prop.bind(m_advancedControls);
   m_prop.bind(m_preset);
 
   m_type.addValue(L"Vanishing Point");
@@ -492,6 +498,8 @@ PerspectiveTool::PerspectiveTool()
   m_color.addValue(L"Cyan", TPixel::Cyan);
   m_color.addValue(L"Black", TPixel::Black);
   m_color.setId("Color");
+
+  m_advancedControls.setValue(PerspectiveToolAdvancedControls);
 
   m_preset.setId("PerspectivePreset");
   m_preset.addValue(CUSTOM_WSTR);
@@ -519,6 +527,7 @@ void PerspectiveTool::updateTranslation() {
   m_opacity.setQStringName(tr("Opacity:"));
   m_horizon.setQStringName(tr("Horizon"));
   m_parallel.setQStringName(tr("Parallel"));
+  m_advancedControls.setQStringName(tr("Advanced Controls"));
 
   m_preset.setQStringName(tr("Preset:"));
   m_preset.setItemUIName(CUSTOM_WSTR, tr("<custom>"));
@@ -546,6 +555,15 @@ bool PerspectiveTool::onPropertyChanged(std::string propertyName) {
     m_propertyUpdating = true;
     getApplication()->getCurrentTool()->notifyToolChanged();
     m_propertyUpdating = false;
+    return true;
+  }
+
+  if (propertyName == m_advancedControls.getName()) {
+    PerspectiveToolAdvancedControls = m_advancedControls.getValue();
+
+    for (int i = 0; i < m_perspectiveObjs.size(); i++)
+      m_perspectiveObjs[i]->setShowAdvancedControls(
+          PerspectiveToolAdvancedControls);
     return true;
   }
 
@@ -667,7 +685,10 @@ void PerspectiveTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       }
       m_selection.makeCurrent();
       invalidateControl(controlIdx);
-      m_modified = true;
+      m_modified         = true;
+      m_propertyUpdating = true;
+      getApplication()->getCurrentTool()->notifyToolChanged();
+      m_propertyUpdating = false;
       return;
     }
 
@@ -764,6 +785,7 @@ void PerspectiveTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
   newObject->setColor(m_color.getColorValue());
   newObject->setHorizon(m_horizon.getValue());
   newObject->setParallel(m_parallel.getValue());
+  newObject->setShowAdvancedControls(PerspectiveToolAdvancedControls);
   newObject->setActive(true);
 
   m_perspectiveObjs.push_back(newObject);
@@ -776,6 +798,10 @@ void PerspectiveTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
 
   m_isShifting = true;  // Allow click and shift
   m_modified   = true;
+
+  m_propertyUpdating = true;
+  getApplication()->getCurrentTool()->notifyToolChanged();
+  m_propertyUpdating = false;
 
   invalidate();
 }
@@ -1210,6 +1236,7 @@ std::vector<PerspectiveObject *> PerspectiveTool::copyPerspectiveSet(
     newObject->setColor(currentObject->getColor());
     newObject->setHorizon(currentObject->isHorizon());
     newObject->setParallel(currentObject->isParallel());
+    newObject->setShowAdvancedControls(PerspectiveToolAdvancedControls);
 
     copy.push_back(newObject);
   }
@@ -1253,6 +1280,7 @@ void PerspectiveTool::loadPreset() {
   if (it == presets.end()) return;
 
   m_perspectiveObjs = preset.m_perspectiveSet;
+  onPropertyChanged(m_advancedControls.getName());
 
   invalidate();
 }
@@ -1293,6 +1321,7 @@ void PerspectiveTool::removePreset() {
 
 void PerspectiveTool::loadLastPreset() {
   m_perspectiveObjs = m_lastPreset;
+  onPropertyChanged(m_advancedControls.getName());
 
   invalidate();
 }
