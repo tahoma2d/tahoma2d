@@ -47,7 +47,8 @@ enum {
   eShowViewerControls  = 0x1000,
   eShowSound           = 0x2000,
   eShowLocator         = 0x4000,
-  eShowHowMany         = 0x8000
+  eShowGainControls    = 0x8000,
+  eShowHowMany         = 0x10000
 };
 
 class QToolBar;
@@ -246,6 +247,9 @@ public:
     eFlipVertical,
     eResetView,
     eBlankFrames,
+    eDecreaseGain,
+    eResetGain,
+    eIncreaseGain,
     // following values are hard-coded in ImagePainter
     eBlackBg = 0x40000,
     eWhiteBg = 0x80000,
@@ -339,6 +343,7 @@ public:
   void setFpsFieldColor(const QColor &color) { m_fpsFieldColor = color; }
   QColor getFpsFieldColor() const { return m_fpsFieldColor; }
 
+  void resetGain(bool forceInit = false);
 signals:
 
   void buttonPressed(FlipConsole::EGadget button);
@@ -355,7 +360,7 @@ private:
 
   QAction *m_customSep, *m_rateSep, *m_histoSep, *m_bgSep, *m_vcrSep,
       *m_compareSep, *m_saveSep, *m_colorFilterSep, *m_soundSep, *m_subcamSep,
-      *m_filledRasterSep, *m_viewerSep;
+      *m_filledRasterSep, *m_viewerSep, *m_gainSep;
 
   QToolBar *m_playToolBar;
   QActionGroup *m_colorFilterGroup;
@@ -372,6 +377,7 @@ private:
   QFrame *createFpsSlider();
   QAction *m_doubleRedAction, *m_doubleGreenAction, *m_doubleBlueAction;
   DoubleButton *m_doubleRed, *m_doubleGreen, *m_doubleBlue;
+
   std::vector<int> m_gadgetsMask;
   int m_from, m_to, m_step;
   int m_currentFrame, m_framesCount;
@@ -387,6 +393,9 @@ private:
   TPixel m_blankColor;
   int m_blanksToDraw;
   bool m_isLinkable;
+
+  QToolButton *m_resetGainBtn;
+  int m_prevGainStep;
 
   QMenu *m_menu;
 
@@ -422,6 +431,8 @@ private:
 
   FlipConsoleOwner *m_consoleOwner;
   TFrameHandle *m_frameHandle;
+
+  void adjustGain(bool increase);
 
 protected slots:
 

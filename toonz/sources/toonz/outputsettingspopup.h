@@ -58,6 +58,8 @@ class OutputSettingsPopup : public DVGui::Dialog {
   QComboBox *m_multimediaOm;
   QComboBox *m_resampleBalanceOm;
   QComboBox *m_channelWidthOm;
+  DVGui::CheckBox *m_linearColorSpaceChk;
+  DVGui::DoubleLineEdit *m_colorSpaceGammaFld;
   DVGui::DoubleLineEdit *m_gammaFld;
   QComboBox *m_dominantFieldOm;
   DVGui::CheckBox *m_applyShrinkChk;
@@ -79,10 +81,13 @@ class OutputSettingsPopup : public DVGui::Dialog {
   QPushButton *m_boardSettingsBtn;
 
   QScrollArea *m_scrollArea;
-  QLabel *m_generalLabel, *m_cameraLabel, *m_advancedLabel, *m_moreLabel;
-  QFrame *m_generalBox, *m_cameraBox, *m_advancedBox, *m_moreBox;
-  QPushButton *m_showCameraSettingsButton, *m_showAdvancedSettingsButton,
-      *m_showMoreSettingsButton;
+  QLabel *m_generalLabel, *m_cameraLabel, *m_colorLabel, *m_advancedLabel,
+      *m_moreLabel;
+  QFrame *m_generalBox, *m_cameraBox, *m_colorBox, *m_advancedBox, *m_moreBox;
+
+  DVGui::CheckBox *m_syncColorSettingsButton;
+  QPushButton *m_showCameraSettingsButton, *m_showColorSettingsButton,
+      *m_showAdvancedSettingsButton, *m_showMoreSettingsButton;
 
   bool m_isPreviewSettings;
   bool m_hideAlreadyCalled = false;
@@ -93,6 +98,7 @@ class OutputSettingsPopup : public DVGui::Dialog {
   QFrame *createPanel(bool isPreview);
   QFrame *createGeneralSettingsBox(bool isPreview);
   QFrame *createCameraSettingsBox(bool isPreview);
+  QFrame *createColorSettingsBox(bool isPreview);
   QFrame *createAdvancedSettingsBox(bool isPreview);
   QFrame *createMoreSettingsBox();
 
@@ -117,6 +123,8 @@ protected slots:
   void onFrameFldEditFinished();
   void onResampleChanged(int type);
   void onChannelWidthChanged(int type);
+  void onLinearColorSpaceChecked(int state);
+  void onColorSpaceGammaEdited();
   void onGammaFldEditFinished();
   void onDominantFieldChanged(int type);
   void onStretchFldEditFinished();
@@ -127,6 +135,7 @@ protected slots:
   void onRasterGranularityChanged(int type);
   void onStereoChecked(int);
   void onStereoChanged();
+  void onSyncColorSettingsChecked(int state);
   void onRenderClicked();
   void onSaveAndRenderClicked();
 

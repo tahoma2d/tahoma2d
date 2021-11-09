@@ -393,13 +393,11 @@ void Previewer::Imp::updateProgressBarStatus() {
   unsigned int i, pbSize = m_pbStatus.size();
   std::map<int, FrameInfo>::iterator it;
   for (i = 0; i < pbSize; ++i) {
-    it = m_frames.find(i);
-    m_pbStatus[i] =
-        (it == m_frames.end())
-            ? FlipSlider::PBFrameNotStarted
-            : ::contains(it->second.m_renderedRegion, m_previewRect)
-                  ? FlipSlider::PBFrameFinished
-                  : it->second.m_rectUnderRender.contains(m_previewRect)
+    it            = m_frames.find(i);
+    m_pbStatus[i] = (it == m_frames.end()) ? FlipSlider::PBFrameNotStarted
+                    : ::contains(it->second.m_renderedRegion, m_previewRect)
+                        ? FlipSlider::PBFrameFinished
+                    : it->second.m_rectUnderRender.contains(m_previewRect)
                         ? FlipSlider::PBFrameStarted
                         : FlipSlider::PBFrameNotStarted;
   }
@@ -674,6 +672,11 @@ void Previewer::Imp::doOnRenderRasterCompleted(const RenderData &renderData) {
   }
 
   TRasterP ras(renderData.m_rasA);
+
+  // Linear Color Space -> sRGB
+  if (ras->isLinear()) {
+    TRop::tosRGB(ras, m_renderSettings.m_colorSpaceGamma);
+  }
 
   m_computingFrameCount--;
 
@@ -1149,7 +1152,7 @@ TRasterP Previewer::getRaster(int frame, bool renderIfNeeded) const {
             (TRasterImageP)TImageCache::instance()->get(str, false);
         if (rimg) {
           TRasterP ras = rimg->getRaster();
-          assert((TRaster32P)ras || (TRaster64P)ras);
+          assert((TRaster32P)ras || (TRaster64P)ras || (TRasterFP)ras);
           return ras;
         } else
           // Weird case - the frame was declared rendered, but no raster is
@@ -1168,7 +1171,7 @@ TRasterP Previewer::getRaster(int frame, bool renderIfNeeded) const {
         (TRasterImageP)TImageCache::instance()->get(str, false);
     if (rimg) {
       TRasterP ras = rimg->getRaster();
-      assert((TRaster32P)ras || (TRaster64P)ras);
+          assert((TRaster32P)ras || (TRaster64P)ras || (TRasterFP)ras);
       return ras;
     } else
       return TRasterP();

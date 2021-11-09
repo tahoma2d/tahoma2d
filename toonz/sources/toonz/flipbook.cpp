@@ -270,7 +270,7 @@ void FlipBook::addFreezeButtonToTitleBar() {
   if (panel) {
     TPanelTitleBar *titleBar = panel->getTitleBar();
     m_freezeButton           = new TPanelTitleBarButton(
-                  titleBar, getIconThemePath("actions/20/pane_freeze.svg"));
+        titleBar, getIconThemePath("actions/20/pane_freeze.svg"));
     m_freezeButton->setToolTip("Freeze");
     titleBar->add(QPoint(-64, 0), m_freezeButton);
     connect(m_freezeButton, SIGNAL(toggled(bool)), this, SLOT(freeze(bool)));
@@ -921,11 +921,11 @@ FlipBook *FlipBookPool::pop() {
 //! Saves the content of this flipbook pool.
 void FlipBookPool::save() const {
   QSettings history(toQString(m_historyPath), QSettings::IniFormat);
-  history.clear();
-
   history.setValue("count", m_overallFlipCount);
 
   history.beginGroup("flipbooks");
+  // clear all contents in the group
+  history.remove("");
 
   std::map<int, FlipBook *>::const_iterator it;
   for (it = m_pool.begin(); it != m_pool.end(); ++it) {
@@ -1149,12 +1149,13 @@ void FlipBook::setLevel(const TFilePath &fp, TPalette *palette, int from,
       levelToPush.m_incrementalIndexing = incrementalIndexing;
 
       int formatIdx = Preferences::instance()->matchLevelFormat(fp);
-      if (formatIdx >= 0 && Preferences::instance()
-                                ->levelFormat(formatIdx)
-                                .m_options.m_premultiply) {
-        levelToPush.m_premultiply = true;
-      }
+      if (formatIdx >= 0) {
+        LevelOptions options =
+            Preferences::instance()->levelFormat(formatIdx).m_options;
 
+        levelToPush.m_premultiply     = options.m_premultiply;
+        levelToPush.m_colorSpaceGamma = options.m_colorSpaceGamma;
+      }
       m_levels.push_back(levelToPush);
 
       // Get the frames count to be shown in this flipbook level
@@ -1518,6 +1519,9 @@ TImageP FlipBook::getCurrentImage(int frame) {
   bool randomAccessRead    = false;
   bool incrementalIndexing = false;
   bool premultiply         = false;
+  TSceneProperties *sp =
+      TApp::instance()->getCurrentScene()->getScene()->getProperties();
+  double colorSpaceGamma = LevelOptions::DefaultColorSpaceGamma;
   if (m_xl)  // is an xsheet level
   {
     if (m_xl->getFrameCount() <= 0) return 0;
@@ -1553,13 +1557,17 @@ TImageP FlipBook::getCurrentImage(int frame) {
     levelName           = m_levelNames[i];
     fid                 = m_levels[i].flipbookIndexToLevelFrame(frameIndex);
     premultiply         = m_levels[i].m_premultiply;
+    colorSpaceGamma     = m_levels[i].m_colorSpaceGamma;
+
     if (fid == TFrameId()) return 0;
     id = levelName.toStdString() + fid.expand(TFrameId::NO_PAD) +
          ((m_isPreviewFx) ? "" : ::to_string(this));
 
-    if (!m_isPreviewFx)
+    if (!m_isPreviewFx) {
       m_title1 = m_viewerTitle + " :: " + fp.withoutParentDir().withFrame(fid);
-    else
+      if (fp.getType() == "exr")
+        m_title1 += " :: " + tr("Gamma : %1").arg(colorSpaceGamma);
+    } else
       m_title1 = "";
   } else if (m_levelNames.empty())
     return 0;
@@ -1597,6 +1605,7 @@ TImageP FlipBook::getCurrentImage(int frame) {
     }
     TImageReaderP ir = m_lr->getFrameReader(fid);
     ir->setShrink(m_shrink);
+    ir->setColorSpaceGamma(colorSpaceGamma);
     if (m_loadbox != TRect() && showSub) {
       ir->setRegion(m_loadbox);
       lx = m_loadbox.getLx();
@@ -1604,6 +1613,9 @@ TImageP FlipBook::getCurrentImage(int frame) {
 
     if (Preferences::instance()->is30bitDisplayEnabled())
       ir->enable16BitRead(true);
+
+    // always enable to load float-format images
+    ir->enableFloatRead(true);
 
     TImageP img = ir->load();
 
@@ -1681,7 +1693,18 @@ void FlipBook::onDrawFrame(int frame, const ImagePainter::VisualSettings &vs,
 
     if (!img) return;
 
-    m_imageViewer->setImage(img);
+    // gain control ( for now the result is not cached )
+    if (vs.m_gainStep != 0) {
+      TImageP gainedImg = img->cloneImage();
+      TSceneProperties *sp =
+          TApp::instance()->getCurrentScene()->getScene()->getProperties();
+      double colorSpaceGamma =
+          sp->getPreviewProperties()->getRenderSettings().m_colorSpaceGamma;
+      TRop::adjustGain(gainedImg->raster(), vs.m_gainStep, colorSpaceGamma);
+
+      m_imageViewer->setImage(gainedImg, img);
+    } else
+      m_imageViewer->setImage(img);
   } catch (...) {
     m_imageViewer->setImage(TImageP());
   }
@@ -1719,8 +1742,7 @@ void FlipBook::clearCache() {
       for (it = m_levels[i].m_level->begin(); it != m_levels[i].m_level->end();
            ++it)
         TImageCache::instance()->remove(
-            m_levelNames[i].toStdString() +
-            std::to_string(it->first.getNumber()) +
+            m_levelNames[i].toStdString() + it->first.expand(TFrameId::NO_PAD) +
             ((m_isPreviewFx) ? "" : ::to_string(this)));
   else {
     int from, to, step;
@@ -1896,6 +1918,7 @@ void FlipBook::reset() {
     m_flipConsole->pressButton(FlipConsole::eDefineLoadBox);
   if (m_flipConsole->isChecked(FlipConsole::eUseLoadBox))
     m_flipConsole->pressButton(FlipConsole::eUseLoadBox);
+  m_flipConsole->resetGain(true);
 
   m_flipConsole->enableButton(FlipConsole::eDefineLoadBox, true);
   m_flipConsole->enableButton(FlipConsole::eUseLoadBox, true);

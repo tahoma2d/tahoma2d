@@ -77,6 +77,8 @@ public:
   TimeShuffleFx()
       : TRasterFx(), m_frame(0), m_timeRegion(), m_cellColumn(nullptr) {
     addInputPort("source", m_port);
+
+    enableComputeInFloat(true);
   }
   ~TimeShuffleFx() {}
 
@@ -143,6 +145,11 @@ public:
                     const TRenderSettings &info) override {
     if (m_port.isConnected())
       TRasterFxP(m_port.getFx())->dryCompute(rect, getLevelFrame(frame), info);
+  }
+
+  bool toBeComputedInLinearColorSpace(bool settingsIsLinear,
+                                      bool tileIsLinear) const override {
+    return tileIsLinear;
   }
 
 private:

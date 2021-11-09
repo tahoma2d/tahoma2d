@@ -1176,8 +1176,11 @@ void FunctionTreeModel::addChannels(TFx *fx, ChannelGroup *groupItem,
   const std::string &paramNamePref = fx->getFxType() + ".";
 
   int p, pCount = params->getParamCount();
-  for (p = 0; p != pCount; ++p)
+  for (p = 0; p != pCount; ++p) {
+    // hidden parameter are not displayed in the tree
+    if (params->isParamHidden(p)) continue;
     addParameter(fxItem, paramNamePref, fxId, params->getParam(p));
+  }
 }
 
 //-----------------------------------------------------------------------------

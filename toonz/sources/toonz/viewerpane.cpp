@@ -91,9 +91,10 @@ BaseViewerPanel::BaseViewerPanel(QWidget *parent, Qt::WindowFlags flags)
   m_keyFrameButton->setObjectHandle(app->getCurrentObject());
   m_keyFrameButton->setXsheetHandle(app->getCurrentXsheet());
 
-  std::vector<int> buttonMask = {FlipConsole::eFilledRaster,
-                                 FlipConsole::eDefineLoadBox,
-                                 FlipConsole::eUseLoadBox};
+  std::vector<int> buttonMask = {
+      FlipConsole::eFilledRaster, FlipConsole::eDefineLoadBox,
+      FlipConsole::eUseLoadBox,   FlipConsole::eDecreaseGain,
+      FlipConsole::eIncreaseGain, FlipConsole::eResetGain};
 
   m_flipConsole =
       new FlipConsole(m_mainLayout, buttonMask, false, m_keyFrameButton,
