@@ -319,11 +319,10 @@ void PerspectiveControls::drawControls() {
 
   TPointD centerPoint = m_perspective->getCenterPoint();
 
-  double unit = sqrt(tglGetPixelSize2());
-  unit *= getDevPixRatio();
+  m_unit = sqrt(tglGetPixelSize2()) * getDevPixRatio();
 
-  double circleRadius = m_handleRadius * unit;
-  double diskRadius   = (m_handleRadius - 2) * unit;
+  double circleRadius = m_handleRadius * m_unit;
+  double diskRadius   = (m_handleRadius - 2) * m_unit;
 
   glLineWidth(1.5);
 
@@ -341,7 +340,7 @@ void PerspectiveControls::drawControls() {
   if (m_active) glColor3d(1.0, 1.0, 0.0);
   tglDrawDisk(m_rotationPos, diskRadius);
   glColor3d(0.50, 0.50, 0.50);
-  tglDrawCircle(m_rotationPos, (m_handleRadius - 6) * unit);
+  tglDrawCircle(m_rotationPos, (m_handleRadius - 6) * m_unit);
 
   // Draw Spacing control
   if (m_perspective->getType() != PerspectiveType::Line ||
@@ -352,12 +351,12 @@ void PerspectiveControls::drawControls() {
     if (m_active) glColor3d(1.0, 1.0, 0.0);
     tglDrawDisk(m_spacingPos, diskRadius);
     glColor3d(0.50, 0.50, 0.50);
-    tglDrawSegment(m_spacingPos + unit * TPointD(-4, 4),
-                   m_spacingPos + unit * TPointD(-4, -4));
-    tglDrawSegment(m_spacingPos + unit * TPointD(0, 4),
-                   m_spacingPos + unit * TPointD(0, -4));
-    tglDrawSegment(m_spacingPos + unit * TPointD(4, 4),
-                   m_spacingPos + unit * TPointD(4, -4));
+    tglDrawSegment(m_spacingPos + m_unit * TPointD(-4, 4),
+                   m_spacingPos + m_unit * TPointD(-4, -4));
+    tglDrawSegment(m_spacingPos + m_unit * TPointD(0, 4),
+                   m_spacingPos + m_unit * TPointD(0, -4));
+    tglDrawSegment(m_spacingPos + m_unit * TPointD(4, 4),
+                   m_spacingPos + m_unit * TPointD(4, -4));
   }
 
   if (m_perspective->getType() == PerspectiveType::VanishingPoint &&
@@ -383,9 +382,12 @@ void PerspectiveControls::drawControls() {
     p3.y = std::sin(angle) * 5;
     p3.x = std::cos(angle) * 5;
     glColor3d(0.50, 0.50, 0.50);
-    tglDrawSegment(m_leftHandlePos + p1 * unit, m_leftHandlePos + p2 * unit);
-    tglDrawSegment(m_leftHandlePos + p2 * unit, m_leftHandlePos + p3 * unit);
-    tglDrawSegment(m_leftHandlePos + p3 * unit, m_leftHandlePos + p1 * unit);
+    tglDrawSegment(m_leftHandlePos + p1 * m_unit,
+                   m_leftHandlePos + p2 * m_unit);
+    tglDrawSegment(m_leftHandlePos + p2 * m_unit,
+                   m_leftHandlePos + p3 * m_unit);
+    tglDrawSegment(m_leftHandlePos + p3 * m_unit,
+                   m_leftHandlePos + p1 * m_unit);
 
     // Draw Right Handle
     glColor3d(0.70, 0.70, 0.70);
@@ -407,9 +409,12 @@ void PerspectiveControls::drawControls() {
     p3.y = std::sin(angle) * 5;
     p3.x = std::cos(angle) * 5;
     glColor3d(0.50, 0.50, 0.50);
-    tglDrawSegment(m_rightHandlePos + p1 * unit, m_rightHandlePos + p2 * unit);
-    tglDrawSegment(m_rightHandlePos + p2 * unit, m_rightHandlePos + p3 * unit);
-    tglDrawSegment(m_rightHandlePos + p3 * unit, m_rightHandlePos + p1 * unit);
+    tglDrawSegment(m_rightHandlePos + p1 * m_unit,
+                   m_rightHandlePos + p2 * m_unit);
+    tglDrawSegment(m_rightHandlePos + p2 * m_unit,
+                   m_rightHandlePos + p3 * m_unit);
+    tglDrawSegment(m_rightHandlePos + p3 * m_unit,
+                   m_rightHandlePos + p1 * m_unit);
 
     // Draw Left Pivot
     glColor3d(0.70, 0.70, 0.70);
@@ -418,7 +423,7 @@ void PerspectiveControls::drawControls() {
     if (m_active) glColor3d(1.0, 1.0, 0.0);
     tglDrawDisk(m_leftPivotPos, diskRadius);
     glColor3d(0.50, 0.50, 0.50);
-    tglDrawDisk(m_leftPivotPos, 2.0 * unit);
+    tglDrawDisk(m_leftPivotPos, 2.0 * m_unit);
 
     // Draw Right Pivot
     glColor3d(0.70, 0.70, 0.70);
@@ -427,7 +432,7 @@ void PerspectiveControls::drawControls() {
     if (m_active) glColor3d(1.0, 1.0, 0.0);
     tglDrawDisk(m_rightPivotPos, diskRadius);
     glColor3d(0.50, 0.50, 0.50);
-    tglDrawDisk(m_rightPivotPos, 2.0 * unit);
+    tglDrawDisk(m_rightPivotPos, 2.0 * m_unit);
   }
 
   // Draw Center Point
@@ -436,10 +441,10 @@ void PerspectiveControls::drawControls() {
   if (m_active) glColor3d(0.0, 1.0, 0.0);
   tglDrawDisk(centerPoint, diskRadius);
   glColor3d(0.50, 0.50, 0.50);
-  tglDrawSegment(centerPoint + unit * TPointD(-12, 0),
-                 centerPoint + unit * TPointD(12, 0));
-  tglDrawSegment(centerPoint + unit * TPointD(0, 12),
-                 centerPoint + unit * TPointD(0, -12));
+  tglDrawSegment(centerPoint + m_unit * TPointD(-12, 0),
+                 centerPoint + m_unit * TPointD(12, 0));
+  tglDrawSegment(centerPoint + m_unit * TPointD(0, 12),
+                 centerPoint + m_unit * TPointD(0, -12));
 
   glDisable(GL_LINE_SMOOTH);
   glDisable(GL_BLEND);
@@ -668,11 +673,13 @@ void PerspectiveTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
 
   int controlIdx = -1;
 
-  for (int i = 0; i < m_perspectiveObjs.size(); i++)
+  for (int i = 0; i < m_perspectiveObjs.size(); i++) {
+    m_perspectiveObjs[i]->setCursorPos(pos);
     if (m_perspectiveObjs[i]->isOverControl()) {
       controlIdx = i;
       break;
     }
+  }
 
   if (controlIdx >= 0) {
     m_isCenterMoving  = m_perspectiveObjs[controlIdx]->isOverCenterPoint();
@@ -1134,17 +1141,6 @@ void PerspectiveTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
   m_isRightPivoting = false;
   m_isRightMoving   = false;
   m_selecting       = false;
-}
-
-//----------------------------------------------------------------------------------------------
-
-void PerspectiveTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
-  m_mousePos = pos;
-
-  if (!m_perspectiveObjs.size()) return;
-
-  for (int i = 0; i < m_perspectiveObjs.size(); i++)
-    m_perspectiveObjs[i]->setCursorPos(pos);
 }
 
 //----------------------------------------------------------------------------------------------

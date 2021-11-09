@@ -98,6 +98,7 @@ class PerspectiveControls {
   TPointD m_cursorPos;
   bool m_active;
   bool m_showAdvanced;
+  double m_unit = 1;
 
   double m_handleRadius = 10;
   // Common Controls
@@ -148,20 +149,15 @@ public:
 
   bool isOverCenterPoint() {
     TPointD centerPoint = m_perspective->getCenterPoint();
-    return areAlmostEqual(centerPoint.x, m_cursorPos.x, m_handleRadius) &&
-           areAlmostEqual(centerPoint.y, m_cursorPos.y, m_handleRadius);
+    return checkOver(centerPoint, m_cursorPos);
   }
-  bool isOverRotation() {
-    return areAlmostEqual(m_rotationPos.x, m_cursorPos.x, m_handleRadius) &&
-           areAlmostEqual(m_rotationPos.y, m_cursorPos.y, m_handleRadius);
-  }
+  bool isOverRotation() { return checkOver(m_rotationPos, m_cursorPos); }
   bool isOverSpacing() {
     if (!m_perspective || (m_perspective->getType() == PerspectiveType::Line &&
                            !m_perspective->isParallel()))
       return false;
 
-    return areAlmostEqual(m_spacingPos.x, m_cursorPos.x, m_handleRadius) &&
-           areAlmostEqual(m_spacingPos.y, m_cursorPos.y, m_handleRadius);
+    return checkOver(m_spacingPos, m_cursorPos);
   }
 
   bool isOverLeftPivot() {
@@ -169,8 +165,7 @@ public:
         m_perspective->getType() != PerspectiveType::VanishingPoint)
       return false;
 
-    return areAlmostEqual(m_leftPivotPos.x, m_cursorPos.x, m_handleRadius) &&
-           areAlmostEqual(m_leftPivotPos.y, m_cursorPos.y, m_handleRadius);
+    return checkOver(m_leftPivotPos, m_cursorPos);
   }
 
   bool isOverLeftHandle() {
@@ -178,8 +173,7 @@ public:
         m_perspective->getType() != PerspectiveType::VanishingPoint)
       return false;
 
-    return areAlmostEqual(m_leftHandlePos.x, m_cursorPos.x, m_handleRadius) &&
-           areAlmostEqual(m_leftHandlePos.y, m_cursorPos.y, m_handleRadius);
+    return checkOver(m_leftHandlePos, m_cursorPos);
   }
 
   bool isOverRightPivot() {
@@ -187,8 +181,7 @@ public:
         m_perspective->getType() != PerspectiveType::VanishingPoint)
       return false;
 
-    return areAlmostEqual(m_rightPivotPos.x, m_cursorPos.x, m_handleRadius) &&
-           areAlmostEqual(m_rightPivotPos.y, m_cursorPos.y, m_handleRadius);
+    return checkOver(m_rightPivotPos, m_cursorPos);
   }
 
   bool isOverRightHandle() {
@@ -196,8 +189,7 @@ public:
         m_perspective->getType() != PerspectiveType::VanishingPoint)
       return false;
 
-    return areAlmostEqual(m_rightHandlePos.x, m_cursorPos.x, m_handleRadius) &&
-           areAlmostEqual(m_rightHandlePos.y, m_cursorPos.y, m_handleRadius);
+    return checkOver(m_rightHandlePos, m_cursorPos);
   }
 
   bool isOverControl() {
@@ -208,40 +200,26 @@ public:
 
   TRectD getCenterPointRect() {
     TPointD centerPoint = m_perspective->getCenterPoint();
-    return TRectD(
-        centerPoint.x - m_handleRadius, centerPoint.y - m_handleRadius,
-        centerPoint.x + m_handleRadius, centerPoint.x + m_handleRadius);
+    return getControlRect(centerPoint);
   }
-  TRectD getRotationRect() {
-    return TRectD(
-        m_rotationPos.x - m_handleRadius, m_rotationPos.y - m_handleRadius,
-        m_rotationPos.x + m_handleRadius, m_rotationPos.x + m_handleRadius);
+  TRectD getRotationRect() { return getControlRect(m_rotationPos); }
+  TRectD getSpacingRect() { return getControlRect(m_spacingPos); }
+  TRectD getLeftPivotRect() { return getControlRect(m_leftPivotPos); }
+  TRectD getLeftHandleRect() { return getControlRect(m_leftHandlePos); }
+  TRectD getRightPivotRect() { return getControlRect(m_rightPivotPos); }
+  TRectD getRightHandleRect() { return getControlRect(m_rightHandlePos); }
+
+private:
+  TRectD getControlRect(TPointD controlPos) {
+    return TRectD(controlPos.x - m_handleRadius * m_unit,
+                  controlPos.y + m_handleRadius * m_unit,
+                  controlPos.x + m_handleRadius * m_unit,
+                  controlPos.y - m_handleRadius * m_unit);
   }
-  TRectD getSpacingRect() {
-    return TRectD(
-        m_spacingPos.x - m_handleRadius, m_spacingPos.y - m_handleRadius,
-        m_spacingPos.x + m_handleRadius, m_spacingPos.x + m_handleRadius);
-  }
-  TRectD getLeftPivotRect() {
-    return TRectD(
-        m_leftPivotPos.x - m_handleRadius, m_leftPivotPos.y - m_handleRadius,
-        m_leftPivotPos.x + m_handleRadius, m_leftPivotPos.x + m_handleRadius);
-  }
-  TRectD getLeftHandleRect() {
-    return TRectD(
-        m_leftHandlePos.x - m_handleRadius, m_leftHandlePos.y - m_handleRadius,
-        m_leftHandlePos.x + m_handleRadius, m_leftHandlePos.x + m_handleRadius);
-  }
-  TRectD getRightPivotRect() {
-    return TRectD(
-        m_rightPivotPos.x - m_handleRadius, m_rightPivotPos.y - m_handleRadius,
-        m_rightPivotPos.x + m_handleRadius, m_rightPivotPos.x + m_handleRadius);
-  }
-  TRectD getRightHandleRect() {
-    return TRectD(m_rightHandlePos.x - m_handleRadius,
-                  m_rightHandlePos.y - m_handleRadius,
-                  m_rightHandlePos.x + m_handleRadius,
-                  m_rightHandlePos.x + m_handleRadius);
+
+  bool checkOver(TPointD controlPos, TPointD mousePos) {
+    return areAlmostEqual(controlPos.x, mousePos.x, m_handleRadius * m_unit) &&
+           areAlmostEqual(controlPos.y, mousePos.y, m_handleRadius * m_unit);
   }
 };
 
@@ -426,8 +404,6 @@ public:
   void updateTranslation();
 
   void draw(SceneViewer *viewer) override;
-
-  void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &e) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override;
