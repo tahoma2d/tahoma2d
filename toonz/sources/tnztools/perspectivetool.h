@@ -319,16 +319,17 @@ struct PerspectivePreset final : public TPersist {
 //************************************************************************
 
 class PerspectivePresetManager {
-  TFilePath m_fp;                         //!< Presets file path
+  TFilePath m_presetFolder;               //!< Presets folder file path
   std::set<PerspectivePreset> m_presets;  //!< Current presets container
 
 public:
   PerspectivePresetManager() {}
 
-  void load(const TFilePath &fp);
-  void save();
+  void loadPresets(const TFilePath &presetFolder);
+  void savePreset(std::wstring presetName);
+  void deletePreset(std::wstring presetName);
 
-  const TFilePath &path() { return m_fp; };
+  const TFilePath &path() { return m_presetFolder; };
   const std::set<PerspectivePreset> &presets() const { return m_presets; }
 
   void addPreset(PerspectivePreset perspectiveSet);

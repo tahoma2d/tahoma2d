@@ -18,6 +18,7 @@
 #include "../toonz/tcamera.h"
 
 #include <QApplication>
+#include <QDir>
 
 #include <QDebug>
 
@@ -33,6 +34,10 @@ PerspectiveTool perspectiveTool;
 //----------------------------------------------------------------------------------------------------------
 
 void PerspectivePreset::saveData(TOStream &os) {
+  os.openChild("version");
+  os << 1 << 0;
+  os.closeChild();
+
   os.openChild("Name");
   os << m_presetName;
   os.closeChild();
@@ -95,8 +100,14 @@ void PerspectivePreset::saveData(TOStream &os) {
 void PerspectivePreset::loadData(TIStream &is) {
   std::string tagName;
 
+  VersionNumber version;
+
   while (is.matchTag(tagName)) {
-    if (tagName == "Name")
+    if (tagName == "version") {
+      is >> version.first >> version.second;
+      is.setVersion(version);
+      is.matchEndTag();
+    } else if (tagName == "Name")
       is >> m_presetName, is.matchEndTag();
     else if (tagName == "PerspectiveObject") {
       PerspectiveObject *newObject;
@@ -228,7 +239,7 @@ void PerspectiveObjectUndo::redo() const {
 void PerspectivePresetManager::addPreset(PerspectivePreset perspectiveSet) {
   removePreset(perspectiveSet.m_presetName);
   m_presets.insert(perspectiveSet);
-  save();
+  savePreset(perspectiveSet.m_presetName);
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -239,64 +250,66 @@ void PerspectivePresetManager::removePreset(const std::wstring &name) {
     PerspectivePreset preset = *it;
     if (preset.m_presetName == name) m_presets.erase(preset);
   }
-  save();
+  deletePreset(name);
 }
 
 //----------------------------------------------------------------------------------------------------------
 
-void PerspectivePresetManager::load(const TFilePath &fp) {
-  m_fp = fp;
+void PerspectivePresetManager::loadPresets(const TFilePath &presetFolder) {
+  m_presetFolder = presetFolder;
 
-  std::string tagName;
-  TIStream is(m_fp);
-  try {
-    while (is.matchTag(tagName)) {
-      if (tagName == "version") {
-        VersionNumber version;
-        is >> version.first >> version.second;
+  TFileStatus fs(m_presetFolder);
 
-        is.setVersion(version);
-        is.matchEndTag();
-      } else if (tagName == "presets") {
-        while (is.matchTag(tagName)) {
-          if (tagName == "preset") {
-            PerspectivePreset data;
+  if (!fs.doesExist() || !fs.isDirectory()) return;
 
-            is >> data, m_presets.insert(data);
-            is.matchEndTag();
-          } else
-            is.skipCurrentTag();
-        }
+  TFilePathSet fileSet;
+  fileSet.clear();
 
-        is.matchEndTag();
-      } else
-        is.skipCurrentTag();
+  QDir presetfp(m_presetFolder.getQString());
+  presetfp.setNameFilters(QStringList("*.grid"));
+  TSystem::readDirectory(fileSet, presetfp, false);
+
+  if (fileSet.size() == 0) return;
+
+  TFilePathSet::iterator it;
+  for (it = fileSet.begin(); it != fileSet.end(); it++) {
+    std::string tagName;
+    PerspectivePreset data;
+    TIStream is(*it);
+    try {
+      is >> data, m_presets.insert(data);
+    } catch (...) {
     }
-  } catch (...) {
   }
 }
 
 //----------------------------------------------------------------------------------------------------------
 
-void PerspectivePresetManager::save() {
-  TSystem::touchParentDir(m_fp);
+void PerspectivePresetManager::savePreset(std::wstring presetName) {
+  TFilePath fp = m_presetFolder + TFilePath(presetName);
+  fp           = fp.withType("grid");
 
-  TOStream os(m_fp);
+  TSystem::touchParentDir(fp);
 
-  os.openChild("version");
-  os << 1 << 0;
-  os.closeChild();
-
-  os.openChild("presets");
+  TOStream os(fp);
 
   std::set<PerspectivePreset>::iterator it, end = m_presets.end();
   for (it = m_presets.begin(); it != end; ++it) {
-    os.openChild("preset");
+    if (it->m_presetName != presetName) continue;
     os << (TPersist &)*it;
-    os.closeChild();
   }
+}
 
-  os.closeChild();
+//----------------------------------------------------------------------------------------------------------
+
+void PerspectivePresetManager::deletePreset(std::wstring presetName) {
+  TFilePath fp = m_presetFolder + TFilePath(presetName);
+  fp           = fp.withType("grid");
+
+  TFileStatus fs(fp);
+  if (!fs.doesExist()) return;
+
+  TSystem::deleteFile(fp);
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -1257,8 +1270,8 @@ void PerspectiveTool::initPresets() {
   if (!m_presetsLoaded) {
     // If necessary, load the presets from file
     m_presetsLoaded = true;
-    m_presetsManager.load(ToonzFolder::getMyModuleDir() +
-                          "perspective_grids.txt");
+    m_presetsManager.loadPresets(ToonzFolder::getLibraryFolder() +
+                                 "perspectives grids");
   }
 
   // Rebuild the presets property entries
