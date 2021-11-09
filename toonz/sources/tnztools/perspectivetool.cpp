@@ -929,7 +929,7 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
     if (e.isAltPressed()) {
       m_totalSpacing += dAngle;
       if (std::abs(m_totalSpacing) >= 10) {
-        dAngle         = m_totalSpacing < 0 ? -45 : 45;
+        dAngle         = m_totalSpacing < 0 ? -15 : 15;
         m_totalSpacing = 0;
       } else
         dAngle = 0;
@@ -1070,6 +1070,13 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
         }
       } else if (m_isRotating) {
         double rotation = obj->getRotation();
+        if (e.isAltPressed()) {
+          // If not at 15deg angle, immediately shift to next angle depending on
+          // direction of movement
+          double snappedAngle = 15.0 * ((int)rotation / 15);
+          if (snappedAngle != rotation)
+            rotation = snappedAngle + (m_totalSpacing < 0 ? 0 : 15);
+        }
         obj->setRotation(rotation + dAngle);
 
         TPointD rotationPos = obj->getRotationPos();
