@@ -19,6 +19,7 @@ class SceneViewer;
 class PerspectiveTool;
 
 //--------------------------------------------------------------
+
 enum PerspectiveType { Undefined, VanishingPoint, Line };
 
 //************************************************************************
@@ -417,17 +418,13 @@ public:
 
   void deleteSelectedObjects();
 
-  void setPerspectiveObjects(std::vector<PerspectiveObject *> objs) {
-    m_perspectiveObjs = objs;
-    m_selection.selectNone();
-    m_mainControlIndex = -1;
-  }
+  void setPerspectiveObjects(std::vector<PerspectiveObject *> objs);
   std::vector<PerspectiveObject *> getPerspectiveObjects() {
     return m_perspectiveObjs;
   }
 
   std::vector<PerspectiveObject *> copyPerspectiveSet(
-      std::vector<PerspectiveObject *> perspectiveSet);
+      std::vector<PerspectiveObject *> perspectiveSet, bool keepStatus = true);
 
   void invalidateControl(int controlIndex);
 

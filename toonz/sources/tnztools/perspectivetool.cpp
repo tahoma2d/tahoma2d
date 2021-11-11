@@ -208,14 +208,14 @@ PerspectiveObjectUndo::PerspectiveObjectUndo(
     std::vector<PerspectiveObject *> objs, PerspectiveTool *tool)
     : m_tool(tool) {
   if (!m_tool) return;
-  m_undoData = m_tool->copyPerspectiveSet(objs);
+  m_undoData = m_tool->copyPerspectiveSet(objs, false);
 }
 
 //----------------------------------------------------------------------------------------------------------
 
 void PerspectiveObjectUndo::setRedoData(std::vector<PerspectiveObject *> objs) {
   if (!m_tool) return;
-  m_redoData = m_tool->copyPerspectiveSet(objs);
+  m_redoData = m_tool->copyPerspectiveSet(objs, false);
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -564,7 +564,14 @@ TPropertyGroup *PerspectiveTool::getProperties(int idx) {
 bool PerspectiveTool::onPropertyChanged(std::string propertyName) {
   if (m_propertyUpdating) return true;
 
+  std::set<int> selectedObjects = m_selection.getSelectedObjects();
+  std::set<int>::iterator it;
+
   if (propertyName == m_preset.getName()) {
+    for (it = selectedObjects.begin(); it != selectedObjects.end(); it++)
+      m_perspectiveObjs[*it]->setActive(false);
+    m_selection.selectNone();
+
     if (m_preset.getValue() != CUSTOM_WSTR)
       loadPreset();
     else  // Chose <custom>, go back to last preset
@@ -585,13 +592,14 @@ bool PerspectiveTool::onPropertyChanged(std::string propertyName) {
     return true;
   }
 
-  std::set<int> selectedObjects = m_selection.getSelectedObjects();
-  std::set<int>::iterator it;
-
   if (propertyName != m_type.getName() && selectedObjects.size() &&
       m_preset.getValue() != CUSTOM_WSTR) {
     m_preset.setValue(CUSTOM_WSTR);
     m_lastPreset = copyPerspectiveSet(m_perspectiveObjs);
+
+    for (it = selectedObjects.begin(); it != selectedObjects.end(); it++)
+      m_perspectiveObjs[*it]->setActive(false);
+
     loadLastPreset();
 
     m_propertyUpdating = true;
@@ -916,9 +924,16 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
   if (m_selection.isEmpty() || m_mainControlIndex < 0) return;
 
+  std::set<int> selectedObjects = m_selection.getSelectedObjects();
+  std::set<int>::iterator it;
+
   if (m_preset.getValue() != CUSTOM_WSTR) {
     m_preset.setValue(CUSTOM_WSTR);
     m_lastPreset = copyPerspectiveSet(m_perspectiveObjs);
+
+    for (it = selectedObjects.begin(); it != selectedObjects.end(); it++)
+      m_perspectiveObjs[*it]->setActive(false);
+
     loadLastPreset();
 
     m_propertyUpdating = true;
@@ -1048,8 +1063,6 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   }
 
   if (applyToSelection) {
-    std::set<int> selectedObjects = m_selection.getSelectedObjects();
-    std::set<int>::iterator it;
     for (it = selectedObjects.begin(); it != selectedObjects.end(); it++) {
       PerspectiveObject *obj = m_perspectiveObjs[*it];
       if (m_isShifting)
@@ -1188,9 +1201,16 @@ void PerspectiveTool::onDeactivate() {
 void PerspectiveTool::deleteSelectedObjects() {
   if (m_selection.isEmpty()) return;
 
+  std::set<int> selectedObjects = m_selection.getSelectedObjects();
+  std::set<int>::iterator it;
+
   if (m_preset.getValue() != CUSTOM_WSTR) {
     m_preset.setValue(CUSTOM_WSTR);
     m_lastPreset = copyPerspectiveSet(m_perspectiveObjs);
+
+    for (it = selectedObjects.begin(); it != selectedObjects.end(); it++)
+      m_perspectiveObjs[*it]->setActive(false);
+
     loadLastPreset();
 
     m_propertyUpdating = true;
@@ -1199,8 +1219,6 @@ void PerspectiveTool::deleteSelectedObjects() {
   }
 
   m_undo = new PerspectiveObjectUndo(m_perspectiveObjs, this);
-
-  std::set<int> selectedObjects = m_selection.getSelectedObjects();
 
   std::set<int>::reverse_iterator rit = selectedObjects.rbegin();
   for (; rit != selectedObjects.rend(); rit++) {
@@ -1220,8 +1238,25 @@ void PerspectiveTool::deleteSelectedObjects() {
 
 //----------------------------------------------------------------------------------------------
 
+void PerspectiveTool::setPerspectiveObjects(
+    std::vector<PerspectiveObject *> objs) {
+  m_perspectiveObjs = objs;
+  m_selection.selectNone();
+  m_lastPreset       = copyPerspectiveSet(m_perspectiveObjs);
+  m_mainControlIndex = -1;
+
+  if (m_preset.getValue() != CUSTOM_WSTR) {
+    m_preset.setValue(CUSTOM_WSTR);
+    m_propertyUpdating = true;
+    getApplication()->getCurrentTool()->notifyToolChanged();
+    m_propertyUpdating = false;
+  }
+}
+
+//----------------------------------------------------------------------------------------------
+
 std::vector<PerspectiveObject *> PerspectiveTool::copyPerspectiveSet(
-    std::vector<PerspectiveObject *> perspectiveSet) {
+    std::vector<PerspectiveObject *> perspectiveSet, bool keepStatus) {
   std::vector<PerspectiveObject *> copy;
 
   std::vector<PerspectiveObject *>::iterator it;
@@ -1254,6 +1289,7 @@ std::vector<PerspectiveObject *> PerspectiveTool::copyPerspectiveSet(
     newObject->setHorizon(currentObject->isHorizon());
     newObject->setParallel(currentObject->isParallel());
     newObject->setShowAdvancedControls(PerspectiveToolAdvancedControls);
+    if (keepStatus) newObject->setActive(currentObject->isActive());
 
     copy.push_back(newObject);
   }
@@ -1328,6 +1364,13 @@ void PerspectiveTool::removePreset() {
   m_presetsManager.removePreset(name);
 
   initPresets();
+
+  std::set<int> selectedObjects = m_selection.getSelectedObjects();
+  std::set<int>::iterator it;
+
+  for (it = selectedObjects.begin(); it != selectedObjects.end(); it++)
+    m_perspectiveObjs[*it]->setActive(false);
+  m_selection.selectNone();
 
   // No parameter change, and set the preset value to custom
   m_preset.setValue(CUSTOM_WSTR);
