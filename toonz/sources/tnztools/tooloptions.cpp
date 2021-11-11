@@ -2961,6 +2961,7 @@ PerspectiveGridToolOptionBox::PerspectiveGridToolOptionBox(
 
   m_perspectiveType =
       dynamic_cast<ToolOptionCombo *>(m_controls.value("Type:"));
+  m_horizon  = dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Horizon"));
   m_parallel = dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Parallel"));
   m_advancedControls =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Advanced Controls"));
@@ -2997,17 +2998,18 @@ void PerspectiveGridToolOptionBox::filterControls() {
   }
 
   m_parallel->setEnabled(isLineSelected);
+  m_horizon->setEnabled(isVanishingSelected || m_parallel->isChecked());
   m_advancedControls->setEnabled(isVanishingSelected);
 }
 
 //-----------------------------------------------------------------------------
 
 void PerspectiveGridToolOptionBox::updateStatus() {
-  filterControls();
-
   QMap<std::string, ToolOptionControl *>::iterator it;
   for (it = m_controls.begin(); it != m_controls.end(); it++)
     it.value()->updateStatus();
+
+  filterControls();
 }
 
 //-----------------------------------------------------------------------------

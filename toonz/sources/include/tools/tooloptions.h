@@ -758,7 +758,7 @@ class PerspectiveGridToolOptionBox final : public ToolOptionsBox {
   QPushButton *m_removePresetButton;
 
   ToolOptionCombo *m_perspectiveType;
-  ToolOptionCheckbox *m_parallel, *m_advancedControls;
+  ToolOptionCheckbox *m_parallel, *m_horizon, *m_advancedControls;
 
 private:
   class PresetNamePopup;

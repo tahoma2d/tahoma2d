@@ -735,8 +735,9 @@ void PerspectiveTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
 
     // Update toolbar options
     m_opacity.setValue(m_perspectiveObjs[controlIdx]->getOpacity());
-    m_horizon.setValue(m_perspectiveObjs[controlIdx]->isHorizon());
     m_color.setColor(m_perspectiveObjs[controlIdx]->getColor());
+    m_horizon.setValue(m_perspectiveObjs[controlIdx]->isHorizon());
+    m_parallel.setValue(m_perspectiveObjs[controlIdx]->isParallel());
     m_propertyUpdating = true;
     getApplication()->getCurrentTool()->notifyToolChanged();
     m_propertyUpdating = false;
