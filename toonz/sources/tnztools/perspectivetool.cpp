@@ -19,6 +19,7 @@
 
 #include <QApplication>
 #include <QDir>
+#include <QKeyEvent>
 
 #include <QDebug>
 
@@ -1155,6 +1156,49 @@ void PerspectiveTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
   m_isRightPivoting = false;
   m_isRightMoving   = false;
   m_selecting       = false;
+}
+
+//----------------------------------------------------------------------------------------------
+
+bool PerspectiveTool::keyDown(QKeyEvent *event) {
+  if (event->modifiers() & Qt::ControlModifier) {
+    if (event->key() == Qt::Key_A) {
+      for (int i = 0; i < m_perspectiveObjs.size(); i++) {
+        m_selection.select(i);
+        m_perspectiveObjs[i]->setActive(true);
+      }
+      m_selection.makeCurrent();
+      invalidate();
+      return true;
+    }
+  }
+
+  TPointD delta;
+
+  switch (event->key()) {
+  case Qt::Key_Up:
+    delta.y = 1;
+    break;
+  case Qt::Key_Down:
+    delta.y = -1;
+    break;
+  case Qt::Key_Left:
+    delta.x = -1;
+    break;
+  case Qt::Key_Right:
+    delta.x = 1;
+    break;
+  default:
+    return false;
+    break;
+  }
+
+  std::set<int> selectedObjects = m_selection.getSelectedObjects();
+  std::set<int>::iterator it;
+  for (it = selectedObjects.begin(); it != selectedObjects.end(); it++)
+    m_perspectiveObjs[*it]->shiftPerspectiveObject(delta);
+
+  return true;
 }
 
 //----------------------------------------------------------------------------------------------

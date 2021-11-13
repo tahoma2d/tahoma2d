@@ -409,6 +409,7 @@ public:
   void leftButtonDown(const TPointD &pos, const TMouseEvent &e) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override;
   void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
+  bool keyDown(QKeyEvent *event) override;
 
   bool onPropertyChanged(std::string propertyName) override;
 
