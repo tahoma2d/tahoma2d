@@ -50,12 +50,7 @@ public:
   void setCenterPoint(TPointD point) { m_centerPoint = point; }
   TPointD getCenterPoint() { return m_centerPoint; }
 
-  void setRotation(double angle) {
-    // Normalize the angle between 0 and 360
-    int a                          = (int)angle % 360;
-    m_rotation                     = (double)a + (angle - (int)angle);
-    if (m_rotation < 0) m_rotation = 360.0 + m_rotation;
-  }
+  void setRotation(double angle) { m_rotation = angle; }
   virtual double getRotation() { return m_rotation; }
 
   void setParallel(bool isParallel) { m_parallel = isParallel; }
@@ -357,7 +352,8 @@ public:
     setSpacing(10);
     setParallel(false);
     setMaxSpacing(180);
-    setRotationPos(TPointD(40, -20));
+    setRotationPos(TPointD(0, -40));
+    setSpacingPos(TPointD(40, -40));
   };
   ~VanishingPointPerspective(){};
 
@@ -468,7 +464,7 @@ protected:
 
   TPointD m_mousePos, m_firstPos;
 
-  double m_totalSpacing;
+  double m_totalChange;
 
   int m_mainControlIndex;
 

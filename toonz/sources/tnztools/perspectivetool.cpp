@@ -676,7 +676,7 @@ void PerspectiveTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
   m_isRightMoving   = false;
   m_selecting       = false;
 
-  m_totalSpacing = 0;
+  m_totalChange = 0;
 
   m_firstPos = pos;
 
@@ -883,8 +883,8 @@ TPointD calculateCenterPoint(TPointD leftHandlePos, TPointD leftPivotPos,
   return newCenterPoint;
 }
 
-TPointD calculateHorizonPoint(TPointD firstPoint, double rotation,
-                              double distance) {
+TPointD calculatePointOnLine(TPointD firstPoint, double rotation,
+                             double distance) {
   TPointD refPoint;
 
   double theta = rotation * (3.14159 / 180);
@@ -901,9 +901,11 @@ TPointD calculateHorizonPoint(TPointD firstPoint, double rotation,
 void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   if (!m_perspectiveObjs.size()) return;
 
+  TPointD usePos = pos;
+
   if (m_selecting) {
-    m_selectingRect.x1 = pos.x;
-    m_selectingRect.y1 = pos.y;
+    m_selectingRect.x1 = usePos.x;
+    m_selectingRect.y1 = usePos.y;
 
     TRectD rect(m_selectingRect);
     if (rect.x0 > rect.x1) std::swap(rect.x0, rect.x1);
@@ -949,40 +951,35 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   PerspectiveObject *mainObj = m_perspectiveObjs[m_mainControlIndex];
 
   TPointD centerPoint = mainObj->getCenterPoint();
-  TPointD dPos        = pos - m_firstPos;
+  TPointD rotationPos = mainObj->getRotationPos();
+  TPointD dPos        = usePos - m_firstPos;
   double dAngle       = 0.0;
   double dSpace       = 0.0;
 
   if (m_isRotating) {
-    TPointD a = m_firstPos - centerPoint;
-    TPointD b = pos - centerPoint;
+    TPointD newRotationPos = rotationPos + dPos;
 
-    double a2 = norm2(a), b2 = norm2(b);
-    const double eps = 1e-8;
-    if (a2 < eps || b2 < eps) return;
+    double dox    = rotationPos.x - centerPoint.x;
+    double doy    = rotationPos.y - centerPoint.y;
+    double oangle = std::atan2(doy, dox) / (3.14159 / 180);
 
-    dAngle = asin(cross(a, b) / sqrt(a2 * b2)) * M_180_PI;
+    double dnx    = newRotationPos.x - centerPoint.x;
+    double dny    = newRotationPos.y - centerPoint.y;
+    double nangle = std::atan2(dny, dnx) / (3.14159 / 180);
 
-    if (e.isAltPressed()) {
-      m_totalSpacing += dAngle;
-      if (std::abs(m_totalSpacing) >= 10) {
-        dAngle         = m_totalSpacing < 0 ? -15 : 15;
-        m_totalSpacing = 0;
-      } else
-        dAngle = 0;
-    }
+    dAngle = nangle - oangle;
   } else if (m_isSpacing) {
     double da = std::sqrt(std::pow(centerPoint.x - m_firstPos.x, 2) +
                           std::pow(centerPoint.y - m_firstPos.y, 2));
-    double db = std::sqrt(std::pow(centerPoint.x - pos.x, 2) +
-                          std::pow(centerPoint.y - pos.y, 2));
+    double db = std::sqrt(std::pow(centerPoint.x - usePos.x, 2) +
+                          std::pow(centerPoint.y - usePos.y, 2));
     dSpace = db - da;
 
     if (e.isAltPressed()) {
-      m_totalSpacing += dSpace;
-      if (std::abs(m_totalSpacing) >= 10) {
-        dSpace         = m_totalSpacing < 0 ? -10 : 10;
-        m_totalSpacing = 0;
+      m_totalChange += dSpace;
+      if (std::abs(m_totalChange) >= 10) {
+        dSpace        = m_totalChange < 0 ? -10 : 10;
+        m_totalChange = 0;
       } else
         dSpace = 0;
     }
@@ -999,17 +996,32 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
       // Also move Center Point
       TPointD newCenterPoint;
+      TPointD dPosCP;
       if (mainObj->isHorizon() && e.isAltPressed()) {
         TPointD otherHorizonPoint =
-            calculateHorizonPoint(centerPoint, mainObj->getRotation(), 100);
+            calculatePointOnLine(centerPoint, mainObj->getRotation(), 100);
         newCenterPoint = calculateCenterPoint(newPos, leftPivotPos, centerPoint,
                                               otherHorizonPoint);
       } else
         newCenterPoint = calculateCenterPoint(newPos, leftPivotPos,
                                               rightHandlePos, rightPivotPos);
-      if (!std::isnan(newCenterPoint.x) && !std::isnan(newCenterPoint.y))
+      if (!std::isnan(newCenterPoint.x) && !std::isnan(newCenterPoint.y)) {
+        dPosCP      = newCenterPoint - centerPoint;
         centerPoint = newCenterPoint;
+      }
       mainObj->setCenterPoint(centerPoint);
+
+      // Move Rotation control or recalculate Rotation Angle
+      if (mainObj->isHorizon() && e.isAltPressed())
+        mainObj->setRotationPos(rotationPos + dPosCP);
+      else {
+        double dx       = rotationPos.x - newCenterPoint.x;
+        double dy       = rotationPos.y - newCenterPoint.y;
+        double newAngle = std::atan2(dy, dx) / (3.14159 / 180);
+        if (mainObj->getType() == PerspectiveType::VanishingPoint)
+          newAngle += 90;
+        mainObj->setRotation(newAngle);
+      }
 
       // Check Right Handle
       rightHandlePos = calculateHandlePos(rightHandlePos, rightPivotPos,
@@ -1020,19 +1032,35 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
     } else if (m_isRightMoving) {
       TPointD newPos = rightHandlePos + dPos;
       mainObj->setRightHandlePos(newPos);
+
       // Also move Center Point
       TPointD newCenterPoint;
+      TPointD dPosCP;
       if (mainObj->isHorizon() && e.isAltPressed()) {
         TPointD otherHorizonPoint =
-            calculateHorizonPoint(centerPoint, mainObj->getRotation(), 100);
+            calculatePointOnLine(centerPoint, mainObj->getRotation(), 100);
         newCenterPoint = calculateCenterPoint(centerPoint, otherHorizonPoint,
                                               newPos, rightPivotPos);
       } else
         newCenterPoint = calculateCenterPoint(leftHandlePos, leftPivotPos,
                                               newPos, rightPivotPos);
-      if (!std::isnan(newCenterPoint.x) && !std::isnan(newCenterPoint.y))
+      if (!std::isnan(newCenterPoint.x) && !std::isnan(newCenterPoint.y)) {
+        dPosCP      = newCenterPoint - centerPoint;
         centerPoint = newCenterPoint;
+      }
       mainObj->setCenterPoint(centerPoint);
+
+      // Move Rotation control or recalculate Rotation Angle
+      if (mainObj->isHorizon() && e.isAltPressed())
+        mainObj->setRotationPos(rotationPos + dPosCP);
+      else {
+        double dx       = rotationPos.x - newCenterPoint.x;
+        double dy       = rotationPos.y - newCenterPoint.y;
+        double newAngle = std::atan2(dy, dx) / (3.14159 / 180);
+        if (mainObj->getType() == PerspectiveType::VanishingPoint)
+          newAngle += 90;
+        mainObj->setRotation(newAngle);
+      }
 
       // Check Left Handle
       leftHandlePos = calculateHandlePos(leftHandlePos, leftPivotPos,
@@ -1066,11 +1094,12 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   if (applyToSelection) {
     for (it = selectedObjects.begin(); it != selectedObjects.end(); it++) {
       PerspectiveObject *obj = m_perspectiveObjs[*it];
+      TPointD objCenterPoint = obj->getCenterPoint();
+      TPointD rotationPos    = obj->getRotationPos();
+
       if (m_isShifting)
         obj->shiftPerspectiveObject(dPos);
       else if (m_isCenterMoving) {  // Moving
-        TPointD objCenterPoint = obj->getCenterPoint();
-
         if (obj->isHorizon() && e.isAltPressed()) {
           double distance =
               std::sqrt(std::pow(dPos.x, 2) + std::pow(dPos.y, 2));
@@ -1082,11 +1111,23 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
                      (rotation == 270 && dPos.y > 0))
             distance *= -1;
           TPointD newCenter =
-              calculateHorizonPoint(objCenterPoint, rotation, distance);
+              calculatePointOnLine(objCenterPoint, rotation, distance);
           dPos = newCenter - objCenterPoint;
         }
 
-        obj->setCenterPoint(objCenterPoint + dPos);
+        TPointD newCenterPoint = objCenterPoint + dPos;
+        obj->setCenterPoint(newCenterPoint);
+
+        // Move Rotation control or recalculate Rotation Angle
+        if (obj->isHorizon() && e.isAltPressed())
+          obj->setRotationPos(rotationPos + dPos);
+        else {
+          double dx       = rotationPos.x - newCenterPoint.x;
+          double dy       = rotationPos.y - newCenterPoint.y;
+          double newAngle = std::atan2(dy, dx) / (3.14159 / 180);
+          if (obj->getType() == PerspectiveType::VanishingPoint) newAngle += 90;
+          obj->setRotation(newAngle);
+        }
 
         // Also Move Left and Right Handles
         if (obj->getType() == PerspectiveType::VanishingPoint) {
@@ -1104,18 +1145,27 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
           obj->setRightHandlePos(rightHandlePos);
         }
       } else if (m_isRotating) {
-        double rotation = obj->getRotation();
+        double rotation        = obj->getRotation();
+        TPointD newRotationPos = rotationPos + dPos;
+        double rot =
+            rotation +
+            ((obj->getType() == PerspectiveType::VanishingPoint) ? 270 : 0);
+        TPointD rotPos  = obj == mainObj ? usePos : rotationPos;
+        double distance = std::sqrt(std::pow((objCenterPoint.x - rotPos.x), 2) +
+                                    std::pow((objCenterPoint.y - rotPos.y), 2));
         if (e.isAltPressed()) {
-          // If not at 15deg angle, immediately shift to next angle depending on
-          // direction of movement
-          double snappedAngle = 15.0 * ((int)rotation / 15);
-          if (snappedAngle != rotation)
-            rotation = snappedAngle + (m_totalSpacing < 0 ? 0 : 15);
+          double ang = tfloor((int)((rot + dAngle) + 7.5), 15);
+          dAngle     = ang - rot;
+          newRotationPos =
+              calculatePointOnLine(objCenterPoint, (rot + dAngle), distance);
+          if (obj == mainObj)
+            usePos = dAngle == 0 ? m_firstPos : newRotationPos;
+        } else if (obj != mainObj) {
+          newRotationPos =
+              calculatePointOnLine(objCenterPoint, (rot + dAngle), distance);
         }
         obj->setRotation(rotation + dAngle);
-
-        TPointD rotationPos = obj->getRotationPos();
-        obj->setRotationPos(rotationPos + dPos);
+        obj->setRotationPos(newRotationPos);
       } else if (m_isSpacing) {
         double spacing = obj->getSpacing();
         obj->setSpacing(spacing + dSpace);
@@ -1127,7 +1177,7 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   }
 
   m_modified = true;
-  m_firstPos = pos;
+  m_firstPos = usePos;
 
   invalidate();
 }
@@ -1156,6 +1206,8 @@ void PerspectiveTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
   m_isRightPivoting = false;
   m_isRightMoving   = false;
   m_selecting       = false;
+
+  m_totalChange = 0;
 }
 
 //----------------------------------------------------------------------------------------------
