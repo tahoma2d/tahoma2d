@@ -898,6 +898,35 @@ TPointD calculatePointOnLine(TPointD firstPoint, double rotation,
   return refPoint;
 }
 
+double calculateSpacing(PerspectiveType perspectiveType, TPointD spacingPos,
+                        TPointD rotationPos, double rotation,
+                        TPointD centerPoint) {
+  double newSpace;
+
+  double dx       = spacingPos.x - centerPoint.x;
+  double dy       = spacingPos.y - centerPoint.y;
+  double distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
+  double angle    = std::atan2(dy, dx) / (3.14159 / 180);
+
+  if (perspectiveType == PerspectiveType::VanishingPoint) {
+    if (angle < 0) angle += 360;
+
+    double drx    = rotationPos.x - centerPoint.x;
+    double dry    = rotationPos.y - centerPoint.y;
+    double rangle = std::atan2(dry, drx) / (3.14159 / 180);
+    if (rangle < 0) rangle += 360;
+
+    newSpace                     = std::abs(rangle - angle);
+    if (newSpace > 180) newSpace = 360 - newSpace;
+  } else {  // Assumed Line
+    angle -= rotation;
+    TPointD normPos = calculatePointOnLine(centerPoint, angle, distance);
+    newSpace        = std::abs(normPos.y - centerPoint.y);
+  }
+
+  return newSpace;
+}
+
 void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   if (!m_perspectiveObjs.size()) return;
 
@@ -952,6 +981,7 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
   TPointD centerPoint = mainObj->getCenterPoint();
   TPointD rotationPos = mainObj->getRotationPos();
+  TPointD spacingPos  = mainObj->getSpacingPos();
   TPointD dPos        = usePos - m_firstPos;
   double dAngle       = 0.0;
   double dSpace       = 0.0;
@@ -969,19 +999,37 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
     dAngle = nangle - oangle;
   } else if (m_isSpacing) {
-    double da = std::sqrt(std::pow(centerPoint.x - m_firstPos.x, 2) +
-                          std::pow(centerPoint.y - m_firstPos.y, 2));
-    double db = std::sqrt(std::pow(centerPoint.x - usePos.x, 2) +
-                          std::pow(centerPoint.y - usePos.y, 2));
-    dSpace = db - da;
+    TPointD newSpacingPos = spacingPos + dPos;
+    double newSpace;
 
-    if (e.isAltPressed()) {
-      m_totalChange += dSpace;
-      if (std::abs(m_totalChange) >= 10) {
-        dSpace        = m_totalChange < 0 ? -10 : 10;
-        m_totalChange = 0;
-      } else
-        dSpace = 0;
+    if (mainObj->getType() == PerspectiveType::VanishingPoint) {
+      double dox    = spacingPos.x - centerPoint.x;
+      double doy    = spacingPos.y - centerPoint.y;
+      double oangle = std::atan2(doy, dox) / (3.14159 / 180);
+
+      double dnx    = newSpacingPos.x - centerPoint.x;
+      double dny    = newSpacingPos.y - centerPoint.y;
+      double nangle = std::atan2(dny, dnx) / (3.14159 / 180);
+      dAngle        = nangle - oangle;
+      if (nangle < 0) nangle += 360;
+
+      double drx    = rotationPos.x - centerPoint.x;
+      double dry    = rotationPos.y - centerPoint.y;
+      double rangle = std::atan2(dry, drx) / (3.14159 / 180);
+      if (rangle < 0) rangle += 360;
+
+      newSpace                     = std::abs(rangle - nangle);
+      if (newSpace > 180) newSpace = 360 - newSpace;
+      dSpace                       = newSpace - mainObj->getSpacing();
+    } else {  // Assumed Line
+      double dx       = newSpacingPos.x - centerPoint.x;
+      double dy       = newSpacingPos.y - centerPoint.y;
+      double distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
+      double angle    = std::atan2(dy, dx) / (3.14159 / 180);
+      angle -= mainObj->getRotation();
+      TPointD normPos = calculatePointOnLine(centerPoint, angle, distance);
+      newSpace        = std::abs(normPos.y - centerPoint.y);
+      dSpace          = newSpace - mainObj->getSpacing();
     }
   } else if (!m_isShifting &&
              mainObj->getType() == PerspectiveType::VanishingPoint) {
@@ -1011,16 +1059,24 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
       }
       mainObj->setCenterPoint(centerPoint);
 
-      // Move Rotation control or recalculate Rotation Angle
-      if (mainObj->isHorizon() && e.isAltPressed())
+      if (mainObj->isHorizon() && e.isAltPressed()) {
+        // Move Rotation/Space controls to maintain angle/spacing
         mainObj->setRotationPos(rotationPos + dPosCP);
-      else {
+        mainObj->setSpacingPos(spacingPos + dPosCP);
+      } else {
+        // Recalculate Angle
         double dx       = rotationPos.x - newCenterPoint.x;
         double dy       = rotationPos.y - newCenterPoint.y;
         double newAngle = std::atan2(dy, dx) / (3.14159 / 180);
         if (mainObj->getType() == PerspectiveType::VanishingPoint)
           newAngle += 90;
         mainObj->setRotation(newAngle);
+
+        // Recalculate Spacing
+        double newSpacing =
+            calculateSpacing(mainObj->getType(), spacingPos, rotationPos,
+                             mainObj->getRotation(), centerPoint);
+        mainObj->setSpacing(newSpacing);
       }
 
       // Check Right Handle
@@ -1050,16 +1106,24 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
       }
       mainObj->setCenterPoint(centerPoint);
 
-      // Move Rotation control or recalculate Rotation Angle
-      if (mainObj->isHorizon() && e.isAltPressed())
+      if (mainObj->isHorizon() && e.isAltPressed()) {
+        // Move Rotation/Space controls to maintain angle/spacing;
         mainObj->setRotationPos(rotationPos + dPosCP);
-      else {
+        mainObj->setSpacingPos(spacingPos + dPosCP);
+      } else {
+        // Recalculate Angle
         double dx       = rotationPos.x - newCenterPoint.x;
         double dy       = rotationPos.y - newCenterPoint.y;
         double newAngle = std::atan2(dy, dx) / (3.14159 / 180);
         if (mainObj->getType() == PerspectiveType::VanishingPoint)
           newAngle += 90;
         mainObj->setRotation(newAngle);
+
+        // Recalculate Spacing
+        double newSpacing =
+            calculateSpacing(mainObj->getType(), spacingPos, rotationPos,
+                             mainObj->getRotation(), centerPoint);
+        mainObj->setSpacing(newSpacing);
       }
 
       // Check Left Handle
@@ -1096,6 +1160,7 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
       PerspectiveObject *obj = m_perspectiveObjs[*it];
       TPointD objCenterPoint = obj->getCenterPoint();
       TPointD rotationPos    = obj->getRotationPos();
+      TPointD spacingPos     = obj->getSpacingPos();
 
       if (m_isShifting)
         obj->shiftPerspectiveObject(dPos);
@@ -1118,15 +1183,23 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
         TPointD newCenterPoint = objCenterPoint + dPos;
         obj->setCenterPoint(newCenterPoint);
 
-        // Move Rotation control or recalculate Rotation Angle
-        if (obj->isHorizon() && e.isAltPressed())
+        if (obj->isHorizon() && e.isAltPressed()) {
+          // Move Rotation/Space controls to maintain angle/spacing
           obj->setRotationPos(rotationPos + dPos);
-        else {
+          obj->setSpacingPos(spacingPos + dPos);
+        } else {
+          // Recalculate Angle
           double dx       = rotationPos.x - newCenterPoint.x;
           double dy       = rotationPos.y - newCenterPoint.y;
           double newAngle = std::atan2(dy, dx) / (3.14159 / 180);
           if (obj->getType() == PerspectiveType::VanishingPoint) newAngle += 90;
           obj->setRotation(newAngle);
+
+          // Recalculate Spacing
+          double newSpacing =
+              calculateSpacing(obj->getType(), spacingPos, rotationPos,
+                               obj->getRotation(), objCenterPoint);
+          obj->setSpacing(newSpacing);
         }
 
         // Also Move Left and Right Handles
@@ -1166,12 +1239,108 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
         }
         obj->setRotation(rotation + dAngle);
         obj->setRotationPos(newRotationPos);
-      } else if (m_isSpacing) {
-        double spacing = obj->getSpacing();
-        obj->setSpacing(spacing + dSpace);
 
-        TPointD spacingPos = obj->getSpacingPos();
-        obj->setSpacingPos(spacingPos + dPos);
+        // Move Spacing control to keep current spacing
+        distance = std::sqrt(std::pow((objCenterPoint.x - spacingPos.x), 2) +
+                             std::pow((objCenterPoint.y - spacingPos.y), 2));
+        double dx     = spacingPos.x - objCenterPoint.x;
+        double dy     = spacingPos.y - objCenterPoint.y;
+        double angle  = std::atan2(dy, dx) / (3.14159 / 180);
+        double nangle = angle + dAngle;
+
+        TPointD newSpacingPos =
+            calculatePointOnLine(objCenterPoint, nangle, distance);
+
+        obj->setSpacingPos(newSpacingPos);
+      } else if (m_isSpacing) {
+        double spacing        = obj->getSpacing();
+        TPointD newSpacingPos = spacingPos + dPos;
+        double delta          = dSpace;
+
+        TPointD pos     = obj == mainObj ? usePos : spacingPos;
+        double dx       = pos.x - objCenterPoint.x;
+        double dy       = pos.y - objCenterPoint.y;
+        double distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
+        double angle    = std::atan2(dy, dx) / (3.14159 / 180);
+
+        if (e.isAltPressed()) {
+          double space = tfloor((int)(spacing + delta + 5), 10);
+          delta        = space - spacing;
+
+          if (obj->getType() == PerspectiveType::VanishingPoint) {
+            double dx2    = newSpacingPos.x - objCenterPoint.x;
+            double dy2    = newSpacingPos.y - objCenterPoint.y;
+            double angle2 = std::atan2(dy2, dx2) / (3.14159 / 180);
+            if (angle2 < 0) angle2 += 360;
+
+            double drx    = rotationPos.x - objCenterPoint.x;
+            double dry    = rotationPos.y - objCenterPoint.y;
+            double rangle = std::atan2(dry, drx) / (3.14159 / 180);
+            if (rangle < 0) rangle += 360;
+
+            double diffAngle = angle2 - rangle;
+            if (diffAngle < 0) diffAngle += 360;
+
+            double newAngle = spacing + delta + 270;
+            if (newAngle < 0) newAngle += 360;
+
+            if (diffAngle > 180) {
+              newAngle *= -1;
+              distance *= -1;
+            }
+            newAngle += obj->getRotation();
+
+            newSpacingPos =
+                calculatePointOnLine(objCenterPoint, newAngle, distance);
+          } else {  // Assumed Line
+            angle -= obj->getRotation();
+            TPointD normPos =
+                calculatePointOnLine(objCenterPoint, angle, distance);
+            dy = spacing + delta;
+            if ((normPos.y - objCenterPoint.y) < 0) dy *= -1;
+            dx       = normPos.x - objCenterPoint.x;
+            distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
+            angle    = std::atan2(dy, dx) / (3.14159 / 180);
+            angle += obj->getRotation();
+            newSpacingPos =
+                calculatePointOnLine(objCenterPoint, angle, distance);
+          }
+
+          if (obj == mainObj) usePos = delta == 0 ? m_firstPos : newSpacingPos;
+
+        } else if (obj != mainObj) {
+          if (obj->getType() == PerspectiveType::VanishingPoint) {
+            double nangle = angle + dAngle;
+
+            newSpacingPos =
+                calculatePointOnLine(objCenterPoint, nangle, distance);
+            if (nangle < 0) nangle += 360;
+
+            double drx    = rotationPos.x - objCenterPoint.x;
+            double dry    = rotationPos.y - objCenterPoint.y;
+            double rangle = std::atan2(dry, drx) / (3.14159 / 180);
+            if (rangle < 0) rangle += 360;
+
+            double newSpace              = std::abs(rangle - nangle);
+            if (newSpace > 180) newSpace = 360 - newSpace;
+            delta                        = newSpace - spacing;
+          } else {  // Assumed line
+            angle -= obj->getRotation();
+            TPointD normPos =
+                calculatePointOnLine(objCenterPoint, angle, distance);
+            dy = spacing + delta;
+            if ((normPos.y - objCenterPoint.y) < 0) dy *= -1;
+            dx       = normPos.x - objCenterPoint.x;
+            distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
+            angle    = std::atan2(dy, dx) / (3.14159 / 180);
+            angle += obj->getRotation();
+            newSpacingPos =
+                calculatePointOnLine(objCenterPoint, angle, distance);
+          }
+        }
+
+        obj->setSpacing(spacing + delta);
+        obj->setSpacingPos(newSpacingPos);
       }
     }
   }
@@ -1541,6 +1710,8 @@ void VanishingPointPerspective::draw(SceneViewer *viewer, TRectD cameraRect) {
       std::sqrt(std::pow(distance, 2) + std::pow(distance, 2));
 
   double step            = getSpacing();
+  step                   = std::min(step, getMaxSpacing());
+  step                   = std::max(step, getMinSpacing());
   int rays               = isHorizon() ? totalDistance : (360 / step);
   if (rays == 0) rays    = 1;
   if (!isHorizon()) step = 360.0 / (double)rays;
@@ -1719,20 +1890,16 @@ void LinePerspective::draw(SceneViewer *viewer, TRectD cameraRect) {
 
   // Draw lines above/below control point
   if (isParallel()) {
-    TPointD above    = p;
-    TPointD below    = p;
-    double distance  = 0.0;
-    double step      = getSpacing();
+    TPointD above         = p;
+    TPointD below         = p;
+    double step           = getSpacing();
+    step                  = std::min(step, getMaxSpacing());
+    step                  = std::max(step, getMinSpacing());
+    double distanceFromCP = step;
+
     double stepspeed = isHorizon() ? 1.5 : 1.0;
 
-    double distanceFromCP = 0.0;
-
-    while (std::abs(distanceFromCP) <= totalDistance) {
-      distance += (step * stepspeed);
-      step = step * stepspeed;
-
-      distanceFromCP = distance / Stage::standardDpi * Stage::inch;
-
+    while (distanceFromCP <= totalDistance) {
       if (!isHorizon()) {
         above.y = p.y + (std::cos(-theta) * distanceFromCP);
         above.x = p.x + (std::sin(-theta) * distanceFromCP);
@@ -1750,6 +1917,9 @@ void LinePerspective::draw(SceneViewer *viewer, TRectD cameraRect) {
       end.x   = below.x + xLength;
       end.y   = below.y + yLength;
       tglDrawSegment(start, end);
+
+      distanceFromCP += (step * stepspeed);
+      step = step * stepspeed;
     }
   }
 

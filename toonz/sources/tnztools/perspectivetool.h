@@ -56,14 +56,12 @@ public:
   void setParallel(bool isParallel) { m_parallel = isParallel; }
   bool isParallel() { return m_parallel; }
 
-  void setSpacing(double space) {
-    m_spacing = space;
-    m_spacing = std::min(m_spacing, m_maxSpacing);
-    m_spacing = std::max(m_spacing, m_minSpacing);
-  }
+  void setSpacing(double space) { m_spacing = space; }
   virtual double getSpacing() { return m_spacing; }
   void setMinSpacing(int minSpace) { m_minSpacing = minSpace; }
+  virtual double getMinSpacing() { return m_minSpacing; }
   void setMaxSpacing(int maxSpace) { m_maxSpacing = maxSpace; }
+  virtual double getMaxSpacing() { return m_maxSpacing; }
 
   void setHorizon(bool isHorizon) { m_horizon = isHorizon; }
   bool isHorizon() { return m_horizon; }
@@ -79,7 +77,7 @@ protected:
   TPointD m_centerPoint;
   double m_rotation;
   bool m_parallel;
-  double m_spacing, m_minSpacing = 1.0, m_maxSpacing = 250.0;
+  double m_spacing, m_minSpacing = 1.0, m_maxSpacing = UINT_MAX;
   bool m_horizon;
   double m_opacity;
   TPixel32 m_color;
@@ -349,20 +347,20 @@ class VanishingPointPerspective final : public PerspectiveObject {
 public:
   VanishingPointPerspective()
       : PerspectiveObject(PerspectiveType::VanishingPoint) {
-    setSpacing(10);
+    setSpacing(27);
     setParallel(false);
     setMaxSpacing(180);
     setRotationPos(TPointD(0, -40));
-    setSpacingPos(TPointD(40, -40));
+    setSpacingPos(TPointD(20, -40));
   };
   ~VanishingPointPerspective(){};
 
   void draw(SceneViewer *viewer, TRectD cameraRect) override;
 
-  double getSpacing() override {
-    if (isHorizon()) return std::min(m_spacing, 90.0);
+  double getMaxSpacing() override {
+    if (isHorizon()) return 90.0;
 
-    return m_spacing;
+    return m_maxSpacing;
   }
 
   TPointD getReferencePoint(TPointD firstPoint) override {
@@ -377,7 +375,7 @@ public:
 class LinePerspective final : public PerspectiveObject {
 public:
   LinePerspective() : PerspectiveObject(PerspectiveType::Line) {
-    setSpacing(30);
+    setSpacing(40);
   };
   ~LinePerspective(){};
 
