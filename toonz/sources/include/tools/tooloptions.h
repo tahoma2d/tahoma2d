@@ -12,6 +12,7 @@
 // TnzCore includes
 #include "tcommon.h"
 #include "tproperty.h"
+#include "tunit.h"
 
 // Qt includes
 #include <QFrame>
@@ -753,12 +754,15 @@ class PerspectiveGridToolOptionBox final : public ToolOptionsBox {
 
   TTool *m_tool;
 
-  ToolOptionCombo *m_presetCombo;
-  QPushButton *m_addPresetButton;
-  QPushButton *m_removePresetButton;
-
   ToolOptionCombo *m_perspectiveType;
-  ToolOptionCheckbox *m_parallel, *m_horizon, *m_advancedControls;
+  ToolOptionSlider *m_opacity;
+  ColorChipCombo *m_color;
+  ToolOptionCheckbox *m_horizon, *m_parallel, *m_advancedControls;
+  QLabel *m_rotationLabel, *m_spacingLabel;
+  MeasuredValueField *m_rotation, *m_spacing;
+  ToolOptionCombo *m_presetCombo;
+  QPushButton *m_addPresetButton, *m_removePresetButton, *m_leftRotateButton,
+      *m_rightRotateButton;
 
 private:
   class PresetNamePopup;
@@ -770,12 +774,17 @@ public:
                                TPaletteHandle *pltHandle,
                                ToolHandle *toolHandle);
   void updateStatus();
+  void updateMeasuredValues(double spacing, double rotation);
 
 protected slots:
 
   void onAddPreset();
   void onRemovePreset();
   void onPerspectiveTypeChanged(int);
+  void onSpacingChange(TMeasuredValue *fld);
+  void onRotationChange(TMeasuredValue *fld);
+  void onRotateLeft();
+  void onRotateRight();
 };
 
 //=============================================================================

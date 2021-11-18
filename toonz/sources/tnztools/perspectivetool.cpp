@@ -560,6 +560,11 @@ TPropertyGroup *PerspectiveTool::getProperties(int idx) {
   return &m_prop;
 }
 
+void PerspectiveTool::setToolOptionsBox(
+    PerspectiveGridToolOptionBox *toolOptionsBox) {
+  m_toolOptionsBox.push_back(toolOptionsBox);
+}
+
 //----------------------------------------------------------------------------------------------
 
 bool PerspectiveTool::onPropertyChanged(std::string propertyName) {
@@ -578,9 +583,7 @@ bool PerspectiveTool::onPropertyChanged(std::string propertyName) {
     else  // Chose <custom>, go back to last preset
       loadLastPreset();
 
-    m_propertyUpdating = true;
-    getApplication()->getCurrentTool()->notifyToolChanged();
-    m_propertyUpdating = false;
+    updateToolOptionValues();
     return true;
   }
 
@@ -603,9 +606,7 @@ bool PerspectiveTool::onPropertyChanged(std::string propertyName) {
 
     loadLastPreset();
 
-    m_propertyUpdating = true;
-    getApplication()->getCurrentTool()->notifyToolChanged();
-    m_propertyUpdating = false;
+    updateToolOptionValues();
   }
 
   if (selectedObjects.size() && !m_undo)
@@ -714,10 +715,8 @@ void PerspectiveTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       }
       m_selection.makeCurrent();
       invalidateControl(controlIdx);
-      m_modified         = true;
-      m_propertyUpdating = true;
-      getApplication()->getCurrentTool()->notifyToolChanged();
-      m_propertyUpdating = false;
+      m_modified = true;
+      updateToolOptionValues();
       return;
     }
 
@@ -726,8 +725,10 @@ void PerspectiveTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
     if (e.isShiftPressed()) m_isShifting = true;
 
     // Hit a control while not pressing Ctrl and is already active: Do nothing
-    if (m_perspectiveObjs[controlIdx]->isActive()) return;
-
+    if (m_perspectiveObjs[controlIdx]->isActive()) {
+      updateToolOptionValues();
+      return;
+    }
     // Hit a control while not pressing Ctrl: Clear selection and make current
     // active
     for (int i = 0; i < m_perspectiveObjs.size(); i++)
@@ -743,13 +744,7 @@ void PerspectiveTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
     invalidateControl(controlIdx);
 
     // Update toolbar options
-    m_opacity.setValue(m_perspectiveObjs[controlIdx]->getOpacity());
-    m_color.setColor(m_perspectiveObjs[controlIdx]->getColor());
-    m_horizon.setValue(m_perspectiveObjs[controlIdx]->isHorizon());
-    m_parallel.setValue(m_perspectiveObjs[controlIdx]->isParallel());
-    m_propertyUpdating = true;
-    getApplication()->getCurrentTool()->notifyToolChanged();
-    m_propertyUpdating = false;
+    updateToolOptionValues();
 
     return;
   } else {
@@ -776,6 +771,7 @@ void PerspectiveTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
     m_selection.selectNone();
     if (wasSelected > 1) {
       m_mainControlIndex = -1;
+      updateToolOptionValues();
       return;
     }
   }
@@ -785,9 +781,7 @@ void PerspectiveTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
     m_lastPreset = copyPerspectiveSet(m_perspectiveObjs);
     loadLastPreset();
 
-    m_propertyUpdating = true;
-    getApplication()->getCurrentTool()->notifyToolChanged();
-    m_propertyUpdating = false;
+    updateToolOptionValues();
   }
 
   m_undo = new PerspectiveObjectUndo(m_perspectiveObjs, this);
@@ -829,9 +823,7 @@ void PerspectiveTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
   m_isShifting = true;  // Allow click and shift
   m_modified   = true;
 
-  m_propertyUpdating = true;
-  getApplication()->getCurrentTool()->notifyToolChanged();
-  m_propertyUpdating = false;
+  updateToolOptionValues();
 
   invalidate();
 }
@@ -927,6 +919,41 @@ double calculateSpacing(PerspectiveType perspectiveType, TPointD spacingPos,
   return newSpace;
 }
 
+TPointD calculateSpacingPos(PerspectiveType perspectiveType, double newSpace,
+                            double rotation, TPointD oldSpacingPos,
+                            TPointD rotationPos, TPointD centerPoint) {
+  TPointD newSpacingPos;
+
+  double dx       = oldSpacingPos.x - centerPoint.x;
+  double dy       = oldSpacingPos.y - centerPoint.y;
+  double distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
+
+  double angle;
+
+  if (perspectiveType == PerspectiveType::VanishingPoint) {
+    double drx    = rotationPos.x - centerPoint.x;
+    double dry    = rotationPos.y - centerPoint.y;
+    double rangle = std::atan2(dry, drx) / (3.14159 / 180);
+    if (rangle < 0) rangle += 360;
+
+    angle = rangle + newSpace;
+  } else {  // Assumed Line
+    angle = std::atan2(dy, dx) / (3.14159 / 180);
+    angle -= rotation;
+    TPointD normPos = calculatePointOnLine(centerPoint, angle, distance);
+    dy              = newSpace;
+    if ((normPos.y - centerPoint.y) < 0) dy *= -1;
+    dx       = normPos.x - centerPoint.x;
+    distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
+    angle    = std::atan2(dy, dx) / (3.14159 / 180);
+    angle += rotation;
+  }
+
+  newSpacingPos = calculatePointOnLine(centerPoint, angle, distance);
+
+  return newSpacingPos;
+}
+
 void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   if (!m_perspectiveObjs.size()) return;
 
@@ -968,9 +995,7 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
     loadLastPreset();
 
-    m_propertyUpdating = true;
-    getApplication()->getCurrentTool()->notifyToolChanged();
-    m_propertyUpdating = false;
+    updateToolOptionValues();
   }
 
   if (!m_undo) m_undo = new PerspectiveObjectUndo(m_perspectiveObjs, this);
@@ -1063,6 +1088,8 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
         // Move Rotation/Space controls to maintain angle/spacing
         mainObj->setRotationPos(rotationPos + dPosCP);
         mainObj->setSpacingPos(spacingPos + dPosCP);
+
+        updateMeasuredValueToolOptions();
       } else {
         // Recalculate Angle
         double dx       = rotationPos.x - newCenterPoint.x;
@@ -1077,6 +1104,7 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
             calculateSpacing(mainObj->getType(), spacingPos, rotationPos,
                              mainObj->getRotation(), centerPoint);
         mainObj->setSpacing(newSpacing);
+        updateMeasuredValueToolOptions();
       }
 
       // Check Right Handle
@@ -1110,6 +1138,7 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
         // Move Rotation/Space controls to maintain angle/spacing;
         mainObj->setRotationPos(rotationPos + dPosCP);
         mainObj->setSpacingPos(spacingPos + dPosCP);
+        updateMeasuredValueToolOptions();
       } else {
         // Recalculate Angle
         double dx       = rotationPos.x - newCenterPoint.x;
@@ -1124,6 +1153,7 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
             calculateSpacing(mainObj->getType(), spacingPos, rotationPos,
                              mainObj->getRotation(), centerPoint);
         mainObj->setSpacing(newSpacing);
+        updateMeasuredValueToolOptions();
       }
 
       // Check Left Handle
@@ -1200,6 +1230,7 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
               calculateSpacing(obj->getType(), spacingPos, rotationPos,
                                obj->getRotation(), objCenterPoint);
           obj->setSpacing(newSpacing);
+          if (obj == mainObj) updateMeasuredValueToolOptions();
         }
 
         // Also Move Left and Right Handles
@@ -1241,10 +1272,9 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
         obj->setRotationPos(newRotationPos);
 
         // Move Spacing control to keep current spacing
-        distance = std::sqrt(std::pow((objCenterPoint.x - spacingPos.x), 2) +
-                             std::pow((objCenterPoint.y - spacingPos.y), 2));
         double dx     = spacingPos.x - objCenterPoint.x;
         double dy     = spacingPos.y - objCenterPoint.y;
+        distance      = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
         double angle  = std::atan2(dy, dx) / (3.14159 / 180);
         double nangle = angle + dAngle;
 
@@ -1252,6 +1282,8 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
             calculatePointOnLine(objCenterPoint, nangle, distance);
 
         obj->setSpacingPos(newSpacingPos);
+
+        if (obj == mainObj) updateMeasuredValueToolOptions();
       } else if (m_isSpacing) {
         double spacing        = obj->getSpacing();
         TPointD newSpacingPos = spacingPos + dPos;
@@ -1341,6 +1373,8 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
         obj->setSpacing(spacing + delta);
         obj->setSpacingPos(newSpacingPos);
+
+        if (obj == mainObj) updateMeasuredValueToolOptions();
       }
     }
   }
@@ -1390,6 +1424,7 @@ bool PerspectiveTool::keyDown(QKeyEvent *event) {
       }
       m_selection.makeCurrent();
       invalidate();
+      updateToolOptionValues();
       return true;
     }
   }
@@ -1477,10 +1512,6 @@ void PerspectiveTool::deleteSelectedObjects() {
       m_perspectiveObjs[*it]->setActive(false);
 
     loadLastPreset();
-
-    m_propertyUpdating = true;
-    getApplication()->getCurrentTool()->notifyToolChanged();
-    m_propertyUpdating = false;
   }
 
   m_undo = new PerspectiveObjectUndo(m_perspectiveObjs, this);
@@ -1499,6 +1530,8 @@ void PerspectiveTool::deleteSelectedObjects() {
   m_undo = 0;
 
   invalidate();
+
+  updateToolOptionValues();
 }
 
 //----------------------------------------------------------------------------------------------
@@ -1510,12 +1543,9 @@ void PerspectiveTool::setPerspectiveObjects(
   m_lastPreset       = copyPerspectiveSet(m_perspectiveObjs);
   m_mainControlIndex = -1;
 
-  if (m_preset.getValue() != CUSTOM_WSTR) {
-    m_preset.setValue(CUSTOM_WSTR);
-    m_propertyUpdating = true;
-    getApplication()->getCurrentTool()->notifyToolChanged();
-    m_propertyUpdating = false;
-  }
+  if (m_preset.getValue() != CUSTOM_WSTR) m_preset.setValue(CUSTOM_WSTR);
+
+  updateToolOptionValues();
 }
 
 //----------------------------------------------------------------------------------------------
@@ -1649,6 +1679,126 @@ void PerspectiveTool::loadLastPreset() {
   onPropertyChanged(m_advancedControls.getName());
 
   invalidate();
+}
+
+//----------------------------------------------------------------------------------------------
+
+void PerspectiveTool::updateSpacing(double space) {
+  if (m_selection.isEmpty()) return;
+
+  m_undo = new PerspectiveObjectUndo(m_perspectiveObjs, this);
+
+  std::set<int> selectedObjects = m_selection.getSelectedObjects();
+  std::set<int>::iterator it;
+
+  for (it = selectedObjects.begin(); it != selectedObjects.end(); it++) {
+    PerspectiveObject *obj = m_perspectiveObjs[*it];
+
+    obj->setSpacing(space);
+
+    // Move Spacing Control
+    TPointD newSpacingPos = calculateSpacingPos(
+        obj->getType(), space, obj->getRotation(), obj->getSpacingPos(),
+        obj->getRotationPos(), obj->getCenterPoint());
+    obj->setSpacingPos(newSpacingPos);
+  }
+
+  m_undo->setRedoData(m_perspectiveObjs);
+  TUndoManager::manager()->add(m_undo);
+  m_undo = 0;
+  invalidate();
+}
+
+//----------------------------------------------------------------------------------------------
+
+void PerspectiveTool::updateRotation(double rotation) {
+  if (m_selection.isEmpty()) return;
+
+  m_undo = new PerspectiveObjectUndo(m_perspectiveObjs, this);
+
+  std::set<int> selectedObjects = m_selection.getSelectedObjects();
+  std::set<int>::iterator it;
+
+  for (it = selectedObjects.begin(); it != selectedObjects.end(); it++) {
+    PerspectiveObject *obj = m_perspectiveObjs[*it];
+
+    TPointD centerPoint    = obj->getCenterPoint();
+    TPointD oldRotationPos = obj->getRotationPos();
+    double oldRotation     = obj->getRotation();
+
+    obj->setRotation(rotation);
+
+    // Move Rotation Control
+    double dx           = oldRotationPos.x - centerPoint.x;
+    double dy           = oldRotationPos.y - centerPoint.y;
+    double distance     = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
+    double controlAngle = rotation;
+    double oldAngle     = oldRotation;
+    if (obj->getType() == PerspectiveType::VanishingPoint) {
+      controlAngle += 270;
+      oldAngle += 270;
+    }
+    double deltaAngle = controlAngle - oldAngle;
+
+    TPointD newRotationPos =
+        calculatePointOnLine(centerPoint, controlAngle, distance);
+    obj->setRotationPos(newRotationPos);
+
+    // Also move Spacing Control to maintain current spacing
+    TPointD oldSpacingPos = obj->getSpacingPos();
+    dx                    = oldSpacingPos.x - centerPoint.x;
+    dy                    = oldSpacingPos.y - centerPoint.y;
+    distance              = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
+    double space          = obj->getSpacing();
+    controlAngle          = std::atan2(dy, dx) / (3.14159 / 180);
+    controlAngle += deltaAngle;
+    TPointD newSpacingPos =
+        calculatePointOnLine(centerPoint, controlAngle, distance);
+    obj->setSpacingPos(newSpacingPos);
+  }
+
+  m_undo->setRedoData(m_perspectiveObjs);
+  TUndoManager::manager()->add(m_undo);
+  m_undo = 0;
+  invalidate();
+}
+
+//----------------------------------------------------------------------------------------------
+
+void PerspectiveTool::updateMeasuredValueToolOptions() {
+  double spacing = 0, rotation = 0;
+  if (m_mainControlIndex != -1 &&
+      m_mainControlIndex < m_perspectiveObjs.size()) {
+    PerspectiveObject *obj = m_perspectiveObjs[m_mainControlIndex];
+    if (obj) {
+      spacing  = obj->getSpacing();
+      rotation = obj->getRotation();
+    }
+  }
+
+  for (int i = 0; i < (int)m_toolOptionsBox.size(); i++)
+    m_toolOptionsBox[i]->updateMeasuredValues(spacing, rotation);
+}
+
+//----------------------------------------------------------------------------------------------
+
+void PerspectiveTool::updateToolOptionValues() {
+  if (m_mainControlIndex != -1 &&
+      m_mainControlIndex < m_perspectiveObjs.size()) {
+    PerspectiveObject *obj = m_perspectiveObjs[m_mainControlIndex];
+    if (obj) {
+      m_opacity.setValue(obj->getOpacity());
+      m_color.setColor(obj->getColor());
+      m_horizon.setValue(obj->isHorizon());
+      m_parallel.setValue(obj->isParallel());
+    }
+  }
+
+  updateMeasuredValueToolOptions();
+
+  m_propertyUpdating = true;
+  getApplication()->getCurrentTool()->notifyToolChanged();
+  m_propertyUpdating = false;
 }
 
 //----------------------------------------------------------------------------------------------

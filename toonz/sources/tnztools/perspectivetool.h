@@ -411,11 +411,21 @@ public:
 
   TPropertyGroup *getProperties(int targetType) override;
 
+  void setToolOptionsBox(PerspectiveGridToolOptionBox *toolOptionsBox);
+
   void deleteSelectedObjects();
 
   void setPerspectiveObjects(std::vector<PerspectiveObject *> objs);
   std::vector<PerspectiveObject *> getPerspectiveObjects() {
     return m_perspectiveObjs;
+  }
+
+  PerspectiveObject *getMainPerspectiveObject() {
+    if (m_mainControlIndex < 0 ||
+        m_mainControlIndex >= m_perspectiveObjs.size())
+      return 0;
+
+    return m_perspectiveObjs[m_mainControlIndex];
   }
 
   std::vector<PerspectiveObject *> copyPerspectiveSet(
@@ -432,8 +442,15 @@ public:
   void removePreset();
   void loadLastPreset();
 
+  void updateSpacing(double space);
+  void updateRotation(double rotation);
+
+  void updateMeasuredValueToolOptions();
+  void updateToolOptionValues();
+
 protected:
   TPropertyGroup m_prop;
+  std::vector<PerspectiveGridToolOptionBox *> m_toolOptionsBox;
 
   TEnumProperty m_type;
   TDoubleProperty m_opacity;
