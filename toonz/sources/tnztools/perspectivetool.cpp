@@ -1194,13 +1194,11 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
       TPointD rotationPos    = obj->getRotationPos();
       TPointD spacingPos     = obj->getSpacingPos();
 
-      if (m_isShifting)
-        obj->shiftPerspectiveObject(dPos);
-      else if (m_isCenterMoving) {  // Moving
+      if (m_isShifting) {
         if (obj->isHorizon() && e.isAltPressed()) {
           double distance =
               std::sqrt(std::pow(dPos.x, 2) + std::pow(dPos.y, 2));
-          double rotation = mainObj->getRotation();
+          double rotation = obj->getRotation();
           if (rotation != 90 && rotation != 270) {
             if (dPos.x < 0) distance *= -1;
             if (rotation > 90 && rotation < 270) distance *= -1;
@@ -1212,28 +1210,24 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
           dPos = newCenter - objCenterPoint;
         }
 
+        obj->shiftPerspectiveObject(dPos);
+      } else if (m_isCenterMoving) {  // Moving
         TPointD newCenterPoint = objCenterPoint + dPos;
         obj->setCenterPoint(newCenterPoint);
 
-        if (obj->isHorizon() && e.isAltPressed()) {
-          // Move Rotation/Space controls to maintain angle/spacing
-          obj->setRotationPos(rotationPos + dPos);
-          obj->setSpacingPos(spacingPos + dPos);
-        } else {
-          // Recalculate Angle
-          double dx       = rotationPos.x - newCenterPoint.x;
-          double dy       = rotationPos.y - newCenterPoint.y;
-          double newAngle = std::atan2(dy, dx) / (3.14159 / 180);
-          if (obj->getType() == PerspectiveType::VanishingPoint) newAngle += 90;
-          obj->setRotation(newAngle);
+        // Recalculate Angle
+        double dx       = rotationPos.x - newCenterPoint.x;
+        double dy       = rotationPos.y - newCenterPoint.y;
+        double newAngle = std::atan2(dy, dx) / (3.14159 / 180);
+        if (obj->getType() == PerspectiveType::VanishingPoint) newAngle += 90;
+        obj->setRotation(newAngle);
 
-          // Recalculate Spacing
-          double newSpacing =
-              calculateSpacing(obj->getType(), spacingPos, rotationPos,
-                               obj->getRotation(), objCenterPoint);
-          obj->setSpacing(newSpacing);
-          if (obj == mainObj) updateMeasuredValueToolOptions();
-        }
+        // Recalculate Spacing
+        double newSpacing =
+            calculateSpacing(obj->getType(), spacingPos, rotationPos,
+                             obj->getRotation(), objCenterPoint);
+        obj->setSpacing(newSpacing);
+        if (obj == mainObj) updateMeasuredValueToolOptions();
 
         // Also Move Left and Right Handles
         if (obj->getType() == PerspectiveType::VanishingPoint) {

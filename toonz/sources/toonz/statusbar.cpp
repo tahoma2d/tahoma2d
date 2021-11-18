@@ -346,16 +346,20 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
   lMap.insert({"T_Ruler", tr("Ruler Tool: Measures distances on the canvas")});
   lMap.insert({"T_PerspectiveGrid",
                tr("Perspective Grid Tool: Set up perspective grids") + spacer +
-                   tr("%1%2Move Perspective Objects")
+                   tr("%1%2Move entire object")
                        .arg(trModKey("Shift"))
                        .arg(cmdTextSeparator) +
                    spacer +
-                   tr("%1%2Select/Deselect multiple; +A to Select All")
+                   tr("%1%2Select/Deselect multiple")
                        .arg(trModKey("Ctrl"))
                        .arg(cmdTextSeparator) +
                    spacer +
-                   tr("%1%2Snap rotation/space; Move center along horizon")
+                   tr("%1%2Snap rotation/spacing")
                        .arg(trModKey("Alt"))
+                       .arg(cmdTextSeparator) +
+                   spacer +
+                   tr("%1%2Move object along horizon")
+                       .arg(trModKey("Shift+Alt"))
                        .arg(cmdTextSeparator)});
   lMap.insert(
       {"T_Finger", tr("Finger Tool: Smudges small areas to cover with line")});
