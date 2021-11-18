@@ -51,6 +51,11 @@ class TXsheetHandle;
 class SelectionTool;
 class ToolHandle;
 
+namespace ToolOptionsControls {
+// calculate maximum field size (once) with 10 pixels margin
+int getMaximumWidthForMeasuredValueField(QWidget *widget);
+}  // namespace
+
 //***********************************************************************************
 //    ToolOptionControl  declaration
 //***********************************************************************************

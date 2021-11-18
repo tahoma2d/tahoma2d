@@ -62,6 +62,8 @@
 #include <QEasingCurve>
 #include <QStackedWidget>
 
+using namespace ToolOptionsControls;
+
 TEnv::IntVar ArrowGlobalKeyFrame("EditToolGlobalKeyFrame", 0);
 
 //=============================================================================
@@ -2955,15 +2957,17 @@ PerspectiveGridToolOptionBox::PerspectiveGridToolOptionBox(
       dynamic_cast<TDoubleProperty *>(props->getProperty("Opacity:"));
   m_opacity = new ToolOptionSlider(tool, opacity, toolHandle);
 
+  int fieldMaxWidth;
+
   m_spacingLabel = new QLabel(tr("Spacing:"), this);
   m_spacing      = new MeasuredValueField(this);
   m_spacing->setMeasure("");
-  m_spacing->setMaximumWidth(50);
+  m_spacing->setMaximumWidth(getMaximumWidthForMeasuredValueField(m_spacing));
 
   m_rotationLabel = new QLabel(tr("Rotation:"), this);
   m_rotation      = new MeasuredValueField(this);
   m_rotation->setMeasure("angle");
-  m_rotation->setMaximumWidth(50);
+  m_rotation->setMaximumWidth(getMaximumWidthForMeasuredValueField(m_rotation));
 
   m_leftRotateButton  = new QPushButton(this);
   m_rightRotateButton = new QPushButton(this);

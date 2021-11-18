@@ -42,6 +42,12 @@
 #include "tooloptionscontrols.h"
 
 using namespace DVGui;
+using namespace ToolOptionsControls;
+
+int ToolOptionsControls::getMaximumWidthForMeasuredValueField(QWidget *widget) {
+  static int fieldMaxWidth = widget->fontMetrics().width("-0000.00 field") + 10;
+  return fieldMaxWidth;
+}
 
 //***********************************************************************************
 //    ToolOptionControl  implementation
@@ -941,14 +947,6 @@ void MeasuredValueField::receiveMouseRelease(QMouseEvent *e) {
 
 //=============================================================================
 
-namespace {
-// calculate maximum field size (once) with 10 pixels margin
-int getMaximumWidthForEditToolField(QWidget *widget) {
-  static int fieldMaxWidth = widget->fontMetrics().width("-0000.00 field") + 10;
-  return fieldMaxWidth;
-}
-}  // namespace
-
 PegbarChannelField::PegbarChannelField(TTool *tool,
                                        enum TStageObject::Channel actionId,
                                        QString name, TFrameHandle *frameHandle,
@@ -996,7 +994,7 @@ PegbarChannelField::PegbarChannelField(TTool *tool,
     break;
   }
 
-  setMaximumWidth(getMaximumWidthForEditToolField(this));
+  setMaximumWidth(getMaximumWidthForMeasuredValueField(this));
 
   updateStatus();
 }
@@ -1116,7 +1114,7 @@ PegbarCenterField::PegbarCenterField(TTool *tool, int index, QString name,
   connect(this, SIGNAL(measuredValueChanged(TMeasuredValue *, bool)),
           SLOT(onChange(TMeasuredValue *, bool)));
   updateStatus();
-  setMaximumWidth(getMaximumWidthForEditToolField(this));
+  setMaximumWidth(getMaximumWidthForMeasuredValueField(this));
 }
 
 //-----------------------------------------------------------------------------
@@ -1174,7 +1172,7 @@ NoScaleField::NoScaleField(TTool *tool, QString name)
   connect(this, SIGNAL(measuredValueChanged(TMeasuredValue *, bool)),
           SLOT(onChange(TMeasuredValue *, bool)));
   updateStatus();
-  setMaximumWidth(getMaximumWidthForEditToolField(this));
+  setMaximumWidth(getMaximumWidthForMeasuredValueField(this));
 }
 
 //-----------------------------------------------------------------------------
@@ -1278,13 +1276,6 @@ void PropertyMenuButton::onActionTriggered(QAction *action) {
 }
 
 //=============================================================================
-namespace {
-// calculate maximum field size (once) with 10 pixels margin
-int getMaximumWidthForSelectionToolField(QWidget *widget) {
-  static int fieldMaxWidth = widget->fontMetrics().width("-000.00 %") + 10;
-  return fieldMaxWidth;
-}
-}  // namespace
 
 // id == 0 Scale X
 // id == 0 Scale Y
@@ -1297,7 +1288,7 @@ SelectionScaleField::SelectionScaleField(SelectionTool *tool, int id,
   setMeasure("scale");
   updateStatus();
 
-  setMaximumWidth(getMaximumWidthForSelectionToolField(this));
+  setMaximumWidth(getMaximumWidthForMeasuredValueField(this));
 }
 
 //-----------------------------------------------------------------------------
@@ -1385,7 +1376,7 @@ SelectionRotationField::SelectionRotationField(SelectionTool *tool,
   setMeasure("angle");
   updateStatus();
 
-  setMaximumWidth(getMaximumWidthForSelectionToolField(this));
+  setMaximumWidth(getMaximumWidthForMeasuredValueField(this));
 }
 
 //-----------------------------------------------------------------------------
@@ -1451,7 +1442,7 @@ SelectionMoveField::SelectionMoveField(SelectionTool *tool, int id,
 
   // for translation value field, use size for the Edit Tool as it needs more
   // estate
-  setMaximumWidth(getMaximumWidthForEditToolField(this));
+  setMaximumWidth(getMaximumWidthForMeasuredValueField(this));
 }
 
 //-----------------------------------------------------------------------------
@@ -1511,7 +1502,7 @@ ThickChangeField::ThickChangeField(SelectionTool *tool, QString name)
   setMeasure("");
   updateStatus();
 
-  setMaximumWidth(getMaximumWidthForSelectionToolField(this));
+  setMaximumWidth(getMaximumWidthForMeasuredValueField(this));
 }
 
 //-----------------------------------------------------------------------------
