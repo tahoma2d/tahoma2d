@@ -469,6 +469,8 @@ void PerspectiveControls::shiftPerspectiveObject(TPointD delta) {
 
 void PerspectiveSelection::enableCommands() {
   enableCommand(m_tool, MI_Clear, &PerspectiveTool::deleteSelectedObjects);
+  enableCommand(m_tool, MI_Cut, &PerspectiveTool::deleteSelectedObjects);
+  enableCommand(m_tool, MI_SelectAll, &PerspectiveTool::selectAllObjects);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -1416,19 +1418,6 @@ void PerspectiveTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
 //----------------------------------------------------------------------------------------------
 
 bool PerspectiveTool::keyDown(QKeyEvent *event) {
-  if (event->modifiers() & Qt::ControlModifier) {
-    if (event->key() == Qt::Key_A) {
-      for (int i = 0; i < m_perspectiveObjs.size(); i++) {
-        m_selection.select(i);
-        m_perspectiveObjs[i]->setActive(true);
-      }
-      m_selection.makeCurrent();
-      invalidate();
-      updateToolOptionValues();
-      return true;
-    }
-  }
-
   TPointD delta;
 
   switch (event->key()) {
@@ -1531,6 +1520,20 @@ void PerspectiveTool::deleteSelectedObjects() {
 
   invalidate();
 
+  updateToolOptionValues();
+}
+
+//----------------------------------------------------------------------------------------------
+
+void PerspectiveTool::selectAllObjects() {
+  if (!m_perspectiveObjs.size()) return;
+
+  for (int i = 0; i < m_perspectiveObjs.size(); i++) {
+    m_selection.select(i);
+    m_perspectiveObjs[i]->setActive(true);
+  }
+  m_selection.makeCurrent();
+  invalidate();
   updateToolOptionValues();
 }
 

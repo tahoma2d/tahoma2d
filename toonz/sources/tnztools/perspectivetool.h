@@ -414,6 +414,7 @@ public:
   void setToolOptionsBox(PerspectiveGridToolOptionBox *toolOptionsBox);
 
   void deleteSelectedObjects();
+  void selectAllObjects();
 
   void setPerspectiveObjects(std::vector<PerspectiveObject *> objs);
   std::vector<PerspectiveObject *> getPerspectiveObjects() {
