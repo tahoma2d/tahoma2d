@@ -758,7 +758,7 @@ class PerspectiveGridToolOptionBox final : public ToolOptionsBox {
   ToolOptionSlider *m_opacity;
   ColorChipCombo *m_color;
   ToolOptionCheckbox *m_horizon, *m_parallel, *m_advancedControls;
-  QLabel *m_rotationLabel, *m_spacingLabel;
+  ClickableLabel *m_rotationLabel, *m_spacingLabel;
   MeasuredValueField *m_rotation, *m_spacing;
   ToolOptionCombo *m_presetCombo;
   QPushButton *m_addPresetButton, *m_removePresetButton, *m_leftRotateButton,

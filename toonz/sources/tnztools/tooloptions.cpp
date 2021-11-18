@@ -2959,12 +2959,12 @@ PerspectiveGridToolOptionBox::PerspectiveGridToolOptionBox(
 
   int fieldMaxWidth;
 
-  m_spacingLabel = new QLabel(tr("Spacing:"), this);
+  m_spacingLabel = new ClickableLabel(tr("Spacing:"), this);
   m_spacing      = new MeasuredValueField(this);
   m_spacing->setMeasure("");
   m_spacing->setMaximumWidth(getMaximumWidthForMeasuredValueField(m_spacing));
 
-  m_rotationLabel = new QLabel(tr("Rotation:"), this);
+  m_rotationLabel = new ClickableLabel(tr("Rotation:"), this);
   m_rotation      = new MeasuredValueField(this);
   m_rotation->setMeasure("angle");
   m_rotation->setMaximumWidth(getMaximumWidthForMeasuredValueField(m_rotation));
@@ -3066,10 +3066,24 @@ PerspectiveGridToolOptionBox::PerspectiveGridToolOptionBox(
 
   connect(m_spacing, SIGNAL(measuredValueChanged(TMeasuredValue *, bool)),
           SLOT(onSpacingChange(TMeasuredValue *)));
+  connect(m_spacingLabel, SIGNAL(onMousePress(QMouseEvent *)), m_spacing,
+          SLOT(receiveMousePress(QMouseEvent *)));
+  connect(m_spacingLabel, SIGNAL(onMouseMove(QMouseEvent *)), m_spacing,
+          SLOT(receiveMouseMove(QMouseEvent *)));
+  connect(m_spacingLabel, SIGNAL(onMouseRelease(QMouseEvent *)), m_spacing,
+          SLOT(receiveMouseRelease(QMouseEvent *)));
+
   connect(m_rotation, SIGNAL(measuredValueChanged(TMeasuredValue *, bool)),
           SLOT(onRotationChange(TMeasuredValue *)));
+  connect(m_rotationLabel, SIGNAL(onMousePress(QMouseEvent *)), m_rotation,
+          SLOT(receiveMousePress(QMouseEvent *)));
+  connect(m_rotationLabel, SIGNAL(onMouseMove(QMouseEvent *)), m_rotation,
+          SLOT(receiveMouseMove(QMouseEvent *)));
+  connect(m_rotationLabel, SIGNAL(onMouseRelease(QMouseEvent *)), m_rotation,
+          SLOT(receiveMouseRelease(QMouseEvent *)));
   connect(m_leftRotateButton, SIGNAL(clicked()), SLOT(onRotateLeft()));
   connect(m_rightRotateButton, SIGNAL(clicked()), SLOT(onRotateRight()));
+
   connect(m_addPresetButton, SIGNAL(clicked()), this, SLOT(onAddPreset()));
   connect(m_removePresetButton, SIGNAL(clicked()), this,
           SLOT(onRemovePreset()));
