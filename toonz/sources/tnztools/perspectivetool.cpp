@@ -1019,12 +1019,19 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
     double dox    = rotationPos.x - centerPoint.x;
     double doy    = rotationPos.y - centerPoint.y;
     double oangle = std::atan2(doy, dox) / (3.14159 / 180);
+    if (oangle < 0) oangle += 360;
 
     double dnx    = newRotationPos.x - centerPoint.x;
     double dny    = newRotationPos.y - centerPoint.y;
     double nangle = std::atan2(dny, dnx) / (3.14159 / 180);
+    if (nangle < 0) nangle += 360;
 
-    dAngle = nangle - oangle;
+    if ((oangle >= 270 && oangle <= 360 && nangle >= 0 && nangle <= 90))
+      dAngle = (360 - oangle) + nangle;
+    else if ((oangle >= 0 && oangle <= 90 && nangle >= 270 && nangle <= 360))
+      dAngle = (oangle + (360 - nangle)) * -1;
+    else
+      dAngle = nangle - oangle;
   } else if (m_isSpacing) {
     TPointD newSpacingPos = spacingPos + dPos;
     double newSpace;
@@ -1066,7 +1073,8 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
     TPointD rightHandlePos = mainObj->getRightHandlePos();
 
     if (m_isLeftMoving) {
-      TPointD newPos = leftHandlePos + dPos;
+      TPointD oldCenterPoint = centerPoint;
+      TPointD newPos         = leftHandlePos + dPos;
       mainObj->setLeftHandlePos(newPos);
 
       // Also move Center Point
@@ -1094,12 +1102,26 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
         updateMeasuredValueToolOptions();
       } else {
         // Recalculate Angle
-        double dx       = rotationPos.x - newCenterPoint.x;
-        double dy       = rotationPos.y - newCenterPoint.y;
-        double newAngle = std::atan2(dy, dx) / (3.14159 / 180);
-        if (mainObj->getType() == PerspectiveType::VanishingPoint)
-          newAngle += 90;
-        mainObj->setRotation(newAngle);
+        double dox    = rotationPos.x - oldCenterPoint.x;
+        double doy    = rotationPos.y - oldCenterPoint.y;
+        double oangle = std::atan2(doy, dox) / (3.14159 / 180);
+        if (oangle < 0) oangle += 360;
+
+        double dnx    = rotationPos.x - newCenterPoint.x;
+        double dny    = rotationPos.y - newCenterPoint.y;
+        double nangle = std::atan2(dny, dnx) / (3.14159 / 180);
+        if (nangle < 0) nangle += 360;
+
+        double dAngle;
+        if ((oangle >= 270 && oangle <= 360 && nangle >= 0 && nangle <= 90))
+          dAngle = (360 - oangle) + nangle;
+        else if ((oangle >= 0 && oangle <= 90 && nangle >= 270 &&
+                  nangle <= 360))
+          dAngle = (oangle + (360 - nangle)) * -1;
+        else
+          dAngle = nangle - oangle;
+
+        mainObj->setRotation(mainObj->getRotation() + dAngle);
 
         // Recalculate Spacing
         double newSpacing =
@@ -1116,7 +1138,8 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
       applyToSelection = false;
     } else if (m_isRightMoving) {
-      TPointD newPos = rightHandlePos + dPos;
+      TPointD oldCenterPoint = centerPoint;
+      TPointD newPos         = rightHandlePos + dPos;
       mainObj->setRightHandlePos(newPos);
 
       // Also move Center Point
@@ -1143,12 +1166,26 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
         updateMeasuredValueToolOptions();
       } else {
         // Recalculate Angle
-        double dx       = rotationPos.x - newCenterPoint.x;
-        double dy       = rotationPos.y - newCenterPoint.y;
-        double newAngle = std::atan2(dy, dx) / (3.14159 / 180);
-        if (mainObj->getType() == PerspectiveType::VanishingPoint)
-          newAngle += 90;
-        mainObj->setRotation(newAngle);
+        double dox    = rotationPos.x - oldCenterPoint.x;
+        double doy    = rotationPos.y - oldCenterPoint.y;
+        double oangle = std::atan2(doy, dox) / (3.14159 / 180);
+        if (oangle < 0) oangle += 360;
+
+        double dnx    = rotationPos.x - newCenterPoint.x;
+        double dny    = rotationPos.y - newCenterPoint.y;
+        double nangle = std::atan2(dny, dnx) / (3.14159 / 180);
+        if (nangle < 0) nangle += 360;
+
+        double dAngle;
+        if ((oangle >= 270 && oangle <= 360 && nangle >= 0 && nangle <= 90))
+          dAngle = (360 - oangle) + nangle;
+        else if ((oangle >= 0 && oangle <= 90 && nangle >= 270 &&
+                  nangle <= 360))
+          dAngle = (oangle + (360 - nangle)) * -1;
+        else
+          dAngle = nangle - oangle;
+
+        mainObj->setRotation(mainObj->getRotation() + dAngle);
 
         // Recalculate Spacing
         double newSpacing =
@@ -1216,11 +1253,26 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
         obj->setCenterPoint(newCenterPoint);
 
         // Recalculate Angle
-        double dx       = rotationPos.x - newCenterPoint.x;
-        double dy       = rotationPos.y - newCenterPoint.y;
-        double newAngle = std::atan2(dy, dx) / (3.14159 / 180);
-        if (obj->getType() == PerspectiveType::VanishingPoint) newAngle += 90;
-        obj->setRotation(newAngle);
+        double dox    = rotationPos.x - objCenterPoint.x;
+        double doy    = rotationPos.y - objCenterPoint.y;
+        double oangle = std::atan2(doy, dox) / (3.14159 / 180);
+        if (oangle < 0) oangle += 360;
+
+        double dnx    = rotationPos.x - newCenterPoint.x;
+        double dny    = rotationPos.y - newCenterPoint.y;
+        double nangle = std::atan2(dny, dnx) / (3.14159 / 180);
+        if (nangle < 0) nangle += 360;
+
+        double dAngle;
+        if ((oangle >= 270 && oangle <= 360 && nangle >= 0 && nangle <= 90))
+          dAngle = (360 - oangle) + nangle;
+        else if ((oangle >= 0 && oangle <= 90 && nangle >= 270 &&
+                  nangle <= 360))
+          dAngle = (oangle + (360 - nangle)) * -1;
+        else
+          dAngle = nangle - oangle;
+
+        obj->setRotation(obj->getRotation() + dAngle);
 
         // Recalculate Spacing
         double newSpacing =
@@ -1245,7 +1297,7 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
           obj->setRightHandlePos(rightHandlePos);
         }
       } else if (m_isRotating) {
-        double rotation        = obj->getRotation();
+        double rotation = obj->getRotation();
         TPointD newRotationPos = rotationPos + dPos;
         double rot =
             rotation +
