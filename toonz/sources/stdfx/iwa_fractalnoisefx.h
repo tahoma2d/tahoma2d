@@ -57,60 +57,60 @@ class Iwa_FractalNoiseFx final : public TStandardZeraryFx {
   };
 
 protected:
-  // Fractal Type ƒtƒ‰ƒNƒ^ƒ‹‚Ìí—Ş
+  // Fractal Type ï¿½tï¿½ï¿½ï¿½Nï¿½^ï¿½ï¿½ï¿½Ìï¿½ï¿½
   TIntEnumParamP m_fractalType;
-  // Noise Type ƒmƒCƒY‚Ìí—Ş
+  // Noise Type ï¿½mï¿½Cï¿½Yï¿½Ìï¿½ï¿½
   TIntEnumParamP m_noiseType;
-  // Invert ”½“]
+  // Invert ï¿½ï¿½ï¿½]
   TBoolParamP m_invert;
-  /// Contrast ƒRƒ“ƒgƒ‰ƒXƒg
-  /// Brightness –¾‚é‚³
-  /// Overflow ƒI[ƒo[ƒtƒ[
+  /// Contrast ï¿½Rï¿½ï¿½ï¿½gï¿½ï¿½ï¿½Xï¿½g
+  /// Brightness ï¿½ï¿½ï¿½é‚³
+  /// Overflow ï¿½Iï¿½[ï¿½oï¿½[ï¿½tï¿½ï¿½ï¿½[
 
-  //- - - Transform ƒgƒ‰ƒ“ƒXƒtƒH[ƒ€ - - -
-  // Rotation ‰ñ“]
+  //- - - Transform ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½tï¿½Hï¿½[ï¿½ï¿½ - - -
+  // Rotation ï¿½ï¿½]
   TDoubleParamP m_rotation;
-  // Uniform Scaling@c‰¡”ä‚ğŒÅ’è
+  // Uniform Scalingï¿½@ï¿½cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å’ï¿½
   TBoolParamP m_uniformScaling;
-  // Scale ƒXƒP[ƒ‹
+  // Scale ï¿½Xï¿½Pï¿½[ï¿½ï¿½
   TDoubleParamP m_scale;
-  // Scale Width ƒXƒP[ƒ‹‚Ì•
+  // Scale Width ï¿½Xï¿½Pï¿½[ï¿½ï¿½ï¿½Ì•ï¿½
   TDoubleParamP m_scaleW;
-  // Scale Height ƒXƒP[ƒ‹‚Ì‚‚³
+  // Scale Height ï¿½Xï¿½Pï¿½[ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½
   TDoubleParamP m_scaleH;
-  // Offset Turbulence —‹C—¬‚ÌƒIƒtƒZƒbƒg
+  // Offset Turbulence ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ÌƒIï¿½tï¿½Zï¿½bï¿½g
   TPointParamP m_offsetTurbulence;
-  // Perspective Offset ‰“‹ßƒIƒtƒZƒbƒg
+  // Perspective Offset ï¿½ï¿½ï¿½ßƒIï¿½tï¿½Zï¿½bï¿½g
   TBoolParamP m_perspectiveOffset;
 
-  // Complexity •¡G“x
+  // Complexity ï¿½ï¿½ï¿½Gï¿½x
   TDoubleParamP m_complexity;
 
-  //- - - Sub Settings ƒTƒuİ’è - - -
-  // Sub Influence ƒTƒu‰e‹¿i“j
+  //- - - Sub Settings ï¿½Tï¿½uï¿½İ’ï¿½ - - -
+  // Sub Influence ï¿½Tï¿½uï¿½eï¿½ï¿½ï¿½iï¿½ï¿½ï¿½j
   TDoubleParamP m_subInfluence;
-  // Sub Scaling@ƒTƒuƒXƒP[ƒ‹
+  // Sub Scalingï¿½@ï¿½Tï¿½uï¿½Xï¿½Pï¿½[ï¿½ï¿½
   TDoubleParamP m_subScaling;
-  // Sub Rotation ƒTƒu‰ñ“]
+  // Sub Rotation ï¿½Tï¿½uï¿½ï¿½]
   TDoubleParamP m_subRotation;
-  // Sub Offset ƒTƒu‚ÌƒIƒtƒZƒbƒg
+  // Sub Offset ï¿½Tï¿½uï¿½ÌƒIï¿½tï¿½Zï¿½bï¿½g
   TPointParamP m_subOffset;
-  // Center Subscale ƒTƒuƒXƒP[ƒ‹‚ğ’†S
+  // Center Subscale ï¿½Tï¿½uï¿½Xï¿½Pï¿½[ï¿½ï¿½ï¿½ğ’†S
   /// TBoolParamP m_centerSubscale;
 
-  // Evolution “WŠJ
+  // Evolution ï¿½Wï¿½J
   TDoubleParamP m_evolution;
 
-  //- - - Evolution Options “WŠJ‚ÌƒIƒvƒVƒ‡ƒ“ - - -
-  // Cycle Evolution ƒTƒCƒNƒ‹“WŠJ
+  //- - - Evolution Options ï¿½Wï¿½Jï¿½ÌƒIï¿½vï¿½Vï¿½ï¿½ï¿½ï¿½ - - -
+  // Cycle Evolution ï¿½Tï¿½Cï¿½Nï¿½ï¿½ï¿½Wï¿½J
   TBoolParamP m_cycleEvolution;
-  // Cycle (in Evolution) ƒTƒCƒNƒ‹iüŠúj
+  // Cycle (in Evolution) ï¿½Tï¿½Cï¿½Nï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½j
   TDoubleParamP m_cycleEvolutionRange;
-  /// Random Seed ƒ‰ƒ“ƒ_ƒ€ƒV[ƒh
-  /// Opacity  •s“§–¾“x
-  /// Blending Mode •`‰æƒ‚[ƒh
+  /// Random Seed ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½Vï¿½[ï¿½h
+  /// Opacity  ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½x
+  /// Blending Mode ï¿½`ï¿½æƒ‚ï¿½[ï¿½h
 
-  // ƒ_ƒCƒiƒ~ƒbƒN‚Ì“x‡‚¢
+  // ï¿½_ï¿½Cï¿½iï¿½~ï¿½bï¿½Nï¿½Ì“xï¿½ï¿½ï¿½ï¿½
   TDoubleParamP m_dynamicIntensity;
 
   //- - - Conical Noise - - - 
@@ -149,7 +149,7 @@ public:
   // composite the base noise pattern
   void composite(double *out, double *buf, const double influence,
                  const FNParam &param);
-  // finalize pattern (coverting the color space)
+  // finalize pattern (converting the color space)
   void finalize(double *out, const FNParam &param);
 };
 

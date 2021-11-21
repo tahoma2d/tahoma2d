@@ -206,7 +206,7 @@ void getValue(QSettings &settings,
         (*it).m_options.m_premultiply == true) {
       LevelOptions defaultValue;
       defaultValue.m_premultiply = true;
-      // if other parameters are the same as deafault, just erase the item
+      // if other parameters are the same as default, just erase the item
       if ((*it).m_options == defaultValue) it = lfv.erase(it);
       // if there are some adjustments by user, then disable only premultiply
       // option

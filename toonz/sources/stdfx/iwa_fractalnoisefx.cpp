@@ -425,7 +425,7 @@ void Iwa_FractalNoiseFx::doCompute(TTile &tile, double frame,
 
   work_buf_ras->unlock();
 
-  // finalize pattern (coverting the color space)
+  // finalize pattern (converting the color space)
   if (param.fractalType == TurbulentSmooth ||
       param.fractalType == TurbulentBasic ||
       param.fractalType == TurbulentSharp) {
@@ -605,7 +605,7 @@ void Iwa_FractalNoiseFx::convert(double *buf, const FNParam &param) {
     *buf = std::abs(*buf - 0.5) * 1.96;
     break;
   case Rocky:
-    // convertion LUT for the range from 0.43 to 0.57, every 0.01
+    // conversion LUT for the range from 0.43 to 0.57, every 0.01
     static double table[15] = {
         0.25,        0.256658635, 0.275550218, 0.30569519,  0.345275591,
         0.392513494, 0.440512,    0.5,         0.555085147, 0.607486506,
@@ -658,7 +658,7 @@ void Iwa_FractalNoiseFx::composite(double *out, double *buf,
 }
 
 //------------------------------------------------------------------
-// finalize pattern (coverting the color space)
+// finalize pattern (converting the color space)
 void Iwa_FractalNoiseFx::finalize(double *out, const FNParam &param) {
   assert(param.fractalType == TurbulentSmooth ||
          param.fractalType == TurbulentBasic ||

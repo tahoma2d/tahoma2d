@@ -663,7 +663,7 @@ void ImageViewer::paintGL() {
 }
 
 //------------------------------------------------------------------------------
-/*! Add to current transformation matrix a \b delta traslation.
+/*! Add to current transformation matrix a \b delta translation.
  */
 void ImageViewer::panQt(const QPoint &delta) {
   if (delta == QPoint()) return;
@@ -695,7 +695,7 @@ void ImageViewer::panQt(const QPoint &delta) {
 }
 
 //-----------------------------------------------------------------------------
-/*! Add to current transformation matrix a \b center traslation matched with a
+/*! Add to current transformation matrix a \b center translation matched with a
                 scale of factor \b factor. Apply a zoom of factor \b factor with
    center
                 \b center.
