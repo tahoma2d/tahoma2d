@@ -796,30 +796,31 @@ void ColorFieldEditorController::edit(DVGui::ColorField *colorField) {
   connect(m_currentColorField, SIGNAL(colorChanged(const TPixel32 &, bool)),
           SLOT(onColorChanged(const TPixel32 &, bool)));
   connect(m_colorFieldHandle, SIGNAL(colorStyleChanged(bool)),
-          SLOT(onColorStyleChanged()));
+          SLOT(onColorStyleChanged(bool)));
 }
 
 //-----------------------------------------------------------------------------
 
 void ColorFieldEditorController::hide() {
   disconnect(m_colorFieldHandle, SIGNAL(colorStyleChanged(bool)), this,
-             SLOT(onColorStyleChanged()));
+             SLOT(onColorStyleChanged(bool)));
 }
 
 //-----------------------------------------------------------------------------
 
-void ColorFieldEditorController::onColorStyleChanged() {
+void ColorFieldEditorController::onColorStyleChanged(bool isDragging) {
   if (!m_currentColorField) return;
   assert(!!m_palette);
   TPixel32 color = m_palette->getStyle(1)->getMainColor();
-  if (m_currentColorField->getColor() == color) return;
+  if (m_currentColorField->getColor() == color && isDragging) return;
   m_currentColorField->setColor(color);
-  m_currentColorField->notifyColorChanged(color, false);
+  m_currentColorField->notifyColorChanged(color, isDragging);
 }
 
 //-----------------------------------------------------------------------------
 
-void ColorFieldEditorController::onColorChanged(const TPixel32 &color, bool) {
+void ColorFieldEditorController::onColorChanged(const TPixel32 &color,
+                                                bool isDragging) {
   if (!m_currentColorField) return;
   TColorStyle *style = m_palette->getStyle(1);
   if (style->getMainColor() == color) return;
@@ -827,7 +828,7 @@ void ColorFieldEditorController::onColorChanged(const TPixel32 &color, bool) {
   TApp::instance()
       ->getPaletteController()
       ->getCurrentPalette()
-      ->notifyColorStyleChanged();
+      ->notifyColorStyleChanged(isDragging);
 }
 
 //=============================================================================

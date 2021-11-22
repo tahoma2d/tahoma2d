@@ -471,6 +471,9 @@
 #define MI_ExportTvpJson "MI_ExportTvpJson"
 #define MI_ExportXsheetPDF "MI_ExportXsheetPDF"
 
+// mark id is added for each actual command (i.g. MI_SetCellMark1)
+#define MI_SetCellMark "MI_SetCellMark"
+
 #define MI_ToggleAutoCreate "MI_ToggleAutoCreate"
 #define MI_ToggleCreationInHoldCells "MI_ToggleCreationInHoldCells"
 #define MI_ToggleAutoStretch "MI_ToggleAutoStretch"

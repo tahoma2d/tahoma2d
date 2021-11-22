@@ -67,6 +67,7 @@ enum class PredefinedRect {
   BEGIN_EXTENDER,           //! top / left extender
   KEYFRAME_AREA,            //! part of cell dedicated to key frames
   DRAG_AREA,                //! draggable side bar
+  CELL_MARK_AREA,           //! cell mark
   SOUND_TRACK,              //! area dedicated to waveform display
   PREVIEW_TRACK,            //! sound preview area
   BEGIN_SOUND_EDIT,         //! top sound resize

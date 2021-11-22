@@ -133,7 +133,7 @@ public:
   void hide() override;
 
 protected slots:
-  void onColorStyleChanged();
+  void onColorStyleChanged(bool);
   void onColorChanged(const TPixel32 &color, bool);
 };
 

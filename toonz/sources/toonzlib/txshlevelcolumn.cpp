@@ -151,9 +151,10 @@ void TXshLevelColumn::loadData(TIStream &is) {
     {
       TFxSet fxSet;
       fxSet.loadData(is);
-    } else {
+    } else if (loadCellMarks(tagName, is)) {
+      // do nothing
+    } else
       throw TException("TXshLevelColumn, unknown tag: " + tagName);
-    }
     is.closeChild();
   }
 }
@@ -201,6 +202,9 @@ void TXshLevelColumn::saveData(TOStream &os) {
     os.closeChild();
   }
   os.child("fx") << m_fx;
+
+  // cell marks
+  saveCellMarks(os);
 }
 
 //-----------------------------------------------------------------------------

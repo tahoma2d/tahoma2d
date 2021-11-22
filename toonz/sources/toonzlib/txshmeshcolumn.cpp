@@ -111,6 +111,8 @@ void TXshMeshColumn::saveData(TOStream &os) {
     }
     os.closeChild();
   }
+  // cell marks
+  saveCellMarks(os);
 }
 
 //------------------------------------------------------------------
@@ -167,6 +169,8 @@ void TXshMeshColumn::loadData(TIStream &is) {
           is.skipCurrentTag();
       }
 
+      is.closeChild();
+    } else if (loadCellMarks(tagName, is)) {
       is.closeChild();
     } else
       is.skipCurrentTag();

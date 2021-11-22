@@ -162,6 +162,8 @@ void TXshZeraryFxColumn::loadData(TIStream &is) {
           throw TException("expected <cell>");
         is.closeChild();
       }
+    } else if (loadCellMarks(tagName, is)) {
+      // do nothing
     } else
       throw TException("expected <status> or <cells>");
     is.closeChild();
@@ -186,6 +188,8 @@ void TXshZeraryFxColumn::saveData(TOStream &os) {
     }
     os.closeChild();
   }
+  // cell marks
+  saveCellMarks(os);
 }
 
 //-----------------------------------------------------------------------------

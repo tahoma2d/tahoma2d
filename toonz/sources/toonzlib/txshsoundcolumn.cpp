@@ -262,6 +262,13 @@ void TXshSoundColumn::loadData(TIStream &is) {
     is >> status;
     setStatusWord(status);
   }
+
+  std::string tagName;
+  while (is.openChild(tagName)) {
+    if (!loadCellMarks(tagName, is))
+      throw TException("TXshLevelColumn, unknown tag: " + tagName);
+    is.closeChild();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -274,6 +281,8 @@ void TXshSoundColumn::saveData(TOStream &os) {
   int i;
   for (i = 0; i < levelsCount; i++) m_levels.at(i)->saveData(os);
   os << getStatusWord();
+  // cell marks
+  saveCellMarks(os);
 }
 
 //-----------------------------------------------------------------------------

@@ -479,8 +479,9 @@ TFilePath GenericLoadFilePopup::getPath() {
 //    GenericSaveFilePopup  implementation
 //***********************************************************************************
 
-GenericSaveFilePopup::GenericSaveFilePopup(const QString &title)
-    : FileBrowserPopup(title, Options(FOR_SAVING)) {
+GenericSaveFilePopup::GenericSaveFilePopup(const QString &title,
+                                           QWidget *customWidget)
+    : FileBrowserPopup(title, Options(FOR_SAVING), "", customWidget) {
   connect(m_nameField, SIGNAL(returnPressedNow()), m_okButton,
           SLOT(animateClick()));
 }

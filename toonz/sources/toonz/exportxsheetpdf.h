@@ -85,6 +85,12 @@ typedef void (*DecoFunc)(QPainter&, QRect, QMap<XSheetPDFDataType, QRect>&,
 
 enum ExportArea { Area_Actions = 0, Area_Cells };
 enum ContinuousLineMode { Line_Always = 0, Line_MoreThan3s, Line_None };
+enum TickMarkType {
+  TickMark_Dot = 0,
+  TickMark_Circle,
+  TickMark_Filled,
+  TickMark_Asterisk
+};
 
 struct XSheetPDFFormatInfo {
   QColor lineColor;
@@ -101,6 +107,11 @@ struct XSheetPDFFormatInfo {
   bool serialFrameNumber;
   bool drawLevelNameOnBottom;
   ContinuousLineMode continuousLineMode;
+  int tick1MarkId;
+  int tick2MarkId;
+  int keyMarkId;
+  TickMarkType tick1MarkType;
+  TickMarkType tick2MarkType;
 };
 
 class XSheetPDFTemplate {
@@ -172,7 +183,9 @@ protected:
   void addInfo(int w, QString lbl, DecoFunc f = nullptr);
 
   void drawContinuousLine(QPainter& painter, QRect rect, bool isEmpty);
-  void drawCellNumber(QPainter& painter, QRect rect, TXshCell& cell);
+  void drawCellNumber(QPainter& painter, QRect rect, TXshCell& cell,
+                      bool isKey);
+  void drawTickMark(QPainter& painter, QRect rect, TickMarkType type);
   void drawEndMark(QPainter& painter, QRect upperRect);
   void drawLevelName(QPainter& painter, QRect rect, QString name,
     bool isBottom = false);
@@ -281,6 +294,9 @@ class ExportXsheetPdfPopup final : public DVGui::Dialog {
   int m_totalPageCount;
   QPushButton *m_prev, *m_next;
 
+  QComboBox *m_tick1IdCombo, *m_tick2IdCombo, *m_keyIdCombo;
+  QComboBox *m_tick1MarkCombo, *m_tick2MarkCombo;
+
   // column and column name (if manually specified)
   QList<QPair<TXshLevelColumn*, QString>> m_columns;
   QList<TXshSoundColumn*> m_soundColumns;
@@ -315,6 +331,8 @@ protected slots:
   void onLogoImgPathChanged();
   void onPrev();
   void onNext();
+
+  void onTickIdComboActivated();
 };
 
 #endif

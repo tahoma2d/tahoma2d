@@ -1222,6 +1222,12 @@ void TXsheet::loadData(TIStream &is) {
           }
         }
       }
+    } else if (tagName == "cameraColumn") {
+      while (is.openChild(tagName)) {
+        if (!m_cameraColumn->getCellColumn()->loadCellMarks(tagName, is))
+          throw TException("Camera Column, unknown tag: " + tagName);
+        is.closeChild();
+      }
     } else if (tagName == "pegbars") {
       TPersist *p = m_imp->m_pegTree;
       m_imp->m_pegTree->loadData(is, this);
@@ -1278,6 +1284,14 @@ void TXsheet::saveData(TOStream &os) {
     if (column && c < getFirstFreeColumnIndex()) os << column.getPointer();
   }
   os.closeChild();
+
+  // save cell marks in the camera column
+  if (!m_cameraColumn->getCellColumn()->getCellMarks().isEmpty()) {
+    os.openChild("cameraColumn");
+    m_cameraColumn->getCellColumn()->saveCellMarks(os);
+    os.closeChild();
+  }
+
   os.openChild("pegbars");
   m_imp->m_pegTree->saveData(os, getFirstFreeColumnIndex(), this);
   // os << *(m_imp->m_pegTree);

@@ -90,6 +90,12 @@ TEnv::StringVar XShPdfExportImgPath("XShPdfExportImgPath", "");
 TEnv::IntVar XShPdfExportContinuousLineThres("XShPdfExportContinuousLineThres",
                                              0);
 
+TEnv::IntVar XShPdfExportTick1Id("XShPdfExportTick1Id", -1);
+TEnv::IntVar XShPdfExportTick2Id("XShPdfExportTick2Id", -1);
+TEnv::IntVar XShPdfExportKeyId("XShPdfExportKeyId", -1);
+TEnv::IntVar XShPdfExportTick1Type("XShPdfExportTick1Type", TickMark_Dot);
+TEnv::IntVar XShPdfExportTick2Type("XShPdfExportTick2Type", TickMark_Dot);
+
 using namespace XSheetPDFTemplateParamIDs;
 
 namespace {
@@ -285,6 +291,86 @@ XSheetPDFDataType dataStr2Type(const QString& str) {
       {"Logo", Data_Logo}};
 
   return map.value(str, Data_Invalid);
+}
+
+QIcon getColorChipIcon(TPixel32 color) {
+  QPixmap pm(15, 15);
+  pm.fill(QColor(color.r, color.g, color.b));
+  return QIcon(pm);
+}
+
+void refreshCellMarkComboItems(QComboBox* combo) {
+  int current = -1;
+  if (combo->count()) current = combo->currentData().toInt();
+
+  combo->clear();
+  QList<TSceneProperties::CellMark> marks = TApp::instance()
+                                                ->getCurrentScene()
+                                                ->getScene()
+                                                ->getProperties()
+                                                ->getCellMarks();
+  combo->addItem(QObject::tr("None", "XSheetPDF CellMark"), -1);
+  int curId = 0;
+  for (auto mark : marks) {
+    QString label = QString("%1: %2").arg(curId).arg(mark.name);
+    combo->addItem(getColorChipIcon(mark.color), label, curId);
+    curId++;
+  }
+
+  if (current >= 0) combo->setCurrentIndex(combo->findData(current));
+}
+
+QPixmap tickMarkPm(TickMarkType type, int size, bool withBG = false) {
+  QPixmap pm(size, size);
+  QPointF center(double(size) * 0.5, double(size) * 0.5);
+
+  pm.fill((withBG) ? Qt::white : Qt::transparent);
+  QPainter p(&pm);
+  QPen pen(Qt::black);
+  pen.setWidthF(double(size) / 15.0);
+  p.setPen(pen);
+  switch (type) {
+  case TickMark_Dot: {
+    p.setBrush(Qt::black);
+    double dotR = double(size) * 0.1;
+    p.drawEllipse(center, dotR, dotR);
+    break;
+  }
+  case TickMark_Circle: {
+    double circleR = double(size) * 0.4;
+    p.drawEllipse(center, circleR, circleR);
+    break;
+  }
+  case TickMark_Filled: {
+    p.setBrush(Qt::black);
+    double circleR = double(size) * 0.4;
+    p.drawEllipse(center, circleR, circleR);
+    break;
+  }
+  case TickMark_Asterisk: {
+    QFont font = p.font();
+    font.setPixelSize(size);
+    p.setFont(font);
+    p.drawText(0, 0, size, size, Qt::AlignCenter, "*");
+    break;
+  }
+  }
+  return pm;
+}
+
+QComboBox* createTickMarkCombo(QWidget* parent) {
+  QComboBox* combo = new QComboBox(parent);
+  combo->addItem(QIcon(tickMarkPm(TickMark_Dot, 15, true)),
+                 QObject::tr("Dot", "XSheetPDF CellMark"), TickMark_Dot);
+  combo->addItem(QIcon(tickMarkPm(TickMark_Circle, 15, true)),
+                 QObject::tr("Circle", "XSheetPDF CellMark"), TickMark_Circle);
+  combo->addItem(QIcon(tickMarkPm(TickMark_Filled, 15, true)),
+                 QObject::tr("Filled circle", "XSheetPDF CellMark"),
+                 TickMark_Filled);
+  combo->addItem(QIcon(tickMarkPm(TickMark_Asterisk, 15, true)),
+                 QObject::tr("Asterisk", "XSheetPDF CellMark"),
+                 TickMark_Asterisk);
+  return combo;
 }
 
 }  // namespace
@@ -859,7 +945,7 @@ void XSheetPDFTemplate::drawContinuousLine(QPainter& painter, QRect rect,
 }
 
 void XSheetPDFTemplate::drawCellNumber(QPainter& painter, QRect rect,
-                                       TXshCell& cell) {
+                                       TXshCell& cell, bool isKey) {
   QFont font = painter.font();
   font.setPixelSize(param(RowHeight) - mm2px(1));
   font.setLetterSpacing(QFont::PercentageSpacing, 100);
@@ -878,7 +964,32 @@ void XSheetPDFTemplate::drawCellNumber(QPainter& painter, QRect rect,
         str += cell.m_frameId.getLetter();
     }
     painter.drawText(rect, Qt::AlignCenter, str);
+    if (isKey) {
+      QPen keep(painter.pen());
+      QPen circlePen(keep);
+      circlePen.setWidth(mm2px(0.3));
+      painter.setPen(circlePen);
+      QFontMetrics fm(font);
+#if QT_VERSION >= 0x051100
+      int keyR_width =
+        std::max(param(RowHeight), fm.horizontalAdvance(str) + mm2px(1));
+#else
+      int keyR_width =
+        std::max(param(RowHeight), fm.boundingRect(str).width() + mm2px(1));
+#endif
+      QRect keyR(0, 0, keyR_width, param(RowHeight));
+      keyR.moveCenter(rect.center());
+      painter.drawEllipse(keyR);
+      painter.setPen(keep);
+    }
   }
+}
+
+void XSheetPDFTemplate::drawTickMark(QPainter& painter, QRect rect,
+                                     TickMarkType type) {
+  QRect tickR(0, 0, rect.height(), rect.height());
+  tickR.moveCenter(rect.center());
+  painter.drawPixmap(tickR, tickMarkPm(type, rect.height()));
 }
 
 void XSheetPDFTemplate::drawEndMark(QPainter& painter, QRect upperRect) {
@@ -1136,14 +1247,23 @@ void XSheetPDFTemplate::drawXsheetContents(QPainter& painter, int framePage,
       TXshCell cell = column->getCell(f);
       if (cell.m_level != level) cell.m_level = nullptr;
 
+      int markId = column->getCellMark(r);
+
       // cotinuous line
       if (r != 0 && r != 72 && prevCell == cell) {
-        if (drawCLFlag)
+        // draw tick mark
+        if (markId >= 0 && m_info.tick1MarkId == markId)
+          drawTickMark(painter, m_cellRects[c][r], m_info.tick1MarkType);
+        else if (markId >= 0 && m_info.tick2MarkId == markId)
+          drawTickMark(painter, m_cellRects[c][r], m_info.tick2MarkType);
+
+        else if (drawCLFlag)
           drawContinuousLine(painter, m_cellRects[c][r], cell.isEmpty());
       }
       // draw cell
       else {
-        drawCellNumber(painter, m_cellRects[c][r], cell);
+        bool drawKeyMark = (markId >= 0 && m_info.keyMarkId == markId);
+        drawCellNumber(painter, m_cellRects[c][r], cell, drawKeyMark);
         drawCLFlag = (m_info.continuousLineMode == Line_Always)
                          ? true
                          : (m_info.continuousLineMode == Line_None)
@@ -1621,6 +1741,15 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
   QPushButton* exportPngBtn = new QPushButton(tr("Export PNG"), this);
   QPushButton* cancelBtn    = new QPushButton(tr("Cancel"), this);
 
+  m_tick1IdCombo = new QComboBox(this);
+  m_tick2IdCombo = new QComboBox(this);
+  m_keyIdCombo   = new QComboBox(this);
+  refreshCellMarkComboItems(m_tick1IdCombo);
+  refreshCellMarkComboItems(m_tick2IdCombo);
+  refreshCellMarkComboItems(m_keyIdCombo);
+  m_tick1MarkCombo = createTickMarkCombo(this);
+  m_tick2MarkCombo = createTickMarkCombo(this);
+
   //------
   QStringList pdfFileTypes = {"pdf"};
   m_pathFld->setFilters(pdfFileTypes);
@@ -1748,22 +1877,41 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
           exportLay->addWidget(m_continuousLineCombo, 2, 1, 1, 2,
                                Qt::AlignLeft | Qt::AlignVCenter);
 
-          exportLay->addWidget(m_addDateTimeCB, 3, 0, 1, 3,
-                               Qt::AlignLeft | Qt::AlignVCenter);
-          exportLay->addWidget(m_addScenePathCB, 4, 0, 1, 3,
-                               Qt::AlignLeft | Qt::AlignVCenter);
-          exportLay->addWidget(m_drawSoundCB, 5, 0, 1, 3,
-                               Qt::AlignLeft | Qt::AlignVCenter);
-          exportLay->addWidget(m_addSceneNameCB, 6, 0, 1, 2,
-                               Qt::AlignLeft | Qt::AlignVCenter);
-          exportLay->addWidget(m_sceneNameEdit, 6, 2,
-                               Qt::AlignLeft | Qt::AlignVCenter);
-          exportLay->addWidget(m_levelNameOnBottomCB, 7, 0, 1, 3,
-                               Qt::AlignLeft | Qt::AlignVCenter);
+          QGridLayout* checksLay = new QGridLayout();
+          checksLay->setMargin(0);
+          checksLay->setHorizontalSpacing(10);
+          checksLay->setVerticalSpacing(10);
+          {
+            checksLay->addWidget(m_addDateTimeCB, 0, 0);
+            checksLay->addWidget(m_addScenePathCB, 0, 1, 1, 2);
+            checksLay->addWidget(m_drawSoundCB, 1, 0);
+            checksLay->addWidget(m_addSceneNameCB, 1, 1);
+            checksLay->addWidget(m_sceneNameEdit, 1, 2,
+                                 Qt::AlignLeft | Qt::AlignVCenter);
+            checksLay->addWidget(m_levelNameOnBottomCB, 2, 0, 1, 3);
+          }
+          checksLay->setColumnStretch(0, 2);
+          checksLay->setColumnStretch(1, 1);
+          checksLay->setColumnStretch(2, 1);
+          exportLay->addLayout(checksLay, 3, 0, 1, 3);
 
-          exportLay->addWidget(new QLabel(tr("Memo:"), this), 8, 0,
+          exportLay->addWidget(new QLabel(tr("Inbetween mark:"), this), 4, 0,
+                               Qt::AlignRight | Qt::AlignVCenter);
+          exportLay->addWidget(m_tick1IdCombo, 4, 1);
+          exportLay->addWidget(m_tick1MarkCombo, 4, 2,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+          exportLay->addWidget(new QLabel(tr("Reverse sheet mark:"), this), 5,
+                               0, Qt::AlignRight | Qt::AlignVCenter);
+          exportLay->addWidget(m_tick2IdCombo, 5, 1);
+          exportLay->addWidget(m_tick2MarkCombo, 5, 2,
+                               Qt::AlignLeft | Qt::AlignVCenter);
+          exportLay->addWidget(new QLabel(tr("Keyframe mark:"), this), 6, 0,
+                               Qt::AlignRight | Qt::AlignVCenter);
+          exportLay->addWidget(m_keyIdCombo, 6, 1);
+
+          exportLay->addWidget(new QLabel(tr("Memo:"), this), 7, 0,
                                Qt::AlignRight | Qt::AlignTop);
-          exportLay->addWidget(m_memoEdit, 8, 1, 1, 2);
+          exportLay->addWidget(m_memoEdit, 7, 1, 1, 2);
         }
         exportLay->setColumnStretch(2, 1);
         exportGBox->setLayout(exportLay);
@@ -1849,6 +1997,16 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
           SLOT(updatePreview()));
   connect(m_prev, SIGNAL(clicked(bool)), this, SLOT(onPrev()));
   connect(m_next, SIGNAL(clicked(bool)), this, SLOT(onNext()));
+
+  connect(m_tick1IdCombo, SIGNAL(activated(int)), this,
+          SLOT(onTickIdComboActivated()));
+  connect(m_tick2IdCombo, SIGNAL(activated(int)), this,
+          SLOT(onTickIdComboActivated()));
+  connect(m_keyIdCombo, SIGNAL(activated(int)), this, SLOT(updatePreview()));
+  connect(m_tick1MarkCombo, SIGNAL(activated(int)), this,
+          SLOT(updatePreview()));
+  connect(m_tick2MarkCombo, SIGNAL(activated(int)), this,
+          SLOT(updatePreview()));
 
   // The following lines are "translation word book" listing the words which may
   // appear in the template
@@ -1969,6 +2127,10 @@ void ExportXsheetPdfPopup::initialize() {
   initTemplate();
 
   m_previewPane->fitScaleTo(m_previewArea->size());
+
+  refreshCellMarkComboItems(m_tick1IdCombo);
+  refreshCellMarkComboItems(m_tick2IdCombo);
+  refreshCellMarkComboItems(m_keyIdCombo);
 }
 
 // register settings to the user env file on close
@@ -1996,6 +2158,12 @@ void ExportXsheetPdfPopup::saveSettings() {
       (ContinuousLineMode)(m_continuousLineCombo->currentData().toInt());
   XShPdfExportContinuousLineThres =
       (clMode == Line_Always) ? 0 : (clMode == Line_None) ? -1 : 3;
+
+  XShPdfExportTick1Id   = m_tick1IdCombo->currentData().toInt();
+  XShPdfExportTick2Id   = m_tick2IdCombo->currentData().toInt();
+  XShPdfExportKeyId     = m_keyIdCombo->currentData().toInt();
+  XShPdfExportTick1Type = m_tick1MarkCombo->currentData().toInt();
+  XShPdfExportTick2Type = m_tick2MarkCombo->currentData().toInt();
 }
 
 // load settings from the user env file on ctor
@@ -2036,6 +2204,19 @@ void ExportXsheetPdfPopup::loadSettings() {
   m_logoTextEdit->setEnabled(m_logoTxtRB->isChecked());
   m_logoImgPathField->setEnabled(m_logoImgRB->isChecked());
   m_sceneNameEdit->setEnabled(m_addSceneNameCB->isChecked());
+
+  int id = XShPdfExportTick1Id;
+  m_tick1IdCombo->setCurrentIndex(m_tick1IdCombo->findData(id));
+  m_tick1MarkCombo->setEnabled(id != -1);
+  id = XShPdfExportTick2Id;
+  m_tick2IdCombo->setCurrentIndex(m_tick2IdCombo->findData(id));
+  m_tick2MarkCombo->setEnabled(id != -1);
+  id = XShPdfExportKeyId;
+  m_keyIdCombo->setCurrentIndex(m_keyIdCombo->findData(id));
+  int type = XShPdfExportTick1Type;
+  m_tick1MarkCombo->setCurrentIndex(m_tick1MarkCombo->findData(type));
+  type = XShPdfExportTick2Type;
+  m_tick2MarkCombo->setCurrentIndex(m_tick2MarkCombo->findData(type));
 }
 
 void ExportXsheetPdfPopup::initTemplate() {
@@ -2095,6 +2276,12 @@ void ExportXsheetPdfPopup::setInfo() {
   info.drawSound = m_drawSoundCB->isEnabled() && m_drawSoundCB->isChecked();
   info.serialFrameNumber     = m_serialFrameNumberCB->isChecked();
   info.drawLevelNameOnBottom = m_levelNameOnBottomCB->isChecked();
+
+  info.tick1MarkId   = m_tick1IdCombo->currentData().toInt();
+  info.tick2MarkId   = m_tick2IdCombo->currentData().toInt();
+  info.keyMarkId     = m_keyIdCombo->currentData().toInt();
+  info.tick1MarkType = (TickMarkType)(m_tick1MarkCombo->currentData().toInt());
+  info.tick2MarkType = (TickMarkType)(m_tick2MarkCombo->currentData().toInt());
 
   m_currentTmpl->setInfo(info);
 
@@ -2362,6 +2549,15 @@ void ExportXsheetPdfPopup::onNext() {
 
   m_prev->setDisabled(current == 1);
   m_next->setDisabled(current == m_totalPageCount);
+  updatePreview();
+}
+
+void ExportXsheetPdfPopup::onTickIdComboActivated() {
+  QComboBox* combo = qobject_cast<QComboBox*>(sender());
+  if (combo == m_tick1IdCombo)
+    m_tick1MarkCombo->setEnabled(m_tick1IdCombo->currentData().toInt() != -1);
+  else if (combo == m_tick2IdCombo)
+    m_tick2MarkCombo->setEnabled(m_tick2IdCombo->currentData().toInt() != -1);
   updatePreview();
 }
 

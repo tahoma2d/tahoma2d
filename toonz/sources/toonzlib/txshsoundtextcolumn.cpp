@@ -80,6 +80,8 @@ void TXshSoundTextColumn::loadData(TIStream &is) {
           throw TException("TXshLevelColumn, unknown tag(2): " + tagName);
         is.closeChild();
       }
+    } else if (loadCellMarks(tagName, is)) {
+      // do nothing
     } else
       throw TException("TXshLevelColumn, unknown tag: " + tagName);
     is.closeChild();
@@ -100,6 +102,8 @@ void TXshSoundTextColumn::saveData(TOStream &os) {
     }
     os.closeChild();
   }
+  // cell marks
+  saveCellMarks(os);
 }
 
 PERSIST_IDENTIFIER(TXshSoundTextColumn, "soundTextColumn")
