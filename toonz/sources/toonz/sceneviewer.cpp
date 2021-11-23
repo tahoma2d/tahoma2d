@@ -1671,17 +1671,6 @@ void SceneViewer::drawOverlay() {
       glPopMatrix();
     }
 
-    TTool *perspectiveTool =
-        TTool::getTool(T_PerspectiveGrid, TTool::VectorImage);
-    if (perspectiveTool &&
-        ((fieldGuideToggle.getStatus() && ShowPerspectiveGrids) ||
-         app->getCurrentTool()->getTool() == perspectiveTool)) {
-      glPushMatrix();
-      tglMultMatrix(m_drawTableAff);
-      perspectiveTool->draw(this);
-      glPopMatrix();
-    }
-
 #ifdef WITH_CANON
     if (m_stopMotion->m_liveViewStatus == StopMotion::LiveViewOpen &&
         app->getCurrentFrame()->getFrame() ==
@@ -1794,6 +1783,21 @@ void SceneViewer::drawOverlay() {
   TTool *tool         = app->getCurrentTool()->getTool();
   TXshSimpleLevel *sl = app->getCurrentLevel()->getSimpleLevel();
 
+  TTool *perspectiveTool =
+      TTool::getTool(T_PerspectiveGrid, TTool::VectorImage);
+  if (tool && perspectiveTool &&
+      ((fieldGuideToggle.getStatus() && ShowPerspectiveGrids) ||
+       tool == perspectiveTool)) {
+    glPushMatrix();
+    if (m_draw3DMode) {
+      mult3DMatrix();
+      tglMultMatrix(tool->getCurrentColumnMatrix());
+    } else
+      tglMultMatrix(getViewMatrix() * tool->getCurrentColumnMatrix());
+    perspectiveTool->draw(this);
+    glPopMatrix();
+  }
+
   // Call tool->draw() even if the level is read only (i.e. to show hooks)
   if (tool && (tool->isEnabled() || (sl && sl->isReadOnly()))) {
     // tool->setViewer(this);                            // Moved at
@@ -1804,6 +1808,7 @@ void SceneViewer::drawOverlay() {
       tglMultMatrix(tool->getMatrix());
     } else
       tglMultMatrix(getViewMatrix() * tool->getMatrix());
+
     if (tool->getToolType() & TTool::LevelTool &&
         !app->getCurrentObject()->isSpline())
       glScaled(m_dpiScale.x, m_dpiScale.y, 1);
