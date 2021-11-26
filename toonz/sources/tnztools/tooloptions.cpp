@@ -3145,6 +3145,7 @@ void PerspectiveGridToolOptionBox::updateStatus() {
   m_color->updateStatus();
   m_horizon->updateStatus();
   m_parallel->updateStatus();
+  m_presetCombo->updateStatus();
 
   filterControls();
 }
