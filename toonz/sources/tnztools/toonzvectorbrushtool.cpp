@@ -913,7 +913,7 @@ void ToonzVectorBrushTool::leftButtonDrag(const TPointD &pos,
     invalidateRect += (brushRect);
 
     double denominator = m_lastPoint.x - m_firstPoint.x;
-    if (denominator == 0) denominator == 0.001;
+    if (denominator == 0) denominator = 0.001;
     double slope    = ((m_lastPoint.y - m_firstPoint.y) / denominator);
     double radAngle = std::atan(abs(slope));
     double angle    = radAngle * (180 / 3.14159);
