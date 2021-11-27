@@ -2915,12 +2915,15 @@ void ShiftTraceToolOptionBox::onAfterRadioBtnClicked() {
 class PerspectiveGridToolOptionBox::PresetNamePopup final
     : public DVGui::Dialog {
   DVGui::LineEdit *m_nameFld;
+  DVGui::CheckBox *m_saveInLibrary;
 
 public:
   PresetNamePopup() : Dialog(0, true) {
     setWindowTitle(tr("Preset Name"));
     m_nameFld = new DVGui::LineEdit();
     addWidget(m_nameFld);
+    m_saveInLibrary = new DVGui::CheckBox(tr("Save As Library Preset"));
+    addWidget(m_saveInLibrary);
 
     QPushButton *okBtn = new QPushButton(tr("OK"), this);
     okBtn->setDefault(true);
@@ -2932,7 +2935,11 @@ public:
   }
 
   QString getName() { return m_nameFld->text(); }
-  void removeName() { m_nameFld->setText(QString("")); }
+  bool isSaveInLibrary() { return m_saveInLibrary->isChecked(); }
+  void resetDialog() {
+    m_nameFld->setText(QString(""));
+    m_saveInLibrary->setChecked(false);
+  }
 };
 
 //=============================================================================
@@ -3163,20 +3170,27 @@ void PerspectiveGridToolOptionBox::updateMeasuredValues(double spacing,
 
 //-----------------------------------------------------------------------------
 
+void PerspectiveGridToolOptionBox::reloadPresetCombo() {
+  m_presetCombo->loadEntries();
+}
+
+//-----------------------------------------------------------------------------
+
 void PerspectiveGridToolOptionBox::onAddPreset() {
   // Initialize preset name popup
   if (!m_presetNamePopup) m_presetNamePopup = new PresetNamePopup;
 
-  if (!m_presetNamePopup->getName().isEmpty()) m_presetNamePopup->removeName();
+  if (!m_presetNamePopup->getName().isEmpty()) m_presetNamePopup->resetDialog();
 
   // Retrieve the preset name
   bool ret = m_presetNamePopup->exec();
   if (!ret) return;
 
   QString name(m_presetNamePopup->getName());
-  m_presetNamePopup->removeName();
+  bool saveInLibrary(m_presetNamePopup->isSaveInLibrary());
+  m_presetNamePopup->resetDialog();
 
-  static_cast<PerspectiveTool *>(m_tool)->addPreset(name);
+  static_cast<PerspectiveTool *>(m_tool)->addPreset(name, saveInLibrary);
 
   m_presetCombo->loadEntries();
 }

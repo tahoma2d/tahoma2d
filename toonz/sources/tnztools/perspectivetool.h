@@ -8,6 +8,8 @@
 #include "tundo.h"
 #include "historytypes.h"
 
+#include "toonz/tproject.h"
+
 #include "toonzqt/selection.h"
 
 #include "tools/tool.h"
@@ -271,12 +273,20 @@ struct PerspectivePreset final : public TPersist {
 
   std::wstring m_presetName;
   std::vector<PerspectiveObject *> m_perspectiveSet;
+  TFilePath m_path;
 
   PerspectivePreset() {}
-  PerspectivePreset(std::wstring presetName) : m_presetName(presetName) {}
+  PerspectivePreset(std::wstring presetName, TFilePath path = TFilePath())
+      : m_presetName(presetName), m_path(path) {}
   PerspectivePreset(std::wstring presetName,
-                    std::vector<PerspectiveObject *> perspectiveSet)
-      : m_presetName(presetName), m_perspectiveSet(perspectiveSet) {}
+                    std::vector<PerspectiveObject *> perspectiveSet,
+                    TFilePath path = TFilePath())
+      : m_presetName(presetName)
+      , m_perspectiveSet(perspectiveSet)
+      , m_path(path) {}
+
+  void setPath(TFilePath path) { m_path = path; }
+  TFilePath getPath() { return m_path; }
 
   bool operator<(const PerspectivePreset &other) const {
     return m_presetName < other.m_presetName;
@@ -291,17 +301,23 @@ struct PerspectivePreset final : public TPersist {
 //************************************************************************
 
 class PerspectivePresetManager {
-  TFilePath m_presetFolder;               //!< Presets folder file path
   std::set<PerspectivePreset> m_presets;  //!< Current presets container
+  bool m_presetsLoaded = false;
 
 public:
   PerspectivePresetManager() {}
 
+  void setIsLoaded(bool isLoaded) { m_presetsLoaded = isLoaded; }
+  bool isLoaded() { return m_presetsLoaded; }
+
+  void clearPresets() {
+    m_presetsLoaded = false;
+    m_presets.clear();
+  }
   void loadPresets(const TFilePath &presetFolder);
   void savePreset(std::wstring presetName);
-  void deletePreset(std::wstring presetName);
+  void deletePreset(TFilePath presetPath);
 
-  const TFilePath &path() { return m_presetFolder; };
   const std::set<PerspectivePreset> &presets() const { return m_presets; }
 
   void addPreset(PerspectivePreset perspectiveSet);
@@ -388,11 +404,12 @@ public:
 // PerspectiveTool
 //-----------------------------------------------------------------------------
 
-class PerspectiveTool final : public TTool {
+class PerspectiveTool final : public TTool, public TProjectManager::Listener {
   Q_DECLARE_TR_FUNCTIONS(PerspectiveTool)
 
 public:
   PerspectiveTool();
+  ~PerspectiveTool();
 
   ToolType getToolType() const override { return TTool::GenericTool; }
 
@@ -439,7 +456,7 @@ public:
 
   void initPresets();
   void loadPreset();
-  void addPreset(QString name);
+  void addPreset(QString name, bool isLibrary = false);
   void removePreset();
   void loadLastPreset();
 
@@ -448,6 +465,10 @@ public:
 
   void updateMeasuredValueToolOptions();
   void updateToolOptionValues();
+
+  /*!	Overridden from TProjectManager::Listener. */
+  void onProjectSwitched() override;
+  void onProjectChanged() override;
 
 protected:
   TPropertyGroup m_prop;
@@ -487,7 +508,6 @@ protected:
   bool m_propertyUpdating = false;
 
   PerspectivePresetManager m_presetsManager;
-  bool m_presetsLoaded;
 
   PerspectiveObjectUndo *m_undo;
 };

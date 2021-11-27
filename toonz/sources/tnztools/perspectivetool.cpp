@@ -9,6 +9,7 @@
 
 #include "toonz/stage.h"
 #include "toonz/toonzfolders.h"
+#include "toonz/tproject.h"
 
 #include "toonzqt/selectioncommandids.h"
 
@@ -249,24 +250,24 @@ void PerspectivePresetManager::removePreset(const std::wstring &name) {
   std::set<PerspectivePreset>::iterator it;
   for (it = m_presets.begin(); it != m_presets.end(); it++) {
     PerspectivePreset preset = *it;
-    if (preset.m_presetName == name) m_presets.erase(preset);
+    if (preset.m_presetName != name) continue;
+    deletePreset(preset.m_path);
+    m_presets.erase(preset);
+    break;
   }
-  deletePreset(name);
 }
 
 //----------------------------------------------------------------------------------------------------------
 
 void PerspectivePresetManager::loadPresets(const TFilePath &presetFolder) {
-  m_presetFolder = presetFolder;
-
-  TFileStatus fs(m_presetFolder);
+  TFileStatus fs(presetFolder);
 
   if (!fs.doesExist() || !fs.isDirectory()) return;
 
   TFilePathSet fileSet;
   fileSet.clear();
 
-  QDir presetfp(m_presetFolder.getQString());
+  QDir presetfp(presetFolder.getQString());
   presetfp.setNameFilters(QStringList("*.grid"));
   TSystem::readDirectory(fileSet, presetfp, false);
 
@@ -278,7 +279,10 @@ void PerspectivePresetManager::loadPresets(const TFilePath &presetFolder) {
     PerspectivePreset data;
     TIStream is(*it);
     try {
-      is >> data, m_presets.insert(data);
+      is >> data;
+      data.m_path       = TFilePath(it->getQString());
+      data.m_presetName = data.m_path.getWideName();
+      m_presets.insert(data);
     } catch (...) {
     }
   }
@@ -287,30 +291,29 @@ void PerspectivePresetManager::loadPresets(const TFilePath &presetFolder) {
 //----------------------------------------------------------------------------------------------------------
 
 void PerspectivePresetManager::savePreset(std::wstring presetName) {
-  TFilePath fp = m_presetFolder + TFilePath(presetName);
-  fp           = fp.withType("grid");
-
-  TSystem::touchParentDir(fp);
-
-  TOStream os(fp);
-
   std::set<PerspectivePreset>::iterator it, end = m_presets.end();
   for (it = m_presets.begin(); it != end; ++it) {
     if (it->m_presetName != presetName) continue;
+    TFilePath fp = it->m_path;
+    if (fp == TFilePath()) return;
+
+    TSystem::touchParentDir(fp);
+
+    TOStream os(fp);
     os << (TPersist &)*it;
+    break;
   }
 }
 
 //----------------------------------------------------------------------------------------------------------
 
-void PerspectivePresetManager::deletePreset(std::wstring presetName) {
-  TFilePath fp = m_presetFolder + TFilePath(presetName);
-  fp           = fp.withType("grid");
+void PerspectivePresetManager::deletePreset(TFilePath presetPath) {
+  if (presetPath == TFilePath()) return;
 
-  TFileStatus fs(fp);
+  TFileStatus fs(presetPath);
   if (!fs.doesExist()) return;
 
-  TSystem::deleteFile(fp);
+  TSystem::deleteFile(presetPath);
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -484,7 +487,6 @@ PerspectiveTool::PerspectiveTool()
     , m_parallel("Parallel", false)
     , m_advancedControls("Advanced Controls", false)
     , m_preset("Preset:")
-    , m_presetsLoaded(false)
     , m_modified(false)
     , m_isShifting(false)
     , m_isCenterMoving(false)
@@ -527,6 +529,32 @@ PerspectiveTool::PerspectiveTool()
 
   m_selection.setTool(this);
   m_selection.selectNone();
+
+  TProjectManager::instance()->addListener(this);
+}
+
+//----------------------------------------------------------------------------------------------
+
+PerspectiveTool::~PerspectiveTool() {
+  TProjectManager::instance()->removeListener(this);
+}
+
+//----------------------------------------------------------------------------------------------
+
+void PerspectiveTool::onProjectSwitched() {
+  m_presetsManager.clearPresets();
+  initPresets();
+  for (int i = 0; i < (int)m_toolOptionsBox.size(); i++)
+    m_toolOptionsBox[i]->reloadPresetCombo();
+}
+
+//----------------------------------------------------------------------------------------------
+
+void PerspectiveTool::onProjectChanged() {
+  m_presetsManager.clearPresets();
+  initPresets();
+  for (int i = 0; i < (int)m_toolOptionsBox.size(); i++)
+    m_toolOptionsBox[i]->reloadPresetCombo();
 }
 
 //----------------------------------------------------------------------------------------------
@@ -557,7 +585,7 @@ void PerspectiveTool::updateTranslation() {
 //----------------------------------------------------------------------------------------------
 
 TPropertyGroup *PerspectiveTool::getProperties(int idx) {
-  if (!m_presetsLoaded) initPresets();
+  initPresets();
 
   return &m_prop;
 }
@@ -1297,7 +1325,7 @@ void PerspectiveTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
           obj->setRightHandlePos(rightHandlePos);
         }
       } else if (m_isRotating) {
-        double rotation = obj->getRotation();
+        double rotation        = obj->getRotation();
         TPointD newRotationPos = rotationPos + dPos;
         double rot =
             rotation +
@@ -1644,11 +1672,13 @@ std::vector<PerspectiveObject *> PerspectiveTool::copyPerspectiveSet(
 //----------------------------------------------------------------------------------------------
 
 void PerspectiveTool::initPresets() {
-  if (!m_presetsLoaded) {
-    // If necessary, load the presets from file
-    m_presetsLoaded = true;
+  if (!m_presetsManager.isLoaded()) {
+    TFilePath projectFolder =
+        TProjectManager::instance()->getCurrentProject()->getProjectFolder();
+    m_presetsManager.loadPresets(projectFolder + "grids");
     m_presetsManager.loadPresets(ToonzFolder::getLibraryFolder() +
-                                 "perspectives grids");
+                                 "perspective grids");
+    m_presetsManager.setIsLoaded(true);
   }
 
   // Rebuild the presets property entries
@@ -1684,8 +1714,17 @@ void PerspectiveTool::loadPreset() {
 
 //----------------------------------------------------------------------------------------------
 
-void PerspectiveTool::addPreset(QString name) {
-  PerspectivePreset preset(name.toStdWString());  // , m_perspectiveObjs);
+void PerspectiveTool::addPreset(QString name, bool isLibrary) {
+  TFilePath projectFolder =
+      TProjectManager::instance()->getCurrentProject()->getProjectFolder();
+
+  TFilePath path =
+      (isLibrary ? (ToonzFolder::getLibraryFolder() + "perspective grids")
+                 : (projectFolder + "grids")) +
+      TFilePath(name);
+  path = path.withType("grid");
+
+  PerspectivePreset preset(name.toStdWString(), path);
 
   preset.m_perspectiveSet = m_perspectiveObjs;
 

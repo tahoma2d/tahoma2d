@@ -776,6 +776,8 @@ public:
   void updateStatus();
   void updateMeasuredValues(double spacing, double rotation);
 
+  void reloadPresetCombo();
+
 protected slots:
 
   void onAddPreset();
