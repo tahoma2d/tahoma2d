@@ -756,6 +756,15 @@ int main(int argc, char *argv[]) {
   QString currentStyle = Preferences::instance()->getCurrentStyleSheetPath();
   a.setStyleSheet(currentStyle);
 
+  // Perspective grid tool - custom grid
+  splash.showMessage(offsetStr + "Loading Perspective Grid...",
+                     Qt::AlignRight | Qt::AlignBottom, Qt::black);
+  a.processEvents();
+
+  TTool *perspectiveTool =
+      TTool::getTool(T_PerspectiveGrid, TTool::VectorImage);
+  if (perspectiveTool) perspectiveTool->loadTool();
+
   w.setWindowTitle(QString::fromStdString(TEnv::getApplicationFullName()));
   if (TEnv::getIsPortable()) {
     splash.showMessage(offsetStr + "Starting Tahoma2D...",

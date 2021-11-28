@@ -31,10 +31,6 @@ PerspectiveTool perspectiveTool;
 
 //----------------------------------------------------------------------------------------------------------
 
-#define CUSTOM_WSTR L"<custom>"
-
-//----------------------------------------------------------------------------------------------------------
-
 void PerspectivePreset::saveData(TOStream &os) {
   os.openChild("version");
   os << 1 << 0;
@@ -264,6 +260,8 @@ void PerspectivePresetManager::loadPresets(const TFilePath &presetFolder) {
 
   if (!fs.doesExist() || !fs.isDirectory()) return;
 
+  bool loadCustom = (presetFolder == ToonzFolder::getMyModuleDir());
+
   TFilePathSet fileSet;
   fileSet.clear();
 
@@ -280,9 +278,13 @@ void PerspectivePresetManager::loadPresets(const TFilePath &presetFolder) {
     TIStream is(*it);
     try {
       is >> data;
-      data.m_path       = TFilePath(it->getQString());
-      data.m_presetName = data.m_path.getWideName();
-      m_presets.insert(data);
+      if (loadCustom)
+        m_customPreset = data;
+      else {
+        data.m_path       = TFilePath(it->getQString());
+        data.m_presetName = data.m_path.getWideName();
+        m_presets.insert(data);
+      }
     } catch (...) {
     }
   }
@@ -291,6 +293,19 @@ void PerspectivePresetManager::loadPresets(const TFilePath &presetFolder) {
 //----------------------------------------------------------------------------------------------------------
 
 void PerspectivePresetManager::savePreset(std::wstring presetName) {
+  if (presetName == CUSTOM_WSTR) {
+    TFilePath fp =
+        ToonzFolder::getMyModuleDir() + TFilePath("perspective.grid");
+    if (TFileStatus(fp).doesExist()) TSystem::deleteFile(fp);
+    TSystem::touchParentDir(fp);
+
+    TOStream os(fp);
+    if (!m_customPreset.m_perspectiveSet.size()) return;
+
+    os << m_customPreset;
+    return;
+  }
+
   std::set<PerspectivePreset>::iterator it, end = m_presets.end();
   for (it = m_presets.begin(); it != end; ++it) {
     if (it->m_presetName != presetName) continue;
@@ -1887,6 +1902,27 @@ void PerspectiveTool::updateToolOptionValues() {
   m_propertyUpdating = true;
   getApplication()->getCurrentTool()->notifyToolChanged();
   m_propertyUpdating = false;
+}
+
+//----------------------------------------------------------------------------------------------
+
+void PerspectiveTool::saveTool() {
+  PerspectivePreset customPreset(CUSTOM_WSTR);
+  if (m_preset.getValue() != CUSTOM_WSTR)
+    customPreset.m_perspectiveSet = m_lastPreset;
+  else
+    customPreset.m_perspectiveSet = m_perspectiveObjs;
+
+  m_presetsManager.setCustomPreset(customPreset);
+  m_presetsManager.savePreset(CUSTOM_WSTR);
+}
+
+void PerspectiveTool::loadTool() {
+  m_presetsManager.loadPresets(
+      ToonzFolder::getMyModuleDir());  // Load custom grid from last session
+  PerspectivePreset preset = m_presetsManager.getCustomPreset();
+  m_lastPreset             = preset.m_perspectiveSet;
+  loadLastPreset();
 }
 
 //----------------------------------------------------------------------------------------------

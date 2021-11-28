@@ -703,6 +703,11 @@ void MainWindow::writeSettings() {
   Tofstream os(ToonzFolder::getMyRoomsDir() + currentRoomFileName);
   os << getCurrentRoom()->getName().toStdString();
 
+  // Perspective grid tool - custom grid
+  TTool *perspectiveTool =
+      TTool::getTool(T_PerspectiveGrid, TTool::VectorImage);
+  if (perspectiveTool) perspectiveTool->saveTool();
+
   // Main window settings
   TFilePath fp = ToonzFolder::getMyModuleDir() + TFilePath("mainwindow.ini");
   QSettings settings(toQString(fp), QSettings::IniFormat);

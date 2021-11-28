@@ -538,6 +538,9 @@ transformation.
 
   virtual bool isMyPaintStyleSelected() { return false; }
 
+  virtual void saveTool(){};
+  virtual void loadTool(){};
+
 public:
   struct CellOps {
     int r0;

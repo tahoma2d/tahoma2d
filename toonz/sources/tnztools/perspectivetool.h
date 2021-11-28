@@ -22,6 +22,10 @@ class PerspectiveTool;
 
 //--------------------------------------------------------------
 
+#define CUSTOM_WSTR L"<custom>"
+
+//--------------------------------------------------------------
+
 enum PerspectiveType { Undefined, VanishingPoint, Line };
 
 //************************************************************************
@@ -303,6 +307,7 @@ struct PerspectivePreset final : public TPersist {
 class PerspectivePresetManager {
   std::set<PerspectivePreset> m_presets;  //!< Current presets container
   bool m_presetsLoaded = false;
+  PerspectivePreset m_customPreset;
 
 public:
   PerspectivePresetManager() {}
@@ -319,6 +324,9 @@ public:
   void deletePreset(TFilePath presetPath);
 
   const std::set<PerspectivePreset> &presets() const { return m_presets; }
+
+  PerspectivePreset getCustomPreset() { return m_customPreset; }
+  void setCustomPreset(PerspectivePreset custom) { m_customPreset = custom; }
 
   void addPreset(PerspectivePreset perspectiveSet);
   void removePreset(const std::wstring &name);
@@ -465,6 +473,9 @@ public:
 
   void updateMeasuredValueToolOptions();
   void updateToolOptionValues();
+
+  void saveTool() override;
+  void loadTool() override;
 
   /*!	Overridden from TProjectManager::Listener. */
   void onProjectSwitched() override;
