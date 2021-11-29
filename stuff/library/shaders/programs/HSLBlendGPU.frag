@@ -8,12 +8,13 @@ uniform mat3      worldToOutput;
 uniform sampler2D inputImage[2];
 uniform mat3      outputToInput[2];
 
-uniform bool bhue;
-uniform bool bsat;
-uniform bool blum;
-uniform float balpha;
+uniform bool bhue;    // Blend HUE?
+uniform bool bsat;    // Blend Saturation?
+uniform bool blum;    // Blend Luminosity?
+uniform float balpha; // Blending Alpha
+uniform bool bmask;   // Base mask?
 
-
+// ---------------------------
 // Blending calculations from:
 // https://www.khronos.org/registry/OpenGL/extensions/KHR/KHR_blend_equation_advanced.txt
 
@@ -84,35 +85,40 @@ vec3 SetLumSat(vec3 cbase, vec3 csat, vec3 clum)
   return SetLum(color, clum);
 }
 
+// ---------------------------
 
 void main( void )
 {
   // Read sources
-  vec2 s_texPos = (outputToInput[0] * vec3(gl_FragCoord.xy, 1.0)).xy;
-  vec2 d_texPos = (outputToInput[1] * vec3(gl_FragCoord.xy, 1.0)).xy;
-  vec4 s_frag = texture2D(inputImage[0], s_texPos);
-  vec4 d_frag = texture2D(inputImage[1], d_texPos);
+  vec2 fg_texPos = (outputToInput[0] * vec3(gl_FragCoord.xy, 1.0)).xy;
+  vec2 bg_texPos = (outputToInput[1] * vec3(gl_FragCoord.xy, 1.0)).xy;
+  vec4 fg_frag = texture2D(inputImage[0], fg_texPos);
+  vec4 bg_frag = texture2D(inputImage[1], bg_texPos);
 
   // De-premultiplication
-  vec3 s_pix = vec3(0.0);
-  if (s_frag.a > 0.0) s_pix = s_frag.rgb / s_frag.a;
-  vec3 d_pix = vec3(0.0);
-  if (d_frag.a > 0.0) d_pix = d_frag.rgb / d_frag.a;
+  vec3 fg_pix = vec3(0.0);
+  if (fg_frag.a > 0.0) fg_pix = fg_frag.rgb / fg_frag.a;
+  vec3 bg_pix = vec3(0.0);
+  if (bg_frag.a > 0.0) bg_pix = bg_frag.rgb / bg_frag.a;
 
   // Figure out output alpha
-  float s_alpha = s_frag.a * balpha;
-  float d_alpha = d_frag.a;
-  gl_FragColor.a = s_alpha + d_alpha * (1.0 - s_alpha);
-  if (gl_FragColor.a <= 0.0) discard;
-
-  // Perform blending
-  if (s_alpha > 0.0 && d_alpha > 0.0) {
-    vec3 o_pix = SetLumSat(bhue ? s_pix : d_pix, bsat ? s_pix : d_pix, blum ? s_pix : d_pix);
-    gl_FragColor.rgb = mix(d_pix, o_pix, balpha);
-  } else if (s_alpha > 0.0) {
-    gl_FragColor.rgb = s_pix;
+  float fg_alpha = fg_frag.a * balpha;
+  float bg_alpha = bg_frag.a;
+  if (bmask) {
+    gl_FragColor.a = bg_alpha;
   } else {
-    gl_FragColor.rgb = d_pix;
+    gl_FragColor.a = fg_alpha + bg_alpha * (1.0 - fg_alpha);
+  }
+  if (gl_FragColor.a <= 0.0) discard;
+  
+  // Perform blending
+  if (fg_alpha > 0.0 && bg_alpha > 0.0) {
+    vec3 o_pix = SetLumSat(bhue ? fg_pix : bg_pix, bsat ? fg_pix : bg_pix, blum ? fg_pix : bg_pix);
+    gl_FragColor.rgb = mix(bg_pix, o_pix, balpha);
+  } else if (fg_alpha > 0.0) {
+    gl_FragColor.rgb = fg_pix;
+  } else {
+    gl_FragColor.rgb = bg_pix;
   }
 
   // Premultiplication

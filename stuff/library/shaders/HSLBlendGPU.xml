@@ -60,4 +60,10 @@
       0 1
     </Range>
   </Parameter>
+  <Parameter>
+    bool bmask
+    <Default>
+      0
+    </Default>
+  </Parameter>
 </Parameters>
