@@ -18,7 +18,6 @@ class QPushButton;
 class QLabel;
 class AudioLevelsDisplay;
 class FlipConsole;
-class QAudioProbe;
 class QAudioBuffer;
 class QMediaPlayer;
 class QElapsedTimer;
@@ -42,13 +41,11 @@ class AudioRecordingPopup : public DVGui::Dialog {
   QCheckBox *m_playXSheetCB;
   int m_currentFrame;
   AudioLevelsDisplay *m_audioLevelsDisplay;
-  QAudioProbe *m_probe;
   QMediaPlayer *m_player;
   TFilePath m_filePath;
   FlipConsole *m_console;
   QElapsedTimer *m_timer;
   QMap<qint64, double> m_recordedLevels;
-  qint64 m_oldElapsed;
   qint64 m_startPause = 0;
   qint64 m_endPause   = 0;
   qint64 m_pausedTime = 0;
@@ -103,6 +100,7 @@ public:
   void start();
   void stop();
   bool save(const QString &filename);
+  void freeup();
 
   qint64 readData(char *data, qint64 maxlen) override;
   qint64 writeData(const char *data, qint64 len) override;
