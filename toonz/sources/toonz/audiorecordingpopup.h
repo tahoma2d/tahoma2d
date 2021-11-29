@@ -15,7 +15,6 @@
 class QComboBox;
 class QCheckBox;
 class QPushButton;
-class QAudioRecorder;
 class QLabel;
 class AudioLevelsDisplay;
 class FlipConsole;
@@ -23,6 +22,7 @@ class QAudioProbe;
 class QAudioBuffer;
 class QMediaPlayer;
 class QElapsedTimer;
+class AudioWriterWAV;
 
 //=============================================================================
 // AudioRecordingPopup
@@ -31,13 +31,13 @@ class QElapsedTimer;
 class AudioRecordingPopup : public DVGui::Dialog {
   Q_OBJECT
 
-  QString m_deviceName;
   QPushButton
-      *m_recordButton,  // *m_refreshDevicesButton, -refresh not working for now
+      *m_recordButton, *m_refreshDevicesButton,
       *m_playButton,
       *m_pauseRecordingButton, *m_pausePlaybackButton, *m_saveButton;
   QComboBox *m_deviceListCB;
-  QAudioRecorder *m_audioRecorder;
+  QAudioInput *m_audioInput;
+  AudioWriterWAV *m_audioWriterWAV;
   QLabel *m_duration, *m_playDuration;
   QCheckBox *m_playXSheetCB;
   int m_currentFrame;
@@ -56,7 +56,11 @@ class AudioRecordingPopup : public DVGui::Dialog {
   QIcon m_pauseIcon;
   QIcon m_recordIcon;
   QIcon m_stopIcon;
+  QIcon m_refreshIcon;
   bool m_isPlaying, m_syncPlayback, m_stoppedAtEnd;
+  QLabel *m_labelDevice, *m_labelSamplerate, *m_labelSamplefmt;
+  QComboBox *m_comboSamplerate, *m_comboSamplefmt;
+  bool m_blockAudioSettings;
 
 public:
   AudioRecordingPopup();
@@ -67,6 +71,8 @@ protected:
   void hideEvent(QHideEvent *event);
   void makePaths();
   void resetEverything();
+  void enumerateAudioDevices(const QString &deviceName);
+  void reinitAudioInput();
 
 private slots:
   void onRecordButtonPressed();
@@ -76,12 +82,42 @@ private slots:
   void onSaveButtonPressed();
   void onPauseRecordingButtonPressed();
   void onPausePlaybackButtonPressed();
-  void processBuffer(const QAudioBuffer &buffer);
   void onPlayStateChanged(bool playing);
   void onPlayXSheetCBChanged(int status);
   void onMediaStateChanged(QMediaPlayer::State state);
   void onInputDeviceChanged();
-  // void onRefreshButtonPressed();
+  void onRefreshButtonPressed();
+  void onAudioSettingChanged();
+};
+
+//=============================================================================
+// AudioWriterWAV
+//-----------------------------------------------------------------------------
+
+class AudioWriterWAV : public QIODevice {
+  Q_OBJECT
+public:
+  AudioWriterWAV(const QAudioFormat &format);
+  bool restart(const QAudioFormat &format);
+
+  void start();
+  void stop();
+  bool save(const QString &filename);
+
+  qint64 readData(char *data, qint64 maxlen) override;
+  qint64 writeData(const char *data, qint64 len) override;
+
+  qreal level() const { return m_level; }
+
+private:
+  QByteArray m_barray;
+  QAudioFormat m_format;
+  qreal m_rbytesms;
+  qreal m_maxAmp;
+  qreal m_level;
+
+signals:
+  void update(qint64 duration);
 };
 
 //=============================================================================
