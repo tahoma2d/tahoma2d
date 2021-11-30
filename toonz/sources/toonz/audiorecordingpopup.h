@@ -97,22 +97,26 @@ public:
   AudioWriterWAV(const QAudioFormat &format);
   bool restart(const QAudioFormat &format);
 
-  void start();
-  void stop();
-  bool save(const QString &filename);
-  void freeup();
+  bool start(const QString &filename, bool useMem);
+  bool stop();
 
   qint64 readData(char *data, qint64 maxlen) override;
   qint64 writeData(const char *data, qint64 len) override;
 
   qreal level() const { return m_level; }
+  qreal peakLevel() const { return m_peakL; }
 
 private:
-  QByteArray m_barray;
+  QString m_filename;
+  QFile *m_wavFile;
+  QByteArray *m_wavBuff; // if not null then use memory
   QAudioFormat m_format;
+  quint64 m_wrRawB; // Written raw bytes
   qreal m_rbytesms;
   qreal m_maxAmp;
-  qreal m_level;
+  qreal m_level, m_peakL;
+
+  void writeWAVHeader(QFile &file);
 
 signals:
   void update(qint64 duration);
@@ -128,12 +132,13 @@ public:
   explicit AudioLevelsDisplay(QWidget *parent = 0);
 
   // Using [0; 1.0] range
-  void setLevel(qreal level);
+  void setLevel(qreal level, qreal peak);
 
 protected:
   void paintEvent(QPaintEvent *event);
 
 private:
   qreal m_level;
+  qreal m_peakL;
 };
 #endif

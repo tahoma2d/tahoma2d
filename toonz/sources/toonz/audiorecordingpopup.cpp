@@ -283,6 +283,16 @@ void AudioRecordingPopup::onRecordButtonPressed() {
     if (TSystem::doesExistFileOrLevel(m_filePath)) {
       TSystem::removeFileOrLevel(m_filePath);
     }
+    // The audio writer support either writing to buffer or directly to disk
+    // each method have their own pros and cons
+    // For now using false to mimic previous QAudioRecorder behaviour
+    m_audioWriterWAV->restart(m_audioInput->format());
+    if (!m_audioWriterWAV->start(m_filePath.getQString(), false)) {
+      DVGui::warning(
+          tr("Failed to save WAV file:\nMake sure you have write permissions "
+             "in folder."));
+      return;
+    }
     m_recordButton->setIcon(m_stopIcon);
     m_saveButton->setDisabled(true);
     m_playButton->setDisabled(true);
@@ -299,8 +309,6 @@ void AudioRecordingPopup::onRecordButtonPressed() {
     m_stoppedAtEnd = false;
     m_playDuration->setText("00:00.000");
     m_timer->restart();
-    m_audioWriterWAV->restart(m_audioInput->format());
-    m_audioWriterWAV->start();
     m_audioInput->start(m_audioWriterWAV);
     // this sometimes sets to one frame off, so + 1.
     m_currentFrame = TApp::instance()->getCurrentFrame()->getFrame() + 1;
@@ -312,13 +320,12 @@ void AudioRecordingPopup::onRecordButtonPressed() {
 
   } else {
     m_audioInput->stop();
-    m_audioWriterWAV->stop();
-    if (m_audioWriterWAV->save(m_filePath.getQString())) {
+    bool success = m_audioWriterWAV->stop();
+    if (success) {
       m_saveButton->setEnabled(true);
       m_playButton->setEnabled(true);
     }
-    m_audioWriterWAV->freeup();
-    m_audioLevelsDisplay->setLevel(-1);
+    m_audioLevelsDisplay->setLevel(-1, -1);
     m_recordButton->setIcon(m_recordIcon);
     m_pauseRecordingButton->setDisabled(true);
     m_pauseRecordingButton->setIcon(m_pauseIcon);
@@ -334,6 +341,10 @@ void AudioRecordingPopup::onRecordButtonPressed() {
       TApp::instance()->getCurrentFrame()->setCurrentFrame(m_currentFrame);
     }
     m_isPlaying = false;
+    if (!success) {
+      DVGui::warning(tr(
+          "Failed to save WAV file:\nMake sure you have write permissions in folder."));
+    }
   }
 }
 
@@ -350,7 +361,8 @@ void AudioRecordingPopup::updateRecordDuration(qint64 duration) {
 
   // Show and record amplitude
   qreal level = m_audioWriterWAV->level();
-  m_audioLevelsDisplay->setLevel(level);
+  qreal peakL = m_audioWriterWAV->peakLevel();
+  m_audioLevelsDisplay->setLevel(level, peakL);
   m_recordedLevels[duration / 20] = level;
 }
 
@@ -369,7 +381,7 @@ void AudioRecordingPopup::updatePlaybackDuration(qint64 duration) {
   // using
   // a map that is made during recording
   if (m_recordedLevels.contains(duration / 20)) {
-    m_audioLevelsDisplay->setLevel(m_recordedLevels.value(duration / 20));
+    m_audioLevelsDisplay->setLevel(m_recordedLevels.value(duration / 20), -1);
   }
 }
 
@@ -466,7 +478,7 @@ void AudioRecordingPopup::onPausePlaybackButtonPressed() {
 void AudioRecordingPopup::onMediaStateChanged(QMediaPlayer::State state) {
   // stopping can happen through the stop button or the file ending
   if (state == QMediaPlayer::StoppedState) {
-    m_audioLevelsDisplay->setLevel(-1);
+    m_audioLevelsDisplay->setLevel(-1, -1);
     if (m_syncPlayback) {
       if (m_isPlaying) {
         m_console->pressButton(FlipConsole::ePause);
@@ -523,11 +535,11 @@ void AudioRecordingPopup::onAudioSettingChanged() {
 void AudioRecordingPopup::onSaveButtonPressed() {
   if (m_audioInput->state() != QAudio::StoppedState) {
     m_audioInput->stop();
-    m_audioLevelsDisplay->setLevel(-1);
+    m_audioLevelsDisplay->setLevel(-1, -1);
   }
   if (m_player->state() != QMediaPlayer::StoppedState) {
     m_player->stop();
-    m_audioLevelsDisplay->setLevel(-1);
+    m_audioLevelsDisplay->setLevel(-1, -1);
   }
   if (!TSystem::doesExistFileOrLevel(m_filePath)) return;
 
@@ -599,7 +611,7 @@ void AudioRecordingPopup::resetEverything() {
   m_recordedLevels.clear();
   m_duration->setText("00:00.000");
   m_playDuration->setText("00:00.000");
-  m_audioLevelsDisplay->setLevel(-1);
+  m_audioLevelsDisplay->setLevel(-1, -1);
   if (!m_console) {
     m_console = FlipConsole::getCurrent();
     if (m_console)
@@ -613,6 +625,7 @@ void AudioRecordingPopup::resetEverything() {
 void AudioRecordingPopup::hideEvent(QHideEvent *event) {
   if (m_audioInput->state() != QAudio::StoppedState) {
     m_audioInput->stop();
+    m_audioWriterWAV->stop();
   }
   if (m_player->state() != QMediaPlayer::StoppedState) {
     m_player->stop();
@@ -627,7 +640,6 @@ void AudioRecordingPopup::hideEvent(QHideEvent *event) {
   }
   // Free up memory used in recording
   m_recordedLevels.clear();
-  m_audioWriterWAV->freeup();
 }
 
 //-----------------------------------------------------------------------------
@@ -701,7 +713,12 @@ void AudioRecordingPopup::reinitAudioInput() {
 // 32-bits isn't supported
 
 AudioWriterWAV::AudioWriterWAV(const QAudioFormat &format)
-    : m_level(0.0), m_maxAmp(0.0) {
+    : m_level(0.0)
+    , m_peakL(0.0)
+    , m_maxAmp(0.0)
+    , m_wrRawB(0)
+    , m_wavFile(NULL)
+    , m_wavBuff(NULL) {
   restart(format);
 }
 
@@ -718,16 +735,79 @@ bool AudioWriterWAV::restart(const QAudioFormat &format) {
     m_rbytesms = 250.0 / (m_format.sampleRate() * m_format.channelCount());
     m_maxAmp   = 1.0;
   }
-  m_barray.clear();
+  m_wrRawB = 0;
+  m_peakL  = 0.0;
+  if (m_wavBuff) m_wavBuff->clear();
   return this->reset();
 }
 
-void AudioWriterWAV::start() {
-    open(QIODevice::WriteOnly);
+// Just a tiny define to avoid a magic number
+// this is the size of a WAV header with PCM format
+#define AWWAV_HEADER_SIZE 44
+
+bool AudioWriterWAV::start(const QString &filename, bool useMem) {
+  open(QIODevice::WriteOnly);
+  m_filename = filename;
+
+  if (useMem) {
+    m_wavBuff = new QByteArray();
+  } else {
+    m_wavFile = new QFile(m_filename);
+    if (!m_wavFile->open(QIODevice::WriteOnly | QIODevice::Truncate))
+      return false;
+    m_wavFile->seek(AWWAV_HEADER_SIZE); // skip header
+  }
+
+  m_wrRawB = 0;
+  m_peakL  = 0.0;
+  return true;
 }
 
-void AudioWriterWAV::stop() {
-    close();
+bool AudioWriterWAV::stop() {
+  close();
+
+  if (m_wavBuff) {
+    // Using memory
+    QFile file;
+    file.setFileName(m_filename);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) return false;
+    writeWAVHeader(file);
+    file.write(m_wavBuff->constData(), m_wavBuff->size());
+    delete m_wavBuff;
+    m_wavBuff = NULL;
+  } else {
+    // Using disk directly
+    writeWAVHeader(*m_wavFile);
+    m_wavFile->close();
+    delete m_wavFile;
+    m_wavFile = NULL;
+  }
+
+  m_wrRawB = 0;
+  m_peakL  = 0.0;
+  return true;
+}
+
+void AudioWriterWAV::writeWAVHeader(QFile &file) {
+  quint16 channels   = m_format.channelCount();
+  quint32 samplerate = m_format.sampleRate();
+  quint16 bitrate    = m_format.sampleSize();
+
+  qint64 pos         = file.pos();
+  file.seek(0);
+
+  QDataStream out(&file);
+  out.setByteOrder(QDataStream::LittleEndian);
+  out.writeRawData("RIFF", 4);
+  out << (quint32)(m_wrRawB + AWWAV_HEADER_SIZE);
+  out.writeRawData("WAVEfmt ", 8);
+  out << (quint32)16 << (quint16)1; // magic numbers!
+  out << channels << samplerate;
+  out << quint32(samplerate * channels * bitrate / 8);
+  out << quint16(channels * bitrate / 8);
+  out << bitrate;
+  out.writeRawData("data", 4);
+  out << (quint32)m_wrRawB;
 }
 
 qint64 AudioWriterWAV::readData(char *data, qint64 maxlen) {
@@ -737,80 +817,57 @@ qint64 AudioWriterWAV::readData(char *data, qint64 maxlen) {
 }
 
 qint64 AudioWriterWAV::writeData(const char *data, qint64 len) {
-  qreal tmp, peak = 0.0;
+  int tmp, peak = 0.0;
 
   // Measure peak
   if (m_format.sampleSize() == 8) {
     const quint8 *sdata = (const quint8 *)data;
     int slen            = len;
     for (int i = 0; i < slen; ++i) {
-      tmp = qAbs(qreal(sdata[i]) - 128.0);
+      tmp = qAbs<int>(sdata[i] - 128);
       if (tmp > peak) peak = tmp;
     }
   } else if (m_format.sampleSize() == 16) {
     const qint16 *sdata = (const qint16 *)data;
     int slen            = len / 2;
     for (int i = 0; i < slen; ++i) {
-      tmp = qAbs(qreal(sdata[i]));
+      tmp = qAbs<int>(sdata[i]);
       if (tmp > peak) peak = tmp;
     }
   } else {
     // 32-bits isn't supported
-    peak = -1.0;
+    peak = -1;
   }
-  m_level = peak / m_maxAmp;
+  m_level = qreal(peak) / m_maxAmp;
+  if (m_level > m_peakL) m_peakL = m_level;
 
-  // Write to buffer
-  m_barray.append(data, len);
+  // Write to memory or disk
+  if (m_wavBuff) {
+    m_wavBuff->append(data, len);
+  } else {
+    m_wavFile->write(data, len);
+  }
+  m_wrRawB += len;
 
   // Emit an update
-  emit update(m_barray.size() * m_rbytesms);
+  emit update(qreal(m_wrRawB) * m_rbytesms);
   return len;
 }
-
-bool AudioWriterWAV::save(const QString &filename)
-{
-  QFile file;
-  quint16 channels   = m_format.channelCount();
-  quint32 samplerate = m_format.sampleRate();
-  quint16 bitrate    = m_format.sampleSize();
-  file.setFileName(filename);
-  if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-    DVGui::warning(tr(
-        "Failed to save WAV file:\nMake sure you have folder permissions."));
-    return false;
-  }
-  QDataStream out(&file);
-  out.setByteOrder(QDataStream::LittleEndian);
-  out.writeRawData("RIFF", 4);
-  out << (quint32)(m_barray.size() + 44);
-  out.writeRawData("WAVEfmt ", 8);
-  out << (quint32)16 << (quint16)1;
-  out << channels << samplerate;
-  out << quint32(samplerate * channels * bitrate / 8);
-  out << quint16(channels * bitrate / 8);
-  out << bitrate;
-  out.writeRawData("data", 4);
-  out << (quint32)m_barray.size();
-  out.writeRawData(m_barray.constData(), m_barray.size());
-  return true;
-}
-
-void AudioWriterWAV::freeup() { m_barray.clear(); }
 
 //-----------------------------------------------------------------------------
 // AudioLevelsDisplay Class
 //-----------------------------------------------------------------------------
 
 AudioLevelsDisplay::AudioLevelsDisplay(QWidget *parent)
-    : QWidget(parent), m_level(0.0) {
+    : QWidget(parent), m_level(0.0), m_peakL(0.0) {
   setFixedHeight(20);
   setFixedWidth(300);
 }
 
-void AudioLevelsDisplay::setLevel(qreal level) {
-  if (m_level != level) {
+void AudioLevelsDisplay::setLevel(qreal level, qreal peakLevel) {
+  if (m_level != level || m_peakL != peakLevel) {
     m_level = level;
+    m_peakL = peakLevel;
     update();
   }
 }
@@ -831,9 +888,18 @@ void AudioLevelsDisplay::paintEvent(QPaintEvent *event) {
   } else
     color = Qt::red;
 
-  qreal widthLevel = m_level * width();
-  painter.fillRect(0, 0, widthLevel, height(), color);
+  int widthLevel = m_level * width();
+  int widthPeakL = m_peakL * width();
   painter.fillRect(widthLevel, 0, width(), height(), Qt::black);
+  if (widthPeakL >= 0) {
+    if (m_peakL >= 0.995) {
+      painter.fillRect(width() - 4, 0, 4, height(), Qt::red);
+    } else {
+      painter.setPen(QColor(64, 64, 64));  // very dark gray
+      painter.drawLine(widthPeakL, 0, widthPeakL, height());
+    }
+  }
+  painter.fillRect(0, 0, widthLevel, height(), color);
 }
 
 //-----------------------------------------------------------------------------
