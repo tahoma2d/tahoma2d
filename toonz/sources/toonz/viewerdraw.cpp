@@ -41,7 +41,6 @@ TEnv::IntVar ShowRuleOfThirds("ShowRuleOfThirds", 1);
 TEnv::IntVar ShowGoldenRatio("ShowGoldenRatio", 0);
 TEnv::IntVar ShowFieldGuide("ShowFieldGuide", 0);
 TEnv::IntVar GuideOpacity("GuideOpacity", 70);
-TEnv::IntVar ShowPerspectiveGuides("ShowPerspectiveGuides", 0);
 
 /* TODO, move to include */
 void getSafeAreaSizeList(QList<QList<double>> &_sizeList);

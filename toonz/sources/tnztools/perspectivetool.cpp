@@ -27,8 +27,6 @@
 TEnv::IntVar PerspectiveToolAdvancedControls("PerspectiveToolAdvancedControls",
                                              0);
 
-PerspectiveTool perspectiveTool;
-
 //----------------------------------------------------------------------------------------------------------
 
 void PerspectivePreset::saveData(TOStream &os) {
@@ -513,6 +511,7 @@ PerspectiveTool::PerspectiveTool()
     , m_isRightMoving(false)
     , m_selecting(false)
     , m_selectingRect(TRectD())
+    , m_firstTime(false)
     , m_undo(0) {
   bind(TTool::AllTargets);
 
@@ -537,7 +536,7 @@ PerspectiveTool::PerspectiveTool()
   m_color.addValue(L"Black", TPixel::Black);
   m_color.setId("Color");
 
-  m_advancedControls.setValue(PerspectiveToolAdvancedControls);
+  m_advancedControls.setValue(false);
 
   m_preset.setId("PerspectivePreset");
   m_preset.addValue(CUSTOM_WSTR);
@@ -608,6 +607,15 @@ TPropertyGroup *PerspectiveTool::getProperties(int idx) {
 void PerspectiveTool::setToolOptionsBox(
     PerspectiveGridToolOptionBox *toolOptionsBox) {
   m_toolOptionsBox.push_back(toolOptionsBox);
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveTool::onActivate() {
+  if (!m_firstTime) {
+    m_firstTime = true;
+    m_advancedControls.setValue(PerspectiveToolAdvancedControls);
+  }
 }
 
 //----------------------------------------------------------------------------------------------
@@ -1918,6 +1926,7 @@ void PerspectiveTool::saveTool() {
 }
 
 void PerspectiveTool::loadTool() {
+  onActivate();
   m_presetsManager.loadPresets(
       ToonzFolder::getMyModuleDir());  // Load custom grid from last session
   PerspectivePreset preset = m_presetsManager.getCustomPreset();
@@ -2215,3 +2224,5 @@ TPointD LinePerspective::getReferencePoint(TPointD firstPoint) {
 
   return refPoint;
 }
+
+PerspectiveTool perspectiveTool;

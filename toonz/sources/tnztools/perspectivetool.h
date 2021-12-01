@@ -430,6 +430,7 @@ public:
   void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
   bool keyDown(QKeyEvent *event) override;
 
+  void onActivate() override;
   bool onPropertyChanged(std::string propertyName) override;
 
   int getCursorId() const override { return ToolCursor::StrokeSelectCursor; };
@@ -495,6 +496,8 @@ protected:
 
   std::vector<PerspectiveObject *> m_perspectiveObjs;
   std::vector<PerspectiveObject *> m_lastPreset;
+
+  bool m_firstTime;
 
   PerspectiveSelection m_selection;
   bool m_selecting;
