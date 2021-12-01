@@ -103,6 +103,7 @@ protected:
   TOutputProperties *getProperties() const;
   void showEvent(QShowEvent *) override;
   void hideEvent(QHideEvent *) override;
+  bool eventFilter(QObject *, QEvent *) override;
 
 protected slots:
 

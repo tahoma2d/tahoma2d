@@ -630,11 +630,9 @@ void Particle::move(std::map<int, TTile *> porttiles,
                     float xgravity, float ygravity, float dpicorr,
                     int lastframe) {
   struct pos_dummy dummy;
-  float frictx, fricty;
   // int time;
   std::map<int, double> imagereferences;
   dummy.x = dummy.y = dummy.a = 0.0;
-  frictx = fricty = 0.0;
 
   double frictreference     = 1;
   double scalereference     = 0;
@@ -685,33 +683,27 @@ void Particle::move(std::map<int, TTile *> porttiles,
     ygravity *= values.gravity_val;
   }
 
-  if (values.friction_val * frictreference) {
-    if (vx) {
-      frictx = vx * (1 + values.friction_val * frictreference) +
-               (10 / vx) * values.friction_val * frictreference;
-      if ((frictx / vx) < 0) frictx = 0;
-      vx = frictx;
+  if (double friction = values.friction_val * frictreference) {
+    if (vx || vy) {
+      double v           = std::sqrt(vx * vx + vy * vy);
+      double frictined_v = v * (1 + friction) + (10 / v) * friction;
+      if (frictined_v < 0) frictined_v = 0;
+
+      double f_ratio = frictined_v / v;
+      if (vx) vx *= f_ratio;
+      if (vy) vy *= f_ratio;
     }
-    if (!frictx &&
-        fabs(values.friction_val * frictreference * 10) > fabs(xgravity)) {
+    if (!vx && fabs(friction * 10) > fabs(xgravity)) {
       xgravity = 0;
       dummy.x  = 0;
       dummy.a  = 0;
       windx    = 0;
     }
-
-    if (vy) {
-      fricty = vy * (1 + values.friction_val * frictreference) +
-               (10 / vy) * values.friction_val * frictreference;
-      if ((fricty / vy) < 0) fricty = 0;
-      vy = fricty;
-    }
-    if (!fricty &&
-        fabs(values.friction_val * frictreference * 10) > fabs(ygravity)) {
-      ygravity = 0;
-      dummy.y  = 0;
+    if (!vy && fabs(friction * 10) > fabs(xgravity)) {
+      xgravity = 0;
+      dummy.x  = 0;
       dummy.a  = 0;
-      windy    = 0;
+      windx    = 0;
     }
   }
 

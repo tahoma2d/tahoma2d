@@ -43,6 +43,9 @@ LayerFooterPanel::LayerFooterPanel(XsheetViewer *viewer, QWidget *parent,
   m_frameZoomSlider->setInvertedAppearance(invDirection);
   m_frameZoomSlider->setInvertedControls(invDirection);
 
+  // for minimal layout, hide the slider
+  if (o->rect(PredefinedRect::ZOOM_SLIDER).isEmpty()) m_frameZoomSlider->hide();
+
   connect(m_frameZoomSlider, SIGNAL(valueChanged(int)), this,
           SLOT(onFrameZoomSliderValueChanged(int)));
 }
@@ -143,6 +146,12 @@ void LayerFooterPanel::showOrHide(const Orientation *o) {
   m_frameZoomSlider->setToolTip(tooltipStr);
   m_frameZoomSlider->setInvertedAppearance(invDirection);
   m_frameZoomSlider->setInvertedControls(invDirection);
+
+  // for minimal layout, hide the slider
+  if (o->rect(PredefinedRect::ZOOM_SLIDER).isEmpty())
+    m_frameZoomSlider->hide();
+  else
+    m_frameZoomSlider->show();
 
   show();
 }

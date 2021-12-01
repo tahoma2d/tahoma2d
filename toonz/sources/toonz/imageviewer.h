@@ -38,6 +38,11 @@ class ImageViewer final : public GLWidgetForHighDpi {
   FlipBook *m_flipbook;
   TPoint m_pressedMousePos;
 
+  // Modifying rect-picking positon offset for vector image.
+  // For unknown reasons, glReadPixels is covering the entire window not the
+  // OpenGL widget.
+  TPointD m_winPosMousePosOffset;
+
   Qt::MouseButton m_mouseButton;
   bool m_draggingZoomSelection;
 
@@ -125,6 +130,7 @@ public:
 
   void doSwapBuffers();
   void changeSwapBehavior(bool enable);
+  void invalidateCompHisto();
 
 protected:
   void contextMenuEvent(QContextMenuEvent *event) override;

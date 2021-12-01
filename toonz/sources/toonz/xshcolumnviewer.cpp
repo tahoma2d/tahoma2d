@@ -63,25 +63,28 @@
 #include <QTimer>
 #include <QLabel>
 #include <QComboBox>
+#include <QCheckBox>
 #include <QPushButton>
 #include <QDesktopWidget>
 
 #include <QBitmap>
 
 TEnv::IntVar ShowParentColorsInXsheet("ShowParentColorsInXsheet", 1);
+
 //=============================================================================
 
 namespace {
-const QSet<TXshSimpleLevel *> getLevels(TXshColumn *column) {
-  QSet<TXshSimpleLevel *> levels;
+const QSet<TXshLevel *> getLevels(TXshColumn *column) {
+  QSet<TXshLevel *> levels;
+
   TXshCellColumn *cellColumn = column->getCellColumn();
   if (cellColumn) {
     int i, r0, r1;
     cellColumn->getRange(r0, r1);
     for (i = r0; i <= r1; i++) {
-      TXshCell cell       = cellColumn->getCell(i);
-      TXshSimpleLevel *sl = cell.getSimpleLevel();
-      if (sl) levels.insert(sl);
+      TXshCell cell = cellColumn->getCell(i);
+      // TXshSimpleLevel *sl = cell.getSimpleLevel();
+      if (!cell.isEmpty()) levels.insert(cell.m_level.getPointer());
     }
   }
   return levels;
@@ -126,18 +129,37 @@ bool containsVectorLevel(int col) {
   TXshColumn::ColumnType type = column->getColumnType();
   if (type != TXshColumn::eLevelType) return false;
 
-  const QSet<TXshSimpleLevel *> levels = getLevels(column);
-  QSet<TXshSimpleLevel *>::const_iterator it2;
+  const QSet<TXshLevel *> levels = getLevels(column);
+  QSet<TXshLevel *>::const_iterator it2;
   bool isVector = false;
   for (it2 = levels.begin(); it2 != levels.end(); it2++) {
-    TXshSimpleLevel *sl = *it2;
-    int type            = sl->getType();
+    TXshLevel *lvl = *it2;
+    int type       = lvl->getType();
     if (type == PLI_XSHLEVEL) {
       isVector = true;
       return true;
     }
   }
   return false;
+}
+
+QIcon createLockIcon(XsheetViewer *viewer) {
+  QImage icon_on, icon_off;
+  QColor bgColor_on, bgColor_off;
+  viewer->getButton(LOCK_ON_XSHBUTTON, bgColor_on, icon_on);
+  viewer->getButton(LOCK_OFF_XSHBUTTON, bgColor_off, icon_off);
+  QPainter p_on(&icon_on);
+  p_on.setCompositionMode(QPainter::CompositionMode_DestinationOver);
+  p_on.fillRect(0, 0, icon_on.width(), icon_on.height(), bgColor_on);
+  p_on.end();
+  QPainter p_off(&icon_off);
+  p_off.setCompositionMode(QPainter::CompositionMode_DestinationOver);
+  p_off.fillRect(0, 0, icon_off.width(), icon_off.height(), bgColor_off);
+  p_off.end();
+  QIcon lockIcon;
+  lockIcon.addPixmap(QPixmap::fromImage(icon_off));
+  lockIcon.addPixmap(QPixmap::fromImage(icon_on), QIcon::Normal, QIcon::On);
+  return lockIcon;
 }
 
 bool isCtrlPressed = false;
@@ -1009,6 +1031,14 @@ void ColumnArea::DrawHeader::drawColumnName() const {
 
   // Build column name
   std::string name(columnObject->getName());
+
+  // if a single level is in the column, show the level name instead
+  if (column && !columnObject->hasSpecifiedName() &&
+      Preferences::instance()->getLevelNameDisplayType() ==
+          Preferences::ShowLevelNameOnColumnHeader) {
+    QSet<TXshLevel *> levels = getLevels(column);
+    if (levels.size() == 1) name = to_string((*levels.begin())->getName());
+  }
   //  if (col < 0) name = std::string("Camera");
 
   // ZeraryFx columns store name elsewhere
@@ -1089,6 +1119,10 @@ void ColumnArea::DrawHeader::drawThumbnail(QPixmap &iconPixmap) const {
   QRect thumbnailRect = o->rect((col < 0) ? PredefinedRect::CAMERA_ICON_AREA
                                           : PredefinedRect::THUMBNAIL_AREA)
                             .translated(orig);
+
+  // Minimum layout has no thumbnail area
+  if (thumbnailRect.isEmpty()) return;
+
   p.setPen(m_viewer->getVerticalLineColor());
   if (o->flag(PredefinedFlag::THUMBNAIL_AREA_BORDER)) p.drawRect(thumbnailRect);
 
@@ -1540,7 +1574,7 @@ void ColumnArea::drawLevelColumnHead(QPainter &p, int col) {
 
   bool isSelected =
       m_viewer->getColumnSelection()->isColumnSelected(col) && !isEditingSpline;
-  bool isCameraSelected = col == -1 && isCurrent && !isEditingSpline;
+  // bool isCameraSelected = col == -1 && isCurrent && !isEditingSpline;
 
   // Draw column
   DrawHeader drawHeader(this, p, col);
@@ -1551,14 +1585,14 @@ void ColumnArea::drawLevelColumnHead(QPainter &p, int col) {
   drawHeader.drawEye();
   drawHeader.drawPreviewToggle(column ? column->getOpacity() : 0);
   drawHeader.drawLock();
-  drawHeader.drawConfig();
   drawHeader.drawColumnName();
   drawHeader.drawColumnNumber();
   QPixmap iconPixmap = getColumnIcon(col);
   drawHeader.drawThumbnail(iconPixmap);
+  drawHeader.drawFilterColor();
+  drawHeader.drawConfig();
   drawHeader.drawPegbarName();
   drawHeader.drawParentHandleName();
-  drawHeader.drawFilterColor();
 }
 
 //-----------------------------------------------------------------------------
@@ -1613,7 +1647,7 @@ void ColumnArea::drawSoundColumnHead(QPainter &p, int col) {  // AREA
   drawHeader.drawThumbnail(iconignored);
   drawHeader.drawPegbarName();
   drawHeader.drawParentHandleName();
-  drawHeader.drawFilterColor();
+  // drawHeader.drawFilterColor();
 }
 
 //-----------------------------------------------------------------------------
@@ -1664,7 +1698,7 @@ void ColumnArea::drawPaletteColumnHead(QPainter &p, int col) {  // AREA
   drawHeader.drawThumbnail(iconPixmap);
   drawHeader.drawPegbarName();
   drawHeader.drawParentHandleName();
-  drawHeader.drawFilterColor();
+  // drawHeader.drawFilterColor();
 }
 
 //-----------------------------------------------------------------------------
@@ -1721,7 +1755,7 @@ void ColumnArea::drawSoundTextColumnHead(QPainter &p, int col) {  // AREA
   drawHeader.drawThumbnail(iconPixmap);
   drawHeader.drawPegbarName();
   drawHeader.drawParentHandleName();
-  drawHeader.drawFilterColor();
+  // drawHeader.drawFilterColor();
 }
 
 //-----------------------------------------------------------------------------
@@ -1765,11 +1799,10 @@ QPixmap ColumnArea::getColumnIcon(int columnIndex) {
       }
     }
     QPixmap icon =
-        zColumn
-            ? FxIconPixmapManager::instance()->getFxIconPm(
-                  zColumn->getZeraryColumnFx()->getZeraryFx()->getFxType())
-            : IconGenerator::instance()->getIcon(xl, cell.m_frameId, false,
-                                                 onDemand);
+        zColumn ? FxIconPixmapManager::instance()->getFxIconPm(
+                      zColumn->getZeraryColumnFx()->getZeraryFx()->getFxType())
+                : IconGenerator::instance()->getIcon(xl, cell.m_frameId, false,
+                                                     onDemand);
     QRect thumbnailImageRect = o->rect(PredefinedRect::THUMBNAIL);
     if (thumbnailImageRect.isEmpty()) return QPixmap();
     return scalePixmapKeepingAspectRatio(icon, thumbnailImageRect.size());
@@ -1836,8 +1869,9 @@ void ColumnArea::paintEvent(QPaintEvent *event) {  // AREA
 //-----------------------------------------------------------------------------
 using namespace DVGui;
 
-ColumnTransparencyPopup::ColumnTransparencyPopup(QWidget *parent)
-    : QWidget(parent, Qt::Popup) {
+ColumnTransparencyPopup::ColumnTransparencyPopup(XsheetViewer *viewer,
+                                                 QWidget *parent)
+    : QWidget(parent, Qt::Popup), m_viewer(viewer), m_lockBtn(nullptr) {
   setFixedWidth(8 + 78 + 8 + 100 + 8 + 8 + 8 + 7);
 
   m_slider = new QSlider(Qt::Horizontal, this);
@@ -1863,31 +1897,59 @@ m_value->setFont(font);*/
       m_filterColorCombo->addItem(getColorChipIcon(info.second), info.first, f);
   }
 
-  QLabel *filterLabel = new QLabel(tr("Filter:"), this);
-  QLabel *sliderLabel = new QLabel(tr("Opacity:"), this);
+  // Lock button is moved in the popup for Minimum layout
+  QPushButton *lockExtraBtn = nullptr;
+  if (m_viewer->getXsheetLayout() == "Minimum") {
+    m_lockBtn = new QPushButton(tr("Lock Column"), this);
+    m_lockBtn->setCheckable(true);
+    m_lockBtn->setIcon(createLockIcon(m_viewer));
+    lockExtraBtn = new QPushButton(this);
+    QMenu *menu  = new QMenu();
+    menu->setObjectName("xsheetColumnAreaMenu_Lock");
+    CommandManager *cmdManager = CommandManager::instance();
+    menu->addAction(cmdManager->getAction("MI_LockThisColumnOnly"));
+    menu->addAction(cmdManager->getAction("MI_LockSelectedColumns"));
+    menu->addAction(cmdManager->getAction("MI_LockAllColumns"));
+    menu->addAction(cmdManager->getAction("MI_UnlockSelectedColumns"));
+    menu->addAction(cmdManager->getAction("MI_UnlockAllColumns"));
+    menu->addAction(cmdManager->getAction("MI_ToggleColumnLocks"));
+    lockExtraBtn->setMenu(menu);
+    lockExtraBtn->setFixedSize(20, 20);
+  }
+ 
 
-  QVBoxLayout *mainLayout = new QVBoxLayout();
+  QGridLayout *mainLayout = new QGridLayout();
   mainLayout->setMargin(3);
-  mainLayout->setSpacing(3);
+  mainLayout->setHorizontalSpacing(6);
+  mainLayout->setVerticalSpacing(6);
   {
+    mainLayout->addWidget(new QLabel(tr("Opacity:"), this), 0, 0,
+                          Qt::AlignRight | Qt::AlignVCenter);
     QHBoxLayout *hlayout = new QHBoxLayout;
-    // hlayout->setContentsMargins(0, 3, 0, 3);
     hlayout->setMargin(0);
     hlayout->setSpacing(3);
-    hlayout->addWidget(sliderLabel, 0);
-    hlayout->addWidget(m_slider);
-    hlayout->addWidget(m_value);
-    hlayout->addWidget(new QLabel("%"));
-    mainLayout->addLayout(hlayout, 0);
-
-    QHBoxLayout *filterColorLay = new QHBoxLayout();
-    filterColorLay->setMargin(0);
-    filterColorLay->setSpacing(2);
     {
-      filterColorLay->addWidget(filterLabel, 0);
-      filterColorLay->addWidget(m_filterColorCombo, 1);
+      hlayout->addWidget(m_slider);
+      hlayout->addWidget(m_value);
+      hlayout->addWidget(new QLabel("%"));
     }
-    mainLayout->addLayout(filterColorLay, 0);
+    mainLayout->addLayout(hlayout, 0, 1);
+
+    mainLayout->addWidget(new QLabel(tr("Filter:"), this), 1, 0,
+                          Qt::AlignRight | Qt::AlignVCenter);
+    mainLayout->addWidget(m_filterColorCombo, 1, 1,
+                          Qt::AlignLeft | Qt::AlignVCenter);
+
+    if (m_lockBtn) {
+      QHBoxLayout *lockLay = new QHBoxLayout();
+      lockLay->setMargin(0);
+      lockLay->setSpacing(3);
+      {
+        lockLay->addWidget(m_lockBtn, 0);
+        lockLay->addWidget(lockExtraBtn, 0);
+      }
+      mainLayout->addLayout(lockLay, 2, 1, Qt::AlignLeft | Qt::AlignVCenter);
+    }
   }
   setLayout(mainLayout);
 
@@ -1902,6 +1964,10 @@ m_value->setFont(font);*/
 
   ret = ret && connect(m_filterColorCombo, SIGNAL(activated(int)), this,
                        SLOT(onFilterColorChanged(int)));
+  if (m_lockBtn)
+    ret = ret && connect(m_lockBtn, SIGNAL(clicked(bool)), this,
+                         SLOT(onLockButtonClicked(bool)));
+
   assert(ret);
 }
 
@@ -1952,6 +2018,17 @@ void ColumnTransparencyPopup::onFilterColorChanged(int id) {
 
 //----------------------------------------------------------------
 
+void ColumnTransparencyPopup::onLockButtonClicked(bool on) {
+  assert(m_lockBtn);
+  if (!m_lockBtn) return;
+  m_column->lock(on);
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  ((ColumnArea *)parent())->update();
+}
+
+//----------------------------------------------------------------
+
 void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
   m_column = column;
   assert(m_column);
@@ -1963,6 +2040,8 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
           SLOT(onValueChanged(const QString &)));
 
   m_filterColorCombo->setCurrentIndex(m_column->getFilterColorId());
+
+  if (m_lockBtn) m_lockBtn->setChecked(m_column->isLocked());
 }
 
 /*void ColumnTransparencyPopup::mouseMoveEvent ( QMouseEvent * e )
@@ -2129,6 +2208,19 @@ void ColumnArea::openCameraColumnPopup(QPoint pos) {
             SLOT(onCameraColumnChangedTriggered()));
     menu.addAction(action);
   }
+  // Lock button is moved in this menu for Minimum layout
+  if (m_viewer->getXsheetLayout() == "Minimum") {
+    menu.addSeparator();
+    bool isLocked = m_viewer->getXsheet()->getColumn(-1)->isLocked();
+    QAction *lockAction =
+        new QAction((isLocked) ? tr("Unlock") : tr("Lock"), this);
+    lockAction->setCheckable(true);
+    lockAction->setChecked(isLocked);
+    lockAction->setIcon(createLockIcon(m_viewer));
+    menu.addAction(lockAction);
+    connect(lockAction, SIGNAL(toggled(bool)), this,
+            SLOT(onCameraColumnLockToggled(bool)));
+  }
 
   menu.exec(pos);
 }
@@ -2136,6 +2228,10 @@ void ColumnArea::openCameraColumnPopup(QPoint pos) {
 void ColumnArea::onCameraColumnChangedTriggered() {
   int newIndex = qobject_cast<QAction *>(sender())->data().toInt();
   onXsheetCameraChange(newIndex);
+}
+
+void ColumnArea::onCameraColumnLockToggled(bool lock) {
+  m_viewer->getXsheet()->getColumn(-1)->lock(lock);
 }
 
 //----------------------------------------------------------------
@@ -2156,8 +2252,7 @@ void ColumnArea::onXsheetCameraChange(int newIndex) {
 
 void ColumnArea::startTransparencyPopupTimer(QMouseEvent *e) {  // AREA
   if (!m_columnTransparencyPopup)
-    m_columnTransparencyPopup = new ColumnTransparencyPopup(
-        this);  // Qt::ToolTip|Qt::MSWindowsFixedSizeDialogHint);//Qt::MSWindowsFixedSizeDialogHint|Qt::Tool);
+    m_columnTransparencyPopup = new ColumnTransparencyPopup(m_viewer, this);
 
   m_columnTransparencyPopup->move(e->globalPos().x(), e->globalPos().y());
 
@@ -2565,7 +2660,8 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
         openSoundColumnPopup();
       } else {
         if (!m_columnTransparencyPopup)
-          m_columnTransparencyPopup = new ColumnTransparencyPopup(this);
+          m_columnTransparencyPopup =
+              new ColumnTransparencyPopup(m_viewer, this);
 
         m_columnTransparencyPopup->move(event->globalPos().x() + x,
                                         event->globalPos().y() - y);
@@ -2937,11 +3033,11 @@ void ColumnArea::onSubSampling(QAction *action) {
     TXshColumn *column          = xsh->getColumn(e);
     TXshColumn::ColumnType type = column->getColumnType();
     if (type != TXshColumn::eLevelType) continue;
-    const QSet<TXshSimpleLevel *> levels = getLevels(column);
-    QSet<TXshSimpleLevel *>::const_iterator it2;
+    const QSet<TXshLevel *> levels = getLevels(column);
+    QSet<TXshLevel *>::const_iterator it2;
     for (it2 = levels.begin(); it2 != levels.end(); it2++) {
-      TXshSimpleLevel *sl = *it2;
-      if (sl->getProperties()->getDirtyFlag()) continue;
+      TXshSimpleLevel *sl = (*it2)->getSimpleLevel();
+      if (!sl || sl->getProperties()->getDirtyFlag()) continue;
       int type = sl->getType();
       if (type == TZI_XSHLEVEL || type == TZP_XSHLEVEL ||
           type == OVL_XSHLEVEL) {

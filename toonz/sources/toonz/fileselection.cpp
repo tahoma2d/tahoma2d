@@ -328,12 +328,16 @@ void FileSelection::showFolderContents() {
     if (!model) return;
     folderPath = model->getFolder();
   }
-  if (TSystem::isUNC(folderPath))
-    QDesktopServices::openUrl(
+  if (TSystem::isUNC(folderPath)) {
+    bool ok = QDesktopServices::openUrl(
         QUrl(QString::fromStdWString(folderPath.getWideString())));
-  else
-    QDesktopServices::openUrl(QUrl::fromLocalFile(
-        QString::fromStdWString(folderPath.getWideString())));
+    if (ok) return;
+    // If the above fails, then try opening UNC path with the same way as the
+    // local files.. QUrl::fromLocalFile() seems to work for UNC path as well in
+    // our environment. (8/10/2021 shun-iwasawa)
+  }
+  QDesktopServices::openUrl(
+      QUrl::fromLocalFile(QString::fromStdWString(folderPath.getWideString())));
 }
 
 //------------------------------------------------------------------------

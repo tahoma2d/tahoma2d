@@ -66,7 +66,7 @@ public:
   /*! Modify stroke: between two linear or cusp point must be a pair chunk
 number.
 PAY ATTENTION: Can add control point in the stroke. */
-  void setStroke(const TVectorImageP &vi, int strokeIndex);
+  bool setStroke(const TVectorImageP &vi, int strokeIndex);
   TStroke *getStroke() const {
     return m_vi ? m_vi->getStroke(m_strokeIndex) : 0;
   }
@@ -140,7 +140,6 @@ private:
   std::set<int> m_selectedPoints;
   int m_strokeIndex;
   ControlPointEditorStroke *m_controlPointEditorStroke;
-  bool m_arePointsDeleted = false;
 
 public:
   ControlPointSelection() : m_controlPointEditorStroke(0), m_strokeIndex(-1) {}
@@ -162,11 +161,6 @@ public:
   void addMenuItems(QMenu *menu);
 
   void enableCommands() override;
-
-  bool getPointsDeleted() { return m_arePointsDeleted; }
-  void setArePointsDeleted(bool value) { m_arePointsDeleted = value; }
-  std::set<int> getSelectedPoints() { return m_selectedPoints; }
-
 protected slots:
   void setLinear();
   void setUnlinear();

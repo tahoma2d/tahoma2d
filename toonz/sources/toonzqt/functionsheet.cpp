@@ -328,8 +328,8 @@ void FunctionSheetColumnHeadViewer::paintEvent(QPaintEvent *e) {
 
   int y0 = 0;
   int y1 = 17;  // needs work
-  int y2 = 34;
   int y3 = 53;
+  if (m_sheet->isSmallHeader()) y3 = 34;
 
   /*--- Fill header with background color ---*/
   for (int c = c0; c <= c1; c++) {
@@ -401,9 +401,9 @@ void FunctionSheetColumnHeadViewer::paintEvent(QPaintEvent *e) {
 
     QString text = channel->getShortName();
     int d        = 8;
-    painter.drawText(x0 + d, y1, width - d, y3 - y1 + 1,
-                     Qt::TextWrapAnywhere | Qt::AlignLeft | Qt::AlignVCenter,
-                     text);
+    int flags    = Qt::AlignLeft | Qt::AlignVCenter;
+    if (!m_sheet->isSmallHeader()) flags |= Qt::TextWrapAnywhere;
+    painter.drawText(x0 + d, y1, width - d, y3 - y1 + 1, flags, text);
 
     // warning of losing expression reference
     TXsheet *xsh = m_sheet->getViewer()->getXsheetHandle()->getXsheet();

@@ -97,7 +97,10 @@ class CellArea final : public QWidget {
 
   void drawFrameSeparator(QPainter &p, int row, int col, bool emptyFrame,
                           bool heldFrame = false);
-  void drawLevelCell(QPainter &p, int row, int col, bool isReference = false);
+  // showLevelName can be OFF only when Preferences::getLevelNameDisplayType()
+  // == ShowLevelNameOnColumnHeader
+  void drawLevelCell(QPainter &p, int row, int col, bool isReference = false,
+                     bool showLevelName = true);
   void drawSoundTextCell(QPainter &p, int row, int col);
   void drawSoundCell(QPainter &p, int row, int col, bool isReference = false);
   void drawPaletteCell(QPainter &p, int row, int col, bool isReference = false);

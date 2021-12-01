@@ -476,6 +476,9 @@ public:
 
   virtual int getFrameZoomFactor() const { return 100; }
 
+  bool isSmallHeader();
+  void updateHeaderHeight();
+
 protected:
   bool event(QEvent *e) override;
   void showEvent(QShowEvent *) override;

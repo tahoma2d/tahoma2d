@@ -1260,7 +1260,7 @@ public:
     return m_layerHeaderLockOverImage;
   }
 
-  void getButton(int &btype, QColor &bgColor, QImage &iconImage,
+  void getButton(const int &btype, QColor &bgColor, QImage &iconImage,
                  bool isTimeline = false);
 
   // convert the last one digit of the frame number to alphabet

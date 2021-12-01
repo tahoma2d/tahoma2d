@@ -1711,6 +1711,12 @@ static void pasteRasterImageInCell(int row, int col,
   if (!isPaste) return;
   cell = xsh->getCell(row, col);
 
+  // The flag TTool::m_isLevelRenumbererd is evaluated in the undo.
+  // We need to reset the flag here as the operation does not call
+  // TTool::touchImage(). Currently the flag can be always false as the
+  // operation does not renumber cells regardless of the preferences.
+  TTool::m_isLevelRenumbererd = false;
+
   TTileSetCM32 *cm32Tiles           = dynamic_cast<TTileSetCM32 *>(tiles);
   TTileSetFullColor *fullColorTiles = dynamic_cast<TTileSetFullColor *>(tiles);
   if (cm32Tiles) {

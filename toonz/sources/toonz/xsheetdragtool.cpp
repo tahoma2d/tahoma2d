@@ -1661,12 +1661,28 @@ public:
       , m_offset(0)
       , m_origOffset(0) {}
 
-  void onClick(const CellPosition &pos) override {
+  void onClick(const QMouseEvent *event) override {
+    QPoint xy                   = event->pos();
+    CellPosition pos            = getViewer()->xyToPosition(xy);
     int col                     = pos.layer();
     TColumnSelection *selection = getViewer()->getColumnSelection();
     if (!selection->isColumnSelected(col)) {
-      selection->selectNone();
-      selection->selectColumn(col);
+      if (event->modifiers() & Qt::ControlModifier) {
+        selection->selectColumn(col, true);
+      } else if (event->modifiers() & Qt::ShiftModifier) {
+        int ia = col, ib = col;
+        int columnCount = getViewer()->getXsheet()->getColumnCount();
+        while (ia > 0 && !selection->isColumnSelected(ia - 1)) --ia;
+        if (ia == 0) ia = col;
+        while (ib < columnCount - 1 && !selection->isColumnSelected(ib + 1))
+          ++ib;
+        if (ib == columnCount - 1) ib = col;
+        int i;
+        for (i = ia; i <= ib; i++) selection->selectColumn(i, true);
+      } else {
+        selection->selectNone();
+        selection->selectColumn(col);
+      }
       selection->makeCurrent();
     }
     std::set<int> indices = selection->getIndices();

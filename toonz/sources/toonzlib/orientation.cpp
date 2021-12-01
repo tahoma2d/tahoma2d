@@ -12,8 +12,6 @@ const int KEY_ICON_WIDTH      = 11;
 const int KEY_ICON_HEIGHT     = 11;
 const int EASE_TRIANGLE_SIZE  = 4;
 const int PLAY_MARKER_SIZE    = 10;
-const int ONION_SIZE          = 19;
-const int ONION_DOT_SIZE      = 8;
 const int PINNED_SIZE         = 10;
 const int FRAME_MARKER_SIZE   = 4;
 const int FOLDED_CELL_SIZE    = 9;
@@ -30,7 +28,8 @@ QRect iconRect(const QRect &areaRect, const int iconWidth, const int iconHeight,
 }  // namespace
 
 class TopToBottomOrientation : public Orientation {
-  const int CELL_WIDTH                 = 74;
+  int CELL_WIDTH = 74;
+  // const int CELL_WIDTH                 = 74;
   const int CELL_HEIGHT                = 20;
   const int CELL_DRAG_WIDTH            = 7;
   const int EXTENDER_WIDTH             = 20;
@@ -39,15 +38,20 @@ class TopToBottomOrientation : public Orientation {
   const int LAYER_HEADER_HEIGHT        = 119;
   const int FOLDED_LAYER_HEADER_HEIGHT = LAYER_HEADER_HEIGHT;
   const int FOLDED_LAYER_HEADER_WIDTH  = 8;
-  const int FRAME_HEADER_WIDTH         = CELL_WIDTH;
-  const int PLAY_RANGE_X = FRAME_HEADER_WIDTH / 2 - PLAY_MARKER_SIZE;
-  const int ONION_X = 0, ONION_Y = 0;
-  const int ICON_WIDTH               = 18;
-  const int ICON_HEIGHT              = 18;
+  int FRAME_HEADER_WIDTH               = CELL_WIDTH;
+  int PLAY_RANGE_X  = FRAME_HEADER_WIDTH / 2 - PLAY_MARKER_SIZE;
+  const int ONION_X = 0;
+  int ONION_Y       = 0;
+  // const int ICON_WIDTH               = 18;
+  // const int ICON_HEIGHT              = 18;
+  int ICON_WIDTH                     = 18;
+  int ICON_HEIGHT                    = 18;
   const int TRACKLEN                 = 60;
   const int SHIFTTRACE_DOT_OFFSET    = 3;
   const int CAMERA_CELL_WIDTH        = 22;
   const int LAYER_FOOTER_PANEL_WIDTH = 16;
+  int ONION_SIZE                     = 19;
+  int ONION_DOT_SIZE                 = 8;
 
 public:
   TopToBottomOrientation();
@@ -97,6 +101,8 @@ class LeftToRightOrientation : public Orientation {
   const int SOUND_PREVIEW_HEIGHT = 6;
   const int FRAME_HEADER_HEIGHT  = 50;
   const int ONION_X = 0, ONION_Y = 0;
+  const int ONION_SIZE         = 19;
+  const int ONION_DOT_SIZE     = 8;
   const int PLAY_RANGE_Y       = ONION_SIZE;
   const int ICON_WIDTH         = 20;
   const int ICON_HEIGHT        = 20;
@@ -279,9 +285,23 @@ TopToBottomOrientation::TopToBottomOrientation() {
 
   int use_header_height = LAYER_HEADER_HEIGHT;
 
-  if (layout == QString("Compact")) use_header_height -= 18;
+  if (layout == QString("Compact"))
+    use_header_height -= 18;
+  else if (layout == QString("Minimum"))
+    use_header_height = CELL_HEIGHT * 2;
 
   int user_folded_header_height = use_header_height;
+
+  if (layout == QString("Minimum")) {
+    CELL_WIDTH         = 50;
+    ICON_WIDTH         = 16;
+    ICON_HEIGHT        = 16;
+    FRAME_HEADER_WIDTH = 45;
+    ONION_SIZE         = 15;
+    ONION_DOT_SIZE     = 6;
+    PLAY_RANGE_X       = ONION_SIZE;
+    ONION_Y            = (CELL_HEIGHT - ONION_SIZE) / 2;
+  }
 
   //
   // Area rectangles
@@ -338,9 +358,8 @@ TopToBottomOrientation::TopToBottomOrientation() {
           cameraKeyRect.translated(-3, 0));
 
   // Note viewer
-  addRect(
-      PredefinedRect::NOTE_AREA,
-      QRect(QPoint(0, 0), QSize(FRAME_HEADER_WIDTH, use_header_height - 1)));
+  addRect(PredefinedRect::NOTE_AREA,
+          QRect(QPoint(0, 0), QSize(FRAME_HEADER_WIDTH, use_header_height)));
   addRect(PredefinedRect::NOTE_ICON,
           QRect(QPoint(0, 0), QSize(CELL_WIDTH - 2, CELL_HEIGHT - 2)));
 
@@ -352,8 +371,12 @@ TopToBottomOrientation::TopToBottomOrientation() {
   addRect(PredefinedRect::PANEL_LAYER_NAME, QRect(0, 0, -1, -1));     // hide
 
   // Row viewer
-  addRect(PredefinedRect::FRAME_LABEL,
-          QRect(0, 0, CELL_WIDTH - 4, CELL_HEIGHT));
+  if (layout == QString("Minimum"))
+    addRect(PredefinedRect::FRAME_LABEL,
+            QRect(0, 0, FRAME_HEADER_WIDTH - 2, CELL_HEIGHT));
+  else
+    addRect(PredefinedRect::FRAME_LABEL,
+            QRect(0, 0, CELL_WIDTH - 4, CELL_HEIGHT));
   addRect(PredefinedRect::FRAME_HEADER,
           QRect(0, 0, FRAME_HEADER_WIDTH, CELL_HEIGHT));
   addRect(PredefinedRect::PLAY_RANGE,
@@ -413,7 +436,89 @@ TopToBottomOrientation::TopToBottomOrientation() {
       volumeArea;
   QPoint soundTopLeft;
 
-  if (layout == QString("Compact")) {
+  if (layout == QString("Minimum")) {
+    THUMBNAIL_HEIGHT = -1;
+    HDRROW_HEIGHT    = CELL_HEIGHT - 1;
+    INDENT           = 0;
+    HDRROW1          = 1;                        // Name, number
+    HDRROW2          = HDRROW1 + HDRROW_HEIGHT;  // eye, preview, config
+
+    addRect(PredefinedRect::DRAG_LAYER, QRect(0, 0, -1, -1));
+
+    addRect(PredefinedRect::RENAME_COLUMN,
+            QRect(0, HDRROW1, CELL_WIDTH, HDRROW_HEIGHT));
+
+    layername =
+        QRect(INDENT + 1, HDRROW1 + 1, CELL_WIDTH - 1, HDRROW_HEIGHT - 1);
+    addRect(PredefinedRect::LAYER_NAME, layername);
+    addRect(PredefinedRect::CAMERA_LAYER_NAME, QRect(0, 0, -1, -1));
+    addRect(PredefinedRect::LAYER_NUMBER,
+            QRect(INDENT + layername.width() - 20, HDRROW1, 20, HDRROW_HEIGHT));
+
+    eyeArea = QRect(INDENT, HDRROW2, ICON_WIDTH + 1, HDRROW_HEIGHT);  // Compact
+    addRect(PredefinedRect::EYE_AREA, eyeArea);
+    addRect(PredefinedRect::EYE,
+            iconRect(eyeArea, ICON_WIDTH, ICON_HEIGHT - 1, 1));
+
+    previewArea =
+        QRect(INDENT + eyeArea.width(), HDRROW2, ICON_WIDTH + 1, HDRROW_HEIGHT);
+    addRect(PredefinedRect::PREVIEW_LAYER_AREA, previewArea);
+    addRect(PredefinedRect::PREVIEW_LAYER,
+            iconRect(previewArea, ICON_WIDTH, ICON_HEIGHT - 1, 1));
+
+    addRect(PredefinedRect::LOCK_AREA, QRect(0, 0, -1, -1));
+    addRect(PredefinedRect::LOCK, QRect(0, 0, -1, -1));
+    addRect(PredefinedRect::CAMERA_LOCK_AREA, QRect(0, 0, -1, -1));
+    addRect(PredefinedRect::CAMERA_LOCK, QRect(0, 0, -1, -1));
+
+    configArea = QRect(INDENT + eyeArea.width() + previewArea.width(), HDRROW2,
+                       ICON_WIDTH, HDRROW_HEIGHT);
+    addRect(PredefinedRect::CONFIG_AREA, configArea);
+    addRect(PredefinedRect::CONFIG,
+            iconRect(configArea, ICON_WIDTH - 1, ICON_HEIGHT - 1));
+    cameraConfigArea = QRect(INDENT, HDRROW2, CAMERA_CELL_WIDTH, HDRROW_HEIGHT);
+    addRect(PredefinedRect::CAMERA_CONFIG_AREA, cameraConfigArea);
+    addRect(PredefinedRect::CAMERA_CONFIG,
+            iconRect(cameraConfigArea, ICON_WIDTH - 1, ICON_HEIGHT - 1));
+    addRect(PredefinedRect::THUMBNAIL_AREA, QRect(0, 0, -1, -1));
+    addRect(PredefinedRect::THUMBNAIL, QRect(0, 0, -1, -1));
+    cameraIconArea = QRect(INDENT, HDRROW1, CAMERA_CELL_WIDTH, HDRROW_HEIGHT);
+    addRect(PredefinedRect::CAMERA_ICON_AREA, cameraIconArea);
+    addRect(PredefinedRect::CAMERA_ICON,
+            iconRect(cameraIconArea, ICON_WIDTH, ICON_HEIGHT));
+
+    addRect(PredefinedRect::FILTER_COLOR, rect(PredefinedRect::CONFIG));
+    addRect(PredefinedRect::SOUND_ICON, QRect(0, 0, -1, -1));
+    addRect(PredefinedRect::VOLUME_AREA, QRect(0, 0, -1, -1));
+    addRect(PredefinedRect::PEGBAR_NAME, QRect(0, 0, -1, -1));
+    addRect(PredefinedRect::PARENT_HANDLE_NAME, QRect(0, 0, -1, -1));
+
+    addFlag(PredefinedFlag::DRAG_LAYER_BORDER, false);
+    addFlag(PredefinedFlag::DRAG_LAYER_VISIBLE, false);
+    addFlag(PredefinedFlag::LAYER_NAME_BORDER, false);
+    addFlag(PredefinedFlag::LAYER_NAME_VISIBLE, true);
+    addFlag(PredefinedFlag::LAYER_NUMBER_BORDER, false);
+    addFlag(PredefinedFlag::LAYER_NUMBER_VISIBLE, false);
+    addFlag(PredefinedFlag::EYE_AREA_BORDER, true);
+    addFlag(PredefinedFlag::EYE_AREA_VISIBLE, true);
+    addFlag(PredefinedFlag::LOCK_AREA_BORDER, false);
+    addFlag(PredefinedFlag::LOCK_AREA_VISIBLE, false);
+    addFlag(PredefinedFlag::PREVIEW_LAYER_AREA_BORDER, true);
+    addFlag(PredefinedFlag::PREVIEW_LAYER_AREA_VISIBLE, true);
+    addFlag(PredefinedFlag::CONFIG_AREA_BORDER, true);
+    addFlag(PredefinedFlag::CAMERA_CONFIG_AREA_BORDER, true);
+    addFlag(PredefinedFlag::CONFIG_AREA_VISIBLE, true);
+    addFlag(PredefinedFlag::CAMERA_CONFIG_AREA_VISIBLE, true);
+    addFlag(PredefinedFlag::PEGBAR_NAME_BORDER, false);
+    addFlag(PredefinedFlag::PEGBAR_NAME_VISIBLE, false);
+    addFlag(PredefinedFlag::PARENT_HANDLE_NAME_BORDER, false);
+    addFlag(PredefinedFlag::PARENT_HANDLE_NAME_VISIBILE, true);
+    addFlag(PredefinedFlag::THUMBNAIL_AREA_BORDER, false);
+    addFlag(PredefinedFlag::THUMBNAIL_AREA_VISIBLE, false);
+    addFlag(PredefinedFlag::CAMERA_ICON_VISIBLE, true);
+    addFlag(PredefinedFlag::VOLUME_AREA_VERTICAL, false);
+    addFlag(PredefinedFlag::NOTE_AREA_IN_POPUP, true);
+  } else if (layout == QString("Compact")) {
     THUMBNAIL_HEIGHT = 44;
     HDRROW_HEIGHT    = CELL_HEIGHT - 2;
     INDENT           = 0;
@@ -521,6 +626,7 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addFlag(PredefinedFlag::THUMBNAIL_AREA_VISIBLE, true);
     addFlag(PredefinedFlag::CAMERA_ICON_VISIBLE, false);
     addFlag(PredefinedFlag::VOLUME_AREA_VERTICAL, false);
+    addFlag(PredefinedFlag::NOTE_AREA_IN_POPUP, false);
   } else if (layout == QString("Roomy")) {
     THUMBNAIL_HEIGHT = 44;
     HDRROW_HEIGHT    = CELL_HEIGHT - 2;
@@ -632,6 +738,7 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addFlag(PredefinedFlag::THUMBNAIL_AREA_VISIBLE, true);
     addFlag(PredefinedFlag::CAMERA_ICON_VISIBLE, true);
     addFlag(PredefinedFlag::VOLUME_AREA_VERTICAL, false);
+    addFlag(PredefinedFlag::NOTE_AREA_IN_POPUP, false);
   } else {
     THUMBNAIL_HEIGHT = 43;
     HDRROW_HEIGHT    = CELL_HEIGHT - 2;
@@ -738,6 +845,7 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addFlag(PredefinedFlag::THUMBNAIL_AREA_VISIBLE, true);
     addFlag(PredefinedFlag::CAMERA_ICON_VISIBLE, true);
     addFlag(PredefinedFlag::VOLUME_AREA_VERTICAL, true);
+    addFlag(PredefinedFlag::NOTE_AREA_IN_POPUP, false);
   }
 
   if (flag(PredefinedFlag::VOLUME_AREA_VERTICAL)) {
@@ -759,7 +867,10 @@ TopToBottomOrientation::TopToBottomOrientation() {
 
   zoomSlider = QRect(0, 17, LAYER_FOOTER_PANEL_WIDTH, use_header_height - 34);
   addRect(PredefinedRect::ZOOM_SLIDER_AREA, zoomSlider);
-  addRect(PredefinedRect::ZOOM_SLIDER, zoomSlider.adjusted(0, 1, 0, 0));
+  if (layout == QString("Minimum"))
+    addRect(PredefinedRect::ZOOM_SLIDER, QRect(0, 0, -1, -1));
+  else
+    addRect(PredefinedRect::ZOOM_SLIDER, zoomSlider.adjusted(0, 1, 0, 0));
 
   zoomIn = QRect(0, zoomSlider.bottom() + 1, LAYER_FOOTER_PANEL_WIDTH, 16);
   addRect(PredefinedRect::ZOOM_IN_AREA, zoomIn);
@@ -768,6 +879,7 @@ TopToBottomOrientation::TopToBottomOrientation() {
   zoomOut = QRect(0, zoomSlider.top() - 17, LAYER_FOOTER_PANEL_WIDTH, 16);
   addRect(PredefinedRect::ZOOM_OUT_AREA, zoomOut);
   addRect(PredefinedRect::ZOOM_OUT, zoomOut.adjusted(1, 1, 0, 0));
+
   /*
   // Layer footer panel
   addRect(PredefinedRect::LAYER_FOOTER_PANEL, QRect(0, 0, -1, -1));  // hide
@@ -1204,6 +1316,7 @@ LeftToRightOrientation::LeftToRightOrientation() {
   addFlag(PredefinedFlag::THUMBNAIL_AREA_VISIBLE, true);
   addFlag(PredefinedFlag::CAMERA_ICON_VISIBLE, true);
   addFlag(PredefinedFlag::VOLUME_AREA_VERTICAL, false);
+  addFlag(PredefinedFlag::NOTE_AREA_IN_POPUP, false);
 
   //
   // Lines

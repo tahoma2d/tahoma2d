@@ -112,6 +112,12 @@ public:
     ToggleBetweenGraphAndSpreadsheet
   };
 
+  enum LevelNameDisplayType {
+    ShowLevelName_Default = 0,
+    ShowLevelNameOnEachMarker,
+    ShowLevelNameOnColumnHeader
+  };
+
   //--- callbacks
   // General
   void enableAutosave();
@@ -212,14 +218,8 @@ public:
   bool isActualPixelViewOnSceneEditingModeEnabled() const {
     return getBoolValue(actualPixelViewOnSceneEditingMode);
   }
-  bool isLevelNameOnEachMarkerEnabled() const {
-    return getBoolValue(levelNameOnEachMarkerEnabled);
-  }
   bool isShowRasterImagesDarkenBlendedInViewerEnabled() const {
     return getBoolValue(showRasterImagesDarkenBlendedInViewer);
-  }
-  bool isShowFrameNumberWithLettersEnabled() const {
-    return getBoolValue(showFrameNumberWithLetters);
   }
   TDimension getIconSize() const { return getSizeValue(iconSize); }
   void getViewValues(int &shrink, int &step) const {
@@ -404,6 +404,16 @@ public:
   }
   void getCurrentColumnData(TPixel &color) const {
     color = getColorValue(currentColumnColor);
+  }
+
+  LevelNameDisplayType getLevelNameDisplayType() const {
+    return LevelNameDisplayType(getIntValue(levelNameDisplayType));
+  }
+  bool isLevelNameOnEachMarkerEnabled() const {
+    return getLevelNameDisplayType() == ShowLevelNameOnEachMarker;
+  }
+  bool isShowFrameNumberWithLettersEnabled() const {
+    return getBoolValue(showFrameNumberWithLetters);
   }
 
   // Animation  tab
