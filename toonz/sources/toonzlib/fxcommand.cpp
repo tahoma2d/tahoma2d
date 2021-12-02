@@ -129,6 +129,9 @@ inline void setFxParamToCurrentScene(TFx *fx, TXsheet *xsh) {
 void initializeFx(TXsheet *xsh, TFx *fx) {
   if (TZeraryColumnFx *zcfx = dynamic_cast<TZeraryColumnFx *>(fx))
     fx = zcfx->getZeraryFx();
+  // if the fx has not unique name then let assignUniqueId() set the default
+  // name
+  if (fx->getName() != L"" && fx->getName() == fx->getFxId()) fx->setName(L"");
 
   xsh->getFxDag()->assignUniqueId(fx);
   setFxParamToCurrentScene(fx, xsh);
