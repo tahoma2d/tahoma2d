@@ -512,6 +512,14 @@ void LevelCmd::addMissingLevelsToCast(const QList<TXshColumnP> &columns) {
 }
 
 void LevelCmd::addMissingLevelsToCast(std::set<TXshLevel *> &levels) {
+  // remove zerary fx levels which are not registered in the cast
+  for (auto it = levels.begin(); it != levels.end();) {
+    if ((*it)->getZeraryFxLevel())
+      it = levels.erase(it);
+    else
+      ++it;
+  }
+
   if (levels.empty()) return;
   TUndoManager::manager()->beginBlock();
   TLevelSet *levelSet =

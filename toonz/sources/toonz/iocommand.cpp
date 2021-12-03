@@ -324,7 +324,8 @@ bool beforeCellsInsert(TXsheet *xsh, int row, int &col, int rowCount,
 
   for (i = 0; i < rowCount && xsh->getCell(row + i, col).isEmpty(); i++) {
   }
-  int type = column ? column->getColumnType() : newLevelColumnType;
+  int type = (column && !column->isEmpty()) ? column->getColumnType()
+                                            : newLevelColumnType;
   // If some used cells in range or column type mismatch must insert a column.
   if (col < 0 || i < rowCount || newLevelColumnType != type) {
     col += 1;

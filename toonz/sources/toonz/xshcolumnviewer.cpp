@@ -1043,7 +1043,7 @@ void ColumnArea::DrawHeader::drawColumnName() const {
 
   // ZeraryFx columns store name elsewhere
   TXshZeraryFxColumn *zColumn = dynamic_cast<TXshZeraryFxColumn *>(column);
-  if (zColumn)
+  if (zColumn && !isEmpty)
     name = ::to_string(zColumn->getZeraryColumnFx()->getZeraryFx()->getName());
 
   QRect columnName = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_NAME
