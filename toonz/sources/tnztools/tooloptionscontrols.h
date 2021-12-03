@@ -51,6 +51,11 @@ class TXsheetHandle;
 class SelectionTool;
 class ToolHandle;
 
+namespace ToolOptionsControls {
+// calculate maximum field size (once) with 10 pixels margin
+int getMaximumWidthForMeasuredValueField(QWidget *widget);
+}  // namespace
+
 //***********************************************************************************
 //    ToolOptionControl  declaration
 //***********************************************************************************
@@ -271,6 +276,23 @@ public slots:
 
   void onValueChanged(const QString &);
   void updateColor();
+};
+
+//-----------------------------------------------------------------------------
+
+class ColorChipCombo final : public QComboBox, public ToolOptionControl {
+  Q_OBJECT
+
+protected:
+  TColorChipProperty *m_property;
+
+public:
+  ColorChipCombo(TTool *tool, TColorChipProperty *property);
+  void updateStatus() override;
+
+public slots:
+  void onActivated(int index);
+  void doSetCurrentIndex(int);
 };
 
 //-----------------------------------------------------------------------------

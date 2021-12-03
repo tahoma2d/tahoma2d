@@ -12,6 +12,7 @@
 // TnzCore includes
 #include "tcommon.h"
 #include "tproperty.h"
+#include "tunit.h"
 
 // Qt includes
 #include <QFrame>
@@ -67,6 +68,7 @@ class MeasuredValueField;
 class PaletteController;
 class ClickableLabel;
 class StyleIndexFieldAndChip;
+class ColorChipCombo;
 
 class QLabel;
 class QPushButton;
@@ -164,6 +166,7 @@ private:
   void visit(TEnumProperty *p) override;
   void visit(TStyleIndexProperty *p) override;
   void visit(TPointerProperty *p) override;
+  void visit(TColorChipProperty *p) override;
 };
 
 //***********************************************************************************************
@@ -737,6 +740,53 @@ protected slots:
   void onPrevRadioBtnClicked();
   void onAfterRadioBtnClicked();
   void updateColors();
+};
+
+//=============================================================================
+//
+// PerspectiveToolOptionBox
+// shown only when "Edit Perspective" mode is active
+//
+//=============================================================================
+
+class PerspectiveGridToolOptionBox final : public ToolOptionsBox {
+  Q_OBJECT
+
+  TTool *m_tool;
+
+  ToolOptionCombo *m_perspectiveType;
+  ToolOptionSlider *m_opacity;
+  ColorChipCombo *m_color;
+  ToolOptionCheckbox *m_horizon, *m_parallel, *m_advancedControls;
+  ClickableLabel *m_rotationLabel, *m_spacingLabel;
+  MeasuredValueField *m_rotation, *m_spacing;
+  ToolOptionCombo *m_presetCombo;
+  QPushButton *m_addPresetButton, *m_removePresetButton, *m_leftRotateButton,
+      *m_rightRotateButton;
+
+private:
+  class PresetNamePopup;
+  PresetNamePopup *m_presetNamePopup;
+  void filterControls();
+
+public:
+  PerspectiveGridToolOptionBox(QWidget *parent, TTool *tool,
+                               TPaletteHandle *pltHandle,
+                               ToolHandle *toolHandle);
+  void updateStatus();
+  void updateMeasuredValues(double spacing, double rotation);
+
+  void reloadPresetCombo();
+
+protected slots:
+
+  void onAddPreset();
+  void onRemovePreset();
+  void onPerspectiveTypeChanged(int);
+  void onSpacingChange(TMeasuredValue *fld);
+  void onRotationChange(TMeasuredValue *fld);
+  void onRotateLeft();
+  void onRotateRight();
 };
 
 //=============================================================================

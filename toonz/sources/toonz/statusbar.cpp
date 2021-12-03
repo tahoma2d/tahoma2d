@@ -191,11 +191,7 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                        .arg(trModKey("Ctrl"))
                        .arg(cmd2TextSeparator) +
                    spacer +
-                   tr("%1%2Add / Remove Vanishing Point")
-                       .arg(trModKey("Ctrl+Alt"))
-                       .arg(cmdTextSeparator) +
-                   spacer +
-                   tr("%1%2Draw to Vanishing Point")
+                   tr("%1%2Snap to Perspective Grid")
                        .arg(trModKey("Alt"))
                        .arg(cmd2TextSeparator) +
                    spacer +
@@ -212,11 +208,7 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                        .arg(trModKey("Ctrl"))
                        .arg(cmd2TextSeparator) +
                    spacer +
-                   tr("%1%2Add / Remove Vanishing Point")
-                       .arg(trModKey("Ctrl+Alt"))
-                       .arg(cmdTextSeparator) +
-                   spacer +
-                   tr("%1%2Draw to Vanishing Point")
+                   tr("%1%2Snap to Perspective Grid")
                        .arg(trModKey("Alt"))
                        .arg(cmd2TextSeparator)});
   lMap.insert({"T_BrushRaster",
@@ -229,11 +221,7 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                        .arg(trModKey("Ctrl"))
                        .arg(cmd2TextSeparator) +
                    spacer +
-                   tr("%1%2Add / Remove Vanishing Point")
-                       .arg(trModKey("Ctrl+Alt"))
-                       .arg(cmdTextSeparator) +
-                   spacer +
-                   tr("%1%2Draw to Vanishing Point")
+                   tr("%1%2Snap to Perspective Grid")
                        .arg(trModKey("Alt"))
                        .arg(cmd2TextSeparator)});
   lMap.insert({"T_Geometric", tr("Geometry Tool: Draws geometric shapes")});
@@ -356,6 +344,23 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
   lMap.insert({"T_Zoom", tr("Zoom Tool: Zooms viewer")});
   lMap.insert({"T_Rotate", tr("Rotate Tool: Rotate the workspace")});
   lMap.insert({"T_Ruler", tr("Ruler Tool: Measures distances on the canvas")});
+  lMap.insert({"T_PerspectiveGrid",
+               tr("Perspective Grid Tool: Set up perspective grids") + spacer +
+                   tr("%1%2Move entire object")
+                       .arg(trModKey("Shift"))
+                       .arg(cmdTextSeparator) +
+                   spacer +
+                   tr("%1%2Select/Deselect multiple")
+                       .arg(trModKey("Ctrl"))
+                       .arg(cmdTextSeparator) +
+                   spacer +
+                   tr("%1%2Snap rotation/spacing")
+                       .arg(trModKey("Alt"))
+                       .arg(cmdTextSeparator) +
+                   spacer +
+                   tr("%1%2Move object along horizon")
+                       .arg(trModKey("Shift+Alt"))
+                       .arg(cmdTextSeparator)});
   lMap.insert(
       {"T_Finger", tr("Finger Tool: Smudges small areas to cover with line")});
   lMap.insert({"T_Dummy", tr("This tool doesn't work on this layer type.")});

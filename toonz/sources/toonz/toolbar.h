@@ -23,7 +23,7 @@ class Toolbar final : public QToolBar {
     bool isSeparator;
     bool collapsible;
     QAction *action;
-  } m_buttonLayout[33] = {
+  } m_buttonLayout[34] = {
       {T_Edit, false, false, 0},       {T_Selection, false, false, 0},
       {"Separator_1", true, false, 0}, {T_Brush, false, false, 0},
       {T_Geometric, false, false, 0},  {T_Type, false, true, 0},
@@ -31,7 +31,8 @@ class Toolbar final : public QToolBar {
       {"Separator_2", true, false, 0}, {T_Eraser, false, false, 0},
       {T_Tape, false, false, 0},  //{T_Finger, false, false, 0},
       {"Separator_3", true, false, 0}, {T_StylePicker, false, false, 0},
-      {T_RGBPicker, false, false, 0},  {T_Ruler, false, false, 0},
+      {T_RGBPicker, false, false, 0},  {T_PerspectiveGrid, false, false, 0},
+      {T_Ruler, false, false, 0},
       {"Separator_4", true, false, 0}, {T_ControlPointEditor, false, false, 0},
       {T_Pinch, false, true, 0},       {T_Pump, false, true, 0},
       {T_Magnet, false, true, 0},      {T_Bender, false, true, 0},

@@ -19,6 +19,7 @@
 //#include "rgbpickertool.h"
 #include "rulertool.h"
 #include "shifttracetool.h"
+#include "perspectivetool.h"
 
 // TnzQt includes
 #include "toonzqt/dvdialog.h"
@@ -60,6 +61,8 @@
 #include <QPropertyAnimation>
 #include <QEasingCurve>
 #include <QStackedWidget>
+
+using namespace ToolOptionsControls;
 
 TEnv::IntVar ArrowGlobalKeyFrame("EditToolGlobalKeyFrame", 0);
 
@@ -335,6 +338,16 @@ void ToolOptionControlBuilder::visit(TStyleIndexProperty *p) {
 
 void ToolOptionControlBuilder::visit(TPointerProperty *p) {
   assert(!"not implemented");
+}
+
+//-----------------------------------------------------------------------------
+
+void ToolOptionControlBuilder::visit(TColorChipProperty *p) {
+  QLabel *label = addLabel(p);
+  m_panel->addLabel(p->getName(), label);
+  ColorChipCombo *chipCombo = new ColorChipCombo(m_tool, p);
+  hLayout()->addWidget(chipCombo, 0);
+  m_panel->addControl(chipCombo);
 }
 
 //=============================================================================
@@ -2103,7 +2116,7 @@ void BrushToolOptionsBox::filterControls() {
        it != m_labels.end(); it++) {
     bool isModifier = (it.key().substr(0, 8) == "Modifier");
     bool isCommon   = (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
-                     it.key() == "Preset:");
+                     it.key() == "Preset:" || it.key() == "Grid");
     bool visible = isCommon || (isModifier == showModifiers);
     it.value()->setVisible(visible);
   }
@@ -2112,7 +2125,7 @@ void BrushToolOptionsBox::filterControls() {
        it != m_controls.end(); it++) {
     bool isModifier = (it.key().substr(0, 8) == "Modifier");
     bool isCommon   = (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
-                     it.key() == "Preset:");
+                     it.key() == "Preset:" || it.key() == "Grid");
     bool visible = isCommon || (isModifier == showModifiers);
     if (QWidget *widget = dynamic_cast<QWidget *>(it.value()))
       widget->setVisible(visible);
@@ -2894,6 +2907,349 @@ void ShiftTraceToolOptionBox::onAfterRadioBtnClicked() {
 }
 
 //=============================================================================
+//
+// PerspectiveGridToolOptionBox classes
+//
+//=============================================================================
+
+class PerspectiveGridToolOptionBox::PresetNamePopup final
+    : public DVGui::Dialog {
+  DVGui::LineEdit *m_nameFld;
+  DVGui::CheckBox *m_saveInLibrary;
+
+public:
+  PresetNamePopup() : Dialog(0, true) {
+    setWindowTitle(tr("Preset Name"));
+    m_nameFld = new DVGui::LineEdit();
+    addWidget(m_nameFld);
+    m_saveInLibrary = new DVGui::CheckBox(tr("Save As Library Preset"));
+    addWidget(m_saveInLibrary);
+
+    QPushButton *okBtn = new QPushButton(tr("OK"), this);
+    okBtn->setDefault(true);
+    QPushButton *cancelBtn = new QPushButton(tr("Cancel"), this);
+    connect(okBtn, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(cancelBtn, SIGNAL(clicked()), this, SLOT(reject()));
+
+    addButtonBarWidget(okBtn, cancelBtn);
+  }
+
+  QString getName() { return m_nameFld->text(); }
+  bool isSaveInLibrary() { return m_saveInLibrary->isChecked(); }
+  void resetDialog() {
+    m_nameFld->setText(QString(""));
+    m_saveInLibrary->setChecked(false);
+  }
+};
+
+//=============================================================================
+// PerspectiveGridToolOptionBox
+//-----------------------------------------------------------------------------
+
+PerspectiveGridToolOptionBox::PerspectiveGridToolOptionBox(
+    QWidget *parent, TTool *tool, TPaletteHandle *pltHandle,
+    ToolHandle *toolHandle)
+    : ToolOptionsBox(parent), m_tool(tool), m_presetNamePopup(0) {
+  setFrameStyle(QFrame::StyledPanel);
+  setFixedHeight(26);
+
+  TPropertyGroup *props = tool->getProperties(0);
+  assert(props->getPropertyCount() > 0);
+
+  TEnumProperty *perspectiveType =
+      dynamic_cast<TEnumProperty *>(props->getProperty("Type:"));
+  m_perspectiveType = new ToolOptionCombo(tool, perspectiveType, toolHandle);
+
+  TDoubleProperty *opacity =
+      dynamic_cast<TDoubleProperty *>(props->getProperty("Opacity:"));
+  m_opacity = new ToolOptionSlider(tool, opacity, toolHandle);
+
+  int fieldMaxWidth;
+
+  m_spacingLabel = new ClickableLabel(tr("Spacing:"), this);
+  m_spacing      = new MeasuredValueField(this);
+  m_spacing->setMeasure("");
+  m_spacing->setMaximumWidth(getMaximumWidthForMeasuredValueField(m_spacing));
+
+  m_rotationLabel = new ClickableLabel(tr("Rotation:"), this);
+  m_rotation      = new MeasuredValueField(this);
+  m_rotation->setMeasure("angle");
+  m_rotation->setMaximumWidth(getMaximumWidthForMeasuredValueField(m_rotation));
+
+  m_leftRotateButton  = new QPushButton(this);
+  m_rightRotateButton = new QPushButton(this);
+
+  m_leftRotateButton->setFixedSize(QSize(20, 20));
+  m_rightRotateButton->setFixedSize(QSize(20, 20));
+
+  m_leftRotateButton->setIcon(createQIcon("rotateleft"));
+  m_leftRotateButton->setIconSize(QSize(20, 20));
+  m_rightRotateButton->setIcon(createQIcon("rotateright"));
+  m_rightRotateButton->setIconSize(QSize(20, 20));
+
+  m_leftRotateButton->setToolTip(tr("Rotate Perspective Left"));
+  m_rightRotateButton->setToolTip(tr("Rotate Perspective Right"));
+
+  TColorChipProperty *color =
+      dynamic_cast<TColorChipProperty *>(props->getProperty("Color:"));
+  m_color = new ColorChipCombo(tool, color);
+
+  TBoolProperty *horizon =
+      dynamic_cast<TBoolProperty *>(props->getProperty("Horizon"));
+  m_horizon = new ToolOptionCheckbox(tool, horizon, toolHandle);
+
+  TBoolProperty *parallel =
+      dynamic_cast<TBoolProperty *>(props->getProperty("Parallel"));
+  m_parallel = new ToolOptionCheckbox(tool, parallel, toolHandle);
+
+  TBoolProperty *advancedControls =
+      dynamic_cast<TBoolProperty *>(props->getProperty("Advanced Controls"));
+  m_advancedControls =
+      new ToolOptionCheckbox(tool, advancedControls, toolHandle);
+
+  TEnumProperty *preset =
+      dynamic_cast<TEnumProperty *>(props->getProperty("Preset:"));
+  m_presetCombo = new ToolOptionCombo(tool, preset, toolHandle);
+
+  // Preset +/- buttons
+  m_addPresetButton    = new QPushButton(QString("+"));
+  m_removePresetButton = new QPushButton(QString("-"));
+
+  m_addPresetButton->setFixedSize(QSize(20, 20));
+  m_removePresetButton->setFixedSize(QSize(20, 20));
+
+  /* --- Layout --- */
+  QHBoxLayout *mainLay = m_layout;
+  {
+    mainLay->addWidget(new QLabel(tr("Type:"), this), 0);
+    mainLay->addWidget(m_perspectiveType, 0);
+
+    mainLay->addSpacing(5);
+
+    mainLay->addWidget(new QLabel(tr("Opacity:"), this), 0);
+    mainLay->addWidget(m_opacity, 100);
+
+    mainLay->addSpacing(5);
+
+    mainLay->addWidget(m_spacingLabel, 0);
+    mainLay->addWidget(m_spacing, 10);
+
+    mainLay->addSpacing(5);
+
+    mainLay->addWidget(m_rotationLabel, 0);
+    mainLay->addWidget(m_rotation, 10);
+    mainLay->addWidget(m_leftRotateButton, 0);
+    mainLay->addWidget(m_rightRotateButton, 0);
+
+    mainLay->addSpacing(5);
+
+    mainLay->addWidget(new QLabel(tr("Color:"), this), 0);
+    mainLay->addWidget(m_color, 0);
+
+    mainLay->addSpacing(5);
+
+    mainLay->addWidget(m_horizon, 0);
+
+    mainLay->addSpacing(5);
+
+    mainLay->addWidget(m_parallel, 0);
+
+    mainLay->addSpacing(5);
+
+    mainLay->addWidget(m_advancedControls, 0);
+
+    mainLay->addSpacing(5);
+
+    mainLay->addWidget(new QLabel(tr("Preset:"), this), 0);
+    mainLay->addWidget(m_presetCombo, 0);
+    mainLay->addWidget(m_addPresetButton);
+    mainLay->addWidget(m_removePresetButton);
+  }
+
+  m_layout->addStretch(1);
+
+  connect(m_perspectiveType, SIGNAL(currentIndexChanged(int)), this,
+          SLOT(onPerspectiveTypeChanged(int)));
+
+  connect(m_spacing, SIGNAL(measuredValueChanged(TMeasuredValue *, bool)),
+          SLOT(onSpacingChange(TMeasuredValue *)));
+  connect(m_spacingLabel, SIGNAL(onMousePress(QMouseEvent *)), m_spacing,
+          SLOT(receiveMousePress(QMouseEvent *)));
+  connect(m_spacingLabel, SIGNAL(onMouseMove(QMouseEvent *)), m_spacing,
+          SLOT(receiveMouseMove(QMouseEvent *)));
+  connect(m_spacingLabel, SIGNAL(onMouseRelease(QMouseEvent *)), m_spacing,
+          SLOT(receiveMouseRelease(QMouseEvent *)));
+
+  connect(m_rotation, SIGNAL(measuredValueChanged(TMeasuredValue *, bool)),
+          SLOT(onRotationChange(TMeasuredValue *)));
+  connect(m_rotationLabel, SIGNAL(onMousePress(QMouseEvent *)), m_rotation,
+          SLOT(receiveMousePress(QMouseEvent *)));
+  connect(m_rotationLabel, SIGNAL(onMouseMove(QMouseEvent *)), m_rotation,
+          SLOT(receiveMouseMove(QMouseEvent *)));
+  connect(m_rotationLabel, SIGNAL(onMouseRelease(QMouseEvent *)), m_rotation,
+          SLOT(receiveMouseRelease(QMouseEvent *)));
+  connect(m_leftRotateButton, SIGNAL(clicked()), SLOT(onRotateLeft()));
+  connect(m_rightRotateButton, SIGNAL(clicked()), SLOT(onRotateRight()));
+
+  connect(m_addPresetButton, SIGNAL(clicked()), this, SLOT(onAddPreset()));
+  connect(m_removePresetButton, SIGNAL(clicked()), this,
+          SLOT(onRemovePreset()));
+
+  filterControls();
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::filterControls() {
+  PerspectiveTool *perspectiveTool = dynamic_cast<PerspectiveTool *>(m_tool);
+
+  PerspectiveObject *mainObj = perspectiveTool->getMainPerspectiveObject();
+
+  std::vector<PerspectiveObject *> objs =
+      perspectiveTool->getPerspectiveObjects();
+  bool isVanishingSelected =
+      m_perspectiveType->getProperty()->getValue() == L"Vanishing Point";
+  bool isLineSelected = m_perspectiveType->getProperty()->getValue() == L"Line";
+  int selected        = 0;
+  for (int i = 0; i < objs.size(); i++) {
+    if (!objs[i]->isActive()) continue;
+    if (objs[i]->getType() == PerspectiveType::VanishingPoint)
+      isVanishingSelected = true;
+    else if (objs[i]->getType() == PerspectiveType::Line)
+      isLineSelected = true;
+    selected++;
+  }
+
+  m_parallel->setEnabled(isLineSelected);
+
+  m_horizon->setEnabled(isVanishingSelected || m_parallel->isChecked());
+
+  m_advancedControls->setEnabled(isVanishingSelected);
+
+  m_spacingLabel->setEnabled(selected &&
+                             (isVanishingSelected || m_parallel->isChecked()));
+  m_spacing->setEnabled(selected &&
+                        (isVanishingSelected || m_parallel->isChecked()));
+  if (!m_spacing->isEnabled())
+    m_spacing->setValue(0);
+  else if (mainObj)
+    m_spacing->setValue(mainObj->getSpacing());
+
+  m_rotationLabel->setEnabled(selected);
+  m_rotation->setEnabled(selected);
+  if (!m_rotation->isEnabled())
+    m_rotation->setValue(0);
+  else if (mainObj)
+    m_rotation->setValue(mainObj->getRotation());
+  m_leftRotateButton->setEnabled(selected);
+  m_rightRotateButton->setEnabled(selected);
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::updateStatus() {
+  m_opacity->updateStatus();
+  m_color->updateStatus();
+  m_horizon->updateStatus();
+  m_parallel->updateStatus();
+  m_presetCombo->updateStatus();
+
+  filterControls();
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::updateMeasuredValues(double spacing,
+                                                        double rotation) {
+  filterControls();
+
+  if (m_spacing->isEnabled()) m_spacing->setValue(spacing);
+  m_rotation->setValue(rotation);
+  repaint();
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::reloadPresetCombo() {
+  m_presetCombo->loadEntries();
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::onAddPreset() {
+  // Initialize preset name popup
+  if (!m_presetNamePopup) m_presetNamePopup = new PresetNamePopup;
+
+  if (!m_presetNamePopup->getName().isEmpty()) m_presetNamePopup->resetDialog();
+
+  // Retrieve the preset name
+  bool ret = m_presetNamePopup->exec();
+  if (!ret) return;
+
+  QString name(m_presetNamePopup->getName());
+  bool saveInLibrary(m_presetNamePopup->isSaveInLibrary());
+  m_presetNamePopup->resetDialog();
+
+  static_cast<PerspectiveTool *>(m_tool)->addPreset(name, saveInLibrary);
+
+  m_presetCombo->loadEntries();
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::onRemovePreset() {
+  static_cast<PerspectiveTool *>(m_tool)->removePreset();
+
+  m_presetCombo->loadEntries();
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::onPerspectiveTypeChanged(int index) {
+  filterControls();
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::onSpacingChange(TMeasuredValue *fld) {
+  double value = fld->getValue(TMeasuredValue::CurrentUnit);
+
+  PerspectiveTool *perspectiveTool = dynamic_cast<PerspectiveTool *>(m_tool);
+  PerspectiveObject *mainObj = perspectiveTool->getMainPerspectiveObject();
+  if (mainObj) {
+    value = std::min(value, mainObj->getMaxSpacing());
+    value = std::max(value, mainObj->getMinSpacing());
+    m_spacing->setValue(value);
+    repaint();
+  }
+  perspectiveTool->updateSpacing(value);
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::onRotationChange(TMeasuredValue *fld) {
+  double value = fld->getValue(TMeasuredValue::CurrentUnit);
+
+  PerspectiveTool *perspectiveTool = dynamic_cast<PerspectiveTool *>(m_tool);
+
+  perspectiveTool->updateRotation(value);
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::onRotateLeft() {
+  m_rotation->setValue(m_rotation->getValue() + 90);
+  emit m_rotation->measuredValueChanged(m_rotation->getMeasuredValue());
+}
+
+//-----------------------------------------------------------------------------
+
+void PerspectiveGridToolOptionBox::onRotateRight() {
+  m_rotation->setValue(m_rotation->getValue() - 90);
+  emit m_rotation->measuredValueChanged(m_rotation->getMeasuredValue());
+}
+
+//=============================================================================
 // ZoomToolOptionBox
 //-----------------------------------------------------------------------------
 
@@ -3083,6 +3439,12 @@ void ToolOptions::onToolSwitched() {
         panel                  = p;
         RulerTool *rt          = dynamic_cast<RulerTool *>(tool);
         if (rt) rt->setToolOptionsBox(p);
+      } else if (tool->getName() == T_PerspectiveGrid) {
+        PerspectiveGridToolOptionBox *p =
+            new PerspectiveGridToolOptionBox(this, tool, currPalette, currTool);
+        panel               = p;
+        PerspectiveTool *pt = dynamic_cast<PerspectiveTool *>(tool);
+        if (pt) pt->setToolOptionsBox(p);
       } else if (tool->getName() == T_StylePicker)
         panel = new StylePickerToolOptionsBox(0, tool, currPalette, currTool,
                                               app->getPaletteController());

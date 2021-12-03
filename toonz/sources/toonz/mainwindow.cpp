@@ -703,6 +703,11 @@ void MainWindow::writeSettings() {
   Tofstream os(ToonzFolder::getMyRoomsDir() + currentRoomFileName);
   os << getCurrentRoom()->getName().toStdString();
 
+  // Perspective grid tool - custom grid
+  TTool *perspectiveTool =
+      TTool::getTool(T_PerspectiveGrid, TTool::VectorImage);
+  if (perspectiveTool) perspectiveTool->saveTool();
+
   // Main window settings
   TFilePath fp = ToonzFolder::getMyModuleDir() + TFilePath("mainwindow.ini");
   QSettings settings(toQString(fp), QSettings::IniFormat);
@@ -2557,6 +2562,9 @@ void MainWindow::defineActions() {
                    "animate a level"));
   createToolAction(T_Ruler, "ruler", QT_TR_NOOP("Ruler Tool"), "",
                    tr("Ruler Tool: Measure distances on the canvas"));
+  createToolAction(T_PerspectiveGrid, "perspective_grid",
+                   QT_TR_NOOP("Perspective Grid Tool"), "",
+                   tr("Perspective Grid Tool: Set up perspective grids"));
   createToolAction(T_Finger, "finger", QT_TR_NOOP("Finger Tool"), "",
                    tr("Finger Tool: Smudges small areas to cover with line"));
 

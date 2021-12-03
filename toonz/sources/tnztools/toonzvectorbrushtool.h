@@ -163,6 +163,7 @@ protected:
   TEnumProperty m_capStyle;
   TEnumProperty m_joinStyle;
   TIntProperty m_miterJoinLimit;
+  TBoolProperty m_snapGrid;
 
   StrokeGenerator m_track;
   StrokeGenerator m_rangeTrack;
@@ -213,11 +214,10 @@ protected:
 
   bool m_propertyUpdating = false;
 
-  std::vector<TPointD> m_assistantPoints;
-  bool m_addingAssistant = false;
   TPointD m_firstPoint;
   TPointD m_lastPoint;
-  int m_highlightAssistant = -1;
+
+  int m_perspectiveIndex = -1;
 };
 
 #endif  // TOONZVECTORBRUSHTOOL_H

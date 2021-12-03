@@ -94,6 +94,7 @@ public:
   void visit(TIntPairProperty *dst) override { assign(dst, m_src); }
   void visit(TStyleIndexProperty *dst) override { assign(dst, m_src); }
   void visit(TPointerProperty *dst) override { assign(dst, m_src); }
+  void visit(TColorChipProperty *dst) override { assign(dst, m_src); }
 };
 
 void TPropertyGroup::setProperties(TPropertyGroup *g) {
@@ -208,6 +209,14 @@ public:
     attr["value"] = p->getValueAsString();
     m_os.openCloseChild("property", attr);
   }
+
+  void visit(TColorChipProperty *p) override {
+    std::map<std::string, std::string> attr;
+    attr["type"]  = "string";
+    attr["name"]  = p->getName();
+    attr["value"] = ::to_string(p->getValue());
+    m_os.openCloseChild("property", attr);
+  }
 };
 
 void TPropertyGroup::loadData(TIStream &is) {
@@ -304,5 +313,16 @@ void TEnumProperty::assignUIName(TProperty *refP) {
   for (int i = 0; i < m_range.size(); i++) {
     int refIndex                         = enumRefP->indexOf(m_range[i]);
     if (0 <= refIndex) m_items[i].UIName = refItems[refIndex].UIName;
+  }
+}
+
+void TColorChipProperty::assignUIName(TProperty *refP) {
+  setQStringName(refP->getQStringName());
+  TColorChipProperty *colorChipRefP = dynamic_cast<TColorChipProperty *>(refP);
+  if (!colorChipRefP) return;
+  ColorChips refChips = colorChipRefP->getColorChips();
+  for (int i = 0; i < m_chips.size(); i++) {
+    int refIndex = colorChipRefP->indexOf(m_chips[i].UIName.toStdWString());
+    if (0 <= refIndex) m_chips[i].UIName = refChips[refIndex].UIName;
   }
 }

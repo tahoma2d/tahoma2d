@@ -58,6 +58,8 @@ class TFxHandle;
 
 class ToolOptionsBox;
 
+class SceneViewer;
+
 class QMenu;
 class QKeyEvent;
 
@@ -415,6 +417,10 @@ return true if the method execution can have changed the current tool
 
   virtual void draw() {}  //!< Draws the tool on the viewer.
 
+  // Needed in case the tool wants the current SceneViewer
+  // as in the case of the PerspectiveTool
+  virtual void draw(SceneViewer *viewer) {}
+
   bool isActive() const {
     return m_active;
   }  //!< Used to know if a tool is active, (used in TextTool only).
@@ -531,6 +537,9 @@ transformation.
   void flipGuideStrokeDirection(int mode);
 
   virtual bool isMyPaintStyleSelected() { return false; }
+
+  virtual void saveTool(){};
+  virtual void loadTool(){};
 
 public:
   struct CellOps {

@@ -183,6 +183,7 @@ protected:
   TBoolProperty m_pressure;
   TDoubleProperty m_modifierSize;
   TBoolProperty m_modifierLockAlpha;
+  TBoolProperty m_snapGrid;
 
   RasterStrokeGenerator *m_rasterTrack;
   TTileSetCM32 *m_tileSet;
@@ -230,15 +231,13 @@ protected:
   bool m_propertyUpdating = false;
 
   bool m_isStraight = false;
-  std::vector<TPointD> m_assistantPoints;
-  bool m_addingAssistant   = false;
-  bool m_snapAssistant     = false;
-  int m_highlightAssistant = -1;
   TPointD m_firstPoint;
   TPointD m_lastPoint;
   double m_oldPressure = -1.0;
   // double m_oldThickness = -1.0;
   // int m_dragCount        = 0;
+
+  int m_perspectiveIndex = -1;
 
 protected:
   static void drawLine(const TPointD &point, const TPointD &centre,

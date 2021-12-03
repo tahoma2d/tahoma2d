@@ -1782,22 +1782,22 @@ void SceneViewer::drawOverlay() {
   // draw tool gadgets
   TTool *tool         = app->getCurrentTool()->getTool();
   TXshSimpleLevel *sl = app->getCurrentLevel()->getSimpleLevel();
-  if (sl) {
-    std::vector<TPointD> assistantPoints =
-        sl->getProperties()->getVanishingPoints();
-    if (!m_draw3DMode && assistantPoints.size() > 0) {
-      if (tool->getToolType() & TTool::LevelTool &&
-          !app->getCurrentObject()->isSpline() &&
-          (tool->getName() == "T_Brush" || tool->getName() == "T_Geometric")) {
-        glPushMatrix();
-        tglMultMatrix(getViewMatrix() * tool->getMatrix());
-        glScaled(m_dpiScale.x, m_dpiScale.y, 1);
-        ViewerDraw::drawPerspectiveGuides(this, m_viewAff[m_viewMode].det(),
-                                          assistantPoints);
-        glPopMatrix();
-      }
-    }
+
+  TTool *perspectiveTool =
+      TTool::getTool(T_PerspectiveGrid, TTool::VectorImage);
+  if (tool && perspectiveTool &&
+      ((fieldGuideToggle.getStatus() && ShowPerspectiveGrids) ||
+       tool == perspectiveTool)) {
+    glPushMatrix();
+    if (m_draw3DMode) {
+      mult3DMatrix();
+      tglMultMatrix(tool->getCurrentColumnMatrix());
+    } else
+      tglMultMatrix(getViewMatrix() * tool->getCurrentColumnMatrix());
+    perspectiveTool->draw(this);
+    glPopMatrix();
   }
+
   // Call tool->draw() even if the level is read only (i.e. to show hooks)
   if (tool && (tool->isEnabled() || (sl && sl->isReadOnly()))) {
     // tool->setViewer(this);                            // Moved at
@@ -1808,6 +1808,7 @@ void SceneViewer::drawOverlay() {
       tglMultMatrix(tool->getMatrix());
     } else
       tglMultMatrix(getViewMatrix() * tool->getMatrix());
+
     if (tool->getToolType() & TTool::LevelTool &&
         !app->getCurrentObject()->isSpline())
       glScaled(m_dpiScale.x, m_dpiScale.y, 1);
