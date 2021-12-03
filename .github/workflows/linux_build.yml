@@ -64,12 +64,12 @@ jobs:
           name: Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
           path: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
       - name: Get Nightly Release Date
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         run: |
           echo "NIGHTLYDATE=$(date '+%Y-%m-%d')" >> $GITHUB_ENV
           echo "NIGHTLYDATETIME=$(date '+%Y-%m-%d %H:%M:%S %Z')" >> $GITHUB_ENV
       - name: Create/Update Nightlies Tag
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         run: |
           git remote add nightly_repo https://tahoma2d:${{ secrets.TAHOMA2D_TOKEN }}@github.com/tahoma2d/tahoma2d_nightlies.git
           git config lfs.https://tahoma2d:${{ secrets.TAHOMA2D_TOKEN }}@github.com/tahoma2d/tahoma2d_nightlies.git.lfs.locksverify false
@@ -81,7 +81,7 @@ jobs:
           git push -f nightly_repo nightly-${{ github.sha }}
           git remote rm nightly_repo
       - name: Update Latest Nightly Release
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
@@ -95,7 +95,7 @@ jobs:
           tag: nightly
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Nightlies Release
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true

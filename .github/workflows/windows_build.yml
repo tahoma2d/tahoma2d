@@ -13,7 +13,7 @@ jobs:
         run: |
           ci-scripts\windows\tahoma-install.bat
       - name: Get CanonSDK
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' }}
         run: |
           curl -H "Authorization: token ${{ secrets.TAHOMA2D_TOKEN }}" -H "Accept:application/octet-stream" -fsSL -o EDSDK_v131231_Windows.zip https://api.github.com/repos/tahoma2d/CanonSDK/releases/assets/25267396
           7z x EDSDK_v131231_Windows.zip -oEDSDK_v131231_Windows
@@ -42,13 +42,13 @@ jobs:
           name: debug-symbols.zip
           path: toonz\build\debug-symbols.zip
       - name: Get Nightly Release Date
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         run: |
           chcp 65001 #set code page to utf-8
           echo ("NIGHTLYDATE=" + (Get-Date -format "yyyy-MM-dd")) >> $env:GITHUB_ENV
           echo ("NIGHTLYDATETIME=" + (Get-Date -format "yyyy-MM-dd HH:mm:ss UTC")) >> $env:GITHUB_ENV
       - name: Create/Update Nightlies Tag
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         run: |
           git remote add nightly_repo https://tahoma2d:${{ secrets.TAHOMA2D_TOKEN }}@github.com/tahoma2d/tahoma2d_nightlies.git
           git config lfs.https://tahoma2d:${{ secrets.TAHOMA2D_TOKEN }}@github.com/tahoma2d/tahoma2d_nightlies.git.lfs.locksverify false
@@ -60,7 +60,7 @@ jobs:
           git push -f nightly_repo nightly-${{ github.sha }}
           git remote rm nightly_repo
       - name: Update Latest Nightly Release
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
@@ -74,7 +74,7 @@ jobs:
           tag: nightly
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Nightlies Release
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
