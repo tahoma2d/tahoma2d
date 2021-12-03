@@ -31,10 +31,12 @@ jobs:
       - name: Create Package
         run: |
           ci-scripts\windows\tahoma-buildpkg.bat
+          mkdir artifact
+          cp -r toonz\build\Tahoma2D artifact
       - uses: actions/upload-artifact@v1
         with:
-          name: Tahoma2D-win.zip
-          path: toonz\build\Tahoma2D-win.zip
+          name: Tahoma2D-win
+          path: artifact
       - uses: actions/upload-artifact@v1
         with:
           name: debug-symbols.zip
