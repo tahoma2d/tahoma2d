@@ -115,7 +115,7 @@ private:
   bool showConfirmDialog();
   bool showOverwriteDialog(QString name);
   void importPreset();
-  QStringList buildPresets();
+  void buildPresets();
   void showEvent(QShowEvent *se) override;
   void setCurrentPresetPref(QString preset);
   void getCurrentPresetPref();
@@ -123,7 +123,7 @@ private:
 protected slots:
   void clearAllShortcuts(bool warning = true);
   void onSearchTextChanged(const QString &text);
-  void onPresetChanged(int index);
+  void onPresetChanged();
   void onExportButton(TFilePath fp = TFilePath());
   void onDeletePreset();
   void onSavePreset();
