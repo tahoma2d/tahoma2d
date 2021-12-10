@@ -574,6 +574,7 @@ void PaletteViewerPanel::onFreezeButtonToggled(bool frozen) {
 
   // Cambio il livello corrente
   if (!frozen) {
+    m_frozenPalette = nullptr;
     std::set<TXshSimpleLevel *> levels;
     TXsheet *xsheet = app->getCurrentXsheet()->getXsheet();
     int row, column;
@@ -605,6 +606,7 @@ void PaletteViewerPanel::onFreezeButtonToggled(bool frozen) {
     app->getCurrentLevel()->setLevel(level);
     m_paletteViewer->setPaletteHandle(ph);
   } else {
+    m_frozenPalette = ph->getPalette();
     m_paletteHandle->setPalette(ph->getPalette());
     m_paletteViewer->setPaletteHandle(m_paletteHandle);
   }
