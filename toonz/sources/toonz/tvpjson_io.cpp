@@ -366,7 +366,7 @@ void TvpJsonClip::build(ToonzScene* scene, TXsheet* xsheet) {
       continue;
     }
     TvpJsonLayer layer;
-    layer.build(col, scene, column);
+    layer.build(m_layers.size(), scene, column);
     if (!layer.isEmpty()) m_layers.append(layer);
   }
 }
