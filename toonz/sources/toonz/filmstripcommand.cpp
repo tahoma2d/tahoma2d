@@ -51,7 +51,8 @@
 //=============================================================================
 
 TFrameId operator+(const TFrameId &fid, int d) {
-  return TFrameId(fid.getNumber() + d, fid.getLetter());
+  return TFrameId(fid.getNumber() + d, fid.getLetter(), fid.getZeroPadding(),
+                  fid.getStartSeqInd());
 }
 
 //-----------------------------------------------------------------------------
@@ -1367,10 +1368,14 @@ void FilmstripCmd::addFrames(TXshSimpleLevel *sl, int start, int end,
   std::vector<TFrameId> oldFids;
   sl->getFids(oldFids);
 
+  TFrameId tmplFid;
+  if (!oldFids.empty()) tmplFid = oldFids.front();
+
   std::set<TFrameId> fidsToInsert;
   int frame = 0;
   for (frame = start; frame <= end; frame += step)
-    fidsToInsert.insert(TFrameId(frame));
+    fidsToInsert.insert(TFrameId(frame, "", tmplFid.getZeroPadding(),
+                                 tmplFid.getStartSeqInd()));
 
   makeSpaceForFids(sl, fidsToInsert);
 
@@ -1499,7 +1504,8 @@ void FilmstripCmd::renumber(
       if (tmp.count(tarFid) > 0) {
         do {
           tarFid =
-              TFrameId(tarFid.getNumber(), getNextLetter(tarFid.getLetter()));
+              TFrameId(tarFid.getNumber(), getNextLetter(tarFid.getLetter()),
+                       tarFid.getZeroPadding(), tarFid.getStartSeqInd());
         } while (!tarFid.getLetter().isEmpty() && tmp.count(tarFid) > 0);
         if (tarFid.getLetter().isEmpty()) {
           // todo: error message
@@ -1557,7 +1563,8 @@ void FilmstripCmd::renumber(TXshSimpleLevel *sl, std::set<TFrameId> &frames,
   std::vector<TFrameId>::iterator j = fids.begin();
   for (it = frames.begin(); it != frames.end(); ++it) {
     TFrameId srcFid(*it);
-    TFrameId dstFid(frame);
+    TFrameId dstFid(frame, "", srcFid.getZeroPadding(),
+                    srcFid.getStartSeqInd());
     frame += stepFrame;
     // faccio il controllo su tmp e non su fids. considera:
     // fids = [1,2,3,4], renumber = [2->3,3->5]
@@ -1590,7 +1597,8 @@ void FilmstripCmd::renumber(TXshSimpleLevel *sl, std::set<TFrameId> &frames,
   it2 = frames.begin();
   std::set<TFrameId> newFrames;
   for (i = 0; i < frames.size(); i++, it2++)
-    newFrames.insert(TFrameId(startFrame + (i * stepFrame), it2->getLetter()));
+    newFrames.insert(TFrameId(startFrame + (i * stepFrame), it2->getLetter(),
+                              it2->getZeroPadding(), it2->getStartSeqInd()));
   assert(frames.size() == newFrames.size());
   frames.swap(newFrames);
 
