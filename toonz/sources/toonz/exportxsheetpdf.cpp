@@ -23,6 +23,8 @@
 #include "toonz/tstageobject.h"
 #include "toonz/preferences.h"
 #include "toonz/toonzfolders.h"
+#include "toonz/txshsoundtextcolumn.h"
+#include "toonz/txshsoundtextlevel.h"
 
 // TnzCore includes
 #include "tsystem.h"
@@ -74,6 +76,8 @@ TEnv::IntVar XShPdfExportPrintSoundtrack("XShPdfExportPrintSoundtrack", 0);
 TEnv::IntVar XShPdfExportSerialFrameNumber("XShPdfExportSerialFrameNumber", 0);
 // print level name on the bottom
 TEnv::IntVar XShPdfExportLevelNameOnBottom("XShPdfExportLevelNameOnBottom", 0);
+// print dialogue
+TEnv::IntVar XShPdfExportPrintDialogue("XShPdfExportPrintDialogue", 0);
 // print scene name
 TEnv::IntVar XShPdfExportPrintSceneName("XShPdfExportPrintSceneName", 0);
 // template font
@@ -738,7 +742,7 @@ void XSheetPDFTemplate::drawDialogBlock(QPainter& painter, const int framePage,
     painter.restore();
 
     // register sound cells
-    if (m_info.drawSound)
+    if (m_info.drawSound || m_noteColumn)
       registerSoundRects(painter, param(DialogColWidth), bodyId);
   }
   painter.restore();
@@ -1136,6 +1140,153 @@ void XSheetPDFTemplate::drawSound(QPainter& painter, int framePage) {
   }
 }
 
+void XSheetPDFTemplate::drawDialogue(QPainter& painter, int framePage) {
+  if (!m_noteColumn || m_soundCellRects.isEmpty()) return;
+
+  QFont font = painter.font();
+  font.setPixelSize(m_soundCellRects[0].height());
+  painter.setFont(font);
+
+  QFont smallFont(font);
+  smallFont.setPixelSize(font.pixelSize() * 2 / 3);
+
+  QFont largeFont(font);
+  largeFont.setPixelSize(font.pixelSize() * 13 / 10);
+  int heightThres = QFontMetrics(largeFont).height();
+
+  int r0, r1;
+  m_noteColumn->getRange(r0, r1);
+
+  // obtain frame range to be printed in the current page
+  int printFrameR0 = framePage * param(FrameLength);
+  int printFrameR1 = printFrameR0 + param(FrameLength) - 1;
+
+  // compute for each body
+  int framesPerBody = 72;
+  int bodyFrameR0   = printFrameR0;
+  int bodyFrameR1   = bodyFrameR0 + framesPerBody - 1;
+  while (bodyFrameR1 <= printFrameR1) {
+    // move to next body if the current body is out of range
+    if (r1 < bodyFrameR0 || bodyFrameR1 < r0) {
+      // to next body
+      bodyFrameR0 = bodyFrameR1 + 1;
+      bodyFrameR1 = bodyFrameR0 + framesPerBody - 1;
+      continue;
+    }
+
+    // frame range to be printed
+    int drawStart = std::max(r0, bodyFrameR0);
+    int drawEnd   = std::min(r1, std::min(bodyFrameR1, printFrameR1));
+
+    int rStart = drawStart;
+    int rEnd   = drawEnd;
+    // obtain top row of the fist note block
+    if (!m_noteColumn->getCell(drawStart).isEmpty()) {
+      while (rStart > 0 && m_noteColumn->getCell(rStart - 1) ==
+                               m_noteColumn->getCell(drawStart)) {
+        rStart--;
+      }
+    }
+    // obtain bottom row of the last note block
+    if (!m_noteColumn->getCell(drawEnd).isEmpty()) {
+      while (m_noteColumn->getCell(rEnd + 1) ==
+             m_noteColumn->getCell(drawEnd)) {
+        rEnd++;
+      }
+    }
+
+    for (int row = rStart; row <= drawEnd; row++) {
+      TXshCell cell = m_noteColumn->getCell(row);
+      if (cell.isEmpty()) continue;
+
+      // check how long the same content continues
+      int rowTo = row;
+      while (m_noteColumn->getCell(rowTo + 1) == cell) {
+        rowTo++;
+      }
+      int blockLength = rowTo - row + 1;
+
+      QString text = cell.getSoundTextLevel()->getFrameText(
+          cell.m_frameId.getNumber() - 1);
+      int textCount = text.count();
+      // separate text if it overflows the body
+      if (row < drawStart) {
+        int partialBlockLength = rowTo - drawStart + 1;
+        int partialTextCount   = (int)std::round(
+            (double)(textCount * partialBlockLength) / (double)blockLength);
+        text        = text.mid(textCount - partialTextCount);
+        textCount   = partialTextCount;
+        row         = drawStart;
+        blockLength = partialBlockLength;
+      }
+      // draw start mark
+      else {
+        int topRectId = row - printFrameR0;
+        QRect rect    = m_soundCellRects.at(topRectId);
+        painter.drawLine(rect.topLeft(), rect.topRight());
+      }
+
+      if (rowTo > drawEnd) {
+        int partialBlockLength = drawEnd - row + 1;
+        int partialTextCount   = (int)std::round(
+            (double)(textCount * partialBlockLength) / (double)blockLength);
+        text      = text.mid(0, partialTextCount);
+        textCount = partialTextCount;
+        rowTo     = drawEnd;
+      }
+      // draw end mark
+      else if (m_noteColumn->getCell(rowTo + 1).isEmpty()) {
+        int bottomRectId = rowTo - printFrameR0;
+        QRect rect       = m_soundCellRects.at(bottomRectId);
+        drawEndMark(painter, rect);
+      }
+      if (text.isEmpty()) {
+        row = rowTo;
+        continue;
+      }
+
+      int normalLettersPerChunk = textCount * m_soundCellRects[0].width() /
+                                  QFontMetrics(font).boundingRect(text).width();
+      int maxLettersPerChunk =
+          textCount * m_soundCellRects[0].width() /
+          QFontMetrics(smallFont).boundingRect(text).width();
+
+      int lettersPerChunk =
+          (int)std::ceil((double)textCount / ((double)blockLength));
+      lettersPerChunk = std::min(lettersPerChunk, maxLettersPerChunk);
+      int chunkCount =
+          (int)std::ceil((double)textCount / (double)(lettersPerChunk));
+      chunkCount = std::min(chunkCount, (int)((double)(blockLength)*1.5));
+
+      int topRectId    = row - printFrameR0;
+      int bottomRectId = rowTo - printFrameR0;
+      // unite the cell rects and divide by the amount of chunks
+      QRect unitedRect = m_soundCellRects.at(topRectId).united(
+          m_soundCellRects.at(bottomRectId));
+      // check if the large font is available
+      if (lettersPerChunk == 1 && unitedRect.height() / textCount > heightThres)
+        painter.setFont(largeFont);
+      else if (lettersPerChunk > normalLettersPerChunk)
+        painter.setFont(smallFont);
+      else
+        painter.setFont(font);
+      // draw text
+      for (int c = 0; c < chunkCount; c++) {
+        int y0 = unitedRect.top() + unitedRect.height() * c / chunkCount;
+        int y1 = unitedRect.top() + unitedRect.height() * (c + 1) / chunkCount;
+        QRect tmpRect(unitedRect.left(), y0, unitedRect.width(), y1 - y0 + 1);
+        painter.drawText(tmpRect, Qt::AlignCenter,
+                         text.mid(c * lettersPerChunk, lettersPerChunk));
+      }
+
+      row = rowTo;
+    }
+    // to next body
+    bodyFrameR0 = bodyFrameR1 + 1;
+    bodyFrameR1 = bodyFrameR0 + framesPerBody - 1;
+  }
+}
+
 XSheetPDFTemplate::XSheetPDFTemplate(
     const QList<QPair<TXshLevelColumn*, QString>>& columns, const int duration)
     : m_columns(columns), m_duration(duration), m_useExtraColumns(false) {}
@@ -1213,6 +1364,10 @@ void XSheetPDFTemplate::drawXsheetContents(QPainter& painter, int framePage,
   painter.setPen(
       QPen(Qt::black, mm2px(0.5), Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
   painter.setFont(m_info.contentsFontFamily);
+
+  // draw dialogue
+  drawDialogue(painter, framePage);
+
   int colsInPage = columnsInPage();
   int startColId = colsInPage * parallelPage;
   int startFrame = param(FrameLength) * framePage;
@@ -1723,8 +1878,10 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
       new QCheckBox(tr("Put Serial Frame Numbers Over Pages"), this);
   m_levelNameOnBottomCB =
       new QCheckBox(tr("Print Level Names On The Bottom"), this);
-  m_sceneNameEdit = new QLineEdit(this);
-  m_memoEdit      = new QTextEdit(this);
+  m_drawDialogueCB   = new QCheckBox(tr("Print Dialogue"), this);
+  m_dialogueColCombo = new QComboBox();
+  m_sceneNameEdit    = new QLineEdit(this);
+  m_memoEdit         = new QTextEdit(this);
 
   m_logoTxtRB        = new QRadioButton(tr("Text"), this);
   m_logoImgRB        = new QRadioButton(tr("Image"), this);
@@ -1766,6 +1923,7 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
   m_memoEdit->setStyleSheet(
       "background:white;\ncolor:black;\nborder:1 solid black;");
   m_memoEdit->setFixedHeight(150);
+  m_dialogueColCombo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
   m_sceneNameEdit->setFixedWidth(100);
 
   m_continuousLineCombo->addItem(tr("Always"), Line_Always);
@@ -1888,7 +2046,10 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
             checksLay->addWidget(m_addSceneNameCB, 1, 1);
             checksLay->addWidget(m_sceneNameEdit, 1, 2,
                                  Qt::AlignLeft | Qt::AlignVCenter);
-            checksLay->addWidget(m_levelNameOnBottomCB, 2, 0, 1, 3);
+            checksLay->addWidget(m_levelNameOnBottomCB, 2, 0);
+            checksLay->addWidget(m_drawDialogueCB, 2, 1);
+            checksLay->addWidget(m_dialogueColCombo, 2, 2,
+                                 Qt::AlignLeft | Qt::AlignVCenter);
           }
           checksLay->setColumnStretch(0, 2);
           checksLay->setColumnStretch(1, 1);
@@ -1979,6 +2140,11 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
   connect(m_serialFrameNumberCB, SIGNAL(clicked(bool)), this,
           SLOT(updatePreview()));
   connect(m_levelNameOnBottomCB, SIGNAL(clicked(bool)), this,
+          SLOT(updatePreview()));
+  connect(m_drawDialogueCB, SIGNAL(clicked(bool)), this, SLOT(updatePreview()));
+  connect(m_drawDialogueCB, SIGNAL(clicked(bool)), m_dialogueColCombo,
+          SLOT(setEnabled(bool)));
+  connect(m_dialogueColCombo, SIGNAL(activated(int)), this,
           SLOT(updatePreview()));
   connect(m_addSceneNameCB, SIGNAL(clicked(bool)), this, SLOT(updatePreview()));
   connect(m_addSceneNameCB, SIGNAL(clicked(bool)), m_sceneNameEdit,
@@ -2091,12 +2257,20 @@ void ExportXsheetPdfPopup::initialize() {
 
   m_columns.clear();
   m_soundColumns.clear();
+  m_noteColumns.clear();
   for (int col = 0; col < xsheet->getColumnCount(); col++) {
     if (xsheet->isColumnEmpty(col)) continue;
 
     TXshSoundColumn* soundColumn = xsheet->getColumn(col)->getSoundColumn();
     if (soundColumn) {
       if (soundColumn->isPreviewVisible()) m_soundColumns.append(soundColumn);
+      continue;
+    }
+
+    TXshSoundTextColumn* noteColumn =
+        xsheet->getColumn(col)->getSoundTextColumn();
+    if (noteColumn) {
+      m_noteColumns.insert(col, noteColumn);
       continue;
     }
 
@@ -2123,6 +2297,12 @@ void ExportXsheetPdfPopup::initialize() {
   m_sceneNameEdit->setText(
       (scene->isUntitled()) ? ""
                             : QString::fromStdWString(scene->getSceneName()));
+  m_drawDialogueCB->setDisabled(m_noteColumns.isEmpty());
+  m_dialogueColCombo->setEnabled(!m_noteColumns.isEmpty() &&
+                                 m_drawDialogueCB->isChecked());
+  m_dialogueColCombo->clear();
+  for (auto colId : m_noteColumns.keys())
+    m_dialogueColCombo->addItem(tr("Col%1").arg(colId + 1), colId);
 
   initTemplate();
 
@@ -2146,6 +2326,7 @@ void ExportXsheetPdfPopup::saveSettings() {
   XShPdfExportPrintSceneName    = (m_addSceneNameCB->isChecked()) ? 1 : 0;
   XShPdfExportSerialFrameNumber = (m_serialFrameNumberCB->isChecked()) ? 1 : 0;
   XShPdfExportLevelNameOnBottom = (m_levelNameOnBottomCB->isChecked()) ? 1 : 0;
+  XShPdfExportPrintDialogue     = (m_drawDialogueCB->isChecked()) ? 1 : 0;
   XShPdfExportTemplateFont =
       m_templateFontCB->currentFont().family().toStdString();
   XShPdfExportOutputFont =
@@ -2182,6 +2363,7 @@ void ExportXsheetPdfPopup::loadSettings() {
   m_addSceneNameCB->setChecked(XShPdfExportPrintSceneName != 0);
   m_serialFrameNumberCB->setChecked(XShPdfExportSerialFrameNumber != 0);
   m_levelNameOnBottomCB->setChecked(XShPdfExportLevelNameOnBottom != 0);
+  m_drawDialogueCB->setChecked(XShPdfExportPrintDialogue != 0);
 
   QString tmplFont = QString::fromStdString(XShPdfExportTemplateFont);
   if (!tmplFont.isEmpty()) m_templateFontCB->setCurrentFont(QFont(tmplFont));
@@ -2204,6 +2386,8 @@ void ExportXsheetPdfPopup::loadSettings() {
   m_logoTextEdit->setEnabled(m_logoTxtRB->isChecked());
   m_logoImgPathField->setEnabled(m_logoImgRB->isChecked());
   m_sceneNameEdit->setEnabled(m_addSceneNameCB->isChecked());
+  m_dialogueColCombo->setEnabled(m_drawDialogueCB->isChecked() &&
+                                 m_drawDialogueCB->isEnabled());
 
   int id = XShPdfExportTick1Id;
   m_tick1IdCombo->setCurrentIndex(m_tick1IdCombo->findData(id));
@@ -2284,6 +2468,12 @@ void ExportXsheetPdfPopup::setInfo() {
   info.tick2MarkType = (TickMarkType)(m_tick2MarkCombo->currentData().toInt());
 
   m_currentTmpl->setInfo(info);
+
+  if (m_drawDialogueCB->isChecked() && m_drawDialogueCB->isEnabled())
+    m_currentTmpl->setNoteColumn(m_noteColumns.value(
+        m_dialogueColCombo->currentData().toInt(), nullptr));
+  else
+    m_currentTmpl->setNoteColumn(nullptr);
 
   if (!m_logoImgRB->isChecked()) return;
 

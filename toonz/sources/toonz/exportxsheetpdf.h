@@ -21,6 +21,7 @@ class QComboBox;
 class QCheckBox;
 class TXshLevelColumn;
 class TXshSoundColumn;
+class TXshSoundTextColumn;
 namespace DVGui {
   class FileField;
   class ColorField;
@@ -149,6 +150,7 @@ protected:
   // column and column name (if manually specified)
   QList<QPair<TXshLevelColumn*, QString>> m_columns;
   QList<TXshSoundColumn*> m_soundColumns;
+  TXshSoundTextColumn* m_noteColumn;
 
   int m_duration;
   bool m_useExtraColumns;
@@ -191,6 +193,7 @@ protected:
     bool isBottom = false);
   void drawLogo(QPainter& painter);
   void drawSound(QPainter& painter, int framePage);
+  void drawDialogue(QPainter& painter, int framePage);
 
   int param(const std::string& id, int defaultValue = 0) {
     if (!m_params.contains(id)) std::cout << id << std::endl;
@@ -213,6 +216,9 @@ public:
   void setLogoPixmap(QPixmap pm);
   void setSoundColumns(const QList<TXshSoundColumn*>& soundColumns) {
     m_soundColumns = soundColumns;
+  }
+  void setNoteColumn(TXshSoundTextColumn* noteColumn) {
+    m_noteColumn = noteColumn;
   }
   void setInfo(const XSheetPDFFormatInfo& info);
 };
@@ -275,11 +281,13 @@ class ExportXsheetPdfPopup final : public DVGui::Dialog {
   XsheetPdfPreviewArea* m_previewArea;
   DVGui::FileField* m_pathFld;
   QLineEdit* m_fileNameFld;
-  QComboBox *m_templateCombo, *m_exportAreaCombo, *m_continuousLineCombo;
+  QComboBox *m_templateCombo, *m_exportAreaCombo, *m_continuousLineCombo,
+      *m_dialogueColCombo;
   DVGui::ColorField* m_lineColorFld;
 
   QCheckBox *m_addDateTimeCB, *m_addScenePathCB, *m_drawSoundCB,
-    *m_addSceneNameCB, *m_serialFrameNumberCB, *m_levelNameOnBottomCB;
+      *m_addSceneNameCB, *m_serialFrameNumberCB, *m_levelNameOnBottomCB,
+      *m_drawDialogueCB;
 
   QFontComboBox *m_templateFontCB, *m_contentsFontCB;
   QTextEdit* m_memoEdit;
@@ -300,6 +308,7 @@ class ExportXsheetPdfPopup final : public DVGui::Dialog {
   // column and column name (if manually specified)
   QList<QPair<TXshLevelColumn*, QString>> m_columns;
   QList<TXshSoundColumn*> m_soundColumns;
+  QMap<int, TXshSoundTextColumn*> m_noteColumns;
   int m_duration;
 
   XSheetPDFTemplate* m_currentTmpl;
