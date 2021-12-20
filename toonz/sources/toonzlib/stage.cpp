@@ -364,22 +364,32 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
   double columnZ        = pegbar->getZ(row);
   double columnNoScaleZ = pegbar->getGlobalNoScaleZ();
 
-  TXshCell cell = xsh->getCell(row, col);
-  TXshLevel *xl = cell.m_level.getPointer();
+  TXshCell cell       = xsh->getCell(row, col);
+  TXshLevel *xl       = cell.m_level.getPointer();
+  TXshSimpleLevel *sl = xl ? xl->getSimpleLevel() : 0;
   // check the previous row for a stop motion layer
   if (!xl) {
-    cell = xsh->getCell(row - 1, col);
-    xl   = cell.m_level.getPointer();
-    if (!xl) {
-      return;
+    // Get the last populated cell
+    if (Preferences::instance()->isImplicitHoldEnabled()) {
+      int r0, r1;
+      xsh->getCellRange(col, r0, r1);
+      for (int r = std::min(r1, row); r >= r0; r--) {
+        cell = xsh->getCell(r, col);
+        if (cell.isEmpty()) continue;
+        xl               = cell.m_level.getPointer();
+        m_currentFrameId = cell.getFrameId();
+        break;
+      }
     } else {
-      xl                  = cell.m_level.getPointer();
-      TXshSimpleLevel *sl = xl->getSimpleLevel();
-      if (sl && m_liveViewImage && sl == m_liveViewPlayer.m_sl) {
-        row -= 1;
-      } else
-        return;
+      cell = xsh->getCell(row - 1, col);
+      xl   = cell.m_level.getPointer();
     }
+
+    if (!xl) return;
+
+    sl = xl->getSimpleLevel();
+
+    if (sl && m_liveViewImage && sl == m_liveViewPlayer.m_sl) row -= 1;
   }
 
   ZPlacement cameraPlacement;
@@ -393,8 +403,6 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
       columnZ, columnNoScaleZ);
 
   if (!columnBehindCamera) return;
-
-  TXshSimpleLevel *sl = xl->getSimpleLevel();
 
   bool storePlayer =
       sl || (xl->getChildLevel() &&

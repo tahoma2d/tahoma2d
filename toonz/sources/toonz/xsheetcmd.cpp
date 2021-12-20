@@ -288,6 +288,24 @@ public:
   }
 } ToggleAutoStretchCommand;
 
+//=============================================================================
+
+class ToggleImplicitHoldCommand final : public MenuItemHandler {
+public:
+  ToggleImplicitHoldCommand() : MenuItemHandler(MI_ToggleImplicitHold) {}
+  void execute() override {
+    bool currentImplictHoldEnabled =
+        Preferences::instance()->isImplicitHoldEnabled();
+    if (CommandManager::instance()
+            ->getAction(MI_ToggleImplicitHold)
+            ->isChecked() == currentImplictHoldEnabled)
+      return;
+    Preferences::instance()->setValue(EnableImplicitHold,
+                                      !currentImplictHoldEnabled);
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+} ToggleImplicitHoldCommand;
+
 //*****************************************************************************
 //    RemoveSceneFrame  command
 //*****************************************************************************

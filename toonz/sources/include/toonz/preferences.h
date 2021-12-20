@@ -304,6 +304,9 @@ public:
   bool isAutoCreateEnabled() const { return getBoolValue(EnableAutocreation); }
   int getNumberingSystem() const { return getIntValue(NumberingSystem); }
   bool isAutoStretchEnabled() const { return getBoolValue(EnableAutoStretch); }
+  bool isImplicitHoldEnabled() const {
+    return getBoolValue(EnableImplicitHold);
+  }
   bool isCreationInHoldCellsEnabled() const {
     return getBoolValue(EnableCreationInHoldCells);
   }

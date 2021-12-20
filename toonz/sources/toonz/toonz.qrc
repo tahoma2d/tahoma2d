@@ -329,8 +329,10 @@
     <file>icons/dark/actions/16/auto_stretch_on.svg</file>
     <file>icons/dark/actions/16/create_in_hold.svg</file>
     <file>icons/dark/actions/16/create_in_hold_on.svg</file>
+    <file>icons/dark/actions/16/implicit_hold.svg</file>
+    <file>icons/dark/actions/16/implicit_hold_on.svg</file>
 
-		<file>icons/dark/actions/16/on_1s.svg</file>
+    <file>icons/dark/actions/16/on_1s.svg</file>
 		<file>icons/dark/actions/16/on_2s.svg</file>
 		<file>icons/dark/actions/16/on_3s.svg</file>
 		<file>icons/dark/actions/16/on_4s.svg</file>

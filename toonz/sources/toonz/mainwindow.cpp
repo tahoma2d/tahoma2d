@@ -2501,6 +2501,10 @@ void MainWindow::defineActions() {
   createToggle(MI_ViewerIndicator, QT_TR_NOOP("Toggle Viewer Indicators"), "",
                Preferences::instance()->isViewerIndicatorEnabled(),
                RightClickMenuCommandType);
+  createToggle(MI_ToggleImplicitHold, QT_TR_NOOP("Toggle Implicit Hold"), "",
+               Preferences::instance()->isImplicitHoldEnabled(),
+               MiscCommandType, "implicit_hold",
+               tr("Toggles the implicit hold of a frame to the next frame"));
 
   // Tools
 

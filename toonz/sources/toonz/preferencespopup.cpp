@@ -1062,6 +1062,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {EnableAutoStretch, tr("Enable Auto-stretch Frame")},
       {EnableCreationInHoldCells, tr("Enable Creation in Hold Cells")},
       {EnableAutoRenumber, tr("Enable Autorenumber")},
+      {EnableImplicitHold, tr("Enable Implict Hold")},
       {vectorSnappingTarget, tr("Vector Snapping:")},
       {saveUnpaintedInCleanup,
        tr("Keep Original Cleaned Up Drawings As Backup")},
@@ -1679,6 +1680,7 @@ QWidget* PreferencesPopup::createDrawingPage() {
   {
     insertUI(NumberingSystem, creationLay, getComboItemList(NumberingSystem));
     insertUI(EnableAutoStretch, creationLay);
+    insertUI(EnableImplicitHold, creationLay);
     insertUI(EnableAutoRenumber, creationLay);
   }
   QGridLayout* autoCreationLay = insertGroupBoxUI(EnableAutocreation, lay);

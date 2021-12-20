@@ -478,4 +478,6 @@
 #define MI_ToggleCreationInHoldCells "MI_ToggleCreationInHoldCells"
 #define MI_ToggleAutoStretch "MI_ToggleAutoStretch"
 
+#define MI_ToggleImplicitHold "MI_ToggleImplictHold"
+
 #endif

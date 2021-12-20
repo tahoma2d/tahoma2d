@@ -512,7 +512,8 @@ void Preferences::definePreferenceItems() {
 
   define(EnableAutocreation, "EnableAutocreation", QMetaType::Bool, true);
   define(NumberingSystem, "NumberingSystem", QMetaType::Int, 0);  // Incremental
-  define(EnableAutoStretch, "EnableAutoStretch", QMetaType::Bool, true);
+  define(EnableAutoStretch, "EnableAutoStretch", QMetaType::Bool, false);
+  define(EnableImplicitHold, "EnableImplicitHold", QMetaType::Bool, true);
   define(EnableCreationInHoldCells, "EnableCreationInHoldCells",
          QMetaType::Bool, true);
   define(EnableAutoRenumber, "EnableAutoRenumber", QMetaType::Bool, true);

@@ -4131,6 +4131,7 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
   menu.addAction(cmdManager->getAction(MI_ToggleAutoCreate));
   menu.addAction(cmdManager->getAction(MI_ToggleCreationInHoldCells));
   menu.addAction(cmdManager->getAction(MI_ToggleAutoStretch));
+  menu.addAction(cmdManager->getAction(MI_ToggleImplicitHold));
 }
 
 //-----------------------------------------------------------------------------
