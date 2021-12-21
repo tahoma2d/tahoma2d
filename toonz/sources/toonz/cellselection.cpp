@@ -2811,7 +2811,7 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
       Preferences::instance()->isAnimationSheetEnabled()) {
     int r0, r1;
     xsh->getCellRange(col, r0, r1);
-    for (int r = std::min(r1, row); r > r0; r--) {
+    for (int r = std::min(r1, row); r >= r0; r--) {
       TXshCell cell = xsh->getCell(r, col);
       if (cell.isEmpty()) continue;
       level = cell.m_level.getPointer();
@@ -2839,6 +2839,18 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
   TXshCell targetCell = xsh->getCell(row, col);
   TXshCell prevCell   = xsh->getCell(row - 1, col);
   ;
+
+  if (targetCell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
+    int r0, r1;
+    xsh->getCellRange(col, r0, r1);
+    for (int r = std::min(r1, row); r >= r0; r--) {
+      TXshCell cell = xsh->getCell(r, col);
+      if (cell.isEmpty()) continue;
+      targetCell = cell;
+      prevCell = cell;
+      break;
+    }
+  }
 
   // check if we use the current cell to duplicate or the previous cell
   if (!targetCell.isEmpty() && targetCell != prevCell) {
