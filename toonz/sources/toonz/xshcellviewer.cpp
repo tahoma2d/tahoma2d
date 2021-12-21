@@ -3734,6 +3734,24 @@ void CellArea::contextMenuEvent(QContextMenuEvent *event) {
   int row                   = cellPosition.frame();
   int col                   = cellPosition.layer();
   TXshCell cell             = m_viewer->getXsheet()->getCell(row, col);
+  bool isImplicitCell       = false;
+
+  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
+    int r0, r1;
+    m_viewer->getXsheet()->getCellRange(col, r0, r1);
+    for (int r = std::min(r1, row); r >= r0; r--) {
+      TXshCell tempCell = m_viewer->getXsheet()->getCell(r, col);
+      if (tempCell.isEmpty()) continue;
+      if (tempCell.m_level->getType() == ZERARYFX_XSHLEVEL ||
+          tempCell.m_level->getType() == PLT_XSHLEVEL ||
+          tempCell.m_level->getType() == SND_XSHLEVEL ||
+          tempCell.m_level->getType() == SND_TXT_XSHLEVEL)
+        break;
+      isImplicitCell = true;
+      cell           = tempCell;
+      break;
+    }
+  }
 
   QMenu menu(this);
 
@@ -3803,13 +3821,13 @@ void CellArea::contextMenuEvent(QContextMenuEvent *event) {
         }
       if (areCellsEmpty) break;
     }
-    createCellMenu(menu, areCellsEmpty, cell, row, col);
+    createCellMenu(menu, areCellsEmpty, cell, row, col, isImplicitCell);
   } else {
     m_viewer->getCellSelection()->makeCurrent();
     m_viewer->getCellSelection()->selectCell(row, col);
     m_viewer->setCurrentColumn(col);
 
-    createCellMenu(menu, !cell.isEmpty(), cell, row, col);
+    createCellMenu(menu, !cell.isEmpty(), cell, row, col, isImplicitCell);
   }
 
   if (!menu.isEmpty()) menu.exec(event->globalPos());
@@ -3899,7 +3917,7 @@ const bool CellArea::isControlPressed() { return isCtrlPressed; }
 
 //-----------------------------------------------------------------------------
 void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
-                              int row, int col) {
+                              int row, int col, bool isImplicitCell) {
   CommandManager *cmdManager = CommandManager::instance();
 
   bool soundCellsSelected     = m_viewer->areSoundCellsSelected();
@@ -3921,113 +3939,123 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
     if (cell.m_level && cell.m_level->getZeraryFxLevel()) {
       menu.addAction(cmdManager->getAction(MI_FxParamEditor));
       addSeparator = true;
-    } else if (!soundTextCellsSelected) {
+    } else if (!soundTextCellsSelected && !isImplicitCell) {
       menu.addAction(cmdManager->getAction(MI_LevelSettings));
       addSeparator = true;
     }
     if (addSeparator) menu.addSeparator();
 
     if (!soundCellsSelected) {
-      QMenu *reframeSubMenu = new QMenu(tr("Reframe"), this);
-      {
-        reframeSubMenu->addAction(cmdManager->getAction(MI_Reframe1));
-        reframeSubMenu->addAction(cmdManager->getAction(MI_Reframe2));
-        reframeSubMenu->addAction(cmdManager->getAction(MI_Reframe3));
-        reframeSubMenu->addAction(cmdManager->getAction(MI_Reframe4));
-        reframeSubMenu->addAction(
-            cmdManager->getAction(MI_ReframeWithEmptyInbetweens));
-      }
-      menu.addMenu(reframeSubMenu);
-
-      QMenu *stepSubMenu = new QMenu(tr("Step"), this);
-      {
-        stepSubMenu->addAction(cmdManager->getAction(MI_Step2));
-        stepSubMenu->addAction(cmdManager->getAction(MI_Step3));
-        stepSubMenu->addAction(cmdManager->getAction(MI_Step4));
-        stepSubMenu->addAction(cmdManager->getAction(MI_ResetStep));
-        stepSubMenu->addAction(cmdManager->getAction(MI_IncreaseStep));
-        stepSubMenu->addAction(cmdManager->getAction(MI_DecreaseStep));
-      }
-      menu.addMenu(stepSubMenu);
-      QMenu *eachSubMenu = new QMenu(tr("Each"), this);
-      {
-        eachSubMenu->addAction(cmdManager->getAction(MI_Each2));
-        eachSubMenu->addAction(cmdManager->getAction(MI_Each3));
-        eachSubMenu->addAction(cmdManager->getAction(MI_Each4));
-      }
-      menu.addMenu(eachSubMenu);
-
-      if (!soundTextCellsSelected) {
-        QMenu *editCellNumbersMenu = new QMenu(tr("Edit Cell Numbers"), this);
+      if (!isImplicitCell) {
+        QMenu *reframeSubMenu = new QMenu(tr("Reframe"), this);
         {
-          editCellNumbersMenu->addAction(cmdManager->getAction(MI_Reverse));
-          editCellNumbersMenu->addAction(cmdManager->getAction(MI_Swing));
-          editCellNumbersMenu->addAction(cmdManager->getAction(MI_Random));
-          editCellNumbersMenu->addAction(cmdManager->getAction(MI_Dup));
-          editCellNumbersMenu->addAction(cmdManager->getAction(MI_Rollup));
-          editCellNumbersMenu->addAction(cmdManager->getAction(MI_Rolldown));
-          editCellNumbersMenu->addAction(cmdManager->getAction(MI_TimeStretch));
-          editCellNumbersMenu->addAction(
-              cmdManager->getAction(MI_AutoInputCellNumber));
+          reframeSubMenu->addAction(cmdManager->getAction(MI_Reframe1));
+          reframeSubMenu->addAction(cmdManager->getAction(MI_Reframe2));
+          reframeSubMenu->addAction(cmdManager->getAction(MI_Reframe3));
+          reframeSubMenu->addAction(cmdManager->getAction(MI_Reframe4));
+          reframeSubMenu->addAction(
+              cmdManager->getAction(MI_ReframeWithEmptyInbetweens));
         }
-        menu.addMenu(editCellNumbersMenu);
+        menu.addMenu(reframeSubMenu);
+
+        QMenu *stepSubMenu = new QMenu(tr("Step"), this);
+        {
+          stepSubMenu->addAction(cmdManager->getAction(MI_Step2));
+          stepSubMenu->addAction(cmdManager->getAction(MI_Step3));
+          stepSubMenu->addAction(cmdManager->getAction(MI_Step4));
+          stepSubMenu->addAction(cmdManager->getAction(MI_ResetStep));
+          stepSubMenu->addAction(cmdManager->getAction(MI_IncreaseStep));
+          stepSubMenu->addAction(cmdManager->getAction(MI_DecreaseStep));
+        }
+        menu.addMenu(stepSubMenu);
+        QMenu *eachSubMenu = new QMenu(tr("Each"), this);
+        {
+          eachSubMenu->addAction(cmdManager->getAction(MI_Each2));
+          eachSubMenu->addAction(cmdManager->getAction(MI_Each3));
+          eachSubMenu->addAction(cmdManager->getAction(MI_Each4));
+        }
+        menu.addMenu(eachSubMenu);
+
+        if (!soundTextCellsSelected) {
+          QMenu *editCellNumbersMenu = new QMenu(tr("Edit Cell Numbers"), this);
+          {
+            editCellNumbersMenu->addAction(cmdManager->getAction(MI_Reverse));
+            editCellNumbersMenu->addAction(cmdManager->getAction(MI_Swing));
+            editCellNumbersMenu->addAction(cmdManager->getAction(MI_Random));
+            editCellNumbersMenu->addAction(cmdManager->getAction(MI_Dup));
+            editCellNumbersMenu->addAction(cmdManager->getAction(MI_Rollup));
+            editCellNumbersMenu->addAction(cmdManager->getAction(MI_Rolldown));
+            editCellNumbersMenu->addAction(
+                cmdManager->getAction(MI_TimeStretch));
+            editCellNumbersMenu->addAction(
+                cmdManager->getAction(MI_AutoInputCellNumber));
+          }
+          menu.addMenu(editCellNumbersMenu);
+        }
       }
+
       menu.addAction(cmdManager->getAction(MI_FillEmptyCell));
 
       menu.addSeparator();
 
-      if (!soundTextCellsSelected)
+      if (!soundTextCellsSelected && !isImplicitCell)
         menu.addAction(cmdManager->getAction(MI_Autorenumber));
     }
 
     if (!soundTextCellsSelected) {
-      QMenu *replaceLevelMenu = new QMenu(tr("Replace Level"), this);
-      menu.addMenu(replaceLevelMenu);
+      if (!isImplicitCell) {
+        QMenu *replaceLevelMenu = new QMenu(tr("Replace Level"), this);
+        menu.addMenu(replaceLevelMenu);
 
-      replaceLevelMenu->addAction(cmdManager->getAction(MI_ReplaceLevel));
+        replaceLevelMenu->addAction(cmdManager->getAction(MI_ReplaceLevel));
 
-      replaceLevelMenu->addAction(
-          cmdManager->getAction(MI_ReplaceParentDirectory));
+        replaceLevelMenu->addAction(
+            cmdManager->getAction(MI_ReplaceParentDirectory));
 
-      {
-        // replace with another level in scene cast
-        std::vector<TXshLevel *> levels;
-        TApp::instance()
-            ->getCurrentScene()
-            ->getScene()
-            ->getLevelSet()
-            ->listLevels(levels);
-        if (!levels.empty()) {
-          QMenu *replaceMenu = replaceLevelMenu->addMenu(tr("Replace with"));
-          connect(replaceMenu, SIGNAL(triggered(QAction *)), this,
-                  SLOT(onReplaceByCastedLevel(QAction *)));
-          for (int i = 0; i < (int)levels.size(); i++) {
-            if (!levels[i]->getSimpleLevel() && !levels[i]->getChildLevel())
-              continue;
+        {
+          // replace with another level in scene cast
+          std::vector<TXshLevel *> levels;
+          TApp::instance()
+              ->getCurrentScene()
+              ->getScene()
+              ->getLevelSet()
+              ->listLevels(levels);
+          if (!levels.empty()) {
+            QMenu *replaceMenu = replaceLevelMenu->addMenu(tr("Replace with"));
+            connect(replaceMenu, SIGNAL(triggered(QAction *)), this,
+                    SLOT(onReplaceByCastedLevel(QAction *)));
+            for (int i = 0; i < (int)levels.size(); i++) {
+              if (!levels[i]->getSimpleLevel() && !levels[i]->getChildLevel())
+                continue;
 
-            if (levels[i]->getChildLevel() &&
-                !TApp::instance()->getCurrentXsheet()->getXsheet()->isLevelUsed(
-                    levels[i]))
-              continue;
+              if (levels[i]->getChildLevel() &&
+                  !TApp::instance()
+                       ->getCurrentXsheet()
+                       ->getXsheet()
+                       ->isLevelUsed(levels[i]))
+                continue;
 
-            QString tmpLevelName =
-                QString::fromStdWString(levels[i]->getName());
-            QAction *tmpAction = new QAction(tmpLevelName, replaceMenu);
-            tmpAction->setData(tmpLevelName);
-            replaceMenu->addAction(tmpAction);
+              QString tmpLevelName =
+                  QString::fromStdWString(levels[i]->getName());
+              QAction *tmpAction = new QAction(tmpLevelName, replaceMenu);
+              tmpAction->setData(tmpLevelName);
+              replaceMenu->addAction(tmpAction);
+            }
           }
+        }
+        if (!soundCellsSelected && !soundTextCellsSelected) {
+          if (selectionContainTlvImage(m_viewer->getCellSelection(),
+                                       m_viewer->getXsheet()))
+            replaceLevelMenu->addAction(
+                cmdManager->getAction(MI_RevertToCleanedUp));
+          if (selectionContainLevelImage(m_viewer->getCellSelection(),
+                                         m_viewer->getXsheet()))
+            replaceLevelMenu->addAction(
+                cmdManager->getAction(MI_RevertToLastSaved));
         }
       }
 
       if (!soundCellsSelected && !soundTextCellsSelected) {
-        if (selectionContainTlvImage(m_viewer->getCellSelection(),
-                                     m_viewer->getXsheet()))
-          replaceLevelMenu->addAction(
-              cmdManager->getAction(MI_RevertToCleanedUp));
-        if (selectionContainLevelImage(m_viewer->getCellSelection(),
-                                       m_viewer->getXsheet()))
-          replaceLevelMenu->addAction(
-              cmdManager->getAction(MI_RevertToLastSaved));
         menu.addAction(cmdManager->getAction(MI_SetKeyframes));
         menu.addAction(cmdManager->getAction(MI_ShiftKeyframesDown));
         menu.addAction(cmdManager->getAction(MI_ShiftKeyframesUp));
@@ -4035,8 +4063,10 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
       menu.addSeparator();
     }
 
-    menu.addAction(cmdManager->getAction(MI_Cut));
-    menu.addAction(cmdManager->getAction(MI_Copy));
+    if (!isImplicitCell) {
+      menu.addAction(cmdManager->getAction(MI_Cut));
+      menu.addAction(cmdManager->getAction(MI_Copy));
+    }
     menu.addAction(cmdManager->getAction(MI_Paste));
 
     QMenu *pasteSpecialMenu = new QMenu(tr("Paste Special"), this);
@@ -4049,7 +4079,7 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
     }
     menu.addMenu(pasteSpecialMenu);
 
-    menu.addAction(cmdManager->getAction(MI_Clear));
+    if (!isImplicitCell) menu.addAction(cmdManager->getAction(MI_Clear));
     menu.addAction(cmdManager->getAction(MI_Insert));
     if (!soundTextCellsSelected) {
       menu.addAction(cmdManager->getAction(MI_CreateBlankDrawing));
@@ -4058,12 +4088,14 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
     menu.addSeparator();
 
     TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
-    if (sl || soundCellsSelected)
-      menu.addAction(cmdManager->getAction(MI_FileInfo));
-    if (sl && (sl->getType() & LEVELCOLUMN_XSHLEVEL))
-      menu.addAction(cmdManager->getAction(MI_ViewFile));
+    if (!isImplicitCell) {
+      if (sl || soundCellsSelected)
+        menu.addAction(cmdManager->getAction(MI_FileInfo));
+      if (sl && (sl->getType() & LEVELCOLUMN_XSHLEVEL))
+        menu.addAction(cmdManager->getAction(MI_ViewFile));
 
-    menu.addSeparator();
+      menu.addSeparator();
+    }
 
     if (!cell.isEmpty() && cell.m_level && cell.m_level->getChildLevel()) {
       menu.addAction(cmdManager->getAction(MI_OpenChild));

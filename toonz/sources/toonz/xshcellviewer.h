@@ -183,7 +183,7 @@ protected:
 cella,
 distinguendo i due casi: cella piena, cella vuota.*/
   void createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell, int row,
-                      int col);
+                      int col, bool isImplicitCell);
   //! Crea il menu' del tasto destro che si visualizza si clicca su un key
   //! frame.
   void createKeyMenu(QMenu &menu);
