@@ -125,6 +125,8 @@ public:
 
   void createBlankDrawing(int row, int col, bool inRange);
   void createBlankDrawings();
+  void stopFrameHold(int row, int col, bool inRange);
+  void stopFrameHold();
   void fillEmptyCell();
 };
 

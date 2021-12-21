@@ -1915,12 +1915,16 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     for (int r = std::min(r1, row); r >= r0; r--) {
       TXshCell tempCell = xsh->getCell(r, col);
       if (tempCell.isEmpty()) continue;
+      if (tempCell.getFrameId().isStopFrame()) break;
       if (tempCell.m_level->getType() == ZERARYFX_XSHLEVEL) break;
       isImplicitCell = true;
       cell           = tempCell;
       break;
     }
   }
+
+  bool isStopFrame =
+      isImplicitCell ? false : cell.getFrameId() == TFrameId::STOP_FRAME;
 
   if (row > 0) prevCell = xsh->getCell(row - 1, col);  // cell in previous frame
 
@@ -2114,11 +2118,14 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   nameRect.adjust(0, 0, -frameAdj.x(), -frameAdj.y());
 
   // draw text in red if the file does not exist
-  bool isRed                                  = false;
-  TXshSimpleLevel *sl                         = cell.getSimpleLevel();
-  if (sl && !sl->isFid(cell.m_frameId)) isRed = true;
-  TXshChildLevel *cl                          = cell.getChildLevel();
-  if (cl && cell.getFrameId().getNumber() - 1 >= cl->getFrameCount())
+  bool isRed          = false;
+  TXshSimpleLevel *sl = cell.getSimpleLevel();
+  if (sl && cell.getFrameId().getNumber() != TFrameId::STOP_FRAME &&
+      !sl->isFid(cell.m_frameId))
+    isRed            = true;
+  TXshChildLevel *cl = cell.getChildLevel();
+  if (cl && cell.getFrameId().getNumber() != TFrameId::STOP_FRAME &&
+      cell.getFrameId().getNumber() - 1 >= cl->getFrameCount())
     isRed = true;
   QColor penColor =
       isRed ? QColor(m_viewer->getErrorTextColor()) : m_viewer->getTextColor();
@@ -2179,7 +2186,9 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
         if (pegbar->isKeyframe(row)) return;
       }
 
-      drawFrameMarker(p, QPoint(x, y), (isRed ? Qt::red : Qt::black));
+      drawFrameMarker(
+          p, QPoint(x, y),
+          (isStopFrame ? Qt::yellow : (isRed ? Qt::red : Qt::black)));
       return;
     }
 
@@ -2187,7 +2196,9 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
 
     // convert the last one digit of the frame number to alphabet
     // Ex.  12 -> 1B    21 -> 2A   30 -> 3
-    if (Preferences::instance()->isShowFrameNumberWithLettersEnabled())
+    if (fid == TFrameId::STOP_FRAME)
+      fnum = "X";
+    else if (Preferences::instance()->isShowFrameNumberWithLettersEnabled())
       fnum = m_viewer->getFrameNumberWithLetters(fid.getNumber());
     else {
       QString frameNumber("");
@@ -2990,9 +3001,9 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
     row0 = std::max(row0, r0);
     row1 = std::min(row1, r1);
 
-    QRect tmpKeyRect = (col >= 0) ? keyRect
-                                  : o->rect(PredefinedRect::CAMERA_KEY_ICON)
-                                        .translated(-frameAdj / 2);
+    QRect tmpKeyRect =
+        (col >= 0) ? keyRect : o->rect(PredefinedRect::CAMERA_KEY_ICON)
+                                   .translated(-frameAdj / 2);
 
     /*- first, draw key segments -*/
     p.setPen(m_viewer->getTextColor());
@@ -4084,6 +4095,7 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
     if (!soundTextCellsSelected) {
       menu.addAction(cmdManager->getAction(MI_CreateBlankDrawing));
       menu.addAction(cmdManager->getAction(MI_Duplicate));
+      menu.addAction(cmdManager->getAction(MI_StopFrameHold));
     }
     menu.addSeparator();
 
@@ -4136,6 +4148,7 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
 
   } else {
     menu.addAction(cmdManager->getAction(MI_CreateBlankDrawing));
+    menu.addAction(cmdManager->getAction(MI_StopFrameHold));
     menu.addSeparator();
     menu.addAction(cmdManager->getAction(MI_FillEmptyCell));
     if (cameraCellsSelected) {

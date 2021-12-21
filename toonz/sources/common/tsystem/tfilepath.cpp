@@ -95,6 +95,8 @@ std::string TFrameId::expand(FrameFormat format) const {
     return "";
   else if (m_frame == NO_FRAME)
     return "-";
+  else if (m_frame == STOP_FRAME)
+    return "x";
   std::ostringstream o_buff;
   if (format == FOUR_ZEROS || format == UNDERSCORE_FOUR_ZEROS) {
     o_buff.fill('0');

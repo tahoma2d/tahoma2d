@@ -2061,6 +2061,8 @@ void MainWindow::defineActions() {
   createMenuCellsAction(MI_CreateBlankDrawing,
                         QT_TR_NOOP("&Create Blank Drawing"), "Alt+D",
                         "add_cell");
+  createMenuCellsAction(MI_StopFrameHold, QT_TR_NOOP("&Stop Frame Hold"), "",
+                        "stop_frame_hold");
   createMenuCellsAction(MI_Duplicate, QT_TR_NOOP("&Duplicate Drawing  "), "D",
                         "duplicate_drawing");
   createMenuCellsAction(MI_Autorenumber, QT_TR_NOOP("&Autorenumber"), "",
