@@ -238,7 +238,8 @@ public:
 
   void reset();
 
-  void onDrawFrame(int frame, const ImagePainter::VisualSettings &vs) override;
+  void onDrawFrame(int frame, const ImagePainter::VisualSettings &vs,
+                   QElapsedTimer *timer, qint64 targetInstant) override;
 
   void minimize(bool doMinimize);
 

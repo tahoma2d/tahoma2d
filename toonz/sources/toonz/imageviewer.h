@@ -17,6 +17,7 @@ class QOpenGLFramebufferObject;
 class LutCalibrator;
 class QTouchEvent;
 class QGestureEvent;
+class QElapsedTimer;
 //-----------------------------------------------------------------------------
 
 //====================
@@ -79,6 +80,10 @@ class ImageViewer final : public GLWidgetForHighDpi {
   bool m_stylusUsed       = false;
   bool m_firstInitialized = true;
 
+  // passed from PlaybackExecutor
+  QElapsedTimer *m_timer;
+  qint64 m_targetInstant;
+
   int getDragType(const TPoint &pos, const TRect &loadBox);
   void updateLoadbox(const TPoint &curPos);
   void updateCursor(const TPoint &curPos);
@@ -131,6 +136,11 @@ public:
   void doSwapBuffers();
   void changeSwapBehavior(bool enable);
   void invalidateCompHisto();
+
+  void setTimerAndTargetInstant(QElapsedTimer *timer, qint64 target) {
+    m_timer         = timer;
+    m_targetInstant = target;
+  }
 
 protected:
   void contextMenuEvent(QContextMenuEvent *event) override;

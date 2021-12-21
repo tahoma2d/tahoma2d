@@ -225,7 +225,8 @@ ImageViewer::ImageViewer(QWidget *parent, FlipBook *flipbook,
     , m_histogramPopup(0)
     , m_isRemakingPreviewFx(false)
     , m_rectRGBPick(false)
-    , m_firstImage(true) {
+    , m_firstImage(true)
+    , m_timer(nullptr) {
   m_visualSettings.m_sceneProperties =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
   m_visualSettings.m_drawExternalBG = true;
@@ -417,10 +418,13 @@ void ImageViewer::setImage(TImageP image) {
 
   if (m_isHistogramEnable && m_histogramPopup->isVisible())
     m_histogramPopup->setImage(image);
+
+  // make sure to redraw the frame here.
+  // repaint() does NOT immediately redraw the frame for QOpenGLWidget
+  update();
   if (!isColorModel())
-    repaint();
-  else
-    update();
+    qApp->processEvents(QEventLoop::ExcludeUserInputEvents |
+                        QEventLoop::ExcludeSocketNotifiers);
 }
 
 //-------------------------------------------------------------------
@@ -565,6 +569,12 @@ void ImageViewer::paintGL() {
   if (!m_image) {
     if (m_lutCalibrator && m_lutCalibrator->isValid())
       m_lutCalibrator->onEndDraw(m_fbo);
+    if (m_timer && m_timer->isValid()) {
+      qint64 currentInstant = m_timer->nsecsElapsed();
+      while (currentInstant < m_targetInstant) {
+        currentInstant = m_timer->nsecsElapsed();
+      }
+    }
     return;
   }
 
@@ -644,6 +654,14 @@ void ImageViewer::paintGL() {
 
   if (m_lutCalibrator && m_lutCalibrator->isValid())
     m_lutCalibrator->onEndDraw(m_fbo);
+
+  // wait to achieve precise fps
+  if (m_timer && m_timer->isValid()) {
+    qint64 currentInstant = m_timer->nsecsElapsed();
+    while (currentInstant < m_targetInstant) {
+      currentInstant = m_timer->nsecsElapsed();
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
