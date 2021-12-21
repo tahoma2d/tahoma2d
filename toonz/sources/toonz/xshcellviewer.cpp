@@ -1907,6 +1907,20 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
                     columnSelection->isColumnSelected(col);
   bool isSimpleView = m_viewer->getFrameZoomFactor() <=
                       o->dimension(PredefinedDimension::SCALE_THRESHOLD);
+  bool isImplicitCell = false;
+
+  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
+    int r0, r1;
+    xsh->getCellRange(col, r0, r1);
+    for (int r = std::min(r1, row); r >= r0; r--) {
+      TXshCell tempCell = xsh->getCell(r, col);
+      if (tempCell.isEmpty()) continue;
+      if (tempCell.m_level->getType() == ZERARYFX_XSHLEVEL) break;
+      isImplicitCell = true;
+      cell           = tempCell;
+      break;
+    }
+  }
 
   if (row > 0) prevCell = xsh->getCell(row - 1, col);  // cell in previous frame
 
@@ -1988,7 +2002,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   }
 
   bool heldFrame = (!o->isVerticalTimeline() && sameLevel &&
-                    prevCell.m_frameId == cell.m_frameId);
+                    prevCell.m_frameId == cell.m_frameId) &&
+                   !isImplicitCell;
   drawFrameSeparator(p, row, col, false, heldFrame);
 
   if (cell.isEmpty()) {  // it means previous is not empty
@@ -2024,6 +2039,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     int levelType;
     m_viewer->getCellTypeAndColors(levelType, cellColor, sideColor, cell,
                                    isSelected);
+    if (isImplicitCell) cellColor.setAlpha(60);
   }
 
   // check if the level is scanned but not cleanupped
@@ -2044,31 +2060,33 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   else
     p.fillRect(rect, QBrush(cellColor));
 
-  if (yetToCleanupCell)  // ORIENTATION: what's this?
-  {
-    if (o->isVerticalTimeline())
-      p.fillRect(rect.adjusted(rect.width() / 2, 0, 0, 0),
-                 (isSelected) ? m_viewer->getSelectedFullcolorColumnColor()
-                              : m_viewer->getFullcolorColumnColor());
-    else
-      p.fillRect(rect.adjusted(0, rect.height() / 2, 0, 0),
-                 (isSelected) ? m_viewer->getSelectedFullcolorColumnColor()
-                              : m_viewer->getFullcolorColumnColor());
+  if (!isImplicitCell) {
+    if (yetToCleanupCell)  // ORIENTATION: what's this?
+    {
+      if (o->isVerticalTimeline())
+        p.fillRect(rect.adjusted(rect.width() / 2, 0, 0, 0),
+                   (isSelected) ? m_viewer->getSelectedFullcolorColumnColor()
+                                : m_viewer->getFullcolorColumnColor());
+      else
+        p.fillRect(rect.adjusted(0, rect.height() / 2, 0, 0),
+                   (isSelected) ? m_viewer->getSelectedFullcolorColumnColor()
+                                : m_viewer->getFullcolorColumnColor());
+    }
+
+    if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
+        !m_viewer->orientation()->isVerticalTimeline() &&
+        row == m_viewer->getCurrentRow() &&
+        Preferences::instance()->isCurrentTimelineIndicatorEnabled())
+      drawCurrentTimeIndicator(p, xy);
+
+    drawDragHandle(p, xy, sideColor);
+
+    bool isLastRow = nextCell.isEmpty() ||
+                     cell.m_level.getPointer() != nextCell.m_level.getPointer();
+    drawEndOfDragHandle(p, isLastRow, xy, cellColor);
+
+    drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), xy, cellColor);
   }
-
-  if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
-      !m_viewer->orientation()->isVerticalTimeline() &&
-      row == m_viewer->getCurrentRow() &&
-      Preferences::instance()->isCurrentTimelineIndicatorEnabled())
-    drawCurrentTimeIndicator(p, xy);
-
-  drawDragHandle(p, xy, sideColor);
-
-  bool isLastRow = nextCell.isEmpty() ||
-                   cell.m_level.getPointer() != nextCell.m_level.getPointer();
-  drawEndOfDragHandle(p, isLastRow, xy, cellColor);
-
-  drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), xy, cellColor);
 
   int distance, offset;
   TApp::instance()->getCurrentScene()->getScene()->getProperties()->getMarkers(
@@ -2124,7 +2142,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   // if the same level & same fId with the previous cell,
   // draw continue line
   QString fnum;
-  if (sameLevel && prevCell.m_frameId == cell.m_frameId) {
+  if ((sameLevel && prevCell.m_frameId == cell.m_frameId) || isImplicitCell) {
     if (o->isVerticalTimeline()) {
       // not on line marker
       PredefinedLine which =
@@ -2192,6 +2210,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     p.drawEllipse(markRect);
     p.setPen(penColor);
   }
+
+  if (isImplicitCell) return;
 
   // draw level name
   if (showLevelName &&
