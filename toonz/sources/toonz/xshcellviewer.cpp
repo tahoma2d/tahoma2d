@@ -1916,7 +1916,6 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
       TXshCell tempCell = xsh->getCell(r, col);
       if (tempCell.isEmpty()) continue;
       if (tempCell.getFrameId().isStopFrame()) break;
-      if (tempCell.m_level->getType() == ZERARYFX_XSHLEVEL) break;
       isImplicitCell = true;
       cell           = tempCell;
       break;
@@ -1924,7 +1923,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   }
 
   bool isStopFrame =
-      isImplicitCell ? false : cell.getFrameId() == TFrameId::STOP_FRAME;
+      isImplicitCell ? false : cell.getFrameId().isStopFrame();
 
   if (row > 0) prevCell = xsh->getCell(row - 1, col);  // cell in previous frame
 
@@ -2120,11 +2119,11 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   // draw text in red if the file does not exist
   bool isRed          = false;
   TXshSimpleLevel *sl = cell.getSimpleLevel();
-  if (sl && cell.getFrameId().getNumber() != TFrameId::STOP_FRAME &&
+  if (sl && !cell.getFrameId().isStopFrame() &&
       !sl->isFid(cell.m_frameId))
     isRed            = true;
   TXshChildLevel *cl = cell.getChildLevel();
-  if (cl && cell.getFrameId().getNumber() != TFrameId::STOP_FRAME &&
+  if (cl && !cell.getFrameId().isStopFrame() &&
       cell.getFrameId().getNumber() - 1 >= cl->getFrameCount())
     isRed = true;
   QColor penColor =
@@ -2196,7 +2195,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
 
     // convert the last one digit of the frame number to alphabet
     // Ex.  12 -> 1B    21 -> 2A   30 -> 3
-    if (fid == TFrameId::STOP_FRAME)
+    if (fid.isStopFrame())
       fnum = "X";
     else if (Preferences::instance()->isShowFrameNumberWithLettersEnabled())
       fnum = m_viewer->getFrameNumberWithLetters(fid.getNumber());
@@ -3753,8 +3752,7 @@ void CellArea::contextMenuEvent(QContextMenuEvent *event) {
     for (int r = std::min(r1, row); r >= r0; r--) {
       TXshCell tempCell = m_viewer->getXsheet()->getCell(r, col);
       if (tempCell.isEmpty()) continue;
-      if (tempCell.m_level->getType() == ZERARYFX_XSHLEVEL ||
-          tempCell.m_level->getType() == PLT_XSHLEVEL ||
+      if (tempCell.m_level->getType() == PLT_XSHLEVEL ||
           tempCell.m_level->getType() == SND_XSHLEVEL ||
           tempCell.m_level->getType() == SND_TXT_XSHLEVEL)
         break;

@@ -53,6 +53,7 @@
 #include "toonz/levelset.h"
 #include "toonz/tstageobjecttree.h"
 #include "toonz/stage.h"
+#include "toonz/txshzeraryfxlevel.h"
 #include "vectorizerpopup.h"
 #include "tools/rasterselection.h"
 #include "tools/strokeselection.h"
@@ -1279,7 +1280,8 @@ public:
   void undo() const override {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
-    xsh->setCell(m_row, m_col, TXshCell(m_oldCell));
+    xsh->clearCells(m_row, m_col, 1);
+    xsh->setCell(m_row, m_col, m_oldCell);
 
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
@@ -2878,6 +2880,7 @@ void TCellSelection::stopFrameHold(int row, int col, bool multiple) {
 
   TXshLevel *lvl = level->getSimpleLevel();
   if (!lvl) lvl  = level->getChildLevel();
+  if (!lvl) lvl  = dynamic_cast<TXshLevel *>(level->getZeraryFxLevel());
 
   if (!lvl) {
     if (!multiple)
