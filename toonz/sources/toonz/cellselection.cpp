@@ -54,6 +54,7 @@
 #include "toonz/tstageobjecttree.h"
 #include "toonz/stage.h"
 #include "toonz/txshzeraryfxlevel.h"
+#include "toonz/txshpalettelevel.h"
 #include "vectorizerpopup.h"
 #include "tools/rasterselection.h"
 #include "tools/strokeselection.h"
@@ -2864,8 +2865,7 @@ void TCellSelection::stopFrameHold(int row, int col, bool multiple) {
   }
   if (level) {
     int levelType = level->getType();
-    if (levelType == PLT_XSHLEVEL || levelType == SND_XSHLEVEL ||
-        levelType == SND_TXT_XSHLEVEL) {
+    if (levelType == SND_XSHLEVEL || levelType == SND_TXT_XSHLEVEL) {
       if (!multiple)
         DVGui::warning(QObject::tr(
             "Cannot create a stop frame hold on the current column"));
@@ -2880,6 +2880,7 @@ void TCellSelection::stopFrameHold(int row, int col, bool multiple) {
 
   TXshLevel *lvl = level->getSimpleLevel();
   if (!lvl) lvl  = level->getChildLevel();
+  if (!lvl) lvl  = dynamic_cast<TXshLevel *>(level->getPaletteLevel());
   if (!lvl) lvl  = dynamic_cast<TXshLevel *>(level->getZeraryFxLevel());
 
   if (!lvl) {

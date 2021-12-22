@@ -1922,8 +1922,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     }
   }
 
-  bool isStopFrame =
-      isImplicitCell ? false : cell.getFrameId().isStopFrame();
+  bool isStopFrame = isImplicitCell ? false : cell.getFrameId().isStopFrame();
 
   if (row > 0) prevCell = xsh->getCell(row - 1, col);  // cell in previous frame
 
@@ -2119,8 +2118,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   // draw text in red if the file does not exist
   bool isRed          = false;
   TXshSimpleLevel *sl = cell.getSimpleLevel();
-  if (sl && !cell.getFrameId().isStopFrame() &&
-      !sl->isFid(cell.m_frameId))
+  if (sl && !cell.getFrameId().isStopFrame() && !sl->isFid(cell.m_frameId))
     isRed            = true;
   TXshChildLevel *cl = cell.getChildLevel();
   if (cl && !cell.getFrameId().isStopFrame() &&
@@ -2717,6 +2715,22 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
 
   TCellSelection *cellSelection = m_viewer->getCellSelection();
   bool isSelected               = cellSelection->isCellSelected(row, col);
+  bool isImplicitCell           = false;
+
+  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
+    int r0, r1;
+    xsh->getCellRange(col, r0, r1);
+    for (int r = std::min(r1, row); r >= r0; r--) {
+      TXshCell tempCell = xsh->getCell(r, col);
+      if (tempCell.isEmpty()) continue;
+      if (tempCell.getFrameId().isStopFrame()) break;
+      isImplicitCell = true;
+      cell           = tempCell;
+      break;
+    }
+  }
+
+  bool isStopFrame = isImplicitCell ? false : cell.getFrameId().isStopFrame();
 
   if (row > 0) prevCell = xsh->getCell(row - 1, col);
   TXshCell nextCell     = xsh->getCell(row + 1, col);
@@ -2788,7 +2802,8 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
   }
 
   bool heldFrame = (!o->isVerticalTimeline() && !isAfterMarkers && sameLevel &&
-                    prevCell.m_frameId == cell.m_frameId);
+                    prevCell.m_frameId == cell.m_frameId) &&
+                   !isImplicitCell;
   drawFrameSeparator(p, row, col, false, heldFrame);
 
   if (cell.isEmpty()) {  // this means the former is not empty
@@ -2828,6 +2843,7 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
     cellColor = (isSelected) ? m_viewer->getSelectedPaletteColumnColor()
                              : m_viewer->getPaletteColumnColor();
     sideColor = m_viewer->getPaletteColumnBorderColor();
+    if (isImplicitCell) cellColor.setAlpha(60);
   }
 
   // paint cell
@@ -2845,20 +2861,22 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
       Preferences::instance()->isCurrentTimelineIndicatorEnabled())
     drawCurrentTimeIndicator(p, xy);
 
-  drawDragHandle(p, xy, sideColor);
-  bool isLastRow = nextCell.isEmpty() ||
-                   cell.m_level.getPointer() != nextCell.m_level.getPointer();
-  drawEndOfDragHandle(p, isLastRow, xy, cellColor);
-  drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), xy, cellColor);
+  if (!isImplicitCell) {
+    drawDragHandle(p, xy, sideColor);
+    bool isLastRow = nextCell.isEmpty() ||
+                     cell.m_level.getPointer() != nextCell.m_level.getPointer();
+    drawEndOfDragHandle(p, isLastRow, xy, cellColor);
+    drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), xy, cellColor);
+  }
 
   if (o->isVerticalTimeline() && isAfterMarkers) {
     p.setPen(m_viewer->getMarkerLineColor());
     p.drawLine(o->line(PredefinedLine::SEE_MARKER_THROUGH).translated(xy));
   }
 
-  if (sameLevel && prevCell.m_frameId == cell.m_frameId &&
-      !isAfterMarkers) {  // cell equal to previous one (not on marker line):
-                          // do not write anything and draw a vertical line
+  if ((sameLevel && prevCell.m_frameId == cell.m_frameId &&
+      !isAfterMarkers) || isImplicitCell) {  // cell equal to previous one (not on marker line):
+                                             // do not write anything and draw a vertical line
     if (o->isVerticalTimeline()) {
       QPen oldPen = p.pen();
       p.setPen(QPen(m_viewer->getTextColor(), 1));
@@ -2882,7 +2900,9 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
         TStageObject *pegbar = xsh->getStageObject(m_viewer->getObjectId(col));
         if (pegbar->isKeyframe(row)) return;
       }
-      drawFrameMarker(p, QPoint(x, y), (isRed ? Qt::red : Qt::black));
+      drawFrameMarker(
+          p, QPoint(x, y),
+          (isStopFrame ? Qt::yellow : (isRed ? Qt::red : Qt::black)));
       return;
     }
 
@@ -2935,7 +2955,9 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
       } else {
         QString frameNumber("");
         // set number
-        if (fid.getNumber() > 0) frameNumber = QString::number(fid.getNumber());
+        if (fid.isStopFrame())
+          frameNumber = "X";
+        else if (fid.getNumber() > 0) frameNumber = QString::number(fid.getNumber());
         // add letter
         if (!fid.getLetter().isEmpty()) frameNumber += fid.getLetter();
         p.drawText(nameRect, Qt::AlignRight | Qt::AlignBottom, frameNumber);
@@ -3752,8 +3774,7 @@ void CellArea::contextMenuEvent(QContextMenuEvent *event) {
     for (int r = std::min(r1, row); r >= r0; r--) {
       TXshCell tempCell = m_viewer->getXsheet()->getCell(r, col);
       if (tempCell.isEmpty()) continue;
-      if (tempCell.m_level->getType() == PLT_XSHLEVEL ||
-          tempCell.m_level->getType() == SND_XSHLEVEL ||
+      if (tempCell.m_level->getType() == SND_XSHLEVEL ||
           tempCell.m_level->getType() == SND_TXT_XSHLEVEL)
         break;
       isImplicitCell = true;
