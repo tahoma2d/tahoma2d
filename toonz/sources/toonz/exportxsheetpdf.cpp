@@ -1347,6 +1347,10 @@ void XSheetPDFTemplate::drawXsheetTemplate(QPainter& painter, int framePage,
 void XSheetPDFTemplate::drawXsheetContents(QPainter& painter, int framePage,
                                            int parallelPage, bool isPreview) {
   auto checkContinuous = [&](const TXshLevelColumn* column, int f, int r) {
+    if (m_info.continuousLineMode == Line_Always)
+      return true;
+    else if (m_info.continuousLineMode == Line_None)
+      return false;
     TXshCell cell = column->getCell(f);
     // check subsequent cells and see if more than 3 cells continue.
     int tmp_r = r + 1;
@@ -1354,6 +1358,11 @@ void XSheetPDFTemplate::drawXsheetContents(QPainter& painter, int framePage,
       if (tmp_f == m_duration) return false;
       if (tmp_r % 72 == 0) return false;  // step over to the next body
       if (column->getCell(tmp_f) != cell) return false;
+      // tickmark breaks continuous line
+      int markId = column->getCellMark(tmp_f);
+      if (markId >= 0 &&
+          (m_info.tick1MarkId == markId || m_info.tick2MarkId == markId))
+        return false;
     }
     return true;
   };
@@ -1407,10 +1416,14 @@ void XSheetPDFTemplate::drawXsheetContents(QPainter& painter, int framePage,
       // cotinuous line
       if (r != 0 && r != 72 && prevCell == cell) {
         // draw tick mark
-        if (markId >= 0 && m_info.tick1MarkId == markId)
-          drawTickMark(painter, m_cellRects[c][r], m_info.tick1MarkType);
-        else if (markId >= 0 && m_info.tick2MarkId == markId)
-          drawTickMark(painter, m_cellRects[c][r], m_info.tick2MarkType);
+        if (markId >= 0 &&
+            (m_info.tick1MarkId == markId || m_info.tick2MarkId == markId)) {
+          if (m_info.tick1MarkId == markId)
+            drawTickMark(painter, m_cellRects[c][r], m_info.tick1MarkType);
+          else
+            drawTickMark(painter, m_cellRects[c][r], m_info.tick2MarkType);
+          drawCLFlag = checkContinuous(column, f, r);
+        }
 
         else if (drawCLFlag)
           drawContinuousLine(painter, m_cellRects[c][r], cell.isEmpty());
@@ -1419,11 +1432,7 @@ void XSheetPDFTemplate::drawXsheetContents(QPainter& painter, int framePage,
       else {
         bool drawKeyMark = (markId >= 0 && m_info.keyMarkId == markId);
         drawCellNumber(painter, m_cellRects[c][r], cell, drawKeyMark);
-        drawCLFlag = (m_info.continuousLineMode == Line_Always)
-                         ? true
-                         : (m_info.continuousLineMode == Line_None)
-                               ? false
-                               : checkContinuous(column, f, r);
+        drawCLFlag = checkContinuous(column, f, r);
       }
       prevCell = cell;
 
