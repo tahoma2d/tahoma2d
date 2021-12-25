@@ -385,7 +385,8 @@ void TApp::updateXshLevel() {
 
       // If we're on an empty cell and auto create is enabled,
       // the current level will be the last level before us
-      if (!xl && Preferences::instance()->isAutoCreateEnabled()) {
+      if (!xl && (Preferences::instance()->isAutoCreateEnabled() ||
+                  Preferences::instance()->isImplicitHoldEnabled())) {
         int r0, r1;
         xsheet->getCellRange(column, r0, r1);
         for (int r = std::max(r0, std::min(r1, frame)); r >= r0; r--) {
