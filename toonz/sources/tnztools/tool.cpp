@@ -353,6 +353,10 @@ TImage *TTool::touchImage() {
   if (!xsh) return 0;
 
   TXshCell cell       = xsh->getCell(row, col);
+
+  // Stop frames cannot be modified
+  if (cell.getFrameId().isStopFrame()) return 0;
+
   TXshSimpleLevel *sl = cell.getSimpleLevel();
 
   if (sl) {
@@ -1107,6 +1111,13 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
                     QObject::tr("The current tool cannot be used on empty "
                                 "frames of a Single Frame level."));
         }
+      }
+ 
+      // Stop frames cannot be modified
+      if (xsh->getCell(rowIndex, columnIndex).getFrameId().isStopFrame()) {
+        return (
+            enable(false),
+            QObject::tr("The current tool cannot be used on a stop frame."));
       }
     }
   }
