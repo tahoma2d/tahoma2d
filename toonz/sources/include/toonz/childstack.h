@@ -110,7 +110,7 @@ Useful by edit in place. Oss.: \b row of current xsheet.
 
   /*!
 Set aff to ancestor affine in \b row. Return true if all ancestors are
-visibile in \b row.
+visible in \b row.
 */
   bool getAncestorAffine(TAffine &aff, int row) const;
 
