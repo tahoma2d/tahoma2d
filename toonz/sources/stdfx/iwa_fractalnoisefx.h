@@ -57,60 +57,60 @@ class Iwa_FractalNoiseFx final : public TStandardZeraryFx {
   };
 
 protected:
-  // Fractal Type �t���N�^���̎��
+  // Fractal Type フラクタルの種類
   TIntEnumParamP m_fractalType;
-  // Noise Type �m�C�Y�̎��
+  // Noise Type ノイズの種類
   TIntEnumParamP m_noiseType;
-  // Invert ���]
+  // Invert 反転
   TBoolParamP m_invert;
-  /// Contrast �R���g���X�g
-  /// Brightness ���邳
-  /// Overflow �I�[�o�[�t���[
+  /// Contrast コントラスト
+  /// Brightness 明るさ
+  /// Overflow オーバーフロー
 
-  //- - - Transform �g�����X�t�H�[�� - - -
-  // Rotation ��]
+  //- - - Transform トランスフォーム - - -
+  // Rotation 回転
   TDoubleParamP m_rotation;
-  // Uniform Scaling�@�c������Œ�
+  // Uniform Scaling　縦横比を固定
   TBoolParamP m_uniformScaling;
-  // Scale �X�P�[��
+  // Scale スケール
   TDoubleParamP m_scale;
-  // Scale Width �X�P�[���̕�
+  // Scale Width スケールの幅
   TDoubleParamP m_scaleW;
-  // Scale Height �X�P�[���̍���
+  // Scale Height スケールの高さ
   TDoubleParamP m_scaleH;
-  // Offset Turbulence ���C���̃I�t�Z�b�g
+  // Offset Turbulence 乱気流のオフセット
   TPointParamP m_offsetTurbulence;
-  // Perspective Offset ���߃I�t�Z�b�g
+  // Perspective Offset 遠近オフセット
   TBoolParamP m_perspectiveOffset;
 
-  // Complexity ���G�x
+  // Complexity 複雑度
   TDoubleParamP m_complexity;
 
-  //- - - Sub Settings �T�u�ݒ� - - -
-  // Sub Influence �T�u�e���i���j
+  //- - - Sub Settings サブ設定 - - -
+  // Sub Influence サブ影響（％）
   TDoubleParamP m_subInfluence;
-  // Sub Scaling�@�T�u�X�P�[��
+  // Sub Scaling　サブスケール
   TDoubleParamP m_subScaling;
-  // Sub Rotation �T�u��]
+  // Sub Rotation サブ回転
   TDoubleParamP m_subRotation;
-  // Sub Offset �T�u�̃I�t�Z�b�g
+  // Sub Offset サブのオフセット
   TPointParamP m_subOffset;
-  // Center Subscale �T�u�X�P�[���𒆐S
+  // Center Subscale サブスケールを中心
   /// TBoolParamP m_centerSubscale;
 
-  // Evolution �W�J
+  // Evolution 展開
   TDoubleParamP m_evolution;
 
-  //- - - Evolution Options �W�J�̃I�v�V���� - - -
-  // Cycle Evolution �T�C�N���W�J
+  //- - - Evolution Options 展開のオプション - - -
+  // Cycle Evolution サイクル展開
   TBoolParamP m_cycleEvolution;
-  // Cycle (in Evolution) �T�C�N���i�����j
+  // Cycle (in Evolution) サイクル（周期）
   TDoubleParamP m_cycleEvolutionRange;
-  /// Random Seed �����_���V�[�h
-  /// Opacity  �s�����x
-  /// Blending Mode �`�惂�[�h
+  /// Random Seed ランダムシード
+  /// Opacity  不透明度
+  /// Blending Mode 描画モード
 
-  // �_�C�i�~�b�N�̓x����
+  // ダイナミックの度合い
   TDoubleParamP m_dynamicIntensity;
 
   //- - - Conical Noise - - - 
