@@ -149,12 +149,25 @@ AutoInputCellNumberUndo::AutoInputCellNumberUndo(int increment, int interval,
         (m_r1 == -1) ? m_rowsCount - 1 : std::min(m_r1, m_r0 + m_rowsCount - 1);
     m_beforeCells.reset(
         new TXshCell[m_columnIndices.size() * (rowUpTo - m_r0 + 1)]);
-    int k = 0;
+    int k        = 0;
+    TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (int c = 0; c < m_columnIndices.size(); ++c) {
-      for (int r = m_r0; r <= rowUpTo; ++r)
+      for (int r = m_r0; r <= rowUpTo; ++r) {
+        const TXshCell &cell = xsh->getCell(r, m_columnIndices.at(c));
         m_beforeCells[k++] =
-            TApp::instance()->getCurrentXsheet()->getXsheet()->getCell(
-                r, m_columnIndices.at(c));
+            xsh->isImplicitCell(r, m_columnIndices.at(c)) ? TXshCell() : cell;
+      }
+    }
+  } else {
+    // Need to restore rows starting with implicit cells that were converted to
+    // actual cells by this process
+    m_beforeCells.reset(new TXshCell[m_columnIndices.size()]);
+    int k        = 0;
+    TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+    for (int c = 0; c < m_columnIndices.size(); ++c) {
+      const TXshCell &cell = xsh->getCell(m_r0, m_columnIndices.at(c));
+      m_beforeCells[k++] =
+          xsh->isImplicitCell(m_r0, m_columnIndices.at(c)) ? TXshCell() : cell;
     }
   }
 }
@@ -178,6 +191,15 @@ void AutoInputCellNumberUndo::undo() const {
   } else {  // on insert case, remove inserted cells
     for (int c = 0; c < m_columnIndices.size(); ++c)
       xsh->removeCells(m_r0, m_columnIndices.at(c), m_rowsCount);
+
+    int k = 0;
+    for (int c = 0; c < m_columnIndices.size(); ++c) {
+      if (m_beforeCells[k].isEmpty())
+        xsh->clearCells(m_r0, m_columnIndices.at(c));
+      else
+        xsh->setCell(m_r0, m_columnIndices.at(c), m_beforeCells[k]);
+      k++;
+    }
   }
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
 }

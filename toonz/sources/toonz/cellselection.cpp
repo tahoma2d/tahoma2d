@@ -2890,7 +2890,8 @@ void TCellSelection::stopFrameHold(int row, int col, bool multiple) {
     return;
   }
 
-  TXshCell cell = xsh->getCell(row, col);
+  TXshCell cell;
+  if (!xsh->isImplicitCell(row, col)) cell = xsh->getCell(row, col);
 
   StopFrameHoldUndo *undo = new StopFrameHoldUndo(lvl, row, col, cell);
   TUndoManager::manager()->add(undo);
@@ -2975,20 +2976,6 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
   TXshCell targetCell = xsh->getCell(row, col);
   TXshCell prevCell   = xsh->getCell(row - 1, col);
   ;
-
-  if (targetCell.isEmpty() &&
-      Preferences::instance()->isImplicitHoldEnabled()) {
-    int r0, r1;
-    xsh->getCellRange(col, r0, r1);
-    for (int r = std::min(r1, row); r >= r0; r--) {
-      TXshCell cell = xsh->getCell(r, col);
-      if (cell.isEmpty()) continue;
-      targetCell = cell;
-      prevCell   = cell;
-      break;
-    }
-  }
-
   // check if we use the current cell to duplicate or the previous cell
   if (!targetCell.isEmpty() && targetCell != prevCell) {
     // Current cell has a drawing to duplicate and it's not a hold shift focus

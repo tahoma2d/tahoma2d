@@ -370,20 +370,8 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
   // check the previous row for a stop motion layer
   if (!xl) {
     // Get the last populated cell
-    if (Preferences::instance()->isImplicitHoldEnabled()) {
-      int r0, r1;
-      xsh->getCellRange(col, r0, r1);
-      for (int r = std::min(r1, row); r >= r0; r--) {
-        cell = xsh->getCell(r, col);
-        if (cell.isEmpty()) continue;
-        xl               = cell.m_level.getPointer();
-        m_currentFrameId = cell.getFrameId();
-        break;
-      }
-    } else {
       cell = xsh->getCell(row - 1, col);
       xl   = cell.m_level.getPointer();
-    }
 
     if (!xl) return;
 

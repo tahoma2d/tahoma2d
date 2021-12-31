@@ -196,6 +196,10 @@ public:
 
   const TXshCell &getCell(const CellPosition &pos) const;
 
+  bool isImplicitCell(int row, int col) const;
+
+  bool isImplicitCell(const CellPosition &pos) const;
+
   bool setCell(int row, int col, const TXshCell &cell);
   /*! Set \b \e cells[] to \b \e rowCount cells of column identified by index \b
      \e col starting from row identified by index \b \e row. If column is empty

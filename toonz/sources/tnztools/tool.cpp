@@ -353,6 +353,7 @@ TImage *TTool::touchImage() {
   if (!xsh) return 0;
 
   TXshCell cell       = xsh->getCell(row, col);
+  bool isImplicitCell = xsh->isImplicitCell(row, col);
 
   // Stop frames cannot be modified
   if (cell.getFrameId().isStopFrame()) return 0;
@@ -384,7 +385,9 @@ TImage *TTool::touchImage() {
       // measure the hold length (starting from the current row) : r0-r1
       int r0 = row, r1 = row;
       if (isAutoStretchEnabled)
-        while (xsh->getCell(r1 + 1, col) == cell) r1++;
+        while (xsh->getCell(r1 + 1, col) == cell &&
+               !xsh->isImplicitCell(r1 + 1, col))
+          r1++;
       // find the proper frameid (possibly addisng suffix, in order to avoid a
       // fid already used)
       // find the proper frameid
@@ -422,7 +425,10 @@ TImage *TTool::touchImage() {
       currentXsheet->notifyXsheetChanged();
       currentScene->notifyCastChange();
       currentLevel->notifyLevelChange();
-      m_cellsData.push_back({r0, r1, CellOps::ExistingToNew});
+      if (isImplicitCell)
+        m_cellsData.push_back({r0, r1, CellOps::BlankToNew});
+      else
+        m_cellsData.push_back({r0, r1, CellOps::ExistingToNew});
     }
     // if the level does not contain a frame in the current cell
     // (i.e. drawing on the cell with red numbers)
@@ -732,7 +738,8 @@ TFrameId TTool::getCurrentFid() const {
   int col = m_application->getCurrentColumn()->getColumnIndex();
   TXshCell cell =
       m_application->getCurrentXsheet()->getXsheet()->getCell(row, col);
-  if (cell.isEmpty()) return TFrameId::NO_FRAME;
+  if (cell.isEmpty() || cell.getFrameId().isStopFrame())
+    return TFrameId::NO_FRAME;
 
   return cell.getFrameId();
 }

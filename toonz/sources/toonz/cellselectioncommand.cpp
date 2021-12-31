@@ -209,7 +209,7 @@ void IncrementUndo::undo() const {
     const TRect &r = m_undoCells[i].first;
     int size       = r.x1 - r.x0 + 1;
 
-    if (m_undoCells[i].second.isEmpty())
+    if (m_undoCells[i].second.getFrameId().isNoFrame())
       xsh->removeCells(r.x0, r.y0, size);
     else {
       xsh->insertCells(r.x0, r.y0, size);
@@ -387,11 +387,13 @@ StepUndo::StepUndo(int r0, int c0, int r1, int c1, int step)
   assert(m_rowsCount > 0 && m_colsCount > 0 && step > 0);
   assert(m_cells);
 
-  int k = 0;
+  TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  int k        = 0;
   for (int r = r0; r <= r1; ++r)
-    for (int c = c0; c <= c1; ++c)
-      m_cells[k++] =
-          TApp::instance()->getCurrentXsheet()->getXsheet()->getCell(r, c);
+    for (int c = c0; c <= c1; ++c) {
+      const TXshCell &cell = xsh->getCell(r, c);
+      m_cells[k++] = xsh->isImplicitCell(r, c) ? TXshCell() : cell;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -489,11 +491,13 @@ EachUndo::EachUndo(int r0, int c0, int r1, int c1, int each)
   assert(m_rowsCount > 0 && m_colsCount > 0 && each > 0);
   assert(m_cells);
 
-  int k = 0;
+  int k        = 0;
+  TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   for (int r = r0; r <= r1; ++r)
-    for (int c = c0; c <= c1; ++c)
-      m_cells[k++] =
-          TApp::instance()->getCurrentXsheet()->getXsheet()->getCell(r, c);
+    for (int c = c0; c <= c1; ++c) {
+      const TXshCell &cell = xsh->getCell(r, c);
+      m_cells[k++] = xsh->isImplicitCell(r, c) ? TXshCell() : cell;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -598,13 +602,16 @@ ReframeUndo::ReframeUndo(int r0, int r1, std::vector<int> columnIndeces,
     , m_withBlank(withBlank) {
   m_nr = m_r1 - m_r0 + 1;
   assert(m_nr > 0);
-  m_cells.reset(new TXshCell[m_nr * (int)m_columnIndeces.size()]);
+  m_cells.reset(new TXshCell[(m_nr + 1) * (int)m_columnIndeces.size()]);
   assert(m_cells);
-  int k = 0;
-  for (int r = r0; r <= r1; r++)
-    for (int c     = 0; c < (int)m_columnIndeces.size(); c++)
-      m_cells[k++] = TApp::instance()->getCurrentXsheet()->getXsheet()->getCell(
-          r, m_columnIndeces[c]);
+  int k        = 0;
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  for (int r = r0; r <= (r1 + 1); r++)
+    for (int c = 0; c < (int)m_columnIndeces.size(); c++) {
+      const TXshCell &cell = xsh->getCell(r, m_columnIndeces[c]);
+      m_cells[k++] =
+          xsh->isImplicitCell(r, m_columnIndeces[c]) ? TXshCell() : cell;
+    }
 
   m_newRows.clear();
 }
@@ -633,7 +640,7 @@ void ReframeUndo::undo() const {
 
   if (m_cells) {
     int k = 0;
-    for (int r = m_r0; r <= m_r1; r++)
+    for (int r = m_r0; r <= m_r1 + 1; r++)
       for (int c = 0; c < m_columnIndeces.size(); c++) {
         if (m_cells[k].isEmpty())
           xsh->clearCells(r, m_columnIndeces[c]);
@@ -834,10 +841,10 @@ ResetStepUndo::ResetStepUndo(int r0, int c0, int r1, int c1)
     TXshCell prevCell;
     m_insertedCells[c] = 0;
 
+    TXsheetP xsh = app->getCurrentXsheet()->getXsheet();
     for (int r = r0; r <= r1; ++r) {
-      const TXshCell &cell =
-          app->getCurrentXsheet()->getXsheet()->getCell(r, c);
-      m_cells[k++] = cell;
+      const TXshCell &cell = xsh->getCell(r, c);
+      m_cells[k++] = xsh->isImplicitCell(r, c) ? TXshCell() : cell;
 
       if (prevCell != cell) {
         prevCell = cell;
@@ -934,10 +941,10 @@ IncreaseStepUndo::IncreaseStepUndo(int r0, int c0, int r1, int c1)
     TXshCell prevCell;
     m_insertedCells[c] = 0;
 
+    TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (int r = r0; r <= r1; ++r) {
-      const TXshCell &cell =
-          TApp::instance()->getCurrentXsheet()->getXsheet()->getCell(r, c);
-      m_cells[k++] = cell;
+      const TXshCell &cell = xsh->getCell(r, c);
+      m_cells[k++] = xsh->isImplicitCell(r, c) ? TXshCell() : cell;
 
       if (prevCell != cell) {
         prevCell = cell;
@@ -1045,19 +1052,18 @@ DecreaseStepUndo::DecreaseStepUndo(int r0, int c0, int r1, int c1)
     , m_newR1(m_r1) {
   assert(m_cells);
 
-  int k = 0;
+  int k        = 0;
+  TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   for (int c = c0; c <= c1; ++c) {
-    TXshCell prevCell =
-        TApp::instance()->getCurrentXsheet()->getXsheet()->getCell(r0, c);
+    TXshCell prevCell = xsh->getCell(r0, c);
     m_removedCells[c] = 0;
 
     bool removed = false;
-    m_cells[k++] = prevCell;
+    m_cells[k++] = xsh->isImplicitCell(r0, c) ? TXshCell() : prevCell;
 
     for (int r = r0 + 1; r <= r1; ++r) {
-      const TXshCell &cell =
-          TApp::instance()->getCurrentXsheet()->getXsheet()->getCell(r, c);
-      m_cells[k++] = cell;
+      const TXshCell &cell = xsh->getCell(r, c);
+      m_cells[k++] = xsh->isImplicitCell(r, c) ? TXshCell() : cell;
 
       if (prevCell == cell) {
         if (!removed) {
@@ -1120,7 +1126,8 @@ void TCellSelection::decreaseStepCells() {
     for (int i = 1; sameCells; i++) {
       nextCell = xsh->getCell(row + i, col);
       if (nextCell.m_frameId == cell.m_frameId &&
-          nextCell.m_level == cell.m_level) {
+          nextCell.m_level == cell.m_level &&
+          !xsh->isImplicitCell(row + i, col)) {
         r1 = row + i;
       } else
         sameCells = false;
@@ -1595,20 +1602,35 @@ void CloneLevelUndo::insertCells() const {
     m_insertedColumns.insert(colIndex);
   }
 
+  bool useImplicitHold = Preferences::instance()->isImplicitHoldEnabled();
+
   // Now, re-traverse the selected range, and add corresponding cells
   // in the destination range
   for (int c = m_range.m_c0; c <= m_range.m_c1; ++c) {
+    TXshCell prevCell;
+    TXshLevelP lastLevel = 0;
     for (int r = m_range.m_r0; r <= m_range.m_r1; ++r) {
-      const TXshCell &srcCell = xsh->getCell(r, c);
+      TXshCell srcCell = xsh->getCell(r, c);
+      if (useImplicitHold) {
+        if (r > m_range.m_r0 &&
+            (prevCell == srcCell || xsh->isImplicitCell(r, c)))
+          srcCell = TXshCell();
+        prevCell = srcCell;
+      }
       if (TXshSimpleLevel *srcSl = srcCell.getSimpleLevel()) {
         std::map<TXshSimpleLevel *, TXshLevelP>::iterator lt =
             m_insertedLevels.find(srcSl);
         if (lt != m_insertedLevels.end()) {
+          lastLevel = lt->second;
           TXshCell dstCell(lt->second, srcCell.getFrameId());
           xsh->setCell(r, c + m_range.getColCount(), dstCell);
         }
       }
     }
+    if (useImplicitHold &&
+        !xsh->getCell(m_range.m_r1, c + m_range.getColCount()).isEmpty())
+      xsh->setCell(m_range.m_r1 + 1, c + m_range.getColCount(),
+                   TXshCell(lastLevel, TFrameId::STOP_FRAME));
   }
 }
 
