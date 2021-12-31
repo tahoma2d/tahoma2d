@@ -2975,7 +2975,7 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
 
   TXshCell targetCell = xsh->getCell(row, col);
   TXshCell prevCell   = xsh->getCell(row - 1, col);
-  ;
+
   // check if we use the current cell to duplicate or the previous cell
   if (!targetCell.isEmpty() && targetCell != prevCell) {
     // Current cell has a drawing to duplicate and it's not a hold shift focus
@@ -2983,6 +2983,12 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
     prevCell = targetCell;
     TApp::instance()->getCurrentFrame()->setCurrentFrame(row + 2);
     row++;
+  }
+
+  if (prevCell.getFrameId().isStopFrame()) {
+    if (!xsh->isImplicitCell(row - 1, col) && !multiple)
+      DVGui::warning(QObject::tr("Cannot duplicate a Stop Frame Hold"));
+    return;
   }
 
   if (prevCell.isEmpty() || !(prevCell.m_level->getSimpleLevel())) return;
