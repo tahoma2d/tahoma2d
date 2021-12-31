@@ -2759,8 +2759,9 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
 
   TXshCell cell       = xsh->getCell(row, col);
   TXshSimpleLevel *sl = cell.getSimpleLevel();
+  bool isStopFrame = cell.getFrameId().isStopFrame();
 
-  if (!img || !sl) {
+  if ((!img || !sl) && !isStopFrame) {
     //----- Restore previous states of autocreation
     if (!isAutoCreateEnabled)
       Preferences::instance()->setValue(EnableAutocreation, false, false);
@@ -2783,8 +2784,12 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
                                         false);
     //------------------
     if (!multiple)
-      DVGui::warning(QObject::tr(
-          "Unable to replace the current drawing with a blank drawing"));
+      if (isStopFrame)
+        DVGui::warning(QObject::tr(
+            "Unable to replace a Stop Frame Hold with a blank drawing"));
+      else
+        DVGui::warning(QObject::tr(
+            "Unable to replace the current drawing with a blank drawing"));
     return;
   }
 
