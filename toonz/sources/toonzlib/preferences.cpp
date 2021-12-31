@@ -94,7 +94,7 @@ inline bool formatLess(const Preferences::LevelFormat &a,
 //=================================================================
 
 void getDefaultLevelFormats(LevelFormatVector &lfv) {
-  lfv.resize(3);
+  lfv.resize(2);
   {
     LevelFormat &lf = lfv[0];
 
@@ -214,6 +214,13 @@ void getValue(QSettings &settings,
         (*it).m_options.m_premultiply = false;
         ++it;
       }
+      changed = true;
+    }
+    // remove the "empty" condition which may inserted due to the previous bug
+    else if ((*it).m_name.isEmpty() &&
+             (*it).m_pathFormat == QRegExp(".*", Qt::CaseInsensitive) &&
+             (*it).m_priority == 1 && (*it).m_options == LevelOptions()) {
+      it      = lfv.erase(it);
       changed = true;
     } else
       ++it;

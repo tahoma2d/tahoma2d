@@ -104,7 +104,7 @@ TLevelWriterMov::~TLevelWriterMov() {
 TImageWriterP TLevelWriterMov::getFrameWriter(TFrameId fid) {
   // if (IOError != 0)
   //	throw TImageException(m_path, buildMovExceptionString(IOError));
-  if (fid.getLetter() != 0) return TImageWriterP(0);
+  if (!fid.getLetter().isEmpty()) return TImageWriterP(0);
   int index            = fid.getNumber();
   TImageWriterMov *iwg = new TImageWriterMov(m_path, index, this);
   return TImageWriterP(iwg);
@@ -207,7 +207,7 @@ TLevelP TLevelReaderMov::loadInfo() {
 TImageReaderP TLevelReaderMov::getFrameReader(TFrameId fid) {
   // if (IOError != 0)
   //	throw TImageException(m_path, buildAVIExceptionString(IOError));
-  if (fid.getLetter() != 0) return TImageReaderP(0);
+  if (!fid.getLetter().isEmpty()) return TImageReaderP(0);
   int index = fid.getNumber();
 
   TImageReaderMov *irm = new TImageReaderMov(m_path, index, this, m_info);

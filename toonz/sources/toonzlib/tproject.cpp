@@ -10,6 +10,7 @@
 #include "toonz/toonzfolders.h"
 #include "toonz/cleanupparameters.h"
 #include "toonz/preferences.h"
+#include "toonz/filepathproperties.h"
 
 // TnzBase includes
 #include "tenv.h"
@@ -17,6 +18,7 @@
 // TnzCore includes
 #include "tsystem.h"
 #include "tstream.h"
+#include "tfilepath.h"
 #include "tfilepath_io.h"
 #include "tconvert.h"
 
@@ -321,11 +323,18 @@ TFilePath getDesktopPath() {
         \see TProjectManager and TOStream.
   */
 
-TProject::TProject() : m_name(), m_path(), m_sprop(new TSceneProperties()) {}
+TProject::TProject()
+    : m_name()
+    , m_path()
+    , m_sprop(new TSceneProperties())
+    , m_fpProp(new FilePathProperties()) {}
 
 //-------------------------------------------------------------------
 
-TProject::~TProject() { delete m_sprop; }
+TProject::~TProject() {
+  delete m_sprop;
+  delete m_fpProp;
+}
 
 //-------------------------------------------------------------------
 /*! Associates the \b name to the specified \b path.
@@ -615,6 +624,13 @@ bool TProject::save(const TFilePath &projectPath) {
   os.openChild("sceneProperties");
   getSceneProperties().saveData(os);
   os.closeChild();
+
+  if (!getFilePathProperties()->isDefault()) {
+    os.openChild("filePathProperties");
+    getFilePathProperties()->saveData(os);
+    os.closeChild();
+  }
+
   os.closeChild();
 
   // crea (se necessario) le directory relative ai vari folder
@@ -724,6 +740,9 @@ void TProject::load(const TFilePath &projectPath) {
       } catch (...) {
       }
       setSceneProperties(sprop);
+      is.matchEndTag();
+    } else if (tagName == "filePathProperties") {
+      m_fpProp->loadData(is);
       is.matchEndTag();
     }
   }
@@ -1038,6 +1057,12 @@ TProjectP TProjectManager::getCurrentProject() {
     assert(TProject::isAProjectPath(fp));
     currentProject = new TProject();
     currentProject->load(fp);
+
+    // update TFilePath condition on loading the current project
+    FilePathProperties *fpProp = currentProject->getFilePathProperties();
+    TFilePath::setFilePathProperties(fpProp->useStandard(),
+                                     fpProp->acceptNonAlphabetSuffix(),
+                                     fpProp->letterCountForSuffix());
   }
   return currentProject;
 }

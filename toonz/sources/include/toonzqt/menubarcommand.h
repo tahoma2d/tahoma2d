@@ -65,7 +65,8 @@ enum CommandType {
   MiscCommandType,
   MenuCommandType,
   VisualizationButtonCommandType,
-  StopMotionCommandType
+  StopMotionCommandType,
+  CellMarkCommandType
 };
 
 //-----------------------------------------------------------------------------

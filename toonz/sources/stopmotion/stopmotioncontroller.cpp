@@ -666,42 +666,46 @@ void StopMotionSaveInFolderPopup::updateParentFolder() {
 
 //=============================================================================
 
-FrameNumberLineEdit::FrameNumberLineEdit(QWidget *parent, int value)
+FrameNumberLineEdit::FrameNumberLineEdit(QWidget* parent, TFrameId fId,
+                                         bool acceptLetter)
     : LineEdit(parent) {
-  setFixedWidth(54);
-  m_intValidator = new QIntValidator(this);
-  setValue(value);
-  m_intValidator->setRange(1, 9999);
+  setFixedWidth(60);
+  if (acceptLetter) {
+    QString regExpStr   = QString("^%1$").arg(TFilePath::fidRegExpStr());
+    m_regexpValidator   = new QRegExpValidator(QRegExp(regExpStr), this);
+    TProjectManager* pm = TProjectManager::instance();
+    pm->addListener(this);
+  } else
+    m_regexpValidator = new QRegExpValidator(QRegExp("^\\d{1,4}$"), this);
 
-  QRegExp rx("^[0-9]{1,4}[A-Ia-i]?$");
-  m_regexpValidator = new QRegExpValidator(rx, this);
+  m_regexpValidator_alt =
+      new QRegExpValidator(QRegExp("^\\d{1,3}[A-Ia-i]?$"), this);
 
   updateValidator();
+
+  setValue(fId);
 }
 
 //-----------------------------------------------------------------------------
 
 void FrameNumberLineEdit::updateValidator() {
   if (Preferences::instance()->isShowFrameNumberWithLettersEnabled())
-    setValidator(m_regexpValidator);
+    setValidator(m_regexpValidator_alt);
   else
-    setValidator(m_intValidator);
+    setValidator(m_regexpValidator);
 }
 
 //-----------------------------------------------------------------------------
 
-void FrameNumberLineEdit::setValue(int value) {
-  if (value <= 0)
-    value = 1;
-  else if (value > 9999)
-    value = 9999;
-
+void FrameNumberLineEdit::setValue(TFrameId fId) {
   QString str;
   if (Preferences::instance()->isShowFrameNumberWithLettersEnabled()) {
-    str = convertToFrameWithLetter(value, 3);
+    if (!fId.getLetter().isEmpty()) {
+      // need some warning?
+    }
+    str = convertToFrameWithLetter(fId.getNumber(), 3);
   } else {
-    str.setNum(value);
-    while (str.length() < 4) str.push_front("0");
+    str = QString::fromStdString(fId.expand());
   }
   setText(str);
   setCursorPosition(0);
@@ -709,19 +713,41 @@ void FrameNumberLineEdit::setValue(int value) {
 
 //-----------------------------------------------------------------------------
 
-int FrameNumberLineEdit::getValue() {
+TFrameId FrameNumberLineEdit::getValue() {
   if (Preferences::instance()->isShowFrameNumberWithLettersEnabled()) {
     QString str = text();
+    int f;
     // if no letters added
     if (str.at(str.size() - 1).isDigit())
-      return str.toInt() * 10;
+      f = str.toInt() * 10;
     else {
-      return str.left(str.size() - 1).toInt() * 10 +
-             letterToNum(str.at(str.size() - 1));
+      f = str.left(str.size() - 1).toInt() * 10 +
+          letterToNum(str.at(str.size() - 1));
     }
-  } else
-    return text().toInt();
+    return TFrameId(f);
+  } else {
+    QString regExpStr = QString("^%1$").arg(TFilePath::fidRegExpStr());
+    QRegExp rx(regExpStr);
+    int pos = rx.indexIn(text());
+    if (pos < 0) return TFrameId();
+    if (rx.cap(2).isEmpty())
+      return TFrameId(rx.cap(1).toInt());
+    else
+      return TFrameId(rx.cap(1).toInt(), rx.cap(2));
+  }
 }
+
+//-----------------------------------------------------------------------------
+
+void FrameNumberLineEdit::onProjectSwitched() {
+  QRegExpValidator* oldValidator = m_regexpValidator;
+  QString regExpStr = QString("^%1$").arg(TFilePath::fidRegExpStr());
+  m_regexpValidator = new QRegExpValidator(QRegExp(regExpStr), this);
+  updateValidator();
+  if (oldValidator) delete oldValidator;
+}
+
+void FrameNumberLineEdit::onProjectChanged() { onProjectSwitched(); }
 
 //-----------------------------------------------------------------------------
 
@@ -3578,7 +3604,7 @@ void StopMotionController::onFileTypeActivated() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onFrameNumberChanged() {
-  m_stopMotion->setFrameNumber(m_frameNumberEdit->getValue());
+  m_stopMotion->setFrameNumber(m_frameNumberEdit->getValue().getNumber());
 }
 
 //-----------------------------------------------------------------------------

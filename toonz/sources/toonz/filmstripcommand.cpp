@@ -51,7 +51,8 @@
 //=============================================================================
 
 TFrameId operator+(const TFrameId &fid, int d) {
-  return TFrameId(fid.getNumber() + d, fid.getLetter());
+  return TFrameId(fid.getNumber() + d, fid.getLetter(), fid.getZeroPadding(),
+                  fid.getStartSeqInd());
 }
 
 //-----------------------------------------------------------------------------
@@ -1341,6 +1342,17 @@ public:
   int getHistoryType() override { return HistoryType::FilmStrip; }
 };
 
+QString getNextLetter(const QString &letter) {
+  // 空なら a を返す
+  if (letter.isEmpty()) return QString('a');
+  // 1文字かつ z または Z ならEmptyを返す
+  if (letter == 'z' || letter == 'Z') return QString();
+  QByteArray byteArray = letter.toUtf8();
+  // それ以外の場合、最後の文字をとにかく１進めて返す
+  byteArray.data()[byteArray.size() - 1]++;
+  return QString::fromUtf8(byteArray);
+};
+
 }  // namespace
 
 //=============================================================================
@@ -1356,10 +1368,14 @@ void FilmstripCmd::addFrames(TXshSimpleLevel *sl, int start, int end,
   std::vector<TFrameId> oldFids;
   sl->getFids(oldFids);
 
+  TFrameId tmplFid;
+  if (!oldFids.empty()) tmplFid = oldFids.front();
+
   std::set<TFrameId> fidsToInsert;
   int frame = 0;
   for (frame = start; frame <= end; frame += step)
-    fidsToInsert.insert(TFrameId(frame));
+    fidsToInsert.insert(TFrameId(frame, "", tmplFid.getZeroPadding(),
+                                 tmplFid.getStartSeqInd()));
 
   makeSpaceForFids(sl, fidsToInsert);
 
@@ -1487,10 +1503,11 @@ void FilmstripCmd::renumber(
       // make sure that srcFid has not been used. add a letter if this is needed
       if (tmp.count(tarFid) > 0) {
         do {
-          char letter = tarFid.getLetter();
-          tarFid = TFrameId(tarFid.getNumber(), letter == 0 ? 'a' : letter + 1);
-        } while (tarFid.getLetter() <= 'z' && tmp.count(tarFid) > 0);
-        if (tarFid.getLetter() > 'z') {
+          tarFid =
+              TFrameId(tarFid.getNumber(), getNextLetter(tarFid.getLetter()),
+                       tarFid.getZeroPadding(), tarFid.getStartSeqInd());
+        } while (!tarFid.getLetter().isEmpty() && tmp.count(tarFid) > 0);
+        if (tarFid.getLetter().isEmpty()) {
           // todo: error message
           return;
         }
@@ -1546,7 +1563,8 @@ void FilmstripCmd::renumber(TXshSimpleLevel *sl, std::set<TFrameId> &frames,
   std::vector<TFrameId>::iterator j = fids.begin();
   for (it = frames.begin(); it != frames.end(); ++it) {
     TFrameId srcFid(*it);
-    TFrameId dstFid(frame);
+    TFrameId dstFid(frame, "", srcFid.getZeroPadding(),
+                    srcFid.getStartSeqInd());
     frame += stepFrame;
     // faccio il controllo su tmp e non su fids. considera:
     // fids = [1,2,3,4], renumber = [2->3,3->5]
@@ -1579,7 +1597,8 @@ void FilmstripCmd::renumber(TXshSimpleLevel *sl, std::set<TFrameId> &frames,
   it2 = frames.begin();
   std::set<TFrameId> newFrames;
   for (i = 0; i < frames.size(); i++, it2++)
-    newFrames.insert(TFrameId(startFrame + (i * stepFrame), it2->getLetter()));
+    newFrames.insert(TFrameId(startFrame + (i * stepFrame), it2->getLetter(),
+                              it2->getZeroPadding(), it2->getStartSeqInd()));
   assert(frames.size() == newFrames.size());
   frames.swap(newFrames);
 
@@ -2763,13 +2782,9 @@ void FilmstripCmd::renumberDrawing(TXshSimpleLevel *sl, const TFrameId &oldFid,
   if (it == fids.end()) return;
   TFrameId newFid = desiredNewFid;
   while (std::find(fids.begin(), fids.end(), newFid) != fids.end()) {
-    char letter = newFid.getLetter();
-    if (letter == 'z') return;
-    if (letter == 0)
-      letter = 'a';
-    else
-      letter++;
-    newFid = TFrameId(newFid.getNumber(), letter);
+    QString nextLetter = getNextLetter(newFid.getLetter());
+    if (nextLetter.isEmpty()) return;
+    newFid = TFrameId(newFid.getNumber(), nextLetter);
   }
   *it = newFid;
   if (Preferences::instance()->isSyncLevelRenumberWithXsheetEnabled()) {

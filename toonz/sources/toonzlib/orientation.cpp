@@ -335,6 +335,9 @@ TopToBottomOrientation::TopToBottomOrientation() {
   addRect(PredefinedRect::KEYFRAME_AREA,
           QRect(CELL_WIDTH - KEY_ICON_WIDTH, 0, KEY_ICON_WIDTH, CELL_HEIGHT));
   addRect(PredefinedRect::DRAG_AREA, QRect(0, 0, CELL_DRAG_WIDTH, CELL_HEIGHT));
+  int markSize = CELL_HEIGHT * 8 / 10;  // 80% size
+  addRect(PredefinedRect::CELL_MARK_AREA,
+          QRect(CELL_DRAG_WIDTH - 3, 2, markSize, markSize));
   QRect soundRect(CELL_DRAG_WIDTH, 0,
                   CELL_WIDTH - CELL_DRAG_WIDTH - SOUND_PREVIEW_WIDTH,
                   CELL_HEIGHT);
@@ -1111,6 +1114,9 @@ LeftToRightOrientation::LeftToRightOrientation() {
                 EXTENDER_HEIGHT));
   addRect(PredefinedRect::KEYFRAME_AREA, keyRect);
   addRect(PredefinedRect::DRAG_AREA, QRect(0, 0, CELL_WIDTH, CELL_DRAG_HEIGHT));
+  int markSize = CELL_HEIGHT / 2;  // 50% size (12px)
+  addRect(PredefinedRect::CELL_MARK_AREA,
+          QRect(1, CELL_DRAG_HEIGHT + 1, markSize, markSize));
   QRect soundRect(0, CELL_DRAG_HEIGHT, CELL_WIDTH,
                   CELL_HEIGHT - CELL_DRAG_HEIGHT - SOUND_PREVIEW_HEIGHT);
   addRect(PredefinedRect::SOUND_TRACK, soundRect);

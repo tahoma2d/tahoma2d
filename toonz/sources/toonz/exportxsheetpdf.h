@@ -21,6 +21,7 @@ class QComboBox;
 class QCheckBox;
 class TXshLevelColumn;
 class TXshSoundColumn;
+class TXshSoundTextColumn;
 namespace DVGui {
   class FileField;
   class ColorField;
@@ -85,6 +86,12 @@ typedef void (*DecoFunc)(QPainter&, QRect, QMap<XSheetPDFDataType, QRect>&,
 
 enum ExportArea { Area_Actions = 0, Area_Cells };
 enum ContinuousLineMode { Line_Always = 0, Line_MoreThan3s, Line_None };
+enum TickMarkType {
+  TickMark_Dot = 0,
+  TickMark_Circle,
+  TickMark_Filled,
+  TickMark_Asterisk
+};
 
 struct XSheetPDFFormatInfo {
   QColor lineColor;
@@ -101,6 +108,11 @@ struct XSheetPDFFormatInfo {
   bool serialFrameNumber;
   bool drawLevelNameOnBottom;
   ContinuousLineMode continuousLineMode;
+  int tick1MarkId;
+  int tick2MarkId;
+  int keyMarkId;
+  TickMarkType tick1MarkType;
+  TickMarkType tick2MarkType;
 };
 
 class XSheetPDFTemplate {
@@ -138,6 +150,7 @@ protected:
   // column and column name (if manually specified)
   QList<QPair<TXshLevelColumn*, QString>> m_columns;
   QList<TXshSoundColumn*> m_soundColumns;
+  TXshSoundTextColumn* m_noteColumn;
 
   int m_duration;
   bool m_useExtraColumns;
@@ -172,12 +185,15 @@ protected:
   void addInfo(int w, QString lbl, DecoFunc f = nullptr);
 
   void drawContinuousLine(QPainter& painter, QRect rect, bool isEmpty);
-  void drawCellNumber(QPainter& painter, QRect rect, TXshCell& cell);
+  void drawCellNumber(QPainter& painter, QRect rect, TXshCell& cell,
+                      bool isKey);
+  void drawTickMark(QPainter& painter, QRect rect, TickMarkType type);
   void drawEndMark(QPainter& painter, QRect upperRect);
   void drawLevelName(QPainter& painter, QRect rect, QString name,
     bool isBottom = false);
   void drawLogo(QPainter& painter);
   void drawSound(QPainter& painter, int framePage);
+  void drawDialogue(QPainter& painter, int framePage);
 
   int param(const std::string& id, int defaultValue = 0) {
     if (!m_params.contains(id)) std::cout << id << std::endl;
@@ -200,6 +216,9 @@ public:
   void setLogoPixmap(QPixmap pm);
   void setSoundColumns(const QList<TXshSoundColumn*>& soundColumns) {
     m_soundColumns = soundColumns;
+  }
+  void setNoteColumn(TXshSoundTextColumn* noteColumn) {
+    m_noteColumn = noteColumn;
   }
   void setInfo(const XSheetPDFFormatInfo& info);
 };
@@ -262,11 +281,13 @@ class ExportXsheetPdfPopup final : public DVGui::Dialog {
   XsheetPdfPreviewArea* m_previewArea;
   DVGui::FileField* m_pathFld;
   QLineEdit* m_fileNameFld;
-  QComboBox *m_templateCombo, *m_exportAreaCombo, *m_continuousLineCombo;
+  QComboBox *m_templateCombo, *m_exportAreaCombo, *m_continuousLineCombo,
+      *m_dialogueColCombo;
   DVGui::ColorField* m_lineColorFld;
 
   QCheckBox *m_addDateTimeCB, *m_addScenePathCB, *m_drawSoundCB,
-    *m_addSceneNameCB, *m_serialFrameNumberCB, *m_levelNameOnBottomCB;
+      *m_addSceneNameCB, *m_serialFrameNumberCB, *m_levelNameOnBottomCB,
+      *m_drawDialogueCB;
 
   QFontComboBox *m_templateFontCB, *m_contentsFontCB;
   QTextEdit* m_memoEdit;
@@ -281,9 +302,13 @@ class ExportXsheetPdfPopup final : public DVGui::Dialog {
   int m_totalPageCount;
   QPushButton *m_prev, *m_next;
 
+  QComboBox *m_tick1IdCombo, *m_tick2IdCombo, *m_keyIdCombo;
+  QComboBox *m_tick1MarkCombo, *m_tick2MarkCombo;
+
   // column and column name (if manually specified)
   QList<QPair<TXshLevelColumn*, QString>> m_columns;
   QList<TXshSoundColumn*> m_soundColumns;
+  QMap<int, TXshSoundTextColumn*> m_noteColumns;
   int m_duration;
 
   XSheetPDFTemplate* m_currentTmpl;
@@ -315,6 +340,8 @@ protected slots:
   void onLogoImgPathChanged();
   void onPrev();
   void onNext();
+
+  void onTickIdComboActivated();
 };
 
 #endif

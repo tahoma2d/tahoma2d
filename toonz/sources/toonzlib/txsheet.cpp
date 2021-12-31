@@ -1061,8 +1061,8 @@ int TXsheet::exposeLevel(int row, int col, TXshLevel *xl, bool overwrite) {
 //-----------------------------------------------------------------------------
 // customized version for load level popup
 int TXsheet::exposeLevel(int row, int col, TXshLevel *xl,
-                         std::vector<TFrameId> &fIds_, int xFrom, int xTo,
-                         int step, int inc, int frameCount,
+                         std::vector<TFrameId> &fIds_, TFrameId xFrom,
+                         TFrameId xTo, int step, int inc, int frameCount,
                          bool doesFileActuallyExist) {
   if (!xl) return 0;
   std::vector<TFrameId> fids;
@@ -1104,7 +1104,7 @@ int TXsheet::exposeLevel(int row, int col, TXshLevel *xl,
     {
       std::vector<TFrameId>::iterator it;
       it = fids.begin();
-      while (it->getNumber() < xFrom) it++;
+      while (*it < xFrom) it++;
 
       if (step == 0)  // Step = Auto
       {
@@ -1112,14 +1112,12 @@ int TXsheet::exposeLevel(int row, int col, TXshLevel *xl,
         next_it = it;
         next_it++;
 
-        int startFrame = it->getNumber();
-
-        for (int f = startFrame; f < startFrame + frameCount; f++) {
-          if (next_it != fids.end() && f >= next_it->getNumber()) {
+        for (int f = 0; f < frameCount; f++) {
+          setCell(row++, col, TXshCell(xl, *it));
+          if (next_it != fids.end()) {
             it++;
             next_it++;
           }
-          setCell(row++, col, TXshCell(xl, *it));
         }
       }
 
@@ -1143,7 +1141,7 @@ int TXsheet::exposeLevel(int row, int col, TXshLevel *xl,
       loopCount = frameCount / step;
 
       for (int loop = 0; loop < loopCount; loop++) {
-        TFrameId id(xFrom + loop * inc, fids.begin()->getLetter());
+        TFrameId id(xFrom.getNumber() + loop * inc, xFrom.getLetter());
         for (int s = 0; s < step; s++) {
           setCell(row++, col, TXshCell(xl, id));
         }
@@ -1224,6 +1222,12 @@ void TXsheet::loadData(TIStream &is) {
           }
         }
       }
+    } else if (tagName == "cameraColumn") {
+      while (is.openChild(tagName)) {
+        if (!m_cameraColumn->getCellColumn()->loadCellMarks(tagName, is))
+          throw TException("Camera Column, unknown tag: " + tagName);
+        is.closeChild();
+      }
     } else if (tagName == "pegbars") {
       TPersist *p = m_imp->m_pegTree;
       m_imp->m_pegTree->loadData(is, this);
@@ -1280,6 +1284,14 @@ void TXsheet::saveData(TOStream &os) {
     if (column && c < getFirstFreeColumnIndex()) os << column.getPointer();
   }
   os.closeChild();
+
+  // save cell marks in the camera column
+  if (!m_cameraColumn->getCellColumn()->getCellMarks().isEmpty()) {
+    os.openChild("cameraColumn");
+    m_cameraColumn->getCellColumn()->saveCellMarks(os);
+    os.closeChild();
+  }
+
   os.openChild("pegbars");
   m_imp->m_pegTree->saveData(os, getFirstFreeColumnIndex(), this);
   // os << *(m_imp->m_pegTree);

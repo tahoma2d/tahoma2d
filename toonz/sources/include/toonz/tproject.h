@@ -9,6 +9,7 @@
 
 class ToonzScene;
 class TSceneProperties;
+class FilePathProperties;
 
 #undef DVAPI
 #undef DVVAR
@@ -27,6 +28,8 @@ class DVAPI TProject final : public TSmartObject {
   std::map<std::string, bool> m_useScenePathFlags;
   bool m_useSubScenePath;
   TSceneProperties *m_sprop;
+
+  FilePathProperties *m_fpProp;
 
 public:
   // default folders names
@@ -69,6 +72,8 @@ public:
 
   void setSceneProperties(const TSceneProperties &sprop);
   const TSceneProperties &getSceneProperties() const { return *m_sprop; }
+
+  FilePathProperties *getFilePathProperties() const { return m_fpProp; }
 
   //?????????????????????????????????????????????
   void setUseScenePath(std::string folderName, bool on);

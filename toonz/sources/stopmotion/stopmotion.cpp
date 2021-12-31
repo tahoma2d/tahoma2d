@@ -160,19 +160,24 @@ QString fidsToString(const std::vector<TFrameId> &fids,
   } else {
     bool beginBlock = true;
     for (int f = 0; f < fids.size() - 1; f++) {
-      int num      = fids[f].getNumber();
-      int next_num = fids[f + 1].getNumber();
-      if (num + 1 == next_num) {
+      int num             = fids[f].getNumber();
+      QString letter      = fids[f].getLetter();
+      int next_num        = fids[f + 1].getNumber();
+      QString next_letter = fids[f + 1].getLetter();
+
+      if (num + 1 == next_num && letter.isEmpty() && next_letter.isEmpty()) {
         if (beginBlock) {
           retStr += QString::number(num) + " - ";
           beginBlock = false;
         }
       } else {
-        retStr += QString::number(num) + ", ";
+        retStr += QString::number(num);
+        if (!letter.isEmpty()) retStr += letter;
+        retStr += ", ";
         beginBlock = true;
       }
     }
-    retStr += QString::number(fids.back().getNumber());
+    if (!fids.back().getLetter().isEmpty()) retStr += fids.back().getLetter();
   }
   return retStr;
 }

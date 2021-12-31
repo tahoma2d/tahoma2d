@@ -1020,8 +1020,8 @@ SplineAimChanger::~SplineAimChanger() {}
 
 void SplineAimChanger::mouseMoveEvent(QGraphicsSceneMouseEvent *me) {
   if (m_buttonState == Qt::LeftButton) {
-    bool increase           = false;
-    int delta               = me->screenPos().y() - me->lastScreenPos().y();
+    bool increase = false;
+    int delta     = me->screenPos().y() - me->lastScreenPos().y();
     if (delta < 0) increase = true;
     m_delta += abs(delta);
     if (m_delta > 15) {
@@ -2250,10 +2250,9 @@ StageSchematicGroupNode::StageSchematicGroupNode(
     , m_root(root)
     , m_groupedObj(groupedObj) {
   SchematicViewer *viewer = scene->getSchematicViewer();
-
   int i;
-  for (i   = 0; i < m_groupedObj.size(); i++) m_groupedObj[i]->addRef();
-  bool ret = true;
+  for (i = 0; i < m_groupedObj.size(); i++) m_groupedObj[i]->addRef();
+  bool ret          = true;
   std::wstring name = m_stageObject->getGroupName(false);
   m_name            = QString::fromStdWString(name);
 

@@ -132,6 +132,9 @@ TLevelP TLevelReader::loadInfo() {
   if (!data.empty()) {
     std::vector<TFilePath>::iterator it =
         std::min_element(data.begin(), data.end(), myLess);
+
+    m_frameFormat = (*it).getFrame().getCurrentFormat();
+    /*
     TFilePath fr = (*it).withoutParentDir().withName("").withType("");
     wstring ws   = fr.getWideString();
     if (ws.length() == 5) {
@@ -150,7 +153,7 @@ TLevelP TLevelReader::loadInfo() {
       else
         m_frameFormat = TFrameId::UNDERSCORE_NO_PAD;
     }
-
+    */
   } else
     m_frameFormat = TFrameId::FOUR_ZEROS;
 

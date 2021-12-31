@@ -1193,7 +1193,9 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
   }
 
   for (i = 0; i < files.size(); i++)
-    if (!TFileType::isViewable(TFileType::getInfo(files[i]))) break;
+    if (!TFileType::isViewable(TFileType::getInfo(files[i])) &&
+        files[i].getType() != "tpl")
+      break;
   if (i == files.size()) {
     std::string type = files[0].getType();
     for (j = 0; j < files.size(); j++)

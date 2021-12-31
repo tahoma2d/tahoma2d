@@ -8,6 +8,7 @@
 #include "orientation.h"
 
 #include "toonz/txshcell.h"
+#include "tundo.h"
 
 // forward declaration
 class XsheetViewer;
@@ -16,6 +17,20 @@ class TXsheetHandle;
 class TXshSoundTextColumn;
 
 namespace XsheetGUI {
+
+class SetCellMarkUndo final : public TUndo {
+  int m_row, m_col;
+  int m_idBefore, m_idAfter;
+
+public:
+  SetCellMarkUndo(int row, int col, int idAfter);
+  void setId(int id) const;
+  void undo() const override;
+  void redo() const override;
+  int getSize() const override;
+  QString getHistoryString() override;
+  int getHistoryType() override;
+};
 
 class NoteWidget;
 class DragTool;
@@ -103,6 +118,7 @@ class CellArea final : public QWidget {
                      bool showLevelName = true);
   void drawSoundTextCell(QPainter &p, int row, int col);
   void drawSoundCell(QPainter &p, int row, int col, bool isReference = false);
+  void drawSoundTextColumn(QPainter &p, int r0, int r1, int col);
   void drawPaletteCell(QPainter &p, int row, int col, bool isReference = false);
 
   void drawKeyframe(QPainter &p, const QRect toBeUpdated);
@@ -166,7 +182,8 @@ protected:
   /*!Crea il menu' del tasto destro che si visualizza quando si clicca sulla
 cella,
 distinguendo i due casi: cella piena, cella vuota.*/
-  void createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell);
+  void createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell, int row,
+                      int col);
   //! Crea il menu' del tasto destro che si visualizza si clicca su un key
   //! frame.
   void createKeyMenu(QMenu &menu);
@@ -182,6 +199,7 @@ protected slots:
   void onStepChanged(QAction *);
   // replace level with another level in the cast
   void onReplaceByCastedLevel(QAction *action);
+  void onSetCellMark();
 };
 
 }  // namespace XsheetGUI

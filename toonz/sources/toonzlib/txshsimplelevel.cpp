@@ -485,7 +485,8 @@ int TXshSimpleLevel::guessStep() const {
 
   TFrameId firstFid = *ft++, secondFid = *ft++;
 
-  if (firstFid.getLetter() != 0 || secondFid.getLetter() != 0) return 1;
+  if (!firstFid.getLetter().isEmpty() || !secondFid.getLetter().isEmpty())
+    return 1;
 
   int step = secondFid.getNumber() - firstFid.getNumber();
   if (step == 1) return 1;
@@ -494,7 +495,7 @@ int TXshSimpleLevel::guessStep() const {
   // (cerco di limitare il numero di volte in cui devo controllare tutta la
   // lista)
   TFrameId lastFid = *m_frames.rbegin();
-  if (lastFid.getLetter() != 0) return 1;
+  if (!lastFid.getLetter().isEmpty()) return 1;
 
   if (lastFid.getNumber() != firstFid.getNumber() + step * (frameCount - 1))
     return 1;
@@ -502,7 +503,7 @@ int TXshSimpleLevel::guessStep() const {
   for (int i = 2; ft != m_frames.end(); ++ft, ++i) {
     const TFrameId &fid = *ft;
 
-    if (fid.getLetter() != 0) return 1;
+    if (!fid.getLetter().isEmpty()) return 1;
 
     if (fid.getNumber() != firstFid.getNumber() + step * i) return 1;
   }
@@ -642,7 +643,8 @@ void TXshSimpleLevel::loadAllIconsAndPutInCache(bool cacheImagesAsWell) {
 
 //-----------------------------------------------------------------------------
 
-TRasterImageP TXshSimpleLevel::getFrameToCleanup(const TFrameId &fid) const {
+TRasterImageP TXshSimpleLevel::getFrameToCleanup(const TFrameId &fid,
+                                                 bool toBeLineProcessed) const {
   assert(m_type != UNKNOWN_XSHLEVEL);
 
   FramesSet::const_iterator ft = m_frames.find(fid);
@@ -652,8 +654,12 @@ TRasterImageP TXshSimpleLevel::getFrameToCleanup(const TFrameId &fid) const {
   std::string imageId = getImageId(fid, flag ? Scanned : 0);
 
   ImageLoader::BuildExtData extData(this, fid, 1);
-  TRasterImageP img = ImageManager::instance()->getImage(
-      imageId, ImageManager::dontPutInCache, &extData);
+
+  UCHAR imFlags = ImageManager::dontPutInCache;
+  // if lines are not processed, obtain the original sampled image
+  if (!toBeLineProcessed) imFlags |= ImageManager::is64bitEnabled;
+  TRasterImageP img =
+      ImageManager::instance()->getImage(imageId, imFlags, &extData);
   if (!img) return img;
 
   double x_dpi, y_dpi;

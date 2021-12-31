@@ -44,6 +44,7 @@ class PaletteViewerPanel final : public StyleShortcutSwitchablePanel {
   PaletteViewer *m_paletteViewer;
 
   bool m_isFrozen;
+  TPaletteP m_frozenPalette;
 
 public:
   PaletteViewerPanel(QWidget *parent);
@@ -133,7 +134,7 @@ public:
   void hide() override;
 
 protected slots:
-  void onColorStyleChanged();
+  void onColorStyleChanged(bool);
   void onColorChanged(const TPixel32 &color, bool);
 };
 

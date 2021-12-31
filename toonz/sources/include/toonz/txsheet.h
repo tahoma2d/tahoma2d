@@ -442,8 +442,9 @@ frame duplication.
 
   // cutomized exposseLevel used from LoadLevel command
   int exposeLevel(int row, int col, TXshLevel *xl, std::vector<TFrameId> &fIds_,
-                  int xFrom = -1, int xTo = -1, int step = -1, int inc = -1,
-                  int frameCount = -1, bool doesFileActuallyExist = true);
+                  TFrameId xFrom = TFrameId(), TFrameId xTo = TFrameId(),
+                  int step = -1, int inc = -1, int frameCount = -1,
+                  bool doesFileActuallyExist = true);
 
   /*! Exposes level \b \e xl \b \e fids in xsheet starting from cell identified
    * by \b \e row and \b \e col.
