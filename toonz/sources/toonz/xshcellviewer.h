@@ -131,6 +131,7 @@ class CellArea final : public QWidget {
 
   void drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
                        bool isKeyFrame = false, bool isCamera = false);
+  void drawEndOfLevelMarker(QPainter &p, QRect rect, bool isStopFrame = false);
 
   // Restistusce true
   bool getEaseHandles(int r0, int r1, double e0, double e1, int &rh0, int &rh1);

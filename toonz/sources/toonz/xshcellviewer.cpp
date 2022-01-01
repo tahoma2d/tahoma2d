@@ -1880,6 +1880,25 @@ void CellArea::drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
 
 //-----------------------------------------------------------------------------
 
+void CellArea::drawEndOfLevelMarker(QPainter &p, QRect rect, bool isStopFrame) {
+  const Orientation *o = m_viewer->orientation();
+
+  QColor levelEndColor = m_viewer->getTextColor();
+  QPoint topLeft       = rect.topLeft();
+  QPoint topRight      = rect.topRight();
+  if (!o->isVerticalTimeline()) {
+    QRect dragRect = o->rect(PredefinedRect::DRAG_AREA);
+    topLeft.setY(topLeft.y() + dragRect.height());
+    topRight.setY(topRight.y() + dragRect.height());
+  }
+  levelEndColor.setAlphaF(0.3);
+  p.setPen(levelEndColor);
+  p.drawLine(topLeft, rect.bottomRight());
+  p.drawLine(topRight, rect.bottomLeft());
+}
+
+//-----------------------------------------------------------------------------
+
 void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
                              bool showLevelName) {
   const Orientation *o = m_viewer->orientation();
@@ -1938,7 +1957,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   cellRect.adjust(0, 0, -frameAdj.x(), -frameAdj.y());
   QRect rect = cellRect.adjusted(
       1, 1, (!o->isVerticalTimeline() && !nextCell.isEmpty() &&
-                     !xsh->isImplicitCell(row + 1, col)
+                     !xsh->isImplicitCell(row + 1, col) &&
+                     !nextCell.getFrameId().isStopFrame()
                  ? 2
                  : 0),
       0);
@@ -2012,11 +2032,9 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
       p.drawEllipse(markRect);
     }
 
-    QColor levelEndColor = m_viewer->getTextColor();
-    levelEndColor.setAlphaF(0.3);
-    p.setPen(levelEndColor);
-    p.drawLine(rect.topLeft(), rect.bottomRight());
-    p.drawLine(rect.topRight(), rect.bottomLeft());
+    // Implicit holds use Stop Frame Hold to denote end of level
+    if (!Preferences::instance()->isImplicitHoldEnabled())
+      drawEndOfLevelMarker(p, rect);
 
     if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
         !m_viewer->orientation()->isVerticalTimeline() &&
@@ -2036,6 +2054,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     m_viewer->getCellTypeAndColors(levelType, cellColor, sideColor, cell,
                                    isSelected);
     if (isImplicitCell) cellColor.setAlpha(60);
+    if (isStopFrame) cellColor.setAlpha(0);
   }
 
   // check if the level is scanned but not cleanupped
@@ -2055,6 +2074,9 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
   else
     p.fillRect(rect, QBrush(cellColor));
+
+  // Implicit holds use Stop Frame Hold to denote end of level
+  if (isStopFrame) drawEndOfLevelMarker(p, rect, true);
 
   if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
       !m_viewer->orientation()->isVerticalTimeline() &&
@@ -2178,9 +2200,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
         if (pegbar->isKeyframe(row)) return;
       }
 
-      drawFrameMarker(
-          p, QPoint(x, y),
-          (isStopFrame ? Qt::yellow : (isRed ? Qt::red : Qt::black)));
+      if (!isStopFrame)
+        drawFrameMarker(p, QPoint(x, y), (isRed ? Qt::red : Qt::black));
       return;
     }
 
@@ -2189,7 +2210,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     // convert the last one digit of the frame number to alphabet
     // Ex.  12 -> 1B    21 -> 2A   30 -> 3
     if (fid.isStopFrame())
-      fnum = "X";
+      fnum = "";
     else if (Preferences::instance()->isShowFrameNumberWithLettersEnabled())
       fnum = m_viewer->getFrameNumberWithLetters(fid.getNumber());
     else {
@@ -2201,8 +2222,9 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
       fnum = frameNumber;
     }
 
-    int alignFlag =
-        ((showLevelName) ? Qt::AlignRight | Qt::AlignBottom : Qt::AlignCenter);
+    int alignFlag = ((showLevelName && !fid.isStopFrame())
+                         ? Qt::AlignRight | Qt::AlignBottom
+                         : Qt::AlignCenter);
     p.drawText(nameRect, alignFlag, fnum);
   }
 
@@ -2308,11 +2330,7 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
   drawFrameSeparator(p, row, col, false, heldFrame);
 
   if (cell.isEmpty()) {  // diagonal cross meaning end of level
-    QColor levelEndColor = m_viewer->getTextColor();
-    levelEndColor.setAlphaF(0.3);
-    p.setPen(levelEndColor);
-    p.drawLine(rect.topLeft(), rect.bottomRight());
-    p.drawLine(rect.topRight(), rect.bottomLeft());
+    drawEndOfLevelMarker(p, rect);
 
     // only draw mark
     if (markId >= 0) {
@@ -2535,13 +2553,7 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
       // draw X shape after the occupied cell
       TXshCell prevCell;
       if (row > 0) prevCell = xsh->getCell(row - 1, col);
-      if (!prevCell.isEmpty()) {
-        QColor levelEndColor = m_viewer->getTextColor();
-        levelEndColor.setAlphaF(0.3);
-        p.setPen(levelEndColor);
-        p.drawLine(info.rect.topLeft(), info.rect.bottomRight());
-        p.drawLine(info.rect.topRight(), info.rect.bottomLeft());
-      }
+      if (!prevCell.isEmpty()) drawEndOfLevelMarker(p, info.rect);
       if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
           !m_viewer->orientation()->isVerticalTimeline() &&
           row == m_viewer->getCurrentRow() &&
@@ -2746,10 +2758,12 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
   QRect cellRect  = o->rect(PredefinedRect::CELL).translated(QPoint(x, y));
   cellRect.adjust(0, 0, -frameAdj.x(), -frameAdj.y());
   QRect rect = cellRect.adjusted(
-      1, 1, (!m_viewer->orientation()->isVerticalTimeline() &&
-                     !nextCell.isEmpty() && !xsh->isImplicitCell(row + 1, col)
-                 ? 2
-                 : 0),
+      1, 1,
+      (!m_viewer->orientation()->isVerticalTimeline() && !nextCell.isEmpty() &&
+               !xsh->isImplicitCell(row + 1, col) &&
+               !nextCell.getFrameId().isStopFrame()
+           ? 2
+           : 0),
       0);
   int markId = xsh->getColumn(col)->getCellColumn()->getCellMark(row);
   QColor markColor;
@@ -2788,11 +2802,9 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
   drawFrameSeparator(p, row, col, false, heldFrame);
 
   if (cell.isEmpty()) {  // this means the former is not empty
-    QColor levelEndColor = m_viewer->getTextColor();
-    levelEndColor.setAlphaF(0.3);
-    p.setPen(levelEndColor);
-    p.drawLine(rect.topLeft(), rect.bottomRight());
-    p.drawLine(rect.topRight(), rect.bottomLeft());
+    // Implicit holds use Stop Frame Hold to denote end of level
+    if (!Preferences::instance()->isImplicitHoldEnabled())
+      drawEndOfLevelMarker(p, rect);
 
     // only draw mark
     if (markId >= 0) {
@@ -2819,6 +2831,7 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
                              : m_viewer->getPaletteColumnColor();
     sideColor = m_viewer->getPaletteColumnBorderColor();
     if (isImplicitCell) cellColor.setAlpha(60);
+    if (isStopFrame) cellColor.setAlpha(0);
   }
 
   // paint cell
@@ -2829,6 +2842,9 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
     p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
   else
     p.fillRect(rect, QBrush(cellColor));
+
+  // Implicit holds use Stop Frame Hold to denote end of level
+  if (isStopFrame) drawEndOfLevelMarker(p, rect, true);
 
   if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
       !m_viewer->orientation()->isVerticalTimeline() &&
@@ -2875,9 +2891,8 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
         TStageObject *pegbar = xsh->getStageObject(m_viewer->getObjectId(col));
         if (pegbar->isKeyframe(row)) return;
       }
-      drawFrameMarker(
-          p, QPoint(x, y),
-          (isStopFrame ? Qt::yellow : (isRed ? Qt::red : Qt::black)));
+      if (!isStopFrame)
+        drawFrameMarker(p, QPoint(x, y), (isRed ? Qt::red : Qt::black));
       return;
     }
 
@@ -2931,12 +2946,14 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
         QString frameNumber("");
         // set number
         if (fid.isStopFrame())
-          frameNumber = "X";
+          frameNumber = "";
         else if (fid.getNumber() > 0)
           frameNumber = QString::number(fid.getNumber());
         // add letter
         if (!fid.getLetter().isEmpty()) frameNumber += fid.getLetter();
-        p.drawText(nameRect, Qt::AlignRight | Qt::AlignBottom, frameNumber);
+        int alignFlag = (!fid.isStopFrame() ? Qt::AlignRight | Qt::AlignBottom
+                                            : Qt::AlignCenter);
+        p.drawText(nameRect, alignFlag, frameNumber);
       }
     }
 
