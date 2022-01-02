@@ -96,8 +96,11 @@ public:
     TXsheet *xsh      = scene->getXsheet();
     if (m_areColumnsShifted)
       xsh->removeColumn(m_columnIndex);
-    else if (m_frameCount > 0)
+    else if (m_frameCount > 0) {
+      // remove the cells and add back blank ones
       xsh->removeCells(m_rowIndex, m_columnIndex, m_frameCount);
+      xsh->insertCells(m_rowIndex, m_columnIndex, m_frameCount);
+    }
 
     TLevelSet *levelSet = scene->getLevelSet();
     if (levelSet) {
