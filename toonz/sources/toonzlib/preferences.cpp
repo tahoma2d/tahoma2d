@@ -654,7 +654,7 @@ void Preferences::definePreferenceItems() {
 
   // Others (not appeared in the popup)
   // Shortcut popup settings
-  define(shortcutPreset, "shortcutPreset", QMetaType::QString, "defopentoonz");
+  define(shortcutPreset, "shortcutPreset", QMetaType::QString, "deftahoma2d");
   // Viewer context menu
   define(guidedDrawingType, "guidedDrawingType", QMetaType::Int, 0);  // Off
   define(guidedAutoInbetween, "guidedAutoInbetween", QMetaType::Bool,
