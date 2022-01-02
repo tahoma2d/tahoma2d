@@ -111,12 +111,14 @@ void copyCellsWithoutUndo(int r0, int c0, int r1, int c1) {
 
 bool pasteCellsWithoutUndo(const TCellData *cellData, int &r0, int &c0, int &r1,
                            int &c1, bool insert = true,
-                           bool doZeraryClone = true) {
+                           bool doZeraryClone  = true,
+                           bool skipEmptyCells = true) {
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   if (!cellData) return false;
   if (r0 < 0 || c0 < 0) return false;
 
-  bool ret = cellData->getCells(xsh, r0, c0, r1, c1, insert, doZeraryClone);
+  bool ret = cellData->getCells(xsh, r0, c0, r1, c1, insert, doZeraryClone,
+                                skipEmptyCells);
   if (!ret) return false;
 
   return true;
@@ -360,7 +362,7 @@ public:
     int r0, c0, r1, c1;
     m_selection->getSelectedCells(r0, c0, r1, c1);
 
-    pasteCellsWithoutUndo(m_data, r0, c0, r1, c1, true);
+    pasteCellsWithoutUndo(m_data, r0, c0, r1, c1, true, true, false);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
