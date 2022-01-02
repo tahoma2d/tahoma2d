@@ -1393,7 +1393,7 @@ void CellArea::drawCells(QPainter &p, const QRect toBeUpdated) {
         //  drawSoundTextCell(p, row, col);
         else
           drawLevelCell(p, row, col, isReference, showLevelName);
-     }
+      }
     }
 
     // draw vertical line
@@ -1606,8 +1606,6 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
     return;
   }
 
-  if (o->isVerticalTimeline() || !row) drawFrameSeparator(p, row, col, false);
-
   TXshSoundLevelP soundLevel = cell.getSoundLevel();
 
   int r0, r1;
@@ -1647,6 +1645,8 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
   // cell mark
   drawCellMarker(p, markId, rect, true, isNextEmpty);
 
+  if (o->isVerticalTimeline() || !row) drawFrameSeparator(p, row, col, false);
+
   if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
       !m_viewer->orientation()->isVerticalTimeline() &&
       row == m_viewer->getCurrentRow() &&
@@ -1671,7 +1671,7 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
   int offset =
       row - cell.getFrameId().getNumber();  // rows since start of the clip
   int begin      = timeBounds.from();       // time axis
-  int end        = timeBounds.to();
+  int end        = timeBounds.to() + 1;
   int soundPixel = o->rowToFrameAxis(row) -
                    o->rowToFrameAxis(offset);  // pixels since start of clip
 
@@ -2440,13 +2440,24 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
 
   auto getCellInfo = [&](int r) {
     CellInfo ret;
-    ret.row         = r;
-    ret.xy          = m_viewer->positionToXY(CellPosition(r, col));
+    ret.row = r;
+    ret.xy  = m_viewer->positionToXY(CellPosition(r, col));
+    if (r == 0) {
+      if (o->isVerticalTimeline())
+        ret.xy.setY(ret.xy.y() + 1);
+      else
+        ret.xy.setX(ret.xy.x() + 1);
+    }
     QPoint frameAdj = m_viewer->getFrameZoomAdjustment();
     QRect cellRect  = o->rect(PredefinedRect::CELL).translated(ret.xy);
     cellRect.adjust(0, 0, -frameAdj.x(), -frameAdj.y());
-    ret.rect = cellRect.adjusted(1, 1, 0, 1);
-
+    TXshCell nextCell = xsh->getCell(r + 1, col);
+    ret.rect          = cellRect.adjusted(
+        1, 1,
+        (!m_viewer->orientation()->isVerticalTimeline() && !nextCell.isEmpty()
+             ? 2
+             : 0),
+        0);
     ret.markId = xsh->getColumn(col)->getCellColumn()->getCellMark(r);
     ret.nameRect = o->rect(PredefinedRect::CELL_NAME)
                        .translated(ret.xy)
@@ -2538,7 +2549,13 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
       QColor tmpCellColor = (isSelected) ? selectedCellColor : cellColor;
       if (!o->isVerticalTimeline() && info.row != rowTo)
         info.rect.adjust(0, 0, 2, 0);
-      p.fillRect(info.rect, QBrush(tmpCellColor));
+      if (o->isVerticalTimeline())
+        // Paint the cell edge-to-edge, we use LightLineColor with low opacity
+        // to pick up the hue of the cell color to make the separator line more
+        // pleasing to the eye.
+        p.fillRect(info.rect.adjusted(0, 0, 0, 1), QBrush(tmpCellColor));
+      else
+        p.fillRect(info.rect, QBrush(tmpCellColor));
 
       // cell mark
       drawCellMarker(p, info.markId, info.rect, true);
@@ -2641,13 +2658,16 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
         int margin = extraWidth / (2 * textCount);
         // Qt::TextJustificationForced flag is needed to make Qt::AlignJustify
         // to work on the single-line text
-        p.drawText(
-            unitedRect.adjusted(margin, 0, -margin, 0),
-            Qt::TextJustificationForced | Qt::AlignJustify | Qt::AlignVCenter,
-            text);
+        p.drawText(unitedRect.adjusted(margin, 0, -margin, 0),
+                   Qt::AlignHCenter | Qt::AlignBottom, text);
       } else {
         QString elided = elideText(text, fm, unitedRect.width(), "~");
-        p.drawText(unitedRect, Qt::AlignLeft | Qt::AlignVCenter, elided);
+        QFontMetrics metric(font);
+        // If text wider than box, shift box left to display 1st character
+        int charWidth = metric.width(elided, 1);
+        if ((charWidth * 2) > unitedRect.width())
+          unitedRect.adjust(-2, 0, 4, 0);
+        p.drawText(unitedRect, Qt::AlignLeft | Qt::AlignBottom, elided);
       }
     }
 
