@@ -289,6 +289,7 @@ public:
   QString getFfmpegPath() const { return getStringValue(ffmpegPath); }
   int getFfmpegTimeout() { return getIntValue(ffmpegTimeout); }
   QString getFastRenderPath() const { return getStringValue(fastRenderPath); }
+  bool getFfmpegMultiThread() const { return getBoolValue(ffmpegMultiThread); }
   QString getRhubarbPath() const { return getStringValue(rhubarbPath); }
   int getRhubarbTimeout() { return getIntValue(rhubarbTimeout); }
 

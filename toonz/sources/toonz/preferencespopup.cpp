@@ -1046,6 +1046,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {ffmpegPath, tr("Executable Directory:")},
       {ffmpegTimeout, tr("Import/Export Timeout (seconds):")},
       {fastRenderPath, tr("Fast Render Output Directory:")},
+      {ffmpegMultiThread, tr("Allow Multi-Thread in FFMPEG Rendering (UNSTABLE)")},
       {rhubarbPath, tr("Executable Directory:")},
       {rhubarbTimeout, tr("Analyze Audio Timeout (seconds):")},
 
@@ -1648,6 +1649,12 @@ QWidget* PreferencesPopup::createImportExportPage() {
   {
     insertUI(ffmpegPath, ffmpegOptionsLay);
     insertUI(ffmpegTimeout, ffmpegOptionsLay);
+
+    putLabel(
+        tr("Enabling multi-thread rendering will render significantly faster\n"
+           "but a random crash might occur, use at your own risk:"),
+        ffmpegOptionsLay);
+    insertUI(ffmpegMultiThread, ffmpegOptionsLay);
   }
 
   QGridLayout* rhubarbOptionsLay = insertGroupBox(tr("Rhubarb Lip Sync"), lay);
