@@ -46,6 +46,13 @@ class Iwa_FractalNoiseFx final : public TStandardZeraryFx {
     bool cycleEvolution;
     double cycleEvolutionRange;
     double dynamicIntensity;
+
+    bool doConical;
+    double conicalEvolution;
+    double conicalAngle;
+    double cameraFov;
+    double zScale;
+
     bool alphaRendering;
   };
 
@@ -106,6 +113,13 @@ protected:
   // ダイナミックの度合い
   TDoubleParamP m_dynamicIntensity;
 
+  //- - - Conical Noise - - - 
+  TBoolParamP m_doConical;
+  TDoubleParamP m_conicalEvolution;
+  TDoubleParamP m_conicalAngle;
+  TDoubleParamP m_cameraFov;
+  TDoubleParamP m_zScale;
+
   // - - - additional parameters - - -
   TBoolParamP m_alphaRendering;
 
@@ -127,7 +141,7 @@ public:
 
   // For Dynamic and Dynamic Twist patterns, the position offsets using gradient
   // / rotation of the parent pattern
-  TPointD getSamplePos(int x, int y, const TDimension outDim,
+  TPointD getSamplePos(double x, double y, const TDimension outDim,
                        const double *out_buf, const int gen, const double scale,
                        const FNParam &param);
   // convert the noise
