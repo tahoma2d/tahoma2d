@@ -1270,9 +1270,12 @@ void TXsheet::updateFrameCount() {
   m_imp->m_frameCount = 0;
   for (int i = 0; i < m_imp->m_columnSet.getColumnCount(); ++i) {
     TXshColumnP cc = m_imp->m_columnSet.getColumn(i);
-    if (cc && !cc->isEmpty())
-      m_imp->m_frameCount =
-          std::max(m_imp->m_frameCount, cc->getMaxFrame() + 1);
+    if (cc && !cc->isEmpty()) {
+      int maxFrame  = cc->getMaxFrame();
+      TXshCell cell = getCell(maxFrame, i);
+      if (cell.getFrameId().isStopFrame()) maxFrame--;
+      m_imp->m_frameCount = std::max(m_imp->m_frameCount, maxFrame + 1);
+    }
   }
 }
 

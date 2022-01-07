@@ -2354,11 +2354,10 @@ public:
 
         while (!exit) {
             TXshCell cell = TApp::instance()->getCurrentXsheetViewer()->getXsheet()->getCell(currentPos, column);
-            if (cell.isEmpty()) {
+            if (cell.isEmpty() || cell.getFrameId().isStopFrame()) {
                 (direction == up) ? currentPos++ : currentPos--;
                 exit = true;
-            }
-            else
+            } else
                 (direction == up) ? currentPos-- : currentPos++;
         }
 
@@ -2366,15 +2365,19 @@ public:
     }
 
     void execute() override {
-        int col = TApp::instance()->getCurrentColumn()->getColumnIndex();
-        int row = TApp::instance()->getCurrentFrame()->getFrame();
-        TXshCell cell =
-            TApp::instance()->getCurrentXsheetViewer()->getXsheet()->getCell(row, col);
-        if (cell.isEmpty()) return;
+        int col       = TApp::instance()->getCurrentColumn()->getColumnIndex();
+        int row       = TApp::instance()->getCurrentFrame()->getFrame();
+        TXsheet *xsh  = TApp::instance()->getCurrentXsheetViewer()->getXsheet();
+        TXshCell cell = xsh->getCell(row, col);
+        if (cell.isEmpty() || cell.getFrameId().isStopFrame()) return;
         int step, r0, r1;
 
+        xsh->getCellRange(col, r0, r1);
+
         int top = getNonEmptyCell(row, col, Direction::up);
-        int bottom = getNonEmptyCell(row, col, Direction::down);
+        int bottom = (xsh->isImplicitCell(row, col) && row > r1)
+                         ? row
+                         : getNonEmptyCell(row, col, Direction::down);
 
         XsheetGUI::getPlayRange(r0, r1, step);
         XsheetGUI::setPlayRange(top, bottom, step);
