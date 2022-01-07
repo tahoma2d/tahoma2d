@@ -370,14 +370,17 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
   // check the previous row for a stop motion layer
   if (!xl) {
     // Get the last populated cell
-      cell = xsh->getCell(row - 1, col);
-      xl   = cell.m_level.getPointer();
+    cell = xsh->getCell(row - 1, col);
+    xl   = cell.m_level.getPointer();
 
     if (!xl) return;
 
     sl = xl->getSimpleLevel();
 
-    if (sl && m_liveViewImage && sl == m_liveViewPlayer.m_sl) row -= 1;
+    if (sl && m_liveViewImage && sl == m_liveViewPlayer.m_sl)
+      row -= 1;
+    else
+      return;
   }
 
   ZPlacement cameraPlacement;
