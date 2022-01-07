@@ -7,6 +7,7 @@
 #include "toonz/txsheet.h"
 #include "toonz/fxdag.h"
 #include "toonz/txshzeraryfxlevel.h"
+#include "toonz/preferences.h"
 
 #include "tstream.h"
 
@@ -21,6 +22,7 @@ TXshZeraryFxColumn::TXshZeraryFxColumn(int frameCount)
   m_zeraryColumnFx->setColumn(this);
   m_zeraryFxLevel->addRef();
   m_zeraryFxLevel->setColumn(this);
+  if (frameCount <= 0) return;
   for (int i = 0; i < frameCount; i++)
     setCell(i, TXshCell(m_zeraryFxLevel, TFrameId(1)));
 }
@@ -37,8 +39,13 @@ TXshZeraryFxColumn::TXshZeraryFxColumn(const TXshZeraryFxColumn &src)
   m_zeraryFxLevel->setColumn(this);
   m_first = src.m_first;
   int i;
-  for (i = 0; i < (int)src.m_cells.size(); i++)
-    m_cells.push_back(TXshCell(m_zeraryFxLevel, src.m_cells[i].getFrameId()));
+  for (i = 0; i < (int)src.m_cells.size(); i++) {
+    if (Preferences::instance()->isImplicitHoldEnabled() &&
+        src.m_cells[i].getFrameId().isEmptyFrame())
+      m_cells.push_back(TXshCell(0, src.m_cells[i].getFrameId()));
+    else
+      m_cells.push_back(TXshCell(m_zeraryFxLevel, src.m_cells[i].getFrameId()));
+  }
   assert((int)src.m_cells.size() == (int)m_cells.size());
   TFx *fx = src.getZeraryColumnFx()->getZeraryFx();
   if (fx) {
@@ -104,9 +111,13 @@ bool TXshZeraryFxColumn::setCells(int row, int rowCount,
   bool isEmptyColumn = isEmpty() && getZeraryColumnFx()->getZeraryFx() == 0;
   int i;
   for (i = 0; i < rowCount; i++) {
-    if (isEmptyColumn)
-      newCells.push_back(TXshCell(m_zeraryFxLevel, cells[i].getFrameId()));
-    else
+    if (isEmptyColumn) {
+      if (Preferences::instance()->isImplicitHoldEnabled() &&
+          cells[i].getFrameId().isEmptyFrame())
+        newCells.push_back(TXshCell(0, cells[i].getFrameId()));
+      else
+        newCells.push_back(TXshCell(m_zeraryFxLevel, cells[i].getFrameId()));
+    } else
       newCells.push_back(cells[i]);
   }
   // Sto settando delle celle in una colonna nuova, devo settare anche

@@ -11,6 +11,7 @@
 #include "toonz/tcolumnfx.h"
 #include "toonz/fxdag.h"
 #include "toonz/txshlevelcolumn.h"
+#include "toonz/preferences.h"
 
 //-----------------------------------------------------------------------------
 
@@ -194,7 +195,12 @@ void TCellData::cloneZeraryFx(int index, std::vector<TXshCell> &cells) const {
     newFxLevel->setColumn(newFxColumn);
     // replace the zerary fx cells by the new fx
     int r;
-    for (r     = firstNotEmptyIndex; r < (index + 1) * m_rowCount; r++)
-      cells[r] = TXshCell(newFxLevel, m_cells[r].getFrameId());
+    for (r = firstNotEmptyIndex; r < (index + 1) * m_rowCount; r++) {
+      if (Preferences::instance()->isImplicitHoldEnabled() &&
+          m_cells[r].getFrameId().isEmptyFrame())
+        cells[r] = TXshCell(0, m_cells[r].getFrameId());
+      else
+        cells[r] = TXshCell(newFxLevel, m_cells[r].getFrameId());
+    }
   }
 }

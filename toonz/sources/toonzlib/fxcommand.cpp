@@ -16,6 +16,7 @@
 #include "toonz/tfxhandle.h"
 #include "toonz/tcolumnhandle.h"
 #include "toonz/tscenehandle.h"
+#include "toonz/preferences.h"
 #include "historytypes.h"
 
 // TnzBase includes
@@ -309,7 +310,9 @@ TXshZeraryFxColumn *FxCommandUndo::createZeraryFxColumn(TXsheet *xsh, TFx *zfx,
   int frameCount = xsh->getScene()->getFrameCount() - row;
 
   TXshZeraryFxColumn *column =
-      new TXshZeraryFxColumn(frameCount > 0 ? frameCount : 100);
+      new TXshZeraryFxColumn(Preferences::instance()->isImplicitHoldEnabled()
+                                 ? 1
+                                 : (frameCount > 0 ? frameCount : 100));
   column->getZeraryColumnFx()->setZeraryFx(zfx);
   column->insertEmptyCells(0, row);
 
@@ -2541,7 +2544,9 @@ void UndoPasteFxs::initialize(const std::map<TFx *, int> &zeraryFxColumnSize,
       // column with
       // the specified column size
       std::map<TFx *, int>::const_iterator it = zeraryFxColumnSize.find(fx);
-      int rows = (it == zeraryFxColumnSize.end()) ? 100 : it->second;
+      int rows = Preferences::instance()->isImplicitHoldEnabled()
+                     ? 1
+                     : ((it == zeraryFxColumnSize.end()) ? 100 : it->second);
 
       TXshZeraryFxColumn *column = new TXshZeraryFxColumn(rows);
       TZeraryColumnFx *zcfx      = column->getZeraryColumnFx();
