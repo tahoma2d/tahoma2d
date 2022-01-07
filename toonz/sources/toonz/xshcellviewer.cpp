@@ -1886,7 +1886,7 @@ void CellArea::drawEndOfLevelMarker(QPainter &p, QRect rect, bool isStopFrame) {
   QColor levelEndColor = m_viewer->getTextColor();
   QPoint topLeft       = rect.topLeft();
   QPoint topRight      = rect.topRight();
-  if (!o->isVerticalTimeline()) {
+  if (!o->isVerticalTimeline() && isStopFrame) {
     QRect dragRect = o->rect(PredefinedRect::DRAG_AREA);
     topLeft.setY(topLeft.y() + dragRect.height());
     topRight.setY(topRight.y() + dragRect.height());
