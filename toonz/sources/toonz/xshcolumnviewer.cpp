@@ -102,7 +102,7 @@ bool containsRasterLevel(TColumnSelection *selection) {
     if (!cellCol) continue;
 
     int i;
-    for (i = 0; i < cellCol->getMaxFrame() + 1; i++) {
+    for (i = 0; i < cellCol->getMaxFrame(true) + 1; i++) {
       TXshCell cell = cellCol->getCell(i);
       if (cell.isEmpty()) continue;
       TXshSimpleLevel *level = cell.getSimpleLevel();

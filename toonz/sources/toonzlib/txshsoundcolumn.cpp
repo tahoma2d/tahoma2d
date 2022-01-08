@@ -287,7 +287,7 @@ void TXshSoundColumn::saveData(TOStream &os) {
 
 //-----------------------------------------------------------------------------
 
-int TXshSoundColumn::getRange(int &r0, int &r1) const {
+int TXshSoundColumn::getRange(int &r0, int &r1, bool ignoreLastStop) const {
   r0 = getFirstRow();
   r1 = getMaxFrame();
   return r1 - r0 + 1;
@@ -301,7 +301,7 @@ int TXshSoundColumn::getRowCount() const {
 
 //-----------------------------------------------------------------------------
 
-int TXshSoundColumn::getMaxFrame() const {
+int TXshSoundColumn::getMaxFrame(bool ignoreLastStop) const {
   int levelsCount = m_levels.size();
   if (levelsCount == 0) return -1;
   return m_levels.at(levelsCount - 1)->getVisibleEndFrame();

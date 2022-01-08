@@ -401,7 +401,7 @@ bool TXsheet::setCells(int row, int col, int rowCount, const TXshCell cells[]) {
   TXshCellColumn *column = touchColumn(col, type)->getCellColumn();
   if (!column) return false;
 
-  int oldColRowCount = column->getMaxFrame() + 1;
+  int oldColRowCount = column->getMaxFrame(true) + 1;
   bool ret           = column->setCells(row, rowCount, cells);
   if (!ret || column->isLocked()) {
     if (wasColumnEmpty) {
@@ -410,7 +410,7 @@ bool TXsheet::setCells(int row, int col, int rowCount, const TXshCell cells[]) {
     }
     return false;
   }
-  int newColRowCount = column->getMaxFrame() + 1;
+  int newColRowCount = column->getMaxFrame(true) + 1;
 
   TFx *fx = column->getFx();
   if (wasColumnEmpty && fx && fx->getOutputConnectionCount() == 0)
@@ -437,7 +437,7 @@ void TXsheet::insertCells(int row, int col, int rowCount) {
   if (!xshColumn) return;
   xshColumn->insertEmptyCells(row, rowCount);
   // aggiorno il frame count
-  int fc = xshColumn->getMaxFrame() + 1;
+  int fc = xshColumn->getMaxFrame(true) + 1;
   if (fc > m_imp->m_frameCount) m_imp->m_frameCount = fc;
 }
 
@@ -450,7 +450,7 @@ void TXsheet::removeCells(int row, int col, int rowCount) {
   TXshCellColumn *xshCellColumn = column->getCellColumn();
   if (!xshCellColumn) return;
 
-  int oldColRowCount = xshCellColumn->getMaxFrame() + 1;
+  int oldColRowCount = xshCellColumn->getMaxFrame(true) + 1;
   xshCellColumn->removeCells(row, rowCount);
 
   // aggiornamento framecount
@@ -468,7 +468,7 @@ void TXsheet::clearCells(int row, int col, int rowCount) {
   TXshCellColumn *xshCellColumn = column->getCellColumn();
   if (!xshCellColumn) return;
 
-  int oldColRowCount = xshCellColumn->getMaxFrame() + 1;
+  int oldColRowCount = xshCellColumn->getMaxFrame(true) + 1;
   xshCellColumn->clearCells(row, rowCount);
 
   // aggiornamento framecount
