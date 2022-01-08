@@ -338,7 +338,7 @@ bool TXsheet::setCell(int row, int col, const TXshCell &cell) {
   if (cell.isEmpty())
     updateFrameCount();
   else if (row >= m_imp->m_frameCount)
-    m_imp->m_frameCount = row + 1;
+    m_imp->m_frameCount = row + (cell.getFrameId().isStopFrame() ? 0 : 1);
 
   TNotifier::instance()->notify(TXsheetChange());
 
