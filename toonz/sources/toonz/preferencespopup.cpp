@@ -1062,7 +1062,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {EnableAutoStretch, tr("Enable Auto-stretch Frame")},
       {EnableCreationInHoldCells, tr("Enable Creation in Hold Cells")},
       {EnableAutoRenumber, tr("Enable Autorenumber")},
-      {EnableImplicitHold, tr("Enable Implict Hold")},
+      {EnableImplicitHold, tr("Enable Implicit Hold")},
       {vectorSnappingTarget, tr("Vector Snapping:")},
       {saveUnpaintedInCleanup,
        tr("Keep Original Cleaned Up Drawings As Backup")},

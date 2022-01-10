@@ -297,14 +297,14 @@ class ToggleImplicitHoldCommand final : public MenuItemHandler {
 public:
   ToggleImplicitHoldCommand() : MenuItemHandler(MI_ToggleImplicitHold) {}
   void execute() override {
-    bool currentImplictHoldEnabled =
+    bool currentImplicitHoldEnabled =
         Preferences::instance()->isImplicitHoldEnabled();
     if (CommandManager::instance()
             ->getAction(MI_ToggleImplicitHold)
-            ->isChecked() == currentImplictHoldEnabled)
+            ->isChecked() == currentImplicitHoldEnabled)
       return;
     Preferences::instance()->setValue(EnableImplicitHold,
-                                      !currentImplictHoldEnabled);
+                                      !currentImplicitHoldEnabled);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
 } ToggleImplicitHoldCommand;
