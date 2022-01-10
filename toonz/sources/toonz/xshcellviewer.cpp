@@ -2053,7 +2053,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     int levelType;
     m_viewer->getCellTypeAndColors(levelType, cellColor, sideColor, cell,
                                    isSelected);
-    if (isImplicitCell) cellColor.setAlpha(60);
+    if (isImplicitCell) cellColor.setAlpha(m_viewer->getImplicitCellAlpha());
     if (isStopFrame) cellColor.setAlpha(0);
   }
 
@@ -2830,7 +2830,7 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
     cellColor = (isSelected) ? m_viewer->getSelectedPaletteColumnColor()
                              : m_viewer->getPaletteColumnColor();
     sideColor = m_viewer->getPaletteColumnBorderColor();
-    if (isImplicitCell) cellColor.setAlpha(60);
+    if (isImplicitCell) cellColor.setAlpha(m_viewer->getImplicitCellAlpha());
     if (isStopFrame) cellColor.setAlpha(0);
   }
 

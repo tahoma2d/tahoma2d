@@ -349,6 +349,11 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   Q_PROPERTY(QColor SelectedMeshColumnColor READ getSelectedMeshColumnColor
                  WRITE setSelectedMeshColumnColor)
 
+  // Implicit Cell alpha
+  int m_implicitCellAlpha;
+  Q_PROPERTY(int ImplicitCellAlpha READ getImplicitCellAlpha WRITE
+                 setImplicitCellAlpha);
+
   // Table color
   QColor m_tableColor;
   Q_PROPERTY(QColor TableColor READ getTableColor WRITE setTableColor)
@@ -948,6 +953,10 @@ public:
   QColor getSelectedMeshColumnColor() const {
     return m_selectedMeshColumnColor;
   }
+
+  // Implicit Cell Alpha
+  void setImplicitCellAlpha(const int &alpha) { m_implicitCellAlpha = alpha; }
+  int getImplicitCellAlpha() const { return m_implicitCellAlpha; }
 
   // Table node
   void setTableColor(const QColor &color) { m_tableColor = color; }

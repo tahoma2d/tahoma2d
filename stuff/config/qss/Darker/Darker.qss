@@ -2283,6 +2283,7 @@ XsheetViewer {
   qproperty-LightBGColor: #c8c8c8;
   qproperty-DarkBGColor: #b9b9b9;
   qproperty-DarkLineColor: #6e6e6e;
+  qproperty-ImplicitCellAlpha: 60;
   qproperty-TimelineIconLineColor: rgba(0, 0, 0, 0.3);
   qproperty-XsheetColumnNameBgColor: rgba(0, 0, 0, 0);
   qproperty-XsheetDragBarHighlightColor: rgba(255, 255, 255, 0.15);
