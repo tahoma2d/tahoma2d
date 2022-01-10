@@ -322,7 +322,9 @@ bool beforeCellsInsert(TXsheet *xsh, int row, int &col, int rowCount,
   int i              = 0;
   TXshColumn *column = xsh->getColumn(col);
 
-  for (i = 0; i < rowCount && xsh->getCell(row + i, col).isEmpty(); i++) {
+  for (i = 0; i < rowCount && (xsh->getCell(row + i, col).isEmpty() ||
+                               xsh->isImplicitCell(row + i, col));
+       i++) {
   }
   int type = (column && !column->isEmpty()) ? column->getColumnType()
                                             : newLevelColumnType;
