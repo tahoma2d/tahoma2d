@@ -1204,7 +1204,7 @@ void FlipBook::setLevel(const TFilePath &fp, TPalette *palette, int from,
                                  m_framesCount);                         // to
       }
 
-      // An old archived bug says that simulatenous open for read of the same
+      // An old archived bug says that simultaneous open for read of the same
       // tlv are not allowed...
       // if(m_lr && m_lr->getFilePath().getType()=="tlv")
       //  m_lr = TLevelReaderP();
@@ -1638,7 +1638,7 @@ TImageP FlipBook::getCurrentImage(int frame) {
       m_loadboxes[id] = showSub ? m_loadbox : TRect();
     }
 
-    // An old archived bug says that simulatenous open for read of the same tlv
+    // An old archived bug says that simultaneous open for read of the same tlv
     // are not allowed...
     // if(fp.getType()=="tlv")
     //  m_lr = TLevelReaderP();
