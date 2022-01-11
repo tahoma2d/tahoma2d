@@ -103,12 +103,12 @@ class CellArea final : public QWidget {
   void drawSelectionBackground(QPainter &p) const;
   void drawExtenderHandles(QPainter &p);
 
-  void drawDragHandle(QPainter &p, const QPoint &xy,
+  void drawDragHandle(QPainter &p, bool isStart, const QPoint &xy,
                       const QColor &sideColor) const;
   void drawEndOfDragHandle(QPainter &p, bool isEnd, const QPoint &xy,
                            const QColor &cellColor) const;
-  void drawLockedDottedLine(QPainter &p, bool isLocked, const QPoint &xy,
-                            const QColor &cellColor) const;
+  void drawLockedDottedLine(QPainter &p, bool isLocked, bool isStart,
+                            const QPoint &xy, const QColor &cellColor) const;
 
   void drawFrameSeparator(QPainter &p, int row, int col, bool emptyFrame,
                           bool heldFrame = false);
