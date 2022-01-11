@@ -36,7 +36,7 @@ TXshCellColumn::~TXshCellColumn() { m_cells.clear(); }
 
 //-----------------------------------------------------------------------------
 
-int TXshCellColumn::getRange(int &r0, int &r1) const {
+int TXshCellColumn::getRange(int &r0, int &r1, bool ignoreLastStop) const {
   int cellCount = m_cells.size();
   r0            = m_first;
   r1            = r0 + cellCount - 1;
@@ -51,8 +51,10 @@ int TXshCellColumn::getRange(int &r0, int &r1) const {
   r0 = m_first + i;
   for (i = cellCount - 1; i >= 0 && m_cells[i].isEmpty(); i--) {
   }
-
   r1 = m_first + i;
+  if (r1 < m_cells.size() && r1 > r0 && ignoreLastStop &&
+      m_cells[r1].getFrameId().isStopFrame())
+    r1--;
   return r1 - r0 + 1;
 }
 
@@ -70,9 +72,9 @@ int TXshCellColumn::getRowCount() const {
 
 //-----------------------------------------------------------------------------
 
-int TXshCellColumn::getMaxFrame() const {
+int TXshCellColumn::getMaxFrame(bool ignoreLastStop) const {
   int r0, r1;
-  getRange(r0, r1);
+  getRange(r0, r1, ignoreLastStop);
   return r1;
 }
 

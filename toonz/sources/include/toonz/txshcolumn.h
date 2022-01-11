@@ -141,7 +141,7 @@ Constructs a TXshColumn with default value.
   virtual TXshZeraryFxColumn *getZeraryFxColumn() { return 0; }
   virtual TXshMeshColumn *getMeshColumn() { return 0; }
 
-  virtual int getMaxFrame() const = 0;
+  virtual int getMaxFrame(bool ignoreLastStop = false) const = 0;
 
   virtual TXshColumn *clone() const = 0;
 
@@ -219,7 +219,7 @@ If r0=r1=row return false.
 */
   virtual bool getLevelRange(int row, int &r0, int &r1) const = 0;
 
-  virtual int getRange(int &r0, int &r1) const {
+  virtual int getRange(int &r0, int &r1, bool ignoreLastStop = false) const {
     r0 = 0;
     r1 = -1;
     return 0;
@@ -330,7 +330,7 @@ Return not empty cell range. Set \b r0 and \b r1 to first
 and last row with not empty cell.
 \sa isEmpty() and getRowCount()
 */
-  int getRange(int &r0, int &r1) const override;
+  int getRange(int &r0, int &r1, bool ignoreLastStop = false) const override;
   /*!
 Return row count.
 \sa isEmpty() and getRange()
@@ -386,7 +386,7 @@ Clear \b rowCount cells from line \b row, without shift.
   /*!
 Return last row with not empty cell.
 */
-  int getMaxFrame() const override;
+  int getMaxFrame(bool ignoreLastStop = false) const override;
 
   /*!
 Return first not empty row.

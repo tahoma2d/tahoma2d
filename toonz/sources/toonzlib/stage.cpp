@@ -364,22 +364,23 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
   double columnZ        = pegbar->getZ(row);
   double columnNoScaleZ = pegbar->getGlobalNoScaleZ();
 
-  TXshCell cell = xsh->getCell(row, col);
-  TXshLevel *xl = cell.m_level.getPointer();
+  TXshCell cell       = xsh->getCell(row, col);
+  TXshLevel *xl       = cell.m_level.getPointer();
+  TXshSimpleLevel *sl = xl ? xl->getSimpleLevel() : 0;
   // check the previous row for a stop motion layer
   if (!xl) {
+    // Get the last populated cell
     cell = xsh->getCell(row - 1, col);
     xl   = cell.m_level.getPointer();
-    if (!xl) {
+
+    if (!xl) return;
+
+    sl = xl->getSimpleLevel();
+
+    if (sl && m_liveViewImage && sl == m_liveViewPlayer.m_sl)
+      row -= 1;
+    else
       return;
-    } else {
-      xl                  = cell.m_level.getPointer();
-      TXshSimpleLevel *sl = xl->getSimpleLevel();
-      if (sl && m_liveViewImage && sl == m_liveViewPlayer.m_sl) {
-        row -= 1;
-      } else
-        return;
-    }
   }
 
   ZPlacement cameraPlacement;
@@ -393,8 +394,6 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
       columnZ, columnNoScaleZ);
 
   if (!columnBehindCamera) return;
-
-  TXshSimpleLevel *sl = xl->getSimpleLevel();
 
   bool storePlayer =
       sl || (xl->getChildLevel() &&

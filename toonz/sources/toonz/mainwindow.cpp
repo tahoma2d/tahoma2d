@@ -2061,6 +2061,8 @@ void MainWindow::defineActions() {
   createMenuCellsAction(MI_CreateBlankDrawing,
                         QT_TR_NOOP("&Create Blank Drawing"), "Alt+D",
                         "add_cell");
+  createMenuCellsAction(MI_StopFrameHold, QT_TR_NOOP("&Stop Frame Hold"), "",
+                        "stop_frame_hold");
   createMenuCellsAction(MI_Duplicate, QT_TR_NOOP("&Duplicate Drawing  "), "D",
                         "duplicate_drawing");
   createMenuCellsAction(MI_Autorenumber, QT_TR_NOOP("&Autorenumber"), "",
@@ -2501,6 +2503,10 @@ void MainWindow::defineActions() {
   createToggle(MI_ViewerIndicator, QT_TR_NOOP("Toggle Viewer Indicators"), "",
                Preferences::instance()->isViewerIndicatorEnabled(),
                RightClickMenuCommandType);
+  createToggle(MI_ToggleImplicitHold, QT_TR_NOOP("Toggle Implicit Hold"), "",
+               Preferences::instance()->isImplicitHoldEnabled(),
+               MiscCommandType, "implicit_hold",
+               tr("Toggles the implicit hold of a frame to the next frame"));
 
   // Tools
 

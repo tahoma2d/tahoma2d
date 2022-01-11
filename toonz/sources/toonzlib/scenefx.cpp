@@ -111,6 +111,15 @@ public:
     if (!m_cellColumn) return m_frame;
     TXshCell cell = m_cellColumn->getCell(tfloor(frame));
     assert(!cell.isEmpty());
+    if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
+      int r0, r1;
+      m_cellColumn->getRange(r0, r1);
+      for (int r = std::min(r1, frame); r >= r0; r--) {
+        cell = m_cellColumn->getCell(r);
+        if (cell.isEmpty()) continue;
+        break;
+      }
+    }
     return cell.m_frameId.getNumber() - 1;
   }
 
@@ -801,6 +810,15 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
   // Retrieve the corresponding xsheet cell to build up
   /*-- 現在のフレームのセルを取得 --*/
   TXshCell cell  = lcfx->getColumn()->getCell(tfloor(m_frame));
+  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
+    int r0, r1;
+    lcfx->getColumn()->getRange(r0, r1);
+    for (int r = std::min(r1, tfloor(m_frame)); r >= r0; r--) {
+      cell = lcfx->getColumn()->getCell(r);
+      if (cell.isEmpty()) continue;
+      break;
+    }
+  }
   int levelFrame = cell.m_frameId.getNumber() - 1;
 
   /*--  ParticlesFxに繋がっておらず、空セルの場合は 中身無しを返す --*/
@@ -940,7 +958,17 @@ PlacedFx FxBuilder::makePF(TPaletteColumnFx *pcfx) {
   if (!pcfx->getColumn()->isPreviewVisible()) return PlacedFx();
 
   TXshCell cell = pcfx->getColumn()->getCell(tfloor(m_frame));
-  if (cell.isEmpty()) return PlacedFx();
+  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
+    int r0, r1;
+    pcfx->getColumn()->getRange(r0, r1);
+    for (int r = std::min(r1, tfloor(m_frame)); r >= r0; r--) {
+      cell = pcfx->getColumn()->getCell(r);
+      if (cell.isEmpty()) continue;
+      break;
+    }
+  }
+
+  if (cell.isEmpty() || cell.getFrameId().isStopFrame()) return PlacedFx();
 
   PlacedFx pf;
   pf.m_columnIndex = pcfx->getColumn()->getIndex();
@@ -968,6 +996,15 @@ PlacedFx FxBuilder::makePF(TZeraryColumnFx *zcfx) {
     return PlacedFx();
 
   TXshCell cell = zcfx->getColumn()->getCell(tfloor(m_frame));
+  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
+    int r0, r1;
+    zcfx->getColumn()->getRange(r0, r1);
+    for (int r = std::min(r1, tfloor(m_frame)); r >= r0; r--) {
+      cell = zcfx->getColumn()->getCell(r);
+      if (cell.isEmpty()) continue;
+      break;
+    }
+  }
 
   // Build
   PlacedFx pf;
@@ -978,7 +1015,7 @@ PlacedFx FxBuilder::makePF(TZeraryColumnFx *zcfx) {
     return PlacedFx();
 
   // if the cell is empty, only inherits its placement
-  if (cell.isEmpty()) return pf;
+  if (cell.isEmpty() || cell.getFrameId().isStopFrame()) return pf;
 
   // set m_fx only when the current cell is not empty
   pf.m_fx =

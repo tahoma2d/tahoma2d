@@ -169,7 +169,10 @@ void InsertSceneFrameUndo::doInsertSceneFrame(int frame) {
       objectId = TStageObjectId::ColumnId(c);
 
       xsh->insertCells(frame, c);
-      xsh->setCell(frame, c, xsh->getCell(frame + 1, c));
+      TXshCell cell;
+      if (!Preferences::instance()->isImplicitHoldEnabled() && frame > 0)
+        cell = xsh->getCell(frame - 1, c);
+      xsh->setCell(frame, c, cell);
     }
 
     if (!xsh->getColumn(c) || xsh->getColumn(c)->isLocked()) continue;
@@ -288,6 +291,24 @@ public:
   }
 } ToggleAutoStretchCommand;
 
+//=============================================================================
+
+class ToggleImplicitHoldCommand final : public MenuItemHandler {
+public:
+  ToggleImplicitHoldCommand() : MenuItemHandler(MI_ToggleImplicitHold) {}
+  void execute() override {
+    bool currentImplicitHoldEnabled =
+        Preferences::instance()->isImplicitHoldEnabled();
+    if (CommandManager::instance()
+            ->getAction(MI_ToggleImplicitHold)
+            ->isChecked() == currentImplicitHoldEnabled)
+      return;
+    Preferences::instance()->setValue(EnableImplicitHold,
+                                      !currentImplicitHoldEnabled);
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+} ToggleImplicitHoldCommand;
+
 //*****************************************************************************
 //    RemoveSceneFrame  command
 //*****************************************************************************
@@ -314,7 +335,8 @@ public:
 
     for (int c = 0; c != colsCount; ++c) {
       // Store cell
-      m_cells[c] = xsh->getCell(m_frame, c);
+      const TXshCell &cell = xsh->getCell(m_frame, c);
+      m_cells[c] = xsh->isImplicitCell(m_frame, c) ? TXshCell() : cell;
 
       // Store stage object keyframes
       TStageObject *obj = xsh->getStageObject(TStageObjectId::ColumnId(c));
@@ -638,9 +660,10 @@ public:
     int r = m_range.m_r0;
     while (c <= m_range.m_c1) {
       tempCol = c;
-      while (r <= m_range.m_r1) {
+      while (r <= m_range.m_r1 + 1) {
         tempRow = r;
-        if (xsh->getCell(tempRow, tempCol).isEmpty()) {
+        if (xsh->getCell(tempRow, tempCol).isEmpty() ||
+            xsh->isImplicitCell(tempRow, tempCol)) {
           emptyCells.push_back(std::make_pair(tempRow, tempCol));
         }
         r++;
@@ -664,7 +687,7 @@ public:
     int r = m_range.m_r0;
     while (c <= m_range.m_c1) {
       col = c;
-      while (r <= m_range.m_r1) {
+      while (r <= m_range.m_r1 + 1) {
         row        = r;
         bool found = false;
         for (int i = 0; i < emptyCells.size(); i++) {
@@ -677,7 +700,7 @@ public:
           r++;
           continue;
         }
-        changeDrawing(-m_direction, row, col);
+        if (r <= m_range.m_r1) changeDrawing(-m_direction, row, col);
         r++;
       }
       r = m_range.m_r0;
@@ -698,11 +721,18 @@ public:
     int col, row;
     int c = m_range.m_c0;
     int r = m_range.m_r0;
+    TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     while (c <= m_range.m_c1) {
       col = c;
+      // Convert implicit cell at end of selected range into a populated cell
+      if (xsh->isImplicitCell((m_range.m_r1 + 1), col)) {
+        TXshCell origCell = xsh->getCell((m_range.m_r1 + 1), col);
+        xsh->setCell((m_range.m_r1 + 1), col, origCell);
+      }
       while (r <= m_range.m_r1) {
         row = r;
-        changeDrawing(m_direction, row, col);
+        if (row == m_range.m_r0 || !xsh->isImplicitCell(row, col))
+          changeDrawing(m_direction, row, col);
         r++;
       }
       r = m_range.m_r0;
@@ -766,13 +796,16 @@ public:
 
         // Find the 1st populated cell in the column
         if (baseCell.isEmpty()) continue;
+        if (xsh->isImplicitCell(r, c))
+          emptyCells.push_back(std::make_pair(r, c));
 
         FramesMap::key_type frameBaseKey(r, c);
         int frameCount    = 1;
         TXshCell nextCell = xsh->getCell((r + frameCount), c);
         while (nextCell == baseCell ||
                (nextCell.isEmpty() && (r + frameCount) <= m_range.m_r1)) {
-          if (nextCell.isEmpty())
+          if ((r + frameCount) >= xsh->getFrameCount()) break;
+          if (nextCell.isEmpty() || xsh->isImplicitCell((r + frameCount), c))
             emptyCells.push_back(std::make_pair((r + frameCount), c));
 
           frameCount++;
@@ -820,7 +853,10 @@ public:
       while (n < ct->second) {
         int row = ct->first.first + n;
         int col = ct->first.second;
-        DrawingSubtitutionUndo::changeDrawing(m_direction, row, col);
+        if (n == 0 ||
+            !TApp::instance()->getCurrentXsheet()->getXsheet()->isImplicitCell(
+                row, col))
+          DrawingSubtitutionUndo::changeDrawing(m_direction, row, col);
         n++;
       }
     }
@@ -853,10 +889,12 @@ bool DrawingSubtitutionUndo::changeDrawing(int delta, int row, int col) {
       return false;
     cell        = prevCell;
     usePrevCell = true;
-  } else if (!cell.m_level || !(cell.m_level->getSimpleLevel() ||
-                                cell.m_level->getChildLevel() ||
-                                cell.m_level->getSoundTextLevel()))
+  } else if (cell.getFrameId().isStopFrame() || !cell.m_level ||
+             !(cell.m_level->getSimpleLevel() ||
+               cell.m_level->getChildLevel() ||
+               cell.m_level->getSoundTextLevel()))
     return false;
+
   TXshLevel *level = cell.m_level->getSimpleLevel();
   if (!level) level = cell.m_level->getChildLevel();
   if (!level) level = cell.m_level->getSoundTextLevel();
@@ -2316,11 +2354,10 @@ public:
 
         while (!exit) {
             TXshCell cell = TApp::instance()->getCurrentXsheetViewer()->getXsheet()->getCell(currentPos, column);
-            if (cell.isEmpty()) {
+            if (cell.isEmpty() || cell.getFrameId().isStopFrame()) {
                 (direction == up) ? currentPos++ : currentPos--;
                 exit = true;
-            }
-            else
+            } else
                 (direction == up) ? currentPos-- : currentPos++;
         }
 
@@ -2328,15 +2365,19 @@ public:
     }
 
     void execute() override {
-        int col = TApp::instance()->getCurrentColumn()->getColumnIndex();
-        int row = TApp::instance()->getCurrentFrame()->getFrame();
-        TXshCell cell =
-            TApp::instance()->getCurrentXsheetViewer()->getXsheet()->getCell(row, col);
-        if (cell.isEmpty()) return;
+        int col       = TApp::instance()->getCurrentColumn()->getColumnIndex();
+        int row       = TApp::instance()->getCurrentFrame()->getFrame();
+        TXsheet *xsh  = TApp::instance()->getCurrentXsheetViewer()->getXsheet();
+        TXshCell cell = xsh->getCell(row, col);
+        if (cell.isEmpty() || cell.getFrameId().isStopFrame()) return;
         int step, r0, r1;
 
+        xsh->getCellRange(col, r0, r1);
+
         int top = getNonEmptyCell(row, col, Direction::up);
-        int bottom = getNonEmptyCell(row, col, Direction::down);
+        int bottom = (xsh->isImplicitCell(row, col) && row > r1)
+                         ? row
+                         : getNonEmptyCell(row, col, Direction::down);
 
         XsheetGUI::getPlayRange(r0, r1, step);
         XsheetGUI::setPlayRange(top, bottom, step);

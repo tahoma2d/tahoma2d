@@ -61,6 +61,17 @@ TPalette *getPalette(TXshColumn *column, int frame) {
   if (!cellColumn) return 0;
 
   TXshCell cell = cellColumn->getCell(frame);
+  // This is only relevant when Implicit Holds are enabled
+  if (cell.isEmpty()) {
+    int r0, r1;
+    cellColumn->getRange(r0, r1);
+    for (int r = std::min(r1, frame); r >= r0; r--) {
+      cell = cellColumn->getCell(r);
+      if (cell.isEmpty()) continue;
+      break;
+    }
+  }
+
   if (cell.isEmpty()) return 0;
 
   TXshPaletteLevel *pl = cell.m_level->getPaletteLevel();

@@ -53,6 +53,8 @@
 #include "toonz/levelset.h"
 #include "toonz/tstageobjecttree.h"
 #include "toonz/stage.h"
+#include "toonz/txshzeraryfxlevel.h"
+#include "toonz/txshpalettelevel.h"
 #include "vectorizerpopup.h"
 #include "tools/rasterselection.h"
 #include "tools/strokeselection.h"
@@ -1264,6 +1266,47 @@ public:
 
 //-----------------------------------------------------------------------------
 
+class StopFrameHoldUndo final : public TUndo {
+  TXshLevel *m_level;
+  TXshCell m_oldCell;
+  int m_row;
+  int m_col;
+
+public:
+  StopFrameHoldUndo(TXshLevel *level, int row, int col, TXshCell oldCell)
+      : m_level(level), m_row(row), m_col(col), m_oldCell(oldCell) {}
+
+  ~StopFrameHoldUndo() {}
+
+  void undo() const override {
+    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+
+    xsh->clearCells(m_row, m_col, 1);
+    xsh->setCell(m_row, m_col, m_oldCell);
+
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  void redo() const override {
+    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+
+    xsh->setCell(m_row, m_col, TXshCell(m_level, TFrameId::STOP_FRAME));
+
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override {
+    return QObject::tr("Set Stop Frame Hold");
+  }
+
+  int getHistoryType() override { return HistoryType::Xsheet; }
+  //-----------------------------------------------------------------------------
+};
+
+//-----------------------------------------------------------------------------
+
 class DuplicateDrawingUndo final : public ToolUtils::TToolUndo {
   TFrameId origFrameId;
   TFrameId dupFrameId;
@@ -1511,6 +1554,7 @@ void TCellSelection::enableCommands() {
                 &TCellSelection::createBlankDrawings);
   enableCommand(this, MI_Duplicate, &TCellSelection::duplicateFrames);
   enableCommand(this, MI_PasteDuplicate, &TCellSelection::pasteDuplicateCells);
+  enableCommand(this, MI_StopFrameHold, &TCellSelection::stopFrameHold);
 }
 //-----------------------------------------------------------------------------
 // Used in RenameCellField::eventFilter()
@@ -1555,7 +1599,8 @@ bool TCellSelection::isEnabledCommand(
                                         MI_ConvertToToonzRaster,
                                         MI_ConvertVectorToVector,
                                         MI_CreateBlankDrawing,
-                                        MI_FillEmptyCell};
+                                        MI_FillEmptyCell,
+                                        MI_StopFrameHold};
   return commands.contains(commandId);
 }
 
@@ -2714,8 +2759,9 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
 
   TXshCell cell       = xsh->getCell(row, col);
   TXshSimpleLevel *sl = cell.getSimpleLevel();
+  bool isStopFrame = cell.getFrameId().isStopFrame();
 
-  if (!img || !sl) {
+  if ((!img || !sl) && !isStopFrame) {
     //----- Restore previous states of autocreation
     if (!isAutoCreateEnabled)
       Preferences::instance()->setValue(EnableAutocreation, false, false);
@@ -2738,8 +2784,12 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
                                         false);
     //------------------
     if (!multiple)
-      DVGui::warning(QObject::tr(
-          "Unable to replace the current drawing with a blank drawing"));
+      if (isStopFrame)
+        DVGui::warning(QObject::tr(
+            "Unable to replace a Stop Frame Hold with a blank drawing"));
+      else
+        DVGui::warning(QObject::tr(
+            "Unable to replace the current drawing with a blank drawing"));
     return;
   }
 
@@ -2787,6 +2837,98 @@ void TCellSelection::createBlankDrawings() {
 
 //-----------------------------------------------------------------------------
 
+void TCellSelection::stopFrameHold(int row, int col, bool multiple) {
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+
+  if (col < 0) {
+    if (!multiple)
+      DVGui::warning(QObject::tr(
+          "Unable to create a stop frame hold on the camera column"));
+    return;
+  }
+
+  TXshColumn *column = xsh->getColumn(col);
+  if (column && column->isLocked()) {
+    if (!multiple) DVGui::warning(QObject::tr("The current column is locked"));
+    return;
+  }
+
+  TApp::instance()->getCurrentColumn()->setColumnIndex(col);
+  TApp::instance()->getCurrentFrame()->setCurrentFrame(row + 1);
+
+  TXshLevel *level = TApp::instance()->getCurrentLevel()->getLevel();
+  if (!level) {
+    int r0, r1;
+    xsh->getCellRange(col, r0, r1);
+    for (int r = std::min(r1, row); r >= r0; r--) {
+      TXshCell cell = xsh->getCell(r, col);
+      if (cell.isEmpty()) continue;
+      level = cell.m_level.getPointer();
+      if (!level) continue;
+      break;
+    }
+  }
+  if (level) {
+    int levelType = level->getType();
+    if (levelType == SND_XSHLEVEL || levelType == SND_TXT_XSHLEVEL) {
+      if (!multiple)
+        DVGui::warning(QObject::tr(
+            "Cannot create a stop frame hold on the current column"));
+      return;
+    }
+  } else {
+    if (!multiple)
+      DVGui::warning(QObject::tr(
+          "Cannot create a stop from hold on a column without a level"));
+    return;
+  }
+
+  TXshLevel *lvl = level->getSimpleLevel();
+  if (!lvl) lvl  = level->getChildLevel();
+  if (!lvl) lvl  = dynamic_cast<TXshLevel *>(level->getPaletteLevel());
+  if (!lvl) lvl  = dynamic_cast<TXshLevel *>(level->getZeraryFxLevel());
+
+  if (!lvl) {
+    if (!multiple)
+      DVGui::warning(QObject::tr(
+          "Unable to create a stop frame hold on the current column"));
+    return;
+  }
+
+  TXshCell cell;
+  if (!xsh->isImplicitCell(row, col)) cell = xsh->getCell(row, col);
+
+  StopFrameHoldUndo *undo = new StopFrameHoldUndo(lvl, row, col, cell);
+  TUndoManager::manager()->add(undo);
+
+  undo->redo();
+}
+
+//-----------------------------------------------------------------------------
+
+void TCellSelection::stopFrameHold() {
+  int col = TApp::instance()->getCurrentColumn()->getColumnIndex();
+  int row = TApp::instance()->getCurrentFrame()->getFrameIndex();
+
+  int r0, c0, r1, c1;
+  getSelectedCells(r0, c0, r1, c1);
+
+  bool multiple = (r1 - r0 > 1) || (c1 - c0 > 1);
+
+  TUndoManager::manager()->beginBlock();
+  for (int c = c0; c <= c1; c++) {
+    for (int r = r0; r <= r1; r++) {
+      stopFrameHold(r, c, multiple);
+    }
+  }
+  TUndoManager::manager()->endBlock();
+
+  TApp::instance()->getCurrentColumn()->setColumnIndex(col);
+  TApp::instance()->getCurrentFrame()->setCurrentFrame(row + 1);
+}
+
+//-----------------------------------------------------------------------------
+
 void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
@@ -2811,7 +2953,7 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
       Preferences::instance()->isAnimationSheetEnabled()) {
     int r0, r1;
     xsh->getCellRange(col, r0, r1);
-    for (int r = std::min(r1, row); r > r0; r--) {
+    for (int r = std::min(r1, row); r >= r0; r--) {
       TXshCell cell = xsh->getCell(r, col);
       if (cell.isEmpty()) continue;
       level = cell.m_level.getPointer();
@@ -2838,7 +2980,6 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
 
   TXshCell targetCell = xsh->getCell(row, col);
   TXshCell prevCell   = xsh->getCell(row - 1, col);
-  ;
 
   // check if we use the current cell to duplicate or the previous cell
   if (!targetCell.isEmpty() && targetCell != prevCell) {
@@ -2847,6 +2988,12 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
     prevCell = targetCell;
     TApp::instance()->getCurrentFrame()->setCurrentFrame(row + 2);
     row++;
+  }
+
+  if (prevCell.getFrameId().isStopFrame()) {
+    if (!xsh->isImplicitCell(row - 1, col) && !multiple)
+      DVGui::warning(QObject::tr("Cannot duplicate a Stop Frame Hold"));
+    return;
   }
 
   if (prevCell.isEmpty() || !(prevCell.m_level->getSimpleLevel())) return;

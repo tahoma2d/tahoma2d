@@ -129,11 +129,11 @@ public:
   void saveData(TOStream &os) override;
 
   /*! r0 : min row not empty, r1 : max row not empty. Return row count.*/
-  int getRange(int &r0, int &r1) const override;
+  int getRange(int &r0, int &r1, bool ignoreLastStop = false) const override;
   /*! Last not empty row - first not empty row. */
   int getRowCount() const override;
   /*! Return max row not empty. */
-  int getMaxFrame() const override;
+  int getMaxFrame(bool ignoreLastStop = false) const override;
   /*! Return min row not empty.*/
   int getFirstRow() const override;
 

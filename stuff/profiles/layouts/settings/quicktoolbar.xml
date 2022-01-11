@@ -3,6 +3,7 @@
     <command>MI_ToggleAutoCreate</command>
     <command>MI_ToggleCreationInHoldCells</command>
     <command>MI_ToggleAutoStretch</command>
+    <command>MI_ToggleImplicitHold</command>
     <separator/>
     <command>MI_NewVectorLevel</command>
     <command>MI_NewToonzRasterLevel</command>

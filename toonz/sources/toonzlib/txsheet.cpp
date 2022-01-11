@@ -241,7 +241,49 @@ const TXshCell &TXsheet::getCell(const CellPosition &pos) const {
   if (!column) return emptyCell;
   TXshCellColumn *xshColumn = column->getCellColumn();
   if (!xshColumn) return emptyCell;
-  return xshColumn->getCell(pos.frame());
+  int frame = pos.frame();
+  TXshCell cell = xshColumn->getCell(frame);
+  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
+    int r0, r1;
+    xshColumn->getRange(r0, r1);
+    for (int r = std::min(r1, pos.frame()); r >= r0; r--) {
+      TXshCell tempCell = xshColumn->getCell(r);
+      if (tempCell.isEmpty()) continue;
+      if (tempCell.getSoundLevel() || tempCell.getSoundTextLevel())
+        return emptyCell;
+      if (tempCell.getFrameId().isStopFrame() && cell.isEmpty())
+        return emptyCell;
+      frame = r;
+      break;
+    }
+  }
+  return xshColumn->getCell(frame);
+}
+
+//-----------------------------------------------------------------------------
+
+bool TXsheet::isImplicitCell(int row, int col) const {
+  return isImplicitCell(CellPosition(row, col));
+}
+
+bool TXsheet::isImplicitCell(const CellPosition &pos) const {
+  if (!Preferences::instance()->isImplicitHoldEnabled()) return false;
+
+  TXshColumnP column = m_imp->m_columnSet.getColumn(pos.layer());
+  if (!column) return false;
+  TXshCellColumn *xshColumn = column->getCellColumn();
+  if (!xshColumn) return false;
+  TXshCell tempCell = xshColumn->getCell(pos.frame());
+  if (!tempCell.isEmpty()) return false;
+
+  int r0, r1;
+  xshColumn->getRange(r0, r1);
+  for (int r = std::min(r1, pos.frame()); r >= r0; r--) {
+    tempCell = xshColumn->getCell(r);
+    if (!tempCell.isEmpty()) return true;
+    if (tempCell.getFrameId().isStopFrame()) return false;
+  }
+  return false;
 }
 
 //-----------------------------------------------------------------------------
@@ -251,8 +293,7 @@ bool TXsheet::setCell(int row, int col, const TXshCell &cell) {
 
   bool wasColumnEmpty = isColumnEmpty(col);
   TXshCellColumn *cellColumn;
-
-  if (!cell.isEmpty()) {
+  if (!cell.isEmpty() && !isImplicitCell(row, col)) {
     TXshLevel *level = cell.m_level.getPointer();
     assert(level);
 
@@ -297,7 +338,7 @@ bool TXsheet::setCell(int row, int col, const TXshCell &cell) {
   if (cell.isEmpty())
     updateFrameCount();
   else if (row >= m_imp->m_frameCount)
-    m_imp->m_frameCount = row + 1;
+    m_imp->m_frameCount = row + (cell.getFrameId().isStopFrame() ? 0 : 1);
 
   TNotifier::instance()->notify(TXsheetChange());
 
@@ -360,7 +401,7 @@ bool TXsheet::setCells(int row, int col, int rowCount, const TXshCell cells[]) {
   TXshCellColumn *column = touchColumn(col, type)->getCellColumn();
   if (!column) return false;
 
-  int oldColRowCount = column->getMaxFrame() + 1;
+  int oldColRowCount = column->getMaxFrame(true) + 1;
   bool ret           = column->setCells(row, rowCount, cells);
   if (!ret || column->isLocked()) {
     if (wasColumnEmpty) {
@@ -369,7 +410,7 @@ bool TXsheet::setCells(int row, int col, int rowCount, const TXshCell cells[]) {
     }
     return false;
   }
-  int newColRowCount = column->getMaxFrame() + 1;
+  int newColRowCount = column->getMaxFrame(true) + 1;
 
   TFx *fx = column->getFx();
   if (wasColumnEmpty && fx && fx->getOutputConnectionCount() == 0)
@@ -396,7 +437,7 @@ void TXsheet::insertCells(int row, int col, int rowCount) {
   if (!xshColumn) return;
   xshColumn->insertEmptyCells(row, rowCount);
   // aggiorno il frame count
-  int fc = xshColumn->getMaxFrame() + 1;
+  int fc = xshColumn->getMaxFrame(true) + 1;
   if (fc > m_imp->m_frameCount) m_imp->m_frameCount = fc;
 }
 
@@ -409,7 +450,7 @@ void TXsheet::removeCells(int row, int col, int rowCount) {
   TXshCellColumn *xshCellColumn = column->getCellColumn();
   if (!xshCellColumn) return;
 
-  int oldColRowCount = xshCellColumn->getMaxFrame() + 1;
+  int oldColRowCount = xshCellColumn->getMaxFrame(true) + 1;
   xshCellColumn->removeCells(row, rowCount);
 
   // aggiornamento framecount
@@ -427,7 +468,7 @@ void TXsheet::clearCells(int row, int col, int rowCount) {
   TXshCellColumn *xshCellColumn = column->getCellColumn();
   if (!xshCellColumn) return;
 
-  int oldColRowCount = xshCellColumn->getMaxFrame() + 1;
+  int oldColRowCount = xshCellColumn->getMaxFrame(true) + 1;
   xshCellColumn->clearCells(row, rowCount);
 
   // aggiornamento framecount
@@ -636,8 +677,12 @@ void TXsheet::reverseCells(int r0, int c0, int r1, int c1) {
   for (int j = c0; j <= c1; j++) {
     int i1, i2;
     for (i1 = r0, i2 = r1; i1 < i2; i1++, i2--) {
-      TXshCell app1 = getCell(CellPosition(i1, j));
-      TXshCell app2 = getCell(CellPosition(i2, j));
+      TXshCell app1;
+      if (!isImplicitCell(CellPosition(i1, j)))
+        app1 = getCell(CellPosition(i1, j));
+      TXshCell app2;
+      if (!isImplicitCell(CellPosition(i2, j)))
+        app2 = getCell(CellPosition(i2, j));
       setCell(i1, j, app2);
       setCell(i2, j, app1);
     }
@@ -654,7 +699,9 @@ void TXsheet::swingCells(int r0, int c0, int r1, int c1) {
 
   for (int j = c0; j <= c1; j++) {
     for (int i1 = r0Mod, i2 = r1 - 1; i2 >= r0; i1++, i2--) {
-      TXshCell cell = getCell(CellPosition(i2, j));
+      TXshCell cell;
+      if (!isImplicitCell(CellPosition(i2, j)))
+        cell = getCell(CellPosition(i2, j));
       setCell(i1, j, cell);
     }
   }
@@ -684,14 +731,17 @@ bool TXsheet::incrementCells(int r0, int c0, int r1, int c1,
       if (getCell(CellPosition(i + 1, j)).isEmpty()) continue;
 
       int frame1 = getCell(CellPosition(i, j)).getFrameId().getNumber();
-      if (frame1 == -1) break;
+      if (frame1 == TFrameId::EMPTY_FRAME || frame1 == TFrameId::STOP_FRAME)
+        break;
       while (!getCell(CellPosition(i + 1, j)).isEmpty() &&
+             !getCell(CellPosition(i + 1, j)).getFrameId().isStopFrame() &&
              getCell(CellPosition(i + 1, j)).getFrameId().getNumber() ==
                  getCell(CellPosition(i, j)).getFrameId().getNumber())
         i++, count++;
 
       int frame2 = getCell(CellPosition(i + 1, j)).getFrameId().getNumber();
-      if (frame2 == -1) break;
+      if (frame2 == TFrameId::EMPTY_FRAME || frame2 == TFrameId::STOP_FRAME)
+        break;
 
       if (frame1 + count == frame2)
         continue;
@@ -699,19 +749,26 @@ bool TXsheet::incrementCells(int r0, int c0, int r1, int c1,
       {
         int numCells = frame2 - frame1 - count;
         insertCells(i + 1, j, numCells);
+        TXshCell cell(0, TFrameId::NO_FRAME);
         forUndo.push_back(std::pair<TRect, TXshCell>(
-            TRect(i + 1, j, i + 1 + numCells - 1, j), TXshCell()));
-        for (int k = 1; k <= numCells; k++)
-          setCell(i + k, j, getCell(CellPosition(i, j)));
+            TRect(i + 1, j, i + 1 + numCells - 1, j), cell));
+        for (int k = 1; k <= numCells; k++) {
+          TXshCell cell;
+          if (!isImplicitCell(CellPosition(i + k, j)))
+            cell = getCell(CellPosition(i, j));
+          setCell(i + k, j, cell);
+        }
         i += numCells;
         r1 += numCells;
       } else  // remove
       {
         int numCells = count - frame2 + frame1;
         i            = i - numCells;
-        forUndo.push_back(
-            std::pair<TRect, TXshCell>(TRect(i + 1, j, i + 1 + numCells - 1, j),
-                                       getCell(CellPosition(i + 1, j))));
+        TXshCell cell;
+        if (!isImplicitCell(CellPosition(i + 1, j)))
+          cell = getCell(CellPosition(i + 1, j));
+        forUndo.push_back(std::pair<TRect, TXshCell>(
+            TRect(i + 1, j, i + 1 + numCells - 1, j), cell));
         removeCells(i + 1, j, numCells);
         r1 -= numCells;
       }
@@ -728,8 +785,13 @@ void TXsheet::duplicateCells(int r0, int c0, int r1, int c1, int upTo) {
 
   for (int j = c0; j <= c1; j++) {
     insertCells(r1 + 1, j, upTo - (r1 + 1) + 1);
-    for (int i = r1 + 1; i <= upTo; i++)
-      setCell(i, j, getCell(CellPosition(r0 + ((i - (r1 + 1)) % chunk), j)));
+    for (int i = r1 + 1; i <= upTo; i++) {
+      int row = r0 + ((i - (r1 + 1)) % chunk);
+      TXshCell cell;
+      if (!isImplicitCell(CellPosition(row, j)))
+        cell = getCell(CellPosition(row, j));
+      setCell(i, j, cell);
+    }
   }
 }
 
@@ -746,18 +808,20 @@ void TXsheet::stepCells(int r0, int c0, int r1, int c1, int type) {
   int k = 0;
   for (int r = r0; r <= r1; r++)
     for (int c = c0; c <= c1; c++) {
-      cells[k++] = getCell(CellPosition(r, c));
+      const TXshCell &cell = getCell(CellPosition(r, c));
+      cells[k++] = isImplicitCell(CellPosition(r, c)) ? TXshCell() : cell;
     }
 
   int nrows = nr * (type - 1);
 
   for (int c = c0; c <= c1; ++c) insertCells(r1 + 1, c, nrows);
 
+  bool useImplicitHold = Preferences::instance()->isImplicitHoldEnabled();
   for (int j = c0; j <= c1; j++) {
     int i, k;
     for (i = r0, k = j - c0; k < size; k += nc) {
       for (int i1 = 0; i1 < type; i1++) {
-        if (cells[k].isEmpty())
+        if (cells[k].isEmpty() || (useImplicitHold && i1 > 0))
           clearCells(i + i1, j);
         else
           setCell(i + i1, j, cells[k]);
@@ -772,13 +836,18 @@ void TXsheet::stepCells(int r0, int c0, int r1, int c1, int type) {
 void TXsheet::increaseStepCells(int r0, int c0, int &r1, int c1) {
   int c, size = r1 - r0 + 1;
   QList<int> ends;
+  bool useImplicit = Preferences::instance()->isImplicitHoldEnabled();
   for (c = c0; c <= c1; c++) {
     int r = r0, i = 0, rEnd = r1;
     while (r <= rEnd) {
       TXshCell cell = getCell(CellPosition(r, c));
       if (!cell.isEmpty()) {
-        insertCells(r, c);
-        setCell(r, c, cell);
+        if (useImplicit)
+          insertCells(r + 1, c);
+        else {
+          insertCells(r, c);
+          setCell(r, c, cell);
+        }
         rEnd++;
         r++;
         while (cell == getCell(CellPosition(r, c)) && r <= rEnd) r++;
@@ -848,7 +917,10 @@ void TXsheet::eachCells(int r0, int c0, int r1, int c1, int type) {
   for (j = r0, i = 0; i < size;
        j += type)  // in cells copio il contenuto delle celle che mi interessano
   {
-    for (k = c0; k <= c1; k++, i++) cells[i] = getCell(CellPosition(j, k));
+    for (k = c0; k <= c1; k++, i++) {
+      const TXshCell &cell = getCell(CellPosition(j, k));
+      cells[i] = isImplicitCell(j, k) ? TXshCell() : cell;
+    }
   }
 
   int c;
@@ -880,18 +952,28 @@ int TXsheet::reframeCells(int r0, int r1, int col, int type, int withBlank) {
   cells.clear();
 
   for (int r = r0; r <= r1; r++) {
-    if (cells.size() == 0 || cells.last() != getCell(CellPosition(r, col)))
-      cells.push_back(getCell(CellPosition(r, col)));
+    const TXshCell &cell = getCell(CellPosition(r, col));
+    if (cells.size() == 0 || cells.last() != cell) {
+      if (cell.isEmpty() && cells.last().getFrameId() == TFrameId::STOP_FRAME)
+        continue;
+      cells.push_back(cell);
+    }
   }
 
   // if withBlank is greater than -1, remove empty cells from cell order
   if (withBlank >= 0) {
     auto itr = cells.begin();
     while (itr != cells.end()) {
-      if ((*itr).isEmpty())
+      if ((*itr).isEmpty() || (*itr).getFrameId().isStopFrame())
         itr = cells.erase(itr);
       else
         itr++;
+    }
+
+    // Convert implicit cell at end of selected range into a populated cell
+    if (withBlank > 0 && isImplicitCell((r1 + 1), col)) {
+      const TXshCell &origCell = getCell((r1 + 1), col);
+      setCell((r1 + 1), col, origCell);
     }
   }
 
@@ -913,9 +995,13 @@ int TXsheet::reframeCells(int r0, int r1, int col, int type, int withBlank) {
     removeCells(r0 + nrows, col, nr - nrows);
   }
 
+  bool useImplicitHold = Preferences::instance()->isImplicitHoldEnabled();
   for (int i = r0, k = 0; i < r0 + nrows; k++) {
+    TXshLevelP level = cells[k].m_level;
+    if (useImplicitHold && !level) level = getCell(i, col).m_level;
     for (int i1 = 0; i1 < type; i1++) {
-      if (cells[k].isEmpty())
+      // Cell is empty, find last level
+      if (cells[k].isEmpty() || (useImplicitHold && i1 > 0))
         clearCells(i + i1, col);
       else
         setCell(i + i1, col, cells[k]);
@@ -924,7 +1010,10 @@ int TXsheet::reframeCells(int r0, int r1, int col, int type, int withBlank) {
 
     if (withBlank > 0) {
       for (int i1 = 0; i1 < withBlank * type; i1++) {
-        clearCells(i + i1, col);
+        if (useImplicitHold && i1 == 0)
+          setCell(i + i1, col, TXshCell(level, TFrameId::STOP_FRAME));
+        else
+          clearCells(i + i1, col);
       }
       i += withBlank * type;
     }
@@ -1008,6 +1097,7 @@ void TXsheet::rolldownCells(int r0, int c0, int r1, int c1) {
                 If nr>r1-r0+1 add cells, otherwise remove cells. */
 void TXsheet::timeStretch(int r0, int c0, int r1, int c1, int nr) {
   int oldNr = r1 - r0 + 1;
+  bool useImplicitHold = Preferences::instance()->isImplicitHoldEnabled();
   if (nr > oldNr) /* ingrandisce */
   {
     int c;
@@ -1019,9 +1109,14 @@ void TXsheet::timeStretch(int r0, int c0, int r1, int c1, int nr) {
       getCells(r0, c, oldNr, cells.get());
       insertCells(r0 + 1, c, dn);
       int i;
-      for (i = nr - 1; i >= 0; i--) {
+      for (i = 0; i < nr; i++) {
         int j = i * double(oldNr) / double(nr);
-        if (j < i) setCell(i + r0, c, cells[j]);
+        if (j < i) {
+          int prevj = (i - 1) * double(oldNr) / double(nr);
+          TXshCell cell =
+              (useImplicitHold && j == prevj) ? TXshCell() : cells[j];
+          setCell(i + r0, c, cell);
+        }
       }
     }
   } else /* rimpicciolisce */
@@ -1035,7 +1130,12 @@ void TXsheet::timeStretch(int r0, int c0, int r1, int c1, int nr) {
       int i;
       for (i = 0; i < nr; i++) {
         int j = i * double(oldNr) / double(nr);
-        if (j > i) setCell(i + r0, c, cells[j]);
+        if (j > i) {
+          int prevj = (i - 1) * double(oldNr) / double(nr);
+          TXshCell cell =
+              (useImplicitHold && j == prevj) ? TXshCell() : cells[j];
+          setCell(i + r0, c, cell);
+        }
       }
       removeCells(r1 - dn + 1, c, dn);
     }
@@ -1170,9 +1270,12 @@ void TXsheet::updateFrameCount() {
   m_imp->m_frameCount = 0;
   for (int i = 0; i < m_imp->m_columnSet.getColumnCount(); ++i) {
     TXshColumnP cc = m_imp->m_columnSet.getColumn(i);
-    if (cc && !cc->isEmpty())
-      m_imp->m_frameCount =
-          std::max(m_imp->m_frameCount, cc->getMaxFrame() + 1);
+    if (cc && !cc->isEmpty()) {
+      int maxFrame  = cc->getMaxFrame();
+      TXshCell cell = getCell(maxFrame, i);
+      if (cell.getFrameId().isStopFrame()) maxFrame--;
+      m_imp->m_frameCount = std::max(m_imp->m_frameCount, maxFrame + 1);
+    }
   }
 }
 
@@ -1744,13 +1847,22 @@ void TXsheet::autoInputCellNumbers(int increment, int interval, int step,
   int rowUpTo = (r1 == -1) ? rowsCount - 1
                            : ((isOverwrite) ? std::min(r1, r0 + rowsCount - 1)
                                             : r0 + rowsCount - 1);
+  bool useImplicitHold = Preferences::instance()->isImplicitHoldEnabled();
+
   // for each column
   for (int c = 0; c < columnIndices.size(); c++) {
     int columnIndex  = columnIndices.at(c);
     TXshLevelP level = levels.at(c);
 
     // on insertion, insert empty cells first
-    if (!isOverwrite) insertCells(r0, columnIndex, rowsCount);
+    if (!isOverwrite) {
+      // If implicit cell, convert to real cell
+      if (isImplicitCell(r0, columnIndex)) {
+        TXshCell cell = getCell(r0, columnIndex);
+        setCell(r0, columnIndex, cell);
+      }
+      insertCells(r0, columnIndex, rowsCount);
+    }
 
     // obtain fids to be input
     std::vector<TFrameId> fids;
@@ -1794,11 +1906,19 @@ void TXsheet::autoInputCellNumbers(int increment, int interval, int step,
     int step_interv_itr = 0;
     while (row <= rowUpTo) {
       // input cell
-      if (step_interv_itr < step)
-        setCell(row, columnIndex, TXshCell(level, fids.at(fid_itr)));
+      if (step_interv_itr < step) {
+        TXshCell cell;
+        if (useImplicitHold && step_interv_itr == 0)
+          cell = TXshCell(level, fids.at(fid_itr));
+        setCell(row, columnIndex, cell);
+      }
       // .. or set empty cell as interval
-      else
-        setCell(row, columnIndex, TXshCell());
+      else {
+        TXshCell emptyCell;
+        if (useImplicitHold && step_interv_itr == step)
+          emptyCell = TXshCell(level, TFrameId::STOP_FRAME);
+        setCell(row, columnIndex, emptyCell);
+      }
 
       // increment
       step_interv_itr++;

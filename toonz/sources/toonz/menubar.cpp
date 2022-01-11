@@ -537,6 +537,7 @@ void TopBar::loadMenubar() {
   addMenuItem(cellsMenu, MI_Autorenumber);
   addMenuItem(cellsMenu, MI_CreateBlankDrawing);
   addMenuItem(cellsMenu, MI_Duplicate);
+  addMenuItem(cellsMenu, MI_StopFrameHold);
   addMenuItem(cellsMenu, MI_MergeFrames);
   addMenuItem(cellsMenu, MI_CloneLevel);
   cellsMenu->addSeparator();

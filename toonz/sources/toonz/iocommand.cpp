@@ -322,7 +322,9 @@ bool beforeCellsInsert(TXsheet *xsh, int row, int &col, int rowCount,
   int i              = 0;
   TXshColumn *column = xsh->getColumn(col);
 
-  for (i = 0; i < rowCount && xsh->getCell(row + i, col).isEmpty(); i++) {
+  for (i = 0; i < rowCount && (xsh->getCell(row + i, col).isEmpty() ||
+                               xsh->isImplicitCell(row + i, col));
+       i++) {
   }
   int type = (column && !column->isEmpty()) ? column->getColumnType()
                                             : newLevelColumnType;
@@ -508,8 +510,10 @@ public:
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (c = m_col0; c <= m_col1; c++)
       for (r = m_row0; r <= m_row1; r++) {
-        TXshSimpleLevel *oldLevel = xsh->getCell(r, c).getSimpleLevel();
-        TFrameId fid              = xsh->getCell(r, c).getFrameId();
+        TXshCell cell;
+        if (!xsh->isImplicitCell(r, c)) cell = xsh->getCell(r, c);
+        TXshSimpleLevel *oldLevel = cell.getSimpleLevel();
+        TFrameId fid              = cell.getFrameId();
         QPair<int, int> cellId(r, c);
         m_oldLevels[cellId] = QPair<TXshSimpleLevelP, TFrameId>(oldLevel, fid);
       }

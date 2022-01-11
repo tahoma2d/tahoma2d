@@ -90,6 +90,7 @@ enum PreferencesItemId {
   EnableAutocreation,
   NumberingSystem,
   EnableAutoStretch,
+  EnableImplicitHold,
   EnableCreationInHoldCells,
   EnableAutoRenumber,
   vectorSnappingTarget,

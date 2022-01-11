@@ -1272,7 +1272,7 @@ void RowArea::contextMenuEvent(QContextMenuEvent *event) {
 bool RowArea::canSetAutoMarkers() {
   TXshCell cell =
       m_viewer->getXsheet()->getCell(m_row, m_viewer->getCurrentColumn());
-  return cell.isEmpty() ? false : true;
+  return cell.isEmpty() || cell.getFrameId().isStopFrame() ? false : true;
 }
 
 //-----------------------------------------------------------------------------
