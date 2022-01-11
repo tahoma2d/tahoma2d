@@ -2584,7 +2584,7 @@ void ExportXsheetPdfPopup::onExport() {
         tr("The file %1 already exists.\nDo you want to overwrite it?")
             .arg(fp.getQString());
     int ret =
-        DVGui::MsgBox(question, QObject::tr("Ovewrite"), QObject::tr("Cancel"));
+        DVGui::MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Cancel"));
     if (ret == 0 || ret == 2) {
       return;
     }
@@ -2654,7 +2654,7 @@ void ExportXsheetPdfPopup::onExportPNG() {
         tr("The file %1 already exists.\nDo you want to overwrite it?")
             .arg(fp.getQString());
     int ret =
-        DVGui::MsgBox(question, QObject::tr("Ovewrite"), QObject::tr("Cancel"));
+        DVGui::MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Cancel"));
     if (ret == 0 || ret == 2) {
       return;
     }

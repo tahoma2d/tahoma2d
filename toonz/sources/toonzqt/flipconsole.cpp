@@ -178,7 +178,7 @@ void PlaybackExecutor::run() {
       1000000000 / (qint64)abs(m_fps);  // User-required time between frames
 
   qint64 emissionInstant = 0;  // starting instant in which rendering is invoked
-  qint64 avgSwapTime     = 0;  // average time for swapping bufers
+  qint64 avgSwapTime     = 0;  // average time for swapping buffers
   qint64 shortTermDelayAdjuster =
       0;  // accumurate recent errors and adjust in short term
 
@@ -204,7 +204,7 @@ void PlaybackExecutor::run() {
         avgSwapTime += avgSwapTimeD;
       avgSwapTime = std::min(targetFrameTime, std::max(avgSwapTime, (qint64)0));
  
-      // preapre for the next sampling
+      // prepare for the next sampling
       lastFrameCounts[currSample]    = playedFramesCount;
       lastSampleInstants[currSample] = emissionInstant;
       currSample                     = (currSample + 1) % 4;
