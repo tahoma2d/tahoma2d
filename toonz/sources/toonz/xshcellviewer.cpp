@@ -2455,15 +2455,19 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
     TXshCell nextCell = xsh->getCell(r + 1, col);
     ret.isEndOfRange  = nextCell.isEmpty();
     ret.rect          = cellRect.adjusted(
-        1, 1,
+        (!m_viewer->orientation()->isVerticalTimeline() && r == 0 ? 0 : 1), 1,
         (!m_viewer->orientation()->isVerticalTimeline() && !nextCell.isEmpty()
              ? 2
              : 0),
         0);
     ret.markId = xsh->getColumn(col)->getCellColumn()->getCellMark(r);
-    ret.nameRect = o->rect(PredefinedRect::CELL_NAME)
-                       .translated(ret.xy)
-                       .adjusted(0, 0, -frameAdj.x(), -frameAdj.y());
+    ret.nameRect =
+        o->rect(PredefinedRect::CELL_NAME)
+            .translated(ret.xy)
+            .adjusted(
+                (!m_viewer->orientation()->isVerticalTimeline() && r == 0 ? -1
+                                                                          : 0),
+                0, -frameAdj.x(), -frameAdj.y());
 
     return ret;
   };
