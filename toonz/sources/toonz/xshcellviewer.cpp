@@ -2436,6 +2436,7 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
     QPoint xy;
     int markId;
     QRect nameRect;
+    bool isEndOfRange;
   };
 
   auto getCellInfo = [&](int r) {
@@ -2452,6 +2453,7 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
     QRect cellRect  = o->rect(PredefinedRect::CELL).translated(ret.xy);
     cellRect.adjust(0, 0, -frameAdj.x(), -frameAdj.y());
     TXshCell nextCell = xsh->getCell(r + 1, col);
+    ret.isEndOfRange  = nextCell.isEmpty();
     ret.rect          = cellRect.adjusted(
         1, 1,
         (!m_viewer->orientation()->isVerticalTimeline() && !nextCell.isEmpty()
@@ -2568,7 +2570,7 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
         drawCurrentTimeIndicator(p, info.xy);
 
       drawDragHandle(p, info.xy, sideColor);
-      drawEndOfDragHandle(p, info.row == rowTo, info.xy, tmpCellColor);
+      drawEndOfDragHandle(p, info.isEndOfRange, info.xy, tmpCellColor);
       drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), info.xy,
                            tmpCellColor);
     }
