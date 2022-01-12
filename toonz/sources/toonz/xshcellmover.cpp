@@ -351,13 +351,17 @@ public:
       if (m_cellsMover.m_uffa & 2) m_cellsMover.emptyColumns(cb);
       if (m_cellsMover.m_uffa & 1) m_cellsMover.restoreColumns(ca);
     }
-    if (m_cellsMover.getOrientation()->isVerticalTimeline())
-      m_cellsMover.moveCells(m_cellsMover.getStartPos());
-    else {
-      int rStart = m_cellsMover.getStartPos().x;
-      int cStart = m_cellsMover.getStartPos().y;
-      const TPoint useStart(rStart, cStart);
-      m_cellsMover.moveCells(useStart);
+    // Undo of moving cells with copy qualifiers does not need to restore the
+    // cells at start pos
+    if (!(m_cellsMover.getQualifiers() & CellsMover::eCopyCells)) {
+      if (m_cellsMover.getOrientation()->isVerticalTimeline())
+        m_cellsMover.moveCells(m_cellsMover.getStartPos());
+      else {
+        int rStart = m_cellsMover.getStartPos().x;
+        int cStart = m_cellsMover.getStartPos().y;
+        const TPoint useStart(rStart, cStart);
+        m_cellsMover.moveCells(useStart);
+      }
     }
     TApp::instance()->getCurrentXsheet()->getXsheet()->updateFrameCount();
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
@@ -685,7 +689,10 @@ void LevelMoverTool::onRelease(const CellPosition &pos) {
   int startY            = cellMover->getStartPos().y;
   int posX              = cellMover->getPos().x;
   int posY              = cellMover->getPos().y;
-  if (m_lastPos != m_startPos) TUndoManager::manager()->add(m_undo);
+  bool copyInserted     = m_qualifiers & CellsMover::eCopyCells &&
+                      m_qualifiers & CellsMover::eInsertCells;
+  if (m_lastPos != m_startPos || copyInserted)
+    TUndoManager::manager()->add(m_undo);
   m_undo = 0;
 
   if (!getViewer()->orientation()->isVerticalTimeline())
