@@ -1590,27 +1590,13 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
       0);
 
   int markId = soundColumn->getCellMark(row);
-  QColor markColor;
-  if (markId >= 0) {
-    TPixel32 col = TApp::instance()
-                       ->getCurrentScene()
-                       ->getScene()
-                       ->getProperties()
-                       ->getCellMark(markId)
-                       .color;
-    markColor = QColor(col.r, col.g, col.b, 196);  // semi transparent
-  }
-  QRect markRect =
-      o->rect(PredefinedRect::CELL_MARK_AREA)
-          .adjusted(0, -std::round(double(frameAdj.y()) * 0.1), -frameAdj.y(),
-                    -std::round(double(frameAdj.y()) * 0.9))
-          .translated(xy);
 
   int maxNumFrame = soundColumn->getMaxFrame() + 1;
   int startFrame  = soundColumn->getFirstRow();
   TXshCell cell   = soundColumn->getSoundCell(row);
   if (soundColumn->isCellEmpty(row) || cell.isEmpty() || row > maxNumFrame ||
       row < startFrame) {
+    drawCellMarker(p, markId, rect, false, isNextEmpty);
     drawFrameSeparator(p, row, col, true);
     if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
         !m_viewer->orientation()->isVerticalTimeline() &&
@@ -1626,12 +1612,8 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
 
   int r0, r1;
   if (!soundColumn->getLevelRange(row, r0, r1)) {
-    // only draw mark
-    if (markId >= 0) {
-      p.setBrush(markColor);
-      p.setPen(Qt::NoPen);
-      p.drawEllipse(markRect);
-    }
+    // cell mark
+    drawCellMarker(p, markId, rect, true, isNextEmpty);
     return;
   }
   bool isFirstRow = (row == r0);
@@ -1661,6 +1643,9 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
     p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
   else
     p.fillRect(rect, QBrush(cellColor));
+
+  // cell mark
+  drawCellMarker(p, markId, rect, true, isNextEmpty);
 
   if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
       !m_viewer->orientation()->isVerticalTimeline() &&
@@ -1719,9 +1704,12 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
       p.drawLine(stroke);
     } else if (i != begin || !isFirstRow) {
       // preview tool on the right side
-      if (i % 2)
-        p.setPen(cellColor);
-      else
+      if (i % 2) {
+        if (markId >= 0)
+          p.setPen(Qt::NoPen);
+        else
+          p.setPen(cellColor);
+      } else
         p.setPen(m_viewer->getSoundColumnTrackColor());
       QLine stroke = o->horizontalLine(i, previewBounds.adjusted(-1, -1));
       p.drawLine(stroke);
@@ -1768,13 +1756,6 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
   if (o->isVerticalTimeline() && isAfterMarkers) {
     p.setPen(m_viewer->getMarkerLineColor());
     p.drawLine(o->line(PredefinedLine::SEE_MARKER_THROUGH).translated(xy));
-  }
-
-  // cell mark
-  if (markId >= 0) {
-    p.setBrush(markColor);
-    p.setPen(Qt::NoPen);
-    p.drawEllipse(markRect);
   }
 }
 
@@ -1899,6 +1880,48 @@ void CellArea::drawEndOfLevelMarker(QPainter &p, QRect rect, bool isStopFrame) {
 
 //-----------------------------------------------------------------------------
 
+void CellArea::drawCellMarker(QPainter &p, int markId, QRect rect,
+                              bool hasFrame, bool isNextEmpty) {
+  if (markId < 0) return;
+
+  const Orientation *o = m_viewer->orientation();
+  TPixel32 col         = TApp::instance()
+                     ->getCurrentScene()
+                     ->getScene()
+                     ->getProperties()
+                     ->getCellMark(markId)
+                     .color;
+
+  QBrush origBrush = p.brush();
+  QPen origPen     = p.pen();
+
+  QColor cellColor = QColor(col.r, col.g, col.b, 175);  // semi transparent
+  QColor borderColor =
+      QColor(col.r + 50, col.g + 50, col.b + 50, 175);  // semi transparent
+
+  p.setBrush(cellColor);
+  p.setPen(borderColor);
+  // Adjust for drag bar
+  if (hasFrame) {
+    QRect dragBar = o->rect(PredefinedRect::DRAG_AREA);
+    if (!o->isVerticalTimeline())
+      rect.adjust(0, dragBar.height() - 1, 0, 0);
+    else
+      rect.adjust(dragBar.width() - 1, 0, 0, 0);
+  }
+  // Adjust right and bottom
+  if (!o->isVerticalTimeline())
+    rect.adjust(0, 0, (!isNextEmpty ? -3 : -1), -1);
+  else
+    rect.adjust(0, 0, -1, -1);
+  p.drawRect(rect);
+
+  p.setBrush(origBrush);
+  p.setPen(origPen);
+}
+
+//-----------------------------------------------------------------------------
+
 void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
                              bool showLevelName) {
   const Orientation *o = m_viewer->orientation();
@@ -1909,16 +1932,6 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
 
   TXshCellColumn *cellColumn = xsh->getColumn(col)->getCellColumn();
   int markId                 = (cellColumn) ? cellColumn->getCellMark(row) : -1;
-  QColor markColor;
-  if (markId >= 0) {
-    TPixel32 col = TApp::instance()
-                       ->getCurrentScene()
-                       ->getScene()
-                       ->getProperties()
-                       ->getCellMark(markId)
-                       .color;
-    markColor = QColor(col.r, col.g, col.b, 196);  // semi transparent
-  }
 
   TCellSelection *cellSelection     = m_viewer->getCellSelection();
   TColumnSelection *columnSelection = m_viewer->getColumnSelection();
@@ -1949,6 +1962,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
 
   TXshCell nextCell;
   nextCell = xsh->getCell(row + 1, col);  // cell in next frame
+  bool isImplicitCellNext = xsh->isImplicitCell(row + 1, col);
 
   QPoint frameAdj = m_viewer->getFrameZoomAdjustment();
   QRect cellRect =
@@ -2000,12 +2014,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     }
 
     // cell mark
-    if (markId >= 0) {
-      p.setBrush(markColor);
-      p.setPen(Qt::NoPen);
-      p.drawEllipse(markRect);
-      // p.fillRect(rect, QBrush(markColor));
-    }
+    drawCellMarker(p, markId, rect, false,
+                   nextCell.isEmpty() || isImplicitCellNext);
 
     drawFrameSeparator(p, row, col, true);
 
@@ -2020,21 +2030,17 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   bool heldFrame = (!o->isVerticalTimeline() && sameLevel &&
                     prevCell.m_frameId == cell.m_frameId) &&
                    !isImplicitCell;
-  drawFrameSeparator(p, row, col, false, heldFrame);
 
   if (cell.isEmpty()) {  // it means previous is not empty
-    // diagonal cross meaning end of level
-
     // cell mark
-    if (markId >= 0) {
-      p.setBrush(markColor);
-      p.setPen(Qt::NoPen);
-      p.drawEllipse(markRect);
-    }
+    drawCellMarker(p, markId, rect, false,
+                   nextCell.isEmpty() || isImplicitCellNext);
 
     // Implicit holds use Stop Frame Hold to denote end of level
     if (!Preferences::instance()->isImplicitHoldEnabled())
       drawEndOfLevelMarker(p, rect);
+
+    drawFrameSeparator(p, row, col, false, heldFrame);
 
     if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
         !m_viewer->orientation()->isVerticalTimeline() &&
@@ -2075,8 +2081,26 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   else
     p.fillRect(rect, QBrush(cellColor));
 
+  if (yetToCleanupCell && !isImplicitCell)  // ORIENTATION: what's this?
+  {
+    if (o->isVerticalTimeline())
+      p.fillRect(rect.adjusted(rect.width() / 2, 0, 0, 0),
+                 (isSelected) ? m_viewer->getSelectedFullcolorColumnColor()
+                              : m_viewer->getFullcolorColumnColor());
+    else
+      p.fillRect(rect.adjusted(0, rect.height() / 2, 0, 0),
+                 (isSelected) ? m_viewer->getSelectedFullcolorColumnColor()
+                              : m_viewer->getFullcolorColumnColor());
+  }
+
+  // cell mark
+  drawCellMarker(p, markId, rect, !isImplicitCell,
+                 nextCell.isEmpty() || isImplicitCellNext);
+
   // Implicit holds use Stop Frame Hold to denote end of level
   if (isStopFrame) drawEndOfLevelMarker(p, rect, true);
+
+  drawFrameSeparator(p, row, col, false, heldFrame);
 
   if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
       !m_viewer->orientation()->isVerticalTimeline() &&
@@ -2085,18 +2109,6 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     drawCurrentTimeIndicator(p, xy);
 
   if (!isImplicitCell) {
-    if (yetToCleanupCell)  // ORIENTATION: what's this?
-    {
-      if (o->isVerticalTimeline())
-        p.fillRect(rect.adjusted(rect.width() / 2, 0, 0, 0),
-                   (isSelected) ? m_viewer->getSelectedFullcolorColumnColor()
-                                : m_viewer->getFullcolorColumnColor());
-      else
-        p.fillRect(rect.adjusted(0, rect.height() / 2, 0, 0),
-                   (isSelected) ? m_viewer->getSelectedFullcolorColumnColor()
-                                : m_viewer->getFullcolorColumnColor());
-    }
-
     drawDragHandle(p, xy, sideColor);
 
     bool isLastRow = nextCell.isEmpty() ||
@@ -2186,14 +2198,6 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   // draw frame number
   else {
     if (isSimpleView) {
-      // cell mark
-      if (markId >= 0) {
-        p.setBrush(markColor);
-        p.setPen(Qt::NoPen);
-        p.drawEllipse(markRect);
-        p.setPen(penColor);
-      }
-
       if (!o->isVerticalTimeline()) {
         // Lets not draw normal marker if there is a keyframe here
         TStageObject *pegbar = xsh->getStageObject(m_viewer->getObjectId(col));
@@ -2226,14 +2230,6 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
                          ? Qt::AlignRight | Qt::AlignBottom
                          : Qt::AlignCenter);
     p.drawText(nameRect, alignFlag, fnum);
-  }
-
-  // cell mark
-  if (markId >= 0) {
-    p.setBrush(markColor);
-    p.setPen(Qt::NoPen);
-    p.drawEllipse(markRect);
-    p.setPen(penColor);
   }
 
   if (isImplicitCell || isStopFrame) return;
@@ -2297,22 +2293,6 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
            : 0),
       0);
   int markId = xsh->getColumn(col)->getCellColumn()->getCellMark(row);
-  QColor markColor;
-  if (markId >= 0) {
-    TPixel32 col = TApp::instance()
-                       ->getCurrentScene()
-                       ->getScene()
-                       ->getProperties()
-                       ->getCellMark(markId)
-                       .color;
-    markColor = QColor(col.r, col.g, col.b, 196);  // semi transparent
-  }
-  QRect markRect =
-      o->rect(PredefinedRect::CELL_MARK_AREA)
-          .adjusted(0, -std::round(double(frameAdj.y()) * 0.1), -frameAdj.y(),
-                    -std::round(double(frameAdj.y()) * 0.9))
-          .translated(xy);
-  if (markRect.right() > rect.right()) markRect.setRight(rect.right());
 
   if (cell.isEmpty() && prevCell.isEmpty()) {
     drawFrameSeparator(p, row, col, true);
@@ -2327,29 +2307,21 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
 
   bool heldFrame = (!o->isVerticalTimeline() && sameLevel &&
                     prevCell.m_frameId == cell.m_frameId);
-  drawFrameSeparator(p, row, col, false, heldFrame);
 
   if (cell.isEmpty()) {  // diagonal cross meaning end of level
+    // cell mark
+    drawCellMarker(p, markId, rect);
+
     drawEndOfLevelMarker(p, rect);
 
-    // only draw mark
-    if (markId >= 0) {
-      p.setBrush(markColor);
-      p.setPen(Qt::NoPen);
-      p.drawEllipse(markRect);
-    }
+    drawFrameSeparator(p, row, col, false, heldFrame);
+
     if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
         !m_viewer->orientation()->isVerticalTimeline() &&
         row == m_viewer->getCurrentRow() &&
         Preferences::instance()->isCurrentTimelineIndicatorEnabled())
       drawCurrentTimeIndicator(p, xy);
 
-    // only draw mark
-    if (markId >= 0) {
-      p.setBrush(markColor);
-      p.setPen(Qt::NoPen);
-      p.drawEllipse(markRect);
-    }
     return;
   }
 
@@ -2367,6 +2339,11 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
   else
     p.fillRect(rect, QBrush(cellColor));
 
+  // cell mark
+  drawCellMarker(p, markId, rect, true, nextCell.isEmpty());
+
+  drawFrameSeparator(p, row, col, false, heldFrame);
+
   if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
       !m_viewer->orientation()->isVerticalTimeline() &&
       row == m_viewer->getCurrentRow() &&
@@ -2380,13 +2357,6 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
   drawEndOfDragHandle(p, isLastRow, xy, cellColor);
 
   drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), xy, cellColor);
-
-  // cell mark
-  if (markId >= 0) {
-    p.setBrush(markColor);
-    p.setPen(Qt::NoPen);
-    p.drawEllipse(markRect);
-  }
 
   TFrameId fid = cell.m_frameId;
   if (fid.getNumber() - 1 < 0) return;
@@ -2465,8 +2435,6 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
     QRect rect;
     QPoint xy;
     int markId;
-    QColor markColor;
-    QRect markRect;
     QRect nameRect;
   };
 
@@ -2480,22 +2448,6 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
     ret.rect = cellRect.adjusted(1, 1, 0, 1);
 
     ret.markId = xsh->getColumn(col)->getCellColumn()->getCellMark(r);
-    if (ret.markId >= 0) {
-      TPixel32 col = TApp::instance()
-                         ->getCurrentScene()
-                         ->getScene()
-                         ->getProperties()
-                         ->getCellMark(ret.markId)
-                         .color;
-      ret.markColor = QColor(col.r, col.g, col.b, 196);  // semi transparent
-      ret.markRect =
-          o->rect(PredefinedRect::CELL_MARK_AREA)
-              .adjusted(0, -std::round(double(frameAdj.y()) * 0.1),
-                        -frameAdj.y(), -std::round(double(frameAdj.y()) * 0.9))
-              .translated(ret.xy);
-      if (ret.markRect.right() > ret.rect.right())
-        ret.markRect.setRight(ret.rect.right());
-    }
     ret.nameRect = o->rect(PredefinedRect::CELL_NAME)
                        .translated(ret.xy)
                        .adjusted(0, 0, -frameAdj.x(), -frameAdj.y());
@@ -2549,22 +2501,18 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
     // if the cell is empty
     if (cell.isEmpty()) {
       CellInfo info = getCellInfo(row);
-      drawFrameSeparator(p, row, col, true);
+      // cell mark
+      drawCellMarker(p, info.markId, info.rect);
       // draw X shape after the occupied cell
       TXshCell prevCell;
       if (row > 0) prevCell = xsh->getCell(row - 1, col);
       if (!prevCell.isEmpty()) drawEndOfLevelMarker(p, info.rect);
+      drawFrameSeparator(p, row, col, true);
       if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
           !m_viewer->orientation()->isVerticalTimeline() &&
           row == m_viewer->getCurrentRow() &&
           Preferences::instance()->isCurrentTimelineIndicatorEnabled())
         drawCurrentTimeIndicator(p, info.xy);
-      // draw mark
-      if (info.markId >= 0) {
-        p.setBrush(info.markColor);
-        p.setPen(Qt::NoPen);
-        p.drawEllipse(info.markRect);
-      }
       continue;
     }
 
@@ -2584,7 +2532,6 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
     // paint background and other stuffs
     for (auto info : infoList) {
       bool heldFrame = (!o->isVerticalTimeline() && info.row != row);
-      drawFrameSeparator(p, info.row, col, false, heldFrame);
 
       bool isSelected =
           isColSelected || cellSelection->isCellSelected(info.row, col);
@@ -2592,6 +2539,11 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
       if (!o->isVerticalTimeline() && info.row != rowTo)
         info.rect.adjust(0, 0, 2, 0);
       p.fillRect(info.rect, QBrush(tmpCellColor));
+
+      // cell mark
+      drawCellMarker(p, info.markId, info.rect, true);
+
+      drawFrameSeparator(p, info.row, col, false, heldFrame);
 
       if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
           !o->isVerticalTimeline() && info.row == m_viewer->getCurrentRow() &&
@@ -2602,12 +2554,6 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
       drawEndOfDragHandle(p, info.row == rowTo, info.xy, tmpCellColor);
       drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), info.xy,
                            tmpCellColor);
-      // draw mark
-      if (info.markId >= 0) {
-        p.setBrush(info.markColor);
-        p.setPen(Qt::NoPen);
-        p.drawEllipse(info.markRect);
-      }
     }
 
     // draw text from here
@@ -2726,7 +2672,8 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
   bool isStopFrame = isImplicitCell ? false : cell.getFrameId().isStopFrame();
 
   if (row > 0) prevCell = xsh->getCell(row - 1, col);
-  TXshCell nextCell     = xsh->getCell(row + 1, col);
+  TXshCell nextCell       = xsh->getCell(row + 1, col);
+  bool isImplicitCellNext = xsh->isImplicitCell(row + 1, col);
 
   bool sameLevel = prevCell.m_level.getPointer() == cell.m_level.getPointer();
 
@@ -2766,26 +2713,12 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
            : 0),
       0);
   int markId = xsh->getColumn(col)->getCellColumn()->getCellMark(row);
-  QColor markColor;
-  if (markId >= 0) {
-    TPixel32 col = TApp::instance()
-                       ->getCurrentScene()
-                       ->getScene()
-                       ->getProperties()
-                       ->getCellMark(markId)
-                       .color;
-    markColor = QColor(col.r, col.g, col.b, 196);  // semi transparent
-  }
-  QRect markRect =
-      o->rect(PredefinedRect::CELL_MARK_AREA)
-          .adjusted(0, -std::round(double(frameAdj.y()) * 0.1), -frameAdj.y(),
-                    -std::round(double(frameAdj.y()) * 0.9))
-          .translated(xy);
-  if (!isSimpleView || !o->isVerticalTimeline())
-    markRect.moveCenter(cellRect.center());
-  if (markRect.right() > rect.right()) markRect.setRight(rect.right());
 
   if (cell.isEmpty() && prevCell.isEmpty()) {
+    // cell mark
+    drawCellMarker(p, markId, rect, false,
+                   nextCell.isEmpty() || isImplicitCellNext);
+
     drawFrameSeparator(p, row, col, true);
     if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
         !m_viewer->orientation()->isVerticalTimeline() &&
@@ -2799,19 +2732,18 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
   bool heldFrame = (!o->isVerticalTimeline() && !isAfterMarkers && sameLevel &&
                     prevCell.m_frameId == cell.m_frameId) &&
                    !isImplicitCell;
-  drawFrameSeparator(p, row, col, false, heldFrame);
 
   if (cell.isEmpty()) {  // this means the former is not empty
+    // cell mark
+    drawCellMarker(p, markId, rect, false,
+                   nextCell.isEmpty() || isImplicitCellNext);
+
     // Implicit holds use Stop Frame Hold to denote end of level
     if (!Preferences::instance()->isImplicitHoldEnabled())
       drawEndOfLevelMarker(p, rect);
 
-    // only draw mark
-    if (markId >= 0) {
-      p.setBrush(markColor);
-      p.setPen(Qt::NoPen);
-      p.drawEllipse(markRect);
-    }
+    drawFrameSeparator(p, row, col, false, heldFrame);
+
     if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
         !m_viewer->orientation()->isVerticalTimeline() &&
         row == m_viewer->getCurrentRow() &&
@@ -2843,8 +2775,14 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
   else
     p.fillRect(rect, QBrush(cellColor));
 
+  // cell mark
+  drawCellMarker(p, markId, rect, !isImplicitCell,
+                 nextCell.isEmpty() || isImplicitCellNext);
+
   // Implicit holds use Stop Frame Hold to denote end of level
   if (isStopFrame) drawEndOfLevelMarker(p, rect, true);
+
+  drawFrameSeparator(p, row, col, false, heldFrame);
 
   if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
       !m_viewer->orientation()->isVerticalTimeline() &&
@@ -2880,12 +2818,6 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
     }
   } else {
     if (isSimpleView) {
-      // cell mark
-      if (markId >= 0) {
-        p.setBrush(markColor);
-        p.setPen(Qt::NoPen);
-        p.drawEllipse(markRect);
-      }
       if (!o->isVerticalTimeline()) {
         // Lets not draw normal marker if there is a keyframe here
         TStageObject *pegbar = xsh->getStageObject(m_viewer->getObjectId(col));
@@ -2968,13 +2900,6 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
 
     if (!sameLevel || isAfterMarkers)
       p.drawText(nameRect, Qt::AlignLeft | Qt::AlignBottom, elidaName);
-  }
-
-  // cell mark
-  if (markId >= 0) {
-    p.setBrush(markColor);
-    p.setPen(Qt::NoPen);
-    p.drawEllipse(markRect);
   }
 }
 
