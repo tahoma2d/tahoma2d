@@ -3268,6 +3268,12 @@ void MainWindow::defineActions() {
                                              tr("Exit Full Screen Mode"));
   createViewerAction(MI_CompareToSnapshot, QT_TR_NOOP("Compare to Snapshot"),
                      "");
+  createViewerAction(MI_ZoomInAndFitPanel,
+                     QT_TR_NOOP("Zoom In And Fit Floating Panel"),
+                     "Ctrl+Alt++");
+  createViewerAction(MI_ZoomOutAndFitPanel,
+                     QT_TR_NOOP("Zoom Out And Fit Floating Panel"),
+                     "Ctrl+Alt+-");
   menuAct = createToggle(MI_ShowStatusBar, QT_TR_NOOP("&Show Status Bar"), "",
                          ShowStatusBarAction ? 1 : 0, MenuViewCommandType);
   connect(menuAct, SIGNAL(triggered(bool)), this, SLOT(toggleStatusBar(bool)));

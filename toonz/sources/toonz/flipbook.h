@@ -242,6 +242,9 @@ public:
   // zoom-out the rendered image.
   void adaptGeometryForFullPreview(const TRect &imgRect);
 
+  void adaptGeometryToCurrentSize();
+  void zoomAndAdaptGeometry(bool forward);
+
   void reset();
 
   void onDrawFrame(int frame, const ImagePainter::VisualSettings &vs,
