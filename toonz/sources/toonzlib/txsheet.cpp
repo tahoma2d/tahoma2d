@@ -267,7 +267,8 @@ bool TXsheet::isImplicitCell(int row, int col) const {
 }
 
 bool TXsheet::isImplicitCell(const CellPosition &pos) const {
-  if (!Preferences::instance()->isImplicitHoldEnabled()) return false;
+  if (pos.layer() < 0 || !Preferences::instance()->isImplicitHoldEnabled())
+    return false;
 
   TXshColumnP column = m_imp->m_columnSet.getColumn(pos.layer());
   if (!column) return false;
