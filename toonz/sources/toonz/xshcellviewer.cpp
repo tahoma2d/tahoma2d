@@ -1875,21 +1875,30 @@ void CellArea::drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
 
 //-----------------------------------------------------------------------------
 
-void CellArea::drawEndOfLevelMarker(QPainter &p, QRect rect, bool isStopFrame) {
+void CellArea::drawEndOfLevelMarker(QPainter &p, QRect rect, bool isNextEmpty,
+                                    bool isStopFrame) {
   const Orientation *o = m_viewer->orientation();
 
   QColor levelEndColor = m_viewer->getTextColor();
   QPoint topLeft       = rect.topLeft();
   QPoint topRight      = rect.topRight();
-  if (!o->isVerticalTimeline() && isStopFrame) {
-    QRect dragRect = o->rect(PredefinedRect::DRAG_AREA);
-    topLeft.setY(topLeft.y() + dragRect.height());
-    topRight.setY(topRight.y() + dragRect.height());
+  QPoint bottomLeft    = rect.bottomLeft();
+  QPoint bottomRight   = rect.bottomRight();
+  if (!o->isVerticalTimeline()) {
+    if (isStopFrame) {
+      QRect dragRect = o->rect(PredefinedRect::DRAG_AREA);
+      topLeft.setY(topLeft.y() + dragRect.height());
+      topRight.setY(topRight.y() + dragRect.height());
+    }
+    if (!isNextEmpty) {
+      topRight.setX(topRight.x() - 2);
+      bottomRight.setX(bottomRight.x() - 2);
+    }
   }
   levelEndColor.setAlphaF(0.3);
   p.setPen(levelEndColor);
-  p.drawLine(topLeft, rect.bottomRight());
-  p.drawLine(topRight, rect.bottomLeft());
+  p.drawLine(topLeft, bottomRight);
+  p.drawLine(topRight, bottomLeft);
 }
 
 //-----------------------------------------------------------------------------
@@ -2052,7 +2061,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
 
     // Implicit holds use Stop Frame Hold to denote end of level
     if (!Preferences::instance()->isImplicitHoldEnabled())
-      drawEndOfLevelMarker(p, rect);
+      drawEndOfLevelMarker(p, rect, nextCell.isEmpty() || isImplicitCellNext);
 
     drawFrameSeparator(p, row, col, false, heldFrame);
 
@@ -2112,7 +2121,9 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
                  nextCell.isEmpty() || isImplicitCellNext);
 
   // Implicit holds use Stop Frame Hold to denote end of level
-  if (isStopFrame) drawEndOfLevelMarker(p, rect, true);
+  if (isStopFrame)
+    drawEndOfLevelMarker(p, rect, nextCell.isEmpty() || isImplicitCellNext,
+                         true);
 
   drawFrameSeparator(p, row, col, false, heldFrame);
 
@@ -2332,7 +2343,7 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
     // cell mark
     drawCellMarker(p, markId, rect);
 
-    drawEndOfLevelMarker(p, rect);
+    drawEndOfLevelMarker(p, rect, nextCell.isEmpty());
 
     drawFrameSeparator(p, row, col, false, heldFrame);
 
@@ -2544,6 +2555,7 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
       prevCell       = xsh->getCell(row - 1, col);
       prevIsImplicit = xsh->isImplicitCell(row - 1, col);
     }
+    TXshCell nextCell = xsh->getCell(row + 1, col);
 
     // if the cell is empty
     if (cell.isEmpty()) {
@@ -2551,7 +2563,8 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
       // cell mark
       drawCellMarker(p, info.markId, info.rect);
       // draw X shape after the occupied cell
-      if (!prevCell.isEmpty()) drawEndOfLevelMarker(p, info.rect);
+      if (!prevCell.isEmpty())
+        drawEndOfLevelMarker(p, info.rect, nextCell.isEmpty());
       drawFrameSeparator(p, row, col, true);
       if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
           !m_viewer->orientation()->isVerticalTimeline() &&
@@ -2801,7 +2814,7 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
 
     // Implicit holds use Stop Frame Hold to denote end of level
     if (!Preferences::instance()->isImplicitHoldEnabled())
-      drawEndOfLevelMarker(p, rect);
+      drawEndOfLevelMarker(p, rect, nextCell.isEmpty() || isImplicitCellNext);
 
     drawFrameSeparator(p, row, col, false, heldFrame);
 
@@ -2841,7 +2854,9 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
                  nextCell.isEmpty() || isImplicitCellNext);
 
   // Implicit holds use Stop Frame Hold to denote end of level
-  if (isStopFrame) drawEndOfLevelMarker(p, rect, true);
+  if (isStopFrame)
+    drawEndOfLevelMarker(p, rect, nextCell.isEmpty() || isImplicitCellNext,
+                         true);
 
   drawFrameSeparator(p, row, col, false, heldFrame);
 
