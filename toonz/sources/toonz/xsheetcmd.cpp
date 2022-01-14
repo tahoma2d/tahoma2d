@@ -449,8 +449,12 @@ void GlobalKeyframeUndo::doInsertGlobalKeyframes(
       objectId = TStageObjectId::ColumnId(c);
 
     TXshColumn *xshColumn = xsh->getColumn(c);
+    TXshCell cell;
+    if (xshColumn) cell = xsh->getCell(frame, c);
     if (!xshColumn || xshColumn->isLocked() ||
-        (xshColumn->isCellEmpty(frame) && !objectId.isCamera()))
+        (cell.isEmpty() && !xsh->isImplicitCell(frame, c) &&
+         !objectId.isCamera()) ||
+        cell.getFrameId().isStopFrame())
       continue;
 
     TStageObject *obj = xsh->getStageObject(objectId);

@@ -281,8 +281,8 @@ bool TXsheet::isImplicitCell(const CellPosition &pos) const {
   xshColumn->getRange(r0, r1);
   for (int r = std::min(r1, pos.frame()); r >= r0; r--) {
     tempCell = xshColumn->getCell(r);
-    if (!tempCell.isEmpty()) return true;
     if (tempCell.getFrameId().isStopFrame()) return false;
+    if (!tempCell.isEmpty()) return true;
   }
   return false;
 }
