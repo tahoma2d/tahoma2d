@@ -1355,6 +1355,9 @@ TStageObject *plasticDeformedObj(const Stage::Player &player,
 
         const TXshCell &parentCell =
             player.m_xsh->getCell(player.m_frame, parentId.getIndex());
+
+        if (parentCell.getFrameId().isStopFrame()) return 0;
+
         TXshSimpleLevel *parentSl = parentCell.getSimpleLevel();
 
         if (sd && locals::isDeformableMeshLevel(parentSl)) return playerObj;
