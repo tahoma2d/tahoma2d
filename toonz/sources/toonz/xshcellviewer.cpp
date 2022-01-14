@@ -2894,7 +2894,7 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
       p.drawLine(continueLine);
       p.setPen(oldPen);
     }
-  } else {
+  } else if(!isStopFrame) {
     if (isSimpleView) {
       if (!o->isVerticalTimeline()) {
         // Lets not draw normal marker if there is a keyframe here
