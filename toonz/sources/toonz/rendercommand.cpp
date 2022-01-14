@@ -210,7 +210,9 @@ bool RenderCommand::init(bool isPreview) {
     m_r1 = scene->getFrameCount() - 1;
   }
   if (m_r0 < 0) m_r0                       = 0;
-  if (m_r1 >= scene->getFrameCount()) m_r1 = scene->getFrameCount() - 1;
+  if (m_r1 >= scene->getFrameCount() &&
+      !Preferences::instance()->isImplicitHoldEnabled())
+    m_r1 = scene->getFrameCount() - 1;
   // nothing to render
   if (m_r1 < m_r0) {
     DVGui::warning(QObject::tr(
