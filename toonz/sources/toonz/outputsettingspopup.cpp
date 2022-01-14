@@ -1381,7 +1381,7 @@ void OutputSettingsPopup::onFrameFldEditFinished() {
     error = true;
     r1    = r0;
   }
-  if (r1 > maxR0) {
+  if (r1 > maxR0 && !Preferences::instance()->isImplicitHoldEnabled()) {
     error = true;
     r1    = maxR0;
   }
