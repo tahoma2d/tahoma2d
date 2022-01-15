@@ -1687,8 +1687,6 @@ bool IoCmd::saveAll() {
   result = result && resources.save(scene->getScenePath());
   resources.updatePaths();
 
-  
-
   // for update title bar
   app->getCurrentLevel()->notifyLevelTitleChange();
   app->getCurrentPalette()->notifyPaletteTitleChanged();
