@@ -1487,6 +1487,8 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
 
   app->getCurrentScene()->setDirtyFlag(false);
 
+  app->getCurrentXsheet()->notifyXsheetSoundChanged();
+
   History::instance()->addItem(scenePath);
   RecentFiles::instance()->addFilePath(
       toQString(scenePath), RecentFiles::Scene,
@@ -1685,7 +1687,7 @@ bool IoCmd::saveAll() {
   result = result && resources.save(scene->getScenePath());
   resources.updatePaths();
 
-  TApp::instance()->getCurrentXsheet()->notifyXsheetSoundChanged();
+  
 
   // for update title bar
   app->getCurrentLevel()->notifyLevelTitleChange();
