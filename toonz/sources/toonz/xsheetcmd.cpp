@@ -449,12 +449,8 @@ void GlobalKeyframeUndo::doInsertGlobalKeyframes(
       objectId = TStageObjectId::ColumnId(c);
 
     TXshColumn *xshColumn = xsh->getColumn(c);
-    TXshCell cell;
-    if (xshColumn) cell = xsh->getCell(frame, c);
     if (!xshColumn || xshColumn->isLocked() ||
-        (cell.isEmpty() && !xsh->isImplicitCell(frame, c) &&
-         !objectId.isCamera()) ||
-        cell.getFrameId().isStopFrame())
+        (xshColumn->isCellEmpty(frame) && !objectId.isCamera()))
       continue;
 
     TStageObject *obj = xsh->getStageObject(objectId);
@@ -2352,13 +2348,21 @@ public:
 
     enum Direction { up = 0, down };
 
-    int getNonEmptyCell(int row, int column, Direction direction) {
+    int getNonEmptyCell(int row, int column, int lastRow, Direction direction) {
         int currentPos = row;
         bool exit = false;
 
         while (!exit) {
-            TXshCell cell = TApp::instance()->getCurrentXsheetViewer()->getXsheet()->getCell(currentPos, column);
-            if (cell.isEmpty() || cell.getFrameId().isStopFrame()) {
+            TXsheet *xsh = TApp::instance()->getCurrentXsheetViewer()->getXsheet();
+            TXshCell cell = xsh->getCell(currentPos, column);
+            if (cell.isEmpty() || cell.getFrameId().isStopFrame() ||
+                (direction == down && currentPos > lastRow)) {
+                if (direction == down && currentPos > lastRow) {
+                  if (cell.getFrameId().isStopFrame())
+                    currentPos = lastRow;
+                  else if (xsh->isImplicitCell(currentPos, column))
+                    currentPos = (row >= lastRow) ? (row + 1) : currentPos++;
+                }
                 (direction == up) ? currentPos++ : currentPos--;
                 exit = true;
             } else
@@ -2378,10 +2382,8 @@ public:
 
         xsh->getCellRange(col, r0, r1);
 
-        int top = getNonEmptyCell(row, col, Direction::up);
-        int bottom = (xsh->isImplicitCell(row, col) && row > r1)
-                         ? row
-                         : getNonEmptyCell(row, col, Direction::down);
+        int top = getNonEmptyCell(row, col, r0, Direction::up);
+        int bottom = getNonEmptyCell(row, col, r1, Direction::down);
 
         XsheetGUI::getPlayRange(r0, r1, step);
         XsheetGUI::setPlayRange(top, bottom, step);
