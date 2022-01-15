@@ -1700,7 +1700,7 @@ void Filmstrip::updateCurrentLevelComboItem() {
   TXshSimpleLevel *currentLevel =
       TApp::instance()->getCurrentLevel()->getSimpleLevel();
   if (!currentLevel) {
-    int noLevelIndex = m_chooseLevelCombo->findText(tr("- No Current Level -"));
+    int noLevelIndex = m_chooseLevelCombo->findText(tr("- No Level -"));
     m_chooseLevelCombo->setCurrentIndex(noLevelIndex);
     return;
   }
@@ -1718,7 +1718,7 @@ void Filmstrip::updateCurrentLevelComboItem() {
     }
   }
 
-  int noLevelIndex = m_chooseLevelCombo->findText(tr("- No Current Level -"));
+  int noLevelIndex = m_chooseLevelCombo->findText(tr("- No Level -"));
   m_chooseLevelCombo->setCurrentIndex(noLevelIndex);
 }
 

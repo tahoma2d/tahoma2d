@@ -329,8 +329,8 @@ bool beforeCellsInsert(TXsheet *xsh, int row, int &col, int rowCount,
   int type = (column && !column->isEmpty()) ? column->getColumnType()
                                             : newLevelColumnType;
   // If some used cells in range or column type mismatch must insert a column.
-  if (col < 0 || i < rowCount || newLevelColumnType != type) {
-    col += 1;
+  if (col < 0 || i < rowCount || newLevelColumnType != type || !column) {
+    if (column) col += 1;
     TApp::instance()->getCurrentColumn()->setColumnIndex(col);
     shiftColumn = true;
     xsh->insertColumn(col);

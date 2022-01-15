@@ -544,6 +544,9 @@ void EachUndo::undo() const {
 void TCellSelection::eachCells(int each) {
   if (isEmpty() || areAllColSelectedLocked()) return;
 
+  // Do nothing if they select less than Each #
+  if ((m_range.m_r1 - m_range.m_r0 + 1) < each) return;
+
   TUndo *undo = new EachUndo(m_range.m_r0, m_range.m_c0, m_range.m_r1,
                              m_range.m_c1, each);
   TUndoManager::manager()->add(undo);
