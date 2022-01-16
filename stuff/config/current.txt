@@ -1468,7 +1468,7 @@
   <item>"STD_iwa_RainbowFx.intensity"	"Intensity"		</item>
   <item>"STD_iwa_RainbowFx.width_scale"	"Width Scale"		</item>
   <item>"STD_iwa_RainbowFx.inside"	"Inside Intensity"		</item>
-  <item>"STD_iwa_RainbowFx.secondary_rainbow"	"Secondary Rainbow Intesity"		</item>
+  <item>"STD_iwa_RainbowFx.secondary_rainbow"	"Secondary Rainbow Intensity"		</item>
   <item>"STD_iwa_RainbowFx.alpha_rendering"	"Alpha Rendering"		</item>
  
  <!------------------------------ Tiled Particles Iwa ------------------------------------------->

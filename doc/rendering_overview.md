@@ -24,7 +24,7 @@ A multimediarenderer exports each layer of a frame individually for compositing 
 - This class receives the list of frames to be rendered with their fx stack
 - Passes this information on to an Imp class which subclasses TrenderPort
     - The Imp communicates with the renderer and handles post rendering tasks, such as sending rendered frames to the level writer, creating the soundtrack, and adding a clapper board.
-- The Imp delets old files if neeeded.
+- The Imp deletes old files if needed.
 - The Imp sets the output size based on the shrink setting from the output settings.
 - The Imp set up the Level Updater and Writer which will handled the frames when rendering is done.
 - Once all setup is done, the movierenderer calls startRendering.

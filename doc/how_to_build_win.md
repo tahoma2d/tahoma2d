@@ -16,7 +16,7 @@ Throughout these instructions `$tahoma2d` represents the full path to your local
 - [ ] Install via **one** of the following methods.
   - (option 1) Install Qt 5.9.9 from here: https://www.qt.io/download-open-source/. Click the `Download the Qt Online Installer` button at the bottom of the page. It should recommend the Windows installer, if not, select it. The installer is a small file and any additional needed files are downloaded during the install.
     - [ ] Run the the downloaded file. 
-    - [ ] On the filter tick the Archive checkbox to see older verions in the list. In the list choose version `Qt 5.9.9`. 
+    - [ ] On the filter tick the Archive checkbox to see older versions in the list. In the list choose version `Qt 5.9.9`. 
 
   - (option 2) Install using the [Qt 5.9.9 Offline Installer](http://download.qt.io/official_releases/qt/5.9/5.9.9/qt-opensource-windows-x86-5.9.9.exe). It is a large installer file which can be run offline.
 
