@@ -693,6 +693,12 @@ void PreferencesPopup::onUseThemeViewerColorsChanged() {
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onChessboardChanged() {
+  CommonChessboard::instance()->update();
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onSVNEnabledChanged() {
   if (m_pref->getBoolValue(SVNEnabled)) {
     if (!VersionControl::instance()->testSetup())
@@ -2012,6 +2018,10 @@ QWidget* PreferencesPopup::createColorsPage() {
                            &PreferencesPopup::notifySceneChanged);
   m_onEditedFuncMap.insert(chessboardColor2,
                            &PreferencesPopup::notifySceneChanged);
+  m_onEditedFuncMap.insert(chessboardColor1,
+                           &PreferencesPopup::onChessboardChanged);
+  m_onEditedFuncMap.insert(chessboardColor2,
+                           &PreferencesPopup::onChessboardChanged);
   m_onEditedFuncMap.insert(useThemeViewerColors,
                            &PreferencesPopup::onUseThemeViewerColorsChanged);
 

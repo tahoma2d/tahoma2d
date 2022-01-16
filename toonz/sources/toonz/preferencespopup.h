@@ -161,6 +161,7 @@ private:
   void onOnionColorChanged();
   // Colors
   void onTranspCheckDataChanged();
+  void onChessboardChanged();
   void onUseThemeViewerColorsChanged();
   // Version Control
   void onSVNEnabledChanged();
