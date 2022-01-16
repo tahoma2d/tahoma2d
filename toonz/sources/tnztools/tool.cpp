@@ -1071,10 +1071,10 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
       // Test for Mesh-deformed levels
       const TStageObjectId &parentId = obj->getParent();
       if (parentId.isColumn() && obj->getParentHandle()[0] != 'H') {
-        TXshSimpleLevel *parentSl =
-            xsh->getCell(rowIndex, parentId.getIndex()).getSimpleLevel();
-        if (parentSl && parentSl->getType() == MESH_XSHLEVEL &&
-            m_name != T_Selection)
+        TXshCell parentCell       = xsh->getCell(rowIndex, parentId.getIndex());
+        TXshSimpleLevel *parentSl = parentCell.getSimpleLevel();
+        if (!parentCell.getFrameId().isStopFrame() && parentSl &&
+            parentSl->getType() == MESH_XSHLEVEL && m_name != T_Selection)
           return (
               enable(false),
               QObject::tr(

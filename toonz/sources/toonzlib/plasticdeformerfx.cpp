@@ -10,6 +10,7 @@
 #include "toonz/txshlevelcolumn.h"
 #include "toonz/dpiscale.h"
 #include "toonz/stage.h"
+#include "toonz/preferences.h"
 
 // TnzExt includes
 #include "ext/plasticskeleton.h"
@@ -194,7 +195,16 @@ bool PlasticDeformerFx::buildTextureDataSl(double frame, TRenderSettings &info,
   TLevelColumnFx *lcfx       = (TLevelColumnFx *)m_port.getFx();
   TXshLevelColumn *texColumn = lcfx->getColumn();
 
-  const TXshCell &texCell = texColumn->getCell(row);
+  TXshCell texCell = texColumn->getCell(row);
+  if (texCell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
+    int r0, r1;
+    texColumn->getRange(r0, r1);
+    for (int r = std::min(r1, (int)frame); r >= r0; r--) {
+      texCell = texColumn->getCell(r);
+      if (texCell.isEmpty()) continue;
+      break;
+    }
+  }
 
   TXshSimpleLevel *texSl = texCell.getSimpleLevel();
   const TFrameId &texFid = texCell.getFrameId();

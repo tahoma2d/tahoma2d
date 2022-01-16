@@ -23,6 +23,8 @@ TFrameId qstringToFrameId(QString str) {
     return TFrameId::EMPTY_FRAME;
   else if (str == "-" || str == "-2")
     return TFrameId::NO_FRAME;
+  else if (str == "x" || str == "-3")
+    return TFrameId::STOP_FRAME;
 
   QString regExpStr = QString("^%1$").arg(TFilePath::fidRegExpStr());
   QRegExp rx(regExpStr);

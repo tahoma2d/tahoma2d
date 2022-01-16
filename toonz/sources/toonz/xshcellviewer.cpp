@@ -2074,6 +2074,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     return;
   }
 
+  int cellColorAlpha;
+
   if (isReference) {
     cellColor = (isSelected) ? m_viewer->getSelectedReferenceColumnColor()
                              : m_viewer->getReferenceColumnColor();
@@ -2083,7 +2085,10 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     m_viewer->getCellTypeAndColors(levelType, cellColor, sideColor, cell,
                                    isSelected);
     if (isImplicitCell) cellColor.setAlpha(m_viewer->getImplicitCellAlpha());
-    if (isStopFrame) cellColor.setAlpha(0);
+    if (isStopFrame) {
+      cellColorAlpha = cellColor.alpha();
+      cellColor.setAlpha(0);
+    }
   }
 
   // check if the level is scanned but not cleanupped
@@ -2103,6 +2108,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
   else
     p.fillRect(rect, QBrush(cellColor));
+
+  if (isStopFrame) cellColor.setAlpha(cellColorAlpha);
 
   if (yetToCleanupCell && !isImplicitCell)  // ORIENTATION: what's this?
   {
@@ -2137,7 +2144,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     bool isStart = row > 0 && (prevCell.isEmpty() || prevIsImplicit);
     drawDragHandle(p, isStart, xy, sideColor);
 
-    bool isLastRow = nextCell.isEmpty() ||
+    bool isLastRow = nextCell.isEmpty() || isImplicitCellNext ||
                      cell.m_level.getPointer() != nextCell.m_level.getPointer();
     drawEndOfDragHandle(p, isLastRow, xy, cellColor);
 
@@ -2828,6 +2835,7 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
   }
 
   QColor cellColor, sideColor;
+  int cellColorAlpha;
   if (isReference) {
     cellColor = (isSelected) ? m_viewer->getSelectedReferenceColumnColor()
                              : m_viewer->getReferenceColumnColor();
@@ -2837,7 +2845,10 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
                              : m_viewer->getPaletteColumnColor();
     sideColor = m_viewer->getPaletteColumnBorderColor();
     if (isImplicitCell) cellColor.setAlpha(m_viewer->getImplicitCellAlpha());
-    if (isStopFrame) cellColor.setAlpha(0);
+    if (isStopFrame) {
+      cellColorAlpha = cellColor.alpha();
+      cellColor.setAlpha(0);
+    }
   }
 
   // paint cell
@@ -2848,6 +2859,8 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
     p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
   else
     p.fillRect(rect, QBrush(cellColor));
+
+  if (isStopFrame) cellColor.setAlpha(cellColorAlpha);
 
   // cell mark
   drawCellMarker(p, markId, rect, !isImplicitCell,
@@ -2869,7 +2882,7 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
   if (!isImplicitCell) {
     bool isStart = row > 0 && (prevCell.isEmpty() || prevIsImplicit);
     drawDragHandle(p, isStart, xy, sideColor);
-    bool isLastRow = nextCell.isEmpty() ||
+    bool isLastRow = nextCell.isEmpty() || isImplicitCellNext ||
                      cell.m_level.getPointer() != nextCell.m_level.getPointer();
     drawEndOfDragHandle(p, isLastRow, xy, cellColor);
     drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), isStart, xy,
@@ -2894,7 +2907,7 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
       p.drawLine(continueLine);
       p.setPen(oldPen);
     }
-  } else {
+  } else if (!isStopFrame) {
     if (isSimpleView) {
       if (!o->isVerticalTimeline()) {
         // Lets not draw normal marker if there is a keyframe here

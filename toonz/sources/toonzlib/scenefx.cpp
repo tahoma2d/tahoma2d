@@ -677,6 +677,9 @@ bool FxBuilder::addPlasticDeformerFx(PlacedFx &pf) {
         m_xsh->getStageObject(parentId)->getPlasticSkeletonDeformation();
 
     const TXshCell &parentCell = m_xsh->getCell(m_frame, parentId.getIndex());
+
+    if (parentCell.getFrameId().isStopFrame()) return false;
+
     TXshSimpleLevel *parentSl  = parentCell.getSimpleLevel();
 
     if (sd && parentSl && (parentSl->getType() == MESH_XSHLEVEL)) {
@@ -871,7 +874,8 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
   pf.m_fx = lcfx;
 
   /*-- subXsheetのとき、その中身もBuildFxを実行 --*/
-  if (!cell.isEmpty() && cell.m_level->getChildLevel()) {
+  if (!cell.isEmpty() && !cell.getFrameId().isStopFrame() &&
+      cell.m_level->getChildLevel()) {
     // Treat the sub-xsheet case - build the sub-render-tree and reassign stuff
     // to pf
     TXsheet *xsh = cell.m_level->getChildLevel()->getXsheet();
@@ -893,7 +897,9 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
 
   if (columnVisible) {
     // Column is visible, alright
-    TXshSimpleLevel *sl = cell.isEmpty() ? 0 : cell.m_level->getSimpleLevel();
+    TXshSimpleLevel *sl = cell.isEmpty() || cell.getFrameId().isStopFrame()
+                              ? 0
+                              : cell.m_level->getSimpleLevel();
     if (sl) {
       // If the level should sustain a Plastic deformation, add the
       // corresponding fx
