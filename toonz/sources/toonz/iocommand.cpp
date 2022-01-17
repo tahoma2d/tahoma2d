@@ -1542,6 +1542,8 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
 
   app->getCurrentScene()->setDirtyFlag(false);
 
+  app->getCurrentXsheet()->notifyXsheetSoundChanged();
+
   History::instance()->addItem(scenePath);
   RecentFiles::instance()->addFilePath(
       toQString(scenePath), RecentFiles::Scene,
