@@ -150,7 +150,7 @@ bool HexLineEdit::fromText(QString text) {
   text.remove(space);
   if (text.size() == 0) return false;
   if (text[0] == "#") return fromHex(text);
-  text = text.toLower(); // table names are lowercase
+  text = text.toLower();  // table names are lowercase
 
   // Find color from tables, user takes priority
   QMap<QString, QString>::const_iterator it;
@@ -175,19 +175,19 @@ bool HexLineEdit::fromHex(QString text) {
   if (!ok) return false;
 
   switch (text.length()) {
-  case 8: // #RRGGBBAA
+  case 8:  // #RRGGBBAA
     m_color.r = parsedValue >> 24;
     m_color.g = parsedValue >> 16;
     m_color.b = parsedValue >> 8;
     m_color.m = parsedValue;
     break;
-  case 6: // #RRGGBB
+  case 6:  // #RRGGBB
     m_color.r = parsedValue >> 16;
     m_color.g = parsedValue >> 8;
     m_color.b = parsedValue;
     m_color.m = 255;
     break;
-  case 4: // #RGBA
+  case 4:  // #RGBA
     m_color.r = (parsedValue >> 12) & 15;
     m_color.r |= m_color.r << 4;
     m_color.g = (parsedValue >> 8) & 15;
@@ -197,7 +197,7 @@ bool HexLineEdit::fromHex(QString text) {
     m_color.m = parsedValue & 15;
     m_color.m |= m_color.m << 4;
     break;
-  case 3: // #RGB
+  case 3:  // #RGB
     m_color.r = (parsedValue >> 8) & 15;
     m_color.r |= m_color.r << 4;
     m_color.g = (parsedValue >> 4) & 15;
@@ -206,13 +206,13 @@ bool HexLineEdit::fromHex(QString text) {
     m_color.b |= m_color.b << 4;
     m_color.m = 255;
     break;
-  case 2: // #VV (non-standard)
+  case 2:  // #VV (non-standard)
     m_color.r = parsedValue;
     m_color.g = m_color.r;
     m_color.b = m_color.r;
     m_color.m = 255;
     break;
-  case 1: // #V (non-standard)
+  case 1:  // #V (non-standard)
     m_color.r = parsedValue & 15;
     m_color.r |= m_color.r << 4;
     m_color.g = m_color.r;
@@ -864,6 +864,13 @@ HexagonalColorWheel::~HexagonalColorWheel() {
 
 void HexagonalColorWheel::updateColorCalibration() {
   if (Preferences::instance()->isColorCalibrationEnabled()) {
+    // prevent to initialize LutCalibrator before this instance is initialized
+    // or OT may crash due to missing OpenGL context
+    if (m_firstInitialized) {
+      cueCalibrationUpdate();
+      return;
+    }
+
     makeCurrent();
     if (!m_lutCalibrator)
       m_lutCalibrator = new LutCalibrator();
@@ -1344,11 +1351,13 @@ void ColorSlider::paintEvent(QPaintEvent *event) {
      In this case we draw "manually" the slider handle at correct position
   */
   if (isVertical) {
-    static QPixmap vHandlePixmap = svgToPixmap(":Resources/v_chandle_arrow.svg");
+    static QPixmap vHandlePixmap =
+        svgToPixmap(":Resources/v_chandle_arrow.svg");
     int pos = QStyle::sliderPositionFromValue(0, maximum(), value(), h, true);
     p.drawPixmap(width() - s_chandle_tall, pos, vHandlePixmap);
   } else {
-    static QPixmap hHandlePixmap = svgToPixmap(":Resources/h_chandle_arrow.svg");
+      static QPixmap hHandlePixmap =
+          svgToPixmap(":Resources/h_chandle_arrow.svg");
     int pos = QStyle::sliderPositionFromValue(0, maximum(), value(), w, false);
     p.drawPixmap(pos, height() - s_chandle_tall, hHandlePixmap);
   }
@@ -1757,6 +1766,7 @@ void ColorParameterSelector::setStyle(const TColorStyle &style) {
     clear();
     return;
   }
+  show();
   if (m_colors.size() != count) {
     m_index = 0;
     m_colors.resize(count);
@@ -1774,7 +1784,11 @@ void ColorParameterSelector::setStyle(const TColorStyle &style) {
 void ColorParameterSelector::clear() {
   if (m_colors.size() != 0) m_colors.clear();
   m_index = 0;
-  update();
+  if (isVisible()) {
+    hide();
+    update();
+    qApp->processEvents();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -4300,66 +4314,6 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
 
   QFrame *bottomWidget = createBottomWidget();
 
-  m_toolBar = new QToolBar(this);
-  m_toolBar->setMovable(false);
-  m_toolBar->setMaximumHeight(22);
-  m_toolBar->addWidget(m_colorParameterSelector);
-
-  QMenu *menu   = new QMenu();
-  m_wheelAction = new QAction(tr("Wheel"), this);
-  m_hsvAction   = new QAction(tr("HSV"), this);
-  m_alphaAction = new QAction(tr("Alpha"), this);
-  m_rgbAction   = new QAction(tr("RGB"), this);
-  m_hexAction   = new QAction(tr("Hex"), this);
-
-  m_wheelAction->setCheckable(true);
-  m_hsvAction->setCheckable(true);
-  m_alphaAction->setCheckable(true);
-  m_rgbAction->setCheckable(true);
-  m_hexAction->setCheckable(true);
-  m_wheelAction->setChecked(true);
-  m_hsvAction->setChecked(false);
-  m_alphaAction->setChecked(true);
-  m_rgbAction->setChecked(false);
-  m_hexAction->setChecked(false);
-  menu->addAction(m_wheelAction);
-  menu->addAction(m_alphaAction);
-  menu->addAction(m_hsvAction);
-  menu->addAction(m_rgbAction);
-  menu->addAction(m_hexAction);
-
-  QFontMetrics fm(QApplication::font());
-
-  m_plainColorPage->m_hsvFrame->setVisible(false);
-  m_plainColorPage->m_rgbFrame->setVisible(false);
-
-  QToolButton *toolButton = new QToolButton(this);
-  toolButton->setIcon(createQIcon("menu"));
-  toolButton->setFixedSize(22, 22);
-  toolButton->setMenu(menu);
-  toolButton->setPopupMode(QToolButton::InstantPopup);
-  toolButton->setToolTip(tr("Show or hide parts of the Color Page."));
-
-  m_styleSetsButton = new QToolButton(this);
-  m_styleSetsButton->setIcon(createQIcon("stylesets"));
-  m_styleSetsButton->setFixedSize(22, 22);
-  m_styleSetsButton->setPopupMode(QToolButton::InstantPopup);
-  m_styleSetsButton->setToolTip(tr("Show or hide style sets."));
-
-  QToolBar *displayToolbar = new QToolBar(this);
-  displayToolbar->addWidget(m_styleSetsButton);
-  m_toggleOrientationAction =
-      displayToolbar->addAction(createQIcon("orientation_h"), "");
-  m_toggleOrientationAction->setToolTip(
-      tr("Toggle orientation of the Color Page."));
-  QWidget *toggleOrientationButton =
-      displayToolbar->widgetForAction(m_toggleOrientationAction);
-  toggleOrientationButton->setFixedSize(22, 22);
-  toggleOrientationButton->setFocusPolicy(Qt::NoFocus);
-  displayToolbar->addWidget(toolButton);
-  displayToolbar->setMaximumHeight(22);
-  displayToolbar->setIconSize(QSize(16, 16));
-
   /* ------- layout ------- */
   QGridLayout *mainLayout = new QGridLayout;
   mainLayout->setMargin(0);
@@ -4377,8 +4331,8 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
     mainLayout->addWidget(m_tabBarContainer, 0, 0, 1, 2);
     mainLayout->addWidget(m_styleChooser, 1, 0, 1, 2);
     mainLayout->addWidget(bottomWidget, 2, 0, 1, 2);
-    mainLayout->addWidget(m_toolBar, 3, 0);
-    mainLayout->addWidget(displayToolbar, 3, 1);
+    // mainLayout->addWidget(m_toolBar, 3, 0);
+    // mainLayout->addWidget(displayToolbar, 3, 1);
   }
   mainLayout->setColumnStretch(0, 1);
   mainLayout->setRowStretch(1, 1);
@@ -4396,30 +4350,6 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   ret = ret && connect(m_plainColorPage,
                        SIGNAL(colorChanged(const ColorModel &, bool)), this,
                        SLOT(onColorChanged(const ColorModel &, bool)));
-
-  ret = ret && connect(m_wheelAction, SIGNAL(toggled(bool)),
-                       m_plainColorPage->m_wheelFrame, SLOT(setVisible(bool)));
-  ret = ret && connect(m_hsvAction, SIGNAL(toggled(bool)),
-                       m_plainColorPage->m_hsvFrame, SLOT(setVisible(bool)));
-  ret = ret && connect(m_alphaAction, SIGNAL(toggled(bool)),
-                       m_plainColorPage->m_alphaFrame, SLOT(setVisible(bool)));
-  ret = ret && connect(m_rgbAction, SIGNAL(toggled(bool)),
-                       m_plainColorPage->m_rgbFrame, SLOT(setVisible(bool)));
-  ret = ret && connect(m_hexAction, SIGNAL(toggled(bool)), m_hexLineEdit,
-                       SLOT(setVisible(bool)));
-  ret = ret && connect(m_hexLineEdit, SIGNAL(editingFinished()), this,
-                       SLOT(onHexChanged()));
-  ret = ret && connect(m_toggleOrientationAction, SIGNAL(triggered()),
-                       m_plainColorPage, SLOT(toggleOrientation()));
-  ret = ret && connect(m_toggleOrientationAction, SIGNAL(triggered()), this,
-                       SLOT(updateOrientationButton()));
-  ret = ret && connect(m_hexLineEdit, SIGNAL(returnPressed()), this,
-                       SLOT(onHexChanged()));
-  ret = ret && connect(m_hexLineEdit, SIGNAL(textEdited(const QString &)), this,
-                       SLOT(onHexEdited(const QString &)));
-  ret = ret && connect(menu, SIGNAL(aboutToHide()), this, SLOT(onHideMenu()));
-  ret = ret && connect(m_styleChooser, SIGNAL(currentChanged(int)), this,
-                       SLOT(onPageChanged(int)));
   assert(ret);
   /* ------- initial conditions ------- */
   enable(false, false, false);
@@ -4457,6 +4387,7 @@ QFrame *StyleEditor::createBottomWidget() {
   bottomWidget->setFrameStyle(QFrame::StyledPanel);
   bottomWidget->setObjectName("bottomWidget");
   bottomWidget->setContentsMargins(0, 0, 0, 0);
+  bottomWidget->setFixedHeight(60);
   m_applyButton->setToolTip(tr("Apply changes to current style"));
   m_applyButton->setDisabled(m_paletteController->isColorAutoApplyEnabled());
   m_applyButton->setFocusPolicy(Qt::NoFocus);
@@ -4482,43 +4413,115 @@ QFrame *StyleEditor::createBottomWidget() {
   m_hexLineEdit->loadDefaultColorNames(false);
   m_hexLineEdit->loadUserColorNames(false);
 
-  m_fillColorWidget->setFixedHeight(32);
-  m_fillColorWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+  m_toolBar = new QToolBar(this);
+  m_toolBar->setMovable(false);
+  m_toolBar->setMaximumHeight(22);
+  m_toolBar->addWidget(m_colorParameterSelector);
+
+  QMenu *menu = new QMenu();
+  m_wheelAction = new QAction(tr("Wheel"), this);
+  m_hsvAction = new QAction(tr("HSV"), this);
+  m_alphaAction = new QAction(tr("Alpha"), this);
+  m_rgbAction = new QAction(tr("RGB"), this);
+  m_hexAction = new QAction(tr("Hex"), this);
+
+  m_wheelAction->setCheckable(true);
+  m_hsvAction->setCheckable(true);
+  m_alphaAction->setCheckable(true);
+  m_rgbAction->setCheckable(true);
+  m_hexAction->setCheckable(true);
+  m_wheelAction->setChecked(true);
+  m_hsvAction->setChecked(false);
+  m_alphaAction->setChecked(true);
+  m_rgbAction->setChecked(false);
+  m_hexAction->setChecked(false);
+  menu->addAction(m_wheelAction);
+  menu->addAction(m_alphaAction);
+  menu->addAction(m_hsvAction);
+  menu->addAction(m_rgbAction);
+  menu->addAction(m_hexAction);
+
+  QFontMetrics fm(QApplication::font());
+
+  m_plainColorPage->m_hsvFrame->setVisible(false);
+  m_plainColorPage->m_rgbFrame->setVisible(false);
+
+  QToolButton *toolButton = new QToolButton(this);
+  toolButton->setIcon(createQIcon("menu"));
+  toolButton->setFixedSize(22, 22);
+  toolButton->setMenu(menu);
+  toolButton->setPopupMode(QToolButton::InstantPopup);
+  toolButton->setToolTip(tr("Show or hide parts of the Color Page."));
+
+  m_styleSetsButton = new QToolButton(this);
+  m_styleSetsButton->setIcon(createQIcon("stylesets"));
+  m_styleSetsButton->setFixedSize(22, 22);
+  m_styleSetsButton->setPopupMode(QToolButton::InstantPopup);
+  m_styleSetsButton->setToolTip(tr("Show or hide style sets."));
+
+//  QToolBar *displayToolbar = new QToolBar(this);
+  m_toolBar->addWidget(m_styleSetsButton);
+  m_toggleOrientationAction =
+    m_toolBar->addAction(createQIcon("orientation_h"), "");
+  m_toggleOrientationAction->setToolTip(
+    tr("Toggle orientation of the Color Page."));
+  QWidget *toggleOrientationButton =
+    m_toolBar->widgetForAction(m_toggleOrientationAction);
+  toggleOrientationButton->setFixedSize(22, 22);
+  toggleOrientationButton->setFocusPolicy(Qt::NoFocus);
+  m_toolBar->addWidget(toolButton);
+  m_toolBar->setMaximumHeight(22);
+  m_toolBar->setIconSize(QSize(16, 16));
+
+  m_fillColorWidget->setMinimumHeight(24);
+  m_fillColorWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   QHBoxLayout *fillColorLayout = new QHBoxLayout(this);
   fillColorLayout->addWidget(new QLabel(" ", this));
   m_fillColorWidget->setLayout(fillColorLayout);
 
   /* ------ layout ------ */
-  QVBoxLayout *mainLayout = new QVBoxLayout;
+  QHBoxLayout *mainLayout = new QHBoxLayout;
   mainLayout->setMargin(2);
-  mainLayout->setSpacing(1);
+  mainLayout->setSpacing(0);
   {
-    QHBoxLayout *hLayout = new QHBoxLayout;
-    hLayout->setMargin(0);
-    hLayout->setSpacing(0);
-    {
-      hLayout->addWidget(m_autoButton);
-      // hLayout->addSpacing(2);
-      hLayout->addWidget(m_applyButton);
-      // hLayout->addSpacing(2);
-      hLayout->addWidget(m_newColor, 1);
-      hLayout->addWidget(m_oldColor, 0);
-      hLayout->addWidget(m_fillColorWidget, 0);
-      hLayout->addSpacing(2);
-      hLayout->addWidget(m_hexLineEdit);
-      m_oldColor->hide();
-    }
-    mainLayout->addLayout(hLayout);
-    m_autoButton->hide();
-    m_applyButton->hide();
+    mainLayout->addWidget(m_autoButton);
+//    mainLayout->addSpacing(4);
+    mainLayout->addWidget(m_applyButton);
+//    mainLayout->addSpacing(4);
 
-    // QHBoxLayout *buttonsLayout = new QHBoxLayout;
-    // buttonsLayout->setMargin(0);
-    // buttonsLayout->setSpacing(5);
-    //{ buttonsLayout->addWidget(m_applyButton); }
-    // mainLayout->addLayout(buttonsLayout);
+    QVBoxLayout *colorLay = new QVBoxLayout();
+    colorLay->setMargin(0);
+    colorLay->setSpacing(0);
+    {
+      QHBoxLayout *chipLay = new QHBoxLayout();
+      chipLay->setMargin(0);
+      chipLay->setSpacing(0);
+      {
+        chipLay->addWidget(m_newColor, 1);
+        chipLay->addWidget(m_oldColor, 1);
+        chipLay->addWidget(m_fillColorWidget, 0);
+      }
+      colorLay->addLayout(chipLay, 1);
+      colorLay->addSpacing(2);
+
+      colorLay->addWidget(m_colorParameterSelector, 0);
+    }
+    mainLayout->addLayout(colorLay, 1);
+
+    QVBoxLayout *hexLay = new QVBoxLayout();
+    hexLay->setMargin(0);
+    hexLay->setSpacing(0);
+    {
+      hexLay->addWidget(m_hexLineEdit);
+      hexLay->addWidget(m_toolBar, 0, Qt::AlignBottom | Qt::AlignRight);
+    }
+    mainLayout->addLayout(hexLay, 0);
   }
   bottomWidget->setLayout(mainLayout);
+
+  m_oldColor->hide();
+  m_autoButton->hide();
+  m_applyButton->hide();
 
   /* ------ signal-slot connections ------ */
   bool ret = true;
@@ -4526,10 +4529,30 @@ QFrame *StyleEditor::createBottomWidget() {
   //                     SLOT(applyButtonClicked()));
   ret = ret && connect(m_autoButton, SIGNAL(toggled(bool)), this,
                        SLOT(autoCheckChanged(bool)));
-  // ret = ret && connect(m_oldColor, SIGNAL(clicked()), this,
-  //                      SLOT(onOldStyleClicked()));
-  // ret = ret && connect(m_newColor, SIGNAL(clicked()), this,
-  //                      SLOT(onNewStyleClicked()));
+//  ret      = ret &&
+//        connect(m_oldColor, SIGNAL(clicked()), this, SLOT(onOldStyleClicked()));
+//  ret = ret &&
+//        connect(m_newColor, SIGNAL(clicked()), this, SLOT(onNewStyleClicked()));
+  ret = ret && connect(m_wheelAction, SIGNAL(toggled(bool)),
+                       m_plainColorPage->m_wheelFrame, SLOT(setVisible(bool)));
+  ret = ret && connect(m_hsvAction, SIGNAL(toggled(bool)),
+                       m_plainColorPage->m_hsvFrame, SLOT(setVisible(bool)));
+  ret = ret && connect(m_alphaAction, SIGNAL(toggled(bool)),
+                       m_plainColorPage->m_alphaFrame, SLOT(setVisible(bool)));
+  ret = ret && connect(m_rgbAction, SIGNAL(toggled(bool)),
+                       m_plainColorPage->m_rgbFrame, SLOT(setVisible(bool)));
+  ret = ret && connect(m_hexAction, SIGNAL(toggled(bool)), m_hexLineEdit,
+                       SLOT(setVisible(bool)));
+  ret = ret && connect(m_hexLineEdit, SIGNAL(editingFinished()), this,
+                       SLOT(onHexChanged()));
+  ret = ret && connect(m_toggleOrientationAction, SIGNAL(triggered()),
+                       m_plainColorPage, SLOT(toggleOrientation()));
+  ret = ret && connect(m_toggleOrientationAction, SIGNAL(triggered()), this,
+                       SLOT(updateOrientationButton()));
+  ret = ret && connect(menu, SIGNAL(aboutToHide()), this, SLOT(onHideMenu()));
+  ret = ret && connect(m_styleChooser, SIGNAL(currentChanged(int)), this,
+                       SLOT(onPageChanged(int)));
+
   assert(ret);
 
   return bottomWidget;
@@ -5208,9 +5231,7 @@ void StyleEditor::onOldStyleClicked() {
 
 //-----------------------------------------------------------------------------
 
-void StyleEditor::onNewStyleClicked() {
-  applyButtonClicked();
-}
+void StyleEditor::onNewStyleClicked() { applyButtonClicked(); }
 
 //-----------------------------------------------------------------------------
 
@@ -5459,6 +5480,8 @@ void StyleEditor::onColorParamChanged() {
   int styleIndex = getStyleIndex();
   if (styleIndex < 0 || palette->getStyleCount() <= styleIndex) return;
 
+  if (*m_oldStyle != *m_editedStyle) applyButtonClicked();
+
   m_paletteHandle->setStyleParamIndex(getColorParam());
 
   if (TColorStyle *currentStyle = palette->getStyle(styleIndex)) {
@@ -5503,7 +5526,7 @@ void StyleEditor::onParamStyleChanged(bool isDragging) {
 
   if (m_autoButton->isChecked()) copyEditedStyleToPalette(isDragging);
 
-  m_editedStyle->invalidateIcon();       // Refresh the new color icon
+  m_editedStyle->invalidateIcon();  // Refresh the new color icon
   m_newColor->setStyle(*m_editedStyle, getColorParam());
 
   int tag = m_editedStyle->getTagId();

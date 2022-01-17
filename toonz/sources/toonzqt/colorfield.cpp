@@ -57,7 +57,7 @@ CommonChessboard *CommonChessboard::instance() {
 CommonChessboard::CommonChessboard() : m_bgRas(40.0, 40.0) { update(); }
 
 void CommonChessboard::setChessboardColors(const TPixel32 &col1,
-                                                 const TPixel32 &col2) {
+                                           const TPixel32 &col2) {
   TRop::checkBoard(m_bgRas, col1, col2,
                    TDimensionD(m_bgRas->getLx() / 8, m_bgRas->getLy() / 8),
                    TPointD(0, 0));
@@ -137,18 +137,32 @@ void StyleSample::setStyle(TColorStyle &style, int colorParameterIndex) {
   // Store current color
   TPixel32 color = style.getColorParamValue(colorParameterIndex);
   m_currentColor = QColor(color.r, color.g, color.b, color.m);
+  if (LutManager::instance()->isValid())
+    LutManager::instance()->convert(m_currentColor);
 
   /*-- TSolidColorStyleの場合のみ、単色塗りつぶし --*/
   if (style.getTagId() == 3) {
     setColor(style.getMainColor());
     m_stretch = true;
   } else {
-    TRaster32P icon =
-        style.getIcon(qsize2Dimension(m_samplePixmap.rect().size()));
+    TDimension iconDim(width(), height());
+
+    // obtain square icon for the TMyPaintBrushStyle
+    // so that the checkerboard color will become consistent with solido style
+    // when the main color is semi-transparent.
+    if (style.getTagId() == 4001) {
+      int d   = std::min(width(), height());
+      iconDim = TDimension(d, d);
+    }
+
+    TRaster32P icon = style.getIcon(iconDim);
+    // TRaster32P icon =
+    //  style.getIcon(qsize2Dimension(m_samplePixmap.rect().size()));
     m_samplePixmap = rasterToQImage(icon, false);  // modified in 6.2
-    m_stretch      = false;
+    m_stretch      = style.getTagId() == 4;
     update();
   }
+
   if (m_cloneStyle) {
     if (m_style) delete m_style;  // avoid memory leak
     m_style = style.clone();
@@ -196,7 +210,9 @@ void StyleSample::paintEvent(QPaintEvent *event) {
   if (m_stretch) {
     painter.drawImage(0, 0, m_samplePixmap.scaled(size()));
   } else {
-    int x = (width() - m_samplePixmap.width()) / 2;
+    // put the icon on the left
+    int x = 0;
+    // int x = (width() - m_samplePixmap.width()) / 2;
     int y = (height() - m_samplePixmap.height()) / 2;
     painter.fillRect(rect(), m_currentColor);
     painter.drawImage(x, y, m_samplePixmap);
