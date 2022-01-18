@@ -2021,6 +2021,10 @@ void MainWindow::defineActions() {
   createMenuXsheetAction(MI_RemoveEmptyColumns,
                          QT_TR_NOOP("Remove Empty Columns"), "",
                          "remove_empty_columns");
+  createMenuXsheetAction(MI_ConvertToImplicitHolds,
+                         QT_TR_NOOP("Convert to use Implicit Holds"), "", "");
+  createMenuXsheetAction(MI_ConvertToExplicitHolds,
+                         QT_TR_NOOP("Convert to use Explicit Holds"), "", "");
   createMenuXsheetAction(MI_LipSyncPopup,
                          QT_TR_NOOP("&Apply Lip Sync to Column"), "Alt+L",
                          "dialogue");

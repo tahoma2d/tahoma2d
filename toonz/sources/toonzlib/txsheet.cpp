@@ -1965,3 +1965,119 @@ ExpressionReferenceMonitor *TXsheet::getExpRefMonitor() const {
   return m_imp->m_expRefMonitor;
 }
 //---------------------------------------------------------
+
+void TXsheet::convertToImplicitHolds() {
+  int cols = getColumnCount();
+  if (!cols) return;
+
+  set<const TXsheet *> visitedXshs;
+  visitedXshs.insert(this);
+
+  for (int c = 0; c < cols; c++) {
+    TXshColumn *column = getColumn(c);
+    if (!column || column->isEmpty()) continue;
+
+    TXshCellColumn *cc = column->getCellColumn();
+    if (!cc || cc->getColumnType() == TXshColumn::ColumnType::eSoundTextType ||
+        cc->getColumnType() == TXshColumn::ColumnType::eSoundType)
+      continue;
+
+    int r0, r1;
+    if (!cc->getRange(r0, r1)) continue;
+
+    bool stopFrameSet = false;
+    TXshCell prevCell;
+    for (int r = r0; r <= r1; r++) {
+      TXshCell cell = cc->getCell(r);
+
+      if (cell.isEmpty()) {
+        if (!stopFrameSet) {
+          // Set a stop frame if one hasn't been set yet
+          prevCell = TXshCell(prevCell.m_level, TFrameId::STOP_FRAME);
+          cc->setCell(r, prevCell);
+          stopFrameSet = true;
+        }
+      } else {
+        TXshLevel *level = cell.m_level.getPointer();
+        if (level && level->getChildLevel()) {
+          TXsheet *childXsh = level->getChildLevel()->getXsheet();
+          if (visitedXshs.count(childXsh) == 0) {
+            visitedXshs.insert(childXsh);
+            childXsh->convertToImplicitHolds();
+          }
+        }
+
+        // Keep 1st instance of new cells, replace duplicates with an empty
+        // frame
+        if (cell != prevCell)
+          prevCell = cell;
+        else if (cc->getColumnType() == TXshColumn::ColumnType::eZeraryFxType) {
+          std::vector<TXshCell> cells;
+          cells.push_back(TXshCell(0, TFrameId::EMPTY_FRAME));
+          cc->setCells(r, 1, &cells[0]);
+        } else
+          cc->setCell(r, TXshCell(0, TFrameId::EMPTY_FRAME));
+
+        stopFrameSet = false;
+      }
+    }
+
+    // Add a final stop frame
+    cc->setCell(r1 + 1, TXshCell(prevCell.m_level, TFrameId::STOP_FRAME));
+  }
+}
+
+//---------------------------------------------------------
+
+void TXsheet::convertToExplicitHolds() {
+  int cols = getColumnCount();
+  if (!cols) return;
+
+  set<const TXsheet *> visitedXshs;
+  visitedXshs.insert(this);
+
+  for (int c = 0; c < cols; c++) {
+    TXshColumn *column = getColumn(c);
+    if (!column || column->isEmpty()) continue;
+
+    TXshCellColumn *cc = column->getCellColumn();
+    if (!cc || cc->getColumnType() == TXshColumn::ColumnType::eSoundTextType ||
+        cc->getColumnType() == TXshColumn::ColumnType::eSoundType)
+      continue;
+
+    int r0, r1;
+    if (!cc->getRange(r0, r1)) continue;
+
+    int frameCount    = getFrameCount() - 1;
+    bool stopFrameSet = false;
+    TXshCell prevCell;
+
+    r1 = std::max(r1, frameCount);
+
+    for (int r = r0; r <= r1; r++) {
+      TXshCell cell = cc->getCell(r);
+
+      TXshLevel *level = cell.m_level.getPointer();
+      if (level && level->getChildLevel()) {
+        TXsheet *childXsh = level->getChildLevel()->getXsheet();
+        if (visitedXshs.count(childXsh) == 0) {
+          visitedXshs.insert(childXsh);
+          childXsh->convertToImplicitHolds();
+        }
+      }
+
+      if (cell != prevCell && !cell.isEmpty()) prevCell = cell;
+
+      if (cell.getFrameId().isStopFrame()) {
+        prevCell = TXshCell(0, TFrameId::EMPTY_FRAME);
+        if (cc->getColumnType() == TXshColumn::ColumnType::eZeraryFxType) {
+          std::vector<TXshCell> cells;
+          cells.push_back(prevCell);
+          cc->setCells(r, 1, &cells[0]);
+        } else
+          cc->setCell(r, TXshCell(prevCell));
+      } else
+        cc->setCell(r, prevCell);
+    }
+  }
+}

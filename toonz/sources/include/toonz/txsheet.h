@@ -588,6 +588,9 @@ in TXsheetImp.
   void notifyStageObjectAdded(const TStageObjectId id);
   bool isReferenceManagementIgnored(TDoubleParam *);
 
+  void convertToImplicitHolds();
+  void convertToExplicitHolds();
+
 protected:
   bool checkCircularReferences(TXsheet *childCandidate);
 

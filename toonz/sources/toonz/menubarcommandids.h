@@ -44,6 +44,8 @@
 #define MI_ImportMagpieFile "MI_ImportMagpieFile"
 #define MI_NewNoteLevel "MI_NewNoteLevel"
 #define MI_RemoveEmptyColumns "MI_RemoveEmptyColumns"
+#define MI_ConvertToImplicitHolds "MI_ConvertToImplicitHolds"
+#define MI_ConvertToExplicitHolds "MI_ConvertToExplicitHolds"
 #define MI_NewProject "MI_NewProject"
 #define MI_OpenRecentProject "MI_OpenRecentProject"
 #define MI_LoadProject "MI_LoadProject"

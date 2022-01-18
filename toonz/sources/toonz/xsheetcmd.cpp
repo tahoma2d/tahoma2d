@@ -1158,6 +1158,53 @@ public:
 
 //============================================================
 
+static void convertHoldType(int holdType) {
+  TTool::Application *app = TTool::getApplication();
+  TXsheet *xsh            = app->getCurrentScene()->getScene()->getXsheet();
+
+  if (!xsh) return;
+
+  int answer = DVGui::MsgBox(
+      QString(QObject::tr("Converting scene to use %1 Holds can only be undone "
+                          "using 'Revert Scene'. Save before converting.\nDo "
+                          "you want to continue?")
+                  .arg(holdType == 0 ? QObject::tr("Implicit")
+                                     : QObject::tr("Explicit"))),
+      QObject::tr("Continue"), QObject::tr("Cancel"), 1);
+
+  if (answer == 0 || answer == 2) return;
+
+  QAction *action =
+      CommandManager::instance()->getAction(MI_ToggleImplicitHold);
+  if (holdType == 0) {
+    xsh->convertToImplicitHolds();
+    if (action && !action->isChecked()) action->trigger();
+  } else {
+    xsh->convertToExplicitHolds();
+    if (action && action->isChecked()) action->trigger();
+  }
+
+  app->getCurrentScene()->setDirtyFlag();
+
+  app->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+class ConvertToImplicitHoldsCommand final : public MenuItemHandler {
+public:
+  ConvertToImplicitHoldsCommand()
+      : MenuItemHandler(MI_ConvertToImplicitHolds) {}
+  void execute() override { XshCmd::convertHoldType(0); }
+} ConvertToImplicitHoldsCommand;
+
+class ConvertToExplicitHoldsCommand final : public MenuItemHandler {
+public:
+  ConvertToExplicitHoldsCommand()
+      : MenuItemHandler(MI_ConvertToExplicitHolds) {}
+  void execute() override { XshCmd::convertHoldType(1); }
+} ConvertToExplicitHoldsCommand;
+
+//============================================================
+
 }  // namespace XshCmd
 
 //*****************************************************************************

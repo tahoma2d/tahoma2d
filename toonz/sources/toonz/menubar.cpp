@@ -433,6 +433,9 @@ void TopBar::loadMenubar() {
   addMenuItem(sceneMenu, MI_LipSyncPopup);
   sceneMenu->addSeparator();
   addMenuItem(sceneMenu, MI_RemoveEmptyColumns);
+  sceneMenu->addSeparator();
+  addMenuItem(sceneMenu, MI_ConvertToImplicitHolds);
+  addMenuItem(sceneMenu, MI_ConvertToExplicitHolds);
 
   // Menu' LEVEL
   QMenu *levelMenu = addMenu(ShortcutTree::tr("Level"), m_menuBar);
