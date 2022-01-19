@@ -1334,6 +1334,7 @@ void ColorSlider::paintEvent(QPaintEvent *event) {
     w -= s_chandle_size;
     h -= 3;
   }
+  if (w < 2 || h < 2) return;
 
   QPixmap bgPixmap =
       makeLinearShading(m_color, m_channel, isVertical ? h : w, isVertical);
