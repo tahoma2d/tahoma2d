@@ -68,7 +68,7 @@ jobs:
           artifacts: toonz\build\Tahoma2D-win.zip,toonz\build\debug-symbols.zip
           artifactContentType: "raw"
           body: ${{ github.event.head_commit.message }}
-          name: Lastest Nightly ${{ env.NIGHTLYDATE }}
+          name: Latest Nightly ${{ env.NIGHTLYDATE }}
           prerelease: true
           replacesArtifacts: true
           tag: nightly
