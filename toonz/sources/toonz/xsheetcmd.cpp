@@ -335,8 +335,8 @@ public:
 
     for (int c = 0; c != colsCount; ++c) {
       // Store cell
-      const TXshCell &cell = xsh->getCell(m_frame, c);
-      m_cells[c] = xsh->isImplicitCell(m_frame, c) ? TXshCell() : cell;
+      const TXshCell &cell = xsh->getCell(m_frame, c, false);
+      m_cells[c] = cell;
 
       // Store stage object keyframes
       TStageObject *obj = xsh->getStageObject(TStageObjectId::ColumnId(c));
@@ -662,10 +662,8 @@ public:
       tempCol = c;
       while (r <= m_range.m_r1 + 1) {
         tempRow = r;
-        if (xsh->getCell(tempRow, tempCol).isEmpty() ||
-            xsh->isImplicitCell(tempRow, tempCol)) {
+        if (xsh->getCell(tempRow, tempCol, false).isEmpty())
           emptyCells.push_back(std::make_pair(tempRow, tempCol));
-        }
         r++;
       }
       r = m_range.m_r0;

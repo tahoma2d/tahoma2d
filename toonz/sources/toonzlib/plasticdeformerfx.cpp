@@ -196,15 +196,6 @@ bool PlasticDeformerFx::buildTextureDataSl(double frame, TRenderSettings &info,
   TXshLevelColumn *texColumn = lcfx->getColumn();
 
   TXshCell texCell = texColumn->getCell(row);
-  if (texCell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
-    int r0, r1;
-    texColumn->getRange(r0, r1);
-    for (int r = std::min(r1, (int)frame); r >= r0; r--) {
-      texCell = texColumn->getCell(r);
-      if (texCell.isEmpty()) continue;
-      break;
-    }
-  }
 
   TXshSimpleLevel *texSl = texCell.getSimpleLevel();
   const TFrameId &texFid = texCell.getFrameId();

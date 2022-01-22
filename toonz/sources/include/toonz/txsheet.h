@@ -192,9 +192,10 @@ public:
      an empty cell.
           \sa setCell(), getCells(), setCells()
   */
-  const TXshCell &getCell(int row, int col) const;
+  const TXshCell &getCell(int row, int col, bool implicitLookup = true) const;
 
-  const TXshCell &getCell(const CellPosition &pos) const;
+  const TXshCell &getCell(const CellPosition &pos,
+                          bool implicitLookup = true) const;
 
   bool isImplicitCell(int row, int col) const;
 

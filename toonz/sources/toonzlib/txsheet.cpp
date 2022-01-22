@@ -230,11 +230,12 @@ int TXsheet::getFrameCount() const { return m_imp->m_frameCount; }
 
 //-----------------------------------------------------------------------------
 
-const TXshCell &TXsheet::getCell(int row, int col) const {
-  return getCell(CellPosition(row, col));
+const TXshCell &TXsheet::getCell(int row, int col, bool implicitLookup) const {
+  return getCell(CellPosition(row, col), implicitLookup);
 }
 
-const TXshCell &TXsheet::getCell(const CellPosition &pos) const {
+const TXshCell &TXsheet::getCell(const CellPosition &pos,
+                                 bool implicitLookup) const {
   static const TXshCell emptyCell;
 
   TXshColumnP column = m_imp->m_columnSet.getColumn(pos.layer());
@@ -242,22 +243,7 @@ const TXshCell &TXsheet::getCell(const CellPosition &pos) const {
   TXshCellColumn *xshColumn = column->getCellColumn();
   if (!xshColumn) return emptyCell;
   int frame = pos.frame();
-  TXshCell cell = xshColumn->getCell(frame);
-  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
-    int r0, r1;
-    xshColumn->getRange(r0, r1);
-    for (int r = std::min(r1, pos.frame()); r >= r0; r--) {
-      TXshCell tempCell = xshColumn->getCell(r);
-      if (tempCell.isEmpty()) continue;
-      if (tempCell.getSoundLevel() || tempCell.getSoundTextLevel())
-        return emptyCell;
-      if (tempCell.getFrameId().isStopFrame() && cell.isEmpty())
-        return emptyCell;
-      frame = r;
-      break;
-    }
-  }
-  return xshColumn->getCell(frame);
+  return xshColumn->getCell(frame, implicitLookup);
 }
 
 //-----------------------------------------------------------------------------
@@ -274,17 +260,8 @@ bool TXsheet::isImplicitCell(const CellPosition &pos) const {
   if (!column) return false;
   TXshCellColumn *xshColumn = column->getCellColumn();
   if (!xshColumn) return false;
-  TXshCell tempCell = xshColumn->getCell(pos.frame());
-  if (!tempCell.isEmpty()) return false;
 
-  int r0, r1;
-  xshColumn->getRange(r0, r1);
-  for (int r = std::min(r1, pos.frame()); r >= r0; r--) {
-    tempCell = xshColumn->getCell(r);
-    if (tempCell.getFrameId().isStopFrame()) return false;
-    if (!tempCell.isEmpty()) return true;
-  }
-  return false;
+  return xshColumn->isCellImplicit(pos.frame());
 }
 
 //-----------------------------------------------------------------------------
@@ -294,7 +271,7 @@ bool TXsheet::setCell(int row, int col, const TXshCell &cell) {
 
   bool wasColumnEmpty = isColumnEmpty(col);
   TXshCellColumn *cellColumn;
-  if (!cell.isEmpty() && !isImplicitCell(row, col)) {
+  if (!cell.isEmpty()) {
     TXshLevel *level = cell.m_level.getPointer();
     assert(level);
 
@@ -678,12 +655,8 @@ void TXsheet::reverseCells(int r0, int c0, int r1, int c1) {
   for (int j = c0; j <= c1; j++) {
     int i1, i2;
     for (i1 = r0, i2 = r1; i1 < i2; i1++, i2--) {
-      TXshCell app1;
-      if (!isImplicitCell(CellPosition(i1, j)))
-        app1 = getCell(CellPosition(i1, j));
-      TXshCell app2;
-      if (!isImplicitCell(CellPosition(i2, j)))
-        app2 = getCell(CellPosition(i2, j));
+      TXshCell app1 = getCell(CellPosition(i1, j), false);
+      TXshCell app2 = getCell(CellPosition(i2, j), false);
       setCell(i1, j, app2);
       setCell(i2, j, app1);
     }
@@ -700,9 +673,7 @@ void TXsheet::swingCells(int r0, int c0, int r1, int c1) {
 
   for (int j = c0; j <= c1; j++) {
     for (int i1 = r0Mod, i2 = r1 - 1; i2 >= r0; i1++, i2--) {
-      TXshCell cell;
-      if (!isImplicitCell(CellPosition(i2, j)))
-        cell = getCell(CellPosition(i2, j));
+      TXshCell cell = getCell(CellPosition(i2, j), false);
       setCell(i1, j, cell);
     }
   }
@@ -754,9 +725,7 @@ bool TXsheet::incrementCells(int r0, int c0, int r1, int c1,
         forUndo.push_back(std::pair<TRect, TXshCell>(
             TRect(i + 1, j, i + 1 + numCells - 1, j), cell));
         for (int k = 1; k <= numCells; k++) {
-          TXshCell cell;
-          if (!isImplicitCell(CellPosition(i + k, j)))
-            cell = getCell(CellPosition(i, j));
+          TXshCell cell = getCell(CellPosition(i, j), false);
           setCell(i + k, j, cell);
         }
         i += numCells;
@@ -765,9 +734,7 @@ bool TXsheet::incrementCells(int r0, int c0, int r1, int c1,
       {
         int numCells = count - frame2 + frame1;
         i            = i - numCells;
-        TXshCell cell;
-        if (!isImplicitCell(CellPosition(i + 1, j)))
-          cell = getCell(CellPosition(i + 1, j));
+        TXshCell cell = getCell(CellPosition(i + 1, j), false);
         forUndo.push_back(std::pair<TRect, TXshCell>(
             TRect(i + 1, j, i + 1 + numCells - 1, j), cell));
         removeCells(i + 1, j, numCells);
@@ -788,9 +755,7 @@ void TXsheet::duplicateCells(int r0, int c0, int r1, int c1, int upTo) {
     insertCells(r1 + 1, j, upTo - (r1 + 1) + 1);
     for (int i = r1 + 1; i <= upTo; i++) {
       int row = r0 + ((i - (r1 + 1)) % chunk);
-      TXshCell cell;
-      if (!isImplicitCell(CellPosition(row, j)))
-        cell = getCell(CellPosition(row, j));
+      TXshCell cell = getCell(CellPosition(row, j), false);
       setCell(i, j, cell);
     }
   }
@@ -809,8 +774,8 @@ void TXsheet::stepCells(int r0, int c0, int r1, int c1, int type) {
   int k = 0;
   for (int r = r0; r <= r1; r++)
     for (int c = c0; c <= c1; c++) {
-      const TXshCell &cell = getCell(CellPosition(r, c));
-      cells[k++] = isImplicitCell(CellPosition(r, c)) ? TXshCell() : cell;
+      const TXshCell &cell = getCell(CellPosition(r, c), false);
+      cells[k++] = cell;
     }
 
   int nrows = nr * (type - 1);
@@ -919,8 +884,8 @@ void TXsheet::eachCells(int r0, int c0, int r1, int c1, int type) {
        j += type)  // in cells copio il contenuto delle celle che mi interessano
   {
     for (k = c0; k <= c1; k++, i++) {
-      const TXshCell &cell = getCell(CellPosition(j, k));
-      cells[i] = isImplicitCell(j, k) ? TXshCell() : cell;
+      const TXshCell &cell = getCell(CellPosition(j, k), false);
+      cells[i] = cell;
     }
   }
 

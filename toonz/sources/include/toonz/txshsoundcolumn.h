@@ -137,7 +137,7 @@ public:
   /*! Return min row not empty.*/
   int getFirstRow() const override;
 
-  const TXshCell &getCell(int row) const override;
+  const TXshCell &getCell(int row, bool implicitLookup = false) const override;
   TXshCell getSoundCell(int row);
   void getCells(int row, int rowCount, TXshCell cells[]) override;
 

@@ -348,11 +348,13 @@ Return true if cell in \b row is empty.
 */
   bool isCellEmpty(int row) const override;
 
+  bool isCellImplicit(int row) const;
+
   /*!
 Return cell in \b row.
 \sa getCells and setCell()
 */
-  virtual const TXshCell &getCell(int row) const;
+  virtual const TXshCell &getCell(int row, bool implicitLookup = true) const;
   /*!
 Set cell in \b row to \b TXshCell \b cell.
 \sa setCells() and getCell(); return false if cannot set cells.

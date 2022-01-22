@@ -385,9 +385,7 @@ TImage *TTool::touchImage() {
       // measure the hold length (starting from the current row) : r0-r1
       int r0 = row, r1 = row;
       if (isAutoStretchEnabled)
-        while (xsh->getCell(r1 + 1, col) == cell &&
-               !xsh->isImplicitCell(r1 + 1, col))
-          r1++;
+        while (xsh->getCell(r1 + 1, col, false) == cell) r1++;
       // find the proper frameid (possibly addisng suffix, in order to avoid a
       // fid already used)
       // find the proper frameid

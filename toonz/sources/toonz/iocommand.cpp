@@ -322,8 +322,7 @@ bool beforeCellsInsert(TXsheet *xsh, int row, int &col, int rowCount,
   int i              = 0;
   TXshColumn *column = xsh->getColumn(col);
 
-  for (i = 0; i < rowCount && (xsh->getCell(row + i, col).isEmpty() ||
-                               xsh->isImplicitCell(row + i, col));
+  for (i = 0; i < rowCount && (xsh->getCell(row + i, col, false).isEmpty());
        i++) {
   }
   int type = (column && !column->isEmpty()) ? column->getColumnType()
@@ -510,8 +509,7 @@ public:
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (c = m_col0; c <= m_col1; c++)
       for (r = m_row0; r <= m_row1; r++) {
-        TXshCell cell;
-        if (!xsh->isImplicitCell(r, c)) cell = xsh->getCell(r, c);
+        TXshCell cell             = xsh->getCell(r, c, false);
         TXshSimpleLevel *oldLevel = cell.getSimpleLevel();
         TFrameId fid              = cell.getFrameId();
         QPair<int, int> cellId(r, c);

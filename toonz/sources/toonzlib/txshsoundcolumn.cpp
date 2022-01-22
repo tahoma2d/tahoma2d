@@ -316,7 +316,7 @@ int TXshSoundColumn::getFirstRow() const {
 
 //-----------------------------------------------------------------------------
 
-const TXshCell &TXshSoundColumn::getCell(int row) const {
+const TXshCell &TXshSoundColumn::getCell(int row, bool implicitLookup) const {
   static TXshCell emptyCell;
 
   ColumnLevel *l = getColumnLevelByFrame(row);
