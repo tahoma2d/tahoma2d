@@ -1617,15 +1617,16 @@ bool changeFrameSkippingHolds(QKeyEvent *e) {
   TXsheet *xsh  = app->getCurrentXsheet()->getXsheet();
   TXshCell cell = xsh->getCell(row, col);
   if (e->key() == Qt::Key_Down) {
+    int r0, r1;
+    bool range = xsh->getCellRange(col, r0, r1);
     if (cell.isEmpty()) {
-      int r0, r1;
-      if (xsh->getCellRange(col, r0, r1)) {
+      if (range) {
         while (row <= r1 && xsh->getCell(row, col).isEmpty()) row++;
         if (xsh->getCell(row, col).isEmpty()) return false;
       } else
         return false;
     } else {
-      while (xsh->getCell(row, col) == cell) row++;
+      while (row <= r1 && xsh->getCell(row, col) == cell) row++;
     }
   } else {
     // Key_Up
