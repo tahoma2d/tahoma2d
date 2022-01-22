@@ -2018,6 +2018,10 @@ void MainWindow::defineActions() {
   createMenuXsheetAction(MI_RemoveGlobalKeyframe,
                          QT_TR_NOOP("Remove Multiple Keys"), "",
                          "remove_multiple_keys");
+  createMenuXsheetAction(MI_SetGlobalStopframe,
+                         QT_TR_NOOP("Set Multiple Stop Frames"), "");
+  createMenuXsheetAction(MI_RemoveGlobalStopframe,
+                         QT_TR_NOOP("Remove Multiple Stop Frames"), "");
   createMenuXsheetAction(MI_RemoveEmptyColumns,
                          QT_TR_NOOP("Remove Empty Columns"), "",
                          "remove_empty_columns");

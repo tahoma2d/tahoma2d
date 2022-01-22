@@ -1255,6 +1255,8 @@ void RowArea::contextMenuEvent(QContextMenuEvent *event) {
   menu->addAction(cmdManager->getAction(MI_RemoveSceneFrame));
   menu->addAction(cmdManager->getAction(MI_InsertGlobalKeyframe));
   menu->addAction(cmdManager->getAction(MI_RemoveGlobalKeyframe));
+  menu->addAction(cmdManager->getAction(MI_SetGlobalStopframe));
+  menu->addAction(cmdManager->getAction(MI_RemoveGlobalStopframe));
   menu->addAction(cmdManager->getAction(MI_DrawingSubForward));
   menu->addAction(cmdManager->getAction(MI_DrawingSubBackward));
   menu->addSeparator();
