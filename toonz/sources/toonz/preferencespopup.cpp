@@ -1152,7 +1152,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {previewBGColor, tr("Preview BG Color:")},
       {useThemeViewerColors,
        tr("Use the Curent Theme's Viewer Background Colors")},
-      {levelEditorBoxColor, tr("Level Editor Box Color:")},
+      {levelEditorBoxColor, tr("Level Editor Canvas Color:")},
       {chessboardColor1, tr("Chessboard Color 1:")},
       {chessboardColor2, tr("Chessboard Color 2:")},
       {transpCheckInkOnWhite, tr("Ink Color on White BG:")},

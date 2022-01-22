@@ -1373,10 +1373,17 @@ void SceneViewer::drawBackground() {
       } else
         bgColor = Preferences::instance()->getPreviewBgColor();
     } else {
-      if (Preferences::instance()->getUseThemeViewerColors()) {
+      TXshLevelHandle *levelHandle = TApp::instance()->getCurrentLevel();
+      TXshSimpleLevel *sl = levelHandle ? levelHandle->getSimpleLevel() : 0;
+      bool isVectorLevel = sl ? sl->getType() == PLI_XSHLEVEL : false;
+      bool isEditingLevel = TApp::instance()->getCurrentFrame()->isEditingLevel();
+
+      if (Preferences::instance()->getUseThemeViewerColors() && (!isEditingLevel || !isVectorLevel)) {
         QColor qtBgColor = getBGColor();
         bgColor =
             TPixel32(qtBgColor.red(), qtBgColor.green(), qtBgColor.blue());
+      } else if (isVectorLevel && isEditingLevel) {
+        bgColor = Preferences::instance()->getLevelEditorBoxColor();
       } else
         bgColor = Preferences::instance()->getViewerBgColor();
     }
