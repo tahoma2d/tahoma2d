@@ -189,9 +189,9 @@ LevelCreatePopup::LevelCreatePopup()
   QRegExp rx("[^\\\\/:?*.\"<>|]+");
   m_nameFld->setValidator(new QRegExpValidator(rx, this));
 
-  m_levelTypeOm->addItem(tr("Vector Level"), (int)PLI_XSHLEVEL);
-  m_levelTypeOm->addItem(tr("Smart Raster Level"), (int)TZP_XSHLEVEL);
   m_levelTypeOm->addItem(tr("Raster Level"), (int)OVL_XSHLEVEL);
+  m_levelTypeOm->addItem(tr("Smart Raster Level"), (int)TZP_XSHLEVEL);
+  m_levelTypeOm->addItem(tr("Vector Level"), (int)PLI_XSHLEVEL);
 
   if (Preferences::instance()->getUnits() == "pixel") {
     m_widthFld->setMeasure("camera.lx");
