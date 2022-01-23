@@ -705,7 +705,7 @@ bool TXsheet::incrementCells(int r0, int c0, int r1, int c1,
       int frame1 = getCell(CellPosition(i, j)).getFrameId().getNumber();
       if (frame1 == TFrameId::EMPTY_FRAME || frame1 == TFrameId::STOP_FRAME)
         break;
-      while (!getCell(CellPosition(i + 1, j)).isEmpty() &&
+      while ((i + 1 <= r1) && !getCell(CellPosition(i + 1, j)).isEmpty() &&
              !getCell(CellPosition(i + 1, j)).getFrameId().isStopFrame() &&
              getCell(CellPosition(i + 1, j)).getFrameId().getNumber() ==
                  getCell(CellPosition(i, j)).getFrameId().getNumber())

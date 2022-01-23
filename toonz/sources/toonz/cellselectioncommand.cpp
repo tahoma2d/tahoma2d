@@ -213,8 +213,12 @@ void IncrementUndo::undo() const {
       xsh->removeCells(r.x0, r.y0, size);
     else {
       xsh->insertCells(r.x0, r.y0, size);
-      for (int j = 0; j < size; ++j)
-        xsh->setCell(r.x0 + j, r.y0, m_undoCells[i].second);
+      for (int j = 0; j < size; ++j) {
+        if (j > 0 && Preferences::instance()->isImplicitHoldEnabled())
+          xsh->setCell(r.x0 + j, r.y0, TXshCell(0, TFrameId::EMPTY_FRAME));
+        else
+          xsh->setCell(r.x0 + j, r.y0, m_undoCells[i].second);
+      }
     }
   }
 
@@ -946,7 +950,7 @@ IncreaseStepUndo::IncreaseStepUndo(int r0, int c0, int r1, int c1)
     TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (int r = r0; r <= r1; ++r) {
       const TXshCell &cell = xsh->getCell(r, c);
-      m_cells[k++] = xsh->getCell(r, c, false);;
+      m_cells[k++] = xsh->getCell(r, c, false);
 
       if (prevCell != cell) {
         prevCell = cell;
@@ -1061,7 +1065,7 @@ DecreaseStepUndo::DecreaseStepUndo(int r0, int c0, int r1, int c1)
     m_removedCells[c] = 0;
 
     bool removed = false;
-    m_cells[k++] = xsh->getCell(r0, c, false);;
+    m_cells[k++] = xsh->getCell(r0, c, false);
 
     for (int r = r0 + 1; r <= r1; ++r) {
       const TXshCell &cell = xsh->getCell(r, c);
