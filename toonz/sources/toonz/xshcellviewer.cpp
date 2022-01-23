@@ -2272,7 +2272,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   if (showLevelName &&
       (!sameLevel || (row > 0 && xsh->isImplicitCell(row - 1, col)) ||
        (isAfterMarkers && !isSimpleView &&
-        Preferences::instance()->isLevelNameOnEachMarkerEnabled()))) {
+        Preferences::instance()->isLevelNameOnEachMarkerEnabled()) ||
+       prevCell.getFrameId().isStopFrame())) {
     std::wstring levelName = cell.m_level->getName();
     QString text           = QString::fromStdWString(levelName);
     QFontMetrics fm(font);
@@ -2989,7 +2990,7 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
         text, font, nameRect.width() - fm.width(numberStr) - 2, QString("~"));
 #endif
 
-    if (!sameLevel || isAfterMarkers)
+    if (!sameLevel || isAfterMarkers || prevCell.getFrameId().isStopFrame())
       p.drawText(nameRect, Qt::AlignLeft | Qt::AlignBottom, elidaName);
   }
 }
