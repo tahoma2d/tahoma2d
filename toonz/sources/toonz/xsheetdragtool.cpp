@@ -2056,14 +2056,21 @@ class DataDragTool final : public XsheetGUI::DragTool {
 
 protected:
   bool canChange(int row, int col) {
-    int c        = col;
-    int r        = row;
-    TXsheet *xsh = getViewer()->getXsheet();
-    TRect rect   = m_data->getLevelFrameRect(
-        getViewer()->orientation()->isVerticalTimeline());
-    for (c = col; c < rect.getLx() + col; c++) {
-      for (r = row; r < rect.getLy() + row; r++)
+    int c           = col;
+    int r           = row;
+    TXsheet *xsh    = getViewer()->getXsheet();
+    bool isVeritcal = getViewer()->orientation()->isVerticalTimeline();
+    TRect rect      = m_data->getLevelFrameRect(isVeritcal);
+    int rectCols    = isVeritcal ? rect.getLx() : rect.getLy();
+    int rectRows    = isVeritcal ? rect.getLy() : rect.getLx();
+    for (c = col; c < rectCols + col; c++) {
+      for (r = row; r < rectRows + row; r++) {
+        if (xsh->getColumn(c) &&
+            xsh->getColumn(c)->getColumnType() !=
+                TXshColumn::ColumnType::eLevelType)
+          return false;
         if (!xsh->getCell(r, c, false).isEmpty()) return false;
+      }
     }
     return true;
   }
