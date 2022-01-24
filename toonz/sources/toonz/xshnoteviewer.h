@@ -48,6 +48,7 @@ public:
   NotePopup(XsheetViewer *viewer, int noteIndex);
   ~NotePopup() {}
 
+  void setCurrentViewer(XsheetViewer *viewer);
   void setCurrentNoteIndex(int index);
 
   void update();
@@ -82,6 +83,8 @@ protected slots:
   void onXsheetSwitched();
 };
 
+static NotePopup *NotePopupWidget;
+
 //=============================================================================
 // NoteWidget
 //-----------------------------------------------------------------------------
@@ -90,7 +93,6 @@ class NoteWidget final : public QWidget {
   Q_OBJECT
   XsheetViewer *m_viewer;
   int m_noteIndex;
-  std::unique_ptr<NotePopup> m_noteEditor;
   bool m_isHovered;
 
 public:
@@ -99,7 +101,7 @@ public:
   int getNoteIndex() const { return m_noteIndex; }
   void setNoteIndex(int index) {
     m_noteIndex = index;
-    if (m_noteEditor) m_noteEditor->setCurrentNoteIndex(index);
+    if (NotePopupWidget) NotePopupWidget->setCurrentNoteIndex(index);
   }
 
   void paint(QPainter *painter, QPoint pos = QPoint(), bool isCurrent = false);
@@ -117,7 +119,6 @@ protected:
 class NoteArea final : public QFrame {
   Q_OBJECT
 
-  std::unique_ptr<NotePopup> m_newNotePopup;  // Popup used to create new note
   XsheetViewer *m_viewer;
 
   // QPushButton *m_flipOrientationButton;
@@ -142,7 +143,6 @@ public:
   NoteArea(XsheetViewer *parent = 0, Qt::WFlags flags = 0);
 #endif
 
-  void updatePopup() { m_newNotePopup->update(); }
   void updateButtons();
 
 protected slots:
@@ -168,7 +168,6 @@ protected:
 class FooterNoteArea final : public QFrame {
   Q_OBJECT
 
-  std::unique_ptr<NotePopup> m_newNotePopup;  // Popup used to create new note
   XsheetViewer *m_viewer;
 
   QToolButton *m_noteButton;
@@ -183,7 +182,6 @@ public:
   FooterNoteArea(XsheetViewer *parent = 0, Qt::WFlags flags = 0);
 #endif
 
-  void updatePopup() { m_newNotePopup->update(); }
   void updateButtons();
 
 protected slots:

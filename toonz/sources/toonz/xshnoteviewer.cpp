@@ -166,6 +166,10 @@ NotePopup::NotePopup(XsheetViewer *viewer, int noteIndex)
 
 //-----------------------------------------------------------------------------
 
+void NotePopup::setCurrentViewer(XsheetViewer *viewer) { m_viewer = viewer; }
+
+//-----------------------------------------------------------------------------
+
 void NotePopup::setCurrentNoteIndex(int index) { m_noteIndex = index; }
 
 //-----------------------------------------------------------------------------
@@ -426,14 +430,17 @@ void NoteWidget::paint(QPainter *painter, QPoint pos, bool isCurrent) {
 //-----------------------------------------------------------------------------
 
 void NoteWidget::openNotePopup() {
-  if (!m_noteEditor) {
-    m_noteEditor.reset(new XsheetGUI::NotePopup(m_viewer, m_noteIndex));
+  if (!NotePopupWidget)
+    NotePopupWidget = new XsheetGUI::NotePopup(m_viewer, m_noteIndex);
+  else {
+    NotePopupWidget->setCurrentViewer(m_viewer);
+    NotePopupWidget->setCurrentNoteIndex(m_noteIndex);
   }
 
-  if (m_noteEditor->isVisible()) {
-    m_noteEditor->activateWindow();
+  if (NotePopupWidget->isVisible()) {
+    NotePopupWidget->activateWindow();
   } else {
-    m_noteEditor->show();
+    NotePopupWidget->show();
   }
 }
 
@@ -689,13 +696,17 @@ void NoteArea::onXsheetOrientationChanged(const Orientation *newOrientation) {
 //-----------------------------------------------------------------------------
 
 void NoteArea::toggleNewNote() {
-  if (!m_newNotePopup)
-    m_newNotePopup.reset(new XsheetGUI::NotePopup(m_viewer, -1));
+  if (!NotePopupWidget)
+    NotePopupWidget = new XsheetGUI::NotePopup(m_viewer, -1);
+  else {
+    NotePopupWidget->setCurrentViewer(m_viewer);
+    NotePopupWidget->setCurrentNoteIndex(-1);
+  }
 
-  if (m_newNotePopup->isVisible()) {
-    m_newNotePopup->activateWindow();
+  if (NotePopupWidget->isVisible()) {
+    NotePopupWidget->activateWindow();
   } else {
-    m_newNotePopup->show();
+    NotePopupWidget->show();
   }
 }
 
@@ -872,13 +883,17 @@ void FooterNoteArea::onXsheetOrientationChanged(
 //-----------------------------------------------------------------------------
 
 void FooterNoteArea::toggleNewNote() {
-  if (!m_newNotePopup)
-    m_newNotePopup.reset(new XsheetGUI::NotePopup(m_viewer, -1));
+  if (!NotePopupWidget)
+    NotePopupWidget = new XsheetGUI::NotePopup(m_viewer, -1);
+  else {
+    NotePopupWidget->setCurrentViewer(m_viewer);
+    NotePopupWidget->setCurrentNoteIndex(-1);
+  }
 
-  if (m_newNotePopup->isVisible()) {
-    m_newNotePopup->activateWindow();
+  if (NotePopupWidget->isVisible()) {
+    NotePopupWidget->activateWindow();
   } else {
-    m_newNotePopup->show();
+    NotePopupWidget->show();
   }
 }
 

@@ -1687,8 +1687,7 @@ void XsheetViewer::resetXsheetNotes() {
 void XsheetViewer::updateNoteWidgets() {
   int i;
   for (i = 0; i < m_noteWidgets.size(); i++) m_noteWidgets.at(i)->update();
-  m_noteArea->updatePopup();
-  m_layerFooterPanel->m_noteArea->updatePopup();
+  if (XsheetGUI::NotePopupWidget) XsheetGUI::NotePopupWidget->update();
   updateCells();
 }
 
