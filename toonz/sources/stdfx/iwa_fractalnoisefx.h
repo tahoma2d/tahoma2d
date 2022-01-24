@@ -113,7 +113,7 @@ protected:
   // ダイナミックの度合い
   TDoubleParamP m_dynamicIntensity;
 
-  //- - - Conical Noise - - - 
+  //- - - Conical Noise - - -
   TBoolParamP m_doConical;
   TDoubleParamP m_conicalEvolution;
   TDoubleParamP m_conicalAngle;
@@ -126,7 +126,7 @@ protected:
 public:
   Iwa_FractalNoiseFx();
   bool canHandle(const TRenderSettings &info, double frame) override {
-    return true;
+    return !m_doConical->getValue();
   }
   bool doGetBBox(double frame, TRectD &bBox,
                  const TRenderSettings &ri) override;
