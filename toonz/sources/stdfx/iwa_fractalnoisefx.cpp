@@ -384,8 +384,11 @@ void Iwa_FractalNoiseFx::doCompute(TTile &tile, double frame,
           // obtain sampling position
           // For Dynamic and Dynamic Twist patterns, the position offsets using
           // gradient / rotation of the parent pattern
+          TPointD samplePosOffset =
+              getSamplePos(x, y, outDim, out_buf, gen, scale, param) -
+              TPointD(x, y);
           TPointD samplePos =
-              getSamplePos(dx, dy, outDim, out_buf, gen, scale, param);
+              TPointD(dx, dy) + samplePosOffset * (D / (D + dz));
           // multiply affine transformation
           samplePos = currentAff * samplePos;
           // adjust position for the block pattern
