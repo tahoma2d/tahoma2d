@@ -94,6 +94,7 @@ void TColumnSelection::enableCommands() {
   enableCommand(this, MI_Reframe4, &TColumnSelection::reframe4Cells);
   enableCommand(this, MI_ReframeWithEmptyInbetweens,
                 &TColumnSelection::reframeWithEmptyInbetweens);
+  enableCommand(this, MI_Autorenumber, &TColumnSelection::renumberColumns);
 }
 
 //-----------------------------------------------------------------------------

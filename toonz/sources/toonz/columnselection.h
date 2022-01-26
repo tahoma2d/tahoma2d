@@ -53,6 +53,8 @@ public:
   void reframe4Cells() { reframeCells(4); }
 
   void reframeWithEmptyInbetweens();
+
+  void renumberColumns();
 };
 
 #endif  // TCELLSELECTION_H
