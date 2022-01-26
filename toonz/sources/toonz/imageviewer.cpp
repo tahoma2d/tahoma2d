@@ -225,7 +225,8 @@ ImageViewer::ImageViewer(QWidget *parent, FlipBook *flipbook,
     , m_histogramPopup(0)
     , m_isRemakingPreviewFx(false)
     , m_rectRGBPick(false)
-    , m_firstImage(true) {
+    , m_firstImage(true)
+    , m_timer(nullptr) {
   m_visualSettings.m_sceneProperties =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
   m_visualSettings.m_drawExternalBG = true;
@@ -244,6 +245,11 @@ ImageViewer::ImageViewer(QWidget *parent, FlipBook *flipbook,
 
   if (Preferences::instance()->isColorCalibrationEnabled())
     m_lutCalibrator = new LutCalibrator();
+
+#if QT_VERSION >= 0x051000
+  if (Preferences::instance()->is30bitDisplayEnabled())
+    setTextureFormat(TGL_TexFmt10);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -412,10 +418,11 @@ void ImageViewer::setImage(TImageP image) {
 
   if (m_isHistogramEnable && m_histogramPopup->isVisible())
     m_histogramPopup->setImage(image);
-  if (!isColorModel())
-    repaint();
-  else
-    update();
+
+  // make sure to redraw the frame here.
+  // repaint() does NOT immediately redraw the frame for QOpenGLWidget
+  update();
+  if (!isColorModel()) qApp->processEvents();
 }
 
 //-------------------------------------------------------------------
@@ -488,13 +495,19 @@ void ImageViewer::resizeGL(int w, int h) {
   // remake fbo with new size
   if (m_lutCalibrator && m_lutCalibrator->isValid()) {
     if (m_fbo) delete m_fbo;
-    m_fbo = new QOpenGLFramebufferObject(w, h);
+    if (Preferences::instance()->is30bitDisplayEnabled()) {
+      QOpenGLFramebufferObjectFormat format;
+      format.setInternalTextureFormat(TGL_TexFmt10);
+      m_fbo = new QOpenGLFramebufferObject(w, h, format);
+    } else  // normally, initialize with GL_RGBA8 format
+      m_fbo = new QOpenGLFramebufferObject(w, h);
   }
 }
 
 //-----------------------------------------------------------------------------
 
 void ImageViewer::paintGL() {
+ initializeOpenGLFunctions();
   if (m_lutCalibrator && m_lutCalibrator->isValid()) m_fbo->bind();
 
   TDimension viewerSize(width(), height());
@@ -554,6 +567,12 @@ void ImageViewer::paintGL() {
   if (!m_image) {
     if (m_lutCalibrator && m_lutCalibrator->isValid())
       m_lutCalibrator->onEndDraw(m_fbo);
+    if (m_timer && m_timer->isValid()) {
+      qint64 currentInstant = m_timer->nsecsElapsed();
+      while (currentInstant < m_targetInstant) {
+        currentInstant = m_timer->nsecsElapsed();
+      }
+    }
     return;
   }
 
@@ -633,10 +652,18 @@ void ImageViewer::paintGL() {
 
   if (m_lutCalibrator && m_lutCalibrator->isValid())
     m_lutCalibrator->onEndDraw(m_fbo);
+
+  // wait to achieve precise fps
+  if (m_timer && m_timer->isValid()) {
+    qint64 currentInstant = m_timer->nsecsElapsed();
+    while (currentInstant < m_targetInstant) {
+      currentInstant = m_timer->nsecsElapsed();
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
-/*! Add to current transformation matrix a \b delta traslation.
+/*! Add to current transformation matrix a \b delta translation.
  */
 void ImageViewer::panQt(const QPoint &delta) {
   if (delta == QPoint()) return;
@@ -668,7 +695,7 @@ void ImageViewer::panQt(const QPoint &delta) {
 }
 
 //-----------------------------------------------------------------------------
-/*! Add to current transformation matrix a \b center traslation matched with a
+/*! Add to current transformation matrix a \b center translation matched with a
                 scale of factor \b factor. Apply a zoom of factor \b factor with
    center
                 \b center.
@@ -1422,8 +1449,14 @@ void ImageViewer::onPreferenceChanged(const QString& prefName) {
             m_lutCalibrator->initialize();
             connect(context(), SIGNAL(aboutToBeDestroyed()), this,
                 SLOT(onContextAboutToBeDestroyed()));
-            if (m_lutCalibrator->isValid() && !m_fbo)
+            if (m_lutCalibrator->isValid() && !m_fbo) {
+              if (Preferences::instance()->is30bitDisplayEnabled()) {
+                QOpenGLFramebufferObjectFormat format;
+                format.setInternalTextureFormat(TGL_TexFmt10);
+                m_fbo = new QOpenGLFramebufferObject(width(), height(), format);
+              } else  // normally, initialize with GL_RGBA8 format
                 m_fbo = new QOpenGLFramebufferObject(width(), height());
+            }
             doneCurrent();
         }
         update();
