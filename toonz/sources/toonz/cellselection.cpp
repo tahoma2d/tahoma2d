@@ -433,6 +433,9 @@ class RenumberUndo::RedoNotifier final : public TUndo {
   }
 
   int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override { return QObject::tr("Autorenumber"); }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 class RenumberUndo::UndoNotifier final : public TUndo {
@@ -443,6 +446,9 @@ class RenumberUndo::UndoNotifier final : public TUndo {
   }
 
   int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override { return QObject::tr("Autorenumber"); }
+  int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
 //=============================================================================
