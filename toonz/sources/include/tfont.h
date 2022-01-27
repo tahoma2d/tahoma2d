@@ -5,6 +5,7 @@
 
 // Toonz includes
 #include "trastercm.h"
+#include "trasterimage.h"
 #include "texception.h"
 
 // STL includes
@@ -48,6 +49,8 @@ public:
   TPoint drawChar(QImage &outImage, TPoint &glyphOrigin, wchar_t charcode,
                   wchar_t nextCode = 0) const;
   TPoint drawChar(TRasterCM32P &outImage, TPoint &glyphOrigin, int inkId,
+                  wchar_t charcode, wchar_t nextCode = 0) const;
+  TPoint drawChar(TRaster32P &outImage, TPoint &glyphOrigin, TPixel32 color,
                   wchar_t charcode, wchar_t nextCode = 0) const;
 
   // brief  get kerning distance between two characters
@@ -139,6 +142,12 @@ public:
   TPoint drawChar(TRasterCM32P &outImage, TPoint &glyphOrigin, int inkId,
                   wchar_t charcode, wchar_t nextCode = 0) {
     return getCurrentFont()->drawChar(outImage, glyphOrigin, inkId, charcode,
+                                      nextCode);
+  }
+
+  TPoint drawChar(TRaster32P &outImage, TPoint &glyphOrigin, TPixel32 color,
+                  wchar_t charcode, wchar_t nextCode = 0) {
+    return getCurrentFont()->drawChar(outImage, glyphOrigin, color, charcode,
                                       nextCode);
   }
 
