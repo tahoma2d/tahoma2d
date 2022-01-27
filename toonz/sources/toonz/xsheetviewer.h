@@ -255,9 +255,9 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
                  setSelectedEmptyCellColor)
 
   // Cell focus
-  QColor m_cellFocusColor;
-  Q_PROPERTY(
-      QColor CellFocusColor READ getCellFocusColor WRITE setCellFocusColor)
+  //  QColor m_cellFocusColor;
+  //  Q_PROPERTY(
+  //      QColor CellFocusColor READ getCellFocusColor WRITE setCellFocusColor)
 
   // Play range
   QColor m_playRangeColor;
@@ -828,8 +828,8 @@ public:
   QColor getSelectedEmptyCellColor() const { return m_selectedEmptyCellColor; }
 
   // Cell focus
-  void setCellFocusColor(const QColor &color) { m_cellFocusColor = color; }
-  QColor getCellFocusColor() const { return m_cellFocusColor; }
+  //  void setCellFocusColor(const QColor &color) { m_cellFocusColor = color; }
+  QColor getCellFocusColor() const;  // { return m_cellFocusColor; }
 
   // Play range
   QColor getPlayRangeColor() const { return m_playRangeColor; }

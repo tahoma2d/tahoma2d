@@ -1950,6 +1950,15 @@ QColor XsheetViewer::getSelectedColumnTextColor() const {
   return currentColumnColor;
 }
 
+QColor XsheetViewer::getCellFocusColor() const {
+  // get colors
+  TPixel currentCellPixel;
+  Preferences::instance()->getCurrentCellData(currentCellPixel);
+  QColor currentCellColor((int)currentCellPixel.r, (int)currentCellPixel.g,
+                          (int)currentCellPixel.b, 255);
+  return currentCellColor;
+}
+
 //-----------------------------------------------------------------------------
 
 bool XsheetViewer::event(QEvent *e) {
