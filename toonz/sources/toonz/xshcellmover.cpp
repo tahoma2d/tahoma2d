@@ -248,9 +248,7 @@ bool CellsMover::canMoveCells(const TPoint &pos) {
   int count = 0;
   for (int i = 0; i < m_colCount; i++) {
     for (int j = 0; j < m_rowCount; j++) {
-      if (!xsh->getCell(r + j, c + i).isEmpty() &&
-          !xsh->isImplicitCell(r + j, c + i))
-        return false;
+      if (!xsh->getCell(r + j, c + i, false).isEmpty()) return false;
       count++;
     }
   }

@@ -137,6 +137,8 @@
 
 #define MI_InsertGlobalKeyframe "MI_InsertGlobalKeyframe"
 #define MI_RemoveGlobalKeyframe "MI_RemoveGlobalKeyframe"
+#define MI_SetGlobalStopframe "MI_SetGlobalStopframe"
+#define MI_RemoveGlobalStopframe "MI_RemoveGlobalStopframe"
 #define MI_DrawingSubForward "MI_DrawingSubForward"
 #define MI_DrawingSubBackward "MI_DrawingSubBackward"
 #define MI_DrawingSubGroupForward "MI_DrawingSubGroupForward"

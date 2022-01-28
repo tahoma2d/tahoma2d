@@ -213,8 +213,12 @@ void IncrementUndo::undo() const {
       xsh->removeCells(r.x0, r.y0, size);
     else {
       xsh->insertCells(r.x0, r.y0, size);
-      for (int j = 0; j < size; ++j)
-        xsh->setCell(r.x0 + j, r.y0, m_undoCells[i].second);
+      for (int j = 0; j < size; ++j) {
+        if (j > 0 && Preferences::instance()->isImplicitHoldEnabled())
+          xsh->setCell(r.x0 + j, r.y0, TXshCell(0, TFrameId::EMPTY_FRAME));
+        else
+          xsh->setCell(r.x0 + j, r.y0, m_undoCells[i].second);
+      }
     }
   }
 
@@ -391,8 +395,8 @@ StepUndo::StepUndo(int r0, int c0, int r1, int c1, int step)
   int k        = 0;
   for (int r = r0; r <= r1; ++r)
     for (int c = c0; c <= c1; ++c) {
-      const TXshCell &cell = xsh->getCell(r, c);
-      m_cells[k++] = xsh->isImplicitCell(r, c) ? TXshCell() : cell;
+      const TXshCell &cell = xsh->getCell(r, c, false);
+      m_cells[k++] = cell;
     }
 }
 
@@ -495,8 +499,8 @@ EachUndo::EachUndo(int r0, int c0, int r1, int c1, int each)
   TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   for (int r = r0; r <= r1; ++r)
     for (int c = c0; c <= c1; ++c) {
-      const TXshCell &cell = xsh->getCell(r, c);
-      m_cells[k++] = xsh->isImplicitCell(r, c) ? TXshCell() : cell;
+      const TXshCell &cell = xsh->getCell(r, c, false);
+      m_cells[k++] = cell;
     }
 }
 
@@ -611,9 +615,8 @@ ReframeUndo::ReframeUndo(int r0, int r1, std::vector<int> columnIndeces,
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   for (int r = r0; r <= (r1 + 1); r++)
     for (int c = 0; c < (int)m_columnIndeces.size(); c++) {
-      const TXshCell &cell = xsh->getCell(r, m_columnIndeces[c]);
-      m_cells[k++] =
-          xsh->isImplicitCell(r, m_columnIndeces[c]) ? TXshCell() : cell;
+      const TXshCell &cell = xsh->getCell(r, m_columnIndeces[c], false);
+      m_cells[k++] = cell;
     }
 
   m_newRows.clear();
@@ -847,7 +850,7 @@ ResetStepUndo::ResetStepUndo(int r0, int c0, int r1, int c1)
     TXsheetP xsh = app->getCurrentXsheet()->getXsheet();
     for (int r = r0; r <= r1; ++r) {
       const TXshCell &cell = xsh->getCell(r, c);
-      m_cells[k++] = xsh->isImplicitCell(r, c) ? TXshCell() : cell;
+      m_cells[k++] = xsh->getCell(r, c, false);
 
       if (prevCell != cell) {
         prevCell = cell;
@@ -947,7 +950,7 @@ IncreaseStepUndo::IncreaseStepUndo(int r0, int c0, int r1, int c1)
     TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (int r = r0; r <= r1; ++r) {
       const TXshCell &cell = xsh->getCell(r, c);
-      m_cells[k++] = xsh->isImplicitCell(r, c) ? TXshCell() : cell;
+      m_cells[k++] = xsh->getCell(r, c, false);
 
       if (prevCell != cell) {
         prevCell = cell;
@@ -1062,11 +1065,11 @@ DecreaseStepUndo::DecreaseStepUndo(int r0, int c0, int r1, int c1)
     m_removedCells[c] = 0;
 
     bool removed = false;
-    m_cells[k++] = xsh->isImplicitCell(r0, c) ? TXshCell() : prevCell;
+    m_cells[k++] = xsh->getCell(r0, c, false);
 
     for (int r = r0 + 1; r <= r1; ++r) {
       const TXshCell &cell = xsh->getCell(r, c);
-      m_cells[k++] = xsh->isImplicitCell(r, c) ? TXshCell() : cell;
+      m_cells[k++] = xsh->getCell(r, c, false);
 
       if (prevCell == cell) {
         if (!removed) {
@@ -1610,16 +1613,9 @@ void CloneLevelUndo::insertCells() const {
   // Now, re-traverse the selected range, and add corresponding cells
   // in the destination range
   for (int c = m_range.m_c0; c <= m_range.m_c1; ++c) {
-    TXshCell prevCell;
     TXshLevelP lastLevel = 0;
     for (int r = m_range.m_r0; r <= m_range.m_r1; ++r) {
-      TXshCell srcCell = xsh->getCell(r, c);
-      if (useImplicitHold) {
-        if (r > m_range.m_r0 &&
-            (prevCell == srcCell || xsh->isImplicitCell(r, c)))
-          srcCell = TXshCell();
-        prevCell = srcCell;
-      }
+      TXshCell srcCell = xsh->getCell(r, c, false);
       if (TXshSimpleLevel *srcSl = srcCell.getSimpleLevel()) {
         std::map<TXshSimpleLevel *, TXshLevelP>::iterator lt =
             m_insertedLevels.find(srcSl);

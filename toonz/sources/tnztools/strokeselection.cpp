@@ -786,9 +786,11 @@ bool StrokeSelection::isEditable() {
     // Test for Mesh-deformed levels
     const TStageObjectId &parentId = obj->getParent();
     if (parentId.isColumn() && obj->getParentHandle()[0] != 'H') {
-      TXshSimpleLevel *parentSl =
-          xsh->getCell(rowIndex, parentId.getIndex()).getSimpleLevel();
-      if (parentSl && parentSl->getType() == MESH_XSHLEVEL) return false;
+      TXshCell cell             = xsh->getCell(rowIndex, parentId.getIndex());
+      TXshSimpleLevel *parentSl = cell.getSimpleLevel();
+      if (!cell.getFrameId().isStopFrame() && parentSl &&
+          parentSl->getType() == MESH_XSHLEVEL)
+        return false;
     }
   }
 

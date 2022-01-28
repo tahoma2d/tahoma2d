@@ -42,6 +42,7 @@
 #include "toonz/tfxhandle.h"
 #include "toonz/scenefx.h"
 #include "toonz/preferences.h"
+#include "toonz/txshlevelcolumn.h"
 
 // TnzQt includes
 #include "toonzqt/tselectionhandle.h"
@@ -335,8 +336,8 @@ public:
 
     for (int c = 0; c != colsCount; ++c) {
       // Store cell
-      const TXshCell &cell = xsh->getCell(m_frame, c);
-      m_cells[c] = xsh->isImplicitCell(m_frame, c) ? TXshCell() : cell;
+      const TXshCell &cell = xsh->getCell(m_frame, c, false);
+      m_cells[c] = cell;
 
       // Store stage object keyframes
       TStageObject *obj = xsh->getStageObject(TStageObjectId::ColumnId(c));
@@ -636,6 +637,265 @@ public:
   }
 } removeGlobalKeyframeCommand;
 
+//*****************************************************************************
+//    SetGlobalStopframe  command
+//*****************************************************************************
+
+class SetGlobalStopframeUndo final : public TUndo {
+  std::vector<std::pair<int, TXshCell>> m_oldCells;
+  std::vector<int> m_columns;
+  int m_frame;
+
+public:
+  SetGlobalStopframeUndo(int frame, const std::vector<int> &columns);
+  ~SetGlobalStopframeUndo() {}
+
+  void undo() const override {
+    if (m_frame < 0 || !m_oldCells.size()) return;
+
+    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+
+    for (int i = 0; i < m_oldCells.size(); i++) {
+      std::pair<int, TXshCell> cellData = m_oldCells[i];
+      TXshColumn *xshColumn = xsh->getColumn(cellData.first);
+      if (!xshColumn) continue;
+
+      TXshCellColumn *cellColumn = xshColumn->getCellColumn();
+      if (!cellColumn) continue;
+
+      std::vector<TXshCell> cells;
+      cells.push_back(cellData.second);
+      cellColumn->setCells(m_frame, 1, &cells[0]);
+    }
+
+    TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  void redo() const override;
+
+  int getSize() const override { return m_oldCells.size(); }
+
+  QString getHistoryString() override {
+    return QObject::tr("Set Multiple Stop Frames  at Frame %1")
+        .arg(QString::number(m_frame + 1));
+  }
+};
+
+//-----------------------------------------------------------------------------
+
+SetGlobalStopframeUndo::SetGlobalStopframeUndo(int frame,
+                                               const std::vector<int> &columns)
+    : m_frame(frame), m_columns(columns) {
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+
+  m_oldCells.clear();
+
+  for (int c : m_columns) {
+    if (c < 0) continue;
+
+    TXshColumn *xshColumn = xsh->getColumn(c);
+    if (!xshColumn || xshColumn->getSoundColumn() ||
+        xshColumn->getSoundTextColumn() || xshColumn->isLocked() ||
+        xshColumn->isEmpty())
+      continue;
+
+    TXshCellColumn *cellColumn = xshColumn->getCellColumn();
+    if (!cellColumn || cellColumn->isEmpty()) continue;
+
+    TXshCell cell = cellColumn->getCell(m_frame, false);
+    if (!cell.isEmpty()) continue;
+
+    m_oldCells.push_back(std::make_pair(c, cell));
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void SetGlobalStopframeUndo::redo() const {
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+
+  for (int c : m_columns) {
+    if (c < 0) continue;
+
+    TXshColumn *xshColumn = xsh->getColumn(c);
+    if (!xshColumn || xshColumn->getSoundColumn() ||
+        xshColumn->getSoundTextColumn() || xshColumn->isLocked() ||
+        xshColumn->isEmpty())
+      continue;
+
+    TXshCellColumn *cellColumn = xshColumn->getCellColumn();
+    if (!cellColumn || cellColumn->isEmpty()) continue;
+
+    TXshCell cell = cellColumn->getCell(m_frame);
+    if (!cell.isEmpty() && !cellColumn->isCellImplicit(m_frame)) continue;
+
+    if (cell.isEmpty()) {  // Might have hit a stop frame
+      for (int r = m_frame - 1; r >= 0; r--) {
+        cell = cellColumn->getCell(r, false);
+        if (cell.isEmpty()) continue;
+        break;
+      }
+      if (cell.isEmpty()) continue;
+    }
+    cellColumn->setCell(
+        m_frame, TXshCell(cell.m_level.getPointer(), TFrameId::STOP_FRAME));
+  }
+
+  TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+//-----------------------------------------------------------------------------
+
+static void setGlobalStopframe(int frame) {
+  std::vector<int> columns;
+  ::getColumns(columns);
+
+  if (columns.empty()) return;
+
+  TUndo *undo = new SetGlobalStopframeUndo(frame, columns);
+  TUndoManager::manager()->add(undo);
+
+  undo->redo();
+}
+
+//=============================================================================
+
+class SetGlobalStopframeCommand final : public MenuItemHandler {
+public:
+  SetGlobalStopframeCommand() : MenuItemHandler(MI_SetGlobalStopframe) {}
+  void execute() override {
+    int frame = TApp::instance()->getCurrentFrame()->getFrame();
+    XshCmd::setGlobalStopframe(frame);
+  }
+} setGlobalStopframeCommand;
+
+//*****************************************************************************
+//    RemoveGlobalStopframe  command
+//*****************************************************************************
+
+class RemoveGlobalStopframeUndo final : public TUndo {
+  std::vector<std::pair<int, TXshCell>> m_oldCells;
+  std::vector<int> m_columns;
+  int m_frame;
+
+public:
+  RemoveGlobalStopframeUndo(int frame, const std::vector<int> &columns);
+  ~RemoveGlobalStopframeUndo() {}
+
+  void undo() const override {
+    if (m_frame < 0 || !m_oldCells.size()) return;
+
+    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+
+    for (int i = 0; i < m_oldCells.size(); i++) {
+      std::pair<int, TXshCell> cellData = m_oldCells[i];
+      TXshColumn *xshColumn = xsh->getColumn(cellData.first);
+      if (!xshColumn) continue;
+
+      TXshCellColumn *cellColumn = xshColumn->getCellColumn();
+      if (!cellColumn) continue;
+
+      std::vector<TXshCell> cells;
+      cells.push_back(cellData.second);
+      cellColumn->setCells(m_frame, 1, &cells[0]);
+    }
+
+    TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  void redo() const override;
+
+  int getSize() const override { return m_oldCells.size(); }
+
+  QString getHistoryString() override {
+    return QObject::tr("Remove Multiple Stop Frames at Frame %1")
+        .arg(QString::number(m_frame + 1));
+  }
+};
+
+//-----------------------------------------------------------------------------
+
+RemoveGlobalStopframeUndo::RemoveGlobalStopframeUndo(
+    int frame, const std::vector<int> &columns)
+    : m_frame(frame), m_columns(columns) {
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+
+  m_oldCells.clear();
+
+  for (int c : m_columns) {
+    if (c < 0) continue;
+
+    TXshColumn *xshColumn = xsh->getColumn(c);
+    if (!xshColumn || xshColumn->getSoundColumn() ||
+        xshColumn->getSoundTextColumn() || xshColumn->isLocked() ||
+        xshColumn->isEmpty())
+      continue;
+
+    TXshCellColumn *cellColumn = xshColumn->getCellColumn();
+    if (!cellColumn || cellColumn->isEmpty()) continue;
+
+    TXshCell cell = cellColumn->getCell(m_frame, false);
+    if (!cell.getFrameId().isStopFrame()) continue;
+
+    m_oldCells.push_back(std::make_pair(c, cell));
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void RemoveGlobalStopframeUndo::redo() const {
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+
+  for (int c : m_columns) {
+    if (c < 0) continue;
+
+    TXshColumn *xshColumn = xsh->getColumn(c);
+    if (!xshColumn || xshColumn->getSoundColumn() ||
+        xshColumn->getSoundTextColumn() || xshColumn->isLocked() ||
+        xshColumn->isEmpty())
+      continue;
+
+    TXshCellColumn *cellColumn = xshColumn->getCellColumn();
+    if (!cellColumn || cellColumn->isEmpty()) continue;
+
+    TXshCell cell = cellColumn->getCell(m_frame, false);
+    if (!cell.getFrameId().isStopFrame()) continue;
+
+    cellColumn->clearCells(m_frame, 1);
+  }
+
+  TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+//-----------------------------------------------------------------------------
+
+static void removeGlobalStopframe(int frame) {
+  std::vector<int> columns;
+  ::getColumns(columns);
+
+  if (columns.empty()) return;
+
+  TUndo *undo = new RemoveGlobalStopframeUndo(frame, columns);
+  TUndoManager::manager()->add(undo);
+
+  undo->redo();
+}
+
+//=============================================================================
+
+class RemoveGlobalStopframeCommand final : public MenuItemHandler {
+public:
+  RemoveGlobalStopframeCommand() : MenuItemHandler(MI_RemoveGlobalStopframe) {}
+  void execute() override {
+    int frame = TApp::instance()->getCurrentFrame()->getFrame();
+    XshCmd::removeGlobalStopframe(frame);
+  }
+} RemoveGlobalStopframeCommand;
+
 //============================================================
 //	Drawing Substitution
 //============================================================
@@ -662,10 +922,8 @@ public:
       tempCol = c;
       while (r <= m_range.m_r1 + 1) {
         tempRow = r;
-        if (xsh->getCell(tempRow, tempCol).isEmpty() ||
-            xsh->isImplicitCell(tempRow, tempCol)) {
+        if (xsh->getCell(tempRow, tempCol, false).isEmpty())
           emptyCells.push_back(std::make_pair(tempRow, tempCol));
-        }
         r++;
       }
       r = m_range.m_r0;

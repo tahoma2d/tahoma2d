@@ -2897,8 +2897,7 @@ void TCellSelection::stopFrameHold(int row, int col, bool multiple) {
     return;
   }
 
-  TXshCell cell;
-  if (!xsh->isImplicitCell(row, col)) cell = xsh->getCell(row, col);
+  TXshCell cell = xsh->getCell(row, col, false);
 
   StopFrameHoldUndo *undo = new StopFrameHoldUndo(lvl, row, col, cell);
   TUndoManager::manager()->add(undo);

@@ -153,9 +153,8 @@ AutoInputCellNumberUndo::AutoInputCellNumberUndo(int increment, int interval,
     TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (int c = 0; c < m_columnIndices.size(); ++c) {
       for (int r = m_r0; r <= rowUpTo; ++r) {
-        const TXshCell &cell = xsh->getCell(r, m_columnIndices.at(c));
-        m_beforeCells[k++] =
-            xsh->isImplicitCell(r, m_columnIndices.at(c)) ? TXshCell() : cell;
+        const TXshCell &cell = xsh->getCell(r, m_columnIndices.at(c), false);
+        m_beforeCells[k++] = cell;
       }
     }
   } else {
@@ -165,9 +164,8 @@ AutoInputCellNumberUndo::AutoInputCellNumberUndo(int increment, int interval,
     int k        = 0;
     TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (int c = 0; c < m_columnIndices.size(); ++c) {
-      const TXshCell &cell = xsh->getCell(m_r0, m_columnIndices.at(c));
-      m_beforeCells[k++] =
-          xsh->isImplicitCell(m_r0, m_columnIndices.at(c)) ? TXshCell() : cell;
+      const TXshCell &cell = xsh->getCell(m_r0, m_columnIndices.at(c), false);
+      m_beforeCells[k++] = cell;
     }
   }
 }

@@ -68,8 +68,8 @@ public:
     TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (int c = c0; c <= c1; c++)
       for (int r = r0; r <= r1; r++) {
-        const TXshCell &cell = xsh->getCell(r, c);
-        m_cells[k++] = xsh->isImplicitCell(r, c) ? TXshCell() : cell;
+        const TXshCell &cell = xsh->getCell(r, c, false);
+        m_cells[k++] = cell;
       }
   }
 

@@ -385,8 +385,8 @@ TImage *TTool::touchImage() {
       // measure the hold length (starting from the current row) : r0-r1
       int r0 = row, r1 = row;
       if (isAutoStretchEnabled)
-        while (xsh->getCell(r1 + 1, col) == cell &&
-               !xsh->isImplicitCell(r1 + 1, col))
+        while (!cell.getFrameId().isStopFrame() &&
+               xsh->getCell(r1 + 1, col, false) == cell)
           r1++;
       // find the proper frameid (possibly addisng suffix, in order to avoid a
       // fid already used)
@@ -464,6 +464,8 @@ TImage *TTool::touchImage() {
     int a = row - 1, b = row + 1;
     while (a >= r0 && xsh->getCell(a, col).isEmpty()) a--;
     while (b <= r1 && xsh->getCell(b, col).isEmpty()) b++;
+
+    if (a >= r0 && xsh->getCell(a, col).getFrameId().isStopFrame()) a = r0 - 1;
 
     // find the level we must attach to
     if (a >= r0) {

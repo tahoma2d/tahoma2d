@@ -429,6 +429,8 @@ void TopBar::loadMenubar() {
   addMenuItem(sceneMenu, MI_RemoveSceneFrame);
   addMenuItem(sceneMenu, MI_InsertGlobalKeyframe);
   addMenuItem(sceneMenu, MI_RemoveGlobalKeyframe);
+  addMenuItem(sceneMenu, MI_SetGlobalStopframe);
+  addMenuItem(sceneMenu, MI_RemoveGlobalStopframe);
   sceneMenu->addSeparator();
   addMenuItem(sceneMenu, MI_LipSyncPopup);
   sceneMenu->addSeparator();

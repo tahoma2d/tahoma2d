@@ -2063,8 +2063,7 @@ protected:
         getViewer()->orientation()->isVerticalTimeline());
     for (c = col; c < rect.getLx() + col; c++) {
       for (r = row; r < rect.getLy() + row; r++)
-        if (!xsh->getCell(r, c).isEmpty() && !xsh->isImplicitCell(r, c))
-          return false;
+        if (!xsh->getCell(r, c, false).isEmpty()) return false;
     }
     return true;
   }

@@ -84,17 +84,55 @@ int TXshCellColumn::getFirstRow() const { return m_first; }
 
 //-----------------------------------------------------------------------------
 
-const TXshCell &TXshCellColumn::getCell(int row) const {
+const TXshCell &TXshCellColumn::getCell(int row, bool implicitLookup) const {
   static TXshCell emptyCell;
-  if (row < 0 || row < m_first || row >= m_first + (int)m_cells.size())
-    return emptyCell;
-  return m_cells[row - m_first];
+
+  if (row < 0 || row < m_first || !m_cells.size()) return emptyCell;
+
+  bool implicitEnabled = Preferences::instance()->isImplicitHoldEnabled() &&
+                         implicitLookup &&
+                         getColumnType() != ColumnType::eSoundTextType &&
+                         getColumnType() != ColumnType::eSoundType;
+
+  int r = row - m_first;
+
+  if (r >= m_cells.size()) {
+    if (!implicitEnabled) return emptyCell;
+    r = m_cells.size() - 1;
+    if (m_cells[r].getFrameId().isStopFrame()) return emptyCell;
+  }
+
+  if (m_cells[r].isEmpty() && implicitEnabled) {
+    for (; r >= 0; r--) {
+      if (m_cells[r].isEmpty()) continue;
+      if (m_cells[r].getFrameId().isStopFrame()) return emptyCell;
+      break;
+    }
+    if (r < 0) return emptyCell;
+  }
+
+  return m_cells[r];
 }
 
 //-----------------------------------------------------------------------------
 
 bool TXshCellColumn::isCellEmpty(int row) const {
   return getCell(row).isEmpty();
+}
+
+//-----------------------------------------------------------------------------
+
+bool TXshCellColumn::isCellImplicit(int row) const {
+  if (!Preferences::instance()->isImplicitHoldEnabled() ||
+      getColumnType() == ColumnType::eSoundType ||
+      getColumnType() == ColumnType::eSoundTextType || row < 0 ||
+      row < m_first || getCell(row).isEmpty())
+    return false;
+
+  // If we got here, the cell is technically not empty
+  // If it is truely empty in the array, then it is implicit
+  int r = row - m_first;
+  return r >= m_cells.size() || m_cells[r].isEmpty();
 }
 
 //-----------------------------------------------------------------------------
@@ -422,10 +460,11 @@ bool TXshCellColumn::getLevelRange(int row, int &r0, int &r1) const {
   r0 = r1       = row;
   TXshCell cell = getCell(row);
   if (cell.isEmpty()) return false;
-  while (r0 > 0 &&
+  while (r0 > 0 && !isCellImplicit(r0 - 1) &&
          getCell(r0 - 1).m_level.getPointer() == cell.m_level.getPointer())
     r0--;
-  while (getCell(r1 + 1).m_level.getPointer() == cell.m_level.getPointer())
+  while (!isCellImplicit(r1 + 1) &&
+         getCell(r1 + 1).m_level.getPointer() == cell.m_level.getPointer())
     r1++;
   return true;
 }

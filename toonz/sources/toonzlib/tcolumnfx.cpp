@@ -821,15 +821,6 @@ bool TLevelColumnFx::canHandle(const TRenderSettings &info, double frame) {
 
   int row       = m_levelColumn->getFirstRow();
   TXshCell cell = m_levelColumn->getCell(row);
-  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
-    int r0, r1;
-    m_levelColumn->getRange(r0, r1);
-    for (int r = std::min(r1, row); r >= r0; r--) {
-      cell = m_levelColumn->getCell(r);
-      if (cell.isEmpty()) continue;
-      break;
-    }
-  }
   if (cell.isEmpty()) return true;
 
   TXshSimpleLevel *sl = cell.m_level->getSimpleLevel();
@@ -847,15 +838,6 @@ TAffine TLevelColumnFx::handledAffine(const TRenderSettings &info,
 
   int row       = m_levelColumn->getFirstRow();
   TXshCell cell = m_levelColumn->getCell(row);
-  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
-    int r0, r1;
-    m_levelColumn->getRange(r0, r1);
-    for (int r = std::min(r1, row); r >= r0; r--) {
-      cell = m_levelColumn->getCell(r);
-      if (cell.isEmpty()) continue;
-      break;
-    }
-  }
   if (cell.isEmpty()) return TAffine();
 
   TXshSimpleLevel *sl = cell.m_level->getSimpleLevel();
@@ -893,16 +875,6 @@ TFilePath TLevelColumnFx::getPalettePath(int frame) const {
   if (!m_levelColumn) return TFilePath();
 
   TXshCell cell = m_levelColumn->getCell(frame);
-  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
-    int r0, r1;
-    m_levelColumn->getRange(r0, r1);
-    for (int r = std::min(r1, frame); r >= r0; r--) {
-      cell = m_levelColumn->getCell(r);
-      if (cell.isEmpty()) continue;
-      break;
-    }
-  }
-
   if (cell.isEmpty()) return TFilePath();
 
   TXshSimpleLevel *sl = cell.m_level->getSimpleLevel();
@@ -924,15 +896,6 @@ TPalette *TLevelColumnFx::getPalette(int frame) const {
   if (!m_levelColumn) return 0;
 
   TXshCell cell = m_levelColumn->getCell(frame);
-  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
-    int r0, r1;
-    m_levelColumn->getRange(r0, r1);
-    for (int r = std::min(r1, frame); r >= r0; r--) {
-      cell = m_levelColumn->getCell(r);
-      if (cell.isEmpty()) continue;
-      break;
-    }
-  }
   if (cell.isEmpty()) return 0;
 
   TXshSimpleLevel *sl = cell.m_level->getSimpleLevel();
@@ -960,15 +923,6 @@ void TLevelColumnFx::doDryCompute(TRectD &rect, double frame,
 
   int row       = (int)frame;
   TXshCell cell = m_levelColumn->getCell(row);
-  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
-    int r0, r1;
-    m_levelColumn->getRange(r0, r1);
-    for (int r = std::min(r1, row); r >= r0; r--) {
-      cell = m_levelColumn->getCell(r);
-      if (cell.isEmpty()) continue;
-      break;
-    }
-  }
   if (cell.isEmpty()) return;
 
   TXshSimpleLevel *sl = cell.m_level->getSimpleLevel();
@@ -1019,15 +973,6 @@ void TLevelColumnFx::doCompute(TTile &tile, double frame,
   // Ensure that a corresponding cell and level exists
   int row       = (int)frame;
   TXshCell cell = m_levelColumn->getCell(row);
-  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
-    int r0, r1;
-    m_levelColumn->getRange(r0, r1);
-    for (int r = std::min(r1, row); r >= r0; r--) {
-      cell = m_levelColumn->getCell(r);
-      if (cell.isEmpty()) continue;
-      break;
-    }
-  }
   if (cell.isEmpty()) return;
 
   TXshSimpleLevel *sl = cell.m_level->getSimpleLevel();
@@ -1446,15 +1391,6 @@ bool TLevelColumnFx::doGetBBox(double frame, TRectD &bBox,
 
   int row       = (int)frame;
   TXshCell cell = m_levelColumn->getCell(row);
-  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
-    int r0, r1;
-    m_levelColumn->getRange(r0, r1);
-    for (int r = std::min(r1, row); r >= r0; r--) {
-      cell = m_levelColumn->getCell(r);
-      if (cell.isEmpty()) continue;
-      break;
-    }
-  }
   if (cell.isEmpty()) return false;
 
   TXshLevelP xshl = cell.m_level;
@@ -1487,15 +1423,6 @@ bool TLevelColumnFx::doGetBBox(double frame, TRectD &bBox,
     dpi = imageInfo.m_dpix / Stage::inch;
   } else {
     TXshCell cell = m_levelColumn->getCell(row);
-    if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
-      int r0, r1;
-      m_levelColumn->getRange(r0, r1);
-      for (int r = std::min(r1, row); r >= r0; r--) {
-        cell = m_levelColumn->getCell(r);
-        if (cell.isEmpty()) continue;
-        break;
-      }
-    }
     TImageP img = cell.getImage(false);
     if (!img) return false;
     bBox = img->getBBox();
@@ -1532,6 +1459,12 @@ TFxTimeRegion TLevelColumnFx::getTimeRegion() const {
   int first = m_levelColumn->getFirstRow();
   int last  = m_levelColumn->getRowCount();
 
+  // For implicit hold, if the last frame is not a stop frame, it's held
+  // indefinitely
+  if (Preferences::instance()->isImplicitHoldEnabled() &&
+      !m_levelColumn->getCell(last - 1).getFrameId().isStopFrame())
+    return TFxTimeRegion(0, (std::numeric_limits<double>::max)());
+
   return TFxTimeRegion(first, last);
 }
 
@@ -1565,15 +1498,6 @@ std::string TLevelColumnFx::getAlias(double frame,
   if (!m_levelColumn) return std::string();
 
   TXshCell cell = m_levelColumn->getCell((int)frame);
-  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
-    int r0, r1;
-    m_levelColumn->getRange(r0, r1);
-    for (int r = std::min(r1, (int)frame); r >= r0; r--) {
-      cell = m_levelColumn->getCell(r);
-      if (cell.isEmpty()) continue;
-      break;
-    }
-  }
   if (cell.isEmpty()) return std::string();
 
   TFilePath fp;
@@ -1635,15 +1559,6 @@ TAffine TLevelColumnFx::getDpiAff(int frame) {
   if (!m_levelColumn) return TAffine();
 
   TXshCell cell = m_levelColumn->getCell(frame);
-  if (cell.isEmpty() && Preferences::instance()->isImplicitHoldEnabled()) {
-    int r0, r1;
-    m_levelColumn->getRange(r0, r1);
-    for (int r = std::min(r1, frame); r >= r0; r--) {
-      cell = m_levelColumn->getCell(r);
-      if (cell.isEmpty()) continue;
-      break;
-    }
-  }
   if (cell.isEmpty()) return TAffine();
 
   TXshSimpleLevel *sl = cell.m_level->getSimpleLevel();
