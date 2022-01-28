@@ -2341,6 +2341,7 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
                                                          // becomes dragbar
            && (o->rect(PredefinedRect::LAYER_NUMBER).contains(mouseInCell) ||
                o->rect(PredefinedRect::LAYER_NAME).contains(mouseInCell)))) {
+        m_viewer->setCurrentColumn(m_col);
         setDragTool(XsheetGUI::DragTool::makeColumnMoveTool(m_viewer));
       } else if (o->rect(PredefinedRect::LOCK_AREA).contains(mouseInCell)) {
         // lock button
