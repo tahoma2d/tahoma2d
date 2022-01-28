@@ -44,11 +44,10 @@ class DVAPI CommonChessboard final : public QObject {
   Q_OBJECT
   TRaster32P m_bgRas;
   QPixmap m_bgPix;
+  CommonChessboard();
   void setChessboardColors(const TPixel32 &col1, const TPixel32 &col2);
 
 public:
-  CommonChessboard();
-
   const QPixmap &getPixmap() { return m_bgPix; }
   void update();
 

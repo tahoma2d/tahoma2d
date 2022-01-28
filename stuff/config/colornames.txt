@@ -12,6 +12,10 @@
   <color name="1">#FF0000</color>
   <color name="2">#00FF00</color>
   <color name="3">#0000FF</color>
+  <color name="4">#00FFFF</color>
+  <color name="5">#FF00FF</color>
+  <color name="6">#FFFF00</color>
+  <color name="7">#FFFFFF</color>
   <!-- HTML Color Names -->
   <color name="AliceBlue">#F0F8FF</color>
   <color name="AntiqueWhite">#FAEBD7</color>
