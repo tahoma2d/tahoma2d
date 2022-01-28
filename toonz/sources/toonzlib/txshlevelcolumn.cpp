@@ -172,14 +172,14 @@ void TXshLevelColumn::saveData(TOStream &os) {
   if (getRange(r0, r1)) {
     os.openChild("cells");
     for (int r = r0; r <= r1; r++) {
-      TXshCell cell = getCell(r);
+      TXshCell cell = getCell(r, false);
       if (cell.isEmpty()) continue;
       TFrameId fid = cell.m_frameId;
       int n = 1, inc = 0, dr = fid.getNumber();
       // If fid has not letter save more than one cell and its incrementation;
       // otherwise save one cell.
       if (r < r1 && fid.getLetter().isEmpty()) {
-        TXshCell cell2 = getCell(r + 1);
+        TXshCell cell2 = getCell(r + 1, false);
         TFrameId fid2  = cell2.m_frameId;
         if (cell2.m_level.getPointer() == cell.m_level.getPointer() &&
             fid2.getLetter().isEmpty()) {
@@ -187,7 +187,7 @@ void TXshLevelColumn::saveData(TOStream &os) {
           n++;
           for (;;) {
             if (r + n > r1) break;
-            cell2         = getCell(r + n);
+            cell2         = getCell(r + n, false);
             TFrameId fid2 = cell2.m_frameId;
             if (cell2.m_level.getPointer() != cell.m_level.getPointer() ||
                 !fid2.getLetter().isEmpty())
