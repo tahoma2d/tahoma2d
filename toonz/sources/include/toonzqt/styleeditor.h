@@ -808,6 +808,8 @@ private slots:
 // StyleEditor
 //-----------------------------------------------------------------------------
 
+enum StyleEditorTab { Color = 0, Raster, Vector, Texture, Settings };
+
 class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   Q_OBJECT
   TApplication *m_app;

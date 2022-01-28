@@ -502,7 +502,7 @@ void Preferences::definePreferenceItems() {
 
   // Drawing
   define(scanLevelType, "scanLevelType", QMetaType::QString, "tif");
-  define(DefLevelType, "DefLevelType", QMetaType::Int, TZP_XSHLEVEL);
+  define(DefLevelType, "DefLevelType", QMetaType::Int, OVL_XSHLEVEL);
   define(newLevelSizeToCameraSizeEnabled, "newLevelSizeToCameraSizeEnabled",
          QMetaType::Bool, true);
   define(DefLevelWidth, "DefLevelWidth", QMetaType::Double,
