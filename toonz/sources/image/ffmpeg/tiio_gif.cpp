@@ -43,6 +43,9 @@ TLevelWriterGif::TLevelWriterGif(const TFilePath &path, TPropertyGroup *winfo)
   TBoolProperty *looping =
       (TBoolProperty *)m_properties->getProperty("Looping");
   m_looping = looping->getValue();
+  TBoolProperty *palette =
+      (TBoolProperty *)m_properties->getProperty("Generate Palette");
+  m_palette    = palette->getValue();
   TEnumProperty *modeProp =
       dynamic_cast<TEnumProperty *>(m_properties->getProperty("Mode"));
   m_mode = 0;
@@ -78,6 +81,7 @@ TLevelWriterGif::~TLevelWriterGif() {
   if (outLx % 2 != 0) outLx++;
   if (outLy % 2 != 0) outLy++;
   */
+  QString palette;
   double framerate = (m_frameRate < 1.0 ? 1.0 : m_frameRate);
 
   QString filters = "fps=" + QString::number(framerate) +
@@ -132,9 +136,39 @@ TLevelWriterGif::~TLevelWriterGif() {
   default:
     break;
   }
+#if 0
+  QString paletteFilters = filters + " [x]; [x][1:v] paletteuse";
+  if (m_palette) {
+    palette = ffmpegWriter->getFfmpegCache().getQString() + "//" +
+      QString::fromStdString(m_path.getName()) + "palette.png";
+    palettePreIArgs << "-v";
+    palettePreIArgs << "warning";
+
+    palettePostIArgs << "-vf";
+    palettePostIArgs << filters + ",palettegen";
+    palettePostIArgs << palette;
+
+    // write the palette
+    ffmpegWriter->runFfmpeg(palettePreIArgs, palettePostIArgs, false, true,
+      true);
+    ffmpegWriter->addToCleanUp(palette);
+  }
+#endif
 
   preIArgs << "-v";
   preIArgs << "warning";
+#if 0
+  if (m_palette) {
+    postIArgs << "-i";
+    postIArgs << palette;
+    postIArgs << "-lavfi";
+    postIArgs << paletteFilters;
+  }
+  else {
+    postIArgs << "-lavfi";
+    postIArgs << filters;
+  }
+#endif
   postIArgs << "-vf";
   postIArgs << filters;
   postIArgs << "-gifflags";
@@ -284,6 +318,7 @@ TImageP TLevelReaderGif::load(int frameIndex) {
 Tiio::GifWriterProperties::GifWriterProperties()
     : m_scale("Scale", 1, 100, 100)
     , m_looping("Looping", true)
+    , m_palette("Generate Palette", true)
     , m_mode("Mode")
     , m_maxcolors("Max Colors", 2, 256, 256) {
   // Set values for mode
@@ -318,6 +353,7 @@ Tiio::GifWriterProperties::GifWriterProperties()
 
   bind(m_scale);
   bind(m_looping);
+  bind(m_palette);
   bind(m_mode);
   bind(m_maxcolors);
 }
@@ -325,6 +361,7 @@ Tiio::GifWriterProperties::GifWriterProperties()
 void Tiio::GifWriterProperties::updateTranslation() {
   m_scale.setQStringName(tr("Scale"));
   m_looping.setQStringName(tr("Looping"));
+  m_palette.setQStringName(tr("Generate Palette"));
   m_mode.setQStringName(tr("Mode"));
   m_maxcolors.setQStringName(tr("Max Colors"));
 }
