@@ -15,6 +15,7 @@
 #include "toonzqt/tabbar.h"
 #include "toonzqt/gutil.h"
 #include "toonzqt/colorfield.h"
+#include "toonzqt/doublefield.h"
 
 // Qt includes
 #include <QWidget>
@@ -208,21 +209,22 @@ class StopMotionController final : public QWidget {
   LevelNameLineEdit *m_levelNameEdit;
   QCheckBox *m_blackScreenForCapture, *m_placeOnXSheetCB, *m_directShowCB,
       *m_liveViewOnAllFramesCB, *m_useMjpgCB, *m_useNumpadCB, *m_drawBeneathCB,
-      *m_timerCB, *m_showScene1, *m_showScene2,
+      *m_playSound, *m_showScene1, *m_showScene2,
       *m_showScene3;  //, *m_upsideDownCB;
   CameraCaptureLevelControl *m_camCapLevelControl;
   DVGui::FileField *m_saveInFileFld;
   DVGui::IntLineEdit *m_xSheetFrameNumberEdit;
   FrameNumberLineEdit *m_frameNumberEdit;
-  DVGui::IntField *m_onionOpacityFld, *m_postCaptureReviewFld,
-      *m_subsamplingFld;
+  DVGui::IntField *m_onionOpacityFld, *m_subsamplingFld;
+  DVGui::DoubleField *m_postCaptureReviewFld;
   StopMotionSaveInFolderPopup *m_saveInFolderPopup;
-  DVGui::IntField *m_timerIntervalFld;
+  DVGui::DoubleField *m_timerIntervalFld;
   DVGui::ColorField *m_screen1ColorFld, *m_screen2ColorFld, *m_screen3ColorFld;
   QGroupBox *m_screen1Box;
   QGroupBox *m_screen2Box;
   QGroupBox *m_screen3Box;
   QGroupBox *m_webcamAutoFocusGB;
+  QGroupBox *m_timerCB;
   QTimer *m_lightTestTimer;
 
   // tests variables
@@ -301,6 +303,9 @@ protected slots:
   void onIntervalToggled(bool);
   void onIntervalStarted();
   void onIntervalStopped();
+
+  // sound
+  void onPlaySoundToggled(bool);
 
   // lights and screens
   void setScreen1Color(const TPixel32 &value, bool isDragging);
@@ -384,6 +389,7 @@ protected slots:
   void onUseMjpgSignal(bool);
   void onUseDirectShowSignal(bool);
   void onReviewTimeChangedSignal(int);
+  void onPlayCaptureSignal(bool);
   void onUseNumpadSignal(bool);
   void onDrawBeneathSignal(bool);
   void onLiveViewChanged(bool);

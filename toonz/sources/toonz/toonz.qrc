@@ -584,6 +584,7 @@
 		<file>Resources/brush.png</file>
 		<file>Resources/camera.svg</file>
 		<file>Resources/camera_small.svg</file>
+		<file>Resources/camera_snap.wav</file>
 		<file>Resources/center.png</file>
 		<file>Resources/clapboard.png</file>
 		<file>Resources/curve.svg</file>
