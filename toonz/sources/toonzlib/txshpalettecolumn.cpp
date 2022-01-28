@@ -86,17 +86,17 @@ void TXshPaletteColumn::saveData(TOStream &os) {
   if (getRange(r0, r1)) {
     os.openChild("cells");
     for (int r = r0; r <= r1; r++) {
-      TXshCell cell = getCell(r);
+      TXshCell cell = getCell(r, false);
       if (cell.isEmpty()) continue;
       int n = 1, inc = 0, dr = cell.m_frameId.getNumber();
       if (r < r1) {
-        TXshCell cell2 = getCell(r + 1);
+        TXshCell cell2 = getCell(r + 1, false);
         if (cell2.m_level.getPointer() == cell.m_level.getPointer()) {
           inc = cell2.m_frameId.getNumber() - dr;
           n++;
           for (;;) {
             if (r + n > r1) break;
-            cell2 = getCell(r + n);
+            cell2 = getCell(r + n, false);
             if (cell2.m_level.getPointer() != cell.m_level.getPointer()) break;
             if (cell2.m_frameId.getNumber() != dr + n * inc) break;
             n++;
