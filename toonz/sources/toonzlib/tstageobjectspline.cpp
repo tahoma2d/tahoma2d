@@ -211,7 +211,6 @@ void TStageObjectSpline::setStroke(TStroke *stroke) {
 
 void TStageObjectSpline::loadData(TIStream &is) {
   std::vector<TThickPoint> points;
-  m_interpolationStroke.clear();
   VersionNumber tnzVersion = is.getVersion();
 
     std::string tagName;
@@ -245,6 +244,7 @@ void TStageObjectSpline::loadData(TIStream &is) {
           points.push_back(p);
         }
       } else if (tagName == "interpolationStroke") {
+        m_interpolationStroke.clear();
         int i, n = 0;
         is >> n;
         for (i = 0; i < n; i++) {
