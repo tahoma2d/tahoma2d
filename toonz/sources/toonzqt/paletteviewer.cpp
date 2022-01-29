@@ -652,6 +652,7 @@ void PaletteViewer::updateSavePaletteToolBar() {
         if (levelType == UNKNOWN_XSHLEVEL)
           levelType = Preferences::instance()->getDefLevelType();
         setSaveDefaultText(act, levelType);
+        if (levelType == PLT_XSHLEVEL) enable = false;
       }
       act->setEnabled(enable);
     } else if (m_viewType != STUDIO_PALETTE && i == 1)  // move action
@@ -690,6 +691,7 @@ void PaletteViewer::updatePaletteMenu() {
         if (levelType == UNKNOWN_XSHLEVEL)
           levelType = Preferences::instance()->getDefLevelType();
         setSaveDefaultText(act, levelType);
+        if (levelType == PLT_XSHLEVEL) enable = false;
       }
       act->setEnabled(enable);
     } else
@@ -777,7 +779,7 @@ void PaletteViewer::contextMenuEvent(QContextMenuEvent *event) {
     QAction *action =
         CommandManager::instance()->getAction("MI_SaveAsDefaultPalette");
     menu->addAction(action);
-
+    bool enable = true;
     if (m_levelHandle) {
       int levelType = m_levelHandle->getLevel()
                           ? m_levelHandle->getLevel()->getType()
@@ -786,7 +788,9 @@ void PaletteViewer::contextMenuEvent(QContextMenuEvent *event) {
       if (levelType == UNKNOWN_XSHLEVEL)
         levelType = Preferences::instance()->getDefLevelType();
       setSaveDefaultText(action, levelType);
+      if (levelType == PLT_XSHLEVEL) enable = false;
     }
+    action->setEnabled(enable);
   }
 
   if (m_viewType == LEVEL_PALETTE && !getPalette()->isLocked() &&
