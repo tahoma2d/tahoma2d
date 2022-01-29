@@ -506,23 +506,12 @@ void PaletteViewer::createSavePaletteToolBar() {
   });
   m_viewMode->addAction(m_showStyleIndex);
 
-  // QIcon saveAsPaletteIcon = createQIconOnOff("savepaletteas", false);
-  QIcon saveAsPaletteIcon = createQIcon("saveas");
-  QAction *saveAsPalette  = new QAction(
-      saveAsPaletteIcon, tr("&Save Palette As"), m_savePaletteToolBar);
-  saveAsPalette->setToolTip(tr("Save palette with a different name."));
-  // overwrite palette
-  QIcon savePaletteIcon = createQIcon("save");
-  QAction *savePalette =
-      new QAction(savePaletteIcon, tr("&Save Palette"), m_savePaletteToolBar);
-  savePalette->setToolTip(tr("Save the palette."));
-  QAction *saveDefaultPalette =
-      new QAction(tr("&Save As Default Palette"), m_savePaletteToolBar);
-  saveDefaultPalette->setToolTip(
-      tr("Save the palette as the default for new levels of the current level "
-         "type."));
-
   if (m_viewType == STUDIO_PALETTE) {
+    QIcon savePaletteIcon = createQIcon("save");
+    QAction *savePalette =
+        new QAction(savePaletteIcon, tr("&Save Palette"), m_savePaletteToolBar);
+    savePalette->setToolTip(tr("Save the palette."));
+
     connect(savePalette, SIGNAL(triggered()), this, SLOT(saveStudioPalette()));
     // m_viewMode->addSeparator();
     // m_viewMode->addAction(savePalette);
@@ -532,21 +521,18 @@ void PaletteViewer::createSavePaletteToolBar() {
     m_viewMode->addSeparator();
 
     // overwrite palette
-    connect(savePalette, SIGNAL(triggered()),
-            CommandManager::instance()->getAction("MI_OverwritePalette"),
-            SIGNAL(triggered()));
+    QAction *savePalette =
+        CommandManager::instance()->getAction("MI_OverwritePalette");
     m_viewMode->addAction(savePalette);
 
     // save palette as
-    connect(saveAsPalette, SIGNAL(triggered()),
-            CommandManager::instance()->getAction("MI_SavePaletteAs"),
-            SIGNAL(triggered()));
+    QAction *saveAsPalette =
+        CommandManager::instance()->getAction("MI_SavePaletteAs");
     m_viewMode->addAction(saveAsPalette);
 
     // save as default palette
-    connect(saveDefaultPalette, SIGNAL(triggered()),
-            CommandManager::instance()->getAction("MI_SaveAsDefaultPalette"),
-            SIGNAL(triggered()));
+    QAction *saveDefaultPalette =
+        CommandManager::instance()->getAction("MI_SaveAsDefaultPalette");
     m_viewMode->addAction(saveDefaultPalette);
   }
 
@@ -736,7 +722,6 @@ void PaletteViewer::setSaveDefaultText(QAction *action, int levelType) {
     action->setText(tr("&Save As Default Palette"));
     break;
   }
-  action->setIcon(createQIcon("save"));
 }
 
 void PaletteViewer::contextMenuEvent(QContextMenuEvent *event) {

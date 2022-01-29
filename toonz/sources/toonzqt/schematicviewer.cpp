@@ -1047,10 +1047,6 @@ void SchematicViewer::createActions() {
 
       // InsertFx
       insertFx = CommandManager::instance()->getAction("MI_InsertFx");
-      if (insertFx) {
-        QIcon insertFxIcon = createQIcon("fx_logo");
-        insertFx->setIcon(insertFxIcon);
-      }
 
       // AddOutputFx
       addOutputFx = CommandManager::instance()->getAction("MI_NewOutputFx");

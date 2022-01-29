@@ -2005,7 +2005,7 @@ void MainWindow::defineActions() {
   createMenuXsheetAction(MI_MergeColumns, QT_TR_NOOP("&Merge Levels"), "",
                          "merge_levels");
   createMenuXsheetAction(MI_InsertFx, QT_TR_NOOP("&New FX..."), "Ctrl+F",
-                         "fx_new");
+                         "fx_logo");
   createMenuXsheetAction(MI_NewOutputFx, QT_TR_NOOP("&New Output"), "Alt+O",
                          "output");
   createMenuXsheetAction(MI_InsertSceneFrame, QT_TR_NOOP("Insert Frame"), "",
@@ -2313,10 +2313,10 @@ void MainWindow::defineActions() {
   // Right Click
 
   createRightClickMenuAction(MI_SavePaletteAs,
-                             QT_TR_NOOP("&Save Palette As..."), "", "",
+                             QT_TR_NOOP("&Save Palette As..."), "", "saveas",
                              tr("Save the current style palette as a separate file with a new name."));
   createRightClickMenuAction(MI_OverwritePalette, QT_TR_NOOP("&Save Palette"),
-                             "", "", tr("Save the current style palette as a separate file."));
+                             "", "save", tr("Save the current style palette as a separate file."));
   createRightClickMenuAction(MI_RegeneratePreview,
                              QT_TR_NOOP("&Regenerate Preview"), "", "",
                              tr("Recreates a set of preview images."));
