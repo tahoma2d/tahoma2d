@@ -3158,23 +3158,20 @@ public:
       return;
     }
 
-    int levelType = UNKNOWN_XSHLEVEL;
+    int levelType = palette->getDefaultPaletteType();
     QString levelTypeStr, displayStr;
 
-    if (palette->isDefaultPalette()) {
-      levelType = palette->getDefaultPaletteType();
-    } else {
+    if (levelType == UNKNOWN_XSHLEVEL) {
       TXshLevel *level = TApp::instance()->getCurrentLevel()->getLevel();
-      if (!level) {
-        DVGui::warning("No current level.");
-        return;
-      }
-      TXshSimpleLevel *sl = level->getSimpleLevel();
-      if (!sl) {
-        DVGui::warning("Current level is not a drawing level.");
-        return;
-      }
-      levelType = sl->getType();
+      if (level) {
+        TXshSimpleLevel *sl = level->getSimpleLevel();
+        if (!sl) {
+          DVGui::warning("Current level is not a drawing level.");
+          return;
+        }
+        levelType = sl->getType();
+      } else
+        levelType = Preferences::instance()->getDefLevelType();
     }
 
     switch (levelType) {

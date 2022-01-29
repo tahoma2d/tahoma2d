@@ -649,6 +649,8 @@ void PaletteViewer::updateSavePaletteToolBar() {
                             : getPalette()
                                   ? getPalette()->getDefaultPaletteType()
                                   : UNKNOWN_XSHLEVEL;
+        if (levelType == UNKNOWN_XSHLEVEL)
+          levelType = Preferences::instance()->getDefLevelType();
         setSaveDefaultText(act, levelType);
       }
       act->setEnabled(enable);
@@ -685,6 +687,8 @@ void PaletteViewer::updatePaletteMenu() {
                             : getPalette()
                                   ? getPalette()->getDefaultPaletteType()
                                   : UNKNOWN_XSHLEVEL;
+        if (levelType == UNKNOWN_XSHLEVEL)
+          levelType = Preferences::instance()->getDefLevelType();
         setSaveDefaultText(act, levelType);
       }
       act->setEnabled(enable);
@@ -779,6 +783,8 @@ void PaletteViewer::contextMenuEvent(QContextMenuEvent *event) {
                           ? m_levelHandle->getLevel()->getType()
                           : getPalette() ? getPalette()->getDefaultPaletteType()
                                          : UNKNOWN_XSHLEVEL;
+      if (levelType == UNKNOWN_XSHLEVEL)
+        levelType = Preferences::instance()->getDefLevelType();
       setSaveDefaultText(action, levelType);
     }
   }
