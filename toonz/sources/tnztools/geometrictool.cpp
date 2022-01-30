@@ -850,6 +850,8 @@ protected:
   bool m_speedMoved;        //!< True after moveSpeed(), false after addVertex()
   bool m_beforeSpeedMoved;  //!< Old value of m_speedMoved
   bool m_ctrlDown;          //!< Whether ctrl is hold down
+  bool m_shiftDown;
+  bool m_altDown;
   MultilinePrimitiveUndo *m_undo;
 
 public:
@@ -860,7 +862,9 @@ public:
       , m_isSingleLine(false)
       , m_speedMoved(false)
       , m_beforeSpeedMoved(false)
-      , m_ctrlDown(false) {}
+      , m_ctrlDown(false)
+      , m_shiftDown(false)
+      , m_altDown(false) {}
 
   std::string getName() const override {
     return "Polyline";
@@ -2511,9 +2515,10 @@ void MultiLinePrimitive::moveSpeed(const TPointD &delta) {
   assert(count > 0);
   TPointD lastPoint        = m_vertex[count - 1];
   TPointD newSpeedOutPoint = lastPoint - delta;
-  if (m_speedMoved)
+  if (m_speedMoved) {
     m_vertex[count - 1] = newSpeedOutPoint;
-  else {
+    if (m_altDown) return;
+  } else {
     m_vertex.push_back(newSpeedOutPoint);
     ++count;
   }
@@ -2586,7 +2591,8 @@ void MultiLinePrimitive::draw() {
         TPointD p0 = m_vertex[count - 1];
         TPointD p1 = m_vertex[count - 2];
         TPointD p2 = m_vertex[count - 3];
-        tglDrawSegment(p0, p2);
+        tglDrawSegment(p0, p1);
+        tglDrawSegment(p1, p2);
         tglDrawDisk(p0, 2 * pixelSize);
         tglDrawDisk(p1, 4 * pixelSize);
         tglDrawDisk(p2, 2 * pixelSize);
@@ -2651,13 +2657,16 @@ void MultiLinePrimitive::leftButtonDown(const TPointD &pos,
 void MultiLinePrimitive::leftButtonDrag(const TPointD &pos,
                                         const TMouseEvent &e) {
   if (m_vertex.size() == 0 || m_isSingleLine) return;
+  TPointD newPos = pos;
+  if (m_vertex.size() >= 2 && m_shiftDown)
+    newPos = rectify(m_vertex[m_vertex.size() - 2], pos);
   if (m_speedMoved ||
-      tdistance2(m_vertex[m_vertex.size() - 1], pos) >
+      tdistance2(m_vertex[m_vertex.size() - 1], newPos) >
           sq(7.0 * m_tool->getPixelSize())) {
-    moveSpeed(m_mousePosition - pos);
+    moveSpeed(m_mousePosition - newPos);
     m_speedMoved = true;
     m_undo->setNewVertex(m_vertex);
-    m_mousePosition = pos;
+    m_mousePosition = newPos;
   }
 }
 
@@ -2679,13 +2688,15 @@ void MultiLinePrimitive::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
 //-----------------------------------------------------------------------------
 
 void MultiLinePrimitive::mouseMove(const TPointD &pos, const TMouseEvent &e) {
-  m_ctrlDown = e.isCtrlPressed() && !e.isShiftPressed();
+  m_ctrlDown  = e.isCtrlPressed() && !e.isShiftPressed();
+  m_shiftDown = e.isShiftPressed();
+  m_altDown   = e.isAltPressed();
   TPointD newPos;
   newPos = calculateSnap(pos, e);
   newPos = checkGuideSnapping(pos, e);
 
   if (m_isEditing) {
-    if ((e.isShiftPressed() && !e.isCtrlPressed()) && !m_vertex.empty())
+    if ((m_shiftDown && !e.isCtrlPressed()) && !m_vertex.empty())
       m_mousePosition = rectify(m_vertex.back(), newPos);
     else
       m_mousePosition = newPos;

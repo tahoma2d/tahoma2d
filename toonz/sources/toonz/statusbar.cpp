@@ -254,7 +254,11 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
            spacer +
            tr("%1%2Snap to Angle")
                .arg(trModKey("Shift"))
-               .arg(cmd2TextSeparator)});
+               .arg(cmd2TextSeparator) +
+           spacer +
+           tr("%1%2Change Curve Handle Angle")
+               .arg(trModKey("Alt"))
+               .arg(cmd2TextSeparator) });
   lMap.insert({"T_GeometricVector",
                tr("Geometry Tool: Draws geometric shapes") + spacer +
                    tr("%1%2Allow or Disallow Snapping")
