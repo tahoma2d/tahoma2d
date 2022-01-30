@@ -13,9 +13,9 @@ if [ -d ffmpeg ]
 then
    rm -rf ffmpeg
 fi
-wget https://github.com/tahoma2d/FFmpeg/releases/download/v4.3.1/ffmpeg-4.3.1-linux-static-lgpl.zip
-unzip ffmpeg-4.3.1-linux-static-lgpl.zip 
-mv ffmpeg-4.3.1-linux-static-lgpl ffmpeg
+wget https://github.com/tahoma2d/FFmpeg/releases/download/v5.0.0/ffmpeg-5.0.0-linux64-static-lgpl.zip
+unzip ffmpeg-5.0.0-linux64-static-lgpl.zip 
+mv ffmpeg-5.0.0-linux64-static-lgpl ffmpeg
 
 
 echo ">>> Getting Rhubarb Lip Sync"
