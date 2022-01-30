@@ -90,6 +90,13 @@ TLevelWriterMp4::~TLevelWriterMp4() {
   postIArgs << QString::number(outLx) + "x" + QString::number(outLy);
   postIArgs << "-b";
   postIArgs << QString::number(finalBitrate) + "k";
+  if (Ffmpeg::checkCodecs("libopenh264")) {
+    postIArgs << "-c:v";
+    postIArgs << "libopenh264";
+  } else if (Ffmpeg::checkCodecs("libxh264")) {
+    postIArgs << "-c:v";
+    postIArgs << "libxh264";
+  }
 
   ffmpegWriter->runFfmpeg(preIArgs, postIArgs, false, false, true);
   ffmpegWriter->cleanUpFiles();
