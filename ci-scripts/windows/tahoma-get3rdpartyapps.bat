@@ -19,9 +19,9 @@ move crashrpt\CrashRpt1500.lib ..\crashrpt
 echo ">>> Getting FFmpeg"
 
 IF EXIST ffmpeg rmdir /S /Q ffmpeg
-curl -fsSL -o ffmpeg-4.3.1-win64-static-lgpl.zip https://github.com/tahoma2d/FFmpeg/releases/download/v4.3.1/ffmpeg-4.3.1-win64-static-lgpl.zip
-7z x ffmpeg-4.3.1-win64-static-lgpl.zip
-rename ffmpeg-4.3.1-win64-static-lgpl ffmpeg
+curl -fsSL -o ffmpeg-5.0.0-win64-static-lgpl.zip https://github.com/tahoma2d/FFmpeg/releases/download/v5.0.0/ffmpeg-5.0.0-win64-static-lgpl.zip
+7z x ffmpeg-5.0.0-win64-static-lgpl.zip
+rename ffmpeg-5.0.0-win64-static-lgpl ffmpeg
 
 echo ">>> Getting Rhubarb Lip Sync"
 

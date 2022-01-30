@@ -26,7 +26,7 @@ sudo make install
 cd ../..
 
 echo ">>> Cloning ffmpeg"
-git clone https://github.com/tahoma2d/ffmpeg
+git clone -b v4.3.1 https://github.com/tahoma2d/FFmpeg ffmpeg
 
 cd ffmpeg
 echo "*" >| .gitignore

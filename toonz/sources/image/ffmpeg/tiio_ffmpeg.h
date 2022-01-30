@@ -34,6 +34,7 @@ public:
   static bool checkFfmpeg();
   static bool checkFfprobe();
   static bool checkFormat(std::string format);
+  static bool checkCodecs(std::string format);
   double getFrameRate();
   TDimension getSize();
   int getFrameCount();

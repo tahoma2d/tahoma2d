@@ -124,6 +124,28 @@ bool Ffmpeg::checkFormat(std::string format) {
   return false;
 }
 
+bool Ffmpeg::checkCodecs(std::string codec) {
+  QString path = Preferences::instance()->getFfmpegPath() + "/ffmpeg";
+#if defined(_WIN32)
+  path = path + ".exe";
+#endif
+  QStringList args;
+  args << "-codecs";
+  QProcess ffmpeg;
+  ffmpeg.start(path, args);
+  if (waitFfmpeg(ffmpeg, 60000)) { // 1 minute timeout
+    QString results = ffmpeg.readAllStandardError();
+    results += ffmpeg.readAllStandardOutput();
+    ffmpeg.close();
+    std::string strResults = results.toStdString();
+    std::string::size_type n;
+    n = strResults.find(codec);
+    if (n != std::string::npos)
+      return true;
+  }
+  return false;
+}
+
 TFilePath Ffmpeg::getFfmpegCache() {
   QString cacheRoot = ToonzFolder::getCacheRootFolder().getQString();
   if (!TSystem::doesExistFileOrLevel(TFilePath(cacheRoot + "/ffmpeg"))) {
