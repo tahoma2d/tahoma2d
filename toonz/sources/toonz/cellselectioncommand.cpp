@@ -805,6 +805,31 @@ void TColumnSelection::reframeWithEmptyInbetweens() {
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
 }
 
+//=============================================================================
+
+void TColumnSelection::renumberColumns() {
+  if (isEmpty()) return;
+
+  int rowCount =
+    TApp::instance()->getCurrentXsheet()->getXsheet()->getFrameCount();
+  std::vector<int> colIndeces;
+  std::set<int>::const_iterator it;
+
+  TUndoManager *undoManager = TUndoManager::manager();
+  undoManager->beginBlock();
+
+  for (it = m_indices.begin(); it != m_indices.end(); it++) {
+    TCellSelection selection;
+    selection.selectCells(0, *it, rowCount, *it);
+    selection.dRenumberCells();
+  }
+
+  undoManager->endBlock();
+
+  TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+}
+
 //*********************************************************************************
 //    Reset Step Cells  command
 //*********************************************************************************
