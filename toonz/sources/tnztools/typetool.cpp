@@ -16,6 +16,7 @@
 #include "tvectorimage.h"
 #include "ttoonzimage.h"
 #include "toonz/toonzimageutils.h"
+#include "toonz/trasterimageutils.h"
 #include "tools/cursors.h"
 #include "tundo.h"
 #include "tvectorgl.h"
@@ -231,6 +232,45 @@ public:
 };
 
 //---------------------------------------------------------
+
+class FullColorRasterUndoTypeTool final : public TFullColorRasterUndo {
+  TTileSetFullColor *m_afterTiles;
+
+public:
+  FullColorRasterUndoTypeTool(TTileSetFullColor *beforeTiles,
+                              TTileSetFullColor *afterTiles,
+                              TXshSimpleLevel *level, const TFrameId &id,
+                              bool createdFrame, bool createdLevel)
+      : TFullColorRasterUndo(beforeTiles, level, id, createdFrame, createdLevel,
+                             0)
+      , m_afterTiles(afterTiles) {}
+
+  ~FullColorRasterUndoTypeTool() { delete m_afterTiles; }
+
+  void redo() const override {
+    insertLevelAndFrameIfNeeded();
+    TRasterImageP image = getImage();
+    if (!image) return;
+    if (m_afterTiles) {
+      TRasterImageUtils::paste(image, m_afterTiles);
+      ToolUtils::updateSaveBox();
+    }
+
+    TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
+    notifyImageChanged();
+  }
+
+  int getSize() const override {
+    if (m_afterTiles)
+      return TFullColorRasterUndo::getSize() + m_afterTiles->getMemorySize();
+    else
+      return TFullColorRasterUndo::getSize();
+  }
+
+  QString getToolName() override { return QString("Type Tool"); }
+};
+
+//---------------------------------------------------------
 //
 // StrokeChar
 //
@@ -267,6 +307,17 @@ public:
         vi->transform(scale);
         paintChar(vi, m_styleId);
         m_offset = (scale * TPointD((double)(adv.x), (double)(adv.y))).x;
+      } else if (TRasterImageP ri = m_char) {
+        TRaster32P newRaster;
+        TPoint p;
+        TPalette *plt           = ri->getPalette();
+        TColorStyle *colorStyle = plt->getStyle(m_styleId);
+        TPixel32 color          = colorStyle->getMainColor();
+        TPoint adv              = TFontManager::instance()->drawChar(
+            (TRaster32P &)newRaster, p, color, (wchar_t)m_key,
+            (wchar_t)nextCode);
+        m_offset = (scale * TPointD((double)(adv.x), (double)(adv.y))).x;
+        m_char   = new TRasterImage(newRaster);
       } else {
         TRasterCM32P newRasterCM;
         TPoint p;
@@ -381,6 +432,7 @@ public:
   void addTextToVectorImage(const TVectorImageP &currentImage,
                             std::vector<const TVectorImage *> &images);
   void addTextToToonzImage(const TToonzImageP &currentImage);
+  void addTextToRasterImage(const TRasterImageP &currentImage);
   void stopEditing();
 
   void reset() override;
@@ -430,7 +482,8 @@ TypeTool::TypeTool()
     , m_vertical("Vertical Orientation", false)  // W_ToolOptions_Vertical
     , m_size("Size:")                            // W_ToolOptions_Size
     , m_undo(0) {
-  bind(TTool::VectorImage | TTool::ToonzImage | TTool::EmptyTarget);
+  bind(TTool::VectorImage | TTool::ToonzImage | TTool::RasterImage |
+       TTool::EmptyTarget);
   m_prop[0].bind(m_fontFamilyMenu);
   // Su mac non e' visibile il menu dello style perche' e' stato inserito nel
   // nome
@@ -615,6 +668,7 @@ void TypeTool::setSize(std::wstring strSize) {
   TImageP img      = getImage(true);
   TToonzImageP ti  = img;
   TVectorImageP vi = img;
+  TRasterImageP ri = img;
   // for vector levels, adjust size according to the ratio between
   // the viewer dpi and the vector level's dpi
   if (vi) dimension *= Stage::inch / Stage::standardDpi;
@@ -639,7 +693,7 @@ void TypeTool::setSize(std::wstring strSize) {
     if (TVectorImageP vi = m_string[i].m_char) vi->transform(TScale(ratio));
     m_string[i].m_offset *= ratio;
   }
-  if (ti)
+  if (ti || ri)
     updateStrokeChar();
   else
     updateCharPositions();
@@ -930,6 +984,17 @@ glPushMatrix();
 
       TPointD adjustedDim = m_scale * TPointD(dim.lx, dim.ly);
       charWidth           = adjustedDim.x;
+    } else if (TRasterImageP ri = m_string[j].m_char) {
+      TRectD dim = ri->getBBox();
+      ri->setPalette(vPalette);
+
+      TPoint rasterCenter(dim.getLx() / 2, dim.getLy() / 2);
+      TTranslation transl1(convert(rasterCenter));
+      TTranslation transl2(m_string[j].m_charPosition);
+      GLRasterPainter::drawRaster(transl2 * m_scale * transl1, ri, false);
+
+      TPointD adjustedDim = m_scale * TPointD(dim.getLx(), dim.getLy());
+      charWidth           = adjustedDim.x;
     }
 
     // sottolineo i caratteri della preedit string
@@ -1072,6 +1137,64 @@ vi->transform( TRotation(m_startPoint,-90) );
 
 //---------------------------------------------------------
 
+void TypeTool::addTextToRasterImage(const TRasterImageP &currentImage) {
+  UINT size = m_string.size();
+  if (size == 0) return;
+
+  TRasterP targetRaster = currentImage->getRaster();
+  TRect changedArea;
+
+  UINT j;
+  for (j = 0; j < size; j++) {
+    if (m_string[j].isReturn()) continue;
+
+    if (TRasterImageP ri = m_string[j].m_char) {
+      TRectD srcBBox  = ri->getBBox() + m_string[j].m_charPosition;
+      TDimensionD dim = srcBBox.getSize();
+      TDimensionD enlargeAmount(dim.lx * (m_scale.a11 - 1.0),
+                                dim.ly * (m_scale.a22 - 1.0));
+      changedArea += TRasterImageUtils::convertWorldToRaster(
+          srcBBox.enlarge(enlargeAmount), currentImage);
+    }
+  }
+
+  if (!changedArea.isEmpty()) {
+    TTileSetFullColor *beforeTiles =
+        new TTileSetFullColor(targetRaster->getSize());
+    beforeTiles->add(targetRaster, changedArea);
+
+    for (j = 0; j < size; j++) {
+      if (m_string[j].isReturn()) continue;
+
+      if (TRasterImageP srcRi = m_string[j].m_char) {
+        TRaster32P srcRaster = srcRi->getRaster();
+        TTranslation transl2(m_string[j].m_charPosition +
+                             convert(targetRaster->getCenter()));
+        TRop::over(targetRaster, srcRaster, transl2 * m_scale);
+      }
+    }
+
+    TTileSetFullColor *afterTiles =
+        new TTileSetFullColor(targetRaster->getSize());
+    afterTiles->add(targetRaster, changedArea);
+
+    TXshSimpleLevel *sl =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TFrameId id = getCurrentFid();
+
+    TUndoManager::manager()->add(new FullColorRasterUndoTypeTool(
+        beforeTiles, afterTiles, sl, id, m_isFrameCreated, m_isLevelCreated));
+    if (m_undo) {
+      delete m_undo;
+      m_undo = 0;
+    }
+
+    ToolUtils::updateSaveBox();
+  }
+}
+
+//---------------------------------------------------------
+
 void TypeTool::addTextToImage() {
   if (!m_validFonts) return;
   TFontManager *instance = TFontManager::instance();
@@ -1082,8 +1205,9 @@ void TypeTool::addTextToImage() {
   TImageP img      = getImage(true);
   TVectorImageP vi = img;
   TToonzImageP ti  = img;
+  TRasterImageP ri = img;
 
-  if (!vi && !ti) return;
+  if (!vi && !ti && !ri) return;
 
   if (vi) {
     QMutexLocker lock(vi->getMutex());
@@ -1105,6 +1229,8 @@ void TypeTool::addTextToImage() {
     addTextToVectorImage(vi, images);
   } else if (ti)
     addTextToToonzImage(ti);
+  else if (ri)
+    addTextToRasterImage(ri);
 
   notifyImageChanged();
   //  getApplication()->notifyImageChanges();
@@ -1224,8 +1350,9 @@ void TypeTool::leftButtonDown(const TPointD &pos, const TMouseEvent &) {
   TImageP img      = getImage(true);
   TVectorImageP vi = img;
   TToonzImageP ti  = img;
+  TRasterImageP ri = img;
 
-  if (!vi && !ti) return;
+  if (!vi && !ti && !ri) return;
 
   setSize(m_size.getValue());
 
@@ -1234,8 +1361,12 @@ void TypeTool::leftButtonDown(const TPointD &pos, const TMouseEvent &) {
       m_undo = new UndoTypeTool(
           0, 0, getApplication()->getCurrentLevel()->getSimpleLevel(),
           getCurrentFid(), m_isFrameCreated, m_isLevelCreated);
-    else
+    else if (ti)
       m_undo = new RasterUndoTypeTool(
+          0, 0, getApplication()->getCurrentLevel()->getSimpleLevel(),
+          getCurrentFid(), m_isFrameCreated, m_isLevelCreated);
+    else
+      m_undo = new FullColorRasterUndoTypeTool(
           0, 0, getApplication()->getCurrentLevel()->getSimpleLevel(),
           getCurrentFid(), m_isFrameCreated, m_isLevelCreated);
   }
@@ -1301,6 +1432,7 @@ void TypeTool::replaceText(std::wstring text, int from, int to) {
   TImageP img      = getImage(true);
   TToonzImageP ti  = img;
   TVectorImageP vi = img;
+  TRasterImageP ri = img;
 
   TPoint adv;
   TPointD d_adv;
@@ -1353,6 +1485,33 @@ void TypeTool::replaceText(std::wstring text, int from, int to) {
 
       m_string.insert(m_string.begin() + index,
                       StrokeChar(newTImage, d_adv.x, character, styleId));
+    } else if (ri) {
+      TRaster32P newRaster;
+      TPoint p;
+      unsigned int index = from + i;
+
+      TPalette *vPalette = img->getPalette();
+      assert(vPalette);
+      TColorStyle *colorStyle = vPalette->getStyle(styleId);
+      TPixel32 color          = colorStyle->getMainColor();
+
+      if (instance->hasKerning() && (UINT)m_cursorIndex < m_string.size() &&
+          !m_string[index].isReturn())
+        adv = instance->drawChar((TRaster32P &)newRaster, p, color,
+                                 (wchar_t)character,
+                                 (wchar_t)m_string[index].m_key);
+      else
+        adv = instance->drawChar((TRaster32P &)newRaster, p, color,
+                                 (wchar_t)character, (wchar_t)0);
+
+      d_adv = m_scale * TPointD((double)(adv.x), (double)(adv.y));
+
+      TRasterImageP newTImage(newRaster);
+
+      newTImage->setPalette(vPalette);
+
+      m_string.insert(m_string.begin() + index,
+                      StrokeChar(newTImage, d_adv.x, character, styleId));
     }
   }
 
@@ -1392,6 +1551,7 @@ void TypeTool::addBaseChar(std::wstring text) {
   TImageP img      = getImage(true);
   TToonzImageP ti  = img;
   TVectorImageP vi = img;
+  TRasterImageP ri = img;
 
   int styleId = TTool::getApplication()->getCurrentLevelStyleIndex();
   TPoint adv;
@@ -1453,6 +1613,35 @@ void TypeTool::addBaseChar(std::wstring text) {
     else
       m_string.insert(m_string.begin() + m_cursorIndex,
                       StrokeChar(newTImage, d_adv.x, character, styleId));
+  } else if (ri) {
+    TRaster32P newRasterCM;
+    TPoint p;
+
+    TPalette *vPalette = img->getPalette();
+    assert(vPalette);
+    TColorStyle *colorStyle = vPalette->getStyle(styleId);
+    TPixel32 color          = colorStyle->getMainColor();
+
+    if (instance->hasKerning() && (UINT)m_cursorIndex < m_string.size() &&
+        !m_string[m_cursorIndex].isReturn())
+      adv = instance->drawChar((TRaster32P &)newRasterCM, p, color,
+                               (wchar_t)character,
+                               (wchar_t)m_string[m_cursorIndex].m_key);
+    else
+      adv = instance->drawChar((TRaster32P &)newRasterCM, p, color,
+                               (wchar_t)character, (wchar_t)0);
+
+    d_adv = m_scale * TPointD((double)(adv.x), (double)(adv.y));
+
+    TRasterImageP newRImage(newRasterCM);
+
+    newRImage->setPalette(vPalette);
+
+    if ((UINT)m_cursorIndex == m_string.size())
+      m_string.push_back(StrokeChar(newRImage, d_adv.x, character, styleId));
+    else
+      m_string.insert(m_string.begin() + m_cursorIndex,
+                      StrokeChar(newRImage, d_adv.x, character, styleId));
   }
 
   if (instance->hasKerning() && m_cursorIndex > 0 &&

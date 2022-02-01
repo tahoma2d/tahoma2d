@@ -25,6 +25,11 @@
 #include "traster.h"
 #include "tmathutil.h"
 #include "tvectorimage.h"
+#include "trasterimage.h"
+#include "toonz/trasterimageutils.h"
+
+#include "trop.h"
+
 using namespace std;
 
 //=============================================================================
@@ -223,6 +228,44 @@ TPoint TFont::drawChar(TRasterCM32P &outImage, TPoint &unused, int inkId,
         *tarPix = bgColor;
       else
         *tarPix = TPixelCM32(inkId, 0, tone);
+
+      ++srcPix;
+      ++tarPix;
+    }
+  }
+  outImage->unlock();
+
+  return getDistance(charcode, nextCharCode);
+}
+
+//-----------------------------------------------------------------------------
+
+TPoint TFont::drawChar(TRaster32P &outImage, TPoint &unused, TPixel32 color,
+                       wchar_t charcode, wchar_t nextCharCode) const {
+  QImage grayAppImage;
+  this->drawChar(grayAppImage, unused, charcode, nextCharCode);
+
+  int lx = grayAppImage.width();
+  int ly = grayAppImage.height();
+
+  TRaster32P ras(lx, ly, lx, (TPixelRGBM32 *)grayAppImage.bits(), false);
+
+  outImage = TRaster32P(lx, ly);
+  outImage->lock();
+
+  TPixel32 bgColor(0, 0, 0, 0);
+  int ty = 0;
+
+  for (int gy = ly - 1; gy >= 0; --gy, ++ty) {
+    uchar *srcPix    = grayAppImage.scanLine(gy);
+    TPixel32 *tarPix = outImage->pixels(ty);
+    for (int x = 0; x < lx; ++x) {
+      int m = (int)(*srcPix);
+
+      if (m == 255)
+        *tarPix = bgColor;
+      else
+        *tarPix = color;
 
       ++srcPix;
       ++tarPix;
