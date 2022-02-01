@@ -18,6 +18,7 @@
 #include "toonz/tcolumnhandle.h"
 #include "toonz/txsheethandle.h"
 #include "toonz/tobjecthandle.h"
+#include "toonz/txshlevelhandle.h"
 #include "toonz/tonionskinmaskhandle.h"
 #include "toonz/tstageobject.h"
 #include "toonz/doubleparamcmd.h"
@@ -599,15 +600,25 @@ void PlasticToolOptionsBox::onSkelIdEdited() {
 //------------------------------------------------------------------------
 
 void PlasticToolOptionsBox::onAddSkeleton() {
-  if (l_plasticTool.isEnabled())
+  if (l_plasticTool.isEnabled()) {
     l_plasticTool.addSkeleton_undo(new PlasticSkeleton);
+
+    l_plasticTool.m_mode.setIndex(l_plasticTool.BUILD_IDX);
+    l_plasticTool.m_mode.notifyListeners();
+  }
 }
 
 //------------------------------------------------------------------------
 
 void PlasticToolOptionsBox::onRemoveSkeleton() {
-  if (l_plasticTool.isEnabled() && l_plasticTool.deformation())
+  if (l_plasticTool.isEnabled() && l_plasticTool.deformation()) {
     l_plasticTool.removeSkeleton_withKeyframes_undo(::skeletonId());
+
+    if (!l_plasticTool.m_sd || !l_plasticTool.m_sd->skeletonsCount()) {
+      l_plasticTool.m_mode.setIndex(l_plasticTool.BUILD_IDX);
+      l_plasticTool.m_mode.notifyListeners();
+    }
+  }
 }
 
 //****************************************************************************************
@@ -880,6 +891,14 @@ void PlasticTool::onColumnSwitched() {
 
   storeDeformation();
   storeMeshImage();
+
+  TXshLevelHandle *lvl = TTool::getApplication()->getCurrentLevel();
+  if (l_plasticTool.isEnabled() && lvl && lvl->getLevel() &&
+      lvl->getLevel()->getType() == MESH_XSHLEVEL &&
+      (!m_sd || !m_sd->skeletonsCount())) {
+    m_mode.setIndex(BUILD_IDX);
+    m_mode.notifyListeners();
+  }
 }
 
 //------------------------------------------------------------------------
