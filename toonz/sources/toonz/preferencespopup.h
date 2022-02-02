@@ -179,6 +179,7 @@ private slots:
   void onInterfaceFontChanged(const QString& text);
   void onLutPathChanged();
   void onCheck30bitDisplay();
+  void onFrameFormatButton();
 
   void onAddLevelFormat();
   void onRemoveLevelFormat();

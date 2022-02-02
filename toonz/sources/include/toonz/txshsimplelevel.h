@@ -185,6 +185,7 @@ table) it returns the proper insertion index
   //! from each entry to the next.
   int guessStep() const;
 
+  void formatFId(TFrameId &fid, TFrameId tmplFId);
   void setFrame(const TFrameId &fid, const TImageP &img);
 
   TImageP getFrame(const TFrameId &fid, UCHAR imgManagerParamsMask,

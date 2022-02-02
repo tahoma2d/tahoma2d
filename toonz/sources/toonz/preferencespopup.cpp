@@ -8,6 +8,7 @@
 #include "levelsettingspopup.h"
 #include "tapp.h"
 #include "cleanupsettingsmodel.h"
+#include "formatsettingspopups.h"
 #include "tenv.h"
 #include "mainwindow.h"
 
@@ -29,6 +30,7 @@
 #include "toonz/toonzscene.h"
 #include "toonz/tcamera.h"
 #include "toonz/levelproperties.h"
+#include "toonz/sceneproperties.h"
 #include "toonz/tonionskinmaskhandle.h"
 #include "toonz/stage.h"
 #include "toonz/toonzfolders.h"
@@ -785,6 +787,17 @@ void PreferencesPopup::onCheck30bitDisplay() {
   checker.exec();
 }
 
+
+//-----------------------------------------------------------------------------
+
+void PreferencesPopup::onFrameFormatButton() {
+  ToonzScene* scene = TApp::instance()->getCurrentScene()->getScene();
+  if (!scene) return;
+  std::string ext = Preferences::instance()->getDefRasterFormat().toStdString();
+  openFormatSettingsPopup(this, ext, nullptr,
+                          &scene->getProperties()->formatTemplateFIdForInput());
+}
+
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onAddLevelFormat() {
@@ -1011,15 +1024,26 @@ void PreferencesPopup::insertUI(PreferencesItemId id, QGridLayout* layout,
 
   // CheckBox contains label in itself
   if (item.type == QMetaType::Bool)
-    layout->addWidget(widget, layout->rowCount(), 0, 1, 2);
+    layout->addWidget(widget, layout->rowCount(), 0, 1, 3, Qt::AlignLeft);
   else {  // insert labels for other types
     int row = layout->rowCount();
     layout->addWidget(new QLabel(getUIString(id), this), row, 0,
                       Qt::AlignRight | Qt::AlignVCenter);
     if (isFileField)
       layout->addWidget(widget, row, 1, 1, 2);
-    else
-      layout->addWidget(widget, row, 1, Qt::AlignLeft | Qt::AlignVCenter);
+    else {
+      bool isWideComboBox = false;
+      for (auto cbItem : comboItems) {
+        if (widget->fontMetrics().width(cbItem.first) > 100) {
+          isWideComboBox = true;
+          break;
+        }
+      }
+      if (id == interfaceFont) isWideComboBox = true;
+
+      layout->addWidget(widget, row, 1, 1, (isWideComboBox) ? 2 : 1,
+                        Qt::AlignLeft | Qt::AlignVCenter);
+    }
   }
 }
 
@@ -1054,7 +1078,7 @@ void PreferencesPopup::insertFootNote(QGridLayout* layout) {
   QLabel* note = new QLabel(
       tr("* Changes will take effect the next time you run Tahoma2D"));
   note->setStyleSheet("font-size: 10px; font: italic;");
-  layout->addWidget(note, layout->rowCount(), 0, 1, 2,
+  layout->addWidget(note, layout->rowCount(), 0, 1, 3,
                     Qt::AlignLeft | Qt::AlignVCenter);
 }
 
@@ -1148,7 +1172,8 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {rhubarbTimeout, tr("Analyze Audio Timeout (seconds):")},
 
       // Drawing
-      {scanLevelType, tr("Scan File Format:")},
+      {DefRasterFormat, tr("Default Raster Level Format:")},
+      //{scanLevelType, tr("Scan File Format:")},
       {DefLevelType, tr("Default Level Type:")},
       {newLevelSizeToCameraSizeEnabled,
        tr("New Levels Default to the Current Camera Size")},
@@ -1229,7 +1254,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {blanksCount, tr("Blank Frames:")},
       {blankColor, tr("Blank Frames Color:")},
       {rewindAfterPlayback, tr("Rewind after Playback")},
-      {shortPlayFrameCount, tr("Number of Frames to Play for Short Play:")},
+      {shortPlayFrameCount, tr("Number of Frames to Play \nfor Short Play:")},
       {previewAlwaysOpenNewFlip, tr("Display in a New Flipbook Window")},
       {fitToFlipbook, tr("Fit to Flipbook")},
       {generatedMovieViewEnabled, tr("Open Flipbook after Rendering")},
@@ -1316,7 +1341,8 @@ QList<ComboBoxItem> PreferencesPopup::getComboItemList(
       {columnIconLoadingPolicy,
        {{tr("At Once"), Preferences::LoadAtOnce},
         {tr("On Demand"), Preferences::LoadOnDemand}}},
-      {scanLevelType, {{"tif", "tif"}, {"png", "png"}}},
+      {DefRasterFormat, {{"tif", "tif"}, {"png", "png"}}},
+      //{scanLevelType, {{"tif", "tif"}, {"png", "png"}}},
       {DefLevelType,
        {{tr("Vector Level"), PLI_XSHLEVEL},
         {tr("Smart Raster Level"), TZP_XSHLEVEL},
@@ -1574,7 +1600,7 @@ QWidget* PreferencesPopup::createInterfacePage() {
 
   // lay->addWidget(new QLabel(tr("Pixels Only:"), this), 5, 0,
   //                Qt::AlignRight | Qt::AlignVCenter);
-  // lay->addWidget(createUI(pixelsOnly), 5, 1);
+  // lay->addWidget(createUI(pixelsOnly), 5, 1, 1, 2, Qt::AlignLeft);
 
   // insertUI(CurrentRoomChoice, lay, roomItemList);
   insertUI(functionEditorToggle, lay, getComboItemList(functionEditorToggle));
@@ -1593,7 +1619,7 @@ QWidget* PreferencesPopup::createInterfacePage() {
 #if QT_VERSION >= 0x051000
   insertUI(displayIn30bit, lay);
   row = lay->rowCount();
-  lay->addWidget(check30bitBtn, row - 1, 3);
+  lay->addWidget(check30bitBtn, row - 1, 2, Qt::AlignRight);
 #endif
 //  insertUI(showIconsInMenu, lay);
 
@@ -1760,7 +1786,7 @@ QWidget* PreferencesPopup::createImportExportPage() {
     insertUI(ffmpegTimeout, ffmpegOptionsLay);
 
     putLabel(
-        tr("Enabling multi-thread rendering will render significantly faster\n"
+      tr("Enabling multi-thread rendering will render significantly faster \n"
            "but a random crash might occur, use at your own risk:"),
         ffmpegOptionsLay);
     insertUI(ffmpegMultiThread, ffmpegOptionsLay);
@@ -1783,10 +1809,15 @@ QWidget* PreferencesPopup::createImportExportPage() {
 QWidget* PreferencesPopup::createDrawingPage() {
   QWidget* widget  = new QWidget(this);
   QGridLayout* lay = new QGridLayout();
+
+  QPushButton* frameFormatBtn = new QPushButton(tr("Default Frame Filename Format"));
+
   setupLayout(lay);
 
-  // insertUI(scanLevelType, lay, getComboItemList(scanLevelType));
   insertUI(DefLevelType, lay, getComboItemList(DefLevelType));
+  insertUI(DefRasterFormat, lay, getComboItemList(DefRasterFormat));
+  int row = lay->rowCount();
+  lay->addWidget(frameFormatBtn, row - 1, 2, Qt::AlignLeft);
   insertUI(newLevelSizeToCameraSizeEnabled, lay);
   insertDualUIs(DefLevelWidth, DefLevelHeight, lay);
   // insertUI(DefLevelDpi, lay);
@@ -1828,6 +1859,9 @@ QWidget* PreferencesPopup::createDrawingPage() {
   getUI<MeasuredDoubleLineEdit*>(DefLevelWidth)->setDecimals(0);
   getUI<MeasuredDoubleLineEdit*>(DefLevelHeight)->setDecimals(0);
   //}
+
+  bool ret = ret && connect(frameFormatBtn, SIGNAL(clicked()), this,
+                            SLOT(onFrameFormatButton()));
 
   return widget;
 }

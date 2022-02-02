@@ -490,7 +490,7 @@ ColorField::ColorField(QWidget *parent, bool isAlphaActive, TPixel32 color,
 */
 
 void ColorField::setAlphaActive(bool active) {
-  if (active && !m_alphaChannel->isVisible()) {
+  if (active && !m_alphaChannel->isVisibleTo(this)) {
     m_alphaChannel->show();
     connect(m_alphaChannel, SIGNAL(valueChanged(int, bool)),
             SLOT(onAlphaChannelChanged(int, bool)));
@@ -499,7 +499,7 @@ void ColorField::setAlphaActive(bool active) {
     m_color.m = 0;
     m_colorSample->setColor(m_color);
     emit colorChanged(m_color, false);
-  } else if (!active && m_alphaChannel->isVisible()) {
+  } else if (!active && m_alphaChannel->isVisibleTo(this)) {
     m_alphaChannel->hide();
     disconnect(m_alphaChannel, SIGNAL(valueChanged(int, bool)), this,
                SLOT(onAlphaChannelChanged(int, bool)));

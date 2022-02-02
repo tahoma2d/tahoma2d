@@ -276,7 +276,8 @@ void MovieRenderer::Imp::prepareForStart() {
         locals::eraseUncompatibleExistingLevel(m_fp, cameraResI);
 
         m_levelUpdaterA.reset(new LevelUpdater(
-            m_fp, oprop->getFileFormatProperties(m_fp.getType())));
+            m_fp, oprop->getFileFormatProperties(m_fp.getType()),
+            oprop->formatTemplateFId()));
         m_levelUpdaterA->getLevelWriter()->setFrameRate(frameRate);
       } else {
         TFilePath leftFp  = m_fp.withName(m_fp.getName() + "_l");
@@ -286,11 +287,13 @@ void MovieRenderer::Imp::prepareForStart() {
         locals::eraseUncompatibleExistingLevel(rightFp, cameraResI);
 
         m_levelUpdaterA.reset(new LevelUpdater(
-            leftFp, oprop->getFileFormatProperties(leftFp.getType())));
+            leftFp, oprop->getFileFormatProperties(leftFp.getType()),
+            oprop->formatTemplateFId()));
         m_levelUpdaterA->getLevelWriter()->setFrameRate(frameRate);
 
         m_levelUpdaterB.reset(new LevelUpdater(
-            rightFp, oprop->getFileFormatProperties(rightFp.getType())));
+            rightFp, oprop->getFileFormatProperties(rightFp.getType()),
+            oprop->formatTemplateFId()));
         m_levelUpdaterB->getLevelWriter()->setFrameRate(frameRate);
       }
     } catch (...) {
@@ -538,7 +541,7 @@ void MovieRenderer::Imp::doRenderRasterCompleted(const RenderData &renderData) {
     // This thread will be the one processing ft - remove it from the map to
     // prevent another
     // thread from interfering
-    double frame = ft->first;
+    double frame                          = ft->first;
     std::pair<TRasterP, TRasterP> rasters = ft->second;
 
     ++m_nextFrameIdxToSave;

@@ -124,7 +124,8 @@ class DVAPI LevelUpdater {
 public:
   LevelUpdater();
   LevelUpdater(TXshSimpleLevel *sl);
-  LevelUpdater(const TFilePath &path, TPropertyGroup *lwProperties = 0);
+  LevelUpdater(const TFilePath &path, TPropertyGroup *lwProperties = 0,
+               const TFrameId &tmplFId = TFrameId(TFrameId::NO_FRAME));
   ~LevelUpdater();
 
   TLevelWriterP getLevelWriter() { return m_lw; }
@@ -142,7 +143,8 @@ public:
   //! This function may throw in case the specified path has an unrecognized
   //! extension, or the file could
   //! not be opened for write.
-  void open(const TFilePath &src, TPropertyGroup *lwProperties);
+  void open(const TFilePath &src, TPropertyGroup *lwProperties,
+            const TFrameId &tmplFId);
 
   //! Attaches the updater to the specified simple level instance. Format
   //! properties are the default in case the level

@@ -34,6 +34,7 @@
 #include "tstream.h"
 #include "tsystem.h"
 #include "tcontenthistory.h"
+#include "tfilepath.h"
 
 // Qt includes
 #include <QDir>
@@ -778,6 +779,27 @@ TImageP buildIcon(const TImageP &img, const TDimension &size) {
 }
 
 }  // anonymous namespace
+
+//-----------------------------------------------------------------------------
+
+// modify frameId to be with the same frame format as existing frames
+void TXshSimpleLevel::formatFId(TFrameId &fid, TFrameId _tmplFId) {
+  if (m_type != OVL_XSHLEVEL && m_type != TZI_XSHLEVEL) return;
+
+  if (!m_frames.empty()) {
+    TFrameId tmplFId = *m_frames.begin();
+    fid.setZeroPadding(tmplFId.getZeroPadding());
+    fid.setStartSeqInd(tmplFId.getStartSeqInd());
+  }
+  // since there is no reference frame, take sepChar from the path
+  else {
+    // override sepchar by the path
+    QChar sepChar = m_path.getSepChar();
+    if (!sepChar.isNull()) _tmplFId.setStartSeqInd(sepChar.toLatin1());
+    fid.setZeroPadding(_tmplFId.getZeroPadding());
+    fid.setStartSeqInd(_tmplFId.getStartSeqInd());
+  }
+}
 
 //-----------------------------------------------------------------------------
 

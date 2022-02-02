@@ -41,7 +41,8 @@ TOutputProperties::TOutputProperties()
     , m_maxTileSizeIndex(0)
     , m_threadIndex(2)
     , m_subcameraPreview(false)
-    , m_boardSettings(new BoardSettings()) {
+    , m_boardSettings(new BoardSettings())
+    , m_formatTemplateFId() {
   m_renderSettings = new TRenderSettings();
 }
 
@@ -61,7 +62,8 @@ TOutputProperties::TOutputProperties(const TOutputProperties &src)
     , m_maxTileSizeIndex(src.m_maxTileSizeIndex)
     , m_threadIndex(src.m_threadIndex)
     , m_subcameraPreview(src.m_subcameraPreview)
-    , m_boardSettings(new BoardSettings(*src.m_boardSettings)) {
+    , m_boardSettings(new BoardSettings(*src.m_boardSettings))
+    , m_formatTemplateFId(src.m_formatTemplateFId) {
   std::map<std::string, TPropertyGroup *>::iterator ft,
       fEnd = m_formatProperties.end();
   for (ft = m_formatProperties.begin(); ft != fEnd; ++ft) {
@@ -107,6 +109,8 @@ TOutputProperties &TOutputProperties::operator=(const TOutputProperties &src) {
 
   delete m_boardSettings;
   m_boardSettings = new BoardSettings(*src.m_boardSettings);
+
+  m_formatTemplateFId = src.m_formatTemplateFId;
 
   return *this;
 }

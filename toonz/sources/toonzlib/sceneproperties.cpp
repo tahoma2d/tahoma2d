@@ -313,6 +313,16 @@ void TSceneProperties::saveData(TOStream &os) const {
       os.closeChild();
     }
 
+    if (out.formatTemplateFId().getZeroPadding() !=
+            TFrameId().getZeroPadding() ||
+        out.formatTemplateFId().getStartSeqInd() !=
+            TFrameId().getStartSeqInd()) {
+      os.openChild("frameFormat");
+      os.child("padding") << (int)out.formatTemplateFId().getZeroPadding();
+      os.child("sepchar") << QString(out.formatTemplateFId().getStartSeqInd());
+      os.closeChild();
+    }
+
     os.closeChild();  // </output>
   }
   os.closeChild();
@@ -680,6 +690,20 @@ void TSceneProperties::loadData(TIStream &is, bool isLoadingProject) {
             } else if (tagName == "clapperboardSettings") {
               assert(out.getBoardSettings());
               out.getBoardSettings()->loadData(is);
+            } else if (tagName == "frameFormat") {
+              while (is.matchTag(tagName)) {
+                if (tagName == "padding") {
+                  int padding;
+                  is >> padding;
+                  out.formatTemplateFId().setZeroPadding(padding);
+                } else if (tagName == "sepchar") {
+                  QString sepChar;
+                  is >> sepChar;
+                  out.formatTemplateFId().setStartSeqInd(sepChar[0].toLatin1());
+                } else
+                  throw TException("unexpected tag: " + tagName);
+                is.closeChild();
+              }  // end while
             } else {
               throw TException("unexpected property tag: " + tagName);
             }
@@ -835,4 +859,11 @@ bool TSceneProperties::hasDefaultCellMarks() const {
       return false;
   }
   return true;
+}
+
+//-----------------------------------------------------------------------------
+// templateFId in preview settings is used for "input" file format
+// such as new raster level, captured images by camera capture feature, etc.
+TFrameId &TSceneProperties::formatTemplateFIdForInput() {
+  return m_previewProp->formatTemplateFId();
 }

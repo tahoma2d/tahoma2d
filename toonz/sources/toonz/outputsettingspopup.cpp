@@ -1258,7 +1258,7 @@ void OutputSettingsPopup::onFormatChanged(const QString &str) {
            ext == "spritesheet";
   };
 
-  TOutputProperties *prop    = getProperties();
+  TOutputProperties *prop = getProperties();
   bool wasMultiRenderInvalid =
       isMultiRenderInvalid(prop->getPath().getType(), m_allowMT);
   TFilePath fp = prop->getPath().withType(str.toStdString());
@@ -1292,9 +1292,25 @@ void OutputSettingsPopup::onFormatChanged(const QString &str) {
 void OutputSettingsPopup::openSettingsPopup() {
   TOutputProperties *prop = getProperties();
   std::string ext         = prop->getPath().getType();
-  openFormatSettingsPopup(this, ext, prop->getFileFormatProperties(ext));
+
+  TFrameId oldTmplFId = prop->formatTemplateFId();
+
+  bool ret =
+      openFormatSettingsPopup(this, ext, prop->getFileFormatProperties(ext),
+                              &prop->formatTemplateFId(), false);
+
+  if (!ret) return;
 
   if (m_presetCombo) m_presetCombo->setCurrentIndex(0);
+
+  if (oldTmplFId.getZeroPadding() !=
+          prop->formatTemplateFId().getZeroPadding() ||
+      oldTmplFId.getStartSeqInd() !=
+          prop->formatTemplateFId().getStartSeqInd()) {
+    TFilePath fp =
+        prop->getPath().withNoFrame().withFrame(prop->formatTemplateFId());
+    prop->setPath(fp);
+  }
 }
 
 //-----------------------------------------------------------------------------

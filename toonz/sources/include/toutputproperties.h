@@ -94,6 +94,10 @@ private:
 
   BoardSettings *m_boardSettings;
 
+  // templateFId in preview settings is used for "input" file format
+  // such as new raster level, captured images by camera capture feature, etc.
+  TFrameId m_formatTemplateFId;
+
 public:
   /*!
 Constructs TOutputProperties with default value.
@@ -221,6 +225,8 @@ machine's CPU).
   void setSubcameraPreview(bool enabled) { m_subcameraPreview = enabled; }
 
   BoardSettings *getBoardSettings() const { return m_boardSettings; }
+
+  TFrameId &formatTemplateFId() { return m_formatTemplateFId; }
 };
 
 //--------------------------------------------

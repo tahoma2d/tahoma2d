@@ -551,6 +551,8 @@ bool XdtsIo::loadXdtsScene(ToonzScene *scene, const TFilePath &scenePath) {
   int tick1Id, tick2Id;
   popup.getMarkerIds(tick1Id, tick2Id);
 
+  TFrameId tmplFId = scene->getProperties()->formatTemplateFIdForInput();
+
   TXsheet *xsh                       = scene->getXsheet();
   XdtsTimeTableFieldItem cellField   = xdtsData.timeTable().getCellField();
   XdtsTimeTableHeaderItem cellHeader = xdtsData.timeTable().getCellHeader();
@@ -558,8 +560,9 @@ bool XdtsIo::loadXdtsScene(ToonzScene *scene, const TFilePath &scenePath) {
   QStringList layerNames             = cellHeader.getLayerNames();
   QList<int> columns                 = cellField.getOccupiedColumns();
   for (int column : columns) {
-    QString levelName = layerNames.at(column);
-    TXshLevel *level  = levels.value(levelName);
+    QString levelName   = layerNames.at(column);
+    TXshLevel *level    = levels.value(levelName);
+    TXshSimpleLevel *sl = level->getSimpleLevel();
     QList<int> tick1, tick2;
     QVector<TFrameId> track = cellField.getColumnTrack(column, tick1, tick2);
 
@@ -568,13 +571,18 @@ bool XdtsIo::loadXdtsScene(ToonzScene *scene, const TFilePath &scenePath) {
     for (TFrameId fid : track) {
       if (fid.getNumber() == -1)  // EMPTY cell case
         row++;
-      else
+      else {
+        // modify frameId to be with the same frame format as existing frames
+        if (sl) sl->formatFId(fid, tmplFId);
         xsh->setCell(row++, column, TXshCell(level, fid));
+      }
     }
     // if the last cell is not "SYMBOL_NULL_CELL", continue the cell
     // to the end of the sheet
     TFrameId lastFid = track.last();
     if (lastFid.getNumber() != -1) {
+      // modify frameId to be with the same frame format as existing frames
+      if (sl) sl->formatFId(lastFid, tmplFId);
       for (; row < duration; row++)
         xsh->setCell(row, column, TXshCell(level, TFrameId(lastFid)));
     }
