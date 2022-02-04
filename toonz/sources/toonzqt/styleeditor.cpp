@@ -4240,6 +4240,10 @@ QFrame *StyleEditor::createBottomWidget() {
   m_plainColorPage->m_rgbFrame->setVisible(false);
 
   menu->addSeparator();
+  m_toggleOrientationAction =
+      new QAction(createQIcon("orientation_h"), tr("Toggle Orientation"), this);
+  menu->addAction(m_toggleOrientationAction);
+
   m_hexEditorAction = new QAction(tr("Hex Color Names..."), this);
   menu->addAction(m_hexEditorAction);
 
@@ -4258,14 +4262,6 @@ QFrame *StyleEditor::createBottomWidget() {
 
 //  QToolBar *displayToolbar = new QToolBar(this);
   m_toolBar->addWidget(m_styleSetsButton);
-  m_toggleOrientationAction =
-    m_toolBar->addAction(createQIcon("orientation_h"), "");
-  m_toggleOrientationAction->setToolTip(
-    tr("Toggle orientation of the Color Page."));
-  QWidget *toggleOrientationButton =
-    m_toolBar->widgetForAction(m_toggleOrientationAction);
-  toggleOrientationButton->setFixedSize(22, 22);
-  toggleOrientationButton->setFocusPolicy(Qt::NoFocus);
   m_toolBar->addWidget(toolButton);
   m_toolBar->setMaximumHeight(22);
   m_toolBar->setIconSize(QSize(16, 16));
