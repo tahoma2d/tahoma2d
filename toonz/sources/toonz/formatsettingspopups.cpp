@@ -65,9 +65,11 @@ FormatSettingsPopup::FormatSettingsPopup(QWidget *parent,
       buildValueField(i, m_props);
     else if (dynamic_cast<TDoubleProperty *>(m_props->getProperty(i)))
       buildDoubleField(i, m_props);
-    else if (dynamic_cast<TBoolProperty *>(m_props->getProperty(i)))
-      buildPropertyCheckBox(i, m_props);
-    else if (dynamic_cast<TStringProperty *>(m_props->getProperty(i)))
+    else if (dynamic_cast<TBoolProperty *>(m_props->getProperty(i))) {
+      if (m_props->getProperty(i)->getName() !=
+          "Generate Palette")  // Hide. Not using but still needed here
+        buildPropertyCheckBox(i, m_props);
+    } else if (dynamic_cast<TStringProperty *>(m_props->getProperty(i)))
       buildPropertyLineEdit(i, m_props);
     else
       assert(false);
