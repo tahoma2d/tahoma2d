@@ -583,7 +583,7 @@ void Preferences::definePreferenceItems() {
   define(currentColumnColor, "currentColumnColor", QMetaType::QColor,
          QColor(Qt::yellow));
   define(currentCellColor, "currentCellColor", QMetaType::QColor,
-         QColor(Qt::black));
+         QColor(Qt::cyan));
   // define(levelNameOnEachMarkerEnabled, "levelNameOnEachMarkerEnabled",
   //  QMetaType::Bool, false);
   define(levelNameDisplayType, "levelNameDisplayType", QMetaType::Int,
