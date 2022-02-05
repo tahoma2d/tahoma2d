@@ -100,7 +100,8 @@ void TXshPaletteLevel::load() {
 
 void TXshPaletteLevel::save() {
   TFilePath path = getScene()->decodeFilePath(m_path);
-  if (TSystem::doesExistFileOrLevel(path) && m_palette) {
+  if (TSystem::doesExistFileOrLevel(path) && m_palette &&
+      m_palette->getDirtyFlag()) {
     TFileStatus fs(path);
     if (!fs.isWritable()) {
       throw TSystemException(
@@ -108,6 +109,7 @@ void TXshPaletteLevel::save() {
     }
     TOStream os(path);
     os << m_palette;
+    m_palette->setDirtyFlag(false);
   }
 }
 
