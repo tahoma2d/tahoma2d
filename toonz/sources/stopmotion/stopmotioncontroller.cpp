@@ -2049,7 +2049,6 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
 #ifndef _WIN32
   m_directShowCB->hide();
-  m_directShowLabel->hide();
 #endif
 }
 
