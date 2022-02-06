@@ -1012,8 +1012,9 @@ void ColumnArea::DrawHeader::drawColumnNumber() const {
   p.setPen(m_viewer->getVerticalLineColor());
   if (o->flag(PredefinedFlag::LAYER_NUMBER_BORDER)) p.drawRect(pos);
 
-  p.setPen((isCurrent) ? m_viewer->getSelectedColumnTextColor()
-                       : m_viewer->getTextColor());
+  //  p.setPen((isCurrent) ? m_viewer->getSelectedColumnTextColor()
+  //                       : m_viewer->getTextColor());
+  p.setPen(m_viewer->getTextColor());
 
   int valign = o->isVerticalTimeline() ? Qt::AlignVCenter : Qt::AlignBottom;
 
@@ -1085,11 +1086,13 @@ void ColumnArea::DrawHeader::drawColumnName() const {
         leftadj = 24;
     }
 
-    p.setPen((isCurrent) ? m_viewer->getSelectedColumnTextColor()
-                         : nameBacklit ? Qt::black : m_viewer->getTextColor());
+    //    p.setPen((isCurrent) ? m_viewer->getSelectedColumnTextColor()
+    //                         : nameBacklit ? Qt::black : m_viewer->getTextColor());
+    p.setPen(nameBacklit ? Qt::black : m_viewer->getTextColor());
   } else
-    p.setPen((isCurrent) ? m_viewer->getSelectedColumnTextColor()
-                         : m_viewer->getTextColor());
+    //    p.setPen((isCurrent) ? m_viewer->getSelectedColumnTextColor()
+    //                         : m_viewer->getTextColor());
+    p.setPen(m_viewer->getTextColor());
 
   if (o->isVerticalTimeline() && col < 0) {
     QString cameraName = QString::fromStdString(name);
