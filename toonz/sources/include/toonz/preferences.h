@@ -410,6 +410,9 @@ public:
   void getCurrentColumnData(TPixel &color) const {
     color = getColorValue(currentColumnColor);
   }
+  void getCurrentCellData(TPixel &color) const {
+    color = getColorValue(currentCellColor);
+  }
 
   LevelNameDisplayType getLevelNameDisplayType() const {
     return LevelNameDisplayType(getIntValue(levelNameDisplayType));

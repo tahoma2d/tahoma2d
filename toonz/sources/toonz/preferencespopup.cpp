@@ -1211,6 +1211,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {currentTimelineEnabled,
        tr("Show Current Time Indicator (Timeline Mode only)")},
       {currentColumnColor, tr("Current Column Color:")},
+      {currentCellColor, tr("Current Cell Color:")},
       //{ levelNameOnEachMarkerEnabled, tr("Display Level Name on Each Marker")
       //},
       {levelNameDisplayType, tr("Level Name Display:")},
@@ -1891,7 +1892,8 @@ QWidget* PreferencesPopup::createXsheetPage() {
   insertUI(showColumnNumbers, lay);
   // insertUI(syncLevelRenumberWithXsheet, lay);
   // insertUI(currentTimelineEnabled, lay);
-  insertUI(currentColumnColor, lay);
+  // insertUI(currentColumnColor, lay);
+  insertUI(currentCellColor, lay);
   // insertUI(showFrameNumberWithLetters, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
