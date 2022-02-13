@@ -3060,7 +3060,9 @@ void StopMotion::changeCameras(int index) {
   emit(liveViewChanged(false));
   refreshFrameInfo();
   // after all live view data is cleared, start it again.
-  toggleLiveView();
+  if (m_liveViewStatus > LiveViewClosed) {
+    toggleLiveView();
+  }
 }
 //-----------------------------------------------------------------
 
