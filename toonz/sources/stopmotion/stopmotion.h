@@ -237,6 +237,8 @@ signals:
   void webcamResolutionsChanged();
   void newWebcamResolutionSelected(int);
   void updateCameraList(QString);
+  void changeCameraIndex(int);
+  void updateStopMotionControls(bool);
 
   // live view and images
   void newLiveViewImageReady();

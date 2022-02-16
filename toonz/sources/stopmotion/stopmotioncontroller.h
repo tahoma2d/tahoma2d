@@ -388,6 +388,8 @@ protected slots:
   void onDrawBeneathSignal(bool);
   void onLiveViewChanged(bool);
   void onNewCameraSelected(int, bool);
+  void onCameraIndexChanged(int);
+  void onUpdateStopMotionControls(bool);
 
   // webcam
   void onWebcamResolutionsChanged();
