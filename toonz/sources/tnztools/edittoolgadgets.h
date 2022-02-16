@@ -153,6 +153,9 @@ public:
 
   int getDevPixRatio();
 
+  // get the current viewer geometry
+  TRectD getGeometry();
+
 public slots:
 
   void onFxSwitched();

@@ -1172,6 +1172,8 @@
   <item>"STD_inoSpinBlurFx.alpha_rendering"	"Alpha Rendering"	</item>
   <item>"STD_inoSpinBlurFx.anti_alias"	"Anti Alias"	</item>
   <item>"STD_inoSpinBlurFx.reference"	"Reference"	</item>
+  <item>"STD_inoSpinBlurFx.ellipse_aspect_ratio"	"Ellipse Aspect Ratio"	</item>
+  <item>"STD_inoSpinBlurFx.ellipse_angle"	"Ellipse Angle"	</item>
   <item>"STD_inoWarphvFx"	"Warp HV Ino"	</item>
   <item>"STD_inoWarphvFx.h_maxlen"	"H MaxLen"	</item>
   <item>"STD_inoWarphvFx.v_maxlen"	"V MaxLen"	</item>
