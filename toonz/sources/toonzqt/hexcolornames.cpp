@@ -466,6 +466,7 @@ HexColorNamesEditor::HexColorNamesEditor(QWidget *parent)
   mainTab->setLayout(mainLay);
 
   m_mainTreeWidget = new QTreeWidget();
+  m_mainTreeWidget->setRootIsDecorated(false);
   m_mainTreeWidget->setColumnCount(2);
   m_mainTreeWidget->setColumnWidth(0, 175);
   m_mainTreeWidget->setColumnWidth(1, 50);
@@ -479,6 +480,7 @@ HexColorNamesEditor::HexColorNamesEditor(QWidget *parent)
   userTab->setLayout(userLay);
 
   m_userTreeWidget = new QTreeWidget();
+  m_userTreeWidget->setRootIsDecorated(false);
   m_userTreeWidget->setColumnCount(2);
   m_userTreeWidget->setColumnWidth(0, 175);
   m_userTreeWidget->setColumnWidth(1, 50);
