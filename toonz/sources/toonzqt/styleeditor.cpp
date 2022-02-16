@@ -41,7 +41,6 @@
 #include "tvectorrenderdata.h"
 #include "tsimplecolorstyles.h"
 #include "tvectorbrushstyle.h"
-#include "tenv.h"
 
 // Qt includes
 #include <QHBoxLayout>
@@ -70,212 +69,6 @@
 
 using namespace StyleEditorGUI;
 using namespace DVGui;
-
-//*****************************************************************************
-//    Hex line editor
-//*****************************************************************************
-
-#define COLORNAMES_FILE "colornames.txt"
-
-QMap<QString, QString> HexLineEdit::s_defcolornames;
-QMap<QString, QString> HexLineEdit::s_usercolornames;
-
-HexLineEdit::HexLineEdit(const QString &contents, QWidget *parent)
-    : QLineEdit(contents, parent), m_editing(false), m_color(0, 0, 0) {}
-
-bool HexLineEdit::loadDefaultColorNames(bool reload) {
-  TFilePath defCTFp = TEnv::getConfigDir() + COLORNAMES_FILE;
-
-  // Load default color names
-  try {
-    if (reload || s_defcolornames.size() == 0) {
-      s_defcolornames.clear();
-      loadColorTableXML(s_defcolornames, defCTFp);
-    }
-  } catch (...) {
-    return false;
-  }
-  return true;
-}
-
-bool HexLineEdit::hasUserColorNames() {
-  TFilePath userCTFp = ToonzFolder::getMyModuleDir() + COLORNAMES_FILE;
-  return TFileStatus(userCTFp).doesExist();
-}
-
-bool HexLineEdit::loadUserColorNames(bool reload) {
-  TFilePath userCTFp = ToonzFolder::getMyModuleDir() + COLORNAMES_FILE;
-
-  // Load user color names (if exists...)
-  if (TFileStatus(userCTFp).doesExist()) {
-    try {
-      if (reload || s_usercolornames.size() == 0) {
-        s_usercolornames.clear();
-        loadColorTableXML(s_usercolornames, userCTFp);
-      }
-    } catch (...) {
-      return false;
-    }
-  }
-  return true;
-}
-
-void HexLineEdit::updateColor() {
-  if (m_color.m == 255) {
-    // Opaque, omit alpha
-    setText(QString("#%1%2%3")
-                .arg(m_color.r, 2, 16, QLatin1Char('0'))
-                .arg(m_color.g, 2, 16, QLatin1Char('0'))
-                .arg(m_color.b, 2, 16, QLatin1Char('0'))
-                .toUpper());
-  } else {
-    setText(QString("#%1%2%3%4")
-                .arg(m_color.r, 2, 16, QLatin1Char('0'))
-                .arg(m_color.g, 2, 16, QLatin1Char('0'))
-                .arg(m_color.b, 2, 16, QLatin1Char('0'))
-                .arg(m_color.m, 2, 16, QLatin1Char('0'))
-                .toUpper());
-  }
-}
-
-void HexLineEdit::setColor(TPixel color) {
-  if (m_color != color) {
-    m_color = color;
-    if (isVisible()) updateColor();
-  }
-}
-
-bool HexLineEdit::fromText(QString text) {
-  static QRegExp space("\\s");
-  text.remove(space);
-  if (text.size() == 0) return false;
-  if (text[0] == "#") return fromHex(text);
-  text = text.toLower();  // table names are lowercase
-
-  // Find color from tables, user takes priority
-  QMap<QString, QString>::const_iterator it;
-  it = s_usercolornames.constFind(text);
-  if (it == s_usercolornames.constEnd()) {
-    it = s_defcolornames.constFind(text);
-    if (it == s_defcolornames.constEnd()) return false;
-  }
-
-  QString hexText = it.value();
-  return fromHex(hexText);
-}
-
-// Whitespaces can break this implementation, thankfully
-//  '.fromText' already took care of it.
-bool HexLineEdit::fromHex(QString text) {
-  if (text.size() == 0) return false;
-  if (text[0] != "#") return false;
-  text.remove(0, 1);
-  bool ok;
-  uint parsedValue = text.toUInt(&ok, 16);
-  if (!ok) return false;
-
-  switch (text.length()) {
-  case 8:  // #RRGGBBAA
-    m_color.r = parsedValue >> 24;
-    m_color.g = parsedValue >> 16;
-    m_color.b = parsedValue >> 8;
-    m_color.m = parsedValue;
-    break;
-  case 6:  // #RRGGBB
-    m_color.r = parsedValue >> 16;
-    m_color.g = parsedValue >> 8;
-    m_color.b = parsedValue;
-    m_color.m = 255;
-    break;
-  case 4:  // #RGBA
-    m_color.r = (parsedValue >> 12) & 15;
-    m_color.r |= m_color.r << 4;
-    m_color.g = (parsedValue >> 8) & 15;
-    m_color.g |= m_color.g << 4;
-    m_color.b = (parsedValue >> 4) & 15;
-    m_color.b |= m_color.b << 4;
-    m_color.m = parsedValue & 15;
-    m_color.m |= m_color.m << 4;
-    break;
-  case 3:  // #RGB
-    m_color.r = (parsedValue >> 8) & 15;
-    m_color.r |= m_color.r << 4;
-    m_color.g = (parsedValue >> 4) & 15;
-    m_color.g |= m_color.g << 4;
-    m_color.b = parsedValue & 15;
-    m_color.b |= m_color.b << 4;
-    m_color.m = 255;
-    break;
-  case 2:  // #VV (non-standard)
-    m_color.r = parsedValue;
-    m_color.g = m_color.r;
-    m_color.b = m_color.r;
-    m_color.m = 255;
-    break;
-  case 1:  // #V (non-standard)
-    m_color.r = parsedValue & 15;
-    m_color.r |= m_color.r << 4;
-    m_color.g = m_color.r;
-    m_color.b = m_color.r;
-    m_color.m = 255;
-    break;
-  default:
-    return false;
-  }
-  updateColor();
-  return true;
-}
-
-void HexLineEdit::loadColorTableXML(QMap<QString, QString> &table,
-                                    const TFilePath &fp) {
-  if (!TFileStatus(fp).doesExist()) throw TException("File not found");
-
-  TIStream is(fp);
-  if (!is) throw TException("Can't read color names");
-
-  std::string tagName;
-  if (!is.matchTag(tagName) || tagName != "colors")
-    throw TException("Not a color names file");
-
-  while (!is.matchEndTag()) {
-    if (!is.matchTag(tagName)) throw TException("Expected tag");
-    if (tagName == "color") {
-      QString name, hex;
-      name = QString::fromStdString(is.getTagAttribute("name"));
-      std::string hexs;
-      is >> hexs;
-      hex = QString::fromStdString(hexs);
-      if (name.size() != 0 && hex.size() != 0)
-        table.insert(name.toLower(), hex);
-      if (!is.matchEndTag()) throw TException("Expected end tag");
-    } else
-      throw TException("unexpected tag /" + tagName + "/");
-  }
-}
-
-void HexLineEdit::setStyle(TColorStyle &style, int index) {
-  setColor(style.getColorParamValue(index));
-}
-
-void HexLineEdit::mousePressEvent(QMouseEvent *event) {
-  QLineEdit::mousePressEvent(event);
-  // Make Ctrl key disable select all so the user can click a specific character
-  // after a focus-in, this likely will fall into a hidden feature thought.
-  bool ctrlDown = event->modifiers() & Qt::ControlModifier;
-  if (!m_editing && !ctrlDown) selectAll();
-  m_editing = true;
-}
-
-void HexLineEdit::focusOutEvent(QFocusEvent *event) {
-  QLineEdit::focusOutEvent(event);
-  deselect();
-  m_editing = false;
-}
-
-void HexLineEdit::showEvent(QShowEvent *event) {
-  QLineEdit::showEvent(event);
-  updateColor();
-}
 
 //*****************************************************************************
 //    UndoPaletteChange  definition
@@ -4238,6 +4031,7 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
     , m_enabledFirstAndLastTab(false)
     , m_oldStyle(0)
     , m_parent(parent)
+    , m_hexColorNamesEditor(0)
     , m_editedStyle(0) {
   // TOGLIERE
   TFilePath libraryPath     = ToonzFolder::getLibraryFolder();
@@ -4411,8 +4205,6 @@ QFrame *StyleEditor::createBottomWidget() {
   m_hexLineEdit = new HexLineEdit("", this);
   m_hexLineEdit->setObjectName("HexLineEdit");
   m_hexLineEdit->setFixedWidth(75);
-  m_hexLineEdit->loadDefaultColorNames(false);
-  m_hexLineEdit->loadUserColorNames(false);
 
   m_toolBar = new QToolBar(this);
   m_toolBar->setMovable(false);
@@ -4446,6 +4238,10 @@ QFrame *StyleEditor::createBottomWidget() {
 
   m_plainColorPage->m_hsvFrame->setVisible(false);
   m_plainColorPage->m_rgbFrame->setVisible(false);
+
+  menu->addSeparator();
+  m_hexEditorAction = new QAction(tr("Hex Color Names..."), this);
+  menu->addAction(m_hexEditorAction);
 
   QToolButton *toolButton = new QToolButton(this);
   toolButton->setIcon(createQIcon("menu"));
@@ -4546,6 +4342,8 @@ QFrame *StyleEditor::createBottomWidget() {
                        SLOT(setVisible(bool)));
   ret = ret && connect(m_hexLineEdit, SIGNAL(editingFinished()), this,
                        SLOT(onHexChanged()));
+  ret = ret && connect(m_hexEditorAction, SIGNAL(triggered()), this,
+                       SLOT(onHexEditor()));
   ret = ret && connect(m_toggleOrientationAction, SIGNAL(triggered()),
                        m_plainColorPage, SLOT(toggleOrientation()));
   ret = ret && connect(m_toggleOrientationAction, SIGNAL(triggered()), this,
@@ -5564,6 +5362,15 @@ void StyleEditor::onHexChanged() {
     onColorChanged(cm, false);
     m_hexLineEdit->selectAll();
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void StyleEditor::onHexEditor() {
+  if (!m_hexColorNamesEditor) {
+    m_hexColorNamesEditor = new DVGui::HexColorNamesEditor(this);
+  }
+  m_hexColorNamesEditor->show();
 }
 
 //-----------------------------------------------------------------------------
