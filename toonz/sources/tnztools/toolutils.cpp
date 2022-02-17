@@ -605,7 +605,16 @@ void ToolUtils::TToolUndo::notifyImageChanged() const {
     ImageManager::instance()->invalidate(id);
   }
 }
+//------------------------------------------------------------------------------------------
 
+ void ToolUtils::TToolUndo::onAdd() {
+   // clean up the flags after registering undo
+   TTool::m_isLevelCreated     = false;
+   TTool::m_isFrameCreated     = false;
+   TTool::m_isLevelRenumbererd = false;
+ }
+
+ //------------------------------------------------------------------------------------------
 int ToolUtils::TToolUndo::m_idCount = 0;
 
 //================================================================================================
