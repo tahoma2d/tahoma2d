@@ -2446,6 +2446,7 @@ bool StopMotion::loadXmlFile() {
     }
     xmlReader.readNext();
   }
+  emit(updateStopMotionControls(webcam));
   return true;
 }
 
@@ -2993,7 +2994,8 @@ void StopMotion::changeCameras(int index) {
 #endif
 
   // close live view if open
-  if (m_liveViewStatus > LiveViewClosed) {
+  int liveViewStatus = m_liveViewStatus;
+  if (liveViewStatus > LiveViewClosed) {
     toggleLiveView();
   }
 
@@ -3049,7 +3051,8 @@ void StopMotion::changeCameras(int index) {
     setWebcamResolution(
         QString(QString::number(width) + " x " + QString::number(height)));
     setTEnvCameraName(m_webcam->getWebcamDescription().toStdString());
-    emit(newCameraSelected(index + 1, true));
+//    emit(newCameraSelected(index + 1, true));
+    emit(changeCameraIndex(index + 1));
     emit(webcamResolutionsChanged());
     emit(newWebcamResolutionSelected(sizeCount));
 
@@ -3062,7 +3065,8 @@ void StopMotion::changeCameras(int index) {
     }
     m_webcam->clearWebcam();
 
-    emit(newCameraSelected(index + 1, false));
+//    emit(newCameraSelected(index + 1, false));
+    emit(changeCameraIndex(index + 1));
 #endif
   }
   if (m_useNumpadShortcuts) toggleNumpadShortcuts(true);
@@ -3077,12 +3081,15 @@ void StopMotion::changeCameras(int index) {
   emit(liveViewChanged(false));
   refreshFrameInfo();
   // after all live view data is cleared, start it again.
-  toggleLiveView();
+  if (liveViewStatus > LiveViewClosed) {
+    toggleLiveView();
+  }
 }
 //-----------------------------------------------------------------
 
 void StopMotion::setWebcamResolution(QString resolution) {
-  m_webcam->releaseWebcam();
+  bool webcamActive = m_webcam->isWebcamActive();
+  if (webcamActive) m_webcam->releaseWebcam();
 
   // resolution is written in the itemText with the format "<width> x
   // <height>" (e.g. "800 x 600")
@@ -3114,6 +3121,7 @@ void StopMotion::setWebcamResolution(QString resolution) {
   refreshFrameInfo();
 
   int index = m_webcam->getIndexOfResolution();
+  if (webcamActive) m_webcam->initWebcam(m_webcam->getWebcamIndex());
   emit(newWebcamResolutionSelected(index));
 }
 

@@ -1823,6 +1823,10 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(refreshCameraList(QString)));
   ret = ret && connect(m_stopMotion, SIGNAL(optionsChanged()), this,
                        SLOT(refreshOptionsLists()));
+  ret = ret && connect(m_stopMotion, SIGNAL(changeCameraIndex(int)), this,
+                       SLOT(onCameraIndexChanged(int)));
+  ret = ret && connect(m_stopMotion, SIGNAL(updateStopMotionControls(bool)),
+                       this, SLOT(onUpdateStopMotionControls(bool)));
 
   // EOS Connections
   ret = ret &&
@@ -2768,13 +2772,28 @@ void StopMotionController::onCameraListComboActivated(int comboIndex) {
   if (cameraCount != m_cameraListCombo->count() - 1) return;
 
   m_stopMotion->changeCameras(comboIndex);
+  m_stopMotion->updateStopMotionControls(m_stopMotion->m_usingWebcam);
 }
 
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onNewCameraSelected(int index, bool useWebcam) {
+  onCameraIndexChanged(index);
+  onUpdateStopMotionControls(useWebcam);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onCameraIndexChanged(int index) {
   if (index < m_cameraListCombo->count())
     m_cameraListCombo->setCurrentIndex(index);
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onUpdateStopMotionControls(bool useWebcam) {
+  int index = m_cameraListCombo->currentIndex();
+
   if (index == 0) {
     m_cameraListCombo->setCurrentIndex(index);
     m_resolutionCombo->hide();

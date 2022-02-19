@@ -86,6 +86,8 @@ public:
   void computeLut();
   cv::Mat getWebcamImage() { return m_webcamImage; }
 
+  bool isWebcamActive() { return m_cvWebcam.isOpened(); }
+
 private:
   // Webcam Properties
   QList<QCameraInfo> m_webcams;
