@@ -1662,10 +1662,9 @@ else*/
 
 /*! Set current level frame to image viewer. Add the view image in cache.
  */
-void FlipBook::onDrawFrame(int frame, const ImagePainter::VisualSettings &vs,
-                           QElapsedTimer *timer, qint64 targetInstant) {
+void FlipBook::onDrawFrame(int frame, const ImagePainter::VisualSettings &vs) {
   try {
-    m_imageViewer->setTimerAndTargetInstant(timer, targetInstant);
+    m_imageViewer->setVisual(vs);
 
     TImageP img = getCurrentImage(frame);
 

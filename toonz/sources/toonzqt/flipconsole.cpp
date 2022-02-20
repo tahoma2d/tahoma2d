@@ -23,8 +23,6 @@
 
 #include "../toonz/tapp.h"
 
-#include <time.h>
-
 // Qt includes
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -156,98 +154,110 @@ void PlaybackExecutor::resetFps(int fps) { m_fps = fps; }
 void PlaybackExecutor::run() {
   // (Daniele)
   // We'll build the fps considering an interval of roughly 1 second (the last
-  // one). However, the fps should be sampled at a faster rate. Each sample is
-  // taken at 1/4 second, and the last 4 samples data are stored to keep trace
-  // of the last second of playback.
-  m_timer.start();
+  // one).
+  // However, the fps should be sampled at a faster rate. Each sample is taken
+  // at
+  // 1/4 second, and the last 4 samples data are stored to keep trace of the
+  // last
+  // second of playback.
 
-  qint64 timeResolution =
-      250 * 1000000;  // Use a sufficient sampling resolution (currently 1/4
-                      // sec). Fps calculation is made once per sample.
+  TStopWatch timer;
+  timer.start();
+
+  TUINT32 timeResolution =
+      250;  // Use a sufficient sampling resolution (currently 1/4 sec).
+            // Fps calculation is made once per sample.
 
   int fps = m_fps, currSample = 0;
-  qint64 playedFramesCount = 0;
-  qint64 nextSampleInstant = timeResolution;
+  TUINT32 playedFramesCount = 0;
+  TUINT32 loadedInstant, nextSampleInstant = timeResolution;
+  TUINT32 sampleTotalLoadingTime = 0;
 
-  qint64 lastFrameCounts[4]    = {0, 0, 0,
-                               0};  // Keep the last 4 'played frames' counts.
-  qint64 lastSampleInstants[4] = {0, 0, 0,
-                                  0};  // Same for the last sampling instants
+  TUINT32 lastFrameCounts[4] = {0, 0, 0,
+                                0};  // Keep the last 4 'played frames' counts.
+  TUINT32 lastSampleInstants[4] = {0, 0, 0,
+                                   0};  // Same for the last sampling instants
+  TUINT32 lastLoadingTimes[4] = {0, 0, 0,
+                                 0};  // Same for total sample loading times
 
-  qint64 targetFrameTime =
-      1000000000 / (qint64)abs(m_fps);  // User-required time between frames
+  double targetFrameTime =
+      1000.0 / abs(m_fps);  // User-required time between frames
 
-  qint64 emissionInstant = 0;  // starting instant in which rendering is invoked
-  qint64 avgSwapTime     = 0;  // average time for swapping buffers
-  qint64 shortTermDelayAdjuster =
-      0;  // accumurate recent errors and adjust in short term
+  TUINT32 emissionInstant = 0;  // Effective instant in which loading is invoked
+  double emissionInstantD = 0.0;  // Double precision version of the above
+
+  double lastLoadingTime = 0.0;  // Mean frame loading time in the last sample
 
   while (!m_abort) {
-    emissionInstant = m_timer.nsecsElapsed();
+    emissionInstant = timer.getTotalTime();
 
-    if (emissionInstant > nextSampleInstant) {
-      // Fps calculation
-      qint64 framesCount = playedFramesCount - lastFrameCounts[currSample];
-      qint64 elapsedTime = emissionInstant - lastSampleInstants[currSample];
-      fps                = troundp((long double)(1000000000 * framesCount) /
-                    (long double)elapsedTime);
+    // Draw the next frame
+    if (playedFramesCount) emit nextFrame(fps);  // Show the next frame, telling
+                                                 // currently measured fps
 
-      targetFrameTime =
-          1000000000 / (qint64)abs(m_fps);  // m_fps could have changed...
-
-      // estimate time for swapping buffers
-      qint64 avgSwapTimeD = (elapsedTime / framesCount) - targetFrameTime;
-      if (avgSwapTime - avgSwapTimeD >
-          20000000)  // Reset beyond, say, 20 msecs tolerance.
-        avgSwapTime = avgSwapTimeD;
-      else
-        avgSwapTime += avgSwapTimeD;
-      avgSwapTime = std::min(targetFrameTime, std::max(avgSwapTime, (qint64)0));
- 
-      // prepare for the next sampling
-      lastFrameCounts[currSample]    = playedFramesCount;
-      lastSampleInstants[currSample] = emissionInstant;
-      currSample                     = (currSample + 1) % 4;
-      nextSampleInstant              = emissionInstant + timeResolution;
-    }
-
-    // draw the next frame
-    if (playedFramesCount) {
-      qint64 delayAdjust = shortTermDelayAdjuster / 4;
-      qint64 targetInstant =
-          emissionInstant + targetFrameTime - avgSwapTime - delayAdjust;
-      targetInstant = std::max(targetInstant, emissionInstant);
-      shortTermDelayAdjuster -= delayAdjust;
-
-      // Show the next frame, telling currently measured fps
-      // The wait time will be inserted at the end of paintGL in order to
-      // achieve precise playback
-      emit nextFrame(fps, &m_timer, targetInstant);
-
-      if (FlipConsole::m_areLinked) {
-        // In case there are linked consoles, update them too.
-        // Their load time must be included in the fps calculation.
-        int i, consolesCount = FlipConsole::m_visibleConsoles.size();
-        for (i = 0; i < consolesCount; ++i) {
-          FlipConsole *console = FlipConsole::m_visibleConsoles.at(i);
-          if (console->isLinkable() && console != FlipConsole::m_currentConsole)
-            console->playbackExecutor().emitNextFrame(m_fps < 0 ? -fps : fps);
-        }
+    if (FlipConsole::m_areLinked) {
+      // In case there are linked consoles, update them too.
+      // Their load time must be included in the fps calculation.
+      int i, consolesCount = FlipConsole::m_visibleConsoles.size();
+      for (i = 0; i < consolesCount; ++i) {
+        FlipConsole *console = FlipConsole::m_visibleConsoles.at(i);
+        if (console->isLinkable() && console != FlipConsole::m_currentConsole)
+          console->playbackExecutor().emitNextFrame(m_fps < 0 ? -fps : fps);
       }
     }
 
     //-------- Each nextFrame() blocks until the frame has been shown ---------
 
-    // accumurate error and slightly adjust waiting time for subsequent frames
-    qint64 delay = m_timer.nsecsElapsed() - emissionInstant - targetFrameTime;
-    // just ignore a large error
-    if (delay < targetFrameTime) shortTermDelayAdjuster += delay;
-
     ++playedFramesCount;
+    loadedInstant = timer.getTotalTime();
+    sampleTotalLoadingTime += (loadedInstant - emissionInstant);
+
+    // Recalculate data only after the specified time resolution has passed.
+    if (loadedInstant > nextSampleInstant) {
+      // Sampling instant. Perform calculations.
+
+      // Store values
+      TUINT32 framesCount = playedFramesCount - lastFrameCounts[currSample];
+      TUINT32 elapsedTime = loadedInstant - lastSampleInstants[currSample];
+      double loadingTime =
+          (sampleTotalLoadingTime - lastLoadingTimes[currSample]) /
+          (double)framesCount;
+
+      lastFrameCounts[currSample]    = playedFramesCount;
+      lastSampleInstants[currSample] = loadedInstant;
+      lastLoadingTimes[currSample]   = sampleTotalLoadingTime;
+
+      currSample        = (currSample + 1) % 4;
+      nextSampleInstant = loadedInstant + timeResolution;
+
+      // Rebuild current fps
+      fps             = troundp((1000 * framesCount) / (double)elapsedTime);
+      targetFrameTime = 1000.0 / abs(m_fps);  // m_fps could have changed...
+
+      // In case the playback is too slow to keep the required pace, reset the
+      // emission timeline.
+      // Otherwise, it should be kept as the difference needs to be compensated
+      // to get the required fps.
+      if ((int)emissionInstant - (int)emissionInstantD >
+          20)  // Reset beyond, say, 20 msecs tolerance.
+        emissionInstantD = (double)loadedInstant - loadingTime;
+      else
+        emissionInstantD +=
+            lastLoadingTime -
+            loadingTime;  // Otherwise, just adapt to the new loading time
+
+      lastLoadingTime = loadingTime;
+    }
+
+    // Calculate the new emission instant
+    emissionInstant = std::max((int)(emissionInstantD += targetFrameTime), 0);
+
+    // Sleep until the next emission instant has been reached
+    while (timer.getTotalTime() < emissionInstant) msleep(1);
   }
 
   m_abort = false;
-  m_timer.invalidate();
+  emit(playbackAborted());
 }
 
 //==========================================================================================
@@ -503,10 +513,8 @@ FlipConsole::FlipConsole(QVBoxLayout *mainLayout, std::vector<int> gadgetsMask,
 
   applyCustomizeMask();
 
-  bool ret = connect(&m_playbackExecutor,
-                     SIGNAL(nextFrame(int, QElapsedTimer *, qint64)), this,
-                     SLOT(onNextFrame(int, QElapsedTimer *, qint64)),
-                     Qt::BlockingQueuedConnection);
+  bool ret = connect(&m_playbackExecutor, SIGNAL(nextFrame(int)), this,
+                     SLOT(onNextFrame(int)), Qt::BlockingQueuedConnection);
   ret = ret && connect(&m_playbackExecutor, SIGNAL(playbackAborted()), this,
                        SLOT(setFpsFieldColors()));
   if (m_fpsField) {
@@ -748,8 +756,7 @@ void FlipConsole::toggleLinked() {
 
 //----------------------------------------------------------------------------
 
-bool FlipConsole::drawBlanks(int from, int to, QElapsedTimer *timer,
-                             qint64 target) {
+bool FlipConsole::drawBlanks(int from, int to) {
   if (m_blanksCount == 0 || m_isPlay || m_framesCount <= 1) return false;
 
   // enable blanks only when the blank button is pressed
@@ -766,7 +773,7 @@ bool FlipConsole::drawBlanks(int from, int to, QElapsedTimer *timer,
     m_blanksToDraw = (m_blanksToDraw == 0 ? m_blanksCount : m_blanksToDraw - 1);
     m_settings.m_blankColor     = m_blankColor;
     m_settings.m_drawBlankFrame = true;
-    m_consoleOwner->onDrawFrame(from, m_settings, timer, target);
+    m_consoleOwner->onDrawFrame(from, m_settings);
     m_settings.m_drawBlankFrame = false;
     return true;
   }
@@ -777,19 +784,17 @@ bool FlipConsole::drawBlanks(int from, int to, QElapsedTimer *timer,
 
 //----------------------------------------------------------------------------
 
-void FlipConsole::onNextFrame(int fps, QElapsedTimer *timer,
-                              qint64 targetInstant) {
-  if (playbackExecutor().isAborted()) return;
+void FlipConsole::onNextFrame(int fps) {
   if (fps < 0)  // can be negative only if is a linked console; it means that
                 // the master console is playing backward
   {
     bool reverse = m_reverse;
     m_reverse    = true;
     fps          = -fps;
-    playNextFrame(timer, targetInstant);
+    playNextFrame();
     m_reverse = reverse;
   } else
-    playNextFrame(timer, targetInstant);
+    playNextFrame();
 
   if (fps == -1) return;
   if (m_fpsLabel)
@@ -825,7 +830,7 @@ void FlipConsole::setFpsFieldColors() {
 
 //----------------------------------------------------------------------------
 
-void FlipConsole::playNextFrame(QElapsedTimer *timer, qint64 targetInstant) {
+void FlipConsole::playNextFrame() {
   int from = m_from, to = m_to;
   if (m_markerFrom <= m_markerTo && m_stopAt == -1)
     from = m_markerFrom, to = m_markerTo;
@@ -839,7 +844,7 @@ void FlipConsole::playNextFrame(QElapsedTimer *timer, qint64 targetInstant) {
       m_currentFrame = (m_reverse ? to : from);
     emit playStateChanged(false);
   } else {
-    if (drawBlanks(from, to, timer, targetInstant)) return;
+    if (drawBlanks(from, to)) return;
 
     if (m_reverse)
       m_currentFrame =
@@ -854,7 +859,7 @@ void FlipConsole::playNextFrame(QElapsedTimer *timer, qint64 targetInstant) {
   updateCurrentTime();
   m_settings.m_blankColor        = TPixel::Transparent;
   m_settings.m_recomputeIfNeeded = true;
-  m_consoleOwner->onDrawFrame(m_currentFrame, m_settings, timer, targetInstant);
+  m_consoleOwner->onDrawFrame(m_currentFrame, m_settings);
 }
 
 //-----------------------------------------------------------------------------

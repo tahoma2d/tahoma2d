@@ -16,9 +16,7 @@ class FlipConsole;
 class FlipConsoleOwner {
 public:
   virtual void onDrawFrame(int frame,
-                           const ImagePainter::VisualSettings& settings,
-                           QElapsedTimer* timer = nullptr,
-                           qint64 targetInstant = 0) = 0;
+                           const ImagePainter::VisualSettings &settings) = 0;
 
   virtual void swapBuffers(){};
   virtual void changeSwapBehavior(bool enable){};

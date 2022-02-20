@@ -309,13 +309,10 @@ void ComboViewerPanel::onShowHideActionTriggered(QAction *act) {
 
 //-----------------------------------------------------------------------------
 
-void ComboViewerPanel::onDrawFrame(int frame,
-                                   const ImagePainter::VisualSettings &settings,
-                                   QElapsedTimer *timer, qint64 targetInstant) {
+void ComboViewerPanel::onDrawFrame(
+    int frame, const ImagePainter::VisualSettings &settings) {
   TApp *app = TApp::instance();
   m_sceneViewer->setVisual(settings);
-  m_sceneViewer->setTimerAndTargetInstant(timer, targetInstant);
-
   TFrameHandle *frameHandle = app->getCurrentFrame();
 
   if (m_sceneViewer->isPreviewEnabled()) {
@@ -350,12 +347,6 @@ void ComboViewerPanel::onDrawFrame(int frame,
 
   else if (settings.m_blankColor != TPixel::Transparent)
     m_sceneViewer->update();
-
-  // make sure to redraw the frame here.
-  // repaint() does NOT immediately redraw the frame for QOpenGLWidget
-  if (frameHandle->isPlaying())
-    qApp->processEvents(QEventLoop::ExcludeUserInputEvents |
-                        QEventLoop::ExcludeSocketNotifiers);
 }
 
 //-----------------------------------------------------------------------------
@@ -696,10 +687,10 @@ void ComboViewerPanel::changeWindowTitle() {
     name = name + tr("   ::   Level: ") + imageName;
 
     if (!m_sceneViewer->is3DView()) {
-      TAffine aff = m_sceneViewer->getViewMatrix();
+      TAffine aff                             = m_sceneViewer->getViewMatrix();
       if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
       if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
-      name = name + "  ::  Zoom : " +
+      name                                    = name + "  ::  Zoom : " +
              QString::number((int)(100.0 * sqrt(aff.det()) *
                                    m_sceneViewer->getDpiFactor())) +
              "%";
@@ -711,15 +702,16 @@ void ComboViewerPanel::changeWindowTitle() {
                  ->isActualPixelViewOnSceneEditingModeEnabled() &&
              TApp::instance()->getCurrentLevel()->getSimpleLevel() &&
              !CleanupPreviewCheck::instance()
-                  ->isEnabled()               // cleanup preview must be OFF
-             && !CameraTestCheck::instance()  // camera test mode must be OFF
-                                              // neither
-                     ->isEnabled() &&
+                  ->isEnabled()  // cleanup preview must be OFF
+             &&
+             !CameraTestCheck::instance()  // camera test mode must be OFF
+                                           // neither
+                  ->isEnabled() &&
              !m_sceneViewer->is3DView()) {
-      TAffine aff = m_sceneViewer->getViewMatrix();
+      TAffine aff                             = m_sceneViewer->getViewMatrix();
       if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
       if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
-      name = name + "  ::  Zoom : " +
+      name                                    = name + "  ::  Zoom : " +
              QString::number((int)(100.0 * sqrt(aff.det()) *
                                    m_sceneViewer->getDpiFactor())) +
              "%";
@@ -739,7 +731,7 @@ void ComboViewerPanel::changeWindowTitle() {
         TAffine aff = m_sceneViewer->getViewMatrix();
         if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
         if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
-        name = name + "  ::  Zoom : " +
+        name                                    = name + "  ::  Zoom : " +
                QString::number((int)(100.0 * sqrt(aff.det()) *
                                      m_sceneViewer->getDpiFactor())) +
                "%";

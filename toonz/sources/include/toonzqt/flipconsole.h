@@ -19,7 +19,6 @@
 #include "toonz/imagepainter.h"
 #include "tstopwatch.h"
 #include <QThread>
-#include <QElapsedTimer>
 
 #undef DVAPI
 #undef DVVAR
@@ -72,7 +71,6 @@ class PlaybackExecutor final : public QThread {
 
   int m_fps;
   bool m_abort;
-  QElapsedTimer m_timer;
 
 public:
   PlaybackExecutor();
@@ -82,14 +80,11 @@ public:
   void run() override;
   void abort() { m_abort = true; }
 
-  bool isAborted() { return m_abort; }
-  void emitNextFrame(int fps) { emit nextFrame(fps, nullptr, 0); }
+  void emitNextFrame(int fps) { emit nextFrame(fps); }
 
 signals:
-  void nextFrame(
-      int fps, QElapsedTimer *timer,
-      qint64 targetInstant);  // Must be connect with
-                              // Qt::BlockingQueuedConnection connection type.
+  void nextFrame(int fps);  // Must be connect with Qt::BlockingQueuedConnection
+                            // connection type.
   void playbackAborted();
 };
 
@@ -326,7 +321,7 @@ public:
   }
 
   bool isLinkable() const { return m_isLinkable; }
-  void playNextFrame(QElapsedTimer *timer = nullptr, qint64 targetInstant = 0);
+  void playNextFrame();
   void updateCurrentFPS(int val);
 
   bool hasButton(std::vector<int> buttonMask, FlipConsole::EGadget buttonId) {
@@ -435,10 +430,10 @@ protected slots:
   }
   void onButtonPressed(int button);
   void incrementCurrentFrame(int delta);
-  void onNextFrame(int fps, QElapsedTimer *timer, qint64 target);
+  void onNextFrame(int fps);
   void setFpsFieldColors();
   void onCustomizeButtonPressed(QAction *);
-  bool drawBlanks(int from, int to, QElapsedTimer *timer, qint64 target);
+  bool drawBlanks(int from, int to);
   void onSliderRelease();
 
   void onFPSEdited();

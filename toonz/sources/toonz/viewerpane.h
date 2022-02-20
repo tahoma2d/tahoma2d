@@ -64,8 +64,8 @@ public:
   void updateShowHide();
   void addShowHideContextMenu(QMenu *);
 
-  void onDrawFrame(int frame, const ImagePainter::VisualSettings &settings,
-                   QElapsedTimer *timer, qint64 targetInstant) override;
+  void onDrawFrame(int frame,
+                   const ImagePainter::VisualSettings &settings) override;
 
   void onEnterPanel() {
     m_sceneViewer->setFocus(Qt::OtherFocusReason);

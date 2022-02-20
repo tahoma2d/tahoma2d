@@ -40,7 +40,6 @@ class QOpenGLFramebufferObject;
 class LutCalibrator;
 class StopMotion;
 class TStopWatch;
-class QElapsedTimer;
 
 namespace ImageUtils {
 class FullScreenWidget;
@@ -219,10 +218,6 @@ class SceneViewer final : public GLWidgetForHighDpi,
 
   QAction *m_keyAction;
 
-  // passed from PlaybackExecutor
-  QElapsedTimer *m_timer;
-  qint64 m_targetInstant;
-
 public:
   enum ReferenceMode {
     NORMAL_REFERENCE   = 1,
@@ -330,11 +325,6 @@ public:
   QColor getBGColor() const { return m_bgColor; }
   void setPreviewBGColor(const QColor &color) { m_previewBgColor = color; }
   QColor getPreviewBGColor() const { return m_previewBgColor; }
-
-  void setTimerAndTargetInstant(QElapsedTimer *timer, qint64 target) {
-    m_timer         = timer;
-    m_targetInstant = target;
-  }
 
 public:
   // SceneViewer's gadget public functions
