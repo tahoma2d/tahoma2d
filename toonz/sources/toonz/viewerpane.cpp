@@ -278,7 +278,6 @@ void SceneViewerPanel::onDrawFrame(int frame,
                                    const ImagePainter::VisualSettings &settings,
                                    QElapsedTimer *timer, qint64 targetInstant) {
   TApp *app = TApp::instance();
-  m_sceneViewer->setVisual(settings);
   m_sceneViewer->setTimerAndTargetInstant(timer, targetInstant);
 
   TFrameHandle *frameHandle = app->getCurrentFrame();

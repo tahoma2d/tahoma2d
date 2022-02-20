@@ -1665,7 +1665,6 @@ else*/
 void FlipBook::onDrawFrame(int frame, const ImagePainter::VisualSettings &vs,
                            QElapsedTimer *timer, qint64 targetInstant) {
   try {
-    m_imageViewer->setVisual(vs);
     m_imageViewer->setTimerAndTargetInstant(timer, targetInstant);
 
     TImageP img = getCurrentImage(frame);
