@@ -422,7 +422,9 @@ void ImageViewer::setImage(TImageP image) {
   // make sure to redraw the frame here.
   // repaint() does NOT immediately redraw the frame for QOpenGLWidget
   update();
-  if (!isColorModel()) qApp->processEvents();
+  if (!isColorModel())
+    qApp->processEvents(QEventLoop::ExcludeUserInputEvents |
+                        QEventLoop::ExcludeSocketNotifiers);
 }
 
 //-------------------------------------------------------------------

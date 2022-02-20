@@ -353,7 +353,9 @@ void ComboViewerPanel::onDrawFrame(int frame,
 
   // make sure to redraw the frame here.
   // repaint() does NOT immediately redraw the frame for QOpenGLWidget
-  if (frameHandle->isPlaying()) qApp->processEvents();
+  if (frameHandle->isPlaying())
+    qApp->processEvents(QEventLoop::ExcludeUserInputEvents |
+                        QEventLoop::ExcludeSocketNotifiers);
 }
 
 //-----------------------------------------------------------------------------
