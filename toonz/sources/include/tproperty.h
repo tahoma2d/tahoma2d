@@ -96,11 +96,15 @@ public:
   std::string getId() const { return m_id; }
   void setId(std::string id) { m_id = id; }
 
+  bool getVisible() const { return m_visible; }
+  void setVisible(bool state) { m_visible = state; }
+
 private:
   std::string m_name;
   QString m_qstringName;
   std::string m_id;
   std::vector<Listener *> m_listeners;
+  bool m_visible;
 };
 
 //---------------------------------------------------------

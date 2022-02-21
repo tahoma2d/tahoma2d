@@ -155,6 +155,8 @@ TLevelWriterGif::~TLevelWriterGif() {
   }
 #endif
 
+  preIArgs << "-r";
+  preIArgs << QString::number(framerate);
   preIArgs << "-v";
   preIArgs << "warning";
 #if 0
@@ -350,6 +352,9 @@ Tiio::GifWriterProperties::GifWriterProperties()
   m_mode.setItemUIName(L"NEW2", tr("New Pal Per Frame + Bayer2 Dither"));
   m_mode.setItemUIName(L"NEW3", tr("New Pal Per Frame + Bayer1 Dither"));
   m_mode.setItemUIName(L"NOPAL", tr("Opaque, Dither, 256 Colors Only"));
+
+  // Doesn't make Generate Palette property visible in the popup
+  m_palette.setVisible(false);
 
   bind(m_scale);
   bind(m_looping);
