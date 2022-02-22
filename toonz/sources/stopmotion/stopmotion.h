@@ -131,6 +131,19 @@ public:
   // captured images.
   TPointD m_liveViewDpi = TPointD(0.0, 0.0);
 
+  struct CalibrationData {
+    // Parameters
+    QString filePath;
+    bool captureCue    = false;
+    cv::Size boardSize = {10, 7};
+    int refCaptured    = 0;
+    std::vector<std::vector<cv::Point3f>> obj_points;
+    std::vector<std::vector<cv::Point2f>> image_points;
+    cv::Mat mapX, mapY;
+    bool isValid   = false;
+    bool isEnabled = false;
+  } m_calibration;
+
   // files and frames
   void setXSheetFrameNumber(int frameNumber);
   int getXSheetFrameNumber() { return m_xSheetFrameNumber; }
@@ -283,6 +296,9 @@ signals:
 
   // test shots
   void updateTestShots();
+
+  // Calibration
+  void calibrationImageCaptured();
 };
 
 #endif  // STOPMOTION_H

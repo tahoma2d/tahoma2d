@@ -92,7 +92,8 @@ int Webcam::getIndexOfResolution() {
 
 //-----------------------------------------------------------------
 
-bool Webcam::getWebcamImage(TRaster32P& tempImage) {
+bool Webcam::getWebcamImage(TRaster32P& tempImage, bool useCalibration,
+                            cv::Mat calibrationMapX, cv::Mat calibrationMapY) {
   bool error = false;
   cv::Mat imgOriginal;
   cv::Mat imgCorrected;
@@ -145,6 +146,14 @@ bool Webcam::getWebcamImage(TRaster32P& tempImage) {
     if (convertBack) {
       cv::cvtColor(imgCorrected, imgCorrected, cv::COLOR_GRAY2BGRA);
     }
+
+    // perform calibration
+    if (useCalibration) {
+      cv::remap(imgCorrected, imgCorrected, calibrationMapX, calibrationMapY,
+                cv::INTER_LINEAR);
+    }
+
+    m_webcamImage = imgCorrected;
 
     int width  = m_cvWebcam.get(3);
     int height = m_cvWebcam.get(4);

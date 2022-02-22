@@ -1391,8 +1391,19 @@ void StopMotion::onTimeout() {
         }
 #endif
       } else {
-        bool success = m_webcam->getWebcamImage(m_liveViewImage);
+        bool calibrateImage = !m_calibration.captureCue &&
+                              m_calibration.isValid && m_calibration.isEnabled;
+        bool success =
+            m_webcam->getWebcamImage(m_liveViewImage, calibrateImage,
+                                     m_calibration.mapX, m_calibration.mapY);
         if (success) {
+          // capture calibration reference
+          if (m_calibration.captureCue) {
+            m_calibration.captureCue = false;
+            emit(calibrationImageCaptured());
+            return;
+          }
+
           setLiveViewImage();
         } else {
           m_hasLiveViewImage = false;

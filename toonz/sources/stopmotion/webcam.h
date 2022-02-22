@@ -41,7 +41,9 @@ public:
   QCamera* getWebcam() { return m_webcam; }
   void setWebcam(QCamera* camera);
   bool initWebcam(int index = 0);
-  bool getWebcamImage(TRaster32P& tempImage);
+  bool getWebcamImage(TRaster32P& tempImage, bool useCalibration = false,
+                      cv::Mat calibrationMapX = cv::Mat(),
+                      cv::Mat calibrationMapY = cv::Mat());
 
   bool translateIndex(int index);
 

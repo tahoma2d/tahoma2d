@@ -10,6 +10,7 @@
 
 #include "tfilepath.h"
 #include "toonz/tproject.h"
+#include "filebrowserpopup.h"
 
 // TnzQt includes
 #include "toonzqt/tabbar.h"
@@ -236,6 +237,17 @@ class StopMotionController final : public QWidget {
   QVBoxLayout *m_testsInsideLayout;
   int m_testsImagesPerRow;
 
+  // calibration feature
+  struct CalibrationUI {
+    QPushButton *capBtn, *newBtn, *loadBtn, *cancelBtn, *exportBtn;
+    QLabel *label;
+    QGroupBox *groupBox;
+  } m_calibrationUI;
+
+  void captureCalibrationRefImage(cv::Mat &procImage);
+
+  QString getCurrentCalibFilePath();
+
 public:
   StopMotionController(QWidget *parent = 0);
   ~StopMotionController();
@@ -415,8 +427,38 @@ protected slots:
   void onRefreshTests();
   void clearTests();
 
+  void onCalibCapBtnClicked();
+  void onCalibNewBtnClicked();
+  void resetCalibSettingsFromFile();
+  void onCalibLoadBtnClicked();
+  void onCalibExportBtnClicked();
+  void onCalibImageCaptured();
+  void onCalibReadme();
+
 public slots:
   void openSaveInFolderPopup();
+};
+
+//=============================================================================
+
+class ExportCalibrationFilePopup final : public GenericSaveFilePopup {
+  Q_OBJECT
+public:
+  ExportCalibrationFilePopup(QWidget *parent);
+
+protected:
+  void showEvent(QShowEvent *) override;
+};
+
+//=============================================================================
+
+class LoadCalibrationFilePopup final : public GenericLoadFilePopup {
+  Q_OBJECT
+public:
+  LoadCalibrationFilePopup(QWidget *parent);
+
+protected:
+  void showEvent(QShowEvent *) override;
 };
 
 #endif  // STOPMOTIONCONTROLLER_H
