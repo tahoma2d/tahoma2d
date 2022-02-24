@@ -519,7 +519,7 @@ TStageObjectId XsheetViewer::getObjectId(int col) const {
 
 void XsheetViewer::setCurrentColumn(int col) {
   TColumnHandle *columnHandle = TApp::instance()->getCurrentColumn();
-  if (col != columnHandle->getColumnIndex()) {
+  if (col != columnHandle->getColumnIndex() || !columnHandle->getColumn()) {
     columnHandle->setColumnIndex(col);
     // E' necessario per il caso in cui si passa da colonna di camera a altra
     // colonna
@@ -600,6 +600,12 @@ void XsheetViewer::scroll(QPoint delta) {
 
   m_cellScrollArea->horizontalScrollBar()->setValue(valueH);
   m_cellScrollArea->verticalScrollBar()->setValue(valueV);
+}
+
+//-----------------------------------------------------------------------------
+
+int XsheetViewer::getColumnScrollValue() {
+  return m_columnScrollArea->horizontalScrollBar()->value();
 }
 
 //-----------------------------------------------------------------------------
@@ -1538,12 +1544,6 @@ void XsheetViewer::scrollToVerticalRange(int y0, int y1) {
     updateCellRowAree();
   else
     updateCellColumnAree();
-}
-
-//-----------------------------------------------------------------------------
-
-int XsheetViewer::getColumnScrollValue() {
-  return m_columnScrollArea->horizontalScrollBar()->value();
 }
 
 //-----------------------------------------------------------------------------

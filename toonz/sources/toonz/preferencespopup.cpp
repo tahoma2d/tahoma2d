@@ -1231,6 +1231,8 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {expandFunctionHeader,
        tr("Expand Function Editor Header to Match Quick Toolbar Height*")},
       {showColumnNumbers, tr("Show Column Numbers in Column Headers")},
+      {parentColorsInXsheetColumn,
+       tr("Show Column Parent's Color in the Xsheet")},
       {syncLevelRenumberWithXsheet,
        tr("Sync Level Strip Drawing Number Changes with the Scene")},
       {currentTimelineEnabled,
@@ -1924,6 +1926,7 @@ QWidget* PreferencesPopup::createXsheetPage() {
   QGridLayout* xshToolbarLay = insertGroupBoxUI(showQuickToolbar, lay);
   { insertUI(expandFunctionHeader, xshToolbarLay); }
   insertUI(showColumnNumbers, lay);
+  insertUI(parentColorsInXsheetColumn, lay);
   // insertUI(syncLevelRenumberWithXsheet, lay);
   // insertUI(currentTimelineEnabled, lay);
   // insertUI(currentColumnColor, lay);

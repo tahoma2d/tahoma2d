@@ -576,6 +576,8 @@ void Preferences::definePreferenceItems() {
   define(showQuickToolbar, "showQuickToolbar", QMetaType::Bool, false);
   define(expandFunctionHeader, "expandFunctionHeader", QMetaType::Bool, false);
   define(showColumnNumbers, "showColumnNumbers", QMetaType::Bool, false);
+  define(parentColorsInXsheetColumn, "parentColorsInXsheetColumn",
+         QMetaType::Bool, true);
   define(syncLevelRenumberWithXsheet, "syncLevelRenumberWithXsheet",
          QMetaType::Bool, true);
   define(currentTimelineEnabled, "currentTimelineEnabled", QMetaType::Bool,

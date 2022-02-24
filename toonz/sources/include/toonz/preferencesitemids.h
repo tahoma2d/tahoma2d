@@ -131,6 +131,7 @@ enum PreferencesItemId {
   showQuickToolbar,
   expandFunctionHeader,
   showColumnNumbers,
+  parentColorsInXsheetColumn,
   syncLevelRenumberWithXsheet,
   currentTimelineEnabled,
   currentColumnColor,

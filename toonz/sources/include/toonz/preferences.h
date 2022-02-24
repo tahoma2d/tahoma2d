@@ -402,6 +402,9 @@ public:
   bool isShowColumnNumbersEnabled() const {
     return getBoolValue(showColumnNumbers);
   }
+  bool isParentColorsInXsheetColumnEnabled() const {
+    return getBoolValue(parentColorsInXsheetColumn);
+  }
   bool isSyncLevelRenumberWithXsheetEnabled() const {
     return getBoolValue(syncLevelRenumberWithXsheet);
   }
