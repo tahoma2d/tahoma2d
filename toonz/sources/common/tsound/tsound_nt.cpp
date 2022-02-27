@@ -39,7 +39,7 @@ MMRESULT getControlDetails(HMIXEROBJ hMixer, DWORD dwSelectControlID,
                            MIXERCONTROLDETAILS_UNSIGNED *mxcdSelectValue);
 
 MMRESULT isaFormatSupported(int sampleRate, int channelCount, int bitPerSample,
-                            bool input);
+                            int sampleType, bool input);
 
 DWORD WINAPI MyWaveOutCallbackThread(LPVOID lpParameter);
 void getAmplitude(int &amplitude, const TSoundTrackP st, TINT32 sample);
@@ -490,7 +490,7 @@ TSoundOutputDeviceImp::~TSoundOutputDeviceImp() { delete m_whdrQueue; }
 
 bool TSoundOutputDeviceImp::doOpenDevice(const TSoundTrackFormat &format) {
   WAVEFORMATEX wf;
-  wf.wFormatTag      = format.m_formatType;  // WAVE_FORMAT_PCM;
+  wf.wFormatTag      = format.m_sampleType & TSound::WMASK;
   wf.nChannels       = format.m_channelCount;
   wf.nSamplesPerSec  = format.m_sampleRate;
   wf.wBitsPerSample  = format.m_bitPerSample;
@@ -561,6 +561,8 @@ void TSoundOutputDeviceImp::insertAllRate() {
   m_supportedRate.insert(32000);
   m_supportedRate.insert(44100);
   m_supportedRate.insert(48000);
+  m_supportedRate.insert(96000);
+  m_supportedRate.insert(192000);
 }
 
 //----------------------------------------------------------------------------
@@ -802,7 +804,7 @@ void TSoundOutputDevice::setLooping(bool loop) {
 TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(TUINT32 sampleRate,
                                                          int channelCount,
                                                          int bitPerSample,
-                                                         int formatType) {
+                                                         int sampleType) {
   TSoundTrackFormat fmt;
 
   // avvvicinarsi al sample rate => dovrebbe esser OK avendo selezionato i piu'
@@ -828,11 +830,6 @@ TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(TUINT32 sampleRate,
   else
     bitPerSample = 32;
 
-  if (bitPerSample >= 16)
-    fmt.m_signedSample = true;
-  else
-    fmt.m_signedSample = false;
-
   // switch mono/stereo
   if (channelCount <= 1)
     channelCount = 1;
@@ -842,7 +839,7 @@ TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(TUINT32 sampleRate,
   fmt.m_bitPerSample = bitPerSample;
   fmt.m_channelCount = channelCount;
   fmt.m_sampleRate   = sampleRate;
-  fmt.m_formatType   = formatType;
+  fmt.m_sampleType   = sampleType;
 
   return fmt;
 }
@@ -853,7 +850,7 @@ TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(
     const TSoundTrackFormat &format) {
   try {
     return getPreferredFormat(format.m_sampleRate, format.m_channelCount,
-                              format.m_bitPerSample, format.m_formatType);
+                              format.m_bitPerSample, format.m_sampleType);
   } catch (TSoundDeviceException &e) {
     throw TSoundDeviceException(TSoundDeviceException::UnsupportedFormat,
                                 e.getMessage());
@@ -872,14 +869,14 @@ class WaveFormat final : public WAVEFORMATEX {
 public:
   WaveFormat(){};
   WaveFormat(unsigned char channelCount, TUINT32 sampleRate,
-             unsigned char bitPerSample, WORD formatType);
+             unsigned char bitPerSample, int sampleFormat);
 
   ~WaveFormat(){};
 };
 
 WaveFormat::WaveFormat(unsigned char channelCount, TUINT32 sampleRate,
-                       unsigned char bitPerSample, WORD formatType) {
-  wFormatTag      = formatType;  // WAVE_FORMAT_PCM;
+                       unsigned char bitPerSample, int sampleFormat) {
+  wFormatTag      = sampleFormat & TSound::WMASK;
   nChannels       = channelCount;
   nSamplesPerSec  = sampleRate;
   wBitsPerSample  = bitPerSample;
@@ -1109,6 +1106,8 @@ void TSoundInputDeviceImp::insertAllRate() {
   m_supportedRate.insert(32000);
   m_supportedRate.insert(44100);
   m_supportedRate.insert(48000);
+  m_supportedRate.insert(96000);
+  m_supportedRate.insert(192000);
 }
 
 //----------------------------------------------------------------------------
@@ -1220,7 +1219,7 @@ throw TException("This format is not supported for recording");*/
 
   try {
     WaveFormat wf(m_imp->m_format.m_channelCount, m_imp->m_format.m_sampleRate,
-                  m_imp->m_format.m_bitPerSample, m_imp->m_format.m_formatType);
+                  m_imp->m_format.m_bitPerSample, m_imp->m_format.m_sampleType);
 
     m_imp->open(wf);
   } catch (TException &e) {
@@ -1292,7 +1291,7 @@ throw TException("This format is not supported for recording");*/
   m_imp->m_byteRecorded = 0;
   try {
     WaveFormat wf(m_imp->m_format.m_channelCount, m_imp->m_format.m_sampleRate,
-                  m_imp->m_format.m_bitPerSample, m_imp->m_format.m_formatType);
+                  m_imp->m_format.m_bitPerSample, m_imp->m_format.m_sampleType);
 
     m_imp->open(wf);
     m_imp->prepareHeader(
@@ -1704,7 +1703,7 @@ vicini
 TSoundTrackFormat TSoundInputDevice::getPreferredFormat(TUINT32 sampleRate,
                                                         int channelCount,
                                                         int bitPerSample,
-                                                        int formatType) {
+                                                        int sampleType) {
   TSoundTrackFormat fmt;
 
   // avvvicinarsi al sample rate => dovrebbe esser OK avendo selezionato i piu'
@@ -1730,11 +1729,6 @@ TSoundTrackFormat TSoundInputDevice::getPreferredFormat(TUINT32 sampleRate,
   else
     bitPerSample = 32;
 
-  if (bitPerSample >= 16)
-    fmt.m_signedSample = true;
-  else
-    fmt.m_signedSample = false;
-
   // switch mono/stereo
   if (channelCount <= 1)
     channelCount = 1;
@@ -1744,7 +1738,7 @@ TSoundTrackFormat TSoundInputDevice::getPreferredFormat(TUINT32 sampleRate,
   fmt.m_bitPerSample = bitPerSample;
   fmt.m_channelCount = channelCount;
   fmt.m_sampleRate   = sampleRate;
-  fmt.m_formatType   = formatType;
+  fmt.m_sampleType   = sampleType;
 
   return fmt;
 }
@@ -1755,7 +1749,7 @@ TSoundTrackFormat TSoundInputDevice::getPreferredFormat(
     const TSoundTrackFormat &format) {
   try {
     return getPreferredFormat(format.m_sampleRate, format.m_channelCount,
-                              format.m_bitPerSample, format.m_formatType);
+                              format.m_bitPerSample, format.m_sampleType);
   } catch (TSoundDeviceException &e) {
     throw TSoundDeviceException(TSoundDeviceException::UnsupportedFormat,
                                 e.getMessage());
@@ -2170,11 +2164,11 @@ bool setRecordLine(TSoundInputDevice::Source typeInput) {
 //------------------------------------------------------------------------------
 
 MMRESULT isaFormatSupported(int sampleRate, int channelCount, int bitPerSample,
-                            bool input) {
+                            int sampleType, bool input) {
   WAVEFORMATEX wf;
   MMRESULT ret;
 
-  wf.wFormatTag      = WAVE_FORMAT_PCM;
+  wf.wFormatTag      = sampleType & TSound::WMASK;
   wf.nChannels       = channelCount;
   wf.nSamplesPerSec  = sampleRate;
   wf.wBitsPerSample  = bitPerSample;
