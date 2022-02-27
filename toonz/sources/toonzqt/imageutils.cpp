@@ -592,7 +592,8 @@ static void convertFromVector(const TLevelReaderP &lr, const TLevelWriterP &lw,
 void convert(const TFilePath &source, const TFilePath &dest,
              const TFrameId &from, const TFrameId &to, double framerate,
              TPropertyGroup *prop, FrameTaskNotifier *frameNotifier,
-             const TPixel &bgColor, bool removeDotBeforeFrameNumber) {
+             const TPixel &bgColor, bool removeDotBeforeFrameNumber,
+             const TFrameId &tmplFId) {
   std::string dstExt = dest.getType(), srcExt = source.getType();
 
   // Load source level structure
@@ -621,6 +622,7 @@ void convert(const TFilePath &source, const TFilePath &dest,
   // Write the destination level
   TLevelWriterP lw(dest, prop);
   lw->setFrameRate(framerate);
+  lw->setFrameFormatTemplateFId(tmplFId);
 
   if (srcExt == "tlv")
     convertFromCM(lr, level->getPalette(), lw, frames, TAffine(),

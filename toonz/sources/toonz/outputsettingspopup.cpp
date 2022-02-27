@@ -38,6 +38,7 @@
 #include "tenv.h"
 #include "tsystem.h"
 #include "tstream.h"
+#include "tfiletype.h"
 
 // Qt includes
 #include <QLabel>
@@ -145,6 +146,13 @@ enum ThreadsOption {
 
 enum GranularityOption { c_off, c_large, c_medium, c_small };
 
+bool checkForSeqNum(QString type) {
+  TFileType::Type typeInfo = TFileType::getInfoFromExtension(type);
+  if ((typeInfo & TFileType::IMAGE) && !(typeInfo & TFileType::LEVEL))
+    return true;
+  else
+    return false;
+}
 }  // anonymous namespace
 //-----------------------------------------------------------------------------
 
@@ -1238,10 +1246,10 @@ void OutputSettingsPopup::onNameChanged() {
   TOutputProperties *prop = getProperties();
   TFilePath fp            = prop->getPath();
 
-  if (fp.getWideName() == wname) return;  // Already had the right name
+  TFilePath newFp = fp.getParentDir() + TFilePath(wname).withType(fp.getType());
+  if (newFp == fp) return;  // Already had the right name
 
-  fp = fp.getParentDir() + TFilePath(wname).withType(fp.getType());
-  prop->setPath(fp);
+  prop->setPath(newFp);
 
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
 
@@ -1258,10 +1266,14 @@ void OutputSettingsPopup::onFormatChanged(const QString &str) {
            ext == "spritesheet";
   };
 
-  TOutputProperties *prop    = getProperties();
+  TOutputProperties *prop = getProperties();
   bool wasMultiRenderInvalid =
       isMultiRenderInvalid(prop->getPath().getType(), m_allowMT);
-  TFilePath fp = prop->getPath().withType(str.toStdString());
+  // remove sepchar, ..
+  TFilePath fp = prop->getPath().withNoFrame().withType(str.toStdString());
+  // .. then add sepchar for sequencial image formats
+  if (checkForSeqNum(str)) fp = fp.withFrame(prop->formatTemplateFId());
+
   prop->setPath(fp);
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
   m_allowMT = Preferences::instance()->getFfmpegMultiThread();
@@ -1292,9 +1304,25 @@ void OutputSettingsPopup::onFormatChanged(const QString &str) {
 void OutputSettingsPopup::openSettingsPopup() {
   TOutputProperties *prop = getProperties();
   std::string ext         = prop->getPath().getType();
-  openFormatSettingsPopup(this, ext, prop->getFileFormatProperties(ext));
+
+  TFrameId oldTmplFId = prop->formatTemplateFId();
+
+  bool ret =
+      openFormatSettingsPopup(this, ext, prop->getFileFormatProperties(ext),
+                              &prop->formatTemplateFId(), false);
+
+  if (!ret) return;
 
   if (m_presetCombo) m_presetCombo->setCurrentIndex(0);
+
+  if (oldTmplFId.getZeroPadding() !=
+          prop->formatTemplateFId().getZeroPadding() ||
+      oldTmplFId.getStartSeqInd() !=
+          prop->formatTemplateFId().getStartSeqInd()) {
+    TFilePath fp =
+        prop->getPath().withNoFrame().withFrame(prop->formatTemplateFId());
+    prop->setPath(fp);
+  }
 }
 
 //-----------------------------------------------------------------------------

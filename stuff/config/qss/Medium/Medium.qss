@@ -1707,6 +1707,15 @@ ProjectPopup QLabel {
   padding-right: 5px;
 }
 /* -----------------------------------------------------------------------------
+   Frame format settings box in FormatSettingsPopup 
+----------------------------------------------------------------------------- */
+#FrameFormatBoxInput {
+  border-color: rgba(138, 24, 24, 0.82);
+}
+#FrameFormatBoxOutput {
+  border-color: rgba(24, 24, 138, 0.82);
+}
+/* -----------------------------------------------------------------------------
    Schematic Viewer
 ----------------------------------------------------------------------------- */
 SchematicViewer {

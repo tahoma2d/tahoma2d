@@ -228,7 +228,8 @@ void ConvertPopup::Converter::convertLevel(
     TPixel32 bgColor = m_parent->m_bgColorField->getColor();
     ImageUtils::convert(sourceFileFullPath, dstFileFullPath, from, to,
                         framerate, prop, m_parent->m_notifier, bgColor,
-                        m_parent->m_removeDotBeforeFrameNumber->isChecked());
+                        m_parent->m_removeDotBeforeFrameNumber->isChecked(),
+                        oprop->formatTemplateFId());
   }
 
   popup->m_notifier->notifyLevelCompleted(dstFileFullPath);
@@ -1039,12 +1040,11 @@ TFilePath ConvertPopup::getDestinationFilePath(
     const TFilePath &sourceFilePath) {
   // Build the DECODED output folder path
   TFilePath destFolder = sourceFilePath.getParentDir();
+  ToonzScene *scene    = TApp::instance()->getCurrentScene()->getScene();
 
   if (!m_saveInFileFld->getPath().isEmpty()) {
     TFilePath dir(m_saveInFileFld->getPath().toStdWString());
-
-    ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
-    destFolder        = scene->decodeFilePath(dir);
+    destFolder = scene->decodeFilePath(dir);
   }
 
   // Build the output level name
@@ -1059,10 +1059,11 @@ TFilePath ConvertPopup::getDestinationFilePath(
   TFilePath destName = TFilePath(name).withType(ext);
 
   if (TFileType::isLevelFilePath(sourceFilePath) &&
-      !TFileType::isLevelExtension(ext))
-    destName = destName.withFrame(TFrameId::EMPTY_FRAME);  // use the '..'
-                                                           // format to denote
-                                                           // an output level
+      !TFileType::isLevelExtension(ext)) {
+    // add ".." or "_." according to the output settings' frame format template.
+    TOutputProperties *prop = scene->getProperties()->getOutputProperties();
+    destName                = destName.withFrame(prop->formatTemplateFId());
+  }
 
   // Merge the two
   return destFolder + destName;
@@ -1273,8 +1274,12 @@ void ConvertPopup::onOptionsClicked() {
   std::string ext       = m_fileFormat->currentText().toStdString();
   TPropertyGroup *props = getFormatProperties(ext);
 
+  // use output settings' frame format.
+  ToonzScene *scene       = TApp::instance()->getCurrentScene()->getScene();
+  TOutputProperties *prop = scene->getProperties()->getOutputProperties();
+
   openFormatSettingsPopup(
-      this, ext, props,
+      this, ext, props, &prop->formatTemplateFId(), false,
       m_srcFilePaths.size() == 1 ? m_srcFilePaths[0] : TFilePath());
 }
 

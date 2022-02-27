@@ -800,8 +800,7 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
     , m_mousePanning(0)
     , m_mouseZooming(0)
     , m_mouseRotating(0)
-    , m_keyAction(0)
-    , m_timer(nullptr) {
+    , m_keyAction(0) {
   m_visualSettings.m_sceneProperties =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
   m_stopMotion = StopMotion::instance();
@@ -2053,14 +2052,6 @@ void SceneViewer::paintGL() {
 
   if (!m_isPicking && m_lutCalibrator && m_lutCalibrator->isValid())
     m_lutCalibrator->onEndDraw(m_fbo);
-
-  // wait to achieve precise fps
-  if (m_timer && m_timer->isValid()) {
-    qint64 currentInstant = m_timer->nsecsElapsed();
-    while (currentInstant < m_targetInstant) {
-      currentInstant = m_timer->nsecsElapsed();
-    }
-  }
 }
 
 //-----------------------------------------------------------------------------

@@ -573,6 +573,36 @@ std::string TFilePath::getDots() const {
 
 //-----------------------------------------------------------------------------
 
+QChar TFilePath::getSepChar() const {
+  if (!TFilePath::m_useStandard) return analyzePath().sepChar;
+  //-----
+  QString type = QString::fromStdString(getType()).toLower();
+  if (isFfmpegType()) return QChar();
+  int i            = getLastSlash(m_path);
+  std::wstring str = m_path.substr(i + 1);
+  // potrei anche avere a.b.c.d dove d e' l'estensione
+  i = str.rfind(L".");
+  if (i == (int)std::wstring::npos || str == L"..") return QChar();
+
+  int j = str.substr(0, i).rfind(L".");
+
+  if (j != (int)std::wstring::npos)
+    return (j == i - 1 || (checkForSeqNum(type) && isNumbers(str, j, i)))
+               ? QChar('.')
+               : QChar();
+  if (!m_underscoreFormatAllowed) return QChar();
+
+  j = str.substr(0, i).rfind(L"_");
+  if (j != (int)std::wstring::npos)
+    return (j == i - 1 || (checkForSeqNum(type) && isNumbers(str, j, i)))
+               ? QChar('_')
+               : QChar();
+  else
+    return QChar();
+}
+
+//-----------------------------------------------------------------------------
+
 std::string TFilePath::getDottedType()
     const  // ritorna l'estensione con PUNTO (se c'e')
 {
@@ -881,7 +911,8 @@ TFilePath TFilePath::withFrame(const TFrameId &frame,
     if (frame.isNoFrame()) {
       return TFilePath(info.parentDir + info.levelName + "." + info.extension);
     }
-    QString sepChar = (info.sepChar.isNull()) ? "." : QString(info.sepChar);
+    QString sepChar = (info.sepChar.isNull()) ? QString(frame.getStartSeqInd())
+                                              : QString(info.sepChar);
 
     return TFilePath(info.parentDir + info.levelName + sepChar +
                      QString::fromStdString(frame.expand(format)) + "." +

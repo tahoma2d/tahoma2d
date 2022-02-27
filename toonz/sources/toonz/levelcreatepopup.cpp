@@ -6,6 +6,7 @@
 #include "menubarcommandids.h"
 #include "tapp.h"
 #include "levelcommand.h"
+#include "formatsettingspopups.h"
 
 // TnzTools includes
 #include "tools/toolhandle.h"
@@ -36,6 +37,7 @@
 #include "toonz/tproject.h"
 #include "toonz/namebuilder.h"
 #include "toonz/childstack.h"
+#include "toutputproperties.h"
 
 // TnzCore includes
 #include "tsystem.h"
@@ -180,6 +182,10 @@ LevelCreatePopup::LevelCreatePopup()
   m_dpiLabel    = new QLabel(tr("DPI:"));
   m_dpiFld      = new DoubleLineEdit(0, 66.76);
 
+  m_rasterFormatLabel = new QLabel(tr("Format:"));
+  m_rasterFormatOm    = new QComboBox();
+  m_frameFormatBtn    = new QPushButton(tr("Frame Format"));
+
   QPushButton *okBtn     = new QPushButton(tr("OK"), this);
   QPushButton *cancelBtn = new QPushButton(tr("Cancel"), this);
   QPushButton *applyBtn  = new QPushButton(tr("Apply"), this);
@@ -204,6 +210,11 @@ LevelCreatePopup::LevelCreatePopup()
   m_widthFld->setRange(0.1, (std::numeric_limits<double>::max)());
   m_heightFld->setRange(0.1, (std::numeric_limits<double>::max)());
   m_dpiFld->setRange(0.1, (std::numeric_limits<double>::max)());
+
+  m_rasterFormatOm->addItem("tif", "tif");
+  m_rasterFormatOm->addItem("png", "png");
+  m_rasterFormatOm->setCurrentIndex(m_rasterFormatOm->findData(
+      Preferences::instance()->getDefRasterFormat()));
 
   okBtn->setDefault(true);
 
@@ -247,15 +258,21 @@ LevelCreatePopup::LevelCreatePopup()
                         Qt::AlignRight | Qt::AlignVCenter);
       guiLay->addWidget(m_pathFld, 4, 1, 1, 4);
 
+      // Format options (for Raster/Scan levels)
+      guiLay->addWidget(m_rasterFormatLabel, 5, 0,
+                        Qt::AlignRight | Qt::AlignVCenter);
+      guiLay->addWidget(m_rasterFormatOm, 5, 1, Qt::AlignLeft);
+      guiLay->addWidget(m_frameFormatBtn, 5, 2, 1, 2, Qt::AlignLeft);
+
       // Width - Height
-      guiLay->addWidget(m_widthLabel, 5, 0, Qt::AlignRight | Qt::AlignVCenter);
-      guiLay->addWidget(m_widthFld, 5, 1);
-      guiLay->addWidget(m_heightLabel, 5, 2, Qt::AlignRight | Qt::AlignVCenter);
-      guiLay->addWidget(m_heightFld, 5, 3);
+      guiLay->addWidget(m_widthLabel, 6, 0, Qt::AlignRight | Qt::AlignVCenter);
+      guiLay->addWidget(m_widthFld, 6, 1);
+      guiLay->addWidget(m_heightLabel, 6, 2, Qt::AlignRight | Qt::AlignVCenter);
+      guiLay->addWidget(m_heightFld, 6, 3);
 
       // DPI
-      guiLay->addWidget(m_dpiLabel, 6, 0, Qt::AlignRight | Qt::AlignVCenter);
-      guiLay->addWidget(m_dpiFld, 6, 1, 1, 3);
+      guiLay->addWidget(m_dpiLabel, 7, 0, Qt::AlignRight | Qt::AlignVCenter);
+      guiLay->addWidget(m_dpiFld, 7, 1);
     }
     guiLay->setColumnStretch(0, 0);
     guiLay->setColumnStretch(1, 0);
@@ -280,12 +297,15 @@ LevelCreatePopup::LevelCreatePopup()
   bool ret = true;
   ret      = ret && connect(m_levelTypeOm, SIGNAL(currentIndexChanged(int)),
                        SLOT(onLevelTypeChanged(int)));
+  ret      = ret && connect(m_frameFormatBtn, SIGNAL(clicked()), this,
+                       SLOT(onFrameFormatButton()));
   ret      = ret && connect(okBtn, SIGNAL(clicked()), this, SLOT(onOkBtn()));
   ret      = ret && connect(cancelBtn, SIGNAL(clicked()), this, SLOT(reject()));
   ret =
       ret && connect(applyBtn, SIGNAL(clicked()), this, SLOT(onApplyButton()));
 
   setSizeWidgetEnable(false);
+  setRasterWidgetVisible(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -377,6 +397,15 @@ void LevelCreatePopup::setSizeWidgetEnable(bool isEnable) {
 
 //-----------------------------------------------------------------------------
 
+void LevelCreatePopup::setRasterWidgetVisible(bool isVisible) {
+  m_rasterFormatLabel->setVisible(isVisible);
+  m_rasterFormatOm->setVisible(isVisible);
+  m_frameFormatBtn->setVisible(isVisible);
+  updateGeometry();
+}
+
+//-----------------------------------------------------------------------------
+
 int LevelCreatePopup::getLevelType() const {
   return m_levelTypeOm->currentData().toInt();
 }
@@ -389,6 +418,9 @@ void LevelCreatePopup::onLevelTypeChanged(int index) {
     setSizeWidgetEnable(true);
   else
     setSizeWidgetEnable(false);
+
+//  setRasterWidgetVisible(type == OVL_XSHLEVEL || type == TZI_XSHLEVEL);
+
   updatePath();
 
   std::wstring levelName = m_nameFld->text().toStdWString();
@@ -418,6 +450,17 @@ void LevelCreatePopup::onApplyButton() {
     nextName();
   }
   m_nameFld->setFocus();
+}
+
+//-----------------------------------------------------------------------------
+
+void LevelCreatePopup::onFrameFormatButton() {
+  // Tentatively use the preview output settings
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  if (!scene) return;
+  std::string ext = m_rasterFormatOm->currentData().toString().toStdString();
+  openFormatSettingsPopup(this, ext, nullptr,
+                          &scene->getProperties()->formatTemplateFIdForInput());
 }
 
 //-----------------------------------------------------------------------------
@@ -498,6 +541,10 @@ bool LevelCreatePopup::apply() {
   TFilePath parentDir(m_pathFld->getPath().toStdWString());
   TFilePath fp =
       scene->getDefaultLevelPath(lType, levelName).withParentDir(parentDir);
+
+  if (lType == OVL_XSHLEVEL || lType == TZI_XSHLEVEL)
+    fp = fp.withType(Preferences::instance()->getDefRasterFormat().toStdString());
+//    fp = fp.withType(m_rasterFormatOm->currentData().toString().toStdString());
 
   TFilePath actualFp = scene->decodeFilePath(fp);
   bool fileExists    = TSystem::doesExistFileOrLevel(actualFp);
@@ -607,7 +654,6 @@ bool LevelCreatePopup::apply() {
 
   for (i = from; i <= to; i += inc) {
     TFrameId fid(i);
-    TXshCell cell(sl, fid);
     if (lType == PLI_XSHLEVEL)
       sl->setFrame(fid, new TVectorImage());
     else if (lType == TZP_XSHLEVEL) {
@@ -622,8 +668,12 @@ bool LevelCreatePopup::apply() {
       raster->clear();
       TRasterImageP ri(raster);
       ri->setDpi(dpi, dpi);
+      // modify frameId to be with the same frame format as existing frames
+      TFrameId tmplFId = scene->getProperties()->formatTemplateFIdForInput();
+      sl->formatFId(fid, tmplFId);
       sl->setFrame(fid, ri);
     }
+    TXshCell cell(sl, fid);
     for (j = 0; j < step; j++) xsh->setCell(row++, col, cell);
   }
 

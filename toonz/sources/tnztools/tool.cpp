@@ -34,6 +34,7 @@
 #include "toonz/dpiscale.h"
 #include "toonz/palettecontroller.h"
 #include "toonz/tonionskinmaskhandle.h"
+#include "toutputproperties.h"
 
 // TnzCore includes
 #include "tvectorimage.h"
@@ -313,6 +314,11 @@ TImage *TTool::touchImage() {
   TFrameHandle *currentFrame    = m_application->getCurrentFrame();
   TXshLevelHandle *currentLevel = m_application->getCurrentLevel();
 
+  TFrameId tmplFId = m_application->getCurrentScene()
+                         ->getScene()
+                         ->getProperties()
+                         ->formatTemplateFIdForInput();
+
   if (currentFrame->isEditingLevel()) {
     // Editing level
 
@@ -331,6 +337,8 @@ TImage *TTool::touchImage() {
 
       // create a new drawing
       img = sl->createEmptyFrame();
+      // modify frameId to be with the same frame format as existing frames
+      sl->formatFId(fid, tmplFId);
       sl->setFrame(fid, img);
       currentLevel->notifyLevelChange();
       m_isFrameCreated = true;
@@ -414,6 +422,8 @@ TImage *TTool::touchImage() {
       // create the new drawing
       TImageP img      = sl->createEmptyFrame();
       m_isFrameCreated = true;
+      // modify frameId to be with the same frame format as existing frames
+      sl->formatFId(fid, tmplFId);
       // insert the drawing in the level
       sl->setFrame(fid, img);
       // update the cell
@@ -507,6 +517,9 @@ TImage *TTool::touchImage() {
       // create the new drawing
       TImageP img      = sl->createEmptyFrame();
       m_isFrameCreated = true;
+
+      // modify frameId to be with the same frame format as existing frames
+      sl->formatFId(fid, tmplFId);
       // insert the drawing in the level
       sl->setFrame(fid, img);
       // update the cell
@@ -561,6 +574,8 @@ TImage *TTool::touchImage() {
   TFrameId fid = animationSheetEnabled ? getNewFrameId(sl, row) : TFrameId(1);
   TImageP img  = sl->createEmptyFrame();
   m_isFrameCreated = true;
+  // modify frameId to be with the same frame format as existing frames
+  sl->formatFId(fid, tmplFId);
   sl->setFrame(fid, img);
   cell = TXshCell(sl, fid);
   xsh->setCell(row, col, cell);

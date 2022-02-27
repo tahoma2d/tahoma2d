@@ -9,6 +9,7 @@
 #include "tcommon.h"
 #include "tgeometry.h"
 #include "tpixel.h"
+#include "tfilepath.h"
 
 // TnzLib includes
 #include "toonz/levelproperties.h"
@@ -36,7 +37,6 @@
 
 //    Forward declarations
 
-class TFilePath;
 class QSettings;
 
 //==============================================================
@@ -295,7 +295,8 @@ public:
   int getRhubarbTimeout() { return getIntValue(rhubarbTimeout); }
 
   // Drawing  tab
-  QString getScanLevelType() const { return getStringValue(scanLevelType); }
+  QString getDefRasterFormat() const { return getStringValue(DefRasterFormat); }
+  // QString getScanLevelType() const { return getStringValue(scanLevelType); }
   int getDefLevelType() const { return getIntValue(DefLevelType); }
   bool isNewLevelSizeToCameraSizeEnabled() const {
     return getBoolValue(newLevelSizeToCameraSizeEnabled);

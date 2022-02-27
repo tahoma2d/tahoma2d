@@ -316,6 +316,8 @@ type is a string that indicate the filename extension(ex:. bmp or .bmp)*/
   void split(std::wstring &head, TFilePath &tail) const;
 
   TFilePathInfo analyzePath() const;
+
+  QChar getSepChar() const;
 };
 
 //-----------------------------------------------------------------------------

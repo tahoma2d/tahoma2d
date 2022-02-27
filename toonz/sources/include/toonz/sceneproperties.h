@@ -288,6 +288,10 @@ and height.
   bool hasDefaultCellMarks()
       const;  // check if the cell mark settings are modified
 
+  // templateFId in preview settings is used for "input" file format
+  // such as new raster level, captured images by camera capture feature, etc.
+  TFrameId &formatTemplateFIdForInput();
+
 private:
   // not implemented
   TSceneProperties(const TSceneProperties &);

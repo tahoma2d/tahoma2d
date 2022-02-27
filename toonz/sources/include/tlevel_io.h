@@ -82,12 +82,11 @@ public:
 
   static FormatType getFormatType(std::string extension);
 
-  static void define(
-      QString extension, int reader,
-      // nel caso in cui ci siano piu' lettori per lo stesso formato
-      // (es. flash)
+  static void define(QString extension, int reader,
+                     // nel caso in cui ci siano piu' lettori per lo stesso
+                     // formato (es. flash)
 
-      TLevelReaderCreateProc *proc);
+                     TLevelReaderCreateProc *proc);
 
   static inline void define(QString extension, TLevelReaderCreateProc *proc) {
     define(extension, 0, proc);
@@ -135,6 +134,9 @@ protected:
   TPropertyGroup *m_properties;
   TContentHistory *m_contentHistory;
   QString m_creator;
+
+  // if template is not used, frame number is set to TFrameId::NO_FRAME
+  TFrameId m_frameFormatTemplateFId;
 
 public:
   TLevelWriter(const TFilePath &path,
@@ -203,6 +205,10 @@ public:
 
   static void define(QString extension, TLevelWriterCreateProc *proc,
                      bool isRenderFormat);
+
+  void setFrameFormatTemplateFId(const TFrameId &tmplFId) {
+    m_frameFormatTemplateFId = tmplFId;
+  }
 };
 
 //-----------------------------------------------------------

@@ -186,7 +186,8 @@ TLevelWriter::TLevelWriter(const TFilePath &path, TPropertyGroup *prop)
     : TSmartObject(m_classCode)
     , m_path(path)
     , m_properties(prop)
-    , m_contentHistory(0) {
+    , m_contentHistory(0)
+    , m_frameFormatTemplateFId(TFrameId::NO_FRAME) {
   string ext = path.getType();
   if (!prop) m_properties = Tiio::makeWriterProperties(ext);
 }
@@ -250,6 +251,12 @@ void TLevelWriter::getSupportedFormats(QStringList &names,
 //-----------------------------------------------------------
 
 TImageWriterP TLevelWriter::getFrameWriter(TFrameId fid) {
+  // change the frame format with the template
+  if (!m_frameFormatTemplateFId.isNoFrame()) {
+    fid.setZeroPadding(m_frameFormatTemplateFId.getZeroPadding());
+    fid.setStartSeqInd(m_frameFormatTemplateFId.getStartSeqInd());
+  }
+
   TImageWriterP iw(m_path.withFrame(fid));
   iw->setProperties(m_properties);
   return iw;

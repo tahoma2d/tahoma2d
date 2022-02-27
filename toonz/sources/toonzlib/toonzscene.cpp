@@ -1376,20 +1376,19 @@ TFilePath ToonzScene::getDefaultLevelPath(int levelType,
   TProject *project = getProject();
   assert(project);
   TFilePath levelPath;
-  QString scanLevelType;
   switch (levelType) {
   case TZI_XSHLEVEL:
-    scanLevelType = Preferences::instance()->getScanLevelType();
-    levelPath     = TFilePath(levelName + L".." + scanLevelType.toStdWString());
-    break;
+  case OVL_XSHLEVEL: {
+    QString rasterLevelType = Preferences::instance()->getDefRasterFormat();
+    TFrameId tmplFId        = getProperties()->formatTemplateFIdForInput();
+    levelPath = TFilePath(levelName + L"." + rasterLevelType.toStdWString())
+                    .withFrame(tmplFId);
+  } break;
   case PLI_XSHLEVEL:
     levelPath = TFilePath(levelName).withType("pli");
     break;
   case TZP_XSHLEVEL:
     levelPath = TFilePath(levelName).withType("tlv");
-    break;
-  case OVL_XSHLEVEL:
-    levelPath = TFilePath(levelName + L"..tif");
     break;
   default:
     levelPath = TFilePath(levelName + L"..png");
