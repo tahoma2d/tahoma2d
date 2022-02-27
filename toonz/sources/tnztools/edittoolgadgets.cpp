@@ -17,6 +17,7 @@
 #include "tparamuiconcept.h"
 
 #include "historytypes.h"
+#include "toonzqt/gutil.h"
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -26,11 +27,6 @@ using namespace EditToolGadgets;
 GLdouble FxGadget::m_selectedColor[3] = {0.2, 0.8, 0.1};
 
 namespace {
-int getDevPixRatio() {
-  static int devPixRatio = QApplication::desktop()->devicePixelRatio();
-  return devPixRatio;
-}
-
 TPointD hadamard(const TPointD &v1, const TPointD &v2) {
   return TPointD(v1.x * v2.x, v1.y * v2.y);
 }
@@ -199,14 +195,14 @@ void FxGadget::setValue(const TPointParamP &param, const TPointD &pos) {
 //---------------------------------------------------------------------------
 
 void FxGadget::setPixelSize() {
-  setPixelSize(sqrt(tglGetPixelSize2()) * getDevPixRatio());
+  setPixelSize(sqrt(tglGetPixelSize2()) * m_controller->getDevPixRatio());
 }
 
 //---------------------------------------------------------------------------
 
 void FxGadget::drawTooltip(const TPointD &tooltipPos,
                            std::string tooltipPosText) {
-  double unit = sqrt(tglGetPixelSize2()) * getDevPixRatio();
+  double unit = sqrt(tglGetPixelSize2()) * m_controller->getDevPixRatio();
   glPushMatrix();
   glTranslated(tooltipPos.x, tooltipPos.y, 0.0);
   double sc = unit * 1.6;
@@ -494,7 +490,7 @@ void AngleFxGadget::draw(bool picking) {
   else
     glColor3d(0, 0, 1);
   glPushName(getId());
-  double pixelSize = sqrt(tglGetPixelSize2()) * getDevPixRatio();
+  double pixelSize = sqrt(tglGetPixelSize2()) * m_controller->getDevPixRatio();
   double r         = pixelSize * 40;
   double a = pixelSize * 10, b = pixelSize * 5;
   tglDrawCircle(m_pos, r);
@@ -579,7 +575,7 @@ void AngleRangeFxGadget::draw(bool picking) {
       glColor3d(0, 0, 1);
   };
 
-  double pixelSize = sqrt(tglGetPixelSize2()) * getDevPixRatio();
+  double pixelSize = sqrt(tglGetPixelSize2()) * m_controller->getDevPixRatio();
   double r         = pixelSize * 200;
   double a         = pixelSize * 30;
 
@@ -2063,3 +2059,7 @@ int FxGadgetController::getCurrentFrame() const { return m_tool->getFrame(); }
 //---------------------------------------------------------------------------
 
 void FxGadgetController::invalidateViewer() { m_tool->invalidate(); }
+
+int FxGadgetController::getDevPixRatio() {
+  return getDevicePixelRatio(m_tool->getViewer()->viewerWidget());
+}

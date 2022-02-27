@@ -145,7 +145,7 @@ public:
 
   void shiftPerspectiveObject(TPointD delta);
 
-  void drawControls();
+  void drawControls(SceneViewer *viewer);
 
   bool isOverCenterPoint() {
     TPointD centerPoint = m_perspective->getCenterPoint();

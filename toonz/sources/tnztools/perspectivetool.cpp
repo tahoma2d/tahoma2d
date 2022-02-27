@@ -331,12 +331,12 @@ void PerspectivePresetManager::deletePreset(TFilePath presetPath) {
 
 //----------------------------------------------------------------------------------------------------------
 
-void PerspectiveControls::drawControls() {
+void PerspectiveControls::drawControls(SceneViewer *viewer) {
   if (!m_perspective) return;
 
   TPointD centerPoint = m_perspective->getCenterPoint();
 
-  m_unit = sqrt(tglGetPixelSize2()) * getDevPixRatio();
+  m_unit = sqrt(tglGetPixelSize2()) * viewer->getDevPixRatio();
 
   double circleRadius = m_handleRadius * m_unit;
   double diskRadius   = (m_handleRadius - 2) * m_unit;
@@ -707,7 +707,7 @@ void PerspectiveTool::draw(SceneViewer *viewer) {
   bool drawControls = getApplication()->getCurrentTool()->getTool() == this;
   if (drawControls) {
     for (int i = 0; i < m_perspectiveObjs.size(); i++)
-      m_perspectiveObjs[i]->drawControls();
+      m_perspectiveObjs[i]->drawControls(viewer);
   }
 
   if (m_selecting) {
