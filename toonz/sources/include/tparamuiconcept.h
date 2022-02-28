@@ -70,7 +70,7 @@ public:
 
     RAINBOW_WIDTH,
 
-    ELLIPSE,  // used in spin blur ino
+    ELLIPSE,  // used in spin blur ino and radial blur ino
 
     TYPESCOUNT
   };

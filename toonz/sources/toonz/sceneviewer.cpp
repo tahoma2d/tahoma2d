@@ -3615,6 +3615,20 @@ TRectD SceneViewer::getGeometry() const {
 }
 
 //-----------------------------------------------------------------------------
+
+TRectD SceneViewer::getCameraRect() const {
+  TRectD cameraRect = TApp::instance()
+                          ->getCurrentScene()
+                          ->getScene()
+                          ->getCurrentCamera()
+                          ->getStageRect();
+
+  // return m_drawCameraAff * TRectD(cameraRect.x0, cameraRect.y0, cameraRect.x1
+  // - m_pixelSize, cameraRect.y1 - m_pixelSize);
+  return m_drawCameraAff * cameraRect;
+}
+
+//-----------------------------------------------------------------------------
 /*! delete preview - subcamera executed from context menu
  */
 void SceneViewer::doDeleteSubCamera() {

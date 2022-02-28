@@ -19,6 +19,10 @@
 #include "historytypes.h"
 #include "toonzqt/gutil.h"
 
+#include "toonz/tscenehandle.h"
+#include "toonz/toonzscene.h"
+#include "toonz/tcamera.h"
+
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QVector2D>
@@ -109,6 +113,126 @@ void drawSpinField(const TRectD geom, const TPointD center,
   glDisable(GL_LINE_STIPPLE);
   glDisableClientState(GL_VERTEX_ARRAY);
   glPopMatrix();
+}
+
+#define RADIAL_FIELD_NUMSEGMENTS 5
+#define RADIAL_COMPASS_NUMSEGMENTS 20
+
+void drawRadialField(const TRectD geom, const TPointD center,
+                     const double lineInterval, const double e_aspect_ratio,
+                     const double e_angle, const double twist,
+                     const double pivot) {
+  // obtain the nearest and the furthest pos inside the geom
+  TPointD nearestPos;
+  nearestPos.x = (center.x <= geom.x0)
+                     ? geom.x0
+                     : (center.x >= geom.x1) ? geom.x1 : center.x;
+  nearestPos.y = (center.y <= geom.y0)
+                     ? geom.y0
+                     : (center.y >= geom.y1) ? geom.y1 : center.y;
+  double minDist = norm(nearestPos - center);
+  TPointD farthestPos;
+  farthestPos.x = (center.x <= geom.x0)
+                      ? geom.x1
+                      : (center.x >= geom.x1)
+                            ? geom.x0
+                            : ((center.x - geom.x0) >= (geom.x1 - center.x))
+                                  ? geom.x0
+                                  : geom.x1;
+  farthestPos.y = (center.y <= geom.y0)
+                      ? geom.y1
+                      : (center.y >= geom.y1)
+                            ? geom.y0
+                            : ((center.y - geom.y0) >= (geom.y1 - center.y))
+                                  ? geom.y0
+                                  : geom.y1;
+  double maxDist  = norm(farthestPos - center);
+  double scale[2] = {1.0, 1.0};
+  // adjust size for ellipse
+  if (e_aspect_ratio != 1.0) {
+    scale[0] = 2.0 * e_aspect_ratio / (e_aspect_ratio + 1);
+    scale[1] = scale[0] / e_aspect_ratio;
+    minDist *= std::min(scale[0], scale[1]);
+    maxDist *= std::max(scale[0], scale[1]);
+  }
+  // obtain id range
+  int minId =
+      (minDist == 0.)
+          ? 0
+          : (int)std::floor(std::log2(M_PI * minDist / lineInterval)) + 1;
+  int maxId = (int)std::ceil(std::log2(M_PI * maxDist / lineInterval)) + 1;
+
+  struct LineInfo {
+    double anglePos;  // original direction of the line
+    int birthId;      // generation where the line started to be drawn
+  };
+  // register lines information
+  QList<LineInfo> infoList;
+  // initial lines at minId
+  int initLineAmount = std::pow(2, minId);
+  for (int li = 0; li < initLineAmount; li++)
+    infoList.append({360.0 * (double)li / (double)initLineAmount, minId});
+  for (int id = minId + 1; id <= maxId; id++) {
+    // insert between the existing lines
+    QList<LineInfo>::iterator itr = infoList.end();
+    while (itr != infoList.begin()) {
+      double ap;
+      if (itr == infoList.end())
+        ap = (360.0 + (*(itr - 1)).anglePos) * 0.5;
+      else
+        ap = ((*itr).anglePos + (*(itr - 1)).anglePos) * 0.5;
+      itr = infoList.insert(itr, {ap, id});
+      itr--;
+    }
+  }
+
+  int unitDist =
+      std::pow(2, (maxId - 1)) - ((minId == 0) ? 0 : std::pow(2, (minId - 1)));
+  GLdouble *vertices =
+      new GLdouble[(unitDist * RADIAL_FIELD_NUMSEGMENTS + 1) * 2];
+
+  double radiStep = (lineInterval / M_PI) / (double)RADIAL_FIELD_NUMSEGMENTS;
+  double tmpRad =
+      (minId == 0) ? 0. : (std::pow(2, (minId - 1)) * lineInterval / M_PI);
+  for (int v = 0; v < unitDist * RADIAL_FIELD_NUMSEGMENTS + 1; v++) {
+    double tw           = twist * tmpRad / pivot;
+    vertices[v * 2]     = tmpRad * std::cos(tw);
+    vertices[v * 2 + 1] = tmpRad * std::sin(tw);
+    tmpRad += radiStep;
+  }
+
+  glColor3d(0, 0, 1);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glLineStipple(1, 0x00FF);
+  glEnable(GL_LINE_STIPPLE);
+
+  glVertexPointer(2, GL_DOUBLE, 0, vertices);
+
+  glPushMatrix();
+
+  glTranslated(center.x, center.y, 0.0);
+  glRotated(e_angle, 0., 0., 1.);
+  glScaled(scale[0], scale[1], 1.);
+  int vertexIdOffset =
+      (minId == 0) ? 0 : std::pow(2, (minId - 1)) * RADIAL_FIELD_NUMSEGMENTS;
+  for (auto line : infoList) {
+    glPushMatrix();
+    glRotated(line.anglePos, 0., 0., 1.);
+    int startId = (line.birthId == 0) ? 0
+                                      : std::pow(2, (line.birthId - 1)) *
+                                                RADIAL_FIELD_NUMSEGMENTS -
+                                            vertexIdOffset;
+    // draw using vertex array
+    glDrawArrays(GL_LINE_STRIP, startId,
+                 unitDist * RADIAL_FIELD_NUMSEGMENTS - startId);
+    glPopMatrix();
+  }
+
+  glDisable(GL_LINE_STIPPLE);
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glPopMatrix();
+
+  delete[] vertices;
 }
 
 }  // namespace
@@ -1579,6 +1703,7 @@ class CompassFxGadget final : public FxGadget {
   TPointParamP m_center;
   TDoubleParamP m_ellipse_aspect_ratio;
   TDoubleParamP m_ellipse_angle;
+  TDoubleParamP m_twist;
 
   enum HANDLE { Body = 0, Near, Far, None } m_handle = None;
 
@@ -1591,7 +1716,8 @@ public:
   CompassFxGadget(FxGadgetController *controller,
                   const TPointParamP &centerPoint, bool isSpin = false,
                   const TDoubleParamP &ellipse_aspect_ratio = TDoubleParamP(),
-                  const TDoubleParamP &ellipse_angle        = TDoubleParamP());
+                  const TDoubleParamP &ellipse_angle        = TDoubleParamP(),
+                  const TDoubleParamP &twist                = TDoubleParamP());
 
   void draw(bool picking) override;
 
@@ -1605,12 +1731,14 @@ public:
 CompassFxGadget::CompassFxGadget(FxGadgetController *controller,
                                  const TPointParamP &centerPoint, bool isSpin,
                                  const TDoubleParamP &ellipse_aspect_ratio,
-                                 const TDoubleParamP &ellipse_angle)
+                                 const TDoubleParamP &ellipse_angle,
+                                 const TDoubleParamP &twist)
     : FxGadget(controller, 3)
     , m_center(centerPoint)
     , m_isSpin(isSpin)
     , m_ellipse_aspect_ratio(ellipse_aspect_ratio)
-    , m_ellipse_angle(ellipse_angle) {
+    , m_ellipse_angle(ellipse_angle)
+    , m_twist(twist) {
   addParam(centerPoint->getX());
   addParam(centerPoint->getY());
   if (ellipse_aspect_ratio) addParam(ellipse_aspect_ratio);
@@ -1660,7 +1788,10 @@ void CompassFxGadget::draw(bool picking) {
   double dCenter = norm(center);
   double e_aspect_ratio =
       (m_ellipse_aspect_ratio) ? getValue(m_ellipse_aspect_ratio) : 1.0;
-  double e_angle = (m_ellipse_angle) ? getValue(m_ellipse_angle) : 0.0;
+  double e_angle    = (m_ellipse_angle) ? getValue(m_ellipse_angle) : 0.0;
+  TRectD cameraRect = m_controller->getCameraRect();
+  double pivot      = getPixelSize() * cameraRect.getLy() / 2.0;
+  double twist      = (m_twist) ? getValue(m_twist) * M_PI_180 : 0.0;
 
   TPointD handleVec;
   if (dCenter > lineHalf) {
@@ -1677,11 +1808,15 @@ void CompassFxGadget::draw(bool picking) {
     double theta = M_180_PI * lineInterval / dCenter;
 
     // draw spin lines field
-    if (isSelected() && !isSelected(None) && m_isSpin &&
-        m_ellipse_aspect_ratio && m_ellipse_angle) {
+    if (isSelected() && !isSelected(None) && m_ellipse_aspect_ratio &&
+        m_ellipse_angle) {
       TRectD geom = m_controller->getGeometry();
+      if (m_isSpin)
+        drawSpinField(geom, center, lineInterval, e_aspect_ratio, e_angle);
+      else
+        drawRadialField(geom, center, lineInterval, e_aspect_ratio, e_angle,
+                        twist, pivot);
 
-      drawSpinField(geom, center, lineInterval, e_aspect_ratio, e_angle);
     } else {
       // draw guides
       glColor3d(0, 0, 1);
@@ -1690,14 +1825,72 @@ void CompassFxGadget::draw(bool picking) {
       glPushMatrix();
       glTranslated(center.x, center.y, 0);
       if (!m_isSpin) {  // radial direction
-        for (int i = -3; i <= 3; i++) {
-          if (i == 0) continue;
+
+        if (areAlmostEqual(twist, 0.0)) {
+          for (int i = -3; i <= 3; i++) {
+            if (i == 0) continue;
+
+            glPushMatrix();
+            glRotated(theta * (double)i + angle, 0, 0, 1);
+            glBegin(GL_LINES);
+            glVertex2d(dCenter - lineHalf, 0.0);
+            glVertex2d(dCenter + lineHalf, 0.0);
+            glEnd();
+            glPopMatrix();
+          }
+        } else if (areAlmostEqual(e_aspect_ratio, 1.0)) {  // twist case
+          for (int i = -3; i <= 3; i++) {
+            if (i == 0) continue;
+
+            glPushMatrix();
+            glRotated(theta * (double)i + angle, 0, 0, 1);
+
+            glBegin(GL_LINE_STRIP);
+            for (int j = 0; j <= RADIAL_COMPASS_NUMSEGMENTS; j++) {
+              double tmp_d = dCenter - lineHalf +
+                             (double)j * 2.0 * lineHalf /
+                                 (double)RADIAL_COMPASS_NUMSEGMENTS;
+              double tmp_tw_radian = twist * (tmp_d - dCenter) / pivot;
+              glVertex2d(tmp_d * std::cos(tmp_tw_radian),
+                         tmp_d * std::sin(tmp_tw_radian));
+            }
+            glEnd();
+            glPopMatrix();
+          }
+        } else {  // elliptical + twist case
+          double scale[2];
+          scale[0] = 2.0 * e_aspect_ratio / (e_aspect_ratio + 1);
+          scale[1] = scale[0] / e_aspect_ratio;
           glPushMatrix();
-          glRotated(theta * (double)i + angle, 0, 0, 1);
-          glBegin(GL_LINES);
-          glVertex2d(dCenter - lineHalf, 0.0);
-          glVertex2d(dCenter + lineHalf, 0.0);
-          glEnd();
+          glRotated(e_angle, 0., 0., 1.);
+          glScaled(scale[0], scale[1], 1.);
+
+          QTransform tr =
+              QTransform().rotate(e_angle).scale(scale[0], scale[1]).inverted();
+
+          for (int i = -3; i <= 3; i++) {
+            if (i == 0) continue;
+            double tmp_angle_radian = (theta * (double)i + angle) * M_PI_180;
+            QPointF lineCenter(dCenter * std::cos(tmp_angle_radian),
+                               dCenter * std::sin(tmp_angle_radian));
+            lineCenter = tr.map(lineCenter);
+
+            tmp_angle_radian   = std::atan2(lineCenter.y(), lineCenter.x());
+            double dLineCenter = QVector2D(lineCenter).length();
+            double tmpLineHalf = lineHalf * dLineCenter / dCenter;
+            glBegin(GL_LINE_STRIP);
+            for (int j = 0; j <= RADIAL_COMPASS_NUMSEGMENTS; j++) {
+              double tmp_d = dLineCenter - tmpLineHalf +
+                             (double)j * 2.0 * tmpLineHalf /
+                                 (double)RADIAL_COMPASS_NUMSEGMENTS;
+              double tmp_tw_radian = twist * (tmp_d - dLineCenter) / pivot;
+
+              QPointF p(tmp_d * std::cos(tmp_angle_radian + tmp_tw_radian),
+                        tmp_d * std::sin(tmp_angle_radian + tmp_tw_radian));
+              glVertex2d(p.x(), p.y());
+            }
+            glEnd();
+          }
           glPopMatrix();
         }
       } else {  // rotational direction
@@ -1713,7 +1906,7 @@ void CompassFxGadget::draw(bool picking) {
             }
             glEnd();
           }
-        } else {
+        } else {  // elliptical case
           double scale[2];
           scale[0] = 2.0 * e_aspect_ratio / (e_aspect_ratio + 1);
           scale[1] = scale[0] / e_aspect_ratio;
@@ -1907,26 +2100,33 @@ class EllipseFxGadget final : public FxGadget {
   TDoubleParamP m_xParam, m_yParam;
   TDoubleParamP m_aspect_ratio;
   TDoubleParamP m_angle;
+  TDoubleParamP m_twist;
 
   TPointD m_pos;
 
-  enum HANDLE { Radius = 0, Center, AngleAndAR, None } m_handle = None;
+  bool m_isSpin;
+
+  enum HANDLE { Radius = 0, Center, AngleAndAR, Twist, None } m_handle = None;
 
 public:
   EllipseFxGadget(FxGadgetController *controller, const TDoubleParamP &radius,
                   const TPointParamP &center, const TDoubleParamP &aspect_ratio,
-                  const TDoubleParamP &angle)
+                  const TDoubleParamP &angle,
+                  const TDoubleParamP &twist = TDoubleParamP())
       : FxGadget(controller, 4)
       , m_radius(radius)
       , m_xParam(center->getX())
       , m_yParam(center->getY())
       , m_aspect_ratio(aspect_ratio)
-      , m_angle(angle) {
+      , m_angle(angle)
+      , m_twist(twist) {
     addParam(radius);
     addParam(m_xParam);
     addParam(m_yParam);
     addParam(m_aspect_ratio);
     addParam(m_angle);
+
+    m_isSpin = !m_twist;
   }
 
   TPointD getCenter() const;
@@ -1962,12 +2162,20 @@ void EllipseFxGadget::draw(bool picking) {
   TPointD center      = getCenter();
   double aspect_ratio = getValue(m_aspect_ratio);
   double angle        = getValue(m_angle);
+  TRectD cameraRect   = m_controller->getCameraRect();
+  double pivot        = getPixelSize() * cameraRect.getLy() / 2.0;
 
   // draw spin lines field
   if (isSelected() && !isSelected(None)) {
     double lineInterval = getPixelSize() * 50;
     TRectD geom         = m_controller->getGeometry();
-    drawSpinField(geom, center, lineInterval, aspect_ratio, angle);
+    if (m_isSpin)
+      drawSpinField(geom, center, lineInterval, aspect_ratio, angle);
+    else {  // radial case
+      double twist = getValue(m_twist) * M_PI_180;
+      drawRadialField(geom, center, lineInterval, aspect_ratio, angle, twist,
+                      pivot);
+    }
   }
 
   double unit = getPixelSize();
@@ -2005,6 +2213,27 @@ void EllipseFxGadget::draw(bool picking) {
     drawTooltip(TPointD(namePos.x(), namePos.y()), getLabel());
   }
 
+  //--- twist ---
+  if (m_twist) {
+    setColorById(Twist);
+    glPushName(idBase + Twist);
+    glPushMatrix();
+
+    glRotated(angle, 0., 0., 1.);
+    glScaled(scale[0], scale[1], 1.0);
+
+    glLineStipple(1, 0x0F0F);
+    glEnable(GL_LINE_STIPPLE);
+    tglDrawCircle(TPointD(), pivot);
+    glDisable(GL_LINE_STIPPLE);
+
+    glPopMatrix();
+    glPopName();
+    if (isSelected(Twist)) {
+      QPointF namePos = transform.map(QPointF(0.707, 0.707) * pivot);
+      drawTooltip(TPointD(namePos.x(), namePos.y()), "Twist");
+    }
+  }
   //--- center ---
   setColorById(Center);
   glPushName(idBase + Center);
@@ -2022,7 +2251,7 @@ void EllipseFxGadget::draw(bool picking) {
 
   glPopName();
   if (isSelected(Center)) {
-    drawTooltip(TPointD(), "Center");
+    drawTooltip(TPointD(7, 3) * unit, "Center");
   }
 
   //---- AR and rotate
@@ -2112,6 +2341,23 @@ void EllipseFxGadget::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
     else if (new_angle > 180.0)
       new_angle -= 360.0;
     setValue(m_angle, new_angle);
+
+    m_pos = pos;
+  } else if (m_handle == Twist) {
+    TPointD center = getCenter();
+    TPointD old_v  = m_pos - center;
+    TPointD new_v  = pos - center;
+    if (old_v == TPointD() || new_v == TPointD()) return;
+    // angle
+    double twist = getValue(m_twist);
+    double d_twist =
+        std::atan2(new_v.y, new_v.x) - std::atan2(old_v.y, old_v.x);
+    double new_twist = twist + d_twist * M_180_PI;
+    if (new_twist < -180.0)
+      new_twist = -180.0;
+    else if (new_twist > 180.0)
+      new_twist = 180.0;
+    setValue(m_twist, new_twist);
 
     m_pos = pos;
   }
@@ -2308,8 +2554,13 @@ FxGadget *FxGadgetController::allocateGadget(const TParamUIConcept &uiConcept) {
   }
 
   case TParamUIConcept::COMPASS: {
-    assert(uiConcept.m_params.size() == 1);
-    gadget = new CompassFxGadget(this, uiConcept.m_params[0]);
+    assert(uiConcept.m_params.size() == 1 || uiConcept.m_params.size() == 4);
+    if (uiConcept.m_params.size() == 1)
+      gadget = new CompassFxGadget(this, uiConcept.m_params[0]);
+    else
+      gadget = new CompassFxGadget(this, uiConcept.m_params[0], false,
+                                   uiConcept.m_params[1], uiConcept.m_params[2],
+                                   uiConcept.m_params[3]);
     break;
   }
 
@@ -2335,10 +2586,17 @@ FxGadget *FxGadgetController::allocateGadget(const TParamUIConcept &uiConcept) {
   }
 
   case TParamUIConcept::ELLIPSE: {
-    assert(uiConcept.m_params.size() == 4);
-    gadget =
-        new EllipseFxGadget(this, uiConcept.m_params[0], uiConcept.m_params[1],
-                            uiConcept.m_params[2], uiConcept.m_params[3]);
+    assert(uiConcept.m_params.size() == 4 || uiConcept.m_params.size() == 5);
+    // radial blur has one more parameter (twist).
+    if (uiConcept.m_params.size() == 5)
+      gadget = new EllipseFxGadget(
+          this, uiConcept.m_params[0], uiConcept.m_params[1],
+          uiConcept.m_params[2], uiConcept.m_params[3], uiConcept.m_params[4]);
+    // spin blur case
+    else
+      gadget = new EllipseFxGadget(this, uiConcept.m_params[0],
+                                   uiConcept.m_params[1], uiConcept.m_params[2],
+                                   uiConcept.m_params[3]);
     break;
   }
 
@@ -2444,3 +2702,11 @@ int FxGadgetController::getDevPixRatio() {
 TRectD FxGadgetController::getGeometry() {
   return (m_tool->getViewer()) ? m_tool->getViewer()->getGeometry() : TRectD();
 }
+
+//---------------------------------------------------------------------------
+
+TRectD FxGadgetController::getCameraRect() {
+  return (m_tool->getViewer()) ? m_tool->getViewer()->getCameraRect()
+                               : TRectD();
+}
+
