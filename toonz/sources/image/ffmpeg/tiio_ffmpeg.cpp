@@ -23,6 +23,7 @@ Ffmpeg::Ffmpeg() {
     m_ffmpegTimeout    = -1;
   std::string strPath  = m_ffmpegPath.toStdString();
   m_intermediateFormat = "png";
+  m_startNumber        = 2147483647;  // Lowest frame determines starting frame
 }
 Ffmpeg::~Ffmpeg() {}
 
@@ -162,10 +163,11 @@ void Ffmpeg::setPath(TFilePath path) { m_path = path; }
 
 void Ffmpeg::createIntermediateImage(const TImageP &img, int frameIndex) {
   m_frameCount++;
-  if (m_frameNumberOffset == -1) m_frameNumberOffset = frameIndex - 1;
+  frameIndex--;  // ffmpeg start at 0 by default
+  if (frameIndex < m_startNumber) m_startNumber = frameIndex;
   QString tempPath = getFfmpegCache().getQString() + "//" +
                      QString::fromStdString(m_path.getName()) + "tempOut" +
-                     QString::number(frameIndex - m_frameNumberOffset) + "." +
+                     QString::number(frameIndex) + "." +
                      m_intermediateFormat;
   std::string saveStatus = "";
   TRasterImageP tempImage(img);
@@ -210,6 +212,10 @@ void Ffmpeg::runFfmpeg(QStringList preIArgs, QStringList postIArgs,
   args = args + preIArgs;
   if (!includesInPath) {  // NOTE:  if including the in path, it needs to be in
                           // the preIArgs argument.
+    if (m_startNumber != 0) {
+      args << "-start_number";
+      args << QString::number(m_startNumber);
+    }
     args << "-i";
     args << tempName;
   }
@@ -336,10 +342,13 @@ ffmpegFileInfo Ffmpeg::getInfo() {
     QByteArray ba = infoText.readAll();
     infoText.close();
     QString text = QString::fromStdString(ba.toStdString());
-    m_lx         = text.split(" ")[0].toInt();
-    m_ly         = text.split(" ")[1].toInt();
-    m_frameRate  = text.split(" ")[2].toDouble();
-    m_frameCount = text.split(" ")[3].toInt();
+    QStringList textlist = text.split(" ");
+    if (textlist.count() >= 4) {
+      m_lx         = textlist[0].toInt();
+      m_ly         = textlist[1].toInt();
+      m_frameRate  = textlist[2].toDouble();
+      m_frameCount = textlist[3].toInt();
+    }
   } else {
     QFile infoText(tempPath);
     getSize();
