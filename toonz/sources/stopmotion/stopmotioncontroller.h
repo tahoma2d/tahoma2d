@@ -181,6 +181,7 @@ class StopMotionController final : public QWidget {
   QFrame *m_pathsPage;
   QFrame *m_dslrFrame;
   QFrame *m_webcamFrame;
+  QFrame *m_commonFrame;
   QFrame *m_noCameraFrame;
   QStackedWidget *m_stackedChooser;
   TabBarContainter *m_tabBarContainer;  //!< Tabs container for pages

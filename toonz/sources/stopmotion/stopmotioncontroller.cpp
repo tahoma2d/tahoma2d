@@ -1237,26 +1237,6 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     innerSettingsLayout->addWidget(m_dslrFrame);
     m_dslrFrame->hide();
 
-    // Calibration
-    m_calibrationUI.groupBox  = new QGroupBox(tr("Calibration"), this);
-    m_calibrationUI.capBtn    = new QPushButton(tr("Capture"), this);
-    m_calibrationUI.cancelBtn = new QPushButton(tr("Cancel"), this);
-    m_calibrationUI.newBtn    = new QPushButton(tr("Start calibration"), this);
-    m_calibrationUI.loadBtn   = new QPushButton(tr("Load"), this);
-    m_calibrationUI.exportBtn = new QPushButton(tr("Export"), this);
-    m_calibrationUI.label     = new QLabel(this);
-    m_calibrationUI.groupBox->setCheckable(true);
-    m_calibrationUI.groupBox->setChecked(CamCapDoCalibration);
-    QAction *calibrationHelp =
-        new QAction(tr("Open Readme.txt for Camera calibration..."));
-    m_calibrationUI.groupBox->addAction(calibrationHelp);
-    m_calibrationUI.groupBox->setContextMenuPolicy(Qt::ActionsContextMenu);
-    m_calibrationUI.capBtn->hide();
-    m_calibrationUI.cancelBtn->hide();
-    m_calibrationUI.label->hide();
-    m_calibrationUI.exportBtn->setEnabled(false);
-    connect(calibrationHelp, SIGNAL(triggered()), this, SLOT(onCalibReadme()));
-
     QVBoxLayout *webcamSettingsLayout = new QVBoxLayout;
     webcamSettingsLayout->setSpacing(0);
     webcamSettingsLayout->setMargin(5);
@@ -1384,6 +1364,35 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     imageFrame->setLayout(imageLay);
     webcamGridLay->addWidget(imageFrame, 6, 0, 1, 2);
 
+    webcamSettingsLayout->addLayout(webcamGridLay);
+
+    webcamSettingsLayout->addStretch();
+    m_webcamFrame = new QFrame();
+    m_webcamFrame->setSizePolicy(QSizePolicy::Expanding,
+                                 QSizePolicy::Expanding);
+    m_webcamFrame->setLayout(webcamSettingsLayout);
+    innerSettingsLayout->addWidget(m_webcamFrame);
+    m_webcamFrame->hide();
+
+    // Calibration
+    m_calibrationUI.groupBox  = new QGroupBox(tr("Calibration"), this);
+    m_calibrationUI.capBtn    = new QPushButton(tr("Capture"), this);
+    m_calibrationUI.cancelBtn = new QPushButton(tr("Cancel"), this);
+    m_calibrationUI.newBtn    = new QPushButton(tr("Start calibration"), this);
+    m_calibrationUI.loadBtn   = new QPushButton(tr("Load"), this);
+    m_calibrationUI.exportBtn = new QPushButton(tr("Export"), this);
+    m_calibrationUI.label     = new QLabel(this);
+    m_calibrationUI.groupBox->setCheckable(true);
+    m_calibrationUI.groupBox->setChecked(CamCapDoCalibration);
+    QAction *calibrationHelp =
+        new QAction(tr("Open Readme.txt for Camera calibration..."));
+    m_calibrationUI.groupBox->addAction(calibrationHelp);
+    m_calibrationUI.groupBox->setContextMenuPolicy(Qt::ActionsContextMenu);
+    m_calibrationUI.capBtn->hide();
+    m_calibrationUI.cancelBtn->hide();
+    m_calibrationUI.label->hide();
+    m_calibrationUI.exportBtn->setEnabled(false);
+    connect(calibrationHelp, SIGNAL(triggered()), this, SLOT(onCalibReadme()));
     // Calibration
     QGridLayout *calibLay = new QGridLayout();
     calibLay->setMargin(8);
@@ -1403,18 +1412,19 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     }
     calibLay->setColumnStretch(0, 1);
     m_calibrationUI.groupBox->setLayout(calibLay);
-    webcamGridLay->addWidget(m_calibrationUI.groupBox, 7, 0, 1, 2);
 
-    webcamSettingsLayout->addLayout(webcamGridLay);
-
-    webcamSettingsLayout->addStretch();
-    m_webcamFrame = new QFrame();
-    m_webcamFrame->setSizePolicy(QSizePolicy::Expanding,
+    QVBoxLayout *commonSettingsLayout = new QVBoxLayout;
+    commonSettingsLayout->setSpacing(0);
+    commonSettingsLayout->setMargin(5);
+    commonSettingsLayout->addWidget(m_calibrationUI.groupBox);
+    commonSettingsLayout->addStretch();
+    m_commonFrame = new QFrame();
+    m_commonFrame->setSizePolicy(QSizePolicy::Expanding,
                                  QSizePolicy::Expanding);
-    m_webcamFrame->setLayout(webcamSettingsLayout);
-    innerSettingsLayout->addWidget(m_webcamFrame);
-    m_webcamFrame->hide();
+    m_commonFrame->setLayout(commonSettingsLayout);
+    innerSettingsLayout->addWidget(m_commonFrame);
     innerSettingsLayout->addStretch();
+
     m_cameraSettingsPage->setLayout(innerSettingsLayout);
 
     // Make Options Page
@@ -2879,6 +2889,7 @@ void StopMotionController::onUpdateStopMotionControls(bool useWebcam) {
     m_zoomButton->setChecked(false);
     m_dslrFrame->hide();
     m_webcamFrame->hide();
+    m_commonFrame->hide();
     m_noCameraFrame->show();
     m_alwaysUseLiveViewImagesButton->hide();
     // if (m_tabBar->tabText(1) == tr("Settings")) {
@@ -2892,6 +2903,7 @@ void StopMotionController::onUpdateStopMotionControls(bool useWebcam) {
     m_cameraStatusLabel->hide();
     m_webcamFrame->show();
     m_dslrFrame->hide();
+    m_commonFrame->show();
     m_noCameraFrame->hide();
     m_alwaysUseLiveViewImagesButton->hide();
     getWebcamStatus();
@@ -2906,6 +2918,7 @@ void StopMotionController::onUpdateStopMotionControls(bool useWebcam) {
     m_cameraStatusLabel->show();
     m_dslrFrame->show();
     m_webcamFrame->hide();
+    m_commonFrame->show();
     m_noCameraFrame->hide();
     m_alwaysUseLiveViewImagesButton->show();
     // if (m_tabBar->tabText(1) == tr("Options")) {
@@ -3477,8 +3490,10 @@ void StopMotionController::showEvent(QShowEvent *event) {
   }
 
   if (!hasWebcam && !hasCanon) {
+    m_commonFrame->hide();
     m_noCameraFrame->show();
   } else {
+    m_commonFrame->show();
     m_noCameraFrame->hide();
   }
   onRefreshTests();
@@ -4053,8 +4068,13 @@ void StopMotionController::resetCalibSettingsFromFile() {
       fs["identifier"] >> identifierStr;
       if (identifierStr != "OpenToonzCameraCalibrationSettings") return;
       cv::Size resolution;
-      QSize currentResolution(m_stopMotion->m_webcam->getWebcamWidth(),
-                              m_stopMotion->m_webcam->getWebcamHeight());
+      int camWidth = m_stopMotion->m_usingWebcam
+                         ? m_stopMotion->m_webcam->getWebcamWidth()
+                         : m_stopMotion->m_canon->m_fullImageDimensions.lx;
+      int camHeight = m_stopMotion->m_usingWebcam
+                          ? m_stopMotion->m_webcam->getWebcamHeight()
+                          : m_stopMotion->m_canon->m_fullImageDimensions.ly;
+      QSize currentResolution(camWidth, camHeight);
       fs["resolution"] >> resolution;
       if (currentResolution != QSize(resolution.width, resolution.height))
         return;
@@ -4063,12 +4083,17 @@ void StopMotionController::resetCalibSettingsFromFile() {
       fs["new_intrinsic"] >> new_intrinsic;
       fs.release();
 
+      cv::Mat mapX, mapY;
       cv::Mat mapR = cv::Mat::eye(3, 3, CV_64F);
       cv::initUndistortRectifyMap(
           intrinsic, distCoeffs, mapR, new_intrinsic,
           cv::Size(currentResolution.width(), currentResolution.height()),
-          CV_32FC1, m_stopMotion->m_calibration.mapX,
-          m_stopMotion->m_calibration.mapY);
+          CV_32FC1, mapX, mapY);
+
+      if (m_stopMotion->m_usingWebcam)
+        m_stopMotion->m_webcam->setCalibration(mapX, mapY);
+      else
+        m_stopMotion->m_canon->setCalibration(mapX, mapY);
 
       m_stopMotion->m_calibration.isValid  = true;
       m_stopMotion->m_calibration.filePath = calibFp;
@@ -4131,14 +4156,25 @@ void StopMotionController::captureCalibrationRefImage(cv::Mat &image) {
                           m_stopMotion->m_calibration.image_points,
                           image.size(), intrinsic, distCoeffs, rvecs, tvecs);
 
+      cv::Mat mapX, mapY;
       cv::Mat mapR          = cv::Mat::eye(3, 3, CV_64F);
       cv::Mat new_intrinsic = cv::getOptimalNewCameraMatrix(
           intrinsic, distCoeffs, image.size(),
           0.0);  // setting the last argument to 1.0 will include all source
                  // pixels in the frame
-      cv::initUndistortRectifyMap(
-          intrinsic, distCoeffs, mapR, new_intrinsic, image.size(), CV_32FC1,
-          m_stopMotion->m_calibration.mapX, m_stopMotion->m_calibration.mapY);
+      cv::initUndistortRectifyMap(intrinsic, distCoeffs, mapR, new_intrinsic,
+                                  image.size(), CV_32FC1, mapX, mapY);
+
+      int camWidth, camHeight;
+      if (m_stopMotion->m_usingWebcam) {
+        m_stopMotion->m_webcam->setCalibration(mapX, mapY);
+        camWidth  = m_stopMotion->m_webcam->getWebcamWidth();
+        camHeight = m_stopMotion->m_webcam->getWebcamHeight();
+      } else {
+        m_stopMotion->m_canon->setCalibration(mapX, mapY);
+        camWidth  = m_stopMotion->m_canon->m_fullImageDimensions.lx;
+        camHeight = m_stopMotion->m_canon->m_fullImageDimensions.ly;
+      }
 
       // save calibration settings
       QString calibFp = getCurrentCalibFilePath();
@@ -4150,8 +4186,7 @@ void StopMotionController::captureCalibrationRefImage(cv::Mat &image) {
       }
       fs << "identifier"
          << "OpenToonzCameraCalibrationSettings";
-      fs << "resolution" << cv::Size(m_stopMotion->m_webcam->getWebcamWidth(),
-                                     m_stopMotion->m_webcam->getWebcamHeight());
+      fs << "resolution" << cv::Size(camWidth, camHeight);
       fs << "instrinsic" << intrinsic;
       fs << "distCoeffs" << distCoeffs;
       fs << "new_intrinsic" << new_intrinsic;
@@ -4192,8 +4227,13 @@ void StopMotionController::onCalibLoadBtnClicked() {
     if (identifierStr != "OpenToonzCameraCalibrationSettings")
       throw TException(fp.toStdWString() + L": Identifier does not match");
     cv::Size resolution;
-    QSize currentResolution(m_stopMotion->m_webcam->getWebcamWidth(),
-                            m_stopMotion->m_webcam->getWebcamHeight());
+    int camWidth = m_stopMotion->m_usingWebcam
+                       ? m_stopMotion->m_webcam->getWebcamWidth()
+                       : m_stopMotion->m_canon->m_fullImageDimensions.lx;
+    int camHeight = m_stopMotion->m_usingWebcam
+                        ? m_stopMotion->m_webcam->getWebcamHeight()
+                        : m_stopMotion->m_canon->m_fullImageDimensions.ly;
+    QSize currentResolution(camWidth, camHeight);
     fs["resolution"] >> resolution;
     if (currentResolution != QSize(resolution.width, resolution.height))
       throw TException(fp.toStdWString() + L": Resolution does not match");
@@ -4261,7 +4301,9 @@ void StopMotionController::onCalibReadme() {
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onCalibImageCaptured() {
-  cv::Mat camImage = m_stopMotion->m_webcam->getWebcamImage();
+  cv::Mat camImage = m_stopMotion->m_usingWebcam
+                         ? m_stopMotion->m_webcam->getWebcamImage()
+                         : m_stopMotion->m_canon->getcanonImage();
   captureCalibrationRefImage(camImage);
 }
 

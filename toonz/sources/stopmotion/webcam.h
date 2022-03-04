@@ -41,9 +41,15 @@ public:
   QCamera* getWebcam() { return m_webcam; }
   void setWebcam(QCamera* camera);
   bool initWebcam(int index = 0);
-  bool getWebcamImage(TRaster32P& tempImage, bool useCalibration = false,
-                      cv::Mat calibrationMapX = cv::Mat(),
-                      cv::Mat calibrationMapY = cv::Mat());
+  bool getWebcamImage(TRaster32P& tempImage);
+
+  void enableCalibration(bool useCalibration) {
+    m_useCalibration = useCalibration;
+  }
+  void setCalibration(cv::Mat calibrationMapX, cv::Mat calibrationMapY) {
+    m_calibrationMapX = calibrationMapX;
+    m_calibrationMapY = calibrationMapY;
+  };
 
   bool translateIndex(int index);
 
@@ -114,6 +120,9 @@ private:
 
   int m_webcamFocusValue       = 0;
   bool m_webcamAutofocusStatus = true;
+
+  bool m_useCalibration;
+  cv::Mat m_calibrationMapX, m_calibrationMapY;
 
   void adjustLevel(cv::Mat& image);
   void binarize(cv::Mat& image);

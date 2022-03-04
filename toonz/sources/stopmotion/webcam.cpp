@@ -92,8 +92,7 @@ int Webcam::getIndexOfResolution() {
 
 //-----------------------------------------------------------------
 
-bool Webcam::getWebcamImage(TRaster32P& tempImage, bool useCalibration,
-                            cv::Mat calibrationMapX, cv::Mat calibrationMapY) {
+bool Webcam::getWebcamImage(TRaster32P& tempImage) {
   bool error = false;
   cv::Mat imgOriginal;
   cv::Mat imgCorrected;
@@ -148,9 +147,9 @@ bool Webcam::getWebcamImage(TRaster32P& tempImage, bool useCalibration,
     }
 
     // perform calibration
-    if (useCalibration) {
-      cv::remap(imgCorrected, imgCorrected, calibrationMapX, calibrationMapY,
-                cv::INTER_LINEAR);
+    if (m_useCalibration) {
+      cv::remap(imgCorrected, imgCorrected, m_calibrationMapX,
+                m_calibrationMapY, cv::INTER_LINEAR);
     }
 
     m_webcamImage = imgCorrected;

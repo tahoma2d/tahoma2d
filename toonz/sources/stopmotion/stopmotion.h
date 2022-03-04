@@ -139,7 +139,6 @@ public:
     int refCaptured    = 0;
     std::vector<std::vector<cv::Point3f>> obj_points;
     std::vector<std::vector<cv::Point2f>> image_points;
-    cv::Mat mapX, mapY;
     bool isValid   = false;
     bool isEnabled = false;
   } m_calibration;
