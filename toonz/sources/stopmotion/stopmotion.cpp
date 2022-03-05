@@ -1381,6 +1381,9 @@ void StopMotion::onTimeout() {
        !TApp::instance()->getCurrentFrame()->isPlaying()) ||
       (m_liveViewStatus == LiveViewPaused && !m_userCalledPause)) {
     if (getAlwaysLiveView() || (currentFrame >= m_xSheetFrameNumber - 2)) {
+      if (m_calibration.captureCue && m_playCaptureSound)
+        m_camSnapSound->play();
+
       bool calibrateImage = !m_calibration.captureCue &&
                             m_calibration.isValid && m_calibration.isEnabled;
       if (!m_usingWebcam) {
