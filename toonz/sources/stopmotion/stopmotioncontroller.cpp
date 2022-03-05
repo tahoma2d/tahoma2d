@@ -4205,9 +4205,10 @@ QString StopMotionController::getCurrentCalibFilePath() {
   if (cameraName.isEmpty()) return QString();
   QString resolution   = m_resolutionCombo->currentText();
   QString hostName     = QHostInfo::localHostName();
-  TFilePath folderPath = ToonzFolder::getLibraryFolder() + "camera calibration";
-  return folderPath.getQString() + "\\" + hostName + "_" + cameraName + "_" +
-         resolution + ".xml";
+  QString fileName = hostName + "_" + cameraName + "_" + resolution + ".xml";
+  TFilePath folderPath = ToonzFolder::getLibraryFolder() +
+                         "camera calibration" + TFilePath(fileName);
+  return folderPath.getQString();
 }
 
 //-----------------------------------------------------------------------------
