@@ -4113,7 +4113,14 @@ void StopMotionController::captureCalibrationRefImage(cv::Mat &image) {
   bool found = cv::findChessboardCorners(
       image, m_stopMotion->m_calibration.boardSize, corners,
       cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FILTER_QUADS);
-  if (found) {
+  if (!found) {
+    TFilePath patternFp = ToonzFolder::getLibraryFolder() +
+                          "camera calibration" + "checkerboard.tif";
+    DVGui::warning(
+        tr("Unable to find complete checkerboard pattern. Check pattern "
+           "position and camera settings.\n\nPrint and use %1 to calibrate.")
+            .arg(patternFp.getQString()));
+  } else {
     // compute corners in detail
     cv::cornerSubPix(
         image, corners, cv::Size(11, 11), cv::Size(-1, -1),
