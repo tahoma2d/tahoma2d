@@ -1388,11 +1388,14 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
         new QAction(tr("Open Readme.txt for Camera calibration..."));
     m_calibrationUI.groupBox->addAction(calibrationHelp);
     m_calibrationUI.groupBox->setContextMenuPolicy(Qt::ActionsContextMenu);
+    m_calibrationUI.groupBox->setToolTip(
+        tr("Use Camera Calibration.\nRight-click for more information."));
     m_calibrationUI.capBtn->hide();
     m_calibrationUI.cancelBtn->hide();
     m_calibrationUI.label->hide();
     m_calibrationUI.exportBtn->setEnabled(false);
     connect(calibrationHelp, SIGNAL(triggered()), this, SLOT(onCalibReadme()));
+
     // Calibration
     QGridLayout *calibLay = new QGridLayout();
     calibLay->setMargin(8);
