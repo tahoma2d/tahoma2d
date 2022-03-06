@@ -1963,7 +1963,9 @@ void TXsheet::convertToImplicitHolds() {
           cc->setCell(r, prevCell);
           stopFrameSet = true;
         }
-      } else {
+      } else if (cell.getFrameId().isStopFrame())
+        stopFrameSet = true;
+      else {
         TXshLevel *level = cell.m_level.getPointer();
         if (level && level->getChildLevel()) {
           TXsheet *childXsh = level->getChildLevel()->getXsheet();
@@ -1989,7 +1991,8 @@ void TXsheet::convertToImplicitHolds() {
     }
 
     // Add a final stop frame
-    cc->setCell(r1 + 1, TXshCell(prevCell.m_level, TFrameId::STOP_FRAME));
+    if (!stopFrameSet)
+      cc->setCell(r1 + 1, TXshCell(prevCell.m_level, TFrameId::STOP_FRAME));
   }
 }
 
@@ -2014,14 +2017,13 @@ void TXsheet::convertToExplicitHolds() {
     int r0, r1;
     if (!cc->getRange(r0, r1)) continue;
 
-    int frameCount    = getFrameCount() - 1;
-    bool stopFrameSet = false;
+    int frameCount = getFrameCount() - 1;
     TXshCell prevCell;
 
     r1 = std::max(r1, frameCount);
 
     for (int r = r0; r <= r1; r++) {
-      TXshCell cell = cc->getCell(r);
+      TXshCell cell = cc->getCell(r, false);
 
       TXshLevel *level = cell.m_level.getPointer();
       if (level && level->getChildLevel()) {
@@ -2041,7 +2043,7 @@ void TXsheet::convertToExplicitHolds() {
           cells.push_back(prevCell);
           cc->setCells(r, 1, &cells[0]);
         } else
-          cc->setCell(r, TXshCell(prevCell));
+          cc->setCell(r, prevCell);
       } else
         cc->setCell(r, prevCell);
     }
