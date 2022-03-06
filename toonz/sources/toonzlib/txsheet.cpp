@@ -325,7 +325,8 @@ bool TXsheet::setCell(int row, int col, const TXshCell &cell) {
 
 //-----------------------------------------------------------------------------
 
-void TXsheet::getCells(int row, int col, int rowCount, TXshCell cells[]) const {
+void TXsheet::getCells(int row, int col, int rowCount, TXshCell cells[],
+                       bool implicitLookup) const {
   static const TXshCell emptyCell;
   int i;
   TXshColumnP column = m_imp->m_columnSet.getColumn(col);
@@ -338,7 +339,7 @@ void TXsheet::getCells(int row, int col, int rowCount, TXshCell cells[]) const {
     for (i = 0; i < rowCount; i++) cells[i] = emptyCell;
     return;
   }
-  xshColumn->getCells(row, rowCount, cells);
+  xshColumn->getCells(row, rowCount, cells, implicitLookup);
 }
 
 //-----------------------------------------------------------------------------

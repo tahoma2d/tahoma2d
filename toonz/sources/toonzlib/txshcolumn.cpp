@@ -162,7 +162,8 @@ void TXshCellColumn::checkColumn() const {
 
 //-----------------------------------------------------------------------------
 
-void TXshCellColumn::getCells(int row, int rowCount, TXshCell cells[]) {
+void TXshCellColumn::getCells(int row, int rowCount, TXshCell cells[],
+                              bool implicitLookup) {
   const TXshCell emptyCell;
   int first = m_first;
   int i;
@@ -189,9 +190,20 @@ void TXshCellColumn::getCells(int row, int rowCount, TXshCell cells[]) {
   TXshCell *endDstCell = dstCell + dst;
   while (dstCell < endDstCell) *dstCell++ = emptyCell;
   endDstCell += n;
-  while (dstCell < endDstCell) *dstCell++ = m_cells[src++];
+  while (dstCell < endDstCell) {
+    TXshCell cell = m_cells[src];
+    if (cell.isEmpty() && implicitLookup) cell = getCell(src + dst);
+    *dstCell++ = cell;
+    src++;
+  }
   endDstCell = cells + rowCount;
-  while (dstCell < endDstCell) *dstCell++ = emptyCell;
+  while (dstCell < endDstCell) {
+    TXshCell cell = m_cells[cellCount - 1];
+    if (implicitLookup && !cell.getFrameId().isStopFrame())
+      *dstCell++ = cell;
+    else
+      *dstCell++ = emptyCell;
+  }
 }
 
 //-----------------------------------------------------------------------------

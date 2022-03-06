@@ -328,12 +328,12 @@ void doCloneLevelNoSave(const TCellSelection::Range &range,
 
     // OverwriteDialog* dialog = new OverwriteDialog();
     for (int r = range.m_r0; r <= range.m_r1; ++r) {
-      TXshCell cell = xsh->getCell(r, c);
-
-      TImageP img = cell.getImage(true);
-      if (!img) continue;
+      TXshCell cell = xsh->getCell(r, c, false);
 
       fid = cell.getFrameId();
+
+      TImageP img = cell.getImage(true);
+      if (!img && !fid.isStopFrame()) continue;
 
       if (cell.getSimpleLevel() == 0 ||
           cell.getSimpleLevel()->getPath().getType() == "psd" ||
@@ -380,12 +380,12 @@ void doCloneLevelNoSave(const TCellSelection::Range &range,
       cell.m_level = xl;
       int k;
       for (k = range.m_r0; k < r; k++) {
-        if (xsh->getCell(k, c).getImage(true).getPointer() ==
+        if (xsh->getCell(k, c, false).getImage(true).getPointer() ==
             img.getPointer()) {
-          TFrameId oldFid = xsh->getCell(k, c).getFrameId();
+          TFrameId oldFid = xsh->getCell(k, c, false).getFrameId();
           assert(fid == oldFid);
           sl->setFrame(fid,
-                       xsh->getCell(k, c + range.getColCount()).getImage(true));
+                       xsh->getCell(k, c + range.getColCount(), false).getImage(true));
           break;
         }
       }
@@ -478,7 +478,7 @@ public:
 
     TFilePath newLevelPath;
     TXshCell c = TApp::instance()->getCurrentXsheet()->getXsheet()->getCell(
-        cells.m_r0, destColumn);
+        cells.m_r0, destColumn, false);
     if (!c.isEmpty() && c.getSimpleLevel())
       newLevelPath = c.getSimpleLevel()->getPath();
 

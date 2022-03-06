@@ -291,7 +291,7 @@ void mergeColumns(int column, int mColumn, bool isRedo, bool groupLevels) {
 
   xsh->getCells(start, column, cell.size(), &(cell[0]));
 
-  xsh->getCells(start, mColumn, cell.size(), &(mCell[0]));
+  xsh->getCells(start, mColumn, cell.size(), &(mCell[0]), true);
 
   TXshColumn *col  = xsh->getColumn(column);
   TXshColumn *mcol = xsh->getColumn(mColumn);
