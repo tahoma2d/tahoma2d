@@ -1655,7 +1655,8 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
     // Paint the cell edge-to-edge, we use LightLineColor with low opacity to
     // pick up the hue of the cell color to make the separator line more
     // pleasing to the eye.
-    p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
+    p.fillRect(rect.adjusted(0, 0, 0, (nextCell.isEmpty() ? 0 : 1)),
+               QBrush(cellColor));
   else
     p.fillRect(rect, QBrush(cellColor));
 
@@ -2082,7 +2083,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
         // Paint the cell edge-to-edge, we use LightLineColor with low opacity
         // to pick up the hue of the cell color to make the separator line more
         // pleasing to the eye.
-        p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
+        p.fillRect(rect.adjusted(0, 0, 0, (nextCell.isEmpty() ? 0 : 1)),
+                   QBrush(cellColor));
       else
         p.fillRect(rect, QBrush(cellColor));
     }
@@ -2156,7 +2158,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     // Paint the cell edge-to-edge, we use LightLineColor with low opacity to
     // pick up the hue of the cell color to make the separator line more
     // pleasing to the eye.
-    p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
+    p.fillRect(rect.adjusted(0, 0, 0, (nextCell.isEmpty() ? 0 : 1)),
+               QBrush(cellColor));
   else
     p.fillRect(rect, QBrush(cellColor));
 
@@ -2425,7 +2428,8 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
     // Paint the cell edge-to-edge, we use LightLineColor with low opacity to
     // pick up the hue of the cell color to make the separator line more
     // pleasing to the eye.
-    p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
+    p.fillRect(rect.adjusted(0, 0, 0, (nextCell.isEmpty() ? 0 : 1)),
+               QBrush(cellColor));
   else
     p.fillRect(rect, QBrush(cellColor));
 
@@ -2660,7 +2664,8 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
         // Paint the cell edge-to-edge, we use LightLineColor with low opacity
         // to pick up the hue of the cell color to make the separator line more
         // pleasing to the eye.
-        p.fillRect(info.rect.adjusted(0, 0, 0, 1), QBrush(tmpCellColor));
+        p.fillRect(info.rect.adjusted(0, 0, 0, (nextCell.isEmpty() ? 0 : 1)),
+                   QBrush(tmpCellColor));
       else
         p.fillRect(info.rect, QBrush(tmpCellColor));
 
@@ -2908,7 +2913,8 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
     // Paint the cell edge-to-edge, we use LightLineColor with low opacity to
     // pick up the hue of the cell color to make the separator line more
     // pleasing to the eye.
-    p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
+    p.fillRect(rect.adjusted(0, 0, 0, (nextCell.isEmpty() ? 0 : 1)),
+               QBrush(cellColor));
   else
     p.fillRect(rect, QBrush(cellColor));
 
