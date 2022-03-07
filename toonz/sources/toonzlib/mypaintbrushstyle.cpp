@@ -276,11 +276,14 @@ void TMyPaintBrushStyle::makeIcon(const TDimension &d) {
     double sx    = (double)d.lx / (double)m_preview->getLx();
     double sy    = (double)d.ly / (double)m_preview->getLy();
     double scale = std::min(sx, sy);
-    TRop::quickPut(m_icon, m_preview, TScale(scale));
+    TRaster32P resamplePreview(m_preview->getLx(), m_preview->getLy());
+    TRop::resample(resamplePreview, m_preview, TScale(scale));
+    TRop::over(m_icon, resamplePreview);
   }
 
   // paint color marker
-  if (d.lx > 0 && d.ly > 0) {
+  // Only show color marker when the icon size is 22x22
+  if (d.lx == d.ly && d.lx <= 22) {
     int size       = std::min(1 + std::min(d.lx, d.ly) * 2 / 3,
                         1 + std::max(d.lx, d.ly) / 2);
     TPixel32 color = getMainColor();
