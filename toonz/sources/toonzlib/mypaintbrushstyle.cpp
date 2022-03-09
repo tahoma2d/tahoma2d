@@ -277,7 +277,8 @@ void TMyPaintBrushStyle::makeIcon(const TDimension &d) {
     double sy    = (double)d.ly / (double)m_preview->getLy();
     double scale = std::min(sx, sy);
     TRaster32P resamplePreview(m_preview->getLx(), m_preview->getLy());
-    TRop::resample(resamplePreview, m_preview, TScale(scale));
+    TRop::resample(resamplePreview, m_preview, TScale(scale),
+                   TRop::ResampleFilterType::Hamming3);
     TRop::over(m_icon, resamplePreview);
   }
 
