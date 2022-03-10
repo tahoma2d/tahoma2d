@@ -1881,7 +1881,6 @@ ColumnTransparencyPopup::ColumnTransparencyPopup(XsheetViewer *viewer,
   m_slider->setMinimum(1);
   m_slider->setMaximum(100);
   m_slider->setFixedHeight(14);
-  m_slider->setFixedWidth(100);
 
   m_value = new DVGui::IntLineEdit(this, 1, 1, 100);
   /*m_value->setValidator(new QIntValidator (1, 100, m_value));
