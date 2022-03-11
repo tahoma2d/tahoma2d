@@ -244,7 +244,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-/*Spostata in tregion.cpp
+/* Moved to tregion.cpp
 inline int TRegion::getStyle() const
 {
 int ret = 0;
@@ -271,10 +271,10 @@ public:
   virtual void update(const TPointD &p1, const TPointD &p2) = 0;
 };
 
-// permette di calcolare varie grandesse sul poligono della regione,
-// come l'area, il baricentro, il perimetro...
-// per usarla si deve sottoclassare la classe virtuale TRegionFeatureFormula
-// specificando la formual della grandezza da calcolare.
+// allows to calculate various magnitudes on the polygon of the region,
+// such as area, center of gravity, perimeter etc...
+// to use it, subclass the virtual class TRegionFeatureFormula
+// specifying the formula of the quantity to calculate.
 
 void DVAPI computeRegionFeature(const TRegion &r,
                                 TRegionFeatureFormula &formula);

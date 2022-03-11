@@ -1042,7 +1042,7 @@ void SceneViewer::showEvent(QShowEvent *) {
   m_visualSettings.m_sceneProperties =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
 
-  // Se il viewer e' show e il preview e' attivo aggiungo il listner al preview
+  // If the viewer is hidden and preview is activated, remove the listener from preview
   if (m_previewMode != NO_PREVIEW)
     Previewer::instance(m_previewMode == SUBCAMERA_PREVIEW)->addListener(this);
 
@@ -1126,7 +1126,7 @@ void SceneViewer::showEvent(QShowEvent *) {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::hideEvent(QHideEvent *) {
-  // Se il viewer e' hide e il preview e' attivo rimuovo il listner dal preview
+  // If the viewer is hidden and preview is activated, remove the listener from preview
   if (m_previewMode != NO_PREVIEW)
     Previewer::instance(m_previewMode == SUBCAMERA_PREVIEW)
         ->removeListener(this);
