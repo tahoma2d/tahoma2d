@@ -938,6 +938,14 @@ bool Canon::downloadImage(EdsBaseRef object) {
     imgBuf = NULL;
   }
 
+  // perform calibration
+  if (m_useCalibration) {
+    cv::remap(imgOriginal, imgOriginal, m_calibrationMapX, m_calibrationMapY,
+              cv::INTER_LINEAR);
+  }
+
+  m_canonImage = imgOriginal;
+
   // calculate the size of the new image
   // and resize it down
   double r = (double)width / (double)height;
@@ -1328,6 +1336,20 @@ bool Canon::downloadEVFData() {
     l_quitLoop                                 = false;
     StopMotion::instance()->m_liveViewImage    = converter->getImage();
     StopMotion::instance()->m_hasLiveViewImage = true;
+
+    uchar* imgBuf = StopMotion::instance()->m_liveViewImage->getRawData();
+    int height    = StopMotion::instance()->m_liveViewImage->getLy();
+    int width     = StopMotion::instance()->m_liveViewImage->getLx();
+    cv::Mat imgData(height, width, CV_8UC4, (void*)imgBuf);
+
+    // perform calibration
+    if (m_useCalibration) {
+      cv::remap(imgData, imgData, m_calibrationMapX, m_calibrationMapY,
+                cv::INTER_LINEAR);
+    }
+
+    m_canonImage = imgData;
+
     delete converter;
     if (stream != NULL) {
       EdsRelease(stream);

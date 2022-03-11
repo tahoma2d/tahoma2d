@@ -103,6 +103,20 @@ public:
   QString m_realShutterSpeed;
   QString m_displayedShutterSpeed;
   QString m_imageQuality;
+  cv::Mat m_canonImage;
+
+  bool m_useCalibration;
+  cv::Mat m_calibrationMapX, m_calibrationMapY;
+
+  void enableCalibration(bool useCalibration) {
+    m_useCalibration = useCalibration;
+  }
+  void setCalibration(cv::Mat calibrationMapX, cv::Mat calibrationMapY) {
+    m_calibrationMapX = calibrationMapX;
+    m_calibrationMapY = calibrationMapY;
+  };
+
+  cv::Mat getcanonImage() { return m_canonImage; }
 
 // Canon Commands
 #ifdef WITH_CANON

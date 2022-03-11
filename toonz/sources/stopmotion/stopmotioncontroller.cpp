@@ -32,6 +32,7 @@
 #include "flipbook.h"
 #include "iocommand.h"
 #include "tlevel_io.h"
+#include "filebrowser.h"
 
 // TnzQt includes
 #include "toonzqt/filefield.h"
@@ -64,6 +65,8 @@
 #include <QToolTip>
 #include <QSerialPort>
 #include <QDomDocument>
+#include <QHostInfo>
+#include <QDesktopServices>
 
 #ifdef _WIN32
 #include <dshow.h>
@@ -82,6 +85,7 @@ TEnv::StringVar CamCapSaveInPopupScene("CamCapSaveInPopupScene", "1");
 TEnv::IntVar CamCapSaveInPopupAutoSubName("CamCapSaveInPopupAutoSubName", 1);
 TEnv::IntVar CamCapSaveInPopupCreateSceneInFolder(
     "CamCapSaveInPopupCreateSceneInFolder", 0);
+TEnv::IntVar CamCapDoCalibration("CamCapDoCalibration", 0);
 
 namespace {
 
@@ -1369,7 +1373,61 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_webcamFrame->setLayout(webcamSettingsLayout);
     innerSettingsLayout->addWidget(m_webcamFrame);
     m_webcamFrame->hide();
+
+    // Calibration
+    m_calibrationUI.groupBox  = new QGroupBox(tr("Calibration"), this);
+    m_calibrationUI.capBtn    = new QPushButton(tr("Capture"), this);
+    m_calibrationUI.cancelBtn = new QPushButton(tr("Cancel"), this);
+    m_calibrationUI.newBtn    = new QPushButton(tr("Start calibration"), this);
+    m_calibrationUI.loadBtn   = new QPushButton(tr("Load"), this);
+    m_calibrationUI.exportBtn = new QPushButton(tr("Export"), this);
+    m_calibrationUI.label     = new QLabel(this);
+    m_calibrationUI.groupBox->setCheckable(true);
+    m_calibrationUI.groupBox->setChecked(CamCapDoCalibration);
+    QAction *calibrationHelp =
+        new QAction(tr("Open Readme.txt for Camera calibration..."));
+    m_calibrationUI.groupBox->addAction(calibrationHelp);
+    m_calibrationUI.groupBox->setContextMenuPolicy(Qt::ActionsContextMenu);
+    m_calibrationUI.groupBox->setToolTip(
+        tr("Use Camera Calibration.\nRight-click for more information."));
+    m_calibrationUI.capBtn->hide();
+    m_calibrationUI.cancelBtn->hide();
+    m_calibrationUI.label->hide();
+    m_calibrationUI.exportBtn->setEnabled(false);
+    connect(calibrationHelp, SIGNAL(triggered()), this, SLOT(onCalibReadme()));
+
+    // Calibration
+    QGridLayout *calibLay = new QGridLayout();
+    calibLay->setMargin(8);
+    calibLay->setHorizontalSpacing(3);
+    calibLay->setVerticalSpacing(5);
+    {
+      calibLay->addWidget(m_calibrationUI.newBtn, 0, 0);
+      calibLay->addWidget(m_calibrationUI.loadBtn, 0, 1);
+      calibLay->addWidget(m_calibrationUI.exportBtn, 0, 2);
+      QHBoxLayout *lay = new QHBoxLayout();
+      lay->setMargin(0);
+      lay->setSpacing(5);
+      lay->addWidget(m_calibrationUI.capBtn, 1);
+      lay->addWidget(m_calibrationUI.label, 0);
+      lay->addWidget(m_calibrationUI.cancelBtn, 1);
+      calibLay->addLayout(lay, 1, 0, 1, 3);
+    }
+    calibLay->setColumnStretch(0, 1);
+    m_calibrationUI.groupBox->setLayout(calibLay);
+
+    QVBoxLayout *commonSettingsLayout = new QVBoxLayout;
+    commonSettingsLayout->setSpacing(0);
+    commonSettingsLayout->setMargin(5);
+    commonSettingsLayout->addWidget(m_calibrationUI.groupBox);
+    commonSettingsLayout->addStretch();
+    m_commonFrame = new QFrame();
+    m_commonFrame->setSizePolicy(QSizePolicy::Expanding,
+                                 QSizePolicy::Expanding);
+    m_commonFrame->setLayout(commonSettingsLayout);
+    innerSettingsLayout->addWidget(m_commonFrame);
     innerSettingsLayout->addStretch();
+
     m_cameraSettingsPage->setLayout(innerSettingsLayout);
 
     // Make Options Page
@@ -1941,6 +1999,24 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   ret = ret && connect(m_stopMotion->m_webcam, SIGNAL(updateHistogram(cv::Mat)),
                        this, SLOT(onUpdateHistogramCalled(cv::Mat)));
 
+  // Calibration
+  ret = ret && connect(m_calibrationUI.groupBox, &QGroupBox::toggled,
+                       [&](bool checked) {
+                         CamCapDoCalibration                   = checked;
+                         m_stopMotion->m_calibration.isEnabled = checked;
+                         resetCalibSettingsFromFile();
+                       });
+  ret = ret && connect(m_calibrationUI.capBtn, SIGNAL(clicked()), this,
+                       SLOT(onCalibCapBtnClicked()));
+  ret = ret && connect(m_calibrationUI.newBtn, SIGNAL(clicked()), this,
+                       SLOT(onCalibNewBtnClicked()));
+  ret = ret && connect(m_calibrationUI.cancelBtn, SIGNAL(clicked()), this,
+                       SLOT(resetCalibSettingsFromFile()));
+  ret = ret && connect(m_calibrationUI.loadBtn, SIGNAL(clicked()), this,
+                       SLOT(onCalibLoadBtnClicked()));
+  ret = ret && connect(m_calibrationUI.exportBtn, SIGNAL(clicked()), this,
+                       SLOT(onCalibExportBtnClicked()));
+
   // Lighting Connections
   ret = ret &&
         connect(m_screen1ColorFld, SIGNAL(colorChanged(const TPixel32 &, bool)),
@@ -2024,6 +2100,9 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   ret = ret && connect(m_stopMotion, SIGNAL(updateTestShots()), this,
                        SLOT(onRefreshTests()));
 
+  // Calibration
+  ret = ret && connect(m_stopMotion, SIGNAL(calibrationImageCaptured()), this,
+                       SLOT(onCalibImageCaptured()));
   assert(ret);
 
   m_placeOnXSheetCB->setChecked(
@@ -2050,6 +2129,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   onSceneSwitched();
   m_stopMotion->setToNextNewLevel();
   m_saveInFileFld->setPath(m_stopMotion->getFilePath());
+
+  m_stopMotion->m_calibration.isEnabled = m_calibrationUI.groupBox->isChecked();
 
 #ifndef _WIN32
   m_directShowCB->hide();
@@ -2773,6 +2854,12 @@ void StopMotionController::onCameraListComboActivated(int comboIndex) {
 
   m_stopMotion->changeCameras(comboIndex);
   m_stopMotion->updateStopMotionControls(m_stopMotion->m_usingWebcam);
+
+  if (m_calibrationUI.groupBox->isChecked() && comboIndex > 0) {
+    m_stopMotion->m_calibration.isValid = false;
+    m_calibrationUI.exportBtn->setEnabled(false);
+    if (m_stopMotion->m_usingWebcam) resetCalibSettingsFromFile();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -2805,6 +2892,7 @@ void StopMotionController::onUpdateStopMotionControls(bool useWebcam) {
     m_zoomButton->setChecked(false);
     m_dslrFrame->hide();
     m_webcamFrame->hide();
+    m_commonFrame->hide();
     m_noCameraFrame->show();
     m_alwaysUseLiveViewImagesButton->hide();
     // if (m_tabBar->tabText(1) == tr("Settings")) {
@@ -2818,6 +2906,7 @@ void StopMotionController::onUpdateStopMotionControls(bool useWebcam) {
     m_cameraStatusLabel->hide();
     m_webcamFrame->show();
     m_dslrFrame->hide();
+    m_commonFrame->show();
     m_noCameraFrame->hide();
     m_alwaysUseLiveViewImagesButton->hide();
     getWebcamStatus();
@@ -2832,6 +2921,7 @@ void StopMotionController::onUpdateStopMotionControls(bool useWebcam) {
     m_cameraStatusLabel->show();
     m_dslrFrame->show();
     m_webcamFrame->hide();
+    m_commonFrame->show();
     m_noCameraFrame->hide();
     m_alwaysUseLiveViewImagesButton->show();
     // if (m_tabBar->tabText(1) == tr("Options")) {
@@ -2862,6 +2952,10 @@ void StopMotionController::onNewWebcamResolutionSelected(int index) {
 
 void StopMotionController::onResolutionComboActivated(const QString &itemText) {
   m_stopMotion->setWebcamResolution(itemText);
+
+  m_stopMotion->m_calibration.isValid = false;
+  m_calibrationUI.exportBtn->setEnabled(false);
+  if (m_stopMotion->m_usingWebcam) resetCalibSettingsFromFile();
 }
 
 //-----------------------------------------------------------------------------
@@ -3399,8 +3493,10 @@ void StopMotionController::showEvent(QShowEvent *event) {
   }
 
   if (!hasWebcam && !hasCanon) {
+    m_commonFrame->hide();
     m_noCameraFrame->show();
   } else {
+    m_commonFrame->show();
     m_noCameraFrame->hide();
   }
   onRefreshTests();
@@ -3908,4 +4004,348 @@ void StopMotionController::clearTests() {
     }
     m_testHBoxes.clear();
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onCalibCapBtnClicked() {
+  if (!m_stopMotion->m_hasLiveViewImage ||
+      m_stopMotion->m_liveViewStatus !=
+          m_stopMotion->LiveViewStatus::LiveViewOpen) {
+    DVGui::warning(tr("Cannot capture image unless live view is active."));
+    return;
+  }
+  m_stopMotion->m_calibration.captureCue = true;
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onCalibNewBtnClicked() {
+  if (m_stopMotion->m_calibration.isValid) {
+    QString question = tr("Do you want to restart camera calibration?");
+    int ret =
+        DVGui::MsgBox(question, QObject::tr("Restart"), QObject::tr("Cancel"));
+    if (ret == 0 || ret == 2) return;
+  }
+  // initialize calibration parameter
+  m_stopMotion->m_calibration.filePath    = getCurrentCalibFilePath();
+  m_stopMotion->m_calibration.captureCue  = false;
+  m_stopMotion->m_calibration.refCaptured = 0;
+  m_stopMotion->m_calibration.obj_points.clear();
+  m_stopMotion->m_calibration.image_points.clear();
+  m_stopMotion->m_calibration.isValid = false;
+
+  // initialize label
+  m_calibrationUI.label->setText(
+      QString("%1/%2").arg(m_stopMotion->m_calibration.refCaptured).arg(10));
+  // swap UIs
+  m_calibrationUI.newBtn->hide();
+  m_calibrationUI.loadBtn->hide();
+  m_calibrationUI.exportBtn->hide();
+  m_calibrationUI.label->show();
+  m_calibrationUI.capBtn->show();
+  m_calibrationUI.cancelBtn->show();
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::resetCalibSettingsFromFile() {
+  if (m_calibrationUI.capBtn->isVisible()) {
+    // swap UIs
+    m_calibrationUI.label->hide();
+    m_calibrationUI.capBtn->hide();
+    m_calibrationUI.cancelBtn->hide();
+    m_calibrationUI.newBtn->show();
+    m_calibrationUI.loadBtn->show();
+    m_calibrationUI.exportBtn->show();
+  }
+  if (m_calibrationUI.groupBox->isChecked() &&
+      !m_stopMotion->m_calibration.isValid) {
+    QString calibFp = getCurrentCalibFilePath();
+    std::cout << calibFp.toStdString() << std::endl;
+    if (!calibFp.isEmpty() && QFileInfo(calibFp).exists()) {
+      cv::Mat intrinsic, distCoeffs, new_intrinsic;
+      cv::FileStorage fs(calibFp.toStdString(), cv::FileStorage::READ);
+      if (!fs.isOpened()) return;
+      std::string identifierStr;
+      fs["identifier"] >> identifierStr;
+      if (identifierStr != "OpenToonzCameraCalibrationSettings") return;
+      cv::Size resolution;
+      int camWidth = m_stopMotion->m_usingWebcam
+                         ? m_stopMotion->m_webcam->getWebcamWidth()
+                         : m_stopMotion->m_canon->m_fullImageDimensions.lx;
+      int camHeight = m_stopMotion->m_usingWebcam
+                          ? m_stopMotion->m_webcam->getWebcamHeight()
+                          : m_stopMotion->m_canon->m_fullImageDimensions.ly;
+      QSize currentResolution(camWidth, camHeight);
+      fs["resolution"] >> resolution;
+      if (currentResolution != QSize(resolution.width, resolution.height))
+        return;
+      fs["instrinsic"] >> intrinsic;
+      fs["distCoeffs"] >> distCoeffs;
+      fs["new_intrinsic"] >> new_intrinsic;
+      fs.release();
+
+      cv::Mat mapX, mapY;
+      cv::Mat mapR = cv::Mat::eye(3, 3, CV_64F);
+      cv::initUndistortRectifyMap(
+          intrinsic, distCoeffs, mapR, new_intrinsic,
+          cv::Size(currentResolution.width(), currentResolution.height()),
+          CV_32FC1, mapX, mapY);
+
+      if (m_stopMotion->m_usingWebcam)
+        m_stopMotion->m_webcam->setCalibration(mapX, mapY);
+      else
+        m_stopMotion->m_canon->setCalibration(mapX, mapY);
+
+      m_stopMotion->m_calibration.isValid  = true;
+      m_stopMotion->m_calibration.filePath = calibFp;
+      m_calibrationUI.exportBtn->setEnabled(true);
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::captureCalibrationRefImage(cv::Mat &image) {
+  cv::cvtColor(image, image, cv::COLOR_RGB2GRAY);
+  std::vector<cv::Point2f> corners;
+  bool found = cv::findChessboardCorners(
+      image, m_stopMotion->m_calibration.boardSize, corners,
+      cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FILTER_QUADS);
+  if (!found) {
+    TFilePath patternFp = ToonzFolder::getLibraryFolder() +
+                          "camera calibration" + "checkerboard.tif";
+    DVGui::warning(
+        tr("Unable to find complete checkerboard pattern. Check pattern "
+           "position and camera settings.\n\nPrint and use %1 to calibrate.")
+            .arg(patternFp.getQString()));
+  } else {
+    // compute corners in detail
+    cv::cornerSubPix(
+        image, corners, cv::Size(11, 11), cv::Size(-1, -1),
+        cv::TermCriteria(cv::TermCriteria::EPS | cv::TermCriteria::MAX_ITER, 30,
+                         0.1));
+    // count up
+    m_stopMotion->m_calibration.refCaptured++;
+    // register corners
+    m_stopMotion->m_calibration.image_points.push_back(corners);
+    // register 3d points in real world space
+    std::vector<cv::Point3f> obj;
+    for (int i = 0; i < m_stopMotion->m_calibration.boardSize.width *
+                            m_stopMotion->m_calibration.boardSize.height;
+         i++)
+      obj.push_back(cv::Point3f(i / m_stopMotion->m_calibration.boardSize.width,
+                                i % m_stopMotion->m_calibration.boardSize.width,
+                                0.0f));
+    m_stopMotion->m_calibration.obj_points.push_back(obj);
+
+    // needs 10 references
+    if (m_stopMotion->m_calibration.refCaptured < 10) {
+      // update label
+      m_calibrationUI.label->setText(
+          QString("%1/%2")
+              .arg(m_stopMotion->m_calibration.refCaptured)
+              .arg(10));
+    } else {
+      // swap UIs
+      m_calibrationUI.label->hide();
+      m_calibrationUI.capBtn->hide();
+      m_calibrationUI.cancelBtn->hide();
+      m_calibrationUI.newBtn->show();
+      m_calibrationUI.loadBtn->show();
+      m_calibrationUI.exportBtn->show();
+
+      cv::Mat intrinsic          = cv::Mat(3, 3, CV_32FC1);
+      intrinsic.ptr<float>(0)[0] = 1.f;
+      intrinsic.ptr<float>(1)[1] = 1.f;
+      cv::Mat distCoeffs;
+      std::vector<cv::Mat> rvecs;
+      std::vector<cv::Mat> tvecs;
+      cv::calibrateCamera(m_stopMotion->m_calibration.obj_points,
+                          m_stopMotion->m_calibration.image_points,
+                          image.size(), intrinsic, distCoeffs, rvecs, tvecs);
+
+      cv::Mat mapX, mapY;
+      cv::Mat mapR          = cv::Mat::eye(3, 3, CV_64F);
+      cv::Mat new_intrinsic = cv::getOptimalNewCameraMatrix(
+          intrinsic, distCoeffs, image.size(),
+          0.0);  // setting the last argument to 1.0 will include all source
+                 // pixels in the frame
+      cv::initUndistortRectifyMap(intrinsic, distCoeffs, mapR, new_intrinsic,
+                                  image.size(), CV_32FC1, mapX, mapY);
+
+      int camWidth, camHeight;
+      if (m_stopMotion->m_usingWebcam) {
+        m_stopMotion->m_webcam->setCalibration(mapX, mapY);
+        camWidth  = m_stopMotion->m_webcam->getWebcamWidth();
+        camHeight = m_stopMotion->m_webcam->getWebcamHeight();
+      } else {
+        m_stopMotion->m_canon->setCalibration(mapX, mapY);
+        camWidth  = m_stopMotion->m_canon->m_fullImageDimensions.lx;
+        camHeight = m_stopMotion->m_canon->m_fullImageDimensions.ly;
+      }
+
+      // save calibration settings
+      QString calibFp = getCurrentCalibFilePath();
+      cv::FileStorage fs(calibFp.toStdString(), cv::FileStorage::WRITE);
+      if (!fs.isOpened()) {
+        DVGui::warning(
+            tr("Failed to save calibration settings to %1.").arg(calibFp));
+        return;
+      }
+      fs << "identifier"
+         << "OpenToonzCameraCalibrationSettings";
+      fs << "resolution" << cv::Size(camWidth, camHeight);
+      fs << "instrinsic" << intrinsic;
+      fs << "distCoeffs" << distCoeffs;
+      fs << "new_intrinsic" << new_intrinsic;
+      fs.release();
+
+      m_stopMotion->m_calibration.isValid = true;
+      m_calibrationUI.exportBtn->setEnabled(true);
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+QString StopMotionController::getCurrentCalibFilePath() {
+  QString cameraName = m_cameraListCombo->currentText();
+  if (cameraName.isEmpty()) return QString();
+  QString resolution   = m_resolutionCombo->currentText();
+  QString hostName     = QHostInfo::localHostName();
+  QString fileName = hostName + "_" + cameraName + "_" + resolution + ".xml";
+  TFilePath folderPath = ToonzFolder::getLibraryFolder() +
+                         "camera calibration" + TFilePath(fileName);
+  return folderPath.getQString();
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onCalibLoadBtnClicked() {
+  LoadCalibrationFilePopup popup(this);
+
+  QString fp = popup.getPath().getQString();
+  if (fp.isEmpty()) return;
+  try {
+    cv::FileStorage fs(fp.toStdString(), cv::FileStorage::READ);
+    if (!fs.isOpened())
+      throw TException(fp.toStdWString() + L": Can't open file");
+
+    std::string identifierStr;
+    fs["identifier"] >> identifierStr;
+    if (identifierStr != "OpenToonzCameraCalibrationSettings")
+      throw TException(fp.toStdWString() + L": Identifier does not match");
+    cv::Size resolution;
+    int camWidth = m_stopMotion->m_usingWebcam
+                       ? m_stopMotion->m_webcam->getWebcamWidth()
+                       : m_stopMotion->m_canon->m_fullImageDimensions.lx;
+    int camHeight = m_stopMotion->m_usingWebcam
+                        ? m_stopMotion->m_webcam->getWebcamHeight()
+                        : m_stopMotion->m_canon->m_fullImageDimensions.ly;
+    QSize currentResolution(camWidth, camHeight);
+    fs["resolution"] >> resolution;
+    if (currentResolution != QSize(resolution.width, resolution.height))
+      throw TException(fp.toStdWString() + L": Resolution does not match");
+  } catch (const TException &se) {
+    DVGui::warning(QString::fromStdWString(se.getMessage()));
+    return;
+  } catch (...) {
+    DVGui::error(tr("Couldn't load %1").arg(fp));
+    return;
+  }
+
+  if (m_stopMotion->m_calibration.isValid) {
+    QString question = tr("Overwriting the current calibration. Are you sure?");
+    int ret = DVGui::MsgBox(question, QObject::tr("OK"), QObject::tr("Cancel"));
+    if (ret == 0 || ret == 2) return;
+    m_stopMotion->m_calibration.isValid = false;
+  }
+
+  QString calibFp = getCurrentCalibFilePath();
+  TSystem::copyFile(TFilePath(calibFp), TFilePath(fp), true);
+  resetCalibSettingsFromFile();
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onCalibExportBtnClicked() {
+  // just in case
+  if (!m_stopMotion->m_calibration.isValid) return;
+  if (!QFileInfo(getCurrentCalibFilePath()).exists()) return;
+
+  ExportCalibrationFilePopup popup(this);
+
+  QString fp = popup.getPath().getQString();
+  if (fp.isEmpty()) return;
+
+  try {
+    {
+      QFileInfo fs(fp);
+      if (fs.exists() && !fs.isWritable()) {
+        throw TSystemException(
+            TFilePath(fp),
+            L"The file cannot be saved: it is a read only file.");
+      }
+    }
+    TSystem::copyFile(TFilePath(fp), TFilePath(getCurrentCalibFilePath()),
+                      true);
+  } catch (const TSystemException &se) {
+    DVGui::warning(QString::fromStdWString(se.getMessage()));
+  } catch (...) {
+    DVGui::error(tr("Couldn't save %1").arg(fp));
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onCalibReadme() {
+  TFilePath readmeFp =
+      ToonzFolder::getLibraryFolder() + "camera calibration" + "readme.txt";
+  if (!TFileStatus(readmeFp).doesExist()) return;
+  if (TSystem::isUNC(readmeFp))
+    QDesktopServices::openUrl(QUrl(readmeFp.getQString()));
+  else
+    QDesktopServices::openUrl(QUrl::fromLocalFile(readmeFp.getQString()));
+}
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onCalibImageCaptured() {
+  cv::Mat camImage = m_stopMotion->m_usingWebcam
+                         ? m_stopMotion->m_webcam->getWebcamImage()
+                         : m_stopMotion->m_canon->getcanonImage();
+  captureCalibrationRefImage(camImage);
+}
+
+//=============================================================================
+
+ExportCalibrationFilePopup::ExportCalibrationFilePopup(QWidget *parent)
+    : GenericSaveFilePopup(tr("Export Camera Calibration Settings")) {
+  Qt::WindowFlags flags = windowFlags();
+  setParent(parent);
+  setWindowFlags(flags);
+  m_browser->enableGlobalSelection(false);
+  setFilterTypes(QStringList("xml"));
+}
+
+void ExportCalibrationFilePopup::showEvent(QShowEvent *e) {
+  FileBrowserPopup::showEvent(e);
+  setFolder(ToonzFolder::getLibraryFolder() + "camera calibration");
+}
+
+//=============================================================================
+
+LoadCalibrationFilePopup::LoadCalibrationFilePopup(QWidget *parent)
+    : GenericLoadFilePopup(tr("Load Camera Calibration Settings")) {
+  Qt::WindowFlags flags = windowFlags();
+  setParent(parent);
+  setWindowFlags(flags);
+  m_browser->enableGlobalSelection(false);
+  setFilterTypes(QStringList("xml"));
+}
+
+void LoadCalibrationFilePopup::showEvent(QShowEvent *e) {
+  FileBrowserPopup::showEvent(e);
+  setFolder(ToonzFolder::getLibraryFolder() + "camera calibration");
 }

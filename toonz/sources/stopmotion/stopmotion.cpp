@@ -1381,18 +1381,39 @@ void StopMotion::onTimeout() {
        !TApp::instance()->getCurrentFrame()->isPlaying()) ||
       (m_liveViewStatus == LiveViewPaused && !m_userCalledPause)) {
     if (getAlwaysLiveView() || (currentFrame >= m_xSheetFrameNumber - 2)) {
+      if (m_calibration.captureCue && m_playCaptureSound)
+        m_camSnapSound->play();
+
+      bool calibrateImage = !m_calibration.captureCue &&
+                            m_calibration.isValid && m_calibration.isEnabled;
       if (!m_usingWebcam) {
 #ifdef WITH_CANON
+        m_canon->enableCalibration(calibrateImage);
         bool success = m_canon->downloadEVFData();
         if (success) {
+          // capture calibration reference
+          if (m_calibration.captureCue) {
+            m_calibration.captureCue = false;
+            emit(calibrationImageCaptured());
+            return;
+          }
+
           setLiveViewImage();
         } else {
           m_hasLiveViewImage = false;
         }
 #endif
       } else {
+        m_webcam->enableCalibration(calibrateImage);
         bool success = m_webcam->getWebcamImage(m_liveViewImage);
         if (success) {
+          // capture calibration reference
+          if (m_calibration.captureCue) {
+            m_calibration.captureCue = false;
+            emit(calibrationImageCaptured());
+            return;
+          }
+
           setLiveViewImage();
         } else {
           m_hasLiveViewImage = false;
