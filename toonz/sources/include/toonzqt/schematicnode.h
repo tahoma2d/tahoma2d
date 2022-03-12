@@ -43,19 +43,23 @@ protected:
   void focusOutEvent(QFocusEvent *fe) override;
 
   void keyPressEvent(QKeyEvent *ke) override;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
+#endif
 
 signals:
   void focusOut();
 
 protected slots:
   void onContentsChanged();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   void onPopupHide();
   void onCut();
   void onCopy();
   void onPaste();
   void onDelete();
   void onSelectAll();
+#endif
 };
 
 //========================================================
