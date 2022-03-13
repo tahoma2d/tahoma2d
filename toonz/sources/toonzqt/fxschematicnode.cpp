@@ -1239,7 +1239,6 @@ void FxSchematicPort::paint(QPainter *painter,
                             const QStyleOptionGraphicsItem *option,
                             QWidget *widget) {
   if (m_isPassThrough && getLinkCount() > 0) return;
-  int devicePixelRatio = getDevicePixelRatio(widget);
   // large scaled
   if (getDock()->getNode()->isNormalIconView()) {
     switch (getType()) {
