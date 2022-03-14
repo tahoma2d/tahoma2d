@@ -348,6 +348,10 @@ void ShiftTraceTool::onActivate() {
 }
 
 void ShiftTraceTool::onDeactivate() {
+  // Deactivating Shift and Trace mode resets the pseudo tool with keeping the
+  // Edit Shift checkbox unchanged
+  QAction *shiftTrace = CommandManager::instance()->getAction("MI_ShiftTrace");
+  if (!shiftTrace->isChecked()) return;
   QAction *action = CommandManager::instance()->getAction("MI_EditShift");
   action->setChecked(false);
 }
