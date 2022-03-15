@@ -271,10 +271,10 @@ public:
   virtual void update(const TPointD &p1, const TPointD &p2) = 0;
 };
 
-// allows to calculate various magnitudes on the polygon of the region,
-// such as area, center of gravity, perimeter etc...
-// to use it, subclass the virtual class TRegionFeatureFormula
-// specifying the formula of the quantity to calculate.
+// allows you to calculate various measurements on the polygon
+// of the region, such as area, center of mass, perimeter...
+// to use it, you must subclass the virtual class by specifying
+// the formula of the measurement to be calculated.
 
 void DVAPI computeRegionFeature(const TRegion &r,
                                 TRegionFeatureFormula &formula);

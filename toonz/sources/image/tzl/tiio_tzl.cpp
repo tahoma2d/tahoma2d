@@ -1328,7 +1328,7 @@ bool TLevelWriterTzl::resizeIcons(const TDimension &newSize) {
   if (!m_chan) return false;
   assert(m_version >= 13);
 
-  // make a copy of m_path and then use it for the resizeIcons()
+  // make a copy of m_path to be able to use it for resizeIcons()
   fclose(m_chan);
   m_chan = 0;
   TFileStatus fs(m_path);

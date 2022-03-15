@@ -1612,7 +1612,7 @@ void ToolUtils::drawBalloon(const TPointD &pos, std::string text,
   pp.moveTo(x0, y - 8 * devPixRatio);
   pp.lineTo(0, y + delta.y);
   pp.lineTo(x0, y);
-  /* rounded borders
+  /* rounded edges
   int arcSize = 10;
   pp.arcTo(x0,y1-arcSize,arcSize,arcSize,180,90);
   pp.arcTo(x1-arcSize,y1-arcSize,arcSize,arcSize,270,90);
