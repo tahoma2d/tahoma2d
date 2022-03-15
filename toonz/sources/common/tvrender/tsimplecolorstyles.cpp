@@ -955,7 +955,14 @@ TRasterImagePatternStrokeStyle::TRasterImagePatternStrokeStyle(
 //-----------------------------------------------------------------------------
 
 TColorStyle *TRasterImagePatternStrokeStyle::clone() const {
-  return new TRasterImagePatternStrokeStyle(*this);
+  TRasterImagePatternStrokeStyle *theClone =
+      new TRasterImagePatternStrokeStyle();
+  theClone->m_level                                      = this->m_level;
+  theClone->m_name                                       = this->m_name;
+  theClone->m_space                                      = this->m_space;
+  theClone->m_rotation                                   = this->m_rotation;
+  if (!this->m_basePath.isEmpty()) theClone->m_basePath  = this->m_basePath;
+  return theClone;
 }
 
 //-----------------------------------------------------------------------------
@@ -1367,7 +1374,14 @@ TVectorImagePatternStrokeStyle::TVectorImagePatternStrokeStyle(
 //-----------------------------------------------------------------------------
 
 TColorStyle *TVectorImagePatternStrokeStyle::clone() const {
-  return new TVectorImagePatternStrokeStyle(*this);
+  TVectorImagePatternStrokeStyle *theClone =
+      new TVectorImagePatternStrokeStyle();
+  theClone->m_level                                     = this->m_level;
+  theClone->m_name                                      = this->m_name;
+  theClone->m_space                                     = this->m_space;
+  theClone->m_rotation                                  = this->m_rotation;
+  if (!this->m_basePath.isEmpty()) theClone->m_basePath = this->m_basePath;
+  return theClone;
 }
 
 //-----------------------------------------------------------------------------
