@@ -1616,13 +1616,25 @@ void FxSchematicPort::mouseMoveEvent(QGraphicsSceneMouseEvent *me) {
   if (!m_ghostLinks.isEmpty() && !m_ghostLinks[0]->isVisible())
     m_ghostLinks[0]->show();
   bool cntr = me->modifiers() == Qt::ControlModifier;
+
+  if (!m_linkingTo) {
+    if (m_currentTargetPort) {
+      m_currentTargetPort->resetSnappedLinksOnDynamicPortFx();
+      m_currentTargetPort = 0;
+    }
+    return;
+  }
+
+  FxSchematicPort *targetPort = dynamic_cast<FxSchematicPort *>(m_linkingTo);
+  assert(targetPort);
+
+  if (m_currentTargetPort == targetPort) return;
+
   if (m_currentTargetPort) {
     m_currentTargetPort->resetSnappedLinksOnDynamicPortFx();
     m_currentTargetPort = 0;
   }
-  if (!m_linkingTo) return;
-  FxSchematicPort *targetPort = dynamic_cast<FxSchematicPort *>(m_linkingTo);
-  assert(targetPort);
+
   m_currentTargetPort    = targetPort;
   TFx *targetFx          = targetPort->getOwnerFx();
   TZeraryColumnFx *colFx = dynamic_cast<TZeraryColumnFx *>(targetFx);
@@ -1643,8 +1655,16 @@ void FxSchematicPort::mouseMoveEvent(QGraphicsSceneMouseEvent *me) {
       targetFx->dynamicPortGroup(groupId)->ports();
   int portId = getIndex(targetFxPort, groupedPorts);
   if (portId == -1) return;
-  if (targetFx != m_ownerFx && cntr && getType() == eFxOutputPort)
-    targetPort->handleSnappedLinksOnDynamicPortFx(groupedPorts, portId);
+  if (targetFx != m_ownerFx && getType() == eFxOutputPort) {
+    // inserting a link above
+    if (cntr)
+      targetPort->handleSnappedLinksOnDynamicPortFx(groupedPorts, portId);
+    // replacing a link
+    else
+      targetPort->handleSnappedLinksOnDynamicPortFx(groupedPorts, portId,
+                                                    portId);
+  }
+  // switching links in the connected ports
   else if (targetFx == m_ownerFx && getType() == eFxInputPort) {
     if (!m_ghostLinks.isEmpty()) {
       for (SchematicLink *ghostLink : m_ghostLinks)
