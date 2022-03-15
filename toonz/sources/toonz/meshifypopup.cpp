@@ -1037,6 +1037,7 @@ void createMeshifiedColumns(int r0, int c0, int r1, int c1,
   // Create corresponding columns and assign them the meshified levels
   int meshColIdx;
 
+  bool useImplicitHolds = Preferences::instance()->isImplicitHoldEnabled();
   int r, c;
   for (c = c1; c >= c0;
        --c)  // Reverse iteration since we're interleaving the results
@@ -1049,6 +1050,7 @@ void createMeshifiedColumns(int r0, int c0, int r1, int c1,
     meshColIdx = -1;
 
     // Deal with cells contents
+    TXshCell prevCell;
     for (r = r0; r <= r1; ++r) {
       // Set meshCol's cells accordingly
       const TXshCell &srcCell = xsh->getCell(r, c);
@@ -1065,9 +1067,10 @@ void createMeshifiedColumns(int r0, int c0, int r1, int c1,
             ::makeMeshColumn(*xsh, c,
                              meshColIdx = c + 1);  // right after current one.
         }
-
         TXshCell dstCell(lt->second, srcCell.m_frameId);
+        if (useImplicitHolds && dstCell == prevCell) continue;
         xsh->setCell(r, meshColIdx, dstCell);
+        prevCell = dstCell;
       }
     }
   }

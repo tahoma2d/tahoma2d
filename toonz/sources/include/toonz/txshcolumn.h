@@ -365,7 +365,8 @@ Set cell in \b row to \b TXshCell \b cell.
 Set \b cells[] from \b row to \b row + \b rowCount to column cells.
 \sa getCell and setCells()
 */
-  virtual void getCells(int row, int rowCount, TXshCell cells[]);
+  virtual void getCells(int row, int rowCount, TXshCell cells[],
+                        bool implicitLookup = false);
   /*!
 Set column cells from \b row to \b row + \b rowCount to cells[].
 \sa setCell() and getCell(); return false if cannot set cells[].

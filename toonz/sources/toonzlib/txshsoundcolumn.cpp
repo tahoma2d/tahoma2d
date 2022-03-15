@@ -328,10 +328,10 @@ const TXshCell &TXshSoundColumn::getCell(int row, bool implicitLookup) const {
   if (!l) return emptyCell;
   TXshSoundLevel *soundLevel = l->getSoundLevel();
   TXshCell *cell = new TXshCell(soundLevel, TFrameId(row - l->getStartFrame()));
-  // The new cell adds a reference to the TXshSoundLevel; 
-  // since the cells of the TXshSoundColumn are not persistent structures 
-  // but are dynamic structures (they are recreated every time) I have to take 
-  // care of making the release otherwise the TXshSoundLevel is never thrown 
+  // The new cell adds a reference to the TXshSoundLevel;
+  // since the cells of the TXshSoundColumn are not persistent structures
+  // but are dynamic structures (they are recreated every time) I have to take
+  // care of making the release otherwise the TXshSoundLevel is never thrown
   // away.
   soundLevel->release();
   return *cell;
@@ -340,18 +340,18 @@ const TXshCell &TXshSoundColumn::getCell(int row, bool implicitLookup) const {
 //-----------------------------------------------------------------------------
 
 TXshCell TXshSoundColumn::getSoundCell(int row) {
-    static TXshCell emptyCell;
+  static TXshCell emptyCell;
 
-    ColumnLevel* l = getColumnLevelByFrame(row);
-    if (row < 0 || row < getFirstRow() || row > getMaxFrame()) {
-        if (l) emptyCell.m_level = l->getSoundLevel();
-        return emptyCell;
-    }
+  ColumnLevel* l = getColumnLevelByFrame(row);
+  if (row < 0 || row < getFirstRow() || row > getMaxFrame()) {
+    if (l) emptyCell.m_level = l->getSoundLevel();
+    return emptyCell;
+  }
 
-    if (!l) return emptyCell;
-    TXshSoundLevel* soundLevel = l->getSoundLevel();
-    TXshCell cell(soundLevel, TFrameId(row - l->getStartFrame()));
-    return cell;
+  if (!l) return emptyCell;
+  TXshSoundLevel* soundLevel = l->getSoundLevel();
+  TXshCell cell(soundLevel, TFrameId(row - l->getStartFrame()));
+  return cell;
 }
 
 //-----------------------------------------------------------------------------
@@ -391,7 +391,8 @@ void TXshSoundColumn::checkColumn() const {
 
 //-----------------------------------------------------------------------------
 
-void TXshSoundColumn::getCells(int row, int rowCount, TXshCell cells[]) {
+void TXshSoundColumn::getCells(int row, int rowCount, TXshCell cells[],
+                               bool implicitLookup) {
   // le celle da settare sono [ra, rb]
   int ra = row;
   int rb = row + rowCount - 1;
@@ -987,7 +988,7 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
 #else
   QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
   if (info.deviceName().length() == 0) throw TSoundDeviceException(TSoundDeviceException::NoDevice,
-								  "No device found, check QAudio backends");
+                  "No device found, check QAudio backends");
   QList<int> ssrs = info.supportedSampleRates();
   if (!ssrs.contains(format.m_sampleRate)) format.m_sampleRate = 44100;
   QAudioFormat qFormat;

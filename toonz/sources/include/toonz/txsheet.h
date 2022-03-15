@@ -208,7 +208,8 @@ public:
      TXshCellColumn set \b \e cells[] to \b \e rowCount empty cells.
           \sa getCells(), setCells(), getCell()
 */
-  void getCells(int row, int col, int rowCount, TXshCell cells[]) const;
+  void getCells(int row, int col, int rowCount, TXshCell cells[],
+                bool implicitLookup = false) const;
   /*! If column identified by index \b \e col is a \b TXshCellColumn or is empty
     and is not
     locked, this method sets to \b \e cells[] the given \b \e rowCount cells of
