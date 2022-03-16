@@ -405,41 +405,51 @@ QIcon createQIcon(const char *iconSVGName, bool useFullOpacity,
   // them for use in toolbars that are set for 20x20 we want to draw them onto a
   // 20x20 pixmap so they don't get resized in the GUI, they will be loaded into
   // the icon along with the original 16x16 pixmap.
-
+  // In case of multiple monitors with different resolutions, let's create icons
+  // for those also
   if (themeIconPixmap.size() == QSize(16 * devPixRatio, 16 * devPixRatio)) {
-    const QSize drawOnSize(20, 20);
-    const int x = (drawOnSize.width() - 16) / 2;   // left adjust
-    const int y = (drawOnSize.height() - 16) / 2;  // top adjust
+    for (auto screen : QApplication::screens()) {
+      QSize drawOnSize(20, 20);
+      int otherDevPixRatio = screen->devicePixelRatio();
+      if (otherDevPixRatio != devPixRatio) {
+        drawOnSize.setWidth(16 * otherDevPixRatio);
+        drawOnSize.setHeight(16 * otherDevPixRatio);
+      }
+      int x = (drawOnSize.width() - 16) / 2;   // left adjust
+      int y = (drawOnSize.height() - 16) / 2;  // top adjust
 
-    // Base icon
-    icon.addPixmap(
-        compositePixmap(themeIconPixmap, baseOpacity, drawOnSize, x, y),
-        QIcon::Normal, QIcon::Off);
-    icon.addPixmap(
-        compositePixmap(themeIconPixmap, disabledOpacity, drawOnSize, x, y),
-        QIcon::Disabled, QIcon::Off);
-
-    // Over icon
-    icon.addPixmap(
-        !overPixmap.isNull()
-            ? compositePixmap(overPixmap, activeOpacity, drawOnSize, x, y)
-            : compositePixmap(themeIconPixmap, activeOpacity, drawOnSize, x, y),
-        QIcon::Active);
-
-    // On icon
-    if (!onPixmap.isNull()) {
-      icon.addPixmap(compositePixmap(onPixmap, activeOpacity, drawOnSize, x, y),
-                     QIcon::Normal, QIcon::On);
+      // Base icon
       icon.addPixmap(
-          compositePixmap(onPixmap, disabledOpacity, drawOnSize, x, y),
-          QIcon::Disabled, QIcon::On);
-    } else {
-      icon.addPixmap(
-          compositePixmap(themeIconPixmap, activeOpacity, drawOnSize, x, y),
-          QIcon::Normal, QIcon::On);
+          compositePixmap(themeIconPixmap, baseOpacity, drawOnSize, x, y),
+          QIcon::Normal, QIcon::Off);
       icon.addPixmap(
           compositePixmap(themeIconPixmap, disabledOpacity, drawOnSize, x, y),
-          QIcon::Disabled, QIcon::On);
+          QIcon::Disabled, QIcon::Off);
+
+      // Over icon
+      icon.addPixmap(
+          !overPixmap.isNull()
+              ? compositePixmap(overPixmap, activeOpacity, drawOnSize, x, y)
+              : compositePixmap(themeIconPixmap, activeOpacity, drawOnSize, x,
+                                y),
+          QIcon::Active);
+
+      // On icon
+      if (!onPixmap.isNull()) {
+        icon.addPixmap(
+            compositePixmap(onPixmap, activeOpacity, drawOnSize, x, y),
+            QIcon::Normal, QIcon::On);
+        icon.addPixmap(
+            compositePixmap(onPixmap, disabledOpacity, drawOnSize, x, y),
+            QIcon::Disabled, QIcon::On);
+      } else {
+        icon.addPixmap(
+            compositePixmap(themeIconPixmap, activeOpacity, drawOnSize, x, y),
+            QIcon::Normal, QIcon::On);
+        icon.addPixmap(
+            compositePixmap(themeIconPixmap, disabledOpacity, drawOnSize, x, y),
+            QIcon::Disabled, QIcon::On);
+      }
     }
   }
 

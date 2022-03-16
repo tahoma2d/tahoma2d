@@ -447,6 +447,7 @@ ToolOptionPopupButton::ToolOptionPopupButton(TTool *tool,
     QAction *action = addItem(createQIcon(items[i].iconName.toUtf8()));
     // make the tooltip text
     action->setToolTip(items[i].UIName);
+    action->setIconVisibleInMenu(true);
   }
   setCurrentIndex(0);
   updateStatus();
