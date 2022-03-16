@@ -1655,7 +1655,8 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
     // Paint the cell edge-to-edge, we use LightLineColor with low opacity to
     // pick up the hue of the cell color to make the separator line more
     // pleasing to the eye.
-    p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
+    p.fillRect(rect.adjusted(0, 0, 0, (nextCell.isEmpty() ? 0 : 1)),
+               QBrush(cellColor));
   else
     p.fillRect(rect, QBrush(cellColor));
 
@@ -1791,7 +1792,17 @@ void CellArea::drawDragHandle(QPainter &p, bool isStart, const QPoint &xy,
       dragHandleRect.adjust(0, 1, 0, 0);
     else
       dragHandleRect.adjust(1, 0, 0, 0);
+  } else {
+    if (xy.x() > 1 && !m_viewer->orientation()->isVerticalTimeline())
+      dragHandleRect.adjust(-1, 0, 0, 0);  
+    else if (xy.y() > 1 && m_viewer->orientation()->isVerticalTimeline())
+      dragHandleRect.adjust(0, -1, 0, 0);
   }
+
+  // Adjust for 1st row
+  if (xy.x() <= 1 && !m_viewer->orientation()->isVerticalTimeline())
+    dragHandleRect.adjust(0, 0, -1, 0);
+
   p.fillRect(dragHandleRect, QBrush(sideColor));
 }
 
@@ -1799,10 +1810,17 @@ void CellArea::drawDragHandle(QPainter &p, bool isStart, const QPoint &xy,
 void CellArea::drawEndOfDragHandle(QPainter &p, bool isEnd, const QPoint &xy,
                                    const QColor &cellColor) const {
   if (!isEnd) return;
+
+  QPoint lxy = xy;
+
+  // Adjust left for 1st row
+  if (lxy.x() <= 1 && !m_viewer->orientation()->isVerticalTimeline())
+    lxy.setX(lxy.x() - 1);
+
   QPoint frameAdj     = m_viewer->getFrameZoomAdjustment();
   QPainterPath corner = m_viewer->orientation()
                             ->path(PredefinedPath::DRAG_HANDLE_CORNER)
-                            .translated(xy - frameAdj);
+                            .translated(lxy - frameAdj);
   p.fillPath(corner, QBrush(cellColor));
 }
 
@@ -1811,17 +1829,36 @@ void CellArea::drawLockedDottedLine(QPainter &p, bool isLocked, bool isStart,
                                     const QPoint &xy,
                                     const QColor &cellColor) const {
   if (!isLocked) return;
+
+  QPoint lxy = xy;
+
+  int adjEndX = 0, adjEndY = 0;
+  if (!m_viewer->orientation()->isVerticalTimeline()) {
+    if (lxy.x() <= 1) {
+      lxy.setX(lxy.x() + 1); // Adjust for 1st row
+      adjEndX = -2;
+    } else
+      adjEndX = -1;
+  } else {
+    if (lxy.y() <= 1) {
+      lxy.setY(lxy.y() + 1);
+      adjEndY = -2;
+    } else
+      adjEndY = -1;
+  }
+
   p.setPen(QPen(cellColor, 2, Qt::DotLine));
   QPoint frameAdj = m_viewer->getFrameZoomAdjustment();
   QLine dottedLine =
-      m_viewer->orientation()->line(PredefinedLine::LOCKED).translated(xy);
+      m_viewer->orientation()->line(PredefinedLine::LOCKED).translated(lxy);
   if (isStart) {
     if (m_viewer->orientation()->isVerticalTimeline())
       dottedLine.setP1(QPoint(dottedLine.x1(), dottedLine.y1() + 2));
     else
       dottedLine.setP1(QPoint(dottedLine.x1() + 2, dottedLine.y1()));
   }
-  dottedLine.setP2(QPoint(dottedLine.x2(), dottedLine.y2()) - frameAdj);
+  dottedLine.setP2(QPoint(dottedLine.x2() + adjEndX, dottedLine.y2() + adjEndY) -
+                   frameAdj);
   p.drawLine(dottedLine);
 }
 
@@ -2046,7 +2083,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
         // Paint the cell edge-to-edge, we use LightLineColor with low opacity
         // to pick up the hue of the cell color to make the separator line more
         // pleasing to the eye.
-        p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
+        p.fillRect(rect.adjusted(0, 0, 0, (nextCell.isEmpty() ? 0 : 1)),
+                   QBrush(cellColor));
       else
         p.fillRect(rect, QBrush(cellColor));
     }
@@ -2120,7 +2158,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     // Paint the cell edge-to-edge, we use LightLineColor with low opacity to
     // pick up the hue of the cell color to make the separator line more
     // pleasing to the eye.
-    p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
+    p.fillRect(rect.adjusted(0, 0, 0, (nextCell.isEmpty() ? 0 : 1)),
+               QBrush(cellColor));
   else
     p.fillRect(rect, QBrush(cellColor));
 
@@ -2389,7 +2428,8 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
     // Paint the cell edge-to-edge, we use LightLineColor with low opacity to
     // pick up the hue of the cell color to make the separator line more
     // pleasing to the eye.
-    p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
+    p.fillRect(rect.adjusted(0, 0, 0, (nextCell.isEmpty() ? 0 : 1)),
+               QBrush(cellColor));
   else
     p.fillRect(rect, QBrush(cellColor));
 
@@ -2624,7 +2664,8 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
         // Paint the cell edge-to-edge, we use LightLineColor with low opacity
         // to pick up the hue of the cell color to make the separator line more
         // pleasing to the eye.
-        p.fillRect(info.rect.adjusted(0, 0, 0, 1), QBrush(tmpCellColor));
+        p.fillRect(info.rect.adjusted(0, 0, 0, (nextCell.isEmpty() ? 0 : 1)),
+                   QBrush(tmpCellColor));
       else
         p.fillRect(info.rect, QBrush(tmpCellColor));
 
@@ -2872,7 +2913,8 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
     // Paint the cell edge-to-edge, we use LightLineColor with low opacity to
     // pick up the hue of the cell color to make the separator line more
     // pleasing to the eye.
-    p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(cellColor));
+    p.fillRect(rect.adjusted(0, 0, 0, (nextCell.isEmpty() ? 0 : 1)),
+               QBrush(cellColor));
   else
     p.fillRect(rect, QBrush(cellColor));
 
