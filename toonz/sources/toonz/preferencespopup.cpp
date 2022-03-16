@@ -280,7 +280,7 @@ PreferencesPopup::Display30bitChecker::GLView::GLView(QWidget* parent,
                                                       bool is30bit)
     : QOpenGLWidget(parent), m_is30bit(is30bit) {
   setFixedSize(500, 100);
-#if QT_VERSION >= 0x051000
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   if (m_is30bit) setTextureFormat(TGL_TexFmt10);
 #endif
 }
@@ -1616,7 +1616,7 @@ QWidget* PreferencesPopup::createInterfacePage() {
   // insertUI(interfaceFontStyle, lay, buildFontStyleList());
   QGridLayout* colorCalibLay = insertGroupBoxUI(colorCalibrationEnabled, lay);
   { insertUI(colorCalibrationLutPaths, colorCalibLay); }
-#if QT_VERSION >= 0x051000
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   insertUI(displayIn30bit, lay);
   row = lay->rowCount();
   lay->addWidget(check30bitBtn, row - 1, 2, Qt::AlignRight);

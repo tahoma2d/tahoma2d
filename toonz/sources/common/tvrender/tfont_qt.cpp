@@ -179,7 +179,7 @@ TPoint TFont::drawChar(QImage &outImage, TPoint &unused, wchar_t charcode,
   // (21/1/2022) Use this workaround for all platforms as the crash also occured
   // in windows when the display is scaled up.
   if (chars[0].isSpace()) {
-#if QT_VERSION >= 0x051100
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
     int w = QFontMetrics(m_pimpl->m_font).horizontalAdvance(chars[0]);
 #else
     int w = raw.averageCharWidth();
