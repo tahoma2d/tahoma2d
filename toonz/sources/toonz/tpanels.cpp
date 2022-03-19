@@ -1631,8 +1631,8 @@ public:
   TPanel *createPanel(QWidget *parent) override {
     TPanel *panel = new VectorGuidedDrawingPanel(parent);
     panel->setObjectName(getPanelType());
-    panel->setWindowTitle(QObject::tr("Vector Guided Drawing Controls"));
-    panel->setMinimumSize(387, 265);
+    panel->setWindowTitle(QObject::tr("Vector Guided Tweening Controls"));
+    panel->setMinimumSize(405, 265);
     panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
     connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
             SLOT(showTitleBar(bool)));
@@ -1645,4 +1645,4 @@ public:
 //=============================================================================
 OpenFloatingPanel openVectorGuidedDrawingPanelCommand(
     MI_OpenGuidedDrawingControls, "VectorGuidedDrawingPanel",
-    QObject::tr("Vector Guided Drawing"));
+    QObject::tr("Vector Guided Tweening Controls"));

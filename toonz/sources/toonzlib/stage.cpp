@@ -203,7 +203,7 @@ public:
   int m_currentXsheetLevel;   // level of the current xsheet, see: editInPlace
   int m_xsheetLevel;          // xsheet-level of the column being processed
 
-  // for guided drawing
+  // for guided tweening
   TFrameId m_currentFrameId;
   int m_isGuidedDrawingEnabled;
   int m_guidedFrontStroke = -1;

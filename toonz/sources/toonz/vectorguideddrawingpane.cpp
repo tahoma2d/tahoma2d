@@ -112,12 +112,12 @@ VectorGuidedDrawingPane::VectorGuidedDrawingPane(QWidget *parent,
   mainlayout->setSpacing(2);
   {
     QLabel *guideFrameLabel = new QLabel(this);
-    guideFrameLabel->setText(tr("Guide Frames:"));
+    guideFrameLabel->setText(tr("Use Onion Skin Frames:"));
     mainlayout->addWidget(guideFrameLabel, 0, 0, Qt::AlignRight);
     mainlayout->addWidget(m_guidedTypeCB, 0, 1);
 
     QLabel *selectGuideStrokeLabel = new QLabel(this);
-    selectGuideStrokeLabel->setText(tr("Select Guide Stroke:"));
+    selectGuideStrokeLabel->setText(tr("Select Stroke:"));
     mainlayout->addWidget(selectGuideStrokeLabel, 1, 0, Qt::AlignRight);
     QHBoxLayout *selectBtnLayout = new QHBoxLayout();
     selectBtnLayout->setMargin(0);
@@ -131,7 +131,7 @@ VectorGuidedDrawingPane::VectorGuidedDrawingPane(QWidget *parent,
     mainlayout->addLayout(selectBtnLayout, 1, 1);
 
     QLabel *flipGuideStrokeLabel = new QLabel(this);
-    flipGuideStrokeLabel->setText(tr("Flip Guide Stroke:"));
+    flipGuideStrokeLabel->setText(tr("Flip Stroke Direction:"));
     mainlayout->addWidget(flipGuideStrokeLabel, 2, 0, Qt::AlignRight);
     QHBoxLayout *flipBtnLayout = new QHBoxLayout();
     flipBtnLayout->setMargin(0);
