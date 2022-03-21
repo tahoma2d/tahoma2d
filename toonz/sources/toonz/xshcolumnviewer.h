@@ -95,8 +95,14 @@ protected:
   void focusInEvent(QFocusEvent *e) override {}
   void selectCurrent(const QString &text);
 
+  void addText(const QString &text, const QString &display);
+  void addText(const QString &text, const QColor &textColor);
+  void addText(const QString &text, const QString &display,
+               const QColor &identColor);
+  virtual void onTextSelected(const QString &) = 0;
+
 protected slots:
-  virtual void onTextChanged(const QString &) = 0;
+  void onItemSelected(QListWidgetItem *);
 };
 
 //=============================================================================
@@ -113,7 +119,7 @@ public:
   void refresh() override;
 
 protected slots:
-  void onTextChanged(const QString &) override;
+  void onTextSelected(const QString &) override;
 };
 
 //=============================================================================
@@ -130,7 +136,7 @@ public:
   void refresh() override;
 
 protected slots:
-  void onTextChanged(const QString &) override;
+  void onTextSelected(const QString &) override;
 };
 
 //=============================================================================

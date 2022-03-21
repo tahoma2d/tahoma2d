@@ -1239,22 +1239,19 @@ void FxSchematicPort::paint(QPainter *painter,
                             const QStyleOptionGraphicsItem *option,
                             QWidget *widget) {
   if (m_isPassThrough && getLinkCount() > 0) return;
-
   // large scaled
   if (getDock()->getNode()->isNormalIconView()) {
     switch (getType()) {
     case eFxInputPort:
     case eFxGroupedInPort: {
-      QRect sourceRect =
+      QRect targetRect =
           scene()->views()[0]->matrix().mapRect(boundingRect()).toRect();
       static QIcon fxPortRedIcon(":Resources/fxport_red.svg");
       static QIcon fxPortPassThroughRedIcon(":Resources/fxport_pt_red.svg");
       QPixmap redPm = (m_isPassThrough)
-                          ? fxPortPassThroughRedIcon.pixmap(sourceRect.size())
-                          : fxPortRedIcon.pixmap(sourceRect.size());
-      sourceRect = QRect(0, 0, sourceRect.width() * getDevPixRatio(),
-                         sourceRect.height() * getDevPixRatio());
-      painter->drawPixmap(boundingRect(), redPm, sourceRect);
+                          ? fxPortPassThroughRedIcon.pixmap(targetRect.size())
+                          : fxPortRedIcon.pixmap(targetRect.size());
+      painter->drawPixmap(boundingRect().toRect(), redPm);
     } break;
 
     case eFxOutputPort:
@@ -1263,8 +1260,7 @@ void FxSchematicPort::paint(QPainter *painter,
           scene()->views()[0]->matrix().mapRect(boundingRect()).toRect();
       static QIcon fxPortBlueIcon(":Resources/fxport_blue.svg");
       QPixmap bluePm = fxPortBlueIcon.pixmap(sourceRect.size());
-      sourceRect     = QRect(0, 0, sourceRect.width() * getDevPixRatio(),
-                         sourceRect.height() * getDevPixRatio());
+      sourceRect     = QRect(0, 0, bluePm.width(), bluePm.height());
       painter->drawPixmap(boundingRect(), bluePm, sourceRect);
       FxSchematicDock *parentDock =
           dynamic_cast<FxSchematicDock *>(parentItem());
@@ -1288,9 +1284,7 @@ void FxSchematicPort::paint(QPainter *painter,
           scene()->views()[0]->matrix().mapRect(boundingRect()).toRect();
       QPixmap linkPm =
           QIcon(":Resources/schematic_link.svg").pixmap(sourceRect.size());
-      sourceRect = QRect(0, 0, sourceRect.width() * getDevPixRatio(),
-                         sourceRect.height() * getDevPixRatio());
-      painter->drawPixmap(boundingRect(), linkPm, sourceRect);
+      painter->drawPixmap(boundingRect().toRect(), linkPm);
     } break;
     }
   }
@@ -1314,9 +1308,7 @@ void FxSchematicPort::paint(QPainter *painter,
           scene()->views()[0]->matrix().mapRect(boundingRect()).toRect();
       QPixmap linkPm = QIcon(":Resources/schematic_link_small.svg")
                            .pixmap(sourceRect.size());
-      sourceRect = QRect(0, 0, sourceRect.width() * getDevPixRatio(),
-                         sourceRect.height() * getDevPixRatio());
-      painter->drawPixmap(boundingRect(), linkPm, sourceRect);
+      painter->drawPixmap(boundingRect().toRect(), linkPm);
     } break;
     }
     painter->drawRect(boundingRect());
@@ -3924,9 +3916,9 @@ QRectF FxSchematicPassThroughNode::boundingRect() const {
   qreal width = m_width;
   QRectF recF = m_nameItem->boundingRect();
   if (m_showName) {
-    width                     = recF.width();
+    width = recF.width();
     if (width > m_width) xAdj = (width - m_width) / 2;
-    yAdj                      = 30;
+    yAdj = 30;
   }
   return QRectF(-5 - xAdj, -5 - yAdj, std::max(m_width, width) + 10,
                 m_height + 10 + yAdj);

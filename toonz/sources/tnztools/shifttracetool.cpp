@@ -245,7 +245,7 @@ void ShiftTraceTool::drawControlRect() {  // TODO
                                           inksOnly);
     color       = (m_ghostIndex == 0) ? backOniColor : frontOniColor;
     double unit = sqrt(tglGetPixelSize2());
-    unit *= getDevPixRatio();
+    unit *= getDevicePixelRatio(m_viewer->viewerWidget());
     TRectD coloredBox = box.enlarge(3.0 * unit);
     tglColor(color);
     glBegin(GL_LINE_STRIP);

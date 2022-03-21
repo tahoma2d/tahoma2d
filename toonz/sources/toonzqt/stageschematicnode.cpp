@@ -769,9 +769,7 @@ void StageSchematicNodePort::paint(QPainter *painter,
       else
         pixmap = QIcon(":Resources/port_red.svg").pixmap(sourceRect.size());
     }
-    sourceRect = QRect(0, 0, sourceRect.width() * getDevPixRatio(),
-                       sourceRect.height() * getDevPixRatio());
-    painter->drawPixmap(imgRect, pixmap, sourceRect);
+    painter->drawPixmap(imgRect, pixmap);
   }
 }
 
@@ -910,8 +908,8 @@ QRectF StageSchematicSplinePort::boundingRect() const {
 void StageSchematicSplinePort::paint(QPainter *painter,
                                      const QStyleOptionGraphicsItem *option,
                                      QWidget *widget) {
-  QRect rect(0, 0, 16, 8);
-  QRect sourceRect = scene()->views()[0]->matrix().mapRect(rect);
+  QRect sourceRect =
+      scene()->views()[0]->matrix().mapRect(boundingRect().toRect());
   QPixmap pixmap;
 
   if (!m_parent->isParentPort()) {
@@ -927,9 +925,7 @@ void StageSchematicSplinePort::paint(QPainter *painter,
     static QIcon splineParentIcon(":Resources/spline_parent_port.svg");
     pixmap = splineParentIcon.pixmap(sourceRect.size());
   }
-  sourceRect = QRect(0, 0, sourceRect.width() * getDevPixRatio(),
-                     sourceRect.height() * getDevPixRatio());
-  painter->drawPixmap(rect, pixmap, sourceRect);
+  painter->drawPixmap(boundingRect().toRect(), pixmap);
 }
 
 //--------------------------------------------------------
@@ -1584,11 +1580,10 @@ StageSchematicPegbarNode::StageSchematicPegbarNode(StageSchematicScene *scene,
                                                    TStageObject *pegbar)
     : StageSchematicNode(scene, pegbar, 90, 18, false, false) {
   SchematicViewer *viewer = scene->getSchematicViewer();
-
-  std::string name = m_stageObject->getFullName();
-  std::string id   = m_stageObject->getId().toString();
-  m_name           = QString::fromStdString(name);
-  m_nameItem       = new SchematicName(this, 72, 20);
+  std::string name        = m_stageObject->getFullName();
+  std::string id          = m_stageObject->getId().toString();
+  m_name                  = QString::fromStdString(name);
+  m_nameItem              = new SchematicName(this, 72, 20);
   m_nameItem->setDefaultTextColor(viewer->getTextColor());
   m_nameItem->setName(m_name);
   m_nameItem->setPos(16, -1);
@@ -2032,9 +2027,8 @@ StageSchematicCameraNode::StageSchematicCameraNode(StageSchematicScene *scene,
                                                    TStageObject *pegbar)
     : StageSchematicNode(scene, pegbar, 90, 18, false, false) {
   SchematicViewer *viewer = scene->getSchematicViewer();
-
-  std::string name = m_stageObject->getFullName();
-  m_name           = QString::fromStdString(name);
+  std::string name        = m_stageObject->getFullName();
+  m_name                  = QString::fromStdString(name);
 
   m_nameItem = new SchematicName(this, 54, 20);
   m_nameItem->setDefaultTextColor(viewer->getTextColor());
@@ -2114,9 +2108,8 @@ StageSchematicSplineNode::StageSchematicSplineNode(StageSchematicScene *scene,
                                                    TStageObjectSpline *spline)
     : SchematicNode(scene), m_spline(spline), m_isOpened(false) {
   SchematicViewer *viewer = scene->getSchematicViewer();
-
-  m_width  = 90;
-  m_height = 18;
+  m_width                 = 90;
+  m_height                = 18;
   assert(spline);
 
   m_dock = new StageSchematicSplineDock(this, true, eStageSplinePort);

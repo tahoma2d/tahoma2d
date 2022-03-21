@@ -31,9 +31,38 @@
 #include <QFileInfo>
 #include <QDesktopWidget>
 #include <QSvgRenderer>
+#include <QScreen>
+#include <QWindow>
 
 using namespace DVGui;
 
+namespace {
+inline bool hasScreensWithDifferentDevPixRatio() {
+  static bool ret     = false;
+  static bool checked = false;
+  if (!checked) {  // check once
+    int dpr = QApplication::desktop()->devicePixelRatio();
+    for (auto screen : QGuiApplication::screens()) {
+      if ((int)screen->devicePixelRatio() != dpr) {
+        ret = true;
+        break;
+      }
+    }
+    checked = true;
+  }
+  return ret;
+}
+
+int getHighestDevicePixelRatio() {
+  static int highestDevPixRatio = 0;
+  if (highestDevPixRatio == 0) {
+    for (auto screen : QGuiApplication::screens())
+      highestDevPixRatio =
+          std::max(highestDevPixRatio, (int)screen->devicePixelRatio());
+  }
+  return highestDevPixRatio;
+}
+}  // namespace
 //-----------------------------------------------------------------------------
 
 QString fileSizeString(qint64 size, int precision) {
@@ -78,7 +107,7 @@ QPixmap rasterToQPixmap(const TRaster32P &ras, bool premultiplied,
                         bool setDevPixRatio) {
   QPixmap pixmap = QPixmap::fromImage(rasterToQImage(ras, premultiplied));
   if (setDevPixRatio) {
-    pixmap.setDevicePixelRatio(getDevPixRatio());
+    pixmap.setDevicePixelRatio(getDevicePixelRatio());
   }
   return pixmap;
 }
@@ -158,7 +187,7 @@ QPixmap scalePixmapKeepingAspectRatio(QPixmap pixmap, QSize size,
 
 QPixmap svgToPixmap(const QString &svgFilePath, const QSize &size,
                     Qt::AspectRatioMode aspectRatioMode, QColor bgColor) {
-  static int devPixRatio = getDevPixRatio();
+  static int devPixRatio = getHighestDevicePixelRatio();
   QSvgRenderer svgRenderer(svgFilePath);
   QSize pixmapSize;
   QRectF renderRect;
@@ -197,7 +226,16 @@ QPixmap svgToPixmap(const QString &svgFilePath, const QSize &size,
 
 //-----------------------------------------------------------------------------
 
-int getDevPixRatio() {
+int getDevicePixelRatio(const QWidget *widget) {
+  if (hasScreensWithDifferentDevPixRatio() && widget) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    return widget->screen()->devicePixelRatio();
+#else
+    if (!widget->windowHandle()) widget->winId();
+    if (widget->windowHandle())
+      return widget->windowHandle()->devicePixelRatio();
+#endif
+  }
   static int devPixRatio = QApplication::desktop()->devicePixelRatio();
   return devPixRatio;
 }
@@ -224,7 +262,7 @@ QString getIconThemePath(const QString &fileSVGPath) {
 
 QPixmap compositePixmap(QPixmap pixmap, const qreal &opacity, const QSize &size,
                         const int leftAdj, const int topAdj, QColor bgColor) {
-  static int devPixRatio = getDevPixRatio();
+  static int devPixRatio = getHighestDevicePixelRatio();
 
   // Sets size of destination pixmap for source to be drawn onto, if size is
   // empty use source pixmap size, else use custom size.
@@ -269,7 +307,7 @@ QPixmap recolorPixmap(QPixmap pixmap, QColor color) {
 
 QIcon createQIcon(const char *iconSVGName, bool useFullOpacity,
                   bool isForMenuItem) {
-  static int devPixRatio = getDevPixRatio();
+  static int devPixRatio = getHighestDevicePixelRatio();
 
   QIcon themeIcon = QIcon::fromTheme(iconSVGName);
 
@@ -367,41 +405,51 @@ QIcon createQIcon(const char *iconSVGName, bool useFullOpacity,
   // them for use in toolbars that are set for 20x20 we want to draw them onto a
   // 20x20 pixmap so they don't get resized in the GUI, they will be loaded into
   // the icon along with the original 16x16 pixmap.
-
+  // In case of multiple monitors with different resolutions, let's create icons
+  // for those also
   if (themeIconPixmap.size() == QSize(16 * devPixRatio, 16 * devPixRatio)) {
-    const QSize drawOnSize(20, 20);
-    const int x = (drawOnSize.width() - 16) / 2;   // left adjust
-    const int y = (drawOnSize.height() - 16) / 2;  // top adjust
+    for (auto screen : QApplication::screens()) {
+      QSize drawOnSize(20, 20);
+      int otherDevPixRatio = screen->devicePixelRatio();
+      if (otherDevPixRatio != devPixRatio) {
+        drawOnSize.setWidth(16 * otherDevPixRatio);
+        drawOnSize.setHeight(16 * otherDevPixRatio);
+      }
+      int x = (drawOnSize.width() - 16) / 2;   // left adjust
+      int y = (drawOnSize.height() - 16) / 2;  // top adjust
 
-    // Base icon
-    icon.addPixmap(
-        compositePixmap(themeIconPixmap, baseOpacity, drawOnSize, x, y),
-        QIcon::Normal, QIcon::Off);
-    icon.addPixmap(
-        compositePixmap(themeIconPixmap, disabledOpacity, drawOnSize, x, y),
-        QIcon::Disabled, QIcon::Off);
-
-    // Over icon
-    icon.addPixmap(
-        !overPixmap.isNull()
-            ? compositePixmap(overPixmap, activeOpacity, drawOnSize, x, y)
-            : compositePixmap(themeIconPixmap, activeOpacity, drawOnSize, x, y),
-        QIcon::Active);
-
-    // On icon
-    if (!onPixmap.isNull()) {
-      icon.addPixmap(compositePixmap(onPixmap, activeOpacity, drawOnSize, x, y),
-                     QIcon::Normal, QIcon::On);
+      // Base icon
       icon.addPixmap(
-          compositePixmap(onPixmap, disabledOpacity, drawOnSize, x, y),
-          QIcon::Disabled, QIcon::On);
-    } else {
-      icon.addPixmap(
-          compositePixmap(themeIconPixmap, activeOpacity, drawOnSize, x, y),
-          QIcon::Normal, QIcon::On);
+          compositePixmap(themeIconPixmap, baseOpacity, drawOnSize, x, y),
+          QIcon::Normal, QIcon::Off);
       icon.addPixmap(
           compositePixmap(themeIconPixmap, disabledOpacity, drawOnSize, x, y),
-          QIcon::Disabled, QIcon::On);
+          QIcon::Disabled, QIcon::Off);
+
+      // Over icon
+      icon.addPixmap(
+          !overPixmap.isNull()
+              ? compositePixmap(overPixmap, activeOpacity, drawOnSize, x, y)
+              : compositePixmap(themeIconPixmap, activeOpacity, drawOnSize, x,
+                                y),
+          QIcon::Active);
+
+      // On icon
+      if (!onPixmap.isNull()) {
+        icon.addPixmap(
+            compositePixmap(onPixmap, activeOpacity, drawOnSize, x, y),
+            QIcon::Normal, QIcon::On);
+        icon.addPixmap(
+            compositePixmap(onPixmap, disabledOpacity, drawOnSize, x, y),
+            QIcon::Disabled, QIcon::On);
+      } else {
+        icon.addPixmap(
+            compositePixmap(themeIconPixmap, activeOpacity, drawOnSize, x, y),
+            QIcon::Normal, QIcon::On);
+        icon.addPixmap(
+            compositePixmap(themeIconPixmap, disabledOpacity, drawOnSize, x, y),
+            QIcon::Disabled, QIcon::On);
+      }
     }
   }
 

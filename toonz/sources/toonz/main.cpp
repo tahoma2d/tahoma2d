@@ -453,16 +453,14 @@ int main(int argc, char *argv[]) {
   // qDebug() << "All icon theme search paths:" << QIcon::themeSearchPaths();
 
   // Set show icons in menus flag (use iconVisibleInMenu to disable selectively)
-  QApplication::instance()->setAttribute(Qt::AA_DontShowIconsInMenus, false);
+  QApplication::instance()->setAttribute(Qt::AA_DontShowIconsInMenus, true);
 
   TEnv::setApplicationFileName(argv[0]);
 
   // splash screen
   QPixmap splashPixmap =
       QIcon(":Resources/splash2.svg").pixmap(QSize(344, 344));
-  splashPixmap.setDevicePixelRatio(QApplication::desktop()->devicePixelRatio());
 
-// QPixmap splashPixmap(":Resources/splash.png");
 #ifdef _WIN32
   QFont font("Segoe UI", -1);
 #else

@@ -151,6 +151,8 @@ public:
 
   bool hasGadget() { return m_gadgets.size() != 0; }
 
+  int getDevPixRatio();
+
 public slots:
 
   void onFxSwitched();

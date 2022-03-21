@@ -52,6 +52,9 @@ public:
   struct CellMark {
     QString name;
     TPixel32 color;
+    bool operator==(const CellMark &cm) {
+      return name == cm.name && color == cm.color;
+    }
   };
 
 private:
