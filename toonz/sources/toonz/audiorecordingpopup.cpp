@@ -249,7 +249,7 @@ AudioRecordingPopup::~AudioRecordingPopup() {}
 //-----------------------------------------------------------------------------
 
 void AudioRecordingPopup::onRecordButtonPressed() {
-#if QT_VERSION >= 0x051000
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   if (m_audioInput->state() == QAudio::InterruptedState) {
     DVGui::warning(
         tr("The microphone is not available: "

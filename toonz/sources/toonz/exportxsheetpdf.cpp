@@ -995,7 +995,7 @@ void XSheetPDFTemplate::drawCellNumber(QPainter& painter, QRect rect,
       circlePen.setWidth(mm2px(0.3));
       painter.setPen(circlePen);
       QFontMetrics fm(font);
-#if QT_VERSION >= 0x051100
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
       int keyR_width =
         std::max(param(RowHeight), fm.horizontalAdvance(str) + mm2px(1));
 #else
