@@ -1,0 +1,16 @@
+Package: tahoma2d
+Version: 1.2
+Maintainer: Charlie Martinez <cmartinez@quirinux.org>
+Section: graphics
+Installed-Size: 3332895
+Homepage: https://tahoma2d.org/
+Architecture: amd64
+Priority: optional
+Description: Tahoma 2D Version 1.1
+ Author: Jeremy Bullock
+ .
+ It is developed primarily by Jeremy Bullock, a middle school teacher in Colorado. Tahoma2D is based on OpenToonz which itself is based on Toonz, developed by Digital Video in Italy.
+ .
+ The mission of Tahoma2D is to be a powerful and user-friendly animation program for digital 2D artists and stop motion animators.
+ .
+ Tahoma2D is mostly open source, but in order to support Canon cameras, we use the Canon proprietary SDK. Tahoma2D can be built without the SDK, however.
