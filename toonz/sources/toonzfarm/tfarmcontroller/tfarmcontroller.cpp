@@ -119,7 +119,8 @@ TFilePath getLocalRoot() {
 #else
   // set path to something suitable for most linux (Unix?) systems
 #ifdef FREEBSD
-  std::string unixpath = "/usr/local/etc/" + tver.getAppName() + "/tahoma.conf";
+  std::string unixpath =
+      "/usr/local/etc/" + tver.getAppName() + "/tahoma.conf";
 #else
   std::string unixpath = "/etc/" + tver.getAppName() + "/tahoma.conf";
 #endif
@@ -767,7 +768,7 @@ inline QString toString(const TFarmTask &task, int ver) {
     ss += ",";
     ss += QString::number(task.m_platform) + ",";
 
-    int depCount                      = 0;
+    int depCount = 0;
     if (task.m_dependencies) depCount = task.m_dependencies->getTaskCount();
 
     ss += QString::number(depCount);
@@ -1320,7 +1321,7 @@ bool FarmController::tryToStartTask(CtrlFarmTask *task) {
       map<TaskId, CtrlFarmTask *>::iterator itSubTask =
           m_tasks.find(TaskId(*itSubTaskId));
       if (itSubTask != m_tasks.end()) {
-        CtrlFarmTask *subTask                = itSubTask->second;
+        CtrlFarmTask *subTask = itSubTask->second;
         if (tryToStartTask(subTask)) started = true;
       }
     }
@@ -1776,8 +1777,7 @@ void FarmController::taskSubmissionError(const QString &taskId, int errCode) {
         }
 
         parentTask->m_status = parentTaskState;
-        if (parentTask->m_status == Aborted ||
-            parentTask->m_status == Aborted) {
+        if (parentTask->m_status == Aborted) {
           parentTask->m_completionDate = task->m_completionDate;
           if (parentTask->m_toBeDeleted) m_tasks.erase(itParent);
         }
@@ -1861,7 +1861,7 @@ void FarmController::taskCompleted(const QString &taskId, int exitCode) {
     } else {
       switch (exitCode) {
       case 0:
-        task->m_status                                = Completed;
+        task->m_status = Completed;
         if (isAScript(task)) task->m_successfullSteps = task->m_stepCount;
         break;
       case RENDER_LICENSE_NOT_FOUND:
@@ -2343,7 +2343,7 @@ void ControllerService::onStart(int argc, char *argv[]) {
   msg += "\n";
   m_userLog->info(msg);
 
-// std::cout << msg;
+  // std::cout << msg;
 
 #ifdef __sgi
   { remove("/tmp/.tfarmcontroller.dat"); }
