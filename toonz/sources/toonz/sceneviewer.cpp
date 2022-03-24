@@ -1476,6 +1476,15 @@ void SceneViewer::drawCameraStand() {
 
   TXshSimpleLevel::m_rasterizePli = rasterizePliToggle.getStatus();
 
+  // display blank frame
+  if (m_visualSettings.m_blankColor != TPixel::Transparent) {
+    glClearColor(m_visualSettings.m_blankColor.r / 255.0f,
+                 m_visualSettings.m_blankColor.g / 255.0f,
+                 m_visualSettings.m_blankColor.b / 255.0f, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    return;
+  }
+
   // clear
   if (m_draw3DMode) {
     glEnable(GL_DEPTH_TEST);
