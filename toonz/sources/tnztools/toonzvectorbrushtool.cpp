@@ -30,6 +30,7 @@
 #include "toonz/preferences.h"
 #include "toonz/tonionskinmaskhandle.h"
 #include "toonz/toonzfolders.h"
+#include "toonz/tstageobjectcmd.h"
 
 // TnzCore includes
 #include "tstream.h"
@@ -1145,6 +1146,10 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
                                        // autoclose proprio dal fatto che
                                        // hanno 1 solo chunk.
     stroke->insertControlPoints(0.5);
+
+  bool isEditingLevel = m_application->getCurrentFrame()->isEditingLevel();
+  if (!isEditingLevel) TUndoManager::manager()->beginBlock();
+
   if (m_frameRange.getIndex()) {
     if (m_firstFrameId == -1) {
       if (m_autoClose.getValue()) stroke->setSelfLoop(true);
@@ -1250,6 +1255,28 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
         getApplication()->getCurrentFrame()->setFid(fId);
     }
   }
+
+  // Column name renamed to level name only if was originally empty
+  if (!isEditingLevel) {
+    int col = getApplication()->getCurrentColumn()->getColumnIndex();
+    TXshColumn *column =
+        getApplication()->getCurrentXsheet()->getXsheet()->getColumn(col);
+    int r0, r1;
+    column->getRange(r0, r1);
+    if (r0 == r1) {
+      TXshLevel *level = getApplication()->getCurrentLevel()->getLevel();
+      TXshSimpleLevelP simLevel = level->getSimpleLevel();
+
+      TStageObjectId columnId = TStageObjectId::ColumnId(col);
+      std::string columnName =
+          QString::fromStdWString(simLevel->getName()).toStdString();
+      TStageObjectCmd::rename(columnId, columnName,
+                              getApplication()->getCurrentXsheet());
+    }
+
+    TUndoManager::manager()->endBlock();
+  }
+
   assert(stroke);
   m_track.clear();
   m_toggleSnap      = false;

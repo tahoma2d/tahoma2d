@@ -31,6 +31,7 @@
 #include "toonz/tpalettehandle.h"
 #include "toonz/mypaintbrushstyle.h"
 #include "toonz/toonzfolders.h"
+#include "toonz/tstageobjectcmd.h"
 
 // TnzCore includes
 #include "tstream.h"
@@ -1859,6 +1860,9 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
   TXshLevel *level          = app->getCurrentLevel()->getLevel();
   TXshSimpleLevelP simLevel = level->getSimpleLevel();
 
+  bool isEditingLevel = m_application->getCurrentFrame()->isEditingLevel();
+  if (!isEditingLevel) TUndoManager::manager()->beginBlock();
+
   /*--
    * 描画中にカレントフレームが変わっても、描画開始時のFidに対してUndoを記録する
    * --*/
@@ -2081,6 +2085,23 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
           m_isFrameCreated, m_isLevelCreated, m_isStraight));
     }
   }
+
+  // Column name renamed to level name only if was originally empty
+  if (!isEditingLevel) {
+    int col            = app->getCurrentColumn()->getColumnIndex();
+    TXshColumn *column = app->getCurrentXsheet()->getXsheet()->getColumn(col);
+    int r0, r1;
+    column->getRange(r0, r1);
+    if (r0 == r1) {
+      TStageObjectId columnId = TStageObjectId::ColumnId(col);
+      std::string columnName =
+          QString::fromStdWString(simLevel->getName()).toStdString();
+      TStageObjectCmd::rename(columnId, columnName, app->getCurrentXsheet());
+    }
+
+    TUndoManager::manager()->endBlock();
+  }
+
   delete m_tileSaver;
   m_isStraight    = false;
   m_oldPressure   = -1.0;

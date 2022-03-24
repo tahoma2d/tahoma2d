@@ -28,6 +28,8 @@
 #include "toonz/mypaintbrushstyle.h"
 #include "toonz/preferences.h"
 #include "toonz/toonzfolders.h"
+#include "toonz/tcolumnhandle.h"
+#include "toonz/tstageobjectcmd.h"
 
 // TnzCore includes
 #include "tgl.h"
@@ -656,6 +658,8 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
 
   if (m_tileSet->getTileCount() > 0) {
     delete m_tileSaver;
+    bool isEditingLevel = m_application->getCurrentFrame()->isEditingLevel();
+    if (!isEditingLevel) TUndoManager::manager()->beginBlock();
     TTool::Application *app   = TTool::getApplication();
     TXshLevel *level          = app->getCurrentLevel()->getLevel();
     TXshSimpleLevelP simLevel = level->getSimpleLevel();
@@ -664,6 +668,22 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
     TUndoManager::manager()->add(new FullColorBrushUndo(
         m_tileSet, simLevel.getPointer(), frameId, m_isFrameCreated, subras,
         m_strokeRect.getP00()));
+
+    // Column name renamed to level name only if was originally empty
+    if (!isEditingLevel) {
+      int col            = app->getCurrentColumn()->getColumnIndex();
+      TXshColumn *column = app->getCurrentXsheet()->getXsheet()->getColumn(col);
+      int r0, r1;
+      column->getRange(r0, r1);
+      if (r0 == r1) {
+        TStageObjectId columnId = TStageObjectId::ColumnId(col);
+        std::string columnName =
+            QString::fromStdWString(simLevel->getName()).toStdString();
+        TStageObjectCmd::rename(columnId, columnName, app->getCurrentXsheet());
+      }
+
+      TUndoManager::manager()->endBlock();
+    }
   }
 
   notifyImageChanged();

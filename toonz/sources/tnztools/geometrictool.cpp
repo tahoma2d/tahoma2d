@@ -33,6 +33,8 @@
 #include "tpixelutils.h"
 #include "historytypes.h"
 #include "toonzvectorbrushtool.h"
+#include "toonz/tcolumnhandle.h"
+#include "toonz/tstageobjectcmd.h"
 
 #include "toonz/mypaintbrushstyle.h"
 
@@ -1256,7 +1258,32 @@ public:
   }
   void leftButtonUp(const TPointD &p, const TMouseEvent &e) override {
     if (!m_active) return;
+
+    bool isEditingLevel = m_application->getCurrentFrame()->isEditingLevel();
+    if (!isEditingLevel) TUndoManager::manager()->beginBlock();
+
     if (m_primitive) m_primitive->leftButtonUp(p, e);
+
+    // Column name renamed to level name only if was originally empty
+    if (!isEditingLevel) {
+      int col = m_application->getCurrentColumn()->getColumnIndex();
+      TXshColumn *column =
+          m_application->getCurrentXsheet()->getXsheet()->getColumn(col);
+      int r0, r1;
+      column->getRange(r0, r1);
+      if (r0 == r1) {
+        TXshLevel *level = m_application->getCurrentLevel()->getLevel();
+        TXshSimpleLevelP simLevel = level->getSimpleLevel();
+        TStageObjectId columnId = TStageObjectId::ColumnId(col);
+        std::string columnName =
+            QString::fromStdWString(simLevel->getName()).toStdString();
+        TStageObjectCmd::rename(columnId, columnName,
+                                m_application->getCurrentXsheet());
+      }
+
+      TUndoManager::manager()->endBlock();
+    }
+
     invalidate();
   }
   void leftButtonDoubleClick(const TPointD &p, const TMouseEvent &e) override {
