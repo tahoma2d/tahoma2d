@@ -1616,6 +1616,9 @@ QWidget* PreferencesPopup::createInterfacePage() {
   insertUI(CurrentLanguageName, lay, languageItemList);
   // insertUI(interfaceFont, lay);  // creates QFontComboBox
   // insertUI(interfaceFontStyle, lay, buildFontStyleList());
+  //qobject_cast<QComboBox*>(m_controlIdMap.key(interfaceFontStyle))
+  //    ->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+
   QGridLayout* colorCalibLay = insertGroupBoxUI(colorCalibrationEnabled, lay);
   { insertUI(colorCalibrationLutPaths, colorCalibLay); }
 #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
@@ -1676,7 +1679,8 @@ QWidget* PreferencesPopup::createVisualizationPage() {
 
 QWidget* PreferencesPopup::createLoadingPage() {
   m_levelFormatNames = new QComboBox;
-  m_editLevelFormat  = new QPushButton(tr("Edit"));
+  m_levelFormatNames->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+  m_editLevelFormat = new QPushButton(tr("Edit"));
 
   QPushButton* addLevelFormat    = new QPushButton("+");
   QPushButton* removeLevelFormat = new QPushButton("-");
