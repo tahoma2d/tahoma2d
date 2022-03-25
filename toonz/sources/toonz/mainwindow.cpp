@@ -2208,7 +2208,7 @@ void MainWindow::defineActions() {
   CommandManager::instance()->enable(MI_NoShift, false);
   createAction(MI_ResetShift, QT_TR_NOOP("Reset Shift"), "", "",
                MenuViewCommandType, "shift_and_trace_reset");
-  createToggle(MI_VectorGuidedDrawing, QT_TR_NOOP("Vector Guided Drawing"), "",
+  createToggle(MI_VectorGuidedDrawing, QT_TR_NOOP("Vector Guided Tweening"), "",
                Preferences::instance()->isGuidedDrawingEnabled(),
                MenuViewCommandType, "view_guided_drawing");
   if (QGLPixelBuffer::hasOpenGLPbuffers())
@@ -2279,7 +2279,7 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_StartupPopup, QT_TR_NOOP("&Startup Popup..."),
                           "Alt+S" /*, "opentoonz"*/);
   createMenuWindowsAction(MI_OpenGuidedDrawingControls,
-                          QT_TR_NOOP("Guided Drawing Controls"), "",
+                          QT_TR_NOOP("Guided Tweening Controls"), "",
                           "guided_drawing");
   // menuAct = createToggle(MI_DockingCheck, QT_TR_NOOP("&Lock Room Panes"), "",
   //                        DockingCheckToggleAction ? 1 : 0, MenuWindowsCommandType);

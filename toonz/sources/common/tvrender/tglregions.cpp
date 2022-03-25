@@ -178,7 +178,7 @@ static void drawArrows(TStroke *stroke, bool onlyFirstPoint) {
 }
 
 //-----------------------------------------------------------------------------
-// Used for Guided Drawing
+// Used for Guided Tweening
 static void drawFirstControlPoint(const TVectorRenderData &rd,
                                   TStroke *stroke) {
   TPointD p          = stroke->getPoint(0.0);
@@ -601,7 +601,7 @@ static bool tglDoDraw(const TVectorRenderData &rd, const TStroke *s) {
   bool ret = false;
 
   if (visible) {
-    // Change stroke color to blue if guided drawing
+    // Change stroke color to blue if guided tweening
     if (rd.m_showGuidedDrawing && rd.m_highLightNow) {
       TVectorRenderData *newRd = new TVectorRenderData(
           rd, rd.m_aff, rd.m_clippingRect, rd.m_palette, rd.m_guidedCf);

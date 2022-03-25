@@ -2072,7 +2072,7 @@ void SceneViewer::drawScene() {
   bool fillFullColorRaster = TXshSimpleLevel::m_fillFullColorRaster;
   TXshSimpleLevel::m_fillFullColorRaster = false;
 
-  // Guided Drawing Check
+  // Guided Tweening Check
   int useGuidedDrawing  = Preferences::instance()->getGuidedDrawingType();
   TTool *tool           = app->getCurrentTool()->getTool();
   int guidedFrontStroke = tool ? tool->getViewer()->getGuidedFrontStroke() : -1;

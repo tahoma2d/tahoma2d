@@ -148,17 +148,17 @@ SceneViewerContextMenu::SceneViewerContextMenu(SceneViewer *parent)
       action->setChecked(data == currentData);
       group->addAction(action);
     };
-    QMenu *guidedDrawingMenu = addMenu(tr("Vector Guided Drawing"));
+    QMenu *guidedDrawingMenu = addMenu(tr("Vector Guided Tweening"));
     int guidedDrawingStatus  = Preferences::instance()->getGuidedDrawingType();
 
     QActionGroup *guidedDrawingGroup = new QActionGroup(this);
     addOptionAction(tr("Off"), 0, guidedDrawingStatus, guidedDrawingMenu,
                     guidedDrawingGroup);
-    addOptionAction(tr("Closest Drawing"), 1, guidedDrawingStatus,
+    addOptionAction(tr("Closest Onion Skin Drawing"), 1, guidedDrawingStatus,
                     guidedDrawingMenu, guidedDrawingGroup);
-    addOptionAction(tr("Farthest Drawing"), 2, guidedDrawingStatus,
+    addOptionAction(tr("Farthest Onion Skin Drawing"), 2, guidedDrawingStatus,
                     guidedDrawingMenu, guidedDrawingGroup);
-    addOptionAction(tr("All Drawings"), 3, guidedDrawingStatus,
+    addOptionAction(tr("All Onion Skin Drawings"), 3, guidedDrawingStatus,
                     guidedDrawingMenu, guidedDrawingGroup);
     ret = ret &&
           parent->connect(guidedDrawingGroup, SIGNAL(triggered(QAction *)),
