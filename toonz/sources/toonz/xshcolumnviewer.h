@@ -118,6 +118,8 @@ public:
 
   void refresh() override;
 
+  static QString getNameTr(const TStageObjectId id);
+
 protected slots:
   void onTextSelected(const QString &) override;
 };
