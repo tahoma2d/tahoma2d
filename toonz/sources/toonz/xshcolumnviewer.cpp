@@ -393,21 +393,6 @@ void ChangeObjectWidget::focusOutEvent(QFocusEvent *e) {
 
 //-----------------------------------------------------------------------------
 
-void ChangeObjectWidget::selectCurrent(const QString &text) {
-  clearSelection();
-  int numRows = count();
-  for (int row = 0; row < numRows; row++) {
-    QListWidgetItem *it = item(row);
-    QVariant display    = it->data(Qt::UserRole);
-    if (text == (display.isValid() ? display.toString() : it->text())) {
-      setCurrentItem(it);
-      return;
-    }
-  }
-}
-
-//-----------------------------------------------------------------------------
-
 void ChangeObjectWidget::addText(const QString &text, const QString &display) {
   QListWidgetItem *item = new QListWidgetItem(display);
   item->setData(Qt::UserRole, text);
@@ -424,25 +409,16 @@ void ChangeObjectWidget::addText(const QString &text, const QColor &textColor) {
 
 //-----------------------------------------------------------------------------
 
-void ChangeObjectWidget::addText(const QString &text, const QString &display,
+void ChangeObjectWidget::addText(const TStageObjectId &id,
+                                 const QString &display,
                                  const QColor &identColor) {
   QListWidgetItem *item = new QListWidgetItem(display);
   QPixmap pixmap(4, 8);
   pixmap.fill(identColor);
   QIcon icon(pixmap);
   item->setIcon(icon);
-  item->setData(Qt::UserRole, text);
+  item->setData(Qt::UserRole, id.getCode());
   addItem(item);
-}
-
-//-----------------------------------------------------------------------------
-
-void ChangeObjectWidget::onItemSelected(QListWidgetItem *item) {
-  QVariant display = item->data(Qt::UserRole);
-  if (display.isValid())
-    onTextSelected(display.toString());
-  else
-    onTextSelected(item->text());
 }
 
 //=============================================================================
@@ -470,10 +446,10 @@ void ChangeObjectParent::refresh() {
   std::list<TStageObject *> children = currentObject->getChildren();
   TStageObjectTree *tree             = xsh->getStageObjectTree();
   int objectCount                    = tree->getStageObjectCount();
-  QList<QString> pegbarListID, pegbarListTr;
-  QList<QString> columnListID, columnListTr;
+  QList<TStageObjectId> pegbarListID, columnListID;
+  QList<QString> pegbarListTr, columnListTr;
   QList<QColor> pegbarListColor, columnListColor;
-  QString currentText;
+  TStageObjectId currentId;
   QString theLongestTxt;
   int i;
   for (i = 0; i < objectCount; i++) {
@@ -488,7 +464,7 @@ void ChangeObjectParent::refresh() {
                             xsh->getStageObject(id)) != children.end());
     if (id == currentObjectId || found) continue;
 
-    QString newTextID = QString::fromStdString(id.toString());
+    TStageObjectId newTextID = id;
     QString newTextTr;
     if (tree->getStageObject(i)->hasSpecifiedName())
       newTextTr = QString::fromStdString(tree->getStageObject(i)->getName());
@@ -513,7 +489,7 @@ void ChangeObjectParent::refresh() {
     } else
       continue;
 
-    if (id == parentId) currentText = newTextID;
+    if (id == parentId) currentId = newTextID;
     if (newTextTr.length() > theLongestTxt.length()) theLongestTxt = newTextTr;
     if (id.isColumn()) {
       columnListID.append(newTextID);
@@ -531,7 +507,7 @@ void ChangeObjectParent::refresh() {
     addText(pegbarListID.at(i), pegbarListTr.at(i), pegbarListColor.at(i));
 
   m_width = fontMetrics().width(theLongestTxt) + 32;
-  selectCurrent(currentText);
+  selectCurrent(currentId);
 }
 
 //-----------------------------------------------------------------------------
@@ -545,42 +521,20 @@ QString ChangeObjectParent::getNameTr(const TStageObjectId id) {
 
 //-----------------------------------------------------------------------------
 
-void ChangeObjectParent::onTextSelected(const QString &text) {
+void ChangeObjectParent::onItemSelected(QListWidgetItem *item) {
   assert(m_xsheetHandle);
   assert(m_objectHandle);
-  if (text.isEmpty()) {
-    hide();
-    return;
-  }
-  bool isPegbar                        = false;
-  if (text.startsWith("Peg")) isPegbar = true;
-  bool isCamera = false;
-  if (text.startsWith("Cam")) isCamera = true;
-  bool isTable                         = false;
-  if (text == "Table") isTable         = true;
-  QString number                       = text;
-  number.remove(0, 3);
-  // Remove names from the index
-  int spaceIndex = number.indexOf(" ");
-  if (spaceIndex > -1) number.remove(spaceIndex, 1000);
-  int index = number.toInt() - 1;
-  if (!isTable && index < 0) {
-    hide();
-    return;
-  }
+
+  QVariant data = item->data(Qt::UserRole);
+  if (!data.isValid()) return;
+
+  TStageObjectId newStageObjectId;
+  newStageObjectId.setCode(data.toUInt());
+
   TXsheet *xsh                   = m_xsheetHandle->getXsheet();
   TStageObjectId currentObjectId = m_objectHandle->getObjectId();
   TStageObjectId currentParentId =
       xsh->getStageObject(currentObjectId)->getParent();
-  TStageObjectId newStageObjectId;
-  if (isPegbar)
-    newStageObjectId = TStageObjectId::PegbarId(index);
-  else if (isCamera)
-    newStageObjectId = TStageObjectId::CameraId(index);
-  else if (isTable)
-    newStageObjectId = TStageObjectId::TableId;
-  else
-    newStageObjectId = TStageObjectId::ColumnId(index);
 
   if (newStageObjectId == currentObjectId) return;
 
@@ -597,6 +551,22 @@ void ChangeObjectParent::onTextSelected(const QString &text) {
   hide();
   m_objectHandle->notifyObjectIdChanged(false);
   m_xsheetHandle->notifyXsheetChanged();
+}
+
+//-----------------------------------------------------------------------------
+
+void ChangeObjectParent::selectCurrent(const TStageObjectId &id) {
+  clearSelection();
+  int numRows = count();
+  for (int row = 0; row < numRows; row++) {
+    QListWidgetItem *it = item(row);
+    QVariant display    = it->data(Qt::UserRole);
+    if (!display.isValid()) continue;
+    if (id.getCode() == display.toUInt()) {
+      setCurrentItem(it);
+      return;
+    }
+  }
 }
 
 //=============================================================================
@@ -645,9 +615,10 @@ void ChangeObjectHandle::refresh() {
 
 //-----------------------------------------------------------------------------
 
-void ChangeObjectHandle::onTextSelected(const QString &text) {
+void ChangeObjectHandle::onItemSelected(QListWidgetItem *item) {
   assert(m_xsheetHandle);
   assert(m_objectHandle);
+  QString text                   = item->text();
   TStageObjectId currentObjectId = m_objectHandle->getObjectId();
   QString handle                 = text;
   if (text.toInt() != 0) handle = QString("H") + handle;
@@ -658,6 +629,20 @@ void ChangeObjectHandle::onTextSelected(const QString &text) {
   hide();
   m_objectHandle->notifyObjectIdChanged(false);
   m_xsheetHandle->notifyXsheetChanged();
+}
+
+//-----------------------------------------------------------------------------
+
+void ChangeObjectHandle::selectCurrent(const QString &text) {
+  clearSelection();
+  int numRows = count();
+  for (int row = 0; row < numRows; row++) {
+    QListWidgetItem *it = item(row);
+    if (text == it->text()) {
+      setCurrentItem(it);
+      return;
+    }
+  }
 }
 
 //=============================================================================
