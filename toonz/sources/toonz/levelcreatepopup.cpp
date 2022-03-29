@@ -37,6 +37,7 @@
 #include "toonz/tproject.h"
 #include "toonz/namebuilder.h"
 #include "toonz/childstack.h"
+#include "toonz/tstageobjectcmd.h"
 #include "toutputproperties.h"
 
 // TnzCore includes
@@ -638,6 +639,10 @@ bool LevelCreatePopup::apply() {
       scene->createNewLevel(lType, levelName, TDimension(), 0, fp);
   TXshSimpleLevel *sl = dynamic_cast<TXshSimpleLevel *>(level);
 
+  TStageObjectId columnId = TStageObjectId::ColumnId(col);
+  TXshColumn *column      = xsh->getColumn(columnId.getIndex());
+  bool wasColumnEmpty     = !column ? true : column->isEmpty();
+
   assert(sl);
   //  sl->setPath(fp, true);
   if (lType == TZP_XSHLEVEL || lType == OVL_XSHLEVEL) {
@@ -683,6 +688,12 @@ bool LevelCreatePopup::apply() {
   //  }
 
   undo->onAdd(sl);
+
+  // Column name renamed to level name only if was originally empty
+  if (wasColumnEmpty) {
+    std::string columnName = QString::fromStdWString(levelName).toStdString();
+    TStageObjectCmd::rename(columnId, columnName, app->getCurrentXsheet());
+  }
 
   TUndoManager::manager()->endBlock();
 

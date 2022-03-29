@@ -66,6 +66,7 @@
 #include "toutputproperties.h"
 #include "toonz/studiopalette.h"
 #include "toonz/tpalettehandle.h"
+#include "toonz/tstageobjectcmd.h"
 
 // TnzCore includes
 #include "tofflinegl.h"
@@ -579,12 +580,22 @@ TXshLevel *loadPalette(ToonzScene *scene, TFilePath actualPath,
   xsh->setCell(row, col, cell);
   xsh->updateFrameCount();
   // Undo
+  TUndoManager::manager()->beginBlock();
   LoadLevelUndo *undo = new LoadLevelUndo();
   undo->setLevel(level);
   undo->setLevelSetFolder(castFolder);
   undo->setCells(scene->getXsheet(), row, col, 1);
   undo->setColumnInserted(true);
   TUndoManager::manager()->add(undo);
+
+  // Column name renamed to level name only if was originally empty
+  TStageObjectId columnId = TStageObjectId::ColumnId(col);
+  std::string columnName =
+      QString::fromStdWString(level->getName()).toStdString();
+  TStageObjectCmd::rename(columnId, columnName,
+                          TApp::instance()->getCurrentXsheet());
+
+  TUndoManager::manager()->endBlock();
   return level;
 }
 
@@ -878,6 +889,26 @@ TXshLevel *loadChildLevel(ToonzScene *parentScene, TFilePath actualPath,
   for (int i = 0; i < parentScene->getLevelSet()->getLevelCount(); i++)
     parentScene->getLevelSet()->getLevel(i)->setScene(parentScene);
 
+  // Column name renamed to level name only if was originally empty
+  bool wasColumnEmpty = shiftColumn;
+  if (!wasColumnEmpty) {
+    TXshColumn *column = parentXsh->getColumn(col);
+    int r0, r1;
+    column->getRange(r0, r1);
+    if ((r1 - r0 + 1) == frameCount) wasColumnEmpty = true;
+  }
+
+  if (wasColumnEmpty) {
+    TStageObjectId columnId = TStageObjectId::ColumnId(col);
+    std::string columnName =
+        QString::fromStdWString(childLevel->getName()).toStdString();
+    TStageObjectCmd::rename(columnId, columnName,
+                            TApp::instance()->getCurrentXsheet());
+    // For now, let's remove the rename undo since loading child level is not
+    // undoable
+    TUndoManager::manager()->popUndo();
+  }
+
   // Inform the cache fx command that a scene was loaded
   CacheFxCommand::instance()->onSceneLoaded();
 
@@ -983,6 +1014,7 @@ TXshLevel *loadLevel(ToonzScene *scene,
     }
   }
   // if the level can be obtained (from scene cast or file)
+  bool wasColumnEmpty = false;
   if (xl) {
     // placing in the xsheet
     if (expose) {
@@ -992,6 +1024,8 @@ TXshLevel *loadLevel(ToonzScene *scene,
         undo->setLevel(xl);
         undo->setIsFirstTime(isFirstTime);
       }
+
+      TUndoManager::manager()->beginBlock();
 
       int levelType = xl->getType();
       TXshColumn::ColumnType newLevelColumnType =
@@ -1008,6 +1042,14 @@ TXshLevel *loadLevel(ToonzScene *scene,
       else
         undo->setCells(scene->getXsheet(), row0, col0, xl->getFrameCount());
       undo->setColumnInserted(columnInserted);
+
+      wasColumnEmpty = columnInserted;
+      if (!wasColumnEmpty) {
+        TXshColumn *column = xsh->getColumn(col0);
+        int r0, r1;
+        column->getRange(r0, r1);
+        if ((r1 - r0 + 1) == xl->getFrameCount()) wasColumnEmpty = true;
+      }
     }
     if (row1 != -1 || col1 != -1)
       replaceUndo = new LoadAndReplaceLevelUndo(xl->getSimpleLevel(), row0,
@@ -1017,6 +1059,18 @@ TXshLevel *loadLevel(ToonzScene *scene,
   if (undo) TUndoManager::manager()->add(undo);
 
   if (replaceUndo) TUndoManager::manager()->add(replaceUndo);
+
+  // Column name renamed to level name only if was originally empty
+  if (expose) {
+    if (wasColumnEmpty) {
+      TStageObjectId columnId = TStageObjectId::ColumnId(col0);
+      std::string columnName =
+          QString::fromStdWString(xl->getName()).toStdString();
+      TStageObjectCmd::rename(columnId, columnName,
+                              TApp::instance()->getCurrentXsheet());
+    }
+    TUndoManager::manager()->endBlock();
+  }
 
   return xl;
 }
@@ -2642,11 +2696,31 @@ bool IoCmd::exposeLevel(TXshSimpleLevel *sl, int row, int col,
   ExposeType type     = eNone;
   if (insert) type    = eShiftCells;
   if (overWrite) type = eOverWrite;
+  TUndoManager::manager()->beginBlock();
   ExposeLevelUndo *undo =
       new ExposeLevelUndo(sl, row, col, frameCount, insertEmptyColumn, type);
   xsh->exposeLevel(row, col, sl, fids, overWrite);
   undo->setFids(fids);
   TUndoManager::manager()->add(undo);
+
+  // Column name renamed to level name only if was originally empty
+  bool wasColumnEmpty = insertEmptyColumn;
+  if (!wasColumnEmpty) {
+    TXshColumn *column = xsh->getColumn(col);
+    int r0, r1;
+    column->getRange(r0, r1);
+    if ((r1 - r0 + 1) == fids.size()) wasColumnEmpty = true;
+  }
+
+  if (wasColumnEmpty) {
+    TStageObjectId columnId = TStageObjectId::ColumnId(col);
+    std::string columnName =
+        QString::fromStdWString(sl->getName()).toStdString();
+    TStageObjectCmd::rename(columnId, columnName, app->getCurrentXsheet());
+  }
+
+  TUndoManager::manager()->endBlock();
+
   app->getCurrentXsheet()->notifyXsheetChanged();
   return true;
 }

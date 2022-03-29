@@ -24,6 +24,7 @@
 #include "tregion.h"
 #include "tvectorrenderdata.h"
 #include "toonz/tpalettehandle.h"
+#include "toonz/tcolumnhandle.h"
 
 #include "toonzqt/selection.h"
 #include "toonzqt/imageutils.h"
@@ -31,6 +32,7 @@
 #include "toonz/ttileset.h"
 #include "toonz/glrasterpainter.h"
 #include "toonz/stage.h"
+#include "toonz/tstageobjectcmd.h"
 
 #include "tfont.h"
 
@@ -730,8 +732,32 @@ void TypeTool::stopEditing() {
   m_preeditRange = std::make_pair(0, 0);
   invalidate();
   if (m_undo) {
+    bool isEditingLevel = getApplication()->getCurrentFrame()->isEditingLevel();
+    if (!isEditingLevel) TUndoManager::manager()->beginBlock();
+
     TUndoManager::manager()->add(m_undo);
     m_undo = 0;
+
+    // Column name renamed to level name only if was originally empty
+    if (!isEditingLevel) {
+      int col = getApplication()->getCurrentColumn()->getColumnIndex();
+      TXshColumn *column =
+          getApplication()->getCurrentXsheet()->getXsheet()->getColumn(col);
+      int r0, r1;
+      column->getRange(r0, r1);
+      if (r0 == r1) {
+        TXshLevel *level = getApplication()->getCurrentLevel()->getLevel();
+        TXshSimpleLevelP simLevel = level->getSimpleLevel();
+
+        TStageObjectId columnId = TStageObjectId::ColumnId(col);
+        std::string columnName =
+            QString::fromStdWString(simLevel->getName()).toStdString();
+        TStageObjectCmd::rename(columnId, columnName,
+                                getApplication()->getCurrentXsheet());
+      }
+
+      TUndoManager::manager()->endBlock();
+    }
   }
 }
 
@@ -1209,6 +1235,9 @@ void TypeTool::addTextToImage() {
 
   if (!vi && !ti && !ri) return;
 
+  bool isEditingLevel = getApplication()->getCurrentFrame()->isEditingLevel();
+  if (!isEditingLevel) TUndoManager::manager()->beginBlock();
+
   if (vi) {
     QMutexLocker lock(vi->getMutex());
     std::vector<const TVectorImage *> images;
@@ -1231,6 +1260,26 @@ void TypeTool::addTextToImage() {
     addTextToToonzImage(ti);
   else if (ri)
     addTextToRasterImage(ri);
+
+  if (!isEditingLevel) {
+    int col = getApplication()->getCurrentColumn()->getColumnIndex();
+    TXshColumn *column =
+        getApplication()->getCurrentXsheet()->getXsheet()->getColumn(col);
+    int r0, r1;
+    column->getRange(r0, r1);
+    if (r0 == r1) {
+      TXshLevel *level = getApplication()->getCurrentLevel()->getLevel();
+      TXshSimpleLevelP simLevel = level->getSimpleLevel();
+
+      TStageObjectId columnId = TStageObjectId::ColumnId(column->getIndex());
+      std::string columnName =
+          QString::fromStdWString(simLevel->getName()).toStdString();
+      TStageObjectCmd::rename(columnId, columnName,
+                              getApplication()->getCurrentXsheet());
+    }
+
+    TUndoManager::manager()->endBlock();
+  }
 
   notifyImageChanged();
   //  getApplication()->notifyImageChanges();

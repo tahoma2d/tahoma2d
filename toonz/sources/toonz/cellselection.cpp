@@ -59,6 +59,7 @@
 #include "tools/rasterselection.h"
 #include "tools/strokeselection.h"
 #include "toonz/sceneproperties.h"
+#include "toonz/tstageobjectcmd.h"
 #include "toutputproperties.h"
 
 // TnzCore includes
@@ -1747,6 +1748,11 @@ static void pasteRasterImageInCell(int row, int col,
     }
     createdFrame = true;
   }
+
+  TStageObjectId columnId = TStageObjectId::ColumnId(col);
+  TXshColumn *column      = xsh->getColumn(columnId.getIndex());
+  bool wasColumnEmpty     = !column ? true : column->isEmpty();
+
   // get the current cell
   TXshCell cell = xsh->getCell(row, col);
   // if the cell doesn't have a level. . .
@@ -1792,6 +1798,14 @@ static void pasteRasterImageInCell(int row, int col,
     TUndoManager::manager()->add(new PasteFullColorImageInCellsUndo(
         rasterImageData, fullColorTiles, cell.getSimpleLevel(),
         cell.getFrameId(), oldPalette, createdFrame, isLevelCreated, col));
+  }
+
+  // Column name renamed to level name only if was originally empty
+  if (wasColumnEmpty) {
+    std::string columnName =
+        QString::fromStdWString(cell.getSimpleLevel()->getName()).toStdString();
+    TStageObjectCmd::rename(columnId, columnName,
+                            TApp::instance()->getCurrentXsheet());
   }
 }
 
@@ -1863,7 +1877,7 @@ void TCellSelection::pasteCells() {
       int newCr0, newCr1;
       column->getRange(newCr0, newCr1);
       areColumnsEmpty.push_back(!column || column->isEmpty() ||
-                                (newCr0 == r0 && newCr1 == r1));
+                                (newCr0 >= r0 && newCr1 <= r1));
     }
     if (!isPaste) return;
 
@@ -1879,6 +1893,25 @@ void TCellSelection::pasteCells() {
     TUndoManager::manager()->add(new PasteCellsUndo(
         r0, c0, r1, c1, oldR0, oldC0, oldR1, oldC1, areColumnsEmpty));
     TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+
+    // Column name renamed to level name only if was originally empty
+    int x = 0;
+    for (c = c0; c <= c1; c++, x++) {
+      if (!areColumnsEmpty[x]) continue;
+      TXshColumn *column = xsh->getColumn(c);
+      if (!column || column->isEmpty()) continue;
+      int lr0, lr1;
+      column->getRange(lr0, lr1);
+      TStageObjectId columnId = TStageObjectId::ColumnId(c);
+      std::string columnName =
+          QString::fromStdWString(column->getCellColumn()
+                                      ->getCell(lr0)
+                                      .m_level.getPointer()
+                                      ->getName())
+              .toStdString();
+      TStageObjectCmd::rename(columnId, columnName,
+                              TApp::instance()->getCurrentXsheet());
+    }
   }
 
   const TKeyframeData *keyframeData =
@@ -2818,9 +2851,24 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
   TPalette *palette = sl->getPalette();
   TFrameId frame    = cell.getFrameId();
 
+  TUndoManager::manager()->beginBlock();
+
   CreateBlankDrawingUndo *undo = new CreateBlankDrawingUndo(
       sl, frame, toolHandle->getTool()->m_isLevelCreated, palette);
   TUndoManager::manager()->add(undo);
+
+  // Column name renamed to level name only if was originally empty
+  int r0, r1;
+  xsh->getCellRange(col, r0, r1);
+  if (r0 == r1) {
+    TStageObjectId columnId = TStageObjectId::ColumnId(col);
+    std::string columnName =
+        QString::fromStdWString(sl->getName()).toStdString();
+    TStageObjectCmd::rename(columnId, columnName,
+                            TApp::instance()->getCurrentXsheet());
+  }
+
+  TUndoManager::manager()->endBlock();
 
   IconGenerator::instance()->invalidate(sl, frame);
 
