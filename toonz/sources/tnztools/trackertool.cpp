@@ -8,6 +8,7 @@
 #include "toonz/txshlevelhandle.h"
 #include "toonz/tscenehandle.h"
 #include "toonzqt/selectioncommandids.h"
+#include "toonzqt/gutil.h"
 
 #include "toonzqt/selection.h"
 #include "tproperty.h"
@@ -287,6 +288,7 @@ void TrackerTool::draw() {
     selectedObjectId = -1;
   int i              = 0;
   double pixelSize   = getPixelSize();
+  int devPixRatio    = getDevicePixelRatio(m_viewer->viewerWidget());
 
   std::vector<TRectD> balloons;  // this is used to avoid balloons overlapping
   // draw hooks
@@ -324,7 +326,7 @@ void TrackerTool::draw() {
       tglColor(textColor);
       glPushMatrix();
       glTranslated(hook->getPos(fid).x, hook->getPos(fid).y, 0);
-      glScaled(pixelSize, pixelSize, 1);
+      glScaled(pixelSize * devPixRatio, pixelSize * devPixRatio, 1);
       int objectId = hook->getTrackerObjectId();
       std::string text({static_cast<char>('A' + objectId)});
       tglDrawText(TPointD(-15, 10), text);
