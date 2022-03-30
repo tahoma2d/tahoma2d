@@ -1181,12 +1181,12 @@ void XsheetViewer::wheelEvent(QWheelEvent *event) {
       return;
     }
 
-    int markerDistance = 0, markerOffset = 0;
+    int markerDistance = 0, markerOffset = 0, secDistance;
     TApp::instance()
         ->getCurrentScene()
         ->getScene()
         ->getProperties()
-        ->getMarkers(markerDistance, markerOffset);
+        ->getMarkers(markerDistance, markerOffset, secDistance);
 
     if (event->angleDelta().x() == 0) {  // vertical scroll
       if (!orientation()->isVerticalTimeline()) markerDistance = 1;

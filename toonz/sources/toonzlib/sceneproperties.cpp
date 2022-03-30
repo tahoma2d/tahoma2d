@@ -133,6 +133,19 @@ void TSceneProperties::setBgColor(const TPixel32 &color) { m_bgColor = color; }
 
 //-----------------------------------------------------------------------------
 
+void TSceneProperties::getMarkers(int &distance, int &offset,
+                                  int &secDistance) const {
+  distance = m_markerDistance;
+  offset   = m_markerOffset;
+  // TODO: handle drop frame when the fps has decimal part
+  secDistance =
+      (Preferences::instance()->getBoolValue(highlightLineEverySecond))
+          ? (int)std::round(getOutputProperties()->getFrameRate())
+          : -1;
+}
+
+//-----------------------------------------------------------------------------
+
 void TSceneProperties::setMarkers(int distance, int offset) {
   m_markerDistance = distance;
   m_markerOffset   = offset;

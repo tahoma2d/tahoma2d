@@ -580,6 +580,8 @@ void Preferences::definePreferenceItems() {
   define(showColumnNumbers, "showColumnNumbers", QMetaType::Bool, false);
   define(parentColorsInXsheetColumn, "parentColorsInXsheetColumn",
          QMetaType::Bool, true);
+  define(highlightLineEverySecond, "highlightLineEverySecond", QMetaType::Bool,
+         false);
   define(syncLevelRenumberWithXsheet, "syncLevelRenumberWithXsheet",
          QMetaType::Bool, true);
   define(currentTimelineEnabled, "currentTimelineEnabled", QMetaType::Bool,

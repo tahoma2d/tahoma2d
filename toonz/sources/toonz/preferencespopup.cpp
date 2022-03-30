@@ -1301,6 +1301,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {showColumnNumbers, tr("Show Column Numbers in Column Headers")},
       {parentColorsInXsheetColumn,
        tr("Show Column Parent's Color in the Xsheet")},
+      {highlightLineEverySecond, tr("Highlight Line Every Second")},
       {syncLevelRenumberWithXsheet,
        tr("Sync Level Strip Drawing Number Changes with the Scene")},
       {currentTimelineEnabled,
@@ -2007,6 +2008,7 @@ QWidget* PreferencesPopup::createXsheetPage() {
   { insertUI(expandFunctionHeader, xshToolbarLay); }
   insertUI(showColumnNumbers, lay);
   insertUI(parentColorsInXsheetColumn, lay);
+  insertUI(highlightLineEverySecond, lay);
   // insertUI(syncLevelRenumberWithXsheet, lay);
   // insertUI(currentTimelineEnabled, lay);
   // insertUI(currentColumnColor, lay);

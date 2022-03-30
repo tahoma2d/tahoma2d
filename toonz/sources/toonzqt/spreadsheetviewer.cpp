@@ -382,7 +382,8 @@ void RowPanel::drawRows(QPainter &p, int r0, int r1) {
   for (r = r0; r <= r1; r++) {
     int next_y = getViewer()->rowToY(r + 1);
     // draw horizontal line
-    QColor color = (getViewer()->isMarkRow(r))
+    bool isMarkSecRow = getViewer()->isMarkSecRow(r);
+    QColor color      = (isMarkSecRow || getViewer()->isMarkRow(r))
                        ? getViewer()->getMarkerLineColor()
                        : getViewer()->getLightLineColor();
     p.setPen(color);
@@ -400,11 +401,6 @@ void RowPanel::drawRows(QPainter &p, int r0, int r1) {
     p.drawText(QRect(x0, y + 1, width() - 4, next_y - y - 1),
                Qt::AlignVCenter | Qt::AlignRight, number);
     y = next_y;
-  }
-  // erase the marker interval at upper-end
-  if (r0 == 0) {
-    p.setPen(getViewer()->getLightLineColor());
-    p.drawLine(x0, getViewer()->rowToY(0), x1, getViewer()->rowToY(0));
   }
 }
 
@@ -499,15 +495,15 @@ void CellPanel::paintEvent(QPaintEvent *e) {
   // draw rows
   int currentRow = getViewer()->getCurrentRow();
   for (int r = r0; r <= r1; r++) {
-    int y        = getViewer()->rowToY(r);
-    QColor color = getViewer()->isMarkRow(r) ? getViewer()->getMarkerLineColor()
-                                             : getViewer()->getLightLineColor();
-    painter.setPen(color);
+    int y             = getViewer()->rowToY(r);
+    bool isMarkSecRow = getViewer()->isMarkSecRow(r);
+    QColor color      = (isMarkSecRow || getViewer()->isMarkRow(r))
+                       ? getViewer()->getMarkerLineColor()
+                       : getViewer()->getLightLineColor();
+    painter.setPen(
+        QPen(color, (isMarkSecRow) ? 3. : 1., Qt::SolidLine, Qt::FlatCap));
     painter.drawLine(x0, y, x1, y);
   }
-  // erase the marker interval at upper-end
-  painter.setPen(getViewer()->getLightLineColor());
-  painter.drawLine(x0, 0, x1, 0);
 }
 
 }  // namespace Spreadsheet
@@ -531,6 +527,7 @@ SpreadsheetViewer::SpreadsheetViewer(QWidget *parent)
     , m_currentRow(0)
     , m_markRowDistance(6)
     , m_markRowOffset(0)
+    , m_markSecRowDistance(-1)
     , m_isComputingSize(false)
     , m_frameScroller() {
   // m_orientation = Orientations::topToBottom ();
