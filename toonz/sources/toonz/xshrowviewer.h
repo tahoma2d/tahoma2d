@@ -55,6 +55,7 @@ class RowArea final : public QWidget {
   void drawCurrentTimeLine(QPainter &p);
   void drawShiftTraceMarker(QPainter &p);
   void drawStopMotionCameraIndicator(QPainter &p);
+  void drawNavigationTags(QPainter &p, int r0, int r1);
 
   DragTool *getDragTool() const;
   void setDragTool(DragTool *dragTool);
@@ -80,6 +81,8 @@ protected:
   void mouseDoubleClickEvent(QMouseEvent *event) override;
   bool event(QEvent *event) override;
 
+protected slots:
+  void onJumpToTag();
 };
 
 }  // namespace XsheetGUI;
