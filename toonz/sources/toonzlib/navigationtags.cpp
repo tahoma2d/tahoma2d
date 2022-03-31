@@ -72,6 +72,7 @@ void NavigationTags::moveTag(int fromFrame, int toFrame) {
   for (int i = 0; i < m_tags.size(); i++)
     if (m_tags[i].m_frame == fromFrame) {
       m_tags[i].m_frame = toFrame;
+      std::sort(m_tags.begin(), m_tags.end());
       break;
     }
 }

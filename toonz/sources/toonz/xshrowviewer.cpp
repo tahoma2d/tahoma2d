@@ -1040,7 +1040,13 @@ void RowArea::mousePressEvent(QMouseEvent *event) {
         playR0       = 0;
       }
 
-      if (playR1 == -1) {  // getFrameCount = 0 i.e. xsheet is empty
+      if (xsh->getNavigationTags()->isTagged(row) &&
+          o->rect(PredefinedRect::NAVIGATION_TAG_AREA)
+              .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
+              .contains(mouseInCell)) {
+        setDragTool(XsheetGUI::DragTool::makeNavigationTagDragTool(m_viewer));
+        frameAreaIsClicked = true;
+      } else if (playR1 == -1) {  // getFrameCount = 0 i.e. xsheet is empty
         setDragTool(
             XsheetGUI::DragTool::makeCurrentFrameModifierTool(m_viewer));
         frameAreaIsClicked = true;
