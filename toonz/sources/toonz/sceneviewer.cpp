@@ -1891,13 +1891,15 @@ void SceneViewer::drawViewerIndicators() {
 
   if (!checkTexts.size()) return;
 
+  int devPixRatio = getDevPixRatio();
+
   int x0, x1, y0, y1;
   rect().getCoords(&x0, &y0, &x1, &y1);
-  x0 = (-(x1 / 2)) + 15;
-  y0 = ((y1 / 2)) - 25;
+  x0 = (-(x1 / (2 * devPixRatio))) + 15;
+  y0 = ((y1 / (2 * devPixRatio))) - 25;
 
   glPushMatrix();
-  glScaled(2, 2, 2);
+  glScaled(2 * devPixRatio, 2 * devPixRatio, 2 * devPixRatio);
   glColor3d(1.0, 0.0, 0.0);
   for (int i = 0; i < checkTexts.size(); i++) {
     int y = (y0 / 2) - (i * 10);

@@ -30,6 +30,7 @@
 // TnzQt includes
 #include "toonzqt/selection.h"
 #include "toonzqt/selectioncommandids.h"
+#include "toonzqt/gutil.h"
 
 // TnzTools includes
 #include "tools/tool.h"
@@ -1263,7 +1264,8 @@ void SkeletonTool::drawDrawingBrowser(const TXshCell &cell,
                      std::to_string(cell.m_frameId.getNumber());
 
   QString qText = QString::fromStdString(name);
-  QFont font("Arial", 10);  // ,QFont::Bold);
+  int devPixRatio = getDevicePixelRatio(getViewer()->viewerWidget());
+  QFont font("Arial", 10 * devPixRatio);  // ,QFont::Bold);
   QFontMetrics fm(font);
   QSize textSize   = fm.boundingRect(qText).size();
   int arrowHeight  = 10;
