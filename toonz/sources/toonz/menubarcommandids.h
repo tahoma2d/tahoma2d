@@ -485,4 +485,11 @@
 
 #define MI_ToggleImplicitHold "MI_ToggleImplicitHold"
 
+// Navigation tags
+#define MI_ToggleTaggedFrame "MI_ToggleTaggedFrame"
+#define MI_EditTaggedFrame "MI_EditTaggedFrame"
+#define MI_NextTaggedFrame "MI_NextTaggedFrame"
+#define MI_PrevTaggedFrame "MI_PrevTaggedFrame"
+#define MI_ClearTags "MI_ClearTags"
+
 #endif

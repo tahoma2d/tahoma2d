@@ -139,7 +139,8 @@ enum class PredefinedRect {
   // ADD_LEVEL_AREA,
   // ADD_LEVEL,
   FOOTER_NOTE_OBJ_AREA,
-  FOOTER_NOTE_AREA
+  FOOTER_NOTE_AREA,
+  NAVIGATION_TAG_AREA
 };
 enum class PredefinedLine {
   LOCKED,              //! dotted vertical line when cell is locked
@@ -169,7 +170,8 @@ enum class PredefinedPath {
   VOLUME_SLIDER_TRACK,  //! slider track
   VOLUME_SLIDER_HEAD,   //! slider head
   TIME_INDICATOR_HEAD,  //! current time indicator head
-  FRAME_MARKER_DIAMOND
+  FRAME_MARKER_DIAMOND,
+  NAVIGATION_TAG
 };
 enum class PredefinedPoint {
   KEY_HIDDEN,  //! move extender handle that much if key icons are disabled

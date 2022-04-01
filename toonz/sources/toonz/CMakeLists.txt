@@ -133,6 +133,7 @@ set(MOC_HEADERS
     ../stopmotion/stopmotionserial.h
     ../stopmotion/stopmotionlight.h
     cameracapturelevelcontrol.h
+    navtageditorpopup.h
 )
 
 set(HEADERS
@@ -369,6 +370,7 @@ set(SOURCES
     ../stopmotion/stopmotionserial.cpp
     ../stopmotion/stopmotionlight.cpp
 	cameracapturelevelcontrol.cpp
+    navtageditorpopup.cpp
 )
 
 if(WITH_TRANSLATION)

@@ -33,6 +33,7 @@
 #include "xshhandlemanager.h"
 #include "orientation.h"
 #include "toonz/expressionreferencemonitor.h"
+#include "toonz/navigationtags.h"
 
 #include "toonz/txsheet.h"
 #include "toonz/preferences.h"
@@ -197,7 +198,8 @@ TXsheet::TXsheet()
     , m_imp(new TXsheet::TXsheetImp)
     , m_notes(new TXshNoteSet())
     , m_cameraColumnIndex(0)
-    , m_observer(nullptr) {
+    , m_observer(nullptr)
+    , m_navigationTags(new NavigationTags()) {
   // extern TSyntax::Grammar *createXsheetGrammar(TXsheet*);
   m_soundProperties      = new TXsheet::SoundProperties();
   m_imp->m_handleManager = new XshHandleManager(this);
@@ -218,6 +220,7 @@ TXsheet::~TXsheet() {
   assert(m_imp);
   if (m_notes) delete m_notes;
   if (m_soundProperties) delete m_soundProperties;
+  if (m_navigationTags) delete m_navigationTags;
 }
 
 //-----------------------------------------------------------------------------
@@ -1337,6 +1340,8 @@ void TXsheet::loadData(TIStream &is) {
       m_imp->copyFoldedState();
     } else if (tagName == "noteSet") {
       m_notes->loadData(is);
+    } else if (tagName == "navigationTags") {
+      m_navigationTags->loadData(is);
     } else {
       throw TException("xsheet, unknown tag: " + tagName);
     }
@@ -1384,6 +1389,13 @@ void TXsheet::saveData(TOStream &os) {
   if (notes->getCount() > 0) {
     os.openChild("noteSet");
     notes->saveData(os);
+    os.closeChild();
+  }
+
+  NavigationTags *navigationTags = getNavigationTags();
+  if (navigationTags->getCount() > 0) {
+    os.openChild("navigationTags");
+    navigationTags->saveData(os);
     os.closeChild();
   }
 }
@@ -2048,4 +2060,23 @@ void TXsheet::convertToExplicitHolds() {
         cc->setCell(r, prevCell);
     }
   }
+}
+
+//---------------------------------------------------------
+
+bool TXsheet::isFrameTagged(int frame) const {
+  if (frame < 0) return false;
+
+  return m_navigationTags->isTagged(frame);
+}
+
+//---------------------------------------------------------
+
+void TXsheet::toggleTaggedFrame(int frame) {
+  if (frame < 0) return;
+
+  if (isFrameTagged(frame))
+    m_navigationTags->removeTag(frame);
+  else
+    m_navigationTags->addTag(frame);
 }
