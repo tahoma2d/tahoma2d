@@ -51,10 +51,6 @@ class MessageAndCheckboxDialog;
 
 //-----------------------------------------------------------------------------
 
-void DVAPI setDialogTitle(const QString &dialogTitle);
-
-//-----------------------------------------------------------------------------
-
 void DVAPI MsgBoxInPopup(MsgType type, const QString &text);
 
 // ATTENZIONE: Valore di ritorno
