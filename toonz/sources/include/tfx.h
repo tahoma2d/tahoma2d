@@ -436,7 +436,7 @@ public:
   int getOutputConnectionCount() const;
   TFxPort *getOutputConnection(int i) const;
 
-  virtual TFxTimeRegion getTimeRegion() const;
+  virtual TFxTimeRegion getTimeRegion(bool ignoreImplicit = false) const;
 
   void setActiveTimeRegion(const TFxTimeRegion &tr);
   TFxTimeRegion getActiveTimeRegion() const;

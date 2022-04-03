@@ -600,7 +600,7 @@ int TFx::getReferenceColumnIndex() const {
 
 //--------------------------------------------------
 
-TFxTimeRegion TFx::getTimeRegion() const {
+TFxTimeRegion TFx::getTimeRegion(bool ignoreImplicit) const {
   if (m_imp->m_portTable.empty()) return TFxTimeRegion::createUnlimited();
 
   TFxTimeRegion tr((std::numeric_limits<double>::max)(),
@@ -611,8 +611,8 @@ TFxTimeRegion TFx::getTimeRegion() const {
     TFxPort *port = it->second;
     if (port && port->isConnected() && !port->isaControlPort()) {
       TFx *fx = port->getFx();
-      assert(fx);
-      tr += fx->getTimeRegion();
+      std::wstring fxName = fx->getName();
+      tr += fx->getTimeRegion((fx->getFxType() == "Toonz_columnFx" ? true : ignoreImplicit));
     }
   }
 
