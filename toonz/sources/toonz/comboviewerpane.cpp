@@ -689,13 +689,12 @@ void ComboViewerPanel::changeWindowTitle() {
     name = name + tr("   ::   Level: ") + imageName;
 
     if (!m_sceneViewer->is3DView()) {
-      TAffine aff = m_sceneViewer->getViewMatrix();
+      TAffine aff = m_sceneViewer->getViewMatrix() *
+                    m_sceneViewer->getNormalZoomScale().inv();
       if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
       if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
       name = name + "  ::  Zoom : " +
-             QString::number((int)(100.0 * sqrt(aff.det()) *
-                                   m_sceneViewer->getDpiFactor())) +
-             "%";
+             QString::number(tround(100.0 * sqrt(aff.det()))) + "%";
     }
 
     // If the current level exists and some option is set in the preference,
@@ -709,13 +708,12 @@ void ComboViewerPanel::changeWindowTitle() {
                                               // neither
                      ->isEnabled() &&
              !m_sceneViewer->is3DView()) {
-      TAffine aff = m_sceneViewer->getViewMatrix();
+      TAffine aff = m_sceneViewer->getViewMatrix() *
+                    m_sceneViewer->getNormalZoomScale().inv();
       if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
       if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
       name = name + "  ::  Zoom : " +
-             QString::number((int)(100.0 * sqrt(aff.det()) *
-                                   m_sceneViewer->getDpiFactor())) +
-             "%";
+             QString::number(tround(100.0 * sqrt(aff.det()))) + "%";
     }
 
   }
@@ -729,13 +727,12 @@ void ComboViewerPanel::changeWindowTitle() {
 
       name = name + tr("Level: ") + imageName;
       if (!m_sceneViewer->is3DView()) {
-        TAffine aff = m_sceneViewer->getViewMatrix();
+        TAffine aff = m_sceneViewer->getViewMatrix() *
+                      m_sceneViewer->getNormalZoomScale().inv();
         if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
         if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
         name = name + "  ::  Zoom : " +
-               QString::number((int)(100.0 * sqrt(aff.det()) *
-                                     m_sceneViewer->getDpiFactor())) +
-               "%";
+               QString::number(tround(100.0 * sqrt(aff.det()))) + "%";
       }
     }
   }

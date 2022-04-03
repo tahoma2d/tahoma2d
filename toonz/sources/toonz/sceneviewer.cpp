@@ -420,7 +420,17 @@ public:
     if (std::string(m_cmdId) == MI_ShiftTrace) {
       cm->enable(MI_EditShift, checked);
       cm->enable(MI_NoShift, checked);
-      if (checked) OnioniSkinMaskGUI::resetShiftTraceFrameOffset();
+      if (checked) {
+        OnioniSkinMaskGUI::resetShiftTraceFrameOffset();
+        // activate edit shift
+        if (isChecked(MI_EditShift))
+          TApp::instance()->getCurrentTool()->setPseudoTool("T_ShiftTrace");
+      } else {
+        // deactivate edit shift
+        if (isChecked(MI_EditShift))
+          TApp::instance()->getCurrentTool()->unsetPseudoTool();
+      }
+
       //     cm->getAction(MI_NoShift)->setChecked(false);
       TApp::instance()->getCurrentOnionSkin()->notifyOnionSkinMaskChanged();
     } else if (std::string(m_cmdId) == MI_EditShift) {
