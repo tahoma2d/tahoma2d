@@ -459,7 +459,7 @@ int main(int argc, char *argv[]) {
 
   // splash screen
   QPixmap splashPixmap =
-      QIcon(":Resources/splash2.svg").pixmap(QSize(344, 344));
+      QIcon(":Resources/tahoma2d_splash.svg").pixmap(QSize(344, 344));
 
 #ifdef _WIN32
   QFont font("Segoe UI", -1);
