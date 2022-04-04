@@ -1220,6 +1220,8 @@ void TXshSimpleLevel::load() {
     TLevelReaderP lr(path);  // May throw
     assert(lr);
 
+    lr->setUseExactPath(getScene()->isLoading());
+
     TLevelP level = lr->loadInfo();
     if (level->getFrameCount() > 0) {
       const TImageInfo *info = lr->getImageInfo(level->begin()->first);
