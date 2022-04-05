@@ -70,6 +70,9 @@ $QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -verbose=0 -always-overwrite \
    -executable=$TOONZDIR/Tahoma2D.app/Contents/MacOS/tfarmcontroller \
    -executable=$TOONZDIR/Tahoma2D.app/Contents/MacOS/tfarmserver 
 
+echo ">>> Manually copying missing dylib needed for plugins"
+cp /usr/local/lib/libopencv_dnn.4.5.dylib $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+
 echo ">>> Correcting library paths"
 for X in `find $TOONZDIR/Tahoma2D.app/Contents -type f -name *.dylib -exec otool -l {} \; | grep -e "^toonz" -e"name \/usr\/local" | sed -e"s/://" -e"s/ (.*$//" -e"s/^ *name //"`
 do
