@@ -171,7 +171,7 @@ TLevelP TLevelReader::loadInfo() {
 //-----------------------------------------------------------
 
 TImageReaderP TLevelReader::getFrameReader(TFrameId fid) {
-  if (fid.isNoFrame()) return m_path;
+  if (fid.isNoFrame()) return TImageReaderP(m_path);
   return TImageReaderP(m_path.withFrame(fid, m_frameFormat));
 }
 
