@@ -541,7 +541,6 @@
 		<file>icons/dark/actions/48/colorchiporder_leftup.svg</file>
 		<file>icons/dark/actions/48/colorchiporder_lowleft.svg</file>
 		<file>icons/dark/actions/48/colorchiporder_upleft.svg</file>
-		<file>icons/dark/misc/startup.png</file>
     <file>icons/dark/actions/20/touch.svg</file>
 		<file>icons/dark/actions/16/quit.svg</file>
 		<file>icons/dark/actions/16/clear_cache.svg</file>
@@ -567,7 +566,6 @@
 		<!-- ===================================================== -->
 		<!-- Light =============================================== -->
 
-		<file>icons/light/misc/startup.png</file>
 		<file>icons/light/misc/footermemo.svg</file>
 		<!-- ===================================================== -->
 		<!-- Legacy resources ==================================== -->
@@ -640,10 +638,9 @@
 		<file>Resources/selection_add.png</file>
 		<file>Resources/selection_convert.png</file>
 		<file>Resources/shear.png</file>
-		<file>Resources/splash.svg</file>
-		<file>Resources/splash2.svg</file>
-		<file>Resources/startup.png</file>
-		<file>Resources/startup.svg</file>
+		<file>Resources/tahoma2d_splash.svg</file>
+		<file>Resources/tahoma2d_about.png</file>
+		<file>Resources/tahoma2d_startup.svg</file>
 		<file>Resources/stroke_select.png</file>
 		<file>Resources/tape.png</file>
 		<file>Resources/type_in.png</file>

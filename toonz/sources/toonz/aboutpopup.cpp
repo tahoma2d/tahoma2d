@@ -35,7 +35,7 @@ AboutPopup::AboutPopup(QWidget* parent)
 
   QLabel* logo = new QLabel(this);
 
-  logo->setPixmap(QPixmap::fromImage(QImage(":Resources/startup.png")));
+  logo->setPixmap(QPixmap::fromImage(QImage(":Resources/tahoma2d_about.png")));
   mainLayout->addWidget(logo);
 
   QString name = QString::fromStdString(TEnv::getApplicationFullName());
