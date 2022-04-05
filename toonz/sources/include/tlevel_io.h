@@ -49,6 +49,8 @@ protected:
   TFilePath m_path;
   TContentHistory *m_contentHistory;
 
+  bool m_useExactPath;
+
 public:
   TLevelReader(const TFilePath &path);
   virtual ~TLevelReader();
@@ -94,6 +96,9 @@ public:
 
   //! TLevelReader keeps the ownership of TContentHistory. Don't delete it
   const TContentHistory *getContentHistory() const { return m_contentHistory; }
+
+  void setUseExactPath(bool useExactPath) { m_useExactPath = useExactPath; }
+  bool useExactPath() { return m_useExactPath; }
 
 private:
   TFrameId::FrameFormat m_frameFormat;
