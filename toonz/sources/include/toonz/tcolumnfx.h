@@ -89,7 +89,7 @@ public:
   TAffine handledAffine(const TRenderSettings &info, double frame) override;
   TAffine getDpiAff(int frame);
 
-  TFxTimeRegion getTimeRegion() const override;
+  TFxTimeRegion getTimeRegion(bool ignoreImplicit = false) const override;
   bool doGetBBox(double frame, TRectD &bBox,
                  const TRenderSettings &info) override;
   std::string getAlias(double frame,
@@ -151,7 +151,7 @@ public:
 
   bool canHandle(const TRenderSettings &info, double frame) override;
 
-  TFxTimeRegion getTimeRegion() const override;
+  TFxTimeRegion getTimeRegion(bool ignoreImplicit = false) const override;
   bool doGetBBox(double frame, TRectD &bBox,
                  const TRenderSettings &info) override;
   std::string getAlias(double frame,
@@ -196,7 +196,7 @@ public:
     return true;
   }
 
-  TFxTimeRegion getTimeRegion() const override;
+  TFxTimeRegion getTimeRegion(bool ignoreImplicit = false) const override;
   bool doGetBBox(double frame, TRectD &bBox,
                  const TRenderSettings &info) override;
   std::string getAlias(double frame,

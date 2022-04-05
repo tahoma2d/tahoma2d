@@ -52,7 +52,7 @@ public:
                     const TRenderSettings &info) override;
   void doCompute(TTile &tile, double frame, const TRenderSettings &ri) override;
 
-  TFxTimeRegion getTimeRegion() const override;
+  TFxTimeRegion getTimeRegion(bool ignoreImplicit = false) const override;
 
   std::string getPluginId() const override;
 

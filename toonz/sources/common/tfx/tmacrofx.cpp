@@ -288,8 +288,8 @@ void TMacroFx::doCompute(TTile &tile, double frame, const TRenderSettings &ri) {
 
 //--------------------------------------------------
 
-TFxTimeRegion TMacroFx::getTimeRegion() const {
-  return m_root->getTimeRegion();
+TFxTimeRegion TMacroFx::getTimeRegion(bool ignoreImplicit) const {
+  return m_root->getTimeRegion(ignoreImplicit);
 }
 
 //--------------------------------------------------
