@@ -1153,6 +1153,10 @@ void DecreaseStepUndo::redo() const {
 
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+
+  TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+      TApp::instance()->getCurrentSelection()->getSelection());
+  if (cellSelection) cellSelection->selectCells(m_r0, m_c0, m_newR1, m_c1);
 }
 
 //-----------------------------------------------------------------------------
@@ -1171,6 +1175,11 @@ void DecreaseStepUndo::undo() const {
 
   app->getCurrentXsheet()->notifyXsheetChanged();
   app->getCurrentScene()->setDirtyFlag(true);
+
+  TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+      TApp::instance()->getCurrentSelection()->getSelection());
+  if (cellSelection)
+    cellSelection->selectCells(m_r0, m_c0, (m_r0 + (m_rowsCount - 1)), m_c1);
 }
 
 }  // namespace
@@ -1202,18 +1211,12 @@ void TCellSelection::decreaseStepCells() {
     m_range.m_r1 = r1;
     m_range.m_c0 = col;
     m_range.m_c1 = col;
-    TApp::instance()->getCurrentSelection()->notifySelectionChanged();
   }
   DecreaseStepUndo *undo = new DecreaseStepUndo(m_range.m_r0, m_range.m_c0,
                                                 m_range.m_r1, m_range.m_c1);
   TUndoManager::manager()->add(undo);
 
   undo->redo();
-
-  if (undo->m_newR1 != m_range.m_r1) {
-    m_range.m_r1 = undo->m_newR1;
-    TApp::instance()->getCurrentSelection()->notifySelectionChanged();
-  }
 }
 
 //*********************************************************************************
