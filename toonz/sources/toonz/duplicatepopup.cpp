@@ -63,6 +63,10 @@ void DuplicateUndo::undo() const {
     app->getCurrentXsheet()->getXsheet()->removeCells(m_r1 + 1, j,
                                                       m_upTo - (m_r1 + 1) + 1);
   app->getCurrentXsheet()->notifyXsheetChanged();
+
+  TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+      TApp::instance()->getCurrentSelection()->getSelection());
+  if (cellSelection) cellSelection->selectCells(m_r0, m_c0, m_r1, m_c1);
 }
 
 //-----------------------------------------------------------------------------
@@ -73,6 +77,10 @@ void DuplicateUndo::redo() const {
   app->getCurrentXsheet()->getXsheet()->duplicateCells(m_r0, m_c0, m_r1, m_c1,
                                                        m_upTo);
   app->getCurrentXsheet()->notifyXsheetChanged();
+
+  TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+      TApp::instance()->getCurrentSelection()->getSelection());
+  if (cellSelection) cellSelection->selectCells(m_r0, m_c0, m_upTo, m_c1);
 }
 
 //-----------------------------------------------------------------------------
@@ -166,6 +174,8 @@ void DuplicatePopup::onApplyPressed() {
     xsh->duplicateCells(r0, c0, r1, c1, (int)upTo - 1);
     TApp::instance()->getCurrentScene()->setDirtyFlag(true);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+
+    selection->selectCells(r0, c0, ((int)upTo - 1), c1);
   } catch (...) {
     DVGui::error(("Cannot duplicate"));
   }
