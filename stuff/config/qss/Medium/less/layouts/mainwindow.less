@@ -522,8 +522,10 @@ DvScrollWidget {
   .tab-container;
 }
 
-QTabBar {
-  background-color: @tabbar-bg-color;
+QTabWidget::Pane {
+  position: absolute;
+  top: -1; // move border under tabs
+  &:extend(.frame all); // frame border
 }
 
 /* -----------------------------------------------------------------------------
@@ -531,6 +533,7 @@ QTabBar {
 ----------------------------------------------------------------------------- */
 
 QTabBar {
+  background-color: @tabbar-bg-color;
   &::tab {
     &:extend(.tab-flat all);
   }
