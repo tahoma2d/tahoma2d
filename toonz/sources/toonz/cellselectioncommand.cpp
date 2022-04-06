@@ -567,6 +567,7 @@ namespace {
 
 class ReframeUndo final : public TUndo {
   int m_r0, m_r1;
+  int m_c0, m_c1;
   int m_type;
   int m_nr;
   int m_withBlank;
@@ -613,10 +614,14 @@ ReframeUndo::ReframeUndo(int r0, int r1, std::vector<int> columnIndeces,
   assert(m_cells);
   int k        = 0;
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  m_c0         = std::numeric_limits<int>::max();
+  m_c1         = -1;
   for (int r = r0; r <= (r1 + 1); r++)
     for (int c = 0; c < (int)m_columnIndeces.size(); c++) {
       const TXshCell &cell = xsh->getCell(r, m_columnIndeces[c], false);
       m_cells[k++] = cell;
+      m_c0 = std::min(m_c0, m_columnIndeces[c]);
+      m_c1 = std::max(m_c1, m_columnIndeces[c]);
     }
 
   m_newRows.clear();
@@ -656,6 +661,11 @@ void ReframeUndo::undo() const {
       }
   }
   app->getCurrentXsheet()->notifyXsheetChanged();
+
+  TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+      TApp::instance()->getCurrentSelection()->getSelection());
+  if (cellSelection)
+    cellSelection->selectCells(m_r0, m_c0, (m_r0 + m_nr - 1), m_c1);
 }
 
 //-----------------------------------------------------------------------------
@@ -665,11 +675,18 @@ void ReframeUndo::redo() const {
 
   TApp *app = TApp::instance();
 
-  for (int c = 0; c < m_columnIndeces.size(); c++)
-    app->getCurrentXsheet()->getXsheet()->reframeCells(
+  int rows = m_r1 - m_r0;
+  for (int c = 0; c < m_columnIndeces.size(); c++) {
+    rows = app->getCurrentXsheet()->getXsheet()->reframeCells(
         m_r0, m_r1, m_columnIndeces[c], m_type, m_withBlank);
+  }
 
   app->getCurrentXsheet()->notifyXsheetChanged();
+
+  TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+      TApp::instance()->getCurrentSelection()->getSelection());
+  if (cellSelection)
+    cellSelection->selectCells(m_r0, m_c0, (m_r0 + rows - 1), m_c1);
 }
 
 //-----------------------------------------------------------------------------
@@ -689,16 +706,20 @@ void TCellSelection::reframeCells(int count) {
   ReframeUndo *undo =
       new ReframeUndo(m_range.m_r0, m_range.m_r1, colIndeces, count);
 
-  for (int c = m_range.m_c0; c <= m_range.m_c1; c++) {
+  int rows = m_range.getRowCount();
+  for (int c = m_range.m_c0; c <= m_range.m_c1; c++) {      
     int nrows = TApp::instance()->getCurrentXsheet()->getXsheet()->reframeCells(
         m_range.m_r0, m_range.m_r1, c, count);
     undo->m_newRows.push_back(nrows);
+    rows = nrows - 1;
   }
 
   TUndoManager::manager()->add(undo);
 
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+
+  m_range.m_r1 = m_range.m_r0 + rows;
 }
 
 void TColumnSelection::reframeCells(int count) {
