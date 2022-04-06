@@ -937,6 +937,15 @@ void ResetStepUndo::redo() const {
 
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+
+  TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+      TApp::instance()->getCurrentSelection()->getSelection());
+  if (cellSelection) {
+    int newR = 1;
+    for (int c = m_c0; c <= m_c1; ++c)
+      newR = std::max(newR, m_insertedCells[c]);
+    cellSelection->selectCells(m_r0, m_c0, (m_r0 + newR - 1), m_c1);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -955,6 +964,11 @@ void ResetStepUndo::undo() const {
 
   app->getCurrentXsheet()->notifyXsheetChanged();
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+
+  TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+      TApp::instance()->getCurrentSelection()->getSelection());
+  if (cellSelection)
+    cellSelection->selectCells(m_r0, m_c0, (m_r0 + (m_rowsCount - 1)), m_c1);
 }
 
 }  // namespace
