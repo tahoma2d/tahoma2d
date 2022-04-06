@@ -98,6 +98,7 @@ PaletteViewer QToolBar QToolButton:pressed {
    Component: Frames
 ----------------------------------------------------------------------------- */
 .frame,
+QTabWidget::Pane,
 .GroupBox,
 #LoadLevelFrame,
 #PsdSettingsGroupBox,
@@ -665,12 +666,16 @@ DvScrollWidget {
   qproperty-BottomAboveLineColor: #111111;
   qproperty-BottomBelowLineColor: #060606;
 }
-QTabBar {
-  background-color: #111111;
+QTabWidget::Pane {
+  position: absolute;
+  top: -1;
 }
 /* -----------------------------------------------------------------------------
    Tabs
 ----------------------------------------------------------------------------- */
+QTabBar {
+  background-color: #111111;
+}
 QTabBar QToolButton {
   /* Scroll buttons */
   margin: 0;
