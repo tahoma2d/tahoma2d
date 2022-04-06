@@ -524,6 +524,13 @@ void EachUndo::redo() const {
 
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+
+  TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+      TApp::instance()->getCurrentSelection()->getSelection());
+  if (cellSelection) {
+    int newR = m_r0 + (m_r1 - m_r0 + m_each) / m_each - 1;
+    cellSelection->selectCells(m_r0, m_c0, newR, m_c1);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -549,6 +556,11 @@ void EachUndo::undo() const {
 
   app->getCurrentXsheet()->notifyXsheetChanged();
   app->getCurrentScene()->setDirtyFlag(true);
+
+  TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+      TApp::instance()->getCurrentSelection()->getSelection());
+  if (cellSelection)
+    cellSelection->selectCells(m_r0, m_c0, (m_r0 + (m_rowsCount - 1)), m_c1);
 }
 
 }  // namespace
@@ -566,7 +578,6 @@ void TCellSelection::eachCells(int each) {
   TUndoManager::manager()->add(undo);
 
   undo->redo();
-  m_range.m_r1 = m_range.m_r0 + (m_range.m_r1 - m_range.m_r0 + each) / each - 1;
 }
 
 //*********************************************************************************
