@@ -1025,6 +1025,10 @@ void IncreaseStepUndo::redo() const {
 
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+
+  TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+      TApp::instance()->getCurrentSelection()->getSelection());
+  if (cellSelection) cellSelection->selectCells(m_r0, m_c0, m_newR1, m_c1);
 }
 
 //-----------------------------------------------------------------------------
@@ -1043,6 +1047,11 @@ void IncreaseStepUndo::undo() const {
 
   app->getCurrentXsheet()->notifyXsheetChanged();
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+
+  TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+      TApp::instance()->getCurrentSelection()->getSelection());
+  if (cellSelection)
+    cellSelection->selectCells(m_r0, m_c0, (m_r0 + (m_rowsCount - 1)), m_c1);
 }
 
 }  // namespace
@@ -1069,11 +1078,6 @@ void TCellSelection::increaseStepCells() {
   TUndoManager::manager()->add(undo);
 
   undo->redo();
-
-  if (undo->m_newR1 != m_range.m_r1) {
-    m_range.m_r1 = undo->m_newR1;
-    TApp::instance()->getCurrentSelection()->notifySelectionChanged();
-  }
 }
 
 //*********************************************************************************
