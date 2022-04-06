@@ -130,6 +130,11 @@ void SwingUndo::redo() const {
 
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+
+  TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+      TApp::instance()->getCurrentSelection()->getSelection());
+  if (cellSelection)
+    cellSelection->selectCells(m_r0, m_c0, (m_r0 + ((m_r1 - m_r0) * 2)), m_c1);
 }
 
 //-----------------------------------------------------------------------------
@@ -143,6 +148,10 @@ void SwingUndo::undo() const {
 
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+
+  TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+      TApp::instance()->getCurrentSelection()->getSelection());
+  if (cellSelection) cellSelection->selectCells(m_r0, m_c0, m_r1, m_c1);
 }
 
 }  // namespace
