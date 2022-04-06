@@ -21,7 +21,22 @@ class NavTagEditorPopup final : public DVGui::Dialog {
   QColor m_color;
 
 public:
-  enum TagColors { Magenta = 0, Red, Green, Blue, Yellow, Cyan, White };
+  enum TagColors {
+    Magenta = 0,
+    Red,
+    Green,
+    Blue,
+    Yellow,
+    Cyan,
+    White,
+    DarkMagenta,
+    DarkRed,
+    DarkGreen,
+    DarkBlue,
+    DarkYellow,
+    DarkCyan,
+    DarkGray
+  };
 
 public:
   NavTagEditorPopup(int frame, QString label, QColor color);
