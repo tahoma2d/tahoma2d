@@ -17,30 +17,118 @@
 <context>
     <name>GifWriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="257"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="342"/>
+        <source>Global Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="343"/>
+        <source>Global Palette + Sierra Dither</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="344"/>
+        <source>Global Palette + Bayer2 Dither</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="345"/>
+        <source>Global Palette + Bayer1 Dither</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="346"/>
+        <source>Diff Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="347"/>
+        <source>Diff Palette + Sierra Dither</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="348"/>
+        <source>Diff Palette + Bayer2 Dither</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="349"/>
+        <source>Diff Palette + Bayer1 Dither</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="350"/>
+        <source>New Pal Per Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="351"/>
+        <source>New Pal Per Frame + Sierra Dither</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="352"/>
+        <source>New Pal Per Frame + Bayer2 Dither</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="353"/>
+        <source>New Pal Per Frame + Bayer1 Dither</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="354"/>
+        <source>Opaque, Dither, 256 Colors Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="367"/>
         <source>Scale</source>
         <translation>Escala</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="258"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="368"/>
         <source>Looping</source>
         <translation>Ciclo</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="259"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="369"/>
         <source>Generate Palette</source>
         <translation>Generar paleta</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="370"/>
+        <source>Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="371"/>
+        <source>Max Colors</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MovWriterProperties</name>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_mov.cpp" line="238"/>
+        <source>Quality</source>
+        <translation type="unfinished">Calidad</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_mov.cpp" line="239"/>
+        <source>Scale</source>
+        <translation type="unfinished">Escala</translation>
     </message>
 </context>
 <context>
     <name>Mp4WriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="234"/>
+        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="241"/>
         <source>Quality</source>
         <translation>Calidad</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="235"/>
+        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="242"/>
         <source>Scale</source>
         <translation>Escala</translation>
     </message>
@@ -48,7 +136,7 @@
 <context>
     <name>PngWriterProperties</name>
     <message>
-        <location filename="../../image/png/tiio_png.cpp" line="746"/>
+        <location filename="../../image/png/tiio_png.cpp" line="757"/>
         <source>Alpha Channel</source>
         <translation>Canal alfa</translation>
     </message>
@@ -56,7 +144,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="214"/>
+        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="272"/>
+        <source>FFmpeg returned error-code: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="276"/>
         <source>FFmpeg timed out.
 Please check the file for errors.
 If the file doesn&apos;t play or is incomplete, 

@@ -178,7 +178,98 @@ Please select a different device or check the microphone.</source>
 別のデバイスを選択するか、マイクを確認して下さい。</translation>
     </message>
     <message>
-        <source>Sync with Scene</source>
+        <source>Sync with XSheet/Timeline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Device: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sample rate: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sample format: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>8000 Hz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>11025 Hz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>22050 Hz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>44100 Hz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>48000 Hz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>96000 Hz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mono 8-Bits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stereo 8-Bits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mono 16-Bits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stereo 16-Bits</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Audio input device to record</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of samples per second, 44.1KHz = CD Quality</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of channels and bits per sample, 16-bits recommended</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Play animation from current frame while recording/playback</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save recording and insert into new column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh list of connected audio input devices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Record failed: 
+Make sure there&apos;s XSheet or Timeline in the room.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to save WAV file:
+Make sure you have write permissions in folder.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Audio format unsupported:
+Nearest format will be internally used.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -546,7 +637,7 @@ Stop it or wait for its completion before removing it.</source>
     <name>CameraCaptureLevelHistogram</name>
     <message>
         <source>Click to Update Histogram</source>
-        <translation type="vanished">［クリック］ヒストグラムを更新</translation>
+        <translation>［クリック］ヒストグラムを更新</translation>
     </message>
     <message>
         <source>Drag to Move White Point</source>
@@ -578,21 +669,6 @@ Stop it or wait for its completion before removing it.</source>
     <message>
         <source>Current Camera Settings</source>
         <translation>現在のカメラ設定</translation>
-    </message>
-</context>
-<context>
-    <name>Canon</name>
-    <message>
-        <source>AC Power</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Full</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>An error occurred.  Please try again.</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -755,6 +831,13 @@ Do you want to crop the canvas?</source>
     <message>
         <source>No</source>
         <translation>いいえ</translation>
+    </message>
+</context>
+<context>
+    <name>CellMarksPopup</name>
+    <message>
+        <source>Cell Marks Settings</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1060,6 +1143,10 @@ What do you want to do?</source>
     <message>
         <source>Right</source>
         <translation>右</translation>
+    </message>
+    <message>
+        <source>Format:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2166,6 +2253,229 @@ contain the dpi information, then the current camera dpi will be used.
     </message>
 </context>
 <context>
+    <name>ExportXDTSCommand</name>
+    <message>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Only active columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inbetween symbol mark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reverse sheet symbol mark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target column</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ExportXsheetPdfPopup</name>
+    <message>
+        <source>Export Xsheet PDF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print Export DateTime</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print Scene Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print Soundtrack</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print Scene Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put Serial Frame Numbers Over Pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print Level Names On The Bottom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Print Dialogue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text</source>
+        <translation type="unfinished">テキスト</translation>
+    </message>
+    <message>
+        <source>Image</source>
+        <translation type="unfinished">画像</translation>
+    </message>
+    <message>
+        <source>&lt; Prev</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next &gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export PDF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export PNG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+    <message>
+        <source>ACTIONS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CELLS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Always</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>More Than 3 Continuous Cells</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Template Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Template:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line color:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Template font:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Logo:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output area:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output font:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Continuous line:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inbetween mark:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reverse sheet mark:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keyframe mark:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Memo:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save in:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B4 size, 3 seconds sheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B4 size, 6 seconds sheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A3 size, 3 seconds sheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A3 size, 6 seconds sheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Col%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The preset file %1 is not valid.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n page(s)</source>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>%1 x %2 pages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please specify the file name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The file %1 already exists.
+Do you want to overwrite it?</source>
+        <translation type="unfinished">ファイル%1は既に存在します。
+上書きしてもよろしいですか？</translation>
+    </message>
+    <message>
+        <source>A folder %1 does not exist.
+Do you want to create it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to create folder %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ExpressionReferenceManager</name>
     <message>
         <source>Expression monitoring restarted: &quot;%1&quot;</source>
@@ -2467,7 +2777,7 @@ Do you want to explode anyway ?</source>
     <name>FileViewerPopup</name>
     <message>
         <source>Viewer</source>
-        <translation type="obsolete">メインビューア</translation>
+        <translation type="unfinished">メインビューア</translation>
     </message>
 </context>
 <context>
@@ -2482,7 +2792,7 @@ Do you want to explode anyway ?</source>
     </message>
     <message>
         <source>- No Current Level -</source>
-        <translation>- カレントレベルがありません -</translation>
+        <translation type="vanished">- カレントレベルがありません -</translation>
     </message>
     <message>
         <source>- No Level -</source>
@@ -2630,6 +2940,34 @@ Do you want to overwrite it?</source>
     <message>
         <source>Configure Codec</source>
         <translation>コーデック設定</translation>
+    </message>
+    <message>
+        <source>. (period)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>_ (underscore)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No padding</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame Number Format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Separate Character:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Padding:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">閉じる</translation>
     </message>
 </context>
 <context>
@@ -2910,6 +3248,14 @@ Do you want to overwrite it?</source>
         <source>Zoom out (Ctrl-click to zoom out all the way)</source>
         <translation>タイムラインの縮小 [Ctrl+クリック] 最小まで縮小</translation>
     </message>
+    <message>
+        <source>Zoom in/out of xsheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 frames per page</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LayerHeaderPanel</name>
@@ -3048,6 +3394,14 @@ Do you want to create it?</source>
     </message>
     <message>
         <source>The level name specified is already used as a file by another level: please choose a different level name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Format:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame Format</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3705,6 +4059,13 @@ Please choose a valid lip sync data file to continue.</source>
     <message>
         <source> does not exist.</source>
         <translation> は存在しません。</translation>
+    </message>
+</context>
+<context>
+    <name>LoadScriptPopup</name>
+    <message>
+        <source>Load script</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5959,7 +6320,7 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <source>Vector Guided Drawing</source>
-        <translation>ベクター自動中割り</translation>
+        <translation type="vanished">ベクター自動中割り</translation>
     </message>
     <message>
         <source>Short Play</source>
@@ -5979,7 +6340,7 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <source>Guided Drawing Controls</source>
-        <translation>ベクター自動中割りコントロール</translation>
+        <translation type="vanished">ベクター自動中割りコントロール</translation>
     </message>
     <message>
         <source>Flip Next Guide Stroke Direction</source>
@@ -6946,6 +7307,126 @@ or you may delete necessary files for it.</source>
         <source>Export the current scene to another project.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;Export Xsheet to PDF</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export TVPaint JSON File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set Multiple Stop Frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Multiple Stop Frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Convert to use Implicit Holds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Convert to use Explicit Holds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Navigation Tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next Tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous Tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Stop Frame Hold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vector Guided Tweening</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Guided Tweening Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Auto-Creation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggles the auto-creation of frames when drawing in blank cells on the timeline/xsheet.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Creation In Hold Cells</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggles the auto-creation of frames when drawing in held cells on the timeline/xsheet.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Auto-Stretch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggles the auto-stretch of a frame to the next frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Viewer Indicators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Implicit Hold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggles the implicit hold of a frame to the next frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Perspective Grid Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Perspective Grid Tool: Set up perspective grids</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Selection/Object Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Selection/Object Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotate Selection/Object Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotate Selection/Object Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set Cell Mark </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -7259,6 +7740,57 @@ What do you want to do?</source>
     <message>
         <source>Camera is not available</source>
         <translation type="vanished">使用できるカメラがありません</translation>
+    </message>
+</context>
+<context>
+    <name>NavTagEditorPopup</name>
+    <message>
+        <source>Edit Tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame %1 Label:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Magenta</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished">赤</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished">緑</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished">青</translation>
+    </message>
+    <message>
+        <source>Yellow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cyan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>White</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
     </message>
 </context>
 <context>
@@ -8447,7 +8979,7 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>Scan File Format:</source>
-        <translation>スキャンファイル形式：</translation>
+        <translation type="vanished">スキャンファイル形式：</translation>
     </message>
     <message>
         <source>Width:</source>
@@ -8463,7 +8995,7 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>Use the TLV Savebox to Limit Filling Operations</source>
-        <translation>TLVのセーブボックスを塗りつぶしの境界線として用いる</translation>
+        <translation type="vanished">TLVのセーブボックスを塗りつぶしの境界線として用いる</translation>
     </message>
     <message>
         <source>Paper Thickness:</source>
@@ -8571,7 +9103,7 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>Display Level Name on Each Marker</source>
-        <translation>タイムシートの各マーカー上にレベル名を表示する</translation>
+        <translation type="vanished">タイムシートの各マーカー上にレベル名を表示する</translation>
     </message>
     <message>
         <source>Show Raster Images Darken Blended in Camstand View</source>
@@ -8579,7 +9111,7 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>Show &quot;ABC&quot; Appendix to the Frame Number in Xsheet Cell</source>
-        <translation type="vanished">タイムシートのセル内で、フレーム番号下一ケタを「A,B,C…」の文字に置き換えて表示する</translation>
+        <translation>タイムシートのセル内で、フレーム番号下一ケタを「A,B,C…」の文字に置き換えて表示する</translation>
     </message>
     <message>
         <source>Automatically Remove Scene Number from Loaded Level Name</source>
@@ -9023,11 +9555,11 @@ if both are possible on coding file path.</source>
     </message>
     <message>
         <source>Open the dropdown to display all options</source>
-        <translation>コンボボックスを展開して全てのオプションを表示する</translation>
+        <translation type="vanished">コンボボックスを展開して全てのオプションを表示する</translation>
     </message>
     <message>
         <source>Cycle through the available options</source>
-        <translation>オプションを順番に切り替える</translation>
+        <translation type="vanished">オプションを順番に切り替える</translation>
     </message>
     <message>
         <source>Path Alias Priority:</source>
@@ -9039,7 +9571,7 @@ if both are possible on coding file path.</source>
     </message>
     <message>
         <source>Dropdown Shortcuts:</source>
-        <translation>コンボボックス表示のオプションにショートカットを用いたとき:</translation>
+        <translation type="vanished">コンボボックス表示のオプションにショートカットを用いたとき:</translation>
     </message>
     <message>
         <source>Show Raster Images Darken Blended</source>
@@ -9263,7 +9795,7 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <source>Level Editor Box Color:</source>
-        <translation>レベル編集モードの背景色：</translation>
+        <translation type="vanished">レベル編集モードの背景色：</translation>
     </message>
     <message>
         <source>Incremental</source>
@@ -9287,7 +9819,7 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <source>Number of Frames to Play for Short Play:</source>
-        <translation>「少し前から再生」のフレーム数：</translation>
+        <translation type="vanished">「少し前から再生」のフレーム数：</translation>
     </message>
     <message>
         <source>Please restart to reload the icons.</source>
@@ -9307,10 +9839,6 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <source>Move Current Frame by Clicking on Layer Header / Numerical Columns Cell Area</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show &quot;ABC&quot; Appendix to the Frame Number in Cell</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9490,6 +10018,106 @@ These come bundled with Tahoma2D, but you can set path to a different version.</
         <source>Import complete. Please restart to complete applying the changes.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>30bit Display*</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Icons In Menu*</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Viewer Indicators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatically Remove Unused Levels From Scene Cast</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow Multi-Thread in FFMPEG Rendering (UNSTABLE)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default Raster Level Format:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Implicit Hold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Column Parent&apos;s Color in the Xsheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current Cell Color:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Level Name Display:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of Frames to Play 
+for Short Play:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Level Editor Canvas Color:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Qt&apos;s Native Windows Ink Support*
+(CAUTION: This options is for maintenance purpose. 
+ Do not activate this option or the tablet won&apos;t work properly.)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minimum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display on Each Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display on Column Header</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check Availability</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabling multi-thread rendering will render significantly faster 
+but a random crash might occur, use at your own risk:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default Frame Filename Format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PreferencesPopup::Display30bitChecker</name>
+    <message>
+        <source>Check 30bit display availability</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">閉じる</translation>
+    </message>
+    <message>
+        <source>If the lower gradient looks smooth and has no banding compared to the upper gradient,
+30bit display is available in the current configuration.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup::FormatProperties</name>
@@ -9636,6 +10264,61 @@ Do you want to overwrite it?</source>
     <message>
         <source>Settings</source>
         <translation type="unfinished">設定</translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation type="unfinished">標準</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Accept Non-alphabet Suffix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In the standard mode files with the following file name are handled as sequential images:
+[LEVEL_NAME][&quot;.&quot;or&quot;_&quot;][FRAME_NUMBER][SUFFIX].[EXTENSION]
+For [SUFFIX] zero or one occurrences of alphabet (a-z, A-Z) can be used in the standard mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In the custom mode you can customize the file path rules.
+Note that this mode uses regular expression for file name validation and may slow the operation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unlimited</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Project Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximum Letter Count For Suffix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File Path Rules</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10291,7 +10974,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Change project</source>
-        <translation type="vanished">プロジェクトを変更</translation>
+        <translation>プロジェクトを変更</translation>
     </message>
     <message>
         <source>It is not possible to delete the selection.</source>
@@ -10582,7 +11265,7 @@ Some levels have not been loaded because their version is not supported</source>
     </message>
     <message>
         <source>A convertion task is in progress! wait until it stops or cancel it</source>
-        <translation>変換タスクの処理中です! 完了まで待つか、またはキャンセルして下さい</translation>
+        <translation type="vanished">変換タスクの処理中です! 完了まで待つか、またはキャンセルして下さい</translation>
     </message>
     <message>
         <source>Error loading scene %1 :%2</source>
@@ -11400,7 +12083,7 @@ Save the scene first.</source>
 A partial save file was generated and changes may be manually salvaged from &apos;%2&apos;.
 
 Do you wish to continue loading the last good save or stop and try to salvage the prior save?</source>
-        <translation>シーン &apos; %1 &apos; は直前の保存作業が不正に中断しました。
+        <translation type="vanished">シーン &apos; %1 &apos; は直前の保存作業が不正に中断しました。
 
 生成された一時保存ファイル &apos;%2&apos; から直前の編集内容を手動で復旧できる可能性があります。
 
@@ -11846,11 +12529,11 @@ Do you want to create it?</source>
     </message>
     <message>
         <source>Vector Guided Drawing Controls</source>
-        <translation>ベクター自動中割りコントロール</translation>
+        <translation type="vanished">ベクター自動中割りコントロール</translation>
     </message>
     <message>
         <source>Vector Guided Drawing</source>
-        <translation>ベクター自動中割り</translation>
+        <translation type="vanished">ベクター自動中割り</translation>
     </message>
     <message>
         <source>Group strokes by vector levels?</source>
@@ -12049,6 +12732,240 @@ Allow duplicate?</source>
     </message>
     <message>
         <source>You cannot save a scene outside of the current project&apos;s folder.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Autorenumber</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set Stop Frame Hold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to replace a Stop Frame Hold with a blank drawing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to create a stop frame hold on the camera column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot create a stop frame hold on the current column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot create a stop from hold on a column without a level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to create a stop frame hold on the current column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot duplicate a Stop Frame Hold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>+</source>
+        <comment>XSheetPDF</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&apos;</source>
+        <comment>XSheetPDF:second</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&quot;</source>
+        <comment>XSheetPDF:frame</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TOT</source>
+        <comment>XSheetPDF</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>th</source>
+        <comment>XSheetPDF</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <comment>XSheetPDF CellMark</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dot</source>
+        <comment>XSheetPDF CellMark</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <comment>XSheetPDF CellMark</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filled circle</source>
+        <comment>XSheetPDF CellMark</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Asterisk</source>
+        <comment>XSheetPDF CellMark</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ACTION</source>
+        <comment>XSheetPDF</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>S</source>
+        <comment>XSheetPDF</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CELL</source>
+        <comment>XSheetPDF</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CAMERA</source>
+        <comment>XSheetPDF</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EPISODE</source>
+        <comment>XSheetPDF</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SEQ.</source>
+        <comment>XSheetPDF</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SCENE</source>
+        <comment>XSheetPDF</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TIME</source>
+        <comment>XSheetPDF</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NAME</source>
+        <comment>XSheetPDF</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SHEET</source>
+        <comment>XSheetPDF</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TITLE</source>
+        <comment>XSheetPDF</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CAMERAMAN</source>
+        <comment>XSheetPDF</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A conversion task is in progress! wait until it stops or cancel it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Removed unused level %1 from the scene cast. (This behavior can be disabled in Preferences.)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Removed unused levels from the scene cast. (This behavior can be disabled in Preferences.)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A prior save of Scene &apos;%1&apos; was critically interrupted. 
+
+A partial save file was generated and changes may be manually salvaged from &apos;%2&apos;.
+
+Do you wish to continue loading the last good save or stop and try to salvage the prior save?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Cell Mark #%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide Viewer Indicators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Viewer Indicators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Don&apos;t Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vector Guided Tweening Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TVPaint JSON file cannot be exported from untitled scene. Save the scene first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No columns can be exported. Please note the followings:
+ - The level files must be placed at the same or child folder relative to the scene file.
+ - Currently only the columns containing raster levels can be exported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export TVPaint JSON File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <comment>Cell Mark</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set Cell Mark at Column %1  Frame %2 to %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set Multiple Stop Frames  at Frame %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Multiple Stop Frames at Frame %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Converting scene to use %1 Holds can only be undone using &apos;Revert Scene&apos;. Save before converting.
+Do you want to continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Implicit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Explicit</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13353,11 +14270,55 @@ Please commit or revert changes first.</source>
         <source>Enable Column Color Filter and Transparency for Rendering</source>
         <translation>列のメインビューア表示の不透明度とカラーフィルタの設定をレンダリングにも用いる</translation>
     </message>
+    <message>
+        <source>Edit Cell Marks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cell Marks:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SceneViewer</name>
     <message>
         <source>Motion Path Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FROZEN</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Transparency Check</source>
+        <translation type="unfinished">透明度チェック</translation>
+    </message>
+    <message>
+        <source>Ink Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ink#1 Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paint Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inks Only Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Black BG Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fill Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gap Check</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13413,7 +14374,7 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Vector Guided Drawing</source>
-        <translation>ベクター自動中割り</translation>
+        <translation type="vanished">ベクター自動中割り</translation>
     </message>
     <message>
         <source>Off</source>
@@ -13421,15 +14382,15 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Closest Drawing</source>
-        <translation>直近の作画</translation>
+        <translation type="vanished">直近の作画</translation>
     </message>
     <message>
         <source>Farthest Drawing</source>
-        <translation>最も遠い作画</translation>
+        <translation type="vanished">最も遠い作画</translation>
     </message>
     <message>
         <source>All Drawings</source>
-        <translation>全ての作画</translation>
+        <translation type="vanished">全ての作画</translation>
     </message>
     <message>
         <source>Show %1</source>
@@ -13474,6 +14435,22 @@ Please commit or revert changes first.</source>
     <message>
         <source>Ease In/Out Interpolation</source>
         <translation>両詰め</translation>
+    </message>
+    <message>
+        <source>Vector Guided Tweening</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Closest Onion Skin Drawing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Farthest Onion Skin Drawing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All Onion Skin Drawings</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -13979,13 +14956,17 @@ Right click to adjust.</source>
         <source>Cleanup</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cell Mark</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ShortcutViewer</name>
     <message>
         <source>%1 is already assigned to &apos;%2&apos;
 Assign to &apos;%3&apos;?</source>
-        <translation>%1　は既に %2 に割り当てられています。
+        <translation type="vanished">%1　は既に %2 に割り当てられています。
 %3 に割り当てますか？</translation>
     </message>
     <message>
@@ -13995,6 +14976,16 @@ Assign to &apos;%3&apos;?</source>
     <message>
         <source>No</source>
         <translation>いいえ</translation>
+    </message>
+    <message>
+        <source>&apos;%1&apos; is already assigned to &apos;%2&apos;
+Assign to &apos;%3&apos;?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Initial sequence &apos;%1&apos; is assigned to &apos;%2&apos; which takes priority.
+Assign shortcut sequence anyway?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -14478,14 +15469,6 @@ What would you like to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1%2Add / Remove Vanishing Point</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1%2Draw to Vanishing Point</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>%1%2Allow or Disallow Snapping</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14519,10 +15502,6 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Type Tool: Adds text</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Smart Raster Painter: Paints areas in Smart Raster leves</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -14605,297 +15584,284 @@ What would you like to do?</source>
         <source>This tool doesn&apos;t work on this layer type.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>%1%2Snap to Perspective Grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1%2Change Curve Handle Angle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smart Raster Painter: Paints areas in Smart Raster levels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1%2Fix small fill gaps with click+dragged style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1%2Selects style on current drawing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Perspective Grid Tool: Set up perspective grids</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1%2Move entire object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1%2Select/Deselect multiple</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1%2Snap rotation/spacing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1%2Move object along horizon</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StopMotion</name>
     <message>
         <source>No</source>
         <comment>frame id</comment>
-        <translation>フレームなし</translation>
+        <translation type="vanished">フレームなし</translation>
     </message>
     <message>
         <source>No level name specified: please choose a valid level name</source>
-        <translation>レベル名は指定されていません。有効なレベル名を指定して下さい</translation>
+        <translation type="vanished">レベル名は指定されていません。有効なレベル名を指定して下さい</translation>
     </message>
     <message>
         <source>The level name specified is already used: please choose a different level name.</source>
-        <translation>指定されたレベル名はすでに使用中です：別の名前を指定してください。</translation>
+        <translation type="vanished">指定されたレベル名はすでに使用中です：別の名前を指定してください。</translation>
     </message>
     <message>
         <source>The save in path specified does not match with the existing level.</source>
-        <translation>指定された保存先パスが既存のレベルと異なります。</translation>
+        <translation type="vanished">指定された保存先パスが既存のレベルと異なります。</translation>
     </message>
     <message>
         <source>The captured image size does not match with the existing level.</source>
-        <translation>取り込まれた画像サイズが既存のレベルと異なります。</translation>
+        <translation type="vanished">取り込まれた画像サイズが既存のレベルと異なります。</translation>
     </message>
     <message>
         <source>File %1 already exists.
 Do you want to overwrite it?</source>
-        <translation>ファイル %1 は既に存在します。
+        <translation type="vanished">ファイル %1 は既に存在します。
 上書きしてもよろしいですか？</translation>
     </message>
     <message>
         <source>Failed to load %1.</source>
-        <translation>ファイル %1 の読み込みに失敗しました。</translation>
+        <translation type="vanished">ファイル %1 の読み込みに失敗しました。</translation>
     </message>
     <message>
         <source>Folder %1 doesn&apos;t exist.
 Do you want to create it?</source>
-        <translation>フォルダー %1 は存在しません。
+        <translation type="vanished">フォルダー %1 は存在しません。
 作成しますか？</translation>
     </message>
     <message>
         <source>Unable to create</source>
-        <translation>作成できません</translation>
+        <translation type="vanished">作成できません</translation>
     </message>
     <message>
         <source>UNDEFINED WARNING</source>
-        <translation>※ 未定義の警告 ※</translation>
+        <translation type="vanished">※ 未定義の警告 ※</translation>
     </message>
     <message>
         <source>The level is not registered in the scene, but exists in the file system.</source>
-        <translation>このレベルは現在のシーンに読み込まれていませんが、ファイルは存在します。</translation>
+        <translation type="vanished">このレベルは現在のシーンに読み込まれていませんが、ファイルは存在します。</translation>
     </message>
     <message>
         <source>
 WARNING : Image size mismatch. The saved image size is %1 x %2.</source>
-        <translation>
+        <translation type="vanished">
 警告： 画像サイズの不一致。保存されている画像のサイズは %1 x %2 ピクセルです。</translation>
     </message>
     <message>
         <source>WARNING </source>
-        <translation>警告 </translation>
+        <translation type="vanished">警告 </translation>
     </message>
     <message>
         <source>
 Frame %1 exists.</source>
-        <translation>
+        <translation type="vanished">
 以下のコマが撮り込み済です： %1</translation>
     </message>
     <message>
         <source>
 Frames %1 exist.</source>
-        <translation>
+        <translation type="vanished">
 以下のコマが撮り込み済です： %1</translation>
     </message>
     <message>
         <source>OVERWRITE 1 of</source>
-        <translation>上書き ：</translation>
+        <translation type="vanished">上書き ：</translation>
     </message>
     <message>
         <source>ADD to</source>
-        <translation>追加 ：</translation>
+        <translation type="vanished">追加 ：</translation>
     </message>
     <message>
         <source> %1 frame</source>
-        <translation> %1 コマ撮り込み済</translation>
+        <translation type="vanished"> %1 コマ撮り込み済</translation>
     </message>
     <message>
         <source> %1 frames</source>
-        <translation> %1 コマ撮り込み済</translation>
+        <translation type="vanished"> %1 コマ撮り込み済</translation>
     </message>
     <message>
         <source>The level will be newly created.</source>
-        <translation>レベルは新規作成されます。</translation>
+        <translation type="vanished">レベルは新規作成されます。</translation>
     </message>
     <message>
         <source>NEW</source>
-        <translation>新規作成</translation>
+        <translation type="vanished">新規作成</translation>
     </message>
     <message>
         <source>The level is already registered in the scene.</source>
-        <translation>このレベルは既にシーンに読み込まれています。</translation>
+        <translation type="vanished">このレベルは既にシーンに読み込まれています。</translation>
     </message>
     <message>
         <source>
 NOTE : The level is not saved.</source>
-        <translation>
+        <translation type="vanished">
 注意： このレベルはまだファイルに保存されていません。</translation>
     </message>
     <message>
         <source>
 WARNING : Failed to get image size of the existing level %1.</source>
-        <translation>
+        <translation type="vanished">
 警告： 既存のレベル %1 の画像サイズの取得に失敗しました。</translation>
     </message>
     <message>
         <source>
 WARNING : Image size mismatch. The existing level size is %1 x %2.</source>
-        <translation>
+        <translation type="vanished">
 警告： 画像サイズの不一致。既存のレベルのサイズは %1 x %2 です。</translation>
     </message>
     <message>
         <source>WARNING : Level name conflicts. There already is a level %1 in the scene with the path                        
           %2.</source>
-        <translation>警告： レベル名の重複。このシーンには、既に %1 という名前のレベルが存在します。
+        <translation type="vanished">警告： レベル名の重複。このシーンには、既に %1 という名前のレベルが存在します。
 既存のレベルのファイルパスは %2 です。</translation>
     </message>
     <message>
         <source>
 WARNING : Image size mismatch. The size of level with the same name is is %1 x %2.</source>
-        <translation>
+        <translation type="vanished">
 警告： 画像サイズの不一致。既存の同名のレベルのサイズは %1 x %2 です。</translation>
     </message>
     <message>
         <source>WARNING : Level path conflicts. There already is a level with the path %1                        
           in the scene with the name %2.</source>
-        <translation>警告： ファイルパスの重複。既にこのシーンには %1 から読み込まれている
+        <translation type="vanished">警告： ファイルパスの重複。既にこのシーンには %1 から読み込まれている
 別名のレベル %2 があります。</translation>
     </message>
     <message>
         <source>
 WARNING : Image size mismatch. The size of level with the same path is %1 x %2.</source>
-        <translation>
+        <translation type="vanished">
 警告： 画像サイズの不一致。 既存の同じファイルパスのレベルのサイズは %1 x %2 です。</translation>
     </message>
     <message>
         <source>WARNING</source>
-        <translation>警告</translation>
+        <translation type="vanished">警告</translation>
     </message>
     <message>
         <source>No camera selected.</source>
-        <translation>カメラが選択されていません。</translation>
+        <translation type="vanished">カメラが選択されていません。</translation>
     </message>
     <message>
         <source>Please start live view before capturing an image.</source>
-        <translation>画像取り込みの前にライブビューを開始してください。</translation>
+        <translation type="vanished">画像取り込みの前にライブビューを開始してください。</translation>
     </message>
     <message>
         <source>Cannot capture webcam image unless live view is active.</source>
         <translation type="vanished">ライブビューが有効でないと、Webカメラの画像を取り込むことはできません。</translation>
-    </message>
-    <message>
-        <source>Please start live view before using time lapse.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cannot capture image unless live view is active.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Can&apos;t capture an image with focus check on.
-Please click the Check button in the Settings tab.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No level exists with the current name.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This is not an image level.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This is not a stop motion level.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Could not find an xsheet level with  the current level</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No export path given.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Could not find the source file.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Overwrite existing files?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>An error occurred.  Aborting.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Successfully exported </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> images.</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>StopMotionController</name>
     <message>
         <source>Controls</source>
-        <translation>コントロール</translation>
+        <translation type="vanished">コントロール</translation>
     </message>
     <message>
         <source>Settings</source>
-        <translation>設定</translation>
+        <translation type="vanished">設定</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation>オプション</translation>
+        <translation type="vanished">オプション</translation>
     </message>
     <message>
         <source>Resolution: </source>
-        <translation>ピクセルサイズ： </translation>
+        <translation type="vanished">ピクセルサイズ： </translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation>更新</translation>
+        <translation type="vanished">更新</translation>
     </message>
     <message>
         <source>File</source>
-        <translation>ファイル</translation>
+        <translation type="vanished">ファイル</translation>
     </message>
     <message>
         <source>Webcam Settings...</source>
-        <translation>ウェブカメラ設定...</translation>
+        <translation type="vanished">ウェブカメラ設定...</translation>
     </message>
     <message>
         <source>Capture</source>
-        <translation>取り込み</translation>
+        <translation type="vanished">取り込み</translation>
     </message>
     <message>
         <source>Next Level</source>
-        <translation>次のレベル</translation>
+        <translation type="vanished">次のレベル</translation>
     </message>
     <message>
         <source>Next New</source>
-        <translation>次の新規レベル</translation>
+        <translation type="vanished">次の新規レベル</translation>
     </message>
     <message>
         <source>Previous Level</source>
-        <translation>前のレベル</translation>
+        <translation type="vanished">前のレベル</translation>
     </message>
     <message>
         <source>Next Frame</source>
-        <translation>次のフレーム</translation>
+        <translation type="vanished">次のフレーム</translation>
     </message>
     <message>
         <source>Last Frame</source>
-        <translation>最後のフレーム</translation>
+        <translation type="vanished">最後のフレーム</translation>
     </message>
     <message>
         <source>Previous Frame</source>
-        <translation>前のフレーム</translation>
+        <translation type="vanished">前のフレーム</translation>
     </message>
     <message>
         <source>Next XSheet Frame</source>
-        <translation>タイムシートの次のフレーム</translation>
+        <translation type="vanished">タイムシートの次のフレーム</translation>
     </message>
     <message>
         <source>Previous XSheet Frame</source>
-        <translation>タイムシートの前のフレーム</translation>
+        <translation type="vanished">タイムシートの前のフレーム</translation>
     </message>
     <message>
         <source>Current Frame</source>
-        <translation>現在のフレーム</translation>
+        <translation type="vanished">現在のフレーム</translation>
     </message>
     <message>
         <source>Set to the Current Playhead Location</source>
-        <translation>現在のフレームに設定</translation>
+        <translation type="vanished">現在のフレームに設定</translation>
     </message>
     <message>
         <source>Start Live View</source>
-        <translation>ライブビューを開始</translation>
+        <translation type="vanished">ライブビューを開始</translation>
     </message>
     <message>
         <source>Zoom</source>
@@ -14907,15 +15873,15 @@ Please click the Check button in the Settings tab.</source>
     </message>
     <message>
         <source>Camera:</source>
-        <translation>カメラ：</translation>
+        <translation type="vanished">カメラ：</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation>レベル名：</translation>
+        <translation type="vanished">レベル名：</translation>
     </message>
     <message>
         <source>Frame:</source>
-        <translation>フレーム：</translation>
+        <translation type="vanished">フレーム：</translation>
     </message>
     <message>
         <source>File Type:</source>
@@ -14931,51 +15897,51 @@ Please click the Check button in the Settings tab.</source>
     </message>
     <message>
         <source>Camera Model</source>
-        <translation>カメラ型番</translation>
+        <translation type="vanished">カメラ型番</translation>
     </message>
     <message>
         <source>Camera Mode</source>
-        <translation>カメラモード</translation>
+        <translation type="vanished">カメラモード</translation>
     </message>
     <message>
         <source>Temperature: </source>
-        <translation>色温度： </translation>
+        <translation type="vanished">色温度： </translation>
     </message>
     <message>
         <source>Shutter Speed: </source>
-        <translation>シャッタースピード： </translation>
+        <translation type="vanished">シャッタースピード： </translation>
     </message>
     <message>
         <source>Iso: </source>
-        <translation>ISO： </translation>
+        <translation type="vanished">ISO： </translation>
     </message>
     <message>
         <source>Aperture: </source>
-        <translation>絞り： </translation>
+        <translation type="vanished">絞り： </translation>
     </message>
     <message>
         <source>Exposure: </source>
-        <translation>露出： </translation>
+        <translation type="vanished">露出： </translation>
     </message>
     <message>
         <source>Image Quality: </source>
-        <translation>画質： </translation>
+        <translation type="vanished">画質： </translation>
     </message>
     <message>
         <source>Picture Style: </source>
-        <translation>ピクチャスタイル： </translation>
+        <translation type="vanished">ピクチャスタイル： </translation>
     </message>
     <message>
         <source>White Balance: </source>
-        <translation>ホワイトバランス： </translation>
+        <translation type="vanished">ホワイトバランス： </translation>
     </message>
     <message>
         <source>Webcam Options</source>
-        <translation>ウェブカメラ設定</translation>
+        <translation type="vanished">ウェブカメラ設定</translation>
     </message>
     <message>
         <source>DSLR Options</source>
-        <translation>デジタル一眼レフ設定</translation>
+        <translation type="vanished">デジタル一眼レフ設定</translation>
     </message>
     <message>
         <source>Place the frame in the XSheet</source>
@@ -14983,7 +15949,7 @@ Please click the Check button in the Settings tab.</source>
     </message>
     <message>
         <source>Use Direct Show Webcam Drivers</source>
-        <translation>DirectShowデバイスドライバを使用する</translation>
+        <translation type="vanished">DirectShowデバイスドライバを使用する</translation>
     </message>
     <message>
         <source>Black Screen for Capture</source>
@@ -14995,7 +15961,7 @@ Please click the Check button in the Settings tab.</source>
     </message>
     <message>
         <source>Use MJPG with Webcam</source>
-        <translation>ウェブカメラの取り込みにMJPGを用いる</translation>
+        <translation type="vanished">ウェブカメラの取り込みにMJPGを用いる</translation>
     </message>
     <message>
         <source>Place on XSheet</source>
@@ -15003,7 +15969,7 @@ Please click the Check button in the Settings tab.</source>
     </message>
     <message>
         <source>Use Numpad Shortcuts When Active</source>
-        <translation>テンキーのショートカットを用いる</translation>
+        <translation type="vanished">テンキーのショートカットを用いる</translation>
     </message>
     <message>
         <source>Show Live View on All Frames</source>
@@ -15011,7 +15977,7 @@ Please click the Check button in the Settings tab.</source>
     </message>
     <message>
         <source>Capture Review Time: </source>
-        <translation>画像を確認する時間： </translation>
+        <translation type="vanished">画像を確認する時間： </translation>
     </message>
     <message>
         <source>Level Subsampling: </source>
@@ -15019,365 +15985,226 @@ Please click the Check button in the Settings tab.</source>
     </message>
     <message>
         <source>Opacity:</source>
-        <translation>不透明度：</translation>
+        <translation type="vanished">不透明度：</translation>
     </message>
     <message>
         <source>No camera detected.</source>
-        <translation>カメラが認識されていません。</translation>
+        <translation type="vanished">カメラが認識されていません。</translation>
     </message>
     <message>
         <source>No camera detected</source>
-        <translation>カメラが認識されていません</translation>
+        <translation type="vanished">カメラが認識されていません</translation>
     </message>
     <message>
         <source>- Select camera -</source>
-        <translation>- カメラを選択してください -</translation>
+        <translation type="vanished">- カメラを選択してください -</translation>
     </message>
     <message>
         <source>Mode: </source>
-        <translation>モード： </translation>
+        <translation type="vanished">モード： </translation>
     </message>
     <message>
         <source>Auto</source>
-        <translation>自動</translation>
+        <translation type="vanished">自動</translation>
     </message>
     <message>
         <source>Disabled</source>
-        <translation>無効</translation>
+        <translation type="vanished">無効</translation>
     </message>
     <message>
         <source>Stop Live View</source>
-        <translation>ライブビューを停止</translation>
-    </message>
-    <message>
-        <source>Light</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tests</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paths</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Camera Status</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show original live view images in timeline</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Check</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Zoom in to check focus</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pick</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set focus check location</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;&lt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&gt;&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;&lt;&lt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&gt;&gt;&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Expose as: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Scene Frame:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select a camera to change settings.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Live View Offset: 0</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Test Shot</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">ライブビューを停止</translation>
     </message>
     <message>
         <source>Image adjust</source>
-        <translation type="unfinished">画像調整</translation>
-    </message>
-    <message>
-        <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">画像調整</translation>
     </message>
     <message>
         <source>Grayscale</source>
-        <translation type="unfinished">グレースケール</translation>
+        <translation type="obsolete">グレースケール</translation>
     </message>
     <message>
         <source>Black &amp; White</source>
-        <translation type="unfinished">白黒二値</translation>
-    </message>
-    <message>
-        <source>Manual Focus</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Focus: </source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">白黒二値</translation>
     </message>
     <message>
         <source>Brightness: </source>
-        <translation type="unfinished">明るさ：</translation>
-    </message>
-    <message>
-        <source>Contrast: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Gain: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Saturation: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>More</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">明るさ：</translation>
     </message>
     <message>
         <source>Color type:</source>
-        <translation type="unfinished">タイプ：</translation>
-    </message>
-    <message>
-        <source>Time Lapse</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use time lapse</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Place the frame in the Scene</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">タイプ：</translation>
     </message>
     <message>
         <source>Interval(sec):</source>
-        <translation type="unfinished">間隔（秒）：</translation>
-    </message>
-    <message>
-        <source>Blackout all Screens</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Test</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use current frame as overlay.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use the current scene frame as an overlay.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Screen 1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Screen 2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Screen 3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Motion Control</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Port: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Aperture: Auto</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Shutter Speed: Auto</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Live View Offset: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start Capturing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Stop Capturing</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">間隔（秒）：</translation>
     </message>
 </context>
 <context>
     <name>StopMotionSaveInFolderPopup</name>
     <message>
         <source>Create the Destination Subfolder to Save</source>
-        <translation type="unfinished">カットフォルダの作成</translation>
+        <translation type="obsolete">カットフォルダの作成</translation>
     </message>
     <message>
         <source>Set As Default</source>
-        <translation type="unfinished">既定値に設定</translation>
+        <translation type="obsolete">既定値に設定</translation>
     </message>
     <message>
         <source>Set the current &quot;Save In&quot; path as the default.</source>
-        <translation type="unfinished">現在の「作成場所」のパスを既定にします。</translation>
+        <translation type="obsolete">現在の「作成場所」のパスを既定にします。</translation>
     </message>
     <message>
         <source>Create Subfolder</source>
-        <translation type="unfinished">カットフォルダを作成する</translation>
+        <translation type="obsolete">カットフォルダを作成する</translation>
     </message>
     <message>
         <source>Infomation</source>
-        <translation type="unfinished">基本情報</translation>
+        <translation type="obsolete">基本情報</translation>
     </message>
     <message>
         <source>Subfolder Name</source>
-        <translation type="unfinished">フォルダ名</translation>
+        <translation type="obsolete">フォルダ名</translation>
     </message>
     <message>
         <source>Auto Format:</source>
-        <translation type="unfinished">自動生成：</translation>
+        <translation type="obsolete">自動生成：</translation>
     </message>
     <message>
         <source>Show This on Launch of the Camera Capture</source>
-        <translation type="unfinished">”カメラから取り込む”起動時にこのポップアップを表示する</translation>
+        <translation type="obsolete">”カメラから取り込む”起動時にこのポップアップを表示する</translation>
     </message>
     <message>
         <source>Save Scene in Subfolder</source>
-        <translation type="unfinished">カットフォルダ内にシーンを保存する</translation>
+        <translation type="obsolete">カットフォルダ内にシーンを保存する</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation type="obsolete">OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation type="obsolete">キャンセル</translation>
     </message>
     <message>
         <source>C- + Sequence + Scene</source>
-        <translation type="unfinished">C- + シーン + カット</translation>
+        <translation type="obsolete">C- + シーン + カット</translation>
     </message>
     <message>
         <source>Sequence + Scene</source>
-        <translation type="unfinished">シーン + カット</translation>
+        <translation type="obsolete">シーン + カット</translation>
     </message>
     <message>
         <source>Episode + Sequence + Scene</source>
-        <translation type="unfinished">話数 + シーン + カット</translation>
+        <translation type="obsolete">話数 + シーン + カット</translation>
     </message>
     <message>
         <source>Project + Episode + Sequence + Scene</source>
-        <translation type="unfinished">作品名 + 話数 + シーン + カット</translation>
+        <translation type="obsolete">作品名 + 話数 + シーン + カット</translation>
     </message>
     <message>
         <source>Save the current scene in the subfolder.
 Set the output folder path to the subfolder as well.</source>
-        <translation type="unfinished">カットフォルダ内にシーンファイルを保存します。同時に、
+        <translation type="obsolete">カットフォルダ内にシーンファイルを保存します。同時に、
 出力設定の保存先をカットフォルダのパスに設定します。</translation>
     </message>
     <message>
-        <source>Save In:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Project:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Episode:</source>
-        <translation type="unfinished">話数：</translation>
+        <translation type="obsolete">話数：</translation>
     </message>
     <message>
         <source>Sequence:</source>
-        <translation type="unfinished">シーン：</translation>
+        <translation type="obsolete">シーン：</translation>
     </message>
     <message>
         <source>Scene:</source>
-        <translation type="unfinished">カット番号：</translation>
+        <translation type="obsolete">カット番号：</translation>
     </message>
     <message>
         <source>Subfolder Name:</source>
-        <translation type="unfinished">フォルダ名：</translation>
+        <translation type="obsolete">フォルダ名：</translation>
     </message>
     <message>
         <source>Subfolder name should not be empty.</source>
-        <translation type="unfinished">フォルダ名を入力してください。</translation>
+        <translation type="obsolete">フォルダ名を入力してください。</translation>
     </message>
     <message>
         <source>Subfolder name should not contain following characters:  * . &quot; / \ [ ] : ; | = , </source>
-        <translation type="unfinished">フォルダ名に次のいずれかを含む事はできません：  * . &quot; / \ [ ] : ; | = , </translation>
+        <translation type="obsolete">フォルダ名に次のいずれかを含む事はできません：  * . &quot; / \ [ ] : ; | = , </translation>
     </message>
     <message>
         <source>Folder %1 already exists.</source>
-        <translation type="unfinished">フォルダ %1 は既に存在します。</translation>
+        <translation type="obsolete">フォルダ %1 は既に存在します。</translation>
     </message>
     <message>
         <source>It is not possible to create the %1 folder.</source>
-        <translation type="unfinished">%1 フォルダを作成できません。</translation>
-    </message>
-</context>
-<context>
-    <name>StopMotionSerial</name>
-    <message>
-        <source>No Device</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">%1 フォルダを作成できません。</translation>
     </message>
 </context>
 <context>
     <name>StudioPaletteTreeViewer</name>
     <message>
         <source>New Folder</source>
-        <translation type="obsolete">新規フォルダ</translation>
+        <translation type="unfinished">新規フォルダ</translation>
+    </message>
+    <message>
+        <source>This folder is not empty. Delete anyway?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Cleanup Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load into Current Cleaunp Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Replace with Current Cleaunp Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load into Current Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge to Current Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Replace with Current Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search for Palettes</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
     <message>
         <source>&amp;Delete</source>
-        <translation type="obsolete">削除 (&amp;D)</translation>
+        <translation type="unfinished">削除 (&amp;D)</translation>
+    </message>
+    <message>
+        <source>&amp;New Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;New Palette</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -15500,59 +16327,7 @@ Click the arrow button to create a new sub-xsheet</source>
         <translation type="unfinished">フィールドガイド</translation>
     </message>
     <message>
-        <source>Vanishing Point Rays</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Angle: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Opacity: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Horizontal Grid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Spacing: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Offset: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vertical Grid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Horizon</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Step: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Isometric Grid</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Left Angle: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Right Angle: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Left Spacing: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Right Spacing: </source>
+        <source>Perspective Grids</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -16106,19 +16881,31 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
     <message>
         <source>Guide Frames:</source>
-        <translation>ガイドを表示するフレーム：</translation>
+        <translation type="vanished">ガイドを表示するフレーム：</translation>
     </message>
     <message>
         <source>Select Guide Stroke:</source>
-        <translation>原画描線を選択：</translation>
+        <translation type="vanished">原画描線を選択：</translation>
     </message>
     <message>
         <source>Flip Guide Stroke:</source>
-        <translation>原画描線の向きを反転：</translation>
+        <translation type="vanished">原画描線の向きを反転：</translation>
     </message>
     <message>
         <source>Interpolation:</source>
         <translation>割り方：</translation>
+    </message>
+    <message>
+        <source>Use Onion Skin Frames:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Stroke:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Stroke Direction:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -16349,6 +17136,18 @@ Please refer to the user guide for details.</source>
         <source>Level Path</source>
         <translation>レベルのパス</translation>
     </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inbetween symbol mark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reverse sheet symbol mark</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>XsheetGUI::CellArea</name>
@@ -16423,6 +17222,25 @@ Please refer to the user guide for details.</source>
     <message>
         <source>Edit Image</source>
         <translation>画像の編集</translation>
+    </message>
+    <message>
+        <source>Lip Sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cell Mark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>XsheetGUI::ChangeObjectParent</name>
+    <message>
+        <source>Table</source>
+        <translation type="unfinished">テーブル</translation>
     </message>
 </context>
 <context>
@@ -16579,6 +17397,14 @@ Please refer to the user guide for details.</source>
         <source>Show the column parent&apos;s color in the Xsheet</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Unlock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lock</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>XsheetGUI::ColumnTransparencyPopup</name>
@@ -16621,6 +17447,10 @@ Please refer to the user guide for details.</source>
     <message>
         <source>Opacity:</source>
         <translation>不透明度：</translation>
+    </message>
+    <message>
+        <source>Lock Column</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -16764,6 +17594,18 @@ Hold F3 Key on the Viewer to Show This Frame Only</source>
         <source>Click to Move Shift &amp; Trace Marker</source>
         <translation>[クリック] ライトテーブルマーカーを移動</translation>
     </message>
+    <message>
+        <source>Tag: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>XsheetGUI::SoundColumnPopup</name>
@@ -16785,6 +17627,13 @@ Hold F3 Key on the Viewer to Show This Frame Only</source>
     <message>
         <source>New Raster Level</source>
         <translation type="vanished">新規ラスターレベル</translation>
+    </message>
+</context>
+<context>
+    <name>XsheetPdfPreviewArea</name>
+    <message>
+        <source>Fit To Window</source>
+        <translation type="unfinished">ウィンドウに全体を表示</translation>
     </message>
 </context>
 <context>

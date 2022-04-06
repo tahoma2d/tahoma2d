@@ -95,6 +95,22 @@
         <source>Y:</source>
         <translation type="unfinished">Y:</translation>
     </message>
+    <message>
+        <source>Flip Object Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Object Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotate Object Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotate Object Right</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BrushTool</name>
@@ -544,6 +560,10 @@
         <source>Ease In/Out</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Savebox</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FillTool</name>
@@ -635,6 +655,14 @@
         <source>Close and Fill</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Refer Visible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Savebox</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FingerTool</name>
@@ -693,6 +721,10 @@
         <source>&lt;custom&gt;</source>
         <translation>&lt;personalizado&gt;</translation>
     </message>
+    <message>
+        <source>Grid</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FullColorEraserTool</name>
@@ -743,6 +775,10 @@
         <source>Fill Depth</source>
         <translation>Profundidad</translation>
     </message>
+    <message>
+        <source>Refer Visible</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>HandToolOptionsBox</name>
@@ -790,6 +826,120 @@
     <message>
         <source>Lines &amp; Areas</source>
         <translation>Líneas y áreas</translation>
+    </message>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished">Presión</translation>
+    </message>
+    <message>
+        <source>Lock Alpha</source>
+        <translation type="unfinished">Preservar alfa</translation>
+    </message>
+</context>
+<context>
+    <name>PerspectiveGridToolOptionBox</name>
+    <message>
+        <source>Spacing:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotation:</source>
+        <translation type="unfinished">Rotación:</translation>
+    </message>
+    <message>
+        <source>Rotate Perspective Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotate Perspective Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation type="unfinished">Tipo:</translation>
+    </message>
+    <message>
+        <source>Opacity:</source>
+        <translation type="unfinished">Opacidad:</translation>
+    </message>
+    <message>
+        <source>Color:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation type="unfinished">Ajustes:</translation>
+    </message>
+</context>
+<context>
+    <name>PerspectiveTool</name>
+    <message>
+        <source>Type:</source>
+        <translation type="unfinished">Tipo:</translation>
+    </message>
+    <message>
+        <source>Vanishing Point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line</source>
+        <translation type="unfinished">Línea</translation>
+    </message>
+    <message>
+        <source>Color:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Magenta</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yellow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cyan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Black</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opacity:</source>
+        <translation type="unfinished">Opacidad:</translation>
+    </message>
+    <message>
+        <source>Horizon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Parallel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Advanced Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation type="unfinished">Ajustes:</translation>
+    </message>
+    <message>
+        <source>&lt;custom&gt;</source>
+        <translation type="unfinished">&lt;personalizado&gt;</translation>
     </message>
 </context>
 <context>
@@ -1107,6 +1257,22 @@ Do you want to proceed?</source>
         <source>Draw Under</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Rotate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation type="unfinished">Tamaño</translation>
+    </message>
+    <message>
+        <source>Eraser</source>
+        <translation type="unfinished">Borrador</translation>
+    </message>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished">Presión</translation>
+    </message>
 </context>
 <context>
     <name>PumpTool</name>
@@ -1325,6 +1491,10 @@ Do you want to proceed?</source>
         <source>The current tool cannot be used on empty frames of a Single Frame level.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>The current tool cannot be used on a stop frame.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RGBPickerTool</name>
@@ -1530,6 +1700,22 @@ Do you want to proceed?</source>
         <source>Y:</source>
         <translation type="unfinished">Y:</translation>
     </message>
+    <message>
+        <source>Flip Selection Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Selection Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotate Selection Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotate Selection Right</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ShiftTraceToolOptionBox</name>
@@ -1681,6 +1867,14 @@ movido hacia el final de la primera página de la paleta.</translation>
     <message>
         <source>Pressure</source>
         <translation>Presión</translation>
+    </message>
+    <message>
+        <source>Lock Alpha</source>
+        <translation type="unfinished">Preservar alfa</translation>
+    </message>
+    <message>
+        <source>Grid</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
