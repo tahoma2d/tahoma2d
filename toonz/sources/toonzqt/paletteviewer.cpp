@@ -641,9 +641,12 @@ void PaletteViewer::updateSavePaletteToolBar() {
         if (levelType == PLT_XSHLEVEL) enable = false;
       }
       act->setEnabled(enable);
-    } else if (m_viewType != STUDIO_PALETTE && i == 1)  // move action
-      actions[i]->setVisible(enable);
-    else
+    } else if (m_viewType != STUDIO_PALETTE && i == 1) {  // move action
+      // Do not hide when palette is not visible otherwise it causes
+      // panel redistribution at startup
+      bool moveVisible = isVisible() ? enable : true;
+      actions[i]->setVisible(moveVisible);
+    } else
       actions[i]->setEnabled(true);
   }
 }

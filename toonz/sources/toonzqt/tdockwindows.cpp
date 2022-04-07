@@ -106,11 +106,7 @@ void TMainWindow::setSeparatorsThickness(int thick) {
 
 //----------------------------------------
 
-void TMainWindow::resizeEvent(QResizeEvent *event) {
-  // see main.cpp for why we are doing this
-  if (m_layout->isEnabled()) m_layout->redistribute();
-  m_layout->setEnabled(true);
-}
+void TMainWindow::resizeEvent(QResizeEvent *event) { m_layout->redistribute(); }
 
 //========================================================================
 
