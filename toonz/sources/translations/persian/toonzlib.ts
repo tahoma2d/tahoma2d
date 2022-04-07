@@ -213,17 +213,17 @@
 <context>
     <name>Preferences</name>
     <message>
-        <location filename="../../toonzlib/preferences.cpp" line="101"/>
+        <location filename="../../toonzlib/preferences.cpp" line="100"/>
         <source>Retas Level Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/preferences.cpp" line="107"/>
+        <location filename="../../toonzlib/preferences.cpp" line="106"/>
         <source>Adobe Photoshop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/preferences.cpp" line="204"/>
+        <location filename="../../toonzlib/preferences.cpp" line="203"/>
         <source>PNG</source>
         <translation type="unfinished"></translation>
     </message>
@@ -307,108 +307,108 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="902"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="908"/>
         <source>Add Fx  : </source>
         <translation>اضافه کردن Fx  : </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="903"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="909"/>
         <source>Insert Fx  : </source>
         <translation>الحاق Fx  : </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1059"/>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1062"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1073"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1076"/>
         <source>Create Linked Fx  : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1284"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1298"/>
         <source>Replace Fx  : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1350"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1364"/>
         <source>Unlink Fx  : %1 - - %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1391"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1405"/>
         <source>Make Macro Fx  : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1534"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1548"/>
         <source>Explode Macro Fx  : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1597"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1611"/>
         <source>Create Output Fx</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1688"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1702"/>
         <source>Connect to Xsheet  : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1748"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1762"/>
         <source>Disconnect from Xsheet  : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="2021"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="2035"/>
         <source>Delete Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="2308"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="2322"/>
         <source>Delete Fx Node : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="2731"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="2747"/>
         <source>Paste Fx  :  </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3100"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3116"/>
         <source>Disconnect Fx</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3352"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3368"/>
         <source>Connect Fx : %1 - %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3534"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3550"/>
         <source>Rename Fx : %1 &gt; %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3586"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3602"/>
         <source>Group Fx</source>
         <translation>گروه کردن Fx</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3690"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3706"/>
         <source>Ungroup Fx</source>
         <translation>لغو گروه Fx</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3792"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3808"/>
         <source>Rename Group  : %1 &gt; %2</source>
         <translation>تغییر اسم گروه  : %1 &gt; %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/orientation.cpp" line="77"/>
+        <location filename="../../toonzlib/orientation.cpp" line="84"/>
         <source>Xsheet</source>
         <translation>اکس شیت</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/orientation.cpp" line="143"/>
+        <location filename="../../toonzlib/orientation.cpp" line="152"/>
         <source>Timeline</source>
         <translation>تایم لاین</translation>
     </message>
@@ -423,67 +423,67 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="453"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="455"/>
         <source>Add Style  to Palette %1</source>
         <translation>افزودن استایل  به پالت %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="671"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="673"/>
         <source>Add Page %1 to Palette %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="736"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="738"/>
         <source>Delete Page %1 from Palette %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="791"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="793"/>
         <source>Load Color Model %1  to Palette %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="889"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="891"/>
         <source>color model</source>
         <translation>مدل رنگ</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="1057"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="1059"/>
         <source>Move Page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="1108"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="1110"/>
         <source>Rename Page  %1 &gt; %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="1172"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="1174"/>
         <source>Rename Style#%1 in Palette%2  : %3 &gt; %4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="1237"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="1239"/>
         <source>Set Picked Position of Style#%1 in Palette%2 : %3,%4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="1316"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="1318"/>
         <source>Update Colors by Using Picked Positions in Palette %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/sceneresources.cpp" line="445"/>
+        <location filename="../../toonzlib/sceneresources.cpp" line="447"/>
         <source>Can&apos;t save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/sceneresources.cpp" line="519"/>
+        <location filename="../../toonzlib/sceneresources.cpp" line="521"/>
         <source>and %1 more item(s).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/sceneresources.cpp" line="522"/>
+        <location filename="../../toonzlib/sceneresources.cpp" line="524"/>
         <source>Failed to save the following resources:
 </source>
         <translation type="unfinished"></translation>
@@ -721,38 +721,86 @@
         <translation>حذف ستون  </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="623"/>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="651"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="742"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="770"/>
         <source>None</source>
         <translation>هیچ</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="625"/>
+        <location filename="../../toonzlib/sceneproperties.cpp" line="28"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="744"/>
         <source>Red</source>
         <translation>قرمز</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="627"/>
+        <location filename="../../toonzlib/sceneproperties.cpp" line="29"/>
+        <source>Orange</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/sceneproperties.cpp" line="30"/>
+        <source>Yellow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/sceneproperties.cpp" line="31"/>
+        <source>Light Green</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/sceneproperties.cpp" line="32"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="746"/>
         <source>Green</source>
         <translation>سبز</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="629"/>
+        <location filename="../../toonzlib/sceneproperties.cpp" line="33"/>
+        <source>Light Blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/sceneproperties.cpp" line="34"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="748"/>
         <source>Blue</source>
         <translation>آبی</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="631"/>
+        <location filename="../../toonzlib/sceneproperties.cpp" line="35"/>
+        <source>Dark Blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/sceneproperties.cpp" line="36"/>
+        <source>Purple</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/sceneproperties.cpp" line="37"/>
+        <source>Pink</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/sceneproperties.cpp" line="38"/>
+        <source>Dark Pink</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/sceneproperties.cpp" line="39"/>
+        <source>White</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="750"/>
         <source>DarkYellow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="633"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="752"/>
         <source>DarkCyan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="635"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="754"/>
         <source>DarkMagenta</source>
         <translation type="unfinished"></translation>
     </message>
