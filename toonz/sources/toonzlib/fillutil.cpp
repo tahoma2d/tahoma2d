@@ -601,6 +601,7 @@ private:
     /*  oldInks.push_back(pair<TPixelCM32*, int>(buf, buf->getInk()));*/       \
     if (!clearInk) buf->setInk(ink);                                           \
     pixels.push_back(buf);                                                     \
+    points.push_back(TPoint(x1 + x, y1 + y));                                  \
   }
 
 #define CLEAR_INK                                                              \
@@ -644,11 +645,14 @@ void InkSegmenter::drawSegment(
   (m_r->pixels() + y2 * m_wrap + x2)->setInk(ink);
 
   std::vector<TPixelCM32*> pixels;
+  std::vector<TPoint> points;
   if (clearInk) {
     buf->setTone(255);
     (m_r->pixels() + y2 * m_wrap + x2)->setTone(255);
     pixels.push_back(buf);
     pixels.push_back(m_r->pixels() + y2 * m_wrap + x2);
+    points.push_back(TPoint(x1, y1));
+    points.push_back(TPoint(x2, y2));
   }
 
   dx = x2 - x1;
@@ -671,16 +675,28 @@ void InkSegmenter::drawSegment(
   }
   
   if (clearInk) {
-      bool lonelyPixels = true;
+    bool lonelyPixels = true;
       // make sure we don't put back the original color of isolated pixels.
+      int i = 0;
       for (auto pix : pixels) {
-          if ((ePix(pix)->getInk() != damInk && !ePix(pix)->isPurePaint()) || (wPix(pix)->getInk() != damInk && !wPix(pix)->isPurePaint()) ||
-              (sPix(pix)->getInk() != damInk && !sPix(pix)->isPurePaint()) || (nPix(pix)->getInk() != damInk && !nPix(pix)->isPurePaint()) ||
-              (nePix(pix)->getInk() != damInk && !nePix(pix)->isPurePaint()) || (sePix(pix)->getInk() != damInk && !sePix(pix)->isPurePaint()) ||
-              (swPix(pix)->getInk() != damInk && !swPix(pix)->isPurePaint()) || (nwPix(pix)->getInk() != damInk && !nwPix(pix)->isPurePaint())) {
-              lonelyPixels = false;
-              break;
-          }
+        bool e = ((points[i].x + 1) < m_lx), w = ((points[i].x - 1) >= 0),
+             n = ((points[i].y + 1) < m_ly), s = ((points[i].y - 1) >= 0);
+        i++;
+        if ((e && ePix(pix)->getInk() != damInk && !ePix(pix)->isPurePaint()) ||
+            (w && wPix(pix)->getInk() != damInk && !wPix(pix)->isPurePaint()) ||
+            (s && sPix(pix)->getInk() != damInk && !sPix(pix)->isPurePaint()) ||
+            (n && nPix(pix)->getInk() != damInk && !nPix(pix)->isPurePaint()) ||
+            (n && e && nePix(pix)->getInk() != damInk &&
+             !nePix(pix)->isPurePaint()) ||
+            (s && e && sePix(pix)->getInk() != damInk &&
+             !sePix(pix)->isPurePaint()) ||
+            (s && w && swPix(pix)->getInk() != damInk &&
+             !swPix(pix)->isPurePaint()) ||
+            (n && w && nwPix(pix)->getInk() != damInk &&
+             !nwPix(pix)->isPurePaint())) {
+          lonelyPixels = false;
+          break;
+        }
       }
       if (lonelyPixels) {
           for (auto pix : pixels) {
