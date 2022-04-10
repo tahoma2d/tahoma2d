@@ -1148,7 +1148,8 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
     stroke->insertControlPoints(0.5);
 
   bool isEditingLevel = m_application->getCurrentFrame()->isEditingLevel();
-  if (!isEditingLevel) TUndoManager::manager()->beginBlock();
+  bool renameColumn   = m_isFrameCreated;
+  if (!isEditingLevel && renameColumn) TUndoManager::manager()->beginBlock();
 
   if (m_frameRange.getIndex()) {
     if (m_firstFrameId == -1) {
@@ -1257,7 +1258,7 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
   }
 
   // Column name renamed to level name only if was originally empty
-  if (!isEditingLevel) {
+  if (!isEditingLevel && renameColumn) {
     int col = getApplication()->getCurrentColumn()->getColumnIndex();
     TXshColumn *column =
         getApplication()->getCurrentXsheet()->getXsheet()->getColumn(col);

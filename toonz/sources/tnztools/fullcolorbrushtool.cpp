@@ -659,7 +659,8 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
   if (m_tileSet->getTileCount() > 0) {
     delete m_tileSaver;
     bool isEditingLevel = m_application->getCurrentFrame()->isEditingLevel();
-    if (!isEditingLevel) TUndoManager::manager()->beginBlock();
+    bool renameColumn   = m_isFrameCreated;
+    if (!isEditingLevel && renameColumn) TUndoManager::manager()->beginBlock();
     TTool::Application *app   = TTool::getApplication();
     TXshLevel *level          = app->getCurrentLevel()->getLevel();
     TXshSimpleLevelP simLevel = level->getSimpleLevel();
@@ -670,7 +671,7 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
         m_strokeRect.getP00()));
 
     // Column name renamed to level name only if was originally empty
-    if (!isEditingLevel) {
+    if (!isEditingLevel && renameColumn) {
       int col            = app->getCurrentColumn()->getColumnIndex();
       TXshColumn *column = app->getCurrentXsheet()->getXsheet()->getColumn(col);
       int r0, r1;
