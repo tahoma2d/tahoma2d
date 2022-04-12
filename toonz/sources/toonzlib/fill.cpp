@@ -646,7 +646,8 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
     for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
       for (int tempX = 0; tempX < tempRaster->getLx();
            tempX++, tempPix++, keepPix++) {
-        keepPix->setPaint(tempPix->getPaint());
+        if (tempPix->getInk() != styleIndex)
+          keepPix->setPaint(tempPix->getPaint());
         // This next line takes care of autopaint lines
         if (tempPix->getInk() != styleIndex) {
           if (closeGaps && tempPix->getInk() == fakeStyleIndex) {
