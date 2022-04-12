@@ -33,6 +33,7 @@
 #include "toonz/childstack.h"
 #include "toonz/tframehandle.h"
 #include "toonz/tcolumnhandle.h"
+#include "toonz/tstageobjectcmd.h"
 
 // TnzCore includes
 #include "tsystem.h"
@@ -1794,9 +1795,28 @@ void CloneLevelUndo::undo() const {
 //-----------------------------------------------------------------------------
 
 void TCellSelection::cloneLevel() {
+  TUndoManager::manager()->beginBlock();
+
   std::unique_ptr<CloneLevelUndo> undo(new CloneLevelUndo(m_range));
 
-  if (undo->redo(), undo->m_ok) TUndoManager::manager()->add(undo.release());
+  if (undo->redo(), undo->m_ok) {
+    TUndoManager::manager()->add(undo.release());
+
+    // Clone level always adds new columns after the column selection.
+    TApplication *app = TApp::instance();
+    for (int col = m_range.m_c0; col <= m_range.m_c1; col++) {
+      int newCol              = col + m_range.getColCount();
+      TStageObjectId columnId = TStageObjectId::ColumnId(newCol);
+      TXsheet *xsh            = app->getCurrentXsheet()->getXsheet();
+      TXshCell cell           = xsh->getCell(m_range.m_r0, newCol);
+      TXshSimpleLevel *level  = cell.getSimpleLevel();
+      std::string columnName =
+          QString::fromStdWString(level->getName()).toStdString();
+      TStageObjectCmd::rename(columnId, columnName, app->getCurrentXsheet());
+    }
+  }
+
+  TUndoManager::manager()->endBlock();
 }
 
 //=============================================================================
