@@ -8,16 +8,18 @@
 #include <stdexcept>
 
 namespace {
-const int KEY_ICON_WIDTH      = 11;
-const int KEY_ICON_HEIGHT     = 11;
-const int EASE_TRIANGLE_SIZE  = 4;
-const int PLAY_MARKER_SIZE    = 10;
-const int PINNED_SIZE         = 11;
-const int NAV_TAG_WIDTH       = 7;
-const int NAV_TAG_HEIGHT      = 13;
-const int FRAME_MARKER_SIZE   = 4;
-const int FOLDED_CELL_SIZE    = 9;
-const int SHIFTTRACE_DOT_SIZE = 12;
+const int KEY_ICON_WIDTH           = 11;
+const int KEY_ICON_HEIGHT          = 11;
+const int EASE_TRIANGLE_SIZE       = 5;
+const int EASE_TRIANGLE_SIZE_LARGE = EASE_TRIANGLE_SIZE + 2;
+const int PLAY_MARKER_SIZE         = 10;
+const int PINNED_SIZE              = 11;
+const int NAV_TAG_WIDTH            = 7;
+const int NAV_TAG_HEIGHT           = 13;
+const int FRAME_MARKER_SIZE        = 4;
+const int FRAME_MARKER_SIZE_LARGE  = FRAME_MARKER_SIZE + 2;
+const int FOLDED_CELL_SIZE         = 9;
+const int SHIFTTRACE_DOT_SIZE      = 12;
 
 QRect iconRect(const QRect &areaRect, const int iconWidth, const int iconHeight,
                const int xOffset = 0) {
@@ -941,12 +943,19 @@ TopToBottomOrientation::TopToBottomOrientation() {
   corner.lineTo(QPointF(0, CELL_HEIGHT));
   addPath(PredefinedPath::DRAG_HANDLE_CORNER, corner);
 
-  QPainterPath diamond(QPointF(0, -4));
-  diamond.lineTo(4, 0);
-  diamond.lineTo(0, 4);
-  diamond.lineTo(-4, 0);
-  diamond.lineTo(0, -4);
+  QPainterPath diamond(QPointF(0, -FRAME_MARKER_SIZE));
+  diamond.lineTo(FRAME_MARKER_SIZE, 0);
+  diamond.lineTo(0, FRAME_MARKER_SIZE);
+  diamond.lineTo(-FRAME_MARKER_SIZE, 0);
+  diamond.lineTo(0, -FRAME_MARKER_SIZE);
   addPath(PredefinedPath::FRAME_MARKER_DIAMOND, diamond);
+
+  QPainterPath diamondLarge(QPointF(0, -FRAME_MARKER_SIZE_LARGE));
+  diamondLarge.lineTo(FRAME_MARKER_SIZE_LARGE, 0);
+  diamondLarge.lineTo(0, FRAME_MARKER_SIZE_LARGE);
+  diamondLarge.lineTo(-FRAME_MARKER_SIZE_LARGE, 0);
+  diamondLarge.lineTo(0, -FRAME_MARKER_SIZE_LARGE);
+  addPath(PredefinedPath::FRAME_MARKER_DIAMOND_LARGE, diamondLarge);
 
   QPainterPath fromTriangle(QPointF(0, EASE_TRIANGLE_SIZE / 2));
   fromTriangle.lineTo(QPointF(EASE_TRIANGLE_SIZE, -EASE_TRIANGLE_SIZE / 2));
@@ -954,11 +963,27 @@ TopToBottomOrientation::TopToBottomOrientation() {
   fromTriangle.lineTo(QPointF(0, EASE_TRIANGLE_SIZE / 2));
   addPath(PredefinedPath::BEGIN_EASE_TRIANGLE, fromTriangle);
 
+  QPainterPath fromTriangleLarge(QPointF(0, EASE_TRIANGLE_SIZE_LARGE / 2));
+  fromTriangleLarge.lineTo(
+      QPointF(EASE_TRIANGLE_SIZE_LARGE, -EASE_TRIANGLE_SIZE_LARGE / 2));
+  fromTriangleLarge.lineTo(
+      QPointF(-EASE_TRIANGLE_SIZE_LARGE, -EASE_TRIANGLE_SIZE_LARGE / 2));
+  fromTriangleLarge.lineTo(QPointF(0, EASE_TRIANGLE_SIZE_LARGE / 2));
+  addPath(PredefinedPath::BEGIN_EASE_TRIANGLE_LARGE, fromTriangleLarge);
+
   QPainterPath toTriangle(QPointF(0, -EASE_TRIANGLE_SIZE / 2));
   toTriangle.lineTo(QPointF(EASE_TRIANGLE_SIZE, EASE_TRIANGLE_SIZE / 2));
   toTriangle.lineTo(QPointF(-EASE_TRIANGLE_SIZE, EASE_TRIANGLE_SIZE / 2));
   toTriangle.lineTo(QPointF(0, -EASE_TRIANGLE_SIZE / 2));
   addPath(PredefinedPath::END_EASE_TRIANGLE, toTriangle);
+
+  QPainterPath toTriangleLarge(QPointF(0, -EASE_TRIANGLE_SIZE_LARGE / 2));
+  toTriangleLarge.lineTo(
+      QPointF(EASE_TRIANGLE_SIZE_LARGE, EASE_TRIANGLE_SIZE_LARGE / 2));
+  toTriangleLarge.lineTo(
+      QPointF(-EASE_TRIANGLE_SIZE_LARGE, EASE_TRIANGLE_SIZE_LARGE / 2));
+  toTriangleLarge.lineTo(QPointF(0, -EASE_TRIANGLE_SIZE_LARGE / 2));
+  addPath(PredefinedPath::END_EASE_TRIANGLE_LARGE, toTriangleLarge);
 
   QPainterPath playFrom(QPointF(0, 0));
   playFrom.lineTo(QPointF(PLAY_MARKER_SIZE, 0));
@@ -1382,12 +1407,19 @@ LeftToRightOrientation::LeftToRightOrientation() {
   corner.lineTo(QPointF(CELL_WIDTH, 0));
   addPath(PredefinedPath::DRAG_HANDLE_CORNER, corner);
 
-  QPainterPath diamond(QPointF(0, -4));
-  diamond.lineTo(4, 0);
-  diamond.lineTo(0, 4);
-  diamond.lineTo(-4, 0);
-  diamond.lineTo(0, -4);
+  QPainterPath diamond(QPointF(0, -FRAME_MARKER_SIZE));
+  diamond.lineTo(FRAME_MARKER_SIZE, 0);
+  diamond.lineTo(0, FRAME_MARKER_SIZE);
+  diamond.lineTo(-FRAME_MARKER_SIZE, 0);
+  diamond.lineTo(0, -FRAME_MARKER_SIZE);
   addPath(PredefinedPath::FRAME_MARKER_DIAMOND, diamond);
+
+  QPainterPath diamondLarge(QPointF(0, -FRAME_MARKER_SIZE_LARGE));
+  diamondLarge.lineTo(FRAME_MARKER_SIZE_LARGE, 0);
+  diamondLarge.lineTo(0, FRAME_MARKER_SIZE_LARGE);
+  diamondLarge.lineTo(-FRAME_MARKER_SIZE_LARGE, 0);
+  diamondLarge.lineTo(0, -FRAME_MARKER_SIZE_LARGE);
+  addPath(PredefinedPath::FRAME_MARKER_DIAMOND_LARGE, diamondLarge);
 
   QPainterPath fromTriangle(QPointF(EASE_TRIANGLE_SIZE / 2, 0));
   fromTriangle.lineTo(QPointF(-EASE_TRIANGLE_SIZE / 2, EASE_TRIANGLE_SIZE));
@@ -1395,11 +1427,27 @@ LeftToRightOrientation::LeftToRightOrientation() {
   fromTriangle.lineTo(QPointF(EASE_TRIANGLE_SIZE / 2, 0));
   addPath(PredefinedPath::BEGIN_EASE_TRIANGLE, fromTriangle);
 
+  QPainterPath fromTriangleLarge(QPointF(EASE_TRIANGLE_SIZE_LARGE / 2, 0));
+  fromTriangleLarge.lineTo(
+      QPointF(-EASE_TRIANGLE_SIZE_LARGE / 2, EASE_TRIANGLE_SIZE_LARGE));
+  fromTriangleLarge.lineTo(
+      QPointF(-EASE_TRIANGLE_SIZE_LARGE / 2, -EASE_TRIANGLE_SIZE_LARGE));
+  fromTriangleLarge.lineTo(QPointF(EASE_TRIANGLE_SIZE_LARGE / 2, 0));
+  addPath(PredefinedPath::BEGIN_EASE_TRIANGLE_LARGE, fromTriangleLarge);
+
   QPainterPath toTriangle(QPointF(-EASE_TRIANGLE_SIZE / 2, 0));
   toTriangle.lineTo(QPointF(EASE_TRIANGLE_SIZE / 2, EASE_TRIANGLE_SIZE));
   toTriangle.lineTo(QPointF(EASE_TRIANGLE_SIZE / 2, -EASE_TRIANGLE_SIZE));
   toTriangle.lineTo(QPointF(-EASE_TRIANGLE_SIZE / 2, 0));
   addPath(PredefinedPath::END_EASE_TRIANGLE, toTriangle);
+
+  QPainterPath toTriangleLarge(QPointF(-EASE_TRIANGLE_SIZE_LARGE / 2, 0));
+  toTriangleLarge.lineTo(
+      QPointF(EASE_TRIANGLE_SIZE_LARGE / 2, EASE_TRIANGLE_SIZE_LARGE));
+  toTriangleLarge.lineTo(
+      QPointF(EASE_TRIANGLE_SIZE_LARGE / 2, -EASE_TRIANGLE_SIZE_LARGE));
+  toTriangleLarge.lineTo(QPointF(-EASE_TRIANGLE_SIZE_LARGE / 2, 0));
+  addPath(PredefinedPath::END_EASE_TRIANGLE_LARGE, toTriangleLarge);
 
   QPainterPath playFrom(QPointF(0, 0));
   playFrom.lineTo(QPointF(PLAY_MARKER_SIZE, 0));

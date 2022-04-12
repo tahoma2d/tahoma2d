@@ -96,6 +96,9 @@ class CellArea final : public QWidget {
 
   RenameCellField *m_renameCell;
 
+  bool m_dragBeginEase, m_dragEndEase, m_dragKeyframe;
+  QPoint m_keyHighlight;
+
   void drawCells(QPainter &p, const QRect toBeUpdated);
   void drawNonEmptyBackground(QPainter &p) const;
   void drawFoldedColumns(QPainter &p, int layerAxis,
@@ -130,7 +133,8 @@ class CellArea final : public QWidget {
                                 bool isFolded = false);
 
   void drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
-                       bool isKeyFrame = false, bool isCamera = false);
+                       bool isKeyFrame = false, bool isCamera = false,
+                       bool keyHighlight = false);
   void drawEndOfLevelMarker(QPainter &p, QRect rect, bool isNextEmpty,
                             bool isStopFrame = false);
   void drawCellMarker(QPainter &p, int markId, QRect rect,
@@ -143,6 +147,8 @@ class CellArea final : public QWidget {
 
   DragTool *getDragTool() const;
   void setDragTool(DragTool *dragTool);
+
+  void updateKeyHighlight(int row, int col);
 
 public:
 #if QT_VERSION >= 0x050500

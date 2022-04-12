@@ -162,15 +162,18 @@ enum class PredefinedDimension {
   SCALE_THRESHOLD        //! scale threshold to simplify the view
 };
 enum class PredefinedPath {
-  DRAG_HANDLE_CORNER,   //! triangle corner at drag sidebar
-  BEGIN_EASE_TRIANGLE,  //! triangle marking beginning of ease range
-  END_EASE_TRIANGLE,    //! triangle marking end of ease range
-  BEGIN_PLAY_RANGE,     //! play range markers
+  DRAG_HANDLE_CORNER,         //! triangle corner at drag sidebar
+  BEGIN_EASE_TRIANGLE,        //! triangle marking beginning of ease range
+  BEGIN_EASE_TRIANGLE_LARGE,  //! triangle marking beginning of ease range
+  END_EASE_TRIANGLE,          //! triangle marking end of ease range
+  END_EASE_TRIANGLE_LARGE,    //! triangle marking end of ease range
+  BEGIN_PLAY_RANGE,           //! play range markers
   END_PLAY_RANGE,
   VOLUME_SLIDER_TRACK,  //! slider track
   VOLUME_SLIDER_HEAD,   //! slider head
   TIME_INDICATOR_HEAD,  //! current time indicator head
   FRAME_MARKER_DIAMOND,
+  FRAME_MARKER_DIAMOND_LARGE,
   NAVIGATION_TAG
 };
 enum class PredefinedPoint {
