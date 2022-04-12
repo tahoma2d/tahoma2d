@@ -44,22 +44,51 @@ NavTagEditorPopup::NavTagEditorPopup(int frame, QString label, QColor color)
   m_colorCB->addItem(getColorChipIcon(Qt::cyan), tr("Cyan"), TagColors::Cyan);
   m_colorCB->addItem(getColorChipIcon(Qt::white), tr("White"),
                      TagColors::White);
+  m_colorCB->addItem(getColorChipIcon(Qt::darkMagenta), tr("Dark Magenta"),
+                     TagColors::DarkMagenta);
+  m_colorCB->addItem(getColorChipIcon(Qt::darkRed), tr("Dark Red"),
+                     TagColors::DarkRed);
+  m_colorCB->addItem(getColorChipIcon(Qt::darkGreen), tr("Dark Green"),
+                     TagColors::DarkGreen);
+  m_colorCB->addItem(getColorChipIcon(Qt::darkBlue), tr("Dark Blue"),
+                     TagColors::DarkBlue);
+  m_colorCB->addItem(getColorChipIcon(Qt::darkYellow), tr("Dark Yellow"),
+                     TagColors::DarkYellow);
+  m_colorCB->addItem(getColorChipIcon(Qt::darkCyan), tr("Dark Cyan"),
+                     TagColors::DarkCyan);
+  m_colorCB->addItem(getColorChipIcon(Qt::darkGray), tr("Dark Gray"),
+                     TagColors::DarkGray);
+
   addWidget(tr("Color:"), m_colorCB);
 
   if (color == Qt::magenta)
-    m_colorCB->setCurrentIndex(0);
+    m_colorCB->setCurrentIndex(TagColors::Magenta);
   else if (color == Qt::red)
-    m_colorCB->setCurrentIndex(1);
+    m_colorCB->setCurrentIndex(TagColors::Red);
   else if (color == Qt::green)
-    m_colorCB->setCurrentIndex(2);
+    m_colorCB->setCurrentIndex(TagColors::Green);
   else if (color == Qt::blue)
-    m_colorCB->setCurrentIndex(3);
+    m_colorCB->setCurrentIndex(TagColors::Blue);
   else if (color == Qt::yellow)
-    m_colorCB->setCurrentIndex(4);
+    m_colorCB->setCurrentIndex(TagColors::Yellow);
   else if (color == Qt::cyan)
-    m_colorCB->setCurrentIndex(5);
+    m_colorCB->setCurrentIndex(TagColors::Cyan);
   else if (color == Qt::white)
-    m_colorCB->setCurrentIndex(6);
+    m_colorCB->setCurrentIndex(TagColors::White);
+  else if (color == Qt::darkMagenta)
+    m_colorCB->setCurrentIndex(TagColors::DarkMagenta);
+  else if (color == Qt::darkRed)
+    m_colorCB->setCurrentIndex(TagColors::DarkRed);
+  else if (color == Qt::darkGreen)
+    m_colorCB->setCurrentIndex(TagColors::DarkGreen);
+  else if (color == Qt::darkBlue)
+    m_colorCB->setCurrentIndex(TagColors::DarkBlue);
+  else if (color == Qt::darkYellow)
+    m_colorCB->setCurrentIndex(TagColors::DarkYellow);
+  else if (color == Qt::darkCyan)
+    m_colorCB->setCurrentIndex(TagColors::DarkCyan);
+  else if (color == Qt::darkGray)
+    m_colorCB->setCurrentIndex(TagColors::DarkGray);
 
   ret = ret &&
         connect(m_labelFld, SIGNAL(editingFinished()), SLOT(onLabelChanged()));
@@ -79,6 +108,10 @@ void NavTagEditorPopup::onColorChanged(int index) {
   QColor color;
 
   switch (index) {
+  case TagColors::Magenta:
+  default:
+    color = Qt::magenta;
+    break;
   case TagColors::Red:
     color = Qt::red;
     break;
@@ -94,9 +127,29 @@ void NavTagEditorPopup::onColorChanged(int index) {
   case TagColors::Cyan:
     color = Qt::cyan;
     break;
-  case TagColors::Magenta:
-  default:
-    color = Qt::magenta;
+  case TagColors::White:
+    color = Qt::white;
+    break;
+  case TagColors::DarkMagenta:
+    color = Qt::darkMagenta;
+    break;
+  case TagColors::DarkRed:
+    color = Qt::darkRed;
+    break;
+  case TagColors::DarkGreen:
+    color = Qt::darkGreen;
+    break;
+  case TagColors::DarkBlue:
+    color = Qt::darkBlue;
+    break;
+  case TagColors::DarkYellow:
+    color = Qt::darkYellow;
+    break;
+  case TagColors::DarkCyan:
+    color = Qt::darkCyan;
+    break;
+  case TagColors::DarkGray:
+    color = Qt::darkGray;
     break;
   }
 

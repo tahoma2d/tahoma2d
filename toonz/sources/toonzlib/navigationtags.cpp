@@ -2,10 +2,20 @@
 
 #include "tstream.h"
 #include "texception.h"
+#include "tenv.h"
 
 #ifndef _WIN32
 #include <limits.h>
 #endif
+
+TEnv::IntVar NavigationTagLastColorR("NavigationTagLastColorR", 255);
+TEnv::IntVar NavigationTagLastColorG("NavigationTagLastColorG", 0);
+TEnv::IntVar NavigationTagLastColorB("NavigationTagLastColorB", 255);
+
+NavigationTags::NavigationTags() {
+  m_lastTagColorUsed = QColor(NavigationTagLastColorR, NavigationTagLastColorG,
+                              NavigationTagLastColorB);
+}
 
 //-----------------------------------------------------------------------------
 
@@ -28,7 +38,7 @@ NavigationTags::Tag NavigationTags::getTag(int frame) {
 void NavigationTags::addTag(int frame, QString label) {
   if (frame < 0 || isTagged(frame)) return;
 
-  m_tags.push_back(Tag(frame, label));
+  m_tags.push_back(Tag(frame, label, m_lastTagColorUsed));
 
   std::sort(m_tags.begin(), m_tags.end());
 }
@@ -146,7 +156,7 @@ void NavigationTags::setTagLabel(int frame, QString label) {
 QColor NavigationTags::getTagColor(int frame) {
   Tag tag = getTag(frame);
 
-  return tag.m_color;
+  return (tag.m_frame == -1) ? m_lastTagColorUsed : tag.m_color;
 }
 
 //-----------------------------------------------------------------------------
@@ -159,6 +169,11 @@ void NavigationTags::setTagColor(int frame, QColor color) {
       m_tags[i].m_color = color;
       break;
     }
+
+  m_lastTagColorUsed      = color;
+  NavigationTagLastColorR = color.red();
+  NavigationTagLastColorG = color.green();
+  NavigationTagLastColorB = color.blue();
 }
 
 //-----------------------------------------------------------------------------

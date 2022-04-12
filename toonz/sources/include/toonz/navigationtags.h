@@ -41,7 +41,9 @@ public:
   };
   std::vector<Tag> m_tags;
 
-  NavigationTags() {}
+  QColor m_lastTagColorUsed;
+
+  NavigationTags();
   ~NavigationTags() {}
 
   std::vector<Tag> getTags() { return m_tags; }
