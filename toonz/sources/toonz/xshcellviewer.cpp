@@ -3108,7 +3108,7 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
         drawKeyframeLine(p, col, NumberRange(segmentRow0, segmentRow1));
 
         if (segmentRow1 - segmentRow0 >
-            4) {  // only show if distance more than 4 frames
+            3) {  // only show if distance more than 4 frames
           int handleRow0, handleRow1;
           if (getEaseHandles(segmentRow0, segmentRow1, ease0, ease1, handleRow0,
                              handleRow1)) {
@@ -3291,7 +3291,7 @@ void CellArea::drawNotes(QPainter &p, const QRect toBeUpdated) {
 
 bool CellArea::getEaseHandles(int r0, int r1, double e0, double e1, int &rh0,
                               int &rh1) {
-  if (r1 <= r0 + 4) {  // ... what?
+  if (r1 <= r0 + 3) {  // ... what?
     rh0 = r0;
     rh1 = r1;
     return false;
@@ -3301,16 +3301,16 @@ bool CellArea::getEaseHandles(int r0, int r1, double e0, double e1, int &rh0,
     rh1 = r1;
     return false;
   }
-  if (e0 <= 0 && e1 <= 0) {
+  if (e0 <= 1 && e1 <= 1) {
     rh0 = r0 + 1;
     rh1 = r1 - 1;
-  } else if (e0 <= 0) {
+  } else if (e0 <= 1) {
     rh0   = r0 + 1;
     int a = rh0 + 1;
     int b = r1 - 2;
     assert(a <= b);
     rh1 = tcrop((int)(r1 - e1 + 0.5), a, b);
-  } else if (e1 <= 0) {
+  } else if (e1 <= 1) {
     rh1   = r1 - 1;
     int b = rh1 - 1;
     int a = r0 + 2;
