@@ -232,7 +232,8 @@ XsheetViewer::XsheetViewer(QWidget *parent, Qt::WFlags flags)
     , m_frameDisplayStyle(to_enum(FrameDisplayStyleInXsheetRowArea))
     , m_orientation(nullptr)
     , m_xsheetLayout("Classic")
-    , m_frameZoomFactor(100) {
+    , m_frameZoomFactor(100)
+    , m_ctrlSelectRef(CellPosition(0, 0)) {
 
   m_xsheetLayout = Preferences::instance()->getLoadedXsheetLayout();
 
@@ -1265,11 +1266,33 @@ void XsheetViewer::keyPressEvent(QKeyEvent *event) {
     int r0, c0, r1, c1;
     cellSel->getSelectedCells(r0, c0, r1, c1);
     stride.setFrame(cellSel->getSelectedCells().getRowCount());
+    stride.setLayer(cellSel->getSelectedCells().getColCount());
 
     if (m_cellArea->isControlPressed()) {  // resize
-      if (r0 == r1 && shift.frame() < 0) return;
-      if (c0 == c1 && shift.layer() < firstCol) return;
-      cellSel->selectCells(r0, c0, r1 + shift.frame(), c1 + shift.layer());
+      // For initial press of CTRL, use current frame for reference but if there
+      // is a selection not including current frame, use upper-left corner of
+      // the active selection
+      if (m_ctrlSelectRef.frame() == CellPosition(0, 0)) {
+        if (now.frame() >= r0 && now.frame() <= r1)
+          m_ctrlSelectRef = now;
+        else
+          m_ctrlSelectRef =
+              CellPosition(r0, (orientation()->isVerticalTimeline() ? c0 : c1));
+      }
+
+      CellPosition offset(r0 - m_ctrlSelectRef.frame(),
+                          c0 - m_ctrlSelectRef.layer());
+
+      if (offset.frame())
+        r0 = std::max(0, r0 + shift.frame());
+      else
+        r1 += shift.frame();
+      if (offset.layer())
+        c0 = std::max(-1, c0 + shift.layer());
+      else
+        c1 += shift.layer();
+
+      cellSel->selectCells(r0, c0, r1, c1);
       updateCells();
       TApp::instance()->getCurrentSelection()->notifySelectionChanged();
       return;
@@ -1283,6 +1306,7 @@ void XsheetViewer::keyPressEvent(QKeyEvent *event) {
                            c1 + diffLayer);
       TApp::instance()->getCurrentSelection()->notifySelectionChanged();
     }
+    m_ctrlSelectRef = CellPosition(0, 0);
   }
 
   if (shift) {
