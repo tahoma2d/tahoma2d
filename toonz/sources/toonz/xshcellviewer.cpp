@@ -3398,16 +3398,37 @@ bool CellArea::isKeyFrameArea(int col, int row, QPoint mouseInCell) {
                .contains(mouseInCell) &&
            row < k1 + 1;
 
-  QRect activeArea = (m_viewer->getFrameZoomFactor() >
-                              o->dimension(PredefinedDimension::SCALE_THRESHOLD)
-                          ? o->rect(PredefinedRect::KEYFRAME_AREA)
-                          : o->rect(PredefinedRect::FRAME_MARKER_AREA));
+//  QRect activeArea = (m_viewer->getFrameZoomFactor() >
+//                              o->dimension(PredefinedDimension::SCALE_THRESHOLD)
+//                          ? o->rect(PredefinedRect::KEYFRAME_AREA)
+//                          : o->rect(PredefinedRect::FRAME_MARKER_AREA));
+  QRect activeArea = o->rect(PredefinedRect::KEYFRAME_AREA);
 
   // If directly over keyframe icon, return true
   if (pegbar->isKeyframe(row) &&
       activeArea.translated(-frameAdj / 2).contains(mouseInCell) &&
       row < k1 + 1)
     return true;
+
+  // Check if we are over ease handles
+  QRect easeRect =
+      (col >= 0)
+          ? o->rect(PredefinedRect::KEY_ICON).translated(-frameAdj / 2)
+          : o->rect(PredefinedRect::CAMERA_KEY_ICON).translated(-frameAdj / 2);
+  int r0, r1;
+  double e0, e1;
+  if (pegbar->getKeyframeSpan(row, r0, e0, r1, e1)) {
+    if (r1 - r0 > 4) {
+      int rh0, rh1;
+      if (getEaseHandles(r0, r1, e0, e1, rh0, rh1)) {
+        if (row == rh0 && easeRect.contains(mouseInCell))
+          return true;
+
+        if (row == rh1 && easeRect.contains(mouseInCell))
+          return true;
+      }
+    }
+  }
 
   // In the white line area, if zoomed in.. narrow height by using frame marker
   // area since it has a narrower height

@@ -334,8 +334,8 @@ TopToBottomOrientation::TopToBottomOrientation() {
   addRect(PredefinedRect::BEGIN_EXTENDER,
           QRect(-EXTENDER_WIDTH - KEY_ICON_WIDTH, -EXTENDER_HEIGHT,
                 EXTENDER_WIDTH, EXTENDER_HEIGHT));
-  addRect(PredefinedRect::KEYFRAME_AREA,
-          QRect(CELL_WIDTH - KEY_ICON_WIDTH, 0, KEY_ICON_WIDTH, CELL_HEIGHT));
+  addRect(PredefinedRect::KEYFRAME_AREA, QRect(CELL_WIDTH - KEY_ICON_WIDTH - 2,
+                                               0, KEY_ICON_WIDTH, CELL_HEIGHT));
   addRect(PredefinedRect::DRAG_AREA, QRect(0, 0, CELL_DRAG_WIDTH, CELL_HEIGHT));
   int markSize = CELL_HEIGHT * 8 / 10;  // 80% size
   addRect(PredefinedRect::CELL_MARK_AREA,
