@@ -209,6 +209,8 @@ void TPalette::Page::removeStyle(int indexInPage) {
   assert(0 <= styleId && styleId < m_palette->getStyleCount());
   assert(m_palette->m_styles[styleId].first == this);
   m_palette->m_styles[styleId].first = 0;
+  m_palette->m_styles[styleId].second =
+      TColorStyleP(new TSolidColorStyle(TPixel32::Black));
   m_styleIds.erase(m_styleIds.begin() + indexInPage);
 }
 
