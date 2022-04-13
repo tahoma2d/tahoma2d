@@ -236,6 +236,10 @@ FlipBook::FlipBook(QWidget *parent, QString viewerTitle,
 
   m_previewUpdateTimer.setSingleShot(true);
 
+  TSceneHandle *sceneHandle = TApp::instance()->getCurrentScene();
+
+  ret = ret && connect(sceneHandle, SIGNAL(sceneSwitching()), this,
+                       SLOT(onSceneSwitching()));
   ret = ret && connect(parentWidget(), SIGNAL(closeButtonPressed()), this,
                        SLOT(onCloseButtonPressed()));
   ret = ret && connect(parentWidget(), SIGNAL(doubleClick(QMouseEvent *)), this,
@@ -546,6 +550,10 @@ void FlipBook::loadImages() {
   m_loadPopup->raise();
   m_loadPopup->activateWindow();
 }
+
+//=============================================================================
+
+void FlipBook::clearImages() { reset(); }
 
 //=============================================================================
 
@@ -1862,6 +1870,9 @@ void FlipBook::reset() {
   else
     PreviewFxManager::instance()->detach(this);
 
+  m_snd = 0;
+  m_xl  = 0;
+
   m_levelNames.clear();
   m_levels.clear();
   m_framesCount = 0;
@@ -2264,3 +2275,7 @@ FlipBook *viewFile(const TFilePath &path, int from, int to, int step,
 }
 
 //-----------------------------------------------------------------------------
+
+void FlipBook::onSceneSwitching() {
+  if (m_xl || m_isPreviewFx) reset();
+}
