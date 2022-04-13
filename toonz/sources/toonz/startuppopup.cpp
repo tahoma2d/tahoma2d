@@ -453,7 +453,7 @@ void StartupPopup::updateProjectCB() {
   RecentFiles::instance()->addFilePath(currentProjectPath,
                                        RecentFiles::Project);
 
-  TFilePath sandboxFp = pm->getSandboxProjectFolder() + "sandbox_otprj.xml";
+  TFilePath sandboxFp = pm->getSandboxProjectFolder() + "tahomaproject.xml";
   m_projectPaths.push_back(sandboxFp);
   m_projectsCB->addItem("sandbox");
   m_projectsCB->setItemData(0, pm->getSandboxProjectFolder().getQString(),
@@ -503,12 +503,14 @@ void StartupPopup::onProjectComboChanged(int index) {
   // The last index is Browse. . .
   if (index == m_projectsCB->count() - 1) {
     m_projectsCB->blockSignals(true);
-    for (int i = 0; i < m_projectPaths.size(); i++) {
+    int i;
+    for (i = 0; i < m_projectPaths.size(); i++) {
       if (pm->getCurrentProjectPath() == m_projectPaths[i]) {
         m_projectsCB->setCurrentIndex(i);
         break;
       }
     }
+    if (i >= m_projectPaths.size()) m_projectsCB->setCurrentIndex(0);
     m_projectsCB->blockSignals(false);
     m_projectLocationFld->setPath(
         Preferences::instance()->getDefaultProjectPath());
