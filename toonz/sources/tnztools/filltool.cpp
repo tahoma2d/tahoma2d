@@ -61,7 +61,7 @@ using namespace ToolUtils;
 #define FREEHANDFILL L"Freehand"
 #define POLYLINEFILL L"Polyline"
 
-TEnv::IntVar MinFillDepth("InknpaintMinFillDepth", 0);
+TEnv::IntVar MinFillDepth("InknpaintMinFillDepth", 1);
 TEnv::IntVar MaxFillDepth("InknpaintMaxFillDepth", 10);
 TEnv::StringVar FillType("InknpaintFillType", "Normal");
 TEnv::StringVar FillColorType("InknpaintFillColorType", "Areas");
@@ -2034,7 +2034,7 @@ FillTool::FillTool(int targetType)
     , m_selective("Selective", false)
     , m_colorType("Mode:")
     , m_onion("Onion Skin", false)
-    , m_fillDepth("Fill Depth", 0, 15, 0, 15)
+    , m_fillDepth("Fill Depth", 0, 15, 1, 15)
     , m_segment("Segment", false)
     , m_onionStyleId(0)
     , m_currCell(-1, -1)
