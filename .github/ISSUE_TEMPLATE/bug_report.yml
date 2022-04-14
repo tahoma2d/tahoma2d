@@ -1,0 +1,87 @@
+name: Bug Report
+description: Create a report to help us improve
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filling out a bug report, please search the Issues list for an existing report and only enter one if none found. Thanks!
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug Description
+      description: What happened?
+      placeholder: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: What steps do we need to take to reproduce this error?
+      placeholder: List steps to reproduce the behavior.
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs/screenshots
+      description: If available, please provide relevant logs or screenshots.
+      placeholder: |
+        Crash logs or dmp files may be found under the following:
+           Windows:  crash dmp file - C:\Users\yourusername\AppData\Local\Tahoma2D\Tahoma2D\cache\crashrpt\xxxx\crashdump.dmp
+                             crash logs     - Event Viewer -> Windows Logs -> Application.  Look for Tahoma2D crash report
+           macOS: crash logs - Console App -> User Reports.  Look for Tahoma2D crash report
+    validations:
+      required: false
+  - type: markdown
+    attributes:
+      value: |
+         ---
+         ## Device Information
+  - type: dropdown
+    id: software-version
+    attributes:
+      label: Software Version
+      description: What version of the software are you running?
+      options:
+        - 1.3
+        - Nightly (Specify below)
+        - 1.2
+        - 1.1
+        - 1.0.1
+        - 1.0
+        - Other (Specify below)
+    validations:
+      required: true
+  - type: input
+    id: special-version
+    attributes:
+      label: Software Version Information
+      description: If using a Nightly version, please specify build date.  If Other, please explain.
+    validations:
+       required: false
+  - type: input
+    id: os
+    attributes:
+      label: Operating System
+      description: What operating system are you on? What version?
+      placeholder: e.g. Windows 10 / macOS Catalina 10.15 / Ubuntu 16.04
+    validations:
+      required: true
+  - type: input
+    id: graphics-card
+    attributes:
+      label: Graphics Card
+      description: What type of graphics card do you have?
+      placeholder: e.g. NVIDIA RTX 2080
+    validations:
+      required: false
+  - type: input
+    id: drawing-tablet
+    attributes:
+      label: Drawing Tablet
+      description: What type of drawing table are you using?
+      placeholder: e.g. Wacom Cintq 22 / XP Pen Artist 12 / mouse
+    validations:
+      required: false
