@@ -1504,7 +1504,7 @@ QStatusBar #StatusBarLabel {
   padding: 3 2 8 3;
 }
 #StyleEditor #bottomWidget QPushButton {
-  padding: 3 5;
+  padding: 13 5;
 }
 #HexagonalColorWheel {
   qproperty-BGColor: #303030;
@@ -1539,6 +1539,7 @@ QStatusBar #StatusBarLabel {
 }
 #PlainColorPageParts QLineEdit {
   max-width: 35;
+  height: 100%;
 }
 /* -----------------------------------------------------------------------------
    Palette Viewer / Studio Palette
