@@ -1831,7 +1831,7 @@ bool ReplaceLevelPopup::execute() {
     int r, c;
     for (c = m_range.m_c0; c <= m_range.m_c1; c++)
       for (r = m_range.m_r0; r <= m_range.m_r1; r++) {
-        TXshCell cell = xsh->getCell(r, c);
+        TXshCell cell = xsh->getCell(r, c, false);
         if (!cell.m_level.getPointer()) continue;
         cell.m_level = xl;
         xsh->setCell(r, c, cell);
@@ -1843,7 +1843,7 @@ bool ReplaceLevelPopup::execute() {
     std::set<int>::iterator i = m_columnRange.begin();
     while (i != m_columnRange.end()) {
       for (int r = 0; r < frameLength; r++) {
-        TXshCell cell = xsh->getCell(r, *i);
+        TXshCell cell = xsh->getCell(r, *i, false);
         if (!cell.m_level.getPointer()) continue;
         cell.m_level = xl;
         xsh->setCell(r, *i, cell);
