@@ -276,7 +276,7 @@ QVariant StageObjectChannelGroup::data(int role) const {
     std::string id = m_stageObject->getId().toString();
 
     return (name == id) ? QString::fromStdString(name)
-                        : QString::fromStdString(id + " (" + name + ")");
+                        : QString::fromStdString(name + " (" + id + ")");
 
   } else if (role == Qt::ForegroundRole) {
     FunctionTreeModel *model = dynamic_cast<FunctionTreeModel *>(getModel());

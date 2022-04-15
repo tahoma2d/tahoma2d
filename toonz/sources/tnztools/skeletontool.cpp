@@ -1237,11 +1237,13 @@ glPopMatrix();
   for (int i = 0; i < (int)m_magicLinks.size(); i++) {
     const MagicLink &magicLink = m_magicLinks[i];
     const HookData &h1         = magicLink.m_h1;
+    TStageObjectId id          = TStageObjectId::ColumnId(h1.m_columnIndex);
+    TStageObject *obj          = xsh->getStageObject(id);
     std::string name;
     name = (m_parentProbeEnabled ? "Linking " : "Link ") +
-           removeTrailingH(magicLink.m_h0.getHandle()) + " to Col " +
-           std::to_string(h1.m_columnIndex + 1) + "/" +
-           removeTrailingH(h1.getHandle());
+           removeTrailingH(magicLink.m_h0.getHandle()) + " to " +
+           obj->getName() + " (Col " + std::to_string(h1.m_columnIndex + 1) +
+           ")/" + removeTrailingH(h1.getHandle());
 
     int code = TD_MagicLink + i;
     glPushName(code);
