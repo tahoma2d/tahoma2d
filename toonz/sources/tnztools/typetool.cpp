@@ -733,13 +733,14 @@ void TypeTool::stopEditing() {
   invalidate();
   if (m_undo) {
     bool isEditingLevel = getApplication()->getCurrentFrame()->isEditingLevel();
-    if (!isEditingLevel) TUndoManager::manager()->beginBlock();
+    bool renameColumn   = m_isFrameCreated;
+    if (!isEditingLevel && renameColumn) TUndoManager::manager()->beginBlock();
 
     TUndoManager::manager()->add(m_undo);
     m_undo = 0;
 
     // Column name renamed to level name only if was originally empty
-    if (!isEditingLevel) {
+    if (!isEditingLevel && renameColumn) {
       int col = getApplication()->getCurrentColumn()->getColumnIndex();
       TXshColumn *column =
           getApplication()->getCurrentXsheet()->getXsheet()->getColumn(col);

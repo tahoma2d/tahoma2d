@@ -1861,7 +1861,8 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
   TXshSimpleLevelP simLevel = level->getSimpleLevel();
 
   bool isEditingLevel = m_application->getCurrentFrame()->isEditingLevel();
-  if (!isEditingLevel) TUndoManager::manager()->beginBlock();
+  bool renameColumn   = m_isFrameCreated;
+  if (!isEditingLevel && renameColumn) TUndoManager::manager()->beginBlock();
 
   /*--
    * 描画中にカレントフレームが変わっても、描画開始時のFidに対してUndoを記録する
@@ -2087,7 +2088,7 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
   }
 
   // Column name renamed to level name only if was originally empty
-  if (!isEditingLevel) {
+  if (!isEditingLevel && renameColumn) {
     int col            = app->getCurrentColumn()->getColumnIndex();
     TXshColumn *column = app->getCurrentXsheet()->getXsheet()->getColumn(col);
     int r0, r1;

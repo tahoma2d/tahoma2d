@@ -1260,12 +1260,13 @@ public:
     if (!m_active) return;
 
     bool isEditingLevel = m_application->getCurrentFrame()->isEditingLevel();
-    if (!isEditingLevel) TUndoManager::manager()->beginBlock();
+    bool renameColumn   = m_isFrameCreated;
+    if (!isEditingLevel && renameColumn) TUndoManager::manager()->beginBlock();
 
     if (m_primitive) m_primitive->leftButtonUp(p, e);
 
     // Column name renamed to level name only if was originally empty
-    if (!isEditingLevel) {
+    if (!isEditingLevel && renameColumn) {
       int col = m_application->getCurrentColumn()->getColumnIndex();
       TXshColumn *column =
           m_application->getCurrentXsheet()->getXsheet()->getColumn(col);
