@@ -4019,7 +4019,7 @@ void TCellSelection::convertToToonzRaster() {
     firstImage->setSavebox(TRect(0, 0, xres - 1, yres - 1));
   }
 
-  bool keepOriginalPalette;
+  bool keepOriginalPalette = false;
   bool success = data->getLevelFrames(
       sl, newFrameIds, DrawingData::OVER_SELECTION, true, keepOriginalPalette,
       true);  // setting is redo = true skips the
