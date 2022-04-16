@@ -127,6 +127,7 @@ public:
             pane->getPanelType() == "Test") {
           pane->show();
           pane->raise();
+          pane->activateWindow();
           return;
         }
       }
@@ -136,6 +137,7 @@ public:
       pane->setFloating(true);
       pane->show();
       pane->raise();
+      pane->activateWindow();
     }
   }
 } openFloatingTestPanelCommand;

@@ -495,6 +495,7 @@ void FileBrowser::getRevisionHistory() {
 
   timelineDialog->show();
   timelineDialog->raise();
+  timelineDialog->activateWindow();
 }
 
 //-----------------------------------------------------------------------------
@@ -573,6 +574,7 @@ void FileBrowser::showLockInformation() {
   SVNLockInfoDialog *dialog = new SVNLockInfoDialog(this, status);
   dialog->show();
   dialog->raise();
+  dialog->activateWindow();
 }
 
 //-----------------------------------------------------------------------------

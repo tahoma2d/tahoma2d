@@ -901,8 +901,9 @@ FlipBook *FlipBookPool::pop() {
 
   // The panel need to be added to currentRoom's layout control.
   currentRoom->addDockWidget(panel);
-  panel->raise();
   panel->show();
+  panel->raise();
+  panel->activateWindow();
 
   return flipbook;
 }

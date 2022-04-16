@@ -172,6 +172,7 @@ public:
             pane->getPanelType() == "Message") {
           pane->show();
           pane->raise();
+          pane->activateWindow();
           return;
         }
       }
@@ -180,6 +181,7 @@ public:
       pane->setFloating(true);
       pane->show();
       pane->raise();
+      pane->activateWindow();
     }
   }
 } openFloatingLogPanelCommand;
