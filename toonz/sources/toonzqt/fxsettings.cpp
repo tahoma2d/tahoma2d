@@ -1602,23 +1602,21 @@ void FxSettings::onViewModeChanged(QAction *triggeredAct) {
   QList<QAction *> actions = m_toolBar->actions();
   QAction *cameraAct       = actions[0];
   QAction *previewAct      = actions[1];
+  m_viewer->setEnable(actIsChecked);
   if (name == previewAct->text()) {
     if (cameraAct->isChecked()) cameraAct->setChecked(false);
     if (actIsChecked) {
       m_isCameraModeView = false;
       m_paramViewer->setIsCameraViewMode(false);
-      setCurrentFx();
     }
-    m_viewer->setEnable(actIsChecked);
   } else if (name == cameraAct->text()) {
     if (previewAct->isChecked()) previewAct->setChecked(false);
     if (actIsChecked) {
       m_isCameraModeView = true;
       m_paramViewer->setIsCameraViewMode(true);
-      setCurrentFx();
     }
-    m_viewer->setEnable(actIsChecked);
   }
+  setCurrentFx();
 }
 
 //-----------------------------------------------------------------------------
