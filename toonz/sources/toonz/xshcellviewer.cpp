@@ -1885,7 +1885,8 @@ void CellArea::drawCurrentTimeIndicator(QPainter &p, const QPoint &xy,
 }
 
 void CellArea::drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
-                               bool isKeyFrame, bool isCamera) {
+                               bool isKeyFrame, bool isCamera,
+                               bool keyHighlight) {
   QColor outlineColor = Qt::black;
   QPoint frameAdj     = m_viewer->getFrameZoomAdjustment();
   QRect dotRect       = (isCamera)
@@ -1904,7 +1905,10 @@ void CellArea::drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
                 PredefinedDimension::SCALE_THRESHOLD))
       dotRect.adjust(0, -3, 0, -3);
 
-    m_viewer->drawPredefinedPath(p, PredefinedPath::FRAME_MARKER_DIAMOND,
+    PredefinedPath diamondPath =
+        keyHighlight ? PredefinedPath::FRAME_MARKER_DIAMOND_LARGE
+                     : PredefinedPath::FRAME_MARKER_DIAMOND;
+    m_viewer->drawPredefinedPath(p, diamondPath,
                                  dotRect.adjusted(1, 1, 1, 1).center(), color,
                                  outlineColor);
   } else {
@@ -3104,7 +3108,7 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
         drawKeyframeLine(p, col, NumberRange(segmentRow0, segmentRow1));
 
         if (segmentRow1 - segmentRow0 >
-            4) {  // only show if distance more than 4 frames
+            3) {  // only show if distance more than 4 frames
           int handleRow0, handleRow1;
           if (getEaseHandles(segmentRow0, segmentRow1, ease0, ease1, handleRow0,
                              handleRow1)) {
@@ -3112,12 +3116,21 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
             if (o->isVerticalTimeline()) easeRect.adjust(-2, 0, -2, 0);
             QPoint topLeft =
                 m_viewer->positionToXY(CellPosition(handleRow0, col));
-            m_viewer->drawPredefinedPath(p, PredefinedPath::BEGIN_EASE_TRIANGLE,
+            PredefinedPath easePath =
+                (m_keyHighlight == QPoint(handleRow0, col))
+                    ? PredefinedPath::BEGIN_EASE_TRIANGLE_LARGE
+                    : PredefinedPath::BEGIN_EASE_TRIANGLE;
+
+            m_viewer->drawPredefinedPath(p, easePath,
                                          easeRect.translated(topLeft).center(),
                                          keyFrameColor, outline);
 
-            topLeft = m_viewer->positionToXY(CellPosition(handleRow1, col));
-            m_viewer->drawPredefinedPath(p, PredefinedPath::END_EASE_TRIANGLE,
+            topLeft  = m_viewer->positionToXY(CellPosition(handleRow1, col));
+            easePath = (m_keyHighlight == QPoint(handleRow1, col))
+                           ? PredefinedPath::END_EASE_TRIANGLE_LARGE
+                           : PredefinedPath::END_EASE_TRIANGLE;
+
+            m_viewer->drawPredefinedPath(p, easePath,
                                          easeRect.translated(topLeft).center(),
                                          keyFrameColor, outline);
           }
@@ -3153,25 +3166,29 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
               m_viewer->getKeyframeSelection()->isSelected(row, col))
             color = QColor(85, 157, 255);
 
-          drawFrameMarker(p, QPoint(x, y), color, true, col < 0);
+          drawFrameMarker(p, QPoint(x, y), color, true, (col < 0),
+                          (m_keyHighlight == QPoint(row, col)));
 
-        } else if (o->isVerticalTimeline()) {
-          target = QPoint(target.x() - 2, target.y() + 2);
+        } else {
+          QPixmap keyPM;
+          if (o->isVerticalTimeline())
+            target = QPoint(target.x() - 2, target.y() + 2);
+
           if (m_viewer->getKeyframeSelection() &&
               m_viewer->getKeyframeSelection()->isSelected(row, col)) {
             // keyframe selected
-            p.drawPixmap(target, selectedKey);
+            keyPM = selectedKey;
           } else {
             // keyframe not selected
-            p.drawPixmap(target, key);
+            keyPM = key;
           }
-        } else if (m_viewer->getKeyframeSelection() &&
-                   m_viewer->getKeyframeSelection()->isSelected(row, col)) {
-          // keyframe selected
-          p.drawPixmap(target, selectedKey);
-        } else {
-          // keyframe not selected
-          p.drawPixmap(target, key);
+
+          if (m_keyHighlight == QPoint(row, col)) {
+            keyPM = keyPM.scaled(keyPM.width() + 10, keyPM.height() + 10);
+            target.setX(target.x() - 3);
+            target.setY(target.y() - 3);
+          }
+          p.drawPixmap(target, keyPM);
         }
       }
     }
@@ -3274,7 +3291,7 @@ void CellArea::drawNotes(QPainter &p, const QRect toBeUpdated) {
 
 bool CellArea::getEaseHandles(int r0, int r1, double e0, double e1, int &rh0,
                               int &rh1) {
-  if (r1 <= r0 + 4) {  // ... what?
+  if (r1 <= r0 + 3) {  // ... what?
     rh0 = r0;
     rh1 = r1;
     return false;
@@ -3284,16 +3301,16 @@ bool CellArea::getEaseHandles(int r0, int r1, double e0, double e1, int &rh0,
     rh1 = r1;
     return false;
   }
-  if (e0 <= 0 && e1 <= 0) {
+  if (e0 <= 1 && e1 <= 1) {
     rh0 = r0 + 1;
     rh1 = r1 - 1;
-  } else if (e0 <= 0) {
+  } else if (e0 <= 1) {
     rh0   = r0 + 1;
     int a = rh0 + 1;
     int b = r1 - 2;
     assert(a <= b);
     rh1 = tcrop((int)(r1 - e1 + 0.5), a, b);
-  } else if (e1 <= 0) {
+  } else if (e1 <= 1) {
     rh1   = r1 - 1;
     int b = rh1 - 1;
     int a = r0 + 2;
@@ -3398,16 +3415,37 @@ bool CellArea::isKeyFrameArea(int col, int row, QPoint mouseInCell) {
                .contains(mouseInCell) &&
            row < k1 + 1;
 
-  QRect activeArea = (m_viewer->getFrameZoomFactor() >
-                              o->dimension(PredefinedDimension::SCALE_THRESHOLD)
-                          ? o->rect(PredefinedRect::KEYFRAME_AREA)
-                          : o->rect(PredefinedRect::FRAME_MARKER_AREA));
+//  QRect activeArea = (m_viewer->getFrameZoomFactor() >
+//                              o->dimension(PredefinedDimension::SCALE_THRESHOLD)
+//                          ? o->rect(PredefinedRect::KEYFRAME_AREA)
+//                          : o->rect(PredefinedRect::FRAME_MARKER_AREA));
+  QRect activeArea = o->rect(PredefinedRect::KEYFRAME_AREA);
 
   // If directly over keyframe icon, return true
   if (pegbar->isKeyframe(row) &&
       activeArea.translated(-frameAdj / 2).contains(mouseInCell) &&
       row < k1 + 1)
     return true;
+
+  // Check if we are over ease handles
+  QRect easeRect =
+      (col >= 0)
+          ? o->rect(PredefinedRect::KEY_ICON).translated(-frameAdj / 2)
+          : o->rect(PredefinedRect::CAMERA_KEY_ICON).translated(-frameAdj / 2);
+  int r0, r1;
+  double e0, e1;
+  if (pegbar->getKeyframeSpan(row, r0, e0, r1, e1)) {
+    if (r1 - r0 > 4) {
+      int rh0, rh1;
+      if (getEaseHandles(r0, r1, e0, e1, rh0, rh1)) {
+        if (row == rh0 && easeRect.contains(mouseInCell))
+          return true;
+
+        if (row == rh1 && easeRect.contains(mouseInCell))
+          return true;
+      }
+    }
+  }
 
   // In the white line area, if zoomed in.. narrow height by using frame marker
   // area since it has a narrower height
@@ -3498,6 +3536,8 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
 
     TStageObject *pegbar = xsh->getStageObject(m_viewer->getObjectId(col));
 
+    m_dragBeginEase = m_dragEndEase = m_dragKeyframe = false;
+
     if (Preferences::instance()->isShowKeyframesOnXsheetCellAreaEnabled()) {
       // only if key frame area is active
       int k0, k1;
@@ -3514,6 +3554,7 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
           m_viewer->setCurrentRow(
               row);  // If you click on the key, change the current row as well
           setDragTool(XsheetGUI::DragTool::makeKeyframeMoverTool(m_viewer));
+          m_dragKeyframe = true;
           accept = true;
         } else {
           int r0, r1;
@@ -3524,10 +3565,12 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
             if (rh0 == row) {  // in a keyframe handle
               setDragTool(XsheetGUI::DragTool::makeKeyFrameHandleMoverTool(
                   m_viewer, true, r0));
+              m_dragBeginEase = true;
               accept = true;
             } else if (rh1 == row) {  // in a keyframe handle
               setDragTool(XsheetGUI::DragTool::makeKeyFrameHandleMoverTool(
                   m_viewer, false, r1));
+              m_dragEndEase = true;
               accept = true;
             }
           }
@@ -3611,6 +3654,34 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
 
 //-----------------------------------------------------------------------------
 
+void CellArea::updateKeyHighlight(int row, int col) {
+  TXsheet *xsh = m_viewer->getXsheet();
+  TStageObject *pegbar = xsh->getStageObject(m_viewer->getObjectId(col));
+  int k0, k1;
+  bool isKeyframeFrame =
+      Preferences::instance()->isShowKeyframesOnXsheetCellAreaEnabled() &&
+      pegbar && pegbar->getKeyframeRange(k0, k1) && k0 <= row && row <= k1 + 1;
+
+  if (!isKeyframeFrame) return;
+
+  bool isDragging = getDragTool();
+
+  if ((!isDragging || m_dragKeyframe) && pegbar->isKeyframe(row))
+    m_keyHighlight = QPoint(row, col);
+  else {
+    int r0, r1;
+    double e0, e1;
+    int rh0, rh1;
+    if (pegbar->getKeyframeSpan(row, r0, e0, r1, e1) &&
+        getEaseHandles(r0, r1, e0, e1, rh0, rh1)) {
+      if ((!isDragging || m_dragBeginEase) && rh0 == row)
+        m_keyHighlight = QPoint(rh0, col);
+      else if ((!isDragging || m_dragEndEase) && rh1 == row)
+        m_keyHighlight = QPoint(rh1, col);
+    }
+  }
+}
+
 void CellArea::mouseMoveEvent(QMouseEvent *event) {
   const Orientation *o = m_viewer->orientation();
   QPoint frameAdj      = m_viewer->getFrameZoomAdjustment();
@@ -3635,18 +3706,23 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
     m_viewer->stopAutoPan();
 
   m_pos = pos;
-  if (getDragTool()) {
-    getDragTool()->onDrag(event);
-    return;
-  }
-
   CellPosition cellPosition = m_viewer->xyToPosition(pos);
   int row                   = cellPosition.frame();
   int col                   = cellPosition.layer();
+  if (getDragTool()) {
+    getDragTool()->onDrag(event);
+    if (m_keyHighlight != QPoint(-1, -1))
+      updateKeyHighlight(row, m_keyHighlight.y());
+    return;
+  }
+
   QPoint cellTopLeft        = m_viewer->positionToXY(CellPosition(row, col));
   int x                     = m_pos.x() - cellTopLeft.x();
   int y                     = m_pos.y() - cellTopLeft.y();
   QPoint mouseInCell        = m_pos - cellTopLeft;
+
+  bool updateViewer = (m_keyHighlight != QPoint(-1, -1));
+  m_keyHighlight    = QPoint(-1, -1);
 
   TXsheet *xsh = m_viewer->getXsheet();
 
@@ -3686,6 +3762,8 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
           m_tooltip = tr("Click and drag to set the deceleration range");
       }
     }
+    updateKeyHighlight(row, col);
+    updateViewer = true;
   } else if (isKeyframeFrame && row == k1 + 1 &&
              o->rect((col < 0) ? PredefinedRect::CAMERA_LOOP_ICON
                                : PredefinedRect::LOOP_ICON)
@@ -3742,6 +3820,8 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
     m_tooltip = tr("");
   } else
     m_tooltip = tr("");
+
+  if (updateViewer) update();
 }
 
 //-----------------------------------------------------------------------------
@@ -3752,6 +3832,7 @@ void CellArea::mouseReleaseEvent(QMouseEvent *event) {
   m_viewer->stopAutoPan();
   m_isPanning = false;
   m_viewer->dragToolRelease(event);
+  m_dragBeginEase = m_dragEndEase = m_dragKeyframe = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -3784,6 +3865,8 @@ void CellArea::mouseDoubleClickEvent(QMouseEvent *event) {
   TObjectHandle *oh = TApp::instance()->getCurrentObject();
   oh->setObjectId(m_viewer->getObjectId(col));
 
+  m_dragBeginEase = m_dragEndEase = m_dragKeyframe = false;
+
   if (Preferences::instance()->isShowKeyframesOnXsheetCellAreaEnabled()) {
     QPoint cellTopLeft   = m_viewer->positionToXY(CellPosition(row, col));
     QPoint mouseInCell   = event->pos() - cellTopLeft;
@@ -3800,6 +3883,7 @@ void CellArea::mouseDoubleClickEvent(QMouseEvent *event) {
         m_viewer->setCurrentRow(
             row);  // If you click on the key, change the current row as well
         setDragTool(XsheetGUI::DragTool::makeKeyframeMoverTool(m_viewer));
+        m_dragKeyframe = true;
         m_viewer->dragToolClick(event);
         event->accept();
         update();
