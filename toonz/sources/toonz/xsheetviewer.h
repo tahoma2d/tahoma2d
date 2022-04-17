@@ -610,6 +610,8 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
 
   int m_frameZoomFactor;
 
+  CellPosition m_ctrlSelectRef;
+
 public:
   enum FrameDisplayStyle { Frame = 0, SecAndFrame, SixSecSheet, ThreeSecSheet };
 
