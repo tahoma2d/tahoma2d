@@ -307,6 +307,9 @@ void ImageViewer::contextMenuEvent(QContextMenuEvent *event) {
     menu->addAction(action);
     action->setParent(m_flipbook);
 
+    action = menu->addAction(tr("Clear Images"));
+    connect(action, SIGNAL(triggered()), m_flipbook, SLOT(clearImages()));
+
     menu->addSeparator();
   }
 

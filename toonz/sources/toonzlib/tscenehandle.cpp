@@ -23,6 +23,7 @@ ToonzScene *TSceneHandle::getScene() const { return m_scene; }
 
 void TSceneHandle::setScene(ToonzScene *scene) {
   if (m_scene == scene) return;
+  emit sceneSwitching();
   delete m_scene;
   m_scene = scene;
   if (m_scene) emit sceneSwitched();

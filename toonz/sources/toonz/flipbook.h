@@ -299,6 +299,7 @@ public slots:
 
   void saveImages();
   void loadImages();
+  void clearImages();
 
   void performFxUpdate();
   void regenerate();
@@ -306,6 +307,8 @@ public slots:
   void clonePreview();
   void freezePreview();
   void unfreezePreview();
+
+  void onSceneSwitching();
 };
 
 // utility

@@ -42,6 +42,7 @@ public:
     emit sceneChanged();
     if (setDirty) setDirtyFlag(true);
   }
+  void notifySceneSwitching() { emit sceneSwitching(); }
   void notifySceneSwitched() {
     emit sceneSwitched();
     setDirtyFlag(false);
@@ -76,6 +77,7 @@ public slots:
   }
 
 signals:
+  void sceneSwitching();
   void sceneSwitched();
   void sceneChanged();
   void castChanged();
