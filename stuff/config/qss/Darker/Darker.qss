@@ -2245,6 +2245,7 @@ XsheetViewer {
   qproperty-ColumnHeadPastelizer: rgba(0, 0, 0, 0);
   qproperty-SelectedColumnHead: rgba(237, 220, 233, 0.3);
   qproperty-PlayRangeColor: #202020;
+  qproperty-CurrentCellColor: #00ffff;
   qproperty-FoldedColumnBGColor: #3a3a3a;
   qproperty-FoldedColumnLineColor: #131313;
   qproperty-EmptyCellColor: #202020;
