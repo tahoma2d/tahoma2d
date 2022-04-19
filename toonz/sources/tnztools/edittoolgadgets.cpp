@@ -53,28 +53,22 @@ void drawSpinField(const TRectD geom, const TPointD center,
   }
   // obtain the nearest and the furthest pos inside the geom
   TPointD nearestPos;
-  nearestPos.x = (center.x <= geom.x0)
-                     ? geom.x0
-                     : (center.x >= geom.x1) ? geom.x1 : center.x;
-  nearestPos.y = (center.y <= geom.y0)
-                     ? geom.y0
-                     : (center.y >= geom.y1) ? geom.y1 : center.y;
+  nearestPos.x   = (center.x <= geom.x0)   ? geom.x0
+                   : (center.x >= geom.x1) ? geom.x1
+                                           : center.x;
+  nearestPos.y   = (center.y <= geom.y0)   ? geom.y0
+                   : (center.y >= geom.y1) ? geom.y1
+                                           : center.y;
   double minDist = norm(nearestPos - center);
   TPointD farthestPos;
-  farthestPos.x = (center.x <= geom.x0)
-                      ? geom.x1
-                      : (center.x >= geom.x1)
-                            ? geom.x0
-                            : ((center.x - geom.x0) >= (geom.x1 - center.x))
-                                  ? geom.x0
-                                  : geom.x1;
-  farthestPos.y = (center.y <= geom.y0)
-                      ? geom.y1
-                      : (center.y >= geom.y1)
-                            ? geom.y0
-                            : ((center.y - geom.y0) >= (geom.y1 - center.y))
-                                  ? geom.y0
-                                  : geom.y1;
+  farthestPos.x   = (center.x <= geom.x0)                            ? geom.x1
+                    : (center.x >= geom.x1)                          ? geom.x0
+                    : ((center.x - geom.x0) >= (geom.x1 - center.x)) ? geom.x0
+                                                                     : geom.x1;
+  farthestPos.y   = (center.y <= geom.y0)                            ? geom.y1
+                    : (center.y >= geom.y1)                          ? geom.y0
+                    : ((center.y - geom.y0) >= (geom.y1 - center.y)) ? geom.y0
+                                                                     : geom.y1;
   double maxDist  = norm(farthestPos - center);
   double scale[2] = {1.0, 1.0};
   // adjust size for ellipse
@@ -124,28 +118,22 @@ void drawRadialField(const TRectD geom, const TPointD center,
                      const double pivot) {
   // obtain the nearest and the furthest pos inside the geom
   TPointD nearestPos;
-  nearestPos.x = (center.x <= geom.x0)
-                     ? geom.x0
-                     : (center.x >= geom.x1) ? geom.x1 : center.x;
-  nearestPos.y = (center.y <= geom.y0)
-                     ? geom.y0
-                     : (center.y >= geom.y1) ? geom.y1 : center.y;
+  nearestPos.x   = (center.x <= geom.x0)   ? geom.x0
+                   : (center.x >= geom.x1) ? geom.x1
+                                           : center.x;
+  nearestPos.y   = (center.y <= geom.y0)   ? geom.y0
+                   : (center.y >= geom.y1) ? geom.y1
+                                           : center.y;
   double minDist = norm(nearestPos - center);
   TPointD farthestPos;
-  farthestPos.x = (center.x <= geom.x0)
-                      ? geom.x1
-                      : (center.x >= geom.x1)
-                            ? geom.x0
-                            : ((center.x - geom.x0) >= (geom.x1 - center.x))
-                                  ? geom.x0
-                                  : geom.x1;
-  farthestPos.y = (center.y <= geom.y0)
-                      ? geom.y1
-                      : (center.y >= geom.y1)
-                            ? geom.y0
-                            : ((center.y - geom.y0) >= (geom.y1 - center.y))
-                                  ? geom.y0
-                                  : geom.y1;
+  farthestPos.x   = (center.x <= geom.x0)                            ? geom.x1
+                    : (center.x >= geom.x1)                          ? geom.x0
+                    : ((center.x - geom.x0) >= (geom.x1 - center.x)) ? geom.x0
+                                                                     : geom.x1;
+  farthestPos.y   = (center.y <= geom.y0)                            ? geom.y1
+                    : (center.y >= geom.y1)                          ? geom.y0
+                    : ((center.y - geom.y0) >= (geom.y1 - center.y)) ? geom.y0
+                                                                     : geom.y1;
   double maxDist  = norm(farthestPos - center);
   double scale[2] = {1.0, 1.0};
   // adjust size for ellipse
@@ -1657,7 +1645,7 @@ void LinearRangeFxGadget::leftButtonDown(const TPointD &pos,
   if (m_handle == None) return;
   m_clickedPos = pos;
   m_targetPos  = (m_handle == Start || m_handle == Body) ? getValue(m_start)
-                                                        : getValue(m_end);
+                                                         : getValue(m_end);
   m_anotherPos = (m_handle == Start || m_handle == Body) ? getValue(m_end)
                                                          : getValue(m_start);
 }
@@ -2318,29 +2306,34 @@ void EllipseFxGadget::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
     TPointD old_v  = m_pos - center;
     TPointD new_v  = pos - center;
     if (old_v == TPointD() || new_v == TPointD()) return;
+
     // AR
-    double aspect_ratio   = getValue(m_aspect_ratio);
-    double pre_axisLength = 2.0 * aspect_ratio / (aspect_ratio + 1.0);
-    double ratio          = norm(new_v) / norm(old_v);
-    if (ratio == 0.) return;
-    double new_axisLength = pre_axisLength * ratio;
-    double new_ar         = new_axisLength / (2.0 - new_axisLength);
-    if (new_ar < 0.1)
-      new_ar = 0.1;
-    else if (new_ar > 10.0)
-      new_ar = 10.0;
-    setValue(m_aspect_ratio, new_ar);
+    if (!e.isShiftPressed()) {  // lock AR when shift is pressed
+      double aspect_ratio   = getValue(m_aspect_ratio);
+      double pre_axisLength = 2.0 * aspect_ratio / (aspect_ratio + 1.0);
+      double ratio          = norm(new_v) / norm(old_v);
+      if (ratio == 0.) return;
+      double new_axisLength = pre_axisLength * ratio;
+      double new_ar         = new_axisLength / (2.0 - new_axisLength);
+      if (new_ar < 0.1)
+        new_ar = 0.1;
+      else if (new_ar > 10.0)
+        new_ar = 10.0;
+      setValue(m_aspect_ratio, new_ar);
+    }
 
     // angle
-    double angle = getValue(m_angle);
-    double d_angle =
-        std::atan2(new_v.y, new_v.x) - std::atan2(old_v.y, old_v.x);
-    double new_angle = angle + d_angle * M_180_PI;
-    if (new_angle < -180.0)
-      new_angle += 360.0;
-    else if (new_angle > 180.0)
-      new_angle -= 360.0;
-    setValue(m_angle, new_angle);
+    if (!e.isCtrlPressed()) {  // lock angle when ctrl is pressed
+      double angle = getValue(m_angle);
+      double d_angle =
+          std::atan2(new_v.y, new_v.x) - std::atan2(old_v.y, old_v.x);
+      double new_angle = angle + d_angle * M_180_PI;
+      if (new_angle < -180.0)
+        new_angle += 360.0;
+      else if (new_angle > 180.0)
+        new_angle -= 360.0;
+      setValue(m_angle, new_angle);
+    }
 
     m_pos = pos;
   } else if (m_handle == Twist) {
@@ -2709,4 +2702,3 @@ TRectD FxGadgetController::getCameraRect() {
   return (m_tool->getViewer()) ? m_tool->getViewer()->getCameraRect()
                                : TRectD();
 }
-
