@@ -631,7 +631,7 @@ public:
             m_tiles->getTile(m_tiles->getTileCount() - 1);
         TRasterCM32P rbefore;
         tile->getRaster(rbefore);
-        fillautoInks(ras, rect, rbefore, m_palette);
+        fillautoInks(ras, rect, rbefore, m_palette, m_closeStyleIndex);
       }
     }
     TTool::Application *app = TTool::getApplication();
@@ -1057,7 +1057,7 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
             tileSet->getTile(tileSet->getTileCount() - 1);
         TRasterCM32P rbefore;
         tile->getRaster(rbefore);
-        fillautoInks(ras, rect, rbefore, plt);
+        fillautoInks(ras, rect, rbefore, plt, cs);
       }
     }
     ToolUtils::updateSaveBox(sl, fid);

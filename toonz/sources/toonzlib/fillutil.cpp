@@ -159,7 +159,7 @@ AreaFiller::~AreaFiller() { m_ras->unlock(); }
 // che confinano con le aree appena fillate con il rect. rbefore e' il rect del
 // raster prima del rectfill.
 void fillautoInks(TRasterCM32P &rin, TRect &rect, const TRasterCM32P &rbefore,
-                  TPalette *plt) {
+                  TPalette *plt, int fillIndex) {
   assert(plt);
   TRasterCM32P r = rin->extract(rect);
   assert(r->getSize() == rbefore->getSize());
@@ -172,7 +172,7 @@ void fillautoInks(TRasterCM32P &rin, TRect &rect, const TRasterCM32P &rbefore,
       int paint = pix->getPaint();
       int tone  = pix->getTone();
       int ink   = pix->getInk();
-      if (paint != pixb->getPaint() && tone > 0 && tone < 255 && ink != paint &&
+      if (paint != pixb->getPaint() && paint == fillIndex && ink != paint &&
           plt->getStyle(ink)->getFlags() != 0)
         inkFill(rin, TPoint(j, i) + rect.getP00(), paint, 0, NULL, &rect);
     }
