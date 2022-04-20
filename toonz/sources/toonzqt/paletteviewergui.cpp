@@ -484,6 +484,7 @@ void PageViewer::drawColorName(QPainter &p, QRect &nameRect, TColorStyle *style,
 
   if (m_viewMode == SmallChips && style->getFlags() != 0) {
     QRect rect(nameRect.left(), nameRect.top(), 9, 9);
+    p.setPen(Qt::black);
     p.fillRect(rect, QBrush(Qt::white));
     p.drawRect(rect);
     p.drawText(rect, Qt::AlignCenter, "a");
@@ -492,9 +493,14 @@ void PageViewer::drawColorName(QPainter &p, QRect &nameRect, TColorStyle *style,
     QRect rect     = nameRect;
     QPen oldPen    = p.pen();
     TPixel32 color = style->getMainColor();
-    int v          = (int)(0.299 * color.r + 0.587 * color.g + 0.114 * color.b);
-    p.setPen(v > 127 ? Qt::black : Qt::white);
     int textWidth = QFontMetrics(p.font()).width(name);
+    p.setPen(Qt::black);
+    if (textWidth < rect.width() - 2)
+      p.drawText(rect.adjusted(1,1,1,1), Qt::AlignCenter, name);
+    else
+      p.drawText(rect.adjusted(3, 1, 1, 1), Qt::AlignLeft | Qt::AlignVCenter,
+                 name);
+    p.setPen(Qt::white);
     if (textWidth < rect.width() - 2)
       p.drawText(rect, Qt::AlignCenter, name);
     else
@@ -504,6 +510,7 @@ void PageViewer::drawColorName(QPainter &p, QRect &nameRect, TColorStyle *style,
   }
 
   if (m_viewMode == LargeChips) {
+    p.setPen(Qt::black);
     QString index                = QString::number(styleIndex);
     QFont font                   = p.font();
     int fontSize                 = font.pointSize();
@@ -524,6 +531,7 @@ void PageViewer::drawColorName(QPainter &p, QRect &nameRect, TColorStyle *style,
     p.setFont(f);
     if (style->getFlags() != 0) {
       QRect rect(nameRect.left(), y0, w, h);
+      p.setPen(Qt::black);
       p.fillRect(rect, QBrush(Qt::white));
       p.drawRect(rect);
       p.drawText(rect.adjusted(0, +1, 0, +1), Qt::AlignCenter, "A");
@@ -532,6 +540,7 @@ void PageViewer::drawColorName(QPainter &p, QRect &nameRect, TColorStyle *style,
     if (ts) {
       QRect rect(nameRect.left() + ((style->getFlags() != 0) ? w : 0), y0, w,
                  h);
+      p.setPen(Qt::black);
       p.fillRect(rect, QBrush(Qt::white));
       p.drawRect(rect);
       p.drawText(rect.adjusted(0, +1, 0, +1), Qt::AlignCenter,
@@ -812,6 +821,9 @@ void PageViewer::paintEvent(QPaintEvent *e) {
         // display the name (style name and original name) according to the name
         // display mode
         if (m_nameDisplayMode == Style) {
+          p.setPen(Qt::black);
+          drawChipName(p, chipRect.adjusted(1,1,1,1), name);
+          p.setPen(Qt::white);
           drawChipName(p, chipRect, name);
         } else if (m_nameDisplayMode == Original) {
           if (origName != L"") {
@@ -860,12 +872,15 @@ void PageViewer::paintEvent(QPaintEvent *e) {
         p.setBrush(Qt::white);
         p.drawRect(indexRect);
         p.drawText(indexRect, Qt::AlignCenter, QString().setNum(styleIndex));
+        p.setBrush(Qt::NoBrush);
       }
 
       // draw "Autopaint for lines" indicator
       int offset = 0;
       if (style->getFlags() != 0) {
         QRect aflRect(chipRect.bottomLeft() + QPoint(0, -14), QSize(12, 15));
+        p.setPen(Qt::black);
+        p.fillRect(aflRect, QBrush(Qt::white));
         p.drawRect(aflRect);
         p.drawText(aflRect, Qt::AlignCenter, "A");
         offset += 12;
@@ -891,12 +906,16 @@ void PageViewer::paintEvent(QPaintEvent *e) {
         int key      = palette->getStyleShortcut(styleIndex);
         int shortcut = key - Qt::Key_0;
         QRect ssRect(chipRect.center().x() - 8, chipRect.top() - 11, 16, 20);
-        p.setBrush(Qt::gray);
+        p.setPen(Qt::black);
+        p.setBrush(Qt::darkGray);
         p.drawChord(ssRect, 0, -180 * 16);
         tmpFont.setPointSize(6);
         p.setFont(tmpFont);
         // make sure the text is visible with any font
         static int rectTopAdjust = 19 - QFontMetrics(tmpFont).overlinePos();
+        p.drawText(ssRect.adjusted(1, rectTopAdjust+1, 1, 1), Qt::AlignCenter,
+                   QString().setNum(shortcut));
+        p.setPen(Qt::white);
         p.drawText(ssRect.adjusted(0, rectTopAdjust, 0, 0), Qt::AlignCenter,
                    QString().setNum(shortcut));
       }
