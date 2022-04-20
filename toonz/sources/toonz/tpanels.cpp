@@ -95,38 +95,76 @@
 #include <QAction>
 
 //=============================================================================
-// XsheetViewer
+// XsheetViewerFactory
 //-----------------------------------------------------------------------------
 
-class XsheetViewerFactory final : public TPanelFactory {
+class XsheetViewerFactory : public TPanelFactory {
 public:
   XsheetViewerFactory() : TPanelFactory("Xsheet") {}
-  void initialize(TPanel *panel) override {
-    panel->setWidget(new XsheetViewer(panel));
+
+  TPanel *createPanel(QWidget *parent) override {
+    XsheetViewerPanel *panel = new XsheetViewerPanel(parent);
+    panel->setObjectName(getPanelType());
+    panel->reset();
     panel->resize(500, 300);
     panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
     connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
             SLOT(showTitleBar(bool)));
+    return panel;
   }
+
+  void initialize(TPanel *panel) override {}
 } xsheetViewerFactory;
 
 //=============================================================================
-// XsheetViewer - Timeline mode
+// XsheetViewer
+//-----------------------------------------------------------------------------
+
+XsheetViewerPanel::XsheetViewerPanel(QWidget *parent) : TPanel(parent) {
+  m_xsheetViewer = new XsheetViewer(this);
+  setWidget(m_xsheetViewer);
+}
+
+void XsheetViewerPanel::reset() {
+  if (!m_xsheetViewer->orientation()->isVerticalTimeline())
+    m_xsheetViewer->flipOrientation();
+}
+
+//=============================================================================
+// TimelineViewerFactory
 //-----------------------------------------------------------------------------
 
 class TimelineViewerFactory final : public TPanelFactory {
 public:
   TimelineViewerFactory() : TPanelFactory("Timeline") {}
-  void initialize(TPanel *panel) override {
-    panel->setWidget(new XsheetViewer(panel));
-    XsheetViewer *xsh = (XsheetViewer *)panel->widget();
-    xsh->flipOrientation();
+
+  TPanel *createPanel(QWidget *parent) override {
+    TimelineViewerPanel *panel = new TimelineViewerPanel(parent);
+    panel->setObjectName(getPanelType());
+    panel->reset();
     panel->resize(500, 300);
     panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
     connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
             SLOT(showTitleBar(bool)));
+    return panel;
   }
+
+  void initialize(TPanel *panel) override {}
 } timelineViewerFactory;
+
+//=============================================================================
+// TimelineViewer
+//-----------------------------------------------------------------------------
+
+TimelineViewerPanel::TimelineViewerPanel(QWidget *parent) : TPanel(parent) {
+  m_timelineViewer = new XsheetViewer(this);
+  setWidget(m_timelineViewer);
+}
+
+void TimelineViewerPanel::reset() {
+  if (m_timelineViewer->orientation()->isVerticalTimeline())
+    m_timelineViewer->flipOrientation();
+}
 
 //=============================================================================
 // SchematicSceneViewer
