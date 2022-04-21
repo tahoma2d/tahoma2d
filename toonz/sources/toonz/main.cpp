@@ -12,6 +12,7 @@
 #include "cleanupsettingspopup.h"
 #include "filebrowsermodel.h"
 #include "expressionreferencemanager.h"
+#include "startuppopup.h"
 
 // TnzTools includes
 #include "tools/tool.h"
@@ -811,6 +812,13 @@ int main(int argc, char *argv[]) {
 
   // Show floating panels only after the main window has been shown
   w.startupFloatingPanels();
+
+  if (Preferences::instance()->isStartupPopupEnabled()) {
+    StartupPopup *startupPopup = new StartupPopup();
+    startupPopup->show();
+    startupPopup->raise();
+    startupPopup->activateWindow();
+  }
 
   CommandManager::instance()->execute(T_Hand);
   if (!loadFilePath.isEmpty()) {

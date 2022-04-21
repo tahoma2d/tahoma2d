@@ -12,7 +12,6 @@
 #include "iocommand.h"
 #include "tapp.h"
 #include "viewerpane.h"
-#include "startuppopup.h"
 #include "tooloptionsshortcutinvoker.h"
 #include "statusbar.h"
 #include "aboutpopup.h"
@@ -1308,12 +1307,6 @@ void MainWindow::onMenuCheckboxChanged() {
 void MainWindow::showEvent(QShowEvent *event) {
   getCurrentRoom()->layout()->setEnabled(true);  // See main function in
                                                  // main.cpp
-  if (Preferences::instance()->isStartupPopupEnabled() &&
-      !m_startupPopupShown) {
-    StartupPopup *startupPopup = new StartupPopup();
-    startupPopup->show();
-    m_startupPopupShown = true;
-  }
 }
 extern const char *applicationName;
 extern const char *applicationVersion;

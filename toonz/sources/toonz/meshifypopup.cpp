@@ -1322,8 +1322,9 @@ public:
     static MeshifyPopup *thePopup = 0;
     if (!thePopup) thePopup = new MeshifyPopup;
 
-    thePopup->raise();
     thePopup->show();
+    thePopup->raise();
+    thePopup->activateWindow();
   }
 
 } meshifyCommand;
