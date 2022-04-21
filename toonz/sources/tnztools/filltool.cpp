@@ -2150,7 +2150,7 @@ void FillTool::updateTranslation() {
   m_rasterGapDistance.setQStringName(tr("Distance:"));
   m_closeStyleIndex.setQStringName(tr("Style Index:"));
   m_closeRasterGaps.setQStringName(tr("Gaps:"));
-  m_closeRasterGaps.setItemUIName(IGNOREGAPS, tr("Ingore Gaps"));
+  m_closeRasterGaps.setItemUIName(IGNOREGAPS, tr("Ignore Gaps"));
   m_closeRasterGaps.setItemUIName(FILLGAPS, tr("Fill Gaps"));
   m_closeRasterGaps.setItemUIName(CLOSEANDFILLGAPS, tr("Close and Fill"));
 }
