@@ -720,7 +720,7 @@
     </message>
     <message>
         <location filename="../../tnztools/filltool.cpp" line="2153"/>
-        <source>Ingore Gaps</source>
+        <source>Ignore Gaps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -792,7 +792,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../tnztools/fullcolorbrushtool.cpp" line="903"/>
+        <location filename="../../tnztools/fullcolorbrushtool.cpp" line="904"/>
         <source>&lt;custom&gt;</source>
         <translation>&lt;vlastní&gt;</translation>
     </message>
@@ -2073,7 +2073,7 @@ Chcete pokračovat?</translation>
         <translation>Obrácená kinematika</translation>
     </message>
     <message>
-        <location filename="../../tnztools/skeletontool.cpp" line="1613"/>
+        <location filename="../../tnztools/skeletontool.cpp" line="1615"/>
         <source>Reset Pinned Center</source>
         <translation>Obnovit výchozí stanovený střed</translation>
     </message>
@@ -2189,7 +2189,7 @@ přesunut na konec první strany palety.</translation>
     </message>
     <message>
         <location filename="../../tnztools/toonzrasterbrushtool.cpp" line="1115"/>
-        <location filename="../../tnztools/toonzrasterbrushtool.cpp" line="2403"/>
+        <location filename="../../tnztools/toonzrasterbrushtool.cpp" line="2404"/>
         <source>&lt;custom&gt;</source>
         <translation>&lt;vlastní&gt;</translation>
     </message>
@@ -2238,7 +2238,7 @@ přesunut na konec první strany palety.</translation>
     </message>
     <message>
         <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="624"/>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="2015"/>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="2016"/>
         <source>&lt;custom&gt;</source>
         <translation>&lt;vlastní&gt;</translation>
     </message>

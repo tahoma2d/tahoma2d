@@ -403,12 +403,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/orientation.cpp" line="84"/>
+        <location filename="../../toonzlib/orientation.cpp" line="86"/>
         <source>Xsheet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/orientation.cpp" line="152"/>
+        <location filename="../../toonzlib/orientation.cpp" line="154"/>
         <source>Timeline</source>
         <translation type="unfinished"></translation>
     </message>

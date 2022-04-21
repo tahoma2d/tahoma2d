@@ -1817,34 +1817,34 @@ Select FX nodes and related links before copying or cutting the selection you wa
 <context>
     <name>PageViewer</name>
     <message>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="600"/>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="609"/>
         <source>- No Styles -</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="677"/>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="923"/>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="686"/>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="942"/>
         <source> + </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="1160"/>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="1179"/>
         <source>Name Editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="1214"/>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="1398"/>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="1233"/>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="1417"/>
         <source>New Style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="1216"/>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="1235"/>
         <source>New Page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="1384"/>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="1403"/>
         <source>Style 0 is set to full transparent. 
 It can&apos;t be changed.  Ever.</source>
         <translation type="unfinished"></translation>
@@ -1860,7 +1860,7 @@ It can&apos;t be changed.  Ever.</source>
     <message>
         <location filename="../../toonzqt/paletteviewer.cpp" line="320"/>
         <location filename="../../toonzqt/paletteviewer.cpp" line="624"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="663"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="666"/>
         <source>&amp;Save Palette As</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1868,39 +1868,39 @@ It can&apos;t be changed.  Ever.</source>
         <location filename="../../toonzqt/paletteviewer.cpp" line="321"/>
         <location filename="../../toonzqt/paletteviewer.cpp" line="512"/>
         <location filename="../../toonzqt/paletteviewer.cpp" line="625"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="664"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="667"/>
         <source>&amp;Save Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzqt/paletteviewer.cpp" line="322"/>
         <location filename="../../toonzqt/paletteviewer.cpp" line="628"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="667"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="719"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="670"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="722"/>
         <source>&amp;Save As Default Vector Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzqt/paletteviewer.cpp" line="323"/>
         <location filename="../../toonzqt/paletteviewer.cpp" line="629"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="668"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="722"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="671"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="725"/>
         <source>&amp;Save As Default Smart Raster Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzqt/paletteviewer.cpp" line="324"/>
         <location filename="../../toonzqt/paletteviewer.cpp" line="630"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="669"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="725"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="672"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="728"/>
         <source>&amp;Save As Default Raster Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzqt/paletteviewer.cpp" line="325"/>
         <location filename="../../toonzqt/paletteviewer.cpp" line="631"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="670"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="728"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="673"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="731"/>
         <source>&amp;Save As Default Palette</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1927,7 +1927,7 @@ It can&apos;t be changed.  Ever.</source>
     </message>
     <message>
         <location filename="../../toonzqt/paletteviewer.cpp" line="457"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="922"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="925"/>
         <source>&amp;Move Palette</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1974,72 +1974,72 @@ It can&apos;t be changed.  Ever.</source>
     </message>
     <message>
         <location filename="../../toonzqt/paletteviewer.cpp" line="626"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="665"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="668"/>
         <source>&amp;Palette Gizmo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="740"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="743"/>
         <source>New Page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="752"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="755"/>
         <source>Delete Page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1134"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1137"/>
         <source>Overwrite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1134"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1137"/>
         <source>Don&apos;t Overwrite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1143"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1146"/>
         <source>Failed to save palette.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1281"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1284"/>
         <source>Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1285"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1288"/>
         <source>Level Palette: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1292"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1295"/>
         <source>Cleanup Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1303"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1306"/>
         <source>Studio Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1310"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1313"/>
         <source>     (Color Model: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1312"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1315"/>
         <source>)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1351"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1354"/>
         <source>Hide New Style Button</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1352"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1355"/>
         <source>Show New Style Button</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2553,17 +2553,17 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1111"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1114"/>
         <source>Overwrite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1112"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1115"/>
         <source>Don&apos;t Overwrite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewergui.cpp" line="1686"/>
+        <location filename="../../toonzqt/paletteviewergui.cpp" line="1705"/>
         <source>Click &amp; Drag Palette into Studio Palette</source>
         <translation type="unfinished"></translation>
     </message>

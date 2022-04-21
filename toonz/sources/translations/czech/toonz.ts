@@ -3189,6 +3189,10 @@ Chcete jej přepsat?</translation>
         <source>Flipbook Histogram</source>
         <translation>Histogram FlipboOk</translation>
     </message>
+    <message>
+        <source>Clear Images</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ImportMagpieFilePopup</name>
@@ -7916,6 +7920,34 @@ Co chcete dělat?</translation>
     <message>
         <source>Cancel</source>
         <translation type="unfinished">Zrušit</translation>
+    </message>
+    <message>
+        <source>Dark Magenta</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Red</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Green</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Yellow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Cyan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Gray</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

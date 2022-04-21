@@ -3094,6 +3094,10 @@ Do you want to overwrite it?</source>
         <source>Load / Append Images</source>
         <translation>加载/附加图像</translation>
     </message>
+    <message>
+        <source>Clear Images</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ImportMagpieFilePopup</name>
@@ -7809,6 +7813,34 @@ What do you want to do?</source>
     <message>
         <source>Cancel</source>
         <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <source>Dark Magenta</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Red</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Green</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Yellow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Cyan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Gray</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

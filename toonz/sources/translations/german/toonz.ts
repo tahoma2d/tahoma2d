@@ -3149,6 +3149,10 @@ Do you want to overwrite it?</source>
         <source>Flipbook Histogram</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Clear Images</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ImportMagpieFilePopup</name>
@@ -7707,6 +7711,34 @@ Was möchten Sie tun?</translation>
     <message>
         <source>Cancel</source>
         <translation type="unfinished">Abbrechen</translation>
+    </message>
+    <message>
+        <source>Dark Magenta</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Red</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Green</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Yellow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Cyan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Gray</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

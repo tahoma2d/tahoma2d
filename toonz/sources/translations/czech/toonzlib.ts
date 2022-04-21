@@ -775,12 +775,12 @@ Pravděpodobně kodek nemůže pracovat řádně.</translation>
 </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/orientation.cpp" line="84"/>
+        <location filename="../../toonzlib/orientation.cpp" line="86"/>
         <source>Xsheet</source>
         <translation>Xsheet</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/orientation.cpp" line="152"/>
+        <location filename="../../toonzlib/orientation.cpp" line="154"/>
         <source>Timeline</source>
         <translation>Časová osa</translation>
     </message>

@@ -644,10 +644,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Ingore Gaps</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Fill Gaps</source>
         <translation type="unfinished"></translation>
     </message>
@@ -661,6 +657,10 @@
     </message>
     <message>
         <source>Savebox</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ignore Gaps</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

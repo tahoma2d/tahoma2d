@@ -9,7 +9,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tpalette.cpp" line="254"/>
+        <location filename="../../common/tvrender/tpalette.cpp" line="256"/>
         <source>colors</source>
         <translation type="unfinished"></translation>
     </message>

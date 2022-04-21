@@ -762,8 +762,12 @@
     </message>
     <message>
         <location filename="../../tnztools/filltool.cpp" line="2153"/>
+        <source>Ignore Gaps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Ingore Gaps</source>
-        <translation>Игнорировать разрывы</translation>
+        <translation type="vanished">Игнорировать разрывы</translation>
     </message>
     <message>
         <location filename="../../tnztools/filltool.cpp" line="2154"/>
@@ -834,7 +838,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../tnztools/fullcolorbrushtool.cpp" line="903"/>
+        <location filename="../../tnztools/fullcolorbrushtool.cpp" line="904"/>
         <source>&lt;custom&gt;</source>
         <translation>&lt;пользовательская&gt;</translation>
     </message>
@@ -2121,7 +2125,7 @@ Do you want to proceed?</source>
         <translation>Обратная кинематика</translation>
     </message>
     <message>
-        <location filename="../../tnztools/skeletontool.cpp" line="1613"/>
+        <location filename="../../tnztools/skeletontool.cpp" line="1615"/>
         <source>Reset Pinned Center</source>
         <translation>Сбросить закрепленный центр</translation>
     </message>
@@ -2236,7 +2240,7 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <location filename="../../tnztools/toonzrasterbrushtool.cpp" line="1115"/>
-        <location filename="../../tnztools/toonzrasterbrushtool.cpp" line="2403"/>
+        <location filename="../../tnztools/toonzrasterbrushtool.cpp" line="2404"/>
         <source>&lt;custom&gt;</source>
         <translation>&lt;пользовательская&gt;</translation>
     </message>
@@ -2285,7 +2289,7 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="624"/>
-        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="2015"/>
+        <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="2016"/>
         <source>&lt;custom&gt;</source>
         <translation>&lt;пользовательская&gt;</translation>
     </message>

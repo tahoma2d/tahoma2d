@@ -2966,6 +2966,10 @@ Vuoi sovrascriverlo?</translation>
         <source>Load / Append Images</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Clear Images</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ImportMagpieFilePopup</name>
@@ -7410,6 +7414,34 @@ Cosa vuoi fare?</translation>
     <message>
         <source>Cancel</source>
         <translation type="unfinished">Annullare</translation>
+    </message>
+    <message>
+        <source>Dark Magenta</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Red</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Green</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Yellow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Cyan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark Gray</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
