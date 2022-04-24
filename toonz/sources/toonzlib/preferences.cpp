@@ -402,7 +402,18 @@ void Preferences::definePreferenceItems() {
   // Interface
   define(CurrentStyleSheetName, "CurrentStyleSheetName", QMetaType::QString,
          "Dark");
-  define(additionalStyleSheet, "additionalStyleSheet", QMetaType::QString, "");
+
+  // Qt has a bug in recent versions that Menu item Does not show correctly
+  // (QTBUG-90242) Since the current OT is made to handle such issue, so we need
+  // to apply an extra adjustment when it is run on the older versions (5.9.x)
+  // of Qt
+  QString defaultAditionalSheet = "";
+#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
+  defaultAditionalSheet = "QMenu::Item{ padding: 3 28 3 28; }";
+#endif
+
+  define(additionalStyleSheet, "additionalStyleSheet", QMetaType::QString,
+         defaultAditionalSheet);
   define(iconTheme, "iconTheme", QMetaType::Bool, false);
   define(pixelsOnly, "pixelsOnly", QMetaType::Bool, true);
   define(oldUnits, "oldUnits", QMetaType::QString, "mm");
