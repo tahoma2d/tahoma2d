@@ -413,6 +413,13 @@ void Preferences::definePreferenceItems() {
   defaultAditionalSheet = "QMenu::Item{ padding: 3 28 3 28; }";
 #endif
 
+  // Linux system font size appears a lot smaller than it should be despite
+  // setting QApplication's setPixelSize = 12 in main.cpp. We'll correct it using
+  // the additional stylesheet.
+#if defined(LINUX) || defined(FREEBSD)
+  defaultAditionalSheet = "QWidget { font: 12px; }" + defaultAditionalSheet;
+#endif
+
   define(additionalStyleSheet, "additionalStyleSheet", QMetaType::QString,
          defaultAditionalSheet);
   define(iconTheme, "iconTheme", QMetaType::Bool, false);
