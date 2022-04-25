@@ -717,17 +717,17 @@
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="29"/>
         <source>Orange</source>
-        <translation type="unfinished"></translation>
+        <translation>Оранжевый</translation>
     </message>
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="30"/>
         <source>Yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>Жёлтый</translation>
     </message>
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="31"/>
         <source>Light Green</source>
-        <translation type="unfinished"></translation>
+        <translation>Светло-зеленый</translation>
     </message>
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="32"/>
@@ -738,7 +738,7 @@
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="33"/>
         <source>Light Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Светло-синий</translation>
     </message>
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="34"/>
@@ -749,27 +749,27 @@
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="35"/>
         <source>Dark Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Темно-синий</translation>
     </message>
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="36"/>
         <source>Purple</source>
-        <translation type="unfinished"></translation>
+        <translation>Пурпурный</translation>
     </message>
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="37"/>
         <source>Pink</source>
-        <translation type="unfinished"></translation>
+        <translation>Розовый</translation>
     </message>
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="38"/>
         <source>Dark Pink</source>
-        <translation type="unfinished"></translation>
+        <translation>Тёмно-розовый</translation>
     </message>
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="39"/>
         <source>White</source>
-        <translation type="unfinished"></translation>
+        <translation>Белый</translation>
     </message>
     <message>
         <location filename="../../toonzlib/txshcolumn.cpp" line="750"/>

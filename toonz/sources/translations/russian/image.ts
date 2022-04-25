@@ -19,67 +19,67 @@
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="342"/>
         <source>Global Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Глобальная палитра</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="343"/>
         <source>Global Palette + Sierra Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Глобальная палитра + Sierra Dither</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="344"/>
         <source>Global Palette + Bayer2 Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Глобальная палитра + Bayer2 Dither</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="345"/>
         <source>Global Palette + Bayer1 Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Глобальная палитра + Bayer1 Dither</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="346"/>
         <source>Diff Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Diff Palette</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="347"/>
         <source>Diff Palette + Sierra Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Diff Palette + Sierra Dither</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="348"/>
         <source>Diff Palette + Bayer2 Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Diff Palette + Bayer2 Dither</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="349"/>
         <source>Diff Palette + Bayer1 Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Diff Palette + Bayer1 Dither</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="350"/>
         <source>New Pal Per Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>New Pal Per Frame</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="351"/>
         <source>New Pal Per Frame + Sierra Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>New Pal Per Frame + Sierra Dither</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="352"/>
         <source>New Pal Per Frame + Bayer2 Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>New Pal Per Frame + Bayer2 Dither</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="353"/>
         <source>New Pal Per Frame + Bayer1 Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>New Pal Per Frame + Bayer1 Dither</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="354"/>
         <source>Opaque, Dither, 256 Colors Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Непрозрачный, Dither, только 256 цветов</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="367"/>
@@ -99,12 +99,12 @@
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="370"/>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Режим</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="371"/>
         <source>Max Colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Максимальное количество цветов</translation>
     </message>
 </context>
 <context>
@@ -112,12 +112,12 @@
     <message>
         <location filename="../../image/ffmpeg/tiio_mov.cpp" line="238"/>
         <source>Quality</source>
-        <translation type="unfinished">Качество</translation>
+        <translation>Качество</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_mov.cpp" line="239"/>
         <source>Scale</source>
-        <translation type="unfinished">Масштаб</translation>
+        <translation>Масштаб</translation>
     </message>
 </context>
 <context>
@@ -146,7 +146,7 @@
     <message>
         <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="272"/>
         <source>FFmpeg returned error-code: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>FFmpeg вернул код ошибки: %1</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="276"/>

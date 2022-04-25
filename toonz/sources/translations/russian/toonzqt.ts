@@ -212,7 +212,7 @@ Possibly the preset file has been corrupted</source>
     <message>
         <location filename="../../toonzqt/combohistogram.cpp" line="278"/>
         <source>RGB</source>
-        <translation type="unfinished">RGB</translation>
+        <translation>RGB</translation>
     </message>
     <message>
         <source>RGBA</source>
@@ -311,17 +311,17 @@ Zero is fully transparent.</source>
     <message>
         <location filename="../../toonzqt/colorfield.cpp" line="611"/>
         <source>Paste Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить цвет</translation>
     </message>
     <message>
         <location filename="../../toonzqt/colorfield.cpp" line="627"/>
         <source>Paste Color of %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Вставить цвет %1</translation>
     </message>
     <message>
         <location filename="../../toonzqt/colorfield.cpp" line="637"/>
         <source>Copy Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать цвет</translation>
     </message>
 </context>
 <context>
@@ -351,17 +351,17 @@ Zero is fully transparent.</source>
     <message>
         <location filename="../../toonzqt/combohistogram.cpp" line="445"/>
         <source>8bit (0-255)</source>
-        <translation type="unfinished"></translation>
+        <translation>8 бит (0-255)</translation>
     </message>
     <message>
         <location filename="../../toonzqt/combohistogram.cpp" line="447"/>
         <source>16bit (0-65535)</source>
-        <translation type="unfinished"></translation>
+        <translation>16 бит (0-65535)</translation>
     </message>
     <message>
         <location filename="../../toonzqt/combohistogram.cpp" line="450"/>
         <source>0.0-1.0</source>
-        <translation type="unfinished"></translation>
+        <translation>0.0-1.0</translation>
     </message>
     <message>
         <location filename="../../toonzqt/combohistogram.cpp" line="463"/>
@@ -1260,7 +1260,7 @@ Control click to reset.</source>
     <message>
         <location filename="../../toonzqt/functionsheet.cpp" line="213"/>
         <source>Toggle synchronizing zoom with xsheet</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключить синхронизацию зума с xsheet</translation>
     </message>
 </context>
 <context>
@@ -1648,12 +1648,12 @@ Manually changing any keyframe will clear the warning.</source>
     <message>
         <location filename="../../toonzqt/fxschematicnode.cpp" line="3842"/>
         <source>&amp;Paste Add</source>
-        <translation type="unfinished">&amp;Вставить Добавить</translation>
+        <translation>&amp;Вставить Добавить</translation>
     </message>
     <message>
         <location filename="../../toonzqt/fxschematicnode.cpp" line="3845"/>
         <source>&amp;Preview</source>
-        <translation type="unfinished">&amp;Предпросмотр</translation>
+        <translation>&amp;Предпросмотр</translation>
     </message>
 </context>
 <context>
@@ -1683,7 +1683,7 @@ Manually changing any keyframe will clear the warning.</source>
         <location filename="../../toonzqt/fxschematicnode.cpp" line="3896"/>
         <location filename="../../toonzqt/fxschematicnode.cpp" line="4007"/>
         <source> (Pass Through)</source>
-        <translation type="unfinished"></translation>
+        <translation> (Пройти сквозь)</translation>
     </message>
 </context>
 <context>
@@ -1816,102 +1816,102 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="449"/>
         <source>Hex Color Names Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Hex Color Редактор имён</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="452"/>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="453"/>
         <source>Apply</source>
-        <translation type="unfinished">Применить</translation>
+        <translation>Применить</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="454"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрыть</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="456"/>
         <source>Unselect</source>
-        <translation type="unfinished"></translation>
+        <translation>Отменить выбор</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="457"/>
         <source>Add Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить цвет</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="458"/>
         <source>Delete Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить цвет</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="505"/>
         <source>User Defined Colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользовательские цвета</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="506"/>
         <source>Default Main Colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Основные цвета по умолчанию</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="511"/>
         <source>Enable Auto-Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить автозаполнение</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="515"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Импорт</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="516"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="890"/>
         <source>Open Color Names</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть имена цветов</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="891"/>
         <source>Text or XML (*.txt *.xml);;Text files (*.txt);;XML files (*.xml)</source>
-        <translation type="unfinished"></translation>
+        <translation>Текст или XML (*.txt *.xml);;Текстовые файлы (*.txt);;XML-файлы (*.xml)</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="895"/>
         <source>Hex Color Names Import</source>
-        <translation type="unfinished"></translation>
+        <translation>Hex Color Импорт имён</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="895"/>
         <source>Do you want to merge with existing entries?</source>
-        <translation type="unfinished"></translation>
+        <translation>Хотите объединиться с существующими записями?</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="901"/>
         <source>Error importing color names XML</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка при импорте названий цветов XML</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="917"/>
         <source>Save Color Names</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить имена цветов</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="918"/>
         <source>XML files (*.xml);;Text files (*.txt)</source>
-        <translation type="unfinished"></translation>
+        <translation>XML-файлы (*.xml);;Текстовые файлы (*.txt)</translation>
     </message>
     <message>
         <location filename="../../toonzqt/hexcolornames.cpp" line="927"/>
         <source>Error exporting color names XML</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка экспорта названий цветов XML</translation>
     </message>
 </context>
 <context>
@@ -2000,32 +2000,32 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="6960"/>
         <source>New Style Set</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый набор стилей</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="6963"/>
         <source>Style Set Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Название набора стилей:</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="6965"/>
         <source>Create as Favorite</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать как Избранное</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="6968"/>
         <source>Style Set Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип набора стилей:</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="6994"/>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="6995"/>
         <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
+        <translation>Отмена</translation>
     </message>
 </context>
 <context>
@@ -2638,19 +2638,22 @@ Are you sure?</source>
         <location filename="../../toonzqt/styleeditor.cpp" line="2023"/>
         <source>Removing a Style will permanently delete the style file. This cannot be undone!
 Are you sure?</source>
-        <translation type="unfinished"></translation>
+        <translation>При удалении стиля навсегда удаляется файл стиля. Это не может быть отменено!
+Уверены ли вы?</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2041"/>
         <source>Emptying Set &quot;%1&quot; will permanently delete all style files for this set. This cannot be undone!
 Are you sure?</source>
-        <translation type="unfinished"></translation>
+        <translation>При очистке набора &quot;%1&quot; все файлы стилей для этого набора будут безвозвратно удалены. Это не может быть отменено!
+Уверены ли вы?</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2149"/>
         <source>Removing Style Set &quot;%1&quot; will permanently delete all style files for this set. This cannot be undone!
 Are you sure?</source>
-        <translation type="unfinished"></translation>
+        <translation>Удаление набора стилей &quot;%1&quot; приведет к безвозвратному удалению всех файлов стилей для этого набора. Это не может быть отменено!
+Уверены ли вы?</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2607"/>
@@ -2692,7 +2695,8 @@ Are you sure?</source>
         <location filename="../../toonzqt/styleeditor.cpp" line="6420"/>
         <source>Removing the selected Styles will permanently delete style files from their sets. This cannot be undone!
 Are you sure?</source>
-        <translation type="unfinished"></translation>
+        <translation>Удаление выбранных стилей навсегда удалит файлы стилей из их наборов. Это не может быть отменено!
+Уверены ли вы?</translation>
     </message>
     <message>
         <source>Save</source>
@@ -3220,7 +3224,7 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <location filename="../../toonzqt/styleeditor.cpp" line="7167"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="7179"/>
         <source> (Favorites)</source>
-        <translation type="unfinished"></translation>
+        <translation> (Избранное)</translation>
     </message>
 </context>
 <context>
@@ -3241,27 +3245,27 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <message>
         <location filename="../../toonzqt/schematicnode.cpp" line="52"/>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Вырезать</translation>
     </message>
     <message>
         <location filename="../../toonzqt/schematicnode.cpp" line="56"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Копировать</translation>
     </message>
     <message>
         <location filename="../../toonzqt/schematicnode.cpp" line="60"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Вставить</translation>
     </message>
     <message>
         <location filename="../../toonzqt/schematicnode.cpp" line="65"/>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Удалить</translation>
+        <translation>&amp;Удалить</translation>
     </message>
     <message>
         <location filename="../../toonzqt/schematicnode.cpp" line="71"/>
         <source>Select &amp;All</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать &amp;все</translation>
     </message>
 </context>
 <context>
@@ -3333,7 +3337,7 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     <message>
         <location filename="../../toonzqt/schematicviewer.cpp" line="1041"/>
         <source>&amp;Switch output port display mode</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Переключить режим отображения выходного порта</translation>
     </message>
     <message>
         <source>&amp;Swtich output port display mode</source>
@@ -3642,97 +3646,97 @@ Are you sure ?</source>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2238"/>
         <source>Style Set Manager:              %1+click - Add Style to Palette              %2+click - Multi-Style Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Диспетчер наборов стилей:              %1+клик - Добавить стиль в палитру               %2+клик - Выбор нескольких стилей</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2283"/>
         <source>Add Selected to Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить выбранные в палитру</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2290"/>
         <source>Remove Selected from Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить выбранное из избранного</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2294"/>
         <source>Add Selected to Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить выбранное в избранное</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2302"/>
         <source>Copy Selected to Style Set...</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать выбранное в набор стилей...</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2317"/>
         <source>Move Selected to Style Set...</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить выбранное в набор стилей...</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2334"/>
         <source>Remove Selected from Sets</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить выбранное из наборов</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2356"/>
         <source>Add to Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в палитру</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2364"/>
         <source>Add to Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить в избранное</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2372"/>
         <source>Copy to Style Set...</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать в набор стилей...</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2389"/>
         <source>Move to Style Set...</source>
-        <translation type="unfinished"></translation>
+        <translation>Перейти к набору стилей...</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2407"/>
         <source>Remove from Set</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить из набора</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2418"/>
         <source>Add Set to Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить набор в палитру</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2424"/>
         <source>Empty Set</source>
-        <translation type="unfinished"></translation>
+        <translation>Пустой набор</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2436"/>
         <source>New Style Set...</source>
-        <translation type="unfinished"></translation>
+        <translation>Набор нового стиля...</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2441"/>
         <source>Rename Style Set...</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименовать набор стилей...</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2448"/>
         <source>Reload Style Set</source>
-        <translation type="unfinished"></translation>
+        <translation>Перезагрузить набор стилей</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2456"/>
         <source>Scan for Style Set Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>Сканировать изменения набора стилей</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="2464"/>
         <source>Remove &apos;%1&apos; Style Set</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить набор стилей &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -3795,22 +3799,22 @@ Apply</source>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="4219"/>
         <source>Hex</source>
-        <translation type="unfinished"></translation>
+        <translation>Hex</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="4244"/>
         <source>Toggle Orientation</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключить ориентацию</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="4247"/>
         <source>Hex Color Names...</source>
-        <translation type="unfinished"></translation>
+        <translation>Hex Color Имена...</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="4261"/>
         <source>Show or hide style sets.</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать или скрыть наборы стилей.</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="4768"/>
@@ -3845,57 +3849,58 @@ Apply</source>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="5623"/>
         <source>My Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation>Мои избранные</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="5626"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="6862"/>
         <source> (Favorites)</source>
-        <translation type="unfinished"></translation>
+        <translation> (Избранное)</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="5629"/>
         <source> (External)</source>
-        <translation type="unfinished"></translation>
+        <translation> (Внешний)</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="5892"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="5915"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="5938"/>
         <source>Show All</source>
-        <translation type="unfinished">Показать все</translation>
+        <translation>Показать все</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="5897"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="5920"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="5943"/>
         <source>Hide All</source>
-        <translation type="unfinished"></translation>
+        <translation>Скрыть всё</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="5902"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="5925"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="5948"/>
         <source>Collapse All</source>
-        <translation type="unfinished"></translation>
+        <translation>Свернуть всё</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="5907"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="5930"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="5953"/>
         <source>Expand All</source>
-        <translation type="unfinished"></translation>
+        <translation>Развернуть всё</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="6900"/>
         <source>Style Set Name cannot be empty or contain any of the following characters:
  \ / : * ? &quot; &lt; &gt; |</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя набора стилей не может быть пустым или содержать любой из следующих символов:
+  \ / : * ? &quot; &lt; &gt; |</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="6945"/>
         <source>Style Set Name already exists. Please try another name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя набора стилей уже существует. Пожалуйста, попробуйте другое имя.</translation>
     </message>
     <message>
         <source>[CLEANUP]  </source>
