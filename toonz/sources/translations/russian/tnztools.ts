@@ -763,7 +763,7 @@
     <message>
         <location filename="../../tnztools/filltool.cpp" line="2153"/>
         <source>Ignore Gaps</source>
-        <translation>Игнлрировать разрывы</translation>
+        <translation>Игнорировать разрывы</translation>
     </message>
     <message>
         <source>Ingore Gaps</source>
