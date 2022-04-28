@@ -2239,13 +2239,11 @@ XsheetViewer {
   qproperty-PreviewFrameTextColor: #2d42b9;
   qproperty-CurrentRowBgColor: rgba(216, 87, 177, 0.7);
   qproperty-OnionSkinAreaBgColor: #c2c2c2;
-  qproperty-CellFocusColor: #000;
   qproperty-ColumnIconLineColor: #707070;
   qproperty-EmptyColumnHeadColor: #DBDBDB;
   qproperty-ColumnHeadPastelizer: rgba(0, 0, 0, 0);
   qproperty-SelectedColumnHead: rgba(0, 0, 0, 0.15);
   qproperty-PlayRangeColor: #DBDBDB;
-  qproperty-CurrentCellColor: #00ffff;
   qproperty-FoldedColumnBGColor: #a8a8a8;
   qproperty-FoldedColumnLineColor: #757575;
   qproperty-EmptyCellColor: #c2c2c2;
