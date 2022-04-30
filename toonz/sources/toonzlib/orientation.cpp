@@ -16,8 +16,9 @@ const int PLAY_MARKER_SIZE         = 10;
 const int PINNED_SIZE              = 11;
 const int NAV_TAG_WIDTH            = 7;
 const int NAV_TAG_HEIGHT           = 13;
-const int FRAME_MARKER_SIZE        = 4;
-const int FRAME_MARKER_SIZE_LARGE  = FRAME_MARKER_SIZE + 2;
+const int FRAME_MARKER_SIZE_SMALL  = 4;
+const int FRAME_MARKER_SIZE        = FRAME_MARKER_SIZE_SMALL + 1;
+const int FRAME_MARKER_SIZE_LARGE  = FRAME_MARKER_SIZE_SMALL + 2;
 const int FOLDED_CELL_SIZE         = 9;
 const int SHIFTTRACE_DOT_SIZE      = 12;
 
@@ -943,6 +944,13 @@ TopToBottomOrientation::TopToBottomOrientation() {
   corner.lineTo(QPointF(0, CELL_HEIGHT));
   addPath(PredefinedPath::DRAG_HANDLE_CORNER, corner);
 
+  QPainterPath diamondSmall(QPointF(0, -FRAME_MARKER_SIZE_SMALL));
+  diamondSmall.lineTo(FRAME_MARKER_SIZE_SMALL, 0);
+  diamondSmall.lineTo(0, FRAME_MARKER_SIZE_SMALL);
+  diamondSmall.lineTo(-FRAME_MARKER_SIZE_SMALL, 0);
+  diamondSmall.lineTo(0, -FRAME_MARKER_SIZE_SMALL);
+  addPath(PredefinedPath::FRAME_MARKER_DIAMOND_SMALL, diamondSmall);
+
   QPainterPath diamond(QPointF(0, -FRAME_MARKER_SIZE));
   diamond.lineTo(FRAME_MARKER_SIZE, 0);
   diamond.lineTo(0, FRAME_MARKER_SIZE);
@@ -1406,6 +1414,13 @@ LeftToRightOrientation::LeftToRightOrientation() {
   corner.lineTo(QPointF(CELL_WIDTH - CELL_DRAG_HEIGHT, CELL_DRAG_HEIGHT));
   corner.lineTo(QPointF(CELL_WIDTH, 0));
   addPath(PredefinedPath::DRAG_HANDLE_CORNER, corner);
+
+  QPainterPath diamondSmall(QPointF(0, -FRAME_MARKER_SIZE_SMALL));
+  diamondSmall.lineTo(FRAME_MARKER_SIZE_SMALL, 0);
+  diamondSmall.lineTo(0, FRAME_MARKER_SIZE_SMALL);
+  diamondSmall.lineTo(-FRAME_MARKER_SIZE_SMALL, 0);
+  diamondSmall.lineTo(0, -FRAME_MARKER_SIZE_SMALL);
+  addPath(PredefinedPath::FRAME_MARKER_DIAMOND_SMALL, diamondSmall);
 
   QPainterPath diamond(QPointF(0, -FRAME_MARKER_SIZE));
   diamond.lineTo(FRAME_MARKER_SIZE, 0);
