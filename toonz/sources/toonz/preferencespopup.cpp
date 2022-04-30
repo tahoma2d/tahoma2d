@@ -1664,7 +1664,7 @@ QWidget* PreferencesPopup::createInterfacePage() {
 
   insertUI(CurrentStyleSheetName, lay, styleSheetItemList);
   int row = lay->rowCount();
-  // lay->addWidget(additionalStyleSheetBtn, row - 1, 3);
+  lay->addWidget(additionalStyleSheetBtn, row - 1, 3);
 
   // lay->addWidget(new QLabel(tr("Icon Theme*:"), this), 2, 0,
   //               Qt::AlignRight | Qt::AlignVCenter);
