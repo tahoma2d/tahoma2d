@@ -402,26 +402,7 @@ void Preferences::definePreferenceItems() {
   // Interface
   define(CurrentStyleSheetName, "CurrentStyleSheetName", QMetaType::QString,
          "Dark");
-
-  // Qt has a bug in recent versions that Menu item Does not show correctly
-  // (QTBUG-90242) Since the current OT is made to handle such issue, so we need
-  // to apply an extra adjustment when it is run on the older versions (5.9.x)
-  // of Qt
-  // Update: confirmed that the bug does not appear at least in Qt 5.12.8
-  QString defaultAditionalSheet = "";
-#if QT_VERSION < QT_VERSION_CHECK(5, 12, 9)
-  defaultAditionalSheet = "QMenu::Item{ padding: 3 28 3 28; }";
-#endif
-
-  // Linux system font size appears a lot smaller than it should be despite
-  // setting QApplication's setPixelSize = 12 in main.cpp. We'll correct it using
-  // the additional stylesheet.
-#if defined(LINUX) || defined(FREEBSD)
-  defaultAditionalSheet = "QWidget { font: 12px; }" + defaultAditionalSheet;
-#endif
-
-  define(additionalStyleSheet, "additionalStyleSheet", QMetaType::QString,
-         defaultAditionalSheet);
+  define(additionalStyleSheet, "additionalStyleSheet", QMetaType::QString, "");
   define(iconTheme, "iconTheme", QMetaType::Bool, false);
   define(pixelsOnly, "pixelsOnly", QMetaType::Bool, true);
   define(oldUnits, "oldUnits", QMetaType::QString, "mm");
@@ -1022,20 +1003,41 @@ QString Preferences::getCurrentStyleSheet() const {
                    currentStyleSheetName + QString(".qss");
   QString styleSheetPath = path.getQString() + "/" + string;
 
-  QString additionalSheetStr = getStringValue(additionalStyleSheet);
-  // if there is no additional style sheet, return the path and let
-  // Qt to load and parse it
-  if (additionalSheetStr.isEmpty()) return QString("file:///" + styleSheetPath);
+  // Set base stylesheet settings. This is used to correct QT styling
+  // issues between different versions/OSes. Stylesheets and Additional
+  // stylesheets can override these settings.
+  QString baseSheetStr = "";
 
-  // if there is any additional style sheet, load the style sheet
-  // from the file and combine with it
-  QString styleSheetStr;
+  // Qt has a bug in recent versions that Menu item Does not show correctly
+  // (QTBUG-90242) Since the current OT is made to handle such issue, so we need
+  // to apply an extra adjustment when it is run on the older versions (5.9.x)
+  // of Qt
+  // Update: confirmed that the bug does not appear at least in Qt 5.12.8
+#if QT_VERSION < QT_VERSION_CHECK(5, 12, 9)
+  baseSheetStr += "QMenu::Item{ padding: 3 28 3 28; }";
+#else
+  baseSheetStr += "QMenu::Item{ padding: 3 28 3 8; }";
+#endif
+
+// Linux system font size appears a lot smaller than it should be despite
+// setting QApplication's setPixelSize = 12 in main.cpp. We'll correct it using
+// the additional stylesheet.
+#if defined(LINUX) || defined(FREEBSD)
+  baseSheetStr += "QWidget{ font: 12px; }QToolTip{ font: 12px; }";
+#endif
+
+
+  QString styleSheetStr = baseSheetStr;
+
+  // Load style sheet from the file and add to base style sheet
   QFile f(styleSheetPath);
   if (f.open(QFile::ReadOnly | QFile::Text)) {
     QTextStream ts(&f);
-    styleSheetStr = ts.readAll();
+    styleSheetStr += ts.readAll();
   }
-  styleSheetStr += additionalSheetStr;
+
+  // If there is any additional style sheet, append to loaded stylesheet
+  styleSheetStr += getStringValue(additionalStyleSheet);
 
   // here we will convert all relative paths to absolute paths
   // or Qt will look for images relative to the current working directory

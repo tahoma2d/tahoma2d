@@ -310,7 +310,6 @@ QMenu {
 }
 QMenu::item {
   border: 0;
-  padding: 3 28 3 8;
 }
 QMenu::item:selected {
   background-color: #d97fbe;
