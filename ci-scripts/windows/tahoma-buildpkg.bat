@@ -35,10 +35,15 @@ IF EXIST ..\..\thirdparty\libgphoto2\include (
 REM Remove ILK files
 del Tahoma2D\*.ilk
 
-echo ">>> Copying stuff to Tahoma2D\tahomastuff"
+echo ">>> Configuring Tahoma2D.exe for deployment"
 
-mkdir Tahoma2D\tahomastuff
-xcopy /Y /E ..\..\stuff Tahoma2D\tahomastuff
+REM Setup for local builds
+set QT_PATH=C:\Qt\5.9.7\msvc2019_64
+
+REM These are effective when running from Actions/Appveyor
+IF EXIST D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.9\msvc2019_64 set QT_PATH=D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.9\msvc2019_64
+
+%QT_PATH%\bin\windeployqt.exe Tahoma2D\Tahoma2D.exe
 
 del /A- /S Tahoma2D\tahomastuff\*.gitkeep
 
@@ -58,19 +63,28 @@ IF EXIST ..\..\thirdparty\apps\rhubarb (
    xcopy /Y /E /I ..\..\thirdparty\apps\rhubarb\res "Tahoma2D\rhubarb\res"
 )
 
-echo ">>> Configuring Tahoma2D.exe for deployment"
+echo ">>> Creating Tahoma2D Windows Installer"
+IF NOT EXIST installer mkdir installer
+cd installer
 
-REM Setup for local builds
-set QT_PATH=C:\Qt\5.9.7\msvc2019_64
+rmdir /S /Q program
+rmdir /S /Q stuff
 
-REM These are effective when running from Actions/Appveyor
-IF EXIST D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.9\msvc2019_64 set QT_PATH=D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.9\msvc2019_64
+xcopy /Y /E /I ..\Tahoma2D program
 
-%QT_PATH%\bin\windeployqt.exe Tahoma2D\Tahoma2D.exe
+xcopy /Y /E /I ..\..\..\stuff stuff
 
-echo ">>> Creating Tahoma2D Windows package"
+python ..\..\installer\windows\filelist_python3.py %cd%
+ISCC.exe /I. /O.. ..\..\installer\windows\setup.iss
 
-IF EXIST Tahoma2D-win.zip del Tahoma2D-win.zip
-7z a Tahoma2D-win.zip Tahoma2D
+cd ..
+
+echo ">>> Creating Tahoma2D Windows Portable package"
+
+xcopy /Y /E /I ..\..\stuff Tahoma2D\tahomastuff
+
+IF EXIST Tahoma2D-portable-win.zip del Tahoma2D-portable-win.zip
+7z a Tahoma2D-portable-win.zip Tahoma2D
+
 
 cd ../..

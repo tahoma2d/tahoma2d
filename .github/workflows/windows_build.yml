@@ -44,8 +44,12 @@ jobs:
           cp -r toonz\build\Tahoma2D artifact
       - uses: actions/upload-artifact@v1
         with:
-          name: Tahoma2D-win
+          name: Tahoma2D-portable-win
           path: artifact
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Tahoma2D-install-win.exe
+          path: toonz\build\Tahoma2D-install-win.exe
       - name: Get Nightly Release Date
         if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         run: |
@@ -70,7 +74,7 @@ jobs:
         with:
           allowUpdates: true
           artifactErrorsFailBuild: false
-          artifacts: toonz\build\Tahoma2D-win.zip
+          artifacts: toonz\build\Tahoma2D-portable-win.zip,toonz\build\Tahoma2D-install-win.exe
           artifactContentType: "raw"
           body: ${{ github.event.head_commit.message }}
           name: Latest Nightly ${{ env.NIGHTLYDATE }}
@@ -84,7 +88,7 @@ jobs:
         with:
           allowUpdates: true
           artifactErrorsFailBuild: false
-          artifacts: toonz\build\Tahoma2D-win.zip
+          artifacts: toonz\build\Tahoma2D-portable-win.zip,toonz\build\Tahoma2D-install-win.exe
           artifactContentType: "raw"
           body: ${{ github.event.head_commit.message }}
           name: ${{ env.NIGHTLYDATETIME }}
