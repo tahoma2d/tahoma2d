@@ -43,6 +43,9 @@ set QT_PATH=C:\Qt\5.9.7\msvc2019_64
 REM These are effective when running from Actions/Appveyor
 IF EXIST D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.9\msvc2019_64 set QT_PATH=D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.9\msvc2019_64
 
+set VCINSTALLDIR="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC"
+IF EXIST "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC" set VCINSTALLDIR="C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC"
+
 %QT_PATH%\bin\windeployqt.exe Tahoma2D\Tahoma2D.exe
 
 del /A- /S Tahoma2D\tahomastuff\*.gitkeep
