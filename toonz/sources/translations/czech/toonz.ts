@@ -10164,6 +10164,10 @@ but a random crash might occur, use at your own risk:</source>
         <source>Favorites</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Edit Additional Style Sheet..</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup:: FormatProperties</name>
@@ -10182,6 +10186,25 @@ but a random crash might occur, use at your own risk:</source>
     <message>
         <source>Priority</source>
         <translation type="vanished">Přednost</translation>
+    </message>
+</context>
+<context>
+    <name>PreferencesPopup::AdditionalStyleEdit</name>
+    <message>
+        <source>Additional Style Sheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">Zavřít</translation>
     </message>
 </context>
 <context>
@@ -13015,14 +13038,6 @@ Do you wish to continue loading the last good save or stop and try to salvage th
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>File not found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Don&apos;t Save</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Vector Guided Tweening Controls</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13068,6 +13083,14 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Explicit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Don&apos;t Save</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -16144,6 +16167,26 @@ VAROVÁNÍ: Nesoulad ve velikosti obrázku. Velikost úrovně se stejnou cestou 
     <message>
         <source>Interval(sec):</source>
         <translation type="obsolete">Interval (s):</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">Zrušit</translation>
+    </message>
+    <message>
+        <source>Load</source>
+        <translation type="obsolete">Nahrát</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="obsolete">Vyvést</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t load %1</source>
+        <translation type="obsolete">Nepodařilo se nahrát %1</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save %1</source>
+        <translation type="obsolete">Nepodařilo se uložit %1</translation>
     </message>
 </context>
 <context>

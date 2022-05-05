@@ -445,6 +445,17 @@ Zero is fully transparent.</source>
     </message>
 </context>
 <context>
+    <name>DVGui::HexColorNamesEditor</name>
+    <message>
+        <source>OK</source>
+        <translation type="obsolete">OK</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="obsolete">Appliquer</translation>
+    </message>
+</context>
+<context>
     <name>DVGui::LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
@@ -1517,16 +1528,16 @@ Sélectionnez les nœuds FX et les liens connexes avant de copier ou couper la s
 <context>
     <name>HexColorNamesEditor</name>
     <message>
-        <source>Hex Color Names Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>OK</source>
         <translation type="unfinished">OK</translation>
     </message>
     <message>
         <source>Apply</source>
         <translation type="unfinished">Appliquer</translation>
+    </message>
+    <message>
+        <source>Hex Color Names Editor</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Close</source>

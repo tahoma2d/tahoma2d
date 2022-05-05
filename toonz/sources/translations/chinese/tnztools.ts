@@ -874,6 +874,18 @@
         <source>Preset:</source>
         <translation type="unfinished">预设:</translation>
     </message>
+    <message>
+        <source>Preset Name</source>
+        <translation type="obsolete">预设名称</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="obsolete">确定</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">取消</translation>
+    </message>
 </context>
 <context>
     <name>PerspectiveTool</name>

@@ -477,6 +477,17 @@ Zero is fully transparent.</source>
     </message>
 </context>
 <context>
+    <name>DVGui::HexColorNamesEditor</name>
+    <message>
+        <source>OK</source>
+        <translation type="obsolete">OK</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="obsolete">Použít</translation>
+    </message>
+</context>
+<context>
     <name>DVGui::ProgressDialog</name>
     <message>
         <source>OpenToonz</source>

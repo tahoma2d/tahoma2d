@@ -486,6 +486,17 @@ Zero is fully transparent.</source>
     </message>
 </context>
 <context>
+    <name>DVGui::HexColorNamesEditor</name>
+    <message>
+        <source>OK</source>
+        <translation type="obsolete">确定</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="obsolete">应用</translation>
+    </message>
+</context>
+<context>
     <name>DVGui::LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
@@ -1589,16 +1600,16 @@ Select FX nodes and related links before copying or cutting the selection you wa
 <context>
     <name>HexColorNamesEditor</name>
     <message>
-        <source>Hex Color Names Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>OK</source>
         <translation type="unfinished">确定</translation>
     </message>
     <message>
         <source>Apply</source>
         <translation type="unfinished">应用</translation>
+    </message>
+    <message>
+        <source>Hex Color Names Editor</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Close</source>

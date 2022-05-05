@@ -213,17 +213,17 @@
 <context>
     <name>Preferences</name>
     <message>
-        <location filename="../../toonzlib/preferences.cpp" line="100"/>
+        <location filename="../../toonzlib/preferences.cpp" line="101"/>
         <source>Retas Level Format</source>
         <translation>Formát úrovně RETAS</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/preferences.cpp" line="106"/>
+        <location filename="../../toonzlib/preferences.cpp" line="107"/>
         <source>Adobe Photoshop</source>
         <translation>Adobe Photoshop</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/preferences.cpp" line="203"/>
+        <location filename="../../toonzlib/preferences.cpp" line="204"/>
         <source>PNG</source>
         <translation>PNG</translation>
     </message>
@@ -775,12 +775,12 @@ Pravděpodobně kodek nemůže pracovat řádně.</translation>
 </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/orientation.cpp" line="86"/>
+        <location filename="../../toonzlib/orientation.cpp" line="87"/>
         <source>Xsheet</source>
         <translation>Xsheet</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/orientation.cpp" line="154"/>
+        <location filename="../../toonzlib/orientation.cpp" line="155"/>
         <source>Timeline</source>
         <translation>Časová osa</translation>
     </message>

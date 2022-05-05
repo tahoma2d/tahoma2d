@@ -10143,6 +10143,29 @@ but a random crash might occur, use at your own risk:</source>
         <source>Favorites</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Edit Additional Style Sheet..</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PreferencesPopup::AdditionalStyleEdit</name>
+    <message>
+        <source>Additional Style Sheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">确定</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="unfinished">应用</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">关闭</translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup::Display30bitChecker</name>
@@ -16066,6 +16089,26 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
     <message>
         <source>Interval(sec):</source>
         <translation type="obsolete">间隔(秒):</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="obsolete">取消</translation>
+    </message>
+    <message>
+        <source>Load</source>
+        <translation type="obsolete">加载</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="obsolete">导出</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t load %1</source>
+        <translation type="obsolete">不能加载%1</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t save %1</source>
+        <translation type="obsolete">无法保存 %1</translation>
     </message>
 </context>
 <context>
