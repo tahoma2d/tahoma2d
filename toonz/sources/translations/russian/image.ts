@@ -17,30 +17,118 @@
 <context>
     <name>GifWriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="257"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="342"/>
+        <source>Global Palette</source>
+        <translation>Глобальная палитра</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="343"/>
+        <source>Global Palette + Sierra Dither</source>
+        <translation>Глобальная палитра + Sierra Dither</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="344"/>
+        <source>Global Palette + Bayer2 Dither</source>
+        <translation>Глобальная палитра + Bayer2 Dither</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="345"/>
+        <source>Global Palette + Bayer1 Dither</source>
+        <translation>Глобальная палитра + Bayer1 Dither</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="346"/>
+        <source>Diff Palette</source>
+        <translation>Diff Palette</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="347"/>
+        <source>Diff Palette + Sierra Dither</source>
+        <translation>Diff Palette + Sierra Dither</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="348"/>
+        <source>Diff Palette + Bayer2 Dither</source>
+        <translation>Diff Palette + Bayer2 Dither</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="349"/>
+        <source>Diff Palette + Bayer1 Dither</source>
+        <translation>Diff Palette + Bayer1 Dither</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="350"/>
+        <source>New Pal Per Frame</source>
+        <translation>New Pal Per Frame</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="351"/>
+        <source>New Pal Per Frame + Sierra Dither</source>
+        <translation>New Pal Per Frame + Sierra Dither</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="352"/>
+        <source>New Pal Per Frame + Bayer2 Dither</source>
+        <translation>New Pal Per Frame + Bayer2 Dither</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="353"/>
+        <source>New Pal Per Frame + Bayer1 Dither</source>
+        <translation>New Pal Per Frame + Bayer1 Dither</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="354"/>
+        <source>Opaque, Dither, 256 Colors Only</source>
+        <translation>Непрозрачный, Dither, только 256 цветов</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="367"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="258"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="368"/>
         <source>Looping</source>
         <translation>Зациклить</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="259"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="369"/>
         <source>Generate Palette</source>
         <translation>Создать палитру</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="370"/>
+        <source>Mode</source>
+        <translation>Режим</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="371"/>
+        <source>Max Colors</source>
+        <translation>Максимальное количество цветов</translation>
+    </message>
+</context>
+<context>
+    <name>MovWriterProperties</name>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_mov.cpp" line="238"/>
+        <source>Quality</source>
+        <translation>Качество</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_mov.cpp" line="239"/>
+        <source>Scale</source>
+        <translation>Масштаб</translation>
     </message>
 </context>
 <context>
     <name>Mp4WriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="234"/>
+        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="241"/>
         <source>Quality</source>
         <translation>Качество</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="235"/>
+        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="242"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
@@ -48,7 +136,7 @@
 <context>
     <name>PngWriterProperties</name>
     <message>
-        <location filename="../../image/png/tiio_png.cpp" line="746"/>
+        <location filename="../../image/png/tiio_png.cpp" line="757"/>
         <source>Alpha Channel</source>
         <translation>Альфа канал</translation>
     </message>
@@ -56,7 +144,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="214"/>
+        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="272"/>
+        <source>FFmpeg returned error-code: %1</source>
+        <translation>FFmpeg вернул код ошибки: %1</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="276"/>
         <source>FFmpeg timed out.
 Please check the file for errors.
 If the file doesn&apos;t play or is incomplete, 

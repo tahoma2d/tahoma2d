@@ -30,12 +30,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../common/tvrender/tpalette.cpp" line="254"/>
+        <location filename="../../common/tvrender/tpalette.cpp" line="256"/>
         <source>colors</source>
         <translation>цвета</translation>
     </message>
     <message>
-        <location filename="../../common/timage_io/tlevel_io.cpp" line="127"/>
+        <location filename="../../common/timage_io/tlevel_io.cpp" line="135"/>
         <source>Skipping frame.</source>
         <translation>Пропуск кадра.</translation>
     </message>
@@ -51,12 +51,12 @@
 <context>
     <name>TCenterLineStrokeStyle</name>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="862"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="886"/>
         <source>Constant</source>
         <translation>Постоянная</translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="895"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="919"/>
         <source>Thickness</source>
         <translation>Толщина</translation>
     </message>
@@ -64,12 +64,12 @@
 <context>
     <name>TRasterImagePatternStrokeStyle</name>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1000"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1046"/>
         <source>Distance</source>
         <translation>Расстояние</translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1002"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1048"/>
         <source>Rotation</source>
         <translation>Вращение</translation>
     </message>
@@ -77,12 +77,12 @@
 <context>
     <name>TVectorImagePatternStrokeStyle</name>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1410"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1478"/>
         <source>Distance</source>
         <translation>Расстояние</translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1412"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1480"/>
         <source>Rotation</source>
         <translation>Вращение</translation>
     </message>

@@ -198,7 +198,11 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     </message>
     <message>
         <source>RGBA</source>
-        <translation>RVAα</translation>
+        <translation type="vanished">RVAα</translation>
+    </message>
+    <message>
+        <source>RGB</source>
+        <translation type="unfinished">RVA</translation>
     </message>
 </context>
 <context>
@@ -264,46 +268,67 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     <name>ColorChannelControl</name>
     <message>
         <source>R</source>
-        <translation type="obsolete">R</translation>
+        <translation type="unfinished">R</translation>
     </message>
     <message>
         <source>G</source>
-        <translation type="obsolete">V</translation>
+        <translation type="unfinished">V</translation>
     </message>
     <message>
         <source>B</source>
-        <translation type="obsolete">A</translation>
+        <translation type="unfinished">A</translation>
     </message>
     <message>
         <source>A</source>
-        <translation type="obsolete">α</translation>
+        <translation type="unfinished">α</translation>
     </message>
     <message>
         <source>H</source>
-        <translation type="obsolete">T</translation>
+        <translation type="unfinished">T</translation>
     </message>
     <message>
         <source>S</source>
-        <translation type="obsolete">S</translation>
+        <translation type="unfinished">S</translation>
     </message>
     <message>
         <source>V</source>
-        <translation type="obsolete">V</translation>
+        <translation type="unfinished">V</translation>
+    </message>
+    <message>
+        <source>Alpha controls the transparency. 
+Zero is fully transparent.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ColorField</name>
     <message>
         <source>G:</source>
-        <translation type="obsolete">V:</translation>
+        <translation type="unfinished">V:</translation>
     </message>
     <message>
         <source>B:</source>
-        <translation type="obsolete">A:</translation>
+        <translation type="unfinished">A:</translation>
     </message>
     <message>
         <source>A:</source>
-        <translation type="obsolete">α:</translation>
+        <translation type="unfinished">α:</translation>
+    </message>
+    <message>
+        <source>R:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste Color of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy Color</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -341,6 +366,18 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     <message>
         <source>Y:</source>
         <translation>Y:</translation>
+    </message>
+    <message>
+        <source>8bit (0-255)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>16bit (0-65535)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>0.0-1.0</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -393,135 +430,19 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     <name>DVGui::ColorField</name>
     <message>
         <source>G:</source>
-        <translation>V:</translation>
+        <translation type="vanished">V:</translation>
     </message>
     <message>
         <source>B:</source>
-        <translation>A:</translation>
+        <translation type="vanished">A:</translation>
     </message>
     <message>
         <source>A:</source>
-        <translation>α:</translation>
-    </message>
-    <message>
-        <source>R:</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">α:</translation>
     </message>
 </context>
 <context>
     <name>DVGui::DvTextEdit</name>
-    <message>
-        <source>Bold</source>
-        <translation>Negrita</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>Cursiva</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation>Subrayado</translation>
-    </message>
-    <message>
-        <source>Align Left</source>
-        <translation>Alinear a izquierda</translation>
-    </message>
-    <message>
-        <source>Align Center</source>
-        <translation>Alinear al centro</translation>
-    </message>
-    <message>
-        <source>Align Right</source>
-        <translation>Alinear a derecha</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::FileField</name>
-    <message>
-        <source>...</source>
-        <translation>...</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::LineEdit</name>
-    <message>
-        <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation>El nombre de un archivo no puede contener ninguno de los siguientes caracteres: /\:*?&quot;&lt;&gt;|.</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::ProgressDialog</name>
-    <message>
-        <source>Toonz</source>
-        <translation type="vanished">OpenToonz</translation>
-    </message>
-    <message>
-        <source>OpenToonz</source>
-        <translation type="vanished">OpenToonz</translation>
-    </message>
-    <message>
-        <source>Tahoma2D</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::RadioButtonDialog</name>
-    <message>
-        <source>Toonz</source>
-        <translation type="vanished">OpenToonz</translation>
-    </message>
-    <message>
-        <source>OpenToonz</source>
-        <translation type="vanished">OpenToonz</translation>
-    </message>
-    <message>
-        <source>Tahoma2D</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::StyleIndexLineEdit</name>
-    <message>
-        <source>current</source>
-        <translation>actual</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::ToneCurveField</name>
-    <message>
-        <source>Channel:</source>
-        <translation>Canal:</translation>
-    </message>
-    <message>
-        <source>Range:</source>
-        <translation type="unfinished">Rango:</translation>
-    </message>
-    <message>
-        <source>Output:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Input:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::ValidatedChoiceDialog</name>
-    <message>
-        <source>Apply</source>
-        <translation>Aplicar</translation>
-    </message>
-    <message>
-        <source>Apply to All</source>
-        <translation>Aplicar a todo</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Cancelar</translation>
-    </message>
-</context>
-<context>
-    <name>DvTextEdit</name>
     <message>
         <source>Bold</source>
         <translation type="vanished">Negrita</translation>
@@ -545,6 +466,102 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     <message>
         <source>Align Right</source>
         <translation type="vanished">Alinear a derecha</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::FileField</name>
+    <message>
+        <source>...</source>
+        <translation type="vanished">...</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::LineEdit</name>
+    <message>
+        <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
+        <translation type="vanished">El nombre de un archivo no puede contener ninguno de los siguientes caracteres: /\:*?&quot;&lt;&gt;|.</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ProgressDialog</name>
+    <message>
+        <source>Toonz</source>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+    <message>
+        <source>OpenToonz</source>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::RadioButtonDialog</name>
+    <message>
+        <source>Toonz</source>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+    <message>
+        <source>OpenToonz</source>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::StyleIndexLineEdit</name>
+    <message>
+        <source>current</source>
+        <translation type="vanished">actual</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ToneCurveField</name>
+    <message>
+        <source>Channel:</source>
+        <translation type="vanished">Canal:</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation type="obsolete">Rango:</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ValidatedChoiceDialog</name>
+    <message>
+        <source>Apply</source>
+        <translation>Aplicar</translation>
+    </message>
+    <message>
+        <source>Apply to All</source>
+        <translation>Aplicar a todo</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Cancelar</translation>
+    </message>
+</context>
+<context>
+    <name>DvTextEdit</name>
+    <message>
+        <source>Bold</source>
+        <translation>Negrita</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation>Cursiva</translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation>Subrayado</translation>
+    </message>
+    <message>
+        <source>Align Left</source>
+        <translation>Alinear a izquierda</translation>
+    </message>
+    <message>
+        <source>Align Center</source>
+        <translation>Alinear al centro</translation>
+    </message>
+    <message>
+        <source>Align Right</source>
+        <translation>Alinear a derecha</translation>
     </message>
 </context>
 <context>
@@ -573,7 +590,7 @@ Es posible que el archivo de dicho ajuste se encuentre corrupto.</translation>
     <name>FileField</name>
     <message>
         <source>...</source>
-        <translation type="vanished">...</translation>
+        <translation>...</translation>
     </message>
 </context>
 <context>
@@ -1089,6 +1106,13 @@ Control click to reset.</source>
     </message>
 </context>
 <context>
+    <name>FunctionSheetButtonArea</name>
+    <message>
+        <source>Toggle synchronizing zoom with xsheet</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FunctionSheetCellViewer</name>
     <message>
         <source>Delete Key</source>
@@ -1212,6 +1236,9 @@ Manually changing any keyframe will clear the warning.</source>
         <source>Plastic Skeleton</source>
         <translation>Esqueleto de Plástico</translation>
     </message>
+</context>
+<context>
+    <name>FunctionTreeModel::Channel</name>
     <message>
         <source>Some key(s) in this parameter loses original reference in expression.
 Manually changing any keyframe will clear the warning.</source>
@@ -1402,6 +1429,17 @@ Manually changing any keyframe will clear the warning.</source>
     </message>
 </context>
 <context>
+    <name>FxPassThroughPainter</name>
+    <message>
+        <source>&amp;Paste Add</source>
+        <translation type="unfinished">&amp;Pegar (agregar)</translation>
+    </message>
+    <message>
+        <source>&amp;Preview</source>
+        <translation type="unfinished">&amp;Previsualizar</translation>
+    </message>
+</context>
+<context>
     <name>FxSchematicLink</name>
     <message>
         <source>&amp;Delete</source>
@@ -1417,6 +1455,13 @@ Manually changing any keyframe will clear the warning.</source>
     <message>
         <source>Output</source>
         <translation>Salida</translation>
+    </message>
+</context>
+<context>
+    <name>FxSchematicPassThroughNode</name>
+    <message>
+        <source> (Pass Through)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1532,6 +1577,89 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
     </message>
 </context>
 <context>
+    <name>HexColorNamesEditor</name>
+    <message>
+        <source>Hex Color Names Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">Aceptar</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="unfinished">Aplicar</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unselect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Defined Colors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default Main Colors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Auto-Complete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Color Names</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text or XML (*.txt *.xml);;Text files (*.txt);;XML files (*.xml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hex Color Names Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you want to merge with existing entries?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error importing color names XML</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save Color Names</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>XML files (*.xml);;Text files (*.txt)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error exporting color names XML</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Histogram</name>
     <message>
         <source>Logarithmic Scale</source>
@@ -1588,7 +1716,7 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
     <name>LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation type="vanished">El nombre de un archivo no puede contener ninguno de los siguientes caracteres: /\:*?&quot;&lt;&gt;|.</translation>
+        <translation>El nombre de un archivo no puede contener ninguno de los siguientes caracteres: /\:*?&quot;&lt;&gt;|.</translation>
     </message>
 </context>
 <context>
@@ -1596,6 +1724,33 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
     <message>
         <source>Plain color</source>
         <translation type="vanished">Color pleno</translation>
+    </message>
+</context>
+<context>
+    <name>NewStyleSetPopup</name>
+    <message>
+        <source>New Style Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style Set Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create as Favorite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style Set Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">Aceptar</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
     </message>
 </context>
 <context>
@@ -1625,19 +1780,28 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
     </message>
     <message>
         <source>New Style</source>
-        <translation type="vanished">Nuevo estilo</translation>
+        <translation>Nuevo estilo</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation type="vanished">Nueva página</translation>
+        <translation>Nueva página</translation>
     </message>
     <message>
         <source>- No Styles -</source>
-        <translation type="obsolete">- sin estilos -</translation>
+        <translation type="unfinished">- sin estilos -</translation>
     </message>
     <message>
         <source>Name Editor</source>
-        <translation type="obsolete">Editor de nombres</translation>
+        <translation type="unfinished">Editor de nombres</translation>
+    </message>
+    <message>
+        <source> + </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style 0 is set to full transparent. 
+It can&apos;t be changed.  Ever.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1791,15 +1955,7 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Save palette with a different name.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save the palette.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save the palette as the default for new levels of the current level type.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1819,7 +1975,7 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
     <name>PaletteViewerGUI::PageViewer</name>
     <message>
         <source>- No Styles -</source>
-        <translation>- sin estilos -</translation>
+        <translation type="vanished">- sin estilos -</translation>
     </message>
     <message>
         <source>Remove Links</source>
@@ -1827,24 +1983,15 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
     </message>
     <message>
         <source>New Style</source>
-        <translation>Nuevo estilo</translation>
+        <translation type="vanished">Nuevo estilo</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation>Nueva página</translation>
+        <translation type="vanished">Nueva página</translation>
     </message>
     <message>
         <source>Name Editor</source>
-        <translation>Editor de nombres</translation>
-    </message>
-    <message>
-        <source> + </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Style 0 is set to full transparent. 
-It can&apos;t be changed.  Ever.</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Editor de nombres</translation>
     </message>
 </context>
 <context>
@@ -1922,6 +2069,10 @@ It can&apos;t be changed.  Ever.</source>
     <message>
         <source>Toonz</source>
         <translation type="vanished">OpenToonz</translation>
+    </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2381,11 +2532,11 @@ Are you sure?</source>
     </message>
     <message>
         <source>Modify Fx Param : %1 Key : %2  Frame %3</source>
-        <translation>Modificar parám. efecto: %1 clave : %2  fotograma %3</translation>
+        <translation type="vanished">Modificar parám. efecto: %1 clave : %2  fotograma %3</translation>
     </message>
     <message>
         <source>Set</source>
-        <translation>Conjunto</translation>
+        <translation type="vanished">Conjunto</translation>
     </message>
     <message>
         <source>OpenToonz 1.1</source>
@@ -2530,6 +2681,26 @@ La segunda línea debería tener la forma &quot;Mesh [profundidad de bits de ent
         <source>Erase</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Removing a Style will permanently delete the style file. This cannot be undone!
+Are you sure?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Emptying Set &quot;%1&quot; will permanently delete all style files for this set. This cannot be undone!
+Are you sure?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Removing Style Set &quot;%1&quot; will permanently delete all style files for this set. This cannot be undone!
+Are you sure?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Removing the selected Styles will permanently delete style files from their sets. This cannot be undone!
+Are you sure?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -2544,6 +2715,17 @@ La segunda línea debería tener la forma &quot;Mesh [profundidad de bits de ent
         <source>Toonz</source>
         <translation type="vanished">OpenToonz</translation>
     </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RenameStyleSet</name>
+    <message>
+        <source> (Favorites)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RgbLinkButtons</name>
@@ -2554,6 +2736,29 @@ La segunda línea debería tener la forma &quot;Mesh [profundidad de bits de ent
     <message>
         <source>Swap %1 and %2</source>
         <translation>Intercambiar %1 y %2</translation>
+    </message>
+</context>
+<context>
+    <name>SchematicName</name>
+    <message>
+        <source>Cu&amp;t</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Paste</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Delete</source>
+        <translation type="unfinished">&amp;Borrar</translation>
+    </message>
+    <message>
+        <source>Select &amp;All</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2600,7 +2805,7 @@ La segunda línea debería tener la forma &quot;Mesh [profundidad de bits de ent
     </message>
     <message>
         <source>&amp;Swtich output port display mode</source>
-        <translation>&amp;Cambiar visualización de conectores</translation>
+        <translation type="vanished">&amp;Cambiar visualización de conectores</translation>
     </message>
     <message>
         <source>&amp;Toggle node icons</source>
@@ -2618,6 +2823,10 @@ La segunda línea debería tener la forma &quot;Mesh [profundidad de bits de ent
         <source>&amp;Hand Mode</source>
         <translation>Modo de &amp;desplazamiento</translation>
     </message>
+    <message>
+        <source>&amp;Switch output port display mode</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SchematicWindowEditor</name>
@@ -2630,11 +2839,11 @@ La segunda línea debería tener la forma &quot;Mesh [profundidad de bits de ent
     <name>SettingsPage</name>
     <message>
         <source>Autopaint for Lines</source>
-        <translation type="obsolete">Pintar (líneas) automáticamente al rellenar</translation>
+        <translation type="unfinished">Pintar (líneas) automáticamente al rellenar</translation>
     </message>
     <message>
         <source>Reset to default</source>
-        <translation type="obsolete">Restablecer a predefinido</translation>
+        <translation type="unfinished">Restablecer a predefinido</translation>
     </message>
 </context>
 <context>
@@ -2878,6 +3087,85 @@ Are you sure ?</source>
     </message>
 </context>
 <context>
+    <name>StyleChooserPage</name>
+    <message>
+        <source>Style Set Manager:              %1+click - Add Style to Palette              %2+click - Multi-Style Select</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Selected to Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Selected from Favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Selected to Favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy Selected to Style Set...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move Selected to Style Set...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Selected from Sets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy to Style Set...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move to Style Set...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove from Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Set to Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Empty Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Style Set...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rename Style Set...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reload Style Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scan for Style Set Changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove &apos;%1&apos; Style Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>StyleEditor</name>
     <message>
         <source>Apply</source>
@@ -2921,7 +3209,7 @@ Are you sure ?</source>
     </message>
     <message>
         <source>Vector Brush</source>
-        <translation>Pinceles vectoriales</translation>
+        <translation type="vanished">Pinceles vectoriales</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -2963,7 +3251,7 @@ Autom</translation>
     </message>
     <message>
         <source>Trail</source>
-        <translation>Rastros</translation>
+        <translation type="vanished">Rastros</translation>
     </message>
     <message>
         <source>Color</source>
@@ -2983,7 +3271,7 @@ Autom</translation>
     </message>
     <message>
         <source>Toggle orientation of the Color Page.</source>
-        <translation>Alterna la orientación de los controles en la solapa Color.</translation>
+        <translation type="vanished">Alterna la orientación de los controles en la solapa Color.</translation>
     </message>
     <message>
         <source>No Style Selected</source>
@@ -3025,41 +3313,89 @@ Autom</translation>
         <source>Level </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Hex</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Orientation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hex Color Names...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show or hide style sets.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>My Favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> (Favorites)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> (External)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show All</source>
+        <translation type="unfinished">Mostrar todos</translation>
+    </message>
+    <message>
+        <source>Hide All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collapse All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expand All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style Set Name cannot be empty or contain any of the following characters:
+ \ / : * ? &quot; &lt; &gt; |</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style Set Name already exists. Please try another name.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StyleEditorGUI::ColorChannelControl</name>
     <message>
         <source>R</source>
-        <translation>R</translation>
+        <translation type="vanished">R</translation>
     </message>
     <message>
         <source>G</source>
-        <translation>V</translation>
+        <translation type="vanished">V</translation>
     </message>
     <message>
         <source>B</source>
-        <translation>A</translation>
+        <translation type="vanished">A</translation>
     </message>
     <message>
         <source>A</source>
-        <translation>α</translation>
+        <translation type="vanished">α</translation>
     </message>
     <message>
         <source>H</source>
-        <translation>T</translation>
+        <translation type="vanished">T</translation>
     </message>
     <message>
         <source>S</source>
-        <translation>S</translation>
+        <translation type="vanished">S</translation>
     </message>
     <message>
         <source>V</source>
-        <translation>V</translation>
-    </message>
-    <message>
-        <source>Alpha controls the transparency. 
-Zero is fully transparent.</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">V</translation>
     </message>
 </context>
 <context>
@@ -3089,18 +3425,18 @@ Zero is fully transparent.</source>
     <name>StyleEditorGUI::SettingsPage</name>
     <message>
         <source>Autopaint for Lines</source>
-        <translation>Pintar (líneas) automáticamente al rellenar</translation>
+        <translation type="vanished">Pintar (líneas) automáticamente al rellenar</translation>
     </message>
     <message>
         <source>Reset to default</source>
-        <translation>Restablecer a predefinido</translation>
+        <translation type="vanished">Restablecer a predefinido</translation>
     </message>
 </context>
 <context>
     <name>StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="obsolete">actual</translation>
+        <translation type="unfinished">actual</translation>
     </message>
 </context>
 <context>
@@ -3191,11 +3527,19 @@ Zero is fully transparent.</source>
     <name>ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation type="vanished">Canal:</translation>
+        <translation>Canal:</translation>
     </message>
     <message>
         <source>Range:</source>
-        <translation type="obsolete">Rango:</translation>
+        <translation type="unfinished">Rango:</translation>
+    </message>
+    <message>
+        <source>Output:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
