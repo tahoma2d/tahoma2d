@@ -440,6 +440,7 @@ private:
 
 class DVAPI TColorChipProperty final : public TProperty {
 public:
+  typedef std::vector<std::wstring> Range;
   struct ColorChip {
     QString UIName;
     TPixel32 pixelColor;
@@ -455,12 +456,8 @@ public:
   TProperty *clone() const override { return new TColorChipProperty(*this); }
 
   int indexOf(const std::wstring &value) {
-    ColorChips::const_iterator it;
-    for (it = m_chips.begin(); it != m_chips.end(); it++) {
-      ColorChip chip = *it;
-      if (chip.UIName == QString::fromStdWString(value)) break;
-    }
-    return (it == m_chips.end()) ? -1 : it - m_chips.begin();
+    Range::const_iterator it = std::find(m_range.begin(), m_range.end(), value);
+    return (it == m_range.end()) ? -1 : it - m_range.begin();
   }
 
   int indexOf(TPixel32 color) {
@@ -472,10 +469,15 @@ public:
     return (it == m_chips.end()) ? -1 : it - m_chips.begin();
   }
 
-  bool isValue(const std::wstring &value) { return (indexOf(value) != -1); }
+  bool isValue(const std::wstring &value) {
+    bool ret =
+        std::find(m_range.begin(), m_range.end(), value) != m_range.end();
+    return ret;
+  }
 
   void addValue(std::wstring value, const TPixel32 &color) {
     if (m_index == -1) m_index = 0;
+    m_range.push_back(value);
     m_chips.push_back(ColorChip(QString::fromStdWString(value), color));
   }
 
@@ -486,6 +488,7 @@ public:
   }
 
   void deleteAllValues() {
+    m_range.clear();
     m_chips.clear();
     m_index = -1;
   }
@@ -509,13 +512,14 @@ public:
 
   int getCount() const { return (int)m_chips.size(); }
 
+  const Range &getRange() const { return m_range; }
   const ColorChips &getColorChips() const { return m_chips; }
 
   std::wstring getValue() const {
-    return (m_index < 0) ? L"" : m_chips[m_index].UIName.toStdWString();
+    return (m_index < 0) ? L"" : m_range[m_index];
   }
   std::string getValueAsString() override {
-    return (m_index < 0) ? "" : m_chips[m_index].UIName.toStdString();
+    return ::to_string(m_range[m_index]);
   }
   TPixel32 getColorValue() const {
     return (m_index < 0) ? TPixel32(0, 0, 0) : m_chips[m_index].pixelColor;
@@ -528,6 +532,7 @@ public:
   void assignUIName(TProperty *refP) override;
 
 private:
+  Range m_range;
   ColorChips m_chips;
   int m_index;
 };
