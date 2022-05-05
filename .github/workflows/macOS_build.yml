@@ -59,8 +59,12 @@ jobs:
         run: bash ./ci-scripts/osx/tahoma-buildpkg.sh
       - uses: actions/upload-artifact@v1
         with:
-          name: Tahoma2D-osx.dmg
-          path: toonz/build/Tahoma2D-osx.dmg
+          name: Tahoma2D-portable-osx.dmg
+          path: toonz/build/Tahoma2D-portable-osx.dmg
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Tahoma2D-install-osx.pkg
+          path: toonz/build/Tahoma2D-install-osx.pkg
       - name: Get Nightly Release Date
         if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         run: |
@@ -84,7 +88,7 @@ jobs:
         with:
           allowUpdates: true
           artifactErrorsFailBuild: false
-          artifacts: toonz/build/Tahoma2D-osx.dmg
+          artifacts: toonz/build/Tahoma2D-portable-osx.dmg,toonz/build/Tahoma2D-install-osx.pkg
           artifactContentType: "raw"
           body: ${{ github.event.head_commit.message }}
           name: Latest Nightly ${{ env.NIGHTLYDATE }}
@@ -98,13 +102,13 @@ jobs:
         with:
           allowUpdates: true
           artifactErrorsFailBuild: false
-          artifacts: toonz/build/Tahoma2D-osx.dmg
+          artifacts: toonz/build/Tahoma2D-portable-osx.dmg,toonz/build/Tahoma2D-install-osx.pkg
           artifactContentType: "raw"
           body: ${{ github.event.head_commit.message }}
           name: ${{ env.NIGHTLYDATETIME }}
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
-          owner: tahoma2d	  
+          owner: tahoma2d
           prerelease: true
           replacesArtifacts: true
           repo: tahoma2d_nightlies
