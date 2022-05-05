@@ -546,6 +546,7 @@ void SceneSettingsPopup::onEditCellMarksButtonClicked() {
   if (!m_cellMarksPopup) m_cellMarksPopup = new CellMarksPopup(this);
   m_cellMarksPopup->show();
   m_cellMarksPopup->raise();
+  m_cellMarksPopup->activateWindow();
 }
 
 //=============================================================================

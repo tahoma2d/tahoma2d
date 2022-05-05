@@ -310,7 +310,6 @@ QMenu {
 }
 QMenu::item {
   border: 0;
-  padding: 3 28;
 }
 QMenu::item:selected {
   background-color: #d97fbe;
@@ -2239,7 +2238,6 @@ XsheetViewer {
   qproperty-PreviewFrameTextColor: #2d42b9;
   qproperty-CurrentRowBgColor: rgba(216, 87, 177, 0.7);
   qproperty-OnionSkinAreaBgColor: #c2c2c2;
-  qproperty-CellFocusColor: #000;
   qproperty-ColumnIconLineColor: #707070;
   qproperty-EmptyColumnHeadColor: #DBDBDB;
   qproperty-ColumnHeadPastelizer: rgba(0, 0, 0, 0);

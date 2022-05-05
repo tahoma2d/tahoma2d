@@ -1898,16 +1898,17 @@ void CellArea::drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
                             ->rect(PredefinedRect::FRAME_MARKER_AREA)
                             .translated(xy)
                             .translated(-frameAdj / 2);
+  bool useSmall =
+      m_viewer->getFrameZoomFactor() <=
+      m_viewer->orientation()->dimension(PredefinedDimension::SCALE_THRESHOLD);
   if (isKeyFrame) {
-    if (isCamera && !m_viewer->orientation()->isVerticalTimeline() &&
-        m_viewer->getFrameZoomFactor() <=
-            m_viewer->orientation()->dimension(
-                PredefinedDimension::SCALE_THRESHOLD))
+    if (isCamera && !m_viewer->orientation()->isVerticalTimeline())
       dotRect.adjust(0, -3, 0, -3);
 
     PredefinedPath diamondPath =
         keyHighlight ? PredefinedPath::FRAME_MARKER_DIAMOND_LARGE
-                     : PredefinedPath::FRAME_MARKER_DIAMOND;
+                     : useSmall ? PredefinedPath::FRAME_MARKER_DIAMOND_SMALL
+                                : PredefinedPath::FRAME_MARKER_DIAMOND;
     m_viewer->drawPredefinedPath(p, diamondPath,
                                  dotRect.adjusted(1, 1, 1, 1).center(), color,
                                  outlineColor);
@@ -3068,8 +3069,6 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
   c0 = visible.from().layer();
   c1 = visible.to().layer();
 
-  static QPixmap selectedKey = svgToPixmap(":Resources/selected_key.svg");
-  static QPixmap key         = svgToPixmap(":Resources/key.svg");
   QPoint frameAdj            = m_viewer->getFrameZoomAdjustment();
   const QRect &keyRect =
       o->rect(PredefinedRect::KEY_ICON).translated(-frameAdj / 2);
@@ -3150,46 +3149,27 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
       if (pegbar->isKeyframe(row)) {
         QPoint xy     = m_viewer->positionToXY(CellPosition(row, col));
         QPoint target = tmpKeyRect.translated(xy).topLeft();
+
+        QColor color  = Qt::white;
+        if (m_viewer->getKeyframeSelection() &&
+            m_viewer->getKeyframeSelection()->isSelected(row, col))
+          color = QColor(85, 157, 255);
+
+        int x = xy.x();
+        int y = xy.y();
+
         if (m_viewer->getFrameZoomFactor() <=
             o->dimension(PredefinedDimension::SCALE_THRESHOLD)) {
-          QColor color = Qt::white;
-          int x        = xy.x();
-          int y        = xy.y();
           if (row == 0) {
             if (o->isVerticalTimeline())
               xy.setY(xy.y() + 1);
             else
               xy.setX(xy.x() + 1);
           }
-
-          if (m_viewer->getKeyframeSelection() &&
-              m_viewer->getKeyframeSelection()->isSelected(row, col))
-            color = QColor(85, 157, 255);
-
-          drawFrameMarker(p, QPoint(x, y), color, true, (col < 0),
-                          (m_keyHighlight == QPoint(row, col)));
-
-        } else {
-          QPixmap keyPM;
-          if (o->isVerticalTimeline())
-            target = QPoint(target.x() - 2, target.y() + 2);
-
-          if (m_viewer->getKeyframeSelection() &&
-              m_viewer->getKeyframeSelection()->isSelected(row, col)) {
-            // keyframe selected
-            keyPM = selectedKey;
-          } else {
-            // keyframe not selected
-            keyPM = key;
-          }
-
-          if (m_keyHighlight == QPoint(row, col)) {
-            keyPM = keyPM.scaled(keyPM.width() + 10, keyPM.height() + 10);
-            target.setX(target.x() - 3);
-            target.setY(target.y() - 3);
-          }
-          p.drawPixmap(target, keyPM);
         }
+
+        drawFrameMarker(p, QPoint(x, y), color, true, (col < 0),
+                        (m_keyHighlight == QPoint(row, col)));
       }
     }
 

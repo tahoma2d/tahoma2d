@@ -200,7 +200,10 @@ public:
   QStringList getLanguageList() const { return m_languageList; }
   QMap<int, QString> getRoomMap() const { return m_roomMaps; }
 
-  QString getCurrentStyleSheetPath() const;  // OK
+  QString getCurrentStyleSheet() const;
+  QString getAdditionalStyleSheet() const {
+    return getStringValue(additionalStyleSheet);
+  }
   bool getPixelsOnly() const { return getBoolValue(pixelsOnly); }
   QString getOldUnits() const { return getStringValue(oldUnits); }
   QString getOldCameraUnits() const { return getStringValue(oldCameraUnits); }

@@ -17,6 +17,7 @@
 // Qt includes
 #include <QComboBox>
 #include <QFontComboBox>
+#include <QTextEdit>
 #include <QOpenGLWidget>
 #include <QSurfaceFormat>
 #include <QOpenGLFunctions>
@@ -68,11 +69,13 @@ public:
 
 private:
   class FormatProperties;
+  class AdditionalStyleEdit;
   class Display30bitChecker;
 
 private:
   Preferences* m_pref;
   FormatProperties* m_formatProperties;
+  AdditionalStyleEdit* m_additionalStyleEdit;
 
   // DVGui::CheckBox *m_projectRootDocuments, *m_projectRootDesktop,
   //    *m_projectRootCustom;
@@ -175,6 +178,9 @@ private slots:
   void onAutoSaveExternallyChanged();
   void onAutoSavePeriodExternallyChanged();
   // void onProjectRootChanged();
+
+  void onEditAdditionalStyleSheet();
+  void onAdditionalStyleSheetEdited();
   void onPixelUnitExternallySelected(bool on);
   void onInterfaceFontChanged(const QString& text);
   void onLutPathChanged();
@@ -249,6 +255,29 @@ protected:
   void initializeGL() override;
   void resizeGL(int width, int height) override;
   void paintGL() override;
+};
+
+//**********************************************************************************
+//   PreferencesPopup::AdditionalStyleEdit  definition
+//**********************************************************************************
+
+class PreferencesPopup::AdditionalStyleEdit final : public DVGui::Dialog {
+  Q_OBJECT
+
+public:
+  AdditionalStyleEdit(PreferencesPopup* parent);
+
+private:
+  QTextEdit* m_edit;
+
+protected:
+  void showEvent(QShowEvent* e) override;
+
+private slots:
+  void onOK();
+  void onApply();
+signals:
+  void additionalSheetEdited();
 };
 
 #endif  // PREFERENCESPOPUP_H

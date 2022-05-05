@@ -25,6 +25,7 @@
 #include <QStringList>
 #include <QAction>
 #include <QColor>
+#include <QTextStream>
 #include <QStandardPaths>
 
 // boost includes
@@ -401,6 +402,7 @@ void Preferences::definePreferenceItems() {
   // Interface
   define(CurrentStyleSheetName, "CurrentStyleSheetName", QMetaType::QString,
          "Dark");
+  define(additionalStyleSheet, "additionalStyleSheet", QMetaType::QString, "");
   define(iconTheme, "iconTheme", QMetaType::Bool, false);
   define(pixelsOnly, "pixelsOnly", QMetaType::Bool, true);
   define(oldUnits, "oldUnits", QMetaType::QString, "mm");
@@ -993,13 +995,61 @@ QString Preferences::getCurrentLanguage() const {
 
 //-----------------------------------------------------------------
 
-QString Preferences::getCurrentStyleSheetPath() const {
+QString Preferences::getCurrentStyleSheet() const {
   QString currentStyleSheetName = getStringValue(CurrentStyleSheetName);
   if (currentStyleSheetName.isEmpty()) return QString();
   TFilePath path(TEnv::getConfigDir() + "qss");
   QString string = currentStyleSheetName + QString("/") +
                    currentStyleSheetName + QString(".qss");
-  return QString("file:///" + path.getQString() + "/" + string);
+  QString styleSheetPath = path.getQString() + "/" + string;
+
+  // Set base stylesheet settings. This is used to correct QT styling
+  // issues between different versions/OSes. Stylesheets and Additional
+  // stylesheets can override these settings.
+  QString baseSheetStr = "";
+
+  // Qt has a bug in recent versions that Menu item Does not show correctly
+  // (QTBUG-90242) Since the current OT is made to handle such issue, so we need
+  // to apply an extra adjustment when it is run on the older versions (5.9.x)
+  // of Qt
+  // Update: confirmed that the bug does not appear at least in Qt 5.12.8
+#if QT_VERSION < QT_VERSION_CHECK(5, 12, 9)
+  baseSheetStr += "QMenu::Item{ padding: 3 28 3 28; }";
+#else
+  baseSheetStr += "QMenu::Item{ padding: 3 28 3 8; }";
+#endif
+
+// Linux system font size appears a lot smaller than it should be despite
+// setting QApplication's setPixelSize = 12 in main.cpp. We'll correct it using
+// the additional stylesheet.
+#if defined(LINUX) || defined(FREEBSD)
+  baseSheetStr += "QWidget{ font: 12px; }QToolTip{ font: 12px; }";
+#endif
+
+
+  QString styleSheetStr = baseSheetStr;
+
+  // Load style sheet from the file and add to base style sheet
+  QFile f(styleSheetPath);
+  if (f.open(QFile::ReadOnly | QFile::Text)) {
+    QTextStream ts(&f);
+    styleSheetStr += ts.readAll();
+  }
+
+  // If there is any additional style sheet, append to loaded stylesheet
+  styleSheetStr += getStringValue(additionalStyleSheet);
+
+  // here we will convert all relative paths to absolute paths
+  // or Qt will look for images relative to the current working directory
+  // since it has no idea where the style sheet comes from.
+
+  QString currentStyleFolderPath =
+      path.getQString().replace("\\", "/") + "/" + currentStyleSheetName;
+
+  styleSheetStr.replace(QRegExp("url\\(['\"]([^'\"]+)['\"]\\)"),
+                        "url(\"" + currentStyleFolderPath + QString("/\\1\")"));
+
+  return styleSheetStr;
 }
 
 //-----------------------------------------------------------------

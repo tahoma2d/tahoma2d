@@ -12,7 +12,6 @@
 #include "iocommand.h"
 #include "tapp.h"
 #include "viewerpane.h"
-#include "startuppopup.h"
 #include "tooloptionsshortcutinvoker.h"
 #include "statusbar.h"
 #include "aboutpopup.h"
@@ -1264,7 +1263,7 @@ void MainWindow::onMenuCheckboxChanged() {
     FieldGuideToggleAction = isChecked;
   else if (cm->getAction(MI_RasterizePli) == action) {
     if (!QGLPixelBuffer::hasOpenGLPbuffers()) isChecked = 0;
-    RasterizePliToggleAction                            = isChecked;
+    RasterizePliToggleAction = isChecked;
   } else if (cm->getAction(MI_SafeArea) == action)
     SafeAreaToggleAction = isChecked;
   else if (cm->getAction(MI_ViewColorcard) == action)
@@ -1308,12 +1307,6 @@ void MainWindow::onMenuCheckboxChanged() {
 void MainWindow::showEvent(QShowEvent *event) {
   getCurrentRoom()->layout()->setEnabled(true);  // See main function in
                                                  // main.cpp
-  if (Preferences::instance()->isStartupPopupEnabled() &&
-      !m_startupPopupShown) {
-    StartupPopup *startupPopup = new StartupPopup();
-    startupPopup->show();
-    m_startupPopupShown = true;
-  }
 }
 extern const char *applicationName;
 extern const char *applicationVersion;
@@ -3165,7 +3158,7 @@ void MainWindow::clearCacheFolder() {
   // 1. $CACHE/[Current ProcessID]
   // 2. $CACHE/temp/[Current scene folder] if the current scene is untitled
 
-  TFilePath cacheRoot                = ToonzFolder::getCacheRootFolder();
+  TFilePath cacheRoot = ToonzFolder::getCacheRootFolder();
   if (cacheRoot.isEmpty()) cacheRoot = TEnv::getStuffDir() + "cache";
 
   TFilePathSet filesToBeRemoved;
@@ -3317,12 +3310,8 @@ class ReloadStyle final : public MenuItemHandler {
 public:
   ReloadStyle() : MenuItemHandler("MI_ReloadStyle") {}
   void execute() override {
-    QString currentStyle = Preferences::instance()->getCurrentStyleSheetPath();
-    QFile file(currentStyle);
-    file.open(QFile::ReadOnly);
-    QString styleSheet = QString(file.readAll());
-    qApp->setStyleSheet(styleSheet);
-    file.close();
+    QString currentStyle = Preferences::instance()->getCurrentStyleSheet();
+    qApp->setStyleSheet(currentStyle);
   }
 } reloadStyle;
 

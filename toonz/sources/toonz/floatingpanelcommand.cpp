@@ -126,6 +126,7 @@ TPanel *OpenFloatingPanel::getOrOpenFloatingPanel(
         currentRoom->addDockWidget(panel);
         panel->show();
         panel->raise();
+        panel->activateWindow();
         return panel;
       } else
         lastFloatingPos = panel->pos();
@@ -141,6 +142,7 @@ TPanel *OpenFloatingPanel::getOrOpenFloatingPanel(
   panel->setFloating(true);
   panel->show();
   panel->raise();
+  panel->activateWindow();
   if (!lastFloatingPos.isNull())
     panel->move(QPoint(lastFloatingPos.x() + 30, lastFloatingPos.y() + 30));
 

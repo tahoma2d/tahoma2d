@@ -12,6 +12,7 @@
 #include "cleanupsettingspopup.h"
 #include "filebrowsermodel.h"
 #include "expressionreferencemanager.h"
+#include "startuppopup.h"
 
 // TnzTools includes
 #include "tools/tool.h"
@@ -230,7 +231,7 @@ project->setUseScenePath(TProject::Extras, false);
   // Imposto la rootDir per ImageCache
 
   /*-- TOONZCACHEROOTの設定  --*/
-  TFilePath cacheDir               = ToonzFolder::getCacheRootFolder();
+  TFilePath cacheDir = ToonzFolder::getCacheRootFolder();
   if (cacheDir.isEmpty()) cacheDir = TEnv::getStuffDir() + "cache";
   TImageCache::instance()->setRootDir(cacheDir);
 
@@ -338,10 +339,10 @@ int main(int argc, char *argv[]) {
   QApplication a(argc, argv);
 
 #ifdef MACOSX
-// This workaround is to avoid missing left button problem on Qt5.6.0.
-// To invalidate m_rightButtonClicked in Qt/qnsview.mm, sending
-// NSLeftButtonDown event before NSLeftMouseDragged event propagated to
-// QApplication. See more details in ../mousedragfilter/mousedragfilter.mm.
+  // This workaround is to avoid missing left button problem on Qt5.6.0.
+  // To invalidate m_rightButtonClicked in Qt/qnsview.mm, sending
+  // NSLeftButtonDown event before NSLeftMouseDragged event propagated to
+  // QApplication. See more details in ../mousedragfilter/mousedragfilter.mm.
 
 #include "mousedragfilter.h"
 
@@ -761,7 +762,7 @@ int main(int argc, char *argv[]) {
   a.processEvents();
 
   // Carico lo styleSheet
-  QString currentStyle = Preferences::instance()->getCurrentStyleSheetPath();
+  QString currentStyle = Preferences::instance()->getCurrentStyleSheet();
   a.setStyleSheet(currentStyle);
 
   // Perspective grid tool - custom grid
@@ -811,6 +812,13 @@ int main(int argc, char *argv[]) {
 
   // Show floating panels only after the main window has been shown
   w.startupFloatingPanels();
+
+  if (Preferences::instance()->isStartupPopupEnabled()) {
+    StartupPopup *startupPopup = new StartupPopup();
+    startupPopup->show();
+    startupPopup->raise();
+    startupPopup->activateWindow();
+  }
 
   CommandManager::instance()->execute(T_Hand);
   if (!loadFilePath.isEmpty()) {

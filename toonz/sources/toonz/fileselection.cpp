@@ -532,6 +532,7 @@ void FileSelection::separateFilesByColors() {
   popup->setFiles(files);
   popup->show();
   popup->raise();
+  popup->activateWindow();
   // popup->exec();
 }
 

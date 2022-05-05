@@ -172,6 +172,7 @@ enum class PredefinedPath {
   VOLUME_SLIDER_TRACK,  //! slider track
   VOLUME_SLIDER_HEAD,   //! slider head
   TIME_INDICATOR_HEAD,  //! current time indicator head
+  FRAME_MARKER_DIAMOND_SMALL,
   FRAME_MARKER_DIAMOND,
   FRAME_MARKER_DIAMOND_LARGE,
   NAVIGATION_TAG
