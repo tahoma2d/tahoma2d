@@ -2169,7 +2169,7 @@ QWidget* PreferencesPopup::createVersionControlPage() {
 
   insertUI(SVNEnabled, lay);
   insertUI(automaticSVNFolderRefreshEnabled, lay);
-//  insertUI(latestVersionCheckEnabled, lay);
+  insertUI(latestVersionCheckEnabled, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
   insertFootNote(lay);
