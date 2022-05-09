@@ -1297,6 +1297,8 @@ void RowArea::contextMenuEvent(QContextMenuEvent *event) {
 
   menu->addAction(CommandManager::instance()->getAction(MI_PreviewThis));
 
+  menu->addAction(CommandManager::instance()->getAction(MI_PreviewSelected));
+
   menu->addSeparator();
 
   if (Preferences::instance()->isOnionSkinEnabled()) {

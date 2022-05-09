@@ -152,6 +152,7 @@
 #define MI_ClearMarkers "MI_ClearMarkers"
 #define MI_SetAutoMarkers "MI_SetAutoMarkers"
 #define MI_PreviewThis "MI_PreviewThis"
+#define MI_PreviewSelected "MI_PreviewSelected"
 
 #define MI_PasteNew "MI_PasteNew"
 #define MI_Autorenumber "MI_Autorenumber"

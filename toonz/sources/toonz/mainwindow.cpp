@@ -2033,6 +2033,8 @@ void MainWindow::defineActions() {
   createMenuXsheetAction(MI_SetAutoMarkers, QT_TR_NOOP("Set Auto Markers"), "");
   createMenuXsheetAction(MI_PreviewThis,
                          QT_TR_NOOP("Set Markers to Current Frame"), "");
+  createMenuXsheetAction(MI_PreviewSelected,
+                         QT_TR_NOOP("Set Markers to Selected Range"), "");
   createMenuXsheetAction(MI_ToggleTaggedFrame,
                          QT_TR_NOOP("Toggle Navigation Tag"), "",
                          "toggle_nav_tag");
