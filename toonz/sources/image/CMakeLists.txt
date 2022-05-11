@@ -63,6 +63,7 @@ if(NOT BUILD_TARGET_BSD)
         tif/tiio_tif.cpp
         tzp/tiio_plt.cpp
         tzp/tiio_tzp.cpp
+        tzp/toonzrle.cpp
         tzp/avl.c
     )
 endif()
