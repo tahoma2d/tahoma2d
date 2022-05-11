@@ -260,6 +260,7 @@ find_package(Qt5 REQUIRED
     Multimedia
     MultimediaWidgets
     SerialPort
+    UiTools
 )
 
 set(QT_MINIMUM_VERSION 5.5.0)

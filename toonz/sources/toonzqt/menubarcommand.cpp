@@ -113,8 +113,8 @@ void CommandManager::setShortcut(CommandId id, QAction *action,
 //---------------------------------------------------------
 
 void CommandManager::define(CommandId id, CommandType type,
-                            std::string defaultShortcutString,
-                            QAction *qaction) {
+                            std::string defaultShortcutString, QAction *qaction,
+                            const char *iconSVGName) {
   assert(type != UndefinedCommandType);
   assert(qaction != 0);
   assert(m_qactionTable.count(qaction) == 0);
@@ -131,6 +131,7 @@ void CommandManager::define(CommandId id, CommandType type,
       node->m_type == MiscCommandType ||
       node->m_type == ToolModifierCommandType ||
       node->m_type == CellMarkCommandType);
+  node->m_iconSVGName = iconSVGName;
 
   m_qactionTable[qaction] = node;
   qaction->setShortcutContext(Qt::ApplicationShortcut);
@@ -400,6 +401,35 @@ std::string CommandManager::getIdFromAction(QAction *action) {
 }
 
 //---------------------------------------------------------
+
+const char *CommandManager::getIconSVGName(CommandId id) {
+  Node *node = getNode(id, false);
+  if (node) return node->m_iconSVGName;
+  return "";
+}
+
+void CommandManager::enlargeIcon(CommandId id, const QSize dstSize) {
+  QAction *action = getAction(id, false);
+  if (!action) return;
+
+  const char *iconSVGName = getIconSVGName(id);
+  if (iconSVGName == "") return;
+
+  QIcon icon = action->icon();
+
+  for (QList<QSize> sizes = icon.availableSizes(); !sizes.isEmpty();
+       sizes.removeFirst()) {
+    if (sizes.first().width() > dstSize.width() &&
+        sizes.first().height() > dstSize.height())
+      return;
+  }
+
+  addSpecifiedSizedImageToIcon(icon, iconSVGName, dstSize);
+
+  action->setIcon(icon);
+}
+
+//---------------------------------------------------------
 // load user defined shortcuts
 
 void CommandManager::loadShortcuts() {
@@ -497,8 +527,10 @@ void DVAction::onTriggered() { CommandManager::instance()->execute(this); }
                 is helpful to use \b m_triggeredActionIndex to distingue action.
 */
 DVMenuAction::DVMenuAction(const QString &text, QWidget *parent,
-                           QList<QString> actions)
-    : QMenu(text, parent), m_triggeredActionIndex(-1) {
+                           QList<QString> actions, bool isForRecentFiles)
+    : QMenu(text, parent)
+    , m_triggeredActionIndex(-1)
+    , m_isForRecentFiles(isForRecentFiles) {
   int i;
   for (i = 0; i < actions.size(); i++) addAction(actions.at(i));
   connect(this, SIGNAL(triggered(QAction *)), this,
@@ -549,6 +581,10 @@ void DVMenuAction::onTriggered(QAction *action) {
   QVariant data = action->data();
   if (data.isValid()) m_triggeredActionIndex = data.toInt();
   CommandManager::instance()->execute(action, menuAction());
+
+  // simply execute the menu item and return
+  if (!m_isForRecentFiles) return;
+
   int oldIndex = m_triggeredActionIndex;
   if (m_triggeredActionIndex != -1) m_triggeredActionIndex = -1;
   QString str = data.toString();

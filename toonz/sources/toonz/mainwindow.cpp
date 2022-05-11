@@ -13,6 +13,7 @@
 #include "tapp.h"
 #include "viewerpane.h"
 #include "tooloptionsshortcutinvoker.h"
+#include "custompanelmanager.h"
 #include "statusbar.h"
 #include "aboutpopup.h"
 
@@ -201,8 +202,8 @@ int get_version_code_from(std::string ver) {
   // minor version: assume that the minor version is less than 255.
   std::string::size_type const b = ver.find('.', a + 1);
   std::string const minor        = (b == std::string::npos)
-                                ? ver.substr(a + 1)
-                                : ver.substr(a + 1, b - a - 1);
+                                       ? ver.substr(a + 1)
+                                       : ver.substr(a + 1, b - a - 1);
   version += std::stoi(minor) << 16;
   if ((b == std::string::npos) || (b + 1 == ver.length())) {
     return version;
@@ -587,9 +588,9 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
       /*--
        * タイトルバーに表示するレイアウト名を作る：_layoutがあればそこから省く。無ければ.txtのみ省く
        * --*/
-      int pos = (argumentLayoutFileName.indexOf("_layout") == -1)
-                    ? argumentLayoutFileName.indexOf(".txt")
-                    : argumentLayoutFileName.indexOf("_layout");
+      int pos      = (argumentLayoutFileName.indexOf("_layout") == -1)
+                         ? argumentLayoutFileName.indexOf(".txt")
+                         : argumentLayoutFileName.indexOf("_layout");
       m_layoutName = argumentLayoutFileName.left(pos);
     }
   }
@@ -664,6 +665,7 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
   }
 
   RecentFiles::instance()->loadRecentFiles();
+  CustomPanelManager::instance()->loadCustomPanelEntries();
 }
 
 //-----------------------------------------------------------------------------
@@ -1451,7 +1453,7 @@ QAction *MainWindow::createAction(const char *id, const char *name,
     action->setMenuRole(QAction::NoRole);
 #endif
   CommandManager::instance()->define(id, type, defaultShortcut.toStdString(),
-                                     action);
+                                     action, iconSVGName);
   action->setStatusTip(newStatusTip);
   return action;
 }
@@ -1601,9 +1603,9 @@ QAction *MainWindow::createFillAction(const char *id, const char *name,
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createMenuAction(const char *id, const char *name,
-                                      QList<QString> list,
-                                      QString newStatusTip) {
-  QMenu *menu     = new DVMenuAction(tr(name), this, list);
+                                      QList<QString> list, QString newStatusTip,
+                                      bool isForRecentFiles) {
+  QMenu *menu     = new DVMenuAction(tr(name), this, list, isForRecentFiles);
   QAction *action = menu->menuAction();
   action->setStatusTip(newStatusTip);
   CommandManager::instance()->define(id, MenuCommandType, "", action);
@@ -1710,8 +1712,8 @@ QAction *MainWindow::createToolAction(const char *id, const char *iconName,
   // Adding tool actions to the main window solve this problem!
   addAction(action);
 
-  CommandManager::instance()->define(id, ToolCommandType,
-                                     defaultShortcut.toStdString(), action);
+  CommandManager::instance()->define(
+      id, ToolCommandType, defaultShortcut.toStdString(), action, iconName);
   return action;
 }
 
@@ -2299,6 +2301,12 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_OpenGuidedDrawingControls,
                           QT_TR_NOOP("Guided Tweening Controls"), "",
                           "guided_drawing");
+
+  createMenuAction(MI_OpenCustomPanels, QT_TR_NOOP("&Custom Panels"), files,
+                   false);
+  createMenuWindowsAction(MI_CustomPanelEditor,
+                          QT_TR_NOOP("&Custom Panel Editor..."), "", "");
+
   // menuAct = createToggle(MI_DockingCheck, QT_TR_NOOP("&Lock Room Panes"), "",
   //                        DockingCheckToggleAction ? 1 : 0, MenuWindowsCommandType);
   // DockingCheck::instance()->setToggle(menuAct);

@@ -204,7 +204,8 @@ private:
                             const char *iconSVGName = "",
                             QString newStatusTip = "");
   QAction *createMenuAction(const char *id, const char *name,
-                            QList<QString> list, QString newStatusTip = "");
+                            QList<QString> list, QString newStatusTip = "",
+                            bool isForRecentFiles = true);
   QAction *createToggle(const char *id, const char *name,
                         const QString &defaultShortcut, bool startStatus,
                         CommandType type, const char *iconSVGName = "",

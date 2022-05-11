@@ -7,6 +7,7 @@
 #include "mainwindow.h"
 #include "tenv.h"
 #include "saveloadqsettings.h"
+#include "custompanelmanager.h"
 
 #include "toonzqt/gutil.h"
 #include "toonzqt/dvdialog.h"
@@ -264,9 +265,10 @@ void TPanelTitleBarButton::paintEvent(QPaintEvent *event) {
   QPixmap panePixmapOn = compositePixmap(panePixmap, 1, QSize(), 0, 0, bgColor);
 
   QPainter painter(this);
-  painter.drawPixmap(
-      0, 0,
-      m_pressed ? panePixmapOn : m_rollover ? panePixmapOver : panePixmapOff);
+  painter.drawPixmap(0, 0,
+                     m_pressed    ? panePixmapOn
+                     : m_rollover ? panePixmapOver
+                                  : panePixmapOff);
   painter.end();
 }
 
@@ -653,6 +655,12 @@ TPanel *TPanelFactory::createPanel(QWidget *parent, QString panelType) {
 
   QMap<QString, TPanelFactory *>::iterator it = tableInstance().find(panelType);
   if (it == tableInstance().end()) {
+    if (panelType.startsWith("Custom_")) {
+      panelType = panelType.right(panelType.size() - 7);
+      return CustomPanelManager::instance()->createCustomPanel(panelType,
+                                                               parent);
+    }
+
     TPanel *panel = new TPanel(parent);
     panel->setPanelType(panelType.toStdString());
     return panel;

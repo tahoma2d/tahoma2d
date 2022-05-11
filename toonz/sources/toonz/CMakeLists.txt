@@ -123,6 +123,8 @@ set(MOC_HEADERS
 	expressionreferencemanager.h
     tooloptionsshortcutinvoker.h
     exportxsheetpdf.h
+    custompanelmanager.h
+    custompaneleditorpopup.h
     motionpathpanel.h
     graphwidget.h
     ../stopmotion/stopmotion.h
@@ -358,6 +360,8 @@ set(SOURCES
     tooloptionsshortcutinvoker.cpp
     tvpjson_io.cpp
     exportxsheetpdf.cpp
+    custompanelmanager.cpp
+    custompaneleditorpopup.cpp
 # Tracker file
     dummyprocessor.cpp
     metnum.cpp
@@ -482,7 +486,7 @@ if(BUILD_ENV_MSVC)
 
     target_link_libraries(Tahoma2D
         Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
-        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort
+        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort Qt5::UiTools
         ${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS} ${EXTRA_LIBS} strmiids
         tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm
     )
@@ -502,7 +506,7 @@ elseif(BUILD_ENV_APPLE AND WITH_CANON)
 
     target_link_libraries(Tahoma2D
         Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
-        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort
+        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort Qt5::UiTools
         ${GL_LIB} ${GLUT_LIB} ${CANON_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
         ${COCOA_LIB} ${EXTRA_LIBS} mousedragfilter
     )
@@ -523,7 +527,7 @@ elseif(BUILD_ENV_APPLE)
 
     target_link_libraries(Tahoma2D
         Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
-        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort
+        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort Qt5::UiTools
         ${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
         ${COCOA_LIB} ${EXTRA_LIBS} mousedragfilter
     )
@@ -546,7 +550,7 @@ elseif(BUILD_ENV_UNIXLIKE)
 
     target_link_libraries(
         Tahoma2D Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
-        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort
+        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort Qt5::UiTools
         ${GL_LIB} ${GLUT_LIB} ${GLU_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
         ${EXTRA_LIBS}
     )

@@ -118,6 +118,8 @@ QPixmap DVAPI recolorPixmap(
                                        : Qt::white);
 QIcon DVAPI createQIcon(const char *iconSVGName, bool useFullOpacity = false,
                         bool isForMenuItem = false);
+void DVAPI addSpecifiedSizedImageToIcon(QIcon &icon, const char *iconSVGName,
+                                        QSize newSize);
 QIcon DVAPI createQIconPNG(const char *iconPNGName);
 QIcon DVAPI createQIconOnOffPNG(const char *iconPNGName, bool withOver = true);
 QIcon DVAPI createTemporaryIconFromName(const char *commandName);

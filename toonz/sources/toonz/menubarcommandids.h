@@ -481,6 +481,9 @@
 // mark id is added for each actual command (i.g. MI_SetCellMark1)
 #define MI_SetCellMark "MI_SetCellMark"
 
+#define MI_OpenCustomPanels "MI_OpenCustomPanels"
+#define MI_CustomPanelEditor "MI_CustomPanelEditor"
+
 #define MI_ToggleAutoCreate "MI_ToggleAutoCreate"
 #define MI_ToggleCreationInHoldCells "MI_ToggleCreationInHoldCells"
 #define MI_ToggleAutoStretch "MI_ToggleAutoStretch"

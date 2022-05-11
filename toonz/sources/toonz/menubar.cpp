@@ -666,6 +666,7 @@ void TopBar::loadMenubar() {
   addMenuItem(windowsMenu, MI_OpenMotionPathPanel);
   addMenuItem(windowsMenu, MI_StartupPopup);
   addMenuItem(windowsMenu, MI_OpenGuidedDrawingControls);
+  addMenuItem(windowsMenu, MI_OpenCustomPanels);
   // windowsMenu->addSeparator();
   // addMenuItem(windowsMenu, MI_OpenExport);
   windowsMenu->addSeparator();
