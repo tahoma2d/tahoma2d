@@ -443,6 +443,14 @@ QList<ComboBoxItem> PreferencesPopup::buildFontStyleList() const {
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onDefaultProjectPathChanged() {
+  // emit signal to update behavior of the File browser
+  TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
+      "DefaultProjectPath");
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onAutoSaveChanged() {
   bool on = getUI<QGroupBox*>(autosaveEnabled)->isChecked();
   if (!on) return;
@@ -1604,6 +1612,8 @@ QWidget* PreferencesPopup::createGeneralPage() {
   pathAliasPriorityCB->setItemData(1, scenefolderTooltip, Qt::ToolTipRole);
   pathAliasPriorityCB->setItemData(2, QString(" "), Qt::ToolTipRole);
 
+  m_onEditedFuncMap.insert(defaultProjectPath,
+                           &PreferencesPopup::onDefaultProjectPathChanged);
   m_onEditedFuncMap.insert(autosaveEnabled,
                            &PreferencesPopup::onAutoSaveChanged);
   m_onEditedFuncMap.insert(autosaveSceneEnabled,

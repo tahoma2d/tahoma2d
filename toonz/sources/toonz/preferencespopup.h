@@ -135,6 +135,7 @@ private:
 
   //--- callbacks ---
   // General
+  void onDefaultProjectPathChanged();
   void onAutoSaveChanged();
   void onAutoSaveOptionsChanged();
   void onWatchFileSystemClicked();
