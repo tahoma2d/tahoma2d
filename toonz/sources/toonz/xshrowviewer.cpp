@@ -1240,9 +1240,9 @@ void RowArea::mouseMoveEvent(QMouseEvent *event) {
                .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
                .contains(mouseInCell) &&
            xsh->isFrameTagged(m_row)) {
-    QString label = xsh->getNavigationTags()->getTagLabel(m_row);
+    QString label              = xsh->getNavigationTags()->getTagLabel(m_row);
     if (label.isEmpty()) label = "-";
-    m_tooltip = tr("Tag: %1").arg(label);
+    m_tooltip                  = tr("Tag: %1").arg(label);
   } else if (row == currentRow) {
     if (Preferences::instance()->isOnionSkinEnabled() &&
         o->rect(PredefinedRect::ONION)
@@ -1256,10 +1256,11 @@ void RowArea::mouseMoveEvent(QMouseEvent *event) {
   else if (m_showOnionToSet == Mos)
     m_tooltip = tr("Relative Onion Skin Toggle");
   else
-    m_tooltip = tr("%1+Click - Set Playback Start Marker\n%2+Click - Set "
-                   "Playback End Marker")
+    m_tooltip = tr("%1+Click\t- Set Playback Start Marker\n%2+Click \t- Set "
+                   "Playback End Marker\n%3+Click\t- Remove Playback Markers")
                     .arg(trModKey("Ctrl"))
-                    .arg(trModKey("Alt"));
+                    .arg(trModKey("Alt"))
+                    .arg(trModKey("Ctrl+Alt"));
 }
 
 //-----------------------------------------------------------------------------
