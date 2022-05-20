@@ -41,6 +41,8 @@ protected:
     TIntParamP m_depth_ref;           // port index of depth reference image
     TDoubleParamP m_depthRange;       // distance range varies depends on the
                                       // brightness of the reference image (0-1)
+    TBoolParamP m_fillGap;
+    TBoolParamP m_doMedian;
   };
   std::array<LAYERPARAM, LAYER_NUM> m_layerParams;
 

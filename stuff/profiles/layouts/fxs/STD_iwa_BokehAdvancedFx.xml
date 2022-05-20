@@ -11,15 +11,23 @@
 		<control>distance1</control>
 		<control>bokeh_adjustment1</control>
 		<control>hardness1</control>
-		<control>depth_ref1</control>
-		<control>depthRange1</control>
+		<hbox>
+			<control>depth_ref1</control>
+			<control>fillGap1</control>
+			<control>doMedian1</control>
+		</hbox>
+    <control>depthRange1</control>
    	</vbox>
 
    	<vbox shrink="0" label="Source2">
 		<control>distance2</control>
 		<control>bokeh_adjustment2</control>
 		<control>hardness2</control>
-		<control>depth_ref2</control>
+		<hbox>
+			<control>depth_ref2</control>
+			<control>fillGap2</control>
+			<control>doMedian2</control>
+		</hbox>
 		<control>depthRange2</control>
    	</vbox>
 
@@ -27,7 +35,11 @@
 		<control>distance3</control>
 		<control>bokeh_adjustment3</control>
 		<control>hardness3</control>
-		<control>depth_ref3</control>
+		<hbox>
+			<control>depth_ref3</control>
+			<control>fillGap3</control>
+			<control>doMedian3</control>
+		</hbox>
 		<control>depthRange3</control>
    	</vbox>
 
@@ -35,7 +47,11 @@
 		<control>distance4</control>
 		<control>bokeh_adjustment4</control>
 		<control>hardness4</control>
-		<control>depth_ref4</control>
+		<hbox>
+			<control>depth_ref4</control>
+			<control>fillGap4</control>
+			<control>doMedian4</control>
+		</hbox>
 		<control>depthRange4</control>
    	</vbox>
 
@@ -43,7 +59,11 @@
 		<control>distance5</control>
 		<control>bokeh_adjustment5</control>
 		<control>hardness5</control>
-		<control>depth_ref5</control>
+		<hbox>
+			<control>depth_ref5</control>
+			<control>fillGap5</control>
+			<control>doMedian5</control>
+		</hbox>
 		<control>depthRange5</control>
    	</vbox>
 
@@ -55,6 +75,27 @@
 		<on>hardness4</on>
 		<on>hardness5</on>
 	</visibleToggle>
+	<visibleToggle>
+		<controller>fillGap1</controller>
+		<on>doMedian1</on>
+	</visibleToggle>
+	<visibleToggle>
+		<controller>fillGap2</controller>
+		<on>doMedian2</on>
+	</visibleToggle>
+	<visibleToggle>
+		<controller>fillGap3</controller>
+		<on>doMedian3</on>
+	</visibleToggle>
+	<visibleToggle>
+		<controller>fillGap4</controller>
+		<on>doMedian4</on>
+	</visibleToggle>
+	<visibleToggle>
+		<controller>fillGap5</controller>
+		<on>doMedian5</on>
+	</visibleToggle>
+
 
 	</page>
 </fxlayout>

@@ -144,6 +144,8 @@ Iwa_BokehAdvancedFx::Iwa_BokehAdvancedFx()
     m_layerParams[layer].m_hardness   = TDoubleParamP(0.3);
     m_layerParams[layer].m_depth_ref  = TIntParamP(0);
     m_layerParams[layer].m_depthRange = TDoubleParamP(1.0);
+    m_layerParams[layer].m_fillGap    = TBoolParamP(true);
+    m_layerParams[layer].m_doMedian   = TBoolParamP(false);
 
     std::string str = QString("Source%1").arg(layer + 1).toStdString();
     addInputPort(str, m_layerParams[layer].m_source);
@@ -158,6 +160,10 @@ Iwa_BokehAdvancedFx::Iwa_BokehAdvancedFx()
               m_layerParams[layer].m_depth_ref);
     bindParam(this, QString("depthRange%1").arg(layer + 1).toStdString(),
               m_layerParams[layer].m_depthRange);
+    bindParam(this, QString("fillGap%1").arg(layer + 1).toStdString(),
+              m_layerParams[layer].m_fillGap);
+    bindParam(this, QString("doMedian%1").arg(layer + 1).toStdString(),
+              m_layerParams[layer].m_doMedian);
 
     m_layerParams[layer].m_distance->setValueRange(0.0, 1.0);
     m_layerParams[layer].m_bokehAdjustment->setValueRange(0.0, 2.0);
@@ -303,8 +309,8 @@ void Iwa_BokehAdvancedFx::doCompute(TTile& tile, double frame,
         m_layerParams[index].m_bokehAdjustment->getValue(frame);
     layerValue.depthRange = m_layerParams[index].m_depthRange->getValue(frame);
     layerValue.distancePrecision = 10;
-    layerValue.fillGap           = true;
-    layerValue.doMedian          = false;
+    layerValue.fillGap           = m_layerParams[index].m_fillGap->getValue();
+    layerValue.doMedian          = m_layerParams[index].m_doMedian->getValue();
 
     layerValues.append(layerValue);
   }

@@ -102,7 +102,37 @@ inputFx);
         }
 }
 */
-}  // namespace
+
+// find the field by parameter name and register the field and its label widget
+bool findItemByParamName(QLayout *layout, std::string name,
+                         QList<QWidget *> &ret) {
+  for (int i = 0; i < layout->count(); i++) {
+    QLayoutItem *item = layout->itemAt(i);
+    if (!item) continue;
+    if (item->widget()) {
+      ParamField *pf = dynamic_cast<ParamField *>(item->widget());
+      if (pf && pf->getParamName().toStdString() == name) {
+        ret.push_back(pf);
+        if (i > 0 && layout->itemAt(i - 1)->widget()) {
+          QLabel *label =
+              dynamic_cast<QLabel *>(layout->itemAt(i - 1)->widget());
+          if (label) ret.push_back(label);
+        }
+        return true;
+      }
+      // the widget may be a container of another layout
+      else if (item->widget()->layout()) {
+        if (findItemByParamName(item->widget()->layout(), name, ret))
+          return true;
+      }
+    } else if (item->layout()) {
+      if (findItemByParamName(item->layout(), name, ret)) return true;
+    }
+  }
+  return false;
+};
+
+ }  // namespace
 
 //=============================================================================
 // ParamViewer
@@ -369,52 +399,15 @@ void ParamsPage::setPageField(TIStream &is, const TFxP &fx, bool isVertical) {
           std::string name;
           is >> name;
           is.matchEndTag();
-          for (int r = 0; r < m_mainLayout->rowCount(); r++) {
-            QLayoutItem *li = m_mainLayout->itemAtPosition(r, 1);
-            if (!li) continue;
-            QWidget *w = li->widget();
-            if (!w) continue;
-            ParamField *pf = dynamic_cast<ParamField *>(w);
-            if (pf) {
-              if (pf->getParamName().toStdString() == name) {
-                if (tagName == "controller")
-                  controller_bpf = dynamic_cast<BoolParamField *>(pf);
-                else if (tagName == "on") {
-                  on_items.push_back(w);
-                  on_items.push_back(
-                      m_mainLayout->itemAtPosition(r, 0)->widget());
-                } else if (tagName == "off") {
-                  off_items.push_back(w);
-                  off_items.push_back(
-                      m_mainLayout->itemAtPosition(r, 0)->widget());
-                }
-              }
-            }
-            /*-- 入れ子のLayoutも１段階探す --*/
-            else {
-              QGridLayout *gridLay = dynamic_cast<QGridLayout *>(w->layout());
-              if (!gridLay) continue;
-              for (int r_s = 0; r_s < gridLay->rowCount(); r_s++) {
-                QLayoutItem *li_s = gridLay->itemAtPosition(r_s, 1);
-                if (!li_s) continue;
-                ParamField *pf_s = dynamic_cast<ParamField *>(li_s->widget());
-                if (pf_s) {
-                  if (pf_s->getParamName().toStdString() == name) {
-                    if (tagName == "controller")
-                      controller_bpf = dynamic_cast<BoolParamField *>(pf_s);
-                    else if (tagName == "on") {
-                      on_items.push_back(pf_s);
-                      on_items.push_back(
-                          gridLay->itemAtPosition(r_s, 0)->widget());
-                    } else if (tagName == "off") {
-                      off_items.push_back(pf_s);
-                      off_items.push_back(
-                          gridLay->itemAtPosition(r_s, 0)->widget());
-                    }
-                  }
-                }
-              }
-            }
+
+          QList<QWidget *> widgets;
+          if (findItemByParamName(m_mainLayout, name, widgets)) {
+            if (tagName == "controller") {
+              controller_bpf = dynamic_cast<BoolParamField *>(widgets[0]);
+            } else if (tagName == "on")
+              on_items.append(widgets);
+            else if (tagName == "off")
+              off_items.append(widgets);
           }
         } else
           throw TException("unexpected tag " + tagName);
@@ -866,8 +859,8 @@ void ParamsPageSet::addParamsPage(ParamsPage *page, const char *name) {
   /*-- このFxで最大サイズのページに合わせてダイアログをリサイズ --*/
   QSize pagePreferredSize = page->getPreferredSize();
   m_preferredSize         = m_preferredSize.expandedTo(
-      pagePreferredSize + QSize(m_tabBarContainer->height() + 2,
-                                2)); /*-- 2は上下左右のマージン --*/
+              pagePreferredSize + QSize(m_tabBarContainer->height() + 2,
+                                        2)); /*-- 2は上下左右のマージン --*/
 
   QScrollArea *pane = new QScrollArea(this);
   pane->setWidgetResizable(true);
@@ -970,8 +963,8 @@ void ParamsPageSet::createPage(TIStream &is, const TFxP &fx, int index) {
   /*-- このFxで最大サイズのページに合わせてダイアログをリサイズ --*/
   QSize pagePreferredSize = paramsPage->getPreferredSize();
   m_preferredSize         = m_preferredSize.expandedTo(
-      pagePreferredSize + QSize(m_tabBarContainer->height() + 2,
-                                2)); /*-- 2は上下左右のマージン --*/
+              pagePreferredSize + QSize(m_tabBarContainer->height() + 2,
+                                        2)); /*-- 2は上下左右のマージン --*/
 
   QScrollArea *scrollAreaPage = new QScrollArea(this);
   scrollAreaPage->setWidgetResizable(true);
@@ -996,7 +989,7 @@ void ParamsPageSet::recomputePreferredSize() {
     if (!page) continue;
     QSize pagePreferredSize = page->getPreferredSize();
     newSize                 = newSize.expandedTo(pagePreferredSize +
-                                 QSize(m_tabBarContainer->height() + 2, 2));
+                                                 QSize(m_tabBarContainer->height() + 2, 2));
   }
   if (!newSize.isEmpty()) {
     m_preferredSize = newSize;
@@ -1235,7 +1228,7 @@ FxSettings::FxSettings(QWidget *parent, const TPixel32 &checkCol1,
   //---signal-slot connections
   bool ret = true;
   ret      = ret && connect(m_paramViewer, SIGNAL(currentFxParamChanged()),
-                       SLOT(updateViewer()));
+                            SLOT(updateViewer()));
   ret      = ret &&
         connect(m_viewer, SIGNAL(pointPositionChanged(int, const TPointD &)),
                 SLOT(onPointChanged(int, const TPointD &)));

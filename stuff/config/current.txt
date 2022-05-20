@@ -1327,30 +1327,40 @@
   <item>"STD_iwa_BokehAdvancedFx.hardness1"		"Source1 Hardness"</item>
   <item>"STD_iwa_BokehAdvancedFx.depth_ref1"		"Depth Image"</item>
   <item>"STD_iwa_BokehAdvancedFx.depthRange1"	"Source1 Depth Range"</item>
+  <item>"STD_iwa_BokehAdvancedFx.fillGap1"	"Fill Gap"</item>
+  <item>"STD_iwa_BokehAdvancedFx.doMedian1"	"Use Median"</item>
 
   <item>"STD_iwa_BokehAdvancedFx.distance2"		"Source2 Distance"</item>
   <item>"STD_iwa_BokehAdvancedFx.bokeh_adjustment2"	"Source2 Bokeh Adjustment"</item>
   <item>"STD_iwa_BokehAdvancedFx.hardness2"		"Source2 Hardness"</item>
   <item>"STD_iwa_BokehAdvancedFx.depth_ref2"		"Depth Image"</item>
   <item>"STD_iwa_BokehAdvancedFx.depthRange2"	"Source2 Depth Range"</item>
+  <item>"STD_iwa_BokehAdvancedFx.fillGap2"	"Fill Gap"</item>
+  <item>"STD_iwa_BokehAdvancedFx.doMedian2"	"Use Median"</item>
 
   <item>"STD_iwa_BokehAdvancedFx.distance3"		"Source3 Distance"</item>
   <item>"STD_iwa_BokehAdvancedFx.bokeh_adjustment3"	"Source3 Bokeh Adjustment"</item>
   <item>"STD_iwa_BokehAdvancedFx.hardness3"		"Source3 Hardness"</item>
   <item>"STD_iwa_BokehAdvancedFx.depth_ref3"		"Depth Image"</item>
   <item>"STD_iwa_BokehAdvancedFx.depthRange3"	"Source3 Depth Range"</item>
+  <item>"STD_iwa_BokehAdvancedFx.fillGap3"	"Fill Gap"</item>
+  <item>"STD_iwa_BokehAdvancedFx.doMedian3"	"Use Median"</item>
 
   <item>"STD_iwa_BokehAdvancedFx.distance4"		"Source4 Distance"</item>
   <item>"STD_iwa_BokehAdvancedFx.bokeh_adjustment4"	"Source4 Bokeh Adjustment"</item>
   <item>"STD_iwa_BokehAdvancedFx.hardness4"		"Source4 Hardness"</item>
   <item>"STD_iwa_BokehAdvancedFx.depth_ref4"		"Depth Image"</item>
   <item>"STD_iwa_BokehAdvancedFx.depthRange4"	"Source4 Depth Range"</item>
+  <item>"STD_iwa_BokehAdvancedFx.fillGap4"	"Fill Gap"</item>
+  <item>"STD_iwa_BokehAdvancedFx.doMedian4"	"Use Median"</item>
 
   <item>"STD_iwa_BokehAdvancedFx.distance5"		"Source5 Distance"</item>
   <item>"STD_iwa_BokehAdvancedFx.bokeh_adjustment5"	"Source5 Bokeh Adjustment"</item>
   <item>"STD_iwa_BokehAdvancedFx.hardness5"		"Source5 Hardness"</item>
   <item>"STD_iwa_BokehAdvancedFx.depth_ref5"		"Depth Image"</item>
   <item>"STD_iwa_BokehAdvancedFx.depthRange5"	"Source5 Depth Range"</item>
+  <item>"STD_iwa_BokehAdvancedFx.fillGap5"	"Fill Gap"</item>
+  <item>"STD_iwa_BokehAdvancedFx.doMedian5"	"Use Median"</item>
 
   <item>"STD_iwa_TimeCodeFx"	"TimeCode Iwa"</item>
   <item>"STD_iwa_TimeCodeFx.displayType"	"Display Type"</item>
