@@ -362,8 +362,8 @@ int igs::rotate_blur::reference_margin(
     const double blur_radius,                  /* ぼかしの始まる半径 */
     const double spin_radius, /* ゼロ以上でspin指定となり、
                             かつぼかし強弱の一定になる半径となる */
-    const int type  // 0: Accelerator, 1: Uniform Angle, 2: Uniform Length
-) {
+    const int type,  // 0: Accelerator, 1: Uniform Angle, 2: Uniform Length
+    const double ellipse_aspect_ratio) {
   /* 強度のないとき、なにもしない */
   if (degree <= 0.0) {
     return 0;
@@ -400,6 +400,14 @@ int igs::rotate_blur::reference_margin(
                                deg * M_PI_180, blur_radius, spin_radius, type);
   if (margin1 < margin2) {
     margin1 = margin2;
+  }
+
+  // Consider ellipse deformation.
+  // Instead of precise computing, return the maximum possible value.
+  if (ellipse_aspect_ratio != 1.0) {
+    double axis_x = 2.0 * ellipse_aspect_ratio / (ellipse_aspect_ratio + 1.0);
+    double axis_y = axis_x / ellipse_aspect_ratio;
+    margin1 *= std::max(axis_x, axis_y);
   }
 
   return static_cast<int>(ceil(margin1));

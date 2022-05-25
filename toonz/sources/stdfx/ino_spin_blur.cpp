@@ -86,8 +86,8 @@ public:
         static_cast<int>(ceil(bBox.getLy())),
         static_cast<int>(ceil(bBox.getLx())), center,
         this->m_blur->getValue(frame), this->m_radius->getValue(frame) * scale,
-        ((0 < this->m_type->getValue()) ? 0.0 : (bBox.getLy() / 2.0)),
-        this->m_type->getValue());
+        bBox.getLy() / 2.0, this->m_type->getValue(),
+        this->m_ellipse_aspect_ratio->getValue(frame));
   }
   void get_render_enlarge(const double frame, const TAffine affine,
                           TRectD &bBox) {
