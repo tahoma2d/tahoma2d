@@ -7,6 +7,7 @@
 #include "toonz/tscenehandle.h"
 #include "toonz/tcamera.h"
 #include "toonz/toonzscene.h"
+#include "tsystem.h"
 
 #include <QCoreApplication>
 #include <QFile>
@@ -968,12 +969,26 @@ bool Canon::downloadImage(EdsBaseRef object) {
 
   // write out the full res file
   if (!isRaw) {
+    TFilePath parentDir =
+        TApp::instance()->getCurrentScene()->getScene()->decodeFilePath(
+            TFilePath(StopMotion::instance()->m_filePath));
+    TFilePath tempFile = parentDir + "temp.jpg";
+
+    StopMotion::instance()->m_tempFile = tempFile.getQString();
+
     QFile fullImage(StopMotion::instance()->m_tempFile);
     fullImage.open(QIODevice::WriteOnly);
     QDataStream dataStream(&fullImage);
     dataStream.writeRawData((const char*)jpgStreamData, jpgStreamSize);
     fullImage.close();
   } else {
+    TFilePath parentDir =
+        TApp::instance()->getCurrentScene()->getScene()->decodeFilePath(
+            TFilePath(StopMotion::instance()->m_filePath));
+    TFilePath tempRaw = parentDir + "temp.cr2";
+
+    StopMotion::instance()->m_tempRaw = tempRaw.getQString();
+
     QFile fullImage(StopMotion::instance()->m_tempRaw);
     fullImage.open(QIODevice::WriteOnly);
     QDataStream dataStream(&fullImage);
