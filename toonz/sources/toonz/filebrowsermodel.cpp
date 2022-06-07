@@ -1116,8 +1116,17 @@ void DvDirModelRootNode::add(std::wstring name, const TFilePath &path) {
 //-----------------------------------------------------------------------------
 
 void DvDirModelRootNode::refreshDefaultProjectPath() {
-  removeChildren(8, m_projectDirNodes.size());
-  m_projectDirNodes.clear();
+// Windows has 1 more entry (Network) than macOS/Linux
+#ifdef WIN32
+  int row = 8;
+#else
+  int row = 7;
+#endif
+
+  if (m_projectDirNodes.size() > 0) {
+    removeChildren(row, m_projectDirNodes.size());
+    m_projectDirNodes.clear();
+  }
 
   QString defaultProjectPaths =
       Preferences::instance()->getDefaultProjectPath();
@@ -1136,7 +1145,7 @@ void DvDirModelRootNode::refreshDefaultProjectPath() {
       projectFolderNode->setPixmap(recolorPixmap(
           svgToPixmap(getIconThemePath("actions/16/projects_folder.svg"))));
       m_projectDirNodes.push_back(projectFolderNode);
-      insertChild(8 + i, projectFolderNode);
+      insertChild(row + i, projectFolderNode);
     }
   }
 }
