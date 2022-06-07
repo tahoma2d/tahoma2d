@@ -762,7 +762,11 @@ void ChennelCurveEditor::mouseReleaseEvent(QMouseEvent *e) {
 void ChennelCurveEditor::keyPressEvent(QKeyEvent *e) {
   if (m_currentControlPointIndex == -1) return;
 
+#ifdef MACOSX
+  if (e->key() == Qt::Key_Backspace) {
+#else
   if (e->key() == Qt::Key_Delete) {
+#endif
     removeCurrentControlPoint();
     return;
   }

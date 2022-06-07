@@ -700,7 +700,11 @@ void HexColorNamesEditor::keyPressEvent(QKeyEvent *event) {
   case Qt::Key_Escape:
     deselectItem(true);
     break;
+#ifdef MACOSX
+  case Qt::Key_Backspace:
+#else
   case Qt::Key_Delete:
+#endif
     deleteCurrentItem(false);
     break;
   case Qt::Key_Insert:

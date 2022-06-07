@@ -1833,7 +1833,12 @@ void MainWindow::defineActions() {
                        "paste_duplicate");
   createMenuEditAction(MI_PasteInto, QT_TR_NOOP("&Paste Into"), "",
                        "paste_into");
-  createMenuEditAction(MI_Clear, QT_TR_NOOP("&Delete"), "Del", "delete");
+#ifdef MACOSX
+  QString delKey = "Backspace";
+#else
+  QString delKey = "Del";
+#endif
+  createMenuEditAction(MI_Clear, QT_TR_NOOP("&Delete"), delKey, "delete");
   createMenuEditAction(MI_Insert, QT_TR_NOOP("&Insert"), "Ins", "insert");
   createMenuEditAction(MI_InsertBelow, QT_TR_NOOP("&Insert Below/Before"),
                        "Shift+Ins", "insert_above_after");
