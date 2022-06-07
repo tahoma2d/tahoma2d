@@ -25,6 +25,30 @@ sudo make install
 
 cd ../..
 
+echo ">>> Cloning dav1d"
+git clone https://github.com/videolan/dav1d
+
+cd dav1d
+
+git checkout tags/0.9.2
+
+if [ ! -d build ] 
+then
+   mkdir build
+fi
+cd build
+
+echo ">>> Configuring dav1d (meson)"
+meson ..
+
+echo ">>> Building dav1d"
+ninja
+
+echo ">>> Installing dav1d"
+ninja install
+
+cd ../..
+
 echo ">>> Cloning ffmpeg"
 git clone -b v4.3.1 https://github.com/tahoma2d/FFmpeg ffmpeg
 
