@@ -2729,6 +2729,27 @@ public:
 
 //============================================================
 
+class PreviewSelected final : public MenuItemHandler {
+public:
+  PreviewSelected() : MenuItemHandler(MI_PreviewSelected) {}
+
+  void execute() override {
+    TApp *app             = TApp::instance();
+    TSelection *selection = app->getCurrentSelection()->getSelection();
+    if (!selection) return;
+    TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(selection);
+    if (!cellSelection) return;
+    int row0, col0, row1, col1;
+    cellSelection->getSelectedCells(row0, col0, row1, col1);
+    int r0, r1, step;
+    XsheetGUI::getPlayRange(r0, r1, step);
+    XsheetGUI::setPlayRange(row0, row1, step);
+    TApp::instance()->getCurrentXsheetViewer()->update();
+  }
+} PreviewSelected;
+
+//============================================================
+
 class ToggleTaggedFrame final : public MenuItemHandler {
 public:
   ToggleTaggedFrame() : MenuItemHandler(MI_ToggleTaggedFrame) {}

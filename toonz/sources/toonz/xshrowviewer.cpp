@@ -1225,6 +1225,9 @@ void RowArea::mouseMoveEvent(QMouseEvent *event) {
       o->path(PredefinedPath::END_PLAY_RANGE).translated(base1);
 
   if (!m_tooltip.isEmpty()) return;
+
+  TXsheet *xsh = m_viewer->getXsheet();
+
   if (startArrow.contains(m_pos))
     m_tooltip = tr("Playback Start Marker");
   else if (endArrow.contains(m_pos))
@@ -1235,11 +1238,11 @@ void RowArea::mouseMoveEvent(QMouseEvent *event) {
                     .arg((isRootBonePinned) ? " (Root)" : "");
   else if (o->rect(PredefinedRect::NAVIGATION_TAG_AREA)
                .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
-               .contains(mouseInCell)) {
-    TXsheet *xsh = m_viewer->getXsheet();
-    QString label = xsh->getNavigationTags()->getTagLabel(m_row);
+               .contains(mouseInCell) &&
+           xsh->isFrameTagged(m_row)) {
+    QString label              = xsh->getNavigationTags()->getTagLabel(m_row);
     if (label.isEmpty()) label = "-";
-    if (xsh->isFrameTagged(m_row)) m_tooltip = tr("Tag: %1").arg(label);
+    m_tooltip                  = tr("Tag: %1").arg(label);
   } else if (row == currentRow) {
     if (Preferences::instance()->isOnionSkinEnabled() &&
         o->rect(PredefinedRect::ONION)
@@ -1252,6 +1255,12 @@ void RowArea::mouseMoveEvent(QMouseEvent *event) {
     m_tooltip = tr("Fixed Onion Skin Toggle");
   else if (m_showOnionToSet == Mos)
     m_tooltip = tr("Relative Onion Skin Toggle");
+  else
+    m_tooltip = tr("%1+Click\t- Set Playback Start Marker\n%2+Click \t- Set "
+                   "Playback End Marker\n%3+Click\t- Remove Playback Markers")
+                    .arg(trModKey("Ctrl"))
+                    .arg(trModKey("Alt"))
+                    .arg(trModKey("Ctrl+Alt"));
 }
 
 //-----------------------------------------------------------------------------
@@ -1296,6 +1305,8 @@ void RowArea::contextMenuEvent(QContextMenuEvent *event) {
   menu->addAction(CommandManager::instance()->getAction(MI_ClearMarkers));
 
   menu->addAction(CommandManager::instance()->getAction(MI_PreviewThis));
+
+  menu->addAction(CommandManager::instance()->getAction(MI_PreviewSelected));
 
   menu->addSeparator();
 
