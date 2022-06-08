@@ -1490,7 +1490,7 @@ double ToolUtils::ConeSubVolume::compute(double cover) {
   if (i == 20)
     return m_values[i];
   else
-    // Interpolazione lineare.
+    // Linear interpolation.
     return (-(x - (i + 1)) * m_values[i]) - (-(x - i) * m_values[i + 1]);
 }
 
@@ -1612,14 +1612,14 @@ void ToolUtils::drawBalloon(const TPointD &pos, std::string text,
   pp.moveTo(x0, y - 8 * devPixRatio);
   pp.lineTo(0, y + delta.y);
   pp.lineTo(x0, y);
-  /* bordi arrotondati
+  /* rounded edges
   int arcSize = 10;
   pp.arcTo(x0,y1-arcSize,arcSize,arcSize,180,90);
   pp.arcTo(x1-arcSize,y1-arcSize,arcSize,arcSize,270,90);
   pp.arcTo(x1-arcSize,y0,arcSize,arcSize,0,90);
   pp.arcTo(x0,y0,arcSize,arcSize,90,90);
   */
-  // bordi acuti
+  // sharp edges
   pp.lineTo(x0, y1);
   pp.lineTo(x1, y1);
   pp.lineTo(x1, y0);

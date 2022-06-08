@@ -1042,7 +1042,7 @@ void SceneViewer::showEvent(QShowEvent *) {
   m_visualSettings.m_sceneProperties =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
 
-  // Se il viewer e' show e il preview e' attivo aggiungo il listner al preview
+  // If the viewer is hidden and preview is activated, remove the listener from preview
   if (m_previewMode != NO_PREVIEW)
     Previewer::instance(m_previewMode == SUBCAMERA_PREVIEW)->addListener(this);
 
@@ -1126,7 +1126,7 @@ void SceneViewer::showEvent(QShowEvent *) {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::hideEvent(QHideEvent *) {
-  // Se il viewer e' hide e il preview e' attivo rimuovo il listner dal preview
+  // If the viewer is hidden and preview is activated, remove the listener from preview
   if (m_previewMode != NO_PREVIEW)
     Previewer::instance(m_previewMode == SUBCAMERA_PREVIEW)
         ->removeListener(this);
@@ -1475,6 +1475,15 @@ void SceneViewer::drawCameraStand() {
   assert(e == GL_NO_ERROR);
 
   TXshSimpleLevel::m_rasterizePli = rasterizePliToggle.getStatus();
+
+  // display blank frame
+  if (m_visualSettings.m_blankColor != TPixel::Transparent) {
+    glClearColor(m_visualSettings.m_blankColor.r / 255.0f,
+                 m_visualSettings.m_blankColor.g / 255.0f,
+                 m_visualSettings.m_blankColor.b / 255.0f, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    return;
+  }
 
   // clear
   if (m_draw3DMode) {
@@ -3603,6 +3612,20 @@ TRectD SceneViewer::getGeometry() const {
   }
 
   return TRectD(topLeft, bottomRight);
+}
+
+//-----------------------------------------------------------------------------
+
+TRectD SceneViewer::getCameraRect() const {
+  TRectD cameraRect = TApp::instance()
+                          ->getCurrentScene()
+                          ->getScene()
+                          ->getCurrentCamera()
+                          ->getStageRect();
+
+  // return m_drawCameraAff * TRectD(cameraRect.x0, cameraRect.y0, cameraRect.x1
+  // - m_pixelSize, cameraRect.y1 - m_pixelSize);
+  return m_drawCameraAff * cameraRect;
 }
 
 //-----------------------------------------------------------------------------

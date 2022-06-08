@@ -1234,7 +1234,7 @@ void XSheetPDFTemplate::drawDialogue(QPainter& painter, int framePage) {
       if (row < drawStart) {
         int partialBlockLength = rowTo - drawStart + 1;
         int partialTextCount   = (int)std::round(
-            (double)(textCount * partialBlockLength) / (double)blockLength);
+              (double)(textCount * partialBlockLength) / (double)blockLength);
         text        = text.mid(textCount - partialTextCount);
         textCount   = partialTextCount;
         row         = drawStart;
@@ -1250,7 +1250,7 @@ void XSheetPDFTemplate::drawDialogue(QPainter& painter, int framePage) {
       if (rowTo > drawEnd) {
         int partialBlockLength = drawEnd - row + 1;
         int partialTextCount   = (int)std::round(
-            (double)(textCount * partialBlockLength) / (double)blockLength);
+              (double)(textCount * partialBlockLength) / (double)blockLength);
         text      = text.mid(0, partialTextCount);
         textCount = partialTextCount;
         rowTo     = drawEnd;
@@ -1315,9 +1315,9 @@ XSheetPDFTemplate::XSheetPDFTemplate(
 void XSheetPDFTemplate::setInfo(const XSheetPDFFormatInfo& info) {
   m_info         = info;
   thinPen        = QPen(info.lineColor, param(ThinLineWidth, mm2px(0.25)),
-                 Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
+                        Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
   thickPen       = QPen(info.lineColor, param(ThickLineWidth, mm2px(0.5)),
-                  Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
+                        Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
   bodyOutlinePen = QPen(info.lineColor, param(BodyOutlineWidth, mm2px(0.5)),
                         Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
   blockBorderPen = (param(IsBlockBorderThick, 0) > 0) ? thickPen : thinPen;
@@ -1435,21 +1435,20 @@ void XSheetPDFTemplate::drawXsheetContents(QPainter& painter, int framePage,
       TXshCell cell = column->getCell(f);
       if (cell.m_level != level) cell.m_level = nullptr;
 
-      int markId = column->getCellMark(r);
+      int markId = column->getCellMark(f);
 
+      // draw tick mark
+      if ((prevCell == cell || cell.isEmpty()) && markId >= 0 &&
+          (m_info.tick1MarkId == markId || m_info.tick2MarkId == markId)) {
+        if (m_info.tick1MarkId == markId)
+          drawTickMark(painter, m_cellRects[c][r], m_info.tick1MarkType);
+        else
+          drawTickMark(painter, m_cellRects[c][r], m_info.tick2MarkType);
+        drawCLFlag = checkContinuous(column, f, r);
+      }
       // cotinuous line
-      if (r != 0 && r != 72 && prevCell == cell) {
-        // draw tick mark
-        if (markId >= 0 &&
-            (m_info.tick1MarkId == markId || m_info.tick2MarkId == markId)) {
-          if (m_info.tick1MarkId == markId)
-            drawTickMark(painter, m_cellRects[c][r], m_info.tick1MarkType);
-          else
-            drawTickMark(painter, m_cellRects[c][r], m_info.tick2MarkType);
-          drawCLFlag = checkContinuous(column, f, r);
-        }
-
-        else if (drawCLFlag)
+      else if (r != 0 && r != 72 && prevCell == cell) {
+        if (drawCLFlag)
           drawContinuousLine(painter, m_cellRects[c][r], cell.isEmpty());
       }
       // draw cell
@@ -2079,13 +2078,13 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
           checksLay->setColumnStretch(2, 1);
           exportLay->addLayout(checksLay, 3, 0, 1, 3);
 
-          exportLay->addWidget(new QLabel(tr("Inbetween mark:"), this), 4, 0,
+          exportLay->addWidget(new QLabel(tr("Inbetween mark 1:"), this), 4, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
           exportLay->addWidget(m_tick1IdCombo, 4, 1);
           exportLay->addWidget(m_tick1MarkCombo, 4, 2,
                                Qt::AlignLeft | Qt::AlignVCenter);
-          exportLay->addWidget(new QLabel(tr("Reverse sheet mark:"), this), 5,
-                               0, Qt::AlignRight | Qt::AlignVCenter);
+          exportLay->addWidget(new QLabel(tr("Inbetween mark 2:"), this), 5, 0,
+                               Qt::AlignRight | Qt::AlignVCenter);
           exportLay->addWidget(m_tick2IdCombo, 5, 1);
           exportLay->addWidget(m_tick2MarkCombo, 5, 2,
                                Qt::AlignLeft | Qt::AlignVCenter);
@@ -2360,8 +2359,9 @@ void ExportXsheetPdfPopup::saveSettings() {
 
   ContinuousLineMode clMode =
       (ContinuousLineMode)(m_continuousLineCombo->currentData().toInt());
-  XShPdfExportContinuousLineThres =
-      (clMode == Line_Always) ? 0 : (clMode == Line_None) ? -1 : 3;
+  XShPdfExportContinuousLineThres = (clMode == Line_Always) ? 0
+                                    : (clMode == Line_None) ? -1
+                                                            : 3;
 
   XShPdfExportTick1Id   = m_tick1IdCombo->currentData().toInt();
   XShPdfExportTick2Id   = m_tick2IdCombo->currentData().toInt();
@@ -2398,11 +2398,10 @@ void ExportXsheetPdfPopup::loadSettings() {
   m_logoTextEdit->setText(QString::fromStdString(XShPdfExportLogoText));
   m_logoImgPathField->setPath(QString::fromStdString(XShPdfExportImgPath));
 
-  ContinuousLineMode clMode = (XShPdfExportContinuousLineThres == 0)
-                                  ? Line_Always
-                                  : (XShPdfExportContinuousLineThres == -1)
-                                        ? Line_None
-                                        : Line_MoreThan3s;
+  ContinuousLineMode clMode =
+      (XShPdfExportContinuousLineThres == 0)    ? Line_Always
+      : (XShPdfExportContinuousLineThres == -1) ? Line_None
+                                                : Line_MoreThan3s;
   m_continuousLineCombo->setCurrentIndex(
       m_continuousLineCombo->findData(clMode));
 
@@ -2583,8 +2582,8 @@ void ExportXsheetPdfPopup::onExport() {
     QString question =
         tr("The file %1 already exists.\nDo you want to overwrite it?")
             .arg(fp.getQString());
-    int ret =
-        DVGui::MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Cancel"));
+    int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"),
+                            QObject::tr("Cancel"));
     if (ret == 0 || ret == 2) {
       return;
     }
@@ -2653,8 +2652,8 @@ void ExportXsheetPdfPopup::onExportPNG() {
     QString question =
         tr("The file %1 already exists.\nDo you want to overwrite it?")
             .arg(fp.getQString());
-    int ret =
-        DVGui::MsgBox(question, QObject::tr("Overwrite"), QObject::tr("Cancel"));
+    int ret = DVGui::MsgBox(question, QObject::tr("Overwrite"),
+                            QObject::tr("Cancel"));
     if (ret == 0 || ret == 2) {
       return;
     }

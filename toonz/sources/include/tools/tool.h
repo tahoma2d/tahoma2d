@@ -688,6 +688,7 @@ public:
 
   /*-- Toolで画面の内外を判断するため --*/
   virtual TRectD getGeometry() const = 0;
+  virtual TRectD getCameraRect() const { return TRectD(); }
 
   virtual void bindFBO() {}
   virtual void releaseFBO() {}
