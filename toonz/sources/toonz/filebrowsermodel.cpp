@@ -1133,6 +1133,7 @@ void DvDirModelRootNode::refreshDefaultProjectPath() {
   if (!defaultProjectPaths.isEmpty()) {
     QStringList projectRoots =
         defaultProjectPaths.split(";", QString::SkipEmptyParts);
+    int folderCount = 0;
     for (int i = 0; i < projectRoots.size(); i++) {
       TFilePath projectRootDir(projectRoots.at(i));
       if (!TFileStatus(projectRootDir).isDirectory()) continue;
@@ -1145,7 +1146,8 @@ void DvDirModelRootNode::refreshDefaultProjectPath() {
       projectFolderNode->setPixmap(recolorPixmap(
           svgToPixmap(getIconThemePath("actions/16/projects_folder.svg"))));
       m_projectDirNodes.push_back(projectFolderNode);
-      insertChild(row + i, projectFolderNode);
+      insertChild(row + folderCount, projectFolderNode);
+      folderCount++;
     }
   }
 }
