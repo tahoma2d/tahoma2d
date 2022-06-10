@@ -226,7 +226,10 @@ void TFilmstripSelection::cutFrames() {
   TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
   if (sl) {
     int firstSelectedIndex = sl->fid2index(*m_selectedFrames.begin());
-    assert(firstSelectedIndex >= 0);
+    if(firstSelectedIndex < 0 || firstSelectedIndex > sl->getFrameCount()) {
+      selectNone();
+      return;
+    }
     FilmstripCmd::cut(sl, m_selectedFrames);
     selectNone();
     TFrameId fId = (firstSelectedIndex == 0)
