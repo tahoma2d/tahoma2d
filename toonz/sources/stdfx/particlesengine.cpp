@@ -27,6 +27,9 @@
 
 #include <sstream>
 
+#include <QPointF>
+#include <QMatrix4x4>
+
 /*-----------------------------------------------------------------*/
 
 Particles_Engine::Particles_Engine(ParticlesFx *parent, double frame)
@@ -135,6 +138,9 @@ void Particles_Engine::fill_value_struct(struct particles_values &myvalues,
       m_parent->pick_color_for_every_frame_val->getValue();
   myvalues.perspective_distribution_val =
       m_parent->perspective_distribution_val->getValue();
+  myvalues.motion_blur_val = m_parent->motion_blur_val->getValue();
+  myvalues.motion_blur_gamma_val =
+      m_parent->motion_blur_gamma_val->getValue(frame);
 }
 
 /*-----------------------------------------------------------------*/
@@ -411,7 +417,6 @@ void Particles_Engine::normalize_values(struct particles_values &values,
   (values.opacity_val.second)      = (values.opacity_val.second) * 0.01;
   (values.trailopacity_val.first)  = (values.trailopacity_val.first) * 0.01;
   (values.trailopacity_val.second) = (values.trailopacity_val.second) * 0.01;
-  (values.mblur_val)               = (values.mblur_val) * 0.01;
   (values.friction_val)            = -(values.friction_val) * 0.01;
   (values.windangle_val)           = (values.windangle_val) * M_PI_180;
   (values.g_angle_val)             = (values.g_angle_val + 180) * M_PI_180;
@@ -856,6 +861,14 @@ void Particles_Engine::do_render(
   // Particles parameters
   M = ri.m_affine * M * TScale(1.0 / partScale);
 
+  // render with motion blur
+  if (values.motion_blur_val) {
+    if (do_render_motion_blur(part, tile, tileRas, rfinalpart, M, bbox,
+                              values.trailopacity_val,
+                              values.motion_blur_gamma_val, ri))
+      return;
+  }
+
   // Then, retrieve the particle position in current reference.
   TPointD pos(part->x, part->y);
   pos = ri.m_affine * pos;
@@ -871,6 +884,376 @@ void Particles_Engine::do_render(
     TRop::over(tileRas, rfinalpart, M);
   else
     throw TException("ParticlesFx: unsupported Pixel Type");
+}
+
+/*-----------------------------------------------------------------*/
+
+bool Particles_Engine::do_render_motion_blur(
+    Particle *part, TTile *tile, TRasterP tileRas, TRaster32P rfinalpart,
+    TAffine &M, const TRectD &bbox, const DoublePair &trailOpacity,
+    const double gamma, const TRenderSettings &ri) {
+  QList<TPointD> points;
+  QList<double> lengths;
+
+  // do not render new-born particles as it has no trace
+  if (part->genlifetime - part->lifetime == 0) return true;
+
+  TRectD partBBoxD =
+      M * TTranslation(bbox.getP00()) * convert(rfinalpart->getBounds());
+  partBBoxD = partBBoxD.enlarge(1.0);
+
+  TRect partBBox = convert(partBBoxD);
+
+  TRaster32P partRas(partBBox.getSize());
+  TRop::over(
+      partRas, rfinalpart,
+      TTranslation(-partBBoxD.getP00()) * M * TTranslation(bbox.getP00()));
+
+  // create trace vertices list
+  // render straight trace in the first 4 frames
+  if (part->genlifetime - part->lifetime < 3) {
+    TPointD p0(part->x, part->y);
+    TPointD p1(part->oldx[0], part->oldy[0]);
+    p0 = ri.m_affine * p0;
+    p1 = ri.m_affine * p1;
+    points.append(TPointD(0, 0));
+    points.append(p1 - p0);
+  }
+  // Cubic spline interpolation
+  else {
+    // divide into 8 lines (= 9 segments)
+    int pointAmount = 9;
+    TPointD keyP[4] = {TPointD(part->x, part->y),
+                       TPointD(part->oldx[0], part->oldy[0]),
+                       TPointD(part->oldx[1], part->oldy[1]),
+                       TPointD(part->oldx[2], part->oldy[2])};
+    for (int i = 0; i < 4; i++) {
+      keyP[i] = ri.m_affine * keyP[i];
+      if (i > 0) {
+        keyP[i] -= keyP[0];
+      }
+    }
+    keyP[0] = TPointD(0, 0);
+
+    double u[4];
+    u[0] = 0.;
+    u[1] = u[0] + norm(keyP[1] - keyP[0]);
+    u[2] = u[1] + norm(keyP[2] - keyP[1]);
+    u[3] = u[2] + norm(keyP[3] - keyP[2]);
+
+    QMatrix4x4 mat(u[0] * u[0] * u[0], u[0] * u[0], u[0], 1.,
+                   u[1] * u[1] * u[1], u[1] * u[1], u[1], 1.,
+                   u[2] * u[2] * u[2], u[2] * u[2], u[2], 1.,
+                   u[3] * u[3] * u[3], u[3] * u[3], u[3], 1.);
+
+    bool ok;
+    mat = mat.inverted(&ok);
+    if (!ok) return false;
+
+    QPointF coeff[4];
+    for (int i = 0; i < 4; i++) {
+      coeff[i] = mat(i, 0) * QPointF(keyP[0].x, keyP[0].y) +
+                 mat(i, 1) * QPointF(keyP[1].x, keyP[1].y) +
+                 mat(i, 2) * QPointF(keyP[2].x, keyP[2].y) +
+                 mat(i, 3) * QPointF(keyP[3].x, keyP[3].y);
+    }
+
+    for (int p = 0; p <= pointAmount; p++) {
+      double ratio = (double)p / (double)pointAmount;
+      double cur_u = u[0] * ratio + u[1] * (1 - ratio);
+
+      points.append(TPointD(
+          cur_u * cur_u * cur_u * coeff[0].x() + cur_u * cur_u * coeff[1].x() +
+              cur_u * coeff[2].x() + coeff[3].x(),
+          cur_u * cur_u * cur_u * coeff[0].y() + cur_u * cur_u * coeff[1].y() +
+              cur_u * coeff[2].y() + coeff[3].y()));
+    }
+  }
+
+  // compute lengths
+  for (int p = 0; p < points.size() - 1; p++) {
+    TPointD vec = points[p + 1] - points[p];
+    lengths.append(norm(vec));
+  }
+
+  /* Get upper, lower, left and right margin */
+  double minX = 0.0;
+  double maxX = 0.0;
+  double minY = 0.0;
+  double maxY = 0.0;
+  for (int p = 0; p < points.size(); p++) {
+    if (points.at(p).x > maxX) maxX = points.at(p).x;
+    if (points.at(p).x < minX) minX = points.at(p).x;
+    if (points.at(p).y > maxY) maxY = points.at(p).y;
+    if (points.at(p).y < minY) minY = points.at(p).y;
+  }
+  int marginLeft   = (int)std::ceil(std::abs(minX));
+  int marginRight  = (int)std::ceil(std::abs(maxX));
+  int marginTop    = (int)std::ceil(std::abs(maxY));
+  int marginBottom = (int)std::ceil(std::abs(minY));
+  if (marginLeft == 0 && marginRight == 0 && marginTop == 0 &&
+      marginBottom == 0)
+    return false;
+
+  // end opacity is computed so that the trace will be connected smoothly in the
+  // trail
+  float end_opacity =
+      trailOpacity.second +
+      (trailOpacity.first - trailOpacity.second) / std::max(1, part->trail);
+
+  // create the blur filter
+  TDimensionI filterDim(marginLeft + marginRight + 1,
+                        marginTop + marginBottom + 1);
+  TRasterGR8P filter_ras(sizeof(float) * filterDim.lx, filterDim.ly);
+  filter_ras->lock();
+  float *filter_p = (float *)filter_ras->getRawData();
+  /* Variable for adding filter value*/
+  float fil_val_sum = 0.0f;
+  /* The current filter position to be looped in the 'for' statement */
+  float *current_fil_p = filter_p;
+  /* For each coordinate in the filter */
+  for (int fily = 0; fily < filterDim.ly; fily++) {
+    for (int filx = 0; filx < filterDim.lx; filx++, current_fil_p++) {
+      /* Get filter coordinates */
+      TPointD pos(static_cast<float>(filx - marginLeft),
+                  static_cast<float>(fily - marginBottom));
+      /* Value to be updated */
+      float nearestDist2         = 100.0f;
+      int nearestIndex           = -1;
+      float nearestFramePosRatio = 0.0f;
+
+      /* Find the nearest point for each pair of sample points */
+      for (int v = 0; v < points.count() - 1; v++) {
+        TPointD p0 = points[v];
+        TPointD p1 = points[v + 1];
+
+        /* If it is not within the range, continue */
+        if (pos.x < std::min(p0.x, p1.x) - 1.0f ||
+            pos.x > std::max(p0.x, p1.x) + 1.0f ||
+            pos.y < std::min(p0.y, p1.y) - 1.0f ||
+            pos.y > std::max(p0.y, p1.y) + 1.0f)
+          continue;
+
+        /* Since it is within the range, obtain the distance between the line
+         * segment and the point. */
+        /* Calculate the inner product of 'p0'->sampling point and 'p0'->'p1' */
+        TPointD vec_p0_sample(static_cast<float>(pos.x - p0.x),
+                              static_cast<float>(pos.y - p0.y));
+        TPointD vec_p0_p1(static_cast<float>(p1.x - p0.x),
+                          static_cast<float>(p1.y - p0.y));
+        float dot =
+            vec_p0_sample.x * vec_p0_p1.x + vec_p0_sample.y * vec_p0_p1.y;
+        /* Calculate the square of distance */
+        float dist2;
+        float framePosRatio;
+        /* If it is before 'p0' */
+        if (dot <= 0.0f) {
+          dist2 = vec_p0_sample.x * vec_p0_sample.x +
+                  vec_p0_sample.y * vec_p0_sample.y;
+          framePosRatio = 0.0f;
+        } else {
+          /* Calculate the square of the length of the trajectory vector */
+          float length2 = lengths[v] * lengths[v];
+
+          /* If it is between 'p0' and 'p1'
+           * If the trajectory at p is a point,
+           * 'length2' becomes 0, so it will never fall into this condition.
+           * So, there should not be worry of becoming ZeroDivide. */
+          if (dot < length2) {
+            float p0_sample_dist2 = vec_p0_sample.x * vec_p0_sample.x +
+                                    vec_p0_sample.y * vec_p0_sample.y;
+            dist2         = p0_sample_dist2 - dot * dot / length2;
+            framePosRatio = dot / length2;
+          }
+          /* If it is before 'p1' */
+          else {
+            TPointD vec_p1_sample = pos - p1;
+            dist2                 = vec_p1_sample.x * vec_p1_sample.x +
+                    vec_p1_sample.y * vec_p1_sample.y;
+            framePosRatio = 1.0f;
+          }
+        }
+        /* If the distance is farther than (√ 2 + 1) / 2, continue
+         * Because it is a comparison with dist2, the value is squared */
+        if (dist2 > 1.4571f) continue;
+
+        /* Update if distance is closer */
+        if (dist2 < nearestDist2) {
+          nearestDist2         = dist2;
+          nearestIndex         = v;
+          nearestFramePosRatio = framePosRatio;
+        }
+      }
+
+      /* If neighborhood vector of the current pixel can not be found,
+       * set the filter value to 0 and return */
+      if (nearestIndex == -1) {
+        *current_fil_p = 0.0f;
+        continue;
+      }
+
+      /* Count how many subpixels (16 * 16) of the current pixel
+       * are in the range 0.5 from the neighborhood vector.
+       */
+      int count   = 0;
+      TPointD np0 = points[nearestIndex];
+      TPointD np1 = points[nearestIndex + 1];
+      for (int yy = 0; yy < 16; yy++) {
+        /* Y coordinate of the subpixel */
+        float subPosY = pos.y + ((float)yy - 7.5f) / 16.0f;
+        for (int xx = 0; xx < 16; xx++) {
+          /* X coordinate of the subpixel */
+          float subPosX = pos.x + ((float)xx - 7.5f) / 16.0f;
+
+          TPointD vec_np0_sub = TPointD(subPosX, subPosY) - np0;
+          TPointD vec_np0_np1 = np1 - np0;
+          float dot =
+              vec_np0_sub.x * vec_np0_np1.x + vec_np0_sub.y * vec_np0_np1.y;
+          /* Calculate the square of the distance */
+          float dist2;
+          /* If it is before 'p0' */
+          if (dot <= 0.0f)
+            dist2 =
+                vec_np0_sub.x * vec_np0_sub.x + vec_np0_sub.y * vec_np0_sub.y;
+          else {
+            /* Compute the square of the length of the trajectory vector */
+            float length2 = lengths[nearestIndex] * lengths[nearestIndex];
+            /* If it is between 'p0' and 'p1' */
+            if (dot < length2) {
+              float np0_sub_dist2 =
+                  vec_np0_sub.x * vec_np0_sub.x + vec_np0_sub.y * vec_np0_sub.y;
+              dist2 = np0_sub_dist2 - dot * dot / length2;
+            }
+            /* if it is before 'p1' */
+            else {
+              TPointD vec_np1_sub = TPointD(subPosX, subPosY) - np1;
+              dist2 =
+                  vec_np1_sub.x * vec_np1_sub.x + vec_np1_sub.y * vec_np1_sub.y;
+            }
+          }
+          /* Increment count if squared distance is less than 0.25 */
+          if (dist2 <= 0.25f) count++;
+        }
+      }
+      /* 'safeguard' - If the count is 0, set the field value to 0 and return.
+       */
+      if (count == 0) {
+        *current_fil_p = 0.0f;
+        continue;
+      }
+
+      /* Count is 256 at a maximum */
+      float countRatio = (float)count / 256.0f;
+
+      /* The brightness of the filter value is inversely proportional
+       * to the area of ​​the line of width 1 made by the vector.
+       *
+       * Since there are semicircular caps with radius 0.5
+       * before and after the vector, it will never be 0-divide
+       * even if the length of vector is 0.
+       */
+
+      /* Area of the neighborhood vector when width = 1 */
+      float vecMenseki = 0.25f * 3.14159265f + lengths[nearestIndex];
+
+      float opacity = 1.0f;
+      if (end_opacity < 1.0f) {
+        float ratio = ((float)nearestIndex + nearestFramePosRatio) /
+                      (float)(points.size() - 1);
+        opacity = ratio + end_opacity * (1.f - ratio);
+      }
+      /* Store field value */
+      *current_fil_p = opacity * countRatio / vecMenseki;
+      fil_val_sum += *current_fil_p;
+    }
+  }
+
+  /* Normalization */
+  current_fil_p = filter_p;
+  for (int f = 0; f < filterDim.lx * filterDim.ly; f++, current_fil_p++) {
+    *current_fil_p /= fil_val_sum;
+  }
+
+  // apply the filter
+  TDimension blurredSize =
+      partRas->getSize() +
+      TDimension(marginLeft + marginRight, marginTop + marginBottom);
+  float4 *blurred_p;
+  TRasterGR8P blurred_ras(sizeof(float4) * blurredSize.lx, blurredSize.ly);
+  blurred_ras->lock();
+  blurred_ras->clear();
+  blurred_p = (float4 *)blurred_ras->getRawData();
+  // for each texture pixels,
+  // distribute to all pixels in the filter
+  for (int ty = 0; ty < partRas->getLy(); ty++) {
+    TPixel32 *t_p = partRas->pixels(ty);
+    for (int tx = 0; tx < partRas->getLx(); tx++, t_p++) {
+      if (t_p->m == 0) continue;
+
+      float4 tex = {(float)t_p->r / (float)(TPixel32::maxChannelValue),
+                    (float)t_p->g / (float)(TPixel32::maxChannelValue),
+                    (float)t_p->b / (float)(TPixel32::maxChannelValue),
+                    (float)t_p->m / (float)(TPixel32::maxChannelValue)};
+      if (gamma > 1.f) {
+        tex.x = std::pow(tex.x / tex.w, gamma) * tex.w;
+        tex.y = std::pow(tex.y / tex.w, gamma) * tex.w;
+        tex.z = std::pow(tex.z / tex.w, gamma) * tex.w;
+      }
+
+      current_fil_p = filter_p;
+      for (int outy = ty; outy < ty + filterDim.ly; outy++) {
+        for (int outx = tx; outx < tx + filterDim.lx; outx++, current_fil_p++) {
+          if (*current_fil_p == 0.f) continue;
+          int outIndex = outy * blurredSize.lx + outx;
+          blurred_p[outIndex].x += *current_fil_p * tex.x;
+          blurred_p[outIndex].y += *current_fil_p * tex.y;
+          blurred_p[outIndex].z += *current_fil_p * tex.z;
+          blurred_p[outIndex].w += *current_fil_p * tex.w;
+        }
+      }
+    }
+  }
+
+  filter_ras->unlock();
+
+  float4 *b_p = blurred_p;
+  TRaster32P blurred(blurredSize);
+  for (int by = 0; by < blurredSize.ly; by++) {
+    TPixel32 *b_ras_p = blurred->pixels(by);
+    for (int bx = 0; bx < blurredSize.lx; bx++, b_ras_p++, b_p++) {
+      if (gamma > 1.f && (*b_p).w > 0.f) {
+        (*b_p).x = std::pow((*b_p).x / (*b_p).w, 1.f / gamma) * (*b_p).w;
+        (*b_p).y = std::pow((*b_p).y / (*b_p).w, 1.f / gamma) * (*b_p).w;
+        (*b_p).z = std::pow((*b_p).z / (*b_p).w, 1.f / gamma) * (*b_p).w;
+      }
+
+      b_ras_p->r = (TPixel32::Channel)std::round(
+          (*b_p).x * (float)(TPixel32::maxChannelValue));
+      b_ras_p->g = (TPixel32::Channel)std::round(
+          (*b_p).y * (float)(TPixel32::maxChannelValue));
+      b_ras_p->b = (TPixel32::Channel)std::round(
+          (*b_p).z * (float)(TPixel32::maxChannelValue));
+      b_ras_p->m = (TPixel32::Channel)std::round(
+          (*b_p).w * (float)(TPixel32::maxChannelValue));
+    }
+  }
+
+  blurred_ras->unlock();
+
+  // composite particle
+  TPointD pos(part->x, part->y);
+  pos = ri.m_affine * pos;
+  M   = TTranslation(pos - tile->m_pos) *
+      TTranslation(-TPointD(marginLeft, marginBottom) + partBBoxD.getP00());
+
+  if (TRaster32P myras32 = tileRas)
+    TRop::over(tileRas, blurred, M);
+  else if (TRaster64P myras64 = tileRas)
+    TRop::over(tileRas, blurred, M);
+  else
+    throw TException("ParticlesFx: unsupported Pixel Type");
+
+  return true;
 }
 
 /*-----------------------------------------------------------------*/

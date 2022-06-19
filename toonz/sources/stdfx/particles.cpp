@@ -174,10 +174,12 @@ Particle::Particle(int g_lifetime, int seed, std::map<int, TTile *> porttiles,
 
   trail =
       (int)(values.trail_val.first + (ranges.trail_range) * random.getFloat());
-  vx   = random_speed * sin(random_s_a_range);
-  vy   = -random_speed * cos(random_s_a_range);
-  oldx = 0;
-  oldy = 0;
+  vx = random_speed * sin(random_s_a_range);
+  vy = -random_speed * cos(random_s_a_range);
+  for (int i = 0; i < 3; i++) {
+    oldx[i] = 0.;
+    oldy[i] = 0.;
+  }
   mass = values.mass_val.first + (ranges.mass_range) * random.getFloat();
   if (values.scale_ctrl_val &&
       (porttiles.find(values.scale_ctrl_val) != porttiles.end())) {
@@ -670,8 +672,13 @@ void Particle::move(std::map<int, TTile *> porttiles,
   if (values.scalestep_ctrl_val)
     scalestepreference = imagereferences[values.scalestep_ctrl_val];
   lifetime--;
-  oldx = x;
-  oldy = y;
+  // slide the old positions
+  for (int i = 2; i >= 1; i--) {
+    oldx[i] = oldx[i - 1];
+    oldy[i] = oldy[i - 1];
+  }
+  oldx[0] = x;
+  oldy[0] = y;
   // time=genlifetime-lifetime-1;
   // if(time<0) time=0;
   if (values.gravity_ctrl_val &&

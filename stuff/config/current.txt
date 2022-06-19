@@ -821,6 +821,8 @@
   <item>"STD_particlesFx.source_gradation"		"Use Control Image Gradation"		</item>
   <item>"STD_particlesFx.pick_color_for_every_frame"	"Pick Control Image's Color for Every Frame"	</item>
   <item>"STD_particlesFx.perspective_distribution"	"Perspective Distribution"	</item>
+  <item>"STD_particlesFx.motion_blur"	"Motion Blur"	</item>
+  <item>"STD_particlesFx.motion_blur_gamma"	"Gamma"	</item>
 
   
  <!------------------------------ Function Editor ------------------------------------------->

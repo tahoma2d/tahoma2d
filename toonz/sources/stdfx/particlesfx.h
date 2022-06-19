@@ -56,8 +56,6 @@ public:
   TBoolParamP scale_ctrl_all_val;
   TRangeParamP rot_val;
   TIntParamP rot_ctrl_val;
-  TRangeParamP trail_val;
-  TDoubleParamP trailstep_val;
   TIntEnumParamP rotswingmode_val;
   TDoubleParamP rotspeed_val;
   TRangeParamP rotsca_val;
@@ -66,6 +64,8 @@ public:
   TRangeParamP opacity_val;
   TIntParamP opacity_ctrl_val;
   TRangeParamP trailopacity_val;
+  TRangeParamP trail_val;
+  TDoubleParamP trailstep_val;
   TRangeParamP scalestep_val;
   TIntParamP scalestep_ctrl_val;
   TDoubleParamP fadein_val;
@@ -90,6 +90,8 @@ public:
   TBoolParamP source_gradation_val;
   TBoolParamP pick_color_for_every_frame_val;
   TBoolParamP perspective_distribution_val;
+  TBoolParamP motion_blur_val;
+  TDoubleParamP motion_blur_gamma_val;
 
 public:
   enum { UNIT_SMALL_INCH, UNIT_INCH };

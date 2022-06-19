@@ -56,9 +56,6 @@
         <control>mass</control>     
         <control>rot</control>
         <control>rot_ctrl</control> 
-      <separator label="Trail"/>
-        <control>trail</control>
-        <control>trail_step</control>
       <separator label="Lifetime"/>
         <control>lifetime</control>
         <control>lifetime_ctrl</control>
@@ -119,6 +116,14 @@
         <control>fade_out</control>
         </hbox>
         <control>trail_opacity</control>
+      <separator label="Trail"/>
+        <control>trail</control>
+        <control>trail_step</control>
+        
+        <hbox>
+          <control>motion_blur</control>
+          <control>motion_blur_gamma</control>          
+        </hbox>
       <separator label="Size Increase"/>
         <control>scale_step</control>
         <control>scale_step_ctrl</control>

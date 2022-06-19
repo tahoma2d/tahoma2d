@@ -56,8 +56,6 @@ struct particles_values {
   bool scale_ctrl_all_val;
   DoublePair rot_val;
   int rot_ctrl_val;
-  DoublePair trail_val;
-  double trailstep_val;
   int rotswingmode_val;
   double rotspeed_val;
   DoublePair rotsca_val;
@@ -66,7 +64,8 @@ struct particles_values {
   DoublePair opacity_val;
   int opacity_ctrl_val;
   DoublePair trailopacity_val;
-  double mblur_val;
+  DoublePair trail_val;
+  double trailstep_val;
   DoublePair scalestep_val;
   int scalestep_ctrl_val;
   double fadein_val;
@@ -93,6 +92,8 @@ struct particles_values {
   bool reset_random_for_every_frame_val;
   bool pick_color_for_every_frame_val;
   bool perspective_distribution_val;
+  bool motion_blur_val;
+  double motion_blur_gamma_val;
 };
 
 //------------------------------------------------------------------------------
@@ -133,8 +134,8 @@ class Particle {
 public:
   double x;
   double y;
-  double oldx;
-  double oldy;
+  double oldx[3];
+  double oldy[3];
   double vx; /*sono le velox iniziali*/
   double vy; /*sono le velox iniziali*/
   double mass;

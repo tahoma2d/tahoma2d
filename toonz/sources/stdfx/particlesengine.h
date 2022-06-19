@@ -7,6 +7,9 @@
 #include "particles.h"
 #include "particlesfx.h"
 
+struct float4 {
+  float x, y, z, w;
+};
 class Particle;
 
 class Particles_Engine {
@@ -50,6 +53,11 @@ public:
                  struct particles_values &values, double opacity_range,
                  int curr_frame,
                  std::map<std::pair<int, int>, double> &partScales);
+
+  bool do_render_motion_blur(Particle *part, TTile *tile, TRasterP tileRas,
+                             TRaster32P rfinalpart, TAffine &M,
+                             const TRectD &bbox, const DoublePair &trailOpacity,
+                             const double gamma, const TRenderSettings &ri);
 
   bool port_is_used(int i, struct particles_values &values);
   bool port_is_used_for_value(int i, struct particles_values &values);

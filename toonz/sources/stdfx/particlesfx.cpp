@@ -98,7 +98,9 @@ ParticlesFx::ParticlesFx()
     , foutfadecol_val(0.0)
     , source_gradation_val(false)
     , pick_color_for_every_frame_val(false)
-    , perspective_distribution_val(false) {
+    , perspective_distribution_val(false)
+    , motion_blur_val(false)
+    , motion_blur_gamma_val(2.2) {
   addInputPort("Texture1", new TRasterFxPort, 0);
   addInputPort("Control1", new TRasterFxPort, 1);
 
@@ -264,6 +266,9 @@ ParticlesFx::ParticlesFx()
   bindParam(this, "source_gradation", source_gradation_val);
   bindParam(this, "pick_color_for_every_frame", pick_color_for_every_frame_val);
   bindParam(this, "perspective_distribution", perspective_distribution_val);
+  bindParam(this, "motion_blur", motion_blur_val);
+  bindParam(this, "motion_blur_gamma", motion_blur_gamma_val);
+  motion_blur_gamma_val->setValueRange(1.0, 5.0);
 }
 
 //------------------------------------------------------------------
