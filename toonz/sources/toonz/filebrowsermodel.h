@@ -44,6 +44,7 @@ public:
 
   void removeChildren(int row, int count);
   void addChild(DvDirModelNode *child);
+  void insertChild(int row, DvDirModelNode *child);
   virtual void visualizeContent(FileBrowser *browser) {}  // ?????????????
 
   virtual QPixmap getPixmap(bool isOpen) const;
@@ -324,11 +325,13 @@ class DvDirModelRootNode final : public DvDirModelNode {
   std::set<TFilePath> m_projectPaths;
   DvDirModelSceneFolderNode *m_sceneFolderNode;
   std::vector<DvDirModelSpecialFileFolderNode *> m_specialNodes;
+  std::vector<DvDirModelSpecialFileFolderNode *> m_projectDirNodes;
 
   void add(std::wstring name, const TFilePath &path);
 
 public:
   DvDirModelRootNode();
+  void refreshDefaultProjectPath();
   void refreshChildren() override;
   int getProjectPathsSize() { return m_projectPaths.size(); }
 

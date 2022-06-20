@@ -126,6 +126,13 @@ void DvDirModelNode::addChild(DvDirModelNode *child) {
 
 //-----------------------------------------------------------------------------
 
+void DvDirModelNode::insertChild(int row, DvDirModelNode *child) {
+  child->setRow(row);
+  m_children.insert(m_children.begin() + row, child);
+}
+
+//-----------------------------------------------------------------------------
+
 int DvDirModelNode::getChildCount() {
   if (!m_childrenValid) refreshChildren();
   return (int)m_children.size();
@@ -1108,6 +1115,45 @@ void DvDirModelRootNode::add(std::wstring name, const TFilePath &path) {
 
 //-----------------------------------------------------------------------------
 
+void DvDirModelRootNode::refreshDefaultProjectPath() {
+// Windows has 1 more entry (Network) than macOS/Linux
+#ifdef WIN32
+  int row = 8;
+#else
+  int row = 7;
+#endif
+
+  if (m_projectDirNodes.size() > 0) {
+    removeChildren(row, m_projectDirNodes.size());
+    m_projectDirNodes.clear();
+  }
+
+  QString defaultProjectPaths =
+      Preferences::instance()->getDefaultProjectPath();
+  if (!defaultProjectPaths.isEmpty()) {
+    QStringList projectRoots =
+        defaultProjectPaths.split(";", QString::SkipEmptyParts);
+    int folderCount = 0;
+    for (int i = 0; i < projectRoots.size(); i++) {
+      TFilePath projectRootDir(projectRoots.at(i));
+      if (!TFileStatus(projectRootDir).isDirectory()) continue;
+      std::wstring folderName = L"Projects";
+      if (projectRoots.size() > 1)
+        folderName +=
+            L" (" + projectRootDir.withoutParentDir().getWideString() + L")";
+      DvDirModelSpecialFileFolderNode *projectFolderNode =
+          new DvDirModelSpecialFileFolderNode(this, folderName, projectRootDir);
+      projectFolderNode->setPixmap(recolorPixmap(
+          svgToPixmap(getIconThemePath("actions/16/projects_folder.svg"))));
+      m_projectDirNodes.push_back(projectFolderNode);
+      insertChild(row + folderCount, projectFolderNode);
+      folderCount++;
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void DvDirModelRootNode::refreshChildren() {
   m_childrenValid = true;
   if (m_children.empty()) {
@@ -1155,6 +1201,28 @@ void DvDirModelRootNode::refreshChildren() {
     addChild(child);
 
     addChild(new DvDirModelHistoryNode(this));
+
+    QString defaultProjectPaths =
+        Preferences::instance()->getDefaultProjectPath();
+    if (!defaultProjectPaths.isEmpty()) {
+      QStringList projectRoots =
+          defaultProjectPaths.split(";", QString::SkipEmptyParts);
+      for (int i = 0; i < projectRoots.size(); i++) {
+        TFilePath projectRootDir(projectRoots.at(i));
+        if (!TFileStatus(projectRootDir).isDirectory()) continue;
+        std::wstring folderName = L"Projects";
+        if (projectRoots.size() > 1)
+          folderName +=
+              L" (" + projectRootDir.withoutParentDir().getWideString() + L")";
+        DvDirModelSpecialFileFolderNode *projectFolderNode =
+            new DvDirModelSpecialFileFolderNode(this, folderName,
+                                                projectRootDir);
+        projectFolderNode->setPixmap(recolorPixmap(
+            svgToPixmap(getIconThemePath("actions/16/projects_folder.svg"))));
+        m_projectDirNodes.push_back(projectFolderNode);
+        addChild(projectFolderNode);
+      }
+    }
 
     TProjectManager *pm          = TProjectManager::instance();
     TFilePath sandboxProjectPath = pm->getSandboxProjectFolder();
@@ -1286,6 +1354,12 @@ DvDirModelNode *DvDirModelRootNode::getNodeByPath(const TFilePath &path) {
   // check for the special folders (My Documents / Desktop / Library)
   for (DvDirModelSpecialFileFolderNode *specialNode : m_specialNodes) {
     DvDirModelNode *node = specialNode->getNodeByPath(path);
+    if (node) return node;
+  }
+
+  // check for the project root folders
+  for (DvDirModelSpecialFileFolderNode *projectDirNode : m_projectDirNodes) {
+    DvDirModelNode *node = projectDirNode->getNodeByPath(path);
     if (node) return node;
   }
 
@@ -1593,12 +1667,15 @@ void DvDirModel::onSceneSwitched() {
 //-----------------------------------------------------------------------------
 
 void DvDirModel::onPreferenceChanged(const QString &prefName) {
-  if (prefName != "PathAliasPriority") return;
-
-  Preferences::PathAliasPriority priority =
-      Preferences::instance()->getPathAliasPriority();
   DvDirModelRootNode *rootNode = dynamic_cast<DvDirModelRootNode *>(m_root);
-  if (rootNode)
+  if (!rootNode) return;
+  if (prefName == "PathAliasPriority") {
+    Preferences::PathAliasPriority priority =
+        Preferences::instance()->getPathAliasPriority();
     rootNode->updateSceneFolderNodeVisibility(priority ==
                                               Preferences::ProjectFolderOnly);
+  } else if (prefName == "DefaultProjectPath") {
+    rootNode->refreshDefaultProjectPath();
+    emit layoutChanged();
+  }
 }
