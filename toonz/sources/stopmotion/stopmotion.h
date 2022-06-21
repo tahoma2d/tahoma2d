@@ -70,7 +70,6 @@ private:
   int m_captureNumberOfFrames = 1;
   QString m_levelName         = "";
   QString m_fileType          = "jpg";
-  QString m_filePath          = "+stopmotion";
   QString m_frameInfoText     = "";
   QString m_infoColorName     = "";
   QString m_frameInfoToolTip  = "";
@@ -110,6 +109,7 @@ public:
   bool m_isTimeLapse       = false;
   int m_reviewTimeDSec     = 20;
   bool m_isTestShot        = false;
+  QString m_filePath       = "+stopmotion";
   QString m_tempFile, m_tempRaw;
   TXshSimpleLevel* m_sl;
 
