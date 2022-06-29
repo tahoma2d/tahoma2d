@@ -60,7 +60,7 @@ static float* dt(float* f, int n, float a = 1.0f) {
   delete[] z;
   return d;
 }
-}
+}  // namespace
 
 //------------------------------------
 
@@ -204,9 +204,10 @@ void Iwa_SoapBubbleFx::doCompute(TTile& tile, double frame,
     /* obtain shape image */
     TTile shape_tile;
     {
-      TRaster32P tmp(1, 1);
-      m_shape->allocateAndCompute(shape_tile, bBox.getP00(), dim, tmp, frame,
-                                  settings);
+      TRenderSettings settings_aux(settings);
+      settings_aux.m_bpp = 32;
+      m_shape->allocateAndCompute(shape_tile, bBox.getP00(), dim, nullptr,
+                                  frame, settings_aux);
     }
 
     if (checkCancelAndReleaseRaster(allocatedRasList, tile, settings)) return;
@@ -530,7 +531,7 @@ int Iwa_SoapBubbleFx::do_binarize(TRaster32P srcRas, USHORT* dst_p, float thres,
   }
 
   QList<int> lut;
-  for (int i      = 0; i < 65536; i++) lut.append(i);
+  for (int i = 0; i < 65536; i++) lut.append(i);
   tmp_p           = dst_p;
   int regionCount = 0;
   for (int j = 0; j < dim.ly; j++) {
@@ -569,7 +570,7 @@ int Iwa_SoapBubbleFx::do_binarize(TRaster32P srcRas, USHORT* dst_p, float thres,
     } else
       convIndex.append(i);
   }
-  for (int i             = 0; i < convIndex.count(); i++)
+  for (int i = 0; i < convIndex.count(); i++)
     lut[convIndex.at(i)] = lut.at(lut.at(convIndex.at(i)));
 
   // apply lut
@@ -577,7 +578,7 @@ int Iwa_SoapBubbleFx::do_binarize(TRaster32P srcRas, USHORT* dst_p, float thres,
   tmp_p              = dst_p;
   for (int j = 0; j < dim.ly; j++) {
     for (int i = 0; i < dim.lx; i++, tmp_p++) {
-      (*tmp_p)                                      = lut[*tmp_p];
+      (*tmp_p) = lut[*tmp_p];
       if (maxRegionIndex < (*tmp_p)) maxRegionIndex = (*tmp_p);
     }
   }
@@ -789,14 +790,14 @@ void Iwa_SoapBubbleFx::calc_norm_angle(float* norm_angle_p, float* depth_map_p,
   float* dst_p = norm_angle_p;
 
   for (int j = 0; j < dim.ly; j++) {
-    int sample_y[2]                  = {j - sampleDistance, j + sampleDistance};
+    int sample_y[2] = {j - sampleDistance, j + sampleDistance};
     if (sample_y[0] < 0) sample_y[0] = 0;
     if (sample_y[1] >= dim.ly) sample_y[1] = dim.ly - 1;
 
     for (int i = 0; i < dim.lx; i++, norm_angle_p++) {
       int sample_x[2] = {i - sampleDistance, i + sampleDistance};
       if (sample_x[1] >= dim.lx) sample_x[1] = dim.lx - 1;
-      if (sample_x[0] < 0) sample_x[0]       = 0;
+      if (sample_x[0] < 0) sample_x[0] = 0;
 
       float gradient[2];
       gradient[0] =
