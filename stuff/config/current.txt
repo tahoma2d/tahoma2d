@@ -1205,6 +1205,7 @@
   <item>"STD_iwa_GradientWarpFx.h_maxlen"		"H Length"</item>
   <item>"STD_iwa_GradientWarpFx.v_maxlen"		"V Length"</item>
   <item>"STD_iwa_GradientWarpFx.scale"			"Scale"</item>
+  <item>"STD_iwa_GradientWarpFx.sampling_size"			"Sampling Size"</item>
 
   <item>"STD_iwa_MotionBlurCompFx"	"Motion Blur Iwa"	</item>
   <item>"STD_iwa_MotionBlurCompFx.hardness"	"Hardness"	</item>

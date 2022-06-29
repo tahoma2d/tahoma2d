@@ -80,19 +80,33 @@ void Iwa_GradientWarpFx::setOutputRaster(float4 *srcMem, const RASTER dstRas,
 //------------------------------------
 
 Iwa_GradientWarpFx::Iwa_GradientWarpFx()
-    : m_h_maxlen(0.0), m_v_maxlen(0.0), m_scale(1.0) {
+    : m_h_maxlen(0.0), m_v_maxlen(0.0), m_scale(1.0), m_sampling_size(1.0) {
   /*- 共通パラメータのバインド -*/
   addInputPort("Source", m_source);
   addInputPort("Warper", m_warper);
   bindParam(this, "h_maxlen", m_h_maxlen);
   bindParam(this, "v_maxlen", m_v_maxlen);
   bindParam(this, "scale", m_scale);
+  bindParam(this, "sampling_size", m_sampling_size);
 
   m_h_maxlen->setMeasureName("fxLength");
   m_v_maxlen->setMeasureName("fxLength");
   m_h_maxlen->setValueRange(-100.0, 100.0);
   m_v_maxlen->setValueRange(-100.0, 100.0);
   m_scale->setValueRange(1.0, 100.0);
+  m_sampling_size->setMeasureName("fxLength");
+  m_sampling_size->setValueRange(0.1, 20.0);
+
+  // Version 1: sampling distance had been always 1 pixel.
+  // Version 2: sampling distance can be specified with the parameter.
+  // this must be called after binding the parameters (see onFxVersionSet())
+  setFxVersion(2);
+}
+
+//--------------------------------------------
+
+void Iwa_GradientWarpFx::onFxVersionSet() {
+  getParams()->getParamVar("sampling_size")->setIsHidden(getFxVersion() == 1);
 }
 
 //------------------------------------
@@ -119,14 +133,20 @@ void Iwa_GradientWarpFx::doCompute(TTile &tile, double frame,
 
   double scale = m_scale->getValue(frame);
 
+  double sampling_size = m_sampling_size->getValue(frame);
+  double grad_factor   = 1. / sampling_size;
+  sampling_size *= k;
+
   /*- ワープ距離が０なら、ソース画像をそのまま返す -*/
   if (hLength == 0.0 && vLength == 0.0) {
     m_source->compute(tile, frame, settings);
     return;
   }
 
-  int margin = static_cast<int>(
-      ceil((std::abs(hLength) < std::abs(vLength)) ? std::abs(vLength) : std::abs(hLength)));
+  int margin = static_cast<int>(ceil((std::abs(hLength) < std::abs(vLength))
+                                         ? std::abs(vLength)
+                                         : std::abs(hLength)));
+  margin     = std::max(margin, static_cast<int>(std::ceil(sampling_size)) + 1);
 
   /*- 素材計算範囲を計算 -*/
   /*- 出力範囲 -*/
@@ -190,7 +210,8 @@ void Iwa_GradientWarpFx::doCompute(TTile &tile, double frame,
   result_host_ras->lock();
   result_host = (float4 *)result_host_ras->getRawData();
   doCompute_CPU(tile, frame, settings, hLength, vLength, margin, enlargedDim,
-                source_host, warper_host, result_host);
+                source_host, warper_host, result_host, sampling_size,
+                grad_factor);
   /*- ポインタ入れ替え -*/
   source_host = result_host;
 
@@ -218,25 +239,52 @@ void Iwa_GradientWarpFx::doCompute(TTile &tile, double frame,
  Fx計算
 ------------------------------------*/
 
-void Iwa_GradientWarpFx::doCompute_CPU(TTile &tile, const double frame,
-                                       const TRenderSettings &settings,
-                                       double hLength, double vLength,
-                                       int margin, TDimensionI &enlargedDim,
-                                       float4 *source_host, float *warper_host,
-                                       float4 *result_host) {
+void Iwa_GradientWarpFx::doCompute_CPU(
+    TTile &tile, const double frame, const TRenderSettings &settings,
+    double hLength, double vLength, int margin, TDimensionI &enlargedDim,
+    float4 *source_host, float *warper_host, float4 *result_host,
+    double sampling_size, double grad_factor) {
+  auto lerp = [](float val0, float val1, double ratio) -> float {
+    return val0 * (1.f - ratio) + val1 * ratio;
+  };
+
   float4 *res_p = result_host + margin * enlargedDim.lx + margin;
 
-  float *warp_up    = warper_host + (margin + 1) * enlargedDim.lx + margin;
-  float *warp_down  = warper_host + (margin - 1) * enlargedDim.lx + margin;
-  float *warp_right = warper_host + margin * enlargedDim.lx + 1 + margin;
-  float *warp_left  = warper_host + margin * enlargedDim.lx - 1 + margin;
+  if (getFxVersion() == 1) {
+    sampling_size = 1.0;
+    grad_factor   = 1.0;
+  }
+  int size_i   = static_cast<int>(std::floor(sampling_size));
+  double ratio = sampling_size - (double)size_i;
+
+  float *warp_up_0 = warper_host + (margin + size_i) * enlargedDim.lx + margin;
+  float *warp_up_1 =
+      warper_host + (margin + size_i + 1) * enlargedDim.lx + margin;
+
+  float *warp_down_0 =
+      warper_host + (margin - size_i) * enlargedDim.lx + margin;
+  float *warp_down_1 =
+      warper_host + (margin - size_i - 1) * enlargedDim.lx + margin;
+
+  float *warp_right_0 = warper_host + margin * enlargedDim.lx + size_i + margin;
+  float *warp_right_1 =
+      warper_host + margin * enlargedDim.lx + size_i + 1 + margin;
+
+  float *warp_left_0 = warper_host + margin * enlargedDim.lx - size_i + margin;
+  float *warp_left_1 =
+      warper_host + margin * enlargedDim.lx - size_i - 1 + margin;
 
   for (int j = margin; j < enlargedDim.ly - margin; j++) {
-    for (int i = margin; i < enlargedDim.lx - margin;
-         i++, res_p++, warp_up++, warp_down++, warp_right++, warp_left++) {
+    for (int i = margin; i < enlargedDim.lx - margin; i++, res_p++, warp_up_0++,
+             warp_up_1++, warp_down_0++, warp_down_1++, warp_right_0++,
+             warp_right_1++, warp_left_0++, warp_left_1++) {
       /*- 勾配を得る -*/
-      float2 grad = {static_cast<float>((*warp_right) - (*warp_left)),
-                     static_cast<float>((*warp_up) - (*warp_down))};
+      float2 grad = {
+          lerp(*warp_right_0 - *warp_left_0, *warp_right_1 - *warp_left_1,
+               ratio),
+          lerp(*warp_up_0 - *warp_down_0, *warp_up_1 - *warp_down_1, ratio)};
+      grad.x *= grad_factor;
+      grad.y *= grad_factor;
       /*- 参照点 -*/
       float2 samplePos = {static_cast<float>(i + grad.x * hLength),
                           static_cast<float>(j + grad.y * vLength)};
@@ -260,10 +308,14 @@ void Iwa_GradientWarpFx::doCompute_CPU(TTile &tile, const double frame,
     }
 
     res_p += 2 * margin;
-    warp_up += 2 * margin;
-    warp_down += 2 * margin;
-    warp_right += 2 * margin;
-    warp_left += 2 * margin;
+    warp_up_0 += 2 * margin;
+    warp_up_1 += 2 * margin;
+    warp_down_0 += 2 * margin;
+    warp_down_1 += 2 * margin;
+    warp_right_0 += 2 * margin;
+    warp_right_1 += 2 * margin;
+    warp_left_0 += 2 * margin;
+    warp_left_1 += 2 * margin;
   }
 }
 

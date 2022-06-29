@@ -33,6 +33,7 @@ protected:
   TDoubleParamP
       m_scale; /*- ワープ量を増やすスカラー値。この値はマージン値には影響しない
                   -*/
+  TDoubleParamP m_sampling_size;
 
   void get_render_real_hv(const double frame, const TAffine affine,
                           double &h_maxlen, double &v_maxlen);
@@ -57,7 +58,8 @@ protected:
                      const TRenderSettings &settings, double hLength,
                      double vLength, int margin, TDimensionI &enlargedDim,
                      float4 *source_host, float *warper_host,
-                     float4 *result_host);
+                     float4 *result_host, double sampling_size,
+                     double grad_factor);
 
   float4 getSourceVal_CPU(float4 *source_host, TDimensionI &enlargedDim,
                           int pos_x, int pos_y);
@@ -74,6 +76,8 @@ public:
                  const TRenderSettings &info) override;
 
   bool canHandle(const TRenderSettings &info, double frame) override;
+
+  void onFxVersionSet() final override;
 };
 
 #endif

@@ -3,5 +3,6 @@
 	<control>h_maxlen</control>
 	<control>v_maxlen</control>
 	<control>scale</control>
+	<control>sampling_size</control>
   </page>
 </fxlayout>
