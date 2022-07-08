@@ -132,6 +132,10 @@ void RowArea::drawRows(QPainter &p, int r0, int r1) {
   bool simpleView = m_viewer->getFrameZoomFactor() <=
                     o->dimension(PredefinedDimension::SCALE_THRESHOLD);
 
+  int currentRow = m_viewer->getCurrentRow();
+  bool hasCurrentFrameTextColor =
+      m_viewer->getTextColor() != m_viewer->getCurrentFrameTextColor();
+
   for (int r = r0; r <= r1; r++) {
     int frameAxis = m_viewer->rowToFrameAxis(r);
 
@@ -141,12 +145,15 @@ void RowArea::drawRows(QPainter &p, int r0, int r1) {
     bool isAfterSecMarkers =
         secDistance > 0 && ((r - offset) % secDistance) == 0 && r != 0;
 
-    QColor color = (isAfterSecMarkers || isAfterMarkers)
-                       ? m_viewer->getMarkerLineColor()
-                       : m_viewer->getLightLineColor();
+    QColor color = (isAfterSecMarkers)
+                       ? m_viewer->getSecMarkerLineColor()
+                       : (isAfterMarkers) ? m_viewer->getMarkerLineColor()
+                                          : m_viewer->getLightLineColor();
+    double lineWidth = (isAfterSecMarkers)
+                           ? 3.
+                           : (secDistance > 0 && isAfterMarkers) ? 2. : 1.;
 
-    p.setPen(
-        QPen(color, (isAfterSecMarkers) ? 3. : 1., Qt::SolidLine, Qt::FlatCap));
+    p.setPen(QPen(color, lineWidth, Qt::SolidLine, Qt::FlatCap));
     // p.setPen(color);
     QLine horizontalLine = o->horizontalLine(frameAxis, layerSide);
     if (!o->isVerticalTimeline()) {
@@ -169,7 +176,9 @@ void RowArea::drawRows(QPainter &p, int r0, int r1) {
   int z = 0;
   for (int r = r0; r <= r1; r++) {
     // draw frame text
-    if (playR0 <= r && r <= playR1) {
+    if (hasCurrentFrameTextColor && r == currentRow)
+      p.setPen(m_viewer->getCurrentFrameTextColor());
+    else if (playR0 <= r && r <= playR1) {
       p.setPen(((r - m_r0) % step == 0) ? m_viewer->getPreviewFrameTextColor()
                                         : m_viewer->getTextColor());
     }
@@ -759,8 +768,8 @@ void RowArea::drawShiftTraceMarker(QPainter &p) {
 
   QPoint frameAdj = m_viewer->getFrameZoomAdjustment();
   int frameAdj_i  = (m_viewer->orientation()->isVerticalTimeline())
-                        ? frameAdj.y()
-                        : frameAdj.x();
+                       ? frameAdj.y()
+                       : frameAdj.x();
 
   // get onion colors
   TPixel frontPixel, backPixel;

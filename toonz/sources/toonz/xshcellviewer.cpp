@@ -1266,10 +1266,17 @@ void CellArea::drawFrameSeparator(QPainter &p, int row, int col,
   bool isAfterSecMarkers =
       secDistance > 0 && ((row - offset) % secDistance) == 0 && row != 0;
 
+  TCellSelection *cellSelection = m_viewer->getCellSelection();
+  bool isSelected               = cellSelection->isCellSelected(row, col);
+
   QColor color = (isAfterMarkers || isAfterSecMarkers)
-                     ? m_viewer->getMarkerLineColor()
+                     ? (isSelected) ? m_viewer->getSelectedMarkerLineColor()
+                                    : (isAfterSecMarkers)
+                                          ? m_viewer->getSecMarkerLineColor()
+                                          : m_viewer->getMarkerLineColor()
                      : m_viewer->getLightLineColor();
-  double lineWidth = (isAfterSecMarkers) ? 3. : 1.;
+  double lineWidth =
+      (isAfterSecMarkers) ? 3. : (secDistance > 0 && isAfterMarkers) ? 2. : 1.;
 
   int frameAxis = m_viewer->rowToFrameAxis(row);
   int handleSize =
@@ -2232,10 +2239,12 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
       cell.getFrameId().getNumber() - 1 >= cl->getFrameCount() &&
       !Preferences::instance()->isImplicitHoldEnabled())
     isRed = true;
-  QColor penColor =
-      isRed ? QColor(m_viewer->getErrorTextColor()) : m_viewer->getTextColor();
+  QColor penColor = isRed ? QColor(m_viewer->getErrorTextColor())
+                          : isSelected ? m_viewer->getSelectedTextColor()
+                                       : m_viewer->getTextColor();
   p.setPen(penColor);
 
+/*
   QString fontName = Preferences::instance()->getInterfaceFont();
   if (fontName == "") {
 #ifdef _WIN32
@@ -2245,6 +2254,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
 #endif
   }
   static QFont font(fontName, -1, QFont::Normal);
+  */
+  QFont font = p.font();
   font.setPixelSize(XSHEET_FONT_PX_SIZE);
   p.setFont(font);
 

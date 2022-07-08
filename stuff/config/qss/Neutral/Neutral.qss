@@ -2272,9 +2272,13 @@ Ruler {
 XsheetViewer {
   qproperty-TextColor: #000;
   qproperty-ErrorTextColor: #c01111;
+  qproperty-SelectedTextColor: #000;
+  qproperty-CurrentFrameTextColor: #000;
   qproperty-BGColor: #767676;
   qproperty-LightLineColor: rgba(0, 0, 0, 0.15);
   qproperty-MarkerLineColor: rgba(255, 255, 255, 0.2);
+  qproperty-SecMarkerLineColor: rgba(255, 255, 255, 0.35);
+  qproperty-SelectedMarkerLineColor: rgba(255, 255, 255, 0.2);
   qproperty-VerticalLineColor: rgba(0, 0, 0, 0.3);
   qproperty-VerticalLineHeadColor: #4d4d4d;
   qproperty-PreviewFrameTextColor: #17239c;
@@ -2421,6 +2425,7 @@ SpreadsheetViewer {
   qproperty-CurrentRowBgColor: rgba(251, 140, 205, 0.7);
   qproperty-LightLineColor: rgba(0, 0, 0, 0.15);
   qproperty-MarkerLineColor: rgba(255, 255, 255, 0.2);
+  qproperty-SecMarkerLineColor: rgba(255, 255, 255, 0.35);
   qproperty-BGColor: #767676;
   qproperty-VerticalLineColor: rgba(0, 0, 0, 0.3);
   qproperty-KeyFrameColor: #c4833e;
@@ -2436,6 +2441,7 @@ SpreadsheetViewer {
   qproperty-SelectedEmptyColor: rgba(165, 146, 157, 0.5);
   qproperty-SelectedSceneRangeEmptyColor: rgba(165, 146, 157, 0.5);
   qproperty-TextColor: #000;
+  qproperty-CurrentRowTextColor: #000;
   qproperty-ColumnHeaderBorderColor: #343434;
 }
 #ExpressionField {
