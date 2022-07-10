@@ -16,6 +16,7 @@
 
 // TnzCore includes
 #include "tconvert.h"
+#include "tlevel_io.h"
 
 // Qt includes
 #include <QTreeWidget>
@@ -31,15 +32,6 @@
 #include <QComboBox>
 
 using namespace DVGui;
-
-//=============================================================================
-
-namespace {
-bool isMovieType(std::string type) {
-  return (type == "avi" || type == "mp4" ||
-          type == "webm" || type == "mov");
-}
-};  // namespace
 
 //=============================================================================
 

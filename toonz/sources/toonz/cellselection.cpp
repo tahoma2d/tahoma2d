@@ -494,10 +494,7 @@ bool pasteStrokesInCellWithoutUndo(
   } else {
     vi = cell.getImage(true);
     sl = cell.getSimpleLevel();
-    if (sl->getType() == OVL_XSHLEVEL &&
-        (sl->getPath().getType() == "psd" || sl->getPath().getType() == "gif" ||
-         sl->getPath().getType() == "mp4" || sl->getPath().getType() == "webm" ||
-         sl->getPath().getType() == "mov"))
+    if (sl->getType() == OVL_XSHLEVEL && sl->getPath().isUneditable())
       return false;
     fid = cell.getFrameId();
     if (!vi) {
@@ -1765,11 +1762,7 @@ static void pasteRasterImageInCell(int row, int col,
     } else {
       TXshSimpleLevel *sl = cell.getSimpleLevel();
       // don't do anything to ffmpeg level types
-      if (sl->getType() == OVL_XSHLEVEL && (sl->getPath().getType() == "psd" ||
-                                            sl->getPath().getType() == "gif" ||
-                                            sl->getPath().getType() == "mp4" ||
-                                            sl->getPath().getType() == "webm" ||
-                                            sl->getPath().getType() == "mov"))
+    if (sl->getType() == OVL_XSHLEVEL && sl->getPath().isUneditable())
         return;
       oldPalette = sl->getPalette();
     }
