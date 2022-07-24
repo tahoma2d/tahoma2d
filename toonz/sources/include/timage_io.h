@@ -227,6 +227,7 @@ private:
   TImageWriter &operator=(const TImageWriter &src);
 
 public:
+  void setFilePath(const TFilePath &path) { m_path = path; }
   TFilePath getFilePath() const { return m_path; };
 
   // don't get ownership

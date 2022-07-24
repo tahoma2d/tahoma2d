@@ -1794,6 +1794,9 @@ void MainWindow::defineActions() {
                         "Export Exchange Digital Time Sheet (XDTS)"),
       "");
   createMenuFileAction(
+      MI_ExportOCA,
+      QT_TRANSLATE_NOOP("MainWindow", "Export Open Cel Animation (OCA)"), "");
+  createMenuFileAction(
       MI_ExportTvpJson,
       QT_TRANSLATE_NOOP("MainWindow", "Export TVPaint JSON File"), "");
   createMenuFileAction("MI_RunScript", QT_TR_NOOP("Run Script..."), "",
