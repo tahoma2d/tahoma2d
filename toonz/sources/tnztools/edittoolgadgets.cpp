@@ -82,7 +82,8 @@ void drawSpinField(const TRectD geom, const TPointD center,
   int minId = (int)std::ceil(minDist / lineInterval);
   int maxId = (int)std::floor(maxDist / lineInterval);
 
-  glColor3d(0, 0, 1);
+  glColor3dv(FxGadget::m_selectedColor);
+
   glEnableClientState(GL_VERTEX_ARRAY);
   glLineStipple(1, 0x00FF);
   glEnable(GL_LINE_STIPPLE);
@@ -97,6 +98,11 @@ void drawSpinField(const TRectD geom, const TPointD center,
 
   for (int id = minId; id <= maxId; id++) {
     if (id == 0) continue;
+    if (id % 2 == 0)
+      glColor3dv(FxGadget::m_selectedColor);
+    else
+      glColor3d(0, 0, 1);
+
     glPushMatrix();
     glScaled((double)id, (double)id, 1.);
     // draw using vertex array
