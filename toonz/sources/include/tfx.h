@@ -505,6 +505,7 @@ public:
 
   void setFxVersion(int);
   int getFxVersion() const;
+  virtual void onFxVersionSet() {}
 
 public:
   // Id-related functions

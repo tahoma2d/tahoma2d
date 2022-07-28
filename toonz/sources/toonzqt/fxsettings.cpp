@@ -194,7 +194,10 @@ void ParamsPage::setPageField(TIStream &is, const TFxP &fx, bool isVertical) {
       is.matchEndTag();
       /*-- Layout設定名とFxParameterの名前が一致するものを取得 --*/
       TParamP param = fx->getParams()->getParam(name);
-      if (param) {
+      bool isHidden =
+          (param) ? fx->getParams()->getParamVar(name)->isHidden() : true;
+
+      if (param && !isHidden) {
         std::string paramName = fx->getFxType() + "." + name;
         QString str =
             QString::fromStdWString(TStringTable::translate(paramName));
@@ -314,6 +317,17 @@ void ParamsPage::setPageField(TIStream &is, const TFxP &fx, bool isVertical) {
               continue;
             modeChanger = field;
             break;
+          }
+          // modeChanger may be in another vbox in the page
+          if (!modeChanger) {
+            QList<ModeChangerParamField *> allModeChangers =
+                findChildren<ModeChangerParamField *>();
+            for (auto field : allModeChangers) {
+              if (field->getParamName().toStdString() == modeSensitiveStr) {
+                modeChanger = field;
+                break;
+              }
+            }
           }
           assert(modeChanger);
           tmpWidget = new ModeSensitiveBox(this, modeChanger, modes);
@@ -568,8 +582,7 @@ void ParamsPage::setFx(const TFxP &currentFx, const TFxP &actualFx, int frame) {
   for (int i = 0; i < (int)m_fields.size(); i++) {
     ParamField *field = m_fields[i];
     QString fieldName = field->getParamName();
-
-    TFxP fx = getCurrentFx(currentFx, actualFx->getFxId());
+    TFxP fx           = getCurrentFx(currentFx, actualFx->getFxId());
     assert(fx.getPointer());
     TParamP currentParam =
         currentFx->getParams()->getParam(fieldName.toStdString());
@@ -1096,6 +1109,8 @@ void ParamViewer::setFx(const TFxP &currentFx, const TFxP &actualFx, int frame,
   if (name == "macroFx") {
     TMacroFx *macroFx = dynamic_cast<TMacroFx *>(currentFx.getPointer());
     if (macroFx) name = macroFx->getMacroFxType();
+  } else {
+    name += std::to_string(actualFx->getFxVersion());
   }
 
   int currentIndex = -1;

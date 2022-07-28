@@ -1321,7 +1321,7 @@ ModeSensitiveBox::ModeSensitiveBox(QWidget *parent, QCheckBox *checkBox)
 //-----------------------------------------------------------------------------
 
 void ModeSensitiveBox::onModeChanged(int modeValue) {
-  bool wasVisible = isVisible();
+  bool wasVisible = isVisibleTo(parentWidget());
   m_currentMode   = modeValue;
   if (wasVisible == m_modes.contains(modeValue)) return;
   setVisible(!wasVisible);
