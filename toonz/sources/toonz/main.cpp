@@ -1,6 +1,7 @@
 // Soli Deo gloria
 
 // Tnz6 includes
+#include "crashhandler.h"
 #include "mainwindow.h"
 #include "flipbook.h"
 #include "tapp.h"
@@ -251,17 +252,22 @@ static void script_output(int type, const QString &value) {
 
 int main(int argc, char *argv[]) {
 #ifdef Q_OS_WIN
-  //  Enable standard input/output on Windows Platform for debug
-  BOOL consoleAttached = ::AttachConsole(ATTACH_PARENT_PROCESS);
-  if (consoleAttached) {
+  // Enable standard input/output on Windows Platform for debug
+  if (::AttachConsole(ATTACH_PARENT_PROCESS)) {
     freopen("CON", "r", stdin);
     freopen("CON", "w", stdout);
     freopen("CON", "w", stderr);
+    atexit([]() {
+      ::FreeConsole();
+    });
   }
 #endif
 
   // Build icon map
   ThemeManager::getInstance().buildIconPathsMap(":/icons");
+
+  // Install signal handlers to catch crashes
+  CrashHandler::install();
 
   // parsing arguments and qualifiers
   TFilePath loadFilePath;
@@ -873,12 +879,6 @@ int main(int argc, char *argv[]) {
 
   TUndoManager::manager()->reset();
   PreviewFxManager::instance()->reset();
-
-#ifdef _WIN32
-  if (consoleAttached) {
-    ::FreeConsole();
-  }
-#endif
 
   return ret;
 }

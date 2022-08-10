@@ -125,6 +125,20 @@ TFilePath ToonzFolder::getCacheRootFolder() {
   return (state == OK) ? TFilePath(cacheDir) : TFilePath();
 }
 
+TFilePath ToonzFolder::getCrashReportFolder() {
+  static enum STATE { FIRSTTIME, OK, NG } state = FIRSTTIME;
+  QString crashDir =
+      QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) +
+      "/crash";
+  if (state == FIRSTTIME) {
+    if (QDir(crashDir).mkpath("."))
+      state = OK;
+    else
+      state = NG;
+  }
+  return (state == OK) ? TFilePath(crashDir) : TFilePath();
+}
+
 TFilePath ToonzFolder::getProfileFolder() {
   TFilePath fp = getSystemVarPathValue(getSystemVarPrefix() + "PROFILES");
   if (fp == TFilePath())
