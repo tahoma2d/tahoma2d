@@ -78,6 +78,14 @@ void RowArea::setDragTool(DragTool *dragTool) {
 }
 
 //-----------------------------------------------------------------------------
+// returns true if the frame area can have extra space
+bool RowArea::checkExpandFrameArea() {
+  return m_viewer->orientation()->isVerticalTimeline() &&
+         !Preferences::instance()->isOnionSkinEnabled() &&
+         !CommandManager::instance()->getAction(MI_ShiftTrace)->isChecked();
+}
+
+//-----------------------------------------------------------------------------
 
 void RowArea::drawRows(QPainter &p, int r0, int r1) {
   const Orientation *o = m_viewer->orientation();
@@ -148,6 +156,14 @@ void RowArea::drawRows(QPainter &p, int r0, int r1) {
       if (!isAfterMarkers) p.setPen(m_viewer->getFrameRangeMarkerLineColor());
     }
     p.drawLine(horizontalLine);
+  }
+
+  int extraSpaces = 0;
+  if (checkExpandFrameArea()) {
+    extraSpaces =
+        std::max(0, o->rect(PredefinedRect::FRAME_LABEL).width() /
+                            QFontMetrics(p.font()).boundingRect("0").width() -
+                        6);
   }
 
   int z = 0;
@@ -226,8 +242,9 @@ void RowArea::drawRows(QPainter &p, int r0, int r1) {
       int koma = (r + 1) % (frameRate * 6);
       if ((r + 1) % frameRate == 1) {
         int page = (r + 1) / (frameRate * 6) + 1;
-        str      = QString("p%1 %2")
+        str      = QString("p%1%2%3")
                   .arg(QString::number(page))
+                  .arg(QString().leftJustified(1 + extraSpaces, ' '))
                   .arg(QString::number(koma).rightJustified(3, '0'));
         z = 0;
       } else {
@@ -255,8 +272,9 @@ void RowArea::drawRows(QPainter &p, int r0, int r1) {
       int koma = (r + 1) % (frameRate * 3);
       if ((r + 1) % frameRate == 1) {
         int page = (r + 1) / (frameRate * 3) + 1;
-        str      = QString("p%1 %2")
+        str      = QString("p%1%2%3")
                   .arg(QString::number(page))
+                  .arg(QString().leftJustified(2 + extraSpaces, ' '))
                   .arg(QString::number(koma).rightJustified(2, '0'));
         z = 0;
       } else {
@@ -285,6 +303,12 @@ void RowArea::drawPlayRangeBackground(QPainter &p, int r0, int r1) {
   int playR0, playR1, step;
   XsheetGUI::getPlayRange(playR0, playR1, step);
 
+  int hExpansion = 0;
+  if (checkExpandFrameArea()) {
+    hExpansion = m_viewer->orientation()->dimension(
+        PredefinedDimension::FRAME_AREA_EXPANSION);
+  }
+
   for (int r = r0; r <= r1; r++) {
     if (!(playR0 <= r && r <= playR1) && ((r - m_r0) % step == 0)) continue;
 
@@ -294,9 +318,10 @@ void RowArea::drawPlayRangeBackground(QPainter &p, int r0, int r1) {
     else
       basePoint.setX(0);
 
-    QRect previewBoxRect = o->rect(PredefinedRect::PREVIEW_FRAME_AREA)
-                               .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
-                               .translated(basePoint);
+    QRect previewBoxRect =
+        o->rect(PredefinedRect::PREVIEW_FRAME_AREA)
+            .adjusted(-hExpansion, 0, -frameAdj.x(), -frameAdj.y())
+            .translated(basePoint);
     p.fillRect(previewBoxRect, m_viewer->getPlayRangeColor());
 
     if (!o->isVerticalTimeline()) {
@@ -333,6 +358,12 @@ void RowArea::drawPlayRange(QPainter &p, int r0, int r1) {
     m_r0 = 0;
   }
 
+  int hOffset = 0;
+  if (checkExpandFrameArea()) {
+    hOffset = m_viewer->orientation()->dimension(
+        PredefinedDimension::FRAME_AREA_EXPANSION);
+  }
+
   QColor ArrowColor = (playRangeEnabled) ? QColor(255, 255, 255) : grey150;
   p.setBrush(QBrush(ArrowColor));
 
@@ -341,7 +372,7 @@ void RowArea::drawPlayRange(QPainter &p, int r0, int r1) {
     if (!m_viewer->orientation()->isVerticalTimeline())
       topLeft.setY(0);
     else
-      topLeft.setX(0);
+      topLeft.setX(-hOffset);
     m_viewer->drawPredefinedPath(p, PredefinedPath::BEGIN_PLAY_RANGE, topLeft,
                                  ArrowColor, QColor(Qt::black));
   }
@@ -352,7 +383,7 @@ void RowArea::drawPlayRange(QPainter &p, int r0, int r1) {
     if (!m_viewer->orientation()->isVerticalTimeline())
       topLeft.setY(0);
     else
-      topLeft.setX(0);
+      topLeft.setX(-hOffset);
     m_viewer->drawPredefinedPath(p, PredefinedPath::END_PLAY_RANGE, topLeft,
                                  ArrowColor, QColor(Qt::black));
   }
@@ -372,6 +403,7 @@ void RowArea::drawCurrentRowGadget(QPainter &p, int r0, int r1) {
   QRect header = m_viewer->orientation()
                      ->rect(PredefinedRect::FRAME_HEADER)
                      .translated(topLeft);
+
   QPoint frameAdj = m_viewer->getFrameZoomAdjustment();
   header.adjust(1, 1, -frameAdj.x(), -frameAdj.y());
   p.fillRect(header, m_viewer->getCurrentRowBgColor());
@@ -1047,6 +1079,12 @@ void RowArea::mousePressEvent(QMouseEvent *event) {
         playR0       = 0;
       }
 
+      int playRangeHOffset = 0;
+      if (checkExpandFrameArea()) {
+        playRangeHOffset = m_viewer->orientation()->dimension(
+            PredefinedDimension::FRAME_AREA_EXPANSION);
+      }
+
       if (xsh->getNavigationTags()->isTagged(row) &&
           o->rect(PredefinedRect::NAVIGATION_TAG_AREA)
               .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
@@ -1059,6 +1097,7 @@ void RowArea::mousePressEvent(QMouseEvent *event) {
         frameAreaIsClicked = true;
       } else if (o->rect(PredefinedRect::PLAY_RANGE)
                      .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
+                     .translated(-playRangeHOffset, 0)
                      .contains(mouseInCell) &&
                  (row == playR0 || row == playR1)) {
         if (!playRangeEnabled) XsheetGUI::setPlayRange(playR0, playR1, step);
@@ -1217,16 +1256,22 @@ void RowArea::mouseMoveEvent(QMouseEvent *event) {
 
   update();
 
+  int hOffset = 0;
+  if (checkExpandFrameArea()) {
+    hOffset = m_viewer->orientation()->dimension(
+        PredefinedDimension::FRAME_AREA_EXPANSION);
+  }
+
   QPoint base0 = m_viewer->positionToXY(CellPosition(m_r0, -1));
   if (!m_viewer->orientation()->isVerticalTimeline())
     base0.setY(0);
   else
-    base0.setX(0);
+    base0.setX(-hOffset);
   QPoint base1 = m_viewer->positionToXY(CellPosition(m_r1, -1));
   if (!m_viewer->orientation()->isVerticalTimeline())
     base1.setY(0);
   else
-    base1.setX(0);
+    base1.setX(-hOffset);
   QPainterPath startArrow =
       o->path(PredefinedPath::BEGIN_PLAY_RANGE).translated(base0);
   QPainterPath endArrow =

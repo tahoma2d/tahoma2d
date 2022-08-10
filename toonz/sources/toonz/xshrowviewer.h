@@ -46,6 +46,8 @@ class RowArea final : public QWidget {
 
   int m_contextMenuRow;
 
+  // returns true if the frame area can have extra space
+  bool checkExpandFrameArea();
   void drawRows(QPainter &p, int r0, int r1);
   void drawPlayRangeBackground(QPainter &p, int r0, int r1);
   void drawPlayRange(QPainter &p, int r0, int r1);
