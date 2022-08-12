@@ -7,6 +7,7 @@
 #include <windows.h>
 #include <winbase.h>
 #include <dbghelp.h>
+#include <psapi.h>
 #else
 #include <execinfo.h>
 #include <signal.h>
@@ -41,38 +42,65 @@
 
 //-----------------------------------------------------------------------------
 
-#ifndef _WIN32
-
-static bool sh(std::string &out, const char *cmd) {
-  char buffer[128];
-  FILE *p = popen(cmd, "r");
-  if (p == NULL) return false;
-  while (fgets(buffer, 128, p)) out.append(buffer);
-  pclose(p);
-  return true;
+static const char *filenameOnly(const char *path) {
+  for (int i = strlen(path); i >= 0; --i) {
+    if (path[i] == '\\' || path[i] == '/') return path + i + 1;
+  }
+  return path;
 }
 
-static bool addr2line(std::string &out, const char *exepath, const char *addr) {
-  char cmd[512];
-#ifdef OSX
-  sprintf(cmd, "atos -o \"%.400s\" %s 2>&1", exepath, addr);
-#else
-  sprintf(cmd, "addr2line -f -p -e \"%.400s\" %s 2>&1", exepath, addr);
-#endif
-  return sh(out, cmd);
-}
-
-#endif
-
-static void print_backtrace(std::string &out) {
-  int frameStack = 0;
-  int frameSkip  = 2;
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+// Windows platform functions
 
 #ifdef _WIN32
+
+#define HAS_MINIDUMP
+static bool generateMinidump(TFilePath dumpFile) {
+  HANDLE hDumpFile = CreateFileW(dumpFile.getWideString().c_str(),
+                                 GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 0, 0);
+  if (hDumpFile == INVALID_HANDLE_VALUE) return false;
+
+  MINIDUMP_EXCEPTION_INFORMATION mdei;
+  mdei.ThreadId          = GetCurrentThreadId();
+  mdei.ExceptionPointers = NULL;
+  mdei.ClientPointers    = FALSE;
+
+  if (MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hDumpFile,
+                        MiniDumpNormal, &mdei, 0, NULL)) {
+    CloseHandle(hDumpFile);
+    return true;
+  }
+
+  return false;
+}
+
+#define HAS_MODULES
+static void printModules(std::string &out) {
+  HANDLE hProcess = GetCurrentProcess();
+
+  HMODULE modules[1024];
+  DWORD size;
+  if (EnumProcessModules(hProcess, modules, sizeof(modules), &size)) {
+    for (unsigned int i = 0; i < size / sizeof(HMODULE); i++) {
+      char moduleName[512];
+      GetModuleFileNameA(modules[i], moduleName, 512);
+      out.append(moduleName);
+      out.append("\n");
+    }
+  }
+}
+
+#define HAS_BACKTRACE
+static void printBacktrace(std::string &out) {
+  int frameStack = 0;
+  int frameSkip  = 3;
+
   HANDLE hProcess = GetCurrentProcess();
 
   SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_INCLUDE_32BIT_MODULES |
-                SYMOPT_FAIL_CRITICAL_ERRORS | SYMOPT_LOAD_LINES | SYMOPT_UNDNAME);
+                SYMOPT_FAIL_CRITICAL_ERRORS | SYMOPT_LOAD_LINES |
+                SYMOPT_UNDNAME);
 
   SymInitialize(hProcess, NULL, TRUE);
 
@@ -86,6 +114,10 @@ static void print_backtrace(std::string &out) {
   IMAGEHLP_LINE64 sourceInfo;
   memset(&sourceInfo, 0, sizeof(IMAGEHLP_LINE64));
   sourceInfo.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
+
+  IMAGEHLP_MODULE64 moduleInfo;
+  memset(&moduleInfo, 0, sizeof(moduleInfo));
+  moduleInfo.SizeOfStruct = sizeof(IMAGEHLP_MODULE64);
 
   STACKFRAME64 stackframe;
   memset(&stackframe, 0, sizeof(STACKFRAME64));
@@ -112,7 +144,6 @@ static void print_backtrace(std::string &out) {
   while (StackWalk64(machineType, hProcess, hThread, &stackframe, &context,
                      NULL, SymFunctionTableAccess64, SymGetModuleBase64,
                      NULL)) {
-
     // Skip first frames since they point to this function
     if (frameStack++ < frameSkip) continue;
     char numStr[32];
@@ -129,12 +160,18 @@ static void print_backtrace(std::string &out) {
                             &displacement64, sourceSym)) {
       out.append(sourceSym->Name);
 
+      // Get module filename
+      char moduleFile[512];
+      MEMORY_BASIC_INFORMATION mbi;
+      VirtualQuery((LPCVOID)stackframe.AddrPC.Offset, &mbi, sizeof(mbi));
+      GetModuleFileNameA((HMODULE)mbi.AllocationBase, moduleFile, 512);
+
       // Get source filename and line
       DWORD displacement32;
       if (SymGetLineFromAddr64(hProcess, stackframe.AddrPC.Offset,
                                &displacement32, &sourceInfo) != FALSE) {
         out.append(" {");
-        out.append(sourceInfo.FileName);
+        out.append(filenameOnly(sourceInfo.FileName));
         out.append(":");
         out.append(std::to_string(sourceInfo.LineNumber));
         out.append("}");
@@ -143,14 +180,136 @@ static void print_backtrace(std::string &out) {
         sprintf(numStr, " [0x%" PRIx64 "]", stackframe.AddrPC.Offset);
         out.append(numStr);
       }
+      out.append(" <");
+      out.append(filenameOnly(moduleFile));
+      out.append(">");
     }
 
     out.append("\n");
   }
 
   SymCleanup(hProcess);
+}
 
+//-----------------------------------------------------------------------------
+
+LONG WINAPI exceptionHandler(PEXCEPTION_POINTERS info) {
+  const char *reason = "Unknown";
+  int accessType;
+
+  switch (info->ExceptionRecord->ExceptionCode) {
+  case EXCEPTION_ACCESS_VIOLATION:
+    reason = "EXCEPTION_ACCESS_VIOLATION";
+    break;
+  case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
+    reason = "EXCEPTION_ARRAY_BOUNDS_EXCEEDED";
+    break;
+  //case EXCEPTION_BREAKPOINT:
+  //  reason = "EXCEPTION_BREAKPOINT";
+  //  break;
+  case EXCEPTION_DATATYPE_MISALIGNMENT:
+    reason = "EXCEPTION_DATATYPE_MISALIGNMENT";
+    break;
+  case EXCEPTION_FLT_DENORMAL_OPERAND:
+    reason = "EXCEPTION_FLT_DENORMAL_OPERAND";
+    break;
+  case EXCEPTION_FLT_DIVIDE_BY_ZERO:
+    reason = "EXCEPTION_FLT_DIVIDE_BY_ZERO";
+    break;
+  case EXCEPTION_FLT_INEXACT_RESULT:
+    reason = "EXCEPTION_FLT_INEXACT_RESULT";
+    break;
+  case EXCEPTION_FLT_INVALID_OPERATION:
+    reason = "EXCEPTION_FLT_INVALID_OPERATION";
+    break;
+  case EXCEPTION_FLT_OVERFLOW:
+    reason = "EXCEPTION_FLT_OVERFLOW";
+    break;
+  case EXCEPTION_FLT_STACK_CHECK:
+    reason = "EXCEPTION_FLT_STACK_CHECK";
+    break;
+  case EXCEPTION_FLT_UNDERFLOW:
+    reason = "EXCEPTION_FLT_UNDERFLOW";
+    break;
+  case EXCEPTION_ILLEGAL_INSTRUCTION:
+    reason = "EXCEPTION_ILLEGAL_INSTRUCTION";
+    break;
+  case EXCEPTION_IN_PAGE_ERROR:
+    reason = "EXCEPTION_IN_PAGE_ERROR";
+    break;
+  case EXCEPTION_INT_DIVIDE_BY_ZERO:
+    reason = "EXCEPTION_INT_DIVIDE_BY_ZERO";
+    break;
+  //case EXCEPTION_INT_OVERFLOW:
+  //  reason = "EXCEPTION_INT_OVERFLOW";
+  //  break;
+  case EXCEPTION_INVALID_DISPOSITION:
+    reason = "EXCEPTION_INVALID_DISPOSITION";
+    break;
+  case EXCEPTION_NONCONTINUABLE_EXCEPTION:
+    reason = "EXCEPTION_NONCONTINUABLE_EXCEPTION";
+    break;
+  case EXCEPTION_PRIV_INSTRUCTION:
+    reason = "EXCEPTION_PRIV_INSTRUCTION";
+    break;
+  //case EXCEPTION_SINGLE_STEP:
+  //  reason = "EXCEPTION_SINGLE_STEP";
+  //  break;
+  case EXCEPTION_STACK_OVERFLOW:
+    reason = "EXCEPTION_STACK_OVERFLOW";
+    break;
+  default:
+    return EXCEPTION_CONTINUE_EXECUTION;
+  }
+
+  if (CrashHandler::trigger(reason, true)) _Exit(1);
+
+  return EXCEPTION_CONTINUE_EXECUTION;
+}
+
+#endif
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+// Linux and Mac OS X platform functions
+
+#ifndef _WIN32
+
+static bool sh(std::string &out, const char *cmd) {
+  char buffer[128];
+  FILE *p = popen(cmd, "r");
+  if (p == NULL) return false;
+  while (fgets(buffer, 128, p)) out.append(buffer);
+  pclose(p);
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+static bool addr2line(std::string &out, const char *exepath, const char *addr) {
+  char cmd[512];
+#ifdef OSX
+  sprintf(cmd, "atos -o \"%.400s\" %s 2>&1", exepath, addr);
 #else
+  sprintf(cmd, "addr2line -f -p -e \"%.400s\" %s 2>&1", exepath, addr);
+#endif
+  return sh(out, cmd);
+}
+
+//-----------------------------------------------------------------------------
+
+static bool generateMinidump(TFilePath dumpFile) { return false; }
+
+//-----------------------------------------------------------------------------
+
+static void printModules(std::string &out) {}
+
+//-----------------------------------------------------------------------------
+
+#define HAS_BACKTRACE
+static void printBacktrace(std::string &out) {
+  int frameStack = 0;
+  int frameSkip  = 3;
 
   const int size = 256;
   void *buffer[size];
@@ -158,7 +317,8 @@ static void print_backtrace(std::string &out) {
   // Get executable path
   char exepath[512];
   memset(exepath, 0, 512);
-  if (readlink("/proc/self/exe", exepath, 512) < 0) throw TException();
+  if (readlink("/proc/self/exe", exepath, 512) < 0)
+    fprintf(stderr, "Couldn't get exe path\n");
 
   // Back trace
   int nptrs  = backtrace(buffer, size);
@@ -190,34 +350,9 @@ static void print_backtrace(std::string &out) {
   }
 
   free(bts);
-
-#endif
-
 }
 
-//-----------------------------------------------------------------------------
-
-static void print_sysinfo(std::string &out) {
-  out.append("Build ABI: " + QSysInfo::buildAbi().toStdString() + "\n");
-  out.append("Operating System: " + QSysInfo::prettyProductName().toStdString() + "\n");
-  out.append("OS Kernel: " + QSysInfo::kernelVersion().toStdString() + "\n");
-  out.append("CPU Threads: " + std::to_string(QThread::idealThreadCount()) + "\n");
-}
-
-//-----------------------------------------------------------------------------
-
-static void print_gpuinfo(std::string &out) {
-  std::string gpuVendorName = (const char *)glGetString(GL_VENDOR);
-  std::string gpuModelName  = (const char *)glGetString(GL_RENDERER);
-  std::string gpuVersion    = (const char *)glGetString(GL_VERSION);
-  out.append("GPU Vendor: " + gpuVendorName + "\n");
-  out.append("GPU Model: " + gpuModelName + "\n");
-  out.append("GPU Version: " + gpuVersion + "\n");
-}
-
-//-----------------------------------------------------------------------------
-
-static void signal_handler(int sig) {
+void signalHandler(int sig) {
   QString reason = "Unknown";
 
   switch (sig) {
@@ -242,6 +377,29 @@ static void signal_handler(int sig) {
   }
 
   if (CrashHandler::trigger(reason, true)) _Exit(1);
+}
+
+#endif
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+static void printSysInfo(std::string &out) {
+  out.append("Build ABI: " + QSysInfo::buildAbi().toStdString() + "\n");
+  out.append("Operating System: " + QSysInfo::prettyProductName().toStdString() + "\n");
+  out.append("OS Kernel: " + QSysInfo::kernelVersion().toStdString() + "\n");
+  out.append("CPU Threads: " + std::to_string(QThread::idealThreadCount()) + "\n");
+}
+
+//-----------------------------------------------------------------------------
+
+static void printGPUInfo(std::string &out) {
+  std::string gpuVendorName = (const char *)glGetString(GL_VENDOR);
+  std::string gpuModelName  = (const char *)glGetString(GL_RENDERER);
+  std::string gpuVersion    = (const char *)glGetString(GL_VERSION);
+  out.append("GPU Vendor: " + gpuVendorName + "\n");
+  out.append("GPU Model: " + gpuModelName + "\n");
+  out.append("GPU Version: " + gpuVersion + "\n");
 }
 
 //-----------------------------------------------------------------------------
@@ -334,19 +492,29 @@ void CrashHandler::openFolder() {
 //-----------------------------------------------------------------------------
 
 void CrashHandler::install() {
-  signal(SIGABRT, signal_handler);
-  signal(SIGFPE, signal_handler);
-  signal(SIGILL, signal_handler);
-  signal(SIGINT, signal_handler);
-  signal(SIGSEGV, signal_handler);
-  signal(SIGTERM, signal_handler);
+#ifdef _WIN32
+  // std library seems to override this
+  //SetUnhandledExceptionFilter(exceptionHandler);
+
+  void *handler = AddVectoredExceptionHandler(0, exceptionHandler);
+  assert(handler != NULL);
+  //RemoveVectoredExceptionHandler(handler);
+#else
+  signal(SIGABRT, signalHandler);
+  signal(SIGFPE, signalHandler);
+  signal(SIGILL, signalHandler);
+  signal(SIGINT, signalHandler);
+  signal(SIGSEGV, signalHandler);
+  signal(SIGTERM, signalHandler);
+#endif
 }
 
 //-----------------------------------------------------------------------------
 
 bool CrashHandler::trigger(const QString reason, bool showDialog) {
-  char fileName[1024];
-  char dateName[256];
+  char fileName[128];
+  char dumpName[128];
+  char dateName[128];
   std::string out;
 
   // Get time and build filename
@@ -355,7 +523,12 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
   struct tm *tm = localtime(&acc_time);
   strftime(dateName, 128, "%Y-%m-%d %H:%M:%S", tm);
   strftime(fileName, 128, "Crash-%Y%m%d-%H%M%S.log", tm);
-  TFilePath fp = ToonzFolder::getCrashReportFolder() + fileName;
+  strftime(dumpName, 128, "Crash-%Y%m%d-%H%M%S.dmp", tm);
+  TFilePath fpCrsh = ToonzFolder::getCrashReportFolder() + fileName;
+  TFilePath fpDump = ToonzFolder::getCrashReportFolder() + dumpName;
+
+  // Generate minidump
+  bool minidump = generateMinidump(fpDump);
 
   TProjectManager *pm      = TProjectManager::instance();
   TProjectP currentProject = pm->getCurrentProject();
@@ -371,11 +544,18 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
     out.append("\nCrash Reason: ");
     out.append(reason.toStdString());
     out.append("\n\n");
-    print_sysinfo(out);
+    printSysInfo(out);
     out.append("\n");
-    print_gpuinfo(out);
+    printGPUInfo(out);
     out.append("\nCrash File: ");
-    out.append(fp.getQString().toStdString());
+    out.append(fpCrsh.getQString().toStdString());
+#ifdef HAS_MINIDUMP
+    out.append("\nMini Dump File: ");
+    if (minidump)
+      out.append(fpDump.getQString().toStdString());
+    else
+      out.append("Failed");
+#endif
     out.append("\nApplication Dir: ");
     out.append(QCoreApplication::applicationDirPath().toStdString());
     out.append("\nStuff Dir: ");
@@ -389,14 +569,22 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
     out.append(projectPath.getQString().toStdString());
     out.append("\nScene Path: ");
     out.append(currentScene->getScenePath().getQString().toStdString());
-    out.append("\n\n==== Backtrace ====\n");
-    print_backtrace(out);
+    out.append("\n");
+#ifdef HAS_MODULES
+    out.append("\n==== Modules ====\n");
+    printModules(out);
     out.append("==== End ====\n");
+#endif
+#ifdef HAS_BACKTRACE
+    out.append("\n==== Backtrace ====\n");
+    printBacktrace(out);
+    out.append("==== End ====\n");
+#endif
   } catch (...) {
   }
 
   // Save to crash information to file
-  FILE *fw = fopen(fp, "w");
+  FILE *fw = fopen(fpCrsh, "w");
   if (fw != NULL) {
     fwrite(out.c_str(), 1, out.size(), fw);
     fclose(fw);
@@ -404,7 +592,7 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
 
   if (showDialog) {
     // Show crash handler dialog
-    CrashHandler crashdialog(TApp::instance()->getMainWindow(), fp,
+    CrashHandler crashdialog(TApp::instance()->getMainWindow(), fpCrsh,
                              QString::fromStdString(out));
     return crashdialog.exec() != QDialog::Rejected;
   }
