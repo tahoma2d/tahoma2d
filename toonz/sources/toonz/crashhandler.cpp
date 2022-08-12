@@ -276,9 +276,11 @@ CrashHandler::CrashHandler(QWidget *parent, TFilePath crashFile, QString crashRe
 
   QPushButton *copyBtn   = new QPushButton(tr("Copy to Clipboard"));
   QPushButton *webBtn    = new QPushButton(tr("Open Issue Webpage"));
+  QPushButton *folderBtn = new QPushButton(tr("Open Reports Folder"));
   QPushButton *closeBtn  = new QPushButton(tr("Close Application"));
   buttonsLay->addWidget(copyBtn);
   buttonsLay->addWidget(webBtn);
+  buttonsLay->addWidget(folderBtn);
   buttonsLay->addWidget(closeBtn);
 
   mainLayout->addWidget(headtext);
@@ -286,8 +288,9 @@ CrashHandler::CrashHandler(QWidget *parent, TFilePath crashFile, QString crashRe
   mainLayout->addLayout(buttonsLay);
 
   bool ret = connect(copyBtn, SIGNAL(clicked()), this, SLOT(copyClipboard()));
-  ret      = ret && connect(webBtn, SIGNAL(clicked()), this, SLOT(openWebpage()));
-  ret      = ret && connect(closeBtn, SIGNAL(clicked()), this, SLOT(accept()));
+  ret = ret && connect(webBtn, SIGNAL(clicked()), this, SLOT(openWebpage()));
+  ret = ret && connect(folderBtn, SIGNAL(clicked()), this, SLOT(openFolder()));
+  ret = ret && connect(closeBtn, SIGNAL(clicked()), this, SLOT(accept()));
   if (!ret) throw TException();
 
   setWindowTitle(tr("Tahoma2D crashed!"));
@@ -297,7 +300,7 @@ CrashHandler::CrashHandler(QWidget *parent, TFilePath crashFile, QString crashRe
 void CrashHandler::reject() {
   QStringList sl;
   sl.append(tr("Application is in unstable state and must be restarted."));
-  sl.append(tr("Resuming is not recommended, it may lead to an unrecoverable crash."));
+  sl.append(tr("Resuming is not recommended and may lead to an unrecoverable crash."));
   sl.append(tr("Ignore advice and try to resume program?"));
 
   QMessageBox::StandardButton reply =
@@ -320,6 +323,13 @@ void CrashHandler::copyClipboard() {
 void CrashHandler::openWebpage() {
   QDesktopServices::openUrl(QUrl("https://github.com/tahoma2d/tahoma2d/issues"));
 }  
+
+//-----------------------------------------------------------------------------
+
+void CrashHandler::openFolder() {
+  TFilePath fp = ToonzFolder::getCrashReportFolder();
+  QDesktopServices::openUrl(QUrl("file:///" + fp.getQString()));
+}
 
 //-----------------------------------------------------------------------------
 

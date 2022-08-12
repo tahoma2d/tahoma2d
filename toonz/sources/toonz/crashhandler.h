@@ -25,6 +25,7 @@ public:
 public slots:
   void copyClipboard();
   void openWebpage();
+  void openFolder();
 };
 
 #endif  // CRASHHANDLER_INCLUDED
