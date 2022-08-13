@@ -5,7 +5,7 @@ sudo apt-get install -y cmake liblzo2-dev liblz4-dev libfreetype6-dev libpng-dev
 # Removed: libopenjpeg-dev 
 sudo apt-get install -y nasm yasm libgnutls28-dev libunistring-dev libass-dev libbluray-dev libmp3lame-dev libopus-dev libsnappy-dev libtheora-dev libvorbis-dev libvpx-dev libwebp-dev libxml2-dev libfontconfig1-dev libfreetype6-dev libopencore-amrnb-dev libopencore-amrwb-dev libspeex-dev libsoxr-dev libopenjp2-7-dev
 sudo apt-get install -y python3-pip
-sudo apt install -y build-essential libgirepository1.0-dev autotools-dev intltool gettext libtool
+sudo apt-get install -y build-essential libgirepository1.0-dev autotools-dev intltool gettext libtool patchelf
 
 pip3 install --upgrade pip
 pip3 install numpy

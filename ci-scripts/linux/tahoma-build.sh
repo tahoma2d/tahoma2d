@@ -13,7 +13,9 @@ cd build
 
 source /opt/qt515/bin/qt515-env.sh
 
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 cmake ../sources \
+    -DWITH_GPHOTO2:BOOL=ON \
     -DWITH_SYSTEM_SUPERLU=ON
 
 make -j7

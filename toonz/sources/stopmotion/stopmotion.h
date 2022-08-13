@@ -23,6 +23,7 @@
 #include "canon.h"
 #include "stopmotionserial.h"
 #include "stopmotionlight.h"
+#include "gphotocam.h"
 
 #include "toonz/namebuilder.h"
 #include "toonz/txshsimplelevel.h"
@@ -50,6 +51,8 @@ public:
 //=============================================================================
 
 enum ASPECT_RATIO { FOUR_THREE = 0, THREE_TWO, SIXTEEN_NINE, OTHER_RATIO };
+
+enum CameraType { None = 0, Web, CanonDSLR, GPhoto };
 
 class StopMotion : public QObject {  // Singleton
   Q_OBJECT
@@ -98,10 +101,13 @@ public:
 
   Webcam* m_webcam;
   Canon* m_canon;
+  GPhotoCam* m_gphotocam;
   StopMotionSerial* m_serial;
   StopMotionLight* m_light;
 
-  bool m_usingWebcam       = false;
+  CameraType m_currentCameraType = CameraType::None;
+  int m_currentCameraTypeIndex   = -1;
+
   bool m_placeOnXSheet     = true;
   bool m_alwaysLiveView    = false;
   bool m_userCalledPause   = false;
@@ -175,7 +181,7 @@ public:
   std::string getTEnvCameraResolution();
   void setTEnvCameraResolution(std::string resolution);
   void disconnectAllCameras();
-  void changeCameras(int index);
+  void changeCameras(int comboIndex, CameraType cameraType, int cameraIndex);
   void refreshCameraList();
 
   // commands
@@ -236,6 +242,16 @@ public:
   void saveTestShot();
   void saveTestXml(TFilePath testsXml, int number);
 
+  bool isPickLiveViewZoom();
+  bool isZooming();
+  bool isLiveViewZoomReadyToPick();
+  void makeZoomPoint(TPointD pickPos);
+  TRect getZoomRect();
+  void toggleZoomPicking();
+  void calculateZoomPoint();
+  void setZoomPoint();
+  void adjustLiveViewZoomPickPoint(int x, int y);
+
 public slots:
   // timers
   void onTimeout();
@@ -252,12 +268,12 @@ public slots:
 signals:
   // camera stuff
   void cameraChanged(QString);
-  void newCameraSelected(int, bool);
+  void newCameraSelected(int);
   void webcamResolutionsChanged();
   void newWebcamResolutionSelected(int);
   void updateCameraList(QString);
   void changeCameraIndex(int);
-  void updateStopMotionControls(bool);
+  void updateStopMotionControls();
 
   // live view and images
   void newLiveViewImageReady();

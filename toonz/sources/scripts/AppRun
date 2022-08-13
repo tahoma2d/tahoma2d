@@ -1,0 +1,14 @@
+#!/bin/bash
+
+DIR="`dirname \"$0\"`" 
+DIR="`( cd \"$DIR\" && readlink -f $(pwd) )`"
+echo "DIR: $DIR"
+export APPDIR=$DIR
+
+export CAMLIBS=`find $APPDIR/usr/lib/libgphoto2 -mindepth 1 -type d`
+echo "CAMLIBS: $CAMLIBS"
+
+export IOLIBS=`find $APPDIR/usr/lib/libgphoto2_port -mindepth 1 -type d`
+echo "IOLIBS: $IOLIBS"
+
+$APPDIR/usr/bin/Tahoma2D

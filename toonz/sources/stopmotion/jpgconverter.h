@@ -32,6 +32,16 @@ class JpgConverter : public QThread {
 #ifdef WITH_CANON
   EdsStreamRef m_stream;
 #endif
+
+#ifdef MACOSX
+  UInt64 m_dataSize = 0;
+#elif defined(LINUX)
+  unsigned long long m_dataSize = 0;
+#else
+  unsigned __int64 m_dataSize = 0;
+#endif
+  unsigned char* m_dataPtr = NULL;
+
   TRaster32P m_finalImage;
   // bool m_scale     = false;
   int m_scaleWidth = 0;
@@ -43,19 +53,18 @@ public:
   static bool loadJpg(TFilePath path, TRaster32P& image);
 #ifdef WITH_CANON
   void setStream(EdsStreamRef stream);
-  // void setScale(bool scale) { m_scale = scale; }
+// void setScale(bool scale) { m_scale = scale; }
+#endif
+  void setDataPtr(unsigned char* dataPtr, unsigned long dataSize);
   void setScaleWidth(bool scaleWidth) { m_scaleWidth = scaleWidth; }
   TRaster32P getImage() { return m_finalImage; }
   void convertFromJpg();
 
 protected:
   void run() override;
-#endif
 
 signals:
   void imageReady(bool);
 };
-
-//#endif
 
 #endif  // JPGCONVERTER_H

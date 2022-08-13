@@ -3073,12 +3073,10 @@ void MainWindow::defineActions() {
                          QT_TR_NOOP("Lower Stop Motion Opacity"), "");
   createStopMotionAction(MI_StopMotionToggleLiveView,
                          QT_TR_NOOP("Toggle Stop Motion Live View"), "");
-#ifdef WITH_CANON
   createStopMotionAction(MI_StopMotionToggleZoom,
                          QT_TR_NOOP("Toggle Stop Motion Zoom"), "");
   createStopMotionAction(MI_StopMotionPickFocusCheck,
                          QT_TR_NOOP("Pick Focus Check Location"), "");
-#endif
   createStopMotionAction(MI_StopMotionLowerSubsampling,
                          QT_TR_NOOP("Lower Stop Motion Level Subsampling"), "");
   createStopMotionAction(MI_StopMotionRaiseSubsampling,

@@ -90,6 +90,8 @@ EdsError Canon::releaseCameraList() {
 //-----------------------------------------------------------------
 
 int Canon::getCameraCount() {
+  m_count = 0;
+
   if (m_cameraList == NULL) {
     getCameraList();
   }
@@ -102,9 +104,9 @@ int Canon::getCameraCount() {
         m_sessionOpen                            = false;
       }
     }
-    return m_count;
-  } else
-    return -1;
+  }
+
+  return m_count;
 }
 
 //-----------------------------------------------------------------
@@ -158,7 +160,7 @@ void Canon::resetCanon(bool liveViewOpen) {
 
   if (m_sessionOpen && getCameraCount() > 0) {
     if (liveViewOpen) {
-      endCanonLiveView();
+      endLiveView();
     }
     closeCameraSession();
   }
@@ -1056,7 +1058,7 @@ void Canon::extendCameraOnTime() {
 
 //-----------------------------------------------------------------
 
-EdsError Canon::startCanonLiveView() {
+EdsError Canon::startLiveView() {
   if (m_camera && m_sessionOpen) {
     EdsError err = EDS_ERR_OK;
     // Get the output device for the live view image
@@ -1083,7 +1085,7 @@ EdsError Canon::startCanonLiveView() {
 
 //-----------------------------------------------------------------
 
-EdsError Canon::endCanonLiveView() {
+EdsError Canon::endLiveView() {
   EdsError err = EDS_ERR_OK;
   // Get the output device for the live view image
   EdsUInt32 device;

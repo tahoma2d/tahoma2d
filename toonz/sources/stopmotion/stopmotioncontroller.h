@@ -85,7 +85,7 @@ class FrameNumberLineEdit : public DVGui::LineEdit,
   QString m_textOnFocusIn;
 
 public:
-  FrameNumberLineEdit(QWidget* parent = 0, TFrameId fId = TFrameId(1),
+  FrameNumberLineEdit(QWidget *parent = 0, TFrameId fId = TFrameId(1),
                       bool acceptLetter = true);
   ~FrameNumberLineEdit() {}
 
@@ -194,18 +194,18 @@ class StopMotionController final : public QWidget {
       *m_focusFar3Button, *m_captureFilterSettingsBtn, *m_testLightsButton;
   QHBoxLayout *m_focusAndZoomLayout;
   QLabel *m_frameInfoLabel, *m_cameraSettingsLabel, *m_cameraModeLabel,
-      *m_resolutionLabel, *m_cameraStatusLabel,
-      *m_apertureLabel, *m_kelvinValueLabel, *m_isoLabel, *m_shutterSpeedLabel,
-      *m_webcamLabel, *m_liveViewCompensationLabel;
+      *m_resolutionLabel, *m_cameraStatusLabel, *m_apertureLabel,
+      *m_kelvinValueLabel, *m_isoLabel, *m_shutterSpeedLabel, *m_webcamLabel,
+      *m_liveViewCompensationLabel;
   QToolButton *m_previousLevelButton, *m_previousFrameButton,
       *m_previousXSheetFrameButton;
   QSlider *m_apertureSlider, *m_shutterSpeedSlider, *m_isoSlider,
       *m_kelvinSlider, *m_webcamFocusSlider, *m_webcamWhiteBalanceSlider,
       *m_webcamExposureSlider, *m_webcamBrightnessSlider,
       *m_webcamContrastSlider, *m_webcamGainSlider, *m_webcamSaturationSlider,
-      *m_liveViewCompensationSlider;
+      *m_liveViewCompensationSlider, *m_manualFocusSlider;
   QComboBox *m_cameraListCombo, *m_exposureCombo, *m_fileTypeCombo,
-      *m_whiteBalanceCombo, *m_resolutionCombo, *m_imageQualityCombo,
+      *m_whiteBalanceCombo, *m_resolutionCombo, *m_imageQualityCombo, *m_imageSizeCombo,
       *m_pictureStyleCombo, *m_controlDeviceCombo, *m_captureFramesCombo,
       *m_colorTypeCombo;
   LevelNameLineEdit *m_levelNameEdit;
@@ -343,7 +343,7 @@ protected slots:
   void onShowSceneOn2Changed(bool);
   void onShowSceneOn3Changed(bool);
 
-  // canon stuff
+  // DSLR stuff
   void onApertureChanged(int index);
   void onShutterSpeedChanged(int index);
   void onIsoChanged(int index);
@@ -351,8 +351,10 @@ protected slots:
   void onWhiteBalanceChanged(int index);
   void onColorTemperatureChanged(int index);
   void onImageQualityChanged(int index);
+  void onImageSizeChanged(int index);
   void onPictureStyleChanged(int index);
   void onLiveViewCompensationChanged(int index);
+  void onManualFocusChanged(int index);
   void onZoomPressed();
   void onPickZoomPressed();
   void onFocusNear();
@@ -368,6 +370,7 @@ protected slots:
   void onWhiteBalanceChangedSignal(QString);
   void onColorTemperatureChangedSignal(QString);
   void onImageQualityChangedSignal(QString);
+  void onImageSizeChangedSignal(QString);
   void onPictureStyleChangedSignal(QString);
   void onLiveViewCompensationChangedSignal(int);
   void refreshApertureList();
@@ -377,8 +380,10 @@ protected slots:
   void refreshWhiteBalanceList();
   void refreshColorTemperatureList();
   void refreshImageQualityList();
+  void refreshImageSizeList();
   void refreshPictureStyleList();
   void refreshMode();
+  void refreshManualFocusRange();
   void onFocusCheckToggled(bool on);
   void onPickFocusCheckToggled(bool on);
   void onAlwaysUseLiveViewImagesButtonClicked();
@@ -406,9 +411,9 @@ protected slots:
   void onUseNumpadSignal(bool);
   void onDrawBeneathSignal(bool);
   void onLiveViewChanged(bool);
-  void onNewCameraSelected(int, bool);
+  void onNewCameraSelected(int);
   void onCameraIndexChanged(int);
-  void onUpdateStopMotionControls(bool);
+  void onUpdateStopMotionControls();
 
   // webcam
   void onWebcamResolutionsChanged();

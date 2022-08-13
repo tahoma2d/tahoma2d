@@ -50,16 +50,24 @@ then
    chmod -R 755 $TOONZDIR/Tahoma2D.app/rhubarb
 fi
 
+if [ ! -d $TOONZDIR/Tahoma2D.app/Contents/Frameworks ]
+then
+   mkdir $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+fi
+
 if [ -d thirdparty/canon/Framework ]
 then
    echo ">>> Copying canon framework to $TOONZDIR/Tahoma2D.app/Contents/Frameworks/EDSDK.Framework"
-   if [ ! -d $TOONZDIR/Tahoma2D.app/Contents/Frameworks ]
-   then
-      mkdir $TOONZDIR/Tahoma2D.app/Contents/Frameworks
-   fi
    cp -R thirdparty/canon/Framework/ $TOONZDIR/Tahoma2D.app/Contents/Frameworks
    chmod -R 755 $TOONZDIR/Tahoma2D.app/Contents/Frameworks/EDSDK.framework
 fi
+
+echo ">>> Copying libghoto2 supporting directories"
+cp -R /usr/local/lib/libgphoto2 $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+cp -R /usr/local/lib/libgphoto2_port $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+
+rm $TOONZDIR/Tahoma2D.app/Contents/Frameworks/libgphoto2/print-camera-list
+find $TOONZDIR/Tahoma2D.app/Contents/Frameworks/libgphoto2* -name *.la -exec rm -f {} \;
 
 echo ">>> Configuring Tahoma2D.app for deployment"
 
@@ -73,7 +81,7 @@ $QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -verbose=0 -always-overwrite \
    -executable=$TOONZDIR/Tahoma2D.app/Contents/MacOS/tfarmserver 
 
 echo ">>> Correcting library paths"
-for X in `find $TOONZDIR/Tahoma2D.app/Contents -type f -name *.dylib -exec otool -l {} \; | grep -e "^toonz" -e"name \/usr\/local" | sed -e"s/://" -e"s/ (.*$//" -e"s/^ *name //"`
+for X in `find $TOONZDIR/Tahoma2D.app/Contents -type f '(' -name *.dylib -o -name *.so ')' -exec otool -l {} \; | grep -e "^toonz" -e"name \/usr\/local" | sed -e"s/://" -e"s/ (.*$//" -e"s/^ *name //"`
 do
    Z=`echo $X | cut -c 1-1`
    if [ "$Z" != "/" ]
@@ -82,10 +90,22 @@ do
    else
       Y=`basename $X`
       W=`basename $LIBFILE`
-      if [ -f $TOONZDIR/Tahoma2D.app/Contents/Frameworks/$Y -a "$Y" != "$W" ]
+      if [ ! -f $TOONZDIR/Tahoma2D.app/Contents/Frameworks/$Y ]
+      then
+        echo "Copying $X to Frameworks"
+        cp $X $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+        chmod 644 $TOONZDIR/Tahoma2D.app/Contents/Frameworks/$Y
+      fi
+      if [ "$Y" != "$W" ]
       then
          echo "Fixing $X in $LIBFILE"
          install_name_tool -change $X @executable_path/../Frameworks/$Y $LIBFILE
+         FIXCHECK=`otool -D $LIBFILE | grep -e"\/usr\/local"`
+         if [ "$FIXCHECK" == "$X" ]
+         then
+           echo "   Fixed ID!"
+           install_name_tool -id @executable_path/../Frameworks/$Y $LIBFILE
+         fi
       fi
    fi
 done

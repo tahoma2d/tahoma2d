@@ -47,6 +47,10 @@ jobs:
         run: |
           export PATH="/usr/local/opt/ccache/libexec:$PATH"
           ci-scripts/osx/tahoma-buildopencv.sh
+      - name: Build libgphoto2
+        run: |
+          export PATH="/usr/local/opt/ccache/libexec:$PATH"
+          ci-scripts/osx/tahoma-buildlibgphoto2.sh
       - name: Build Tahoma2D
         run: |
           export PATH="/usr/local/opt/ccache/libexec:$PATH"
