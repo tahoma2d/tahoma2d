@@ -33,9 +33,7 @@ IF EXIST ..\..\thirdparty\canon\Header (
 )
 
 IF EXIST ..\..\thirdparty\libgphoto2\include (
-   xcopy /Y /E ..\..\thirdparty\libgphoto2\bin\camlibs Tahoma2D\tahomastuff
-   xcopy /Y /E ..\..\thirdparty\libgphoto2\bin\iolibs Tahoma2D\tahomastuff
-   copy /Y ..\..\thirdparty\libgphoto2\bin\*.* Tahoma2D\tahomastuff
+   xcopy /Y /E ..\..\thirdparty\libgphoto2\bin Tahoma2D
 )
 
 IF EXIST ..\..\thirdparty\crashrpt\include (
