@@ -2903,9 +2903,10 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
                              : m_viewer->getReferenceColumnColor();
     sideColor = m_viewer->getReferenceColumnBorderColor();
   } else {
-    cellColor = (isSelected) ? m_viewer->getSelectedPaletteColumnColor()
-                             : m_viewer->getPaletteColumnColor();
-    sideColor = m_viewer->getPaletteColumnBorderColor();
+    int levelType;
+    m_viewer->getCellTypeAndColors(levelType, cellColor, sideColor, cell,
+                                   isSelected);
+
     if (isImplicitCell) cellColor.setAlpha(m_viewer->getImplicitCellAlpha());
     if (isStopFrame) {
       cellColorAlpha = cellColor.alpha();
