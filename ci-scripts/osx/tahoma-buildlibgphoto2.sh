@@ -5,7 +5,6 @@ echo ">>> Cloning libgphoto2"
 git clone https://github.com/tahoma2d/libgphoto2.git libgphoto2_src
 
 cd libgphoto2_src
-echo "*" >| .gitignore
 
 git checkout tahoma2d-version
 
