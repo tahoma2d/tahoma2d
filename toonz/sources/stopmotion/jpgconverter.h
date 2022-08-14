@@ -33,9 +33,7 @@ class JpgConverter : public QThread {
   EdsStreamRef m_stream;
 #endif
 
-#ifdef MACOSX
-  UInt64 m_dataSize = 0;
-#elif defined(LINUX)
+#if defined(MACOSX) || defined(LINUX)
   unsigned long long m_dataSize = 0;
 #else
   unsigned __int64 m_dataSize = 0;
