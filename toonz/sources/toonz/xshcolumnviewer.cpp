@@ -481,11 +481,12 @@ void ChangeObjectParent::refresh() {
                            : viewer->getOtherCameraColor();
     } else if (id.isColumn() && (!xsh->isColumnEmpty(index))) {
       TXshColumn *colx = xsh->getColumn(index);
-      if (colx->getColumnType() != TXshColumn::eSoundTextType &&
-          colx->getColumnType() != TXshColumn::eSoundType) {
-        QColor unused;
+      if (colx->getColumnType() == TXshColumn::eSoundTextType ||
+          colx->getColumnType() == TXshColumn::eSoundType)
+        continue;
+
+      QColor unused;
         viewer->getColumnColor(newTextBG, unused, id.getIndex(), xsh);
-      }
     } else
       continue;
 
