@@ -18,13 +18,6 @@
 
 #include <sstream>
 
-class TStringConvertException final : public TException {
-  std::string m_string;
-
-public:
-  TStringConvertException(const std::string str) : m_string(str) {}
-};
-
 std::wstring to_wstring(std::string s) {
 #ifdef TNZCORE_LIGHT
   std::wstring ws;

@@ -20,6 +20,7 @@
 #include "tapp.h"
 #include "tenv.h"
 #include "tconvert.h"
+#include "texception.h"
 #include "tfilepath_io.h"
 #include "toonz/toonzfolders.h"
 #include "toonz/tproject.h"
@@ -204,9 +205,6 @@ LONG WINAPI exceptionHandler(PEXCEPTION_POINTERS info) {
   case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
     reason = "EXCEPTION_ARRAY_BOUNDS_EXCEEDED";
     break;
-  //case EXCEPTION_BREAKPOINT:
-  //  reason = "EXCEPTION_BREAKPOINT";
-  //  break;
   case EXCEPTION_DATATYPE_MISALIGNMENT:
     reason = "EXCEPTION_DATATYPE_MISALIGNMENT";
     break;
@@ -240,9 +238,6 @@ LONG WINAPI exceptionHandler(PEXCEPTION_POINTERS info) {
   case EXCEPTION_INT_DIVIDE_BY_ZERO:
     reason = "EXCEPTION_INT_DIVIDE_BY_ZERO";
     break;
-  //case EXCEPTION_INT_OVERFLOW:
-  //  reason = "EXCEPTION_INT_OVERFLOW";
-  //  break;
   case EXCEPTION_INVALID_DISPOSITION:
     reason = "EXCEPTION_INVALID_DISPOSITION";
     break;
@@ -252,19 +247,19 @@ LONG WINAPI exceptionHandler(PEXCEPTION_POINTERS info) {
   case EXCEPTION_PRIV_INSTRUCTION:
     reason = "EXCEPTION_PRIV_INSTRUCTION";
     break;
-  //case EXCEPTION_SINGLE_STEP:
-  //  reason = "EXCEPTION_SINGLE_STEP";
-  //  break;
   case EXCEPTION_STACK_OVERFLOW:
     reason = "EXCEPTION_STACK_OVERFLOW";
     break;
+  case 0xE06D7363:  // Magic number... oof
+    reason = "C++ Exception";
+    break;
   default:
-    return EXCEPTION_CONTINUE_EXECUTION;
+    return EXCEPTION_CONTINUE_SEARCH;
   }
 
   if (CrashHandler::trigger(reason, true)) _Exit(1);
 
-  return EXCEPTION_CONTINUE_EXECUTION;
+  return EXCEPTION_CONTINUE_SEARCH;
 }
 
 #endif
@@ -530,19 +525,19 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
   // Generate minidump
   bool minidump = generateMinidump(fpDump);
 
-  TProjectManager *pm      = TProjectManager::instance();
-  TProjectP currentProject = pm->getCurrentProject();
-  TFilePath projectPath    = currentProject->getProjectPath();
-  ToonzScene *currentScene = TApp::instance()->getCurrentScene()->getScene();
-  std::wstring sceneName   = currentScene->getSceneName();
-
   // Generate report
   try {
+    TString exception = TException::getLastMessage();
+
     out.append(TEnv::getApplicationFullName() + "  (Build " + __DATE__ ")\n");
     out.append("\nReport Date: ");
     out.append(dateName);
     out.append("\nCrash Reason: ");
     out.append(reason.toStdString());
+    if (!exception.empty()) {
+      out.append("\nException: ");
+      out.append(::to_string(exception));
+    }
     out.append("\n\n");
     printSysInfo(out);
     out.append("\n");
@@ -556,6 +551,18 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
     else
       out.append("Failed");
 #endif
+    out.append("\n");
+  } catch (...) {
+  }
+  try {
+    TProjectManager *pm = TProjectManager::instance();
+
+    TProjectP currentProject = pm->getCurrentProject();
+    TFilePath projectPath    = currentProject->getProjectPath();
+
+    ToonzScene *currentScene = TApp::instance()->getCurrentScene()->getScene();
+    std::wstring sceneName   = currentScene->getSceneName();
+
     out.append("\nApplication Dir: ");
     out.append(QCoreApplication::applicationDirPath().toStdString());
     out.append("\nStuff Dir: ");
@@ -570,18 +577,24 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
     out.append("\nScene Path: ");
     out.append(currentScene->getScenePath().getQString().toStdString());
     out.append("\n");
+  } catch (...) {
+  }
 #ifdef HAS_MODULES
+  try {
     out.append("\n==== Modules ====\n");
     printModules(out);
     out.append("==== End ====\n");
+  } catch (...) {
+  }
 #endif
 #ifdef HAS_BACKTRACE
+  try {
     out.append("\n==== Backtrace ====\n");
     printBacktrace(out);
     out.append("==== End ====\n");
-#endif
   } catch (...) {
   }
+#endif
 
   // Save to crash information to file
   FILE *fw = fopen(fpCrsh, "w");

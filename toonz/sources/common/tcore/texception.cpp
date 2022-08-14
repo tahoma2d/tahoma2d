@@ -3,7 +3,15 @@
 #include "texception.h"
 #include "tconvert.h"
 
-TException::TException(const std::string &msg) { m_msg = ::to_wstring(msg); }
+static TString s_lastMsg;
+
+TException::TException(const std::string &msg) {
+  m_msg     = ::to_wstring(msg);
+  s_lastMsg = getMessage();
+}
+
+TString TException::getLastMessage() { return s_lastMsg; }
+
 /*
 ostream& operator<<(ostream &out, const TException &e)
 {
