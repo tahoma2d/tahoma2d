@@ -23,7 +23,6 @@ public:
   explicit TException(const std::wstring &msg) : m_msg(msg) {}
   virtual ~TException() {}
   virtual TString getMessage() const { return m_msg; }
-  static TString getLastMessage();
 };
 
 // DVAPI ostream& operator<<(ostream &out, const TException &e);

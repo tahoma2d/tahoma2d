@@ -41,6 +41,9 @@
 #include <QTextEdit>
 #include <QPushButton>
 
+static QWidget *s_parentWindow = NULL;
+static bool s_reportProjInfo   = false;
+
 //-----------------------------------------------------------------------------
 
 static const char *filenameOnly(const char *path) {
@@ -195,9 +198,9 @@ static void printBacktrace(std::string &out) {
 //-----------------------------------------------------------------------------
 
 LONG WINAPI exceptionHandler(PEXCEPTION_POINTERS info) {
-  const char *reason = "Unknown";
-  int accessType;
+  static volatile bool handling = false;
 
+  const char *reason = "Unknown";
   switch (info->ExceptionRecord->ExceptionCode) {
   case EXCEPTION_ACCESS_VIOLATION:
     reason = "EXCEPTION_ACCESS_VIOLATION";
@@ -250,14 +253,16 @@ LONG WINAPI exceptionHandler(PEXCEPTION_POINTERS info) {
   case EXCEPTION_STACK_OVERFLOW:
     reason = "EXCEPTION_STACK_OVERFLOW";
     break;
-  case 0xE06D7363:  // Magic number... oof
-    reason = "C++ Exception";
-    break;
   default:
     return EXCEPTION_CONTINUE_SEARCH;
   }
 
+  // Avoid new exceptions inside the crash handler
+  if (handling) return EXCEPTION_CONTINUE_SEARCH;
+
+  handling = true;
   if (CrashHandler::trigger(reason, true)) _Exit(1);
+  handling = false;
 
   return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -348,8 +353,9 @@ static void printBacktrace(std::string &out) {
 }
 
 void signalHandler(int sig) {
-  QString reason = "Unknown";
+  static volatile bool handling = false;
 
+  const char *reason = "Unknown";
   switch (sig) {
   case SIGABRT:
     reason = "(SIGABRT) Usually caused by an abort() or assert()";
@@ -371,7 +377,12 @@ void signalHandler(int sig) {
     break;
   }
 
+  // Avoid new signals inside the crash handler
+  if (handling) return;
+
+  handling = true;
   if (CrashHandler::trigger(reason, true)) _Exit(1);
+  handling = false;
 }
 
 #endif
@@ -389,12 +400,15 @@ static void printSysInfo(std::string &out) {
 //-----------------------------------------------------------------------------
 
 static void printGPUInfo(std::string &out) {
-  std::string gpuVendorName = (const char *)glGetString(GL_VENDOR);
-  std::string gpuModelName  = (const char *)glGetString(GL_RENDERER);
-  std::string gpuVersion    = (const char *)glGetString(GL_VERSION);
-  out.append("GPU Vendor: " + gpuVendorName + "\n");
-  out.append("GPU Model: " + gpuModelName + "\n");
-  out.append("GPU Version: " + gpuVersion + "\n");
+  const char *gpuVendorName = (const char *)glGetString(GL_VENDOR);
+  const char *gpuModelName  = (const char *)glGetString(GL_RENDERER);
+  const char *gpuVersion    = (const char *)glGetString(GL_VERSION);
+  if (gpuVendorName)
+    out.append("GPU Vendor: " + std::string(gpuVendorName) + "\n");
+  if (gpuModelName)
+    out.append("GPU Model: " + std::string(gpuModelName) + "\n");
+  if (gpuVersion)
+    out.append("GPU Version: " + std::string(gpuVersion) + "\n");
 }
 
 //-----------------------------------------------------------------------------
@@ -506,6 +520,18 @@ void CrashHandler::install() {
 
 //-----------------------------------------------------------------------------
 
+void CrashHandler::reportProjectInfo(bool enableReport) {
+  s_reportProjInfo = enableReport;
+}
+
+//-----------------------------------------------------------------------------
+
+void CrashHandler::attachParentWindow(QWidget *parent) {
+  s_parentWindow = parent;
+}
+
+//-----------------------------------------------------------------------------
+
 bool CrashHandler::trigger(const QString reason, bool showDialog) {
   char fileName[128];
   char dumpName[128];
@@ -527,17 +553,11 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
 
   // Generate report
   try {
-    TString exception = TException::getLastMessage();
-
     out.append(TEnv::getApplicationFullName() + "  (Build " + __DATE__ ")\n");
     out.append("\nReport Date: ");
     out.append(dateName);
     out.append("\nCrash Reason: ");
     out.append(reason.toStdString());
-    if (!exception.empty()) {
-      out.append("\nException: ");
-      out.append(::to_string(exception));
-    }
     out.append("\n\n");
     printSysInfo(out);
     out.append("\n");
@@ -555,28 +575,31 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
   } catch (...) {
   }
   try {
-    TProjectManager *pm = TProjectManager::instance();
+    if (s_reportProjInfo) {
+      TProjectManager *pm = TProjectManager::instance();
+      TApp *app           = TApp::instance();
 
-    TProjectP currentProject = pm->getCurrentProject();
-    TFilePath projectPath    = currentProject->getProjectPath();
+      TProjectP currentProject = pm->getCurrentProject();
+      TFilePath projectPath    = currentProject->getProjectPath();
 
-    ToonzScene *currentScene = TApp::instance()->getCurrentScene()->getScene();
-    std::wstring sceneName   = currentScene->getSceneName();
+      ToonzScene *currentScene = app->getCurrentScene()->getScene();
+      std::wstring sceneName   = currentScene->getSceneName();
 
-    out.append("\nApplication Dir: ");
-    out.append(QCoreApplication::applicationDirPath().toStdString());
-    out.append("\nStuff Dir: ");
-    out.append(TEnv::getStuffDir().getQString().toStdString());
-    out.append("\n");
-    out.append("\nProject Name: ");
-    out.append(currentProject->getName().getQString().toStdString());
-    out.append("\nScene Name: ");
-    out.append(QString::fromStdWString(sceneName).toStdString());
-    out.append("\nProject Path: ");
-    out.append(projectPath.getQString().toStdString());
-    out.append("\nScene Path: ");
-    out.append(currentScene->getScenePath().getQString().toStdString());
-    out.append("\n");
+      out.append("\nApplication Dir: ");
+      out.append(QCoreApplication::applicationDirPath().toStdString());
+      out.append("\nStuff Dir: ");
+      out.append(TEnv::getStuffDir().getQString().toStdString());
+      out.append("\n");
+      out.append("\nProject Name: ");
+      out.append(currentProject->getName().getQString().toStdString());
+      out.append("\nScene Name: ");
+      out.append(QString::fromStdWString(sceneName).toStdString());
+      out.append("\nProject Path: ");
+      out.append(projectPath.getQString().toStdString());
+      out.append("\nScene Path: ");
+      out.append(currentScene->getScenePath().getQString().toStdString());
+      out.append("\n");
+    }
   } catch (...) {
   }
 #ifdef HAS_MODULES
@@ -605,8 +628,7 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
 
   if (showDialog) {
     // Show crash handler dialog
-    CrashHandler crashdialog(TApp::instance()->getMainWindow(), fpCrsh,
-                             QString::fromStdString(out));
+    CrashHandler crashdialog(s_parentWindow, fpCrsh, QString::fromStdString(out));
     return crashdialog.exec() != QDialog::Rejected;
   }
 

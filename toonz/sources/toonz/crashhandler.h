@@ -20,6 +20,8 @@ public:
   void reject();
 
   static void install();
+  static void reportProjectInfo(bool enableReport);
+  static void attachParentWindow(QWidget *parent);
   static bool trigger(const QString reason, bool showDialog);
 
 public slots:
