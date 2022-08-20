@@ -568,7 +568,7 @@ void TStyleSelection::selectNone() {
 //-------------------------------------------------------------------
 
 bool TStyleSelection::isEmpty() const {
-  return m_pageIndex < 0 && m_styleIndicesInPage.empty();
+  return m_pageIndex < 0 || m_styleIndicesInPage.empty();
 }
 
 //-------------------------------------------------------------------
