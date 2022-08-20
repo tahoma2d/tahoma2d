@@ -393,6 +393,10 @@ void PaletteViewer::createPaletteToolBar() {
     m_paletteToolBar->setStyleSheet("QToolBar{spacing:3px;}");
     m_paletteToolBar->addWidget(m_freezePaletteToolButton);
 
+    m_paletteToolBar->addSeparator();
+    CommandManager *cmd = CommandManager::instance();
+    QAction *gizmo      = cmd->getAction("MI_OpenPltGizmo");
+    m_paletteToolBar->addAction(gizmo);
   } else if (m_viewType == STUDIO_PALETTE) {
     QToolButton *toolButton = new QToolButton(this);
     toolButton->setPopupMode(QToolButton::InstantPopup);
