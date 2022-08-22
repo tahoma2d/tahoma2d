@@ -10,6 +10,7 @@
 #include "toonzqt/dvscrollwidget.h"
 #include "toonzqt/studiopaletteviewer.h"
 #include "toonzqt/styleselection.h"
+#include "toonzqt/stylenameeditor.h"
 #include "palettedata.h"
 
 // TnzLib includes
@@ -106,6 +107,7 @@ PaletteViewer::PaletteViewer(QWidget *parent, PaletteViewType viewType,
     , m_frozen(false)
     , m_freezePaletteToolButton(0)
     , m_lockPaletteToolButton(0)
+    , m_styleNameEditor(nullptr)
     , m_app(0) {
   setObjectName("OnePixelMarginFrame");
   setFrameStyle(QFrame::StyledPanel);
@@ -308,6 +310,38 @@ void PaletteViewer::updateView() {
 
 //-----------------------------------------------------------------------------
 
+void PaletteViewer::save(QSettings &settings) const {
+  int visibleParts = m_toolbarVisibleOtherParts;
+  if (m_visibleKeysAction->isChecked()) visibleParts |= 0x01;
+//  if (m_visibleNewAction->isChecked()) visibleParts |= 0x02;
+  if (m_visibleGizmoAction->isChecked()) visibleParts |= 0x04;
+  if (m_visibleNameAction->isChecked()) visibleParts |= 0x08;
+  settings.setValue("toolbarVisibleMsk", visibleParts);
+ }
+ 
+ void PaletteViewer::load(QSettings &settings) {
+  int visibleParts;
+  QVariant visibleVar = settings.value("toolbarVisibleMsk");
+  if (visibleVar.canConvert(QVariant::Int)) {
+    visibleParts = visibleVar.toInt();
+  } else {
+    visibleParts = 3;  // Show keyframes and new style/page
+  }
+
+  m_visibleKeysAction->setChecked(visibleParts & 0x01);
+//  m_visibleNewAction->setChecked(visibleParts & 0x02);
+  m_visibleGizmoAction->setChecked(visibleParts & 0x04);
+  m_visibleNameAction->setChecked(visibleParts & 0x08);
+  m_toolbarVisibleOtherParts = visibleParts & ~0x0F;  // Reserve
+
+  applyToolbarPartVisibility(TBVisKeyframe, visibleParts & 0x01);
+//  applyToolbarPartVisibility(TBVisNewStylePage, visibleParts & 0x02);
+  applyToolbarPartVisibility(TBVisPaletteGizmo, visibleParts & 0x04);
+  applyToolbarPartVisibility(TBVisNameEditor, visibleParts & 0x08);
+ }
+ 
+//-----------------------------------------------------------------------------
+
 void PaletteViewer::enableSaveAction(bool enable) {
   if (!m_savePaletteToolBar) return;
   QList<QAction *> actions;
@@ -325,6 +359,33 @@ void PaletteViewer::enableSaveAction(bool enable) {
         act->text() == tr("&Save As Default Palette"))
       act->setEnabled(enable);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void PaletteViewer::applyToolbarPartVisibility(int part, bool visible) {
+  assert(m_toolbarParts.contains(part));
+  for (QAction *action : m_toolbarParts.values(part)) {
+    action->setVisible(visible);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void PaletteViewer::toggleKeyframeVisibility(bool checked) {
+  applyToolbarPartVisibility(TBVisKeyframe, checked);
+}
+
+//void PaletteViewer::toggleNewStylePageVisibility(bool checked) {
+//  applyToolbarPartVisibility(TBVisNewStylePage, checked);
+//}
+
+void PaletteViewer::togglePaletteGizmoVisibility(bool checked) {
+  applyToolbarPartVisibility(TBVisPaletteGizmo, checked);
+}
+
+void PaletteViewer::toggleNameEditorVisibility(bool checked) {
+  applyToolbarPartVisibility(TBVisNameEditor, checked);
 }
 
 //-----------------------------------------------------------------------------
@@ -350,6 +411,9 @@ void PaletteViewer::createPaletteToolBar() {
   m_paletteToolBar->setIconSize(QSize(20, 20));
   m_paletteToolBar->setLayoutDirection(Qt::LeftToRight);
 
+  m_toolbarParts.clear();
+
+  // m_toolbarParts.insert(TBVisNewStylePage, addPage);
   // QIcon newColorIcon = createQIcon("newstyle");
   // QAction* addColor =
   //    new QAction(newColorIcon, tr("&New Style"), m_paletteToolBar);
@@ -358,12 +422,14 @@ void PaletteViewer::createPaletteToolBar() {
   // m_paletteToolBar->addAction(addColor);
 
   // m_paletteToolBar->addSeparator();
+  // m_toolbarParts.insert(TBVisNewStylePage, addColor);
+  // m_toolbarParts.insert(TBVisNewStylePage, m_paletteToolBar->addSeparator());
 
   // KeyFrame button
   if (m_viewType != CLEANUP_PALETTE) {
     m_keyFrameButton = new PaletteKeyframeNavigator(m_paletteToolBar);
-    m_paletteToolBar->addWidget(m_keyFrameButton);
-    m_paletteToolBar->addSeparator();
+    m_toolbarParts.insert(TBVisKeyframe, m_paletteToolBar->addWidget(m_keyFrameButton));
+    m_toolbarParts.insert(TBVisKeyframe, m_paletteToolBar->addSeparator());
     m_keyFrameButton->setSelection(m_pageViewer->getSelection());
   }
 
@@ -395,8 +461,15 @@ void PaletteViewer::createPaletteToolBar() {
 
     m_paletteToolBar->addSeparator();
     CommandManager *cmd = CommandManager::instance();
-    QAction *gizmo      = cmd->getAction("MI_OpenPltGizmo");
-    m_paletteToolBar->addAction(gizmo);
+    m_sharedGizmoAction = cmd->getAction("MI_OpenPltGizmo");
+
+    // Clone palette gizmo action so visibility can be control
+    QAction *palGizmo = new DVAction(m_sharedGizmoAction->icon(),
+                                     m_sharedGizmoAction->text(), this);
+    connect(palGizmo, &QAction::triggered,
+            [&]() { m_sharedGizmoAction->trigger(); });
+    m_paletteToolBar->addAction(palGizmo);
+    m_toolbarParts.insert(TBVisPaletteGizmo, palGizmo);
   } else if (m_viewType == STUDIO_PALETTE) {
     QToolButton *toolButton = new QToolButton(this);
     toolButton->setPopupMode(QToolButton::InstantPopup);
@@ -420,7 +493,22 @@ void PaletteViewer::createPaletteToolBar() {
             SLOT(setChecked(bool)));
 
     m_paletteToolBar->addWidget(toolButton);
+    m_paletteToolBar->addSeparator();
   }
+
+  QAction *openStyleNameEditorAct = new QAction(tr("Name Editor"));
+  openStyleNameEditorAct->setIcon(createQIcon("rename", false, true));
+  connect(openStyleNameEditorAct, &QAction::triggered, [&]() {
+    if (!m_styleNameEditor) {
+      m_styleNameEditor = new StyleNameEditor(this);
+      m_styleNameEditor->setPaletteHandle(getPaletteHandle());
+    }
+    m_styleNameEditor->show();
+    m_styleNameEditor->raise();
+    m_styleNameEditor->activateWindow();
+  });
+  m_paletteToolBar->addAction(openStyleNameEditorAct);
+  m_toolbarParts.insert(TBVisNameEditor, openStyleNameEditorAct);
 
   updatePaletteToolBar();
 }
@@ -509,6 +597,42 @@ void PaletteViewer::createSavePaletteToolBar() {
     m_showStyleIndex->blockSignals(false);
   });
   m_viewMode->addAction(m_showStyleIndex);
+
+  m_viewMode->addSeparator();
+
+  // Add ability to show or hide buttons
+  QMenu *visibleButtons = new QMenu(tr("Visible Toolbar Buttons"));
+
+  m_visibleKeysAction = new QAction(tr("KeyFrame"));
+  m_visibleKeysAction->setCheckable(true);
+  m_visibleKeysAction->setChecked(true);
+  visibleButtons->addAction(m_visibleKeysAction);
+//  m_visibleNewAction = new QAction(tr("New Style/Page"));
+//  m_visibleNewAction->setCheckable(true);
+//  m_visibleNewAction->setChecked(true);
+//  visibleButtons->addAction(m_visibleNewAction);
+  m_visibleGizmoAction = new QAction(tr("Palette Gizmo"));
+  m_visibleGizmoAction->setCheckable(true);
+  m_visibleGizmoAction->setChecked(true);
+  visibleButtons->addAction(m_visibleGizmoAction);
+  m_visibleNameAction = new QAction(tr("Name Editor"));
+  m_visibleNameAction->setCheckable(true);
+  m_visibleNameAction->setChecked(true);
+  visibleButtons->addAction(m_visibleNameAction);
+  m_viewMode->addMenu(visibleButtons);
+
+  if (m_viewType == CLEANUP_PALETTE) m_visibleKeysAction->setVisible(false);
+
+  if (m_viewType != LEVEL_PALETTE) m_visibleGizmoAction->setVisible(false);
+
+  connect(m_visibleKeysAction, SIGNAL(toggled(bool)), this,
+          SLOT(toggleKeyframeVisibility(bool)));
+//  connect(m_visibleNewAction, SIGNAL(toggled(bool)), this,
+//          SLOT(toggleNewStylePageVisibility(bool)));
+  connect(m_visibleGizmoAction, SIGNAL(toggled(bool)), this,
+          SLOT(togglePaletteGizmoVisibility(bool)));
+  connect(m_visibleNameAction, SIGNAL(toggled(bool)), this,
+          SLOT(toggleNameEditorVisibility(bool)));
 
   if (m_viewType == STUDIO_PALETTE) {
     QIcon savePaletteIcon = createQIcon("save");

@@ -474,6 +474,8 @@
 		<file>icons/dark/actions/16/palette_tab.svg</file>
 		<file>icons/dark/actions/20/dragpalette.svg</file>
 		<file>icons/dark/actions/16/palettegizmo.svg</file>
+		<file>icons/dark/actions/16/new_style.svg</file>
+		<file>icons/dark/actions/16/new_page.svg</file>
 
 		<!-- Titlebars -->
 		<file>icons/dark/actions/20/pane_table.svg</file>
