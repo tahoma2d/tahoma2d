@@ -1456,6 +1456,7 @@ void PreviewFxManager::onLevelChanged() {
     // Build the level name as an alias keyword. All cache images associated
     // with an alias containing the level name will be updated.
     TXshLevel *xl = TApp::instance()->getCurrentLevel()->getLevel();
+    if (!xl) return;
     std::string aliasKeyword;
     TFilePath fp = xl->getPath();
     aliasKeyword = ::to_string(fp.withType(""));
