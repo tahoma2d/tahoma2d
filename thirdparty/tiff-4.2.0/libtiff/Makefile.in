@@ -237,6 +237,7 @@ am__depfiles_remade = ./$(DEPDIR)/mkg3states.Po \
 	./$(DEPDIR)/tif_error.Plo ./$(DEPDIR)/tif_extension.Plo \
 	./$(DEPDIR)/tif_fax3.Plo ./$(DEPDIR)/tif_fax3sm.Plo \
 	./$(DEPDIR)/tif_flush.Plo ./$(DEPDIR)/tif_getimage.Plo \
+	./$(DEPDIR)/tif_getimage_64.Plo \
 	./$(DEPDIR)/tif_jbig.Plo ./$(DEPDIR)/tif_jpeg.Plo \
 	./$(DEPDIR)/tif_jpeg_12.Plo ./$(DEPDIR)/tif_luv.Plo \
 	./$(DEPDIR)/tif_lzma.Plo ./$(DEPDIR)/tif_lzw.Plo \

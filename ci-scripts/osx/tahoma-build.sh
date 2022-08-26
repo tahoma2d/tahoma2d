@@ -1,5 +1,5 @@
 #!/bin/bash
-pushd thirdparty/tiff-4.0.3
+pushd thirdparty/tiff-4.2.0
 ./configure --disable-lzma --without-x && make
 popd
 
@@ -31,7 +31,7 @@ export MACOSX_DEPLOYMENT_TARGET=10.13
 export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/jpeg-turbo/lib/pkgconfig"
 cmake ../sources  $CANON_FLAG \
       -DQT_PATH=$USEQTLIB \
-      -DTIFF_INCLUDE_DIR=../../thirdparty/tiff-4.0.3/libtiff/ \
+      -DTIFF_INCLUDE_DIR=../../thirdparty/tiff-4.2.0/libtiff/ \
       -DSUPERLU_INCLUDE_DIR=../../thirdparty/superlu/SuperLU_4.1/include/
 
 make -j7 # runs 7 jobs in parallel

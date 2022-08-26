@@ -1,5 +1,5 @@
 #!/bin/bash
-pushd thirdparty/tiff-4.0.3
+pushd thirdparty/tiff-4.2.0
 CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --disable-jbig && make
 popd
 
