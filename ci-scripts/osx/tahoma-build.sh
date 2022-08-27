@@ -1,6 +1,6 @@
 #!/bin/bash
 pushd thirdparty/tiff-4.2.0
-./configure --disable-lzma --without-x && make
+./configure --disable-lzma --disable-webp --without-x && make
 popd
 
 cd toonz
