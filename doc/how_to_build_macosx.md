@@ -70,8 +70,8 @@ $ mv ~/Downloads/boost_1_72_0.tar.bz2 .   #or whatever the boost filename you do
 $ tar xvjf boost_1_72_0.tar.bz2
 $ cd ../lzo
 $ cp -r 2.03/include/lzo driver
-$ cd ../tiff-4.0.3
-$ ./configure --disable-lzma && make
+$ cd ../tiff-4.2.0
+$ ./configure  --disable-webp --disable-zstd --without-x && make
 ```
 
 ### Configure build for QT version
