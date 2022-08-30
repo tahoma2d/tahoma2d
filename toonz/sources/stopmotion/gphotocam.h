@@ -41,7 +41,7 @@ const struct {
     {"Canon",
      {"autoexposuremode", "batterylevel", "shutterspeed", "aperture", "iso",
       "whitebalance", "picturestyle", "imageformat", 0, "exposurecompensation",
-      "colorTemperature", "manualfocusdrive", "eoszoomposition", "viewfinder",
+      "colortemperature", "manualfocusdrive", "eoszoomposition", "viewfinder",
       "focusinfo"}},
     // Nikon
     {"Nikon",
