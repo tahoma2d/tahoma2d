@@ -163,9 +163,8 @@ void Iwa_BokehFx::doCompute(TTile& tile, double frame,
   QList<LayerValue> layerValues;
   for (auto index : sourceIndices) {
     LayerValue layerValue;
-    layerValue.sourceTile = sourceTiles[index];
-    layerValue.premultiply =
-        m_layerParams[index].m_premultiply->getValue() ? 1 : 0;
+    layerValue.sourceTile    = sourceTiles[index];
+    layerValue.premultiply   = m_layerParams[index].m_premultiply->getValue();
     layerValue.layerHardness = masterHardness;
     layerValue.depth_ref     = 0;
     layerValue.irisSize      = irisSizes.value(index);
