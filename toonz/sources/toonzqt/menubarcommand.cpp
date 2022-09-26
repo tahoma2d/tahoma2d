@@ -583,7 +583,10 @@ void DVMenuAction::onTriggered(QAction *action) {
   CommandManager::instance()->execute(action, menuAction());
 
   // simply execute the menu item and return
-  if (!m_isForRecentFiles) return;
+  if (!m_isForRecentFiles) {
+    m_triggeredActionIndex = -1;
+    return;
+  }
 
   int oldIndex = m_triggeredActionIndex;
   if (m_triggeredActionIndex != -1) m_triggeredActionIndex = -1;
