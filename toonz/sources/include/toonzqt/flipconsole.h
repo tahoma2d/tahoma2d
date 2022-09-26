@@ -245,6 +245,7 @@ public:
     eFlipHorizontal,
     eFlipVertical,
     eResetView,
+    eBlankFrames,
     // following values are hard-coded in ImagePainter
     eBlackBg = 0x40000,
     eWhiteBg = 0x80000,

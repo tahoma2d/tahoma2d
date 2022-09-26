@@ -221,6 +221,7 @@
 #define MI_PrevStep "MI_PrevStep"
 #define MI_NextKeyframe "MI_NextKeyframe"
 #define MI_PrevKeyframe "MI_PrevKeyframe"
+#define MI_ToggleBlankFrames "MI_ToggleBlankFrames"
 
 #define MI_RedChannel "MI_RedChannel"
 #define MI_GreenChannel "MI_GreenChannel"

@@ -305,7 +305,8 @@ VcrCommand playCommand(MI_Play, FlipConsole::ePlay),
     greenChannelGComman(MI_GreenChannelGreyscale, FlipConsole::eGGreen),
     blueChannelGCommand(MI_BlueChannelGreyscale, FlipConsole::eGBlue),
 
-    compareCommand(MI_CompareToSnapshot, FlipConsole::eCompare);
+    compareCommand(MI_CompareToSnapshot, FlipConsole::eCompare),
+    blankFramesCommand(MI_ToggleBlankFrames, FlipConsole::eBlankFrames);
 
 NextDrawingCommand nextDrawingCommand;
 PrevDrawingCommand prevDrawingCommand;

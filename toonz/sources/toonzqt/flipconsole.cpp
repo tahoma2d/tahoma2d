@@ -170,7 +170,7 @@ void PlaybackExecutor::run() {
   qint64 nextSampleInstant = timeResolution;
 
   qint64 lastFrameCounts[4]    = {0, 0, 0,
-                               0};  // Keep the last 4 'played frames' counts.
+                                  0};  // Keep the last 4 'played frames' counts.
   qint64 lastSampleInstants[4] = {0, 0, 0,
                                   0};  // Same for the last sampling instants
 
@@ -190,7 +190,7 @@ void PlaybackExecutor::run() {
       qint64 framesCount = playedFramesCount - lastFrameCounts[currSample];
       qint64 elapsedTime = emissionInstant - lastSampleInstants[currSample];
       fps                = troundp((long double)(1000000000 * framesCount) /
-                    (long double)elapsedTime);
+                                   (long double)elapsedTime);
 
       targetFrameTime =
           1000000000 / (qint64)abs(m_fps);  // m_fps could have changed...
@@ -295,11 +295,10 @@ void FlipSlider::paintEvent(QPaintEvent *ev) {
                 PBMarkerMarginLeft;
       if (i == pbStatusSize - 1) nextPos += PBMarkerMarginRight;
       p.fillRect(currPos, PBColorMarginTop, nextPos - currPos, colorHeight,
-                 ((*m_progressBarStatus)[i] == PBFrameStarted)
-                     ? PBStartedColor
-                     : ((*m_progressBarStatus)[i] == PBFrameFinished)
-                           ? PBFinishedColor
-                           : PBNotStartedColor);
+                 ((*m_progressBarStatus)[i] == PBFrameStarted) ? PBStartedColor
+                 : ((*m_progressBarStatus)[i] == PBFrameFinished)
+                     ? PBFinishedColor
+                     : PBNotStartedColor);
       currPos = nextPos;
     }
 
@@ -1861,6 +1860,8 @@ QFrame *FlipConsole::createFrameSlider() {
     m_enableBlankFrameButton->setFixedHeight(24);
     m_enableBlankFrameButton->setFixedWidth(66);
     m_enableBlankFrameButton->setObjectName("enableBlankFrameButton");
+
+    m_buttons[eBlankFrames] = m_enableBlankFrameButton;
   }
 
   // layout
