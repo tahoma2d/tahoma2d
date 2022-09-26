@@ -12,6 +12,7 @@
 #include "toonzqt/gutil.h"
 #include "toonzqt/filefield.h"
 #include "toonzqt/colorfield.h"
+#include "toonzqt/intfield.h"
 
 // TnzLib includes
 #include "toonz/tscenehandle.h"
@@ -1234,7 +1235,7 @@ void XSheetPDFTemplate::drawDialogue(QPainter& painter, int framePage) {
       if (row < drawStart) {
         int partialBlockLength = rowTo - drawStart + 1;
         int partialTextCount   = (int)std::round(
-              (double)(textCount * partialBlockLength) / (double)blockLength);
+            (double)(textCount * partialBlockLength) / (double)blockLength);
         text        = text.mid(textCount - partialTextCount);
         textCount   = partialTextCount;
         row         = drawStart;
@@ -1250,7 +1251,7 @@ void XSheetPDFTemplate::drawDialogue(QPainter& painter, int framePage) {
       if (rowTo > drawEnd) {
         int partialBlockLength = drawEnd - row + 1;
         int partialTextCount   = (int)std::round(
-              (double)(textCount * partialBlockLength) / (double)blockLength);
+            (double)(textCount * partialBlockLength) / (double)blockLength);
         text      = text.mid(0, partialTextCount);
         textCount = partialTextCount;
         rowTo     = drawEnd;
@@ -1315,9 +1316,9 @@ XSheetPDFTemplate::XSheetPDFTemplate(
 void XSheetPDFTemplate::setInfo(const XSheetPDFFormatInfo& info) {
   m_info         = info;
   thinPen        = QPen(info.lineColor, param(ThinLineWidth, mm2px(0.25)),
-                        Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
+                 Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
   thickPen       = QPen(info.lineColor, param(ThickLineWidth, mm2px(0.5)),
-                        Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
+                  Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
   bodyOutlinePen = QPen(info.lineColor, param(BodyOutlineWidth, mm2px(0.5)),
                         Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
   blockBorderPen = (param(IsBlockBorderThick, 0) > 0) ? thickPen : thinPen;
@@ -1431,6 +1432,8 @@ void XSheetPDFTemplate::drawXsheetContents(QPainter& painter, int framePage,
           startFrame + 72 != m_duration)
         drawLevelName(painter, m_colLabelRects_bottom[c][r / 72], columnName,
                       true);
+
+      if (m_duration == 0) break;
 
       TXshCell cell = column->getCell(f);
       if (cell.m_level != level) cell.m_level = nullptr;
@@ -1887,6 +1890,7 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
   m_templateCombo       = new QComboBox(this);
   m_exportAreaCombo     = new QComboBox(this);
   m_continuousLineCombo = new QComboBox(this);
+  m_durationFld         = new DVGui::IntLineEdit(this, 0, 0);
 
   m_pageInfoLbl  = new QLabel(this);
   m_lineColorFld = new DVGui::ColorField(this, false, TPixel32(128, 128, 128));
@@ -2042,19 +2046,23 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
         exportLay->setHorizontalSpacing(5);
         exportLay->setVerticalSpacing(10);
         {
-          exportLay->addWidget(new QLabel(tr("Output area:"), this), 0, 0,
+          exportLay->addWidget(new QLabel(tr("Frame length:"), this), 0, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
-          exportLay->addWidget(m_exportAreaCombo, 0, 1);
-          exportLay->addWidget(m_pageInfoLbl, 0, 2);
+          exportLay->addWidget(m_durationFld, 0, 1);
 
-          exportLay->addWidget(new QLabel(tr("Output font:"), this), 1, 0,
+          exportLay->addWidget(new QLabel(tr("Output area:"), this), 1, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
-          exportLay->addWidget(m_contentsFontCB, 1, 1, 1, 2,
+          exportLay->addWidget(m_exportAreaCombo, 1, 1);
+          exportLay->addWidget(m_pageInfoLbl, 1, 2);
+
+          exportLay->addWidget(new QLabel(tr("Output font:"), this), 2, 0,
+                               Qt::AlignRight | Qt::AlignVCenter);
+          exportLay->addWidget(m_contentsFontCB, 2, 1, 1, 2,
                                Qt::AlignLeft | Qt::AlignVCenter);
 
-          exportLay->addWidget(new QLabel(tr("Continuous line:"), this), 2, 0,
+          exportLay->addWidget(new QLabel(tr("Continuous line:"), this), 3, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
-          exportLay->addWidget(m_continuousLineCombo, 2, 1, 1, 2,
+          exportLay->addWidget(m_continuousLineCombo, 3, 1, 1, 2,
                                Qt::AlignLeft | Qt::AlignVCenter);
 
           QGridLayout* checksLay = new QGridLayout();
@@ -2076,25 +2084,25 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
           checksLay->setColumnStretch(0, 2);
           checksLay->setColumnStretch(1, 1);
           checksLay->setColumnStretch(2, 1);
-          exportLay->addLayout(checksLay, 3, 0, 1, 3);
+          exportLay->addLayout(checksLay, 4, 0, 1, 3);
 
-          exportLay->addWidget(new QLabel(tr("Inbetween mark 1:"), this), 4, 0,
+          exportLay->addWidget(new QLabel(tr("Inbetween mark 1:"), this), 5, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
-          exportLay->addWidget(m_tick1IdCombo, 4, 1);
-          exportLay->addWidget(m_tick1MarkCombo, 4, 2,
+          exportLay->addWidget(m_tick1IdCombo, 5, 1);
+          exportLay->addWidget(m_tick1MarkCombo, 5, 2,
                                Qt::AlignLeft | Qt::AlignVCenter);
-          exportLay->addWidget(new QLabel(tr("Inbetween mark 2:"), this), 5, 0,
+          exportLay->addWidget(new QLabel(tr("Inbetween mark 2:"), this), 6, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
-          exportLay->addWidget(m_tick2IdCombo, 5, 1);
-          exportLay->addWidget(m_tick2MarkCombo, 5, 2,
+          exportLay->addWidget(m_tick2IdCombo, 6, 1);
+          exportLay->addWidget(m_tick2MarkCombo, 6, 2,
                                Qt::AlignLeft | Qt::AlignVCenter);
-          exportLay->addWidget(new QLabel(tr("Keyframe mark:"), this), 6, 0,
+          exportLay->addWidget(new QLabel(tr("Keyframe mark:"), this), 7, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
-          exportLay->addWidget(m_keyIdCombo, 6, 1);
+          exportLay->addWidget(m_keyIdCombo, 7, 1);
 
-          exportLay->addWidget(new QLabel(tr("Memo:"), this), 7, 0,
+          exportLay->addWidget(new QLabel(tr("Memo:"), this), 8, 0,
                                Qt::AlignRight | Qt::AlignTop);
-          exportLay->addWidget(m_memoEdit, 7, 1, 1, 2);
+          exportLay->addWidget(m_memoEdit, 8, 1, 1, 2);
         }
         exportLay->setColumnStretch(2, 1);
         exportGBox->setLayout(exportLay);
@@ -2144,6 +2152,8 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
   connect(exportPngBtn, SIGNAL(clicked()), this, SLOT(onExportPNG()));
   connect(cancelBtn, SIGNAL(clicked()), this, SLOT(close()));
 
+  connect(m_durationFld, SIGNAL(editingFinished()), this,
+          SLOT(onDurationEdited()));
   connect(m_templateCombo, SIGNAL(activated(int)), this, SLOT(initTemplate()));
 
   connect(m_exportAreaCombo, SIGNAL(activated(int)), this,
@@ -2277,6 +2287,8 @@ void ExportXsheetPdfPopup::initialize() {
   else
     m_duration = xsheet->getFrameCount();
 
+  m_durationFld->setValue(m_duration);
+
   m_columns.clear();
   m_soundColumns.clear();
   m_noteColumns.clear();
@@ -2359,9 +2371,8 @@ void ExportXsheetPdfPopup::saveSettings() {
 
   ContinuousLineMode clMode =
       (ContinuousLineMode)(m_continuousLineCombo->currentData().toInt());
-  XShPdfExportContinuousLineThres = (clMode == Line_Always) ? 0
-                                    : (clMode == Line_None) ? -1
-                                                            : 3;
+  XShPdfExportContinuousLineThres =
+      (clMode == Line_Always) ? 0 : (clMode == Line_None) ? -1 : 3;
 
   XShPdfExportTick1Id   = m_tick1IdCombo->currentData().toInt();
   XShPdfExportTick2Id   = m_tick2IdCombo->currentData().toInt();
@@ -2398,10 +2409,11 @@ void ExportXsheetPdfPopup::loadSettings() {
   m_logoTextEdit->setText(QString::fromStdString(XShPdfExportLogoText));
   m_logoImgPathField->setPath(QString::fromStdString(XShPdfExportImgPath));
 
-  ContinuousLineMode clMode =
-      (XShPdfExportContinuousLineThres == 0)    ? Line_Always
-      : (XShPdfExportContinuousLineThres == -1) ? Line_None
-                                                : Line_MoreThan3s;
+  ContinuousLineMode clMode = (XShPdfExportContinuousLineThres == 0)
+                                  ? Line_Always
+                                  : (XShPdfExportContinuousLineThres == -1)
+                                        ? Line_None
+                                        : Line_MoreThan3s;
   m_continuousLineCombo->setCurrentIndex(
       m_continuousLineCombo->findData(clMode));
 
@@ -2771,6 +2783,13 @@ void ExportXsheetPdfPopup::onTickIdComboActivated() {
   else if (combo == m_tick2IdCombo)
     m_tick2MarkCombo->setEnabled(m_tick2IdCombo->currentData().toInt() != -1);
   updatePreview();
+}
+
+void ExportXsheetPdfPopup::onDurationEdited() {
+  int newDuration = m_durationFld->getValue();
+  if (m_duration == newDuration) return;
+  m_duration = newDuration;
+  initTemplate();
 }
 
 //-----------------------------------------------------------------------------
