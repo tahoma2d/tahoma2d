@@ -87,7 +87,7 @@ TXshColumn *TXshLevelColumn::clone() const {
   column->m_cells = m_cells;
   column->m_first = m_first;
   column->setColorTag(getColorTag());
-  column->setFilterColorId(getFilterColorId());
+  column->setColorFilterId(getColorFilterId());
 
   // column->updateIcon();
   return column;
@@ -113,7 +113,7 @@ void TXshLevelColumn::loadData(TIStream &is) {
     } else if (tagName == "filter_color_id") {
       int id;
       is >> id;
-      setFilterColorId((TXshColumn::FilterColor)id);
+      setColorFilterId(id);
     } else if (tagName == "cells") {
       while (is.openChild(tagName)) {
         if (tagName == "cell") {
@@ -166,8 +166,8 @@ void TXshLevelColumn::loadData(TIStream &is) {
 void TXshLevelColumn::saveData(TOStream &os) {
   os.child("status") << getStatusWord();
   if (getOpacity() < 255) os.child("camerastand_opacity") << (int)getOpacity();
-  if (getFilterColorId() != 0)
-    os.child("filter_color_id") << (int)getFilterColorId();
+  if (getColorFilterId() != 0)
+    os.child("filter_color_id") << (int)getColorFilterId();
   int r0, r1;
   if (getRange(r0, r1)) {
     os.openChild("cells");
