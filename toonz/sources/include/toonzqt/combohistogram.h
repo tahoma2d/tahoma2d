@@ -51,6 +51,7 @@ private:
   QColor m_color;
 
   DisplayMode m_mode;
+  bool m_alphaVisible;
 
 public:
   ComboHistoRGBLabel(QColor color, QWidget *parent);
@@ -59,6 +60,7 @@ public:
 
   void setColorAndUpdate(QColor color);
   void setDisplayMode(DisplayMode mode) { m_mode = mode; }
+  void setAlphaVisible(bool visible) { m_alphaVisible = visible; }
 
 protected:
   void paintEvent(QPaintEvent *pe) override;
@@ -142,6 +144,9 @@ public:
 
 protected slots:
   void onShowAlphaButtonToggled(bool visible);
+
+signals:
+  void showButtonToggled(bool);
 };
 
 //-----------------------------------------------------------------------------
@@ -199,6 +204,7 @@ protected:
 
 protected slots:
   void onDisplayModeChanged();
+  void onShowAlphaButtonToggled(bool);
 };
 
 #endif

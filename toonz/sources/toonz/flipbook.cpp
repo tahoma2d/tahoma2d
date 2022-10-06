@@ -270,7 +270,7 @@ void FlipBook::addFreezeButtonToTitleBar() {
   if (panel) {
     TPanelTitleBar *titleBar = panel->getTitleBar();
     m_freezeButton           = new TPanelTitleBarButton(
-        titleBar, getIconThemePath("actions/20/pane_freeze.svg"));
+                  titleBar, getIconThemePath("actions/20/pane_freeze.svg"));
     m_freezeButton->setToolTip("Freeze");
     titleBar->add(QPoint(-64, 0), m_freezeButton);
     connect(m_freezeButton, SIGNAL(toggled(bool)), this, SLOT(freeze(bool)));
@@ -1766,9 +1766,12 @@ void FlipBook::onCloseButtonPressed() {
 
 void ImageViewer::showHistogram() {
   if (!m_isHistogramEnable) return;
+
+  // close the popup when using the command while open
   if (m_histogramPopup->isVisible())
-    m_histogramPopup->raise();
+    m_histogramPopup->hide();
   else {
+    m_histogramPopup->moveNextToWidget(this);
     m_histogramPopup->setImage(getImage());
     m_histogramPopup->show();
   }

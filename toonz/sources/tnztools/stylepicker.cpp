@@ -261,7 +261,7 @@ TPixel64 StylePicker::pickAverageColor16(const TRectD &rect) const {
   assert(raster64);
   if (!raster64) return TPixel64::Transparent;
 
-  UINT r = 0, g = 0, b = 0, m = 0, size = 0;
+  uint64_t r = 0, g = 0, b = 0, m = 0, size = 0;
   for (int y = topLeft.y; y < bottomRight.y; y++) {
     TPixel64 *p = &raster64->pixels(y)[topLeft.x];
     for (int x = topLeft.x; x < bottomRight.x; x++, p++) {

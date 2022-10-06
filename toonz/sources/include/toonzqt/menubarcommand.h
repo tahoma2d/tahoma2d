@@ -63,10 +63,11 @@ enum CommandType {
   ToolModifierCommandType,
   ZoomCommandType,
   MiscCommandType,
+  StopMotionCommandType,
+  CellMarkCommandType,
   MenuCommandType,
   VisualizationButtonCommandType,
-  StopMotionCommandType,
-  CellMarkCommandType
+  HiddenCommandType
 };
 
 //-----------------------------------------------------------------------------
@@ -246,9 +247,15 @@ public:
 
   void execute() override {
     if (!m_popup) m_popup = new T();
-    m_popup->show();
-    m_popup->raise();
-    m_popup->activateWindow();
+
+    // close popup when using the command while open
+    if (m_popup->isVisible())
+      m_popup->hide();
+    else {
+      m_popup->show();
+      m_popup->raise();
+      m_popup->activateWindow();
+    }
   }
 };
 

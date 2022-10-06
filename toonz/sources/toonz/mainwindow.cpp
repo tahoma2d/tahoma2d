@@ -2386,6 +2386,11 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_PasteNumbers, QT_TR_NOOP("&Paste Numbers"), "",
                              "paste_numbers");
   createRightClickMenuAction(MI_Histogram, QT_TR_NOOP("&Histogram"), "");
+  // MI_ViewerHistogram command is used as a proxy. It will be called when
+  // the MI_Histogram is used while the current flip console is in viewer.
+  createAction(MI_ViewerHistogram, QT_TR_NOOP("&Viewer Histogram"), "", "",
+               HiddenCommandType);
+
   createRightClickMenuAction(MI_BlendColors, QT_TR_NOOP("&Blend colors"), "");
   createToggle(MI_OnionSkin, QT_TR_NOOP("Onion Skin Toggle"), "/", false,
                RightClickMenuCommandType, "onionskin_toggle");

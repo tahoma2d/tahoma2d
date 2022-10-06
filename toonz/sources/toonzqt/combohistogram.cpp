@@ -95,11 +95,10 @@ void ChannelHistoGraph::paintEvent(QPaintEvent *event) {
     p.drawLine(posx, 1, posx, COMBOHIST_RESOLUTION_H);
   }
 
-  QColor compColor = (m_channelIndex == 0)
-                         ? Qt::red
-                         : (m_channelIndex == 1)
-                               ? Qt::green
-                               : (m_channelIndex == 2) ? Qt::blue : Qt::magenta;
+  QColor compColor = (m_channelIndex == 0)   ? Qt::red
+                     : (m_channelIndex == 1) ? Qt::green
+                     : (m_channelIndex == 2) ? Qt::blue
+                                             : Qt::magenta;
   compColor.setAlpha(120);
 
   int maxValue = m_maxValue[0];
@@ -192,8 +191,9 @@ void RGBHistoGraph::setValues(int *buf, bool) {
   imgPainter.setCompositionMode(QPainter::CompositionMode_Plus);
 
   for (int chan = 0; chan < 3; chan++) {
-    imgPainter.setPen((chan == 0) ? Qt::red
-                                  : (chan == 1) ? Qt::green : Qt::blue);
+    imgPainter.setPen((chan == 0)   ? Qt::red
+                      : (chan == 1) ? Qt::green
+                                    : Qt::blue);
 
     for (int i = 0; i < COMBOHIST_RESOLUTION_W; i++) {
       int v = m_rgbValues[chan][i];
@@ -339,14 +339,18 @@ void ChannelHisto::showCurrentChannelValue(int val) {
 void ChannelHisto::onShowAlphaButtonToggled(bool visible) {
   m_histogramGraph->setVisible(visible);
   m_colorBar->setVisible(visible);
+  emit showButtonToggled(visible);
 }
 
 //=============================================================================
 // ComboHistoRGBLabel
 //-----------------------------------------------------------------------------
 ComboHistoRGBLabel::ComboHistoRGBLabel(QColor color, QWidget *parent)
-    : QWidget(parent), m_color(color), m_mode(DisplayMode::Display_8bit) {
-  setFixedSize(COMBOHIST_RESOLUTION_W, 30);
+    : QWidget(parent)
+    , m_color(color)
+    , m_mode(DisplayMode::Display_8bit)
+    , m_alphaVisible(false) {
+  setFixedSize(COMBOHIST_RESOLUTION_W, 35);
 }
 
 void ComboHistoRGBLabel::setColorAndUpdate(QColor color) {
@@ -388,12 +392,14 @@ void ComboHistoRGBLabel::paintEvent(QPaintEvent *pe) {
   font.setPixelSize(pixelSizes[(int)m_mode]);
   p.setFont(font);
   QString colorStr;
+  QString colorStr2 = QString();
   switch (m_mode) {
   case Display_8bit: {
     colorStr = tr("R:%1 G:%2 B:%3")
                    .arg(m_color.red())
                    .arg(m_color.green())
                    .arg(m_color.blue());
+    if (m_alphaVisible) colorStr += tr(" A:%1").arg(m_color.alpha());
     break;
   }
   case Display_16bit: {
@@ -402,17 +408,34 @@ void ComboHistoRGBLabel::paintEvent(QPaintEvent *pe) {
                    .arg(rgba64.red())
                    .arg(rgba64.green())
                    .arg(rgba64.blue());
+    if (m_alphaVisible) colorStr += tr(" A:%1").arg(rgba64.alpha());
     break;
   }
   case Display_0_1: {
-    colorStr = tr("R:%1 G:%2 B:%3")
-                   .arg(m_color.redF())
-                   .arg(m_color.greenF())
-                   .arg(m_color.blueF());
+    if (!m_alphaVisible) {
+      colorStr = tr("R:%1 G:%2 B:%3")
+                     .arg(m_color.redF())
+                     .arg(m_color.greenF())
+                     .arg(m_color.blueF());
+    } else {
+      // display in 2 lines
+      colorStr = tr("R:%1 G:%2 B:%3")
+                     .arg(m_color.redF())
+                     .arg(m_color.greenF())
+                     .arg(m_color.blueF());
+      colorStr2 = tr("A:%1").arg(m_color.alphaF());
+    }
     break;
   }
   }
-  p.drawText(rect(), Qt::AlignCenter, colorStr);
+  if (colorStr2.isEmpty())
+    p.drawText(rect(), Qt::AlignCenter, colorStr);
+  else {
+    QRect upRect = rect().adjusted(0, 0, 0, -rect().height() / 2);
+    p.drawText(upRect, Qt::AlignCenter, colorStr);
+    QRect dnRect = upRect.translated(0, rect().height() / 2);
+    p.drawText(dnRect, Qt::AlignCenter, colorStr2);
+  }
 }
 
 //=============================================================================
@@ -472,18 +495,16 @@ ComboHistogram::ComboHistogram(QWidget *parent)
                           0, Qt::AlignLeft | Qt::AlignVCenter);
     mainLayout->addWidget(m_rectAverageRgbLabel, 0, Qt::AlignCenter);
 
-    QGridLayout *infoParamLay = new QGridLayout();
-    infoParamLay->setHorizontalSpacing(3);
-    infoParamLay->setVerticalSpacing(5);
+    QHBoxLayout *infoParamLay = new QHBoxLayout();
+    infoParamLay->setMargin(5);
+    infoParamLay->setSpacing(3);
     {
-      infoParamLay->addWidget(new QLabel(tr("X:"), this), 0, 0,
+      infoParamLay->addWidget(new QLabel(tr("X:"), this), 1,
                               Qt::AlignRight | Qt::AlignVCenter);
-      infoParamLay->addWidget(m_xPosLabel, 0, 1,
-                              Qt::AlignLeft | Qt::AlignVCenter);
-      infoParamLay->addWidget(new QLabel(tr("Y:"), this), 1, 0,
+      infoParamLay->addWidget(m_xPosLabel, 1, Qt::AlignLeft | Qt::AlignVCenter);
+      infoParamLay->addWidget(new QLabel(tr("Y:"), this), 1,
                               Qt::AlignRight | Qt::AlignVCenter);
-      infoParamLay->addWidget(m_yPosLabel, 1, 1,
-                              Qt::AlignLeft | Qt::AlignVCenter);
+      infoParamLay->addWidget(m_yPosLabel, 2, Qt::AlignLeft | Qt::AlignVCenter);
     }
     mainLayout->addLayout(infoParamLay, 0);
 
@@ -499,6 +520,8 @@ ComboHistogram::ComboHistogram(QWidget *parent)
 
   connect(m_displayModeCombo, SIGNAL(activated(int)), this,
           SLOT(onDisplayModeChanged()));
+  connect(m_histograms[3], SIGNAL(showButtonToggled(bool)), this,
+          SLOT(onShowAlphaButtonToggled(bool)));
 }
 //-----------------------------------------------------------------------------
 
@@ -595,6 +618,7 @@ void ComboHistogram::updateInfo(const TPixel32 &pix, const TPointD &imagePos) {
     m_histograms[0]->showCurrentChannelValue(-1);
     m_histograms[1]->showCurrentChannelValue(-1);
     m_histograms[2]->showCurrentChannelValue(-1);
+    m_histograms[3]->showCurrentChannelValue(-1);
     m_rgbLabel->setColorAndUpdate(Qt::transparent);
     m_xPosLabel->setText("");
     m_yPosLabel->setText("");
@@ -603,7 +627,9 @@ void ComboHistogram::updateInfo(const TPixel32 &pix, const TPointD &imagePos) {
     m_histograms[0]->showCurrentChannelValue((int)pix.r);
     m_histograms[1]->showCurrentChannelValue((int)pix.g);
     m_histograms[2]->showCurrentChannelValue((int)pix.b);
-    m_rgbLabel->setColorAndUpdate(QColor((int)pix.r, (int)pix.g, (int)pix.b));
+    m_histograms[3]->showCurrentChannelValue((int)pix.m);
+    m_rgbLabel->setColorAndUpdate(
+        QColor((int)pix.r, (int)pix.g, (int)pix.b, (int)pix.m));
     m_xPosLabel->setText(QString::number(tround(imagePos.x)));
     m_yPosLabel->setText(QString::number(tround(imagePos.y)));
   }
@@ -616,6 +642,7 @@ void ComboHistogram::updateInfo(const TPixel64 &pix, const TPointD &imagePos) {
     m_histograms[0]->showCurrentChannelValue(-1);
     m_histograms[1]->showCurrentChannelValue(-1);
     m_histograms[2]->showCurrentChannelValue(-1);
+    m_histograms[3]->showCurrentChannelValue(-1);
     m_rgbLabel->setColorAndUpdate(Qt::transparent);
     m_xPosLabel->setText("");
     m_yPosLabel->setText("");
@@ -625,8 +652,9 @@ void ComboHistogram::updateInfo(const TPixel64 &pix, const TPointD &imagePos) {
     m_histograms[0]->showCurrentChannelValue((int)pix32.r);
     m_histograms[1]->showCurrentChannelValue((int)pix32.g);
     m_histograms[2]->showCurrentChannelValue((int)pix32.b);
-    m_rgbLabel->setColorAndUpdate(
-        QColor::fromRgba64((ushort)pix.r, (ushort)pix.g, (ushort)pix.b));
+    m_histograms[3]->showCurrentChannelValue((int)pix32.m);
+    m_rgbLabel->setColorAndUpdate(QColor::fromRgba64(
+        (ushort)pix.r, (ushort)pix.g, (ushort)pix.b, (ushort)pix.m));
     m_xPosLabel->setText(QString::number(tround(imagePos.x)));
     m_yPosLabel->setText(QString::number(tround(imagePos.y)));
   }
@@ -639,7 +667,7 @@ void ComboHistogram::updateAverageColor(const TPixel32 &pix) {
     m_rectAverageRgbLabel->setColorAndUpdate(Qt::transparent);
   } else {
     m_rectAverageRgbLabel->setColorAndUpdate(
-        QColor((int)pix.r, (int)pix.g, (int)pix.b));
+        QColor((int)pix.r, (int)pix.g, (int)pix.b, (int)pix.m));
   }
 }
 
@@ -649,8 +677,8 @@ void ComboHistogram::updateAverageColor(const TPixel64 &pix) {
   if (pix == TPixel64::Transparent) {
     m_rectAverageRgbLabel->setColorAndUpdate(Qt::transparent);
   } else {
-    m_rectAverageRgbLabel->setColorAndUpdate(
-        QColor::fromRgba64((ushort)pix.r, (ushort)pix.g, (ushort)pix.b));
+    m_rectAverageRgbLabel->setColorAndUpdate(QColor::fromRgba64(
+        (ushort)pix.r, (ushort)pix.g, (ushort)pix.b, (ushort)pix.m));
   }
 }
 
@@ -695,4 +723,13 @@ void ComboHistogram::showEvent(QShowEvent *) {
       static_cast<ComboHistoRGBLabel::DisplayMode>(envMode);
   m_rgbLabel->setDisplayMode(mode);
   m_rectAverageRgbLabel->setDisplayMode(mode);
+}
+
+//-----------------------------------------------------------------------------
+
+void ComboHistogram::onShowAlphaButtonToggled(bool alphaVisible) {
+  m_rgbLabel->setAlphaVisible(alphaVisible);
+  m_rectAverageRgbLabel->setAlphaVisible(alphaVisible);
+  m_rgbLabel->update();
+  m_rectAverageRgbLabel->update();
 }

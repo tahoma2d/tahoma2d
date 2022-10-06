@@ -6,6 +6,7 @@
 #include "menubarcommandids.h"
 #include "tapp.h"
 #include "previewer.h"
+#include "sceneviewer.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -22,6 +23,8 @@
 // Qt includes
 #include <QTimer>
 #include <QMainWindow>
+#include <QDesktopWidget>
+#include <QFocusEvent>
 
 using namespace DVGui;
 
@@ -106,6 +109,35 @@ void HistogramPopup::invalidateCompHisto() {
   m_histogram->invalidateCompHisto();
 }
 
+//-----------------------------------------------------------------------------
+
+void HistogramPopup::moveNextToWidget(QWidget *widget) {
+  if (!widget) return;
+  const int margin = 5;
+
+  if (minimumSize().isEmpty()) grab();
+  QSize popupSize = frameSize();
+
+  int currentScreen = QApplication::desktop()->screenNumber(widget);
+  QRect screenRect  = QApplication::desktop()->availableGeometry(currentScreen);
+  QRect viewerRect  = widget->rect();
+  viewerRect.moveTo(widget->mapToGlobal(QPoint(0, 0)));
+  // decide which side to open the popup
+  QPoint popupPos = widget->mapToGlobal(QPoint(0, 0));
+  // open at the left
+  if (viewerRect.left() - screenRect.left() >
+      screenRect.right() - viewerRect.right())
+    popupPos.setX(std::max(viewerRect.left() - popupSize.width() - margin, 0));
+  // open at the right
+  else
+    popupPos.setX(std::min(viewerRect.right() + margin,
+                           screenRect.right() - popupSize.width()));
+  // adjust vertical position
+  popupPos.setY(std::min(std::max(popupPos.y(), screenRect.top()),
+                         screenRect.bottom() - popupSize.height() - margin));
+  move(popupPos);
+}
+
 //=============================================================================
 /*! \class ViewerHistogramPopup
                 \brief The ViewerHistogramPopup show the histogram pertain to
@@ -127,6 +159,7 @@ void ViewerHistogramPopup::showEvent(QShowEvent *e) {
           SLOT(setCurrentRaster()));
 
   setCurrentRaster();
+  moveNextToWidget(TApp::instance()->getActiveViewer());
 }
 
 //-----------------------------------------------------------------------------
@@ -160,4 +193,5 @@ void ViewerHistogramPopup::setCurrentRaster() {
 
 //=============================================================================
 
-OpenPopupCommandHandler<ViewerHistogramPopup> openHistogramPopup(MI_Histogram);
+OpenPopupCommandHandler<ViewerHistogramPopup> openHistogramPopup(
+    MI_ViewerHistogram);
