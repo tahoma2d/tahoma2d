@@ -1760,6 +1760,8 @@ void MainWindow::defineActions() {
                        tr("Remove everything from the recent level list."));
   createMenuFileAction(MI_ConvertFileWithInput, QT_TR_NOOP("&Convert File..."), "",
                        "convert", tr("Convert an existing file or image sequence to another format."));
+  createMenuFileAction(MI_ConvertTZPInFolder,
+                       QT_TR_NOOP("&Convert TZP Files In Folder..."), "");
   createMenuFileAction(MI_LoadColorModel, QT_TR_NOOP("&Load Color Model..."),
                        "", "load_colormodel", tr("Load an image as a color guide."));
   createMenuFileAction(MI_ImportMagpieFile,

@@ -101,7 +101,7 @@ TRect rasterizeStroke(TOfflineGL *&gl, TRect rasBounds, TStroke *stroke,
 
 TRect rasterizeRegion(TOfflineGL *&gl, TRect rasBounds, TRegion *region,
                       TRectD clip) {
-  TRectD regionBBox               = region->getBBox();
+  TRectD regionBBox = region->getBBox();
   if (!clip.isEmpty()) regionBBox = regionBBox * clip;
 
   TRect rect = convert(regionBBox) * rasBounds;
@@ -169,7 +169,8 @@ void fastAddPaintRegion(const TToonzImageP &ti, TRegion *region, int newPaintId,
                        std::min(maxStyleId, subregion->getStyle()), maxStyleId);
   }
 }
-}
+}  // namespace
+
 
 //-------------------------------------------------------------------
 
@@ -455,7 +456,7 @@ TToonzImageP ToonzImageUtils::vectorToToonzImage(
       else {
         visible = false;
         for (int j = 0; j < style->getColorParamCount() && !visible; j++) {
-          TPixel32 color            = style->getColorParamValue(j);
+          TPixel32 color = style->getColorParamValue(j);
           if (color.m != 0) visible = true;
         }
       }
@@ -577,7 +578,7 @@ void ToonzImageUtils::scrambleStyles(const TToonzImageP &ti,
     assert(j >= 0);
     assert(j < 1000000);
     if (j >= (int)lut.size()) lut.resize(j + 1, -1);
-    lut[j]                 = k;
+    lut[j] = k;
     if (j != k) isIdentity = false;
   }
   if (isIdentity) return;
@@ -590,9 +591,9 @@ void ToonzImageUtils::scrambleStyles(const TToonzImageP &ti,
     TPixelCM32 *pix    = ras->pixels(y);
     TPixelCM32 *endPix = pix + lx;
     while (pix < endPix) {
-      int ink                                               = pix->getInk();
-      if (0 <= ink && ink < m && lut[ink] >= 0) ink         = lut[ink];
-      int paint                                             = pix->getPaint();
+      int ink = pix->getInk();
+      if (0 <= ink && ink < m && lut[ink] >= 0) ink = lut[ink];
+      int paint = pix->getPaint();
       if (0 <= paint && paint < m && lut[paint] >= 0) paint = lut[paint];
       if (ink != pix->getInk() || paint != pix->getPaint()) {
         *pix = TPixelCM32(ink, paint, pix->getTone());
@@ -735,16 +736,16 @@ void ToonzImageUtils::eraseImage(const TToonzImageP &ti,
         paint = inPix->m > 0 && erasePaint && canErasePaint
                     ? 0
                     : outPix->getPaint();
-        tone = inPix->m > 0 && eraseInk && canEraseInk
-                   ? std::max(outPix->getTone(), (int)inPix->m)
-                   : outPix->getTone();
+        tone  = inPix->m > 0 && eraseInk && canEraseInk
+                    ? std::max(outPix->getTone(), (int)inPix->m)
+                    : outPix->getTone();
       } else {
         paint = inPix->m < 255 && erasePaint && canErasePaint
                     ? 0
                     : outPix->getPaint();
-        tone = inPix->m < 255 && eraseInk && canEraseInk
-                   ? std::max(outPix->getTone(), 255 - (int)inPix->m)
-                   : outPix->getTone();
+        tone  = inPix->m < 255 && eraseInk && canEraseInk
+                    ? std::max(outPix->getTone(), 255 - (int)inPix->m)
+                    : outPix->getTone();
       }
       *outPix = TPixelCM32(outPix->getInk(), paint, tone);
     }

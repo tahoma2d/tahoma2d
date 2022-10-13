@@ -1,14 +1,14 @@
 
 
 #include "tiio_tzp.h"
-//#include "tiio.h"
+// #include "tiio.h"
 #include "trastercm.h"
 #include "toonztags.h"
 #include "texception.h"
 
 #include "tiffio.h"
 #include "tiffiop.h"
-//#include "tspecialstyleid.h"
+// #include "tspecialstyleid.h"
 #include <set>
 
 #ifdef _MSC_VER
@@ -37,6 +37,8 @@ class TzpReader final : public Tiio::Reader {
   bool m_isBigEndian;
   bool m_isFirstLineRead;
 
+  bool m_isOldCmap13;
+
 public:
   TzpReader();
   ~TzpReader();
@@ -63,6 +65,7 @@ TzpReader::TzpReader()
     , m_lx(0)
     , m_ly(0)
     , m_isCmap24(false)
+    , m_isOldCmap13(false)
     , m_nColor(0)
     , m_nPencil(0)
     , m_isBigEndian(false)
@@ -145,8 +148,9 @@ void TzpReader::open(FILE *file) {
   m_nColor  = palette[10];
   m_nPencil = palette[11];
 
+  // Old 4.1 palette : 4bit paint, 4bit tone, 5bit ink
   if (m_nColor == 128 && m_nPencil == 32) {
-    throw TException("Old 4.1 Palette");
+    m_isOldCmap13 = true;
   }
 
   if (bps == 32)
@@ -180,7 +184,7 @@ extern int ComboInkIndex[];  // a bad patch....
 void TzpReader::readLine(char *buffer, int x0, int x1, int shrink) {
   TPixelCM32 *pix = (TPixelCM32 *)buffer;
   for (int i = 0; i < m_info.m_lx; i++) pix[i] = TPixelCM32();
-  int y                                        = m_row++;
+  int y = m_row++;
 
   const int paintOffset = 0;                 // paint#1 --> 1
   const int inkOffset   = 1 + m_nColor - 1;  // ink#0 --> nColor-1
@@ -213,7 +217,7 @@ void TzpReader::readLine(char *buffer, int x0, int x1, int shrink) {
         pix[i] = TPixelCM32(ink, paint, tone);
       }
     }
-  } else {
+  } else if (!m_isOldCmap13) {
     if (m_y <= y && y < m_y + m_ly) {
       std::vector<unsigned short> line(m_lx);
       TIFFReadScanline(m_tiff, (char *)&line[0], y - m_y, 0);
@@ -234,6 +238,39 @@ void TzpReader::readLine(char *buffer, int x0, int x1, int shrink) {
         tone |= tone << 4;
         if (paint > 0) paint += paintOffset;
         ink += inkOffset;
+        pix[i] = TPixelCM32(ink, paint, tone);
+        if (tone < 255) {
+          //           int w = ink;
+        }
+        if (table.find(ink) == table.end()) {
+          table.insert(ink);
+        }
+      }
+    }
+  } else {
+    if (m_y <= y && y < m_y + m_ly) {
+      std::vector<unsigned short> line(m_lx);
+      TIFFReadScanline(m_tiff, (char *)&line[0], y - m_y, 0);
+      pix += m_x;
+      static std::set<int> table;
+
+      /// per le tzp che vengono da Irix
+      bool bigEndian =
+          (m_tiff->tif_header.classic.tiff_magic == TIFF_BIGENDIAN);
+
+      for (int i = 0; i < m_lx; i++) {
+        unsigned short inPix = line[i];
+        if (bigEndian) inPix = swapUshort(inPix);
+
+        int ink   = ((inPix >> 3) & 0x1F);
+        int tone  = ((inPix >> 8) & 0xF);
+        int paint = ((inPix >> 12) & 0xF);
+        tone |= tone << 4;
+        if (paint > 0) paint += paintOffset;
+        if (ComboInkIndex[ink] != -1)
+          ink = ComboInkIndex[ink];
+        else
+          ink += inkOffset;
         pix[i] = TPixelCM32(ink, paint, tone);
         if (tone < 255) {
           //           int w = ink;

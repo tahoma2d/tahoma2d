@@ -125,6 +125,7 @@ set(MOC_HEADERS
     exportxsheetpdf.h
     custompanelmanager.h
     custompaneleditorpopup.h
+    convertfolderpopup.h
     motionpathpanel.h
     graphwidget.h
     ../stopmotion/stopmotion.h
@@ -362,6 +363,7 @@ set(SOURCES
     exportxsheetpdf.cpp
     custompanelmanager.cpp
     custompaneleditorpopup.cpp
+    convertfolderpopup.cpp
 # Tracker file
     dummyprocessor.cpp
     metnum.cpp
