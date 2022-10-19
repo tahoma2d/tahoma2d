@@ -33,6 +33,7 @@
 #include "toonz/levelset.h"
 #include "toonz/txshsimplelevel.h"
 #include "toonz/levelproperties.h"
+#include "toonz/filepathproperties.h"
 
 // TnzSound includes
 #include "tnzsound.h"
@@ -50,7 +51,7 @@
 #include "tunit.h"
 #include "tenv.h"
 #include "tpassivecachemanager.h"
-//#include "tcacheresourcepool.h"
+// #include "tcacheresourcepool.h"
 
 // TnzCore includes
 #include "tsystem.h"
@@ -798,7 +799,7 @@ int main(int argc, char *argv[]) {
     loadShaderInterfaces(ToonzFolder::getLibraryFolder() +
                          TFilePath("shaders"));
 
-    //#endif
+    // #endif
 
     //---------------------------------------------------------
 
@@ -827,6 +828,12 @@ int main(int argc, char *argv[]) {
     cout << msg << endl;
     m_userLog->info(msg);
     // pm->setCurrentProject(project, false); // false => temporaneamente
+
+    // update TFilePath condition on loading the current project
+    FilePathProperties *fpProp = project->getFilePathProperties();
+    TFilePath::setFilePathProperties(fpProp->useStandard(),
+                                     fpProp->acceptNonAlphabetSuffix(),
+                                     fpProp->letterCountForSuffix());
 
     Sw1.start();
 
@@ -927,13 +934,10 @@ int main(int argc, char *argv[]) {
     const int threadCounts[3] = {1, procCount / 2, procCount};
     if (nthreads.isSelected()) {
       QString threadCountStr = QString::fromStdString(nthreads.getValue());
-      threadCount            = (threadCountStr == "single")
-                        ? threadCounts[0]
-                        : (threadCountStr == "half")
-                              ? threadCounts[1]
-                              : (threadCountStr == "all")
-                                    ? threadCounts[2]
-                                    : threadCountStr.toInt();
+      threadCount            = (threadCountStr == "single") ? threadCounts[0]
+                               : (threadCountStr == "half") ? threadCounts[1]
+                               : (threadCountStr == "all")  ? threadCounts[2]
+                                                           : threadCountStr.toInt();
 
       if (threadCount <= 0) {
         cout << "Qualifier 'nthreads': bad input" << endl;
@@ -953,15 +957,11 @@ int main(int argc, char *argv[]) {
         TOutputProperties::MediumVal, TOutputProperties::SmallVal};
     if (tileSize.isSelected()) {
       QString tileSizeStr = QString::fromStdString(tileSize.getValue());
-      maxTileSize         = (tileSizeStr == "none")
-                        ? maxTileSizes[0]
-                        : (tileSizeStr == "large")
-                              ? maxTileSizes[1]
-                              : (tileSizeStr == "medium")
-                                    ? maxTileSizes[2]
-                                    : (tileSizeStr == "small")
-                                          ? maxTileSizes[3]
-                                          : tileSizeStr.toInt();
+      maxTileSize         = (tileSizeStr == "none")     ? maxTileSizes[0]
+                            : (tileSizeStr == "large")  ? maxTileSizes[1]
+                            : (tileSizeStr == "medium") ? maxTileSizes[2]
+                            : (tileSizeStr == "small")  ? maxTileSizes[3]
+                                                        : tileSizeStr.toInt();
 
       if (maxTileSize <= 0) {
         cout << "Qualifier 'maxtilesize': bad input" << endl;

@@ -22,6 +22,7 @@
 #include "toonz/txshcolumn.h"
 #include "toonz/tlog.h"
 #include "toonz/imagestyles.h"
+#include "toonz/filepathproperties.h"
 
 // TnzBase includes
 #include "tcli.h"
@@ -595,6 +596,12 @@ int main(int argc, char *argv[]) {
   }
 
   cout << "project:" << project->getName() << endl;
+
+  // update TFilePath condition on loading the current project
+  FilePathProperties *fpProp = project->getFilePathProperties();
+  TFilePath::setFilePathProperties(fpProp->useStandard(),
+                                   fpProp->acceptNonAlphabetSuffix(),
+                                   fpProp->letterCountForSuffix());
 
   TFilePath fp = srcName;
 
