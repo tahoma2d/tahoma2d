@@ -40,17 +40,19 @@ class DVAPI CustomStyleManager final : public QObject {
 public:
   struct DVAPI PatternData {
     QImage *m_image;
-    std::string m_patternName;
+    QString m_patternName;
     bool m_isVector;
     bool m_isGenerated;
     TFilePath m_path;
+    std::string m_idName;  // brush id name
 
     PatternData()
         : m_image(0)
         , m_patternName("")
         , m_isVector(false)
         , m_isGenerated(false)
-        , m_path(TFilePath()) {}
+        , m_path(TFilePath())
+        , m_idName("") {}
   };
 
   class StyleLoaderTask;
@@ -61,6 +63,10 @@ private:
   TFilePath m_stylesFolder;
   QString m_filters;
   QSize m_chipSize;
+
+  bool m_isIndexed;
+  QList<int> m_indexes;
+  QString m_searchText;
 
   TThread::Executor m_executor;
   bool m_started;
@@ -92,6 +98,13 @@ public:
     emit itemsUpdated();
   }
 
+  void applyFilter();
+  void applyFilter(const QString text) {
+    m_searchText = text;
+    applyFilter();
+  }
+  QString getSearchText() const { return m_searchText; }
+
 private:
   void addPattern(const TFilePath &path);
 
@@ -110,10 +123,11 @@ class DVAPI TextureStyleManager final : public QObject {
 public:
   struct DVAPI TextureData {
     TRaster32P m_raster;
-    std::string m_textureName;
+    QString m_textureName;
     TFilePath m_path;
+    std::string m_idName;  // brush id name
 
-    TextureData() : m_raster(0), m_textureName(""), m_path(TFilePath()) {}
+    TextureData() : m_raster(0), m_textureName(""), m_path(TFilePath()), m_idName("") {}
   };
 
 private:
@@ -121,6 +135,10 @@ private:
   TFilePath m_stylesFolder;
   QString m_filters;
   QSize m_chipSize;
+
+  bool m_isIndexed;
+  QList<int> m_indexes;
+  QString m_searchText;
 
 public:
   TextureStyleManager(const TFilePath &stylesFolder,
@@ -137,6 +155,13 @@ public:
 
   void loadTexture(TFilePath &fp);
   void loadItems();
+
+  void applyFilter();
+  void applyFilter(const QString text) {
+    m_searchText = text;
+    applyFilter();
+  }
+  QString getSearchText() const { return m_searchText; }
 
 private:
   void addTexture(const TFilePath &path);
@@ -156,10 +181,12 @@ class DVAPI BrushStyleManager final : public QObject {
 public:
   struct DVAPI BrushData {
     TMyPaintBrushStyle m_brush;
-    std::string m_brushName;
+    QString m_brushName;
     TFilePath m_path;
+    std::string m_idName;  // brush id name
 
-    BrushData() : m_brush(), m_brushName(""), m_path(TFilePath()) {}
+    BrushData()
+        : m_brush(), m_brushName(""), m_path(TFilePath()), m_idName("") {}
   };
 
 private:
@@ -167,6 +194,10 @@ private:
   TFilePath m_stylesFolder;
   QString m_filters;
   QSize m_chipSize;
+
+  bool m_isIndexed;
+  QList<int> m_indexes;
+  QString m_searchText;
 
 public:
   BrushStyleManager(const TFilePath &stylesFolder, QString filters = QString(),
@@ -181,6 +212,13 @@ public:
   BrushData getBrush(int index);
 
   void loadItems();
+
+  void applyFilter();
+  void applyFilter(const QString text) {
+    m_searchText = text;
+    applyFilter();
+  }
+  QString getSearchText() const { return m_searchText; }
 
 signals:
 

@@ -57,6 +57,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TAirbrushRasterStyle", "Airbrush");
   }
+  std::string getBrushIdName() const override { return "AirbrushRasterStyle"; }
 
   int getParamCount() const override { return 1; }
   TColorStyle::ParamType getParamType(int index) const override {
@@ -121,6 +122,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TBlendRasterStyle", "Blend");
   }
+  std::string getBrushIdName() const override { return "BlendRasterStyle"; }
 
   void makeIcon(const TDimension &d) override;
 
@@ -150,6 +152,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TNoColorRasterStyle", "Markup");
   }
+  std::string getBrushIdName() const override { return "NoColorRasterStyle"; }
 
   bool hasMainColor() { return false; }
   // TPixel32 getMainColor() const {return m_color;}

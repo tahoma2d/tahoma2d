@@ -132,7 +132,11 @@ public:
   void setColorParamValue(int index, const TPixel32 &color) override;
 
   TColorStyle *clone() const override;
+  TColorStyle *clone(std::string brushIdName) const override;
+
   QString getDescription() const override;
+  std::string getBrushIdName() const override;
+  static std::string staticBrushIdName(std::wstring texturePath);
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_averageColor; }

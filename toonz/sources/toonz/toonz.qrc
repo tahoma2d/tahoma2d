@@ -643,6 +643,7 @@
 		<file>Resources/no_specialstyle.png</file>
 		<file>Resources/no_vectorbrush.png</file>
 		<file>Resources/no_mypaintbrush.png</file>
+		<file>Resources/no_texturestyle.png</file>
 		<file>Resources/palette_header.svg</file>
 		<file>Resources/paletteicon.svg</file>
 		<file>Resources/pan.png</file>

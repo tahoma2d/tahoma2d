@@ -553,6 +553,43 @@ protected:
   bool m_allowFavorite = false;
   bool m_external      = false;
 
+  enum ChipType {
+    COMMONCHIP = 0,  // Common chip
+    SOLIDCHIP  = 1   // Solid/Nobrush chip
+  };
+
+  QColor m_commonChipBoxColor;
+  QColor m_solidChipBoxColor;
+  QColor m_selectedChipBoxColor;
+  QColor m_selectedChipBox2Color;
+
+  Q_PROPERTY(QColor CommonChipBoxColor READ getCommonChipBoxColor WRITE
+                 setCommonChipBoxColor)
+  Q_PROPERTY(QColor SolidChipBoxColor READ getSolidChipBoxColor WRITE
+                 setSolidChipBoxColor)
+  Q_PROPERTY(QColor SelectedChipBoxColor READ getSelectedChipBoxColor WRITE
+                 setSelectedChipBoxColor)
+  Q_PROPERTY(QColor SelectedChipBox2Color READ getSelectedChipBox2Color WRITE
+                 setSelectedChipBox2Color)
+
+  QColor getCommonChipBoxColor() const { return m_commonChipBoxColor; }
+  QColor getSolidChipBoxColor() const { return m_solidChipBoxColor; }
+  QColor getSelectedChipBoxColor() const { return m_selectedChipBoxColor; }
+  QColor getSelectedChipBox2Color() const { return m_selectedChipBox2Color; }
+
+  void setSolidChipBoxColor(const QColor &color) {
+    m_solidChipBoxColor = color;
+  }
+  void setCommonChipBoxColor(const QColor &color) {
+    m_commonChipBoxColor = color;
+  }
+  void setSelectedChipBoxColor(const QColor &color) {
+    m_selectedChipBoxColor = color;
+  }
+  void setSelectedChipBox2Color(const QColor &color) {
+    m_selectedChipBox2Color = color;
+  }
+
 public:
   StyleChooserPage(TFilePath styleFolder, QWidget *parent = 0);
 
@@ -586,7 +623,11 @@ public:
   virtual bool isLoading() { return false; }
   virtual int getChipCount() const = 0;
 
-  virtual void drawChip(QPainter &p, QRect rect, int index) = 0;
+  virtual int drawChip(QPainter &p, QRect rect, int index) = 0;
+
+  virtual void applyFilter(){};
+  virtual void applyFilter(const QString text){};
+
   virtual void onSelect(int index) {}
 
   virtual void removeSelectedStylesFromSet(std::vector<int> selection){};
@@ -621,13 +662,15 @@ protected:
   void resizeEvent(QResizeEvent *) override { computeSize(); }
 
   void mousePressEvent(QMouseEvent *event) override;
-  void mouseMoveEvent(QMouseEvent *event) override {}
+  void mouseMoveEvent(QMouseEvent *event) override;
   void mouseReleaseEvent(QMouseEvent *event) override;
   void contextMenuEvent(QContextMenuEvent *event) override;
   void enterEvent(QEvent *event) override;
 
-protected slots:
+public slots:
   void computeSize();
+
+protected slots:
   void onTogglePage(bool toggled);
   void onRemoveStyleFromSet();
   void onEmptySet();
@@ -641,6 +684,7 @@ protected slots:
   void onReloadStyleSet();
   void onRenameStyleSet();
   void onLabelContextMenu(const QPoint &pos);
+
 signals:
   void styleSelected(const TColorStyle &style);
   void refreshFavorites();
@@ -828,7 +872,18 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   QAction *m_alphaAction;
   QAction *m_rgbAction;
   QAction *m_hexAction;
+  QAction *m_searchAction;
   QAction *m_hexEditorAction;
+
+  QFrame *m_textureSearchFrame;
+  QFrame *m_vectorsSearchFrame;
+  QFrame *m_mypaintSearchFrame;
+  QLineEdit *m_textureSearchText;
+  QLineEdit *m_vectorsSearchText;
+  QLineEdit *m_mypaintSearchText;
+  QPushButton *m_textureSearchClear;
+  QPushButton *m_vectorsSearchClear;
+  QPushButton *m_mypaintSearchClear;
 
   TColorStyleP
       m_oldStyle;  //!< A copy of current style \a before the last change.
@@ -1005,10 +1060,21 @@ protected slots:
   void onHexChanged();
   void onHexEditor();
 
+  void onSearchVisible(bool on);
+
   void onHexEdited(const QString &text);
   void onHideMenu();
   void onPageChanged(int index);
   void onToggleAutoApply();
+
+  void onTextureSearch(const QString &);
+  void onTextureClearSearch();
+
+  void onVectorsSearch(const QString &);
+  void onVectorsClearSearch();
+
+  void onMyPaintSearch(const QString &);
+  void onMyPaintClearSearch();
 
   void onToggleTextureSet(int checkedState);
   void onToggleVectorSet(int checkedState);

@@ -44,6 +44,7 @@ public:
   ~TMyPaintBrushStyle();
 
   TColorStyle *clone() const override { return new TMyPaintBrushStyle(*this); }
+  TColorStyle *clone(std::string brushIdName) const override;
 
   TColorStyle &copy(const TColorStyle &other) override;
 
@@ -67,6 +68,7 @@ public:
   int getTagId() const override { return 4001; }
 
   QString getDescription() const override;
+  std::string getBrushIdName() const override;
 
   void setBaseValue(MyPaintBrushSetting id, bool enable, float value);
   void resetBaseValues();

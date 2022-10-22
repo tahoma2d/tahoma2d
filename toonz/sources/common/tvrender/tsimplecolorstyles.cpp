@@ -132,9 +132,9 @@ public:
         next_stage(x, y, z);
       else {
         if (stage == 2) next_stage(x, y, z);
-        double l = fabs(ax + bx) > 1e-9
-                       ? -(ay - by) / (ax + bx)
-                       : fabs(ay + by) > 1e-9 ? (ax - bx) / (ay + by) : 0.0;
+        double l = fabs(ax + bx) > 1e-9   ? -(ay - by) / (ax + bx)
+                   : fabs(ay + by) > 1e-9 ? (ax - bx) / (ay + by)
+                                          : 0.0;
         if (fabs(l) > maxl || fabs(l) < 1.0 || l > 0.0) {
           vertices.resize(vertices.size() + 12);
           double *p = &vertices.back() - 11;
@@ -723,6 +723,19 @@ QString TSolidColorStyle::getDescription() const { return "SolidColorStyle"; }
 
 //-----------------------------------------------------------------------------
 
+std::string TSolidColorStyle::getBrushIdName() const {
+  return "SolidColorStyle";
+}
+
+//-----------------------------------------------------------------------------
+
+std::size_t TSolidColorStyle::staticBrushIdHash() {
+  static std::size_t bidHash = TColorStyle::generateHash("SolidColorStyle");
+  return bidHash;
+}
+
+//-----------------------------------------------------------------------------
+
 int TSolidColorStyle::getTagId() const { return 3; }
 
 //-----------------------------------------------------------------------------
@@ -888,6 +901,12 @@ QString TCenterLineStrokeStyle::getDescription() const {
 
 //-----------------------------------------------------------------------------
 
+std::string TCenterLineStrokeStyle::getBrushIdName() const {
+  return "CenterLineStrokeStyle";
+}
+
+//-----------------------------------------------------------------------------
+
 int TCenterLineStrokeStyle::getTagId() const { return 2; }
 
 //-----------------------------------------------------------------------------
@@ -987,6 +1006,29 @@ TColorStyle *TRasterImagePatternStrokeStyle::clone() const {
   theClone->m_rotation                                   = this->m_rotation;
   if (!this->m_basePath.isEmpty()) theClone->m_basePath  = this->m_basePath;
   return theClone;
+}
+
+//-----------------------------------------------------------------------------
+
+TColorStyle *TRasterImagePatternStrokeStyle::clone(
+    std::string brushIdName) const {
+  TRasterImagePatternStrokeStyle *style =
+      new TRasterImagePatternStrokeStyle(*this);
+  std::string patternName = getBrushIdNameParam(brushIdName);
+  if (patternName != "") style->loadLevel(patternName);
+  return style;
+}
+
+//-----------------------------------------------------------------------------
+
+QString TRasterImagePatternStrokeStyle::getDescription() const {
+  return "TRasterImagePatternStrokeStyle";
+}
+
+//-----------------------------------------------------------------------------
+
+std::string TRasterImagePatternStrokeStyle::getBrushIdName() const {
+  return "RasterImagePatternStrokeStyle:" + m_name;
 }
 
 //-----------------------------------------------------------------------------
@@ -1406,6 +1448,29 @@ TColorStyle *TVectorImagePatternStrokeStyle::clone() const {
   theClone->m_rotation                                  = this->m_rotation;
   if (!this->m_basePath.isEmpty()) theClone->m_basePath = this->m_basePath;
   return theClone;
+}
+
+//-----------------------------------------------------------------------------
+
+TColorStyle *TVectorImagePatternStrokeStyle::clone(
+    std::string brushIdName) const {
+  TVectorImagePatternStrokeStyle *style =
+      new TVectorImagePatternStrokeStyle(*this);
+  std::string patternName = getBrushIdNameParam(brushIdName);
+  if (patternName != "") style->loadLevel(patternName);
+  return style;
+}
+
+//-----------------------------------------------------------------------------
+
+QString TVectorImagePatternStrokeStyle::getDescription() const {
+  return "TVectorImagePatternStrokeStyle";
+}
+
+//-----------------------------------------------------------------------------
+
+std::string TVectorImagePatternStrokeStyle::getBrushIdName() const {
+  return "VectorImagePatternStrokeStyle:" + m_name;
 }
 
 //-----------------------------------------------------------------------------
