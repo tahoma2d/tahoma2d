@@ -106,7 +106,11 @@ void CustomPanelManager::loadCustomPanelEntries() {
       }
     }
   }
-  menu->addAction(CommandManager::instance()->getAction(MI_CustomPanelEditor));
+  // register an empty action with the label "Custom Panel Editor".
+  // actual command will be called in OpenCustomPanelCommandHandler
+  // in order to prevent double calling of the command
+  menu->addAction(
+      CommandManager::instance()->getAction(MI_CustomPanelEditor)->text());
 }
 
 //-----------------------------------------------------------------------------
@@ -224,8 +228,12 @@ public:
     DVMenuAction* menu = dynamic_cast<DVMenuAction*>(act->menu());
     int index          = menu->getTriggeredActionIndex();
 
-    // the last action is for opening custom panel editor
-    if (index == menu->actions().size() - 1) return;
+    // the last action is for opening custom panel editor, in which the index is
+    // not set.
+    if (index == -1) {
+      CommandManager::instance()->getAction(MI_CustomPanelEditor)->trigger();
+      return;
+    }
 
     QString panelId = menu->actions()[index]->text();
 
