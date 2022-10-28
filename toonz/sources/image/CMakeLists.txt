@@ -16,9 +16,10 @@ set(HEADERS
     ../include/tnzimage.h
     ffmpeg/tiio_gif.h
     ffmpeg/tiio_webm.h
+    ffmpeg/tiio_apng.h
     ffmpeg/tiio_mp4.h
-    ffmpeg/tiio_mov.h
     ffmpeg/tiio_ffmpeg.h
+    ffmpeg/tiio_ff_mov.h
     sprite/tiio_sprite.h
     mesh/tiio_mesh.h
     exr/tinyexr_otmod.h
@@ -44,9 +45,10 @@ set(SOURCES
     tzl/tiio_tzl.cpp
     ffmpeg/tiio_gif.cpp
     ffmpeg/tiio_webm.cpp
+    ffmpeg/tiio_apng.cpp
     ffmpeg/tiio_mp4.cpp
-    ffmpeg/tiio_mov.cpp
     ffmpeg/tiio_ffmpeg.cpp
+    ffmpeg/tiio_ff_mov.cpp
     sprite/tiio_sprite.cpp
     mesh/tiio_mesh.cpp
     exr/tiio_exr.cpp

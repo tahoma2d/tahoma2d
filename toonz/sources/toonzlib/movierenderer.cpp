@@ -295,6 +295,7 @@ void MovieRenderer::Imp::prepareForStart() {
             m_fp, oprop->getFileFormatProperties(m_fp.getType()),
             oprop->formatTemplateFId()));
         m_levelUpdaterA->getLevelWriter()->setFrameRate(frameRate);
+        m_fp = m_levelUpdaterA->getLevelWriter()->getFilePath();
       } else {
         TFilePath leftFp  = m_fp.withName(m_fp.getName() + "_l");
         TFilePath rightFp = m_fp.withName(m_fp.getName() + "_r");
@@ -306,11 +307,13 @@ void MovieRenderer::Imp::prepareForStart() {
             leftFp, oprop->getFileFormatProperties(leftFp.getType()),
             oprop->formatTemplateFId()));
         m_levelUpdaterA->getLevelWriter()->setFrameRate(frameRate);
+        leftFp = m_levelUpdaterA->getLevelWriter()->getFilePath();
 
         m_levelUpdaterB.reset(new LevelUpdater(
             rightFp, oprop->getFileFormatProperties(rightFp.getType()),
             oprop->formatTemplateFId()));
         m_levelUpdaterB->getLevelWriter()->setFrameRate(frameRate);
+        rightFp = m_levelUpdaterB->getLevelWriter()->getFilePath();
       }
     } catch (...) {
       // If we get here, it's because one of the LevelUpdaters could not be

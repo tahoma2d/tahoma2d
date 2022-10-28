@@ -370,7 +370,9 @@ LoadImagesPopup::LoadImagesPopup(FlipBook *flip)
   m_shrinkField = new DVGui::LineEdit("1", this);
 
   // Define the append/load filter types
-  m_appendFilterTypes << "jpg"
+  m_appendFilterTypes << "3gp"
+                      << "mov"
+                      << "jpg"
                       << "png"
                       << "tga"
                       << "tif"
@@ -2269,7 +2271,8 @@ FlipBook *viewFile(const TFilePath &path, int from, int to, int step,
   }
 
   // Movie files must not have the ".." extension
-  if ((path.getType() == "avi") &&
+  if ((path.getType() == "mov" || path.getType() == "avi" ||
+       path.getType() == "3gp") &&
       path.isLevelName()) {
     DVGui::warning(QObject::tr("%1  has an invalid extension format.")
                        .arg(QString::fromStdString(path.getLevelName())));

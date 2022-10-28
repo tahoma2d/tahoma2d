@@ -1,54 +1,58 @@
 
+#include "tiio_apng.h"
 #include "tsystem.h"
-#include "tiio_mov.h"
 #include "trasterimage.h"
-#include "timageinfo.h"
 #include "tsound.h"
+#include "timageinfo.h"
 #include "toonz/stage.h"
 #include <QStringList>
 
 //===========================================================
 //
-//  TImageWriterMov
+//  TImageWriterAPng
 //
 //===========================================================
 
-class TImageWriterMov : public TImageWriter {
+class TImageWriterAPng : public TImageWriter {
 public:
   int m_frameIndex;
 
-  TImageWriterMov(const TFilePath &path, int frameIndex, TLevelWriterMov *lwg)
+  TImageWriterAPng(const TFilePath &path, int frameIndex, TLevelWriterAPng *lwg)
       : TImageWriter(path), m_frameIndex(frameIndex), m_lwg(lwg) {
     m_lwg->addRef();
   }
-  ~TImageWriterMov() { m_lwg->release(); }
+  ~TImageWriterAPng() { m_lwg->release(); }
 
   bool is64bitOutputSupported() override { return false; }
   void save(const TImageP &img) override { m_lwg->save(img, m_frameIndex); }
 
 private:
-  TLevelWriterMov *m_lwg;
+  TLevelWriterAPng *m_lwg;
 };
 
 //===========================================================
 //
-//  TLevelWriterMov;
+//  TLevelWriterAPng;
 //
 //===========================================================
 
-TLevelWriterMov::TLevelWriterMov(const TFilePath &path, TPropertyGroup *winfo)
+TLevelWriterAPng::TLevelWriterAPng(const TFilePath &path, TPropertyGroup *winfo)
     : TLevelWriter(path, winfo) {
-  if (!m_properties) m_properties = new Tiio::MovWriterProperties();
-  if (m_properties->getPropertyCount() == 0) {
-    m_scale      = 100;
-    m_vidQuality = 100;
-  } else {
-    std::string scale = m_properties->getProperty("Scale")->getValueAsString();
-    m_scale           = QString::fromStdString(scale).toInt();
-    std::string quality =
-        m_properties->getProperty("Quality")->getValueAsString();
-    m_vidQuality = QString::fromStdString(quality).toInt();
+  if (!m_properties) m_properties = new Tiio::APngWriterProperties();
+
+  std::string scale = m_properties->getProperty("Scale")->getValueAsString();
+  m_scale           = QString::fromStdString(scale).toInt();
+
+  TBoolProperty *extPng = (TBoolProperty *)m_properties->getProperty("ExtPng");
+  m_extPng              = extPng->getValue();
+
+  TBoolProperty *loop = (TBoolProperty *)m_properties->getProperty("Looping");
+  m_looping           = loop->getValue();
+
+  if (m_extPng) {
+    m_path = m_path.getParentDir() + TFilePath(m_path.getWideName() + L".png");
   }
+
   ffmpegWriter = new Ffmpeg();
   ffmpegWriter->setPath(m_path);
   if (TSystem::doesExistFileOrLevel(m_path)) TSystem::deleteFile(m_path);
@@ -56,8 +60,7 @@ TLevelWriterMov::TLevelWriterMov(const TFilePath &path, TPropertyGroup *winfo)
 
 //-----------------------------------------------------------
 
-TLevelWriterMov::~TLevelWriterMov() {
-  // QProcess createMov;
+TLevelWriterAPng::~TLevelWriterAPng() {
   QStringList preIArgs;
   QStringList postIArgs;
 
@@ -73,27 +76,14 @@ TLevelWriterMov::~TLevelWriterMov() {
   if (outLx % 2 != 0) outLx++;
   if (outLy % 2 != 0) outLy++;
 
-  // calculate quality (bitrate)
-  int pixelCount   = m_lx * m_ly;
-  int bitRate      = pixelCount / 150;  // crude but gets decent values
-  double quality   = m_vidQuality / 100.0;
-  double tempRate  = (double)bitRate * quality;
-  int finalBitrate = (int)tempRate;
-  int crf          = 51 - (m_vidQuality * 51 / 100);
-
   preIArgs << "-framerate";
   preIArgs << QString::number(m_frameRate);
-
-  postIArgs << "-pix_fmt";
-  postIArgs << "yuva444p10le";
-  postIArgs << "-c:v";
-  postIArgs << "prores_ks";
-  postIArgs << "-profile";
-  postIArgs << "4444";
+  postIArgs << "-plays";
+  postIArgs << (m_looping ? "0" : "1");
+  postIArgs << "-f";
+  postIArgs << "apng";
   postIArgs << "-s";
   postIArgs << QString::number(outLx) + "x" + QString::number(outLy);
-  postIArgs << "-b";
-  postIArgs << QString::number(finalBitrate) + "k";
 
   ffmpegWriter->runFfmpeg(preIArgs, postIArgs, false, false, true);
   ffmpegWriter->cleanUpFiles();
@@ -101,28 +91,26 @@ TLevelWriterMov::~TLevelWriterMov() {
 
 //-----------------------------------------------------------
 
-TImageWriterP TLevelWriterMov::getFrameWriter(TFrameId fid) {
-  // if (IOError != 0)
-  //	throw TImageException(m_path, buildMovExceptionString(IOError));
+TImageWriterP TLevelWriterAPng::getFrameWriter(TFrameId fid) {
   if (!fid.getLetter().isEmpty()) return TImageWriterP(0);
-  int index            = fid.getNumber();
-  TImageWriterMov *iwg = new TImageWriterMov(m_path, index, this);
+  int index             = fid.getNumber();
+  TImageWriterAPng *iwg = new TImageWriterAPng(m_path, index, this);
   return TImageWriterP(iwg);
 }
 
 //-----------------------------------------------------------
-void TLevelWriterMov::setFrameRate(double fps) {
+void TLevelWriterAPng::setFrameRate(double fps) {
   m_frameRate = fps;
   ffmpegWriter->setFrameRate(fps);
 }
 
-void TLevelWriterMov::saveSoundTrack(TSoundTrack *st) {
+void TLevelWriterAPng::saveSoundTrack(TSoundTrack *st) {
   ffmpegWriter->saveSoundTrack(st);
 }
 
 //-----------------------------------------------------------
 
-void TLevelWriterMov::save(const TImageP &img, int frameIndex) {
+void TLevelWriterAPng::save(const TImageP &img, int frameIndex) {
   TRasterImageP image(img);
   m_lx = image->getRaster()->getLx();
   m_ly = image->getRaster()->getLy();
@@ -131,20 +119,20 @@ void TLevelWriterMov::save(const TImageP &img, int frameIndex) {
 
 //===========================================================
 //
-//  TImageReaderMov
+//  TImageReaderAPng
 //
 //===========================================================
 
-class TImageReaderMov final : public TImageReader {
+class TImageReaderAPng final : public TImageReader {
 public:
   int m_frameIndex;
 
-  TImageReaderMov(const TFilePath &path, int index, TLevelReaderMov *lra,
-                  TImageInfo *info)
+  TImageReaderAPng(const TFilePath &path, int index, TLevelReaderAPng *lra,
+                   TImageInfo *info)
       : TImageReader(path), m_lra(lra), m_frameIndex(index), m_info(info) {
     m_lra->addRef();
   }
-  ~TImageReaderMov() { m_lra->release(); }
+  ~TImageReaderAPng() { m_lra->release(); }
 
   TImageP load() override { return m_lra->load(m_frameIndex); }
   TDimension getSize() const { return m_lra->getSize(); }
@@ -152,21 +140,21 @@ public:
   const TImageInfo *getImageInfo() const override { return m_info; }
 
 private:
-  TLevelReaderMov *m_lra;
+  TLevelReaderAPng *m_lra;
   TImageInfo *m_info;
 
   // not implemented
-  TImageReaderMov(const TImageReaderMov &);
-  TImageReaderMov &operator=(const TImageReaderMov &src);
+  TImageReaderAPng(const TImageReaderAPng &);
+  TImageReaderAPng &operator=(const TImageReaderAPng &src);
 };
 
 //===========================================================
 //
-//  TLevelReaderMov
+//  TLevelReaderAPng
 //
 //===========================================================
 
-TLevelReaderMov::TLevelReaderMov(const TFilePath &path) : TLevelReader(path) {
+TLevelReaderAPng::TLevelReaderAPng(const TFilePath &path) : TLevelReader(path) {
   ffmpegReader = new Ffmpeg();
   ffmpegReader->setPath(m_path);
   ffmpegReader->disablePrecompute();
@@ -189,13 +177,11 @@ TLevelReaderMov::TLevelReaderMov(const TFilePath &path) : TLevelReader(path) {
 }
 //-----------------------------------------------------------
 
-TLevelReaderMov::~TLevelReaderMov() {
-  // ffmpegReader->cleanUpFiles();
-}
+TLevelReaderAPng::~TLevelReaderAPng() {}
 
 //-----------------------------------------------------------
 
-TLevelP TLevelReaderMov::loadInfo() {
+TLevelP TLevelReaderAPng::loadInfo() {
   if (m_frameCount == -1) return TLevelP();
   TLevelP level;
   for (int i = 1; i <= m_frameCount; i++) level->setFrame(i, TImageP());
@@ -204,23 +190,21 @@ TLevelP TLevelReaderMov::loadInfo() {
 
 //-----------------------------------------------------------
 
-TImageReaderP TLevelReaderMov::getFrameReader(TFrameId fid) {
-  // if (IOError != 0)
-  //	throw TImageException(m_path, buildAVIExceptionString(IOError));
+TImageReaderP TLevelReaderAPng::getFrameReader(TFrameId fid) {
   if (!fid.getLetter().isEmpty()) return TImageReaderP(0);
   int index = fid.getNumber();
 
-  TImageReaderMov *irm = new TImageReaderMov(m_path, index, this, m_info);
+  TImageReaderAPng *irm = new TImageReaderAPng(m_path, index, this, m_info);
   return TImageReaderP(irm);
 }
 
 //------------------------------------------------------------------------------
 
-TDimension TLevelReaderMov::getSize() { return m_size; }
+TDimension TLevelReaderAPng::getSize() { return m_size; }
 
 //------------------------------------------------
 
-TImageP TLevelReaderMov::load(int frameIndex) {
+TImageP TLevelReaderAPng::load(int frameIndex) {
   if (!ffmpegFramesCreated) {
     ffmpegReader->getFramesFromMovie();
     ffmpegFramesCreated = true;
@@ -228,16 +212,17 @@ TImageP TLevelReaderMov::load(int frameIndex) {
   return ffmpegReader->getImage(frameIndex);
 }
 
-Tiio::MovWriterProperties::MovWriterProperties()
-    : m_vidQuality("Quality", 1, 100, 90), m_scale("Scale", 1, 100, 100) {
-  bind(m_vidQuality);
+Tiio::APngWriterProperties::APngWriterProperties()
+    : m_scale("Scale", 1, 100, 100)
+    , m_looping("Looping", true)
+    , m_extPng("ExtPng", false) {
   bind(m_scale);
+  bind(m_looping);
+  bind(m_extPng);
 }
 
-void Tiio::MovWriterProperties::updateTranslation() {
-  m_vidQuality.setQStringName(tr("Quality"));
+void Tiio::APngWriterProperties::updateTranslation() {
   m_scale.setQStringName(tr("Scale"));
+  m_looping.setQStringName(tr("Looping"));
+  m_extPng.setQStringName(tr("Write as .png"));
 }
-
-// Tiio::Reader* Tiio::makeMovReader(){ return nullptr; }
-// Tiio::Writer* Tiio::makeMovWriter(){ return nullptr; }

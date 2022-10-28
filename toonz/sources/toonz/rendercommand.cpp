@@ -87,10 +87,9 @@ public:
 
     if (Preferences::instance()->isGeneratedMovieViewEnabled()) {
       if (!isPreview && (Preferences::instance()->isDefaultViewerEnabled()) &&
-          (m_fp.getType() == "avi" ||
-           m_fp.getType() == "mp4" ||
-           m_fp.getType() == "gif" || m_fp.getType() == "webm" ||
-           m_fp.getType() == "mov")) {
+          (m_fp.getType() == "mov" || m_fp.getType() == "avi" ||
+           m_fp.getType() == "3gp" || m_fp.getType() == "mp4" ||
+           m_fp.getType() == "gif" || m_fp.getType() == "webm")) {
         QString name = QString::fromStdString(m_fp.getName());
         int index;
         if ((index = name.indexOf("#RENDERID")) != -1)  //! quite ugly I

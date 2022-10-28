@@ -130,6 +130,9 @@ Constructs a TXshColumn with default value.
   //! Returns the column type used to store levels of the specified type.
   static ColumnType toColumnType(int levelType);
 
+  //! Returns true if the column can be parent of another.
+  bool canBeParent() const;
+
   //! Creates an empty TXshColumn of the specified column type.
   static TXshColumn *createEmpty(int colType);
 

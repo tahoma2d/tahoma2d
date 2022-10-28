@@ -237,8 +237,8 @@ public:
 //  Some useful utility inlines
 
 inline bool isMovieType(std::string type) {
-  return (type == "avi" || type == "webm" ||
-          type == "mp4" || type == "mov");
+  return (type == "mov" || type == "avi" || type == "3gp" || type == "webm" ||
+          type == "mp4" || type == "apng");
 }
 
 //-----------------------------------------------------------
@@ -264,7 +264,7 @@ inline bool isMovieTypeOpaque(const TFilePath &fp) {
 //-----------------------------------------------------------
 
 inline bool isSequencialRequired(std::string type) {
-  return (type == "avi" || type == "3gp");
+  return (type == "mov" || type == "avi" || type == "3gp");
 }
 
 //-----------------------------------------------------------
@@ -279,7 +279,7 @@ inline bool isSequencialRequired(const TFilePath &fp) {
 inline bool isMultipleFrameType(std::string type) {
   return (type == "tlv" || type == "tzl" || type == "pli" || type == "mov" ||
           type == "avi" || type == "3gp" || type == "gif" || type == "mp4" ||
-          type == "webm");
+          type == "webm" || type == "apng");
 }
 
 //-----------------------------------------------------------

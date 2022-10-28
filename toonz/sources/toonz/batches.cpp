@@ -288,7 +288,10 @@ void BatchesController::setTasksTree(TaskTreeModel *tree) {
 
 //------------------------------------------------------------------------------
 
-inline bool isMovieType(std::string type) { return (type == "avi" || type == "mp4" || type == "webm" || type == "mov"); }
+inline bool isMovieType(std::string type) {
+  return (type == "mov" || type == "avi" || type == "3gp" || type == "mp4" ||
+          type == "webm");
+}
 
 //------------------------------------------------------------------------------
 

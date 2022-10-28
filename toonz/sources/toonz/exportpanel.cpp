@@ -371,7 +371,8 @@ you want to do?";*/
     if (m_frame >= totalFrameCount &&
         Preferences::instance()->isGeneratedMovieViewEnabled()) {
       if (Preferences::instance()->isDefaultViewerEnabled() &&
-          (outPath.getType() == "avi")) {
+          (outPath.getType() == "mov" || outPath.getType() == "avi" ||
+           outPath.getType() == "3gp")) {
         QString name = QString::fromStdString(outPath.getName());
 
         if (!TSystem::showDocument(outPath)) {

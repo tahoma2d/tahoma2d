@@ -884,7 +884,8 @@ void CastBrowser::viewFile() {
       if (!TFileType::isViewable(TFileType::getInfo(filePath))) return;
 
       if (Preferences::instance()->isDefaultViewerEnabled() &&
-          (filePath.getType() == "avi"))
+          (filePath.getType() == "mov" || filePath.getType() == "avi" ||
+           filePath.getType() == "3gp"))
         QDesktopServices::openUrl(QUrl("file:///" + toQString(filePath)));
       else
         ::viewFile(filePath);

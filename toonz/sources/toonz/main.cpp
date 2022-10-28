@@ -12,6 +12,7 @@
 #include "cleanupsettingspopup.h"
 #include "filebrowsermodel.h"
 #include "expressionreferencemanager.h"
+#include "thirdparty.h"
 #include "startuppopup.h"
 
 // TnzTools includes
@@ -506,6 +507,9 @@ int main(int argc, char *argv[]) {
   // Install run out of contiguous memory callback
   TBigMemoryManager::instance()->setRunOutOfContiguousMemoryHandler(
       &toonzRunOutOfContMemHandler);
+
+  // Setup third party
+  ThirdParty::initialize();
 
   // Toonz environment
   initToonzEnv(argumentPathValues);

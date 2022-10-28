@@ -801,7 +801,7 @@ else
 p->setValue(L"64(RGBM)");
 }
 
-bool isMovie = (format=="avi");
+bool isMovie = (format=="mov" || format=="avi" || format=="3gp");
 
 
 TLevelWriterP lw;
