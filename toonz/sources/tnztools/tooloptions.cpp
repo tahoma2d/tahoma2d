@@ -1045,12 +1045,12 @@ void ArrowToolOptionsBox::onCurrentStageObjectComboActivated(int index) {
     return;
   }
   // switch the current object
-  m_objHandle->setObjectId(id);
   if (id.isCamera()) {
     TXsheet *xsh = m_xshHandle->getXsheet();
     if (xsh->getCameraColumnIndex() != id.getIndex())
       m_xshHandle->changeXsheetCamera(id.getIndex());
   }
+  m_objHandle->setObjectId(id);
 }
 
 //------------------------------------------------------------------------------
