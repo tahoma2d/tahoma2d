@@ -2740,6 +2740,8 @@ void MainWindow::defineActions() {
                ToolCommandType, "fill_freehand");
   createAction(MI_FillPolyline, QT_TR_NOOP("Fill Tool - Polyline"), "", "",
                ToolCommandType, "fill_polyline");
+  createAction(MI_FillFreepick, QT_TR_NOOP("Fill Tool - Pick+Freehand"), "", "",
+               ToolCommandType, "fill_freepick");
   createAction(MI_FillNextMode, QT_TR_NOOP("Fill Tool - Next Mode"), "", "",
                ToolCommandType);
   createAction(MI_FillAreas, QT_TR_NOOP("Fill Tool - Areas"), "", "",
@@ -2968,6 +2970,10 @@ void MainWindow::defineActions() {
   menuAct = createToolOptionsAction("A_ToolOption_Type:Polyline",
                                     QT_TR_NOOP("Type - Polyline"), "");
   menuAct->setIcon(createQIcon("type_polyline"));
+
+  menuAct = createToolOptionsAction("A_ToolOption_Type:Freepick",
+                                    QT_TR_NOOP("Type - Pick+Freehand"), "");
+  menuAct->setIcon(createQIcon("type_pickerlasso"));
 
   menuAct = createToolOptionsAction("A_ToolOption_Type:Segment",
                                     QT_TR_NOOP("Type - Segment"), "");

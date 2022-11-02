@@ -459,6 +459,7 @@
 		<file>icons/dark/actions/20/selection_freehand.svg</file>
 
     <file>icons/dark/actions/20/type_lasso.svg</file>
+		<file>icons/dark/actions/20/type_pickerlasso.svg</file>
 		<file>icons/dark/actions/20/type_rectangular.svg</file>
 		<file>icons/dark/actions/20/type_polyline.svg</file>
 		<file>icons/dark/actions/20/type_normal.svg</file>

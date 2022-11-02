@@ -135,6 +135,7 @@ const struct {
                     {ToolCursor::Ex_Precise, "ex_precise"},
                     {ToolCursor::Ex_Prev, "ex_prev"},
                     {ToolCursor::Ex_Next, "ex_next"},
+                    {ToolCursor::Ex_FreePick, "ex_freepick"},
                     {0, 0}};
 };  // namespace
 

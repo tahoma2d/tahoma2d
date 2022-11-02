@@ -388,6 +388,7 @@
 #define MI_FillRectangular "MI_FillRectangular"
 #define MI_FillFreehand "MI_FillFreehand"
 #define MI_FillPolyline "MI_FillPolyline"
+#define MI_FillFreepick "MI_FillFreepick"
 #define MI_FillNextMode "MI_FillNextMode"
 #define MI_FillAreas "MI_FillAreas"
 #define MI_FillLines "MI_FillLines"

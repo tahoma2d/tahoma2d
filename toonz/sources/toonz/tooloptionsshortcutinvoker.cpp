@@ -502,6 +502,8 @@ void ToolOptionsShortcutInvoker::initialize() {
                     &ToolOptionsShortcutInvoker::toggleFillFreehand);
   setCommandHandler(MI_FillPolyline, this,
                     &ToolOptionsShortcutInvoker::toggleFillPolyline);
+  setCommandHandler(MI_FillFreepick, this,
+                    &ToolOptionsShortcutInvoker::toggleFillFreepick);
   setCommandHandler(MI_FillNextMode, this,
                     &ToolOptionsShortcutInvoker::toggleFillNextMode);
   setCommandHandler(MI_FillAreas, this,
@@ -863,6 +865,14 @@ void ToolOptionsShortcutInvoker::toggleFillPolyline() {
   CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
   CommandManager::instance()
       ->getAction("A_ToolOption_Type:Polyline")
+      ->trigger();
+}
+
+void ToolOptionsShortcutInvoker::toggleFillFreepick() {
+  CommandManager::instance()->getAction(T_Fill)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Freepick")
       ->trigger();
 }
 
