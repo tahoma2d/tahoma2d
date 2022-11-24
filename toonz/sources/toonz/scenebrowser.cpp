@@ -118,8 +118,8 @@ SceneBrowserButtonBar::SceneBrowserButtonBar(DvItemViewer *itemViewer,
   // buttonBar->setIconSize(QSize(10,10));
 
   QIcon newFolderIcon = createQIcon("newfolder");
-  QAction *newScene  = new QAction(newFolderIcon, tr("Add new scene"), this);
-  newScene->setIconText(tr("Add scene"));
+  QAction *newScene  = new QAction(newFolderIcon, tr("Create new scene"), this);
+  newScene->setIconText(tr("Create scene"));
   addAction(newScene);
   //addSeparator();
 
