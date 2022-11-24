@@ -168,6 +168,7 @@ SceneBrowser::SceneBrowser(QWidget *parent, Qt::WFlags flags, bool noContextMenu
   viewerPanel->setItemViewPlayDelegate(itemViewPlayDelegate);
 
   //m_mainSplitter->setObjectName("SceneBrowserSplitter");
+  m_folderTreeView->hide();
   m_folderTreeView->setObjectName("DirTreeView");
   box->setObjectName("castFrame");
   box->setFrameStyle(QFrame::StyledPanel);
