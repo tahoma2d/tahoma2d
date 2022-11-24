@@ -107,7 +107,7 @@ void CellsMover::getImplicitCellInfo() {
       column->getRange(r0, r1);
       TXshCell currentCell;
       for (int r = r0; r <= r1 + 1; r++) {
-        TXshCell tmpCell = cellCol->getCell(r);
+        TXshCell tmpCell = cellCol->getCell(r, false);
         if (tmpCell != currentCell) {
           if (m_qualifiers & eCopyCells)
             cellInfo.insert(r, tmpCell);
@@ -208,10 +208,13 @@ void CellsMover::moveCells(const TPoint &pos) const {
           continue;
         }
         // a cell at the bottom of the inserted cells
-        TXshCell bottomCell = xsh->getCell(r + m_rowCount - 1, c + i);
+        TXshCell bottomCell = xsh->getCell(r + m_rowCount - 1, c + i, false);
         for (int tmp_r = r + m_rowCount; tmp_r <= itr.key() - 1 + m_rowCount;
              tmp_r++)
-          xsh->setCell(tmp_r, c + i, bottomCell);
+          if (Preferences::instance()->isImplicitHoldEnabled())
+            xsh->setCell(tmp_r, c + i, TXshCell(0, TFrameId::EMPTY_FRAME));
+          else
+            xsh->setCell(tmp_r, c + i, bottomCell);
 
         infoId++;
       }
