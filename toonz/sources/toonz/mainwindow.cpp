@@ -1088,7 +1088,7 @@ void MainWindow::onOpenReportABug() {
 
 void MainWindow::autofillToggle() {
   TPaletteHandle *h = TApp::instance()->getCurrentPalette();
-  h->toggleAutopaint();
+  if (h->getPalette()) h->toggleAutopaint();
 }
 
 void MainWindow::resetRoomsLayout() {
