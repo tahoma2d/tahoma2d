@@ -116,6 +116,11 @@ void XsheetViewer::getCellTypeAndColors(int &ltype, QColor &cellColor,
           (isSelected) ? getSelectedMeshColumnColor() : getMeshColumnColor();
       sideColor = getMeshColumnBorderColor();
       break;
+    case PLT_XSHLEVEL:
+      cellColor =
+          (isSelected) ? getSelectedPaletteColumnColor() : getPaletteColumnColor();
+      sideColor = getPaletteColumnBorderColor();
+      break;
     case UNKNOWN_XSHLEVEL:
     case NO_XSHLEVEL:
     default:
