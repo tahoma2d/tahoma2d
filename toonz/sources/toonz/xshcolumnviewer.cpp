@@ -481,11 +481,12 @@ void ChangeObjectParent::refresh() {
                            : viewer->getOtherCameraColor();
     } else if (id.isColumn() && (!xsh->isColumnEmpty(index))) {
       TXshColumn *colx = xsh->getColumn(index);
-      if (colx->getColumnType() != TXshColumn::eSoundTextType &&
-          colx->getColumnType() != TXshColumn::eSoundType) {
-        QColor unused;
+      if (colx->getColumnType() == TXshColumn::eSoundTextType ||
+          colx->getColumnType() == TXshColumn::eSoundType)
+        continue;
+
+      QColor unused;
         viewer->getColumnColor(newTextBG, unused, id.getIndex(), xsh);
-      }
     } else
       continue;
 
@@ -1269,8 +1270,7 @@ void ColumnArea::DrawHeader::drawPegbarName() const {
   p.setPen(m_viewer->getVerticalLineColor());
   if (o->flag(PredefinedFlag::PEGBAR_NAME_BORDER)) p.drawRect(pegbarnamerect);
 
-  if (column->getSoundColumn() || column->getSoundTextColumn() ||
-      column->getPaletteColumn())
+  if (column->getSoundColumn() || column->getSoundTextColumn())
     return;
 
   if (Preferences::instance()->isParentColorsInXsheetColumnEnabled() &&
@@ -1305,8 +1305,7 @@ void ColumnArea::DrawHeader::drawPegbarName() const {
 void ColumnArea::DrawHeader::drawParentHandleName() const {
   if (col < 0 || isEmpty ||
       !o->flag(PredefinedFlag::PARENT_HANDLE_NAME_VISIBILE) ||
-      column->getSoundColumn() || column->getSoundTextColumn() ||
-      column->getPaletteColumn())
+      column->getSoundColumn() || column->getSoundTextColumn())
     return;
 
   TStageObjectId columnId = m_viewer->getObjectId(col);
