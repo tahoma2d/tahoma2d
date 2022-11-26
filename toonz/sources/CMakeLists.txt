@@ -336,7 +336,16 @@ if(BUILD_ENV_MSVC)
         set(PLATFORM2 _64)
     endif()
 
-    if(MSVC_VERSION GREATER 1800)
+#--- MSVC_VERSIONs ---
+#1800      = VS 12.0 (v120 toolset) - 2013
+#1900      = VS 14.0 (v140 toolset) - 2015
+#1910-1919 = VS 15.0 (v141 toolset) - 2017
+#1920-1929 = VS 16.0 (v142 toolset) - 2019
+#1930-1939 = VS 17.0 (v143 toolset) - 2022
+#
+    if(MSVC_VERSION GREATER 1919)
+        set(MSVC_LIB_VERSION 2019)
+    elseif(MSVC_VERSION GREATER 1800)
         set(MSVC_LIB_VERSION 2015)
     else()
         set(MSVC_LIB_VERSION 2013)
@@ -351,10 +360,10 @@ if(BUILD_ENV_MSVC)
     #set(JPEG_LIB ${SDKROOT}/LibJPEG/jpeg-9/lib/LibJPEG-9_${MSVC_LIB_VERSION}${PLATFORM2}.lib)
     set(JPEG_LIB ${SDKROOT}/libjpeg-turbo/lib/jpeg-static_${MSVC_LIB_VERSION}${PLATFORM2}.lib)
     set(TURBOJPEG_LIB ${SDKROOT}/libjpeg-turbo/lib/turbojpeg-static_${MSVC_LIB_VERSION}${PLATFORM2}.lib)
-    set(TIFF_INCLUDE_DIR ${SDKROOT}/tiff-4.0.3/libtiff)
+    set(TIFF_INCLUDE_DIR ${SDKROOT}/tiff-4.2.0/libtiff)
     set(TIFF_LIB
-        optimized ${SDKROOT}/tiff-4.0.3/lib/LibTIFF-4.0.3_${MSVC_LIB_VERSION}${PLATFORM2}.lib
-        debug  ${SDKROOT}/tiff-4.0.3/lib/LibTIFF-4.0.3_${MSVC_LIB_VERSION}${PLATFORM2}d.lib
+        optimized ${SDKROOT}/tiff-4.2.0/lib/Libtiff-4.2.0_${MSVC_LIB_VERSION}${PLATFORM2}.lib
+        debug  ${SDKROOT}/tiff-4.2.0/lib/Libtiff-4.2.0_${MSVC_LIB_VERSION}${PLATFORM2}d.lib
     )
     set(PNG_LIB
         optimized ${SDKROOT}/libpng-1.6.21/lib/libpng16_${MSVC_LIB_VERSION}${PLATFORM2}.lib

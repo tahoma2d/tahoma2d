@@ -148,8 +148,8 @@ TODO: make sure we can use the system libtiff instead and remove this section.
 Features from the modified libtiff are needed currently, so this isn't a simple switch.
 
 ```
-$ cd tahoma2d/thirdparty/tiff-4.0.3
-$ ./configure --with-pic --disable-jbig
+$ cd tahoma2d/thirdparty/tiff-4.2.0
+$ ./configure --with-pic --disable-jbig --disable-webp 
 $ make -j$(nproc)
 $ cd ../../
 ```
