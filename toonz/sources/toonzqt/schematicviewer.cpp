@@ -281,6 +281,7 @@ void SchematicSceneViewer::mousePressEvent(QMouseEvent *me) {
 /*! Reimplemets the QGraphicsView::mouseMoveEvent()
  */
 void SchematicSceneViewer::mouseMoveEvent(QMouseEvent *me) {
+  // qDebug() << "[mouseMoveEvent]";
   if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen &&
       !m_stylusUsed) {
     return;
@@ -550,7 +551,7 @@ void SchematicSceneViewer::tabletEvent(QTabletEvent *e) {
     m_stylusUsed = false;
   }
 
-  e->accept();
+  QGraphicsView::tabletEvent(e);
 }
 
 //------------------------------------------------------------------
