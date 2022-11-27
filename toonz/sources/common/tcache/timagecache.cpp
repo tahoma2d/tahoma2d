@@ -19,6 +19,7 @@
 
 #include "timagecache.h"
 #include "trasterimage.h"
+#include "tmeshimage.h"
 #ifndef TNZCORE_LIGHT
 #include "tvectorimage.h"
 #include "trastercm.h"
@@ -437,7 +438,7 @@ CompressedOnMemoryCacheItem::~CompressedOnMemoryCacheItem() {
 //------------------------------------------------------------------------------
 
 TUINT32 CompressedOnMemoryCacheItem::getSize() const {
-  if (m_compressedRas)
+  if (m_compressedRas && m_compressedRas.getPointer())
     return m_compressedRas->getLx();
   else
     return 0;
@@ -1239,7 +1240,8 @@ void TImageCache::Imp::add(const std::string &id, const TImageP &img,
 #ifdef TNZCORE_LIGHT
   item->m_cantCompress = false;
 #else
-  item->m_cantCompress = (TVectorImageP(img) ? true : false);
+  item->m_cantCompress =
+      (TVectorImageP(img) || TMeshImageP(img) ? true : false);
 #endif
   item->m_id                             = id;
   m_uncompressedItems[id]                = item;
