@@ -2401,7 +2401,7 @@ void MainWindow::defineActions() {
   createToggle(MI_OnionSkin, QT_TR_NOOP("Onion Skin Toggle"), "/", false,
                RightClickMenuCommandType, "onionskin_toggle");
   createToggle(MI_ZeroThick, QT_TR_NOOP("Zero Thick Lines"), "Shift+/", false,
-               RightClickMenuCommandType);
+               RightClickMenuCommandType, "zero_thick_lines");
   createToggle(MI_CursorOutline, QT_TR_NOOP("Toggle Cursor Size Outline"), "", false,
                RightClickMenuCommandType);
   createRightClickMenuAction(MI_ToggleCurrentTimeIndicator,
