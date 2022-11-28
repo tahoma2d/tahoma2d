@@ -649,13 +649,13 @@ void PaletteViewer::createSavePaletteToolBar() {
     m_viewMode->addSeparator();
 
     // overwrite palette
-    QAction *savePalette =
-        CommandManager::instance()->getAction("MI_OverwritePalette");
+    QAction *savePalette = new QAction(createQIcon("save"), tr("&Save Palette"),
+                                       m_savePaletteToolBar);
     m_viewMode->addAction(savePalette);
 
     // save palette as
-    QAction *saveAsPalette =
-        CommandManager::instance()->getAction("MI_SavePaletteAs");
+    QAction *saveAsPalette = new QAction(
+        createQIcon("saveas"), tr("&Save Palette As"), m_savePaletteToolBar);
     m_viewMode->addAction(saveAsPalette);
 
     // save as default palette
@@ -880,7 +880,8 @@ void PaletteViewer::contextMenuEvent(QContextMenuEvent *event) {
           canRemovePage = false;
         if (canRemovePage) {
           m_indexPageToDelete = tabIndex;
-          QAction *deletePage = menu->addAction(tr("Delete Page"));
+          QAction *deletePage =
+              menu->addAction(createQIcon("delete"), tr("Delete Page"));
           connect(deletePage, SIGNAL(triggered()), SLOT(deletePage()));
         }
       }
