@@ -395,6 +395,7 @@
 		<file>icons/dark/actions/16/cache_fx.svg</file>
 		<file>icons/dark/actions/16/uncache_fx.svg</file>
 		<file>icons/dark/actions/16/link.svg</file>
+		<file>icons/dark/actions/16/unlink.svg</file>
 		<file>icons/dark/actions/16/macro.svg</file>
 
 		<file>icons/dark/actions/16/toggle_nav_tag.svg</file>

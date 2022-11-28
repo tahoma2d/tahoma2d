@@ -280,7 +280,8 @@ void FxColumnPainter::contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) {
   connect(disconnectFromXSheet, SIGNAL(triggered()), fxScene,
           SLOT(onDisconnectFromXSheet()));
 
-  QAction *connectToXSheet = new QAction(tr("&Connect to Scene"), &menu);
+  QAction *connectToXSheet = new QAction(createQIcon("xsheet_connect"),
+                                         tr("&Connect to Scene"), &menu);
   connect(connectToXSheet, SIGNAL(triggered()), fxScene,
           SLOT(onConnectToXSheet()));
 
@@ -754,12 +755,12 @@ void FxPainter::contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) {
   connect(deleteFx, SIGNAL(triggered()), fxScene, SLOT(onDeleteFx()));
 
   QAction *disconnectFromXSheet = new QAction(
-      createQIcon("xsheet_disconnect"), tr("&Disconnect from Xsheet"), &menu);
+      createQIcon("xsheet_disconnect"), tr("&Disconnect from Scene"), &menu);
   connect(disconnectFromXSheet, SIGNAL(triggered()), fxScene,
           SLOT(onDisconnectFromXSheet()));
 
-  QAction *connectToXSheet =
-      new QAction(createQIcon("xsheet_connect"), tr("&Connect to Xsheet"), &menu);
+  QAction *connectToXSheet = new QAction(createQIcon("xsheet_connect"),
+                                         tr("&Connect to Scene"), &menu);
   connect(connectToXSheet, SIGNAL(triggered()), fxScene,
           SLOT(onConnectToXSheet()));
 
@@ -767,7 +768,7 @@ void FxPainter::contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) {
       new QAction(createQIcon("link"), tr("&Create Linked FX"), &menu);
   connect(duplicateFx, SIGNAL(triggered()), fxScene, SLOT(onDuplicateFx()));
 
-  QAction *unlinkFx = new QAction(tr("&Unlink"), &menu);
+  QAction *unlinkFx = new QAction(createQIcon("unlink"), tr("&Unlink"), &menu);
   connect(unlinkFx, SIGNAL(triggered()), fxScene, SLOT(onUnlinkFx()));
 
   QAction *macroFx =
