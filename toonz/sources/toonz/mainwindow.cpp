@@ -1768,18 +1768,21 @@ void MainWindow::defineActions() {
                        QT_TR_NOOP("&Import Toonz Lip Sync File..."), "", "dialogue_import",
                        tr("Import a lip sync file to be applied to a level."));
   createMenuFileAction(MI_NewProject, QT_TR_NOOP("&New Project..."), "",
-                       "", tr("Create a new project.") + separator +
-                       tr("A project is a container for a collection of "
-                       "related scenes and drawings."));
+                       "new_project",
+                       tr("Create a new project.") + separator +
+                           tr("A project is a container for a collection of "
+                              "related scenes and drawings."));
   createMenuAction(MI_OpenRecentProject, QT_TR_NOOP("&Open Recent Project"),
                    files, "");
   createMenuFileAction(MI_LoadProject, QT_TR_NOOP("&Load Project..."), "", "",
                        tr("Load an existing project."));
   createMenuFileAction(MI_ProjectSettings, QT_TR_NOOP("&Project Settings..."),
-                       "");
-  createMenuFileAction(MI_SaveDefaultSettings, QT_TR_NOOP("&Save Default Settings"), "",
-                       "", tr("Use the current scene's settings as a template for "
-                       "all new scenes in the current project."));
+                       "", "project_settings");
+  createMenuFileAction(MI_SaveDefaultSettings,
+                       QT_TR_NOOP("&Save Default Settings"), "",
+                       "save_default_settings",
+                       tr("Use the current scene's settings as a template for "
+                          "all new scenes in the current project."));
   createMenuFileAction(MI_SoundTrack, QT_TR_NOOP("&Export Soundtrack"), "",
                        "", tr("Exports the soundtrack to the current scene as a wav file."));
   createMenuFileAction(MI_Preferences, QT_TR_NOOP("&Preferences..."), "Ctrl+U",
@@ -1891,7 +1894,7 @@ void MainWindow::defineActions() {
   // Menu - Level
 
   createMenuLevelAction(MI_NewLevel, QT_TR_NOOP("&New Level..."), "Alt+N",
-                        "new_document", tr("Create a new drawing layer."));
+                        "new_level", tr("Create a new drawing layer."));
   createMenuLevelAction(MI_NewVectorLevel, QT_TR_NOOP("&New Vector Level"), "",
                         "new_vector_level", tr("Create a new vector level.") + 
                         separator + tr("Vectors can be manipulated easily and have "
@@ -1953,7 +1956,7 @@ void MainWindow::defineActions() {
   menuAct = createMenuLevelAction(MI_CanvasSize, QT_TR_NOOP("&Canvas Size..."),
                                   "", "resize");
   menuAct->setDisabled(true);
-  createMenuLevelAction(MI_FileInfo, QT_TR_NOOP("&Info..."), "", "level_info");
+  createMenuLevelAction(MI_FileInfo, QT_TR_NOOP("&Info..."), "", "info");
   createMenuLevelAction(MI_RemoveUnused,
                         QT_TR_NOOP("&Remove All Unused Levels"), "",
                         "remove_unused_levels");
@@ -1962,8 +1965,8 @@ void MainWindow::defineActions() {
                         "replace_parent_directory");
   createMenuLevelAction(MI_NewNoteLevel, QT_TR_NOOP("New Note Level"), "",
                         "new_note_level");
-  createMenuLevelAction(MI_ConvertToVectors, 
-                        QT_TR_NOOP("Convert to Vectors..."), "");
+  createMenuLevelAction(MI_ConvertToVectors,
+                        QT_TR_NOOP("Convert to Vectors..."), "", "convert");
   createMenuLevelAction(MI_ConvertToToonzRaster,
                         QT_TR_NOOP("Vectors to Smart Raster"), "");
   createMenuLevelAction(
@@ -1971,8 +1974,7 @@ void MainWindow::defineActions() {
       QT_TRANSLATE_NOOP("MainWindow",
                         "Replace Vectors with Simplified Vectors"),
       "");
-  createMenuLevelAction(MI_Tracking, QT_TR_NOOP("Tracking..."), "",
-                        "tracking_options");
+  createMenuLevelAction(MI_Tracking, QT_TR_NOOP("Tracking..."), "", "focus");
   createMenuLevelAction(MI_NewSpline, QT_TR_NOOP("&New Motion Path"), "",
                         "menu_toggle", tr("Create a new motion path.") + separator +
                         tr("Motion paths can be used as animation guides, or you can animate "
@@ -2162,8 +2164,8 @@ void MainWindow::defineActions() {
                          "", "preview_settings",
                          tr("Control the settings that will be used to preview the scene."));
   createMenuRenderAction(MI_Render, QT_TR_NOOP("&Render"), "Ctrl+Shift+R",
-                         "render_clapboard", tr("Renders according to the settings and "
-                         "location set in Output Settings."));
+                         "render", tr("Renders according to the settings and "
+                                      "location set in Output Settings."));
   createMenuRenderAction(MI_FastRender, QT_TR_NOOP("&Fast Render to MP4"),
                          "Alt+R", "fast_render_mp4", tr("Exports an MP4 file to the location specified in the preferences.") +
                          separator + tr("This is quicker than going into the Output Settings "
@@ -2363,9 +2365,11 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_SavePreset, QT_TR_NOOP("&Save As Preset"), "");
   createRightClickMenuAction(MI_PreviewFx, QT_TR_NOOP("Preview Fx"), "");
   createRightClickMenuAction(MI_PasteValues, QT_TR_NOOP("&Paste Color && Name"),
-                             "");
-  createRightClickMenuAction(MI_PasteColors, QT_TR_NOOP("Paste Color"), "");
-  createRightClickMenuAction(MI_PasteNames, QT_TR_NOOP("Paste Name"), "");
+                             "", "paste_color_and_name");
+  createRightClickMenuAction(MI_PasteColors, QT_TR_NOOP("Paste Color"), "",
+                             "paste_color");
+  createRightClickMenuAction(MI_PasteNames, QT_TR_NOOP("Paste Name"), "",
+                             "paste_name");
   createRightClickMenuAction(MI_GetColorFromStudioPalette,
                              QT_TR_NOOP("Get Color from Studio Palette"), "");
   createRightClickMenuAction(MI_ToggleLinkToStudioPalette,
@@ -2409,17 +2413,16 @@ void MainWindow::defineActions() {
                              "show_folder_contents");
   createRightClickMenuAction(MI_ConvertFiles, QT_TR_NOOP("Convert..."), "",
                              "convert");
-  createRightClickMenuAction(MI_CollectAssets, QT_TR_NOOP("Collect Assets"),
-                             "");
+  createRightClickMenuAction(MI_CollectAssets, QT_TR_NOOP("Collect Assets"), "",
+                             "collect_assets");
   createRightClickMenuAction(MI_ImportScenes, QT_TR_NOOP("Import Scene"), "",
                              "load_scene");
   createRightClickMenuAction(MI_ExportScenes, QT_TR_NOOP("Export Scene..."), "",
-                             "scene_export");
+                             "export_scene");
   createRightClickMenuAction(MI_RemoveLevel, QT_TR_NOOP("Remove Level"), "",
                              "remove_level");
   createRightClickMenuAction(MI_AddToBatchRenderList,
-                             QT_TR_NOOP("Add As Render Task"), "",
-                             "render_add");
+                             QT_TR_NOOP("Add As Render Task"), "", "new_scene");
   createRightClickMenuAction(MI_AddToBatchCleanupList,
                              QT_TR_NOOP("Add As Cleanup Task"), "",
                              "cleanup_add");
@@ -2517,7 +2520,8 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_OpenPltGizmo, QT_TR_NOOP("&Palette Gizmo"), "",
                              "palettegizmo");
   createRightClickMenuAction(MI_EraseUnusedStyles,
-                             QT_TR_NOOP("&Delete Unused Styles"), "");
+                             QT_TR_NOOP("&Delete Unused Styles"), "",
+                             "delete_unused_styles");
   // createRightClickMenuAction(MI_LoadSubSceneFile, QT_TR_NOOP("Load As Sub-xsheet"),   "");
   // createRightClickMenuAction(MI_LoadResourceFile, QT_TR_NOOP("Load"), "");
   // createRightClickMenuAction(MI_PremultiplyFile,  QT_TR_NOOP("Premultiply"), "");
@@ -2722,19 +2726,19 @@ void MainWindow::defineActions() {
   createAction(MI_TapeNextType, QT_TR_NOOP("Tape Tool - Next Type"), "", "",
                ToolCommandType);
   createAction(MI_TapeNormal, QT_TR_NOOP("Tape Tool - Normal"), "", "",
-               ToolCommandType);
-  createAction(MI_TapeRectangular, QT_TR_NOOP("Tape Tool - Rectangular"), "", "",
-               ToolCommandType);
+               ToolCommandType, "tape_normal");
+  createAction(MI_TapeRectangular, QT_TR_NOOP("Tape Tool - Rectangular"), "",
+               "", ToolCommandType, "tape_rectangular");
   createAction(MI_TapeNextMode, QT_TR_NOOP("Tape Tool - Next Mode"), "", "",
                ToolCommandType);
   createAction(MI_TapeEndpointToEndpoint,
                QT_TR_NOOP("Tape Tool - Endpoint to Endpoint"), "", "",
-               ToolCommandType);
+               ToolCommandType, "tape_end_to_end");
   createAction(MI_TapeEndpointToLine,
                QT_TR_NOOP("Tape Tool - Endpoint to Line"), "", "",
-               ToolCommandType);
-  createAction(MI_TapeLineToLine, QT_TR_NOOP("Tape Tool - Line to Line"), "", "",
-               ToolCommandType);
+               ToolCommandType, "tape_end_to_line");
+  createAction(MI_TapeLineToLine, QT_TR_NOOP("Tape Tool - Line to Line"), "",
+               "", ToolCommandType, "tape_line_to_line");
 
   /*-- Style Picker tool + mode switching shortcuts --*/
   createAction(MI_PickStyleNextMode,
@@ -3042,8 +3046,10 @@ void MainWindow::defineActions() {
                                   "reset");
   createVisualizationButtonAction(VB_ZoomFit, QT_TR_NOOP("Fit to Window"),
                                   "fit_to_window");
-  createVisualizationButtonAction(VB_ZoomReset, QT_TR_NOOP("Reset Zoom"));
-  createVisualizationButtonAction(VB_RotateReset, QT_TR_NOOP("Reset Rotation"));
+  createVisualizationButtonAction(VB_ZoomReset, QT_TR_NOOP("Reset Zoom"),
+                                  "zoom_reset");
+  createVisualizationButtonAction(VB_RotateReset, QT_TR_NOOP("Reset Rotation"),
+                                  "rotate_reset");
   createVisualizationButtonAction(VB_PositionReset,
                                   QT_TR_NOOP("Reset Position"));
   createVisualizationButtonAction(
