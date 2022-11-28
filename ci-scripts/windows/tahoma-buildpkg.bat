@@ -43,6 +43,8 @@ echo ">>> Copying stuff to Tahoma2D\tahomastuff"
 mkdir Tahoma2D\tahomastuff
 xcopy /Y /E ..\..\stuff Tahoma2D\tahomastuff
 
+del /A- /S Tahoma2D\tahomastuff\*.gitkeep
+
 IF EXIST ..\..\thirdparty\apps\ffmpeg\bin (
    echo ">>> Copying FFmpeg to Tahoma2D\ffmpeg"
    IF EXIST Tahoma2D\ffmpeg rmdir /S /Q Tahoma2D\ffmpeg
