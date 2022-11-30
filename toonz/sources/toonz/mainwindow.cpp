@@ -2340,7 +2340,7 @@ void MainWindow::defineActions() {
       MI_AutoFillToggle,
       QT_TRANSLATE_NOOP("MainWindow",
                         "Toggle Autofill on Current Palette Color"),
-      "Shift+A");
+      "Shift+A", "toggle_autofill");
 
   // Right Click
 
@@ -2744,13 +2744,13 @@ void MainWindow::defineActions() {
   createAction(MI_PickStyleNextMode,
                QT_TR_NOOP("Style Picker Tool - Next Mode"), "", "",
                ToolCommandType);
-  createAction(MI_PickStyleAreas, QT_TR_NOOP("Style Picker Tool - Areas"), "", "",
-               ToolCommandType);
-  createAction(MI_PickStyleLines, QT_TR_NOOP("Style Picker Tool - Lines"), "", "",
-               ToolCommandType);
+  createAction(MI_PickStyleAreas, QT_TR_NOOP("Style Picker Tool - Areas"), "",
+               "", ToolCommandType, "stylepicker_areas");
+  createAction(MI_PickStyleLines, QT_TR_NOOP("Style Picker Tool - Lines"), "",
+               "", ToolCommandType, "stylepicker_lines");
   createAction(MI_PickStyleLinesAndAreas,
                QT_TR_NOOP("Style Picker Tool - Lines & Areas"), "", "",
-               ToolCommandType);
+               ToolCommandType, "stylepicker_lines_areas");
 
   /*-- RGB Picker tool + type switching shortcuts --*/
   createAction(MI_RGBPickerNextType, QT_TR_NOOP("RGB Picker Tool - Next Type"),

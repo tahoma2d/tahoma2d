@@ -427,7 +427,11 @@
 		<file>icons/dark/actions/20/fill_mode_areas.svg</file>
 		<file>icons/dark/actions/20/fill_mode_lines.svg</file>
 		<file>icons/dark/actions/20/fill_mode_lines_areas.svg</file>
-		<file>icons/dark/actions/16/fill_auto.svg</file>
+		<file>icons/dark/actions/16/toggle_autofill.svg</file>
+
+		<file>icons/dark/actions/20/stylepicker_areas.svg</file>
+		<file>icons/dark/actions/20/stylepicker_lines.svg</file>
+		<file>icons/dark/actions/20/stylepicker_lines_areas.svg</file>
 
 		<file>icons/dark/actions/20/paintbrush_mode_areas.svg</file>
 		<file>icons/dark/actions/20/paintbrush_mode_lines.svg</file>
