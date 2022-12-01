@@ -14,7 +14,6 @@ cd build
 source /opt/qt515/bin/qt515-env.sh
 
 cmake ../sources \
-    -DWITH_SYSTEM_SUPERLU:BOOL=OFF
+    -DWITH_SYSTEM_SUPERLU=ON
 
 make -j7
-
