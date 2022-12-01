@@ -1714,6 +1714,9 @@ void CloneLevelUndo::insertCells() const {
     TXshLevelP lastLevel = 0;
     for (int r = m_range.m_r0; r <= m_range.m_r1; ++r) {
       TXshCell srcCell = xsh->getCell(r, c, false);
+      if (srcCell.isEmpty() && useImplicitHold &&
+          xsh->isColumnEmpty(c + m_range.getColCount()))
+        srcCell = xsh->getCell(r, c, true);
       if (TXshSimpleLevel *srcSl = srcCell.getSimpleLevel()) {
         std::map<TXshSimpleLevel *, TXshLevelP>::iterator lt =
             m_insertedLevels.find(srcSl);
@@ -1809,6 +1812,7 @@ void TCellSelection::cloneLevel() {
       TStageObjectId columnId = TStageObjectId::ColumnId(newCol);
       TXsheet *xsh            = app->getCurrentXsheet()->getXsheet();
       TXshCell cell           = xsh->getCell(m_range.m_r0, newCol);
+      if (cell.isEmpty()) continue;
       TXshSimpleLevel *level  = cell.getSimpleLevel();
       std::string columnName =
           QString::fromStdWString(level->getName()).toStdString();

@@ -2229,7 +2229,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     isRed            = true;
   TXshChildLevel *cl = cell.getChildLevel();
   if (cl && !cell.getFrameId().isStopFrame() &&
-      cell.getFrameId().getNumber() - 1 >= cl->getFrameCount())
+      cell.getFrameId().getNumber() - 1 >= cl->getFrameCount() &&
+      !Preferences::instance()->isImplicitHoldEnabled())
     isRed = true;
   QColor penColor =
       isRed ? QColor(m_viewer->getErrorTextColor()) : m_viewer->getTextColor();

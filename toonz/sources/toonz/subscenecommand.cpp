@@ -31,6 +31,7 @@
 #include "toonz/tstageobjectspline.h"
 #include "toonz/tcamera.h"
 #include "toonz/expressionreferencemonitor.h"
+#include "toonz/preferences.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -1282,6 +1283,39 @@ void removeFx(TXsheet *xsh, TFx *fx) {
 
 //-----------------------------------------------------------------------------
 
+int getChildFrameCount(TXsheet *childXsh) {
+  if (!childXsh) return 0;
+
+  int frameCount = childXsh->getFrameCount();
+
+  // For implicit holds, use last Stop Frame marker or last Key frame marker as
+  // frame count
+  if (Preferences::instance()->isImplicitHoldEnabled()) {
+    for (int c = 0; c < childXsh->getColumnCount(); c++) {
+      int r0, r1;
+
+      r1            = childXsh->getMaxFrame(c);
+      TXshCell cell = childXsh->getCell(r1, c);
+      // If last frame is a stop frame, don't check for keyframe in the same
+      // column in case of overshoot
+      if (cell.getFrameId().isStopFrame()) {
+        frameCount = std::max(frameCount, (r1 + 1));
+        continue;
+      }
+
+      TStageObject *pegbar =
+          childXsh->getStageObject(TStageObjectId::ColumnId(c));
+      if (!pegbar) continue;
+      if (!pegbar->getKeyframeRange(r0, r1)) continue;
+      frameCount = std::max(frameCount, (r1 + 1));
+    }
+  }
+
+  return frameCount;
+}
+
+//-----------------------------------------------------------------------------
+
 void collapseColumns(std::set<int> indices, bool columnsOnly) {
   // return if there is no selected columns
   if (indices.empty()) return;
@@ -1337,7 +1371,7 @@ void collapseColumns(std::set<int> indices, bool columnsOnly) {
   xsh->insertColumn(index);
 
   // set subxsheet cells in the parent xhseet
-  int r, rowCount = childXsh->getFrameCount();
+  int r, rowCount = getChildFrameCount(childXsh);
   for (r = 0; r < rowCount; ++r)
     xsh->setCell(r, index, TXshCell(xl, TFrameId(r + 1)));
 
@@ -1440,7 +1474,7 @@ void collapseColumns(std::set<int> indices,
 
   xsh->insertColumn(index);
 
-  int r, rowCount = childXsh->getFrameCount();
+  int r, rowCount = getChildFrameCount(childXsh);
   for (r = 0; r < rowCount; r++)
     xsh->setCell(r, index, TXshCell(xl, TFrameId(r + 1)));
 
@@ -1514,7 +1548,7 @@ void collapseColumns(std::set<int> indices, const std::set<TFx *> &fxs,
     if (output) xsh->getFxDag()->removeOutputFx(output);
   }
 
-  int rowCount = childXsh->getFrameCount();
+  int rowCount = getChildFrameCount(childXsh);
   int r;
   for (r = 0; r < rowCount; r++)
     xsh->setCell(r, index, TXshCell(xl, TFrameId(r + 1)));
