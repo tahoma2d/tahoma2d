@@ -136,7 +136,12 @@ public:
       f++;
       xsh->setCell(i, m_columnIndex, cell);
       int appo = i++;
-      while (i < m_step + appo) xsh->setCell(i++, m_columnIndex, cell);
+      while (i < m_step + appo) {
+        if (i > 0 && Preferences::instance()->isImplicitHoldEnabled())
+          xsh->setCell(i++, m_columnIndex, TXshCell(0, TFrameId::EMPTY_FRAME));
+        else
+          xsh->setCell(i++, m_columnIndex, cell);
+      }
     }
     app->getCurrentScene()->notifySceneChanged();
     app->getCurrentScene()->notifyCastChange();
@@ -679,7 +684,12 @@ bool LevelCreatePopup::apply() {
       sl->setFrame(fid, ri);
     }
     TXshCell cell(sl, fid);
-    for (j = 0; j < step; j++) xsh->setCell(row++, col, cell);
+    for (j = 0; j < step; j++) {
+      if (j > 0 && Preferences::instance()->isImplicitHoldEnabled())
+        xsh->setCell(row++, col, TXshCell(0, TFrameId::EMPTY_FRAME));
+      else
+        xsh->setCell(row++, col, cell);
+    }
   }
 
   //  if (lType == TZP_XSHLEVEL || lType == OVL_XSHLEVEL) {

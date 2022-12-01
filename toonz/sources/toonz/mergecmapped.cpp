@@ -511,18 +511,34 @@ void mergeCmapped(int column, int mColumn, const QString &fullpath,
 
   int count = 0;
   for (int i = 0; i < (int)cell.size(); i++) {
-    if (cell[i].isEmpty() && mCell[i].isEmpty()) continue;
-    if (cell[i].getFrameId().isStopFrame() &&
-        mCell[i].getFrameId().isStopFrame())
+    bool cellImplicit =
+        isImplicitHoldEnabled
+            ? xsh->isImplicitCell(std::min(start, mStart) + i, column)
+            : false;
+    bool mCellImplicit =
+        isImplicitHoldEnabled
+            ? xsh->isImplicitCell(std::min(start, mStart) + i, mColumn)
+            : false;
+
+    if ((cell[i].isEmpty() && mCell[i].isEmpty()) ||
+        (cellImplicit && mCellImplicit) || (cellImplicit && mCell[i].isEmpty()))
       continue;
 
-    if (isImplicitHoldEnabled) {
-      bool cellImplicit =
-          xsh->isImplicitCell(std::min(start, mStart) + i, column);
-      bool mCellImplicit =
-          xsh->isImplicitCell(std::min(start, mStart) + i, mColumn);
-      if (cellImplicit && (mCellImplicit || mCell[i].isEmpty())) continue;
-      if (mCellImplicit && (cellImplicit || cell[i].isEmpty())) continue;
+    if ((cell[i].getFrameId().isStopFrame() &&
+         mCell[i].getFrameId().isStopFrame()) ||
+        (mCell[i].isEmpty() && cell[i].getFrameId().isStopFrame())) {
+      TXshCell newCell(newLevel, cell[i].m_frameId);
+      xsh->setCell(i, column, newCell);
+      cell[i] = newCell;
+      continue;
+    }
+
+    if ((mCell[i].getFrameId().isStopFrame() && cell[i].isEmpty()) ||
+        (mCellImplicit && cell[i].isEmpty())) {
+      TXshCell newCell(newLevel, mCell[i].m_frameId);
+      xsh->setCell(i, column, newCell);
+      cell[i] = newCell;
+      continue;
     }
 
     TAffine imgAff, matchAff;
@@ -531,8 +547,13 @@ void mergeCmapped(int column, int mColumn, const QString &fullpath,
     getColumnPlacement(matchAff, xsh, std::min(start, mStart) + i, mColumn,
                        false);
 
-    TFrameId frameId  = cell[i].isEmpty() ? TFrameId() : cell[i].getFrameId();
-    TFrameId mFrameId = mCell[i].isEmpty() ? TFrameId() : mCell[i].getFrameId();
+    TFrameId frameId = (cell[i].isEmpty() || cell[i].getFrameId().isStopFrame())
+                           ? TFrameId()
+                           : cell[i].getFrameId();
+    TFrameId mFrameId =
+        (mCell[i].isEmpty() || mCell[i].getFrameId().isStopFrame())
+            ? TFrameId()
+            : mCell[i].getFrameId();
 
     // std::map<TFrameId, TFrameId>::iterator it;
     MergedPair mp(frameId, mFrameId, imgAff.inv() * matchAff);
@@ -605,7 +626,9 @@ void mergeCmapped(int column, int mColumn, const QString &fullpath,
 
   for (int i = 0; i < (int)cell.size(); i++)  // the saveboxes must be updated
   {
-    if (cell[i].isEmpty() || mCell[i].isEmpty()) continue;
+    if (cell[i].isEmpty() || cell[i].getFrameId().isStopFrame() ||
+        mCell[i].isEmpty() || mCell[i].getFrameId().isStopFrame())
+      continue;
 
     if (!cell[i].getImage(false) || !mCell[i].getImage(false)) continue;
 

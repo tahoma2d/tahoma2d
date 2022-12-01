@@ -378,23 +378,26 @@ void doCloneLevelNoSave(const TCellSelection::Range &range,
 
       TXshCell oldCell(cell);
       cell.m_level = xl;
-      int k;
-      for (k = range.m_r0; k < r; k++) {
-        if (xsh->getCell(k, c, false).getImage(true).getPointer() ==
-            img.getPointer()) {
-          TFrameId oldFid = xsh->getCell(k, c, false).getFrameId();
-          assert(fid == oldFid);
-          sl->setFrame(fid,
-                       xsh->getCell(k, c + range.getColCount(), false).getImage(true));
-          break;
+      if (!fid.isStopFrame()) {
+        int k;
+        for (k = range.m_r0; k < r; k++) {
+          if (xsh->getCell(k, c, false).getImage(true).getPointer() ==
+              img.getPointer()) {
+            TFrameId oldFid = xsh->getCell(k, c, false).getFrameId();
+            assert(fid == oldFid);
+            sl->setFrame(
+                fid,
+                xsh->getCell(k, c + range.getColCount(), false).getImage(true));
+            break;
+          }
         }
-      }
 
-      if (!keepOldLevel && k >= r) {
-        TImageP newImg(img->cloneImage());
-        assert(newImg);
+        if (!keepOldLevel && k >= r) {
+          TImageP newImg(img->cloneImage());
+          assert(newImg);
 
-        sl->setFrame(fid, newImg);
+          sl->setFrame(fid, newImg);
+        }
       }
 
       cell.m_frameId = fid;
