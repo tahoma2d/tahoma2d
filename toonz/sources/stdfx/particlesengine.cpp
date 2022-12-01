@@ -526,6 +526,7 @@ void Particles_Engine::render_particles(
     TRectD bboxForInifiniteSource = ri.m_affine.inv() * outTileBBox;
     TRectD sourceBbox;
     if (values.source_ctrl_val &&
+        (ctrl_ports.find(values.source_ctrl_val) != ctrl_ports.end()) &&
         ctrl_ports.at(values.source_ctrl_val)->isConnected()) {
       (*(ctrl_ports.at(values.source_ctrl_val)))
           ->getBBox(r_frame, sourceBbox, riAux);
