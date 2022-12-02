@@ -925,7 +925,7 @@ public:
   std::vector<StyleChooserPage *> *getStyleSetList(StylePageType pageType);
 
   void setUpdated(TFilePath setPath);
-  TFilePath getSetStyleFolder(QString setName);
+  TFilePath getSetStyleFolder(QString setName, StylePageType pageType);
 
   void updatePage(int pageIndex);
 
