@@ -2412,8 +2412,8 @@ FunctionTreeView {
 }
 FunctionPanel {
   qproperty-BGColor: #5a5a5a;
-  qproperty-ValueLineColor: rgba(0, 0, 0, 0.1);
-  qproperty-FrameLineColor: rgba(0, 0, 0, 0.1);
+  qproperty-ValueLineColor: #505050;
+  qproperty-FrameLineColor: #454545;
   qproperty-OtherCurvesColor: #c5c5c5;
   qproperty-RulerBackground: #676767;
   qproperty-TextColor: #000;

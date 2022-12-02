@@ -2411,13 +2411,13 @@ FunctionTreeView {
   padding-left: 2;
 }
 FunctionPanel {
-  qproperty-BGColor: #282828;
-  qproperty-ValueLineColor: rgba(0, 0, 0, 0.1);
-  qproperty-FrameLineColor: rgba(0, 0, 0, 0.1);
-  qproperty-OtherCurvesColor: #747474;
-  qproperty-RulerBackground: #202020;
+  qproperty-BGColor: #131313;
+  qproperty-ValueLineColor: #1d1d1d;
+  qproperty-FrameLineColor: #282828;
+  qproperty-OtherCurvesColor: #606060;
+  qproperty-RulerBackground: #0c0c0c;
   qproperty-TextColor: #e6e6e6;
-  qproperty-SubColor: #282828;
+  qproperty-SubColor: #131313;
   qproperty-SelectedColor: #FFA500;
 }
 SpreadsheetViewer {

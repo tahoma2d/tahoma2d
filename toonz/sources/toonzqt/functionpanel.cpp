@@ -668,10 +668,10 @@ void FunctionPanel::drawOtherCurves(QPainter &painter) {
       for (int k = 0; k < kCount; k++) {
         double frame = curve->keyframeIndexToFrame(k);
         QPointF p    = getWinPos(curve, frame, curve->getValue(frame));
-        painter.drawRect(p.x() - 3, p.y() - 3, 7, 7);
+        painter.drawRect(p.x() - 2, p.y() - 2, 5, 5);
         QPointF p2 = getWinPos(curve, frame, curve->getValue(frame, true));
         if (p2.y() != p.y()) {
-          painter.drawRect(p2.x() - 3, p2.y() - 3, 7, 7);
+          painter.drawRect(p2.x() - 2, p2.y() - 2, 5, 5);
           painter.setPen(solidPen);
           painter.drawLine(p, p2);
           painter.setPen(m_textColor);
@@ -971,7 +971,7 @@ void FunctionPanel::drawCurrentCurve(QPainter &painter) {
     case Point:
       painter.setBrush(isSelected ? QColor(255, 126, 0) : m_subColor);
       painter.setPen(m_textColor);
-      r = isHighlighted ? 7 : 5;
+      r = isHighlighted ? 4 : 3;
       drawSquare(painter, p, r);
       break;
 
@@ -979,8 +979,8 @@ void FunctionPanel::drawCurrentCurve(QPainter &painter) {
     case SpeedOut:
       painter.setBrush(m_subColor);
       painter.setPen(m_textColor);
-      r = isHighlighted ? 3 : 2;
-      drawRoundedSquare(painter, p, r);
+      r = isHighlighted ? 4 : 3;
+      drawCircle(painter, p, r);
       break;
 
     case EaseIn:

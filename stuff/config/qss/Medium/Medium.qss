@@ -2272,9 +2272,13 @@ Ruler {
 XsheetViewer {
   qproperty-TextColor: #e6e6e6;
   qproperty-ErrorTextColor: #ff7b7b;
+  qproperty-SelectedTextColor: #e6e6e6;
+  qproperty-CurrentFrameTextColor: #e6e6e6;
   qproperty-BGColor: #404040;
   qproperty-LightLineColor: rgba(0, 0, 0, 0.2);
   qproperty-MarkerLineColor: rgba(255, 255, 255, 0.15);
+  qproperty-SecMarkerLineColor: rgba(255, 255, 255, 0.25);
+  qproperty-SelectedMarkerLineColor: rgba(255, 255, 255, 0.15);
   qproperty-VerticalLineColor: rgba(0, 0, 0, 0.3);
   qproperty-VerticalLineHeadColor: #272727;
   qproperty-PreviewFrameTextColor: #9fdaff;
@@ -2407,13 +2411,13 @@ FunctionTreeView {
   padding-left: 2;
 }
 FunctionPanel {
-  qproperty-BGColor: #404040;
-  qproperty-ValueLineColor: rgba(0, 0, 0, 0.1);
-  qproperty-FrameLineColor: rgba(0, 0, 0, 0.1);
-  qproperty-OtherCurvesColor: #8d8d8d;
-  qproperty-RulerBackground: #393939;
+  qproperty-BGColor: #3b3b3b;
+  qproperty-ValueLineColor: #454545;
+  qproperty-FrameLineColor: #505050;
+  qproperty-OtherCurvesColor: #888888;
+  qproperty-RulerBackground: #343434;
   qproperty-TextColor: #e6e6e6;
-  qproperty-SubColor: #404040;
+  qproperty-SubColor: #3b3b3b;
   qproperty-SelectedColor: #FFA500;
 }
 SpreadsheetViewer {
@@ -2421,6 +2425,7 @@ SpreadsheetViewer {
   qproperty-CurrentRowBgColor: rgba(163, 82, 147, 0.7);
   qproperty-LightLineColor: rgba(0, 0, 0, 0.2);
   qproperty-MarkerLineColor: rgba(255, 255, 255, 0.15);
+  qproperty-SecMarkerLineColor: rgba(255, 255, 255, 0.25);
   qproperty-BGColor: #404040;
   qproperty-VerticalLineColor: rgba(0, 0, 0, 0.3);
   qproperty-KeyFrameColor: #995d1d;
@@ -2436,6 +2441,7 @@ SpreadsheetViewer {
   qproperty-SelectedEmptyColor: rgba(119, 103, 116, 0.5);
   qproperty-SelectedSceneRangeEmptyColor: rgba(119, 103, 116, 0.5);
   qproperty-TextColor: #e6e6e6;
+  qproperty-CurrentRowTextColor: #e6e6e6;
   qproperty-ColumnHeaderBorderColor: #272727;
 }
 #ExpressionField {
