@@ -2067,6 +2067,8 @@ void StyleChooserPage::onAddStyleToFavorite() {
     setPath += TFilePath("textures");
     break;
   case StylePageType::VectorBrush:
+    setPath += TFilePath("vector brushes");
+    break;
   case StylePageType::VectorCustom:
   case StylePageType::VectorGenerated:
     setPath += TFilePath("vector styles");
@@ -2100,7 +2102,8 @@ void StyleChooserPage::onCopyStyleToSet() {
 
   m_selection.clear();
   m_selection.push_back(m_currentIndex);
-  addSelectedStylesToSet(m_selection, m_editor->getSetStyleFolder(setName));
+  addSelectedStylesToSet(m_selection,
+                         m_editor->getSetStyleFolder(setName, m_pageType));
   m_selection.clear();
 }
 
@@ -2114,7 +2117,8 @@ void StyleChooserPage::onMoveStyleToSet() {
 
   m_selection.clear();
   m_selection.push_back(m_currentIndex);
-  addSelectedStylesToSet(m_selection, m_editor->getSetStyleFolder(setName));
+  addSelectedStylesToSet(m_selection,
+                         m_editor->getSetStyleFolder(setName, m_pageType));
   removeSelectedStylesFromSet(m_selection);
   m_selection.clear();
 }
@@ -2790,6 +2794,7 @@ public:
   void removeSelectedStylesFromSet(std::vector<int> selection) override;
   void addSelectedStylesToSet(std::vector<int> selection,
                               TFilePath setPath) override;
+  void updateFavorite() override { emit refreshFavorites(); };
   void addSelectedStylesToPalette(std::vector<int> selection) override;
   void changeStyleSetFolder(TFilePath newPath) override {
     TStyleManager::instance()->changeStyleSetFolder(m_styleManager, newPath);
@@ -3054,8 +3059,7 @@ void TextureStyleChooserPage::addSelectedStylesToPalette(
     m_editor->addToPalette(style);
 
     // If selecting Custom Style, only, switch to Settings page automatically
-    if (style.isCustom())
-      emit customStyleSelected();
+    if (style.isCustom()) emit customStyleSelected();
   }
 }
 
@@ -4066,6 +4070,9 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
   createStylePage(StylePageType::VectorCustom,
                   myFavoritesPath + TFilePath("vector styles"),
                   getStylePageFilter(StylePageType::VectorCustom), true);
+  createStylePage(StylePageType::VectorBrush,
+                  myFavoritesPath + TFilePath("vector brushes"),
+                  getStylePageFilter(StylePageType::VectorBrush), true);
   createStylePage(StylePageType::Raster,
                   myFavoritesPath + TFilePath("raster styles"),
                   getStylePageFilter(StylePageType::Raster), true);
@@ -4681,7 +4688,8 @@ bool StyleEditor::isSelectingFavorites() {
   if (tab == StyleEditorTab::Texture)
     return (m_texturePages[0]->getSelection().size() > 0);
   else if (tab == StyleEditorTab::Vector)
-    return (m_vectorPages[0]->getSelection().size() > 0);
+    return (m_vectorPages[0]->getSelection().size() > 0 ||
+            m_vectorPages[1]->getSelection().size() > 0);
   else if (tab == StyleEditorTab::Raster)
     return (m_rasterPages[0]->getSelection().size() > 0);
 
@@ -4694,12 +4702,16 @@ bool StyleEditor::isSelectingFavoritesOnly() {
   int tab = m_styleBar->currentIndex();
 
   std::vector<StyleChooserPage *> *pages;
+  int nonFavPagesOffset = 1;
   if (tab == StyleEditorTab::Texture) {
     if (m_texturePages[0]->getSelection().size() == 0) return false;
     pages = &m_texturePages;
   } else if (tab == StyleEditorTab::Vector) {
-    if (m_vectorPages[0]->getSelection().size() == 0) return false;
-    pages = &m_vectorPages;
+    if (m_vectorPages[0]->getSelection().size() == 0 &&
+        m_vectorPages[1]->getSelection().size() == 0)
+      return false;
+    pages             = &m_vectorPages;
+    nonFavPagesOffset = 2;
   } else if (tab == StyleEditorTab::Raster) {
     if (m_rasterPages[0]->getSelection().size() == 0) return false;
     pages = &m_rasterPages;
@@ -4707,7 +4719,7 @@ bool StyleEditor::isSelectingFavoritesOnly() {
     return false;
 
   std::vector<StyleChooserPage *>::iterator it;
-  for (it = pages->begin() + 1; it != pages->end(); it++) {
+  for (it = pages->begin() + nonFavPagesOffset; it != pages->end(); it++) {
     StyleChooserPage *page = *it;
     if (page->getSelection().size() > 0) return false;
   }
@@ -4721,12 +4733,16 @@ bool StyleEditor::isSelectingNonFavoritesOnly() {
   int tab = m_styleBar->currentIndex();
 
   std::vector<StyleChooserPage *> *pages;
+  int nonFavPageOffset = 1;
   if (tab == StyleEditorTab::Texture) {
     if (m_texturePages[0]->getSelection().size() >= 0) return false;
     pages = &m_texturePages;
   } else if (tab == StyleEditorTab::Vector) {
-    if (m_vectorPages[0]->getSelection().size() >= 0) return false;
-    pages = &m_vectorPages;
+    if (m_vectorPages[0]->getSelection().size() >= 0 ||
+        m_vectorPages[1]->getSelection().size())
+      return false;
+    pages            = &m_vectorPages;
+    nonFavPageOffset = 2;
   } else if (tab == StyleEditorTab::Raster) {
     if (m_rasterPages[0]->getSelection().size() >= 0) return false;
     pages = &m_rasterPages;
@@ -4734,7 +4750,7 @@ bool StyleEditor::isSelectingNonFavoritesOnly() {
     return false;
 
   std::vector<StyleChooserPage *>::iterator it;
-  for (it = pages->begin() + 1; it != pages->end(); it++) {
+  for (it = pages->begin() + 2; it != pages->end(); it++) {
     StyleChooserPage *page = *it;
     if (page->getSelection().size() > 0) return true;
   }
@@ -5035,9 +5051,10 @@ void StyleEditor::setPage(int index) {
   if (!m_enabledFirstAndLastTab) {
     if (index == StyleEditorTab::Texture)
       m_texturePages[0]->loadItems();
-    else if (index == StyleEditorTab::Vector)
+    else if (index == StyleEditorTab::Vector) {
       m_vectorPages[0]->loadItems();
-    else if (index == StyleEditorTab::Raster)
+      m_vectorPages[1]->loadItems();
+    } else if (index == StyleEditorTab::Raster)
       m_rasterPages[0]->loadItems();
     m_styleChooser->setCurrentIndex(index);
     return;
@@ -5809,8 +5826,16 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       menuAction->setDefaultWidget(checkBox);
 
       // Favorites should be 1st
-      if (isMyFavoriteSet)
-        menuAction->setVisible(!m_vectorButtons[0]->isHidden());
+      if (isMyFavoriteSet) {
+        label->setHidden(true);
+        button->setHidden(true);
+        button->setDisabled(true);
+        checkBox->setHidden(true);
+        checkBox->setDisabled(true);
+        connect(m_vectorButtons[0], SIGNAL(toggled(bool)), newPage,
+                SLOT(onTogglePage(bool)));
+        menuAction->setVisible(false);
+      }
 
       m_vectorMenu->insertAction(
           m_vectorMenu->actions()[m_vectorPages.size() - 1], menuAction);
@@ -5987,8 +6012,16 @@ void StyleEditor::onToggleVectorSet(int checkedState) {
   if (index >= m_vectorPages.size()) return;
   m_vectorButtons[index]->setVisible(checked);
   m_vectorLabels[index]->setVisible(checked);
-  if (m_vectorButtons[index]->isChecked())
-    m_vectorPages[index]->setVisible(checked);
+  if (m_vectorButtons[index]->isChecked()) {
+    if (index > 0)
+      m_vectorPages[index]->setVisible(checked);
+    else {
+      if (m_vectorPages[0]->getChipCount() > 1)
+        m_vectorPages[0]->setVisible(checked);
+      if (m_vectorPages[1]->getChipCount() > 1)
+        m_vectorPages[1]->setVisible(checked);
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -6207,31 +6240,34 @@ void StyleEditor::setUpdated(TFilePath setPath) {
 void StyleEditor::onUpdateFavorites() {
   int tab = m_styleBar->currentIndex();
 
-  int chipSize;
+  int chipSize, chipSize1, chipSize2;
   QPushButton *button;
   ClickableLabel *label;
   QMenu *menu;
   StyleChooserPage *page;
   int minChipCount = 2;
   if (tab == StyleEditorTab::Texture) {
-    chipSize     = m_texturePages[0]->getChipCount();
-    button       = m_textureButtons[0];
-    label        = m_textureLabels[0];
-    page         = m_texturePages[0];
-    menu         = m_textureMenu;
-    minChipCount = 3;
+    chipSize = chipSize1 = m_texturePages[0]->getChipCount();
+    button               = m_textureButtons[0];
+    label                = m_textureLabels[0];
+    page                 = m_texturePages[0];
+    menu                 = m_textureMenu;
+    minChipCount         = 3;
   } else if (tab == StyleEditorTab::Vector) {
-    chipSize = m_vectorPages[0]->getChipCount();
-    button   = m_vectorButtons[0];
-    label    = m_vectorLabels[0];
-    page     = m_vectorPages[0];
-    menu     = m_vectorMenu;
+    chipSize1 = m_vectorPages[0]->getChipCount();
+    chipSize2 = m_vectorPages[1]->getChipCount();
+    chipSize  = chipSize1 + chipSize2;
+    button    = m_vectorButtons[0];
+    label     = m_vectorLabels[0];
+    page      = m_vectorPages[0];
+    menu      = m_vectorMenu;
+    minChipCount = 3;
   } else if (tab == StyleEditorTab::Raster) {
-    chipSize = m_rasterPages[0]->getChipCount();
-    button   = m_rasterButtons[0];
-    label    = m_rasterLabels[0];
-    page     = m_rasterPages[0];
-    menu     = m_rasterMenu;
+    chipSize = chipSize1 = m_rasterPages[0]->getChipCount();
+    button               = m_rasterButtons[0];
+    label                = m_rasterLabels[0];
+    page                 = m_rasterPages[0];
+    menu                 = m_rasterMenu;
   } else
     return;
 
@@ -6243,7 +6279,12 @@ void StyleEditor::onUpdateFavorites() {
     if (!checkBox->isChecked()) return;
     label->setHidden(false);
     button->setHidden(false);
-    if (button->isChecked()) page->setHidden(false);
+    if (button->isChecked()) {
+      if (chipSize1 > 1)
+        page->setHidden(false);
+      else
+        page->setHidden(true);
+    }
   } else {
     button->setDisabled(true);
     QWidgetAction *action = qobject_cast<QWidgetAction *>(menu->actions()[0]);
@@ -6256,6 +6297,17 @@ void StyleEditor::onUpdateFavorites() {
   }
 
   update();
+
+  if (tab == StyleEditorTab::Vector) {
+    StyleChooserPage *page2 = m_vectorPages[1];
+    if (chipSize >= 2 || page2->isLoading()) {
+      if (chipSize2 > 1)
+        page2->setHidden(false);
+      else
+        page2->setHidden(true);
+    } else
+      page2->setHidden(true);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -6263,17 +6315,19 @@ void StyleEditor::onUpdateFavorites() {
 void StyleEditor::onRemoveSelectedStylesFromFavorites() {
   int tab = m_styleBar->currentIndex();
 
-  StyleChooserPage *page;
+  StyleChooserPage *page, *page2 = 0;
   if (tab == StyleEditorTab::Texture)
     page = m_texturePages[0];
-  else if (tab == StyleEditorTab::Vector)
-    page = m_vectorPages[0];
-  else if (tab == StyleEditorTab::Raster)
+  else if (tab == StyleEditorTab::Vector) {
+    page  = m_vectorPages[0];
+    page2 = m_vectorPages[1];
+  } else if (tab == StyleEditorTab::Raster)
     page = m_rasterPages[0];
   else
     return;
 
   page->removeSelectedStylesFromSet(page->getSelection());
+  if (page2) page2->removeSelectedStylesFromSet(page2->getSelection());
   clearSelection();
   update();
 }
@@ -6289,8 +6343,7 @@ void StyleEditor::onAddSelectedStylesToFavorites() {
     pages   = &m_texturePages;
     setPath = m_texturePages[0]->getStylesFolder();
   } else if (tab == StyleEditorTab::Vector) {
-    pages   = &m_vectorPages;
-    setPath = m_vectorPages[0]->getStylesFolder();
+    pages = &m_vectorPages;
   } else if (tab == StyleEditorTab::Raster) {
     pages   = &m_rasterPages;
     setPath = m_rasterPages[0]->getStylesFolder();
@@ -6300,6 +6353,15 @@ void StyleEditor::onAddSelectedStylesToFavorites() {
   std::vector<StyleChooserPage *>::iterator it;
   for (it = pages->begin() + 1; it != pages->end(); it++) {
     StyleChooserPage *page = *it;
+
+    if (tab == StyleEditorTab::Vector) {
+      int favIndex = (page->getPageType() == StylePageType::VectorCustom ||
+                      page->getPageType() == StylePageType::VectorGenerated)
+                         ? 0
+                         : 1;
+      setPath = m_vectorPages[favIndex]->getStylesFolder();
+    }
+
     page->addSelectedStylesToSet(page->getSelection(), setPath);
   }
 
@@ -6445,7 +6507,8 @@ void StyleEditor::onRemoveSelectedStyleFromSet() {
 
 //-----------------------------------------------------------------------------
 
-TFilePath StyleEditor::getSetStyleFolder(QString setName) {
+TFilePath StyleEditor::getSetStyleFolder(QString setName,
+                                         StylePageType pageType) {
   int tab = m_styleBar->currentIndex();
 
   std::vector<StyleChooserPage *> *pages;
@@ -6462,7 +6525,10 @@ TFilePath StyleEditor::getSetStyleFolder(QString setName) {
   std::vector<StyleChooserPage *>::iterator it;
   for (it = pages->begin(); it != pages->end(); it++) {
     StyleChooserPage *page = *it;
-    if (page->getStyleSetName() == setName) return page->getStylesFolder();
+    if ((pageType != StylePageType::VectorBrush || setName != "My Favorites" ||
+         page->getPageType() == pageType) &&
+        page->getStyleSetName() == setName)
+      return page->getStylesFolder();
   }
 
   return TFilePath();
@@ -6512,6 +6578,8 @@ void StyleEditor::updatePage(int pageIndex) {
     else if (pageIndex == StyleEditorTab::Vector) {
       pageType = StylePageType::VectorCustom;
       if ((ToonzFolder::getLibraryFolder() + TFilePath("vector brushes"))
+              .isAncestorOf(fp) ||
+          (ToonzFolder::getMyFavoritesFolder() + TFilePath("vector brushes"))
               .isAncestorOf(fp))
         pageType = StylePageType::VectorBrush;
     } else if (pageIndex == StyleEditorTab::Raster)
@@ -6567,6 +6635,7 @@ void StyleEditor::onScanStyleSetChanges() {
     fps.push_back(libPath + TFilePath("custom styles"));
     fps.push_back(libPath + TFilePath("vector brushes"));
     fps.push_back(favoritesLibPath + TFilePath("vector styles"));
+    fps.push_back(favoritesLibPath + TFilePath("vector brushes"));
   } else if (tab == StyleEditorTab::Raster) {
     pages    = &m_rasterPages;
     pageType = StylePageType::Raster;
@@ -6623,9 +6692,11 @@ void StyleEditor::onScanStyleSetChanges() {
   for (fpListIt = fpList.begin(); fpListIt != fpList.end(); fpListIt++) {
     TFilePath fp(*fpListIt);
     if (tab == StyleEditorTab::Vector)
-      pageType = (libPath + TFilePath("vector brushes")).isAncestorOf(fp)
-                     ? StylePageType::VectorBrush
-                     : StylePageType::VectorCustom;
+      pageType =
+          ((libPath + TFilePath("vector brushes")).isAncestorOf(fp) ||
+           (favoritesLibPath + TFilePath("vector brushes")).isAncestorOf(fp))
+              ? StylePageType::VectorBrush
+              : StylePageType::VectorCustom;
     createNewStyleSet(pageType, fp, false);
   }
 }
@@ -6909,10 +6980,12 @@ bool StyleEditor::isStyleNameValid(QString name, StylePageType pageType,
 
     if (pageType == StylePageType::Texture)
       path += TFilePath("textures");
-    else if (pageType == StylePageType::VectorBrush ||
-             pageType == StylePageType::VectorCustom) {
+    else if (pageType == StylePageType::VectorCustom) {
       pageType = StylePageType::VectorCustom;
       path += TFilePath("vector styles");
+    } else if (pageType == StylePageType::VectorBrush) {
+      pageType = StylePageType::VectorBrush;
+      path += TFilePath("vector brushes");
     } else if (pageType == StylePageType::Raster)
       path += TFilePath("raster styles");
   } else {
@@ -7067,9 +7140,12 @@ void NewStyleSetPopup::createStyleSet() {
 
     if (m_texture->isChecked())
       path += TFilePath("textures");
-    else if (m_vectorBrush->isChecked() || m_vectorCustom->isChecked()) {
+    else if (m_vectorCustom->isChecked()) {
       m_pageType = StylePageType::VectorCustom;
       path += TFilePath("vector styles");
+    } else if (m_vectorBrush->isChecked()) {
+      m_pageType = StylePageType::VectorBrush;
+      path += TFilePath("vector brushes");
     } else if (m_raster->isChecked())
       path += TFilePath("raster styles");
   } else {
