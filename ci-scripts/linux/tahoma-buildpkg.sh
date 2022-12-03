@@ -35,6 +35,8 @@ mv appdir/usr/share/tahoma2d/stuff Tahoma2D/tahomastuff
 chmod -R 777 Tahoma2D/tahomastuff
 rmdir appdir/usr/share/tahoma2d
 
+find Tahoma2D/tahomastuff -name .gitkeep -exec rm -f {} \;
+
 if [ -d ../../thirdparty/apps/ffmpeg/bin ]
 then
    echo ">>> Copying FFmpeg to Tahoma2D/ffmpeg"
