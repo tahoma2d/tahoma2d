@@ -22,6 +22,8 @@ fi
 cp -R stuff $TOONZDIR/Tahoma2D.app/tahomastuff
 chmod -R 777 $TOONZDIR/Tahoma2D.app/tahomastuff
 
+find $TOONZDIR/Tahoma2D.app/tahomastuff -name .gitkeep -exec rm -f {} \;
+
 if [ -d thirdparty/apps/ffmpeg/bin ]
 then
    echo ">>> Copying FFmpeg to $TOONZDIR/Tahoma2D.app/ffmpeg"
