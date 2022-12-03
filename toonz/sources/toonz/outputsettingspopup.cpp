@@ -1042,7 +1042,7 @@ void OutputSettingsPopup::updateField() {
     QString name   = path.withoutParentDir().getQString();
     name           = QString::fromStdString(name.toStdString().substr(
         0, name.length() - path.getDottedType().length()));
-    if (name.isEmpty())
+    if (name.isEmpty() || name == ".")
       name = QString::fromStdString(scene->getScenePath().getName());
     m_saveInFileFld->setPath(toQString(path.getParentDir()));
     m_fileNameFld->setText(name);
