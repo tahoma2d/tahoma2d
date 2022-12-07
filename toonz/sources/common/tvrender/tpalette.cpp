@@ -202,15 +202,16 @@ void TPalette::Page::insertStyle(int indexInPage, TPixel32 color) {
 
 //-------------------------------------------------------------------
 
-void TPalette::Page::removeStyle(int indexInPage) {
+void TPalette::Page::removeStyle(int indexInPage, bool flagOnly) {
   if (indexInPage < 0 || indexInPage >= getStyleCount()) return;
   assert(m_palette);
   int styleId = getStyleId(indexInPage);
   assert(0 <= styleId && styleId < m_palette->getStyleCount());
   assert(m_palette->m_styles[styleId].first == this);
   m_palette->m_styles[styleId].first = 0;
-  m_palette->m_styles[styleId].second =
-      TColorStyleP(new TSolidColorStyle(TPixel32::Black));
+  if (!flagOnly)
+    m_palette->m_styles[styleId].second =
+        TColorStyleP(new TSolidColorStyle(TPixel32::Black));
   m_styleIds.erase(m_styleIds.begin() + indexInPage);
 }
 

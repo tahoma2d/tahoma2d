@@ -163,8 +163,10 @@ public:
     //! its
     //!  id at the specified position in the page.
 
-    void removeStyle(int indexInPage);  //!< Removes the style at the specified
-                                        //! position from this page.
+    void removeStyle(
+        int indexInPage,
+        bool flagOnly = false);  //!< Removes the style at the specified
+                                 //! position from this page.
     int search(int styleId)
         const;  //!< Returns the page position of the specified style id,
                 //!  or \p -1 if it cannot be found on the page.
