@@ -212,7 +212,7 @@ public:
     int k;
     for (k = 0; k < count; k++) {
       styles.push_back(dstPage->getStyleId(h));
-      dstPage->removeStyle(h);
+      dstPage->removeStyle(h, true);
     }
     k = 0;
     for (i = m_srcIndicesInPage.begin(); i != m_srcIndicesInPage.end();
@@ -235,7 +235,7 @@ public:
       int index = *i;
       if (m_dstPageIndex == m_srcPageIndex && index < k) k--;
       styles.push_back(srcPage->getStyleId(index));
-      srcPage->removeStyle(index);
+      srcPage->removeStyle(index, true);
     }
     for (j = styles.begin(); j != styles.end(); ++j)
       dstPage->insertStyle(k, *j);
@@ -300,7 +300,7 @@ public:
     assert(page);
     int indexInPage = page->search(m_styleId);
     assert(indexInPage >= 0);
-    page->removeStyle(indexInPage);
+    page->removeStyle(indexInPage, true);
     m_paletteHandle->notifyPaletteChanged();
   }
   void redo() const override {

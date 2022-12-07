@@ -153,6 +153,7 @@ bool pasteStylesWithoutUndo(TPalette *palette, TPaletteHandle *pltHandle,
   // cerco il punto di inserimento (dopo lo stile corrente)
   int currentStyleIndex = pltHandle->getStyleIndex();
   int indexInPage       = page->search(currentStyleIndex) + 1;
+  if (pageIndex == 0 && indexInPage < 2) indexInPage = 2;
   const StyleData *data =
       dynamic_cast<const StyleData *>(QApplication::clipboard()->mimeData());
   if (!data) return false;
@@ -298,6 +299,7 @@ public:
     TPalette::Page *page = m_palette->getPage(m_pageIndex);
     assert(page);
     int indexInPage       = page->search(m_oldStyleIndex) + 1;
+    if (m_pageIndex == 0 && indexInPage < 2) indexInPage = 2;
     const StyleData *data = dynamic_cast<const StyleData *>(m_data);
     assert(data);
     std::set<int> styleIndicesInPage;
