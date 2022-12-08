@@ -164,6 +164,8 @@ TPropertyGroup *TOutputProperties::getFileFormatProperties(std::string ext) {
     TPropertyGroup *ret     = Tiio::makeWriterProperties(ext);
     m_formatProperties[ext] = ret;
     return ret;
+  } else if (ext == "mov" || ext == "3gp") {
+    return it->second;
   } else {
     // Try to merge settings instead of overriding them
     TPropertyGroup *ret = Tiio::makeWriterProperties(ext);

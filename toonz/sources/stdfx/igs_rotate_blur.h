@@ -44,8 +44,8 @@ IGS_ROTATE_BLUR_EXPORT int reference_margin(
     const double blur_radius,                  /* ぼかしの始まる半径 */
     const double spin_radius, /* ゼロ以上でspin指定となり、
                             かつぼかし強弱の一定になる半径となる */
-    const int type  // 0: Accelerator, 1: Uniform Angle, 2: Uniform Length
-);
+    const int type,  // 0: Accelerator, 1: Uniform Angle, 2: Uniform Length
+    const double ellipse_aspect_ratio = 1.0);
 }  // namespace rotate_blur
 }  // namespace igs
 
