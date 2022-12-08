@@ -714,8 +714,8 @@ void RowArea::drawShiftTraceMarker(QPainter &p) {
 
   QPoint frameAdj = m_viewer->getFrameZoomAdjustment();
   int frameAdj_i  = (m_viewer->orientation()->isVerticalTimeline())
-                       ? frameAdj.y()
-                       : frameAdj.x();
+                        ? frameAdj.y()
+                        : frameAdj.x();
 
   // get onion colors
   TPixel frontPixel, backPixel;
@@ -1106,7 +1106,8 @@ void RowArea::mouseMoveEvent(QMouseEvent *event) {
     return;
   }
 
-  m_row = m_viewer->xyToPosition(pos).frame();
+  m_row = std::max(0, m_viewer->xyToPosition(pos).frame());
+
   int x = pos.x();
 
   if ((event->buttons() & Qt::LeftButton) != 0 &&

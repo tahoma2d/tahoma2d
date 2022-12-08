@@ -212,7 +212,7 @@ void Iwa_BokehRefFx::doCompute(TTile& tile, double frame,
   }
   ctrls[1] = depth_buff;
 
-  layerValue.premultiply       = 2;  // auto
+  layerValue.premultiply       = false;
   layerValue.layerHardness     = m_hardness->getValue(frame);
   layerValue.depth_ref         = 1;
   layerValue.distance          = 0.5;

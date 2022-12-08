@@ -163,9 +163,9 @@ void BokehUtils::MyThread::setLayerRaster(const RASTER srcRas,
     PIXEL* pix = srcRas->pixels(j);
     for (int i = 0; i < dim.lx; i++, pix++) {
       if (pix->m != 0) {
-        double val = (m_channel == Red) ? (double)pix->r
-                                        : (m_channel == Green) ? (double)pix->g
-                                                               : (double)pix->b;
+        double val = (m_channel == Red)     ? (double)pix->r
+                     : (m_channel == Green) ? (double)pix->g
+                                            : (double)pix->b;
         // multiply the exposure by alpha channel value
         dstMem[j * dim.lx + i].r =
             valueToExposure(val / (double)PIXEL::maxChannelValue,
@@ -264,9 +264,9 @@ void BokehUtils::MyThread::run() {
             std::pow(exposure / (*alp_p), m_layerHardness / m_masterHardness) *
             (*alp_p);
 
-      double* res = (m_channel == Red) ? (&((*res_p).x))
-                                       : (m_channel == Green) ? (&((*res_p).y))
-                                                              : (&((*res_p).z));
+      double* res = (m_channel == Red)     ? (&((*res_p).x))
+                    : (m_channel == Green) ? (&((*res_p).y))
+                                           : (&((*res_p).z));
 
       // composite exposure
       if ((*alp_p) >= 1.0 || (*res) == 0.0)
@@ -1280,22 +1280,26 @@ void BokehUtils::setOutputRaster(double4* src, const RASTER dstRas,
       outPix->r =
           (typename PIXEL::Channel)((val > (double)PIXEL::maxChannelValue)
                                         ? (double)PIXEL::maxChannelValue
-                                        : val);
+                                    : (val < 0.) ? 0.
+                                                 : val);
       val = (*src_p).y * (double)PIXEL::maxChannelValue + 0.5;
       outPix->g =
           (typename PIXEL::Channel)((val > (double)PIXEL::maxChannelValue)
                                         ? (double)PIXEL::maxChannelValue
-                                        : val);
+                                    : (val < 0.) ? 0.
+                                                 : val);
       val = (*src_p).z * (double)PIXEL::maxChannelValue + 0.5;
       outPix->b =
           (typename PIXEL::Channel)((val > (double)PIXEL::maxChannelValue)
                                         ? (double)PIXEL::maxChannelValue
-                                        : val);
+                                    : (val < 0.) ? 0.
+                                                 : val);
       val = (*src_p).w * (double)PIXEL::maxChannelValue + 0.5;
       outPix->m =
           (typename PIXEL::Channel)((val > (double)PIXEL::maxChannelValue)
                                         ? (double)PIXEL::maxChannelValue
-                                        : val);
+                                    : (val < 0.) ? 0.
+                                                 : val);
     }
     src_p += margin.x;
   }

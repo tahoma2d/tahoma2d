@@ -65,7 +65,7 @@ class TParamVarT final : public TParamVar {
 public:
   TParamVarT(std::string name, T *var = nullptr, TParamP pluginVar = 0,
              bool hidden = false, bool obsolete = false)
-      : TParamVar(name, hidden), m_var(var), m_pluginVar(pluginVar) {}
+      : TParamVar(name, hidden, obsolete), m_var(var), m_pluginVar(pluginVar) {}
   TParamVarT() = delete;
   void setParam(TParam *param) {
     if (m_var)
@@ -80,7 +80,8 @@ public:
       return m_pluginVar.getPointer();
   }
   TParamVar *clone() const {
-    return new TParamVarT<T>(getName(), m_var, m_pluginVar, isHidden());
+    return new TParamVarT<T>(getName(), m_var, m_pluginVar, isHidden(),
+                             isObsolete());
   }
 };
 
