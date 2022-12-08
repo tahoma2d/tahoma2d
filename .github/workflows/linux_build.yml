@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   Linux:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         compiler: [ gcc, clang ]
@@ -16,12 +16,12 @@ jobs:
             cc: clang
             cxx: clang++
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Dependencies
         run: |
           ci-scripts/linux/tahoma-install.sh
           sudo apt-get install ccache
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: |
             /home/runner/.ccache

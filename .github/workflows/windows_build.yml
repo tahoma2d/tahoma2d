@@ -6,7 +6,7 @@ jobs:
   Windows:
     runs-on: windows-2019
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           lfs: true
       - name: Install Dependencies
@@ -24,7 +24,7 @@ jobs:
         run: |
           ci-scripts\windows\tahoma-get3rdpartyapps.bat
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.0.2
+        uses: microsoft/setup-msbuild@v1.1
       - name: Build Tahoma2D
         run: |
           ci-scripts\windows\tahoma-build.bat
