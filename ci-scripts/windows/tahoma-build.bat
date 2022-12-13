@@ -30,6 +30,11 @@ IF EXIST ..\..\thirdparty\crashrpt\include set WITH_CRASHRPT=Y
 
 cmake ..\sources -G %MSVCVERSION%  -Ax64 -DQT_PATH=%QT_PATH% -DBOOST_ROOT=%BOOST_ROOT% -DOpenCV_DIR=%OPENCV_DIR% -DWITH_CANON=%WITH_CANON% -DWITH_CRASHRPT=%WITH_CRASHRPT%
 
-msbuild /property:Configuration=RelWithDebInfo /m /verbosity:minimal ALL_BUILD.vcxproj
+
+IF EXIST C:\ProgramData\chocolatey\bin\cl.exe (
+ 	msbuild /p:CLToolPath=C:\ProgramData\chocolatey\bin /p:UseMultiToolTask=true /p:Configuration=RelWithDebInfo /m /verbosity:minimal ALL_BUILD.vcxproj
+) ELSE (
+	msbuild /p:Configuration=RelWithDebInfo /m /verbosity:minimal ALL_BUILD.vcxproj
+)
 
 cd ../..

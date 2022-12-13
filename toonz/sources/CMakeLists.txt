@@ -1,4 +1,7 @@
-﻿cmake_minimum_required(VERSION 2.8.11)
+﻿cmake_policy(SET CMP0141 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0141 NEW)
+
+cmake_minimum_required(VERSION 2.8.11)
 
 set(CMAKE_BUILD_TYPE_INIT Release)
 
@@ -143,6 +146,7 @@ if(BUILD_ENV_MSVC)
         -DNOMINMAX
         -D_USE_MATH_DEFINES
     )
+    set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>")
 elseif(BUILD_ENV_APPLE)
     if(NOT PLATFORM)
         set(PLATFORM 64)

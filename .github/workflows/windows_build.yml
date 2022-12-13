@@ -12,6 +12,15 @@ jobs:
       - name: Install Dependencies
         run: |
           ci-scripts\windows\tahoma-install.bat
+          choco install ccache
+          copy C:\ProgramData\chocolatey\lib\ccache\tools\ccache*\ccache.exe C:\ProgramData\chocolatey\bin\cl.exe
+          mkdir %LOCALAPPDATA%\ccache
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/AppData/Local/ccache
+          key: ${{ runner.os }}-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-
       - name: Get CanonSDK
         if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' }}
         run: |
@@ -85,7 +94,7 @@ jobs:
           name: ${{ env.NIGHTLYDATETIME }}
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
-          owner: tahoma2d	  
+          owner: tahoma2d
           prerelease: true
           replacesArtifacts: true
           repo: tahoma2d_nightlies
