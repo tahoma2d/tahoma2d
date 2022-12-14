@@ -44,6 +44,7 @@
 #include <QGroupBox>
 
 extern TEnv::StringVar EnvSafeAreaName;
+extern TEnv::IntVar EnvViewerPreviewBehavior;
 extern TEnv::IntVar CameraViewTransparency;
 extern TEnv::IntVar ShowRuleOfThirds;
 extern TEnv::IntVar ShowGoldenRatio;
@@ -474,6 +475,58 @@ TPanelTitleBarButtonForGrids::TPanelTitleBarButtonForGrids(
 void TPanelTitleBarButtonForGrids::mousePressEvent(QMouseEvent *e) {
   m_menu->exec(e->globalPos() + QPoint(-100, 12));
 }
+
+//=============================================================================
+// TPanelTitleBarButtonForPreview
+//-----------------------------------------------------------------------------
+
+void TPanelTitleBarButtonForPreview::mousePressEvent(QMouseEvent *e) {
+  if (e->button() != Qt::RightButton) {
+    m_pressed = !m_pressed;
+    emit toggled(m_pressed);
+    update();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TPanelTitleBarButtonForPreview::contextMenuEvent(QContextMenuEvent *e) {
+  QMenu menu(this);
+
+  // 0: current frame
+  // 1: all frames in the preview range
+  // 2: selected cell, auto play once & stop
+  QStringList behaviorsStrList = {tr("Current frame"),
+                                  tr("All preview range frames"),
+                                  tr("Selected cells - Auto play")};
+
+  QActionGroup *behaviorGroup = new QActionGroup(this);
+
+  for (int i = 0; i < behaviorsStrList.size(); i++) {
+    QAction *action = menu.addAction(behaviorsStrList.at(i));
+    action->setData(i);
+    connect(action, SIGNAL(triggered()), this, SLOT(onSetPreviewBehavior()));
+    action->setCheckable(true);
+    behaviorGroup->addAction(action);
+    if (i == EnvViewerPreviewBehavior) action->setChecked(true);
+  }
+
+  menu.exec(e->globalPos());
+}
+
+//-----------------------------------------------------------------------------
+
+void TPanelTitleBarButtonForPreview::onSetPreviewBehavior() {
+  int behaviorId = qobject_cast<QAction *>(sender())->data().toInt();
+  // change safearea if the different one is selected
+  if (EnvViewerPreviewBehavior != behaviorId) {
+    EnvViewerPreviewBehavior = behaviorId;
+    // emit sceneChanged without setting dirty flag
+    TApp::instance()->getCurrentScene()->notifySceneChanged(false);
+  }
+}
+
+//-----------------------------------------------------------------------------
 
 //=============================================================================
 // TPanelTitleBarButtonSet

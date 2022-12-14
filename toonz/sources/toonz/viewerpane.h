@@ -51,8 +51,8 @@ protected:
   FlipConsole *m_flipConsole;
   ViewerKeyframeNavigator *m_keyFrameButton;
   TPanelTitleBarButtonSet *m_referenceModeBs;
-  TPanelTitleBarButton *m_previewButton;
-  TPanelTitleBarButton *m_subcameraPreviewButton;
+  TPanelTitleBarButtonForPreview *m_previewButton;
+  TPanelTitleBarButtonForPreview *m_subcameraPreviewButton;
   bool m_onionSkinActive = false;
   UINT m_visiblePartsFlag;
   bool m_playSound     = true;
@@ -63,6 +63,8 @@ protected:
   double m_samplesPerFrame;
   bool m_first         = true;
   TSoundTrack *m_sound = NULL;
+
+  bool m_isActive = false;
 
 public:
   BaseViewerPanel(QWidget *parent = 0, Qt::WindowFlags flags = 0);
@@ -91,6 +93,8 @@ public:
 
   void initializeTitleBar(TPanelTitleBar *titleBar);
 
+  void getPreviewButtonStates(bool &prev, bool &subCamPrev);
+
 protected:
   // void contextMenuEvent(QContextMenuEvent *event) override;
   void showEvent(QShowEvent *) override;
@@ -111,6 +115,8 @@ public slots:
   void onButtonPressed(FlipConsole::EGadget button);
   void setFlipHButtonChecked(bool checked);
   void setFlipVButtonChecked(bool checked);
+  void enableFullPreview(bool enabled);
+  void enableSubCameraPreview(bool enabled);
   void changeSceneFps(int value);
 
 protected slots:
@@ -121,8 +127,8 @@ protected slots:
   void onPlayingStatusChanged(bool playing);
   // for showing/hiding the parts
   void onShowHideActionTriggered(QAction *);
-  void enableFullPreview(bool enabled);
-  void enableSubCameraPreview(bool enabled);
+  void onPreviewStatusChanged();
+  void onActiveViewerChanged();
 };
  
 class SceneViewerPanel final : public BaseViewerPanel {

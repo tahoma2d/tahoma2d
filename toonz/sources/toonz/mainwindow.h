@@ -246,6 +246,7 @@ protected slots:
   void onInk1CheckTriggered(bool on);
 
   void onUpdateCheckerDone(bool);
+  void onActiveViewerChanged();
 
   void toggleStatusBar(bool);
   void toggleTransparency(bool);
