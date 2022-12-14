@@ -2768,7 +2768,17 @@ void StopMotionController::refreshApertureList() {
   } else {
     m_apertureSlider->setEnabled(true);
     m_apertureLabel->setText(tr("Aperture: ") + currentAperture);
-    m_apertureSlider->setRange(0, count - 1);
+    if (count == 3) {
+      // It's a range instead of a list
+      float rmin, rmax, rstep;
+      rmin  = apertureOptions[0].toInt();
+      rmax  = apertureOptions[1].toInt();
+      rstep = apertureOptions[2].toInt();
+      m_apertureSlider->setRange(rmin, rmax);
+      m_apertureSlider->setSingleStep(rstep);
+    }
+    else
+      m_apertureSlider->setRange(0, count - 1);
     m_apertureSlider->setValue(apertureOptions.lastIndexOf(currentAperture));
   }
 
@@ -2809,7 +2819,17 @@ void StopMotionController::refreshShutterSpeedList() {
   } else {
     m_shutterSpeedSlider->setEnabled(true);
     m_shutterSpeedLabel->setText(tr("Shutter Speed: ") + currentShutterSpeed);
-    m_shutterSpeedSlider->setRange(0, count - 1);
+    if (count == 3) {
+      // It's a range instead of a list
+      float rmin, rmax, rstep;
+      rmin  = shutterSpeedOptions[0].toInt();
+      rmax  = shutterSpeedOptions[1].toInt();
+      rstep = shutterSpeedOptions[2].toInt();
+      m_shutterSpeedSlider->setRange(rmin, rmax);
+      m_shutterSpeedSlider->setSingleStep(rstep);
+
+    } else
+      m_shutterSpeedSlider->setRange(0, count - 1);
     m_shutterSpeedSlider->setValue(
         shutterSpeedOptions.lastIndexOf(currentShutterSpeed));
   }
@@ -3028,7 +3048,18 @@ void StopMotionController::refreshColorTemperatureList() {
     m_kelvinSlider->show();
     m_kelvinValueLabel->show();
     m_kelvinSlider->setEnabled(true);
-    m_kelvinSlider->setRange(0, count - 1);
+    if (count == 3) {
+      // It's a range instead of a list
+      float rmin, rmax, rstep;
+      rmin  = colorTempOptions[0].toInt();
+      rmax  = colorTempOptions[1].toInt();
+      rstep = colorTempOptions[2].toInt();
+      m_kelvinSlider->setRange(rmin, rmax);
+      m_kelvinSlider->setSingleStep(rstep);
+
+    } else
+      m_kelvinSlider->setRange(0, count - 1);
+    m_kelvinSlider->setValue(colorTempOptions.lastIndexOf(currentColorTemp));
     m_kelvinValueLabel->setText(tr("Temperature: ") + currentColorTemp);
   }
 
