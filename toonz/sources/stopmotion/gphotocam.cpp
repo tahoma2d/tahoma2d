@@ -1389,7 +1389,7 @@ void GPhotoCam::setLiveViewOffset(int compensation) {
 //-----------------------------------------------------------------
 
 bool GPhotoCam::zoomLiveView() {
-  if (!m_sessionOpen || !StopMotion::instance()->m_liveViewStatus > 0)
+  if (!m_sessionOpen || !StopMotion::instance()->m_liveViewStatus)
     return false;
 
   if (m_pickLiveViewZoom) toggleZoomPicking();
@@ -1545,8 +1545,6 @@ void GPhotoCam::toggleZoomPicking() {
 
 bool GPhotoCam::setZoomPoint() {
   // make sure this is set AFTER starting zoom
-  int retVal;
-
   m_liveViewZoomReadyToPick = false;
 
   calculateZoomPoint();
