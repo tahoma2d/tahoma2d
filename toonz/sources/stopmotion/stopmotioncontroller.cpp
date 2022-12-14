@@ -3026,7 +3026,8 @@ void StopMotionController::refreshColorTemperatureList() {
 #ifdef WITH_GPHOTO2
   if (m_stopMotion->m_currentCameraType == CameraType::GPhoto) {
     currentWhiteBalance = m_stopMotion->m_gphotocam->getCurrentWhiteBalance();
-    if (currentWhiteBalance == "Color Temperature") {
+    if (currentWhiteBalance.contains("Color Temperature",
+                                     Qt::CaseInsensitive)) {
       m_stopMotion->m_gphotocam->getAvailableColorTemperatures();
       colorTempOptions =
           m_stopMotion->m_gphotocam->getColorTemperatureOptions();
