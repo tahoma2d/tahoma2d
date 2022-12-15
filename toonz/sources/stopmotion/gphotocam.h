@@ -45,13 +45,13 @@ const struct {
       "focusinfo"}},
     // Nikon
     {"Nikon",
-     {"expprogram", "Battery Level", "shutterspeed", "f-number", "iso",
+     {"expprogram", "batterylevel", "shutterspeed", "f-number", "iso",
       "whitebalance", 0, "imagequality", "imagesize", "exposurecompensation", 0,
-      "manualfocusdrive", "changeafarea", "viewfinder", "changeafarea"}},
+      "manualfocusdrive", "changeafarea", "viewfinder", 0}},
     {0,
-     {"expprogram", 0, "shutterspeed", "f-number", "iso", "whitebalance", 0,
-      "imagequality", "imagesize", "exposurecompensation", 0, "manualfocusdrive",
-      0, "viewfinder", 0}}};
+     {"expprogram", "Battery Level", "shutterspeed", "f-number", "iso",
+      "whitebalance", 0, "imagequality", "imagesize", "exposurecompensation",
+      "colortemperature", "manualfocusdrive", 0, "viewfinder", 0}}};
 
 //-----------------------------------------------------------------
 
