@@ -30,7 +30,7 @@ typedef struct {
   const char *manualFocusDriveKey;
   const char *afPositionKey;
   const char *viewfinderKey;
-  const char *focusPointKey;
+  const char *focusInfoKey;
 } GPConfigKeys;
 
 const struct {

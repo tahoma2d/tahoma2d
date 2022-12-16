@@ -155,7 +155,7 @@ void GPhotoCam::loadCameraConfigKeys(QString manufacturer) {
       cameraConfigKeys[i].keys.manualFocusDriveKey;
   m_configKeys.afPositionKey = cameraConfigKeys[i].keys.afPositionKey;
   m_configKeys.viewfinderKey = cameraConfigKeys[i].keys.viewfinderKey;
-  m_configKeys.focusPointKey = cameraConfigKeys[i].keys.focusPointKey;
+  m_configKeys.focusInfoKey  = cameraConfigKeys[i].keys.focusInfoKey;
 }
 
 //-----------------------------------------------------------------
@@ -687,15 +687,25 @@ bool GPhotoCam::getGPhotocamImage() {
 
   delete converter;
 
-  QString focusPosition = getCameraConfigValue(m_configKeys.focusPointKey);
-  if (m_configKeys.focusPointKey == "focusinfo") {
-    int i = focusPosition.indexOf("size=");
-    i += 5;
-    int j         = focusPosition.indexOf(",", i);
-    focusPosition = focusPosition.mid(i, (j - i));
+  QString focusAreaSize = getCameraConfigValue(m_configKeys.focusInfoKey);
+  if (focusAreaSize != "-" && m_configKeys.focusInfoKey == "focusinfo") {
+    int i = focusAreaSize.indexOf("size2=");
+    i += 6;
+    int j         = focusAreaSize.indexOf(",", i);
+    focusAreaSize = focusAreaSize.mid(i, (j - i));
   }
 
-  QStringList sizeDimensions = focusPosition.split("x");
+  // If no focus area info, let's use image size configuration
+  // Use the largest size available, assume it is the 1st in the list
+  if (focusAreaSize == "-" && !m_imageSizeOptions.isEmpty())
+    focusAreaSize = m_imageQualityOptions.at(0);
+
+  // If no focus area or size information found, let's default it.
+  // The "Pick" point may be offset depending on what the camera's
+  // actual focus area is.
+  if (focusAreaSize == "-") focusAreaSize = "6000x4000";
+
+  QStringList sizeDimensions = focusAreaSize.split("x");
   if (sizeDimensions.size() > 1) {
     m_fullImageDimensions =
         TDimension(sizeDimensions.at(0).toInt(), sizeDimensions.at(1).toInt());
