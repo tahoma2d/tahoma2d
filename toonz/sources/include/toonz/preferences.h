@@ -192,6 +192,10 @@ public:
     return PathAliasPriority(getIntValue(pathAliasPriority));
   }
 
+  bool isShowAdvancedOptionsEnabled() const {
+    return getBoolValue(showAdvancedOptions);
+  }
+
   // Interface  tab
   QStringList getStyleSheetList() const { return m_styleSheetList; }
   bool getIconTheme() const { return getBoolValue(iconTheme); }

@@ -140,6 +140,7 @@ private:
   void onAutoSaveOptionsChanged();
   void onWatchFileSystemClicked();
   void onPathAliasPriorityChanged();
+  void onShowAdvancedOptionsChanged();
   // Interface
   void onStyleSheetTypeChanged();
   // void onIconThemeChanged();

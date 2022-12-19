@@ -321,7 +321,11 @@ LevelSettingsPopup::LevelSettingsPopup()
     , m_whiteTransp(0)
     , m_scanPathFld(0) {
   setWindowTitle(tr("Level Settings"));
-  m_mainFrame->setFixedHeight(280);
+
+  bool showAdvancedOptions =
+      Preferences::instance()->isShowAdvancedOptionsEnabled();
+
+  m_mainFrame->setFixedHeight(showAdvancedOptions ? 420 : 280);
   m_mainFrame->setFixedWidth(380);
   this->layout()->setSizeConstraint(QLayout::SetFixedSize);
 
@@ -482,7 +486,9 @@ LevelSettingsPopup::LevelSettingsPopup()
       dpiLayout->addWidget(imageDpiTitle, 5, 0,
                            Qt::AlignRight | Qt::AlignVCenter);
       dpiLayout->addWidget(m_imageDpiLabel, 5, 1, 1, 3);
-      
+      dpiLayout->addWidget(imageResTitle, 6, 0,
+                           Qt::AlignRight | Qt::AlignVCenter);
+      dpiLayout->addWidget(m_imageResLabel, 6, 1, 1, 3);      
     }
     dpiLayout->setColumnStretch(0, 0);
     dpiLayout->setColumnStretch(1, 1);
@@ -491,13 +497,15 @@ LevelSettingsPopup::LevelSettingsPopup()
     dpiBox->setLayout(dpiLayout);
 
     m_topLayout->addWidget(dpiBox);
-    dpiBox->hide();
+    if (!showAdvancedOptions) {
+      dpiBox->hide();
 
-    QHBoxLayout* resLayout = new QHBoxLayout();
-    resLayout->addWidget(imageResTitle);
-    resLayout->addWidget(m_imageResLabel);
-    resLayout->addStretch();
-    m_topLayout->addLayout(resLayout);
+      QHBoxLayout *resLayout = new QHBoxLayout();
+      resLayout->addWidget(imageResTitle);
+      resLayout->addWidget(m_imageResLabel);
+      resLayout->addStretch();
+      m_topLayout->addLayout(resLayout);
+    }
 
     m_topLayout->addWidget(m_doPremultiply);
 

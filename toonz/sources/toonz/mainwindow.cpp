@@ -1413,7 +1413,8 @@ QAction *MainWindow::createAction(const char *id, const char *name,
   QAction *action = new DVAction(tr(name), this);
 
 #if !defined(_WIN32)
-  bool visible = false; //Preferences::instance()->getBoolValue(showIconsInMenu);
+  bool visible = Preferences::instance()->isShowAdvancedOptionsEnabled() &&
+                 Preferences::instance()->getBoolValue(showIconsInMenu);
   action->setIconVisibleInMenu(visible);
 #endif
 
@@ -1678,7 +1679,8 @@ QAction *MainWindow::createToggle(const char *id, const char *name,
   if (!iconSVGName || !*iconSVGName) action->setIcon(QIcon());
 #if defined(_WIN32)
   else {
-    bool visible = false; //Preferences::instance()->getBoolValue(showIconsInMenu);
+    bool visible = Preferences::instance()->isShowAdvancedOptionsEnabled() &&
+                   Preferences::instance()->getBoolValue(showIconsInMenu);
     action->setIconVisibleInMenu(visible);
   }
 #endif

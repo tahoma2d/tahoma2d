@@ -4179,12 +4179,14 @@ void StyleEditor::setPaletteHandle(TPaletteHandle* paletteHandle)
 //-----------------------------------------------------------------------------
 
 QFrame *StyleEditor::createBottomWidget() {
+  bool showAdvancedOptions =
+      Preferences::instance()->isShowAdvancedOptionsEnabled();
+
   QFrame *bottomWidget = new QFrame(this);
   m_autoButton         = new QPushButton(tr("Auto"));
   m_oldColor           = new DVGui::StyleSample(this, 42, 24);
   m_newColor           = new DVGui::StyleSample(this, 42, 24);
   m_applyButton        = new QPushButton(tr("Apply"));
-  m_fillColorWidget    = new QFrame(this);
 
   bottomWidget->setFrameStyle(QFrame::StyledPanel);
   bottomWidget->setObjectName("bottomWidget");
@@ -4273,21 +4275,15 @@ QFrame *StyleEditor::createBottomWidget() {
   m_toolBar->setMaximumHeight(22);
   m_toolBar->setIconSize(QSize(16, 16));
 
-  m_fillColorWidget->setMinimumHeight(24);
-  m_fillColorWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  QHBoxLayout *fillColorLayout = new QHBoxLayout(this);
-  fillColorLayout->addWidget(new QLabel(" ", this));
-  m_fillColorWidget->setLayout(fillColorLayout);
-
   /* ------ layout ------ */
   QHBoxLayout *mainLayout = new QHBoxLayout;
   mainLayout->setMargin(2);
   mainLayout->setSpacing(0);
   {
     mainLayout->addWidget(m_autoButton);
-    //    mainLayout->addSpacing(4);
+    if (showAdvancedOptions) mainLayout->addSpacing(4);
     mainLayout->addWidget(m_applyButton);
-    //    mainLayout->addSpacing(4);
+    if (showAdvancedOptions) mainLayout->addSpacing(4);
 
     QVBoxLayout *colorLay = new QVBoxLayout();
     colorLay->setMargin(0);
@@ -4299,7 +4295,6 @@ QFrame *StyleEditor::createBottomWidget() {
       {
         chipLay->addWidget(m_newColor, 1);
         chipLay->addWidget(m_oldColor, 1);
-        chipLay->addWidget(m_fillColorWidget, 0);
       }
       colorLay->addLayout(chipLay, 1);
       colorLay->addSpacing(2);
@@ -4319,20 +4314,22 @@ QFrame *StyleEditor::createBottomWidget() {
   }
   bottomWidget->setLayout(mainLayout);
 
+  if (!showAdvancedOptions) {
+    m_autoButton->hide();
+    m_applyButton->hide();
+  }
   m_oldColor->hide();
-  m_autoButton->hide();
-  m_applyButton->hide();
 
   /* ------ signal-slot connections ------ */
   bool ret = true;
-  // ret      = ret && connect(m_applyButton, SIGNAL(clicked()), this,
-  //                     SLOT(applyButtonClicked()));
+  ret      = ret && connect(m_applyButton, SIGNAL(clicked()), this,
+                       SLOT(applyButtonClicked()));
   ret = ret && connect(m_autoButton, SIGNAL(toggled(bool)), this,
                        SLOT(autoCheckChanged(bool)));
-  //  ret      = ret &&
-  //        connect(m_oldColor, SIGNAL(clicked()), this, SLOT(onOldStyleClicked()));
-  //  ret = ret &&
-  //        connect(m_newColor, SIGNAL(clicked()), this, SLOT(onNewStyleClicked()));
+  ret = ret &&
+        connect(m_oldColor, SIGNAL(clicked()), this, SLOT(onOldStyleClicked()));
+  ret = ret &&
+        connect(m_newColor, SIGNAL(clicked()), this, SLOT(onNewStyleClicked()));
   ret = ret && connect(m_wheelAction, SIGNAL(toggled(bool)),
                        m_plainColorPage->m_wheelFrame, SLOT(setVisible(bool)));
   ret = ret && connect(m_hsvAction, SIGNAL(toggled(bool)),
@@ -4843,25 +4840,6 @@ void StyleEditor::onStyleChanged(bool isDragging) {
   m_colorParameterSelector->setStyle(*m_editedStyle);
   m_settingsPage->setStyle(m_editedStyle);
   m_newColor->setStyle(*m_editedStyle, getColorParam());
-  int tag = m_editedStyle->getTagId();
-  if (tag == 4 || tag == 2000 || tag == 2800 || getStyleIndex() == 0) {
-    m_fillColorWidget->hide();
-  } else {
-    m_fillColorWidget->show();
-
-    // TPixel32 color  = m_editedStyle->getMainColor();
-    TPixel32 color   = m_editedStyle->getColorParamValue(getColorParam());
-    QString hexColor = color2Hex(color);
-    m_hexLineEdit->setText(hexColor);
-    m_newColor->setToolTip(hexColor);
-    m_fillColorWidget->setToolTip(hexColor);
-    QString myColor = QString::number(color.r) + ", " +
-                      QString::number(color.g) + ", " +
-                      QString::number(color.b);
-    std::string myColorStr = myColor.toStdString();
-    QString styleSheet     = "QFrame {background-color: rgb(%1);}";
-    m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
-  }
   m_oldColor->setStyle(
       *m_oldStyle,
       getColorParam());  // This line is needed for proper undo behavior
@@ -4955,24 +4933,6 @@ void StyleEditor::onColorChanged(const ColorModel &color, bool isDragging) {
     }
 
     m_newColor->setStyle(*m_editedStyle, getColorParam());
-    int tag = m_editedStyle->getTagId();
-    if (tag == 4 || tag == 2000 || tag == 2800 || getStyleIndex() == 0) {
-      m_fillColorWidget->hide();
-    } else {
-      m_fillColorWidget->show();
-      // TPixel32 color  = m_editedStyle->getMainColor();
-      TPixel32 color   = m_editedStyle->getColorParamValue(getColorParam());
-      QString hexColor = color2Hex(color);
-      m_hexLineEdit->setText(hexColor);
-      m_newColor->setToolTip(hexColor);
-      m_fillColorWidget->setToolTip(hexColor);
-      QString myColor = QString::number(color.r) + ", " +
-                        QString::number(color.g) + ", " +
-                        QString::number(color.b);
-      std::string myColorStr = myColor.toStdString();
-      QString styleSheet     = "QFrame {background-color: rgb(%1);}";
-      m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
-    }
     m_colorParameterSelector->setStyle(*m_editedStyle);
     m_hexLineEdit->setStyle(*m_editedStyle, getColorParam());
 
@@ -5001,10 +4961,7 @@ void StyleEditor::enable(bool enabled, bool enabledOnlyFirstTab,
     if (enabled == false) {
       m_oldColor->setColor(TPixel32::Transparent);
       m_newColor->setColor(TPixel32::Transparent);
-      m_fillColorWidget->setStyleSheet("background-color: rgba(0, 0, 0, 0);");
-      m_fillColorWidget->hide();
-    } else
-      m_fillColorWidget->show();
+    }
   }
 
   // lock button behavior
@@ -5087,6 +5044,7 @@ void StyleEditor::autoCheckChanged(bool value) {
   if (!m_enabled) return;
 
   m_applyButton->setDisabled(value);
+  m_oldColor->setHidden(value);
 }
 
 //-----------------------------------------------------------------------------
@@ -5129,24 +5087,6 @@ bool StyleEditor::setStyle(TColorStyle *currentStyle) {
     m_newColor->setStyle(*currentStyle, getColorParam());
     m_hexLineEdit->setStyle(*m_editedStyle, getColorParam());
 
-    int tag = currentStyle->getTagId();
-    if (tag == 4 || tag == 2000 || tag == 2800 || getStyleIndex() == 0) {
-      m_fillColorWidget->hide();
-    } else {
-      m_fillColorWidget->show();
-      // TPixel32 color  = currentStyle->getMainColor();
-      TPixel32 color   = m_editedStyle->getColorParamValue(getColorParam());
-      QString hexColor = color2Hex(color);
-      m_hexLineEdit->setText(hexColor);
-      m_newColor->setToolTip(hexColor);
-      m_fillColorWidget->setToolTip(hexColor);
-      QString myColor = QString::number(color.r) + ", " +
-                        QString::number(color.g) + ", " +
-                        QString::number(color.b);
-      std::string myColorStr = myColor.toStdString();
-      QString styleSheet     = "QFrame {background-color: rgb(%1);}";
-      m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
-    }
     setOldStyleToStyle(currentStyle);
   }
 
@@ -5212,24 +5152,6 @@ void StyleEditor::selectStyle(const TColorStyle &newStyle) {
 
   // Update editor widgets
   m_newColor->setStyle(*m_editedStyle, getColorParam());
-  int tag = m_editedStyle->getTagId();
-  if (tag == 4 || tag == 2000 || tag == 2800 || getStyleIndex() == 0) {
-    m_fillColorWidget->hide();
-  } else {
-    m_fillColorWidget->show();
-    // TPixel32 color  = m_editedStyle->getMainColor();
-    TPixel32 color   = m_editedStyle->getColorParamValue(getColorParam());
-    QString hexColor = color2Hex(color);
-    m_hexLineEdit->setText(hexColor);
-    m_newColor->setToolTip(hexColor);
-    m_fillColorWidget->setToolTip(hexColor);
-    QString myColor = QString::number(color.r) + ", " +
-                      QString::number(color.g) + ", " +
-                      QString::number(color.b);
-    std::string myColorStr = myColor.toStdString();
-    QString styleSheet     = "QFrame {background-color: rgb(%1); }";
-    m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
-  }
   m_plainColorPage->setColor(*m_editedStyle, getColorParam());
   m_colorParameterSelector->setStyle(*m_editedStyle);
   m_settingsPage->setStyle(m_editedStyle);
@@ -5260,24 +5182,6 @@ void StyleEditor::addToPalette(const TColorStyle &newStyle) {
   // Update editor widgets
   m_newColor->setStyle(*m_editedStyle, getColorParam());
   m_oldColor->setStyle(*m_editedStyle, getColorParam());
-  int tag = m_editedStyle->getTagId();
-  if (tag == 4 || tag == 2000 || tag == 2800 || getStyleIndex() == 0) {
-    m_fillColorWidget->hide();
-  } else {
-    m_fillColorWidget->show();
-    // TPixel32 color  = m_editedStyle->getMainColor();
-    TPixel32 color   = m_editedStyle->getColorParamValue(getColorParam());
-    QString hexColor = color2Hex(color);
-    m_hexLineEdit->setText(hexColor);
-    m_newColor->setToolTip(hexColor);
-    m_fillColorWidget->setToolTip(hexColor);
-    QString myColor = QString::number(color.r) + ", " +
-                      QString::number(color.g) + ", " +
-                      QString::number(color.b);
-    std::string myColorStr = myColor.toStdString();
-    QString styleSheet     = "QFrame {background-color: rgb(%1); }";
-    m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
-  }
   m_plainColorPage->setColor(*m_editedStyle, getColorParam());
   m_colorParameterSelector->setStyle(*m_editedStyle);
   m_settingsPage->setStyle(m_editedStyle);
@@ -5307,25 +5211,6 @@ void StyleEditor::onColorParamChanged() {
     m_settingsPage->setStyle(m_editedStyle);
     m_hexLineEdit->setStyle(*m_editedStyle, getColorParam());
   }
-  int tag = m_editedStyle->getTagId();
-  if (tag == 4 || tag == 2000 || tag == 2800 || getStyleIndex() == 0) {
-    m_fillColorWidget->hide();
-  } else {
-    m_fillColorWidget->show();
-
-    // TPixel32 color  = m_editedStyle->getMainColor();
-    TPixel32 color   = m_editedStyle->getColorParamValue(getColorParam());
-    QString hexColor = color2Hex(color);
-    m_hexLineEdit->setText(hexColor);
-    m_newColor->setToolTip(hexColor);
-    m_fillColorWidget->setToolTip(hexColor);
-    QString myColor = QString::number(color.r) + ", " +
-                      QString::number(color.g) + ", " +
-                      QString::number(color.b);
-    std::string myColorStr = myColor.toStdString();
-    QString styleSheet     = "QFrame {background-color: rgb(%1);}";
-    m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
-  }
 }
 
 //-----------------------------------------------------------------------------
@@ -5342,24 +5227,6 @@ void StyleEditor::onParamStyleChanged(bool isDragging) {
   m_editedStyle->invalidateIcon();  // Refresh the new color icon
   m_newColor->setStyle(*m_editedStyle, getColorParam());
 
-  int tag = m_editedStyle->getTagId();
-  if (tag == 4 || tag == 2000 || tag == 2800 || getStyleIndex() == 0) {
-    m_fillColorWidget->hide();
-  } else {
-    TPixel32 color = m_editedStyle->getColorParamValue(getColorParam());
-    // TPixel32 color  = m_editedStyle->getMainColor();
-    QString hexColor = color2Hex(color);
-    m_hexLineEdit->setText(hexColor);
-    m_newColor->setToolTip(hexColor);
-    m_fillColorWidget->setToolTip(hexColor);
-    QString myColor = QString::number(color.r) + ", " +
-                      QString::number(color.g) + ", " +
-                      QString::number(color.b);
-    std::string myColorStr = myColor.toStdString();
-    m_fillColorWidget->show();
-    QString styleSheet = "QFrame {background-color: rgb(%1);}";
-    m_fillColorWidget->setStyleSheet(styleSheet.arg(myColor));
-  }
   m_hexLineEdit->setStyle(*m_editedStyle, getColorParam());
 }
 

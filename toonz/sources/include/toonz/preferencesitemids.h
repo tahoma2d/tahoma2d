@@ -20,6 +20,7 @@ enum PreferencesItemId {
   projectRoot,
   customProjectRoot,
   pathAliasPriority,
+  showAdvancedOptions,
 
   //----------
   // Interface

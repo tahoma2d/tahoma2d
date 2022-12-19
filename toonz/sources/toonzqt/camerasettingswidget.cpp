@@ -65,6 +65,10 @@ QString removeZeros(QString srcStr) {
   }
   return srcStr;
 }
+
+// Preference values of the unit - translation text
+QMap<QString, QString> unitTrMap;
+
 }  // namespace
 
 //=============================================================================
@@ -175,6 +179,17 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
     , m_arValue(0)
     , m_presetListFile("")
     , m_currentLevel(0) {
+  bool showAdvancedOptions =
+      Preferences::instance()->isShowAdvancedOptionsEnabled();
+
+  if (unitTrMap.isEmpty()) {
+    unitTrMap["cm"]    = tr("cm");
+    unitTrMap["mm"]    = tr("mm");
+    unitTrMap["inch"]  = tr("inch");
+    unitTrMap["field"] = tr("field");
+    unitTrMap["pixel"] = tr("pixel");
+  }
+
   m_xPrev    = new QRadioButton();
   m_yPrev    = new QRadioButton();
   m_arPrev   = new QRadioButton();
@@ -192,12 +207,14 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
   m_yDpiFld   = new DoubleLineEdit();
   m_unitLabel = new QLabel();
   if (Preferences::instance()->getPixelsOnly())
-    m_unitLabel->setText(tr("Size"));
+    m_unitLabel->setText(showAdvancedOptions ? tr("Pixels") : tr("Size"));
   else
-    m_unitLabel->setText(Preferences::instance()->getCameraUnits());
+    m_unitLabel->setText(
+        unitTrMap.value(Preferences::instance()->getCameraUnits()));
   m_dpiLabel = new QLabel(tr("DPI"));
-  m_resLabel = new QLabel(tr("Size"));
+  m_resLabel = new QLabel(showAdvancedOptions ? tr("Pixels") : tr("Size"));
   m_xLabel   = new QLabel(tr("x"));
+  m_arLabel  = new QLabel(tr("A/R"));
 
   m_fspChk = new QPushButton("");
 
@@ -269,8 +286,13 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
   group = new QButtonGroup;
   group->addButton(m_inchPrev);
   group->addButton(m_dotPrev);
-  m_xPrev->setChecked(true);
-  m_inchPrev->setChecked(true);
+  if (showAdvancedOptions) {
+    m_arPrev->setChecked(true);
+    m_dotPrev->setChecked(true);
+  } else {
+    m_xPrev->setChecked(true);
+    m_inchPrev->setChecked(true);
+  }
 
   //------ layout
 
@@ -284,20 +306,25 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
     {
       gridLay->addWidget(m_xPrev, 0, 2, Qt::AlignCenter);
       gridLay->addWidget(m_yPrev, 0, 4, Qt::AlignCenter);
-      m_xPrev->hide();
-      m_yPrev->hide();
+      if (!showAdvancedOptions) {
+        m_xPrev->hide();
+        m_yPrev->hide();
+      }
       gridLay->addWidget(m_inchPrev, 1, 0, Qt::AlignRight | Qt::AlignVCenter);
-      m_inchPrev->hide();
+      if (!showAdvancedOptions) m_inchPrev->hide();
       gridLay->addWidget(m_unitLabel, 1, 1, Qt::AlignRight | Qt::AlignVCenter);
       gridLay->addWidget(m_lxFld, 1, 2);
       gridLay->addWidget(new QLabel("x"), 1, 3, Qt::AlignCenter);
       gridLay->addWidget(m_lyFld, 1, 4);
 
       gridLay->addWidget(m_arPrev, 2, 2, Qt::AlignRight | Qt::AlignVCenter);
-      // gridLay->addWidget(new QLabel(tr("A/R")), 2, 3, Qt::AlignCenter);
+      gridLay->addWidget(m_arLabel, 2, 3, Qt::AlignCenter);
       gridLay->addWidget(m_arFld, 2, 4);
-      m_arFld->hide();
-      m_arPrev->hide();
+      if (!showAdvancedOptions) {
+        m_arLabel->hide();
+        m_arFld->hide();
+        m_arPrev->hide();
+      }
 
       gridLay->addWidget(m_dotPrev, 3, 0, Qt::AlignRight | Qt::AlignVCenter);
       gridLay->addWidget(m_resLabel, 3, 1, Qt::AlignRight | Qt::AlignVCenter);
@@ -386,7 +413,6 @@ void CameraSettingsWidget::showEvent(QShowEvent *e) {
     m_yDpiFld->hide();
     m_fspChk->hide();
     m_dotPrev->hide();
-    m_arFld->hide();
     m_lxFld->setDecimals(0);
     m_lyFld->setDecimals(0);
   } else {
@@ -405,7 +431,8 @@ void CameraSettingsWidget::showEvent(QShowEvent *e) {
   if (Preferences::instance()->getPixelsOnly())
     m_unitLabel->setText(tr("Pixels"));
   else
-    m_unitLabel->setText(Preferences::instance()->getCameraUnits());
+    m_unitLabel->setText(
+        unitTrMap.value(Preferences::instance()->getCameraUnits()));
 }
 
 void CameraSettingsWidget::loadPresetList() {

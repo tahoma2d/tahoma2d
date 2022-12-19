@@ -742,15 +742,16 @@ void FullColorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 
   // locals.addMinMax(m_thickness, int(add));
   //} else
-  // if (e.isCtrlPressed() && e.isAltPressed()) {
-  //  const TPointD &diff = pos - m_mousePos;
-  //  double max          = diff.x / 2;
-  //  double min          = diff.y / 2;
+  if (e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed() &&
+      Preferences::instance()->useCtrlAltToResizeBrushEnabled()) {
+    const TPointD &diff = pos - m_mousePos;
+    double max          = diff.x / 2;
+    double min          = diff.y / 2;
 
-  //  locals.addMinMaxSeparate(m_thickness, int(min), int(max));
-  //} else {
-  m_brushPos = pos;
-  //}
+    locals.addMinMaxSeparate(m_thickness, int(min), int(max));
+  } else {
+    m_brushPos = pos;
+  }
 
   m_mousePos = pos;
 

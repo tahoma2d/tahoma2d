@@ -109,23 +109,24 @@ StartupPopup::StartupPopup()
                                 .getParentDir()
                                 .getQString();
   m_projectLocationFld->setPath(currProjectPath);
-  m_projectsCB     = new QComboBox(this);
-  m_sceneNameLabel = new QLabel(tr("Scene Name:"));
-  m_widthLabel     = new QLabel(tr("Width:"), this);
-  m_widthFld       = new MeasuredDoubleLineEdit(this);
-  m_heightLabel    = new QLabel(tr("Height:"), this);
-  m_heightFld      = new MeasuredDoubleLineEdit(this);
-  // m_dpiLabel                = new QLabel(tr("DPI:"), this);
-  // m_dpiFld                  = new DoubleLineEdit(this, 120);
-  m_resXLabel            = new QLabel(tr("X"), this);
-  m_resXFld              = new DoubleLineEdit(this);
-  m_resYFld              = new DoubleLineEdit(this);
-  m_resTextLabel         = new QLabel(tr("Resolution:"), this);
-  m_fpsLabel             = new QLabel(tr("Frame Rate:"), this);
-  m_fpsFld               = new DoubleLineEdit(this, 24.0);
-  m_cameraSettingsWidget = new CameraSettingsWidget(false);
-  m_presetCombo          = new QComboBox(this);
-  // m_unitsCB                 = new QComboBox(this);
+  m_projectsCB              = new QComboBox(this);
+  m_sceneNameLabel          = new QLabel(tr("Scene Name:"));
+  m_widthLabel              = new QLabel(tr("Width:"), this);
+  m_widthFld                = new MeasuredDoubleLineEdit(this);
+  m_heightLabel             = new QLabel(tr("Height:"), this);
+  m_heightFld               = new MeasuredDoubleLineEdit(this);
+  m_dpiLabel                = new QLabel(tr("DPI:"), this);
+  m_dpiFld                  = new DoubleLineEdit(this, 120);
+  m_resXLabel               = new QLabel(tr("X"), this);
+  m_resXFld                 = new DoubleLineEdit(this);
+  m_resYFld                 = new DoubleLineEdit(this);
+  m_resTextLabel            = new QLabel(tr("Resolution:"), this);
+  m_fpsLabel                = new QLabel(tr("Frame Rate:"), this);
+  m_fpsFld                  = new DoubleLineEdit(this, 24.0);
+  m_cameraSettingsWidget    = new CameraSettingsWidget(false);
+  m_presetCombo             = new QComboBox(this);
+  m_unitsLabel              = new QLabel(tr("Units:"), this);
+  m_unitsCB                 = new QComboBox(this);
   m_addPresetBtn            = new QPushButton(tr("Add"), this);
   m_removePresetBtn         = new QPushButton(tr("Remove"), this);
   m_showAtStartCB           = new QCheckBox(tr("Show this at startup"), this);
@@ -136,9 +137,9 @@ StartupPopup::StartupPopup()
 
   QPushButton *loadOtherSceneButton =
       new QPushButton(tr("Open Another Scene..."), this);
-  // QStringList type;
-  // type << tr("pixel") << tr("cm") << tr("mm") << tr("inch") << tr("field");
-  // m_unitsCB->addItems(type);
+  QStringList type;
+  type << tr("pixel") << tr("cm") << tr("mm") << tr("inch") << tr("field");
+  m_unitsCB->addItems(type);
 
   // Exclude all character which cannot fit in a filepath (Win).
   // Dots are also prohibited since they are internally managed by Toonz.
@@ -149,12 +150,15 @@ StartupPopup::StartupPopup()
   m_heightFld->setMeasure("camera.ly");
   m_widthFld->setFixedWidth(60);
   m_heightFld->setFixedWidth(60);
+  m_resXFld->setFixedWidth(60);
+  m_resYFld->setFixedWidth(60);
+  m_dpiFld->setFixedWidth(60);
 
   m_widthFld->setRange(0.1, (std::numeric_limits<double>::max)());
   m_heightFld->setRange(0.1, (std::numeric_limits<double>::max)());
   m_fpsFld->setRange(1.0, (std::numeric_limits<double>::max)());
   m_fpsFld->setFixedWidth(30);
-  // m_dpiFld->setRange(1.0, (std::numeric_limits<double>::max)());
+  m_dpiFld->setRange(1.0, (std::numeric_limits<double>::max)());
   m_resXFld->setRange(0.1, (std::numeric_limits<double>::max)());
   m_resYFld->setRange(0.1, (std::numeric_limits<double>::max)());
   m_autoSaveTimeFld->setRange(1, (std::numeric_limits<int>::max)());
@@ -250,6 +254,13 @@ StartupPopup::StartupPopup()
       newSceneLay->addWidget(m_resXLabel, 4, 2, 1, 1, Qt::AlignCenter);
       newSceneLay->addWidget(m_resYFld, 4, 3);
 
+      newSceneLay->addWidget(m_unitsLabel, 5, 0,
+                             Qt::AlignRight | Qt::AlignVCenter);
+      newSceneLay->addWidget(m_unitsCB, 5, 1, 1, 1);
+      newSceneLay->addWidget(m_dpiLabel, 5, 2,
+                             Qt::AlignRight | Qt::AlignVCenter);
+      newSceneLay->addWidget(m_dpiFld, 5, 3, 1, 1);
+
       newSceneLay->addWidget(createButton, 6, 1, 1, 3, Qt::AlignLeft);
       newSceneLay->setColumnStretch(4, 1);
     }
@@ -310,6 +321,8 @@ StartupPopup::StartupPopup()
   ret = ret && connect(m_presetCombo, SIGNAL(activated(const QString &)),
                        SLOT(onPresetSelected(const QString &)));
   ret = ret && connect(m_addPresetBtn, SIGNAL(clicked()), SLOT(addPreset()));
+  ret = ret && connect(m_unitsCB, SIGNAL(currentIndexChanged(int)),
+                       SLOT(onCameraUnitChanged(int)));
   ret = ret &&
         connect(m_removePresetBtn, SIGNAL(clicked()), SLOT(removePreset()));
   ret = ret && connect(m_nameFld, SIGNAL(returnPressedNow()), createButton,
@@ -353,13 +366,24 @@ void StartupPopup::showEvent(QShowEvent *) {
                    ->getFrameRate();
   m_widthFld->setValue(cameraSize.lx);
   m_heightFld->setValue(cameraSize.ly);
-  if (Preferences::instance()->getCameraUnits() == "pixel") {
+
+  bool showAdvancedOptions =
+      Preferences::instance()->isShowAdvancedOptionsEnabled();
+  if (!showAdvancedOptions && m_unitsCB->currentText() != "pixel")
+    m_unitsCB->setCurrentText("pixel");
+
+  m_unitsLabel->setVisible(showAdvancedOptions);
+  m_unitsCB->setVisible(showAdvancedOptions);
+  if (!showAdvancedOptions ||
+      Preferences::instance()->getCameraUnits() == "pixel") {
     m_widthFld->setDecimals(0);
     m_heightFld->setDecimals(0);
     m_resTextLabel->hide();
     m_resXFld->hide();
     m_resYFld->hide();
     m_resXLabel->hide();
+    m_dpiLabel->hide();
+    m_dpiFld->hide();
   } else {
     m_widthFld->setDecimals(4);
     m_heightFld->setDecimals(4);
@@ -367,10 +391,12 @@ void StartupPopup::showEvent(QShowEvent *) {
     m_resYFld->show();
     m_resXLabel->show();
     m_resTextLabel->show();
+    m_dpiLabel->show();
+    m_dpiFld->show();
   }
 
   m_fpsFld->setValue(fps);
-  // m_unitsCB->setCurrentText(Preferences::instance()->getCameraUnits());
+  m_unitsCB->setCurrentText(Preferences::instance()->getCameraUnits());
   m_dpi  = cameraRes.lx / cameraSize.lx;
   m_xRes = cameraRes.lx;
   m_yRes = cameraRes.ly;
@@ -1125,6 +1151,8 @@ void StartupPopup::onCameraUnitChanged(int index) {
     m_resXFld->show();
     m_resYFld->show();
     m_resXLabel->show();
+    m_dpiFld->show();
+    m_dpiLabel->show();
     m_widthFld->setMeasure("camera.lx");
     m_heightFld->setMeasure("camera.ly");
     m_widthFld->setValue(width);
@@ -1139,6 +1167,8 @@ void StartupPopup::onCameraUnitChanged(int index) {
     m_resXFld->hide();
     m_resYFld->hide();
     m_resXLabel->hide();
+    m_dpiFld->hide();
+    m_dpiLabel->hide();
     m_widthFld->setMeasure("camera.lx");
     m_heightFld->setMeasure("camera.ly");
     m_widthFld->setValue(m_xRes / Stage::standardDpi);
