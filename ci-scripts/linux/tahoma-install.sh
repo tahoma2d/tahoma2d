@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo add-apt-repository --yes ppa:beineri/opt-qt-5.15.2-focal
+sudo add-apt-repository --yes ppa:beineri/opt-qt-5.15.2-bionic
 sudo apt-get update
 sudo apt-get install -y cmake liblzo2-dev liblz4-dev libfreetype6-dev libpng-dev libegl1-mesa-dev libgles2-mesa-dev libglew-dev freeglut3-dev qt515script libsuperlu-dev qt515svg qt515tools qt515multimedia wget libboost-all-dev liblzma-dev libjson-c-dev libjpeg-turbo8-dev libturbojpeg0-dev libglib2.0-dev qt515serialport
 # Removed: libopenjpeg-dev 
