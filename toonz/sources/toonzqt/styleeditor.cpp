@@ -4253,6 +4253,11 @@ QFrame *StyleEditor::createBottomWidget() {
       new QAction(createQIcon("orientation_h"), tr("Toggle Orientation"), this);
   menu->addAction(m_toggleOrientationAction);
 
+  if (showAdvancedOptions) {
+    m_toggleAutoApply = new QAction(tr("Hide Auto/Apply"), this);
+    menu->addAction(m_toggleAutoApply);
+  }
+
   m_hexEditorAction = new QAction(tr("Hex Color Names..."), this);
   menu->addAction(m_hexEditorAction);
 
@@ -4275,15 +4280,24 @@ QFrame *StyleEditor::createBottomWidget() {
   m_toolBar->setMaximumHeight(22);
   m_toolBar->setIconSize(QSize(16, 16));
 
+  m_autoApplyWidget = new QWidget(this);
+  QHBoxLayout *autoApplyLayout = new QHBoxLayout;
+  autoApplyLayout->setMargin(0);
+  autoApplyLayout->setSpacing(0);
+  {
+    autoApplyLayout->addWidget(m_autoButton);
+    autoApplyLayout->addSpacing(4);
+    autoApplyLayout->addWidget(m_applyButton);
+    autoApplyLayout->addSpacing(4);
+  }
+  m_autoApplyWidget->setLayout(autoApplyLayout);
+
   /* ------ layout ------ */
   QHBoxLayout *mainLayout = new QHBoxLayout;
   mainLayout->setMargin(2);
   mainLayout->setSpacing(0);
   {
-    mainLayout->addWidget(m_autoButton);
-    if (showAdvancedOptions) mainLayout->addSpacing(4);
-    mainLayout->addWidget(m_applyButton);
-    if (showAdvancedOptions) mainLayout->addSpacing(4);
+    mainLayout->addWidget(m_autoApplyWidget);
 
     QVBoxLayout *colorLay = new QVBoxLayout();
     colorLay->setMargin(0);
@@ -4314,10 +4328,7 @@ QFrame *StyleEditor::createBottomWidget() {
   }
   bottomWidget->setLayout(mainLayout);
 
-  if (!showAdvancedOptions) {
-    m_autoButton->hide();
-    m_applyButton->hide();
-  }
+  if (!showAdvancedOptions) m_autoApplyWidget->hide();
   m_oldColor->hide();
 
   /* ------ signal-slot connections ------ */
@@ -4346,6 +4357,9 @@ QFrame *StyleEditor::createBottomWidget() {
                        SLOT(onHexEditor()));
   ret = ret && connect(m_toggleOrientationAction, SIGNAL(triggered()),
                        m_plainColorPage, SLOT(toggleOrientation()));
+  if (showAdvancedOptions)
+    ret = ret && connect(m_toggleAutoApply, SIGNAL(triggered()), this,
+                         SLOT(onToggleAutoApply()));
   ret = ret && connect(m_toggleOrientationAction, SIGNAL(triggered()), this,
                        SLOT(updateOrientationButton()));
   ret = ret && connect(menu, SIGNAL(aboutToHide()), this, SLOT(onHideMenu()));
@@ -5297,6 +5311,21 @@ void StyleEditor::onPageChanged(int index) {
 }
 
 //-----------------------------------------------------------------------------
+
+void StyleEditor::onToggleAutoApply() {
+  if (!m_toggleAutoApply ||
+      !Preferences::instance()->isShowAdvancedOptionsEnabled())
+    return;
+
+  m_showAutoApply = !m_showAutoApply;
+  if (!m_showAutoApply && !m_autoButton->isChecked())
+    m_autoButton->setChecked(true);
+  m_autoApplyWidget->setHidden(!m_showAutoApply);
+  m_toggleAutoApply->setText(m_showAutoApply ? tr("Hide Auto/Apply")
+                                             : tr("Show Auto/Apply"));
+}
+
+//-----------------------------------------------------------------------------
 QStringList StyleEditor::savePageStates(StylePageType pageType) const {
   QStringList pageStateData;
   QString pageData;
@@ -5397,6 +5426,7 @@ void StyleEditor::save(QSettings &settings) const {
   settings.setValue("vectorPageStates",
                     savePageStates(StylePageType::VectorCustom));
   settings.setValue("rasterPageStates", savePageStates(StylePageType::Raster));
+  settings.setValue("showAutoApply", m_showAutoApply);
 }
 void StyleEditor::load(QSettings &settings) {
   QVariant isVertical = settings.value("isVertical");
@@ -5445,6 +5475,11 @@ void StyleEditor::load(QSettings &settings) {
   QVariant rasterPageStates = settings.value("rasterPageStates");
   if (rasterPageStates.canConvert(QVariant::StringList))
     loadPageStates(StylePageType::Raster, rasterPageStates.toStringList());
+
+  QVariant showAutoApply = settings.value("showAutoApply");
+  if (showAutoApply.canConvert(QVariant::Bool)) {
+    if (showAutoApply.toBool() != m_showAutoApply) onToggleAutoApply();
+  }
 }
 
 //-----------------------------------------------------------------------------

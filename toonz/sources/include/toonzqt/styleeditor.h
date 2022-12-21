@@ -866,6 +866,10 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
 
   RenameStyleSet *m_renameStyleSet;
 
+  QWidget *m_autoApplyWidget;
+  QAction *m_toggleAutoApply;
+  bool m_showAutoApply = true;
+
 public:
   StyleEditor(PaletteController *, QWidget *parent = 0);
   ~StyleEditor();
@@ -1003,6 +1007,7 @@ protected slots:
   void onHexEdited(const QString &text);
   void onHideMenu();
   void onPageChanged(int index);
+  void onToggleAutoApply();
 
   void onToggleTextureSet(int checkedState);
   void onToggleVectorSet(int checkedState);
