@@ -376,6 +376,11 @@
 #define MI_TypeBoldOblique "MI_TypeBoldOblique"
 #define MI_TypeBold "MI_TypeBold"
 
+#define MI_PaintBrushNextMode "MI_PaintBrushNextMode"
+#define MI_PaintBrushAreas "MI_PaintBrushAreas"
+#define MI_PaintBrushLines "MI_PaintBrushLines"
+#define MI_PaintBrushLinesAndAreas "MI_PaintBrushLinesAndAreas"
+
 #define MI_FillNextType "MI_FillNextType"
 #define MI_FillNormal "MI_FillNormal"
 #define MI_FillRectangular "MI_FillRectangular"

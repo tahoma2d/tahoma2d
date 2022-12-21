@@ -2688,6 +2688,17 @@ void MainWindow::defineActions() {
   createAction(MI_TypeBold, QT_TR_NOOP("Type Tool - Bold"), "", "",
                ToolCommandType);
 
+    /*-- Paint Brush tool + mode swicthing shortcuts --*/
+  createAction(MI_PaintBrushNextMode, QT_TR_NOOP("Paint Brush - Next Mode"), "",
+               "", ToolCommandType);
+  createAction(MI_PaintBrushAreas, QT_TR_NOOP("Paint Brush - Areas"), "", "",
+               ToolCommandType, "paintbrush_mode_areas");
+  createAction(MI_PaintBrushLines, QT_TR_NOOP("Paint Brush - Lines"), "", "",
+               ToolCommandType, "paintbrush_mode_lines");
+  createAction(MI_PaintBrushLinesAndAreas,
+               QT_TR_NOOP("Paint Brush - Lines & Areas"), "", "",
+               ToolCommandType, "paintbrush_mode_lines_areas");
+
   /*-- Fill tool + type/mode switching shortcuts --*/
   createAction(MI_FillNextType, QT_TR_NOOP("Fill Tool - Next Type"), "", "",
                ToolCommandType);
