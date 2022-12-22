@@ -5,10 +5,12 @@
 #include "tapp.h"
 #include "sceneviewer.h"
 #include "stopmotion.h"
+#include "cellselection.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
 #include "toonzqt/flipconsole.h"
+#include "toonzqt/tselectionhandle.h"
 
 // TnzLib includes
 #include "toonz/txsheet.h"
@@ -40,7 +42,23 @@ public:
       : MenuItemHandler(cmdId), m_buttonId(buttonId) {}
   void execute() override {
     FlipConsole *console = FlipConsole::getCurrent();
-    if (console) console->pressButton(m_buttonId);
+    if (console) {
+      console->pressButton(m_buttonId);
+
+      if (m_buttonId != FlipConsole::eFirst &&
+          m_buttonId != FlipConsole::eLast &&
+          m_buttonId != FlipConsole::eNext && m_buttonId != FlipConsole::ePrev)
+        return;
+
+      int row = TApp::instance()->getCurrentFrame()->getFrame();
+      TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+          TApp::instance()->getCurrentSelection()->getSelection());
+      if (cellSelection) {
+        int r0, r1, c0, c1;
+        cellSelection->getSelectedCells(r0, c0, r1, c1);
+        cellSelection->selectCells(row, c0, r1 + (row - r0), c1);
+      }
+    }
   }
 };
 
@@ -64,6 +82,14 @@ public:
       if (xsh->getCell(row, col).isEmpty()) continue;
       if (xsh->getCell(row, col) != cell) {
         TApp::instance()->getCurrentFrame()->setFrame(row);
+
+        TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+            TApp::instance()->getCurrentSelection()->getSelection());
+        if (cellSelection) {
+          int r0, r1, c0, c1;
+          cellSelection->getSelectedCells(r0, c0, r1, c1);
+          cellSelection->selectCells(row, c0, r1 + (row - r0), c1);
+        }
         break;
       }
     }
@@ -99,6 +125,14 @@ public:
       // Get *first* cell in current uniform cell block
       while (row > 0 && xsh->getCell(row - 1, col) == cell) --row;
       TApp::instance()->getCurrentFrame()->setFrame(row);
+
+      TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+          TApp::instance()->getCurrentSelection()->getSelection());
+      if (cellSelection) {
+        int r0, r1, c0, c1;
+        cellSelection->getSelectedCells(r0, c0, r1, c1);
+        cellSelection->selectCells(row, c0, r1 + (row - r0), c1);
+      }
     }
   }
 };
@@ -114,6 +148,14 @@ public:
     int step = Preferences::instance()->getXsheetStep();
 
     TApp::instance()->getCurrentFrame()->setFrame(row + step);
+
+    TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+        TApp::instance()->getCurrentSelection()->getSelection());
+    if (cellSelection) {
+      int r0, r1, c0, c1;
+      cellSelection->getSelectedCells(r0, c0, r1, c1);
+      cellSelection->selectCells(r0 + step, c0, r1 + step, c1);
+    }
   }
 };
 
@@ -128,6 +170,14 @@ public:
     int step = Preferences::instance()->getXsheetStep();
 
     TApp::instance()->getCurrentFrame()->setFrame(std::max(row - step, 0));
+
+    TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+        TApp::instance()->getCurrentSelection()->getSelection());
+    if (cellSelection) {
+      int r0, r1, c0, c1;
+      cellSelection->getSelectedCells(r0, c0, r1, c1);
+      cellSelection->selectCells(r0 - step, c0, r1 - step, c1);
+    }
   }
 };
 
@@ -178,6 +228,15 @@ public:
         if (std::find(navControlList, navControlList + 6, pane) !=
             (navControlList + 6)) {
           TApp::instance()->getCurrentFrame()->emitTriggerNextKeyframe(panel);
+
+          int row = TApp::instance()->getCurrentFrame()->getFrame();
+          TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+              TApp::instance()->getCurrentSelection()->getSelection());
+          if (cellSelection) {
+            int r0, r1, c0, c1;
+            cellSelection->getSelectedCells(r0, c0, r1, c1);
+            cellSelection->selectCells(row, c0, r1 + (row - r0), c1);
+          }
           break;
         } else
           panel = TApp::instance()->getActiveViewer()->parentWidget();
@@ -207,6 +266,15 @@ public:
         if (std::find(navControlList, navControlList + 6, pane) !=
             (navControlList + 6)) {
           TApp::instance()->getCurrentFrame()->emitTriggerPrevKeyframe(panel);
+
+          int row = TApp::instance()->getCurrentFrame()->getFrame();
+          TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+              TApp::instance()->getCurrentSelection()->getSelection());
+          if (cellSelection) {
+            int r0, r1, c0, c1;
+            cellSelection->getSelectedCells(r0, c0, r1, c1);
+            cellSelection->selectCells(row, c0, r1 + (row - r0), c1);
+          }
           break;
         } else
           panel = TApp::instance()->getActiveViewer()->parentWidget();
