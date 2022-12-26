@@ -61,6 +61,14 @@ then
    chmod 755 -R Tahoma2D/rhubarb
 fi
 
+echo ">>> Copying libghoto2 supporting directories"
+cp -r /usr/local/lib/libgphoto2 appdir/usr/lib
+cp -r /usr/local/lib/libgphoto2_port appdir/usr/lib
+
+rm appdir/usr/lib/libgphoto2/print-camera-list
+find appdir/usr/lib/libgphoto2* -name *.la -exec rm -f {} \;
+find appdir/usr/lib/libgphoto2* -name *.so -exec patchelf --set-rpath '$ORIGIN/../..' {} \;
+
 echo ">>> Creating Tahoma2D/Tahoma2D.AppImage"
 
 if [ ! -f linuxdeployqt*.AppImage ]
@@ -78,6 +86,11 @@ export LD_LIBRARY_PATH=appdir/usr/lib/tahoma2d
    -executable=appdir/usr/bin/tconverter \
    -executable=appdir/usr/bin/tfarmcontroller \
    -executable=appdir/usr/bin/tfarmserver 
+
+rm appdir/AppRun
+cp ../sources/scripts/AppRun appdir
+chmod 775 appdir/AppRun
+
 ./linuxdeployqt*.AppImage appdir/usr/bin/Tahoma2D -appimage
 
 mv Tahoma2D*.AppImage Tahoma2D/Tahoma2D.AppImage

@@ -132,6 +132,7 @@ set(MOC_HEADERS
     ../stopmotion/canon.h
     ../stopmotion/stopmotionserial.h
     ../stopmotion/stopmotionlight.h
+    ../stopmotion/gphotocam.h
     cameracapturelevelcontrol.h
     navtageditorpopup.h
 )
@@ -369,6 +370,7 @@ set(SOURCES
     ../stopmotion/canon.cpp
     ../stopmotion/stopmotionserial.cpp
     ../stopmotion/stopmotionlight.cpp
+    ../stopmotion/gphotocam.cpp
 	cameracapturelevelcontrol.cpp
     navtageditorpopup.cpp
 )
@@ -438,6 +440,10 @@ if (WITH_CRASHRPT)
     add_definitions(-DWITH_CRASHRPT)
 endif()
 
+if (WITH_GPHOTO2)
+    add_definitions(-DWITH_GPHOTO2)
+endif()
+
 if (WITH_WINTAB AND BUILD_TARGET_WIN AND (PLATFORM EQUAL 64))
     add_definitions(-DWITH_WINTAB)
 endif()
@@ -468,6 +474,10 @@ if(BUILD_ENV_MSVC)
         set(EXTRA_LIBS ${EXTRA_LIBS} ${CRASHRPT_LIB})
     endif()
 
+    if(WITH_GPHOTO2)
+        set(EXTRA_LIBS ${EXTRA_LIBS} ${GPHOTO2_LIB} ${GPHOTO2_PORT_LIB} ${GPHOTO2_COMPAT_LIB})
+    endif()
+
     target_link_libraries(Tahoma2D
         Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
         Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort
@@ -481,6 +491,10 @@ elseif(BUILD_ENV_APPLE AND WITH_CANON)
 
     # 変なところにライブラリ生成するカスども
     set(EXTRA_LIBS ${EXTRA_LIBS} "$<TARGET_FILE:tnzstdfx>" "$<TARGET_FILE:tfarm>")
+
+    if(WITH_GPHOTO2)
+        set(EXTRA_LIBS ${EXTRA_LIBS} ${GPHOTO2_LIB} ${GPHOTO2_PORT_LIB})
+    endif()
 
     add_dependencies(Tahoma2D tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
 
@@ -499,6 +513,10 @@ elseif(BUILD_ENV_APPLE)
     # 変なところにライブラリ生成するカスども
     set(EXTRA_LIBS ${EXTRA_LIBS} "$<TARGET_FILE:tnzstdfx>" "$<TARGET_FILE:tfarm>")
 
+    if(WITH_GPHOTO2)
+        set(EXTRA_LIBS ${EXTRA_LIBS} ${GPHOTO2_LIB} ${GPHOTO2_PORT_LIB})
+    endif()
+
     add_dependencies(Tahoma2D tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
 
     target_link_libraries(Tahoma2D
@@ -515,6 +533,10 @@ elseif(BUILD_ENV_UNIXLIKE)
     set(EXTRA_LIBS ${EXTRA_LIBS} "$<TARGET_FILE:tnzstdfx>" "$<TARGET_FILE:tfarm>")
 
     set(EXTRA_LIBS ${EXTRA_LIBS} ${Boost_LIBRARIES} ${OPENBLAS_LIB})
+
+    if(WITH_GPHOTO2)
+        set(EXTRA_LIBS ${EXTRA_LIBS} ${GPHOTO2_LIB} ${GPHOTO2_PORT_LIB})
+    endif()
 
     if(BUILD_TARGET_WIN)
         set(EXTRA_LIBS ${EXTRA_LIBS} Qt5::WinMain -lstrmiids -mwindows)

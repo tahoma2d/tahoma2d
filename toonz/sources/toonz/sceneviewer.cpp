@@ -1204,7 +1204,7 @@ void SceneViewer::onNewStopMotionImageReady() {
     m_stopMotionImage->setDpi(m_stopMotion->m_liveViewDpi.x,
                               m_stopMotion->m_liveViewDpi.y);
     m_hasStopMotionImage = true;
-    if (m_stopMotion->m_canon->m_pickLiveViewZoom) {
+    if (m_stopMotion->isPickLiveViewZoom()) {
       setToolCursor(this, ToolCursor::ZoomCursor);
     }
     onSceneChanged();
@@ -1713,7 +1713,6 @@ void SceneViewer::drawOverlay() {
       glPopMatrix();
     }
 
-#ifdef WITH_CANON
     if (m_stopMotion->m_liveViewStatus == StopMotion::LiveViewOpen &&
         app->getCurrentFrame()->getFrame() ==
             m_stopMotion->getXSheetFrameNumber() - 1) {
@@ -1726,12 +1725,11 @@ void SceneViewer::drawOverlay() {
     }
 
     // draw Stop Motion Zoom Box
-    if (m_stopMotion->m_liveViewStatus == 2 &&
-        m_stopMotion->m_canon->m_pickLiveViewZoom) {
+    if (m_stopMotion->m_liveViewStatus == 2 && m_stopMotion->isPickLiveViewZoom()) {
       glPushMatrix();
       tglMultMatrix(m_drawCameraAff);
       m_pixelSize = sqrt(tglGetPixelSize2()) * getDevPixRatio();
-      TRect rect  = m_stopMotion->m_canon->m_zoomRect;
+      TRect rect = m_stopMotion->getZoomRect();
 
       glColor3d(1.0, 0.0, 0.0);
 
@@ -1746,8 +1744,6 @@ void SceneViewer::drawOverlay() {
 
       glPopMatrix();
     }
-
-#endif
 
     // safe area
     if (safeAreaToggle.getStatus() && m_drawEditingLevel == false &&
@@ -2176,11 +2172,9 @@ void SceneViewer::drawScene() {
         m_stopMotionImage->getDpi(dpiX, dpiY);
         smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
         bool hide_opacity = false;
-#ifdef WITH_CANON
-        hide_opacity = m_stopMotion->m_canon->m_zooming ||
-                       m_stopMotion->m_canon->m_pickLiveViewZoom ||
+        hide_opacity = m_stopMotion->isZooming() ||
+                       m_stopMotion->isPickLiveViewZoom() ||
                        !m_hasStopMotionLineUpImage;
-#endif
         smPlayer.m_opacity = hide_opacity ? 255.0 : m_stopMotion->getOpacity();
         smPlayer.m_sl      = m_stopMotion->m_sl;
         args.m_liveViewImage  = m_stopMotionImage;
@@ -2293,11 +2287,9 @@ void SceneViewer::drawScene() {
           m_stopMotionImage->getDpi(dpiX, dpiY);
           smPlayer.m_dpiAff = TScale(Stage::inch / dpiX, Stage::inch / dpiY);
           bool hide_opacity = false;
-#ifdef WITH_CANON
-          hide_opacity = m_stopMotion->m_canon->m_zooming ||
-                         m_stopMotion->m_canon->m_pickLiveViewZoom ||
+          hide_opacity = m_stopMotion->isZooming()||
+                         m_stopMotion->isPickLiveViewZoom() ||
                          !m_hasStopMotionLineUpImage;
-#endif
           smPlayer.m_opacity =
               hide_opacity ? 255.0 : m_stopMotion->getOpacity();
           smPlayer.m_sl         = m_stopMotion->m_sl;

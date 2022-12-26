@@ -47,6 +47,11 @@ jobs:
           export CC="ccache ${{ matrix.cc }}"
           export CXX="ccache ${{ matrix.cxx }}"
           ci-scripts/linux/tahoma-buildlibmypaint.sh
+      - name: Build libgphoto2
+        run: |
+          export CC="ccache ${{ matrix.cc }}"
+          export CXX="ccache ${{ matrix.cxx }}"
+          ci-scripts/linux/tahoma-buildlibgphoto2.sh
       - name: Build Tahoma2D
         run: |
           export CC="ccache ${{ matrix.cc }}"

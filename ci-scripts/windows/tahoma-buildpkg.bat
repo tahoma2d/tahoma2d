@@ -32,6 +32,10 @@ IF EXIST ..\..\thirdparty\canon\Header (
    copy /Y ..\..\thirdparty\canon\Dll\EdsImage.dll Tahoma2D
 )
 
+IF EXIST ..\..\thirdparty\libgphoto2\include (
+   xcopy /Y /E ..\..\thirdparty\libgphoto2\bin Tahoma2D
+)
+
 IF EXIST ..\..\thirdparty\crashrpt\include (
    copy /Y ..\..\thirdparty\apps\crashrpt\CrashRpt1500.dll Tahoma2D
    copy /Y ..\..\thirdparty\apps\crashrpt\CrashSender1500.exe Tahoma2D

@@ -27,9 +27,9 @@ then
    export CANON_FLAG=-DWITH_CANON=ON
 fi
 
-export MACOSX_DEPLOYMENT_TARGET=10.13
 export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/jpeg-turbo/lib/pkgconfig"
 cmake ../sources  $CANON_FLAG \
+      -DWITH_GPHOTO2=ON \
       -DQT_PATH=$USEQTLIB \
       -DTIFF_INCLUDE_DIR=../../thirdparty/tiff-4.2.0/libtiff/ \
       -DSUPERLU_INCLUDE_DIR=../../thirdparty/superlu/SuperLU_4.1/include/

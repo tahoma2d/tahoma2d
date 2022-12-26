@@ -85,7 +85,6 @@ public:
   EdsUInt32 m_liveViewZoom      = 1;
   bool m_isSDKLoaded            = false;
   bool m_sessionOpen            = false;
-  bool m_zooming                = false;
   std::string m_cameraName;
   TPoint m_liveViewZoomOffset     = TPoint(0, 0);
   bool m_liveViewZoomReadyToPick  = true;
@@ -97,6 +96,7 @@ public:
 #endif
   TDimension m_proxyImageDimensions = TDimension(0, 0);
   bool m_converterSucceeded         = false;
+  bool m_zooming                    = false;
   bool m_pickLiveViewZoom           = false;
   TDimension m_fullImageDimensions  = TDimension(0, 0);
   int m_liveViewExposureOffset      = 0;
@@ -104,6 +104,10 @@ public:
   QString m_displayedShutterSpeed;
   QString m_imageQuality;
   cv::Mat m_canonImage;
+  int m_canonIndex = -1;
+
+  void setCanonIndex(int index) { m_canonIndex = index; }
+  int getCanonIndex() { return m_canonIndex; }
 
   bool m_useCalibration;
   cv::Mat m_calibrationMapX, m_calibrationMapY;
@@ -135,8 +139,8 @@ public:
   EdsError closeCameraSession();
   bool downloadImage(EdsBaseRef object);
   EdsError takePicture();
-  EdsError startCanonLiveView();
-  EdsError endCanonLiveView();
+  EdsError startLiveView();
+  EdsError endLiveView();
   bool downloadEVFData();
   QStringList getIsoOptions() { return m_isoOptions; }
   QStringList getShutterSpeedOptions() { return m_shutterSpeedOptions; }

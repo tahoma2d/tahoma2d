@@ -9,26 +9,34 @@ JpgConverter::JpgConverter() {}
 JpgConverter::~JpgConverter() {}
 
 #ifdef WITH_CANON
-
 void JpgConverter::setStream(EdsStreamRef stream) { m_stream = stream; }
+#endif
+
+void JpgConverter::setDataPtr(unsigned char* dataPtr, unsigned long dataSize) {
+  m_dataPtr  = dataPtr;
+  m_dataSize = dataSize;
+}
 
 void JpgConverter::convertFromJpg() {
-#ifdef MACOSX
-  UInt64 mySize = 0;
-#else
-  unsigned __int64 mySize = 0;
+#ifdef WITH_CANON
+  if (m_stream) {
+    EdsError err = EdsGetPointer(m_stream, (EdsVoid**)&m_dataPtr);
+    err          = EdsGetLength(m_stream, &m_dataSize);
+  }
 #endif
-  unsigned char* data = NULL;
-  EdsError err        = EdsGetPointer(m_stream, (EdsVoid**)&data);
-  err                 = EdsGetLength(m_stream, &mySize);
+
+  if (!m_dataPtr) {
+    emit(imageReady(false));
+    return;
+  }
 
   int width, height, pixelFormat;
   int inSubsamp, inColorspace;
   tjhandle tjInstance   = NULL;
   unsigned char* imgBuf = NULL;
   tjInstance            = tjInitDecompress();
-  tjDecompressHeader3(tjInstance, data, mySize, &width, &height, &inSubsamp,
-                      &inColorspace);
+  tjDecompressHeader3(tjInstance, m_dataPtr, m_dataSize, &width, &height,
+                      &inSubsamp, &inColorspace);
 
   if (width < 0 || height < 0) {
     emit(imageReady(false));
@@ -51,7 +59,7 @@ void JpgConverter::convertFromJpg() {
     tempWidth  = TJSCALED(width, scalingFactor);
     tempHeight = TJSCALED(height, scalingFactor);
   }
-  tjDecompress2(tjInstance, data, mySize, imgBuf, width,
+  tjDecompress2(tjInstance, m_dataPtr, m_dataSize, imgBuf, width,
                 width * tjPixelSize[pixelFormat], height, pixelFormat, flags);
 
   m_finalImage = TRaster32P(width, height);
@@ -65,17 +73,17 @@ void JpgConverter::convertFromJpg() {
   tjDestroy(tjInstance);
   tjInstance = NULL;
 
+#ifdef WITH_CANON
   if (m_stream != NULL) {
     EdsRelease(m_stream);
     m_stream = NULL;
   }
-  data = NULL;
+#endif
+  m_dataPtr = NULL;
   emit(imageReady(true));
 }
 
 void JpgConverter::run() { convertFromJpg(); }
-
-#endif
 
 //-----------------------------------------------------------------------------
 
