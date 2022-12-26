@@ -88,6 +88,7 @@ class DVAPI CameraSettingsWidget final : public QFrame {
   QLabel *m_resLabel;
   QLabel *m_xLabel;
   QLabel *m_unitLabel;
+  QLabel *m_arLabel;
 
   QPushButton *m_fspChk;  // Force Squared Pixel => dpix == dpiy
 

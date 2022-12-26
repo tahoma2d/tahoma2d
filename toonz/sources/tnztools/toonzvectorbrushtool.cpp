@@ -1571,42 +1571,42 @@ void ToonzVectorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   TPointD halfThick(m_maxThick * 0.5, m_maxThick * 0.5);
   TRectD invalidateRect(m_brushPos - halfThick, m_brushPos + halfThick);
 
-  // if (e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed() &&
-  //    Preferences::instance()->useCtrlAltToResizeBrushEnabled()) {
-  //  // Resize the brush if CTRL+ALT is pressed and the preference is enabled.
-  //  const TPointD &diff = pos - m_mousePos;
-  //  double max          = diff.x / 2;
-  //  double min          = diff.y / 2;
+  if (e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed() &&
+      Preferences::instance()->useCtrlAltToResizeBrushEnabled()) {
+    // Resize the brush if CTRL+ALT is pressed and the preference is enabled.
+    const TPointD &diff = pos - m_mousePos;
+    double max          = diff.x / 2;
+    double min          = diff.y / 2;
 
-  //  locals.addMinMaxSeparate(m_thickness, min, max);
+    locals.addMinMaxSeparate(m_thickness, min, max);
 
-  //  double radius = m_thickness.getValue().second * 0.5;
-  //  invalidateRect += TRectD(m_brushPos - TPointD(radius, radius),
-  //                           m_brushPos + TPointD(radius, radius));
+    double radius = m_thickness.getValue().second * 0.5;
+    invalidateRect += TRectD(m_brushPos - TPointD(radius, radius),
+                             m_brushPos + TPointD(radius, radius));
 
-  //} else {
-  m_mousePos = pos;
-  m_brushPos = pos;
+  } else {
+    m_mousePos = pos;
+    m_brushPos = pos;
 
-  TPointD snapThick(6.0 * m_pixelSize, 6.0 * m_pixelSize);
-  // In order to clear the previous snap indicator
-  if (m_foundFirstSnap)
-    invalidateRect +=
-        TRectD(m_firstSnapPoint - snapThick, m_firstSnapPoint + snapThick);
+    TPointD snapThick(6.0 * m_pixelSize, 6.0 * m_pixelSize);
+    // In order to clear the previous snap indicator
+    if (m_foundFirstSnap)
+      invalidateRect +=
+          TRectD(m_firstSnapPoint - snapThick, m_firstSnapPoint + snapThick);
 
-  m_firstSnapPoint = pos;
-  m_foundFirstSnap = false;
-  m_toggleSnap = !e.isAltPressed() && e.isCtrlPressed() && e.isShiftPressed();
-  checkStrokeSnapping(true, m_toggleSnap);
-  checkGuideSnapping(true, m_toggleSnap);
-  m_brushPos = m_firstSnapPoint;
-  // In order to draw the snap indicator
-  if (m_foundFirstSnap)
-    invalidateRect +=
-        TRectD(m_firstSnapPoint - snapThick, m_firstSnapPoint + snapThick);
+    m_firstSnapPoint = pos;
+    m_foundFirstSnap = false;
+    m_toggleSnap = !e.isAltPressed() && e.isCtrlPressed() && e.isShiftPressed();
+    checkStrokeSnapping(true, m_toggleSnap);
+    checkGuideSnapping(true, m_toggleSnap);
+    m_brushPos = m_firstSnapPoint;
+    // In order to draw the snap indicator
+    if (m_foundFirstSnap)
+      invalidateRect +=
+          TRectD(m_firstSnapPoint - snapThick, m_firstSnapPoint + snapThick);
 
-  invalidateRect += TRectD(pos - halfThick, pos + halfThick);
-  //}
+    invalidateRect += TRectD(pos - halfThick, pos + halfThick);
+  }
 
   invalidate(invalidateRect.enlarge(2));
 

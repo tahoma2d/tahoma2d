@@ -802,7 +802,6 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
       *m_newColor;  //!< New style viewer (lower-right panel side).
   DVGui::StyleSample
       *m_oldColor;  //!< Old style viewer (lower-right panel side).
-  QFrame *m_fillColorWidget;
   QAction *m_toggleOrientationAction;
   QPushButton
       *m_autoButton;  //!< "Auto Apply" checkbox on the right panel side.
@@ -866,6 +865,10 @@ class DVAPI StyleEditor final : public QWidget, public SaveLoadQSettings {
   bool m_isCtrlPressed = false;
 
   RenameStyleSet *m_renameStyleSet;
+
+  QWidget *m_autoApplyWidget;
+  QAction *m_toggleAutoApply;
+  bool m_showAutoApply = true;
 
 public:
   StyleEditor(PaletteController *, QWidget *parent = 0);
@@ -1004,6 +1007,7 @@ protected slots:
   void onHexEdited(const QString &text);
   void onHideMenu();
   void onPageChanged(int index);
+  void onToggleAutoApply();
 
   void onToggleTextureSet(int checkedState);
   void onToggleVectorSet(int checkedState);

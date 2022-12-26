@@ -121,7 +121,7 @@ class NoteArea final : public QFrame {
 
   XsheetViewer *m_viewer;
 
-  // QPushButton *m_flipOrientationButton;
+  QPushButton *m_flipOrientationButton;
 
   QToolButton *m_noteButton;
   QToolButton *m_nextNoteButton;
@@ -146,7 +146,7 @@ public:
   void updateButtons();
 
 protected slots:
-  // void flipOrientation();
+  void flipOrientation();
   void toggleNewNote();
   void nextNote();
   void precNote();

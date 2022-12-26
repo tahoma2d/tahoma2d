@@ -462,7 +462,7 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
 #endif
     : QFrame(parent)
     , m_viewer(parent)
-    // , m_flipOrientationButton(nullptr)
+    , m_flipOrientationButton(nullptr)
     , m_noteButton(nullptr)
     , m_precNoteButton(nullptr)
     , m_nextNoteButton(nullptr)
@@ -475,7 +475,7 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
   setFrameStyle(QFrame::StyledPanel);
   setObjectName("cornerWidget");
 
-  // m_flipOrientationButton  = new QPushButton(this);
+  m_flipOrientationButton  = new QPushButton(this);
   m_noteButton             = new QToolButton(this);
   m_precNoteButton         = new QToolButton(this);
   m_nextNoteButton         = new QToolButton(this);
@@ -484,13 +484,13 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
   m_layerHeaderPanel       = new LayerHeaderPanel(m_viewer, this);
 
   //-----
-  //
-  // m_flipOrientationButton->setObjectName("flipOrientationButton");
-  // m_flipOrientationButton->setFocusPolicy(Qt::FocusPolicy::NoFocus);
-  // m_flipOrientationButton->setFixedSize(QSize(70, 23));
-  // m_flipOrientationButton->setIconSize(QSize(20, 20));
-  // m_flipOrientationButton->setIcon(createQIcon("toggle_xsheet_orientation"));
-  // m_flipOrientationButton->setToolTip(tr("Toggle Xsheet/Timeline"));
+
+  m_flipOrientationButton->setObjectName("flipOrientationButton");
+  m_flipOrientationButton->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+  m_flipOrientationButton->setFixedSize(QSize(70, 23));
+  m_flipOrientationButton->setIconSize(QSize(20, 20));
+  m_flipOrientationButton->setIcon(createQIcon("toggle_xsheet_orientation"));
+  m_flipOrientationButton->setToolTip(tr("Toggle Xsheet/Timeline"));
 
   m_newLevelButton->setObjectName("ToolbarToolButton");
   m_newLevelButton->setFixedSize(34, 25);
@@ -527,14 +527,18 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
   m_frameDisplayStyleCombo->addItems(frameDisplayStyles);
   m_frameDisplayStyleCombo->setCurrentIndex(
       (int)m_viewer->getFrameDisplayStyle());
-  m_frameDisplayStyleCombo->hide();
+
+  if (!Preferences::instance()->isShowAdvancedOptionsEnabled()) {
+    m_flipOrientationButton->hide();
+    m_frameDisplayStyleCombo->hide();
+  }
 
   createLayout();
 
   // signal-slot connections
   bool ret = true;
-  // ret      = ret && connect(m_flipOrientationButton, SIGNAL(clicked()),
-  //                     SLOT(flipOrientation()));
+  ret      = ret && connect(m_flipOrientationButton, SIGNAL(clicked()),
+                      SLOT(flipOrientation()));
 
   ret = ret && connect(m_noteButton, SIGNAL(clicked()), SLOT(toggleNewNote()));
   ret = ret &&
@@ -563,7 +567,7 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WFlags flags)
 void NoteArea::removeLayout() {
   if (!m_currentLayout) return;
 
-  // m_currentLayout->removeWidget(m_flipOrientationButton);
+  m_currentLayout->removeWidget(m_flipOrientationButton);
   m_currentLayout->removeWidget(m_noteButton);
   m_currentLayout->removeWidget(m_precNoteButton);
   m_currentLayout->removeWidget(m_nextNoteButton);
@@ -624,6 +628,8 @@ void NoteArea::createLayout() {
     mainLayout->setMargin(1);
     mainLayout->setSpacing(0);
     {
+      mainLayout->addWidget(m_flipOrientationButton, 0, centerAlign);
+
       mainLayout->addStretch(1);
 
       mainLayout->addWidget(m_newLevelButton, 0, centerAlign);
@@ -681,13 +687,13 @@ void NoteArea::updateButtons() {
 
 //-----------------------------------------------------------------------------
 
-// void NoteArea::flipOrientation() { m_viewer->flipOrientation(); }
+void NoteArea::flipOrientation() { m_viewer->flipOrientation(); }
 
 void NoteArea::onXsheetOrientationChanged(const Orientation *newOrientation) {
-  //  m_flipOrientationButton->setText(newOrientation->caption());
+  // m_flipOrientationButton->setText(newOrientation->caption());
 
-  // m_flipOrientationButton->setIcon(createQIcon("toggle_xsheet_orientation"));
-  // m_flipOrientationButton->setIconSize(QSize(20, 20));
+  m_flipOrientationButton->setIcon(createQIcon("toggle_xsheet_orientation"));
+  m_flipOrientationButton->setIconSize(QSize(20, 20));
 
   removeLayout();
   createLayout();

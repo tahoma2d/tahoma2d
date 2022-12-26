@@ -2179,25 +2179,25 @@ void ToonzRasterBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   TPointD halfThick(thickness * 0.5, thickness * 0.5);
   TRectD invalidateRect(m_brushPos - halfThick, m_brushPos + halfThick);
 
-  // if (e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed() &&
-  //    Preferences::instance()->useCtrlAltToResizeBrushEnabled()) {
-  //  // Resize the brush if CTRL+ALT is pressed and the preference is enabled.
-  //  const TPointD &diff = pos - m_mousePos;
-  //  double max          = diff.x / 2;
-  //  double min          = diff.y / 2;
+  if (e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed() &&
+      Preferences::instance()->useCtrlAltToResizeBrushEnabled()) {
+    // Resize the brush if CTRL+ALT is pressed and the preference is enabled.
+    const TPointD &diff = pos - m_mousePos;
+    double max          = diff.x / 2;
+    double min          = diff.y / 2;
 
-  //  locals.addMinMaxSeparate(m_rasThickness, min, max);
+    locals.addMinMaxSeparate(m_rasThickness, min, max);
 
-  //  double radius = m_rasThickness.getValue().second * 0.5;
-  //  invalidateRect += TRectD(m_brushPos - TPointD(radius, radius),
-  //                           m_brushPos + TPointD(radius, radius));
+    double radius = m_rasThickness.getValue().second * 0.5;
+    invalidateRect += TRectD(m_brushPos - TPointD(radius, radius),
+                             m_brushPos + TPointD(radius, radius));
 
-  //} else {
-  m_mousePos = pos;
-  m_brushPos = getCenteredCursorPos(pos);
+  } else {
+    m_mousePos = pos;
+    m_brushPos = getCenteredCursorPos(pos);
 
-  invalidateRect += TRectD(pos - halfThick, pos + halfThick);
-  //}
+    invalidateRect += TRectD(pos - halfThick, pos + halfThick);
+  }
 
   invalidate(invalidateRect.enlarge(2));
 

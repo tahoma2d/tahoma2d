@@ -15,6 +15,7 @@
 // TnzLib includes
 #include "toonz/txshlevelhandle.h"
 #include "toonz/levelproperties.h"
+#include "toonz/preferences.h"
 
 // TnzBase includes
 #include "tunit.h"
@@ -539,17 +540,19 @@ CanvasSizePopup::CanvasSizePopup()
 
   addSeparator(tr("New Size"));
 
-  //// Unit
-  //m_unit = new QComboBox(this);
-  //m_unit->addItem(tr("pixel"), "pixel");
-  //m_unit->addItem(tr("mm"), "mm");
-  //m_unit->addItem(tr("cm"), "cm");
-  //m_unit->addItem(tr("field"), "field");
-  //m_unit->addItem(tr("inch"), "inch");
-  //m_unit->setFixedHeight(DVGui::WidgetHeight);
-  //addWidget(tr("Unit:"), m_unit);
-  //connect(m_unit, SIGNAL(currentIndexChanged(int)), this,
-  //        SLOT(onUnitChanged(int)));
+  // Unit
+  m_unit = new QComboBox(this);
+  m_unit->addItem(tr("pixel"), "pixel");
+  m_unit->addItem(tr("mm"), "mm");
+  m_unit->addItem(tr("cm"), "cm");
+  m_unit->addItem(tr("field"), "field");
+  m_unit->addItem(tr("inch"), "inch");
+  m_unit->setFixedHeight(DVGui::WidgetHeight);
+  if (Preferences::instance()->isShowAdvancedOptionsEnabled()) {
+    addWidget(tr("Unit:"), m_unit);
+    connect(m_unit, SIGNAL(currentIndexChanged(int)), this,
+            SLOT(onUnitChanged(int)));
+  }
 
   // New Xsize
   m_xSizeFld = new DVGui::DoubleLineEdit(this, dim.lx);

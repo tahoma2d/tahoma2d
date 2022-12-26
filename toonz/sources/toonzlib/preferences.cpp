@@ -395,6 +395,8 @@ void Preferences::definePreferenceItems() {
   define(pathAliasPriority, "pathAliasPriority", QMetaType::Int,
          (int)ProjectFolderOnly);
 
+  define(showAdvancedOptions, "showAdvancedOptions", QMetaType::Bool, false);
+
   setCallBack(autosaveEnabled, &Preferences::enableAutosave);
   setCallBack(autosavePeriod, &Preferences::setAutosavePeriod);
   setCallBack(undoMemorySize, &Preferences::setUndoMemorySize);
@@ -551,7 +553,7 @@ void Preferences::definePreferenceItems() {
   define(levelBasedToolsDisplay, "levelBasedToolsDisplay", QMetaType::Int,
          0);  // Default
   define(useCtrlAltToResizeBrush, "useCtrlAltToResizeBrush", QMetaType::Bool,
-         true);
+         false);
   define(temptoolswitchtimer, "temptoolswitchtimer", QMetaType::Int, 500, 1,
          std::numeric_limits<int>::max());
 
