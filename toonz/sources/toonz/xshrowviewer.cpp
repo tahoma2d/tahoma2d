@@ -1297,6 +1297,9 @@ void RowArea::mouseReleaseEvent(QMouseEvent *event) {
 //-----------------------------------------------------------------------------
 
 void RowArea::contextMenuEvent(QContextMenuEvent *event) {
+  TPoint pos(event->pos().x(), event->pos().y());
+  m_contextMenuRow = m_viewer->xyToPosition(pos).frame();
+
   OnionSkinMask osMask =
       TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
 

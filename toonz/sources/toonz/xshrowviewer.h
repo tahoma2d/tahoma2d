@@ -44,6 +44,8 @@ class RowArea final : public QWidget {
   // panning by middle-drag
   bool m_isPanning;
 
+  int m_contextMenuRow;
+
   void drawRows(QPainter &p, int r0, int r1);
   void drawPlayRangeBackground(QPainter &p, int r0, int r1);
   void drawPlayRange(QPainter &p, int r0, int r1);
@@ -70,6 +72,8 @@ public:
   RowArea(XsheetViewer *parent, Qt::WFlags flags = 0);
 #endif
   ~RowArea();
+
+  int getContextMenuRow() { return m_contextMenuRow; }
 
 protected:
   void paintEvent(QPaintEvent *) override;

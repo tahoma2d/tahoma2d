@@ -2755,7 +2755,8 @@ public:
   ToggleTaggedFrame() : MenuItemHandler(MI_ToggleTaggedFrame) {}
   void execute() override {
     TApp *app = TApp::instance();
-    int frame = app->getCurrentFrame()->getFrame();
+    int frame = app->getCurrentXsheetViewer()->getContextMenuRow();
+    if (frame < 0) frame = app->getCurrentFrame()->getFrame();
     assert(frame >= 0);
     TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
 
@@ -2777,7 +2778,8 @@ public:
   EditTaggedFrame() : MenuItemHandler(MI_EditTaggedFrame) {}
   void execute() override {
     TApp *app = TApp::instance();
-    int frame = app->getCurrentFrame()->getFrame();
+    int frame = app->getCurrentXsheetViewer()->getContextMenuRow();
+    if (frame < 0) frame = app->getCurrentFrame()->getFrame();
     assert(frame >= 0);
     TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
 

@@ -1285,6 +1285,8 @@ public:
   QList<int> availableFramesPerPage();
   void zoomToFramesPerPage(int frames);
 
+  int getContextMenuRow() { return m_rowArea->getContextMenuRow(); }
+
 protected:
   void scrollToColumn(int col);
   void scrollToHorizontalRange(int x0, int x1);
