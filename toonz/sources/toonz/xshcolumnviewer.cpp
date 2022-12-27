@@ -467,7 +467,8 @@ void ChangeObjectParent::refresh() {
     TStageObjectId newTextID = id;
     QString newTextTr;
     if (tree->getStageObject(i)->hasSpecifiedName())
-      newTextTr = QString::fromStdString(tree->getStageObject(i)->getName());
+      newTextTr =
+          QString::fromStdString(tree->getStageObject(i)->getFullName());
     else
       newTextTr = getNameTr(id);
 
@@ -486,7 +487,7 @@ void ChangeObjectParent::refresh() {
         continue;
 
       QColor unused;
-        viewer->getColumnColor(newTextBG, unused, id.getIndex(), xsh);
+      viewer->getColumnColor(newTextBG, unused, id.getIndex(), xsh);
     } else
       continue;
 
@@ -682,8 +683,10 @@ void RenameColumnField::show(const QRect &rect, int col) {
                      ->getName();
   TXshColumn *column          = xsh->getColumn(col);
   TXshZeraryFxColumn *zColumn = dynamic_cast<TXshZeraryFxColumn *>(column);
+/*
   if (zColumn)
     name = ::to_string(zColumn->getZeraryColumnFx()->getZeraryFx()->getName());
+*/
   setText(QString(name.c_str()));
   selectAll();
 
@@ -705,8 +708,7 @@ void RenameColumnField::renameColumn() {
   if (zColumn)
     TFxCommand::renameFx(zColumn->getZeraryColumnFx(), ::to_wstring(newName),
                          m_xsheetHandle);
-  else
-    TStageObjectCmd::rename(columnId, newName, m_xsheetHandle);
+  TStageObjectCmd::rename(columnId, newName, m_xsheetHandle);
   m_xsheetHandle->notifyXsheetChanged();
   m_col = -1;
   setText("");
@@ -1080,12 +1082,12 @@ void ColumnArea::DrawHeader::drawColumnName() const {
     if (levels.size() == 1) name = to_string((*levels.begin())->getName());
   }
   //  if (col < 0) name = std::string("Camera");
-
+/*
   // ZeraryFx columns store name elsewhere
   TXshZeraryFxColumn *zColumn = dynamic_cast<TXshZeraryFxColumn *>(column);
   if (zColumn && !isEmpty)
     name = ::to_string(zColumn->getZeraryColumnFx()->getZeraryFx()->getName());
-
+*/
   QRect columnName = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_NAME
                                        : PredefinedRect::LAYER_NAME)
                          .translated(orig);

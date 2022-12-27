@@ -343,6 +343,8 @@ void FunctionSheetColumnHeadViewer::paintEvent(QPaintEvent *e) {
     painter.fillRect(x0, y0, width, y3 - y0, getViewer()->getBGColor());
   }
 
+  int groupChannelCount = 0;
+  int firstX0           = 0;
   for (int c = c0; c <= c1; ++c) {
     FunctionTreeModel::Channel *channel = m_sheet->getChannel(c);
     if (!channel) {
@@ -363,14 +365,21 @@ void FunctionSheetColumnHeadViewer::paintEvent(QPaintEvent *e) {
 
     /*---- If the group is different from the before and after, flags are set
      * respectively ---*/
-    bool firstGroupColumn = prevGroup != group;
-    bool lastGroupColumn  = nextGroup != group;
+    bool firstGroupColumn = prevGroup != group || c == 0;
+    bool lastGroupColumn  = nextGroup != group || c == c1;
 
     /*--- The left and right coordinates of the current column ---*/
     int x0 = getViewer()->columnToX(c);
     int x1 = getViewer()->columnToX(c + 1) - 1;
     // Column width
     int width = x1 - x0 + 1;
+
+    if (firstGroupColumn) {
+      groupChannelCount = 0;
+      firstX0           = x0;
+    }
+
+    groupChannelCount++;
 
     QRect selectedRect = m_sheet->getSelectedCells();
     bool isSelected =
@@ -414,13 +423,13 @@ void FunctionSheetColumnHeadViewer::paintEvent(QPaintEvent *e) {
     }
 
     // group name
-    if (firstGroupColumn) {
-      int tmpwidth = (lastGroupColumn) ? width : width * 2;
+    if (lastGroupColumn) {
+      int tmpwidth = width * groupChannelCount;
       painter.setPen(getViewer()->getTextColor());
       if (group == currentGroup)
         painter.setPen(m_sheet->getViewer()->getCurrentTextColor());
-      text = group->getShortName();
-      painter.drawText(x0 + d, y0, tmpwidth - d, y1 - y0 + 1,
+      text = group->getLongName();
+      painter.drawText(firstX0 + d, y0, tmpwidth - d, y1 - y0 + 1,
                        Qt::AlignLeft | Qt::AlignVCenter, text);
     }
   }

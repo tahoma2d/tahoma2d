@@ -413,6 +413,8 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
 
   // enable to choose target pegbar with combobox
   m_currentStageObjectCombo = new QComboBox(this);
+  m_currentStageObjectCombo->setSizeAdjustPolicy(
+      QComboBox::SizeAdjustPolicy::AdjustToContents);
 
   TEnumProperty *activeAxisProp =
       dynamic_cast<TEnumProperty *>(m_pg->getProperty("Active Axis"));
@@ -989,7 +991,7 @@ void ArrowToolOptionsBox::updateStageObjectComboItems() {
     TStageObject *pegbar = xsh->getStageObject(id);
     QString itemName     = (id.isTable())
                            ? tr("Table")
-                           : QString::fromStdString(pegbar->getName());
+                           : QString::fromStdString(pegbar->getFullName());
     // store the item with ObjectId data
     m_currentStageObjectCombo->addItem(itemName, (int)id.getCode());
   }
@@ -1016,7 +1018,7 @@ void ArrowToolOptionsBox::syncCurrentStageObjectComboItem() {
   // column.)
   else {
     TStageObject *pegbar = m_xshHandle->getXsheet()->getStageObject(curObjId);
-    QString itemName     = QString::fromStdString(pegbar->getName());
+    QString itemName     = QString::fromStdString(pegbar->getFullName());
     std::string itemNameString = itemName.toStdString();
     // store the item with ObjectId data
     if (itemName == "Peg10000") itemName = "Path";
