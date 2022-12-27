@@ -2804,8 +2804,16 @@ public:
 
     NavigationTags *navTags = xsh->getNavigationTags();
     int nextFrame           = navTags->getNextTag(frame);
-    if (nextFrame != -1)
+    if (nextFrame != -1) {
       app->getCurrentXsheetViewer()->setCurrentRow(nextFrame);
+      TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+          TApp::instance()->getCurrentSelection()->getSelection());
+      if (cellSelection) {
+        int r0, r1, c0, c1;
+        cellSelection->getSelectedCells(r0, c0, r1, c1);
+        cellSelection->selectCells(nextFrame, c0, r1 + (nextFrame - r0), c1);
+      }
+    }
   }
 } NextTaggedFrame;
 
@@ -2822,8 +2830,16 @@ public:
 
     NavigationTags *navTags = xsh->getNavigationTags();
     int prevFrame           = navTags->getPrevTag(frame);
-    if (prevFrame != -1)
+    if (prevFrame != -1) {
       app->getCurrentXsheetViewer()->setCurrentRow(prevFrame);
+      TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
+          TApp::instance()->getCurrentSelection()->getSelection());
+      if (cellSelection) {
+        int r0, r1, c0, c1;
+        cellSelection->getSelectedCells(r0, c0, r1, c1);
+        cellSelection->selectCells(prevFrame, c0, r1 + (prevFrame - r0), c1);
+      }
+    }
   }
 } PrevTaggedFrame;
 
