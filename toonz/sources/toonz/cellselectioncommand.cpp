@@ -1124,6 +1124,7 @@ namespace {
 class DecreaseStepUndo final : public TUndo {
   int m_r0, m_c0, m_r1, m_c1;
   int m_rowsCount, m_colsCount;
+  bool m_singleRow = false;
 
   std::unique_ptr<TXshCell[]> m_cells;
   QMap<int, int> m_removedCells;
@@ -1147,11 +1148,18 @@ DecreaseStepUndo::DecreaseStepUndo(int r0, int c0, int r1, int c1)
     , m_c0(c0)
     , m_r1(r1)
     , m_c1(c1)
-    , m_rowsCount(m_r1 - m_r0 + 1)
-    , m_colsCount(m_c1 - m_c0 + 1)
-    , m_cells(new TXshCell[m_rowsCount * m_colsCount])
-    , m_newR1(m_r1) {
+    , m_colsCount(m_c1 - m_c0 + 1) {
   assert(m_cells);
+
+  if (r0 == r1) {
+    m_singleRow = true;
+    m_r1++;
+  }
+
+  m_newR1     = m_r1;
+  m_rowsCount = (m_r1 - m_r0 + 1);
+  m_cells =
+      std::unique_ptr<TXshCell[]>(new TXshCell[m_rowsCount * m_colsCount]);
 
   int k        = 0;
   TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
@@ -1162,11 +1170,11 @@ DecreaseStepUndo::DecreaseStepUndo(int r0, int c0, int r1, int c1)
     bool removed = false;
     m_cells[k++] = xsh->getCell(r0, c, false);
 
-    for (int r = r0 + 1; r <= r1; ++r) {
+    for (int r = m_r0 + 1; r <= m_r1; ++r) {
       const TXshCell &cell = xsh->getCell(r, c);
       m_cells[k++] = xsh->getCell(r, c, false);
 
-      if (prevCell == cell) {
+      if (prevCell == cell && !cell.isEmpty()) {
         if (!removed) {
           removed = true;
           m_removedCells[c]++;
@@ -1191,6 +1199,7 @@ void DecreaseStepUndo::redo() const {
 
   TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
       TApp::instance()->getCurrentSelection()->getSelection());
+  if (m_singleRow) m_newR1 = m_r0;
   if (cellSelection) cellSelection->selectCells(m_r0, m_c0, m_newR1, m_c1);
 }
 
@@ -1213,8 +1222,10 @@ void DecreaseStepUndo::undo() const {
 
   TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
       TApp::instance()->getCurrentSelection()->getSelection());
-  if (cellSelection)
-    cellSelection->selectCells(m_r0, m_c0, (m_r0 + (m_rowsCount - 1)), m_c1);
+  if (cellSelection) {
+    int newR1 = m_singleRow ? m_r0 : (m_r0 + (m_rowsCount - 1));
+    cellSelection->selectCells(m_r0, m_c0, newR1, m_c1);
+  }
 }
 
 }  // namespace
