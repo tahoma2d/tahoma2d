@@ -204,15 +204,21 @@ void FxColumnPainter::paint(QPainter *painter,
   painter->setPen(viewer->getTextColor());
   painter->setBrush(Qt::NoBrush);
 
+  bool showColumnNumber = Preferences::instance()->isShowColumnNumbersEnabled();
+  int rectAdj           = 0;
+  if (showColumnNumber) rectAdj = -20;
+
   QRectF columnNameRect;
   QRectF levelNameRect;
+  QRectF colNumberRect;
   if (m_parent->isNormalIconView()) {
-    columnNameRect = QRect(18, 2, 54, 14);
-    levelNameRect  = QRectF(18, 16, 54, 14);
+    columnNameRect = QRect(18, 2, 74 + rectAdj, 14);
+    levelNameRect  = QRectF(18, 16, 74, 14);
+    colNumberRect  = QRectF(72, 2, 20, 14);
   } else {
-    columnNameRect = QRect(4, 2, 78, 22);
-    levelNameRect  = QRectF(4, 26, 78, 22);
-
+    columnNameRect = QRect(4, 2, 94 + rectAdj, 22);
+    levelNameRect  = QRectF(4, 26, 94, 22);
+    colNumberRect  = QRectF(76, 2, 24, 22);
     QFont fnt = painter->font();
     fnt.setPixelSize(fnt.pixelSize() * 2);
     painter->setFont(fnt);
@@ -227,6 +233,12 @@ void FxColumnPainter::paint(QPainter *painter,
         elideText(m_name, painter->font(), columnNameRect.width());
     painter->drawText(columnNameRect, Qt::AlignLeft | Qt::AlignVCenter,
                       elidedName);
+
+    // column number
+    if (showColumnNumber) {
+      QString colNumber = QString::number(m_parent->getColumnIndex() + 1);
+      painter->drawText(colNumberRect, Qt::AlignCenter, colNumber);
+    }
   }
 
   // level name
@@ -429,18 +441,25 @@ void FxPalettePainter::paint(QPainter *painter,
   else
     painter->drawRoundRect(QRectF(0, 0, m_width, m_height), 10, 30);
 
+  bool showColumnNumber = Preferences::instance()->isShowColumnNumbersEnabled();
+  int rectAdj           = 0;
+  if (showColumnNumber) rectAdj = -20;
+
   // draw icon
   QRect paletteRect;
   QRectF idRect;
   QRectF palNameRect;
+  QRectF colNumberRect;
   if (m_parent->isNormalIconView()) {
-    paletteRect = QRect(-3, -1, 20, 16);
-    idRect      = QRectF(18, 2, 54, 14);
-    palNameRect = QRectF(18, 16, 54, 14);
+    paletteRect   = QRect(-3, -1, 20, 16);
+    idRect        = QRectF(18, 2, 74 + rectAdj, 14);
+    palNameRect   = QRectF(18, 16, 74, 14);
+    colNumberRect = QRectF(72, 2, 20, 14);
   } else {
-    paletteRect = QRect(4, -6, 35, 28);
-    idRect      = QRectF(25, 2, 49, 22);
-    palNameRect = QRectF(4, 26, 78, 22);
+    paletteRect   = QRect(4, -6, 35, 28);
+    idRect        = QRectF(25, 2, 69 + rectAdj, 22);
+    palNameRect   = QRectF(4, 26, 98, 22);
+    colNumberRect = QRectF(76, 2, 24, 22);
 
     QFont fnt = painter->font();
     fnt.setPixelSize(fnt.pixelSize() * 2);
@@ -461,9 +480,13 @@ void FxPalettePainter::paint(QPainter *painter,
     if (m_parent->isNormalIconView()) {
       QString elidedName = elideText(m_name, painter->font(), w);
       painter->drawText(idRect, Qt::AlignLeft | Qt::AlignVCenter, elidedName);
-    } else
-      painter->drawText(idRect, Qt::AlignRight | Qt::AlignVCenter,
-                        QString::number(m_parent->getColumnIndex() + 1));
+    }
+
+    // column number
+    if (showColumnNumber) {
+      QString colNumber = QString::number(m_parent->getColumnIndex() + 1);
+      painter->drawText(colNumberRect, Qt::AlignCenter, colNumber);
+    }
   }
 
   // level name
@@ -618,6 +641,10 @@ void FxPainter::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
   columnFont.setPixelSize(columnFont.pixelSize() - 1);
   painter->setFont(columnFont);
 
+  bool showColumnNumber = Preferences::instance()->isShowColumnNumbersEnabled();
+  int rectAdj           = 0;
+  if (showColumnNumber && m_type == eZeraryFx) rectAdj = -20;
+
   // draw fxId in the bottom part
   painter->setPen(viewer->getTextColor());
   QString label;
@@ -648,7 +675,7 @@ void FxPainter::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     if (!sceneFx) return;
     if (sceneFx->getCurrentFx() == m_parent->getFx())
       painter->setPen(viewer->getSelectedNodeTextColor());
-    QRectF rect(3, 2, m_width - 21, 14);
+    QRectF rect(3, 2, m_width + rectAdj - 21, 14);
     int w = rect.width();
     if (label == m_name) {
       rect.adjust(0, 0, 0, 14);
@@ -656,6 +683,13 @@ void FxPainter::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     }
     QString elidedName = elideText(m_name, painter->font(), w);
     painter->drawText(rect, Qt::TextWrapAnywhere, elidedName);
+
+    // column number
+    if (showColumnNumber && m_type == eZeraryFx) {
+      QString colNumber = QString::number(m_parent->getColumnIndex() + 1);
+      QRectF colNumberRect(72, 2, 20, 14);
+      painter->drawText(colNumberRect, Qt::AlignCenter, colNumber);
+    }
   }
 }
 
@@ -865,20 +899,21 @@ void FxPainter::paint_small(QPainter *painter) {
       QRectF rect(14, 2, 68, 22);
       int w              = rect.width();
       QString elidedName = elideText(m_name, painter->font(), w);
-      painter->drawText(rect, elidedName);
+      painter->drawText(rect, elidedName, Qt::AlignLeft | Qt::AlignVCenter);
     }
   } else {
-    painter->drawPixmap(16, 6, 38, 38,
+    painter->drawPixmap(22, 6, 44, 38,
                         FxIconPixmapManager::instance()->getFxIconPm(m_fxType));
   }
 
   // show column number on the right side of icon
-  if (m_type == eZeraryFx) {
+  if (Preferences::instance()->isShowColumnNumbersEnabled() &&
+      m_type == eZeraryFx) {
     FxSchematicZeraryNode *zeraryNode =
         dynamic_cast<FxSchematicZeraryNode *>(m_parent);
     if (zeraryNode) {
-      QRect idRect(30, 10, 46, 38);
-      painter->drawText(idRect, Qt::AlignRight | Qt::AlignBottom,
+      QRectF idRect(76, 2, 24, 22);
+      painter->drawText(idRect, Qt::AlignCenter,
                         QString::number(zeraryNode->getColumnIndex() + 1));
     }
   }
@@ -2412,14 +2447,14 @@ bool isMatteFx(std::string id) {
 
 FxSchematicNormalFxNode::FxSchematicNormalFxNode(FxSchematicScene *scene,
                                                  TFx *fx)
-    : FxSchematicNode(scene, fx, 90, 32, eNormalFx) {
+    : FxSchematicNode(scene, fx, 110, 32, eNormalFx) {
   SchematicViewer *viewer = scene->getSchematicViewer();
 
   checkDynamicInputPortSize();
 
   // resize if small scaled
   if (!m_isNormalIconView) {
-    setWidth(70);
+    setWidth(90);
     setHeight(50);
   }
 
@@ -2480,7 +2515,7 @@ FxSchematicNormalFxNode::FxSchematicNormalFxNode(FxSchematicScene *scene,
     break;
   }
 
-  m_nameItem = new SchematicName(this, 72, 20);  // for rename
+  m_nameItem = new SchematicName(this, 92, 20);  // for rename
   m_outDock  = new FxSchematicDock(this, "", 0, eFxOutputPort);
   m_linkDock = new FxSchematicDock(this, "", 0, eFxLinkPort);
 
@@ -2504,18 +2539,18 @@ FxSchematicNormalFxNode::FxSchematicNormalFxNode(FxSchematicScene *scene,
 
   if (m_isNormalIconView) {
     m_nameItem->setPos(1, -1);
-    m_outDock->setPos(72, 14);
-    m_linkDock->setPos(72, 7);
-    m_renderToggle->setPos(72, 0);
+    m_outDock->setPos(92, 14);
+    m_linkDock->setPos(92, 7);
+    m_renderToggle->setPos(92, 0);
   } else {
     QFont fnt = m_nameItem->font();
     fnt.setPixelSize(fnt.pixelSize() * 2);
     m_nameItem->setFont(fnt);
 
     m_nameItem->setPos(-1, 0);
-    m_outDock->setPos(60, 0);
-    m_linkDock->setPos(60, -5);
-    m_renderToggle->setPos(30, -5);
+    m_outDock->setPos(80, 0);
+    m_linkDock->setPos(80, -5);
+    m_renderToggle->setPos(50, -5);
   }
 
   m_nameItem->setZValue(3);
@@ -2721,24 +2756,24 @@ void FxSchematicNormalFxNode::resize(bool maximized) {}
 
 FxSchematicZeraryNode::FxSchematicZeraryNode(FxSchematicScene *scene,
                                              TZeraryColumnFx *fx)
-    : FxSchematicNode(scene, fx, 90, 32, eZeraryFx) {
+    : FxSchematicNode(scene, fx, 110, 32, eZeraryFx) {
   SchematicViewer *viewer = scene->getSchematicViewer();
 
   checkDynamicInputPortSize();
 
   if (!m_isNormalIconView) {
-    setWidth(90);
+    setWidth(110);
     setHeight(50);
   }
 
-  m_columnIndex = fx->getColumnIndex();
+  setColumnIndex(fx->getColumnIndex());
 
-  TXshColumn *column = scene->getXsheet()->getColumn(m_columnIndex);
+  TXshColumn *column = scene->getXsheet()->getColumn(getColumnIndex());
 
   TFx *zeraryFx     = fx->getZeraryFx();
-  TStageObjectId id = TStageObjectId::ColumnId(m_columnIndex);
+  TStageObjectId id = TStageObjectId::ColumnId(getColumnIndex());
   std::string name  = scene->getXsheet()->getStageObject(id)->getName();
-
+/*
   if (column) {
     // ZeraryFx columns store name elsewhere
     TXshZeraryFxColumn *zColumn = dynamic_cast<TXshZeraryFxColumn *>(column);
@@ -2746,13 +2781,13 @@ FxSchematicZeraryNode::FxSchematicZeraryNode(FxSchematicScene *scene,
       name =
           ::to_string(zColumn->getZeraryColumnFx()->getZeraryFx()->getName());
   }
-
+*/
   m_name = QString::fromStdString(name);
 
   setToolTip(QString("%1 : %2").arg(
       m_name, QString::fromStdWString(zeraryFx->getFxId())));
 
-  m_nameItem = new SchematicName(this, 72, 20);  // for rename
+  m_nameItem = new SchematicName(this, 92, 20);  // for rename
   m_outDock  = new FxSchematicDock(this, "", 0, eFxOutputPort);
   m_linkDock = new FxSchematicDock(this, "", 0, eFxLinkPort);
   m_renderToggle =
@@ -2794,10 +2829,10 @@ FxSchematicZeraryNode::FxSchematicZeraryNode(FxSchematicScene *scene,
   // define positions
   if (m_isNormalIconView) {
     m_nameItem->setPos(1, -1);
-    m_outDock->setPos(72, 14);
-    m_linkDock->setPos(72, m_height);
-    m_renderToggle->setPos(72, 0);
-    m_cameraStandToggle->setPos(72, 7);
+    m_outDock->setPos(92, 14);
+    m_linkDock->setPos(92, m_height);
+    m_renderToggle->setPos(92, 0);
+    m_cameraStandToggle->setPos(92, 7);
 
   } else {
     QFont fnt = m_nameItem->font();
@@ -2805,10 +2840,10 @@ FxSchematicZeraryNode::FxSchematicZeraryNode(FxSchematicScene *scene,
     m_nameItem->setFont(fnt);
 
     m_nameItem->setPos(-1, 0);
-    m_outDock->setPos(80, 0);
-    m_linkDock->setPos(80, -5);
-    m_renderToggle->setPos(50, -5);
-    m_cameraStandToggle->setPos(20, -5);
+    m_outDock->setPos(100, 0);
+    m_linkDock->setPos(100, -5);
+    m_renderToggle->setPos(70, -5);
+    m_cameraStandToggle->setPos(40, -5);
   }
 
   m_nameItem->setZValue(3);
@@ -2875,7 +2910,7 @@ void FxSchematicZeraryNode::paint(QPainter *painter,
 void FxSchematicZeraryNode::onRenderToggleClicked(bool toggled) {
   FxSchematicScene *fxScene = dynamic_cast<FxSchematicScene *>(scene());
   if (!fxScene) return;
-  TXshColumn *column = fxScene->getXsheet()->getColumn(m_columnIndex);
+  TXshColumn *column = fxScene->getXsheet()->getColumn(getColumnIndex());
   if (column) {
     column->setPreviewVisible(toggled);
     emit sceneChanged();
@@ -2888,7 +2923,7 @@ void FxSchematicZeraryNode::onRenderToggleClicked(bool toggled) {
 void FxSchematicZeraryNode::onCameraStandToggleClicked(int state) {
   FxSchematicScene *fxScene = dynamic_cast<FxSchematicScene *>(scene());
   if (!fxScene) return;
-  TXshColumn *column = fxScene->getXsheet()->getColumn(m_columnIndex);
+  TXshColumn *column = fxScene->getXsheet()->getColumn(getColumnIndex());
   if (column) {
     column->setCamstandVisible(!column->isCamstandVisible());
     // column->setCamstandVisible(toggled);
@@ -2918,10 +2953,10 @@ void FxSchematicZeraryNode::mouseDoubleClickEvent(
   QRectF nameArea(0, 0, m_width, 14);
   if (nameArea.contains(me->pos()) && me->modifiers() == Qt::ControlModifier) {
     FxSchematicScene *fxScene = dynamic_cast<FxSchematicScene *>(scene());
-    TXshColumn *column        = fxScene->getXsheet()->getColumn(m_columnIndex);
-    TStageObjectId id         = TStageObjectId::ColumnId(m_columnIndex);
-    std::string name = fxScene->getXsheet()->getStageObject(id)->getName();
-
+    TXshColumn *column = fxScene->getXsheet()->getColumn(getColumnIndex());
+    TStageObjectId id  = TStageObjectId::ColumnId(getColumnIndex());
+    std::string name   = fxScene->getXsheet()->getStageObject(id)->getName();
+    /*
     if (column) {
       // ZeraryFx columns store name elsewhere
       TXshZeraryFxColumn *zColumn = dynamic_cast<TXshZeraryFxColumn *>(column);
@@ -2929,7 +2964,7 @@ void FxSchematicZeraryNode::mouseDoubleClickEvent(
         name =
             ::to_string(zColumn->getZeraryColumnFx()->getZeraryFx()->getName());
     }
-
+*/
     m_name = QString::fromStdString(name);
 
     m_nameItem->setPlainText(m_name);
@@ -2969,15 +3004,17 @@ void FxSchematicZeraryNode::onNameChanged() {
   if (!fxScene) return;
 
   TXshZeraryFxColumn *zColumn = dynamic_cast<TXshZeraryFxColumn *>(
-      fxScene->getXsheet()->getColumn(m_columnIndex));
+      fxScene->getXsheet()->getColumn(getColumnIndex()));
   if (zColumn) {
     TFx *fx = zColumn->getZeraryColumnFx()->getZeraryFx();
     setToolTip(
         QString("%1 : %2").arg(m_name, QString::fromStdWString(fx->getFxId())));
   }
 
+  TStageObjectId id = TStageObjectId::ColumnId(getColumnIndex());
   TFxCommand::renameFx(m_fx.getPointer(), m_name.toStdWString(),
                        fxScene->getXsheetHandle());
+  TStageObjectCmd::rename(id, m_name.toStdString(), fxScene->getXsheetHandle());
   updateOutputDockToolTips(m_name);
   emit sceneChanged();
   update();
@@ -2995,23 +3032,23 @@ void FxSchematicZeraryNode::resize(bool maximized) {}
 
 FxSchematicColumnNode::FxSchematicColumnNode(FxSchematicScene *scene,
                                              TLevelColumnFx *fx)
-    : FxSchematicNode(scene, fx, 90, 32, eColumnFx)
+    : FxSchematicNode(scene, fx, 110, 32, eColumnFx)
     , m_isOpened(false)  // iwasawa
 {
   SchematicViewer *viewer = scene->getSchematicViewer();
 
   if (!m_isNormalIconView) {
-    setWidth(90);
+    setWidth(110);
     setHeight(50);
   }
-  m_columnIndex     = fx->getColumnIndex();
-  TStageObjectId id = TStageObjectId::ColumnId(m_columnIndex);
+  setColumnIndex(fx->getColumnIndex());
+  TStageObjectId id = TStageObjectId::ColumnId(getColumnIndex());
   std::string name  = scene->getXsheet()->getStageObject(id)->getName();
   m_name            = QString::fromStdString(name);
 
   m_resizeItem = new SchematicThumbnailToggle(
       this, fx->getAttributes()->isOpened());    //サムネイル矢印
-  m_nameItem = new SchematicName(this, 54, 20);  //リネーム部分
+  m_nameItem = new SchematicName(this, 74, 20);  //リネーム部分
   m_outDock  = new FxSchematicDock(this, "", 0, eFxOutputPort);  // Outポート
   m_renderToggle =
       new SchematicToggle(this, viewer->getSchematicPreviewButtonOnImage(),
@@ -3045,7 +3082,7 @@ FxSchematicColumnNode::FxSchematicColumnNode(FxSchematicScene *scene,
   addPort(0, m_outDock->getPort());
 
   m_nameItem->hide();
-  TXshColumn *column = scene->getXsheet()->getColumn(m_columnIndex);
+  TXshColumn *column = scene->getXsheet()->getColumn(getColumnIndex());
   if (column) {
     m_renderToggle->setIsActive(column->isPreviewVisible());
     m_cameraStandToggle->setState(
@@ -3059,15 +3096,15 @@ FxSchematicColumnNode::FxSchematicColumnNode(FxSchematicScene *scene,
   if (m_isNormalIconView) {
     m_resizeItem->setPos(2, 0);
     m_nameItem->setPos(16, -1);
-    m_outDock->setPos(72, 14);
-    m_renderToggle->setPos(72, 0);
-    m_cameraStandToggle->setPos(72, 7);
+    m_outDock->setPos(92, 14);
+    m_renderToggle->setPos(92, 0);
+    m_cameraStandToggle->setPos(92, 7);
   } else {
     m_resizeItem->hide();
     m_nameItem->setPos(0, 0);
-    m_outDock->setPos(80, 0);
-    m_renderToggle->setPos(60, -5);
-    m_cameraStandToggle->setPos(30, -5);
+    m_outDock->setPos(100, 0);
+    m_renderToggle->setPos(80, -5);
+    m_cameraStandToggle->setPos(50, -5);
   }
 
   m_resizeItem->setZValue(2);
@@ -3118,7 +3155,7 @@ void FxSchematicColumnNode::paint(QPainter *painter,
 void FxSchematicColumnNode::onRenderToggleClicked(bool toggled) {
   FxSchematicScene *fxScene = dynamic_cast<FxSchematicScene *>(scene());
   if (!fxScene) return;
-  TXshColumn *column = fxScene->getXsheet()->getColumn(m_columnIndex);
+  TXshColumn *column = fxScene->getXsheet()->getColumn(getColumnIndex());
   if (column) {
     column->setPreviewVisible(toggled);
     emit sceneChanged();
@@ -3131,7 +3168,7 @@ void FxSchematicColumnNode::onRenderToggleClicked(bool toggled) {
 void FxSchematicColumnNode::onCameraStandToggleClicked(int state) {
   FxSchematicScene *fxScene = dynamic_cast<FxSchematicScene *>(scene());
   if (!fxScene) return;
-  TXshColumn *column = fxScene->getXsheet()->getColumn(m_columnIndex);
+  TXshColumn *column = fxScene->getXsheet()->getColumn(getColumnIndex());
   if (column) {
     column->setCamstandVisible(!column->isCamstandVisible());
     // column->setCamstandVisible(toggled);
@@ -3146,11 +3183,11 @@ QPixmap FxSchematicColumnNode::getPixmap() {
   FxSchematicScene *fxScene = dynamic_cast<FxSchematicScene *>(scene());
   if (!fxScene) return QPixmap();
   TXsheet *xsh = fxScene->getXsheet();
-  if (xsh && !xsh->isColumnEmpty(m_columnIndex)) {
+  if (xsh && !xsh->isColumnEmpty(getColumnIndex())) {
     int r0, r1;
-    xsh->getCellRange(m_columnIndex, r0, r1);
+    xsh->getCellRange(getColumnIndex(), r0, r1);
     if (r1 >= r0) {
-      TXshCell cell = xsh->getCell(r0, m_columnIndex);
+      TXshCell cell = xsh->getCell(r0, getColumnIndex());
       TXshLevel *xl = cell.m_level.getPointer();
       if (xl)
         return IconGenerator::instance()->getIcon(xl, cell.m_frameId, false);
@@ -3171,19 +3208,19 @@ void FxSchematicColumnNode::getLevelTypeAndName(int &ltype,
   }
 
   TXsheet *xsh = fxScene->getXsheet();
-  if (xsh && !xsh->isColumnEmpty(m_columnIndex)) {
+  if (xsh && !xsh->isColumnEmpty(getColumnIndex())) {
     int r0, r1;
-    xsh->getCellRange(m_columnIndex, r0, r1);
+    xsh->getCellRange(getColumnIndex(), r0, r1);
     if (r1 >= r0) {
-      TXshCell cell = xsh->getCell(r0, m_columnIndex);
+      TXshCell cell = xsh->getCell(r0, getColumnIndex());
       TXshLevel *xl = cell.m_level.getPointer();
       if (xl) {
         ltype = cell.m_level->getType();
 
         // for Zerary Fx, display FxId
         if (ltype == ZERARYFX_XSHLEVEL) {
-          TXshZeraryFxColumn *zColumn =
-              dynamic_cast<TXshZeraryFxColumn *>(xsh->getColumn(m_columnIndex));
+          TXshZeraryFxColumn *zColumn = dynamic_cast<TXshZeraryFxColumn *>(
+              xsh->getColumn(getColumnIndex()));
           if (zColumn) {
             TFx *fx   = zColumn->getZeraryColumnFx()->getZeraryFx();
             levelName = QString::fromStdWString(fx->getFxId());
@@ -3229,7 +3266,7 @@ void FxSchematicColumnNode::onNameChanged() {
 
   setFlag(QGraphicsItem::ItemIsSelectable, true);
 
-  TStageObjectId id = TStageObjectId::ColumnId(m_columnIndex);
+  TStageObjectId id = TStageObjectId::ColumnId(getColumnIndex());
   renameObject(id, m_name.toStdString());
   updateOutputDockToolTips(m_name);
   emit sceneChanged();
@@ -3248,7 +3285,7 @@ void FxSchematicColumnNode::mouseDoubleClickEvent(
     QGraphicsSceneMouseEvent *me) {
   QRectF nameArea(14, 0, m_width - 15, 14);
   if (nameArea.contains(me->pos()) && me->modifiers() == Qt::ControlModifier) {
-    TStageObjectId id         = TStageObjectId::ColumnId(m_columnIndex);
+    TStageObjectId id         = TStageObjectId::ColumnId(getColumnIndex());
     FxSchematicScene *fxScene = dynamic_cast<FxSchematicScene *>(scene());
     if (!fxScene) return;
     TStageObject *pegbar = fxScene->getXsheet()->getStageObject(id);
@@ -3295,21 +3332,21 @@ void FxSchematicColumnNode::renameObject(const TStageObjectId &id,
 
 FxSchematicPaletteNode::FxSchematicPaletteNode(FxSchematicScene *scene,
                                                TPaletteColumnFx *fx)
-    : FxSchematicNode(scene, fx, 90, 32, eColumnFx) {
+    : FxSchematicNode(scene, fx, 110, 32, eColumnFx) {
   SchematicViewer *viewer = scene->getSchematicViewer();
 
   if (!m_isNormalIconView) {
-    setWidth(90);
+    setWidth(110);
     setHeight(50);
   }
-  m_columnIndex     = fx->getColumnIndex();
-  TStageObjectId id = TStageObjectId::ColumnId(m_columnIndex);
+  setColumnIndex(fx->getColumnIndex());
+  TStageObjectId id = TStageObjectId::ColumnId(getColumnIndex());
   std::string name  = scene->getXsheet()->getStageObject(id)->getName();
   m_name            = QString::fromStdString(name);
 
   m_linkedNode = 0;
   m_linkDock   = 0;
-  m_nameItem   = new SchematicName(this, 54, 20);  // for rename
+  m_nameItem   = new SchematicName(this, 74, 20);  // for rename
   m_outDock    = new FxSchematicDock(this, "", 0, eFxOutputPort);
   m_renderToggle =
       new SchematicToggle(this, viewer->getSchematicPreviewButtonOnImage(),
@@ -3328,22 +3365,22 @@ FxSchematicPaletteNode::FxSchematicPaletteNode(FxSchematicScene *scene,
 
   addPort(0, m_outDock->getPort());
 
-  TXshColumn *column = scene->getXsheet()->getColumn(m_columnIndex);
+  TXshColumn *column = scene->getXsheet()->getColumn(getColumnIndex());
   if (column) m_renderToggle->setIsActive(column->isPreviewVisible());
 
   // set geometry
   if (m_isNormalIconView) {
     m_nameItem->setPos(19, -1);
-    m_outDock->setPos(72, 14);
-    m_renderToggle->setPos(72, 0);
+    m_outDock->setPos(92, 14);
+    m_renderToggle->setPos(92, 0);
   } else {
     QFont fnt = m_nameItem->font();
     fnt.setPixelSize(fnt.pixelSize() * 2);
     m_nameItem->setFont(fnt);
 
     m_nameItem->setPos(-1, 0);
-    m_outDock->setPos(80, 0);
-    m_renderToggle->setPos(60, -5);
+    m_outDock->setPos(100, 0);
+    m_renderToggle->setPos(80, -5);
   }
 
   m_nameItem->setZValue(2);
@@ -3369,11 +3406,11 @@ QString FxSchematicPaletteNode::getPaletteName() {
   }
 
   TXsheet *xsh = fxScene->getXsheet();
-  if (xsh && !xsh->isColumnEmpty(m_columnIndex)) {
+  if (xsh && !xsh->isColumnEmpty(getColumnIndex())) {
     int r0, r1;
-    xsh->getCellRange(m_columnIndex, r0, r1);
+    xsh->getCellRange(getColumnIndex(), r0, r1);
     if (r1 >= r0) {
-      TXshCell cell = xsh->getCell(r0, m_columnIndex);
+      TXshCell cell = xsh->getCell(r0, getColumnIndex());
       TXshLevel *xl = cell.m_level.getPointer();
       if (xl) {
         return QString::fromStdWString(xl->getName());
@@ -3407,7 +3444,7 @@ void FxSchematicPaletteNode::paint(QPainter *painter,
 void FxSchematicPaletteNode::onRenderToggleClicked(bool toggled) {
   FxSchematicScene *fxScene = dynamic_cast<FxSchematicScene *>(scene());
   if (!fxScene) return;
-  TXshColumn *column = fxScene->getXsheet()->getColumn(m_columnIndex);
+  TXshColumn *column = fxScene->getXsheet()->getColumn(getColumnIndex());
   if (column) {
     column->setPreviewVisible(toggled);
     emit sceneChanged();
@@ -3429,7 +3466,7 @@ void FxSchematicPaletteNode::onNameChanged() {
   setToolTip(QString("%1 : %2").arg(m_name, paletteName));
   setFlag(QGraphicsItem::ItemIsSelectable, true);
 
-  TStageObjectId id = TStageObjectId::ColumnId(m_columnIndex);
+  TStageObjectId id = TStageObjectId::ColumnId(getColumnIndex());
   renameObject(id, m_name.toStdString());
   updateOutputDockToolTips(m_name);
   emit sceneChanged();

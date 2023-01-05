@@ -9,6 +9,7 @@
 #include "toonz/tcolumnfxset.h"
 #include "toonz/txshzeraryfxcolumn.h"
 #include "toonz/tstageobjecttree.h"
+#include "toonz/tstageobjectcmd.h"
 #include "toonz/txshlevelcolumn.h"
 #include "toonz/txshpalettecolumn.h"
 #include "toonz/toonzscene.h"
@@ -843,6 +844,14 @@ void InsertFxUndo::redo() const {
   if (m_insertedColumn) {
     FxCommandUndo::insertColumn(xsh, m_insertedColumn.getPointer(), m_colIdx,
                                 m_columnReplacesHole, true);
+
+    TStageObjectId columnId = TStageObjectId::ColumnId(m_colIdx);
+    std::wstring wname =
+        m_insertedColumn->getZeraryColumnFx()->getZeraryFx()->getName();
+    std::string str(wname.begin(), wname.end());
+
+    TStageObjectCmd::rename(columnId, str, m_app->getCurrentXsheet());
+
     return;
   }
 

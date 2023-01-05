@@ -1205,6 +1205,7 @@ void FxSchematicScene::onSelectionChanged() {
 
 void FxSchematicScene::reorderScene() {
   int step = m_gridDimension == eLarge ? 100 : 50;
+  if (!m_isNormalIconView) step += 10;
   m_placedFxs.clear();
   QPointF sceneCenter = sceneRect().center();
   double minY         = sceneCenter.y();
@@ -1297,7 +1298,7 @@ void FxSchematicScene::reorderScene() {
     TFx *fx = fxSet->getFx(i);
     if (m_placedFxs.contains(fx)) continue;
 
-    placeNodeAndParents(fx, (sceneCenter.x() + 120), maxX, minY);
+    placeNodeAndParents(fx, (sceneCenter.x() + 140), maxX, minY);
     y -= step;
     minY = std::min(y, minY);
   }
@@ -1315,8 +1316,8 @@ void FxSchematicScene::removeRetroLinks(TFx *fx, double &maxX) {
     TPointD fxPos   = fx->getAttributes()->getDagNodePos();
     if (inFxPos != TConst::nowhere && fxPos != TConst::nowhere &&
         fxPos.x <= inFxPos.x) {
-      while (fxPos.x <= inFxPos.x) fxPos.x += 150;
-      maxX = std::max(fxPos.x + 150, maxX);
+      while (fxPos.x <= inFxPos.x) fxPos.x += 170;
+      maxX = std::max(fxPos.x + 170, maxX);
       fx->getAttributes()->setDagNodePos(fxPos);
       for (int j = 0; j < fx->getOutputConnectionCount(); j++) {
         TFx *outFx = fx->getOutputConnection(j)->getOwnerFx();
@@ -1331,6 +1332,7 @@ void FxSchematicScene::removeRetroLinks(TFx *fx, double &maxX) {
 void FxSchematicScene::placeNodeAndParents(TFx *fx, double x, double &maxX,
                                            double &minY) {
   int step = m_gridDimension == eLarge ? 100 : 50;
+  if (!m_isNormalIconView) step += 10;
   if (!fx) return;
   m_placedFxs.append(fx);
   if (fx->getFxType() == "STD_particlesFx" ||
@@ -1364,7 +1366,7 @@ void FxSchematicScene::placeNodeAndParents(TFx *fx, double x, double &maxX,
   } else
     fx->getAttributes()->setDagNodePos(TPointD(x, y));
   if (fx->getOutputConnectionCount() == 0) minY -= step;
-  x += 120;
+  x += 140;
   maxX = std::max(maxX, x);
   int i;
   for (i = 0; i < fx->getOutputConnectionCount(); i++) {

@@ -1325,7 +1325,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {showQuickToolbar, tr("Show Quick Toolbar")},
       {expandFunctionHeader,
        tr("Expand Function Editor Header to Match Quick Toolbar Height*")},
-      {showColumnNumbers, tr("Show Column Numbers in Column Headers")},
+      {showColumnNumbers, tr("Show Column Numbers")},
       {parentColorsInXsheetColumn,
        tr("Show Column Parent's Color in the Xsheet")},
       {highlightLineEverySecond, tr("Highlight Line Every Second")},

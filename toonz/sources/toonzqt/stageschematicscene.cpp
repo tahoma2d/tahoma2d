@@ -727,7 +727,7 @@ void StageSchematicScene::placeNodes() {
   for (i = 0; i < pegTree->getSplineCount(); i++) {
     TStageObjectSpline *spline = pegTree->getSpline(i);
     spline->setDagNodePos(TPointD(maxXPos, yFirstPos + step));
-    maxXPos += (m_showLetterOnPortFlag) ? 150 : 120;
+    maxXPos += (m_showLetterOnPortFlag) ? 170 : 140;
   }
 
   // delete the tree
@@ -783,7 +783,7 @@ void StageSchematicScene::makeTree(TreeStageNode *treeNode) {
 void StageSchematicScene::placeChildren(TreeStageNode *treeNode, double &xPos,
                                         double &yPos, bool isCameraTree) {
   int i;
-  xPos += (m_showLetterOnPortFlag) ? 150 : 120;
+  xPos += (m_showLetterOnPortFlag) ? 170 : 140;
   double xChildPos = xPos;
   double xRefPos   = xPos;
   bool firstChild  = true;
@@ -815,7 +815,7 @@ void StageSchematicScene::placeNode(StageSchematicNode *node) {
   double xPos      = xFirstPos;
   double yPos      = yFirstPos;
   int step         = m_gridDimension == eLarge ? 100 : 50;
-  int hStep        = (m_showLetterOnPortFlag) ? 150 : 120;
+  int hStep        = (m_showLetterOnPortFlag) ? 170 : 140;
 
   TStageObjectTree *pegTree = m_xshHandle->getXsheet()->getStageObjectTree();
   QRectF nodeRect           = node->boundingRect();
@@ -923,7 +923,7 @@ void StageSchematicScene::placeSplineNode(
     StageSchematicSplineNode *splineNode) {
   double xFirstPos           = m_firstPos.x - 500;
   double yFirstPos           = m_firstPos.y + 500;
-  int hStep                  = (m_showLetterOnPortFlag) ? 150 : 120;
+  int hStep                  = (m_showLetterOnPortFlag) ? 170 : 140;
   double xPos                = xFirstPos + (hStep * 2);
   int step                   = m_gridDimension == eLarge ? 100 : 50;
   double yPos                = yFirstPos + step;

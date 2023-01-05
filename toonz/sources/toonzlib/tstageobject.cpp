@@ -13,6 +13,7 @@
 #include "toonz/tcamera.h"
 #include "toonz/doubleparamcmd.h"
 #include "toonz/tpinnedrangeset.h"
+#include "toonz/preferences.h"
 
 // TnzExt includes
 #include "ext/plasticskeleton.h"
@@ -557,13 +558,20 @@ string TStageObject::getName() const {
 string TStageObject::getFullName() const {
   string name = getName();
   if (m_id.isColumn()) {
-    if (name.find("Col") == 0 && name.length() > 3 &&
-        name.find_first_not_of("0123456789", 3) == string::npos)
-      return name;
-    else
-      return name + " (" + std::to_string(m_id.getIndex() + 1) + ")";
-  } else
-    return name;
+    if (!Preferences::instance()->isShowColumnNumbersEnabled()) return name;
+
+    if (name.find("Col") != 0 ||
+        (name.length() > 3 &&
+         name.find_first_not_of("0123456789", 3) != string::npos))
+      return name + " (Col" + std::to_string(m_id.getIndex() + 1) + ")";
+  } else if (m_id.isPegbar()) {
+    if (name.find("Peg") != 0 ||
+        (name.length() > 3 &&
+         name.find_first_not_of("0123456789", 3) != string::npos))
+      return name + " (Peg" + std::to_string(m_id.getIndex() + 1) + ")";
+  }
+
+  return name;
 }
 
 //-----------------------------------------------------------------------------

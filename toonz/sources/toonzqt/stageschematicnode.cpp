@@ -180,18 +180,30 @@ void ColumnPainter::paint(QPainter *painter,
         dynamic_cast<StageSchematicScene *>(scene());
     if (!stageScene) return;
 
+    bool showColumnNumber =
+        Preferences::instance()->isShowColumnNumbersEnabled();
+    int rectAdj                   = 0;
+    if (showColumnNumber) rectAdj = -20;
+
     // if this is current object
     if (stageScene->getCurrentObject() == m_parent->getStageObject()->getId())
       painter->setPen(viewer->getSelectedNodeTextColor());
-    QRectF columnNameRect(18, 2, 54, 14);
+    QRectF columnNameRect(18, 2, 74 + rectAdj, 14);
     QString elidedName =
         elideText(m_name, painter->font(), columnNameRect.width());
     painter->drawText(columnNameRect, Qt::AlignLeft | Qt::AlignVCenter,
                       elidedName);
+
+    // column number
+    if (showColumnNumber) {
+      QString colNumber = QString::number(m_parent->getColumnNumber());
+      QRectF colNumberRect(72, 2, 20, 14);
+      painter->drawText(colNumberRect, Qt::AlignCenter, colNumber);
+    }
   }
 
   // level names
-  QRectF levelNameRect(18, 16, 54, 14);
+  QRectF levelNameRect(18, 16, 74, 14);
   QString elidedName =
       elideText(levelName, painter->font(), levelNameRect.width());
   painter->drawText(levelNameRect, Qt::AlignLeft | Qt::AlignVCenter,
@@ -1698,7 +1710,7 @@ void StageSchematicTableNode::paint(QPainter *painter,
 
 StageSchematicColumnNode::StageSchematicColumnNode(StageSchematicScene *scene,
                                                    TStageObject *pegbar)
-    : StageSchematicNode(scene, pegbar, 90, 32), m_isOpened(true) {
+    : StageSchematicNode(scene, pegbar, 110, 32), m_isOpened(true) {
   bool ret = true;
 
   assert(pegbar && pegbar->getId().isColumn());
@@ -1709,7 +1721,7 @@ StageSchematicColumnNode::StageSchematicColumnNode(StageSchematicScene *scene,
       scene->getXsheet()->getColumn(pegbar->getId().getIndex());
 
   std::string name = m_stageObject->getName();
-
+/*
   if (column) {
     // ZeraryFx columns store name elsewhere
     TXshZeraryFxColumn *zColumn = dynamic_cast<TXshZeraryFxColumn *>(column);
@@ -1717,7 +1729,7 @@ StageSchematicColumnNode::StageSchematicColumnNode(StageSchematicScene *scene,
       name =
           ::to_string(zColumn->getZeraryColumnFx()->getZeraryFx()->getName());
   }
-
+*/
   m_name       = QString::fromStdString(name);
   m_resizeItem = new SchematicThumbnailToggle(this, m_stageObject->isOpened());
   m_resizeItem->setPos(2, 0);
@@ -1725,7 +1737,7 @@ StageSchematicColumnNode::StageSchematicColumnNode(StageSchematicScene *scene,
   ret = ret && connect(m_resizeItem, SIGNAL(toggled(bool)), this,
                        SLOT(onChangedSize(bool)));
 
-  m_nameItem = new SchematicName(this, 54, 20);
+  m_nameItem = new SchematicName(this, 74, 20);
   m_nameItem->setDefaultTextColor(viewer->getTextColor());
   m_nameItem->setName(m_name);
   m_nameItem->setPos(16, -1);
@@ -1745,7 +1757,7 @@ StageSchematicColumnNode::StageSchematicColumnNode(StageSchematicScene *scene,
   if (scene) {
     if (column) m_renderToggle->setIsActive(column->isPreviewVisible());
 
-    m_renderToggle->setPos(72, 0);
+    m_renderToggle->setPos(92, 0);
     m_renderToggle->setZValue(2);
 
     m_cameraStandToggle = new SchematicToggle(
@@ -1762,7 +1774,7 @@ StageSchematicColumnNode::StageSchematicColumnNode(StageSchematicScene *scene,
                                         ? (column->getOpacity() < 255 ? 2 : 1)
                                         : 0);
 
-    m_cameraStandToggle->setPos(72, 7);
+    m_cameraStandToggle->setPos(92, 7);
     m_cameraStandToggle->setZValue(2);
   }
 
@@ -1811,21 +1823,6 @@ void StageSchematicColumnNode::paint(QPainter *painter,
                                      const QStyleOptionGraphicsItem *option,
                                      QWidget *widget) {
   StageSchematicNode::paint(painter, option, widget);
-  TStageObjectId id = m_stageObject->getId();
-  assert(id.isColumn());
-  QString colNumber = QString::number(id.getIndex() + 1);
-  QFont font("Verdana", 8);
-  painter->setFont(font);
-  StageSchematicScene *scene = dynamic_cast<StageSchematicScene *>(m_scene);
-  SchematicViewer *viewer    = scene->getSchematicViewer();
-  if (scene && scene->getCurrentObject() == id)
-    painter->setPen(viewer->getSelectedNodeTextColor());
-  QFontMetrics metrix(font);
-  int srcWidth  = metrix.width(colNumber);
-  int srcHeight = metrix.height();
-  QPointF pos(m_cameraStandToggle->pos() -
-              QPointF(srcWidth + 1, -srcHeight + 3));
-  painter->drawText(pos, colNumber);
 }
 
 //--------------------------------------------------------
@@ -1906,6 +1903,14 @@ void StageSchematicColumnNode::getLevelTypeAndName(int &ltype,
   levelName = QString();
   return;
 }
+
+//--------------------------------------------------------
+
+int StageSchematicColumnNode::getColumnNumber() {
+  TStageObjectId id = m_stageObject->getId();
+  return id.getIndex() + 1;
+}
+
 //--------------------------------------------------------
 
 void StageSchematicColumnNode::onChangedSize(bool expand) {
@@ -1940,13 +1945,14 @@ void StageSchematicColumnNode::mouseDoubleClickEvent(
 
     TStageObjectId id  = m_stageObject->getId();
     TXshColumn *column = stageScene->getXsheet()->getColumn(id.getIndex());
+/*
     if (column) {
       TXshZeraryFxColumn *fxColumn = dynamic_cast<TXshZeraryFxColumn *>(column);
       if (fxColumn)
         name = ::to_string(
             fxColumn->getZeraryColumnFx()->getZeraryFx()->getName());
     }
-
+*/
     m_name = QString::fromStdString(name);
     m_nameItem->setPlainText(m_name);
     m_nameItem->show();
@@ -1979,11 +1985,9 @@ void StageSchematicColumnNode::onNameChanged() {
   if (fxColumn)
     TFxCommand::renameFx(fxColumn->getZeraryColumnFx(), m_name.toStdWString(),
                          stageScene->getXsheetHandle());
-  else {
-    TStageObjectCmd::rename(id, m_name.toStdString(),
-                            stageScene->getXsheetHandle());
-    update();
-  }
+  TStageObjectCmd::rename(id, m_name.toStdString(),
+                          stageScene->getXsheetHandle());
+  update();
 }
 
 //--------------------------------------------------------

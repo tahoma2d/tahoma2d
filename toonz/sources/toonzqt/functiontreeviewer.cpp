@@ -272,12 +272,9 @@ QVariant StageObjectChannelGroup::data(int role) const {
   if (role == Qt::DisplayRole) {
     std::string name = (m_stageObject->getId().isTable())
                            ? FunctionTreeView::tr("Table").toStdString()
-                           : m_stageObject->getName();
-    std::string id = m_stageObject->getId().toString();
+                           : m_stageObject->getFullName();
 
-    return (name == id) ? QString::fromStdString(name)
-                        : QString::fromStdString(name + " (" + id + ")");
-
+    return QString::fromStdString(name);
   } else if (role == Qt::ForegroundRole) {
     FunctionTreeModel *model = dynamic_cast<FunctionTreeModel *>(getModel());
     if (!model)
@@ -345,7 +342,9 @@ QString FxChannelGroup::getShortName() const {
 //-----------------------------------------------------------------------------
 
 QString FxChannelGroup::getLongName() const {
-  return QString::fromStdWString(m_fx->getFxId());
+  std::wstring name = m_fx->getName();
+  std::wstring id   = m_fx->getFxId();
+  return QString::fromStdWString(id + L" (" + name + L")");
 }
 
 //-----------------------------------------------------------------------------

@@ -484,6 +484,7 @@ public:
   void resize(bool maximized);
 
   void getLevelTypeAndName(int &, QString &);
+  int getColumnNumber();
 
 private:
   void updatePortsPosition();
