@@ -862,9 +862,9 @@ void TRasterFx::compute(TTile &tile, double frame,
                             tfloor(fracInfoTranslation.y));
   TPointD newTilePos(intTilePos.x - intInfoTranslation.x,
                      intTilePos.y - intInfoTranslation.y);
-  /*-- If the position of the input tile has a decimal value --*/
+  /*-- If the position of the input tile had a fractional value --*/
   if (tile.m_pos != newTilePos) {
-    /*-- Add misalignment to the affine matrix of Render Settings --*/
+    /*-- Add the offset to the affine matrix in RenderSettings --*/
     TRenderSettings newInfo(info);
     newInfo.m_affine.a13 = fracInfoTranslation.x - intInfoTranslation.x;
     newInfo.m_affine.a23 = fracInfoTranslation.y - intInfoTranslation.y;
@@ -899,7 +899,8 @@ void TRasterFx::compute(TTile &tile, double frame,
   if (myIsEmpty(interestingRect)) return;
 
   TDimension tileSize = tile.getRaster()->getSize();
-  // 縺ｲ縺ｨ縺､蜑阪・繝弱・繝峨′蟆乗焚轤ｹ蟇ｾ蠢懊＠縺ｦ縺・ｋ縺九←縺・°縺ｫ繧医▲縺ｦ縲∝・縺｣縺ｦ縺上ｋ繝ｩ繧ｹ繧ｿ縺ｮ蠖｢蠑上′逡ｰ縺ｪ繧・
+  // The format of the incoming raster depends on whether the previous node
+  // supports floating point rendering or not.
   TRaster32P ras32 = tile.getRaster();
   TRaster64P ras64 = tile.getRaster();
   TRasterFP rasF   = tile.getRaster();
@@ -914,7 +915,7 @@ void TRasterFx::compute(TTile &tile, double frame,
       tile.setRaster(rasAuxF);
     }
   }
-  // linear蛹・
+  // convert to linear
   bool isLinear = tile.getRaster()->isLinear();
   bool computeInLinear =
       toBeComputedInLinearColorSpace(info.m_linearColorSpace, isLinear);
@@ -954,7 +955,7 @@ void TRasterFx::compute(TTile &tile, double frame,
   FxResourceBuilder rBuilder(alias, this, info, frame);
   rBuilder.build(interestingTile);
 
-  // linear蛹・
+  // convert to linear
   if (isLinear != computeInLinear) {
     if (isLinear)  //  && !computeInLinear
       TRop::toLinearRGB(tile.getRaster(), info.m_colorSpaceGamma);

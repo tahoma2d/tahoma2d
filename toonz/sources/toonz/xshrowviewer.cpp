@@ -41,11 +41,7 @@ namespace XsheetGUI {
 // RowArea
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 RowArea::RowArea(XsheetViewer *parent, Qt::WindowFlags flags)
-#else
-RowArea::RowArea(XsheetViewer *parent, Qt::WFlags flags)
-#endif
     : QWidget(parent, flags)
     , m_viewer(parent)
     , m_row(-1)
@@ -145,13 +141,12 @@ void RowArea::drawRows(QPainter &p, int r0, int r1) {
     bool isAfterSecMarkers =
         secDistance > 0 && ((r - offset) % secDistance) == 0 && r != 0;
 
-    QColor color = (isAfterSecMarkers)
-                       ? m_viewer->getSecMarkerLineColor()
-                       : (isAfterMarkers) ? m_viewer->getMarkerLineColor()
-                                          : m_viewer->getLightLineColor();
-    double lineWidth = (isAfterSecMarkers)
-                           ? 3.
-                           : (secDistance > 0 && isAfterMarkers) ? 2. : 1.;
+    QColor color     = (isAfterSecMarkers) ? m_viewer->getSecMarkerLineColor()
+                       : (isAfterMarkers)  ? m_viewer->getMarkerLineColor()
+                                           : m_viewer->getLightLineColor();
+    double lineWidth = (isAfterSecMarkers)                   ? 3.
+                       : (secDistance > 0 && isAfterMarkers) ? 2.
+                                                             : 1.;
 
     p.setPen(QPen(color, lineWidth, Qt::SolidLine, Qt::FlatCap));
     // p.setPen(color);
@@ -768,8 +763,8 @@ void RowArea::drawShiftTraceMarker(QPainter &p) {
 
   QPoint frameAdj = m_viewer->getFrameZoomAdjustment();
   int frameAdj_i  = (m_viewer->orientation()->isVerticalTimeline())
-                       ? frameAdj.y()
-                       : frameAdj.x();
+                        ? frameAdj.y()
+                        : frameAdj.x();
 
   // get onion colors
   TPixel frontPixel, backPixel;

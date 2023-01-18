@@ -299,7 +299,11 @@ void InfoViewerImp::setGeneralFileInfo(const TFilePath &path) {
   setVal(eFileType, getTypeString());
   if (fi.owner() != "") setVal(eOwner, fi.owner());
   setVal(eSize, fileSizeString(fi.size()));
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
+  setVal(eCreated, fi.birthTime().toString());
+#else
   setVal(eCreated, fi.created().toString());
+#endif
   setVal(eModified, fi.lastModified().toString());
   setVal(eLastAccess, fi.lastRead().toString());
   m_separator1.show();

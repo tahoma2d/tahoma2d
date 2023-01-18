@@ -531,22 +531,14 @@ void StageSchematicScene::updateNestedGroupEditors(StageSchematicNode *node,
       if (rect.isEmpty())
         rect = app;
       else
-#if QT_VERSION >= 0x050000
         rect = rect.united(app);
-#else
-        rect = rect.unite(app);
-#endif
     }
   }
   node->setPos(newPos);
   for (i = 0; i < groupIdStack.size(); i++) {
     if (!m_groupEditorTable.contains(groupIdStack[i])) continue;
-#if QT_VERSION >= 0x050000
     rect =
         rect.united(m_groupEditorTable[groupIdStack[i]]->sceneBoundingRect());
-#else
-    rect = rect.unite(m_groupEditorTable[groupIdStack[i]]->sceneBoundingRect());
-#endif
     QRectF app = m_groupEditorTable[groupIdStack[i]]->boundingSceneRect();
     if (m_groupEditorTable[groupIdStack[i]]->scenePos() != app.topLeft())
       m_groupEditorTable[groupIdStack[i]]->setPos(app.topLeft());
@@ -1217,7 +1209,7 @@ void StageSchematicScene::contextMenuEvent(
 void StageSchematicScene::mousePressEvent(QGraphicsSceneMouseEvent *me) {
   QList<QGraphicsItem *> items = selectedItems();
   SchematicScene::mousePressEvent(me);
-  if (me->button() == Qt::MidButton) {
+  if (me->button() == Qt::MiddleButton) {
     int i;
     for (i = 0; i < items.size(); i++) items[i]->setSelected(true);
   }

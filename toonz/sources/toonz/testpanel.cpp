@@ -31,12 +31,7 @@ using namespace DVGui;
                         margin: 1px;
                 }
 */
-#if QT_VERSION >= 0x050500
-TestPanel::TestPanel(QWidget *parent, Qt::WindowFlags flags)
-#else
-TestPanel::TestPanel(QWidget *parent, Qt::WFlags flags)
-#endif
-    : TPanel(parent) {
+TestPanel::TestPanel(QWidget *parent, Qt::WindowFlags flags) : TPanel(parent) {
   setPanelType("Test");
   setIsMaximizable(false);
   setWindowTitle("Test");

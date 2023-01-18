@@ -192,13 +192,17 @@ namespace tipc {
 
 //---------------------- Connection-message utilities ----------------------
 
-DVAPI bool startBackgroundProcess(QString cmdline);
+DVAPI bool startBackgroundProcess(QString cmdlineProgram,
+                                  QStringList cmdlineArguments);
 
 DVAPI QString applicationSpecificServerName(QString srvName);
 DVAPI bool startSlaveConnection(QLocalSocket *socket, QString srvName,
-                                int msecs = -1, QString cmdline = QString(),
-                                QString threadName = QString());
-DVAPI bool startSlaveServer(QString srvName, QString cmdline);
+                                int msecs                    = -1,
+                                QString cmdlineProgram       = QString(),
+                                QStringList cmdlineArguments = QStringList(),
+                                QString threadName           = QString());
+DVAPI bool startSlaveServer(QString srvName, QString cmdlineProgram,
+                            QStringList cmdlineArguments);
 
 DVAPI QString readMessage(Stream &stream, Message &msg, int msecs = -1);
 DVAPI QString

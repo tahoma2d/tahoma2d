@@ -172,7 +172,7 @@ void rgb2hsv(int dstHsv[3], const TPixel32 &srcRgb, int maxHsv) {
   double max, min;
   double delta;
   double r, g, b;
-  double v, s, h;
+  double v, s, h = 0.;
   r = srcRgb.r / 255.;
   g = srcRgb.g / 255.;
   b = srcRgb.b / 255.;
@@ -337,10 +337,11 @@ TPixel64 toPixel64(const TPixelGR8 &src) {
 //-----------------------------------------------------------------------------
 
 TPixel64 toPixel64(const TPixelF &src) {
-  const float factor = 65535.0f;
-  return TPixel64(
-      wordCrop(tround(src.r * factor)), wordCrop(tround(src.g * factor)),
-      wordCrop(tround(src.b * factor)), wordCrop(tround(src.m * factor)));
+  const double factor = 65535.0;
+  return TPixel64(wordCrop(tround((double)src.r * factor)),
+                  wordCrop(tround((double)src.g * factor)),
+                  wordCrop(tround((double)src.b * factor)),
+                  wordCrop(tround((double)src.m * factor)));
 }
 
 //-----------------------------------------------------------------------------
@@ -383,7 +384,7 @@ TPixelF toPixelF(const TPixel32 &src) {
 //-----------------------------------------------------------------------------
 
 TPixelF toPixelF(const TPixelD &src) {
-  return TPixelF(src.r, src.g, src.b, src.m);
+  return TPixelF((float)src.r, (float)src.g, (float)src.b, (float)src.m);
 }
 
 //-----------------------------------------------------------------------------

@@ -51,9 +51,10 @@ class StyleNameEditor;
 namespace PaletteViewerGUI {
 
 enum PaletteViewType  //! Possible palette contents of a Palette Viewer.
-{ LEVEL_PALETTE,      //!< Content palette is from a level.
-  CLEANUP_PALETTE,    //!< Content palette is from cleanup settings.
-  STUDIO_PALETTE      //!< Content palette is from a Studio Palette panel.
+{
+  LEVEL_PALETTE,    //!< Content palette is from a level.
+  CLEANUP_PALETTE,  //!< Content palette is from cleanup settings.
+  STUDIO_PALETTE    //!< Content palette is from a Studio Palette panel.
 };
 
 //****************************************************************************
@@ -102,8 +103,9 @@ class DVAPI PageViewer final : public QFrame, public TSelection::View {
           WRITE setListNumpadShortcutBorderColor)
 
 public:
-  enum ViewMode         //! Possible view modes for a Palette Viewer.
-  { SmallChips,         //!< Small icons.
+  enum ViewMode  //! Possible view modes for a Palette Viewer.
+  {
+    SmallChips,         //!< Small icons.
     MediumChips,        //!< Medium icons.
     LargeChips,         //!< Large icons with style names.
     List,               //!< Top-down list of all icons.
@@ -348,11 +350,8 @@ class DVAPI PaletteIconWidget final : public QWidget {
   Q_OBJECT
 
 public:
-#if QT_VERSION >= 0x050500
-  PaletteIconWidget(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  PaletteIconWidget(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
+  PaletteIconWidget(QWidget *parent       = 0,
+                    Qt::WindowFlags flags = Qt::WindowFlags());
   ~PaletteIconWidget();
 
 signals:

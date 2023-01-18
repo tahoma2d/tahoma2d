@@ -391,7 +391,7 @@ void FlipSlider::mousePressEvent(QMouseEvent *me) {
   emit flipSliderPressed();
   int cursorValue = sliderValueFromPosition(minimum(), maximum(), singleStep(),
                                             me->pos().x(), width());
-  if (me->button() == Qt::MidButton)
+  if (me->button() == Qt::MiddleButton)
     if (cursorValue == value())
       setSliderDown(true);
     else {
@@ -1963,7 +1963,12 @@ QFrame *FlipConsole::createFpsSlider() {
   m_fpsField  = new DVGui::IntLineEdit(fpsSliderFrame, m_fps, -60, 60);
   m_fpsField->setFixedWidth(40);
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+  m_fpsLabel->setMinimumWidth(
+      m_fpsLabel->fontMetrics().horizontalAdvance("_FPS_24___"));
+#else
   m_fpsLabel->setMinimumWidth(m_fpsLabel->fontMetrics().width("_FPS_24___"));
+#endif
   m_fpsLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_fpsSlider->setObjectName("ViewerFpsSlider");
   m_fpsSlider->setRange(-60, 60);

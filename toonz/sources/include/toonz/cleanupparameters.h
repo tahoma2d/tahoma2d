@@ -157,7 +157,7 @@ public:
   TPaletteP m_cleanupPalette;
   TFilePath m_path;
 
-  /*--- オフセットを軸ごとにロックする ---*/
+  /*--- Lock offsets by axis ---*/
   bool m_offx_lock, m_offy_lock;
 
   // hold brightness and contrast values for each line processing modes (grey

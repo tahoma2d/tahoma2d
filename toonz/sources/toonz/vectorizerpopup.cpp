@@ -424,11 +424,7 @@ void Vectorizer::run() { doVectorize(); }
 //    VectorizerPopup implementation
 //*****************************************************************************
 
-#if QT_VERSION >= 0x050500
 VectorizerPopup::VectorizerPopup(QWidget *parent, Qt::WindowFlags flags)
-#else
-VectorizerPopup::VectorizerPopup(QWidget *parent, Qt::WFlags flags)
-#endif
     : Dialog(TApp::instance()->getMainWindow(), true, false, "Vectorizer")
     , m_sceneHandle(TApp::instance()->getCurrentScene()) {
   struct Locals {

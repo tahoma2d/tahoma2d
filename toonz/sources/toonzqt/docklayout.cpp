@@ -950,9 +950,9 @@ static void calculateNearest(std::vector<double> target,
 
   for (i = 0; i < target.size(); ++i) {
     if (nearest[i] < intervals[i].first || nearest[i] > intervals[i].second) {
-      distance = nearest[i] < intervals[i].first
-                     ? intervals[i].first - nearest[i]
-                     : nearest[i] - intervals[i].second;
+      distance   = nearest[i] < intervals[i].first
+                       ? intervals[i].first - nearest[i]
+                       : nearest[i] - intervals[i].second;
       nearest[i] = nearest[i] < intervals[i].first ? intervals[i].first
                                                    : intervals[i].second;
       if (maxDistance < distance) {
@@ -1440,7 +1440,11 @@ void DockLayout::writeRegion(Region *r, QString &hierarchy) {
 //! widget has ever been left unchanged or completely restored
 //! as it were when saved. In particular, their ordering must be preserved.
 bool DockLayout::restoreState(const State &state) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QStringList vars = state.second.split(" ", Qt::SkipEmptyParts);
+#else
   QStringList vars = state.second.split(" ", QString::SkipEmptyParts);
+#endif
   if (vars.size() < 1) return 0;
 
   // Check number of items

@@ -59,6 +59,7 @@
 #include <QDesktopServices>
 #include <QGroupBox>
 #include <QSettings>
+#include <QLocale>
 
 // Template
 TEnv::StringVar XShPdfExportTemplate("XShPdfExportTemplate", "B4_6sec");
@@ -1316,9 +1317,9 @@ XSheetPDFTemplate::XSheetPDFTemplate(
 void XSheetPDFTemplate::setInfo(const XSheetPDFFormatInfo& info) {
   m_info         = info;
   thinPen        = QPen(info.lineColor, param(ThinLineWidth, mm2px(0.25)),
-                 Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
+                        Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
   thickPen       = QPen(info.lineColor, param(ThickLineWidth, mm2px(0.5)),
-                  Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
+                        Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
   bodyOutlinePen = QPen(info.lineColor, param(BodyOutlineWidth, mm2px(0.5)),
                         Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
   blockBorderPen = (param(IsBlockBorderThick, 0) > 0) ? thickPen : thinPen;
@@ -1587,8 +1588,8 @@ QPixmap XSheetPDFTemplate::initializePreview() {
 }
 
 int XSheetPDFTemplate::framePageCount() {
-  int ret = m_duration / param(FrameLength);
-  if (m_duration % param(FrameLength) != 0 || m_duration == 0) ret += 1;
+  int ret = m_duration / param(FrameLength, 1);
+  if (m_duration % param(FrameLength, 1) != 0 || m_duration == 0) ret += 1;
   return ret;
 }
 
@@ -1936,7 +1937,7 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
   //------
   QStringList pdfFileTypes = {"pdf"};
   m_pathFld->setFilters(pdfFileTypes);
-  m_pathFld->setFileMode(QFileDialog::DirectoryOnly);
+  m_pathFld->setFileMode(QFileDialog::Directory);  // implies ShowDirOnly
   m_fileNameFld->setFixedWidth(100);
   m_previewArea->setWidget(m_previewPane);
   m_previewArea->setAlignment(Qt::AlignCenter);
@@ -2371,8 +2372,9 @@ void ExportXsheetPdfPopup::saveSettings() {
 
   ContinuousLineMode clMode =
       (ContinuousLineMode)(m_continuousLineCombo->currentData().toInt());
-  XShPdfExportContinuousLineThres =
-      (clMode == Line_Always) ? 0 : (clMode == Line_None) ? -1 : 3;
+  XShPdfExportContinuousLineThres = (clMode == Line_Always) ? 0
+                                    : (clMode == Line_None) ? -1
+                                                            : 3;
 
   XShPdfExportTick1Id   = m_tick1IdCombo->currentData().toInt();
   XShPdfExportTick2Id   = m_tick2IdCombo->currentData().toInt();
@@ -2409,11 +2411,10 @@ void ExportXsheetPdfPopup::loadSettings() {
   m_logoTextEdit->setText(QString::fromStdString(XShPdfExportLogoText));
   m_logoImgPathField->setPath(QString::fromStdString(XShPdfExportImgPath));
 
-  ContinuousLineMode clMode = (XShPdfExportContinuousLineThres == 0)
-                                  ? Line_Always
-                                  : (XShPdfExportContinuousLineThres == -1)
-                                        ? Line_None
-                                        : Line_MoreThan3s;
+  ContinuousLineMode clMode =
+      (XShPdfExportContinuousLineThres == 0)    ? Line_Always
+      : (XShPdfExportContinuousLineThres == -1) ? Line_None
+                                                : Line_MoreThan3s;
   m_continuousLineCombo->setCurrentIndex(
       m_continuousLineCombo->findData(clMode));
 
@@ -2473,7 +2474,7 @@ void ExportXsheetPdfPopup::setInfo() {
   info.lineColor = QColor(col.r, col.g, col.b);
   info.dateTimeText =
       (m_addDateTimeCB->isChecked())
-          ? QDateTime::currentDateTime().toString(Qt::DefaultLocaleLongDate)
+          ? QLocale::system().toString(QDateTime::currentDateTime())
           : "";
   ToonzScene* scene = TApp::instance()->getCurrentScene()->getScene();
   info.scenePathText =

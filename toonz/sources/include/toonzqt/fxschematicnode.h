@@ -72,6 +72,8 @@ protected:
 
 class FxPalettePainter final : public QObject, public QGraphicsItem {
   Q_OBJECT
+  Q_INTERFACES(QGraphicsItem)
+
   FxSchematicPaletteNode *m_parent;
   double m_width, m_height;
   QString m_name;

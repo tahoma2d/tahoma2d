@@ -6,7 +6,7 @@
 #include "toonz/txshsimplelevel.h"
 #include "toonz/txshlevelcolumn.h"
 #include "toonz/txshcell.h"
-//#include "tw/action.h"
+// #include "tw/action.h"
 #include "tropcm.h"
 #include "ttoonzimage.h"
 #include "matchline.h"
@@ -61,8 +61,6 @@ void mergeCmapped(const std::vector<MergeCmappedPair> &matchingLevels) {
   TPalette *palette = matchingLevels[0].m_cell->getImage(false)->getPalette();
   TPalette *matchPalette =
       matchingLevels[0].m_mcell->getImage(false)->getPalette();
-
-  TPalette::Page *page;
 
   // upInkId -> downInkId
   std::map<int, int> usedColors;
@@ -239,17 +237,17 @@ public:
   DeleteMatchlineUndo(
       TXshLevel *xl, TXshSimpleLevel *sl, const std::vector<TFrameId> &fids,
       const std::vector<int> &indexes)  //, TPalette*matchPalette)
-      : TUndo(),
-        m_xl(xl),
-        m_sl(sl),
-        m_fids(fids),
-        m_indexes(indexes)
+      : TUndo()
+      , m_xl(xl)
+      , m_sl(sl)
+      , m_fids(fids)
+      , m_indexes(indexes)
   //, m_matchlinePalette(matchPalette->clone())
   {
     // assert(matchPalette);
     int i;
     for (i = 0; i < fids.size(); i++) {
-      QString id = "DeleteMatchlineUndo" + QString::number((uintptr_t) this) +
+      QString id = "DeleteMatchlineUndo" + QString::number((uintptr_t)this) +
                    "-" + QString::number(i);
       TToonzImageP image = sl->getFrame(fids[i], false);
       assert(image);
@@ -262,7 +260,7 @@ public:
     // TPalette *palette = m_matchlinePalette->clone();
     // m_sl->setPalette(palette);
     for (i = 0; i < m_fids.size(); i++) {
-      QString id = "DeleteMatchlineUndo" + QString::number((uintptr_t) this) +
+      QString id = "DeleteMatchlineUndo" + QString::number((uintptr_t)this) +
                    "-" + QString::number(i);
       TImageP img = TImageCache::instance()->get(id, false)->cloneImage();
 
@@ -297,7 +295,7 @@ public:
     int i;
     for (i = 0; i < m_fids.size(); i++)
       TImageCache::instance()->remove("DeleteMatchlineUndo" +
-                                      QString::number((uintptr_t) this) + "-" +
+                                      QString::number((uintptr_t)this) + "-" +
                                       QString::number(i));
   }
 };
@@ -413,8 +411,8 @@ public:
     std::map<TFrameId, QString>::const_iterator it = m_images.begin();
     for (; it != m_images.end(); ++it)  //, ++mit)
     {
-      QString id = "MergeCmappedUndo" + QString::number((uintptr_t) this) +
-                   "-" + QString::number(it->first.getNumber());
+      QString id = "MergeCmappedUndo" + QString::number((uintptr_t)this) + "-" +
+                   QString::number(it->first.getNumber());
       TImageCache::instance()->remove(id);
     }
     delete m_palette;

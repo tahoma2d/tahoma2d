@@ -704,13 +704,12 @@ void RenameCellField::showInRowCol(int row, int col, bool multiColumnSelected) {
     // Ex.  12 -> 1B    21 -> 2A   30 -> 3
     if (Preferences::instance()->isShowFrameNumberWithLettersEnabled() &&
         cell.m_level->getType() != TXshLevelType::SND_TXT_XSHLEVEL)
-      setText(
-          (fid.isEmptyFrame() || fid.isNoFrame())
-              ? QString::fromStdWString(levelName)
+      setText((fid.isEmptyFrame() || fid.isNoFrame())
+                  ? QString::fromStdWString(levelName)
               : (multiColumnSelected)
-                    ? m_viewer->getFrameNumberWithLetters(fid.getNumber())
-                    : QString::fromStdWString(levelName) + QString(" ") +
-                          m_viewer->getFrameNumberWithLetters(fid.getNumber()));
+                  ? m_viewer->getFrameNumberWithLetters(fid.getNumber())
+                  : QString::fromStdWString(levelName) + QString(" ") +
+                        m_viewer->getFrameNumberWithLetters(fid.getNumber()));
     else {
       QString frameNumber("");
       if (fid.getNumber() > 0) frameNumber = QString::number(fid.getNumber());
@@ -727,12 +726,10 @@ void RenameCellField::showInRowCol(int row, int col, bool multiColumnSelected) {
       }
       // other level types
       else {
-        setText((frameNumber.isEmpty())
-                    ? QString::fromStdWString(levelName)
-                    : (multiColumnSelected)
-                          ? frameNumber
-                          : QString::fromStdWString(levelName) + QString(" ") +
-                                frameNumber);
+        setText((frameNumber.isEmpty()) ? QString::fromStdWString(levelName)
+                : (multiColumnSelected) ? frameNumber
+                                        : QString::fromStdWString(levelName) +
+                                              QString(" ") + frameNumber);
       }
     }
     selectAll();
@@ -867,28 +864,6 @@ void RenameCellField::renameCell() {
   bool animationSheetEnabled =
       Preferences::instance()->isAnimationSheetEnabled();
 
-  /*bool levelDefined =
-      xsheet->getCell(m_row, m_col).getSimpleLevel() != 0 ||
-      m_row > 0 && xsheet->getCell(m_row - 1, m_col).getSimpleLevel() != 0;
-
-  if (animationSheetEnabled && levelDefined) {
-    TXshCell cell       = xsheet->getCell(m_row, m_col);
-    TXshSimpleLevel *sl = cell.getSimpleLevel();
-    if (sl) {
-      QRegExp fidRe("([0-9]+)([a-z]?)");
-      if (fidRe.exactMatch(s)) {
-#if QT_VERSION >= 0x050500
-        fid = TFrameId(fidRe.cap(1).toInt(),
-                       fidRe.cap(2) == "" ? 0 : fidRe.cap(2).toLatin1()[0]);
-#else
-        fid  = TFrameId(fidRe.cap(1).toInt(),
-                       fidRe.cap(2) == "" ? 0 : fidRe.cap(2).toAscii()[0]);
-#endif
-        FilmstripCmd::renumberDrawing(sl, cell.m_frameId, fid);
-      }
-    }
-    return;
-  }*/
   TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
       TApp::instance()->getCurrentSelection()->getSelection());
   if (!cellSelection) return;
@@ -1210,11 +1185,7 @@ void RenameCellField::onXsheetChanged() {
 // CellArea
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 CellArea::CellArea(XsheetViewer *parent, Qt::WindowFlags flags)
-#else
-CellArea::CellArea(XsheetViewer *parent, Qt::WFlags flags)
-#endif
     : QWidget(parent, flags)
     , m_viewer(parent)
     , m_levelExtenderRect()
@@ -1269,24 +1240,23 @@ void CellArea::drawFrameSeparator(QPainter &p, int row, int col,
   TCellSelection *cellSelection = m_viewer->getCellSelection();
   bool isSelected               = cellSelection->isCellSelected(row, col);
 
-  QColor color = (isAfterMarkers || isAfterSecMarkers)
-                     ? (isSelected) ? m_viewer->getSelectedMarkerLineColor()
-                                    : (isAfterSecMarkers)
-                                          ? m_viewer->getSecMarkerLineColor()
-                                          : m_viewer->getMarkerLineColor()
-                     : m_viewer->getLightLineColor();
-  double lineWidth =
-      (isAfterSecMarkers) ? 3. : (secDistance > 0 && isAfterMarkers) ? 2. : 1.;
+  QColor color     = (isAfterMarkers || isAfterSecMarkers)
+                         ? (isSelected) ? m_viewer->getSelectedMarkerLineColor()
+                           : (isAfterSecMarkers) ? m_viewer->getSecMarkerLineColor()
+                                                 : m_viewer->getMarkerLineColor()
+                         : m_viewer->getLightLineColor();
+  double lineWidth = (isAfterSecMarkers)                   ? 3.
+                     : (secDistance > 0 && isAfterMarkers) ? 2.
+                                                           : 1.;
 
   int frameAxis = m_viewer->rowToFrameAxis(row);
   int handleSize =
-      (emptyFrame)
-          ? 0
-          : (o->isVerticalTimeline())
-                ? (isAfterMarkers || isAfterSecMarkers)
-                      ? 0
-                      : -1  // o->rect(PredefinedRect::DRAG_HANDLE_CORNER).width()
-                : -1;  // o->rect(PredefinedRect::DRAG_HANDLE_CORNER).height();
+      (emptyFrame) ? 0
+      : (o->isVerticalTimeline())
+          ? (isAfterMarkers || isAfterSecMarkers)
+                ? 0
+                : -1  // o->rect(PredefinedRect::DRAG_HANDLE_CORNER).width()
+          : -1;  // o->rect(PredefinedRect::DRAG_HANDLE_CORNER).height();
 
   QLine horizontalLine = m_viewer->orientation()->horizontalLine(
       frameAxis, layerAxisRange.adjusted(handleSize - 1, 1));
@@ -1507,7 +1477,7 @@ void CellArea::drawSelectionBackground(QPainter &p) const {
     int newSelCol1 = std::min(selCol0, selCol1);
     selectionRect  = m_viewer->rangeToXYRect(
         CellRange(CellPosition(selRow0, newSelCol0),
-                  CellPosition(selRow1 + 1, newSelCol1 - 1)));
+                   CellPosition(selRow1 + 1, newSelCol1 - 1)));
   }
 
   p.fillRect(selectionRect, QBrush(m_viewer->getSelectedEmptyCellColor()));
@@ -1895,11 +1865,11 @@ void CellArea::drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
   QColor outlineColor = Qt::black;
   QPoint frameAdj     = m_viewer->getFrameZoomAdjustment();
   QRect dotRect       = (isCamera)
-                      ? m_viewer->orientation()
+                            ? m_viewer->orientation()
                             ->rect(PredefinedRect::CAMERA_FRAME_MARKER_AREA)
                             .translated(xy)
                             .translated(-frameAdj / 2)
-                      : m_viewer->orientation()
+                            : m_viewer->orientation()
                             ->rect(PredefinedRect::FRAME_MARKER_AREA)
                             .translated(xy)
                             .translated(-frameAdj / 2);
@@ -2239,9 +2209,9 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
       cell.getFrameId().getNumber() - 1 >= cl->getFrameCount() &&
       !Preferences::instance()->isImplicitHoldEnabled())
     isRed = true;
-  QColor penColor = isRed ? QColor(m_viewer->getErrorTextColor())
-                          : isSelected ? m_viewer->getSelectedTextColor()
-                                       : m_viewer->getTextColor();
+  QColor penColor = isRed        ? QColor(m_viewer->getErrorTextColor())
+                    : isSelected ? m_viewer->getSelectedTextColor()
+                                 : m_viewer->getTextColor();
   p.setPen(penColor);
 
 /*
@@ -2340,14 +2310,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     std::wstring levelName = cell.m_level->getName();
     QString text           = QString::fromStdWString(levelName);
     QFontMetrics fm(font);
-#if QT_VERSION >= 0x050500
-    //    QFontMetrics fm(font);
     QString elidaName =
         elideText(text, fm, nameRect.width() - fm.width(fnum), QString("~"));
-#else
-    QString elidaName =
-        elideText(text, font, nameRect.width() - fm.width(fnum));
-#endif
     p.drawText(nameRect, Qt::AlignLeft | Qt::AlignBottom, elidaName);
   }
 }
@@ -2506,11 +2470,7 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
   int charWidth = metric.width(text, 1);
   if ((charWidth * 2) > nameRect.width()) nameRect.adjust(-2, 0, 4, 0);
 
-#if QT_VERSION >= 0x050500
   QString elidaName = elideText(text, metric, nameRect.width(), "~");
-#else
-  QString elidaName   = elideText(text, font, nameRect.width(), "~");
-#endif
 
   if (!sameLevel || prevCell.m_frameId != cell.m_frameId)
     p.drawText(nameRect, Qt::AlignLeft | Qt::AlignBottom, elidaName);
@@ -3029,14 +2989,9 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
       }
     }
 
-    QString text = QString::fromStdWString(levelName);
-#if QT_VERSION >= 0x050500
+    QString text      = QString::fromStdWString(levelName);
     QString elidaName = elideText(
         text, fm, nameRect.width() - fm.width(numberStr) - 2, QString("~"));
-#else
-    QString elidaName = elideText(
-        text, font, nameRect.width() - fm.width(numberStr) - 2, QString("~"));
-#endif
 
     if (!sameLevel || isAfterMarkers || prevCell.getFrameId().isStopFrame())
       p.drawText(nameRect, Qt::AlignLeft | Qt::AlignBottom, elidaName);

@@ -818,8 +818,7 @@ void doSingleExtend(const double4* source_buff,
       // continue if the current pixel is already extended
       if ((*gen_p) > 0) continue;
 
-      // check out the neighbor pixels. store brightness in neighbor[x].w
-      double4 neighbor[8];
+      // check out the neighbor pixels.
       bool neighbor_found = false;
       for (int ky = posY - 1; ky <= posY + 1; ky++) {
         for (int kx = posX - 1; kx <= posX + 1; kx++) {

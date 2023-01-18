@@ -31,7 +31,7 @@ class DVAPI TFxAttributes {
 
   int m_groupSelector;
 
-  /*-- MotionBlurなどのFxのために、オブジェクトの軌跡のデータを取得する --*/
+  /*-- Get object trajectory data for MotionBlur and other Fxs --*/
   QList<TPointD> m_motionPoints;
   TAffine m_motionAffine[2];
   // to maintain backward compatibility in the fx

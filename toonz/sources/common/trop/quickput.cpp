@@ -40,11 +40,13 @@ inline TPixel32 applyColorScale(const TPixel32 &color,
                                 const TPixel32 &colorScale,
                                 bool toBePremultiplied = false) {
   /*--
-   * 半透明のラスタをViewer上で半透明にquickputするとき、色が暗くなってしまうのを防ぐ
+   * Prevent colors from being darkened when quickputting a semi-transparent
+   * raster on the Viewer
    * --*/
   if (colorScale.r == 0 && colorScale.g == 0 && colorScale.b == 0) {
     /*--
-     * toBePremultipliedがONのときは、後でPremultiplyをするので、ここでは行わない
+     * When toBePremultiplied is ON, Premultiply is done later, so it is not
+     * done here.
      * --*/
     if (toBePremultiplied)
       return TPixel32(color.r, color.g, color.b, color.m * colorScale.m / 255);
@@ -2328,7 +2330,7 @@ void doQuickPutNoFilter(const TRaster32P &dn, const TRaster32P &up, double sx,
 
       TPixel32 upPix = *(upBasePix + (yI * upWrap + xI));
 
-      if (firstColumn) upPix.m = 65535;
+      if (firstColumn) upPix.m = 255;
 
       if (upPix.m == 0 || (whiteTransp && upPix == TPixel::White)) continue;
 

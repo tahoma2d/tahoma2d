@@ -748,7 +748,7 @@ void Iwa_FlowPaintBrushFx::computeBrushVertices(
         break;
       }
     }
-    qSort(brushStrokes.begin(), brushStrokes.end(), strokeStackGraterThan);
+    std::sort(brushStrokes.begin(), brushStrokes.end(), strokeStackGraterThan);
   }
 
   // ƒ^ƒbƒ`‚ğ‚¹‚ñ’f‚É‘Î‚µ‚Ä‚±‚Á‚¿Œü‚¯‚Ä‘¾‚­‚·‚éŠ„‡

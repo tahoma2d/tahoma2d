@@ -65,7 +65,7 @@ IntPairField::IntPairField(QWidget *parent, bool isMaxRangeLimited)
   bool ret = connect(m_leftLineEdit, SIGNAL(editingFinished()),
                      SLOT(onLeftEditingFinished()));
   ret      = ret && connect(m_rightLineEdit, SIGNAL(editingFinished()),
-                       SLOT(onRightEditingFinished()));
+                            SLOT(onRightEditingFinished()));
 
   assert(ret);
 }
@@ -153,8 +153,13 @@ void IntPairField::paintEvent(QPaintEvent *) {
 void IntPairField::setLeftText(const QString &text) {
   QPoint pos       = m_leftLabel->pos();
   QString oldText  = m_leftLabel->text();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+  int oldLabelSize = fontMetrics().horizontalAdvance(oldText);
+  int newLabelSize = fontMetrics().horizontalAdvance(text);
+#else
   int oldLabelSize = fontMetrics().width(oldText);
   int newLabelSize = fontMetrics().width(text);
+#endif
   int labelSize    = newLabelSize - oldLabelSize;
   m_leftMargin += labelSize + MARGIN_OFFSET;
   m_leftLabel->setText(text);
@@ -165,8 +170,13 @@ void IntPairField::setLeftText(const QString &text) {
 
 void IntPairField::setRightText(const QString &text) {
   QString oldText  = m_rightLabel->text();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+  int oldLabelSize = fontMetrics().horizontalAdvance(oldText);
+  int newLabelSize = fontMetrics().horizontalAdvance(text);
+#else
   int oldLabelSize = fontMetrics().width(oldText);
   int newLabelSize = fontMetrics().width(text);
+#endif
   int labelSize    = newLabelSize - oldLabelSize;
   m_rightMargin += labelSize + MARGIN_OFFSET;
   m_rightLabel->setText(text);

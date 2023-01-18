@@ -263,7 +263,7 @@ class TPanel : public TDockWidget {
   QByteArray m_currentRoomOldState;
 
 public:
-  TPanel(QWidget *parent = 0, Qt::WindowFlags flags = 0,
+  TPanel(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags(),
          TDockWidget::Orientation orientation = TDockWidget::vertical);
   ~TPanel();
 

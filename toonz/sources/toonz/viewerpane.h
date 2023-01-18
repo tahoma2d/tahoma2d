@@ -134,7 +134,8 @@ protected slots:
 class SceneViewerPanel final : public BaseViewerPanel {
   Q_OBJECT
 public:
-  SceneViewerPanel(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+  SceneViewerPanel(QWidget *parent       = 0,
+                   Qt::WindowFlags flags = Qt::WindowFlags());
   ~SceneViewerPanel() {}
 
 protected:

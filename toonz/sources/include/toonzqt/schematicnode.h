@@ -236,6 +236,8 @@ protected:
 */
 class SchematicLink : public QObject, public QGraphicsItem {
   Q_OBJECT
+  Q_INTERFACES(QGraphicsItem)
+
   SchematicPort *m_startPort, *m_endPort;
   QPainterPath m_path, m_hitPath;
   bool m_lineShaped;

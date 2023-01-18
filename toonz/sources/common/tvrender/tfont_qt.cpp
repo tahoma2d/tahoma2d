@@ -285,7 +285,11 @@ TPoint TFont::drawChar(TRaster32P &outImage, TPoint &unused, TPixel32 color,
 
 TPoint TFont::getDistance(wchar_t firstChar, wchar_t secondChar) const {
   QFontMetrics metrics(m_pimpl->m_font);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+  return TPoint(metrics.horizontalAdvance(QChar(firstChar)), 0);
+#else
   return TPoint(metrics.width(QChar(firstChar)), 0);
+#endif
 }
 
 //-----------------------------------------------------------------------------

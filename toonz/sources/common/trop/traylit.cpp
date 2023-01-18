@@ -40,11 +40,11 @@ of the ray we're tracing
 
   // Build colors-related variables
   int max = T::maxChannelValue;
-  /*-- 透明部分の色 --*/
+  /*-- Color of transparent part --*/
   int transp_val = (params.m_invert) ? max : 0, opaque_val = max - transp_val;
   int value, val_r, val_g, val_b, val_m;
   double lightness, r_fac, g_fac, b_fac, m_fac;
-  /*-- 8bit/16bitの違いを吸収する係数 --*/
+  /*--  Coefficients to absorb 8bit/16bit difference --*/
   double factor = max / 255.0;
 
   // NOTE: These variable initializations are, well,
@@ -60,13 +60,16 @@ of the ray we're tracing
   double smoothness = log(params.m_smoothness * 5.0 / 100.0 + 1.0);
   double radius     = params.m_radius;
 
-  /*-- 1ステップ進んだ時、次のピクセルで光源が無かったときの光の弱まる割合 --*/
+  /*-- The rate at which light diminishes when there is no light source at the
+   * next pixel when advancing one step. --*/
   double neg_delta_p = smoothness * intensity;
-  /*-- 1ステップ進んだ時、次のピクセルで光源が有ったときの光の強まる割合 --*/
+  /*-- The rate at which light intensifies when there is a light source at the
+   * next pixel when advancing one step. --*/
   double quot_delta_p = intensity / max;  //
 
   /*--
-   * m_colorはRaylitFxのColor値。r_fac、g_fac、b_facは各チャンネルをPremultiplyした値
+   * m_color is the Color value of RaylitFx. r_fac, g_fac, b_fac are the
+   * premultiplied values of each channel
    * --*/
   m_fac = (params.m_color.m / 255.0);
   r_fac = m_fac * (params.m_color.r / 255.0);
@@ -200,7 +203,7 @@ void performStandardRaylit<TPixelF>(TPixelF *bufIn, TPixelF *bufOut, int dxIn,
  /                    |
 /  - ray_final_y      | octLy
 / 1                    |
-----                   |
++----                   |
 _____  octLx
 
 
@@ -210,12 +213,12 @@ of the ray we're tracing
 
   // Build colors-related variables
   float max = TPixelF::maxChannelValue;
-  /*-- 騾乗・驛ｨ蛻・・濶ｲ --*/
+  /*-- Color of transparent part --*/
   float transp_val = (params.m_invert) ? max : 0.f,
         opaque_val = max - transp_val;
   float value, val_r, val_g, val_b, val_m;
   double lightness, r_fac, g_fac, b_fac, m_fac;
-  /*-- 8bit/ 32bit-Float 縺ｮ驕輔＞繧貞精蜿弱☆繧倶ｿよ焚 --*/
+  /*-- Coefficients to absorb 8bit/16bit difference --*/
   double factor = max / 255.0;
 
   // NOTE: These variable initializations are, well,
@@ -231,13 +234,16 @@ of the ray we're tracing
   double smoothness = log(params.m_smoothness * 5.0 / 100.0 + 1.0);
   double radius     = params.m_radius;
 
-  /*-- 1繧ｹ繝・ャ繝鈴ｲ繧薙□譎ゅ∵ｬ｡縺ｮ繝斐け繧ｻ繝ｫ縺ｧ蜈画ｺ舌′辟｡縺九▲縺溘→縺阪・蜈峨・蠑ｱ縺ｾ繧句牡蜷・--*/
+  /*-- The rate at which light diminishes when there is no light source at the
+   * next pixel when advancing one step. --*/
   double neg_delta_p = smoothness * intensity;
-  /*-- 1繧ｹ繝・ャ繝鈴ｲ繧薙□譎ゅ∵ｬ｡縺ｮ繝斐け繧ｻ繝ｫ縺ｧ蜈画ｺ舌′譛峨▲縺溘→縺阪・蜈峨・蠑ｷ縺ｾ繧句牡蜷・--*/
+  /*-- The rate at which light intensifies when there is a light source at the
+   * next pixel when advancing one step. --*/
   double quot_delta_p = intensity / max;  //
 
   /*--
-   * m_color縺ｯRaylitFx縺ｮColor蛟､縲Ｓ_fac縲“_fac縲｜_fac縺ｯ蜷・メ繝｣繝ｳ繝阪Ν繧単remultiply縺励◆蛟､
+   * m_color is the Color value of RaylitFx. r_fac, g_fac, b_fac are the
+   * premultiplied values of each channel
    * --*/
   TPixelF colorF = toPixelF(params.m_color);
   m_fac          = colorF.m;
@@ -628,7 +634,7 @@ void performColorRaylit<TPixelF>(TPixelF *bufIn, TPixelF *bufOut, int dxIn,
   }
 }
 //--------------------------------------------------------------------------------------------
-/*-- ピザ状に8分割された領域の1つを計算する --*/
+/*-- Calculate one of the 8 pizza-shaped regions --*/
 template <typename T>
 void computeOctant(const TRasterPT<T> &src, const TRasterPT<T> &dst, int octant,
                    const TRop::RaylitParams &params,
@@ -651,7 +657,7 @@ void computeOctant(const TRasterPT<T> &src, const TRasterPT<T> &dst, int octant,
   lxIn = src->getLx(), lxOut = dst->getLx();
   lyIn = src->getLy(), lyOut = dst->getLy();
 
-  /*-- 1ピクセルずつ進むときの移動値 --*/
+  /*-- Movement value when moving forward by 1 pixel --*/
   // Vertical octant pairs
   if (octant == 1 || octant == 8)
     dxIn = 1, dxOut = 1, x0 = tfloor(pOut.x), x1 = lxOut;
@@ -680,7 +686,8 @@ void computeOctant(const TRasterPT<T> &src, const TRasterPT<T> &dst, int octant,
     x1         = lyOut, std::swap(srcRect.y0, srcRect.y1),
     srcRect.y0 = lyOut - srcRect.y0, srcRect.y1 = lyOut - srcRect.y1;
 
-  /*-- 縦向きのピザ領域を計算する場合は、90度回転してから --*/
+  /*-- To calculate the pizza area in vertical orientation, rotate 90 degrees in
+   * advance --*/
   // Swap x and y axis where necessary
   if (octant == 2 || octant == 3 || octant == 6 || octant == 7) {
     std::swap(lxIn, lyIn), std::swap(lxOut, lyOut);

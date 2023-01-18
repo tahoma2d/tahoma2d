@@ -488,10 +488,10 @@ public:
   virtual void compatibilityTranslatePort(int majorVersion, int minorVersion,
                                           std::string &portName) {}
 
-  /*-- Rendering（目玉）ボタンがOFFのときに使用されるInputPort --*/
+  /*-- InputPort used when the Rendering (eye) button is OFF --*/
   virtual int getPreferredInputPort() { return 0; }
 
-  /* RasterFxPluginHost 用の仮想関数 */
+  /* Virtual function for RasterFxPluginHost */
   virtual void callStartRenderHandler() {}
   virtual void callEndRenderHandler() {}
   virtual void callStartRenderFrameHandler(const TRenderSettings *rs,

@@ -286,6 +286,7 @@ inline float4 getColor(QVector3D pre_n, QVector3D cur_n, QVector3D pre_p,
   else if (vars.renderMode == Iwa_FloorBumpFx::ReflectionMode)
     return getReflectionColor(lerpNormal(pre_n, cur_n, ratio),
                               lerpPos(pre_p, cur_p, ratio), source_host, vars);
+  return float4();
 };
 
 QList<QPointF> getSubPointsList(int subAmount,

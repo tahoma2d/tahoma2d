@@ -120,7 +120,7 @@ void KeyframeSetter::selectKeyframe(int kIndex) {
 
 // set key frame at frame and returns its index
 int KeyframeSetter::createKeyframe(double frame) {
-  /*--- すでにそこにキーフレームがある場合はそのIndexを返すだけ ---*/
+  /*--- If there is already a keyframe there, just return its Index ---*/
   int kIndex = m_param->getClosestKeyframe(frame);
   if (kIndex >= 0 && m_param->getKeyframe(kIndex).m_frame == frame) {
     selectKeyframe(kIndex);
@@ -161,7 +161,8 @@ int KeyframeSetter::createKeyframe(double frame) {
       m_keyframe.m_step = ka.m_step;  // An existing segment step should prevail
                                       // over the preference
 
-      /*---Segment内にKeyを打った場合は、Step値も元のSegmentの値を引き継ぐようにする---*/
+      /*---When a Key is entered in a Segment, the Step value should also
+       * inherit the value of the original Segment.---*/
       m_param->setKeyframe(m_kIndex, m_keyframe);
 
       if (segmentType == TDoubleKeyframe::SpeedInOut ||
@@ -765,7 +766,7 @@ void KeyframeSetter::setAllParams(
     break;
   }
 
-  /*--- リンクされたカーブの処理 ---*/
+  /*--- Processing Linked Curves ---*/
   const double eps = 0.00001;
   if (m_kIndex != 0 && keyframe.m_linkedHandles &&
       keyframe.m_prevType == TDoubleKeyframe::SpeedInOut) {

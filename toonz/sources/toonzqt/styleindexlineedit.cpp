@@ -15,8 +15,13 @@ using namespace DVGui;
 StyleIndexLineEdit::StyleIndexLineEdit() : m_pltHandle(0) {
   // style index will not be more than 4096, but a longer text
   // "current" may be input instead of style id + chip width + margin
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+  int currentWidth = std::max(fontMetrics().horizontalAdvance("current"),
+                              fontMetrics().horizontalAdvance(tr("current")));
+#else
   int currentWidth = std::max(fontMetrics().width("current"),
                               fontMetrics().width(tr("current")));
+#endif
   setMaximumWidth(currentWidth + 30);
   setFixedHeight(20);
 }

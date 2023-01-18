@@ -392,8 +392,7 @@ static TFilePath getFilePath(const QStringList &l, int &i) {
   if (outStr.startsWith('"')) {
     outStr = outStr.remove(0, 1);
     if (!outStr.endsWith('"')) {
-      do
-        outStr += " " + l.at(i);
+      do outStr += " " + l.at(i);
       while (i < l.size() && !l.at(i++).endsWith('"'));
     }
     outStr.chop(1);
@@ -405,7 +404,11 @@ static TFilePath getFilePath(const QStringList &l, int &i) {
 //------------------------------------------------------------------------------
 
 void TFarmTask::parseCommandLine(QString commandLine) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QStringList l = commandLine.split(" ", Qt::SkipEmptyParts);
+#else
   QStringList l = commandLine.split(" ", QString::SkipEmptyParts);
+#endif
   assert(l.size() >= 2);
 
   // serve per skippare il path dell'eseguibile su mac che contiene spazi
@@ -452,11 +455,10 @@ void TFarmTask::parseCommandLine(QString commandLine) {
           QString::number(TOutputProperties::MediumVal),
           QString::number(TOutputProperties::SmallVal)};
 
-      m_maxTileSizeIndex = (str == maxTileSizeIndexes[2])
-                               ? 3
-                               : (str == maxTileSizeIndexes[1])
-                                     ? 2
-                                     : (str == maxTileSizeIndexes[0]) ? 1 : 0;
+      m_maxTileSizeIndex = (str == maxTileSizeIndexes[2])   ? 3
+                           : (str == maxTileSizeIndexes[1]) ? 2
+                           : (str == maxTileSizeIndexes[0]) ? 1
+                                                            : 0;
       i += 2;
     }
 
@@ -479,8 +481,12 @@ void TFarmTask::parseCommandLine(QString commandLine) {
 
 //------------------------------------------------------------------------------
 
-QString TFarmTask::getCommandLine(bool isFarmTask) const {
-  QString cmdline = getExeName(m_isComposerTask);
+QString TFarmTask::getCommandLinePrgName() const {
+  return getExeName(m_isComposerTask);
+}
+
+QString TFarmTask::getCommandLineArguments() const {
+  QString cmdline = "";
 
   if (!m_taskFilePath.isEmpty())
     cmdline += " \"" +
@@ -489,18 +495,10 @@ QString TFarmTask::getCommandLine(bool isFarmTask) const {
                "\"";
 
   if (m_callerMachineName != "") {
-#if QT_VERSION >= 0x050500
     struct hostent *he = gethostbyname(m_callerMachineName.toLatin1());
-#else
-    struct hostent *he = gethostbyname(m_callerMachineName.toAscii());
-#endif
     if (he) {
       char *ipAddress = inet_ntoa(*(struct in_addr *)*(he->h_addr_list));
-#if QT_VERSION >= 0x050500
       cmdline += " -tmsg " + QString::fromUtf8(ipAddress);
-#else
-      cmdline += " -tmsg " + QString::fromAscii(ipAddress);
-#endif
     }
   }
 
@@ -541,6 +539,10 @@ QString TFarmTask::getCommandLine(bool isFarmTask) const {
   QString appname = QSettings().applicationName();
 
   return cmdline;
+}
+
+QString TFarmTask::getCommandLine(bool) const {
+  return getCommandLinePrgName() + getCommandLineArguments();
 }
 
 //------------------------------------------------------------------------------

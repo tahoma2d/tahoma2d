@@ -83,7 +83,7 @@ void CleanupSwatch::CleanupSwatchArea::mousePressEvent(QMouseEvent *event) {
   //   TRop::addBackground(m_sw->m_lastRasCleanupped, TPixel::White);
   m_pos = event->pos();
 
-  if (event->button() != Qt::MidButton || !m_sw->m_resampledRaster) {
+  if (event->button() != Qt::MiddleButton || !m_sw->m_resampledRaster) {
     event->ignore();
     return;
     m_panning = false;
@@ -189,7 +189,7 @@ void CleanupSwatch::CleanupSwatchArea::mouseMoveEvent(QMouseEvent *event) {
 void CleanupSwatch::CleanupSwatchArea::wheelEvent(QWheelEvent *event) {
   if (!m_sw->m_resampledRaster || m_sw->m_lx == 0 || m_sw->m_ly == 0) return;
 
-  int step      = event->delta() > 0 ? 120 : -120;
+  int step      = event->angleDelta().y() > 0 ? 120 : -120;
   double factor = exp(0.001 * step);
   if (factor == 1.0) return;
   double scale = m_sw->m_viewAff.det();
@@ -199,7 +199,11 @@ void CleanupSwatch::CleanupSwatchArea::wheelEvent(QWheelEvent *event) {
   if ((factor < 1 && sqrt(scale) < minZoom) || (factor > 1 && scale > 1200.0))
     return;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  TPointD delta(event->position().x(), height() - event->position().y());
+#else
   TPointD delta(event->pos().x(), height() - event->pos().y());
+#endif
   m_sw->m_viewAff =
       (TTranslation(delta) * TScale(factor) * TTranslation(-delta)) *
       m_sw->m_viewAff;

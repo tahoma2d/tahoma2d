@@ -97,7 +97,7 @@ private:
   TPointD m_delta;
   int m_id;
 
-  // Proprietà relative alla trackerRegion
+  // Properties related to trackerRegion
   //! If Hook is also a Trackeregion then m_trackerObjectId>=0, else is -1
   int m_trackerObjectId;
   double m_width;   // trackerRegion width

@@ -94,11 +94,7 @@ QString fidToFrameNumberWithLetter(int f) {
 // Filmstrip
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 FilmstripFrames::FilmstripFrames(QScrollArea *parent, Qt::WindowFlags flags)
-#else
-FilmstripFrames::FilmstripFrames(QScrollArea *parent, Qt::WFlags flags)
-#endif
     : QFrame(parent, flags)
     , m_scrollArea(parent)
     , m_selection(new TFilmstripSelection())
@@ -1297,9 +1293,8 @@ void FilmstripFrames::contextMenuEvent(QContextMenuEvent *event) {
     if (sl && sl->getType() == TZP_XSHLEVEL)
       menu->addAction(cm->getAction(MI_RevertToCleanedUp));
   }
-  if (sl &&
-      (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL ||
-       (sl->getType() == OVL_XSHLEVEL && !sl->getPath().isUneditable())))
+  if (sl && (sl->getType() == TZP_XSHLEVEL || sl->getType() == PLI_XSHLEVEL ||
+             (sl->getType() == OVL_XSHLEVEL && !sl->getPath().isUneditable())))
     menu->addAction(cm->getAction(MI_RevertToLastSaved));
   menu->addSeparator();
   createSelectLevelMenu(menu);
@@ -1528,12 +1523,7 @@ void FilmstripFrames::inbetween() {
 // Filmstrip
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
-Filmstrip::Filmstrip(QWidget *parent, Qt::WindowFlags flags)
-#else
-Filmstrip::Filmstrip(QWidget *parent, Qt::WFlags flags)
-#endif
-    : QWidget(parent) {
+Filmstrip::Filmstrip(QWidget *parent, Qt::WindowFlags flags) : QWidget(parent) {
   setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
   m_frameArea        = new QScrollArea(this);

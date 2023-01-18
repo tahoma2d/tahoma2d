@@ -42,11 +42,8 @@ class FilmstripFrames final : public QFrame, public TSelection::View {
   Q_OBJECT
 
 public:
-#if QT_VERSION >= 0x050500
-  FilmstripFrames(QScrollArea *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  FilmstripFrames(QScrollArea *parent = 0, Qt::WFlags flags = 0);
-#endif
+  FilmstripFrames(QScrollArea *parent   = 0,
+                  Qt::WindowFlags flags = Qt::WindowFlags());
   ~FilmstripFrames();
 
   bool m_isVertical    = true;
@@ -239,11 +236,7 @@ class Filmstrip final : public QWidget, public SaveLoadQSettings {
   bool m_showComboBox  = true;
 
 public:
-#if QT_VERSION >= 0x050500
   Filmstrip(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  Filmstrip(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
   ~Filmstrip();
 
   // SaveLoadQSettings

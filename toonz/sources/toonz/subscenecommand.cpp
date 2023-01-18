@@ -1439,8 +1439,8 @@ void collapseColumns(std::set<int> indices,
   }
 
   StageObjectsData *data = new StageObjectsData();
-  data->storeObjects(objIds.toVector().toStdVector(), xsh,
-                     StageObjectsData::eDoClone);
+  data->storeObjects(std::vector<TStageObjectId>(objIds.begin(), objIds.end()),
+                     xsh, StageObjectsData::eDoClone);
   data->storeColumnFxs(indices, xsh, StageObjectsData::eDoClone);
 
   // ExpressionReferenceMonitor *monitor = xsh->getExpRefMonitor()->clone();

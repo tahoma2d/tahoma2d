@@ -92,7 +92,7 @@ void RasterStrokeGenerator::generateStroke(bool isPencil,
     }
     rasterBrush(rasBuffer, partialPoints, m_styleId, !isPencil);
     placeOver(m_raster, rasBuffer, newOrigin);
-  } else if (size % 2 == 1) /*-- 奇数の場合 --*/
+  } else if (size % 2 == 1) /*-- In the case of odd numbers --*/
   {
     int strokeCount = (size - 1) / 2 - 1;
     std::vector<TThickPoint> partialPoints;
@@ -175,7 +175,7 @@ TRect RasterStrokeGenerator::getBBox(
          x1 = -(std::numeric_limits<double>::max)(),
          y1 = -(std::numeric_limits<double>::max)();
   for (int i = 0; i < (int)points.size(); i++) {
-    double radius                     = points[i].thick * 0.5;
+    double radius = points[i].thick * 0.5;
     if (points[i].x - radius < x0) x0 = points[i].x - radius;
     if (points[i].x + radius > x1) x1 = points[i].x + radius;
     if (points[i].y - radius < y0) y0 = points[i].y - radius;
@@ -208,7 +208,7 @@ void RasterStrokeGenerator::placeOver(const TRasterCM32P &out,
   TRect box2        = box - p;
   TRasterCM32P rIn  = in->extract(box2);
   for (int y = 0; y < rOut->getLy(); y++) {
-    /*-- Finger Toolの境界条件 --*/
+    /*--Finger Tool Boundary Conditions --*/
     if (m_task == FINGER && (y == 0 || y == rOut->getLy() - 1)) continue;
 
     TPixelCM32 *inPix  = rIn->pixels(y);
@@ -298,26 +298,27 @@ void RasterStrokeGenerator::placeOver(const TRasterCM32P &out,
 
       /*-- Finger tool --*/
       else if (m_task == FINGER) {
-        /*-- 境界条件 --*/
+        /*-- Boundary Conditions --*/
         if (outPix == rOut->pixels(y) || outPix == outEnd - 1) continue;
 
         int inkId = inPix->getInk();
         if (inkId == 0) continue;
 
         TPixelCM32 *neighbourPixels[4];
-        neighbourPixels[0] = outPix - 1;               /* 左 */
-        neighbourPixels[1] = outPix + 1;               /* 右 */
-        neighbourPixels[2] = outPix - rOut->getWrap(); /* 上 */
-        neighbourPixels[3] = outPix + rOut->getWrap(); /* 下 */
+        neighbourPixels[0] = outPix - 1;               /* left */
+        neighbourPixels[1] = outPix + 1;               /* right */
+        neighbourPixels[2] = outPix - rOut->getWrap(); /* top */
+        neighbourPixels[3] = outPix + rOut->getWrap(); /* bottom */
         int count          = 0;
         int tone           = outPix->getTone();
 
-        /*--- Invertがオフのとき：穴を埋める操作 ---*/
+        /*--- When Invert is off: Fill hole operation ---*/
         if (!m_selective) {
-          /*-- 4近傍のピクセルについて --*/
+          /*-- For 4 neighborhood pixels --*/
           int minTone = tone;
           for (int p = 0; p < 4; p++) {
-            /*-- 自分Pixelより線が濃い（Toneが低い）ものを集計する --*/
+            /*-- Count up the items that have darker lines (lower Tone) than the
+             * current pixel. --*/
             if (neighbourPixels[p]->getTone() < tone) {
               count++;
               if (neighbourPixels[p]->getTone() < minTone)
@@ -325,19 +326,21 @@ void RasterStrokeGenerator::placeOver(const TRasterCM32P &out,
             }
           }
 
-          /*--- 周りの３つ以上のピクセルが濃ければ、最小Toneと置き換える ---*/
+          /*--- If 3 or more surrounding pixels are darker, replace with the
+           * minimum Tone ---*/
           if (count <= 2) continue;
           *outPix = TPixelCM32(inkId, outPix->getPaint(), minTone);
         }
-        /*--- InvertがONのとき：出っ張りを削る操作 ---*/
+        /*--- When Invert is ON: Operation to trim protrusion ---*/
         else {
           if (outPix->isPurePaint() || outPix->getInk() != inkId) continue;
 
-          /*-- 4近傍のピクセルについて --*/
+          /*-- For 4 neighborhood pixels --*/
           int maxTone = tone;
           for (int p = 0; p < 4; p++) {
             /*--
-             * Ink＃がCurrentでない、または、自分Pixelより線が薄い（Toneが高い）ものを集計する
+             * Count up items whose Ink# is not Current or whose line is thinner
+             * than your Pixel (Tone is higher).
              * --*/
             if (neighbourPixels[p]->getInk() != inkId) {
               count++;
@@ -349,7 +352,8 @@ void RasterStrokeGenerator::placeOver(const TRasterCM32P &out,
             }
           }
 
-          /*--- 周りの３つ以上のピクセルが薄ければ、最大Toneと置き換える ---*/
+          /*---  If 3 or more surrounding pixels are thinner, replace with the
+           * maximum Tone ---*/
           if (count <= 2) continue;
           *outPix = TPixelCM32((maxTone == 255) ? 0 : inkId, outPix->getPaint(),
                                maxTone);

@@ -235,11 +235,7 @@ static void getVolumeCursorRect(QRect &out, double volume,
 // MotionPathMenu
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 MotionPathMenu::MotionPathMenu(QWidget *parent, Qt::WindowFlags flags)
-#else
-MotionPathMenu::MotionPathMenu(QWidget *parent, Qt::WFlags flags)
-#endif
     : QWidget(parent, flags)
     , m_mDeleteRect(QRect(0, 0, ColumnWidth - 13, RowHeight))
     , m_mNormalRect(QRect(0, RowHeight, ColumnWidth - 13, RowHeight))
@@ -1270,8 +1266,7 @@ void ColumnArea::DrawHeader::drawPegbarName() const {
   p.setPen(m_viewer->getVerticalLineColor());
   if (o->flag(PredefinedFlag::PEGBAR_NAME_BORDER)) p.drawRect(pegbarnamerect);
 
-  if (column->getSoundColumn() || column->getSoundTextColumn())
-    return;
+  if (column->getSoundColumn() || column->getSoundTextColumn()) return;
 
   if (Preferences::instance()->isParentColorsInXsheetColumnEnabled() &&
       column->isPreviewVisible()) {
@@ -1433,11 +1428,7 @@ void ColumnArea::DrawHeader::drawVolumeControl(double volume) const {
 //=============================================================================
 // ColumnArea
 //-----------------------------------------------------------------------------
-#if QT_VERSION >= 0x050500
 ColumnArea::ColumnArea(XsheetViewer *parent, Qt::WindowFlags flags)
-#else
-ColumnArea::ColumnArea(XsheetViewer *parent, Qt::WFlags flags)
-#endif
     : QWidget(parent, flags)
     , m_viewer(parent)
     , m_pos(-1, -1)

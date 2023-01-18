@@ -39,9 +39,8 @@ int TFilePath::m_letterCountForSuffix     = 1;
 
 namespace {
 
-/*-- fromSeg位置 と
- * toSeg位置は含まず、それらの間に挟まれている文字列が「数字4ケタ」ならtrueを返す
- * --*/
+// Returns true if the string between the fromSeg position and the toSeg
+// position is "4 digits".
 bool isNumbers(std::wstring str, int fromSeg, int toSeg) {
   /*
     if (toSeg - fromSeg != 5) return false;
@@ -772,7 +771,8 @@ TFrameId TFilePath::getFrame() const {
   if (j == (int)std::wstring::npos) return TFrameId(TFrameId::NO_FRAME);
   if (i == j + 1) return TFrameId(TFrameId::EMPTY_FRAME);
 
-  // 間が数字でない場合（ファイル名にまぎれた"_" や "."がある場合）を除外する
+  // Exclude cases with non-numeric characters inbetween. (In case the file name
+  // contains "_" or ".")
   if (!checkForSeqNum(type) || !isNumbers(str, j, i))
     return TFrameId(TFrameId::NO_FRAME);
 
@@ -979,7 +979,7 @@ TFilePath TFilePath::withFrame(const TFrameId &frame,
         (k == j - 1 ||
          (checkForSeqNum(type) &&
           isNumbers(str, k,
-                    j))))  //-- "_." の並びか、"_[数字]."の並びのとき --
+                    j))))  // -- In case of "_." or "_[numbers]." --
       return TFilePath(m_path.substr(0, k + i + 1) +
                        ((frame.isNoFrame())
                             ? L""
@@ -1098,7 +1098,7 @@ TFilePath::TFilePathInfo TFilePath::analyzePath() const {
   // Frame Number and Suffix
   QString fIdRegExp = TFilePath::fidRegExpStr();
 
-  // Extension：letters other than "._" or  \/:,;*?"<>|  or " "(space)
+  // Extension: letters other than "._" or  \/:,;*?"<>|  or " "(space)
   const QString extensionRegExp("([^\\._ \\\\/:,;*?\"<>|]+)");
 
   // ignore frame numbers on non-sequential (i.e. movie) extension case :
@@ -1109,7 +1109,7 @@ TFilePath::TFilePathInfo TFilePath::analyzePath() const {
   //  if (!checkForSeqNum(ext)) {
   //    info.levelName = rx_mf.cap(1);
   //    info.sepChar = QChar();
-  //    info.fId = TFrameId(TFrameId::NO_FRAME, 0, 0); //NO_PADで初期化する
+  //    info.fId = TFrameId(TFrameId::NO_FRAME, 0, 0); // initialize with NO_PAD
   //    info.extension = ext;
   //    return info;
   //  }

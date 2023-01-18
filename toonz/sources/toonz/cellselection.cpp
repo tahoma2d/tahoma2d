@@ -1762,15 +1762,14 @@ static void pasteRasterImageInCell(int row, int col,
     } else {
       TXshSimpleLevel *sl = cell.getSimpleLevel();
       // don't do anything to ffmpeg level types
-    if (sl->getType() == OVL_XSHLEVEL && sl->getPath().isUneditable())
-        return;
+      if (sl->getType() == OVL_XSHLEVEL && sl->getPath().isUneditable()) return;
       oldPalette = sl->getPalette();
     }
   }
   if (oldPalette) oldPalette = oldPalette->clone();
-  TTileSet *tiles            = 0;
-  bool isPaste = pasteRasterImageInCellWithoutUndo(row, col, rasterImageData,
-                                                   &tiles, isLevelCreated);
+  TTileSet *tiles = 0;
+  bool isPaste    = pasteRasterImageInCellWithoutUndo(row, col, rasterImageData,
+                                                      &tiles, isLevelCreated);
   if (isLevelCreated && oldPalette.getPointer()) oldPalette = 0;
   if (!isPaste) return;
   cell = xsh->getCell(row, col);
@@ -3950,7 +3949,7 @@ void TCellSelection::convertToToonzRaster() {
   TApp *app = TApp::instance();
   int row   = app->getCurrentFrame()->getFrame();
   int col   = app->getCurrentColumn()->getColumnIndex();
-  int i, j;
+  int i;
 
   ToonzScene *scene = app->getCurrentScene()->getScene();
   TXsheet *xsh      = scene->getXsheet();
@@ -4065,7 +4064,7 @@ void TCellSelection::convertVectortoVector() {
   TApp *app = TApp::instance();
   int row   = app->getCurrentFrame()->getFrame();
   int col   = app->getCurrentColumn()->getColumnIndex();
-  int i, j;
+  int i;
 
   ToonzScene *scene = app->getCurrentScene()->getScene();
   TXsheet *xsh      = scene->getXsheet();

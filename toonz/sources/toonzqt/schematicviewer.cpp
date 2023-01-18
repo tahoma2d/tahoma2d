@@ -348,7 +348,7 @@ void SchematicSceneViewer::mousePressEvent(QMouseEvent *me) {
       m_zooming   = true;
       return;
     }
-  } else if (m_buttonState == Qt::MidButton) {
+  } else if (m_buttonState == Qt::MiddleButton) {
     m_mousePanPoint = m_touchDevice == QTouchDevice::TouchScreen
                           ? mapToScene(me->pos())
                           : me->pos() * getDevicePixelRatio(this);
@@ -384,7 +384,7 @@ void SchematicSceneViewer::mouseMoveEvent(QMouseEvent *me) {
   QPoint currWinPos    = me->pos();
   QPointF currScenePos = mapToScene(currWinPos);
   if (((m_cursorMode == CursorMode::Hand || m_panningArmed) && m_panning) ||
-      m_buttonState == Qt::MidButton) {
+      m_buttonState == Qt::MiddleButton) {
     QPointF usePos     = m_touchDevice == QTouchDevice::TouchScreen
                              ? mapToScene(me->pos())
                              : me->pos() * getDevicePixelRatio(this);
@@ -502,7 +502,11 @@ void SchematicSceneViewer::wheelEvent(QWheelEvent *me) {
          m_touchDevice == QTouchDevice::TouchScreen) ||
         m_gestureActive == false) {
       double factor = exp(delta * 0.001);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+      changeScale(me->position().toPoint(), factor);
+#else
       changeScale(me->pos(), factor);
+#endif
       m_panning = false;
     }
   }
@@ -513,28 +517,24 @@ void SchematicSceneViewer::wheelEvent(QWheelEvent *me) {
 
 void SchematicSceneViewer::zoomQt(bool zoomin, bool resetView) {
   if (resetView) {
-    resetMatrix();
+    resetTransform();
     // resetting will set view to the center of items bounding
     centerOn(scene()->itemsBoundingRect().center());
     return;
   }
 
-#if QT_VERSION >= 0x050000
-  double scale2 = matrix().determinant();
-#else
-  double scale2 = matrix().det();
-#endif
+  double scale2 = transform().determinant();
   if ((scale2 < 100000 || !zoomin) && (scale2 > 0.001 * 0.05 || zoomin)) {
     double oldZoomScale = sqrt(scale2);
     double zoomScale =
         resetView ? 1
                   : ImageUtils::getQuantizedZoomFactor(oldZoomScale, zoomin);
-    QMatrix scale =
-        QMatrix().scale(zoomScale / oldZoomScale, zoomScale / oldZoomScale);
+    QTransform scale =
+        QTransform().scale(zoomScale / oldZoomScale, zoomScale / oldZoomScale);
 
     // See QGraphicsView::mapToScene()'s doc for details
     QPointF sceneCenter(mapToScene(rect().center()));
-    setMatrix(scale, true);
+    setTransform(scale, true);
     centerOn(sceneCenter);
   }
 }
@@ -546,8 +546,8 @@ void SchematicSceneViewer::zoomQt(bool zoomin, bool resetView) {
 void SchematicSceneViewer::changeScale(const QPoint &winPos,
                                        qreal scaleFactor) {
   QPointF startScenePos = mapToScene(winPos);
-  QMatrix scale         = QMatrix().scale(scaleFactor, scaleFactor);
-  setMatrix(scale, true);
+  QTransform scale      = QTransform().scale(scaleFactor, scaleFactor);
+  setTransform(scale, true);
   QPointF endScenePos = mapToScene(winPos);
   QPointF delta       = endScenePos - startScenePos;
   translate(delta.x(), delta.y());
@@ -582,7 +582,7 @@ void SchematicSceneViewer::reorderScene() {
 void SchematicSceneViewer::normalizeScene() {
   // See QGraphicsView::mapToScene()'s doc for details
   QPointF sceneCenter(mapToScene(rect().center()));
-  resetMatrix();
+  resetTransform();
 #if defined(MACOSX)
   scale(1.32, 1.32);
 #endif
@@ -606,7 +606,7 @@ void SchematicSceneViewer::showEvent(QShowEvent *se) {
   if (m_firstShowing) {
     m_firstShowing = false;
     QRectF rect    = scene()->itemsBoundingRect();
-    resetMatrix();
+    resetTransform();
     centerOn(rect.center());
   }
 }
@@ -1207,7 +1207,7 @@ void SchematicViewer::setStageSchematic() {
     m_viewer->setScene(m_stageScene);
     QRectF rect = m_stageScene->itemsBoundingRect();
 
-    m_viewer->resetMatrix();
+    m_viewer->resetTransform();
     m_viewer->centerOn(rect.center());
 
     m_fxToolbar->hide();
@@ -1226,7 +1226,7 @@ void SchematicViewer::setFxSchematic() {
     m_viewer->setScene(m_fxScene);
     QRectF rect = m_fxScene->itemsBoundingRect();
 
-    m_viewer->resetMatrix();
+    m_viewer->resetTransform();
     m_viewer->centerOn(rect.center());
 
     m_stageToolbar->hide();
@@ -1268,7 +1268,7 @@ void SchematicViewer::onSceneSwitched() {
   m_nodeSize->setText(label);
 
   // reset schematic
-  m_viewer->resetMatrix();
+  m_viewer->resetTransform();
   m_viewer->centerOn(m_viewer->scene()->itemsBoundingRect().center());
   if (m_viewer->scene() == m_fxScene && !m_fxScene->isNormalIconView())
     m_fxScene->updateScene();

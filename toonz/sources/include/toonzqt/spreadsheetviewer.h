@@ -144,11 +144,7 @@ class DVAPI ScrollArea final : public QScrollArea {
   Q_OBJECT
 
 public:
-#if QT_VERSION >= 0x050500
-  ScrollArea(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  ScrollArea(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
+  ScrollArea(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
   virtual ~ScrollArea();
 
 protected:

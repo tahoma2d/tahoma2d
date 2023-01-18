@@ -52,7 +52,8 @@ public:
   bool isImageCompatible(int imFlags, void *extData) override;
 
   /*--
-   * ImageBuilder仮想関数の実装。アイコン、画像をLoad時に全てキャッシュに格納する
+   * Implement ImageBuilder virtual functions. All icons and images are stored
+   * in the cache on loading
    * --*/
   void buildAllIconsAndPutInCache(TXshSimpleLevel *level,
                                   std::vector<TFrameId> fids,

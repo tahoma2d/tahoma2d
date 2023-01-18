@@ -487,7 +487,7 @@ void CameraPainter::paint(QPainter *painter,
 
   SchematicViewer *viewer = stageScene->getSchematicViewer();
   QColor cameraColor      = m_isActive ? viewer->getActiveCameraColor()
-                                  : viewer->getOtherCameraColor();
+                                       : viewer->getOtherCameraColor();
 
   painter->setBrush(cameraColor);
   painter->setPen(Qt::NoPen);
@@ -1103,11 +1103,7 @@ StageSchematicNodeDock::StageSchematicNodeDock(StageSchematicNode *parent,
   connect(m_port, SIGNAL(xsheetChanged()), parent, SIGNAL(xsheetChanged()));
 
   setZValue(1.5);
-#if QT_VERSION >= 0x050000
   setAcceptHoverEvents(true);
-#else
-  setAcceptsHoverEvents(true);
-#endif
 }
 
 //--------------------------------------------------------
@@ -1125,11 +1121,7 @@ QRectF StageSchematicNodeDock::boundingRect() const {
       stageScene->isShowLetterOnPortFlagEnabled()) {
     QRectF handleRect = m_handleSpinBox->boundingRect();
     handleRect.moveTopLeft(QPointF(portRect.width(), handleRect.topLeft().y()));
-#if QT_VERSION >= 0x050000
     portRect = portRect.united(handleRect);
-#else
-    portRect = portRect.unite(handleRect);
-#endif
   }
   return portRect;
 }
@@ -1286,11 +1278,7 @@ StageSchematicSplineDock::StageSchematicSplineDock(SchematicNode *parent,
   setFlag(QGraphicsItem::ItemIsSelectable, false);
   setFlag(QGraphicsItem::ItemIsFocusable, false);
   m_port = new StageSchematicSplinePort(this, type);
-#if QT_VERSION >= 0x050000
   setAcceptHoverEvents(true);
-#else
-  setAcceptsHoverEvents(true);
-#endif
 
   connect(m_port, SIGNAL(sceneChanged()), parent, SIGNAL(sceneChanged()));
   connect(m_port, SIGNAL(xsheetChanged()), parent, SIGNAL(xsheetChanged()));
@@ -1657,8 +1645,8 @@ void StageSchematicPegbarNode::onNameChanged() {
   std::string strId = id.toString();
   std::string name  = m_name.toStdString();
   QString toolTip   = name == strId
-                        ? m_name
-                        : m_name + " (" + QString::fromStdString(strId) + ")";
+                          ? m_name
+                          : m_name + " (" + QString::fromStdString(strId) + ")";
   setToolTip(toolTip);
   if (id.isPegbar())
     TStageObjectCmd::rename(id, m_name.toStdString(),

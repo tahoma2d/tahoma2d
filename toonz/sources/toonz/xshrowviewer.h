@@ -68,11 +68,7 @@ class RowArea final : public QWidget {
   bool canSetAutoMarkers();
 
 public:
-#if QT_VERSION >= 0x050500
-  RowArea(XsheetViewer *parent, Qt::WindowFlags flags = 0);
-#else
-  RowArea(XsheetViewer *parent, Qt::WFlags flags = 0);
-#endif
+  RowArea(XsheetViewer *parent, Qt::WindowFlags flags = Qt::WindowFlags());
   ~RowArea();
 
   int getContextMenuRow() { return m_contextMenuRow; }

@@ -990,14 +990,8 @@ void RenderTask::run() {
     if (!m_fieldRender && !m_stereoscopic) {
       // Common case - just build the first tile
       buildTile(m_tileA);
-      // static int iCount = 0;
-      // QString qPath("C:\\butta\\image_" +
-      //     QString::number(++iCount).rightJustified(3, '0') + ".tif");
-      // TImageWriter::save(TFilePath(qPath.toStdWString()), m_tileA.getRaster());
-      /*-- Normally this is the Fx rendering process --*/
+      /*-- Normally, Fx rendering process is performed here --*/
       m_fx.m_frameA->compute(m_tileA, t, m_info);
-      // The tile now has the image.
-      // TImageWriter::save(TFilePath(qPath.toStdWString()), m_tileA.getRaster());
     } else {
       assert(!(m_stereoscopic && m_fieldRender));
       // Field rendering  or stereoscopic case
@@ -1138,7 +1132,7 @@ void RenderTask::onFinished(TThread::RunnableP) {
 
   // If the render instance has just expired
   if (instanceExpires) {
-    /*-- キャンセルされた場合はm_overallRenderedRegionの更新をしない --*/
+    /*-- Do not update m_overallRenderedRegion if canceled --*/
 
     // Inform the render ports
     rendererImp->notifyRenderFinished(isCanceled);
@@ -1191,8 +1185,8 @@ void TRendererStartInvoker::doStartRender(TRendererImp *renderer,
 }
 
 std::vector<const TFx *> calculateSortedFxs(TRasterFxP rootFx) {
-  std::map<const TFx *, std::set<const TFx *>> E; 
-  std::set<const TFx *> Sources; 
+  std::map<const TFx *, std::set<const TFx *>> E; /* information on the edges */
+  std::set<const TFx *> Sources;                  /* Node group with no input */
 
   std::queue<const TFx *> Q;
   Q.push(rootFx.getPointer());
@@ -1206,8 +1200,7 @@ std::vector<const TFx *> calculateSortedFxs(TRasterFxP rootFx) {
       continue;
     }
 
-    /* Visit the Fx beyond the connected input port
-Exit if there is no input port */
+    /* If there is no input port to visit Fx connected to input port, exit */
     int portCount = vptr->getInputPortCount();
     if (portCount < 1) {
       Sources.insert(vptr);
@@ -1230,7 +1223,7 @@ Exit if there is no input port */
     }
   }
 
-  /* Topological sort */
+  /* topological sorting */
   std::set<const TFx *> visited;
   std::vector<const TFx *> L;
   std::function<void(const TFx *)> visit = [&visit, &visited, &E,
@@ -1409,10 +1402,10 @@ void TRendererImp::startRendering(
     // Build the frame's description alias
     const TRenderer::RenderData &renderData = *it;
 
-    /*--- Camera size (used for Level Auto and noise) ---*/
+    /*--- Camera size (used for LevelAuto and noise) ---*/
     TRenderSettings rs = renderData.m_info;
     rs.m_cameraBox     = camBox;
-    /*--- Flag when Preview calculation is canceled in the middle ---*/
+    /*--- Flag when Preview calculation is canceled during the process ---*/
     rs.m_isCanceled = &renderInfos->m_canceled;
 
     TRasterFxP fx = renderData.m_fxRoot.m_frameA;

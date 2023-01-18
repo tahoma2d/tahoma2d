@@ -154,9 +154,9 @@ public:
   // Raster levels. Currently used only in Tile Fx Iwa. (see iwa_tilefx.cpp)
   bool m_getFullSizeBBox;
 
-  /*-- カメラサイズ --*/
+  /*-- camera size --*/
   TRectD m_cameraBox;
-  /*-- 途中でPreview計算がキャンセルされたときのフラグ --*/
+  /*-- Flag when Preview calculation is canceled during the process --*/
   int *m_isCanceled;
 
   // pointer to QOffscreenSurface which is created on

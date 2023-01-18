@@ -219,9 +219,10 @@ void FxSelection::pasteSelection() {
       emit columnPasted(columns);
     }
 
-    TFxCommand::pasteFxs(fxs.toStdList(), zeraryFxColumnSize.toStdMap(),
-                         columns.toStdList(), m_pastePosition, m_xshHandle,
-                         m_fxHandle);
+    TFxCommand::pasteFxs(std::list<TFxP>(fxs.begin(), fxs.end()),
+                         zeraryFxColumnSize.toStdMap(),
+                         std::list<TXshColumnP>(columns.begin(), columns.end()),
+                         m_pastePosition, m_xshHandle, m_fxHandle);
 
     if (!columns.isEmpty()) {
       TUndoManager::manager()->endBlock();
@@ -281,9 +282,11 @@ bool FxSelection::insertPasteSelection() {
       emit columnPasted(columns);
     }
 
-    TFxCommand::insertPasteFxs(selectedLinks[i], fxs.toStdList(),
-                               zeraryFxColumnSize.toStdMap(),
-                               columns.toStdList(), m_xshHandle, m_fxHandle);
+    TFxCommand::insertPasteFxs(
+        selectedLinks[i], std::list<TFxP>(fxs.begin(), fxs.end()),
+        zeraryFxColumnSize.toStdMap(),
+        std::list<TXshColumnP>(columns.begin(), columns.end()), m_xshHandle,
+        m_fxHandle);
   }
 
   return true;
@@ -325,9 +328,11 @@ bool FxSelection::addPasteSelection() {
       auto_.m_destruct = true, TUndoManager::manager()->beginBlock();
 
     TFx *inFx = selectedFxs[i].getPointer();
-    TFxCommand::addPasteFxs(inFx, fxs.toStdList(),
-                            zeraryFxColumnSize.toStdMap(), columns.toStdList(),
-                            m_xshHandle, m_fxHandle);
+    TFxCommand::addPasteFxs(
+        inFx, std::list<TFxP>(fxs.begin(), fxs.end()),
+        zeraryFxColumnSize.toStdMap(),
+        std::list<TXshColumnP>(columns.begin(), columns.end()), m_xshHandle,
+        m_fxHandle);
   }
 
   return true;
@@ -374,9 +379,11 @@ bool FxSelection::replacePasteSelection() {
     }
 
     TFx *inFx = m_selectedFxs[i].getPointer();
-    TFxCommand::replacePasteFxs(inFx, fxs.toStdList(),
-                                zeraryFxColumnSize.toStdMap(),
-                                columns.toStdList(), m_xshHandle, m_fxHandle);
+    TFxCommand::replacePasteFxs(
+        inFx, std::list<TFxP>(fxs.begin(), fxs.end()),
+        zeraryFxColumnSize.toStdMap(),
+        std::list<TXshColumnP>(columns.begin(), columns.end()), m_xshHandle,
+        m_fxHandle);
   }
 
   return true;
@@ -386,7 +393,8 @@ bool FxSelection::replacePasteSelection() {
 
 void FxSelection::groupSelection() {
   if (m_selectedFxs.size() <= 1) return;
-  TFxCommand::groupFxs(m_selectedFxs.toStdList(), m_xshHandle);
+  TFxCommand::groupFxs(
+      std::list<TFxP>(m_selectedFxs.begin(), m_selectedFxs.end()), m_xshHandle);
   selectNone();
   m_xshHandle->notifyXsheetChanged();
 }

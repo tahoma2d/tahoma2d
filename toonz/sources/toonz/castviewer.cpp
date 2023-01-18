@@ -93,7 +93,7 @@ public:
     return QObject::tr("Move Level to Cast Folder");
   }
 };
-}
+}  // namespace
 
 //=============================================================================
 //
@@ -454,11 +454,7 @@ void CastTreeViewer::deleteFolder() {
 //
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 CastBrowser::CastBrowser(QWidget *parent, Qt::WindowFlags flags)
-#else
-CastBrowser::CastBrowser(QWidget *parent, Qt::WFlags flags)
-#endif
     : QSplitter(parent)
     , m_treeViewer(0)
     , m_folderName(0)

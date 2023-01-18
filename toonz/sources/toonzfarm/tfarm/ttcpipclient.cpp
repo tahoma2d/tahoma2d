@@ -43,17 +43,13 @@ TTcpIpClient::~TTcpIpClient() {
 
 int TTcpIpClient::connect(const QString &hostName, const QString &addrStr,
                           int port, int &sock) {
-/*
-  if (!addrStr.empty())
-  {
-    unsigned long ipAddr = inet_addr(addrStr.c_str());
-  }
-*/
-#if QT_VERSION >= 0x050500
+  /*
+    if (!addrStr.empty())
+    {
+      unsigned long ipAddr = inet_addr(addrStr.c_str());
+    }
+  */
   struct hostent *he = gethostbyname(hostName.toUtf8());
-#else
-  struct hostent *he = gethostbyname(hostName.toAscii());
-#endif
   if (!he) {
 #ifdef _WIN32
     int err = WSAGetLastError();
@@ -309,7 +305,7 @@ int readData(int sock, string &data)
 
 #endif
 
-//#define PRIMA
+// #define PRIMA
 
 #ifdef PRIMA
 
@@ -353,7 +349,7 @@ int readData(int sock, string &data) {
 
 int TTcpIpClient::send(int sock, const QString &data, QString &reply) {
   if (data.size() > 0) {
-    int ret           = send(sock, data);
+    int ret = send(sock, data);
     if (ret == 0) ret = readData(sock, reply);
     return ret;
   }

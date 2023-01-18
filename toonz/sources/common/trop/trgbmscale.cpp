@@ -208,9 +208,6 @@ void do_rgbmScale<TPixelF>(TRasterFP rout, TRasterFP rin, const double *a,
   float out0M = std::max(fac * (float)out0[3], 0.f);
   float out1M = std::min(fac * (float)out1[3], 1.f);
 
-  // Retrieve de/premultiplication luts
-  double premFac, depremFac;
-
   float aFac[4];
   for (int i = 0; i < 4; i++) aFac[i] = a[i] * (float)fac;
 

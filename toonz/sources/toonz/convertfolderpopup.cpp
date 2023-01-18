@@ -240,7 +240,8 @@ ConvertFolderPopup::ConvertFolderPopup()
 
   m_srcFileList = new QListWidget(this);
 
-  m_convertFolderFld->setFileMode(QFileDialog::DirectoryOnly);
+  m_convertFolderFld->setFileMode(
+      QFileDialog::Directory);  // implies ShowDirsOnly
   //-----------------------
 
   m_progressDialog->setWindowTitle(tr("Convert TZP in Folder"));

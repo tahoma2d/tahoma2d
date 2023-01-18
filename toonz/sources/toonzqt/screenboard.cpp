@@ -12,6 +12,7 @@
 using namespace DVGui;
 
 #include <QPalette>
+#include <QScreen>
 
 //***********************************************************************************
 //    Local namespace
@@ -25,13 +26,13 @@ public:
     return rect.contains(QCursor::pos());
   }
   void paintEvent(QWidget *widget, QPaintEvent *pe) override {
-// Seems that mouse masking is on by default on the drawn regions, when using
-// WA_TranslucentBackground (which is weird). I think it's the Qt 2 autoMask
-// feature
-// that disappeared from Qt 3 on - now it must be managed internally.
+    // Seems that mouse masking is on by default on the drawn regions, when
+    // using WA_TranslucentBackground (which is weird). I think it's the Qt 2
+    // autoMask feature that disappeared from Qt 3 on - now it must be managed
+    // internally.
 
-// So, we have to fill the entire screen region with the most invisible color
-// possible...
+    // So, we have to fill the entire screen region with the most invisible
+    // color possible...
 
 #ifdef MACOSX
 #define MIN_ALPHA                                                              \
@@ -179,7 +180,8 @@ void ScreenBoard::releaseMouse() {
 void ScreenBoard::reallocScreenWidgets() {
   QDesktopWidget *desktop = QApplication::desktop();
 
-  int i, screensCount = desktop->numScreens();
+  int i;
+  int screensCount = QGuiApplication::screens().count();
 
   // Delete exceeding screens and resize to screensCount
   for (i = screensCount; i < m_screenWidgets.size(); ++i) {
@@ -188,7 +190,7 @@ void ScreenBoard::reallocScreenWidgets() {
     // Note that updates may be invoked in event handlers.
   }
 
-  m_screenWidgets.resize(desktop->numScreens());
+  m_screenWidgets.resize(screensCount);
 
   // Re-initialize the screen widgets list
   for (i = 0; i < screensCount; ++i) {
@@ -200,7 +202,7 @@ void ScreenBoard::reallocScreenWidgets() {
   int j, drawingsCount = m_drawings.size();
   for (i = 0; i < screensCount; ++i) {
     ScreenWidget *screenWidget = m_screenWidgets[i];
-    const QRect &screenGeom    = desktop->screenGeometry(i);
+    const QRect &screenGeom    = QGuiApplication::screens().at(i)->geometry();
 
     for (j = 0; j < drawingsCount; ++j) {
       Drawing *drawing = m_drawings[j];

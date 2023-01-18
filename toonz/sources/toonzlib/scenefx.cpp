@@ -365,7 +365,7 @@ static bool getColumnPlacement(PlacedFx &pf, TXsheet *xsh, double row, int col,
 }
 
 //-------------------------------------------------------------------
-/*-- Objectの位置を得る --*/
+/*-- Obtain the position of the Object --*/
 static bool getStageObjectPlacement(TAffine &aff, TXsheet *xsh, double row,
                                     TStageObjectId &id, bool isPreview) {
   TStageObject *pegbar = xsh->getStageObjectTree()->getStageObject(id, false);
@@ -390,7 +390,7 @@ static bool getStageObjectPlacement(TAffine &aff, TXsheet *xsh, double row,
   return isVisible;
 }
 
-/*-- typeとindexからStageObjectIdを得る --*/
+/*-- Get StageObjectId from type and index --*/
 namespace {
 TStageObjectId getMotionObjectId(MotionObjectType type, int index) {
   switch (type) {
@@ -427,7 +427,7 @@ static TPointD getColumnSpeed(TXsheet *xsh, double row, int col,
   const double h = 0.001;
   getColumnPlacement(aff, xsh, row + h, col, isPreview);
 
-  /*-- カラムと、カメラの動きに反応 --*/
+  /*-- Reacts to columns and camera movement --*/
   TStageObjectId cameraId;
   if (isPreview)
     cameraId = xsh->getStageObjectTree()->getCurrentPreviewCameraId();
@@ -447,15 +447,15 @@ static TPointD getColumnSpeed(TXsheet *xsh, double row, int col,
 }
 
 //-------------------------------------------------------------------
-/*-- オブジェクトの軌跡を、基準点との差分で得る
-        objectId: 移動の参考にするオブジェクト。自分自身の場合はNoneId
+/*-- Obtain the trajectory of an object by the difference from the reference
+point objectId: The reference object for the move. NoneId for itself.
 --*/
 static QList<TPointD> getColumnMotionPoints(TXsheet *xsh, double row, int col,
                                             TStageObjectId &objectId,
                                             bool isPreview, double shutterStart,
                                             double shutterEnd,
                                             int traceResolution) {
-  /*-- 前後フレームが共に０なら空のリストを返す --*/
+  /*-- Returns an empty list if the previous and next frames are both zero. --*/
   if (shutterStart == 0.0 && shutterEnd == 0.0) return QList<TPointD>();
 
   /*-- 現在のカメラを得る --*/

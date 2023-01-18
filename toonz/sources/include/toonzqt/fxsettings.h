@@ -159,11 +159,7 @@ class DVAPI ParamsPageSet final : public QWidget {
   QLabel *m_warningMark;
 
 public:
-#if QT_VERSION >= 0x050500
-  ParamsPageSet(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  ParamsPageSet(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
+  ParamsPageSet(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
   ~ParamsPageSet();
 
   void setFx(const TFxP &currentFx, const TFxP &actualFx, int frame);
@@ -210,11 +206,7 @@ class DVAPI ParamViewer final : public QFrame {
   QMap<std::string, int> m_tableFxIndex;
 
 public:
-#if QT_VERSION >= 0x050500
-  ParamViewer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  ParamViewer(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
+  ParamViewer(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
   ~ParamViewer();
 
   void setFx(const TFxP &currentFx, const TFxP &actualFx, int frame,

@@ -893,7 +893,7 @@ void LipSyncPopup::onApplyButton() {
   int lastFrame = m_textLines.at(m_textLines.size() - 2).toInt() + startFrame;
 
   if (m_restToEnd->isChecked()) {
-    int r0, r1, step;
+    int r0, r1;
     TApp::instance()->getCurrentXsheet()->getXsheet()->getCellRange(m_col, r0,
                                                                     r1);
     if (lastFrame < r1 + 1) lastFrame = r1 + 1;
@@ -937,7 +937,7 @@ void LipSyncPopup::imageNavClicked(int id) {
   else if (frameIndex == 0 && direction == -1)
     newIndex = m_levelFrameIds.size() - 1;
   else
-    newIndex                    = frameIndex + direction;
+    newIndex = frameIndex + direction;
   m_activeFrameIds[frameNumber] = m_levelFrameIds.at(newIndex);
   TXshCell newCell =
       TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getCell(

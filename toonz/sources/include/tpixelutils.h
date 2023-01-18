@@ -31,8 +31,10 @@ inline T blend(const T &a, const T &b, double t) {
 
 template <>
 inline TPixelF blend(const TPixelF &a, const TPixelF &b, double t) {
-  return TPixelF((1 - t) * a.r + t * b.r, (1 - t) * a.g + t * b.g,
-                 (1 - t) * a.b + t * b.b, (1 - t) * a.m + t * b.m);
+  return TPixelF((float)(1. - t) * a.r + (float)t * b.r,
+                 (float)(1. - t) * a.g + (float)t * b.g,
+                 (float)(1. - t) * a.b + (float)t * b.b,
+                 (float)(1. - t) * a.m + (float)t * b.m);
 }
 
 //-----------------------------------------------------------------------------
@@ -419,9 +421,9 @@ inline void premult(TPixel32 &pix) {
 }
 
 inline void premult(TPixel64 &pix) {
-  pix.r = pix.r * pix.m / 65535.0;
-  pix.g = pix.g * pix.m / 65535.0;
-  pix.b = pix.b * pix.m / 65535.0;
+  pix.r = (typename TPixel64::Channel)((double)pix.r * (double)pix.m / 65535.0);
+  pix.g = (typename TPixel64::Channel)((double)pix.g * (double)pix.m / 65535.0);
+  pix.b = (typename TPixel64::Channel)((double)pix.b * (double)pix.m / 65535.0);
 }
 
 inline void premult(TPixelF &pix) {
@@ -431,17 +433,17 @@ inline void premult(TPixelF &pix) {
 }
 
 inline void depremult(TPixel32 &pix) {
-  float fac = 255.0f / pix.m;
-  pix.r     = std::min(pix.r * fac, 255.0f);
-  pix.g     = std::min(pix.g * fac, 255.0f);
-  pix.b     = std::min(pix.b * fac, 255.0f);
+  float fac = 255.f / (float)pix.m;
+  pix.r     = (typename TPixel32::Channel)(std::min((float)pix.r * fac, 255.f));
+  pix.g     = (typename TPixel32::Channel)(std::min((float)pix.g * fac, 255.f));
+  pix.b     = (typename TPixel32::Channel)(std::min((float)pix.b * fac, 255.f));
 }
 
 inline void depremult(TPixel64 &pix) {
-  double fac = 65535.0 / pix.m;
-  pix.r      = std::min(pix.r * fac, 65535.0);
-  pix.g      = std::min(pix.g * fac, 65535.0);
-  pix.b      = std::min(pix.b * fac, 65535.0);
+  double fac = 65535. / (double)pix.m;
+  pix.r = (typename TPixel64::Channel)(std::min((double)pix.r * fac, 65535.));
+  pix.g = (typename TPixel64::Channel)(std::min((double)pix.g * fac, 65535.));
+  pix.b = (typename TPixel64::Channel)(std::min((double)pix.b * fac, 65535.));
 }
 
 inline void depremult(TPixelF &pix) {
@@ -469,8 +471,9 @@ inline TPixel32 premultiply(const TPixel32 &pix) {
 }
 
 inline TPixel64 premultiply(const TPixel64 &pix) {
-  return TPixel64(pix.r * pix.m / 65535.0, pix.g * pix.m / 65535.0,
-                  pix.b * pix.m / 65535.0, pix.m);
+  return TPixel64((int)((double)pix.r * (double)pix.m / 65535.),
+                  (int)((double)pix.g * (double)pix.m / 65535.),
+                  (int)((double)pix.b * (double)pix.m / 65535.), pix.m);
 }
 
 inline TPixelF premultiply(const TPixelF &pix) {
@@ -479,13 +482,15 @@ inline TPixelF premultiply(const TPixelF &pix) {
 }
 
 inline TPixel32 depremultiply(const TPixel32 &pix) {
-  return TPixel32(pix.r * 255.0 / pix.m, pix.g * 255.0 / pix.m,
-                  pix.b * 255.0 / pix.m, pix.m);
+  return TPixel32((int)((double)pix.r * 255. / (double)pix.m),
+                  (int)((double)pix.g * 255. / (double)pix.m),
+                  (int)((double)pix.b * 255. / (double)pix.m), pix.m);
 }
 
 inline TPixel64 depremultiply(const TPixel64 &pix) {
-  return TPixel64(pix.r * 65535.0 / pix.m, pix.g * 65535.0 / pix.m,
-                  pix.b * 65535.0 / pix.m, pix.m);
+  return TPixel64((int)((double)pix.r * 65535. / (double)pix.m),
+                  (int)((double)pix.g * 65535. / (double)pix.m),
+                  (int)((double)pix.b * 65535. / (double)pix.m), pix.m);
 }
 
 inline TPixelF depremultiply(const TPixelF &pix) {

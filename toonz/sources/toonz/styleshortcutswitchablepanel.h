@@ -22,7 +22,7 @@ class StyleShortcutSwitchablePanel : public TPanel {
 
 public:
   StyleShortcutSwitchablePanel(
-      QWidget *parent = 0, Qt::WindowFlags flags = 0,
+      QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags(),
       TDockWidget::Orientation orientation = TDockWidget::vertical)
       : TPanel(parent, flags, orientation) {}
 

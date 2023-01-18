@@ -155,7 +155,7 @@ bool calcFillRow(const TRasterCM32P &r, const TPoint &p, int &xa, int &xb,
     oldtone = tone;
   }
   if (tone == 0) {
-    tmp_limit                    = pix - 10;
+    tmp_limit = pix - 10;
     if (limit < tmp_limit) limit = tmp_limit;
     for (; pix >= limit; pix--) {
       if (pix->getPaint() == paint) break;
@@ -211,7 +211,7 @@ void findSegment(const TRaster32P &r, const TPoint &p, int &xa, int &xb,
     oldmatte = matte;
   }
   if (matte == 0) {
-    tmp_limit                    = pix - 10;
+    tmp_limit = pix - 10;
     if (limit < tmp_limit) limit = tmp_limit;
     for (; pix >= limit; pix--) {
       if (*pix == color) break;
@@ -401,7 +401,7 @@ bool floodCheck(const TPixel32 &clickColor, const TPixel32 *targetPix,
 //-----------------------------------------------------------------------------
 }  // namespace
 //-----------------------------------------------------------------------------
-/*-- The return value is whether the saveBox has been updated --*/
+/*-- The return value is whether the saveBox has been updated or not. --*/
 bool fill(const TRasterCM32P &r, const FillParameters &params,
           TTileSaverCM32 *saver, bool fillGaps, bool closeGaps,
           int closeStyleIndex, double autoCloseDistance, TXsheet *xsheet,
@@ -434,16 +434,16 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
     tempRaster = r;
   }
 
-  /*-- getBounds --*/
+  /*-- getBounds returns the entire image --*/
   TRect bbbox = tempRaster->getBounds();
 
-  /*- Return for off-screen clicks -*/
+  /*- Return if clicked outside the screen -*/
   if (!bbbox.contains(p)) return false;
-  /*- Return if the same color is already painted -*/
+  /*- If the same color has already been painted, return -*/
   int paintAtClickedPos = (tempRaster->pixels(p.y) + p.x)->getPaint();
   if (paintAtClickedPos == paint) return false;
-  /*- If the "Paint only transparent area" option is enabled and it is already
-   * colored, return
+  /*- If the "paint only transparent areas" option is enabled and the area is
+   * already colored, return
    * -*/
   if (params.m_emptyOnly && (tempRaster->pixels(p.y) + p.x)->getPaint() != 0)
     return false;
@@ -494,8 +494,8 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
     default:
       assert(false);
     }
-  /*-- Look at the colors in the four corners and update the saveBox if even one
-   * changes --*/
+  /*--Look at the colors in the four corners and update the saveBox if any of
+   * the colors change. --*/
   TPixelCM32 borderIndex[4];
   TPixelCM32 *borderPix[4];
   pix            = tempRaster->pixels(0);
@@ -776,7 +776,7 @@ void fill(const TRaster32P &ras, const TRaster32P &ref,
     for (int i = 0; i < (int)segmentVector.size(); i++) {
       std::pair<int, int> segment = segmentVector[i];
       if (segment.second >= segment.first) {
-        pix             = line + segment.first;
+        pix = line + segment.first;
         if (ref) refPix = refLine + segment.first;
         int n;
         for (n = 0; n < segment.second - segment.first + 1; n++, pix++) {
@@ -1010,8 +1010,8 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
 
   std::map<int, std::vector<std::pair<int, int>>>::iterator it;
   for (it = segments.begin(); it != segments.end(); it++) {
-    TPixel32 *line    = ras->pixels(it->first);
-    TPixel32 *refLine = 0;
+    TPixel32 *line                                 = ras->pixels(it->first);
+    TPixel32 *refLine                              = 0;
     std::vector<std::pair<int, int>> segmentVector = it->second;
     for (int i = 0; i < (int)segmentVector.size(); i++) {
       std::pair<int, int> segment = segmentVector[i];

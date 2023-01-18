@@ -280,7 +280,7 @@ class DVAPI RadioButtonDialog final : public DVGui::Dialog {
 public:
   RadioButtonDialog(const QString &labelText,
                     const QList<QString> &radioButtonList, QWidget *parent = 0,
-                    Qt::WindowFlags f = 0);
+                    Qt::WindowFlags f = Qt::WindowFlags());
 
 public Q_SLOTS:
   void onButtonClicked(int id);
@@ -308,7 +308,7 @@ protected:
 public:
   ProgressDialog(const QString &labelText, const QString &cancelButtonText,
                  int minimum, int maximum, QWidget *parent = 0,
-                 Qt::WindowFlags f = 0);
+                 Qt::WindowFlags f = Qt::WindowFlags());
 
   void setLabelText(const QString &text);
   void setCancelButton(QPushButton *cancelButton);

@@ -163,11 +163,7 @@ class XsheetScrollArea final : public QScrollArea {
   Q_OBJECT
 
 public:
-#if QT_VERSION >= 0x050500
   XsheetScrollArea(QWidget *parent = 0, Qt::WindowFlags flags = 0)
-#else
-  XsheetScrollArea(QWidget *parent = 0, Qt::WFlags flags = 0)
-#endif
       : QScrollArea(parent) {
     setObjectName("xsheetScrollArea");
     setFrameStyle(QFrame::StyledPanel);
@@ -644,11 +640,7 @@ private:
   }
 
 public:
-#if QT_VERSION >= 0x050500
   XsheetViewer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  XsheetViewer(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
   ~XsheetViewer();
 
   TColumnSelection *getColumnSelection() const { return m_columnSelection; }

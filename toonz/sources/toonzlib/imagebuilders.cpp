@@ -212,7 +212,8 @@ void ImageLoader::invalidate() {
 
 //-------------------------------------------------------------------------
 /*--
- * ImageBuilder仮想関数の実装。アイコン、画像をLoad時に全てキャッシュに格納する
+ * Implement ImageBuilder virtual functions. All icons and images are stored in
+ * the cache on Loading.
  * --*/
 
 void ImageLoader::buildAllIconsAndPutInCache(TXshSimpleLevel *level,
@@ -221,7 +222,7 @@ void ImageLoader::buildAllIconsAndPutInCache(TXshSimpleLevel *level,
                                              bool cacheImagesAsWell) {
   if (m_path.getType() != "tlv") return;
   if (fids.empty() || iconIds.empty()) return;
-  /*- fidとアイコンidの数は同じはず -*/
+  /*- The number of fid and icon id should be the same -*/
   if ((int)fids.size() != (int)iconIds.size()) return;
 
   try {
@@ -237,7 +238,7 @@ void ImageLoader::buildAllIconsAndPutInCache(TXshSimpleLevel *level,
       TPalette *palette     = level->getPalette();
       std::string fullImgId = level->getImageId(fids[i]);
 
-      /*- 画像データも一緒にキャッシュする場合 -*/
+      /*- When image data is also cached together -*/
       if (cacheImagesAsWell) {
         ir->enable16BitRead(m_64bitCompatible);
         ir->setShrink(1);
@@ -249,7 +250,7 @@ void ImageLoader::buildAllIconsAndPutInCache(TXshSimpleLevel *level,
         }
       }
 
-      /*- アイコンのロード -*/
+      /*- load icons -*/
       TImageP img = ir->loadIcon();
       ir->enable16BitRead(false);
       if (img) {

@@ -7,7 +7,7 @@
 #include "timage.h"
 #include <QObject>
 #include <QMap>
-#include <QTime>
+#include <QElapsedTimer>
 
 // forward declaration
 class TTool;
@@ -35,7 +35,7 @@ class DVAPI ToolHandle final : public QObject {
   QString m_toolName;
   int m_toolTargetType;
   QString m_storedToolName;
-  QTime m_storedToolTime;
+  QElapsedTimer m_storedToolTime;
   QString m_oldToolName;
   bool m_toolIsBusy;
 

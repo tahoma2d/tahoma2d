@@ -259,7 +259,7 @@ bool PreviewSubCameraManager::mouseMoveEvent(SceneViewer *viewer,
   }
 
   // In case, perform the pan
-  return event.buttons() == Qt::MidButton;
+  return event.buttons() == Qt::MiddleButton;
 }
 
 //----------------------------------------------------------------------

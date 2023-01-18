@@ -337,9 +337,9 @@ int TriMesh<V, E, F>::collapseEdge(int e) {
     {
       F &fc = this->face(*ft);
 
-      (fc.edge(0) == srcE)
-          ? fc.setEdge(0, dstE)
-          : (fc.edge(1) == srcE) ? fc.setEdge(1, dstE) : fc.setEdge(2, dstE);
+      (fc.edge(0) == srcE)   ? fc.setEdge(0, dstE)
+      : (fc.edge(1) == srcE) ? fc.setEdge(1, dstE)
+                             : fc.setEdge(2, dstE);
 
       dstEd.addFace(*ft);
       ft = srcEd.eraseFace(ft);  // here
@@ -356,7 +356,7 @@ int TriMesh<V, E, F>::collapseEdge(int e) {
 
 // Ensure that there is no remaining edge which would be duplicated
 // after vDelete and vKeep merge
-/* FIXME: edgeInciding がないと言われるのでとりあえず省略 */
+/* FIXME: Omitted for now because it is warned that there is no edgeInciding */
 #if 0
     assert("Detected vertex adjacent to collapsed edge's endpoints, but not to its faces." &&
            edgeInciding(ed.otherVertex(vDelete), vKeep) < 0);
@@ -394,7 +394,7 @@ int TriMesh<V, E, F>::splitEdge(int e) {
       fCount =
           ed.facesCount();  //       MORE than 2 adjacent faces, the new faces
   //       should be inserted BEFORE removing the split
-  for (f      = 0; f != fCount; ++f)  //       edge.
+  for (f = 0; f != fCount; ++f)  //       edge.
     otherV[f] = otherFaceVertex(ed.face(f), e);
 
   // Remove e

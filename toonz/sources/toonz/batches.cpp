@@ -243,7 +243,19 @@ commandline += " -id " + task->m_id;*/
     RunningTasks[task->m_id] = process;
   }
 
-  process->start(task->getCommandLine());
+  process->setProgram(task->getCommandLinePrgName());
+#if defined(_WIN32)
+  process->setNativeArguments(task->getCommandLineArguments());
+#else
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  process->setArguments(
+      task->getCommandLineArguments().split(" ", Qt::SkipEmptyParts));
+#else
+  process->setArguments(
+      task->getCommandLineArguments().split(" ", QString::SkipEmptyParts));
+#endif
+#endif
+  process->start();
   process->waitForFinished(-1);
 
   {
@@ -348,7 +360,7 @@ void BatchesController::addComposerTask(const TFilePath &_taskFilePath) {
   out.getRange(r0, r1, step);
 
   int sceneFrameCount = scene.getFrameCount();
-  if (r0 < 0) r0      = 0;
+  if (r0 < 0) r0 = 0;
   if (r1 >= sceneFrameCount)
     r1 = sceneFrameCount - 1;
   else if (r1 < r0)
@@ -479,7 +491,7 @@ namespace {
 void DeleteTask(const std::pair<QString, TFarmTask *> &mapItem) {
   if (mapItem.second->m_parentId.isEmpty()) delete mapItem.second;
 }
-}
+}  // namespace
 
 void BatchesController::removeAllTasks() {
   std::map<QString, TFarmTask *>::iterator tt, tEnd(m_tasks.end());
@@ -558,7 +570,7 @@ void BatchesController::setDirtyFlag(bool state) {
   if (FirstTime) {
     FirstTime = false;
     bool ret  = connect(TApp::instance()->getMainWindow(), SIGNAL(exit(bool &)),
-                       SLOT(onExit(bool &)));
+                        SLOT(onExit(bool &)));
     assert(ret);
   }
 
@@ -710,7 +722,7 @@ void BatchesController::stop(const QString &taskId) {
     int count = task->getTaskCount();
     if (count > 1) {
       for (int i = 0; i < count; ++i) {
-        TFarmTask *subtask                                  = task->getTask(i);
+        TFarmTask *subtask = task->getTask(i);
         if (subtask->m_status == Waiting) subtask->m_status = Suspended;
         if ((it = RunningTasks.find(subtask->m_id)) != RunningTasks.end()) {
           it->second->kill();
@@ -873,7 +885,7 @@ void BatchesController::saveas() {
   }
 
   static SaveTaskListPopup *popup = 0;
-  if (!popup) popup               = new SaveTaskListPopup();
+  if (!popup) popup = new SaveTaskListPopup();
 
   popup->exec();
 }
@@ -932,7 +944,7 @@ void BatchesController::detach(BatchesController::Observer *obs) {
 namespace {
 
 void notifyObserver(BatchesController::Observer *obs) { obs->update(); }
-}
+}  // namespace
 
 void BatchesController::notify() {
   std::for_each(m_observers.begin(), m_observers.end(), notifyObserver);

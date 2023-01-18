@@ -88,11 +88,7 @@ class VectorizerPopup final : public DVGui::Dialog {
   Q_OBJECT
 
 public:
-#if QT_VERSION >= 0x050500
   VectorizerPopup(QWidget *parent = 0, Qt::WindowFlags flags = Qt::Tool);
-#else
-  VectorizerPopup(QWidget *parent = 0, Qt::WFlags flags = Qt::Tool);
-#endif
 
   bool apply();  //!< The main vectorization method - prepares input
                  //!  configuration and runs the vectorization thread.

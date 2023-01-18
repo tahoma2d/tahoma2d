@@ -710,7 +710,11 @@ bool isReservedFileName_message(const QString &fileName) {
 
 QString elideText(const QString &srcText, const QFont &font, int width) {
   QFontMetrics metrix(font);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+  int srcWidth = metrix.horizontalAdvance(srcText);
+#else
   int srcWidth = metrix.width(srcText);
+#endif
   if (srcWidth < width) return srcText;
   int tilde = metrix.width("~");
   int block = (width - tilde) / 2;
@@ -718,13 +722,21 @@ QString elideText(const QString &srcText, const QFont &font, int width) {
   int i;
   for (i = 0; i < srcText.size(); i++) {
     text += srcText.at(i);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+    if (metrix.horizontalAdvance(text) > block) break;
+#else
     if (metrix.width(text) > block) break;
+#endif
   }
   text[i] = '~';
   QString endText("");
   for (i = srcText.size() - 1; i >= 0; i--) {
     endText.push_front(srcText.at(i));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+    if (metrix.horizontalAdvance(endText) > block) break;
+#else
     if (metrix.width(endText) > block) break;
+#endif
   }
   endText.remove(0, 1);
   text += endText;
@@ -737,7 +749,11 @@ QString elideText(const QString &srcText, const QFontMetrics &fm, int width,
                   const QString &elideSymbol) {
   QString text(srcText);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+  for (int i = text.size(); i > 1 && fm.horizontalAdvance(text) > width;)
+#else
   for (int i = text.size(); i > 1 && fm.width(text) > width;)
+#endif
     text = srcText.left(--i).append(elideSymbol);
 
   return text;

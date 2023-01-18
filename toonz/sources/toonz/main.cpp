@@ -333,9 +333,7 @@ int main(int argc, char *argv[]) {
 
   // Enables high-DPI scaling. This attribute must be set before QApplication is
   // constructed. Available from Qt 5.6.
-#if QT_VERSION >= 0x050600
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
 
   QApplication a(argc, argv);
 

@@ -844,7 +844,7 @@ void ImageViewer::mouseMoveEvent(QMouseEvent *event) {
   if (m_visualSettings.m_defineLoadbox && m_flipbook) {
     if (m_mouseButton == Qt::LeftButton)
       updateLoadbox(curPos);
-    else if (m_mouseButton == Qt::MidButton)
+    else if (m_mouseButton == Qt::MiddleButton)
       panQt(curQPos - m_pos);
     else
       updateCursor(curPos);
@@ -873,7 +873,7 @@ void ImageViewer::mouseMoveEvent(QMouseEvent *event) {
 
   if (m_compareSettings.m_dragCompareX || m_compareSettings.m_dragCompareY)
     dragCompare(curQPos - m_pos);
-  else if (m_mouseButton == Qt::MidButton)
+  else if (m_mouseButton == Qt::MiddleButton)
     panQt(curQPos - m_pos);
 
   m_pos = curQPos;
@@ -1273,7 +1273,6 @@ void ImageViewer::mouseReleaseEvent(QMouseEvent *event) {
  */
 void ImageViewer::wheelEvent(QWheelEvent *event) {
   if (!m_image) return;
-  if (event->orientation() == Qt::Horizontal) return;
   int delta = 0;
   switch (event->source()) {
   case Qt::MouseEventNotSynthesized: {
@@ -1307,14 +1306,19 @@ void ImageViewer::wheelEvent(QWheelEvent *event) {
 
   }  // end switch
 
-  if (abs(delta) > 0) {
+  if (delta != 0) {
     if ((m_gestureActive == true &&
          m_touchDevice == QTouchDevice::TouchScreen) ||
         m_gestureActive == false) {
-      int delta = event->delta() > 0 ? 120 : -120;
+      int d = delta > 0 ? 120 : -120;
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+      QPoint center(event->position().x() * getDevPixRatio() - width() / 2,
+                    -event->position().y() * getDevPixRatio() + height() / 2);
+#else
       QPoint center(event->pos().x() * getDevPixRatio() - width() / 2,
                     -event->pos().y() * getDevPixRatio() + height() / 2);
-      zoomQt(center, exp(0.001 * delta));
+#endif
+      zoomQt(center, exp(0.001 * d));
     }
   }
   event->accept();

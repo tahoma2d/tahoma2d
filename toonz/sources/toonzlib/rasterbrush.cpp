@@ -381,13 +381,13 @@ double findChordalDeviation(const TQuadratic &quadratic, double t,
 }
 
 // Accende un pixel calcolandone l'intensita'
-/*-- 筆先のアンチエイリアス部分の描画 --*/
+/*-- Drawing the anti-aliased portion of the brush tip --*/
 void lightPixel(const TRasterCM32P &ras, const TPoint &pix, double distance,
                 int styleId, bool checkAntialiasedPixel) {
   TPixelCM32 pixel      = ras->pixels(pix.y)[pix.x];
   double volumeParziale = ConeSubVolume::compute(distance);
 
-  /*- 現在のToneに乗算していく -*/
+  /*- Multiply to current Tone. -*/
   int newTone = tround((double)pixel.getTone() * (1.0 - volumeParziale));
   assert(newTone >= 0 && newTone <= 255);
   ras->pixels(pix.y)[pix.x] = TPixelCM32(styleId, pixel.getPaint(), newTone);

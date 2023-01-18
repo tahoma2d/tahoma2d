@@ -607,6 +607,7 @@ bool TXshColumn::canBeParent() const {
     return false;
   default:
     assert(!"Unknown level type!");
+    return false;
   }
 }
 

@@ -331,7 +331,9 @@ void StageObjectSelection::copySelection() {
   StageObjectsData *data = new StageObjectsData();
   bool pegSelected       = false;
   data->storeObjects(
-      m_selectedObjects.toVector().toStdVector(), m_xshHandle->getXsheet(),
+      std::vector<TStageObjectId>(m_selectedObjects.begin(),
+                                  m_selectedObjects.end()),
+      m_xshHandle->getXsheet(),
       StageObjectsData::eDoClone | StageObjectsData::eResetFxDagPositions);
   std::set<int> columnIndexes;
   int i;
@@ -342,7 +344,8 @@ void StageObjectSelection::copySelection() {
       columnIndexes, m_xshHandle->getXsheet(),
       StageObjectsData::eDoClone | StageObjectsData::eResetFxDagPositions);
   data->storeSplines(
-      m_selectedSplines.toStdList(), m_xshHandle->getXsheet(),
+      std::list<int>(m_selectedSplines.begin(), m_selectedSplines.end()),
+      m_xshHandle->getXsheet(),
       StageObjectsData::eDoClone | StageObjectsData::eResetFxDagPositions);
 
   if (!data->isEmpty())
