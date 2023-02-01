@@ -348,6 +348,7 @@ void TopBar::loadMenubar() {
     addMenuItem(exportMenu, MI_ExportXsheetPDF);
     addMenuItem(exportMenu, MI_StopMotionExportImageSequence);
     addMenuItem(exportMenu, MI_ExportTvpJson);
+    addMenuItem(exportMenu, MI_ExportCameraTrack);
   }
   fileMenu->addSeparator();
   addMenuItem(fileMenu, MI_PrintXsheet);

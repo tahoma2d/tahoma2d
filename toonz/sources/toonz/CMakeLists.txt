@@ -127,6 +127,7 @@ set(MOC_HEADERS
     custompanelmanager.h
     custompaneleditorpopup.h
     convertfolderpopup.h
+    exportcameratrackpopup.h
     motionpathpanel.h
     graphwidget.h
     ../stopmotion/stopmotion.h
@@ -367,6 +368,7 @@ set(SOURCES
     custompanelmanager.cpp
     custompaneleditorpopup.cpp
     convertfolderpopup.cpp
+    exportcameratrackpopup.cpp
 # Tracker file
     dummyprocessor.cpp
     metnum.cpp

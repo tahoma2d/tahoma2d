@@ -1881,6 +1881,8 @@ void MainWindow::defineActions() {
   createMenuFileAction(MI_ExportCurrentScene,
                        QT_TR_NOOP("&Export Current Scene"), "", "",
                        tr("Export the current scene to another project."));
+  createMenuFileAction(MI_ExportCameraTrack, QT_TR_NOOP("&Export Camera Track"),
+                       "");
 
   // Menu - Edit
 
