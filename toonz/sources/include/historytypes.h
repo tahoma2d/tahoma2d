@@ -21,7 +21,8 @@ enum {
   Palette,
   Xsheet,
   FilmStrip,
-  PerspectiveGridTool
+  PerspectiveGridTool,
+  SymmetryTool
 };
 }
 

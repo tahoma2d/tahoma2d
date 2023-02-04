@@ -7,6 +7,7 @@
 #include "traster.h"
 #include "trastercm.h"
 #include "tcurves.h"
+#include "symmetrytool.h"
 #include <QPainter>
 #include <QImage>
 
@@ -116,7 +117,15 @@ private:
 
   TRaster32P m_ras;
   Raster32PMyPaintSurface m_mypaintSurface;
-  mypaint::Brush brush;
+
+  // Symmetry tool
+  mypaint::Brush brushes[MAX_SYMMETRY];
+  int m_brushCount;
+  double m_rotation;
+  TPointD m_centerPoint;
+  bool m_useLineSymmetry;
+  TPointD m_dpiScale;
+  TPointD m_rasCenter;
 
   bool reset;
   Params previous, current;
@@ -131,6 +140,10 @@ public:
   // colormapped
   void updateDrawing(const TRasterCM32P rasCM, const TRasterCM32P rasBackupCM,
                      const TRect &bbox, int styleId, bool lockAlpha) const;
+
+  void addSymmetryBrushes(double lines, double rotation, TPointD centerPoint,
+                          bool useLineSymmetry, TPointD dpiScale);
+  bool hasSymmetryBrushes() { return m_brushCount > 1; }
 };
 
 #endif  // T_BLUREDBRUSH

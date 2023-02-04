@@ -11,7 +11,6 @@
 #include "tvectorimage.h"
 #include "ttoonzimage.h"
 #include "tproperty.h"
-#include "toonz/strokegenerator.h"
 #include "toonz/ttilesaver.h"
 #include "toonz/txshsimplelevel.h"
 #include "toonz/observer.h"
@@ -19,7 +18,6 @@
 #include "toonz/levelproperties.h"
 #include "toonz/stage2.h"
 #include "toonz/ttileset.h"
-#include "toonz/rasterstrokegenerator.h"
 #include "toonz/preferences.h"
 #include "tgl.h"
 #include "tenv.h"
@@ -40,6 +38,9 @@
 
 #include "tools/stylepicker.h"
 #include "toonzqt/styleselection.h"
+
+#include "cmrasterbrush.h"
+#include "symmetrytool.h"
 
 using namespace ToolUtils;
 
@@ -69,28 +70,46 @@ class BrushUndo final : public TRasterUndo {
   bool m_selective;
   ColorType m_colorType;
   bool m_modifierLockAlpha;
+  TPointD m_dpiScale;
+  double m_brushCount;
+  double m_rotation;
+  TPointD m_centerPoint;
+  bool m_useLineSymmetry;
 
 public:
   BrushUndo(TTileSetCM32 *tileSet, const std::vector<TThickPoint> &points,
             ColorType colorType, int styleId, bool selective,
-            TXshSimpleLevel *level, const TFrameId &frameId, bool lockAlpha)
+            TXshSimpleLevel *level, const TFrameId &frameId, bool lockAlpha,
+            TPointD dpiScale, double symmetryLines, double rotation,
+            TPointD centerPoint, bool useLineSymmetry)
       : TRasterUndo(tileSet, level, frameId, false, false, 0)
       , m_points(points)
       , m_styleId(styleId)
       , m_selective(selective)
       , m_colorType(colorType)
-      , m_modifierLockAlpha(lockAlpha) {}
+      , m_modifierLockAlpha(lockAlpha)
+      , m_dpiScale(dpiScale)
+      , m_brushCount(symmetryLines)
+      , m_rotation(rotation)
+      , m_centerPoint(centerPoint)
+      , m_useLineSymmetry(useLineSymmetry) {}
 
   void redo() const override {
     TToonzImageP image = m_level->getFrame(m_frameId, true);
     TRasterCM32P ras   = image->getRaster();
-    RasterStrokeGenerator m_rasterTrack(ras, PAINTBRUSH, m_colorType, m_styleId,
-                                        m_points[0], m_selective, 0,
-                                        m_modifierLockAlpha, false);
-    m_rasterTrack.setPointsSequence(m_points);
-    m_rasterTrack.generateStroke(true);
-    image->setSavebox(image->getSavebox() +
-                      m_rasterTrack.getBBox(m_rasterTrack.getPointsSequence()));
+    CMRasterBrush m_cmRasterBrush(ras, PAINTBRUSH, m_colorType, m_styleId,
+                                  m_points[0], m_selective, 0,
+                                  m_modifierLockAlpha, false);
+    if (m_brushCount > 1)
+      m_cmRasterBrush.addSymmetryBrushes(m_brushCount, m_rotation,
+                                         m_centerPoint, m_useLineSymmetry,
+                                         m_dpiScale);
+
+    m_cmRasterBrush.setPointsSequence(m_points);
+    m_cmRasterBrush.generateStroke(true);
+    image->setSavebox(
+        image->getSavebox() +
+        m_cmRasterBrush.getBBox(m_cmRasterBrush.getPointsSequence()));
     ToolUtils::updateSaveBox();
     TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
     notifyImageChanged();
@@ -264,7 +283,7 @@ double computeThickness(double pressure, const TDoublePairProperty &property) {
 class PaintBrushTool final : public TTool {
   Q_DECLARE_TR_FUNCTIONS(PaintBrushTool)
 
-  RasterStrokeGenerator *m_rasterTrack;
+  CMRasterBrush *m_cmRasterBrush;
 
   bool m_firstTime;
 
@@ -341,7 +360,7 @@ PaintBrushTool paintBrushTool;
 
 PaintBrushTool::PaintBrushTool()
     : TTool("T_PaintBrush")
-    , m_rasterTrack(0)
+    , m_cmRasterBrush(0)
     , m_selecting(false)
     , m_tileSaver(0)
     , m_cursor(ToolCursor::EraserCursor)
@@ -526,15 +545,26 @@ void PaintBrushTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
 
       TTileSetCM32 *tileSet = new TTileSetCM32(ras->getSize());
       m_tileSaver           = new TTileSaverCM32(ras, tileSet);
-      m_rasterTrack         = new RasterStrokeGenerator(
+      m_cmRasterBrush       = new CMRasterBrush(
           ras, m_task, m_colorTypeBrush, styleId,
           TThickPoint(m_mousePos + convert(ras->getCenter()), thickness),
           m_onlyEmptyAreas.getValue(), 0, m_modifierLockAlpha.getValue(),
           false);
+
+      SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+          TTool::getTool("T_Symmetry", TTool::RasterImage));
+      if (symmetryTool && symmetryTool->isGuideEnabled()) {
+        TPointD dpiScale       = getViewer()->getDpiScale();
+        SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+        m_cmRasterBrush->addSymmetryBrushes(
+            symmObj.getLines(), symmObj.getRotation(), symmObj.getCenterPoint(),
+            symmObj.isUsingLineSymmetry(), dpiScale);
+      }
+
       /*-- 現在のFidを記憶 --*/
       m_workingFrameId = getFrameId();
-      m_tileSaver->save(m_rasterTrack->getLastRect());
-      m_rasterTrack->generateLastPieceOfStroke(true);
+      m_tileSaver->save(m_cmRasterBrush->getLastRect());
+      m_cmRasterBrush->generateLastPieceOfStroke(true);
       invalidate();
     }
   }
@@ -548,9 +578,9 @@ void PaintBrushTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   fixMousePos(pos);
   if (TToonzImageP ri = TImageP(getImage(true))) {
     /*--- マウスを動かしながらショートカットでこのツールに切り替わった場合、
-            いきなりleftButtonDragから呼ばれることがあり、m_rasterTrackが無い可能性がある
+            いきなりleftButtonDragから呼ばれることがあり、m_cmRasterBrushが無い可能性がある
 　---*/
-    if (m_rasterTrack) {
+    if (m_cmRasterBrush) {
       double maxThick = m_rasThickness.getValue().second;
       double thickness =
           (m_pressure.getValue())
@@ -565,10 +595,10 @@ void PaintBrushTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
         leftButtonDown(pos, e);
       }
 
-      m_rasterTrack->add(TThickPoint(
+      m_cmRasterBrush->add(TThickPoint(
           m_mousePos + convert(ri->getRaster()->getCenter()), thickness));
-      m_tileSaver->save(m_rasterTrack->getLastRect());
-      TRect modifiedBbox = m_rasterTrack->generateLastPieceOfStroke(true);
+      m_tileSaver->save(m_cmRasterBrush->getLastRect());
+      TRect modifiedBbox = m_cmRasterBrush->generateLastPieceOfStroke(true);
       invalidate();
     }
   }
@@ -642,7 +672,7 @@ void PaintBrushTool::onDeactivate() {
  */
 void PaintBrushTool::finishBrush(double pressureValue) {
   if (TToonzImageP ti = (TToonzImageP)getImage(true)) {
-    if (m_rasterTrack) {
+    if (m_cmRasterBrush) {
       double maxThick = m_rasThickness.getValue().second;
       double thickness =
           (m_pressure.getValue())
@@ -652,10 +682,10 @@ void PaintBrushTool::finishBrush(double pressureValue) {
       if (m_pressure.getValue() && pressureValue == 1.0)
         thickness = m_rasThickness.getValue().first;
 
-      m_rasterTrack->add(TThickPoint(
+      m_cmRasterBrush->add(TThickPoint(
           m_mousePos + convert(ti->getRaster()->getCenter()), thickness));
-      m_tileSaver->save(m_rasterTrack->getLastRect());
-      m_rasterTrack->generateLastPieceOfStroke(true, true);
+      m_tileSaver->save(m_cmRasterBrush->getLastRect());
+      m_cmRasterBrush->generateLastPieceOfStroke(true, true);
 
       TTool::Application *app   = TTool::getApplication();
       TXshLevel *level          = app->getCurrentLevel()->getLevel();
@@ -666,11 +696,28 @@ void PaintBrushTool::finishBrush(double pressureValue) {
       TFrameId frameId =
           m_workingFrameId.isEmptyFrame() ? getCurrentFid() : m_workingFrameId;
 
+      double symmetryLines = 0;
+      double rotation      = 0;
+      bool useLineSymmetry = false;
+      TPointD centerPoint(0, 0);
+      SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+          TTool::getTool("T_Symmetry", TTool::RasterImage));
+      if (symmetryTool && symmetryTool->isGuideEnabled()) {
+        SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+        symmetryLines          = symmObj.getLines();
+        rotation               = symmObj.getRotation();
+        centerPoint            = symmObj.getCenterPoint();
+        useLineSymmetry        = symmObj.isUsingLineSymmetry();
+      }
+
+      TPointD dpiScale = getViewer()->getDpiScale();
+
       TUndoManager::manager()->add(new BrushUndo(
-          m_tileSaver->getTileSet(), m_rasterTrack->getPointsSequence(),
-          m_colorTypeBrush, m_rasterTrack->getStyleId(),
-          m_rasterTrack->isSelective(), simLevel.getPointer(), frameId,
-          m_rasterTrack->isAlphaLocked()));
+          m_tileSaver->getTileSet(), m_cmRasterBrush->getPointsSequence(true),
+          m_colorTypeBrush, m_cmRasterBrush->getStyleId(),
+          m_cmRasterBrush->isSelective(), simLevel.getPointer(), frameId,
+          m_cmRasterBrush->isAlphaLocked(), dpiScale, symmetryLines, rotation,
+          centerPoint, useLineSymmetry));
       ToolUtils::updateSaveBox();
 
       /*--- FIdを指定して、描画中にフレームが変わっても、
@@ -678,8 +725,8 @@ void PaintBrushTool::finishBrush(double pressureValue) {
       notifyImageChanged(frameId);
 
       invalidate();
-      delete m_rasterTrack;
-      m_rasterTrack = 0;
+      delete m_cmRasterBrush;
+      m_cmRasterBrush = 0;
       delete m_tileSaver;
 
       /*--- 作業中のフレームをリセット ---*/

@@ -31,6 +31,9 @@
 #include "tgl.h"
 #include "trop.h"
 #include "tropcm.h"
+#include "symmetrytool.h"
+#include "vectorbrush.h"
+#include "symmetrystroke.h"
 
 #include "toonz/onionskinmask.h"
 #include "toonz/ttileset.h"
@@ -912,6 +915,7 @@ void doStrokeAutofill(const TImageP &img, TStroke *selectingStroke,
     TPoint pos;
     TRaster32P image =
         convertStrokeToImage(selectingStroke, ras->getBounds(), pos);
+    if (!image.getPointer()) return;
     TRect bbox = (image->getBounds() + pos).enlarge(2);
     pos        = bbox.getP00();
 
@@ -1369,10 +1373,11 @@ public:
     }
   }
 
-  MultiAreaFiller(TStroke *&firstStroke, TStroke *&lastStroke,
-                  bool unfilledOnly, std::wstring colorType, int styleIndex,
-                  bool autopaintLines, bool fillGaps, bool closeGaps,
-                  int closeStyleIndex, bool fillOnlySavebox)
+  MultiAreaFiller(std::vector<TStroke *> &firstStrokes,
+                  std::vector<TStroke *> &lastStrokes, bool unfilledOnly,
+                  std::wstring colorType, int styleIndex, bool autopaintLines,
+                  bool fillGaps, bool closeGaps, int closeStyleIndex,
+                  bool fillOnlySavebox)
       : m_firstRect()
       , m_lastRect()
       , m_unfilledOnly(unfilledOnly)
@@ -1385,8 +1390,11 @@ public:
       , m_fillOnlySavebox(fillOnlySavebox) {
     m_firstImage = new TVectorImage();
     m_lastImage  = new TVectorImage();
-    m_firstImage->addStroke(firstStroke);
-    m_lastImage->addStroke(lastStroke);
+
+    for (int i = 0; i < firstStrokes.size(); i++) {
+      m_firstImage->addStroke(firstStrokes[i]);
+      m_lastImage->addStroke(lastStrokes[i]);
+    }
   }
 
   void process(TImageP img, double t, TXshSimpleLevel *sl, const TFrameId &fid,
@@ -1400,30 +1408,33 @@ public:
                        m_closeStyleIndex, m_fillOnlySavebox);
     } else {
       if (t == 0)
-        fillAreaWithUndo(img, TRectD(), m_firstImage->getStroke(0),
-                         m_unfilledOnly, m_colorType, sl, fid, m_styleIndex,
-                         m_autopaintLines, m_fillGaps, m_closeGaps,
-                         m_closeStyleIndex, m_fillOnlySavebox);
+        for (int i = 0; i < m_firstImage->getStrokeCount(); i++)
+          fillAreaWithUndo(img, TRectD(), m_firstImage->getStroke(i),
+                           m_unfilledOnly, m_colorType, sl, fid, m_styleIndex,
+                           m_autopaintLines, m_fillGaps, m_closeGaps,
+                           m_closeStyleIndex, m_fillOnlySavebox);
       else if (t == 1)
-        fillAreaWithUndo(img, TRectD(), m_lastImage->getStroke(0),
-                         m_unfilledOnly, m_colorType, sl, fid, m_styleIndex,
-                         m_autopaintLines, m_fillGaps, m_closeGaps,
-                         m_closeStyleIndex, m_fillOnlySavebox);
+        for (int i = 0; i < m_lastImage->getStrokeCount(); i++)
+          fillAreaWithUndo(img, TRectD(), m_lastImage->getStroke(i),
+                           m_unfilledOnly, m_colorType, sl, fid, m_styleIndex,
+                           m_autopaintLines, m_fillGaps, m_closeGaps,
+                           m_closeStyleIndex, m_fillOnlySavebox);
       else
       // if(t>1)
       {
-        assert(t > 0 && t < 1);
-        assert(m_firstImage->getStrokeCount() == 1);
-        assert(m_lastImage->getStrokeCount() == 1);
+//        assert(t > 0 && t < 1);
+//        assert(m_firstImage->getStrokeCount() == 1);
+//        assert(m_lastImage->getStrokeCount() == 1);
 
         TVectorImageP vi = TInbetween(m_firstImage, m_lastImage).tween(t);
 
-        assert(vi->getStrokeCount() == 1);
+//        assert(vi->getStrokeCount() == 1);
 
-        fillAreaWithUndo(img, TRectD(), vi->getStroke(0) /*, imgloc*/,
-                         m_unfilledOnly, m_colorType, sl, fid, m_styleIndex,
-                         m_autopaintLines, m_fillGaps, m_closeGaps,
-                         m_closeStyleIndex, m_fillOnlySavebox);
+        for (int i = 0; i < vi->getStrokeCount(); i++)
+          fillAreaWithUndo(img, TRectD(), vi->getStroke(i) /*, imgloc*/,
+                           m_unfilledOnly, m_colorType, sl, fid, m_styleIndex,
+                           m_autopaintLines, m_fillGaps, m_closeGaps,
+                           m_closeStyleIndex, m_fillOnlySavebox);
       }
     }
   }
@@ -1434,7 +1445,7 @@ public:
 //-----------------------------------------------------------------------------
 
 class MultiFiller final : public SequencePainter {
-  TPointD m_firstPoint, m_lastPoint;
+  std::vector<TPointD> m_firstPoints, m_lastPoints;
   FillParameters m_params;
   bool m_autopaintLines;
   bool m_fillGaps, m_closeGaps;
@@ -1443,19 +1454,49 @@ class MultiFiller final : public SequencePainter {
 public:
   MultiFiller(const TPointD &firstPoint, const TPointD &lastPoint,
               const FillParameters &params, bool autopaintLines, bool fillGaps,
-              bool closeGaps, int closeStyleIndex)
-      : m_firstPoint(firstPoint)
-      , m_lastPoint(lastPoint)
-      , m_params(params)
+              bool closeGaps, int closeStyleIndex, TPointD rasCenter,
+              TPointD dpiScale)
+      : m_params(params)
       , m_autopaintLines(autopaintLines)
       , m_fillGaps(fillGaps)
       , m_closeStyleIndex(closeStyleIndex)
-      , m_closeGaps(closeGaps) {}
+      , m_closeGaps(closeGaps) {
+    m_firstPoints.push_back(firstPoint);
+    m_lastPoints.push_back(lastPoint);
+
+    SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+        TTool::getTool("T_Symmetry", TTool::RasterImage));
+    if (symmetryTool && symmetryTool->isGuideEnabled()) {
+      std::vector<TPointD> firstSymmPts = symmetryTool->getSymmetryPoints(
+          (firstPoint + rasCenter), rasCenter, dpiScale);
+      std::vector<TPointD> lastSymmPts = symmetryTool->getSymmetryPoints(
+          (lastPoint + rasCenter), rasCenter, dpiScale);
+      for (int i = 1; i < firstSymmPts.size(); i++) {
+        m_firstPoints.push_back(firstSymmPts[i] - rasCenter);
+        m_lastPoints.push_back(lastSymmPts[i] - rasCenter);
+      }
+    }
+  }
+
   void process(TImageP img, double t, TXshSimpleLevel *sl, const TFrameId &fid,
                int frameIdx) override {
-    TPointD p = m_firstPoint * (1 - t) + m_lastPoint * t;
-    doFill(img, p, m_params, false, sl, fid, m_autopaintLines, m_fillGaps,
-           m_closeGaps, m_closeStyleIndex, frameIdx);
+    SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+        TTool::getTool("T_Symmetry", TTool::RasterImage));
+    if (m_firstPoints.size() > 1 && symmetryTool &&
+        symmetryTool->isGuideEnabled()) {
+      TUndoManager::manager()->beginBlock();
+    }
+
+    for (int i = 0; i < m_firstPoints.size(); i++) {
+      TPointD p = m_firstPoints[i] * (1 - t) + m_lastPoints[i] * t;
+      doFill(img, p, m_params, false, sl, fid, m_autopaintLines, m_fillGaps,
+             m_closeGaps, m_closeStyleIndex, frameIdx);
+    }
+
+    if (m_firstPoints.size() > 1 && symmetryTool &&
+        symmetryTool->isGuideEnabled()) {
+      TUndoManager::manager()->endBlock();
+    }
   }
 };
 
@@ -1508,7 +1549,6 @@ AreaFillTool::AreaFillTool(TTool *parent)
     , m_isPath(false)
     , m_enabled(false)
     , m_active(false)
-    , m_firstStroke(0)
     , m_thick(0.5)
     , m_mousePosition()
     , m_onion(false)
@@ -1521,26 +1561,34 @@ void AreaFillTool::draw() {
 
   TPixel color = TPixel32::Red;
   if (m_type == RECT) {
-    if (m_frameRange && m_firstFrameSelected)
-      drawRect(m_firstRect, color, 0x3F33, true);
-    if (m_selecting || (m_frameRange && !m_firstFrameSelected))
-      drawRect(m_selectingRect, color, 0xFFFF, true);
+    if (m_frameRange && m_firstFrameSelected) {
+      if (m_firstStrokes.size()) {
+        tglColor(color);
+        for (int i = 0; i < m_firstStrokes.size(); i++)
+          drawStrokeCenterline(*m_firstStrokes[i], 1);
+      } else
+        drawRect(m_firstRect, color, 0x3F33, true);
+    }
+    if (m_selecting || (m_frameRange && !m_firstFrameSelected)) {
+      if (m_polyline.size() > 1) {
+        glPushMatrix();
+        m_polyline.drawRectangle(color);
+        glPopMatrix();
+      } else
+        drawRect(m_selectingRect, color, 0xFFFF, true);
+    }
   } else if ((m_type == FREEHAND || m_type == POLYLINE) && m_frameRange) {
     tglColor(color);
-    if (m_firstStroke) drawStrokeCenterline(*m_firstStroke, 1);
+    for(int i = 0; i < m_firstStrokes.size(); i++)
+      drawStrokeCenterline(*m_firstStrokes[i], 1);
   }
 
   if (m_type == POLYLINE && !m_polyline.empty()) {
     glPushMatrix();
-    tglColor(TPixel::Red);
-    tglDrawCircle(m_polyline[0], 2);
-    glBegin(GL_LINE_STRIP);
-    for (UINT i = 0; i < m_polyline.size(); i++) tglVertex(m_polyline[i]);
-    tglVertex(m_mousePosition);
-    glEnd();
+    m_polyline.drawPolyline(m_mousePosition, color);
     glPopMatrix();
   } else if (m_type == FREEHAND && !m_track.isEmpty()) {
-    tglColor(TPixel::Red);
+    tglColor(color);
     glPushMatrix();
     m_track.drawAllFragments();
     glPopMatrix();
@@ -1555,10 +1603,7 @@ void AreaFillTool::resetMulti() {
   TXshLevel *xl           = app->getCurrentLevel()->getLevel();
   m_level                 = xl ? xl->getSimpleLevel() : 0;
   m_firstFrameId = m_veryFirstFrameId = m_parent->getCurrentFid();
-  if (m_firstStroke) {
-    delete m_firstStroke;
-    m_firstStroke = 0;
-  }
+  m_firstStrokes.clear();
 }
 
 void AreaFillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &,
@@ -1571,12 +1616,28 @@ void AreaFillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &,
     return;
   }
 
+  SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+      TTool::getTool("T_Symmetry", TTool::RasterImage));
+  TPointD dpiScale       = m_parent->getViewer()->getDpiScale();
+  SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+
   m_selecting = true;
   if (m_type == RECT) {
     m_selectingRect.x0 = pos.x;
     m_selectingRect.y0 = pos.y;
     m_selectingRect.x1 = pos.x + 1;
     m_selectingRect.y1 = pos.y + 1;
+
+    if (symmetryTool && symmetryTool->isGuideEnabled()) {
+      // We'll use polyline
+      m_polyline.reset();
+      m_polyline.addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                                    symmObj.getCenterPoint(),
+                                    symmObj.isUsingLineSymmetry(), dpiScale);
+      m_polyline.setRectangle(TPointD(m_selectingRect.x0, m_selectingRect.y0),
+                              TPointD(m_selectingRect.x1, m_selectingRect.y1));
+      m_mousePosition = pos;
+    }
   } else if (m_type == FREEHAND || m_type == POLYLINE) {
     int col  = TTool::getApplication()->getCurrentColumn()->getColumnIndex();
     m_isPath = TTool::getApplication()
@@ -1587,21 +1648,30 @@ void AreaFillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &,
     if (!m_enabled) return;
     m_active = true;
 
-    m_track.clear();
+    m_track.reset();
+    if (!m_isPath) {
+      if (symmetryTool && symmetryTool->isGuideEnabled()) {
+        m_track.addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                                   symmObj.getCenterPoint(),
+                                   symmObj.isUsingLineSymmetry(), dpiScale);
+      }
+    }
     m_firstPos        = pos;
     double pixelSize2 = m_parent->getPixelSize() * m_parent->getPixelSize();
     m_track.add(TThickPoint(pos, m_thick), pixelSize2);
     if (m_type == POLYLINE) {
+      if (symmetryTool && symmetryTool->isGuideEnabled() &&
+          !m_polyline.hasSymmetryBrushes()) {
+        m_polyline.addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                                      symmObj.getCenterPoint(),
+                                      symmObj.isUsingLineSymmetry(), dpiScale);
+      }
+
       if (m_polyline.empty() || m_polyline.back() != pos)
         m_polyline.push_back(pos);
       m_mousePosition = pos;
     } else
       m_track.add(TThickPoint(pos, m_thick), pixelSize2);
-
-    if (m_type == POLYLINE) {
-      if (m_polyline.empty() || m_polyline.back() != pos)
-        m_polyline.push_back(pos);
-    }
   }
   m_isLeftButtonPressed = true;
 }
@@ -1624,15 +1694,7 @@ void AreaFillTool::leftButtonDoubleClick(const TPointD &pos,
   if (m_polyline.back() != pos) m_polyline.push_back(pos);
   if (m_polyline.back() != m_polyline.front())
     m_polyline.push_back(m_polyline.front());
-  std::vector<TThickPoint> strokePoints;
-  for (UINT i = 0; i < m_polyline.size() - 1; i++) {
-    strokePoints.push_back(TThickPoint(m_polyline[i], 1));
-    strokePoints.push_back(
-        TThickPoint(0.5 * (m_polyline[i] + m_polyline[i + 1]), 1));
-  }
-  strokePoints.push_back(TThickPoint(m_polyline.back(), 1));
-  m_polyline.clear();
-  stroke = new TStroke(strokePoints);
+  stroke = m_polyline.makePolylineStroke();
   assert(stroke->getPoint(0) == stroke->getPoint(1));
 
   //    if (m_type==POLYLINE)
@@ -1642,14 +1704,21 @@ void AreaFillTool::leftButtonDoubleClick(const TPointD &pos,
   if (m_frameRange)  // stroke multi
   {
     if (m_firstFrameSelected) {
-      MultiAreaFiller filler(m_firstStroke, stroke, m_onlyUnfilled, m_colorType,
-                             styleIndex, m_autopaintLines, fillGaps, closeGaps,
-                             closeStyleIndex, m_fillOnlySavebox);
+      std::vector<TStroke *> lastStrokes;
+      for (int i = 0; i < m_polyline.getBrushCount(); i++)
+        lastStrokes.push_back(m_polyline.makePolylineStroke(i));
+      
+      MultiAreaFiller filler(m_firstStrokes, lastStrokes, m_onlyUnfilled,
+                             m_colorType, styleIndex, m_autopaintLines,
+                             fillGaps, closeGaps, closeStyleIndex,
+                             m_fillOnlySavebox);
       filler.processSequence(m_level.getPointer(), m_firstFrameId,
                              m_parent->getCurrentFid());
       m_parent->invalidate(m_selectingRect.enlarge(2));
       if (e.isShiftPressed()) {
-        m_firstStroke  = stroke;
+        m_firstStrokes.clear();
+        for (int i = 0; i < m_polyline.getBrushCount(); i++)
+          m_firstStrokes.push_back(m_polyline.makePolylineStroke(i));
         m_firstFrameId = m_parent->getCurrentFid();
       } else {
         if (app->getCurrentFrame()->isEditingScene()) {
@@ -1661,25 +1730,62 @@ void AreaFillTool::leftButtonDoubleClick(const TPointD &pos,
       }
     } else  // primo frame
     {
-      m_firstStroke = stroke;
+      m_firstStrokes.clear();
+      for (int i = 0; i < m_polyline.getBrushCount(); i++)
+        m_firstStrokes.push_back(m_polyline.makePolylineStroke(i));
       // if (app->getCurrentFrame()->isEditingScene())
       m_currCell =
           std::pair<int, int>(app->getCurrentColumn()->getColumnIndex(),
                               app->getCurrentFrame()->getFrame());
+      m_parent->invalidate();
     }
   } else {
     if (m_onion) {
+      if (m_polyline.hasSymmetryBrushes())
+        TUndoManager::manager()->beginBlock();
+
       OnionSkinMask osMask = app->getCurrentOnionSkin()->getOnionSkinMask();
       doStrokeAutofill(m_parent->getImage(true), stroke, m_onlyUnfilled, osMask,
                        m_level.getPointer(), m_parent->getCurrentFid());
-    } else
+
+      if (m_polyline.hasSymmetryBrushes()) {
+        for (int i = 1; i < m_polyline.getBrushCount(); i++) {
+          TStroke *symmStroke = m_polyline.makePolylineStroke(i);
+          symmStroke->setStyle(stroke->getStyle());
+          doStrokeAutofill(m_parent->getImage(true), symmStroke, m_onlyUnfilled,
+                           osMask, m_level.getPointer(),
+                           m_parent->getCurrentFid());
+        }
+
+        TUndoManager::manager()->endBlock();
+      }
+    } else {
+      if (m_polyline.hasSymmetryBrushes())
+        TUndoManager::manager()->beginBlock();
+
       fillAreaWithUndo(m_parent->getImage(true), TRectD(), stroke,
                        m_onlyUnfilled, m_colorType, m_level.getPointer(),
                        m_parent->getCurrentFid(), styleIndex, m_autopaintLines,
                        fillGaps, closeGaps, closeStyleIndex, m_fillOnlySavebox);
+
+      if (m_polyline.hasSymmetryBrushes()) {
+        for (int i = 1; i < m_polyline.getBrushCount(); i++) {
+          TStroke *symmStroke = m_polyline.makePolylineStroke(i);
+          symmStroke->setStyle(stroke->getStyle());
+          fillAreaWithUndo(m_parent->getImage(true), TRectD(), symmStroke,
+                           m_onlyUnfilled, m_colorType, m_level.getPointer(),
+                           m_parent->getCurrentFid(), styleIndex,
+                           m_autopaintLines, fillGaps, closeGaps,
+                           closeStyleIndex, m_fillOnlySavebox);
+        }
+
+        TUndoManager::manager()->endBlock();
+      }
+    }
     TTool *t = app->getCurrentTool()->getTool();
     if (t) t->notifyImageChanged();
   }
+  m_polyline.reset();
 }
 
 void AreaFillTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
@@ -1687,6 +1793,13 @@ void AreaFillTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   if (m_type == RECT) {
     m_selectingRect.x1 = pos.x;
     m_selectingRect.y1 = pos.y;
+
+    if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+      m_polyline.clear();
+      m_polyline.setRectangle(TPointD(m_selectingRect.x0, m_selectingRect.y0),
+                              TPointD(m_selectingRect.x1, m_selectingRect.y1));
+    }
+
     m_parent->invalidate();
   } else if (m_type == FREEHAND) {
     if (!m_enabled || !m_active) return;
@@ -1724,18 +1837,44 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
     if (m_selectingRect.y0 > m_selectingRect.y1)
       std::swap(m_selectingRect.y0, m_selectingRect.y1);
 
+    if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+      // We'll use polyline
+      m_polyline.clear();
+      m_polyline.setRectangle(TPointD(m_selectingRect.x0, m_selectingRect.y0),
+                              TPointD(m_selectingRect.x1, m_selectingRect.y1));
+    }
+
     if (m_frameRange) {
       if (m_firstFrameSelected) {
-        MultiAreaFiller filler(m_firstRect, m_selectingRect, m_onlyUnfilled,
-                               m_colorType, styleIndex, m_autopaintLines,
-                               fillGaps, closeGaps, closeStyleIndex,
-                               m_fillOnlySavebox);
-        filler.processSequence(m_level.getPointer(), m_firstFrameId,
-                               m_parent->getCurrentFid());
+        if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+          // We'll use polyline
+          std::vector<TStroke *> lastStrokes;
+          for (int i = 0; i < m_polyline.getBrushCount(); i++)
+            lastStrokes.push_back(m_polyline.makeRectangleStroke(i));
+
+          MultiAreaFiller filler(m_firstStrokes, lastStrokes, m_onlyUnfilled,
+                                 m_colorType, styleIndex, m_autopaintLines,
+                                 fillGaps, closeGaps, closeStyleIndex,
+                                 m_fillOnlySavebox);
+          filler.processSequence(m_level.getPointer(), m_firstFrameId,
+                                 m_parent->getCurrentFid());
+        } else {
+          MultiAreaFiller filler(m_firstRect, m_selectingRect, m_onlyUnfilled,
+                                 m_colorType, styleIndex, m_autopaintLines,
+                                 fillGaps, closeGaps, closeStyleIndex,
+                                 m_fillOnlySavebox);
+          filler.processSequence(m_level.getPointer(), m_firstFrameId,
+                                 m_parent->getCurrentFid());
+        }
         m_parent->invalidate(m_selectingRect.enlarge(2));
         if (e.isShiftPressed()) {
           m_firstRect    = m_selectingRect;
           m_firstFrameId = m_parent->getCurrentFid();
+          m_firstStrokes.clear();
+          if (m_polyline.size() > 1) {
+            for (int i = 0; i < m_polyline.getBrushCount(); i++)
+              m_firstStrokes.push_back(m_polyline.makeRectangleStroke(i));
+          }
         } else {
           if (app->getCurrentFrame()->isEditingScene()) {
             app->getCurrentColumn()->setColumnIndex(m_currCell.first);
@@ -1743,19 +1882,60 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
           } else
             app->getCurrentFrame()->setFid(m_veryFirstFrameId);
           resetMulti();
+          m_polyline.reset();
         }
       } else {
+        m_firstStrokes.clear();
+        if (m_polyline.size() > 1) {
+          for (int i = 0; i < m_polyline.getBrushCount(); i++)
+            m_firstStrokes.push_back(m_polyline.makeRectangleStroke(i));
+        }
         // if (app->getCurrentFrame()->isEditingScene())
         m_currCell =
             std::pair<int, int>(app->getCurrentColumn()->getColumnIndex(),
                                 app->getCurrentFrame()->getFrame());
+        m_parent->invalidate();
       }
     } else {
       if (m_onion) {
         OnionSkinMask osMask = app->getCurrentOnionSkin()->getOnionSkinMask();
-        doRectAutofill(m_parent->getImage(true), m_selectingRect,
-                       m_onlyUnfilled, osMask, m_level.getPointer(),
-                       m_parent->getCurrentFid());
+        if (m_polyline.hasSymmetryBrushes()) {
+            TUndoManager::manager()->beginBlock();
+
+            for (int i = 0; i < m_polyline.getBrushCount(); i++) {
+              TStroke *stroke = m_polyline.makePolylineStroke(i);
+
+              doStrokeAutofill(m_parent->getImage(true), stroke,
+                               m_onlyUnfilled, osMask, m_level.getPointer(),
+                               m_parent->getCurrentFid());
+            }
+
+            TUndoManager::manager()->endBlock();
+        } else
+          doRectAutofill(m_parent->getImage(true), m_selectingRect,
+                         m_onlyUnfilled, osMask, m_level.getPointer(),
+                         m_parent->getCurrentFid());
+      } else if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+        TUndoManager::manager()->beginBlock();
+
+        TStroke *stroke = m_polyline.makeRectangleStroke();
+        fillAreaWithUndo(m_parent->getImage(true), TRectD(), stroke,
+                         m_onlyUnfilled, m_colorType, m_level.getPointer(),
+                         m_parent->getCurrentFid(), styleIndex,
+                         m_autopaintLines, fillGaps, closeGaps, closeStyleIndex,
+                         m_fillOnlySavebox);
+
+        for (int i = 1; i < m_polyline.getBrushCount(); i++) {
+          TStroke *symmStroke = m_polyline.makeRectangleStroke(i);
+          symmStroke->setStyle(stroke->getStyle());
+          fillAreaWithUndo(m_parent->getImage(true), TRectD(), symmStroke,
+                           m_onlyUnfilled, m_colorType, m_level.getPointer(),
+                           m_parent->getCurrentFid(), styleIndex,
+                           m_autopaintLines, fillGaps, closeGaps,
+                           closeStyleIndex, m_fillOnlySavebox);
+        }
+
+        TUndoManager::manager()->endBlock();
       } else
         fillAreaWithUndo(m_parent->getImage(true), m_selectingRect, 0,
                          m_onlyUnfilled, m_colorType, m_level.getPointer(),
@@ -1764,6 +1944,7 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
                          m_fillOnlySavebox);
       m_parent->invalidate();
       m_selectingRect.empty();
+      m_polyline.reset();
       TTool *t = app->getCurrentTool()->getTool();
       if (t) t->notifyImageChanged();
     }
@@ -1782,12 +1963,15 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
     TStroke *stroke = m_track.makeStroke(error);
 
     stroke->setStyle(1);
-    m_track.clear();
 
     if (m_frameRange)  // stroke multi
     {
       if (m_firstFrameSelected) {
-        MultiAreaFiller filler(m_firstStroke, stroke, m_onlyUnfilled,
+        std::vector<TStroke *> lastStrokes;
+        for (int i = 0; i < m_track.getBrushCount(); i++)
+          lastStrokes.push_back(m_track.makeStroke(error, i));
+      
+        MultiAreaFiller filler(m_firstStrokes, lastStrokes, m_onlyUnfilled,
                                m_colorType, styleIndex, m_autopaintLines,
                                fillGaps, closeGaps, closeStyleIndex,
                                m_fillOnlySavebox);
@@ -1795,7 +1979,9 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
                                m_parent->getCurrentFid());
         m_parent->invalidate(m_selectingRect.enlarge(2));
         if (e.isShiftPressed()) {
-          m_firstStroke  = stroke;
+          m_firstStrokes.clear();
+          for (int i = 0; i < m_track.getBrushCount(); i++)
+            m_firstStrokes.push_back(m_track.makeStroke(error, i));
           m_firstFrameId = m_parent->getCurrentFid();
         } else {
           if (app->getCurrentFrame()->isEditingScene()) {
@@ -1807,32 +1993,70 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
         }
       } else  // primo frame
       {
-        m_firstStroke = stroke;
+        m_firstStrokes.clear();
+        for (int i = 0; i < m_track.getBrushCount(); i++)
+          m_firstStrokes.push_back(m_track.makeStroke(error, i));
         // if (app->getCurrentFrame()->isEditingScene())
         m_currCell =
             std::pair<int, int>(app->getCurrentColumn()->getColumnIndex(),
                                 app->getCurrentFrame()->getFrame());
+        m_parent->invalidate();
       }
-
     } else  // stroke non multi
     {
       if (!m_parent->getImage(true)) return;
       if (m_onion) {
+        if (m_track.hasSymmetryBrushes()) TUndoManager::manager()->beginBlock();
+
         OnionSkinMask osMask = app->getCurrentOnionSkin()->getOnionSkinMask();
         doStrokeAutofill(m_parent->getImage(true), stroke, m_onlyUnfilled,
                          osMask, m_level.getPointer(),
                          m_parent->getCurrentFid());
-      } else
+
+        if (m_track.hasSymmetryBrushes()) {
+          std::vector<TStroke *> symmStrokes =
+              m_track.makeSymmetryStrokes(error);
+          for (int i = 0; i < symmStrokes.size(); i++) {
+            symmStrokes[i]->setStyle(stroke->getStyle());
+            doStrokeAutofill(m_parent->getImage(true), symmStrokes[i],
+                             m_onlyUnfilled, osMask, m_level.getPointer(),
+                             m_parent->getCurrentFid());
+          }
+
+          TUndoManager::manager()->endBlock();
+        }
+      } else {
+        if (m_track.hasSymmetryBrushes()) TUndoManager::manager()->beginBlock();
+
         fillAreaWithUndo(
             m_parent->getImage(true), TRectD(), stroke /*, imageLocation*/,
             m_onlyUnfilled, m_colorType, m_level.getPointer(),
             m_parent->getCurrentFid(), styleIndex, m_autopaintLines, fillGaps,
             closeGaps, closeStyleIndex, m_fillOnlySavebox);
+
+        if (m_track.hasSymmetryBrushes()) {
+          std::vector<TStroke *> symmStrokes =
+              m_track.makeSymmetryStrokes(error);
+          for (int i = 0; i < symmStrokes.size(); i++) {
+            symmStrokes[i]->setStyle(stroke->getStyle());
+            fillAreaWithUndo(m_parent->getImage(true), TRectD(),
+                             symmStrokes[i] /*, imageLocation*/, m_onlyUnfilled,
+                             m_colorType, m_level.getPointer(),
+                             m_parent->getCurrentFid(), styleIndex,
+                             m_autopaintLines, fillGaps, closeGaps,
+                             closeStyleIndex, m_fillOnlySavebox);
+          }
+
+          TUndoManager::manager()->endBlock();
+        }
+      }
+
       delete stroke;
       TTool *t = app->getCurrentTool()->getTool();
       if (t) t->notifyImageChanged();
       m_parent->invalidate();
     }
+    m_track.reset();
   }
 }
 
@@ -1843,7 +2067,7 @@ void AreaFillTool::onImageChanged() {
   TXshLevel *xshl = app->getCurrentLevel()->getLevel();
 
   if (!xshl || m_level.getPointer() != xshl ||
-      (m_selectingRect.isEmpty() && !m_firstStroke))
+      (m_selectingRect.isEmpty() && !m_firstStrokes.size()))
     resetMulti();
   else if (m_firstFrameId == m_parent->getCurrentFid())
     m_firstFrameSelected = false;  // nel caso sono passato allo stato 1 e
@@ -1876,7 +2100,7 @@ bool AreaFillTool::onPropertyChanged(bool multi, bool onlyUnfilled, bool onion,
   /*--動作中にプロパティが変わったら、現在の動作を無効にする--*/
   if (m_isLeftButtonPressed) m_isLeftButtonPressed = false;
 
-  if (m_type == POLYLINE && !m_polyline.empty()) m_polyline.clear();
+  if (m_type == POLYLINE) m_polyline.reset();
 
   return true;
 }
@@ -2187,6 +2411,10 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
     m_rectFill->leftButtonDown(pos, e, getImage(true));
     return;
   }
+
+  TXshLevel *xl = app->getCurrentLevel()->getLevel();
+  m_level       = xl ? xl->getSimpleLevel() : 0;
+
   /*--以下、NormalFillの場合--*/
   FillParameters params = getFillParameters();
 
@@ -2218,9 +2446,15 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       TFrameId fid   = getCurrentFid();
       m_lastFrameIdx = app->getCurrentFrame()->getFrameIndex();
 
+      TImageP image     = getImage(false);
+      TToonzImageP ti   = image;
+      TRasterP ras      = ti ? ti->getRaster() : TRasterP();
+      TPointD rasCenter = ti ? ras->getCenterD() : TPointD(0, 0);
+      TPointD dpiScale  = getViewer()->getDpiScale();
       MultiFiller filler(m_firstPoint, pos, params, m_autopaintLines.getValue(),
                          m_closeRasterGaps.getIndex() > 0,
-                         m_closeRasterGaps.getIndex() > 1, closeStyleIndex);
+                         m_closeRasterGaps.getIndex() > 1, closeStyleIndex,
+                         rasCenter, dpiScale);
       if (isEditingLevel)
         filler.processSequence(m_level.getPointer(), m_firstFrameId, fid);
       else
@@ -2250,9 +2484,7 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
     if (params.m_fillType == LINES && m_targetType == TTool::ToonzImage)
       m_normalLineFillTool->leftButtonDown(pos, e);
     else {
-      TXshLevel *xl = app->getCurrentLevel()->getLevel();
-      m_level       = xl ? xl->getSimpleLevel() : 0;
-      doFill(getImage(true), pos, params, e.isShiftPressed(),
+      applyFill(getImage(true), pos, params, e.isShiftPressed(),
              m_level.getPointer(), getCurrentFid(), m_autopaintLines.getValue(),
              m_closeRasterGaps.getIndex() > 0, m_closeRasterGaps.getIndex() > 1,
              closeStyleIndex, app->getCurrentFrame()->getFrameIndex());
@@ -2315,7 +2547,7 @@ void FillTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
       closeStyleIndex =
           TTool::getApplication()->getCurrentPalette()->getStyleIndex();
     }
-    doFill(img, pos, params, e.isShiftPressed(), m_level.getPointer(),
+    applyFill(img, pos, params, e.isShiftPressed(), m_level.getPointer(),
            getCurrentFid(), m_autopaintLines.getValue(),
            m_closeRasterGaps.getIndex() > 0, m_closeRasterGaps.getIndex() > 1,
            closeStyleIndex);
@@ -2338,7 +2570,7 @@ void FillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
                                closeStyleIndex);
     else if (m_onionStyleId > 0) {
       FillParameters tmp = getFillParameters();
-      doFill(getImage(true), pos, tmp, e.isShiftPressed(), m_level.getPointer(),
+      applyFill(getImage(true), pos, tmp, e.isShiftPressed(), m_level.getPointer(),
              getCurrentFid(), m_autopaintLines.getValue(),
              m_closeRasterGaps.getIndex() > 0, m_closeRasterGaps.getIndex() > 1,
              closeStyleIndex);
@@ -2403,6 +2635,7 @@ bool FillTool::onPropertyChanged(std::string propertyName) {
   else if (propertyName == m_onion.getName()) {
     if (m_onion.getValue()) FillType = ::to_string(m_fillType.getValue());
     FillOnion                        = (int)(m_onion.getValue());
+    rectPropChangedflag              = true;
   }
   // Frame Range
   else if (propertyName == m_frameRange.getName()) {
@@ -2565,6 +2798,23 @@ void FillTool::draw() {
   if (m_frameRange.getValue() && m_firstClick) {
     tglColor(TPixel::Red);
     drawCross(m_firstPoint, 6);
+
+    SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+        TTool::getTool("T_Symmetry", TTool::RasterImage));
+    if (symmetryTool && symmetryTool->isGuideEnabled()) {
+      TImageP image                = getImage(false);
+      TToonzImageP ti              = image;
+      TPointD dpiScale             = getViewer()->getDpiScale();
+      TRasterP ras                 = ti ? ti->getRaster() : TRasterP();
+      TPointD rasCenter            = ti ? ras->getCenterD() : TPointD(0, 0);
+      TPointD fillPt               = m_firstPoint + rasCenter;
+      std::vector<TPointD> symmPts =
+          symmetryTool->getSymmetryPoints(fillPt, rasCenter, dpiScale);
+
+      for (int i = 1; i < symmPts.size(); i++) {
+        drawCross(symmPts[i] - rasCenter, 6);
+      }
+    }
   } else if (!m_frameRange.getValue() &&
              getFillParameters().m_fillType == LINES &&
              m_targetType == TTool::ToonzImage)
@@ -2759,6 +3009,46 @@ void FillTool::onDeactivate() {
              this, SLOT(onFrameSwitched()));
   disconnect(TTool::m_application->getCurrentColumn(),
              SIGNAL(columnIndexSwitched()), this, SLOT(onFrameSwitched()));
+}
+
+//-----------------------------------------------------------------------------
+
+void FillTool::applyFill(const TImageP &img, const TPointD &pos,
+                         FillParameters &params, bool isShiftFill,
+                         TXshSimpleLevel *sl, const TFrameId &fid,
+                         bool autopaintLines, bool fillGaps, bool closeGaps,
+                         int closeStyleIndex, int frameIndex) {
+  TToonzImageP ti  = TToonzImageP(img);
+  TVectorImageP vi = TVectorImageP(img);
+
+  SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+      TTool::getTool("T_Symmetry", TTool::RasterImage));
+  if ((ti || vi) && symmetryTool && symmetryTool->isGuideEnabled()) {
+    TUndoManager::manager()->beginBlock();
+  }
+
+  doFill(img, pos, params, isShiftFill, m_level.getPointer(), getCurrentFid(),
+         m_autopaintLines.getValue(), m_closeRasterGaps.getIndex() > 0,
+         m_closeRasterGaps.getIndex() > 1, closeStyleIndex, frameIndex);
+
+  if ((ti || vi) && symmetryTool && symmetryTool->isGuideEnabled()) {
+    TPointD dpiScale             = getViewer()->getDpiScale();
+    TRasterP ras                 = ti ? ti->getRaster() : TRasterP();
+    TPointD rasCenter            = ti ? ras->getCenterD() : TPointD(0, 0);
+    TPointD fillPt               = pos + rasCenter;
+    std::vector<TPointD> symmPts =
+        symmetryTool->getSymmetryPoints(fillPt, rasCenter, dpiScale);
+
+    for (int i = 0; i < symmPts.size(); i++) {
+      if (symmPts[i] == fillPt) continue;
+      doFill(img, symmPts[i] - rasCenter, params, isShiftFill,
+             m_level.getPointer(), getCurrentFid(), m_autopaintLines.getValue(),
+             m_closeRasterGaps.getIndex() > 0, m_closeRasterGaps.getIndex() > 1,
+             closeStyleIndex, frameIndex);
+    }
+
+    TUndoManager::manager()->endBlock();
+  }
 }
 
 //-----------------------------------------------------------------------------

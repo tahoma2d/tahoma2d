@@ -8,11 +8,12 @@
 #include "trasterimage.h"
 #include "ttoonzimage.h"
 #include "tstroke.h"
-#include "toonz/strokegenerator.h"
 
 #include "tools/tool.h"
 #include "tools/cursors.h"
 #include "mypainttoonzbrush.h"
+#include "bluredbrush.h"
+#include "cmrasterbrush.h"
 
 #include <QCoreApplication>
 #include <QRadialGradient>
@@ -112,6 +113,7 @@ private:
   int m_resampledIndex;
   std::vector<TThickPoint> m_resampledPoints;
 };
+
 //************************************************************************
 //   Toonz Raster Brush Tool declaration
 //************************************************************************
@@ -185,7 +187,7 @@ protected:
   TBoolProperty m_modifierLockAlpha;
   TBoolProperty m_snapGrid;
 
-  RasterStrokeGenerator *m_rasterTrack;
+  CMRasterBrush *m_cmRasterBrush;
   TTileSetCM32 *m_tileSet;
   TTileSaverCM32 *m_tileSaver;
   TPixel32 m_currentColor;
@@ -197,7 +199,7 @@ protected:
       m_mousePos,  //!< Current mouse position, in world coordinates.
       m_brushPos;  //!< World position the brush will be painted at.
 
-  BluredBrush *m_bluredBrush;
+  RasterBlurredBrush *m_bluredBrush;
   QRadialGradient m_brushPad;
 
   TRasterCM32P m_backupRas;

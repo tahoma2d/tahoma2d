@@ -9,6 +9,8 @@
 #include "tmathutil.h"
 #include "tools/cursors.h"
 #include "tproperty.h"
+#include "symmetrytool.h"
+#include "symmetrystroke.h"
 
 #include "toonzqt/imageutils.h"
 
@@ -194,6 +196,8 @@ class VectorTapeTool final : public TTool {
   TDoubleProperty m_autocloseFactor;
   TEnumProperty m_type;
 
+  SymmetryStroke m_polyline;
+
 public:
   VectorTapeTool()
       : TTool("T_Tape")
@@ -275,6 +279,22 @@ public:
 
   TPropertyGroup *getProperties(int targetType) override { return &m_prop; }
 
+  void drawConnection(TThickPoint point1, TThickPoint point2) {
+    tglColor(TPixelD(0.1, 0.9, 0.1));
+
+    m_pixelSize  = getPixelSize();
+    double thick = std::max(6.0 * m_pixelSize, point1.thick);
+
+    tglDrawCircle(point1, thick);
+
+    if (point2 == TThickPoint()) return;
+
+    thick = std::max(6.0 * m_pixelSize, point2.thick);
+
+    tglDrawCircle(point2, thick);
+    tglDrawSegment(point1, point2);
+  }
+
   void draw() override {
     TVectorImageP vi(getImage(false));
     if (!m_draw) return;
@@ -283,41 +303,153 @@ public:
     // TAffine viewMatrix = getViewer()->getViewMatrix();
     // glPushMatrix();
     // tglMultMatrix(viewMatrix);
+    TPixel color = TPixel32::Red;
     if (m_type.getValue() == RECT) {
       if (!m_selectionRect.isEmpty())
-        ToolUtils::drawRect(m_selectionRect, TPixel::Black, 0x3F33, true);
+        if (m_polyline.size() > 1) {
+          m_polyline.drawRectangle(color);
+        } else
+          ToolUtils::drawRect(m_selectionRect, TPixel::Black, 0x3F33, true);
       return;
     }
 
     if (m_strokeIndex1 == -1 || m_strokeIndex1 >= (int)(vi->getStrokeCount()))
       return;
-    tglColor(TPixelD(0.1, 0.9, 0.1));
 
     TStroke *stroke1   = vi->getStroke(m_strokeIndex1);
     TThickPoint point1 = stroke1->getPoint(m_w1);
     // TThickPoint point1 = stroke1->getControlPoint(m_cpIndex1);
-
-    m_pixelSize  = getPixelSize();
-    double thick = std::max(6.0 * m_pixelSize, point1.thick);
-
-    tglDrawCircle(point1, thick);
-
     TThickPoint point2;
 
     if (m_secondPoint) {
       if (m_strokeIndex2 != -1) {
         TStroke *stroke2 = vi->getStroke(m_strokeIndex2);
         point2           = stroke2->getPoint(m_w2);
-        thick            = std::max(6.0 * m_pixelSize, point2.thick);
       } else {
-        tglColor(TPixelD(0.6, 0.7, 0.4));
-        thick  = 4 * m_pixelSize;
-        point2 = m_pos;
+        point2 = TThickPoint(m_pos, 4 * m_pixelSize);
       }
-      tglDrawCircle(point2, thick);
-      tglDrawSegment(point1, point2);
+    }
+
+    drawConnection(point1, point2);
+
+    SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+        TTool::getTool("T_Symmetry", TTool::RasterImage));
+    if (symmetryTool && !symmetryTool->isGuideEnabled()) return;
+
+    TPointD dpiScale       = getViewer()->getDpiScale();
+
+    std::vector<TPointD> firstPts = symmetryTool->getSymmetryPoints(
+        point1, TPointD(), getViewer()->getDpiScale());
+    std::vector<TPointD> secondPts = symmetryTool->getSymmetryPoints(
+        point2, TPointD(), getViewer()->getDpiScale());
+
+    for (int i = 1; i < firstPts.size(); i++) {
+      int strokeIndex1 = vi->getStrokeIndexAtPos(firstPts[i], getPixelSize());
+      if (strokeIndex1 == -1) continue;
+      drawConnection(firstPts[i], secondPts[i]);
     }
     // glPopMatrix();
+  }
+
+  //-----------------------------------------------------------------------------
+
+  void findFirstStroke(TPointD pos, TVectorImageP vi, int &strokeIndex1,
+                       double &w1) {
+    double minDistance2 = 10000000000.;
+
+    int i, strokeNumber = vi->getStrokeCount();
+
+    TStroke *stroke;
+    double distance2, outW;
+    TPointD point;
+    int cpMax;
+
+    for (i = 0; i < strokeNumber; i++) {
+      stroke = vi->getStroke(i);
+      if (m_mode.getValue() == LINE2LINE) {
+        if (stroke->getNearestW(pos, outW, distance2) &&
+            distance2 < minDistance2) {
+          minDistance2 = distance2;
+          strokeIndex1 = i;
+          if (areAlmostEqual(outW, 0.0, 1e-3))
+            w1 = 0.0;
+          else if (areAlmostEqual(outW, 1.0, 1e-3))
+            w1 = 1.0;
+          else
+            w1 = outW;
+        }
+      } else if (!stroke->isSelfLoop()) {
+        point = stroke->getControlPoint(0);
+        if ((distance2 = tdistance2(pos, point)) < minDistance2) {
+          minDistance2 = distance2;
+          strokeIndex1 = i;
+          w1           = 0.0;
+        }
+
+        cpMax = stroke->getControlPointCount() - 1;
+        point = stroke->getControlPoint(cpMax);
+        if ((distance2 = tdistance2(pos, point)) < minDistance2) {
+          minDistance2 = distance2;
+          strokeIndex1 = i;
+          w1           = 1.0;
+        }
+      }
+    }
+  }
+
+  //-----------------------------------------------------------------------------
+
+  void findSecondStroke(TPointD pos, TVectorImageP vi, int strokeIndex1,
+                        double w1, int &strokeIndex, double &w) {
+    double minDistance2 = 900 * m_pixelSize;
+
+    int i, strokeNumber = vi->getStrokeCount();
+
+    TStroke *stroke;
+    double distance2, outW;
+    TPointD point;
+    int cpMax;
+
+    for (i = 0; i < strokeNumber; i++) {
+      if (!vi->sameGroup(strokeIndex1, i) &&
+          (vi->isStrokeGrouped(strokeIndex1) || vi->isStrokeGrouped(i)))
+        continue;
+      stroke = vi->getStroke(i);
+      if (m_mode.getValue() != POINT2POINT) {
+        if (stroke->getNearestW(pos, outW, distance2) &&
+            distance2 < minDistance2) {
+          minDistance2 = distance2;
+          strokeIndex  = i;
+          if (areAlmostEqual(outW, 0.0, 1e-3))
+            w = 0.0;
+          else if (areAlmostEqual(outW, 1.0, 1e-3))
+            w = 1.0;
+          else
+            w = outW;
+        }
+      }
+
+      if (!stroke->isSelfLoop()) {
+        cpMax = stroke->getControlPointCount() - 1;
+        if (!(strokeIndex1 == i && (w1 == 0.0 || cpMax < 3))) {
+          point = stroke->getControlPoint(0);
+          if ((distance2 = tdistance2(pos, point)) < minDistance2) {
+            minDistance2 = distance2;
+            strokeIndex  = i;
+            w            = 0.0;
+          }
+        }
+
+        if (!(strokeIndex1 == i && (w1 == 1.0 || cpMax < 3))) {
+          point = stroke->getControlPoint(cpMax);
+          if ((distance2 = tdistance2(pos, point)) < minDistance2) {
+            minDistance2 = distance2;
+            strokeIndex  = i;
+            w            = 1.0;
+          }
+        }
+      }
+    }
   }
 
   //-----------------------------------------------------------------------------
@@ -332,51 +464,11 @@ public:
 
     if (m_type.getValue() == RECT) return;
 
-    double minDistance2 = 10000000000.;
-
     m_strokeIndex1 = -1;
     m_secondPoint  = false;
 
-    int i, strokeNumber = vi->getStrokeCount();
+    findFirstStroke(pos, vi, m_strokeIndex1, m_w1);
 
-    TStroke *stroke;
-    double distance2, outW;
-    TPointD point;
-    int cpMax;
-
-    for (i = 0; i < strokeNumber; i++) {
-      stroke = vi->getStroke(i);
-      if (m_mode.getValue() == LINE2LINE) {
-        if (stroke->getNearestW(pos, outW, distance2) &&
-            distance2 < minDistance2) {
-          minDistance2   = distance2;
-          m_strokeIndex1 = i;
-          if (areAlmostEqual(outW, 0.0, 1e-3))
-            m_w1 = 0.0;
-          else if (areAlmostEqual(outW, 1.0, 1e-3))
-            m_w1 = 1.0;
-          else
-            m_w1 = outW;
-        }
-      } else if (!stroke->isSelfLoop()) {
-        point = stroke->getControlPoint(0);
-        if ((distance2 = tdistance2(pos, point)) < minDistance2) {
-          minDistance2   = distance2;
-          m_strokeIndex1 = i;
-          m_w1           = 0.0;
-          // m_cpIndex1=0;
-        }
-
-        cpMax = stroke->getControlPointCount() - 1;
-        point = stroke->getControlPoint(cpMax);
-        if ((distance2 = tdistance2(pos, point)) < minDistance2) {
-          minDistance2   = distance2;
-          m_strokeIndex1 = i;
-          m_w1           = 1.0;
-          // m_cpIndex1=cpMax;
-        }
-      }
-    }
     invalidate();
   }
 
@@ -386,7 +478,26 @@ public:
     if (!(TVectorImageP)getImage(false)) return;
 
     if (m_type.getValue() == RECT) {
+      SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+          TTool::getTool("T_Symmetry", TTool::RasterImage));
+      TPointD dpiScale       = getViewer()->getDpiScale();
+      SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+
       m_startRect = pos;
+
+      if (symmetryTool && symmetryTool->isGuideEnabled()) {
+        m_selectionRect = TRectD(m_startRect.x, m_startRect.y,
+                                 m_startRect.x + 1, m_startRect.y + 1);
+
+        // We'll use polyline
+        m_polyline.reset();
+        m_polyline.addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                                      symmObj.getCenterPoint(),
+                                      symmObj.isUsingLineSymmetry(), dpiScale);
+        m_polyline.setRectangle(
+            TPointD(m_selectionRect.x0, m_selectionRect.y0),
+            TPointD(m_selectionRect.x1, m_selectionRect.y1));
+      }
     } else if (m_strokeIndex1 != -1)
       m_secondPoint = true;
   }
@@ -401,63 +512,23 @@ public:
       m_selectionRect = TRectD(
           std::min(m_startRect.x, pos.x), std::min(m_startRect.y, pos.y),
           std::max(m_startRect.x, pos.x), std::max(m_startRect.y, pos.y));
+
+      if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+        m_polyline.clear();
+        m_polyline.setRectangle(
+            TPointD(m_selectionRect.x0, m_selectionRect.y0),
+            TPointD(m_selectionRect.x1, m_selectionRect.y1));
+      }
+
       invalidate();
       return;
     }
 
     if (m_strokeIndex1 == -1 || !m_secondPoint) return;
 
-    double minDistance2 = 900 * m_pixelSize;
-
-    int i, strokeNumber = vi->getStrokeCount();
-
-    TStroke *stroke;
-    double distance2, outW;
-    TPointD point;
-    int cpMax;
-
     m_strokeIndex2 = -1;
 
-    for (i = 0; i < strokeNumber; i++) {
-      if (!vi->sameGroup(m_strokeIndex1, i) &&
-          (vi->isStrokeGrouped(m_strokeIndex1) || vi->isStrokeGrouped(i)))
-        continue;
-      stroke = vi->getStroke(i);
-      if (m_mode.getValue() != POINT2POINT) {
-        if (stroke->getNearestW(pos, outW, distance2) &&
-            distance2 < minDistance2) {
-          minDistance2   = distance2;
-          m_strokeIndex2 = i;
-          if (areAlmostEqual(outW, 0.0, 1e-3))
-            m_w2 = 0.0;
-          else if (areAlmostEqual(outW, 1.0, 1e-3))
-            m_w2 = 1.0;
-          else
-            m_w2 = outW;
-        }
-      }
-
-      if (!stroke->isSelfLoop()) {
-        cpMax = stroke->getControlPointCount() - 1;
-        if (!(m_strokeIndex1 == i && (m_w1 == 0.0 || cpMax < 3))) {
-          point = stroke->getControlPoint(0);
-          if ((distance2 = tdistance2(pos, point)) < minDistance2) {
-            minDistance2   = distance2;
-            m_strokeIndex2 = i;
-            m_w2           = 0.0;
-          }
-        }
-
-        if (!(m_strokeIndex1 == i && (m_w1 == 1.0 || cpMax < 3))) {
-          point = stroke->getControlPoint(cpMax);
-          if ((distance2 = tdistance2(pos, point)) < minDistance2) {
-            minDistance2   = distance2;
-            m_strokeIndex2 = i;
-            m_w2           = 1.0;
-          }
-        }
-      }
-    }
+    findSecondStroke(pos, vi, m_strokeIndex1, m_w1, m_strokeIndex2, m_w2);
 
     m_pos = pos;
 
@@ -693,15 +764,45 @@ public:
     }
     return type;
   }
+
+  void tapeStrokes(TVectorImageP vi, int strokeIndex1, int strokeIndex2) {
+    m_strokeIndex1 = strokeIndex1;
+    m_strokeIndex2 = strokeIndex2;
+
+    QMutexLocker lock(vi->getMutex());
+    std::vector<TFilledRegionInf> *fillInformation =
+        new std::vector<TFilledRegionInf>;
+    ImageUtils::getFillingInformationOverlappingArea(
+        vi, *fillInformation, vi->getStroke(strokeIndex1)->getBBox() +
+                                  vi->getStroke(strokeIndex2)->getBBox());
+
+    doTape(vi, fillInformation, m_joinStrokes.getValue());
+  }
+
   //-------------------------------------------------------------------------------
 
   void leftButtonUp(const TPointD &, const TMouseEvent &) override {
     TVectorImageP vi(getImage(true));
 
     if (vi && m_type.getValue() == RECT) {
+      if (m_polyline.hasSymmetryBrushes())
+        TUndoManager::manager()->beginBlock();
+
       tapeRect(vi, m_selectionRect);
+
+      if (m_polyline.hasSymmetryBrushes()) {
+        for (int i = 1; i < m_polyline.getBrushCount(); i++) {
+          TStroke *symmStroke      = m_polyline.makeRectangleStroke(i);
+          TRectD symmSelectionRect = symmStroke->getBBox();
+          tapeRect(vi, symmSelectionRect);
+        }
+
+        TUndoManager::manager()->endBlock();
+      }
+
       m_selectionRect = TRectD();
       m_startRect     = TPointD();
+      m_polyline.reset();
       notifyImageChanged();
       invalidate();
       return;
@@ -715,16 +816,38 @@ public:
       m_secondPoint  = false;
       return;
     }
-    QMutexLocker lock(vi->getMutex());
-    m_secondPoint = false;
-    std::vector<TFilledRegionInf> *fillInformation =
-        new std::vector<TFilledRegionInf>;
-    ImageUtils::getFillingInformationOverlappingArea(
-        vi, *fillInformation,
-        vi->getStroke(m_strokeIndex1)->getBBox() +
-            vi->getStroke(m_strokeIndex2)->getBBox());
 
-    doTape(vi, fillInformation, m_joinStrokes.getValue());
+    m_secondPoint = false;
+
+    SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+        TTool::getTool("T_Symmetry", TTool::RasterImage));
+    if (symmetryTool && symmetryTool->isGuideEnabled())
+      TUndoManager::manager()->beginBlock();
+
+    tapeStrokes(vi, m_strokeIndex1, m_strokeIndex2);
+
+    if (symmetryTool && symmetryTool->isGuideEnabled()) {
+      TStroke *stroke1   = vi->getStroke(m_strokeIndex1);
+      TStroke *stroke2   = vi->getStroke(m_strokeIndex2);
+      TThickPoint point1 = stroke1->getPoint(m_w1);
+      TThickPoint point2 = stroke2->getPoint(m_w2);
+
+      std::vector<TPointD> firstPts = symmetryTool->getSymmetryPoints(
+          point1, TPointD(), getViewer()->getDpiScale());
+      std::vector<TPointD> secondPts = symmetryTool->getSymmetryPoints(
+          point2, TPointD(), getViewer()->getDpiScale());
+
+      for (int i = 1; i < firstPts.size(); i++) {
+        int strokeIndex1 = vi->getStrokeIndexAtPos(firstPts[i], getPixelSize());
+        if (strokeIndex1 == -1) continue;
+        int strokeIndex2 =
+            vi->getStrokeIndexAtPos(secondPts[i], getPixelSize());
+        if (strokeIndex2 == -1) continue;
+        tapeStrokes(vi, strokeIndex1, strokeIndex2);
+      }
+
+      TUndoManager::manager()->endBlock();
+    }
 
     invalidate();
 

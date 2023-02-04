@@ -7,12 +7,13 @@
 #include "tproperty.h"
 #include "toonz/txshlevelhandle.h"
 #include "toonz/txshsimplelevel.h"
-#include "toonz/strokegenerator.h"
 // TnzTools includes
 #include "tools/tool.h"
 #include "tools/toolutils.h"
 #include "autofill.h"
 #include "toonz/fill.h"
+#include "vectorbrush.h"
+#include "symmetrystroke.h"
 
 #include <QObject>
 
@@ -26,6 +27,7 @@
 
 class NormalLineFillTool;
 namespace {
+
 class AreaFillTool {
 public:
   enum Type { RECT, FREEHAND, POLYLINE };
@@ -45,14 +47,14 @@ private:
   TTool *m_parent;
   std::wstring m_colorType;
   std::pair<int, int> m_currCell;
-  StrokeGenerator m_track;
-  std::vector<TPointD> m_polyline;
+  VectorBrush m_track;
+  SymmetryStroke m_polyline;
   bool m_isPath;
   bool m_active;
   bool m_enabled;
   double m_thick;
   TPointD m_firstPos;
-  TStroke *m_firstStroke;
+  std::vector<TStroke *> m_firstStrokes;
   TPointD m_mousePosition;
   bool m_onion;
   bool m_isLeftButtonPressed;
@@ -153,6 +155,14 @@ public:
   int getCursorId() const override;
 
   int getColorClass() const { return 2; }
+
+private:
+  void applyFill(const TImageP &img, const TPointD &pos, FillParameters &params,
+                 bool isShiftFill, TXshSimpleLevel *sl, const TFrameId &fid,
+                 bool autopaintLines, bool fillGaps = false,
+                 bool closeGaps = false, int closeStyleIndex = -1,
+                 int frameIndex = -1);
+
 public slots:
   void onFrameSwitched() override;
 };

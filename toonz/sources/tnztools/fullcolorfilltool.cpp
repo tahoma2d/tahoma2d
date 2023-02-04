@@ -17,6 +17,7 @@
 #include "tenv.h"
 #include "tpalette.h"
 #include "tsystem.h"
+#include "symmetrytool.h"
 
 using namespace ToolUtils;
 
@@ -187,7 +188,7 @@ void FullColorFillTool::leftButtonDown(const TPointD &pos,
     ? xsh->getXsheet()
     : 0;
 
-  doFill(getImage(true), pos, params, e.isShiftPressed(), m_level.getPointer(),
+  applyFill(getImage(true), pos, params, e.isShiftPressed(), m_level.getPointer(),
          getCurrentFid(), xsheet, frameIndex);
   invalidate();
 }
@@ -223,8 +224,9 @@ void FullColorFillTool::leftButtonDrag(const TPointD &pos,
           ? xsh->getXsheet()
           : 0;
 
-  doFill(img, pos, params, e.isShiftPressed(), m_level.getPointer(),
-         getCurrentFid(), xsheet, frameIndex);
+  applyFill(img, pos, params, e.isShiftPressed(), m_level.getPointer(),
+            getCurrentFid(), xsheet, frameIndex);
+
   invalidate();
 }
 
@@ -251,6 +253,39 @@ int FullColorFillTool::getCursorId() const {
   if (ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg)
     ret = ret | ToolCursor::Ex_Negate;
   return ret;
+}
+
+void FullColorFillTool::applyFill(const TImageP &img, const TPointD &pos,
+                                  FillParameters &params, bool isShiftFill,
+                                  TXshSimpleLevel *sl, const TFrameId &fid,
+                                  TXsheet *xsheet, int frameIndex) {
+  TRasterImageP ri = TRasterImageP(img);
+
+  SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+      TTool::getTool("T_Symmetry", TTool::RasterImage));
+  if (ri && symmetryTool && symmetryTool->isGuideEnabled()) {
+    TUndoManager::manager()->beginBlock();
+  }
+
+  doFill(img, pos, params, isShiftFill, m_level.getPointer(), getCurrentFid(),
+         xsheet, frameIndex);
+
+  if (ri && symmetryTool && symmetryTool->isGuideEnabled()) {
+    TPointD dpiScale             = getViewer()->getDpiScale();
+    TRasterP ras                 = ri->getRaster();
+    TPointD rasCenter            = ras ? ras->getCenterD() : TPointD(0, 0);
+    TPointD fillPt               = pos + rasCenter;
+    std::vector<TPointD> symmPts =
+        symmetryTool->getSymmetryPoints(fillPt, rasCenter, dpiScale);
+
+    for (int i = 0; i < symmPts.size(); i++) {
+      if (symmPts[i] == fillPt) continue;
+      doFill(img, symmPts[i] - rasCenter, params, isShiftFill,
+             m_level.getPointer(), getCurrentFid(), xsheet, frameIndex);
+    }
+
+    TUndoManager::manager()->endBlock();
+  }
 }
 
 FullColorFillTool FullColorRasterFillTool;

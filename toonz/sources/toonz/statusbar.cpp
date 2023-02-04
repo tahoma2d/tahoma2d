@@ -366,6 +366,14 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                        .arg(trModKey("Shift+Alt"))
                        .arg(cmdTextSeparator)});
   lMap.insert(
+      {"T_Symmetry",
+       tr("Symmetry Tool: Set up symmetrical guide") + spacer +
+           tr("%1%2Move entire object")
+               .arg(trModKey("Shift"))
+               .arg(cmdTextSeparator) +
+           spacer +
+           tr("%1%2Snap rotation").arg(trModKey("Alt")).arg(cmdTextSeparator)});
+  lMap.insert(
       {"T_Finger", tr("Finger Tool: Smudges small areas to cover with line")});
   lMap.insert({"T_Dummy", tr("This tool doesn't work on this layer type.")});
 

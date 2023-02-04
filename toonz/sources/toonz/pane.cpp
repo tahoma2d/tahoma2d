@@ -17,6 +17,7 @@
 #include "toonz/tscenehandle.h"
 
 #include "tools/toolhandle.h"
+#include "../tnztools/symmetrytool.h"
 
 // TnzCore includes
 #include "tsystem.h"
@@ -48,6 +49,7 @@ extern TEnv::IntVar ShowGoldenRatio;
 extern TEnv::IntVar ShowFieldGuide;
 extern TEnv::IntVar GuideOpacity;
 extern TEnv::IntVar ShowPerspectiveGrids;
+extern TEnv::IntVar ShowSymmetryGuide;
 //=============================================================================
 // TPanel
 //-----------------------------------------------------------------------------
@@ -444,10 +446,21 @@ TPanelTitleBarButtonForGrids::TPanelTitleBarButtonForGrids(
     emit updateViewer();
     });
 
+  QCheckBox *symmetryCheckbox = new QCheckBox(tr("Symmetry Guide"), this);
+  connect(symmetryCheckbox, &QCheckBox::stateChanged, [=](int value) {
+    ShowSymmetryGuide          = value > 0 ? 1 : 0;
+    SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+        TTool::getTool("T_Symmetry", TTool::RasterImage));
+    if (symmetryTool) symmetryTool->setGuideEnabled(ShowSymmetryGuide);
+    emit updateViewer();
+  });
+  symmetryCheckbox->setChecked(ShowSymmetryGuide != 0);
+
   gridLayout->addWidget(thirdsCheckbox, 0, 0, 1, 2);
   gridLayout->addWidget(goldenRationCheckbox, 1, 0, 1, 2);
   gridLayout->addWidget(fieldGuideCheckbox, 2, 0, 1, 2);
   gridLayout->addWidget(perspectiveCheckbox, 3, 0, 1, 2);
+  gridLayout->addWidget(symmetryCheckbox, 4, 0, 1, 2);
 
   gridWidget->setLayout(gridLayout);
   gridsAction->setDefaultWidget(gridWidget);

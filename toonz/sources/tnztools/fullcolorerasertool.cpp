@@ -19,7 +19,6 @@
 #include "toonz/trasterimageutils.h"
 #include "toonz/stage2.h"
 #include "toonz/levelproperties.h"
-#include "toonz/strokegenerator.h"
 #include "toonz/preferences.h"
 
 // TnzBase includes
@@ -35,6 +34,10 @@
 #include "drawutil.h"
 #include "tinbetween.h"
 #include "tpixelutils.h"
+#include "cmrasterbrush.h"
+#include "symmetrytool.h"
+#include "vectorbrush.h"
+#include "symmetrystroke.h"
 
 // Qt includes
 #include <QCoreApplication>
@@ -185,17 +188,29 @@ class FullColorEraserUndo final : public TFullColorRasterUndo {
   int m_size;
   double m_hardness;
   double m_opacity;
+  TPointD m_dpiScale;
+  int m_brushCount;
+  double m_rotation;
+  TPointD m_centerPoint;
+  bool m_useLineSymmetry;
 
 public:
   FullColorEraserUndo(TTileSetFullColor *tileSet,
                       const std::vector<TThickPoint> &points,
                       TXshSimpleLevel *level, const TFrameId &frameId, int size,
-                      double hardness, double opacity)
+                      double hardness, double opacity, TPointD dpiScale,
+                      double symmetryLines, double rotation,
+                      TPointD centerPoint, bool useLineSymmetry)
       : TFullColorRasterUndo(tileSet, level, frameId, false, false, 0)
       , m_points(points)
       , m_size(size)
       , m_hardness(hardness)
-      , m_opacity(opacity) {}
+      , m_opacity(opacity)
+      , m_dpiScale(dpiScale)
+      , m_brushCount(symmetryLines)
+      , m_rotation(rotation)
+      , m_centerPoint(centerPoint)
+      , m_useLineSymmetry(useLineSymmetry) {}
 
   void redo() const override {
     if (m_points.size() == 0) return;
@@ -206,7 +221,12 @@ public:
     TRasterP backUpRas       = ras->clone();
     workRaster->clear();
 
-    BluredBrush brush(workRaster, m_size, brushPad, false);
+    RasterBlurredBrush brush(workRaster, m_size, brushPad, false);
+
+    if (m_brushCount > 1)
+      brush.addSymmetryBrushes(m_brushCount, m_rotation, m_centerPoint,
+                               m_useLineSymmetry, m_dpiScale);
+
     std::vector<TThickPoint> points;
     points.push_back(m_points[0]);
     TRect bbox = brush.getBoundFromPoints(points);
@@ -315,7 +335,8 @@ public:
   void multiUpdate(const TRectD firstRect, const TRectD lastRect);
 
   void multiAreaEraser(TFrameId &firstFid, TFrameId &lastFid,
-                       TStroke *firstStroke, TStroke *lastStroke);
+                       std::vector<TStroke *> firstStrokes,
+                       std::vector<TStroke *> lastStrokes);
 
   void doMultiEraser(const TImageP &img, double t, const TFrameId &fid,
                      const TVectorImageP &firstImage,
@@ -344,14 +365,14 @@ private:
   QRadialGradient m_brushPad;
 
   std::vector<TThickPoint> m_points;
-  BluredBrush *m_brush;
+  RasterBlurredBrush *m_brush;
 
   TTileSetFullColor *m_tileSet;
   TTileSaverFullColor *m_tileSaver;
 
-  StrokeGenerator m_track;
-  std::vector<TPointD> m_polyline;
-  TStroke *m_firstStroke;
+  VectorBrush m_track;
+  SymmetryStroke m_polyline;
+  std::vector<TStroke *> m_firstStrokes;
 
   TRectD m_selectingRect, m_firstRect;
 
@@ -406,7 +427,7 @@ FullColorEraserTool::FullColorEraserTool(std::string name)
 
 //---------------------------------------------------------------------------------------------------
 
-FullColorEraserTool::~FullColorEraserTool() { delete m_firstStroke; }
+FullColorEraserTool::~FullColorEraserTool() { m_firstStrokes.clear(); }
 
 //---------------------------------------------------------------------------------------------------
 
@@ -445,7 +466,7 @@ void FullColorEraserTool::onActivate() {
   // via shortcut ( i.e. the case skipping onEnter() )
   resetMulti();
   // clear previous polyline when the tool is activated
-  m_polyline.clear();
+  m_polyline.reset();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -465,6 +486,12 @@ void FullColorEraserTool::leftButtonDown(const TPointD &pos,
   if (!ri) return;
   TRectD invalidateRect;
   TRasterP ras = ri->getRaster();
+
+  SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+      TTool::getTool("T_Symmetry", TTool::RasterImage));
+  TPointD dpiScale       = getViewer()->getDpiScale();
+  SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+
   if (m_eraseType.getValue() == NORMALERASE) {
     TDimension dim  = ras->getSize();
     double opacity  = m_opacity.getValue() * 0.01;
@@ -484,8 +511,21 @@ void FullColorEraserTool::leftButtonDown(const TPointD &pos,
 
     m_tileSet   = new TTileSetFullColor(ras->getSize());
     m_tileSaver = new TTileSaverFullColor(ras, m_tileSet);
-    m_brush =
-        new BluredBrush(m_workRaster, m_size.getValue(), m_brushPad, false);
+    m_brush     = new RasterBlurredBrush(m_workRaster, m_size.getValue(),
+                                     m_brushPad, false);
+    if (symmetryTool && symmetryTool->isGuideEnabled()) {
+      m_brush->addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                                  symmObj.getCenterPoint(),
+                                  symmObj.isUsingLineSymmetry(), dpiScale);
+    }
+
+    std::vector<TThickPoint> points = m_points;
+    std::vector<TThickPoint> symmPts;
+    symmPts = m_brush->getSymmetryPoints(m_points);
+    points.insert(points.end(), symmPts.begin(), symmPts.end());
+
+    invalidateRect += ToolUtils::getBounds(points, maxThick) - rasCenter;
+
     TRect bbox = m_brush->getBoundFromPoints(m_points);
     m_tileSaver->save(bbox);
     m_brush->addPoint(point, 1);
@@ -502,21 +542,44 @@ void FullColorEraserTool::leftButtonDown(const TPointD &pos,
     m_selectingRect.x1 = pos.x + 1;
     m_selectingRect.y1 = pos.y + 1;
     invalidateRect     = m_selectingRect;
+
+    if (!m_invertOption.getValue() && symmetryTool &&
+        symmetryTool->isGuideEnabled()) {
+      // We'll use polyline
+      m_polyline.reset();
+      m_polyline.addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                                    symmObj.getCenterPoint(),
+                                    symmObj.isUsingLineSymmetry(), dpiScale);
+      m_polyline.setRectangle(TPointD(m_selectingRect.x0, m_selectingRect.y0),
+                              TPointD(m_selectingRect.x1, m_selectingRect.y1));
+    }
   } else if (m_eraseType.getValue() == FREEHANDERASE ||
              m_eraseType.getValue() == POLYLINEERASE) {
-    if (m_multi.getValue() && m_firstStroke && !m_firstFrameSelected) {
-      invalidateRect = m_firstStroke->getBBox();
-      delete m_firstStroke;
-      m_firstStroke = 0;
-      invalidate(invalidateRect.enlarge(2));
+    if (m_multi.getValue() && m_firstStrokes.size() && !m_firstFrameSelected) {
+      m_firstStrokes.clear();
+      invalidate();
     }
 
-    m_track.clear();
+    m_track.reset();
+    if (!m_invertOption.getValue() && symmetryTool &&
+        symmetryTool->isGuideEnabled()) {
+      m_track.addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                                 symmObj.getCenterPoint(),
+                                 symmObj.isUsingLineSymmetry(), dpiScale);
+    }
+
     m_firstPos        = pos;
     double pixelSize2 = getPixelSize() * getPixelSize();
     m_track.add(TThickPoint(pos, m_thick), pixelSize2);
 
     if (m_eraseType.getValue() == POLYLINEERASE) {
+      if (!m_invertOption.getValue() && symmetryTool &&
+          symmetryTool->isGuideEnabled() && !m_polyline.hasSymmetryBrushes()) {
+        m_polyline.addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                                      symmObj.getCenterPoint(),
+                                      symmObj.isUsingLineSymmetry(), dpiScale);
+      }
+
       if (m_polyline.empty() || m_polyline.back() != pos)
         m_polyline.push_back(pos);
     }
@@ -581,6 +644,14 @@ void FullColorEraserTool::leftButtonDrag(const TPointD &pos,
       m_tileSaver->save(bbox);
       m_brush->addArc(m_points[m - 4], old, mid, 1, 1);
     }
+
+    std::vector<TThickPoint> allPts = points;
+    std::vector<TThickPoint> symmPts;
+    symmPts = m_brush->getSymmetryPoints(allPts);
+    allPts.insert(allPts.end(), symmPts.begin(), symmPts.end());
+
+    invalidateRect += ToolUtils::getBounds(allPts, thickness);
+
     m_brush->eraseDrawing(ri->getRaster(), m_backUpRas, bbox, opacity);
     invalidate(invalidateRect.enlarge(2) - rasCenter);
   }
@@ -597,7 +668,14 @@ void FullColorEraserTool::leftButtonDrag(const TPointD &pos,
     if (invalidateRect.y0 > invalidateRect.y1)
       std::swap(invalidateRect.y1, invalidateRect.y0);
     invalidateRect += oldRect;
-    invalidate(invalidateRect.enlarge(2));
+
+    if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+      m_polyline.clear();
+      m_polyline.setRectangle(TPointD(m_selectingRect.x0, m_selectingRect.y0),
+                              TPointD(m_selectingRect.x1, m_selectingRect.y1));
+      invalidate();
+    } else
+      invalidate(invalidateRect.enlarge(2));
   }
   if (m_eraseType.getValue() == FREEHANDERASE) {
     m_track.add(TThickPoint(pos, m_thick), pixelSize2);
@@ -628,6 +706,9 @@ void FullColorEraserTool::leftButtonUp(const TPointD &pos,
       double opacity = m_opacity.getValue() * 0.01;
       m_brush->eraseDrawing(ri->getRaster(), m_backUpRas, bbox, opacity);
       TRectD invalidateRect = ToolUtils::getBounds(points, m_size.getValue());
+      std::vector<TThickPoint> symmPts = m_brush->getSymmetryPoints(points);
+      points.insert(points.end(), symmPts.begin(), symmPts.end());
+      invalidateRect += ToolUtils::getBounds(points, m_thick);
       invalidate(invalidateRect.enlarge(2) - rasCenter);
     }
 
@@ -648,24 +729,66 @@ void FullColorEraserTool::leftButtonUp(const TPointD &pos,
     TXshLevel *level          = app->getCurrentLevel()->getLevel();
     TXshSimpleLevelP simLevel = level->getSimpleLevel();
     TFrameId frameId          = getCurrentFid();
+
+    double symmetryLines = 0;
+    double rotation      = 0;
+    bool useLineSymmetry = false;
+    TPointD centerPoint(0, 0);
+    SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+        TTool::getTool("T_Symmetry", TTool::RasterImage));
+    if (symmetryTool && symmetryTool->isGuideEnabled()) {
+      SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+      symmetryLines          = symmObj.getLines();
+      rotation               = symmObj.getRotation();
+      centerPoint            = symmObj.getCenterPoint();
+      useLineSymmetry        = symmObj.isUsingLineSymmetry();
+    }
+
+    TPointD dpiScale = getViewer()->getDpiScale();
+
     TUndoManager::manager()->add(new FullColorEraserUndo(
         m_tileSet, m_points, simLevel.getPointer(), frameId, m_size.getValue(),
-        m_hardness.getValue() * 0.01, opacity));
+        m_hardness.getValue() * 0.01, opacity, dpiScale, symmetryLines,
+        rotation, centerPoint, useLineSymmetry));
     notifyImageChanged();
   } else if (m_eraseType.getValue() == RECTERASE) {
+    m_selecting = false;
+
     if (m_selectingRect.x0 > m_selectingRect.x1)
       std::swap(m_selectingRect.x1, m_selectingRect.x0);
     if (m_selectingRect.y0 > m_selectingRect.y1)
       std::swap(m_selectingRect.y1, m_selectingRect.y0);
 
+    if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+      // We'll use polyline
+      m_polyline.clear();
+      m_polyline.setRectangle(TPointD(m_selectingRect.x0, m_selectingRect.y0),
+                              TPointD(m_selectingRect.x1, m_selectingRect.y1));
+    }
+
     if (m_multi.getValue()) {
       TTool::Application *app = TTool::getApplication();
       if (m_firstFrameSelected) {
-        multiUpdate(m_firstRect, m_selectingRect);
+        if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+          // We'll use polyline
+          TFrameId tmp = getCurrentFid();
+          std::vector<TStroke *> lastStrokes;
+          for (int i = 0; i < m_polyline.getBrushCount(); i++)
+            lastStrokes.push_back(m_polyline.makeRectangleStroke(i));
+          multiAreaEraser(m_firstFrameId, tmp, m_firstStrokes, lastStrokes);
+        } else {
+          multiUpdate(m_firstRect, m_selectingRect);
+        }
         notifyImageChanged();
+
         if (e.isShiftPressed()) {
           m_firstRect    = m_selectingRect;
           m_firstFrameId = getFrameId();
+          m_firstStrokes.clear();
+          if (m_polyline.size() > 1) {
+            for (int i = 0; i < m_polyline.getBrushCount(); i++)
+              m_firstStrokes.push_back(m_polyline.makeRectangleStroke(i));
+          }
           invalidate();
         } else {
           if (m_isXsheetCell) {
@@ -674,10 +797,17 @@ void FullColorEraserTool::leftButtonUp(const TPointD &pos,
           } else
             app->getCurrentFrame()->setFid(m_veryFirstFrameId);
           resetMulti();
+          m_polyline.reset();
         }
       } else {
+        m_firstStrokes.clear();
+        if (m_polyline.size() > 1) {
+          for (int i = 0; i < m_polyline.getBrushCount(); i++)
+            m_firstStrokes.push_back(m_polyline.makeRectangleStroke(i));
+        }
         m_isXsheetCell = app->getCurrentFrame()->isEditingScene();
         m_currCell     = std::pair<int, int>(getColumnIndex(), getFrame());
+        invalidate();
       }
     } else {
       TTool::Application *app   = TTool::getApplication();
@@ -716,11 +846,28 @@ void FullColorEraserTool::leftButtonUp(const TPointD &pos,
         }
         TUndoManager::manager()->endBlock();
         invalidate();
+      } else if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+        TUndoManager::manager()->beginBlock();
+
+        TStroke *stroke = m_polyline.makeRectangleStroke();
+        eraseStroke(ri, stroke, POLYLINEERASE, m_invertOption.getValue(),
+                    /*m_multi.getValue(),*/ m_level, frameId);
+
+        for (int i = 1; i < m_polyline.getBrushCount(); i++) {
+          TStroke *symmStroke = m_polyline.makeRectangleStroke(i);
+          symmStroke->setStyle(stroke->getStyle());
+          eraseStroke(ri, symmStroke, POLYLINEERASE, m_invertOption.getValue(),
+                      /*m_multi.getValue(),*/ m_level, frameId);
+        }
+
+        TUndoManager::manager()->endBlock();
+        invalidate();
       } else {
         update(ri, m_selectingRect, simLevel, false, frameId);
         invalidate(m_selectingRect.enlarge(2));
       }
       m_selectingRect.empty();
+      m_polyline.reset();
       TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
       m_selecting = false;
       notifyImageChanged();
@@ -735,24 +882,24 @@ void FullColorEraserTool::leftButtonUp(const TPointD &pos,
     TStroke *stroke = m_track.makeStroke(error);
 
     stroke->setStyle(1);
-    m_track.clear();
 
     TTool::Application *app = TTool::getApplication();
     if (m_multi.getValue())  // stroke multi
     {
       if (m_firstFrameSelected) {
         TFrameId tmp = getCurrentFid();
-        if (m_firstStroke && stroke)
-          multiAreaEraser(m_firstFrameId, tmp, m_firstStroke, stroke);
+        if (m_firstStrokes.size() && stroke) {
+          std::vector<TStroke *> lastStrokes;
+          for (int i = 0; i < m_track.getBrushCount(); i++)
+            lastStrokes.push_back(m_track.makeStroke(error, i));
+          multiAreaEraser(m_firstFrameId, tmp, m_firstStrokes, lastStrokes);
+        }
         notifyImageChanged();
         if (e.isShiftPressed()) {
-          TRectD invalidateRect = m_firstStroke->getBBox();
-          delete m_firstStroke;
-          m_firstStroke = 0;
-          invalidate(invalidateRect.enlarge(2));
-          m_firstStroke  = stroke;
-          invalidateRect = m_firstStroke->getBBox();
-          invalidate(invalidateRect.enlarge(2));
+          m_firstStrokes.clear();
+          for (int i = 0; i < m_track.getBrushCount(); i++)
+            m_firstStrokes.push_back(m_track.makeStroke(error, i));
+          invalidate();
           m_firstFrameId = getFrameId();
         } else {
           if (m_isXsheetCell) {
@@ -765,23 +912,42 @@ void FullColorEraserTool::leftButtonUp(const TPointD &pos,
         }
       } else  // primo frame
       {
-        m_firstStroke  = stroke;
+        m_firstStrokes.clear();
+        for (int i = 0; i < m_track.getBrushCount(); i++)
+          m_firstStrokes.push_back(m_track.makeStroke(error, i));
         m_isXsheetCell = app->getCurrentFrame()->isEditingScene();
         m_currCell     = std::pair<int, int>(getColumnIndex(), getFrame());
-        invalidate(m_firstStroke->getBBox().enlarge(2));
+        invalidate();
       }
     } else  // stroke non multi
     {
       if (!getImage(true)) return;
       TFrameId frameId = getCurrentFid();
+
+      if (m_track.hasSymmetryBrushes()) TUndoManager::manager()->beginBlock();
+
       eraseStroke(ri, stroke, m_eraseType.getValue(), m_invertOption.getValue(),
                   /*m_multi.getValue(),*/ m_level, frameId);
+
+      if (m_track.hasSymmetryBrushes()) {
+        std::vector<TStroke *> symmStrokes = m_track.makeSymmetryStrokes(error);
+        for (int i = 0; i < symmStrokes.size(); i++) {
+          symmStrokes[i]->setStyle(stroke->getStyle());
+          eraseStroke(ri, symmStrokes[i], m_eraseType.getValue(),
+                      m_invertOption.getValue(),
+                      /*m_multi.getValue(),*/ m_level, frameId);
+        }
+
+        TUndoManager::manager()->endBlock();
+      }
+
       notifyImageChanged();
-      if (m_invertOption.getValue())
+      if (m_invertOption.getValue() || m_track.hasSymmetryBrushes())
         invalidate();
       else
         invalidate(stroke->getBBox().enlarge(2));
     }
+    m_track.reset();
   }
   m_mousePressed = false;
 }
@@ -801,31 +967,24 @@ void FullColorEraserTool::leftButtonDoubleClick(const TPointD &pos,
   if (m_polyline.back() != pos) m_polyline.push_back(pos);
   if (m_polyline.back() != m_polyline.front())
     m_polyline.push_back(m_polyline.front());
-  std::vector<TThickPoint> strokePoints;
-  for (UINT i = 0; i < m_polyline.size() - 1; i++) {
-    strokePoints.push_back(TThickPoint(m_polyline[i], 1));
-    strokePoints.push_back(
-        TThickPoint(0.5 * (m_polyline[i] + m_polyline[i + 1]), 1));
-  }
-  strokePoints.push_back(TThickPoint(m_polyline.back(), 1));
-  m_polyline.clear();
-  stroke = new TStroke(strokePoints);
+  stroke = m_polyline.makePolylineStroke();
   assert(stroke->getPoint(0) == stroke->getPoint(1));
 
   if (m_multi.getValue())  // stroke multi
   {
     if (m_firstFrameSelected) {
       TFrameId tmp = getFrameId();
-      if (m_firstStroke && stroke)
-        multiAreaEraser(m_firstFrameId, tmp, m_firstStroke, stroke);
+      if (m_firstStrokes.size() && stroke) {
+        std::vector<TStroke *> lastStrokes;
+        for (int i = 0; i < m_polyline.getBrushCount(); i++)
+          lastStrokes.push_back(m_polyline.makePolylineStroke(i));
+        multiAreaEraser(m_firstFrameId, tmp, m_firstStrokes, lastStrokes);
+      }
       if (e.isShiftPressed()) {
-        TRectD invalidateRect = m_firstStroke->getBBox();
-        delete m_firstStroke;
-        m_firstStroke = 0;
-        invalidate(invalidateRect.enlarge(2));
-        m_firstStroke  = stroke;
-        invalidateRect = m_firstStroke->getBBox();
-        invalidate(invalidateRect.enlarge(2));
+        m_firstStrokes.clear();
+        for (int i = 0; i < m_polyline.getBrushCount(); i++)
+          m_firstStrokes.push_back(m_polyline.makePolylineStroke(i));
+        invalidate();
         m_firstFrameId = getFrameId();
       } else {
         if (m_isXsheetCell) {
@@ -838,24 +997,43 @@ void FullColorEraserTool::leftButtonDoubleClick(const TPointD &pos,
       }
     } else  // primo frame
     {
-      m_firstStroke  = stroke;
+      m_firstStrokes.clear();
+      for (int i = 0; i < m_polyline.getBrushCount(); i++)
+        m_firstStrokes.push_back(m_polyline.makePolylineStroke(i));
       m_isXsheetCell = app->getCurrentFrame()->isEditingScene();
       m_currCell     = std::pair<int, int>(getColumnIndex(), getFrame());
-      invalidate(m_firstStroke->getBBox().enlarge(2));
+      invalidate();
     }
   } else {
     if (!getImage(true)) return;
     TXshLevel *level          = app->getCurrentLevel()->getLevel();
     TXshSimpleLevelP simLevel = level->getSimpleLevel();
     TFrameId frameId          = getFrameId();
+
+    if (m_polyline.hasSymmetryBrushes()) TUndoManager::manager()->beginBlock();
+
     eraseStroke(ri, stroke, m_eraseType.getValue(), m_invertOption.getValue(),
                 /*m_multi.getValue(),*/ m_level, frameId);
+
+    if (m_polyline.hasSymmetryBrushes()) {
+      for (int i = 1; i < m_polyline.getBrushCount(); i++) {
+        TStroke *symmStroke = m_polyline.makePolylineStroke(i);
+        symmStroke->setStyle(stroke->getStyle());
+        eraseStroke(ri, symmStroke, m_eraseType.getValue(),
+                    m_invertOption.getValue(),
+                    /*m_multi.getValue(),*/ m_level, frameId);
+      }
+
+      TUndoManager::manager()->endBlock();
+    }
+
     notifyImageChanged();
-    if (m_invertOption.getValue())
+    if (m_invertOption.getValue() || m_polyline.hasSymmetryBrushes())
       invalidate();
     else
       invalidate(stroke->getBBox().enlarge(2));
   }
+  m_polyline.reset();
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -905,6 +1083,10 @@ void FullColorEraserTool::draw() {
   m_thick           = sqrt(pixelSize2) / 2.0;
   TRasterImageP img = (TRasterImageP)getImage(false);
   if (!img) return;
+//  TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
+//                     ? TPixel32::White
+//                     : TPixel32::Black;
+  TPixel color = TPixel32::Red;
   if (m_eraseType.getValue() == NORMALERASE) {
     // If toggled off, don't draw brush outline
     if (!Preferences::instance()->isCursorOutlineEnabled()) return;
@@ -912,40 +1094,38 @@ void FullColorEraserTool::draw() {
     glColor3d(1.0, 0.0, 0.0);
     tglDrawCircle(m_brushPos, (m_size.getValue() + 1) * 0.5);
   } else if (m_eraseType.getValue() == RECTERASE) {
-    TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
-                       ? TPixel32::White
-                       : TPixel32::Black;
-    if (m_multi.getValue() && m_firstFrameSelected)
-      drawRect(m_firstRect, color, 0x3F33, true);
+    if (m_multi.getValue() && m_firstFrameSelected) {
+      if (m_firstStrokes.size()) {
+        tglColor(color);
+        for (int i = 0; i < m_firstStrokes.size(); i++)
+          drawStrokeCenterline(*m_firstStrokes[i], 1);
+      } else
+        drawRect(m_firstRect, color, 0x3F33, true);
+    }
 
-    if (m_selecting || (m_multi.getValue() && !m_firstFrameSelected))
-      drawRect(m_selectingRect, color, 0x3F33, true);
+    if (m_selecting || (m_multi.getValue() && !m_firstFrameSelected)) {
+      if (m_polyline.size() > 1) {
+        glPushMatrix();
+        m_polyline.drawRectangle(color);
+        glPopMatrix();
+      } else
+        drawRect(m_selectingRect, color, 0xFFFF, true);
+    }
   }
   if ((m_eraseType.getValue() == FREEHANDERASE ||
        m_eraseType.getValue() == POLYLINEERASE) &&
       m_multi.getValue()) {
-    TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
-                       ? TPixel32::White
-                       : TPixel32::Black;
     tglColor(color);
-    if (m_firstStroke) drawStrokeCenterline(*m_firstStroke, 1);
+    for (int i = 0; i < m_firstStrokes.size(); i++)
+      drawStrokeCenterline(*m_firstStrokes[i], 1);
   }
   if (m_eraseType.getValue() == POLYLINEERASE && !m_polyline.empty()) {
-    TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
-                       ? TPixel32::White
-                       : TPixel32::Black;
-    tglColor(color);
-    tglDrawCircle(m_polyline[0], 2 * m_thick);
-    glBegin(GL_LINE_STRIP);
-    for (UINT i = 0; i < m_polyline.size(); i++) tglVertex(m_polyline[i]);
-    tglVertex(m_mousePos);
-    glEnd();
+    m_polyline.drawPolyline(m_mousePos, color);
   } else if (m_eraseType.getValue() == FREEHANDERASE && !m_track.isEmpty()) {
-    TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
-                       ? TPixel32::White
-                       : TPixel32::Black;
     tglColor(color);
+    glPushMatrix();
     m_track.drawAllFragments();
+    glPopMatrix();
   }
 }
 
@@ -989,8 +1169,12 @@ void FullColorEraserTool::update(const TRasterImageP &ri, TRectD selArea,
   tileSet->add(raster, TRasterImageUtils::convertWorldToRaster(selArea, ri));
   TUndo *undo;
 
-  undo       = new RectFullColorUndo(tileSet, selArea, TStroke(),
-                               m_eraseType.getValue(), level.getPointer(),
+  std::wstring eraseType =
+      (m_eraseType.getValue() == RECTERASE && m_polyline.hasSymmetryBrushes())
+          ? POLYLINEERASE
+          : m_eraseType.getValue();
+  undo = new RectFullColorUndo(tileSet, selArea, TStroke(), eraseType,
+                               level.getPointer(),
                                m_invertOption.getValue(), frameId);
   TRect rect = TRasterImageUtils::eraseRect(ri, selArea);
 
@@ -1009,10 +1193,7 @@ void FullColorEraserTool::resetMulti() {
                 ? app->getCurrentLevel()->getSimpleLevel()
                 : 0;
   m_firstFrameId = m_veryFirstFrameId = getCurrentFid();
-  if (m_firstStroke) {
-    delete m_firstStroke;
-    m_firstStroke = 0;
-  }
+  m_firstStrokes.clear();
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -1025,7 +1206,7 @@ void FullColorEraserTool::onImageChanged() {
     xshl = app->getCurrentLevel()->getSimpleLevel();
 
   if (!xshl || m_level.getPointer() != xshl ||
-      (m_selectingRect.isEmpty() && !m_firstStroke))
+      (m_selectingRect.isEmpty() && !m_firstStrokes.size()))
     resetMulti();
   else if (m_firstFrameId == getCurrentFid())
     m_firstFrameSelected = false;  // nel caso sono passato allo stato 1 e torno
@@ -1108,16 +1289,18 @@ void FullColorEraserTool::onEnter() {
 //----------------------------------------------------------------------------------------------------------
 
 void FullColorEraserTool::multiAreaEraser(TFrameId &firstFid, TFrameId &lastFid,
-                                          TStroke *firstStroke,
-                                          TStroke *lastStroke) {
-  TStroke *first           = new TStroke();
-  TStroke *last            = new TStroke();
-  *first                   = *firstStroke;
-  *last                    = *lastStroke;
+                                          std::vector<TStroke *>firstStrokes,
+                                          std::vector<TStroke *>lastStrokes) {
+//  TStroke *first           = new TStroke();
+//  TStroke *last            = new TStroke();
+//  *first                   = *firstStrokes[0];
+//  *last                    = *lastStrokes[0];
   TVectorImageP firstImage = new TVectorImage();
   TVectorImageP lastImage  = new TVectorImage();
-  firstImage->addStroke(first);
-  lastImage->addStroke(last);
+  for (int i = 0; i < firstStrokes.size(); i++)
+    firstImage->addStroke(firstStrokes[i]);
+  for (int i = 0; i < lastStrokes.size(); i++)
+    lastImage->addStroke(lastStrokes[i]);
 
   bool backward = false;
   if (firstFid > lastFid) {
@@ -1157,21 +1340,26 @@ void FullColorEraserTool::doMultiEraser(const TImageP &img, double t,
                                         const TVectorImageP &firstImage,
                                         const TVectorImageP &lastImage) {
   int styleId = TTool::getApplication()->getCurrentLevelStyleIndex();
+  std::wstring eraseType = m_eraseType.getValue() == RECTERASE
+                               ? POLYLINEERASE
+                               : m_eraseType.getValue();
   if (t == 0)
-    eraseStroke(img, firstImage->getStroke(0), m_eraseType.getValue(),
-                m_invertOption.getValue(), /*m_multi.getValue(),*/ m_level,
-                fid);
+    for (int i = 0; i < firstImage->getStrokeCount(); i++)
+      eraseStroke(img, firstImage->getStroke(i), eraseType,
+                  m_invertOption.getValue(), /*m_multi.getValue(),*/ m_level,
+                  fid);
   else if (t == 1)
-    eraseStroke(img, lastImage->getStroke(0), m_eraseType.getValue(),
-                m_invertOption.getValue(), /*m_multi.getValue(),*/ m_level,
-                fid);
+    for (int i = 0; i < lastImage->getStrokeCount(); i++)
+      eraseStroke(img, lastImage->getStroke(i), eraseType,
+                  m_invertOption.getValue(), /*m_multi.getValue(),*/ m_level,
+                  fid);
   else {
-    assert(firstImage->getStrokeCount() == 1);
-    assert(lastImage->getStrokeCount() == 1);
+//    assert(firstImage->getStrokeCount() == 1);
+//    assert(lastImage->getStrokeCount() == 1);
     TVectorImageP vi = TInbetween(firstImage, lastImage).tween(t);
-    assert(vi->getStrokeCount() == 1);
-    eraseStroke(img, vi->getStroke(0), m_eraseType.getValue(),
-                m_invertOption.getValue(), /*m_multi.getValue(),*/ m_level,
-                fid);
+//    assert(vi->getStrokeCount() == 1);
+    for (int i = 0; i < vi->getStrokeCount(); i++)
+      eraseStroke(img, vi->getStroke(i), eraseType, m_invertOption.getValue(),
+                  /*m_multi.getValue(),*/ m_level, fid);
   }
 }

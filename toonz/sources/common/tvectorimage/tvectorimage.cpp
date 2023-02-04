@@ -3112,3 +3112,20 @@ int TVectorImage::pickGroup(const TPointD &pos) const {
 }
 
 //--------------------------------------------------------------------------------------------------
+
+int TVectorImage::getStrokeIndexAtPos(TPointD pos, double maxDistance) {
+  int i, strokeNumber = getStrokeCount();
+
+  TStroke *stroke;
+  double distance, outW;
+
+  for (i = 0; i < strokeNumber; i++) {
+    stroke = getStroke(i);
+    if (stroke->getNearestW(pos, outW, distance) && distance <= maxDistance)
+      return i;
+  }
+
+  return -1;
+}
+
+//--------------------------------------------------------------------------------------------------
