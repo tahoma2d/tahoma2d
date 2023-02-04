@@ -1177,8 +1177,13 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
         m_veryFirstFrameId = m_firstFrameId;
       }
       m_firstSymmetryStrokes.clear();
-      if (m_track.hasSymmetryBrushes())
+      if (m_track.hasSymmetryBrushes()) {
         m_firstSymmetryStrokes = m_track.makeSymmetryStrokes(error);
+        if (m_autoClose.getValue()) {
+          for (int i = 0; i < m_firstSymmetryStrokes.size(); i++)
+            m_firstSymmetryStrokes[i]->setSelfLoop(true);
+        }
+      }
     } else if (m_firstFrameId == getFrameId()) {
       if (m_firstStroke) {
         delete m_firstStroke;
@@ -1189,8 +1194,13 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
       if (m_autoClose.getValue()) m_firstStroke->setSelfLoop(true);
       m_rangeTrack = m_track;
       m_firstSymmetryStrokes.clear();
-      if (m_track.hasSymmetryBrushes())
+      if (m_track.hasSymmetryBrushes()) {
         m_firstSymmetryStrokes = m_track.makeSymmetryStrokes(error);
+        if (m_autoClose.getValue()) {
+          for (int i = 0; i < m_firstSymmetryStrokes.size(); i++)
+            m_firstSymmetryStrokes[i]->setSelfLoop(true);
+        }
+      }
     } else {
       TFrameId currentId = getFrameId();
       int curCol = 0, curFrame = 0;
@@ -1203,9 +1213,13 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
       if (m_autoClose.getValue()) stroke->setSelfLoop(true);
 
       std::vector<TStroke *> lastStrokes;
-      if (m_track.hasSymmetryBrushes())
+      if (m_track.hasSymmetryBrushes()) {
         lastStrokes = m_track.makeSymmetryStrokes(error);
-
+        if (m_autoClose.getValue()) {
+          for (int i = 0; i < lastStrokes.size(); i++)
+            lastStrokes[i]->setSelfLoop(true);
+        }
+      }
       bool success = doFrameRangeStrokes(
           m_firstFrameId, m_firstStroke, getFrameId(), stroke,
           m_frameRange.getIndex(), m_breakAngles.getValue(),
@@ -1276,6 +1290,7 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
       std::vector<TStroke *> symmStrokes = m_track.makeSymmetryStrokes(error);
       for (int i = 0; i < symmStrokes.size(); i++) {
         symmStrokes[i]->setStyle(stroke->getStyle());
+        if (m_autoClose.getValue()) symmStrokes[i]->setSelfLoop(true);
         addStrokeToImage(getApplication(), vi, symmStrokes[i],
                          m_breakAngles.getValue(), m_autoGroup.getValue(),
                          m_autoFill.getValue(), m_isFrameCreated,
@@ -1364,13 +1379,19 @@ bool ToonzVectorBrushTool::doFrameRangeStrokes(
   }
 
   firstImage->addStroke(first, false, sendToBack);
-  for (int i = 0; i < firstSymmetryStrokes.size(); i++)
-    firstImage->addStroke(
-        swapped ? lastSymmetryStrokes[i] : firstSymmetryStrokes[i], sendToBack);
+  for (int i = 0; i < firstSymmetryStrokes.size(); i++) {
+    TStroke *stroke =
+        swapped ? lastSymmetryStrokes[i] : firstSymmetryStrokes[i];
+    if (m_autoClose.getValue()) stroke->setSelfLoop(true);
+    firstImage->addStroke(stroke, sendToBack);
+  }
   lastImage->addStroke(last, false, sendToBack);
-  for (int i = 0; i < lastSymmetryStrokes.size(); i++)
-    lastImage->addStroke(
-        swapped ? firstSymmetryStrokes[i] : lastSymmetryStrokes[i], sendToBack);
+  for (int i = 0; i < lastSymmetryStrokes.size(); i++) {
+    TStroke *stroke =
+        swapped ? firstSymmetryStrokes[i] : lastSymmetryStrokes[i];
+    if (m_autoClose.getValue()) stroke->setSelfLoop(true);
+    lastImage->addStroke(stroke, sendToBack);
+  }
   assert(firstFrameId <= lastFrameId);
 
   std::vector<TFrameId> allFids;
