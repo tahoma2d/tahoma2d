@@ -2448,7 +2448,7 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
 
       TImageP image     = getImage(false);
       TToonzImageP ti   = image;
-      TRasterP ras      = ti ? ti->getRaster() : TRasterP();
+      TRasterCM32P ras  = ti ? ti->getRaster() : TRasterCM32P();
       TPointD rasCenter = ti ? ras->getCenterD() : TPointD(0, 0);
       TPointD dpiScale  = getViewer()->getDpiScale();
       MultiFiller filler(m_firstPoint, pos, params, m_autopaintLines.getValue(),
@@ -2805,7 +2805,7 @@ void FillTool::draw() {
       TImageP image                = getImage(false);
       TToonzImageP ti              = image;
       TPointD dpiScale             = getViewer()->getDpiScale();
-      TRasterP ras                 = ti ? ti->getRaster() : TRasterP();
+      TRasterCM32P ras             = ti ? ti->getRaster() : TRasterCM32P();
       TPointD rasCenter            = ti ? ras->getCenterD() : TPointD(0, 0);
       TPointD fillPt               = m_firstPoint + rasCenter;
       std::vector<TPointD> symmPts =
@@ -3033,7 +3033,7 @@ void FillTool::applyFill(const TImageP &img, const TPointD &pos,
 
   if ((ti || vi) && symmetryTool && symmetryTool->isGuideEnabled()) {
     TPointD dpiScale             = getViewer()->getDpiScale();
-    TRasterP ras                 = ti ? ti->getRaster() : TRasterP();
+    TRasterCM32P ras             = ti ? ti->getRaster() : TRasterCM32P();
     TPointD rasCenter            = ti ? ras->getCenterD() : TPointD(0, 0);
     TPointD fillPt               = pos + rasCenter;
     std::vector<TPointD> symmPts =

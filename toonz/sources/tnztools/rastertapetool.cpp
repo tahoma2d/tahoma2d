@@ -579,7 +579,7 @@ public:
         TImageP image     = getImage(false);
         TToonzImageP ti   = image;
         TPointD dpiScale  = getViewer()->getDpiScale();
-        TRasterP ras      = ti ? ti->getRaster() : TRasterP();
+        TRasterCM32P ras  = ti ? ti->getRaster() : TRasterCM32P();
         TPointD rasCenter = ti ? ras->getCenterD() : TPointD(0, 0);
         TPointD fillPt    = m_firstPoint + rasCenter;
         std::vector<TPointD> symmPts =
