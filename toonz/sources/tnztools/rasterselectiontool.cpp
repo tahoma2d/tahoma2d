@@ -654,6 +654,16 @@ void RasterSelectionTool::leftButtonDrag(const TPointD &pos,
                    tround(std::max(m_firstPos.y, pos.y) - p.y) + p.y);
 
       m_selectingRect = rectD;
+
+      if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+        m_polyline.clear();
+        m_polyline.push_back(m_selectingRect.getP00());
+        m_polyline.push_back(m_selectingRect.getP01());
+        m_polyline.push_back(m_selectingRect.getP11());
+        m_polyline.push_back(m_selectingRect.getP10());
+        m_polyline.push_back(m_selectingRect.getP00());
+      }
+
       m_bboxs.clear();
 
       TTool::getApplication()
@@ -728,16 +738,45 @@ void RasterSelectionTool::leftButtonUp(const TPointD &pos,
   if (ti || ri) {
     if (m_strokeSelectionType.getValue() == RECT_SELECTION) {
       m_bboxs.push_back(m_selectingRect);
-      m_rasterSelection.select(
-          TRectD(m_selectingRect.getP00(), m_selectingRect.getP11()));
+
+      if (!m_selectingRect.isEmpty() && m_polyline.hasSymmetryBrushes()) {
+        // We'll use polyline
+        m_polyline.clear();
+        m_polyline.push_back(m_selectingRect.getP00());
+        m_polyline.push_back(m_selectingRect.getP01());
+        m_polyline.push_back(m_selectingRect.getP11());
+        m_polyline.push_back(m_selectingRect.getP10());
+        m_polyline.push_back(m_selectingRect.getP00());
+
+        std::vector<TStroke *> strokes;
+        for (int i = 0; i < m_polyline.getBrushCount(); i++)
+          strokes.push_back(m_polyline.makePolylineStroke(i));
+        for (int i = 0; i < strokes.size(); i++)
+          m_rasterSelection.select(*strokes[i]);
+      } else
+        m_rasterSelection.select(
+            TRectD(m_selectingRect.getP00(), m_selectingRect.getP11()));
+
       m_rasterSelection.setFrameId(getCurrentFid());
+
       m_selectingRect.empty();
+      m_polyline.reset();
     } else if (m_strokeSelectionType.getValue() == FREEHAND_SELECTION) {
       closeFreehand(pos);
       if (m_stroke->getControlPointCount() > 5) {
         m_rasterSelection.select(*m_stroke);
         m_rasterSelection.setFrameId(getCurrentFid());
         m_rasterSelection.makeCurrent();
+
+        if (m_track.hasSymmetryBrushes()) {
+          double error = (30.0 / 11) * sqrt(getPixelSize() * getPixelSize());
+          std::vector<TStroke *> symmStrokes =
+              m_track.makeSymmetryStrokes(error);
+          for (int i = 0; i < symmStrokes.size(); i++) {
+            symmStrokes[i]->setStyle(m_stroke->getStyle());
+            m_rasterSelection.select(*symmStrokes[i]);
+          }
+        }
       }
       m_track.clear();
     }
@@ -759,10 +798,19 @@ void RasterSelectionTool::leftButtonDoubleClick(const TPointD &pos,
       !m_polyline.empty()) {
     closePolyline(pos);
     if (m_stroke) {
-      m_rasterSelection.select(*m_stroke);
+      if (m_polyline.hasSymmetryBrushes()) {
+        std::vector<TStroke *> strokes;
+        for (int i = 0; i < m_polyline.getBrushCount(); i++)
+          strokes.push_back(m_polyline.makePolylineStroke(i));
+        for (int i = 0; i < strokes.size(); i++)
+          m_rasterSelection.select(*strokes[i]);
+      } else
+        m_rasterSelection.select(*m_stroke);
+
       m_rasterSelection.setFrameId(getCurrentFid());
       m_rasterSelection.makeCurrent();
     }
+    m_polyline.reset();
     m_selecting = false;
     return;
   }

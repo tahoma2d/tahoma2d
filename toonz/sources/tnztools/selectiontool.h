@@ -6,7 +6,9 @@
 #include "tproperty.h"
 #include "toonzqt/selection.h"
 #include "tools/toolutils.h"
-#include "toonz/strokegenerator.h"
+
+#include "symmetrystroke.h"
+#include "vectorbrush.h"
 
 // For Qt translation support
 #include <QCoreApplication>
@@ -329,8 +331,8 @@ protected:
   bool m_firstTime;
   DragSelectionTool::DragTool *m_dragTool;
 
-  StrokeGenerator m_track;
-  std::vector<TPointD> m_polyline;
+  VectorBrush m_track;
+  SymmetryStroke m_polyline;
   TPointD m_mousePosition;
   TStroke *m_stroke;
 

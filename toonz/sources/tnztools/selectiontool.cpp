@@ -6,6 +6,7 @@
 #include "tcurveutil.h"
 #include "tenv.h"
 #include "drawutil.h"
+#include "symmetrytool.h"
 #include "tools/toolhandle.h"
 #include "tools/cursors.h"
 #include "toonz/stage2.h"
@@ -1100,12 +1101,36 @@ void SelectionTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       delete m_stroke;
       m_stroke = 0;
     }
+
+    SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+        TTool::getTool("T_Symmetry", TTool::RasterImage));
+    TPointD dpiScale       = getViewer()->getDpiScale();
+    SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+
     if (m_strokeSelectionType.getValue() == FREEHAND_SELECTION)
       startFreehand(pos);
-    if (m_strokeSelectionType.getValue() == POLYLINE_SELECTION)
+    else if (m_strokeSelectionType.getValue() == POLYLINE_SELECTION) {
+      if (symmetryTool && symmetryTool->isGuideEnabled() &&
+          !m_polyline.hasSymmetryBrushes()) {
+        m_polyline.addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                                      symmObj.getCenterPoint(),
+                                      symmObj.isUsingLineSymmetry(), dpiScale);
+      }
+
       addPointPolyline(pos);
-    else if (m_polyline.size() != 0)
-      m_polyline.clear();
+    } else { //if (m_polyline.size() != 0) {
+      // Rectangular selection
+      if (symmetryTool && symmetryTool->isGuideEnabled()) {
+        m_selectingRect = TRectD(pos.x, pos.y, pos.x, pos.y);
+
+        // We'll use polyline
+        m_polyline.reset();
+        m_polyline.addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                                      symmObj.getCenterPoint(),
+                                      symmObj.isUsingLineSymmetry(), dpiScale);
+        m_polyline.setRectangle(m_selectingRect.getP00(), m_selectingRect.getP11());
+      }
+    }
   }
   m_firstPos = m_curPos    = pos;
   m_leftButtonMousePressed = true;
@@ -1193,24 +1218,21 @@ int SelectionTool::getCursorId() const {
 
 void SelectionTool::drawPolylineSelection() {
   if (m_polyline.empty()) return;
-  TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
-                     ? TPixel32::White
-                     : TPixel32::Black;
-  tglColor(color);
-  tglDrawCircle(m_polyline[0], 2);
-  glBegin(GL_LINE_STRIP);
-  for (UINT i = 0; i < m_polyline.size(); i++) tglVertex(m_polyline[i]);
-  tglVertex(m_mousePosition);
-  glEnd();
+//  TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
+//                     ? TPixel32::White
+//                     : TPixel32::Black;
+  TPixel color = TPixel32::Red;
+  m_polyline.drawPolyline(m_mousePosition, color);
 }
 
 //-----------------------------------------------------------------------------
 
 void SelectionTool::drawFreehandSelection() {
   if (m_track.isEmpty()) return;
-  TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
-                     ? TPixel32::White
-                     : TPixel32::Black;
+//  TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
+//                     ? TPixel32::White
+//                     : TPixel32::Black;
+  TPixel color = TPixel32::Red;
   tglColor(color);
   m_track.drawAllFragments();
 }
@@ -1218,11 +1240,18 @@ void SelectionTool::drawFreehandSelection() {
 //-----------------------------------------------------------------------------
 
 void SelectionTool::drawRectSelection(const TImage *image) {
+  TPixel color = TPixel32::Red;
+
+  if (!m_polyline.empty()) {
+    m_polyline.drawRectangle(color);
+    return;
+  }
+
   const TVectorImage *vi   = dynamic_cast<const TVectorImage *>(image);
   unsigned short stipple   = 0x3F33;
   FourPoints selectingRect = m_selectingRect;
   if (vi && m_curPos.x >= m_firstPos.x) stipple = 0xFF00;
-  drawFourPoints(selectingRect, TPixel32::Black, stipple, true);
+  drawFourPoints(selectingRect, color, stipple, true);
 }
 
 //-----------------------------------------------------------------------------
@@ -1324,6 +1353,8 @@ void SelectionTool::onSelectionChanged() {
 bool SelectionTool::onPropertyChanged(std::string propertyName) {
   if (propertyName == m_strokeSelectionType.getName()) {
     SelectionType = ::to_string(m_strokeSelectionType.getValue());
+    if (m_strokeSelectionType.getValue() == POLYLINE_SELECTION)
+      m_polyline.reset();
     return true;
   }
   return false;
@@ -1334,7 +1365,19 @@ bool SelectionTool::onPropertyChanged(std::string propertyName) {
 //! Viene aggiunto \b pos a \b m_track e disegnato il primo pezzetto del lazzo.
 //! Viene inizializzato \b m_firstPos
 void SelectionTool::startFreehand(const TPointD &pos) {
-  m_track.clear();
+  m_track.reset();
+
+  SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+      TTool::getTool("T_Symmetry", TTool::RasterImage));
+  TPointD dpiScale       = getViewer()->getDpiScale();
+  SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+
+  if (symmetryTool && symmetryTool->isGuideEnabled()) {
+    m_track.addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                               symmObj.getCenterPoint(),
+                               symmObj.isUsingLineSymmetry(), dpiScale);
+  }
+
   m_firstPos       = pos;
   double pixelSize = getPixelSize();
   m_track.add(TThickPoint(pos, 0), pixelSize * pixelSize);
@@ -1381,15 +1424,7 @@ void SelectionTool::closePolyline(const TPointD &pos) {
   if (m_polyline.back() != m_polyline.front())
     m_polyline.push_back(m_polyline.front());
 
-  std::vector<TThickPoint> strokePoints;
-  for (UINT i = 0; i < m_polyline.size() - 1; i++) {
-    strokePoints.push_back(TThickPoint(m_polyline[i], 0));
-    strokePoints.push_back(
-        TThickPoint(0.5 * (m_polyline[i] + m_polyline[i + 1]), 0));
-  }
-  strokePoints.push_back(TThickPoint(m_polyline.back(), 0));
-  m_polyline.clear();
-  m_stroke = new TStroke(strokePoints);
+  m_stroke = m_polyline.makePolylineStroke();
   assert(m_stroke->getPoint(0) == m_stroke->getPoint(1));
   invalidate();
 }
