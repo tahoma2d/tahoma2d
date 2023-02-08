@@ -69,6 +69,16 @@
 using namespace DVGui;
 
 extern TEnv::IntVar EnvViewerPreviewBehavior;
+
+// this enum is to keep comaptibility with older versions
+enum OldV_Parts {
+  OldVPARTS_None        = 0,
+  OldVPARTS_PLAYBAR     = 0x1,
+  OldVPARTS_FRAMESLIDER = 0x4,
+  OldVPARTS_End         = 0x8,
+  OldVPARTS_ALL         = OldVPARTS_PLAYBAR | OldVPARTS_FRAMESLIDER
+};
+
 //=============================================================================
 //
 // BaseViewerPanel
@@ -1050,11 +1060,16 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WindowFlags flags)
 //-----------------------------------------------------------------------------
 
 void SceneViewerPanel::checkOldVersionVisblePartsFlags(QSettings &settings) {
-  if (!settings.contains("visibleParts")) return;
-  m_visiblePartsFlag =
-      settings.value("visibleParts", m_visiblePartsFlag).toUInt();
-  settings.remove("visibleParts");
-  settings.setValue("viewerVisibleParts", m_visiblePartsFlag);
+  if (settings.contains("viewerVisibleParts") ||
+      !settings.contains("visibleParts"))
+    return;
+  UINT oldVisiblePartsFlag =
+      settings.value("visibleParts", OldVPARTS_ALL).toUInt();
+  m_visiblePartsFlag = VPPARTS_None;
+  if (oldVisiblePartsFlag & OldVPARTS_PLAYBAR)
+    m_visiblePartsFlag |= VPPARTS_PLAYBAR;
+  if (oldVisiblePartsFlag & OldVPARTS_FRAMESLIDER)
+    m_visiblePartsFlag |= VPPARTS_FRAMESLIDER;
 }
 
 //=========================================================

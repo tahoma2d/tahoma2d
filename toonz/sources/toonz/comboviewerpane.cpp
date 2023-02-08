@@ -153,7 +153,9 @@ void ComboViewerPanel::addShowHideContextMenu(QMenu *menu) {
 //-----------------------------------------------------------------------------
 
 void ComboViewerPanel::checkOldVersionVisblePartsFlags(QSettings &settings) {
-  if (!settings.contains("visibleParts")) return;
+  if (settings.contains("viewerVisibleParts") ||
+      !settings.contains("visibleParts"))
+    return;
   UINT oldVisiblePartsFlag =
       settings.value("visibleParts", CVPARTS_ALL).toUInt();
   m_visiblePartsFlag = VPPARTS_None;
@@ -163,6 +165,4 @@ void ComboViewerPanel::checkOldVersionVisblePartsFlags(QSettings &settings) {
     m_visiblePartsFlag |= VPPARTS_TOOLOPTIONS;
   if (oldVisiblePartsFlag & CVPARTS_FLIPCONSOLE)
     m_visiblePartsFlag |= VPPARTS_PLAYBAR | VPPARTS_FRAMESLIDER;
-  settings.remove("visibleParts");
-  settings.setValue("viewerVisibleParts", m_visiblePartsFlag);
 }
