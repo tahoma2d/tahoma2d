@@ -7,6 +7,7 @@
 #include "tdoublekeyframe.h"
 #include "toonz/doubleparamcmd.h"
 
+#include <QList>
 // class QMouseEvent;
 class KeyframeSetter;
 class TDoubleParam;
@@ -151,4 +152,31 @@ public:
   void release(QMouseEvent *e) override;
 };
 
+class StretchPointDragTool final : public FunctionPanel::DragTool {
+private:
+  FunctionPanel *m_panel;
+  TDoubleParam *m_curve;
+  double m_clickedFrame;
+
+  struct keyInfo {
+    int kIndex;
+    double orgFramePos;
+    TPointD orgSpeedIn;
+    TPointD orgSpeedOut;
+    KeyframeSetter *setter;
+  };
+
+  QList<keyInfo> m_keys;
+  bool m_moveLeft;
+  double m_previousRange;
+
+public:
+  StretchPointDragTool(FunctionPanel *panel, TDoubleParam *curve, int leftId,
+                       int rightId, bool moveLeft);
+  ~StretchPointDragTool();
+
+  void click(QMouseEvent *e) override;
+  void drag(QMouseEvent *e) override;
+  void release(QMouseEvent *e) override;
+};
 #endif

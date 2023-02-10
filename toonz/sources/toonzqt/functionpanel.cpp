@@ -1301,16 +1301,39 @@ void FunctionPanel::mousePressEvent(QMouseEvent *e) {
               getSelection()->deselectAllKeyframes();
             getSelection()->select(currentCurve, kIndex);
           }
-          // move selected point(s)
-          MovePointDragTool *dragTool =
-              new MovePointDragTool(this, currentCurve);
-          if (getSelection()->getSelectedSegment().first != 0) {
-            // if a segment is selected then move only the clicked point
-            dragTool->addKeyframe2(kIndex);
-          } else {
-            dragTool->setSelection(getSelection());
+
+          // stretch the selected keys IF;
+          // 1) alt key is pressed, and
+          // 2) more than two keys are selected, and
+          // 3) clicked key is one of the end of the selection, and
+          // 4) all keys between the both end of the selection are selected
+          if (e->modifiers() & Qt::AltModifier) {
+            QList<int> selectedIndices =
+                getSelection()->getSelectedKeyIndices(currentCurve);
+            if (selectedIndices.count() >= 3 &&
+                (selectedIndices.first() == kIndex ||
+                 selectedIndices.last() == kIndex) &&
+                (selectedIndices.last() - selectedIndices.first()) ==
+                    selectedIndices.count() - 1) {
+              bool moveLeft = selectedIndices.first() == kIndex;
+              m_dragTool    = new StretchPointDragTool(
+                  this, currentCurve, selectedIndices.first(),
+                  selectedIndices.last(), moveLeft);
+            }
           }
-          m_dragTool = dragTool;
+
+          if (!m_dragTool) {
+            // move selected point(s)
+            MovePointDragTool *dragTool =
+                new MovePointDragTool(this, currentCurve);
+            if (getSelection()->getSelectedSegment().first != 0) {
+              // if a segment is selected then move only the clicked point
+              dragTool->addKeyframe2(kIndex);
+            } else {
+              dragTool->setSelection(getSelection());
+            }
+            m_dragTool = dragTool;
+          }
         } else {
           m_dragTool =
               new MoveHandleDragTool(this, currentCurve, kIndex, handle);

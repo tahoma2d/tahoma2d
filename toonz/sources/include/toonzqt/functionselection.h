@@ -131,6 +131,7 @@ public:
   // overlapping the selection
   int getCommonSegmentType(bool inclusive = true);
 
+  QList<int> getSelectedKeyIndices(TDoubleParam *curve);
 signals:
   void selectionChanged();
 };
