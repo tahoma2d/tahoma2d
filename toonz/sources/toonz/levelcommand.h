@@ -26,6 +26,8 @@ bool removeUnusedLevelsFromCast(bool showMessage = true);
 // returns false.
 bool removeLevelFromCast(TXshLevel* level, ToonzScene* scene = nullptr,
                          bool showMessage = true);
+
+void loadAllUsedRasterLevelsAndPutInCache(bool cacheImagesAsWell);
 }  // namespace LevelCmd
 
 #endif

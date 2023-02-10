@@ -261,8 +261,8 @@ public:
     return getBoolValue(removeSceneNumberFromLoadedLevelName);
   }
   bool isIgnoreImageDpiEnabled() const { return getBoolValue(IgnoreImageDpi); }
-  int getInitialLoadTlvCachingBehavior() const {
-    return getIntValue(initialLoadTlvCachingBehavior);
+  int getRasterLevelCachingBehavior() const {
+    return getIntValue(rasterLevelCachingBehavior);
   }
   ColumnIconLoadingPolicy getColumnIconLoadingPolicy() const {
     return ColumnIconLoadingPolicy(getIntValue(columnIconLoadingPolicy));

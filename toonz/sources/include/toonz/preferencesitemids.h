@@ -62,7 +62,8 @@ enum PreferencesItemId {
   subsceneFolderEnabled,
   removeSceneNumberFromLoadedLevelName,
   IgnoreImageDpi,
-  initialLoadTlvCachingBehavior,
+  rasterLevelCachingBehavior,
+  // initialLoadTlvCachingBehavior, // deprecated
   columnIconLoadingPolicy,
   levelFormats,  // need to be handle separately
   autoRemoveUnusedLevels,

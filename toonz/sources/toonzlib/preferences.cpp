@@ -475,7 +475,7 @@ void Preferences::definePreferenceItems() {
   define(removeSceneNumberFromLoadedLevelName,
          "removeSceneNumberFromLoadedLevelName", QMetaType::Bool, false);
   define(IgnoreImageDpi, "IgnoreImageDpi", QMetaType::Bool, true);
-  define(initialLoadTlvCachingBehavior, "initialLoadTlvCachingBehavior",
+  define(rasterLevelCachingBehavior, "rasterLevelCachingBehavior",
          QMetaType::Int, 0);  // On Demand
   define(columnIconLoadingPolicy, "columnIconLoadingPolicy", QMetaType::Int,
          (int)LoadAtOnce);
@@ -805,6 +805,16 @@ void Preferences::resolveCompatibility() {
   if (m_settings->contains("scanLevelType") &&
       !m_settings->contains("DefRasterFormat")) {
     setValue(DefRasterFormat, m_settings->value("scanLevelType").toString());
+  }
+  // "initialLoadTlvCachingBehavior" is changed to "rasterLevelCachingBehavior"
+  // , Now this setting also applies to raster levels (previously only Toonz
+  // raster levels). It also applies to any operation that loads a level, such
+  // as loading scene or loading a recent level. (Previously, this was only
+  // available from the Load Level popup.)
+  if (m_settings->contains("initialLoadTlvCachingBehavior") &&
+      !m_settings->contains("rasterLevelCachingBehavior")) {
+    setValue(rasterLevelCachingBehavior,
+             m_settings->value("initialLoadTlvCachingBehavior").toInt());
   }
 }
 

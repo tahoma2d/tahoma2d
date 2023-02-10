@@ -707,8 +707,9 @@ LoadLevelPopup::LoadLevelPopup()
   QWidget *optionWidget = (QWidget *)m_customWidget;
 
   // choose tlv caching behavior
-  QLabel *cacheBehaviorLabel = new QLabel(tr("TLV Caching Behavior"), this);
-  m_loadTlvBehaviorComboBox  = new QComboBox(this);
+  QLabel *cacheBehaviorLabel =
+      new QLabel(tr("Raster Level Caching Behavior"), this);
+  m_rasterCacheBehaviorComboBox = new QComboBox(this);
 
   //----Load Subsequence Level
   QPushButton *showSubsequenceButton = createShowButton(this);
@@ -744,17 +745,17 @@ LoadLevelPopup::LoadLevelPopup()
   m_notExistLabel = new QLabel(tr("(FILE DOES NOT EXIST)"));
 
   //----
-  m_loadTlvBehaviorComboBox->addItem(tr("On Demand"),
-                                     IoCmd::LoadResourceArguments::ON_DEMAND);
-  m_loadTlvBehaviorComboBox->addItem(tr("All Icons"),
-                                     IoCmd::LoadResourceArguments::ALL_ICONS);
-  m_loadTlvBehaviorComboBox->addItem(
+  m_rasterCacheBehaviorComboBox->addItem(
+      tr("On Demand"), IoCmd::LoadResourceArguments::ON_DEMAND);
+  m_rasterCacheBehaviorComboBox->addItem(
+      tr("All Icons"), IoCmd::LoadResourceArguments::ALL_ICONS);
+  m_rasterCacheBehaviorComboBox->addItem(
       tr("All Icons & Images"),
       IoCmd::LoadResourceArguments::ALL_ICONS_AND_IMAGES);
   // use the default value set in the preference
-  m_loadTlvBehaviorComboBox->setCurrentIndex(
-      m_loadTlvBehaviorComboBox->findData(
-          Preferences::instance()->getInitialLoadTlvCachingBehavior()));
+  m_rasterCacheBehaviorComboBox->setCurrentIndex(
+      m_rasterCacheBehaviorComboBox->findData(
+          Preferences::instance()->getRasterLevelCachingBehavior()));
   cacheBehaviorLabel->setObjectName("TitleTxtLabel");
 
   //----Load Subsequence Level
@@ -811,7 +812,7 @@ LoadLevelPopup::LoadLevelPopup()
     {
       cacheLay->addStretch(1);
       cacheLay->addWidget(cacheBehaviorLabel, 0);
-      cacheLay->addWidget(m_loadTlvBehaviorComboBox, 0);
+      cacheLay->addWidget(m_rasterCacheBehaviorComboBox, 0);
     }
     mainLayout->addLayout(cacheLay, 0);
 
@@ -1264,8 +1265,8 @@ bool LoadLevelPopup::execute() {
     args.step                  = m_stepCombo->currentIndex();
     args.inc                   = m_incCombo->currentIndex();
     args.doesFileActuallyExist = !m_notExistLabel->isVisible();
-    args.cachingBehavior       = IoCmd::LoadResourceArguments::CacheTlvBehavior(
-        m_loadTlvBehaviorComboBox->currentData().toInt());
+    args.cachingBehavior = IoCmd::LoadResourceArguments::CacheRasterBehavior(
+        m_rasterCacheBehaviorComboBox->currentData().toInt());
 
     if (m_arrLvlPropWidget->isVisible() &&
         m_levelPropertiesFrame->isEnabled()) {
@@ -1294,8 +1295,8 @@ bool LoadLevelPopup::execute() {
         args.frameIdsSet.insert(args.frameIdsSet.begin(), *fIdIt);
     }
 
-    args.cachingBehavior = IoCmd::LoadResourceArguments::CacheTlvBehavior(
-        m_loadTlvBehaviorComboBox->currentData().toInt());
+    args.cachingBehavior = IoCmd::LoadResourceArguments::CacheRasterBehavior(
+        m_rasterCacheBehaviorComboBox->currentData().toInt());
 
     if (m_arrLvlPropWidget->isVisible() &&
         m_levelPropertiesFrame->isEnabled()) {
