@@ -68,7 +68,7 @@ void OCAData::write(QJsonObject &json) const {
   json["layers"] = m_layers;
 
   // Versions
-  json["originApp"] = "OpenToonz";
+  json["originApp"] = "Tahoma2D";
   json["originAppVersion"] =
       QString::fromStdString(TEnv::getApplicationVersion());
   json["ocaVersion"] = "1.1.0";
@@ -76,12 +76,17 @@ void OCAData::write(QJsonObject &json) const {
 
 int OCAData::frameLen(TXshCellColumn *column, const QList<int> &rows, int index) {
   // Next cells must match same level and frame-id
-  int length = 0;
+  int length          = 0;
   const TXshCell &stc = column->getCell(rows[index]);
+  bool isStcStopFrame    = stc.getFrameId().isStopFrame();
   for (int i = index; i < rows.count(); i++) {
     int currentRow       = rows[i];
     const TXshCell &cell = column->getCell(currentRow);
-    if (stc.m_frameId != cell.m_frameId || stc.m_level != cell.m_level) break;
+    if ((isStcStopFrame && !cell.isEmpty() &&
+         !cell.getFrameId().isStopFrame()) ||
+        (!isStcStopFrame &&
+         (stc.m_frameId != cell.m_frameId || stc.m_level != cell.m_level)))
+      break;
     length++;
   }
   return length;
@@ -89,13 +94,13 @@ int OCAData::frameLen(TXshCellColumn *column, const QList<int> &rows, int index)
 
 bool OCAData::isBlank(TXshCellColumn *column, int row) {
   TXshCell cell = column->getCell(row);
-  return cell.isEmpty();
+  return cell.isEmpty() || cell.getFrameId().isStopFrame();
 }
 
 bool OCAData::getLayerName(TXshCellColumn *column, QString &out) {
   // Layer name will be the first cel that occur on the column
   TXshCell cell = column->getCell(column->getFirstRow());
-  if (cell.isEmpty()) return false;
+  if (cell.isEmpty() || cell.getFrameId().isStopFrame()) return false;
 
   out = QString::fromStdWString(cell.m_level->getName());
   return true;
@@ -103,7 +108,7 @@ bool OCAData::getLayerName(TXshCellColumn *column, QString &out) {
 
 bool OCAData::getCellName(TXshCellColumn *column, int row, QString &out) {
   TXshCell cell = column->getCell(row);
-  if (cell.isEmpty()) return false;
+  if (cell.isEmpty() || cell.getFrameId().isStopFrame()) return false;
 
   TFilePath fp(cell.m_level->getName());
   fp = fp.withFrame(cell.getFrameId(), TFrameId::FrameFormat::FOUR_ZEROS);
@@ -179,7 +184,7 @@ bool OCAData::buildGroup(QJsonObject &json, const QList<int> &rows,
   QList<int> crows;
   for (int i = m_startTime; i <= m_endTime; i++) {
     TXshCell cell = column->getCell(i);
-    if (cell.isEmpty())
+    if (cell.isEmpty() || cell.getFrameId().isStopFrame())
       crows.append(-1);
     else
       crows.append(cell.getFrameId().getNumber() - 1);
@@ -332,8 +337,8 @@ void OCAData::build(ToonzScene *scene, TXsheet *xsheet, QString name,
   TOutputProperties *oprop = scene->getProperties()->getOutputProperties();
   int from, to, step;
   if (scene->getTopXsheet() == xsheet && oprop->getRange(from, to, step)) {
-    m_startTime = from - 1;
-    m_endTime   = to - 1;
+    m_startTime = from;
+    m_endTime   = to;
     //m_stepTime  = step;
   } else {
     m_startTime = 0;
