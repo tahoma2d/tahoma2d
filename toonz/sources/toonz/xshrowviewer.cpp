@@ -436,6 +436,12 @@ void RowArea::drawNavigationTags(QPainter &p, int r0, int r1) {
 
   NavigationTags *tags = xsh->getNavigationTags();
 
+  int hOffset          = 0;
+  if (checkExpandFrameArea()) {
+    hOffset = m_viewer->orientation()->dimension(
+        PredefinedDimension::FRAME_AREA_EXPANSION);
+  }
+
   for (int r = r0; r <= r1; r++) {
     if (!xsh->isFrameTagged(r)) continue;
 
@@ -443,7 +449,7 @@ void RowArea::drawNavigationTags(QPainter &p, int r0, int r1) {
     if (!m_viewer->orientation()->isVerticalTimeline())
       topLeft.setY(0);
     else
-      topLeft.setX(0);
+      topLeft.setX(-hOffset);
 
     QRect tagRect = m_viewer->orientation()
                         ->rect(PredefinedRect::NAVIGATION_TAG_AREA)
@@ -1088,6 +1094,7 @@ void RowArea::mousePressEvent(QMouseEvent *event) {
       if (xsh->getNavigationTags()->isTagged(row) &&
           o->rect(PredefinedRect::NAVIGATION_TAG_AREA)
               .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
+              .translated(-playRangeHOffset, 0)
               .contains(mouseInCell)) {
         setDragTool(XsheetGUI::DragTool::makeNavigationTagDragTool(m_viewer));
         frameAreaIsClicked = true;
