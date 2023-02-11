@@ -13,6 +13,9 @@ set(MOC_HEADERS
     selectiontool.h
     edittool.h
     controlpointeditortool.h
+    cmrasterbrush.h
+    vectorbrush.h
+    symmetrystroke.h
     ../include/tools/imagegrouping.h
     ../include/tools/screenpicker.h
     ../include/tools/toolhandle.h
@@ -34,6 +37,7 @@ set(HEADERS
     toonzvectorbrushtool.h
     vectorselectiontool.h
 	perspectivetool.h
+    symmetrytool.h
     ../include/tools/RGBpicker.h
     ../include/tools/cursormanager.h
     ../include/tools/cursors.h
@@ -106,6 +110,10 @@ set(SOURCES
     mypainttoonzbrush.cpp
     shifttracetool.cpp
 	perspectivetool.cpp
+    symmetrytool.cpp
+    cmrasterbrush.cpp
+    vectorbrush.cpp
+    symmetrystroke.cpp
     toonzrasterbrushtool.cpp
 	toonzvectorbrushtool.cpp
 )

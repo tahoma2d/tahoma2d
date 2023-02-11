@@ -385,7 +385,7 @@ private:
   void doOnActivate() override;
   void doOnDeactivate() override;
 
-  void selectRegionVectorImage(bool includeIntersect);
+  void selectRegionVectorImage(bool includeIntersect, int selectionIndex);
 
   void updateTranslation() override;
 

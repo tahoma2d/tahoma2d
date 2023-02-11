@@ -12,7 +12,6 @@
 #include "tvectorimage.h"
 #include "ttoonzimage.h"
 #include "tproperty.h"
-#include "toonz/strokegenerator.h"
 #include "toonz/ttilesaver.h"
 #include "toonz/txshsimplelevel.h"
 #include "toonz/observer.h"
@@ -20,7 +19,6 @@
 #include "toonz/levelproperties.h"
 #include "toonz/stage2.h"
 #include "toonz/ttileset.h"
-#include "toonz/rasterstrokegenerator.h"
 #include "toonz/preferences.h"
 #include "tgl.h"
 #include "tenv.h"
@@ -29,6 +27,9 @@
 
 #include "tinbetween.h"
 #include "ttile.h"
+
+#include "cmrasterbrush.h"
+#include "symmetrytool.h"
 
 #include "toonz/tpalettehandle.h"
 #include "toonz/txsheethandle.h"
@@ -61,25 +62,43 @@ class FingerUndo final : public TRasterUndo {
   std::vector<TThickPoint> m_points;
   int m_styleId;
   bool m_invert;
+  TPointD m_dpiScale;
+  int m_brushCount;
+  double m_rotation;
+  TPointD m_centerPoint;
+  bool m_useLineSymmetry;
 
 public:
   FingerUndo(TTileSetCM32 *tileSet, const std::vector<TThickPoint> &points,
              int styleId, bool invert, TXshSimpleLevel *level,
-             const TFrameId &frameId)
+             const TFrameId &frameId, TPointD dpiScale, double symmetryLines,
+             double rotation, TPointD centerPoint, bool useLineSymmetry)
       : TRasterUndo(tileSet, level, frameId, false, false, 0)
       , m_points(points)
       , m_styleId(styleId)
-      , m_invert(invert) {}
+      , m_invert(invert)
+      , m_dpiScale(dpiScale)
+      , m_brushCount(symmetryLines)
+      , m_rotation(rotation)
+      , m_centerPoint(centerPoint)
+      , m_useLineSymmetry(useLineSymmetry) {}
 
   void redo() const override {
     TToonzImageP image = m_level->getFrame(m_frameId, true);
     TRasterCM32P ras   = image->getRaster();
-    RasterStrokeGenerator m_rasterTrack(ras, FINGER, INK, m_styleId,
-                                        m_points[0], m_invert, 0, false, false);
-    m_rasterTrack.setPointsSequence(m_points);
-    m_rasterTrack.generateStroke(true);
-    image->setSavebox(image->getSavebox() +
-                      m_rasterTrack.getBBox(m_rasterTrack.getPointsSequence()));
+    CMRasterBrush m_cmRasterBrush(ras, FINGER, INK, m_styleId, m_points[0],
+                                  m_invert, 0, false, false);
+
+    if (m_brushCount > 1)
+      m_cmRasterBrush.addSymmetryBrushes(m_brushCount, m_rotation,
+                                         m_centerPoint, m_useLineSymmetry,
+                                         m_dpiScale);
+
+    m_cmRasterBrush.setPointsSequence(m_points);
+    m_cmRasterBrush.generateStroke(true);
+    image->setSavebox(
+        image->getSavebox() +
+        m_cmRasterBrush.getBBox(m_cmRasterBrush.getPointsSequence()));
 
     ToolUtils::updateSaveBox();
 
@@ -245,7 +264,7 @@ void drawEmptyCircle(int thick, const TPointD &mousePos, bool isPencil,
 class FingerTool final : public TTool {
   Q_DECLARE_TR_FUNCTIONS(FingerTool)
 
-  RasterStrokeGenerator *m_rasterTrack;
+  CMRasterBrush *m_cmRasterBrush;
 
   bool m_firstTime;
 
@@ -308,7 +327,7 @@ FingerTool fingerTool;
 
 FingerTool::FingerTool()
     : TTool("T_Finger")
-    , m_rasterTrack(0)
+    , m_cmRasterBrush(0)
     , m_pointSize(-1)
     , m_selecting(false)
     , m_tileSaver(0)
@@ -406,16 +425,26 @@ void FingerTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       int styleId   = TTool::getApplication()->getCurrentLevelStyleIndex();
       TTileSetCM32 *tileSet = new TTileSetCM32(ras->getSize());
       m_tileSaver           = new TTileSaverCM32(ras, tileSet);
-      m_rasterTrack         = new RasterStrokeGenerator(
+      m_cmRasterBrush       = new CMRasterBrush(
           ras, FINGER, INK, styleId,
           TThickPoint(pos + convert(ras->getCenter()), thickness),
           m_invert.getValue(), 0, false, false);
 
+      SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+          TTool::getTool("T_Symmetry", TTool::RasterImage));
+      if (symmetryTool && symmetryTool->isGuideEnabled()) {
+        TPointD dpiScale       = getViewer()->getDpiScale();
+        SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+        m_cmRasterBrush->addSymmetryBrushes(
+            symmObj.getLines(), symmObj.getRotation(), symmObj.getCenterPoint(),
+            symmObj.isUsingLineSymmetry(), dpiScale);
+      }
+
       /*-- 作業中Fidを現在のFIDにする --*/
       m_workingFrameId = getFrameId();
 
-      m_tileSaver->save(m_rasterTrack->getLastRect());
-      TRect modifiedBbox = m_rasterTrack->generateLastPieceOfStroke(true);
+      m_tileSaver->save(m_cmRasterBrush->getLastRect());
+      TRect modifiedBbox = m_cmRasterBrush->generateLastPieceOfStroke(true);
       invalidate();
     }
   }
@@ -430,13 +459,13 @@ void FingerTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   if (TToonzImageP ri = TImageP(getImage(true))) {
     /*---	マウスを動かしながらショートカットで切り替わった場合、
                     いきなりleftButtonDragから呼ばれることがあり、
-                    m_rasterTrackが無くて落ちることがある。 ---*/
-    if (m_rasterTrack) {
+                    m_cmRasterBrushが無くて落ちることがある。 ---*/
+    if (m_cmRasterBrush) {
       int thickness = m_toolSize.getValue();
-      m_rasterTrack->add(
+      m_cmRasterBrush->add(
           TThickPoint(pos + convert(ri->getRaster()->getCenter()), thickness));
-      m_tileSaver->save(m_rasterTrack->getLastRect());
-      TRect modifiedBbox = m_rasterTrack->generateLastPieceOfStroke(true);
+      m_tileSaver->save(m_cmRasterBrush->getLastRect());
+      TRect modifiedBbox = m_cmRasterBrush->generateLastPieceOfStroke(true);
       invalidate();
     }
   }
@@ -509,12 +538,13 @@ void FingerTool::onDeactivate() {
  */
 void FingerTool::finishBrush() {
   if (TToonzImageP ti = (TToonzImageP)getImage(true)) {
-    if (m_rasterTrack) {
+    if (m_cmRasterBrush) {
       int thickness = m_toolSize.getValue();
-      m_rasterTrack->add(TThickPoint(
+      m_cmRasterBrush->add(TThickPoint(
           m_mousePos + convert(ti->getRaster()->getCenter()), thickness));
-      m_tileSaver->save(m_rasterTrack->getLastRect());
-      TRect modifiedBbox = m_rasterTrack->generateLastPieceOfStroke(true, true);
+      m_tileSaver->save(m_cmRasterBrush->getLastRect());
+      TRect modifiedBbox =
+          m_cmRasterBrush->generateLastPieceOfStroke(true, true);
 
       TTool::Application *app   = TTool::getApplication();
       TXshLevel *level          = app->getCurrentLevel()->getLevel();
@@ -523,10 +553,26 @@ void FingerTool::finishBrush() {
       TFrameId frameId =
           m_workingFrameId.isEmptyFrame() ? getCurrentFid() : m_workingFrameId;
 
+      double symmetryLines = 0;
+      double rotation      = 0;
+      bool useLineSymmetry = false;
+      TPointD dpiScale     = getViewer()->getDpiScale();
+      TPointD centerPoint(0, 0);
+      SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+          TTool::getTool("T_Symmetry", TTool::RasterImage));
+      if (symmetryTool && symmetryTool->isGuideEnabled()) {
+        SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+        symmetryLines          = symmObj.getLines();
+        rotation               = symmObj.getRotation();
+        centerPoint            = symmObj.getCenterPoint();
+        useLineSymmetry        = symmObj.isUsingLineSymmetry();
+      }
+
       TUndoManager::manager()->add(new FingerUndo(
-          m_tileSaver->getTileSet(), m_rasterTrack->getPointsSequence(),
-          m_rasterTrack->getStyleId(), m_rasterTrack->isSelective(),
-          simLevel.getPointer(), frameId));
+          m_tileSaver->getTileSet(), m_cmRasterBrush->getPointsSequence(),
+          m_cmRasterBrush->getStyleId(), m_cmRasterBrush->isSelective(),
+          simLevel.getPointer(), frameId, dpiScale, symmetryLines, rotation,
+          centerPoint, useLineSymmetry));
       ToolUtils::updateSaveBox();
 
       /*! FIdを指定して、作業中にフレームが動いても、
@@ -535,8 +581,8 @@ void FingerTool::finishBrush() {
       notifyImageChanged(frameId);
 
       invalidate();
-      delete m_rasterTrack;
-      m_rasterTrack = 0;
+      delete m_cmRasterBrush;
+      m_cmRasterBrush = 0;
       delete m_tileSaver;
 
       /*-- 作業中fIdをリセット --*/

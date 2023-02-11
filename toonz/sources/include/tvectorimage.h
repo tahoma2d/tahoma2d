@@ -393,6 +393,8 @@ existing stroke. this method is used for undoing removeEndpoints . */
   void resetRegionFinder();
 #endif
 
+  int getStrokeIndexAtPos(TPointD pos, double maxDistance = 1);
+
 private:  // not implemented
   TVectorImage(const TVectorImage &);
   TVectorImage &operator=(const TVectorImage &);

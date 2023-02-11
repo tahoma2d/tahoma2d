@@ -6,6 +6,8 @@
 #include "tpixelutils.h"
 #include <toonz/mypainthelpers.hpp>
 
+#include "symmetrytool.h"
+
 #include <QColor>
 
 namespace {
@@ -112,22 +114,44 @@ MyPaintToonzBrush::MyPaintToonzBrush(const TRaster32P &ras,
                                      const mypaint::Brush &brush)
     : m_ras(ras)
     , m_mypaintSurface(m_ras, controller)
-    , brush(brush)
-    , reset(true) {
+    , m_brushCount(1)
+    , m_rotation(0)
+    , reset(true)
+    , m_rasCenter(ras->getCenterD()) {
+  brushes[0] = brush;
+
   // read brush antialiasing settings
-  float aa = this->brush.getBaseValue(MYPAINT_BRUSH_SETTING_ANTI_ALIASING);
+  float aa = brushes[0].getBaseValue(MYPAINT_BRUSH_SETTING_ANTI_ALIASING);
   m_mypaintSurface.setAntialiasing(aa > 0.5f);
 
   // reset brush antialiasing to zero to avoid radius and hardness correction
-  this->brush.setBaseValue(MYPAINT_BRUSH_SETTING_ANTI_ALIASING, 0.f);
+  brushes[0].setBaseValue(MYPAINT_BRUSH_SETTING_ANTI_ALIASING, 0.f);
   for (int i = 0; i < MYPAINT_BRUSH_INPUTS_COUNT; ++i)
-    this->brush.setMappingN(MYPAINT_BRUSH_SETTING_ANTI_ALIASING,
-                            (MyPaintBrushInput)i, 0);
+    brushes[0].setMappingN(MYPAINT_BRUSH_SETTING_ANTI_ALIASING,
+                           (MyPaintBrushInput)i, 0);
+}
+
+void MyPaintToonzBrush::addSymmetryBrushes(double lines, double rotation,
+                                           TPointD centerPoint,
+                                           bool useLineSymmetry,
+                                           TPointD dpiScale) {
+  if (lines < 2) return;
+
+  m_brushCount      = lines;
+  m_rotation        = rotation;
+  m_centerPoint     = centerPoint;
+  m_useLineSymmetry = useLineSymmetry;
+  m_dpiScale        = dpiScale;
+
+  // Copy main brush
+  for (int i = 1; i < m_brushCount; i++) brushes[i] = brushes[0];
 }
 
 void MyPaintToonzBrush::beginStroke() {
-  brush.reset();
-  brush.newStroke();
+  for (int i = 0; i < m_brushCount; i++) {
+    brushes[i].reset();
+    brushes[i].newStroke();
+  }
   reset = true;
 }
 
@@ -142,15 +166,31 @@ void MyPaintToonzBrush::strokeTo(const TPointD &point, double pressure,
                                  double dtime) {
   Params next(point.x, point.y, pressure, 0.0);
 
+  std::vector<TPointD> prevPoints, currPoints, nextPoints;
+
+  SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+      TTool::getTool("T_Symmetry", TTool::RasterImage));
+
   if (reset) {
     current  = next;
     previous = current;
     reset    = false;
-    // we need to jump to initial point (heuristic)
-    brush.setState(MYPAINT_BRUSH_STATE_X, current.x);
-    brush.setState(MYPAINT_BRUSH_STATE_Y, current.y);
-    brush.setState(MYPAINT_BRUSH_STATE_ACTUAL_X, current.x);
-    brush.setState(MYPAINT_BRUSH_STATE_ACTUAL_Y, current.y);
+
+    if (symmetryTool && hasSymmetryBrushes()) {
+      SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+      currPoints             = symmetryTool->getSymmetryPoints(
+          TPointD(current.x, current.y), m_rasCenter, m_dpiScale, m_brushCount,
+          m_rotation, m_centerPoint, m_useLineSymmetry);
+    } else
+      currPoints.push_back(TPointD(current.x, current.y));
+
+    for (int i = 0; i < currPoints.size(); i++) {
+      // we need to jump to initial point (heuristic)
+      brushes[i].setState(MYPAINT_BRUSH_STATE_X, currPoints[i].x);
+      brushes[i].setState(MYPAINT_BRUSH_STATE_Y, currPoints[i].y);
+      brushes[i].setState(MYPAINT_BRUSH_STATE_ACTUAL_X, currPoints[i].x);
+      brushes[i].setState(MYPAINT_BRUSH_STATE_ACTUAL_Y, currPoints[i].y);
+    }
     return;
   } else {
     next.time = current.time + dtime;
@@ -161,32 +201,57 @@ void MyPaintToonzBrush::strokeTo(const TPointD &point, double pressure,
   const double thresholdSqr = threshold * threshold;
   const int maxLevel        = 16;
 
-  // set initial segment
-  Segment stack[maxLevel + 1];
-  Params p0;
-  Segment *segment    = stack;
-  Segment *maxSegment = segment + maxLevel;
-  p0.setMedian(previous, current);
-  segment->p1 = current;
-  segment->p2.setMedian(current, next);
+  if (symmetryTool && hasSymmetryBrushes()) {
+    SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+    prevPoints             = symmetryTool->getSymmetryPoints(
+        TPointD(previous.x, previous.y), m_rasCenter, m_dpiScale, m_brushCount,
+        m_rotation, m_centerPoint, m_useLineSymmetry);
+    currPoints = symmetryTool->getSymmetryPoints(
+        TPointD(current.x, current.y), m_rasCenter, m_dpiScale, m_brushCount,
+        m_rotation, m_centerPoint, m_useLineSymmetry);
+    nextPoints = symmetryTool->getSymmetryPoints(
+        TPointD(next.x, next.y), m_rasCenter, m_dpiScale, m_brushCount,
+        m_rotation, m_centerPoint, m_useLineSymmetry);
+  } else {
+    prevPoints.push_back(TPointD(previous.x, previous.y));
+    currPoints.push_back(TPointD(current.x, current.y));
+    nextPoints.push_back(TPointD(next.x, next.y));
+  }
 
-  // process
-  while (true) {
-    double dx = segment->p2.x - p0.x;
-    double dy = segment->p2.y - p0.y;
-    if (dx * dx + dy * dy > thresholdSqr && segment != maxSegment) {
-      Segment *sub = segment + 1;
-      sub->p1.setMedian(p0, segment->p1);
-      segment->p1.setMedian(segment->p1, segment->p2);
-      sub->p2.setMedian(sub->p1, segment->p1);
-      segment = sub;
-    } else {
-      brush.strokeTo(m_mypaintSurface, segment->p2.x, segment->p2.y,
-                     segment->p2.pressure, 0.f, 0.f,
-                     segment->p2.time - p0.time);
-      if (segment == stack) break;
-      p0 = segment->p2;
-      --segment;
+  for (int i = 0; i < nextPoints.size(); i++) {
+    Params prevPt(prevPoints[i].x, prevPoints[i].y, previous.pressure,
+                  previous.time);
+    Params currPt(currPoints[i].x, currPoints[i].y, current.pressure,
+                  current.time);
+    Params nextPt(nextPoints[i].x, nextPoints[i].y, next.pressure, next.time);
+
+    // set initial segment
+    Segment stack[maxLevel + 1];
+    Params p0;
+    Segment *segment    = stack;
+    Segment *maxSegment = segment + maxLevel;
+    p0.setMedian(prevPt, currPt);
+    segment->p1 = currPt;
+    segment->p2.setMedian(currPt, nextPt);
+
+    // process
+    while (true) {
+      double dx = segment->p2.x - p0.x;
+      double dy = segment->p2.y - p0.y;
+      if (dx * dx + dy * dy > thresholdSqr && segment != maxSegment) {
+        Segment *sub = segment + 1;
+        sub->p1.setMedian(p0, segment->p1);
+        segment->p1.setMedian(segment->p1, segment->p2);
+        sub->p2.setMedian(sub->p1, segment->p1);
+        segment = sub;
+      } else {
+        brushes[i].strokeTo(m_mypaintSurface, segment->p2.x, segment->p2.y,
+                            segment->p2.pressure, 0.f, 0.f,
+                            segment->p2.time - p0.time);
+        if (segment == stack) break;
+        p0 = segment->p2;
+        --segment;
+      }
     }
   }
 

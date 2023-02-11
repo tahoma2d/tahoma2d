@@ -791,6 +791,51 @@ protected slots:
 
 //=============================================================================
 //
+// SymmetryToolOptionBox
+// shown only when "Edit Perspective" mode is active
+//
+//=============================================================================
+
+class SymmetryToolOptionBox final : public ToolOptionsBox {
+  Q_OBJECT
+
+  TTool *m_tool;
+
+  ToolOptionIntSlider *m_lines;
+  ToolOptionSlider *m_opacity;
+  ColorChipCombo *m_color;
+  ToolOptionCheckbox *m_useLineSymmetry;
+  ClickableLabel *m_rotationLabel;
+  MeasuredValueField *m_rotation;
+  QPushButton *m_leftRotateButton, *m_rightRotateButton;
+  ToolOptionCombo *m_presetCombo;
+  QPushButton *m_addPresetButton;
+  QPushButton *m_removePresetButton;
+
+private:
+  class PresetNamePopup;
+  PresetNamePopup *m_presetNamePopup;
+  void filterControls();
+
+public:
+  SymmetryToolOptionBox(QWidget *parent, TTool *tool, TPaletteHandle *pltHandle,
+                        ToolHandle *toolHandle);
+  void updateStatus();
+  void updateMeasuredValues(double rotation);
+
+protected slots:
+
+  void onLinesChanged();
+  void onRotationChange(TMeasuredValue *fld);
+  void onRotateLeft();
+  void onRotateRight();
+  void onResetPosition();
+  void onAddPreset();
+  void onRemovePreset();
+};
+
+//=============================================================================
+//
 // ZoomToolOptionsBox
 //
 //=============================================================================

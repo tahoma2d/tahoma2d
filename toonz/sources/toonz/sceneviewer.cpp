@@ -91,6 +91,7 @@
 #include "sceneviewer.h"
 
 TEnv::IntVar ShowPerspectiveGrids("ShowPerspectiveGrids", 1);
+TEnv::IntVar ShowSymmetryGuide("ShowSymmetryGuide", 1);
 
 void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
                 double pixelSize);
@@ -1833,6 +1834,20 @@ void SceneViewer::drawOverlay() {
     } else
       tglMultMatrix(getViewMatrix() * tool->getCurrentColumnMatrix());
     perspectiveTool->draw(this);
+    glPopMatrix();
+  }
+
+  TTool *symmetryTool = TTool::getTool(T_Symmetry, TTool::VectorImage);
+  if (tool && symmetryTool &&
+      ((fieldGuideToggle.getStatus() && ShowSymmetryGuide) ||
+       tool == symmetryTool)) {
+    glPushMatrix();
+    if (m_draw3DMode) {
+      mult3DMatrix();
+      tglMultMatrix(tool->getCurrentColumnMatrix());
+    } else
+      tglMultMatrix(getViewMatrix() * tool->getCurrentColumnMatrix());
+    symmetryTool->draw(this);
     glPopMatrix();
   }
 

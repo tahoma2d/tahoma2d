@@ -22,7 +22,6 @@
 #include "toonz/tframehandle.h"
 #include "toonz/ttileset.h"
 #include "toonz/ttilesaver.h"
-#include "toonz/strokegenerator.h"
 #include "toonz/tstageobject.h"
 #include "toonz/palettecontroller.h"
 #include "toonz/mypaintbrushstyle.h"
@@ -380,6 +379,16 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
   mypaint::Brush mypaintBrush;
   applyToonzBrushSettings(mypaintBrush);
   m_toonz_brush = new MyPaintToonzBrush(m_workRaster, *this, mypaintBrush);
+
+  SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+      TTool::getTool("T_Symmetry", TTool::RasterImage));
+  if (symmetryTool && symmetryTool->isGuideEnabled()) {
+    TPointD dpiScale       = getViewer()->getDpiScale();
+    SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+    m_toonz_brush->addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                                      symmObj.getCenterPoint(),
+                                      symmObj.isUsingLineSymmetry(), dpiScale);
+  }
 
   m_strokeRect.empty();
   m_strokeSegmentRect.empty();

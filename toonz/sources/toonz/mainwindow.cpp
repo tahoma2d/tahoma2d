@@ -2594,6 +2594,8 @@ void MainWindow::defineActions() {
   createToolAction(T_PerspectiveGrid, "perspective_grid",
                    QT_TR_NOOP("Perspective Grid Tool"), "",
                    tr("Perspective Grid Tool: Set up perspective grids"));
+  createToolAction(T_Symmetry, "symmetry", QT_TR_NOOP("Symmetry Tool"), "",
+                   tr("Symmetry Tool: Set up symmetrical guide"));
   createToolAction(T_Finger, "finger", QT_TR_NOOP("Finger Tool"), "",
                    tr("Finger Tool: Smudges small areas to cover with line"));
 

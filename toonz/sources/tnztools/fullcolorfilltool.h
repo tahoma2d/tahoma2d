@@ -41,6 +41,11 @@ public:
 
   void onActivate() override;
   int getCursorId() const override;
+
+private:
+  void applyFill(const TImageP &img, const TPointD &pos, FillParameters &params,
+                 bool isShiftFill, TXshSimpleLevel *sl, const TFrameId &fid,
+                 TXsheet *xsheet, int frameInde);
 };
 
 #endif  // FULLCOLORFILLTOOL_H

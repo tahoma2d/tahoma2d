@@ -16,10 +16,12 @@
 #include "toonz/stage2.h"
 
 #include "tvectorimage.h"
-#include "toonz/strokegenerator.h"
 #include "tstroke.h"
 #include "drawutil.h"
 #include "tinbetween.h"
+#include "symmetrytool.h"
+#include "vectorbrush.h"
+#include "symmetrystroke.h"
 
 #include "toonz/txsheethandle.h"
 #include "toonz/tframehandle.h"
@@ -124,13 +126,13 @@ class RasterTapeTool final : public TTool {
   std::pair<int, int> m_currCell;
 
   // Aggiunte per disegnare il lazzo a la polyline
-  StrokeGenerator m_track;
+  VectorBrush m_track;
   TPointD m_firstPos;
   TPointD m_mousePosition;
   double m_thick;
   TStroke *m_stroke;
-  TStroke *m_firstStroke;
-  std::vector<TPointD> m_polyline;
+  std::vector<TStroke *>m_firstStrokes;
+  SymmetryStroke m_polyline;
   bool m_firstTime;
 
 public:
@@ -153,7 +155,6 @@ public:
       , m_mousePosition()
       , m_thick(0.5)
       , m_stroke(0)
-      , m_firstStroke(0)
       , m_firstTime(true) {
     bind(TTool::ToonzImage);
     m_prop.bind(m_closeType);
@@ -198,6 +199,14 @@ public:
       if (!m_selecting) return;
       m_selectingRect.x1 = pos.x;
       m_selectingRect.y1 = pos.y;
+
+      if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+        m_polyline.clear();
+        m_polyline.setRectangle(
+            TPointD(m_selectingRect.x0, m_selectingRect.y0),
+            TPointD(m_selectingRect.x1, m_selectingRect.y1));
+      }
+
       invalidate();
     } else if (m_closeType.getValue() == FREEHAND_CLOSE) {
       freehandDrag(pos);
@@ -207,7 +216,7 @@ public:
 
   //------------------------------------------------------------
   /*--  AutoClose Returns true if executed, false otherwise --*/
-  bool applyAutoclose(const TToonzImageP &ti, const TRectD &selRect = TRectD(),
+  bool applyAutoclose(const TToonzImageP &ti, TFrameId id, const TRectD &selRect = TRectD(),
                       TStroke *stroke = 0) {
     if (!ti) return false;
     // inizializzo gli AutocloseParameters
@@ -238,7 +247,8 @@ public:
       ras   = raux->extract(myRect);
       delta = myRect.getP00();
     } else if ((m_closeType.getValue() == FREEHAND_CLOSE ||
-                m_closeType.getValue() == POLYLINE_CLOSE) &&
+                m_closeType.getValue() == POLYLINE_CLOSE ||
+                m_closeType.getValue() == RECT_CLOSE) &&
                stroke) {
       TRectD selArea = stroke->getBBox();
       TRect myRect(ToonzImageUtils::convertWorldToRaster(selArea, ti));
@@ -280,7 +290,6 @@ public:
 
     TXshSimpleLevel *sl =
         TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
-    TFrameId id = getCurrentFid();
     TUndoManager::manager()->add(
         new RasterAutocloseUndo(tileSet, params, segments2, sl, id));
     ac.draw(segments);
@@ -297,9 +306,11 @@ public:
 
   //============================================================
 
-  void multiApplyAutoclose(TFrameId firstFid, TFrameId lastFid,
-                           TRectD firstRect, TRectD lastRect,
-                           TStroke *firstStroke = 0, TStroke *lastStroke = 0) {
+  void multiApplyAutoclose(
+      TFrameId firstFid, TFrameId lastFid, std::wstring closeType,
+      TRectD firstRect, TRectD lastRect,
+      std::vector<TStroke *> firstStrokes = std::vector<TStroke *>(),
+      std::vector<TStroke *> lastStrokes  = std::vector<TStroke *>()) {
     bool backward = false;
     if (firstFid > lastFid) {
       std::swap(firstFid, lastFid);
@@ -321,15 +332,14 @@ public:
 
     TVectorImageP firstImage;
     TVectorImageP lastImage;
-    if ((m_closeType.getValue() == FREEHAND_CLOSE ||
-         m_closeType.getValue() == POLYLINE_CLOSE) &&
-        firstStroke && lastStroke) {
-      TStroke *first = new TStroke(*firstStroke);
-      TStroke *last  = new TStroke(*lastStroke);
+    if ((closeType == FREEHAND_CLOSE || closeType == POLYLINE_CLOSE) &&
+        firstStrokes.size() && lastStrokes.size()) {
       firstImage     = new TVectorImage();
       lastImage      = new TVectorImage();
-      firstImage->addStroke(first);
-      lastImage->addStroke(last);
+      for (int i = 0; i < firstStrokes.size(); i++)
+        firstImage->addStroke(firstStrokes[i]);
+      for (int i = 0; i < lastStrokes.size(); i++)
+        lastImage->addStroke(lastStrokes[i]);
     }
 
     TUndoManager::manager()->beginBlock();
@@ -338,12 +348,11 @@ public:
       TToonzImageP img = (TToonzImageP)m_level->getFrame(fid, true);
       if (!img) continue;
       double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
-      if (m_closeType.getValue() == RECT_CLOSE)
-        applyAutoclose(img, interpolateRect(firstRect, lastRect, t));
-      else if ((m_closeType.getValue() == FREEHAND_CLOSE ||
-                m_closeType.getValue() == POLYLINE_CLOSE) &&
-               firstStroke && lastStroke)
-        doClose(t, img, firstImage, lastImage);
+      if (closeType == RECT_CLOSE)
+        applyAutoclose(img, fid, interpolateRect(firstRect, lastRect, t));
+      else if ((closeType == FREEHAND_CLOSE || closeType == POLYLINE_CLOSE) &&
+               firstStrokes.size() && lastStrokes.size())
+        doClose(t, fid, img, firstImage, lastImage);
       m_level->getProperties()->setDirtyFlag(true);
     }
     TUndoManager::manager()->endBlock();
@@ -370,7 +379,7 @@ public:
     for (int i = r0; i <= r1; ++i) {
       TFrameId fid(i);
       TImageP img = m_level->getFrame(fid, true);
-      applyAutoclose(img);
+      applyAutoclose(img, fid);
     }
     TUndoManager::manager()->endBlock();
 
@@ -397,14 +406,36 @@ public:
     m_selecting = false;
     TRasterCM32P ras;
     if (m_closeType.getValue() == RECT_CLOSE) {
+      if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+        // We'll use polyline
+        m_polyline.clear();
+        m_polyline.setRectangle(
+            TPointD(m_selectingRect.x0, m_selectingRect.y0),
+            TPointD(m_selectingRect.x1, m_selectingRect.y1));
+      }
+
       if (m_multi.getValue()) {
         if (m_firstFrameSelected) {
-          multiApplyAutoclose(m_firstFrameId, getFrameId(), m_firstRect,
-                              m_selectingRect);
+          if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+            // We'll use polyline
+            TFrameId tmp = getCurrentFid();
+            std::vector<TStroke *> lastStrokes;
+            for (int i = 0; i < m_polyline.getBrushCount(); i++)
+              lastStrokes.push_back(m_polyline.makeRectangleStroke(i));
+            multiAutocloseRegion(lastStrokes, POLYLINE_CLOSE, e);
+          } else {
+            multiApplyAutoclose(m_firstFrameId, getFrameId(), RECT_CLOSE,
+                                m_firstRect, m_selectingRect);
+          }
           invalidate(m_selectingRect.enlarge(2));
           if (e.isShiftPressed()) {
             m_firstRect    = m_selectingRect;
             m_firstFrameId = getFrameId();
+            m_firstStrokes.clear();
+            if (m_polyline.size() > 1) {
+              for (int i = 0; i < m_polyline.getBrushCount(); i++)
+                m_firstStrokes.push_back(m_polyline.makeRectangleStroke(i));
+            }
           } else {
             if (m_isXsheetCell) {
               app->getCurrentColumn()->setColumnIndex(m_currCell.first);
@@ -412,34 +443,82 @@ public:
             } else
               app->getCurrentFrame()->setFid(m_veryFirstFrameId);
             resetMulti();
+            m_polyline.reset();
           }
         } else {
+          m_firstStrokes.clear();
+          if (m_polyline.size() > 1) {
+            for (int i = 0; i < m_polyline.getBrushCount(); i++)
+              m_firstStrokes.push_back(m_polyline.makeRectangleStroke(i));
+          }
           m_isXsheetCell = app->getCurrentFrame()->isEditingScene();
           // if (m_isXsheetCell)
           m_currCell = std::pair<int, int>(getColumnIndex(), this->getFrame());
         }
         return;
+      } else if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+        TUndoManager::manager()->beginBlock();
+
+        TStroke *stroke = m_polyline.makeRectangleStroke();
+        TFrameId fid    = getFrameId();
+        applyAutoclose(ti, fid, TRectD(), stroke);
+
+        for (int i = 1; i < m_polyline.getBrushCount(); i++) {
+          TStroke *symmStroke = m_polyline.makeRectangleStroke(i);
+          applyAutoclose(ti, fid, TRectD(), symmStroke);
+        }
+
+        TUndoManager::manager()->endBlock();
+        invalidate();
+      } else {
+        /*-- AutoCloseが実行されたか判定する --*/
+        TFrameId fid = getFrameId();
+        if (!applyAutoclose(ti, fid, m_selectingRect)) {
+          if (m_stroke) {
+            delete m_stroke;
+            m_stroke = 0;
+          }
+          invalidate();
+          return;
+        }
       }
 
-      /*-- AutoCloseが実行されたか判定する --*/
-      if (!applyAutoclose(ti, m_selectingRect)) {
-        if (m_stroke) {
-          delete m_stroke;
-          m_stroke = 0;
-        }
-        invalidate();
-        return;
-      }
+      m_selectingRect.empty();
+      m_polyline.reset();
 
       invalidate();
       notifyImageChanged();
     } else if (m_closeType.getValue() == FREEHAND_CLOSE) {
       closeFreehand(pos);
-      if (m_multi.getValue())
-        multiAutocloseRegion(m_stroke, e);
-      else
-        applyAutoclose(ti, TRectD(), m_stroke);
-      m_track.clear();
+      double error = (30.0 / 11) * sqrt(getPixelSize() * getPixelSize());
+      if (m_multi.getValue()) {
+        TFrameId tmp = getFrameId();
+        if (m_firstStrokes.size() && m_stroke) {
+          std::vector<TStroke *> lastStrokes;
+          for (int i = 0; i < m_track.getBrushCount(); i++)
+            lastStrokes.push_back(m_track.makeStroke(error, i));
+          multiAutocloseRegion(lastStrokes, m_closeType.getValue(), e);
+        } else {
+          m_firstStrokes.clear();
+          multiAutocloseRegion(m_firstStrokes, m_closeType.getValue(), e);
+        }
+      } else {
+        if (m_track.hasSymmetryBrushes()) TUndoManager::manager()->beginBlock();
+
+        TFrameId fid = getFrameId();
+        applyAutoclose(ti, fid, TRectD(), m_stroke);
+
+        if (m_track.hasSymmetryBrushes()) {
+          std::vector<TStroke *> symmStrokes =
+              m_track.makeSymmetryStrokes(error);
+          for (int i = 0; i < symmStrokes.size(); i++) {
+            applyAutoclose(ti, fid, TRectD(), symmStrokes[i]);
+          }
+
+          TUndoManager::manager()->endBlock();
+        }
+      }
+      m_track.reset();
       invalidate();
     }
     if (m_stroke) {
@@ -453,43 +532,64 @@ public:
   void draw() override {
     double pixelSize2 = getPixelSize() * getPixelSize();
     m_thick           = sqrt(pixelSize2) / 2.0;
+//    TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
+//                       ? TPixel32::White
+//                       : TPixel32::Black;
+    TPixel color = TPixel32::Red;
     if (m_closeType.getValue() == RECT_CLOSE) {
-      TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
-                         ? TPixel32::White
-                         : TPixel32::Black;
-      if (m_multi.getValue() && m_firstFrameSelected)
-        drawRect(m_firstRect, color, 0x3F33, true);
+    if (m_multi.getValue() && m_firstFrameSelected) {
+        if (m_firstStrokes.size()) {
+          tglColor(color);
+          for (int i = 0; i < m_firstStrokes.size(); i++)
+            drawStrokeCenterline(*m_firstStrokes[i], 1);
+        } else
+          drawRect(m_firstRect, color, 0x3F33, true);
+      }
 
-      if (m_selecting || (m_multi.getValue() && !m_firstFrameSelected))
-        drawRect(m_selectingRect, color, 0x3F33, true);
+      if (m_selecting || (m_multi.getValue() && !m_firstFrameSelected)) {
+        if (m_polyline.size() > 1) {
+          glPushMatrix();
+          m_polyline.drawRectangle(color);
+          glPopMatrix();
+        } else
+          drawRect(m_selectingRect, color, 0xFFFF, true);
+      }
+
     }
     if ((m_closeType.getValue() == FREEHAND_CLOSE ||
          m_closeType.getValue() == POLYLINE_CLOSE) &&
-        m_multi.getValue() && m_firstStroke) {
-      TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
-                         ? TPixel32::White
-                         : TPixel32::Black;
+        m_multi.getValue()) {
       tglColor(color);
-      drawStrokeCenterline(*m_firstStroke, 1);
+      for (int i = 0; i < m_firstStrokes.size(); i++)
+        drawStrokeCenterline(*m_firstStrokes[i], 1);
     }
     if (m_closeType.getValue() == POLYLINE_CLOSE && !m_polyline.empty()) {
-      TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
-                         ? TPixel32::White
-                         : TPixel32::Black;
-      tglColor(color);
-      tglDrawCircle(m_polyline[0], 2);
-      glBegin(GL_LINE_STRIP);
-      for (UINT i = 0; i < m_polyline.size(); i++) tglVertex(m_polyline[i]);
-      tglVertex(m_mousePosition);
-      glEnd();
+      m_polyline.drawPolyline(m_mousePosition, color);
     } else if (m_closeType.getValue() == FREEHAND_CLOSE && !m_track.isEmpty()) {
-      TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
-                         ? TPixel32::White
-                         : TPixel32::Black;
       tglColor(color);
+      glPushMatrix();
       m_track.drawAllFragments();
-    } else if (m_multi.getValue() && m_firstFrameSelected)
+      glPopMatrix();
+    } else if (m_multi.getValue() && m_firstFrameSelected) {
       drawCross(m_firstPoint, 5);
+
+      SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+          TTool::getTool("T_Symmetry", TTool::RasterImage));
+      if (symmetryTool && symmetryTool->isGuideEnabled()) {
+        TImageP image     = getImage(false);
+        TToonzImageP ti   = image;
+        TPointD dpiScale  = getViewer()->getDpiScale();
+        TRasterCM32P ras  = ti ? ti->getRaster() : TRasterCM32P();
+        TPointD rasCenter = ti ? ras->getCenterD() : TPointD(0, 0);
+        TPointD fillPt    = m_firstPoint + rasCenter;
+        std::vector<TPointD> symmPts =
+            symmetryTool->getSymmetryPoints(fillPt, rasCenter, dpiScale);
+
+        for (int i = 1; i < symmPts.size(); i++) {
+          drawCross(symmPts[i] - rasCenter, 5);
+        }
+      }
+    }
   }
 
   //------------------------------------------------------------
@@ -539,7 +639,7 @@ public:
                   ? app->getCurrentLevel()->getSimpleLevel()
                   : 0;
     m_firstFrameId = m_veryFirstFrameId = getFrameId();
-    m_firstStroke                       = 0;
+    m_firstStrokes.clear();
   }
 
   //----------------------------------------------------------------------
@@ -555,7 +655,7 @@ public:
         (m_closeType.getValue() == RECT_CLOSE && m_selectingRect.isEmpty()) ||
         ((m_closeType.getValue() == FREEHAND_CLOSE ||
           m_closeType.getValue() == POLYLINE_CLOSE) &&
-         !m_firstStroke))
+         !m_firstStrokes.size()))
       resetMulti();
     else if (m_firstFrameId == getFrameId())
       m_firstFrameSelected = false;  // nel caso sono passato allo stato 1 e
@@ -576,17 +676,40 @@ public:
     TToonzImageP ti = TToonzImageP(getImage(true));
     if (!ti) return;
 
+    SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+        TTool::getTool("T_Symmetry", TTool::RasterImage));
+    TPointD dpiScale       = getViewer()->getDpiScale();
+    SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+
     if (m_closeType.getValue() == RECT_CLOSE) {
       m_selecting        = true;
       m_selectingRect.x0 = pos.x;
       m_selectingRect.y0 = pos.y;
       m_selectingRect.x1 = pos.x + 1;
       m_selectingRect.y1 = pos.y + 1;
+
+      if (symmetryTool && symmetryTool->isGuideEnabled()) {
+        // We'll use polyline
+        m_polyline.reset();
+        m_polyline.addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                                      symmObj.getCenterPoint(),
+                                      symmObj.isUsingLineSymmetry(), dpiScale);
+        m_polyline.setRectangle(
+            TPointD(m_selectingRect.x0, m_selectingRect.y0),
+            TPointD(m_selectingRect.x1, m_selectingRect.y1));
+      }
       return;
     } else if (m_closeType.getValue() == FREEHAND_CLOSE) {
       startFreehand(pos);
       return;
     } else if (m_closeType.getValue() == POLYLINE_CLOSE) {
+      if (symmetryTool && symmetryTool->isGuideEnabled() &&
+          !m_polyline.hasSymmetryBrushes()) {
+        m_polyline.addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                                      symmObj.getCenterPoint(),
+                                      symmObj.isUsingLineSymmetry(), dpiScale);
+      }
+
       addPointPolyline(pos);
       return;
     } else if (m_closeType.getValue() == NORMAL_CLOSE) {
@@ -613,7 +736,8 @@ public:
       }
 
       m_selecting = false;
-      applyAutoclose(ti);
+      TFrameId fid = getFrameId();
+      applyAutoclose(ti, fid);
       invalidate();
       notifyImageChanged();
     }
@@ -627,21 +751,36 @@ public:
     if (m_closeType.getValue() == POLYLINE_CLOSE && ti) {
       closePolyline(pos);
 
-      std::vector<TThickPoint> strokePoints;
-      for (UINT i = 0; i < m_polyline.size() - 1; i++) {
-        strokePoints.push_back(TThickPoint(m_polyline[i], 1));
-        strokePoints.push_back(
-            TThickPoint(0.5 * (m_polyline[i] + m_polyline[i + 1]), 1));
-      }
-      strokePoints.push_back(TThickPoint(m_polyline.back(), 1));
-      m_polyline.clear();
-      m_stroke = new TStroke(strokePoints);
+      m_stroke = m_polyline.makePolylineStroke();
       assert(m_stroke->getPoint(0) == m_stroke->getPoint(1));
-      if (m_multi.getValue())
-        multiAutocloseRegion(m_stroke, e);
-      else
-        applyAutoclose(ti, TRectD(), m_stroke);
+      if (m_multi.getValue()) {
+        if (m_firstStrokes.size()) {
+          std::vector<TStroke *> lastStrokes;
+          for (int i = 0; i < m_polyline.getBrushCount(); i++)
+            lastStrokes.push_back(m_polyline.makePolylineStroke(i));
+          multiAutocloseRegion(lastStrokes, m_closeType.getValue(), e);
+        } else {
+          m_firstStrokes.clear();
+          multiAutocloseRegion(m_firstStrokes, m_closeType.getValue(), e);
+        }
+      } else {
+        if (m_polyline.hasSymmetryBrushes())
+          TUndoManager::manager()->beginBlock();
+
+        TFrameId fid = getFrameId();
+        applyAutoclose(ti, fid, TRectD(), m_stroke);
+
+        if (m_polyline.hasSymmetryBrushes()) {
+          for (int i = 1; i < m_polyline.getBrushCount(); i++) {
+            TStroke *symmStroke = m_polyline.makePolylineStroke(i);
+            applyAutoclose(ti, fid, TRectD(), symmStroke);
+          }
+
+          TUndoManager::manager()->endBlock();
+        }
+      }
       invalidate();
+      m_polyline.reset();
     }
     if (m_stroke) {
       delete m_stroke;
@@ -710,7 +849,19 @@ public:
   //! Viene aggiunto \b pos a \b m_track e disegnato il primo pezzetto del
   //! lazzo. Viene inizializzato \b m_firstPos
   void startFreehand(const TPointD &pos) {
-    m_track.clear();
+    m_track.reset();
+
+    SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+        TTool::getTool("T_Symmetry", TTool::RasterImage));
+    TPointD dpiScale       = getViewer()->getDpiScale();
+    SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+
+    if (symmetryTool && symmetryTool->isGuideEnabled()) {
+      m_track.addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                                 symmObj.getCenterPoint(),
+                                 symmObj.isUsingLineSymmetry(), dpiScale);
+    }
+
     m_firstPos        = pos;
     double pixelSize2 = getPixelSize() * getPixelSize();
     m_track.add(TThickPoint(pos, m_thick), pixelSize2);
@@ -797,15 +948,26 @@ public:
 
   //-------------------------------------------------------------------
 
-  void multiAutocloseRegion(TStroke *stroke, const TMouseEvent &e) {
+  void multiAutocloseRegion(std::vector<TStroke *> laststrokes,
+                            const std::wstring eraseType,
+                            const TMouseEvent &e) {
     TTool::Application *app = TTool::getApplication();
-    if (m_firstStroke) {
-      multiApplyAutoclose(m_firstFrameId, getFrameId(), TRectD(), TRectD(),
-                          m_firstStroke, stroke);
+    if (m_firstStrokes.size()) {
+      multiApplyAutoclose(m_firstFrameId, getFrameId(), eraseType, TRectD(),
+                          TRectD(), m_firstStrokes, laststrokes);
       invalidate();
       if (e.isShiftPressed()) {
-        delete m_firstStroke;
-        m_firstStroke  = new TStroke(*stroke);
+        m_firstStrokes.clear();
+        if (eraseType == POLYLINE_CLOSE) {
+          if (m_polyline.size() > 1) {
+            for (int i = 0; i < m_polyline.getBrushCount(); i++)
+              m_firstStrokes.push_back(m_polyline.makeRectangleStroke(i));
+          }
+        } else {
+          double error = (30.0 / 11) * sqrt(getPixelSize() * getPixelSize());
+          for (int i = 0; i < m_track.getBrushCount(); i++)
+            m_firstStrokes.push_back(m_track.makeStroke(error, i));
+        }
         m_firstFrameId = getFrameId();
       } else {
         if (m_isXsheetCell) {
@@ -819,25 +981,38 @@ public:
       m_isXsheetCell = app->getCurrentFrame()->isEditingScene();
       // if (m_isXsheetCell)
       m_currCell    = std::pair<int, int>(getColumnIndex(), getFrame());
-      m_firstStroke = new TStroke(*stroke);
+      m_firstStrokes.clear();
+      if (eraseType == POLYLINE_CLOSE) {
+        if (m_polyline.size() > 1) {
+          for (int i = 0; i < m_polyline.getBrushCount(); i++)
+            m_firstStrokes.push_back(m_polyline.makeRectangleStroke(i));
+        }
+      } else {
+        double error = (30.0 / 11) * sqrt(getPixelSize() * getPixelSize());
+        for (int i = 0; i < m_track.getBrushCount(); i++)
+          m_firstStrokes.push_back(m_track.makeStroke(error, i));
+      }
     }
     return;
   }
 
   //------------------------------------------------------------------------
 
-  void doClose(double t, const TImageP &img, const TVectorImageP &firstImage,
+  void doClose(double t, TFrameId fid, const TImageP &img, const TVectorImageP &firstImage,
                const TVectorImageP &lastImage) {
     if (t == 0)
-      applyAutoclose(img, TRectD(), firstImage->getStroke(0));
+      for (int i = 0; i < firstImage->getStrokeCount(); i++)
+        applyAutoclose(img, fid, TRectD(), firstImage->getStroke(i));
     else if (t == 1)
-      applyAutoclose(img, TRectD(), lastImage->getStroke(0));
+      for (int i = 0; i < lastImage->getStrokeCount(); i++)
+        applyAutoclose(img, fid, TRectD(), lastImage->getStroke(i));
     else {
-      assert(firstImage->getStrokeCount() == 1);
-      assert(lastImage->getStrokeCount() == 1);
+//      assert(firstImage->getStrokeCount() == 1);
+//      assert(lastImage->getStrokeCount() == 1);
       TVectorImageP vi = TInbetween(firstImage, lastImage).tween(t);
-      assert(vi->getStrokeCount() == 1);
-      applyAutoclose(img, TRectD(), vi->getStroke(0));
+//      assert(vi->getStrokeCount() == 1);
+      for (int i = 0; i < vi->getStrokeCount(); i++)
+        applyAutoclose(img, fid, TRectD(), vi->getStroke(i));
     }
   }
 

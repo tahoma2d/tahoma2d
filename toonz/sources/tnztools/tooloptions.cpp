@@ -20,6 +20,7 @@
 #include "rulertool.h"
 #include "shifttracetool.h"
 #include "perspectivetool.h"
+#include "symmetrytool.h"
 
 // TnzQt includes
 #include "toonzqt/dvdialog.h"
@@ -3252,6 +3253,242 @@ void PerspectiveGridToolOptionBox::onRotateRight() {
 }
 
 //=============================================================================
+// SymmetryToolOptionBox
+//-----------------------------------------------------------------------------
+
+class SymmetryToolOptionBox::PresetNamePopup final : public DVGui::Dialog {
+  DVGui::LineEdit *m_nameFld;
+
+public:
+  PresetNamePopup() : Dialog(0, true) {
+    setWindowTitle(tr("Preset Name"));
+    m_nameFld = new DVGui::LineEdit();
+    addWidget(m_nameFld);
+
+    QPushButton *okBtn = new QPushButton(tr("OK"), this);
+    okBtn->setDefault(true);
+    QPushButton *cancelBtn = new QPushButton(tr("Cancel"), this);
+    connect(okBtn, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(cancelBtn, SIGNAL(clicked()), this, SLOT(reject()));
+
+    addButtonBarWidget(okBtn, cancelBtn);
+  }
+
+  QString getName() { return m_nameFld->text(); }
+  void removeName() { m_nameFld->setText(QString("")); }
+};
+
+SymmetryToolOptionBox::SymmetryToolOptionBox(QWidget *parent, TTool *tool,
+                                             TPaletteHandle *pltHandle,
+                                             ToolHandle *toolHandle)
+    : ToolOptionsBox(parent), m_tool(tool), m_presetNamePopup(0) {
+  setFrameStyle(QFrame::StyledPanel);
+  setFixedHeight(26);
+
+  TPropertyGroup *props = tool->getProperties(0);
+  assert(props->getPropertyCount() > 0);
+
+  TIntProperty *lines =
+      dynamic_cast<TIntProperty *>(props->getProperty("Lines:"));
+  m_lines = new ToolOptionIntSlider(tool, lines, toolHandle);
+
+  TDoubleProperty *opacity =
+      dynamic_cast<TDoubleProperty *>(props->getProperty("Opacity:"));
+  m_opacity = new ToolOptionSlider(tool, opacity, toolHandle);
+
+  m_rotationLabel = new ClickableLabel(tr("Rotation:"), this);
+  m_rotation      = new MeasuredValueField(this);
+  m_rotation->setMeasure("angle");
+  m_rotation->setMaximumWidth(getMaximumWidthForMeasuredValueField(m_rotation));
+
+  m_leftRotateButton  = new QPushButton(this);
+  m_rightRotateButton = new QPushButton(this);
+
+  m_leftRotateButton->setFixedSize(QSize(20, 20));
+  m_rightRotateButton->setFixedSize(QSize(20, 20));
+
+  m_leftRotateButton->setIcon(createQIcon("rotateleft"));
+  m_leftRotateButton->setIconSize(QSize(20, 20));
+  m_rightRotateButton->setIcon(createQIcon("rotateright"));
+  m_rightRotateButton->setIconSize(QSize(20, 20));
+
+  m_leftRotateButton->setToolTip(tr("Rotate Perspective Left"));
+  m_rightRotateButton->setToolTip(tr("Rotate Perspective Right"));
+
+  TColorChipProperty *color =
+      dynamic_cast<TColorChipProperty *>(props->getProperty("Color:"));
+  m_color = new ColorChipCombo(tool, color);
+
+  TBoolProperty *lineSymmetry =
+      dynamic_cast<TBoolProperty *>(props->getProperty("Line Symmetry"));
+  m_useLineSymmetry = new ToolOptionCheckbox(tool, lineSymmetry, toolHandle);
+
+  QPushButton *resetButton = new QPushButton(tr("Reset Position"));
+  int buttonWidth          = fontMetrics().width(resetButton->text()) + 10;
+  resetButton->setFixedWidth(buttonWidth);
+  resetButton->setFixedHeight(20);
+
+  TEnumProperty *preset =
+      dynamic_cast<TEnumProperty *>(props->getProperty("Preset:"));
+  m_presetCombo = new ToolOptionCombo(tool, preset, toolHandle);
+
+  // Preset +/- buttons
+  m_addPresetButton    = new QPushButton(QString("+"));
+  m_removePresetButton = new QPushButton(QString("-"));
+
+  m_addPresetButton->setFixedSize(QSize(20, 20));
+  m_removePresetButton->setFixedSize(QSize(20, 20));
+
+  /* --- Layout --- */
+  QHBoxLayout *mainLay = m_layout;
+  {
+    mainLay->addWidget(new QLabel(tr("Lines:"), this), 0);
+    mainLay->addWidget(m_lines, 16);
+
+    mainLay->addSpacing(5);
+
+    mainLay->addWidget(new QLabel(tr("Opacity:"), this), 0);
+    mainLay->addWidget(m_opacity, 100);
+
+    mainLay->addSpacing(5);
+
+    mainLay->addWidget(m_rotationLabel, 0);
+    mainLay->addWidget(m_rotation, 10);
+    mainLay->addWidget(m_leftRotateButton, 0);
+    mainLay->addWidget(m_rightRotateButton, 0);
+
+    mainLay->addSpacing(5);
+
+    mainLay->addWidget(new QLabel(tr("Color:"), this), 0);
+    mainLay->addWidget(m_color, 0);
+
+    mainLay->addSpacing(5);
+
+    mainLay->addWidget(m_useLineSymmetry, 0);
+
+    mainLay->addSpacing(5);
+
+    mainLay->addWidget(new QLabel(tr("Preset:"), this), 0);
+    mainLay->addWidget(m_presetCombo, 0);
+    mainLay->addWidget(m_addPresetButton);
+    mainLay->addWidget(m_removePresetButton);
+  }
+
+  m_layout->addStretch(1);
+  m_layout->addWidget(resetButton, 0);
+  m_layout->addSpacing(5);
+
+  connect(m_rotation, SIGNAL(measuredValueChanged(TMeasuredValue *, bool)),
+          SLOT(onRotationChange(TMeasuredValue *)));
+  connect(m_rotationLabel, SIGNAL(onMousePress(QMouseEvent *)), m_rotation,
+          SLOT(receiveMousePress(QMouseEvent *)));
+  connect(m_rotationLabel, SIGNAL(onMouseMove(QMouseEvent *)), m_rotation,
+          SLOT(receiveMouseMove(QMouseEvent *)));
+  connect(m_rotationLabel, SIGNAL(onMouseRelease(QMouseEvent *)), m_rotation,
+          SLOT(receiveMouseRelease(QMouseEvent *)));
+  connect(m_leftRotateButton, SIGNAL(clicked()), SLOT(onRotateLeft()));
+  connect(m_rightRotateButton, SIGNAL(clicked()), SLOT(onRotateRight()));
+  connect(resetButton, SIGNAL(clicked()), SLOT(onResetPosition()));
+  connect(m_addPresetButton, SIGNAL(clicked()), this, SLOT(onAddPreset()));
+  connect(m_removePresetButton, SIGNAL(clicked()), this,
+          SLOT(onRemovePreset()));
+
+  filterControls();
+}
+
+//-----------------------------------------------------------------------------
+
+void SymmetryToolOptionBox::filterControls() {
+  bool hasEvenLines = (m_lines->getValue() % 2) == 0;
+
+  m_useLineSymmetry->setEnabled(hasEvenLines);
+}
+
+//-----------------------------------------------------------------------------
+
+void SymmetryToolOptionBox::updateStatus() {
+  m_lines->updateStatus();
+  m_opacity->updateStatus();
+  m_color->updateStatus();
+  m_useLineSymmetry->updateStatus();
+  m_presetCombo->updateStatus();
+
+  filterControls();
+}
+
+//-----------------------------------------------------------------------------
+
+void SymmetryToolOptionBox::updateMeasuredValues(double rotation) {
+  m_rotation->setValue(rotation);
+  repaint();
+}
+
+//-----------------------------------------------------------------------------
+
+void SymmetryToolOptionBox::onLinesChanged() { filterControls(); }
+
+//-----------------------------------------------------------------------------
+
+void SymmetryToolOptionBox::onRotationChange(TMeasuredValue *fld) {
+  double value = fld->getValue(TMeasuredValue::CurrentUnit);
+
+  SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(m_tool);
+
+  symmetryTool->updateRotation(value);
+  symmetryTool->onPropertyChanged("Rotation");
+}
+
+//-----------------------------------------------------------------------------
+
+void SymmetryToolOptionBox::onRotateLeft() {
+  m_rotation->setValue(m_rotation->getValue() + 90);
+  emit m_rotation->measuredValueChanged(m_rotation->getMeasuredValue());
+}
+
+//-----------------------------------------------------------------------------
+
+void SymmetryToolOptionBox::onRotateRight() {
+  m_rotation->setValue(m_rotation->getValue() - 90);
+  emit m_rotation->measuredValueChanged(m_rotation->getMeasuredValue());
+}
+
+//-----------------------------------------------------------------------------
+
+void SymmetryToolOptionBox::onResetPosition() {
+  SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(m_tool);
+
+  symmetryTool->resetPosition();
+}
+
+//-----------------------------------------------------------------------------
+
+void SymmetryToolOptionBox::onAddPreset() {
+  // Initialize preset name popup
+  if (!m_presetNamePopup) m_presetNamePopup = new PresetNamePopup;
+
+  if (!m_presetNamePopup->getName().isEmpty()) m_presetNamePopup->removeName();
+
+  // Retrieve the preset name
+  bool ret = m_presetNamePopup->exec();
+  if (!ret) return;
+
+  QString name(m_presetNamePopup->getName());
+  m_presetNamePopup->removeName();
+
+  static_cast<SymmetryTool *>(m_tool)->addPreset(name);
+
+  m_presetCombo->loadEntries();
+}
+
+//-----------------------------------------------------------------------------
+
+void SymmetryToolOptionBox::onRemovePreset() {
+  static_cast<SymmetryTool *>(m_tool)->removePreset();
+
+  m_presetCombo->loadEntries();
+}
+
+//=============================================================================
 // ZoomToolOptionBox
 //-----------------------------------------------------------------------------
 
@@ -3447,6 +3684,12 @@ void ToolOptions::onToolSwitched() {
         panel               = p;
         PerspectiveTool *pt = dynamic_cast<PerspectiveTool *>(tool);
         if (pt) pt->setToolOptionsBox(p);
+      } else if (tool->getName() == T_Symmetry) {
+        SymmetryToolOptionBox *p =
+            new SymmetryToolOptionBox(this, tool, currPalette, currTool);
+        panel            = p;
+        SymmetryTool *st = dynamic_cast<SymmetryTool *>(tool);
+        if (st) st->setToolOptionsBox(p);
       } else if (tool->getName() == T_StylePicker)
         panel = new StylePickerToolOptionsBox(0, tool, currPalette, currTool,
                                               app->getPaletteController());

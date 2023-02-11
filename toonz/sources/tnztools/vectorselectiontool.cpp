@@ -1537,8 +1537,10 @@ void VectorSelectionTool::leftButtonDoubleClick(const TPointD &pos,
   if (m_strokeSelectionType.getIndex() == POLYLINE_SELECTION_IDX &&
       !m_polyline.empty()) {
     closePolyline(pos);
-    selectRegionVectorImage(m_includeIntersection.getValue());
+    selectRegionVectorImage(m_includeIntersection.getValue(),
+                            m_strokeSelectionType.getIndex());
 
+    m_polyline.reset();
     m_selecting = false;
     invalidate();
 
@@ -1590,6 +1592,24 @@ void VectorSelectionTool::leftButtonDrag(const TPointD &pos,
 
     TRectD rect(m_firstPos, pos);
     m_selectingRect = rect;
+
+    if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+      m_polyline.clear();
+      m_polyline.push_back(m_selectingRect.getP00());
+      m_polyline.push_back(m_selectingRect.getP01());
+      m_polyline.push_back(m_selectingRect.getP11());
+      m_polyline.push_back(m_selectingRect.getP10());
+      m_polyline.push_back(m_selectingRect.getP00());
+
+      if (!m_shiftPressed) clearSelectedStrokes();
+
+      m_stroke = m_polyline.makePolylineStroke(0);
+      selectRegionVectorImage(m_includeIntersection.getValue(),
+                              POLYLINE_SELECTION_IDX);
+      invalidate();
+      m_stroke = 0;
+      return;
+    }
 
     std::set<int> oldSelection;
     if (m_shiftPressed) oldSelection = m_strokeSelection.getSelection();
@@ -1663,15 +1683,18 @@ void VectorSelectionTool::leftButtonUp(const TPointD &pos,
   TVectorImageP vi = getImage(false);
 
   if (vi) {
-    if (m_strokeSelectionType.getIndex() == RECT_SELECTION_IDX)
+    if (m_strokeSelectionType.getIndex() == RECT_SELECTION_IDX) {
+      m_polyline.reset();
+
       notifySelectionChanged();
-    else if (m_strokeSelectionType.getIndex() == FREEHAND_SELECTION_IDX) {
+    } else if (m_strokeSelectionType.getIndex() == FREEHAND_SELECTION_IDX) {
       QMutexLocker lock(vi->getMutex());
 
       closeFreehand(pos);
 
       if (m_stroke->getControlPointCount() > 3)
-        selectRegionVectorImage(m_includeIntersection.getValue());
+        selectRegionVectorImage(m_includeIntersection.getValue(),
+                                m_strokeSelectionType.getIndex());
 
       delete m_stroke;  // >:(
       m_stroke = 0;
@@ -2175,7 +2198,8 @@ void VectorSelectionTool::selectionOutlineStyle(int &capStyle, int &joinStyle) {
 
 //-----------------------------------------------------------------------------
 
-void VectorSelectionTool::selectRegionVectorImage(bool includeIntersect) {
+void VectorSelectionTool::selectRegionVectorImage(bool includeIntersect,
+                                                  int selectionIndex) {
   if (!m_stroke) return;
 
   TVectorImageP vi(getImage(false));
@@ -2185,6 +2209,23 @@ void VectorSelectionTool::selectRegionVectorImage(bool includeIntersect) {
 
   TVectorImage selectImg;
   selectImg.addStroke(new TStroke(*m_stroke));
+
+  std::vector<TStroke *> symmStrokes;
+  if (selectionIndex == POLYLINE_SELECTION_IDX) {
+    if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
+      for (int i = 1; i < m_polyline.getBrushCount(); i++)
+        symmStrokes.push_back(m_polyline.makePolylineStroke(i));
+    }
+  } else if (selectionIndex == FREEHAND_SELECTION_IDX) {
+    if (m_track.hasSymmetryBrushes()) {
+      double pixelSize = getPixelSize();
+      double error     = (30.0 / 11) * pixelSize;
+      symmStrokes      = m_track.makeSymmetryStrokes(error);
+    }
+  }
+  for (int i = 0; i < symmStrokes.size(); i++)
+    selectImg.addStroke(symmStrokes[i]);
+
   selectImg.findRegions();
 
   int sCount = int(vi->getStrokeCount()),
@@ -2208,6 +2249,14 @@ void VectorSelectionTool::selectRegionVectorImage(bool includeIntersect) {
       if (intersections.size() > 0) {
         selectionChanged = selectStroke(s, false) || selectionChanged;
       }
+      for (int i = 0; i < symmStrokes.size(); i++) {
+        intersections.clear();
+        intersect(symmStrokes[i], currentStroke, intersections, false);
+        if (intersections.size() > 0) {
+          selectionChanged = selectStroke(s, false) || selectionChanged;
+        }
+      }
+
     }
   }
 

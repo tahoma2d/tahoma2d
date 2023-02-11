@@ -6,7 +6,6 @@
 #include "tools/toolhandle.h"
 #include "tools/toolutils.h"
 #include "tools/tooloptions.h"
-#include "bluredbrush.h"
 
 // TnzQt includes
 #include "toonzqt/dvdialog.h"
@@ -21,7 +20,6 @@
 #include "toonz/txsheet.h"
 #include "toonz/tstageobject.h"
 #include "toonz/tstageobjectspline.h"
-#include "toonz/rasterstrokegenerator.h"
 #include "toonz/ttileset.h"
 #include "toonz/txshsimplelevel.h"
 #include "toonz/toonzimageutils.h"
@@ -519,10 +517,8 @@ ToonzVectorBrushTool::ToonzVectorBrushTool(std::string name, int targetType)
     , m_capStyle("Cap")
     , m_joinStyle("Join")
     , m_miterJoinLimit("Miter:", 0, 100, 4)
-    , m_rasterTrack(0)
     , m_styleId(0)
     , m_modifiedRegion()
-    , m_bluredBrush(0)
     , m_active(false)
     , m_enabled(false)
     , m_isPrompting(false)
@@ -762,7 +758,20 @@ void ToonzVectorBrushTool::leftButtonDown(const TPointD &pos,
   m_lastPoint  = pos;
 
   // assert(0<=m_styleId && m_styleId<2);
-  m_track.clear();
+  m_track.reset();
+
+  if (!m_isPath) {
+    SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+        TTool::getTool("T_Symmetry", TTool::RasterImage));
+    if (symmetryTool && symmetryTool->isGuideEnabled()) {
+      TPointD dpiScale       = getViewer()->getDpiScale();
+      SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+      m_track.addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
+                                 symmObj.getCenterPoint(),
+                                 symmObj.isUsingLineSymmetry(), dpiScale);
+    }
+  }
+
   double thickness = (m_pressure.getValue() || m_isPath)
                          ? computeThickness(e.m_pressure, m_thickness, m_isPath)
                          : m_thickness.getValue().second * 0.5;
@@ -1167,6 +1176,14 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
         m_veryFirstFrame   = m_firstFrame;
         m_veryFirstFrameId = m_firstFrameId;
       }
+      m_firstSymmetryStrokes.clear();
+      if (m_track.hasSymmetryBrushes()) {
+        m_firstSymmetryStrokes = m_track.makeSymmetryStrokes(error);
+        if (m_autoClose.getValue()) {
+          for (int i = 0; i < m_firstSymmetryStrokes.size(); i++)
+            m_firstSymmetryStrokes[i]->setSelfLoop(true);
+        }
+      }
     } else if (m_firstFrameId == getFrameId()) {
       if (m_firstStroke) {
         delete m_firstStroke;
@@ -1176,6 +1193,14 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
       m_firstStroke = new TStroke(*stroke);
       if (m_autoClose.getValue()) m_firstStroke->setSelfLoop(true);
       m_rangeTrack = m_track;
+      m_firstSymmetryStrokes.clear();
+      if (m_track.hasSymmetryBrushes()) {
+        m_firstSymmetryStrokes = m_track.makeSymmetryStrokes(error);
+        if (m_autoClose.getValue()) {
+          for (int i = 0; i < m_firstSymmetryStrokes.size(); i++)
+            m_firstSymmetryStrokes[i]->setSelfLoop(true);
+        }
+      }
     } else {
       TFrameId currentId = getFrameId();
       int curCol = 0, curFrame = 0;
@@ -1186,11 +1211,21 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
       }
 
       if (m_autoClose.getValue()) stroke->setSelfLoop(true);
+
+      std::vector<TStroke *> lastStrokes;
+      if (m_track.hasSymmetryBrushes()) {
+        lastStrokes = m_track.makeSymmetryStrokes(error);
+        if (m_autoClose.getValue()) {
+          for (int i = 0; i < lastStrokes.size(); i++)
+            lastStrokes[i]->setSelfLoop(true);
+        }
+      }
       bool success = doFrameRangeStrokes(
           m_firstFrameId, m_firstStroke, getFrameId(), stroke,
           m_frameRange.getIndex(), m_breakAngles.getValue(),
           m_autoGroup.getValue(), m_autoFill.getValue(), m_firstFrameRange,
-          true, true, m_sendToBack.getValue() > 0);
+          true, true, m_sendToBack.getValue() > 0, m_firstSymmetryStrokes,
+          lastStrokes);
       if (e.isCtrlPressed() && e.isAltPressed() && e.isShiftPressed()) {
         if (application) {
           if (m_firstFrameId > currentId) {
@@ -1228,33 +1263,51 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
       m_snapSelf = false;
     }
 
+   bool guidedDrawing =
+        (Preferences::instance()->getGuidedDrawingType() == 1 ||
+         Preferences::instance()->getGuidedDrawingType() == 2) &&
+        Preferences::instance()->getGuidedAutoInbetween();
+    TFrameId fId = getFrameId();
+
     if (m_autoClose.getValue()) stroke->setSelfLoop(true);
     //#ifdef Q_OS_WIN
     //    m_sendToBack = (GetKeyState(VK_CAPITAL) & 0x0001);
     //#endif
+    if (m_track.hasSymmetryBrushes()) TUndoManager::manager()->beginBlock();
+
     addStrokeToImage(getApplication(), vi, stroke, m_breakAngles.getValue(),
                      m_autoGroup.getValue(), m_autoFill.getValue(),
                      m_isFrameCreated, m_isLevelCreated, 0, TFrameId::NO_FRAME,
                      m_sendToBack.getValue() > 0);
     TRectD bbox = stroke->getBBox().enlarge(2) + m_track.getModifiedRegion();
 
-    invalidate();
-
-    if ((Preferences::instance()->getGuidedDrawingType() == 1 ||
-         Preferences::instance()->getGuidedDrawingType() == 2) &&
-        Preferences::instance()->getGuidedAutoInbetween()) {
-      int fidx     = getApplication()->getCurrentFrame()->getFrameIndex();
-      TFrameId fId = getFrameId();
-
+    if (guidedDrawing)
       doGuidedAutoInbetween(fId, vi, stroke, m_breakAngles.getValue(),
                             m_autoGroup.getValue(), m_autoFill.getValue(),
                             false, m_sendToBack.getValue() > 0);
 
-      if (getApplication()->getCurrentFrame()->isEditingScene())
-        getApplication()->getCurrentFrame()->setFrame(fidx);
-      else
-        getApplication()->getCurrentFrame()->setFid(fId);
+    if (m_track.hasSymmetryBrushes()) {
+      std::vector<TStroke *> symmStrokes = m_track.makeSymmetryStrokes(error);
+      for (int i = 0; i < symmStrokes.size(); i++) {
+        symmStrokes[i]->setStyle(stroke->getStyle());
+        if (m_autoClose.getValue()) symmStrokes[i]->setSelfLoop(true);
+        addStrokeToImage(getApplication(), vi, symmStrokes[i],
+                         m_breakAngles.getValue(), m_autoGroup.getValue(),
+                         m_autoFill.getValue(), m_isFrameCreated,
+                         m_isLevelCreated, 0, TFrameId::NO_FRAME,
+                         m_sendToBack.getValue() > 0);
+
+        if (guidedDrawing)
+          doGuidedAutoInbetween(fId, vi, symmStrokes[i],
+                                m_breakAngles.getValue(),
+                                m_autoGroup.getValue(), m_autoFill.getValue(),
+                                false, m_sendToBack.getValue() > 0);
+      }
+
+      TUndoManager::manager()->endBlock();
     }
+
+    invalidate();
   }
 
   // Column name renamed to level name only if was originally empty
@@ -1300,7 +1353,8 @@ bool ToonzVectorBrushTool::doFrameRangeStrokes(
     TFrameId firstFrameId, TStroke *firstStroke, TFrameId lastFrameId,
     TStroke *lastStroke, int interpolationType, bool breakAngles,
     bool autoGroup, bool autoFill, bool drawFirstStroke, bool drawLastStroke,
-    bool withUndo, bool sendToBack) {
+    bool withUndo, bool sendToBack, std::vector<TStroke *> firstSymmetryStrokes,
+    std::vector<TStroke *> lastSymmetryStrokes) {
   TXshSimpleLevel *sl =
       TTool::getApplication()->getCurrentLevel()->getLevel()->getSimpleLevel();
   TStroke *first           = new TStroke();
@@ -1325,7 +1379,19 @@ bool ToonzVectorBrushTool::doFrameRangeStrokes(
   }
 
   firstImage->addStroke(first, false, sendToBack);
+  for (int i = 0; i < firstSymmetryStrokes.size(); i++) {
+    TStroke *stroke =
+        swapped ? lastSymmetryStrokes[i] : firstSymmetryStrokes[i];
+    if (m_autoClose.getValue()) stroke->setSelfLoop(true);
+    firstImage->addStroke(stroke, sendToBack);
+  }
   lastImage->addStroke(last, false, sendToBack);
+  for (int i = 0; i < lastSymmetryStrokes.size(); i++) {
+    TStroke *stroke =
+        swapped ? firstSymmetryStrokes[i] : lastSymmetryStrokes[i];
+    if (m_autoClose.getValue()) stroke->setSelfLoop(true);
+    lastImage->addStroke(stroke, sendToBack);
+  }
   assert(firstFrameId <= lastFrameId);
 
   std::vector<TFrameId> allFids;
@@ -1372,25 +1438,31 @@ bool ToonzVectorBrushTool::doFrameRangeStrokes(
     TVectorImageP img = sl->getFrame(fid, true);
     if (t == 0) {
       if (!swapped && !drawFirstStroke) {
-      } else
-        addStrokeToImage(getApplication(), img, firstImage->getStroke(0),
-                         breakAngles, autoGroup, autoFill, m_isFrameCreated,
-                         m_isLevelCreated, sl, fid, sendToBack);
+      } else {
+        for (int i = 0; i < firstImage->getStrokeCount(); i++)
+          addStrokeToImage(getApplication(), img, firstImage->getStroke(i),
+                           breakAngles, autoGroup, autoFill, m_isFrameCreated,
+                           m_isLevelCreated, sl, fid, sendToBack);
+      }
     } else if (t == 1) {
       if (swapped && !drawFirstStroke) {
-      } else if (drawLastStroke)
-        addStrokeToImage(getApplication(), img, lastImage->getStroke(0),
-                         breakAngles, autoGroup, autoFill, m_isFrameCreated,
-                         m_isLevelCreated, sl, fid, sendToBack);
+      } else if (drawLastStroke) {
+        for (int i = 0; i < lastImage->getStrokeCount(); i++)
+          addStrokeToImage(getApplication(), img, lastImage->getStroke(i),
+                           breakAngles, autoGroup, autoFill, m_isFrameCreated,
+                           m_isLevelCreated, sl, fid, sendToBack);
+      }
     } else {
-      assert(firstImage->getStrokeCount() == 1);
-      assert(lastImage->getStrokeCount() == 1);
+//      assert(firstImage->getStrokeCount() == 1);
+//      assert(lastImage->getStrokeCount() == 1);
       TVectorImageP vi = TInbetween(firstImage, lastImage).tween(s);
-      assert(vi->getStrokeCount() == 1);
-      if (m_autoClose.getValue()) vi->getStroke(0)->setSelfLoop(true);
-      addStrokeToImage(getApplication(), img, vi->getStroke(0), breakAngles,
-                       autoGroup, autoFill, m_isFrameCreated, m_isLevelCreated,
-                       sl, fid, sendToBack);
+//      assert(vi->getStrokeCount() == 1);
+      for (int i = 0; i < vi->getStrokeCount(); i++) {
+        if (m_autoClose.getValue()) vi->getStroke(i)->setSelfLoop(true);
+        addStrokeToImage(getApplication(), img, vi->getStroke(i), breakAngles,
+                         autoGroup, autoFill, m_isFrameCreated,
+                         m_isLevelCreated, sl, fid, sendToBack);
+      }
     }
   }
   if (row != -1)
@@ -1875,6 +1947,7 @@ void ToonzVectorBrushTool::resetFrameRange() {
     delete m_firstStroke;
     m_firstStroke = 0;
   }
+  m_firstSymmetryStrokes.clear();
   m_firstFrameRange = true;
 }
 

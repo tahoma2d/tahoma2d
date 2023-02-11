@@ -53,6 +53,7 @@ public:
                         ColorType colorType, int styleId, const TThickPoint &p,
                         bool selective, int selectedStyle, bool lockAlpha,
                         bool keepAntialias, bool isPaletteOrder = false);
+  RasterStrokeGenerator(RasterStrokeGenerator *src);
   ~RasterStrokeGenerator();
   void setRaster(const TRasterCM32P &ras) { m_raster = ras; }
   void setStyle(int styleId) { m_styleId = styleId; }

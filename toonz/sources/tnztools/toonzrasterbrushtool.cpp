@@ -21,7 +21,6 @@
 #include "toonz/txsheet.h"
 #include "toonz/tstageobject.h"
 #include "toonz/tstageobjectspline.h"
-#include "toonz/rasterstrokegenerator.h"
 #include "toonz/ttileset.h"
 #include "toonz/txshsimplelevel.h"
 #include "toonz/toonzimageutils.h"
@@ -444,12 +443,19 @@ class RasterBrushUndo final : public TRasterUndo {
   bool m_isPencil;
   bool m_isStraight;
   bool m_modifierLockAlpha;
+  TPointD m_dpiScale;
+  double m_brushCount;
+  double m_rotation;
+  TPointD m_centerPoint;
+  bool m_useLineSymmetry;
 
 public:
   RasterBrushUndo(TTileSetCM32 *tileSet, const std::vector<TThickPoint> &points,
                   int styleId, bool selective, TXshSimpleLevel *level,
                   const TFrameId &frameId, bool isPencil, bool isFrameCreated,
                   bool isLevelCreated, bool isPaletteOrder, bool lockAlpha,
+                  TPointD dpiScale, double symmetryLines, double rotation,
+                  TPointD centerPoint, bool useLineSymmetry,
                   bool isStraight = false)
       : TRasterUndo(tileSet, level, frameId, isFrameCreated, isLevelCreated, 0)
       , m_points(points)
@@ -458,24 +464,36 @@ public:
       , m_isPencil(isPencil)
       , m_isStraight(isStraight)
       , m_isPaletteOrder(isPaletteOrder)
-      , m_modifierLockAlpha(lockAlpha) {}
+      , m_modifierLockAlpha(lockAlpha)
+      , m_dpiScale(dpiScale)
+      , m_brushCount(symmetryLines)
+      , m_rotation(rotation)
+      , m_centerPoint(centerPoint)
+      , m_useLineSymmetry(useLineSymmetry) {}
 
   void redo() const override {
     insertLevelAndFrameIfNeeded();
     TToonzImageP image = getImage();
     TRasterCM32P ras   = image->getRaster();
-    RasterStrokeGenerator m_rasterTrack(
-        ras, BRUSH, NONE, m_styleId, m_points[0], m_selective, 0,
-        m_modifierLockAlpha, !m_isPencil, m_isPaletteOrder);
+
+    CMRasterBrush m_cmRasterBrush(ras, BRUSH, NONE, m_styleId, m_points[0],
+                                  m_selective, 0, m_modifierLockAlpha,
+                                  !m_isPencil, m_isPaletteOrder);
+    if (m_brushCount > 1)
+      m_cmRasterBrush.addSymmetryBrushes(m_brushCount, m_rotation,
+                                         m_centerPoint, m_useLineSymmetry,
+                                         m_dpiScale);
+
     if (m_isPaletteOrder) {
       QSet<int> aboveStyleIds;
       getAboveStyleIdSet(m_styleId, image->getPalette(), aboveStyleIds);
-      m_rasterTrack.setAboveStyleIds(aboveStyleIds);
+      m_cmRasterBrush.setAboveStyleIds(aboveStyleIds);
     }
-    m_rasterTrack.setPointsSequence(m_points);
-    m_rasterTrack.generateStroke(m_isPencil, m_isStraight);
-    image->setSavebox(image->getSavebox() +
-                      m_rasterTrack.getBBox(m_rasterTrack.getPointsSequence()));
+    m_cmRasterBrush.setPointsSequence(m_points);
+    m_cmRasterBrush.generateStroke(m_isPencil, m_isStraight);
+    image->setSavebox(
+        image->getSavebox() +
+        m_cmRasterBrush.getBBox(m_cmRasterBrush.getPointsSequence()));
     ToolUtils::updateSaveBox();
     TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
     notifyImageChanged();
@@ -498,6 +516,11 @@ class RasterBluredBrushUndo final : public TRasterUndo {
   double m_hardness;
   bool m_isStraight;
   bool m_modifierLockAlpha;
+  TPointD m_dpiScale;
+  int m_brushCount;
+  double m_rotation;
+  TPointD m_centerPoint;
+  bool m_useLineSymmetry;
 
 public:
   RasterBluredBrushUndo(TTileSetCM32 *tileSet,
@@ -505,7 +528,10 @@ public:
                         DrawOrder drawOrder, bool lockAlpha,
                         TXshSimpleLevel *level, const TFrameId &frameId,
                         int maxThick, double hardness, bool isFrameCreated,
-                        bool isLevelCreated, bool isStraight = false)
+                        bool isLevelCreated, TPointD dpiScale,
+                        double symmetryLines, double rotation,
+                        TPointD centerPoint, bool useLineSymmetry,
+                        bool isStraight = false)
       : TRasterUndo(tileSet, level, frameId, isFrameCreated, isLevelCreated, 0)
       , m_points(points)
       , m_styleId(styleId)
@@ -513,7 +539,12 @@ public:
       , m_maxThick(maxThick)
       , m_isStraight(isStraight)
       , m_hardness(hardness)
-      , m_modifierLockAlpha(lockAlpha) {}
+      , m_modifierLockAlpha(lockAlpha)
+      , m_dpiScale(dpiScale)
+      , m_brushCount(symmetryLines)
+      , m_rotation(rotation)
+      , m_centerPoint(centerPoint)
+      , m_useLineSymmetry(useLineSymmetry) {}
 
   void redo() const override {
     if (m_points.size() == 0) return;
@@ -524,7 +555,11 @@ public:
     TRaster32P workRaster(ras->getSize());
     QRadialGradient brushPad = ToolUtils::getBrushPad(m_maxThick, m_hardness);
     workRaster->clear();
-    BluredBrush brush(workRaster, m_maxThick, brushPad, false);
+    RasterBlurredBrush brush(workRaster, m_maxThick, brushPad, false);
+
+    if (m_brushCount > 1)
+      brush.addSymmetryBrushes(m_brushCount, m_rotation, m_centerPoint,
+                               m_useLineSymmetry, m_dpiScale);
 
     if (m_drawOrder == PaletteOrder) {
       QSet<int> aboveStyleIds;
@@ -881,7 +916,7 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
     , m_pencil("Pencil", false)
     , m_pressure("Pressure", true)
     , m_modifierSize("ModifierSize", -3, 3, 0, true)
-    , m_rasterTrack(0)
+    , m_cmRasterBrush(0)
     , m_styleId(0)
     , m_bluredBrush(0)
     , m_active(false)
@@ -1373,7 +1408,19 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
         mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
                                   baseSize + modifierSize);
       }
+
       m_toonz_brush = new MyPaintToonzBrush(m_workRas, *this, mypaintBrush);
+
+      SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+          TTool::getTool("T_Symmetry", TTool::RasterImage));
+      if (symmetryTool && symmetryTool->isGuideEnabled()) {
+        TPointD dpiScale       = getViewer()->getDpiScale();
+        SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+        m_toonz_brush->addSymmetryBrushes(
+            symmObj.getLines(), symmObj.getRotation(), symmObj.getCenterPoint(),
+            symmObj.isUsingLineSymmetry(), dpiScale);
+      }
+
       m_strokeRect.empty();
       m_strokeSegmentRect.empty();
       m_toonz_brush->beginStroke();
@@ -1399,16 +1446,26 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
 
       TThickPoint thickPoint(centeredPos + convert(ras->getCenter()),
                              thickness);
-      m_rasterTrack = new RasterStrokeGenerator(
+      m_cmRasterBrush = new CMRasterBrush(
           ras, BRUSH, NONE, m_styleId, thickPoint, drawOrder != OverAll, 0,
           m_modifierLockAlpha.getValue(), !m_pencil.getValue(),
           drawOrder == PaletteOrder);
 
-      if (drawOrder == PaletteOrder)
-        m_rasterTrack->setAboveStyleIds(aboveStyleIds);
+      SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+          TTool::getTool("T_Symmetry", TTool::RasterImage));
+      if (symmetryTool && symmetryTool->isGuideEnabled()) {
+        TPointD dpiScale       = getViewer()->getDpiScale();
+        SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+        m_cmRasterBrush->addSymmetryBrushes(
+            symmObj.getLines(), symmObj.getRotation(), symmObj.getCenterPoint(),
+            symmObj.isUsingLineSymmetry(), dpiScale);
+      }
 
-      m_tileSaver->save(m_rasterTrack->getLastRect());
-      m_rasterTrack->generateLastPieceOfStroke(m_pencil.getValue());
+      if (drawOrder == PaletteOrder)
+        m_cmRasterBrush->setAboveStyleIds(aboveStyleIds);
+
+      m_tileSaver->save(m_cmRasterBrush->getLastRect());
+      m_cmRasterBrush->generateLastPieceOfStroke(m_pencil.getValue());
 
       std::vector<TThickPoint> pts;
       if (m_smooth.getValue() == 0) {
@@ -1422,7 +1479,18 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
       m_points.clear();
       TThickPoint point(centeredPos + rasCenter, thickness);
       m_points.push_back(point);
-      m_bluredBrush = new BluredBrush(m_workRas, maxThick, m_brushPad, false);
+      m_bluredBrush =
+          new RasterBlurredBrush(m_workRas, maxThick, m_brushPad, false);
+
+      SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+          TTool::getTool("T_Symmetry", TTool::RasterImage));
+      if (symmetryTool && symmetryTool->isGuideEnabled()) {
+        TPointD dpiScale       = getViewer()->getDpiScale();
+        SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+        m_bluredBrush->addSymmetryBrushes(
+            symmObj.getLines(), symmObj.getRotation(), symmObj.getCenterPoint(),
+            symmObj.isUsingLineSymmetry(), dpiScale);
+      }
 
       if (drawOrder == PaletteOrder)
         m_bluredBrush->setAboveStyleIds(aboveStyleIds);
@@ -1726,7 +1794,7 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
         TRectD(centeredPos - thickOffset, centeredPos + thickOffset);
     invalidateRect +=
         TRectD(m_brushPos - thickOffset, m_brushPos + thickOffset);
-  } else if (m_rasterTrack &&
+  } else if (m_cmRasterBrush &&
              (m_hardness.getValue() == 100 || m_pencil.getValue())) {
     /*-- Pencilモードでなく、Hardness=100 の場合のブラシサイズを1段階下げる
      * --*/
@@ -1742,19 +1810,24 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
     }
     for (size_t i = 0; i < pts.size(); ++i) {
       const TThickPoint &thickPoint = pts[i];
-      m_rasterTrack->add(thickPoint);
-      m_tileSaver->save(m_rasterTrack->getLastRect());
-      m_rasterTrack->generateLastPieceOfStroke(m_pencil.getValue());
-      std::vector<TThickPoint> brushPoints = m_rasterTrack->getPointsSequence();
-      int m                                = (int)brushPoints.size();
+      m_cmRasterBrush->add(thickPoint);
+      m_tileSaver->save(m_cmRasterBrush->getLastRect());
+      m_cmRasterBrush->generateLastPieceOfStroke(m_pencil.getValue());
+      std::vector<TThickPoint> brushPoints =
+          m_cmRasterBrush->getPointsSequence();
+      int m = (int)brushPoints.size();
       std::vector<TThickPoint> points;
-      if (m == 3) {
-        points.push_back(brushPoints[0]);
-        points.push_back(brushPoints[1]);
-      } else {
-        points.push_back(brushPoints[m - 4]);
-        points.push_back(brushPoints[m - 3]);
-        points.push_back(brushPoints[m - 2]);
+      if (m_cmRasterBrush->hasSymmetryBrushes())
+        points = brushPoints;
+      else {
+        if (m == 3) {
+          points.push_back(brushPoints[0]);
+          points.push_back(brushPoints[1]);
+        } else {
+          points.push_back(brushPoints[m - 4]);
+          points.push_back(brushPoints[m - 3]);
+          points.push_back(brushPoints[m - 2]);
+        }
       }
       invalidateRect += ToolUtils::getBounds(points, maxThickness) - rasCenter;
     }
@@ -1800,6 +1873,11 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
         m_bluredBrush->addArc(m_points[m - 4], old, mid, 1, 1);
         m_lastRect += bbox;
       }
+
+      std::vector<TThickPoint> symmPts =
+          m_bluredBrush->getSymmetryPoints(points);
+      points.insert(points.end(), symmPts.begin(), symmPts.end());
+
       invalidateRect += ToolUtils::getBounds(points, maxThickness) - rasCenter;
 
       m_bluredBrush->updateDrawing(ti->getRaster(), m_backupRas, bbox,
@@ -1904,7 +1982,7 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
           m_isLevelCreated, subras, m_strokeRect.getP00()));
     }
 
-  } else if (m_rasterTrack &&
+  } else if (m_cmRasterBrush &&
              (m_hardness.getValue() == 100 || m_pencil.getValue())) {
     double thickness = m_pressure.getValue()
                            ? computeThickness(pressureVal, m_rasThickness)
@@ -1920,7 +1998,7 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
       // if (m_oldThickness > 0.0) {
       //  thickness = m_oldThickness;
       //} else
-      thickness = m_rasterTrack->getPointsSequence().at(0).thick;
+      thickness = m_cmRasterBrush->getPointsSequence(true).at(0).thick;
     }
     TRectD invalidateRect;
     TThickPoint thickPoint(pos + rasCenter, thickness);
@@ -1934,29 +2012,34 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
     }
     for (size_t i = 0; i < pts.size(); ++i) {
       const TThickPoint &thickPoint = pts[i];
-      m_rasterTrack->add(thickPoint);
+      m_cmRasterBrush->add(thickPoint);
       if (m_isStraight) {
-        m_tileSaver->save(m_rasterTrack->getLastRect(true));
-        m_rasterTrack->generateLastPieceOfStroke(m_pencil.getValue(), true,
-                                                 true);
+        m_tileSaver->save(m_cmRasterBrush->getLastRect(true));
+        m_cmRasterBrush->generateLastPieceOfStroke(m_pencil.getValue(), true,
+                                                   true);
       } else {
-        m_tileSaver->save(m_rasterTrack->getLastRect());
-        m_rasterTrack->generateLastPieceOfStroke(m_pencil.getValue(), true);
+        m_tileSaver->save(m_cmRasterBrush->getLastRect());
+        m_cmRasterBrush->generateLastPieceOfStroke(m_pencil.getValue(), true);
       }
 
-      std::vector<TThickPoint> brushPoints = m_rasterTrack->getPointsSequence();
-      int m                                = (int)brushPoints.size();
+      std::vector<TThickPoint> brushPoints =
+          m_cmRasterBrush->getPointsSequence();
+      int m = (int)brushPoints.size();
       std::vector<TThickPoint> points;
-      if (m_isStraight) {
-        points.push_back(brushPoints[0]);
-        points.push_back(brushPoints[2]);
-      } else if (m == 3) {
-        points.push_back(brushPoints[0]);
-        points.push_back(brushPoints[1]);
-      } else {
-        points.push_back(brushPoints[m - 4]);
-        points.push_back(brushPoints[m - 3]);
-        points.push_back(brushPoints[m - 2]);
+      if (m_cmRasterBrush->hasSymmetryBrushes())
+        points = brushPoints;
+      else {
+        if (m_isStraight) {
+          points.push_back(brushPoints[0]);
+          points.push_back(brushPoints[2]);
+        } else if (m == 3) {
+          points.push_back(brushPoints[0]);
+          points.push_back(brushPoints[1]);
+        } else {
+          points.push_back(brushPoints[m - 4]);
+          points.push_back(brushPoints[m - 3]);
+          points.push_back(brushPoints[m - 2]);
+        }
       }
       int maxThickness = m_rasThickness.getValue().second;
       invalidateRect += ToolUtils::getBounds(points, maxThickness) - rasCenter;
@@ -1964,15 +2047,31 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
     invalidate(invalidateRect.enlarge(2));
 
     if (m_tileSet->getTileCount() > 0) {
+      double symmetryLines = 0;
+      double rotation      = 0;
+      bool useLineSymmetry = false;
+      TPointD centerPoint(0, 0);
+      SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+          TTool::getTool("T_Symmetry", TTool::RasterImage));
+      if (symmetryTool && symmetryTool->isGuideEnabled()) {
+        SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+        symmetryLines          = symmObj.getLines();
+        rotation               = symmObj.getRotation();
+        centerPoint            = symmObj.getCenterPoint();
+        useLineSymmetry        = symmObj.isUsingLineSymmetry();
+      }
+
+      TPointD dpiScale = getViewer()->getDpiScale();
       TUndoManager::manager()->add(new RasterBrushUndo(
-          m_tileSet, m_rasterTrack->getPointsSequence(),
-          m_rasterTrack->getStyleId(), m_rasterTrack->isSelective(),
+          m_tileSet, m_cmRasterBrush->getPointsSequence(true),
+          m_cmRasterBrush->getStyleId(), m_cmRasterBrush->isSelective(),
           simLevel.getPointer(), frameId, m_pencil.getValue(), m_isFrameCreated,
-          m_isLevelCreated, m_rasterTrack->isPaletteOrder(),
-          m_rasterTrack->isAlphaLocked(), m_isStraight));
+          m_isLevelCreated, m_cmRasterBrush->isPaletteOrder(),
+          m_cmRasterBrush->isAlphaLocked(), dpiScale, symmetryLines, rotation,
+          centerPoint, useLineSymmetry, m_isStraight));
     }
-    delete m_rasterTrack;
-    m_rasterTrack = 0;
+    delete m_cmRasterBrush;
+    m_cmRasterBrush = 0;
   } else {
     double maxThickness = m_rasThickness.getValue().second;
     double thickness    = (m_pressure.getValue())
@@ -2031,8 +2130,13 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
           m_lastRect += bbox;
         }
 
+        std::vector<TThickPoint> allPts = points;
+        std::vector<TThickPoint> symmPts =
+            m_bluredBrush->getSymmetryPoints(points);
+        allPts.insert(allPts.end(), symmPts.begin(), symmPts.end());
+
         invalidateRect +=
-            ToolUtils::getBounds(points, maxThickness) - rasCenter;
+            ToolUtils::getBounds(allPts, maxThickness) - rasCenter;
 
         m_bluredBrush->updateDrawing(ti->getRaster(), m_backupRas, bbox,
                                      m_styleId, m_drawOrder.getIndex(),
@@ -2067,7 +2171,12 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
                                    m_styleId, m_drawOrder.getIndex(),
                                    m_modifierLockAlpha.getValue());
 
-      invalidateRect += ToolUtils::getBounds(points, maxThickness) - rasCenter;
+      std::vector<TThickPoint> allPts = points;
+      std::vector<TThickPoint> symmPts =
+          m_bluredBrush->getSymmetryPoints(points);
+      allPts.insert(allPts.end(), symmPts.begin(), symmPts.end());
+
+      invalidateRect += ToolUtils::getBounds(allPts, maxThickness) - rasCenter;
 
       m_lastRect += bbox;
       m_strokeRect += bbox;
@@ -2079,11 +2188,27 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
     m_bluredBrush = 0;
 
     if (m_tileSet->getTileCount() > 0) {
+      TPointD dpiScale     = getViewer()->getDpiScale();
+      double symmetryLines = 0;
+      double rotation      = 0;
+      bool useLineSymmetry = false;
+      TPointD centerPoint(0, 0);
+      SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+          TTool::getTool("T_Symmetry", TTool::RasterImage));
+      if (symmetryTool && symmetryTool->isGuideEnabled()) {
+        SymmetryObject symmObj = symmetryTool->getSymmetryObject();
+        symmetryLines          = symmObj.getLines();
+        rotation               = symmObj.getRotation();
+        centerPoint            = symmObj.getCenterPoint();
+        useLineSymmetry        = symmObj.isUsingLineSymmetry();
+      }
+
       TUndoManager::manager()->add(new RasterBluredBrushUndo(
           m_tileSet, m_points, m_styleId, (DrawOrder)m_drawOrder.getIndex(),
           m_modifierLockAlpha.getValue(), simLevel.getPointer(), frameId,
           m_rasThickness.getValue().second, m_hardness.getValue() * 0.01,
-          m_isFrameCreated, m_isLevelCreated, m_isStraight));
+          m_isFrameCreated, m_isLevelCreated, dpiScale, symmetryLines, rotation,
+          centerPoint, useLineSymmetry, m_isStraight));
     }
   }
 

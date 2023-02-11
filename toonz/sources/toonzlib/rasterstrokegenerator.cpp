@@ -30,6 +30,25 @@ RasterStrokeGenerator::RasterStrokeGenerator(const TRasterCM32P &raster,
 
 //-----------------------------------------------------------
 
+RasterStrokeGenerator::RasterStrokeGenerator(RasterStrokeGenerator *src) {
+  m_raster            = src->m_raster;
+  m_boxOfRaster       = src->m_boxOfRaster;
+  m_styleId           = src->m_styleId;
+  m_selective         = src->m_selective;
+  m_task              = src->m_task;
+  m_colorType         = src->m_colorType;
+  m_eraseStyle        = src->m_eraseStyle;
+  m_selectedStyle     = src->m_selectedStyle;
+  m_keepAntiAlias     = src->m_keepAntiAlias;
+  m_doAnArc           = src->m_doAnArc;
+  m_isPaletteOrder    = src->m_isPaletteOrder;
+  m_modifierLockAlpha = src->m_modifierLockAlpha;
+  m_aboveStyleIds     = src->m_aboveStyleIds;
+  m_points            = src->m_points;
+}
+
+//-----------------------------------------------------------
+
 RasterStrokeGenerator::~RasterStrokeGenerator() {}
 
 //-----------------------------------------------------------
