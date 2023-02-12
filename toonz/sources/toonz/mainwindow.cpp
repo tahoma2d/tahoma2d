@@ -2306,7 +2306,7 @@ void MainWindow::defineActions() {
                           QT_TR_NOOP("Guided Tweening Controls"), "",
                           "guided_drawing");
 
-  createMenuAction(MI_OpenCustomPanels, QT_TR_NOOP("&Custom Panels"), files,
+  createMenuAction(MI_OpenCustomPanels, QT_TR_NOOP("&Custom Panels"), files, "",
                    false);
   createMenuWindowsAction(MI_CustomPanelEditor,
                           QT_TR_NOOP("&Custom Panel Editor..."), "", "");
