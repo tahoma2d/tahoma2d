@@ -635,7 +635,7 @@ void PaletteViewer::createSavePaletteToolBar() {
           SLOT(toggleNameEditorVisibility(bool)));
 
   if (m_viewType == STUDIO_PALETTE) {
-    QIcon savePaletteIcon = createQIcon("save");
+    QIcon savePaletteIcon = createQIcon("save", false, true);
     QAction *savePalette =
         new QAction(savePaletteIcon, tr("&Save Palette"), m_savePaletteToolBar);
     savePalette->setToolTip(tr("Save the palette."));
@@ -649,13 +649,15 @@ void PaletteViewer::createSavePaletteToolBar() {
     m_viewMode->addSeparator();
 
     // overwrite palette
-    QAction *savePalette = new QAction(createQIcon("save"), tr("&Save Palette"),
-                                       m_savePaletteToolBar);
+    QAction *savePalette =
+        new QAction(createQIcon("save", false, true), tr("&Save Palette"),
+                    m_savePaletteToolBar);
     m_viewMode->addAction(savePalette);
 
     // save palette as
-    QAction *saveAsPalette = new QAction(
-        createQIcon("saveas"), tr("&Save Palette As"), m_savePaletteToolBar);
+    QAction *saveAsPalette =
+        new QAction(createQIcon("saveas", false, true), tr("&Save Palette As"),
+                    m_savePaletteToolBar);
     m_viewMode->addAction(saveAsPalette);
 
     // save as default palette
@@ -868,7 +870,8 @@ void PaletteViewer::contextMenuEvent(QContextMenuEvent *event) {
 
   QMenu *menu = new QMenu(this);
   if (m_hasPageCommand) {
-    QAction *newPage = menu->addAction(tr("New Page"));
+    QAction *newPage =
+        menu->addAction(createQIcon("newpage", false, true), tr("New Page"));
     connect(newPage, SIGNAL(triggered()), SLOT(addNewPage()));
 
     if (m_pagesBar->geometry().contains(pos)) {
@@ -880,8 +883,8 @@ void PaletteViewer::contextMenuEvent(QContextMenuEvent *event) {
           canRemovePage = false;
         if (canRemovePage) {
           m_indexPageToDelete = tabIndex;
-          QAction *deletePage =
-              menu->addAction(createQIcon("delete"), tr("Delete Page"));
+          QAction *deletePage = menu->addAction(
+              createQIcon("delete", false, true), tr("Delete Page"));
           connect(deletePage, SIGNAL(triggered()), SLOT(deletePage()));
         }
       }
