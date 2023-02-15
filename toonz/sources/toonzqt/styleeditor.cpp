@@ -6049,10 +6049,14 @@ void StyleEditor::createStylePage(StylePageType pageType, TFilePath styleFolder,
       TSystem::readDirectory_DirItems(fpList, styleFolder);
 
     QStringList::iterator fpListIt;
-    for (fpListIt = fpList.begin(); fpListIt != fpList.end(); fpListIt++)
+    for (fpListIt = fpList.begin(); fpListIt != fpList.end(); fpListIt++) {
+      // hide Texture\Brush tips used by Flows Fx
+      if (pageType == StylePageType::Texture && !isFavorite && dirDepth == 0 && *fpListIt ==
+              "brush tips")
+        continue;
       createStylePage(pageType, styleFolder + TFilePath(*fpListIt), filters,
                       isFavorite, (dirDepth + 1));
-
+    }
   } catch (...) {
     return;
   }
