@@ -93,7 +93,7 @@ ComboViewerPanel::ComboViewerPanel(QWidget *parent, Qt::WFlags flags)
   setObjectName("ComboViewerPanel");
 
   // ToolBar
-  m_toolbar = new Toolbar(this, false);
+  m_toolbar = new Toolbar(this, true);
   // Tool Options
   m_toolOptions = new ToolOptions();
   m_toolOptions->setObjectName("ComboViewerToolOptions");

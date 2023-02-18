@@ -1017,8 +1017,8 @@ public:
     panel->setWidget(toolbar);
     panel->setIsMaximizable(false);
     // panel->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
-    panel->setFixedWidth(44);  // 35
-    toolbar->setFixedWidth(34);
+//    panel->setFixedWidth(44);  // 35
+//    toolbar->setFixedWidth(34);
     panel->setWindowTitle(QString(""));
     panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
     connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
