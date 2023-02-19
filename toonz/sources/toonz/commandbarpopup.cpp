@@ -74,7 +74,8 @@ public:
 // CommandBarTree
 //-----------------------------------------------------------------------------
 
-CommandBarTree::CommandBarTree(TFilePath& path, QWidget* parent)
+CommandBarTree::CommandBarTree(TFilePath& path, TFilePath& defaultPath,
+                               QWidget* parent)
     : QTreeWidget(parent) {
   setObjectName("SolidLineFrame");
   setAlternatingRowColors(true);
@@ -91,6 +92,8 @@ CommandBarTree::CommandBarTree(TFilePath& path, QWidget* parent)
   TFilePath fp;
   if (TFileStatus(path).isWritable())
     fp = path;
+  else if (TFileStatus(defaultPath).isWritable())
+    fp = defaultPath;
   else {
     if (path.getName() == "quicktoolbar") {
       fp = ToonzFolder::getTemplateModuleDir() + TFilePath("quicktoolbar.xml");
@@ -470,25 +473,34 @@ void CommandBarListTree::onItemClicked(const QModelIndex& index) {
 // CommandBarPopup
 //-----------------------------------------------------------------------------
 
-CommandBarPopup::CommandBarPopup(bool isQuickToolbar)
+CommandBarPopup::CommandBarPopup(QString barId, bool isQuickToolbar)
     : Dialog(TApp::instance()->getMainWindow(), true, false,
              "CustomizeCommandBar") {
   QLabel* commandBarLabel;
   if (isQuickToolbar) {
-    m_path = ToonzFolder::getMyModuleDir() + TFilePath("quicktoolbar.xml");
+    m_defaultPath = m_path =
+        ToonzFolder::getMyModuleDir() + TFilePath("quicktoolbar.xml");
     commandBarLabel = new QLabel(tr("Quick Toolbar"));
     setWindowTitle(tr("Customize Quick Toolbar"));
   } else {
-    m_path = ToonzFolder::getMyModuleDir() + TFilePath("commandbar.xml");
+    m_defaultPath = m_path =
+        ToonzFolder::getMyModuleDir() + TFilePath("commandbar.xml");
+    if (!barId.isEmpty()) {
+      m_path = ToonzFolder::getMyModuleDir() + TFilePath("commandbars") +
+               TFilePath("commandbar_" + barId + ".xml");
+      TSystem::touchParentDir(m_path);
+    }
     commandBarLabel = new QLabel(tr("Command Bar"));
     setWindowTitle(tr("Customize Command Bar"));
   }
 
   m_commandListTree = new CommandBarListTree(this);
-  m_menuBarTree     = new CommandBarTree(m_path, this);
+  m_menuBarTree     = new CommandBarTree(m_path, m_defaultPath, this);
 
   QPushButton* okBtn     = new QPushButton(tr("OK"), this);
   QPushButton* cancelBtn = new QPushButton(tr("Cancel"), this);
+
+  m_saveAsDefaultCB = new QCheckBox(tr("Save as Default"));
 
   okBtn->setFocusPolicy(Qt::NoFocus);
   cancelBtn->setFocusPolicy(Qt::NoFocus);
@@ -546,12 +558,29 @@ CommandBarPopup::CommandBarPopup(bool isQuickToolbar)
   }
 
   m_buttonLayout->setMargin(0);
-  m_buttonLayout->setSpacing(30);
+  m_buttonLayout->setSpacing(0);
   {
-    m_buttonLayout->addStretch(1);
-    m_buttonLayout->addWidget(okBtn, 0);
-    m_buttonLayout->addWidget(cancelBtn, 0);
-    m_buttonLayout->addStretch(1);
+    QGridLayout* buttonGridLay = new QGridLayout();
+    buttonGridLay->setMargin(0);
+    buttonGridLay->setHorizontalSpacing(8);
+    buttonGridLay->setVerticalSpacing(0);
+    {
+      if (!isQuickToolbar) buttonGridLay->addWidget(m_saveAsDefaultCB, 0, 0);
+
+      QHBoxLayout* buttonsLay = new QHBoxLayout();
+      buttonsLay->setMargin(0);
+      buttonsLay->setSpacing(30);
+      {
+        buttonsLay->addWidget(okBtn, 0);
+        buttonsLay->addWidget(cancelBtn, 0);
+      }
+      buttonGridLay->addLayout(buttonsLay, 0, 1);
+
+      buttonGridLay->setColumnStretch(0, 1);
+      buttonGridLay->setColumnStretch(1, 1);
+      buttonGridLay->setColumnStretch(2, 1);
+    }
+    m_buttonLayout->addLayout(buttonGridLay, 0);
   }
 
   //--- signal/slot connections
@@ -567,7 +596,10 @@ CommandBarPopup::CommandBarPopup(bool isQuickToolbar)
 //-----------------------------------------------------------------------------
 
 void CommandBarPopup::onOkPressed() {
-  m_menuBarTree->saveMenuTree(m_path);
+  if (m_saveAsDefaultCB->isChecked())
+    m_menuBarTree->saveMenuTree(m_defaultPath);
+  else
+    m_menuBarTree->saveMenuTree(m_path);
 
   accept();
 }

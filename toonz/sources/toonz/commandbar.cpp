@@ -35,28 +35,69 @@ CommandBar::CommandBar(QWidget *parent, Qt::WindowFlags flags,
 #else
 CommandBar::CommandBar(QWidget *parent, Qt::WFlags flags)
 #endif
-    : QToolBar(parent), m_isCollapsible(isCollapsible) {
+    : QToolBar(parent)
+    , m_isCollapsible(isCollapsible)
+    , m_isQuickToolbar(isQuickToolbar)
+    , m_barId("") {
   setObjectName("cornerWidget");
   setObjectName("CommandBar");
-  fillToolbar(this, isQuickToolbar);
+  if (!isQuickToolbar) {
+    QDateTime date = QDateTime::currentDateTime();
+    m_barId        = date.toString("yyyyMMddhhmmss");
+  }
+  // Sets up default.
+  fillToolbar(this);
   setIconSize(QSize(20, 20));
   QIcon moreIcon(":Resources/more.svg");
   QToolButton *more = findChild<QToolButton *>("qt_toolbar_ext_button");
   more->setIcon(moreIcon);
+
+  if (!isQuickToolbar)
+    connect(parentWidget(), SIGNAL(closeButtonPressed()), this,
+            SLOT(onCloseButtonPressed()));
 }
 
 //-----------------------------------------------------------------------------
 
-void CommandBar::fillToolbar(CommandBar *toolbar, bool isQuickToolbar) {
+// SaveLoadQSettings
+void CommandBar::save(QSettings &settings, bool forPopupIni) const {
+  // Don't save barId during popup.ini save
+  if (forPopupIni) return;
+  settings.setValue("barId", m_barId);
+}
+
+//-----------------------------------------------------------------------------
+
+void CommandBar::load(QSettings &settings) {
+  QVariant barId = settings.value("barId");
+  if (barId.canConvert(QVariant::String)) {
+    m_barId = barId.toString();
+    fillToolbar(this, m_isQuickToolbar, m_barId);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void CommandBar::fillToolbar(CommandBar *toolbar, bool isQuickToolbar,
+                             QString barId) {
   toolbar->clear();
   TFilePath personalPath;
+  bool fileFound = false;
   if (isQuickToolbar) {
     personalPath =
         ToonzFolder::getMyModuleDir() + TFilePath("quicktoolbar.xml");
+  } else if (!barId.isEmpty()) {
+    personalPath = ToonzFolder::getMyModuleDir() + TFilePath("commandbars") +
+                   TFilePath("commandbar_" + barId + ".xml");
+    if (!TSystem::doesExistFileOrLevel(personalPath)) {
+      personalPath =
+          ToonzFolder::getMyModuleDir() + TFilePath("commandbar.xml");
+    } else
+      fileFound = true;
   } else {
     personalPath = ToonzFolder::getMyModuleDir() + TFilePath("commandbar.xml");
   }
-  if (!TSystem::doesExistFileOrLevel(personalPath)) {
+  if (!fileFound && !TSystem::doesExistFileOrLevel(personalPath)) {
     if (isQuickToolbar) {
       personalPath =
           ToonzFolder::getTemplateModuleDir() + TFilePath("quicktoolbar.xml");
@@ -146,6 +187,19 @@ void CommandBar::buildDefaultToolbar(CommandBar *toolbar) {
 
 //-----------------------------------------------------------------------------
 
+void CommandBar::onCloseButtonPressed() {
+  if (m_isQuickToolbar || m_barId.isEmpty()) return;
+
+  TFilePath commandbarFile = ToonzFolder::getMyModuleDir() +
+                             TFilePath("commandbars") +
+                             TFilePath("commandbar_" + m_barId + ".xml");
+  if (!TSystem::doesExistFileOrLevel(commandbarFile)) return;
+
+  TSystem::deleteFile(commandbarFile);
+}
+
+//-----------------------------------------------------------------------------
+
 void CommandBar::contextMenuEvent(QContextMenuEvent *event) {
   QMenu *menu                  = new QMenu(this);
   QAction *customizeCommandBar = menu->addAction(tr("Customize Command Bar"));
@@ -157,10 +211,10 @@ void CommandBar::contextMenuEvent(QContextMenuEvent *event) {
 //-----------------------------------------------------------------------------
 
 void CommandBar::doCustomizeCommandBar() {
-  CommandBarPopup *cbPopup = new CommandBarPopup();
+  CommandBarPopup *cbPopup = new CommandBarPopup(m_barId);
 
   if (cbPopup->exec()) {
-    fillToolbar(this);
+    fillToolbar(this, m_isQuickToolbar, m_barId);
   }
   delete cbPopup;
 }

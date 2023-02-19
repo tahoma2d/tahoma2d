@@ -5411,7 +5411,7 @@ void StyleEditor::loadPageStates(StylePageType pageType,
   }
 }
 
-void StyleEditor::save(QSettings &settings) const {
+void StyleEditor::save(QSettings &settings, bool forPopupIni) const {
   settings.setValue("isVertical", m_plainColorPage->getIsVertical());
   int visibleParts = 0;
   if (m_wheelAction->isChecked()) visibleParts |= 0x01;

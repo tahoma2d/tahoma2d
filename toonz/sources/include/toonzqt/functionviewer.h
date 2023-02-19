@@ -124,7 +124,8 @@ public:
   TXsheetHandle *getXsheetHandle() const { return m_xshHandle; }
 
   // SaveLoadQSettings
-  virtual void save(QSettings &settings) const override;
+  virtual void save(QSettings &settings,
+                    bool forPopupIni = false) const override;
   virtual void load(QSettings &settings) override;
 
   // refer to the preferences' "Current Column Color"

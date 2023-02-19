@@ -6,6 +6,7 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QAction>
+#include <QCheckBox>
 
 #include "toonzqt/dvdialog.h"
 #include "tfilepath.h"
@@ -25,7 +26,7 @@ class CommandBarTree final : public QTreeWidget {
   void saveMenuRecursive(QXmlStreamWriter& writer, QTreeWidgetItem* parentItem);
 
 public:
-  CommandBarTree(TFilePath& path, QWidget* parent = 0);
+  CommandBarTree(TFilePath& path, TFilePath& defaultPath, QWidget* parent = 0);
   void saveMenuTree(TFilePath& path);
 
 protected:
@@ -71,10 +72,11 @@ class CommandBarPopup final : public DVGui::Dialog {
   Q_OBJECT
   CommandBarListTree* m_commandListTree;
   CommandBarTree* m_menuBarTree;
-  TFilePath m_path;
+  QCheckBox* m_saveAsDefaultCB;
+  TFilePath m_path, m_defaultPath;
 
 public:
-  CommandBarPopup(bool isQuickToolbar = false);
+  CommandBarPopup(QString barId, bool isQuickToolbar = false);
 protected slots:
   void onOkPressed();
   void onSearchTextChanged(const QString& text);

@@ -914,7 +914,7 @@ void ComboViewerPanel::setVisiblePartsFlag(UINT flag) {
 }
 
 // SaveLoadQSettings
-void ComboViewerPanel::save(QSettings &settings) const {
+void ComboViewerPanel::save(QSettings &settings, bool forPopupIni) const {
   settings.setValue("visibleParts", m_visiblePartsFlag);
 }
 

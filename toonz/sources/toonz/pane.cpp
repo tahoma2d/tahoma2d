@@ -91,7 +91,7 @@ TPanel::~TPanel() {
     settings.setValue("geometry", geometry());
     if (SaveLoadQSettings *persistent =
             dynamic_cast<SaveLoadQSettings *>(widget()))
-      persistent->save(settings);
+      persistent->save(settings, true);
   }
 }
 

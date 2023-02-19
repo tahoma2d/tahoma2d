@@ -900,7 +900,7 @@ void SceneViewerPanel::setVisiblePartsFlag(UINT flag) {
 //-----------------------------------------------------------------------------
 
 // SaveLoadQSettings
-void SceneViewerPanel::save(QSettings &settings) const {
+void SceneViewerPanel::save(QSettings &settings, bool forPopupIni) const {
   settings.setValue("visibleParts", m_visiblePartsFlag);
   settings.setValue("consoleParts", m_flipConsole->getCustomizeMask());
 }
