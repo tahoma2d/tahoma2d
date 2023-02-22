@@ -1454,6 +1454,14 @@ QAction *MainWindow::createAction(const char *id, const char *name,
                                   const char *iconSVGName) {
   QAction *action = new DVAction(tr(name), this);
 
+  // For "edit" category menu commands may behave various function
+  // according to the current selection.
+  // Now the command name can be adjusted on switching the selection.
+  // Here we explicitly register the default text in order to recover the
+  // command name if the selection does not specify the alternative command
+  // name.
+  if (type == MenuEditCommandType) action->setIconText(tr(name));
+
 #if !defined(_WIN32)
   bool visible = Preferences::instance()->isShowAdvancedOptionsEnabled() &&
                  Preferences::instance()->getBoolValue(showIconsInMenu);

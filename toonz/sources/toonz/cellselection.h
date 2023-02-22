@@ -40,6 +40,7 @@ public:
   ~TCellSelection();
 
   void enableCommands() override;
+  void setAlternativeCommandNames();
 
   bool isEmpty() const override;
 

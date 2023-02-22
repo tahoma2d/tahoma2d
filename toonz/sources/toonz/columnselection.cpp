@@ -67,7 +67,9 @@ void getLevelSetFromColumnIndices(const std::set<int>& indices,
 // TColumnSelection
 //-----------------------------------------------------------------------------
 
-TColumnSelection::TColumnSelection() : m_reframePopup(0) {}
+TColumnSelection::TColumnSelection() : m_reframePopup(0) {
+  setAlternativeCommandNames();
+}
 
 //-----------------------------------------------------------------------------
 
@@ -95,6 +97,16 @@ void TColumnSelection::enableCommands() {
   enableCommand(this, MI_ReframeWithEmptyInbetweens,
                 &TColumnSelection::reframeWithEmptyInbetweens);
   enableCommand(this, MI_Autorenumber, &TColumnSelection::renumberColumns);
+}
+//-----------------------------------------------------------------------------
+
+void TColumnSelection::setAlternativeCommandNames() {
+  m_alternativeCommandNames = {
+      {MI_Copy, QObject::tr("Copy Columns", "TColumnSelection")},
+      {MI_Paste, QObject::tr("Paste Columns", "TColumnSelection")},
+      {MI_Cut, QObject::tr("Cut Columns", "TColumnSelection")},
+      {MI_Clear, QObject::tr("Delete Columns", "TColumnSelection")},
+      {MI_Insert, QObject::tr("Insert Columns", "TColumnSelection")}};
 }
 
 //-----------------------------------------------------------------------------
