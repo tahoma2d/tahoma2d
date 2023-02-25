@@ -1897,14 +1897,24 @@ ParamFieldKeyToggle {
   margin-top: 1;
   margin-bottom: 1;
 }
-#ToolBar QToolButton#qt_toolbar_ext_button {
+#ToolBar QToolButton#qt_toolbar_ext_button_vertical {
   qproperty-icon: url('../Medium/imgs/white/toolbar_extension_vertical.png');
   padding-bottom: 1;
 }
-#ToolBar QToolButton#qt_toolbar_ext_button:hover {
+#ToolBar QToolButton#qt_toolbar_ext_button_vertical:hover {
   background-color: #494949;
 }
-#ToolBar QToolButton#qt_toolbar_ext_button:pressed {
+#ToolBar QToolButton#qt_toolbar_ext_button_vertical:pressed {
+  background-color: #040404;
+}
+#ToolBar QToolButton#qt_toolbar_ext_button_horizontal {
+  qproperty-icon: url('../Medium/imgs/white/toolbar_extension_horizontal.png');
+  padding-bottom: 1;
+}
+#ToolBar QToolButton#qt_toolbar_ext_button_horizontal:hover {
+  background-color: #494949;
+}
+#ToolBar QToolButton#qt_toolbar_ext_button_horizontal:pressed {
   background-color: #040404;
 }
 #expandButton:checked {

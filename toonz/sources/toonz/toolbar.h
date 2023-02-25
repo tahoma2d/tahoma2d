@@ -5,11 +5,14 @@
 
 #include "tools/toolcommandids.h"
 
+#include "pane.h"
+#include "saveloadqsettings.h"
+
 #include <QToolBar>
 
 class QToolButton;
 
-class Toolbar final : public QToolBar {
+class Toolbar final : public QToolBar, public SaveLoadQSettings {
   Q_OBJECT
 
   std::map<std::string, QAction *> m_toolbarList;
@@ -17,6 +20,11 @@ class Toolbar final : public QToolBar {
   QAction *m_expandAction;
   bool m_isExpanded;
   int m_toolbarLevel;
+
+  bool m_isViewerToolbar;
+  TPanel *m_panel;
+  bool m_isVertical = true;
+  QToolButton *m_moreButton;
 
   struct {
     const char *toolName;
@@ -44,8 +52,14 @@ class Toolbar final : public QToolBar {
       {T_Hand, false, false, 0},       {0, false, false, 0}};
 
 public:
-  Toolbar(QWidget *parent, bool isVertical = true);
+  Toolbar(QWidget *parent, bool isViewerToolbar = false);
   ~Toolbar();
+
+  // SaveLoadQSettings
+  virtual void save(QSettings &settings) const override;
+  virtual void load(QSettings &settings) override;
+
+  void updateOrientation(bool isVertical);
 
 protected:
   bool addAction(QAction *act);
@@ -53,11 +67,14 @@ protected:
   void showEvent(QShowEvent *e) override;
   void hideEvent(QHideEvent *e) override;
 
+  void contextMenuEvent(QContextMenuEvent *event) override;
+
 protected slots:
   void onToolChanged();
   void onPreferenceChanged(const QString &prefName);
   void setIsExpanded(bool expand);
   void updateToolbar();
+  void orientationToggled(bool);
 };
 
 #endif  // TOOLBAR_H

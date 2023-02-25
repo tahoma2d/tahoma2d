@@ -28,6 +28,8 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 #include <QObject>
+#include <QContextMenuEvent>
+#include <QStyle>
 
 TEnv::IntVar ShowAllToolsToggle("ShowAllToolsToggle", 1);
 
@@ -35,41 +37,35 @@ TEnv::IntVar ShowAllToolsToggle("ShowAllToolsToggle", 1);
 // Toolbar
 //-----------------------------------------------------------------------------
 
-Toolbar::Toolbar(QWidget *parent, bool isVertical)
-    : QToolBar(parent), m_isExpanded(ShowAllToolsToggle != 0) {
+Toolbar::Toolbar(QWidget *parent, bool isViewerToolbar)
+    : QToolBar(parent)
+    , m_isExpanded(ShowAllToolsToggle != 0)
+    , m_isViewerToolbar(isViewerToolbar)
+    , m_isVertical(true) {
   // Fondamentale per lo style sheet
   setObjectName("toolBar");
 
-  setMovable(false);
-  if (isVertical)
-    setOrientation(Qt::Vertical);
-  else
-    setOrientation(Qt::Horizontal);
+  if (m_isViewerToolbar) m_isVertical = false;
 
+  m_panel      = dynamic_cast<TPanel *>(parent);
+
+  setMovable(false);
   setIconSize(QSize(20, 20));
   setToolButtonStyle(Qt::ToolButtonIconOnly);
+
+  m_moreButton   = findChild<QToolButton *>("qt_toolbar_ext_button");
 
   m_expandButton = new QToolButton(this);
   m_expandButton->setObjectName("expandButton");
   m_expandButton->setCheckable(true);
   m_expandButton->setChecked(m_isExpanded);
-  m_expandButton->setArrowType((isVertical) ? Qt::DownArrow : Qt::RightArrow);
   m_expandButton->hide();
   m_expandAction = addWidget(m_expandButton);
 
   connect(m_expandButton, SIGNAL(toggled(bool)), this,
           SLOT(setIsExpanded(bool)));
 
-  updateToolbar();
-  if (isVertical) {
-    QIcon moreIcon(":Resources/moredown.svg");
-    QToolButton *more = findChild<QToolButton *>("qt_toolbar_ext_button");
-    more->setIcon(moreIcon);
-  } else {
-    QIcon moreIcon(":Resources/more.svg");
-    QToolButton *more = findChild<QToolButton *>("qt_toolbar_ext_button");
-    more->setIcon(moreIcon);
-  }
+  updateOrientation(m_isVertical);
 }
 
 //-----------------------------------------------------------------------------
@@ -265,6 +261,79 @@ void Toolbar::hideEvent(QHideEvent *e) {
   disconnect(TApp::instance()->getCurrentScene(),
              SIGNAL(preferenceChanged(const QString &)), this,
              SLOT(onPreferenceChanged(const QString &)));
+}
+
+//-----------------------------------------------------------------------------
+
+void Toolbar::contextMenuEvent(QContextMenuEvent *event) {
+  if (m_isViewerToolbar) return;
+
+  QMenu *menu             = new QMenu();
+
+  QAction *toggleOrientation = menu->addAction(tr("Toggle Orientation"));
+  connect(toggleOrientation, SIGNAL(triggered(bool)), this,
+          SLOT(orientationToggled(bool)));
+
+  toggleOrientation->setEnabled(m_panel->isFloating());
+
+  menu->exec(event->globalPos());
+}
+
+//-----------------------------------------------------------------------------
+
+void Toolbar::orientationToggled(bool ignore) {
+  if (m_isViewerToolbar) return;
+
+  updateOrientation(!m_isVertical);
+}
+
+void Toolbar::updateOrientation(bool isVertical) {
+  bool wasVertical = m_isVertical;
+
+  m_isVertical = isVertical;
+
+  if (!m_isViewerToolbar) {
+    // Current dimensions
+    int x = wasVertical ? m_panel->height() : m_panel->width();
+
+    m_panel->setOrientation(m_isVertical);
+    m_panel->setFixedWidth(m_isVertical ? 44 : QWIDGETSIZE_MAX);
+    m_panel->setFixedHeight(m_isVertical ? QWIDGETSIZE_MAX : 44);
+    if (m_isVertical)
+      m_panel->resize(44, x);
+    else
+      m_panel->resize(x, 44);
+  }
+
+  setFixedWidth(m_isVertical ? 34 : QWIDGETSIZE_MAX);
+  setFixedHeight(m_isVertical ? QWIDGETSIZE_MAX : 34);
+  setOrientation(m_isVertical ? Qt::Vertical : Qt::Horizontal);
+  setSizePolicy(QSizePolicy::Policy::Expanding,
+                  QSizePolicy::Policy::Expanding);
+
+//  m_moreButton->setIcon(m_isVertical ? m_moreDownIcon : m_moreIcon);
+  m_moreButton->setObjectName(m_isVertical
+                                  ? "qt_toolbar_ext_button_vertical"
+                                  : "qt_toolbar_ext_button_horizontal");
+  QStyle *s = m_moreButton->style();
+  s->unpolish(m_moreButton);
+  s->polish(m_moreButton);
+
+  m_expandButton->setArrowType(m_isVertical ? Qt::DownArrow : Qt::RightArrow);
+  updateToolbar();
+}
+
+// SaveLoadQSettings
+void Toolbar::save(QSettings &settings) const {
+  UINT orientation = 0;
+  orientation      = m_isVertical ? 1 : 0;
+  settings.setValue("vertical", orientation);
+}
+
+void Toolbar::load(QSettings &settings) {
+  UINT orientation = settings.value("vertical", 1).toUInt();
+  m_isVertical     = orientation == 1;
+  updateOrientation(m_isVertical);
 }
 
 //-----------------------------------------------------------------------------
