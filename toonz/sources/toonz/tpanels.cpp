@@ -1033,7 +1033,7 @@ public:
 //-----------------------------------------------------------------------------
 CommandBarPanel::CommandBarPanel(QWidget *parent)
     : TPanel(parent, 0, TDockWidget::horizontal) {
-  CommandBar *xsheetToolbar = new CommandBar();
+  CommandBar *xsheetToolbar = new CommandBar(this);
   setWidget(xsheetToolbar);
   setIsMaximizable(false);
   setFixedHeight(36);

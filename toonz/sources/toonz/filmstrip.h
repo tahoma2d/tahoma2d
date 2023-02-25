@@ -247,7 +247,8 @@ public:
   ~Filmstrip();
 
   // SaveLoadQSettings
-  virtual void save(QSettings &settings) const override;
+  virtual void save(QSettings &settings,
+                    bool forPopupIni = false) const override;
   virtual void load(QSettings &settings) override;
 
 protected:

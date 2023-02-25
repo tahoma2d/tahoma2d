@@ -11,7 +11,7 @@ class QSettings;
 //! into / from provided qsettings
 class SaveLoadQSettings {
 public:
-  virtual void save(QSettings &settings) const = 0;
+  virtual void save(QSettings &settings, bool forPopupIni = false) const = 0;
   virtual void load(QSettings &settings)       = 0;
 };
 

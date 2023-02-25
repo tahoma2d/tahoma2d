@@ -75,7 +75,7 @@ void QuickToolbar::contextMenuEvent(QContextMenuEvent *event) {
 //-----------------------------------------------------------------------------
 
 void QuickToolbar::doCustomizeCommandBar() {
-  CommandBarPopup *cbPopup = new CommandBarPopup(true);
+  CommandBarPopup *cbPopup = new CommandBarPopup("", true);
 
   if (cbPopup->exec()) {
     fillToolbar(this, true);

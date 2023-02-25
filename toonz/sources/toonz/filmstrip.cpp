@@ -1949,7 +1949,7 @@ void Filmstrip::setOrientation(bool isVertical) {
 }
 
 // SaveLoadQSettings
-void Filmstrip::save(QSettings &settings) const {
+void Filmstrip::save(QSettings &settings, bool forPopupIni) const {
   UINT orientation = 0;
   orientation      = m_isVertical ? 1 : 0;
   settings.setValue("vertical", orientation);

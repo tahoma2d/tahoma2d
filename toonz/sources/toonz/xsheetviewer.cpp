@@ -1855,7 +1855,7 @@ void XsheetViewer::setFrameDisplayStyle(FrameDisplayStyle style) {
 
 //-----------------------------------------------------------------------------
 
-void XsheetViewer::save(QSettings &settings) const {
+void XsheetViewer::save(QSettings &settings, bool forPopupIni) const {
   settings.setValue("orientation", orientation()->name());
   settings.setValue("frameZoomFactor", m_frameZoomFactor);
 }
