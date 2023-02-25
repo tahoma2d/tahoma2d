@@ -324,7 +324,7 @@ void Toolbar::updateOrientation(bool isVertical) {
 }
 
 // SaveLoadQSettings
-void Toolbar::save(QSettings &settings) const {
+void Toolbar::save(QSettings &settings, bool forPopupIni) const {
   UINT orientation = 0;
   orientation      = m_isVertical ? 1 : 0;
   settings.setValue("vertical", orientation);
