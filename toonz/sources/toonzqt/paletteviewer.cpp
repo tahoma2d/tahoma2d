@@ -310,7 +310,7 @@ void PaletteViewer::updateView() {
 
 //-----------------------------------------------------------------------------
 
-void PaletteViewer::save(QSettings &settings) const {
+void PaletteViewer::save(QSettings &settings, bool forPopupIni) const {
   int visibleParts = m_toolbarVisibleOtherParts;
   if (m_visibleKeysAction->isChecked()) visibleParts |= 0x01;
 //  if (m_visibleNewAction->isChecked()) visibleParts |= 0x02;
