@@ -90,15 +90,14 @@ namespace ba = boost::adaptors;
 
 using namespace DVGui;
 
-
 //=============================================================================
 //      Local namespace
 //=============================================================================
 
 namespace {
 std::set<SceneBrowser *> activePreproductionBoards;
-//std::map<TFilePath, FCData> frameCountMap;
-//QMutex frameCountMapMutex;
+// std::map<TFilePath, FCData> frameCountMap;
+// QMutex frameCountMapMutex;
 QMutex levelFileMutex;
 
 }  // namespace
@@ -118,10 +117,10 @@ SceneBrowserButtonBar::SceneBrowserButtonBar(DvItemViewer *itemViewer,
   // buttonBar->setIconSize(QSize(10,10));
 
   QIcon newFolderIcon = createQIcon("newfolder");
-  QAction *newScene  = new QAction(newFolderIcon, tr("Create new scene"), this);
+  QAction *newScene = new QAction(newFolderIcon, tr("Create new scene"), this);
   newScene->setIconText(tr("Create scene"));
   addAction(newScene);
-  //addSeparator();
+  // addSeparator();
 
   connect(newScene, SIGNAL(triggered()), SIGNAL(newScene()));
 }
@@ -130,19 +129,14 @@ SceneBrowserButtonBar::SceneBrowserButtonBar(DvItemViewer *itemViewer,
 // SceneBrowser
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 SceneBrowser::SceneBrowser(QWidget *parent, Qt::WindowFlags flags,
-                         bool noContextMenu, bool multiSelectionEnabled)
-#else
-SceneBrowser::SceneBrowser(QWidget *parent, Qt::WFlags flags, bool noContextMenu,
-                         bool multiSelectionEnabled)
-#endif
+                           bool noContextMenu, bool multiSelectionEnabled)
     : QFrame(parent), m_folderName(0), m_itemViewer(0) {
   // style sheet
   setObjectName("SceneBrowser");
   setFrameStyle(QFrame::StyledPanel);
 
-  //m_mainSplitter      = new QSplitter(this);
+  // m_mainSplitter      = new QSplitter(this);
   m_folderTreeView    = new DvDirTreeView(this);
   QFrame *box         = new QFrame(this);
   QLabel *folderLabel = new QLabel(tr("Folder: "), this);
@@ -154,7 +148,7 @@ SceneBrowser::SceneBrowser(QWidget *parent, Qt::WFlags flags, bool noContextMenu
       new SceneBrowserButtonBar(m_itemViewer, box);
   DvItemViewerPanel *viewerPanel = m_itemViewer->getPanel();
   viewerPanel->setThumbnailsView();
-  viewerPanel->setIconSize(QSize(192,108)); //default 80, 60
+  viewerPanel->setIconSize(QSize(192, 108));  // default 80, 60
   viewerPanel->addColumn(DvItemListModel::FileType, 50);
   viewerPanel->addColumn(DvItemListModel::FrameCount, 50);
   viewerPanel->addColumn(DvItemListModel::FileSize, 50);
@@ -168,7 +162,7 @@ SceneBrowser::SceneBrowser(QWidget *parent, Qt::WFlags flags, bool noContextMenu
       new DVItemViewPlayDelegate(viewerPanel);
   viewerPanel->setItemViewPlayDelegate(itemViewPlayDelegate);
 
-  //m_mainSplitter->setObjectName("SceneBrowserSplitter");
+  // m_mainSplitter->setObjectName("SceneBrowserSplitter");
   m_folderTreeView->hide();
   m_folderTreeView->setObjectName("DirTreeView");
   box->setObjectName("castFrame");
@@ -192,7 +186,7 @@ SceneBrowser::SceneBrowser(QWidget *parent, Qt::WFlags flags, bool noContextMenu
     }
     mainLayout->addLayout(folderLay, 0);
 
-    //m_mainSplitter->addWidget(m_folderTreeView);
+    // m_mainSplitter->addWidget(m_folderTreeView);
     QVBoxLayout *boxLayout = new QVBoxLayout(box);
     boxLayout->setMargin(0);
     boxLayout->setSpacing(0);
@@ -200,12 +194,12 @@ SceneBrowser::SceneBrowser(QWidget *parent, Qt::WFlags flags, bool noContextMenu
       boxLayout->addWidget(titleBar, 0);
       boxLayout->addWidget(m_itemViewer, 1);
     }
-    //m_mainSplitter->addWidget(box);
+    // m_mainSplitter->addWidget(box);
     mainLayout->addWidget(box, 1);
   }
   setLayout(mainLayout);
 
-  //m_mainSplitter->setSizes(QList<int>() << 270 << 500);
+  // m_mainSplitter->setSizes(QList<int>() << 270 << 500);
 
   // signal-slot connections
   bool ret = connect(m_folderTreeView, SIGNAL(currentNodeChanged()),
@@ -252,15 +246,15 @@ SceneBrowser::SceneBrowser(QWidget *parent, Qt::WFlags flags, bool noContextMenu
   ret = ret && connect(MyFileSystemWatcher::instance(),
                        SIGNAL(directoryChanged(const QString &)), this,
                        SLOT(onFileSystemChanged(const QString &)));
-  
+
   // when the scene switched, update the path of the scene location node
   TSceneHandle *sceneHandle = TApp::instance()->getCurrentScene();
-  //ret = ret && connect(sceneHandle, SIGNAL(sceneSwitched()), this,
-  //                     SLOT(onSceneSwitched()));
+  // ret = ret && connect(sceneHandle, SIGNAL(sceneSwitched()), this,
+  //                      SLOT(onSceneSwitched()));
   ret = ret && connect(sceneHandle, SIGNAL(nameSceneChanged()), this,
                        SLOT(onSceneSwitched()));
 
-  //onSceneSwitched();
+  // onSceneSwitched();
 
   // store the first item("Root") in the history
   m_indexHistoryList.append(m_folderTreeView->currentIndex());
@@ -491,7 +485,9 @@ void SceneBrowser::sortByDataModel(DataType dataType, bool isDiscendent) {
 
 //-----------------------------------------------------------------------------
 
-void SceneBrowser::setFilterTypes(const QStringList &types) { m_filter = types; }
+void SceneBrowser::setFilterTypes(const QStringList &types) {
+  m_filter = types;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -511,8 +507,8 @@ void SceneBrowser::refreshCurrentFolderItems() {
   m_items.clear();
 
   // put the parent directory item
-  //TFilePath parentFp = m_folder.getParentDir();
-  //if (parentFp != TFilePath("") && parentFp != m_folder)
+  // TFilePath parentFp = m_folder.getParentDir();
+  // if (parentFp != TFilePath("") && parentFp != m_folder)
   //  m_items.push_back(Item(parentFp, true, false));
 
   // register the file items
@@ -621,7 +617,7 @@ void SceneBrowser::refreshCurrentFolderItems() {
 //-----------------------------------------------------------------------------
 
 void SceneBrowser::setFolder(const TFilePath &fp, bool expandNode,
-                            bool forceUpdate) {
+                             bool forceUpdate) {
   if (fp == m_folder && !forceUpdate) return;
 
   // set the current folder path
@@ -829,7 +825,7 @@ void SceneBrowser::readFrameCount(Item &item) {
 //-----------------------------------------------------------------------------
 
 QVariant SceneBrowser::getItemData(int index, DataType dataType,
-                                  bool isSelected) {
+                                   bool isSelected) {
   if (index < 0 || index >= (int)m_items.size()) return QVariant();
   Item &item = m_items[index];
   if (dataType == Name) {
@@ -1140,7 +1136,7 @@ QMenu *SceneBrowser::getContextMenu(QWidget *parent, int index) {
   if (files.size() == 1 && files[0].getType() != "tnz") {
     QAction *action = new QAction(tr("Rename"), menu);
     ret             = ret && connect(action, SIGNAL(triggered()), this,
-                         SLOT(renameAsToonzLevel()));
+                                     SLOT(renameAsToonzLevel()));
     menu->addAction(action);
   }
 #ifdef LEVO
@@ -1154,13 +1150,13 @@ QMenu *SceneBrowser::getContextMenu(QWidget *parent, int index) {
        files[1].getType() == "TIFF" || files[1].getType() == "PNG")) {
     QAction *action = new QAction(tr("Convert to Painted TLV"), menu);
     ret             = ret && connect(action, SIGNAL(triggered()), this,
-                         SLOT(convertToPaintedTlv()));
+                                     SLOT(convertToPaintedTlv()));
     menu->addAction(action);
   }
   if (areFullcolor) {
     QAction *action = new QAction(tr("Convert to Unpainted TLV"), menu);
     ret             = ret && connect(action, SIGNAL(triggered()), this,
-                         SLOT(convertToUnpaintedTlv()));
+                                     SLOT(convertToUnpaintedTlv()));
     menu->addAction(action);
     menu->addSeparator();
   }
@@ -1193,42 +1189,42 @@ QMenu *SceneBrowser::getContextMenu(QWidget *parent, int index) {
       if (status == DvItemListModel::VC_ReadOnly) {
         action = vcMenu->addAction(tr("Edit"));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(editVersionControl()));
+                                SLOT(editVersionControl()));
 
         TFilePath path       = files.at(0);
         std::string fileType = path.getType();
         if (fileType == "tlv" || fileType == "pli" || path.getDots() == "..") {
           action = vcMenu->addAction(tr("Edit Frame Range..."));
           ret    = ret && connect(action, SIGNAL(triggered()), this,
-                               SLOT(editFrameRangeVersionControl()));
+                                  SLOT(editFrameRangeVersionControl()));
         }
       } else {
         action = vcMenu->addAction(tr("Edit"));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(updateAndEditVersionControl()));
+                                SLOT(updateAndEditVersionControl()));
       }
     }
 
     if (status == DvItemListModel::VC_Modified) {
       action = vcMenu->addAction(tr("Put..."));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(putVersionControl()));
+                              SLOT(putVersionControl()));
 
       action = vcMenu->addAction(tr("Revert"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(revertVersionControl()));
+                              SLOT(revertVersionControl()));
     }
 
     if (status == DvItemListModel::VC_ReadOnly ||
         status == DvItemListModel::VC_ToUpdate) {
       action = vcMenu->addAction(tr("Get"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(getVersionControl()));
+                              SLOT(getVersionControl()));
 
       if (status == DvItemListModel::VC_ReadOnly) {
         action = vcMenu->addAction(tr("Delete"));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(deleteVersionControl()));
+                                SLOT(deleteVersionControl()));
       }
 
       vcMenu->addSeparator();
@@ -1245,36 +1241,36 @@ QMenu *SceneBrowser::getContextMenu(QWidget *parent, int index) {
       } else if (files.size() > 1) {
         action = vcMenu->addAction("Get Revision...");
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(getRevisionVersionControl()));
+                                SLOT(getRevisionVersionControl()));
       }
     }
 
     if (status == DvItemListModel::VC_Edited) {
       action = vcMenu->addAction(tr("Unlock"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(unlockVersionControl()));
+                              SLOT(unlockVersionControl()));
     }
 
     if (status == DvItemListModel::VC_Unversioned) {
       action = vcMenu->addAction(tr("Put..."));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(putVersionControl()));
+                              SLOT(putVersionControl()));
     }
 
     if (status == DvItemListModel::VC_Locked && files.size() == 1) {
       action = vcMenu->addAction(tr("Unlock"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(unlockVersionControl()));
+                              SLOT(unlockVersionControl()));
 
       action = vcMenu->addAction(tr("Edit Info"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(showLockInformation()));
+                              SLOT(showLockInformation()));
     }
 
     if (status == DvItemListModel::VC_Missing) {
       action = vcMenu->addAction(tr("Get"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(getVersionControl()));
+                              SLOT(getVersionControl()));
 
       if (files.size() == 1) {
         vcMenu->addSeparator();
@@ -1292,44 +1288,44 @@ QMenu *SceneBrowser::getContextMenu(QWidget *parent, int index) {
     if (status == DvItemListModel::VC_PartialLocked) {
       action = vcMenu->addAction(tr("Get"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(getVersionControl()));
+                              SLOT(getVersionControl()));
       if (files.size() == 1) {
         action = vcMenu->addAction(tr("Edit Frame Range..."));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(editFrameRangeVersionControl()));
+                                SLOT(editFrameRangeVersionControl()));
 
         action = vcMenu->addAction(tr("Edit Info"));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(showFrameRangeLockInfo()));
+                                SLOT(showFrameRangeLockInfo()));
       }
 
     } else if (status == DvItemListModel::VC_PartialEdited) {
       action = vcMenu->addAction(tr("Get"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(getVersionControl()));
+                              SLOT(getVersionControl()));
 
       if (files.size() == 1) {
         action = vcMenu->addAction(tr("Unlock Frame Range"));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(unlockFrameRangeVersionControl()));
+                                SLOT(unlockFrameRangeVersionControl()));
 
         action = vcMenu->addAction(tr("Edit Info"));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(showFrameRangeLockInfo()));
+                                SLOT(showFrameRangeLockInfo()));
       }
     } else if (status == DvItemListModel::VC_PartialModified) {
       action = vcMenu->addAction(tr("Get"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(getVersionControl()));
+                              SLOT(getVersionControl()));
 
       if (files.size() == 1) {
         action = vcMenu->addAction(tr("Put..."));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(putFrameRangeVersionControl()));
+                                SLOT(putFrameRangeVersionControl()));
 
         action = vcMenu->addAction(tr("Revert"));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(revertFrameRangeVersionControl()));
+                                SLOT(revertFrameRangeVersionControl()));
       }
     }
 
@@ -1385,7 +1381,7 @@ void SceneBrowser::startDragDrop() {
 //-----------------------------------------------------------------------------
 
 bool SceneBrowser::dropMimeData(QTreeWidgetItem *parent, int index,
-                               const QMimeData *data, Qt::DropAction action) {
+                                const QMimeData *data, Qt::DropAction action) {
   return false;
 }
 
@@ -1394,10 +1390,10 @@ bool SceneBrowser::dropMimeData(QTreeWidgetItem *parent, int index,
 void SceneBrowser::onTreeFolderChanged() {
   // Commented by KD
   DvDirModelNode *node = m_folderTreeView->getCurrentNode();
-  //if (node)
-  //  node->visualizeContent(this);
-  //else
-  //  setFolder(TFilePath());
+  // if (node)
+  //   node->visualizeContent(this);
+  // else
+  //   setFolder(TFilePath());
   m_itemViewer->resetVerticalScrollBar();
   m_itemViewer->updateContentSize();
   m_itemViewer->getPanel()->update();
@@ -1410,7 +1406,6 @@ void SceneBrowser::onTreeFolderChanged() {
 
   // Restore scroll position
   m_itemViewer->verticalScrollBar()->setValue(m_currentScroll);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -1420,7 +1415,7 @@ void SceneBrowser::changeFolder(const QModelIndex &index) {}
 //-----------------------------------------------------------------------------
 
 void SceneBrowser::onDataChanged(const QModelIndex &topLeft,
-                                const QModelIndex &bottomRight) {
+                                 const QModelIndex &bottomRight) {
   onTreeFolderChanged();
 }
 
@@ -1497,8 +1492,7 @@ bool SceneBrowser::drop(const QMimeData *mimeData) {
       TFilePath path = folderPath;
       NameBuilder *nameBuilder =
           NameBuilder::getBuilder(::to_wstring(path.getName()));
-      do
-        levelName = nameBuilder->getNext();
+      do levelName = nameBuilder->getNext();
       while (TSystem::doesExistFileOrLevel(path.withName(levelName)));
       folderPath = path.withName(levelName);
     }
@@ -1634,11 +1628,7 @@ QString getFrame(const QString &filename) {
   QString number = filename.mid(from + 1, to - from);
   for (i = 0; i < 4 - number.size(); i++) padStr[i] = '0';
   for (i = 0; i < number.size(); i++)
-#if QT_VERSION >= 0x050500
     padStr[4 - number.size() + i] = number.at(i).toLatin1();
-#else
-    padStr[4 - number.size() + i] = number.at(i).toAscii();
-#endif
   return QString(padStr);
 }
 
@@ -1745,7 +1735,7 @@ void SceneBrowser::renameAsToonzLevel() {
 
   QApplication::restoreOverrideCursor();
 
-  SceneBrowser::refreshFolder(filePaths[0].getParentDir());
+  FileBrowser::refreshFolder(filePaths[0].getParentDir());
 }
 
 #ifdef LEVO
@@ -1926,9 +1916,10 @@ void SceneBrowser::convertToPaintedTlv() {
 //-----------------------------------------------------------------------------
 
 void SceneBrowser::onSceneSwitched() {
-  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  ToonzScene *scene      = TApp::instance()->getCurrentScene()->getScene();
   TFilePath scenesFolder = scene->getScenePath().getParentDir();
-  //TFilePath scenesFolder = TProjectManager::instance()->getCurrentProject()->getScenesPath();
+  // TFilePath scenesFolder =
+  // TProjectManager::instance()->getCurrentProject()->getScenesPath();
   setFolder(scenesFolder, true);
 }
 
@@ -1991,7 +1982,8 @@ void SceneBrowser::onDoubleClickedItem(int index) {
 
 void SceneBrowser::refreshFolder(const TFilePath &folderPath) {
   std::set<SceneBrowser *>::iterator it;
-  for (it = activePreproductionBoards.begin(); it != activePreproductionBoards.end(); ++it) {
+  for (it = activePreproductionBoards.begin();
+       it != activePreproductionBoards.end(); ++it) {
     SceneBrowser *browser = *it;
     DvDirModel::instance()->refreshFolder(folderPath);
     if (browser->getFolder() == folderPath) {
@@ -2004,7 +1996,8 @@ void SceneBrowser::refreshFolder(const TFilePath &folderPath) {
 
 void SceneBrowser::updateItemViewerPanel() {
   std::set<SceneBrowser *>::iterator it;
-  for (it = activePreproductionBoards.begin(); it != activePreproductionBoards.end(); ++it) {
+  for (it = activePreproductionBoards.begin();
+       it != activePreproductionBoards.end(); ++it) {
     SceneBrowser *browser = *it;
     browser->m_itemViewer->getPanel()->update();
   }
@@ -2013,7 +2006,7 @@ void SceneBrowser::updateItemViewerPanel() {
 //-----------------------------------------------------------------------------
 
 void SceneBrowser::getExpandedFolders(DvDirModelNode *node,
-                                     QList<DvDirModelNode *> &expandedNodes) {
+                                      QList<DvDirModelNode *> &expandedNodes) {
   if (!node) return;
   QModelIndex newIndex = DvDirModel::instance()->getIndexByNode(node);
   if (!m_folderTreeView->isExpanded(newIndex)) return;
@@ -2061,7 +2054,6 @@ void SceneBrowser::refresh() {
 //-----------------------------------------------------------------------------
 
 void SceneBrowser::newScene() {
-
   m_currentScroll = m_itemViewer->verticalScrollBar()->value();
 
   TFilePath parentFolder = getFolder();
@@ -2069,37 +2061,38 @@ void SceneBrowser::newScene() {
   TFilePath scenePath;
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   if (scene->isUntitled()) {
-      bool ok;
-      sceneName =
-          QInputDialog::getText(this, tr("Save Scene"), tr("Scene name:"),
-                                QLineEdit::Normal, QString(), &ok);
-      if (!ok || sceneName == "") return;
-    } else {
-      sceneName = QString::fromWCharArray( scene->getSceneName().c_str() );
+    bool ok;
+    sceneName = QInputDialog::getText(this, tr("Save Scene"), tr("Scene name:"),
+                                      QLineEdit::Normal, QString(), &ok);
+    if (!ok || sceneName == "") return;
+  } else {
+    sceneName = QString::fromWCharArray(scene->getSceneName().c_str());
   }
   QString prefix;
   QString number;
-  for(int j = 0; j<sceneName.length(); j++) {
+  for (int j = 0; j < sceneName.length(); j++) {
     QChar c;
-    c = sceneName.at(sceneName.length()-1-j);
+    c = sceneName.at(sceneName.length() - 1 - j);
     if (c.isDigit()) {
       number = QString(c) + number;
     } else {
       prefix = sceneName;
-      prefix.truncate(sceneName.length()-j);
+      prefix.truncate(sceneName.length() - j);
       break;
     }
   }
-  if (number.length()==0) {
-    //prefix+="-";
-    number="000";
+  if (number.length() == 0) {
+    // prefix+="-";
+    number = "000";
   }
   int i = number.toInt();
   do {
-    QString number_ext = QStringLiteral("%1").arg(++i, number.length(), 10, QLatin1Char('0'));
-    scenePath = parentFolder + (prefix.toStdWString()+number_ext.toStdWString()+L".tnz");
+    QString number_ext =
+        QStringLiteral("%1").arg(++i, number.length(), 10, QLatin1Char('0'));
+    scenePath = parentFolder +
+                (prefix.toStdWString() + number_ext.toStdWString() + L".tnz");
   } while (TFileStatus(scenePath).doesExist());
-  
+
   if (!IoCmd::saveSceneIfNeeded(QObject::tr("Change project"))) return;
   IoCmd::newScene();
   IoCmd::saveScene(scenePath, false);
@@ -2110,7 +2103,7 @@ void SceneBrowser::newScene() {
   QString tempName(tr("New Folder"));
   std::wstring folderName = tempName.toStdWString();
   TFilePath folderPath    = parentFolder + folderName;
-  //int i                   = 1;
+  // int i                   = 1;
   while (TFileStatus(folderPath).doesExist())
     folderPath = parentFolder + (folderName + L" " + std::to_wstring(++i));
 
@@ -2202,5 +2195,6 @@ void SceneBrowser::tryToOpenScene(const TFilePath &filePath) {
 
 //=============================================================================
 
-OpenFloatingPanel openPreproductionBoardPane(MI_OpenPreproductionBoard, "PreproductionBoard",
-                                  QObject::tr("Preproduction Board"));
+OpenFloatingPanel openPreproductionBoardPane(
+    MI_OpenPreproductionBoard, "PreproductionBoard",
+    QObject::tr("Preproduction Board"));

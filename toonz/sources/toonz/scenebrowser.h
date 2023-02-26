@@ -43,13 +43,8 @@ class SceneBrowser final : public QFrame, public DvItemListModel {
   Q_OBJECT
 
 public:
-#if QT_VERSION >= 0x050500
   SceneBrowser(QWidget *parent, Qt::WindowFlags flags = 0,
-              bool noContextMenu = false, bool multiSelectionEnabled = false);
-#else
-  SceneBrowser(QWidget *parent, Qt::WFlags flags = 0, bool noContextMenu = false,
-              bool multiSelectionEnabled = false);
-#endif
+               bool noContextMenu = false, bool multiSelectionEnabled = false);
   ~SceneBrowser();
 
   void sortByDataModel(DataType dataType, bool isDiscendent) override;
