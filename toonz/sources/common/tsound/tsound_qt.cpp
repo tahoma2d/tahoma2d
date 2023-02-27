@@ -325,8 +325,7 @@ TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(TUINT32 sampleRate,
                                                          int channelCount,
                                                          int bitPerSample,
                                                          int sampleType) {
-  TSoundTrackFormat fmt(sampleRate, bitPerSample, channelCount, true,
-                        sampleType);
+  TSoundTrackFormat fmt(sampleRate, bitPerSample, channelCount, sampleType);
   return fmt;
 }
 
