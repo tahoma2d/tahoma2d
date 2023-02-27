@@ -6,6 +6,7 @@
 // TnzCore includes
 #include "tsystem.h"
 #include "tmsgcore.h"
+#include "tenv.h"
 
 // QT includes
 #include <QCoreApplication>
@@ -267,8 +268,8 @@ QString autodetectRhubarb() {
 
 #ifndef _WIN32
   folderList.append("/usr/local/bin");
-  folderList.append(return "/usr/bin");
-  folderList.append(return "/bin");
+  folderList.append("/usr/bin");
+  folderList.append("/bin");
 #endif
 
 #ifdef _WIN32
