@@ -99,7 +99,9 @@ void DVAPI fillautoInks(TRasterCM32P &r, TRect &rect,
 
 void DVAPI fullColorFill(const TRaster32P &ras, const FillParameters &params,
                          TTileSaverFullColor *saver = 0, TXsheet *xsheet = 0,
-                         int frameIndex = -1);
+                         int frameIndex = -1, bool fillGaps = false,
+                         bool closeGaps = false, int closeStyleIndex = -1,
+                         double autoCloseDistance = -1.0);
 
 //=============================================================================
 //! The class AreaFiller allows to fill a raster area, delimited by rect or

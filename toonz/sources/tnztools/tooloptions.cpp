@@ -1749,7 +1749,65 @@ FullColorFillToolOptionsBox::FullColorFillToolOptionsBox(
   ToolOptionControlBuilder builder(this, tool, pltHandle, toolHandle);
   if (tool && tool->getProperties(0)) tool->getProperties(0)->accept(builder);
 
+  m_rasterGapSettings =
+      dynamic_cast<ToolOptionCombo *>(m_controls.value("Gaps:"));
+  m_rasterGapSlider =
+      dynamic_cast<ToolOptionSlider *>(m_controls.value("Distance:"));
+  m_styleIndex =
+      dynamic_cast<StyleIndexFieldAndChip *>(m_controls.value("Style Index:"));
+  m_rasterGapLabel  = m_labels.value(m_rasterGapSettings->propertyName());
+  m_styleIndexLabel = m_labels.value(m_styleIndex->propertyName());
+  m_gapSliderLabel  = m_labels.value(m_rasterGapSlider->propertyName());
+
+  bool ret = connect(m_rasterGapSettings, SIGNAL(currentIndexChanged(int)),
+                     this, SLOT(onGapSettingChanged(int)));
+
+  checkGapSettingsVisibility();
+
   m_layout->addStretch(0);
+}
+
+//-----------------------------------------------------------------------------
+
+void FullColorFillToolOptionsBox::checkGapSettingsVisibility() {
+  if (m_rasterGapSettings->getProperty()->getValue() == L"Ignore Gaps") {
+    m_styleIndex->hide();
+    m_styleIndexLabel->hide();
+    m_rasterGapSlider->hide();
+    m_gapSliderLabel->hide();
+  } else if (m_rasterGapSettings->getProperty()->getValue() == L"Fill Gaps") {
+    m_styleIndex->hide();
+    m_styleIndexLabel->hide();
+    m_rasterGapSlider->show();
+    m_gapSliderLabel->show();
+  } else if (m_rasterGapSettings->getProperty()->getValue() ==
+             L"Close and Fill") {
+    m_styleIndex->show();
+    m_styleIndexLabel->show();
+    m_rasterGapSlider->show();
+    m_gapSliderLabel->show();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void FullColorFillToolOptionsBox::onGapSettingChanged(int index) {
+  if (index == 0) {
+    m_styleIndex->hide();
+    m_styleIndexLabel->hide();
+    m_rasterGapSlider->hide();
+    m_gapSliderLabel->hide();
+  } else if (index == 1) {
+    m_styleIndex->hide();
+    m_styleIndexLabel->hide();
+    m_rasterGapSlider->show();
+    m_gapSliderLabel->hide();
+  } else if (index == 2) {
+    m_styleIndex->show();
+    m_styleIndexLabel->show();
+    m_rasterGapSlider->show();
+    m_gapSliderLabel->show();
+  }
 }
 
 //=============================================================================

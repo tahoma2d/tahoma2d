@@ -14,6 +14,10 @@
 #include <QCoreApplication>
 #include <QObject>
 
+#define IGNOREGAPS L"Ignore Gaps"
+#define FILLGAPS L"Fill Gaps"
+#define CLOSEANDFILLGAPS L"Close and Fill"
+
 class FullColorFillTool final : public QObject, public TTool {
   Q_DECLARE_TR_FUNCTIONS(FullColorFillTool)
 
@@ -22,6 +26,9 @@ class FullColorFillTool final : public QObject, public TTool {
   TPropertyGroup m_prop;
   TPointD m_clickPoint;
   TBoolProperty m_referenced;
+  TDoubleProperty m_rasterGapDistance;
+  TEnumProperty m_closeRasterGaps;
+  TStyleIndexProperty m_closeStyleIndex;
 
 public:
   FullColorFillTool();
@@ -45,7 +52,8 @@ public:
 private:
   void applyFill(const TImageP &img, const TPointD &pos, FillParameters &params,
                  bool isShiftFill, TXshSimpleLevel *sl, const TFrameId &fid,
-                 TXsheet *xsheet, int frameInde);
+                 TXsheet *xsheet, int frameIndex, bool fillGap, bool closeGap,
+                 int closeStyleIndex);
 };
 
 #endif  // FULLCOLORFILLTOOL_H

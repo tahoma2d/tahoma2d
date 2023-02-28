@@ -920,10 +920,12 @@ void inkFill(const TRasterCM32P &r, const TPoint &pin, int ink, int searchRay,
 //-----------------------------------------------------------------------------
 
 void fullColorFill(const TRaster32P &ras, const FillParameters &params,
-                   TTileSaverFullColor *saver, TXsheet *xsheet,
-                   int frameIndex) {
+                   TTileSaverFullColor *saver, TXsheet *xsheet, int frameIndex,
+                   bool fillGaps, bool closeGaps, int closeStyleIndex,
+                   double autoCloseDistance) {
   int oldy, xa, xb, xc, xd, dy, oldxd, oldxc;
   TPixel32 *pix, *limit, *pix0, *oldpix, *refpix, *oldrefpix;
+  TPixelCM32 *refCMpix;
   int x = params.m_p.x, y = params.m_p.y;
 
   TRect bbbox = ras->getBounds();
@@ -937,6 +939,10 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
   if (clickedPosColor == color) return;
 
   TRaster32P refRas(bbbox.getSize());
+
+  TPixel32 gapColor  = plt->getStyle(closeStyleIndex)->getMainColor();
+  int styleIndex     = 4094;
+  int fakeStyleIndex = 4095;
 
   if (xsheet) {
     ToonzScene *scene = xsheet->getScene();
@@ -952,6 +958,34 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
     refRas->copy(tmpRaster, offset);
 
     clickedPosColor = *(refRas->pixels(y) + x);
+  } else if (fillGaps) {
+    refRas->lock();
+    TPoint offset((refRas->getLx() - ras->getLx()) / 2,
+                  (refRas->getLy() - ras->getLy()) / 2);
+    refRas->fill(color);
+    refRas->copy(ras, offset);
+  }
+
+  TRasterCM32P refCMRaster;
+
+  if (fillGaps) {
+    TRasterCM32P cr = convertRaster2CM(refRas);
+    refCMRaster     = cr->clone();
+    fillGaps = TAutocloser(refCMRaster, autoCloseDistance, AutocloseAngle,
+                           styleIndex, AutocloseOpacity)
+                   .exec();
+    if (fillGaps) {
+      // Transfer the gap segments to the refRaster
+      refCMpix         = refCMRaster->pixels(0);
+      TPixel32 *refPix = refRas->pixels(0);
+      for (int refCMY = 0; refCMY < refCMRaster->getLy(); refCMY++) {
+        for (int refCMX = 0; refCMX < refCMRaster->getLx();
+             refCMX++, refCMpix++, refPix++) {
+          if (refCMpix->getInk() != styleIndex) continue;
+          *refPix = color;
+        }
+      }
+    }
   }
 
   int fillDepth =
@@ -966,7 +1000,7 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
   std::stack<FillSeed> seeds;
   std::map<int, std::vector<std::pair<int, int>>> segments;
 
-  if (!xsheet)
+  if (!xsheet && !fillGaps)
     fullColorFindSegment(ras, params.m_p, xa, xb, color, clickedPosColor,
                          fillDepth);
   else
@@ -976,6 +1010,20 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
   segments[y].push_back(std::pair<int, int>(xa, xb));
   seeds.push(FillSeed(xa, xb, y, 1));
   seeds.push(FillSeed(xa, xb, y, -1));
+
+  if (fillGaps && closeGaps) {
+    // Set the ink on gaps that were used to 4095
+    TPixelCM32 *tempPix = refCMRaster->pixels(0);
+    tempPix += (y * refCMRaster->getLx()) + xa - 1;
+    int i = xa;
+    while (i <= xb) {
+      if (tempPix->getInk() == styleIndex) {
+        tempPix->setInk(fakeStyleIndex);
+      }
+      tempPix++;
+      i++;
+    }
+  }
 
   while (!seeds.empty()) {
     FillSeed fs = seeds.top();
@@ -995,7 +1043,7 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
     // left end of the fill seed pixels
     oldpix = ras->pixels(oldy) + xa;
 
-    if (xsheet) {
+    if (xsheet || fillGaps) {
       refpix    = refRas->pixels(y) + xa;
       oldrefpix = refRas->pixels(oldy) + xa;
     }
@@ -1011,7 +1059,7 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
       if (segments.find(y) != segments.end())
         test = isPixelInSegment(segments[y], x);
       bool canPaint = false;
-      if (!xsheet)
+      if (!xsheet && !fillGaps)
         canPaint = *pix != color && !test &&
                    floodCheck(clickedPosColor, pix, oldpix, fillDepth);
       else
@@ -1019,7 +1067,7 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
                    floodCheck(clickedPosColor, refpix, oldrefpix, fillDepth);
       if (canPaint) {
         // compute horizontal range to be filled
-        if (!xsheet)
+        if (!xsheet && !fillGaps)
           fullColorFindSegment(ras, TPoint(x, y), xc, xd, color,
                                clickedPosColor, fillDepth);
         else
@@ -1027,6 +1075,20 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
                                clickedPosColor, fillDepth);
         // insert segment to be filled
         insertSegment(segments[y], std::pair<int, int>(xc, xd));
+        if (fillGaps && closeGaps) {
+          // Set the ink on gaps that were used to 4095
+          TPixelCM32 *tempPix = refCMRaster->pixels(0);
+          tempPix += (y * refCMRaster->getLx()) + xa - 1;
+          int i = xa;
+          while (i <= xb) {
+            if (tempPix->getInk() == styleIndex) {
+              tempPix->setInk(fakeStyleIndex);
+            }
+            tempPix++;
+            i++;
+          }
+        }
+
         // create new fillSeed to invert direction, if needed
         if (xc < xa) seeds.push(FillSeed(xc, xa - 1, y, -dy));
         if (xd > xb) seeds.push(FillSeed(xb + 1, xd, y, -dy));
@@ -1040,7 +1102,7 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
         // jump to the next pixel to the right end of the range
         pix += xd - x + 1;
         oldpix += xd - x + 1;
-        if (xsheet) {
+        if (xsheet || fillGaps) {
           refpix += xd - x + 1;
           oldrefpix += xd - x + 1;
         }
@@ -1048,7 +1110,7 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
       } else {
         pix++;
         oldpix++, x++;
-        if (xsheet) {
+        if (xsheet || fillGaps) {
           refpix++;
           oldrefpix++;
         }
@@ -1058,15 +1120,14 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
     if (oldxd > 0) seeds.push(FillSeed(oldxc, oldxd, y, dy));
   }
 
-  if (xsheet) refRas->unlock();
+  if (xsheet || fillGaps) refRas->unlock();
 
   // pixels are actually filled here
   TPixel32 premultiColor = premultiply(color);
 
   std::map<int, std::vector<std::pair<int, int>>>::iterator it;
   for (it = segments.begin(); it != segments.end(); it++) {
-    TPixel32 *line    = ras->pixels(it->first);
-    TPixel32 *refLine = 0;
+    TPixel32 *line = ras->pixels(it->first);
     std::vector<std::pair<int, int>> segmentVector = it->second;
     for (int i = 0; i < (int)segmentVector.size(); i++) {
       std::pair<int, int> segment = segmentVector[i];
@@ -1084,6 +1145,19 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
             *pix = color;
           else
             *pix = overPix(*pix, premultiColor);
+        }
+      }
+    }
+  }
+
+  if (fillGaps && closeGaps) {
+    TPixelCM32 *tempPix = refCMRaster->pixels();
+    TPixel32 *keepPix   = ras->pixels();
+    for (int tempY = 0; tempY < refCMRaster->getLy(); tempY++) {
+      for (int tempX = 0; tempX < refCMRaster->getLx();
+           tempX++, tempPix++, keepPix++) {
+        if (tempPix->getInk() == fakeStyleIndex) {
+          *keepPix = gapColor;
         }
       }
     }
