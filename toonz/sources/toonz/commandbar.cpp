@@ -46,7 +46,7 @@ CommandBar::CommandBar(QWidget *parent, Qt::WFlags flags)
     m_barId        = date.toString("yyyyMMddhhmmss");
   }
   // Sets up default.
-  fillToolbar(this);
+  fillToolbar(this, m_isQuickToolbar, m_barId);
   setIconSize(QSize(20, 20));
   QIcon moreIcon(":Resources/more.svg");
   QToolButton *more = findChild<QToolButton *>("qt_toolbar_ext_button");
