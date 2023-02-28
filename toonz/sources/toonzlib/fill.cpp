@@ -18,6 +18,8 @@
 
 #include <stack>
 
+#include <QDebug>
+
 extern TEnv::DoubleVar AutocloseDistance;
 extern TEnv::DoubleVar AutocloseAngle;
 extern TEnv::IntVar AutocloseInk;
@@ -326,7 +328,7 @@ void fillRow(const TRasterCM32P &r, const TPoint &p, int xa, int xb, int paint,
              TPalette *palette, TTileSaverCM32 *saver) {
   /* vai a destra */
   TPixelCM32 *line = r->pixels(p.y);
-  TPixelCM32 *pix = line + p.x;
+  TPixelCM32 *pix  = line + p.x;
 
   if (saver) saver->save(TRect(xa, p.y, xb, p.y));
 
@@ -338,9 +340,9 @@ void fillRow(const TRasterCM32P &r, const TPoint &p, int xa, int xb, int paint,
         TPoint pInk = nearestInkNotDiagonal(r, TPoint(xa + n, p.y));
         if (pInk != TPoint(-1, -1)) {
           TPixelCM32 *pixInk =
-            (TPixelCM32 *)r->getRawData() + (pInk.y * r->getWrap() + pInk.x);
+              (TPixelCM32 *)r->getRawData() + (pInk.y * r->getWrap() + pInk.x);
           if (pixInk->getInk() != paint &&
-            palette->getStyle(pixInk->getInk())->getFlags() != 0)
+              palette->getStyle(pixInk->getInk())->getFlags() != 0)
             inkFill(r, pInk, paint, 0, saver);
         }
       }
@@ -401,6 +403,33 @@ bool floodCheck(const TPixel32 &clickColor, const TPixel32 *targetPix,
 //-----------------------------------------------------------------------------
 }  // namespace
 //-----------------------------------------------------------------------------
+
+TRasterCM32P convertRaster2CM(const TRasterP &inputRaster) {
+  int lx = inputRaster->getLx();
+  int ly = inputRaster->getLy();
+
+  TRaster32P r = inputRaster;
+
+  TRasterCM32P rout(lx, ly);
+
+  for (int y = 0; y < ly; y++) {
+    TPixel32 *pixin    = r->pixels(y);
+    TPixel32 *pixinEnd = pixin + lx;
+    TPixelCM32 *pixout = rout->pixels(y);
+    while (pixin < pixinEnd) {
+      if (*pixin == TPixel32(0, 0, 0, 0)) {
+        ++pixin;
+        *pixout++ = TPixelCM32(0, 0, 255);
+      } else {
+        int v = (pixin->r + pixin->g + pixin->b) / 3;
+        ++pixin;
+        *pixout++ = TPixelCM32(1, 0, v);
+      }
+    }
+  }
+  return rout;
+}
+
 /*-- The return value is whether the saveBox has been updated --*/
 bool fill(const TRasterCM32P &r, const FillParameters &params,
           TTileSaverCM32 *saver, bool fillGaps, bool closeGaps,
@@ -476,6 +505,32 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
     if (params.m_emptyOnly && clickedPosColor != TPixel32(0, 0, 0, 0)) {
       refRaster->unlock();
       return false;
+    }
+
+    if (fillGaps) {
+      TRasterCM32P cr          = convertRaster2CM(refRaster);
+      TRasterCM32P refCMRaster = cr->clone();
+      fillGaps = TAutocloser(refCMRaster, autoCloseDistance, AutocloseAngle,
+                             styleIndex, AutocloseOpacity)
+                     .exec();
+      if (fillGaps) {
+        // Transfer the gap segments to the refRaster
+
+        TPixelCM32 *tempPix  = tempRaster->pixels(0);
+        TPixelCM32 *refCMPix = refCMRaster->pixels(0);
+        TPixel32 *refPix     = refRaster->pixels(0);
+        for (int refCMY = 0; refCMY < refCMRaster->getLy(); refCMY++) {
+          for (int refCMX = 0; refCMX < refCMRaster->getLx();
+               refCMX++, refCMPix++, refPix++, tempPix++) {
+            if (refCMPix->getInk() != styleIndex) continue;
+            *refPix = color;
+            if (closeGaps) {
+              tempPix->setInk(refCMPix->getInk());
+              tempPix->setTone(refCMPix->getTone());
+            }
+          }
+        }
+      }
     }
   }
 
