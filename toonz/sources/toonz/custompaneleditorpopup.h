@@ -115,6 +115,12 @@ class CustomPanelCommandListTree final : public QTreeWidget {
 public:
   CustomPanelCommandListTree(QWidget* parent = 0);
 
+  void searchItems(const QString& searchWord = QString());
+
+private:
+  void displayAll(QTreeWidgetItem* item);
+  void hideAll(QTreeWidgetItem* item);
+
 protected:
   void mousePressEvent(QMouseEvent*) override;
 };
@@ -155,6 +161,7 @@ protected slots:
   void onPreviewClicked(int id);
   void onPreviewDropped(int id, QString cmdId, bool fromTree);
   void onRegister();
+  void onSearchTextChanged(const QString& text);
 };
 
 #endif

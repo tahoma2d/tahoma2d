@@ -390,6 +390,69 @@ void CustomPanelCommandListTree::mousePressEvent(QMouseEvent* event) {
   QTreeWidget::mousePressEvent(event);
 }
 
+//-----------------------------------------------------------------------------
+
+void CustomPanelCommandListTree::displayAll(QTreeWidgetItem* item) {
+  int childCount = item->childCount();
+  for (int i = 0; i < childCount; ++i) {
+    displayAll(item->child(i));
+  }
+  item->setHidden(false);
+  item->setExpanded(false);
+}
+
+//-------------------------------------------------------------------
+
+void CustomPanelCommandListTree::hideAll(QTreeWidgetItem* item) {
+  int childCount = item->childCount();
+  for (int i = 0; i < childCount; ++i) {
+    hideAll(item->child(i));
+  }
+  item->setHidden(true);
+  item->setExpanded(false);
+}
+
+//-----------------------------------------------------------------------------
+
+void CustomPanelCommandListTree::searchItems(const QString& searchWord) {
+  // if search word is empty, show all items
+  if (searchWord.isEmpty()) {
+    int itemCount = topLevelItemCount();
+    for (int i = 0; i < itemCount; ++i) {
+      displayAll(topLevelItem(i));
+    }
+    // revert to the initial state - expanding "Menu Commands" tree
+    findItems(ShortcutTree::tr("Menu Commands"), Qt::MatchExactly)[0]
+        ->setExpanded(true);
+    update();
+    return;
+  }
+
+  // hide all items first
+  int itemCount = topLevelItemCount();
+  for (int i = 0; i < itemCount; ++i) {
+    hideAll(topLevelItem(i));
+  }
+
+  QList<QTreeWidgetItem*> foundItems =
+     findItems(searchWord, Qt::MatchContains | Qt::MatchRecursive, 0);
+  if (foundItems.isEmpty()) {  // if nothing is found, do nothing but update
+    update();
+    return;
+  }
+
+  // for each item found, show it and show its parent
+  for (auto item : foundItems) {
+    while (item) {
+      item->setHidden(false);
+      item->setExpanded(true);
+      item = item->parent();
+    }
+  }
+
+  update();
+}
+
 //=============================================================================
 // CustomPanelEditorPopup
 //-----------------------------------------------------------------------------
@@ -558,7 +621,7 @@ void CustomPanelEditorPopup::updateControls(QWidget* customWidget) {
     if (entry.type == Button) {
       QString commandId = entry.field->commandId();
       QAction* action   = CommandManager::instance()->getAction(
-            commandId.toStdString().c_str());
+          commandId.toStdString().c_str());
       if (!action) continue;
       QAbstractButton* button = dynamic_cast<QAbstractButton*>(widget);
       QToolButton* tb         = dynamic_cast<QToolButton*>(widget);
@@ -722,7 +785,7 @@ void CustomPanelEditorPopup::replaceObjectNames(QDomElement& element) {
   while (!n.isNull()) {
     if (n.isElement()) {
       QDomElement e = n.toElement();
-      //Ž©•ªŽ©g‚ðƒ`ƒFƒbƒN
+      // 自分自身をチェック
       if (e.tagName() == "widget" && e.hasAttribute("name")) {
         QString objName     = e.attribute("name");
         QList<int> entryIds = entryIdByObjName(objName);
@@ -819,6 +882,8 @@ CustomPanelEditorPopup::CustomPanelEditorPopup()
   QFont f("Arial", 15, QFont::Bold);
   commandItemListLabel->setFont(f);
 
+  QLineEdit* searchEdit = new QLineEdit(this);
+
   m_previewArea       = new UiPreviewArea(this);
   m_UiFieldsContainer = new QWidget(this);
   m_templateCombo     = new QComboBox(this);
@@ -853,6 +918,14 @@ CustomPanelEditorPopup::CustomPanelEditorPopup()
   rightLay->setSpacing(10);
   {
     rightLay->addWidget(commandItemListLabel, 0);
+    QHBoxLayout* searchLay = new QHBoxLayout();
+    searchLay->setMargin(0);
+    searchLay->setSpacing(5);
+    {
+      searchLay->addWidget(new QLabel(tr("Search:"), this), 0);
+      searchLay->addWidget(searchEdit);
+    }
+    rightLay->addLayout(searchLay, 0);
     rightLay->addWidget(m_commandListTree, 1);
   }
   addLayout(rightLay);
@@ -878,6 +951,8 @@ CustomPanelEditorPopup::CustomPanelEditorPopup()
                        SLOT(onTemplateSwitched()));
   ret = ret &&
         connect(registerButton, SIGNAL(clicked()), this, SLOT(onRegister()));
+  ret = ret && connect(searchEdit, SIGNAL(textChanged(const QString&)), this,
+                       SLOT(onSearchTextChanged(const QString&)));
   assert(ret);
 
   // load template
@@ -885,6 +960,16 @@ CustomPanelEditorPopup::CustomPanelEditorPopup()
   if (!ok) {
     // show some warning?
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void CustomPanelEditorPopup::onSearchTextChanged(const QString& text) {
+  static bool busy = false;
+  if (busy) return;
+  busy = true;
+  m_commandListTree->searchItems(text);
+  busy = false;
 }
 
 //-----------------------------------------------------------------------------

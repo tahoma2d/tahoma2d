@@ -434,7 +434,10 @@ void CommandBarListTree::searchItems(const QString& searchWord) {
     for (int i = 0; i < itemCount; ++i) {
       displayAll(topLevelItem(i));
     }
-    update();
+
+    // revert to the initial state - expanding "Menu Commands" tree
+    findItems(ShortcutTree::tr("Menu Commands"), Qt::MatchExactly)[0]
+        ->setExpanded(true);    update();
     return;
   }
 
