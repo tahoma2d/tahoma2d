@@ -987,7 +987,9 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
       TPixel32 colorScale = m_scene->getProperties()->getColorFilterColor(
           column->getColorFilterId());
       if (colorScale != TPixel::Black) {
-        colorScale.m = column->getOpacity();
+        colorScale.m = (typename TPixel32::Channel)((int)colorScale.m *
+                                                    (int)column->getOpacity() /
+                                                    TPixel32::maxChannelValue);
         pf.m_fx      = TFxUtil::makeColumnColorFilter(pf.m_fx, colorScale);
       }
     }

@@ -119,7 +119,21 @@ bool containsRasterLevel(TColumnSelection *selection) {
 const QIcon getColorChipIcon(TPixel32 color) {
   QColor qCol((int)color.r, (int)color.g, (int)color.b, (int)color.m);
   QPixmap pixmap(12, 12);
-  pixmap.fill(qCol);
+  if (color.m == TPixel32::maxChannelValue) {
+    pixmap.fill(qCol);
+    return QIcon(pixmap);
+  }
+  static QPixmap checkPm;
+  if (checkPm.isNull()) {
+    checkPm = QPixmap(12, 12);
+    checkPm.fill(Qt::white);
+    QPainter cp(&checkPm);
+    cp.fillRect(0, 0, 6, 6, Qt::black);
+    cp.fillRect(6, 6, 6, 6, Qt::black);
+  }
+  pixmap = checkPm;
+  QPainter p(&pixmap);
+  p.fillRect(0, 0, 12, 12, qCol);
   return QIcon(pixmap);
 }
 
