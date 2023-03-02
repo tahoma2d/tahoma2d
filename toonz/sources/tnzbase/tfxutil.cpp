@@ -170,3 +170,26 @@ void TFxUtil::setKeyframe(const TFxP &dstFx, int dstFrame, const TFxP &srcFx,
     dstParam->assignKeyframe(dstFrame, srcParam, srcFrame, changedOnly);
   }
 }
+
+//-------------------------------------------------------------------
+
+TFxP TFxUtil::makeMask(const TFxP &source, const TFxP &mask) {
+  if (!source)
+    return 0;
+  else if (!mask)
+    return source;
+
+  assert(source && mask);
+
+  TFxP columnMaskFx = TFx::create("columnMaskFx");
+  if (!columnMaskFx) {
+    assert(columnMaskFx);
+    return 0;
+  }
+
+  if (!columnMaskFx->connect("Source", source.getPointer()) ||
+      !columnMaskFx->connect("Mask", mask.getPointer()))
+    assert(!"Could not connect ports!");
+
+  return columnMaskFx;
+}

@@ -70,6 +70,9 @@ public:
   void draw(TVectorImageP image, const TVectorRenderData &rd,
             bool doInitMatrix = false);
 
+  void drawMask(TVectorImageP image, const TVectorRenderData &rd,
+                bool doInitMatrix = false);
+
   void draw(TRasterImageP image, const TAffine &aff, bool doInitMatrix = false);
 
   void flush();

@@ -327,7 +327,7 @@ void Picker::endMask() {}
 
 //-----------------------------------------------------------------------------
 
-void Picker::enableMask() {}
+void Picker::enableMask(TStencilControl::MaskType maskType) {}
 
 //-----------------------------------------------------------------------------
 
@@ -389,8 +389,8 @@ void RasterPainter::endMask() {
   TStencilControl::instance()->endMask();
 }
 //! Utilizzato solo per TAB Pro
-void RasterPainter::enableMask() {
-  TStencilControl::instance()->enableMask(TStencilControl::SHOW_INSIDE);
+void RasterPainter::enableMask(TStencilControl::MaskType maskType) {
+  TStencilControl::instance()->enableMask(maskType);
 }
 //! Utilizzato solo per TAB Pro
 void RasterPainter::disableMask() {
@@ -785,7 +785,8 @@ static void drawAutocloses(TVectorImage *vi, TVectorRenderData &rd) {
    onToonzImage().
 */
 void RasterPainter::onImage(const Stage::Player &player) {
-  if (m_singleColumnEnabled && !player.m_isCurrentColumn) return;
+  if (m_singleColumnEnabled && !player.m_isCurrentColumn && !player.m_isMask)
+    return;
 
   // Attempt Plastic-deformed drawing
   // For now generating icons of plastic-deformed image causes crash as
@@ -1141,11 +1142,15 @@ OpenGlPainter::OpenGlPainter(const TAffine &viewAff, const TRect &rect,
     , m_isViewer(isViewer)
     , m_alphaEnabled(alphaEnabled)
     , m_paletteHasChanged(false)
-    , m_minZ(0) {}
+    , m_minZ(0)
+    , m_singleColumnEnabled(false) {}
 
 //-----------------------------------------------------------------------------
 
 void OpenGlPainter::onImage(const Stage::Player &player) {
+  if (m_singleColumnEnabled && !player.m_isCurrentColumn && !player.m_isMask)
+    return;
+
   if (player.m_z < m_minZ) m_minZ = player.m_z;
 
   glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -1330,8 +1335,8 @@ void OpenGlPainter::endMask() {
   --m_maskLevel;
   TStencilControl::instance()->endMask();
 }
-void OpenGlPainter::enableMask() {
-  TStencilControl::instance()->enableMask(TStencilControl::SHOW_INSIDE);
+void OpenGlPainter::enableMask(TStencilControl::MaskType maskType) {
+  TStencilControl::instance()->enableMask(maskType);
 }
 void OpenGlPainter::disableMask() {
   TStencilControl::instance()->disableMask();

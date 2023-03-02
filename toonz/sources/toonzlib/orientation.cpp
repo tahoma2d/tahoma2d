@@ -500,6 +500,9 @@ TopToBottomOrientation::TopToBottomOrientation() {
             iconRect(cameraIconArea, ICON_WIDTH, ICON_HEIGHT));
 
     addRect(PredefinedRect::FILTER_COLOR, rect(PredefinedRect::CONFIG));
+
+    addRect(PredefinedRect::CLIPPING_MASK_AREA, QRect(0, 0, -1, -1));
+
     addRect(PredefinedRect::SOUND_ICON, QRect(0, 0, -1, -1));
     addRect(PredefinedRect::VOLUME_AREA, QRect(0, 0, -1, -1));
     addRect(PredefinedRect::PEGBAR_NAME, QRect(0, 0, -1, -1));
@@ -595,6 +598,10 @@ TopToBottomOrientation::TopToBottomOrientation() {
 
     addRect(PredefinedRect::FILTER_COLOR,
             QRect(thumbnail.right() - 14, thumbnail.top() + 3, 12, 12));
+
+    addRect(PredefinedRect::CLIPPING_MASK_AREA,
+            QRect(thumbnail.right() - ICON_WIDTH, thumbnail.top() + 2, ICON_WIDTH,
+                  ICON_HEIGHT));
 
     addRect(PredefinedRect::SOUND_ICON,
             QRect(thumbnailArea.topLeft(), QSize(40, 30))
@@ -708,6 +715,10 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addRect(PredefinedRect::FILTER_COLOR,
             QRect(thumbnail.right() - 14, thumbnail.top() + 3, 12, 12));
 
+    addRect(PredefinedRect::CLIPPING_MASK_AREA,
+            QRect(thumbnail.right() - ICON_WIDTH, thumbnail.top() + 2,
+                  ICON_WIDTH, ICON_HEIGHT));
+
     addRect(PredefinedRect::SOUND_ICON,
             QRect(thumbnailArea.topLeft(), QSize(40, 30))
                 .adjusted((thumbnailArea.width() / 2) - (40 / 2),
@@ -815,6 +826,10 @@ TopToBottomOrientation::TopToBottomOrientation() {
 
     addRect(PredefinedRect::FILTER_COLOR,
             QRect(thumbnail.right() - 14, thumbnail.top() + 3, 12, 12));
+
+    addRect(PredefinedRect::CLIPPING_MASK_AREA,
+            QRect(thumbnail.right() - ICON_WIDTH, thumbnail.top() + 2,
+                  ICON_WIDTH, ICON_HEIGHT));
 
     addRect(
         PredefinedRect::SOUND_ICON,
@@ -1306,6 +1321,10 @@ LeftToRightOrientation::LeftToRightOrientation() {
 
   addRect(PredefinedRect::FILTER_COLOR,
           QRect(thumbnail.right() - 14, thumbnail.top() + 3, 12, 12));
+
+  addRect(PredefinedRect::CLIPPING_MASK_AREA,
+          QRect(thumbnail.right() - 14, thumbnail.top() + 3, 12, 12));
+
   addRect(PredefinedRect::PEGBAR_NAME, QRect(0, 0, -1, -1));         // hide
   addRect(PredefinedRect::PARENT_HANDLE_NAME, QRect(0, 0, -1, -1));  // hide
 

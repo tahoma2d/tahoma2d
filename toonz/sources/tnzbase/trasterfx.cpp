@@ -1172,7 +1172,9 @@ TRenderSettings::TRenderSettings()
     , m_isCanceled(NULL)
     , m_getFullSizeBBox(false)
     , m_linearColorSpace(false)
-    , m_colorSpaceGamma(2.2) {}
+    , m_colorSpaceGamma(2.2)
+    , m_applyMask(false)
+    , m_useMaskBox(false) {}
 
 //------------------------------------------------------------------------------
 
@@ -1217,7 +1219,8 @@ bool TRenderSettings::operator==(const TRenderSettings &rhs) const {
       m_mark != rhs.m_mark || m_isSwatch != rhs.m_isSwatch ||
       m_userCachable != rhs.m_userCachable ||
       m_linearColorSpace != rhs.m_linearColorSpace ||
-      m_colorSpaceGamma != rhs.m_colorSpaceGamma)
+      m_colorSpaceGamma != rhs.m_colorSpaceGamma ||
+      m_applyMask != rhs.m_applyMask || m_useMaskBox != rhs.m_useMaskBox)
     return false;
 
   return std::equal(m_data.begin(), m_data.end(), rhs.m_data.begin(), areEqual);

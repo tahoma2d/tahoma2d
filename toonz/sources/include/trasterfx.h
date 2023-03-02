@@ -167,6 +167,9 @@ public:
 
   double m_colorSpaceGamma;
 
+  bool m_applyMask;
+  bool m_useMaskBox;
+
 public:
   TRenderSettings();
   ~TRenderSettings();

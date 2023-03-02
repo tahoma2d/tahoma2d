@@ -123,6 +123,14 @@ bool computeOutline(const TRegion *region,
 //-------------------------------------------------------------------
 
 void OutlineRegionProp::computeRegionOutline() {
+  // Avoid overlapping calculations
+  if (!m_outline.setCalculating()) return;
+
+  // Drawing in progress. Hold calculation until it's done
+  while (m_outline.isInUse()) {
+     // Wait
+  }
+
   int subRegionNumber = getRegion()->getSubregionCount();
   TRegionOutline::PointVector app;
 
@@ -142,6 +150,7 @@ void OutlineRegionProp::computeRegionOutline() {
   }
 
   m_outline.m_bbox = getRegion()->getBBox();
+  m_outline.unsetCalculating();
 }
 
 //-------------------------------------------------------------------

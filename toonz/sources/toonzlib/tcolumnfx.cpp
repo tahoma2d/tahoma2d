@@ -42,13 +42,19 @@
 #include "toonz/fill.h"
 #include "toonz/tstageobjectid.h"
 #include "toonz/tstageobject.h"
+#include "toonz/tstageobjecttree.h"
 #include "toonz/levelproperties.h"
 #include "toonz/imagemanager.h"
 #include "toonz/toonzimageutils.h"
 #include "toonz/tvectorimageutils.h"
 #include "toonz/preferences.h"
 #include "toonz/dpiscale.h"
+#include "toonz/tcamera.h"
 #include "imagebuilders.h"
+
+#include "tstencilcontrol.h"
+#include "tvectorgl.h"
+#include "toonz/glrasterpainter.h"
 
 // 4.6 compatibility - sandor fxs
 #include "toonz4.6/raster.h"
@@ -985,6 +991,10 @@ void TLevelColumnFx::doCompute(TTile &tile, double frame,
                                const TRenderSettings &info) {
   if (!m_levelColumn) return;
 
+  if (m_levelColumn->isMask() && !info.m_applyMask &&
+      !m_levelColumn->canRenderMask())
+    return;
+
   // Ensure that a corresponding cell and level exists
   int row       = (int)frame;
   TXshCell cell = m_levelColumn->getCell(row);
@@ -1075,7 +1085,36 @@ void TLevelColumnFx::doCompute(TTile &tile, double frame,
       if (!m_isCachable) vpalette->mutex()->lock();
 
       vpalette->setFrame((int)frame);
-      m_offlineContext->draw(vectorImage, rd, true);
+
+      if (info.m_applyMask) {
+        bool initMatrix = true;
+
+        rd.m_alphaChannel = false;
+
+        TStencilControl *stencil = TStencilControl::instance();
+
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
+        tglEnableBlending(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+        stencil->beginMask();
+        m_offlineContext->drawMask(vectorImage, rd, initMatrix);
+        stencil->endMask();
+        TStencilControl::MaskType maskType = m_levelColumn->isInvertedMask()
+                                                 ? TStencilControl::SHOW_OUTSIDE
+                                                 : TStencilControl::SHOW_INSIDE;
+        stencil->enableMask(maskType);
+        TRasterP ras = tile.getRaster();
+
+        TAffine tileAff = TTranslation((ras->getLx() / 2), (ras->getLy() / 2)) *
+                          TScale(1.0 / info.m_shrinkX, 1.0 / info.m_shrinkY);
+        GLRasterPainter::drawRaster(tileAff, tile.getRaster(), true);
+
+        glPopAttrib();
+
+        stencil->disableMask();
+      } else
+        m_offlineContext->draw(vectorImage, rd, true);
+
       vpalette->setFrame(oldFrame);
 
       if (!m_isCachable) vpalette->mutex()->unlock();
@@ -1462,6 +1501,17 @@ bool TLevelColumnFx::doGetBBox(double frame, TRectD &bBox,
       double enlargement       = enlargedImageBBox.x1 - imageBBox.x1;
       bBox += imageBBox.enlarge(enlargement * dpi);
     }
+  }
+
+  if (info.m_useMaskBox) {
+    TXsheet *xsh = m_levelColumn->getXsheet();
+    TStageObjectId cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
+    TStageObject *cameraPegbar = xsh->getStageObject(cameraId);
+    TCamera *camera = cameraPegbar->getCamera();
+
+    TRectD imageBBox(bBox);
+    double enlargement       = camera->getRes().lx-imageBBox.x1;
+    bBox += imageBBox.enlarge(enlargement * dpi);
   }
 
   return true;

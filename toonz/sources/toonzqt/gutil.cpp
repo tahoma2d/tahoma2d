@@ -436,7 +436,8 @@ QPixmap convertImageToPixmap(const QImage &image) {
 
 // Load, theme colorize and change opacity of an icon image
 QImage generateIconImage(const QString &iconSVGName, qreal opacity,
-                         QSize newSize, Qt::AspectRatioMode aspectRatioMode) {
+                         QSize newSize, Qt::AspectRatioMode aspectRatioMode,
+                         bool useThemeColor) {
   static ThemeManager &themeManager = ThemeManager::getInstance();
 
   if (iconSVGName.isEmpty() || !themeManager.hasIcon(iconSVGName)) {
@@ -453,7 +454,7 @@ QImage generateIconImage(const QString &iconSVGName, qreal opacity,
   QImage image(svgToImage(imgPath, newSize, aspectRatioMode));
 
   // Colorize QImage
-  image = themeManager.recolorBlackPixels(image);
+  if (useThemeColor) image = themeManager.recolorBlackPixels(image);
 
   // Change opacity if required
   if (opacity != qreal(1.0)) image = adjustImageOpacity(image, opacity);
@@ -465,9 +466,10 @@ QImage generateIconImage(const QString &iconSVGName, qreal opacity,
 
 // Load, theme colorize and change opacity of an icon image file
 QPixmap generateIconPixmap(const QString &iconSVGName, qreal opacity,
-                           QSize newSize, Qt::AspectRatioMode aspectRatioMode) {
-  QImage image =
-      generateIconImage(iconSVGName, opacity, newSize, aspectRatioMode);
+                           QSize newSize, Qt::AspectRatioMode aspectRatioMode,
+                           bool useThemeColor) {
+  QImage image = generateIconImage(iconSVGName, opacity, newSize,
+                                   aspectRatioMode, useThemeColor);
   return convertImageToPixmap(image);
 }
 

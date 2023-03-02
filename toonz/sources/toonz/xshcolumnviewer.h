@@ -31,6 +31,8 @@ class QPushButton;
 class Orientation;
 class TApp;
 class TXsheet;
+class QCheckBox;
+class QGroupBox;
 
 //=============================================================================
 namespace XsheetGUI {
@@ -222,6 +224,10 @@ class ColumnTransparencyPopup final : public QWidget {
   XsheetViewer *m_viewer;
   QPushButton *m_lockBtn;
 
+  QGroupBox *m_maskGroupBox;
+  QCheckBox *m_invertMask;
+  QCheckBox *m_renderMask;
+
   QTimer *m_keepClosedTimer;
   bool m_keepClosed;
 
@@ -246,6 +252,10 @@ protected slots:
 
   void onFilterColorChanged();
   void onLockButtonClicked(bool on);
+
+  void onMaskGroupBoxChanged(bool clicked);
+  void onInvertMaskCBChanged(int checkedState);
+  void onRenderMaskCBChanged(int checkedState);
 
   void resetKeepClosed();
 };
@@ -352,6 +362,7 @@ class ColumnArea final : public QWidget {
     void drawPegbarName() const;
     void drawParentHandleName() const;
     void drawFilterColor() const;
+    void drawClippingMask() const;
 
     void drawSoundIcon(bool isPlaying) const;
     void drawVolumeControl(double volume) const;
@@ -401,7 +412,6 @@ protected slots:
   void onCameraColumnChangedTriggered();
   void onCameraColumnLockToggled(bool);
   void onXsheetCameraChange(int);
-  void onSetMask(int);
 };
 
 //-----------------------------------------------------------------------------

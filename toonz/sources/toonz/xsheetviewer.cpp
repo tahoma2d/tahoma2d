@@ -151,7 +151,7 @@ void XsheetViewer::getColumnColor(QColor &color, QColor &sideColor, int index,
       getCellTypeAndColors(ltype, color, sideColor, cell);
     }
   }
-  if (xsh->getColumn(index)->isMask()) color = QColor(255, 0, 255);
+//  if (xsh->getColumn(index)->isMask()) color = QColor(255, 0, 255);
 }
 
 //-----------------------------------------------------------------------------

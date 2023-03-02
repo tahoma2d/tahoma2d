@@ -39,6 +39,9 @@ DVAPI void deleteKeyframes(const TFxP &fx, int frame);
 
 DVAPI void setKeyframe(const TFxP &dstFx, int dstFrame, const TFxP &srcFx,
                        int srcFrame, bool changedOnly = false);
+
+DVAPI TFxP makeMask(const TFxP &source, const TFxP &mask);
+
 }  // namespace TFxUtil
 
 #endif

@@ -13,12 +13,31 @@ public:
 
   TRectD m_bbox;
 
-  TRegionOutline() : m_doAntialiasing(false) {}
+  bool m_calculating;
+  int m_inUse;
+
+  TRegionOutline()
+      : m_doAntialiasing(false), m_calculating(false), m_inUse(0) {}
 
   void clear() {
     m_exterior.clear();
     m_interior.clear();
   }
+
+  bool setCalculating() {
+    if (m_calculating) return false;
+    m_calculating = true;
+    return true;
+  }
+  void unsetCalculating() { m_calculating = false; }
+  int isCalculating() { return m_calculating; }
+
+  void setInUse() { m_inUse++; }
+  void unsetInUse() {
+    m_inUse--;
+    if (m_inUse < 0) m_inUse = 0;
+  }
+  int isInUse() { return m_inUse > 0; }
 };
 
 #endif

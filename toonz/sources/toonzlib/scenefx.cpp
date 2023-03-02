@@ -618,6 +618,8 @@ public:
   // prevent infinite loop.
   QMap<std::wstring, QPair<TFxP, bool>> m_globalControlledFx;
 
+  bool m_applyMasks;
+
 public:
   FxBuilder(ToonzScene *scene, TXsheet *xsh, double frame, int whichLevels,
             bool isPreview = false, bool expandXSheet = true);
@@ -648,7 +650,8 @@ FxBuilder::FxBuilder(ToonzScene *scene, TXsheet *xsh, double frame,
     , m_whichLevels(whichLevels)
     , m_isPreview(isPreview)
     , m_expandXSheet(expandXSheet)
-    , m_particleDescendentCount(0) {
+    , m_particleDescendentCount(0)
+    , m_applyMasks(true) {
   TStageObjectId cameraId;
   if (m_isPreview)
     cameraId = m_xsh->getStageObjectTree()->getCurrentPreviewCameraId();
@@ -918,8 +921,9 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
   pf.m_fx = lcfx;
 
   /*-- subXsheetのとき、その中身もBuildFxを実行 --*/
-  if (!cell.isEmpty() && !cell.getFrameId().isStopFrame() &&
-      cell.m_level->getChildLevel()) {
+  bool isSubXsheet = !cell.isEmpty() && !cell.getFrameId().isStopFrame() &&
+                     cell.m_level->getChildLevel();
+  if (isSubXsheet) {
     // Treat the sub-xsheet case - build the sub-render-tree and reassign stuff
     // to pf
     TXsheet *xsh = cell.m_level->getChildLevel()->getXsheet();
@@ -999,6 +1003,27 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
                                                     TPixel32::maxChannelValue);
         pf.m_fx      = TFxUtil::makeColumnColorFilter(pf.m_fx, colorScale);
       }
+    }
+
+    // Add check for/create all ClippingMaskFx here
+    if (m_applyMasks && (sl || isSubXsheet) &&
+        (!column->isMask() || column->canRenderMask())) {
+      m_applyMasks = false;
+      std::vector<TXshColumn *> masks = column->getColumnMasks();
+      for (int i = 0; i < masks.size(); i++) {
+        TXshLevelColumn *mask = masks[i]->getLevelColumn();
+        if (!mask) break;
+        TXshCell maskCell = mask->getCell(m_frame);
+        if (maskCell.isEmpty() || maskCell.getFrameId() == TFrameId::STOP_FRAME)
+          continue;
+        PlacedFx maskPf = makePF(mask->getFx());
+
+        maskPf.m_fx = getFxWithColumnMovements(maskPf);
+        maskPf.m_fx = TFxUtil::makeAffine(maskPf.m_fx, pf.m_aff.inv());
+
+        pf.m_fx = TFxUtil::makeMask(pf.m_fx, maskPf.m_fx);
+      }
+      m_applyMasks = true;
     }
 
     return pf;

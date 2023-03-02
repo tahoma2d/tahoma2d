@@ -743,8 +743,40 @@ bool TXshColumn::isMask() const { return (m_status & eMasked) != 0; }
 
 //-----------------------------------------------------------------------------
 
+bool TXshColumn::isInvertedMask() const {
+  return (m_status & eInvertedMask) != 0;
+}
+
+//-----------------------------------------------------------------------------
+
+bool TXshColumn::canRenderMask() const {
+  return (m_status & eRenderMask) != 0;
+}
+
+//-----------------------------------------------------------------------------
+
 void TXshColumn::setIsMask(bool on) {
   const int mask = eMasked;
+  if (on)
+    m_status |= mask;
+  else
+    m_status &= ~mask;
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshColumn::setInvertedMask(bool on) {
+  const int mask = eInvertedMask;
+  if (on)
+    m_status |= mask;
+  else
+    m_status &= ~mask;
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshColumn::setCanRenderMask(bool on) {
+  const int mask = eRenderMask;
   if (on)
     m_status |= mask;
   else

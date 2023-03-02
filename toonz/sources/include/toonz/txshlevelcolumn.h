@@ -88,6 +88,8 @@ Return \b TFx.
   // Used in TCellData::getNumbers
   bool setNumbers(int row, int rowCount, const TXshCell cells[]);
 
+  std::vector<TXshColumn *> getColumnMasks();
+
 private:
   // not implemented
   TXshLevelColumn(const TXshLevelColumn &);

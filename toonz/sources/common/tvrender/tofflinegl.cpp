@@ -685,6 +685,30 @@ void TOfflineGL::draw(TVectorImageP image, const TVectorRenderData &rd,
 
 //-----------------------------------------------------------------------------
 
+void TOfflineGL::drawMask(TVectorImageP image, const TVectorRenderData &rd,
+                          bool doInitMatrix) {
+  checkErrorsByGL;
+  makeCurrent();
+  checkErrorsByGL;
+
+  if (doInitMatrix) {
+    initMatrix();
+    checkErrorsByGL;
+  }
+
+  if (image) {
+    checkErrorsByGL;
+    tglDrawMask(rd, image.getPointer());
+    checkErrorsByGL;
+  }
+
+  checkErrorsByGL;
+  glFlush();
+  checkErrorsByGL;
+}
+
+//-----------------------------------------------------------------------------
+
 void TOfflineGL::draw(TRasterImageP ri, const TAffine &aff, bool doInitMatrix) {
   makeCurrent();
 
