@@ -5,6 +5,7 @@
 #include "menubarcommandids.h"
 #include "shortcutpopup.h"
 #include "custompanelmanager.h"
+#include "commandbarpopup.h"
 
 // TnzQt includes
 #include "toonzqt/gutil.h"
@@ -255,202 +256,6 @@ void UiPreviewArea::resizeEvent(QResizeEvent* event) {
   }
 
   QScrollArea::resizeEvent(event);
-}
-
-//=============================================================================
-// CommandBarCommandItem
-//-----------------------------------------------------------------------------
-
-class CustomPanelCommandItem final : public QTreeWidgetItem {
-  QAction* m_action;
-
-public:
-  CustomPanelCommandItem(QTreeWidgetItem* parent, QAction* action)
-      : QTreeWidgetItem(parent, UserType), m_action(action) {
-    setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled |
-             Qt::ItemNeverHasChildren);
-    QString tempText = m_action->text();
-    // removing accelerator key indicator
-    tempText = tempText.replace(QRegExp("&([^& ])"), "\\1");
-    // removing doubled &s
-    tempText = tempText.replace("&&", "&");
-    setText(0, tempText);
-    setToolTip(0, QObject::tr("[Drag] to move position"));
-  }
-  QAction* getAction() const { return m_action; }
-};
-
-//=============================================================================
-// CustomPanelCommandListTree
-//-----------------------------------------------------------------------------
-
-void CustomPanelCommandListTree::addFolder(const QString& title,
-                                           int commandType,
-                                           QTreeWidgetItem* parentFolder) {
-  QTreeWidgetItem* folder;
-  if (!parentFolder)
-    folder = new QTreeWidgetItem(this);
-  else
-    folder = new QTreeWidgetItem(parentFolder);
-  assert(folder);
-  folder->setText(0, title);
-  folder->setIcon(0, invisibleRootItem()->icon(0));
-
-  std::vector<QAction*> actions;
-  CommandManager::instance()->getActions((CommandType)commandType, actions);
-  for (int i = 0; i < (int)actions.size(); i++) {
-    CustomPanelCommandItem* item =
-        new CustomPanelCommandItem(folder, actions[i]);
-    item->setToolTip(
-        0, QObject::tr(
-               "[Drag&Drop] to set command to control in the custom panel"));
-  }
-}
-
-CustomPanelCommandListTree::CustomPanelCommandListTree(QWidget* parent)
-    : QTreeWidget(parent) {
-  setObjectName("SolidLineFrame");
-  setAlternatingRowColors(true);
-  setDragEnabled(true);
-  setDragDropMode(QAbstractItemView::DragOnly);
-  setColumnCount(1);
-  setIconSize(QSize(21, 18));
-  header()->close();
-
-  QIcon menuFolderIcon(createQIcon("folder_project", true));
-  invisibleRootItem()->setIcon(0, menuFolderIcon);
-
-  QTreeWidgetItem* menuCommandFolder = new QTreeWidgetItem(this);
-  menuCommandFolder->setFlags(Qt::ItemIsEnabled);
-  menuCommandFolder->setText(0, ShortcutTree::tr("Menu Commands"));
-  menuCommandFolder->setExpanded(true);
-  menuCommandFolder->setIcon(0, invisibleRootItem()->icon(0));
-
-  addFolder(ShortcutTree::tr("File"), MenuFileCommandType, menuCommandFolder);
-  addFolder(ShortcutTree::tr("Edit"), MenuEditCommandType, menuCommandFolder);
-  addFolder(ShortcutTree::tr("Scan & Cleanup"), MenuScanCleanupCommandType,
-            menuCommandFolder);
-  addFolder(ShortcutTree::tr("Level"), MenuLevelCommandType, menuCommandFolder);
-  addFolder(ShortcutTree::tr("Xsheet"), MenuXsheetCommandType,
-            menuCommandFolder);
-  addFolder(ShortcutTree::tr("Cells"), MenuCellsCommandType, menuCommandFolder);
-  addFolder(ShortcutTree::tr("Play"), MenuPlayCommandType, menuCommandFolder);
-  addFolder(ShortcutTree::tr("Render"), MenuRenderCommandType,
-            menuCommandFolder);
-  addFolder(ShortcutTree::tr("View"), MenuViewCommandType, menuCommandFolder);
-  addFolder(ShortcutTree::tr("Windows"), MenuWindowsCommandType,
-            menuCommandFolder);
-  addFolder(ShortcutTree::tr("Help"), MenuHelpCommandType, menuCommandFolder);
-
-  addFolder(ShortcutTree::tr("Tools"), ToolCommandType);
-  addFolder(ShortcutTree::tr("Fill"), FillCommandType);
-  addFolder(ShortcutTree::tr("Right-click Menu Commands"),
-            RightClickMenuCommandType);
-  QTreeWidgetItem* rcmSubFolder =
-      invisibleRootItem()->child(invisibleRootItem()->childCount() - 1);
-  addFolder(ShortcutTree::tr("Cell Mark"), CellMarkCommandType, rcmSubFolder);
-  addFolder(ShortcutTree::tr("Tool Modifiers"), ToolModifierCommandType);
-  addFolder(ShortcutTree::tr("Visualization"), VisualizationButtonCommandType);
-  addFolder(ShortcutTree::tr("Misc"), MiscCommandType);
-  addFolder(ShortcutTree::tr("RGBA Channels"), RGBACommandType);
-
-  sortItems(0, Qt::AscendingOrder);
-}
-
-void CustomPanelCommandListTree::mousePressEvent(QMouseEvent* event) {
-  setCurrentItem(itemAt(event->pos()));
-  CustomPanelCommandItem* commandItem =
-      dynamic_cast<CustomPanelCommandItem*>(itemAt(event->pos()));
-
-  if (commandItem) {
-    std::string dragStr;
-    QString dragPixmapTxt;
-    dragStr =
-        CommandManager::instance()->getIdFromAction(commandItem->getAction());
-    dragPixmapTxt = commandItem->getAction()->text();
-    dragPixmapTxt.remove("&");
-
-    QMimeData* mimeData = new QMimeData;
-    mimeData->setText(QString::fromStdString(dragStr));
-
-    QFontMetrics fm(QApplication::font());
-    QPixmap pix(fm.boundingRect(dragPixmapTxt).adjusted(-2, -2, 2, 2).size());
-    QPainter painter(&pix);
-    painter.fillRect(pix.rect(), Qt::white);
-    painter.setPen(Qt::black);
-    painter.drawText(pix.rect(), Qt::AlignCenter, dragPixmapTxt);
-
-    QDrag* drag = new QDrag(this);
-    drag->setMimeData(mimeData);
-    drag->setPixmap(pix);
-
-    drag->exec(Qt::CopyAction);
-  }
-
-  QTreeWidget::mousePressEvent(event);
-}
-
-//-----------------------------------------------------------------------------
-
-void CustomPanelCommandListTree::displayAll(QTreeWidgetItem* item) {
-  int childCount = item->childCount();
-  for (int i = 0; i < childCount; ++i) {
-    displayAll(item->child(i));
-  }
-  item->setHidden(false);
-  item->setExpanded(false);
-}
-
-//-------------------------------------------------------------------
-
-void CustomPanelCommandListTree::hideAll(QTreeWidgetItem* item) {
-  int childCount = item->childCount();
-  for (int i = 0; i < childCount; ++i) {
-    hideAll(item->child(i));
-  }
-  item->setHidden(true);
-  item->setExpanded(false);
-}
-
-//-----------------------------------------------------------------------------
-
-void CustomPanelCommandListTree::searchItems(const QString& searchWord) {
-  // if search word is empty, show all items
-  if (searchWord.isEmpty()) {
-    int itemCount = topLevelItemCount();
-    for (int i = 0; i < itemCount; ++i) {
-      displayAll(topLevelItem(i));
-    }
-    // revert to the initial state - expanding "Menu Commands" tree
-    findItems(ShortcutTree::tr("Menu Commands"), Qt::MatchExactly)[0]
-        ->setExpanded(true);
-    update();
-    return;
-  }
-
-  // hide all items first
-  int itemCount = topLevelItemCount();
-  for (int i = 0; i < itemCount; ++i) {
-    hideAll(topLevelItem(i));
-  }
-
-  QList<QTreeWidgetItem*> foundItems =
-     findItems(searchWord, Qt::MatchContains | Qt::MatchRecursive, 0);
-  if (foundItems.isEmpty()) {  // if nothing is found, do nothing but update
-    update();
-    return;
-  }
-
-  // for each item found, show it and show its parent
-  for (auto item : foundItems) {
-    while (item) {
-      item->setHidden(false);
-      item->setExpanded(true);
-      item = item->parent();
-    }
-  }
-
-  update();
 }
 
 //=============================================================================
@@ -876,7 +681,8 @@ CustomPanelEditorPopup::CustomPanelEditorPopup()
              "CustomPanelEditorPopup") {
   setWindowTitle(tr("Custom Panel Editor"));
 
-  m_commandListTree = new CustomPanelCommandListTree(this);
+  m_commandListTree =
+      new CommandListTree(tr("a control in the panel"), this, false);
 
   QLabel* commandItemListLabel = new QLabel(tr("Command List"), this);
   QFont f("Arial", 15, QFont::Bold);
