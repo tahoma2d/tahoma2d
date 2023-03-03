@@ -453,13 +453,16 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   int styleIndex                                 = 4094;
   int fakeStyleIndex                             = 4095;
   if (autoCloseDistance < 0.0) autoCloseDistance = AutocloseDistance;
+
+  bool gapsClosed = false, refGapsClosed = false;
+
   if (fillGaps) {
     tempRaster = r->clone();
-    fillGaps   = TAutocloser(tempRaster, autoCloseDistance, AutocloseAngle,
-                           styleIndex, AutocloseOpacity)
-                   .exec();
+    gapsClosed = TAutocloser(tempRaster, autoCloseDistance, AutocloseAngle,
+                             styleIndex, AutocloseOpacity)
+                     .exec();
   }
-  if (!fillGaps) {
+  if (!gapsClosed) {
     tempRaster = r;
   }
 
@@ -510,12 +513,14 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
     if (fillGaps) {
       TRasterCM32P cr          = convertRaster2CM(refRaster);
       TRasterCM32P refCMRaster = cr->clone();
-      fillGaps = TAutocloser(refCMRaster, autoCloseDistance, AutocloseAngle,
-                             styleIndex, AutocloseOpacity)
-                     .exec();
-      if (fillGaps) {
-        // Transfer the gap segments to the refRaster
 
+      refGapsClosed = TAutocloser(refCMRaster, autoCloseDistance,
+                                  AutocloseAngle, styleIndex, AutocloseOpacity)
+                          .exec();
+      if (refGapsClosed) {
+        if (!gapsClosed) tempRaster = r->clone();
+
+        // Transfer the gap segments to the refRaster
         TPixelCM32 *tempPix  = tempRaster->pixels(0);
         TPixelCM32 *refCMPix = refCMRaster->pixels(0);
         TPixel32 *refPix     = refRaster->pixels(0);
@@ -533,6 +538,8 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
       }
     }
   }
+
+  if (fillGaps && !gapsClosed && !refGapsClosed) fillGaps = false;
 
   assert(fillDepth >= 0 && fillDepth < 16);
 
@@ -701,7 +708,8 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
     for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
       for (int tempX = 0; tempX < tempRaster->getLx();
            tempX++, tempPix++, keepPix++) {
-        if (tempPix->getInk() != styleIndex)
+        if (tempPix->getInk() != styleIndex &&
+            tempPix->getInk() != fakeStyleIndex)
           keepPix->setPaint(tempPix->getPaint());
         // This next line takes care of autopaint lines
         if (tempPix->getInk() != styleIndex) {

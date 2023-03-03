@@ -3028,8 +3028,7 @@ void FillTool::applyFill(const TImageP &img, const TPointD &pos,
   }
 
   doFill(img, pos, params, isShiftFill, m_level.getPointer(), getCurrentFid(),
-         m_autopaintLines.getValue(), m_closeRasterGaps.getIndex() > 0,
-         m_closeRasterGaps.getIndex() > 1, closeStyleIndex, frameIndex);
+         autopaintLines, fillGaps, closeGaps, closeStyleIndex, frameIndex);
 
   if ((ti || vi) && symmetryTool && symmetryTool->isGuideEnabled()) {
     TPointD dpiScale             = getViewer()->getDpiScale();
@@ -3042,9 +3041,8 @@ void FillTool::applyFill(const TImageP &img, const TPointD &pos,
     for (int i = 0; i < symmPts.size(); i++) {
       if (symmPts[i] == fillPt) continue;
       doFill(img, symmPts[i] - rasCenter, params, isShiftFill,
-             m_level.getPointer(), getCurrentFid(), m_autopaintLines.getValue(),
-             m_closeRasterGaps.getIndex() > 0, m_closeRasterGaps.getIndex() > 1,
-             closeStyleIndex, frameIndex);
+             m_level.getPointer(), getCurrentFid(), autopaintLines, fillGaps,
+             closeGaps, closeStyleIndex, frameIndex);
     }
 
     TUndoManager::manager()->endBlock();
