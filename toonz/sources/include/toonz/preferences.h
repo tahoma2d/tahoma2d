@@ -382,6 +382,7 @@ public:
     return getBoolValue(xsheetAutopanEnabled);
   }  //!< Returns whether xsheet pans during playback.
   int getDragCellsBehaviour() const { return getIntValue(DragCellsBehaviour); }
+  int getPasteCellsBehavior() const { return getIntValue(pasteCellsBehavior); }
   bool isIgnoreAlphaonColumn1Enabled() const {
     return getBoolValue(ignoreAlphaonColumn1Enabled);
   }

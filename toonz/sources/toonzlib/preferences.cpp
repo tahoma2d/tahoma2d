@@ -569,6 +569,8 @@ void Preferences::definePreferenceItems() {
   define(xsheetAutopanEnabled, "xsheetAutopanEnabled", QMetaType::Bool, true);
   define(DragCellsBehaviour, "DragCellsBehaviour", QMetaType::Int,
          1);  // Cells and Column Data
+  define(pasteCellsBehavior, "pasteCellsBehavior", QMetaType::Int,
+         0);  // Insert paste whole cell data
   define(ignoreAlphaonColumn1Enabled, "ignoreAlphaonColumn1Enabled",
          QMetaType::Bool, false);
   define(showKeyframesOnXsheetCellArea, "showKeyframesOnXsheetCellArea",
