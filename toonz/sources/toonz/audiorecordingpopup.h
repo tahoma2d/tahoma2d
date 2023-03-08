@@ -30,9 +30,7 @@ class AudioWriterWAV;
 class AudioRecordingPopup : public DVGui::Dialog {
   Q_OBJECT
 
-  QPushButton
-      *m_recordButton, *m_refreshDevicesButton,
-      *m_playButton,
+  QPushButton *m_recordButton, *m_refreshDevicesButton, *m_playButton,
       *m_pauseRecordingButton, *m_pausePlaybackButton, *m_saveButton;
   QComboBox *m_deviceListCB;
   QAudioInput *m_audioInput;
@@ -95,7 +93,7 @@ class AudioWriterWAV : public QIODevice {
   Q_OBJECT
 public:
   AudioWriterWAV(const QAudioFormat &format);
-  bool restart(const QAudioFormat &format);
+  bool reset(const QAudioFormat &format);
 
   bool start(const QString &filename, bool useMem);
   bool stop();
@@ -109,12 +107,12 @@ public:
 private:
   QString m_filename;
   QFile *m_wavFile;
-  QByteArray *m_wavBuff; // if not null then use memory
+  QByteArray *m_wavBuff;  // if not null then use memory
   QAudioFormat m_format;
-  quint64 m_wrRawB; // Written raw bytes
+  quint64 m_wrRawB;  // Written raw bytes
   qreal m_rbytesms;
-  qreal m_maxAmp;
   qreal m_level, m_peakL;
+  bool m_state;
 
   void writeWAVHeader(QFile &file);
 

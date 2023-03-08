@@ -956,10 +956,9 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
         sampleRate            = f.m_sampleRate;
         format.m_channelCount = f.m_channelCount;
         channels              = f.m_channelCount;
-        format.m_signedSample = f.m_signedSample;
+        format.m_sampleType   = f.m_sampleType;
         format.m_bitPerSample = f.m_bitPerSample;
         bitsPerSample         = f.m_bitPerSample;
-        format.m_formatType   = f.m_formatType;
       }
       if (f.m_channelCount > channels) {
         format.m_channelCount = f.m_channelCount;
@@ -969,8 +968,6 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
         format.m_bitPerSample = f.m_bitPerSample;
         bitsPerSample         = f.m_bitPerSample;
       }
-      if (format.m_formatType > f.m_formatType)
-        format.m_formatType = f.m_formatType;
     }
   }
 
@@ -979,8 +976,8 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
     format.m_sampleRate   = 44100;
     format.m_bitPerSample = 16;
     format.m_channelCount = 1;
-    format.m_signedSample = true;
-    format.m_formatType   = WAVE_FORMAT_PCM;
+    format.m_sampleType   = TSound::INT;
+
   }
 
 #ifdef _WIN32
@@ -993,8 +990,19 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
   if (!ssrs.contains(format.m_sampleRate)) format.m_sampleRate = 44100;
   QAudioFormat qFormat;
   qFormat.setSampleRate(format.m_sampleRate);
-  qFormat.setSampleType(format.m_signedSample ? QAudioFormat::SignedInt
-                                              : QAudioFormat::UnSignedInt);
+  switch (format.m_sampleType) {
+  case TSound::INT:
+    qFormat.setSampleType(QAudioFormat::SignedInt);
+    break;
+  case TSound::UINT:
+    qFormat.setSampleType(QAudioFormat::UnSignedInt);
+    break;
+  case TSound::FLOAT:
+    qFormat.setSampleType(QAudioFormat::Float);
+    break;
+  default:
+    break;
+  }
   qFormat.setSampleSize(format.m_bitPerSample);
   qFormat.setCodec("audio/pcm");
   qFormat.setChannelCount(format.m_channelCount);
@@ -1004,10 +1012,19 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
     format.m_bitPerSample = qFormat.sampleSize();
     format.m_channelCount = qFormat.channelCount();
     format.m_sampleRate   = qFormat.sampleRate();
-    if (qFormat.sampleType() == QAudioFormat::SignedInt)
-      format.m_signedSample = true;
-    else
-      format.m_signedSample = false;
+    switch (qFormat.sampleType()) {
+    case QAudioFormat::SignedInt:
+      format.m_sampleType = TSound::INT;
+      break;
+    case QAudioFormat::UnSignedInt:
+      format.m_sampleType = TSound::UINT;
+      break;
+    case QAudioFormat::Float:
+      format.m_sampleType = TSound::FLOAT;
+      break;
+    default:
+      break;
+    }
   }
 #endif
   // Create the soundTrack
@@ -1065,7 +1082,7 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
 
     if (s1 > 0 && s1 >= s0) {
       soundTrack = soundTrack->extract(s0, s1);
-      if (format.m_formatType == WAVE_FORMAT_PCM)
+      if (format.m_sampleType != TSound::FLOAT)
         overallSoundTrack->copy(
             soundTrack, int((levelStartFrame - fromFrame) * samplePerFrame));
       else
@@ -1126,9 +1143,12 @@ TSoundTrackP TXshSoundColumn::mixingTogether(
 
   // Per ora perche mov vuole solo 16 bit
   TSoundTrackFormat fmt                            = mix->getFormat();
-  if (fmt.m_bitPerSample != 32) fmt.m_bitPerSample = 32;
-  if (fmt.m_formatType != WAVE_FORMAT_PCM) fmt.m_formatType = WAVE_FORMAT_PCM;
-  mix                                              = TSop::convert(mix, fmt);
+  if (fmt.m_bitPerSample == 8) {
+    fmt.m_bitPerSample = 16;
+    fmt.m_sampleType   = TSound::INT;
+    // 8-bits signed don't play on windows
+    mix = TSop::convert(mix, fmt);
+  }
   return mix;
 }
 

@@ -87,13 +87,17 @@ QDateTime TFileStatus::getLastModificationTime() const {
 
 QDateTime TFileStatus::getCreationTime() const {
   if (!m_exist) return QDateTime();
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
+  return m_fileInfo.birthTime();
+#else
   return m_fileInfo.created();
+#endif
 }
 
 //-----------------------------------------------------------------------------------
 
 QFile::Permissions TFileStatus::getPermissions() const {
-  if (!m_exist) return 0;
+  if (!m_exist) return QFileDevice::Permissions();
   return m_fileInfo.permissions();
 }
 
@@ -160,7 +164,11 @@ TFilePath TSystem::getTestDir(string name) {
 //------------------------------------------------------------
 
 QString TSystem::getSystemValue(const TFilePath &name) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QStringList strlist = toQString(name).split("\\", Qt::SkipEmptyParts);
+#else
   QStringList strlist = toQString(name).split("\\", QString::SkipEmptyParts);
+#endif
 
   assert(strlist.size() > 3);
   assert(strlist.at(0) == "SOFTWARE");
@@ -228,7 +236,7 @@ void setPathsPermissions(const TFilePathSet &pathSet,
     f.setPermissions(permissions);
   }
 }
-}
+}  // namespace
 
 // gestire exception
 void TSystem::mkDir(const TFilePath &path) {
@@ -445,7 +453,7 @@ public:
 
 //------------------------------------------------------------
 /*! return the folder path list which is readable and executable
-*/
+ */
 void TSystem::readDirectory_Dir_ReadExe(TFilePathSet &dst,
                                         const TFilePath &path) {
   QStringList dirItems;
@@ -503,7 +511,7 @@ void TSystem::readDirectory_DirItems(QStringList &dst, const TFilePath &path) {
 
 //------------------------------------------------------------
 /*! to retrieve the both lists with groupFrames option = on and off.
-*/
+ */
 void TSystem::readDirectory(TFilePathSet &groupFpSet, TFilePathSet &allFpSet,
                             const TFilePath &path) {
   if (!TFileStatus(path).isDirectory())
@@ -627,7 +635,7 @@ void TSystem::readDirectory(TFilePathSet &dst, const QDir &dir,
     while (FindNextFile(hFind, &find_dir_data)) addEntry();
   }
 #else
-  entries    = (dir.entryList(dir.filter() | QDir::NoDotAndDotDot));
+  entries = (dir.entryList(dir.filter() | QDir::NoDotAndDotDot));
 #endif
 
   TFilePath dirPath(dir.path().toStdWString());
@@ -697,6 +705,8 @@ void TSystem::readDirectoryTree(TFilePathSet &dst, const TFilePath &path,
   if (!TFileStatus(path).isDirectory())
     throw TSystemException(path, " is not a directory");
 
+  std::set<TFilePath, CaselessFilepathLess> fpSet;
+
   QFileInfoList fil = QDir(toQString(path)).entryInfoList();
   int i;
   for (i = 0; i < fil.size(); i++) {
@@ -707,9 +717,15 @@ void TSystem::readDirectoryTree(TFilePathSet &dst, const TFilePath &path,
     if (TFileStatus(son).isDirectory()) {
       if (!onlyFiles) dst.push_back(son);
       readDirectoryTree(dst, son, groupFrames, onlyFiles);
-    } else
-      dst.push_back(son);
+    } else {
+      if (groupFrames && son.getDots() == "..") {
+        son = son.withFrame();
+      }
+      fpSet.insert(son);
+    }
   }
+
+  dst.insert(dst.end(), fpSet.begin(), fpSet.end());
 }
 
 //------------------------------------------------------------
@@ -820,10 +836,10 @@ bool TSystem::doesExistFileOrLevel(const TFilePath &fp) {
     QString name(QString::fromStdWString(fp.getWideName()));
     name.append(QString::fromStdString(fp.getDottedType()));
 
-    int sepPos                               = name.indexOf("#");
-    int dotPos                               = name.indexOf(".", sepPos);
-    int removeChars                          = dotPos - sepPos;
-    int doubleUnderscorePos                  = name.indexOf("__", sepPos);
+    int sepPos              = name.indexOf("#");
+    int dotPos              = name.indexOf(".", sepPos);
+    int removeChars         = dotPos - sepPos;
+    int doubleUnderscorePos = name.indexOf("__", sepPos);
     if (doubleUnderscorePos > 0) removeChars = doubleUnderscorePos - sepPos;
 
     name.remove(sepPos, removeChars);
@@ -1015,8 +1031,8 @@ bool TSystem::touchParentDir(const TFilePath &fp) {
 
 bool TSystem::showDocument(const TFilePath &path) {
 #ifdef _WIN32
-  int ret = (int)ShellExecuteW(0, L"open", path.getWideString().c_str(), 0, 0,
-                               SW_SHOWNORMAL);
+  unsigned long long ret = (unsigned long long)ShellExecuteW(
+      0, L"open", path.getWideString().c_str(), 0, 0, SW_SHOWNORMAL);
   if (ret <= 32) {
     return false;
     throw TSystemException(path, "Can't open");
@@ -1030,7 +1046,7 @@ bool TSystem::showDocument(const TFilePath &path) {
   char newPath[2048];
 
   while (pos < thePath.size()) {
-    char c                         = thePath[pos];
+    char c = thePath[pos];
     if (c == ' ') newPath[count++] = '\\';
 
     newPath[count++] = c;

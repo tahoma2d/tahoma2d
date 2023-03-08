@@ -393,7 +393,8 @@ void FileSelection::viewFile() {
       continue;
 
     if (Preferences::instance()->isDefaultViewerEnabled() &&
-        (files[i].getType() == "avi"))
+        (files[i].getType() == "mov" || files[i].getType() == "avi" ||
+         files[i].getType() == "3gp"))
       QDesktopServices::openUrl(QUrl("file:///" + toQString(files[i])));
     else if (files[i].getType() == "tpl") {
       viewedPalette = StudioPalette::instance()->getPalette(files[i], false);

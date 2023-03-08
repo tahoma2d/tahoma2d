@@ -26,11 +26,7 @@ class VectorGuidedDrawingPane final : public QFrame {
       *m_FlipNextDirectionBtn, *m_FlipPrevDirectionBtn;
 
 public:
-#if QT_VERSION >= 0x050500
   VectorGuidedDrawingPane(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  VectorGuidedDrawingPane(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#endif
   ~VectorGuidedDrawingPane(){};
 
   void updateStatus();

@@ -159,7 +159,9 @@ enum class PredefinedDimension {
   QBOXLAYOUT_DIRECTION,  //! direction of QBoxLayout
   CENTER_ALIGN,          //! horizontal / vertical align
   CAMERA_LAYER,          //! width of a camera column / height of camera row
-  SCALE_THRESHOLD        //! scale threshold to simplify the view
+  SCALE_THRESHOLD,       //! scale threshold to simplify the view
+  FRAME_AREA_EXPANSION   //! expansion of the frame area if it can have extra
+                         //! space
 };
 enum class PredefinedPath {
   DRAG_HANDLE_CORNER,         //! triangle corner at drag sidebar
@@ -179,8 +181,8 @@ enum class PredefinedPath {
 };
 enum class PredefinedPoint {
   KEY_HIDDEN,  //! move extender handle that much if key icons are disabled
-  EXTENDER_XY_RADIUS,        //! x and y radius for rounded rectangle
-  VOLUME_DIVISIONS_TOP_LEFT  //! where to draw volume slider
+  EXTENDER_XY_RADIUS,         //! x and y radius for rounded rectangle
+  VOLUME_DIVISIONS_TOP_LEFT,  //! where to draw volume slider
 };
 enum class PredefinedRange {
   HEADER_FRAME,  //! size of of column header height(v) / row header width(h)

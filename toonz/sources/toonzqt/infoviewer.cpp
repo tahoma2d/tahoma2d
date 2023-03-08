@@ -68,6 +68,7 @@ public:
     eChannels,
     eSampleRate,
     eSampleSize,
+    eSampleType,
     eHowMany
   };
 
@@ -222,6 +223,7 @@ InfoViewerImp::InfoViewerImp()
   create(eChannels, QObject::tr("Channels: "));
   create(eSampleRate, QObject::tr("Sample Rate: "));
   create(eSampleSize, QObject::tr("Sample Size:      "));
+  create(eSampleType, QObject::tr("Sample Type: "));
 
   m_historyLabel.setStyleSheet("color: rgb(0, 0, 200);");
   m_history.setStyleSheet("font-size: 12px; font-family: \"courier\";");
@@ -267,7 +269,7 @@ QString InfoViewerImp::getTypeString() {
     return "Smart Raster Level";
   else if (ext == "pli" || ext == "svg")
     return "Vector Level";
-  else if (ext == "avi")
+  else if (ext == "mov" || ext == "avi" || ext == "3gp")
     return "Movie File";
   else if (ext == "tnz")
     return "Tahoma2D Scene";
@@ -275,7 +277,8 @@ QString InfoViewerImp::getTypeString() {
     return "Tab Scene";
   else if (ext == "plt")
     return "Tahoma2D Palette";
-  else if (ext == "wav" || ext == "aiff" || ext == "mp3")
+  else if (ext == "wav" || ext == "aiff" || ext == "aif" || ext == "raw" ||
+           ext == "mp3" || ext == "ogg" || ext == "flac")
     return "Audio File";
   else if (ext == "mesh")
     return "Mesh Level";
@@ -299,7 +302,11 @@ void InfoViewerImp::setGeneralFileInfo(const TFilePath &path) {
   setVal(eFileType, getTypeString());
   if (fi.owner() != "") setVal(eOwner, fi.owner());
   setVal(eSize, fileSizeString(fi.size()));
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
+  setVal(eCreated, fi.birthTime().toString());
+#else
   setVal(eCreated, fi.created().toString());
+#endif
   setVal(eModified, fi.lastModified().toString());
   setVal(eLastAccess, fi.lastRead().toString());
   m_separator1.show();
@@ -454,6 +461,22 @@ void InfoViewerImp::setSoundInfo() {
 
   label = QString::number(sndTrack->getBitPerSample()) + " bit";
   setVal(eSampleSize, label);
+
+  switch (sndTrack->getSampleType()) {
+  case TSound::INT:
+    label = "Signed integer";
+    break;
+  case TSound::UINT:
+    label = "Unsigned integer";
+    break;
+  case TSound::FLOAT:
+    label = "Floating-point";
+    break;
+  default:
+    label = "Unknown";
+    break;
+  }
+  setVal(eSampleType, label);
 }
 
 //----------------------------------------------------------------

@@ -112,9 +112,33 @@ TColorStyle *TTextureStyle::clone() const { return new TTextureStyle(*this); }
 
 //-----------------------------------------------------------------------------
 
+TColorStyle *TTextureStyle::clone(std::string brushIdName) const {
+  TTextureStyle *style = new TTextureStyle(*this);
+
+  std::string name = getBrushIdNameParam(brushIdName);
+  style->m_texturePath = TFilePath(name);
+  style->setAverageColor();
+  return style;
+}
+
+//-----------------------------------------------------------------------------
+
 QString TTextureStyle::getDescription() const { return "TextureStyle"; }
 
 //-----------------------------------------------------------------------------
+
+std::string TTextureStyle::getBrushIdName() const {
+  std::wstring ws = m_texturePath.getWideString();
+  const std::string s(ws.begin(), ws.end());
+  return "TextureStyle:" + s;
+}
+
+//-----------------------------------------------------------------------------
+
+std::string TTextureStyle::staticBrushIdName(std::wstring texturePath) {
+  const std::string s(texturePath.begin(), texturePath.end());
+  return "TextureStyle:" + s;
+}
 
 //-----------------------------------------------------------------------------
 int TTextureStyle::getTagId() const { return 4; }

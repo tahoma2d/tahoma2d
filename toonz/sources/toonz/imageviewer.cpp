@@ -214,6 +214,7 @@ ImageViewer::ImageViewer(QWidget *parent, FlipBook *flipbook,
     , m_mouseButton(Qt::NoButton)
     , m_draggingZoomSelection(false)
     , m_image()
+    , m_orgImage()
     , m_FPS(0)
     , m_viewAff()
     , m_pos(0, 0)
@@ -407,8 +408,9 @@ ImageViewer::~ImageViewer() {
 /*! Set current image to \b image and update. If Histogram is visible set its
  * image.
  */
-void ImageViewer::setImage(TImageP image) {
-  m_image = image;
+void ImageViewer::setImage(TImageP image, TImageP orgImage) {
+  m_image    = image;
+  m_orgImage = orgImage;
 
   if (m_image && m_firstImage) {
     m_firstImage = false;
@@ -420,7 +422,7 @@ void ImageViewer::setImage(TImageP image) {
   }
 
   if (m_isHistogramEnable && m_histogramPopup->isVisible())
-    m_histogramPopup->setImage(image);
+    m_histogramPopup->setImage((orgImage) ? orgImage : image);
 
   // make sure to redraw the frame here.
   // repaint() does NOT immediately redraw the frame for QOpenGLWidget
@@ -842,7 +844,7 @@ void ImageViewer::mouseMoveEvent(QMouseEvent *event) {
   if (m_visualSettings.m_defineLoadbox && m_flipbook) {
     if (m_mouseButton == Qt::LeftButton)
       updateLoadbox(curPos);
-    else if (m_mouseButton == Qt::MidButton)
+    else if (m_mouseButton == Qt::MiddleButton)
       panQt(curQPos - m_pos);
     else
       updateCursor(curPos);
@@ -871,7 +873,7 @@ void ImageViewer::mouseMoveEvent(QMouseEvent *event) {
 
   if (m_compareSettings.m_dragCompareX || m_compareSettings.m_dragCompareY)
     dragCompare(curQPos - m_pos);
-  else if (m_mouseButton == Qt::MidButton)
+  else if (m_mouseButton == Qt::MiddleButton)
     panQt(curQPos - m_pos);
 
   m_pos = curQPos;
@@ -950,6 +952,8 @@ TImageP ImageViewer::getPickedImage(QPointF mousePos) {
   }
   if (cursorIsInSnapShot)
     return TImageCache::instance()->get(QString("TnzCompareImg"), false);
+  else if (m_orgImage)
+    return m_orgImage;
   else
     return m_image;
 }
@@ -982,8 +986,8 @@ void ImageViewer::pickColor(QMouseEvent *event, bool putValueToStyleEditor) {
       getViewAff().inv() * TPointD(curPos.x() - (qreal)(width()) / 2,
                                    -curPos.y() + (qreal)(height()) / 2);
 
-  TRectD imgRect = (img->raster()) ? convert(TRect(img->raster()->getSize()))
-                                   : img->getBBox();
+  TRectD imgRect   = (img->raster()) ? convert(TRect(img->raster()->getSize()))
+                                     : img->getBBox();
   TPointD imagePos = (img->raster()) ? TPointD(0.5 * imgRect.getLx() + pos.x,
                                                0.5 * imgRect.getLy() + pos.y)
                                      : pos;
@@ -1001,25 +1005,35 @@ void ImageViewer::pickColor(QMouseEvent *event, bool putValueToStyleEditor) {
     TPixel32 pix = picker.pickColor(area);
     m_histogramPopup->updateInfo(pix, imagePos);
     if (putValueToStyleEditor) setPickedColorToStyleEditor(pix);
-  } else if (img->raster()->getPixelSize() == 8)  // 16bpc raster
-  {
+  } else {
     // for specifying pixel range on picking vector
     double scale2 = getViewAff().det();
-    TPixel64 pix  = picker.pickColor16(pos + TPointD(-0.5, -0.5), 10.0, scale2);
+    TPixel32 pixForStyleEditor;
 
-    // throw the picked color to the histogram
-    m_histogramPopup->updateInfo(pix, imagePos);
-    // throw it to the style editor as well
-    if (putValueToStyleEditor) setPickedColorToStyleEditor(toPixel32(pix));
-  } else {  // 8bpc raster
-    // for specifying pixel range on picking vector
-    double scale2 = getViewAff().det();
-    TPixel32 pix  = picker.pickColor(pos + TPointD(-0.5, -0.5), 10.0, scale2);
+    if (img->raster()->getPixelSize() == 8)  // 16bpc raster
+    {
+      TPixel64 pix =
+          picker.pickColor16(pos + TPointD(-0.5, -0.5), 10.0, scale2);
+      // throw the picked color to the histogram
+      m_histogramPopup->updateInfo(pix, imagePos);
+      pixForStyleEditor = toPixel32(pix);
+    } else if (img->raster()->getPixelSize() ==
+               16)  // 32bpc floating point raster
+    {
+      TPixelF pix =
+          picker.pickColor32F(pos + TPointD(-0.5, -0.5), 10.0, scale2);
+      // throw the picked color to the histogram
+      m_histogramPopup->updateInfo(pix, imagePos);
+      pixForStyleEditor = toPixel32(pix);
+    } else {  // 8bpc raster
+      TPixel32 pix = picker.pickColor(pos + TPointD(-0.5, -0.5), 10.0, scale2);
+      // throw the picked color to the histogram
+      m_histogramPopup->updateInfo(pix, imagePos);
+      pixForStyleEditor = pix;
+    }
 
-    // throw the picked color to the histogram
-    m_histogramPopup->updateInfo(pix, imagePos);
     // throw it to the style editor as well
-    if (putValueToStyleEditor) setPickedColorToStyleEditor(pix);
+    if (putValueToStyleEditor) setPickedColorToStyleEditor(pixForStyleEditor);
   }
 }
 
@@ -1050,7 +1064,7 @@ void ImageViewer::rectPickColor(bool putValueToStyleEditor) {
   if (!img->raster()) {  // vector image
     TPointD pressedWinPos = convert(m_pressedMousePos) + m_winPosMousePosOffset;
     TPointD startPos      = TPointD(pressedWinPos.x,
-                               (double)(window()->height()) - pressedWinPos.y);
+                                    (double)(window()->height()) - pressedWinPos.y);
     TPointD currentWinPos =
         TPointD(m_pos.x(), m_pos.y()) + m_winPosMousePosOffset;
     TPointD endPos = TPointD(currentWinPos.x,
@@ -1083,20 +1097,28 @@ void ImageViewer::rectPickColor(bool putValueToStyleEditor) {
   TPointD end = getViewAff().inv() *
                 TPointD(endPos.x - width() / 2, endPos.y - height() / 2);
 
+  TPixel32 pixForStyleEditor;
   if (img->raster()->getPixelSize() == 8)  // 16bpc raster
   {
     TPixel64 pix = picker.pickAverageColor16(TRectD(start, end));
     // throw the picked color to the histogram
     m_histogramPopup->updateAverageColor(pix);
-    // throw it to the style editor as well
-    if (putValueToStyleEditor) setPickedColorToStyleEditor(toPixel32(pix));
+    pixForStyleEditor = toPixel32(pix);
+  } else if (img->raster()->getPixelSize() ==
+             16)  // 32bpc floating point raster
+  {
+    TPixelF pix = picker.pickAverageColor32F(TRectD(start, end));
+    // throw the picked color to the histogram
+    m_histogramPopup->updateAverageColor(pix);
+    pixForStyleEditor = toPixel32(pix);
   } else {  // 8bpc raster
     TPixel32 pix = picker.pickAverageColor(TRectD(start, end));
     // throw the picked color to the histogram
     m_histogramPopup->updateAverageColor(pix);
-    // throw it to the style editor as well
-    if (putValueToStyleEditor) setPickedColorToStyleEditor(pix);
+    pixForStyleEditor = pix;
   }
+  // throw it to the style editor as well
+  if (putValueToStyleEditor) setPickedColorToStyleEditor(pixForStyleEditor);
 }
 
 //-----------------------------------------------------------------------------
@@ -1251,7 +1273,6 @@ void ImageViewer::mouseReleaseEvent(QMouseEvent *event) {
  */
 void ImageViewer::wheelEvent(QWheelEvent *event) {
   if (!m_image) return;
-  if (event->orientation() == Qt::Horizontal) return;
   int delta = 0;
   switch (event->source()) {
   case Qt::MouseEventNotSynthesized: {
@@ -1285,14 +1306,19 @@ void ImageViewer::wheelEvent(QWheelEvent *event) {
 
   }  // end switch
 
-  if (abs(delta) > 0) {
+  if (delta != 0) {
     if ((m_gestureActive == true &&
          m_touchDevice == QTouchDevice::TouchScreen) ||
         m_gestureActive == false) {
-      int delta = event->delta() > 0 ? 120 : -120;
+      int d = delta > 0 ? 120 : -120;
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+      QPoint center(event->position().x() * getDevPixRatio() - width() / 2,
+                    -event->position().y() * getDevPixRatio() + height() / 2);
+#else
       QPoint center(event->pos().x() * getDevPixRatio() - width() / 2,
                     -event->pos().y() * getDevPixRatio() + height() / 2);
-      zoomQt(center, exp(0.001 * delta));
+#endif
+      zoomQt(center, exp(0.001 * d));
     }
   }
   event->accept();

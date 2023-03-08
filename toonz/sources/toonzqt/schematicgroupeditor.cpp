@@ -24,19 +24,13 @@
 
 SchematicWindowEditor::SchematicWindowEditor(
     const QList<SchematicNode *> &groupedNode, SchematicScene *scene)
-#if QT_VERSION >= 0x050000
     : QGraphicsItem()
-#else
-    : QGraphicsItem(0, scene)
-#endif
     , m_groupedNode(groupedNode)
     , m_scene(scene)
     , m_lastPos()
     , m_button(Qt::NoButton)
     , m_isMacroEditor(false) {
-#if QT_VERSION >= 0x050000
   scene->addItem(this);
-#endif
   m_nameItem = new SchematicName(this, 67, 14);
   m_nameItem->setPos(-2, -2);
   m_nameItem->setZValue(1);
@@ -266,7 +260,8 @@ void FxSchematicGroupEditor::onNameChanged() {
   setFlag(QGraphicsItem::ItemIsSelectable, true);
   FxSchematicScene *fxScene = dynamic_cast<FxSchematicScene *>(scene());
   if (!fxScene) return;
-  TFxCommand::renameGroup(fxs.toStdList(), m_groupName.toStdWString(), true,
+  TFxCommand::renameGroup(std::list<TFxP>(fxs.begin(), fxs.end()),
+                          m_groupName.toStdWString(), true,
                           fxScene->getXsheetHandle());
   update();
 }
@@ -297,11 +292,7 @@ QRectF FxSchematicGroupEditor::boundingSceneRect() const {
       int factor = k * 30;
       app.adjust(-factor, -factor, factor, factor);
     }
-#if QT_VERSION >= 0x050000
     rect = rect.united(app);
-#else
-    rect = rect.unite(app);
-#endif
   }
   rect.adjust(-20, -35, 0, 20);
   return rect;
@@ -387,11 +378,7 @@ QRectF FxSchematicMacroEditor::boundingSceneRect() const {
     QPointF shiftAppPos(node->scenePos().x() - app.left(),
                         node->scenePos().y() + app.top() + 10);
     app.moveTopLeft(shiftAppPos);
-#if QT_VERSION >= 0x050000
     rect = rect.united(app);
-#else
-    rect = rect.unite(app);
-#endif
   }
   rect.adjust(-20, -35, 0, 20);
   return rect;
@@ -467,11 +454,7 @@ QRectF StageSchematicGroupEditor::boundingSceneRect() const {
     app.moveTopLeft(shiftAppPos);
     bool isASubgroupedNode = obj->getEditingGroupId() != m_groupId;
     if (isASubgroupedNode) app.adjust(-30, -30, 30, 30);
-#if QT_VERSION >= 0x050000
     rect = rect.united(app);
-#else
-    rect = rect.unite(app);
-#endif
   }
   rect.adjust(-20, -35, 0, 0);
   return rect;

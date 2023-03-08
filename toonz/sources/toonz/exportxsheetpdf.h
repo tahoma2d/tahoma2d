@@ -25,6 +25,7 @@ class TXshSoundTextColumn;
 namespace DVGui {
   class FileField;
   class ColorField;
+  class IntLineEdit;
 }  // namespace DVGui
 class XSheetPDFTemplate;
 class QFontComboBox;
@@ -289,6 +290,7 @@ class ExportXsheetPdfPopup final : public DVGui::Dialog {
   QComboBox *m_templateCombo, *m_exportAreaCombo, *m_continuousLineCombo,
       *m_dialogueColCombo;
   DVGui::ColorField* m_lineColorFld;
+  DVGui::IntLineEdit* m_durationFld;
 
   QCheckBox *m_addDateTimeCB, *m_addScenePathCB, *m_drawSoundCB,
       *m_addSceneNameCB, *m_serialFrameNumberCB, *m_levelNameOnBottomCB,
@@ -347,6 +349,7 @@ protected slots:
   void onNext();
 
   void onTickIdComboActivated();
+  void onDurationEdited();
 };
 
 #endif

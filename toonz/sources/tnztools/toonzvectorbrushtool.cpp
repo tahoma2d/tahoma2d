@@ -1407,9 +1407,9 @@ bool ToonzVectorBrushTool::doFrameRangeStrokes(
   assert(m > 0);
 
   if (withUndo) TUndoManager::manager()->beginBlock();
-  int row = getApplication()->getCurrentFrame()->isEditingScene()
-                ? getApplication()->getCurrentFrame()->getFrameIndex()
-                : -1;
+  int row       = getApplication()->getCurrentFrame()->isEditingScene()
+                      ? getApplication()->getCurrentFrame()->getFrameIndex()
+                      : -1;
   TFrameId cFid = getApplication()->getCurrentFrame()->getFid();
   for (int i = 0; i < m; ++i) {
     TFrameId fid = fids[i];
@@ -1714,7 +1714,7 @@ void ToonzVectorBrushTool::checkStrokeSnapping(bool beforeMousePress,
       stroke = vi->getStroke(i);
       if (stroke->getNearestW(m_mousePos, outW, distance2) &&
           distance2 < minDistance2) {
-        minDistance2                      = distance2;
+        minDistance2 = distance2;
         beforeMousePress ? m_strokeIndex1 = i : m_strokeIndex2 = i;
         if (areAlmostEqual(outW, 0.0, 1e-3))
           beforeMousePress ? m_w1 = 0.0 : m_w2 = 0.0;
@@ -1725,7 +1725,7 @@ void ToonzVectorBrushTool::checkStrokeSnapping(bool beforeMousePress,
 
         beforeMousePress ? point1 = stroke->getPoint(m_w1)
                          : point1 = stroke->getPoint(m_w2);
-        snapFound                 = true;
+        snapFound = true;
       }
     }
     // compare to first point of current stroke
@@ -1826,8 +1826,8 @@ void ToonzVectorBrushTool::checkGuideSnapping(bool beforeMousePress,
         snapPoint.x = hGuide;
       }
       beforeMousePress ? m_foundFirstSnap = true : m_foundLastSnap = true;
-      beforeMousePress ? m_firstSnapPoint = snapPoint : m_lastSnapPoint =
-                                                            snapPoint;
+      beforeMousePress ? m_firstSnapPoint = snapPoint
+                       : m_lastSnapPoint  = snapPoint;
     }
   }
 }

@@ -2,6 +2,7 @@
 #include "tnzimage.h"
 #include "tiio.h"
 #include "tfiletype.h"
+#include "thirdparty.h"
 
 //-------------------------------------------------------------------
 
@@ -57,9 +58,11 @@
 #include "./ffmpeg/tiio_gif.h"
 #include "./ffmpeg/tiio_webm.h"
 #include "./ffmpeg/tiio_mp4.h"
-#include "./ffmpeg/tiio_mov.h"
+#include "./ffmpeg/tiio_apng.h"
+#include "./ffmpeg/tiio_ff_mov.h"
 #include "./mesh/tiio_mesh.h"
 #include "./sprite/tiio_sprite.h"
+#include "./exr/tiio_exr.h"
 
 //-------------------------------------------------------------------
 
@@ -152,34 +155,52 @@ void initImageIo(bool lightVersion) {
   Tiio::defineWriterProperties("spritesheet",
                                new Tiio::SpriteWriterProperties());
 
+  Tiio::defineReaderMaker("exr", Tiio::makeExrReader);
+  Tiio::defineWriterMaker("exr", Tiio::makeExrWriter, true);
+  TFileType::declare("exr", TFileType::RASTER_IMAGE);
+  Tiio::defineWriterProperties("exr", new Tiio::ExrWriterProperties());
+
 // ffmpeg
 #if !defined(_WIN32) || defined(x64) || (defined(_WIN32) && defined(__GNUC__))
-  if (Ffmpeg::checkFfmpeg()) {
-    bool ffprobe = Ffmpeg::checkFfprobe();
+  if (ThirdParty::checkFFmpeg()) {
     if (Ffmpeg::checkFormat("webm")) {
       TLevelWriter::define("webm", TLevelWriterWebm::create, true);
-      if (ffprobe) TLevelReader::define("webm", TLevelReaderWebm::create);
+      TLevelReader::define("webm", TLevelReaderWebm::create);
       TFileType::declare("webm", TFileType::RASTER_LEVEL);
       Tiio::defineWriterProperties("webm", new Tiio::WebmWriterProperties());
     }
     if (Ffmpeg::checkFormat("gif")) {
       TLevelWriter::define("gif", TLevelWriterGif::create, true);
-      if (ffprobe) TLevelReader::define("gif", TLevelReaderGif::create);
+      TLevelReader::define("gif", TLevelReaderGif::create);
       TFileType::declare("gif", TFileType::RASTER_LEVEL);
       Tiio::defineWriterProperties("gif", new Tiio::GifWriterProperties());
     }
     if (Ffmpeg::checkFormat("mp4")) {
       TLevelWriter::define("mp4", TLevelWriterMp4::create, true);
-      if (ffprobe) TLevelReader::define("mp4", TLevelReaderMp4::create);
+      TLevelReader::define("mp4", TLevelReaderMp4::create);
       TFileType::declare("mp4", TFileType::RASTER_LEVEL);
       Tiio::defineWriterProperties("mp4", new Tiio::Mp4WriterProperties());
     }
-    if (Ffmpeg::checkFormat("mov")) {
-      TLevelWriter::define("mov", TLevelWriterMov::create, true);
-      if (ffprobe) TLevelReader::define("mov", TLevelReaderMov::create);
-      TFileType::declare("mov", TFileType::RASTER_LEVEL);
-      Tiio::defineWriterProperties("mov", new Tiio::MovWriterProperties());
+    if (Ffmpeg::checkFormat("apng")) {
+      TLevelWriter::define("apng", TLevelWriterAPng::create, true);
+      TLevelReader::define("apng", TLevelReaderAPng::create);
+      TFileType::declare("apng", TFileType::RASTER_LEVEL);
+      Tiio::defineWriterProperties("apng", new Tiio::APngWriterProperties());
     }
+    if (Ffmpeg::checkFormat("mov")) {
+      TLevelWriter::define("mov", TLevelWriterFFMov::create, true);
+      TLevelReader::define("mov", TLevelReaderFFMov::create);
+      TFileType::declare("mov", TFileType::RASTER_LEVEL);
+      Tiio::defineWriterProperties("mov", new Tiio::FFMovWriterProperties());
+    }
+    if (Ffmpeg::checkFormat("3gp")) {
+      TLevelReader::define("3gp", TLevelReaderFFmpeg::create);
+      TFileType::declare("3gp", TFileType::RASTER_LEVEL);
+    }
+    TLevelReader::define("webp", TLevelReaderFFmpeg::create);
+    TFileType::declare("webp", TFileType::RASTER_LEVEL);
+    TLevelReader::define("ffvideo", TLevelReaderFFmpeg::create);
+    TFileType::declare("ffvideo", TFileType::RASTER_LEVEL);
   }
 #endif
 // end ffmpeg

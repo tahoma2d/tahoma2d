@@ -5,7 +5,7 @@
 
 //------------------------------------------------------------------------------
 #include <set>
-//#include "tpixel.h"
+// #include "tpixel.h"
 #include "traster.h"
 
 #include <QList>
@@ -22,10 +22,10 @@
 
 namespace TColorUtils {
 
-/*-- 似ている色をまとめて1つのStyleにする --*/
+/*-- Combine similar colors into one style --*/
 DVAPI void buildPalette(std::set<TPixel32> &palette, const TRaster32P &raster,
                         int maxColorCount);
-/*-- 全ての異なるピクセルの色を別のStyleにする --*/
+/*-- Make each different pixel color a separate style --*/
 DVAPI void buildPrecisePalette(std::set<TPixel32> &palette,
                                const TRaster32P &raster, int maxColorCount);
 //  pick up color chip sorrounded by frames with specified color
@@ -34,7 +34,7 @@ DVAPI void buildColorChipPalette(QList<QPair<TPixel32, TPoint>> &palette,
                                  const TPixel32 &gridColor,
                                  const int gridLineWidth,
                                  const int colorChipOrder);
-}
+}  // namespace TColorUtils
 
 //------------------------------------------------------------------------------
 

@@ -119,10 +119,7 @@ bool isAreadOnlyLevel(const TFilePath &path) {
   if (path.getDots() == "." ||
       (path.getDots() == ".." &&
        (path.getType() == "tlv" || path.getType() == "tpl"))) {
-    if (path.getType() == "psd" || path.getType() == "gif" ||
-        path.getType() == "mp4" || path.getType() == "webm" ||
-        path.getType() == "mov")
-      return true;
+    if (path.isUneditable()) return true;
     if (!TSystem::doesExistFileOrLevel(path)) return false;
     TFileStatus fs(path);
     return !fs.isWritable();
@@ -197,6 +194,7 @@ TXshSimpleLevel::TXshSimpleLevel(const std::wstring &name)
     , m_editableRangeUserInfo(L"")
     , m_isSubsequence(false)
     , m_16BitChannelLevel(false)
+    , m_floatChannelLevel(false)
     , m_isReadOnly(false)
     , m_temporaryHookMerged(false) {}
 
@@ -939,11 +937,12 @@ void TXshSimpleLevel::loadData(TIStream &is) {
       } else if (tagName == "info") {
         std::string v;
         double xdpi = 0, ydpi = 0;
-        int subsampling                      = 1;
-        int doPremultiply                    = 0;
-        int whiteTransp                      = 0;
-        int antialiasSoftness                = 0;
-        int isStopMotionLevel                = 0;
+        int subsampling        = 1;
+        int doPremultiply      = 0;
+        int whiteTransp        = 0;
+        int antialiasSoftness  = 0;
+        int isStopMotionLevel  = 0;
+        double colorSpaceGamma = LevelOptions::DefaultColorSpaceGamma;
         double vanishingPoint1x              = 0.0;
         double vanishingPoint1y              = 0.0;
         double vanishingPoint2x              = 0.0;
@@ -965,6 +964,8 @@ void TXshSimpleLevel::loadData(TIStream &is) {
         if (is.getTagParam("whiteTransp", v)) whiteTransp = std::stoi(v);
         if (is.getTagParam("isStopMotionLevel", v))
           isStopMotionLevel = std::stoi(v);
+        if (is.getTagParam("colorSpaceGamma", v))
+          colorSpaceGamma = std::stod(v);
 
         if (is.getTagParam("vanishingPoint1x", v))
           vanishingPoint1x = std::stod(v);
@@ -1008,6 +1009,7 @@ void TXshSimpleLevel::loadData(TIStream &is) {
         m_properties->setDoAntialias(antialiasSoftness);
         m_properties->setWhiteTransp(whiteTransp);
         m_properties->setIsStopMotion(isStopMotionLevel);
+        m_properties->setColorSpaceGamma(colorSpaceGamma);
         m_properties->setVanishingPoints(vanishingPoints);
         if (isStopMotionLevel == 1) setIsReadOnly(true);
       } else
@@ -1235,7 +1237,10 @@ void TXshSimpleLevel::load() {
         return;
       }
 
-      if (info) set16BitChannelLevel(info->m_bitsPerSample == 16);
+      if (info) {
+        set16BitChannelLevel(info->m_bitsPerSample == 16);
+        setFloatChannelLevel(info->m_bitsPerSample == 32);
+      }
     }
     if ((getType() & FULLCOLOR_TYPE) && !is16BitChannelLevel())
       setPalette(FullColorPalette::instance()->getPalette(getScene()));
@@ -1378,7 +1383,10 @@ void TXshSimpleLevel::load(const std::vector<TFrameId> &fIds) {
         setFrame(fIds[i], TImageP());
       }
       const TImageInfo *info = lr->getImageInfo(fIds[0]);
-      if (info) set16BitChannelLevel(info->m_bitsPerSample == 16);
+      if (info) {
+        set16BitChannelLevel(info->m_bitsPerSample == 16);
+        setFloatChannelLevel(info->m_bitsPerSample == 32);
+      }
     } else {
       TLevelP level = lr->loadInfo();
       for (TLevel::Iterator it = level->begin(); it != level->end(); it++) {
@@ -1387,7 +1395,10 @@ void TXshSimpleLevel::load(const std::vector<TFrameId> &fIds) {
         setFrame(it->first, TImageP());
       }
       const TImageInfo *info = lr->getImageInfo(level->begin()->first);
-      if (info) set16BitChannelLevel(info->m_bitsPerSample == 16);
+      if (info) {
+        set16BitChannelLevel(info->m_bitsPerSample == 16);
+        setFloatChannelLevel(info->m_bitsPerSample == 32);
+      }
     }
 
     if ((getType() & FULLCOLOR_TYPE) && !is16BitChannelLevel())
@@ -1478,6 +1489,11 @@ void TXshSimpleLevel::saveData(TOStream &os) {
       attr["vanishingPoint4x"] = std::to_string(vanishingPoints.at(3).x);
       attr["vanishingPoint4y"] = std::to_string(vanishingPoints.at(3).y);
     }
+  }
+  if (!areAlmostEqual(getProperties()->colorSpaceGamma(),
+                      LevelOptions::DefaultColorSpaceGamma)) {
+    attr["colorSpaceGamma"] =
+        std::to_string(getProperties()->colorSpaceGamma());
   }
 
   if (m_type == TZI_XSHLEVEL) attr["type"] = "s";
@@ -2496,9 +2512,7 @@ bool TXshSimpleLevel::isFrameReadOnly(TFrameId fid) {
     if (getProperties()->isStopMotionLevel()) return true;
     TFilePath fullPath   = getScene()->decodeFilePath(m_path);
     std::string fileType = fullPath.getType();
-    if (fileType == "psd" || fileType == "gif" || fileType == "mp4" ||
-        fileType == "webm" || fileType == "mov")
-      return true;
+    if (fullPath.isUneditable()) return true;
     TFilePath path =
         fullPath.getDots() == ".." ? fullPath.withFrame(fid) : fullPath;
     if (!TSystem::doesExistFileOrLevel(path)) return false;

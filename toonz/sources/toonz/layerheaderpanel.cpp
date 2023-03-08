@@ -15,13 +15,8 @@
 
 using XsheetGUI::ColumnArea;
 
-#if QT_VERSION >= 0x050500
 LayerHeaderPanel::LayerHeaderPanel(XsheetViewer *viewer, QWidget *parent,
                                    Qt::WindowFlags flags)
-#else
-LayerHeaderPanel::LayerHeaderPanel(XsheetViewer *viewer, QWidget *parent,
-                                   Qt::WFlags flags)
-#endif
     : QWidget(parent, flags), m_viewer(viewer) {
   const Orientation *o = Orientations::leftToRight();
   QRect rect           = o->rect(PredefinedRect::LAYER_HEADER_PANEL);
@@ -52,7 +47,7 @@ QRect shorter(const QRect original) { return original.adjusted(0, 2, 0, -2); }
 QLine leftSide(const QRect &r) { return QLine(r.topLeft(), r.bottomLeft()); }
 
 QLine rightSide(const QRect &r) { return QLine(r.topRight(), r.bottomRight()); }
-}
+}  // namespace
 
 void LayerHeaderPanel::paintEvent(QPaintEvent *event) {
   QPainter p(this);
@@ -66,15 +61,15 @@ void LayerHeaderPanel::paintEvent(QPaintEvent *event) {
   //QRect rect             = QRect(QPoint(0, 0), size());
   //p.fillRect(rect.adjusted(0, 0, -3, 0), slightlyLighter);
 
-  QImage preview = (m_buttonHighlighted == PreviewButton
-                        ? m_viewer->getLayerHeaderPreviewOverImage()
-                        : m_viewer->getLayerHeaderPreviewImage());
+  QImage preview  = (m_buttonHighlighted == PreviewButton
+                         ? m_viewer->getLayerHeaderPreviewOverImage()
+                         : m_viewer->getLayerHeaderPreviewImage());
   QImage camstand = (m_buttonHighlighted == CamstandButton
                          ? m_viewer->getLayerHeaderCamstandOverImage()
                          : m_viewer->getLayerHeaderCamstandImage());
-  QImage lock = (m_buttonHighlighted == LockButton
-                     ? m_viewer->getLayerHeaderLockOverImage()
-                     : m_viewer->getLayerHeaderLockImage());
+  QImage lock     = (m_buttonHighlighted == LockButton
+                         ? m_viewer->getLayerHeaderLockOverImage()
+                         : m_viewer->getLayerHeaderLockImage());
 
   drawIcon(p, PredefinedRect::PANEL_EYE, boost::none, preview);
   drawIcon(p, PredefinedRect::PANEL_PREVIEW_LAYER, boost::none, camstand);

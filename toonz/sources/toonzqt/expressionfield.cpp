@@ -219,7 +219,7 @@ void ExpressionField::keyPressEvent(QKeyEvent *e) {
     setAutoFillBackground(true);
     QPalette p = palette();
     p.setColor(QPalette::Base, Qt::cyan);
-    p.setColor(QPalette::Background, Qt::cyan);
+    p.setColor(QPalette::Window, Qt::cyan);
     setPalette(p);
     update();
     setStyleSheet("#ExpressionField {background-color:cyan;}");
@@ -351,7 +351,8 @@ bool ExpressionField::updateCompleterPopup() {
   int w = m_completerPopup->sizeHintForColumn(0) +
           m_completerPopup->verticalScrollBar()->sizeHint().width() + 5;
   int h =
-      (m_completerPopup->sizeHintForRow(0) * std::min(7, model->rowCount()) + 3) +
+      (m_completerPopup->sizeHintForRow(0) * std::min(7, model->rowCount()) +
+       3) +
       3;
 
   QSize size(w, h);
@@ -372,8 +373,8 @@ int ExpressionField::computeSuggestions() {
     while (start > 0) {
       char c = text[start - 1];
       if ((isascii(c) && isalpha(c)) || c == '_' ||
-          (c == '.' && (start - 2 < 0 ||
-                        (isascii(text[start - 2]) && isalpha(text[start - 2]))))) {
+          (c == '.' && (start - 2 < 0 || (isascii(text[start - 2]) &&
+                                          isalpha(text[start - 2]))))) {
       } else
         break;
       start--;

@@ -128,7 +128,7 @@ void RollerField::removeValue(bool isDragging) {
 IntLineEdit::IntLineEdit(QWidget *parent, int value, int minValue, int maxValue,
                          int showedDigits)
     : LineEdit(parent), m_showedDigits(showedDigits) {
-  setFixedWidth(54);
+  setFixedWidth(40);
 
   m_validator = new QIntValidator(this);
   setValue(value);

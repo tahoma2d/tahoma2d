@@ -31,7 +31,7 @@ static std::pair<double, double> dummyCurrentDpiGetter() {
 CurrentDpiGetter currentDpiGetter = &dummyCurrentDpiGetter;
 
 void setCurrentDpiGetter(CurrentDpiGetter f) { currentDpiGetter = f; }
-}
+}  // namespace UnitParameters
 
 //-------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ void setFieldGuideAspectRatio(double ar) {
 double getFieldGuideAspectRatio() {
   return VerticalFldUnitConverter::m_fieldGuideAspectRatio;
 }
-}
+}  // namespace UnitParameters
 
 //===================================================================
 
@@ -148,9 +148,8 @@ bool TUnit::isExtension(std::wstring ext) const {
 //-------------------------------------------------------------------
 
 void TUnit::setDefaultExtension(std::wstring ext) {
-  if (!ext.empty() &&
-      std::find(m_extensions.begin(), m_extensions.end(), ext) ==
-          m_extensions.end())
+  if (!ext.empty() && std::find(m_extensions.begin(), m_extensions.end(),
+                                ext) == m_extensions.end())
     m_extensions.push_back(ext);
   m_defaultExtension = ext;
 }
@@ -278,13 +277,13 @@ TMeasureManager::TMeasureManager() {
   length = m = new TMeasure("length", inch.clone());
   m->add(cm.clone());
   /*---
-  Fxの寸法パラメータは単位なし（実際にはStageInch（1 StageInch = 1/53.33333
-  inch）という値）
-  Fxの寸法パラメータからExpressionで単位のあるパラメータを参照すると、
-  カレントUnitによってFxの計算結果が変わってしまう。
-  tcomposerで用いられるカレントUnitはデフォルト値なので、
-  ここでデフォルトのカレントUnitをmmにしておくことで、
-  Unit = mm でシーンを作っておけば、作業時と同じRender結果が得られるようにする。
+  The dimensional parameters of Fx are unitless (actually it uses the unit of
+  StageInch (1 StageInch = 1/53.33333 inch)). If you refer to a parameter with a
+  unit in Expression from the Fx dimension parameter, the Fx calculation results
+  will vary depending on the current Unit. Since the current Unit used in
+  tcomposer is the default value, we can set the default current Unit to mm here
+  so that if we create a scene with Unit = mm, we will get the same Render
+  results as when we work.
   ---*/
   TUnit *mmUnit = mm.clone();
   m->add(mmUnit);
@@ -486,9 +485,9 @@ bool TMeasuredValue::setValue(std::wstring s, int *pErr) {
       value = std::stod(s.substr(j, i - j));
     }
     // handle exceptions
-    catch (const std::invalid_argument &e) {
+    catch (const std::invalid_argument &) {
       return false;
-    } catch (const std::out_of_range &e) {
+    } catch (const std::out_of_range &) {
       return false;
     }
 
@@ -599,7 +598,7 @@ public:
 };
 
 //===================================================================
-/*-- Zのカーブのハンドルの長さは0=0となるようにしなければならない --*/
+/*-- The length of the Z curve handle must be 0=0 --*/
 class ZDepthHandleUnitConverter final : public TUnitConverter {
   TMeasureManager::CameraSizeProvider *m_cameraSizeProvider;
 

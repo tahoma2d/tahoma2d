@@ -35,7 +35,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 
 // Diagnostics include
-//#define DIAGNOSTICS
+// #define DIAGNOSTICS
 #ifdef DIAGNOSTICS
 #include "diagnostics.h"
 #endif
@@ -799,8 +799,7 @@ void ShaderFx::bindParameters(QOpenGLShaderProgram *program, double frame) {
 
 void ShaderFx::bindWorldTransform(QOpenGLShaderProgram *program,
                                   const TAffine &worldToDst) {
-// Bind transformation affine
-#if QT_VERSION >= 0x050500
+  // Bind transformation affine
   float qwToD[9] = {static_cast<float>(worldToDst.a11),
                     static_cast<float>(worldToDst.a12),
                     static_cast<float>(worldToDst.a13),
@@ -810,34 +809,18 @@ void ShaderFx::bindWorldTransform(QOpenGLShaderProgram *program,
                     0.0f,
                     0.0f,
                     1.0f};
-#else
-  qreal qwToD[9] = {worldToDst.a11,
-                    worldToDst.a12,
-                    worldToDst.a13,
-                    worldToDst.a21,
-                    worldToDst.a22,
-                    worldToDst.a23,
-                    0.0,
-                    0.0,
-                    1.0};
-#endif
   program->setUniformValue("worldToOutput", QMatrix3x3(qwToD));
 
   const TAffine &dToW = worldToDst.inv();
-#if QT_VERSION >= 0x050500
-  float qdToW[9] = {static_cast<float>(dToW.a11),
-                    static_cast<float>(dToW.a12),
-                    static_cast<float>(dToW.a13),
-                    static_cast<float>(dToW.a21),
-                    static_cast<float>(dToW.a22),
-                    static_cast<float>(dToW.a23),
-                    0.0f,
-                    0.0f,
-                    1.0f};
-#else
-  qreal qdToW[9] = {dToW.a11, dToW.a12, dToW.a13, dToW.a21, dToW.a22,
-                    dToW.a23, 0.0,      0.0,      1.0};
-#endif
+  float qdToW[9]      = {static_cast<float>(dToW.a11),
+                         static_cast<float>(dToW.a12),
+                         static_cast<float>(dToW.a13),
+                         static_cast<float>(dToW.a21),
+                         static_cast<float>(dToW.a22),
+                         static_cast<float>(dToW.a23),
+                         0.0f,
+                         0.0f,
+                         1.0f};
   program->setUniformValue("outputToWorld", QMatrix3x3(qdToW));
 }
 
@@ -1095,7 +1078,6 @@ void ShaderFx::doCompute(TTile &tile, double frame,
 
           TAffine sToI(iToS.inv());
 
-#if QT_VERSION >= 0x050500
           float qiToS[9] = {static_cast<float>(iToS.a11),
                             static_cast<float>(iToS.a12),
                             static_cast<float>(iToS.a13),
@@ -1114,13 +1096,6 @@ void ShaderFx::doCompute(TTile &tile, double frame,
                             0.0f,
                             0.0f,
                             1.0f};
-#else
-          qreal qiToS[9] = {iToS.a11, iToS.a12, iToS.a13, iToS.a21, iToS.a22,
-                            iToS.a23, 0.0,      0.0,      1.0};
-
-          qreal qsToI[9] = {sToI.a11, sToI.a12, sToI.a13, sToI.a21, sToI.a22,
-                            sToI.a23, 0.0,      0.0,      1.0};
-#endif
           inputs[p] = p, screenToInput[p] = QMatrix3x3(qsToI),
           inputToScreen[p] = QMatrix3x3(qiToS);
         }

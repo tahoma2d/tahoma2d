@@ -156,6 +156,8 @@ public:
   TColorStyle *clone() const override;
 
   QString getDescription() const override;
+  std::string getBrushIdName() const override;
+  static std::size_t staticBrushIdHash();
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -203,6 +205,7 @@ public:
   TColorStyle *clone() const override;
 
   QString getDescription() const override;
+  std::string getBrushIdName() const override;
 
   TPixel32 getColor() const { return m_color; }
   USHORT getStipple() const { return m_stipple; }
@@ -269,10 +272,10 @@ public:
   void invalidate(){};
 
   TColorStyle *clone() const override;
+  TColorStyle *clone(std::string brushIdName) const override;
 
-  QString getDescription() const override {
-    return "TRasterImagePatternStrokeStyle";
-  }
+  QString getDescription() const override;
+  std::string getBrushIdName() const override;
 
   bool hasMainColor() const override { return false; }
   TPixel32 getMainColor() const override { return TPixel32::Black; }
@@ -300,6 +303,8 @@ public:
   void getParamRange(int index, double &min, double &max) const override;
   double getParamValue(TColorStyle::double_tag, int index) const override;
   void setParamValue(int index, double value) override;
+
+  TRectD getStrokeBBox(const TStroke *stroke) const override;
 
 protected:
   void makeIcon(const TDimension &d) override;
@@ -348,10 +353,10 @@ public:
   void invalidate(){};
 
   TColorStyle *clone() const override;
+  TColorStyle *clone(std::string brushIdName) const override;
 
-  QString getDescription() const override {
-    return "TVectorImagePatternStrokeStyle";
-  }
+  QString getDescription() const override;
+  std::string getBrushIdName() const override;
 
   bool hasMainColor() const override { return false; }
   TPixel32 getMainColor() const override { return TPixel32::Black; }
@@ -381,6 +386,8 @@ public:
   void setParamValue(int index, double value) override;
 
   static void clearGlDisplayLists();
+
+  TRectD getStrokeBBox(const TStroke *stroke) const override;
 
 protected:
   void makeIcon(const TDimension &d) override;

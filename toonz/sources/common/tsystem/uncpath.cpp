@@ -4,7 +4,9 @@
 #include "tconvert.h"
 
 #ifdef _WIN32
+#ifndef UNICODE
 #define UNICODE  // per le funzioni di conversione da/a UNC
+#endif
 #include <windows.h>
 #include <lm.h>
 #endif
@@ -82,14 +84,14 @@ TFilePath TSystem::toUNC(const TFilePath &fp) {
           // Loop through the entries;
           for (i = 1; i <= er; i++) {
             if (p->shi502_type == STYPE_DISKTREE) {
-              //#ifdef IS_DOTNET
-              // shi502_path e' una wstring, aanche se la dichiarazione di
-              // PSHARE_INFO_502 non lo sa!
+              // #ifdef IS_DOTNET
+              //  shi502_path e' una wstring, aanche se la dichiarazione di
+              //  PSHARE_INFO_502 non lo sa!
               std::wstring shareLocalPathW = (LPWSTR)(p->shi502_path);
               std::string shareLocalPath   = ::to_string(shareLocalPathW);
-              //#else
-              // string shareLocalPath = toString(p->shi502_path);
-              //#endif
+              // #else
+              //  string shareLocalPath = toString(p->shi502_path);
+              // #endif
 
               if (toLower(fpStr).find(toLower(shareLocalPath)) == 0) {
                 std::string hostName = TSystem::getHostName().toStdString();
@@ -100,7 +102,7 @@ TFilePath TSystem::toUNC(const TFilePath &fp) {
                 std::string shareNetName   = ::to_string(shareNetNameW);
                 //	 #else
                 // string shareNetName = toString(p->shi502_netname);
-                //#endif
+                // #endif
                 shareNetName.append("\\");
 
                 std::string fp(fpStr);
@@ -176,19 +178,19 @@ TFilePath TSystem::toLocalPath(const TFilePath &fp) {
       // Loop through the entries;
       for (int i = 1; i <= (int)er; i++) {
         if (p->shi502_type == STYPE_DISKTREE) {
-          //#ifdef IS_DOTNET
-          // shi502_netname e' una wstring, anche se la dichiarazione di
-          // PSHARE_INFO_502 non lo sa!
+          // #ifdef IS_DOTNET
+          //  shi502_netname e' una wstring, anche se la dichiarazione di
+          //  PSHARE_INFO_502 non lo sa!
           std::wstring shareNetNameW = (LPWSTR)(p->shi502_netname);
           std::string shareNetName   = ::to_string(shareNetNameW);
           //	#else
           // string shareNetName = toString(p->shi502_netname);
-          //#endif
+          // #endif
 
           if (toLower(fpShareName) == toLower(shareNetName)) {
-            //#ifdef IS_DOTNET
-            // shi502_path e' una wstring, anche se la dichiarazione di
-            // PSHARE_INFO_502 non lo sa!
+            // #ifdef IS_DOTNET
+            //  shi502_path e' una wstring, anche se la dichiarazione di
+            //  PSHARE_INFO_502 non lo sa!
             std::wstring shareLocalPathW = (LPWSTR)(p->shi502_path);
             return TFilePath(shareLocalPathW) + TFilePath(path);
           }

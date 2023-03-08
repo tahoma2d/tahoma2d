@@ -21,8 +21,8 @@ public:
   ~Ffmpeg();
   void createIntermediateImage(const TImageP &image, int frameIndex);
   void runFfmpeg(QStringList preIArgs, QStringList postIArgs,
-                 bool includesInPath, bool includesOutPath,
-                 bool overWriteFiles);
+                 bool includesInPath, bool includesOutPath, bool overWriteFiles,
+                 bool asyncProcess = true);
   void runFfmpeg(QStringList preIArgs, QStringList postIArgs, TFilePath path);
   QString runFfprobe(QStringList args);
   void cleanUpFiles();
@@ -31,8 +31,6 @@ public:
   void setPath(TFilePath path);
   void saveSoundTrack(TSoundTrack *st);
   bool checkFilesExist();
-  static bool checkFfmpeg();
-  static bool checkFfprobe();
   static bool checkFormat(std::string format);
   static bool checkCodecs(std::string format);
   double getFrameRate();
@@ -46,17 +44,46 @@ public:
   int getGifFrameCount();
 
 private:
-  QString m_intermediateFormat, m_ffmpegPath, m_audioPath, m_audioFormat;
+  QString m_intermediateFormat, m_audioPath, m_audioFormat;
   int m_frameCount    = 0, m_lx, m_ly, m_bpp, m_bitsPerSample, m_channelCount,
-      m_ffmpegTimeout = -1, m_frameNumberOffset = -1;
-  double m_frameRate  = 24.0;
-  bool m_ffmpegExists = false, m_ffprobeExists = false, m_hasSoundTrack = false;
+      m_ffmpegTimeout = -1, m_startNumber = 2147483647;
+  double m_frameRate   = 24.0;
+  bool m_hasSoundTrack = false;
   TFilePath m_path;
   QVector<QString> m_cleanUpList;
   QStringList m_audioArgs;
   TUINT32 m_sampleRate;
   QString cleanPathSymbols();
-  static bool waitFfmpeg(const QProcess &ffmpeg, int timeout);
+  bool waitFfmpeg(QProcess &ffmpeg, bool asyncProcess);
 };
+
+//===========================================================
+//
+//  TLevelReaderFFmpeg
+//
+//===========================================================
+
+class TLevelReaderFFmpeg final : public TLevelReader {
+public:
+  TLevelReaderFFmpeg(const TFilePath &path);
+  ~TLevelReaderFFmpeg();
+  TImageReaderP getFrameReader(TFrameId fid) override;
+
+  static TLevelReader *create(const TFilePath &f) {
+    return new TLevelReaderFFmpeg(f);
+  }
+
+  TLevelP loadInfo() override;
+  TImageP load(int frameIndex);
+  TDimension getSize();
+
+private:
+  Ffmpeg *ffmpegReader;
+  bool ffmpegFramesCreated = false;
+  TDimension m_size;
+  int m_frameCount, m_lx, m_ly;
+};
+
+//===========================================================================
 
 #endif

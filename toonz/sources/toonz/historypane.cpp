@@ -38,7 +38,7 @@ const struct {
     {HistoryType::FilmStrip, "history_filmstrip"},
 
     {0, 0}};
-};
+};  // namespace
 
 class HistoryPixmapManager {  // singleton
 
@@ -72,11 +72,7 @@ public:
   }
 };
 //-----------------------------------------------------------------------------
-#if QT_VERSION >= 0x050500
 HistoryField::HistoryField(QScrollArea *parent, Qt::WindowFlags flags)
-#else
-HistoryField::HistoryField(QScrollArea *parent, Qt::WFlags flags)
-#endif
     : QFrame(parent, flags), m_scrollArea(parent) {
   setObjectName("filmStripFrames");
   setFrameStyle(QFrame::StyledPanel);
@@ -94,8 +90,8 @@ void HistoryField::updateContentHeight(int minimumHeight) {
   int contentHeight =
       TUndoManager::manager()->getHistoryCount() * HISTORY_ITEM_HEIGHT;
   if (contentHeight < minimumHeight) contentHeight = minimumHeight;
-  int parentHeight                                 = parentWidget()->height();
-  if (contentHeight < parentHeight) contentHeight  = parentHeight;
+  int parentHeight = parentWidget()->height();
+  if (contentHeight < parentHeight) contentHeight = parentHeight;
   if (contentHeight != height()) setFixedHeight(contentHeight);
 }
 
@@ -191,11 +187,7 @@ void HistoryField::exposeCurrent() {
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-#if QT_VERSION >= 0x050500
 HistoryPane::HistoryPane(QWidget *parent, Qt::WindowFlags flags)
-#else
-HistoryPane::HistoryPane(QWidget *parent, Qt::WFlags flags)
-#endif
     : QWidget(parent) {
   m_frameArea = new QScrollArea(this);
   m_field     = new HistoryField(m_frameArea);

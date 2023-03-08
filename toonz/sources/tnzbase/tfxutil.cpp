@@ -2,7 +2,7 @@
 
 #include "tfxutil.h"
 #include "tbasefx.h"
-//#include "timage_io.h"
+// #include "timage_io.h"
 #include "trasterimage.h"
 #include "tdoubleparam.h"
 #include "tparamset.h"
@@ -82,8 +82,8 @@ TFxP TFxUtil::makeDarken(const TFxP &dn, const TFxP &up) {
   assert(dn);
   assert(up);
 
-  /*-- TODO: FxId名変更となる可能性が高い。DarkenFx実装後に修正のこと。2016/2/3
-   * shun_iwasawa --*/
+  /*-- TODO: FxId name will likely be changed; correct after DarkenFx
+   * implementation. 2016/2/3 shun_iwasawa --*/
   TFxP darkenFx = TFx::create("STD_inoDarkenFx");
   assert(darkenFx);
   if (!darkenFx) return 0;

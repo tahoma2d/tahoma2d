@@ -29,7 +29,7 @@
 #include <QHideEvent>
 #include <QGestureEvent>
 
-//#define PRINT_AFF
+// #define PRINT_AFF
 
 //**********************************************************************************
 //    Local namespace  stuff
@@ -50,8 +50,9 @@ private:
 bool PlaneViewerZoomer::zoom(bool zoomin, bool resetZoom) {
   PlaneViewer &planeViewer = static_cast<PlaneViewer &>(*getWidget());
 
-  resetZoom ? planeViewer.resetView() : zoomin ? planeViewer.zoomIn()
-                                               : planeViewer.zoomOut();
+  resetZoom ? planeViewer.resetView()
+  : zoomin  ? planeViewer.zoomIn()
+            : planeViewer.zoomOut();
 
   return true;
 }
@@ -189,7 +190,7 @@ void PlaneViewer::mouseMoveEvent(QMouseEvent *event) {
   }
 
   QPoint curPos = event->pos() * getDevPixRatio();
-  if (event->buttons() & Qt::MidButton)
+  if (event->buttons() & Qt::MiddleButton)
     moveView(curPos.x() - m_xpos, height() - curPos.y() - m_ypos);
 
   m_xpos = curPos.x(), m_ypos = height() - curPos.y();
@@ -255,12 +256,12 @@ void PlaneViewer::wheelEvent(QWheelEvent *event) {
 
   default:  // Qt::MouseEventSynthesizedByQt,
             // Qt::MouseEventSynthesizedByApplication
-    {
-      std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
-                   "Qt::MouseEventSynthesizedByApplication"
-                << std::endl;
-      break;
-    }
+  {
+    std::cout << "not supported event: Qt::MouseEventSynthesizedByQt, "
+                 "Qt::MouseEventSynthesizedByApplication"
+              << std::endl;
+    break;
+  }
 
   }  // end switch
 
@@ -268,9 +269,14 @@ void PlaneViewer::wheelEvent(QWheelEvent *event) {
     if ((m_gestureActive == true &&
          m_touchDevice == QTouchDevice::TouchScreen) ||
         m_gestureActive == false) {
-      TPointD pos(event->x() * getDevPixRatio(),
-                  height() - event->y() * getDevPixRatio());
-      double zoom_par = 1 + event->delta() * 0.001;
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+      TPointD pos(event->position().x() * getDevPixRatio(),
+                  height() - event->position().y() * getDevPixRatio());
+#else
+      TPointD pos(event->pos().x() * getDevPixRatio(),
+                  height() - event->pos().y() * getDevPixRatio());
+#endif
+      double zoom_par = 1 + event->angleDelta().y() * 0.001;
 
       zoomView(pos.x, pos.y, zoom_par);
     }
@@ -469,10 +475,9 @@ bool PlaneViewer::event(QEvent *e) {
   }
   */
 
-  if (e->type() == QEvent::Gesture &&
-      CommandManager::instance()
-          ->getAction(MI_TouchGestureControl)
-          ->isChecked()) {
+  if (e->type() == QEvent::Gesture && CommandManager::instance()
+                                          ->getAction(MI_TouchGestureControl)
+                                          ->isChecked()) {
     gestureEvent(static_cast<QGestureEvent *>(e));
     return true;
   }

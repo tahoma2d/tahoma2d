@@ -69,6 +69,9 @@ public:
   bool m_forSceneIcon = false;  // whether it is rendered for the scene icons
   bool m_forReference =
       false;  // whether it is rendered for reference operations
+
+  int m_gainStep;
+
 public:
   VisualSettings();
 
@@ -110,6 +113,6 @@ DVAPI void paintImage(const TImageP &image, const TDimension &imageSize,
                       const VisualSettings &visualSettings,
                       const CompareSettings &compareSettings,
                       const TRect &loadbox);
-}
+}  // namespace ImagePainter
 
 #endif  // IMAGEPAINTER_H

@@ -389,6 +389,7 @@ public:
   void updateField(double value) override;
 
   QSize getPreferredSize() override { return QSize(260, 26); }
+
   void setPrecision(int precision) override;
 
 protected slots:
@@ -564,6 +565,8 @@ public:
   void update(int frame) override;
 
   QSize getPreferredSize() override { return QSize(150, 20); }
+
+  int getValue() const;
 
 protected slots:
   void onChange(const QString &str);

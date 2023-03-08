@@ -321,7 +321,7 @@ Dialog::Dialog(QWidget *parent, bool hasButton, bool hasFixedSize,
     if (x > screen.right() - 50) x  = screen.right() - 50;
     if (x < screen.left()) x        = screen.left();
     if (y > screen.bottom() - 90) y = screen.bottom() - 90;
-    if (y < screen.top()) y         = screen.top();
+    if (y <= screen.top()) y = screen.top() + 50;  // pad for window title
     setGeometry(x, y, values.at(2).toInt(), values.at(3).toInt());
     settings.setValue(m_name, QString::number(x) + " " + QString::number(y) +
                                   " " + QString::number(values.at(2).toInt()) +

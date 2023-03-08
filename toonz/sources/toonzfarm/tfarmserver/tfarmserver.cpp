@@ -31,7 +31,7 @@ using namespace TVER;
 #include <unistd.h>
 #endif
 
-//#define REDIRECT_OUTPUT
+// #define REDIRECT_OUTPUT
 
 #ifdef _WIN32
 #define QUOTE_STR "\""
@@ -116,7 +116,8 @@ TFilePath getLocalRoot() {
 #else
   // set path to something suitable for most linux (Unix?) systems
 #ifdef FREEBSD
-  std::string unixpath = "/usr/local/etc/" + tver.getAppName() + "/tahoma.conf";
+  std::string unixpath =
+      "/usr/local/etc/" + tver.getAppName() + "/tahoma.conf";
 #else
   std::string unixpath = "/etc/" + tver.getAppName() + "/tahoma.conf";
 #endif
@@ -460,9 +461,30 @@ void Task::run() {
   // cout << exename << endl;
   // cout << cmdline << endl;
 
-  QProcess process;
+  // parse command line
+  QString prgName;
+  QString argsStr = "";
+  int sepPos      = cmdline.indexOf(" ");
 
-  process.start(cmdline);
+  if (sepPos == -1) {
+    prgName = cmdline;
+  } else {
+    prgName = cmdline.left(sepPos);
+    argsStr = cmdline.right(cmdline.size() - sepPos - 1);
+  }
+
+  QProcess process;
+  process.setProgram(prgName);
+#if defined(_WIN32)
+  process.setNativeArguments(argsStr);
+#else
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  process.setArguments(argsStr.split(" ", Qt::SkipEmptyParts));
+#else
+  process.setArguments(argsStr.split(" ", QString::SkipEmptyParts));
+#endif
+#endif
+  process.start();
   process.waitForFinished(-1);
 
   int exitCode  = process.exitCode();
@@ -612,13 +634,9 @@ int FarmServer::addTask(const QString &id, const QString &cmdline) {
 
 int FarmServer::terminateTask(const QString &taskid) {
 #ifdef _WIN32
-  HANDLE hJob = OpenJobObject(MAXIMUM_ALLOWED,  // access right
-                              TRUE,             // inheritance state
-#if QT_VERSION >= 0x050500
+  HANDLE hJob = OpenJobObject(MAXIMUM_ALLOWED,   // access right
+                              TRUE,              // inheritance state
                               taskid.toUtf8());  // job name
-#else
-                              taskid.toAscii());              // job name
-#endif
 
   if (hJob != NULL) {
     BOOL res = TerminateJobObject(hJob,  // handle to job
@@ -661,7 +679,7 @@ void FarmServer::queryHwInfo(HwInfo &hwInfo) {
 #ifdef __sgi
   hwInfo.m_type         = Irix;
 #else
-  hwInfo.m_type        = Linux;
+  hwInfo.m_type = Linux;
 #endif
 #endif
 }
@@ -746,12 +764,7 @@ static bool loadServerData(const QString &hostname, QString &addr, int &port) {
 
     iss >> name >> ipAddress >> port;
     if (name[0] == '#') continue;
-#if QT_VERSION >= 0x050500
-    if (STRICMP(hostname.toUtf8(), name.c_str()) == 0)
-#else
-    if (STRICMP(hostname.toAscii(), name.c_str()) == 0)
-#endif
-    {
+    if (STRICMP(hostname.toUtf8(), name.c_str()) == 0) {
       addr = QString(ipAddress.c_str());
       return true;
     }
@@ -1033,11 +1046,7 @@ void FarmServerService::mountDisks() {
     DWORD res =
         WNetAddConnection2(&NetResource,  // connection details
                            0,             // password
-#if QT_VERSION >= 0x050500
                            TSystem::getUserName().toUtf8(),  // user name
-#else
-                           TSystem::getUserName().toAscii(),  // user name
-#endif
                            0);  // connection options
 
     if (res == NO_ERROR) m_disksMounted.push_back(drive);

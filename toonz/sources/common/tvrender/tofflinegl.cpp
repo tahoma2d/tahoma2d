@@ -65,7 +65,7 @@ namespace {
 // on particular configurations (notably, Windows 7). So we mutex them as
 // a temporary workaround.
 static QMutex win32ImpMutex;
-}
+}  // namespace
 
 //-------------------------------
 
@@ -183,23 +183,33 @@ public:
     static PIXELFORMATDESCRIPTOR pfd = {
         sizeof(PIXELFORMATDESCRIPTOR),  // size of this pfd
         1,                              // version number
-        0 | (false ? (PFD_DRAW_TO_WINDOW | PFD_DOUBLEBUFFER)
+        0 |
+            (false ? (PFD_DRAW_TO_WINDOW | PFD_DOUBLEBUFFER)
                    : (PFD_DRAW_TO_BITMAP | PFD_SUPPORT_GDI)) |
             PFD_SUPPORT_OPENGL,  // support OpenGL
         PFD_TYPE_RGBA,           // RGBA type
         32,                      // 32-bit color depth
         0,
-        0, 0, 0, 0, 0,   // color bits ignored
-        8,               // no alpha buffer /*===*/
-        0,               // shift bit ignored
-        0,               // no accumulation buffer
-        0, 0, 0, 0,      // accum bits ignored
+        0,
+        0,
+        0,
+        0,
+        0,  // color bits ignored
+        8,  // no alpha buffer /*===*/
+        0,  // shift bit ignored
+        0,  // no accumulation buffer
+        0,
+        0,
+        0,
+        0,               // accum bits ignored
         32,              // 32-bit z-buffer
         32,              // max stencil buffer
         0,               // no auxiliary buffer
         PFD_MAIN_PLANE,  // main layer
         0,               // reserved
-        0, 0, 0          // layer masks ignored
+        0,
+        0,
+        0  // layer masks ignored
     };
 
     // get the best available match of pixel format for the device context
@@ -241,7 +251,7 @@ public:
     void *b = buffer;  // Pointer To The Buffer
 
 #if !defined(x64) && defined(_MSC_VER)
-    __asm        // Assembler Code To Follow
+    __asm            // Assembler Code To Follow
     {
         mov ecx, bufferSize  // Counter Set To Dimensions Of Our Memory Block
         mov ebx, b  // Points ebx To Our Data (b)
@@ -312,7 +322,7 @@ namespace {
 // The XScopedLock stuff doesn't seem finished,
 // why not just do the same as with win32 and use a Qt lock??
 static QMutex linuxImpMutex;
-}
+}  // namespace
 
 class XImplementation final : public TOfflineGL::Imp {
 public:
@@ -348,14 +358,14 @@ public:
     static TThread::Mutex mutex;
 
     QMutexLocker sl(&mutex);
-    pthread_t self = pthread_self();
+    pthread_t self                               = pthread_self();
     std::map<pthread_t, GLXContext>::iterator it = m_glxContext.find(self);
     if (((it != m_glxContext.end()) && (it->second != m_context)) ||
         (it == m_glxContext.end())) {
       //	cout << "calling GLXMakeCurrent " << self << " " << m_context <<
       // endl;
       Bool ret;
-      if (!isDtor) ret   = glXMakeCurrent(m_dpy, m_pixmap, m_context);
+      if (!isDtor) ret = glXMakeCurrent(m_dpy, m_pixmap, m_context);
       m_glxContext[self] = m_context;
       return ret;
     }
@@ -432,7 +442,7 @@ Bool ret = glXMakeCurrent(m_dpy,
     m_raster = raster;
   }
 
-//-----------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------
 
 #if defined(MACOSX)
 #if defined(powerpc)
@@ -545,10 +555,10 @@ TOfflineGL::TOfflineGL(TDimension dim, const TOfflineGL *shared) : m_imp(0) {
 #endif
 
   /*
-  元のコードは(別スレッドから呼び出すための) offline renderer を作って main
-  thread に dispatch するという訳のわからないことをしていたが Q*GLContext は
-  thread context を超えられないので直接生成してこのコンテキストで閉じる.
-  別スレッドには dispatch しない.
+ The original code did some incomprehensible things like creating an offline
+ renderer (to be called from another thread) and dispatching it to the main
+ thread, but Q*GLContext can't go beyond the  thread context, so it is created
+ directly and closed in this context. It does not dispatch to another thread.
 */
   m_imp = currentImpGenerator(dim, shared ? shared->m_imp : 0);
 
@@ -594,7 +604,7 @@ TOfflineGL::ImpGenerator *TOfflineGL::defineImpGenerator(
 
 void TOfflineGL::makeCurrent() {
   if (currentContextManager) currentContextManager->store();
-  // Tutto il codice è stato spostato dentro Imp
+  // All the code was moved inside Imp
   m_imp->makeCurrent();
   assert(glGetError() == GL_NO_ERROR);
 }

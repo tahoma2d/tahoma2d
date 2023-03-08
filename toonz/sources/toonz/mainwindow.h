@@ -6,11 +6,7 @@
 #include "tfilepath.h"
 #include "toonzqt/menubarcommand.h"
 
-#if QT_VERSION >= 0x050000
 #include <QtWidgets/QMainWindow>
-#else
-#include <QtGui/QMainWindow>
-#endif
 #include <map>
 #include <QAction>
 #include <QString>
@@ -33,13 +29,8 @@ class Room final : public TMainWindow {
   QString m_name;
 
 public:
-#if QT_VERSION >= 0x050500
-  Room(QWidget *parent = 0, Qt::WindowFlags flags = 0)
-#else
-  Room(QWidget *parent = 0, Qt::WFlags flags = 0)
-#endif
-      : TMainWindow(parent, flags) {
-  }
+  Room(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags())
+      : TMainWindow(parent, flags) {}
 
   ~Room() {}
 
@@ -79,13 +70,8 @@ class MainWindow final : public QMainWindow {
   std::vector<std::pair<DockLayout *, DockLayout::State>> m_panelStates;
 
 public:
-#if QT_VERSION >= 0x050500
   MainWindow(const QString &argumentLayoutFileName, QWidget *parent = 0,
-             Qt::WindowFlags flags = 0);
-#else
-  MainWindow(const QString &argumentLayoutFileName, QWidget *parent = 0,
-             Qt::WFlags flags = 0);
-#endif
+             Qt::WindowFlags flags = Qt::WindowFlags());
   ~MainWindow();
 
   void startupFloatingPanels();
@@ -204,7 +190,8 @@ private:
                             const char *iconSVGName = "",
                             QString newStatusTip = "");
   QAction *createMenuAction(const char *id, const char *name,
-                            QList<QString> list, QString newStatusTip = "");
+                            QList<QString> list, QString newStatusTip = "",
+                            bool isForRecentFiles = true);
   QAction *createToggle(const char *id, const char *name,
                         const QString &defaultShortcut, bool startStatus,
                         CommandType type, const char *iconSVGName = "",
@@ -245,6 +232,7 @@ protected slots:
   void onInk1CheckTriggered(bool on);
 
   void onUpdateCheckerDone(bool);
+  void onActiveViewerChanged();
 
   void toggleStatusBar(bool);
   void toggleTransparency(bool);

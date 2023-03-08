@@ -90,6 +90,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TFurStrokeStyle", "Herringbone");
   }
+  std::string getBrushIdName() const override { return "FurStrokeStyle"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -132,6 +133,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TChainStrokeStyle", "Chain");
   }
+  std::string getBrushIdName() const override { return "ChainStrokeStyle"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -163,6 +165,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TSprayStrokeStyle", "Circlets");
   }
+  std::string getBrushIdName() const override { return "SprayStrokeStyle"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -204,6 +207,9 @@ public:
 
   QString getDescription() const override {
     return QCoreApplication::translate("TGraphicPenStrokeStyle", "Dashes");
+  }
+  std::string getBrushIdName() const override {
+    return "GraphicPenStrokeStyle";
   }
 
   bool hasMainColor() const override { return true; }
@@ -253,6 +259,9 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TDottedLineStrokeStyle", "Vanishing");
   }
+  std::string getBrushIdName() const override {
+    return "DottedLineStrokeStyle";
+  }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -298,6 +307,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TRopeStrokeStyle", "Rope");
   }
+  std::string getBrushIdName() const override { return "RopeStrokeStyle"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -340,6 +350,9 @@ public:
 
   QString getDescription() const override {
     return QCoreApplication::translate("TCrystallizeStrokeStyle", "Tulle");
+  }
+  std::string getBrushIdName() const override {
+    return "CrystallizeStrokeStyle";
   }
 
   bool hasMainColor() const override { return true; }
@@ -384,6 +397,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TBraidStrokeStyle", "Plait");
   }
+  std::string getBrushIdName() const override { return "BraidStrokeStyle"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_colors[0]; }
@@ -432,6 +446,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TSketchStrokeStyle", "Fuzz");
   }
+  std::string getBrushIdName() const override { return "SketchStrokeStyle"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -474,6 +489,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TBubbleStrokeStyle", "Bubbles");
   }
+  std::string getBrushIdName() const override { return "BubbleStrokeStyle"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color0; }
@@ -529,6 +545,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TTissueStrokeStyle", "Gauze");
   }
+  std::string getBrushIdName() const override { return "TissueStrokeStyle"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -576,6 +593,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TBiColorStrokeStyle", "Shade");
   }
+  std::string getBrushIdName() const override { return "BiColorStrokeStyle"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color0; }
@@ -628,6 +646,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TNormal2StrokeStyle", "Bump");
   }
+  std::string getBrushIdName() const override { return "Normal2StrokeStyle"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -671,6 +690,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TChalkStrokeStyle2", "Chalk");
   }
+  std::string getBrushIdName() const override { return "ChalkStrokeStyle2"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -724,6 +744,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TBlendStrokeStyle2", "Fade");
   }
+  std::string getBrushIdName() const override { return "BlendStrokeStyle2"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -774,6 +795,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TTwirlStrokeStyle", "Ribbon");
   }
+  std::string getBrushIdName() const override { return "TwirlStrokeStyle"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -826,6 +848,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TSawToothStrokeStyle", "Jagged");
   }
+  std::string getBrushIdName() const override { return "SawToothStrokeStyle"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -870,6 +893,9 @@ public:
 
   QString getDescription() const override {
     return QCoreApplication::translate("TMultiLineStrokeStyle2", "Gouache");
+  }
+  std::string getBrushIdName() const override {
+    return "MultiLineStrokeStyle2";
   }
 
   bool hasMainColor() const override { return true; }
@@ -941,6 +967,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TZigzagStrokeStyle", "Zigzag");
   }
+  std::string getBrushIdName() const override { return "ZigzagStrokeStyle"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -989,6 +1016,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TSinStrokeStyle", "Wave");
   }
+  std::string getBrushIdName() const override { return "SinStrokeStyle"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -1028,6 +1056,7 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TFriezeStrokeStyle2", "Curl");
   }
+  std::string getBrushIdName() const override { return "FriezeStrokeStyle2"; }
 
   bool hasMainColor() const override { return true; }
   TPixel32 getMainColor() const override { return m_color; }
@@ -1088,6 +1117,9 @@ public:
 
   QString getDescription() const override {
     return QCoreApplication::translate("TDualColorStrokeStyle2", "Striped");
+  }
+  std::string getBrushIdName() const override {
+    return "DualColorStrokeStyle2";
   }
 
   bool hasMainColor() const override { return true; }
@@ -1150,6 +1182,9 @@ public:
 
   QString getDescription() const override {
     return QCoreApplication::translate("TLongBlendStrokeStyle2", "Watercolor");
+  }
+  std::string getBrushIdName() const override {
+    return "LongBlendStrokeStyle2";
   }
 
   bool hasMainColor() const override { return true; }
@@ -1240,6 +1275,7 @@ public:
     return QCoreApplication::translate("OutlineViewerStyle",
                                        "OutlineViewer(OnlyDebug)");
   }
+  std::string getBrushIdName() const override { return "OutlineViewerStyle"; }
   int getTagId() const override { return 99; };
 };
 
@@ -1303,6 +1339,8 @@ public:
   QString getDescription() const override {
     return QCoreApplication::translate("TMatrioskaStrokeStyle", "Toothpaste");
   }
+  std::string getBrushIdName() const override { return "MatrioskaStrokeStyle"; }
+
   int getTagId() const override { return 141; };
 };
 

@@ -504,7 +504,9 @@ void JpgExifReader::ProcessExifDir(unsigned char *DirStart,
                                    unsigned char *OffsetBase,
                                    unsigned ExifLength, int NestingLevel) {
   int de;
+#ifdef ReadAllTags
   int a;
+#endif
   int NumDirEntries;
   unsigned ThumbnailOffset = 0;
   unsigned ThumbnailSize   = 0;
@@ -524,7 +526,7 @@ void JpgExifReader::ProcessExifDir(unsigned char *DirStart,
 
   {
     unsigned char *DirEnd;
-    DirEnd = DIR_ENTRY_ADDR(DirStart, NumDirEntries);
+    DirEnd = DIR_ENTRY_ADDR(DirStart, static_cast<int64_t>(NumDirEntries));
     if (DirEnd + 4 > (OffsetBase + ExifLength)) {
       if (DirEnd + 2 == OffsetBase + ExifLength ||
           DirEnd == OffsetBase + ExifLength) {
@@ -551,7 +553,7 @@ void JpgExifReader::ProcessExifDir(unsigned char *DirStart,
     unsigned char *ValuePtr;
     int ByteCount;
     unsigned char *DirEntry;
-    DirEntry = DIR_ENTRY_ADDR(DirStart, de);
+    DirEntry = DIR_ENTRY_ADDR(DirStart, static_cast<int64_t>(de));
 
     Tag        = Get16u(DirEntry);
     Format     = Get16u(DirEntry + 2);

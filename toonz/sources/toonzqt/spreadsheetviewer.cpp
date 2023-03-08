@@ -255,11 +255,7 @@ void PanTool::release(int row, int col, QMouseEvent *e) {
 
 //=============================================================================
 
-#if QT_VERSION >= 0x050500
 ScrollArea::ScrollArea(QWidget *parent, Qt::WindowFlags flags)
-#else
-ScrollArea::ScrollArea(QWidget *parent, Qt::WFlags flags)
-#endif
     : QScrollArea(parent) {
   setFrameStyle(QFrame::Panel | QFrame::Raised);
   setLineWidth(6);
@@ -300,7 +296,7 @@ void GenericPanel::paintEvent(QPaintEvent *e) {
 
 void GenericPanel::mousePressEvent(QMouseEvent *e) {
   assert(!m_dragTool);
-  if (e->button() == Qt::MidButton || m_viewer->getPanningArmed())
+  if (e->button() == Qt::MiddleButton || m_viewer->getPanningArmed())
     m_dragTool = new PanTool(this);
   else
     m_dragTool = createDragTool(e);
@@ -377,16 +373,22 @@ void RowPanel::drawRows(QPainter &p, int r0, int r1) {
   bool simpleView = getViewer()->getFrameZoomFactor() <=
                     Orientations::topToBottom()->dimension(
                         PredefinedDimension::SCALE_THRESHOLD);
+  int currentRow = getViewer()->getCurrentRow();
   int r;
   int y = getViewer()->rowToY(r0);
   for (r = r0; r <= r1; r++) {
     int next_y = getViewer()->rowToY(r + 1);
     // draw horizontal line
     bool isMarkSecRow = getViewer()->isMarkSecRow(r);
-    QColor color      = (isMarkSecRow || getViewer()->isMarkRow(r))
-                       ? getViewer()->getMarkerLineColor()
-                       : getViewer()->getLightLineColor();
-    p.setPen(color);
+    bool isMarkRow    = getViewer()->isMarkRow(r);
+    QColor color      = (isMarkSecRow) ? getViewer()->getSecMarkerLineColor()
+                        : (isMarkRow)  ? getViewer()->getMarkerLineColor()
+                                       : getViewer()->getLightLineColor();
+    p.setPen(QPen(color,
+                  (isMarkSecRow)                                    ? 3.
+                  : (getViewer()->isSecMarkerActive() && isMarkRow) ? 2.
+                                                                    : 1.,
+                  Qt::SolidLine, Qt::FlatCap));
     p.drawLine(x0, y, x1, y);
 
     if (simpleView && r > 0 && !getViewer()->isMarkRow(r + 1)) {
@@ -395,7 +397,8 @@ void RowPanel::drawRows(QPainter &p, int r0, int r1) {
     }
 
     // draw numbers
-    p.setPen(getViewer()->getTextColor());
+    p.setPen((r == currentRow) ? getViewer()->getCurrentRowTextColor()
+                               : getViewer()->getTextColor());
 
     QString number = QString::number(r + 1);
     p.drawText(QRect(x0, y + 1, width() - 4, next_y - y - 1),
@@ -497,11 +500,15 @@ void CellPanel::paintEvent(QPaintEvent *e) {
   for (int r = r0; r <= r1; r++) {
     int y             = getViewer()->rowToY(r);
     bool isMarkSecRow = getViewer()->isMarkSecRow(r);
-    QColor color      = (isMarkSecRow || getViewer()->isMarkRow(r))
-                       ? getViewer()->getMarkerLineColor()
-                       : getViewer()->getLightLineColor();
-    painter.setPen(
-        QPen(color, (isMarkSecRow) ? 3. : 1., Qt::SolidLine, Qt::FlatCap));
+    bool isMarkRow    = getViewer()->isMarkRow(r);
+    QColor color      = (isMarkSecRow) ? getViewer()->getSecMarkerLineColor()
+                        : (isMarkRow)  ? getViewer()->getMarkerLineColor()
+                                       : getViewer()->getLightLineColor();
+    painter.setPen(QPen(color,
+                        (isMarkSecRow)                                    ? 3.
+                        : (getViewer()->isSecMarkerActive() && isMarkRow) ? 2.
+                                                                          : 1.,
+                        Qt::SolidLine, Qt::FlatCap));
     painter.drawLine(x0, y, x1, y);
   }
 }
@@ -807,7 +814,7 @@ bool SpreadsheetViewer::refreshContentSize(int scrollDx, int scrollDy) {
   QSize viewportSize = m_cellScrollArea->viewport()->size();
   QPoint offset      = m_cellScrollArea->widget()->pos();
   offset             = QPoint(std::min(0, offset.x() - scrollDx),
-                  std::min(0, offset.y() - scrollDy));
+                              std::min(0, offset.y() - scrollDy));
 
   QSize contentSize(columnToX(m_columnCount + 1), rowToY(m_rowCount + 1));
 

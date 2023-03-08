@@ -39,6 +39,7 @@ class QToolBar;
 class QStackedWidget;
 class QVBoxLayout;
 class QGridLayout;
+class QLabel;
 class QPushButton;
 class FxKeyframeNavigator;
 class ParamViewer;
@@ -153,13 +154,12 @@ class DVAPI ParamsPageSet final : public QWidget {
   /*-- ヘルプボタンで開くURL --*/
   std::string m_helpUrl;
   QPushButton *m_helpButton;
+  // waring mark appears when the current fx does not support
+  // float / linear render settings
+  QLabel *m_warningMark;
 
 public:
-#if QT_VERSION >= 0x050500
-  ParamsPageSet(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  ParamsPageSet(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
+  ParamsPageSet(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
   ~ParamsPageSet();
 
   void setFx(const TFxP &currentFx, const TFxP &actualFx, int frame);
@@ -178,6 +178,8 @@ public:
   void addParamsPage(ParamsPage *page, const char *name);
 
   QSize getPreferredSize() { return m_preferredSize; }
+
+  void updateWarnings(const TFxP &currentFx, bool isFloat);
 
 protected:
   void createPage(TIStream &is, const TFxP &fx, int index);
@@ -204,11 +206,7 @@ class DVAPI ParamViewer final : public QFrame {
   QMap<std::string, int> m_tableFxIndex;
 
 public:
-#if QT_VERSION >= 0x050500
-  ParamViewer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  ParamViewer(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
+  ParamViewer(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
   ~ParamViewer();
 
   void setFx(const TFxP &currentFx, const TFxP &actualFx, int frame,
@@ -223,6 +221,9 @@ public:
   void notifyPreferredSizeChanged(QSize size) {
     emit preferredSizeChanged(size);
   }
+
+  // show warning if the current Fx does not support float rendering
+  void updateWarnings(const TFxP &currentFx, bool isFloat);
 
 protected:
   ParamsPageSet *getCurrentPageSet() const;

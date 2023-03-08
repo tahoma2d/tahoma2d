@@ -56,11 +56,7 @@ TEnv::IntVar FunctionEditorToggleStatus("FunctionEditorToggleStatus", 1);
 //
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 FunctionViewer::FunctionViewer(QWidget *parent, Qt::WindowFlags flags)
-#else
-FunctionViewer::FunctionViewer(QWidget *parent, Qt::WFlags flags)
-#endif
     : QSplitter(parent)
     , m_xshHandle(0)
     , m_frameHandle(0)
@@ -178,13 +174,13 @@ FunctionViewer::FunctionViewer(QWidget *parent, Qt::WFlags flags)
   //---- signal-slot connections
   bool ret = true;
   ret      = ret && connect(m_toolbar, SIGNAL(numericalColumnToggled()), this,
-                       SLOT(toggleMode()));
+                            SLOT(toggleMode()));
   ret      = ret && connect(ftModel, SIGNAL(activeChannelsChanged()),
-                       m_functionGraph, SLOT(update()));
+                            m_functionGraph, SLOT(update()));
   ret      = ret && connect(ftModel, SIGNAL(activeChannelsChanged()),
-                       m_numericalColumns, SLOT(updateAll()));
+                            m_numericalColumns, SLOT(updateAll()));
   ret      = ret && connect(ftModel, SIGNAL(curveChanged(bool)), m_treeView,
-                       SLOT(update()));
+                            SLOT(update()));
   ret = ret && connect(ftModel, SIGNAL(curveChanged(bool)), m_functionGraph,
                        SLOT(update()));
   ret = ret && connect(ftModel, SIGNAL(curveChanged(bool)), m_numericalColumns,
@@ -434,7 +430,7 @@ void FunctionViewer::setObjectHandle(TObjectHandle *objectHandle) {
 
     bool ret = true;
     ret      = connect(m_objectHandle, SIGNAL(objectSwitched()), this,
-                  SLOT(onStageObjectSwitched())) &&
+                       SLOT(onStageObjectSwitched())) &&
           ret;
     ret = connect(m_objectHandle, SIGNAL(objectChanged(bool)), this,
                   SLOT(onStageObjectChanged(bool))) &&
@@ -553,7 +549,7 @@ void FunctionViewer::onCurveChanged(bool isDragging) {
     if (ftModel) {
       FunctionTreeModel::Channel *currChan = ftModel->getCurrentChannel();
       if (currChan) {
-        //カレントチャンネルがFxChannelGroupに含まれていたらEmit
+        // カレントチャンネルがFxChannelGroupに含まれていたらEmit
         FxChannelGroup *fxChanGroup =
             dynamic_cast<FxChannelGroup *>(currChan->getChannelGroup());
         if (fxChanGroup) m_fxHandle->notifyFxChanged();
@@ -596,8 +592,8 @@ void FunctionViewer::onStageObjectSwitched() {
 
   const TStageObjectId &objId = m_objectHandle->getObjectId();
   TStageObject *obj           = (objId == TStageObjectId::NoneId)
-                          ? (TStageObject *)0
-                          : xsh->getStageObject(objId);
+                                    ? (TStageObject *)0
+                                    : xsh->getStageObject(objId);
 
   static_cast<FunctionTreeModel *>(m_treeView->model())
       ->setCurrentStageObject(obj);
@@ -613,8 +609,8 @@ void FunctionViewer::onStageObjectChanged(bool isDragging) {
 
   const TStageObjectId &objId = m_objectHandle->getObjectId();
   TStageObject *obj           = (objId == TStageObjectId::NoneId)
-                          ? (TStageObject *)0
-                          : xsh->getStageObject(objId);
+                                    ? (TStageObject *)0
+                                    : xsh->getStageObject(objId);
 
   static_cast<FunctionTreeModel *>(m_treeView->model())
       ->setCurrentStageObject(obj);

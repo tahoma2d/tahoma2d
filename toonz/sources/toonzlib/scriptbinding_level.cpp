@@ -221,14 +221,10 @@ TFrameId Level::getFid(const QScriptValue &arg, QString &err) {
       QString c = re.cap(2);
       TFrameId fid;
       if (c.length() == 1)
-#if QT_VERSION >= 0x050500
         fid = TFrameId(d, c[0].unicode());
-#else
-        fid = TFrameId(d, c[0].toAscii());
-#endif
       else
         fid = TFrameId(d);
-      err   = "";
+      err = "";
       return fid;
     }
   }

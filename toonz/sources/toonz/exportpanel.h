@@ -31,7 +31,7 @@ namespace DVGui {
 class ProgressDialog;
 class FileField;
 class LineEdit;
-}
+}  // namespace DVGui
 
 //-----------------------------------------------------------------------------
 
@@ -90,11 +90,7 @@ class ExportPanel final : public TPanel {
   QCheckBox *m_useMarker;
 
 public:
-#if QT_VERSION >= 0x050500
   ExportPanel(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  ExportPanel(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
   ~ExportPanel();
   void loadExportSettings();
   void saveExportSettings();

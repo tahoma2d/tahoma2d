@@ -175,11 +175,7 @@ public:
     void onCanceled(TThread::RunnableP task) override;
   };
 
-#if QT_VERSION >= 0x050500
-  SwatchViewer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  SwatchViewer(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
+  SwatchViewer(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
   ~SwatchViewer();
 
   static void suspendRendering(bool suspend, bool blocking = true);

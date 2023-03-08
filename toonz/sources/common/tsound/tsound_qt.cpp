@@ -157,9 +157,19 @@ public:
     format.setCodec("audio/pcm");
     format.setChannelCount(st->getChannelCount());
     format.setByteOrder(QAudioFormat::LittleEndian);
-    format.setSampleType( st->getFormat().m_signedSample
-                        ? QAudioFormat::SignedInt
-                        : QAudioFormat::UnSignedInt );
+    switch (st->getSampleType()) {
+    case TSound::INT:
+      format.setSampleType(QAudioFormat::SignedInt);
+      break;
+    case TSound::UINT:
+      format.setSampleType(QAudioFormat::UnSignedInt);
+      break;
+    case TSound::FLOAT:
+      format.setSampleType(QAudioFormat::Float);
+      break;
+    default:
+      break;
+    }
     format.setSampleRate(st->getSampleRate());
 
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
@@ -314,8 +324,8 @@ void TSoundOutputDevice::setLooping(bool loop) { m_imp->setLooping(loop); }
 TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(TUINT32 sampleRate,
                                                          int channelCount,
                                                          int bitPerSample,
-                                                         int formatType) {
-  TSoundTrackFormat fmt(sampleRate, bitPerSample, channelCount, true, formatType);
+                                                         int sampleType) {
+  TSoundTrackFormat fmt(sampleRate, bitPerSample, channelCount, sampleType);
   return fmt;
 }
 
@@ -324,7 +334,7 @@ TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(TUINT32 sampleRate,
 TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(
     const TSoundTrackFormat &format) {
   return getPreferredFormat(format.m_sampleRate, format.m_channelCount,
-                            format.m_bitPerSample, format.m_formatType);
+                            format.m_bitPerSample, format.m_sampleType);
 }
 
 //==============================================================================
@@ -437,7 +447,7 @@ bool TSoundInputDevice::supportsVolume() { return true; }
 TSoundTrackFormat TSoundInputDevice::getPreferredFormat(TUINT32 sampleRate,
                                                         int channelCount,
                                                         int bitPerSample,
-                                                        int formatType) {
+                                                        int sampleType) {
   TSoundTrackFormat fmt;
   return fmt;
 }
@@ -450,7 +460,7 @@ TSoundTrackFormat TSoundInputDevice::getPreferredFormat(
 try {
 */
   return getPreferredFormat(format.m_sampleRate, format.m_channelCount,
-                            format.m_bitPerSample, format.m_formatType);
+                            format.m_bitPerSample, format.m_sampleType);
   /*}
 
 catch (TSoundDeviceException &e) {

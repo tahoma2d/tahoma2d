@@ -114,17 +114,9 @@ bool writeVersionAndCreator(FILE *chan, const char *version, QString creator) {
   if (creator.length() == 0) creator = "UNKNOWN";
   memset(s, 0, sizeof s);
   if (creator.length() > CREATOR_LENGTH - 1)
-#if QT_VERSION >= 0x050000
     memcpy(s, creator.toLatin1(), CREATOR_LENGTH - 1);
-#else
-    memcpy(s, creator.toAscii(), CREATOR_LENGTH - 1);
-#endif
   else
-#if QT_VERSION >= 0x050000
     memcpy(s, creator.toLatin1(), creator.length());
-#else
-    memcpy(s, creator.toAscii(), creator.length());
-#endif
   tfwrite(s, CREATOR_LENGTH, chan);
 
   return true;
@@ -1076,9 +1068,9 @@ void TLevelWriterTzl::saveImage(const TImageP &img, const TFrameId &_fid,
   }
   rCompressed->unlock();
 
-  //#if !TNZ_LITTLE_ENDIAN
-  // delete [] buff;
-  //#endif
+  // #if !TNZ_LITTLE_ENDIAN
+  //  delete [] buff;
+  // #endif
 }
 
 //-------------------------------------------------------------------
@@ -2194,7 +2186,7 @@ TImageP TImageReaderTzl::load14() {
       TINT32 iconsbx0 = tfloor((double)iconLx * sbx0 / m_lrp->m_res.lx);
       TINT32 iconsby0 = tfloor((double)iconLy * sby0 / m_lrp->m_res.ly);
       savebox         = TRect(TPoint(iconsbx0, iconsby0),
-                      TDimension(tmp_savebox.getLx(), tmp_savebox.getLy()));
+                              TDimension(tmp_savebox.getLx(), tmp_savebox.getLy()));
     }
 
     // int ly = tround((double)m_lrp->m_res.ly*iconLx/m_lrp->m_res.lx);

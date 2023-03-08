@@ -140,7 +140,7 @@ void QtOfflineGL::createContext(TDimension rasterSize,
 #elif defined(MACOSX)
   fmt = QGLFormat::defaultFormat();
   // printf("GL Version: %s\n",glGetString(GL_VERSION));
-  fmt.setVersion(2, 1); /* OSX10.8 では 3.2 だめかも */
+  fmt.setVersion(2, 1); /* 3.2 might not work on OSX10.8 */
 #if 0
   fmt.setAlphaBufferSize(8);
   fmt.setAlpha(true);

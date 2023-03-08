@@ -51,15 +51,15 @@ void putOnRasterCM(const TRasterCM32P &out, const TRaster32P &in, int styleId,
                                outPix->getTone());
           continue;
         }
-        bool sameStyleId   = styleId == outPix->getInk();
+        bool sameStyleId = styleId == outPix->getInk();
         // line with the same style : multiply tones
         // line with different style : pick darker tone
         int tone = sameStyleId ? outPix->getTone() * (255 - inPix->m) / 255
                                : std::min(255 - inPix->m, outPix->getTone());
-        int ink = !sameStyleId && outPix->getTone() < 255 - inPix->m
-                      ? outPix->getInk()
-                      : styleId;
-        *outPix = TPixelCM32(ink, outPix->getPaint(), tone);
+        int ink  = !sameStyleId && outPix->getTone() < 255 - inPix->m
+                       ? outPix->getInk()
+                       : styleId;
+        *outPix  = TPixelCM32(ink, outPix->getPaint(), tone);
       }
     }
   } else if (drawOrderMode == 1) {  // UnderAll
@@ -80,15 +80,15 @@ void putOnRasterCM(const TRasterCM32P &out, const TRaster32P &in, int styleId,
                                outPix->getTone());
           continue;
         }
-        bool sameStyleId   = styleId == outPix->getInk();
+        bool sameStyleId = styleId == outPix->getInk();
         // line with the same style : multiply tones
         // line with different style : pick darker tone
         int tone = sameStyleId ? outPix->getTone() * (255 - inPix->m) / 255
                                : std::min(255 - inPix->m, outPix->getTone());
-        int ink = !sameStyleId && outPix->getTone() <= 255 - inPix->m
-                      ? outPix->getInk()
-                      : styleId;
-        *outPix = TPixelCM32(ink, outPix->getPaint(), tone);
+        int ink  = !sameStyleId && outPix->getTone() <= 255 - inPix->m
+                       ? outPix->getInk()
+                       : styleId;
+        *outPix  = TPixelCM32(ink, outPix->getPaint(), tone);
       }
     }
   } else {  // PaletteOrder
@@ -103,7 +103,7 @@ void putOnRasterCM(const TRasterCM32P &out, const TRaster32P &in, int styleId,
                                outPix->getTone());
           continue;
         }
-        bool sameStyleId   = styleId == outPix->getInk();
+        bool sameStyleId = styleId == outPix->getInk();
         // line with the same style : multiply tones
         // line with different style : pick darker tone
         int tone = sameStyleId ? outPix->getTone() * (255 - inPix->m) / 255
@@ -144,9 +144,9 @@ void eraseFromRasterCM(const TRasterCM32P &out, const TRaster32P &in,
           !selective || (selective && selectedStyleId == outPix->getPaint());
       int paint = eraseAreas && erasePaint ? 0 : outPix->getPaint();
       int tone  = inPix->m > 0 && eraseLine && eraseInk
-                     ? std::max(outPix->getTone(), (int)inPix->m)
-                     : outPix->getTone();
-      *outPix = TPixelCM32(outPix->getInk(), paint, tone);
+                      ? std::max(outPix->getTone(), (int)inPix->m)
+                      : outPix->getTone();
+      *outPix   = TPixelCM32(outPix->getInk(), paint, tone);
     }
   }
 }
@@ -166,7 +166,7 @@ TRasterP rasterFromQImage(
                        (TPixelGR8 *)image.bits(), false);
   return TRasterP();
 }
-}
+}  // namespace
 
 //=======================================================
 //
@@ -218,9 +218,9 @@ void BluredBrush::addPoint(const TThickPoint &p, double opacity) {
   painter.setRenderHint(QPainter::Antialiasing);
   painter.setPen(Qt::NoPen);
   painter.setBrush(m_gradient);
-  painter.setMatrix(
-      QMatrix(scaleFactor, 0.0, 0.0, scaleFactor, p.x - radius, p.y - radius),
-      false);
+  painter.setTransform(QTransform(scaleFactor, 0.0, 0.0, scaleFactor,
+                                  p.x - radius, p.y - radius),
+                       false);
   if (m_enableDynamicOpacity) painter.setOpacity(opacity);
   painter.drawEllipse(0, 0, m_size, m_size);
   painter.end();
@@ -249,9 +249,9 @@ void BluredBrush::addArc(const TThickPoint &pa, const TThickPoint &pb,
     double radius      = point.thick * 0.5;
     double scaleFactor = radius / brushRadius;
 
-    painter.setMatrix(QMatrix(scaleFactor, 0.0, 0.0, scaleFactor,
-                              point.x - radius, point.y - radius),
-                      false);
+    painter.setTransform(QTransform(scaleFactor, 0.0, 0.0, scaleFactor,
+                                    point.x - radius, point.y - radius),
+                         false);
     if (m_enableDynamicOpacity) {
       double opacity = opacityA + ((opacityC - opacityA) * t);
       if (fabs(opacity - m_oldOpacity) > 0.01)

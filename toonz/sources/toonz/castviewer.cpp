@@ -93,7 +93,7 @@ public:
     return QObject::tr("Move Level to Cast Folder");
   }
 };
-}
+}  // namespace
 
 //=============================================================================
 //
@@ -454,11 +454,7 @@ void CastTreeViewer::deleteFolder() {
 //
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 CastBrowser::CastBrowser(QWidget *parent, Qt::WindowFlags flags)
-#else
-CastBrowser::CastBrowser(QWidget *parent, Qt::WFlags flags)
-#endif
     : QSplitter(parent)
     , m_treeViewer(0)
     , m_folderName(0)
@@ -884,7 +880,8 @@ void CastBrowser::viewFile() {
       if (!TFileType::isViewable(TFileType::getInfo(filePath))) return;
 
       if (Preferences::instance()->isDefaultViewerEnabled() &&
-          (filePath.getType() == "avi"))
+          (filePath.getType() == "mov" || filePath.getType() == "avi" ||
+           filePath.getType() == "3gp"))
         QDesktopServices::openUrl(QUrl("file:///" + toQString(filePath)));
       else
         ::viewFile(filePath);

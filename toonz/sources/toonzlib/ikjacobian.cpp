@@ -844,9 +844,9 @@ void MatrixRmn::ConvertBidiagToDiagonal(MatrixRmn &U, MatrixRmn &V, VectorRn &w,
     // This gives a lambda value which will shift the Givens rotations
     // Last four entries of M^T * M are  ( ( A, B ), ( B, C ) ).
     double A;
-    A = (firstBidiagIdx < lastBidiagIdx - 1)
-            ? Square(superDiag[lastBidiagIdx - 2])
-            : 0.0;
+    A          = (firstBidiagIdx < lastBidiagIdx - 1)
+                     ? Square(superDiag[lastBidiagIdx - 2])
+                     : 0.0;
     double BSq = Square(w[lastBidiagIdx - 1]);
     A += BSq;  // The "A" entry of M^T * M
     double C = Square(superDiag[lastBidiagIdx - 1]);
@@ -1106,9 +1106,9 @@ void Jacobian::Reset() {
   // Usato nel Damped Least Squares Method
   DampingLambda   = DefaultDampingLambda;
   DampingLambdaSq = Square(DampingLambda);
-  for (int i            = 0; i < DampingLambdaSqV.GetLength(); i++)
+  for (int i = 0; i < DampingLambdaSqV.GetLength(); i++)
     DampingLambdaSqV[i] = DampingLambdaSq;
-  for (int i           = 0; i < diagMatIdentity.GetLength(); i++)
+  for (int i = 0; i < diagMatIdentity.GetLength(); i++)
     diagMatIdentity[i] = 1.0;
   // DampingLambdaSDLS = 1.5*DefaultDampingLambda;
 
@@ -1358,7 +1358,7 @@ void Jacobian::CalcDeltaThetasPseudoinverse() {
     Jcurrent.Multiply(dTheta, dTemp);
 
     VectorRn dTemp2(dScurrent.GetLength());
-    for (int k  = 0; k < dScurrent.GetLength(); k++)
+    for (int k = 0; k < dScurrent.GetLength(); k++)
       dTemp2[k] = dScurrent[k] - dTemp[k];
 
     // Moltiplico JdstPinv per dTemp2
@@ -1366,8 +1366,8 @@ void Jacobian::CalcDeltaThetasPseudoinverse() {
     JdstPinv.Multiply(dTemp2, dThetaCurrent);
     for (int k = 0; k < dTheta.GetLength(); k++) dTheta[k] += dThetaCurrent[k];
 
-    // Infine mi calcolo la pseudoinversa di Jcurrent e quindi la sua proiezione
-    // che servirà al passo successivo
+    // Finally, I calculate the pseudoinverse of Jcurrent and thus its
+    // projection, which will be used in the next step
 
     // calcolo la pseudoinversa di Jcurrent
     Jcurrent.ComputeSVD(U, w, V);

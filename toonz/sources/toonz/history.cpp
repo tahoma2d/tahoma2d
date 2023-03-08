@@ -3,11 +3,13 @@
 #include "history.h"
 #include "tsystem.h"
 #include "tenv.h"
-//#include "tutil.h"
+// #include "tutil.h"
 #include "tfilepath_io.h"
 #include "toonz/toonzfolders.h"
 
-//#include <fstream.h>
+#include <QLocale>
+
+// #include <fstream.h>
 
 inline TFilePath getHistoryFile() {
   return ToonzFolder::getMyModuleDir() + L"file_history.txt";
@@ -21,7 +23,8 @@ std::string History::Day::getDate() const {
   else if (m_timeStamp == yesterday)
     return "yesterday";
   else
-    return m_timeStamp.toString(Qt::SystemLocaleDate)
+    return QLocale::system()
+        .toString(m_timeStamp)
         .toStdString();  // "%d %b %A %x");
 }
 

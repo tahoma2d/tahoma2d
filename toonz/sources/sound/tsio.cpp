@@ -1,10 +1,15 @@
 
 
 #include "tnzsound.h"
-#include "tsio.h"
 // #include "tpluginmanager.h"
 #include "tsound_io.h"
 #include "tfiletype.h"
+#include "thirdparty.h"
+
+#include "wav/tsio_wav.h"
+#include "aiff/tsio_aiff.h"
+#include "raw/tsio_raw.h"
+#include "ffmpeg/tsio_ffmpeg.h"
 
 // static TPluginInfo info("soundIOPlugin");
 
@@ -25,10 +30,19 @@ void initSoundIo() {
   TSoundTrackWriter::define("raw", TSoundTrackWriterRaw::create);
   TFileType::declare("raw", TFileType::AUDIO_LEVEL);
 
-  if (FfmpegAudio::checkFfmpeg()) {
-    TSoundTrackReader::define("mp3", TSoundTrackReaderMp3::create);
-    // TSoundTrackWriter::define("mp3", TSoundTrackWriterMp3::create);
+  if (ThirdParty::checkFFmpeg()) {
+    TSoundTrackReader::define("mp3", TSoundTrackReaderFFmpeg::create);
     TFileType::declare("mp3", TFileType::AUDIO_LEVEL);
+    TSoundTrackReader::define("ogg", TSoundTrackReaderFFmpeg::create);
+    TFileType::declare("ogg", TFileType::AUDIO_LEVEL);
+    TSoundTrackReader::define("flac", TSoundTrackReaderFFmpeg::create);
+    TFileType::declare("flac", TFileType::AUDIO_LEVEL);
+    TSoundTrackReader::define("m4a", TSoundTrackReaderFFmpeg::create);
+    TFileType::declare("m4a", TFileType::AUDIO_LEVEL);
+    TSoundTrackReader::define("aac", TSoundTrackReaderFFmpeg::create);
+    TFileType::declare("aac", TFileType::AUDIO_LEVEL);
+    TSoundTrackReader::define("ffaudio", TSoundTrackReaderFFmpeg::create);
+    TFileType::declare("ffaudio", TFileType::AUDIO_LEVEL);
   }
   // return &info;
 }

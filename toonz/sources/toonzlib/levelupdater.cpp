@@ -241,7 +241,7 @@ void LevelUpdater::open(const TFilePath &fp, TPropertyGroup *pg,
           TLevelReaderP();  // Release the reader. This is necessary since the
       m_lw = TLevelWriterP(
           fp, m_pg->clone());  // original file itself will be MODIFIED.
-      m_lwPath = fp;
+      m_lwPath = m_lw->getFilePath();
     }
   } catch (...) {
     // In this case, TLevelWriterP(..) failed, that object was never

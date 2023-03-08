@@ -98,7 +98,11 @@ void getFileFids(TFilePath path, std::vector<TFrameId> &fids) {
 
 QString hyphenText(const QString &srcText, const QFont &font, int width) {
   QFontMetrics metrics(font);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+  int srcWidth = metrics.horizontalAdvance(srcText);
+#else
   int srcWidth = metrics.width(srcText);
+#endif
   if (srcWidth < width) return srcText;
 
   int count = double(srcWidth) / double(width);
@@ -110,8 +114,13 @@ QString hyphenText(const QString &srcText, const QFont &font, int width) {
   int hyphenCount = 1;
   for (i = 0; i < srcText.size(); i++) {
     QChar c       = srcText.at(i);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+    int cWidth    = metrics.horizontalAdvance(c);
+    int textWidth = metrics.horizontalAdvance(text) + cWidth;
+#else
     int cWidth    = metrics.width(c);
     int textWidth = metrics.width(text) + cWidth;
+#endif
     if ((c.isSpace() && textWidth > (hyphenCount - 1) * width + diff) ||
         (textWidth > hyphenCount * width)) {
       ++hyphenCount;
@@ -177,10 +186,10 @@ QString DvItemListModel::getItemDataAsString(int index, DataType dataType) {
   case Icon:
     return "";
   case CreationDate:
-    return value.toDateTime().toString(Qt::SystemLocaleShortDate);
+    return QLocale::system().toString(value.toDateTime());
     break;
   case ModifiedDate:
-    return value.toDateTime().toString(Qt::SystemLocaleShortDate);
+    return QLocale::system().toString(value.toDateTime());
     break;
   case FileSize: {
     if (getItemData(index, IsFolder).toBool()) return QString("");
@@ -1195,7 +1204,7 @@ void DvItemViewerPanel::mousePressEvent(QMouseEvent *event) {
       update();
     }
     return;
-  } else if (event->button() == Qt::MidButton) {
+  } else if (event->button() == Qt::MiddleButton) {
     m_lastMousePos = event->globalPos();
     event->accept();
     return;
@@ -1259,7 +1268,7 @@ void DvItemViewerPanel::mousePressEvent(QMouseEvent *event) {
 //-----------------------------------------------------------------------------
 
 void DvItemViewerPanel::mouseMoveEvent(QMouseEvent *event) {
-  if (event->buttons() == Qt::MidButton) {
+  if (event->buttons() == Qt::MiddleButton) {
     QPoint d       = event->globalPos() - m_lastMousePos;
     m_lastMousePos = event->globalPos();
     if (m_viewer) {
@@ -1381,7 +1390,7 @@ bool DvItemViewerPanel::event(QEvent *event) {
 //-----------------------------------------------------------------------------
 
 void DvItemViewerPanel::setListView() {
-  m_viewType                                                 = ListView;
+  m_viewType = ListView;
   m_viewer->m_windowType == DvItemViewer::Cast ? CastView    = ListView
                                                : BrowserView = ListView;
   emit viewTypeChange(m_viewType);
@@ -1392,7 +1401,7 @@ void DvItemViewerPanel::setListView() {
 //-----------------------------------------------------------------------------
 
 void DvItemViewerPanel::setTableView() {
-  m_viewType                                                 = TableView;
+  m_viewType = TableView;
   m_viewer->m_windowType == DvItemViewer::Cast ? CastView    = TableView
                                                : BrowserView = TableView;
   emit viewTypeChange(m_viewType);
@@ -1403,7 +1412,7 @@ void DvItemViewerPanel::setTableView() {
 //-----------------------------------------------------------------------------
 
 void DvItemViewerPanel::setThumbnailsView() {
-  m_viewType                                                 = ThumbnailView;
+  m_viewType = ThumbnailView;
   m_viewer->m_windowType == DvItemViewer::Cast ? CastView    = ThumbnailView
                                                : BrowserView = ThumbnailView;
   emit viewTypeChange(m_viewType);

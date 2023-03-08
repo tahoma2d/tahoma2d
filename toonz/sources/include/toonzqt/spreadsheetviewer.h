@@ -144,11 +144,7 @@ class DVAPI ScrollArea final : public QScrollArea {
   Q_OBJECT
 
 public:
-#if QT_VERSION >= 0x050500
-  ScrollArea(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  ScrollArea(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
+  ScrollArea(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
   virtual ~ScrollArea();
 
 protected:
@@ -238,15 +234,22 @@ class DVAPI SpreadsheetViewer : public QDialog {
   Q_PROPERTY(
       QColor LightLineColor READ getLightLineColor WRITE setLightLineColor)
 
-  QColor m_currentRowBgColor;  // current frame, column
-  QColor m_markerLineColor;    // marker interval (0, 255, 246)
-  QColor m_textColor;          // text (black)
-  QColor m_verticalLineColor;  // vertical line (black)
+  QColor m_currentRowBgColor;    // current frame, column
+  QColor m_markerLineColor;      // marker interval (0, 255, 246)
+  QColor m_secMarkerLineColor;   // second marker lines
+  QColor m_textColor;            // text (black)
+  QColor m_currentRowTextColor;  // text color for the current row
+  QColor m_verticalLineColor;    // vertical line (black)
+
   Q_PROPERTY(QColor CurrentRowBgColor READ getCurrentRowBgColor WRITE
                  setCurrentRowBgColor)
   Q_PROPERTY(
       QColor MarkerLineColor READ getMarkerLineColor WRITE setMarkerLineColor)
+  Q_PROPERTY(QColor SecMarkerLineColor READ getSecMarkerLineColor WRITE
+                 setSecMarkerLineColor)
   Q_PROPERTY(QColor TextColor READ getTextColor WRITE setTextColor)
+  Q_PROPERTY(QColor CurrentRowTextColor READ getCurrentRowTextColor WRITE
+                 setCurrentRowTextColor)
   Q_PROPERTY(QColor VerticalLineColor READ getVerticalLineColor WRITE
                  setVerticalLineColor)
 
@@ -355,8 +358,16 @@ public:
   QColor getCurrentRowBgColor() const { return m_currentRowBgColor; }
   void setMarkerLineColor(const QColor &color) { m_markerLineColor = color; }
   QColor getMarkerLineColor() const { return m_markerLineColor; }
+  void setSecMarkerLineColor(const QColor &color) {
+    m_secMarkerLineColor = color;
+  }
+  QColor getSecMarkerLineColor() const { return m_secMarkerLineColor; }
   void setTextColor(const QColor &color) { m_textColor = color; }
   QColor getTextColor() const { return m_textColor; }
+  void setCurrentRowTextColor(const QColor &color) {
+    m_currentRowTextColor = color;
+  }
+  QColor getCurrentRowTextColor() const { return m_currentRowTextColor; }
   void setVerticalLineColor(const QColor &color) {
     m_verticalLineColor = color;
   }
@@ -473,6 +484,7 @@ public:
     return m_markSecRowDistance > 0 &&
            ((row - m_markRowOffset) % m_markSecRowDistance) == 0 && row > 0;
   }
+  bool isSecMarkerActive() const { return m_markSecRowDistance > 0; }
 
   void setFrameHandle(TFrameHandle *frameHandle);
   TFrameHandle *getFrameHandle() const { return m_frameHandle; }

@@ -25,6 +25,7 @@
 #include "tsound_io.h"
 #include "toutputproperties.h"
 #include "toonz/tproject.h"
+#include "thirdparty.h"
 
 // TnzCore includes
 #include "filebrowsermodel.h"
@@ -530,7 +531,7 @@ void LipSyncPopup::showEvent(QShowEvent *) {
   m_startAt->setValue(row + 1);
   m_startAt->clearFocus();
 
-  if (checkRhubarb()) m_rhubarbPath = Preferences::instance()->getRhubarbPath();
+  if (ThirdParty::checkRhubarb()) m_rhubarbPath = ThirdParty::getRhubarbDir();
 
   TXshLevelHandle *level = app->getCurrentLevel();
   m_sl                   = level->getSimpleLevel();
@@ -698,46 +699,6 @@ void LipSyncPopup::saveAudio() {
     m_audioPath  = audioPath.getQString();
     m_startFrame = r0 + 1;
   }
-}
-
-//-----------------------------------------------------------------------------
-
-bool LipSyncPopup::checkRhubarb() {
-  QString exe = "rhubarb";
-#if defined(_WIN32)
-  exe = exe + ".exe";
-#endif
-
-  // check the user defined path in preferences first
-  QString path = Preferences::instance()->getRhubarbPath() + "/" + exe;
-  if (TSystem::doesExistFileOrLevel(TFilePath(path))) return true;
-
-  // Let's try and autodetect the exe included with release
-  QStringList folderList;
-
-  folderList.append(".");
-  folderList.append("./rhubarb");  // rhubarb folder
-
-#ifdef MACOSX
-  // Look inside app
-  folderList.append("./" +
-                    QString::fromStdString(TEnv::getApplicationFileName()) +
-                    ".app/rhubarb");  // rhubarb folder
-#elif defined(LINUX) || defined(FREEBSD)
-  // Need to account for symbolic links
-  folderList.append(TEnv::getWorkingDirectory().getQString() +
-                    "/rhubarb");  // rhubarb folder
-#endif
-
-  QString exePath = TSystem::findFileLocation(folderList, exe);
-
-  if (!exePath.isEmpty()) {
-    Preferences::instance()->setValue(rhubarbPath, exePath);
-    return true;
-  }
-
-  // give up
-  return false;
 }
 
 //-----------------------------------------------------------------------------
@@ -932,7 +893,7 @@ void LipSyncPopup::onApplyButton() {
   int lastFrame = m_textLines.at(m_textLines.size() - 2).toInt() + startFrame;
 
   if (m_restToEnd->isChecked()) {
-    int r0, r1, step;
+    int r0, r1;
     TApp::instance()->getCurrentXsheet()->getXsheet()->getCellRange(m_col, r0,
                                                                     r1);
     if (lastFrame < r1 + 1) lastFrame = r1 + 1;
@@ -976,7 +937,7 @@ void LipSyncPopup::imageNavClicked(int id) {
   else if (frameIndex == 0 && direction == -1)
     newIndex = m_levelFrameIds.size() - 1;
   else
-    newIndex                    = frameIndex + direction;
+    newIndex = frameIndex + direction;
   m_activeFrameIds[frameNumber] = m_levelFrameIds.at(newIndex);
   TXshCell newCell =
       TApp::instance()->getCurrentScene()->getScene()->getXsheet()->getCell(

@@ -55,7 +55,7 @@ void copy_except_margin(const T *in, const int margin, T *out, const int hh,
     }
   }
 }
-}
+}  // namespace image
 namespace color {
 template <class T>
 double ref_value(const T *ref, const int cc, const int ref_max,
@@ -64,49 +64,55 @@ double ref_value(const T *ref, const int cc, const int ref_max,
     using namespace igs::image::rgba;
     switch (ref_mode) {
     case 0:
-      return static_cast<double>(ref[red]) / ref_max;
+      return static_cast<double>(ref[red]) / static_cast<double>(ref_max);
       break;
     case 1:
-      return static_cast<double>(ref[gre]) / ref_max;
+      return static_cast<double>(ref[gre]) / static_cast<double>(ref_max);
       break;
     case 2:
-      return static_cast<double>(ref[blu]) / ref_max;
+      return static_cast<double>(ref[blu]) / static_cast<double>(ref_max);
       break;
     case 3:
-      return static_cast<double>(ref[alp]) / ref_max;
+      return static_cast<double>(ref[alp]) / static_cast<double>(ref_max);
       break;
     case 4:
       return /* 輝度(Luminance)(CCIR Rec.601) */
-          0.298912 * static_cast<double>(ref[red]) / ref_max +
-          0.586611 * static_cast<double>(ref[gre]) / ref_max +
-          0.114478 * static_cast<double>(ref[blu]) / ref_max;
+          0.298912 * static_cast<double>(ref[red]) /
+              static_cast<double>(ref_max) +
+          0.586611 * static_cast<double>(ref[gre]) /
+              static_cast<double>(ref_max) +
+          0.114478 * static_cast<double>(ref[blu]) /
+              static_cast<double>(ref_max);
       break;
     }
   } else if (igs::image::rgb::siz == cc) {
     using namespace igs::image::rgb;
     switch (ref_mode) {
     case 0:
-      return static_cast<double>(ref[red]) / ref_max;
+      return static_cast<double>(ref[red]) / static_cast<double>(ref_max);
       break;
     case 1:
-      return static_cast<double>(ref[gre]) / ref_max;
+      return static_cast<double>(ref[gre]) / static_cast<double>(ref_max);
       break;
     case 2:
-      return static_cast<double>(ref[blu]) / ref_max;
+      return static_cast<double>(ref[blu]) / static_cast<double>(ref_max);
       break;
     case 3:
       return /* 輝度(Luminance)(CCIR Rec.601) */
-          0.298912 * static_cast<double>(ref[red]) / ref_max +
-          0.586611 * static_cast<double>(ref[gre]) / ref_max +
-          0.114478 * static_cast<double>(ref[blu]) / ref_max;
+          0.298912 * static_cast<double>(ref[red]) /
+              static_cast<double>(ref_max) +
+          0.586611 * static_cast<double>(ref[gre]) /
+              static_cast<double>(ref_max) +
+          0.114478 * static_cast<double>(ref[blu]) /
+              static_cast<double>(ref_max);
       break;
     }
   } else if (1 == cc) {
-    return static_cast<double>(ref[0]) / ref_max;
+    return static_cast<double>(ref[0]) / static_cast<double>(ref_max);
   }
   return 1.0;
 }
-}
-}
+}  // namespace color
+}  // namespace igs
 
 #endif /* !igs_ifx_common_h */

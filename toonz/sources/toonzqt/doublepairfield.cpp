@@ -70,7 +70,7 @@ DoubleValuePairField::DoubleValuePairField(QWidget *parent,
   bool ret = connect(m_leftLineEdit, SIGNAL(editingFinished()),
                      SLOT(onLeftEditingFinished()));
   ret      = ret && connect(m_rightLineEdit, SIGNAL(editingFinished()),
-                       SLOT(onRightEditingFinished()));
+                            SLOT(onRightEditingFinished()));
   assert(ret);
 }
 
@@ -157,8 +157,13 @@ void DoubleValuePairField::paintEvent(QPaintEvent *) {
 void DoubleValuePairField::setLeftText(const QString &text) {
   QString oldText = m_leftLabel->text();
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+  int oldLabelSize = fontMetrics().horizontalAdvance(oldText);
+  int newLabelSize = fontMetrics().horizontalAdvance(text);
+#else
   int oldLabelSize = fontMetrics().width(oldText);
   int newLabelSize = fontMetrics().width(text);
+#endif
   int labelSize    = newLabelSize - oldLabelSize;
   m_leftMargin += labelSize + MARGIN_OFFSET;
 
@@ -171,8 +176,13 @@ void DoubleValuePairField::setLeftText(const QString &text) {
 void DoubleValuePairField::setRightText(const QString &text) {
   QString oldText = m_rightLabel->text();
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+  int oldLabelSize = fontMetrics().horizontalAdvance(oldText);
+  int newLabelSize = fontMetrics().horizontalAdvance(text);
+#else
   int oldLabelSize = fontMetrics().width(oldText);
   int newLabelSize = fontMetrics().width(text);
+#endif
   int labelSize    = newLabelSize - oldLabelSize;
   m_rightMargin += labelSize + MARGIN_OFFSET;
 

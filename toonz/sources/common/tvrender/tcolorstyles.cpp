@@ -50,6 +50,7 @@ TColorStyle::TColorStyle()
     , m_icon(0)
     , m_validIcon(false)
     , m_isEditedFromOriginal(false)
+    , m_hash(0)
     , m_pickedPosition()
     , m_isCustom(false) {}
 
@@ -68,6 +69,7 @@ TColorStyle::TColorStyle(const TColorStyle &other)
     , m_enabled(other.m_enabled)
     , m_validIcon(false)
     , m_isEditedFromOriginal(other.m_isEditedFromOriginal)
+    , m_hash(other.m_hash)
     , m_pickedPosition(other.m_pickedPosition)
     , m_isCustom(other.m_isCustom) {}
 
@@ -82,6 +84,7 @@ TColorStyle &TColorStyle::operator=(const TColorStyle &other) {
   m_enabled              = other.m_enabled;
   m_validIcon            = false;
   m_isEditedFromOriginal = other.m_isEditedFromOriginal;
+  m_hash                 = other.m_hash;
   m_pickedPosition       = other.m_pickedPosition;
   m_isCustom             = other.m_isCustom;
 
@@ -138,6 +141,13 @@ bool TColorStyle::operator==(const TColorStyle &cs) const {
   }
 
   return true;
+}
+
+//-------------------------------------------------------------------
+
+QString TColorStyle::getDescription() const {
+  assert(false);
+  return QString("");
 }
 
 //-------------------------------------------------------------------
@@ -426,6 +436,23 @@ public:
     return it->second.m_style->clone();
   }
 
+  TColorStyle *create(std::string brushIdName) {
+    int index = brushIdName.find(':');
+    std::string brushIdCategory =
+        (index != -1) ? brushIdName.substr(0, index) : brushIdName;
+
+    for (auto &table : m_table) {
+      std::string name = table.second.m_style->getBrushIdName();
+      int index        = name.find(':');
+      if (index != -1 && brushIdCategory == name.substr(0, index)) {
+        return table.second.m_style->clone(brushIdName);
+      } else if (index == -1 && brushIdCategory == name) {
+        return table.second.m_style->clone(brushIdName);
+      }
+    }
+    return nullptr;
+  }
+
   void getAllTags(std::vector<int> &tags) {
     tags.clear();
     tags.reserve(m_table.size());
@@ -576,6 +603,60 @@ TColorStyle *TColorStyle::create(int tagId) {
 
 //-------------------------------------------------------------------
 
+TColorStyle *TColorStyle::create(std::string brushIdName) {
+  return ColorStyleList::instance()->create(brushIdName);
+}
+
+//-------------------------------------------------------------------
+
 void TColorStyle::getAllTags(std::vector<int> &tags) {
   ColorStyleList::instance()->getAllTags(tags);
+}
+
+//-------------------------------------------------------------------
+
+std::string TColorStyle::getBrushIdName() const {
+  assert(false);
+  return "InvalidStyle";
+}
+
+//-------------------------------------------------------------------
+
+std::size_t TColorStyle::generateHash(std::string brushIdName) {
+  std::hash<std::string> hasher;
+  std::size_t v_hash = hasher(brushIdName);
+  return v_hash;
+}
+
+//-------------------------------------------------------------------
+
+std::size_t TColorStyle::getBrushIdHash() {
+  if (m_hash) return m_hash;
+
+  std::hash<std::string> hasher;
+  std::string brushId = getBrushIdName();
+  m_hash              = hasher(brushId);
+  return m_hash;
+}
+
+//-------------------------------------------------------------------
+
+std::string TColorStyle::getBrushIdNameClass(std::string brushIdName) {
+  int index = brushIdName.find(':');
+  if (index >= 0) return brushIdName.substr(0, index);
+  return brushIdName;
+}
+
+//-------------------------------------------------------------------
+
+std::string TColorStyle::getBrushIdNameParam(std::string brushIdName) {
+  int index = brushIdName.find(':');
+  if (index < 0) return "";
+  return brushIdName.substr(index + 1);
+}
+
+//-------------------------------------------------------------------
+
+TRectD TColorStyle::getStrokeBBox(const TStroke *stroke) const {
+  return stroke->getBBox();
 }

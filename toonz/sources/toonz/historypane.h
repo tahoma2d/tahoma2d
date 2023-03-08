@@ -11,11 +11,8 @@ class HistoryField final : public QFrame {
   QScrollArea *m_scrollArea;
 
 public:
-#if QT_VERSION >= 0x050500
-  HistoryField(QScrollArea *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  HistoryField(QScrollArea *parent = 0, Qt::WFlags flags = 0);
-#endif
+  HistoryField(QScrollArea *parent   = 0,
+               Qt::WindowFlags flags = Qt::WindowFlags());
   ~HistoryField(){};
 
   void updateContentHeight(int minimumHeight = -1);
@@ -36,11 +33,7 @@ class HistoryPane final : public QWidget {
   QScrollArea *m_frameArea;
 
 public:
-#if QT_VERSION >= 0x050500
   HistoryPane(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  HistoryPane(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
   ~HistoryPane(){};
 
 protected:

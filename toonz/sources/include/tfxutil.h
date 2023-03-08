@@ -18,7 +18,8 @@ DVAPI TFxP makeCheckboard();
 DVAPI TFxP makeCheckboard(TPixel32 c0, TPixel32 c1, double squareSize);
 
 /*--
- * Preferenceオプションにより、Xsheetノードに繋がった素材を「比較暗」合成して表示する
+ * Darken composite display of nodes connected to the Xsheet node according to
+ * the Preference option
  * --*/
 DVAPI TFxP makeDarken(const TFxP &dn, const TFxP &up);
 
@@ -38,6 +39,6 @@ DVAPI void deleteKeyframes(const TFxP &fx, int frame);
 
 DVAPI void setKeyframe(const TFxP &dstFx, int dstFrame, const TFxP &srcFx,
                        int srcFrame, bool changedOnly = false);
-}
+}  // namespace TFxUtil
 
 #endif

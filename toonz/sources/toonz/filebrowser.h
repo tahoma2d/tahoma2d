@@ -60,13 +60,8 @@ class FileBrowser final : public QFrame, public DvItemListModel {
   Q_OBJECT
 
 public:
-#if QT_VERSION >= 0x050500
   FileBrowser(QWidget *parent, Qt::WindowFlags flags = 0,
               bool noContextMenu = false, bool multiSelectionEnabled = false);
-#else
-  FileBrowser(QWidget *parent, Qt::WFlags flags = 0, bool noContextMenu = false,
-              bool multiSelectionEnabled = false);
-#endif
   ~FileBrowser();
 
   void sortByDataModel(DataType dataType, bool isDiscendent) override;
@@ -100,8 +95,8 @@ types to be displayed in the file browser.
 
   void setFolder(const TFilePath &fp, bool expandNode = false,
                  bool forceUpdate = false, bool collapseAll = false);
-  // process when inputting the folder which is not registered in the folder tree
-  // (e.g. UNC path in Windows)
+  // process when inputting the folder which is not registered in the folder
+  // tree (e.g. UNC path in Windows)
   void setUnregisteredFolder(const TFilePath &fp);
 
   void setHistoryDay(std::string dayDateString);

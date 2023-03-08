@@ -13,6 +13,7 @@
 #include "tapp.h"
 #include "viewerpane.h"
 #include "tooloptionsshortcutinvoker.h"
+#include "custompanelmanager.h"
 #include "statusbar.h"
 #include "aboutpopup.h"
 
@@ -201,8 +202,8 @@ int get_version_code_from(std::string ver) {
   // minor version: assume that the minor version is less than 255.
   std::string::size_type const b = ver.find('.', a + 1);
   std::string const minor        = (b == std::string::npos)
-                                ? ver.substr(a + 1)
-                                : ver.substr(a + 1, b - a - 1);
+                                       ? ver.substr(a + 1)
+                                       : ver.substr(a + 1, b - a - 1);
   version += std::stoi(minor) << 16;
   if ((b == std::string::npos) || (b + 1 == ver.length())) {
     return version;
@@ -373,13 +374,8 @@ void Room::reload() {
 // MainWindow
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 MainWindow::MainWindow(const QString &argumentLayoutFileName, QWidget *parent,
                        Qt::WindowFlags flags)
-#else
-MainWindow::MainWindow(const QString &argumentLayoutFileName, QWidget *parent,
-                       Qt::WFlags flags)
-#endif
     : QMainWindow(parent, flags)
     , m_saveSettingsOnQuit(true)
     , m_oldRoomIndex(0)
@@ -488,6 +484,9 @@ centralWidget->setLayout(centralWidgetLayout);*/
   if (TSystem::doesExistFileOrLevel(TFilePath(ffmpegCachePath))) {
     TSystem::rmDirTree(TFilePath(ffmpegCachePath));
   }
+
+  connect(TApp::instance(), SIGNAL(activeViewerChanged()), this,
+          SLOT(onActiveViewerChanged()));
 }
 
 //-----------------------------------------------------------------------------
@@ -587,9 +586,9 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
       /*--
        * タイトルバーに表示するレイアウト名を作る：_layoutがあればそこから省く。無ければ.txtのみ省く
        * --*/
-      int pos = (argumentLayoutFileName.indexOf("_layout") == -1)
-                    ? argumentLayoutFileName.indexOf(".txt")
-                    : argumentLayoutFileName.indexOf("_layout");
+      int pos      = (argumentLayoutFileName.indexOf("_layout") == -1)
+                         ? argumentLayoutFileName.indexOf(".txt")
+                         : argumentLayoutFileName.indexOf("_layout");
       m_layoutName = argumentLayoutFileName.left(pos);
     }
   }
@@ -664,6 +663,7 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
   }
 
   RecentFiles::instance()->loadRecentFiles();
+  CustomPanelManager::instance()->loadCustomPanelEntries();
 }
 
 //-----------------------------------------------------------------------------
@@ -1356,6 +1356,27 @@ void MainWindow::onUpdateCheckerDone(bool error) {
   disconnect(m_updateChecker);
   m_updateChecker->deleteLater();
 }
+
+//-----------------------------------------------------------------------------
+
+void MainWindow::onActiveViewerChanged() {
+  // sync the command state to the button state of the activated viewer
+  SceneViewer *activeViewer = TApp::instance()->getActiveViewer();
+  if (!activeViewer) return;
+  BaseViewerPanel *bvp = qobject_cast<BaseViewerPanel *>(
+      activeViewer->parentWidget()->parentWidget());
+  if (!bvp) return;
+  bool prev, subCamPrev;
+  bvp->getPreviewButtonStates(prev, subCamPrev);
+
+  CommandManager::instance()
+      ->getAction(MI_ToggleViewerPreview)
+      ->setChecked(prev);
+  CommandManager::instance()
+      ->getAction(MI_ToggleViewerSubCameraPreview)
+      ->setChecked(subCamPrev);
+}
+
 //-----------------------------------------------------------------------------
 
 void MainWindow::closeEvent(QCloseEvent *event) {
@@ -1451,7 +1472,7 @@ QAction *MainWindow::createAction(const char *id, const char *name,
     action->setMenuRole(QAction::NoRole);
 #endif
   CommandManager::instance()->define(id, type, defaultShortcut.toStdString(),
-                                     action);
+                                     action, iconSVGName);
   action->setStatusTip(newStatusTip);
   return action;
 }
@@ -1601,9 +1622,9 @@ QAction *MainWindow::createFillAction(const char *id, const char *name,
 //-----------------------------------------------------------------------------
 
 QAction *MainWindow::createMenuAction(const char *id, const char *name,
-                                      QList<QString> list,
-                                      QString newStatusTip) {
-  QMenu *menu     = new DVMenuAction(tr(name), this, list);
+                                      QList<QString> list, QString newStatusTip,
+                                      bool isForRecentFiles) {
+  QMenu *menu     = new DVMenuAction(tr(name), this, list, isForRecentFiles);
   QAction *action = menu->menuAction();
   action->setStatusTip(newStatusTip);
   CommandManager::instance()->define(id, MenuCommandType, "", action);
@@ -1710,8 +1731,8 @@ QAction *MainWindow::createToolAction(const char *id, const char *iconName,
   // Adding tool actions to the main window solve this problem!
   addAction(action);
 
-  CommandManager::instance()->define(id, ToolCommandType,
-                                     defaultShortcut.toStdString(), action);
+  CommandManager::instance()->define(
+      id, ToolCommandType, defaultShortcut.toStdString(), action, iconName);
   return action;
 }
 
@@ -1758,24 +1779,29 @@ void MainWindow::defineActions() {
                        tr("Remove everything from the recent level list."));
   createMenuFileAction(MI_ConvertFileWithInput, QT_TR_NOOP("&Convert File..."), "",
                        "convert", tr("Convert an existing file or image sequence to another format."));
+  createMenuFileAction(MI_ConvertTZPInFolder,
+                       QT_TR_NOOP("&Convert TZP Files In Folder..."), "");
   createMenuFileAction(MI_LoadColorModel, QT_TR_NOOP("&Load Color Model..."),
                        "", "load_colormodel", tr("Load an image as a color guide."));
   createMenuFileAction(MI_ImportMagpieFile,
                        QT_TR_NOOP("&Import Toonz Lip Sync File..."), "", "dialogue_import",
                        tr("Import a lip sync file to be applied to a level."));
   createMenuFileAction(MI_NewProject, QT_TR_NOOP("&New Project..."), "",
-                       "", tr("Create a new project.") + separator +
-                       tr("A project is a container for a collection of "
-                       "related scenes and drawings."));
+                       "new_project",
+                       tr("Create a new project.") + separator +
+                           tr("A project is a container for a collection of "
+                              "related scenes and drawings."));
   createMenuAction(MI_OpenRecentProject, QT_TR_NOOP("&Open Recent Project"),
                    files, "");
   createMenuFileAction(MI_LoadProject, QT_TR_NOOP("&Load Project..."), "", "",
                        tr("Load an existing project."));
   createMenuFileAction(MI_ProjectSettings, QT_TR_NOOP("&Project Settings..."),
-                       "");
-  createMenuFileAction(MI_SaveDefaultSettings, QT_TR_NOOP("&Save Default Settings"), "",
-                       "", tr("Use the current scene's settings as a template for "
-                       "all new scenes in the current project."));
+                       "", "project_settings");
+  createMenuFileAction(MI_SaveDefaultSettings,
+                       QT_TR_NOOP("&Save Default Settings"), "",
+                       "save_default_settings",
+                       tr("Use the current scene's settings as a template for "
+                          "all new scenes in the current project."));
   createMenuFileAction(MI_SoundTrack, QT_TR_NOOP("&Export Soundtrack"), "",
                        "", tr("Exports the soundtrack to the current scene as a wav file."));
   createMenuFileAction(MI_Preferences, QT_TR_NOOP("&Preferences..."), "Ctrl+U",
@@ -1793,6 +1819,9 @@ void MainWindow::defineActions() {
       QT_TRANSLATE_NOOP("MainWindow",
                         "Export Exchange Digital Time Sheet (XDTS)"),
       "");
+  createMenuFileAction(
+      MI_ExportOCA,
+      QT_TRANSLATE_NOOP("MainWindow", "Export Open Cel Animation (OCA)"), "");
   createMenuFileAction(
       MI_ExportTvpJson,
       QT_TRANSLATE_NOOP("MainWindow", "Export TVPaint JSON File"), "");
@@ -1884,7 +1913,7 @@ void MainWindow::defineActions() {
   // Menu - Level
 
   createMenuLevelAction(MI_NewLevel, QT_TR_NOOP("&New Level..."), "Alt+N",
-                        "new_document", tr("Create a new drawing layer."));
+                        "new_level", tr("Create a new drawing layer."));
   createMenuLevelAction(MI_NewVectorLevel, QT_TR_NOOP("&New Vector Level"), "",
                         "new_vector_level", tr("Create a new vector level.") + 
                         separator + tr("Vectors can be manipulated easily and have "
@@ -1946,7 +1975,7 @@ void MainWindow::defineActions() {
   menuAct = createMenuLevelAction(MI_CanvasSize, QT_TR_NOOP("&Canvas Size..."),
                                   "", "resize");
   menuAct->setDisabled(true);
-  createMenuLevelAction(MI_FileInfo, QT_TR_NOOP("&Info..."), "", "level_info");
+  createMenuLevelAction(MI_FileInfo, QT_TR_NOOP("&Info..."), "", "info");
   createMenuLevelAction(MI_RemoveUnused,
                         QT_TR_NOOP("&Remove All Unused Levels"), "",
                         "remove_unused_levels");
@@ -1955,8 +1984,8 @@ void MainWindow::defineActions() {
                         "replace_parent_directory");
   createMenuLevelAction(MI_NewNoteLevel, QT_TR_NOOP("New Note Level"), "",
                         "new_note_level");
-  createMenuLevelAction(MI_ConvertToVectors, 
-                        QT_TR_NOOP("Convert to Vectors..."), "");
+  createMenuLevelAction(MI_ConvertToVectors,
+                        QT_TR_NOOP("Convert to Vectors..."), "", "convert");
   createMenuLevelAction(MI_ConvertToToonzRaster,
                         QT_TR_NOOP("Vectors to Smart Raster"), "");
   createMenuLevelAction(
@@ -1964,8 +1993,7 @@ void MainWindow::defineActions() {
       QT_TRANSLATE_NOOP("MainWindow",
                         "Replace Vectors with Simplified Vectors"),
       "");
-  createMenuLevelAction(MI_Tracking, QT_TR_NOOP("Tracking..."), "",
-                        "tracking_options");
+  createMenuLevelAction(MI_Tracking, QT_TR_NOOP("Tracking..."), "", "focus");
   createMenuLevelAction(MI_NewSpline, QT_TR_NOOP("&New Motion Path"), "",
                         "menu_toggle", tr("Create a new motion path.") + separator +
                         tr("Motion paths can be used as animation guides, or you can animate "
@@ -2142,6 +2170,8 @@ void MainWindow::defineActions() {
                        "nextkey");
   createMenuPlayAction(MI_PrevKeyframe, QT_TR_NOOP("Previous Key"), "Ctrl+,",
                        "prevkey");
+  createMenuPlayAction(MI_ToggleBlankFrames, QT_TR_NOOP("Toggle Blank Frames"),
+                       "", "blankframes");
   
   // Menu - Render
   
@@ -2153,8 +2183,8 @@ void MainWindow::defineActions() {
                          "", "preview_settings",
                          tr("Control the settings that will be used to preview the scene."));
   createMenuRenderAction(MI_Render, QT_TR_NOOP("&Render"), "Ctrl+Shift+R",
-                         "render_clapboard", tr("Renders according to the settings and "
-                         "location set in Output Settings."));
+                         "render", tr("Renders according to the settings and "
+                                      "location set in Output Settings."));
   createMenuRenderAction(MI_FastRender, QT_TR_NOOP("&Fast Render to MP4"),
                          "Alt+R", "fast_render_mp4", tr("Exports an MP4 file to the location specified in the preferences.") +
                          separator + tr("This is quicker than going into the Output Settings "
@@ -2165,6 +2195,12 @@ void MainWindow::defineActions() {
   createMenuRenderAction(MI_SavePreviewedFrames,
                          QT_TR_NOOP("&Save Previewed Frames"), "",
                          "save_previewed_frames", tr("Save the images created during preview to a specified location."));
+  createToggle(MI_ToggleViewerPreview, QT_TR_NOOP("Toggle Viewer Preview"), "",
+               false, MenuRenderCommandType, "pane_preview");
+  createToggle(MI_ToggleViewerSubCameraPreview,
+               QT_TR_NOOP("Toggle Viewer Sub-camera Preview"), "", false,
+               MenuRenderCommandType, "pane_subpreview");
+
   createMenuRenderAction(MI_SaveAndRender, QT_TR_NOOP("&Save and Render"), "", "render",
                          tr("Saves the current scene and renders according to the settings and "
                          "location set in Output Settings."));
@@ -2237,6 +2273,8 @@ void MainWindow::defineActions() {
 
   createMenuWindowsAction(MI_OpenFileBrowser, QT_TR_NOOP("&File Browser"), "",
                          "filebrowser");
+  createMenuWindowsAction(MI_OpenPreproductionBoard, QT_TR_NOOP("&Preproduction Board"), "",
+                          "scenebrowser");
   createMenuWindowsAction(MI_OpenFileViewer, QT_TR_NOOP("&Flipbook"), "",
                          "flipbook");
   createMenuWindowsAction(MI_OpenFunctionEditor, QT_TR_NOOP("&Function Editor"),
@@ -2296,6 +2334,12 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_OpenGuidedDrawingControls,
                           QT_TR_NOOP("Guided Tweening Controls"), "",
                           "guided_drawing");
+
+  createMenuAction(MI_OpenCustomPanels, QT_TR_NOOP("&Custom Panels"), files, "",
+                   false);
+  createMenuWindowsAction(MI_CustomPanelEditor,
+                          QT_TR_NOOP("&Custom Panel Editor..."), "", "");
+
   // menuAct = createToggle(MI_DockingCheck, QT_TR_NOOP("&Lock Room Panes"), "",
   //                        DockingCheckToggleAction ? 1 : 0, MenuWindowsCommandType);
   // DockingCheck::instance()->setToggle(menuAct);
@@ -2323,7 +2367,7 @@ void MainWindow::defineActions() {
       MI_AutoFillToggle,
       QT_TRANSLATE_NOOP("MainWindow",
                         "Toggle Autofill on Current Palette Color"),
-      "Shift+A");
+      "Shift+A", "toggle_autofill");
 
   // Right Click
 
@@ -2348,9 +2392,11 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_SavePreset, QT_TR_NOOP("&Save As Preset"), "");
   createRightClickMenuAction(MI_PreviewFx, QT_TR_NOOP("Preview Fx"), "");
   createRightClickMenuAction(MI_PasteValues, QT_TR_NOOP("&Paste Color && Name"),
-                             "");
-  createRightClickMenuAction(MI_PasteColors, QT_TR_NOOP("Paste Color"), "");
-  createRightClickMenuAction(MI_PasteNames, QT_TR_NOOP("Paste Name"), "");
+                             "", "paste_color_and_name");
+  createRightClickMenuAction(MI_PasteColors, QT_TR_NOOP("Paste Color"), "",
+                             "paste_color");
+  createRightClickMenuAction(MI_PasteNames, QT_TR_NOOP("Paste Name"), "",
+                             "paste_name");
   createRightClickMenuAction(MI_GetColorFromStudioPalette,
                              QT_TR_NOOP("Get Color from Studio Palette"), "");
   createRightClickMenuAction(MI_ToggleLinkToStudioPalette,
@@ -2373,11 +2419,16 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_PasteNumbers, QT_TR_NOOP("&Paste Numbers"), "",
                              "paste_numbers");
   createRightClickMenuAction(MI_Histogram, QT_TR_NOOP("&Histogram"), "");
+  // MI_ViewerHistogram command is used as a proxy. It will be called when
+  // the MI_Histogram is used while the current flip console is in viewer.
+  createAction(MI_ViewerHistogram, QT_TR_NOOP("&Viewer Histogram"), "", "",
+               HiddenCommandType);
+
   createRightClickMenuAction(MI_BlendColors, QT_TR_NOOP("&Blend colors"), "");
   createToggle(MI_OnionSkin, QT_TR_NOOP("Onion Skin Toggle"), "/", false,
                RightClickMenuCommandType, "onionskin_toggle");
   createToggle(MI_ZeroThick, QT_TR_NOOP("Zero Thick Lines"), "Shift+/", false,
-               RightClickMenuCommandType);
+               RightClickMenuCommandType, "zero_thick_lines");
   createToggle(MI_CursorOutline, QT_TR_NOOP("Toggle Cursor Size Outline"), "", false,
                RightClickMenuCommandType);
   createRightClickMenuAction(MI_ToggleCurrentTimeIndicator,
@@ -2389,17 +2440,16 @@ void MainWindow::defineActions() {
                              "show_folder_contents");
   createRightClickMenuAction(MI_ConvertFiles, QT_TR_NOOP("Convert..."), "",
                              "convert");
-  createRightClickMenuAction(MI_CollectAssets, QT_TR_NOOP("Collect Assets"),
-                             "");
+  createRightClickMenuAction(MI_CollectAssets, QT_TR_NOOP("Collect Assets"), "",
+                             "collect_assets");
   createRightClickMenuAction(MI_ImportScenes, QT_TR_NOOP("Import Scene"), "",
                              "load_scene");
   createRightClickMenuAction(MI_ExportScenes, QT_TR_NOOP("Export Scene..."), "",
-                             "scene_export");
+                             "export_scene");
   createRightClickMenuAction(MI_RemoveLevel, QT_TR_NOOP("Remove Level"), "",
                              "remove_level");
   createRightClickMenuAction(MI_AddToBatchRenderList,
-                             QT_TR_NOOP("Add As Render Task"), "",
-                             "render_add");
+                             QT_TR_NOOP("Add As Render Task"), "", "new_scene");
   createRightClickMenuAction(MI_AddToBatchCleanupList,
                              QT_TR_NOOP("Add As Cleanup Task"), "",
                              "cleanup_add");
@@ -2497,7 +2547,8 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_OpenPltGizmo, QT_TR_NOOP("&Palette Gizmo"), "",
                              "palettegizmo");
   createRightClickMenuAction(MI_EraseUnusedStyles,
-                             QT_TR_NOOP("&Delete Unused Styles"), "");
+                             QT_TR_NOOP("&Delete Unused Styles"), "",
+                             "delete_unused_styles");
   // createRightClickMenuAction(MI_LoadSubSceneFile, QT_TR_NOOP("Load As Sub-xsheet"),   "");
   // createRightClickMenuAction(MI_LoadResourceFile, QT_TR_NOOP("Load"), "");
   // createRightClickMenuAction(MI_PremultiplyFile,  QT_TR_NOOP("Premultiply"), "");
@@ -2664,6 +2715,17 @@ void MainWindow::defineActions() {
   createAction(MI_TypeBold, QT_TR_NOOP("Type Tool - Bold"), "", "",
                ToolCommandType);
 
+  /*-- Paint Brush tool + mode swicthing shortcuts --*/
+  createAction(MI_PaintBrushNextMode, QT_TR_NOOP("Paint Brush - Next Mode"), "",
+               "", ToolCommandType);
+  createAction(MI_PaintBrushAreas, QT_TR_NOOP("Paint Brush - Areas"), "", "",
+               ToolCommandType, "paintbrush_mode_areas");
+  createAction(MI_PaintBrushLines, QT_TR_NOOP("Paint Brush - Lines"), "", "",
+               ToolCommandType, "paintbrush_mode_lines");
+  createAction(MI_PaintBrushLinesAndAreas,
+               QT_TR_NOOP("Paint Brush - Lines & Areas"), "", "",
+               ToolCommandType, "paintbrush_mode_lines_areas");
+
   /*-- Fill tool + type/mode switching shortcuts --*/
   createAction(MI_FillNextType, QT_TR_NOOP("Fill Tool - Next Type"), "", "",
                ToolCommandType);
@@ -2675,6 +2737,8 @@ void MainWindow::defineActions() {
                ToolCommandType, "fill_freehand");
   createAction(MI_FillPolyline, QT_TR_NOOP("Fill Tool - Polyline"), "", "",
                ToolCommandType, "fill_polyline");
+  createAction(MI_FillFreepick, QT_TR_NOOP("Fill Tool - Pick+Freehand"), "", "",
+               ToolCommandType, "fill_freepick");
   createAction(MI_FillNextMode, QT_TR_NOOP("Fill Tool - Next Mode"), "", "",
                ToolCommandType);
   createAction(MI_FillAreas, QT_TR_NOOP("Fill Tool - Areas"), "", "",
@@ -2702,31 +2766,31 @@ void MainWindow::defineActions() {
   createAction(MI_TapeNextType, QT_TR_NOOP("Tape Tool - Next Type"), "", "",
                ToolCommandType);
   createAction(MI_TapeNormal, QT_TR_NOOP("Tape Tool - Normal"), "", "",
-               ToolCommandType);
-  createAction(MI_TapeRectangular, QT_TR_NOOP("Tape Tool - Rectangular"), "", "",
-               ToolCommandType);
+               ToolCommandType, "tape_normal");
+  createAction(MI_TapeRectangular, QT_TR_NOOP("Tape Tool - Rectangular"), "",
+               "", ToolCommandType, "tape_rectangular");
   createAction(MI_TapeNextMode, QT_TR_NOOP("Tape Tool - Next Mode"), "", "",
                ToolCommandType);
   createAction(MI_TapeEndpointToEndpoint,
                QT_TR_NOOP("Tape Tool - Endpoint to Endpoint"), "", "",
-               ToolCommandType);
+               ToolCommandType, "tape_end_to_end");
   createAction(MI_TapeEndpointToLine,
                QT_TR_NOOP("Tape Tool - Endpoint to Line"), "", "",
-               ToolCommandType);
-  createAction(MI_TapeLineToLine, QT_TR_NOOP("Tape Tool - Line to Line"), "", "",
-               ToolCommandType);
+               ToolCommandType, "tape_end_to_line");
+  createAction(MI_TapeLineToLine, QT_TR_NOOP("Tape Tool - Line to Line"), "",
+               "", ToolCommandType, "tape_line_to_line");
 
   /*-- Style Picker tool + mode switching shortcuts --*/
   createAction(MI_PickStyleNextMode,
                QT_TR_NOOP("Style Picker Tool - Next Mode"), "", "",
                ToolCommandType);
-  createAction(MI_PickStyleAreas, QT_TR_NOOP("Style Picker Tool - Areas"), "", "",
-               ToolCommandType);
-  createAction(MI_PickStyleLines, QT_TR_NOOP("Style Picker Tool - Lines"), "", "",
-               ToolCommandType);
+  createAction(MI_PickStyleAreas, QT_TR_NOOP("Style Picker Tool - Areas"), "",
+               "", ToolCommandType, "stylepicker_areas");
+  createAction(MI_PickStyleLines, QT_TR_NOOP("Style Picker Tool - Lines"), "",
+               "", ToolCommandType, "stylepicker_lines");
   createAction(MI_PickStyleLinesAndAreas,
                QT_TR_NOOP("Style Picker Tool - Lines & Areas"), "", "",
-               ToolCommandType);
+               ToolCommandType, "stylepicker_lines_areas");
 
   /*-- RGB Picker tool + type switching shortcuts --*/
   createAction(MI_RGBPickerNextType, QT_TR_NOOP("RGB Picker Tool - Next Type"),
@@ -2904,6 +2968,10 @@ void MainWindow::defineActions() {
                                     QT_TR_NOOP("Type - Polyline"), "");
   menuAct->setIcon(createQIcon("type_polyline"));
 
+  menuAct = createToolOptionsAction("A_ToolOption_Type:Freepick",
+                                    QT_TR_NOOP("Type - Pick+Freehand"), "");
+  menuAct->setIcon(createQIcon("type_pickerlasso"));
+
   menuAct = createToolOptionsAction("A_ToolOption_Type:Segment",
                                     QT_TR_NOOP("Type - Segment"), "");
   menuAct->setIcon(createQIcon("type_erase_segment"));
@@ -3022,8 +3090,10 @@ void MainWindow::defineActions() {
                                   "reset");
   createVisualizationButtonAction(VB_ZoomFit, QT_TR_NOOP("Fit to Window"),
                                   "fit_to_window");
-  createVisualizationButtonAction(VB_ZoomReset, QT_TR_NOOP("Reset Zoom"));
-  createVisualizationButtonAction(VB_RotateReset, QT_TR_NOOP("Reset Rotation"));
+  createVisualizationButtonAction(VB_ZoomReset, QT_TR_NOOP("Reset Zoom"),
+                                  "zoom_reset");
+  createVisualizationButtonAction(VB_RotateReset, QT_TR_NOOP("Reset Rotation"),
+                                  "rotate_reset");
   createVisualizationButtonAction(VB_PositionReset,
                                   QT_TR_NOOP("Reset Position"));
   createVisualizationButtonAction(

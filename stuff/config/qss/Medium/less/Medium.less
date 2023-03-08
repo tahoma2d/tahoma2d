@@ -107,7 +107,7 @@
 // -----------------------------------------------------------------------------
 // Palette Window
 // -----------------------------------------------------------------------------
- 
+
 // All views (except list)
 @palette-SelectedBorderColor: rgb(255, 255, 255);
 @palette-NumpadShortcutBgColor: rgba(0, 0, 0, 0.3);
@@ -118,6 +118,12 @@
 @palette-SelectedCellColor: @hl-bg-color;
 @palette-CurrentCellColor: fade(@hl-bg-color, 50);
 @palette-ListNumpadShortcutBorderColor: rgb(175, 175, 175);
+
+// StyleChooserPage Chips
+@palette-CommonChipBoxColor:    black;
+@palette-SolidChipBoxColor:     rgb(228, 16, 0);
+@palette-SelectedChipBoxColor:  white;
+@palette-SelectedChipBox2Color: rgb(199, 202, 50);
 
 // -----------------------------------------------------------------------------
 // Button
@@ -297,6 +303,13 @@
 @slider-right-handle-disabled: @slider-handle-img-disabled;
 
 // -----------------------------------------------------------------------------
+// Custom Panel Widgets
+// -----------------------------------------------------------------------------
+
+@customPanel-Scroller-border-color: darken(@text-color, 35);
+@customPanel-Scroller-bg-color: darken(@bg, 8);
+
+// -----------------------------------------------------------------------------
 // Titlebars
 // -----------------------------------------------------------------------------
 
@@ -391,10 +404,14 @@
 // XSheet Spreadsheet Viewer
 @xsheet-text-color:                         @text-color;
 @xsheet-error-text-color:                   rgb(255, 123, 123);
+@xsheet-selected-text-color:                @text-color;
+@xsheet-currentFrame-text-color:            @text-color;
 @xsheet-bg-color:                           darken(@bg, 3);
 @xsheet-empty-bg-color:                     @bg;
 @xsheet-LightLine-color:                    rgba(0, 0, 0, 0.2);
 @xsheet-MarkerLine-color:                   rgba(255, 255, 255, 0.15);
+@xsheet-SecMarkerLine-color:                rgba(255, 255, 255, 0.25);
+@xsheet-SelectedMarkerLine-color:           @xsheet-MarkerLine-color;
 @xsheet-VerticalLine-color:                 rgba(0, 0, 0, 0.3);
 @xsheet-VerticalLineHead-color:             darken(@bg, 13);
 @xsheet-PreviewFrameText-color:             @label-title;
@@ -544,9 +561,9 @@
 @function-treeview-text-color: @text-color;
 
 // Function Curve Panel
-@function-panel-bg-color: @xsheet-NotEmptyColumn-color;
-@function-panel-ValueLine-color: fade(@xsheet-LightLine-color, 10);
-@function-panel-FrameLine-color: fade(@xsheet-VerticalLine-color, 10);
+@function-panel-bg-color: darken(@bg, 5);
+@function-panel-ValueLine-color: lighten(@function-panel-bg-color, 4);
+@function-panel-FrameLine-color: lighten(@function-panel-bg-color, 8);
 @function-panel-OtherCurves-color: lighten(@function-panel-bg-color, 30);
 @function-panel-RulerBG-color: darken(@function-panel-bg-color, 3);
 @function-panel-Text-color: @text-color;

@@ -448,11 +448,7 @@ void modifyColor(const T &modifier) {
 // ValueAdjuster
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 ValueAdjuster::ValueAdjuster(QWidget *parent, Qt::WindowFlags flags)
-#else
-ValueAdjuster::ValueAdjuster(QWidget *parent, Qt::WFlags flags)
-#endif
     : QWidget(parent) {
   QPushButton *plusBut  = new QPushButton(QString("+"), this);
   QPushButton *minusBut = new QPushButton(QString("-"), this);
@@ -501,11 +497,7 @@ void ValueAdjuster::onClickedMinus() {
 // ValueShifter
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 ValueShifter::ValueShifter(bool isHue, QWidget *parent, Qt::WindowFlags flags)
-#else
-ValueShifter::ValueShifter(bool isHue, QWidget *parent, Qt::WFlags flags)
-#endif
     : QWidget(parent) {
   QPushButton *plusBut  = new QPushButton(QString("+"), this);
   QPushButton *minusBut = new QPushButton(QString("-"), this);
@@ -553,11 +545,7 @@ void ValueShifter::onClickedMinus() {
 // ColorFader
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 ColorFader::ColorFader(QString name, QWidget *parent, Qt::WindowFlags flags)
-#else
-ColorFader::ColorFader(QString name, QWidget *parent, Qt::WFlags flags)
-#endif
     : QWidget(parent) {
   QHBoxLayout *layout = new QHBoxLayout(this);
   layout->setMargin(0);

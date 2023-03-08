@@ -29,13 +29,8 @@ private:
   XsheetViewer *m_viewer;
 
 public:
-#if QT_VERSION >= 0x050500
   LayerHeaderPanel(XsheetViewer *viewer, QWidget *parent = 0,
                    Qt::WindowFlags flags = 0);
-#else
-  LayerHeaderPanel(XsheetViewer *viewer, QWidget *parent = 0,
-                   Qt::WFlags flags = 0);
-#endif
   ~LayerHeaderPanel();
 
   void showOrHide(const Orientation *o);

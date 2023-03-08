@@ -78,11 +78,7 @@ class CastBrowser final : public QSplitter, public DvItemListModel {
   std::unique_ptr<CastItems> m_castItems;
 
 public:
-#if QT_VERSION >= 0x050500
   CastBrowser(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  CastBrowser(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
   ~CastBrowser();
 
   CastItems const &getCastItems() const { return *m_castItems; }

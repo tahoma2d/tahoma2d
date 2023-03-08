@@ -40,7 +40,7 @@ public:
   }
   TActualDoubleKeyframe &operator=(const TDoubleKeyframe &src) {
     TDoubleKeyframe::operator=(src);
-    m_unit                   = 0;
+    m_unit = 0;
     if (m_type == Expression || m_type == SimilarShape) {
       m_expression.setText(m_expressionText);
     } else if (m_type == File) {
@@ -96,16 +96,15 @@ inline double getConstantValue(const TActualDoubleKeyframe &k0,
 
 inline double getLinearValue(const TActualDoubleKeyframe &k0,
                              const TActualDoubleKeyframe &k1, double f) {
-  return k0.m_value +
-         (f - k0.m_frame) * (k1.m_value - k0.m_value) /
-             (k1.m_frame - k0.m_frame);
+  return k0.m_value + (f - k0.m_frame) * (k1.m_value - k0.m_value) /
+                          (k1.m_frame - k0.m_frame);
 }
 
 //---------------------------------------------------------
 
 static void truncateSpeeds(double aFrame, double bFrame, TPointD &aSpeedTrunc,
                            TPointD &bSpeedTrunc) {
-  double deltaX                        = bFrame - aFrame;
+  double deltaX = bFrame - aFrame;
   if (aSpeedTrunc.x < 0) aSpeedTrunc.x = 0;
   if (bSpeedTrunc.x > 0) bSpeedTrunc.x = 0;
 
@@ -262,7 +261,7 @@ inline double getExpressionValue(const TActualDoubleKeyframe &k0,
                                  const TActualDoubleKeyframe &k1, double frame,
                                  const TMeasure *measure) {
   double t = 0, rframe = frame - k0.m_frame;
-  if (k1.m_frame > k0.m_frame) t  = rframe / (k1.m_frame - k0.m_frame);
+  if (k1.m_frame > k0.m_frame) t = rframe / (k1.m_frame - k0.m_frame);
   TSyntax::Calculator *calculator = k0.m_expression.getCalculator();
   if (calculator) {
     calculator->setUnit(
@@ -543,7 +542,7 @@ double TDoubleParam::getValue(double frame, bool leftmost) const {
     if (frame < f0)
       frame = f0;
     else if (frame > f1 && !m_imp->m_cycleEnabled)
-      frame            = f1;
+      frame = f1;
     double valueOffset = 0;
 
     if (m_imp->m_cycleEnabled) {
@@ -598,7 +597,7 @@ double TDoubleParam::getValue(double frame, bool leftmost) const {
         if (b->m_type != TDoubleKeyframe::Expression ||
             !b->m_expression.isCycling())
           tmpKeyframe[0].m_value = getValue(b->m_frame);
-        b                        = tmpKeyframe.begin();
+        b = tmpKeyframe.begin();
       }
       // .. and/or if prev segment is not then update the a value
       if (a != keyframes.begin() &&
@@ -616,7 +615,7 @@ double TDoubleParam::getValue(double frame, bool leftmost) const {
       int relPos = tfloor(b->m_frame - a->m_frame),
           step   = std::min(a->m_step, relPos);
 
-      tmpKeyframe[2].m_frame        = a->m_frame + tfloor(relPos, step);
+      tmpKeyframe[2].m_frame = a->m_frame + tfloor(relPos, step);
       if (frame > b->m_frame) frame = b->m_frame;
 
       frame = a->m_frame + tfloor(tfloor(frame - a->m_frame), step);
@@ -680,7 +679,7 @@ bool TDoubleParam::setValue(double frame, double value) {
   it           = std::lower_bound(keyframes.begin(), keyframes.end(), k);
   int index    = 0;
   bool created = false;
-  /*-- キーフレームが見つかった場合 --*/
+  /*-- If a keyframe is found --*/
   if (it != keyframes.end() && it->m_frame == frame) {
     // changing a keyframe value
     index                             = std::distance(keyframes.begin(), it);
@@ -693,7 +692,7 @@ bool TDoubleParam::setValue(double frame, double value) {
 
     m_imp->notify(TParamChange(this, 0, 0, true, false, false));
   }
-  /*-- セグメントの部分なので、新たにキーフレームを作る --*/
+  /*-- It is a segment, so create a new keyframe. --*/
   else {
     assert(it == keyframes.end() || it->m_frame > frame);
 
@@ -713,7 +712,8 @@ bool TDoubleParam::setValue(double frame, double value) {
       it->m_prevType = TDoubleKeyframe::None;
     else {
       it->m_prevType = it[-1].m_type;
-      /*-- FxGuiでSegment内にKeyを打った場合は、Step値も引き継ぐ --*/
+      /*-- If you create Key in Segment in FxGui, the Step value is also
+       * inherited. --*/
       it->m_step = it[-1].m_step;
     }
     if (it + 1 != keyframes.end()) it[1].m_prevType = it->m_type;
@@ -786,7 +786,7 @@ void TDoubleParam::setKeyframes(const std::map<int, TDoubleKeyframe> &ks) {
   }
   if (!keyframes.empty()) {
     keyframes[0].m_prevType = TDoubleKeyframe::None;
-    for (int i                = 1; i < (int)keyframes.size(); i++)
+    for (int i = 1; i < (int)keyframes.size(); i++)
       keyframes[i].m_prevType = keyframes[i - 1].m_type;
   }
 
@@ -919,8 +919,8 @@ void TDoubleParam::deleteKeyframe(double frame) {
                         TDoubleKeyframe(frame));
   if (it == keyframes.end() || it->m_frame != frame) return;
 
-  TDoubleKeyframe::Type type                = it->m_prevType;
-  it                                        = m_imp->m_keyframes.erase(it);
+  TDoubleKeyframe::Type type = it->m_prevType;
+  it                         = m_imp->m_keyframes.erase(it);
   if (it != keyframes.end()) it->m_prevType = type;
 
   m_imp->notify(TParamChange(this, 0, 0, true, false, false));

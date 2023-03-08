@@ -594,6 +594,24 @@ TXshColumn::ColumnType TXshColumn::toColumnType(int levelType) {
 }
 
 //-----------------------------------------------------------------------------
+
+bool TXshColumn::canBeParent() const {
+  switch (getColumnType()) {
+  case eLevelType:
+  case eZeraryFxType:
+  case ePaletteType:
+  case eMeshType:
+    return true;
+  case eSoundType:
+  case eSoundTextType:
+    return false;
+  default:
+    assert(!"Unknown level type!");
+    return false;
+  }
+}
+
+//-----------------------------------------------------------------------------
 bool TXshColumn::isRendered() const {
   //  if (!getXsheet() || !getFx()) return false;
   //  if (!isPreviewVisible()) return false;

@@ -11,6 +11,8 @@
 #include "trop.h"
 #include "tsop.h"
 
+#include "tiio.h"
+
 // TnzLib includes
 #include "toonz/toonzscene.h"
 #include "toonz/sceneproperties.h"
@@ -85,7 +87,7 @@ void getRange(ToonzScene *scene, bool isPreview, int &from, int &to) {
       TXshColumn *col         = xs->getColumn(k);
       TXshSoundColumn *sndCol = col ? col->getSoundColumn() : 0;
 
-      if (sndCol) r0  = 0;
+      if (sndCol) r0 = 0;
 
       from = std::min(from, r0), to = std::max(to, r1);
     }
@@ -121,8 +123,8 @@ public:
   std::map<double, std::pair<TRasterP, TRasterP>> m_toBeSaved;
   std::vector<std::pair<double, TFxPair>> m_framesToBeRendered;
   std::string m_renderCacheId;
-  /*--- When reusing the cache of the same raster
-          Gamma is applied only to the first one, and it is reused after that.
+  /*--- When caching the same raster, gamma only the first one and use the
+  result in subsequent frames
   ---*/
   std::map<double, bool> m_toBeAppliedGamma;
 
@@ -151,7 +153,7 @@ public:
   void onRenderRasterCompleted(const RenderData &renderData) override;
   void onRenderFailure(const RenderData &renderData, TException &e) override;
 
-  /*-- キャンセル時にはm_overallRenderedRegionを更新しない --*/
+  /*-- Do not update m_overallRenderedRegion on cancel --*/
   void onRenderFinished(bool isCanceled = false) override;
 
   void doRenderRasterCompleted(const RenderData &renderData);
@@ -161,7 +163,15 @@ public:
 
   void prepareForStart();
   void addSoundtrack(int r0, int r1, double fps, int boardDuration = 0);
+
+  // writeInLinearColorSpace : Whether the format will save image in linear
+  // color space. (true only in EXR fromat) writingGamma : Color space gamma to
+  // be used for saving in the file ("Color Space Gamma" property in EXR format)
+  // renderingGamma : Color space gamma used on rendering ( "Color Space Gamma"
+  // value in the Render Settings )
   void postProcessImage(const TRasterImageP &img, bool has64bitOutputSupport,
+                        bool writeInLinearColorSpace, bool isFirstTime,
+                        double writingGamma, double renderingGamma,
                         const TRasterP &mark, int frame);
 
   //! Saves the specified rasters at the specified time; returns whether the
@@ -254,7 +264,7 @@ void MovieRenderer::Imp::prepareForStart() {
   TOutputProperties *oprop = m_scene->getProperties()->getOutputProperties();
   double frameRate         = (double)oprop->getFrameRate();
 
-  /*-- Frame rate の stretch --*/
+  /*-- stretch of the Frame rate --*/
   double stretchFactor = oprop->getRenderSettings().m_timeStretchTo /
                          oprop->getRenderSettings().m_timeStretchFrom;
   frameRate *= stretchFactor;
@@ -285,6 +295,7 @@ void MovieRenderer::Imp::prepareForStart() {
             m_fp, oprop->getFileFormatProperties(m_fp.getType()),
             oprop->formatTemplateFId()));
         m_levelUpdaterA->getLevelWriter()->setFrameRate(frameRate);
+        m_fp = m_levelUpdaterA->getLevelWriter()->getFilePath();
       } else {
         TFilePath leftFp  = m_fp.withName(m_fp.getName() + "_l");
         TFilePath rightFp = m_fp.withName(m_fp.getName() + "_r");
@@ -296,11 +307,13 @@ void MovieRenderer::Imp::prepareForStart() {
             leftFp, oprop->getFileFormatProperties(leftFp.getType()),
             oprop->formatTemplateFId()));
         m_levelUpdaterA->getLevelWriter()->setFrameRate(frameRate);
+        leftFp = m_levelUpdaterA->getLevelWriter()->getFilePath();
 
         m_levelUpdaterB.reset(new LevelUpdater(
             rightFp, oprop->getFileFormatProperties(rightFp.getType()),
             oprop->formatTemplateFId()));
         m_levelUpdaterB->getLevelWriter()->setFrameRate(frameRate);
+        rightFp = m_levelUpdaterB->getLevelWriter()->getFilePath();
       }
     } catch (...) {
       // If we get here, it's because one of the LevelUpdaters could not be
@@ -317,7 +330,7 @@ void MovieRenderer::Imp::prepareForStart() {
 
 void MovieRenderer::Imp::addSoundtrack(int r0, int r1, double fps,
                                        int boardDuration) {
-  TCG_ASSERT(r0 <= r1, return );
+  TCG_ASSERT(r0 <= r1, return);
 
   TXsheet::SoundProperties *prop =
       new TXsheet::SoundProperties();  // Ownership will be surrendered ...
@@ -371,6 +384,9 @@ void MovieRenderer::Imp::onRenderRasterCompleted(const RenderData &renderData) {
 
 void MovieRenderer::Imp::postProcessImage(const TRasterImageP &img,
                                           bool has64bitOutputSupport,
+                                          bool writeInLinearColorSpace,
+                                          bool isFirstTime, double writingGamma,
+                                          double renderingGamma,
                                           const TRasterP &mark, int frame) {
   img->setDpi(m_xDpi, m_yDpi);
 
@@ -378,6 +394,23 @@ void MovieRenderer::Imp::postProcessImage(const TRasterImageP &img,
     TRaster32P aux(img->getRaster()->getLx(), img->getRaster()->getLy());
     TRop::convert(aux, img->getRaster());
     img->setRaster(aux);
+  }
+
+  // raster will be converted to linear before saving in exr format
+  if (isFirstTime) {
+    if (img->getRaster()->isLinear()) {
+      if (!writeInLinearColorSpace)
+        TRop::tosRGB(img->getRaster(), renderingGamma);
+      // write in linear color space, but with different gamma
+      else if (!areAlmostEqual(renderingGamma, writingGamma)) {
+        double gammaAdjust = writingGamma / renderingGamma;
+        // temporarily release the linear flag in order to use toLinearRGB
+        img->getRaster()->setLinear(false);
+        TRop::toLinearRGB(img->getRaster(), gammaAdjust);
+      }
+    } else if (!img->getRaster()->isLinear() && writeInLinearColorSpace) {
+      TRop::toLinearRGB(img->getRaster(), writingGamma);
+    }
   }
 
   if (mark) addMark(mark, img);
@@ -411,11 +444,25 @@ std::pair<bool, int> MovieRenderer::Imp::saveFrame(
     assert(m_levelUpdaterB.get() || !rasters.second);
 
     // Analyze writer
-    bool has64bitOutputSupport = false;
+    bool has64bitOutputSupport   = false;
+    bool writeInLinearColorSpace = false;
+    double writingGamma          = 2.2;
     {
       if (TImageWriterP writerA =
-              m_levelUpdaterA->getLevelWriter()->getFrameWriter(fid))
+              m_levelUpdaterA->getLevelWriter()->getFrameWriter(fid)) {
         has64bitOutputSupport = writerA->is64bitOutputSupported();
+
+        const std::string &type = toLower(m_fp.getType());
+        Tiio::Writer *writer    = Tiio::makeWriter(type);
+        writeInLinearColorSpace = writer && writer->writeInLinearColorSpace();
+        if (writeInLinearColorSpace) {
+          TDoubleProperty *gammaProp =
+              (TDoubleProperty *)(m_levelUpdaterA->getLevelWriter()
+                                      ->getProperties()
+                                      ->getProperty("Color Space Gamma"));
+          if (gammaProp) writingGamma = gammaProp->getValue();
+        }
+      }
 
       // NOTE: If the writer could not be retrieved, the updater will throw.
       // Failure will be caught then.
@@ -425,8 +472,8 @@ std::pair<bool, int> MovieRenderer::Imp::saveFrame(
     TRasterP rasterA = rasters.first, rasterB = rasters.second;
     assert(rasterA);
 
-    /*--- 同じラスタのキャッシュを使いまわすとき、
-    最初のものだけガンマをかけ、以降はそれを使いまわすようにする。
+    /*--- When caching the same raster, gamma only the first one and use the
+result in subsequent frames
 ---*/
     if (m_renderSettings.m_gamma != 1.0 && m_toBeAppliedGamma[frame]) {
       TRop::gammaCorrect(rasterA, m_renderSettings.m_gamma);
@@ -436,15 +483,19 @@ std::pair<bool, int> MovieRenderer::Imp::saveFrame(
     // Flush images
     try {
       TRasterImageP imgA(rasterA);
-      postProcessImage(imgA, has64bitOutputSupport, m_renderSettings.m_mark,
-                       fid.getNumber());
+      postProcessImage(imgA, has64bitOutputSupport, writeInLinearColorSpace,
+                       m_toBeAppliedGamma[frame], writingGamma,
+                       m_renderSettings.m_colorSpaceGamma,
+                       m_renderSettings.m_mark, fid.getNumber());
 
       m_levelUpdaterA->update(fid, imgA);
 
       if (rasterB) {
         TRasterImageP imgB(rasterB);
-        postProcessImage(imgB, has64bitOutputSupport, m_renderSettings.m_mark,
-                         fid.getNumber());
+        postProcessImage(imgB, has64bitOutputSupport, writeInLinearColorSpace,
+                         m_toBeAppliedGamma[frame], writingGamma,
+                         m_renderSettings.m_colorSpaceGamma,
+                         m_renderSettings.m_mark, fid.getNumber());
 
         m_levelUpdaterB->update(fid, imgB);
       }
@@ -452,9 +503,10 @@ std::pair<bool, int> MovieRenderer::Imp::saveFrame(
       // Should no more throw from here on
 
       if (m_cacheResults) {
-        if (imgA->getRaster()->getPixelSize() == 8) {
-          // Convert 64-bit images to 32 - cached images are supposed to be
-          // 32-bit
+        if (imgA->getRaster()->getPixelSize() == 8 ||
+            imgA->getRaster()->getPixelSize() == 16) {
+          // Convert 64-bit / float images to 32 - cached images are supposed to
+          // be 32-bit
           TRaster32P aux(imgA->getRaster()->getLx(),
                          imgA->getRaster()->getLy());
 

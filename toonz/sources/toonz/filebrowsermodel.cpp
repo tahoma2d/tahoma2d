@@ -1059,7 +1059,7 @@ void DvDirModelStuffFolderNode::refreshChildren() {
   DvDirModelSpecialFileFolderNode *child = new DvDirModelSpecialFileFolderNode(
       this, L"Library", ToonzFolder::getLibraryFolder());
   child->setPixmap(
-      recolorPixmap(svgToPixmap(getIconThemePath("actions/16/library.svg"))));
+      recolorPixmap(svgToPixmap(getIconThemePath("actions/16/library.svg"), QSize(16,16))));
   addChild(child);
 
   child = new DvDirModelSpecialFileFolderNode(
@@ -1077,8 +1077,8 @@ void DvDirModelStuffFolderNode::refreshChildren() {
 
   child = new DvDirModelSpecialFileFolderNode(
       this, L"Studio Palettes", ToonzFolder::getStudioPaletteFolder());
-  child->setPixmap(
-      recolorPixmap(svgToPixmap(getIconThemePath("actions/16/palette.svg"))));
+  child->setPixmap(recolorPixmap(
+      svgToPixmap(getIconThemePath("actions/16/palette.svg"), QSize(16, 16))));
   addChild(child);
 }
 
@@ -1165,15 +1165,15 @@ void DvDirModelRootNode::refreshChildren() {
     DvDirModelSpecialFileFolderNode *child;
     child = new DvDirModelSpecialFileFolderNode(this, L"My Documents",
                                                 getMyDocumentsPath());
-    child->setPixmap(recolorPixmap(
-        svgToPixmap(getIconThemePath("actions/16/my_documents.svg"))));
+    child->setPixmap(recolorPixmap(svgToPixmap(
+        getIconThemePath("actions/16/my_documents.svg"), QSize(16, 16))));
     m_specialNodes.push_back(child);
     addChild(child);
 
     child =
         new DvDirModelSpecialFileFolderNode(this, L"Desktop", getDesktopPath());
-    child->setPixmap(
-        recolorPixmap(svgToPixmap(getIconThemePath("actions/16/desktop.svg"))));
+    child->setPixmap(recolorPixmap(svgToPixmap(
+        getIconThemePath("actions/16/desktop.svg"), QSize(16, 16))));
     m_specialNodes.push_back(child);
     addChild(child);
 

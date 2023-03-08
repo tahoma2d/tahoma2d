@@ -18,15 +18,9 @@ using namespace DVGui;
 
 //=============================================================================
 
-#if QT_VERSION >= 0x050500
 VectorGuidedDrawingPane::VectorGuidedDrawingPane(QWidget *parent,
                                                  Qt::WindowFlags flags)
-#else
-VectorGuidedDrawingPane::VectorGuidedDrawingPane(QWidget *parent,
-                                                 Qt::WindowFlags flags)
-#endif
     : QFrame(parent) {
-
   setObjectName("cornerWidget");
   setObjectName("VectorGuidedDrawingToolbar");
 

@@ -12,6 +12,7 @@
 #include "toonzqt/gutil.h"
 #include "toonzqt/filefield.h"
 #include "toonzqt/colorfield.h"
+#include "toonzqt/intfield.h"
 
 // TnzLib includes
 #include "toonz/tscenehandle.h"
@@ -58,6 +59,7 @@
 #include <QDesktopServices>
 #include <QGroupBox>
 #include <QSettings>
+#include <QLocale>
 
 // Template
 TEnv::StringVar XShPdfExportTemplate("XShPdfExportTemplate", "B4_6sec");
@@ -1234,7 +1236,7 @@ void XSheetPDFTemplate::drawDialogue(QPainter& painter, int framePage) {
       if (row < drawStart) {
         int partialBlockLength = rowTo - drawStart + 1;
         int partialTextCount   = (int)std::round(
-              (double)(textCount * partialBlockLength) / (double)blockLength);
+            (double)(textCount * partialBlockLength) / (double)blockLength);
         text        = text.mid(textCount - partialTextCount);
         textCount   = partialTextCount;
         row         = drawStart;
@@ -1250,7 +1252,7 @@ void XSheetPDFTemplate::drawDialogue(QPainter& painter, int framePage) {
       if (rowTo > drawEnd) {
         int partialBlockLength = drawEnd - row + 1;
         int partialTextCount   = (int)std::round(
-              (double)(textCount * partialBlockLength) / (double)blockLength);
+            (double)(textCount * partialBlockLength) / (double)blockLength);
         text      = text.mid(0, partialTextCount);
         textCount = partialTextCount;
         rowTo     = drawEnd;
@@ -1432,6 +1434,8 @@ void XSheetPDFTemplate::drawXsheetContents(QPainter& painter, int framePage,
         drawLevelName(painter, m_colLabelRects_bottom[c][r / 72], columnName,
                       true);
 
+      if (m_duration == 0) break;
+
       TXshCell cell = column->getCell(f);
       if (cell.m_level != level) cell.m_level = nullptr;
 
@@ -1584,8 +1588,8 @@ QPixmap XSheetPDFTemplate::initializePreview() {
 }
 
 int XSheetPDFTemplate::framePageCount() {
-  int ret = m_duration / param(FrameLength);
-  if (m_duration % param(FrameLength) != 0 || m_duration == 0) ret += 1;
+  int ret = m_duration / param(FrameLength, 1);
+  if (m_duration % param(FrameLength, 1) != 0 || m_duration == 0) ret += 1;
   return ret;
 }
 
@@ -1887,6 +1891,7 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
   m_templateCombo       = new QComboBox(this);
   m_exportAreaCombo     = new QComboBox(this);
   m_continuousLineCombo = new QComboBox(this);
+  m_durationFld         = new DVGui::IntLineEdit(this, 0, 0);
 
   m_pageInfoLbl  = new QLabel(this);
   m_lineColorFld = new DVGui::ColorField(this, false, TPixel32(128, 128, 128));
@@ -1932,7 +1937,7 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
   //------
   QStringList pdfFileTypes = {"pdf"};
   m_pathFld->setFilters(pdfFileTypes);
-  m_pathFld->setFileMode(QFileDialog::DirectoryOnly);
+  m_pathFld->setFileMode(QFileDialog::Directory);  // implies ShowDirOnly
   m_fileNameFld->setFixedWidth(100);
   m_previewArea->setWidget(m_previewPane);
   m_previewArea->setAlignment(Qt::AlignCenter);
@@ -2042,19 +2047,23 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
         exportLay->setHorizontalSpacing(5);
         exportLay->setVerticalSpacing(10);
         {
-          exportLay->addWidget(new QLabel(tr("Output area:"), this), 0, 0,
+          exportLay->addWidget(new QLabel(tr("Frame length:"), this), 0, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
-          exportLay->addWidget(m_exportAreaCombo, 0, 1);
-          exportLay->addWidget(m_pageInfoLbl, 0, 2);
+          exportLay->addWidget(m_durationFld, 0, 1);
 
-          exportLay->addWidget(new QLabel(tr("Output font:"), this), 1, 0,
+          exportLay->addWidget(new QLabel(tr("Output area:"), this), 1, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
-          exportLay->addWidget(m_contentsFontCB, 1, 1, 1, 2,
+          exportLay->addWidget(m_exportAreaCombo, 1, 1);
+          exportLay->addWidget(m_pageInfoLbl, 1, 2);
+
+          exportLay->addWidget(new QLabel(tr("Output font:"), this), 2, 0,
+                               Qt::AlignRight | Qt::AlignVCenter);
+          exportLay->addWidget(m_contentsFontCB, 2, 1, 1, 2,
                                Qt::AlignLeft | Qt::AlignVCenter);
 
-          exportLay->addWidget(new QLabel(tr("Continuous line:"), this), 2, 0,
+          exportLay->addWidget(new QLabel(tr("Continuous line:"), this), 3, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
-          exportLay->addWidget(m_continuousLineCombo, 2, 1, 1, 2,
+          exportLay->addWidget(m_continuousLineCombo, 3, 1, 1, 2,
                                Qt::AlignLeft | Qt::AlignVCenter);
 
           QGridLayout* checksLay = new QGridLayout();
@@ -2076,25 +2085,25 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
           checksLay->setColumnStretch(0, 2);
           checksLay->setColumnStretch(1, 1);
           checksLay->setColumnStretch(2, 1);
-          exportLay->addLayout(checksLay, 3, 0, 1, 3);
+          exportLay->addLayout(checksLay, 4, 0, 1, 3);
 
-          exportLay->addWidget(new QLabel(tr("Inbetween mark 1:"), this), 4, 0,
+          exportLay->addWidget(new QLabel(tr("Inbetween mark 1:"), this), 5, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
-          exportLay->addWidget(m_tick1IdCombo, 4, 1);
-          exportLay->addWidget(m_tick1MarkCombo, 4, 2,
+          exportLay->addWidget(m_tick1IdCombo, 5, 1);
+          exportLay->addWidget(m_tick1MarkCombo, 5, 2,
                                Qt::AlignLeft | Qt::AlignVCenter);
-          exportLay->addWidget(new QLabel(tr("Inbetween mark 2:"), this), 5, 0,
+          exportLay->addWidget(new QLabel(tr("Inbetween mark 2:"), this), 6, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
-          exportLay->addWidget(m_tick2IdCombo, 5, 1);
-          exportLay->addWidget(m_tick2MarkCombo, 5, 2,
+          exportLay->addWidget(m_tick2IdCombo, 6, 1);
+          exportLay->addWidget(m_tick2MarkCombo, 6, 2,
                                Qt::AlignLeft | Qt::AlignVCenter);
-          exportLay->addWidget(new QLabel(tr("Keyframe mark:"), this), 6, 0,
+          exportLay->addWidget(new QLabel(tr("Keyframe mark:"), this), 7, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
-          exportLay->addWidget(m_keyIdCombo, 6, 1);
+          exportLay->addWidget(m_keyIdCombo, 7, 1);
 
-          exportLay->addWidget(new QLabel(tr("Memo:"), this), 7, 0,
+          exportLay->addWidget(new QLabel(tr("Memo:"), this), 8, 0,
                                Qt::AlignRight | Qt::AlignTop);
-          exportLay->addWidget(m_memoEdit, 7, 1, 1, 2);
+          exportLay->addWidget(m_memoEdit, 8, 1, 1, 2);
         }
         exportLay->setColumnStretch(2, 1);
         exportGBox->setLayout(exportLay);
@@ -2144,6 +2153,8 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
   connect(exportPngBtn, SIGNAL(clicked()), this, SLOT(onExportPNG()));
   connect(cancelBtn, SIGNAL(clicked()), this, SLOT(close()));
 
+  connect(m_durationFld, SIGNAL(editingFinished()), this,
+          SLOT(onDurationEdited()));
   connect(m_templateCombo, SIGNAL(activated(int)), this, SLOT(initTemplate()));
 
   connect(m_exportAreaCombo, SIGNAL(activated(int)), this,
@@ -2276,6 +2287,8 @@ void ExportXsheetPdfPopup::initialize() {
     m_duration = to + 1;
   else
     m_duration = xsheet->getFrameCount();
+
+  m_durationFld->setValue(m_duration);
 
   m_columns.clear();
   m_soundColumns.clear();
@@ -2461,7 +2474,7 @@ void ExportXsheetPdfPopup::setInfo() {
   info.lineColor = QColor(col.r, col.g, col.b);
   info.dateTimeText =
       (m_addDateTimeCB->isChecked())
-          ? QDateTime::currentDateTime().toString(Qt::DefaultLocaleLongDate)
+          ? QLocale::system().toString(QDateTime::currentDateTime())
           : "";
   ToonzScene* scene = TApp::instance()->getCurrentScene()->getScene();
   info.scenePathText =
@@ -2771,6 +2784,13 @@ void ExportXsheetPdfPopup::onTickIdComboActivated() {
   else if (combo == m_tick2IdCombo)
     m_tick2MarkCombo->setEnabled(m_tick2IdCombo->currentData().toInt() != -1);
   updatePreview();
+}
+
+void ExportXsheetPdfPopup::onDurationEdited() {
+  int newDuration = m_durationFld->getValue();
+  if (m_duration == newDuration) return;
+  m_duration = newDuration;
+  initTemplate();
 }
 
 //-----------------------------------------------------------------------------

@@ -134,7 +134,7 @@ ResampleOption quality2index(TRenderSettings::ResampleQuality quality) {
   return c_standard;
 }
 
-enum ChannelWidth { c_8bit, c_16bit };
+enum ChannelWidth { c_8bit, c_16bit, c_32bit };  // 32bit: compute in float
 
 enum DominantField { c_odd, c_even, c_none };
 
@@ -182,7 +182,8 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
     , m_outputCameraOm(nullptr)
     , m_isPreviewSettings(isPreview)
     , m_allowMT(Preferences::instance()->getFfmpegMultiThread())
-    , m_presetCombo(nullptr) {
+    , m_presetCombo(nullptr)
+    , m_syncColorSettingsButton(nullptr) {
   setWindowTitle(isPreview ? tr("Preview Settings") : tr("Output Settings"));
   if (!isPreview) setObjectName("OutputSettingsPopup");
   // create panel
@@ -218,14 +219,15 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
   QString tooltip =
       tr("Save current output settings.\nThe parameters to be saved are:\n- "
          "Camera settings\n- Project folder to be saved in\n- File format\n- "
-         "File options\n- Resample Balance\n- Channel width");
+         "File options\n- Resample Balance\n- Channel width\n- Linear Color "
+         "Space\n- Color Space Gamma");
   addPresetButton->setToolTip(tooltip);
   /*-- プリセットフォルダを調べ、コンボボックスにアイテムを格納する --*/
   updatePresetComboItems();
 
 //  QListWidget *categoryList = new QListWidget(this);
 //  QStringList categories;
-//  categories << tr("General") << tr("Camera") << tr("Advanced") << tr("More");
+//  categories << tr("Camera") << tr("Color") << tr("File") << tr("More");
 //  categoryList->addItems(categories);
 //  categoryList->setFixedWidth(100);
 //  categoryList->setCurrentRow(0);
@@ -300,6 +302,9 @@ void OutputSettingsPopup::onCategoryActivated(QListWidgetItem *item) {
   } else if (item->text() == tr("Camera")) {
     label = m_cameraLabel;
     frame = m_cameraBox;
+  } else if (item->text() == tr("Color")) {
+    label = m_colorLabel;
+    frame = m_colorBox;
   } else if (item->text() == tr("Advanced")) {
     label = m_advancedLabel;
     frame = m_advancedBox;
@@ -327,14 +332,24 @@ QFrame *OutputSettingsPopup::createPanel(bool isPreview) {
     m_generalLabel = new QLabel(tr("General Settings"), this);
     m_generalBox = createGeneralSettingsBox(isPreview);
   }
+
   m_cameraLabel = new QLabel(tr("Camera Settings"), this);
   m_cameraBox = createCameraSettingsBox(isPreview);
+
+  m_colorLabel = new QLabel(tr("Color Settings"), this);
+  m_colorBox   = createColorSettingsBox(isPreview);
+
   m_advancedLabel   = new QLabel(tr("Advanced Settings"), this);
   m_advancedBox     = createAdvancedSettingsBox(isPreview);
+
   if (!isPreview) {
     m_moreLabel = new QLabel(tr("More Settings"), this);
     m_moreBox   = createMoreSettingsBox();
   }
+
+  if (isPreview)
+    m_syncColorSettingsButton =
+        new DVGui::CheckBox(tr("Sync with Output Settings"));
 
   if (!isPreview) {
     m_showCameraSettingsButton = new QPushButton("", this);
@@ -344,6 +359,14 @@ QFrame *OutputSettingsPopup::createPanel(bool isPreview) {
     m_showCameraSettingsButton->setCheckable(true);
     m_showCameraSettingsButton->setChecked(false);
     m_showCameraSettingsButton->setFocusPolicy(Qt::NoFocus);
+
+    m_showColorSettingsButton = new QPushButton("", this);
+    m_showColorSettingsButton->setObjectName("menuToggleButton");
+    m_showColorSettingsButton->setFixedSize(15, 15);
+    m_showColorSettingsButton->setIcon(createQIcon("menu_toggle"));
+    m_showColorSettingsButton->setCheckable(true);
+    m_showColorSettingsButton->setChecked(false);
+    m_showColorSettingsButton->setFocusPolicy(Qt::NoFocus);
 
     m_showAdvancedSettingsButton = new QPushButton("", this);
     m_showAdvancedSettingsButton->setObjectName("OutputSettingsShowButton");
@@ -385,6 +408,21 @@ QFrame *OutputSettingsPopup::createPanel(bool isPreview) {
     lay->addWidget(m_cameraBox, 0);
     lay->addSpacing(10);
 
+    QHBoxLayout *colorLabelLay = new QHBoxLayout();
+    colorLabelLay->setMargin(0);
+    colorLabelLay->setSpacing(3);
+    {
+      if (!isPreview) colorLabelLay->addWidget(m_showColorSettingsButton, 0);
+      colorLabelLay->addWidget(m_colorLabel, 0);
+      colorLabelLay->addStretch(1);
+      if (isPreview && m_syncColorSettingsButton)
+        colorLabelLay->addWidget(m_syncColorSettingsButton, 0);
+    }
+    lay->addLayout(colorLabelLay, 0);
+    lay->addWidget(m_colorBox, 0);
+    lay->addSpacing(10);
+
+
     QHBoxLayout *advancedSettingsLabelLay = new QHBoxLayout();
     advancedSettingsLabelLay->setMargin(0);
     advancedSettingsLabelLay->setSpacing(3);
@@ -415,10 +453,18 @@ QFrame *OutputSettingsPopup::createPanel(bool isPreview) {
   }
   panel->setLayout(lay);
 
+  if (isPreview && m_syncColorSettingsButton) {
+    bool ret = connect(m_syncColorSettingsButton, SIGNAL(stateChanged(int)),
+                       SLOT(onSyncColorSettingsChecked(int)));
+    assert(ret);
+  }
+
   if (!isPreview) {
     bool ret = true;
     ret = ret && connect(m_showCameraSettingsButton, SIGNAL(toggled(bool)),
       m_cameraBox, SLOT(setVisible(bool)));
+    ret = ret && connect(m_showColorSettingsButton, SIGNAL(toggled(bool)),
+      m_colorBox, SLOT(setVisible(bool)));
     ret = ret && connect(m_showAdvancedSettingsButton, SIGNAL(toggled(bool)),
       m_advancedBox, SLOT(setVisible(bool)));
     ret = ret && connect(m_showMoreSettingsButton, SIGNAL(toggled(bool)),
@@ -428,6 +474,7 @@ QFrame *OutputSettingsPopup::createPanel(bool isPreview) {
 
   if (!isPreview) {
     m_cameraBox->setVisible(false);
+    m_colorBox->setVisible(false);
     m_advancedBox->setVisible(false);
     m_moreBox->setVisible(false);
   }
@@ -685,14 +732,86 @@ QFrame *OutputSettingsPopup::createCameraSettingsBox(bool isPreview) {
 
 //-----------------------------------------------------------------------------
 
+QFrame *OutputSettingsPopup::createColorSettingsBox(bool isPreview) {
+  QFrame *colorSettingsBox = new QFrame(this);
+  colorSettingsBox->setObjectName("OutputSettingsBox");
+
+  // Channel Width
+  m_channelWidthOm = new QComboBox();
+  // Linear Color Space
+  m_linearColorSpaceChk = new DVGui::CheckBox();
+  // color space gamma
+  m_colorSpaceGammaFld = new DVGui::DoubleLineEdit(this, 2.2);
+
+  // Channel Width
+  m_channelWidthOm->addItem(tr("8 bit"), "8 bit");
+  m_channelWidthOm->addItem(tr("16 bit"), "16 bit");
+  m_channelWidthOm->addItem(tr("32 bit Floating point"), "32 bit");
+
+  m_linearColorSpaceChk->setToolTip(
+      tr("On rendering, color values will be temporarily converted to linear "
+         "light from nonlinear RGB values by using color space gamma."));
+  if (m_isPreviewSettings)
+    m_colorSpaceGammaFld->setRange(-1.0, 5.0);
+  else
+    m_colorSpaceGammaFld->setRange(1.0, 5.0);
+  m_colorSpaceGammaFld->setDecimals(3);
+  QString colorSpaceGammaTooltip =
+      tr("Color Space Gamma value is used for conversion between the linear "
+         "and nonlinear color spaces,\n"
+         "when the \"Linear Color Space\" option is enabled.");
+  if (m_isPreviewSettings)
+    colorSpaceGammaTooltip +=
+        tr("\nInput less than 1.0 to sync the value with the output settings.");
+  m_colorSpaceGammaFld->setToolTip(colorSpaceGammaTooltip);
+
+  if (!isPreview) {
+    m_channelWidthOm->setFocusPolicy(Qt::StrongFocus);
+  }
+
+  QGridLayout *gridLay = new QGridLayout();
+  gridLay->setMargin(5);
+  gridLay->setHorizontalSpacing(5);
+  gridLay->setVerticalSpacing(10);
+  {
+    // Channel Width
+    gridLay->addWidget(new QLabel(tr("Channel Width:"), this), 0, 0,
+                       Qt::AlignRight | Qt::AlignVCenter);
+    gridLay->addWidget(m_channelWidthOm, 0, 1, 1, 2,
+                       Qt::AlignLeft | Qt::AlignVCenter);
+
+    // Linear Color Space and Color SpaceGamma
+    gridLay->addWidget(new QLabel(tr("Linear Color Space:"), this), 1, 0,
+                       Qt::AlignRight | Qt::AlignVCenter);
+    gridLay->addWidget(m_linearColorSpaceChk, 1, 1,
+                       Qt::AlignLeft | Qt::AlignVCenter);
+    gridLay->addWidget(new QLabel(tr("Color Space Gamma:"), this), 1, 2,
+                       Qt::AlignRight | Qt::AlignVCenter);
+    gridLay->addWidget(m_colorSpaceGammaFld, 1, 3);
+  }
+  gridLay->setColumnStretch(2, 1);
+  colorSettingsBox->setLayout(gridLay);
+
+  bool ret = true;
+  ret      = ret && connect(m_channelWidthOm, SIGNAL(currentIndexChanged(int)),
+                            SLOT(onChannelWidthChanged(int)));
+  ret      = ret && connect(m_linearColorSpaceChk, SIGNAL(stateChanged(int)),
+                            SLOT(onLinearColorSpaceChecked(int)));
+
+  ret = ret && connect(m_colorSpaceGammaFld, SIGNAL(editingFinished()),
+                       SLOT(onColorSpaceGammaEdited()));
+  assert(ret);
+  return colorSettingsBox;
+}
+
+//-----------------------------------------------------------------------------
+
 QFrame *OutputSettingsPopup::createAdvancedSettingsBox(bool isPreview) {
   QFrame *advancedSettingsBox = new QFrame(this);
   advancedSettingsBox->setObjectName("OutputSettingsBox");
 
   // Resample Balance
   m_resampleBalanceOm = new QComboBox();
-  // Channel Width
-  m_channelWidthOm = new QComboBox();
   // Threads
   m_threadsComboOm = new QComboBox();
   // Granularity
@@ -704,9 +823,6 @@ QFrame *OutputSettingsPopup::createAdvancedSettingsBox(bool isPreview) {
     m_resampleBalanceOm->addItem(resampleInfoMap[(ResampleOption)i].uiString,
                                  resampleInfoMap[(ResampleOption)i].idString);
   }
-  // Channel Width
-  m_channelWidthOm->addItem(tr("8 bit"), "8 bit");
-  m_channelWidthOm->addItem(tr("16 bit"), "16 bit");
 
   QStringList threadsChoices;
   threadsChoices << tr("Single") << tr("Half") << tr("All");
@@ -717,7 +833,6 @@ QFrame *OutputSettingsPopup::createAdvancedSettingsBox(bool isPreview) {
   m_rasterGranularityOm->addItems(granularityChoices);
 
   m_resampleBalanceOm->setFocusPolicy(Qt::StrongFocus);
-  m_channelWidthOm->setFocusPolicy(Qt::StrongFocus);
   m_threadsComboOm->setFocusPolicy(Qt::StrongFocus);
   m_rasterGranularityOm->setFocusPolicy(Qt::StrongFocus);
   m_resampleBalanceOm->installEventFilter(this);
@@ -741,20 +856,17 @@ QFrame *OutputSettingsPopup::createAdvancedSettingsBox(bool isPreview) {
                                Qt::AlignRight | Qt::AlignVCenter);
       bottomGridLay->addWidget(m_resampleBalanceOm, 0, 1, 1, 2,
                                Qt::AlignLeft | Qt::AlignVCenter);
-      // Channel Width
-      bottomGridLay->addWidget(new QLabel(tr("Channel Width:"), this), 1, 0,
-                               Qt::AlignRight | Qt::AlignVCenter);
-      bottomGridLay->addWidget(m_channelWidthOm, 1, 1);
+
       // Threads
-      bottomGridLay->addWidget(new QLabel(tr("Dedicated CPUs:"), this), 2, 0,
+      bottomGridLay->addWidget(new QLabel(tr("Dedicated CPUs:"), this), 1, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
       bottomGridLay->addWidget(m_threadsComboOm, 2, 1);
       // Granularity
-      bottomGridLay->addWidget(new QLabel(tr("Render Tile:"), this), 3, 0,
+      bottomGridLay->addWidget(new QLabel(tr("Render Tile:"), this), 2, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
-      bottomGridLay->addWidget(m_rasterGranularityOm, 3, 1);
+      bottomGridLay->addWidget(m_rasterGranularityOm, 2, 1);
       if (m_subcameraChk) {
-        bottomGridLay->addWidget(m_subcameraChk, 4, 1, 1, 2);
+        bottomGridLay->addWidget(m_subcameraChk, 3, 1, 1, 2);
       }
     }
     bottomGridLay->setColumnStretch(2, 1);
@@ -768,8 +880,7 @@ QFrame *OutputSettingsPopup::createAdvancedSettingsBox(bool isPreview) {
   bool ret = true;
   ret = ret && connect(m_resampleBalanceOm, SIGNAL(currentIndexChanged(int)),
                        SLOT(onResampleChanged(int)));
-  ret = ret && connect(m_channelWidthOm, SIGNAL(currentIndexChanged(int)),
-                       SLOT(onChannelWidthChanged(int)));
+
   ret = ret && connect(m_threadsComboOm, SIGNAL(currentIndexChanged(int)),
                        SLOT(onThreadsComboChanged(int)));
   ret = ret && connect(m_rasterGranularityOm, SIGNAL(currentIndexChanged(int)),
@@ -1032,6 +1143,10 @@ void OutputSettingsPopup::updateField() {
     m_rasterGranularityOm->setCurrentIndex(0);
 
     if (m_subcameraChk) m_subcameraChk->setCheckState(Qt::Unchecked);
+    m_linearColorSpaceChk->setCheckState(Qt::Unchecked);
+    m_colorSpaceGammaFld->setText(QString());
+    if (m_syncColorSettingsButton)
+      m_syncColorSettingsButton->setCheckState(Qt::Unchecked);
     return;
   }
 
@@ -1118,9 +1233,25 @@ void OutputSettingsPopup::updateField() {
   case 64:
     m_channelWidthOm->setCurrentIndex(c_16bit);
     break;
+  case 128:
+    m_channelWidthOm->setCurrentIndex(c_32bit);
+    break;
   default:
     m_channelWidthOm->setCurrentIndex(c_8bit);
     break;
+  }
+
+  m_linearColorSpaceChk->setCheckState(
+      renderSettings.m_linearColorSpace ? Qt::Checked : Qt::Unchecked);
+  // currently bpp should be 128 when the linearColorSpace is ON
+  m_channelWidthOm->setDisabled(renderSettings.m_linearColorSpace &&
+                                renderSettings.m_bpp == 128);
+
+  m_colorSpaceGammaFld->setValue(renderSettings.m_colorSpaceGamma);
+
+  if (m_isPreviewSettings && m_syncColorSettingsButton) {
+    m_syncColorSettingsButton->setChecked(
+        getProperties()->isColorSettingsSynced());
   }
 
   // Threads
@@ -1275,7 +1406,10 @@ void OutputSettingsPopup::onFormatChanged(const QString &str) {
   if (checkForSeqNum(str)) fp = fp.withFrame(prop->formatTemplateFId());
 
   prop->setPath(fp);
-  TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+  if (prop->getPath() != fp) {
+    prop->setPath(fp);
+    TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+  }
   m_allowMT = Preferences::instance()->getFfmpegMultiThread();
 
   if (m_presetCombo) m_presetCombo->setCurrentIndex(0);
@@ -1394,6 +1528,29 @@ void OutputSettingsPopup::onStereoChanged() {
 
 //----------------------------------------------
 
+void OutputSettingsPopup::onSyncColorSettingsChecked(int state) {
+  assert(m_isPreviewSettings);
+  bool doSync = (state == Qt::Checked);
+  m_colorBox->setDisabled(doSync);
+  getProperties()->syncColorSettings(doSync);
+  // take values from the output settings
+  if (doSync) {
+    TRenderSettings out_rs = getCurrentScene()
+                                 ->getProperties()
+                                 ->getOutputProperties()
+                                 ->getRenderSettings();
+    TRenderSettings rs    = getProperties()->getRenderSettings();
+    rs.m_bpp              = out_rs.m_bpp;
+    rs.m_linearColorSpace = out_rs.m_linearColorSpace;
+    rs.m_colorSpaceGamma  = out_rs.m_colorSpaceGamma;
+    getProperties()->setRenderSettings(rs);
+  }
+  // dirty flag will be set here
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
+}
+
+//----------------------------------------------
+
 void OutputSettingsPopup::onFrameFldEditFinished() {
   ToonzScene *scene = getCurrentScene();
   if (!scene) return;
@@ -1405,7 +1562,9 @@ void OutputSettingsPopup::onFrameFldEditFinished() {
   int step   = (int)m_stepFld->getValue();
   int shrink = (int)m_shrinkFld->getValue();
 
-  bool error = false;
+  bool error            = false;
+  bool somethingChanged = false;
+
   if (r0 < 0) {
     error = true;
     r0    = 0;
@@ -1438,15 +1597,27 @@ void OutputSettingsPopup::onFrameFldEditFinished() {
     r0 = 0;
     r1 = -1;
   }
-  prop->setRange(r0, r1, step);
-  TRenderSettings rs = prop->getRenderSettings();
+  int oldR0, oldR1, oldStep;
+  prop->getRange(oldR0, oldR1, oldStep);
+  if (r0 != oldR0 || r1 != oldR1 || step != oldStep) {
+    prop->setRange(r0, r1, step);
+    somethingChanged = true;
+  }
+  TRenderSettings rs   = prop->getRenderSettings();
+  int oldShrink        = rs.m_shrinkX;
+  bool old_applyShrink = rs.m_applyShrinkToViewer;
+
   rs.m_shrinkX = rs.m_shrinkY = shrink;
   rs.m_applyShrinkToViewer =
       m_applyShrinkChk ? m_applyShrinkChk->checkState() == Qt::Checked : false;
 
-  prop->setRenderSettings(rs);
+  if (rs.m_shrinkX != oldShrink ||
+      rs.m_applyShrinkToViewer != old_applyShrink) {
+    prop->setRenderSettings(rs);
+    somethingChanged = true;
+  }
 
-  TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+  if (somethingChanged) TApp::instance()->getCurrentScene()->setDirtyFlag(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -1455,10 +1626,12 @@ void OutputSettingsPopup::onFrameFldEditFinished() {
 */
 void OutputSettingsPopup::onResampleChanged(int type) {
   if (!getCurrentScene()) return;
-  TOutputProperties *prop = getProperties();
-  TRenderSettings rs      = prop->getRenderSettings();
+  TOutputProperties *prop                      = getProperties();
+  TRenderSettings rs                           = prop->getRenderSettings();
+  TRenderSettings::ResampleQuality old_quality = rs.m_quality;
 
   rs.m_quality = resampleInfoMap[(ResampleOption)type].quality;
+  if (rs.m_quality == old_quality) return;
   prop->setRenderSettings(rs);
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
   if (m_presetCombo) m_presetCombo->setCurrentIndex(0);
@@ -1472,13 +1645,106 @@ void OutputSettingsPopup::onChannelWidthChanged(int type) {
   if (!getCurrentScene()) return;
   TOutputProperties *prop = getProperties();
   TRenderSettings rs      = prop->getRenderSettings();
+  int old_bpp             = rs.m_bpp;
   if (type == c_8bit)
     rs.m_bpp = 32;
-  else
+  else if (type == c_16bit)
     rs.m_bpp = 64;
+  else
+    rs.m_bpp = 128;
+
+  if (rs.m_bpp == old_bpp) return;
+
   prop->setRenderSettings(rs);
-  TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+
+  // sync output settings value to the preview settings
+  if (!m_isPreviewSettings && getCurrentScene()
+                                  ->getProperties()
+                                  ->getPreviewProperties()
+                                  ->isColorSettingsSynced()) {
+    TRenderSettings prev_rs = getCurrentScene()
+                                  ->getProperties()
+                                  ->getPreviewProperties()
+                                  ->getRenderSettings();
+    prev_rs.m_bpp = rs.m_bpp;
+    getCurrentScene()
+        ->getProperties()
+        ->getPreviewProperties()
+        ->setRenderSettings(prev_rs);
+  }
+
   if (m_presetCombo) m_presetCombo->setCurrentIndex(0);
+  // dirty flag will be set here
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
+}
+//-----------------------------------------------------------------------------
+
+void OutputSettingsPopup::onLinearColorSpaceChecked(int state) {
+  if (!getCurrentScene()) return;
+  TOutputProperties *prop = getProperties();
+  TRenderSettings rs      = prop->getRenderSettings();
+  rs.m_linearColorSpace   = (state == Qt::Checked);
+  // force floating point when compute in linear color space
+  if (rs.m_linearColorSpace) {
+    prop->setNonlinearBpp(rs.m_bpp);
+    rs.m_bpp = 128;
+  } else
+    rs.m_bpp = prop->getNonlinearBpp();
+  prop->setRenderSettings(rs);
+
+  // sync output settings value to the preview settings
+  TOutputProperties *prev_prop =
+      getCurrentScene()->getProperties()->getPreviewProperties();
+  if (!m_isPreviewSettings && prev_prop->isColorSettingsSynced()) {
+    TRenderSettings prev_rs    = prev_prop->getRenderSettings();
+    prev_rs.m_linearColorSpace = (state == Qt::Checked);
+    if (prev_rs.m_linearColorSpace) {
+      prev_prop->setNonlinearBpp(prev_rs.m_bpp);
+      prev_rs.m_bpp = 128;
+    } else
+      prev_rs.m_bpp = prev_prop->getNonlinearBpp();
+    getCurrentScene()
+        ->getProperties()
+        ->getPreviewProperties()
+        ->setRenderSettings(prev_rs);
+  }
+
+  if (m_presetCombo) m_presetCombo->setCurrentIndex(0);
+  // dirty flag will be set here
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
+}
+
+//-----------------------------------------------------------------------------
+
+void OutputSettingsPopup::onColorSpaceGammaEdited() {
+  if (!getCurrentScene()) return;
+  TOutputProperties *prop = getProperties();
+  TRenderSettings rs      = prop->getRenderSettings();
+
+  double colorSpaceGamma = m_colorSpaceGammaFld->getValue();
+
+  rs.m_colorSpaceGamma = colorSpaceGamma;
+  prop->setRenderSettings(rs);
+
+  // sync output settings value to the preview settings
+  if (!m_isPreviewSettings && getCurrentScene()
+                                  ->getProperties()
+                                  ->getPreviewProperties()
+                                  ->isColorSettingsSynced()) {
+    TRenderSettings prev_rs = getCurrentScene()
+                                  ->getProperties()
+                                  ->getPreviewProperties()
+                                  ->getRenderSettings();
+    prev_rs.m_colorSpaceGamma = colorSpaceGamma;
+    getCurrentScene()
+        ->getProperties()
+        ->getPreviewProperties()
+        ->setRenderSettings(prev_rs);
+  }
+
+  if (m_presetCombo) m_presetCombo->setCurrentIndex(0);
+  // dirty flag will be set here
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -1495,7 +1761,8 @@ void OutputSettingsPopup::onGammaFldEditFinished() {
     m_gammaFld->setValue(gamma);
   }
   TRenderSettings rs = prop->getRenderSettings();
-  rs.m_gamma         = gamma;
+  if (rs.m_gamma == gamma) return;
+  rs.m_gamma = gamma;
   prop->setRenderSettings(rs);
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
 }
@@ -1510,6 +1777,7 @@ void OutputSettingsPopup::onDominantFieldChanged(int type) {
   if (!getCurrentScene()) return;
   TOutputProperties *prop = getProperties();
   TRenderSettings rs      = prop->getRenderSettings();
+  TRenderSettings::FieldPrevalence oldFieldPrevalence = rs.m_fieldPrevalence;
   if (type != c_none &&
       m_stretchFromFld->getValue() != m_stretchToFld->getValue()) {
     DVGui::error("Can't apply field rendering in a time stretched scene");
@@ -1523,6 +1791,7 @@ void OutputSettingsPopup::onDominantFieldChanged(int type) {
     rs.m_fieldPrevalence = TRenderSettings::NoField;
   m_doStereoscopy->setEnabled(rs.m_fieldPrevalence == TRenderSettings::NoField);
   m_stereoShift->setEnabled(rs.m_fieldPrevalence == TRenderSettings::NoField);
+  if (rs.m_fieldPrevalence == oldFieldPrevalence) return;
   prop->setRenderSettings(rs);
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
 }
@@ -1541,11 +1810,15 @@ void OutputSettingsPopup::onStretchFldEditFinished() {
     DVGui::error("Can't stretch time in a field rendered scene\n");
     m_stretchFromFld->setValue(rs.m_timeStretchFrom);
     m_stretchToFld->setValue(rs.m_timeStretchTo);
-  } else {
-    rs.m_timeStretchFrom = m_stretchFromFld->getValue();
-    rs.m_timeStretchTo   = m_stretchToFld->getValue();
-    prop->setRenderSettings(rs);
+    return;
+  } else if (rs.m_timeStretchFrom == m_stretchFromFld->getValue() &&
+             rs.m_timeStretchTo == m_stretchToFld->getValue()) {
+    return;
   }
+
+  rs.m_timeStretchFrom = m_stretchFromFld->getValue();
+  rs.m_timeStretchTo   = m_stretchToFld->getValue();
+  prop->setRenderSettings(rs);
 
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
 }
@@ -1555,6 +1828,7 @@ void OutputSettingsPopup::onStretchFldEditFinished() {
 void OutputSettingsPopup::onMultimediaChanged(int state) {
   if (!getCurrentScene()) return;
   TOutputProperties *prop = getProperties();
+  if (prop->getMultimediaRendering() == state) return;
   prop->setMultimediaRendering(state);
 
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
@@ -1565,6 +1839,7 @@ void OutputSettingsPopup::onMultimediaChanged(int state) {
 void OutputSettingsPopup::onThreadsComboChanged(int type) {
   if (!getCurrentScene()) return;
   TOutputProperties *prop = getProperties();
+  if (prop->getThreadIndex() == type) return;
   prop->setThreadIndex(type);
 
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
@@ -1575,6 +1850,7 @@ void OutputSettingsPopup::onThreadsComboChanged(int type) {
 void OutputSettingsPopup::onRasterGranularityChanged(int type) {
   if (!getCurrentScene()) return;
   TOutputProperties *prop = getProperties();
+  if (prop->getMaxTileSizeIndex() == type) return;
   prop->setMaxTileSizeIndex(type);
 
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
@@ -1660,6 +1936,10 @@ void OutputSettingsPopup::onAddPresetButtonPressed() {
   // Channel Width
   QString chanw = m_channelWidthOm->currentData().toString();
   os.child("bpp") << chanw.toStdString();
+  // Linear Color Space & Color Space Gamma
+  std::string linearStr = (m_linearColorSpaceChk->isChecked()) ? "1" : "0";
+  os.child("linearColorSpace") << linearStr;
+  os.child("colorSpaceGamma") << m_colorSpaceGammaFld->text().toStdString();
 
   // 140503 iwasawa Frame Rate (Scene Settings)
   os.child("frameRate") << m_frameRateFld->text().toStdString();
@@ -1777,6 +2057,13 @@ void OutputSettingsPopup::onPresetSelected(const QString &str) {
 
   TOutputProperties *prop = getProperties();
   TRenderSettings rs      = prop->getRenderSettings();
+
+  // set back the linear settings to default
+  // in order to make old presets properly reproduce the settings before the
+  // implementation of linear rendering
+  rs.m_linearColorSpace = false;
+  rs.m_colorSpaceGamma  = 2.2;
+
   while (is.matchTag(tagName)) {
     // Camera
     if (tagName == "camera") {
@@ -1873,9 +2160,21 @@ void OutputSettingsPopup::onPresetSelected(const QString &str) {
         m_channelWidthOm->setCurrentIndex(index);
         if (index == c_8bit)
           rs.m_bpp = 32;
-        else
+        else if (index == c_16bit)
           rs.m_bpp = 64;
+        else
+          rs.m_bpp = 128;
       }
+    }
+    // Linear Color Space & Color Space Gamma
+    else if (tagName == "linearColorSpace") {
+      std::string linearStr;
+      is >> linearStr;
+      rs.m_linearColorSpace = (linearStr != "0");
+    } else if (tagName == "colorSpaceGamma") {
+      std::string gamma;
+      is >> gamma;
+      rs.m_colorSpaceGamma = QString::fromStdString(gamma).toDouble();
     }
 
     // Frame Rate (Scene Settings)

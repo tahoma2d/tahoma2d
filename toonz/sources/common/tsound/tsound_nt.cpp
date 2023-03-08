@@ -20,8 +20,8 @@ class TSoundInputDeviceImp;
 //=========================================================
 
 namespace {
-void CALLBACK recordCB(HWAVEIN hwi, UINT uMsg, DWORD dwInstance, DWORD dwParam1,
-                       DWORD dwParam2);
+void CALLBACK recordCB(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwInstance,
+                       DWORD_PTR dwParam1, DWORD dwParam2);
 
 bool setRecordLine(TSoundInputDevice::Source typeInput);
 
@@ -39,11 +39,11 @@ MMRESULT getControlDetails(HMIXEROBJ hMixer, DWORD dwSelectControlID,
                            MIXERCONTROLDETAILS_UNSIGNED *mxcdSelectValue);
 
 MMRESULT isaFormatSupported(int sampleRate, int channelCount, int bitPerSample,
-                            bool input);
+                            int sampleType, bool input);
 
 DWORD WINAPI MyWaveOutCallbackThread(LPVOID lpParameter);
 void getAmplitude(int &amplitude, const TSoundTrackP st, TINT32 sample);
-}
+}  // namespace
 
 //==============================================================================
 //     Class to send the message that a playback is completed
@@ -490,7 +490,7 @@ TSoundOutputDeviceImp::~TSoundOutputDeviceImp() { delete m_whdrQueue; }
 
 bool TSoundOutputDeviceImp::doOpenDevice(const TSoundTrackFormat &format) {
   WAVEFORMATEX wf;
-  wf.wFormatTag      = format.m_formatType;  // WAVE_FORMAT_PCM;
+  wf.wFormatTag      = format.m_sampleType & TSound::WMASK;
   wf.nChannels       = format.m_channelCount;
   wf.nSamplesPerSec  = format.m_sampleRate;
   wf.wBitsPerSample  = format.m_bitPerSample;
@@ -503,8 +503,9 @@ bool TSoundOutputDeviceImp::doOpenDevice(const TSoundTrackFormat &format) {
                            &m_notifyThreadId));
 
   MMRESULT ret;
-  if ((ret = waveOutOpen(&m_wout, WAVE_MAPPER, &wf, (DWORD)m_notifyThreadId,
-                         (DWORD)this, CALLBACK_THREAD)) != MMSYSERR_NOERROR) {
+  if ((ret = waveOutOpen(&m_wout, WAVE_MAPPER, &wf, (DWORD_PTR)m_notifyThreadId,
+                         (DWORD_PTR)this, CALLBACK_THREAD)) !=
+      MMSYSERR_NOERROR) {
     while (!PostThreadMessage(m_notifyThreadId, WM_QUIT, 0, 0))
       ;
   }
@@ -560,6 +561,8 @@ void TSoundOutputDeviceImp::insertAllRate() {
   m_supportedRate.insert(32000);
   m_supportedRate.insert(44100);
   m_supportedRate.insert(48000);
+  m_supportedRate.insert(96000);
+  m_supportedRate.insert(192000);
 }
 
 //----------------------------------------------------------------------------
@@ -686,7 +689,7 @@ void getAmplitude(int &amplitude, const TSoundTrackP st, TINT32 sample) {
     amplitude += (int)snd->getPressure(sample, k);
   amplitude /= k;
 }
-}
+}  // namespace
 
 //------------------------------------------------------------------------------
 
@@ -801,7 +804,7 @@ void TSoundOutputDevice::setLooping(bool loop) {
 TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(TUINT32 sampleRate,
                                                          int channelCount,
                                                          int bitPerSample,
-                                                         int formatType) {
+                                                         int sampleType) {
   TSoundTrackFormat fmt;
 
   // avvvicinarsi al sample rate => dovrebbe esser OK avendo selezionato i piu'
@@ -827,11 +830,6 @@ TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(TUINT32 sampleRate,
   else
     bitPerSample = 32;
 
-  if (bitPerSample >= 16)
-    fmt.m_signedSample = true;
-  else
-    fmt.m_signedSample = false;
-
   // switch mono/stereo
   if (channelCount <= 1)
     channelCount = 1;
@@ -841,7 +839,7 @@ TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(TUINT32 sampleRate,
   fmt.m_bitPerSample = bitPerSample;
   fmt.m_channelCount = channelCount;
   fmt.m_sampleRate   = sampleRate;
-  fmt.m_formatType   = formatType;
+  fmt.m_sampleType   = sampleType;
 
   return fmt;
 }
@@ -852,7 +850,7 @@ TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(
     const TSoundTrackFormat &format) {
   try {
     return getPreferredFormat(format.m_sampleRate, format.m_channelCount,
-                              format.m_bitPerSample, format.m_formatType);
+                              format.m_bitPerSample, format.m_sampleType);
   } catch (TSoundDeviceException &e) {
     throw TSoundDeviceException(TSoundDeviceException::UnsupportedFormat,
                                 e.getMessage());
@@ -871,14 +869,14 @@ class WaveFormat final : public WAVEFORMATEX {
 public:
   WaveFormat(){};
   WaveFormat(unsigned char channelCount, TUINT32 sampleRate,
-             unsigned char bitPerSample, WORD formatType);
+             unsigned char bitPerSample, int sampleFormat);
 
   ~WaveFormat(){};
 };
 
 WaveFormat::WaveFormat(unsigned char channelCount, TUINT32 sampleRate,
-                       unsigned char bitPerSample, WORD formatType) {
-  wFormatTag      = formatType;  // WAVE_FORMAT_PCM;
+                       unsigned char bitPerSample, int sampleFormat) {
+  wFormatTag      = sampleFormat & TSound::WMASK;
   nChannels       = channelCount;
   nSamplesPerSec  = sampleRate;
   wBitsPerSample  = bitPerSample;
@@ -933,8 +931,8 @@ WinSoundInputDevice::~WinSoundInputDevice() { CloseHandle(m_hBlockDone); }
 void WinSoundInputDevice::open(const WaveFormat &wf) {
   if (m_hWaveIn) close();
 
-  MMRESULT ret = waveInOpen(&m_hWaveIn, WAVE_MAPPER, &wf, (DWORD)recordCB,
-                            (DWORD)m_hBlockDone, CALLBACK_FUNCTION);
+  MMRESULT ret = waveInOpen(&m_hWaveIn, WAVE_MAPPER, &wf, (DWORD_PTR)recordCB,
+                            (DWORD_PTR)m_hBlockDone, CALLBACK_FUNCTION);
 
   if (ret != MMSYSERR_NOERROR) {
     throw TException("Error to open the input device");
@@ -1108,6 +1106,8 @@ void TSoundInputDeviceImp::insertAllRate() {
   m_supportedRate.insert(32000);
   m_supportedRate.insert(44100);
   m_supportedRate.insert(48000);
+  m_supportedRate.insert(96000);
+  m_supportedRate.insert(192000);
 }
 
 //----------------------------------------------------------------------------
@@ -1145,15 +1145,15 @@ bool TSoundInputDeviceImp::verifyRate() {
 
 //====================================================================
 namespace {
-void CALLBACK recordCB(HWAVEIN hwi, UINT uMsg, DWORD dwInstance, DWORD dwParam1,
-                       DWORD dwParam2) {
+void CALLBACK recordCB(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwInstance,
+                       DWORD_PTR dwParam1, DWORD dwParam2) {
   WAVEHDR *whdr     = (WAVEHDR *)dwParam1;
   HANDLE *blockDone = (HANDLE *)dwInstance;
 
   if (uMsg != MM_WIM_DATA) return;
   SetEvent(blockDone);
 }
-}
+}  // namespace
 
 //==============================================================================
 
@@ -1219,7 +1219,7 @@ throw TException("This format is not supported for recording");*/
 
   try {
     WaveFormat wf(m_imp->m_format.m_channelCount, m_imp->m_format.m_sampleRate,
-                  m_imp->m_format.m_bitPerSample, m_imp->m_format.m_formatType);
+                  m_imp->m_format.m_bitPerSample, m_imp->m_format.m_sampleType);
 
     m_imp->open(wf);
   } catch (TException &e) {
@@ -1291,7 +1291,7 @@ throw TException("This format is not supported for recording");*/
   m_imp->m_byteRecorded = 0;
   try {
     WaveFormat wf(m_imp->m_format.m_channelCount, m_imp->m_format.m_sampleRate,
-                  m_imp->m_format.m_bitPerSample, m_imp->m_format.m_formatType);
+                  m_imp->m_format.m_bitPerSample, m_imp->m_format.m_sampleType);
 
     m_imp->open(wf);
     m_imp->prepareHeader(
@@ -1546,7 +1546,7 @@ bool TSoundInputDevice::setVolume(double value) {
   double delta    = (double)(dwMaximum / (mxc.Metrics.cSteps - 1));
   newValue        = (int)(tround(fattProp) * delta);
 
-  MIXERCONTROLDETAILS_UNSIGNED mxcdVolume = {newValue};
+  MIXERCONTROLDETAILS_UNSIGNED mxcdVolume = {(DWORD)newValue};
   ret = setControlDetails((HMIXEROBJ)0, dwVolumeControlID, mxc.cMultipleItems,
                           &mxcdVolume);
   if (ret != MMSYSERR_NOERROR)
@@ -1703,7 +1703,7 @@ vicini
 TSoundTrackFormat TSoundInputDevice::getPreferredFormat(TUINT32 sampleRate,
                                                         int channelCount,
                                                         int bitPerSample,
-                                                        int formatType) {
+                                                        int sampleType) {
   TSoundTrackFormat fmt;
 
   // avvvicinarsi al sample rate => dovrebbe esser OK avendo selezionato i piu'
@@ -1729,11 +1729,6 @@ TSoundTrackFormat TSoundInputDevice::getPreferredFormat(TUINT32 sampleRate,
   else
     bitPerSample = 32;
 
-  if (bitPerSample >= 16)
-    fmt.m_signedSample = true;
-  else
-    fmt.m_signedSample = false;
-
   // switch mono/stereo
   if (channelCount <= 1)
     channelCount = 1;
@@ -1743,7 +1738,7 @@ TSoundTrackFormat TSoundInputDevice::getPreferredFormat(TUINT32 sampleRate,
   fmt.m_bitPerSample = bitPerSample;
   fmt.m_channelCount = channelCount;
   fmt.m_sampleRate   = sampleRate;
-  fmt.m_formatType   = formatType;
+  fmt.m_sampleType   = sampleType;
 
   return fmt;
 }
@@ -1754,7 +1749,7 @@ TSoundTrackFormat TSoundInputDevice::getPreferredFormat(
     const TSoundTrackFormat &format) {
   try {
     return getPreferredFormat(format.m_sampleRate, format.m_channelCount,
-                              format.m_bitPerSample, format.m_formatType);
+                              format.m_bitPerSample, format.m_sampleType);
   } catch (TSoundDeviceException &e) {
     throw TSoundDeviceException(TSoundDeviceException::UnsupportedFormat,
                                 e.getMessage());
@@ -1799,7 +1794,7 @@ MMRESULT getLineInfo(HMIXEROBJ hMixer, MIXERLINE &mxl, DWORD destination,
   mxl.dwDestination = destination;
   mxl.dwSource      = source;
   ret               = mixerGetLineInfo(0, &mxl,
-                         MIXER_OBJECTF_HMIXER | MIXER_GETLINEINFOF_SOURCE);
+                                       MIXER_OBJECTF_HMIXER | MIXER_GETLINEINFOF_SOURCE);
   return ret;
 }
 
@@ -1813,7 +1808,7 @@ MMRESULT getLineInfo(HMIXEROBJ hMixer, MIXERLINE &mxl, DWORD dwLineID) {
   mxl.cbStruct = sizeof(mxl);
   mxl.dwLineID = dwLineID;
   ret          = mixerGetLineInfo((HMIXEROBJ)hMixer, &mxl,
-                         MIXER_OBJECTF_HMIXER | MIXER_GETLINEINFOF_LINEID);
+                                  MIXER_OBJECTF_HMIXER | MIXER_GETLINEINFOF_LINEID);
   return ret;
 }
 
@@ -1911,7 +1906,7 @@ MMRESULT getControlDetails(HMIXEROBJ hMixer, DWORD dwSelectControlID,
   mxcd.cbDetails      = sizeof(MIXERCONTROLDETAILS_LISTTEXT);
   mxcd.paDetails      = pmxcdSelectText;
   ret                 = mixerGetControlDetails((HMIXEROBJ)0, &mxcd,
-                               MIXER_GETCONTROLDETAILSF_LISTTEXT);
+                                               MIXER_GETCONTROLDETAILSF_LISTTEXT);
   return ret;
 }
 
@@ -2117,7 +2112,8 @@ bool setRecordLine(TSoundInputDevice::Source typeInput) {
   case TSoundInputDevice::LineIn:
     dwComponentTypeSrc = MIXERLINE_COMPONENTTYPE_SRC_LINE /*|
                              MIXERLINE_COMPONENTTYPE_SRC_AUXILIARY |
-                             MIXERLINE_COMPONENTTYPE_SRC_ANALOG*/;
+                             MIXERLINE_COMPONENTTYPE_SRC_ANALOG*/
+        ;
     break;
   case TSoundInputDevice::DigitalIn:
     dwComponentTypeSrc = MIXERLINE_COMPONENTTYPE_SRC_DIGITAL;
@@ -2168,11 +2164,11 @@ bool setRecordLine(TSoundInputDevice::Source typeInput) {
 //------------------------------------------------------------------------------
 
 MMRESULT isaFormatSupported(int sampleRate, int channelCount, int bitPerSample,
-                            bool input) {
+                            int sampleType, bool input) {
   WAVEFORMATEX wf;
   MMRESULT ret;
 
-  wf.wFormatTag      = WAVE_FORMAT_PCM;
+  wf.wFormatTag      = sampleType & TSound::WMASK;
   wf.nChannels       = channelCount;
   wf.nSamplesPerSec  = sampleRate;
   wf.wBitsPerSample  = bitPerSample;
@@ -2186,4 +2182,4 @@ MMRESULT isaFormatSupported(int sampleRate, int channelCount, int bitPerSample,
     ret = waveOutOpen(NULL, WAVE_MAPPER, &wf, NULL, NULL, WAVE_FORMAT_QUERY);
   return ret;
 }
-}
+}  // namespace

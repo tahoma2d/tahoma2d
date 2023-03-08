@@ -214,11 +214,7 @@ void XsheetViewer::getButton(const int &btype, QColor &bgColor,
 
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 XsheetViewer::XsheetViewer(QWidget *parent, Qt::WindowFlags flags)
-#else
-XsheetViewer::XsheetViewer(QWidget *parent, Qt::WFlags flags)
-#endif
     : QFrame(parent)
     , m_timerId(0)
     , m_autoPanSpeed(0, 0)
@@ -239,7 +235,6 @@ XsheetViewer::XsheetViewer(QWidget *parent, Qt::WFlags flags)
     , m_xsheetLayout("Classic")
     , m_frameZoomFactor(100)
     , m_ctrlSelectRef(CellPosition(0, 0)) {
-
   m_xsheetLayout = Preferences::instance()->getLoadedXsheetLayout();
 
   setFocusPolicy(Qt::StrongFocus);
@@ -706,7 +701,7 @@ bool XsheetViewer::refreshContentSize(int dx, int dy) {
   QSize viewportSize = m_cellScrollArea->viewport()->size();
   QPoint offset      = m_cellArea->pos();
   offset             = QPoint(std::min(0, offset.x() - dx),
-                  std::min(0, offset.y() - dy));  // what?
+                              std::min(0, offset.y() - dy));  // what?
 
   TXsheet *xsh    = getXsheet();
   int frameCount  = xsh ? xsh->getFrameCount() : 0;
@@ -1475,7 +1470,7 @@ void XsheetViewer::onCurrentFrameSwitched() {
   m_isCurrentFrameSwitched = false;
   scrollToRow(row);
 
-  TXsheet *xsh = getXsheet();
+  TXsheet *xsh            = getXsheet();
   NavigationTags *navTags = xsh->getNavigationTags();
   int lastTag             = navTags->getPrevTag(INT_MAX);
   int firstTag            = navTags->getNextTag(-1);

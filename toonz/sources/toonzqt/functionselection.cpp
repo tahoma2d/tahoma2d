@@ -394,7 +394,7 @@ QPair<TDoubleParam *, int> FunctionSelection::getSelectedKeyframe(
     if (index < count) {
       TDoubleParam *curve          = m_selectedKeyframes[i].first;
       QSet<int>::const_iterator it = m_selectedKeyframes[i].second.begin();
-      it += index;
+      std::advance(it, index);
       return QPair<TDoubleParam *, int>(curve, *it);
     }
     index -= count;

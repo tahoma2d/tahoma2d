@@ -33,13 +33,8 @@ private:
   XsheetViewer *m_viewer;
 
 public:
-#if QT_VERSION >= 0x050500
   LayerFooterPanel(XsheetViewer *viewer, QWidget *parent = 0,
                    Qt::WindowFlags flags = 0);
-#else
-  LayerFooterPanel(XsheetViewer *viewer, QWidget *parent = 0,
-                   Qt::WFlags flags = 0);
-#endif
   ~LayerFooterPanel();
 
   void showOrHide(const Orientation *o);

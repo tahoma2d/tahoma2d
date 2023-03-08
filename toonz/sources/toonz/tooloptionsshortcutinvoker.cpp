@@ -481,6 +481,16 @@ void ToolOptionsShortcutInvoker::initialize() {
   setCommandHandler(MI_TypeBold, this,
                     &ToolOptionsShortcutInvoker::toggleTypeBold);
 
+  /*-- Paint Brush tool + mode switching shortcuts --*/
+  setCommandHandler(MI_PaintBrushNextMode, this,
+                    &ToolOptionsShortcutInvoker::togglePaintBrushNextMode);
+  setCommandHandler(MI_PaintBrushAreas, this,
+                    &ToolOptionsShortcutInvoker::togglePaintBrushAreas);
+  setCommandHandler(MI_PaintBrushLines, this,
+                    &ToolOptionsShortcutInvoker::togglePaintBrushLines);
+  setCommandHandler(MI_PaintBrushLinesAndAreas, this,
+                    &ToolOptionsShortcutInvoker::togglePaintBrushLinesAndAreas);
+
   /*-- Fill tool + type/mode switching shortcuts --*/
   setCommandHandler(MI_FillNextType, this,
                     &ToolOptionsShortcutInvoker::toggleFillNextType);
@@ -492,6 +502,8 @@ void ToolOptionsShortcutInvoker::initialize() {
                     &ToolOptionsShortcutInvoker::toggleFillFreehand);
   setCommandHandler(MI_FillPolyline, this,
                     &ToolOptionsShortcutInvoker::toggleFillPolyline);
+  setCommandHandler(MI_FillFreepick, this,
+                    &ToolOptionsShortcutInvoker::toggleFillFreepick);
   setCommandHandler(MI_FillNextMode, this,
                     &ToolOptionsShortcutInvoker::toggleFillNextMode);
   setCommandHandler(MI_FillAreas, this,
@@ -856,6 +868,14 @@ void ToolOptionsShortcutInvoker::toggleFillPolyline() {
       ->trigger();
 }
 
+void ToolOptionsShortcutInvoker::toggleFillFreepick() {
+  CommandManager::instance()->getAction(T_Fill)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Type:Normal")->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Type:Freepick")
+      ->trigger();
+}
+
 void ToolOptionsShortcutInvoker::toggleFillNextMode() {
   if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_Fill)
     CommandManager::instance()->getAction("A_ToolOption_Mode")->trigger();
@@ -875,6 +895,32 @@ void ToolOptionsShortcutInvoker::toggleFillLines() {
 
 void ToolOptionsShortcutInvoker::toggleFillLinesAndAreas() {
   CommandManager::instance()->getAction(T_Fill)->trigger();
+  CommandManager::instance()
+      ->getAction("A_ToolOption_Mode:Lines & Areas")
+      ->trigger();
+}
+
+ 
+//---------------------------------------------------------------------------------------
+/*-- Paint Brush tool + mode switching shortcuts --*/
+void ToolOptionsShortcutInvoker::togglePaintBrushNextMode() {
+  if (TApp::instance()->getCurrentTool()->getTool()->getName() == T_PaintBrush)
+    CommandManager::instance()->getAction("A_ToolOption_Mode")->trigger();
+  else
+    CommandManager::instance()->getAction(T_PaintBrush)->trigger();
+}
+void ToolOptionsShortcutInvoker::togglePaintBrushAreas() {
+  CommandManager::instance()->getAction(T_PaintBrush)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Mode:Areas")->trigger();
+}
+
+void ToolOptionsShortcutInvoker::togglePaintBrushLines() {
+  CommandManager::instance()->getAction(T_PaintBrush)->trigger();
+  CommandManager::instance()->getAction("A_ToolOption_Mode:Lines")->trigger();
+}
+
+void ToolOptionsShortcutInvoker::togglePaintBrushLinesAndAreas() {
+  CommandManager::instance()->getAction(T_PaintBrush)->trigger();
   CommandManager::instance()
       ->getAction("A_ToolOption_Mode:Lines & Areas")
       ->trigger();
