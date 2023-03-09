@@ -50,12 +50,7 @@ class MotionPathMenu final : public QWidget {
   QPoint m_pos;
 
 public:
-#if QT_VERSION >= 0x050500
   MotionPathMenu(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  MotionPathMenu(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
-
   ~MotionPathMenu();
 
 protected:
@@ -353,11 +348,7 @@ class ColumnArea final : public QWidget {
   };
 
 public:
-#if QT_VERSION >= 0x050500
-  ColumnArea(XsheetViewer *parent, Qt::WindowFlags flags = 0);
-#else
-  ColumnArea(XsheetViewer *parent, Qt::WFlags flags = 0);
-#endif
+  ColumnArea(XsheetViewer *parent, Qt::WindowFlags flags = Qt::WindowFlags());
   ~ColumnArea();
 
   void onControlPressed(bool pressed);

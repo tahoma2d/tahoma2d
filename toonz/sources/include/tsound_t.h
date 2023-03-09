@@ -24,20 +24,18 @@ public:
 
   //----------------------------------------------------------------------------
 
-  TSoundTrackT(TUINT32 sampleRate, int channelCount, TINT32 sampleCount,
-               int formatType = WAVE_FORMAT_PCM)
+  TSoundTrackT(TUINT32 sampleRate, int channelCount, TINT32 sampleCount)
       : TSoundTrack(sampleRate, T::getBitPerSample(), channelCount, sizeof(T),
-                    sampleCount, T::isSampleSigned(), formatType) {}
+                    sampleCount, T::getSampleType()) {}
 
   //----------------------------------------------------------------------------
 
   TSoundTrackT(TUINT32 sampleRate, int channelCount, TINT32 sampleCount,
-               T *buffer, TSoundTrackT<T> *parent,
-               int formatType = WAVE_FORMAT_PCM)
+               T *buffer, TSoundTrackT<T> *parent)
 
       : TSoundTrack(sampleRate, T::getBitPerSample(), channelCount, sizeof(T),
-                    sampleCount, reinterpret_cast<UCHAR *>(buffer), parent,
-                    formatType) {}
+                    sampleCount, T::getSampleType(),
+                    reinterpret_cast<UCHAR *>(buffer), parent) {}
 
   //----------------------------------------------------------------------------
 
@@ -45,7 +43,13 @@ public:
 
   //----------------------------------------------------------------------------
 
-  bool isSampleSigned() const override { return T::isSampleSigned(); }
+  bool isSampleSigned() const override {
+    return T::getSampleType() != TSound::UINT;
+  }
+
+  //----------------------------------------------------------------------------
+
+  int getSampleType() const override { return T::getSampleType(); }
 
   //----------------------------------------------------------------------------
 
@@ -80,10 +84,9 @@ public:
     ss0 = tcrop<TINT32>(s0, (TINT32)0, getSampleCount() - 1);
     ss1 = tcrop<TINT32>(s1, (TINT32)0, getSampleCount() - 1);
 
-    return TSoundTrackP(
-        new TSoundTrackT<T>(getSampleRate(), getChannelCount(), ss1 - ss0 + 1,
-                            (T *)(m_buffer + (long)(ss0 * getSampleSize())),
-                            this, getFormatType()));
+    return TSoundTrackP(new TSoundTrackT<T>(
+        getSampleRate(), getChannelCount(), ss1 - ss0 + 1,
+        (T *)(m_buffer + (long)(ss0 * getSampleSize())), this));
   }
 
   //----------------------------------------------------------------------------
@@ -98,8 +101,8 @@ from which it's created. It has no reference to the object.
       return clone();
     else {
       typedef typename T::ChannelSampleType TCST;
-      TSoundTrackT<TCST> *dst = new TSoundTrackT<TCST>(
-          m_sampleRate, 1, getSampleCount(), getFormatType());
+      TSoundTrackT<TCST> *dst =
+          new TSoundTrackT<TCST>(m_sampleRate, 1, getSampleCount());
 
       const T *sample    = samples();
       const T *endSample = sample + getSampleCount();
@@ -357,8 +360,8 @@ template class DVAPI TSoundTrackT<TMono24Sample>;
 template class DVAPI TSoundTrackT<TStereo24Sample>;
 template class DVAPI TSoundTrackT<TMono32Sample>;
 template class DVAPI TSoundTrackT<TStereo32Sample>;
-template class DVAPI TSoundTrackT<TMono32floatSample>;
-template class DVAPI TSoundTrackT<TStereo32floatSample>;
+template class DVAPI TSoundTrackT<TMono32FloatSample>;
+template class DVAPI TSoundTrackT<TStereo32FloatSample>;
 #endif
 
 typedef TSoundTrackT<TMono8SignedSample> TSoundTrackMono8Signed;
@@ -371,8 +374,8 @@ typedef TSoundTrackT<TMono24Sample> TSoundTrackMono24;
 typedef TSoundTrackT<TStereo24Sample> TSoundTrackStereo24;
 typedef TSoundTrackT<TMono32Sample> TSoundTrackMono32;
 typedef TSoundTrackT<TStereo32Sample> TSoundTrackStereo32;
-typedef TSoundTrackT<TMono32floatSample> TSoundTrackMono32float;
-typedef TSoundTrackT<TStereo32floatSample> TSoundTrackStereo32float;
+typedef TSoundTrackT<TMono32FloatSample> TSoundTrackMono32Float;
+typedef TSoundTrackT<TStereo32FloatSample> TSoundTrackStereo32Float;
 
 //==============================================================================
 
@@ -393,8 +396,8 @@ public:
   virtual TSoundTrackP compute(const TSoundTrackStereo24 &) { return 0; };
   virtual TSoundTrackP compute(const TSoundTrackMono32 &) { return 0; };
   virtual TSoundTrackP compute(const TSoundTrackStereo32 &) { return 0; };
-  virtual TSoundTrackP compute(const TSoundTrackMono32float &) { return 0; };
-  virtual TSoundTrackP compute(const TSoundTrackStereo32float &) { return 0; };
+  virtual TSoundTrackP compute(const TSoundTrackMono32Float &) { return 0; };
+  virtual TSoundTrackP compute(const TSoundTrackStereo32Float &) { return 0; };
 };
 
 //==============================================================================

@@ -190,6 +190,8 @@ private:
 
   bool isAnEmptyZone_withParentFx(const QRectF &rect, const TFx *parent);
 
+  // snap to neighbor nodes on dragging
+  void updateSnapTarget(QGraphicsItem *item) override;
 signals:
   void showPreview(TFxP);
   void cacheFx(TFxP);

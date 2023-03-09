@@ -30,7 +30,11 @@ protected:
 
     QFontMetrics fm    = p.fontMetrics();
     QString elidedText = fm.elidedText(m_text, Qt::ElideRight, width());
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+    qreal textWidth = fm.horizontalAdvance(elidedText);
+#else
     qreal textWidth    = fm.width(elidedText);
+#endif
     p.drawText((width() - textWidth) * 0.5, (height() - fm.height()) * 0.5,
                elidedText);
   }
@@ -86,11 +90,7 @@ void MessagePanel::setMessage(QString text) { m_messageBox->setText(text); }
 
                 Inherits \b TPanel.
 */
-#if QT_VERSION >= 0x050500
 LogPanel::LogPanel(QWidget *parent, Qt::WindowFlags flags)
-#else
-LogPanel::LogPanel(QWidget *parent, Qt::WFlags flags)
-#endif
     : TPanel(parent), TLogger::Listener() {
   TLogger::instance()->addListener(this);
   TLogger::instance()->clearMessages();
@@ -149,7 +149,7 @@ void LogPanel::onLogChanged() {
 
 //-----------------------------------------------------------------------------
 /*! Clear panel text box from all messages.
-*/
+ */
 void LogPanel::clear() {
   TLogger::instance()->clearMessages();
   m_messageBox->clear();

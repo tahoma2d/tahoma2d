@@ -835,6 +835,7 @@ QTreeWidget {
 ----------------------------------------------------------------------------- */
 .Button,
 QPushButton,
+#CustomPanelButton,
 .ComboBox,
 #enableBlankFrameButton,
 QComboBox {
@@ -849,6 +850,7 @@ QComboBox {
 }
 .Button:hover,
 QPushButton:hover,
+#CustomPanelButton:hover,
 #ViewerFpsSlider::sub-line:horizontal:hover,
 #ViewerFpsSlider::add-line:horizontal:hover,
 #enableBlankFrameButton:hover {
@@ -858,6 +860,7 @@ QPushButton:hover,
 }
 .Button:pressed,
 QPushButton:pressed,
+#CustomPanelButton:pressed,
 #ViewerFpsSlider::sub-line:horizontal:pressed,
 #ViewerFpsSlider::add-line:horizontal:pressed,
 #enableBlankFrameButton:pressed {
@@ -867,6 +870,7 @@ QPushButton:pressed,
 }
 .Button:checked,
 QPushButton:checked,
+#CustomPanelButton:checked,
 #enableBlankFrameButton:checked {
   background-color: #b5b5b5;
   border-color: #8e8e8e;
@@ -874,17 +878,20 @@ QPushButton:checked,
 }
 .Button:checked:hover,
 QPushButton:checked:hover,
+#CustomPanelButton:checked:hover,
 #enableBlankFrameButton:checked:hover {
   background-color: #c9c9c9;
   border-color: #bcbcbc;
 }
 .Button:checked:hover:pressed,
 QPushButton:checked:hover:pressed,
+#CustomPanelButton:checked:hover:pressed,
 #enableBlankFrameButton:checked:hover:pressed {
   background: #bcbcbc;
 }
 .Button:disabled,
 QPushButton:disabled,
+#CustomPanelButton:disabled,
 .ComboBox:disabled,
 #ViewerFpsSlider::sub-line:horizontal:disabled,
 #ViewerFpsSlider::add-line:horizontal:disabled,
@@ -896,6 +903,9 @@ QComboBox:disabled {
 }
 #PushButton_NoPadding {
   padding: 3;
+}
+#CustomPanelButton {
+  padding: 0;
 }
 /* -----------------------------------------------------------------------------
    ComboBox
@@ -1290,6 +1300,13 @@ QProgressBar::chunk {
   border-radius: 2;
 }
 /* -----------------------------------------------------------------------------
+   Custom Panel Widgets
+----------------------------------------------------------------------------- */
+MyScroller {
+  qproperty-ScrollerBorderColor: #000000;
+  qproperty-ScrollerBGColor: #c7c7c7;
+}
+/* -----------------------------------------------------------------------------
    File Browser
 ----------------------------------------------------------------------------- */
 /* Left Pane
@@ -1524,6 +1541,12 @@ QStatusBar #StatusBarLabel {
 }
 #HexagonalColorWheel {
   qproperty-BGColor: #DBDBDB;
+}
+#StyleChooserPage {
+  qproperty-CommonChipBoxColor: #c0c0c0;
+  qproperty-SolidChipBoxColor: #e49080;
+  qproperty-SelectedChipBoxColor: black;
+  qproperty-SelectedChipBox2Color: #c7ca32;
 }
 /* -------------------------------------------------------------------------- */
 /* Horizontal QSlider */
@@ -2262,9 +2285,13 @@ Ruler {
 XsheetViewer {
   qproperty-TextColor: #000;
   qproperty-ErrorTextColor: #c01111;
+  qproperty-SelectedTextColor: #000;
+  qproperty-CurrentFrameTextColor: #000;
   qproperty-BGColor: #cecece;
   qproperty-LightLineColor: rgba(0, 0, 0, 0.15);
   qproperty-MarkerLineColor: rgba(0, 0, 0, 0.3);
+  qproperty-SecMarkerLineColor: rgba(0, 0, 0, 0.5);
+  qproperty-SelectedMarkerLineColor: rgba(0, 0, 0, 0.3);
   qproperty-VerticalLineColor: rgba(0, 0, 0, 0.15);
   qproperty-VerticalLineHeadColor: rgba(0, 0, 0, 0.3);
   qproperty-PreviewFrameTextColor: #2d42b9;
@@ -2397,9 +2424,9 @@ FunctionTreeView {
   padding-left: 2;
 }
 FunctionPanel {
-  qproperty-BGColor: #808080;
-  qproperty-ValueLineColor: rgba(0, 0, 0, 0.1);
-  qproperty-FrameLineColor: rgba(0, 0, 0, 0.1);
+  qproperty-BGColor: #828282;
+  qproperty-ValueLineColor: #787878;
+  qproperty-FrameLineColor: #6d6d6d;
   qproperty-OtherCurvesColor: #dadada;
   qproperty-RulerBackground: #c2c2c2;
   qproperty-TextColor: #000;
@@ -2411,6 +2438,7 @@ SpreadsheetViewer {
   qproperty-CurrentRowBgColor: rgba(216, 87, 177, 0.7);
   qproperty-LightLineColor: rgba(0, 0, 0, 0.15);
   qproperty-MarkerLineColor: rgba(0, 0, 0, 0.3);
+  qproperty-SecMarkerLineColor: rgba(0, 0, 0, 0.5);
   qproperty-BGColor: #cecece;
   qproperty-VerticalLineColor: rgba(0, 0, 0, 0.15);
   qproperty-KeyFrameColor: #edaa64;
@@ -2426,6 +2454,7 @@ SpreadsheetViewer {
   qproperty-SelectedEmptyColor: rgba(157, 139, 152, 0.5);
   qproperty-SelectedSceneRangeEmptyColor: rgba(157, 139, 152, 0.5);
   qproperty-TextColor: #000;
+  qproperty-CurrentRowTextColor: #000;
   qproperty-ColumnHeaderBorderColor: #5b5b5b;
 }
 #ExpressionField {

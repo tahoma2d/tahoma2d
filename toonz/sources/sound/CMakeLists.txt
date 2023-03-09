@@ -2,9 +2,8 @@ set(HEADERS
     wav/tsio_wav.h
     aiff/tsio_aiff.h
     raw/tsio_raw.h
-    mp3/tsio_mp3.h
+    ffmpeg/tsio_ffmpeg.h
     ../include/tnzsound.h
-    tsio.h
 )
 
 set(SOURCES
@@ -13,7 +12,7 @@ set(SOURCES
     wav/tsio_wav.cpp
     aiff/tsio_aiff.cpp
     raw/tsio_raw.cpp
-    mp3/tsio_mp3.cpp
+    ffmpeg/tsio_ffmpeg.cpp
 )
 
 add_library(sound SHARED ${HEADERS} ${SOURCES})

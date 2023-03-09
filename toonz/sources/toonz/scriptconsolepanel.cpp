@@ -123,13 +123,8 @@ static void def(ScriptEngine *teng, const QString &name,
   eng->globalObject().setProperty(name, evalFun);
 }
 
-#if QT_VERSION >= 0x050500
 ScriptConsolePanel::ScriptConsolePanel(QWidget *parent, Qt::WindowFlags flags)
-#else
-ScriptConsolePanel::ScriptConsolePanel(QWidget *parent, Qt::WFlags flags)
-#endif
     : TPanel(parent) {
-
   setPanelType("ScriptConsole");
   setIsMaximizable(false);
   setWindowTitle(QObject::tr("Script Console"));

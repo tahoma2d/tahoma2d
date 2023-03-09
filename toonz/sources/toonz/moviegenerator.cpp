@@ -159,7 +159,7 @@ public:
     TPointD center(0.5 * cameraSize.lx, 0.5 * cameraSize.ly);
     m_viewAff       = TTranslation(center);
     std::string ext = fp.getType();
-    m_isFrames      = ext != "avi";
+    m_isFrames      = ext != "avi" && ext != "mov" && ext != "3gp";
     m_fileOptions   = properties.getFileFormatProperties(ext);
   }
 

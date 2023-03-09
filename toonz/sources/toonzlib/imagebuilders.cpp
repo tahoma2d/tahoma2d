@@ -45,7 +45,11 @@ extern TOfflineGL *currentOfflineGL;
 //***************************************************************************************
 
 ImageLoader::ImageLoader(const TFilePath &path, const TFrameId &fid)
-    : m_path(path), m_fid(fid), m_subsampling(0), m_64bitCompatible(false) {}
+    : m_path(path)
+    , m_fid(fid)
+    , m_subsampling(0)
+    , m_64bitCompatible(false)
+    , m_colorSpaceGamma(LevelOptions::DefaultColorSpaceGamma) {}
 
 //-------------------------------------------------------------------------
 
@@ -69,13 +73,10 @@ bool ImageLoader::getInfo(TImageInfo &info, int imFlags, void *extData) {
 //-------------------------------------------------------------------------
 
 inline int ImageLoader::buildSubsampling(int imFlags, BuildExtData *data) {
-  return (imFlags & ImageManager::toBeModified)
-             ? 1
-             : (data->m_subs > 0)
-                   ? data->m_subs
-                   : (m_subsampling > 0)
-                         ? m_subsampling
-                         : data->m_sl->getProperties()->getSubsampling();
+  return (imFlags & ImageManager::toBeModified) ? 1
+         : (data->m_subs > 0)                   ? data->m_subs
+         : (m_subsampling > 0)                  ? m_subsampling
+                               : data->m_sl->getProperties()->getSubsampling();
 }
 
 //-------------------------------------------------------------------------
@@ -109,6 +110,16 @@ TImageP ImageLoader::build(int imFlags, void *extData) {
 
     bool enable64bit = (imFlags & ImageManager::is64bitEnabled);
     ir->enable16BitRead(enable64bit);  // Set 64-bit loading if required
+    bool enableFloat = (imFlags & ImageManager::isFloatEnabled);
+    ir->enableFloatRead(enableFloat);  // Set float loading if required
+
+    double colorSpaceGamma = LevelOptions::DefaultColorSpaceGamma;
+    if (m_path.getType() == "exr") {
+      // gamma value to be used for converting linear-based image file to
+      // nonlinear raster. Curretly only used in EXR image levels.
+      colorSpaceGamma = data->m_sl->getProperties()->colorSpaceGamma();
+      ir->setColorSpaceGamma(colorSpaceGamma);
+    }
 
     // Load the image
     TImageP img;
@@ -121,6 +132,7 @@ TImageP ImageLoader::build(int imFlags, void *extData) {
     }
 
     ir->enable16BitRead(false);
+    ir->enableFloatRead(false);
 
     if (!img) return img;  // There was an error loading the image.
 
@@ -141,6 +153,9 @@ TImageP ImageLoader::build(int imFlags, void *extData) {
       m_subsampling = subsampling;
       m_64bitCompatible =
           data->m_sl->is16BitChannelLevel() ? enable64bit : true;
+      m_floatCompatible =
+          data->m_sl->isFloatChannelLevel() ? enableFloat : true;
+      if (m_path.getType() == "exr") m_colorSpaceGamma = colorSpaceGamma;
     }
 
     return img;
@@ -167,11 +182,23 @@ bool ImageLoader::isImageCompatible(int imFlags, void *extData) {
 
   if (m_subsampling <= 0 || subsampling != m_subsampling) return false;
 
-  if (m_64bitCompatible || !(imFlags & ImageManager::is64bitEnabled)) {
-    return true;
-  } else {
+  if (m_path.getType() == "exr" &&
+      !areAlmostEqual(m_colorSpaceGamma,
+                      sl->getProperties()->colorSpaceGamma()))
     return false;
-  }
+
+  if (!m_floatCompatible && (imFlags & ImageManager::isFloatEnabled))
+    return false;
+  else if (!m_64bitCompatible && (imFlags & ImageManager::is64bitEnabled))
+    return false;
+  else
+    return true;
+
+  // if (m_64bitCompatible || !(imFlags & ImageManager::is64bitEnabled)) {
+  //   return true;
+  // } else {
+  //   return false;
+  // }
 }
 
 //-------------------------------------------------------------------------
@@ -180,11 +207,13 @@ void ImageLoader::invalidate() {
   ImageBuilder::invalidate();
   m_subsampling     = 0;
   m_64bitCompatible = false;
+  m_colorSpaceGamma = LevelOptions::DefaultColorSpaceGamma;
 }
 
 //-------------------------------------------------------------------------
 /*--
- * ImageBuilder仮想関数の実装。アイコン、画像をLoad時に全てキャッシュに格納する
+ * Implement ImageBuilder virtual functions. All icons and images are stored in
+ * the cache on Loading.
  * --*/
 
 void ImageLoader::buildAllIconsAndPutInCache(TXshSimpleLevel *level,
@@ -193,7 +222,7 @@ void ImageLoader::buildAllIconsAndPutInCache(TXshSimpleLevel *level,
                                              bool cacheImagesAsWell) {
   if (m_path.getType() != "tlv") return;
   if (fids.empty() || iconIds.empty()) return;
-  /*- fidとアイコンidの数は同じはず -*/
+  /*- The number of fid and icon id should be the same -*/
   if ((int)fids.size() != (int)iconIds.size()) return;
 
   try {
@@ -209,7 +238,7 @@ void ImageLoader::buildAllIconsAndPutInCache(TXshSimpleLevel *level,
       TPalette *palette     = level->getPalette();
       std::string fullImgId = level->getImageId(fids[i]);
 
-      /*- 画像データも一緒にキャッシュする場合 -*/
+      /*- When image data is also cached together -*/
       if (cacheImagesAsWell) {
         ir->enable16BitRead(m_64bitCompatible);
         ir->setShrink(1);
@@ -221,7 +250,7 @@ void ImageLoader::buildAllIconsAndPutInCache(TXshSimpleLevel *level,
         }
       }
 
-      /*- アイコンのロード -*/
+      /*- load icons -*/
       TImageP img = ir->loadIcon();
       ir->enable16BitRead(false);
       if (img) {

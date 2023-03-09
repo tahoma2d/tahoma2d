@@ -19,16 +19,17 @@ void readrow(FILE *psd, TPSDChannelInfo *chan,
 
   switch (chan->comptype) {
   case RAWDATA: /* uncompressed */
-    pos                  = chan->filepos + chan->rowbytes * row;
-    seekres              = fseek(psd, pos, SEEK_SET);
-    if (seekres != -1) n = fread(inbuffer, 1, chan->rowbytes, psd);
+    pos     = chan->filepos + chan->rowbytes * row;
+    seekres = fseek(psd, pos, SEEK_SET);
+    if (seekres != -1) n = (psdPixel)fread(inbuffer, 1, chan->rowbytes, psd);
     break;
   case RLECOMP:
     pos     = chan->rowpos[row];
     seekres = fseek(psd, pos, SEEK_SET);
     if (seekres != -1) {
-      rlebytes = fread(tmpbuffer, 1, chan->rowpos[row + 1] - pos, psd);
-      n        = unpackrow(inbuffer, tmpbuffer, chan->rowbytes, rlebytes);
+      rlebytes =
+          (psdPixel)fread(tmpbuffer, 1, chan->rowpos[row + 1] - pos, psd);
+      n = unpackrow(inbuffer, tmpbuffer, chan->rowbytes, rlebytes);
     }
     break;
   case ZIPWITHPREDICTION:

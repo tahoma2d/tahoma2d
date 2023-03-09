@@ -73,45 +73,37 @@ double findMinimum(const TStrokeDeformation &def, const TStroke &stroke,
 //---------------------------------------------------------------------------
 
 /**
-  * Rationale:
-  *  Supponiamo di voler modellare un segmento (rappresentato da una stroke)
-  *  in modo che assuma la forma di una parabola (caso abituale offerto dal
- * modificatore).
-  *  Poniamo il che:
-  *   (o) i punti della stroke si trovino lungo l'asse y=-100;
-  *   (o) le x che corrisponderanno siano x1=-10 e x2=+10 (ovvio
- * dall'equazione).
-  *
-  *  La parabola potrà essere rappresentata sul lato sx da una quadratica con
-  *  punti di controllo:
-  *    P0=(-10,-100),
-  *    P1=(-5,    0),
-  *    P2=( 0,    0).
-  *  Se conosciamo il numero di tratti lineari che rappresentano questa
- * parabola,
-  *  sappiamo anche quanti "campioni" sono richiesti per la sua linearizzazione.
-  *  Questo parametro può essere utilizzato per stabilire in modo qualitativo
-  *  il valore con cui campionare la stroke da testare; ci dovranno essere tanti
-  *  punti da spostare per quanti campioni sono presenti nel riferimento.
-  */
+ * Rationale:
+ *  Suppose we want to model a segment (represented by a stroke)  so that it
+ * takes the shape of a parabola (the usual case offered by the modifier). We
+ * assume that: (o) stroke points lie along the y=-100 axis; (o) the x's that
+ * will correspond are x1=-10 and x2=+10 (obvious from the equation).
+ *
+ *  The parabola may be represented on the left side by a quadratic with control
+ * points: P0=(-10,-100), P1=(-5,    0), P2=( 0,    0). If we know the number of
+ * linear strokes representing this parabola, we also know how many "samples"
+ * are required for its linearization. This parameter can be used to
+ * qualitatively determine the value with which to sample the stroke to be
+ * tested; there will need to be as many points to move as there are samples in
+ * the reference.
+ */
 double computeIncrement(double strokeLength, double pixelSize) {
   assert(pixelSize > 0 && "Pixel size is negative!!!");
   assert(strokeLength > 0 && "Stroke Length size is negative!!!");
 
-  // altezza della parabola (va verso il basso)
+  // height of the parabola (goes downward)
   double height = 100;
 
-  // suppongo di fare almeno un drag di 100 pixel
+  // I suppose I'm doing at least a 100-pixel drag
   assert(height >= 100.0);
 
   double x = sqrt(height);
 
-  // il punto p1 dovra' essere all'intersezione
-  //  tra le tangenti ai due estremi.
-  //  La tangente del punto p2 e l'asse x,
-  //  l'altra avra' versore dato dal gradiente in p0,
-  //  cioe': grad(x,-2 x)
-  //  e se y = m x + q
+  // the point p1 will have to be at the intersection of the tangents to the two
+  // extremes. The tangent of the point p2 and the x-axis, the other will have
+  // versor given by the gradient at p0,
+  //  ie: grad(x,-2 x)
+  //  and if y = m x + q
   //  m =
   double m = 2.0 * x;
 
@@ -131,7 +123,7 @@ double computeIncrement(double strokeLength, double pixelSize) {
 
   double step = computeStep(quadratic, pixelSize);
 
-  //  giusto per aggiungere punti anche nel caso peggiore.
+  //  just to add points even in the worst case.
   if (step >= 1.0) step = 0.1;
 
   return step;
@@ -141,39 +133,35 @@ double computeIncrement(double strokeLength, double pixelSize) {
 
 void detectEdges(const std::vector<TPointD> &pointArray,
                  std::vector<UINT> &edgeIndexArray) {
-  // ASSUNZIONE: sharpPointArray non contiene punti coincidenti adiacenti
+  // ASSUMPTION: sharpPointArray does not contain adjacent coincident points
 
   int size = pointArray.size();
-  // controllo che ci siano piu' di tre elementi
+  // I check that there are more than three elements
   if (size < 3) return;
-  //  scorre pointArray e per ogni suo punto cerca di inscrivere triangoli
-  //  (utilizzando i
-  //  punti a sinistra e a destra) considerando potenziali corner quelli con
-  //  lati l tale
-  //  che dMin <= l <= dMax (in realta' alla prima volta che l > dMax: breack) e
-  //  con apertura
-  //  angolare alpha <= alphaMax. Poi cerca i max locali tra i potenziali corner
-  //  in una
-  //  finestra di semiampiezza dMax (al solito alla prima volta che si supera
-  //  dMax: breack)
-
-  //  valori di default: dMin = 7; dMax = dMin + 2; alphaMax = 2.6 (150°)
+  //  runs pointArray and for each of its points tries to inscribe triangles
+  //  (using left and right points) considering potential corners those with
+  //  sides l such that dMin <= l <= dMax (actually at the first time that l >
+  //  dMax: breack) and with angular aperture alpha <= alphaMax.
+  // Then it looks for local maxes among the potential corners in a window of
+  // semiamplitude dMax(actually at the first time dMax : breack is exceeded)
+  //  default values: dMin = 7; dMax = dMin + 2; alphaMax = 2.6 (150 degrees)
 
   const double dMin     = 4;
   const double dMax     = dMin + 3;
-  const double alphaMax = 2.4;  // ( 137.5°)
+  const double alphaMax = 2.4;  // ( 137.5 degrees)
   const double dMin2    = dMin * dMin;
   const double dMax2    = dMax * dMax;
   std::vector<double> sharpnessArray;
-  sharpnessArray.push_back(M_PI);  //  il primo punto e' un corner
+  sharpnessArray.push_back(M_PI);  //  the first point is a corner
   int nodeCount;
   for (nodeCount = 1; nodeCount < size - 1;
-       ++nodeCount) {  //  scorre la sharpPointArray escludendo gli estremi
+       ++nodeCount) {  //  scrolls the sharpPointArray excluding the extremes
     sharpnessArray.push_back(0);
     TPointD point(pointArray[nodeCount]);
     int leftCount;
     for (leftCount = nodeCount - 1; leftCount >= 0;
-         --leftCount) {  //  calcola i lati "left" dei triangoli inscritti...
+         --leftCount) {  //  Calculates the "left" sides of the inscribed
+                         //  triangles...
       TPointD left  = pointArray[leftCount];
       double dLeft2 = norm2(left - point);
       if (dLeft2 < dMin2)
@@ -182,8 +170,8 @@ void detectEdges(const std::vector<TPointD> &pointArray,
         break;
       int rightCount;
       for (rightCount = nodeCount + 1; rightCount < size;
-           ++rightCount) {  //  calcola i lati "right" dei triangoli
-                            //  inscritti...
+           ++rightCount) {  // Calculates the "right" sides of the inscribed
+                            // triangles...
         TPointD right  = pointArray[rightCount];
         double dRight2 = norm2(right - point);
         if (dRight2 < dMin2)
@@ -191,7 +179,7 @@ void detectEdges(const std::vector<TPointD> &pointArray,
         else if (dMax2 < dRight2)
           break;
 
-        //  calcola i lati "center" dei triangoli inscritti
+        //  Calculates the "center" sides of the inscribed triangles
         double dCenter2 = norm2(left - right);
         assert(dLeft2 != 0.0 && dRight2 != 0.0);
 
@@ -208,16 +196,17 @@ void detectEdges(const std::vector<TPointD> &pointArray,
     }
   }
 
-  edgeIndexArray.push_back(0);  //  il primo punto e' un corner
+  edgeIndexArray.push_back(0);  // the first point is a corner
 
-  // trovo i massimi locali escludendo gli estremi
+  // I find local maxima by excluding extremes
   for (nodeCount = 1; nodeCount < size - 1;
-       ++nodeCount) {  //  scorre la lista escludendo gli estremi
+       ++nodeCount) {  // scroll through the list excluding the extremes
     bool isCorner = true;
     TPointD point(pointArray[nodeCount]);
     int leftCount;
     for (leftCount = nodeCount - 1; leftCount >= 0;
-         --leftCount) {  //  scorre la lista di sharpPoint a sinistra di node...
+         --leftCount) {  //  scrolls down the list of sharpPoints to the left of
+                         //  node...
       TPointD left  = pointArray[leftCount];
       double dLeft2 = norm2(left - point);
       if (dLeft2 > dMax2) break;
@@ -229,7 +218,8 @@ void detectEdges(const std::vector<TPointD> &pointArray,
     if (isCorner) continue;
     int rightCount;
     for (rightCount = nodeCount + 1; rightCount < size;
-         ++rightCount) {  //  scorre la lista di sharpPoint a destra di node..
+         ++rightCount) {  // scrolls the list of sharpPoints to the right of
+                          // node..
       TPointD right  = pointArray[rightCount];
       double dRight2 = norm2(right - point);
       if (dRight2 > dMax2) break;
@@ -240,9 +230,8 @@ void detectEdges(const std::vector<TPointD> &pointArray,
     }
     if (isCorner) edgeIndexArray.push_back(nodeCount);
   }
-  edgeIndexArray.push_back(size - 1);  //  l'ultimo punto e' un corner
+  edgeIndexArray.push_back(size - 1);  //  the last point is a corner
 }
-
 }  // namespace
 
 //*******************************************************************************
@@ -271,8 +260,7 @@ bool increaseControlPoints(TStroke &stroke, const TStrokeDeformation &deformer,
   // step 2:
   //  increase control point checking delta of deformer
   double maxDifference =
-      deformer
-          .getMaxDiff();  // sopra questo valore di delta, si aggiungono punti
+      deformer.getMaxDiff();  // above this delta value, points are added
 
   int strokeControlPoint = stroke.getControlPointCount();
 
@@ -313,8 +301,9 @@ bool increaseControlPoints(TStroke &stroke, const TStrokeDeformation &deformer,
       // find the position of step
       minimum = findMinimum(
           deformer, stroke, x1, x2, TConsts::epsilon, offset,
-          20);  // tra x1 e x2 va messo un nuovo punto di controllo. dove?
-      // questa funzione trova il punto in cui si supera il valore maxdifference
+          20);  // A new control point should be put between x1 and x2. where?
+      // this function finds the point at which the maxdifference value is
+      // exceeded
 
       // if minimum is not found or is equal to previous value
       //  use a heuristic...
@@ -324,8 +313,9 @@ bool increaseControlPoints(TStroke &stroke, const TStrokeDeformation &deformer,
       }
 
       //... else insert a control point in minimum
-      w = minimum;  // la scansione riprende dal nuovo punto, in questo modo si
-                    // infittisce...
+      w = minimum;  // scanning resumes from the new point, in this way it
+                    // thickens ...
+
       stroke.insertControlPoints(minimum);
 
       // update of step

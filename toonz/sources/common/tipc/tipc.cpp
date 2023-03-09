@@ -3,7 +3,7 @@
 // Qt includes
 #include <QCoreApplication>
 #include <QThread>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QSharedMemory>
 #include <QProcess>
 #include <QMutex>
@@ -54,7 +54,7 @@ maximum
 //    Diagnostics Stuff
 //********************************************************
 
-//#define TIPC_DEBUG
+// #define TIPC_DEBUG
 
 #ifdef TIPC_DEBUG
 #define tipc_debug(expr) expr
@@ -75,7 +75,7 @@ int shm_max = -1;
 int shm_all = -1;
 int shm_seg = -1;
 int shm_mni = -1;
-}
+}  // namespace
 
 //********************************************************
 //    tipc Stream Implementation
@@ -260,10 +260,12 @@ QString tipc::applicationSpecificServerName(QString srvName) {
 
 //-------------------------------------------------------------
 
-bool tipc::startBackgroundProcess(QString cmdline) {
+bool tipc::startBackgroundProcess(QString cmdlineProgram,
+                                  QStringList cmdlineArguments) {
 #ifdef _WIN32
   QProcess *proc = new QProcess;
-  proc->start(cmdline);
+
+  proc->start(cmdlineProgram, cmdlineArguments);
   if (proc->state() == QProcess::NotRunning) {
     delete proc;
     return false;
@@ -275,7 +277,7 @@ bool tipc::startBackgroundProcess(QString cmdline) {
                    SLOT(deleteLater()));
   return true;
 #else
-  return QProcess::startDetached(cmdline);
+  return QProcess::startDetached(cmdlineProgram, cmdlineArguments);
   ;
 #endif
 }
@@ -295,8 +297,10 @@ bool tipc::startBackgroundProcess(QString cmdline) {
   \warning Please, observe that a correct slave server name should be
   ensured to be unique to the system.
 */
-bool tipc::startSlaveServer(QString srvName, QString cmdline) {
-  if (!tipc::startBackgroundProcess(cmdline)) return false;
+bool tipc::startSlaveServer(QString srvName, QString cmdlineProgram,
+                            QStringList cmdlineArguments) {
+  if (!tipc::startBackgroundProcess(cmdlineProgram, cmdlineArguments))
+    return false;
 
   QString mainSrvName(srvName + "_main");
 
@@ -364,9 +368,10 @@ bool tipc::startSlaveServer(QString srvName, QString cmdline) {
   ensured to be unique to the parent process.
 */
 bool tipc::startSlaveConnection(QLocalSocket *socket, QString srvName,
-                                int msecs, QString cmdline,
+                                int msecs, QString cmdlineProgram,
+                                QStringList cmdlineArguments,
                                 QString threadName) {
-  QTime time;
+  QElapsedTimer time;
   time.start();
 
   if (msecs == -1) msecs = (std::numeric_limits<int>::max)();
@@ -377,7 +382,8 @@ bool tipc::startSlaveConnection(QLocalSocket *socket, QString srvName,
   // If the socket is not connecting, the server lookup table returned that the
   // no server with
   // the passed name exists. This means that a server must be created.
-  if (socket->state() == QLocalSocket::UnconnectedState && !cmdline.isEmpty()) {
+  if (socket->state() == QLocalSocket::UnconnectedState &&
+      !cmdlineProgram.isEmpty()) {
     // Completely serialize the server start
     static QMutex mutex;
     QMutexLocker locker(&mutex);
@@ -387,7 +393,8 @@ bool tipc::startSlaveConnection(QLocalSocket *socket, QString srvName,
     if (socket->state() != QLocalSocket::UnconnectedState) goto connecting;
 
     // Invoke the supplied command line to start the server
-    if (!tipc::startSlaveServer(srvName, cmdline)) return false;
+    if (!tipc::startSlaveServer(srvName, cmdlineProgram, cmdlineArguments))
+      return false;
 
     // Reconnect to the server
     socket->connectToServer(fullSrvName);

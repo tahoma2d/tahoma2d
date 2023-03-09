@@ -9,6 +9,7 @@
 #include <QMouseEvent>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QScreen>
 
 // STD includes
 #include <assert.h>
@@ -82,7 +83,7 @@ inline QRect toRect(const QRectF &rect) {
 namespace {
 QDesktopWidget *desktop;
 void getClosestAvailableMousePosition(QPoint &globalPos);
-}
+}  // namespace
 
 //========================================================
 
@@ -399,12 +400,19 @@ void DockWidget::maximizeDock() {
 void DockWidget::wheelEvent(QWheelEvent *we) {
   if (m_dragging) {
     if (m_selectedPlace) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
       DockPlaceholder *newSelected =
-          (we->delta() > 0)
+          (we->angleDelta().y() > 0)
+              ? m_selectedPlace->parentPlaceholder()
+              : m_selectedPlace->childPlaceholder(parentWidget()->mapFromGlobal(
+                    we->globalPosition().toPoint()));
+#else
+      DockPlaceholder *newSelected =
+          (we->angleDelta().y() > 0)
               ? m_selectedPlace->parentPlaceholder()
               : m_selectedPlace->childPlaceholder(
                     parentWidget()->mapFromGlobal(we->globalPos()));
-
+#endif
       if (newSelected != m_selectedPlace) {
         m_selectedPlace->hide();
         newSelected->show();
@@ -715,10 +723,9 @@ DockPlaceholder *DockPlaceholder::childPlaceholder(QPoint p) {
   r = r->childRegion(i);
 
   // Finally, return child placeholder found.
-  return r->placeholders().size()
-             ? lastExtremity ? r->placeholders().back()
-                             : r->placeholders().front()
-             : this;
+  return r->placeholders().size() ? lastExtremity ? r->placeholders().back()
+                                                  : r->placeholders().front()
+                                  : this;
 }
 
 //------------------------------------------------------
@@ -963,25 +970,25 @@ namespace {
 // Finds the closest mouse point belonging to some available geometry.
 void getClosestAvailableMousePosition(QPoint &globalPos) {
   // Search the screen rect containing the mouse position
-  int i, screens = desktop->numScreens();
-  for (i = 0; i < screens; ++i)
-    if (desktop->screenGeometry(i).contains(globalPos)) break;
+  for (auto screen : QGuiApplication::screens()) {
+    if (screen->geometry().contains(globalPos)) {
+      // Find the closest point to the corresponding available region
+      QRect rect(screen->availableGeometry());
+      if (rect.contains(globalPos)) return;
 
-  // Find the closest point to the corresponding available region
-  QRect rect(desktop->availableGeometry(i));
-  if (rect.contains(globalPos)) return;
+      // Return the closest point to the available geometry
+      QPoint result;
+      if (globalPos.x() < rect.left())
+        globalPos.setX(rect.left());
+      else if (globalPos.x() > rect.right())
+        globalPos.setX(rect.right());
 
-  // Return the closest point to the available geometry
-  QPoint result;
-  if (globalPos.x() < rect.left())
-    globalPos.setX(rect.left());
-  else if (globalPos.x() > rect.right())
-    globalPos.setX(rect.right());
-
-  if (globalPos.y() < rect.top())
-    globalPos.setY(rect.top());
-  else if (globalPos.y() > rect.bottom())
-    globalPos.setY(rect.bottom());
+      if (globalPos.y() < rect.top())
+        globalPos.setY(rect.top());
+      else if (globalPos.y() > rect.bottom())
+        globalPos.setY(rect.bottom());
+    }
+  }
 }
 
-}  // Local namespace
+}  // namespace

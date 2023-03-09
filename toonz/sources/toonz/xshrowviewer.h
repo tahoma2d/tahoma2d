@@ -46,6 +46,8 @@ class RowArea final : public QWidget {
 
   int m_contextMenuRow;
 
+  // returns true if the frame area can have extra space
+  bool checkExpandFrameArea();
   void drawRows(QPainter &p, int r0, int r1);
   void drawPlayRangeBackground(QPainter &p, int r0, int r1);
   void drawPlayRange(QPainter &p, int r0, int r1);
@@ -66,11 +68,7 @@ class RowArea final : public QWidget {
   bool canSetAutoMarkers();
 
 public:
-#if QT_VERSION >= 0x050500
-  RowArea(XsheetViewer *parent, Qt::WindowFlags flags = 0);
-#else
-  RowArea(XsheetViewer *parent, Qt::WFlags flags = 0);
-#endif
+  RowArea(XsheetViewer *parent, Qt::WindowFlags flags = Qt::WindowFlags());
   ~RowArea();
 
   int getContextMenuRow() { return m_contextMenuRow; }

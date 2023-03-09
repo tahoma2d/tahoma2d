@@ -76,7 +76,7 @@ namespace {
 void initToonzEvent(TMouseEvent &toonzEvent, QMouseEvent *event,
                     int widgetHeight, double pressure, int devPixRatio) {
   toonzEvent.m_pos = TPointD(event->pos().x() * devPixRatio,
-                             widgetHeight - 1 - event->pos().y() * devPixRatio);
+                                  widgetHeight - 1 - event->pos().y() * devPixRatio);
   toonzEvent.m_mousePos = event->pos();
   toonzEvent.m_pressure = 1.0;
 
@@ -204,7 +204,7 @@ void SceneViewer::onButtonPressed(FlipConsole::EGadget button) {
     break;
 
   case FlipConsole::eHisto: {
-    QAction *action = CommandManager::instance()->getAction(MI_Histogram);
+    QAction *action = CommandManager::instance()->getAction(MI_ViewerHistogram);
     action->trigger();
     break;
   }
@@ -1909,18 +1909,11 @@ void SceneViewer::onContextMenu(const QPoint &pos, const QPoint &globalPos) {
 
   menu->addLevelCommands(columnIndices);
 
-  ComboViewerPanel *cvp =
-      qobject_cast<ComboViewerPanel *>(parentWidget()->parentWidget());
-  if (cvp) {
+  BaseViewerPanel *bvp =
+      qobject_cast<BaseViewerPanel *>(parentWidget()->parentWidget());
+  if (bvp) {
     menu->addSeparator();
-    cvp->addShowHideContextMenu(menu);
-  }
-
-  SceneViewerPanel *svp = qobject_cast<SceneViewerPanel *>(
-      parentWidget()->parentWidget()->parentWidget());
-  if (svp) {
-    menu->addSeparator();
-    svp->addShowHideContextMenu(menu);
+    bvp->addShowHideContextMenu(menu);
   }
 
   menu->exec(globalPos);

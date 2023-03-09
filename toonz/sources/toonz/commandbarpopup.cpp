@@ -522,7 +522,6 @@ CommandBarPopup::CommandBarPopup(QString barId, bool isQuickToolbar)
   QLineEdit* searchEdit = new QLineEdit(this);
 
   //--- layout
-  QVBoxLayout* mainLay = new QVBoxLayout();
   m_topLayout->setMargin(0);
   m_topLayout->setSpacing(0);
   {

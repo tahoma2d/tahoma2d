@@ -44,11 +44,7 @@ class BatchServersViewer final : public QFrame {
   Q_OBJECT
 
 public:
-#if QT_VERSION >= 0x050500
   BatchServersViewer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  BatchServersViewer(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
   ~BatchServersViewer();
 
   void updateSelected();

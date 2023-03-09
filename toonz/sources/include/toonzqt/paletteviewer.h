@@ -4,6 +4,7 @@
 #define PALETTEVIEWER_H
 
 #include "paletteviewergui.h"
+#include "saveloadqsettings.h"
 #include "toonz/tpalettehandle.h"
 #include "toonz/tapplication.h"
 
@@ -41,7 +42,7 @@ class TXsheetHandle;
 // PaletteViewer
 //-----------------------------------------------------------------------------
 
-class DVAPI PaletteViewer final : public QFrame {
+class DVAPI PaletteViewer final : public QFrame, public SaveLoadQSettings {
   Q_OBJECT
 
 public:
@@ -50,7 +51,16 @@ public:
                 bool hasPasteColors = true);
   ~PaletteViewer();
 
-  const TPaletteHandle *getPaletteHandle() const { return m_paletteHandle; }
+  enum ToolbarButtons : int  //! Toolbar buttons to display
+  {
+    TBVisKeyframe,
+    TBVisNewStylePage,
+    TBVisPaletteGizmo,
+    TBVisNameEditor,
+    TBVisTotal
+  };
+
+  TPaletteHandle *getPaletteHandle() const { return m_paletteHandle; }
   void setPaletteHandle(TPaletteHandle *paletteHandle);
 
   const TFrameHandle *getFrameHandle() const { return m_frameHandle; }
@@ -85,6 +95,11 @@ public:
   TApplication *getApplication() { return m_app; }
 
   int geCurrentPageIndex() { return m_currentIndexPage; }
+
+  // SaveLoadQSettings
+  virtual void save(QSettings &settings,
+                    bool forPopupIni = false) const override;
+  virtual void load(QSettings &settings) override;
 
 protected:
   TPaletteHandle *m_paletteHandle;
@@ -123,6 +138,16 @@ protected:
 
   TApplication *m_app;
 
+  StyleNameEditor *m_styleNameEditor;
+  QAction *m_sharedGizmoAction;
+
+  int m_toolbarVisibleOtherParts;
+  QMultiMap<int, QAction *> m_toolbarParts;
+  QAction *m_visibleKeysAction;
+//  QAction *m_visibleNewAction;
+  QAction *m_visibleGizmoAction;
+  QAction *m_visibleNameAction;
+
 protected:
   void createTabBar();
 
@@ -157,6 +182,8 @@ protected:
 
   void clearStyleSelection();
 
+  void applyToolbarPartVisibility(int part, bool visible);
+
 protected slots:
 
   void setPageView(int currentIndexPage);
@@ -186,6 +213,10 @@ protected slots:
   void onSwitchToPage(int pageIndex);
   void onShowNewStyleButtonToggled();
 
+  void toggleKeyframeVisibility(bool);
+//  void toggleNewStylePageVisibility(bool);
+  void togglePaletteGizmoVisibility(bool);
+  void toggleNameEditorVisibility(bool);
 signals:
   void frozenChanged(bool frozen);
 

@@ -1,6 +1,6 @@
 
 
-//#include "traster.h"
+// #include "traster.h"
 #include "tcolorutils.h"
 #include "tmathutil.h"
 
@@ -12,8 +12,8 @@ typedef float KEYER_FLOAT;
 
 //------------------------------------------------------------------------------
 
-//#define CLUSTER_ELEM_CONTAINER_IS_A_SET
-//#define WITH_ALPHA_IN_STATISTICS
+// #define CLUSTER_ELEM_CONTAINER_IS_A_SET
+// #define WITH_ALPHA_IN_STATISTICS
 
 //------------------------------------------------------------------------------
 
@@ -214,7 +214,7 @@ void chooseLeafToClusterize(ClusterContainer::iterator &itRet,
 
     const KEYER_FLOAT *clusterCovariance = clusterFound->statistic.covariance;
     int i                                = 0;
-    for (; i < 9; ++i) tmpMatrixM[i]     = clusterCovariance[i];
+    for (; i < 9; ++i) tmpMatrixM[i] = clusterCovariance[i];
 
     tmpMatrixM[0] -= maxEigenValue;
     tmpMatrixM[4] -= maxEigenValue;
@@ -412,7 +412,7 @@ void SolveCubic(KEYER_FLOAT a,  /* coefficient of x^3 */
     x[0]       = (KEYER_FLOAT)(-2.0 * sqrt(Q) * cos(theta / 3.0) - a1 / 3.0);
     x[1]       = (KEYER_FLOAT)(-2.0 * sqrt(Q) * cos((theta + 2.0 * PI) / 3.0) -
                          a1 / 3.0);
-    x[2] = (KEYER_FLOAT)(-2.0 * sqrt(Q) * cos((theta + 4.0 * PI) / 3.0) -
+    x[2]       = (KEYER_FLOAT)(-2.0 * sqrt(Q) * cos((theta + 4.0 * PI) / 3.0) -
                          a1 / 3.0);
 
     assert(!std::isnan(x[0]));
@@ -530,7 +530,7 @@ static void clusterize(ClusterContainer &clusters, int clustersCount) {
 
 #endif
 
-    for (j                              = 0; j < 9; ++j)
+    for (j = 0; j < 9; ++j)
       subcluster2->statistic.matrixR[j] = choosedCluster->statistic.matrixR[j] -
                                           subcluster1->statistic.matrixR[j];
 
@@ -624,7 +624,7 @@ void Cluster::computeStatistics() {
 
   statistic.sumCoords = TPoint(0, 0);
 
-  int i                                         = 0;
+  int i = 0;
   for (; i < 3; ++i) statistic.sumComponents[i] = 0.0;
 
   for (i = 0; i < 9; ++i) statistic.matrixR[i] = 0.0;
@@ -729,7 +729,7 @@ void Cluster::getMeanAxis(KEYER_FLOAT axis[3]) {
 
 //------------------------------------------------------------------------------
 
-//#define METODO_USATO_SU_TOONZ46
+// #define METODO_USATO_SU_TOONZ46
 
 static void buildPaletteForBlendedImages(std::set<TPixel32> &palette,
                                          const TRaster32P &raster,
@@ -850,11 +850,11 @@ struct EdgePoint {
     // identify available corners
     if (info & UpperEdge) {
       if (info & RightEdge) info = info | RightUpper;
-      if (info & LeftEdge) info  = info | LeftUpper;
+      if (info & LeftEdge) info = info | LeftUpper;
     }
     if (info & LowerEdge) {
       if (info & RightEdge) info = info | RightLower;
-      if (info & LeftEdge) info  = info | LeftLower;
+      if (info & LeftEdge) info = info | LeftLower;
     }
   }
 
@@ -932,7 +932,7 @@ bool colorChipLeftUpperThan(const ColorChip &chip1, const ColorChip &chip2) {
 
 }  // namespace
 
-/*-- 似ている色をまとめて1つのStyleにする --*/
+/*-- Combine similar colors into one style. --*/
 void TColorUtils::buildPalette(std::set<TPixel32> &palette,
                                const TRaster32P &raster, int maxColorCount) {
   int lx   = raster->getLx();
@@ -973,7 +973,7 @@ void TColorUtils::buildPalette(std::set<TPixel32> &palette,
 }
 //------------------------------------------------------------------------------
 
-/*-- 全ての異なるピクセルの色を別のStyleにする --*/
+/*-- Make each different pixel color a separate style --*/
 void TColorUtils::buildPrecisePalette(std::set<TPixel32> &palette,
                                       const TRaster32P &raster,
                                       int maxColorCount) {
@@ -997,9 +997,10 @@ void TColorUtils::buildPrecisePalette(std::set<TPixel32> &palette,
 
   raster->unlock();
 
-  /*-- 色数が最大値を超えたら、似ている色をまとめて1つのStyleにする手法を行う
+  /*-- If the maximum number of colors is exceeded, perform the method of
+   * combining similar colors into a single style.
    * --*/
-  if (count == 0) {
+   if (count == 0) {
     palette.clear();
     buildPalette(palette, raster, maxColorCount);
   }

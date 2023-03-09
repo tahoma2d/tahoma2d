@@ -77,6 +77,8 @@ public:
   TimeShuffleFx()
       : TRasterFx(), m_frame(0), m_timeRegion(), m_cellColumn(nullptr) {
     addInputPort("source", m_port);
+
+    enableComputeInFloat(true);
   }
   ~TimeShuffleFx() {}
 
@@ -143,6 +145,11 @@ public:
                     const TRenderSettings &info) override {
     if (m_port.isConnected())
       TRasterFxP(m_port.getFx())->dryCompute(rect, getLevelFrame(frame), info);
+  }
+
+  bool toBeComputedInLinearColorSpace(bool settingsIsLinear,
+                                      bool tileIsLinear) const override {
+    return tileIsLinear;
   }
 
 private:
@@ -269,15 +276,11 @@ public:
       , m_isPostXsheetNode(false) {}
 
   bool operator<(const PlacedFx &pf) const {
-    return (m_z < pf.m_z)
-               ? true
-               : (m_z > pf.m_z)
-                     ? false
-                     : (m_so < pf.m_so)
-                           ? true
-                           : (m_so > pf.m_so)
-                                 ? false
-                                 : (m_columnIndex < pf.m_columnIndex);
+    return (m_z < pf.m_z)     ? true
+           : (m_z > pf.m_z)   ? false
+           : (m_so < pf.m_so) ? true
+           : (m_so > pf.m_so) ? false
+                              : (m_columnIndex < pf.m_columnIndex);
   }
 
   TFxP makeFx() {
@@ -362,7 +365,7 @@ static bool getColumnPlacement(PlacedFx &pf, TXsheet *xsh, double row, int col,
 }
 
 //-------------------------------------------------------------------
-/*-- Objectの位置を得る --*/
+/*-- Obtain the position of the Object --*/
 static bool getStageObjectPlacement(TAffine &aff, TXsheet *xsh, double row,
                                     TStageObjectId &id, bool isPreview) {
   TStageObject *pegbar = xsh->getStageObjectTree()->getStageObject(id, false);
@@ -387,7 +390,7 @@ static bool getStageObjectPlacement(TAffine &aff, TXsheet *xsh, double row,
   return isVisible;
 }
 
-/*-- typeとindexからStageObjectIdを得る --*/
+/*-- Get StageObjectId from type and index --*/
 namespace {
 TStageObjectId getMotionObjectId(MotionObjectType type, int index) {
   switch (type) {
@@ -424,7 +427,7 @@ static TPointD getColumnSpeed(TXsheet *xsh, double row, int col,
   const double h = 0.001;
   getColumnPlacement(aff, xsh, row + h, col, isPreview);
 
-  /*-- カラムと、カメラの動きに反応 --*/
+  /*-- Reacts to columns and camera movement --*/
   TStageObjectId cameraId;
   if (isPreview)
     cameraId = xsh->getStageObjectTree()->getCurrentPreviewCameraId();
@@ -444,15 +447,15 @@ static TPointD getColumnSpeed(TXsheet *xsh, double row, int col,
 }
 
 //-------------------------------------------------------------------
-/*-- オブジェクトの軌跡を、基準点との差分で得る
-        objectId: 移動の参考にするオブジェクト。自分自身の場合はNoneId
+/*-- Obtain the trajectory of an object by the difference from the reference
+point objectId: The reference object for the move. NoneId for itself.
 --*/
 static QList<TPointD> getColumnMotionPoints(TXsheet *xsh, double row, int col,
                                             TStageObjectId &objectId,
                                             bool isPreview, double shutterStart,
                                             double shutterEnd,
                                             int traceResolution) {
-  /*-- 前後フレームが共に０なら空のリストを返す --*/
+  /*-- Returns an empty list if the previous and next frames are both zero. --*/
   if (shutterStart == 0.0 && shutterEnd == 0.0) return QList<TPointD>();
 
   /*-- 現在のカメラを得る --*/
@@ -514,6 +517,57 @@ static QList<TPointD> getColumnMotionPoints(TXsheet *xsh, double row, int col,
     points.append(tmpPos - basePos);
   }
   return points;
+}
+
+//-------------------------------------------------------------------
+/*--
+    フレーム前後のアフィン変換を得る
+        objectId: 移動の参考にするオブジェクト。自分自身の場合はNoneId
+--*/
+static void getColumnMotionAffines(TAffine &aff_Before, TAffine &aff_After,
+                                   TXsheet *xsh, double row, int col,
+                                   TStageObjectId &objectId, bool isPreview,
+                                   double shutterLength) {
+  /*-- 現在のカメラを得る --*/
+  TStageObjectId cameraId;
+  if (isPreview)
+    cameraId = xsh->getStageObjectTree()->getCurrentPreviewCameraId();
+  else
+    cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
+  TStageObject *camera = xsh->getStageObject(cameraId);
+  TAffine dpiAff       = getDpiAffine(camera->getCamera());
+
+  /*-- objectIdが有効なものかどうかチェック --*/
+  bool useOwnMotion = false;
+  if (objectId == TStageObjectId::NoneId ||
+      !xsh->getStageObjectTree()->getStageObject(objectId, false)) {
+    useOwnMotion = true;
+  }
+
+  /*-- 結果を収めるリスト --*/
+  TAffine retAff[2];
+  TAffine aff;
+
+  /*-- 各点の位置を、基準点との差分で格納していく --*/
+  for (int i = 0; i < 2; i++) {
+    /*-- 基準位置とのフレーム差 --*/
+    double frameOffset = (i == 0) ? -shutterLength : shutterLength;
+    double targetFrame = row + frameOffset;
+    // Proper position cannot be obtained for frame = -1.0
+    if (targetFrame == -1.0) targetFrame = -0.9999;
+
+    /*-- 自分自身の動きを使うか、別オブジェクトの動きを使うか --*/
+    if (useOwnMotion)
+      getColumnPlacement(aff, xsh, targetFrame, col, isPreview);
+    else
+      getStageObjectPlacement(aff, xsh, targetFrame, objectId, isPreview);
+
+    TAffine cameraAff = camera->getPlacement(targetFrame);
+    retAff[i]         = dpiAff.inv() * aff * cameraAff.inv();
+  }
+
+  aff_Before = retAff[0];
+  aff_After  = retAff[1];
 }
 
 namespace {
@@ -982,12 +1036,13 @@ PlacedFx FxBuilder::makePF(TZeraryColumnFx *zcfx) {
   PlacedFx pf;
   pf.m_columnIndex = zcfx->getColumn()->getIndex();
 
-  // Add the column placement NaAffineFx
-  if (!getColumnPlacement(pf, m_xsh, m_frame, pf.m_columnIndex, m_isPreview))
-    return PlacedFx();
-
   // if the cell is empty, only inherits its placement
-  if (cell.isEmpty() || cell.getFrameId().isStopFrame()) return pf;
+  if (cell.isEmpty() || cell.getFrameId().isStopFrame()) {
+    // Add the column placement NaAffineFx
+    if (!getColumnPlacement(pf, m_xsh, m_frame, pf.m_columnIndex, m_isPreview))
+      return PlacedFx();
+    return pf;
+  }
 
   // set m_fx only when the current cell is not empty
   pf.m_fx =
@@ -1034,8 +1089,27 @@ PlacedFx FxBuilder::makePF(TZeraryColumnFx *zcfx) {
                                           noteColumnIndex, getNeighbor));
     }
   }
+  if (pf.m_fx->getAttributes()->isSpeedAware()) {
+    MotionAwareAffineFx *maafx =
+        dynamic_cast<MotionAwareAffineFx *>(pf.m_fx.getPointer());
+    if (maafx) {
+      double shutterLength    = maafx->getShutterLength()->getValue(m_frame);
+      MotionObjectType type   = maafx->getMotionObjectType();
+      int index               = maafx->getMotionObjectIndex()->getValue();
+      TStageObjectId objectId = getMotionObjectId(type, index);
+      TAffine aff_Before, aff_After;
+      getColumnMotionAffines(aff_Before, aff_After, m_xsh, m_frame,
+                             pf.m_columnIndex, objectId, m_isPreview,
+                             shutterLength);
+      pf.m_fx->getAttributes()->setMotionAffines(aff_Before, aff_After);
+    }
+  }
 
-  return pf;
+  // Add the column placement NaAffineFx
+  if (getColumnPlacement(pf, m_xsh, m_frame, pf.m_columnIndex, m_isPreview))
+    return pf;
+  else
+    return PlacedFx();
 }
 
 //-------------------------------------------------------------------
@@ -1178,8 +1252,14 @@ PlacedFx FxBuilder::makePFfromGenericFx(TFx *fx) {
   int m = fx->getInputPortCount();
   for (int i = 0; i < m; ++i) {
     if (TFxP inputFx = fx->getInputPort(i)->getFx()) {
-      PlacedFx inputPF = makePF(inputFx.getPointer());
-      inputFx          = inputPF.m_fx;
+      PlacedFx inputPF;
+      if (fx->getFxType() == "STD_iwa_FlowPaintBrushFx") {
+        m_particleDescendentCount++;
+        inputPF = makePF(inputFx.getPointer());
+        m_particleDescendentCount--;
+      } else
+        inputPF = makePF(inputFx.getPointer());
+      inputFx = inputPF.m_fx;
       // check the column index instead of inputFx
       // so that the firstly-found input column always inherits
       // its placement even if the current cell is empty.

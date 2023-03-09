@@ -95,13 +95,13 @@ class Win8PointerInputApi {
 
 public:
 #define DEFINE_FP_FROM_WINAPI(func)                                            \
-  \
+                                                                               \
 public:                                                                        \
   using p##func##_t = std::add_pointer<decltype(func)>::type;                  \
-  \
+                                                                               \
 private:                                                                       \
   p##func##_t m_p##func = nullptr;                                             \
-  \
+                                                                               \
 public:                                                                        \
   const p##func##_t &func = m_p##func;  // const fp ref to member
 
@@ -523,8 +523,8 @@ QTabletEvent makeProximityTabletEvent(const QEvent::Type eventType,
       Qt::NoModifier,        // keyState
       reinterpret_cast<qint64>(penInfo.pointerInfo.sourceDevice),  // uniqueID
       Qt::NoButton,                                                // button
-      (Qt::MouseButtons)0                                          // buttons
-      );
+      Qt::MouseButtons()                                           // buttons
+  );
 }
 
 // void rotateTiltAngles(int &tiltX, int &tiltY, const DISPLAYCONFIG_ROTATION
@@ -660,7 +660,7 @@ QTabletEvent makePositionalTabletEvent(const QWidget *targetWidget,
       reinterpret_cast<qint64>(penInfo.pointerInfo.sourceDevice),  // uniqueID
       mouseButton,                                                 // button
       mouseButtons                                                 // buttons
-      );
+  );
 }
 
 bool sendProximityTabletEvent(const QEvent::Type eventType,

@@ -16,6 +16,7 @@
 
 // TnzCore includes
 #include "tconvert.h"
+#include "tlevel_io.h"
 
 // Qt includes
 #include <QTreeWidget>
@@ -34,15 +35,6 @@ using namespace DVGui;
 
 //=============================================================================
 
-namespace {
-bool isMovieType(std::string type) {
-  return (type == "avi" || type == "mp4" ||
-          type == "webm" || type == "mov");
-}
-};  // namespace
-
-//=============================================================================
-
 const std::vector<QAction *> &TasksViewer::getActions() const {
   return m_actions;
 }
@@ -51,13 +43,8 @@ const std::vector<QAction *> &TasksViewer::getActions() const {
 
 void TasksViewer::add(const QString &iconName, QString text, QToolBar *toolBar,
                       const char *slot, QString iconText) {
-#if QT_VERSION >= 0x050500
   QAction *action = new QAction(
       createQIcon(iconName.toLatin1().constData(), false), text, this);
-#else
-  QAction *action = new QAction(
-      createQIcon(iconName.toAscii().constData(), false), text, this);
-#endif
   action->setIconText(iconText);
   bool ret = connect(action, SIGNAL(triggered(bool)),
                      (TaskTreeModel *)m_treeView->model(), slot);
@@ -86,7 +73,7 @@ QWidget *TasksViewer::createToolBar() {
   add("play", tr("&Start"), cmdToolbar, SLOT(start(bool)), tr("Start"));
   add("stop", tr("&Stop"), cmdToolbar, SLOT(stop(bool)), tr("Stop"));
   cmdToolbar->addSeparator();
-  add("render_add", tr("&Add Render Task"), cmdToolbar,
+  add("new_scene", tr("&Add Render Task"), cmdToolbar,
       SLOT(addRenderTask(bool)), tr("Add Render"));
   add("cleanup_add", tr("&Add Cleanup Task"), cmdToolbar,
       SLOT(addCleanupTask(bool)), tr("Add Cleanup"));
@@ -118,11 +105,7 @@ QWidget *TasksViewer::createToolBar() {
 /*! \class TasksViewer
                 Inherits \b QSplitter.
 */
-#if QT_VERSION >= 0x050500
 TasksViewer::TasksViewer(QWidget *parent, Qt::WindowFlags flags)
-#else
-TasksViewer::TasksViewer(QWidget *parent, Qt::WFlags flags)
-#endif
     : QSplitter(parent) {
   QFrame *box;
 
@@ -615,7 +598,7 @@ void TaskSheet::setShrink() {
     // Update children tasks, if present.
     TFarmTaskGroup *taskGroup = dynamic_cast<TFarmTaskGroup *>(m_task);
     if (taskGroup) {
-      for (int i                        = 0; i < taskGroup->getTaskCount(); ++i)
+      for (int i = 0; i < taskGroup->getTaskCount(); ++i)
         taskGroup->getTask(i)->m_shrink = taskGroup->m_shrink;
     }
   }
@@ -643,7 +626,7 @@ void TaskSheet::setStep() {
     // Update children tasks, if present.
     TFarmTaskGroup *taskGroup = dynamic_cast<TFarmTaskGroup *>(m_task);
     if (taskGroup) {
-      for (int i                      = 0; i < taskGroup->getTaskCount(); ++i)
+      for (int i = 0; i < taskGroup->getTaskCount(); ++i)
         taskGroup->getTask(i)->m_step = taskGroup->m_step;
     }
   }

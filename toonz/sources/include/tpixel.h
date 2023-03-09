@@ -41,7 +41,7 @@ class TPixelGR16;
     Note that channel ordering is platform depending. */
 
 class DVAPI DV_ALIGNED(4) TPixelRGBM32 {
-  TPixelRGBM32(TUINT32 mask) { *(TUINT32 *)this = mask; };
+  TPixelRGBM32(TUINT32 mask) : TPixelRGBM32() { *(TUINT32 *)this = mask; };
 
 public:
   static const int maxChannelValue;
@@ -82,7 +82,7 @@ public:
       : r(rr), g(gg), b(bb), m(mm){};
 
   // Copy constructor and operator=
-  TPixelRGBM32(const TPixelRGBM32 &pix) {
+  TPixelRGBM32(const TPixelRGBM32 &pix) : TPixelRGBM32() {
     *(TUINT32 *)this = *(const TUINT32 *)&pix;
   }
 
@@ -195,7 +195,7 @@ undefined machine order !!!!
 #endif
 
   // Copy constructor and operator=
-  TPixelRGBM64(const TPixelRGBM64 &pix) {
+  TPixelRGBM64(const TPixelRGBM64 &pix) : TPixelRGBM64() {
     *(TUINT64 *)this = *(const TUINT64 *)&pix;
   }
 
@@ -258,7 +258,6 @@ typedef TPixelRGBM64 TPixel64;
 class DVAPI TPixelD {
 public:
   typedef double Channel;
-
   Channel r, g, b, m;
 
   TPixelD() : r(0), g(0), b(0), m(1){};
@@ -316,6 +315,68 @@ static inline TPixelD from(const TPixelD &pix) {return pix;};
   static const TPixelD White;
   static const TPixelD Black;
   static const TPixelD Transparent;
+};
+
+//-----------------------------------------------------------------------------
+// TPixelF is used in floating-point rendering
+
+class DVAPI TPixelF {
+public:
+  typedef float Channel;
+  static const float maxChannelValue;
+
+#ifdef TNZ_MACHINE_CHANNEL_ORDER_BGRM
+  Channel b, g, r, m;
+#elif defined(TNZ_MACHINE_CHANNEL_ORDER_MRGB)
+  Channel m, r, g, b;
+#elif defined(TNZ_MACHINE_CHANNEL_ORDER_RGBM)
+  Channel r, g, b, m;
+#else
+  undefined machine order !!!!
+#endif
+
+  TPixelF() : r(0.f), g(0.f), b(0.f), m(1.f){};
+  TPixelF(const TPixelF &pix) : r(pix.r), g(pix.g), b(pix.b), m(pix.m){};
+  TPixelF(float rr, float gg, float bb, float mm = 1.f)
+      : r(rr), g(gg), b(bb), m(mm){};
+
+  inline bool operator==(const TPixelF &p) const {
+    return r == p.r && g == p.g && b == p.b && m == p.m;
+  };
+  inline bool operator<(const TPixelF &p) const {
+    return r < p.r ||
+           (r == p.r &&
+            (g < p.g || (g == p.g && (b < p.b || (b == p.b && (m < p.m))))));
+  };
+
+  inline bool operator>=(const TPixelF &p) const { return !operator<(p); };
+  inline bool operator!=(const TPixelF &p) const { return !operator==(p); };
+  inline bool operator>(const TPixelF &p) const {
+    return !operator<(p) && !operator==(p);
+  };
+  inline bool operator<=(const TPixelF &p) const { return !operator>(p); };
+
+  inline TPixelF operator*=(const TPixelF &p) {
+    r *= p.r;
+    g *= p.g;
+    b *= p.b;
+    m *= p.m;
+    return *this;
+  }
+  inline TPixelF operator*(const TPixelF &p) const {
+    TPixelF ret(*this);
+    return ret *= p;
+  }
+
+  static const TPixelF Red;
+  static const TPixelF Green;
+  static const TPixelF Blue;
+  static const TPixelF Yellow;
+  static const TPixelF Cyan;
+  static const TPixelF Magenta;
+  static const TPixelF White;
+  static const TPixelF Black;
+  static const TPixelF Transparent;
 };
 
 //-----------------------------------------------------------------------------

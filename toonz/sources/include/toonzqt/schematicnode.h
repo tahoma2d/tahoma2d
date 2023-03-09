@@ -35,7 +35,7 @@ public:
 
   bool eventFilter(QObject *object, QEvent *event) override;
 
-  void setName(const QString &name); // Act as default name
+  void setName(const QString &name);  // Act as default name
   void acceptName(const QString &name);
 
 protected:
@@ -236,6 +236,8 @@ protected:
 */
 class SchematicLink : public QObject, public QGraphicsItem {
   Q_OBJECT
+  Q_INTERFACES(QGraphicsItem)
+
   SchematicPort *m_startPort, *m_endPort;
   QPainterPath m_path, m_hitPath;
   bool m_lineShaped;
@@ -473,6 +475,25 @@ signals:
   void sceneChanged();
   void xsheetChanged();
   void nodeChangedSize();
+};
+
+//========================================================
+//
+// class SnapTargetItem
+//
+//========================================================
+
+class SnapTargetItem : public QGraphicsItem {
+  QRectF m_rect;
+  QPointF m_theOtherEndPos, m_portEndOffset;
+
+public:
+  SnapTargetItem(const QPointF &pos, const QRectF &rect,
+                 const QPointF &theOtherEndPos, const QPointF &portEndOffset);
+
+  QRectF boundingRect() const override;
+  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+             QWidget *widget = 0) override;
 };
 
 #endif  // SCHEMATICNODE_H

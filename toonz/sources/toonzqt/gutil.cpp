@@ -460,6 +460,72 @@ QIcon createQIcon(const char *iconSVGName, bool useFullOpacity,
 
 //-----------------------------------------------------------------------------
 
+void addSpecifiedSizedImageToIcon(QIcon &icon, const char *iconSVGName,
+                                  QSize newSize) {
+  static int devPixRatio = getHighestDevicePixelRatio();
+  newSize *= devPixRatio;
+  QIcon themeIcon = QIcon::fromTheme(iconSVGName);
+  // Pseudo state name strings
+  QString overStr = QString(iconSVGName) + "_over";
+  QString onStr   = QString(iconSVGName) + "_on";
+  // Control lightness of the icons
+  const qreal activeOpacity   = 1;
+  const qreal baseOpacity     = 0.8;
+  const qreal disabledOpacity = 0.15;
+  //----------
+
+  // Base pixmap
+  QPixmap themeIconPixmap(recolorPixmap(themeIcon.pixmap(newSize)));
+  if (!themeIconPixmap.isNull()) {  // suppress message
+    themeIconPixmap.setDevicePixelRatio(devPixRatio);
+    themeIconPixmap = themeIconPixmap.scaled(newSize, Qt::KeepAspectRatio,
+                                             Qt::SmoothTransformation);
+  }
+
+  // Over pixmap
+  QPixmap overPixmap(recolorPixmap(QIcon::fromTheme(overStr).pixmap(newSize)));
+  if (!overPixmap.isNull()) {  // suppress message
+    overPixmap.setDevicePixelRatio(devPixRatio);
+    overPixmap = overPixmap.scaled(newSize, Qt::KeepAspectRatio,
+                                   Qt::SmoothTransformation);
+  }
+
+  // On pixmap
+  QPixmap onPixmap(recolorPixmap(QIcon::fromTheme(onStr).pixmap(newSize)));
+  if (!onPixmap.isNull()) {  // suppress message
+    onPixmap.setDevicePixelRatio(devPixRatio);
+    onPixmap =
+        onPixmap.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+  }
+
+  // Base icon
+  icon.addPixmap(compositePixmap(themeIconPixmap, baseOpacity), QIcon::Normal,
+                 QIcon::Off);
+  icon.addPixmap(compositePixmap(themeIconPixmap, disabledOpacity),
+                 QIcon::Disabled, QIcon::Off);
+
+  // Over icon
+  icon.addPixmap(!overPixmap.isNull()
+                     ? compositePixmap(overPixmap, activeOpacity)
+                     : compositePixmap(themeIconPixmap, activeOpacity),
+                 QIcon::Active);
+
+  // On icon
+  if (!onPixmap.isNull()) {
+    icon.addPixmap(compositePixmap(onPixmap, activeOpacity), QIcon::Normal,
+                   QIcon::On);
+    icon.addPixmap(compositePixmap(onPixmap, disabledOpacity), QIcon::Disabled,
+                   QIcon::On);
+  } else {
+    icon.addPixmap(compositePixmap(themeIconPixmap, activeOpacity),
+                   QIcon::Normal, QIcon::On);
+    icon.addPixmap(compositePixmap(themeIconPixmap, disabledOpacity),
+                   QIcon::Disabled, QIcon::On);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 QIcon createQIconPNG(const char *iconPNGName) {
   QString normal = QString(":Resources/") + iconPNGName + ".png";
   QString click  = QString(":Resources/") + iconPNGName + "_click.png";
@@ -644,7 +710,11 @@ bool isReservedFileName_message(const QString &fileName) {
 
 QString elideText(const QString &srcText, const QFont &font, int width) {
   QFontMetrics metrix(font);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+  int srcWidth = metrix.horizontalAdvance(srcText);
+#else
   int srcWidth = metrix.width(srcText);
+#endif
   if (srcWidth < width) return srcText;
   int tilde = metrix.width("~");
   int block = (width - tilde) / 2;
@@ -652,13 +722,21 @@ QString elideText(const QString &srcText, const QFont &font, int width) {
   int i;
   for (i = 0; i < srcText.size(); i++) {
     text += srcText.at(i);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+    if (metrix.horizontalAdvance(text) > block) break;
+#else
     if (metrix.width(text) > block) break;
+#endif
   }
   text[i] = '~';
   QString endText("");
   for (i = srcText.size() - 1; i >= 0; i--) {
     endText.push_front(srcText.at(i));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+    if (metrix.horizontalAdvance(endText) > block) break;
+#else
     if (metrix.width(endText) > block) break;
+#endif
   }
   endText.remove(0, 1);
   text += endText;
@@ -671,7 +749,11 @@ QString elideText(const QString &srcText, const QFontMetrics &fm, int width,
                   const QString &elideSymbol) {
   QString text(srcText);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+  for (int i = text.size(); i > 1 && fm.horizontalAdvance(text) > width;)
+#else
   for (int i = text.size(); i > 1 && fm.width(text) > width;)
+#endif
     text = srcText.left(--i).append(elideSymbol);
 
   return text;

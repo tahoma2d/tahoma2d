@@ -151,11 +151,7 @@ class CellArea final : public QWidget {
   void updateKeyHighlight(int row, int col);
 
 public:
-#if QT_VERSION >= 0x050500
-  CellArea(XsheetViewer *parent, Qt::WindowFlags flags = 0);
-#else
-  CellArea(XsheetViewer *parent, Qt::WFlags flags = 0);
-#endif
+  CellArea(XsheetViewer *parent, Qt::WindowFlags flags = Qt::WindowFlags());
   ~CellArea();
 
   void mouseMoveEvent(QMouseEvent *event) override;

@@ -144,22 +144,12 @@ QMutex levelFileMutex;
 
 }  // namespace
 
-inline bool isMultipleFrameType(std::string type) {
-  return (type == "tlv" || type == "tzl" || type == "pli" || type == "avi" ||
-          type == "gif" || type == "mp4" || type == "webm" || type == "mov");
-}
-
 //=============================================================================
 // FileBrowser
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 FileBrowser::FileBrowser(QWidget *parent, Qt::WindowFlags flags,
                          bool noContextMenu, bool multiSelectionEnabled)
-#else
-FileBrowser::FileBrowser(QWidget *parent, Qt::WFlags flags, bool noContextMenu,
-                         bool multiSelectionEnabled)
-#endif
     : QFrame(parent), m_folderName(0), m_itemViewer(0) {
   // style sheet
   setObjectName("FileBrowser");
@@ -1237,13 +1227,13 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
        files[1].getType() == "TIFF" || files[1].getType() == "PNG")) {
     QAction *action = new QAction(tr("Convert to Painted TLV"), menu);
     ret             = ret && connect(action, SIGNAL(triggered()), this,
-                         SLOT(convertToPaintedTlv()));
+                                     SLOT(convertToPaintedTlv()));
     menu->addAction(action);
   }
   if (areFullcolor) {
     QAction *action = new QAction(tr("Convert to Unpainted TLV"), menu);
     ret             = ret && connect(action, SIGNAL(triggered()), this,
-                         SLOT(convertToUnpaintedTlv()));
+                                     SLOT(convertToUnpaintedTlv()));
     menu->addAction(action);
     menu->addSeparator();
   }
@@ -1276,42 +1266,42 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
       if (status == DvItemListModel::VC_ReadOnly) {
         action = vcMenu->addAction(tr("Edit"));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(editVersionControl()));
+                                SLOT(editVersionControl()));
 
         TFilePath path       = files.at(0);
         std::string fileType = path.getType();
         if (fileType == "tlv" || fileType == "pli" || path.getDots() == "..") {
           action = vcMenu->addAction(tr("Edit Frame Range..."));
           ret    = ret && connect(action, SIGNAL(triggered()), this,
-                               SLOT(editFrameRangeVersionControl()));
+                                  SLOT(editFrameRangeVersionControl()));
         }
       } else {
         action = vcMenu->addAction(tr("Edit"));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(updateAndEditVersionControl()));
+                                SLOT(updateAndEditVersionControl()));
       }
     }
 
     if (status == DvItemListModel::VC_Modified) {
       action = vcMenu->addAction(tr("Put..."));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(putVersionControl()));
+                              SLOT(putVersionControl()));
 
       action = vcMenu->addAction(tr("Revert"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(revertVersionControl()));
+                              SLOT(revertVersionControl()));
     }
 
     if (status == DvItemListModel::VC_ReadOnly ||
         status == DvItemListModel::VC_ToUpdate) {
       action = vcMenu->addAction(tr("Get"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(getVersionControl()));
+                              SLOT(getVersionControl()));
 
       if (status == DvItemListModel::VC_ReadOnly) {
         action = vcMenu->addAction(tr("Delete"));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(deleteVersionControl()));
+                                SLOT(deleteVersionControl()));
       }
 
       vcMenu->addSeparator();
@@ -1328,36 +1318,36 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
       } else if (files.size() > 1) {
         action = vcMenu->addAction("Get Revision...");
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(getRevisionVersionControl()));
+                                SLOT(getRevisionVersionControl()));
       }
     }
 
     if (status == DvItemListModel::VC_Edited) {
       action = vcMenu->addAction(tr("Unlock"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(unlockVersionControl()));
+                              SLOT(unlockVersionControl()));
     }
 
     if (status == DvItemListModel::VC_Unversioned) {
       action = vcMenu->addAction(tr("Put..."));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(putVersionControl()));
+                              SLOT(putVersionControl()));
     }
 
     if (status == DvItemListModel::VC_Locked && files.size() == 1) {
       action = vcMenu->addAction(tr("Unlock"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(unlockVersionControl()));
+                              SLOT(unlockVersionControl()));
 
       action = vcMenu->addAction(tr("Edit Info"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(showLockInformation()));
+                              SLOT(showLockInformation()));
     }
 
     if (status == DvItemListModel::VC_Missing) {
       action = vcMenu->addAction(tr("Get"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(getVersionControl()));
+                              SLOT(getVersionControl()));
 
       if (files.size() == 1) {
         vcMenu->addSeparator();
@@ -1375,44 +1365,44 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
     if (status == DvItemListModel::VC_PartialLocked) {
       action = vcMenu->addAction(tr("Get"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(getVersionControl()));
+                              SLOT(getVersionControl()));
       if (files.size() == 1) {
         action = vcMenu->addAction(tr("Edit Frame Range..."));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(editFrameRangeVersionControl()));
+                                SLOT(editFrameRangeVersionControl()));
 
         action = vcMenu->addAction(tr("Edit Info"));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(showFrameRangeLockInfo()));
+                                SLOT(showFrameRangeLockInfo()));
       }
 
     } else if (status == DvItemListModel::VC_PartialEdited) {
       action = vcMenu->addAction(tr("Get"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(getVersionControl()));
+                              SLOT(getVersionControl()));
 
       if (files.size() == 1) {
         action = vcMenu->addAction(tr("Unlock Frame Range"));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(unlockFrameRangeVersionControl()));
+                                SLOT(unlockFrameRangeVersionControl()));
 
         action = vcMenu->addAction(tr("Edit Info"));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(showFrameRangeLockInfo()));
+                                SLOT(showFrameRangeLockInfo()));
       }
     } else if (status == DvItemListModel::VC_PartialModified) {
       action = vcMenu->addAction(tr("Get"));
       ret    = ret && connect(action, SIGNAL(triggered()), this,
-                           SLOT(getVersionControl()));
+                              SLOT(getVersionControl()));
 
       if (files.size() == 1) {
         action = vcMenu->addAction(tr("Put..."));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(putFrameRangeVersionControl()));
+                                SLOT(putFrameRangeVersionControl()));
 
         action = vcMenu->addAction(tr("Revert"));
         ret    = ret && connect(action, SIGNAL(triggered()), this,
-                             SLOT(revertFrameRangeVersionControl()));
+                                SLOT(revertFrameRangeVersionControl()));
       }
     }
 
@@ -1575,8 +1565,7 @@ bool FileBrowser::drop(const QMimeData *mimeData) {
       TFilePath path = folderPath;
       NameBuilder *nameBuilder =
           NameBuilder::getBuilder(::to_wstring(path.getName()));
-      do
-        levelName = nameBuilder->getNext();
+      do levelName = nameBuilder->getNext();
       while (TSystem::doesExistFileOrLevel(path.withName(levelName)));
       folderPath = path.withName(levelName);
     }
@@ -1770,11 +1759,7 @@ QString getFrame(const QString &filename) {
   QString number = filename.mid(from + 1, to - from);
   for (i = 0; i < 4 - number.size(); i++) padStr[i] = '0';
   for (i = 0; i < number.size(); i++)
-#if QT_VERSION >= 0x050500
     padStr[4 - number.size() + i] = number.at(i).toLatin1();
-#else
-    padStr[4 - number.size() + i] = number.at(i).toAscii();
-#endif
   return QString(padStr);
 }
 
@@ -2362,7 +2347,7 @@ calculateTask:
 
 //-----------------------------------------------------------------------------
 
-inline void FrameCountReader::stopReading() { m_executor.cancelAll(); }
+void FrameCountReader::stopReading() { m_executor.cancelAll(); }
 
 //=============================================================================
 // FrameCountTask methods

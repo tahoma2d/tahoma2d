@@ -230,7 +230,7 @@ int TreeModel::columnCount(const QModelIndex &parent) const { return 1; }
 //------------------------------------------------------------------------------------------------------------------
 
 Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const {
-  if (!index.isValid()) return 0;
+  if (!index.isValid()) return Qt::ItemFlags();
   return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
@@ -398,7 +398,7 @@ void TreeView::mousePressEvent(QMouseEvent *e) {
       onClick(item, itemPos, e);
     }
     // for drag & drop
-    else if (e->button() == Qt::MidButton) {
+    else if (e->button() == Qt::MiddleButton) {
       m_dragging = true;
       setMouseTracking(true);
       onMidClick(item, itemPos, e);

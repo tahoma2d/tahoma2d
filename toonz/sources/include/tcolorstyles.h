@@ -133,6 +133,8 @@ private:
       m_pickedPosition;  // picked position from color model by using style
                          // picker tool with "organize palette" option.
 
+  std::size_t m_hash;  //!< Hash value for quick comparison.
+
   bool m_isCustom;  // for Custom Texture
 
 protected:
@@ -149,6 +151,7 @@ public:
   virtual ~TColorStyle();
 
   virtual TColorStyle *clone() const = 0;  //!< Polymorphic clone of the style.
+  virtual TColorStyle *clone(std::string brushIdName) const { return clone(); }
   virtual TColorStyle &copy(
       const TColorStyle &other)  //!< Polymorphic copy of the style.
   {
@@ -368,9 +371,20 @@ For example for a stroke style we have "Constant", "Chain", "Rope", "Tulle",
 etc...
 */
   virtual QString getDescription()
-      const = 0;  //!< Return a brief description of the style.
+      const;  //!< Return a brief description of the style.
   virtual QString getParamNames(int index)
       const;  //!< Return the string that identifies the \a index-th parameter.
+
+  virtual std::string getBrushIdName()
+      const;  //!< Return a name identifying the brush.
+
+  static std::size_t generateHash(std::string brushIdName);
+  std::size_t getBrushIdHash();  //!< Hash for quick comparison (cached).
+
+  static std::string getBrushIdNameClass(
+      std::string brushIdName);  //!< Get class inside brush id name
+  static std::string getBrushIdNameParam(
+      std::string brushIdName);  //!< Get parameter inside brush id name
 
   // I/O-related  functions
 
@@ -380,15 +394,16 @@ etc...
 
   void save(TOutputStreamInterface &) const;  //!< Calls the local
                                               //! implementation of saveData()
-  //! passing it also the name and
-  //! the tagId of the style.
+  //! passing it also the name and the tagId of the style.
+
   static TColorStyle *load(TInputStreamInterface &);  //!< Loads the style from
                                                       //! disk. Calls the local
-  //! implementation of
-  //! loadData().
+  //! implementation of loadData().
+
 
   static TColorStyle *create(
       int tagId);  //!< Creates a new style with identifier equal to \a tagId.
+  static TColorStyle *create(std::string brushIdName);
 
   static void declare(
       TColorStyle *style);  //!< Puts the style in the table of actual styles.
@@ -415,6 +430,8 @@ It is used when updates must be done after changes or creation of new styles.
   int getVersionNumber() const {
     return m_versionNumber;
   }  //!< Returns the version number of the style.
+
+  virtual TRectD getStrokeBBox(const TStroke *stroke) const;
 
 protected:
   virtual void makeIcon(const TDimension &d);

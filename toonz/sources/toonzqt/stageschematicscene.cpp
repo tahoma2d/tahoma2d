@@ -531,22 +531,14 @@ void StageSchematicScene::updateNestedGroupEditors(StageSchematicNode *node,
       if (rect.isEmpty())
         rect = app;
       else
-#if QT_VERSION >= 0x050000
         rect = rect.united(app);
-#else
-        rect = rect.unite(app);
-#endif
     }
   }
   node->setPos(newPos);
   for (i = 0; i < groupIdStack.size(); i++) {
     if (!m_groupEditorTable.contains(groupIdStack[i])) continue;
-#if QT_VERSION >= 0x050000
     rect =
         rect.united(m_groupEditorTable[groupIdStack[i]]->sceneBoundingRect());
-#else
-    rect = rect.unite(m_groupEditorTable[groupIdStack[i]]->sceneBoundingRect());
-#endif
     QRectF app = m_groupEditorTable[groupIdStack[i]]->boundingSceneRect();
     if (m_groupEditorTable[groupIdStack[i]]->scenePos() != app.topLeft())
       m_groupEditorTable[groupIdStack[i]]->setPos(app.topLeft());
@@ -1217,7 +1209,7 @@ void StageSchematicScene::contextMenuEvent(
 void StageSchematicScene::mousePressEvent(QGraphicsSceneMouseEvent *me) {
   QList<QGraphicsItem *> items = selectedItems();
   SchematicScene::mousePressEvent(me);
-  if (me->button() == Qt::MidButton) {
+  if (me->button() == Qt::MiddleButton) {
     int i;
     for (i = 0; i < items.size(); i++) items[i]->setSelected(true);
   }
@@ -1311,4 +1303,51 @@ TStageObjectId StageSchematicScene::getCurrentObject() {
 void StageSchematicScene::onNodeChangedSize() {
   if (resizingNodes) return;
   updateScene();
+}
+
+//------------------------------------------------------------------
+// snap to neighbor nodes on dragging
+void StageSchematicScene::updateSnapTarget(QGraphicsItem *item) {
+  clearSnapTargets();
+  StageSchematicNode *node = dynamic_cast<StageSchematicNode *>(item);
+  if (!node) return;
+
+  int portCount = node->getChildCount();
+  for (int i = 0; i < portCount; i++) {
+    StageSchematicNodePort *port = node->getChildPort(i);
+    int j, linkCount = port->getLinkCount();
+    for (j = 0; j < linkCount; j++) {
+      SchematicLink *link = port->getLink(j);
+      if (!link) continue;
+      SchematicNode *otherNode = link->getOtherNode(node);
+      if (otherNode && !otherNode->isSelected()) {
+        QPointF targetPos =
+            otherNode->scenePos() -
+            QPointF(node->boundingRect().width() + SchematicScene::snapHSpacing,
+                    0);
+        addSnapTarget(targetPos, node->boundingRect(),
+                      link->getOtherPort(port)->getLinkEndPoint(),
+                      port->getLinkEndPoint() - node->scenePos());
+      }
+    }
+  }
+
+  StageSchematicNodePort *port = node->getParentPort();
+  if (port) {
+    int linkCount = port->getLinkCount();
+    for (int i = 0; i < linkCount; i++) {
+      SchematicLink *link = port->getLink(i);
+      if (!link) continue;
+      SchematicNode *otherNode = link->getOtherNode(node);
+      if (otherNode && !otherNode->isSelected()) {
+        QPointF targetPos =
+            otherNode->scenePos() + QPointF(otherNode->boundingRect().width() +
+                                                SchematicScene::snapHSpacing,
+                                            0);
+        addSnapTarget(targetPos, node->boundingRect(),
+                      link->getOtherPort(port)->getLinkEndPoint(),
+                      port->getLinkEndPoint() - node->scenePos());
+      }
+    }
+  }
 }

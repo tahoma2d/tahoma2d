@@ -7,6 +7,7 @@
 #include "mainwindow.h"
 #include "tenv.h"
 #include "saveloadqsettings.h"
+#include "custompanelmanager.h"
 
 #include "toonzqt/gutil.h"
 #include "toonzqt/dvdialog.h"
@@ -43,6 +44,7 @@
 #include <QGroupBox>
 
 extern TEnv::StringVar EnvSafeAreaName;
+extern TEnv::IntVar EnvViewerPreviewBehavior;
 extern TEnv::IntVar CameraViewTransparency;
 extern TEnv::IntVar ShowRuleOfThirds;
 extern TEnv::IntVar ShowGoldenRatio;
@@ -264,9 +266,10 @@ void TPanelTitleBarButton::paintEvent(QPaintEvent *event) {
   QPixmap panePixmapOn = compositePixmap(panePixmap, 1, QSize(), 0, 0, bgColor);
 
   QPainter painter(this);
-  painter.drawPixmap(
-      0, 0,
-      m_pressed ? panePixmapOn : m_rollover ? panePixmapOver : panePixmapOff);
+  painter.drawPixmap(0, 0,
+                     m_pressed    ? panePixmapOn
+                     : m_rollover ? panePixmapOver
+                                  : panePixmapOff);
   painter.end();
 }
 
@@ -474,6 +477,58 @@ void TPanelTitleBarButtonForGrids::mousePressEvent(QMouseEvent *e) {
 }
 
 //=============================================================================
+// TPanelTitleBarButtonForPreview
+//-----------------------------------------------------------------------------
+
+void TPanelTitleBarButtonForPreview::mousePressEvent(QMouseEvent *e) {
+  if (e->button() != Qt::RightButton) {
+    m_pressed = !m_pressed;
+    emit toggled(m_pressed);
+    update();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TPanelTitleBarButtonForPreview::contextMenuEvent(QContextMenuEvent *e) {
+  QMenu menu(this);
+
+  // 0: current frame
+  // 1: all frames in the preview range
+  // 2: selected cell, auto play once & stop
+  QStringList behaviorsStrList = {tr("Current frame"),
+                                  tr("All preview range frames"),
+                                  tr("Selected cells - Auto play")};
+
+  QActionGroup *behaviorGroup = new QActionGroup(this);
+
+  for (int i = 0; i < behaviorsStrList.size(); i++) {
+    QAction *action = menu.addAction(behaviorsStrList.at(i));
+    action->setData(i);
+    connect(action, SIGNAL(triggered()), this, SLOT(onSetPreviewBehavior()));
+    action->setCheckable(true);
+    behaviorGroup->addAction(action);
+    if (i == EnvViewerPreviewBehavior) action->setChecked(true);
+  }
+
+  menu.exec(e->globalPos());
+}
+
+//-----------------------------------------------------------------------------
+
+void TPanelTitleBarButtonForPreview::onSetPreviewBehavior() {
+  int behaviorId = qobject_cast<QAction *>(sender())->data().toInt();
+  // change safearea if the different one is selected
+  if (EnvViewerPreviewBehavior != behaviorId) {
+    EnvViewerPreviewBehavior = behaviorId;
+    // emit sceneChanged without setting dirty flag
+    TApp::instance()->getCurrentScene()->notifySceneChanged(false);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+//=============================================================================
 // TPanelTitleBarButtonSet
 //-----------------------------------------------------------------------------
 
@@ -653,6 +708,12 @@ TPanel *TPanelFactory::createPanel(QWidget *parent, QString panelType) {
 
   QMap<QString, TPanelFactory *>::iterator it = tableInstance().find(panelType);
   if (it == tableInstance().end()) {
+    if (panelType.startsWith("Custom_")) {
+      panelType = panelType.right(panelType.size() - 7);
+      return CustomPanelManager::instance()->createCustomPanel(panelType,
+                                                               parent);
+    }
+
     TPanel *panel = new TPanel(parent);
     panel->setPanelType(panelType.toStdString());
     return panel;

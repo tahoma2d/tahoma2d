@@ -188,6 +188,7 @@ bool AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
   // Then fills in EVERYTHING with 'color'
   // Then uses the fill command to fill in the edges with their original color
   // This makes sure only the enclosed areas not on the edge get filled.
+  /*- In case of FillInk only -*/
   if (!fillPaints) {
     assert(fillInks);
     assert(m_ras->getBounds().contains(rect));
@@ -213,7 +214,7 @@ bool AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
   std::vector<int> frameSeed(2 * (r.getLx() + r.getLy() - 2));
 
   int x, y, count1, count2;
-  /*- Move ptr to the starting point of the Rect range -*/
+  /*- Move ptr to the start of the Rectangular range -*/
   Pixel *ptr = m_pixels + r.y0 * m_wrap + r.x0;
   count1     = 0;
   count2     = r.y1 - r.y0 + 1;
@@ -227,7 +228,7 @@ bool AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
   // FrameSeed is filled with all the paints of the various areas of the
   // boundary rectangle.
   // It is checked if the pixels of the rectangle are all pure paint.
-
+  /*- Store the Paint ID of the contour in the frameseed -*/
   for (y = r.y0; y <= r.y1; y++, ptr += m_wrap, count1++, count2++) {
     if (r.x0 > 0) frameSeed[count1]                  = ptr->getPaint();
     if (r.x1 < m_ras->getLx() - 1) frameSeed[count2] = (ptr + dx)->getPaint();
@@ -473,7 +474,7 @@ public:
 
     pix = m_buf + p.y * m_wrap + p.x;
 
-    /*-- 同じインクの場合はreturn --*/
+    /*-- If the same ink is used, RETURN --*/
     if (pix->getInk() == ink && !m_clearInk) return false;
 
     if (!ConnectionTable[neighboursCode(pix, p)]) {

@@ -13,11 +13,7 @@ class TestPanel final : public TPanel {
   Q_OBJECT
 
 public:
-#if QT_VERSION >= 0x050500
   TestPanel(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  TestPanel(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
   ~TestPanel();
 
 public slots:

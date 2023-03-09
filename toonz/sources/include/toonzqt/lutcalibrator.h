@@ -89,7 +89,7 @@ public:
 
   bool isValid() { return m_isValid; }
   int meshSize() const { return m_lut.meshSize; }
-  float* data() const { return m_lut.data; }
+  const float* data() const { return m_lut.data; }
 
   bool loadLutFile(const QString& fp);
 

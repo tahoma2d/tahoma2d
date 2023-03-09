@@ -122,7 +122,7 @@ TRect fastAddInkStroke(const TRasterImageP &ri, TStroke *stroke, TRectD clip,
 
 TRect rasterizeRegion(TOfflineGL *&gl, TRect rasBounds, TRegion *region,
                       TPalette *palette, TRectD clip) {
-  TRectD regionBBox               = region->getBBox();
+  TRectD regionBBox = region->getBBox();
   if (!clip.isEmpty()) regionBBox = regionBBox * clip;
 
   TRect rect = convert(regionBBox) * rasBounds;
@@ -172,7 +172,7 @@ void fastAddPaintRegion(const TRasterImageP &ri, TRegion *region,
                        std::min(maxStyleId, subregion->getStyle()), maxStyleId);
   }
 }
-}
+}  // namespace
 
 //==========================================================================
 
@@ -295,7 +295,7 @@ TRasterImageP TRasterImageUtils::vectorToFullColorImage(
     else {
       visible = false;
       for (int j = 0; j < style->getColorParamCount() && !visible; j++) {
-        TPixel32 color            = style->getColorParamValue(j);
+        TPixel32 color = style->getColorParamValue(j);
         if (color.m != 0) visible = true;
       }
     }
@@ -355,8 +355,8 @@ void TRasterImageUtils::addSceneNumbering(const TRasterImageP &ri,
   numberingFont.setPixelSize(ly * 0.04);
   numberingFont.setBold(true);
   p.setFont(numberingFont);
-  QMatrix matrix;
-  p.setMatrix(matrix.translate(0, ly).scale(1, -1), true);
+  QTransform transform;
+  p.setTransform(transform.translate(0, ly).scale(1, -1), true);
   QFontMetrics fm = p.fontMetrics();
   int fontHeight  = fm.height();
   int offset      = fontHeight * 0.2;
@@ -367,7 +367,11 @@ void TRasterImageUtils::addSceneNumbering(const TRasterImageP &ri,
   QString sceneNumberingString =
       QString::fromStdWString(sceneName) + ": " + sceneFrame;
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+  int sceneNumberingWidth = fm.horizontalAdvance(sceneNumberingString);
+#else
   int sceneNumberingWidth = fm.width(sceneNumberingString);
+#endif
   p.setPen(Qt::NoPen);
   p.setBrush(QColor(255, 255, 255, 255));
   p.drawRect(offset, ly - offset - fontHeight, sceneNumberingWidth + offset * 2,
@@ -382,7 +386,11 @@ void TRasterImageUtils::addSceneNumbering(const TRasterImageP &ri,
   QString globalFrame = QString::number(globalIndex);
   while (globalFrame.size() < 4) globalFrame.push_front("0");
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+  int gloablNumberingWidth = fm.horizontalAdvance(globalFrame);
+#else
   int gloablNumberingWidth = fm.width(globalFrame);
+#endif
   p.setPen(Qt::NoPen);
   p.setBrush(QColor(255, 255, 255, 255));
   p.drawRect(lx - 3 * offset - gloablNumberingWidth, ly - offset - fontHeight,
@@ -411,8 +419,8 @@ void TRasterImageUtils::addGlobalNumbering(const TRasterImageP &ri,
   numberingFont.setPixelSize(ly * 0.04);
   numberingFont.setBold(true);
   p.setFont(numberingFont);
-  QMatrix matrix;
-  p.setMatrix(matrix.translate(0, ly).scale(1, -1), true);
+  QTransform transform;
+  p.setTransform(transform.translate(0, ly).scale(1, -1), true);
   QFontMetrics fm     = p.fontMetrics();
   int fontHeight      = fm.height();
   int offset          = fontHeight * 0.2;
@@ -421,7 +429,11 @@ void TRasterImageUtils::addGlobalNumbering(const TRasterImageP &ri,
   QString globalNumberingString =
       QString::fromStdWString(sceneName) + ": " + globalFrame;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+  int globalNumberingWidth = fm.horizontalAdvance(globalNumberingString);
+#else
   int globalNumberingWidth = fm.width(globalNumberingString);
+#endif
   p.setPen(Qt::NoPen);
   p.setBrush(QColor(255, 255, 255, 255));
   p.drawRect(offset, ly - offset - fontHeight,

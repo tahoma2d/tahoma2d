@@ -12,6 +12,7 @@
 // TnzLib includes
 #include "toonz/preferences.h"
 #include "toonz/tframehandle.h"
+#include "toonz/toonzfolders.h"
 
 // TnzBase includes
 #include "tenv.h"
@@ -76,6 +77,12 @@ QColor PBBaseColor       = QColor(235, 235, 235);
 QColor PBNotStartedColor = QColor(210, 40, 40);
 QColor PBStartedColor    = QColor(220, 160, 160);
 QColor PBFinishedColor   = QColor(235, 235, 235);
+
+QString getFlipSettingsPath() {
+  return toQString(ToonzFolder::getMyModuleDir() +
+                   TFilePath("fliphistory.ini"));
+}
+
 }  // namespace
 
 //-----------------------------------------------------------------------------
@@ -170,7 +177,7 @@ void PlaybackExecutor::run() {
   qint64 nextSampleInstant = timeResolution;
 
   qint64 lastFrameCounts[4]    = {0, 0, 0,
-                               0};  // Keep the last 4 'played frames' counts.
+                                  0};  // Keep the last 4 'played frames' counts.
   qint64 lastSampleInstants[4] = {0, 0, 0,
                                   0};  // Same for the last sampling instants
 
@@ -190,7 +197,7 @@ void PlaybackExecutor::run() {
       qint64 framesCount = playedFramesCount - lastFrameCounts[currSample];
       qint64 elapsedTime = emissionInstant - lastSampleInstants[currSample];
       fps                = troundp((long double)(1000000000 * framesCount) /
-                    (long double)elapsedTime);
+                                   (long double)elapsedTime);
 
       targetFrameTime =
           1000000000 / (qint64)abs(m_fps);  // m_fps could have changed...
@@ -295,11 +302,10 @@ void FlipSlider::paintEvent(QPaintEvent *ev) {
                 PBMarkerMarginLeft;
       if (i == pbStatusSize - 1) nextPos += PBMarkerMarginRight;
       p.fillRect(currPos, PBColorMarginTop, nextPos - currPos, colorHeight,
-                 ((*m_progressBarStatus)[i] == PBFrameStarted)
-                     ? PBStartedColor
-                     : ((*m_progressBarStatus)[i] == PBFrameFinished)
-                           ? PBFinishedColor
-                           : PBNotStartedColor);
+                 ((*m_progressBarStatus)[i] == PBFrameStarted) ? PBStartedColor
+                 : ((*m_progressBarStatus)[i] == PBFrameFinished)
+                     ? PBFinishedColor
+                     : PBNotStartedColor);
       currPos = nextPos;
     }
 
@@ -385,7 +391,7 @@ void FlipSlider::mousePressEvent(QMouseEvent *me) {
   emit flipSliderPressed();
   int cursorValue = sliderValueFromPosition(minimum(), maximum(), singleStep(),
                                             me->pos().x(), width());
-  if (me->button() == Qt::MidButton)
+  if (me->button() == Qt::MiddleButton)
     if (cursorValue == value())
       setSliderDown(true);
     else {
@@ -447,7 +453,7 @@ FlipConsole::FlipConsole(QVBoxLayout *mainLayout, std::vector<int> gadgetsMask,
     , m_blanksToDraw(0)
     , m_isLinkable(isLinkable)
     , m_customAction(0)
-    , m_customizeMask(eShowHowMany - 1)
+    , m_customizeMask((eShowHowMany - 1) & ~eShowGainControls)
     , m_fpsLabelAction(0)
     , m_fpsSliderAction(0)
     , m_fpsFieldAction(0)
@@ -467,9 +473,14 @@ FlipConsole::FlipConsole(QVBoxLayout *mainLayout, std::vector<int> gadgetsMask,
     , m_fpsLabel(0)
     , m_timeLabel(0)
     , m_consoleOwner(consoleOwner)
-    , m_enableBlankFrameButton(0) {
+    , m_enableBlankFrameButton(0)
+    , m_prevGainStep(0)
+    , m_gainSep(nullptr)
+    , m_resetGainBtn(nullptr) {
+  QSettings flipSettings(getFlipSettingsPath(), QSettings::IniFormat);
+  flipSettings.beginGroup("ConsoleCustomizeMasks");
   if (m_customizeId != "SceneViewerConsole") {
-    QString s                    = QSettings().value(m_customizeId).toString();
+    QString s = flipSettings.value(m_customizeId).toString();
     if (s != "") m_customizeMask = s.toUInt();
   }
 
@@ -810,9 +821,11 @@ void FlipConsole::onNextFrame(int fps, QElapsedTimer *timer,
     else
       m_fpsField->setLineEditBackgroundColor(Qt::red);
   }
-  if (m_stopAt > 0 && m_currentFrame >= m_stopAt) {
+  if (m_stopAt > 0 && m_currentFrame >= m_stopAt &&
+      (m_isPlay || m_startAt == -1)) {
     doButtonPressed(ePause);
-    m_stopAt = -1;
+    m_stopAt  = -1;
+    m_startAt = -1;
   }
 }
 
@@ -838,6 +851,10 @@ void FlipConsole::playNextFrame(QElapsedTimer *timer, qint64 targetInstant) {
   int from = m_from, to = m_to;
   if (m_markerFrom <= m_markerTo && m_stopAt == -1)
     from = m_markerFrom, to = m_markerTo;
+  else if (m_stopAt > 0 && m_startAt > 0) {
+    from = m_startAt;
+    to   = m_stopAt;
+  }
 
   if (m_framesCount == 0 ||
       (m_isPlay && m_currentFrame == (m_reverse ? from : to))) {
@@ -1036,7 +1053,9 @@ void FlipConsole::onCustomizeButtonPressed(QAction *a) {
   else
     m_customizeMask = m_customizeMask & (~id);
 
-  QSettings().setValue(m_customizeId, QString::number(m_customizeMask));
+  QSettings flipSettings(getFlipSettingsPath(), QSettings::IniFormat);
+  flipSettings.beginGroup("ConsoleCustomizeMasks");
+  flipSettings.setValue(m_customizeId, QString::number(m_customizeMask));
 
   applyCustomizeMask();
 }
@@ -1131,6 +1150,13 @@ void FlipConsole::applyCustomizeMask() {
   enableButton(eResetView, m_customizeMask & eShowViewerControls);
   if (m_viewerSep)
     m_viewerSep->setVisible(m_customizeMask & eShowViewerControls);
+
+  if (m_resetGainBtn) {
+    enableButton(eDecreaseGain, m_customizeMask & eShowGainControls);
+    enableButton(eResetGain, m_customizeMask & eShowGainControls);
+    enableButton(eIncreaseGain, m_customizeMask & eShowGainControls);
+    m_gainSep->setVisible(m_customizeMask & eShowGainControls);
+  }
 
   update();
 }
@@ -1241,6 +1267,9 @@ void FlipConsole::createCustomizeMenu(bool withCustomWidget) {
 
     if (hasButton(m_gadgetsMask, eRate))
       addMenuItem(eShowFramerate, tr("Framerate"), menu);
+
+    if (hasButton(m_gadgetsMask, eDecreaseGain))
+      addMenuItem(eShowGainControls, tr("Gain Controls"), menu);
 
     bool ret = connect(menu, SIGNAL(triggered(QAction *)), this,
                        SLOT(onCustomizeButtonPressed(QAction *)));
@@ -1417,6 +1446,23 @@ void FlipConsole::createPlayToolBar(QWidget *customWidget) {
     m_viewerSep = m_playToolBar->addSeparator();
   }
 
+  if (hasButton(m_gadgetsMask, eDecreaseGain)) {
+    createButton(eDecreaseGain, "prevkey",
+                 tr("&Reduce gain 1/2 stop (divide by sqrt(2))"), false);
+    createButton(eResetGain, "", "f/8", false);
+    m_resetGainBtn = dynamic_cast<QToolButton *>(
+        m_playToolBar->widgetForAction(m_actions[eResetGain]));
+    m_resetGainBtn->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    m_resetGainBtn->setToolTip(
+        tr("Toggle gain between 1 and the previous setting.\n"
+           "Gain is shown as an f-stop and the \"neutral\" or 1.0 gain f-stop "
+           "is f/8."));
+    m_resetGainBtn->setFixedWidth(36);
+    createButton(eIncreaseGain, "nextkey",
+                 tr("&Increase gain 1/2 stop (multiply by sqrt(2))"), false);
+    m_gainSep = m_playToolBar->addSeparator();
+  }
+
   // for all actions in this toolbar
   ret = ret && connect(m_playToolBar, SIGNAL(actionTriggered(QAction *)), this,
                        SLOT(onButtonPressed(QAction *)));
@@ -1537,6 +1583,7 @@ void FlipConsole::onButtonPressed(int button) {
           playingConsole->setChecked(ePause, true);
           stoppedOther = true;
           m_stopAt     = -1;
+          m_startAt    = -1;
         }
       }
       if (stoppedOther) {
@@ -1692,7 +1739,8 @@ void FlipConsole::doButtonPressed(UINT button) {
           playingConsole->setChecked(ePause, true);
         }
       }
-      m_stopAt = -1;
+      m_stopAt  = -1;
+      m_startAt = -1;
       return;
     }
 
@@ -1700,6 +1748,7 @@ void FlipConsole::doButtonPressed(UINT button) {
 
     if (m_playbackExecutor.isRunning()) m_playbackExecutor.abort();
     m_stopAt       = -1;
+    m_startAt      = -1;
     m_isPlay       = false;
     m_blanksToDraw = 0;
 
@@ -1818,6 +1867,16 @@ void FlipConsole::doButtonPressed(UINT button) {
   case eResetView:
     return;
 
+  case eDecreaseGain:
+    adjustGain(false);
+    break;
+  case eIncreaseGain:
+    adjustGain(true);
+    break;
+  case eResetGain:
+    resetGain();
+    break;
+
   default:
     assert(false);
     break;
@@ -1832,6 +1891,10 @@ void FlipConsole::doButtonPressed(UINT button) {
 //--------------------------------------------------------------------
 
 void FlipConsole::setStopAt(int frame) { m_stopAt = frame; }
+
+//--------------------------------------------------------------------
+
+void FlipConsole::setStartAt(int frame) { m_startAt = frame; }
 
 //--------------------------------------------------------------------
 
@@ -1861,6 +1924,8 @@ QFrame *FlipConsole::createFrameSlider() {
     m_enableBlankFrameButton->setFixedHeight(24);
     m_enableBlankFrameButton->setFixedWidth(66);
     m_enableBlankFrameButton->setObjectName("enableBlankFrameButton");
+
+    m_buttons[eBlankFrames] = m_enableBlankFrameButton;
   }
 
   // layout
@@ -1898,7 +1963,12 @@ QFrame *FlipConsole::createFpsSlider() {
   m_fpsField  = new DVGui::IntLineEdit(fpsSliderFrame, m_fps, -60, 60);
   m_fpsField->setFixedWidth(40);
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+  m_fpsLabel->setMinimumWidth(
+      m_fpsLabel->fontMetrics().horizontalAdvance("_FPS_24___"));
+#else
   m_fpsLabel->setMinimumWidth(m_fpsLabel->fontMetrics().width("_FPS_24___"));
+#endif
   m_fpsLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_fpsSlider->setObjectName("ViewerFpsSlider");
   m_fpsSlider->setRange(-60, 60);
@@ -2144,6 +2214,44 @@ void FlipConsole::onPreferenceChanged(const QString &prefName) {
       m_enableBlankFrameButton->update();
     }
   }
+}
+
+//--------------------------------------------------------------------
+
+void FlipConsole::adjustGain(bool increase) {
+  if (increase && m_settings.m_gainStep < 12)
+    m_settings.m_gainStep++;
+  else if (!increase && m_settings.m_gainStep > -12)
+    m_settings.m_gainStep--;
+
+  // enable / disable buttons (-6 to +6 steps range)
+  enableButton(eDecreaseGain, m_settings.m_gainStep > -12, false);
+  enableButton(eIncreaseGain, m_settings.m_gainStep < 12, false);
+
+  if (m_settings.m_gainStep != 0) m_prevGainStep = m_settings.m_gainStep;
+
+  // update label
+  double fNumber   = std::pow(2.0, 3.0 - (double)m_settings.m_gainStep * 0.25);
+  QString labelStr = QString("f/%1").arg(QString::number(fNumber, 'g', 2));
+  double gain      = std::pow(2.0, (double)m_settings.m_gainStep * 0.5);
+  m_resetGainBtn->setText(labelStr);
+  m_resetGainBtn->setToolTip(labelStr + tr(" (gain %1)").arg(gain));
+}
+
+void FlipConsole::resetGain(bool forceInit) {
+  if (forceInit) m_prevGainStep = 0;
+
+  if (m_settings.m_gainStep == 0)
+    m_settings.m_gainStep = m_prevGainStep;
+  else
+    m_settings.m_gainStep = 0;
+
+  // update label
+  double fNumber   = std::pow(2.0, 3.0 - (double)m_settings.m_gainStep * 0.25);
+  QString labelStr = QString("f/%1").arg(QString::number(fNumber, 'g', 2));
+  double gain      = std::pow(2.0, (double)m_settings.m_gainStep * 0.5);
+  m_resetGainBtn->setText(labelStr);
+  m_resetGainBtn->setToolTip(labelStr + tr(" (gain %1)").arg(gain));
 }
 
 //====================================================================

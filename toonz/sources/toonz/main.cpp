@@ -12,6 +12,7 @@
 #include "cleanupsettingspopup.h"
 #include "filebrowsermodel.h"
 #include "expressionreferencemanager.h"
+#include "thirdparty.h"
 #include "startuppopup.h"
 
 // TnzTools includes
@@ -332,9 +333,7 @@ int main(int argc, char *argv[]) {
 
   // Enables high-DPI scaling. This attribute must be set before QApplication is
   // constructed. Available from Qt 5.6.
-#if QT_VERSION >= 0x050600
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
 
   QApplication a(argc, argv);
 
@@ -506,6 +505,9 @@ int main(int argc, char *argv[]) {
   // Install run out of contiguous memory callback
   TBigMemoryManager::instance()->setRunOutOfContiguousMemoryHandler(
       &toonzRunOutOfContMemHandler);
+
+  // Setup third party
+  ThirdParty::initialize();
 
   // Toonz environment
   initToonzEnv(argumentPathValues);

@@ -32,7 +32,7 @@ class DoubleField;
 class IntField;
 // class LineEdit;
 class CheckBox;
-}
+}  // namespace DVGui
 
 //=============================================================================
 // TrackerPopup
@@ -56,11 +56,7 @@ class TrackerPopup final : public DVGui::Dialog {
   DVGui::IntField *m_to;
 
 public:
-#if QT_VERSION >= 0x050500
   TrackerPopup(QWidget *parent = 0, Qt::WindowFlags flags = Qt::Tool);
-#else
-  TrackerPopup(QWidget *parent = 0, Qt::WFlags flags = Qt::Tool);
-#endif
 
   bool apply();
 

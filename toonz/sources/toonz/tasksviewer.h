@@ -169,11 +169,7 @@ public:
   TaskTreeView *m_treeView;
   QTimer *m_timer;
 
-#if QT_VERSION >= 0x050500
   TasksViewer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  TasksViewer(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
   ~TasksViewer();
 
   void update() override;

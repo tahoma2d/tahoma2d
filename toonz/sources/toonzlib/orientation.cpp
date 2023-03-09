@@ -934,6 +934,7 @@ TopToBottomOrientation::TopToBottomOrientation() {
   addDimension(PredefinedDimension::CENTER_ALIGN, Qt::AlignHCenter);
   addDimension(PredefinedDimension::CAMERA_LAYER, CAMERA_CELL_WIDTH);
   addDimension(PredefinedDimension::SCALE_THRESHOLD, 57);
+  addDimension(PredefinedDimension::FRAME_AREA_EXPANSION, PLAY_RANGE_X);
 
   //
   // Paths
@@ -1405,6 +1406,7 @@ LeftToRightOrientation::LeftToRightOrientation() {
   addDimension(PredefinedDimension::CENTER_ALIGN, Qt::AlignVCenter);
   addDimension(PredefinedDimension::CAMERA_LAYER, CAMERA_CELL_HEIGHT);
   addDimension(PredefinedDimension::SCALE_THRESHOLD, 50);
+  addDimension(PredefinedDimension::FRAME_AREA_EXPANSION, 0);  // not used
 
   //
   // Paths

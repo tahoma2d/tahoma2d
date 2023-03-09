@@ -94,9 +94,8 @@ bool checkForMeshColumns(TXsheet *xsh,
             cells[i].m_level->getType() == CHILD_XSHLEVEL) {
           TXshChildLevel *level = cells[i].m_level->getChildLevel();
           // make sure we haven't already checked the level
-          if (level &&
-              std::find(childLevels.begin(), childLevels.end(), level) ==
-                  childLevels.end()) {
+          if (level && std::find(childLevels.begin(), childLevels.end(),
+                                 level) == childLevels.end()) {
             childLevels.push_back(level);
             TXsheet *subXsh = level->getXsheet();
             foundMesh       = checkForMeshColumns(subXsh, childLevels);
@@ -171,7 +170,7 @@ bool RenderController::addScene(MovieGenerator &g, ToonzScene *scene) {
   }
   if (r1 < r0) return false;
   TPixel color = scene->getProperties()->getBgColor();
-  if (isMovieType(m_movieExt) && m_movieExt != "mov" && m_movieExt != "webm") color.m = 255;
+  if (isMovieTypeOpaque(m_movieExt)) color.m = 255;
   g.setBackgroundColor(color);
   g.addScene(*scene, r0, r1);
   return true;
@@ -371,7 +370,8 @@ you want to do?";*/
     if (m_frame >= totalFrameCount &&
         Preferences::instance()->isGeneratedMovieViewEnabled()) {
       if (Preferences::instance()->isDefaultViewerEnabled() &&
-          (outPath.getType() == "avi")) {
+          (outPath.getType() == "mov" || outPath.getType() == "avi" ||
+           outPath.getType() == "3gp")) {
         QString name = QString::fromStdString(outPath.getName());
 
         if (!TSystem::showDocument(outPath)) {
@@ -691,7 +691,7 @@ void ClipListViewer::dragMoveEvent(QDragMoveEvent *event) {
 
 void ClipListViewer::dropEvent(QDropEvent *event) {
   if (event->mimeData()->hasUrls()) {
-    int j        = m_dropInsertionPoint;
+    int j = m_dropInsertionPoint;
     if (j < 0) j = getItemCount();
     for (const QUrl &url : event->mimeData()->urls()) {
       TFilePath fp(url.toLocalFile().toStdString());
@@ -771,11 +771,7 @@ void ClipListViewer::loadScene() {
 //
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 ExportPanel::ExportPanel(QWidget *parent, Qt::WindowFlags flags)
-#else
-ExportPanel::ExportPanel(QWidget *parent, Qt::WFlags flags)
-#endif
     : TPanel(parent)
     , m_clipListViewer(0)
     , m_saveInFileFld(0)

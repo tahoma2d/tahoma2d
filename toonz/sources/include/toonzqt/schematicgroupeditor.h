@@ -34,6 +34,7 @@ class SchematicName;
 
 class DVAPI SchematicWindowEditor : public QObject, public QGraphicsItem {
   Q_OBJECT
+  Q_INTERFACES(QGraphicsItem)
 
   QPointF m_lastPos;
 
@@ -52,7 +53,7 @@ public:
 
   QRectF boundingRect() const override;
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget                    = 0) override;
+             QWidget *widget = 0) override;
   virtual QRectF boundingSceneRect() const      = 0;
   virtual void setGroupedNodeZValue(int zValue) = 0;
   bool contains(SchematicNode *node) const {

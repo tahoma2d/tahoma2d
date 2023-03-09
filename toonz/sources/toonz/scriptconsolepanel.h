@@ -12,11 +12,8 @@ class ScriptConsolePanel final : public TPanel {
   ScriptConsole *m_scriptConsole;
 
 public:
-#if QT_VERSION >= 0x050500
-  ScriptConsolePanel(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  ScriptConsolePanel(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
+  ScriptConsolePanel(QWidget *parent       = 0,
+                     Qt::WindowFlags flags = Qt::WindowFlags());
   ~ScriptConsolePanel();
 
   void executeCommand(const QString &cmd);

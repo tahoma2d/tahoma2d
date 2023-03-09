@@ -30,7 +30,7 @@
 
 using namespace TFxUtil;
 
-//#define USE_SQLITE_HDPOOL
+// #define USE_SQLITE_HDPOOL
 
 //*************************************************************************************
 //    Swatch cache delegate
@@ -242,11 +242,7 @@ int submittedTasks      = 0;
 // SwatchViewer
 //-----------------------------------------------------------------------------
 
-#if QT_VERSION >= 0x050500
 SwatchViewer::SwatchViewer(QWidget *parent, Qt::WindowFlags flags)
-#else
-SwatchViewer::SwatchViewer(QWidget *parent, Qt::WFlags flags)
-#endif
     : QWidget(parent, flags)
     , m_fx(0)
     , m_actualFxClone(0)
@@ -686,7 +682,7 @@ void SwatchViewer::mousePressEvent(QMouseEvent *event) {
       }
     }
     update();
-  } else if (m_mouseButton == Qt::MidButton) {
+  } else if (m_mouseButton == Qt::MiddleButton) {
     m_pos        = pos;
     m_firstPos   = pos;
     m_oldContent = getContent();
@@ -724,7 +720,7 @@ void SwatchViewer::mouseMoveEvent(QMouseEvent *event) {
     // to avoid unnecessary recursions.
 
     QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-  } else if (m_mouseButton == Qt::MidButton) {
+  } else if (m_mouseButton == Qt::MiddleButton) {
     pan(pos - m_pos);
     m_pos = pos;
   }
@@ -736,7 +732,7 @@ void SwatchViewer::mouseReleaseEvent(QMouseEvent *event) {
   m_mouseButton   = Qt::NoButton;
   m_selectedPoint = -1;
   TPoint pos      = TPoint(event->pos().x(), event->pos().y());
-  if (event->button() == Qt::MidButton) {
+  if (event->button() == Qt::MiddleButton) {
     if (!m_oldContent || !m_curContent) return;
     TPointD p = convert(pos - m_pos);
     setAff(TTranslation(p.x, -p.y) * m_aff);
@@ -788,9 +784,14 @@ void SwatchViewer::wheelEvent(QWheelEvent *event) {
     if ((m_gestureActive == true &&
          m_touchDevice == QTouchDevice::TouchScreen) ||
         m_gestureActive == false) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+      TPoint center(event->position().x() - width() / 2,
+                    -event->position().y() + height() / 2);
+#else
       TPoint center(event->pos().x() - width() / 2,
                     -event->pos().y() + height() / 2);
-      zoom(center, exp(0.001 * event->delta()));
+#endif
+      zoom(center, exp(0.001 * event->angleDelta().y()));
     }
   }
   event->accept();

@@ -5,7 +5,7 @@
 
 // TODO: cambiare il nome del file in tpanel.h
 
-//#include <QDockWidget>
+// #include <QDockWidget>
 #include "../toonzqt/tdockwindows.h"
 
 class TPanelTitleBarButtonSet;
@@ -75,7 +75,7 @@ signals:
 };
 
 //-----------------------------------------------------------------------------
-/*! specialized button for sage area which enables to choose safe area size by
+/*! specialized button for safe area which enables to choose safe area size by
  * context menu
  */
 
@@ -128,6 +128,27 @@ protected:
   void mousePressEvent(QMouseEvent *event) override;
 signals:
   void updateViewer();
+};
+
+//-----------------------------------------------------------------------------
+/*! specialized button for safe area which enables to choose safe area size by
+ * context menu
+ */
+
+class TPanelTitleBarButtonForPreview final : public TPanelTitleBarButton {
+  Q_OBJECT
+public:
+  TPanelTitleBarButtonForPreview(QWidget *parent,
+                                 const QString &standardPixmapName)
+      : TPanelTitleBarButton(parent, standardPixmapName) {}
+
+  bool isChecked() { return m_pressed; }
+
+protected:
+  void contextMenuEvent(QContextMenuEvent *event) override;
+  void mousePressEvent(QMouseEvent *event) override;
+protected slots:
+  void onSetPreviewBehavior();
 };
 
 //-----------------------------------------------------------------------------
@@ -242,7 +263,7 @@ class TPanel : public TDockWidget {
   QByteArray m_currentRoomOldState;
 
 public:
-  TPanel(QWidget *parent = 0, Qt::WindowFlags flags = 0,
+  TPanel(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags(),
          TDockWidget::Orientation orientation = TDockWidget::vertical);
   ~TPanel();
 

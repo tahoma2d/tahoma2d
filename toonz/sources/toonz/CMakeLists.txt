@@ -79,6 +79,7 @@ set(MOC_HEADERS
     reslist.h
     ruler.h
     savepresetpopup.h
+    scenebrowser.h
     scenesettingspopup.h
     sceneviewer.h
     sceneviewercontextmenu.h
@@ -123,6 +124,9 @@ set(MOC_HEADERS
 	expressionreferencemanager.h
     tooloptionsshortcutinvoker.h
     exportxsheetpdf.h
+    custompanelmanager.h
+    custompaneleditorpopup.h
+    convertfolderpopup.h
     motionpathpanel.h
     graphwidget.h
     ../stopmotion/stopmotion.h
@@ -178,6 +182,7 @@ set(HEADERS
     ../include/orientation.h
     ../include/saveloadqsettings.h
     xdtsio.h
+    ocaio.h
     levelcommand.h
 # Tracker file
     ObjectTracker.h
@@ -267,6 +272,8 @@ set(SOURCES
     renumberpopup.cpp
     runscriptcommand.cpp
     savepresetpopup.cpp
+    scenebrowser.cpp
+    scenebrowserversioncontrol.cpp
     sceneviewercontextmenu.cpp
     scenesettingspopup.cpp
     scriptconsolepanel.cpp
@@ -351,11 +358,15 @@ set(SOURCES
 	separatecolorsswatch.cpp
 	separatecolorspopup.cpp
     xdtsio.cpp
+    ocaio.cpp
 	xdtsimportpopup.cpp
 	expressionreferencemanager.cpp
     tooloptionsshortcutinvoker.cpp
     tvpjson_io.cpp
     exportxsheetpdf.cpp
+    custompanelmanager.cpp
+    custompaneleditorpopup.cpp
+    convertfolderpopup.cpp
 # Tracker file
     dummyprocessor.cpp
     metnum.cpp
@@ -480,7 +491,7 @@ if(BUILD_ENV_MSVC)
 
     target_link_libraries(Tahoma2D
         Qt5::WinMain Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
-        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort
+        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort Qt5::UiTools
         ${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS} ${EXTRA_LIBS} strmiids
         tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm
     )
@@ -500,7 +511,7 @@ elseif(BUILD_ENV_APPLE AND WITH_CANON)
 
     target_link_libraries(Tahoma2D
         Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
-        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort
+        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort Qt5::UiTools
         ${GL_LIB} ${GLUT_LIB} ${CANON_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
         ${COCOA_LIB} ${EXTRA_LIBS} mousedragfilter
     )
@@ -521,7 +532,7 @@ elseif(BUILD_ENV_APPLE)
 
     target_link_libraries(Tahoma2D
         Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
-        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort
+        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets Qt5::SerialPort Qt5::UiTools
         ${GL_LIB} ${GLUT_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
         ${COCOA_LIB} ${EXTRA_LIBS} mousedragfilter
     )
@@ -544,7 +555,7 @@ elseif(BUILD_ENV_UNIXLIKE)
 
     target_link_libraries(
         Tahoma2D Qt5::Core Qt5::Gui Qt5::Network Qt5::OpenGL Qt5::Svg Qt5::Xml
-        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort
+        Qt5::Script Qt5::Widgets Qt5::PrintSupport Qt5::Multimedia Qt5::SerialPort Qt5::UiTools
         ${GL_LIB} ${GLUT_LIB} ${GLU_LIB} ${TURBOJPEG_LIB} ${OpenCV_LIBS}
         ${EXTRA_LIBS}
     )

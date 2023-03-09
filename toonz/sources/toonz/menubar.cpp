@@ -344,6 +344,7 @@ void TopBar::loadMenubar() {
     addMenuItem(exportMenu, MI_ExportCurrentScene);
     addMenuItem(exportMenu, MI_SoundTrack);
     addMenuItem(exportMenu, MI_ExportXDTS);
+    addMenuItem(exportMenu, MI_ExportOCA);
     addMenuItem(exportMenu, MI_ExportXsheetPDF);
     addMenuItem(exportMenu, MI_StopMotionExportImageSequence);
     addMenuItem(exportMenu, MI_ExportTvpJson);
@@ -653,6 +654,7 @@ void TopBar::loadMenubar() {
   addMenuItem(windowsMenu, MI_OpenFilmStrip);
   windowsMenu->addSeparator();
   addMenuItem(windowsMenu, MI_OpenFileBrowser);
+  addMenuItem(windowsMenu, MI_OpenPreproductionBoard);
   addMenuItem(windowsMenu, MI_OpenFileBrowser2);
   windowsMenu->addSeparator();
   addMenuItem(windowsMenu, MI_OpenCleanupSettings);
@@ -665,6 +667,7 @@ void TopBar::loadMenubar() {
   addMenuItem(windowsMenu, MI_OpenMotionPathPanel);
   addMenuItem(windowsMenu, MI_StartupPopup);
   addMenuItem(windowsMenu, MI_OpenGuidedDrawingControls);
+  addMenuItem(windowsMenu, MI_OpenCustomPanels);
   // windowsMenu->addSeparator();
   // addMenuItem(windowsMenu, MI_OpenExport);
   windowsMenu->addSeparator();

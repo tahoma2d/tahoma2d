@@ -563,7 +563,7 @@ TPalette *Convert2Tlv::buildPalette() {
       stylesToBeAddedToPage.push_back(it->second);
   }
 
-  /*- インデックス順にページに格納する -*/
+  /*- Store on page in index order -*/
   if (!stylesToBeAddedToPage.isEmpty()) {
     std::sort(stylesToBeAddedToPage.begin(), stylesToBeAddedToPage.end());
     for (int s = 0; s < stylesToBeAddedToPage.size(); s++)
@@ -628,7 +628,7 @@ TPalette *Convert2Tlv::buildPalette() {
       int addedId =
           m_palette->addStyle(srcPage->getStyle(srcIndexInPage)->clone());
       dstPage->addStyle(addedId);
-      /*-- StudioPalette由来のDefaultPaletteの場合、GrobalNameを消去する --*/
+      /*--  For StudioPalette-derived DefaultPalettes, clear the GrobalName --*/
       m_palette->getStyle(addedId)->setGlobalName(L"");
       m_palette->getStyle(addedId)->setOriginalName(L"");
     }

@@ -31,12 +31,8 @@ class QuickToolbar final : public CommandBar {
   XsheetViewer *m_viewer;
 
 public:
-#if QT_VERSION >= 0x050500
   QuickToolbar(XsheetViewer *parent = 0, Qt::WindowFlags flags = 0,
                 bool isCollapsible = false);
-#else
-  QuickToolbar(XsheetViewer *parent = 0, Qt::WFlags flags = 0);
-#endif
   static void toggleQuickToolbar();
   void showToolbar(bool show);
 
@@ -48,6 +44,6 @@ protected slots:
   void doCustomizeCommandBar();
 };
 
-}  // namespace XsheetGUI;
+}  // namespace XsheetGUI
 
 #endif  // QUICKTOOLBAR_H

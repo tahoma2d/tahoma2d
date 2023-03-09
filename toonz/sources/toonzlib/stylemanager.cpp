@@ -198,9 +198,10 @@ void CustomStyleManager::StyleLoaderTask::run() {
 #endif
 
     m_data.m_path        = m_fp;
-    m_data.m_patternName = m_fp.getName();
+    m_data.m_patternName = QString::fromStdString(m_fp.getName());
     m_data.m_isVector    = (m_fp.getType() == "pli" || m_fp.getType() == "svg");
     m_data.m_image       = image;
+    m_data.m_idName      = TTextureStyle::staticBrushIdName(m_fp.getLevelNameW());
   } catch (...) {
   }
 }
@@ -223,7 +224,10 @@ void CustomStyleManager::StyleLoaderTask::onFinished(
 
 CustomStyleManager::CustomStyleManager(const TFilePath &stylesFolder,
                                        QString filters, QSize chipSize)
-    : m_stylesFolder(stylesFolder), m_filters(filters), m_chipSize(chipSize) {
+    : m_stylesFolder(stylesFolder)
+    , m_filters(filters)
+    , m_chipSize(chipSize)
+    , m_isIndexed(false) {
   m_executor.setMaxActiveTasks(1);
 }
 
@@ -240,13 +244,37 @@ void CustomStyleManager::loadItemFinished(TFilePath file) {
 
 //-----------------------------------------------------------------------------
 
-int CustomStyleManager::getPatternCount() { return m_patterns.size(); }
+int CustomStyleManager::getPatternCount() {
+  return m_isIndexed ? m_indexes.count() : m_patterns.size();
+}
 
 //-----------------------------------------------------------------------------
 
 CustomStyleManager::PatternData CustomStyleManager::getPattern(int index) {
+  if (m_isIndexed)
+    return (index < 0 || index >= m_indexes.count())
+               ? PatternData()
+               : m_patterns[m_indexes[index]];
+
   return (index < 0 || index >= m_patterns.size()) ? PatternData()
                                                    : m_patterns[index];
+}
+
+//-----------------------------------------------------------------------------
+
+void CustomStyleManager::applyFilter() {
+  QList<int> indexes;
+
+  m_indexes.clear();
+  int len = m_patterns.count();
+  for (int i = 0; i < len; i++) {
+    auto &chip = m_patterns[i];
+    if (chip.m_patternName.indexOf(m_searchText, 0, Qt::CaseInsensitive) >= 0)
+        m_indexes.append(i);
+  }
+
+  m_indexes.append(indexes);
+  m_isIndexed = (m_indexes.count() != len);
 }
 
 //-----------------------------------------------------------------------------
@@ -323,9 +351,10 @@ void CustomStyleManager::loadGeneratedStyle(TFilePath file) {
   convertRaster32ToImage(style->getIcon(chipSize), image);
 
   pattern.m_path        = file;
-  pattern.m_patternName = nameParts[0].toStdString();
+  pattern.m_patternName = nameParts[0];
   pattern.m_isGenerated = true;
   pattern.m_image       = image;
+  pattern.m_idName      = style->getBrushIdName();
 
   m_patterns.push_back(pattern);
 }
@@ -346,17 +375,44 @@ void CustomStyleManager::setStyleFolder(TFilePath styleFolder) {
 
 TextureStyleManager::TextureStyleManager(const TFilePath &stylesFolder,
                                          QString filters, QSize chipSize)
-    : m_stylesFolder(stylesFolder), m_filters(filters), m_chipSize(chipSize) {}
+    : m_stylesFolder(stylesFolder)
+    , m_filters(filters)
+    , m_chipSize(chipSize)
+    , m_isIndexed(false) {}
 
 //-----------------------------------------------------------------------------
 
-int TextureStyleManager::getTextureCount() { return m_textures.size(); }
+int TextureStyleManager::getTextureCount() {
+  return m_isIndexed ? m_indexes.count() : m_textures.size();
+}
 
 //-----------------------------------------------------------------------------
 
 TextureStyleManager::TextureData TextureStyleManager::getTexture(int index) {
+  if (m_isIndexed)
+    return (index < 0 || index >= m_indexes.count())
+               ? TextureData()
+               : m_textures[m_indexes[index]];
+
   return (index < 0 || index >= m_textures.size()) ? TextureData()
                                                    : m_textures[index];
+}
+
+//-----------------------------------------------------------------------------
+
+void TextureStyleManager::applyFilter() {
+  QList<int> indexes;
+
+  m_indexes.clear();
+  int len = m_textures.count();
+  for (int i = 0; i < len; i++) {
+    auto &chip = m_textures[i];
+    if (chip.m_textureName.indexOf(m_searchText, 0, Qt::CaseInsensitive) >= 0)
+      m_indexes.append(i);
+  }
+
+  m_indexes.append(indexes);
+  m_isIndexed = (m_indexes.count() != len);
 }
 
 //-----------------------------------------------------------------------------
@@ -418,8 +474,9 @@ void TextureStyleManager::loadTexture(TFilePath &fp) {
     TTextureStyle::fillCustomTextureIcon(ras);
     TextureData customText;
     customText.m_raster      = ras;
-    customText.m_textureName = std::string("");
+    customText.m_textureName = "";
     customText.m_path        = fp;
+    customText.m_idName      = TTextureStyle::staticBrushIdName(fp.getLevelNameW());
 
     m_textures.push_back(customText);
     return;
@@ -448,8 +505,9 @@ void TextureStyleManager::loadTexture(TFilePath &fp) {
 
   TextureData text;
   text.m_raster      = texture;
-  text.m_textureName = fp.getName();
+  text.m_textureName = QString::fromStdString(fp.getName());
   text.m_path        = fp;
+  text.m_idName      = TTextureStyle::staticBrushIdName(fp.getLevelNameW());
 
   m_textures.push_back(text);
 }
@@ -470,17 +528,44 @@ void TextureStyleManager::setStyleFolder(TFilePath styleFolder) {
 
 BrushStyleManager::BrushStyleManager(const TFilePath &stylesFolder,
                                      QString filters, QSize chipSize)
-    : m_stylesFolder(stylesFolder), m_filters(filters), m_chipSize(chipSize) {}
+    : m_stylesFolder(stylesFolder)
+    , m_filters(filters)
+    , m_chipSize(chipSize)
+    , m_isIndexed(false) {}
 
 //-----------------------------------------------------------------------------
 
-int BrushStyleManager::getBrushCount() { return m_brushes.size(); }
+int BrushStyleManager::getBrushCount() {
+  return m_isIndexed ? m_indexes.count() : m_brushes.size();
+}
 
 //-----------------------------------------------------------------------------
 
 BrushStyleManager::BrushData BrushStyleManager::getBrush(int index) {
+  if (m_isIndexed)
+    return (index < 0 || index >= m_indexes.count())
+               ? BrushData()
+               : m_brushes[m_indexes[index]];
+
   return (index < 0 || index >= m_brushes.size()) ? BrushData()
                                                   : m_brushes[index];
+}
+
+//-----------------------------------------------------------------------------
+
+void BrushStyleManager::applyFilter() {
+  QList<int> indexes;
+
+  m_indexes.clear();
+  int len = m_brushes.count();
+  for (int i = 0; i < len; i++) {
+    auto &chip = m_brushes[i];
+    if (chip.m_brushName.indexOf(m_searchText, 0, Qt::CaseInsensitive) >= 0)
+      m_indexes.append(i);
+  }
+
+  m_indexes.append(indexes);
+  m_isIndexed = (m_indexes.count() != len);
 }
 
 //-----------------------------------------------------------------------------
@@ -524,8 +609,9 @@ void BrushStyleManager::loadItems() {
   for (TFilePathSet::iterator it = fps.begin(); it != fps.end(); it++) {
     BrushData brush;
     brush.m_brush     = TMyPaintBrushStyle(*it);
-    brush.m_brushName = it->getName();
+    brush.m_brushName = QString::fromStdString(it->getName());
     brush.m_path      = *it;
+    brush.m_idName    = brush.m_brush.getBrushIdName();
 
     m_brushes.push_back(brush);
     brushesUpdated = true;
@@ -736,7 +822,7 @@ void TStyleManager::changeStyleSetFolder(CustomStyleManager *styleManager,
   std::pair<TFilePath, QString> newKey(newPath, styleManager->getFilters());
 
   std::vector<std::pair<TFilePath, QString>>::iterator it;
-  int i;
+  int i = 0;
   for (it = m_customStyleFolders.begin(); it != m_customStyleFolders.end();
        it++) {
     if (*it == oldKey) {
@@ -764,7 +850,7 @@ void TStyleManager::changeStyleSetFolder(TextureStyleManager *styleManager,
   std::pair<TFilePath, QString> newKey(newPath, styleManager->getFilters());
 
   std::vector<std::pair<TFilePath, QString>>::iterator it;
-  int i;
+  int i = 0;
   for (it = m_textureStyleFolders.begin(); it != m_textureStyleFolders.end();
        it++) {
     if (*it == oldKey) {
@@ -792,7 +878,7 @@ void TStyleManager::changeStyleSetFolder(BrushStyleManager *styleManager,
   std::pair<TFilePath, QString> newKey(newPath, styleManager->getFilters());
 
   std::vector<std::pair<TFilePath, QString>>::iterator it;
-  int i;
+  int i = 0;
   for (it = m_brushStyleFolders.begin(); it != m_brushStyleFolders.end();
        it++) {
     if (*it == oldKey) {

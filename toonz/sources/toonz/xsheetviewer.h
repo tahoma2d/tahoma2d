@@ -163,11 +163,7 @@ class XsheetScrollArea final : public QScrollArea {
   Q_OBJECT
 
 public:
-#if QT_VERSION >= 0x050500
   XsheetScrollArea(QWidget *parent = 0, Qt::WindowFlags flags = 0)
-#else
-  XsheetScrollArea(QWidget *parent = 0, Qt::WFlags flags = 0)
-#endif
       : QScrollArea(parent) {
     setObjectName("xsheetScrollArea");
     setFrameStyle(QFrame::StyledPanel);
@@ -212,19 +208,27 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
                  setTimelineIconLineColor)
 
   // Row
-  QColor m_currentRowBgColor;      // current frame / column (210,210,210)
-  QColor m_markerLineColor;        // marker lines (0, 255, 246)
-  QColor m_verticalLineColor;      // vertical lines
-  QColor m_verticalLineHeadColor;  // vertical lines in column head
-  QColor m_textColor;              // text color (black)
-  QColor m_errorTextColor;         // error text color (red, probably)
-  QColor m_previewFrameTextColor;  // frame number in preview range (blue)
+  QColor m_currentRowBgColor;        // current frame / column (210,210,210)
+  QColor m_markerLineColor;          // marker lines (0, 255, 246)
+  QColor m_secMarkerLineColor;       // second marker lines
+  QColor m_selectedMarkerLineColor;  // marker lines in selected cells
+  QColor m_verticalLineColor;        // vertical lines
+  QColor m_verticalLineHeadColor;    // vertical lines in column head
+  QColor m_textColor;                // text color (black)
+  QColor m_errorTextColor;           // error text color (red, probably)
+  QColor m_selectedTextColor;        // text color for the selected cells
+  QColor m_currentFrameTextColor;    // text color for the current frame row
+  QColor m_previewFrameTextColor;    // frame number in preview range (blue)
   QColor m_onionSkinAreaBgColor;
   QColor m_frameRangeMarkerLineColor;  // timeline frame markers
   Q_PROPERTY(QColor CurrentRowBgColor READ getCurrentRowBgColor WRITE
                  setCurrentRowBgColor)
   Q_PROPERTY(
       QColor MarkerLineColor READ getMarkerLineColor WRITE setMarkerLineColor)
+  Q_PROPERTY(QColor SecMarkerLineColor READ getSecMarkerLineColor WRITE
+                 setSecMarkerLineColor)
+  Q_PROPERTY(QColor SelectedMarkerLineColor READ getSelectedMarkerLineColor
+                 WRITE setSelectedMarkerLineColor)
   Q_PROPERTY(QColor VerticalLineColor READ getVerticalLineColor WRITE
                  setVerticalLineColor)
   Q_PROPERTY(QColor VerticalLineHeadColor READ getVerticalLineHeadColor WRITE
@@ -232,6 +236,10 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   Q_PROPERTY(QColor TextColor READ getTextColor WRITE setTextColor)
   Q_PROPERTY(
       QColor ErrorTextColor READ getErrorTextColor WRITE setErrorTextColor)
+  Q_PROPERTY(QColor SelectedTextColor READ getCurrentFrameTextColor WRITE
+                 setCurrentFrameTextColor)
+  Q_PROPERTY(QColor CurrentFrameTextColor READ getSelectedTextColor WRITE
+                 setSelectedTextColor)
   Q_PROPERTY(QColor PreviewFrameTextColor READ getPreviewFrameTextColor WRITE
                  setPreviewFrameTextColor)
   Q_PROPERTY(QColor OnionSkinAreaBgColor READ getOnionSkinAreaBgColor WRITE
@@ -632,11 +640,7 @@ private:
   }
 
 public:
-#if QT_VERSION >= 0x050500
   XsheetViewer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  XsheetViewer(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
   ~XsheetViewer();
 
   TColumnSelection *getColumnSelection() const { return m_columnSelection; }
@@ -784,6 +788,16 @@ public:
   QColor getCurrentRowBgColor() const { return m_currentRowBgColor; }
   void setMarkerLineColor(const QColor &color) { m_markerLineColor = color; }
   QColor getMarkerLineColor() const { return m_markerLineColor; }
+  void setSecMarkerLineColor(const QColor &color) {
+    m_secMarkerLineColor = color;
+  }
+  QColor getSecMarkerLineColor() const { return m_secMarkerLineColor; }
+  void setSelectedMarkerLineColor(const QColor &color) {
+    m_selectedMarkerLineColor = color;
+  }
+  QColor getSelectedMarkerLineColor() const {
+    return m_selectedMarkerLineColor;
+  }
   void setVerticalLineColor(const QColor &color) {
     m_verticalLineColor = color;
   }
@@ -796,6 +810,14 @@ public:
   QColor getTextColor() const { return m_textColor; }
   void setErrorTextColor(const QColor &color) { m_errorTextColor = color; }
   QColor getErrorTextColor() const { return m_errorTextColor; }
+  void setSelectedTextColor(const QColor &color) {
+    m_selectedTextColor = color;
+  }
+  QColor getSelectedTextColor() const { return m_selectedTextColor; }
+  void setCurrentFrameTextColor(const QColor &color) {
+    m_currentFrameTextColor = color;
+  }
+  QColor getCurrentFrameTextColor() const { return m_currentFrameTextColor; }
   void setPreviewFrameTextColor(const QColor &color) {
     m_previewFrameTextColor = color;
   }

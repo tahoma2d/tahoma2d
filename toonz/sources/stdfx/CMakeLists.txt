@@ -86,6 +86,11 @@ set(HEADERS
     iwa_bokeh_advancedfx.h
     iwa_bokeh_util.h
     globalcontrollablefx.h
+    iwa_floorbumpfx.h
+    iwa_tangentflowfx.h
+    iwa_flowblurfx.h
+    iwa_flowpaintbrushfx.h
+    iwa_motionflowfx.h
 )
 
 if(OpenCV_FOUND)
@@ -280,6 +285,11 @@ set(SOURCES
     iwa_rainbowfx.cpp
     iwa_bokeh_advancedfx.cpp
     iwa_bokeh_util.cpp
+    iwa_floorbumpfx.cpp
+    iwa_tangentflowfx.cpp
+    iwa_flowblurfx.cpp
+    iwa_flowpaintbrushfx.cpp
+    iwa_motionflowfx.cpp
 )
 
 if(OpenCV_FOUND)

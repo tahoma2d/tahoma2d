@@ -1002,7 +1002,10 @@ TFx *TFx::getLinkedFx() const {
 
 //--------------------------------------------------
 
-void TFx::setFxVersion(int v) { m_imp->m_attributes.setFxVersion(v); }
+void TFx::setFxVersion(int v) {
+  m_imp->m_attributes.setFxVersion(v);
+  onFxVersionSet();
+}
 
 //--------------------------------------------------
 

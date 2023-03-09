@@ -1,4 +1,4 @@
-#include "separatecolorsswatch.h"
+ï»¿#include "separatecolorsswatch.h"
 
 #include "tapp.h"
 
@@ -240,7 +240,7 @@ void SeparateSwatchArea::paintEvent(QPaintEvent *event) {
 void SeparateSwatchArea::wheelEvent(QWheelEvent *event) {
   if (!m_sw->m_mainSwatch || m_sw->m_lx == 0 || m_sw->m_ly == 0) return;
 
-  int step      = event->delta() > 0 ? 120 : -120;
+  int step      = event->angleDelta().y() > 0 ? 120 : -120;
   double factor = exp(0.001 * step);
   if (factor == 1.0) return;
   double scale   = m_sw->m_viewAff.det();
@@ -249,7 +249,11 @@ void SeparateSwatchArea::wheelEvent(QWheelEvent *event) {
   if ((factor < 1 && sqrt(scale) < minZoom) || (factor > 1 && scale > 1200.0))
     return;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  TPointD delta(event->position().x(), height() - event->position().y());
+#else
   TPointD delta(event->pos().x(), height() - event->pos().y());
+#endif
   m_sw->m_viewAff =
       (TTranslation(delta) * TScale(factor) * TTranslation(-delta)) *
       m_sw->m_viewAff;
@@ -411,7 +415,7 @@ void SeparateSwatch::setRaster(TRasterP orgRas, TRasterP mainRas,
 void SeparateSwatch::setRaster(TRasterP orgRas, TRasterP mainRas,
                                TRasterP sub1Ras, TRasterP sub2Ras,
                                TRasterP sub3Ras) {
-  //o‚·
+  // ÂoÂ‚Â·
   m_sub3Swatch->setVisible(true);
   m_sub3Label->setVisible(true);
 

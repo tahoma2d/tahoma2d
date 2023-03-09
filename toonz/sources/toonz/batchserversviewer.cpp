@@ -255,11 +255,7 @@ static LineEdit *create(QGridLayout *layout, const QString &name, int &row,
   return ret;
 }
 
-#if QT_VERSION >= 0x050500
 BatchServersViewer::BatchServersViewer(QWidget *parent, Qt::WindowFlags flags)
-#else
-BatchServersViewer::BatchServersViewer(QWidget *parent, Qt::WFlags flags)
-#endif
     : QFrame(parent) {
   int row = 0;
 

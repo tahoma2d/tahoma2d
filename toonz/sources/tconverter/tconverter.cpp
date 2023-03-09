@@ -449,7 +449,7 @@ int main(int argc, char *argv[]) {
         exit(1);
       }
     }
-    if (ext != "pli") {
+    if (ext != "3gp" && ext != "pli") {
       convert(srcFilePath, dstFilePath, range, width, prop, resQuality);
     } else {
       msg = "Cannot convert to ." + ext + " format.";

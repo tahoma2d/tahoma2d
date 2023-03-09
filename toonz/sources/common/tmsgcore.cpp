@@ -10,7 +10,7 @@
 #include <QTcpSocket>
 
 TMsgCore *TMsgCore::instance() {
-  static TMsgCore *theInstance  = 0;
+  static TMsgCore *theInstance = 0;
   if (!theInstance) theInstance = new TMsgCore();
   return theInstance;
 }
@@ -133,7 +133,11 @@ void TMsgCore::readFromSocket(QTcpSocket *socket)  // server side
     message.chop(lastbegin);
   }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  QStringList messages = message.split("#TMSG", Qt::SkipEmptyParts);
+#else
   QStringList messages = message.split("#TMSG", QString::SkipEmptyParts);
+#endif
 
   for (int i = 0; i < messages.size(); i++) {
     QString str = messages.at(i).simplified();
@@ -177,11 +181,7 @@ bool TMsgCore::send(DVGui::MsgType type, const QString &message)  // client side
              : (type == DVGui::WARNING ? "#TMSG WARNING " : "#TMSG INFO ")) +
         message + " #END\n";
 
-#if QT_VERSION >= 0x050000
     m_clientSocket->write(socketMessage.toLatin1());
-#else
-    m_clientSocket->write(socketMessage.toAscii());
-#endif
     m_clientSocket->flush();
     // m_clientSocket->waitForBytesWritten (1000);
   } else

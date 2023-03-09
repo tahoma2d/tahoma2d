@@ -66,6 +66,6 @@ static const TCM_INFO Tcm_32_default_info = {
 #define TCM_CMAP_COLBUFFER_SIZE(TCM) (1 << ((TCM).color_bits + (TCM).tone_bits))
 
 #define TCM_CMAP_PENBUFFER_SIZE(TCM)                                           \
-  (1 << ((TCM).pencil_bits + (TCM).tone_bits))
+  (uint64_t(1) << ((TCM).pencil_bits + (TCM).tone_bits))
 
 #endif

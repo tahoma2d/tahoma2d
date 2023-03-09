@@ -52,7 +52,8 @@ public:
   bool isImageCompatible(int imFlags, void *extData) override;
 
   /*--
-   * ImageBuilder仮想関数の実装。アイコン、画像をLoad時に全てキャッシュに格納する
+   * Implement ImageBuilder virtual functions. All icons and images are stored
+   * in the cache on loading
    * --*/
   void buildAllIconsAndPutInCache(TXshSimpleLevel *level,
                                   std::vector<TFrameId> fids,
@@ -76,8 +77,11 @@ private:
   TFrameId m_fid;    //!< Frame of the level to load
 
   bool m_64bitCompatible;  //!< Whether current image is 64-bit compatible
+  bool m_floatCompatible;  //!< Whether current image is float compatible
   int m_subsampling;       //!< Current image subsampling
   //!< NOTE: Should this be replaced by requests to the TImageCache?
+
+  double m_colorSpaceGamma;  // current gamma. only used in EXR levels
 };
 
 //-----------------------------------------------------------------------------

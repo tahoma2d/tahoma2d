@@ -18,11 +18,7 @@ class ValueAdjuster final : public QWidget {
   DVGui::DoubleLineEdit *m_valueLineEdit;
 
 public:
-#if QT_VERSION >= 0x050500
-  ValueAdjuster(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  ValueAdjuster(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
+  ValueAdjuster(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
   ~ValueAdjuster();
 
 protected slots:
@@ -43,11 +39,8 @@ class ValueShifter final : public QWidget {
   DVGui::DoubleLineEdit *m_valueLineEdit;
 
 public:
-#if QT_VERSION >= 0x050500
-  ValueShifter(bool isHue, QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  ValueShifter(bool isHue, QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
+  ValueShifter(bool isHue, QWidget *parent = 0,
+               Qt::WindowFlags flags = Qt::WindowFlags());
   ~ValueShifter();
 
 protected slots:
@@ -70,11 +63,8 @@ class ColorFader final : public QWidget {
   DVGui::DoubleLineEdit *m_valueLineEdit;
 
 public:
-#if QT_VERSION >= 0x050500
-  ColorFader(QString name = "", QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-  ColorFader(QString name = "", QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
+  ColorFader(QString name = "", QWidget *parent = 0,
+             Qt::WindowFlags flags = Qt::WindowFlags());
   ~ColorFader();
 
 protected slots:

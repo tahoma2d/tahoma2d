@@ -134,16 +134,23 @@ Iwa_BokehAdvancedFx::Iwa_BokehAdvancedFx()
   bindParam(this, "on_focus_distance", m_onFocusDistance, false);
   bindParam(this, "bokeh_amount", m_bokehAmount, false);
   bindParam(this, "masterHardness", m_hardness, false);
+  bindParam(this, "masterGamma", m_gamma, false);
+  bindParam(this, "masterGammaAdjust", m_gammaAdjust, false);
   bindParam(this, "hardnessPerSource", m_hardnessPerSource, false);
+  bindParam(this, "linearizeMode", m_linearizeMode, false);
 
   // Bind layer parameters
   for (int layer = 0; layer < LAYER_NUM; layer++) {
     m_layerParams[layer].m_distance        = TDoubleParamP(0.5);
     m_layerParams[layer].m_bokehAdjustment = TDoubleParamP(1);
 
-    m_layerParams[layer].m_hardness   = TDoubleParamP(0.3);
-    m_layerParams[layer].m_depth_ref  = TIntParamP(0);
-    m_layerParams[layer].m_depthRange = TDoubleParamP(1.0);
+    m_layerParams[layer].m_hardness    = TDoubleParamP(0.3);
+    m_layerParams[layer].m_gamma       = TDoubleParamP(2.2);
+    m_layerParams[layer].m_gammaAdjust = TDoubleParamP(0.);
+    m_layerParams[layer].m_depth_ref   = TIntParamP(0);
+    m_layerParams[layer].m_depthRange  = TDoubleParamP(1.0);
+    m_layerParams[layer].m_fillGap     = TBoolParamP(true);
+    m_layerParams[layer].m_doMedian    = TBoolParamP(false);
 
     std::string str = QString("Source%1").arg(layer + 1).toStdString();
     addInputPort(str, m_layerParams[layer].m_source);
@@ -152,21 +159,67 @@ Iwa_BokehAdvancedFx::Iwa_BokehAdvancedFx()
     bindParam(this, QString("bokeh_adjustment%1").arg(layer + 1).toStdString(),
               m_layerParams[layer].m_bokehAdjustment);
 
+    bindParam(this, QString("gamma%1").arg(layer + 1).toStdString(),
+              m_layerParams[layer].m_gamma);
+    bindParam(this, QString("gammaAdjust%1").arg(layer + 1).toStdString(),
+              m_layerParams[layer].m_gammaAdjust);
     bindParam(this, QString("hardness%1").arg(layer + 1).toStdString(),
               m_layerParams[layer].m_hardness);
     bindParam(this, QString("depth_ref%1").arg(layer + 1).toStdString(),
               m_layerParams[layer].m_depth_ref);
     bindParam(this, QString("depthRange%1").arg(layer + 1).toStdString(),
               m_layerParams[layer].m_depthRange);
+    bindParam(this, QString("fillGap%1").arg(layer + 1).toStdString(),
+              m_layerParams[layer].m_fillGap);
+    bindParam(this, QString("doMedian%1").arg(layer + 1).toStdString(),
+              m_layerParams[layer].m_doMedian);
 
     m_layerParams[layer].m_distance->setValueRange(0.0, 1.0);
     m_layerParams[layer].m_bokehAdjustment->setValueRange(0.0, 2.0);
 
     m_layerParams[layer].m_hardness->setValueRange(0.05, 3.0);
+    m_layerParams[layer].m_gamma->setValueRange(1.0, 10.0);
+    m_layerParams[layer].m_gammaAdjust->setValueRange(-5., 5.);
     m_layerParams[layer].m_depthRange->setValueRange(0.0, 1.0);
   }
 
   addInputPort("Depth1", new TRasterFxPort, 0);
+
+  enableComputeInFloat(true);
+
+  // Version 1: Exposure is computed by using Hardness
+  //            E = std::pow(10.0, (value - 0.5) / hardness)
+  // Version 2: Exposure can also be computed by using Gamma, for easier
+  // combination with the linear color space
+  //            E = std::pow(value, gamma)
+  // this must be called after binding the parameters (see onFxVersionSet())
+  // Version 3: Gamma is computed by rs.m_colorSpaceGamma + gammaAdjust
+  setFxVersion(3);
+}
+
+//--------------------------------------------
+
+void Iwa_BokehAdvancedFx::onFxVersionSet() {
+  bool useGamma = getFxVersion() == 2;
+  if (getFxVersion() == 1) {
+    m_linearizeMode->setValue(Hardness);
+    setFxVersion(3);
+  } else if (getFxVersion() == 2) {
+    if (m_linearizeMode->getValue() == Hardness) {
+      useGamma = false;
+      setFxVersion(3);
+    }
+  }
+  getParams()->getParamVar("masterGamma")->setIsHidden(!useGamma);
+  getParams()->getParamVar("masterGammaAdjust")->setIsHidden(useGamma);
+  for (int layer = 0; layer < LAYER_NUM; layer++) {
+    getParams()
+        ->getParamVar(QString("gamma%1").arg(layer + 1).toStdString())
+        ->setIsHidden(!useGamma);
+    getParams()
+        ->getParamVar(QString("gammaAdjust%1").arg(layer + 1).toStdString())
+        ->setIsHidden(useGamma);
+  }
 }
 
 //--------------------------------------------
@@ -232,12 +285,11 @@ void Iwa_BokehAdvancedFx::doCompute(TTile& tile, double frame,
 
   // compute the input tiles
   QMap<int, TTile*> sourceTiles;
-  TRenderSettings infoOnInput(settings);
-  infoOnInput.m_bpp = 64;
   for (auto index : sourceIndices) {
     TTile* layerTile = new TTile();
     m_layerParams[index].m_source->allocateAndCompute(
-        *layerTile, _rectOut.getP00(), dimOut, 0, frame, infoOnInput);
+        *layerTile, _rectOut.getP00(), dimOut, tile.getRaster(), frame,
+        settings);
     sourceTiles[index] = layerTile;
   }
 
@@ -270,6 +322,7 @@ void Iwa_BokehAdvancedFx::doCompute(TTile& tile, double frame,
         unsigned char* ctrl_mem = (unsigned char*)ctrlRas->getRawData();
         TRaster32P ras32        = (TRaster32P)tmpTile.getRaster();
         TRaster64P ras64        = (TRaster64P)tmpTile.getRaster();
+        TRasterFP rasF          = (TRasterFP)tmpTile.getRaster();
         lock.lockForRead();
         if (ras32)
           BokehUtils::setDepthRaster<TRaster32P, TPixel32>(ras32, ctrl_mem,
@@ -277,6 +330,9 @@ void Iwa_BokehAdvancedFx::doCompute(TTile& tile, double frame,
         else if (ras64)
           BokehUtils::setDepthRaster<TRaster64P, TPixel64>(ras64, ctrl_mem,
                                                            dimOut);
+        else if (rasF)
+          BokehUtils::setDepthRaster<TRasterFP, TPixelF>(rasF, ctrl_mem,
+                                                         dimOut);
         lock.unlock();
         ctrl_rasters.push_back(ctrlRas);
         ctrls[portIndex] = ctrl_mem;
@@ -284,7 +340,17 @@ void Iwa_BokehAdvancedFx::doCompute(TTile& tile, double frame,
     }
   }
 
-  double masterHardness = m_hardness->getValue(frame);
+  double masterGamma;
+  if (m_linearizeMode->getValue() == Hardness)
+    masterGamma = m_hardness->getValue(frame);
+  else {  // Gamma
+    if (getFxVersion() == 2)
+      masterGamma = m_gamma->getValue(frame);
+    else
+      masterGamma = std::max(
+          1., settings.m_colorSpaceGamma + m_gammaAdjust->getValue(frame));
+    if (tile.getRaster()->isLinear()) masterGamma /= settings.m_colorSpaceGamma;
+  }
 
   QList<LayerValue> layerValues;
   for (auto index : sourceIndices) {
@@ -292,10 +358,24 @@ void Iwa_BokehAdvancedFx::doCompute(TTile& tile, double frame,
     layerValue.sourceTile = sourceTiles[index];
     layerValue.premultiply =
         false;  // assuming input images are always premultiplied
-    layerValue.layerHardness =
-        (m_hardnessPerSource->getValue())
-            ? m_layerParams[index].m_hardness->getValue(frame)
-            : masterHardness;
+
+    if (m_hardnessPerSource->getValue()) {
+      if (m_linearizeMode->getValue() == Hardness)
+        layerValue.layerGamma =
+            m_layerParams[index].m_hardness->getValue(frame);
+      else {  // Gamma
+        if (getFxVersion() == 2)
+          layerValue.layerGamma = m_layerParams[index].m_gamma->getValue(frame);
+        else
+          layerValue.layerGamma = std::max(
+              1., settings.m_colorSpaceGamma +
+                      m_layerParams[index].m_gammaAdjust->getValue(frame));
+        if (tile.getRaster()->isLinear())
+          layerValue.layerGamma /= settings.m_colorSpaceGamma;
+      }
+    } else
+      layerValue.layerGamma = masterGamma;
+
     layerValue.depth_ref = m_layerParams[index].m_depth_ref->getValue();
     layerValue.irisSize  = irisSizes.value(index);
     layerValue.distance  = m_layerParams[index].m_distance->getValue(frame);
@@ -303,8 +383,8 @@ void Iwa_BokehAdvancedFx::doCompute(TTile& tile, double frame,
         m_layerParams[index].m_bokehAdjustment->getValue(frame);
     layerValue.depthRange = m_layerParams[index].m_depthRange->getValue(frame);
     layerValue.distancePrecision = 10;
-    layerValue.fillGap           = true;
-    layerValue.doMedian          = false;
+    layerValue.fillGap           = m_layerParams[index].m_fillGap->getValue();
+    layerValue.doMedian          = m_layerParams[index].m_doMedian->getValue();
 
     layerValues.append(layerValue);
   }

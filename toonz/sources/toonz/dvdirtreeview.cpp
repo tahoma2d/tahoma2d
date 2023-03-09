@@ -118,11 +118,7 @@ QWidget *DvDirTreeViewDelegate::createEditor(QWidget *parent,
   if (!fnode || fnode->isProjectFolder()) return 0;
   QPixmap px = node->getPixmap(m_treeView->isExpanded(index));
   QRect rect = option.rect;
-#if QT_VERSION >= 0x050000
   if (index.data().canConvert(QMetaType::QString)) {
-#else
-  if (qVariantCanConvert<QString>(index.data())) {
-#endif
     NodeEditor *editor = new NodeEditor(parent, rect, px.width());
     editor->setText(index.data().toString());
     connect(editor, SIGNAL(editingFinished()), this,
@@ -266,11 +262,7 @@ void DvDirTreeViewDelegate::paint(QPainter *painter,
 
 void DvDirTreeViewDelegate::setEditorData(QWidget *editor,
                                           const QModelIndex &index) const {
-#if QT_VERSION >= 0x050000
   if (index.data().canConvert(QMetaType::QString))
-#else
-  if (qVariantCanConvert<QString>(index.data()))
-#endif
     NodeEditor *nodeEditor = qobject_cast<NodeEditor *>(editor);
   else
     QAbstractItemDelegate::setEditorData(editor, index);
@@ -281,12 +273,7 @@ void DvDirTreeViewDelegate::setEditorData(QWidget *editor,
 void DvDirTreeViewDelegate::setModelData(QWidget *editor,
                                          QAbstractItemModel *model,
                                          const QModelIndex &index) const {
-#if QT_VERSION >= 0x050000
-  if (index.data().canConvert(QMetaType::QString))
-#else
-  if (qVariantCanConvert<QString>(index.data()))
-#endif
-  {
+  if (index.data().canConvert(QMetaType::QString)) {
     NodeEditor *nodeEditor = qobject_cast<NodeEditor *>(editor);
     model->setData(index, qVariantFromValue(
                               nodeEditor->getText()));  // starEditor->text()));
@@ -342,7 +329,7 @@ DvDirTreeView::DvDirTreeView(QWidget *parent)
   // bottom horizontal scrollbar to resize contents...
   bool ret = true;
   ret      = ret && connect(this, SIGNAL(expanded(const QModelIndex &)), this,
-                       SLOT(resizeToConts()));
+                            SLOT(resizeToConts()));
 
   ret = ret && connect(this, SIGNAL(collapsed(const QModelIndex &)), this,
                        SLOT(resizeToConts()));
@@ -450,8 +437,7 @@ void DvDirTreeView::dropEvent(QDropEvent *e) {
     NameBuilder *nameBuilder =
         NameBuilder::getBuilder(::to_wstring(path.getName()));
     std::wstring levelNameOut;
-    do
-      levelNameOut = nameBuilder->getNext();
+    do levelNameOut = nameBuilder->getNext();
     while (TSystem::doesExistFileOrLevel(path.withName(levelNameOut)));
     dstFp = path.withName(levelNameOut);
 

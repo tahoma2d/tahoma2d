@@ -126,6 +126,11 @@
 // List view
 @palette-ListNumpadShortcutBorderColor: rgb(105, 105, 105);
 
+// StyleChooserPage Chips
+@palette-CommonChipBoxColor:    rgb(192, 192, 192);
+@palette-SolidChipBoxColor:     rgb(228, 144, 128);
+@palette-SelectedChipBoxColor:  black;
+
 // -----------------------------------------------------------------------------
 // File Browser / Trees
 // -----------------------------------------------------------------------------
@@ -173,6 +178,7 @@
 @xsheet-VerticalLine-color:                 rgba(0, 0, 0, 0.15);
 @xsheet-ColumnIconLine-color:               rgb(112, 112, 112);
 @xsheet-MarkerLine-color:                   rgba(0, 0, 0, 0.3);
+@xsheet-SecMarkerLine-color:                rgba(0, 0, 0, 0.5);
 @xsheet-OnionSkinAreaBG-color:              darken(@bg, 10);
 @xsheet-PreviewFrameText-color:             #2d42b9;
 @xsheet-CurrentRowBG-color:                 saturate(lighten(fade(@hl-bg-color, 70), -8), 8);
@@ -230,7 +236,7 @@
 // -----------------------------------------------------------------------------
 
 // Function Curve Panel
-@function-panel-bg-color: @schematic-viewer-bg-color;
+@function-panel-bg-color: darken(@bg, 35);
 @function-panel-OtherCurves-color: rgb(218, 218, 218);
 @function-panel-Text-color: @text-color;
 

@@ -3,6 +3,8 @@
 #include "tsystem.h"
 #include "tsound.h"
 #include "tenv.h"
+#include "timageinfo.h"
+#include "toonz/stage.h"
 
 #include <QProcess>
 #include <QEventLoop>
@@ -13,136 +15,50 @@
 #include "toonz/preferences.h"
 #include "toonz/toonzfolders.h"
 #include "tmsgcore.h"
+#include "thirdparty.h"
 
 Ffmpeg::Ffmpeg() {
-  m_ffmpegPath    = Preferences::instance()->getFfmpegPath();
-  m_ffmpegTimeout = Preferences::instance()->getFfmpegTimeout();
-  if (m_ffmpegTimeout > 0)
-    m_ffmpegTimeout *= 1000;
-  else
+  m_ffmpegTimeout      = ThirdParty::getFFmpegTimeout() * 1000;
+  if (m_ffmpegTimeout <= 0)
     m_ffmpegTimeout    = -1;
-  std::string strPath  = m_ffmpegPath.toStdString();
   m_intermediateFormat = "png";
+  m_startNumber        = 2147483647;  // Lowest frame determines starting frame
 }
 Ffmpeg::~Ffmpeg() {}
 
-bool Ffmpeg::checkFfmpeg() {
-  QString exe = "ffmpeg";
-#if defined(_WIN32)
-  exe = exe + ".exe";
-#endif
-
-  // check the user defined path in preferences first
-  QString path = Preferences::instance()->getFfmpegPath() + "/" + exe;
-  if (TSystem::doesExistFileOrLevel(TFilePath(path))) return true;
-
-  // Let's try and autodetect the exe included with release
-  QStringList folderList;
-
-  folderList.append(".");
-  folderList.append("./ffmpeg");  // ffmpeg folder
-
-#ifdef MACOSX
-  // Look inside app
-  folderList.append("./" +
-                    QString::fromStdString(TEnv::getApplicationFileName()) +
-                    ".app/ffmpeg");  // ffmpeg folder
-#elif defined(LINUX) || defined(FREEBSD)
-  // Need to account for symbolic links
-  folderList.append(TEnv::getWorkingDirectory().getQString() +
-                    "/ffmpeg");  // ffmpeg folder
-#endif
-
-  QString exePath = TSystem::findFileLocation(folderList, exe);
-
-  if (!exePath.isEmpty()) {
-    Preferences::instance()->setValue(ffmpegPath, exePath);
-    return true;
-  }
-
-  // give up
-  return false;
-}
-
-bool Ffmpeg::checkFfprobe() {
-  QString exe = "ffprobe";
-#if defined(_WIN32)
-  exe = exe + ".exe";
-#endif
-
-  // check the user defined path in preferences first
-  QString path = Preferences::instance()->getFfmpegPath() + "/" + exe;
-  if (TSystem::doesExistFileOrLevel(TFilePath(path))) return true;
-
-  // Let's try and autodetect the exe included with release
-  QStringList folderList;
-
-  folderList.append(".");
-  folderList.append("./ffmpeg");  // ffmpeg folder
-
-#ifdef MACOSX
-  // Look inside app
-  folderList.append("./" +
-                    QString::fromStdString(TEnv::getApplicationFileName()) +
-                    ".app/ffmpeg");  // ffmpeg folder
-#elif defined(LINUX) || defined(FREEBSD)
-  // Need to account for symbolic links
-  folderList.append(TEnv::getWorkingDirectory().getQString() +
-                    "/ffmpeg");  // ffmpeg folder
-#endif
-
-  QString exePath = TSystem::findFileLocation(folderList, exe);
-
-  if (!exePath.isEmpty()) {
-    Preferences::instance()->setValue(ffmpegPath, exePath);
-    return true;
-  }
-
-  // give up
-  return false;
-}
-
 bool Ffmpeg::checkFormat(std::string format) {
-  QString path = Preferences::instance()->getFfmpegPath() + "/ffmpeg";
-#if defined(_WIN32)
-  path = path + ".exe";
-#endif
   QStringList args;
   args << "-formats";
   QProcess ffmpeg;
-  ffmpeg.start(path, args);
-  if (waitFfmpeg(ffmpeg, 60000)) { // 1 minute timeout
-    QString results = ffmpeg.readAllStandardError();
-    results += ffmpeg.readAllStandardOutput();
-    ffmpeg.close();
-    std::string strResults = results.toStdString();
-    std::string::size_type n;
-    n = strResults.find(format);
-    if (n != std::string::npos)
-      return true;
-  }
+  ThirdParty::runFFmpeg(ffmpeg, args);
+  ffmpeg.waitForFinished();
+  QString results = ffmpeg.readAllStandardError();
+  results += ffmpeg.readAllStandardOutput();
+  ffmpeg.close();
+  std::string strResults = results.toStdString();
+  std::string::size_type n;
+  n = strResults.find(format);
+  if (n != std::string::npos)
+    return true;
+
   return false;
 }
 
 bool Ffmpeg::checkCodecs(std::string codec) {
-  QString path = Preferences::instance()->getFfmpegPath() + "/ffmpeg";
-#if defined(_WIN32)
-  path = path + ".exe";
-#endif
   QStringList args;
   args << "-codecs";
   QProcess ffmpeg;
-  ffmpeg.start(path, args);
-  if (waitFfmpeg(ffmpeg, 60000)) { // 1 minute timeout
-    QString results = ffmpeg.readAllStandardError();
-    results += ffmpeg.readAllStandardOutput();
-    ffmpeg.close();
-    std::string strResults = results.toStdString();
-    std::string::size_type n;
-    n = strResults.find(codec);
-    if (n != std::string::npos)
-      return true;
-  }
+  ThirdParty::runFFmpeg(ffmpeg, args);
+  ffmpeg.waitForFinished();
+  QString results = ffmpeg.readAllStandardError();
+  results += ffmpeg.readAllStandardOutput();
+  ffmpeg.close();
+  std::string strResults = results.toStdString();
+  std::string::size_type n;
+  n = strResults.find(codec);
+  if (n != std::string::npos)
+    return true;
+
   return false;
 }
 
@@ -162,11 +78,11 @@ void Ffmpeg::setPath(TFilePath path) { m_path = path; }
 
 void Ffmpeg::createIntermediateImage(const TImageP &img, int frameIndex) {
   m_frameCount++;
-  if (m_frameNumberOffset == -1) m_frameNumberOffset = frameIndex - 1;
+  frameIndex--;  // ffmpeg start at 0 by default
+  if (frameIndex < m_startNumber) m_startNumber = frameIndex;
   QString tempPath = getFfmpegCache().getQString() + "//" +
                      QString::fromStdString(m_path.getName()) + "tempOut" +
-                     QString::number(frameIndex - m_frameNumberOffset) + "." +
-                     m_intermediateFormat;
+                     QString::number(frameIndex) + "." + m_intermediateFormat;
   std::string saveStatus = "";
   TRasterImageP tempImage(img);
   TRasterImage *image = (TRasterImage *)tempImage->cloneImage();
@@ -201,7 +117,7 @@ void Ffmpeg::createIntermediateImage(const TImageP &img, int frameIndex) {
 
 void Ffmpeg::runFfmpeg(QStringList preIArgs, QStringList postIArgs,
                        bool includesInPath, bool includesOutPath,
-                       bool overWriteFiles) {
+                       bool overWriteFiles, bool asyncProcess) {
   QString tempName = "//" + QString::fromStdString(m_path.getName()) +
                      "tempOut%d." + m_intermediateFormat;
   tempName = getFfmpegCache().getQString() + tempName;
@@ -210,6 +126,10 @@ void Ffmpeg::runFfmpeg(QStringList preIArgs, QStringList postIArgs,
   args = args + preIArgs;
   if (!includesInPath) {  // NOTE:  if including the in path, it needs to be in
                           // the preIArgs argument.
+    if (m_startNumber != 0) {
+      args << "-start_number";
+      args << QString::number(m_startNumber);
+    }
     args << "-i";
     args << tempName;
   }
@@ -226,8 +146,8 @@ void Ffmpeg::runFfmpeg(QStringList preIArgs, QStringList postIArgs,
 
   // write the file
   QProcess ffmpeg;
-  ffmpeg.start(m_ffmpegPath + "/ffmpeg", args);
-  if (waitFfmpeg(ffmpeg, m_ffmpegTimeout)) {
+  ThirdParty::runFFmpeg(ffmpeg, args);
+  if (waitFfmpeg(ffmpeg, asyncProcess)) {
     QString results = ffmpeg.readAllStandardError();
     results += ffmpeg.readAllStandardOutput();
     int exitCode = ffmpeg.exitCode();
@@ -238,8 +158,8 @@ void Ffmpeg::runFfmpeg(QStringList preIArgs, QStringList postIArgs,
 
 QString Ffmpeg::runFfprobe(QStringList args) {
   QProcess ffmpeg;
-  ffmpeg.start(m_ffmpegPath + "/ffprobe", args);
-  if (!waitFfmpeg(ffmpeg, m_ffmpegTimeout)) {
+  ThirdParty::runFFprobe(ffmpeg, args);
+  if (!waitFfmpeg(ffmpeg, false)) {
     throw TImageException(m_path, "error accessing ffprobe.");
   }
   QString results = ffmpeg.readAllStandardError();
@@ -253,19 +173,20 @@ QString Ffmpeg::runFfprobe(QStringList args) {
   return results;
 }
 
-bool Ffmpeg::waitFfmpeg(const QProcess &ffmpeg, int timeout) {
-  QEventLoop eloop;
-  QTimer timer;
-  timer.connect(&timer, &QTimer::timeout, &eloop, [&eloop] { eloop.exit(-2); });
-  ffmpeg.connect(&ffmpeg, &QProcess::errorOccurred, &eloop,
-                 [&eloop] { eloop.exit(-1); });
-  ffmpeg.connect(&ffmpeg,
-                 static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(
-                     &QProcess::finished),
-                 &eloop, &QEventLoop::quit);
-  timer.start(timeout);
+bool Ffmpeg::waitFfmpeg(QProcess &ffmpeg, bool asyncProcess) {
+  if (!asyncProcess) {
+    bool status = ffmpeg.waitForFinished(m_ffmpegTimeout);
+    if (!status) {
+      DVGui::warning(
+          QObject::tr("FFmpeg timed out.\n"
+                      "Please check the file for errors.\n"
+                      "If the file doesn't play or is incomplete, \n"
+                      "Please try raising the FFmpeg timeout in Preferences."));
+    }
+    return status;
+  }
 
-  int exitCode = eloop.exec();
+  int exitCode = ThirdParty::waitAsyncProcess(ffmpeg, m_ffmpegTimeout);
   if (exitCode == 0) return true;
   if (exitCode == -1) {
     DVGui::warning(
@@ -336,10 +257,13 @@ ffmpegFileInfo Ffmpeg::getInfo() {
     QByteArray ba = infoText.readAll();
     infoText.close();
     QString text = QString::fromStdString(ba.toStdString());
-    m_lx         = text.split(" ")[0].toInt();
-    m_ly         = text.split(" ")[1].toInt();
-    m_frameRate  = text.split(" ")[2].toDouble();
-    m_frameCount = text.split(" ")[3].toInt();
+    QStringList textlist = text.split(" ");
+    if (textlist.count() >= 4) {
+      m_lx         = textlist[0].toInt();
+      m_ly         = textlist[1].toInt();
+      m_frameRate  = textlist[2].toDouble();
+      m_frameCount = textlist[3].toInt();
+    }
   } else {
     QFile infoText(tempPath);
     getSize();
@@ -535,7 +459,7 @@ void Ffmpeg::getFramesFromMovie(int frame) {
 
     postIFrameArgs << tempName;
 
-    runFfmpeg(preIFrameArgs, postIFrameArgs, true, true, true);
+    runFfmpeg(preIFrameArgs, postIFrameArgs, true, true, true, false);
 
     for (int i = 1; i <= m_frameCount; i++) {
       QString number      = QString("%1").arg(i, 4, 10, QChar('0'));
@@ -585,4 +509,100 @@ void Ffmpeg::cleanUpFiles() {
 
 void Ffmpeg::disablePrecompute() {
   Preferences::instance()->setPrecompute(false);
+}
+
+//===========================================================
+//
+//  TImageReaderFFmpeg
+//
+//===========================================================
+
+class TImageReaderFFmpeg final : public TImageReader {
+public:
+  int m_frameIndex;
+
+  TImageReaderFFmpeg(const TFilePath &path, int index, TLevelReaderFFmpeg *lra,
+                     TImageInfo *info)
+      : TImageReader(path), m_lra(lra), m_frameIndex(index), m_info(info) {
+    m_lra->addRef();
+  }
+  ~TImageReaderFFmpeg() { m_lra->release(); }
+
+  TImageP load() override { return m_lra->load(m_frameIndex); }
+  TDimension getSize() const { return m_lra->getSize(); }
+  TRect getBBox() const { return TRect(); }
+  const TImageInfo *getImageInfo() const override { return m_info; }
+
+private:
+  TLevelReaderFFmpeg *m_lra;
+  TImageInfo *m_info;
+
+  // not implemented
+  TImageReaderFFmpeg(const TImageReaderFFmpeg &);
+  TImageReaderFFmpeg &operator=(const TImageReaderFFmpeg &src);
+};
+
+//===========================================================
+//
+//  TLevelReaderFFmpeg
+//
+//===========================================================
+
+TLevelReaderFFmpeg::TLevelReaderFFmpeg(const TFilePath &path)
+    : TLevelReader(path) {
+  ffmpegReader = new Ffmpeg();
+  ffmpegReader->setPath(m_path);
+  ffmpegReader->disablePrecompute();
+  ffmpegFileInfo tempInfo = ffmpegReader->getInfo();
+  double fps              = tempInfo.m_frameRate;
+  m_frameCount            = tempInfo.m_frameCount;
+  m_size                  = TDimension(tempInfo.m_lx, tempInfo.m_ly);
+  m_lx                    = m_size.lx;
+  m_ly                    = m_size.ly;
+
+  // set values
+  m_info                   = new TImageInfo();
+  m_info->m_frameRate      = fps;
+  m_info->m_lx             = m_lx;
+  m_info->m_ly             = m_ly;
+  m_info->m_bitsPerSample  = 8;
+  m_info->m_samplePerPixel = 4;
+  m_info->m_dpix           = Stage::standardDpi;
+  m_info->m_dpiy           = Stage::standardDpi;
+}
+//-----------------------------------------------------------
+
+TLevelReaderFFmpeg::~TLevelReaderFFmpeg() {}
+
+//-----------------------------------------------------------
+
+TLevelP TLevelReaderFFmpeg::loadInfo() {
+  if (m_frameCount == -1) return TLevelP();
+  TLevelP level;
+  for (int i = 1; i <= m_frameCount; i++) level->setFrame(i, TImageP());
+  return level;
+}
+
+//-----------------------------------------------------------
+
+TImageReaderP TLevelReaderFFmpeg::getFrameReader(TFrameId fid) {
+  if (!fid.getLetter().isEmpty()) return TImageReaderP(0);
+  int index = fid.getNumber();
+
+  TImageReaderFFmpeg *irm = new TImageReaderFFmpeg(m_path, index, this, m_info);
+  return TImageReaderP(irm);
+}
+
+//------------------------------------------------------------------------------
+
+TDimension TLevelReaderFFmpeg::getSize() { return m_size; }
+
+//------------------------------------------------
+
+TImageP TLevelReaderFFmpeg::load(int frameIndex) {
+  if (!ffmpegFramesCreated) {
+    ffmpegReader->getFramesFromMovie();
+    ffmpegFramesCreated = true;
+  }
+  return ffmpegReader->getImage(frameIndex);
 }

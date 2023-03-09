@@ -514,7 +514,11 @@ bool LutManager::loadLutFile(const QString& fp) {
 
   // The third line is corrections of values at each LUT grid
   line = locals::readDataLine(stream);
-  list = line.split(" ", QString::SkipEmptyParts);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  list = line.split(" ", Qt::SkipEmptyParts);
+#else
+  list        = line.split(" ", QString::SkipEmptyParts);
+#endif
   if (list.size() != m_lut.meshSize) {
     file.close();
     return execWarning(QObject::tr("Failed to Load 3DLUT File."));
@@ -530,7 +534,11 @@ bool LutManager::loadLutFile(const QString& fp) {
       for (int i = 0; i < m_lut.meshSize; ++i)  // b
       {
         line = locals::readDataLine(stream);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+        list = line.split(" ", Qt::SkipEmptyParts);
+#else
         list = line.split(" ", QString::SkipEmptyParts);
+#endif
         if (list.size() != 3) {
           file.close();
           delete[] m_lut.data;
@@ -567,8 +575,11 @@ void LutManager::convert(float& r, float& g, float& b) {
   float ratio[3];   // RGB軸
   int index[3][2];  // rgb インデックス
   float rawVal[3] = {r, g, b};
+  // clamp values (for HDR image)
+  for (int c = 0; c < 3; c++)
+    rawVal[c] = (rawVal[c] < 0.f) ? 0.f : (rawVal[c] > 1.f) ? 1.f : rawVal[c];
 
-  float vertex_color[2][2][2][3];  //補間用の１ボクセルの頂点色
+  float vertex_color[2][2][2][3];  // 陬憺俣逕ｨ縺ｮ・代・繧ｯ繧ｻ繝ｫ縺ｮ鬆らせ濶ｲ
 
   for (int c = 0; c < 3; c++) {
     float val   = rawVal[c] * (float)(m_lut.meshSize - 1);
@@ -616,9 +627,7 @@ void LutManager::convert(QColor& col) {
   float g = col.greenF();
   float b = col.blueF();
   convert(r, g, b);
-  // 0.5 offset is necessary for converting to 255 grading
-  col = QColor((int)(r * 255.0 + 0.5), (int)(g * 255.0 + 0.5),
-               (int)(b * 255.0 + 0.5), col.alpha());
+  col = QColor::fromRgbF(r, g, b, col.alphaF());
 }
 
 //-----------------------------------------------------------------------------

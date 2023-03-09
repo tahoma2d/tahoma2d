@@ -585,7 +585,8 @@ QFrame *ConvertPopup::createTlvSettings() {
   m_dpiMode = new QComboBox();
   m_dpiFld  = new DVGui::DoubleLineEdit();
 
-  m_unpaintedFolder->setFileMode(QFileDialog::DirectoryOnly);
+  m_unpaintedFolder->setFileMode(
+      QFileDialog::Directory);  // implies ShowDirsOnly
   m_unpaintedSuffix->setMaximumWidth(40);
   QStringList items1;
   items1 << tr("Keep Original Antialiasing")
@@ -664,11 +665,11 @@ QFrame *ConvertPopup::createTlvSettings() {
 
   bool ret = true;
   ret      = ret && connect(m_antialias, SIGNAL(currentIndexChanged(int)), this,
-                       SLOT(onAntialiasSelected(int)));
+                            SLOT(onAntialiasSelected(int)));
   ret      = ret && connect(m_palettePath, SIGNAL(pathChanged()), this,
-                       SLOT(onPalettePathChanged()));
+                            SLOT(onPalettePathChanged()));
   ret      = ret && connect(m_dpiMode, SIGNAL(currentIndexChanged(int)), this,
-                       SLOT(onDpiModeSelected(int)));
+                            SLOT(onDpiModeSelected(int)));
 
   assert(ret);
 
@@ -1186,13 +1187,8 @@ void ConvertPopup::apply() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   m_converter = new Converter(this);
-#if QT_VERSION >= 0x050000
   bool ret =
       connect(m_converter, SIGNAL(finished()), this, SLOT(onConvertFinished()));
-#else
-  int ret =
-      connect(m_converter, SIGNAL(finished()), this, SLOT(onConvertFinished()));
-#endif
   Q_ASSERT(ret);
 
   // TODO: salvare il vecchio stato
