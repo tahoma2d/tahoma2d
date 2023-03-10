@@ -1923,8 +1923,14 @@ using namespace DVGui;
 
 ColumnTransparencyPopup::ColumnTransparencyPopup(XsheetViewer *viewer,
                                                  QWidget *parent)
-    : QWidget(parent, Qt::Popup), m_viewer(viewer), m_lockBtn(nullptr) {
+    : QWidget(parent, Qt::Popup)
+    , m_viewer(viewer)
+    , m_lockBtn(nullptr)
+    , m_keepClosed(false) {
   setFixedWidth(8 + 78 + 8 + 100 + 8 + 8 + 8 + 7);
+
+  m_keepClosedTimer = new QTimer(this);
+  m_keepClosedTimer->setSingleShot(true);
 
   m_slider = new QSlider(Qt::Horizontal, this);
   m_slider->setMinimum(1);
@@ -2019,6 +2025,9 @@ m_value->setFont(font);*/
     ret = ret && connect(m_lockBtn, SIGNAL(clicked(bool)), this,
                          SLOT(onLockButtonClicked(bool)));
 
+  ret = ret && connect(m_keepClosedTimer, SIGNAL(timeout()), this,
+                       SLOT(resetKeepClosed()));
+
   assert(ret);
 }
 
@@ -2104,6 +2113,16 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
 
 void ColumnTransparencyPopup::mouseReleaseEvent(QMouseEvent *e) {
   // hide();
+}
+
+void ColumnTransparencyPopup::hideEvent(QHideEvent *e) {
+  m_keepClosedTimer->start(300);
+  m_keepClosed = true;
+}
+
+void ColumnTransparencyPopup::resetKeepClosed() {
+  if (m_keepClosedTimer) m_keepClosedTimer->stop();
+  m_keepClosed = false;
 }
 
 //------------------------------------------------------------------------------
@@ -2213,6 +2232,10 @@ void ColumnArea::openTransparencyPopup() {
   if (m_col < 0) return;
   TXshColumn *column = m_viewer->getXsheet()->getColumn(m_col);
   if (!column || column->isEmpty()) return;
+
+  if (m_columnTransparencyPopup->getcolumn() == column &&
+      m_columnTransparencyPopup->isKeepClosed())
+    return;
 
   if (!column->isCamstandVisible()) {
     column->setCamstandVisible(true);

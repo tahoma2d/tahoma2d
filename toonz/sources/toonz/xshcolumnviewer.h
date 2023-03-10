@@ -222,13 +222,21 @@ class ColumnTransparencyPopup final : public QWidget {
   XsheetViewer *m_viewer;
   QPushButton *m_lockBtn;
 
+  QTimer *m_keepClosedTimer;
+  bool m_keepClosed;
+
 public:
   ColumnTransparencyPopup(XsheetViewer *viewer, QWidget *parent);
   void setColumn(TXshColumn *column);
+  TXshColumn *getcolumn() { return m_column; }
+
+  bool isKeepClosed() { return m_keepClosed; }
+  void setKeepClosed(bool keepClosed) { m_keepClosed = keepClosed; }
 
 protected:
   // void mouseMoveEvent ( QMouseEvent * e );
   void mouseReleaseEvent(QMouseEvent *e) override;
+  void hideEvent(QHideEvent *e) override;
 
 protected slots:
   void onSliderReleased();
@@ -238,6 +246,8 @@ protected slots:
 
   void onFilterColorChanged(int id);
   void onLockButtonClicked(bool on);
+
+  void resetKeepClosed();
 };
 
 class SoundColumnPopup final : public QWidget {
