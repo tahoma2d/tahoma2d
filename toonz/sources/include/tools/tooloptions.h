@@ -502,10 +502,21 @@ protected slots:
 class FullColorFillToolOptionsBox final : public ToolOptionsBox {
   Q_OBJECT
 
+  ToolOptionCombo *m_rasterGapSettings;
+  ToolOptionSlider *m_rasterGapSlider;
+  StyleIndexFieldAndChip *m_styleIndex;
+
+  QLabel *m_gapSliderLabel, *m_styleIndexLabel, *m_rasterGapLabel;
+
 public:
   FullColorFillToolOptionsBox(QWidget *parent, TTool *tool,
                               TPaletteHandle *pltHandle,
                               ToolHandle *toolHandle);
+
+  void checkGapSettingsVisibility();
+
+protected slots:
+  void onGapSettingChanged(int);
 };
 
 //=============================================================================

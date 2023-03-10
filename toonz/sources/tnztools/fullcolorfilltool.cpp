@@ -10,6 +10,8 @@
 #include "toonz/preferences.h"
 #include "toonz/txsheethandle.h"
 #include "toonz/tframehandle.h"
+#include "toonz/tonionskinmaskhandle.h"
+#include "toonz/tpalettehandle.h"
 
 #include "tools/toolhandle.h"
 #include "tools/toolutils.h"
@@ -24,6 +26,10 @@ using namespace ToolUtils;
 TEnv::IntVar FullColorMinFillDepth("InknpaintFullColorMinFillDepth", 4);
 TEnv::IntVar FullColorMaxFillDepth("InknpaintFullColorMaxFillDepth", 12);
 TEnv::IntVar FullColorFillReferenced("InknpaintFullColorFillReferenced", 0);
+
+TEnv::StringVar FullColorRasterGapSetting("InknpaintFullColorRasterGapSetting",
+                                          "Ignore Gaps");
+extern TEnv::DoubleVar AutocloseDistance;
 
 namespace {
 
@@ -84,7 +90,8 @@ public:
 
 void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
             bool isShiftFill, TXshSimpleLevel *sl, const TFrameId &fid,
-            TXsheet *xsheet, int frameIndex) {
+            TXsheet *xsheet, int frameIndex, bool fillGaps = false,
+            bool closeGaps = false, int closeStyleIndex = -1) {
   TTool::Application *app = TTool::getApplication();
   if (!app || !sl) return;
 
@@ -115,7 +122,8 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
       return;
     }
 
-    fullColorFill(ras, params, &tileSaver, xsheet, frameIndex);
+    fullColorFill(ras, params, &tileSaver, xsheet, frameIndex, fillGaps,
+                  closeGaps, closeStyleIndex, AutocloseDistance);
 
     if (tileSaver.getTileSet()->getTileCount() != 0) {
       static int count = 0;
@@ -149,15 +157,35 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
 FullColorFillTool::FullColorFillTool()
     : TTool("T_Fill")
     , m_fillDepth("Fill Depth", 0, 15, 4, 12)
-    , m_referenced("Refer Visible", false) {
+    , m_referenced("Refer Visible", false)
+    , m_closeStyleIndex("Style Index:", L"current")  // W_ToolOptions_InkIndex
+    , m_rasterGapDistance("Distance:", 1, 100, 10)
+    , m_closeRasterGaps("Gaps:") {
   bind(TTool::RasterImage);
   m_prop.bind(m_fillDepth);
+  m_prop.bind(m_closeRasterGaps);
+  m_prop.bind(m_rasterGapDistance);
+  m_prop.bind(m_closeStyleIndex);
   m_prop.bind(m_referenced);
+
+  m_closeRasterGaps.setId("CloseGaps");
+  m_rasterGapDistance.setId("RasterGapDistance");
+  m_closeStyleIndex.setId("RasterGapInkIndex");
+
+  m_closeRasterGaps.addValue(IGNOREGAPS);
+  m_closeRasterGaps.addValue(FILLGAPS);
+  m_closeRasterGaps.addValue(CLOSEANDFILLGAPS);
 }
 
 void FullColorFillTool::updateTranslation() {
   m_fillDepth.setQStringName(tr("Fill Depth"));
   m_referenced.setQStringName(tr("Refer Visible"));
+  m_rasterGapDistance.setQStringName(tr("Distance:"));
+  m_closeStyleIndex.setQStringName(tr("Style Index:"));
+  m_closeRasterGaps.setQStringName(tr("Gaps:"));
+  m_closeRasterGaps.setItemUIName(IGNOREGAPS, tr("Ignore Gaps"));
+  m_closeRasterGaps.setItemUIName(FILLGAPS, tr("Fill Gaps"));
+  m_closeRasterGaps.setItemUIName(CLOSEANDFILLGAPS, tr("Close and Fill"));
 }
 
 FillParameters FullColorFillTool::getFillParameters() const {
@@ -180,6 +208,11 @@ void FullColorFillTool::leftButtonDown(const TPointD &pos,
   m_level       = xl ? xl->getSimpleLevel() : 0;
   FillParameters params = getFillParameters();
 
+  int closeStyleIndex = m_closeStyleIndex.getStyleIndex();
+  if (closeStyleIndex == -1) {
+    closeStyleIndex = app->getCurrentPalette()->getStyleIndex();
+  }
+
   int frameIndex = app->getCurrentFrame()->getFrameIndex();
 
   TXsheetHandle *xsh = app->getCurrentXsheet();
@@ -188,8 +221,10 @@ void FullColorFillTool::leftButtonDown(const TPointD &pos,
     ? xsh->getXsheet()
     : 0;
 
-  applyFill(getImage(true), pos, params, e.isShiftPressed(), m_level.getPointer(),
-         getCurrentFid(), xsheet, frameIndex);
+  applyFill(getImage(true), pos, params, e.isShiftPressed(),
+            m_level.getPointer(), getCurrentFid(), xsheet, frameIndex,
+            m_closeRasterGaps.getIndex() > 0, m_closeRasterGaps.getIndex() > 1,
+            closeStyleIndex);
   invalidate();
 }
 
@@ -224,8 +259,15 @@ void FullColorFillTool::leftButtonDrag(const TPointD &pos,
           ? xsh->getXsheet()
           : 0;
 
+  int closeStyleIndex = m_closeStyleIndex.getStyleIndex();
+  if (closeStyleIndex == -1) {
+    closeStyleIndex = app->getCurrentPalette()->getStyleIndex();
+  }
+
   applyFill(img, pos, params, e.isShiftPressed(), m_level.getPointer(),
-            getCurrentFid(), xsheet, frameIndex);
+            getCurrentFid(), xsheet, frameIndex,
+            m_closeRasterGaps.getIndex() > 0, m_closeRasterGaps.getIndex() > 1,
+            closeStyleIndex);
 
   invalidate();
 }
@@ -235,7 +277,20 @@ bool FullColorFillTool::onPropertyChanged(std::string propertyName) {
   if (propertyName == m_fillDepth.getName()) {
     FullColorMinFillDepth = (int)m_fillDepth.getValue().first;
     FullColorMaxFillDepth = (int)m_fillDepth.getValue().second;
+  } else if (propertyName == m_rasterGapDistance.getName()) {
+    AutocloseDistance       = m_rasterGapDistance.getValue();
+    TTool::Application *app = TTool::getApplication();
+    // This is a hack to get the viewer to update with the distance.
+    app->getCurrentOnionSkin()->notifyOnionSkinMaskChanged();
   }
+
+  else if (propertyName == m_closeStyleIndex.getName()) {
+  }
+
+  else if (propertyName == m_closeRasterGaps.getName()) {
+    FullColorRasterGapSetting = ::to_string(m_closeRasterGaps.getValue());
+  }
+
   return true;
 }
 
@@ -246,6 +301,10 @@ void FullColorFillTool::onActivate() {
                                                     FullColorMaxFillDepth));
     firstTime = false;
   }
+
+  m_closeRasterGaps.setValue(
+      ::to_wstring(FullColorRasterGapSetting.getValue()));
+  m_rasterGapDistance.setValue(AutocloseDistance);
 }
 
 int FullColorFillTool::getCursorId() const {
@@ -258,7 +317,8 @@ int FullColorFillTool::getCursorId() const {
 void FullColorFillTool::applyFill(const TImageP &img, const TPointD &pos,
                                   FillParameters &params, bool isShiftFill,
                                   TXshSimpleLevel *sl, const TFrameId &fid,
-                                  TXsheet *xsheet, int frameIndex) {
+                                  TXsheet *xsheet, int frameIndex, bool fillGap,
+                                  bool closeGap, int closeStyleIndex) {
   TRasterImageP ri = TRasterImageP(img);
 
   SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
@@ -267,21 +327,21 @@ void FullColorFillTool::applyFill(const TImageP &img, const TPointD &pos,
     TUndoManager::manager()->beginBlock();
   }
 
-  doFill(img, pos, params, isShiftFill, m_level.getPointer(), getCurrentFid(),
-         xsheet, frameIndex);
+  doFill(img, pos, params, isShiftFill, sl, fid, xsheet, frameIndex, fillGap,
+         closeGap, closeStyleIndex);
 
   if (ri && symmetryTool && symmetryTool->isGuideEnabled()) {
-    TPointD dpiScale             = getViewer()->getDpiScale();
-    TRasterP ras                 = ri->getRaster();
-    TPointD rasCenter            = ras ? ras->getCenterD() : TPointD(0, 0);
-    TPointD fillPt               = pos + rasCenter;
+    TPointD dpiScale  = getViewer()->getDpiScale();
+    TRasterP ras      = ri->getRaster();
+    TPointD rasCenter = ras ? ras->getCenterD() : TPointD(0, 0);
+    TPointD fillPt    = pos + rasCenter;
     std::vector<TPointD> symmPts =
         symmetryTool->getSymmetryPoints(fillPt, rasCenter, dpiScale);
 
     for (int i = 0; i < symmPts.size(); i++) {
       if (symmPts[i] == fillPt) continue;
-      doFill(img, symmPts[i] - rasCenter, params, isShiftFill,
-             m_level.getPointer(), getCurrentFid(), xsheet, frameIndex);
+      doFill(img, symmPts[i] - rasCenter, params, isShiftFill, sl, fid, xsheet,
+             frameIndex, fillGap, closeGap, closeStyleIndex);
     }
 
     TUndoManager::manager()->endBlock();
