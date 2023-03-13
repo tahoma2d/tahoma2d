@@ -1570,7 +1570,7 @@ void TCellSelection::enableCommands() {
                 &TCellSelection::reframeWithEmptyInbetweens);
 
   enableCommand(this, MI_PasteNumbers, &TCellSelection::overwritePasteNumbers);
-  enableCommand(this, MI_PasteWholeCellData, &TCellSelection::pasteCells);
+  enableCommand(this, MI_PasteCellContent, &TCellSelection::pasteCells);
   enableCommand(this, MI_CreateBlankDrawing,
                 &TCellSelection::createBlankDrawings);
   enableCommand(this, MI_Duplicate, &TCellSelection::duplicateFrames);
@@ -1617,7 +1617,7 @@ bool TCellSelection::isEnabledCommand(
                                         MI_Undo,
                                         MI_Redo,
                                         MI_PasteNumbers,
-                                        MI_PasteWholeCellData,
+                                        MI_PasteCellContent,
                                         MI_ConvertToToonzRaster,
                                         MI_ConvertVectorToVector,
                                         MI_CreateBlankDrawing,

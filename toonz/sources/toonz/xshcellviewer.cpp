@@ -4158,8 +4158,7 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
       if (Preferences::instance()->getPasteCellsBehavior() == 0)
         pasteSpecialMenu->addAction(cmdManager->getAction(MI_PasteNumbers));
       else
-        pasteSpecialMenu->addAction(
-            cmdManager->getAction(MI_PasteWholeCellData));
+        pasteSpecialMenu->addAction(cmdManager->getAction(MI_PasteCellContent));
       if (!soundTextCellsSelected) {
         pasteSpecialMenu->addAction(cmdManager->getAction(MI_PasteDuplicate));
       }
