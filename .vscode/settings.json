@@ -17,5 +17,5 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "*.ipp": "cpp"
-    },
+    }
 }
