@@ -275,7 +275,7 @@ Agradecimentos especiais para:</translation>
     <message>
         <location filename="../../toonz/audiorecordingpopup.cpp" line="152"/>
         <source>Play animation from current frame while recording/playback</source>
-        <translation>Tocar animação desde o quadro atual enquanto grava/reproduz</translation>
+        <translation>Reproduzir animação desde o quadro atual enquanto grava/reproduz</translation>
     </message>
     <message>
         <location filename="../../toonz/audiorecordingpopup.cpp" line="153"/>
@@ -5703,12 +5703,12 @@ Cômodos customizados não serão tocados.</translation>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2113"/>
         <source>Play</source>
-        <translation>Play</translation>
+        <translation>Reproduzir</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2114"/>
         <source>Short Play</source>
-        <translation>Play Curto</translation>
+        <translation>Reprodução Curta</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2115"/>
@@ -9380,7 +9380,7 @@ OK retirar esses atalhos?</translation>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1278"/>
         <source>Toolbar Display Behaviour:</source>
-        <translation>Comportamento de display da Barra de Ferramentas:</translation>
+        <translation>Comportamento de Display da Barra de Ferramentas:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1279"/>
@@ -9405,7 +9405,7 @@ OK retirar esses atalhos?</translation>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1286"/>
         <source>Autopan during Playback</source>
-        <translation>Automover durante Playback</translation>
+        <translation>Automover durante Reprodução</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1287"/>
@@ -9525,14 +9525,14 @@ OK retirar esses atalhos?</translation>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1326"/>
         <source>Rewind after Playback</source>
-        <translation>Rebobinar após Playback</translation>
+        <translation>Rebobinar após Reprodução</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1327"/>
         <source>Number of Frames to Play 
 for Short Play:</source>
         <translation>Número de Quadros para tocar em
-Play curto:</translation>
+Reprodução Curta:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1328"/>
@@ -9577,7 +9577,7 @@ Play curto:</translation>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1338"/>
         <source>Show Onion Skin During Playback</source>
-        <translation>Mostrar Onion Skin durante Playback</translation>
+        <translation>Mostrar Onion Skin durante Reprodução</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1340"/>
@@ -9859,7 +9859,7 @@ Não ative essa opção ou a mesa digitalizadora não funcionará corretamente.)
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1443"/>
         <source>Display on Each Marker</source>
-        <translation>Monstrar em cada Marcador</translation>
+        <translation>Mostrar em cada Marcador</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1444"/>
@@ -15757,7 +15757,7 @@ Botão direito para ajustar.</translation>
         <location filename="../../toonz/menubar.cpp" line="552"/>
         <location filename="../../toonz/shortcutpopup.cpp" line="247"/>
         <source>Play</source>
-        <translation>Play</translation>
+        <translation>Reproduzir</translation>
     </message>
     <message>
         <location filename="../../toonz/commandbarpopup.cpp" line="313"/>
@@ -17600,7 +17600,7 @@ Por favor se refira ao guia de usuário para detalhes.</translation>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="3792"/>
         <source>Click and drag to play</source>
-        <translation>Clique e arraste para tocar</translation>
+        <translation>Clique e arraste para Reproduzir</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="3794"/>
@@ -17738,7 +17738,7 @@ Por favor se refira ao guia de usuário para detalhes.</translation>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2621"/>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2640"/>
         <source>Click to play the soundtrack back</source>
-        <translation>Clique para tocar a trilha sonora</translation>
+        <translation>Clique para Reproduzir a trilha sonora</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2624"/>
@@ -17983,7 +17983,7 @@ Segure a tecla F3 no Visualizador para Mostrar Apenas Este Quadro</translation>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1231"/>
         <source>Playback End Marker</source>
-        <translation>Marcador de Fim de Marcador</translation>
+        <translation>Marcador de Fim de Reprodução</translation>
     </message>
     <message>
         <location filename="../../toonz/xshrowviewer.cpp" line="1233"/>
