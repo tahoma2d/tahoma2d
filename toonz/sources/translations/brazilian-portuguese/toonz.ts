@@ -2501,7 +2501,7 @@ contém informação de DPI, então o DPI da câmera atual será usado.</transla
     <message>
         <location filename="../../toonz/exportxsheetpdf.cpp" line="1883"/>
         <source>Export Xsheet PDF</source>
-        <translation>Exportar Xsheet para PDF</translation>
+        <translation>Exportar XSheet para PDF</translation>
     </message>
     <message>
         <location filename="../../toonz/exportxsheetpdf.cpp" line="1896"/>
@@ -2767,7 +2767,7 @@ Gostaria de criá-la?</translation>
     <message>
         <location filename="../../toonz/expressionreferencemanager.cpp" line="625"/>
         <source>(To be in the sub xsheet)</source>
-        <translation>(Para estar na subXsheet)</translation>
+        <translation>(Para estar na subXSheet)</translation>
     </message>
     <message>
         <location filename="../../toonz/expressionreferencemanager.cpp" line="627"/>
@@ -2777,12 +2777,12 @@ Gostaria de criá-la?</translation>
     <message>
         <location filename="../../toonz/expressionreferencemanager.cpp" line="762"/>
         <source>(In the current xsheet)</source>
-        <translation>(Na Xsheet atual)</translation>
+        <translation>(Na XSheet atual)</translation>
     </message>
     <message>
         <location filename="../../toonz/expressionreferencemanager.cpp" line="766"/>
         <source>(To be brought from the subxsheet)</source>
-        <translation>(Para ser trazida da subXsheet)</translation>
+        <translation>(Para ser trazida da subXSheet)</translation>
     </message>
     <message>
         <location filename="../../toonz/expressionreferencemanager.cpp" line="768"/>
@@ -2794,7 +2794,7 @@ Gostaria de explodir mesmo assim?</translation>
     <message>
         <location filename="../../toonz/expressionreferencemanager.cpp" line="1013"/>
         <source>(In a sub xsheet)</source>
-        <translation>(Em uma SubXsheet)</translation>
+        <translation>(Em uma SubXSheet)</translation>
     </message>
     <message>
         <location filename="../../toonz/expressionreferencemanager.cpp" line="1023"/>
@@ -3624,7 +3624,7 @@ Gostaria de Substituí-lo?</translation>
         <location filename="../../toonz/layerfooterpanel.cpp" line="35"/>
         <location filename="../../toonz/layerfooterpanel.cpp" line="142"/>
         <source>Zoom in/out of xsheet</source>
-        <translation>Zoom in/out da Xsheet</translation>
+        <translation>Zoom in/out da XSheet</translation>
     </message>
     <message>
         <location filename="../../toonz/layerfooterpanel.cpp" line="36"/>
@@ -3961,7 +3961,7 @@ Gostaria de criá-la?</translation>
     <message>
         <location filename="../../toonz/levelsettingspopup.cpp" line="713"/>
         <source>SubXsheet Level</source>
-        <translation>Nível SubXsheet</translation>
+        <translation>Nível SubXSheet</translation>
     </message>
     <message>
         <location filename="../../toonz/levelsettingspopup.cpp" line="716"/>
@@ -4135,7 +4135,7 @@ Por favor escolha um arquivo diferente</translation>
         <location filename="../../toonz/lipsyncpopup.cpp" line="546"/>
         <source>Thumbnails are not available for sub-Xsheets.
 Please use the frame numbers for reference.</source>
-        <translation>Miniaturas não estão disponíveis para SubXsheets.
+        <translation>Miniaturas não estão disponíveis para SubXSheets.
 Por favor use o número do Quadro para referência.</translation>
     </message>
     <message>
@@ -4201,7 +4201,7 @@ Por favor escolha um arquivo de informação de Sincronia Labial válido para co
     <message>
         <location filename="../../toonz/lipsyncpopup.cpp" line="1010"/>
         <source>SubXSheet Frame </source>
-        <translation>Quadro da SubXsheet </translation>
+        <translation>Quadro da SubXSheet </translation>
     </message>
     <message>
         <location filename="../../toonz/lipsyncpopup.cpp" line="1018"/>
@@ -4855,7 +4855,7 @@ Cômodos customizados não serão tocados.</translation>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1783"/>
         <source>&amp;Print Xsheet</source>
-        <translation>&amp;Imprimir Xsheet</translation>
+        <translation>&amp;Imprimir XSheet</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1784"/>
@@ -4865,7 +4865,7 @@ Cômodos customizados não serão tocados.</translation>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1786"/>
         <source>&amp;Export Xsheet to PDF</source>
-        <translation>&amp;Exportar Xsheet para PDF</translation>
+        <translation>&amp;Exportar XSheet para PDF</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="1791"/>
@@ -6623,7 +6623,7 @@ Cômodos customizados não serão tocados.</translation>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2505"/>
         <source>Toggles the auto-creation of frames when drawing in blank cells on the timeline/xsheet.</source>
-        <translation>Habilita a auto-criação de quadros quando desenhar em células vázias na Timeline/Xsheet.</translation>
+        <translation>Habilita a auto-criação de quadros quando desenhar em células vázias na Timeline/XSheet.</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2508"/>
@@ -6633,7 +6633,7 @@ Cômodos customizados não serão tocados.</translation>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2511"/>
         <source>Toggles the auto-creation of frames when drawing in held cells on the timeline/xsheet.</source>
-        <translation>Habilita a auto-criação de quadros quando desenhar em células de Hold na Timeline/Xsheet.</translation>
+        <translation>Habilita a auto-criação de quadros quando desenhar em células de Hold na Timeline/XSheet.</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2513"/>
@@ -9490,7 +9490,7 @@ OK retirar esses atalhos?</translation>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1314"/>
         <source>Show &quot;ABC&quot; Appendix to the Frame Number in Xsheet Cell</source>
-        <translation>Mostrar apêndice &quot;ABC&quot; nos Números de Quadros na Célula XSheet</translation>
+        <translation>Mostrar apêndice &quot;ABC&quot; nos Números de Quadros na Célula da XSheet</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1317"/>
@@ -9711,7 +9711,7 @@ Não ative essa opção ou a mesa digitalizadora não funcionará corretamente.)
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1400"/>
         <source>Toggle Between Graph Editor and Spreadsheet</source>
-        <translation>Habilitar entre Editor Gráfico e Tabela</translation>
+        <translation>Trocar entre Editor Gráfico e Tabela</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1402"/>
@@ -12220,7 +12220,7 @@ O que gostaria de fazer?</translation>
     <message>
         <location filename="../../toonz/iocommand.cpp" line="1340"/>
         <source> Anyway</source>
-        <translation>De qualquer forma</translation>
+        <translation> de qualquer forma</translation>
     </message>
     <message>
         <location filename="../../toonz/iocommand.cpp" line="1477"/>
