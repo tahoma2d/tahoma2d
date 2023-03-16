@@ -9531,7 +9531,7 @@ OK retirar esses atalhos?</translation>
         <location filename="../../toonz/preferencespopup.cpp" line="1327"/>
         <source>Number of Frames to Play 
 for Short Play:</source>
-        <translation>Número de Quadros para tocar em
+        <translation>Número de Quadros para Reproduzir em
 Reprodução Curta:</translation>
     </message>
     <message>
