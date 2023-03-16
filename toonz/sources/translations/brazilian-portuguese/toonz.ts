@@ -398,7 +398,7 @@ selecionará todos os quadros no nível selecionado.</translation>
     <message>
         <location filename="../../toonz/autoinputcellnumberpopup.cpp" line="263"/>
         <source>cell steps</source>
-        <translation>etapas de células</translation>
+        <translation>intervalos de células</translation>
     </message>
     <message>
         <location filename="../../toonz/autoinputcellnumberpopup.cpp" line="265"/>
@@ -5558,32 +5558,32 @@ Cômodos customizados não serão tocados.</translation>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2059"/>
         <source>&amp;Reset Step</source>
-        <translation>&amp;Restaurar Etapas</translation>
+        <translation>&amp;Restaurar Intervalos</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2061"/>
         <source>&amp;Increase Step</source>
-        <translation>&amp;Aumentar Etapas</translation>
+        <translation>&amp;Aumentar Intervalo</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2063"/>
         <source>&amp;Decrease Step</source>
-        <translation>&amp;Diminuir Etapas</translation>
+        <translation>&amp;Diminuir Intervalo</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2065"/>
         <source>&amp;Step 2</source>
-        <translation>&amp;2 Etapas</translation>
+        <translation>&amp;2 Intervalos</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2066"/>
         <source>&amp;Step 3</source>
-        <translation>&amp;3 Etapas</translation>
+        <translation>&amp;3 Intervalos</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2067"/>
         <source>&amp;Step 4</source>
-        <translation>&amp;4 Etapas</translation>
+        <translation>&amp;4 Intervalos</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2068"/>
@@ -5753,12 +5753,12 @@ Cômodos customizados não serão tocados.</translation>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2129"/>
         <source>Next Step</source>
-        <translation>Etapa Seguinte</translation>
+        <translation>Intervalo Seguinte</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2130"/>
         <source>Previous Step</source>
-        <translation>Etapa Anterior</translation>
+        <translation>Intervalo Anterior</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2132"/>
@@ -9014,7 +9014,7 @@ OK retirar esses atalhos?</translation>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1164"/>
         <source>Show Startup Window when Tahoma2D Starts</source>
-        <translation>Mostrar Tela de Início quando executar Tahoma2D</translation>
+        <translation>Mostrar Aba de Início quando executar Tahoma2D</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1165"/>
@@ -16705,7 +16705,7 @@ Possivelmente o arquivo da Pré-Definição foi corrompido.</translation>
     <message>
         <location filename="../../toonz/tasksviewer.cpp" line="868"/>
         <source>Step:</source>
-        <translation>Intervalo:</translation>
+        <translation>Etapa:</translation>
     </message>
     <message>
         <location filename="../../toonz/tasksviewer.cpp" line="868"/>
@@ -17071,12 +17071,12 @@ Possivelmente o arquivo da Pré-Definição foi corrompido.</translation>
     <message>
         <location filename="../../toonz/menubar.cpp" line="506"/>
         <source>Reframe</source>
-        <translation>Re-Expôr</translation>
+        <translation>Reexpor</translation>
     </message>
     <message>
         <location filename="../../toonz/menubar.cpp" line="514"/>
         <source>Step</source>
-        <translation>Etapas</translation>
+        <translation>Intervalos</translation>
     </message>
     <message>
         <location filename="../../toonz/menubar.cpp" line="523"/>
@@ -17610,7 +17610,7 @@ Por favor se refira ao guia de usuário para detalhes.</translation>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="4095"/>
         <source>Reframe</source>
-        <translation>Re-Expôr</translation>
+        <translation>Reexpor</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="4106"/>
@@ -17799,7 +17799,7 @@ Por favor se refira ao guia de usuário para detalhes.</translation>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2961"/>
         <source>Reframe</source>
-        <translation>Re-Expôr</translation>
+        <translation>Reexpor</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2976"/>

@@ -926,22 +926,22 @@ CTRL+Clique para restaurar.</translation>
     <message>
         <location filename="../../toonzqt/functionpanel.cpp" line="1566"/>
         <source>Step 1</source>
-        <translation>Etapa 1</translation>
+        <translation>1 Intervalo</translation>
     </message>
     <message>
         <location filename="../../toonzqt/functionpanel.cpp" line="1567"/>
         <source>Step 2</source>
-        <translation>Etapa 2</translation>
+        <translation>2 Intervalos</translation>
     </message>
     <message>
         <location filename="../../toonzqt/functionpanel.cpp" line="1568"/>
         <source>Step 3</source>
-        <translation>Etapa 3</translation>
+        <translation>3 Intervalos</translation>
     </message>
     <message>
         <location filename="../../toonzqt/functionpanel.cpp" line="1569"/>
         <source>Step 4</source>
-        <translation>Etapa 4</translation>
+        <translation>4 Intervalos</translation>
     </message>
     <message>
         <location filename="../../toonzqt/functionpanel.cpp" line="1641"/>
