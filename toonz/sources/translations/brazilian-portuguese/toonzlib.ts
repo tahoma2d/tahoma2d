@@ -157,27 +157,27 @@
         <translation>Exceção ao escrever %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="268"/>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="264"/>
         <source>frame index (%1) must be a number</source>
         <translation>Índice de Quadro (%1) deve ser um número</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="272"/>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="268"/>
         <source>frame index (%1) is out of range (0-%2)</source>
         <translation>Índice de Quadro (%1) está fora do escopo (0-%2)</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="295"/>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="291"/>
         <source>second argument (%1) is not an image</source>
         <translation>Segundo argumento (%1) não é uma imagem</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="308"/>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="304"/>
         <source>can not insert a %1 image into a level</source>
         <translation>Não é possível inserir uma imagem %1 em um Nível</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="329"/>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="325"/>
         <source>can not insert a %1 image to a %2 level</source>
         <translation>Não é possível inserir uma imagem %1 em um Nível %2</translation>
     </message>
@@ -213,17 +213,17 @@
 <context>
     <name>Preferences</name>
     <message>
-        <location filename="../../toonzlib/preferences.cpp" line="101"/>
+        <location filename="../../toonzlib/preferences.cpp" line="102"/>
         <source>Retas Level Format</source>
         <translation>Formato de Nível Retas</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/preferences.cpp" line="107"/>
+        <location filename="../../toonzlib/preferences.cpp" line="108"/>
         <source>Adobe Photoshop</source>
         <translation>Adobe Photoshop</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/preferences.cpp" line="204"/>
+        <location filename="../../toonzlib/preferences.cpp" line="208"/>
         <source>PNG</source>
         <translation>PNG</translation>
     </message>
@@ -298,108 +298,108 @@ Provavelmente o codec não está funcionando corretamente.</translation>
         <translation>Estabelecer Quadro Chave</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/doubleparamcmd.cpp" line="816"/>
+        <location filename="../../toonzlib/doubleparamcmd.cpp" line="817"/>
         <source>Remove Keyframe</source>
         <translation>Remover Quadro Chave</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/doubleparamcmd.cpp" line="856"/>
+        <location filename="../../toonzlib/doubleparamcmd.cpp" line="857"/>
         <source>Cycle</source>
         <translation>Ciclo</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="908"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="917"/>
         <source>Add Fx  : </source>
         <translation>Adicionar FX: </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="909"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="918"/>
         <source>Insert Fx  : </source>
         <translation>Inserir FX: </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1073"/>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1076"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1082"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1085"/>
         <source>Create Linked Fx  : %1</source>
         <translation>Criar FX vinculado: %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1298"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1307"/>
         <source>Replace Fx  : </source>
         <translation>Substituir FX: </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1364"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1373"/>
         <source>Unlink Fx  : %1 - - %2</source>
         <translation>Desvincular FX: %1 - - %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1405"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1414"/>
         <source>Make Macro Fx  : %1</source>
         <translation>Fazer Macro FX: %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1548"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1557"/>
         <source>Explode Macro Fx  : %1</source>
         <translation>Expandir Macro FX: %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1611"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1620"/>
         <source>Create Output Fx</source>
         <translation>Criar Saída FX</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1702"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1711"/>
         <source>Connect to Xsheet  : </source>
         <translation>Conectar à XSheet: </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1762"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1771"/>
         <source>Disconnect from Xsheet  : </source>
         <translation>Desconectarr da XSheet: </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="2035"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="2044"/>
         <source>Delete Link</source>
         <translation>Excluir vínculo</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="2322"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="2331"/>
         <source>Delete Fx Node : %1</source>
         <translation>Excluir Nó de FX: %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="2747"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="2756"/>
         <source>Paste Fx  :  </source>
         <translation>Colar FX: </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3116"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3125"/>
         <source>Disconnect Fx</source>
         <translation>Desconectar FX</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3368"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3377"/>
         <source>Connect Fx : %1 - %2</source>
         <translation>Conectar FX: %1 - %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3550"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3559"/>
         <source>Rename Fx : %1 &gt; %2</source>
         <translation>Renomear FX: %1 &gt; %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3602"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3611"/>
         <source>Group Fx</source>
         <translation>Agrupar FX</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3706"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3715"/>
         <source>Ungroup Fx</source>
         <translation>Desagrupar FX</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3808"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3817"/>
         <source>Rename Group  : %1 &gt; %2</source>
         <translation>Renomear Grupo: %1 &gt; %2</translation>
     </message>
@@ -475,7 +475,7 @@ Provavelmente o codec não está funcionando corretamente.</translation>
     </message>
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="28"/>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="744"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="762"/>
         <source>Red</source>
         <translation>Vermelho</translation>
     </message>
@@ -496,7 +496,7 @@ Provavelmente o codec não está funcionando corretamente.</translation>
     </message>
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="32"/>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="746"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="764"/>
         <source>Green</source>
         <translation>Verde</translation>
     </message>
@@ -507,7 +507,7 @@ Provavelmente o codec não está funcionando corretamente.</translation>
     </message>
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="34"/>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="748"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="766"/>
         <source>Blue</source>
         <translation>Azul</translation>
     </message>
@@ -590,7 +590,7 @@ Provavelmente o codec não está funcionando corretamente.</translation>
         <translation>Argumento ruim (%1): deveria ser uma imagem(não vazia)</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="235"/>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="231"/>
         <source>Argument &apos;%1&apos; does not look like a FrameId</source>
         <translation>Argumento &apos;%1&apos; não parece com um Id de Quadro</translation>
     </message>
@@ -786,23 +786,23 @@ Provavelmente o codec não está funcionando corretamente.</translation>
         <translation>Remover Coluna</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="742"/>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="770"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="760"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="788"/>
         <source>None</source>
         <translation>Nenhum</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="750"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="768"/>
         <source>DarkYellow</source>
         <translation>Amarelo Escuro</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="752"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="770"/>
         <source>DarkCyan</source>
         <translation>Ciano Escuro</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="754"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="772"/>
         <source>DarkMagenta</source>
         <translation>Magenta Escuro</translation>
     </message>

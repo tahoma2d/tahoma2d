@@ -19,9 +19,37 @@
         <translation>Ruído</translation>
     </message>
     <message>
-        <location filename="../../colorfx/regionstyles.h" line="460"/>
+        <location filename="../../colorfx/regionstyles.h" line="467"/>
         <source>Irregular</source>
         <translation>Irregular</translation>
+    </message>
+</context>
+<context>
+    <name>FlowLineStrokeStyle</name>
+    <message>
+        <location filename="../../colorfx/flowlinestrokestyle.cpp" line="129"/>
+        <source>Density</source>
+        <translation>Densidade</translation>
+    </message>
+    <message>
+        <location filename="../../colorfx/flowlinestrokestyle.cpp" line="131"/>
+        <source>Extension</source>
+        <translation>Extensão</translation>
+    </message>
+    <message>
+        <location filename="../../colorfx/flowlinestrokestyle.cpp" line="133"/>
+        <source>Width Scale</source>
+        <translation>Escala de Comprimento</translation>
+    </message>
+    <message>
+        <location filename="../../colorfx/flowlinestrokestyle.cpp" line="135"/>
+        <source>Straighten Ends</source>
+        <translation>Arretar Pontas</translation>
+    </message>
+    <message>
+        <location filename="../../colorfx/flowlinestrokestyle.h" line="58"/>
+        <source>Flow Line</source>
+        <translation>Linha de Fluxo</translation>
     </message>
 </context>
 <context>
@@ -70,7 +98,7 @@
         <translation>distância</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="1240"/>
+        <location filename="../../colorfx/strokestyles.h" line="1275"/>
         <source>OutlineViewer(OnlyDebug)</source>
         <translation>Visualizador de Contorno(Apenas para Debug)</translation>
     </message>
@@ -93,7 +121,7 @@
         <translation>Comprimento</translation>
     </message>
     <message>
-        <location filename="../../colorfx/regionstyles.h" line="120"/>
+        <location filename="../../colorfx/regionstyles.h" line="121"/>
         <source>Hatched Shading</source>
         <translation>Sombreamento Hachurado</translation>
     </message>
@@ -111,7 +139,7 @@
         <translation>Tamanho</translation>
     </message>
     <message>
-        <location filename="../../colorfx/regionstyles.h" line="169"/>
+        <location filename="../../colorfx/regionstyles.h" line="171"/>
         <source>Plain Shadow</source>
         <translation>Sombra Plana</translation>
     </message>
@@ -124,7 +152,7 @@
         <translation>Aerógrafo</translation>
     </message>
     <message>
-        <location filename="../../colorfx/rasterstyles.h" line="69"/>
+        <location filename="../../colorfx/rasterstyles.h" line="70"/>
         <source>Blur value</source>
         <translation>Valor de Borrado</translation>
     </message>
@@ -132,7 +160,7 @@
 <context>
     <name>TBiColorStrokeStyle</name>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="577"/>
+        <location filename="../../colorfx/strokestyles.h" line="594"/>
         <source>Shade</source>
         <translation>Sombreamento</translation>
     </message>
@@ -140,7 +168,7 @@
 <context>
     <name>TBlendRasterStyle</name>
     <message>
-        <location filename="../../colorfx/rasterstyles.h" line="122"/>
+        <location filename="../../colorfx/rasterstyles.h" line="123"/>
         <source>Blend</source>
         <translation>Mistura</translation>
     </message>
@@ -163,7 +191,7 @@
         <translation>Desaparecimento</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="725"/>
+        <location filename="../../colorfx/strokestyles.h" line="745"/>
         <source>Fade</source>
         <translation>Esmaecimento</translation>
     </message>
@@ -176,7 +204,7 @@
         <translation>Torcer</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="385"/>
+        <location filename="../../colorfx/strokestyles.h" line="398"/>
         <source>Plait</source>
         <translation>Trançar</translation>
     </message>
@@ -184,7 +212,7 @@
 <context>
     <name>TBubbleStrokeStyle</name>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="475"/>
+        <location filename="../../colorfx/strokestyles.h" line="490"/>
         <source>Bubbles</source>
         <translation>Bolhas</translation>
     </message>
@@ -192,7 +220,7 @@
 <context>
     <name>TChainStrokeStyle</name>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="133"/>
+        <location filename="../../colorfx/strokestyles.h" line="134"/>
         <source>Chain</source>
         <translation>Corrente</translation>
     </message>
@@ -210,7 +238,7 @@
         <translation>Tamanho do Ponto</translation>
     </message>
     <message>
-        <location filename="../../colorfx/regionstyles.h" line="508"/>
+        <location filename="../../colorfx/regionstyles.h" line="516"/>
         <source>Chalk</source>
         <translation>Giz</translation>
     </message>
@@ -243,7 +271,7 @@
         <translation>Ruído</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="672"/>
+        <location filename="../../colorfx/strokestyles.h" line="691"/>
         <source>Chalk</source>
         <translation>Giz</translation>
     </message>
@@ -276,7 +304,7 @@
         <translation>Espessura</translation>
     </message>
     <message>
-        <location filename="../../colorfx/regionstyles.h" line="399"/>
+        <location filename="../../colorfx/regionstyles.h" line="405"/>
         <source>Square</source>
         <translation>Quadrado</translation>
     </message>
@@ -299,7 +327,7 @@
         <translation>Ângulo</translation>
     </message>
     <message>
-        <location filename="../../colorfx/regionstyles.h" line="559"/>
+        <location filename="../../colorfx/regionstyles.h" line="569"/>
         <source>Chessboard</source>
         <translation>Quadriculado</translation>
     </message>
@@ -327,7 +355,7 @@
         <translation>Espessura</translation>
     </message>
     <message>
-        <location filename="../../colorfx/regionstyles.h" line="766"/>
+        <location filename="../../colorfx/regionstyles.h" line="780"/>
         <source>Concentric</source>
         <translation>Concêntrico</translation>
     </message>
@@ -345,7 +373,7 @@
         <translation>Opacidade</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="342"/>
+        <location filename="../../colorfx/strokestyles.h" line="352"/>
         <source>Tulle</source>
         <translation>Tulle</translation>
     </message>
@@ -363,7 +391,7 @@
         <translation>Distância do Ponto</translation>
     </message>
     <message>
-        <location filename="../../colorfx/regionstyles.h" line="346"/>
+        <location filename="../../colorfx/regionstyles.h" line="351"/>
         <source>Polka Dots</source>
         <translation>Bolinhas</translation>
     </message>
@@ -391,7 +419,7 @@
         <translation>Brecha</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="254"/>
+        <location filename="../../colorfx/strokestyles.h" line="260"/>
         <source>Vanishing</source>
         <translation>Sumir</translation>
     </message>
@@ -404,7 +432,7 @@
         <translation>Distância</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="1090"/>
+        <location filename="../../colorfx/strokestyles.h" line="1119"/>
         <source>Striped</source>
         <translation>Listrado</translation>
     </message>
@@ -422,7 +450,7 @@
         <translation>Espessura</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="1029"/>
+        <location filename="../../colorfx/strokestyles.h" line="1057"/>
         <source>Curl</source>
         <translation>Ondular</translation>
     </message>
@@ -453,7 +481,7 @@
         <translation>Densidade</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="206"/>
+        <location filename="../../colorfx/strokestyles.h" line="209"/>
         <source>Dashes</source>
         <translation>Traços</translation>
     </message>
@@ -481,7 +509,7 @@
         <translation>Suavidade</translation>
     </message>
     <message>
-        <location filename="../../colorfx/regionstyles.h" line="665"/>
+        <location filename="../../colorfx/regionstyles.h" line="677"/>
         <source>Linear Gradient</source>
         <translation>Gradiente Linear</translation>
     </message>
@@ -494,7 +522,7 @@
         <translation>Distância</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="1152"/>
+        <location filename="../../colorfx/strokestyles.h" line="1184"/>
         <source>Watercolor</source>
         <translation>Aquarela</translation>
     </message>
@@ -507,7 +535,7 @@
         <translation>Listras</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="1304"/>
+        <location filename="../../colorfx/strokestyles.h" line="1340"/>
         <source>Toothpaste</source>
         <translation>Pasta de Dente</translation>
     </message>
@@ -535,7 +563,7 @@
         <translation>Espessura Máx.</translation>
     </message>
     <message>
-        <location filename="../../colorfx/regionstyles.h" line="822"/>
+        <location filename="../../colorfx/regionstyles.h" line="839"/>
         <source>Stained Glass</source>
         <translation>Vitral</translation>
     </message>
@@ -563,7 +591,7 @@
         <translation>Ruído</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="872"/>
+        <location filename="../../colorfx/strokestyles.h" line="895"/>
         <source>Gouache</source>
         <translation>Guache</translation>
     </message>
@@ -571,7 +599,7 @@
 <context>
     <name>TNoColorRasterStyle</name>
     <message>
-        <location filename="../../colorfx/rasterstyles.h" line="151"/>
+        <location filename="../../colorfx/rasterstyles.h" line="153"/>
         <source>Markup</source>
         <translation>Marcação</translation>
     </message>
@@ -600,7 +628,7 @@
     </message>
     <message>
         <location filename="../../colorfx/strokestyles.cpp" line="2022"/>
-        <location filename="../../colorfx/strokestyles.h" line="629"/>
+        <location filename="../../colorfx/strokestyles.h" line="647"/>
         <source>Bump</source>
         <translation>Ressalto</translation>
     </message>
@@ -623,7 +651,7 @@
         <translation>Espessura</translation>
     </message>
     <message>
-        <location filename="../../colorfx/regionstyles.h" line="872"/>
+        <location filename="../../colorfx/regionstyles.h" line="890"/>
         <source>Beehive</source>
         <translation>Colméia</translation>
     </message>
@@ -651,7 +679,7 @@
         <translation>Tamanho do Ponto</translation>
     </message>
     <message>
-        <location filename="../../colorfx/regionstyles.h" line="283"/>
+        <location filename="../../colorfx/regionstyles.h" line="287"/>
         <source>Sponge Shading</source>
         <translation>Sombreamento com Esponja</translation>
     </message>
@@ -679,7 +707,7 @@
         <translation>Suavidade</translation>
     </message>
     <message>
-        <location filename="../../colorfx/regionstyles.h" line="718"/>
+        <location filename="../../colorfx/regionstyles.h" line="731"/>
         <source>Radial Gradient</source>
         <translation>Gradiente Radial</translation>
     </message>
@@ -692,7 +720,7 @@
         <translation>Inclinar</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="299"/>
+        <location filename="../../colorfx/strokestyles.h" line="308"/>
         <source>Rope</source>
         <translation>Corda</translation>
     </message>
@@ -705,7 +733,7 @@
         <translation>Intensidade</translation>
     </message>
     <message>
-        <location filename="../../colorfx/regionstyles.h" line="230"/>
+        <location filename="../../colorfx/regionstyles.h" line="233"/>
         <source>Blob</source>
         <translation>Mancha</translation>
     </message>
@@ -718,7 +746,7 @@
         <translation>Distância</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="827"/>
+        <location filename="../../colorfx/strokestyles.h" line="849"/>
         <source>Jagged</source>
         <translation>Denteado</translation>
     </message>
@@ -731,7 +759,7 @@
         <translation>Frequência</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="990"/>
+        <location filename="../../colorfx/strokestyles.h" line="1017"/>
         <source>Wave</source>
         <translation>Onda</translation>
     </message>
@@ -744,7 +772,7 @@
         <translation>Densidade</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="433"/>
+        <location filename="../../colorfx/strokestyles.h" line="447"/>
         <source>Fuzz</source>
         <translation>Penugem</translation>
     </message>
@@ -767,7 +795,7 @@
         <translation>Tamanho</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="164"/>
+        <location filename="../../colorfx/strokestyles.h" line="166"/>
         <source>Circlets</source>
         <translation>Diademas</translation>
     </message>
@@ -790,7 +818,7 @@
         <translation>Espessura</translation>
     </message>
     <message>
-        <location filename="../../colorfx/regionstyles.h" line="610"/>
+        <location filename="../../colorfx/regionstyles.h" line="621"/>
         <source>Banded</source>
         <translation>Bandeado</translation>
     </message>
@@ -808,7 +836,7 @@
         <translation>Tamanho da Borda</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="530"/>
+        <location filename="../../colorfx/strokestyles.h" line="546"/>
         <source>Gauze</source>
         <translation>Gaze</translation>
     </message>
@@ -826,7 +854,7 @@
         <translation>Sombreamento</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="775"/>
+        <location filename="../../colorfx/strokestyles.h" line="796"/>
         <source>Ribbon</source>
         <translation>Fita</translation>
     </message>
@@ -867,7 +895,7 @@
         <translation>Espessura</translation>
     </message>
     <message>
-        <location filename="../../colorfx/strokestyles.h" line="942"/>
+        <location filename="../../colorfx/strokestyles.h" line="968"/>
         <source>Zigzag</source>
         <translation>Ziguezague</translation>
     </message>
