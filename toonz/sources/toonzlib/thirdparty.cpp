@@ -75,7 +75,15 @@ bool findFFmpeg(QString dir) {
 
 bool checkFFmpeg() {
   // Path in preferences
-  return findFFmpeg(Preferences::instance()->getFfmpegPath());
+  bool found = findFFmpeg(Preferences::instance()->getFfmpegPath());
+  if (found) return true;
+
+  QString path = autodetectFFmpeg();
+  if (path.isEmpty()) return false;
+
+  setFFmpegDir(path);
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -149,8 +157,8 @@ void setFFmpegTimeout(int secs) {
 
 void runFFmpeg(QProcess &process, const QStringList &arguments) {
   QString dir = Preferences::instance()->getFfmpegPath();
-  if (dir.at(0) == '.')  // Relative path
-    dir = QCoreApplication::applicationDirPath() + "/" + dir;
+//  if (dir.at(0) == '.')  // Relative path
+//    dir = QCoreApplication::applicationDirPath() + "/" + dir;
 
   process.start(dir + FFMPEG_EXE, arguments);
 }
@@ -159,8 +167,8 @@ void runFFmpeg(QProcess &process, const QStringList &arguments) {
 
 void runFFprobe(QProcess &process, const QStringList &arguments) {
   QString dir = Preferences::instance()->getFfmpegPath();
-  if (dir.at(0) == '.')  // Relative path
-    dir = QCoreApplication::applicationDirPath() + "/" + dir;
+//  if (dir.at(0) == '.')  // Relative path
+//    dir = QCoreApplication::applicationDirPath() + "/" + dir;
 
   process.start(dir + FFPROBE_EXE, arguments);
 }
@@ -240,7 +248,14 @@ bool findRhubarb(QString dir) {
 
 bool checkRhubarb() {
   // Path in preferences
-  return findRhubarb(Preferences::instance()->getRhubarbPath());
+  bool found = findRhubarb(Preferences::instance()->getRhubarbPath());
+  if (found) return true;
+
+  QString path = autodetectRhubarb();
+  if (path.isEmpty()) return false;
+
+  setRhubarbDir(path);
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -291,8 +306,8 @@ QString autodetectRhubarb() {
 
 void runRhubarb(QProcess &process, const QStringList &arguments) {
   QString dir = Preferences::instance()->getRhubarbPath();
-  if (dir.at(0) == '.')  // Relative path
-    dir = QCoreApplication::applicationDirPath() + "/" + dir;
+//  if (dir.at(0) == '.')  // Relative path
+//    dir = QCoreApplication::applicationDirPath() + "/" + dir;
 
   process.start(dir + RHUBARB_EXE, arguments);
 }
