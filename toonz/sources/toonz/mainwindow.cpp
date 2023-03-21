@@ -222,6 +222,27 @@ int get_version_code_from(std::string ver) {
 // Room
 //-----------------------------------------------------------------------------
 
+void Room::setName(QString name) {
+  m_name   = name;
+  m_trName = name;
+
+  // Set translatable name if it matches default room
+  if (m_name == "2D")
+    m_trName = tr("2D");
+  else if (m_name == "StopMotion")
+    m_trName = tr("StopMotion");
+  else if (m_name == "Timing")
+    m_trName = tr("Timing");
+  else if (m_name == "FX")
+    m_trName = tr("FX");
+  else if (m_name == "Browser")
+    m_trName = tr("Browser");
+  else if (m_name == "History")
+    m_trName = tr("History");
+  else if (m_name == "New Room")
+    m_trName = tr("New Room");
+}
+
 void Room::save() {
   DockLayout *layout = dockLayout();
 
@@ -600,7 +621,7 @@ void MainWindow::readSettings(const QString &argumentLayoutFileName) {
       Room *room = new Room(this);
       m_panelStates.push_back(room->load(roomPath));
       m_stackedWidget->addWidget(room);
-      roomTabWidget->addTab(room->getName());
+      roomTabWidget->addTab(room->getTrName());
 
       // room->setDockOptions(QMainWindow::DockOptions(
       //  (QMainWindow::AnimatedDocks | QMainWindow::AllowNestedDocks) &
@@ -721,7 +742,7 @@ Room *MainWindow::create2DRoom() {
   room->setName("2D");
   room->setObjectName("2DRoom");
 
-  m_topBar->getRoomTabWidget()->addTab("2D");
+  m_topBar->getRoomTabWidget()->addTab(room->getTrName());
 
   DockLayout *layout = room->dockLayout();
 
@@ -797,7 +818,7 @@ Room *MainWindow::createStopMotionRoom() {
   room->setName("StopMotion");
   room->setObjectName("StopMotionRoom");
 
-  m_topBar->getRoomTabWidget()->addTab("StopMotion");
+  m_topBar->getRoomTabWidget()->addTab(room->getTrName());
 
   DockLayout *layout = room->dockLayout();
 
@@ -847,7 +868,7 @@ Room *MainWindow::createTimingRoom() {
   room->setName("Timing");
   room->setObjectName("TimingRoom");
 
-  m_topBar->getRoomTabWidget()->addTab("Timing");
+  m_topBar->getRoomTabWidget()->addTab(room->getTrName());
 
   DockLayout *layout = room->dockLayout();
 
@@ -915,7 +936,7 @@ Room *MainWindow::createFXRoom() {
   room->setName("FX");
   room->setObjectName("FXRoom");
 
-  m_topBar->getRoomTabWidget()->addTab("FX");
+  m_topBar->getRoomTabWidget()->addTab(room->getTrName());
 
   DockLayout *layout = room->dockLayout();
 
@@ -965,7 +986,7 @@ Room *MainWindow::createBrowserRoom() {
   browserRoom->setName("Browser");
   browserRoom->setObjectName("BrowserRoom");
 
-  m_topBar->getRoomTabWidget()->addTab("Browser");
+  m_topBar->getRoomTabWidget()->addTab(browserRoom->getTrName());
 
   DockLayout *layout = browserRoom->dockLayout();
 
@@ -1125,7 +1146,7 @@ void MainWindow::resetRoomsLayout() {
           room->hide();
           m_panelStates.push_back(room->load(fp));
           m_stackedWidget->addWidget(room);
-          roomTabWidget->addTab(room->getName());
+          roomTabWidget->addTab(room->getTrName());
           room->show();
         }
       }
@@ -1203,7 +1224,7 @@ void MainWindow::onIndexSwapped(int firstIndex, int secondIndex) {
 
 void MainWindow::insertNewRoom() {
   Room *room = new Room(this);
-  room->setName("room");
+  room->setName("New Room");
   if (m_saveSettingsOnQuit) makePrivate(room);
   m_stackedWidget->insertWidget(0, room);
 
@@ -1222,7 +1243,7 @@ void MainWindow::deleteRoom(int index) {
   } catch (...) {
     DVGui::error(tr("Cannot delete") + toQString(fp));
     // Se non ho rimosso la stanza devo rimettere il tab!!
-    m_topBar->getRoomTabWidget()->insertTab(index, room->getName());
+    m_topBar->getRoomTabWidget()->insertTab(index, room->getTrName());
     return;
   }
 
