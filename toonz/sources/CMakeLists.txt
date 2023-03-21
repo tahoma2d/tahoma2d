@@ -649,7 +649,7 @@ endif()
 
 if(WITH_TRANSLATION)
     # generate Qt translations and messages
-    set(LANGUAGES japanese italian french spanish chinese german russian korean czech)
+    set(LANGUAGES japanese italian french spanish chinese german russian korean czech brazilian-portuguese)
 
     function(add_translation module)
         set(translation)
