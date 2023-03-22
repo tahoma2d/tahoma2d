@@ -419,6 +419,9 @@ public:
   bool isShowColumnNumbersEnabled() const {
     return getBoolValue(showColumnNumbers);
   }
+  bool isUnifyColumnVisibilityTogglesEnabled() const {
+    return getBoolValue(unifyColumnVisibilityToggles);
+  }
   bool isParentColorsInXsheetColumnEnabled() const {
     return getBoolValue(parentColorsInXsheetColumn);
   }

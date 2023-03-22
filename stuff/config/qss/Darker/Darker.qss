@@ -2381,6 +2381,7 @@ XsheetViewer {
   qproperty-XsheetPreviewButtonOnImage: url('../Medium/imgs/white/x_prev_eye_on.svg');
   qproperty-XsheetPreviewButtonBgOffColor: transparent;
   qproperty-XsheetPreviewButtonOffImage: url('../Medium/imgs/white/x_prev_eye_off.svg');
+  qproperty-XsheetUnifiedButtonTranspImage: url('../Medium/imgs/white/x_prev_eye_transp.svg');
   qproperty-XsheetCamstandButtonBgOnColor: #eb906b;
   qproperty-XsheetCamstandButtonOnImage: url('../Medium/imgs/white/x_table_view_on.svg');
   qproperty-XsheetCamstandButtonTranspImage: url('../Medium/imgs/white/x_table_view_transp.svg');
@@ -2397,6 +2398,7 @@ XsheetViewer {
   qproperty-TimelinePreviewButtonOnImage: url('../Medium/imgs/white/preview_small.svg');
   qproperty-TimelinePreviewButtonBgOffColor: #202020;
   qproperty-TimelinePreviewButtonOffImage: url('../Medium/imgs/white/transparent.svg');
+  qproperty-TimelineUnifiedButtonTranspImage: url('../Medium/imgs/white/preview_trans_small.svg');
   qproperty-TimelineCamstandButtonBgOnColor: #202020;
   qproperty-TimelineCamstandButtonOnImage: url('../Medium/imgs/white/table_small.svg');
   qproperty-TimelineCamstandButtonTranspImage: url('../Medium/imgs/white/trans_small.svg');

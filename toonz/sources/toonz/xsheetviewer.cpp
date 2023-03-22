@@ -216,6 +216,12 @@ void XsheetViewer::getButton(const int &btype, QColor &bgColor,
     svgIconPath = (isTimeline) ? getTimelineConfigButtonImage()
                              : getXsheetConfigButtonImage();
     break;
+  case UNIFIED_TRANSP_XSHBUTTON:
+    bgColor = (isTimeline) ? getTimelinePreviewButtonBgOnColor()
+                           : getXsheetPreviewButtonBgOnColor();
+    svgIconPath = (isTimeline) ? getTimelineUnifiedButtonTranspImage()
+                               : getXsheetUnifiedButtonTranspImage();
+    break;
   default:
     bgColor = grey210;
     static QImage iconignored;

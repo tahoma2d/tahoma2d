@@ -322,6 +322,13 @@ void SchematicScenePanel::onColumnPaste(const QList<TXshColumnP> &columns) {
 
 //-----------------------------------------------------------------------------
 
+void SchematicScenePanel::onPreferenceChanged(const QString &prefName) {
+  if (prefName == "unifyColumnVisibilityToggles")
+    m_schematicViewer->updateSchematic();
+}
+
+//-----------------------------------------------------------------------------
+
 void SchematicScenePanel::showEvent(QShowEvent *e) {
   if (m_schematicViewer->isStageSchematicViewed())
     setWindowTitle(QObject::tr("Stage Schematic"));
@@ -355,6 +362,8 @@ void SchematicScenePanel::showEvent(QShowEvent *e) {
           SLOT(updateSchematic()));
   connect(app->getCurrentScene(), SIGNAL(sceneSwitched()), m_schematicViewer,
           SLOT(onSceneSwitched()));
+  connect(app->getCurrentScene(), SIGNAL(preferenceChanged(const QString &)),
+          this, SLOT(onPreferenceChanged(const QString &)));
   connect(m_schematicViewer, SIGNAL(columnPasted(const QList<TXshColumnP> &)),
           this, SLOT(onColumnPaste(const QList<TXshColumnP> &)));
   m_schematicViewer->updateSchematic();
@@ -386,6 +395,8 @@ void SchematicScenePanel::hideEvent(QHideEvent *e) {
              m_schematicViewer, SLOT(updateSchematic()));
   disconnect(app->getCurrentScene(), SIGNAL(sceneSwitched()), m_schematicViewer,
              SLOT(onSceneSwitched()));
+  disconnect(app->getCurrentScene(), SIGNAL(preferenceChanged(const QString &)),
+             this, SLOT(onPreferenceChanged(const QString &)));
   disconnect(m_schematicViewer,
              SIGNAL(columnPasted(const QList<TXshColumnP> &)), this,
              SLOT(onColumnPaste(const QList<TXshColumnP> &)));

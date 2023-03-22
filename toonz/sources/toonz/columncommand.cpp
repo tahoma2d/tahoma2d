@@ -663,6 +663,49 @@ public:
   int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
+//---------------------------------------------------------------------------
+
+void doUnifyColumnVisibilityToggles_Recursive(const TXsheet *xsh,
+                                              QStringList &modifiedColumnNames,
+                                              QList<TXsheet *> doneList,
+                                              QStringList &parentXshStack) {
+  for (int c = 0; c < xsh->getColumnCount(); c++) {
+    TXshColumn *column = xsh->getColumn(c);
+    if (!column || column->isEmpty()) continue;
+    int colType = column->getColumnType();
+    if (colType == TXshColumn::ePaletteType ||
+        colType == TXshColumn::eSoundType ||
+        colType == TXshColumn::eSoundTextType ||
+        colType == TXshColumn::eFolderType)
+      continue;
+    // visibility check
+    if (column->isPreviewVisible() != column->isCamstandVisible()) {
+      column->setCamstandVisible(column->isPreviewVisible());
+      QString colName = QString::fromStdString(
+          xsh->getStageObject(TStageObjectId::ColumnId(c))->getName());
+      modifiedColumnNames.append(parentXshStack.join(" > ") + colName);
+    }
+
+    // check subxsheet recursively
+    TXshCellColumn *cellCol = column->getCellColumn();
+    if (!cellCol) continue;
+    int r0, r1;
+    column->getRange(r0, r1);
+    TXshCell cell              = cellCol->getCell(r0);
+    TXshChildLevel *childLevel = cell.m_level->getChildLevel();
+    if (childLevel) {
+      TXsheet *subSheet = childLevel->getXsheet();
+      if (!doneList.contains(subSheet)) {
+        doneList.append(subSheet);
+        parentXshStack.append(QString::fromStdWString(childLevel->getName()));
+        doUnifyColumnVisibilityToggles_Recursive(xsh, modifiedColumnNames,
+                                                 doneList, parentXshStack);
+        parentXshStack.pop_back();
+      }
+    }
+  }
+}
+
 }  // namespace
 
 //*************************************************************************
@@ -1774,6 +1817,28 @@ bool ColumnCmd::checkExpressionReferences(
       colIdsToBeDeleted, fxsToBeDeleted, objIdsToBeDuplicated, true);
 }
 
+//---------------------------------------------------------------------------
+// Check if any column has visibility toggles with different states and the
+// "unify visibility toggles" option is enabled
+void ColumnCmd::unifyColumnVisibilityToggles() {
+  TApp *app         = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+  QStringList modifiedColumnNames;
+  QList<TXsheet *> doneList;
+  QStringList parentStack;
+  doUnifyColumnVisibilityToggles_Recursive(
+      scene->getTopXsheet(), modifiedColumnNames, doneList, parentStack);
+  if (!modifiedColumnNames.isEmpty()) {
+    DVGui::warning(
+        QObject::tr(
+            "The visibility toggles of following columns are modified \n"
+            "due to \"Unify Preview and Camstand Visibility Toggles\" "
+            "preference option : \n  %1")
+            .arg(modifiedColumnNames.join("\n  ")));
+    app->getCurrentScene()->setDirtyFlag(true);
+  }
+}
+
 //=============================================================================
 
 namespace {
@@ -1867,6 +1932,10 @@ public:
           column->setPreviewVisible(negate);
         else
           column->setPreviewVisible(!column->isPreviewVisible());
+
+        // sync camstand visibility
+        if (Preferences::instance()->isUnifyColumnVisibilityTogglesEnabled())
+          column->setCamstandVisible(column->isPreviewVisible());
       }
       if (cmd &
           (CMD_ENABLE_CAMSTAND | CMD_DISABLE_CAMSTAND | CMD_TOGGLE_CAMSTAND)) {

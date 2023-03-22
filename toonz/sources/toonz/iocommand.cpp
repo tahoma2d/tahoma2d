@@ -22,6 +22,7 @@
 #include "xdtsio.h"
 #include "expressionreferencemanager.h"
 #include "levelcommand.h"
+#include "columncommand.h"
 
 // TnzTools includes
 #include "tools/toolhandle.h"
@@ -1270,7 +1271,6 @@ inline TPaletteP dirtyWhite(const TPaletteP &plt) {
   return out;
 }
 
-//---------------------------------------------------------------------------
 }  // namespace
 //---------------------------------------------------------------------------
 
@@ -2184,6 +2184,11 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
       app->getCurrentScene()->setDirtyFlag(true);
     }
   }
+
+  // Check if any column has visibility toggles with different states and the
+  // "unify visibility toggles" option is enabled
+  if (Preferences::instance()->isUnifyColumnVisibilityTogglesEnabled())
+    ColumnCmd::unifyColumnVisibilityToggles();
 
   // caching raster levels
   int cacheRasterBehavior =
