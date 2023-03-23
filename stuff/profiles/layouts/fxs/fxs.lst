@@ -170,7 +170,7 @@
     STD_iwa_TangentFlowFx
     STD_iwa_MotionFlowFx
   </Stylize>
-  <Tahoma2D_Level>
+  <Toonz_Level>
     STD_artContourFx
     STD_calligraphicFx
     STD_blendTzFx
@@ -179,7 +179,7 @@
     STD_paletteFilterFx
     STD_cornerPinFx
     STD_textureFx
-  </Tahoma2D_Level>
+  </Toonz_Level>
 <Shaders>
   SHADER_caustics
   SHADER_fireball

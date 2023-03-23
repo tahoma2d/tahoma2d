@@ -30,7 +30,7 @@ public:
   void load(const TFilePath &);
 
   void loadCoded(const TFilePath &);
-  void saveCoded(const TFilePath &);
+//  void saveCoded(const TFilePath &);
 
   const Item *getItem(std::string name) const override;
   std::pair<std::string, int> getDefaultFontNameAndSize() const override {
@@ -284,6 +284,8 @@ const TStringTable::Item *TStringTableImp::getItem(std::string name) const {
 
 }  // namespace
 
+static TStringTableImp *StringTable = 0;
+
 //-------------------------------------------------------------------
 
 TStringTable::TStringTable() {}
@@ -306,10 +308,19 @@ std::wstring TStringTable::translate(std::string name) {
 
 const TStringTable *TStringTable::instance() {
   // may hurt MacOsX
-  static TStringTableImp *instance = 0;
-  if (!instance) instance          = new TStringTableImp;
+  if (!StringTable) StringTable = new TStringTableImp;
 
-  instance->init();
+  StringTable->init();
 
-  return instance;
+  return StringTable;
+}
+
+void TStringTable::updateTranslation(QString language) { 
+  if (!StringTable) StringTable = new TStringTableImp;
+
+  if (!language.isEmpty() && language != "English") {
+    TFilePath languageFp = TEnv::getConfigDir() + "loc" +
+                           language.toStdString() + TFilePath("current.txt");
+    if (TFileStatus(languageFp).doesExist()) StringTable->load(languageFp);
+  }
 }

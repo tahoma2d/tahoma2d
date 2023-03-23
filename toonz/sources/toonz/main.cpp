@@ -14,6 +14,7 @@
 #include "expressionreferencemanager.h"
 #include "thirdparty.h"
 #include "startuppopup.h"
+#include "tw/stringtable.h"
 
 // TnzTools includes
 #include "tools/tool.h"
@@ -546,6 +547,10 @@ int main(int argc, char *argv[]) {
   TTool::updateToolsPropertiesTranslation();
   // Apply translation to file writers properties
   Tiio::updateFileWritersPropertiesTranslation();
+
+  // Translate string table
+  TStringTable::instance()->updateTranslation(
+      Preferences::instance()->getCurrentLanguage());
 
   // Force to have left-to-right layout direction in any language environment.
   // This function has to be called after installTranslator().
