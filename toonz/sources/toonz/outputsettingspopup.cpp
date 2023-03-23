@@ -193,7 +193,7 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
   renderButton->setIcon(createQIcon("render"));
   renderButton->setIconSize(QSize(20, 20));
   if (isPreview)
-    renderButton->setText("Preview");
+    renderButton->setText(tr("Preview"));
 
   // preview settings
   if (isPreview) {
@@ -1780,7 +1780,7 @@ void OutputSettingsPopup::onDominantFieldChanged(int type) {
   TRenderSettings::FieldPrevalence oldFieldPrevalence = rs.m_fieldPrevalence;
   if (type != c_none &&
       m_stretchFromFld->getValue() != m_stretchToFld->getValue()) {
-    DVGui::error("Can't apply field rendering in a time stretched scene");
+    DVGui::error(tr("Can't apply field rendering in a time stretched scene"));
     rs.m_fieldPrevalence = TRenderSettings::NoField;
     m_dominantFieldOm->setCurrentIndex(c_none);
   } else if (type == c_odd)
@@ -1807,7 +1807,7 @@ void OutputSettingsPopup::onStretchFldEditFinished() {
   TOutputProperties *prop = getProperties();
   TRenderSettings rs      = prop->getRenderSettings();
   if (m_dominantFieldOm->currentIndex() != c_none) {
-    DVGui::error("Can't stretch time in a field rendered scene\n");
+    DVGui::error(tr("Can't stretch time in a field rendered scene\n"));
     m_stretchFromFld->setValue(rs.m_timeStretchFrom);
     m_stretchToFld->setValue(rs.m_timeStretchTo);
     return;
@@ -1876,7 +1876,7 @@ void OutputSettingsPopup::onAddPresetButtonPressed() {
   if (TFileStatus(fp).doesExist()) {
     int ret = QMessageBox::question(
         this, tr("Add output settings preset"),
-        QString("The file %1 does already exist.\nDo you want to overwrite it?")
+        QString(tr("The file %1 does already exist.\nDo you want to overwrite it?"))
             .arg(qs),
         QMessageBox::Save | QMessageBox::Cancel, QMessageBox::Save);
     if (ret == QMessageBox::Cancel) return;
@@ -2008,7 +2008,7 @@ void OutputSettingsPopup::onRemovePresetButtonPressed() {
   int index = m_presetCombo->currentIndex();
   if (index <= 0) return;
   int ret = QMessageBox::question(this, tr("Remove preset"),
-                                  QString("Deleting \"%1\".\nAre you sure?")
+                                  QString(tr("Deleting \"%1\".\nAre you sure?"))
                                       .arg(m_presetCombo->currentText()),
                                   QMessageBox::Ok | QMessageBox::Cancel,
                                   QMessageBox::Ok);
@@ -2034,7 +2034,7 @@ void OutputSettingsPopup::onPresetSelected(const QString &str) {
                  QString("%1.txt").arg(str).toStdString();
   if (!TFileStatus(fp).doesExist()) {
     QMessageBox::warning(this, tr("Warning"),
-                         QString("The preset file %1.txt not found").arg(str),
+                         QString(tr("The preset file %1.txt not found")).arg(str),
                          QMessageBox::Ok, QMessageBox::Ok);
     return;
   }
@@ -2042,7 +2042,7 @@ void OutputSettingsPopup::onPresetSelected(const QString &str) {
   if (!is) {
     QMessageBox::warning(
         this, tr("Warning"),
-        QString("Failed to open the preset file %1.txt").arg(str),
+        QString(tr("Failed to open the preset file %1.txt")).arg(str),
         QMessageBox::Ok, QMessageBox::Ok);
     return;
   }
@@ -2050,7 +2050,7 @@ void OutputSettingsPopup::onPresetSelected(const QString &str) {
   std::string tagName = "";
   if (!is.matchTag(tagName) || tagName != "outputsettingspreset") {
     QMessageBox::warning(this, tr("Warning"),
-                         QString("Bad file format: %1.txt").arg(str),
+                         QString(tr("Bad file format: %1.txt")).arg(str),
                          QMessageBox::Ok, QMessageBox::Ok);
     return;
   }
