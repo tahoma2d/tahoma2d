@@ -664,6 +664,34 @@
         <source>White</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Load From File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use As Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotation(degrees)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>X displ</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Y displ</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>

@@ -603,6 +603,10 @@
         <source>Ignore Gaps</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Pick+Freehand</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FingerTool</name>
@@ -705,6 +709,30 @@
     </message>
     <message>
         <source>Refer Visible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distance:</source>
+        <translation type="unfinished">거리:</translation>
+    </message>
+    <message>
+        <source>Style Index:</source>
+        <translation type="unfinished">스타일 인덱스:</translation>
+    </message>
+    <message>
+        <source>Gaps:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ignore Gaps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fill Gaps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close and Fill</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1731,6 +1759,96 @@ Do you want to proceed?</source>
         <source>With this option being activated, the picked style will be
 moved to the end of the first page of the palette.</source>
         <translation>이 옵션이 활성화되면 선택한 스타일이 팔레트의 첫 페이지 끝으로 이동한다.</translation>
+    </message>
+</context>
+<context>
+    <name>SymmetryTool</name>
+    <message>
+        <source>Lines:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation type="unfinished">불투명도</translation>
+    </message>
+    <message>
+        <source>Color:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Magenta</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yellow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cyan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Black</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line Symmetry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation type="unfinished">사전설정:</translation>
+    </message>
+    <message>
+        <source>&lt;custom&gt;</source>
+        <translation type="unfinished">&lt;사용자 정의&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>SymmetryToolOptionBox</name>
+    <message>
+        <source>Rotation:</source>
+        <translation type="unfinished">회전:</translation>
+    </message>
+    <message>
+        <source>Rotate Perspective Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotate Perspective Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset Position</source>
+        <translation type="unfinished">위치 재설정</translation>
+    </message>
+    <message>
+        <source>Lines:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opacity:</source>
+        <translation type="unfinished">불투명도:</translation>
+    </message>
+    <message>
+        <source>Color:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation type="unfinished">사전설정:</translation>
     </message>
 </context>
 <context>
