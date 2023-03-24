@@ -16,6 +16,8 @@
 
 #include "toonz/mypaintbrushstyle.h"
 
+#include "tw/stringtable.h"
+
 #include <QDebug>
 
 #include <sstream>
@@ -381,8 +383,8 @@ int TMyPaintBrushStyle::getParamCount() const {
 //-----------------------------------------------------------------------------
 
 QString TMyPaintBrushStyle::getParamNames(int index) const {
-  return QString::fromUtf8(
-      mypaint::Setting::byId((MyPaintBrushSetting)index).name.c_str());
+  return QString::fromStdWString(TStringTable::translate(
+      mypaint::Setting::byId((MyPaintBrushSetting)index).name.c_str()));
 }
 
 //-----------------------------------------------------------------------------
