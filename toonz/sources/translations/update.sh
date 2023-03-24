@@ -15,3 +15,7 @@ lupdate ../../toonzlib/ -ts toonzlib.ts
 lupdate ../../toonzqt/ -ts toonzqt.ts
 lupdate ../../image/ -ts image.ts
 
+if [ "$OSTYPE" = "msys" ]
+then
+   unix2dos *.ts
+fi
