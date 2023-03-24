@@ -1193,7 +1193,7 @@ void PageViewer::contextMenuEvent(QContextMenuEvent *event) {
   }
   QAction *openStyleControlAct = cmd->getAction("MI_OpenStyleControl");
   menu.addAction(openStyleControlAct);
-  QAction *openStyleNameEditorAct = menu.addAction(tr("Name Editor"));
+  QAction *openStyleNameEditorAct = menu.addAction(QObject::tr("Name Editor"));
   openStyleNameEditorAct->setIcon(createQIcon("rename", false, true));
   connect(openStyleNameEditorAct, &QAction::triggered, [&]() {
     if (!m_styleNameEditor) {
@@ -1249,10 +1249,10 @@ void PageViewer::contextMenuEvent(QContextMenuEvent *event) {
   if (m_page) {
     menu.addSeparator();
     QIcon newStyleIco = createQIcon("newstyle", false, true);
-    QAction *newStyle = menu.addAction(newStyleIco, tr("New Style"));
+    QAction *newStyle = menu.addAction(newStyleIco, QObject::tr("New Style"));
     connect(newStyle, SIGNAL(triggered()), SLOT(addNewColor()));
     QIcon newPageIco = createQIcon("newpage", false, true);
-    QAction *newPage = menu.addAction(newPageIco, tr("New Page"));
+    QAction *newPage = menu.addAction(newPageIco, QObject::tr("New Page"));
     connect(newPage, SIGNAL(triggered()), SLOT(addNewPage()));
   }
 
