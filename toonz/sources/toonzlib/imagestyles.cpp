@@ -537,21 +537,21 @@ int TTextureStyle::getParamCount() const { return 8; }
 QString TTextureStyle::getParamNames(int index) const {
   switch (index) {
   case 0:
-    return "Load From File";
+    return QObject::tr("Load From File");
   case 1:
-    return "Use As Pattern";
+    return QObject::tr("Use As Pattern");
   case 2:
-    return "Position";
+    return QObject::tr("Position");
   case 3:
-    return "Scale";
+    return QObject::tr("Scale");
   case 4:
-    return "Rotation(degrees)";
+    return QObject::tr("Rotation(degrees)");
   case 5:
-    return "X displ";
+    return QObject::tr("X displ");
   case 6:
-    return "Y displ";
+    return QObject::tr("Y displ");
   case 7:
-    return "Contrast";
+    return QObject::tr("Contrast");
   default:
     assert(false);
   }
