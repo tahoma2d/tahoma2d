@@ -108,7 +108,7 @@ void LocatorPopup::changeWindowTitle() {
   }
 
   if (showZoomFactor) {
-    name = name + "  Zoom : " +
+    name = name + tr("  Zoom : ") +
            QString::number((int)(100.0 * sqrt(m_viewer->getViewMatrix().det()) *
                                  m_viewer->getDpiFactor())) +
            "%";
