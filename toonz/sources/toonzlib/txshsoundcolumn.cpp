@@ -1082,12 +1082,8 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
 
     if (s1 > 0 && s1 >= s0) {
       soundTrack = soundTrack->extract(s0, s1);
-      if (format.m_sampleType != TSound::FLOAT)
         overallSoundTrack->copy(
             soundTrack, int((levelStartFrame - fromFrame) * samplePerFrame));
-      else
-        overallSoundTrack->copy(
-            soundTrack, double((levelStartFrame - fromFrame) * samplePerFrame));
     }
   }
   return overallSoundTrack;

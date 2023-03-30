@@ -212,7 +212,8 @@ void Ffmpeg::saveSoundTrack(TSoundTrack *st) {
 
   m_audioPath = getFfmpegCache().getQString() + "//" +
                 QString::fromStdString(m_path.getName()) + "tempOut.raw";
-  m_audioFormat = "s" + QString::number(m_bitsPerSample);
+  m_audioFormat = ((st->getSampleType() == TSound::FLOAT) ? "f" : "s") +
+                  QString::number(m_bitsPerSample);
   if (m_bitsPerSample > 8) m_audioFormat = m_audioFormat + "le";
   std::string strPath                    = m_audioPath.toStdString();
 
