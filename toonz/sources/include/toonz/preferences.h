@@ -199,8 +199,8 @@ public:
   // Interface  tab
   QStringList getStyleSheetList() const { return m_styleSheetList; }
   bool getIconTheme() const { return getBoolValue(iconTheme); }
-  void storeOldUnits();  // OK
-  void resetOldUnits();  // OK
+  void storeOldUnits();
+  void resetOldUnits();
   QStringList getLanguageList() const { return m_languageList; }
   QMap<int, QString> getRoomMap() const { return m_roomMaps; }
 
