@@ -36,6 +36,8 @@
 #include "toonz/tproject.h"
 #include "tconvert.h"
 #include "toonz/navigationtags.h"
+#include "toonz/txshlevelcolumn.h"
+#include "toonz/txshpalettecolumn.h"
 
 #include "tenv.h"
 
@@ -533,9 +535,22 @@ void XsheetViewer::setCurrentColumn(int col) {
       objectHandle->setObjectId(TStageObjectId::ColumnId(col));
       TXsheet *xsh       = getXsheet();
       TXshColumn *column = xsh->getColumn(col);
-      if (!column || !column->getZeraryFxColumn()) return;
-      TFx *fx = column->getZeraryFxColumn()->getZeraryColumnFx();
-      TApp::instance()->getCurrentFx()->setFx(fx);
+      if (!column) return;
+      // switching the current fx
+      TFx *fx                 = nullptr;
+      bool doSwitchFxSettings = false;
+      if (TXshLevelColumn *lc = column->getLevelColumn())
+        fx = lc->getLevelColumnFx();
+      else if (TXshPaletteColumn *pc =
+                   dynamic_cast<TXshPaletteColumn *>(column))
+        fx = pc->getPaletteColumnFx();
+      else if (TXshZeraryFxColumn *zc =
+                   dynamic_cast<TXshZeraryFxColumn *>(column)) {
+        fx                 = zc->getZeraryColumnFx();
+        doSwitchFxSettings = true;
+      }
+      if (!fx) return;
+      TApp::instance()->getCurrentFx()->setFx(fx, doSwitchFxSettings);
     }
     return;
   }
