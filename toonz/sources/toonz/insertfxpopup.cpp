@@ -252,7 +252,7 @@ InsertFxPopup::InsertFxPopup()
 
   // add 'Plugins' directory
   auto plugins =
-      new QTreeWidgetItem((QTreeWidget *)NULL, QStringList("Plugins"));
+      new QTreeWidgetItem((QTreeWidget *)NULL, QStringList(tr("Plugins")));
   plugins->setIcon(0, createQIcon("folder", true));
   m_fxTree->addTopLevelItem(plugins);
 
@@ -325,7 +325,8 @@ void InsertFxPopup::loadFolder(QTreeWidgetItem *parent) {
     std::string tagName;
     if (m_is->matchTag(tagName)) {
       // Found a sub-folder
-      QString folderName = QString::fromStdString(tagName);
+      QString folderName =
+          QString::fromStdWString(TStringTable::translate(tagName));
 
       std::unique_ptr<QTreeWidgetItem> folder(
           new QTreeWidgetItem((QTreeWidget *)0, QStringList(folderName)));

@@ -27,6 +27,14 @@
         <source>Replace </source>
         <translation>교체</translation>
     </message>
+    <message>
+        <source>Plugins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Macro</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AddWordButton</name>
@@ -145,6 +153,30 @@ Possibly the preset file has been corrupted</source>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>cm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>inch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>field</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>pixel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A/R</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChannelHisto</name>
@@ -184,36 +216,7 @@ Possibly the preset file has been corrupted</source>
     <name>ColorChannelControl</name>
     <message>
         <source>H</source>
-        <translation>수평</translation>
-    </message>
-    <message>
-        <source>R</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>G</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>B</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>A</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>S</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>V</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Alpha controls the transparency. 
-Zero is fully transparent.</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">수평</translation>
     </message>
 </context>
 <context>
@@ -259,6 +262,14 @@ Zero is fully transparent.</source>
     <message>
         <source>R:%1 G:%2 B:%3</source>
         <translation></translation>
+    </message>
+    <message>
+        <source> A:%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A:%1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -699,6 +710,27 @@ Control click to reset.</source>
     </message>
     <message>
         <source>&amp;Next Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gain Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Reduce gain 1/2 stop (divide by sqrt(2))</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle gain between 1 and the previous setting.
+Gain is shown as an f-stop and the &quot;neutral&quot; or 1.0 gain f-stop is f/8.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Increase gain 1/2 stop (multiply by sqrt(2))</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> (gain %1)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1618,7 +1650,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>Name Editor</source>
-        <translation>이름 편집기</translation>
+        <translation type="vanished">이름 편집기</translation>
     </message>
     <message>
         <source>New Style</source>
@@ -1626,7 +1658,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>New Page</source>
-        <translation>새로운 페이지</translation>
+        <translation type="vanished">새로운 페이지</translation>
     </message>
     <message>
         <source> + </source>
@@ -1788,6 +1820,22 @@ It can&apos;t be changed.  Ever.</source>
         <source>Show New Style Button</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Name Editor</source>
+        <translation type="unfinished">이름 편집기</translation>
+    </message>
+    <message>
+        <source>Visible Toolbar Buttons</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>KeyFrame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Palette Gizmo</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PaletteViewerGUI::PageViewer</name>
@@ -1846,6 +1894,12 @@ It can&apos;t be changed.  Ever.</source>
     </message>
     <message>
         <source>View help page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Fx does not support rendering in floating point channel width (32bit).
+The output pixel values from this fx will be clamped to 0.0 - 1.0
+and tone may be slightly discretized.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2484,6 +2538,139 @@ Are you sure?</source>
 Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Sample Type: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name Editor</source>
+        <translation type="unfinished">이름 편집기</translation>
+    </message>
+    <message>
+        <source>New Style</source>
+        <translation type="unfinished">새로운 스타일</translation>
+    </message>
+    <message>
+        <source>New Page</source>
+        <translation type="unfinished">새로운 페이지</translation>
+    </message>
+    <message>
+        <source>R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>G</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>H</source>
+        <translation type="unfinished">수평</translation>
+    </message>
+    <message>
+        <source>S</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>V</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alpha controls the transparency. 
+Zero is fully transparent.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style Set Manager:              %1+click - Add Style to Palette              %2+click - Multi-Style Select</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Selected to Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Selected from Favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Selected to Favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy Selected to Style Set...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move Selected to Style Set...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Selected from Sets</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to Favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy to Style Set...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move to Style Set...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove from Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Set to Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Empty Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Style Set...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rename Style Set...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reload Style Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scan for Style Set Changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove &apos;%1&apos; Style Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Autopaint for Lines</source>
+        <translation type="unfinished">선 자동 페인트</translation>
+    </message>
+    <message>
+        <source>Reset to default</source>
+        <translation type="unfinished">기본값으로 재설정</translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -2618,11 +2805,11 @@ Are you sure?</source>
     <name>SettingsPage</name>
     <message>
         <source>Reset to default</source>
-        <translation>기본값으로 재설정</translation>
+        <translation type="vanished">기본값으로 재설정</translation>
     </message>
     <message>
         <source>Autopaint for Lines</source>
-        <translation type="unfinished">선 자동 페인트</translation>
+        <translation type="obsolete">선 자동 페인트</translation>
     </message>
 </context>
 <context>
@@ -2827,85 +3014,6 @@ Are you sure ?</source>
     </message>
 </context>
 <context>
-    <name>StyleChooserPage</name>
-    <message>
-        <source>Style Set Manager:              %1+click - Add Style to Palette              %2+click - Multi-Style Select</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Selected to Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove Selected from Favorites</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Selected to Favorites</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy Selected to Style Set...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Move Selected to Style Set...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove Selected from Sets</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add to Favorites</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy to Style Set...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Move to Style Set...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove from Set</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Set to Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Empty Set</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Style Set...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Rename Style Set...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reload Style Set</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Scan for Style Set Changes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove &apos;%1&apos; Style Set</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>StyleEditor</name>
     <message>
         <source>Generated</source>
@@ -3074,6 +3182,22 @@ Are you sure ?</source>
     </message>
     <message>
         <source>Style Set Name already exists. Please try another name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide Auto/Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Auto/Apply</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

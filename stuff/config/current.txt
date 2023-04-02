@@ -1,4 +1,251 @@
 <stringtable>
+<!------------------------------ FX Menu Groups and Subgroups ------------------------------------------->
+<!-- List should match groups found in profiles\layouts\fxs\fxs.lst                                -->
+
+  <item>"Background"		"Background"			</item>
+  <item>"Blur"			"Blur"			</item>
+  <item>"Distort"		"Distort"			</item>
+  <item>"Gradient"		"Gradient"			</item>
+  <item>"Image_Adjust"		"Image Adjust"			</item>
+  <item>"Layer_Blending"	"Layer Blending"			</item>
+  <item>"Layer_Blending_Ino"	"Layer Blending (Ino)"			</item>
+  <item>"Light"			"Light"			</item>
+  <item>"Matte"			"Matte"			</item>
+  <item>"Noise"			"Noise"			</item>
+  <item>"Render"		"Render"			</item>
+  <item>"Stylize"		"Stylize"			</item>
+  <item>"Toonz_Level"		"Color Indexed"			</item>
+  <item>"Shaders"		"Shaders"			</item>
+  <item>"Utility"		"Utility"			</item>
+
+<!------------------------------ FX Settings tabs/separators ---------------------------------------->
+  <item>"Add Ino"			"Add Ino"			</item>
+  <item>"Add"				"Add"			</item>
+  <item>"Adjust Exposure Iwa"		"Adjust Exposure Iwa"			</item>
+  <item>"Adjust Levels"			"Adjust Levels"			</item>
+  <item>"Alpha"				"Alpha"			</item>
+  <item>"Angle"				"Angle"			</item>
+  <item>"Animation"			"Animation"			</item>
+  <item>"Art Contour"			"Art Contour"			</item>
+  <item>"Backlit"			"Backlit"			</item>
+  <item>"Barrel Distort Iwa"		"Barrel Distort Iwa"			</item>
+  <item>"Base"				"Base"			</item>
+  <item>"Birth Color"			"Birth Color"			</item>
+  <item>"Birth Params"			"Birth Params"			</item>
+  <item>"Bloom Iwa"			"Bloom Iwa"			</item>
+  <item>"Blue"				"Blue"			</item>
+  <item>"Blur Ino"			"Blur Ino"			</item>
+  <item>"Blur"				"Blur"			</item>
+  <item>"Body Highlight"		"Body Highlight"			</item>
+  <item>"Bokeh Iwa"			"Bokeh Iwa"			</item>
+  <item>"Bokeh Ref Iwa"			"Bokeh Ref Iwa"			</item>
+  <item>"Brush Tip Geometry"		"Brush Tip Geometry"			</item>
+  <item>"Bubble Color"			"Bubble Color"			</item>
+  <item>"Calligraphic Line"		"Calligraphic Line"			</item>
+  <item>"Cast Shadow"			"Cast Shadow"			</item>
+  <item>"Caustics"			"Caustics"			</item>
+  <item>"Channel Mixer"			"Channel Mixer"			</item>
+  <item>"Channel Selector Ino"		"Channel Selector Ino"			</item>
+  <item>"Checkerboard"			"Checkerboard"			</item>
+  <item>"Clouds"			"Clouds"			</item>
+  <item>"Color and Shape"		"Color and Shape"			</item>
+  <item>"Color Blending"		"Color Blending"			</item>
+  <item>"Color Burn Ino"		"Color Burn Ino"			</item>
+  <item>"Color Card"			"Color Card"			</item>
+  <item>"Color Dodge Ino"		"Color Dodge Ino"			</item>
+  <item>"Color Emboss"			"Color Emboss"			</item>
+  <item>"Color Raylit"			"Color Raylit"			</item>
+  <item>"Colors"			"Colors"			</item>
+  <item>"Conical Transform"		"Conical Transform"			</item>
+  <item>"Contour"			"Contour"			</item>
+  <item>"Contrast"			"Contrast"			</item>
+  <item>"Corridor Gradient Iwa"		"Corridor Gradient Iwa"			</item>
+  <item>"Cross Dissolve Ino"		"Cross Dissolve Ino"			</item>
+  <item>"Cross Dissolve"		"Cross Dissolve"			</item>
+  <item>"Curves"			"Curves"			</item>
+  <item>"Darken Ino"			"Darken Ino"			</item>
+  <item>"Darken"			"Darken"			</item>
+  <item>"Darker Color Ino"		"Darker Color Ino"			</item>
+  <item>"Density Ino"			"Density Ino"			</item>
+  <item>"Despeckle"			"Despeckle"			</item>
+  <item>"Destination"			"Destination"			</item>
+  <item>"Diamond Grad"			"Diamond Grad"			</item>
+  <item>"Difference mode"		"Difference mode"			</item>
+  <item>"Directional Blur Iwa"		"Directional Blur Iwa"			</item>
+  <item>"Directional Blur"		"Directional Blur"			</item>
+  <item>"Dissolve"			"Dissolve"			</item>
+  <item>"Distortion Wave"		"Distortion Wave"			</item>
+  <item>"Distortion"			"Distortion"			</item>
+  <item>"Divide Ino"			"Divide Ino"			</item>
+  <item>"Ellipse"			"Ellipse"			</item>
+  <item>"Emboss"			"Emboss"			</item>
+  <item>"End"				"End"			</item>
+  <item>"Environment"			"Environment"			</item>
+  <item>"Erode/Dilate"			"Erode/Dilate"			</item>
+  <item>"Evolution Options"		"Evolution Options"			</item>
+  <item>"External Palette"		"External Palette"			</item>
+  <item>"Fade-in Color"			"Fade-in Color"			</item>
+  <item>"Fade-out Color"		"Fade-out Color"			</item>
+  <item>"Fireball"			"Fireball"			</item>
+  <item>"Flap Behavior"			"Flap Behavior"			</item>
+  <item>"Floor Bump Iwa"		"Floor Bump Iwa"			</item>
+  <item>"Flow Blur Iwa"			"Flow Blur Iwa"			</item>
+  <item>"Flow Paint Brush Iwa"		"Flow Paint Brush Iwa"			</item>
+  <item>"Fog Ino"			"Fog Ino"			</item>
+  <item>"Four Points"			"Four Points"			</item>
+  <item>"Fractal Noise Iwa"		"Fractal Noise Iwa"			</item>
+  <item>"Free Distort"			"Free Distort"			</item>
+  <item>"Friction"			"Friction"			</item>
+  <item>"Gamma"				"Gamma"			</item>
+  <item>"Glare Iwa"			"Glare Iwa"			</item>
+  <item>"Glitter"			"Glitter"			</item>
+  <item>"Glow"				"Glow"			</item>
+  <item>"GPU HSL Blend"			"GPU HSL Blend"			</item>
+  <item>"Gradient Warp Iwa"		"Gradient Warp Iwa"			</item>
+  <item>"Gravity"			"Gravity"			</item>
+  <item>"Green"				"Green"			</item>
+  <item>"Hard Light Ino"		"Hard Light Ino"			</item>
+  <item>"Hard Mix Ino"			"Hard Mix Ino"			</item>
+  <item>"HLS Add Ino"			"HLS Add Ino"			</item>
+  <item>"HLS Adjust Ino"		"HLS Adjust Ino"			</item>
+  <item>"HLS Noise Ino"			"HLS Noise Ino"			</item>
+  <item>"HSV Add Ino"			"HSV Add Ino"			</item>
+  <item>"HSV Adjust Ino"		"HSV Adjust Ino"			</item>
+  <item>"HSV Key"			"HSV Key"			</item>
+  <item>"HSV Noise Ino"			"HSV Noise Ino"			</item>
+  <item>"HSV Scale"			"HSV Scale"			</item>
+  <item>"Inner Shape"			"Inner Shape"			</item>
+  <item>"iwa Bokeh Advanced"		"iwa Bokeh Advanced"			</item>
+  <item>"Kaleido"			"Kaleido"			</item>
+  <item>"Level Auto Ino"		"Level Auto Ino"			</item>
+  <item>"Level Master Ino"		"Level Master Ino"			</item>
+  <item>"Level RGBA Ino"		"Level RGBA Ino"			</item>
+  <item>"Lifetime"			"Lifetime"			</item>
+  <item>"Light Direction"		"Light Direction"			</item>
+  <item>"Light Spot"			"Light Spot"			</item>
+  <item>"Lighten Ino"			"Lighten Ino"			</item>
+  <item>"Lighter Color Ino"		"Lighter Color Ino"			</item>
+  <item>"Limits"			"Limits"			</item>
+  <item>"Line Blur Ino"			"Line Blur Ino"			</item>
+  <item>"Linear Burn Ino"		"Linear Burn Ino"			</item>
+  <item>"Linear Dodge Ino"		"Linear Dodge Ino"			</item>
+  <item>"Linear Gradient (Classic)"	"Linear Gradient (Classic)"			</item>
+  <item>"Linear Gradient"		"Linear Gradient"			</item>
+  <item>"Linear Light Ino"		"Linear Light Ino"			</item>
+  <item>"Linear Wave"			"Linear Wave"			</item>
+  <item>"Local Blur"			"Local Blur"			</item>
+  <item>"Local Transp"			"Local Transp"			</item>
+  <item>"Max Min Ino"			"Max Min Ino"			</item>
+  <item>"Median Filter Ino"		"Median Filter Ino"			</item>
+  <item>"Median Ino"			"Median Ino"			</item>
+  <item>"Mosaic"			"Mosaic"			</item>
+  <item>"Motion Blur Ino"		"Motion Blur Ino"			</item>
+  <item>"Motion Blur Iwa"		"Motion Blur Iwa"			</item>
+  <item>"Motion Blur"			"Motion Blur"			</item>
+  <item>"Motion Flow Iwa"		"Motion Flow Iwa"			</item>
+  <item>"Motion Wind Ino"		"Motion Wind Ino"			</item>
+  <item>"Multi Linear"			"Multi Linear"			</item>
+  <item>"Multi Radial"			"Multi Radial"			</item>
+  <item>"Multiply Ino"			"Multiply Ino"			</item>
+  <item>"Multiply"			"Multiply"			</item>
+  <item>"Multitone"			"Multitone"			</item>
+  <item>"Negate Ino"			"Negate Ino"			</item>
+  <item>"Noise"				"Noise"			</item>
+  <item>"Nothing"			"Nothing"			</item>
+  <item>"Opacity"			"Opacity"			</item>
+  <item>"Outer Shape"			"Outer Shape"			</item>
+  <item>"OutLine"			"OutLine"			</item>
+  <item>"Over Ino"			"Over Ino"			</item>
+  <item>"Overlay Ino"			"Overlay Ino"			</item>
+  <item>"Palette Filter"		"Palette Filter"			</item>
+  <item>"Particle Generation"		"Particle Generation"			</item>
+  <item>"Particle"			"Particle"			</item>
+  <item>"Pattern"			"Pattern"			</item>
+  <item>"Perlin Noise"			"Perlin Noise"			</item>
+  <item>"Perspective Distort Iwa"	"Perspective Distort Iwa"			</item>
+  <item>"Pin Light Ino"			"Pin Light Ino"			</item>
+  <item>"Pivot"				"Pivot"			</item>
+  <item>"PN Clouds Ino"			"PN Clouds Ino"			</item>
+  <item>"PN Perspective Iwa"		"PN Perspective Iwa"			</item>
+  <item>"Posterize"			"Posterize"			</item>
+  <item>"Radial Blur GPU"		"Radial Blur GPU"			</item>
+  <item>"Radial Blur Ino"		"Radial Blur Ino"			</item>
+  <item>"Radial Blur"			"Radial Blur"			</item>
+  <item>"Radial Gradient"		"Radial Gradient"			</item>
+  <item>"Rainbow Iwa"			"Rainbow Iwa"			</item>
+  <item>"Random Wave"			"Random Wave"			</item>
+  <item>"Raylit"			"Raylit"			</item>
+  <item>"Red"				"Red"			</item>
+  <item>"Reference Frame"		"Reference Frame"			</item>
+  <item>"Reflection mode"		"Reflection mode"			</item>
+  <item>"Refraction mode"		"Refraction mode"			</item>
+  <item>"RGB Fade"			"RGB Fade"			</item>
+  <item>"RGB Key"			"RGB Key"			</item>
+  <item>"RGB"				"RGB"			</item>
+  <item>"RGBA Cut"			"RGBA Cut"			</item>
+  <item>"RGBA Scale"			"RGBA Scale"			</item>
+  <item>"Ripple"			"Ripple"			</item>
+  <item>"Ripples"			"Ripples"			</item>
+  <item>"Rotation"			"Rotation"			</item>
+  <item>"Salt Pepper Noise"		"Salt Pepper Noise"			</item>
+  <item>"Scale"				"Scale"			</item>
+  <item>"Scattering"			"Scattering"			</item>
+  <item>"Screen Ino"			"Screen Ino"			</item>
+  <item>"Shape"				"Shape"			</item>
+  <item>"Sharpen"			"Sharpen"			</item>
+  <item>"Shift"				"Shift"			</item>
+  <item>"Size Increase"			"Size Increase"			</item>
+  <item>"Size, Mass and Orientation"	"Size, Mass and Orientation"			</item>
+  <item>"Smudge"			"Smudge"			</item>
+  <item>"Soft Light Ino"		"Soft Light Ino"			</item>
+  <item>"Solarize"			"Solarize"			</item>
+  <item>"Source Area"			"Source Area"			</item>
+  <item>"Source Image"			"Source Image"			</item>
+  <item>"Source"			"Source"			</item>
+  <item>"Source1"			"Source1"			</item>
+  <item>"Source2"			"Source2"			</item>
+  <item>"Source3"			"Source3"			</item>
+  <item>"Source4"			"Source4"			</item>
+  <item>"Source5"			"Source5"			</item>
+  <item>"Spectrum Iwa"			"Spectrum Iwa"			</item>
+  <item>"Speed"				"Speed"			</item>
+  <item>"Spin Blur GPU"			"Spin Blur GPU"			</item>
+  <item>"Spin Blur Ino"			"Spin Blur Ino"			</item>
+  <item>"Spin Blur"			"Spin Blur"			</item>
+  <item>"Spin Gradient Iwa"		"Spin Gradient Iwa"			</item>
+  <item>"Spiral"			"Spiral"			</item>
+  <item>"Square Gradient"		"Square Gradient"			</item>
+  <item>"Starsky"			"Starsky"			</item>
+  <item>"Start"				"Start"			</item>
+  <item>"Sub Settings"			"Sub Settings"			</item>
+  <item>"Subtract Ino"			"Subtract Ino"			</item>
+  <item>"Subtract"			"Subtract"			</item>
+  <item>"Sunflare"			"Sunflare"			</item>
+  <item>"Tangent Flow Iwa"		"Tangent Flow Iwa"			</item>
+  <item>"Target Spot"			"Target Spot"			</item>
+  <item>"Text Iwa"			"Text Iwa"			</item>
+  <item>"Texture Offset"		"Texture Offset"			</item>
+  <item>"Texture"			"Texture"			</item>
+  <item>"Thickness variation"		"Thickness variation"			</item>
+  <item>"Tile Horizontally"		"Tile Horizontally"			</item>
+  <item>"Tile Iwa"			"Tile Iwa"			</item>
+  <item>"Tile Vertically"		"Tile Vertically"			</item>
+  <item>"Tile"				"Tile"			</item>
+  <item>"TimeCode Iwa"			"TimeCode Iwa"			</item>
+  <item>"Tip Placement"			"Tip Placement"			</item>
+  <item>"Top Layer"			"Top Layer"			</item>
+  <item>"Trail"				"Trail"			</item>
+  <item>"Transform"			"Transform"			</item>
+  <item>"Transparency"			"Transparency"			</item>
+  <item>"Transverse Wave"		"Transverse Wave"			</item>
+  <item>"Vector Control"		"Vector Control"			</item>
+  <item>"Vivid Light Ino"		"Vivid Light Ino"			</item>
+  <item>"Warp HV Ino"			"Warp HV Ino"			</item>
+  <item>"Warp"				"Warp"			</item>
+  <item>"Waves"				"Waves"			</item>
+  <item>"Wavy"				"Wavy"			</item>
+  <item>"Wind"				"Wind"			</item>
+
 <!------------------------------ FX ------------------------------------------->
 
   <item>"addFx"			"Add"			</item>
@@ -1719,5 +1966,64 @@
   <item>"STD_iwa_TiledParticlesFx.fadeout_color_fade"		"Fade-out Intensity"		</item>
   <item>"STD_iwa_TiledParticlesFx.source_gradation"		"Use Control Image Gradation"		</item>
   <item>"STD_iwa_TiledParticlesFx.pick_color_for_every_frame"	"Pick Control Image's Color for Every Frame"	</item>
+  
+<!------------------------------ MyPaint settings ---------------------------------------->
+ <item>"Opacity"				"Opacity"			</item>
+ <item>"Opacity multiply"			"Opacity multiply"			</item>
+ <item>"Opacity linearize"			"Opacity linearize"			</item>
+ <item>"Radius"					"Radius"			</item>
+ <item>"Hardness"				"Hardness"			</item>
+ <item>"Pixel feather"				"Pixel feather"			</item>
+ <item>"Dabs per basic radius"			"Dabs per basic radius"			</item>
+ <item>"Dabs per actual radius"			"Dabs per actual radius"			</item>
+ <item>"Dabs per second"			"Dabs per second"			</item>
+ <item>"GridMap Scale"				"GridMap Scale"			</item>
+ <item>"GridMap Scale X"			"GridMap Scale X"			</item>
+ <item>"GridMap Scale Y"			"GridMap Scale Y"			</item>
+ <item>"Radius by random"			"Radius by random"			</item>
+ <item>"Fine speed filter"			"Fine speed filter"			</item>
+ <item>"Gross speed filter"			"Gross speed filter"			</item>
+ <item>"Fine speed gamma"			"Fine speed gamma"			</item>
+ <item>"Gross speed gamma"			"Gross speed gamma"			</item>
+ <item>"Jitter"					"Jitter"			</item>
+ <item>"Offset Y"				"Offset Y"			</item>
+ <item>"Offset X"				"Offset X"			</item>
+ <item>"Angular Offset: Direction"		"Angular Offset: Direction"			</item>
+ <item>"Angular Offset: Ascension"		"Angular Offset: Ascension"			</item>
+ <item>"Angular Offset Mirrored: Direction"	"Angular Offset Mirrored: Direction"			</item>
+ <item>"Angular Offset Mirrored: Ascension"	"Angular Offset Mirrored: Ascension"			</item>
+ <item>"Angular Offsets Adjustment"		"Angular Offsets Adjustment"			</item>
+ <item>"Offsets Multiplier"			"Offsets Multiplier"			</item>
+ <item>"Offset by speed"			"Offset by speed"			</item>
+ <item>"Offset by speed filter"			"Offset by speed filter"			</item>
+ <item>"Slow position tracking"			"Slow position tracking"			</item>
+ <item>"Slow tracking per dab"			"Slow tracking per dab"			</item>
+ <item>"Tracking noise"				"Tracking noise"			</item>
+ <item>"Color hue"				"Color hue"			</item>
+ <item>"Color saturation"			"Color saturation"			</item>
+ <item>"Color value"				"Color value"			</item>
+ <item>"Save color"				"Save color"			</item>
+ <item>"Change color hue"			"Change color hue"			</item>
+ <item>"Change color lightness (HSL)"		"Change color lightness (HSL)"			</item>
+ <item>"Change color satur. (HSL)"		"Change color satur. (HSL)"			</item>
+ <item>"Change color value (HSV)"		"Change color value (HSV)"			</item>
+ <item>"Change color satur. (HSV)"		"Change color satur. (HSV)"			</item>
+ <item>"Smudge"					"Smudge"			</item>
+ <item>"Smudge length"				"Smudge length"			</item>
+ <item>"Smudge radius"				"Smudge radius"			</item>
+ <item>"Eraser"					"Eraser"			</item>
+ <item>"Stroke threshold"			"Stroke threshold"			</item>
+ <item>"Stroke duration"			"Stroke duration"			</item>
+ <item>"Stroke hold time"			"Stroke hold time"			</item>
+ <item>"Custom input"				"Custom input"			</item>
+ <item>"Custom input filter"			"Custom input filter"			</item>
+ <item>"Elliptical dab: ratio"			"Elliptical dab: ratio"			</item>
+ <item>"Elliptical dab: angle"			"Elliptical dab: angle"			</item>
+ <item>"Direction filter"			"Direction filter"			</item>
+ <item>"Lock alpha"				"Lock alpha"			</item>
+ <item>"Colorize"				"Colorize"			</item>
+ <item>"Snap to pixel"				"Snap to pixel"			</item>
+ <item>"Pressure gain"				"Pressure gain"			</item>
+
 </stringtable> 
 

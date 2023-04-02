@@ -548,6 +548,10 @@
         <source>Ignore Gaps</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Pick+Freehand</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FingerTool</name>
@@ -662,6 +666,30 @@
     </message>
     <message>
         <source>Refer Visible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distance:</source>
+        <translation type="unfinished">Distance:</translation>
+    </message>
+    <message>
+        <source>Style Index:</source>
+        <translation type="unfinished">Indice de Style:</translation>
+    </message>
+    <message>
+        <source>Gaps:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ignore Gaps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fill Gaps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close and Fill</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1693,6 +1721,96 @@ Voulez-vous continuer?</translation>
         <source>With this option being activated, the picked style will be
 moved to the end of the first page of the palette.</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SymmetryTool</name>
+    <message>
+        <source>Lines:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Magenta</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yellow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cyan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Black</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line Symmetry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation type="unfinished">Paramètre Prédéfini:</translation>
+    </message>
+    <message>
+        <source>&lt;custom&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SymmetryToolOptionBox</name>
+    <message>
+        <source>Rotation:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotate Perspective Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotate Perspective Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset Position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lines:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opacity:</source>
+        <translation type="unfinished">Opacité:</translation>
+    </message>
+    <message>
+        <source>Color:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preset:</source>
+        <translation type="unfinished">Paramètre Prédéfini:</translation>
     </message>
 </context>
 <context>

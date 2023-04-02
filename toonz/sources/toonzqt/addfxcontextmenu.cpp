@@ -245,7 +245,7 @@ void AddFxContextMenu::loadFxs() {
 //---------------------------------------------------
 
 void AddFxContextMenu::loadFxPluginGroup() {
-  QString groupName = QString::fromStdString("Plugins");
+  QString groupName = tr("Plugins");
 
   std::unique_ptr<QMenu> insertFxGroup(new QMenu(groupName, m_insertMenu));
   std::unique_ptr<QMenu> addFxGroup(new QMenu(groupName, m_addMenu));
@@ -263,7 +263,8 @@ void AddFxContextMenu::loadFxGroup(TIStream *is) {
   while (!is->eos()) {
     std::string tagName;
     if (is->matchTag(tagName)) {
-      QString groupName = QString::fromStdString(tagName);
+      QString groupName =
+          QString::fromStdWString(TStringTable::translate(tagName));
 
       std::unique_ptr<QMenu> insertFxGroup(new QMenu(groupName, m_insertMenu));
       std::unique_ptr<QMenu> addFxGroup(new QMenu(groupName, m_addMenu));
@@ -401,16 +402,14 @@ bool AddFxContextMenu::loadPreset(const std::string &name, QMenu *insertFxGroup,
   if (TFileStatus(presetsFilepath).isDirectory()) {
     TFilePathSet presets = TSystem::readDirectory(presetsFilepath, false);
     if (!presets.empty()) {
-      QMenu *inserMenu =
-          new QMenu(QString::fromStdWString(TStringTable::translate(name)),
-                    insertFxGroup);
+      QString translatedName =
+          QString::fromStdWString(TStringTable::translate(name));
+
+      QMenu *inserMenu = new QMenu(translatedName, insertFxGroup);
       insertFxGroup->addMenu(inserMenu);
-      QMenu *addMenu = new QMenu(
-          QString::fromStdWString(TStringTable::translate(name)), addFxGroup);
+      QMenu *addMenu = new QMenu(translatedName, addFxGroup);
       addFxGroup->addMenu(addMenu);
-      QMenu *replaceMenu =
-          new QMenu(QString::fromStdWString(TStringTable::translate(name)),
-                    replaceFxGroup);
+      QMenu *replaceMenu = new QMenu(translatedName, replaceFxGroup);
       replaceFxGroup->addMenu(replaceMenu);
 
       // This is a workaround to set the bold style to the first element of this
@@ -422,12 +421,9 @@ bool AddFxContextMenu::loadPreset(const std::string &name, QMenu *insertFxGroup,
       addMenu->setObjectName("fxMenu");
       replaceMenu->setObjectName("fxMenu");
 
-      QAction *insertAction = new QAction(
-          QString::fromStdWString(TStringTable::translate(name)), inserMenu);
-      QAction *addAction = new QAction(
-          QString::fromStdWString(TStringTable::translate(name)), addMenu);
-      QAction *replaceAction = new QAction(
-          QString::fromStdWString(TStringTable::translate(name)), replaceMenu);
+      QAction *insertAction  = new QAction(translatedName, inserMenu);
+      QAction *addAction     = new QAction(translatedName, addMenu);
+      QAction *replaceAction = new QAction(translatedName, replaceMenu);
 
       insertAction->setCheckable(true);
       addAction->setCheckable(true);
@@ -485,9 +481,10 @@ void AddFxContextMenu::loadMacro() {
       TFilePathSet macros = TSystem::readDirectory(macroDir);
       if (macros.empty()) return;
 
-      QMenu *insertMacroMenu  = new QMenu("Macro", m_insertMenu);
-      QMenu *addMacroMenu     = new QMenu("Macro", m_addMenu);
-      QMenu *replaceMacroMenu = new QMenu("Macro", m_replaceMenu);
+      QString macroGroup      = tr("Macro");
+      QMenu *insertMacroMenu  = new QMenu(macroGroup, m_insertMenu);
+      QMenu *addMacroMenu     = new QMenu(macroGroup, m_addMenu);
+      QMenu *replaceMacroMenu = new QMenu(macroGroup, m_replaceMenu);
 
       m_insertMenu->addMenu(insertMacroMenu);
       m_addMenu->addMenu(addMacroMenu);

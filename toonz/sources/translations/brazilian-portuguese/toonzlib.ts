@@ -269,6 +269,7 @@ Provavelmente o codec não está funcionando corretamente.</translation>
     </message>
     <message>
         <location filename="../../toonzlib/cleanupcolorstyles.cpp" line="95"/>
+        <location filename="../../toonzlib/imagestyles.cpp" line="554"/>
         <source>Contrast</source>
         <translation>Contraste</translation>
     </message>
@@ -805,6 +806,41 @@ Provavelmente o codec não está funcionando corretamente.</translation>
         <location filename="../../toonzlib/txshcolumn.cpp" line="772"/>
         <source>DarkMagenta</source>
         <translation>Magenta Escuro</translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/imagestyles.cpp" line="540"/>
+        <source>Load From File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/imagestyles.cpp" line="542"/>
+        <source>Use As Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/imagestyles.cpp" line="544"/>
+        <source>Position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/imagestyles.cpp" line="546"/>
+        <source>Scale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/imagestyles.cpp" line="548"/>
+        <source>Rotation(degrees)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/imagestyles.cpp" line="550"/>
+        <source>X displ</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/imagestyles.cpp" line="552"/>
+        <source>Y displ</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

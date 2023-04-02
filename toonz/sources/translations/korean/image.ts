@@ -2,6 +2,21 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ko" sourcelanguage="en">
 <context>
+    <name>APngWriterProperties</name>
+    <message>
+        <source>Scale</source>
+        <translation type="unfinished">비율</translation>
+    </message>
+    <message>
+        <source>Looping</source>
+        <translation type="unfinished">반복</translation>
+    </message>
+    <message>
+        <source>Write as .png</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AviWriterProperties</name>
     <message>
         <source>Codec</source>
@@ -10,6 +25,80 @@
     <message>
         <source>Uncompressed</source>
         <translation>압축해제</translation>
+    </message>
+</context>
+<context>
+    <name>ExrWriterProperties</name>
+    <message>
+        <source>Bits Per Pixel</source>
+        <translation type="unfinished">픽셀당 비트 수</translation>
+    </message>
+    <message>
+        <source>48(RGB Half Float)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>64(RGBA Half Float)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>96(RGB Float)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>128(RGBA Float)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Compression Type</source>
+        <translation type="unfinished">압축</translation>
+    </message>
+    <message>
+        <source>No compression</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Run Length Encoding (RLE)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ZIP compression per Scanline (ZIPS)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ZIP compression per scanline band (ZIP)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PIZ-based wavelet compression (PIZ)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Storage Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scan-line based</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tile based</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color Space Gamma</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FFMovWriterProperties</name>
+    <message>
+        <source>Quality</source>
+        <translation type="unfinished">품질</translation>
+    </message>
+    <message>
+        <source>Scale</source>
+        <translation type="unfinished">비율</translation>
     </message>
 </context>
 <context>
@@ -91,11 +180,11 @@
     <name>MovWriterProperties</name>
     <message>
         <source>Quality</source>
-        <translation type="unfinished">품질</translation>
+        <translation type="obsolete">품질</translation>
     </message>
     <message>
         <source>Scale</source>
-        <translation type="unfinished">비율</translation>
+        <translation type="obsolete">비율</translation>
     </message>
 </context>
 <context>

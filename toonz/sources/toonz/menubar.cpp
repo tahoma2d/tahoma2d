@@ -219,7 +219,7 @@ void RoomTabWidget::updateTabName() {
 //-----------------------------------------------------------------------------
 
 void RoomTabWidget::addNewTab() {
-  insertTab(0, tr("Room"));
+  insertTab(0, tr("New Room"));
   emit insertNewTabRoom();
 }
 

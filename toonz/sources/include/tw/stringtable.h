@@ -15,12 +15,15 @@
 #define DVVAR DV_IMPORT_VAR
 #endif
 
+class QString;
 class TFilePath;
 
 class DVAPI TStringTable {
 public:
   static const TStringTable *instance();
   static std::wstring translate(std::string);
+  static void updateTranslation(QString);
+
 
   class Item {
   public:

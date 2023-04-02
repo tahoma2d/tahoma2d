@@ -1358,8 +1358,9 @@ ColorChannelControl::ColorChannelControl(ColorChannel channel, QWidget *parent)
   setFocusPolicy(Qt::NoFocus);
 
   QStringList channelList;
-  channelList << tr("R") << tr("G") << tr("B") << tr("A") << tr("H") << tr("S")
-              << tr("V");
+  channelList << QObject::tr("R") << QObject::tr("G") << QObject::tr("B")
+              << QObject::tr("A") << QObject::tr("H") << QObject::tr("S")
+              << QObject::tr("V");
   assert(0 <= (int)m_channel && (int)m_channel < 7);
   QString text = channelList.at(m_channel);
   m_label      = new QLabel(text, this);
@@ -1376,9 +1377,9 @@ ColorChannelControl::ColorChannelControl(ColorChannel channel, QWidget *parent)
   m_field = new ChannelLineEdit(this, 0, minValue, maxValue);
   if (text == "A") {
     m_label->setToolTip(
-        tr("Alpha controls the transparency. \nZero is fully transparent."));
+        QObject::tr("Alpha controls the transparency. \nZero is fully transparent."));
     m_field->setToolTip(
-        tr("Alpha controls the transparency. \nZero is fully transparent."));
+        QObject::tr("Alpha controls the transparency. \nZero is fully transparent."));
   }
   m_slider = new ColorSlider(Qt::Horizontal, this);
 
@@ -2247,7 +2248,7 @@ void StyleChooserPage::mousePressEvent(QMouseEvent *event) {
 void StyleChooserPage::enterEvent(QEvent *event) {
   TApplication *app = m_editor->getApplication();
   if (app)
-    app->showMessage(tr("Style Set Manager:              %1+click - Add Style "
+    app->showMessage(QObject::tr("Style Set Manager:              %1+click - Add Style "
                         "to Palette              %2+click - Multi-Style Select")
                          .arg(trModKey("Alt"))
                          .arg(trModKey("Ctrl")),
@@ -2303,18 +2304,18 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
 
   if (m_editor->isSelecting()) {
     action = new QAction(this);
-    action->setText(tr("Add Selected to Palette"));
+    action->setText(QObject::tr("Add Selected to Palette"));
     connect(action, SIGNAL(triggered()), m_editor,
             SLOT(onAddSelectedStylesToPalette()));
     menu->addAction(action);
 
     action = new QAction(this);
     if (m_editor->isSelectingFavoritesOnly()) {
-      action->setText(tr("Remove Selected from Favorites"));
+      action->setText(QObject::tr("Remove Selected from Favorites"));
       connect(action, SIGNAL(triggered()), m_editor,
               SLOT(onRemoveSelectedStylesFromFavorites()));
     } else {
-      action->setText(tr("Add Selected to Favorites"));
+      action->setText(QObject::tr("Add Selected to Favorites"));
       connect(action, SIGNAL(triggered()), m_editor,
               SLOT(onAddSelectedStylesToFavorites()));
       // Disable if selecting favorites also
@@ -2322,7 +2323,7 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
     }
     menu->addAction(action);
 
-    QMenu *styleSetMenu = new QMenu(tr("Copy Selected to Style Set..."), this);
+    QMenu *styleSetMenu = new QMenu(QObject::tr("Copy Selected to Style Set..."), this);
     for (int i = 1; i < styleSets->size(); i++) {
       StyleChooserPage *page = styleSets->at(i);
       QAction *subAction     = new QAction(page->getStyleSetName());
@@ -2337,7 +2338,7 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
     if (styleSets->size() < 2) styleSetMenu->setDisabled(true);
     menu->addMenu(styleSetMenu);
 
-    styleSetMenu = new QMenu(tr("Move Selected to Style Set..."), this);
+    styleSetMenu = new QMenu(QObject::tr("Move Selected to Style Set..."), this);
     for (int i = 1; i < styleSets->size(); i++) {
       StyleChooserPage *page = styleSets->at(i);
       QAction *subAction     = new QAction(page->getStyleSetName());
@@ -2354,7 +2355,7 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
     menu->addMenu(styleSetMenu);
 
     action = new QAction(this);
-    action->setText(tr("Remove Selected from Sets"));
+    action->setText(QObject::tr("Remove Selected from Sets"));
     connect(action, SIGNAL(triggered()), m_editor,
             SLOT(onRemoveSelectedStyleFromSet()));
     for (int i = 1; i < styleSets->size(); i++) {
@@ -2376,7 +2377,7 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
     m_currentIndex = currentIndex;
 
     action = new QAction(this);
-    action->setText(tr("Add to Palette"));
+    action->setText(QObject::tr("Add to Palette"));
     connect(action, SIGNAL(triggered()), this, SLOT(onAddStyleToPalette()));
     if (m_currentIndex == 0 || (m_pageType == StylePageType::Texture &&
                                 m_currentIndex == getChipCount() - 1))
@@ -2384,7 +2385,7 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
     menu->addAction(action);
 
     action = new QAction(this);
-    action->setText(tr("Add to Favorites"));
+    action->setText(QObject::tr("Add to Favorites"));
     connect(action, SIGNAL(triggered()), this, SLOT(onAddStyleToFavorite()));
     if (m_currentIndex == 0 || (m_pageType == StylePageType::Texture &&
                                 m_currentIndex == getChipCount() - 1) ||
@@ -2392,7 +2393,7 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
       action->setDisabled(true);
     menu->addAction(action);
 
-    QMenu *styleSetMenu = new QMenu(tr("Copy to Style Set..."), this);
+    QMenu *styleSetMenu = new QMenu(QObject::tr("Copy to Style Set..."), this);
     for (int i = 1; i < styleSets->size(); i++) {
       StyleChooserPage *page = styleSets->at(i);
       QAction *subAction     = new QAction(page->getStyleSetName());
@@ -2409,7 +2410,7 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
       styleSetMenu->setDisabled(true);
     menu->addMenu(styleSetMenu);
 
-    styleSetMenu = new QMenu(tr("Move to Style Set..."), this);
+    styleSetMenu = new QMenu(QObject::tr("Move to Style Set..."), this);
     for (int i = 1; i < styleSets->size(); i++) {
       StyleChooserPage *page = styleSets->at(i);
       QAction *subAction     = new QAction(page->getStyleSetName());
@@ -2427,7 +2428,7 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
     menu->addMenu(styleSetMenu);
 
     action = new QAction(this);
-    action->setText(tr("Remove from Set"));
+    action->setText(QObject::tr("Remove from Set"));
     connect(action, SIGNAL(triggered()), this, SLOT(onRemoveStyleFromSet()));
     if (m_currentIndex == 0 || (m_pageType == StylePageType::Texture &&
                                 m_currentIndex == getChipCount() - 1) ||
@@ -2438,13 +2439,13 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
     menu->addSeparator();
 
     action = new QAction(this);
-    action->setText(tr("Add Set to Palette"));
+    action->setText(QObject::tr("Add Set to Palette"));
     connect(action, SIGNAL(triggered()), this, SLOT(onAddSetToPalette()));
     if (getChipCount() <= 1) action->setDisabled(true);
     menu->addAction(action);
 
     action = new QAction(this);
-    action->setText(tr("Empty Set"));
+    action->setText(QObject::tr("Empty Set"));
     connect(action, SIGNAL(triggered()), this, SLOT(onEmptySet()));
     if (getChipCount() <= 1 ||
         (m_pageType == StylePageType::Texture && getChipCount() <= 2) ||
@@ -2456,19 +2457,19 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
   }
 
   action = new QAction(this);
-  action->setText(tr("New Style Set..."));
+  action->setText(QObject::tr("New Style Set..."));
   connect(action, SIGNAL(triggered()), m_editor, SLOT(onAddNewStyleSet()));
   menu->addAction(action);
 
   action = new QAction(this);
-  action->setText(tr("Rename Style Set..."));
+  action->setText(QObject::tr("Rename Style Set..."));
   connect(action, SIGNAL(triggered()), this, SLOT(onRenameStyleSet()));
   if (isMyFavoriteSet() || isRootFolder() || isExternal())
     action->setDisabled(true);
   menu->addAction(action);
 
   action = new QAction(this);
-  action->setText(tr("Reload Style Set"));
+  action->setText(QObject::tr("Reload Style Set"));
   connect(action, SIGNAL(triggered()), this, SLOT(onReloadStyleSet()));
   if (m_pageType == StylePageType::VectorGenerated ||
       m_styleSetName == "Unknown Style Set")
@@ -2476,7 +2477,7 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
   menu->addAction(action);
 
   action = new QAction(this);
-  action->setText(tr("Scan for Style Set Changes"));
+  action->setText(QObject::tr("Scan for Style Set Changes"));
   connect(action, SIGNAL(triggered()), m_editor, SLOT(onScanStyleSetChanges()));
   menu->addAction(action);
 
@@ -2484,7 +2485,7 @@ void StyleChooserPage::contextMenuEvent(QContextMenuEvent *event) {
 
   if (m_styleSetName != "Unknown Style Set") {
     action = new QAction(this);
-    action->setText(tr("Remove '%1' Style Set").arg(m_styleSetName));
+    action->setText(QObject::tr("Remove '%1' Style Set").arg(m_styleSetName));
     if (m_stylesFolder == TFilePath() || (isFavorite() && !allowFavorite()) ||
         !canDeletePage())
       action->setDisabled(true);
@@ -3721,7 +3722,7 @@ SettingsPage::SettingsPage(QWidget *parent)
   paramsContainer->setLayout(paramsContainerLayout);
 
   // Add a vertical layout to store the "autofill" checkbox widgets
-  m_autoFillCheckBox = new QCheckBox(tr("Autopaint for Lines"), this);
+  m_autoFillCheckBox = new QCheckBox(QObject::tr("Autopaint for Lines"), this);
   paramsContainerLayout->addWidget(m_autoFillCheckBox, 0,
                                    Qt::AlignLeft | Qt::AlignVCenter);
 
@@ -3879,7 +3880,7 @@ void SettingsPage::setStyle(const TColorStyleP &editedStyle) {
       // "reset to default" button
       if (m_editedStyle->hasParamDefault(p)) {
         QPushButton *pushButton = new QPushButton;
-        pushButton->setToolTip(tr("Reset to default"));
+        pushButton->setToolTip(QObject::tr("Reset to default"));
         pushButton->setIcon(createQIcon("delete"));
         pushButton->setFixedSize(24, 24);
         m_paramsLayout->addWidget(pushButton, p, 2);

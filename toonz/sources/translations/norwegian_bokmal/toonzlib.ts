@@ -157,27 +157,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="268"/>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="264"/>
         <source>frame index (%1) must be a number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="272"/>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="268"/>
         <source>frame index (%1) is out of range (0-%2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="295"/>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="291"/>
         <source>second argument (%1) is not an image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="308"/>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="304"/>
         <source>can not insert a %1 image into a level</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="329"/>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="325"/>
         <source>can not insert a %1 image to a %2 level</source>
         <translation type="unfinished"></translation>
     </message>
@@ -213,17 +213,17 @@
 <context>
     <name>Preferences</name>
     <message>
-        <location filename="../../toonzlib/preferences.cpp" line="101"/>
+        <location filename="../../toonzlib/preferences.cpp" line="102"/>
         <source>Retas Level Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/preferences.cpp" line="107"/>
+        <location filename="../../toonzlib/preferences.cpp" line="108"/>
         <source>Adobe Photoshop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/preferences.cpp" line="204"/>
+        <location filename="../../toonzlib/preferences.cpp" line="208"/>
         <source>PNG</source>
         <translation type="unfinished"></translation>
     </message>
@@ -268,6 +268,7 @@
     </message>
     <message>
         <location filename="../../toonzlib/cleanupcolorstyles.cpp" line="95"/>
+        <location filename="../../toonzlib/imagestyles.cpp" line="554"/>
         <source>Contrast</source>
         <translation type="unfinished"></translation>
     </message>
@@ -297,108 +298,108 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/doubleparamcmd.cpp" line="816"/>
+        <location filename="../../toonzlib/doubleparamcmd.cpp" line="817"/>
         <source>Remove Keyframe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/doubleparamcmd.cpp" line="856"/>
+        <location filename="../../toonzlib/doubleparamcmd.cpp" line="857"/>
         <source>Cycle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="908"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="917"/>
         <source>Add Fx  : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="909"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="918"/>
         <source>Insert Fx  : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1073"/>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1076"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1082"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1085"/>
         <source>Create Linked Fx  : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1298"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1307"/>
         <source>Replace Fx  : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1364"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1373"/>
         <source>Unlink Fx  : %1 - - %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1405"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1414"/>
         <source>Make Macro Fx  : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1548"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1557"/>
         <source>Explode Macro Fx  : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1611"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1620"/>
         <source>Create Output Fx</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1702"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1711"/>
         <source>Connect to Xsheet  : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1762"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1771"/>
         <source>Disconnect from Xsheet  : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="2035"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="2044"/>
         <source>Delete Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="2322"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="2331"/>
         <source>Delete Fx Node : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="2747"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="2756"/>
         <source>Paste Fx  :  </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3116"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3125"/>
         <source>Disconnect Fx</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3368"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3377"/>
         <source>Connect Fx : %1 - %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3550"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3559"/>
         <source>Rename Fx : %1 &gt; %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3602"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3611"/>
         <source>Group Fx</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3706"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3715"/>
         <source>Ungroup Fx</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3808"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3817"/>
         <source>Rename Group  : %1 &gt; %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -525,7 +526,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="235"/>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="231"/>
         <source>Argument &apos;%1&apos; does not look like a FrameId</source>
         <translation type="unfinished"></translation>
     </message>
@@ -721,14 +722,14 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="742"/>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="770"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="760"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="788"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="28"/>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="744"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="762"/>
         <source>Red</source>
         <translation type="unfinished"></translation>
     </message>
@@ -749,7 +750,7 @@
     </message>
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="32"/>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="746"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="764"/>
         <source>Green</source>
         <translation type="unfinished"></translation>
     </message>
@@ -760,7 +761,7 @@
     </message>
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="34"/>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="748"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="766"/>
         <source>Blue</source>
         <translation type="unfinished"></translation>
     </message>
@@ -790,18 +791,53 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="750"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="768"/>
         <source>DarkYellow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="752"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="770"/>
         <source>DarkCyan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/txshcolumn.cpp" line="754"/>
+        <location filename="../../toonzlib/txshcolumn.cpp" line="772"/>
         <source>DarkMagenta</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/imagestyles.cpp" line="540"/>
+        <source>Load From File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/imagestyles.cpp" line="542"/>
+        <source>Use As Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/imagestyles.cpp" line="544"/>
+        <source>Position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/imagestyles.cpp" line="546"/>
+        <source>Scale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/imagestyles.cpp" line="548"/>
+        <source>Rotation(degrees)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/imagestyles.cpp" line="550"/>
+        <source>X displ</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/imagestyles.cpp" line="552"/>
+        <source>Y displ</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

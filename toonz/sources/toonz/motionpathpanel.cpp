@@ -403,10 +403,10 @@ void MotionPathPanel::refreshPaths(bool force) {
 
   if (tree->getSplineCount() > 0) {
     m_pathsLayout->addWidget(new QLabel(""), 0, 0, Qt::AlignLeft);
-    m_pathsLayout->addWidget(new QLabel("Path Name"), 0, 1, Qt::AlignLeft);
-    m_pathsLayout->addWidget(new QLabel("Width"), 0, 2, Qt::AlignCenter);
-    m_pathsLayout->addWidget(new QLabel("Color"), 0, 3, Qt::AlignCenter);
-    m_pathsLayout->addWidget(new QLabel("Steps"), 0, 4, Qt::AlignCenter);
+    m_pathsLayout->addWidget(new QLabel(tr("Path Name")), 0, 1, Qt::AlignLeft);
+    m_pathsLayout->addWidget(new QLabel(tr("Width")), 0, 2, Qt::AlignCenter);
+    m_pathsLayout->addWidget(new QLabel(tr("Color")), 0, 3, Qt::AlignCenter);
+    m_pathsLayout->addWidget(new QLabel(tr("Steps")), 0, 4, Qt::AlignCenter);
     int i = 0;
     for (; i < tree->getSplineCount(); i++) {
       createControl(tree->getSpline(i), i + 1);

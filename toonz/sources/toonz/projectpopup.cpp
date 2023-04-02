@@ -97,7 +97,7 @@ ProjectPopup::ProjectPopup(bool isModal)
   m_showSettingsButton->setFocusPolicy(Qt::NoFocus);
 
   m_useSubSceneCbs =
-      new CheckBox("*Separate assets into scene sub-folders");
+      new CheckBox(tr("*Separate assets into scene sub-folders"));
   m_useSubSceneCbs->setMaximumHeight(WidgetHeight);
 
   m_rulePreferenceBG       = new QButtonGroup(this);

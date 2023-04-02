@@ -14,6 +14,7 @@
 #include "expressionreferencemanager.h"
 #include "thirdparty.h"
 #include "startuppopup.h"
+#include "tw/stringtable.h"
 
 // TnzTools includes
 #include "tools/tool.h"
@@ -486,7 +487,76 @@ int main(int argc, char *argv[]) {
   if (!isRunScript) splash.show();
   a.processEvents();
 
-  splash.showMessage(offsetStr + "Initializing QGLFormat...",
+  splash.showMessage(offsetStr + "Loading Translator...",
+                     Qt::AlignRight | Qt::AlignBottom, Qt::black);
+  a.processEvents();
+
+  // Carico la traduzione contenuta in toonz.qm (se ï¿½ presente)
+  QString languagePathString =
+      QString::fromStdString(::to_string(TEnv::getConfigDir() + "loc"));
+#ifndef WIN32
+  // the merge of menu on osx can cause problems with different languages with
+  // the Preferences menu
+  // qt_mac_set_menubar_merge(false);
+  languagePathString += "/" + Preferences::instance()->getCurrentLanguage();
+#else
+  languagePathString += "\\" + Preferences::instance()->getCurrentLanguage();
+#endif
+  QTranslator translator;
+  translator.load("toonz", languagePathString);
+
+  // La installo
+  a.installTranslator(&translator);
+
+  // Carico la traduzione contenuta in toonzqt.qm (se e' presente)
+  QTranslator translator2;
+  translator2.load("toonzqt", languagePathString);
+  a.installTranslator(&translator2);
+
+  // Carico la traduzione contenuta in tnzcore.qm (se e' presente)
+  QTranslator tnzcoreTranslator;
+  tnzcoreTranslator.load("tnzcore", languagePathString);
+  qApp->installTranslator(&tnzcoreTranslator);
+
+  // Carico la traduzione contenuta in toonzlib.qm (se e' presente)
+  QTranslator toonzlibTranslator;
+  toonzlibTranslator.load("toonzlib", languagePathString);
+  qApp->installTranslator(&toonzlibTranslator);
+
+  // Carico la traduzione contenuta in colorfx.qm (se e' presente)
+  QTranslator colorfxTranslator;
+  colorfxTranslator.load("colorfx", languagePathString);
+  qApp->installTranslator(&colorfxTranslator);
+
+  // Carico la traduzione contenuta in tools.qm
+  QTranslator toolTranslator;
+  toolTranslator.load("tnztools", languagePathString);
+  qApp->installTranslator(&toolTranslator);
+
+  // load translation for file writers properties
+  QTranslator imageTranslator;
+  imageTranslator.load("image", languagePathString);
+  qApp->installTranslator(&imageTranslator);
+
+  QTranslator qtTranslator;
+  qtTranslator.load("qt_" + QLocale::system().name(),
+                    QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+  a.installTranslator(&qtTranslator);
+
+  // Aggiorno la traduzione delle properties di tutti i tools
+  TTool::updateToolsPropertiesTranslation();
+  // Apply translation to file writers properties
+  Tiio::updateFileWritersPropertiesTranslation();
+
+  // Translate string table
+  TStringTable::instance()->updateTranslation(
+      Preferences::instance()->getCurrentLanguage());
+
+  // Force to have left-to-right layout direction in any language environment.
+  // This function has to be called after installTranslator().
+  a.setLayoutDirection(Qt::LeftToRight);
+
+  splash.showMessage(offsetStr + QObject::tr("Initializing QGLFormat..."),
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
@@ -498,7 +568,7 @@ int main(int argc, char *argv[]) {
 
   glutInit(&argc, argv);
 
-  splash.showMessage(offsetStr + "Initializing environment...",
+  splash.showMessage(offsetStr + QObject::tr("Initializing environment..."),
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
@@ -584,72 +654,8 @@ int main(int argc, char *argv[]) {
   // DVDirModel must be instantiated after Version Control initialization...
   FolderListenerManager::instance()->addListener(DvDirModel::instance());
 
-  splash.showMessage(offsetStr + "Loading Translator...",
-                     Qt::AlignRight | Qt::AlignBottom, Qt::black);
-  a.processEvents();
 
-  // Carico la traduzione contenuta in toonz.qm (se ï¿½ presente)
-  QString languagePathString =
-      QString::fromStdString(::to_string(TEnv::getConfigDir() + "loc"));
-#ifndef WIN32
-  // the merge of menu on osx can cause problems with different languages with
-  // the Preferences menu
-  // qt_mac_set_menubar_merge(false);
-  languagePathString += "/" + Preferences::instance()->getCurrentLanguage();
-#else
-  languagePathString += "\\" + Preferences::instance()->getCurrentLanguage();
-#endif
-  QTranslator translator;
-  translator.load("toonz", languagePathString);
-
-  // La installo
-  a.installTranslator(&translator);
-
-  // Carico la traduzione contenuta in toonzqt.qm (se e' presente)
-  QTranslator translator2;
-  translator2.load("toonzqt", languagePathString);
-  a.installTranslator(&translator2);
-
-  // Carico la traduzione contenuta in tnzcore.qm (se e' presente)
-  QTranslator tnzcoreTranslator;
-  tnzcoreTranslator.load("tnzcore", languagePathString);
-  qApp->installTranslator(&tnzcoreTranslator);
-
-  // Carico la traduzione contenuta in toonzlib.qm (se e' presente)
-  QTranslator toonzlibTranslator;
-  toonzlibTranslator.load("toonzlib", languagePathString);
-  qApp->installTranslator(&toonzlibTranslator);
-
-  // Carico la traduzione contenuta in colorfx.qm (se e' presente)
-  QTranslator colorfxTranslator;
-  colorfxTranslator.load("colorfx", languagePathString);
-  qApp->installTranslator(&colorfxTranslator);
-
-  // Carico la traduzione contenuta in tools.qm
-  QTranslator toolTranslator;
-  toolTranslator.load("tnztools", languagePathString);
-  qApp->installTranslator(&toolTranslator);
-
-  // load translation for file writers properties
-  QTranslator imageTranslator;
-  imageTranslator.load("image", languagePathString);
-  qApp->installTranslator(&imageTranslator);
-
-  QTranslator qtTranslator;
-  qtTranslator.load("qt_" + QLocale::system().name(),
-                    QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-  a.installTranslator(&qtTranslator);
-
-  // Aggiorno la traduzione delle properties di tutti i tools
-  TTool::updateToolsPropertiesTranslation();
-  // Apply translation to file writers properties
-  Tiio::updateFileWritersPropertiesTranslation();
-
-  // Force to have left-to-right layout direction in any language environment.
-  // This function has to be called after installTranslator().
-  a.setLayoutDirection(Qt::LeftToRight);
-
-  splash.showMessage(offsetStr + "Loading styles...",
+  splash.showMessage(offsetStr + QObject::tr("Loading styles..."),
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
@@ -663,20 +669,20 @@ int main(int argc, char *argv[]) {
 
   IconGenerator::setFilmstripIconSize(Preferences::instance()->getIconSize());
 
-  splash.showMessage(offsetStr + "Loading shaders...",
+  splash.showMessage(offsetStr + QObject::tr("Loading shaders..."),
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
   loadShaderInterfaces(ToonzFolder::getLibraryFolder() + TFilePath("shaders"));
 
-  splash.showMessage(offsetStr + "Initializing Tahoma2D...",
+  splash.showMessage(offsetStr + QObject::tr("Initializing Tahoma2D..."),
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
   TTool::setApplication(TApp::instance());
   TApp::instance()->init();
 
-  splash.showMessage(offsetStr + "Loading Plugins...",
+  splash.showMessage(offsetStr + QObject::tr("Loading Plugins..."),
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
   /* poll the thread ends:
@@ -689,7 +695,7 @@ int main(int argc, char *argv[]) {
     a.processEvents();
   }
 
-  splash.showMessage(offsetStr + "Creating main window...",
+  splash.showMessage(offsetStr + QObject::tr("Creating main window..."),
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
@@ -759,7 +765,7 @@ int main(int argc, char *argv[]) {
   QWindowsWindowFunctions::setWinTabEnabled(!useQtNativeWinInk);
 #endif
 
-  splash.showMessage(offsetStr + "Loading style sheet...",
+  splash.showMessage(offsetStr + QObject::tr("Loading style sheet..."),
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
@@ -768,7 +774,7 @@ int main(int argc, char *argv[]) {
   a.setStyleSheet(currentStyle);
 
   // Perspective grid tool - custom grid
-  splash.showMessage(offsetStr + "Loading Perspective Grid...",
+  splash.showMessage(offsetStr + QObject::tr("Loading Perspective Grid..."),
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
 
@@ -778,10 +784,10 @@ int main(int argc, char *argv[]) {
 
   w.setWindowTitle(QString::fromStdString(TEnv::getApplicationFullName()));
   if (TEnv::getIsPortable()) {
-    splash.showMessage(offsetStr + "Starting Tahoma2D...",
+    splash.showMessage(offsetStr + QObject::tr("Starting Tahoma2D..."),
                        Qt::AlignRight | Qt::AlignBottom, Qt::black);
   } else {
-    splash.showMessage(offsetStr + "Starting main window...",
+    splash.showMessage(offsetStr + QObject::tr("Starting main window..."),
                        Qt::AlignRight | Qt::AlignBottom, Qt::black);
   }
   a.processEvents();
@@ -824,9 +830,9 @@ int main(int argc, char *argv[]) {
 
   CommandManager::instance()->execute(T_Hand);
   if (!loadFilePath.isEmpty()) {
-    splash.showMessage(
-        QString("Loading file '") + loadFilePath.getQString() + "'...",
-        Qt::AlignRight | Qt::AlignBottom, Qt::black);
+    splash.showMessage(QString(QObject::tr("Loading file '%1'..."))
+                           .arg(loadFilePath.getQString()),
+                       Qt::AlignRight | Qt::AlignBottom, Qt::black);
     loadFilePath = loadFilePath.withType("tnz");
     if (TFileStatus(loadFilePath).doesExist()) IoCmd::loadScene(loadFilePath);
   }

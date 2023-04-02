@@ -27,6 +27,7 @@ class Room final : public TMainWindow {
 
   TFilePath m_path;
   QString m_name;
+  QString m_trName;
 
 public:
   Room(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags())
@@ -38,7 +39,9 @@ public:
   void setPath(TFilePath path) { m_path = path; }
 
   QString getName() const { return m_name; }
-  void setName(QString name) { m_name = name; }
+  void setName(QString name);
+
+  QString getTrName() const { return m_trName; }
 
   void save();
   std::pair<DockLayout *, DockLayout::State> load(const TFilePath &fp);

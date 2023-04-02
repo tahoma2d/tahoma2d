@@ -203,20 +203,20 @@ void ParamsPage::setPageField(TIStream &is, const TFxP &fx, bool isVertical) {
       std::string name;
       is >> name;
       is.matchEndTag();
-      QString str;
+      QString str = QString::fromStdWString(TStringTable::translate(name));
       if (isVertical == false) {
         assert(m_horizontalLayout);
-        m_horizontalLayout->addWidget(new QLabel(str.fromStdString(name)));
+        m_horizontalLayout->addWidget(new QLabel(str));
       } else {
         int currentRow = m_mainLayout->rowCount();
-        m_mainLayout->addWidget(new QLabel(str.fromStdString(name)), currentRow,
+        m_mainLayout->addWidget(new QLabel(str), currentRow,
                                 0, 1, 2);
       }
     } else if (tagName == "separator") {
       // <separator/> o <separator label="xxx"/>
       std::string label = is.getTagAttribute("label");
-      QString str;
-      Separator *sep = new Separator(str.fromStdString(label), this);
+      QString str = QString::fromStdWString(TStringTable::translate(label));
+      Separator *sep = new Separator(str, this);
       int currentRow = m_mainLayout->rowCount();
       m_mainLayout->addWidget(sep, currentRow, 0, 1, 2);
       m_mainLayout->setRowStretch(currentRow, 0);
@@ -249,12 +249,13 @@ void ParamsPage::setPageField(TIStream &is, const TFxP &fx, bool isVertical) {
         if (shrinkStr != "") {
           shrink              = QString::fromStdString(shrinkStr).toInt();
           std::string label   = is.getTagAttribute("label");
+          QString str         = QString::fromStdWString(TStringTable::translate(label));
           QCheckBox *checkBox = new QCheckBox(this);
           QHBoxLayout *sepLay = new QHBoxLayout();
           sepLay->setMargin(0);
           sepLay->setSpacing(5);
           sepLay->addWidget(checkBox, 0);
-          sepLay->addWidget(new Separator(QString::fromStdString(label), this),
+          sepLay->addWidget(new Separator(str, this),
                             1);
           int currentRow = m_mainLayout->rowCount();
           m_mainLayout->addLayout(sepLay, currentRow, 0, 1, 2);
@@ -963,8 +964,8 @@ void ParamsPageSet::createPage(TIStream &is, const TFxP &fx, int index) {
   scrollAreaPage->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   scrollAreaPage->setWidget(paramsPage);
 
-  QString str;
-  m_tabBar->addSimpleTab(str.fromStdString(pageName));
+  QString str = QString::fromStdWString(TStringTable::translate(pageName));
+  m_tabBar->addSimpleTab(str);
   m_pagesList->addWidget(scrollAreaPage);
   if (index >= 0) m_pageFxIndexTable[paramsPage] = index;
 }
