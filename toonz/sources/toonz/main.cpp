@@ -254,12 +254,6 @@ static void script_output(int type, const QString &value) {
 }
 
 //-----------------------------------------------------------------------------
-#ifdef WITH_CRASHRPT
-LPCWSTR convertToLPCWSTR(std::string str) {
-  std::wstring stemp = std::wstring(str.begin(), str.end());
-  return stemp.c_str();
-}
-#endif
 
 int main(int argc, char *argv[]) {
 #ifdef Q_OS_WIN
@@ -583,15 +577,26 @@ int main(int argc, char *argv[]) {
   initToonzEnv(argumentPathValues);
 
 #ifdef WITH_CRASHRPT
+  std::string str;
+
   CR_INSTALL_INFO pInfo;
   memset(&pInfo, 0, sizeof(CR_INSTALL_INFO));
-  pInfo.cb = sizeof(CR_INSTALL_INFO);
-  pInfo.pszAppName = convertToLPCWSTR(TEnv::getApplicationName());
-  pInfo.pszAppVersion = convertToLPCWSTR(TEnv::getApplicationVersion());
+  pInfo.cb                 = sizeof(CR_INSTALL_INFO);
+
+  str                      = TEnv::getApplicationName();
+  std::wstring wAppName    = std::wstring(str.begin(), str.end());
+  pInfo.pszAppName         = wAppName.c_str();
+
+  str                      = TEnv::getApplicationVersion();
+  std::wstring wAppVersion = std::wstring(str.begin(), str.end());
+  pInfo.pszAppVersion      = wAppVersion.c_str();
+
   TFilePath crashrptCache =
-    ToonzFolder::getCacheRootFolder() + TFilePath("crashrpt");
-  pInfo.pszErrorReportSaveDir =
-    convertToLPCWSTR(crashrptCache.getQString().toStdString());
+      ToonzFolder::getCacheRootFolder() + TFilePath("crashrpt");
+  str                         = crashrptCache.getQString().toStdString();
+  std::wstring wRptdir        = std::wstring(str.begin(), str.end());
+  pInfo.pszErrorReportSaveDir = wRptdir.c_str();
+
   // Install all available exception handlers.
   // Don't send reports automaticall, store locally
   pInfo.dwFlags |= CR_INST_ALL_POSSIBLE_HANDLERS | CR_INST_DONT_SEND_REPORT;
