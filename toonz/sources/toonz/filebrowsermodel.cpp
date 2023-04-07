@@ -1078,6 +1078,24 @@ QPixmap DvDirModelStuffFolderNode::getPixmap(bool isOpen) const {
   return pixmap;
 }
 
+//-----------------------------------------------------------------------------
+
+DvDirModelNode *DvDirModelNetworkNode::createNetworkFolderNode(
+    const TFilePath &path) {
+  QDir networkDir(path.getQString());
+  while (networkDir.cdUp()) {
+  }
+  TFilePath networkDirPath(networkDir.absolutePath());
+
+  DvDirModelFileFolderNode *child = new DvDirModelFileFolderNode(
+      this, networkDirPath.getWideString(), networkDirPath);
+  child->setPeeking(false);
+
+  addChild(child);
+
+  return child->getNodeByPath(path);
+}
+
 //=============================================================================
 //
 // DvDirModelRootNode [Root]
@@ -1360,6 +1378,14 @@ DvDirModelNode *DvDirModelRootNode::getNodeByPath(const TFilePath &path) {
       DvDirModelNode *node = m_networkNode->getChild(i)->getNodeByPath(path);
       if (node) return node;
     }
+
+    // try to find in the network
+    QString pathStr = path.getQString();
+    if ((pathStr.startsWith("\\\\") || pathStr.startsWith("//")) &&
+        QDir(pathStr).exists()) {
+      DvDirModelNode *node = m_networkNode->createNetworkFolderNode(path);
+      if (node) return node;
+    }
   }
 
   return 0;
@@ -1397,7 +1423,6 @@ void DvDirModelRootNode::updateSceneFolderNodeVisibility(bool forceHide) {
     m_sceneFolderNode->setRow(-1);
   }
 }
-
 //=============================================================================
 //
 // DvDirModel
