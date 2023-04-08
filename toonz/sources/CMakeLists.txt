@@ -1,8 +1,5 @@
-﻿if(WIN32 AND ${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.25.0") 
-    message("Enabling CMP0141")
-    cmake_policy(SET CMP0141 NEW)
-    set(CMAKE_POLICY_DEFAULT_CMP0141 NEW)
-endif()
+﻿cmake_policy(SET CMP0141 NEW)
+set(CMAKE_POLICY_DEFAULT_CMP0141 NEW)
 
 cmake_minimum_required(VERSION 2.8.11)
 
