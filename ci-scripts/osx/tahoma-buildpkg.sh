@@ -81,10 +81,10 @@ $QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -verbose=0 -always-overwrite \
    -executable=$TOONZDIR/Tahoma2D.app/Contents/MacOS/tfarmserver 
 
 echo ">>> Correcting library paths"
-for X in `find $TOONZDIR/Tahoma2D.app/Contents -type f '(' -name *.dylib -o -name *.so ')' -exec otool -l {} \; | grep -e "^toonz" -e"name \/usr\/local" | sed -e"s/://" -e"s/ (.*$//" -e"s/^ *name //"`
+for X in `find $TOONZDIR/Tahoma2D.app/Contents -type f '(' -name *.dylib -o -name *.so ')' -exec otool -l {} \; | grep -e "^toonz" -e"name \/usr\/local" -e"@rpath" | sed -e"s/://" -e"s/ (.*$//" -e"s/^ *name //"`
 do
    Z=`echo $X | cut -c 1-1`
-   if [ "$Z" != "/" ]
+   if [ "$Z" != "/" -a "$Z" != "@" ]
    then
       LIBFILE=$X
    else
