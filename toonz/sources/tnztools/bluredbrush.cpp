@@ -52,10 +52,14 @@ void putOnRasterCM(const TRasterCM32P &out, const TRaster32P &in, int styleId,
           continue;
         }
         bool sameStyleId = styleId == outPix->getInk();
+        // line with lock alpha : use original pixel's tone
         // line with the same style : multiply tones
         // line with different style : pick darker tone
-        int tone = sameStyleId ? outPix->getTone() * (255 - inPix->m) / 255
-                               : std::min(255 - inPix->m, outPix->getTone());
+        int tone = lockAlpha
+                       ? outPix->getTone()
+                       : sameStyleId
+                             ? outPix->getTone() * (255 - inPix->m) / 255
+                             : std::min(255 - inPix->m, outPix->getTone());
         int ink  = !sameStyleId && outPix->getTone() < 255 - inPix->m
                        ? outPix->getInk()
                        : styleId;
