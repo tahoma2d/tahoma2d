@@ -1278,6 +1278,17 @@ bool Previewer::isFrameReady(int frame) const {
 
 //-----------------------------------------------------------------------------
 
+void Previewer::clearAllUnfinishedFrames() {
+  for (int f = 0; f < m_imp->m_pbStatus.size(); f++) {
+    if (m_imp->m_pbStatus[f] == FlipSlider::PBFrameStarted) {
+      m_imp->remove(f);
+    }
+  }
+  m_imp->updateProgressBarStatus();
+}
+
+//-----------------------------------------------------------------------------
+
 bool Previewer::isActive() const { return !m_imp->m_listeners.empty(); }
 
 //-----------------------------------------------------------------------------

@@ -966,9 +966,12 @@ void SceneViewer::enablePreview(int previewMode) {
     emit freezeStateChanged(false);
   }
 
-  if (m_previewMode != NO_PREVIEW)
+  if (m_previewMode != NO_PREVIEW) {
     Previewer::instance(m_previewMode == SUBCAMERA_PREVIEW)
         ->removeListener(this);
+    Previewer::instance(m_previewMode == SUBCAMERA_PREVIEW)
+        ->clearAllUnfinishedFrames();
+  }
 
   m_previewMode = previewMode;
 
