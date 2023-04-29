@@ -413,7 +413,6 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
   default:
     break;
   }
-  e->accept();
 }
 
 //-----------------------------------------------------------------------------
