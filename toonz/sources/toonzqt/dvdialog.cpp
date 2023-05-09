@@ -1334,7 +1334,7 @@ MessageAndCheckboxDialog *DVGui::createMsgandCheckbox(
   QObject::connect(dialogCheckBox, SIGNAL(stateChanged(int)), dialog,
                    SLOT(onCheckboxChanged(int)));
   QObject::connect(buttonGroup, SIGNAL(idClicked(int)), dialog,
-                   SLOT(idClicked(int)));
+                   SLOT(onButtonClicked(int)));
 
   return dialog;
 }
