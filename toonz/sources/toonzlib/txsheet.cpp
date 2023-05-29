@@ -229,7 +229,40 @@ unsigned long TXsheet::id() const { return m_imp->m_id; }
 
 //-----------------------------------------------------------------------------
 
-int TXsheet::getFrameCount() const { return m_imp->m_frameCount; }
+int TXsheet::getFrameCount() const {
+  if (!Preferences::instance()->isImplicitHoldEnabled()) 
+    return m_imp->m_frameCount;
+
+  // For implicit holds, use last Stop Frame marker or last Key frame marker as
+  // frame count
+  int r0, r1;
+
+  int frameCount = m_imp->m_frameCount;
+  for (int c = 0; c < getColumnCount(); c++) {
+
+    r1            = getMaxFrame(c);
+    TXshCell cell = getCell(r1, c);
+    // If last frame is a stop frame, don't check for keyframe in the same
+    // column in case of overshoot
+    if (cell.getFrameId().isStopFrame()) {
+      frameCount = std::max(frameCount, r1);
+      continue;
+    }
+
+    TStageObject *pegbar = getStageObject(TStageObjectId::ColumnId(c));
+    if (!pegbar) continue;
+    if (!pegbar->getKeyframeRange(r0, r1)) continue;
+    frameCount = std::max(frameCount, (r1 + 1));
+  }
+
+  // Check camera keys
+  TStageObjectId cameraId = getStageObjectTree()->getCurrentCameraId();
+  TStageObject *camera    = getStageObject(cameraId);
+  if (camera && camera->getKeyframeRange(r0, r1))
+    frameCount = std::max(frameCount, (r1 + 1));
+
+  return frameCount;
+}
 
 //-----------------------------------------------------------------------------
 
