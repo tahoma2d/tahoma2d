@@ -593,7 +593,7 @@ in TXsheetImp.
   bool isReferenceManagementIgnored(TDoubleParam *);
 
   void convertToImplicitHolds();
-  void convertToExplicitHolds();
+  void convertToExplicitHolds(int endPlayRange);
 
   NavigationTags *getNavigationTags() const { return m_navigationTags; }
   bool isFrameTagged(int frame) const;

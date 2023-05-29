@@ -2043,7 +2043,7 @@ void TXsheet::convertToImplicitHolds() {
 
 //---------------------------------------------------------
 
-void TXsheet::convertToExplicitHolds() {
+void TXsheet::convertToExplicitHolds(int endPlayRange) {
   int cols = getColumnCount();
   if (!cols) return;
 
@@ -2063,6 +2063,10 @@ void TXsheet::convertToExplicitHolds() {
     if (!cc->getRange(r0, r1)) continue;
 
     int frameCount = getFrameCount() - 1;
+    if (endPlayRange > frameCount &&
+        Preferences::instance()->isImplicitHoldEnabled())
+      frameCount = endPlayRange;
+
     TXshCell prevCell;
 
     r1 = std::max(r1, frameCount);
