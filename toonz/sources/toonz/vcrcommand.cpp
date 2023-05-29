@@ -51,13 +51,10 @@ public:
         return;
 
       int row = TApp::instance()->getCurrentFrame()->getFrame();
+      int col = TApp::instance()->getCurrentColumn()->getColumnIndex();
       TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
           TApp::instance()->getCurrentSelection()->getSelection());
-      if (cellSelection) {
-        int r0, r1, c0, c1;
-        cellSelection->getSelectedCells(r0, c0, r1, c1);
-        cellSelection->selectCells(row, c0, r1 + (row - r0), c1);
-      }
+      if (cellSelection) cellSelection->selectCells(row, col, row, col);
     }
   }
 };
@@ -85,11 +82,7 @@ public:
 
         TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
             TApp::instance()->getCurrentSelection()->getSelection());
-        if (cellSelection) {
-          int r0, r1, c0, c1;
-          cellSelection->getSelectedCells(r0, c0, r1, c1);
-          cellSelection->selectCells(row, c0, r1 + (row - r0), c1);
-        }
+        if (cellSelection) cellSelection->selectCells(row, col, row, col);
         break;
       }
     }
@@ -128,11 +121,7 @@ public:
 
       TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
           TApp::instance()->getCurrentSelection()->getSelection());
-      if (cellSelection) {
-        int r0, r1, c0, c1;
-        cellSelection->getSelectedCells(r0, c0, r1, c1);
-        cellSelection->selectCells(row, c0, r1 + (row - r0), c1);
-      }
+      if (cellSelection) cellSelection->selectCells(row, col, row, col);
     }
   }
 };
@@ -145,17 +134,15 @@ public:
 
   void execute() override {
     int row  = TApp::instance()->getCurrentFrame()->getFrame();
+    int col  = TApp::instance()->getCurrentColumn()->getColumnIndex();
     int step = Preferences::instance()->getXsheetStep();
 
     TApp::instance()->getCurrentFrame()->setFrame(row + step);
 
     TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
         TApp::instance()->getCurrentSelection()->getSelection());
-    if (cellSelection) {
-      int r0, r1, c0, c1;
-      cellSelection->getSelectedCells(r0, c0, r1, c1);
-      cellSelection->selectCells(r0 + step, c0, r1 + step, c1);
-    }
+    if (cellSelection)
+      cellSelection->selectCells(row + step, col, row + step, col);
   }
 };
 
@@ -167,17 +154,15 @@ public:
 
   void execute() override {
     int row  = TApp::instance()->getCurrentFrame()->getFrame();
+    int col  = TApp::instance()->getCurrentColumn()->getColumnIndex();
     int step = Preferences::instance()->getXsheetStep();
 
     TApp::instance()->getCurrentFrame()->setFrame(std::max(row - step, 0));
 
     TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
         TApp::instance()->getCurrentSelection()->getSelection());
-    if (cellSelection) {
-      int r0, r1, c0, c1;
-      cellSelection->getSelectedCells(r0, c0, r1, c1);
-      cellSelection->selectCells(r0 - step, c0, r1 - step, c1);
-    }
+    if (cellSelection)
+      cellSelection->selectCells(row - step, col, row - step, col);
   }
 };
 
@@ -230,13 +215,10 @@ public:
           TApp::instance()->getCurrentFrame()->emitTriggerNextKeyframe(panel);
 
           int row = TApp::instance()->getCurrentFrame()->getFrame();
+          int col = TApp::instance()->getCurrentColumn()->getColumnIndex();
           TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
               TApp::instance()->getCurrentSelection()->getSelection());
-          if (cellSelection) {
-            int r0, r1, c0, c1;
-            cellSelection->getSelectedCells(r0, c0, r1, c1);
-            cellSelection->selectCells(row, c0, r1 + (row - r0), c1);
-          }
+          if (cellSelection) cellSelection->selectCells(row, col, row, col);
           break;
         } else
           panel = TApp::instance()->getActiveViewer()->parentWidget();
@@ -268,13 +250,10 @@ public:
           TApp::instance()->getCurrentFrame()->emitTriggerPrevKeyframe(panel);
 
           int row = TApp::instance()->getCurrentFrame()->getFrame();
+          int col = TApp::instance()->getCurrentColumn()->getColumnIndex();
           TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
               TApp::instance()->getCurrentSelection()->getSelection());
-          if (cellSelection) {
-            int r0, r1, c0, c1;
-            cellSelection->getSelectedCells(r0, c0, r1, c1);
-            cellSelection->selectCells(row, c0, r1 + (row - r0), c1);
-          }
+          if (cellSelection) cellSelection->selectCells(row, col, row, col);
           break;
         } else
           panel = TApp::instance()->getActiveViewer()->parentWidget();
