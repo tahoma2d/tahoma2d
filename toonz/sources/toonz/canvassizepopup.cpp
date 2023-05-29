@@ -548,7 +548,9 @@ CanvasSizePopup::CanvasSizePopup()
   m_unit->addItem(tr("field"), "field");
   m_unit->addItem(tr("inch"), "inch");
   m_unit->setFixedHeight(DVGui::WidgetHeight);
+  m_unit->hide();
   if (Preferences::instance()->isShowAdvancedOptionsEnabled()) {
+    m_unit->show();
     addWidget(tr("Unit:"), m_unit);
     connect(m_unit, SIGNAL(currentIndexChanged(int)), this,
             SLOT(onUnitChanged(int)));
