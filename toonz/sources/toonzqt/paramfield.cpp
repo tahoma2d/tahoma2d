@@ -9,6 +9,7 @@
 #include "toonzqt/doublepairfield.h"
 #include "toonzqt/tonecurvefield.h"
 #include "toonzqt/checkbox.h"
+#include "toonzqt/menubarcommand.h"
 
 #include "tdoubleparam.h"
 #include "tnotanimatableparam.h"
@@ -1564,6 +1565,11 @@ void IntParamField::update(int frame) {
 
 namespace component {
 
+MyTextEdit::MyTextEdit(const QString &text, QWidget *parent)
+    : QTextEdit(text, parent) {
+  installEventFilter(this);
+}
+
 void MyTextEdit::keyPressEvent(QKeyEvent *event) {
   QTextEdit::keyPressEvent(event);
   if (event->key() == Qt::Key_Return) emit edited();
@@ -1573,6 +1579,26 @@ void MyTextEdit::focusOutEvent(QFocusEvent *event) {
   QTextEdit::focusOutEvent(event);
   emit edited();
 }
+
+bool MyTextEdit::eventFilter(QObject *obj, QEvent *e) {
+  if (e->type() != QEvent::ShortcutOverride)
+    return QTextEdit::eventFilter(obj, e);
+
+  QKeyEvent *ke = (QKeyEvent *)e;
+  std::string keyStr =
+      QKeySequence(ke->key() + ke->modifiers()).toString().toStdString();
+  QAction *action = CommandManager::instance()->getActionFromShortcut(keyStr);
+  if (!action) return QTextEdit::eventFilter(obj, e);
+
+  std::string actionId = CommandManager::instance()->getIdFromAction(action);
+  if (actionId == "MI_Undo" || actionId == "MI_Redo" ||
+      actionId == "MI_Clear" || actionId == "MI_Copy" ||
+      actionId == "MI_Paste" || actionId == "MI_Cut")
+    return QTextEdit::eventFilter(obj, e);
+
+  return true;
+}
+
 };  // namespace component
 
 StringParamField::StringParamField(QWidget *parent, QString name,
