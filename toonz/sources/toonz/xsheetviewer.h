@@ -236,9 +236,9 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   Q_PROPERTY(QColor TextColor READ getTextColor WRITE setTextColor)
   Q_PROPERTY(
       QColor ErrorTextColor READ getErrorTextColor WRITE setErrorTextColor)
-  Q_PROPERTY(QColor SelectedTextColor READ getCurrentFrameTextColor WRITE
+  Q_PROPERTY(QColor CurrentFrameTextColor READ getCurrentFrameTextColor WRITE
                  setCurrentFrameTextColor)
-  Q_PROPERTY(QColor CurrentFrameTextColor READ getSelectedTextColor WRITE
+  Q_PROPERTY(QColor SelectedTextColor READ getSelectedTextColor WRITE
                  setSelectedTextColor)
   Q_PROPERTY(QColor PreviewFrameTextColor READ getPreviewFrameTextColor WRITE
                  setPreviewFrameTextColor)
