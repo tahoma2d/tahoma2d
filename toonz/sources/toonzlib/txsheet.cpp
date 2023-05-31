@@ -1062,7 +1062,7 @@ void TXsheet::rollupCells(int r0, int c0, int r1, int c1) {
 
   // in cells copio il contenuto delle celle che mi interessano
   int k;
-  for (k = c0; k <= c1; k++) cells[k - c0] = getCell(CellPosition(r0, k));
+  for (k = c0; k <= c1; k++) cells[k - c0] = getCell(CellPosition(r0, k), false);
 
   for (k = c0; k <= c1; k++) removeCells(r0, k, 1);
 
@@ -1085,7 +1085,7 @@ void TXsheet::rolldownCells(int r0, int c0, int r1, int c1) {
 
   // in cells copio il contenuto delle celle che mi interessano
   int k;
-  for (k = c0; k <= c1; k++) cells[k - c0] = getCell(CellPosition(r1, k));
+  for (k = c0; k <= c1; k++) cells[k - c0] = getCell(CellPosition(r1, k), false);
 
   for (k = c0; k <= c1; k++) removeCells(r1, k, 1);
 
