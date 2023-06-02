@@ -957,7 +957,8 @@ int TXsheet::reframeCells(int r0, int r1, int col, int type, int withBlank) {
   for (int r = r0; r <= r1; r++) {
     const TXshCell &cell = getCell(CellPosition(r, col));
     if (cells.size() == 0 || cells.last() != cell) {
-      if (cell.isEmpty() && cells.last().getFrameId() == TFrameId::STOP_FRAME)
+      if (cell.isEmpty() && cells.size() &&
+          cells.last().getFrameId() == TFrameId::STOP_FRAME)
         continue;
       cells.push_back(cell);
     }
