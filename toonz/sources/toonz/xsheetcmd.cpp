@@ -2801,6 +2801,7 @@ public:
   void execute() override {
     TApp *app = TApp::instance();
     int frame = app->getCurrentFrame()->getFrame();
+    int col   = app->getCurrentColumn()->getColumnIndex();
     assert(frame >= 0);
     TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
 
@@ -2810,11 +2811,8 @@ public:
       app->getCurrentXsheetViewer()->setCurrentRow(nextFrame);
       TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
           TApp::instance()->getCurrentSelection()->getSelection());
-      if (cellSelection) {
-        int r0, r1, c0, c1;
-        cellSelection->getSelectedCells(r0, c0, r1, c1);
-        cellSelection->selectCells(nextFrame, c0, r1 + (nextFrame - r0), c1);
-      }
+      if (cellSelection)
+        cellSelection->selectCells(nextFrame, col, nextFrame, col);
     }
   }
 } NextTaggedFrame;
@@ -2827,6 +2825,7 @@ public:
   void execute() override {
     TApp *app = TApp::instance();
     int frame = app->getCurrentFrame()->getFrame();
+    int col   = app->getCurrentColumn()->getColumnIndex();
     assert(frame >= 0);
     TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
 
@@ -2836,11 +2835,8 @@ public:
       app->getCurrentXsheetViewer()->setCurrentRow(prevFrame);
       TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(
           TApp::instance()->getCurrentSelection()->getSelection());
-      if (cellSelection) {
-        int r0, r1, c0, c1;
-        cellSelection->getSelectedCells(r0, c0, r1, c1);
-        cellSelection->selectCells(prevFrame, c0, r1 + (prevFrame - r0), c1);
-      }
+      if (cellSelection)
+        cellSelection->selectCells(prevFrame, col, prevFrame, col);
     }
   }
 } PrevTaggedFrame;
