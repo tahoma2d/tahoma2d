@@ -1451,7 +1451,9 @@ static void convertHoldType(int holdType) {
     xsh->convertToImplicitHolds();
     if (action && !action->isChecked()) action->trigger();
   } else {
-    xsh->convertToExplicitHolds();
+    int r0, r1, step;
+    XsheetGUI::getPlayRange(r0, r1, step);
+    xsh->convertToExplicitHolds(r1);
     if (action && action->isChecked()) action->trigger();
   }
 

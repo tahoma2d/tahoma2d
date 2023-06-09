@@ -229,7 +229,40 @@ unsigned long TXsheet::id() const { return m_imp->m_id; }
 
 //-----------------------------------------------------------------------------
 
-int TXsheet::getFrameCount() const { return m_imp->m_frameCount; }
+int TXsheet::getFrameCount() const {
+  if (!Preferences::instance()->isImplicitHoldEnabled()) 
+    return m_imp->m_frameCount;
+
+  // For implicit holds, use last Stop Frame marker or last Key frame marker as
+  // frame count
+  int r0, r1;
+
+  int frameCount = m_imp->m_frameCount;
+  for (int c = 0; c < getColumnCount(); c++) {
+
+    r1            = getMaxFrame(c);
+    TXshCell cell = getCell(r1, c);
+    // If last frame is a stop frame, don't check for keyframe in the same
+    // column in case of overshoot
+    if (cell.getFrameId().isStopFrame()) {
+      frameCount = std::max(frameCount, r1);
+      continue;
+    }
+
+    TStageObject *pegbar = getStageObject(TStageObjectId::ColumnId(c));
+    if (!pegbar) continue;
+    if (!pegbar->getKeyframeRange(r0, r1)) continue;
+    frameCount = std::max(frameCount, (r1 + 1));
+  }
+
+  // Check camera keys
+  TStageObjectId cameraId = getStageObjectTree()->getCurrentCameraId();
+  TStageObject *camera    = getStageObject(cameraId);
+  if (camera && camera->getKeyframeRange(r0, r1))
+    frameCount = std::max(frameCount, (r1 + 1));
+
+  return frameCount;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -924,7 +957,8 @@ int TXsheet::reframeCells(int r0, int r1, int col, int type, int withBlank) {
   for (int r = r0; r <= r1; r++) {
     const TXshCell &cell = getCell(CellPosition(r, col));
     if (cells.size() == 0 || cells.last() != cell) {
-      if (cell.isEmpty() && cells.last().getFrameId() == TFrameId::STOP_FRAME)
+      if (cell.isEmpty() && cells.size() &&
+          cells.last().getFrameId() == TFrameId::STOP_FRAME)
         continue;
       cells.push_back(cell);
     }
@@ -1029,7 +1063,7 @@ void TXsheet::rollupCells(int r0, int c0, int r1, int c1) {
 
   // in cells copio il contenuto delle celle che mi interessano
   int k;
-  for (k = c0; k <= c1; k++) cells[k - c0] = getCell(CellPosition(r0, k));
+  for (k = c0; k <= c1; k++) cells[k - c0] = getCell(CellPosition(r0, k), false);
 
   for (k = c0; k <= c1; k++) removeCells(r0, k, 1);
 
@@ -1052,7 +1086,7 @@ void TXsheet::rolldownCells(int r0, int c0, int r1, int c1) {
 
   // in cells copio il contenuto delle celle che mi interessano
   int k;
-  for (k = c0; k <= c1; k++) cells[k - c0] = getCell(CellPosition(r1, k));
+  for (k = c0; k <= c1; k++) cells[k - c0] = getCell(CellPosition(r1, k), false);
 
   for (k = c0; k <= c1; k++) removeCells(r1, k, 1);
 
@@ -2010,7 +2044,7 @@ void TXsheet::convertToImplicitHolds() {
 
 //---------------------------------------------------------
 
-void TXsheet::convertToExplicitHolds() {
+void TXsheet::convertToExplicitHolds(int endPlayRange) {
   int cols = getColumnCount();
   if (!cols) return;
 
@@ -2030,6 +2064,10 @@ void TXsheet::convertToExplicitHolds() {
     if (!cc->getRange(r0, r1)) continue;
 
     int frameCount = getFrameCount() - 1;
+    if (endPlayRange > frameCount &&
+        Preferences::instance()->isImplicitHoldEnabled())
+      frameCount = endPlayRange;
+
     TXshCell prevCell;
 
     r1 = std::max(r1, frameCount);

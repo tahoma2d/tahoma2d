@@ -558,6 +558,9 @@ void PreviewFxInstance::updateFrameRange() {
   properties->getRange(m_start, m_end, m_step);
   if (m_end < 0) m_end = frameCount - 1;
 
+  if (m_end >= frameCount && Preferences::instance()->isImplicitHoldEnabled())
+    frameCount = m_end;
+
   // Intersect with the fx active frame range
   TRasterFxP rasterFx(m_fx);
   TFxTimeRegion timeRegion(rasterFx->getTimeRegion());
