@@ -44,7 +44,9 @@ class RowArea final : public QWidget {
   // panning by middle-drag
   bool m_isPanning;
 
+  QTimer *m_resetMenuTimer;
   int m_contextMenuRow;
+  bool m_editTagEnabled;
 
   // returns true if the frame area can have extra space
   bool checkExpandFrameArea();
@@ -85,6 +87,8 @@ protected:
 
 protected slots:
   void onJumpToTag();
+  void onHideMenu();
+  void resetContextMenu();
 };
 
 }  // namespace XsheetGUI;
