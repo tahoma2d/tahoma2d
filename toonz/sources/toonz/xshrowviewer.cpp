@@ -52,9 +52,17 @@ RowArea::RowArea(XsheetViewer *parent, Qt::WindowFlags flags)
     , m_tooltip(tr(""))
     , m_r0(0)
     , m_r1(5)
-    , m_isPanning(false) {
+    , m_isPanning(false)
+    , m_contextMenuRow(-1)
+    , m_editTagEnabled(false) {
   setFocusPolicy(Qt::NoFocus);
   setMouseTracking(true);
+
+  m_resetMenuTimer = new QTimer(this);
+  m_resetMenuTimer->setSingleShot(true);
+
+  connect(m_resetMenuTimer, SIGNAL(timeout()), this, SLOT(resetContextMenu()));
+
   connect(TApp::instance()->getCurrentOnionSkin(),
           SIGNAL(onionSkinMaskChanged()), this, SLOT(update()));
   // for displaying the pinned center keys when the skeleton tool is selected
@@ -1353,6 +1361,8 @@ void RowArea::mouseReleaseEvent(QMouseEvent *event) {
 //-----------------------------------------------------------------------------
 
 void RowArea::contextMenuEvent(QContextMenuEvent *event) {
+  if (m_resetMenuTimer) m_resetMenuTimer->stop();
+
   TPoint pos(event->pos().x(), event->pos().y());
   m_contextMenuRow = m_viewer->xyToPosition(pos).frame();
 
@@ -1406,11 +1416,12 @@ void RowArea::contextMenuEvent(QContextMenuEvent *event) {
   // Tags
   menu->addSeparator();
   menu->addAction(cmdManager->getAction(MI_ToggleTaggedFrame));
-  menu->addAction(cmdManager->getAction(MI_EditTaggedFrame));
+  QAction *tagAction = cmdManager->getAction(MI_EditTaggedFrame);
+  menu->addAction(tagAction);
+  m_editTagEnabled        = tagAction->isEnabled();
 
   QMenu *tagMenu          = menu->addMenu(tr("Tags"));
   NavigationTags *navTags = m_viewer->getXsheet()->getNavigationTags();
-  QAction *tagAction;
   if (!navTags->getCount()) {
     tagAction = tagMenu->addAction("Empty");
     tagAction->setEnabled(false);
@@ -1430,6 +1441,11 @@ void RowArea::contextMenuEvent(QContextMenuEvent *event) {
 
   menu->addAction(cmdManager->getAction(MI_NextTaggedFrame));
   menu->addAction(cmdManager->getAction(MI_PrevTaggedFrame));
+
+  CommandManager::instance()->enable(MI_EditTaggedFrame,
+                                     navTags->isTagged(m_contextMenuRow));
+
+  connect(menu, SIGNAL(aboutToHide()), this, SLOT(onHideMenu()));
 
   menu->exec(event->globalPos());
 }
@@ -1491,6 +1507,19 @@ void RowArea::onJumpToTag() {
   assert(senderAction);
   int frame = senderAction->data().toInt();
   m_viewer->setCurrentRow(frame);
+}
+
+//-----------------------------------------------------------------------------
+
+void RowArea::onHideMenu() {
+  m_resetMenuTimer->start(300);
+  CommandManager::instance()->enable(MI_EditTaggedFrame, m_editTagEnabled);
+}
+
+void RowArea::resetContextMenu() {
+  if (m_resetMenuTimer) m_resetMenuTimer->stop();
+
+  m_contextMenuRow = -1;
 }
 
 }  // namespace XsheetGUI
