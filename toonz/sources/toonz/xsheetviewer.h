@@ -834,7 +834,7 @@ public:
   QColor getEmptyColumnHeadColor() const { return m_emptyColumnHeadColor; }
 
   // specified by preferences
-  QColor getSelectedColumnTextColor() const;
+  QColor getColumnFocusColor() const;
 
   // Cell
   void setEmptyCellColor(const QColor &color) { m_emptyCellColor = color; }

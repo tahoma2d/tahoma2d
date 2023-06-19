@@ -592,7 +592,7 @@ void ChangeObjectHandle::refresh() {
   int i;
   QString str;
   QColor colorHndHook = viewer->getPreviewFrameTextColor();
-  QColor colorHndDef  = viewer->getSelectedColumnTextColor();
+  QColor colorHndDef  = viewer->getColumnFocusColor();
   QColor colorHndNone = viewer->getTextColor();
   if (stageObject->getParent().isColumn()) {
     for (i = 0; i < 20; i++) addText(str.number(20 - i), colorHndHook);
@@ -1047,8 +1047,7 @@ void ColumnArea::DrawHeader::drawColumnNumber() const {
   p.setPen(m_viewer->getVerticalLineColor());
   if (o->flag(PredefinedFlag::LAYER_NUMBER_BORDER)) p.drawRect(pos);
 
-  p.setPen((isCurrent) ? m_viewer->getSelectedColumnTextColor()
-                       : m_viewer->getTextColor());
+  p.setPen(m_viewer->getTextColor());
 
   int valign = o->isVerticalTimeline() ? Qt::AlignVCenter : Qt::AlignBottom;
 
@@ -1120,11 +1119,9 @@ void ColumnArea::DrawHeader::drawColumnName() const {
         leftadj = 24;
     }
 
-    p.setPen((isCurrent) ? m_viewer->getSelectedColumnTextColor()
-                         : nameBacklit ? Qt::black : m_viewer->getTextColor());
+    p.setPen(nameBacklit ? Qt::black : m_viewer->getTextColor());
   } else
-    p.setPen((isCurrent) ? m_viewer->getSelectedColumnTextColor()
-                         : m_viewer->getTextColor());
+    p.setPen(m_viewer->getTextColor());
 
   if (o->isVerticalTimeline() && col < 0) {
     QString cameraName = QString::fromStdString(name);
@@ -1646,6 +1643,23 @@ void ColumnArea::drawLevelColumnHead(QPainter &p, int col) {
 
 //-----------------------------------------------------------------------------
 
+void ColumnArea::drawCurrentColumnFocus(QPainter &p, int col) {
+  const Orientation *o = m_viewer->orientation();
+  QPoint orig          = m_viewer->positionToXY(CellPosition(0, col));
+
+  QRect rect = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_NAME
+                                 : PredefinedRect::LAYER_NAME)
+                   .translated(orig);
+
+  p.setPen(m_viewer->getColumnFocusColor());
+  p.setBrush(Qt::NoBrush);
+  for (int i = 0; i < 2; i++)  // thick border within name area
+    p.drawRect(QRect(rect.topLeft() + QPoint(i, i),
+                     rect.size() - QSize(2 * i, 2 * i)));
+}
+
+//-----------------------------------------------------------------------------
+
 void ColumnArea::drawSoundColumnHead(QPainter &p, int col) {  // AREA
   TColumnSelection *selection = m_viewer->getColumnSelection();
   const Orientation *o        = m_viewer->orientation();
@@ -1911,6 +1925,9 @@ void ColumnArea::paintEvent(QPaintEvent *event) {  // AREA
     p.drawRect(toBeUpdated.adjusted(-1, 0, -1, -3));
   else
     p.drawRect(toBeUpdated.adjusted(0, 0, -2, -1));
+
+  // focus column border
+  drawCurrentColumnFocus(p, m_viewer->getCurrentColumn());
 
   if (getDragTool()) getDragTool()->drawColumnsArea(p);
 }
