@@ -2714,7 +2714,7 @@ void TCellSelection::pasteDuplicateCells() {
     if (cellSelection) cellSelection->selectCells(r0, c0, r1, c1);
 
     std::vector<bool> areColumnsEmpty;
-    bool containsSoundColumn;
+    bool containsSoundColumn = false;
     int c;
     for (c = c0; c <= c1; c++) {
       TXshColumn *column = xsh->getColumn(c);
