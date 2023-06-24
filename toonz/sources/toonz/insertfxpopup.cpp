@@ -289,7 +289,7 @@ InsertFxPopup::InsertFxPopup()
   m_buttonLayout->addWidget(addBtn);
 
   QPushButton *replaceBtn = new QPushButton(tr("Replace"), this);
-  addBtn->setMinimumSize(65, 25);
+  replaceBtn->setMinimumSize(65, 25);
   replaceBtn->setObjectName("PushButton_NoPadding");
   connect(replaceBtn, SIGNAL(clicked()), this, SLOT(onReplace()));
   m_buttonLayout->addWidget(replaceBtn);
