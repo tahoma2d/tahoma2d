@@ -593,7 +593,7 @@ void Preferences::definePreferenceItems() {
   define(currentTimelineEnabled, "currentTimelineEnabled", QMetaType::Bool,
          true);
   define(currentColumnColor, "currentColumnColor", QMetaType::QColor,
-         QColor(Qt::yellow));
+         QColor(Qt::cyan));
   define(currentCellColor, "currentCellColor", QMetaType::QColor,
          QColor(Qt::cyan));
   // define(levelNameOnEachMarkerEnabled, "levelNameOnEachMarkerEnabled",

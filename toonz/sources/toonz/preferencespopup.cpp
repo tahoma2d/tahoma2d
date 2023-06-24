@@ -2086,7 +2086,7 @@ QWidget* PreferencesPopup::createXsheetPage() {
     insertUI(syncLevelRenumberWithXsheet, lay);
     insertUI(currentTimelineEnabled, lay);
   }
-  // insertUI(currentColumnColor, lay);
+  insertUI(currentColumnColor, lay);
   insertUI(currentCellColor, lay);
   if (Preferences::instance()->isShowAdvancedOptionsEnabled())
     insertUI(showFrameNumberWithLetters, lay);
