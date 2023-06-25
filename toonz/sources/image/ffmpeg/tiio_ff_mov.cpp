@@ -40,7 +40,10 @@ private:
 TLevelWriterFFMov::TLevelWriterFFMov(const TFilePath &path,
                                      TPropertyGroup *winfo)
     : TLevelWriter(path, winfo) {
-  if (!m_properties) m_properties = new Tiio::FFMovWriterProperties();
+  // Older scenes saved with MOV properties from QuickTime have incompatible
+  // properties. Swicth to new ones.
+  if (!m_properties || !m_properties->getProperty("Scale"))
+    m_properties = new Tiio::FFMovWriterProperties();
   if (m_properties->getPropertyCount() == 0) {
     m_scale      = 100;
     m_vidQuality = 100;
