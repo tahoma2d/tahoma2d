@@ -1003,7 +1003,7 @@ void DvDirModelNetworkNode::refreshChildren() {
     err = WNetEnumResource(enumHandle, &count, buffer, &bufferSize);
 
     if (err == NO_ERROR) {
-      for (int i = 0; i < count; ++i) {
+      for (DWORD i = 0; i < count; ++i) {
         // Only list disk-type devices - in any case, the remote (UNC) name
         // should exist
         if (buffer[i].dwType == RESOURCETYPE_DISK && buffer[i].lpRemoteName) {
