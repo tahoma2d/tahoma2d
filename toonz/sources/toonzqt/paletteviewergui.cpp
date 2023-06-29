@@ -571,6 +571,8 @@ void PageViewer::drawToggleLink(QPainter &p, QRect &chipRect,
     p.setPen(Qt::black);
     p.drawRect(rect);
 
+    p.save();
+
     if (globalName[0] == L'+') {
       QPointF a(x + 2, y + 2);
       QPointF b(x + 2, y + 5);
@@ -580,6 +582,8 @@ void PageViewer::drawToggleLink(QPainter &p, QRect &chipRect,
       p.drawLine(a, c);
       p.drawLine(a, d);
     }
+
+    p.restore();
   }
 }
 
