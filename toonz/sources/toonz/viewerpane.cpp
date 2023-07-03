@@ -126,7 +126,7 @@ BaseViewerPanel::BaseViewerPanel(QWidget *parent, Qt::WindowFlags flags)
   m_flipConsole->enableButton(FlipConsole::eCheckBg, false, false);
   m_flipConsole->setChecked(FlipConsole::eSound, true);
   m_playSound = m_flipConsole->isChecked(FlipConsole::eSound);
- 
+
   m_flipConsole->setFrameRate(app->getCurrentScene()
                                   ->getScene()
                                   ->getProperties()
@@ -345,7 +345,7 @@ void BaseViewerPanel::showEvent(QShowEvent *event) {
   ret = ret && connect(frameHandle, SIGNAL(frameTypeChanged()), this,
                        SLOT(onFrameTypeChanged()));
 
-  // onXshLevelSwitched(TXshLevel*)F changeWindowTitle() + updateFrameRange()
+  // onXshLevelSwitched(TXshLevel*)ï¿½F changeWindowTitle() + updateFrameRange()
   ret = ret && connect(levelHandle, SIGNAL(xshLevelSwitched(TXshLevel *)), this,
                        SLOT(onXshLevelSwitched(TXshLevel *)));
 
@@ -394,8 +394,7 @@ void BaseViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   // buttons for show / hide toggle for the field guide and the safe area
   TPanelTitleBarButtonForSafeArea *safeAreaButton =
-      new TPanelTitleBarButtonForSafeArea(
-          titleBar, getIconThemePath("actions/20/pane_safe.svg"));
+      new TPanelTitleBarButtonForSafeArea(titleBar, getIconPath("pane_safe"));
   safeAreaButton->setToolTip(tr("Safe Area (Right Click to Select)"));
   titleBar->add(QPoint(x, 0), safeAreaButton);
   ret = ret && connect(safeAreaButton, SIGNAL(toggled(bool)),
@@ -408,8 +407,7 @@ void BaseViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   safeAreaButton->setPressed(
       CommandManager::instance()->getAction(MI_SafeArea)->isChecked());
 
-  button = new TPanelTitleBarButton(
-      titleBar, getIconThemePath("actions/20/pane_grid.svg"));
+  button = new TPanelTitleBarButton(titleBar, getIconPath("pane_grid"));
   button->setToolTip(tr("Grids and Overlays\nRight click to adjust."));
   x += 1 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
@@ -423,8 +421,7 @@ void BaseViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
       CommandManager::instance()->getAction(MI_FieldGuide)->isChecked());
 
   TPanelTitleBarButtonForGrids *gridMoreButton =
-      new TPanelTitleBarButtonForGrids(
-          titleBar, getIconThemePath("actions/9/pane_more.svg"));
+      new TPanelTitleBarButtonForGrids(titleBar, getIconPath("pane_more"));
   gridMoreButton->setToolTip(tr("Grids and Overlays Settings"));
   x += 1 + iconWidth;
   titleBar->add(QPoint(x, 0), gridMoreButton);
@@ -432,31 +429,27 @@ void BaseViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
           [=]() { m_sceneViewer->update(); });
 
   // view mode toggles
-  button = new TPanelTitleBarButton(
-      titleBar, getIconThemePath("actions/20/pane_table.svg"));
+  button = new TPanelTitleBarButton(titleBar, getIconPath("pane_table"));
   button->setToolTip(tr("Camera Stand View"));
   x += 10 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::NORMAL_REFERENCE);
   button->setPressed(true);
 
-  button = new TPanelTitleBarButton(titleBar,
-                                    getIconThemePath("actions/20/pane_3d.svg"));
+  button = new TPanelTitleBarButton(titleBar, getIconPath("pane_3d"));
   button->setToolTip(tr("3D View"));
   x += 1 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA3D_REFERENCE);
 
-  button = new TPanelTitleBarButton(
-      titleBar, getIconThemePath("actions/20/pane_cam.svg"));
+  button = new TPanelTitleBarButton(titleBar, getIconPath("pane_cam"));
   button->setToolTip(tr("Camera View"));
   x += 1 + iconWidth;
   titleBar->add(QPoint(x, 0), button);
   button->setButtonSet(viewModeButtonSet, SceneViewer::CAMERA_REFERENCE);
 
   TPanelTitleBarButtonForCameraView *camTransparencyButton =
-      new TPanelTitleBarButtonForCameraView(
-          titleBar, getIconThemePath("actions/9/pane_more.svg"));
+      new TPanelTitleBarButtonForCameraView(titleBar, getIconPath("pane_more"));
   camTransparencyButton->setToolTip(tr("Change camera view transparency."));
   x += 1 + iconWidth;
   titleBar->add(QPoint(x, 0), camTransparencyButton);
@@ -468,8 +461,7 @@ void BaseViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
                        SLOT(setReferenceMode(int)));
 
   // freeze button
-  button = new TPanelTitleBarButton(
-      titleBar, getIconThemePath("actions/20/pane_freeze.svg"));
+  button = new TPanelTitleBarButton(titleBar, getIconPath("pane_freeze"));
   x += 10 + iconWidth;
 
   button->setToolTip(tr("Freeze"));
@@ -478,8 +470,8 @@ void BaseViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
                        SLOT(freeze(bool)));
 
   // preview toggles
-  m_previewButton = new TPanelTitleBarButtonForPreview(
-      titleBar, getIconThemePath("actions/20/pane_preview.svg"));
+  m_previewButton =
+      new TPanelTitleBarButtonForPreview(titleBar, getIconPath("pane_preview"));
   x += 10 + iconWidth;
   titleBar->add(QPoint(x, 0), m_previewButton);
   m_previewButton->setToolTip(tr("Preview"));
@@ -488,7 +480,7 @@ void BaseViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   //                      SLOT(enableFullPreview(bool)));
 
   m_subcameraPreviewButton = new TPanelTitleBarButtonForPreview(
-      titleBar, getIconThemePath("actions/20/pane_subpreview.svg"));
+      titleBar, getIconPath("pane_subpreview"));
   x += 1 + 24;  // width of pane_preview.svg = 24px
 
   titleBar->add(QPoint(x, 0), m_subcameraPreviewButton);
@@ -633,7 +625,7 @@ void BaseViewerPanel::onPlayingStatusChanged(bool playing) {
 
 //-----------------------------------------------------------------------------
 
-void BaseViewerPanel::changeWindowTitle() {  // —vŠm”F
+void BaseViewerPanel::changeWindowTitle() {  // ï¿½vï¿½mï¿½F
   TApp *app         = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
   if (!scene) return;
@@ -669,7 +661,7 @@ void BaseViewerPanel::changeWindowTitle() {  // —vŠm”F
                       m_sceneViewer->getNormalZoomScale().inv();
         if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
         if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
-        name                                    = name + tr("  ::  Zoom : ") +
+        name = name + tr("  ::  Zoom : ") +
                QString::number(tround(100.0 * sqrt(aff.det()))) + "%";
         if (m_sceneViewer->getIsFlippedX() || m_sceneViewer->getIsFlippedY()) {
           name = name + tr(" (Flipped)");
@@ -699,7 +691,7 @@ void BaseViewerPanel::changeWindowTitle() {  // —vŠm”F
                   m_sceneViewer->getNormalZoomScale().inv();
     if (m_sceneViewer->getIsFlippedX()) aff = aff * TScale(-1, 1);
     if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
-    name                                    = name + tr("  ::  Zoom : ") +
+    name = name + tr("  ::  Zoom : ") +
            QString::number(tround(100.0 * sqrt(aff.det()))) + "%";
     if (m_sceneViewer->getIsFlippedX() || m_sceneViewer->getIsFlippedY()) {
       name = name + tr(" (Flipped)");

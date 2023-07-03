@@ -677,8 +677,8 @@ void PaletteViewerPanel::showEvent(QShowEvent *) {
   TSceneHandle *sceneHandle = TApp::instance()->getCurrentScene();
   bool ret = connect(sceneHandle, SIGNAL(preferenceChanged(const QString &)),
                      this, SLOT(onPreferenceChanged(const QString &)));
-  ret = ret && connect(sceneHandle, SIGNAL(sceneSwitched()), this,
-                       SLOT(onSceneSwitched()));
+  ret      = ret && connect(sceneHandle, SIGNAL(sceneSwitched()), this,
+                            SLOT(onSceneSwitched()));
   assert(ret);
 }
 
@@ -1018,8 +1018,8 @@ public:
     panel->setWidget(toolbar);
     panel->setIsMaximizable(false);
     // panel->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
-//    panel->setFixedWidth(44);  // 35
-//    toolbar->setFixedWidth(34);
+    //    panel->setFixedWidth(44);  // 35
+    //    toolbar->setFixedWidth(34);
     panel->setWindowTitle(QString(""));
     panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
     connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
@@ -1129,8 +1129,7 @@ void FlipbookPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   int iconWidth = 20;
   // safe area button
   TPanelTitleBarButtonForSafeArea *safeAreaButton =
-      new TPanelTitleBarButtonForSafeArea(
-          titleBar, getIconThemePath("actions/20/pane_safe.svg"));
+      new TPanelTitleBarButtonForSafeArea(titleBar, getIconPath("pane_safe"));
   safeAreaButton->setToolTip(tr("Safe Area (Right Click to Select)"));
   titleBar->add(QPoint(x, 0), safeAreaButton);
   ret = ret && connect(safeAreaButton, SIGNAL(toggled(bool)),
@@ -1145,8 +1144,7 @@ void FlipbookPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   x += 28 + iconWidth;
   // minimize button
-  m_button = new TPanelTitleBarButton(
-      titleBar, getIconThemePath("actions/20/pane_minimize.svg"));
+  m_button = new TPanelTitleBarButton(titleBar, getIconPath("pane_minimize"));
   m_button->setToolTip(tr("Minimize"));
   m_button->setPressed(false);
 
