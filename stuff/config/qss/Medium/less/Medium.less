@@ -34,6 +34,8 @@
 @label-title: rgb(159, 218, 255);
 @label-error: rgb(255, 0, 0);
 
+@lock-color: #C34040;
+
 // -----------------------------------------------------------------------------
 // Tabs
 // -----------------------------------------------------------------------------
@@ -197,7 +199,7 @@
 @toolbutton-border-color-disabled: @toolbutton-bg-color-disabled;
 
 // Lock
-@toolbutton-lock-bg-color-checked: #C34040;
+@toolbutton-lock-bg-color-checked: @lock-color;
 @toolbutton-lock-border-color-checked: @toolbutton-lock-bg-color-checked;
 @toolbutton-lock-bg-color-checked-hover: lighten(@toolbutton-lock-bg-color-checked, 15);
 @toolbutton-lock-border-color-checked-hover: @toolbutton-lock-bg-color-checked-hover;
@@ -317,15 +319,15 @@
 @title-text-color: lighten(@bg, 30);
 @title-text-color-active: #fff;
 
-@title-active-border-pixmap: 'none';
 @title-border-width: 1px;
 @title-border-color: @accent;
 
 // Title pane icon colors
 @title-button-rollover-color: @button-bg-color-hover;
 @title-button-pressed-color: @hl-bg-color;
-@title-button-freeze-color: @toolbutton-lock-bg-color-checked;
+@title-button-freeze-color: @lock-color;
 @title-button-preview-color: #1baf7e;
+@title-close-over-color: @lock-color;
 
 // -----------------------------------------------------------------------------
 // File Browser / Trees
