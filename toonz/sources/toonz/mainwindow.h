@@ -54,7 +54,7 @@ class MainWindow final : public QMainWindow {
   Q_OBJECT
 
   bool m_saveSettingsOnQuit;
-  bool m_shownOnce         = false;
+  bool m_shownOnce = false;
   int m_oldRoomIndex;
   QString m_currentRoomsChoice;
   UpdateChecker *m_updateChecker;
@@ -133,65 +133,65 @@ private:
 
   QAction *createAction(const char *id, const char *name,
                         const QString &defaultShortcut, QString newStatusTip,
-                        CommandType type = MenuFileCommandType,
+                        CommandType type        = MenuFileCommandType,
                         const char *iconSVGName = "");
   QAction *createRightClickMenuAction(const char *id, const char *name,
                                       const QString &defaultShortcut,
                                       const char *iconSVGName = "",
-                                      QString newStatusTip = "");
+                                      QString newStatusTip    = "");
   QAction *createMenuFileAction(const char *id, const char *name,
                                 const QString &defaultShortcut,
                                 const char *iconSVGName = "",
-                                QString newStatusTip = "");
+                                QString newStatusTip    = "");
   QAction *createMenuEditAction(const char *id, const char *name,
                                 const QString &defaultShortcut,
                                 const char *iconSVGName = "",
-                                QString newStatusTip = "");
+                                QString newStatusTip    = "");
   QAction *createMenuScanCleanupAction(const char *id, const char *name,
                                        const QString &defaultShortcut,
                                        const char *iconSVGName = "",
-                                       QString newStatusTip = "");
+                                       QString newStatusTip    = "");
   QAction *createMenuLevelAction(const char *id, const char *name,
                                  const QString &defaultShortcut,
                                  const char *iconSVGName = "",
-                                 QString newStatusTip = "");
+                                 QString newStatusTip    = "");
   QAction *createMenuXsheetAction(const char *id, const char *name,
                                   const QString &defaultShortcut,
                                   const char *iconSVGName = "",
-                                  QString newStatusTip = "");
+                                  QString newStatusTip    = "");
   QAction *createMenuCellsAction(const char *id, const char *name,
                                  const QString &defaultShortcut,
                                  const char *iconSVGName = "",
-                                 QString newStatusTip = "");
+                                 QString newStatusTip    = "");
   QAction *createMenuViewAction(const char *id, const char *name,
                                 const QString &defaultShortcut,
                                 const char *iconSVGName = "",
-                                QString newStatusTip = "");
+                                QString newStatusTip    = "");
   QAction *createMenuWindowsAction(const char *id, const char *name,
                                    const QString &defaultShortcut,
                                    const char *iconSVGName = "",
-                                   QString newStatusTip = "");
+                                   QString newStatusTip    = "");
 
   QAction *createMenuPlayAction(const char *id, const char *name,
                                 const QString &defaultShortcut,
                                 const char *iconSVGName = "",
-                                QString newStatusTip = "");
+                                QString newStatusTip    = "");
   QAction *createMenuRenderAction(const char *id, const char *name,
                                   const QString &defaultShortcut,
                                   const char *iconSVGName = "",
-                                  QString newStatusTip = "");
+                                  QString newStatusTip    = "");
   QAction *createMenuHelpAction(const char *id, const char *name,
                                 const QString &defaultShortcut,
                                 const char *iconSVGName = "",
-                                QString newStatusTip = "");
+                                QString newStatusTip    = "");
   QAction *createRGBAAction(const char *id, const char *name,
                             const QString &defaultShortcut,
                             const char *iconSVGName = "",
-                            QString newStatusTip = "");
+                            QString newStatusTip    = "");
   QAction *createFillAction(const char *id, const char *name,
                             const QString &defaultShortcut,
                             const char *iconSVGName = "",
-                            QString newStatusTip = "");
+                            QString newStatusTip    = "");
   QAction *createMenuAction(const char *id, const char *name,
                             QList<QString> list, QString newStatusTip = "",
                             bool isForRecentFiles = true);
@@ -205,22 +205,23 @@ private:
   QAction *createViewerAction(const char *id, const char *name,
                               const QString &defaultShortcut,
                               const char *iconSVGName = "",
-                              QString newStatusTip = "");
+                              QString newStatusTip    = "");
   // For command bar, no shortcut keys
   QAction *createVisualizationButtonAction(const char *id, const char *name,
                                            const char *iconSVGName = "",
-                                           QString newStatusTip = "");
+                                           QString newStatusTip    = "");
 
   QAction *createMiscAction(const char *id, const char *name,
                             const char *defaultShortcut,
                             QString newStatusTip = "");
   QAction *createToolOptionsAction(const char *id, const char *name,
                                    const QString &defaultShortcut,
-                                   QString newStatusTip = "");
+                                   QString newStatusTip = "",
+                                   const char *iconSVGName = "");
   QAction *createStopMotionAction(const char *id, const char *name,
                                   const QString &defaultShortcut,
                                   const char *iconSVGName = "",
-                                  QString newStatusTip = "");
+                                  QString newStatusTip    = "");
 
 protected slots:
   void onCurrentRoomChanged(int newRoomIndex);

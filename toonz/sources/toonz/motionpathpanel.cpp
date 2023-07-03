@@ -44,7 +44,7 @@ double distanceSquared(QPoint p1, QPoint p2) {
   int newY = p1.y() - p2.y();
   return (newX * newX) + (newY * newY);
 }
-};
+};  // namespace
 
 //*****************************************************************************
 //    MotionPathPanel  implementation
@@ -119,9 +119,10 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
   ToolHandle* th = TApp::instance()->getCurrentTool();
   connect(th, &ToolHandle::toolSwitched, this, &MotionPathPanel::updateTools);
   connect(th, &ToolHandle::toolChanged, this, &MotionPathPanel::updateTools);
-  connect(m_geometryOptionsBox, static_cast<void (QComboBox::*)(int)>(
-                                    &QComboBox::currentIndexChanged),
-          this, &MotionPathPanel::onGeometricComboChanged);
+  connect(
+      m_geometryOptionsBox,
+      static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+      this, &MotionPathPanel::onGeometricComboChanged);
   connect(m_geometrySidesField, &DVGui::IntField::valueChanged, this,
           &MotionPathPanel::onGeometricSidesChanged);
   m_toolLayout->addWidget(m_geometryOptionsBox);
@@ -268,7 +269,6 @@ void MotionPathPanel::showEvent(QShowEvent*) { refreshPaths(true); }
 //-----------------------------------------------------------------------------
 
 void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
-  getIconThemePath("actions/20/pane_preview.svg");
   TObjectHandle* objHandle = TApp::instance()->getCurrentObject();
   bool active              = spline->getActive();
   ClickablePathLabel* nameLabel =
@@ -277,8 +277,8 @@ void MotionPathPanel::createControl(TStageObjectSpline* spline, int number) {
   DVGui::LineEdit* nameEdit       = new DVGui::LineEdit(this);
   ClickablePathLabel* deleteLabel = new ClickablePathLabel("", this);
   deleteLabel->setPixmap(createQIcon("menu_toggle_on").pixmap(QSize(23, 18)));
-  TPanelTitleBarButton* activeButton = new TPanelTitleBarButton(
-      this, getIconThemePath("actions/20/pane_preview.svg"));
+  TPanelTitleBarButton* activeButton =
+      new TPanelTitleBarButton(this, getIconPath("pane_preview"));
 
   DVGui::IntLineEdit* stepsEdit = new DVGui::IntLineEdit(this);
   stepsEdit->setValue(spline->getSteps());
@@ -697,27 +697,28 @@ void MotionPathPlaybackExecutor::run() {
   TUINT32 loadedInstant, nextSampleInstant = timeResolution;
   TUINT32 sampleTotalLoadingTime = 0;
 
-  TUINT32 lastFrameCounts[4] = {0, 0, 0,
-                                0};  // Keep the last 4 'played frames' counts.
+  TUINT32 lastFrameCounts[4]    = {0, 0, 0,
+                                   0};  // Keep the last 4 'played frames' counts.
   TUINT32 lastSampleInstants[4] = {0, 0, 0,
                                    0};  // Same for the last sampling instants
-  TUINT32 lastLoadingTimes[4] = {0, 0, 0,
-                                 0};  // Same for total sample loading times
+  TUINT32 lastLoadingTimes[4]   = {0, 0, 0,
+                                   0};  // Same for total sample loading times
 
   double targetFrameTime =
-      1000.0 / abs(m_fps);  // User-required time between frames
+      1000.0 / abs(m_fps);      // User-required time between frames
 
   TUINT32 emissionInstant = 0;  // Effective instant in which loading is invoked
   double emissionInstantD = 0.0;  // Double precision version of the above
 
-  double lastLoadingTime = 0.0;  // Mean frame loading time in the last sample
+  double lastLoadingTime = 0.0;   // Mean frame loading time in the last sample
 
   while (!m_abort) {
     emissionInstant = timer.getTotalTime();
 
     // Draw the next frame
-    if (playedFramesCount) emit nextFrame(fps);  // Show the next frame, telling
-                                                 // currently measured fps
+    if (playedFramesCount)
+      emit nextFrame(fps);  // Show the next frame, telling
+                            // currently measured fps
 
     //-------- Each nextFrame() blocks until the frame has been shown ---------
 

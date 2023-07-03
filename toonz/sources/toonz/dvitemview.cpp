@@ -1037,8 +1037,7 @@ void DvItemViewerPanel::paintThumbnailItem(QPainter &p, int index) {
   if (!thumbnail.isNull()) p.drawPixmap(iconRect.topLeft(), thumbnail);
   //}
   else {
-    static QPixmap missingPixmap =
-        QPixmap(getIconThemePath("mimetypes/60/missing_icon.svg"));
+    static QPixmap missingPixmap = generateIconPixmap("missing_icon");
     QRect pixmapRect(rect.left() + (rect.width() - missingPixmap.width()) / 2,
                      rect.top(), missingPixmap.width(), missingPixmap.height());
     p.drawPixmap(pixmapRect.topLeft(), missingPixmap);

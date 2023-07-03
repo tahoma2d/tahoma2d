@@ -123,10 +123,8 @@ ExportSceneDvDirModelFileFolderNode::createExposeSceneNode(
 // ExportSceneDvDirModelProjectNode
 
 QPixmap ExportSceneDvDirModelProjectNode::getPixmap(bool isOpen) const {
-  static QPixmap openProjectPixmap(recolorPixmap(
-      svgToPixmap(getIconThemePath("actions/18/folder_project_on.svg"))));
-  static QPixmap closeProjectPixmap(recolorPixmap(
-      svgToPixmap(getIconThemePath("actions/18/folder_project.svg"))));
+  static QPixmap openProjectPixmap(generateIconPixmap("folder_project_on"));
+  static QPixmap closeProjectPixmap(generateIconPixmap("folder_project"));
   return isOpen ? openProjectPixmap : closeProjectPixmap;
 }
 

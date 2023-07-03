@@ -92,17 +92,13 @@ void LayerFooterPanel::paintEvent(QPaintEvent *event) {
   m_noteArea->setFixedSize(o->rect(PredefinedRect::FOOTER_NOTE_AREA).size());
   m_noteArea->setGeometry(noteObjRect);
 
-  static QPixmap zoomIn =
-      recolorPixmap(svgToPixmap(getIconThemePath("actions/15/zoom_in.svg")));
-  static QPixmap zoomInRollover = recolorPixmap(
-      svgToPixmap(getIconThemePath("actions/15/zoom_in_rollover.svg")));
-  const QRect zoomInImgRect = o->rect(PredefinedRect::ZOOM_IN);
+  static QPixmap zoomIn         = generateIconPixmap("zoom_in");
+  static QPixmap zoomInRollover = generateIconPixmap("zoom_in_rollover");
+  const QRect zoomInImgRect     = o->rect(PredefinedRect::ZOOM_IN);
 
-  static QPixmap zoomOut =
-      recolorPixmap(svgToPixmap(getIconThemePath("actions/15/zoom_out.svg")));
-  static QPixmap zoomOutRollover = recolorPixmap(
-      svgToPixmap(getIconThemePath("actions/15/zoom_out_rollover.svg")));
-  const QRect zoomOutImgRect = o->rect(PredefinedRect::ZOOM_OUT);
+  static QPixmap zoomOut         = generateIconPixmap("zoom_out");
+  static QPixmap zoomOutRollover = generateIconPixmap("zoom_out_rollover");
+  const QRect zoomOutImgRect     = o->rect(PredefinedRect::ZOOM_OUT);
 
   // static QPixmap addLevel = svgToPixmap(":Resources/new_level.svg");
   // static QPixmap addLevelRollover =
