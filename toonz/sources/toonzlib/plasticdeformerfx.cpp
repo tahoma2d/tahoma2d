@@ -444,8 +444,10 @@ void PlasticDeformerFx::doCompute(TTile &tile, double frame,
 
     // ts->unloadTexture(texId);                                // Auto-released
     // due to display list destruction
-    context->deleteLater();
-    // context->doneCurrent();
+    //context->deleteLater();
+    context->moveToThread(0);
+    context->doneCurrent();
+    delete context;
   }
   assert(glGetError() == GL_NO_ERROR);
 }
