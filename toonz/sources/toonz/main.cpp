@@ -1,7 +1,4 @@
 // Soli Deo gloria
-#ifdef WITH_CRASHRPT
-#include <tchar.h>
-#endif
 
 // Tnz6 includes
 #include "mainwindow.h"
@@ -69,10 +66,6 @@
 #include "tfont.h"
 
 #include "kis_tablet_support_win8.h"
-
-#ifdef WITH_CRASHRPT
-#include "CrashRpt.h"
-#endif
 
 #ifdef MACOSX
 #include "tipc.h"
@@ -576,34 +569,6 @@ int main(int argc, char *argv[]) {
   // Toonz environment
   initToonzEnv(argumentPathValues);
 
-#ifdef WITH_CRASHRPT
-  std::string str;
-
-  CR_INSTALL_INFO pInfo;
-  memset(&pInfo, 0, sizeof(CR_INSTALL_INFO));
-  pInfo.cb                 = sizeof(CR_INSTALL_INFO);
-
-  str                      = TEnv::getApplicationName();
-  std::wstring wAppName    = std::wstring(str.begin(), str.end());
-  pInfo.pszAppName         = wAppName.c_str();
-
-  str                      = TEnv::getApplicationVersion();
-  std::wstring wAppVersion = std::wstring(str.begin(), str.end());
-  pInfo.pszAppVersion      = wAppVersion.c_str();
-
-  TFilePath crashrptCache =
-      ToonzFolder::getCacheRootFolder() + TFilePath("crashrpt");
-  str                         = crashrptCache.getQString().toStdString();
-  std::wstring wRptdir        = std::wstring(str.begin(), str.end());
-  pInfo.pszErrorReportSaveDir = wRptdir.c_str();
-
-  // Install all available exception handlers.
-  // Don't send reports automaticall, store locally
-  pInfo.dwFlags |= CR_INST_ALL_POSSIBLE_HANDLERS | CR_INST_DONT_SEND_REPORT;
-
-  crInstall(&pInfo);
-#endif
-
   // prepare for 30bit display
   if (Preferences::instance()->is30bitDisplayEnabled()) {
     QSurfaceFormat sFmt = QSurfaceFormat::defaultFormat();
@@ -913,10 +878,6 @@ int main(int argc, char *argv[]) {
   if (consoleAttached) {
     ::FreeConsole();
   }
-#endif
-
-#ifdef WITH_CRASHRPT
-  crUninstall();
 #endif
 
   return ret;

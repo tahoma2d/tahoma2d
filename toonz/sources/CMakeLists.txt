@@ -107,7 +107,6 @@ option(WITH_SYSTEM_SUPERLU "Use the system SuperLU library instead of 'thirdpary
 option(WITH_CANON "Build with Canon DSLR support - Requires Canon SDK" OFF)
 option(WITH_GPHOTO2 "Build with Libgphoto2" OFF)
 option(WITH_TRANSLATION "Generate translation projects as well" ON)
-option(WITH_CRASHRPT "Build CrashRpt support - Requires CrashRpt Library" OFF)
 option(WITH_WINTAB "(Windows only) Build with customized Qt with WinTab support. https://github.com/shun-iwasawa/qt5/releases/tag/v5.15.2_wintab" OFF)
 
 # avoid using again
@@ -281,12 +280,6 @@ if(BUILD_ENV_MSVC)
         -DGLUT_NO_LIB_PRAGMA
     )
 
-	if(WITH_CRASHRPT)
-		include_directories(
-			${SDKROOT}/crashrpt/include
-		)
-	endif()
-
     if(WITH_GPHOTO2)
         include_directories(
             ${SDKROOT}/libgphoto2/include
@@ -395,10 +388,6 @@ if(BUILD_ENV_MSVC)
     endif()
     set(MYPAINT_LIB_INCLUDE_DIRS ${SDKROOT}/libmypaint/dist/${PLATFORM}/include/libmypaint)
     set(MYPAINT_LIB_LDFLAGS ${SDKROOT}/libmypaint/dist/${PLATFORM}/libmypaint.lib)
-
-	if(WITH_CRASHRPT)
-		set(CRASHRPT_LIB ${SDKROOT}/crashrpt/CrashRpt1500.lib)
-	endif()
 
     if(WITH_GPHOTO2)
         set(GPHOTO2_LIB ${SDKROOT}/libgphoto2/lib/libgphoto2.lib)

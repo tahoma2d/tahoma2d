@@ -36,12 +36,6 @@ IF EXIST ..\..\thirdparty\libgphoto2\include (
    xcopy /Y /E ..\..\thirdparty\libgphoto2\bin Tahoma2D
 )
 
-IF EXIST ..\..\thirdparty\crashrpt\include (
-   copy /Y ..\..\thirdparty\apps\crashrpt\CrashRpt1500.dll Tahoma2D
-   copy /Y ..\..\thirdparty\apps\crashrpt\CrashSender1500.exe Tahoma2D
-   copy /Y ..\..\thirdparty\apps\crashrpt\crashrpt_lang.ini Tahoma2D
-)
-
 echo ">>> Copying stuff to Tahoma2D\tahomastuff"
 
 mkdir Tahoma2D\tahomastuff

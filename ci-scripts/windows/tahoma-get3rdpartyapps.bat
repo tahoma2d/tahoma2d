@@ -5,17 +5,6 @@ IF NOT EXIST apps mkdir apps
 cd apps
 echo * > .gitignore
 
-echo ">>> Getting CrashRpt"
-
-IF EXIST crashrpt rmdir /S /Q crashrpt
-curl -fsSL -o crashrpt-tahoma2d-win_2019.zip https://github.com/tahoma2d/crashrpt2/releases/download/v1.5.0.0/crashrpt-tahoma2d-win_2019.zip
-7z x crashrpt-tahoma2d-win_2019.zip
-rename crashrpt-tahoma2d-win_2019 crashrpt
-IF EXIST ..\crashrpt\include rmdir /S /Q ..\crashrpt\include
-IF EXIST ..\crashrpt\CrashRpt1500.lib del ..\crashrpt\CrashRpt1500.lib
-move crashrpt\include ..\crashrpt
-move crashrpt\CrashRpt1500.lib ..\crashrpt
-
 echo ">>> Getting FFmpeg"
 
 IF EXIST ffmpeg rmdir /S /Q ffmpeg
