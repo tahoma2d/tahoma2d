@@ -26,12 +26,7 @@ body:
     id: logs
     attributes:
       label: Relevant logs/screenshots
-      description: If available, please provide relevant logs or screenshots.
-      placeholder: |
-        Crash logs or dmp files may be found under the following:
-           Windows:  crash dmp file - C:\Users\yourusername\AppData\Local\Tahoma2D\Tahoma2D\cache\crashrpt\xxxx\crashdump.dmp
-                             crash logs     - Event Viewer -> Windows Logs -> Application.  Look for Tahoma2D crash report
-           macOS: crash logs - Console App -> User Reports.  Look for Tahoma2D crash report
+      description: If available, please provide relevant logs, screenshots or short videos.  Windows users can add zipped crash dmp files.
     validations:
       required: false
   - type: markdown
@@ -45,6 +40,7 @@ body:
       label: Software Version
       description: What version of the software are you running?
       options:
+        - 1.3.1
         - 1.3
         - Nightly (Specify below)
         - 1.2
