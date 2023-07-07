@@ -43,6 +43,9 @@
 
 static QWidget *s_parentWindow = NULL;
 static bool s_reportProjInfo   = false;
+#ifdef _WIN32
+static PEXCEPTION_POINTERS s_exceptionPtr = NULL;
+#endif
 
 //-----------------------------------------------------------------------------
 
@@ -60,15 +63,16 @@ static const char *filenameOnly(const char *path) {
 #ifdef _WIN32
 
 #define HAS_MINIDUMP
-static bool generateMinidump(TFilePath dumpFile) {
+static bool generateMinidump(TFilePath dumpFile,
+                             PEXCEPTION_POINTERS exceptionInfo) {
   HANDLE hDumpFile = CreateFileW(dumpFile.getWideString().c_str(),
                                  GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 0, 0);
   if (hDumpFile == INVALID_HANDLE_VALUE) return false;
 
   MINIDUMP_EXCEPTION_INFORMATION mdei;
   mdei.ThreadId          = GetCurrentThreadId();
-  mdei.ExceptionPointers = NULL;
-  mdei.ClientPointers    = FALSE;
+  mdei.ExceptionPointers = exceptionInfo;
+  mdei.ClientPointers    = TRUE;
 
   if (MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hDumpFile,
                         MiniDumpNormal, &mdei, 0, NULL)) {
@@ -261,6 +265,7 @@ LONG WINAPI exceptionHandler(PEXCEPTION_POINTERS info) {
   if (handling) return EXCEPTION_CONTINUE_SEARCH;
 
   handling = true;
+  s_exceptionPtr = info;
   if (CrashHandler::trigger(reason, true)) _Exit(1);
   handling = false;
 
@@ -549,7 +554,11 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
   TFilePath fpDump = ToonzFolder::getCrashReportFolder() + dumpName;
 
   // Generate minidump
+#ifdef _WIN32
+  bool minidump = generateMinidump(fpDump, s_exceptionPtr);
+#else
   bool minidump = generateMinidump(fpDump);
+#endif;
 
   // Generate report
   try {
