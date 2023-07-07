@@ -611,18 +611,18 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
     }
   } catch (...) {
   }
-#ifdef HAS_MODULES
-  try {
-    out.append("\n==== Modules ====\n");
-    printModules(out);
-    out.append("==== End ====\n");
-  } catch (...) {
-  }
-#endif
 #ifdef HAS_BACKTRACE
   try {
     out.append("\n==== Backtrace ====\n");
     printBacktrace(out);
+    out.append("==== End ====\n");
+  } catch (...) {
+  }
+#endif
+#ifdef HAS_MODULES
+  try {
+    out.append("\n==== Modules ====\n");
+    printModules(out);
     out.append("==== End ====\n");
   } catch (...) {
   }
