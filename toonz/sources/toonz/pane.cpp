@@ -626,7 +626,6 @@ QSize TPanelTitleBar::minimumSizeHint() const { return QSize(20, 18); }
 //-----------------------------------------------------------------------------
 
 void TPanelTitleBar::generateCloseButtonPixmaps() {
-  QString iconSVGName = "pane_close";
   // Icon theme vars
   ThemeManager &themeManager = ThemeManager::getInstance();
   const qreal offOpacity     = themeManager.getOffOpacity();
