@@ -197,6 +197,10 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                    spacer +
                    tr("%1%2Allow or Disallow Snapping")
                        .arg(trModKey("Ctrl+Shift"))
+                       .arg(cmdTextSeparator) +
+                   spacer +
+                   tr("%1%2Intermediate Stroke in Range")
+                       .arg(trModKey("Ctrl+Alt+Shift"))
                        .arg(cmdTextSeparator)});
   lMap.insert({"T_BrushSmartRaster",
                tr("Brush Tool : Draws in the work area freehand") + spacer +
