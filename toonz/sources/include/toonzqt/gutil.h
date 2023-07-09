@@ -54,10 +54,6 @@ class TStroke;
 
 //-----------------------------------------------------------------------------
 
-QString DVAPI getIconThemePath(const QString &filePath);
-
-//-----------------------------------------------------------------------------
-
 QString DVAPI fileSizeString(qint64 size, int precision = 2);
 
 //-----------------------------------------------------------------------------
@@ -103,6 +99,11 @@ QPixmap DVAPI scalePixmapKeepingAspectRatio(QPixmap p, QSize size,
 SvgRenderParams calculateSvgRenderParams(const QSize &desiredSize,
                                          QSize &imageSize,
                                          Qt::AspectRatioMode aspectRatioMode);
+
+//-----------------------------------------------------------------------------
+
+// Workaround issue with QT5.9's svgRenderer not handling viewBox very well
+QSize determineSvgSize(const QString &svgFilePath);
 
 //-----------------------------------------------------------------------------
 

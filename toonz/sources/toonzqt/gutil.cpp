@@ -34,6 +34,7 @@
 #include <QSvgRenderer>
 #include <QScreen>
 #include <QWindow>
+#include <QXmlStreamReader>
 #include <QDebug>
 
 using namespace DVGui;
@@ -236,6 +237,48 @@ SvgRenderParams calculateSvgRenderParams(const QSize &desiredSize,
 
 //-----------------------------------------------------------------------------
 
+// Workaround issue with QT5.9's svgRenderer not handling viewBox very well
+QSize determineSvgSize(const QString &svgFilePath) {
+  QFile file(svgFilePath);
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    return QSize();
+  }
+
+  QXmlStreamReader xml(&file);
+  int width  = 0;
+  int height = 0;
+
+  while (!xml.atEnd() && !xml.hasError()) {
+    QXmlStreamReader::TokenType token = xml.readNext();
+    if (token == QXmlStreamReader::StartDocument) {
+      continue;
+    }
+    if (token == QXmlStreamReader::StartElement) {
+      if (xml.name() == "svg") {
+        foreach (const QXmlStreamAttribute &attr, xml.attributes()) {
+          if (attr.name().toString() == "viewBox") {
+            QStringList parts = attr.value().toString().split(" ");
+            if (parts.size() == 4) {
+              width  = parts[2].toInt();
+              height = parts[3].toInt();
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (xml.hasError()) {
+    qDebug() << "Error handling XML to determine SVG image size";
+  }
+
+  file.close();
+
+  return QSize(width, height);
+}
+
+//-----------------------------------------------------------------------------
+
 QPixmap svgToPixmap(const QString &svgFilePath, QSize size,
                     Qt::AspectRatioMode aspectRatioMode, QColor bgColor) {
   if (svgFilePath.isEmpty()) return QPixmap();
@@ -285,7 +328,13 @@ QImage svgToImage(const QString &svgFilePath, QSize size,
 
   static int devPixRatio = getHighestDevicePixelRatio();
 
-  QSize imageSize = svgRenderer.defaultSize() * devPixRatio;
+  // Determine SVG image size: there is a problem with QT5.9's svgRenderer
+  // not handling viewBox very well, so we'll calculate the image size a
+  // different way depending if the SVG uses width and height or viewBox.
+  QSize imageSize = determineSvgSize(svgFilePath) * devPixRatio;
+  if (imageSize.isNull())
+    imageSize = QSize(svgRenderer.defaultSize() * devPixRatio);
+
   SvgRenderParams params =
       calculateSvgRenderParams(size, imageSize, aspectRatioMode);
   QImage image(params.size, QImage::Format_ARGB32_Premultiplied);
@@ -495,7 +544,9 @@ QIcon createQIcon(const QString &iconSVGName, bool useFullOpacity,
   // Set an empty pixmap for menu icons when hiding icons from menus is true,
   // search bug ID for more info.
 #ifdef _WIN32
-  bool showIconInMenu = Preferences::instance()->getBoolValue(showIconsInMenu);
+  bool showIconInMenu =
+      Preferences::instance()->isShowAdvancedOptionsEnabled() &&
+      Preferences::instance()->getBoolValue(showIconsInMenu);
   if (isForMenuItem && baseImg.width() == (16 * devPixRatio) &&
       baseImg.height() == (16 * devPixRatio) && !showIconInMenu) {
     static QPixmap emptyPm(16 * devPixRatio, 16 * devPixRatio);
