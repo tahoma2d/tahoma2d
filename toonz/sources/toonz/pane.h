@@ -79,8 +79,6 @@ protected:
   void leaveEvent(QEvent *) override;
   void mousePressEvent(QMouseEvent *event) override;
 
-  QPixmap getPixmap(const QString &iconSVGName, bool rollover);
-
 signals:
   //! emitted when the user press the button
   //! n.b. the signal is not emitted if the button is part of a buttonset

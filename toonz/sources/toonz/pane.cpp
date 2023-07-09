@@ -213,7 +213,7 @@ TPanelTitleBarButton::TPanelTitleBarButton(QWidget *parent,
     , m_buttonSet(0)
     , m_id(0) {
   updatePixmaps();
-  setFixedSize(m_onPixmap.size());
+  setFixedSize(m_onPixmap.size() / m_onPixmap.devicePixelRatio());
 }
 
 //-----------------------------------------------------------------------------
