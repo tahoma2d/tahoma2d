@@ -294,7 +294,13 @@ QPixmap svgToPixmap(const QString &svgFilePath, QSize size,
   static int devPixRatio = getHighestDevicePixelRatio();
   if (!size.isEmpty()) size *= devPixRatio;
 
-  QSize imageSize = svgRenderer.defaultSize() * devPixRatio;
+  // Determine SVG image size: there is a problem with QT5.9's svgRenderer
+  // not handling viewBox very well, so we'll calculate the image size a
+  // different way depending if the SVG uses width and height or viewBox.
+  QSize imageSize = determineSvgSize(svgFilePath) * devPixRatio;
+  if (imageSize.isNull())
+    imageSize = QSize(svgRenderer.defaultSize() * devPixRatio);
+
   SvgRenderParams params =
       calculateSvgRenderParams(size, imageSize, aspectRatioMode);
   QPixmap pixmap(params.size);
