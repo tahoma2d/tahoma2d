@@ -1696,8 +1696,8 @@ QAction *MainWindow::createMiscAction(const char *id, const char *name,
 
 QAction *MainWindow::createToolOptionsAction(const char *id, const char *name,
                                              const QString &defaultShortcut,
-                                             QString newStatusTip,
-                                             const char *iconSVGName) {
+                                             const char *iconSVGName,
+                                             QString newStatusTip) {
   QAction *action = new DVAction(tr(name), this);
   if (iconSVGName && *iconSVGName)
     action->setIcon(createQIcon(iconSVGName, false, true));
@@ -3016,13 +3016,13 @@ void MainWindow::defineActions() {
   createToolOptionsAction("A_ToolOption_Mode", QT_TR_NOOP("Mode"), "");
   menuAct =
       createToolOptionsAction("A_ToolOption_Mode:Areas",
-                              QT_TR_NOOP("Mode - Areas"), "", "", "mode_areas");
+                              QT_TR_NOOP("Mode - Areas"), "", "mode_areas", "");
   menuAct =
       createToolOptionsAction("A_ToolOption_Mode:Lines",
-                              QT_TR_NOOP("Mode - Lines"), "", "", "mode_lines");
+                              QT_TR_NOOP("Mode - Lines"), "", "mode_lines", "");
   menuAct = createToolOptionsAction("A_ToolOption_Mode:Lines & Areas",
-                                    QT_TR_NOOP("Mode - Lines && Areas"), "", "",
-                                    "mode_areas_lines");
+                                    QT_TR_NOOP("Mode - Lines && Areas"), "",
+                                    "mode_areas_lines", "");
   createToolOptionsAction("A_ToolOption_Mode:Endpoint to Endpoint",
                           QT_TR_NOOP("Mode - Endpoint to Endpoint"), "");
   createToolOptionsAction("A_ToolOption_Mode:Endpoint to Line",
@@ -3032,28 +3032,28 @@ void MainWindow::defineActions() {
   createToolOptionsAction("A_ToolOption_Type", QT_TR_NOOP("Type"), "");
 
   menuAct = createToolOptionsAction("A_ToolOption_Type:Normal",
-                                    QT_TR_NOOP("Type - Normal"), "", "",
-                                    "type_normal");
+                                    QT_TR_NOOP("Type - Normal"), "",
+                                    "type_normal", "");
 
   menuAct = createToolOptionsAction("A_ToolOption_Type:Rectangular",
-                                    QT_TR_NOOP("Type - Rectangular"), "F5", "",
-                                    "type_rectangular");
+                                    QT_TR_NOOP("Type - Rectangular"), "F5",
+                                    "type_rectangular", "");
 
   menuAct = createToolOptionsAction("A_ToolOption_Type:Freehand",
-                                    QT_TR_NOOP("Type - Freehand"), "", "",
-                                    "type_lasso");
+                                    QT_TR_NOOP("Type - Freehand"), "",
+                                    "type_lasso", "");
 
   menuAct = createToolOptionsAction("A_ToolOption_Type:Polyline",
-                                    QT_TR_NOOP("Type - Polyline"), "", "",
-                                    "type_polyline");
+                                    QT_TR_NOOP("Type - Polyline"), "",
+                                    "type_polyline", "");
 
   menuAct = createToolOptionsAction("A_ToolOption_Type:Freepick",
-                                    QT_TR_NOOP("Type - Pick+Freehand"), "", "",
-                                    "type_pickerlasso");
+                                    QT_TR_NOOP("Type - Pick+Freehand"), "",
+                                    "type_pickerlasso", "");
 
   menuAct = createToolOptionsAction("A_ToolOption_Type:Segment",
-                                    QT_TR_NOOP("Type - Segment"), "", "",
-                                    "type_erase_segment");
+                                    QT_TR_NOOP("Type - Segment"), "",
+                                    "type_erase_segment", "");
 
   createToolOptionsAction("A_ToolOption_TypeFont", QT_TR_NOOP("TypeTool Font"),
                           "");

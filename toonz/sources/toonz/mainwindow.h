@@ -216,8 +216,8 @@ private:
                             QString newStatusTip = "");
   QAction *createToolOptionsAction(const char *id, const char *name,
                                    const QString &defaultShortcut,
-                                   QString newStatusTip = "",
-                                   const char *iconSVGName = "");
+                                   const char *iconSVGName = "",
+                                   QString newStatusTip = "");
   QAction *createStopMotionAction(const char *id, const char *name,
                                   const QString &defaultShortcut,
                                   const char *iconSVGName = "",
