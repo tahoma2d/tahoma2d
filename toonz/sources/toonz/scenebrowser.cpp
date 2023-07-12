@@ -148,7 +148,7 @@ SceneBrowser::SceneBrowser(QWidget *parent, Qt::WindowFlags flags,
       new SceneBrowserButtonBar(m_itemViewer, box);
   DvItemViewerPanel *viewerPanel = m_itemViewer->getPanel();
   viewerPanel->setThumbnailsView();
-  viewerPanel->setIconSize(QSize(192, 108));  // default 80, 60
+  viewerPanel->setIconSize(QSize(80, 60));
   viewerPanel->addColumn(DvItemListModel::FileType, 50);
   viewerPanel->addColumn(DvItemListModel::FrameCount, 50);
   viewerPanel->addColumn(DvItemListModel::FileSize, 50);

@@ -244,7 +244,7 @@ protected slots:
   void onSliderValueChanged(int);
   void onValueChanged(const QString &);
 
-  void onFilterColorChanged(int id);
+  void onFilterColorChanged();
   void onLockButtonClicked(bool on);
 
   void resetKeepClosed();

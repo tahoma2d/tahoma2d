@@ -34,6 +34,10 @@
 #include "toonzqt/gutil.h"
 #include "toonz/namebuilder.h"
 
+#include <QProgressDialog>
+#include <QMainWindow>
+#include <QApplication>
+
 namespace {
 
 class DeleteLevelUndo final : public TUndo {
@@ -116,6 +120,58 @@ bool LevelCmd::removeLevelFromCast(TXshLevel *level, ToonzScene *scene,
     scene->getLevelSet()->removeLevel(level);
   }
   return true;
+}
+
+void LevelCmd::loadAllUsedRasterLevelsAndPutInCache(bool cacheImagesAsWell) {
+  TApp *app         = TApp::instance();
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+
+  TLevelSet *levelSet = scene->getLevelSet();
+
+  std::set<TXshLevel *> usedLevels;
+  scene->getTopXsheet()->getUsedLevels(usedLevels);
+
+  std::map<TXshSimpleLevel *, int>
+      targetLevels;  // level pointer and its frame amount
+  int totalFrames = 0;
+  // estimate the amount
+  for (auto xl : usedLevels) {
+    TXshSimpleLevel *simpleLevel = xl->getSimpleLevel();
+    if (simpleLevel && (simpleLevel->getType() == TZP_XSHLEVEL ||
+                        simpleLevel->getType() == OVL_XSHLEVEL)) {
+      targetLevels[simpleLevel] = simpleLevel->getFrameCount();
+      totalFrames += simpleLevel->getFrameCount();
+    }
+  }
+
+  // if the amount of frames is more than 10, open a progress dialog and
+  // shows WaitCursor
+  QProgressDialog *pd = nullptr;
+  if (totalFrames > 10) {
+    pd = new QProgressDialog(QObject::tr("Loading Raster Images To Cache..."),
+                             QObject::tr("Cancel"), 0, totalFrames,
+                             app->getMainWindow());
+    pd->setAttribute(Qt::WA_DeleteOnClose, true);
+    pd->setWindowModality(Qt::WindowModal);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    pd->show();
+  }
+  std::map<TXshSimpleLevel *, int>::iterator i = targetLevels.begin();
+  while (i != targetLevels.end()) {
+    if (pd && pd->wasCanceled()) break;
+    i->first->loadAllIconsAndPutInCache(cacheImagesAsWell);
+    if (pd) {
+      pd->setValue(pd->value() + i->second);
+      QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+    }
+    ++i;
+  }
+
+  if (pd) {
+    QApplication::restoreOverrideCursor();
+    pd->close();
+  }
+  return;
 }
 
 //=============================================================================

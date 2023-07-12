@@ -560,7 +560,9 @@ int main(int argc, char *argv[]) {
   fmt.setStencil(true);
   QGLFormat::setDefaultFormat(fmt);
 
+#ifndef __HAIKU__
   glutInit(&argc, argv);
+#endif
 
   splash.showMessage(offsetStr + QObject::tr("Initializing environment..."),
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);

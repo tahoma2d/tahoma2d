@@ -1,5 +1,5 @@
 
-#if defined(LINUX) || defined(FREEBSD)
+#if defined(LINUX) || defined(FREEBSD) || defined(HAIKU)
 #define GL_GLEXT_PROTOTYPES
 #endif
 
@@ -966,9 +966,12 @@ void SceneViewer::enablePreview(int previewMode) {
     emit freezeStateChanged(false);
   }
 
-  if (m_previewMode != NO_PREVIEW)
+  if (m_previewMode != NO_PREVIEW) {
     Previewer::instance(m_previewMode == SUBCAMERA_PREVIEW)
         ->removeListener(this);
+    Previewer::instance(m_previewMode == SUBCAMERA_PREVIEW)
+        ->clearAllUnfinishedFrames();
+  }
 
   m_previewMode = previewMode;
 

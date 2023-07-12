@@ -14,6 +14,7 @@
 // Qt includes
 #include <QPainter>
 #include <QMouseEvent>
+#include <QMultiMap>
 
 //=============================================================================
 
@@ -538,4 +539,240 @@ default:assert(0);
 void MoveGroupHandleDragTool::release(QMouseEvent *e) {
   for (int i = 0; i < (int)m_setters.size(); i++) delete m_setters[i].second;
   m_setters.clear();
+}
+
+//=============================================================================
+
+StretchPointDragTool::StretchPointDragTool(FunctionPanel *panel,
+                                           TDoubleParam *curve, int leftId,
+                                           int rightId, bool moveLeft)
+    : m_panel(panel), m_curve(curve), m_moveLeft(moveLeft) {
+  // This undo block is closed in the destructor
+  TUndoManager::manager()->beginBlock();
+  for (int k = leftId; k <= rightId; k++) {
+    KeyframeSetter *setter = new KeyframeSetter(curve);
+    setter->selectKeyframe(k);
+    m_keys.append({k, curve->getKeyframe(k).m_frame,
+                   curve->getKeyframe(k).m_speedIn,
+                   curve->getKeyframe(k).m_speedOut, setter});
+  }
+  m_previousRange =
+      m_keys.value(rightId).orgFramePos - m_keys.value(leftId).orgFramePos;
+}
+
+StretchPointDragTool::~StretchPointDragTool() {
+  TUndoManager::manager()->endBlock();
+}
+
+void StretchPointDragTool::click(QMouseEvent *e) {
+  m_clickedFrame = m_panel->xToFrame(e->pos().x());
+}
+void StretchPointDragTool::drag(QMouseEvent *e) {
+  double currentPosFrame = m_panel->xToFrame(e->pos().x());
+
+  // moved distance
+  double dFrame = currentPosFrame - m_clickedFrame;
+
+  double orgRange = m_keys.last().orgFramePos - m_keys.first().orgFramePos;
+  // frame range after stretched
+  double stretchedRange = (m_moveLeft) ? orgRange - dFrame : orgRange + dFrame;
+  // the frame range should not be smaller than [selected key amount] - 1.
+  stretchedRange = std::max(stretchedRange, (double)m_keys.size() - 1.);
+  // selection should not extend the neighbor unselected key
+  if (m_moveLeft && m_keys.first().kIndex > 0) {
+    double maxRange = m_keys.last().orgFramePos -
+                      m_curve->getKeyframe(m_keys.first().kIndex - 1).m_frame -
+                      1.;
+    stretchedRange = std::min(stretchedRange, maxRange);
+  } else if (!m_moveLeft &&
+             m_keys.last().kIndex < m_curve->getKeyframeCount() - 1) {
+    double maxRange = m_curve->getKeyframe(m_keys.last().kIndex + 1).m_frame -
+                      m_keys.first().orgFramePos - 1.;
+    stretchedRange = std::min(stretchedRange, maxRange);
+  }
+
+  if (stretchedRange == m_previousRange) return;
+
+  // compute the key frame positions (int) after stretching
+  QMultiMap<int, int> keyPlacement;  // frame(int) - kIndex multimap
+
+  // if the frame range is equal to [selected key amount] - 1, keys will be
+  // "packed" in every frames.
+  if ((int)std::round(stretchedRange) == m_keys.size() - 1) {
+    int f = (m_moveLeft) ? (int)(m_keys.last().orgFramePos - stretchedRange)
+                         : (int)m_keys.first().orgFramePos;
+    for (auto keyInfo : m_keys) {
+      keyPlacement.insert(f, keyInfo.kIndex);
+      f++;
+    }
+  } else {  // other cases
+    // stretch ratio
+    double stretchRatio = stretchedRange / orgRange;
+    double pivot =
+        (m_moveLeft) ? m_keys.last().orgFramePos : m_keys.first().orgFramePos;
+    // compute preferable key frame positions (double) after stretching
+    QMap<int, double> stretchedKeyPlacement;  // kIndex - frame(double)
+    for (auto keyInfo : m_keys) {
+      double sf =
+          pivot * (1. - stretchRatio) + keyInfo.orgFramePos * stretchRatio;
+      stretchedKeyPlacement.insert(keyInfo.kIndex, sf);
+    }
+
+    // now, put keys in integer frame positions, minimizing error.
+    // first, put the keys at both ends
+    int kFrom = m_keys.first().kIndex;
+    int kTo   = m_keys.last().kIndex;
+    keyPlacement.insert((int)std::round(stretchedKeyPlacement.value(kFrom)),
+                        kFrom);
+    keyPlacement.insert((int)std::round(stretchedKeyPlacement.value(kTo)), kTo);
+
+    for (int i = 1; i < m_keys.size() - 1;
+         i++) {  // put other intermediate keys
+      keyInfo info = m_keys.at(i);
+      // if the nearest integer position is vacant, put the key and continue
+      int tmp_f = (int)std::round(stretchedKeyPlacement.value(info.kIndex));
+      if (!keyPlacement.contains(tmp_f)) {
+        keyPlacement.insert(tmp_f, info.kIndex);
+        continue;
+      }
+
+      // evaluate errors with two candidate - insert key at round down or round
+      // up postions. inserting the key may push out the existing key.
+      int f1 = (int)std::floor(stretchedKeyPlacement.value(info.kIndex));
+      int f2 = f1 + 1;
+      {
+        bool ok1 = true;
+        bool ok2 = true;
+
+        // a list after inserting the key at round down position
+        QMultiMap<int, int> candidate1 =
+            keyPlacement;  // frame(int) - kIndex multimap
+        int moveId = candidate1.value(f1);
+        candidate1.insert(f1, info.kIndex);
+        while (1) {
+          // move the key to the previous frame
+          candidate1.remove(f1, moveId);
+          // if the frame is vacant, put the key and break
+          if (!candidate1.contains(f1 - 1)) {
+            candidate1.insert(f1 - 1, moveId);
+            break;
+          }
+          // if the frame is occupied, switch the current moving key and "push
+          // out" it
+          int occupiedId = candidate1.value(f1 - 1);
+          candidate1.insert(f1 - 1, moveId);
+          moveId = occupiedId;
+          f1 -= 1;
+
+          // the moving key should not be the first one
+          if (moveId == kFrom) {
+            ok1 = false;
+            break;
+          }
+        }
+
+        // a list after inserting the key at round up position
+        QMultiMap<int, int> candidate2 =
+            keyPlacement;  // frame(int) - kIndex multimap
+        moveId = candidate2.value(f2);
+        candidate2.insert(f2, info.kIndex);
+        while (1) {
+          // move the key to the nexy frame
+          candidate2.remove(f2, moveId);
+          // if the frame is vacant, put the key and break
+          if (!candidate2.contains(f2 + 1)) {
+            candidate2.insert(f2 + 1, moveId);
+            break;
+          }
+          // if the frame is occupied, switch the current moving key and "push
+          // out" it
+          int occupiedId = candidate2.value(f2 + 1);
+          candidate2.insert(f2 + 1, moveId);
+          moveId = occupiedId;
+          f2 += 1;
+
+          // the moving key should not be the last one
+          if (moveId == kTo) {
+            ok2 = false;
+            break;
+          }
+        }
+
+        if (!ok2)
+          keyPlacement = candidate1;
+        else if (!ok1)
+          keyPlacement = candidate2;
+        else {
+          double error1                         = 0.;
+          QMultiMap<int, int>::const_iterator i = candidate1.constBegin();
+          while (i != candidate1.constEnd()) {
+            error1 += std::abs((double)i.key() -
+                               stretchedKeyPlacement.value(i.value()));
+            ++i;
+          }
+          double error2 = 0.;
+          i             = candidate2.constBegin();
+          while (i != candidate2.constEnd()) {
+            error2 += std::abs((double)i.key() -
+                               stretchedKeyPlacement.value(i.value()));
+            ++i;
+          }
+          if (error1 <= error2)
+            keyPlacement = candidate1;
+          else
+            keyPlacement = candidate2;
+        }
+      }
+    }
+  }
+  // each setter will move key frame
+  bool extending = stretchedRange > m_previousRange;
+
+  QList<double> segRatio;
+  for (int i = 0; i < m_keys.size() - 1; i++) {
+    double orgSegLength =
+        m_keys.at(i + 1).orgFramePos - m_keys.at(i).orgFramePos;
+    double newSegLength = (double)(keyPlacement.key(m_keys.at(i + 1).kIndex) -
+                                   keyPlacement.key(m_keys.at(i).kIndex));
+    segRatio.append(newSegLength / orgSegLength);
+  }
+
+  // dragging left + shrink or dragging right + extend cases
+  // move from right key to left key
+  int start = (m_moveLeft != extending) ? m_keys.size() - 1 : 0;
+  int end   = (m_moveLeft != extending) ? -1 : m_keys.size();
+  int dki   = (m_moveLeft != extending) ? -1 : 1;
+  for (int ki = start; ki != end; ki += dki) {
+    int kId      = m_keys[ki].kIndex;
+    int curFrame = (int)std::round(m_curve->getKeyframe(kId).m_frame);
+    int dstFrame = keyPlacement.key(kId);
+    if (curFrame != dstFrame) {
+      m_keys[ki].setter->moveKeyframes(dstFrame - curFrame, 0.);
+    }
+    m_keys[ki].setter->selectKeyframe(kId);
+    if (ki != 0 && segRatio[ki - 1] != 1.) {
+      if (m_keys[ki].setter->isSpeedInOut(kId - 1))
+        m_keys[ki].setter->setSpeedIn(
+            TPointD(m_keys[ki].orgSpeedIn.x * segRatio[ki - 1],
+                    m_keys[ki].orgSpeedIn.y));
+      else if (m_keys[ki].setter->isEaseInOut(kId - 1))
+        m_keys[ki].setter->setEaseIn(m_keys[ki].orgSpeedIn.x *
+                                     segRatio[ki - 1]);
+    }
+    if (ki != m_keys.size() - 1 && segRatio[ki] != 1.) {
+      if (m_keys[ki].setter->isSpeedInOut(kId))
+        m_keys[ki].setter->setSpeedOut(TPointD(
+            m_keys[ki].orgSpeedOut.x * segRatio[ki], m_keys[ki].orgSpeedOut.y));
+      else if (m_keys[ki].setter->isEaseInOut(kId))
+        m_keys[ki].setter->setEaseOut(m_keys[ki].orgSpeedOut.x * segRatio[ki]);
+    }
+  }
+
+  m_previousRange = stretchedRange;
+  m_panel->update();
+}
+
+void StretchPointDragTool::release(QMouseEvent *e) {
+  for (int i = 0; i < (int)m_keys.size(); i++) delete m_keys[i].setter;
+  m_keys.clear();
 }

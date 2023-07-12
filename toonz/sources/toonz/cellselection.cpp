@@ -1505,7 +1505,9 @@ int TCellSelection::Range::getColCount() const { return m_c1 - m_c0 + 1; }
 // TCellSelection
 //-----------------------------------------------------------------------------
 
-TCellSelection::TCellSelection() : m_timeStretchPopup(0), m_reframePopup(0) {}
+TCellSelection::TCellSelection() : m_timeStretchPopup(0), m_reframePopup(0) {
+  setAlternativeCommandNames();
+}
 
 //-----------------------------------------------------------------------------
 
@@ -1543,7 +1545,9 @@ void TCellSelection::enableCommands() {
   enableCommand(this, MI_ShiftKeyframesUp, &TCellSelection::shiftKeyframesUp);
 
   enableCommand(this, MI_Copy, &TCellSelection::copyCells);
-  enableCommand(this, MI_Paste, &TCellSelection::pasteCells);
+  enableCommand(this, MI_Paste,
+                &TCellSelection::doPaste);  // choose pasting behavior by
+                                            // preference option
 
   if (dynamic_cast<const TKeyframeData *>(
           QApplication::clipboard()->mimeData()))
@@ -1568,12 +1572,26 @@ void TCellSelection::enableCommands() {
                 &TCellSelection::reframeWithEmptyInbetweens);
 
   enableCommand(this, MI_PasteNumbers, &TCellSelection::overwritePasteNumbers);
+  enableCommand(this, MI_PasteCellContent, &TCellSelection::pasteCells);
   enableCommand(this, MI_CreateBlankDrawing,
                 &TCellSelection::createBlankDrawings);
   enableCommand(this, MI_Duplicate, &TCellSelection::duplicateFrames);
   enableCommand(this, MI_PasteDuplicate, &TCellSelection::pasteDuplicateCells);
   enableCommand(this, MI_StopFrameHold, &TCellSelection::stopFrameHold);
 }
+
+//-----------------------------------------------------------------------------
+
+void TCellSelection::setAlternativeCommandNames() {
+  m_alternativeCommandNames = {
+      {MI_Copy, QObject::tr("Copy Cells", "TCellSelection")},
+      {MI_Paste, QObject::tr("Paste Cells", "TCellSelection")},
+      {MI_PasteInto, QObject::tr("Overwrite Paste Cells", "TCellSelection")},
+      {MI_Cut, QObject::tr("Cut Cells", "TCellSelection")},
+      {MI_Clear, QObject::tr("Delete Cells", "TCellSelection")},
+      {MI_Insert, QObject::tr("Insert Cells", "TCellSelection")}};
+}
+
 //-----------------------------------------------------------------------------
 // Used in RenameCellField::eventFilter()
 
@@ -1614,6 +1632,7 @@ bool TCellSelection::isEnabledCommand(
                                         MI_Undo,
                                         MI_Redo,
                                         MI_PasteNumbers,
+                                        MI_PasteCellContent,
                                         MI_ConvertToToonzRaster,
                                         MI_ConvertVectorToVector,
                                         MI_CreateBlankDrawing,
@@ -1799,6 +1818,16 @@ static void pasteRasterImageInCell(int row, int col,
     TStageObjectCmd::rename(columnId, columnName,
                             TApp::instance()->getCurrentXsheet());
   }
+}
+
+//-----------------------------------------------------------------------------
+// choose pasting behavior by preference option
+void TCellSelection::doPaste() {
+  if (Preferences::instance()->getPasteCellsBehavior() ==
+      0)  // insert paste whole contents of copied cells
+    pasteCells();
+  else  // overwrite paste numbers, consistent with QuickChecker
+    overwritePasteNumbers();
 }
 
 //-----------------------------------------------------------------------------

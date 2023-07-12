@@ -488,12 +488,14 @@ void ExportOCACommand::execute() {
   QDir saveDir(ocafolder);
 
   if (!saveFile.open(QIODevice::WriteOnly)) {
-    qWarning("Couldn't open save file.");
+    progressDialog->close();
+    DVGui::error(QObject::tr("Unable to open OCA file for saving."));
     return;
   }
   if (!saveDir.exists()) {
-    if (!saveDir.mkdir(".")) {
-      qWarning("Couldn't create folder.");
+    if (!saveDir.mkpath(".")) {
+      progressDialog->close();
+      DVGui::error(QObject::tr("Unable to create folder for saving layers."));
       return;
     }
   }
@@ -503,6 +505,7 @@ void ExportOCACommand::execute() {
   ocaData.build(scene, xsheet, QString::fromStdString(fp.getName()), ocafolder,
                 frameOffset, exrImageFmt, !rasterVecs);
   if (ocaData.isEmpty()) {
+    progressDialog->close();
     DVGui::error(QObject::tr("No columns can be exported."));
     return;
   }

@@ -49,7 +49,8 @@ class FileBrowserPopup : public QDialog {
 
 public:
   enum Options  //! Various options used to customize the popup's behavior.
-  { STANDARD      = 0x0,  //!< Standard options.
+  {
+    STANDARD      = 0x0,  //!< Standard options.
     CUSTOM_LAYOUT = 0x1,  //!< Prevents standard layout organization at
                           //! construction, surrendering it
     //!  to the user. Observe that sub-widgets creation is still enforced.
@@ -284,7 +285,7 @@ class LoadLevelPopup final : public FileBrowserPopup {
   DVGui::CheckBox *m_premultiply, *m_whiteTransp;  // , *m_doAntialias;
 
   QLabel *m_notExistLabel;
-  QComboBox *m_loadTlvBehaviorComboBox;
+  QComboBox *m_rasterCacheBehaviorComboBox;
 
 public:
   LoadLevelPopup();

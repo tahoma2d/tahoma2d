@@ -220,7 +220,10 @@ void ImageLoader::buildAllIconsAndPutInCache(TXshSimpleLevel *level,
                                              std::vector<TFrameId> fids,
                                              std::vector<std::string> iconIds,
                                              bool cacheImagesAsWell) {
-  if (m_path.getType() != "tlv") return;
+  // if (m_path.getType() != "tlv") return;
+  if (level->getType() != TZP_XSHLEVEL && level->getType() != OVL_XSHLEVEL)
+    return;
+
   if (fids.empty() || iconIds.empty()) return;
   /*- The number of fid and icon id should be the same -*/
   if ((int)fids.size() != (int)iconIds.size()) return;

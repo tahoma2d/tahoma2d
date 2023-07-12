@@ -38,6 +38,7 @@
 #include <QDesktopWidget>
 #include <QDialog>
 #include <QLineEdit>
+#include <QTextEdit>
 #include <QWidgetAction>
 #include <QLabel>
 #include <QCheckBox>
@@ -145,9 +146,10 @@ void TPanel::enterEvent(QEvent *event) {
     // grab the focus, unless a line-edit is focused currently
 
     QWidget *focusWidget = qApp->focusWidget();
-    if (focusWidget && dynamic_cast<QLineEdit *>(focusWidget)) {
-      event->accept();
-      return;
+    if (focusWidget && (dynamic_cast<QLineEdit *>(focusWidget) ||
+                        dynamic_cast<QTextEdit *>(focusWidget))) {
+        event->accept();
+        return;
     }
 
     widgetFocusOnEnter();

@@ -21,6 +21,11 @@ public:
   typedef T value_type;
   typedef Hash_functor hash_type;
 
+  struct BucketNode;
+  typedef typename tcg::list<BucketNode>::size_t size_t;
+  typedef typename tcg::list<BucketNode>::iterator iterator;
+  typedef typename tcg::list<BucketNode>::const_iterator const_iterator;
+
   struct BucketNode {
     K m_key;
     T m_val;
@@ -33,11 +38,6 @@ public:
         : m_key(pair.first), m_val(pair.second), m_next(-1), m_prev(-1) {}
     ~BucketNode() {}
   };
-
-  typedef typename tcg::list<BucketNode>::size_t size_t;
-
-  typedef typename tcg::list<BucketNode>::iterator iterator;
-  typedef typename tcg::list<BucketNode>::const_iterator const_iterator;
 
 private:
   std::vector<size_t> m_bucketsIdx;

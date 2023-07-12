@@ -1259,7 +1259,7 @@ void DvItemViewerPanel::mousePressEvent(QMouseEvent *event) {
   }
   if (m_globalSelectionEnabled) m_selection->makeCurrent();
   m_currentIndex = index;
-  if (m_viewer) m_viewer->notifyClick(index);
+  //if (m_viewer ) m_viewer->notifyClick(index);
   m_startDragPosition = event->pos();
   update();
 }
@@ -1309,7 +1309,9 @@ void DvItemViewerPanel::mouseMoveEvent(QMouseEvent *event) {
 
 //-----------------------------------------------------------------------------
 
-void DvItemViewerPanel::mouseReleaseEvent(QMouseEvent *) {}
+void DvItemViewerPanel::mouseReleaseEvent(QMouseEvent *) {
+  if (m_viewer ) m_viewer->notifyClick(m_currentIndex);
+}
 
 //-----------------------------------------------------------------------------
 

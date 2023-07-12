@@ -95,9 +95,10 @@ struct LoadResourceArguments {
 
   enum ImportPolicy  //!  Policy adopted for resources external to current
                      //!  scene.
-  { ASK_USER,        //!< User is prompted for a resolution.
-    IMPORT,          //!< Resources are copied to scene folders (\a overwrites).
-    LOAD,            //!< Resources are loaded from their original paths.
+  {
+    ASK_USER,  //!< User is prompted for a resolution.
+    IMPORT,    //!< Resources are copied to scene folders (\a overwrites).
+    LOAD,      //!< Resources are loaded from their original paths.
   };
 
 public:
@@ -132,7 +133,7 @@ public:
   int step, inc, frameCount;
   bool doesFileActuallyExist;
 
-  enum CacheTlvBehavior {
+  enum CacheRasterBehavior {
     ON_DEMAND = 0,  // image data will be loaded when needed
     ALL_ICONS,      // icon data of all frames will be cached at the begininng
     ALL_ICONS_AND_IMAGES  // both icon and image data of all frames will be

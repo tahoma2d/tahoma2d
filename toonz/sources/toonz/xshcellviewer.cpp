@@ -4153,7 +4153,12 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
     QMenu *pasteSpecialMenu = new QMenu(tr("Paste Special"), this);
     {
       pasteSpecialMenu->addAction(cmdManager->getAction(MI_PasteInto));
-      pasteSpecialMenu->addAction(cmdManager->getAction(MI_PasteNumbers));
+      // the "standard" paste behavior for MI_Paste is specified in the
+      // preferences. here we display the alternative behavior.
+      if (Preferences::instance()->getPasteCellsBehavior() == 0)
+        pasteSpecialMenu->addAction(cmdManager->getAction(MI_PasteNumbers));
+      else
+        pasteSpecialMenu->addAction(cmdManager->getAction(MI_PasteCellContent));
       if (!soundTextCellsSelected) {
         pasteSpecialMenu->addAction(cmdManager->getAction(MI_PasteDuplicate));
       }

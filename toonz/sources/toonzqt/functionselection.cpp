@@ -709,6 +709,17 @@ int FunctionSelection::getCommonSegmentType(bool inclusive) {
   return type;
 }
 
+QList<int> FunctionSelection::getSelectedKeyIndices(TDoubleParam *curve) {
+  for (auto selectedParam : m_selectedKeyframes) {
+    if (curve == selectedParam.first) {
+      QList<int> ret = selectedParam.second.toList();
+      std::sort(ret.begin(), ret.end());
+      return ret;
+    }
+  }
+  return QList<int>();
+}
+
 //=============================================================================
 //
 // FunctionKeyframesData

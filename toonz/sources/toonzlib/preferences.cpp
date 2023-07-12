@@ -475,7 +475,7 @@ void Preferences::definePreferenceItems() {
   define(removeSceneNumberFromLoadedLevelName,
          "removeSceneNumberFromLoadedLevelName", QMetaType::Bool, false);
   define(IgnoreImageDpi, "IgnoreImageDpi", QMetaType::Bool, true);
-  define(initialLoadTlvCachingBehavior, "initialLoadTlvCachingBehavior",
+  define(rasterLevelCachingBehavior, "rasterLevelCachingBehavior",
          QMetaType::Int, 0);  // On Demand
   define(columnIconLoadingPolicy, "columnIconLoadingPolicy", QMetaType::Int,
          (int)LoadAtOnce);
@@ -569,6 +569,8 @@ void Preferences::definePreferenceItems() {
   define(xsheetAutopanEnabled, "xsheetAutopanEnabled", QMetaType::Bool, true);
   define(DragCellsBehaviour, "DragCellsBehaviour", QMetaType::Int,
          1);  // Cells and Column Data
+  define(pasteCellsBehavior, "pasteCellsBehavior", QMetaType::Int,
+         0);  // Insert paste whole cell data
   define(ignoreAlphaonColumn1Enabled, "ignoreAlphaonColumn1Enabled",
          QMetaType::Bool, false);
   define(showKeyframesOnXsheetCellArea, "showKeyframesOnXsheetCellArea",
@@ -806,6 +808,16 @@ void Preferences::resolveCompatibility() {
       !m_settings->contains("DefRasterFormat")) {
     setValue(DefRasterFormat, m_settings->value("scanLevelType").toString());
   }
+  // "initialLoadTlvCachingBehavior" is changed to "rasterLevelCachingBehavior"
+  // , Now this setting also applies to raster levels (previously only Toonz
+  // raster levels). It also applies to any operation that loads a level, such
+  // as loading scene or loading a recent level. (Previously, this was only
+  // available from the Load Level popup.)
+  if (m_settings->contains("initialLoadTlvCachingBehavior") &&
+      !m_settings->contains("rasterLevelCachingBehavior")) {
+    setValue(rasterLevelCachingBehavior,
+             m_settings->value("initialLoadTlvCachingBehavior").toInt());
+  }
 }
 
 //-----------------------------------------------------------------
@@ -977,8 +989,10 @@ void Preferences::setRasterBackgroundColor() {
 //-----------------------------------------------------------------
 
 void Preferences::storeOldUnits() {
-  setValue(oldUnits, getStringValue(linearUnits));
-  setValue(oldCameraUnits, getStringValue(cameraUnits));
+  QString linearU = getStringValue(linearUnits);
+  if (linearU != "pixel") setValue(oldUnits, linearU);
+  QString cameraU = getStringValue(cameraUnits);
+  if (cameraU != "pixel") setValue(oldCameraUnits, cameraU);
 }
 
 //-----------------------------------------------------------------

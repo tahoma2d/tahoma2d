@@ -413,7 +413,6 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
   default:
     break;
   }
-  e->accept();
 }
 
 //-----------------------------------------------------------------------------
@@ -495,6 +494,10 @@ void SceneViewer::mouseMoveEvent(QMouseEvent *event) {
   if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen) {
     return;
   }
+  // Strangely, mouseMoveEvent seems to be called once just after releasing
+  // tablet. This condition avoids to proceed further in such case.
+  if (event->buttons() != Qt::NoButton && m_mouseButton == Qt::NoButton) return;
+
   // there are three cases to come here :
   // 1. on mouse is moved (no tablet is used)
   // 2. on tablet is moved, with middle or right button is pressed
@@ -583,8 +586,12 @@ void SceneViewer::onMove(const TMouseEvent &event) {
   }
 
   if (m_editPreviewSubCamera) {
-    if (!PreviewSubCameraManager::instance()->mouseMoveEvent(this, event))
+    if (!PreviewSubCameraManager::instance()->mouseMoveEvent(this, event)) {
+      if (m_tabletEvent && m_tabletState == StartStroke && m_tabletMove) {
+        m_tabletState = OnStroke;
+      }
       return;
+    }
   }
 
   // if the "compare with snapshot" mode is activated, change the mouse cursor
@@ -810,8 +817,11 @@ void SceneViewer::onPress(const TMouseEvent &event) {
       m_mouseButton == Qt::LeftButton)
     return;
   else if (m_mouseButton == Qt::LeftButton && m_editPreviewSubCamera) {
-    if (!PreviewSubCameraManager::instance()->mousePressEvent(this, event))
+    if (!PreviewSubCameraManager::instance()->mousePressEvent(this, event)) {
+      if (m_tabletEvent && m_tabletState == Touched)
+        m_tabletState = StartStroke;
       return;
+    }
   } else if (m_mouseButton == Qt::LeftButton && m_visualSettings.m_doCompare) {
     if (std::abs(m_pos.x() - width() * m_compareSettings.m_compareX) < 20) {
       m_compareSettings.m_dragCompareX = true;

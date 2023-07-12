@@ -625,7 +625,7 @@ TImageP TXshSimpleLevel::getFrameIcon(const TFrameId &fid) const {
 //-----------------------------------------------------------------------------
 // load icon (and image) data of all frames into cache
 void TXshSimpleLevel::loadAllIconsAndPutInCache(bool cacheImagesAsWell) {
-  if (m_type != TZP_XSHLEVEL) return;
+  if (m_type != TZP_XSHLEVEL && m_type != OVL_XSHLEVEL) return;
 
   std::vector<TFrameId> fids;
   getFids(fids);
