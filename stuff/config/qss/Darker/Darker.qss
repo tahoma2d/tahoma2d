@@ -362,10 +362,7 @@ TPanelTitleBar {
   min-height: 18;
   qproperty-TitleColor: #6d6d6d;
   qproperty-ActiveTitleColor: #fff;
-  qproperty-BorderPixmap: url('none');
-  qproperty-ActiveBorderPixmap: url('../Medium/imgs/white/none');
-  qproperty-FloatBorderPixmap: url('none');
-  qproperty-FloatActiveBorderPixmap: url('../Medium/imgs/white/none');
+  qproperty-OverColor: #C34040;
 }
 TPanelTitleBarButton {
   qproperty-PressedColor: #a35293;
@@ -597,20 +594,20 @@ DvScrollWidget {
   padding-right: -1;
   width: 20px;
   height: 20px;
-  image: url('');
+  image: url('../Medium/imgs/white/transparent.svg');
 }
 #keyFrameNavigator #PreviousKey:disabled {
-  image: url('');
+  image: url('../Medium/imgs/white/transparent.svg');
 }
 #keyFrameNavigator #NextKey {
   margin: 0 2;
   padding-right: -1;
   width: 20px;
   height: 20px;
-  image: url('');
+  image: url('../Medium/imgs/white/transparent.svg');
 }
 #keyFrameNavigator #NextKey:disabled {
-  image: url('');
+  image: url('../Medium/imgs/white/transparent.svg');
 }
 #keyFrameNavigator #KeyNo,
 #keyFrameNavigator #KeyPartial,
@@ -619,20 +616,20 @@ DvScrollWidget {
   padding-right: -1;
   width: 20px;
   height: 20px;
-  image: url('');
+  image: url('../Medium/imgs/white/transparent.svg');
 }
 #keyFrameNavigator #KeyNo:disabled,
 #keyFrameNavigator #KeyPartial:disabled,
 #keyFrameNavigator #KeyTotal:disabled {
-  image: url('');
+  image: url('../Medium/imgs/white/transparent.svg');
 }
 #keyFrameNavigator #KeyNo {
   background-color: rgba(0, 0, 0, 0);
   border: 1 solid rgba(0, 0, 0, 0);
-  image: url('');
+  image: url('../Medium/imgs/white/transparent.svg');
 }
 #keyFrameNavigator #KeyNo:disabled {
-  image: url('');
+  image: url('../Medium/imgs/white/transparent.svg');
 }
 #keyFrameNavigator #KeyNo:hover {
   background-color: #494949;
@@ -641,7 +638,7 @@ DvScrollWidget {
 #keyFrameNavigator #KeyPartial {
   background-color: #be7323;
   border: 1 solid #be7323;
-  image: url('');
+  image: url('../Medium/imgs/white/transparent.svg');
 }
 #keyFrameNavigator #KeyPartial:hover {
   background-color: #db8d39;
@@ -2372,24 +2369,18 @@ XsheetViewer {
   qproperty-TimelinePreviewButtonBgOnColor: #202020;
   qproperty-TimelinePreviewButtonOnImage: url('../Medium/imgs/white/preview_small.svg');
   qproperty-TimelinePreviewButtonBgOffColor: #202020;
-  qproperty-TimelinePreviewButtonOffImage: url('none');
+  qproperty-TimelinePreviewButtonOffImage: url('../Medium/imgs/white/transparent.svg');
   qproperty-TimelineCamstandButtonBgOnColor: #202020;
   qproperty-TimelineCamstandButtonOnImage: url('../Medium/imgs/white/table_small.svg');
   qproperty-TimelineCamstandButtonTranspImage: url('../Medium/imgs/white/trans_small.svg');
   qproperty-TimelineCamstandButtonBgOffColor: #202020;
-  qproperty-TimelineCamstandButtonOffImage: url('none');
+  qproperty-TimelineCamstandButtonOffImage: url('../Medium/imgs/white/transparent.svg');
   qproperty-TimelineLockButtonBgOnColor: #202020;
   qproperty-TimelineLockButtonOnImage: url('../Medium/imgs/white/lock_on_small.svg');
   qproperty-TimelineLockButtonBgOffColor: #202020;
-  qproperty-TimelineLockButtonOffImage: url('none');
+  qproperty-TimelineLockButtonOffImage: url('../Medium/imgs/white/transparent.svg');
   qproperty-TimelineConfigButtonBgColor: #202020;
   qproperty-TimelineConfigButtonImage: url('../Medium/imgs/white/timeline_config.svg');
-  qproperty-LayerHeaderPreviewImage: url('../Medium/imgs/white/layer_header_prev_eye.svg');
-  qproperty-LayerHeaderPreviewOverImage: url('../Medium/imgs/white/layer_header_prev_eye_over.svg');
-  qproperty-LayerHeaderCamstandImage: url('../Medium/imgs/white/layer_header_table_view.svg');
-  qproperty-LayerHeaderCamstandOverImage: url('../Medium/imgs/white/layer_header_table_view_over.svg');
-  qproperty-LayerHeaderLockImage: url('../Medium/imgs/white/layer_lock_on.svg');
-  qproperty-LayerHeaderLockOverImage: url('../Medium/imgs/white/layer_lock_on_over.svg');
 }
 /* -----------------------------------------------------------------------------
    Function Editor

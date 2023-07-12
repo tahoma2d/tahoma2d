@@ -107,9 +107,9 @@ SizeField::SizeField(QSize min, QSize max, QSize value, QWidget* parent)
 
   bool ret = true;
   ret      = ret && connect(m_fieldX, SIGNAL(editingFinished()), this,
-                       SIGNAL(editingFinished()));
+                            SIGNAL(editingFinished()));
   ret      = ret && connect(m_fieldY, SIGNAL(editingFinished()), this,
-                       SIGNAL(editingFinished()));
+                            SIGNAL(editingFinished()));
   assert(ret);
 }
 
@@ -274,9 +274,9 @@ Preferences::LevelFormat PreferencesPopup::FormatProperties::levelFormat()
   lf.m_priority = m_priority->getValue();
 
   // Assign level format values
-  lf.m_options.m_dpiPolicy = (m_dpiPolicy->currentIndex() == DP_ImageDpi)
-                                 ? LevelOptions::DP_ImageDpi
-                                 : LevelOptions::DP_CustomDpi;
+  lf.m_options.m_dpiPolicy   = (m_dpiPolicy->currentIndex() == DP_ImageDpi)
+                                   ? LevelOptions::DP_ImageDpi
+                                   : LevelOptions::DP_CustomDpi;
   lf.m_options.m_dpi         = m_dpi->getValue();
   lf.m_options.m_subsampling = m_subsampling->getValue();
   lf.m_options.m_antialias =
@@ -522,42 +522,31 @@ void PreferencesPopup::onPathAliasPriorityChanged() {
 
 void PreferencesPopup::onStyleSheetTypeChanged() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  QString currentStyle        = m_pref->getCurrentStyleSheet();
-  QString iconThemeName       = QIcon::themeName();
-  std::string styleString     = currentStyle.toStdString();
-  std::string iconThemeString = iconThemeName.toStdString();
+
+  QString currentStyle = m_pref->getCurrentStyleSheet();
   qApp->setStyleSheet(currentStyle);
   QApplication::restoreOverrideCursor();
 
-  if (currentStyle.contains("file:///") && (currentStyle.contains("Light") ||
-      currentStyle.contains("Neutral")) ||
-      currentStyle.contains("imgs/black")) {
-    m_pref->setValue(iconTheme, true);
-    if (iconThemeName != "dark") {
-      // QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
-      //    : "light");
+  bool isDarkTheme = Preferences::instance()->getIconTheme();
+  bool themeCondition =
+      currentStyle.contains("file:///") && (currentStyle.contains("Light") ||
+                                            currentStyle.contains("Neutral")) ||
+      currentStyle.contains("imgs/black");
+
+  if (themeCondition) {
+    if (!isDarkTheme) {
+      m_pref->setValue(iconTheme, true);
       DVGui::MsgBoxInPopup(DVGui::MsgType(INFORMATION),
                            tr("Please restart to reload the icons."));
     }
   } else {
-    m_pref->setValue(iconTheme, false);
-    if (iconThemeName != "light") {
-      // QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
-      //    : "light");
+    if (isDarkTheme) {
+      m_pref->setValue(iconTheme, false);
       DVGui::MsgBoxInPopup(DVGui::MsgType(INFORMATION),
                            tr("Please restart to reload the icons."));
     }
   }
 }
-
-////-----------------------------------------------------------------------------
-//
-// void PreferencesPopup::onIconThemeChanged() {
-//  // Switch between dark or light icons
-//  QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
-//                                                              : "light");
-//  // qDebug() << "Icon theme name (preference switch):" << QIcon::themeName();
-//}
 
 //-----------------------------------------------------------------------------
 
@@ -899,7 +888,6 @@ void PreferencesPopup::onCheck30bitDisplay() {
   checker.exec();
 }
 
-
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onFrameFormatButton() {
@@ -1000,7 +988,7 @@ QWidget* PreferencesPopup::createUI(PreferencesItemId id,
         combo->addItem(item.first, item.second);
       combo->setCurrentIndex(combo->findData(item.value));
       ret    = connect(combo, SIGNAL(currentIndexChanged(int)), this,
-                    SLOT(onChange()));
+                       SLOT(onChange()));
       widget = combo;
     } else {  // create IntLineEdit
       assert(item.max.toInt() != -1);
@@ -1037,7 +1025,7 @@ QWidget* PreferencesPopup::createUI(PreferencesItemId id,
       QFontComboBox* combo = new QFontComboBox(this);
       combo->setCurrentText(item.value.toString());
       ret    = connect(combo, SIGNAL(currentIndexChanged(const QString&)), this,
-                    SLOT(onInterfaceFontChanged(const QString&)));
+                       SLOT(onInterfaceFontChanged(const QString&)));
       widget = combo;
     } else if (!comboItems.isEmpty()) {  // create QComboBox
       QComboBox* combo = new QComboBox(this);
@@ -1045,7 +1033,7 @@ QWidget* PreferencesPopup::createUI(PreferencesItemId id,
         combo->addItem(item.first, item.second);
       combo->setCurrentIndex(combo->findData(item.value));
       ret    = connect(combo, SIGNAL(currentIndexChanged(int)), this,
-                    SLOT(onChange()));
+                       SLOT(onChange()));
       widget = combo;
     } else {  // create FileField
       DVGui::FileField* field =
@@ -1068,7 +1056,7 @@ QWidget* PreferencesPopup::createUI(PreferencesItemId id,
     ColorField* field =
         new ColorField(this, false, colorToTPixel(item.value.value<QColor>()));
     ret    = connect(field, SIGNAL(colorChanged(const TPixel32&, bool)), this,
-                  SLOT(onColorFieldChanged(const TPixel32&, bool)));
+                     SLOT(onColorFieldChanged(const TPixel32&, bool)));
     widget = field;
   } break;
 
@@ -1280,7 +1268,8 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {ffmpegPath, tr("Executable Directory:")},
       {ffmpegTimeout, tr("Import/Export Timeout (seconds):")},
       {fastRenderPath, tr("Fast Render Output Directory:")},
-      {ffmpegMultiThread, tr("Allow Multi-Thread in FFMPEG Rendering (UNSTABLE)")},
+      {ffmpegMultiThread,
+       tr("Allow Multi-Thread in FFMPEG Rendering (UNSTABLE)")},
       {rhubarbPath, tr("Executable Directory:")},
       {rhubarbTimeout, tr("Analyze Audio Timeout (seconds):")},
 
@@ -1314,7 +1303,10 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
 
       // Tools
       // {dropdownShortcutsCycleOptions, tr("Dropdown Shortcuts:")}, // removed
-      {FillOnlysavebox, tr("Use the TLV Savebox to Limit Filling Operations")}, // Moved to tools that need it
+      {FillOnlysavebox,
+       tr("Use the TLV Savebox to Limit Filling Operations")},  // Moved to
+                                                                // tools that
+                                                                // need it
       {multiLayerStylePickerEnabled,
        tr("Multi Layer Style Picker: Switch Levels by Picking")},
       {cursorBrushType, tr("Basic Cursor Type:")},
@@ -1490,7 +1482,8 @@ QList<ComboBoxItem> PreferencesPopup::getComboItemList(
         {tr("Enable Tools For Level Only"), 1},
         {tr("Show Tools For Level Only"), 2}}},
       {xsheetLayoutPreference,
-       {{tr("Compact"), "Compact"}, {tr("Roomy"), "Roomy"},
+       {{tr("Compact"), "Compact"},
+        {tr("Roomy"), "Roomy"},
         {tr("Minimum"), "Minimum"}}},
       {levelNameDisplayType,
        {{tr("Default"), Preferences::ShowLevelName_Default},
@@ -1675,11 +1668,11 @@ QWidget* PreferencesPopup::createGeneralPage() {
 
   bool ret = true;
   ret      = ret && connect(m_pref, SIGNAL(stopAutoSave()), this,
-                       SLOT(onAutoSaveExternallyChanged()));
+                            SLOT(onAutoSaveExternallyChanged()));
   ret      = ret && connect(m_pref, SIGNAL(startAutoSave()), this,
-                       SLOT(onAutoSaveExternallyChanged()));
+                            SLOT(onAutoSaveExternallyChanged()));
   ret      = ret && connect(m_pref, SIGNAL(autoSavePeriodChanged()), this,
-                       SLOT(onAutoSavePeriodExternallyChanged()));
+                            SLOT(onAutoSavePeriodExternallyChanged()));
 
   // ret = ret && connect(m_projectRootDocuments, SIGNAL(stateChanged(int)),
   //                     SLOT(onProjectRootChanged()));
@@ -1783,12 +1776,12 @@ QWidget* PreferencesPopup::createInterfacePage() {
   // IoCmd::loadScene())
   bool ret = true;
   ret      = ret && connect(TApp::instance()->getCurrentScene(),
-                       SIGNAL(pixelUnitSelected(bool)), this,
-                       SLOT(onPixelUnitExternallySelected(bool)));
+                            SIGNAL(pixelUnitSelected(bool)), this,
+                            SLOT(onPixelUnitExternallySelected(bool)));
   ret      = ret && connect(additionalStyleSheetBtn, SIGNAL(clicked()), this,
-                       SLOT(onEditAdditionalStyleSheet()));
+                            SLOT(onEditAdditionalStyleSheet()));
   ret      = ret && connect(check30bitBtn, SIGNAL(clicked()), this,
-                       SLOT(onCheck30bitDisplay()));
+                            SLOT(onCheck30bitDisplay()));
   assert(ret);
 
   m_onEditedFuncMap.insert(CurrentStyleSheetName,
@@ -1937,7 +1930,7 @@ QWidget* PreferencesPopup::createImportExportPage() {
     insertUI(ffmpegTimeout, ffmpegOptionsLay);
 
     putLabel(
-      tr("Enabling multi-thread rendering will render significantly faster \n"
+        tr("Enabling multi-thread rendering will render significantly faster \n"
            "but a random crash might occur, use at your own risk:"),
         ffmpegOptionsLay);
     insertUI(ffmpegMultiThread, ffmpegOptionsLay);
@@ -1961,7 +1954,8 @@ QWidget* PreferencesPopup::createDrawingPage() {
   QWidget* widget  = new QWidget(this);
   QGridLayout* lay = new QGridLayout();
 
-  QPushButton* frameFormatBtn = new QPushButton(tr("Default Frame Filename Format"));
+  QPushButton* frameFormatBtn =
+      new QPushButton(tr("Default Frame Filename Format"));
 
   setupLayout(lay);
 
@@ -1973,8 +1967,7 @@ QWidget* PreferencesPopup::createDrawingPage() {
   insertDualUIs(DefLevelWidth, DefLevelHeight, lay);
   if (Preferences::instance()->isShowAdvancedOptionsEnabled())
     insertUI(DefLevelDpi, lay);
-  QGridLayout* creationLay = insertGroupBox(
-    tr("Frame Creation Options"), lay);
+  QGridLayout* creationLay = insertGroupBox(tr("Frame Creation Options"), lay);
   {
     insertUI(NumberingSystem, creationLay, getComboItemList(NumberingSystem));
     insertUI(EnableAutoStretch, creationLay);
@@ -1982,9 +1975,7 @@ QWidget* PreferencesPopup::createDrawingPage() {
     insertUI(EnableAutoRenumber, creationLay);
   }
   QGridLayout* autoCreationLay = insertGroupBoxUI(EnableAutocreation, lay);
-  {
-    insertUI(EnableCreationInHoldCells, autoCreationLay);
-  }
+  { insertUI(EnableCreationInHoldCells, autoCreationLay); }
   insertUI(vectorSnappingTarget, lay, getComboItemList(vectorSnappingTarget));
   insertUI(saveUnpaintedInCleanup, lay);
   insertUI(minimizeSaveboxAfterEditing, lay);

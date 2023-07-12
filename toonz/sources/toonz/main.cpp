@@ -129,6 +129,7 @@ static void lastWarningError(QString msg) {
   DVGui::error(msg);
   // exit(0);
 }
+
 //-----------------------------------------------------------------------------
 
 static void toonzRunOutOfContMemHandler(unsigned long size) {
@@ -265,6 +266,9 @@ int main(int argc, char *argv[]) {
     freopen("CON", "w", stderr);
   }
 #endif
+
+  // Build icon map
+  ThemeManager::getInstance().buildIconPathsMap(":/icons");
 
   // parsing arguments and qualifiers
   TFilePath loadFilePath;
@@ -417,6 +421,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 #ifdef _WIN32
+  // BUG_WORKAROUND: #20230627
   // This attribute is set to make menubar icon to be always (16 x devPixRatio).
   // Without this attribute the menu bar icon size becomes the same as tool bar
   // when Windows scale is in 125%. Currently hiding the menu bar icon is done
@@ -441,11 +446,6 @@ int main(int argc, char *argv[]) {
     assert(ret);
   }
 #endif
-
-  // Set icon theme search paths
-  QStringList themeSearchPathsList = {":/icons"};
-  QIcon::setThemeSearchPaths(themeSearchPathsList);
-  // qDebug() << "All icon theme search paths:" << QIcon::themeSearchPaths();
 
   // Set show icons in menus flag (use iconVisibleInMenu to disable selectively)
   QApplication::instance()->setAttribute(Qt::AA_DontShowIconsInMenus, false);
@@ -663,11 +663,6 @@ int main(int argc, char *argv[]) {
   splash.showMessage(offsetStr + QObject::tr("Loading styles..."),
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);
   a.processEvents();
-
-  // Set default start icon theme
-  QIcon::setThemeName(Preferences::instance()->getIconTheme() ? "dark"
-                                                              : "light");
-  // qDebug() << "Icon theme name:" << QIcon::themeName();
 
   // stile
   QApplication::setStyle("windows");

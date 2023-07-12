@@ -909,22 +909,19 @@ QVariant FileBrowser::getItemData(int index, DataType dataType,
     QSize iconSize = m_itemViewer->getPanel()->getIconSize();
     // parent folder icons
     if (item.m_path == m_folder.getParentDir()) {
-      static QPixmap folderUpPixmap(
-          svgToPixmap(getIconThemePath("actions/60/folder_browser_up.svg"),
-                      iconSize, Qt::KeepAspectRatio));
+      static QPixmap folderUpPixmap(generateIconPixmap(
+          "folder_browser_up", qreal(1.0), iconSize, Qt::KeepAspectRatio));
       return folderUpPixmap;
     }
     // folder icons
     else if (item.m_isFolder) {
       if (item.m_isLink) {
-        static QPixmap folderLinkPixmap(
-            svgToPixmap(getIconThemePath("actions/60/folder_browser_link.svg"),
-                        iconSize, Qt::KeepAspectRatio));
+        static QPixmap folderLinkPixmap(generateIconPixmap(
+            "folder_browser_link", qreal(1.0), iconSize, Qt::KeepAspectRatio));
         return folderLinkPixmap;
       } else {
-        static QPixmap folderPixmap(
-            svgToPixmap(getIconThemePath("actions/60/folder_browser.svg"),
-                        iconSize, Qt::KeepAspectRatio));
+        static QPixmap folderPixmap(generateIconPixmap(
+            "folder_browser", qreal(1.0), iconSize, Qt::KeepAspectRatio));
         return folderPixmap;
       }
     }

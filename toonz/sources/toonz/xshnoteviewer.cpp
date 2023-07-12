@@ -499,8 +499,6 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WindowFlags flags)
   m_noteButton->setFixedSize(32, 16);
   m_noteButton->setIconSize(QSize(30, 15));
   QIcon addNoteIcon = createQIcon("footermemo");
-  addNoteIcon.addFile(QString(":Resources/footermemo_disabled.svg"), QSize(),
-                      QIcon::Disabled);
   m_noteButton->setIcon(addNoteIcon);
   m_noteButton->setToolTip(tr("Add New Memo"));
 
@@ -777,9 +775,7 @@ FooterNoteArea::FooterNoteArea(QWidget *parent, XsheetViewer *viewer,
   m_noteButton->setObjectName("ToolbarToolButton");
   m_noteButton->setFixedSize(32, 16);
   m_noteButton->setIconSize(QSize(30, 15));
-  QIcon addNoteIcon; // = createQIcon("footermemo");
-  addNoteIcon.addFile(QString(":icons/light/misc/footermemo.svg"), QSize(),
-                      QIcon::Normal);
+  QIcon addNoteIcon = createQIcon("footermemo");
   m_noteButton->setIcon(addNoteIcon);
   m_noteButton->setToolTip(tr("Add New Memo"));
 
@@ -787,8 +783,6 @@ FooterNoteArea::FooterNoteArea(QWidget *parent, XsheetViewer *viewer,
   m_precNoteButton->setFixedSize(16, 16);
   m_precNoteButton->setIconSize(QSize(16, 16));
   QIcon precNoteIcon = createQIcon("prevkey");
-  precNoteIcon.addFile(QString(":Resources/prevkey_disabled.svg"), QSize(),
-                       QIcon::Disabled);
   m_precNoteButton->setIcon(precNoteIcon);
   m_precNoteButton->setToolTip(tr("Previous Memo"));
 
@@ -796,8 +790,6 @@ FooterNoteArea::FooterNoteArea(QWidget *parent, XsheetViewer *viewer,
   m_nextNoteButton->setFixedSize(16, 16);
   m_nextNoteButton->setIconSize(QSize(16, 16));
   QIcon nextNoteIcon = createQIcon("nextkey");
-  nextNoteIcon.addFile(QString(":Resources/nextkey_disabled.svg"), QSize(),
-                       QIcon::Disabled);
   m_nextNoteButton->setIcon(nextNoteIcon);
   m_nextNoteButton->setToolTip(tr("Next Memo"));
 
