@@ -44,6 +44,7 @@ DVAPI TFilePath getLibraryFolder();
 DVAPI TFilePath getPluginsFolder();
 DVAPI TFilePath getReslistPath(bool forCleanup);
 DVAPI TFilePath getCacheRootFolder();
+DVAPI TFilePath getCrashReportFolder();
 DVAPI TFilePath getProfileFolder();
 
 DVAPI TFilePath getMyReslistPath(bool forCleanup);

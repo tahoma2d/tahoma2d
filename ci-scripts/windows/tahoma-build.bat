@@ -28,10 +28,7 @@ IF EXIST ..\..\thirdparty\canon\Header set WITH_CANON=Y
 set WITH_GPHOTO2=N
 IF EXIST ..\..\thirdparty\libgphoto2\include set WITH_GPHOTO2=Y
 
-set WITH_CRASHRPT=N
-IF EXIST ..\..\thirdparty\crashrpt\include set WITH_CRASHRPT=Y
-
-cmake ..\sources -G %MSVCVERSION%  -Ax64 -DQT_PATH=%QT_PATH% -DBOOST_ROOT=%BOOST_ROOT% -DOpenCV_DIR=%OPENCV_DIR% -DWITH_CANON=%WITH_CANON% -DWITH_GPHOTO2=%WITH_GPHOTO2% -DWITH_CRASHRPT=%WITH_CRASHRPT%
+cmake ..\sources -G %MSVCVERSION%  -Ax64 -DQT_PATH=%QT_PATH% -DBOOST_ROOT=%BOOST_ROOT% -DOpenCV_DIR=%OPENCV_DIR% -DWITH_CANON=%WITH_CANON% -DWITH_GPHOTO2=%WITH_GPHOTO2%
 
 
 IF EXIST C:\ProgramData\chocolatey\bin\cl.exe (

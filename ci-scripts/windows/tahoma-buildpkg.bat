@@ -10,10 +10,6 @@ echo ">>> Copy and configure Tahoma2D installation"
 
 copy /y RelWithDebInfo\*.* Tahoma2D
 
-REM Remove PDB and ILK files
-del Tahoma2D\*.pdb
-del Tahoma2D\*.ilk
-
 copy /Y ..\..\thirdparty\freeglut\bin\x64\freeglut.dll Tahoma2D
 copy /Y ..\..\thirdparty\glew\glew-1.9.0\bin\64bit\glew32.dll Tahoma2D
 copy /Y ..\..\thirdparty\libmypaint\dist\64\libiconv-2.dll Tahoma2D
@@ -36,11 +32,8 @@ IF EXIST ..\..\thirdparty\libgphoto2\include (
    xcopy /Y /E ..\..\thirdparty\libgphoto2\bin Tahoma2D
 )
 
-IF EXIST ..\..\thirdparty\crashrpt\include (
-   copy /Y ..\..\thirdparty\apps\crashrpt\CrashRpt1500.dll Tahoma2D
-   copy /Y ..\..\thirdparty\apps\crashrpt\CrashSender1500.exe Tahoma2D
-   copy /Y ..\..\thirdparty\apps\crashrpt\crashrpt_lang.ini Tahoma2D
-)
+REM Remove ILK files
+del Tahoma2D\*.ilk
 
 echo ">>> Copying stuff to Tahoma2D\tahomastuff"
 
@@ -79,15 +72,5 @@ echo ">>> Creating Tahoma2D Windows package"
 
 IF EXIST Tahoma2D-win.zip del Tahoma2D-win.zip
 7z a Tahoma2D-win.zip Tahoma2D
-
-IF EXIST ..\..\..\tahoma2d_symbols (
-   echo ">>> Saving debugging symbols"
-   mkdir ..\..\..\tahoma2d_symbols\%date:~10,4%-%date:~4,2%-%date:~7,2%
-   copy /y RelWithDebInfo\*.* ..\..\..\tahoma2d_symbols\%date:~10,4%-%date:~4,2%-%date:~7,2%
-) else (
-   echo ">>> Creating debugging symbols package"
-   IF EXIST debug-symbols.zip del debug-symbols.zip
-   7z a debug-symbols.zip RelWithDebInfo\*.*
-)
 
 cd ../..

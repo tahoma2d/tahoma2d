@@ -46,10 +46,6 @@ jobs:
         with:
           name: Tahoma2D-win
           path: artifact
-      - uses: actions/upload-artifact@v1
-        with:
-          name: debug-symbols.zip
-          path: toonz\build\debug-symbols.zip
       - name: Get Nightly Release Date
         if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         run: |
@@ -74,7 +70,7 @@ jobs:
         with:
           allowUpdates: true
           artifactErrorsFailBuild: false
-          artifacts: toonz\build\Tahoma2D-win.zip,toonz\build\debug-symbols.zip
+          artifacts: toonz\build\Tahoma2D-win.zip
           artifactContentType: "raw"
           body: ${{ github.event.head_commit.message }}
           name: Latest Nightly ${{ env.NIGHTLYDATE }}
@@ -88,7 +84,7 @@ jobs:
         with:
           allowUpdates: true
           artifactErrorsFailBuild: false
-          artifacts: toonz\build\Tahoma2D-win.zip,toonz\build\debug-symbols.zip
+          artifacts: toonz\build\Tahoma2D-win.zip
           artifactContentType: "raw"
           body: ${{ github.event.head_commit.message }}
           name: ${{ env.NIGHTLYDATETIME }}

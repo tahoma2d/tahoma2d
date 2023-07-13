@@ -1,9 +1,7 @@
 // Soli Deo gloria
-#ifdef WITH_CRASHRPT
-#include <tchar.h>
-#endif
 
 // Tnz6 includes
+#include "crashhandler.h"
 #include "mainwindow.h"
 #include "flipbook.h"
 #include "tapp.h"
@@ -69,10 +67,6 @@
 #include "tfont.h"
 
 #include "kis_tablet_support_win8.h"
-
-#ifdef WITH_CRASHRPT
-#include "CrashRpt.h"
-#endif
 
 #ifdef MACOSX
 #include "tipc.h"
@@ -258,17 +252,22 @@ static void script_output(int type, const QString &value) {
 
 int main(int argc, char *argv[]) {
 #ifdef Q_OS_WIN
-  //  Enable standard input/output on Windows Platform for debug
-  BOOL consoleAttached = ::AttachConsole(ATTACH_PARENT_PROCESS);
-  if (consoleAttached) {
+  // Enable standard input/output on Windows Platform for debug
+  if (::AttachConsole(ATTACH_PARENT_PROCESS)) {
     freopen("CON", "r", stdin);
     freopen("CON", "w", stdout);
     freopen("CON", "w", stderr);
+    atexit([]() {
+      ::FreeConsole();
+    });
   }
 #endif
 
   // Build icon map
   ThemeManager::getInstance().buildIconPathsMap(":/icons");
+
+  // Install signal handlers to catch crashes
+  CrashHandler::install();
 
   // parsing arguments and qualifiers
   TFilePath loadFilePath;
@@ -578,34 +577,6 @@ int main(int argc, char *argv[]) {
   // Toonz environment
   initToonzEnv(argumentPathValues);
 
-#ifdef WITH_CRASHRPT
-  std::string str;
-
-  CR_INSTALL_INFO pInfo;
-  memset(&pInfo, 0, sizeof(CR_INSTALL_INFO));
-  pInfo.cb                 = sizeof(CR_INSTALL_INFO);
-
-  str                      = TEnv::getApplicationName();
-  std::wstring wAppName    = std::wstring(str.begin(), str.end());
-  pInfo.pszAppName         = wAppName.c_str();
-
-  str                      = TEnv::getApplicationVersion();
-  std::wstring wAppVersion = std::wstring(str.begin(), str.end());
-  pInfo.pszAppVersion      = wAppVersion.c_str();
-
-  TFilePath crashrptCache =
-      ToonzFolder::getCacheRootFolder() + TFilePath("crashrpt");
-  str                         = crashrptCache.getQString().toStdString();
-  std::wstring wRptdir        = std::wstring(str.begin(), str.end());
-  pInfo.pszErrorReportSaveDir = wRptdir.c_str();
-
-  // Install all available exception handlers.
-  // Don't send reports automaticall, store locally
-  pInfo.dwFlags |= CR_INST_ALL_POSSIBLE_HANDLERS | CR_INST_DONT_SEND_REPORT;
-
-  crInstall(&pInfo);
-#endif
-
   // prepare for 30bit display
   if (Preferences::instance()->is30bitDisplayEnabled()) {
     QSurfaceFormat sFmt = QSurfaceFormat::defaultFormat();
@@ -703,6 +674,8 @@ int main(int argc, char *argv[]) {
 
   /*-- Layoutファイル名をMainWindowのctorに渡す --*/
   MainWindow w(argumentLayoutFileName);
+  CrashHandler::attachParentWindow(&w);
+  CrashHandler::reportProjectInfo(true);
 
   TFilePath fp = ToonzFolder::getModuleFile("mainwindow.ini");
   QSettings settings(toQString(fp), QSettings::IniFormat);
@@ -910,16 +883,6 @@ int main(int argc, char *argv[]) {
 
   TUndoManager::manager()->reset();
   PreviewFxManager::instance()->reset();
-
-#ifdef _WIN32
-  if (consoleAttached) {
-    ::FreeConsole();
-  }
-#endif
-
-#ifdef WITH_CRASHRPT
-  crUninstall();
-#endif
 
   return ret;
 }
