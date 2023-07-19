@@ -549,7 +549,7 @@ QIcon createQIcon(const QString &iconSVGName, bool useFullOpacity,
   // START_BUG_WORKAROUND: #20230627
   // Set an empty pixmap for menu icons when hiding icons from menus is true,
   // search bug ID for more info.
-#ifdef _WIN32
+//#ifdef _WIN32
   bool showIconInMenu =
       Preferences::instance()->isShowAdvancedOptionsEnabled() &&
       Preferences::instance()->getBoolValue(showIconsInMenu);
@@ -559,7 +559,7 @@ QIcon createQIcon(const QString &iconSVGName, bool useFullOpacity,
     emptyPm.fill(Qt::transparent);
     addPixmapToAllModesAndStates(icon, emptyPm);
   } else
-#endif  // END_BUG_WORKAROUND
+//#endif  // END_BUG_WORKAROUND
   {
     addImagesToIcon(icon, baseImg, overImg, onImg, useFullOpacity);
   }
