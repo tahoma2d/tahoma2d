@@ -4167,6 +4167,8 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
 
     if (!isImplicitCell) menu.addAction(cmdManager->getAction(MI_Clear));
     menu.addAction(cmdManager->getAction(MI_Insert));
+    menu.addAction(cmdManager->getAction(MI_RemoveCells));
+    if (!isImplicitCell) menu.addAction(cmdManager->getAction(MI_ClearFrames));
     if (!soundTextCellsSelected) {
       menu.addAction(cmdManager->getAction(MI_CreateBlankDrawing));
       menu.addAction(cmdManager->getAction(MI_Duplicate));

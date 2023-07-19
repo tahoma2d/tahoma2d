@@ -383,6 +383,9 @@ void TopBar::loadMenubar() {
   addMenuItem(editMenu, MI_Insert);
   addMenuItem(editMenu, MI_InsertBelow);
   addMenuItem(editMenu, MI_Clear);
+  addMenuItem(editMenu, MI_RemoveCells);
+  editMenu->addSeparator();
+  addMenuItem(editMenu, MI_ClearFrames);
   editMenu->addSeparator();
   addMenuItem(editMenu, MI_SelectAll);
   addMenuItem(editMenu, MI_InvertSelection);
@@ -460,7 +463,6 @@ void TopBar::loadMenubar() {
   addMenuItem(levelMenu, MI_ExportLevel);
   levelMenu->addSeparator();
   addMenuItem(levelMenu, MI_AddFrames);
-  addMenuItem(levelMenu, MI_ClearFrames);
   addMenuItem(levelMenu, MI_Renumber);
   addMenuItem(levelMenu, MI_ReplaceLevel);
   addMenuItem(levelMenu, MI_RevertToCleanedUp);
