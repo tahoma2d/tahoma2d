@@ -1446,10 +1446,10 @@ void FunctionTreeView::onActivated(const QModelIndex &index) {
   // were active
   bool someInactiveChannels = (activeFlag != ACTIVE_CHANNELS);
 
-  if (someInactiveChannels && !isExpanded(index)) {
-    setExpanded(index, true);
-    ftModel->onExpanded(index);
-  }
+//  if (someInactiveChannels && !isExpanded(index)) {
+//    setExpanded(index, true);
+//    ftModel->onExpanded(index);
+//  }
 
   if (item) {
     if (!childChannels.empty()) {
