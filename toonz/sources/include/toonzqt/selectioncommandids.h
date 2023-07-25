@@ -21,6 +21,7 @@
 #define MI_ClearFrames "MI_ClearFrames"
 #define MI_SelectAll "MI_SelectAll"
 #define MI_InvertSelection "MI_InvertSelection"
+#define MI_RemoveCells "MI_RemoveCells"
 
 #define MI_BlendColors "MI_BlendColors"
 #define MI_EraseUnusedStyles "MI_EraseUnusedStyles"
