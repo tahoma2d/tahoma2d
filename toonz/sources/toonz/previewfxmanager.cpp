@@ -1082,7 +1082,7 @@ void PreviewFxInstance::doOnRenderRasterCompleted(
 
   /*-- 16bpc縺ｧ險育ｮ励＆繧後◆蝣ｴ蜷医∫ｵ先棡繧奪ithering縺吶ｋ --*/
   // dither the 16bpc image IF the "30bit display" preference option is OFF
-  if ((rasA->getPixelSize() == 8 || rasA->getPixelSize() == 16) &&
+  if (rasA->getPixelSize() == 8 &&
       !Preferences::instance()->is30bitDisplayEnabled())  // render in 64 bits
   {
     TRaster32P auxA(rasA->getLx(), rasA->getLy());
