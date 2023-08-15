@@ -81,33 +81,49 @@ $QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -verbose=0 -always-overwrite \
    -executable=$TOONZDIR/Tahoma2D.app/Contents/MacOS/tfarmserver 
 
 echo ">>> Correcting library paths"
-for X in `find $TOONZDIR/Tahoma2D.app/Contents -type f '(' -name *.dylib -o -name *.so ')' -exec otool -l {} \; | grep -e "^toonz" -e"name \/usr\/local" -e"@rpath" | sed -e"s/://" -e"s/ (.*$//" -e"s/^ *name //"`
-do
-   Z=`echo $X | cut -c 1-1`
-   if [ "$Z" != "/" -a "$Z" != "@" ]
-   then
-      LIBFILE=$X
-   else
-      Y=`basename $X`
-      W=`basename $LIBFILE`
-      if [ ! -f $TOONZDIR/Tahoma2D.app/Contents/Frameworks/$Y ]
+function checkLibFile() {
+   local LIBFILE=$1   
+   for DEPFILE in `otool -L $LIBFILE | sed -e "s/ (.*$//" | grep -e"\/usr\/local" -e"@rpath" -e"\.\./\.\./\.\." | grep -v "/qt"`
+   do
+      local Z=`echo $DEPFILE | cut -c 1-1`
+      if [ "$Z" = "/" -o "$Z" = "@" ]
       then
-        echo "Copying $X to Frameworks"
-        cp $X $TOONZDIR/Tahoma2D.app/Contents/Frameworks
-        chmod 644 $TOONZDIR/Tahoma2D.app/Contents/Frameworks/$Y
-      fi
-      if [ "$Y" != "$W" ]
-      then
-         echo "Fixing $X in $LIBFILE"
-         install_name_tool -change $X @executable_path/../Frameworks/$Y $LIBFILE
-         FIXCHECK=`otool -D $LIBFILE | grep -e"\/usr\/local"`
-         if [ "$FIXCHECK" == "$X" ]
+         local Y=`basename $DEPFILE`
+         local W=`basename $LIBFILE`
+         if [ ! -f $TOONZDIR/Tahoma2D.app/Contents/Frameworks/$Y ]
          then
-           echo "   Fixed ID!"
-           install_name_tool -id @executable_path/../Frameworks/$Y $LIBFILE
+            local SRC=$DEPFILE	
+            local Z=`echo $DEPFILE | cut -c 1-24`
+            if [ "$Z" = "@loader_path/../../../.." ]
+            then
+               local V=`echo $DEPFILE | cut -c 26-`
+               local SRC=/usr/local/$V
+            fi
+            echo "Copying $SRC to Frameworks"
+            cp $SRC $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+            chmod 644 $TOONZDIR/Tahoma2D.app/Contents/Frameworks/$Y
+            local ORIGDEPFILE=$DEPFILE
+            checkLibFile $TOONZDIR/Tahoma2D.app/Contents/Frameworks/$Y
+            DEPFILE=$ORIGDEPFILE
+         fi
+         if [ "$Y" != "$W" ]
+         then
+            echo "Fixing $DEPFILE in $LIBFILE"
+            install_name_tool -change $DEPFILE @executable_path/../Frameworks/$Y $LIBFILE
+         fi
+         FIXCHECK=`otool -D $LIBFILE | grep -v ":" | grep -e"\/usr\/local"`
+         if [ "$FIXCHECK" == "$DEPFILE" ]
+         then
+            echo "   Fixed ID!"
+            install_name_tool -id @executable_path/../Frameworks/$Y $LIBFILE
          fi
       fi
-   fi
+   done
+}
+
+for FILE in `find $TOONZDIR/Tahoma2D.app/Contents -type f '(' -name *.dylib -o -name *.so ')'`
+do
+   checkLibFile $FILE
 done
    
 echo ">>> Creating Tahoma2D-osx.dmg"
