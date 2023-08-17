@@ -173,7 +173,7 @@ public:
   TaskTreeView *m_treeView;
   QTimer *m_timer;
 
-  TasksViewer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+  TasksViewer(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
   ~TasksViewer();
 
   void update() override;

@@ -231,7 +231,7 @@ XsheetViewer::XsheetViewer(QWidget *parent, Qt::WindowFlags flags)
     , m_isCurrentColumnSwitched(false)
     , m_isComputingSize(false)
     , m_currentNoteIndex(0)
-    , m_qtModifiers(0)
+    , m_qtModifiers(Qt::KeyboardModifiers())
     , m_frameDisplayStyle(to_enum(FrameDisplayStyleInXsheetRowArea))
     , m_orientation(nullptr)
     , m_xsheetLayout("Classic")
@@ -252,7 +252,7 @@ XsheetViewer::XsheetViewer(QWidget *parent, Qt::WindowFlags flags)
   m_toolbarScrollArea = new XsheetScrollArea(this);
   m_toolbarScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   m_toolbarScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  m_toolbar = new XsheetGUI::QuickToolbar(this, 0, true);
+  m_toolbar = new XsheetGUI::QuickToolbar(this, Qt::WindowFlags(), true);
   m_toolbarScrollArea->setWidget(m_toolbar);
 
   m_noteArea       = new XsheetGUI::NoteArea(this);
@@ -704,7 +704,7 @@ void XsheetViewer::timerEvent(QTimerEvent *) {
   scroll(m_autoPanSpeed);
   if (!m_dragTool) return;
   QMouseEvent mouseEvent(QEvent::MouseMove, m_lastAutoPanPos - m_autoPanSpeed,
-                         Qt::NoButton, 0, m_qtModifiers);
+                         Qt::NoButton, Qt::MouseButtons(), m_qtModifiers);
   m_dragTool->onDrag(&mouseEvent);
   m_lastAutoPanPos += m_autoPanSpeed;
 }

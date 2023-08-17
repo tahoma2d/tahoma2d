@@ -137,7 +137,7 @@ class NoteArea final : public QFrame {
   QLayout *m_currentLayout;
 
 public:
-  NoteArea(XsheetViewer *parent = 0, Qt::WindowFlags flags = 0);
+  NoteArea(XsheetViewer *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 
   void updateButtons();
 
@@ -172,7 +172,7 @@ class FooterNoteArea final : public QFrame {
 
 public:
   FooterNoteArea(QWidget *parent = 0, XsheetViewer *viewer = 0,
-                 Qt::WindowFlags flags = 0);
+                 Qt::WindowFlags flags = Qt::WindowFlags());
 
   void updateButtons();
 

@@ -29,7 +29,7 @@ protected:
   QString m_barId;
 
 public:
-  CommandBar(QWidget *parent = 0, Qt::WindowFlags flags = 0,
+  CommandBar(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags(),
              bool isCollapsible = false, bool isQuickToolbar = false);
 
   QString getBarId() { return m_barId; }
