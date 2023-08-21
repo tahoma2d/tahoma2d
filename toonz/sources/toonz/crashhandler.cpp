@@ -9,6 +9,9 @@
 #include <dbghelp.h>
 #include <psapi.h>
 #else
+#ifdef MACOSX
+#include <mach-o/dyld.h>
+#endif
 #include <execinfo.h>
 #include <signal.h>
 #include <unistd.h>
@@ -294,7 +297,28 @@ static bool sh(std::string &out, const char *cmd) {
 static bool addr2line(std::string &out, const char *exepath, const char *addr) {
   char cmd[512];
 #ifdef MACOSX
-  sprintf(cmd, "atos -o \"%.400s\" %s 2>&1", exepath, addr);
+  std::string exe;
+  uintptr_t loadaddr;
+  int c = _dyld_image_count();
+  bool libFound = false;
+  for (int i = 0; i < c; i++) {
+    const char *image_name = _dyld_get_image_name(i);
+
+    const char *moduleName = strstr(image_name, exepath);
+    if (!moduleName)
+      continue;
+   
+    exe = std::string(image_name);
+    const struct mach_header *header = _dyld_get_image_header(i);
+    loadaddr = (uintptr_t) header;
+    libFound = true;
+    break;
+  }
+
+  if(!libFound)
+     return true;
+
+  sprintf(cmd, "atos -o \"%.400s\" -l %p %s 2>&1", exe.c_str(), loadaddr, addr);
 #else
   sprintf(cmd, "addr2line -f -p -e \"%.400s\" %s 2>&1", exepath, addr);
 #endif
@@ -307,7 +331,18 @@ static bool generateMinidump(TFilePath dumpFile) { return false; }
 
 //-----------------------------------------------------------------------------
 
-static void printModules(std::string &out) {}
+#define HAS_MODULES
+static void printModules(std::string &out) {
+#ifdef MACOSX
+  int c = _dyld_image_count();
+  for (int i = 0; i < c; i++) {
+    const char *image_name = _dyld_get_image_name(i);
+
+    out.append(image_name);
+    out.append("\n");
+  }
+#endif
+}
 
 //-----------------------------------------------------------------------------
 
@@ -322,8 +357,10 @@ static void printBacktrace(std::string &out) {
   // Get executable path
   char exepath[512];
   memset(exepath, 0, 512);
+#ifndef MACOSX
   if (readlink("/proc/self/exe", exepath, 512) < 0)
     fprintf(stderr, "Couldn't get exe path\n");
+#endif
 
   // Back trace
   int nptrs  = backtrace(buffer, size);
@@ -341,13 +378,28 @@ static void printBacktrace(std::string &out) {
       std::string sym = bts[i];
       std::string line;
       std::smatch ms;
+      std::string frame;
+      std::string module;
+      std::string addr;
 
       bool found = false;
-      if (std::regex_search(sym, ms, re)) {
-        std::string addr = ms[1];
-        if (addr2line(line, exepath, addr.c_str())) {
-          found = (line.rfind("??", 0) != 0);
-        }
+
+#ifdef MACOSX
+      QString sym2 = QString::fromStdString(sym);
+      QStringList strlst = sym2.split(" ");
+      strlst.removeAll({});
+
+      module = strlst[1].toStdString();
+      addr   = strlst[2].toStdString();
+#else
+      module = std::string(exepath);
+      if (std::regex_search(sym, ms, re))
+         addr = ms[1];
+#endif
+      if (addr2line(line, module.c_str(), addr.c_str())) {
+        found = (line.rfind("??", 0) != 0) &&
+                (line.find("cannot load symbol", 0) != 0) &&
+                (line.find("command not found") != 0);
       }
 
       out.append(found ? line : (sym + "\n"));
