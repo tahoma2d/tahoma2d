@@ -446,14 +446,14 @@ int main(int argc, char *argv[]) {
   }
 #endif
 
+  TEnv::setApplicationFileName(argv[0]);
+
   // Set show icons in menus flag (use iconVisibleInMenu to disable selectively)
   bool dontShowIcon =
       !Preferences::instance()->isShowAdvancedOptionsEnabled() ||
       !Preferences::instance()->getBoolValue(showIconsInMenu);
   QApplication::instance()->setAttribute(Qt::AA_DontShowIconsInMenus,
                                          dontShowIcon);
-
-  TEnv::setApplicationFileName(argv[0]);
 
   // splash screen
   QPixmap splashPixmap =
