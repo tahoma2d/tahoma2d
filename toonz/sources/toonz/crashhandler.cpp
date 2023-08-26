@@ -29,6 +29,7 @@
 #include "toonz/tproject.h"
 #include "toonz/tscenehandle.h"
 #include "toonz/toonzscene.h"
+#include "tsystem.h"
 
 #include <QOperatingSystemVersion>
 #include <QDesktopServices>
@@ -44,6 +45,8 @@
 #include <QTextEdit>
 #include <QPushButton>
 
+#include <QDebug>
+
 static QWidget *s_parentWindow = NULL;
 static bool s_reportProjInfo   = false;
 #ifdef _WIN32
@@ -57,6 +60,15 @@ static const char *filenameOnly(const char *path) {
     if (path[i] == '\\' || path[i] == '/') return path + i + 1;
   }
   return path;
+}
+
+//-----------------------------------------------------------------------------
+static QString obfuscateUsername(QString path) {
+  QString username = TSystem::getUserName();
+  QString newPath = path;
+  newPath.replace("/" + username + "/", "/USER/");
+  newPath.replace("\\" + username + "\\", "\\USER\\");
+  return newPath;
 }
 
 //-----------------------------------------------------------------------------
@@ -96,7 +108,8 @@ static void printModules(std::string &out) {
     for (unsigned int i = 0; i < size / sizeof(HMODULE); i++) {
       char moduleName[512];
       GetModuleFileNameA(modules[i], moduleName, 512);
-      out.append(moduleName);
+      QString path = obfuscateUsername(QString(moduleName));
+      out.append(path.toStdString());
       out.append("\n");
     }
   }
@@ -337,8 +350,8 @@ static void printModules(std::string &out) {
   int c = _dyld_image_count();
   for (int i = 0; i < c; i++) {
     const char *image_name = _dyld_get_image_name(i);
-
-    out.append(image_name);
+    QString path = obfuscateUsername(QString(image_name));
+    out.append(path.toStdString());
     out.append("\n");
   }
 #endif
@@ -595,6 +608,7 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
   char dateName[128];
   std::string out;
 
+
   // Get time and build filename
   time_t acc_time;
   time(&acc_time);
@@ -624,11 +638,11 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
     out.append("\n");
     printGPUInfo(out);
     out.append("\nCrash File: ");
-    out.append(fpCrsh.getQString().toStdString());
+    out.append(obfuscateUsername(fpCrsh.getQString()).toStdString());
 #ifdef HAS_MINIDUMP
     out.append("\nMini Dump File: ");
     if (minidump)
-      out.append(fpDump.getQString().toStdString());
+      out.append(obfuscateUsername(fpDump.getQString()).toStdString());
     else
       out.append("Failed");
 #endif
@@ -647,18 +661,19 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
       std::wstring sceneName   = currentScene->getSceneName();
 
       out.append("\nApplication Dir: ");
-      out.append(QCoreApplication::applicationDirPath().toStdString());
+      out.append(obfuscateUsername(QCoreApplication::applicationDirPath()).toStdString());
       out.append("\nStuff Dir: ");
-      out.append(TEnv::getStuffDir().getQString().toStdString());
+      out.append(obfuscateUsername(TEnv::getStuffDir().getQString()).toStdString());
       out.append("\n");
       out.append("\nProject Name: ");
       out.append(currentProject->getName().getQString().toStdString());
       out.append("\nScene Name: ");
       out.append(QString::fromStdWString(sceneName).toStdString());
       out.append("\nProject Path: ");
-      out.append(projectPath.getQString().toStdString());
+      out.append(obfuscateUsername(projectPath.getQString()).toStdString());
       out.append("\nScene Path: ");
-      out.append(currentScene->getScenePath().getQString().toStdString());
+      out.append(obfuscateUsername(currentScene->getScenePath().getQString())
+                     .toStdString());
       out.append("\n");
     }
   } catch (...) {
