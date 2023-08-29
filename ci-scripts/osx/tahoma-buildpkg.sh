@@ -71,7 +71,7 @@ find $TOONZDIR/Tahoma2D.app/Contents/Frameworks/libgphoto2* -name *.la -exec rm 
 
 echo ">>> Configuring Tahoma2D.app for deployment"
 
-$QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -verbose=0 -always-overwrite \
+$QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -verbose=0 -always-overwrite -no-strip \
    -executable=$TOONZDIR/Tahoma2D.app/Contents/MacOS/lzocompress \
    -executable=$TOONZDIR/Tahoma2D.app/Contents/MacOS/lzodecompress \
    -executable=$TOONZDIR/Tahoma2D.app/Contents/MacOS/tcleanup \
@@ -128,7 +128,7 @@ done
    
 echo ">>> Creating Tahoma2D-osx.dmg"
 
-$QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -dmg -verbose=0
+$QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -dmg -verbose=0 -no-strip
 
 mv $TOONZDIR/Tahoma2D.dmg $TOONZDIR/../Tahoma2D-osx.dmg
 

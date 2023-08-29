@@ -9,6 +9,9 @@
 #include <dbghelp.h>
 #include <psapi.h>
 #else
+#ifdef MACOSX
+#include <mach-o/dyld.h>
+#endif
 #include <execinfo.h>
 #include <signal.h>
 #include <unistd.h>
@@ -26,6 +29,7 @@
 #include "toonz/tproject.h"
 #include "toonz/tscenehandle.h"
 #include "toonz/toonzscene.h"
+#include "tsystem.h"
 
 #include <QOperatingSystemVersion>
 #include <QDesktopServices>
@@ -41,6 +45,8 @@
 #include <QTextEdit>
 #include <QPushButton>
 
+#include <QDebug>
+
 static QWidget *s_parentWindow = NULL;
 static bool s_reportProjInfo   = false;
 #ifdef _WIN32
@@ -54,6 +60,15 @@ static const char *filenameOnly(const char *path) {
     if (path[i] == '\\' || path[i] == '/') return path + i + 1;
   }
   return path;
+}
+
+//-----------------------------------------------------------------------------
+static QString obfuscateUsername(QString path) {
+  QString username = TSystem::getUserName();
+  QString newPath = path;
+  newPath.replace("/" + username + "/", "/USER/");
+  newPath.replace("\\" + username + "\\", "\\USER\\");
+  return newPath;
 }
 
 //-----------------------------------------------------------------------------
@@ -93,7 +108,8 @@ static void printModules(std::string &out) {
     for (unsigned int i = 0; i < size / sizeof(HMODULE); i++) {
       char moduleName[512];
       GetModuleFileNameA(modules[i], moduleName, 512);
-      out.append(moduleName);
+      QString path = obfuscateUsername(QString(moduleName));
+      out.append(path.toStdString());
       out.append("\n");
     }
   }
@@ -293,8 +309,29 @@ static bool sh(std::string &out, const char *cmd) {
 
 static bool addr2line(std::string &out, const char *exepath, const char *addr) {
   char cmd[512];
-#ifdef OSX
-  sprintf(cmd, "atos -o \"%.400s\" %s 2>&1", exepath, addr);
+#ifdef MACOSX
+  std::string exe;
+  uintptr_t loadaddr;
+  int c = _dyld_image_count();
+  bool libFound = false;
+  for (int i = 0; i < c; i++) {
+    const char *image_name = _dyld_get_image_name(i);
+
+    const char *moduleName = strstr(image_name, exepath);
+    if (!moduleName)
+      continue;
+   
+    exe = std::string(image_name);
+    const struct mach_header *header = _dyld_get_image_header(i);
+    loadaddr = (uintptr_t) header;
+    libFound = true;
+    break;
+  }
+
+  if(!libFound)
+     return true;
+
+  sprintf(cmd, "atos -o \"%.400s\" -l %p %s 2>&1", exe.c_str(), loadaddr, addr);
 #else
   sprintf(cmd, "addr2line -f -p -e \"%.400s\" %s 2>&1", exepath, addr);
 #endif
@@ -307,7 +344,18 @@ static bool generateMinidump(TFilePath dumpFile) { return false; }
 
 //-----------------------------------------------------------------------------
 
-static void printModules(std::string &out) {}
+#define HAS_MODULES
+static void printModules(std::string &out) {
+#ifdef MACOSX
+  int c = _dyld_image_count();
+  for (int i = 0; i < c; i++) {
+    const char *image_name = _dyld_get_image_name(i);
+    QString path = obfuscateUsername(QString(image_name));
+    out.append(path.toStdString());
+    out.append("\n");
+  }
+#endif
+}
 
 //-----------------------------------------------------------------------------
 
@@ -322,8 +370,10 @@ static void printBacktrace(std::string &out) {
   // Get executable path
   char exepath[512];
   memset(exepath, 0, 512);
+#ifndef MACOSX
   if (readlink("/proc/self/exe", exepath, 512) < 0)
     fprintf(stderr, "Couldn't get exe path\n");
+#endif
 
   // Back trace
   int nptrs  = backtrace(buffer, size);
@@ -341,13 +391,28 @@ static void printBacktrace(std::string &out) {
       std::string sym = bts[i];
       std::string line;
       std::smatch ms;
+      std::string frame;
+      std::string module;
+      std::string addr;
 
       bool found = false;
-      if (std::regex_search(sym, ms, re)) {
-        std::string addr = ms[1];
-        if (addr2line(line, exepath, addr.c_str())) {
-          found = (line.rfind("??", 0) != 0);
-        }
+
+#ifdef MACOSX
+      QString sym2 = QString::fromStdString(sym);
+      QStringList strlst = sym2.split(" ");
+      strlst.removeAll({});
+
+      module = strlst[1].toStdString();
+      addr   = strlst[2].toStdString();
+#else
+      module = std::string(exepath);
+      if (std::regex_search(sym, ms, re))
+         addr = ms[1];
+#endif
+      if (addr2line(line, module.c_str(), addr.c_str())) {
+        found = (line.rfind("??", 0) != 0) &&
+                (line.find("cannot load symbol", 0) != 0) &&
+                (line.find("command not found") != 0);
       }
 
       out.append(found ? line : (sym + "\n"));
@@ -543,6 +608,7 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
   char dateName[128];
   std::string out;
 
+
   // Get time and build filename
   time_t acc_time;
   time(&acc_time);
@@ -572,11 +638,11 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
     out.append("\n");
     printGPUInfo(out);
     out.append("\nCrash File: ");
-    out.append(fpCrsh.getQString().toStdString());
+    out.append(obfuscateUsername(fpCrsh.getQString()).toStdString());
 #ifdef HAS_MINIDUMP
     out.append("\nMini Dump File: ");
     if (minidump)
-      out.append(fpDump.getQString().toStdString());
+      out.append(obfuscateUsername(fpDump.getQString()).toStdString());
     else
       out.append("Failed");
 #endif
@@ -595,18 +661,19 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
       std::wstring sceneName   = currentScene->getSceneName();
 
       out.append("\nApplication Dir: ");
-      out.append(QCoreApplication::applicationDirPath().toStdString());
+      out.append(obfuscateUsername(QCoreApplication::applicationDirPath()).toStdString());
       out.append("\nStuff Dir: ");
-      out.append(TEnv::getStuffDir().getQString().toStdString());
+      out.append(obfuscateUsername(TEnv::getStuffDir().getQString()).toStdString());
       out.append("\n");
       out.append("\nProject Name: ");
       out.append(currentProject->getName().getQString().toStdString());
       out.append("\nScene Name: ");
       out.append(QString::fromStdWString(sceneName).toStdString());
       out.append("\nProject Path: ");
-      out.append(projectPath.getQString().toStdString());
+      out.append(obfuscateUsername(projectPath.getQString()).toStdString());
       out.append("\nScene Path: ");
-      out.append(currentScene->getScenePath().getQString().toStdString());
+      out.append(obfuscateUsername(currentScene->getScenePath().getQString())
+                     .toStdString());
       out.append("\n");
     }
   } catch (...) {
