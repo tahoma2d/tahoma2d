@@ -93,11 +93,15 @@ function checkLibFile() {
          if [ ! -f $TOONZDIR/Tahoma2D.app/Contents/Frameworks/$Y ]
          then
             local SRC=$DEPFILE	
-            local Z=`echo $DEPFILE | cut -c 1-24`
-            if [ "$Z" = "@loader_path/../../../.." ]
+            local Z=`echo $DEPFILE | cut -c 1-16`
+            local Z2=`echo $DEPFILE | cut -c 1-6`
+            if [ "$Z" = "@loader_path/../" ]
             then
-               local V=`echo $DEPFILE | cut -c 26-`
+               local V=`echo $DEPFILE | sed -e"s/^.*\/\.\.\///"`
                local SRC=/usr/local/$V
+            elif [ "$Z2" = "@rpath" ]
+            then
+                local SRC=/usr/local/lib/$Y
             fi
             echo "Copying $SRC to Frameworks"
             cp $SRC $TOONZDIR/Tahoma2D.app/Contents/Frameworks
