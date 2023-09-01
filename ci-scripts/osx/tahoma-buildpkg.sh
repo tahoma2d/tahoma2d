@@ -80,6 +80,17 @@ $QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -verbose=0 -always-overwrite -no-s
    -executable=$TOONZDIR/Tahoma2D.app/Contents/MacOS/tfarmcontroller \
    -executable=$TOONZDIR/Tahoma2D.app/Contents/MacOS/tfarmserver 
 
+echo ">>> Copying missing Qt frameworks"
+cp -r $QTDIR/Frameworks/QtDBus.framework $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+cp -r $QTDIR/Frameworks/QtPdf.framework $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+cp -r $QTDIR/Frameworks/QtQml.framework $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+cp -r $QTDIR/Frameworks/QtQmlModels.framework $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+cp -r $QTDIR/Frameworks/QtQuick.framework $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+cp -r $QTDIR/Frameworks/QtVirtualKeyboard.framework $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+
+echo ">>> Adding Contents/lib symbolic link to Frameworks"
+ln -s Frameworks $TOONZDIR/Tahoma2D.app/Contents/lib
+
 echo ">>> Correcting library paths"
 function checkLibFile() {
    local LIBFILE=$1   
