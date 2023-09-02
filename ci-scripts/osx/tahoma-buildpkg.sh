@@ -7,20 +7,13 @@ else
 fi
 export TOONZDIR=toonz/build/toonz
 
-echo ">>> Creating DSYM files"
-for X in `find $TOONZDIR/Tahoma2D.app/Contents/MacOS -type f`
-do
-   dsymutil -o $TOONZDIR/DSYM $X
-   strip -S $X
-done
-
 # If found, use Xcode Release build
 if [ -d $TOONZDIR/Release ]
 then
    export TOONZDIR=$TOONZDIR/Release
 fi
 
-echo ">>> Copying stuff to $TOONZDIR/Tahoma2D.app/tahomastuff"
+echo ">>> Copying stuff to Tahoma2D.app/tahomastuff"
 if [ -d $TOONZDIR/Tahoma2D.app/tahomastuff ]
 then
    # In case of prior builds, replace stuff folder
@@ -33,7 +26,7 @@ find $TOONZDIR/Tahoma2D.app/tahomastuff -name .gitkeep -exec rm -f {} \;
 
 if [ -d thirdparty/apps/ffmpeg/bin ]
 then
-   echo ">>> Copying FFmpeg to $TOONZDIR/Tahoma2D.app/ffmpeg"
+   echo ">>> Copying FFmpeg to Tahoma2D.app/ffmpeg"
    if [ -d $TOONZDIR/Tahoma2D.app/ffmpeg ]
    then
       # In case of prior builds, replace ffmpeg folder
@@ -46,7 +39,7 @@ fi
 
 if [ -d thirdparty/apps/rhubarb ]
 then
-   echo ">>> Copying Rhubarb Lip Sync to $TOONZDIR/Tahoma2D.app/rhubarb"
+   echo ">>> Copying Rhubarb Lip Sync to Tahoma2D.app/rhubarb"
    if [ -d $TOONZDIR/Tahoma2D.app/rhubarb ]
    then
       # In case of prior builds, replace rhubarb folder
@@ -64,17 +57,40 @@ fi
 
 if [ -d thirdparty/canon/Framework ]
 then
-   echo ">>> Copying canon framework to $TOONZDIR/Tahoma2D.app/Contents/Frameworks/EDSDK.Framework"
-   cp -R thirdparty/canon/Framework/ $TOONZDIR/Tahoma2D.app/Contents/Frameworks
-   chmod -R 755 $TOONZDIR/Tahoma2D.app/Contents/Frameworks/EDSDK.framework
+   if [ ! -d $TOONZDIR/Tahoma2D.app/Contents/Frameworks/EDSDK.framework ]
+   then
+      echo ">>> Copying canon framework to Tahoma2D.app/Contents/Frameworks/EDSDK.Framework"
+      cp -R thirdparty/canon/Framework/ $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+      chmod -R 755 $TOONZDIR/Tahoma2D.app/Contents/Frameworks/EDSDK.framework
+   fi
 fi
 
-echo ">>> Copying libghoto2 supporting directories"
-cp -R /usr/local/lib/libgphoto2 $TOONZDIR/Tahoma2D.app/Contents/Frameworks
-cp -R /usr/local/lib/libgphoto2_port $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+if [ ! -d $TOONZDIR/Tahoma2D.app/Contents/Frameworks/libgphoto2 ]
+then
+   echo ">>> Copying libghoto2 supporting directories to Tahoma2D.app/Contents/Frameworks"
+   cp -R /usr/local/lib/libgphoto2 $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+   cp -R /usr/local/lib/libgphoto2_port $TOONZDIR/Tahoma2D.app/Contents/Frameworks
 
-rm $TOONZDIR/Tahoma2D.app/Contents/Frameworks/libgphoto2/print-camera-list
-find $TOONZDIR/Tahoma2D.app/Contents/Frameworks/libgphoto2* -name *.la -exec rm -f {} \;
+   rm $TOONZDIR/Tahoma2D.app/Contents/Frameworks/libgphoto2/print-camera-list
+   find $TOONZDIR/Tahoma2D.app/Contents/Frameworks/libgphoto2* -name *.la -exec rm -f {} \;
+fi
+
+echo ">>> Creating DSYM files"
+if [ -d $TOONZDIR/DSYM ]
+then
+   rm -rf $TOONZDIR/DSYM
+fi
+
+for X in `find $TOONZDIR/Tahoma2D.app/Contents/MacOS -type f`
+do
+   dsymutil -o $TOONZDIR/DSYM $X
+   strip -S $X
+done
+
+if [ -d $TOONZDIR/Tahoma2D.app/DSYM ]
+then
+   rm -rf $TOONZDIR/Tahoma2D.app/DSYM
+fi
 
 echo ">>> Configuring Tahoma2D.app for deployment"
 
@@ -91,14 +107,14 @@ for FW in `echo "QtDBus QtPdf QtQml QtQmlModels QtQuick QtVirtualKeyboard"`
 do
    if [ ! -d $TOONZDIR/Tahoma2D.app/Contents/Frameworks/$FW.framework ]
    then
-      echo ">>> Copying missing $FW.framework to Contents/Frameworks"
+      echo ">>> Copying missing $FW.framework to Tahoma2D.app/Contents/Frameworks"
       cp -r $QTDIR/Frameworks/$FW.framework $TOONZDIR/Tahoma2D.app/Contents/Frameworks
    fi
 done
 
 if [ ! -d $TOONZDIR/Tahoma2D.app/Contents/lib ]
 then
-   echo ">>> Adding Contents/lib symbolic link to Contents/Frameworks"
+   echo ">>> Adding Contents/lib symbolic link to Tahoma2D.app/Contents/Frameworks"
    ln -s Frameworks $TOONZDIR/Tahoma2D.app/Contents/lib
 fi
 
@@ -158,7 +174,8 @@ for FILE in `find $TOONZDIR/Tahoma2D.app/Contents -type f | grep -v -e"\.h" -e"\
 do
    checkLibFile $FILE
 done
-   
+
+echo ">>> Moving DYSM to Tahoma2D.app"
 mv $TOONZDIR/DSYM $TOONZDIR/Tahoma2D.app
 
 echo ">>> Creating Tahoma2D-osx.dmg"

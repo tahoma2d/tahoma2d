@@ -329,7 +329,7 @@ static bool addr2line(std::string &out, const char *exepath, const char *addr) {
   }
 
   if(!libFound)
-     return true;
+     return false;
 
   if (exe.find("Tahoma2D.app/Contents/MacOS") != std::string::npos) {
     std::string dsym = exe;
