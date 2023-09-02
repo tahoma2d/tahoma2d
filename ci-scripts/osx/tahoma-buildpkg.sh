@@ -80,16 +80,20 @@ $QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -verbose=0 -always-overwrite -no-s
    -executable=$TOONZDIR/Tahoma2D.app/Contents/MacOS/tfarmcontroller \
    -executable=$TOONZDIR/Tahoma2D.app/Contents/MacOS/tfarmserver 
 
-echo ">>> Copying missing Qt frameworks"
-cp -r $QTDIR/Frameworks/QtDBus.framework $TOONZDIR/Tahoma2D.app/Contents/Frameworks
-cp -r $QTDIR/Frameworks/QtPdf.framework $TOONZDIR/Tahoma2D.app/Contents/Frameworks
-cp -r $QTDIR/Frameworks/QtQml.framework $TOONZDIR/Tahoma2D.app/Contents/Frameworks
-cp -r $QTDIR/Frameworks/QtQmlModels.framework $TOONZDIR/Tahoma2D.app/Contents/Frameworks
-cp -r $QTDIR/Frameworks/QtQuick.framework $TOONZDIR/Tahoma2D.app/Contents/Frameworks
-cp -r $QTDIR/Frameworks/QtVirtualKeyboard.framework $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+for FW in `echo "QtDBus QtPdf QtQml QtQmlModels QtQuick QtVirtualKeyboard"`
+do
+   if [ ! -d $TOONZDIR/Tahoma2D.app/Contents/Frameworks/$FW.framework ]
+   then
+      echo ">>> Copying missing $FW.framework to Contents/Frameworks"
+      cp -r $QTDIR/Frameworks/$FW.framework $TOONZDIR/Tahoma2D.app/Contents/Frameworks
+   fi
+done
 
-echo ">>> Adding Contents/lib symbolic link to Frameworks"
-ln -s Frameworks $TOONZDIR/Tahoma2D.app/Contents/lib
+if [ ! -d $TOONZDIR/Tahoma2D.app/Contents/lib ]
+then
+   echo ">>> Adding Contents/lib symbolic link to Contents/Frameworks"
+   ln -s Frameworks $TOONZDIR/Tahoma2D.app/Contents/lib
+fi
 
 echo ">>> Correcting library paths"
 function checkLibFile() {
@@ -101,9 +105,10 @@ function checkLibFile() {
       then
          local Y=`basename $DEPFILE`
          local W=`basename $LIBFILE`
-         if [ ! -f $TOONZDIR/Tahoma2D.app/Contents/Frameworks/$Y ]
+         local X=`echo $DEPFILE | grep "\.framework\/"`
+         if [ "$X" = "" -a ! -f $TOONZDIR/Tahoma2D.app/Contents/Frameworks/$Y ]
          then
-            local SRC=$DEPFILE	
+            local SRC=$DEPFILE
             local Z=`echo $DEPFILE | cut -c 1-16`
             local Z2=`echo $DEPFILE | cut -c 1-6`
             if [ "$Z" = "@loader_path/../" ]
@@ -124,7 +129,13 @@ function checkLibFile() {
          if [ "$Y" != "$W" ]
          then
             echo "Fixing $DEPFILE in $LIBFILE"
-            install_name_tool -change $DEPFILE @executable_path/../Frameworks/$Y $LIBFILE
+            if [ "$X" != "" ]
+            then
+               local Y=`echo $DEPFILE | sed -e"s/^.*\/\.\.\///"`
+               install_name_tool -change $DEPFILE @executable_path/../Frameworks/$Y $LIBFILE
+            else
+               install_name_tool -change $DEPFILE @executable_path/../Frameworks/$Y $LIBFILE
+            fi
          fi
          FIXCHECK=`otool -D $LIBFILE | grep -v ":" | grep -e"\/usr\/local"`
          if [ "$FIXCHECK" == "$DEPFILE" ]
@@ -136,7 +147,7 @@ function checkLibFile() {
    done
 }
 
-for FILE in `find $TOONZDIR/Tahoma2D.app/Contents -type f '(' -name *.dylib -o -name *.so ')'`
+for FILE in `find $TOONZDIR/Tahoma2D.app/Contents -type f | grep -v -e"\.h" -e"\.prl" -e"\.plist" -e"\.conf" -e"\.icns" -e"EDSDK" -e"\/Headers\/"`
 do
    checkLibFile $FILE
 done
