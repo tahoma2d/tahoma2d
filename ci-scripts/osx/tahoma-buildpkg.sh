@@ -7,6 +7,13 @@ else
 fi
 export TOONZDIR=toonz/build/toonz
 
+echo ">>> Creating DSYM files"
+for X in `find $TOONZDIR/Tahoma2D.app/Contents/MacOS -type f`
+do
+   dsymutil -o $TOONZDIR/DSYM $X
+   strip -S $X
+done
+
 # If found, use Xcode Release build
 if [ -d $TOONZDIR/Release ]
 then
@@ -71,7 +78,7 @@ find $TOONZDIR/Tahoma2D.app/Contents/Frameworks/libgphoto2* -name *.la -exec rm 
 
 echo ">>> Configuring Tahoma2D.app for deployment"
 
-$QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -verbose=0 -always-overwrite -no-strip \
+$QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -verbose=0 -always-overwrite \
    -executable=$TOONZDIR/Tahoma2D.app/Contents/MacOS/lzocompress \
    -executable=$TOONZDIR/Tahoma2D.app/Contents/MacOS/lzodecompress \
    -executable=$TOONZDIR/Tahoma2D.app/Contents/MacOS/tcleanup \
@@ -152,9 +159,11 @@ do
    checkLibFile $FILE
 done
    
+mv $TOONZDIR/DSYM $TOONZDIR/Tahoma2D.app
+
 echo ">>> Creating Tahoma2D-osx.dmg"
 
-$QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -dmg -verbose=0 -no-strip
+$QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -dmg -verbose=0
 
 mv $TOONZDIR/Tahoma2D.dmg $TOONZDIR/../Tahoma2D-osx.dmg
 

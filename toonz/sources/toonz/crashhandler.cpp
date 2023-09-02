@@ -331,6 +331,14 @@ static bool addr2line(std::string &out, const char *exepath, const char *addr) {
   if(!libFound)
      return true;
 
+  if (exe.find("Tahoma2D.app/Contents/MacOS") != std::string::npos) {
+    std::string dsym = exe;
+    int pos = dsym.find("Contents");
+    dsym.replace(pos, 14, "DSYM/Contents/Resources/DWARF");
+    TFilePath file(dsym);
+    if(TFileStatus(file).doesExist()) exe = dsym;
+  }
+
   sprintf(cmd, "atos -o \"%.400s\" -l %p %s 2>&1", exe.c_str(), loadaddr, addr);
 #else
   sprintf(cmd, "addr2line -f -p -e \"%.400s\" %s 2>&1", exepath, addr);
