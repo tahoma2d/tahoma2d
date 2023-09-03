@@ -508,6 +508,27 @@ void addImagesToIcon(QIcon &icon, const QImage &baseImg, const QImage &overImg,
 
 //-----------------------------------------------------------------------------
 
+void addSpecifiedSizedImageToIcon(QIcon &icon, const char *iconSVGName,
+                                  QSize newSize) {
+  static int devPixRatio = getHighestDevicePixelRatio();
+  newSize *= devPixRatio;
+
+  // Construct icon filenames
+  QString iconName     = QString::fromUtf8(iconSVGName);
+  QString overIconName = iconName + "_over";
+  QString onIconName   = iconName + "_on";
+
+  // Generate icon images
+  QImage baseImg = generateIconImage(iconName, 1.0, newSize);
+  QImage overImg = generateIconImage(overIconName, 1.0, newSize);
+  QImage onImg   = generateIconImage(onIconName, 1.0, newSize);
+
+  // Add newly sized images to the icon
+  addImagesToIcon(icon, baseImg, overImg, onImg);
+}
+
+//-----------------------------------------------------------------------------
+
 // Add the same pixmap to all modes and states of a QIcon
 void addPixmapToAllModesAndStates(QIcon &icon, const QPixmap &pixmap) {
   QIcon::Mode modes[]   = {QIcon::Normal, QIcon::Disabled, QIcon::Selected};
