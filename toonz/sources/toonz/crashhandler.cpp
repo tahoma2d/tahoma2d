@@ -11,6 +11,8 @@
 #else
 #ifdef MACOSX
 #include <mach-o/dyld.h>
+#else
+#include <link.h>
 #endif
 #include <execinfo.h>
 #include <signal.h>
@@ -313,7 +315,7 @@ static bool addr2line(std::string &out, const char *exepath, const size_t addr,
 #ifdef MACOSX
   sprintf(cmd, "atos -o \"%.400s\" -l %p %p 2>&1", exepath, laddr, addr);
 #else
-  sprintf(cmd, "addr2line -f -p -e \"%.400s\" %p 2>&1", exepath, addr);
+  sprintf(cmd, "addr2line -fpCis -e \"%.400s\" %p 2>&1", exepath, addr);
 #endif
   return sh(out, cmd);
 }
@@ -325,6 +327,16 @@ static bool generateMinidump(TFilePath dumpFile) { return false; }
 //-----------------------------------------------------------------------------
 
 #define HAS_MODULES
+#ifdef LINUX
+static int printModuleInfo(struct dl_phdr_info *i, size_t size, void *data) {
+  std::string *out = (std::string *)data;
+  char addr[512];
+  sprintf(addr, "%p", (long)i->dlpi_addr);
+  out->append(std::string(addr) + " - " + std::string(i->dlpi_name) + "\n");
+  return 0;
+}
+#endif
+
 static void printModules(std::string &out) {
 #ifdef MACOSX
   char str[512];
@@ -339,6 +351,8 @@ static void printModules(std::string &out) {
     out.append(std::string(str) + " - " + path.toStdString());
     out.append("\n");
   }
+#else
+  dl_iterate_phdr(printModuleInfo, &out);
 #endif
 }
 
@@ -386,6 +400,10 @@ static void printBacktrace(std::string &out) {
     char addrstr[512];
     sprintf(addrstr, "%p", addr);
     sym = std::string(addrstr) + " (in " + module + ")";
+#else
+    link_map *link_map;
+    dladdr1(buffer[i], &info, (void **)&link_map, RTLD_DL_LINKMAP);
+    addr -= link_map->l_addr;
 #endif
 
     if (infoFound &&
