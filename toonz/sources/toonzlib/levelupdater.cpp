@@ -25,6 +25,9 @@ namespace {
 
 inline bool supportsRandomAccess(const TFilePath &fp) {
   const std::string &type = fp.getType();
+
+  if (type == "pli") return false;
+
   return type == "tlv" ||  // TLVs do support random access
          fp.getDots() == "..";  // Multi-file levels of course do
 }
