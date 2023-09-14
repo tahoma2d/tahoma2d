@@ -78,7 +78,7 @@ then
 fi
 
 export LD_LIBRARY_PATH=appdir/usr/lib/tahoma2d
-./linuxdeployqt*.AppImage appdir/usr/bin/Tahoma2D -bundle-non-qt-libs -verbose=0 -always-overwrite \
+./linuxdeployqt*.AppImage appdir/usr/bin/Tahoma2D -bundle-non-qt-libs -verbose=0 -always-overwrite -no-strip \
    -executable=appdir/usr/bin/lzocompress \
    -executable=appdir/usr/bin/lzodecompress \
    -executable=appdir/usr/bin/tcleanup \
@@ -91,7 +91,7 @@ rm appdir/AppRun
 cp ../sources/scripts/AppRun appdir
 chmod 775 appdir/AppRun
 
-./linuxdeployqt*.AppImage appdir/usr/bin/Tahoma2D -appimage
+./linuxdeployqt*.AppImage appdir/usr/bin/Tahoma2D -appimage -no-strip 
 
 mv Tahoma2D*.AppImage Tahoma2D/Tahoma2D.AppImage
 
