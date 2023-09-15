@@ -989,15 +989,6 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
                       int closeStyleIndex, bool fillOnlySavebox) {
   TRectD selArea = stroke ? stroke->getBBox() : area;
 
-  //std::cout << "\nfillAreaWithUndo.strokeBBox y1:";
-  //std::cout << selArea.y1;
-  //std::cout << "::y0:";
-  //std::cout << selArea.y0;
-  //std::cout << ",x1:";
-  //std::cout << selArea.x1;
-  //std::cout << ",x0:";
-  //std::cout << selArea.x0;
-
   if (TToonzImageP ti = img) {
     // allargo di 1 la savebox, perche cosi' il rectfill di tutta l'immagine fa
     // una sola fillata
@@ -1009,14 +1000,6 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
             : TRect(TPoint(0, 0), ti->getSize());
     TRect rasterFillArea =
         ToonzImageUtils::convertWorldToRaster(selArea, ti) * enlargedSavebox;
-    //std::cout << "   rasterFillArea:y1=";
-    //std::cout << rasterFillArea.y1;
-    //std::cout << ",y0=";
-    //std::cout << rasterFillArea.y0;
-    //std::cout << "; x1=";
-    //std::cout << rasterFillArea.x1;
-    //std::cout << ",x0=";
-    //std::cout << rasterFillArea.x0;
 
     if (rasterFillArea.isEmpty()) return;
 
@@ -1026,9 +1009,9 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
     TTileSetCM32 *tileSet = new TTileSetCM32(ras->getSize());
     tileSet->add(ras, rasterFillArea);
 
-    std::cout << "\nfillAreaWithUndo ras:";
-    std::cout << ras->getSize();
-    outputPixels("ras", ras);
+    //std::cout << "\nfillAreaWithUndo ras:";
+    //std::cout << ras->getSize();
+    //outputPixels("ras", ras);
 
     TRasterCM32P tempRaster;
     int styleIndex = 4094;
@@ -1038,65 +1021,54 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
 
 
     if (fillGaps) {
-      //std::cout << "\nfillAreaWithUndo before applyAutoclose, tempRaster size:";
-      //std::cout << tempRaster->getSize();
-      //std::cout << ", AutocloseDistance:";
-      //std::cout << AutocloseDistance;
-      //std::cout << ", AutocloseAngle:";
-      //std::cout << AutocloseAngle;
 
       applyAutoclose(tempTi, AutocloseDistance, AutocloseAngle,
                      AutocloseOpacity, 4094, convert(rasterFillArea), stroke);
 
-      std::cout << "\nfillAreaWithUndo after applyAutoclose, tempRaster size:";
-      std::cout << tempRaster->getSize();
-      outputPixels("tempRaster", tempRaster);
+      //std::cout << "\nfillAreaWithUndo after applyAutoclose, tempRaster size:";
+      //std::cout << tempRaster->getSize();
+      //outputPixels("tempRaster", tempRaster);
     }
 
     AreaFiller filler(tempRaster);
         
     if (!stroke) {
-      std::cout << "\nfillAreaWithUndo now calling AreaFiller.rectFill()";
       bool ret = filler.rectFill(rasterFillArea, cs, onlyUnfilled,
                                  colorType != LINES, colorType != AREAS);
       if (!ret) {
         delete tileSet;
         return;
       }
-      std::cout << "\nfillAreaWithUndo after calling AreaFiller.rectFill()";
-      std::cout << tempRaster->getSize();
-      outputPixels("tempRaster", tempRaster);
+      //std::cout << "\nfillAreaWithUndo after calling AreaFiller.rectFill()";
+      //std::cout << tempRaster->getSize();
+      //outputPixels("tempRaster", tempRaster);
 
     } else {
-      std::cout << "\nfillAreaWithUndo now calling AreaFiller.strokeFill()";
       filler.strokeFill(stroke, cs, onlyUnfilled, colorType != LINES,
                         colorType != AREAS, rasterFillArea);
-      std::cout << "\nfillAreaWithUndo after calling AreaFiller.strokeFill()";
-      std::cout << tempRaster->getSize();
-      outputPixels("tempRaster", tempRaster);
+      //std::cout << "\nfillAreaWithUndo after calling AreaFiller.strokeFill()";
+      //std::cout << tempRaster->getSize();
+      //outputPixels("tempRaster", tempRaster);
     }
 
       TPixelCM32 *tempPix = tempRaster->pixels();
       TPixelCM32 *keepPix = ras->pixels();
-      std::cout << "\nFinal Check Started filltool.cpp:fillAreaWithUndo if fillGaps is TRUE";
-      std::cout << "\n---- y:";
-      std::cout << tempRaster->getLy();
-      std::cout << " x:";
-      std::cout << tempRaster->getLx();
-      std::cout << " paint:";
-      std::cout << cs;
-      std::cout << "----";
+      //std::cout << "\nFinal Check Started filltool.cpp:fillAreaWithUndo if fillGaps is TRUE";
+      //std::cout << "\n---- y:";
+      //std::cout << tempRaster->getLy();
+      //std::cout << " x:";
+      //std::cout << tempRaster->getLx();
+      //std::cout << " paint:";
+      //std::cout << cs;
+      //std::cout << "----";
       for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
-        std::cout << "\n y:";
-        std::cout << tempY;
+        //std::cout << "\n y:";
+        //std::cout << tempY;
         for (int tempX = 0; tempX < tempRaster->getLx();
              tempX++, tempPix++, keepPix++) {
 
-          //if (tempPix->getInk() == 4095 ||
-          //    tempPix->getInk() == styleIndex) {
           if (tempPix->getInk() == 4095) {
-            //if (fillGaps || closeGaps) {
-              // does this pixel have a fill pixel neighbor?
+            // does this pixel have a fill pixel neighbor?
             if (((tempX > 0) && ((tempPix - 1)->getPaint() == cs) &&
               (tempPix - 1)->isPurePaint())  // west
               || ((tempX < tempRaster->getLx()) &&
@@ -1111,10 +1083,6 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
               ) {  // yes, keep this pixel
               if (closeGaps) {
                 // keep as ink line
-                std::cout << " i:";
-                std::cout << tempY;
-                std::cout << ":";
-                std::cout << tempX;
                 keepPix->setInk(closeStyleIndex);
                 keepPix->setPaint(cs);
                 keepPix->setTone(0);
@@ -1122,10 +1090,6 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
               else {
                 // keep as paint
                 // keepPix->setInk(paint);
-                std::cout << " p:";
-                std::cout << tempY;
-                std::cout << ":";
-                std::cout << tempX;
                 keepPix->setPaint(cs);
                 keepPix->setTone(255);
               }
@@ -1133,23 +1097,12 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
               //unwanted close gap pixel
             }
           } else if (tempPix->getPaint() == IGNORECOLORSTYLE || tempPix->getInk() == IGNORECOLORSTYLE) {
-              // IGNORECOLORSTYLE is a color style index value above the valid style index values.
+              // IGNORECOLORSTYLE is a color style index value used to identify pixels to not persist.
               // Pixels are set to this value in fillutil::restoreColors()
               // It indicates pixels that should be discarded by this final check routine.
               // This allows original pixel values to persist.
-              //std::cout << ", IGNORECOLORSTYLE at:";
-              //std::cout << tempY;
-              //std::cout << ":";
-              //std::cout << tempX;
           } else {
             // Handle all other pixels
-              // ToDo - add a check for stray single pixels
-              //    New paint pixels on a border without a paint neighbor should be removed.
-              //    Stray pixels can appear on the opposite side of ink lines from the filled side.
-              // ToDo - add a check to persist only pixels of the current colorstyle.
-              //    Only new pixels of the current colorstyle should be preserved.
-              //    This resolves the accidental replacement of pixels with 0 colorstyle pixels.
-              //    Is this needed?
             if (tempPix->getPaint() == cs){
                 keepPix->setInk(tempPix->getInk());
                 keepPix->setPaint(tempPix->getPaint());
@@ -1159,28 +1112,17 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
         }
       }
 
-      std::cout << "\nFinal Check Complete fillAreaWithUndo ras at end of filltool.cpp:fillAreaWithUndo if fillGaps";
-      std::cout << fillGaps;
-      std::cout << ras->getSize();
-      outputPixels("ras", ras);
+      //std::cout << "\nFinal Check Complete fillAreaWithUndo ras at end of filltool.cpp:fillAreaWithUndo if fillGaps";
+      //std::cout << fillGaps;
+      //std::cout << ras->getSize();
+      //outputPixels("ras", ras);
 
     TPalette *plt = ti->getPalette();
-
-    std::cout << "\nautopaintLines:";
-    std::cout << autopaintLines;
-    std::cout << ", plt:";
-    std::cout << plt;
-    std::cout << ", plt && !hasAutoInks(plt):";
-    std::cout << (plt && !hasAutoInks(plt));
 
     // !autopaintLines will temporary disable autopaint line feature
     if ((plt && !hasAutoInks(plt)) || !autopaintLines) plt = 0;
 
-    std::cout << ", after test plt:";
-    std::cout << plt;
-
     if (plt) {
-      std::cout << "\nautopainting lines";
       TRect rect   = rasterFillArea;
       TRect bounds = ras->getBounds();
       if (bounds.overlaps(rect)) {
@@ -1311,7 +1253,7 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
 
     if (tileSaver.getTileSet()->getTileCount() != 0) {
       static int count = 0;
-      TSystem::outputDebug("FILL" + std::to_string(count++) + "\n");
+      //TSystem::outputDebug("FILL" + std::to_string(count++) + "\n");
       if (offs != TPoint())
         for (int i = 0; i < tileSet->getTileCount(); i++) {
           TTileSet::Tile *t = tileSet->editTile(i);
@@ -1989,7 +1931,6 @@ void AreaFillTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
                                 bool fillGaps, bool closeGaps,
                                 int closeStyleIndex) {
-    std::cout << "\nAreaFillTool::leftButtonUp()";
   if (!m_isLeftButtonPressed) return;
   m_isLeftButtonPressed = false;
 

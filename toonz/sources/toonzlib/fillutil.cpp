@@ -31,17 +31,10 @@ void computeSeeds(const TRasterCM32P &r, TStroke *stroke,
   for (int i = 0; i < length; i++) {
     TPoint p = convert(stroke->getPointAtLength(i));
     if (p == oldP || !bbox.contains(p)) continue;
-    //std::cout << "\ncomputeSeeds y:";
-    //std::cout << p.y;
-    //std::cout << " x:";
-    //std::cout << p.x;
-    //std::cout << " paint:";
-    //std::cout << (r->pixels(p.y) + p.x)->getPaint();
     seeds.push_back(
         std::pair<TPoint, int>(p, (r->pixels(p.y) + p.x)->getPaint()));
     oldP = p;
   }
-  std::cout << "\n";
 }
 
 //-----------------------------------------------------------------------------
@@ -74,15 +67,6 @@ void fillArea(const TRasterCM32P &ras, TRegion *r, int colorId,
   bbox *= ras->getBounds();
   ras->lock();
 
-  std::cout << "\nfillutil.fillArea(), bbox";
-  std::cout << " y1:";
-  std::cout << bbox.y1;
-  std::cout << " y0:";
-  std::cout << bbox.y0;
-  std::cout << " x1:";
-  std::cout << bbox.x1;
-  std::cout << " x0:";
-  std::cout << bbox.x0;
   for (int i = bbox.y0; i <= bbox.y1; i++) {
     TPixelCM32 *line = ras->pixels(i);
     std::vector<double> intersections;
@@ -94,12 +78,6 @@ void fillArea(const TRasterCM32P &ras, TRegion *r, int colorId,
       int from        = std::max(tfloor(intersections[j]), bbox.x0);
       int to          = std::min(tceil(intersections[j + 1]), bbox.x1);
       TPixelCM32 *pix = line + from;
-      std::cout << "\ny:";
-      std::cout << i;
-      std::cout << " from:";
-      std::cout << from;
-      std::cout << " to:";
-      std::cout << to;
       for (int k = from; k < to; k++, pix++) {
         if (fillPaints && (!onlyUnfilled || pix->getPaint() == 0))
           pix->setPaint(colorId);
@@ -123,14 +101,6 @@ void restoreColors(const TRasterCM32P &r,
     //params.m_styleId = seeds[i].second;
     //params.m_styleId = 0;
     params.m_styleId = IGNORECOLORSTYLE; //an unused color style value used to control a later final check
-    std::cout << "\nrestoreColors:";
-    std::cout << i;
-    std::cout << " y:";
-    std::cout << params.m_p.y;
-    std::cout << " x:";
-    std::cout << params.m_p.x;
-    std::cout << " styleId:";
-    std::cout << params.m_styleId;
     fill(r, params);
   }
 }
@@ -201,31 +171,14 @@ void fillautoInks(TRasterCM32P &rin, TRect &rect, const TRasterCM32P &rbefore,
   TRasterCM32P r = rin->extract(rect);
   assert(r->getSize() == rbefore->getSize());
   int i, j;
-
-  std::cout << "\nfillautoInks(), fillIndex:";
-  std::cout << fillIndex;
  
   for (i = 0; i < r->getLy(); i++) {
     TPixelCM32 *pix  = r->pixels(i);
     TPixelCM32 *pixb = rbefore->pixels(i);
-    std::cout << "\ny:";
-    std::cout << i;
     for (j = 0; j < r->getLx(); j++, pix++, pixb++) {
       int paint = pix->getPaint();
       int tone  = pix->getTone();
       int ink   = pix->getInk();
-      //std::cout << "|pix x:";
-      //std::cout << j;
-      //std::cout << ", pix.paint:";
-      //std::cout << paint;
-      //std::cout << ", pixb.paint:";
-      //std::cout << pixb->getPaint();
-      //std::cout << ", tone:";
-      //std::cout << tone;
-      //std::cout << ", ink:";
-      //std::cout << ink;
-      //std::cout << ", flag:";
-      //std::cout << plt->getStyle(ink)->getFlags();
 
       /* new
       * Pseudocode:
@@ -269,15 +222,6 @@ bool AreaFiller::rectFill(const TRect &rect, int color, bool onlyUnfilled,
   // Then uses the fill command to fill in the edges with their original color
   // This makes sure only the enclosed areas not on the edge get filled.
   /*- In case of FillInk only -*/
-
-  std::cout << "\nAreaFiller::rectFill(), color:";
-  std::cout << color;
-  std::cout << ", onlyUnfilled:";
-  std::cout << onlyUnfilled;
-  std::cout << ", fillPaints:";
-  std::cout << fillPaints;
-  std::cout << ", fillInks:";
-  std::cout << fillInks;
 
   if (!fillPaints) {
     assert(fillInks);
@@ -416,22 +360,22 @@ void AreaFiller::strokeFill(TStroke *stroke, int colorId, bool onlyUnfilled,
   
   app.findRegions();
 
-  std::cout << "\nAreaFiller::strokeFill().fillArea()";
+  //std::cout << "\nAreaFiller::strokeFill().fillArea()";
 
   for (UINT i = 0; i < app.getRegionCount(); i++)
     fillArea(m_ras, app.getRegion(i), colorId, onlyUnfilled, fillPaints,
              fillInks);
   
-  std::cout << "\nAreaFiller::strokeFill(), after fillArea()";
-  outputPixels("tempRaster", m_ras); // issue 1151
+  //std::cout << "\nAreaFiller::strokeFill(), after fillArea()";
+  //outputPixels("tempRaster", m_ras); // issue 1151
   
   app.removeStroke(0);
 
   stroke->transform(TTranslation(convert(-m_ras->getCenter())));
   restoreColors(m_ras, seeds);
 
-  std::cout << "\nAreaFiller::strokeFill(), after restoreColors()";
-  outputPixels("tempRaster", m_ras); // issue 1151
+  //std::cout << "\nAreaFiller::strokeFill(), after restoreColors()";
+  //outputPixels("tempRaster", m_ras); // issue 1151
 
   m_ras->unlock();
 }
