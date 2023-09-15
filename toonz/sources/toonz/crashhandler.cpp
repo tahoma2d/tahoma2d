@@ -9,11 +9,16 @@
 #include <dbghelp.h>
 #include <psapi.h>
 #else
+#ifdef MACOSX
+#include <mach-o/dyld.h>
+#else
+#include <link.h>
+#endif
 #include <execinfo.h>
 #include <signal.h>
 #include <unistd.h>
 #include <err.h>
-#include <regex>
+#include <dlfcn.h>
 #endif
 
 #include "tgl.h"
@@ -26,6 +31,7 @@
 #include "toonz/tproject.h"
 #include "toonz/tscenehandle.h"
 #include "toonz/toonzscene.h"
+#include "tsystem.h"
 
 #include <QOperatingSystemVersion>
 #include <QDesktopServices>
@@ -41,6 +47,8 @@
 #include <QTextEdit>
 #include <QPushButton>
 
+#include <QDebug>
+
 static QWidget *s_parentWindow = NULL;
 static bool s_reportProjInfo   = false;
 #ifdef _WIN32
@@ -54,6 +62,15 @@ static const char *filenameOnly(const char *path) {
     if (path[i] == '\\' || path[i] == '/') return path + i + 1;
   }
   return path;
+}
+
+//-----------------------------------------------------------------------------
+static QString obfuscateUsername(QString path) {
+  QString username = TSystem::getUserName();
+  QString newPath  = path;
+  newPath.replace("/" + username + "/", "/USER/");
+  newPath.replace("\\" + username + "\\", "\\USER\\");
+  return newPath;
 }
 
 //-----------------------------------------------------------------------------
@@ -93,7 +110,8 @@ static void printModules(std::string &out) {
     for (unsigned int i = 0; i < size / sizeof(HMODULE); i++) {
       char moduleName[512];
       GetModuleFileNameA(modules[i], moduleName, 512);
-      out.append(moduleName);
+      QString path = obfuscateUsername(QString(moduleName));
+      out.append(path.toStdString());
       out.append("\n");
     }
   }
@@ -291,12 +309,13 @@ static bool sh(std::string &out, const char *cmd) {
 
 //-----------------------------------------------------------------------------
 
-static bool addr2line(std::string &out, const char *exepath, const char *addr) {
+static bool addr2line(std::string &out, const char *exepath, const size_t addr,
+                      const size_t laddr) {
   char cmd[512];
-#ifdef OSX
-  sprintf(cmd, "atos -o \"%.400s\" %s 2>&1", exepath, addr);
+#ifdef MACOSX
+  sprintf(cmd, "atos -o \"%.400s\" -l %p %p 2>&1", exepath, laddr, addr);
 #else
-  sprintf(cmd, "addr2line -f -p -e \"%.400s\" %s 2>&1", exepath, addr);
+  sprintf(cmd, "addr2line -fpCis -e \"%.400s\" %p 2>&1", exepath, addr);
 #endif
   return sh(out, cmd);
 }
@@ -307,7 +326,35 @@ static bool generateMinidump(TFilePath dumpFile) { return false; }
 
 //-----------------------------------------------------------------------------
 
-static void printModules(std::string &out) {}
+#define HAS_MODULES
+#ifdef LINUX
+static int printModuleInfo(struct dl_phdr_info *i, size_t size, void *data) {
+  std::string *out = (std::string *)data;
+  char addr[512];
+  sprintf(addr, "%p", (long)i->dlpi_addr);
+  out->append(std::string(addr) + " - " + std::string(i->dlpi_name) + "\n");
+  return 0;
+}
+#endif
+
+static void printModules(std::string &out) {
+#ifdef MACOSX
+  char str[512];
+  int c = _dyld_image_count();
+  for (int i = 0; i < c; i++) {
+    const char *image_name           = _dyld_get_image_name(i);
+    const struct mach_header *header = _dyld_get_image_header(i);
+    uintptr_t loadaddr               = (uintptr_t)header;
+    sprintf(str, "%p", loadaddr);
+
+    QString path = obfuscateUsername(QString(image_name));
+    out.append(std::string(str) + " - " + path.toStdString());
+    out.append("\n");
+  }
+#else
+  dl_iterate_phdr(printModuleInfo, &out);
+#endif
+}
 
 //-----------------------------------------------------------------------------
 
@@ -319,42 +366,55 @@ static void printBacktrace(std::string &out) {
   const int size = 256;
   void *buffer[size];
 
-  // Get executable path
-  char exepath[512];
-  memset(exepath, 0, 512);
-  if (readlink("/proc/self/exe", exepath, 512) < 0)
-    fprintf(stderr, "Couldn't get exe path\n");
-
   // Back trace
-  int nptrs  = backtrace(buffer, size);
-  char **bts = backtrace_symbols(buffer, nptrs);
-  std::regex re("\\[(.+)\\]");
-  if (bts) {
-    for (int i = 0; i < nptrs; ++i) {
-      // Skip first frames since they point to this function
-      if (frameStack++ < frameSkip) continue;
-      char numStr[32];
-      memset(numStr, 0, sizeof(numStr));
-      sprintf(numStr, "%3i> ", frameStack - frameSkip);
-      out.append(numStr);
+  int nptrs = backtrace(buffer, size);
+  for (int i = 0; i < nptrs; ++i) {
+    // Skip first frames since they point to this function
+    if (frameStack++ < frameSkip) continue;
+    char numStr[32];
+    memset(numStr, 0, sizeof(numStr));
+    sprintf(numStr, "%3i> ", frameStack - frameSkip);
+    out.append(numStr);
 
-      std::string sym = bts[i];
-      std::string line;
-      std::smatch ms;
+    std::string line;
+    std::string sym    = "??? at ??:?";
+    std::string module = "???";
+    size_t addr        = (size_t)buffer[i];
 
-      bool found = false;
-      if (std::regex_search(sym, ms, re)) {
-        std::string addr = ms[1];
-        if (addr2line(line, exepath, addr.c_str())) {
-          found = (line.rfind("??", 0) != 0);
-        }
-      }
+    bool found = false;
 
-      out.append(found ? line : (sym + "\n"));
+    Dl_info info;
+    int infoFound = dladdr(buffer[i], &info);
+
+    if (infoFound) module = std::string(info.dli_fname);
+
+#ifdef MACOSX
+    if (module.find("Tahoma2D.app/Contents/MacOS") != std::string::npos) {
+      std::string dsym = module;
+      int pos          = dsym.find("Contents");
+      dsym.replace(pos, 14, "DSYM/Contents/Resources/DWARF");
+      TFilePath file(dsym);
+      if (TFileStatus(file).doesExist()) module = dsym;
     }
-  }
 
-  free(bts);
+    char addrstr[512];
+    sprintf(addrstr, "%p", addr);
+    sym = std::string(addrstr) + " (in " + module + ")";
+#else
+    link_map *link_map;
+    dladdr1(buffer[i], &info, (void **)&link_map, RTLD_DL_LINKMAP);
+    addr -= link_map->l_addr;
+#endif
+
+    if (infoFound &&
+        addr2line(line, module.c_str(), addr, (size_t)info.dli_fbase)) {
+      found = (line.rfind("??", 0) != 0) &&
+              (line.find("cannot load symbol", 0) != 0) &&
+              (line.find("command not found") != 0);
+    }
+
+    out.append(found ? line : (sym + "\n"));
+  }
 }
 
 void signalHandler(int sig) {
@@ -543,6 +603,7 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
   char dateName[128];
   std::string out;
 
+
   // Get time and build filename
   time_t acc_time;
   time(&acc_time);
@@ -558,7 +619,7 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
   bool minidump = generateMinidump(fpDump, s_exceptionPtr);
 #else
   bool minidump = generateMinidump(fpDump);
-#endif;
+#endif
 
   // Generate report
   try {
@@ -572,11 +633,11 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
     out.append("\n");
     printGPUInfo(out);
     out.append("\nCrash File: ");
-    out.append(fpCrsh.getQString().toStdString());
+    out.append(obfuscateUsername(fpCrsh.getQString()).toStdString());
 #ifdef HAS_MINIDUMP
     out.append("\nMini Dump File: ");
     if (minidump)
-      out.append(fpDump.getQString().toStdString());
+      out.append(obfuscateUsername(fpDump.getQString()).toStdString());
     else
       out.append("Failed");
 #endif
@@ -595,18 +656,21 @@ bool CrashHandler::trigger(const QString reason, bool showDialog) {
       std::wstring sceneName   = currentScene->getSceneName();
 
       out.append("\nApplication Dir: ");
-      out.append(QCoreApplication::applicationDirPath().toStdString());
+      out.append(obfuscateUsername(QCoreApplication::applicationDirPath())
+                     .toStdString());
       out.append("\nStuff Dir: ");
-      out.append(TEnv::getStuffDir().getQString().toStdString());
+      out.append(
+          obfuscateUsername(TEnv::getStuffDir().getQString()).toStdString());
       out.append("\n");
       out.append("\nProject Name: ");
       out.append(currentProject->getName().getQString().toStdString());
       out.append("\nScene Name: ");
       out.append(QString::fromStdWString(sceneName).toStdString());
       out.append("\nProject Path: ");
-      out.append(projectPath.getQString().toStdString());
+      out.append(obfuscateUsername(projectPath.getQString()).toStdString());
       out.append("\nScene Path: ");
-      out.append(currentScene->getScenePath().getQString().toStdString());
+      out.append(obfuscateUsername(currentScene->getScenePath().getQString())
+                     .toStdString());
       out.append("\n");
     }
   } catch (...) {
