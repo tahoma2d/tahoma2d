@@ -73,6 +73,8 @@ class TTileSaverFullColor;
 
 //=============================================================================
 
+DVAPI void outputPixels(const std::string _str, const TRasterCM32P& r);
+
 // returns true if the savebox is changed typically, if you fill the bg)
 DVAPI bool fill(const TRasterCM32P &r, const FillParameters &params,
                 TTileSaverCM32 *saver = 0, bool fillGaps = false,

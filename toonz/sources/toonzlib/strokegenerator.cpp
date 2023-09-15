@@ -57,12 +57,15 @@ void StrokeGenerator::filterPoints() {
 
   //  filtra m_points iniziali: generalmente elevate variazioni di thickness
   //  si hanno tra m_points[0] (al massimo m_points[1]) e i successivi)
+  // filter initial m_points: usually large thickness variations
+  // you have between m_points[0] (at most m_points[1]) and the following ones)
   int size1 = m_points.size();
   int kMin  = 0;
   int kMax  = std::min(
       4,
       size1 -
           2);  //  confronta 5 m_points iniziali con i successivi corrispondenti
+               // compare initial 5 m_points with subsequent matched ones
   int k = kMax;
   for (k = kMax; k >= kMin; --k) {
     TThickPoint currPoint = m_points[k];
@@ -72,10 +75,12 @@ void StrokeGenerator::filterPoints() {
     if (deltaThick > 0.6 * dist)  //  deltaThick <= dist (condizione
                                   //  approssimata di non-autocontenimento per
                                   //  TTQ)
+        // deltaThick <= dist (approximate non-self-contained condition for TTQ)
     {
       vector<TThickPoint>::iterator it1 = m_points.begin();
       vector<TThickPoint>::iterator it2 = it1 + k + 1;
       m_points.erase(it1, it2);  //  cancella da m_points[0] a m_points[k]
+      // delete from m_points[0] to m_points[k]
       assert((int)m_points.size() == size1 - k - 1);
       break;
     }
@@ -83,11 +88,15 @@ void StrokeGenerator::filterPoints() {
   //  filtra m_points finali: generalmente elevate variazioni di thickness
   //  si hanno tra m_points[size - 1] (al massimo m_points[size - 2]) e i
   //  predecessori)
+  // filter final m_points: usually large thickness variations
+  // have between m_points[size - 1] (at most m_points[size - 2]) and i
+  // predecessors)
   int size2 = m_points.size();
   kMax      = size2 - 1;
   kMin      = std::max(
       kMax - 4,
       1);  //  confronta 5 m_points finali con i predecessori corrispondenti
+           // compare final 5 m_points with matching ancestors
   k = kMin;
   for (k = kMin; k <= kMax; ++k) {
     TThickPoint currPoint = m_points[k];
@@ -100,6 +109,7 @@ void StrokeGenerator::filterPoints() {
     {
       int kTmp = k;
       while (k <= kMax)  //  cancella da m_points[k] a m_points[size2 - 1]
+                         //  delete from m_points[k] to m_points[size2 - 1]
       {
         m_points.pop_back();
         ++k;

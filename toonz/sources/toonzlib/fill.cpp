@@ -71,9 +71,15 @@ bool calcFillRow(const TRasterCM32P &r, const TPoint &p, int &xa, int &xb,
   limit   = line + r->getBounds().x1;
   oldtone = pix->getTone();
   tone    = oldtone;
-  std::cout << "calcFillRow xa:";
+  std::cout << "calcFillRow, prevailing:";
+  std::cout << prevailing;
+  std::cout << ", p.x:";
+  std::cout << p.x;
+  std::cout << ", limit:";
+  std::cout << r->getBounds().x1;
+  std::cout << ", xa:";
   std::cout << xa;
-  std::cout << " xb:";
+  std::cout << ", xb:";
   std::cout << xb;
   for (; pix <= limit; pix++) {
     std::cout << " x:";
@@ -567,12 +573,50 @@ TRasterCM32P convertRaster2CM(const TRasterP &inputRaster) {
   return rout;
 }
 
+//-----------------------------------------------------------------------------
+
+void outputPixels(const std::string _str, const TRasterCM32P &r) {
+    //r->lock();
+    //TPixelCM32* tempPix = r->pixels(0);
+    //std::cout << "\noutputPixels for:";
+    //std::cout << _str;
+    //std::cout << ", bbox is y : ";
+    //std::cout << r->getLy();
+    //std::cout << ",x:";
+    //std::cout << r->getLx();
+    //std::cout << "----";
+    //tempPix = tempPix + ((r->getLy()-1) * r->getLx());
+    //for (int tempY = r->getLy()-1; tempY >= 0; tempY--) {
+    //    if (tempY < r->getLy() - 1) {
+    //        tempPix = tempPix - 2 * r->getLx(); 
+    //    }
+    //    std::cout << "\ny:";
+    //    std::cout << tempY;
+    //    for (int tempX = 0; tempX < r->getLx();
+    //        tempX++, tempPix++) {
+    //        std::cout << "|x:";
+    //        std::cout << tempX;
+    //        std::cout << ":";
+    //        std::cout << tempPix->getInk();
+    //        std::cout << ".";
+    //        std::cout << tempPix->getPaint();
+    //        std::cout << ".";
+    //        std::cout << tempPix->getTone();
+    //    }
+    //}
+    //r->unlock();
+    //std::cout << "\n";
+    return;
+}
+
+//-----------------------------------------------------------------------------
+
 /*-- The return value is whether the saveBox has been updated or not. --*/
 bool fill(const TRasterCM32P &r, const FillParameters &params,
           TTileSaverCM32 *saver, bool fillGaps, bool closeGaps,
           int closeStyleIndex, double autoCloseDistance, TXsheet *xsheet,
           int frameIndex) {
-  std::cout << "\nGlobalScope.fill_2";
+  std::cout << " GlobalScope.fill_2";
   auto fullColorThreshMatte = [](int matte, int fillDepth) -> int {
     return (matte <= fillDepth) ? matte : 255;
   };
@@ -609,11 +653,25 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   /*-- getBounds returns the entire image --*/
   TRect bbbox = tempRaster->getBounds();
 
+  std::cout << " bbbox:";
+  std::cout << bbbox;
+  std::cout << " p:";
+  std::cout << p;
+
   /*- Return if clicked outside the screen -*/
   if (!bbbox.contains(p)) return false;
   /*- If the same color has already been painted, return -*/
   int paintAtClickedPos = (tempRaster->pixels(p.y) + p.x)->getPaint();
-  if (paintAtClickedPos == paint) return false;
+  
+  std::cout << " paintAtClickedPos:";
+  std::cout << paintAtClickedPos;
+  std::cout << ", paint:";
+  std::cout << paint;
+
+  if (paintAtClickedPos == paint) {
+      std::cout << " paintAtClickedPos==paint ";
+      return false;
+  }
   /*- If the "paint only transparent areas" option is enabled and the area is
    * already colored, return
    * -*/
@@ -721,6 +779,7 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   
   std::cout << " paint_2=:";
   std::cout << paint;
+  std::cout << " ";
 
   bool fillIt =
       !xsheet ? calcFillRow(tempRaster, p, xa, xb, paint, params.m_palette,
@@ -729,11 +788,17 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
                                fillDepth);
   std::cout << " paint_3=:";
   std::cout << paint;
+  std::cout << " ";
 
   if (fillIt) fillRow(tempRaster, p, xa, xb, paint, params.m_palette, saver);
   if (xsheet) segments[y].push_back(std::pair<int, int>(xa, xb));
   seeds.push(FillSeed(xa, xb, y, 1));
   seeds.push(FillSeed(xa, xb, y, -1));
+
+  std::cout << "\nfill.fill().outputPixels() tempRaster about to populate first seed, fillGaps is:";
+  std::cout << fillGaps;
+  outputPixels("tempRaster",tempRaster); // issue 1151
+
 
     // Start: Set the ink on gaps that were used to their final value, NOTE: This is duplicate code, 1 of 2  
   if (fillGaps || closeGaps) {
@@ -1117,10 +1182,15 @@ std::cout << "\nFill-Seeds";
     }
   }
 
+  std::cout << "\nfill.fill().outputPixels() before final, fillGaps is:";
+  std::cout << fillGaps;
+  outputPixels("tempRaster", tempRaster); // issue 1151
+
+
   if (fillGaps) {
     TPixelCM32 *tempPix = tempRaster->pixels();
     TPixelCM32 *keepPix = r->pixels();
-    std::cout << "\nfill_final_check----y:";
+    std::cout << "\nfill.cpp:fill final check started----y:";
     std::cout << tempRaster->getLy();
     std::cout << ",x:";
     std::cout << tempRaster->getLx();
@@ -1130,35 +1200,8 @@ std::cout << "\nFill-Seeds";
       //std::cout << tempY;
       for (int tempX = 0; tempX < tempRaster->getLx();
            tempX++, tempPix++, keepPix++) {
-         //std::cout << " a";
-         //std::cout << tempX;
-         //std::cout << ":";
-         //std::cout << tempPix->getInk();
-         //std::cout << ".";
-         //std::cout << tempPix->getPaint();
-         //std::cout << ".";
-         //std::cout << tempPix->getTone();
-         //std::cout << ":";
-         //std::cout << keepPix->getInk();
-         //std::cout << ".";
-         //std::cout << keepPix->getPaint();
-         //std::cout << ".";
-         //std::cout << keepPix->getTone();
 
-        // if (tempPix->getInk() != styleIndex &&
-        //    tempPix->getInk() != fakeStyleIndex) {
-        // std::cout << "\ntempY:";
-        // std::cout << tempY;
-        // std::cout << "\ttempX:";
-        // std::cout << tempX;
-        // std::cout << "\ttemPix.getInk():";
-        // std::cout << tempPix->getInk();
-        // std::cout << "\ttemPix.getPaint():";
-        // std::cout << tempPix->getPaint();
-        // keepPix->setPaint(tempPix->getPaint());
-        //}
         // Handle pixels of gap close lines, 4094, 4095
-
         if (tempPix->getInk() == fakeStyleIndex ||
             tempPix->getInk() == styleIndex) {
             if (tempPix->getInk() == fakeStyleIndex) {
@@ -1174,122 +1217,7 @@ std::cout << "\nFill-Seeds";
             }else{
                 // an unused close gap pixel, so ignore
             }
-        //  if (fillGaps || closeGaps) {
-        //        
 
-        //    std::cout << "\nNorth "; //north
-        //    std::cout << tempY+1;
-        //    std::cout << "  ";
-        //    std::cout << tempX;
-        //    std::cout << ":";
-        //    std::cout << (tempPix + tempRaster->getWrap())->getInk();
-        //    std::cout << ".";
-        //    std::cout << (tempPix + tempRaster->getWrap())->getPaint();
-        //    std::cout << ".";
-        //    std::cout << (tempPix + tempRaster->getWrap())->getTone();
-        //    std::cout << ";";
-        //    std::cout << (keepPix + r->getWrap())->getInk();
-        //    std::cout << ".";
-        //    std::cout << (keepPix + r->getWrap())->getPaint();
-        //    std::cout << ".";
-        //    std::cout << (keepPix + r->getWrap())->getTone();
-
-        //    std::cout << "\nWest:Center:East "; //west, center, east
-        //    std::cout << tempY;
-        //    std::cout << " ";
-        //    // west
-        //    std::cout << tempX-1;
-        //    std::cout << ":";
-        //    std::cout << (tempPix - 1)->getInk();
-        //    std::cout << ".";
-        //    std::cout << (tempPix - 1)->getPaint();
-        //    std::cout << ".";
-        //    std::cout << (tempPix - 1)->getTone();
-        //    std::cout << ";";
-        //    std::cout << (keepPix - 1)->getInk();
-        //    std::cout << ".";
-        //    std::cout << (keepPix - 1)->getPaint();
-        //    std::cout << ".";
-        //    std::cout << (keepPix - 1)->getTone();
-        //    // center
-        //    std::cout << " ";
-        //    std::cout << tempX;
-        //    std::cout << ":";
-        //    std::cout << tempPix->getInk();
-        //    std::cout << ".";
-        //    std::cout << tempPix->getPaint();
-        //    std::cout << ".";
-        //    std::cout << tempPix->getTone();
-        //    std::cout << ";";
-        //    std::cout << keepPix->getInk();
-        //    std::cout << ".";
-        //    std::cout << keepPix->getPaint();
-        //    std::cout << ".";
-        //    std::cout << keepPix->getTone();
-        //    // east
-        //    std::cout << " ";
-        //    std::cout << tempX+1;
-        //    std::cout << ":";
-        //    std::cout << (tempPix + 1)->getInk();
-        //    std::cout << ".";
-        //    std::cout << (tempPix + 1)->getPaint();
-        //    std::cout << ".";
-        //    std::cout << (tempPix + 1)->getTone();
-        //    std::cout << ";";
-        //    std::cout << (keepPix + 1)->getInk();
-        //    std::cout << ".";
-        //    std::cout << (keepPix + 1)->getPaint();
-        //    std::cout << ".";
-        //    std::cout << (keepPix + 1)->getTone();
-        //    // south
-        //    std::cout << "\nSouth ";
-        //    std::cout << tempY-1;
-        //    std::cout << "  ";
-        //    std::cout << tempX;
-        //    std::cout << ":";
-        //    std::cout << (tempPix - tempRaster->getWrap())->getInk();
-        //    std::cout << ".";
-        //    std::cout << (tempPix - tempRaster->getWrap())->getPaint();
-        //    std::cout << ".";
-        //    std::cout << (tempPix - tempRaster->getWrap())->getTone();
-        //    std::cout << ";";
-        //    std::cout << (keepPix - r->getWrap())->getInk();
-        //    std::cout << ".";
-        //    std::cout << (keepPix - r->getWrap())->getPaint();
-        //    std::cout << ".";
-        //    std::cout << (keepPix - r->getWrap())->getTone();
-
-
-        //    // does this pixel have a fill pixel neighbor that is new?
-        //    if (
-        //        ((tempX > 0) && ((tempPix - 1)->getPaint() == paint) && (tempPix - 1)->isPurePaint() && !(((keepPix - 1)->getPaint() == paint) && (keepPix - 1)->isPurePaint()) )  // west
-        //        || ((tempX < tempRaster->getLx()) && ((tempPix + 1)->getPaint() == paint) && (tempPix + 1)->isPurePaint() && !(((keepPix + 1)->getPaint() == paint) && (keepPix + 1)->isPurePaint()) )  // east
-        //        || ((tempPix + tempRaster->getWrap())->getPaint() == paint && (tempPix + tempRaster->getWrap())->isPurePaint() && !((keepPix + r->getWrap())->getPaint() == paint && (keepPix + r->getWrap())->isPurePaint()) )  // north
-        //        || ((tempPix - tempRaster->getWrap())->getPaint() == paint && (tempPix - tempRaster->getWrap())->isPurePaint() && !((keepPix - r->getWrap())->getPaint() == paint && (keepPix - r->getWrap())->isPurePaint()) )  // south
-        //    ) {// yes, keep this pixel
-        //      if (closeGaps 
-        //          && (
-        //              ((tempX > 0) && (tempPix - 1)->getPaint() == 0 && (tempPix - 1)->isPurePaint())  // west
-        //              || ((tempX < tempRaster->getLx()) && ((tempPix + 1)->getPaint() == 0) && (tempPix + 1)->isPurePaint())  // east
-        //              || ((tempPix + tempRaster->getWrap())->getPaint() == 0 && (tempPix + tempRaster->getWrap())->isPurePaint())  // north
-        //              || ((tempPix - tempRaster->getWrap())->getPaint() == 0 && (tempPix - tempRaster->getWrap())->isPurePaint())  // south 
-        //            )
-        //      ){ //keep as ink line
-        //        keepPix->setInk(closeStyleIndex);
-        //        keepPix->setPaint(paint);
-        //        keepPix->setTone(0);
-        //      } else { //keep as paint
-        //        //keepPix->setInk(paint);
-        //        keepPix->setPaint(paint);
-        //        keepPix->setTone(255);
-        //      }
-        //    }
-        //  } else {
-        //    // Ignore unwanted gap close pixels.
-        //    // Should not reach this code as those pixels should not be
-        //    // generated prior to this code without fillGaps or closeGaps set to
-        //    // true.
-        //  }
         } else {
           //
           // Handle all other pixels
@@ -1298,58 +1226,9 @@ std::cout << "\nFill-Seeds";
           keepPix->setPaint(tempPix->getPaint());
           keepPix->setTone(tempPix->getTone());
         }
-        // This next line takes care of autopaint lines
-        //if (tempPix->getInk() != styleIndex) { //commented out by Tom
-        //  //if (closeGaps && (tempPix->getInk() == fakeStyleIndex)) {
-        //  if (tempPix->getInk() == fakeStyleIndex) {
-        //    std::cout << "\n****** A pixel with ink 4095 was found ******\n";
-        //    if (closeGaps) {
-        //      keepPix->setInk(closeStyleIndex);
-        //      // the following two lines could set up a partial ink, partial paint pixel
-        //      // keepPix->setPaint(closeStyleIndex);
-        //      // keepPix->setTone(tempPix->getTone()); //commented out by Tom
-        //      keepPix->setTone(0);
-        //    } else {
-        //      keepPix->setPaint(paint);
-        //      keepPix->setTone(255);
-        //    }
-        //  } else {
-        //    keepPix->setPaint(tempPix->getPaint());
-        //    keepPix->setTone(tempPix->getTone());
-        //  }
-        //} else { // handle tempPix->getInk() == styleIndex
-            //TPoint nearestPix = nearestInkNotDiagonal(tempRaster, TPoint(tempX, tempY));
-            //std::cout << "\nfor pix y: ";
-            //std::cout << tempY;
-            //std::cout << " x: ";
-            //std::cout << tempX;
-            //std::cout << " nearest pix y: ";
-            //std::cout << nearestPix.y;
-            //std::cout << " x: ";
-            //std::cout << nearestPix.x;
-            // Is this pixel next to a pixel painted with current fill color? 
-            // then keep
-            //keepPix->setInk(closeStyleIndex);
-            //keepPix->setTone(0);
-            // else, ignore
-            //keepPix->setTone(255);
-        //}
-        //std::cout << " b";
-        //std::cout << tempX;
-        //std::cout << ":";
-        //std::cout << tempPix->getInk();
-        //std::cout << ".";
-        //std::cout << tempPix->getPaint();
-        //std::cout << ".";
-        //std::cout << tempPix->getTone();
-        //std::cout << ":";
-        //std::cout << keepPix->getInk();
-        //std::cout << ".";
-        //std::cout << keepPix->getPaint();
-        //std::cout << ".";
-        //std::cout << keepPix->getTone();
       }
     }
+    std::cout << "\nfill.cpp:fill final check finished----";
   }
   return saveBoxChanged;
 }
