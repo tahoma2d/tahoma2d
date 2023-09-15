@@ -481,6 +481,7 @@ static void printGPUInfo(std::string &out) {
 CrashHandler::CrashHandler(QWidget *parent, TFilePath crashFile, QString crashReport)
     : QDialog(parent), m_crashFile(crashFile), m_crashReport(crashReport) {
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+  setWindowFlag(Qt::WindowCloseButtonHint, false);
 
   QStringList sl;
   sl.append(tr("<b>Tahoma2D crashed unexpectedly.</b>"));
@@ -530,6 +531,7 @@ CrashHandler::CrashHandler(QWidget *parent, TFilePath crashFile, QString crashRe
 }
 
 void CrashHandler::reject() {
+/*
   QStringList sl;
   sl.append(tr("Application is in unstable state and must be restarted."));
   sl.append(tr("Resuming is not recommended and may lead to an unrecoverable crash."));
@@ -541,6 +543,7 @@ void CrashHandler::reject() {
   if (reply == QMessageBox::Yes) {
     QDialog::reject();
   }
+*/
 }
 
 //-----------------------------------------------------------------------------
