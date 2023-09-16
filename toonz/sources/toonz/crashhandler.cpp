@@ -480,8 +480,7 @@ static void printGPUInfo(std::string &out) {
 
 CrashHandler::CrashHandler(QWidget *parent, TFilePath crashFile, QString crashReport)
     : QDialog(parent), m_crashFile(crashFile), m_crashReport(crashReport) {
-  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-  setWindowFlag(Qt::WindowCloseButtonHint, false);
+  setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
 
   QStringList sl;
   sl.append(tr("<b>Tahoma2D crashed unexpectedly.</b>"));
