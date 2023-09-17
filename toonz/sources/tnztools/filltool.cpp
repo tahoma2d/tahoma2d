@@ -1253,7 +1253,7 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
 
     if (tileSaver.getTileSet()->getTileCount() != 0) {
       static int count = 0;
-      //TSystem::outputDebug("FILL" + std::to_string(count++) + "\n");
+      TSystem::outputDebug("FILL" + std::to_string(count++) + "\n");
       if (offs != TPoint())
         for (int i = 0; i < tileSet->getTileCount(); i++) {
           TTileSet::Tile *t = tileSet->editTile(i);

@@ -1185,21 +1185,6 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
   seeds.push(FillSeed(xa, xb, y, 1));
   seeds.push(FillSeed(xa, xb, y, -1));
 
-  // TomDoingArt - update this for issue 1151?
-  //if (fillGaps && closeGaps) {
-  //  // Set the ink on gaps that were used to 4095
-  //  TPixelCM32 *tempPix = refCMRaster->pixels(0);
-  //  tempPix += (y * refCMRaster->getLx()) + xa - 1;
-  //  int i = xa;
-  //  while (i <= xb) {
-  //    if (tempPix->getInk() == styleIndex) {
-  //      tempPix->setInk(fakeStyleIndex);
-  //    }
-  //    tempPix++;
-  //    i++;
-  //  }
-  //}
-
   while (!seeds.empty()) {
     FillSeed fs = seeds.top();
     seeds.pop();
@@ -1250,21 +1235,6 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
                                clickedPosColor, fillDepth);
         // insert segment to be filled
         insertSegment(segments[y], std::pair<int, int>(xc, xd));
-        
-        // TomDoingArt - update this for issue 1151?
-        //if (fillGaps && closeGaps) {
-        //  // Set the ink on gaps that were used to 4095
-        //  TPixelCM32 *tempPix = refCMRaster->pixels(0);
-        //  tempPix += (y * refCMRaster->getLx()) + xa - 1;
-        //  int i = xa;
-        //  while (i <= xb) {
-        //    if (tempPix->getInk() == styleIndex) {
-        //      tempPix->setInk(fakeStyleIndex);
-        //    }
-        //    tempPix++;
-        //    i++;
-        //  }
-        //}
 
         // create new fillSeed to invert direction, if needed
         if (xc < xa) seeds.push(FillSeed(xc, xa - 1, y, -dy));
@@ -1327,14 +1297,57 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
     }
   }
 
-  if (fillGaps && closeGaps) {
+  //std::cout << "\nfill::fullColorFill() step before final, fillGaps is:";
+  //std::cout << fillGaps;
+  //outputPixels("refCMRaster", refCMRaster); // issue 1151
+
+// final check for close gap pixels
+  if (fillGaps) {
     TPixelCM32 *tempPix = refCMRaster->pixels();
     TPixel32 *keepPix   = ras->pixels();
+    int fillNeighbors;
     for (int tempY = 0; tempY < refCMRaster->getLy(); tempY++) {
       for (int tempX = 0; tempX < refCMRaster->getLx();
            tempX++, tempPix++, keepPix++) {
-        if (tempPix->getInk() == fakeStyleIndex) {
-          *keepPix = gapColor;
+        // if (tempPix->getInk() == fakeStyleIndex) {
+        if (tempPix->getInk() == styleIndex) {
+          // how many fill pixel neighbors for the current pixel?
+          fillNeighbors = 0;
+          if ((tempX > 0) && *(keepPix - 1) == color) fillNeighbors++;  // west
+          if ((tempX < refCMRaster->getLx()) && *(keepPix + 1) == color)
+            fillNeighbors++;                                          // east
+          if (*(keepPix + ras->getWrap()) == color) fillNeighbors++;  // north
+          if (*(keepPix - ras->getWrap()) == color) fillNeighbors++;  // south
+          if (fillNeighbors < 1) {
+            // no neighboring fill pixels, this is an unused gap close pixel
+          } else if (fillNeighbors > 3) {
+            // too many neighboring fill pixels to be a gap close pixel
+            // , convert it to a fill pixel
+            *keepPix = color;
+          } else {
+            // does it have at least one unpainted pixel neighbor?
+            if (((tempX > 0) && (tempPix - 1)->getInk() == 0 &&
+                 (*(keepPix - 1) == clickedPosColor))  // west
+                || ((tempX < refCMRaster->getLx()) &&
+                    (tempPix + 1)->getInk() == 0 &&
+                    *(keepPix + 1) == clickedPosColor)  // east
+                || ((tempPix + refCMRaster->getWrap())->getInk() == 0 &&
+                    *(keepPix + ras->getWrap()) == clickedPosColor)  // north
+                || ((tempPix - refCMRaster->getWrap())->getInk() == 0 &&
+                    *(keepPix - ras->getWrap()) == clickedPosColor)  // south
+            ) {
+              // yes, persist it as a gap close pixel
+              if (closeGaps) {
+                *keepPix = gapColor;
+              } else {
+                *keepPix = color;
+              }
+            } else {
+              // it is not acting as a border pixel so convert it to a fill
+              // pixel
+              *keepPix = color;
+            }
+          }
         }
       }
     }

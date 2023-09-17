@@ -181,31 +181,26 @@ void fillautoInks(TRasterCM32P &rin, TRect &rect, const TRasterCM32P &rbefore,
       int ink   = pix->getInk();
 
       /* new
-      * Pseudocode:
-      * Start the inkFill procedure at the current pixel if:
-      *     The ink colorstyle has autopaint enabled
-      *     The ink colorstyle is not already the same as the fill colorstyle
-      *     The paint colorstyle of a neighboring pixel:
-      *       is the same as the fill colorstyle
-      *       has changed from its prior version
-      */
+       * Pseudocode:
+       * Start the inkFill procedure at the current pixel if:
+       *     The ink colorstyle has autopaint enabled
+       *     The ink colorstyle is not already the same as the fill colorstyle
+       *     The paint colorstyle of a neighboring pixel:
+       *       is the same as the fill colorstyle
+       *       has changed from its prior version
+       */
 
-      if (plt->getStyle(ink)->getFlags() != 0
-        && ink != fillIndex
-        && ( 
-          ((pix + r->getWrap())->getPaint() == fillIndex //north
-          && (pix + r->getWrap())->getPaint() != (pixb + rbefore->getWrap())->getPaint())
-          ||
-          ((pix - r->getWrap())->getPaint() == fillIndex //south
-          && (pix - r->getWrap())->getPaint() != (pixb - rbefore->getWrap())->getPaint())
-          ||
-          ((pix + 1)->getPaint() == fillIndex            //east
-          && (pix + 1)->getPaint() != (pixb + 1)->getPaint())
-          ||
-          ((pix - 1)->getPaint() == fillIndex            //west
-          && (pix - 1)->getPaint() != (pixb - 1)->getPaint())
-        )
-      ){
+      if (plt->getStyle(ink)->getFlags() != 0 && ink != fillIndex &&
+          (((pix + r->getWrap())->getPaint() == fillIndex  // north
+            && (pix + r->getWrap())->getPaint() !=
+                   (pixb + rbefore->getWrap())->getPaint()) ||
+           ((pix - r->getWrap())->getPaint() == fillIndex  // south
+            && (pix - r->getWrap())->getPaint() !=
+                   (pixb - rbefore->getWrap())->getPaint()) ||
+           ((pix + 1)->getPaint() == fillIndex  // east
+            && (pix + 1)->getPaint() != (pixb + 1)->getPaint()) ||
+           ((pix - 1)->getPaint() == fillIndex  // west
+            && (pix - 1)->getPaint() != (pixb - 1)->getPaint()))) {
         inkFill(rin, TPoint(j, i) + rect.getP00(), fillIndex, 0, NULL, &rect);
       }
     }
