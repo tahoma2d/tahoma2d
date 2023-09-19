@@ -75,7 +75,7 @@ void initImageIo(bool lightVersion) {
   TFileType::declare("pli", TFileType::VECTOR_LEVEL);
 
   TLevelReader::define("svg", 0, TLevelReaderSvg::create);
-  TFileType::declare("svg", TFileType::VECTOR_LEVEL);
+  TFileType::declare("svg", TFileType::VECTOR_IMAGE);
   TLevelWriter::define("svg", TLevelWriterSvg::create, false);
   Tiio::defineWriterProperties("svg", new Tiio::SvgWriterProperties());
 
