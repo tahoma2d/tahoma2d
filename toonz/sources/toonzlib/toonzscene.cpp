@@ -1498,8 +1498,12 @@ TCamera *ToonzScene::getCurrentPreviewCamera() {
 //-----------------------------------------------------------------------------
 
 TContentHistory *ToonzScene::getContentHistory(bool createIfNeeded) {
-  if (!m_contentHistory && createIfNeeded)
-    m_contentHistory = new TContentHistory(false);
+  if (!m_contentHistory && createIfNeeded) {
+    QString altUsername =
+        Preferences::instance()->getStringValue(recordAsUsername);
+    bool recordEdit  = Preferences::instance()->getBoolValue(recordFileHistory);
+    m_contentHistory = new TContentHistory(false, altUsername, recordEdit);
+  }
   return m_contentHistory;
 }
 

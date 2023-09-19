@@ -331,7 +331,10 @@ void TXshSimpleLevel::touchFrame(const TFrameId &fid) {
   m_properties->setDirtyFlag(true);
   TContentHistory *ch = getContentHistory();
   if (!ch) {
-    ch = new TContentHistory(true);
+    QString altUsername =
+        Preferences::instance()->getStringValue(recordAsUsername);
+    bool recordEdit = Preferences::instance()->getBoolValue(recordFileHistory);
+    ch              = new TContentHistory(true, altUsername, recordEdit);
     setContentHistory(ch);
   }
   ch->frameModifiedNow(fid);

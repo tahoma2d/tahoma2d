@@ -225,7 +225,7 @@ InfoViewerImp::InfoViewerImp()
   create(eSampleSize, QObject::tr("Sample Size:      "));
   create(eSampleType, QObject::tr("Sample Type: "));
 
-  m_historyLabel.setStyleSheet("color: rgb(0, 0, 200);");
+  setLabelStyle(&m_historyLabel);
   m_history.setStyleSheet("font-size: 12px; font-family: \"courier\";");
   // m_history.setStyleSheet("font-family: \"courier\";");
   m_history.setReadOnly(true);
@@ -343,6 +343,12 @@ void InfoViewerImp::setImageInfo() {
     ii = lr->getImageInfo(m_fids[m_currentIndex]);
   } catch (...) {
     return;
+  }
+  if (lr && m_path.getType() == "pli") {
+    try {
+      lr->loadInfo();
+    } catch (...) {
+    }
   }
   if (!m_fids.empty() && lr && ii) {
     setVal(eImageSize,

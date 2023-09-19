@@ -12,6 +12,7 @@
 //#include <fstream.h>
 #include "../compatibility/tfile_io.h"
 #include "tenv.h"
+#include "toonz/preferences.h"
 
 /*=====================================================================*/
 
@@ -700,7 +701,11 @@ void ParsedPliImp::loadInfo(bool readPlt, TPalette *&palette,
       m_iChan.seekg(pos, ios::beg);
       TagElem *tagElem = readTag();
       TextTag *textTag = (TextTag *)tagElem->m_tag;
-      history          = new TContentHistory(true);
+      QString altUsername =
+          Preferences::instance()->getStringValue(recordAsUsername);
+      bool recordEdit =
+          Preferences::instance()->getBoolValue(recordFileHistory);
+      history = new TContentHistory(true, altUsername, recordEdit);
       history->deserialize(QString::fromStdString(textTag->m_text));
       delete tagElem;
     }

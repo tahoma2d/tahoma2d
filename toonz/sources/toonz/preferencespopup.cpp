@@ -651,6 +651,17 @@ void PreferencesPopup::onColorCalibrationChanged() {
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onRecordAsUserChanged() {
+  QString username = m_pref->getStringValue(recordAsUsername);
+  if (username.isEmpty()) {
+    username = TSystem::getUserName();
+    m_pref->setValue(recordAsUsername, QVariant::fromValue(username));
+    getUI<LineEdit*>(recordAsUsername)->setText(username);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onDefLevelTypeChanged() {
   bool isRaster = m_pref->getIntValue(DefLevelType) != PLI_XSHLEVEL &&
                   !m_pref->getBoolValue(newLevelSizeToCameraSizeEnabled);
@@ -971,7 +982,8 @@ void PreferencesPopup::onImportPolicyExternallyChanged(int policy) {
 //-----------------------------------------------------------------------------
 
 QWidget* PreferencesPopup::createUI(PreferencesItemId id,
-                                    const QList<ComboBoxItem>& comboItems) {
+                                    const QList<ComboBoxItem>& comboItems,
+                                    bool isLineEdit) {
   PreferencesItem item = m_pref->getItem(id);
   // create widget depends on the parameter types
   QWidget* widget = nullptr;
@@ -1039,6 +1051,12 @@ QWidget* PreferencesPopup::createUI(PreferencesItemId id,
       ret    = connect(combo, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onChange()));
       widget = combo;
+    } else if (isLineEdit) {  // create LineEdit
+      DVGui::LineEdit* lineEdit =
+          new DVGui::LineEdit(item.value.toString(), this);
+      ret =
+          connect(lineEdit, SIGNAL(editingFinished()), this, SLOT(onChange()));
+      widget = lineEdit;
     } else {  // create FileField
       DVGui::FileField* field =
           new DVGui::FileField(this, item.value.toString());
@@ -1115,16 +1133,18 @@ QGridLayout* PreferencesPopup::insertGroupBoxUI(PreferencesItemId id,
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::insertUI(PreferencesItemId id, QGridLayout* layout,
-                                const QList<ComboBoxItem>& comboItems) {
+                                const QList<ComboBoxItem>& comboItems,
+                                bool isLineEdit) {
   PreferencesItem item = m_pref->getItem(id);
 
-  QWidget* widget = createUI(id, comboItems);
+  QWidget* widget = createUI(id, comboItems, isLineEdit);
   if (!widget) return;
 
-  bool isFileField = false;
+  bool isEditBox = false;
   if (item.type == QMetaType::QVariantMap ||
-      (item.type == QMetaType::QString && dynamic_cast<FileField*>(widget)))
-    isFileField = true;
+      (item.type == QMetaType::QString &&
+       (dynamic_cast<FileField*>(widget) || dynamic_cast<LineEdit*>(widget))))
+    isEditBox = true;
 
   // CheckBox contains label in itself
   if (item.type == QMetaType::Bool)
@@ -1133,8 +1153,8 @@ void PreferencesPopup::insertUI(PreferencesItemId id, QGridLayout* layout,
     int row = layout->rowCount();
     layout->addWidget(new QLabel(getUIString(id), this), row, 0,
                       Qt::AlignRight | Qt::AlignVCenter);
-    if (isFileField)
-      layout->addWidget(widget, row, 1, 1, 2);
+    if (isEditBox)
+      layout->addWidget(widget, row, 1, 1, (isLineEdit ? 1 : 2));
     else {
       bool isWideComboBox = false;
       for (auto cbItem : comboItems) {
@@ -1267,6 +1287,8 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {resetUndoOnSavingLevel, tr("Clear Undo History when Saving Levels")},
       {doNotShowPopupSaveScene, tr("Do not show Save Scene popup warning")},
       {defaultProjectPath, tr("Default Project Path:")},
+      {recordFileHistory, tr("Record File History* (tnz, pli, hst)")},
+      {recordAsUsername, tr("History Username*:")},
 
       // Import / Export
       {ffmpegPath, tr("Executable Directory:")},
@@ -1914,8 +1936,16 @@ QWidget* PreferencesPopup::createSavingPage() {
 
   insertUI(fastRenderPath, lay);
 
+  QGridLayout* recordHistoryLay = insertGroupBoxUI(recordFileHistory, lay);
+  { insertUI(recordAsUsername, recordHistoryLay, QList<ComboBoxItem>(), true); }
+
   lay->setRowStretch(lay->rowCount(), 1);
+  insertFootNote(lay);
   widget->setLayout(lay);
+
+  m_onEditedFuncMap.insert(recordAsUsername,
+                           &PreferencesPopup::onRecordAsUserChanged);
+
   return widget;
 }
 
@@ -2391,6 +2421,8 @@ void PreferencesPopup::onChange() {
     m_pref->setValue(id, field->getValue());
   else if (QGroupBox* groupBox = dynamic_cast<QGroupBox*>(senderWidget))
     m_pref->setValue(id, groupBox->isChecked());
+  else if (LineEdit* lineEdit = dynamic_cast<LineEdit*>(senderWidget))
+    m_pref->setValue(id, lineEdit->text());
   else
     return;
 
