@@ -511,4 +511,6 @@
 #define MI_PrevTaggedFrame "MI_PrevTaggedFrame"
 #define MI_ClearTags "MI_ClearTags"
 
+#define MI_ToggleLightTable "MI_ToggleLightTable"
+
 #endif

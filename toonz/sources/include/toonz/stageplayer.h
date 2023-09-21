@@ -114,6 +114,8 @@ public:
 
   TPixel32 m_filterColor;
 
+  static bool m_isLightTableEnabled;
+
 public:
   Player();
 

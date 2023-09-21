@@ -474,6 +474,8 @@
 		<file>icons/dark/actions/16/shift_and_trace_no_shift.svg</file>
 		<file>icons/dark/actions/16/shift_and_trace_reset.svg</file>
 
+		<file>icons/dark/actions/16/light_table.svg</file>
+
 		<!-- Folders -->
 		<file>icons/dark/actions/18/folder.svg</file>
 		<file>icons/dark/actions/18/folder_on.svg</file>

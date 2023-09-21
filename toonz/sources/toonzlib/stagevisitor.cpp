@@ -857,6 +857,10 @@ void RasterPainter::onVectorImage(TVectorImage *vi,
   int oldFrame = vPalette->getFrame();
   vPalette->setFrame(player.m_frame);
 
+  UCHAR useOpacity = player.m_opacity;
+  if (player.m_isLightTableEnabled && !player.m_isCurrentColumn)
+    useOpacity *= 0.30;
+
   if (player.m_onionSkinDistance != c_noOnionSkin) {
     TPixel32 frontOnionColor, backOnionColor;
 
@@ -875,6 +879,8 @@ void RasterPainter::onVectorImage(TVectorImage *vi,
            ((player.m_onionSkinDistance == 0)
                 ? 0.1
                 : OnionSkinMask::getOnionSkinFade(player.m_onionSkinDistance));
+    if (player.m_isLightTableEnabled && !player.m_isCurrentColumn) m[3] *= 0.30;
+
     c[0] = (1.0 - m[3]) * bgColor.r, c[1] = (1.0 - m[3]) * bgColor.g,
     c[2] = (1.0 - m[3]) * bgColor.b;
     c[3] = 0.0;
@@ -882,10 +888,10 @@ void RasterPainter::onVectorImage(TVectorImage *vi,
     cf = new TGenericColorFunction(m, c);
   } else if (player.m_filterColor != TPixel::Black) {
     TPixel32 colorScale = player.m_filterColor;
-    colorScale.m        = player.m_opacity;
+    colorScale.m        = useOpacity;
     cf                  = new TColumnColorFilterFunction(colorScale);
-  } else if (player.m_opacity < 255)
-    cf = new TTranspFader(player.m_opacity / 255.0);
+  } else if (useOpacity < 255)
+    cf = new TTranspFader(useOpacity / 255.0);
 
   TVectorRenderData rd(m_viewAff * player.m_placement, TRect(), vPalette, cf,
                        true  // alpha enabled
@@ -1011,6 +1017,10 @@ void RasterPainter::onRasterImage(TRasterImage *ri,
   bbox *= convert(m_clipRect);
   if (bbox.isEmpty()) return;
 
+  UCHAR useOpacity = player.m_opacity;
+  if (player.m_isLightTableEnabled && !player.m_isCurrentColumn)
+    useOpacity *= 0.30;
+
   int alpha                 = 255;
   Node::OnionMode onionMode = Node::eOnionSkinNone;
   if (player.m_onionSkinDistance != c_noOnionSkin) {
@@ -1023,6 +1033,8 @@ void RasterPainter::onRasterImage(TRasterImage *ri,
                               ? 0.9
                               : (1.0 - OnionSkinMask::getOnionSkinFade(
                                            player.m_onionSkinDistance));
+    if (player.m_isLightTableEnabled && !player.m_isCurrentColumn)
+      onionSkiFade *= 0.30;
     alpha               = tcrop(tround(onionSkiFade * 255.0), 0, 255);
     if (player.m_isShiftAndTraceEnabled &&
         !Preferences::instance()->areOnionColorsUsedForShiftAndTraceGhosts())
@@ -1034,8 +1046,8 @@ void RasterPainter::onRasterImage(TRasterImage *ri,
               : ((player.m_onionSkinDistance < 0) ? Node::eOnionSkinBack
                                                   : Node::eOnionSkinNone);
     }
-  } else if (player.m_opacity < 255)
-    alpha             = player.m_opacity;
+  } else if (useOpacity < 255)
+    alpha             = useOpacity;
   TXshSimpleLevel *sl = player.m_sl;
   bool doPremultiply  = false;
   bool whiteTransp    = false;
@@ -1074,6 +1086,10 @@ void RasterPainter::onToonzImage(TToonzImage *ti, const Stage::Player &player) {
   bbox *= convert(m_clipRect);
   if (bbox.isEmpty()) return;
 
+  UCHAR useOpacity = player.m_opacity;
+  if (player.m_isLightTableEnabled && !player.m_isCurrentColumn)
+    useOpacity *= 0.30;
+
   int alpha                 = 255;
   Node::OnionMode onionMode = Node::eOnionSkinNone;
   if (player.m_onionSkinDistance != c_noOnionSkin) {
@@ -1086,6 +1102,8 @@ void RasterPainter::onToonzImage(TToonzImage *ti, const Stage::Player &player) {
                               ? 0.9
                               : (1.0 - OnionSkinMask::getOnionSkinFade(
                                            player.m_onionSkinDistance));
+    if (player.m_isLightTableEnabled && !player.m_isCurrentColumn)
+      onionSkiFade *= 0.30;
     alpha               = tcrop(tround(onionSkiFade * 255.0), 0, 255);
 
     if (player.m_isShiftAndTraceEnabled &&
@@ -1099,8 +1117,8 @@ void RasterPainter::onToonzImage(TToonzImage *ti, const Stage::Player &player) {
                                                   : Node::eOnionSkinNone);
     }
 
-  } else if (player.m_opacity < 255)
-    alpha = player.m_opacity;
+  } else if (useOpacity < 255)
+    alpha = useOpacity;
 
   m_nodes.push_back(Node(r, ti->getPalette(), alpha, aff, ti->getSavebox(),
                          bbox, player.m_frame, player.m_isCurrentColumn,
@@ -1436,6 +1454,10 @@ void onMeshImage(TMeshImage *mi, const Stage::Player &player,
     }
   }
 
+  UCHAR useOpacity = player.m_opacity;
+  if (player.m_isLightTableEnabled && !player.m_isCurrentColumn)
+    useOpacity *= 0.30;
+
   if (deformation) {
     // Retrieve the associated plastic deformers data (this may eventually
     // update the deforms)
@@ -1455,7 +1477,7 @@ void onMeshImage(TMeshImage *mi, const Stage::Player &player,
 
     // Draw edges next
     if (drawMeshes) {
-      glColor4d(0.0, 1.0, 0.0, 0.7 * player.m_opacity / 255.0);  // Green
+      glColor4d(0.0, 1.0, 0.0, 0.7 * useOpacity / 255.0);  // Green
       tglDrawEdges(*mi, dataGroup);  // The mesh must be deformed
     }
   } else {
@@ -1469,7 +1491,7 @@ void onMeshImage(TMeshImage *mi, const Stage::Player &player,
 
     // Just draw the mesh image next
     if (drawMeshes) {
-      glColor4d(0.0, 1.0, 0.0, 0.7 * player.m_opacity / 255.0);  // Green
+      glColor4d(0.0, 1.0, 0.0, 0.7 * useOpacity / 255.0);  // Green
       tglDrawEdges(*mi);
     }
   }
@@ -1494,6 +1516,10 @@ void onPlasticDeformedImage(TStageObject *playerObj,
   // Deal with color scaling due to transparency / onion skin
   double pixScale[4] = {1.0, 1.0, 1.0, 1.0};
 
+  UCHAR useOpacity = player.m_opacity;
+  if (player.m_isLightTableEnabled && !player.m_isCurrentColumn)
+    useOpacity *= 0.30;
+
   if (doOnionSkin) {
     if (onionSkinImage) {
       TPixel32 frontOnionColor, backOnionColor;
@@ -1512,8 +1538,8 @@ void onPlasticDeformedImage(TStageObject *playerObj,
       pixScale[1] = (refColor.g / 255.0) * pixScale[3];
       pixScale[2] = (refColor.b / 255.0) * pixScale[3];
     }
-  } else if (player.m_opacity < 255) {
-    pixScale[3] = player.m_opacity / 255.0;
+  } else if (useOpacity < 255) {
+    pixScale[3] = useOpacity / 255.0;
     pixScale[0] = pixScale[1] = pixScale[2] = 0.0;
   }
 

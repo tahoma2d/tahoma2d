@@ -1408,6 +1408,7 @@ void RowArea::contextMenuEvent(QContextMenuEvent *event) {
   menu->addAction(cmdManager->getAction(MI_DrawingSubForward));
   menu->addAction(cmdManager->getAction(MI_DrawingSubBackward));
   menu->addSeparator();
+  menu->addAction(cmdManager->getAction(MI_ToggleLightTable));
   menu->addAction(cmdManager->getAction(MI_ShiftTrace));
   menu->addAction(cmdManager->getAction(MI_EditShift));
   menu->addAction(cmdManager->getAction(MI_NoShift));
