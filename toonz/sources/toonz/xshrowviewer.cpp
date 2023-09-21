@@ -1413,6 +1413,8 @@ void RowArea::contextMenuEvent(QContextMenuEvent *event) {
   menu->addAction(cmdManager->getAction(MI_EditShift));
   menu->addAction(cmdManager->getAction(MI_NoShift));
   menu->addAction(cmdManager->getAction(MI_ResetShift));
+  menu->addSeparator();
+  menu->addAction(cmdManager->getAction(MI_CurrentDrawingOnTop));
 
   // Tags
   menu->addSeparator();

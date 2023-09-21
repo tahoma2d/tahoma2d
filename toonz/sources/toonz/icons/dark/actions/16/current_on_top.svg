@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="16px"
+   height="16px"
+   version="1.1"
+   xml:space="preserve"
+   style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"
+   id="svg20"
+   sodipodi:docname="current_on_top.svg"
+   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs24" /><sodipodi:namedview
+   id="namedview22"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   showgrid="true"
+   inkscape:snap-grids="false"
+   inkscape:zoom="44.9375"
+   inkscape:cx="8"
+   inkscape:cy="7.9888734"
+   inkscape:window-width="1920"
+   inkscape:window-height="1141"
+   inkscape:window-x="-7"
+   inkscape:window-y="-7"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="g18"><inkscape:grid
+     type="xygrid"
+     id="grid841" /></sodipodi:namedview>
+    <g
+   transform="matrix(1,0,0,1,-170,-210)"
+   id="g18">
+        <g
+   id="new_vector_level"
+   transform="matrix(1,0,0,1,60,-20)">
+            <g
+   id="bg"
+   transform="matrix(0.110345,0,0,0.121212,93.7793,211.091)">
+                <rect
+   x="147"
+   y="156"
+   width="145"
+   height="132"
+   style="fill:rgb(135,135,135);fill-opacity:0;"
+   id="rect2" />
+            </g>
+            <g
+   id="g11">
+                <g
+   transform="matrix(1,0,0,1,1,0)"
+   id="g7">
+                    <path
+   d="M120,231.5L123.5,235L120,235L120,231.5Z"
+   id="path5" />
+                </g>
+                <path
+   d="m 125,235 c 0,-0.265 -0.105,-0.52 -0.293,-0.707 l -3,-3 C 121.52,231.105 121.265,231 121,231 h -9 c -0.552,0 -1,0.448 -1,1 v 5 c 0,0.552 0.448,1 1,1 h 12 c 0.552,0 1,-0.448 1,-1 z m -1,0 -3,-3 h -9 v 5 h 12 z"
+   id="path9"
+   sodipodi:nodetypes="sccsssssssscccccc" />
+            </g>
+            <g
+   transform="matrix(1,0,0,1,108,227)"
+   id="g15">
+                
+            </g>
+        </g>
+    <rect
+   style="fill:#000000;stroke:#000000;stroke-width:1.24066;stroke-linecap:round;stroke-dashoffset:0.9"
+   id="rect3568"
+   width="12.880068"
+   height="0.75934029"
+   x="171.49828"
+   y="220.12033" /><rect
+   style="clip-rule:evenodd;fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:1.24067;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:2;stroke-dashoffset:0.9"
+   id="rect3568-5"
+   width="12.880322"
+   height="0.7593298"
+   x="171.51547"
+   y="223.62033" /></g>
+</svg>

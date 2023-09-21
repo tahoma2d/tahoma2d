@@ -469,6 +469,8 @@
 		<file>icons/dark/actions/16/tape_end_to_line.svg</file>
 		<file>icons/dark/actions/16/tape_line_to_line.svg</file>
 
+		<file>icons/dark/actions/16/current_on_top.svg</file>
+
 		<file>icons/dark/actions/16/shift_and_trace.svg</file>
 		<file>icons/dark/actions/16/shift_and_trace_edit.svg</file>
 		<file>icons/dark/actions/16/shift_and_trace_no_shift.svg</file>

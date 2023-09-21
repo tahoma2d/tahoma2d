@@ -166,6 +166,8 @@ private:
 
   TXsheetColumnChangeObserver *m_observer;
 
+  bool m_currentDrawingOnTop;
+
   DECLARE_CLASS_CODE
 
 public:
@@ -598,6 +600,9 @@ in TXsheetImp.
   NavigationTags *getNavigationTags() const { return m_navigationTags; }
   bool isFrameTagged(int frame) const;
   void toggleTaggedFrame(int frame);
+
+  bool isCurrentDrawingOnTop() { return m_currentDrawingOnTop; }
+  void setCurrentDrawingOnTop(bool onTop) { m_currentDrawingOnTop = onTop; }
 
 protected:
   bool checkCircularReferences(TXsheet *childCandidate);

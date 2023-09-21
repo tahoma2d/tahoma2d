@@ -116,6 +116,8 @@ public:
 
   static bool m_isLightTableEnabled;
 
+  bool m_currentDrawingOnTop;
+
 public:
   Player();
 

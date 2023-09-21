@@ -45,7 +45,8 @@ Stage::Player::Player()
     , m_frame(0)
     , m_isPlaying(false)
     , m_opacity(255)
-    , m_bingoOrder(0) {}
+    , m_bingoOrder(0)
+    , m_currentDrawingOnTop(false) {}
 
 //-----------------------------------------------------------------------------
 

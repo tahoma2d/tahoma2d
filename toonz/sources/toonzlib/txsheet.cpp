@@ -199,7 +199,8 @@ TXsheet::TXsheet()
     , m_notes(new TXshNoteSet())
     , m_cameraColumnIndex(0)
     , m_observer(nullptr)
-    , m_navigationTags(new NavigationTags()) {
+    , m_navigationTags(new NavigationTags())
+    , m_currentDrawingOnTop(false) {
   // extern TSyntax::Grammar *createXsheetGrammar(TXsheet*);
   m_soundProperties      = new TXsheet::SoundProperties();
   m_imp->m_handleManager = new XshHandleManager(this);
