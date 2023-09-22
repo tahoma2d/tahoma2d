@@ -2411,7 +2411,7 @@ void MainWindow::defineActions() {
   // DockingCheck::instance()->setToggle(menuAct);
   createMenuWindowsAction(MI_OpenExport, QT_TR_NOOP("&Export"), "");
   createMenuWindowsAction(MI_OpenMotionPathPanel, QT_TR_NOOP("&Motion Paths"),
-                          "");
+                          "", "motion_path");
 
   // Menu - Help
 

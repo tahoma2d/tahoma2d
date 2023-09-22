@@ -591,7 +591,8 @@
 		<file>icons/dark/actions/16/project_settings.svg</file>
 		<file>icons/dark/actions/16/save_default_settings.svg</file>
 		<file>icons/dark/actions/16/zero_thick_lines.svg</file>
-		<file>icons/dark/actions/16/table.svg</file>
+    <file>icons/dark/actions/16/table.svg</file>
+    <file>icons/dark/actions/16/motion_path.svg</file>
 
     <!-- Keyframe -->
 		<file>icons/dark/actions/20/key_off.svg</file>
