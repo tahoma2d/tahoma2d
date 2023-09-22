@@ -2935,7 +2935,7 @@ void MainWindow::defineActions() {
                           QT_TR_NOOP("Flip Previous Guide Stroke Direction"),
                           "");
   createToolOptionsAction("A_ToolOption_GlobalKey", QT_TR_NOOP("Global Key"),
-                          "");
+                          "", "global_key");
 
   createToolOptionsAction("A_IncreaseMaxBrushThickness",
                           QT_TR_NOOP("Brush size - Increase max"), "I");
