@@ -66,6 +66,7 @@ using namespace ToolUtils;
 #define FREEPICKFILL L"Freepick"
 
 #define IGNORECOLORSTYLE 4093
+#define FAKESTYLEINDEX 4095
 
 TEnv::IntVar MinFillDepth("InknpaintMinFillDepth", 1);
 TEnv::IntVar MaxFillDepth("InknpaintMaxFillDepth", 10);
@@ -605,6 +606,8 @@ public:
       filler.strokeFill(m_s, m_paintId, m_onlyUnfilled, m_colorType != LINES,
                         m_colorType != AREAS, m_fillArea);
 
+    TSystem::outputDebug("filltool.redo() final check, m_fillGaps is:" + std::to_string(m_fillGaps) + "\n");
+    // final check
     if (m_fillGaps) {
       TPixelCM32 *tempPix = tempRaster->pixels();
       TPixelCM32 *keepPix = ras->pixels();
@@ -614,13 +617,13 @@ public:
           keepPix->setPaint(tempPix->getPaint());
           if (tempPix->getInk() != styleIndex) {
             if (m_colorType == AREAS && m_closeGaps &&
-                tempPix->getInk() == 4095) {
+                tempPix->getInk() == FAKESTYLEINDEX) {
               keepPix->setInk(m_closeStyleIndex);
               keepPix->setTone(tempPix->getTone());
-            } else if (m_colorType != AREAS && tempPix->getInk() == 4095) {
+            } else if (m_colorType != AREAS && tempPix->getInk() == FAKESTYLEINDEX) {
               keepPix->setInk(m_paintId);
               keepPix->setTone(tempPix->getTone());
-            } else if (tempPix->getInk() != 4095) {
+            } else if (tempPix->getInk() != FAKESTYLEINDEX) {
               keepPix->setInk(tempPix->getInk());
             }
           }
@@ -1053,21 +1056,16 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
 
       TPixelCM32 *tempPix = tempRaster->pixels();
       TPixelCM32 *keepPix = ras->pixels();
-      //std::cout << "\nFinal Check Started filltool.cpp:fillAreaWithUndo if fillGaps is TRUE";
-      //std::cout << "\n---- y:";
-      //std::cout << tempRaster->getLy();
-      //std::cout << " x:";
-      //std::cout << tempRaster->getLx();
-      //std::cout << " paint:";
-      //std::cout << cs;
-      //std::cout << "----";
+
+      TSystem::outputDebug("filltool.fillAreaWithUndo() final check, fillGaps is:" + std::to_string(fillGaps) + "\n");
+
       for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
         //std::cout << "\n y:";
         //std::cout << tempY;
         for (int tempX = 0; tempX < tempRaster->getLx();
              tempX++, tempPix++, keepPix++) {
 
-          if (tempPix->getInk() == 4095) {
+          if (tempPix->getInk() == FAKESTYLEINDEX) {
             // does this pixel have a fill pixel neighbor?
             if (((tempX > 0) && ((tempPix - 1)->getPaint() == cs) &&
               (tempPix - 1)->isPurePaint())  // west

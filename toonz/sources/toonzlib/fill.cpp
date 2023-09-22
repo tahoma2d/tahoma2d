@@ -20,6 +20,8 @@
 
 #include <QDebug>
 
+#include "tsystem.h"
+
 extern TEnv::DoubleVar AutocloseDistance;
 extern TEnv::DoubleVar AutocloseAngle;
 extern TEnv::IntVar AutocloseInk;
@@ -521,6 +523,9 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
     tempRaster = r;
   }
 
+  TSystem::outputDebug("fill.cpp::fill() tempRaster just after TAutocloser(), fillGaps:" + std::to_string(fillGaps) + "\n");
+  //outputPixels("tempRaster", tempRaster); // issue 1151
+
   /*-- getBounds returns the entire image --*/
   TRect bbbox = tempRaster->getBounds();
 
@@ -644,83 +649,9 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   seeds.push(FillSeed(xa, xb, y, 1));
   seeds.push(FillSeed(xa, xb, y, -1));
 
-  //std::cout << "\nfill.fill().outputPixels() tempRaster about to populate first seed, fillGaps is:";
+  //std::cout << "\nfill.fill().outputPixels() tempRaster about to process close gaps for first seed, fillGaps is:";
   //std::cout << fillGaps;
   //outputPixels("tempRaster",tempRaster); // issue 1151
-
-
-    // Start: Set the ink on gaps that were used to their final value, NOTE: This is duplicate code, 1 of 2  
-  if (fillGaps || closeGaps) {
-
-    TPixelCM32 *tempPix = tempRaster->pixels(0);
-    tempPix += (y * tempRaster->getLx()) + xa - 1;
-    int i = xa;
-
-    while (i <= xb) {
-
-      if (tempPix->getPaint() == paint) {
-        // check for neighboring gap pixels and finalize them
-        // west
-        if ((tempPix - 1)->getInk() == styleIndex) {
-          if (closeGaps) {
-            // keep as ink pixel
-            (tempPix - 1)->setInk(closeStyleIndex);
-            (tempPix - 1)->setPaint(paint);
-            (tempPix - 1)->setTone(0);
-          } else {
-            // keep as paint pixel
-            (tempPix - 1)->setInk(0);
-            (tempPix - 1)->setPaint(paint);
-            (tempPix - 1)->setTone(255);
-          }
-        }
-        // east
-        if ((tempPix + 1)->getInk() == styleIndex) {
-          if (closeGaps) {
-            // keep as ink pixel
-            (tempPix + 1)->setInk(closeStyleIndex);
-            (tempPix + 1)->setPaint(paint);
-            (tempPix + 1)->setTone(0);
-          } else {
-            // keep as paint pixel
-            (tempPix + 1)->setInk(0);
-            (tempPix + 1)->setPaint(paint);
-            (tempPix + 1)->setTone(255);
-          }
-        }
-        // north
-        if ((tempPix + tempRaster->getWrap())->getInk() == styleIndex) {
-          if (closeGaps) {
-            // keep as ink pixel
-            (tempPix + tempRaster->getWrap())->setInk(closeStyleIndex);
-            (tempPix + tempRaster->getWrap())->setPaint(paint);
-            (tempPix + tempRaster->getWrap())->setTone(0);
-          } else {
-            // keep as paint pixel
-            (tempPix + tempRaster->getWrap())->setInk(0);
-            (tempPix + tempRaster->getWrap())->setPaint(paint);
-            (tempPix + tempRaster->getWrap())->setTone(255);
-          }
-        }
-        // south
-        if ((tempPix - tempRaster->getWrap())->getInk() == styleIndex) {
-          if (closeGaps) {
-            // keep as ink pixel
-            (tempPix - tempRaster->getWrap())->setInk(closeStyleIndex);
-            (tempPix - tempRaster->getWrap())->setPaint(paint);
-            (tempPix - tempRaster->getWrap())->setTone(0);
-          } else {
-            // keep as paint pixel
-            (tempPix - tempRaster->getWrap())->setInk(0);
-            (tempPix - tempRaster->getWrap())->setPaint(paint);
-            (tempPix - tempRaster->getWrap())->setTone(255);
-          }
-        }
-      }
-      tempPix++;
-      i++;
-    }
-  }
 
   while (!seeds.empty()) {
     FillSeed fs = seeds.top();
@@ -772,40 +703,6 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
                   saver);
         if (xsheet) insertSegment(segments[y], std::pair<int, int>(xc, xd));
 
-        // Start: Set the ink on gaps that were used to their final value, NOTE: This is duplicate code, 2 of 2
-        if (fillGaps || closeGaps) {
-
-          TPixelCM32 *tempPix = tempRaster->pixels(0);
-          tempPix += (y * tempRaster->getLx()) + xa - 1;
-          int i = xa;
-
-          while (i <= xb) {
-
-            if (tempPix->getPaint() == paint) {
-              // check for neighboring gap pixels and finalize them
-              // west
-              if ((tempPix - 1)->getInk() == styleIndex) {
-                (tempPix - 1)->setInk(fakeStyleIndex);
-              }
-              // east
-              if ((tempPix + 1)->getInk() == styleIndex) {
-                  (tempPix + 1)->setInk(fakeStyleIndex);
-              }
-              // north
-              if ((tempPix + tempRaster->getWrap())->getInk() == styleIndex) {
-                (tempPix + tempRaster->getWrap())->setInk(fakeStyleIndex);
-              }
-              // south
-              if ((tempPix - tempRaster->getWrap())->getInk() == styleIndex) {
-                (tempPix - tempRaster->getWrap())->setInk(fakeStyleIndex);
-              }
-            }
-            tempPix++;
-            i++;
-          }
-        }// End: Set the ink on gaps that were used to their final value
-
-
         if (xc < xa) seeds.push(FillSeed(xc, xa - 1, y, -dy));
         if (xd > xb) seeds.push(FillSeed(xb + 1, xd, y, -dy));
         if (oldxd >= xc - 1)
@@ -848,47 +745,124 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
     }
   }
 
-  //std::cout << "\nfill.fill().outputPixels() before final, fillGaps is:";
-  //std::cout << fillGaps;
+  TSystem::outputDebug("fill.cpp::fill() before final check, fillGaps is:" + std::to_string(fillGaps) + "\n");
   //outputPixels("tempRaster", tempRaster); // issue 1151
 
-
   if (fillGaps) {
-    TPixelCM32 *tempPix = tempRaster->pixels();
-    TPixelCM32 *keepPix = r->pixels();
+    TPixelCM32 *tempPix, *tempPixRestart;
+    tempPixRestart = tempPix = tempRaster->pixels();
+    TPixelCM32 *keepPix, *keepPixRestart;
+    keepPixRestart = keepPix = r->pixels();
+    int fillNeighbors        = 0;
+    // validate close gap pixels
     for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
       for (int tempX = 0; tempX < tempRaster->getLx();
            tempX++, tempPix++, keepPix++) {
-
-        // Handle pixels of gap close lines, 4094, 4095
         if (tempPix->getInk() == fakeStyleIndex ||
             tempPix->getInk() == styleIndex) {
-            if (tempPix->getInk() == fakeStyleIndex) {
-               if(closeGaps){ //keep as ink pixel
-                    keepPix->setInk(closeStyleIndex);
-                    keepPix->setPaint(paint);
-                    keepPix->setTone(0);
-                } else { //keep as paint pixel
-                    keepPix->setInk(0);
-                    keepPix->setPaint(paint);
-                    keepPix->setTone(255);
-                }
-            }else{
-                // an unused close gap pixel, so ignore
+          // how many new fill pixel neighbors for the current pixel?
+          fillNeighbors = 0;
+          if (tempX > 0 && (tempPix - 1)->getTone() > 0 &&
+              (tempPix - 1)->getInk() < 4093 &&
+              (tempPix - 1)->getPaint() == paint &&
+              (keepPix - 1)->getPaint() != paint)
+            fillNeighbors++;  // west
+          if (tempX < tempRaster->getLx() - 1 && (tempPix + 1)->getTone() > 0 &&
+              (tempPix + 1)->getInk() < 4093 &&
+              (tempPix + 1)->getPaint() == paint &&
+              (keepPix + 1)->getPaint() != paint)
+            fillNeighbors++;  // east
+          if (tempY < tempRaster->getLy() - 1 &&
+              (tempPix + tempRaster->getWrap())->getTone() > 0 &&
+              (tempPix + tempRaster->getWrap())->getInk() < 4093 &&
+              (tempPix + tempRaster->getWrap())->getPaint() == paint &&
+              (keepPix + r->getWrap())->getPaint() != paint)
+            fillNeighbors++;  // north
+          if (tempY > 0 && (tempPix - tempRaster->getWrap())->getTone() > 0 &&
+              (tempPix - tempRaster->getWrap())->getInk() < 4093 &&
+              (tempPix - tempRaster->getWrap())->getPaint() == paint &&
+              (keepPix - r->getWrap())->getPaint() != paint)
+            fillNeighbors++;  // south
+          if (fillNeighbors < 1) {
+            // no neighboring new fill pixels, this is an unused gap close pixel
+            // pull in original values from keepPix for pixel neighbor checks
+            tempPix->setInk(keepPix->getInk());
+            tempPix->setPaint(keepPix->getPaint());
+            tempPix->setTone(keepPix->getTone());
+            continue;
+          }
+          if (fillNeighbors > 3) {
+            // too many neighboring new fill pixels to be a gap close pixel
+            // convert it to a fill pixel
+            tempPix->setInk(0);
+            tempPix->setPaint(paint);
+            tempPix->setTone(255);
+            continue;
+          }
+          // does it have at least one paintable but unpainted pixel neighbor?
+          if ((tempX > 0 && (tempPix - 1)->getInk() < fakeStyleIndex &&
+               (tempPix - 1)->getTone() > 0 &&
+               ((tempPix - 1)->getPaint() == 0 ||
+                (tempPix - 1)->getPaint() == paintAtClickedPos))  // west
+              || (tempX < tempRaster->getLx() - 1 &&
+                  (tempPix + 1)->getInk() < fakeStyleIndex &&
+                  (tempPix + 1)->getTone() > 0 &&
+                  ((tempPix + 1)->getPaint() == 0 ||
+                   (tempPix + 1)->getPaint() == paintAtClickedPos))  // east
+              ||
+              (tempY < tempRaster->getLy() - 1 &&
+               (tempPix + tempRaster->getWrap())->getInk() < fakeStyleIndex &&
+               (tempPix + tempRaster->getWrap())->getTone() > 0 &&
+               ((tempPix + tempRaster->getWrap())->getPaint() == 0 ||
+                (tempPix + tempRaster->getWrap())->getPaint() ==
+                    paintAtClickedPos))  // north
+              ||
+              (tempY > 0 &&
+               (tempPix - tempRaster->getWrap())->getInk() < fakeStyleIndex &&
+               (tempPix - tempRaster->getWrap())->getTone() > 0 &&
+               ((tempPix - tempRaster->getWrap())->getPaint() == 0 ||
+                (tempPix - tempRaster->getWrap())->getPaint() ==
+                    paintAtClickedPos))  // south
+          ) {
+            // has a paintable but unpainted neighbor, is this a close and fill
+            // pixel?
+            if (closeGaps) {  // yes, keep as ink
+              tempPix->setInk(closeStyleIndex);
+              tempPix->setPaint(paint);
+              tempPix->setTone(0);
+              continue;
             }
-
-        } else {
-          //
-          // Handle all other pixels
-          //
-          keepPix->setInk(tempPix->getInk());
-          keepPix->setPaint(tempPix->getPaint());
-          keepPix->setTone(tempPix->getTone());
+            // no, a fill gaps pixel, keep as paint
+            tempPix->setInk(0);
+            tempPix->setPaint(paint);
+            tempPix->setTone(255);
+            continue;
+          }
+          // no, it is not acting as a border pixel so treat it as a fill pixel
+          tempPix->setInk(0);
+          tempPix->setPaint(paint);
+          tempPix->setTone(255);
+          continue;
         }
       }
     }
-    //std::cout << "\nfill.cpp:fill final check finished----";
+    // persistence pass
+    tempPix = tempPixRestart;
+    keepPix = keepPixRestart;
+
+    for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
+      for (int tempX = 0; tempX < tempRaster->getLx();
+           tempX++, tempPix++, keepPix++) {
+        keepPix->setInk(tempPix->getInk());
+        keepPix->setPaint(tempPix->getPaint());
+        keepPix->setTone(tempPix->getTone());
+      }
+    }
   }
+
+  TSystem::outputDebug("fill.cpp:fill final check finished----\n");
+  //outputPixels("r", r);  // issue 1151
+
   return saveBoxChanged;
 }
 
@@ -1297,8 +1271,7 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
     }
   }
 
-  //std::cout << "\nfill::fullColorFill() step before final, fillGaps is:";
-  //std::cout << fillGaps;
+  TSystem::outputDebug("fill::fullColorFill() final check, fillGaps is:" + std::to_string(fillGaps) + "\n");
   //outputPixels("refCMRaster", refCMRaster); // issue 1151
 
 // final check for close gap pixels
@@ -1314,10 +1287,12 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
           // how many fill pixel neighbors for the current pixel?
           fillNeighbors = 0;
           if ((tempX > 0) && *(keepPix - 1) == color) fillNeighbors++;  // west
-          if ((tempX < refCMRaster->getLx()) && *(keepPix + 1) == color)
-            fillNeighbors++;                                          // east
-          if (*(keepPix + ras->getWrap()) == color) fillNeighbors++;  // north
-          if (*(keepPix - ras->getWrap()) == color) fillNeighbors++;  // south
+          if (tempX < ras->getLx() - 1 && *(keepPix + 1) == color)
+            fillNeighbors++;  // east
+          if (tempY < ras->getLy() - 1 && *(keepPix + ras->getWrap()) == color)
+            fillNeighbors++;  // north
+          if (tempY > 0 && *(keepPix - ras->getWrap()) == color)
+            fillNeighbors++;  // south
           if (fillNeighbors < 1) {
             // no neighboring fill pixels, this is an unused gap close pixel
           } else if (fillNeighbors > 3) {
@@ -1328,12 +1303,14 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
             // does it have at least one unpainted pixel neighbor?
             if (((tempX > 0) && (tempPix - 1)->getInk() == 0 &&
                  (*(keepPix - 1) == clickedPosColor))  // west
-                || ((tempX < refCMRaster->getLx()) &&
+                || (tempX < refCMRaster->getLx() - 1 &&
                     (tempPix + 1)->getInk() == 0 &&
                     *(keepPix + 1) == clickedPosColor)  // east
-                || ((tempPix + refCMRaster->getWrap())->getInk() == 0 &&
+                || (tempY < refCMRaster->getLy() - 1 &&
+                    (tempPix + refCMRaster->getWrap())->getInk() == 0 &&
                     *(keepPix + ras->getWrap()) == clickedPosColor)  // north
-                || ((tempPix - refCMRaster->getWrap())->getInk() == 0 &&
+                || (tempY > 0 &&
+                    (tempPix - refCMRaster->getWrap())->getInk() == 0 &&
                     *(keepPix - ras->getWrap()) == clickedPosColor)  // south
             ) {
               // yes, persist it as a gap close pixel

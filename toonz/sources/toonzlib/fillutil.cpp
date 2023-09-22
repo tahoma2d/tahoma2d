@@ -158,12 +158,8 @@ AreaFiller::AreaFiller(const TRasterCM32P &ras)
 AreaFiller::~AreaFiller() { m_ras->unlock(); }
 
 //-----------------------------------------------------------------------------
-// questa funzione viene chiamata dopo il fill rect delle aree, e colora gli
-// inchiostri di tipo "autoink"
-// che confinano con le aree appena fillate con il rect. rbefore e' il rect del
-// raster prima del rectfill.
 // This function is called after rect fill of the areas, and colors the
-// "autoink" type inks bordering the areas just filled with the rect. 
+// "autoink" type inks bordering the areas just filled with the rect.
 // rbefore is the rect of the raster before rectfill.
 void fillautoInks(TRasterCM32P &rin, TRect &rect, const TRasterCM32P &rbefore,
                   TPalette *plt, int fillIndex) {
@@ -171,7 +167,7 @@ void fillautoInks(TRasterCM32P &rin, TRect &rect, const TRasterCM32P &rbefore,
   TRasterCM32P r = rin->extract(rect);
   assert(r->getSize() == rbefore->getSize());
   int i, j;
- 
+
   for (i = 0; i < r->getLy(); i++) {
     TPixelCM32 *pix  = r->pixels(i);
     TPixelCM32 *pixb = rbefore->pixels(i);
@@ -191,16 +187,22 @@ void fillautoInks(TRasterCM32P &rin, TRect &rect, const TRasterCM32P &rbefore,
        */
 
       if (plt->getStyle(ink)->getFlags() != 0 && ink != fillIndex &&
-          (((pix + r->getWrap())->getPaint() == fillIndex  // north
-            && (pix + r->getWrap())->getPaint() !=
-                   (pixb + rbefore->getWrap())->getPaint()) ||
-           ((pix - r->getWrap())->getPaint() == fillIndex  // south
-            && (pix - r->getWrap())->getPaint() !=
-                   (pixb - rbefore->getWrap())->getPaint()) ||
-           ((pix + 1)->getPaint() == fillIndex  // east
-            && (pix + 1)->getPaint() != (pixb + 1)->getPaint()) ||
-           ((pix - 1)->getPaint() == fillIndex  // west
-            && (pix - 1)->getPaint() != (pixb - 1)->getPaint()))) {
+          (
+              // north
+              (i < r->getLy() - 1 &&
+               (pix + r->getWrap())->getPaint() == fillIndex &&
+               (pix + r->getWrap())->getPaint() !=
+                   (pixb + rbefore->getWrap())->getPaint())
+              // south
+              || (i > 0 && (pix - r->getWrap())->getPaint() == fillIndex &&
+                  (pix - r->getWrap())->getPaint() !=
+                      (pixb - rbefore->getWrap())->getPaint())
+              // east
+              || (j < r->getLx() - 1 && (pix + 1)->getPaint() == fillIndex &&
+                  (pix + 1)->getPaint() != (pixb + 1)->getPaint())
+              // west
+              || (j > 0 && (pix - 1)->getPaint() == fillIndex &&
+                  (pix - 1)->getPaint() != (pixb - 1)->getPaint()))) {
         inkFill(rin, TPoint(j, i) + rect.getP00(), fillIndex, 0, NULL, &rect);
       }
     }
