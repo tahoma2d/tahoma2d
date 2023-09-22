@@ -1939,7 +1939,8 @@ void MainWindow::defineActions() {
                        tr("Remove everything from the recent project list."));
   // createMenuEditAction(MI_PasteNew, QT_TR_NOOP("&Paste New"),  "");
   createMenuEditAction(MI_ClearFrames, QT_TR_NOOP("&Clear Frames"), "");
-  createMenuEditAction(MI_RemoveCells, QT_TR_NOOP("&Remove Cells"), "", "");
+  createMenuEditAction(MI_RemoveCells, QT_TR_NOOP("&Remove Cells"), "",
+                       "remove");
 
   // Menu - Cleanup
 

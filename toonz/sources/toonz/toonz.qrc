@@ -94,6 +94,7 @@
 		<file>icons/dark/actions/16/load_as_sub_xsheet.svg</file>
 		<file>icons/dark/actions/16/export_scene.svg</file>
 		<file>icons/dark/actions/16/stylesets.svg</file>
+		<file>icons/dark/actions/16/remove.svg</file>
 
     <!-- Arrange -->
 		<file>icons/dark/actions/16/move_back_one.svg</file>
