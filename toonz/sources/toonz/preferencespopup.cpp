@@ -2505,8 +2505,8 @@ void PreferencesPopup::onImport() {
       Preferences::instance()->setValue(rhubarbPath, origRhubarbPath);
     }
 
+    // -- Environment variables
     if (useLegacy) {
-      // -- Environment variables
       srcDir = oldStuffPath + TFilePath("profiles/env");
       if (!TFileStatus(srcDir).doesExist())
         DVGui::warning("Failed to process Env.\nCould not find " +
@@ -2518,12 +2518,15 @@ void PreferencesPopup::onImport() {
           TSystem::copyFile(
               destDir + L"env.ini",
               srcDir + (TSystem::getUserName().toStdWString() + L".env"), true);
-          // Force reload now because it will automatically save on quit
-          TEnv::loadAllEnvVariables();
         }
       }
+    }
+    // Force reload now because it will automatically save on quit
+    if (TFileStatus(destDir + L"env.ini").doesExist())
+      TEnv::loadAllEnvVariables();
 
-      // -- Config
+    // -- Config
+    if (useLegacy) {
       srcDir = oldStuffPath + L"config";
       if (!TFileStatus(srcDir).doesExist())
         DVGui::warning("Failed to process Config.\nCould not find " +
