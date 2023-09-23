@@ -65,8 +65,6 @@
 
 using namespace ToolOptionsControls;
 
-TEnv::IntVar ArrowGlobalKeyFrame("EditToolGlobalKeyFrame", 0);
-
 //=============================================================================
 // ToolOptionToolBar
 
