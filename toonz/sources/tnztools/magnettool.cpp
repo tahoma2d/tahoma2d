@@ -11,10 +11,13 @@
 #include "tproperty.h"
 #include "drawutil.h"
 #include "tcurveutil.h"
+#include "tenv.h"
 
 #include "toonz/tobjecthandle.h"
 #include "toonz/txshlevelhandle.h"
 #include "toonz/tstageobject.h"
+
+TEnv::IntVar MagnetSize("MagnetToolSize", 20);
 
 using namespace ToolUtils;
 
@@ -109,7 +112,7 @@ void drawQuadratic(const TQuadratic &quad, double pixelSize) {
 class MagnetTool final : public TTool {
   Q_DECLARE_TR_FUNCTIONS(MagnetTool)
 
-  bool m_active;
+  bool m_active, m_firstTime;
 
   TPointD m_startingPos;
 
@@ -438,6 +441,10 @@ lefrightButtonDown(p);
   }
 
   void onActivate() override {
+    if (!m_firstTime) {
+      m_firstTime = true;
+      m_toolSize.setValue(MagnetSize);
+    }
     //        getApplication()->editImageOrSpline();
   }
 
@@ -451,6 +458,7 @@ lefrightButtonDown(p);
 
   bool onPropertyChanged(std::string propertyName) override {
     if (propertyName == m_toolSize.getName()) {
+      MagnetSize = m_toolSize.getValue();
       invalidate();
     }
 
