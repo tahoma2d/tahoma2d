@@ -41,6 +41,9 @@ TEnv::IntVar l_strokeSelectConstantThickness("SelectionToolConstantThickness",
                                              0);
 TEnv::IntVar l_strokeSelectIncludeIntersection(
     "SelectionToolIncludeIntersection", 0);
+TEnv::StringVar l_strokeSelectionTarget("SelectionToolVectorTarget",
+                                        "Standard");
+TEnv::StringVar l_strokeSelectionType("SelectionToolVectorType", "Rectangular");
 
 const int l_dragThreshold = 10;  //!< Distance, in pixels, the user has to
                                  //!  move from a button press to trigger a
@@ -1964,6 +1967,10 @@ void VectorSelectionTool::onActivate() {
     m_constantThickness.setValue(l_strokeSelectConstantThickness ? 1 : 0);
     m_strokeSelection.setSceneHandle(
         TTool::getApplication()->getCurrentScene());
+    m_selectionTarget.setValue(
+        ::to_wstring(l_strokeSelectionTarget.getValue()));
+    m_strokeSelectionType.setValue(
+        ::to_wstring(l_strokeSelectionType.getValue()));
   }
 
   SelectionTool::onActivate();
@@ -2059,15 +2066,19 @@ TPropertyGroup *VectorSelectionTool::getProperties(int idx) {
 bool VectorSelectionTool::onPropertyChanged(std::string propertyName) {
   if (!m_strokeSelection.isEditable()) return false;
 
+  if (propertyName == m_strokeSelectionType.getName())
+    l_strokeSelectionType = ::to_string(m_strokeSelectionType.getValue());
+
   if (SelectionTool::onPropertyChanged(propertyName)) return true;
 
   if (propertyName == m_includeIntersection.getName())
     l_strokeSelectIncludeIntersection = (int)(m_includeIntersection.getValue());
-  if (propertyName == m_constantThickness.getName())
+  else if (propertyName == m_constantThickness.getName())
     l_strokeSelectConstantThickness = (int)(m_constantThickness.getValue());
-  else if (propertyName == m_selectionTarget.getName())
+  else if (propertyName == m_selectionTarget.getName()) {
+    l_strokeSelectionTarget = ::to_string(m_selectionTarget.getValue());
     doOnActivate();
-  else if (propertyName == m_capStyle.getName()) {
+  } else if (propertyName == m_capStyle.getName()) {
     if (m_strokeSelection.isEmpty()) return true;
 
     TXshSimpleLevel *level =
