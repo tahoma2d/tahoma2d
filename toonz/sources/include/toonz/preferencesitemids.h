@@ -73,6 +73,8 @@ enum PreferencesItemId {
   rasterBackgroundColor,
   resetUndoOnSavingLevel,
   defaultProjectPath,
+  recordFileHistory,
+  recordAsUsername,
 
   //----------
   // Import / Export

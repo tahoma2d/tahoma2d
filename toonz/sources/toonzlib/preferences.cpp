@@ -497,6 +497,11 @@ void Preferences::definePreferenceItems() {
   define(defaultProjectPath, "defaultProjectPath", QMetaType::QString,
          documentsPath);
 
+  define(recordFileHistory, "recordFileHistory", QMetaType::Bool, true);
+
+  QString userName = TSystem::getUserName();
+  define(recordAsUsername, "recordAsUsername", QMetaType::QString, userName);
+
   // Import / Export
   define(ffmpegPath, "ffmpegPath", QMetaType::QString, "");
   define(ffmpegTimeout, "ffmpegTimeout", QMetaType::Int, 0, 0,

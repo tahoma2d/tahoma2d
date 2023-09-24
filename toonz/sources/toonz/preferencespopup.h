@@ -102,10 +102,12 @@ private:
 
   QWidget* createUI(
       PreferencesItemId id,
-      const QList<ComboBoxItem>& comboItems = QList<ComboBoxItem>());
+      const QList<ComboBoxItem>& comboItems = QList<ComboBoxItem>(),
+      bool isLineEdit                       = false);
   QGridLayout* insertGroupBoxUI(PreferencesItemId id, QGridLayout* layout);
   void insertUI(PreferencesItemId id, QGridLayout* layout,
-                const QList<ComboBoxItem>& comboItems = QList<ComboBoxItem>());
+                const QList<ComboBoxItem>& comboItems = QList<ComboBoxItem>(),
+                bool isLineEdit                       = false);
   void insertDualUIs(
       PreferencesItemId leftId, PreferencesItemId rightId, QGridLayout* layout,
       const QList<ComboBoxItem>& leftComboItems  = QList<ComboBoxItem>(),
@@ -149,6 +151,8 @@ private:
   void onUnitChanged();
   void beforeRoomChoiceChanged();
   void onColorCalibrationChanged();
+  // Saving
+  void onRecordAsUserChanged();
   // Drawing
   void onDefLevelTypeChanged();
   void onUseNumpadForSwitchingStylesClicked();
