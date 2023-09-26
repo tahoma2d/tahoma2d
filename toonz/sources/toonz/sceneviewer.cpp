@@ -785,6 +785,24 @@ public:
   }
 } TLightTableToggleCommand;
 
+class TCurrentDrawingOnTopCommand final : public MenuItemHandler {
+public:
+  TCurrentDrawingOnTopCommand() : MenuItemHandler(MI_CurrentDrawingOnTop) {}
+  void execute() override {
+    CommandManager *cm = CommandManager::instance();
+    QAction *action    = cm->getAction(MI_CurrentDrawingOnTop);
+
+    TApp::instance()->getCurrentXsheet()->getXsheet()->setCurrentDrawingOnTop(
+        action->isChecked());
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  bool isChecked(CommandId id) const {
+    QAction *action = CommandManager::instance()->getAction(id);
+    return action != 0 && action->isChecked();
+  }
+} TCurrentDrawingOnTopCommand;
+
 //=============================================================================
 // SceneViewer
 //-----------------------------------------------------------------------------
@@ -2200,6 +2218,8 @@ void SceneViewer::drawScene() {
     args.m_isGuidedDrawingEnabled = useGuidedDrawing;
     args.m_guidedFrontStroke      = guidedFrontStroke;
     args.m_guidedBackStroke       = guidedBackStroke;
+    args.m_currentDrawingOnTop =
+        app->getCurrentXsheet()->getXsheet()->isCurrentDrawingOnTop();
 
     // args.m_currentFrameId = app->getCurrentFrame()->getFid();
 
@@ -2317,6 +2337,8 @@ void SceneViewer::drawScene() {
       args.m_isGuidedDrawingEnabled = useGuidedDrawing;
       args.m_guidedFrontStroke      = guidedFrontStroke;
       args.m_guidedBackStroke       = guidedBackStroke;
+      args.m_currentDrawingOnTop =
+          app->getCurrentXsheet()->getXsheet()->isCurrentDrawingOnTop();
 
       if (m_stopMotion->m_alwaysUseLiveViewImages &&
           m_stopMotion->m_liveViewStatus > 0 &&

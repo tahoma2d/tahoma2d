@@ -141,6 +141,7 @@ struct DVAPI VisitArgs {
   TRasterImageP m_lineupImage   = 0;
   Stage::Player m_liveViewPlayer;
   Stage::Player m_lineupPlayer;
+  bool m_currentDrawingOnTop;
 
 public:
   VisitArgs()
@@ -157,7 +158,8 @@ public:
       , m_isGuidedDrawingEnabled(0)
       , m_guidedFrontStroke(-1)
       , m_guidedBackStroke(-1)
-      , m_rasterizePli(false) {}
+      , m_rasterizePli(false)
+      , m_currentDrawingOnTop(false) {}
 };
 
 //=============================================================================

@@ -2334,6 +2334,8 @@ void MainWindow::defineActions() {
     RasterizePliToggleAction = 0;
   createToggle(MI_ToggleLightTable, QT_TR_NOOP("Light Table"), "", false,
                MenuViewCommandType, "light_table");
+  createToggle(MI_CurrentDrawingOnTop, QT_TR_NOOP("Current Drawing On Top"), "", false,
+               MenuViewCommandType, "current_on_top");
 
   // Menu - Panes
 
