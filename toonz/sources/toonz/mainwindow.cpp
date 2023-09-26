@@ -2332,6 +2332,8 @@ void MainWindow::defineActions() {
                  "view_vector_as_raster");
   else
     RasterizePliToggleAction = 0;
+  createToggle(MI_ToggleLightTable, QT_TR_NOOP("Light Table"), "", false,
+               MenuViewCommandType, "light_table");
 
   // Menu - Panes
 

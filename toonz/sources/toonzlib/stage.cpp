@@ -936,6 +936,7 @@ void Stage::visit(Visitor &visitor, const VisitArgs &args) {
   Player::m_firstBackOnionSkin     = 0;
   Player::m_lastBackVisibleSkin    = 0;
   Player::m_isShiftAndTraceEnabled = osm->isShiftTraceEnabled();
+  Player::m_isLightTableEnabled    = osm->isLightTableEnabled();
   sb.addFrame(sb.m_players, scene, xsh, row, 0, args.m_onlyVisible,
               args.m_checkPreviewVisibility);
 
@@ -980,6 +981,7 @@ void Stage::visit(Visitor &visitor, TXshSimpleLevel *level, const TFrameId &fid,
   Player::m_firstBackOnionSkin     = 0;
   Player::m_lastBackVisibleSkin    = 0;
   Player::m_isShiftAndTraceEnabled = osm.isShiftTraceEnabled();
+  Player::m_isLightTableEnabled    = osm.isLightTableEnabled();
   sb.addSimpleLevelFrame(sb.m_players, level, fid);
   updateOnionSkinSize(sb.m_players);
   sb.visit(sb.m_players, visitor, isPlaying);

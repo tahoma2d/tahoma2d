@@ -613,6 +613,7 @@ void TopBar::loadMenubar() {
   addMenuItem(viewMenu, MI_GCheck);
   addMenuItem(viewMenu, MI_ACheck);
   viewMenu->addSeparator();
+  addMenuItem(viewMenu, MI_ToggleLightTable);
   addMenuItem(viewMenu, MI_ShiftTrace);
   addMenuItem(viewMenu, MI_EditShift);
   addMenuItem(viewMenu, MI_NoShift);

@@ -766,6 +766,25 @@ public:
   }
 } flipPrevStrokeDirectionCommand;
 
+class TLightTableToggleCommand final : public MenuItemHandler {
+public:
+  TLightTableToggleCommand() : MenuItemHandler(MI_ToggleLightTable) {}
+  void execute() override {
+    CommandManager *cm = CommandManager::instance();
+    QAction *action    = cm->getAction(MI_ToggleLightTable);
+    OnionSkinMask osm =
+        TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
+    osm.setLightTableStatus(action->isChecked());
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    TApp::instance()->getCurrentOnionSkin()->setOnionSkinMask(osm);
+  }
+
+  bool isChecked(CommandId id) const {
+    QAction *action = CommandManager::instance()->getAction(id);
+    return action != 0 && action->isChecked();
+  }
+} TLightTableToggleCommand;
+
 //=============================================================================
 // SceneViewer
 //-----------------------------------------------------------------------------
