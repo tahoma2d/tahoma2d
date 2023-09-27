@@ -97,6 +97,8 @@ public:
   int m_chunkSize;                     //!< Sub-tasks size
 
   int m_multimedia;
+  bool m_renderKeysOnly;
+
   int m_threadsIndex;
   int m_maxTileSizeIndex;
 
@@ -118,8 +120,8 @@ public:
             const QString &user, const QString &host, int stepCount,
             int priority, const TFilePath &taskFilePath,
             const TFilePath &outputPath, int from, int to, int step, int shrink,
-            int multimedia, int chunksize, int threadsIndex,
-            int maxTileSizeIndex, OverwriteBehavior overwrite,
+            int multimedia, bool renderKeysOnly, int chunksize,
+            int threadsIndex, int maxTileSizeIndex, OverwriteBehavior overwrite,
             bool onlyvisible);
 
   virtual ~TFarmTask() { delete m_dependencies; }
@@ -155,7 +157,8 @@ public:
                  const QString &host, int stepCount, int priority,
                  const TFilePath &taskFilePath, const TFilePath &outputPath,
                  int from, int to, int step, int shrink, int multimedia,
-                 int chunksize, int threadsIndex, int maxTileSizeIndex);
+                 bool renderKeysOnly, int chunksize, int threadsIndex,
+                 int maxTileSizeIndex);
 
   TFarmTaskGroup(const QString &id, const QString &name, const QString &user,
                  const QString &host, int stepCount, int priority,

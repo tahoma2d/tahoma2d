@@ -258,6 +258,10 @@ void TSceneProperties::saveData(TOStream &os) const {
       os.child("syncColorSettings") << (out.isColorSettingsSynced() ? 1 : 0);
 
     os.child("multimedia") << out.getMultimediaRendering();
+    // Save render keys only if enabled and multimedia set to anything except
+    // None
+    if (out.getMultimediaRendering() && out.isRenderKeysOnly())
+      os.child("renderKeysOnly") << (out.isRenderKeysOnly() ? 1 : 0);
     os.child("threadsIndex") << out.getThreadIndex();
     os.child("maxTileSizeIndex") << out.getMaxTileSizeIndex();
     os.child("subcameraPrev") << (out.isSubcameraPreview() ? 1 : 0);
@@ -589,6 +593,10 @@ void TSceneProperties::loadData(TIStream &is, bool isLoadingProject) {
               int j;
               is >> j;
               out.setMultimediaRendering(j);
+            } else if (tagName == "renderKeysOnly") {
+              int renderKeysOnly;
+              is >> renderKeysOnly;
+              out.setRenderKeysOnly(renderKeysOnly == 1);
             } else if (tagName == "threadsIndex") {
               int j;
               is >> j;

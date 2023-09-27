@@ -38,6 +38,7 @@ TOutputProperties::TOutputProperties()
     , m_step(1)
     , m_whichLevels(false)
     , m_multimediaRendering(0)
+    , m_renderKeysOnly(false)
     , m_maxTileSizeIndex(0)
     , m_threadIndex(2)
     , m_subcameraPreview(false)
@@ -61,6 +62,7 @@ TOutputProperties::TOutputProperties(const TOutputProperties &src)
     , m_offset(src.m_offset)
     , m_step(src.m_step)
     , m_multimediaRendering(src.m_multimediaRendering)
+    , m_renderKeysOnly(src.m_renderKeysOnly) 
     , m_maxTileSizeIndex(src.m_maxTileSizeIndex)
     , m_threadIndex(src.m_threadIndex)
     , m_subcameraPreview(src.m_subcameraPreview)
@@ -96,6 +98,7 @@ TOutputProperties &TOutputProperties::operator=(const TOutputProperties &src) {
   m_step        = src.m_step;
 
   m_multimediaRendering = src.m_multimediaRendering;
+  m_renderKeysOnly      = src.m_renderKeysOnly;
   m_maxTileSizeIndex    = src.m_maxTileSizeIndex;
   m_threadIndex         = src.m_threadIndex;
   m_subcameraPreview    = src.m_subcameraPreview;

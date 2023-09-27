@@ -10,6 +10,9 @@
 #include "toonz/txsheet.h"
 #include "toonz/fxdag.h"
 #include "toonz/tcolumnfxset.h"
+#include "toonz/txshlevelcolumn.h"
+#include "toonz/txshzeraryfxcolumn.h"
+#include "toonz/txshcell.h"
 
 // Fxs tree decomposition
 #include "toonz/scenefx.h"
@@ -69,9 +72,10 @@ public:
   QEventLoop m_eventLoop;
 
   int m_multimediaMode;
+  bool m_renderKeysOnly;
 
   Imp(ToonzScene *scene, const TFilePath &moviePath, int multimediaMode,
-      int threadCount, bool cacheResults);
+      bool renderKeysOnly, int threadCount, bool cacheResults);
 
   ~Imp();
 
@@ -79,6 +83,7 @@ public:
   void scanSceneForColumns();
   void scanSceneForLayers();
   bool scanColsRecursive(TFx *fx);
+  bool hasKeyDrawing(TFx *fx, int row);
   TColumnFx *searchColumn(TFxP fx);
   TFxP addPostProcessing(TFxP fx, TFxP postProc);
   void addPostProcessingRecursive(TFxP fx, TFxP postProc);
@@ -94,8 +99,8 @@ public:
 //---------------------------------------------------------
 
 MultimediaRenderer::Imp::Imp(ToonzScene *scene, const TFilePath &moviePath,
-                             int multimediaMode, int threadCount,
-                             bool cacheResults)
+                             int multimediaMode, bool renderKeysOnly,
+                             int threadCount, bool cacheResults)
     : m_scene(scene)
     , m_fp(moviePath)
     , m_threadCount(threadCount)
@@ -108,7 +113,8 @@ MultimediaRenderer::Imp::Imp(ToonzScene *scene, const TFilePath &moviePath,
     , m_canceled(false)
     , m_currentFx(0)
     , m_currentFrame()
-    , m_multimediaMode(multimediaMode) {
+    , m_multimediaMode(multimediaMode)
+    , m_renderKeysOnly(renderKeysOnly) {
   // Retrieve all fx nodes to be rendered in this process.
   scanSceneForRenderNodes();
 }
@@ -169,6 +175,35 @@ bool MultimediaRenderer::Imp::scanColsRecursive(TFx *fx) {
   }
 
   if (isChildAnFxRepres && fx->getInputPortCount() == 1) return true;
+  return false;
+}
+
+bool MultimediaRenderer::Imp::hasKeyDrawing(TFx *fx, int row) {
+  TColumnFx *colFx = dynamic_cast<TColumnFx *>(fx);
+  if (colFx) {
+    TXshColumn *col = colFx->getXshColumn();
+    if (!col) return false;
+    TXshCellColumn *celCol = col->getCellColumn();
+    if (!celCol) return false;
+
+    TXshCell cell     = celCol->getCell(row, false);
+    TXshCell prevCell = row > 0 ? celCol->getCell(row - 1, false) : TXshCell();
+
+    if (cell.isEmpty() || cell.getFrameId().isStopFrame() || cell == prevCell)
+      return false;
+
+    return true;
+  }
+
+  // Search for key drawings in every port
+  bool doesChildHaveKey;
+  for (int i = 0; i < fx->getInputPortCount(); ++i) {
+    TFx *childFx = fx->getInputPort(i)->getFx();
+    if (!childFx) continue;
+    doesChildHaveKey = hasKeyDrawing(childFx, row);
+    if (doesChildHaveKey) return true;
+  }
+
   return false;
 }
 
@@ -310,6 +345,11 @@ void MultimediaRenderer::Imp::start() {
     int j;
     for (j = 0, jt = m_framesToRender.begin(); jt != m_framesToRender.end();
          ++j, ++jt) {
+
+      if (m_multimediaMode && m_renderKeysOnly &&
+          !hasKeyDrawing(m_fxsToRender.getFx(i), *jt))
+        continue;
+
       TFxPair fx;
 
       if (m_renderSettings.m_stereoscopic)
@@ -446,10 +486,10 @@ void MultimediaRenderer::Imp::onRenderCompleted() {
 
 MultimediaRenderer::MultimediaRenderer(ToonzScene *scene,
                                        const TFilePath &moviePath,
-                                       int multimediaMode, int threadCount,
-                                       bool cacheResults)
-    : m_imp(new Imp(scene, moviePath, multimediaMode, threadCount,
-                    cacheResults)) {
+                                       int multimediaMode, bool renderKeysOnly,
+                                       int threadCount, bool cacheResults)
+    : m_imp(new Imp(scene, moviePath, multimediaMode, renderKeysOnly,
+                    threadCount, cacheResults)) {
   m_imp->addRef();
 }
 
@@ -477,6 +517,12 @@ int MultimediaRenderer::getColumnsCount() {
 
 int MultimediaRenderer::getMultimediaMode() const {
   return m_imp->m_multimediaMode;
+}
+
+//---------------------------------------------------------
+
+bool MultimediaRenderer::isRenderKeysOnly() const {
+  return m_imp->m_renderKeysOnly;
 }
 
 //---------------------------------------------------------

@@ -340,6 +340,8 @@ void TaskSheet::update(TFarmTask *task) {
       m_step->setText(QString::number(task->m_step));
       m_shrink->setText(QString::number(task->m_shrink));
       m_multimedia->setCurrentIndex(task->m_multimedia);
+      m_renderKeysOnly->setChecked(task->m_renderKeysOnly);
+      m_renderKeysOnly->setEnabled(m_multimedia->currentIndex());
       m_threadsCombo->setCurrentIndex(task->m_threadsIndex);
       m_rasterGranularityCombo->setCurrentIndex(task->m_maxTileSizeIndex);
 
@@ -445,9 +447,9 @@ void inline create(QLabel *&ret, QGridLayout *layout, QString name, int row,
 
 //-----------------------------------------------------------------------------
 
-void inline create(CheckBox *&ret, QGridLayout *layout, QString name, int row) {
+void inline create(CheckBox *&ret, QGridLayout *layout, QString name, int row, int col = 0) {
   ret = new CheckBox(name);
-  layout->addWidget(ret, row, 0, 1, 2, Qt::AlignLeft | Qt::AlignVCenter);
+  layout->addWidget(ret, row, col, 1, 2, Qt::AlignLeft | Qt::AlignVCenter);
 }
 
 //-----------------------------------------------------------------------------
@@ -692,6 +694,30 @@ void TaskSheet::setMultimedia(int) {
       taskGroup->getTask(i)->m_multimedia = taskGroup->m_multimedia;
   }
 
+  m_renderKeysOnly->setEnabled(m_multimedia->currentIndex());
+
+  m_viewer->startTimer();
+}
+
+//-----------------------------------------------------------------------------
+
+void TaskSheet::setRenderKeysOnly(int) {
+  if (!m_task) return;
+  if (m_task->m_renderKeysOnly ==
+      (m_renderKeysOnly->checkState() == Qt::Checked))
+    return;
+
+  m_task->m_renderKeysOnly = (m_renderKeysOnly->checkState() == Qt::Checked);
+  m_commandLine->setText(m_task->getCommandLine());
+  BatchesController::instance()->setDirtyFlag(true);
+
+  // Update children tasks, if present.
+  TFarmTaskGroup *taskGroup = dynamic_cast<TFarmTaskGroup *>(m_task);
+  if (taskGroup) {
+    for (int i = 0; i < taskGroup->getTaskCount(); ++i)
+      taskGroup->getTask(i)->m_renderKeysOnly = taskGroup->m_renderKeysOnly;
+  }
+
   m_viewer->startTimer();
 }
 
@@ -845,6 +871,8 @@ TaskSheet::TaskSheet(TasksViewer *owner) : QScrollArea(owner) {
   ::create(m_chunkSize, m_multimedia, layout1, tr("Frames per Chunk:"),
            tr("Multimedia:"), Qt::AlignRight | Qt::AlignTop,
            Qt::AlignLeft | Qt::AlignTop, row1++);
+  ::create(m_renderKeysOnly, layout1, tr("Render Key Drawings Only"), row1++,
+           4);
   ::create(m_from, m_to, layout1, tr("From:"), tr("To:"),
            Qt::AlignRight | Qt::AlignTop, Qt::AlignRight | Qt::AlignTop,
            row1++);
@@ -857,6 +885,8 @@ TaskSheet::TaskSheet(TasksViewer *owner) : QScrollArea(owner) {
   multimediaTypes << tr("None") << tr("Fx Schematic Flows")
                   << tr("Fx Schematic Terminal Nodes");
   m_multimedia->addItems(multimediaTypes);
+
+  m_renderKeysOnly->setEnabled(false);
 
   ::create(m_threadsCombo, layout1, tr("Dedicated CPUs:"), row1++, 3);
   QStringList threadsTypes;
@@ -953,6 +983,8 @@ TaskSheet::TaskSheet(TasksViewer *owner) : QScrollArea(owner) {
 
   ret = ret && connect(m_multimedia, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(setMultimedia(int)));
+  ret = ret && connect(m_renderKeysOnly, SIGNAL(stateChanged(int)), this,
+                       SLOT(setRenderKeysOnly(int)));
   ret = ret && connect(m_visible, SIGNAL(stateChanged(int)), this,
                        SLOT(setVisible(int)));
 
