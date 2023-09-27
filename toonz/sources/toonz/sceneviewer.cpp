@@ -14,6 +14,7 @@
 #include "../stopmotion/stopmotion.h"
 #include "tenv.h"
 #include "cellselection.h"
+#include "toonz/stage.h"
 
 // TnzTools includes
 #include "tools/cursors.h"
@@ -91,6 +92,7 @@
 
 TEnv::IntVar ShowPerspectiveGrids("ShowPerspectiveGrids", 1);
 TEnv::IntVar ShowSymmetryGuide("ShowSymmetryGuide", 1);
+TEnv::IntVar ShowSceneOverlay("ShowSceneOverlay", 1);
 
 void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
                 double pixelSize);
@@ -1616,6 +1618,13 @@ void SceneViewer::drawCameraStand() {
   assert(glGetError() == GL_NO_ERROR);
   drawScene();
   assert((glGetError()) == GL_NO_ERROR);
+
+  // draw scene overlay
+  if (fieldGuideToggle.getStatus() && ShowSceneOverlay) {
+    assert(glGetError() == GL_NO_ERROR);
+    drawSceneOverlay();
+    assert((glGetError()) == GL_NO_ERROR);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -2371,6 +2380,89 @@ void SceneViewer::drawScene() {
     for (auto itr = guidedStrokes.begin(); itr != guidedStrokes.end(); ++itr) {
       m_guidedDrawingBBox += (*itr)->getBBox();
     }
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void SceneViewer::drawSceneOverlay() {
+  TApp *app = TApp::instance();
+
+  if (app->getCurrentFrame()->isEditingLevel()) return;
+
+  ToonzScene *scene = app->getCurrentScene()->getScene();
+
+  TXshLevel *level = scene->getOverlayLevel();
+  if (!level) return;
+
+  TXshSimpleLevel *sl = level->getSimpleLevel();
+  if (!sl) return;
+  TFrameId frameId = sl->getFirstFid();
+  TXshCell cell    = TXshCell(sl, frameId);
+  TImageP image    = cell.getImage(false);
+  TRasterImageP ri = image;
+  TToonzImageP ti  = image;
+  TVectorImageP vi = image;
+  if (!ri && !ti && !vi) return;
+
+  int frame      = app->getCurrentFrame()->getFrame();
+  TXsheet *xsh   = app->getCurrentXsheet()->getXsheet();
+  TRect clipRect = getActualClipRect(getViewMatrix());
+  clipRect += TPoint(width() * 0.5, height() * 0.5);
+
+  TStageObjectId cameraId = xsh->getStageObjectTree()->getCurrentCameraId();
+  TStageObject *camera    = xsh->getStageObject(cameraId);
+  TAffine cameraAff       = camera->getPlacement(frame);
+  double cameraZ          = camera->getZ(frame);
+
+  TAffine viewAff =
+      getViewMatrix() * cameraAff * TScale((1000 + cameraZ) / 1000);
+
+  Stage::Player player;
+  player.m_sl                     = sl;
+  player.m_frame                  = frame;
+  player.m_fid                    = frameId;
+  player.m_isCurrentColumn        = false;
+  player.m_isCurrentXsheetLevel   = true;
+  player.m_isEditingLevel         = true;
+  player.m_currentFrameId         = 0;
+  player.m_isGuidedDrawingEnabled = false;
+  player.m_guidedFrontStroke      = -1;
+  player.m_guidedBackStroke       = -1;
+  player.m_isVisibleinOSM         = false;
+  player.m_onionSkinDistance      = c_noOnionSkin;
+  player.m_dpiAff                 = getDpiAffine(sl, frameId);
+  player.m_ancestorColumnIndex    = -1;
+  player.m_opacity                = scene->getOverlayOpacity();
+
+  if (is3DView()) {
+    Stage::OpenGlPainter painter(viewAff, clipRect, m_visualSettings, true,
+                                 false);
+    painter.enableCamera3D(true);
+    painter.setPhi(m_phi3D);
+
+    if (ri)
+      painter.onRasterImage(ri.getPointer(), player);
+    else if (ti)
+      painter.onToonzImage(ti.getPointer(), player);
+    else if (vi)
+      painter.onVectorImage(vi.getPointer(), player);
+  } else {
+    // camera 2D (normale)
+    TDimension viewerSize(width(), height());
+
+    Stage::RasterPainter painter(viewerSize, viewAff, clipRect,
+                                 m_visualSettings, true);
+
+    if (ri)
+      painter.onRasterImage(ri.getPointer(), player);
+    else if (ti)
+      painter.onToonzImage(ti.getPointer(), player);
+    else if (vi)
+      painter.onVectorImage(vi.getPointer(), player);
+
+    assert(glGetError() == 0);
+    painter.flushRasterImages();
   }
 }
 

@@ -53,6 +53,7 @@ extern TEnv::IntVar ShowFieldGuide;
 extern TEnv::IntVar GuideOpacity;
 extern TEnv::IntVar ShowPerspectiveGrids;
 extern TEnv::IntVar ShowSymmetryGuide;
+extern TEnv::IntVar ShowSceneOverlay;
 //=============================================================================
 // TPanel
 //-----------------------------------------------------------------------------
@@ -520,11 +521,19 @@ TPanelTitleBarButtonForGrids::TPanelTitleBarButtonForGrids(
   });
   symmetryCheckbox->setChecked(ShowSymmetryGuide != 0);
 
+  QCheckBox *sceneOverlayCheckbox = new QCheckBox(tr("Scene Overlay"), this);
+  connect(sceneOverlayCheckbox, &QCheckBox::stateChanged, [=](int value) {
+    ShowSceneOverlay = value > 0 ? 1 : 0;
+    emit updateViewer();
+  });
+  sceneOverlayCheckbox->setChecked(ShowSceneOverlay != 0);
+
   gridLayout->addWidget(thirdsCheckbox, 0, 0, 1, 2);
   gridLayout->addWidget(goldenRationCheckbox, 1, 0, 1, 2);
   gridLayout->addWidget(fieldGuideCheckbox, 2, 0, 1, 2);
   gridLayout->addWidget(perspectiveCheckbox, 3, 0, 1, 2);
   gridLayout->addWidget(symmetryCheckbox, 4, 0, 1, 2);
+  gridLayout->addWidget(sceneOverlayCheckbox, 5, 0, 1, 2);
 
   gridWidget->setLayout(gridLayout);
   gridsAction->setDefaultWidget(gridWidget);

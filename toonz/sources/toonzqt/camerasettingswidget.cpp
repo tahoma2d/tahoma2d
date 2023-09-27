@@ -178,7 +178,8 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
     : m_forCleanup(forCleanup)
     , m_arValue(0)
     , m_presetListFile("")
-    , m_currentLevel(0) {
+    , m_currentLevel(0)
+    , m_overlayLevel(0) {
   bool showAdvancedOptions =
       Preferences::instance()->isShowAdvancedOptionsEnabled();
 
@@ -219,6 +220,7 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
   m_fspChk = new QPushButton("");
 
   m_useLevelSettingsBtn = new QPushButton(tr("Use Current Level Settings"));
+  m_useOverlaySettingsBtn = new QPushButton(tr("Use Scene Overlay Settings"));
 
   m_presetListOm    = new QComboBox();
   m_addPresetBtn    = new QPushButton(tr("Add"));
@@ -227,6 +229,8 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
   //----
   m_useLevelSettingsBtn->setEnabled(false);
   m_useLevelSettingsBtn->setFocusPolicy(Qt::NoFocus);
+  m_useOverlaySettingsBtn->setEnabled(false);
+  m_useOverlaySettingsBtn->setFocusPolicy(Qt::NoFocus);
   m_lxFld->installEventFilter(this);
   m_lyFld->installEventFilter(this);
   m_arFld->installEventFilter(this);
@@ -345,6 +349,7 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
     mainLay->addLayout(gridLay);
 
     mainLay->addWidget(m_useLevelSettingsBtn);
+    mainLay->addWidget(m_useOverlaySettingsBtn);
 
     QHBoxLayout *resListLay = new QHBoxLayout();
     resListLay->setSpacing(3);
@@ -390,6 +395,8 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
 
   ret = ret && connect(m_useLevelSettingsBtn, SIGNAL(clicked()), this,
                        SLOT(useLevelSettings()));
+  ret = ret && connect(m_useOverlaySettingsBtn, SIGNAL(clicked()), this,
+                       SLOT(useOverlaySettings()));
 
   ret = ret && connect(m_presetListOm, SIGNAL(activated(const QString &)),
                        SLOT(onPresetSelected(const QString &)));
@@ -400,7 +407,10 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
   assert(ret);
 }
 
-CameraSettingsWidget::~CameraSettingsWidget() { setCurrentLevel(0); }
+CameraSettingsWidget::~CameraSettingsWidget() {
+  setCurrentLevel(0);
+  setOverlayLevel(0);
+}
 
 void CameraSettingsWidget::showEvent(QShowEvent *e) {
   if (Preferences::instance()->getCameraUnits() == "pixel") {
@@ -587,8 +597,30 @@ void CameraSettingsWidget::setCurrentLevel(TXshLevel *xshLevel) {
 }
 
 void CameraSettingsWidget::useLevelSettings() {
-  TXshSimpleLevel *sl = m_currentLevel;
-  if (!sl) return;
+  if (applyLevelSettings(m_currentLevel)) {
+    emit levelSettingsUsed();
+    emit changed();
+  }
+}
+
+void CameraSettingsWidget::setOverlayLevel(TXshLevel *xshLevel) {
+  TXshSimpleLevel *sl = xshLevel ? xshLevel->getSimpleLevel() : 0;
+  if (sl == m_overlayLevel) return;
+  if (sl) sl->addRef();
+  if (m_overlayLevel) m_overlayLevel->release();
+  m_overlayLevel = sl;
+  m_useOverlaySettingsBtn->setEnabled(m_overlayLevel != 0);
+}
+
+void CameraSettingsWidget::useOverlaySettings() {
+  if (applyLevelSettings(m_overlayLevel)) {
+    emit overlaySettingsUsed();
+    emit changed();
+  }
+}
+
+bool CameraSettingsWidget::applyLevelSettings(TXshSimpleLevel *sl) {
+  if (!sl) return false;
 
   // Build dpi
   TPointD dpi = sl->getDpi(TFrameId::NO_FRAME, 0);
@@ -596,7 +628,7 @@ void CameraSettingsWidget::useLevelSettings() {
   // Build physical size
   TDimensionD size(0, 0);
   TDimension res = sl->getResolution();
-  if (res.lx <= 0 || res.ly <= 0 || dpi.x <= 0 || dpi.y <= 0) return;
+  if (res.lx <= 0 || res.ly <= 0 || dpi.x <= 0 || dpi.y <= 0) return false;
 
   size.lx = res.lx / dpi.x;
   size.ly = res.ly / dpi.y;
@@ -606,8 +638,8 @@ void CameraSettingsWidget::useLevelSettings() {
   camera.setSize(size);
   camera.setRes(res);
   setFields(&camera);
-  emit levelSettingsUsed();
-  emit changed();
+
+  return true;
 }
 
 void CameraSettingsWidget::setFields(const TCamera *camera) {
