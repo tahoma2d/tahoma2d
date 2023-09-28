@@ -1342,6 +1342,8 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {useCtrlAltToResizeBrush, tr("Use Ctrl+Alt to Resize Brush")},
       {temptoolswitchtimer,
        tr("Temporary Tool Switch Shortcut Hold Time (ms):")},
+      {magnetNonLinearSliderEnabled,
+       tr("Magnet Tool Size Slider - Non-Linear mode*")},
 
       // Xsheet
       {xsheetLayoutPreference, tr("Column Header Layout*:")},
@@ -2076,6 +2078,7 @@ QWidget* PreferencesPopup::createToolsPage() {
   if (Preferences::instance()->isShowAdvancedOptionsEnabled())
     insertUI(useCtrlAltToResizeBrush, lay);
   insertUI(temptoolswitchtimer, lay);
+  insertUI(magnetNonLinearSliderEnabled, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
   widget->setLayout(lay);
