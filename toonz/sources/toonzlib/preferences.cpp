@@ -565,6 +565,8 @@ void Preferences::definePreferenceItems() {
          false);
   define(temptoolswitchtimer, "temptoolswitchtimer", QMetaType::Int, 500, 1,
          std::numeric_limits<int>::max());
+  define(magnetNonLinearSliderEnabled, "magnetNonLinearSliderEnabled",
+         QMetaType::Bool, false);
 
   // Xsheet
   define(xsheetLayoutPreference, "xsheetLayoutPreference", QMetaType::QString,

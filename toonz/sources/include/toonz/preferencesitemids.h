@@ -120,6 +120,7 @@ enum PreferencesItemId {
   levelBasedToolsDisplay,
   useCtrlAltToResizeBrush,
   temptoolswitchtimer,
+  magnetNonLinearSliderEnabled,
 
   //----------
   // Xsheet

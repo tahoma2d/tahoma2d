@@ -13,6 +13,7 @@
 #include "tcurveutil.h"
 #include "tenv.h"
 
+#include "toonz/preferences.h"
 #include "toonz/tobjecthandle.h"
 #include "toonz/txshlevelhandle.h"
 #include "toonz/tstageobject.h"
@@ -149,7 +150,8 @@ public:
   {
     bind(TTool::Vectors);
 
-    m_toolSize.setNonLinearSlider();
+    if (Preferences::instance()->getBoolValue(magnetNonLinearSliderEnabled))
+      m_toolSize.setNonLinearSlider();
 
     m_prop.bind(m_toolSize);
   }
