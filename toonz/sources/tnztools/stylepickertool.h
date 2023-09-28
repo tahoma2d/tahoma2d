@@ -12,6 +12,7 @@
 class StylePickerTool final : public TTool, public QObject {
   Q_DECLARE_TR_FUNCTIONS(StylePickerTool)
 
+  bool m_firstTime;
   int m_oldStyleId, m_currentStyleId;
 
   TEnumProperty m_colorType;
@@ -43,6 +44,8 @@ public:
   int getCursorId() const override;
 
   bool onPropertyChanged(std::string propertyName) override;
+
+  void onActivate() override;
 
   bool isOrganizePaletteActive() { return m_organizePalette.getValue(); }
 

@@ -62,6 +62,9 @@ TEnv::IntVar ShowHVscale("EditToolShowHVscale", 1);
 TEnv::IntVar ShowShear("EditToolShowShear", 0);
 TEnv::IntVar ShowCenterPosition("EditToolShowCenterPosition", 0);
 TEnv::StringVar Active("EditToolActiveAxis", "Position");
+TEnv::StringVar AutoSelect("EditToolAutoSelect", "None");
+TEnv::StringVar ScaleConstraint("EditToolScaleConstraint", "None");
+TEnv::IntVar ArrowGlobalKeyFrame("EditToolGlobalKeyFrame", 0);
 
 //=============================================================================
 namespace {
@@ -1483,6 +1486,11 @@ void EditTool::onActivate() {
 
     m_fxGadgetController = new FxGadgetController(this);
 
+    m_activeAxis.setValue(::to_wstring(Active.getValue()));
+    m_autoSelect.setValue(::to_wstring(AutoSelect.getValue()));
+    m_scaleConstraint.setValue(::to_wstring(ScaleConstraint.getValue()));
+    m_globalKeyframes.setValue(ArrowGlobalKeyFrame ? 1 : 0);
+
     /*
 m_foo.setTool(this);
 m_foo.setFxHandle(getApplication()->getCurrentFx());
@@ -1586,7 +1594,18 @@ bool EditTool::onPropertyChanged(std::string propertyName) {
       m_what = Center;
     else if (activeAxis == L"All")
       m_what = None;
+
+    Active = ::to_string(activeAxis);
   }
+
+  else if (propertyName == m_autoSelect.getName())
+    AutoSelect = ::to_string(m_autoSelect.getValue());
+
+  else if (propertyName == m_scaleConstraint.getName())
+    ScaleConstraint = ::to_string(m_scaleConstraint.getValue());
+
+  else if (propertyName == m_globalKeyframes.getName())
+    ArrowGlobalKeyFrame = (int)m_globalKeyframes.getValue();
 
   return true;
 }

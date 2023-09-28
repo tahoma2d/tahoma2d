@@ -31,10 +31,14 @@
 #include "ttoonzimage.h"
 #include "tundo.h"
 #include "tmsgcore.h"
+#include "tenv.h"
 
 #define LINES L"Lines"
 #define AREAS L"Areas"
 #define ALL L"Lines & Areas"
+
+TEnv::StringVar StylePickVectorType("InknpaintStylePickVectorType", "Areas");
+TEnv::IntVar StylePickPassive("InknpaintStylePickPassive", 0);
 
 //========================================================================
 // Pick Style Tool
@@ -46,7 +50,8 @@ StylePickerTool::StylePickerTool()
     , m_colorType("Mode:")
     , m_passivePick("Passive Pick", false)
     , m_organizePalette("Organize Palette", false)
-    , m_paletteToBeOrganized(NULL) {
+    , m_paletteToBeOrganized(NULL)
+    , m_firstTime(true) {
   m_prop.bind(m_colorType);
   m_colorType.addValue(AREAS);
   m_colorType.addValue(LINES);
@@ -261,8 +266,20 @@ bool StylePickerTool::onPropertyChanged(std::string propertyName) {
       std::cout << "End Organize Palette" << std::endl;
       m_paletteToBeOrganized = NULL;
     }
-  }
+  } else if (propertyName == m_colorType.getName())
+    StylePickVectorType = ::to_string(m_colorType.getValue());
+  else if (propertyName == m_passivePick.getName())
+    StylePickPassive = m_passivePick.getValue();
+
   return true;
+}
+
+void StylePickerTool::onActivate() {
+  if (m_firstTime) {
+    m_colorType.setValue(::to_wstring(StylePickVectorType.getValue()));
+    m_passivePick.setValue(StylePickPassive ? 1 : 0);
+    m_firstTime = false;
+  }
 }
 
 bool StylePickerTool::startOrganizePalette() {

@@ -19,8 +19,6 @@
 using namespace ToolUtils;
 using namespace DragSelectionTool;
 
-TEnv::StringVar SelectionType("SelectionType", "Rectangular");
-
 //-----------------------------------------------------------------------------
 
 template <typename Tv, typename Tr, typename... Args>
@@ -1324,7 +1322,6 @@ void SelectionTool::drawCommandHandle(const TImage *image) {
 
 void SelectionTool::onActivate() {
   if (m_firstTime) {
-    m_strokeSelectionType.setValue(::to_wstring(SelectionType.getValue()));
     m_firstTime = false;
   }
   if (isLevelType() || isSelectedFramesType()) return;
@@ -1352,7 +1349,6 @@ void SelectionTool::onSelectionChanged() {
 
 bool SelectionTool::onPropertyChanged(std::string propertyName) {
   if (propertyName == m_strokeSelectionType.getName()) {
-    SelectionType = ::to_string(m_strokeSelectionType.getValue());
     if (m_strokeSelectionType.getValue() == POLYLINE_SELECTION)
       m_polyline.reset();
     return true;

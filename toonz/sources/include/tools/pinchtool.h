@@ -37,6 +37,7 @@ class StrokeDeformation;
 class DVAPI PinchTool : public TTool {
   Q_DECLARE_TR_FUNCTIONS(PinchTool)
 
+  bool m_firstTime;
   TMouseEvent m_lastMouseEvent;
   ToonzExt::StrokeDeformation *m_deformation;
   ToonzExt::ContextStatus m_status;
@@ -88,6 +89,7 @@ public:
 
   bool keyDown(QKeyEvent *) override;
 
+  bool onPropertyChanged(std::string propertyName) override;
   void onActivate() override;
   void onDeactivate() override;
 

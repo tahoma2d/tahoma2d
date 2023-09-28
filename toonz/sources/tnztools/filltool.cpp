@@ -77,6 +77,7 @@ TEnv::IntVar FillOnlySavebox("InknpaintFillOnlySavebox", 0);
 TEnv::IntVar FillReferenced("InknpaintFillReferenced", 0);
 
 TEnv::StringVar RasterGapSetting("RasterGapSetting", "Ignore Gaps");
+TEnv::IntVar AutoPaintLines("InknpaintAutoPaintLines", 1);
 extern TEnv::DoubleVar AutocloseDistance;
 extern TEnv::DoubleVar AutocloseAngle;
 extern TEnv::IntVar AutocloseInk;
@@ -2722,6 +2723,7 @@ bool FillTool::onPropertyChanged(std::string propertyName) {
 
   // Autopaint
   else if (propertyName == m_autopaintLines.getName()) {
+    AutoPaintLines      = (int)m_autopaintLines.getValue();
     rectPropChangedflag = true;
   }
 
@@ -2991,6 +2993,8 @@ void FillTool::onActivate() {
     m_frameRange.setValue(FillRange ? 1 : 0);
     m_fillOnlySavebox.setValue(FillOnlySavebox ? 1 : 0);
     m_referenced.setValue(FillReferenced ? 1 : 0);
+    m_autopaintLines.setValue(AutoPaintLines ? 1 : 0);
+
     m_firstTime = false;
 
     if (m_fillType.getValue() != NORMALFILL) {
