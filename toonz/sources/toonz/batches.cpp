@@ -361,6 +361,7 @@ void BatchesController::addComposerTask(const TFilePath &_taskFilePath) {
 
   int multimedia       = out.getMultimediaRendering();
   bool renderKeysOnly  = out.isRenderKeysOnly();
+  bool renderToFolders = out.isRenderToFolders();
   int threadsIndex     = out.getThreadIndex();
   int maxTileSizeIndex = out.getMaxTileSizeIndex();
 
@@ -386,7 +387,8 @@ void BatchesController::addComposerTask(const TFilePath &_taskFilePath) {
   TFarmTaskGroup *taskGroup = new TFarmTaskGroup(
       id, name, TSystem::getUserName(), TSystem::getHostName(), sceneFrameCount,
       50, taskFilePath, outputPath, r0, r1, step, shrink, multimedia,
-      renderKeysOnly, taskChunkSize, threadsIndex, maxTileSizeIndex);
+      renderKeysOnly, renderToFolders, taskChunkSize, threadsIndex,
+      maxTileSizeIndex);
 
   try {
     BatchesController::instance()->addTask(id, taskGroup);

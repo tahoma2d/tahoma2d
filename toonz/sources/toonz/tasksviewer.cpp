@@ -341,7 +341,9 @@ void TaskSheet::update(TFarmTask *task) {
       m_shrink->setText(QString::number(task->m_shrink));
       m_multimedia->setCurrentIndex(task->m_multimedia);
       m_renderKeysOnly->setChecked(task->m_renderKeysOnly);
+      m_renderToFolders->setChecked(task->m_renderToFolders);
       m_renderKeysOnly->setEnabled(m_multimedia->currentIndex());
+      m_renderToFolders->setEnabled(m_multimedia->currentIndex());
       m_threadsCombo->setCurrentIndex(task->m_threadsIndex);
       m_rasterGranularityCombo->setCurrentIndex(task->m_maxTileSizeIndex);
 
@@ -695,6 +697,7 @@ void TaskSheet::setMultimedia(int) {
   }
 
   m_renderKeysOnly->setEnabled(m_multimedia->currentIndex());
+  m_renderToFolders->setEnabled(m_multimedia->currentIndex());
 
   m_viewer->startTimer();
 }
@@ -716,6 +719,28 @@ void TaskSheet::setRenderKeysOnly(int) {
   if (taskGroup) {
     for (int i = 0; i < taskGroup->getTaskCount(); ++i)
       taskGroup->getTask(i)->m_renderKeysOnly = taskGroup->m_renderKeysOnly;
+  }
+
+  m_viewer->startTimer();
+}
+
+//-----------------------------------------------------------------------------
+
+void TaskSheet::setRenderToFolders(int) {
+  if (!m_task) return;
+  if (m_task->m_renderToFolders ==
+      (m_renderToFolders->checkState() == Qt::Checked))
+    return;
+
+  m_task->m_renderToFolders = (m_renderToFolders->checkState() == Qt::Checked);
+  m_commandLine->setText(m_task->getCommandLine());
+  BatchesController::instance()->setDirtyFlag(true);
+
+  // Update children tasks, if present.
+  TFarmTaskGroup *taskGroup = dynamic_cast<TFarmTaskGroup *>(m_task);
+  if (taskGroup) {
+    for (int i = 0; i < taskGroup->getTaskCount(); ++i)
+      taskGroup->getTask(i)->m_renderToFolders = taskGroup->m_renderToFolders;
   }
 
   m_viewer->startTimer();
@@ -873,6 +898,8 @@ TaskSheet::TaskSheet(TasksViewer *owner) : QScrollArea(owner) {
            Qt::AlignLeft | Qt::AlignTop, row1++);
   ::create(m_renderKeysOnly, layout1, tr("Render Key Drawings Only"), row1++,
            4);
+  ::create(m_renderToFolders, layout1, tr("Render To Folders"), row1++,
+           4);
   ::create(m_from, m_to, layout1, tr("From:"), tr("To:"),
            Qt::AlignRight | Qt::AlignTop, Qt::AlignRight | Qt::AlignTop,
            row1++);
@@ -887,6 +914,7 @@ TaskSheet::TaskSheet(TasksViewer *owner) : QScrollArea(owner) {
   m_multimedia->addItems(multimediaTypes);
 
   m_renderKeysOnly->setEnabled(false);
+  m_renderToFolders->setEnabled(false);
 
   ::create(m_threadsCombo, layout1, tr("Dedicated CPUs:"), row1++, 3);
   QStringList threadsTypes;
@@ -985,6 +1013,8 @@ TaskSheet::TaskSheet(TasksViewer *owner) : QScrollArea(owner) {
                        SLOT(setMultimedia(int)));
   ret = ret && connect(m_renderKeysOnly, SIGNAL(stateChanged(int)), this,
                        SLOT(setRenderKeysOnly(int)));
+  ret = ret && connect(m_renderToFolders, SIGNAL(stateChanged(int)), this,
+                       SLOT(setRenderToFolders(int)));
   ret = ret && connect(m_visible, SIGNAL(stateChanged(int)), this,
                        SLOT(setVisible(int)));
 

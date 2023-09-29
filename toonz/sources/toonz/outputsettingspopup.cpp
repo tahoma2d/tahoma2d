@@ -941,6 +941,9 @@ QFrame *OutputSettingsPopup::createMoreSettingsBox() {
   m_renderKeysOnly = new DVGui::CheckBox(tr("Render Key Drawings Only"), this);
   m_renderKeysOnly->setEnabled(false);
 
+  m_renderToFolders = new DVGui::CheckBox(tr("Render To Folders"), this);
+  m_renderToFolders->setEnabled(false);
+
   //-----
 
   QGridLayout *lay = new QGridLayout();
@@ -983,9 +986,11 @@ QFrame *OutputSettingsPopup::createMoreSettingsBox() {
                    Qt::AlignLeft | Qt::AlignVCenter);
     lay->addWidget(m_renderKeysOnly, 6, 1, 1, 3,
                    Qt::AlignLeft | Qt::AlignVCenter);
+    lay->addWidget(m_renderToFolders, 7, 1, 1, 3,
+                   Qt::AlignLeft | Qt::AlignVCenter);
 
-    lay->addWidget(m_doStereoscopy, 7, 0);
-    lay->addWidget(new QLabel(tr("Camera Shift:")), 7, 1, 1, 2,
+    lay->addWidget(m_doStereoscopy, 8, 0);
+    lay->addWidget(new QLabel(tr("Camera Shift:")), 8, 1, 1, 2,
                    Qt::AlignRight | Qt::AlignVCenter);
     lay->addWidget(m_stereoShift, 8, 3, Qt::AlignLeft | Qt::AlignVCenter);
   }
@@ -1020,6 +1025,8 @@ QFrame *OutputSettingsPopup::createMoreSettingsBox() {
                        SLOT(onStereoChanged()));
   ret = ret && connect(m_renderKeysOnly, SIGNAL(stateChanged(int)), this,
                        SLOT(onRenderKeysOnlyChecked(int)));
+  ret = ret && connect(m_renderToFolders, SIGNAL(stateChanged(int)), this,
+                       SLOT(onRenderToFoldersChecked(int)));
   assert(ret);
   return moreSettingsBox;
 }
@@ -1173,7 +1180,9 @@ void OutputSettingsPopup::updateField() {
         m_fileFormat->findText(QString::fromStdString(path.getType())));
     m_multimediaOm->setCurrentIndex(prop->getMultimediaRendering());
     m_renderKeysOnly->setChecked(prop->isRenderKeysOnly());
+    m_renderToFolders->setChecked(prop->isRenderToFolders());
     m_renderKeysOnly->setEnabled(prop->getMultimediaRendering());
+    m_renderToFolders->setEnabled(prop->getMultimediaRendering());
   }
 
   // Refresh format if allow-multithread was toggled
@@ -1841,6 +1850,7 @@ void OutputSettingsPopup::onMultimediaChanged(int state) {
   prop->setMultimediaRendering(state);
 
   m_renderKeysOnly->setEnabled(state);
+  m_renderToFolders->setEnabled(state);
 
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
 }
@@ -1851,6 +1861,16 @@ void OutputSettingsPopup::onRenderKeysOnlyChecked(int) {
   if (!getCurrentScene()) return;
   TOutputProperties *prop = getProperties();
   prop->setRenderKeysOnly(m_renderKeysOnly->isChecked());
+
+  TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+}
+
+//-----------------------------------------------------------------------------
+
+void OutputSettingsPopup::onRenderToFoldersChecked(int) {
+  if (!getCurrentScene()) return;
+  TOutputProperties *prop = getProperties();
+  prop->setRenderToFolders(m_renderToFolders->isChecked());
 
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
 }

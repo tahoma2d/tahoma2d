@@ -127,6 +127,7 @@ class TaskSheet final : public QScrollArea {
   QListWidget *m_notAddedBox;
   DVGui::CheckBox *m_visible;
   DVGui::CheckBox *m_renderKeysOnly;
+  DVGui::CheckBox *m_renderToFolders;
   QComboBox *m_overwrite;
   QComboBox *m_multimedia;
   QComboBox *m_threadsCombo;
@@ -150,6 +151,7 @@ protected slots:
   void setOverwrite(int);
   void setMultimedia(int);
   void setRenderKeysOnly(int);
+  void setRenderToFolders(int);
   void setThreadsCombo(int);
   void setGranularityCombo(int);
   void setPriority();

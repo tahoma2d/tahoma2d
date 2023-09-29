@@ -130,6 +130,7 @@ TFarmTask::TFarmTask(const QString &name)
     , m_chunkSize(-1)
     , m_multimedia(0)        // Full render, no multimedia
     , m_renderKeysOnly(false)
+    , m_renderToFolders(false)
     , m_threadsIndex(2)      // All threads
     , m_maxTileSizeIndex(0)  // No tiling
     , m_overwrite()
@@ -144,8 +145,9 @@ TFarmTask::TFarmTask(const QString &id, const QString &name, bool composerTask,
                      int priority, const TFilePath &taskFilePath,
                      const TFilePath &outputPath, int from, int to, int step,
                      int shrink, int multimedia, bool renderKeysOnly,
-                     int chunksize, int threadsIndex, int maxTileSizeIndex,
-                     OverwriteBehavior overwrite, bool onlyvisible)
+                     bool renderToFolders, int chunksize, int threadsIndex,
+                     int maxTileSizeIndex, OverwriteBehavior overwrite,
+                     bool onlyvisible)
 
     : m_isComposerTask(composerTask)
     , m_id(id)
@@ -166,6 +168,7 @@ TFarmTask::TFarmTask(const QString &id, const QString &name, bool composerTask,
     , m_shrink(shrink)
     , m_multimedia(multimedia)
     , m_renderKeysOnly(renderKeysOnly)
+    , m_renderToFolders(renderToFolders)
     , m_threadsIndex(threadsIndex)
     , m_maxTileSizeIndex(maxTileSizeIndex)
     , m_chunkSize(chunksize)
@@ -224,6 +227,7 @@ TFarmTask &TFarmTask::operator=(const TFarmTask &rhs) {
     m_overwrite        = rhs.m_overwrite;
     m_multimedia       = rhs.m_multimedia;
     m_renderKeysOnly   = rhs.m_renderKeysOnly;
+    m_renderToFolders  = rhs.m_renderToFolders;
     m_threadsIndex     = rhs.m_threadsIndex;
     m_maxTileSizeIndex = rhs.m_maxTileSizeIndex;
     m_chunkSize        = rhs.m_chunkSize;
@@ -266,6 +270,7 @@ bool TFarmTask::operator==(const TFarmTask &task) {
       task.m_shrink == m_shrink && task.m_onlyVisible == m_onlyVisible &&
       task.m_overwrite == m_overwrite && task.m_multimedia == m_multimedia &&
       task.m_renderKeysOnly == m_renderKeysOnly &&
+      task.m_renderToFolders == m_renderToFolders &&
       task.m_threadsIndex == m_threadsIndex &&
       task.m_maxTileSizeIndex == m_maxTileSizeIndex &&
       task.m_chunkSize == m_chunkSize && equalDependencies);
@@ -449,6 +454,9 @@ void TFarmTask::parseCommandLine(QString commandLine) {
     } else if (l.at(i) == "-renderkeysonly") {
       m_renderKeysOnly = (l.at(i + 1).toInt());
       i += 2;
+    } else if (l.at(i) == "-rendertofolders") {
+      m_renderToFolders = (l.at(i + 1).toInt());
+      i += 2;
     } else if (l.at(i) == "-nthreads") {
       QString str(l.at(i + 1));
 
@@ -534,6 +542,7 @@ QString TFarmTask::getCommandLineArguments() const {
   cmdline += " -shrink " + QString::number(m_shrink);
   cmdline += " -multimedia " + QString::number(m_multimedia);
   cmdline += " -renderkeysonly " + QString::number(m_renderKeysOnly ? 1 : 0);
+  cmdline += " -rendertofolders " + QString::number(m_renderToFolders ? 1 : 0);
 
   const QString threadCounts[3] = {"single", "half", "all"};
   cmdline += " -nthreads " + threadCounts[m_threadsIndex];
@@ -588,6 +597,7 @@ QStringList TFarmTask::getCommandLineArgumentsList() const {
   ret << "-shrink" << QString::number(m_shrink);
   ret << "-multimedia" << QString::number(m_multimedia);
   ret << "-renderkeysonly" << QString::number(m_renderKeysOnly ? 1 : 0);
+  ret << "-rendertofolders" << QString::number(m_renderToFolders ? 1 : 0);
 
   const QString threadCounts[3] = {"single", "half", "all"};
   ret << "-nthreads" << threadCounts[m_threadsIndex];
@@ -673,8 +683,9 @@ bool TFarmTaskGroup::changeChunkSize(int chunksize) {
         TFarmTask *subTask = new TFarmTask(
             m_id + "." + toString(i, 2, '0'), subName, true, m_user, m_hostName,
             rb - ra + 1, m_priority, m_taskFilePath, m_outputPath, ra, rb,
-            m_step, m_shrink, m_multimedia, m_renderKeysOnly, m_chunkSize,
-            m_threadsIndex, m_maxTileSizeIndex, Overwrite_Off, false);
+            m_step, m_shrink, m_multimedia, m_renderKeysOnly, m_renderToFolders,
+            m_chunkSize, m_threadsIndex, m_maxTileSizeIndex, Overwrite_Off,
+            false);
 
         subTask->m_parentId = m_id;
         addTask(subTask);
@@ -691,18 +702,17 @@ bool TFarmTaskGroup::changeChunkSize(int chunksize) {
 
 //------------------------------------------------------------------------------
 
-TFarmTaskGroup::TFarmTaskGroup(const QString &id, const QString &name,
-                               const QString &user, const QString &host,
-                               int stepCount, int priority,
-                               const TFilePath &taskFilePath,
-                               const TFilePath &outputPath, int from, int to,
-                               int step, int shrink, int multimedia,
-                               bool renderKeysOnly, int chunksize,
-                               int threadsIndex, int maxTileSizeIndex)
+TFarmTaskGroup::TFarmTaskGroup(
+    const QString &id, const QString &name, const QString &user,
+    const QString &host, int stepCount, int priority,
+    const TFilePath &taskFilePath, const TFilePath &outputPath, int from,
+    int to, int step, int shrink, int multimedia, bool renderKeysOnly,
+    bool renderToFolders, int chunksize, int threadsIndex, int maxTileSizeIndex)
 
     : TFarmTask(id, name, true, user, host, stepCount, priority, taskFilePath,
                 outputPath, from, to, step, shrink, multimedia, renderKeysOnly,
-                chunksize, threadsIndex, maxTileSizeIndex, Overwrite_Off, false)
+                renderToFolders, chunksize, threadsIndex, maxTileSizeIndex,
+                Overwrite_Off, false)
     , m_imp(new Imp()) {
   int subCount = 0;
   if (chunksize > 0) subCount = tceil((to - from + 1) / (double)chunksize);
@@ -720,8 +730,8 @@ TFarmTaskGroup::TFarmTaskGroup(const QString &id, const QString &name,
         TFarmTask *subTask = new TFarmTask(
             id + "." + toString(i, 2, '0'), subName, true, user, host,
             stepCount, priority, taskFilePath, outputPath, ra, rb, step, shrink,
-            multimedia, renderKeysOnly, chunksize, threadsIndex,
-            maxTileSizeIndex, Overwrite_Off, false);
+            multimedia, renderKeysOnly, renderToFolders, chunksize,
+            threadsIndex, maxTileSizeIndex, Overwrite_Off, false);
 
         subTask->m_parentId = id;
         addTask(subTask);
@@ -742,7 +752,8 @@ TFarmTaskGroup::TFarmTaskGroup(const QString &id, const QString &name,
                                const TFilePath &taskFilePath,
                                OverwriteBehavior overwrite, bool onlyvisible)
     : TFarmTask(id, name, false, user, host, stepCount, priority, taskFilePath,
-                TFilePath(), 0, 0, 0, 0, 0, 0, 0, 0, 0, overwrite, onlyvisible)
+                TFilePath(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, overwrite,
+                onlyvisible)
     , m_imp(new Imp()) {}
 
 //------------------------------------------------------------------------------

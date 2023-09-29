@@ -4,6 +4,7 @@
 #include "toonz/multimediarenderer.h"
 #include "toonz/movierenderer.h"
 #include "trenderer.h"
+#include "tsystem.h"
 
 // Scene structures
 #include "toonz/toonzscene.h"
@@ -73,9 +74,11 @@ public:
 
   int m_multimediaMode;
   bool m_renderKeysOnly;
+  bool m_renderToFolders;
 
   Imp(ToonzScene *scene, const TFilePath &moviePath, int multimediaMode,
-      bool renderKeysOnly, int threadCount, bool cacheResults);
+      bool renderKeysOnly, bool renderToFolders, int threadCount,
+      bool cacheResults);
 
   ~Imp();
 
@@ -100,7 +103,8 @@ public:
 
 MultimediaRenderer::Imp::Imp(ToonzScene *scene, const TFilePath &moviePath,
                              int multimediaMode, bool renderKeysOnly,
-                             int threadCount, bool cacheResults)
+                             bool renderToFolders, int threadCount,
+                             bool cacheResults)
     : m_scene(scene)
     , m_fp(moviePath)
     , m_threadCount(threadCount)
@@ -114,7 +118,8 @@ MultimediaRenderer::Imp::Imp(ToonzScene *scene, const TFilePath &moviePath,
     , m_currentFx(0)
     , m_currentFrame()
     , m_multimediaMode(multimediaMode)
-    , m_renderKeysOnly(renderKeysOnly) {
+    , m_renderKeysOnly(renderKeysOnly)
+    , m_renderToFolders(renderToFolders) {
   // Retrieve all fx nodes to be rendered in this process.
   scanSceneForRenderNodes();
 }
@@ -394,13 +399,39 @@ void MultimediaRenderer::Imp::start() {
     std::wstring fxNameNoSpaces(::removeSpaces(fxName));
     std::wstring fxId(currFx->getFxId());
 
-    std::wstring fpName =
-        m_fp.getWideName() + L"_" + columnName +
-        (columnId == columnName ? L"" : L"(" + columnId + L")") +
-        (fxId.empty() ? L"" : L"_" + fxName + (fxId == fxNameNoSpaces
-                                                   ? L""
-                                                   : L"(" + fxId + L")"));
-    TFilePath movieFp(m_fp.withName(fpName));
+    std::wstring fpName;
+
+    TFilePath fp = m_fp;
+
+    if (!m_renderToFolders)
+      fpName = fp.getWideName() + L"_" + columnName +
+               (columnId == columnName ? L"" : L"(" + columnId + L")") +
+               (fxId.empty()
+                    ? L""
+                    : L"_" + fxName +
+                          (fxId == fxNameNoSpaces ? L"" : L"(" + fxId + L")"));
+    else {
+      fp = fp.getParentDir() + TFilePath(fp.getWideName()) +
+           TFilePath(columnName +
+                     (columnId == columnName ? L"" : L"(" + columnId + L")")) +
+           columnName;
+      fp = fp.withType(m_fp.getType());
+      if (!TSystem::doesExistFileOrLevel(fp.getParentDir())) {
+        TFilePath parentDir = fp.getParentDir();
+        try {
+          TSystem::mkDir(parentDir);
+        } catch (...) {
+          break;
+        }
+      }
+      fpName = columnName +
+               ((fxId.empty() || m_multimediaMode == 1)
+                    ? L""
+                    : L"_" + fxName +
+                          (fxId == fxNameNoSpaces ? L"" : L"(" + fxId + L")"));
+    }
+
+    TFilePath movieFp(fp.withName(fpName));
 
     // Initialize a MovieRenderer with our infos
     MovieRenderer movieRenderer(m_scene, movieFp, m_threadCount, false);
@@ -487,9 +518,10 @@ void MultimediaRenderer::Imp::onRenderCompleted() {
 MultimediaRenderer::MultimediaRenderer(ToonzScene *scene,
                                        const TFilePath &moviePath,
                                        int multimediaMode, bool renderKeysOnly,
-                                       int threadCount, bool cacheResults)
+                                       bool renderToFolders, int threadCount,
+                                       bool cacheResults)
     : m_imp(new Imp(scene, moviePath, multimediaMode, renderKeysOnly,
-                    threadCount, cacheResults)) {
+                    renderToFolders, threadCount, cacheResults)) {
   m_imp->addRef();
 }
 
@@ -523,6 +555,12 @@ int MultimediaRenderer::getMultimediaMode() const {
 
 bool MultimediaRenderer::isRenderKeysOnly() const {
   return m_imp->m_renderKeysOnly;
+}
+
+//---------------------------------------------------------
+
+bool MultimediaRenderer::isRenderToFolders() const {
+  return m_imp->m_renderToFolders;
 }
 
 //---------------------------------------------------------
