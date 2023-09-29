@@ -312,27 +312,30 @@ void PaletteViewer::updateView() {
 
 void PaletteViewer::save(QSettings &settings, bool forPopupIni) const {
   int visibleParts = m_toolbarVisibleOtherParts;
+  int swatchSize   = m_pageViewer->getViewMode();
   if (m_visibleKeysAction->isChecked()) visibleParts |= 0x01;
-//  if (m_visibleNewAction->isChecked()) visibleParts |= 0x02;
+  //  if (m_visibleNewAction->isChecked()) visibleParts |= 0x02;
   if (m_visibleGizmoAction->isChecked()) visibleParts |= 0x04;
   if (m_visibleNameAction->isChecked()) visibleParts |= 0x08;
   settings.setValue("toolbarVisibleMsk", visibleParts);
- }
- 
- void PaletteViewer::load(QSettings &settings) {
-  int visibleParts;
-  QVariant visibleVar = settings.value("toolbarVisibleMsk");
-  if (visibleVar.canConvert(QVariant::Int)) {
-    visibleParts = visibleVar.toInt();
-  } else {
-    visibleParts = 3;  // Show keyframes and new style/page
-  }
+  settings.setValue("swatchSize", swatchSize);
+}
+
+void PaletteViewer::load(QSettings &settings) {
+  int visibleParts                = 3;  // Show keyframes and new style/page;
+  PageViewer::ViewMode swatchSize = PageViewer::SmallChips;
+  QVariant visibleVar             = settings.value("toolbarVisibleMsk");
+  QVariant swatchVar              = settings.value("swatchSize");
+  if (visibleVar.canConvert(QVariant::Int)) visibleParts = visibleVar.toInt();
+  if (swatchVar.canConvert(QVariant::Int))
+    swatchSize = (PageViewer::ViewMode)swatchVar.toInt();
 
   m_visibleKeysAction->setChecked(visibleParts & 0x01);
 //  m_visibleNewAction->setChecked(visibleParts & 0x02);
   m_visibleGizmoAction->setChecked(visibleParts & 0x04);
   m_visibleNameAction->setChecked(visibleParts & 0x08);
   m_toolbarVisibleOtherParts = visibleParts & ~0x0F;  // Reserve
+  m_pageViewer->setViewMode(swatchSize);
 
   applyToolbarPartVisibility(TBVisKeyframe, visibleParts & 0x01);
 //  applyToolbarPartVisibility(TBVisNewStylePage, visibleParts & 0x02);
