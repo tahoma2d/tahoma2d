@@ -98,6 +98,9 @@ private:
   bool m_columnColorFilterOnRender;
   TFilePath m_camCapSaveInPath;
 
+  TFilePath m_overlayFile;
+  int m_overlayOpacity;
+
 public:
   /*!
           The constructor creates:
@@ -311,6 +314,15 @@ and height.
   // templateFId in preview settings is used for "input" file format
   // such as new raster level, captured images by camera capture feature, etc.
   TFrameId &formatTemplateFIdForInput();
+
+  // Scene Overlay Image
+  TFilePath getOverlayFile() { return m_overlayFile; }
+  void setOverlayFile(TFilePath overlayFile) { m_overlayFile = overlayFile; }
+
+  int getOverlayOpacity() { return m_overlayOpacity; }
+  void setOverlayOpacity(int overlayOpacity) {
+    m_overlayOpacity = overlayOpacity;
+  }
 
 private:
   // not implemented
