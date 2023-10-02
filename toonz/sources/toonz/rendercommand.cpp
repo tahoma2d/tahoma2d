@@ -162,6 +162,8 @@ class RenderCommand {
   double m_timeStretchFactor;
 
   int m_multimediaRender;
+  bool m_renderKeysOnly;
+  bool m_renderToFolders;
 
 public:
   RenderCommand()
@@ -173,7 +175,9 @@ public:
       , m_stepd(1)
       , m_oldCameraRes(0, 0)
       , m_timeStretchFactor(1)
-      , m_multimediaRender(0) {
+      , m_multimediaRender(0)
+      , m_renderKeysOnly(false)
+      , m_renderToFolders(false) {
     setCommandHandler("MI_Render", this, &RenderCommand::onRender);
     setCommandHandler("MI_SaveAndRender", this, &RenderCommand::onSaveAndRender);
     setCommandHandler("MI_FastRender", this, &RenderCommand::onFastRender);
@@ -238,6 +242,8 @@ sprop->getOutputProperties()->setRenderSettings(rso);*/
     m_r                = m_r0;
     m_stepd            = m_step;
     m_multimediaRender = 0;
+    m_renderKeysOnly   = false;
+    m_renderToFolders  = false;
     return true;
   }
 
@@ -302,6 +308,8 @@ sprop->getOutputProperties()->setRenderSettings(rso);*/
 
   // Update the multimedia render switch
   m_multimediaRender = outputSettings.getMultimediaRendering();
+  m_renderKeysOnly   = outputSettings.isRenderKeysOnly();
+  m_renderToFolders  = outputSettings.isRenderToFolders();
 
   return true;
 }
@@ -731,8 +739,11 @@ void RenderCommand::multimediaRender() {
   TRenderSettings rs = prop->getRenderSettings();
   rs.m_maxTileSize   = maxTileSizes[index];
 
-  MultimediaRenderer multimediaRenderer(
-      scene, m_fp, prop->getMultimediaRendering(), threadCount);
+  int multimedia       = prop->getMultimediaRendering();
+  bool renderKeysOnly  = prop->isRenderKeysOnly();
+  bool renderToFolders = prop->isRenderToFolders();
+  MultimediaRenderer multimediaRenderer(scene, m_fp, multimedia, renderKeysOnly,
+                                        renderToFolders, threadCount);
   multimediaRenderer.setRenderSettings(rs);
 
   TPointD cameraDpi = scene->getCurrentCamera()->getDpi();

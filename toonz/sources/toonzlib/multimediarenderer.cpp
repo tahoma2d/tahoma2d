@@ -4,12 +4,16 @@
 #include "toonz/multimediarenderer.h"
 #include "toonz/movierenderer.h"
 #include "trenderer.h"
+#include "tsystem.h"
 
 // Scene structures
 #include "toonz/toonzscene.h"
 #include "toonz/txsheet.h"
 #include "toonz/fxdag.h"
 #include "toonz/tcolumnfxset.h"
+#include "toonz/txshlevelcolumn.h"
+#include "toonz/txshzeraryfxcolumn.h"
+#include "toonz/txshcell.h"
 
 // Fxs tree decomposition
 #include "toonz/scenefx.h"
@@ -69,9 +73,12 @@ public:
   QEventLoop m_eventLoop;
 
   int m_multimediaMode;
+  bool m_renderKeysOnly;
+  bool m_renderToFolders;
 
   Imp(ToonzScene *scene, const TFilePath &moviePath, int multimediaMode,
-      int threadCount, bool cacheResults);
+      bool renderKeysOnly, bool renderToFolders, int threadCount,
+      bool cacheResults);
 
   ~Imp();
 
@@ -79,6 +86,7 @@ public:
   void scanSceneForColumns();
   void scanSceneForLayers();
   bool scanColsRecursive(TFx *fx);
+  bool hasKeyDrawing(TFx *fx, int row);
   TColumnFx *searchColumn(TFxP fx);
   TFxP addPostProcessing(TFxP fx, TFxP postProc);
   void addPostProcessingRecursive(TFxP fx, TFxP postProc);
@@ -94,7 +102,8 @@ public:
 //---------------------------------------------------------
 
 MultimediaRenderer::Imp::Imp(ToonzScene *scene, const TFilePath &moviePath,
-                             int multimediaMode, int threadCount,
+                             int multimediaMode, bool renderKeysOnly,
+                             bool renderToFolders, int threadCount,
                              bool cacheResults)
     : m_scene(scene)
     , m_fp(moviePath)
@@ -108,7 +117,9 @@ MultimediaRenderer::Imp::Imp(ToonzScene *scene, const TFilePath &moviePath,
     , m_canceled(false)
     , m_currentFx(0)
     , m_currentFrame()
-    , m_multimediaMode(multimediaMode) {
+    , m_multimediaMode(multimediaMode)
+    , m_renderKeysOnly(renderKeysOnly)
+    , m_renderToFolders(renderToFolders) {
   // Retrieve all fx nodes to be rendered in this process.
   scanSceneForRenderNodes();
 }
@@ -169,6 +180,35 @@ bool MultimediaRenderer::Imp::scanColsRecursive(TFx *fx) {
   }
 
   if (isChildAnFxRepres && fx->getInputPortCount() == 1) return true;
+  return false;
+}
+
+bool MultimediaRenderer::Imp::hasKeyDrawing(TFx *fx, int row) {
+  TColumnFx *colFx = dynamic_cast<TColumnFx *>(fx);
+  if (colFx) {
+    TXshColumn *col = colFx->getXshColumn();
+    if (!col) return false;
+    TXshCellColumn *celCol = col->getCellColumn();
+    if (!celCol) return false;
+
+    TXshCell cell     = celCol->getCell(row, false);
+    TXshCell prevCell = row > 0 ? celCol->getCell(row - 1, false) : TXshCell();
+
+    if (cell.isEmpty() || cell.getFrameId().isStopFrame() || cell == prevCell)
+      return false;
+
+    return true;
+  }
+
+  // Search for key drawings in every port
+  bool doesChildHaveKey;
+  for (int i = 0; i < fx->getInputPortCount(); ++i) {
+    TFx *childFx = fx->getInputPort(i)->getFx();
+    if (!childFx) continue;
+    doesChildHaveKey = hasKeyDrawing(childFx, row);
+    if (doesChildHaveKey) return true;
+  }
+
   return false;
 }
 
@@ -310,6 +350,11 @@ void MultimediaRenderer::Imp::start() {
     int j;
     for (j = 0, jt = m_framesToRender.begin(); jt != m_framesToRender.end();
          ++j, ++jt) {
+
+      if (m_multimediaMode && m_renderKeysOnly &&
+          !hasKeyDrawing(m_fxsToRender.getFx(i), *jt))
+        continue;
+
       TFxPair fx;
 
       if (m_renderSettings.m_stereoscopic)
@@ -354,13 +399,39 @@ void MultimediaRenderer::Imp::start() {
     std::wstring fxNameNoSpaces(::removeSpaces(fxName));
     std::wstring fxId(currFx->getFxId());
 
-    std::wstring fpName =
-        m_fp.getWideName() + L"_" + columnName +
-        (columnId == columnName ? L"" : L"(" + columnId + L")") +
-        (fxId.empty() ? L"" : L"_" + fxName + (fxId == fxNameNoSpaces
-                                                   ? L""
-                                                   : L"(" + fxId + L")"));
-    TFilePath movieFp(m_fp.withName(fpName));
+    std::wstring fpName;
+
+    TFilePath fp = m_fp;
+
+    if (!m_renderToFolders)
+      fpName = fp.getWideName() + L"_" + columnName +
+               (columnId == columnName ? L"" : L"(" + columnId + L")") +
+               (fxId.empty()
+                    ? L""
+                    : L"_" + fxName +
+                          (fxId == fxNameNoSpaces ? L"" : L"(" + fxId + L")"));
+    else {
+      fp = fp.getParentDir() + TFilePath(fp.getWideName()) +
+           TFilePath(columnName +
+                     (columnId == columnName ? L"" : L"(" + columnId + L")")) +
+           columnName;
+      fp = fp.withType(m_fp.getType());
+      if (!TSystem::doesExistFileOrLevel(fp.getParentDir())) {
+        TFilePath parentDir = fp.getParentDir();
+        try {
+          TSystem::mkDir(parentDir);
+        } catch (...) {
+          break;
+        }
+      }
+      fpName = columnName +
+               ((fxId.empty() || m_multimediaMode == 1)
+                    ? L""
+                    : L"_" + fxName +
+                          (fxId == fxNameNoSpaces ? L"" : L"(" + fxId + L")"));
+    }
+
+    TFilePath movieFp(fp.withName(fpName));
 
     // Initialize a MovieRenderer with our infos
     MovieRenderer movieRenderer(m_scene, movieFp, m_threadCount, false);
@@ -446,10 +517,11 @@ void MultimediaRenderer::Imp::onRenderCompleted() {
 
 MultimediaRenderer::MultimediaRenderer(ToonzScene *scene,
                                        const TFilePath &moviePath,
-                                       int multimediaMode, int threadCount,
+                                       int multimediaMode, bool renderKeysOnly,
+                                       bool renderToFolders, int threadCount,
                                        bool cacheResults)
-    : m_imp(new Imp(scene, moviePath, multimediaMode, threadCount,
-                    cacheResults)) {
+    : m_imp(new Imp(scene, moviePath, multimediaMode, renderKeysOnly,
+                    renderToFolders, threadCount, cacheResults)) {
   m_imp->addRef();
 }
 
@@ -477,6 +549,18 @@ int MultimediaRenderer::getColumnsCount() {
 
 int MultimediaRenderer::getMultimediaMode() const {
   return m_imp->m_multimediaMode;
+}
+
+//---------------------------------------------------------
+
+bool MultimediaRenderer::isRenderKeysOnly() const {
+  return m_imp->m_renderKeysOnly;
+}
+
+//---------------------------------------------------------
+
+bool MultimediaRenderer::isRenderToFolders() const {
+  return m_imp->m_renderToFolders;
 }
 
 //---------------------------------------------------------
