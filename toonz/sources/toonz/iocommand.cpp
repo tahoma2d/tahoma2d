@@ -959,7 +959,8 @@ TXshLevel *loadLevel(ToonzScene *scene,
       std::string format = actualPath.getType();
       if (format == "tzp" || format == "tzu") convertingPopup->show();
 
-      if (fIds.size() != 0 && doesFileActuallyExist)
+      // SVGs are treated as PLI. Ignore the fIds lists
+      if (format != "svg" && fIds.size() != 0 && doesFileActuallyExist)
         xl = scene->loadLevel(actualPath, rd.m_options ? &*rd.m_options : 0,
                               levelName, fIds);
       else
