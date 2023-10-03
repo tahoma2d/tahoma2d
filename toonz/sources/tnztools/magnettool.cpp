@@ -150,9 +150,6 @@ public:
   {
     bind(TTool::Vectors);
 
-    if (Preferences::instance()->getBoolValue(magnetNonLinearSliderEnabled))
-      m_toolSize.setNonLinearSlider();
-
     m_prop.bind(m_toolSize);
   }
 
@@ -446,6 +443,9 @@ lefrightButtonDown(p);
     if (!m_firstTime) {
       m_firstTime = true;
       m_toolSize.setValue(MagnetSize);
+
+      if (Preferences::instance()->getBoolValue(magnetNonLinearSliderEnabled))
+        m_toolSize.setNonLinearSlider();
     }
     //        getApplication()->editImageOrSpline();
   }
