@@ -105,6 +105,12 @@ void DVAPI fullColorFill(const TRaster32P &ras, const FillParameters &params,
                          bool closeGaps = false, int closeStyleIndex = -1,
                          double autoCloseDistance = -1.0);
 
+void DVAPI finishGapLines(TRasterCM32P &rin, TRect &rect,
+                          const TRasterCM32P &rbefore,
+                          const TRasterCM32P &combined, TPalette *plt,
+                          int clickedColorStyle, int fillIndex,
+                          int closeColorStyle, bool closeGaps);
+
 //=============================================================================
 //! The class AreaFiller allows to fill a raster area, delimited by rect or
 //! spline.

@@ -1801,7 +1801,7 @@ void FullColorFillToolOptionsBox::onGapSettingChanged(int index) {
     m_styleIndex->hide();
     m_styleIndexLabel->hide();
     m_rasterGapSlider->show();
-    m_gapSliderLabel->hide();
+    m_gapSliderLabel->show();
   } else if (index == 2) {
     m_styleIndex->show();
     m_styleIndexLabel->show();
