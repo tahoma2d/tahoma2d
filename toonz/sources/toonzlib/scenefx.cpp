@@ -908,7 +908,7 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
       getColumnPlacement(pf, m_xsh, m_frame, pf.m_columnIndex, m_isPreview);
 
   bool isOverlay = false;
-  if (!cell.isEmpty() &&
+  if (!cell.isEmpty() && cell.getSimpleLevel() &&
       cell.getSimpleLevel()->getName() == L"__Scene Overlay__")
     isOverlay = true;
 
