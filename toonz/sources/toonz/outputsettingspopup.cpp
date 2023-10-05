@@ -860,7 +860,7 @@ QFrame *OutputSettingsPopup::createAdvancedSettingsBox(bool isPreview) {
       // Threads
       bottomGridLay->addWidget(new QLabel(tr("Dedicated CPUs:"), this), 1, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
-      bottomGridLay->addWidget(m_threadsComboOm, 2, 1);
+      bottomGridLay->addWidget(m_threadsComboOm, 1, 1);
       // Granularity
       bottomGridLay->addWidget(new QLabel(tr("Render Tile:"), this), 2, 0,
                                Qt::AlignRight | Qt::AlignVCenter);
