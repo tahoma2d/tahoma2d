@@ -603,16 +603,6 @@ public:
     else
       filler.strokeFill(m_s, m_paintId, m_onlyUnfilled, m_colorType != LINES,
                         m_colorType != AREAS, m_fillArea);
-
-    TSystem::outputDebug("filltool.redo() final check, m_fillGaps is:" + std::to_string(m_fillGaps));
-    // final check
-    
-    // ToDo - call finishGapLines instead of this code
-    //void finishGapLines(TRasterCM32P & rin, TRect & rect, const TRasterCM32P & rbefore,
-    //  const TRasterCM32P & combined, TPalette * plt,
-    //  int clickedColorStyle, int fillIndex, int closeColorStyle,
-    //  bool closeGaps) {
-
     
     if (m_fillGaps) {
 
@@ -630,24 +620,6 @@ public:
 
       TPixelCM32 *tempPix = tempRaster->pixels();
       TPixelCM32 *keepPix = ras->pixels();
-      //for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
-      //  for (int tempX = 0; tempX < tempRaster->getLx();
-      //       tempX++, tempPix++, keepPix++) {
-      //    keepPix->setPaint(tempPix->getPaint());
-      //    if (tempPix->getInk() != styleIndex) {
-      //      if (m_colorType == AREAS && m_closeGaps &&
-      //          tempPix->getInk() == GAP_CLOSE_USED) {
-      //        keepPix->setInk(m_closeStyleIndex);
-      //        keepPix->setTone(tempPix->getTone());
-      //      } else if (m_colorType != AREAS && tempPix->getInk() == GAP_CLOSE_USED) {
-      //        keepPix->setInk(m_paintId);
-      //        keepPix->setTone(tempPix->getTone());
-      //      } else if (tempPix->getInk() != GAP_CLOSE_USED) {
-      //        keepPix->setInk(tempPix->getInk());
-      //      }
-      //    }
-      //  }
-      //}
       for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
         for (int tempX = 0; tempX < tempRaster->getLx();
              tempX++, tempPix++, keepPix++) {
@@ -1041,26 +1013,17 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
     TTileSetCM32 *tileSet = new TTileSetCM32(ras->getSize());
     tileSet->add(ras, rasterFillArea);
 
-    //std::cout << "\nfillAreaWithUndo ras:";
-    //std::cout << ras->getSize();
-    //outputPixels("ras", ras);
-
     TRasterCM32P tempRaster;
     int styleIndex = GAP_CLOSE_TEMP;
 
     TToonzImageP tempTi = ti->clone();
     tempRaster = tempTi->getRaster();
 
-    //outputPixels("tempRaster before auto close", tempRaster);
-
     if (fillGaps) {
 
       applyAutoclose(tempTi, AutocloseDistance, AutocloseAngle,
                      AutocloseOpacity, GAP_CLOSE_TEMP, convert(rasterFillArea), stroke);
 
-      //std::cout << "\nfillAreaWithUndo after applyAutoclose, tempRaster size:";
-      //std::cout << tempRaster->getSize();
-      //outputPixels("tempRaster", tempRaster);
     }
 
     AreaFiller filler(tempRaster);
@@ -1072,24 +1035,15 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
         delete tileSet;
         return;
       }
-      //std::cout << "\nfillAreaWithUndo after calling AreaFiller.rectFill()";
-      //std::cout << tempRaster->getSize();
-      //outputPixels("tempRaster", tempRaster);
 
     } else {
       filler.strokeFill(stroke, cs, onlyUnfilled, colorType != LINES,
                         colorType != AREAS, rasterFillArea);
-      //std::cout << "\nfillAreaWithUndo after calling AreaFiller.strokeFill()";
-      //std::cout << tempRaster->getSize();
-      //outputPixels("tempRaster", tempRaster);
     }
 
     TPixelCM32 *tempPix = tempRaster->pixels();
     TPixelCM32 *keepPix = ras->pixels();
 
-    TSystem::outputDebug(
-        "filltool.fillAreaWithUndo() final check, fillGaps is:" +
-        std::to_string(fillGaps) + "\n");
 
     finishGapLines(tempRaster, rasterFillArea, ras, ras, ti->getPalette(), 0,
                    cs, closeStyleIndex, closeGaps);
@@ -1108,9 +1062,6 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
         }
       }
     }
-
-      TSystem::outputDebug("filltool.fillAreaWithUndo() final check complete.\n");
-      //outputPixels("ras", ras);
 
     TPalette *plt = ti->getPalette();
 
@@ -1248,7 +1199,7 @@ void doFill(const TImageP &img, const TPointD &pos, FillParameters &params,
 
     if (tileSaver.getTileSet()->getTileCount() != 0) {
       static int count = 0;
-      TSystem::outputDebug("FILL" + std::to_string(count++) + "\n");
+      TSystem::outputDebug("FILL" + std::to_string(count++));
       if (offs != TPoint())
         for (int i = 0; i < tileSet->getTileCount(); i++) {
           TTileSet::Tile *t = tileSet->editTile(i);
@@ -2657,8 +2608,8 @@ void FillTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
         invalidate();
         return;
       }
-      TSystem::outputDebug("ok. pix=" + std::to_string(pix.getTone()) + "," +
-                           std::to_string(pix.getPaint()) + "\n");
+      //TSystem::outputDebug("ok. pix=" + std::to_string(pix.getTone()) + "," +
+      //                     std::to_string(pix.getPaint()));
     } else
       return;
     int closeStyleIndex = m_closeStyleIndex.getStyleIndex();

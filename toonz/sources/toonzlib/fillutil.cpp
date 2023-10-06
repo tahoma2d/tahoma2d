@@ -100,9 +100,7 @@ void restoreColors(const TRasterCM32P &r,
   params.m_prevailing = false;
   for (UINT i = 0; i < seeds.size(); i++) {
     params.m_p       = seeds[i].first;
-    //params.m_styleId = seeds[i].second;
-    //params.m_styleId = 0;
-    params.m_styleId = IGNORECOLORSTYLE; //set to ignore in final check
+    params.m_styleId = seeds[i].second;
     fill(r, params);
   }
 }
@@ -168,22 +166,8 @@ void finishGapLine(const TRasterCM32P &r, const TRasterCM32P &combined,
   int paintStyle       = 0;
   int toneValue        = 0;
 
-  TSystem::outputDebug(
-      "fillutil.finishGapLine(), closeGaps:" + std::to_string(closeGaps) +
-      ", clickedColorStyle:" + std::to_string(clickedColorStyle) +
-      ", fillColorStyle:" + std::to_string(fillColorStyle) +
-      ", closeColorStyle:" + std::to_string(closeColorStyle));
-  TSystem::outputDebug("point is p.y:" + std::to_string(p.y) +
-                       ", p.x:" + std::to_string(p.x));
-
-  TSystem::outputDebug("r->getBounds()), ly:" + std::to_string(r->getBounds().getLy()) + ", lx:" + std::to_string(r->getBounds().getLx()));
-  TSystem::outputDebug("insideRect, ly:" + std::to_string(insideRect->getLy()) + ", lx : " + std::to_string(insideRect->getLx()));
-  
-
   TPixelCM32 *pix  = pixels + (p.y * r->getWrap() + p.x);
   TPixelCM32 *pixc = combinedPixels + (p.y * myCombined->getWrap() + p.x);
-
-  // outputPixels("r", r);
 
   std::stack<TPoint> gapLinePixels;
   std::stack<TPoint> seeds;
@@ -194,40 +178,18 @@ void finishGapLine(const TRasterCM32P &r, const TRasterCM32P &combined,
     seeds.pop();
 
     if (!r->getBounds().contains(p)) {
-      TSystem::outputDebug("fillutil.finishGapLine(), out of bounds at p.y:" +
-        std::to_string(p.y) +
-        ", p.x:" + std::to_string(p.x));
       continue;
     }
     if (insideRect && !insideRect->contains(p)) {
-      TSystem::outputDebug("fillutil.finishGapLine(), insideRect && !insideRect->contains(p) at p.y:" +
-        std::to_string(p.y) +
-        ", p.x:" + std::to_string(p.x));
       continue;
     }
 
     TPixelCM32 *pix  = pixels + (p.y * r->getWrap() + p.x);
     TPixelCM32 *pixc = combinedPixels + (p.y * myCombined->getWrap() + p.x);
 
-    TSystem::outputDebug("--------------------- checking pixel at: p.y:"
-      + std::to_string(p.y)
-      + ", p.x:" + std::to_string(p.x)
-      + ", ink:" + std::to_string(pix->getInk())
-      + ", paint:" + std::to_string(pix->getPaint())
-      + ", tone:" + std::to_string(pix->getTone())
-      + ", pixc "
-      + ", ink:" + std::to_string(pixc->getInk())
-      + ", paint:" + std::to_string(pixc->getPaint())
-      + ", tone:" + std::to_string(pixc->getTone()));
-
-
     // handle gap close pixel
     if (pix->getInk() == GAP_CLOSE_USED) continue;
     if (pix->getInk() == GAP_CLOSE_TEMP) {
-      TSystem::outputDebug("Gap Close pixel at p.y:" +
-                           std::to_string(p.y) +
-                           ", p.x:" + std::to_string(p.x));
-
       pix->setInk(GAP_CLOSE_USED);
       // push to the gapLinePixels collection for later processing as a line
       gapLinePixels.push(p);
@@ -246,57 +208,37 @@ void finishGapLine(const TRasterCM32P &r, const TRasterCM32P &combined,
     // a neighboring filled pixel
     if (pix->getTone() > 0 && pix->getPaint() == fillColorStyle) {
       filledNeighbor++;
-      TSystem::outputDebug("    Filled neighbor at p.y:" + std::to_string(p.y) +
-                           ", p.x:" + std::to_string(p.x) + " ");
       continue;
     }
     // a neighboring fillable but unfilled pixel
-    if ((pix->getTone() == 255 && ((pix->getPaint() == clickedColorStyle) ||
-         (pix->getPaint() == 0) || (pix->getPaint() == IGNORECOLORSTYLE))) &&
+    if ((pix->getTone() == 255 &&
+         ((pix->getPaint() == clickedColorStyle) || (pix->getPaint() == 0) ||
+          (pix->getPaint() == IGNORECOLORSTYLE))) &&
         (pixc->getTone() == 255 && ((pixc->getPaint() == clickedColorStyle) ||
-        (pixc->getPaint() == 0)))) {
+                                    (pixc->getPaint() == 0)))) {
       unfilledNeighbor++;
-      TSystem::outputDebug("        Unfilled neighbor at p.y:" + std::to_string(p.y) +
-                           ", p.x:" + std::to_string(p.x) + " ");
       continue;
     }
   }
 
-  TSystem::outputDebug("fillutil.finishGapLine(), filledNeighbor:" +
-                       std::to_string(filledNeighbor) + ", unfilledNeighbor:" +
-                       std::to_string(unfilledNeighbor));
-
   // determine the final disposition of the gap line
   if (filledNeighbor > 0) {
     if (unfilledNeighbor > 0) {
-      TSystem::outputDebug(
-          "fillutil.finishGapLine(), a needed line so let's finish it.");
       if (closeGaps) {
-        TSystem::outputDebug("fillutil.finishGapLine(), finish as ink.");
         inkStyle   = closeColorStyle;
         paintStyle = fillColorStyle;
         toneValue  = 0;
       } else {
-        TSystem::outputDebug("fillutil.finishGapLine(), finish as paint.");
         inkStyle   = 0;
         paintStyle = fillColorStyle;
         toneValue  = 255;
       }
     } else {
-      // surrounded by filled pixels, not a needed line, fill with fill color
-      TSystem::outputDebug(
-          "fillutil.finishGapLine(), No unfilled pixel neighbors, so fill with "
-          "fill color.");
       inkStyle   = 0;
       paintStyle = fillColorStyle;
       toneValue  = 255;
     }
   } else {
-    // not a needed line, restore original pixels
-    // set to IGNORECOLORSTYLE to resolve in final check
-    TSystem::outputDebug(
-        "fillutil.finishGapLine(), not a needed line, set ink to a value to "
-        "ignore later.");
     inkStyle   = IGNORECOLORSTYLE;
     paintStyle = 0;
     toneValue  = 0;
@@ -306,13 +248,6 @@ void finishGapLine(const TRasterCM32P &r, const TRasterCM32P &combined,
   while (!gapLinePixels.empty()) {
     p = gapLinePixels.top();
     gapLinePixels.pop();
-
-    // do I need these checks since these points are already valid?
-    if (!r->getBounds().contains(p)) continue;
-    if (insideRect && !insideRect->contains(p)) continue;
-
-    TSystem::outputDebug("finishing point p.y:" + std::to_string(p.y) +
-                         ", p.x:" + std::to_string(p.x));
 
     TPixelCM32 *pix = pixels + (p.y * r->getWrap() + p.x);
 
@@ -345,14 +280,6 @@ void finishGapLines(TRasterCM32P &rin, TRect &rect, const TRasterCM32P &rbefore,
       int paint = pix->getPaint();
       int tone  = pix->getTone();
       int ink   = pix->getInk();
-
-      /* Pseudocode:
-       * Start the finish line procedure at the current pixel if:
-       *     The ink colorstyle is TEMP_GAP_CLOSE
-       *     The paint colorstyle of at least one neighboring pixel:
-       *       is the same as the fill colorstyle
-       *       has changed from its prior version
-       */
 
       if (ink == GAP_CLOSE_TEMP &&
           (

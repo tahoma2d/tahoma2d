@@ -527,9 +527,6 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
     tempRaster = r;
   }
 
-  //TSystem::outputDebug("fill.cpp::fill() tempRaster just after TAutocloser(), fillGaps:" + std::to_string(fillGaps) + "\n");
-  //outputPixels("tempRaster", tempRaster); // issue 1151
-
   /*-- getBounds returns the entire image --*/
   TRect bbbox = tempRaster->getBounds();
 
@@ -581,9 +578,6 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
       cr = convertRaster2CM(refRaster);
       refCMRaster = cr->clone();
 
-      //outputPixels("refCMRaster", refCMRaster);
-      //outputPixels("cr", cr);
-
       refGapsClosed = TAutocloser(refCMRaster, autoCloseDistance,
                                   AutocloseAngle, styleIndex, AutocloseOpacity)
                           .exec();
@@ -591,7 +585,6 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
         if (!gapsClosed) tempRaster = r->clone();
 
         // Transfer the gap segments to the refRaster
-        TSystem::outputDebug("fill.cpp::fill() Transfer the gap segments to the refRaster, refGapsClosed:" + std::to_string(refGapsClosed) +", gapsClosed:" + std::to_string(gapsClosed));
         TPixelCM32 *tempPix  = tempRaster->pixels(0);
         TPixelCM32 *refCMPix = refCMRaster->pixels(0);
         TPixel32 *refPix     = refRaster->pixels(0);
@@ -601,7 +594,6 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
             if (refCMPix->getInk() != styleIndex) continue;
             *refPix = color;
             if (fillGaps) {
-              TSystem::outputDebug("y:" + std::to_string(refCMY) + "," + "x:" + std::to_string(refCMX) + "," + std::to_string(refCMPix->getInk()) + ":" + std::to_string(refCMPix->getPaint()) + ":" + std::to_string(refCMPix->getTone()) + "\n");
               tempPix->setInk(refCMPix->getInk());
               tempPix->setTone(refCMPix->getTone());
             }
@@ -613,7 +605,6 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
 
   if (fillGaps && !gapsClosed && !refGapsClosed) {
     fillGaps = false;
-    TSystem::outputDebug("fill.cpp::fill(), refGapsClosed:" + std::to_string(refGapsClosed) + ", gapsClosed:" + std::to_string(gapsClosed) + ", set fillGaps to:" + std::to_string(fillGaps));
   }
 
   assert(fillDepth >= 0 && fillDepth < 16);
@@ -660,10 +651,6 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   if (xsheet) segments[y].push_back(std::pair<int, int>(xa, xb));
   seeds.push(FillSeed(xa, xb, y, 1));
   seeds.push(FillSeed(xa, xb, y, -1));
-
-  //std::cout << "\nfill.fill().outputPixels() tempRaster about to process close gaps for first seed, fillGaps is:";
-  //std::cout << fillGaps;
-  //outputPixels("tempRaster",tempRaster); // issue 1151
 
   while (!seeds.empty()) {
     FillSeed fs = seeds.top();
@@ -758,8 +745,6 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   }
 
   if (fillGaps) {
-    TSystem::outputDebug("fill.cpp::fill() final check, fillGaps is:" + std::to_string(fillGaps));
-    //outputPixels("tempRaster", tempRaster); // issue 1151
     finishGapLines(tempRaster, bbbox, r, refCMRaster, params.m_palette, paintAtClickedPos, paint, closeStyleIndex, closeGaps);
     TPixelCM32 *tempPix, *tempPixRestart;
     tempPixRestart = tempPix = tempRaster->pixels();
@@ -780,9 +765,6 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
       }
     }
   }
-
-  TSystem::outputDebug("fill.cpp:fill final check finished----\n");
-  //outputPixels("r", r);  // issue 1151
 
   return saveBoxChanged;
 }
@@ -1193,31 +1175,8 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
     }
   }
 
-  TSystem::outputDebug("fill::fullColorFill() final check, fillGaps is:" + std::to_string(fillGaps));
-  //outputPixels("refCMRaster", refCMRaster); // issue 1151
-
 // final check for close gap pixels
   if (fillGaps) {
-    
-    // ToDo - Can this be adpated to call finishGapClosePixels instead of the logic below?
-    // This logic doesn't use the palette color styles it uses RGB pixel values
-    //void finishGapLines(TRasterCM32P& rin, TRect& rect, const TRasterCM32P& rbefore,
-    //  const TRasterCM32P& combined, TPalette* plt,
-    //  int clickedColorStyle, int fillIndex, int closeColorStyle,
-    //  bool closeGaps) {
-
-    //finishGapLines(
-    //  refCMRaster,
-    //  bbbox,
-    //  cr,
-    //  refCMRaster,
-    //  params.m_palette,
-    //  clickedPosColor,
-    //  fillIndex, 
-    //  closeStyleIndex,
-    //  closeGaps
-    //);
-
 
     TPixelCM32 *tempPix = refCMRaster->pixels();
     TPixel32 *keepPix   = ras->pixels();
