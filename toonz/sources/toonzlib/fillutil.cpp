@@ -99,8 +99,9 @@ void restoreColors(const TRasterCM32P &r,
   // in order to make the paint to protrude behind the line
   params.m_prevailing = false;
   for (UINT i = 0; i < seeds.size(); i++) {
-    params.m_p       = seeds[i].first;
-    params.m_styleId = seeds[i].second;
+    params.m_p = seeds[i].first;
+    // params.m_styleId = seeds[i].second;
+    params.m_styleId = IGNORECOLORSTYLE;
     fill(r, params);
   }
 }

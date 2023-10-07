@@ -1051,15 +1051,13 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
     for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
       for (int tempX = 0; tempX < tempRaster->getLx();
            tempX++, tempPix++, keepPix++) {
-        if (tempPix->getInk() >= IGNORECOLORSTYLE ||
-            tempPix->getPaint() >= IGNORECOLORSTYLE) {
-          continue;
-        } else {
-          // Handle all other pixels
+        if (tempPix->getInk() < IGNORECOLORSTYLE) {
           keepPix->setInk(tempPix->getInk());
-          keepPix->setPaint(tempPix->getPaint());
-          keepPix->setTone(tempPix->getTone());
         }
+        if (tempPix->getPaint() < IGNORECOLORSTYLE) {
+          keepPix->setPaint(tempPix->getPaint());
+        }
+        keepPix->setTone(tempPix->getTone());
       }
     }
 
