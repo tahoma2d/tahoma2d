@@ -1615,7 +1615,21 @@ std::string TLevelColumnFx::getAlias(double frame,
       rdata += "column_0";
   }
 
-  return getFxType() + "[" + ::to_string(fp.getWideString()) + "," + rdata +
+  std::vector<TXshColumn *> masks = m_levelColumn->getColumnMasks();
+  if (masks.size()) {
+    std::string maskAlias = "masked";
+    for (int i = 0; i < masks.size(); i++) {
+      TXshLevelColumn *mask = masks[i]->getLevelColumn();
+      if (!mask) break;
+
+      if (mask->isInvertedMask()) maskAlias += "inv";
+      if (mask->canRenderMask()) maskAlias += "render";
+      break;
+    }
+    rdata += maskAlias;
+  }
+
+   return getFxType() + "[" + ::to_string(fp.getWideString()) + "," + rdata +
          "]";
 }
 
