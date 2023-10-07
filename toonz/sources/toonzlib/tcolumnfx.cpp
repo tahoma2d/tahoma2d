@@ -992,7 +992,7 @@ void TLevelColumnFx::doCompute(TTile &tile, double frame,
   if (!m_levelColumn) return;
 
   if (m_levelColumn->isMask() && !info.m_applyMask &&
-      !m_levelColumn->canRenderMask())
+      !m_levelColumn->canRenderMask() && !info.m_plasticMask)
     return;
 
   // Ensure that a corresponding cell and level exists

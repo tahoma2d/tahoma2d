@@ -244,6 +244,8 @@ bool PlasticDeformerFx::buildTextureDataSl(double frame, TRenderSettings &info,
           TScale(handledAff.a11 / worldLevelToLevelAff.a11) * info.m_affine;
   }
 
+  info.m_invertedMask = texColumn->isInvertedMask();
+
   return true;
 }
 
@@ -272,6 +274,10 @@ void PlasticDeformerFx::doCompute(TTile &tile, double frame,
 
   // Build texture data
   TRenderSettings texInfo(info);
+  texInfo.m_applyMask   = false;
+  texInfo.m_useMaskBox  = false;
+  texInfo.m_plasticMask = info.m_applyMask;
+
   TAffine worldTexLevelToTexLevelAff;
 
   if (dynamic_cast<TLevelColumnFx *>(m_port.getFx())) {
@@ -355,6 +361,9 @@ void PlasticDeformerFx::doCompute(TTile &tile, double frame,
   TTile inTile;
   m_port->allocateAndCompute(inTile, bbox.getP00(), tileSize, TRasterP(), frame,
                              texInfo);
+
+  TTile origTile(tile.getRaster()->clone());
+
   QOpenGLContext *context;
   // Draw the textured mesh
   {
@@ -448,6 +457,13 @@ void PlasticDeformerFx::doCompute(TTile &tile, double frame,
     context->moveToThread(0);
     context->doneCurrent();
     delete context;
+
+    if (info.m_applyMask) {
+      if (texInfo.m_invertedMask)
+        TRop::ropout(origTile.getRaster(), tile.getRaster(), tile.getRaster());
+      else
+        TRop::ropin(origTile.getRaster(), tile.getRaster(), tile.getRaster());
+    }
   }
   assert(glGetError() == GL_NO_ERROR);
 }
