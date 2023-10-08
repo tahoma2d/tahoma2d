@@ -752,6 +752,11 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
   if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen) {
     return;
   }
+
+  // Strangely, mousePressEvent seems to be called once just after releasing
+  // tablet. This condition avoids to proceed further in such case.
+  if (event->buttons() != Qt::NoButton && m_mouseButton == Qt::NoButton) return;
+
   // For now OSX has a critical problem that mousePressEvent is called just
   // after releasing the stylus, which causes the irregular stroke while
   // float-moving.
