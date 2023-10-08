@@ -973,7 +973,8 @@ std::set<int> explode(TXsheet *xsh, TXsheet *subXsh, int index,
 
   QMap<TFx *, TFx *> fxMap;
   for (auto it = fxs.constBegin(); it != fxs.constEnd(); ++it) {
-    setGrammerToParams(it.value().first->getParams(), grammer);
+    if (it.value().first)
+      setGrammerToParams(it.value().first->getParams(), grammer);
     fxMap.insert(it.key(), it.value().first);
   }
 
