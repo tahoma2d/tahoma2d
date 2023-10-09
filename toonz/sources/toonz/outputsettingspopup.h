@@ -70,6 +70,8 @@ class OutputSettingsPopup : public DVGui::Dialog {
   QComboBox *m_rasterGranularityOm;
   QComboBox *m_threadsComboOm;
   bool m_allowMT;
+  DVGui::CheckBox *m_renderKeysOnly;
+  DVGui::CheckBox *m_renderToFolders;
 
   DVGui::DoubleLineEdit *m_frameRateFld;
   QPushButton *m_fileFormatButton;
@@ -131,6 +133,8 @@ protected slots:
   void onApplyShrinkChecked(int state);
   void onSubcameraChecked(int state);
   void onMultimediaChanged(int mode);
+  void onRenderKeysOnlyChecked(int);
+  void onRenderToFoldersChecked(int);
   void onThreadsComboChanged(int type);
   void onRasterGranularityChanged(int type);
   void onStereoChecked(int);

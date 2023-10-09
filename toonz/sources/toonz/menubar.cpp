@@ -613,10 +613,13 @@ void TopBar::loadMenubar() {
   addMenuItem(viewMenu, MI_GCheck);
   addMenuItem(viewMenu, MI_ACheck);
   viewMenu->addSeparator();
+  addMenuItem(viewMenu, MI_ToggleLightTable);
   addMenuItem(viewMenu, MI_ShiftTrace);
   addMenuItem(viewMenu, MI_EditShift);
   addMenuItem(viewMenu, MI_NoShift);
   addMenuItem(viewMenu, MI_ResetShift);
+  viewMenu->addSeparator();
+  addMenuItem(viewMenu, MI_CurrentDrawingOnTop);
   viewMenu->addSeparator();
   addMenuItem(viewMenu, MI_VectorGuidedDrawing);
   viewMenu->addSeparator();

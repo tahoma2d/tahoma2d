@@ -461,6 +461,10 @@ void DragSelectionTool::RasterScaleTool::leftButtonUp(const TPointD &pos,
 
 TEnv::IntVar ModifySavebox("ModifySavebox", 0);
 TEnv::IntVar NoAntialiasing("NoAntialiasing", 0);
+TEnv::StringVar RasterSelectionType("SelectionToolInknpaintType",
+                                    "Rectangular");
+TEnv::StringVar FullColorSelectionType("SelectionToolFullcolorType",
+                                       "Rectangular");
 
 //=============================================================================
 // RasterSelectionTool
@@ -1054,8 +1058,13 @@ void RasterSelectionTool::decreaseTransformationCount() {
 
 void RasterSelectionTool::onActivate() {
   if (m_firstTime) {
-    if (m_targetType & ToonzImage)
+    if (m_targetType & ToonzImage) {
+      m_strokeSelectionType.setValue(
+          ::to_wstring(RasterSelectionType.getValue()));
       m_modifySavebox.setValue(ModifySavebox ? 1 : 0);
+    } else
+      m_strokeSelectionType.setValue(
+          ::to_wstring(FullColorSelectionType.getValue()));
   }
 
   SelectionTool::onActivate();
@@ -1066,7 +1075,15 @@ void RasterSelectionTool::onActivate() {
 bool RasterSelectionTool::onPropertyChanged(std::string propertyName) {
   if (!m_rasterSelection.isEditable()) return false;
 
+  if (propertyName == m_strokeSelectionType.getName()) {
+    if (m_targetType & ToonzImage)
+      RasterSelectionType = ::to_string(m_strokeSelectionType.getValue());
+    else
+      FullColorSelectionType = ::to_string(m_strokeSelectionType.getValue());
+  }
+
   if (SelectionTool::onPropertyChanged(propertyName)) return true;
+
   if (m_targetType & ToonzImage) {
     ModifySavebox = (int)(m_modifySavebox.getValue());
     invalidate();

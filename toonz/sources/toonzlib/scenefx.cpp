@@ -17,6 +17,7 @@
 #include "toonz/txshcell.h"
 #include "toonz/txshleveltypes.h"
 #include "toonz/txshlevelcolumn.h"
+#include "toonz/txshcolumn.h"
 #include "toonz/txshpalettecolumn.h"
 #include "toonz/txshzeraryfxcolumn.h"
 #include "toonz/txshsimplelevel.h"
@@ -906,6 +907,11 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
   bool columnVisible =
       getColumnPlacement(pf, m_xsh, m_frame, pf.m_columnIndex, m_isPreview);
 
+  bool isOverlay = false;
+  if (!cell.isEmpty() && cell.getSimpleLevel() &&
+      cell.getSimpleLevel()->getName() == L"__Scene Overlay__")
+    isOverlay = true;
+
   // if the cell is empty, only inherits its placement
   if ((m_particleDescendentCount == 0 && cell.isEmpty())) return pf;
 
@@ -933,7 +939,7 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
     addPlasticDeformerFx(pf);
   }
 
-  if (columnVisible) {
+  if (columnVisible || isOverlay) {
     // Column is visible, alright
     TXshSimpleLevel *sl = cell.isEmpty() || cell.getFrameId().isStopFrame()
                               ? 0
@@ -981,7 +987,8 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
 
     // Apply column's color filter and semi-transparency for rendering
     TXshLevelColumn *column = lcfx->getColumn();
-    if (m_scene->getProperties()->isColumnColorFilterOnRenderEnabled() &&
+    if ((m_scene->getProperties()->isColumnColorFilterOnRenderEnabled() ||
+         isOverlay) &&
         (column->getColorFilterId() != 0 ||  // None
          (column->isCamstandVisible() && column->getOpacity() != 255))) {
       TPixel32 colorScale = m_scene->getProperties()->getColorFilterColor(
@@ -1354,6 +1361,17 @@ TFxP buildSceneFx(ToonzScene *scene, TXsheet *xsh, double row, int whichLevels,
   // this creates an over fx to lay the current frame over the background color.
   fx = TFxUtil::makeOver(
       TFxUtil::makeColorCard(scene->getProperties()->getBgColor()), fx);
+
+  // this creates an over fx to lay the Scene Overlay, if there is one, over the
+  // current frame
+  TLevelColumnFx *overlayFx = scene->getOverlayFx(row);
+
+  if (overlayFx) {
+    PlacedFx overlayPf = builder.makePF(overlayFx);
+    TFxP overlayAffine = TFxUtil::makeAffine(overlayPf.makeFx(), aff);
+    fx                 = TFxUtil::makeOver(fx, overlayAffine);
+  }
+
   return fx;
 }
 

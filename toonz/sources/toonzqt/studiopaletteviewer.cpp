@@ -1265,3 +1265,20 @@ void StudioPaletteViewer::setViewMode(int mode) {
   m_studioPaletteViewer->setViewMode(
       (PaletteViewerGUI::PageViewer::ViewMode)mode);
 }
+
+//-----------------------------------------------------------------------------
+
+void StudioPaletteViewer::save(QSettings &settings, bool forPopupIni) const {
+  int swatchSize = getViewMode();
+  settings.setValue("swatchSize", swatchSize);
+}
+
+//-----------------------------------------------------------------------------
+
+void StudioPaletteViewer::load(QSettings &settings) {
+  int swatchSize     = PageViewer::SmallChips;
+  QVariant swatchVar = settings.value("swatchSize");
+  if (swatchVar.canConvert(QVariant::Int)) swatchSize = swatchVar.toInt();
+
+  setViewMode(swatchSize);
+}

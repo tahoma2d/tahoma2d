@@ -151,6 +151,7 @@ void CameraSettingsPopup::showEvent(QShowEvent *e) {
 
 void CameraSettingsPopup::hideEvent(QHideEvent *e) {
   m_cameraSettingsWidget->setCurrentLevel(0);
+  m_cameraSettingsWidget->setOverlayLevel(0);
 
   if (m_cameraId != TStageObjectId::NoneId) {
     // Remove the popup from currentlyOpened ones and schedule for deletion
@@ -254,6 +255,8 @@ void CameraSettingsPopup::updateFields() {
         TDimensionD(res.lx / Stage::standardDpi, res.ly / Stage::standardDpi));
   }
   if (camera) m_cameraSettingsWidget->setFields(camera);
+  m_cameraSettingsWidget->setOverlayLevel(
+      TApp::instance()->getCurrentScene()->getScene()->getOverlayLevel());
 }
 
 void CameraSettingsPopup::onLevelSwitched(TXshLevel *) {

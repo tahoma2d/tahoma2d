@@ -486,6 +486,8 @@ static std::pair<int, int> generateMovie(ToonzScene *scene, const TFilePath &fp,
   double stepd             = step * timeStretchFactor;
 
   int multimediaRender = outputSettings.getMultimediaRendering();
+  bool renderKeysOnly  = outputSettings.isRenderKeysOnly();
+  bool renderToFolders = outputSettings.isRenderToFolders();
 
   //---------------------------------------------------------
   //    Multimedia render
@@ -493,6 +495,7 @@ static std::pair<int, int> generateMovie(ToonzScene *scene, const TFilePath &fp,
 
   if (multimediaRender) {
     MultimediaRenderer multimediaRenderer(scene, fp, multimediaRender,
+                                          renderKeysOnly, renderToFolders,
                                           threadCount);
     TRenderSettings rs = outputSettings.getRenderSettings();
     rs.m_maxTileSize   = maxTileSize;
@@ -608,6 +611,8 @@ int main(int argc, char *argv[]) {
   IntQualifier stepOpt("-step n", "Step");
   IntQualifier shrinkOpt("-shrink n", "Shrink");
   IntQualifier multimedia("-multimedia n", "Multimedia rendering mode");
+  IntQualifier renderKeysOnly("-renderkeysonly n", "Render keys drawings only");
+  IntQualifier renderToFolders("-rendertofolders n", "Render To Folders");
   StringQualifier farmData("-farm data", "TFarm Controller");
   StringQualifier idq("-id n", "id");
   StringQualifier nthreads("-nthreads n", "Number of rendering threads");
@@ -615,7 +620,8 @@ int main(int argc, char *argv[]) {
                            "Enable tile rendering of max n MB per tile");
   StringQualifier tmsg("-tmsg val", "only internal use");
   usageLine = srcName + dstName + range + stepOpt + shrinkOpt + multimedia +
-              farmData + idq + nthreads + tileSize + tmsg;
+              renderKeysOnly + renderToFolders + farmData + idq + nthreads +
+              tileSize + tmsg;
 
   // system path qualifiers
   std::map<QString, std::unique_ptr<TCli::QualifierT<TFilePath>>>
@@ -927,6 +933,12 @@ int main(int argc, char *argv[]) {
     if (multimedia.isSelected())
       scene->getProperties()->getOutputProperties()->setMultimediaRendering(
           multimedia.getValue());
+    if (renderKeysOnly.isSelected())
+      scene->getProperties()->getOutputProperties()->setRenderKeysOnly(
+          renderKeysOnly.getValue());
+    if (renderToFolders.isSelected())
+      scene->getProperties()->getOutputProperties()->setRenderToFolders(
+          renderToFolders.getValue());
 
     // Retrieve Thread count
     const int procCount = TSystem::getProcessorCount();

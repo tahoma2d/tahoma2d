@@ -67,7 +67,8 @@ public:
   //----------------------------------------------------------------
 
   MultimediaRenderer(ToonzScene *scene, const TFilePath &moviePath,
-                     int multimediaMode, int threadCount = 1,
+                     int multimediaMode, bool renderKeysOnly,
+                     bool renderToFolders, int threadCount = 1,
                      bool cacheResults = true);
 
   ~MultimediaRenderer();
@@ -84,6 +85,8 @@ public:
 
   enum { COLUMNS = 1, LAYERS = 2 };
   int getMultimediaMode() const;
+  bool isRenderKeysOnly() const;
+  bool isRenderToFolders() const;
 
   //! Returns the currently active TRenderer.
   TRenderer *getTRenderer();

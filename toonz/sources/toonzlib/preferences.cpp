@@ -497,6 +497,11 @@ void Preferences::definePreferenceItems() {
   define(defaultProjectPath, "defaultProjectPath", QMetaType::QString,
          documentsPath);
 
+  define(recordFileHistory, "recordFileHistory", QMetaType::Bool, true);
+
+  QString userName = TSystem::getUserName();
+  define(recordAsUsername, "recordAsUsername", QMetaType::QString, userName);
+
   // Import / Export
   define(ffmpegPath, "ffmpegPath", QMetaType::QString, "");
   define(ffmpegTimeout, "ffmpegTimeout", QMetaType::Int, 0, 0,
@@ -560,6 +565,8 @@ void Preferences::definePreferenceItems() {
          false);
   define(temptoolswitchtimer, "temptoolswitchtimer", QMetaType::Int, 500, 1,
          std::numeric_limits<int>::max());
+  define(magnetNonLinearSliderEnabled, "magnetNonLinearSliderEnabled",
+         QMetaType::Bool, false);
 
   // Xsheet
   define(xsheetLayoutPreference, "xsheetLayoutPreference", QMetaType::QString,

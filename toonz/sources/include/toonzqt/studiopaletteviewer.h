@@ -3,6 +3,7 @@
 #ifndef STUDIOPALETTEVIEWER_H
 #define STUDIOPALETTEVIEWER_H
 
+#include "saveloadqsettings.h"
 #include "toonz/studiopalette.h"
 #include "toonz/tapplication.h"
 #include "toonz/tproject.h"
@@ -214,7 +215,8 @@ protected:
                 allows to show and modify current studio palette selected in
    tree.
 */
-class DVAPI StudioPaletteViewer final : public QSplitter {
+class DVAPI StudioPaletteViewer final : public QSplitter,
+                                        public SaveLoadQSettings {
   Q_OBJECT
 
   StudioPaletteTreeViewer *m_studioPaletteTreeViewer;
@@ -240,6 +242,10 @@ public:
     if (m_studioPaletteViewer) m_studioPaletteViewer->setApplication(app);
   }
   TApplication *getApplication() { return m_app; }
+
+  // SaveLoadQSettings
+  void save(QSettings &settings, bool forPopupIni = false) const override;
+  void load(QSettings &settings) override;
 };
 
 //-----------------------------------------------------------------------------

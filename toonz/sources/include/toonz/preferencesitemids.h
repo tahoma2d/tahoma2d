@@ -73,6 +73,8 @@ enum PreferencesItemId {
   rasterBackgroundColor,
   resetUndoOnSavingLevel,
   defaultProjectPath,
+  recordFileHistory,
+  recordAsUsername,
 
   //----------
   // Import / Export
@@ -118,6 +120,7 @@ enum PreferencesItemId {
   levelBasedToolsDisplay,
   useCtrlAltToResizeBrush,
   temptoolswitchtimer,
+  magnetNonLinearSliderEnabled,
 
   //----------
   // Xsheet

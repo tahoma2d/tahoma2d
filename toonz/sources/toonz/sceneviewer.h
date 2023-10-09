@@ -356,6 +356,7 @@ protected:
   void drawViewerIndicators();
 
   void drawScene();
+  void drawSceneOverlay();
   void drawToolGadgets();
 
 protected:

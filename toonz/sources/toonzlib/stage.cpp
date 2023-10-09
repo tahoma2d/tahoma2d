@@ -219,6 +219,8 @@ public:
   Stage::Player m_liveViewPlayer;
   Stage::Player m_lineupPlayer;
 
+  bool m_currentDrawingOnTop;
+
 public:
   StageBuilder();
   virtual ~StageBuilder();
@@ -285,7 +287,8 @@ StageBuilder::StageBuilder()
     , m_fade(0)
     , m_shiftTraceGhostId(NO_GHOST)
     , m_currentXsheetLevel(0)
-    , m_xsheetLevel(0) {
+    , m_xsheetLevel(0)
+    , m_currentDrawingOnTop(false) {
   m_placementStack.push_back(ZPlacement());
 }
 
@@ -482,6 +485,10 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
         }
       }
     }
+
+    player.m_currentDrawingOnTop = m_currentDrawingOnTop;
+    if (m_currentDrawingOnTop && player.m_isCurrentColumn)
+      player.m_bingoOrder = 10;
 
     players.push_back(player);
   } else if (TXshChildLevel *cl = xl->getChildLevel()) {
@@ -828,6 +835,7 @@ void StageBuilder::addSimpleLevelFrame(PlayerSet &players,
   player.m_isEditingLevel       = true;
   player.m_ancestorColumnIndex  = -1;
   player.m_dpiAff               = getDpiAffine(level, fid);
+  player.m_currentDrawingOnTop  = m_currentDrawingOnTop;
 }
 
 //-----------------------------------------------------------------------------
@@ -922,6 +930,7 @@ void Stage::visit(Visitor &visitor, const VisitArgs &args) {
   sb.m_isGuidedDrawingEnabled = args.m_isGuidedDrawingEnabled;
   sb.m_guidedFrontStroke      = args.m_guidedFrontStroke;
   sb.m_guidedBackStroke       = args.m_guidedBackStroke;
+  sb.m_currentDrawingOnTop    = args.m_currentDrawingOnTop;
   if (args.m_liveViewImage) {
     sb.m_liveViewImage  = args.m_liveViewImage;
     sb.m_liveViewPlayer = args.m_liveViewPlayer;
@@ -936,6 +945,7 @@ void Stage::visit(Visitor &visitor, const VisitArgs &args) {
   Player::m_firstBackOnionSkin     = 0;
   Player::m_lastBackVisibleSkin    = 0;
   Player::m_isShiftAndTraceEnabled = osm->isShiftTraceEnabled();
+  Player::m_isLightTableEnabled    = osm->isLightTableEnabled();
   sb.addFrame(sb.m_players, scene, xsh, row, 0, args.m_onlyVisible,
               args.m_checkPreviewVisibility);
 
@@ -980,6 +990,7 @@ void Stage::visit(Visitor &visitor, TXshSimpleLevel *level, const TFrameId &fid,
   Player::m_firstBackOnionSkin     = 0;
   Player::m_lastBackVisibleSkin    = 0;
   Player::m_isShiftAndTraceEnabled = osm.isShiftTraceEnabled();
+  Player::m_isLightTableEnabled    = osm.isLightTableEnabled();
   sb.addSimpleLevelFrame(sb.m_players, level, fid);
   updateOnionSkinSize(sb.m_players);
   sb.visit(sb.m_players, visitor, isPlaying);

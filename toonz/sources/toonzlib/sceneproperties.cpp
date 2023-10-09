@@ -71,7 +71,9 @@ TSceneProperties::TSceneProperties()
     , m_fieldGuideSize(16)
     , m_fieldGuideAspectRatio(1.77778)
     , m_columnColorFilterOnRender(false)
-    , m_camCapSaveInPath() {
+    , m_camCapSaveInPath()
+    , m_overlayFile()
+    , m_overlayOpacity(255) {
   // Default color
   m_notesColor.push_back(TPixel32(255, 235, 140));
   m_notesColor.push_back(TPixel32(255, 160, 120));
@@ -126,6 +128,8 @@ void TSceneProperties::assign(const TSceneProperties *sprop) {
   m_fieldGuideSize            = sprop->m_fieldGuideSize;
   m_fieldGuideAspectRatio     = sprop->m_fieldGuideAspectRatio;
   m_columnColorFilterOnRender = sprop->m_columnColorFilterOnRender;
+  m_overlayFile               = sprop->m_overlayFile;
+  m_overlayOpacity            = sprop->m_overlayOpacity;
   int i;
   for (i = 0; i < m_notesColor.size(); i++)
     m_notesColor.replace(i, sprop->getNoteColor(i));
@@ -258,6 +262,14 @@ void TSceneProperties::saveData(TOStream &os) const {
       os.child("syncColorSettings") << (out.isColorSettingsSynced() ? 1 : 0);
 
     os.child("multimedia") << out.getMultimediaRendering();
+    // Save render keys only if enabled and multimedia set to anything except
+    // None
+    if (out.getMultimediaRendering()) {
+      if (out.isRenderKeysOnly())
+        os.child("renderKeysOnly") << (out.isRenderKeysOnly() ? 1 : 0);
+      if (out.isRenderToFolders())
+        os.child("renderToFolders") << (out.isRenderToFolders() ? 1 : 0);
+    }
     os.child("threadsIndex") << out.getThreadIndex();
     os.child("maxTileSizeIndex") << out.getMaxTileSizeIndex();
     os.child("subcameraPrev") << (out.isSubcameraPreview() ? 1 : 0);
@@ -400,6 +412,8 @@ void TSceneProperties::saveData(TOStream &os) const {
       os << filter.name.toStdString() << filter.color;
     os.closeChild();
   }
+  if (!m_overlayFile.isEmpty())
+    os.child("overlayFile") << m_overlayFile << m_overlayOpacity;
 }
 
 //-----------------------------------------------------------------------------
@@ -589,6 +603,14 @@ void TSceneProperties::loadData(TIStream &is, bool isLoadingProject) {
               int j;
               is >> j;
               out.setMultimediaRendering(j);
+            } else if (tagName == "renderKeysOnly") {
+              int renderKeysOnly;
+              is >> renderKeysOnly;
+              out.setRenderKeysOnly(renderKeysOnly == 1);
+            } else if (tagName == "renderToFolders") {
+              int renderToFolders;
+              is >> renderToFolders;
+              out.setRenderToFolders(renderToFolders == 1);
             } else if (tagName == "threadsIndex") {
               int j;
               is >> j;
@@ -835,6 +857,8 @@ void TSceneProperties::loadData(TIStream &is, bool isLoadingProject) {
         m_colorFilters.replace(i, {QString::fromStdString(name), color});
         i++;
       }
+    } else if (tagName == "overlayFile") {
+      is >> m_overlayFile >> m_overlayOpacity;
     } else {
       throw TException("unexpected property tag: " + tagName);
     }

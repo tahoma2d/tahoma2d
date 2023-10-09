@@ -86,6 +86,8 @@ private:
   int m_offset, m_step;
 
   int m_multimediaRendering;
+  bool m_renderKeysOnly;
+  bool m_renderToFolders;
 
   int m_maxTileSizeIndex;
   int m_threadIndex;
@@ -210,6 +212,14 @@ Insert in \b v all extension in format properties of output settings.
   //! Sets the rendering behaviour to 'Multimedia'.
   void setMultimediaRendering(int mode) { m_multimediaRendering = mode; }
   int getMultimediaRendering() const { return m_multimediaRendering; }
+
+  void setRenderKeysOnly(bool keysOnly) { m_renderKeysOnly = keysOnly; }
+  bool isRenderKeysOnly() const { return m_renderKeysOnly; }
+
+  void setRenderToFolders(bool renderToFolders) {
+    m_renderToFolders = renderToFolders;
+  }
+  bool isRenderToFolders() const { return m_renderToFolders; }
 
   /*! Sets the granularity of raster allocations for rendering processes.
 The specified value refers to an index associated with const values,

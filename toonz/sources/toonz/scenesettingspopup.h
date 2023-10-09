@@ -9,6 +9,7 @@
 #include "toonzqt/doublefield.h"
 #include "toonzqt/colorfield.h"
 #include "toonzqt/checkbox.h"
+#include "toonzqt/filefield.h"
 
 // forward declaration
 class TSceneProperties;
@@ -79,6 +80,9 @@ class SceneSettingsPopup final : public QDialog {
 
   DVGui::DoubleLineEdit *m_colorSpaceGammaFld;
 
+  DVGui::FileField *m_overlayFile;
+  DVGui::IntField *m_overlayOpacity;
+  
 public:
   SceneSettingsPopup();
   void configureNotify();
@@ -105,6 +109,9 @@ public slots:
 
   void onEditCellMarksButtonClicked();
   void onEditColorFiltersButtonClicked();
+
+  void onOverlayFileChanged();
+  void onOverlayOpacityChanged(bool isDragging);
 };
 
 #endif  // SCENESETTINGSPOPUP_H

@@ -10,6 +10,7 @@
 #include "tstroke.h"
 #include "tvectorimage.h"
 #include "hookselection.h"
+#include "tenv.h"
 #include "tools/toolhandle.h"
 
 #include "toonzqt/selection.h"
@@ -38,6 +39,8 @@
 #include <QCoreApplication>
 
 #include <QPainter>
+
+TEnv::IntVar HookSnap("HookToolSnap", 1);
 
 using namespace ToolUtils;
 
@@ -68,6 +71,8 @@ public:
 
 class HookTool final : public TTool {
   Q_DECLARE_TR_FUNCTIONS(HookTool)
+
+  bool m_firstTime;
 
   HookSelection m_selection;
 
@@ -106,6 +111,7 @@ public:
   void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
   void mouseMove(const TPointD &pos, const TMouseEvent &e) override;
 
+  bool onPropertyChanged(std::string propertyName) override;
   void onActivate() override;
   void onDeactivate() override;
   void onEnter() override;
@@ -172,7 +178,8 @@ HookTool::HookTool()
     , m_snapped(false)
     , m_hookSetChanged(false)
     , m_buttonDown(false)
-    , m_pivotOffset() {
+    , m_pivotOffset()
+    , m_firstTime(false) {
   bind(TTool::CommonLevels);
   m_prop.bind(m_snappedActive);
 
@@ -759,7 +766,21 @@ void HookTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 
 //-----------------------------------------------------------------------------
 
+bool HookTool::onPropertyChanged(std::string propertyName) {
+  if (propertyName == m_snappedActive.getName())
+    HookSnap = (int) m_snappedActive.getValue();
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
 void HookTool::onActivate() {
+  if (!m_firstTime) {
+    m_firstTime = true;
+    m_snappedActive.setValue(HookSnap ? 1 : 0);
+  }
+
   // TODO: getApplication()->editImageOrSpline();
   m_otherHooks.clear();
   getOtherHooks(m_otherHooks);

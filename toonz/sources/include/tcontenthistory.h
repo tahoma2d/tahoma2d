@@ -29,12 +29,14 @@ class DVAPI TContentHistory {
   bool m_isLevel;
   std::map<TFrameId, QDateTime> m_records;
   QString m_frozenHistory;
+  QString m_altUsername;
+  bool m_recordEdit;
 
   const QString currentToString() const;
 
 public:
   //! set isLevel=true if you want to keep track of single-frames modifications
-  TContentHistory(bool isLevel);
+  TContentHistory(bool isLevel, QString altUsername, bool recordEdit);
 
   ~TContentHistory();
 

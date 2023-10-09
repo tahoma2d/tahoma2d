@@ -32,6 +32,7 @@
 #include "tstream.h"
 #include "tstrokeutil.h"
 #include "tthreadmessage.h"
+#include "tenv.h"
 #include "tools/pinchtool.h"
 
 #include "toonz/tobjecthandle.h"
@@ -48,6 +49,10 @@
 
 #include <memory>
 #include <algorithm>
+
+TEnv::DoubleVar PinchCorner("PinchToolCorner", 160.0);
+TEnv::IntVar PinchManual("PinchToolManual", 0);
+TEnv::DoubleVar PinchSize("PinchToolSize", 500.0);
 
 using namespace ToolUtils;
 using namespace ToonzExt;
@@ -78,7 +83,8 @@ PinchTool::PinchTool()
                        160.0)          // W_ToolOptions_PinchCorner
     , m_autoOrManual("Manual", false)  // W_ToolOptions_PinchManual
     , m_deformation(new ToonzExt::StrokeDeformation)
-    , m_selector(500, 10, 1000) {
+    , m_selector(500, 10, 1000)
+    , m_firstTime(false) {
   bind(TTool::Vectors);
 
   m_toolRange.setNonLinearSlider();
@@ -563,7 +569,27 @@ bool PinchTool::moveCursor(const TPointD &pos) {
 
 //-----------------------------------------------------------------------------
 
+bool PinchTool::onPropertyChanged(std::string propertyName) {
+  if (propertyName == m_toolRange.getName())
+    PinchSize = m_toolRange.getValue();
+  else if (propertyName == m_toolCornerSize.getName())
+    PinchCorner = m_toolCornerSize.getValue();
+  else if (propertyName == m_autoOrManual.getName())
+    PinchManual = (int)m_autoOrManual.getValue();
+  else
+    return false;
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
 void PinchTool::onActivate() {
+  if (!m_firstTime) {
+    m_firstTime = true;
+    m_toolRange.setValue(PinchSize);
+    m_toolCornerSize.setValue(PinchCorner);
+    m_autoOrManual.setValue(PinchManual ? 1 : 0);
+  }
   //  getApplication()->editImageOrSpline();
   //  TNotifier::instance()->attach(this);
   // per sicurezza

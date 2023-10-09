@@ -25,6 +25,9 @@
 
 // TnzCore includes
 #include "trop.h"
+#include "tsystem.h"
+
+#include "tlevel_io.h"
 
 // Qt includes
 #include <QLayout>
@@ -34,6 +37,7 @@
 #include <QMainWindow>
 #include <QPainter>
 #include <QPushButton>
+#include <QImageReader>
 
 using namespace DVGui;
 
@@ -507,6 +511,19 @@ SceneSettingsPopup::SceneSettingsPopup()
   QPushButton *editColorFiltersButton =
       new QPushButton(tr("Edit Column Color Filters"), this);
 
+  m_overlayFile = new DVGui::FileField(this);
+  m_overlayFile->setFileMode(QFileDialog::AnyFile);
+  QStringList filters;
+  for (QByteArray &format : QImageReader::supportedImageFormats())
+    filters += format;
+  filters += "pli";
+  filters += "tlv";
+  m_overlayFile->setFilters(filters);
+
+  m_overlayOpacity = new DVGui::IntField(this);
+  m_overlayOpacity->setRange(0, 100);
+  m_overlayOpacity->setValue(100);
+
   // layout
   QGridLayout *mainLayout = new QGridLayout();
   mainLayout->setMargin(10);
@@ -557,6 +574,16 @@ SceneSettingsPopup::SceneSettingsPopup()
                           Qt::AlignRight | Qt::AlignVCenter);
     mainLayout->addWidget(editCellMarksButton, 7, 1, 1, 4,
                           Qt::AlignLeft | Qt::AlignVCenter);
+
+    // Scene Overlay file
+    mainLayout->addWidget(new QLabel(tr("Overlay Image:"), this), 8, 0,
+                          Qt::AlignRight | Qt::AlignVCenter);
+    mainLayout->addWidget(m_overlayFile, 8, 1, 1, 4);
+
+    mainLayout->addWidget(new QLabel(tr("Overlay Opacity:"), this), 9, 0,
+                          Qt::AlignRight | Qt::AlignVCenter);
+    mainLayout->addWidget(m_overlayOpacity, 9, 1, 1, 4,
+                          Qt::AlignLeft | Qt::AlignVCenter);
   }
   mainLayout->setColumnStretch(0, 0);
   mainLayout->setColumnStretch(1, 0);
@@ -600,6 +627,11 @@ SceneSettingsPopup::SceneSettingsPopup()
   // Cell Marks
   ret = ret && connect(editCellMarksButton, SIGNAL(clicked()), this,
                        SLOT(onEditCellMarksButtonClicked()));
+  // Overlay File
+  ret = ret && connect(m_overlayFile, SIGNAL(pathChanged()), this,
+                       SLOT(onOverlayFileChanged()));
+  ret = ret && connect(m_overlayOpacity, SIGNAL(valueChanged(bool)), this,
+                       SLOT(onOverlayOpacityChanged(bool)));
   assert(ret);
 }
 
@@ -656,6 +688,8 @@ void SceneSettingsPopup::update() {
 
   if (m_cellMarksPopup) m_cellMarksPopup->update();
   if (m_colorFiltersPopup) m_colorFiltersPopup->updateContents();
+  m_overlayFile->setPath(sprop->getOverlayFile().getQString());
+  m_overlayOpacity->setValue(double(100 * sprop->getOverlayOpacity()) / 255.0);
 }
 
 //-----------------------------------------------------------------------------
@@ -768,6 +802,47 @@ void SceneSettingsPopup::onEditCellMarksButtonClicked() {
   m_cellMarksPopup->show();
   m_cellMarksPopup->raise();
   m_cellMarksPopup->activateWindow();
+}
+
+void SceneSettingsPopup::onOverlayFileChanged() {
+  ToonzScene *scene       = TApp::instance()->getCurrentScene()->getScene();
+  TSceneProperties *sprop = getProperties();
+
+  TFilePath fp(m_overlayFile->getPath());
+
+  if (!fp.isEmpty()) {
+    TFilePath decodedFp = scene->decodeFilePath(fp);
+    if (!TSystem::doesExistFileOrLevel(decodedFp)) {
+      fp = sprop->getOverlayFile();
+      m_overlayFile->setPath(fp.getQString());
+    }
+
+    if (fp.isLevelName()) {
+      TLevelReaderP lr(decodedFp);
+      TLevelP level;
+      if (lr) level = lr->loadInfo();
+      if (level.getPointer() && level->getTable()->size() > 0) {
+        TFrameId firstFrame = level->begin()->first;
+        fp                  = fp.withFrame(firstFrame);
+        m_overlayFile->setPath(fp.getQString());
+      }
+    }
+  }
+
+  sprop->setOverlayFile(fp);
+  scene->loadOverlayFile(fp);
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
+}
+
+void SceneSettingsPopup::onOverlayOpacityChanged(bool isDragging) {
+  ToonzScene *scene       = TApp::instance()->getCurrentScene()->getScene();
+  TSceneProperties *sprop = getProperties();
+
+  int opacity = (int)(255.0f * (float)m_overlayOpacity->getValue() / 100.0f);
+
+  sprop->setOverlayOpacity(opacity);
+  scene->setOverlayOpacity(opacity);
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
 }
 
 //=============================================================================

@@ -18,6 +18,7 @@
 #include "tenv.h"
 #include "tconvert.h"
 #include "trasterimage.h"
+#include "toonz/preferences.h"
 
 #include <QByteArray>
 
@@ -1501,7 +1502,13 @@ TLevelReaderTzl::TLevelReaderTzl(const TFilePath &path)
     fread(&historyData[0], 1, lSize, historyChan);
     fclose(historyChan);
 
-    if (!m_contentHistory) m_contentHistory = new TContentHistory(true);
+    if (!m_contentHistory) {
+      QString altUsername =
+          Preferences::instance()->getStringValue(recordAsUsername);
+      bool recordEdit =
+          Preferences::instance()->getBoolValue(recordFileHistory);
+      m_contentHistory = new TContentHistory(true, altUsername, recordEdit);
+    }
     m_contentHistory->deserialize(QString::fromStdString(historyData));
   }
 

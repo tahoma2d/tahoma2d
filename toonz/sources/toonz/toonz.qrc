@@ -94,6 +94,7 @@
 		<file>icons/dark/actions/16/load_as_sub_xsheet.svg</file>
 		<file>icons/dark/actions/16/export_scene.svg</file>
 		<file>icons/dark/actions/16/stylesets.svg</file>
+		<file>icons/dark/actions/16/remove.svg</file>
 
     <!-- Arrange -->
 		<file>icons/dark/actions/16/move_back_one.svg</file>
@@ -304,6 +305,7 @@
 		<file>icons/dark/actions/16/repeat.svg</file>
 		<file>icons/dark/actions/16/time_stretch.svg</file>
 		<file>icons/dark/actions/16/set_key.svg</file>
+		<file>icons/dark/actions/16/global_key.svg</file>
 		<file>icons/dark/actions/16/shift_keys_down.svg</file>
 		<file>icons/dark/actions/16/shift_keys_up.svg</file>
 		<file>icons/dark/actions/16/insert_multiple_keys.svg</file>
@@ -469,10 +471,14 @@
 		<file>icons/dark/actions/16/tape_end_to_line.svg</file>
 		<file>icons/dark/actions/16/tape_line_to_line.svg</file>
 
+		<file>icons/dark/actions/16/current_on_top.svg</file>
+
 		<file>icons/dark/actions/16/shift_and_trace.svg</file>
 		<file>icons/dark/actions/16/shift_and_trace_edit.svg</file>
 		<file>icons/dark/actions/16/shift_and_trace_no_shift.svg</file>
 		<file>icons/dark/actions/16/shift_and_trace_reset.svg</file>
+
+		<file>icons/dark/actions/16/light_table.svg</file>
 
 		<!-- Folders -->
 		<file>icons/dark/actions/18/folder.svg</file>
@@ -589,7 +595,8 @@
 		<file>icons/dark/actions/16/project_settings.svg</file>
 		<file>icons/dark/actions/16/save_default_settings.svg</file>
 		<file>icons/dark/actions/16/zero_thick_lines.svg</file>
-		<file>icons/dark/actions/16/table.svg</file>
+    <file>icons/dark/actions/16/table.svg</file>
+    <file>icons/dark/actions/16/motion_path.svg</file>
 
     <!-- Keyframe -->
 		<file>icons/dark/actions/20/key_off.svg</file>

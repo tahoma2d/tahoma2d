@@ -114,6 +114,10 @@ public:
 
   TPixel32 m_filterColor;
 
+  static bool m_isLightTableEnabled;
+
+  bool m_currentDrawingOnTop;
+
 public:
   Player();
 

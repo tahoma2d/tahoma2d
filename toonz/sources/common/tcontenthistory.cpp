@@ -26,8 +26,12 @@ using namespace std;
 
 //-------------------------------------------------------
 
-TContentHistory::TContentHistory(bool isLevel)
-    : m_isLevel(isLevel), m_frozenHistory() {}
+TContentHistory::TContentHistory(bool isLevel, QString altUsername,
+                                 bool recordEdit)
+    : m_isLevel(isLevel)
+    , m_frozenHistory()
+    , m_altUsername(altUsername)
+    , m_recordEdit(recordEdit) {}
 
 //-------------------------------------------------------
 
@@ -36,7 +40,8 @@ TContentHistory::~TContentHistory() {}
 //-------------------------------------------------------
 
 TContentHistory *TContentHistory::clone() const {
-  TContentHistory *history = new TContentHistory(m_isLevel);
+  TContentHistory *history =
+      new TContentHistory(m_isLevel, m_altUsername, m_recordEdit);
   history->deserialize(serialize());
   return history;
 }
@@ -84,7 +89,7 @@ inline QString getStr(const TFrameId &id) {
 const QString Fmt = "dd MMM yy   hh:mm";
 
 static QString getLine(int counter, const QDateTime &date,
-                       const set<TFrameId> &frames) {
+                       const set<TFrameId> &frames, QString altUsername) {
   static QString user;
   static QString machine;
   if (user == "") {
@@ -97,6 +102,8 @@ static QString getLine(int counter, const QDateTime &date,
       else if (value.startsWith("COMPUTERNAME="))
         machine = blanks(value.right(value.size() - 13));
     }
+
+    if (!altUsername.isEmpty()) user = blanks(altUsername);
   }
 
   if (frames.empty())
@@ -149,7 +156,9 @@ const QString TContentHistory::currentToString() const {
 
   if (!m_isLevel) {
     assert(m_records.size() == 1);
-    return getLine(++counter, m_records.begin()->second, set<TFrameId>());
+    if (!m_recordEdit) return "";
+    return getLine(++counter, m_records.begin()->second, set<TFrameId>(),
+                   m_altUsername);
   }
 
   QString out;
@@ -168,7 +177,8 @@ const QString TContentHistory::currentToString() const {
       ++it1;
     }
     assert(!frames.empty());
-    out += getLine(++counter, currDate, frames);
+    if (m_recordEdit)
+      out += getLine(++counter, currDate, frames, m_altUsername);
     if (it1 != dateSorted.end()) currDate = it1->first;
   }
 

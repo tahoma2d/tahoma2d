@@ -367,6 +367,9 @@ public:
   int getTempToolSwitchtimer() const {
     return getIntValue(temptoolswitchtimer);
   }
+  bool isMagnetNonLinearSliderEnabled() const {
+    return getBoolValue(magnetNonLinearSliderEnabled);
+  }
 
   // Xsheet  tab
   QString getXsheetLayoutPreference() const {

@@ -1939,7 +1939,8 @@ void MainWindow::defineActions() {
                        tr("Remove everything from the recent project list."));
   // createMenuEditAction(MI_PasteNew, QT_TR_NOOP("&Paste New"),  "");
   createMenuEditAction(MI_ClearFrames, QT_TR_NOOP("&Clear Frames"), "");
-  createMenuEditAction(MI_RemoveCells, QT_TR_NOOP("&Remove Cells"), "", "");
+  createMenuEditAction(MI_RemoveCells, QT_TR_NOOP("&Remove Cells"), "",
+                       "remove");
 
   // Menu - Cleanup
 
@@ -2332,6 +2333,10 @@ void MainWindow::defineActions() {
                  "view_vector_as_raster");
   else
     RasterizePliToggleAction = 0;
+  createToggle(MI_ToggleLightTable, QT_TR_NOOP("Light Table"), "", false,
+               MenuViewCommandType, "light_table");
+  createToggle(MI_CurrentDrawingOnTop, QT_TR_NOOP("Current Drawing On Top"), "", false,
+               MenuViewCommandType, "current_on_top");
 
   // Menu - Panes
 
@@ -2410,7 +2415,7 @@ void MainWindow::defineActions() {
   // DockingCheck::instance()->setToggle(menuAct);
   createMenuWindowsAction(MI_OpenExport, QT_TR_NOOP("&Export"), "");
   createMenuWindowsAction(MI_OpenMotionPathPanel, QT_TR_NOOP("&Motion Paths"),
-                          "");
+                          "", "motion_path");
 
   // Menu - Help
 
@@ -2935,7 +2940,7 @@ void MainWindow::defineActions() {
                           QT_TR_NOOP("Flip Previous Guide Stroke Direction"),
                           "");
   createToolOptionsAction("A_ToolOption_GlobalKey", QT_TR_NOOP("Global Key"),
-                          "");
+                          "", "global_key");
 
   createToolOptionsAction("A_IncreaseMaxBrushThickness",
                           QT_TR_NOOP("Brush size - Increase max"), "I");
