@@ -1,6 +1,6 @@
 #include "viewereventlogpopup.h"
 
-#include <QCheckbox>
+#include <QCheckBox>
 #include <QLabel>
 #include <QPushButton>
 #include <QTabletEvent>
