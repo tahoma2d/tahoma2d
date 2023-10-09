@@ -34,6 +34,7 @@
 #include "toonz/tonionskinmaskhandle.h"
 #include "toonz/stage.h"
 #include "toonz/toonzfolders.h"
+#include "viewereventlogpopup.h"
 
 // TnzCore includes
 #include "tsystem.h"
@@ -981,6 +982,18 @@ void PreferencesPopup::onImportPolicyExternallyChanged(int policy) {
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onOpenViewerEventLog() {
+  if (!m_viewerEventLogPopup) {
+    m_viewerEventLogPopup = new ViewerEventLogPopup();
+    ViewerEventLogManager::instance()->setViewerEventLogPopup(
+        m_viewerEventLogPopup);
+  }
+
+  m_viewerEventLogPopup->show();
+}
+
+//-----------------------------------------------------------------------------
+
 QWidget* PreferencesPopup::createUI(PreferencesItemId id,
                                     const QList<ComboBoxItem>& comboItems,
                                     bool isLineEdit) {
@@ -1554,7 +1567,8 @@ inline T PreferencesPopup::getUI(PreferencesItemId id) {
 PreferencesPopup::PreferencesPopup()
     : QDialog(TApp::instance()->getMainWindow())
     , m_formatProperties()
-    , m_additionalStyleEdit(nullptr) {
+    , m_additionalStyleEdit(nullptr)
+    , m_viewerEventLogPopup(0) {
   setWindowTitle(tr("Preferences"));
   setObjectName("PreferencesPopup");
 
@@ -2307,11 +2321,15 @@ QWidget* PreferencesPopup::createTouchTabletPage() {
       new CheckBox(tr("Enable Touch Gesture Controls"));
   enableTouchGestures->setChecked(touchAction->isChecked());
 
+  QPushButton* viewerEventLogBtn =
+      new QPushButton(tr("Open Viewer Event Log"));
+
   QWidget* widget  = new QWidget(this);
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
 
   lay->addWidget(enableTouchGestures, 0, 0, 1, 2);
+  lay->addWidget(viewerEventLogBtn, 0, 3, 1, 1);
   if (winInkAvailable) insertUI(winInkEnabled, lay);
 #ifdef WITH_WINTAB
   insertUI(useQtNativeWinInk, lay);
@@ -2326,6 +2344,9 @@ QWidget* PreferencesPopup::createTouchTabletPage() {
                        SLOT(setChecked(bool)));
   ret = ret && connect(touchAction, SIGNAL(triggered(bool)),
                        enableTouchGestures, SLOT(setChecked(bool)));
+  ret = ret && connect(viewerEventLogBtn, SIGNAL(clicked()), this,
+                       SLOT(onOpenViewerEventLog()));
+
   assert(ret);
 
   return widget;
