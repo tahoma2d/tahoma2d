@@ -2596,10 +2596,11 @@ void FillTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
       closeStyleIndex =
           TTool::getApplication()->getCurrentPalette()->getStyleIndex();
     }
+    TTool::Application *app = TTool::getApplication();
     applyFill(img, pos, params, e.isShiftPressed(), m_level.getPointer(),
            getCurrentFid(), m_autopaintLines.getValue(),
-           m_closeRasterGaps.getIndex() > 0, m_closeRasterGaps.getIndex() > 1,
-           closeStyleIndex);
+           m_closeRasterGaps.getIndex() > 0, m_closeRasterGaps.getIndex() > 1, closeStyleIndex,
+              app->getCurrentFrame()->getFrameIndex());
     invalidate();
   }
 }
