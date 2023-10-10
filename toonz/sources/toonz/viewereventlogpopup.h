@@ -8,6 +8,7 @@
 
 class QTextEdit;
 class QCheckBox;
+class QPushButton;
 
 //**************************************************************
 //    Viewer Event Log Popup
@@ -23,6 +24,8 @@ class ViewerEventLogPopup final : public QSplitter {
       *m_eventMouseButtonPress, *m_eventMouseMove, *m_eventMouseButtonRelease,
       *m_eventMouseButtonDblClick, *m_eventKeyPress, *m_eventKeyRelease;
 
+  QPushButton *m_pauseBtn;
+
   QString m_lastMsg;
   int m_lastMsgCount;
 
@@ -37,6 +40,8 @@ public:
   void hideEvent(QHideEvent *e) override;
 
 public slots:
+  void onPauseButtonPressed();
+  void onCopyButtonPressed();
   void onClearButtonPressed();
 };
 

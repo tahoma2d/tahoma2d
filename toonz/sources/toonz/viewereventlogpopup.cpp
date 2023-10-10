@@ -6,6 +6,8 @@
 #include <QTabletEvent>
 #include <QTextEdit>
 #include <QVBoxLayout>
+#include <QApplication>
+#include <QClipboard>
 
 //=============================================================================
 // ViewerEventLog
@@ -85,6 +87,10 @@ ViewerEventLogPopup::ViewerEventLogPopup(QWidget *parent)
 
   //------begin right side
 
+  m_pauseBtn = new QPushButton(tr("Pause"), this);
+  connect(m_pauseBtn, SIGNAL(pressed()), this, SLOT(onPauseButtonPressed()));
+  QPushButton *copyBtn = new QPushButton(tr("Copy to Clipboard"), this);
+  connect(copyBtn, SIGNAL(pressed()), this, SLOT(onCopyButtonPressed()));
   QPushButton *clearBtn = new QPushButton(tr("Clear Log"), this);
   connect(clearBtn, SIGNAL(pressed()), this, SLOT(onClearButtonPressed()));
 
@@ -92,10 +98,17 @@ ViewerEventLogPopup::ViewerEventLogPopup(QWidget *parent)
   m_eventLog->setReadOnly(true);
 
   QFrame *logBox          = new QFrame(this);
+
   QVBoxLayout *vLogLayout = new QVBoxLayout(logBox);
 
   vLogLayout->addWidget(m_eventLog);
-  vLogLayout->addWidget(clearBtn);
+
+  QHBoxLayout *btnLayout = new QHBoxLayout();
+  btnLayout->addWidget(m_pauseBtn);
+  btnLayout->addWidget(copyBtn);
+  btnLayout->addWidget(clearBtn);
+
+  vLogLayout->addLayout(btnLayout);
 
   logBox->setLayout(vFilterLayout);
 
@@ -270,12 +283,33 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
 
 //--------------------------------------------------
 
+void ViewerEventLogPopup::onPauseButtonPressed() {
+  m_logging = !m_logging;
+  if (m_logging) {
+    m_pauseBtn->setText("Pause");
+    m_eventLog->append("*** Event logging resumed ***");
+  } else {
+    m_pauseBtn->setText("Resume");
+    m_eventLog->append("*** Event logging paused ***");
+  }
+}
+
+//--------------------------------------------------
+
+void ViewerEventLogPopup::onCopyButtonPressed() {
+  QClipboard *clipboard = QApplication::clipboard();
+  clipboard->setText(m_eventLog->toPlainText());
+}
+
+//--------------------------------------------------
+
 void ViewerEventLogPopup::onClearButtonPressed() { m_eventLog->clear(); }
 
 //--------------------------------------------------
 
 void ViewerEventLogPopup::showEvent(QShowEvent *e) {
   m_logging = true;
+  m_pauseBtn->setText("Pause");
   m_eventLog->clear();
 }
 
