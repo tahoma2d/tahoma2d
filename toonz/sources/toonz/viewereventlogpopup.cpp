@@ -96,6 +96,8 @@ ViewerEventLogPopup::ViewerEventLogPopup(QWidget *parent)
 
   m_eventLog = new QTextEdit(this);
   m_eventLog->setReadOnly(true);
+  m_eventLog->setLineWrapMode(QTextEdit::LineWrapMode::NoWrap);
+  m_eventLog->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
   QFrame *logBox = new QFrame(this);
 
