@@ -16,7 +16,7 @@
 ViewerEventLogPopup::ViewerEventLogPopup(QWidget *parent)
     : QSplitter(parent), m_logging(false), m_lastMsgCount(0) {
   setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
-  setWindowTitle("Viewer Event Log");
+  setWindowTitle(tr("Viewer Event Log"));
 
   // style sheet
   setObjectName("ViewerEventLog");
@@ -97,7 +97,7 @@ ViewerEventLogPopup::ViewerEventLogPopup(QWidget *parent)
   m_eventLog = new QTextEdit(this);
   m_eventLog->setReadOnly(true);
 
-  QFrame *logBox          = new QFrame(this);
+  QFrame *logBox = new QFrame(this);
 
   QVBoxLayout *vLogLayout = new QVBoxLayout(logBox);
 
@@ -124,26 +124,27 @@ ViewerEventLogPopup::ViewerEventLogPopup(QWidget *parent)
 void ViewerEventLogPopup::addEventMessage(QEvent *e) {
   if (!m_logging) return;
 
-  QString eventMsg = "Unknown event";
+  QString eventMsg = tr("Unknown event");
 
   switch (e->type()) {
   case QEvent::Enter: {
     if (!m_eventEnter->isChecked()) return;
-    eventMsg = "Entered viewer";
+    eventMsg = tr("Entered viewer");
   } break;
 
   case QEvent::Leave: {
     if (!m_eventLeave->isChecked()) return;
-    eventMsg = "Left viewer";
+    eventMsg = tr("Left viewer");
   } break;
 
   case QEvent::TabletPress: {
     if (!m_eventTabletPress->isChecked()) return;
 
     QTabletEvent *te = dynamic_cast<QTabletEvent *>(e);
-    eventMsg = "Stylus pressed at X=" + QString::number(te->pos().x()) + " Y=" +
-               QString::number(te->pos().y()) + " Pressure=" +
-               QString::number(te->pressure());
+    eventMsg         = tr("Stylus pressed at X=%1 Y=%2 Pressure=%3")
+                   .arg(te->pos().x())
+                   .arg(te->pos().y())
+                   .arg(te->pressure());
   } break;
 
   case QEvent::TabletMove: {
@@ -153,42 +154,43 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
     QString operation =
         ((te->buttons() & Qt::LeftButton) ||
          (te->buttons() & Qt::RightButton) || (te->buttons() & Qt::MidButton))
-            ? "dragged"
-            : "moved";
-    eventMsg = "Stylus " + operation + " to X=" +
-               QString::number(te->pos().x()) + " Y=" +
-               QString::number(te->pos().y()) + " Pressure=" +
-               QString::number(te->pressure());
+            ? tr("dragged")
+            : tr("moved");
+    eventMsg = tr("Stylus %1 to X=%2 Y=%3 Pressure=%4")
+                   .arg(operation)
+                   .arg(te->pos().x())
+                   .arg(te->pos().y())
+                   .arg(te->pressure());
   } break;
 
   case QEvent::TabletRelease: {
     if (!m_eventTabletRelease->isChecked()) return;
 
-    eventMsg = "Stylus released";
+    eventMsg = tr("Stylus released");
   } break;
 
   case QEvent::TouchBegin: {
     if (!m_eventTouchBegin->isChecked()) return;
 
-    eventMsg = "Touch begins";
+    eventMsg = tr("Touch begins");
   } break;
 
   case QEvent::TouchEnd: {
     if (!m_eventTouchEnd->isChecked()) return;
 
-    eventMsg = "Touch ended";
+    eventMsg = tr("Touch ended");
   } break;
 
   case QEvent::TouchCancel: {
     if (!m_eventTouchCancel->isChecked()) return;
 
-    eventMsg = "Touch cancelled";
+    eventMsg = tr("Touch cancelled");
   } break;
 
   case QEvent::Gesture: {
     if (!m_eventGesture->isChecked()) return;
 
-    eventMsg = "Gesture encountered";
+    eventMsg = tr("Gesture encountered");
   } break;
 
   case QEvent::MouseButtonPress: {
@@ -197,14 +199,15 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
     QMouseEvent *me = dynamic_cast<QMouseEvent *>(e);
     QString usedButton =
         (me->buttons() & Qt::LeftButton)
-            ? "LEFT"
+            ? tr("LEFT")
             : (me->buttons() & Qt::RightButton)
-                  ? "RIGHT"
-                  : (me->buttons() & Qt::MidButton) ? "MIDDLE" : "NO";
+                  ? tr("RIGHT")
+                  : (me->buttons() & Qt::MidButton) ? tr("MIDDLE") : tr("NO");
 
-    eventMsg = "Mouse " + usedButton + " button pressed at X=" +
-               QString::number(me->pos().x()) + " Y=" +
-               QString::number(me->pos().y());
+    eventMsg = tr("Mouse %1 button pressed at X=%2 Y=%3")
+                   .arg(usedButton)
+                   .arg(me->pos().x())
+                   .arg(me->pos().y());
   } break;
 
   case QEvent::MouseMove: {
@@ -214,17 +217,18 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
     QString operation =
         ((me->buttons() & Qt::LeftButton) ||
          (me->buttons() & Qt::RightButton) || (me->buttons() & Qt::MidButton))
-            ? "dragged"
-            : "moved";
-    eventMsg = "Mouse " + operation + " to X=" +
-               QString::number(me->pos().x()) + " Y=" +
-               QString::number(me->pos().y());
+            ? tr("dragged")
+            : tr("moved");
+    eventMsg = tr("Mouse %1 to X=%2 Y=%3")
+                   .arg(operation)
+                   .arg(me->pos().x())
+                   .arg(me->pos().y());
   } break;
 
   case QEvent::MouseButtonRelease: {
     if (!m_eventMouseButtonRelease->isChecked()) return;
 
-    eventMsg = "Mouse button released";
+    eventMsg = tr("Mouse button released");
   } break;
 
   case QEvent::MouseButtonDblClick: {
@@ -233,14 +237,15 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
     QMouseEvent *me = dynamic_cast<QMouseEvent *>(e);
     QString usedButton =
         (me->buttons() & Qt::LeftButton)
-            ? "LEFT"
+            ? tr("LEFT")
             : (me->buttons() & Qt::RightButton)
-                  ? "RIGHT"
-                  : (me->buttons() & Qt::MidButton) ? "MIDDLE" : "NO";
+                  ? tr("RIGHT")
+                  : (me->buttons() & Qt::MidButton) ? tr("MIDDLE") : tr("NO");
 
-    eventMsg = "Mouse " + usedButton + " button double-clicked at X=" +
-               QString::number(me->pos().x()) + " Y=" +
-               QString::number(me->pos().y());
+    eventMsg = tr("Mouse %1 button double-clicked at X=%2 Y=%3")
+                   .arg(usedButton)
+                   .arg(me->pos().x())
+                   .arg(me->pos().y());
   } break;
 
   case QEvent::KeyPress: {
@@ -249,7 +254,7 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
     QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(e);
     QString keyStr =
         QKeySequence(keyEvent->key() + keyEvent->modifiers()).toString();
-    eventMsg = "Key pressed: " + keyStr;
+    eventMsg = tr("Key pressed: %1").arg(keyStr);
   } break;
 
   case QEvent::KeyRelease: {
@@ -258,7 +263,7 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
     QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(e);
     QString keyStr =
         QKeySequence(keyEvent->key() + keyEvent->modifiers()).toString();
-    eventMsg = "Key released: " + keyStr;
+    eventMsg = tr("Key released: %1").arg(keyStr);
   } break;
 
   default:
