@@ -22,6 +22,9 @@ class TStroke;
   Genera degli stroke sulla base di un vettore di punti,
         questo vettore e' fatto di punti che vengono inseriti.
         Consente di visualizzare dei frammenti fatti dai punti che acquisisce.
+    Generate strokes based on a vector of points,
+         this vector is made of points that are inserted.
+         Allows you to view fragments made from the points it acquires.
 */
 class DVAPI StrokeGenerator {
   //! Vettore di TThickPoint

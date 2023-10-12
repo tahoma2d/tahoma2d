@@ -20,10 +20,16 @@
 
 #include <QDebug>
 
+#include "tsystem.h"
+
 extern TEnv::DoubleVar AutocloseDistance;
 extern TEnv::DoubleVar AutocloseAngle;
 extern TEnv::IntVar AutocloseInk;
 extern TEnv::IntVar AutocloseOpacity;
+
+#define IGNORECOLORSTYLE 4093
+#define GAP_CLOSE_TEMP 4094
+#define GAP_CLOSE_USED 4095
 
 //-----------------------------------------------------------------------------
 namespace {  // Utility Function
@@ -47,14 +53,14 @@ inline TPoint nearestInkNotDiagonal(const TRasterCM32P &r, const TPoint &p) {
 }
 
 //
-// from point x, y expands to the rightand left.
+// from point x, y expands to the right and left.
 // the redrawn line goes from* xa to* xb inclusive
 // x1 <= *xa <= *xb <= x2
 // N.B. if not even one pixel is drawn* xa > * xb
 //
 // "prevailing" is set to false on revert-filling the border of
 // region in the Rectangular, Freehand and Polyline fill procedures
-// in order to make the paint to protlude behind the line.
+// in order to make the paint extend behind the line.
 
 // Calculates the endpoints for the line of pixels in which to fill
 bool calcFillRow(const TRasterCM32P &r, const TPoint &p, int &xa, int &xb,
@@ -72,10 +78,16 @@ bool calcFillRow(const TRasterCM32P &r, const TPoint &p, int &xa, int &xb,
   oldtone = pix->getTone();
   tone    = oldtone;
   for (; pix <= limit; pix++) {
-    if (pix->getPaint() == paint) break;
-    if (emptyOnly && pix->getPaint() != 0) break;
+    if (pix->getPaint() == paint) {
+        //break;
+    }
+    if (emptyOnly && pix->getPaint() != 0) {
+        //break;
+    }
     tone = pix->getTone();
-    if (tone == 0) break;
+    if (tone == 0) {
+        break;
+    }
     // prevent fill area from protruding behind the colored line
     if (tone > oldtone) {
       // not-yet-colored line case
@@ -94,8 +106,7 @@ bool calcFillRow(const TRasterCM32P &r, const TPoint &p, int &xa, int &xb,
             TPixelCM32 *upPix   = pix - r->getWrap();
             TPixelCM32 *downPix = pix + r->getWrap();
             if (upPix->getTone() > pix->getTone() &&
-                downPix->getTone() > pix->getTone())
-              continue;
+                downPix->getTone() > pix->getTone()) continue;
           }
           break;
         }
@@ -109,12 +120,14 @@ bool calcFillRow(const TRasterCM32P &r, const TPoint &p, int &xa, int &xb,
     tmp_limit = pix + 10;  // edge stop fill == 10 per default
     if (limit > tmp_limit) limit = tmp_limit;
     for (; pix <= limit; pix++) {
-      if (pix->getPaint() == paint) break;
-      if (pix->getTone() != 0) break;
+      //if (pix->getPaint() == paint) break; // commented out for issue 1151
+      if (pix->getTone() != 0) {
+          break;
+      }
     }
   }
 
-  xb = p.x + pix - pix0 - 1;
+  xb = p.x + pix - pix0 - 1; //go backward one pixel from the current pixel which triggered the boundary condition.
 
   /* go left */
 
@@ -123,15 +136,22 @@ bool calcFillRow(const TRasterCM32P &r, const TPoint &p, int &xa, int &xb,
   oldtone = pix->getTone();
   tone    = oldtone;
   for (pix--; pix >= limit; pix--) {
-    if (pix->getPaint() == paint) break;
-    if (emptyOnly && pix->getPaint() != 0) break;
+      if (pix->getPaint() == paint) { 
+          break; 
+      }
+      if (emptyOnly && pix->getPaint() != 0) {
+          break; 
+      }
     tone = pix->getTone();
-    if (tone == 0) break;
+    if (tone == 0) {
+        break;
+    }
     // prevent fill area from protruding behind the colored line
     if (tone > oldtone) {
       // not-yet-colored line case
-      if (prevailing && !pix->isPurePaint() && pix->getInk() != pix->getPaint())
-        break;
+        if (prevailing && !pix->isPurePaint() && pix->getInk() != pix->getPaint()){
+            break;
+        }
       while (pix != pix0) {
         // iterate forward in order to leave the pixel with the lowest tone
         // unpainted
@@ -145,8 +165,9 @@ bool calcFillRow(const TRasterCM32P &r, const TPoint &p, int &xa, int &xb,
             TPixelCM32 *upPix   = pix - r->getWrap();
             TPixelCM32 *downPix = pix + r->getWrap();
             if (upPix->getTone() > pix->getTone() &&
-                downPix->getTone() > pix->getTone())
-              continue;
+                downPix->getTone() > pix->getTone()) {
+                continue;
+            }
           }
           break;
         }
@@ -160,12 +181,14 @@ bool calcFillRow(const TRasterCM32P &r, const TPoint &p, int &xa, int &xb,
     tmp_limit = pix - 10;
     if (limit < tmp_limit) limit = tmp_limit;
     for (; pix >= limit; pix--) {
-      if (pix->getPaint() == paint) break;
-      if (pix->getTone() != 0) break;
+      //if (pix->getPaint() == paint) break; // commented out for issue 1151
+        if (pix->getTone() != 0) { 
+            break; 
+        }
     }
   }
 
-  xa = p.x + pix - pix0 + 1;
+  xa = p.x + pix - pix0 + 1; //go backward one pixel from the current pixel which triggered the boundary condition.
 
   return (xb >= xa);
 }
@@ -430,6 +453,44 @@ TRasterCM32P convertRaster2CM(const TRasterP &inputRaster) {
   return rout;
 }
 
+//-----------------------------------------------------------------------------
+
+void outputPixels(const std::string _str, const TRasterCM32P &r) {
+    r->lock();
+    TPixelCM32* tempPix = r->pixels(0);
+    std::cout << "\noutputPixels for:";
+    std::cout << _str;
+    std::cout << ", bbox is y : ";
+    std::cout << r->getLy();
+    std::cout << ",x:";
+    std::cout << r->getLx();
+    std::cout << "----";
+    tempPix = tempPix + ((r->getLy()-1) * r->getLx());
+    for (int tempY = r->getLy()-1; tempY >= 0; tempY--) {
+        if (tempY < r->getLy() - 1) {
+            tempPix = tempPix - 2 * r->getLx(); 
+        }
+        std::cout << "\ny:";
+        std::cout << tempY;
+        for (int tempX = 0; tempX < r->getLx();
+            tempX++, tempPix++) {
+            std::cout << "|x:";
+            std::cout << tempX;
+            std::cout << ":";
+            std::cout << tempPix->getInk();
+            std::cout << ".";
+            std::cout << tempPix->getPaint();
+            std::cout << ".";
+            std::cout << tempPix->getTone();
+        }
+    }
+    r->unlock();
+    std::cout << "\n";
+    return;
+}
+
+//-----------------------------------------------------------------------------
+
 /*-- The return value is whether the saveBox has been updated or not. --*/
 bool fill(const TRasterCM32P &r, const FillParameters &params,
           TTileSaverCM32 *saver, bool fillGaps, bool closeGaps,
@@ -449,9 +510,9 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   int paint = params.m_styleId;
   int fillDepth =
       params.m_shiftFill ? params.m_maxFillDepth : params.m_minFillDepth;
-  TRasterCM32P tempRaster;
-  int styleIndex                                 = 4094;
-  int fakeStyleIndex                             = 4095;
+  TRasterCM32P tempRaster, cr, refCMRaster;
+  int styleIndex                                 = GAP_CLOSE_TEMP;
+  int fakeStyleIndex                             = GAP_CLOSE_USED;
   if (autoCloseDistance < 0.0) autoCloseDistance = AutocloseDistance;
 
   bool gapsClosed = false, refGapsClosed = false;
@@ -473,7 +534,10 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   if (!bbbox.contains(p)) return false;
   /*- If the same color has already been painted, return -*/
   int paintAtClickedPos = (tempRaster->pixels(p.y) + p.x)->getPaint();
-  if (paintAtClickedPos == paint) return false;
+  
+  if (paintAtClickedPos == paint) {
+      return false;
+  }
   /*- If the "paint only transparent areas" option is enabled and the area is
    * already colored, return
    * -*/
@@ -511,8 +575,8 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
     }
 
     if (fillGaps) {
-      TRasterCM32P cr          = convertRaster2CM(refRaster);
-      TRasterCM32P refCMRaster = cr->clone();
+      cr = convertRaster2CM(refRaster);
+      refCMRaster = cr->clone();
 
       refGapsClosed = TAutocloser(refCMRaster, autoCloseDistance,
                                   AutocloseAngle, styleIndex, AutocloseOpacity)
@@ -529,7 +593,7 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
                refCMX++, refCMPix++, refPix++, tempPix++) {
             if (refCMPix->getInk() != styleIndex) continue;
             *refPix = color;
-            if (closeGaps) {
+            if (fillGaps) {
               tempPix->setInk(refCMPix->getInk());
               tempPix->setTone(refCMPix->getTone());
             }
@@ -539,7 +603,9 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
     }
   }
 
-  if (fillGaps && !gapsClosed && !refGapsClosed) fillGaps = false;
+  if (fillGaps && !gapsClosed && !refGapsClosed) {
+    fillGaps = false;
+  }
 
   assert(fillDepth >= 0 && fillDepth < 16);
 
@@ -580,23 +646,11 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
                             params.m_prevailing, params.m_emptyOnly)
               : calcRefFillRow(refRaster, p, xa, xb, color, clickedPosColor,
                                fillDepth);
+
   if (fillIt) fillRow(tempRaster, p, xa, xb, paint, params.m_palette, saver);
   if (xsheet) segments[y].push_back(std::pair<int, int>(xa, xb));
   seeds.push(FillSeed(xa, xb, y, 1));
   seeds.push(FillSeed(xa, xb, y, -1));
-  // Set the ink on gaps that were used to 4095
-  {
-    TPixelCM32 *tempPix = tempRaster->pixels(0);
-    tempPix += (y * tempRaster->getLx()) + xa - 1;
-    int i = xa;
-    while (i <= xb) {
-      if (tempPix->getInk() == styleIndex) {
-        tempPix->setInk(fakeStyleIndex);
-      }
-      tempPix++;
-      i++;
-    }
-  }
 
   while (!seeds.empty()) {
     FillSeed fs = seeds.top();
@@ -647,19 +701,7 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
           fillRow(tempRaster, TPoint(x, y), xc, xd, paint, params.m_palette,
                   saver);
         if (xsheet) insertSegment(segments[y], std::pair<int, int>(xc, xd));
-        // Set the ink on gaps that were used to 4095
-        {
-          TPixelCM32 *tempPix = tempRaster->pixels(0);
-          tempPix += (y * tempRaster->getLx()) + xa - 1;
-          int i = xa;
-          while (i <= xb) {
-            if (tempPix->getInk() == styleIndex) {
-              tempPix->setInk(fakeStyleIndex);
-            }
-            tempPix++;
-            i++;
-          }
-        }
+
         if (xc < xa) seeds.push(FillSeed(xc, xa - 1, y, -dy));
         if (xd > xb) seeds.push(FillSeed(xb + 1, xd, y, -dy));
         if (oldxd >= xc - 1)
@@ -703,26 +745,27 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   }
 
   if (fillGaps) {
-    TPixelCM32 *tempPix = tempRaster->pixels();
-    TPixelCM32 *keepPix = r->pixels();
+    finishGapLines(tempRaster, bbbox, r, refCMRaster, params.m_palette, paintAtClickedPos, paint, closeStyleIndex, closeGaps);
+    TPixelCM32 *tempPix, *tempPixRestart;
+    tempPixRestart = tempPix = tempRaster->pixels();
+    TPixelCM32 *keepPix, *keepPixRestart;
+    keepPixRestart = keepPix = r->pixels();
+    int fillNeighbors = 0;
+    int paintableNeighbors = 0;
+
     for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
       for (int tempX = 0; tempX < tempRaster->getLx();
            tempX++, tempPix++, keepPix++) {
-        if (tempPix->getInk() != styleIndex &&
-            tempPix->getInk() != fakeStyleIndex)
-          keepPix->setPaint(tempPix->getPaint());
-        // This next line takes care of autopaint lines
-        if (tempPix->getInk() != styleIndex) {
-          if (closeGaps && tempPix->getInk() == fakeStyleIndex) {
-            keepPix->setInk(closeStyleIndex);
-            keepPix->setTone(tempPix->getTone());
-          } else if (tempPix->getInk() != fakeStyleIndex) {
-            keepPix->setInk(tempPix->getInk());
-          }
+        if (tempPix->getInk() >= IGNORECOLORSTYLE || tempPix->getPaint() >= IGNORECOLORSTYLE) {
+          continue;
         }
+        keepPix->setInk(tempPix->getInk());
+        keepPix->setPaint(tempPix->getPaint());
+        keepPix->setTone(tempPix->getTone());
       }
     }
   }
+
   return saveBoxChanged;
 }
 
@@ -949,8 +992,8 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
   TRaster32P refRas(bbbox.getSize());
 
   TPixel32 gapColor  = plt->getStyle(closeStyleIndex)->getMainColor();
-  int styleIndex     = 4094;
-  int fakeStyleIndex = 4095;
+  int styleIndex     = GAP_CLOSE_TEMP;
+  int fakeStyleIndex = GAP_CLOSE_USED;
 
   if (xsheet) {
     ToonzScene *scene = xsheet->getScene();
@@ -975,9 +1018,10 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
   }
 
   TRasterCM32P refCMRaster;
+  TRasterCM32P cr;
 
   if (fillGaps) {
-    TRasterCM32P cr = convertRaster2CM(refRas);
+    cr = convertRaster2CM(refRas);
     refCMRaster     = cr->clone();
     fillGaps = TAutocloser(refCMRaster, autoCloseDistance, AutocloseAngle,
                            styleIndex, AutocloseOpacity)
@@ -1018,20 +1062,6 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
   segments[y].push_back(std::pair<int, int>(xa, xb));
   seeds.push(FillSeed(xa, xb, y, 1));
   seeds.push(FillSeed(xa, xb, y, -1));
-
-  if (fillGaps && closeGaps) {
-    // Set the ink on gaps that were used to 4095
-    TPixelCM32 *tempPix = refCMRaster->pixels(0);
-    tempPix += (y * refCMRaster->getLx()) + xa - 1;
-    int i = xa;
-    while (i <= xb) {
-      if (tempPix->getInk() == styleIndex) {
-        tempPix->setInk(fakeStyleIndex);
-      }
-      tempPix++;
-      i++;
-    }
-  }
 
   while (!seeds.empty()) {
     FillSeed fs = seeds.top();
@@ -1083,19 +1113,6 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
                                clickedPosColor, fillDepth);
         // insert segment to be filled
         insertSegment(segments[y], std::pair<int, int>(xc, xd));
-        if (fillGaps && closeGaps) {
-          // Set the ink on gaps that were used to 4095
-          TPixelCM32 *tempPix = refCMRaster->pixels(0);
-          tempPix += (y * refCMRaster->getLx()) + xa - 1;
-          int i = xa;
-          while (i <= xb) {
-            if (tempPix->getInk() == styleIndex) {
-              tempPix->setInk(fakeStyleIndex);
-            }
-            tempPix++;
-            i++;
-          }
-        }
 
         // create new fillSeed to invert direction, if needed
         if (xc < xa) seeds.push(FillSeed(xc, xa - 1, y, -dy));
@@ -1158,14 +1175,59 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
     }
   }
 
-  if (fillGaps && closeGaps) {
+// final check for close gap pixels
+  if (fillGaps) {
+
     TPixelCM32 *tempPix = refCMRaster->pixels();
     TPixel32 *keepPix   = ras->pixels();
+    int fillNeighbors;
     for (int tempY = 0; tempY < refCMRaster->getLy(); tempY++) {
       for (int tempX = 0; tempX < refCMRaster->getLx();
            tempX++, tempPix++, keepPix++) {
-        if (tempPix->getInk() == fakeStyleIndex) {
-          *keepPix = gapColor;
+        // if (tempPix->getInk() == fakeStyleIndex) {
+        if (tempPix->getInk() == styleIndex) {
+          // how many fill pixel neighbors for the current pixel?
+          fillNeighbors = 0;
+          if ((tempX > 0) && *(keepPix - 1) == color) fillNeighbors++;  // west
+          if (tempX < ras->getLx() - 1 && *(keepPix + 1) == color)
+            fillNeighbors++;  // east
+          if (tempY < ras->getLy() - 1 && *(keepPix + ras->getWrap()) == color)
+            fillNeighbors++;  // north
+          if (tempY > 0 && *(keepPix - ras->getWrap()) == color)
+            fillNeighbors++;  // south
+          if (fillNeighbors < 1) {
+            // no neighboring fill pixels, this is an unused gap close pixel
+            continue;
+          } else if (fillNeighbors > 3) {
+            // too many neighboring fill pixels to be a gap close pixel
+            // , convert it to a fill pixel
+            *keepPix = color;
+          } else {
+            // does it have at least one unpainted pixel neighbor?
+            if (((tempX > 0) && (tempPix - 1)->getInk() == 0 &&
+                 (*(keepPix - 1) == clickedPosColor))  // west
+                || (tempX < refCMRaster->getLx() - 1 &&
+                    (tempPix + 1)->getInk() == 0 &&
+                    *(keepPix + 1) == clickedPosColor)  // east
+                || (tempY < refCMRaster->getLy() - 1 &&
+                    (tempPix + refCMRaster->getWrap())->getInk() == 0 &&
+                    *(keepPix + ras->getWrap()) == clickedPosColor)  // north
+                || (tempY > 0 &&
+                    (tempPix - refCMRaster->getWrap())->getInk() == 0 &&
+                    *(keepPix - ras->getWrap()) == clickedPosColor)  // south
+            ) {
+              // yes, persist it as a gap close pixel
+              if (closeGaps) {
+                *keepPix = gapColor;
+              } else {
+                *keepPix = color;
+              }
+            } else {
+              // it is not acting as a border pixel so convert it to a fill
+              // pixel
+              *keepPix = color;
+            }
+          }
         }
       }
     }

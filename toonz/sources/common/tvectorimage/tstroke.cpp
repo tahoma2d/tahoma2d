@@ -3717,6 +3717,12 @@ TThickCubic *TCubicStroke::generateCubic3D(const T3DPointD pointsArrayBegin[],
         TCubicStroke, cioe' uno stroke cubico. Da questo trova lo stroke
   quadratico.
   */
+//! Returns a stroke from a vector of TThickPoints
+/*!
+    Transforms an array of TThickPoints into an array of T3DPointDs 
+    which is used for a TCubicStroke, i.e. a cubic stroke. 
+    From this he finds the stroke quadratic.
+*/
 TStroke *TStroke::interpolate(const vector<TThickPoint> &points, double error,
                               bool findCorners) {
   vector<T3DPointD> pointsArray3D;
