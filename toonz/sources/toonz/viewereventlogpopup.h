@@ -36,7 +36,6 @@ public:
 
   void addEventMessage(QEvent *e);
 
-  void showEvent(QShowEvent *e) override;
   void hideEvent(QHideEvent *e) override;
 
 public slots:

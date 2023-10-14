@@ -14,8 +14,8 @@
 //-----------------------------------------------------------------------------
 
 ViewerEventLogPopup::ViewerEventLogPopup(QWidget *parent)
-    : QSplitter(parent), m_logging(false), m_lastMsgCount(0) {
-  setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
+    : QSplitter(parent), m_logging(true), m_lastMsgCount(0) {
+  setWindowFlags(Qt::WindowStaysOnTopHint);
   setWindowTitle(tr("Viewer Event Log"));
 
   // style sheet
@@ -316,12 +316,6 @@ void ViewerEventLogPopup::onClearButtonPressed() { m_eventLog->clear(); }
 
 //--------------------------------------------------
 
-void ViewerEventLogPopup::showEvent(QShowEvent *e) {
-  m_logging = true;
-  m_pauseBtn->setText("Pause");
-  m_eventLog->clear();
+void ViewerEventLogPopup::hideEvent(QHideEvent *e) {
+  if (m_logging) onPauseButtonPressed();
 }
-
-//--------------------------------------------------
-
-void ViewerEventLogPopup::hideEvent(QHideEvent *e) { m_logging = false; }
