@@ -141,6 +141,7 @@ set(MOC_HEADERS
     ../stopmotion/gphotocam.h
     cameracapturelevelcontrol.h
     navtageditorpopup.h
+    viewereventlogpopup.h
 )
 
 set(HEADERS
@@ -388,6 +389,7 @@ set(SOURCES
     ../stopmotion/gphotocam.cpp
 	cameracapturelevelcontrol.cpp
     navtageditorpopup.cpp
+    viewereventlogpopup.cpp
 )
 
 if(WITH_TRANSLATION)

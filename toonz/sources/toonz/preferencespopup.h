@@ -14,6 +14,8 @@
 // TnzLib includes
 #include "toonz/preferences.h"
 
+#include "viewereventlogpopup.h"
+
 // Qt includes
 #include <QComboBox>
 #include <QFontComboBox>
@@ -95,6 +97,8 @@ private:
   QCheckBox* m_importStudioPalettesCB;
   QCheckBox* m_importLibraryCB;
   QCheckBox* m_importToonzfarmCB;
+
+  ViewerEventLogPopup *m_viewerEventLogPopup;
 
 private:
   void rebuildFormatsList();
@@ -193,6 +197,7 @@ private slots:
   void onLutPathChanged();
   void onCheck30bitDisplay();
   void onFrameFormatButton();
+  void onOpenViewerEventLog();
 
   void onAddLevelFormat();
   void onRemoveLevelFormat();
