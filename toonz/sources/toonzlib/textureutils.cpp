@@ -14,6 +14,7 @@
 #include "toonz/toonzscene.h"
 #include "toonz/imagemanager.h"
 #include "imagebuilders.h"
+#include "tstencilcontrol.h"
 
 // TnzCore includes
 #include "tpalette.h"
@@ -199,7 +200,11 @@ DrawableTextureDataP texture_utils::getTextureData(const TXsheet *xsh,
   TGlContext currentContext = tglGetCurrentContext();
   {
     tglDoneCurrent(currentContext);
+    bool masked = TStencilControl::instance()->isMaskEnabled();
+    // Must move masks aside when building texture
+    if (masked) TStencilControl::instance()->stashMask();
     xsh->getScene()->renderFrame(tex, frame, xsh, bbox, TAffine());
+    if (masked) TStencilControl::instance()->restoreMask();
     tglMakeCurrent(currentContext);
   }
 #endif
