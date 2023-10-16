@@ -1047,7 +1047,7 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
   TPointD m_firstPoint, m_clickPoint;
 
   // convert fillDepth range from [0 - 15] to [0 - 255]
-  fillDepth = (fillDepth << 4) | fillDepth;
+  fillDepth = ((15 - fillDepth) << 4) | (15 - fillDepth);
 
   std::stack<FillSeed> seeds;
   std::map<int, std::vector<std::pair<int, int>>> segments;
