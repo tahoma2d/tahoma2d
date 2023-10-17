@@ -24,9 +24,6 @@
 // TnzCore includes
 #include "drawutil.h"
 
-// boost includes
-#include <boost/bind.hpp>
-
 using namespace ToolUtils;
 using namespace DragSelectionTool;
 
@@ -655,7 +652,7 @@ void DragSelectionTool::VectorDeformTool::transformWholeLevel() {
   // Remove unwanted fids
   fids.erase(std::remove_if(
                  fids.begin(), fids.end(),
-                 boost::bind(::currentOrNotSelected, boost::cref(*tool), _1)),
+                 [tool](const TFrameId &fid) { return currentOrNotSelected(*tool, fid); }),
              fids.end());
 
   TUndoManager::manager()->beginBlock();
@@ -704,9 +701,9 @@ void DragSelectionTool::VectorDeformTool::transformWholeLevel() {
 
   // Finally, notify changed frames
   std::for_each(fids.begin(), fids.end(),
-                boost::bind(  // NOTE: current frame is not here - it should be,
-                    &TTool::notifyImageChanged, m_tool,
-                    _1));  //       but it's currently unnecessary, in fact...
+  // NOTE: current frame is not here - it should be,
+  // but it's currently unnecessary, in fact...
+  [this](const TFrameId &fid) { m_tool->notifyImageChanged(fid); });
 
   // notifyImageChanged(fid) must be invoked OUTSIDE of the loop - since it
   // seems to imply notifyImageChanged()
@@ -976,12 +973,12 @@ void DragSelectionTool::VectorChangeThicknessTool::setStrokesThickness(
     const std::set<int> &selectedStrokeIdxs = strokeSelection->getSelection();
 
     std::for_each(selectedStrokeIdxs.begin(), selectedStrokeIdxs.end(),
-                  boost::bind(locals::setThickness, boost::cref(data), _1));
+      [&data](int s) { locals::setThickness(data, s); });
   } else {
     std::vector<int> strokeIdxs = getSelectedStrokes(vi, levelSelection);
 
     std::for_each(strokeIdxs.begin(), strokeIdxs.end(),
-                  boost::bind(locals::setThickness, boost::cref(data), _1));
+      [&data](int s) { locals::setThickness(data, s); });
   }
 }
 
@@ -1030,12 +1027,12 @@ void DragSelectionTool::VectorChangeThicknessTool::changeImageThickness(
     const std::set<int> &selectedStrokeIdxs = strokeSelection->getSelection();
 
     std::for_each(selectedStrokeIdxs.begin(), selectedStrokeIdxs.end(),
-                  boost::bind(locals::changeThickness, boost::ref(data), _1));
+      [&data](int s) { locals::changeThickness(data, s); });
   } else {
     std::vector<int> strokeIdxs = getSelectedStrokes(vi, levelSelection);
 
     std::for_each(strokeIdxs.begin(), strokeIdxs.end(),
-                  boost::bind(locals::changeThickness, boost::ref(data), _1));
+      [&data](int s) { locals::changeThickness(data, s); });
   }
 }
 
@@ -1061,8 +1058,7 @@ void DragSelectionTool::VectorChangeThicknessTool::addUndo() {
 
     // Remove unwanted frames
     fids.erase(std::remove_if(fids.begin(), fids.end(),
-                              boost::bind(::currentOrNotSelected,
-                                          boost::cref(*vtool), _1)),
+      [vtool](const TFrameId &fid) { return currentOrNotSelected(*vtool, fid); }),
                fids.end());
 
     TUndoManager::manager()->beginBlock();
@@ -1098,9 +1094,7 @@ void DragSelectionTool::VectorChangeThicknessTool::addUndo() {
 
     // Finally, notify changed frames
     std::for_each(fids.begin(), fids.end(),
-                  boost::bind(  // NOTE: current frame is not here - it was
-                      &TTool::notifyImageChanged, m_tool,
-                      _1));  //       aldready notified
+      [this](const TFrameId &fid) { m_tool->notifyImageChanged(fid); });
   } else
     TUndoManager::manager()->add(m_undo.release());  // Outside any undo block
 }
@@ -1286,7 +1280,7 @@ void VectorSelectionTool::setNewFreeDeformer() {
 
     fids.erase(std::remove_if(
                    fids.begin(), fids.end(),
-                   boost::bind(::currentOrNotSelected, boost::cref(*this), _1)),
+                   [this](const TFrameId &fid) { return currentOrNotSelected(*this, fid); }),
                fids.end());
 
     std::vector<TFrameId>::iterator ft, fEnd = fids.end();

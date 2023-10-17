@@ -162,6 +162,11 @@ void DVAPI addImagesToIcon(QIcon &icon, const QImage &baseImg,
 
 //-----------------------------------------------------------------------------
 
+void DVAPI addSpecifiedSizedImageToIcon(QIcon &icon, const char *iconSVGName,
+                                        QSize newSize = QSize());
+
+//-----------------------------------------------------------------------------
+
 void DVAPI addPixmapToAllModesAndStates(QIcon &icon, const QPixmap &pixmap);
 
 //-----------------------------------------------------------------------------

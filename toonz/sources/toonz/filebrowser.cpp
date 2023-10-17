@@ -80,7 +80,6 @@
 #include "tcg/boost/permuted_range.h"
 
 // boost includes
-#include <boost/bind.hpp>
 #include <boost/iterator/counting_iterator.hpp>
 #include <boost/range/adaptor/filtered.hpp>
 #include <boost/range/adaptor/transformed.hpp>
@@ -435,7 +434,7 @@ void FileBrowser::sortByDataModel(DataType dataType, bool isDiscendent) {
 
     std::stable_sort(
         new2OldIdx.begin(), new2OldIdx.end(),
-        boost::bind(locals::itemLess, _1, _2, boost::ref(*this), dataType));
+        [this, dataType](int x, int y) { return locals::itemLess(x, y, *this, dataType); });
 
     // Use the renumbering table to permutate elements
     std::vector<Item>(
@@ -453,15 +452,13 @@ void FileBrowser::sortByDataModel(DataType dataType, bool isDiscendent) {
           boost::make_counting_iterator(int(m_items.size())));
 
       std::sort(old2NewIdx.begin(), old2NewIdx.end(),
-                boost::bind(locals::indexLess, _1, _2, boost::ref(new2OldIdx)));
+                [&new2OldIdx](int aIdx, int bIdx){ return locals::indexLess(aIdx, bIdx, new2OldIdx); });
 
       std::vector<int> newSelectedIndices;
       tcg::substitute(
           newSelectedIndices,
           tcg::permuted_range(old2NewIdx, fs->getSelectedIndices() |
-                                              ba::filtered(boost::bind(
-                                                  std::less<int>(), _1,
-                                                  int(old2NewIdx.size())))));
+                                              ba::filtered([&old2NewIdx](int x){ return x < old2NewIdx.size(); })));
 
       fs->select(!newSelectedIndices.empty() ? &newSelectedIndices.front() : 0,
                  int(newSelectedIndices.size()));
@@ -486,8 +483,8 @@ void FileBrowser::sortByDataModel(DataType dataType, bool isDiscendent) {
       tcg::substitute(
           newSelectedIndices,
           fs->getSelectedIndices() |
-              ba::filtered(boost::bind(std::less<int>(), _1, iCount)) |
-              ba::transformed(boost::bind(locals::complement, _1, lastIdx)));
+              ba::filtered([iCount](int x){ return x < iCount; }) |
+              ba::transformed([lastIdx](int x){ return locals::complement(x, lastIdx); }));
 
       fs->select(!newSelectedIndices.empty() ? &newSelectedIndices.front() : 0,
                  int(newSelectedIndices.size()));

@@ -2861,7 +2861,7 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
 
   if (m_transparencyPopupTimer) m_transparencyPopupTimer->stop();
 
-  m_viewer->setQtModifiers(0);
+  m_viewer->setQtModifiers(Qt::KeyboardModifiers());
   m_viewer->dragToolRelease(event);
   m_isPanning = false;
   m_viewer->stopAutoPan();

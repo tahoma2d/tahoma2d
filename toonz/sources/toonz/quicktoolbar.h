@@ -31,7 +31,7 @@ class QuickToolbar final : public CommandBar {
   XsheetViewer *m_viewer;
 
 public:
-  QuickToolbar(XsheetViewer *parent = 0, Qt::WindowFlags flags = 0,
+  QuickToolbar(XsheetViewer *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags(),
                 bool isCollapsible = false);
   static void toggleQuickToolbar();
   void showToolbar(bool show);

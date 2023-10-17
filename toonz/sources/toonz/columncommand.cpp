@@ -1453,7 +1453,9 @@ public:
       TXshColumn *column = xsh->getColumn(i);
       if (!column) continue;
       /*- Skip if target is in selected column mode and not selected -*/
-      bool isSelected = selection && selection->isColumnSelected(i);
+      bool isSelected = selection && !selection->isEmpty()
+                      ? selection->isColumnSelected(i)
+                      : cc == i;
       if (m_target == TARGET_SELECTED && !isSelected) continue;
 
       /*-

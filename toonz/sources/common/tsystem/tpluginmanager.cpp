@@ -15,12 +15,12 @@
 #include <sys/param.h>
 #include <unistd.h>
 #include <sys/types.h>
-#ifndef FREEBSD
+#if !defined(FREEBSD) || __FreeBSD_version >= 1300040
 #include <dirent.h>
 #endif
 #include <stdio.h>
 #include <unistd.h>
-#ifndef HAIKU
+#if !defined(HAIKU) && (!defined(FREEBSD) || __FreeBSD_version < 1300040)
 #include <sys/dir.h>
 #endif
 #include <sys/param.h>  // for getfsstat

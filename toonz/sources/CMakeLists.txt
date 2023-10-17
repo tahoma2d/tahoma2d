@@ -520,7 +520,7 @@ elseif(BUILD_ENV_UNIXLIKE)
     find_package(LZO REQUIRED)
     message("LZO:" ${LZO_INCLUDE_DIR})
 
-    if(HAIKU)
+    if(BUILD_TARGET_BSD OR HAIKU)
         find_library(EXECINFO_LIBRARY execinfo)
     endif()
     find_library(PTHREAD_LIBRARY pthread)

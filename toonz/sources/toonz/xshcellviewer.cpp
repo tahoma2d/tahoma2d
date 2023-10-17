@@ -3748,7 +3748,7 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
 //-----------------------------------------------------------------------------
 
 void CellArea::mouseReleaseEvent(QMouseEvent *event) {
-  m_viewer->setQtModifiers(0);
+  m_viewer->setQtModifiers(Qt::KeyboardModifiers());
   m_isMousePressed = false;
   m_viewer->stopAutoPan();
   m_isPanning = false;
