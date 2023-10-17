@@ -683,7 +683,6 @@ public:
 
   TXsheet *getXsheet() const;
   int getCurrentColumn() const;
-  int getClickedColumn() const;
   int getCurrentRow() const;
   //! Restituisce la \b objectId corrispondente alla colonna \b col
   TStageObjectId getObjectId(int col) const;
