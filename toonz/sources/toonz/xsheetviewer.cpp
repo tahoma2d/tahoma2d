@@ -500,6 +500,13 @@ int XsheetViewer::getCurrentColumn() const {
 
 //-----------------------------------------------------------------------------
 
+int XsheetViewer::getMenuColumnTarget() const {
+  if (!m_columnArea) return -999;
+  return m_columnArea->getMenuColumnTarget();
+}
+
+//-----------------------------------------------------------------------------
+
 int XsheetViewer::getCurrentRow() const {
   return TApp::instance()->getCurrentFrame()->getFrame();
 }

@@ -1591,7 +1591,9 @@ ColumnArea::ColumnArea(XsheetViewer *parent, Qt::WindowFlags flags)
     , m_columnTransparencyPopup(0)
     , m_transparencyPopupTimer(0)
     , m_isPanning(false)
-    , m_soundColumnPopup(0) {
+    , m_soundColumnPopup(0)
+    , m_menuCol(-999)
+    , m_menuTimer(0) {
   TXsheetHandle *xsheetHandle = TApp::instance()->getCurrentXsheet();
   TObjectHandle *objectHandle = TApp::instance()->getCurrentObject();
   m_changeObjectParent        = new ChangeObjectParent(m_viewer);
@@ -3119,19 +3121,22 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
 #endif
   const Orientation *o = m_viewer->orientation();
 
-  int col = m_viewer->xyToPosition(event->pos()).layer();
+  m_menuCol = m_viewer->xyToPosition(event->pos()).layer();
 
-  bool isCamera = col < 0;
+  bool isCamera = m_menuCol < 0;
 
   TXsheet *xsh       = m_viewer->getXsheet();
-  QPoint topLeft     = m_viewer->positionToXY(CellPosition(0, col));
+  QPoint topLeft     = m_viewer->positionToXY(CellPosition(0, m_menuCol));
   QPoint mouseInCell = event->pos() - topLeft;
 
   QMenu menu(this);
+  connect(&menu, SIGNAL(aboutToHide()), this, SLOT(onMenuAboutToHide()));
+
   CommandManager *cmdManager = CommandManager::instance();
 
   //---- Preview
-  if (((isCamera && !o->isVerticalTimeline()) || !xsh->isColumnEmpty(col)) &&
+  if (((isCamera && !o->isVerticalTimeline()) ||
+       !xsh->isColumnEmpty(m_menuCol)) &&
       o->rect(PredefinedRect::EYE_AREA).contains(mouseInCell)) {
     menu.setObjectName("xsheetColumnAreaMenu_Preview");
 
@@ -3143,7 +3148,7 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
     menu.addAction(cmdManager->getAction("MI_SwapEnabledColumns"));
   }
   //---- Lock
-  else if ((isCamera || !xsh->isColumnEmpty(col)) &&
+  else if ((isCamera || !xsh->isColumnEmpty(m_menuCol)) &&
            o->rect((isCamera) ? PredefinedRect::CAMERA_LOCK_AREA
                               : PredefinedRect::LOCK_AREA)
                .contains(mouseInCell)) {
@@ -3158,7 +3163,7 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
   }
   //---- Camstand
   else if (((isCamera && !o->isVerticalTimeline()) ||
-            !xsh->isColumnEmpty(col)) &&
+            !xsh->isColumnEmpty(m_menuCol)) &&
            o->rect(PredefinedRect::PREVIEW_LAYER_AREA).contains(mouseInCell)) {
     menu.setObjectName("xsheetColumnAreaMenu_Camstand");
 
@@ -3175,8 +3180,8 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
   else {
     if (!isCamera) {
       int r0, r1;
-      xsh->getCellRange(col, r0, r1);
-      TXshCell cell = xsh->getCell(r0, col);
+      xsh->getCellRange(m_menuCol, r0, r1);
+      TXshCell cell = xsh->getCell(r0, m_menuCol);
       menu.addAction(cmdManager->getAction(MI_Cut));
       menu.addAction(cmdManager->getAction(MI_Copy));
       menu.addAction(cmdManager->getAction(MI_Paste));
@@ -3191,7 +3196,7 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
         menu.addAction(cmdManager->getAction(MI_RemoveEmptyColumns));
       }
       menu.addSeparator();
-      if (m_viewer->getXsheet()->isColumnEmpty(col) ||
+      if (m_viewer->getXsheet()->isColumnEmpty(m_menuCol) ||
           (cell.m_level && cell.m_level->getChildLevel()))
         menu.addAction(cmdManager->getAction(MI_OpenChild));
 
@@ -3240,7 +3245,7 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
     }
 
     // force the selected cells placed in n-steps
-    if (!xsh->isColumnEmpty(col)) {
+    if (!xsh->isColumnEmpty(m_menuCol)) {
       menu.addSeparator();
       QMenu *reframeSubMenu = new QMenu(tr("Reframe"), this);
       {
@@ -3267,7 +3272,7 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
       menu.addMenu(subsampleSubMenu);
     }
 
-    if (!xsh->isColumnEmpty(col)) {
+    if (!xsh->isColumnEmpty(m_menuCol)) {
       menu.addAction(cmdManager->getAction(MI_ReplaceLevel));
       menu.addAction(cmdManager->getAction(MI_ReplaceParentDirectory));
     }
@@ -3309,12 +3314,33 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
     act4->setText(tr("&Paste Insert Below"));
   }
 
+  if (m_menuTimer) m_menuTimer->stop();
+
   menu.exec(event->globalPos());
 
   act->setText(actText);
   act2->setText(act2Text);
   act3->setText(act3Text);
   act4->setText(act4Text);
+}
+
+//-----------------------------------------------------------------------------
+
+void ColumnArea::onMenuAboutToHide() {
+  if (!m_menuTimer) {
+    m_menuTimer = new QTimer(this);
+    connect(m_menuTimer, SIGNAL(timeout()), this,
+            SLOT(onResetContextMenuTarget()));
+    m_menuTimer->setSingleShot(true);
+  }
+  m_menuTimer->start(300);
+}
+
+//-----------------------------------------------------------------------------
+
+void ColumnArea::onResetContextMenuTarget() {
+  if (m_menuTimer) m_menuTimer->stop();
+  m_menuCol = -999;
 }
 
 //-----------------------------------------------------------------------------

@@ -325,6 +325,9 @@ class ColumnArea final : public QWidget {
   QAction *m_subsampling3;
   QAction *m_subsampling4;
 
+  int m_menuCol;
+  QTimer *m_menuTimer;
+
   DragTool *getDragTool() const;
   void setDragTool(DragTool *dragTool);
   void startTransparencyPopupTimer(QMouseEvent *e);
@@ -384,7 +387,7 @@ public:
 
   QPixmap getColumnIcon(int columnIndex);
 
-  int getClickedColumn() { return m_col; }
+  int getMenuColumnTarget() { return m_menuCol; }
 
   class Pixmaps {
   public:
@@ -412,6 +415,8 @@ protected slots:
   void onCameraColumnChangedTriggered();
   void onCameraColumnLockToggled(bool);
   void onXsheetCameraChange(int);
+  void onMenuAboutToHide();
+  void onResetContextMenuTarget();
 };
 
 //-----------------------------------------------------------------------------
