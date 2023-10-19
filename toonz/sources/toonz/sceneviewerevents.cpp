@@ -401,6 +401,12 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
         m_tabletState       = Released;
         mouseEvent.m_button = Qt::LeftButton;
         onRelease(mouseEvent);
+      } else if (m_tabletState == StartStroke) {
+        // Single tap of stylus still records TableMoves before TabletRelease.
+        // Skip the 1st TabletMove to give time for TabletRelease to show up
+        // This way we don't try to do a LeftButtonDrag operation (i.e. normal
+        // fill) too soon.
+        m_tabletState = OnStroke;
       } else {
         m_tabletMove = true;
         onMove(mouseEvent);  // m_tabletState is set to OnStrole here
