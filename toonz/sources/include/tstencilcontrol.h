@@ -4,6 +4,7 @@
 #define TSTENCILCONTROL_H
 
 #include <memory>
+#include <stack>
 
 #include "tcommon.h"
 
@@ -34,6 +35,8 @@ private:
   class Imp;
   std::unique_ptr<Imp> m_imp;
 
+  std::stack<Imp *> m_impStack;
+
 public:
   static TStencilControl *instance();
 
@@ -45,6 +48,11 @@ public:
 
   void enableMask(MaskType maskType);
   void disableMask();
+
+  bool isMaskEnabled();
+
+  void stashMask();
+  void restoreMask();
 };
 
 //------------------------------------------------------

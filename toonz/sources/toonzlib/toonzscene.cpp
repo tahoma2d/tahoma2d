@@ -812,7 +812,7 @@ void ToonzScene::renderFrame(const TRaster32P &ras, int row, const TXsheet *xsh,
 #ifdef MACOSX
     std::unique_ptr<QOpenGLFramebufferObject> fb(
         new QOpenGLFramebufferObject(ras->getLx(), ras->getLy()));
-
+    fb->setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
     fb->bind();
     assert(glGetError() == GL_NO_ERROR);
 

@@ -167,6 +167,11 @@ public:
 
   double m_colorSpaceGamma;
 
+  bool m_applyMask;
+  bool m_invertedMask;
+  bool m_useMaskBox;
+  bool m_plasticMask;
+
 public:
   TRenderSettings();
   ~TRenderSettings();

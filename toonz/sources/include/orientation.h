@@ -140,7 +140,8 @@ enum class PredefinedRect {
   // ADD_LEVEL,
   FOOTER_NOTE_OBJ_AREA,
   FOOTER_NOTE_AREA,
-  NAVIGATION_TAG_AREA
+  NAVIGATION_TAG_AREA,
+  CLIPPING_MASK_AREA
 };
 enum class PredefinedLine {
   LOCKED,              //! dotted vertical line when cell is locked

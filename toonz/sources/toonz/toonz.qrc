@@ -598,6 +598,8 @@
     <file>icons/dark/actions/16/table.svg</file>
     <file>icons/dark/actions/16/motion_path.svg</file>
 
+    <file>icons/dark/actions/16/clipping_mask.svg</file>
+
     <!-- Keyframe -->
 		<file>icons/dark/actions/20/key_off.svg</file>
 		<file>icons/dark/actions/20/key_on.svg</file>

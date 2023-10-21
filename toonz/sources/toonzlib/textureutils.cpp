@@ -14,6 +14,7 @@
 #include "toonz/toonzscene.h"
 #include "toonz/imagemanager.h"
 #include "imagebuilders.h"
+#include "tstencilcontrol.h"
 
 // TnzCore includes
 #include "tpalette.h"
@@ -191,15 +192,22 @@ DrawableTextureDataP texture_utils::getTextureData(const TXsheet *xsh,
       xsh->getPlacement(xsh->getStageObjectTree()->getCurrentCameraId(), frame);
   bbox = (cameraAff.inv() * bbox).enlarge(1.0);
 
-// Render the xsheet on the specified bbox
+  // Render the xsheet on the specified bbox
+  bool masked = TStencilControl::instance()->isMaskEnabled();
 #ifdef MACOSX
+  // Must move masks aside when building texture
+  if (masked) TStencilControl::instance()->stashMask();
   xsh->getScene()->renderFrame(tex, frame, xsh, bbox, TAffine());
+  if (masked) TStencilControl::instance()->restoreMask();
 #else
   // The call below will change context (I know, it's a shame :( )
   TGlContext currentContext = tglGetCurrentContext();
   {
     tglDoneCurrent(currentContext);
+    // Must move masks aside when building texture
+    if (masked) TStencilControl::instance()->stashMask();
     xsh->getScene()->renderFrame(tex, frame, xsh, bbox, TAffine());
+    if (masked) TStencilControl::instance()->restoreMask();
     tglMakeCurrent(currentContext);
   }
 #endif

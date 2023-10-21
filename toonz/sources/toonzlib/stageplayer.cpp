@@ -46,7 +46,10 @@ Stage::Player::Player()
     , m_isPlaying(false)
     , m_opacity(255)
     , m_bingoOrder(0)
-    , m_currentDrawingOnTop(false) {}
+    , m_currentDrawingOnTop(false)
+    , m_isMask(false)
+    , m_isInvertedMask(false)
+    , m_canRenderMask(false) {}
 
 //-----------------------------------------------------------------------------
 

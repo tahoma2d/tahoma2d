@@ -38,6 +38,7 @@
 #include "imagebuilders.h"
 #include "toonz/toonzscene.h"
 #include "toonz/sceneproperties.h"
+#include "tstencilcontrol.h"
 
 // Qt includes
 #include <QImage>
@@ -118,19 +119,6 @@ bool descending(int i, int j) { return (i > j); }
 
 //----------------------------------------------------------------
 }  // namespace
-
-//=============================================================================
-/*! The ZPlacement class preserve camera position information.
- */
-//=============================================================================
-
-class ZPlacement {
-public:
-  TAffine m_aff;
-  double m_z;
-  ZPlacement() : m_aff(), m_z(0) {}
-  ZPlacement(const TAffine &aff, double z) : m_aff(aff), m_z(z) {}
-};
 
 //=============================================================================
 /*! The class PlayerLt allows a priority operator for player.
@@ -373,7 +361,7 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
   TXshLevel *xl       = cell.m_level.getPointer();
   TXshSimpleLevel *sl = xl ? xl->getSimpleLevel() : 0;
   // check the previous row for a stop motion layer
-  if (!xl) {
+  if (!xl && !column->isMask()) {
     // Get the last populated cell
     cell = xsh->getCell(row - 1, col);
     xl   = cell.m_level.getPointer();
@@ -400,10 +388,10 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
 
   if (!columnBehindCamera) return;
 
-  bool storePlayer =
-      sl || (xl->getChildLevel() &&
-             locals::applyPlasticDeform(column.getPointer(), m_vs) &&
-             locals::isMeshDeformed(xsh, pegbar, m_vs));
+  bool storePlayer = sl || (column->isMask() && column->isInvertedMask()) ||
+                     (xl && xl->getChildLevel() &&
+                      locals::applyPlasticDeform(column.getPointer(), m_vs) &&
+                      locals::isMeshDeformed(xsh, pegbar, m_vs));
 
   if (storePlayer) {
     // Build and store a player
@@ -430,6 +418,9 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
     player.m_opacity             = column->getOpacity();
     player.m_filterColor =
         scene->getProperties()->getColorFilterColor(column->getColorFilterId());
+    player.m_isMask              = column->isMask();
+    player.m_isInvertedMask      = column->isInvertedMask();
+    player.m_canRenderMask       = column->canRenderMask();
 
     if (m_subXSheetStack.empty()) {
       player.m_z         = columnZ;
@@ -491,7 +482,7 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
       player.m_bingoOrder = 10;
 
     players.push_back(player);
-  } else if (TXshChildLevel *cl = xl->getChildLevel()) {
+  } else if (TXshChildLevel *cl = xl ? xl->getChildLevel() : 0) {
     int childRow         = cell.m_frameId.getNumber() - 1;
     TXsheet *childXsheet = cl->getXsheet();
     TStageObjectId childCameraId =
@@ -687,12 +678,20 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
     TXshColumn *column = xsh->getColumn(c);
     bool isMask        = false;
     if (column && !column->isEmpty() && !column->getSoundColumn()) {
-      if (!column->isPreviewVisible() && checkPreviewVisibility) continue;
+      if (!column->isPreviewVisible() && checkPreviewVisibility) {
+        if (!isMask && column->getColumnType() != TXshColumn::eMeshType) {
+          while (m_masks.size() > maskCount) m_masks.pop_back();
+        }
+        continue;
+      }
       if (column->isCamstandVisible() ||
           includeUnvisible)  // se l'"occhietto" non e' chiuso
       {
         if (column->isMask())  // se e' una maschera (usate solo in tab pro)
         {
+          if (column->canRenderMask())
+            addCellWithOnionSkin(players, scene, xsh, row, c, level,
+                                 subSheetColIndex);
           isMask = true;
           std::vector<int> saveMasks;
           saveMasks.swap(m_masks);
@@ -708,7 +707,7 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
                                subSheetColIndex);
       }
     }
-    if (!isMask) {
+    if (!isMask && column->getColumnType() != TXshColumn::eMeshType) {
       while (m_masks.size() > maskCount) m_masks.pop_back();
     }
   }
@@ -863,7 +862,13 @@ void StageBuilder::visit(PlayerSet &players, Visitor &visitor, bool isPlaying) {
         visit(*m_maskPool[maskIndex], visitor, isPlaying);
         visitor.endMask();
         masks.push_back(maskIndex);
-        visitor.enableMask();
+        TStencilControl::MaskType maskType = TStencilControl::SHOW_INSIDE;
+        if (m_maskPool[maskIndex]->size()) {
+          Player playerMask = m_maskPool[maskIndex]->at(0);
+          if (playerMask.m_isInvertedMask)
+            maskType = TStencilControl::SHOW_OUTSIDE;
+        }
+        visitor.enableMask(maskType);
         i++;
       }
     }

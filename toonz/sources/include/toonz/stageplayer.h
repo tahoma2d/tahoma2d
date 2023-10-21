@@ -118,6 +118,10 @@ public:
 
   bool m_currentDrawingOnTop;
 
+  bool m_isMask;
+  bool m_isInvertedMask;
+  bool m_canRenderMask;
+
 public:
   Player();
 

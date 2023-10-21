@@ -144,14 +144,16 @@ QPixmap DVAPI convertImageToPixmap(const QImage &image);
 QImage DVAPI
 generateIconImage(const QString &iconSVGName, qreal opacity = qreal(1.0),
                   QSize newSize                       = QSize(),
-                  Qt::AspectRatioMode aspectRatioMode = Qt::IgnoreAspectRatio);
+                  Qt::AspectRatioMode aspectRatioMode = Qt::IgnoreAspectRatio,
+                  bool useThemeColor                  = true);
 
 //-----------------------------------------------------------------------------
 
 QPixmap DVAPI
 generateIconPixmap(const QString &iconSVGName, qreal opacity = qreal(1.0),
                    QSize newSize                       = QSize(),
-                   Qt::AspectRatioMode aspectRatioMode = Qt::IgnoreAspectRatio);
+                   Qt::AspectRatioMode aspectRatioMode = Qt::IgnoreAspectRatio,
+                   bool useThemeColor                  = true);
 
 //-----------------------------------------------------------------------------
 

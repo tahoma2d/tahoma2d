@@ -66,6 +66,7 @@
 #include <QCheckBox>
 #include <QPushButton>
 #include <QDesktopWidget>
+#include <QGroupBox>
 
 #include <QBitmap>
 
@@ -186,25 +187,10 @@ class ColumnMaskUndo final : public TUndo {
   std::string m_name;
 
 public:
-  ColumnMaskUndo(int column, bool isMask, std::string name)
-      : m_col(column), m_isMask(isMask), m_name(name) {}
+  ColumnMaskUndo(int column, bool isMask) : m_col(column), m_isMask(isMask) {}
   ~ColumnMaskUndo() {}
 
   void undo() const override {
-    TXshColumn *column =
-        TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(m_col);
-    TXshColumn::ColumnType type = column->getColumnType();
-    if (type != TXshColumn::eLevelType) return;
-
-    if (containsVectorLevel(m_col)) {
-      column->setIsMask(m_isMask);
-      TApp::instance()->getCurrentScene()->notifySceneChanged();
-      TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
-      TApp::instance()->getCurrentScene()->setDirtyFlag(true);
-    }
-  }
-
-  void redo() const override {
     TXshColumn *column =
         TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(m_col);
     TXshColumn::ColumnType type = column->getColumnType();
@@ -218,10 +204,116 @@ public:
     }
   }
 
+  void redo() const override {
+    TXshColumn *column =
+        TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(m_col);
+    TXshColumn::ColumnType type = column->getColumnType();
+    if (type != TXshColumn::eLevelType) return;
+
+    if (containsVectorLevel(m_col)) {
+      column->setIsMask(m_isMask);
+      TApp::instance()->getCurrentScene()->notifySceneChanged();
+      TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+      TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+    }
+  }
+
   int getSize() const override { return sizeof(*this); }
 
   QString getHistoryString() override {
-    QString str = QObject::tr("Toggle vector column as mask. ");
+    QString str = QObject::tr("Toggle column as mask. ");
+    return str;
+  }
+  int getHistoryType() override { return HistoryType::Xsheet; }
+};
+
+class ColumnMaskInvertUndo final : public TUndo {
+  int m_col;
+  bool m_invertMask;
+
+public:
+  ColumnMaskInvertUndo(int column, bool invertMask)
+      : m_col(column), m_invertMask(invertMask) {}
+  ~ColumnMaskInvertUndo() {}
+
+  void undo() const override {
+    TXshColumn *column =
+        TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(m_col);
+    TXshColumn::ColumnType type = column->getColumnType();
+    if (type != TXshColumn::eLevelType) return;
+
+    if (containsVectorLevel(m_col)) {
+      column->setInvertedMask(!m_invertMask);
+      TApp::instance()->getCurrentScene()->notifySceneChanged();
+      TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+      TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+    }
+  }
+
+  void redo() const override {
+    TXshColumn *column =
+        TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(m_col);
+    TXshColumn::ColumnType type = column->getColumnType();
+    if (type != TXshColumn::eLevelType) return;
+
+    if (containsVectorLevel(m_col)) {
+      column->setInvertedMask(m_invertMask);
+      TApp::instance()->getCurrentScene()->notifySceneChanged();
+      TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+      TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+    }
+  }
+
+  int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override {
+    QString str = QObject::tr("Toggle invert column mask. ");
+    return str;
+  }
+  int getHistoryType() override { return HistoryType::Xsheet; }
+};
+
+class ColumnMaskRenderUndo final : public TUndo {
+  int m_col;
+  bool m_renderMask;
+
+public:
+  ColumnMaskRenderUndo(int column, bool renderMask)
+      : m_col(column), m_renderMask(renderMask) {}
+  ~ColumnMaskRenderUndo() {}
+
+  void undo() const override {
+    TXshColumn *column =
+        TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(m_col);
+    TXshColumn::ColumnType type = column->getColumnType();
+    if (type != TXshColumn::eLevelType) return;
+
+    if (containsVectorLevel(m_col)) {
+      column->setCanRenderMask(!m_renderMask);
+      TApp::instance()->getCurrentScene()->notifySceneChanged();
+      TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+      TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+    }
+  }
+
+  void redo() const override {
+    TXshColumn *column =
+        TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(m_col);
+    TXshColumn::ColumnType type = column->getColumnType();
+    if (type != TXshColumn::eLevelType) return;
+
+    if (containsVectorLevel(m_col)) {
+      column->setCanRenderMask(m_renderMask);
+      TApp::instance()->getCurrentScene()->notifySceneChanged();
+      TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+      TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+    }
+  }
+
+  int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override {
+    QString str = QObject::tr("Toggle render column mask. ");
     return str;
   }
   int getHistoryType() override { return HistoryType::Xsheet; }
@@ -820,8 +912,13 @@ void ColumnArea::DrawHeader::levelColors(QColor &columnColor,
   if (usage == Reference) {
     columnColor = m_viewer->getReferenceColumnColor();
     dragColor   = m_viewer->getReferenceColumnBorderColor();
-  } else
+  } else {
     m_viewer->getColumnColor(columnColor, dragColor, col, xsh);
+
+    if (column->isMask() && m_viewer->orientation()->isVerticalTimeline() &&
+        m_viewer->getXsheetLayout() == "Minimum")
+      columnColor = columnColor.lighter(175);
+  }
 }
 void ColumnArea::DrawHeader::soundColors(QColor &columnColor,
                                          QColor &dragColor) const {
@@ -1360,7 +1457,7 @@ void ColumnArea::DrawHeader::drawParentHandleName() const {
 void ColumnArea::DrawHeader::drawFilterColor() const {
   if (col < 0 || isEmpty || column->getColorFilterId() == 0 ||
       column->getSoundColumn() || column->getSoundTextColumn() ||
-      column->getPaletteColumn())
+      column->getPaletteColumn() || column->isMask())
     return;
 
   TPixel32 filterColor = TApp::instance()
@@ -1372,6 +1469,35 @@ void ColumnArea::DrawHeader::drawFilterColor() const {
   QRect filterColorRect =
       o->rect(PredefinedRect::FILTER_COLOR).translated(orig);
   p.drawPixmap(filterColorRect, getColorChipIcon(filterColor).pixmap(12, 12));
+}
+
+void ColumnArea::DrawHeader::drawClippingMask() const {
+  if (col < 0 || isEmpty || !column->isMask() ||
+      !o->flag(PredefinedFlag::THUMBNAIL_AREA_VISIBLE))
+    return;
+
+  QColor maskColor = QColor(75, 75, 75);
+  
+  if (column->getColorFilterId()) {
+    TPixel32 filterColor =
+        TApp::instance()
+            ->getCurrentScene()
+            ->getScene()
+            ->getProperties()
+            ->getColorFilterColor(column->getColorFilterId());
+    maskColor.setRgb(filterColor.r, filterColor.g, filterColor.b,
+                     filterColor.m);
+  }
+
+  static QPixmap basePixmap = generateIconPixmap(
+      "clipping_mask", qreal(1.0), QSize(), Qt::KeepAspectRatio, false);
+
+  ThemeManager &themeManager = ThemeManager::getInstance();
+  QPixmap maskPixmap = themeManager.recolorBlackPixels(basePixmap, maskColor);
+
+  QRect clippingMaskArea =
+      o->rect(PredefinedRect::CLIPPING_MASK_AREA).translated(orig);
+  p.drawPixmap(clippingMaskArea, maskPixmap);
 }
 
 void ColumnArea::DrawHeader::drawSoundIcon(bool isPlaying) const {
@@ -1670,6 +1796,7 @@ void ColumnArea::drawLevelColumnHead(QPainter &p, int col) {
   QPixmap iconPixmap = getColumnIcon(col);
   drawHeader.drawThumbnail(iconPixmap);
   drawHeader.drawFilterColor();
+  drawHeader.drawClippingMask();
   drawHeader.drawConfig();
   drawHeader.drawPegbarName();
   drawHeader.drawParentHandleName();
@@ -1973,7 +2100,8 @@ ColumnTransparencyPopup::ColumnTransparencyPopup(XsheetViewer *viewer,
     : QWidget(parent, Qt::Popup)
     , m_viewer(viewer)
     , m_lockBtn(nullptr)
-    , m_keepClosed(false) {
+    , m_keepClosed(false)
+    , m_keepClosedTimer(0) {
   setFixedWidth(8 + 78 + 8 + 100 + 8 + 8 + 8 + 7);
 
   m_keepClosedTimer = new QTimer(this);
@@ -1993,6 +2121,25 @@ m_value->setFont(font);*/
 
   // contents of the combo box will be updated in setColumn
   m_filterColorCombo = new QComboBox(this);
+
+  m_invertMask = new QCheckBox(tr("Invert Mask"), this);
+  m_invertMask->setCheckable(true);
+
+  m_renderMask = new QCheckBox(tr("Render Mask"), this);
+  m_renderMask->setCheckable(true);
+
+  m_maskGroupBox = new QGroupBox("Clipping Mask", this);
+  m_maskGroupBox->setCheckable(true);
+  QGridLayout *maskLay = new QGridLayout();
+  maskLay->setMargin(5);
+  maskLay->setHorizontalSpacing(6);
+  maskLay->setVerticalSpacing(6);
+  maskLay->setColumnStretch(2, 1);
+  {
+    maskLay->addWidget(m_invertMask, 0, 0, 1, 2);
+    maskLay->addWidget(m_renderMask, 1, 0, 1, 2);
+  }
+  m_maskGroupBox->setLayout(maskLay);
 
   // Lock button is moved in the popup for Minimum layout
   QPushButton *lockExtraBtn = nullptr;
@@ -2036,6 +2183,8 @@ m_value->setFont(font);*/
     mainLayout->addWidget(m_filterColorCombo, 1, 1,
                           Qt::AlignLeft | Qt::AlignVCenter);
 
+    mainLayout->addWidget(m_maskGroupBox, 2, 0, 1, 2);
+
     if (m_lockBtn) {
       QHBoxLayout *lockLay = new QHBoxLayout();
       lockLay->setMargin(0);
@@ -2044,7 +2193,7 @@ m_value->setFont(font);*/
         lockLay->addWidget(m_lockBtn, 0);
         lockLay->addWidget(lockExtraBtn, 0);
       }
-      mainLayout->addLayout(lockLay, 2, 1, Qt::AlignLeft | Qt::AlignVCenter);
+      mainLayout->addLayout(lockLay, 3, 1, Qt::AlignLeft | Qt::AlignVCenter);
     }
   }
   setLayout(mainLayout);
@@ -2060,6 +2209,14 @@ m_value->setFont(font);*/
 
   ret = ret && connect(m_filterColorCombo, SIGNAL(activated(int)), this,
                        SLOT(onFilterColorChanged()));
+
+  ret = ret && connect(m_maskGroupBox, SIGNAL(clicked(bool)), this,
+                       SLOT(onMaskGroupBoxChanged(bool)));
+  ret = ret && connect(m_invertMask, SIGNAL(stateChanged(int)), this,
+                       SLOT(onInvertMaskCBChanged(int)));
+  ret = ret && connect(m_renderMask, SIGNAL(stateChanged(int)), this,
+                       SLOT(onRenderMaskCBChanged(int)));
+
   if (m_lockBtn)
     ret = ret && connect(m_lockBtn, SIGNAL(clicked(bool)), this,
                          SLOT(onLockButtonClicked(bool)));
@@ -2128,6 +2285,44 @@ void ColumnTransparencyPopup::onLockButtonClicked(bool on) {
   ((ColumnArea *)parent())->update();
 }
 
+
+//-----------------------------------------------------------------------------
+
+void ColumnTransparencyPopup::onMaskGroupBoxChanged(bool clicked) {
+  int col = m_column->getIndex();
+
+  ColumnMaskUndo *undo = new ColumnMaskUndo(col, m_maskGroupBox->isChecked());
+  undo->redo();
+  TUndoManager::manager()->add(undo);
+  update();
+}
+
+//-----------------------------------------------------------------------------
+
+void ColumnTransparencyPopup::onInvertMaskCBChanged(int checkedState) {
+  bool checked = checkedState == Qt::Checked;
+
+  int col = m_column->getIndex();
+
+  ColumnMaskInvertUndo *undo = new ColumnMaskInvertUndo(col, checked);
+  undo->redo();
+  TUndoManager::manager()->add(undo);
+  update();
+}
+
+//-----------------------------------------------------------------------------
+
+void ColumnTransparencyPopup::onRenderMaskCBChanged(int checkedState) {
+  bool checked = checkedState == Qt::Checked;
+
+  int col = m_column->getIndex();
+
+  ColumnMaskRenderUndo *undo = new ColumnMaskRenderUndo(col, checked);
+  undo->redo();
+  TUndoManager::manager()->add(undo);
+  update();
+}
+
 //----------------------------------------------------------------
 
 void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
@@ -2159,6 +2354,24 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
 
   m_filterColorCombo->setCurrentIndex(
       m_filterColorCombo->findData(m_column->getColorFilterId()));
+
+  m_maskGroupBox->blockSignals(true);
+  m_invertMask->blockSignals(true);
+  m_renderMask->blockSignals(true);
+  if (containsVectorLevel(m_column->getIndex())) {
+    m_maskGroupBox->setChecked(m_column->isMask());
+    m_maskGroupBox->setEnabled(true);
+    m_invertMask->setChecked(m_column->isInvertedMask());
+    m_renderMask->setChecked(m_column->canRenderMask());
+  } else {
+    m_maskGroupBox->setChecked(false);
+    m_maskGroupBox->setEnabled(false);
+    m_invertMask->setChecked(false);
+    m_renderMask->setChecked(false);
+  }
+  m_maskGroupBox->blockSignals(false);
+  m_invertMask->blockSignals(false);
+  m_renderMask->blockSignals(false);
 
   if (m_lockBtn) m_lockBtn->setChecked(m_column->isLocked());
 }
@@ -3057,24 +3270,8 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
     if (!xsh->isColumnEmpty(col)) {
       menu.addAction(cmdManager->getAction(MI_ReplaceLevel));
       menu.addAction(cmdManager->getAction(MI_ReplaceParentDirectory));
-
-      // if (containsVectorLevel(col)) {
-      //  menu.addSeparator();
-      //  QAction *setMask =
-      //      new QAction(tr("Temporary Mask (Not in final render)"), this);
-      //  setMask->setCheckable(true);
-      //  setMask->setChecked(xsh->getColumn(col)->isMask());
-      //  setMask->setToolTip(
-      //      tr("Only Toonz Vector levels can be used as masks. \n Masks don't
-      //      "
-      //         "show up in final renders."));
-      //  bool ret = true;
-      //  ret      = ret &&
-      //        connect(setMask, &QAction::toggled, [=]() { onSetMask(col); });
-      //  assert(ret);
-      //  menu.addAction(setMask);
-      //}
     }
+
     if (o->isVerticalTimeline()) {
       menu.addSeparator();
       QAction *showParentColors =
@@ -3118,20 +3315,6 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
   act2->setText(act2Text);
   act3->setText(act3Text);
   act4->setText(act4Text);
-}
-
-//-----------------------------------------------------------------------------
-
-void ColumnArea::onSetMask(int col) {
-  TXshColumn *column = m_viewer->getXsheet()->getColumn(m_col);
-
-  std::string name = m_viewer->getXsheet()
-                         ->getStageObject(TStageObjectId::ColumnId(col))
-                         ->getName();
-  ColumnMaskUndo *undo = new ColumnMaskUndo(col, column->isMask(), name);
-  undo->redo();
-  TUndoManager::manager()->add(undo);
-  update();
 }
 
 //-----------------------------------------------------------------------------

@@ -199,6 +199,13 @@ void TglTessellator::doTessellate(GLTess &glTess, const TColorFunction *cf,
 void TglTessellator::doTessellate(GLTess &glTess, const TColorFunction *cf,
                                   const bool antiAliasing,
                                   TRegionOutline &outline) {
+  // Calculation in progress. Hold drawing until it's done
+  while (outline.isCalculating()) {
+     // Wait
+  }
+
+  outline.setInUse();
+
   QMutexLocker sl(&CombineDataGuard);
 
   Combine_data.clear();
@@ -221,8 +228,8 @@ void TglTessellator::doTessellate(GLTess &glTess, const TColorFunction *cf,
 #endif
 #endif
 
-  for (TRegionOutline::Boundary::iterator poly_it = outline.m_exterior.begin();
-       poly_it != outline.m_exterior.end(); ++poly_it) {
+  for (int y = 0; y < outline.m_exterior.size(); y++) {
+    TRegionOutline::PointVector *poly_it = &outline.m_exterior[y];
 #ifdef GLU_VERSION_1_2
     gluTessBeginContour(glTess.m_tess);
 #else
@@ -233,9 +240,10 @@ void TglTessellator::doTessellate(GLTess &glTess, const TColorFunction *cf,
 #endif
 #endif
 
-    for (TRegionOutline::PointVector::iterator it = poly_it->begin();
-         it != poly_it->end(); ++it)
+    for (int z = 0; z < poly_it->size(); z++) {
+      T3DPointD *it = &poly_it->at(z);
       gluTessVertex(glTess.m_tess, &(it->x), &(it->x));
+    }
 
 #ifdef GLU_VERSION_1_2
     gluTessEndContour(glTess.m_tess);
@@ -282,6 +290,8 @@ void TglTessellator::doTessellate(GLTess &glTess, const TColorFunction *cf,
   endIt   = Combine_data.end();
   beginIt = Combine_data.begin();
   for (; beginIt != endIt; ++beginIt) delete[](*beginIt);
+
+  outline.unsetInUse();
 }
 
 //------------------------------------------------------------------

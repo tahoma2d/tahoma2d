@@ -70,6 +70,9 @@ public:
 
   Imp();
 
+  void copy(Imp *src);
+  void resetMask();
+
   void updateOpenGlState();
 
   void pushMask();
@@ -121,6 +124,34 @@ TStencilControl::Imp::Imp()
 
 //---------------------------------------------------------
 
+void TStencilControl::Imp::copy(Imp *src) {
+  m_stencilBitCount  = src->m_stencilBitCount;
+  m_pushCount        = src->m_pushCount;
+  m_currentWriting   = src->m_currentWriting;
+  m_enabledMask      = src->m_enabledMask;
+  m_writingMask      = src->m_writingMask;
+  m_inOrOutMask      = src->m_inOrOutMask;
+  m_drawOnScreenMask = src->m_drawOnScreenMask;
+  m_drawOnlyOnceMask = src->m_drawOnlyOnceMask;
+  m_virtualState     = src->m_virtualState;
+}
+
+//---------------------------------------------------------
+
+void TStencilControl::Imp::resetMask() {
+  m_stencilBitCount  = 0;
+  m_pushCount        = 1;
+  m_currentWriting   = -1;
+  m_enabledMask      = 0;
+  m_writingMask      = 0;
+  m_inOrOutMask      = 0;
+  m_drawOnScreenMask = 0;
+  m_drawOnlyOnceMask = 0;
+  m_virtualState     = 0;
+}
+
+//---------------------------------------------------------
+
 TStencilControl *TStencilControl::instance() {
   StencilControlManager *instance = StencilControlManager::instance();
   return instance->getCurrentStencilControl();
@@ -128,7 +159,7 @@ TStencilControl *TStencilControl::instance() {
 
 //---------------------------------------------------------
 
-TStencilControl::TStencilControl() : m_imp(new Imp) {}
+TStencilControl::TStencilControl() : m_imp(new Imp) { m_impStack.empty(); }
 
 //---------------------------------------------------------
 
@@ -364,3 +395,46 @@ void TStencilControl::disableMask() {
 }
 
 //---------------------------------------------------------
+
+bool TStencilControl::isMaskEnabled() { return m_imp->m_virtualState > 0; }
+
+//---------------------------------------------------------
+
+void TStencilControl::stashMask() {
+  Imp *currentImp = new Imp;
+  currentImp->copy(m_imp.get());
+  m_impStack.push(currentImp);
+
+  int maskCount = m_imp->m_pushCount;
+  if (m_imp->m_virtualState == 2)
+    for (int i = 0; i < maskCount; i++) endMask();
+  else if (m_imp->m_virtualState == 1) {
+    for (int i = 0; i < maskCount; i++) disableMask();
+  }
+}
+
+//---------------------------------------------------------
+
+void TStencilControl::restoreMask() {
+  int maskCount = m_impStack.top()->m_pushCount;
+  if (m_impStack.top()->m_virtualState == 2) {
+    for (int i = 0; i < maskCount; i++) {
+      if (i > 0) endMask();
+      beginMask();
+    }
+  } else if (m_impStack.top()->m_virtualState == 1) {
+    for (int i = 1; i <= maskCount; i++) {
+      beginMask();
+      endMask();
+      unsigned char currentMask = 1 << (i - 1);
+      if ((m_impStack.top()->m_inOrOutMask & currentMask) != 0)
+        enableMask(SHOW_INSIDE);
+      else
+        enableMask(SHOW_OUTSIDE);
+    }
+  }
+
+  m_imp->copy(m_impStack.top());
+
+  m_impStack.pop();
+}

@@ -44,6 +44,20 @@ namespace Stage {
 DVVAR extern const double inch;
 DVVAR extern const double standardDpi;
 
+
+//=============================================================================
+/*! The ZPlacement class preserve camera position information.
+ */
+//=============================================================================
+
+class ZPlacement {
+public:
+  TAffine m_aff;
+  double m_z;
+  ZPlacement() : m_aff(), m_z(0) {}
+  ZPlacement(const TAffine &aff, double z) : m_aff(aff), m_z(z) {}
+};
+
 class Visitor;
 struct VisitArgs;
 
