@@ -225,7 +225,8 @@ void BreadcrumbArea::updateBreadcrumbs() {
     childCol.push_back(col);
   }
 
-  QString separator = tr("  >  ");
+  QString separator  = tr("  >  ");
+  QString separator2 = tr("  |  ");
 
   Breadcrumb *crumb;
 
@@ -258,7 +259,7 @@ void BreadcrumbArea::updateBreadcrumbs() {
 
   if (m_breadcrumbWidgets.size())
     m_breadcrumbWidgets.push_back(new Breadcrumb(
-        CrumbType::SEPARATOR, separator, CrumbWidgetType::LABEL, this));
+        CrumbType::SEPARATOR, separator2, CrumbWidgetType::LABEL, this));
 
   QString ancestorName;
   for (int i = ancestorCount; i > 0; i--) {
