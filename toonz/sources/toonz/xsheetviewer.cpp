@@ -57,12 +57,13 @@ TEnv::IntVar FrameDisplayStyleInXsheetRowArea(
 namespace XsheetGUI {
 //-----------------------------------------------------------------------------
 
-const int ColumnWidth     = 74;
-const int RowHeight       = 20;
-const int SCROLLBAR_WIDTH = 16;
-const int TOOLBAR_HEIGHT  = 29;
-const int ZOOM_FACTOR_MAX = 100;
-const int ZOOM_FACTOR_MIN = 20;
+const int ColumnWidth       = 74;
+const int RowHeight         = 20;
+const int SCROLLBAR_WIDTH   = 16;
+const int TOOLBAR_HEIGHT    = 29;
+const int BREADCRUMB_HEIGHT = 29;
+const int ZOOM_FACTOR_MAX   = 100;
+const int ZOOM_FACTOR_MIN   = 20;
 }  // namespace XsheetGUI
 
 //=============================================================================
@@ -255,6 +256,12 @@ XsheetViewer::XsheetViewer(QWidget *parent, Qt::WindowFlags flags)
   m_toolbar = new XsheetGUI::QuickToolbar(this, Qt::WindowFlags(), true);
   m_toolbarScrollArea->setWidget(m_toolbar);
 
+  m_breadcrumbArea = new XsheetGUI::BreadcrumbArea(this, Qt::WindowFlags());
+  m_breadcrumbScrollArea = new XsheetScrollArea(this);
+  m_breadcrumbScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  m_breadcrumbScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  m_breadcrumbScrollArea->setWidget(m_breadcrumbArea);
+
   m_noteArea       = new XsheetGUI::NoteArea(this);
   m_noteScrollArea = new XsheetScrollArea(this);
   m_noteScrollArea->setObjectName("xsheetArea");
@@ -416,6 +423,31 @@ void XsheetViewer::positionSections() {
     }
   } else {
     m_toolbar->showToolbar(false);
+    m_toolbarScrollArea->setGeometry(0, 0, 0, 0);
+  }
+
+  if (Preferences::instance()->isShowXsheetBreadcrumbsEnabled()) {
+    m_breadcrumbArea->showBreadcrumbs(true);
+    int w = visibleRegion().boundingRect().width();
+    if (o->isVerticalTimeline())
+      m_breadcrumbScrollArea->setGeometry(0, headerFrame.from(), w,
+                                          XsheetGUI::BREADCRUMB_HEIGHT);
+    else
+      m_breadcrumbScrollArea->setGeometry(0, headerLayer.from(), w,
+                                          XsheetGUI::BREADCRUMB_HEIGHT);
+    m_breadcrumbArea->setFixedWidth(w);
+    if (o->isVerticalTimeline()) {
+      headerFrame = headerFrame.adjusted(XsheetGUI::BREADCRUMB_HEIGHT,
+                                         XsheetGUI::BREADCRUMB_HEIGHT);
+      bodyFrame = bodyFrame.adjusted(XsheetGUI::BREADCRUMB_HEIGHT, 0);
+    } else {
+      headerLayer = headerLayer.adjusted(XsheetGUI::BREADCRUMB_HEIGHT,
+                                         XsheetGUI::BREADCRUMB_HEIGHT);
+      bodyLayer = bodyLayer.adjusted(XsheetGUI::BREADCRUMB_HEIGHT, 0);
+    }
+  } else {
+    m_breadcrumbArea->showBreadcrumbs(false);
+    m_breadcrumbScrollArea->setGeometry(0, 0, 0, 0);
   }
 
   m_noteScrollArea->setGeometry(o->frameLayerRect(headerFrame, headerLayer));
@@ -1465,7 +1497,7 @@ void XsheetViewer::onXsheetChanged() {
 //-----------------------------------------------------------------------------
 
 void XsheetViewer::onPreferenceChanged(const QString &prefName) {
-  if (prefName == "QuickToolbar") {
+  if (prefName == "QuickToolbar" || prefName == "XsheetBreadcrumbs") {
     positionSections();
     refreshContentSize(0, 0);
   } else if (prefName == "XsheetCamera") {

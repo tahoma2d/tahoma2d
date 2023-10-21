@@ -2481,6 +2481,8 @@ void MainWindow::defineActions() {
                              "view_file");
   createRightClickMenuAction(MI_ToggleQuickToolbar,
                              QT_TR_NOOP("Toggle Quick Toolbar"), "");
+  createRightClickMenuAction(MI_ToggleXsheetBreadcrumbs,
+                             QT_TR_NOOP("Toggle Sub-Scene Breadcrumbs"), "");
   createRightClickMenuAction(MI_ToggleXsheetCameraColumn,
                              QT_TR_NOOP("Show/Hide Camera Column"), "");
   createRightClickMenuAction(MI_SetKeyframes, QT_TR_NOOP("&Set Key"), "Z",

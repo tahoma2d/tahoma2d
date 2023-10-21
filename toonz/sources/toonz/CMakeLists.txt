@@ -142,6 +142,7 @@ set(MOC_HEADERS
     cameracapturelevelcontrol.h
     navtageditorpopup.h
     viewereventlogpopup.h
+    xshbreadcrumbs.h
 )
 
 set(HEADERS
@@ -390,6 +391,7 @@ set(SOURCES
 	cameracapturelevelcontrol.cpp
     navtageditorpopup.cpp
     viewereventlogpopup.cpp
+    xshbreadcrumbs.cpp
 )
 
 if(WITH_TRANSLATION)

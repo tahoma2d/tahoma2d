@@ -16,6 +16,7 @@
 #include "saveloadqsettings.h"
 #include "toonzqt/spreadsheetviewer.h"
 #include "orientation.h"
+#include "xshbreadcrumbs.h"
 #include <boost/optional.hpp>
 
 using boost::optional;
@@ -581,12 +582,15 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   XsheetScrollArea *m_rowScrollArea;
   XsheetScrollArea *m_noteScrollArea;
   XsheetScrollArea *m_toolbarScrollArea;
+  XsheetScrollArea *m_breadcrumbScrollArea;
 
   XsheetGUI::ColumnArea *m_columnArea;
   XsheetGUI::RowArea *m_rowArea;
   XsheetGUI::CellArea *m_cellArea;
   XsheetGUI::NoteArea *m_noteArea;
   XsheetGUI::QuickToolbar *m_toolbar;
+  XsheetGUI::BreadcrumbArea *m_breadcrumbArea;
+
   LayerFooterPanel *m_layerFooterPanel;
 
   Spreadsheet::FrameScroller m_frameScroller;

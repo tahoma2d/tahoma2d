@@ -136,6 +136,7 @@ enum PreferencesItemId {
   inputCellsWithoutDoubleClickingEnabled,
   shortcutCommandsWhileRenamingCellEnabled,
   showQuickToolbar,
+  showXsheetBreadcrumbs,
   expandFunctionHeader,
   showColumnNumbers,
   parentColorsInXsheetColumn,

@@ -735,6 +735,13 @@ void PreferencesPopup::onShowQuickToolbarClicked() {
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onShowXsheetBreadcrumbsClicked() {
+  TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
+      "XsheetBreadcrumbs");
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onModifyExpressionOnMovingReferencesChanged() {
   TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
       "modifyExpressionOnMovingReferences");
@@ -1375,8 +1382,9 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {shortcutCommandsWhileRenamingCellEnabled,
        tr("Enable Tahoma2D Commands' Shortcut Keys While Renaming Cell")},
       {showQuickToolbar, tr("Show Quick Toolbar")},
-      {expandFunctionHeader,
-       tr("Expand Function Editor Header to Match Quick Toolbar Height*")},
+      {showXsheetBreadcrumbs, tr("Show Sub-Scene Breadcrumbs")},
+      {expandFunctionHeader, tr("Expand Function Editor Header to Match Quick "
+                                "Toolbar/Breadcrumb Height*")},
       {showColumnNumbers, tr("Show Column Numbers")},
       {parentColorsInXsheetColumn,
        tr("Show Column Parent's Color in the Xsheet")},
@@ -2126,8 +2134,12 @@ QWidget* PreferencesPopup::createXsheetPage() {
   insertUI(useArrowKeyToShiftCellSelection, lay);
   insertUI(inputCellsWithoutDoubleClickingEnabled, lay);
   insertUI(shortcutCommandsWhileRenamingCellEnabled, lay);
-  QGridLayout* xshToolbarLay = insertGroupBoxUI(showQuickToolbar, lay);
-  { insertUI(expandFunctionHeader, xshToolbarLay); }
+  QGridLayout* xshToolbarLay = insertGroupBox(tr("Scene Tools"), lay);
+  {
+    insertUI(showQuickToolbar, xshToolbarLay);
+    insertUI(showXsheetBreadcrumbs, xshToolbarLay);
+    insertUI(expandFunctionHeader, xshToolbarLay);
+  }
   insertUI(showColumnNumbers, lay);
   insertUI(parentColorsInXsheetColumn, lay);
   insertUI(highlightLineEverySecond, lay);
@@ -2150,6 +2162,8 @@ QWidget* PreferencesPopup::createXsheetPage() {
                            &PreferencesPopup::onShowKeyframesOnCellAreaChanged);
   m_onEditedFuncMap.insert(showQuickToolbar,
                            &PreferencesPopup::onShowQuickToolbarClicked);
+  m_onEditedFuncMap.insert(showXsheetBreadcrumbs,
+                           &PreferencesPopup::onShowXsheetBreadcrumbsClicked);
 
   return widget;
 }

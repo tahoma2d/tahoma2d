@@ -3224,6 +3224,7 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
     }
     menu.addSeparator();
     menu.addAction(cmdManager->getAction(MI_ToggleQuickToolbar));
+    menu.addAction(cmdManager->getAction(MI_ToggleXsheetBreadcrumbs));
 
     QAction *flipOrientation = new QAction(tr("Toggle Orientation"), this);
 
