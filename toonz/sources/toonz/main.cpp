@@ -761,6 +761,15 @@ int main(int argc, char *argv[]) {
       TTool::getTool(T_PerspectiveGrid, TTool::VectorImage);
   if (perspectiveTool) perspectiveTool->loadTool();
 
+  // Symmetry tool - 
+  splash.showMessage(offsetStr + QObject::tr("Loading Symmetry Guide..."),
+                     Qt::AlignRight | Qt::AlignBottom, Qt::black);
+  a.processEvents();
+
+  TTool *symmetryTool =
+      TTool::getTool(T_Symmetry, TTool::VectorImage);
+  if (symmetryTool) symmetryTool->loadTool();
+
   w.setWindowTitle(QString::fromStdString(TEnv::getApplicationFullName()));
   if (TEnv::getIsPortable()) {
     splash.showMessage(offsetStr + QObject::tr("Starting Tahoma2D..."),
