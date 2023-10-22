@@ -500,10 +500,9 @@ int XsheetViewer::getCurrentColumn() const {
 
 //-----------------------------------------------------------------------------
 
-int XsheetViewer::getClickedColumn() const {
-  if (!m_columnArea) return -1;
-
-  return m_columnArea->getClickedColumn();
+int XsheetViewer::getMenuColumnTarget() const {
+  if (!m_columnArea) return -999;
+  return m_columnArea->getMenuColumnTarget();
 }
 
 //-----------------------------------------------------------------------------

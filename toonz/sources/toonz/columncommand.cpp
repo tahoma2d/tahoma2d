@@ -1437,7 +1437,9 @@ public:
         TApp::instance()->getCurrentSelection()->getSelection());
     TXsheet *xsh          = TApp::instance()->getCurrentXsheet()->getXsheet();
     XsheetViewer *xviewer = TApp::instance()->getCurrentXsheetViewer();
-    int cc                = xviewer->getClickedColumn();
+    int mc                = xviewer->getMenuColumnTarget();
+    int cc =
+        mc >= -1 ? mc : TApp::instance()->getCurrentColumn()->getColumnIndex();
     bool sound_changed    = false;
     TTool *tool           = TApp::instance()->getCurrentTool()->getTool();
     TTool::Viewer *viewer = tool ? tool->getViewer() : nullptr;
