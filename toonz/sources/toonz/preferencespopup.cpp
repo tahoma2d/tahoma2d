@@ -1382,9 +1382,8 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {shortcutCommandsWhileRenamingCellEnabled,
        tr("Enable Tahoma2D Commands' Shortcut Keys While Renaming Cell")},
       {showQuickToolbar, tr("Show Quick Toolbar")},
-      {showXsheetBreadcrumbs, tr("Show Sub-Scene Breadcrumbs")},
-      {expandFunctionHeader, tr("Expand Function Editor Header to Match Quick "
-                                "Toolbar/Breadcrumb Height*")},
+      {showXsheetBreadcrumbs, tr("Show Sub-Scene Navigation Bar")},
+      {expandFunctionHeader, tr("Expand Function Editor Header to Match Xsheet Header Height*")},
       {showColumnNumbers, tr("Show Column Numbers")},
       {parentColorsInXsheetColumn,
        tr("Show Column Parent's Color in the Xsheet")},
