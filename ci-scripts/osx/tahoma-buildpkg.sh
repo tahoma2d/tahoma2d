@@ -1,4 +1,6 @@
 #!/bin/bash
+export TAHOMA2DVERSION=1.3
+
 if [ -d /usr/local/Cellar/qt@5 ]
 then
    export QTDIR=/usr/local/opt/qt@5
@@ -13,14 +15,11 @@ then
    export TOONZDIR=$TOONZDIR/Release
 fi
 
-echo ">>> Copying stuff to Tahoma2D.app/tahomastuff"
 if [ -d $TOONZDIR/Tahoma2D.app/tahomastuff ]
 then
    # In case of prior builds, replace stuff folder
    rm -rf $TOONZDIR/Tahoma2D.app/tahomastuff
 fi
-cp -R stuff $TOONZDIR/Tahoma2D.app/tahomastuff
-chmod -R 777 $TOONZDIR/Tahoma2D.app/tahomastuff
 
 find $TOONZDIR/Tahoma2D.app/tahomastuff -name .gitkeep -exec rm -f {} \;
 
@@ -178,9 +177,17 @@ done
 echo ">>> Moving DYSM to Tahoma2D.app"
 mv $TOONZDIR/DSYM $TOONZDIR/Tahoma2D.app
 
-echo ">>> Creating Tahoma2D-osx.dmg"
+echo ">>> Creating Tahoma2D-install-osx.pkg"
 
+toonz/installer/osx/app.rb $TOONZDIR stuff toonz/installer/osx/scripts $TAHOMA2DVERSION
+
+mv $TOONZDIR/Tahoma2D-install-osx.pkg $TOONZDIR/..
+
+echo ">>> Creating Tahoma2D-portable-osx.dmg"
+
+cp -R stuff $TOONZDIR/Tahoma2D.app/tahomastuff
+chmod -R 777 $TOONZDIR/Tahoma2D.app/tahomastuff
+   
 $QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -dmg -verbose=0
 
-mv $TOONZDIR/Tahoma2D.dmg $TOONZDIR/../Tahoma2D-osx.dmg
-
+mv $TOONZDIR/Tahoma2D.dmg $TOONZDIR/../Tahoma2D-portable-osx.dmg
