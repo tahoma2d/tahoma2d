@@ -267,15 +267,15 @@
     <name>BrushToolOptionsBox</name>
     <message>
         <source>Preset Name</source>
-        <translation type="vanished">Nombre del ajuste</translation>
+        <translation>Nombre del ajuste</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="vanished">Aceptar</translation>
+        <translation>Aceptar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
@@ -328,7 +328,7 @@
     <name>DVGui::StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="vanished">actual</translation>
+        <translation>actual</translation>
     </message>
 </context>
 <context>
@@ -898,6 +898,22 @@
         <source>Preset:</source>
         <translation type="unfinished">Ajustes:</translation>
     </message>
+    <message>
+        <source>Preset Name</source>
+        <translation type="unfinished">Nombre del ajuste</translation>
+    </message>
+    <message>
+        <source>Save As Library Preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">Aceptar</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
+    </message>
 </context>
 <context>
     <name>PerspectiveTool</name>
@@ -1433,15 +1449,15 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
-        <translation type="vanished">%1   Nivel : %2  Fotograma : %3</translation>
+        <translation>%1   Nivel : %2  Fotograma : %3</translation>
     </message>
     <message>
         <source>Modify Stroke Tool</source>
-        <translation type="vanished">Modificar trazo</translation>
+        <translation>Modificar trazo</translation>
     </message>
     <message>
         <source>Modify Spline</source>
-        <translation type="vanished">Modificar curva</translation>
+        <translation>Modificar curva</translation>
     </message>
     <message>
         <source>Deform Raster</source>
@@ -1799,7 +1815,7 @@ Do you want to proceed?</source>
     <name>StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="unfinished">actual</translation>
+        <translation type="obsolete">actual</translation>
     </message>
 </context>
 <context>
@@ -1938,6 +1954,18 @@ movido hacia el final de la primera página de la paleta.</translation>
     <message>
         <source>Preset:</source>
         <translation type="unfinished">Ajustes:</translation>
+    </message>
+    <message>
+        <source>Preset Name</source>
+        <translation type="unfinished">Nombre del ajuste</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">Aceptar</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancelar</translation>
     </message>
 </context>
 <context>

@@ -205,6 +205,10 @@ Possibly the preset file has been corrupted</source>
         <source>pixel</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Use Scene Overlay Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChannelHisto</name>
@@ -290,37 +294,6 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>X</source>
         <translation type="unfinished">X</translation>
-    </message>
-</context>
-<context>
-    <name>ColorField</name>
-    <message>
-        <source>R:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>G:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>B:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>A:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste Color of %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy Color</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -427,44 +400,158 @@ Possibly the preset file has been corrupted</source>
     </message>
 </context>
 <context>
+    <name>DVGui::ColorField</name>
+    <message>
+        <source>R:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>G:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>B:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste Color of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DVGui::DvTextEdit</name>
     <message>
         <source>Bold</source>
-        <translation type="vanished">太字</translation>
+        <translation>太字</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="vanished">斜体</translation>
+        <translation>斜体</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="vanished">下線</translation>
+        <translation>下線</translation>
     </message>
     <message>
         <source>Align Left</source>
-        <translation type="vanished">左揃え</translation>
+        <translation>左揃え</translation>
     </message>
     <message>
         <source>Align Center</source>
-        <translation type="vanished">中央揃え</translation>
+        <translation>中央揃え</translation>
     </message>
     <message>
         <source>Align Right</source>
-        <translation type="vanished">右揃え</translation>
+        <translation>右揃え</translation>
     </message>
 </context>
 <context>
     <name>DVGui::FileField</name>
     <message>
         <source>...</source>
-        <translation type="vanished">...</translation>
+        <translation>...</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::HexColorNamesEditor</name>
+    <message>
+        <source>Hex Color Names Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="unfinished">適用</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unselect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Defined Colors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Default Main Colors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Auto-Complete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Color Names</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text or XML (*.txt *.xml);;Text files (*.txt);;XML files (*.xml)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hex Color Names Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you want to merge with existing entries?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error importing color names XML</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save Color Names</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>XML files (*.xml);;Text files (*.txt)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error exporting color names XML</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>DVGui::LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation type="vanished">ファイル名は次の記号を含むことができません： /\:*?&quot;&lt;&gt;|</translation>
+        <translation>ファイル名は次の記号を含むことができません： /\:*?&quot;&lt;&gt;|</translation>
     </message>
 </context>
 <context>
@@ -473,6 +560,10 @@ Possibly the preset file has been corrupted</source>
         <source>Toonz</source>
         <translation type="vanished">OpenToonz</translation>
     </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DVGui::RadioButtonDialog</name>
@@ -480,23 +571,35 @@ Possibly the preset file has been corrupted</source>
         <source>Toonz</source>
         <translation type="vanished">OpenToonz</translation>
     </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DVGui::StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="vanished">選択色</translation>
+        <translation>選択色</translation>
     </message>
 </context>
 <context>
     <name>DVGui::ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation type="vanished">チャンネル：</translation>
+        <translation>チャンネル：</translation>
     </message>
     <message>
         <source>Range:</source>
-        <translation type="obsolete">範囲：</translation>
+        <translation type="unfinished">範囲：</translation>
+    </message>
+    <message>
+        <source>Output:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -518,27 +621,27 @@ Possibly the preset file has been corrupted</source>
     <name>DvTextEdit</name>
     <message>
         <source>Bold</source>
-        <translation>太字</translation>
+        <translation type="vanished">太字</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation>斜体</translation>
+        <translation type="vanished">斜体</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation>下線</translation>
+        <translation type="vanished">下線</translation>
     </message>
     <message>
         <source>Align Left</source>
-        <translation>左揃</translation>
+        <translation type="vanished">左揃</translation>
     </message>
     <message>
         <source>Align Center</source>
-        <translation>中央揃</translation>
+        <translation type="vanished">中央揃</translation>
     </message>
     <message>
         <source>Align Right</source>
-        <translation>右揃</translation>
+        <translation type="vanished">右揃</translation>
     </message>
 </context>
 <context>
@@ -567,7 +670,7 @@ Possibly the preset file has been corrupted</source>
     <name>FileField</name>
     <message>
         <source>...</source>
-        <translation>...</translation>
+        <translation type="vanished">...</translation>
     </message>
 </context>
 <context>
@@ -1234,9 +1337,6 @@ Manually changing any keyframe will clear the warning.</source>
         <source>Plastic Skeleton</source>
         <translation>プラスチックのボーン</translation>
     </message>
-</context>
-<context>
-    <name>FunctionTreeModel::Channel</name>
     <message>
         <source>Some key(s) in this parameter loses original reference in expression.
 Manually changing any keyframe will clear the warning.</source>
@@ -1577,84 +1677,12 @@ Select FX nodes and related links before copying or cutting the selection you wa
 <context>
     <name>HexColorNamesEditor</name>
     <message>
-        <source>Hex Color Names Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation type="obsolete">OK</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="unfinished">適用</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unselect</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete Color</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>User Defined Colors</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Default Main Colors</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Auto-Complete</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Import</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open Color Names</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Text or XML (*.txt *.xml);;Text files (*.txt);;XML files (*.xml)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hex Color Names Import</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Do you want to merge with existing entries?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error importing color names XML</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save Color Names</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>XML files (*.xml);;Text files (*.txt)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error exporting color names XML</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">適用</translation>
     </message>
 </context>
 <context>
@@ -1714,7 +1742,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation>ファイル名は次の記号のどれかを含むことができません： --- \ / : ? &quot; | --- </translation>
+        <translation type="vanished">ファイル名は次の記号のどれかを含むことができません： --- \ / : ? &quot; | --- </translation>
     </message>
 </context>
 <context>
@@ -1778,7 +1806,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>New Style</source>
-        <translation>新規スタイル</translation>
+        <translation type="vanished">新規スタイル</translation>
     </message>
     <message>
         <source>New Page</source>
@@ -1786,20 +1814,11 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>- No Styles -</source>
-        <translation type="unfinished">- スタイルがありません -</translation>
+        <translation type="obsolete">- スタイルがありません -</translation>
     </message>
     <message>
         <source>Name Editor</source>
         <translation type="obsolete">スタイル名エディタ</translation>
-    </message>
-    <message>
-        <source> + </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Style 0 is set to full transparent. 
-It can&apos;t be changed.  Ever.</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1989,7 +2008,7 @@ It can&apos;t be changed.  Ever.</source>
     <name>PaletteViewerGUI::PageViewer</name>
     <message>
         <source>- No Styles -</source>
-        <translation type="vanished">- スタイルがありません -</translation>
+        <translation>- スタイルがありません -</translation>
     </message>
     <message>
         <source>Remove Links</source>
@@ -1997,7 +2016,7 @@ It can&apos;t be changed.  Ever.</source>
     </message>
     <message>
         <source>New Style</source>
-        <translation type="vanished">新規スタイル</translation>
+        <translation>新規スタイル</translation>
     </message>
     <message>
         <source>New Page</source>
@@ -2006,6 +2025,15 @@ It can&apos;t be changed.  Ever.</source>
     <message>
         <source>Name Editor</source>
         <translation type="vanished">スタイル名エディタ</translation>
+    </message>
+    <message>
+        <source> + </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style 0 is set to full transparent. 
+It can&apos;t be changed.  Ever.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2089,10 +2117,6 @@ and tone may be slightly discretized.</source>
     <message>
         <source>Toonz</source>
         <translation type="vanished">TOONZ</translation>
-    </message>
-    <message>
-        <source>Tahoma2D</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2555,11 +2579,11 @@ Are you sure?</source>
     </message>
     <message>
         <source>Modify Fx Param : %1 Key : %2  Frame %3</source>
-        <translation type="vanished">エフェクトパラメータを変更 : キーフレームを%1 : %2  フレーム %3</translation>
+        <translation>エフェクトパラメータを変更 : キーフレームを%1 : %2  フレーム %3</translation>
     </message>
     <message>
         <source>Set</source>
-        <translation type="vanished">設定</translation>
+        <translation>設定</translation>
     </message>
     <message>
         <source>Remove Reference  in Palette : %1</source>
@@ -2858,10 +2882,6 @@ Zero is fully transparent.</source>
     <message>
         <source>Toonz</source>
         <translation type="vanished">TOONZ</translation>
-    </message>
-    <message>
-        <source>Tahoma2D</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3486,7 +3506,7 @@ Apply</source>
     <name>StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="unfinished">選択色</translation>
+        <translation type="obsolete">選択色</translation>
     </message>
 </context>
 <context>
@@ -3577,19 +3597,11 @@ Apply</source>
     <name>ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation>チャンネル：</translation>
+        <translation type="vanished">チャンネル：</translation>
     </message>
     <message>
         <source>Range:</source>
-        <translation type="unfinished">範囲：</translation>
-    </message>
-    <message>
-        <source>Output:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Input:</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">範囲：</translation>
     </message>
 </context>
 <context>

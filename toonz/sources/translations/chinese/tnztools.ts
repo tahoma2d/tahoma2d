@@ -267,15 +267,15 @@
     <name>BrushToolOptionsBox</name>
     <message>
         <source>Preset Name</source>
-        <translation type="vanished">预设名称</translation>
+        <translation>预设名称</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="vanished">确定</translation>
+        <translation>确定</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">取消</translation>
+        <translation>取消</translation>
     </message>
 </context>
 <context>
@@ -328,7 +328,7 @@
     <name>DVGui::StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="vanished">当前</translation>
+        <translation>当前</translation>
     </message>
 </context>
 <context>
@@ -904,15 +904,19 @@
     </message>
     <message>
         <source>Preset Name</source>
-        <translation type="obsolete">预设名称</translation>
+        <translation type="unfinished">预设名称</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="obsolete">确定</translation>
+        <translation type="unfinished">确定</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">取消</translation>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <source>Save As Library Preset</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1449,15 +1453,15 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
-        <translation type="vanished">%1   层级 : %2  帧 : %3</translation>
+        <translation>%1   层级 : %2  帧 : %3</translation>
     </message>
     <message>
         <source>Modify Stroke Tool</source>
-        <translation type="vanished">修改描边工具</translation>
+        <translation>修改描边工具</translation>
     </message>
     <message>
         <source>Modify Spline</source>
-        <translation type="vanished">修改样条线</translation>
+        <translation>修改样条线</translation>
     </message>
     <message>
         <source>Deform Raster</source>
@@ -1815,7 +1819,7 @@ Do you want to proceed?</source>
     <name>StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="unfinished">当前</translation>
+        <translation type="obsolete">当前</translation>
     </message>
 </context>
 <context>
@@ -1953,6 +1957,18 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Preset:</source>
         <translation type="unfinished">预设:</translation>
+    </message>
+    <message>
+        <source>Preset Name</source>
+        <translation type="unfinished">预设名称</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">确定</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
     </message>
 </context>
 <context>

@@ -113,12 +113,12 @@
 <context>
     <name>FFMovWriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="234"/>
+        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="237"/>
         <source>Quality</source>
         <translation type="unfinished">质量</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="235"/>
+        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="238"/>
         <source>Scale</source>
         <translation type="unfinished">缩放</translation>
     </message>
@@ -243,7 +243,7 @@
 <context>
     <name>PngWriterProperties</name>
     <message>
-        <location filename="../../image/png/tiio_png.cpp" line="757"/>
+        <location filename="../../image/png/tiio_png.cpp" line="763"/>
         <source>Alpha Channel</source>
         <translation>透明度通道</translation>
     </message>

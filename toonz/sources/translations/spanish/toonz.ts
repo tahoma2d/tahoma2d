@@ -741,7 +741,7 @@ Detenerla o esperar a su finalización antes de eliminarla.</translation>
     <name>CameraCaptureLevelHistogram</name>
     <message>
         <source>Click to Update Histogram</source>
-        <translation>Clic para actualizar el histograma</translation>
+        <translation type="vanished">Clic para actualizar el histograma</translation>
     </message>
     <message>
         <source>Drag to Move White Point</source>
@@ -773,6 +773,13 @@ Detenerla o esperar a su finalización antes de eliminarla.</translation>
     <message>
         <source>Current Camera Settings</source>
         <translation>Opciones de la cámara actual</translation>
+    </message>
+</context>
+<context>
+    <name>CameraTrackPreviewArea</name>
+    <message>
+        <source>Fit To Window</source>
+        <translation type="unfinished">Ajustar a la ventana</translation>
     </message>
 </context>
 <context>
@@ -1325,6 +1332,21 @@ What do you want to do?</source>
     </message>
 </context>
 <context>
+    <name>ColorFiltersPopup</name>
+    <message>
+        <source>Color Filters Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color Filter %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ColorModelBehaviorPopup</name>
     <message>
         <source>Select the Palette Operation</source>
@@ -1526,7 +1548,7 @@ What do you want to do? </source>
     <name>CommandBarListTree</name>
     <message>
         <source>----Separator----</source>
-        <translation>----Separador----</translation>
+        <translation type="vanished">----Separador----</translation>
     </message>
 </context>
 <context>
@@ -1591,7 +1613,7 @@ What do you want to do? </source>
     <name>CommandListTree</name>
     <message>
         <source>----Separator----</source>
-        <translation type="vanished">----separador----</translation>
+        <translation>----separador----</translation>
     </message>
 </context>
 <context>
@@ -2019,6 +2041,49 @@ contuviera información de PPP, entonces se usarán los de la cámara actual.
     </message>
 </context>
 <context>
+    <name>CrashHandler</name>
+    <message>
+        <source>&lt;b&gt;Tahoma2D crashed unexpectedly.&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A crash report has been generated.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To report, click &apos;Open Issue Webpage&apos; to access Tahoma2D&apos;s Issues page on GitHub.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click on the &apos;New issue&apos; button and fill out the form.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>System Configuration and Problem Details:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Issue Webpage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Reports Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close Application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tahoma2D crashed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CustomPanelEditorPopup</name>
     <message>
         <source>Template folder %1 not found.</source>
@@ -2087,6 +2152,14 @@ contuviera información de PPP, entonces se usarán los de la cámara actual.
     <message>
         <source>Panel name:</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>a control in the panel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search:</source>
+        <translation type="unfinished">Buscar:</translation>
     </message>
 </context>
 <context>
@@ -2373,6 +2446,149 @@ contuviera información de PPP, entonces se usarán los de la cámara actual.
     <name>ExportCalibrationFilePopup</name>
     <message>
         <source>Export Camera Calibration Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ExportCameraTrackPopup</name>
+    <message>
+        <source>Export Camera Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw On Keyframes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw On Navigation Tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Top Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Top Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Center</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bottom Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bottom Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Draw Numbers On Track Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished">Exportar</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specify frame numbers where the camera rectangles will be drawn. Separate numbers by comma &quot;,&quot; .</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Every 2 frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Every 3 frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Every 4 frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Every 5 frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Every 6 frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Every 8 frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Every 10 frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Every 12 frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Target Column:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Background:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Line Color:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera Rectangles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specify Frames Manually:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Track Lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Graduation Marks Interval:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame Numbers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera Rect Corner:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Font Family:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Font Size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Col %1 (%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please specify one of the following file formats; jpg, jpeg, bmp, png, and tif</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3141,7 +3357,7 @@ Do you want to explode anyway ?</source>
     <name>FileViewerPopup</name>
     <message>
         <source>Viewer</source>
-        <translation type="unfinished">Visor</translation>
+        <translation type="obsolete">Visor</translation>
     </message>
 </context>
 <context>
@@ -3644,15 +3860,15 @@ Do you want to overwrite it?</source>
     <name>LayerHeaderPanel</name>
     <message>
         <source>Preview Visibility Toggle All</source>
-        <translation>Ver todas en procesamiento</translation>
+        <translation type="vanished">Ver todas en procesamiento</translation>
     </message>
     <message>
         <source>Camera Stand Visibility Toggle All</source>
-        <translation>Ver todas en mesa de trabajo</translation>
+        <translation type="vanished">Ver todas en mesa de trabajo</translation>
     </message>
     <message>
         <source>Lock Toggle All</source>
-        <translation>Bloquear todas</translation>
+        <translation type="vanished">Bloquear todas</translation>
     </message>
 </context>
 <context>
@@ -4362,7 +4578,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>TLV Caching Behavior</source>
-        <translation>Caché de niveles TLV</translation>
+        <translation type="vanished">Caché de niveles TLV</translation>
     </message>
     <message>
         <source>Load Subsequence Level</source>
@@ -4432,6 +4648,10 @@ Please choose a valid lip sync data file to continue.</source>
         <source>Level Settings &amp; Arrangement in Scene</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Raster Level Caching Behavior</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LoadProjectCommandHandler</name>
@@ -4457,13 +4677,6 @@ Please choose a valid lip sync data file to continue.</source>
     <message>
         <source> does not exist.</source>
         <translation> no existe.</translation>
-    </message>
-</context>
-<context>
-    <name>LoadScriptPopup</name>
-    <message>
-        <source>Load script</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7903,6 +8116,30 @@ or you may delete necessary files for it.</source>
         <source>Type - Pick+Freehand</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;Export Camera Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Remove Cells</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Light Table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current Drawing On Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle Sub-Scene Navigation Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Paste Cell Content</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -8780,6 +9017,14 @@ Are you sure?</source>
     </message>
     <message>
         <source>Bad file format: %1.txt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Render Key Drawings Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Render To Folders</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10066,7 +10311,7 @@ Is it OK to release these shortcuts?</source>
     </message>
     <message>
         <source>Default TLV Caching Behavior:</source>
-        <translation>Comportamiento de caché de imágenes de Toonz (TLV):</translation>
+        <translation type="vanished">Comportamiento de caché de imágenes de Toonz (TLV):</translation>
     </message>
     <message>
         <source>Column Icon:</source>
@@ -10192,7 +10437,7 @@ la relatividad al resolver la ruta de un archvo.</translation>
     </message>
     <message>
         <source>Expand Function Editor Header to Match Quick Toolbar Height*</source>
-        <translation>También expandir la altura del editor de funciones*</translation>
+        <translation type="vanished">También expandir la altura del editor de funciones*</translation>
     </message>
     <message>
         <source>Colors</source>
@@ -10761,6 +11006,50 @@ but a random crash might occur, use at your own risk:</source>
     </message>
     <message>
         <source>Triangle Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Raster Level Caching Behavior:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Record File History* (tnz, pli, hst)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>History Username*:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Magnet Tool Size Slider - Non-Linear mode*</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste Cells Behaviour:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Sub-Scene Navigation Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Expand Function Editor Header to Match Xsheet Header Height*</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Insert Paste Whole Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overwrite Paste Cell Numbers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scene Tools</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Viewer Event Log</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13284,14 +13573,6 @@ Do you want to create it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>[Drag&amp;Drop] to copy separator to toolbar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[Drag&amp;Drop] to copy command to toolbar</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Clear Frames  : Level %1 : Frame </source>
         <translation type="unfinished"></translation>
     </message>
@@ -13393,10 +13674,6 @@ Allow duplicate?</source>
     <message>
         <source>Export Exchange Digital Time Sheet (XDTS)</source>
         <translation type="unfinished">Exportar archivo XDTS (Exchange Digital Time Sheet)</translation>
-    </message>
-    <message>
-        <source>Toggle vector column as mask. </source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The Premultiply options in the following levels are disabled, since PNG files are premultiplied on loading in the current version: %1</source>
@@ -13597,14 +13874,6 @@ Do you wish to continue loading the last good save or stop and try to salvage th
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>File not found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Don&apos;t Save</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Vector Guided Tweening Controls</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13659,10 +13928,6 @@ Do you want to continue?</source>
     <message>
         <source>The log file already exists.
  Do you want to overwrite it?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[Drag&amp;Drop] to set command to control in the custom panel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -13753,6 +14018,119 @@ Do you want to continue?</source>
         <source>Restart</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Remove Cells</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy Cells</source>
+        <comment>TCellSelection</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste Cells</source>
+        <comment>TCellSelection</comment>
+        <translation type="unfinished">Pegar acetatos</translation>
+    </message>
+    <message>
+        <source>Overwrite Paste Cells</source>
+        <comment>TCellSelection</comment>
+        <translation type="unfinished">Pegar y sobrescribir acetatos</translation>
+    </message>
+    <message>
+        <source>Cut Cells</source>
+        <comment>TCellSelection</comment>
+        <translation type="unfinished">Cortar acetatos</translation>
+    </message>
+    <message>
+        <source>Delete Cells</source>
+        <comment>TCellSelection</comment>
+        <translation type="unfinished">Borrar acetatos</translation>
+    </message>
+    <message>
+        <source>Insert Cells</source>
+        <comment>TCellSelection</comment>
+        <translation type="unfinished">Insertar acetatos</translation>
+    </message>
+    <message>
+        <source>Remove Cells</source>
+        <comment>TCellSelection</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear Frames</source>
+        <comment>TCellSelection</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy Columns</source>
+        <comment>TColumnSelection</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste Columns</source>
+        <comment>TColumnSelection</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cut Columns</source>
+        <comment>TColumnSelection</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Columns</source>
+        <comment>TColumnSelection</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Insert Columns</source>
+        <comment>TColumnSelection</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Drag&amp;Drop] to copy separator to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Drag&amp;Drop] to copy command to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export Camera Track Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading Raster Images To Cache...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading Symmetry Guide...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to open OCA file for saving.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to create folder for saving layers.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Color Filter #%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle column as mask. </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle invert column mask. </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle render column mask. </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ReframePopup</name>
@@ -13766,7 +14144,7 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>steps</source>
-        <translation>fotogramas</translation>
+        <translation type="vanished">fotogramas</translation>
     </message>
     <message>
         <source>with</source>
@@ -13774,11 +14152,11 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>(</source>
-        <translation>(</translation>
+        <translation type="vanished">(</translation>
     </message>
     <message>
         <source> blank cells will be inserted.)</source>
-        <translation> acetatos en blanco serán insertados).</translation>
+        <translation type="vanished"> acetatos en blanco serán insertados).</translation>
     </message>
     <message>
         <source>Reframe with Empty Inbetweens</source>
@@ -13787,6 +14165,18 @@ Do you want to continue?</source>
     <message>
         <source>empty inbetweens</source>
         <translation>intermedios vacíos</translation>
+    </message>
+    <message>
+        <source>Number of steps:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(%1 blank cells will be inserted.)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -15265,6 +15655,18 @@ Por favor enviar o revertir los cambios antes.</translation>
         <source>Cell Marks:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Edit Column Color Filters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overlay Image:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Overlay Opacity:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SceneViewer</name>
@@ -15920,6 +16322,14 @@ Por favor enviar o revertir los cambios antes.</translation>
     </message>
     <message>
         <source>Cell Mark</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SubMenu Commands</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Advanced</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -16588,6 +16998,10 @@ What would you like to do?</source>
     </message>
     <message>
         <source>%1%2Snap rotation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1%2Intermediate Stroke in Range</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -17444,66 +17858,14 @@ También establecer la ruta de salida a esa carpeta.</translation>
     <name>StudioPaletteTreeViewer</name>
     <message>
         <source>New Folder</source>
-        <translation type="unfinished">Nueva carpeta</translation>
-    </message>
-    <message>
-        <source>This folder is not empty. Delete anyway?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Cleanup Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete Folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load into Current Cleaunp Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Replace with Current Cleaunp Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load into Current Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Merge to Current Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Replace with Current Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete Palette</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search for Palettes</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nueva carpeta</translation>
     </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
     <message>
         <source>&amp;Delete</source>
-        <translation type="unfinished">&amp;Borrar</translation>
-    </message>
-    <message>
-        <source>&amp;New Folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;New Palette</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">&amp;Borrar</translation>
     </message>
 </context>
 <context>
@@ -17632,6 +17994,10 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     </message>
     <message>
         <source>Symmetry Guide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scene Overlay</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -17843,6 +18209,14 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     <message>
         <source>TaskUnknown</source>
         <translation>Tarea desconocida</translation>
+    </message>
+    <message>
+        <source>Render Key Drawings Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Render To Folders</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -18427,6 +18801,177 @@ Por favor ver la guía de usuario para obtener más detalles.</translation>
     </message>
 </context>
 <context>
+    <name>ViewerEventLogPopup</name>
+    <message>
+        <source>Viewer Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Leave</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Press</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Move</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Release</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Touch Begin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Touch End</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Touch Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gesture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mouse Button Press</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mouse Move</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mouse Button Release</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mouse Button Double-Click</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Key Press</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Key Release</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capture events:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translation type="unfinished">Pausa</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Entered viewer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Left viewer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus pressed at X=%1 Y=%2 Pressure=%3%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>dragged</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>moved</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus %1 to X=%2 Y=%3 Pressure=%4%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus released</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Touch begins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Touch ended</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Touch cancelled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gesture encountered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>LEFT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RIGHT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MIDDLE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NO</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mouse %1 button pressed at X=%2 Y=%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mouse %1 to X=%2 Y=%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mouse button released</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mouse %1 button double-clicked at X=%2 Y=%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Key pressed: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Key released: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ViewerHistogramPopup</name>
     <message>
         <source>Viewer Histogram</source>
@@ -18469,6 +19014,29 @@ Por favor ver la guía de usuario para obtener más detalles.</translation>
     </message>
     <message>
         <source>Cell Mark for Inbetween Symbol 2 (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>XsheetGUI::BreadcrumbArea</name>
+    <message>
+        <source>  &gt;  </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>  |  </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>---</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Main</source>
+        <translation type="unfinished">Principal</translation>
+    </message>
+    <message>
+        <source>Scene Depth:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -18773,6 +19341,14 @@ Por favor ver la guía de usuario para obtener más detalles.</translation>
     </message>
     <message>
         <source>Lock Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invert Mask</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Render Mask</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
