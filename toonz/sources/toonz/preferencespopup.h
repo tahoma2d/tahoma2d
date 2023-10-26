@@ -165,6 +165,7 @@ private:
   // Xsheet
   void onShowKeyframesOnCellAreaChanged();
   void onShowQuickToolbarClicked();
+  void onShowXsheetBreadcrumbsClicked();
   // Animation
   void onModifyExpressionOnMovingReferencesChanged();
   // Preview

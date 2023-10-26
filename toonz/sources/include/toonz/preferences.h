@@ -407,6 +407,9 @@ public:
   bool isShowQuickToolbarEnabled() const {
     return getBoolValue(showQuickToolbar);
   }
+  bool isShowXsheetBreadcrumbsEnabled() const {
+    return getBoolValue(showXsheetBreadcrumbs);
+  }
   bool isExpandFunctionHeaderEnabled() const {
     return getBoolValue(expandFunctionHeader);
   }
