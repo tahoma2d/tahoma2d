@@ -269,6 +269,8 @@ public:
   void removePreset();
   void loadLastSymmetry();
 
+  void loadTool() override;
+
 protected:
   TPropertyGroup m_prop;
   std::vector<SymmetryToolOptionBox *> m_toolOptionsBox;

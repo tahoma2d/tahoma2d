@@ -1949,6 +1949,9 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
   }
   if (sceneProject && !sceneProject->isCurrent()) {
     pm->setCurrentProjectPath(sceneProject->getProjectPath());
+    // Clear existing raster palette so it forces a reloads of the new project's
+    // raster palette when loading scene
+    FullColorPalette::instance()->clear();
     //    QString currentProjectName = QString::fromStdWString(
     //        pm->getCurrentProject()->getName().getWideString());
     //    QString sceneProjectName =

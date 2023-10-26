@@ -239,17 +239,6 @@ SymmetryTool::SymmetryTool()
   m_color.setId("Color");
   m_useLineSymmetry.setId("UseLineSymmetry");
   m_preset.setId("SymmetryPreset");
-
-  std::wstring wpreset =
-      QString::fromStdString(SymmetryPreset.getValue()).toStdWString();
-  if (wpreset != CUSTOM_WSTR) {
-    initPresets();
-    if (!m_preset.isValue(wpreset)) wpreset = CUSTOM_WSTR;
-    m_preset.setValue(wpreset);
-    SymmetryPreset = m_preset.getValueAsString();
-    loadPreset();
-  } else
-    loadLastSymmetry();
 }
 
 //----------------------------------------------------------------------------------------------
@@ -464,6 +453,21 @@ void SymmetryTool::loadLastSymmetry() {
       TPointD(SymmetryRotationPosX, SymmetryRotationPosY));
 
   updateMeasuredValueToolOptions();
+}
+
+//----------------------------------------------------------------------------------------------
+
+void SymmetryTool::loadTool() {
+  std::wstring wpreset =
+      QString::fromStdString(SymmetryPreset.getValue()).toStdWString();
+  if (wpreset != CUSTOM_WSTR) {
+    initPresets();
+    if (!m_preset.isValue(wpreset)) wpreset = CUSTOM_WSTR;
+    m_preset.setValue(wpreset);
+    SymmetryPreset = m_preset.getValueAsString();
+    loadPreset();
+  } else
+    loadLastSymmetry();
 }
 
 //----------------------------------------------------------------------------------------------
