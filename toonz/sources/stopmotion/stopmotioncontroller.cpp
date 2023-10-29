@@ -2022,8 +2022,9 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   ret = ret && connect(m_stopMotion->m_gphotocam,
                        SIGNAL(liveViewOffsetChangedSignal(int)), this,
                        SLOT(onLiveViewCompensationChangedSignal(int)));
-  ret = ret && connect(m_stopMotion->m_canon, SIGNAL(focusCheckToggled(bool)),
-                       this, SLOT(onFocusCheckToggled(bool)));
+  ret =
+      ret && connect(m_stopMotion->m_gphotocam, SIGNAL(focusCheckToggled(bool)),
+                     this, SLOT(onFocusCheckToggled(bool)));
   ret = ret &&
         connect(m_stopMotion->m_gphotocam, SIGNAL(pickFocusCheckToggled(bool)),
                 this, SLOT(onPickFocusCheckToggled(bool)));

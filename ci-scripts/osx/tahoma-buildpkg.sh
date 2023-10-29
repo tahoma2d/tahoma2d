@@ -153,7 +153,7 @@ function checkLibFile() {
             echo "Fixing $DEPFILE in $LIBFILE"
             if [ "$X" != "" ]
             then
-               local Y=`echo $DEPFILE | sed -e"s/^.*\/\.\.\///"`
+               local Y=`echo $DEPFILE | sed -e"s/^.*\/\.\.\///" -e"s/@rpath.//"`
                install_name_tool -change $DEPFILE @executable_path/../Frameworks/$Y $LIBFILE
             else
                install_name_tool -change $DEPFILE @executable_path/../Frameworks/$Y $LIBFILE
