@@ -1586,5 +1586,15 @@ DVAPI TFxP buildSceneFx(ToonzScene *scene, double frame, TXsheet *xsh,
 
   if (!aff.isIdentity()) fx = TFxUtil::makeAffine(fx, aff);
 
+  // this creates an over fx to lay the Scene Overlay, if there is one, over the
+  // current frame
+  TLevelColumnFx *overlayFx = scene->getOverlayFx(frame);
+
+  if (overlayFx) {
+    PlacedFx overlayPf = builder.makePF(overlayFx);
+    TFxP overlayAffine = TFxUtil::makeAffine(overlayPf.makeFx(), aff);
+    fx                 = TFxUtil::makeOver(fx, overlayAffine);
+  }
+
   return fx;
 }
