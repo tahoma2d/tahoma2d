@@ -2105,6 +2105,7 @@ ColumnTransparencyPopup::ColumnTransparencyPopup(XsheetViewer *viewer,
     , m_keepClosed(false)
     , m_keepClosedTimer(0) {
   setFixedWidth(8 + 78 + 8 + 100 + 8 + 8 + 8 + 7);
+  setFixedHeight(130);
 
   m_keepClosedTimer = new QTimer(this);
   m_keepClosedTimer->setSingleShot(true);
@@ -3003,17 +3004,26 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
         QDesktopWidget *desktop = qApp->desktop();
         QRect screenRect        = desktop->screenGeometry(app->getMainWindow());
 
-        int popupLeft  = event->globalPos().x() + x;
-        int popupRight = popupLeft + m_columnTransparencyPopup->width();
+        int popupLeft   = event->globalPos().x() + x;
+        int popupRight  = popupLeft + m_columnTransparencyPopup->width();
+        int popupTop    = event->globalPos().y() - y;
+        int popupBottom = popupTop + m_columnTransparencyPopup->height();
 
         // first condition checks if popup is on same monitor as main app;
         // if popup is on different monitor, leave as is
-        if (popupLeft < screenRect.right() && popupRight > screenRect.right()) {
-          int distance = popupRight - screenRect.right();
-          m_columnTransparencyPopup->move(
-              m_columnTransparencyPopup->x() - distance,
-              m_columnTransparencyPopup->y());
+        int distanceX = 0;
+        int distanceY = 0;
+        if (popupLeft < screenRect.right() && popupRight > screenRect.right())
+          distanceX = popupRight - screenRect.right();
+        if (popupTop < screenRect.bottom() &&
+            popupBottom > screenRect.bottom()) {
+          distanceY = popupBottom - screenRect.bottom();
+          distanceX -= configRect.width() - 1;  // Move right to not hide button
         }
+        if (distanceX != 0 || distanceY != 0)
+          m_columnTransparencyPopup->move(
+              m_columnTransparencyPopup->x() - distanceX,
+              m_columnTransparencyPopup->y() - distanceY);
 
         openTransparencyPopup();
       }
