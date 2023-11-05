@@ -46,8 +46,7 @@ public:
   };
 
 public:
-  OnionSkinMask()
-      : m_enabled(false), m_wholeScene(false), m_everyFrame(false), m_LightTableStatus(false) {}
+  OnionSkinMask();
 
   void clear();
 
@@ -87,10 +86,10 @@ public:
   void enable(bool on) { m_enabled = on; }
 
   bool isWholeScene() const { return m_wholeScene; }
-  void setIsWholeScene(bool wholeScene) { m_wholeScene = wholeScene; }
+  void setIsWholeScene(bool wholeScene);
 
   bool isEveryFrame() const { return m_everyFrame; }
-  void setIsEveryFrame(bool everyFrame) { m_everyFrame = everyFrame; }
+  void setIsEveryFrame(bool everyFrame);
 
   /*!
 Returns the fade (transparency) value, in the [0.0, 1.0] range, corresponding to
