@@ -11,8 +11,7 @@
     <command>MI_Dup</command>
     <separator/>
     <command>MI_Collapse</command> 
-    <command>MI_OpenChild</command>
-    <command>MI_CloseChild</command>
+    <command>MI_ToggleXsheetBreadcrumbs</command>
     <command>MI_ToggleEditInPlace</command>    
     
   </commandbar>

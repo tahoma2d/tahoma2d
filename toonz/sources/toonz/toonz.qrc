@@ -400,6 +400,8 @@
 		<file>icons/dark/actions/16/next_nav_tag.svg</file>
 		<file>icons/dark/actions/16/prev_nav_tag.svg</file>
 
+    <file>icons/dark/actions/16/toggle_sub_nav.svg</file>
+
 		<!-- Modes, Types, Options -->
 		<file>icons/dark/actions/16/ink_check.svg</file>
 		<file>icons/dark/actions/16/inks_only.svg</file>
