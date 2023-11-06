@@ -155,7 +155,7 @@ void OnioniSkinMaskGUI::addOnionSkinCommand(QMenu *menu, bool isFilmStrip) {
                       SLOT(setEveryFrame()));
       } else {
         QAction *onionSkinNewExposure =
-            menu->addAction(QString(QObject::tr("Onion Skin On New Exposures")));
+            menu->addAction(QString(QObject::tr("Onion Skin On Drawings")));
         menu->connect(onionSkinNewExposure, SIGNAL(triggered()), &switcher,
                       SLOT(setNewExposure()));
       }
