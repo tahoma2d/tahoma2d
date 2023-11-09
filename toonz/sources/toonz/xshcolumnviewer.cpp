@@ -2105,7 +2105,6 @@ ColumnTransparencyPopup::ColumnTransparencyPopup(XsheetViewer *viewer,
     , m_keepClosed(false)
     , m_keepClosedTimer(0) {
   setFixedWidth(8 + 78 + 8 + 100 + 8 + 8 + 8 + 7);
-  setFixedHeight(130);
 
   m_keepClosedTimer = new QTimer(this);
   m_keepClosedTimer->setSingleShot(true);
@@ -2362,6 +2361,7 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
   m_invertMask->blockSignals(true);
   m_renderMask->blockSignals(true);
   if (containsVectorLevel(m_column->getIndex())) {
+    m_maskGroupBox->setVisible(true);
     m_maskGroupBox->setChecked(m_column->isMask());
     m_maskGroupBox->setEnabled(true);
     m_invertMask->setChecked(m_column->isInvertedMask());
@@ -2371,6 +2371,7 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
     m_maskGroupBox->setEnabled(false);
     m_invertMask->setChecked(false);
     m_renderMask->setChecked(false);
+    m_maskGroupBox->setVisible(false);
   }
   m_maskGroupBox->blockSignals(false);
   m_invertMask->blockSignals(false);
@@ -3000,6 +3001,8 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
         m_columnTransparencyPopup->move(event->globalPos().x() + x,
                                         event->globalPos().y() - y);
 
+        openTransparencyPopup();
+
         // make sure the popup doesn't go off the screen to the right
         QDesktopWidget *desktop = qApp->desktop();
         QRect screenRect        = desktop->screenGeometry(app->getMainWindow());
@@ -3024,8 +3027,6 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
           m_columnTransparencyPopup->move(
               m_columnTransparencyPopup->x() - distanceX,
               m_columnTransparencyPopup->y() - distanceY);
-
-        openTransparencyPopup();
       }
     } else if (m_doOnRelease == ToggleAllPreviewVisible) {
       for (col = 0; col < totcols; col++) {
