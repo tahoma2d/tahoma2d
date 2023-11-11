@@ -8,6 +8,7 @@
 #include "tstroke.h"
 #include "tvectorimage.h"
 #include "tcurves.h"
+#include "tundo.h"
 
 //=============================================================================
 // ControlPointEditorStroke
@@ -156,7 +157,18 @@ public:
   void select(int index);
   void unselect(int index);
 
+  TUndo *initSelectionUndo(int strokeIndex);
+
   void deleteControlPoints();
+
+  void alignControlPointsLeft();
+  void alignControlPointsRight();
+  void alignControlPointsTop();
+  void alignControlPointsBottom();
+  void alignControlPointsCenterH();
+  void alignControlPointsCenterV();
+  void distributeControlPointsH();
+  void distributeControlPointsV();
 
   void addMenuItems(QMenu *menu);
 

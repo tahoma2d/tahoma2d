@@ -83,6 +83,15 @@ public:
 
   void selectAll();
 
+  void alignStrokesLeft();
+  void alignStrokesRight();
+  void alignStrokesTop();
+  void alignStrokesBottom();
+  void alignStrokesCenterH();
+  void alignStrokesCenterV();
+  void distributeStrokesH();
+  void distributeStrokesV();
+
 private:
   TVectorImageP m_vi;          //!< Selected vector image.
   IndexesContainer m_indexes;  //!< Selected stroke indexes in m_vi.

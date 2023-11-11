@@ -405,6 +405,19 @@ void TopBar::loadMenubar() {
     addMenuItem(arrangeMenu, MI_SendBackward);
     addMenuItem(arrangeMenu, MI_SendBack);
   }
+  editMenu->addSeparator();
+  QMenu *alignMenu = editMenu->addMenu(tr("Alignment"));
+  {
+    addMenuItem(alignMenu, MI_AlignLeft);
+    addMenuItem(alignMenu, MI_AlignRight);
+    addMenuItem(alignMenu, MI_AlignTop);
+    addMenuItem(alignMenu, MI_AlignBottom);
+    addMenuItem(alignMenu, MI_AlignCenterHorizontal);
+    addMenuItem(alignMenu, MI_AlignCenterVertical);
+    alignMenu->addSeparator();
+    addMenuItem(alignMenu, MI_DistributeHorizontal);
+    addMenuItem(alignMenu, MI_DistributeVertical);
+  }
 
   // Menu' Scene
   QMenu *sceneMenu = addMenu(ShortcutTree::tr("Scene"), m_menuBar);

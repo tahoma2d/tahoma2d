@@ -48,6 +48,28 @@
 //=============================================================================
 namespace {
 
+bool getGroupBBox(TVectorImageP vi, int strokeIndex, TRectD &gBox) {
+  if (!vi->isStrokeGrouped(strokeIndex)) return false;
+
+  gBox             = vi->getStroke(strokeIndex)->getBBox();
+  bool boxExpanded = false;
+
+  int groupDepth       = vi->isInsideGroup();
+  int strokeGroupDepth = vi->getGroupDepth(strokeIndex);
+  if (vi->getGroupDepth(strokeIndex) == groupDepth) return false;
+  int s, sCount = int(vi->getStrokeCount());
+  for (s = 0; s != sCount; ++s) {
+    int sGroupDepth = vi->getGroupDepth(s);
+    if ((vi->sameGroup(s, strokeIndex) ||
+         vi->sameParentGroupStrokes(s, strokeIndex)) &&
+        sGroupDepth > groupDepth) {
+      TRectD sBox = vi->getStroke(s)->getBBox();
+      gBox += vi->getStroke(s)->getBBox();
+    }
+  }
+  return true;
+}
+
 void vectorizeToonzImageData(const TVectorImageP &image,
                              const ToonzImageData *tiData,
                              std::set<int> &indexes, TPalette *palette,
@@ -312,6 +334,127 @@ public:
 
   int getSize() const override { return sizeof(*this); }
 };
+
+//--------------------------------------------------------------------
+enum ALIGN_TYPE {
+  ALIGN_LEFT = 0,
+  ALIGN_RIGHT,
+  ALIGN_TOP,
+  ALIGN_BOTTOM,
+  ALIGN_CENTER_H,
+  ALIGN_CENTER_V,
+  DISTRIBUTE_H,
+  DISTRIBUTE_V
+};
+
+class AlignStrokesUndo final : public TUndo {
+  TXshSimpleLevelP m_level;
+  TFrameId m_frameId;
+  std::vector<std::pair<int, TStroke *>> m_strokes;
+  ALIGN_TYPE m_alignType;
+  double m_alignX, m_alignY;
+
+public:
+  AlignStrokesUndo(TXshSimpleLevel *level, const TFrameId &frameId,
+                   std::vector<std::pair<int, TStroke *>> strokes,
+                   ALIGN_TYPE alignType, double alignX, double alignY)
+      : m_level(level)
+      , m_frameId(frameId)
+      , m_strokes(strokes)
+      , m_alignType(alignType)
+      , m_alignX(alignX)
+      , m_alignY(alignY) {}
+
+  ~AlignStrokesUndo() {
+    int i;
+    for (i = 0; i < (int)m_strokes.size(); i++) delete m_strokes[i].second;
+  }
+
+  void undo() const override {
+    TVectorImageP vi = m_level->getFrame(m_frameId, true);
+    int i;
+    for (i = 0; i < (int)m_strokes.size(); i++) {
+      TStroke *stroke     = vi->getStroke(m_strokes[i].first);
+      TStroke *origStroke = m_strokes[i].second;
+      for (int j = 0, count = stroke->getControlPointCount(); j < count; ++j) {
+        stroke->setControlPoint(j, origStroke->getControlPoint(j));
+      }
+    }
+    StrokeSelection *selection = dynamic_cast<StrokeSelection *>(
+        TTool::getApplication()->getCurrentSelection()->getSelection());
+    if (selection) selection->selectNone();
+
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
+  }
+
+  void redo() const override {
+    int i;
+    TVectorImageP vi = m_level->getFrame(m_frameId, true);
+    std::vector<std::pair<TStroke *, TPointD>> newPts;
+
+    int strokeCount = 0;
+    std::set<int> groups;
+    for (i = 0; i < (int)m_strokes.size(); i++) {
+      TStroke *stroke = vi->getStroke(m_strokes[i].first);
+      TRectD bbox     = stroke->getBBox();
+      TRectD gBBox;
+
+      if (getGroupBBox(vi, m_strokes[i].first, gBBox)) bbox = gBBox;
+
+      double newX, newY;
+      if (m_alignType == ALIGN_TYPE::ALIGN_LEFT)
+        newX = m_alignX - bbox.x0;
+      else if (m_alignType == ALIGN_TYPE::ALIGN_RIGHT)
+        newX = m_alignX - bbox.x1;
+      else if (m_alignType == ALIGN_TYPE::ALIGN_TOP)
+        newY = m_alignY - bbox.y1;
+      else if (m_alignType == ALIGN_TYPE::ALIGN_BOTTOM)
+        newY = m_alignY - bbox.y0;
+      else if (m_alignType == ALIGN_TYPE::ALIGN_CENTER_H)
+        newY = (m_alignY - bbox.y0) - (bbox.getLy() / 2.0);
+      else if (m_alignType == ALIGN_TYPE::ALIGN_CENTER_V)
+        newX = (m_alignX - bbox.x0) - (bbox.getLx() / 2.0);
+      else if (m_alignType == ALIGN_TYPE::DISTRIBUTE_H) {
+        // m_alignX = 1st X point. m_alignY = X spacing between points
+        int groupId = vi->getGroupByStroke(m_strokes[i].first);
+        if (groupId < 0)
+          strokeCount++;
+        else if (groups.find(groupId) == groups.end()) {
+          groups.insert(groupId);
+          strokeCount++;
+        }
+        newX = (m_alignX + (m_alignY * (double)strokeCount)) -
+               (bbox.getLx() / 2.0) - bbox.x0;
+      } else if (m_alignType == ALIGN_TYPE::DISTRIBUTE_V) {
+        // m_alignX = 1st Y point. m_alignY = Y spacing between points
+        int groupId = vi->getGroupByStroke(m_strokes[i].first);
+        if (groupId < 0)
+          strokeCount++;
+        else if (groups.find(groupId) == groups.end()) {
+          groups.insert(groupId);
+          strokeCount++;
+        }
+        newY = (m_alignX + (m_alignY * (double)strokeCount)) -
+               (bbox.getLy() / 2.0) - bbox.y0;
+      }
+
+      newPts.push_back(std::make_pair(stroke, TPointD(newX, newY)));
+    }
+
+    for (i = 0; i < (int)newPts.size(); i++) {
+      TStroke *stroke = newPts[i].first;
+      for (int j = 0, count = stroke->getControlPointCount(); j < count; ++j) {
+        TThickPoint p = stroke->getControlPoint(j);
+        p             = TThickPoint(p + newPts[i].second, p.thick);
+        stroke->setControlPoint(j, p);
+      }
+    }
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
+  }
+
+  int getSize() const override { return sizeof(*this); }
+};
+
 //=============================================================================
 // DeleteFramesUndo
 //-----------------------------------------------------------------------------
@@ -648,6 +791,600 @@ void StrokeSelection::cut() {
 
 //=============================================================================
 //
+// Align and Distribute
+//
+//-----------------------------------------------------------------------------
+
+void StrokeSelection::alignStrokesLeft() {
+  if (!m_vi) return;
+  if (m_indexes.empty() || m_indexes.size() < 2) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Find anchor point
+  double newX;
+  bool xSet = false;
+
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    if (!xSet)
+      newX = bbox.x0;
+    else
+      newX = std::min(newX, bbox.x0);
+    xSet   = true;
+  }
+
+  // Store moving strokes
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    if (bbox.x0 == newX) continue;
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo = new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                                       ALIGN_TYPE::ALIGN_LEFT, newX, 0);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
+}
+
+//-----------------------------------------------------------------------------
+
+void StrokeSelection::alignStrokesRight() {
+  if (!m_vi) return;
+  if (m_indexes.empty() || m_indexes.size() < 2) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Find anchor point
+  double newX;
+  bool xSet = false;
+
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    if (!xSet)
+      newX = bbox.x1;
+    else
+      newX = std::max(newX, bbox.x1);
+    xSet   = true;
+  }
+
+  // Store moving strokes
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    if (bbox.x1 == newX) continue;
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo = new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                                       ALIGN_TYPE::ALIGN_RIGHT, newX, 0);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
+}
+
+//-----------------------------------------------------------------------------
+
+void StrokeSelection::alignStrokesTop() {
+  if (!m_vi) return;
+  if (m_indexes.empty() || m_indexes.size() < 2) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Find anchor point
+  double newY;
+  bool ySet = false;
+
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    if (!ySet)
+      newY = bbox.y1;
+    else
+      newY = std::max(newY, bbox.y1);
+    ySet   = true;
+  }
+
+  // Store moving strokes
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    if (bbox.y1 == newY) continue;
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo = new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                                       ALIGN_TYPE::ALIGN_TOP, 0, newY);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
+}
+
+//-----------------------------------------------------------------------------
+
+void StrokeSelection::alignStrokesBottom() {
+  if (!m_vi) return;
+  if (m_indexes.empty() || m_indexes.size() < 2) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Find anchor point
+  double newY;
+  bool ySet = false;
+
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    if (!ySet)
+      newY = bbox.y0;
+    else
+      newY = std::min(newY, bbox.y0);
+    ySet   = true;
+  }
+
+  // Store moving strokes
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    if (bbox.y0 == newY) continue;
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo = new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                                       ALIGN_TYPE::ALIGN_BOTTOM, 0, newY);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
+}
+
+//-----------------------------------------------------------------------------
+
+void StrokeSelection::alignStrokesCenterH() {
+  if (!m_vi) return;
+  if (m_indexes.empty() || m_indexes.size() < 2) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Find anchor point
+  double minY, maxY;
+  bool ySet = false;
+
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    if (!ySet) {
+      minY = bbox.y0;
+      maxY = bbox.y1;
+    } else {
+      minY = std::min(minY, bbox.y0);
+      maxY = std::max(maxY, bbox.y1);
+    }
+    ySet = true;
+  }
+
+  double newY = (maxY + minY) / 2.0;
+
+  // Store moving strokes
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo = new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                                       ALIGN_TYPE::ALIGN_CENTER_H, 0, newY);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
+}
+
+//-----------------------------------------------------------------------------
+
+void StrokeSelection::alignStrokesCenterV() {
+  if (!m_vi) return;
+  if (m_indexes.empty() || m_indexes.size() < 2) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Find anchor point
+  double minX, maxX;
+  bool xSet = false;
+
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    if (!xSet) {
+      minX = bbox.x0;
+      maxX = bbox.x1;
+    } else {
+      minX = std::min(minX, bbox.x0);
+      maxX = std::max(maxX, bbox.x1);
+    }
+    xSet = true;
+  }
+
+  double newX = (maxX + minX) / 2.0;
+
+  // Store moving strokes
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo = new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                                       ALIGN_TYPE::ALIGN_CENTER_V, newX, 0);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
+}
+
+//-----------------------------------------------------------------------------
+
+class XStrokeSorter {
+  TVectorImageP m_vi;
+
+public:
+  XStrokeSorter(TVectorImageP vi) : m_vi(vi) {}
+
+  bool operator()(int a, int &b) {
+    TStroke *strokeA = m_vi->getStroke(a);
+    TStroke *strokeB = m_vi->getStroke(b);
+    TRectD gBox;
+    TRectD bboxA = strokeA->getBBox();
+    if (getGroupBBox(m_vi, a, gBox)) bboxA = gBox;
+    TRectD bboxB = strokeB->getBBox();
+    if (getGroupBBox(m_vi, b, gBox)) bboxB = gBox;
+
+    return (bboxA.x0 < bboxB.x0);
+  }
+};
+
+void StrokeSelection::distributeStrokesH() {
+  if (!m_vi) return;
+  if (m_indexes.empty() || m_indexes.size() < 3) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Sort the points based on X
+  std::vector<int> sortedStrokes;
+
+  // Remove strokes not in group
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    sortedStrokes.push_back(e);
+  }
+  std::sort(sortedStrokes.begin(), sortedStrokes.end(), XStrokeSorter(m_vi));
+
+  // Find anchor point
+  double minX, maxX;
+  bool xSet = false;
+
+  for (auto const &e : sortedStrokes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    TRectD bbox     = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    double midX = bbox.x0 + (bbox.getLx() / 2.0);
+    if (!xSet) {
+      minX = maxX = midX;
+    } else {
+      minX = std::min(minX, midX);
+      maxX = std::max(maxX, midX);
+    }
+    xSet = true;
+  }
+
+  // Store moving strokes
+  int strokeCount = 0;
+  std::set<int> groups;
+  for (auto const &e : sortedStrokes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    TRectD bbox     = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    double midX = bbox.x0 + (bbox.getLx() / 2.0);
+    if (midX == minX || midX == maxX) continue;
+    int groupId = m_vi->getGroupByStroke(e);
+    if (groupId < 0)
+      strokeCount++;
+    else if (groups.find(groupId) == groups.end()) {
+      groups.insert(groupId);
+      strokeCount++;
+    }
+
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+  double distX = (maxX - minX) / (double)(strokeCount + 1);
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo = new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                                       ALIGN_TYPE::DISTRIBUTE_H, minX, distX);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
+}
+
+//-----------------------------------------------------------------------------
+
+class YStrokeSorter {
+  TVectorImageP m_vi;
+
+public:
+  YStrokeSorter(TVectorImageP vi) : m_vi(vi) {}
+
+  bool operator()(int a, int &b) {
+    TStroke *strokeA = m_vi->getStroke(a);
+    TStroke *strokeB = m_vi->getStroke(b);
+    TRectD gBox;
+    TRectD bboxA = strokeA->getBBox();
+    if (getGroupBBox(m_vi, a, gBox)) bboxA = gBox;
+    TRectD bboxB = strokeB->getBBox();
+    if (getGroupBBox(m_vi, b, gBox)) bboxB = gBox;
+
+    return (bboxA.y0 < bboxB.y0);
+  }
+};
+
+void StrokeSelection::distributeStrokesV() {
+  if (!m_vi) return;
+  if (m_indexes.empty() || m_indexes.size() < 3) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Sort the points based on Y
+  std::vector<int> sortedStrokes;
+
+  // Remove strokes not in group
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    sortedStrokes.push_back(e);
+  }
+  std::sort(sortedStrokes.begin(), sortedStrokes.end(), YStrokeSorter(m_vi));
+
+  // Find anchor point
+  double minY, maxY;
+  bool ySet = false;
+
+  for (auto const &e : sortedStrokes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    TRectD bbox     = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    double midY = bbox.y0 + (bbox.getLy() / 2.0);
+    if (!ySet) {
+      minY = maxY = midY;
+    } else {
+      minY = std::min(minY, midY);
+      maxY = std::max(maxY, midY);
+    }
+    ySet = true;
+  }
+
+  // Store moving strokes
+  int strokeCount = 0;
+  std::set<int> groups;
+  for (auto const &e : sortedStrokes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    TRectD bbox     = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    double midY = bbox.y0 + (bbox.getLy() / 2.0);
+    if (midY == minY || midY == maxY) continue;
+    int groupId = m_vi->getGroupByStroke(e);
+    if (groupId < 0)
+      strokeCount++;
+    else if (groups.find(groupId) == groups.end()) {
+      groups.insert(groupId);
+      strokeCount++;
+    }
+
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+  double distY = (maxY - minY) / (double)(strokeCount + 1);
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo = new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                                       ALIGN_TYPE::DISTRIBUTE_V, minY, distY);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
+}
+
+//=============================================================================
+//
 // enableCommands
 //
 //-----------------------------------------------------------------------------
@@ -671,6 +1408,19 @@ void StrokeSelection::enableCommands() {
 
   enableCommand(this, MI_RemoveEndpoints, &StrokeSelection::removeEndpoints);
   enableCommand(this, MI_SelectAll, &StrokeSelection::selectAll);
+
+  enableCommand(this, MI_AlignLeft, &StrokeSelection::alignStrokesLeft);
+  enableCommand(this, MI_AlignRight, &StrokeSelection::alignStrokesRight);
+  enableCommand(this, MI_AlignTop, &StrokeSelection::alignStrokesTop);
+  enableCommand(this, MI_AlignBottom, &StrokeSelection::alignStrokesBottom);
+  enableCommand(this, MI_AlignCenterHorizontal,
+                &StrokeSelection::alignStrokesCenterH);
+  enableCommand(this, MI_AlignCenterVertical,
+                &StrokeSelection::alignStrokesCenterV);
+  enableCommand(this, MI_DistributeHorizontal,
+                &StrokeSelection::distributeStrokesH);
+  enableCommand(this, MI_DistributeVertical,
+                &StrokeSelection::distributeStrokesV);
 }
 
 //===================================================================

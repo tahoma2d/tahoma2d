@@ -1943,6 +1943,26 @@ void MainWindow::defineActions() {
   createMenuEditAction(MI_ClearFrames, QT_TR_NOOP("&Clear Frames"), "");
   createMenuEditAction(MI_RemoveCells, QT_TR_NOOP("&Remove Cells"), "",
                        "remove");
+  createMenuEditAction(MI_AlignLeft, QT_TR_NOOP("&Align Left"), "",
+                       "select_align_left");
+  createMenuEditAction(MI_AlignRight, QT_TR_NOOP("&Align Right"), "",
+                       "select_align_right");
+  createMenuEditAction(MI_AlignTop, QT_TR_NOOP("&Align Top"), "",
+                       "select_align_top");
+  createMenuEditAction(MI_AlignBottom, QT_TR_NOOP("&Align Bottom"), "",
+                       "select_align_bottom");
+  createMenuEditAction(MI_AlignCenterHorizontal,
+                       QT_TR_NOOP("&Align Center Horizontally"), "",
+                       "select_align_center_h");
+  createMenuEditAction(MI_AlignCenterVertical,
+                       QT_TR_NOOP("&Align Center Vertically"), "",
+                       "select_align_center_v");
+  createMenuEditAction(MI_DistributeHorizontal,
+                       QT_TR_NOOP("&Distribute Horizontally"), "",
+                       "select_distribute_h");
+  createMenuEditAction(MI_DistributeVertical,
+                       QT_TR_NOOP("&Distribute Vertically"), "",
+                       "select_distribute_v");
 
   // Menu - Cleanup
 
@@ -2630,6 +2650,14 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_EraseUnusedStyles,
                              QT_TR_NOOP("&Delete Unused Styles"), "",
                              "delete_unused_styles");
+
+  createRightClickMenuAction(MI_SetLinearControlPoint,
+                             QT_TR_NOOP("&Set Linear Control Point"), "",
+                             "set_linear_cp");
+  createRightClickMenuAction(MI_SetNonLinearControlPoint,
+                             QT_TR_NOOP("&Set Nonlinear Control Point"), "",
+                             "set_nonlinear_cp");
+
   // createRightClickMenuAction(MI_LoadSubSceneFile, QT_TR_NOOP("Load As
   // Sub-xsheet"),   ""); createRightClickMenuAction(MI_LoadResourceFile,
   // QT_TR_NOOP("Load"), ""); createRightClickMenuAction(MI_PremultiplyFile,
