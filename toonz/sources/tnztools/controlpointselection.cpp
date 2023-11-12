@@ -1018,7 +1018,8 @@ void ControlPointSelection::addMenuItems(QMenu *menu) {
 
 //---------------------------------------------------------------------------
 
-TUndo *ControlPointSelection::initSelectionUndo(int strokeIndex) {
+TUndo *ControlPointSelection::initSelectionUndo(int strokeIndex,
+                                                bool clearSelection) {
   TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
   if (TTool::getApplication()->getCurrentObject()->isSpline())
     return new UndoPath(
@@ -1029,7 +1030,7 @@ TUndo *ControlPointSelection::initSelectionUndo(int strokeIndex) {
   TXshSimpleLevel *level =
       TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
   UndoControlPointEditor *undo =
-      new UndoControlPointEditor(level, tool->getCurrentFid());
+      new UndoControlPointEditor(level, tool->getCurrentFid(), clearSelection);
   if (strokeIndex > -1)
     undo->addOldStroke(strokeIndex, vi->getVIStroke(strokeIndex));
   return undo;
@@ -1133,7 +1134,7 @@ void ControlPointSelection::alignControlPointsLeft() {
       m_selectedPoints.size() < 2)
     return;
 
-  TUndo *undo = initSelectionUndo(currentStrokeIndex);
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
 
   double newX;
   bool xSet = false;
@@ -1172,7 +1173,7 @@ void ControlPointSelection::alignControlPointsRight() {
       m_selectedPoints.size() < 2)
     return;
 
-  TUndo *undo = initSelectionUndo(currentStrokeIndex);
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
 
   double newX;
   bool xSet = false;
@@ -1211,7 +1212,7 @@ void ControlPointSelection::alignControlPointsTop() {
       m_selectedPoints.size() < 2)
     return;
 
-  TUndo *undo = initSelectionUndo(currentStrokeIndex);
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
 
   double newY;
   bool ySet = false;
@@ -1250,7 +1251,7 @@ void ControlPointSelection::alignControlPointsBottom() {
       m_selectedPoints.size() < 2)
     return;
 
-  TUndo *undo = initSelectionUndo(currentStrokeIndex);
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
 
   double newY;
   bool ySet = false;
@@ -1289,7 +1290,7 @@ void ControlPointSelection::alignControlPointsCenterH() {
       m_selectedPoints.size() < 2)
     return;
 
-  TUndo *undo = initSelectionUndo(currentStrokeIndex);
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
 
   double minY, maxY;
   bool ySet = false;
@@ -1332,7 +1333,7 @@ void ControlPointSelection::alignControlPointsCenterV() {
       m_selectedPoints.size() < 2)
     return;
 
-  TUndo *undo = initSelectionUndo(currentStrokeIndex);
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
 
   double minX, maxX;
   bool ySet = false;
@@ -1386,7 +1387,7 @@ void ControlPointSelection::distributeControlPointsH() {
       m_selectedPoints.size() < 3)
     return;
 
-  TUndo *undo = initSelectionUndo(currentStrokeIndex);
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
 
   // Sort the points based on X
   std::vector<int> sortedPoints(m_selectedPoints.begin(),
@@ -1439,7 +1440,7 @@ void ControlPointSelection::distributeControlPointsV() {
       m_selectedPoints.size() < 3)
     return;
 
-  TUndo *undo = initSelectionUndo(currentStrokeIndex);
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
 
   // Sort the points based on Y
   std::vector<int> sortedPoints(m_selectedPoints.begin(),

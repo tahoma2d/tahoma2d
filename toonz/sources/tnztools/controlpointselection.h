@@ -157,7 +157,7 @@ public:
   void select(int index);
   void unselect(int index);
 
-  TUndo *initSelectionUndo(int strokeIndex);
+  TUndo *initSelectionUndo(int strokeIndex, bool clearSelection = true);
 
   void deleteControlPoints();
 

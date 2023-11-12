@@ -380,9 +380,6 @@ public:
         stroke->setControlPoint(j, origStroke->getControlPoint(j));
       }
     }
-    StrokeSelection *selection = dynamic_cast<StrokeSelection *>(
-        TTool::getApplication()->getCurrentSelection()->getSelection());
-    if (selection) selection->selectNone();
 
     TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
