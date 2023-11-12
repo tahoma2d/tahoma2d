@@ -258,7 +258,8 @@ void TSceneProperties::saveData(TOStream &os) const {
     if (rs.m_colorSpaceGamma >= 1. &&
         !areAlmostEqual(rs.m_colorSpaceGamma, 2.2))
       os.child("colorSpaceGamma") << rs.m_colorSpaceGamma;
-    if (i == 1)  // preview
+    // Only save syncColorSetting if not the default value
+    if (i == 1 && !out.isColorSettingsSynced())  // preview
       os.child("syncColorSettings") << (out.isColorSettingsSynced() ? 1 : 0);
 
     os.child("multimedia") << out.getMultimediaRendering();
