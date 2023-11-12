@@ -1842,7 +1842,7 @@ void MainWindow::defineActions() {
                        tr("Use the current scene's settings as a template for "
                           "all new scenes in the current project."));
   createMenuFileAction(
-      MI_SoundTrack, QT_TR_NOOP("&Export Soundtrack"), "", "",
+      MI_SoundTrack, QT_TR_NOOP("&Export Soundtrack"), "", "export_soundtrack",
       tr("Exports the soundtrack to the current scene as a wav file."));
   createMenuFileAction(MI_Preferences, QT_TR_NOOP("&Preferences..."), "Ctrl+U",
                        "gear", tr("Change Tahoma2D's settings."));
@@ -1853,19 +1853,21 @@ void MainWindow::defineActions() {
                        "printer", tr("Print the scene's exposure sheet."));
 
   createMenuFileAction(MI_ExportXsheetPDF, QT_TR_NOOP("&Export Xsheet to PDF"),
-                       "");
+                       "", "export_xsheetpdf");
 
   createMenuFileAction(
       MI_ExportXDTS,
       QT_TRANSLATE_NOOP("MainWindow",
                         "Export Exchange Digital Time Sheet (XDTS)"),
-      "");
+      "", "export_xdts");
   createMenuFileAction(
       MI_ExportOCA,
-      QT_TRANSLATE_NOOP("MainWindow", "Export Open Cel Animation (OCA)"), "");
+      QT_TRANSLATE_NOOP("MainWindow", "Export Open Cel Animation (OCA)"), "",
+      "export_oca");
   createMenuFileAction(
       MI_ExportTvpJson,
-      QT_TRANSLATE_NOOP("MainWindow", "Export TVPaint JSON File"), "");
+      QT_TRANSLATE_NOOP("MainWindow", "Export TVPaint JSON File"), "",
+      "export_tvpaint");
   createMenuFileAction(
       "MI_RunScript", QT_TR_NOOP("Run Script..."), "", "run_script",
       tr("Run a script to perform a series of actions on a scene."));
@@ -1887,10 +1889,10 @@ void MainWindow::defineActions() {
   createMenuFileAction(MI_ClearCacheFolder, QT_TR_NOOP("&Clear Cache Folder"),
                        "", "clear_cache");
   createMenuFileAction(MI_ExportCurrentScene,
-                       QT_TR_NOOP("&Export Current Scene"), "", "",
+                       QT_TR_NOOP("&Export Current Scene"), "", "export_scene",
                        tr("Export the current scene to another project."));
   createMenuFileAction(MI_ExportCameraTrack, QT_TR_NOOP("&Export Camera Track"),
-                       "");
+                       "", "export_cameratrack");
 
   // Menu - Edit
 
@@ -3226,7 +3228,7 @@ void MainWindow::defineActions() {
 
   createStopMotionAction(
       MI_StopMotionExportImageSequence,
-      QT_TR_NOOP("&Export Stop Motion Image Sequence"), "", "",
+      QT_TR_NOOP("&Export Stop Motion Image Sequence"), "", "export_smimages",
       tr("Exports the full resolution stop motion image sequence.") +
           separator + tr("This is especially useful if using a DSLR camera."));
   createStopMotionAction(MI_StopMotionCapture,
