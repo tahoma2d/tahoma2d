@@ -195,7 +195,6 @@ elseif(BUILD_ENV_UNIXLIKE)
     endif()
     if(CMAKE_SYSTEM_NAME MATCHES "Linux")
         add_definitions(-DLINUX)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ldeflate")
     elseif(CMAKE_SYSTEM_NAME MATCHES "Haiku")
         add_definitions(-DHAIKU)
         set(PRELOAD_VARIABLE "LIBRARY_PATH")
@@ -504,6 +503,20 @@ elseif(BUILD_ENV_UNIXLIKE)
     set(GLEW_LIB ${GLEW_LIBRARIES})
 
     pkg_check_modules(LZ4_LIB REQUIRED liblz4)
+
+    find_package(OpenEXR)
+    if((OpenEXR_VERSION VERSION_EQUAL 3.2) OR (OpenEXR_VERSION GREATER 3.2))
+        # OpenEXR requires libdeflate starting with 3.2.0
+        # https://openexr.com/en/latest/news.html#august-30-2023-openexr-v3-2-0-released
+        if(DEFLATE-NOTFOUND)
+          pkg_check_modules(DEFLATE REQUIRED deflate)
+        endif()
+        if (TARGET deflate::deflate)
+          set(DEFLATE_LIB deflate::deflate)
+        else()
+          set(DEFLATE_LIB ${Deflate_LIBRARY})
+        endif()
+    endif()
 
     message("**************** lz4 lib:" ${LZ4_LIB_INCLUDE_DIRS})
     find_path(LZ4_STATIC lz4frame_static.h PATH ${LZ4_LIB_INCLUDE_DIRS})
