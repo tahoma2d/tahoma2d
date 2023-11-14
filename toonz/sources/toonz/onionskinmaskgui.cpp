@@ -44,6 +44,13 @@ bool OnioniSkinMaskGUI::OnionSkinSwitcher::isWholeScene() const {
 
 //------------------------------------------------------------------------------
 
+bool OnioniSkinMaskGUI::OnionSkinSwitcher::isEveryFrame() const {
+  OnionSkinMask osm = getMask();
+  return osm.isEveryFrame();
+}
+
+//------------------------------------------------------------------------------
+
 void OnioniSkinMaskGUI::OnionSkinSwitcher::activate() {
   OnionSkinMask osm = getMask();
   if (osm.isEnabled() && !osm.isEmpty()) return;
@@ -78,6 +85,22 @@ void OnioniSkinMaskGUI::OnionSkinSwitcher::setWholeScene() {
 void OnioniSkinMaskGUI::OnionSkinSwitcher::setSingleLevel() {
   OnionSkinMask osm = getMask();
   osm.setIsWholeScene(false);
+  setMask(osm);
+}
+
+//------------------------------------------------------------------------------
+
+void OnioniSkinMaskGUI::OnionSkinSwitcher::setEveryFrame() {
+  OnionSkinMask osm = getMask();
+  osm.setIsEveryFrame(true);
+  setMask(osm);
+}
+
+//------------------------------------------------------------------------------
+
+void OnioniSkinMaskGUI::OnionSkinSwitcher::setNewExposure() {
+  OnionSkinMask osm = getMask();
+  osm.setIsEveryFrame(false);
   setMask(osm);
 }
 
@@ -124,6 +147,17 @@ void OnioniSkinMaskGUI::addOnionSkinCommand(QMenu *menu, bool isFilmStrip) {
             menu->addAction(QString(QObject::tr("Extend Onion Skin To Scene")));
         menu->connect(extendOnionSkinToScene, SIGNAL(triggered()), &switcher,
                       SLOT(setWholeScene()));
+      }
+      if (!switcher.isEveryFrame()) {
+        QAction *onionSkinEveryFrame =
+            menu->addAction(QString(QObject::tr("Onion Skin On All Frames")));
+        menu->connect(onionSkinEveryFrame, SIGNAL(triggered()), &switcher,
+                      SLOT(setEveryFrame()));
+      } else {
+        QAction *onionSkinNewExposure =
+            menu->addAction(QString(QObject::tr("Onion Skin On Drawings")));
+        menu->connect(onionSkinNewExposure, SIGNAL(triggered()), &switcher,
+                      SLOT(setNewExposure()));
       }
       OnionSkinMask osm = switcher.getMask();
       if (osm.getFosCount() || osm.getMosCount()) {
