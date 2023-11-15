@@ -108,7 +108,7 @@ You will need two additional libraries.
 Copy the following folders into the `$tahoma2d/thirdparty` folder.
  - [ ] Copy the Header and library folders from the Canon SDK to `$tahoma2d/thirdparty/canon`
  - Make sure that the library is the one from the EDSDK_64 folder.
- - [ ] Copy the lib and include folders from libjpeg-turbo64 into `$tahoma2d/thirdparty/libjpeg-turbo64`.
+ - [ ] Copy the lib and include folders from libjpeg-turbo64 into `$tahoma2d/thirdparty/libjpeg-turbo`.
  - [ ] Check the checkbox in CMake to build with stop motion support.
 
 To run the program with stop motion support, you will need to copy the .dll files from opencv2, libjpeg-turbo and the Canon SDK into the folder where your project is built.
