@@ -464,6 +464,21 @@ elseif(BUILD_ENV_APPLE)
         find_library(GPHOTO2_PORT_LIB gphoto2_port)
         message("**************** gphoto2_port lib:" ${GPHOTO2_PORT_LIB})
     endif()
+
+    # If compiling with OpenEXR
+    find_package(OpenEXR)
+    if((OpenEXR_VERSION VERSION_EQUAL 3.2) OR (OpenEXR_VERSION GREATER 3.2))
+        # OpenEXR requires libdeflate starting with 3.2.0
+        # https://openexr.com/en/latest/news.html#august-30-2023-openexr-v3-2-0-released
+        if(DEFLATE-NOTFOUND)
+          pkg_check_modules(DEFLATE REQUIRED deflate)
+        endif()
+        if (TARGET deflate::deflate)
+          set(DEFLATE_LIB deflate::deflate)
+        else()
+          set(DEFLATE_LIB ${Deflate_LIBRARY})
+        endif()
+    endif()
 elseif(BUILD_ENV_UNIXLIKE)
     if(BUILD_TARGET_WIN)
         find_library(GL_LIB opengl32)
@@ -504,20 +519,6 @@ elseif(BUILD_ENV_UNIXLIKE)
 
     pkg_check_modules(LZ4_LIB REQUIRED liblz4)
 
-    find_package(OpenEXR)
-    if((OpenEXR_VERSION VERSION_EQUAL 3.2) OR (OpenEXR_VERSION GREATER 3.2))
-        # OpenEXR requires libdeflate starting with 3.2.0
-        # https://openexr.com/en/latest/news.html#august-30-2023-openexr-v3-2-0-released
-        if(DEFLATE-NOTFOUND)
-          pkg_check_modules(DEFLATE REQUIRED deflate)
-        endif()
-        if (TARGET deflate::deflate)
-          set(DEFLATE_LIB deflate::deflate)
-        else()
-          set(DEFLATE_LIB ${Deflate_LIBRARY})
-        endif()
-    endif()
-
     message("**************** lz4 lib:" ${LZ4_LIB_INCLUDE_DIRS})
     find_path(LZ4_STATIC lz4frame_static.h PATH ${LZ4_LIB_INCLUDE_DIRS})
     if(LZ4_STATIC-FOUND)
@@ -553,6 +554,22 @@ elseif(BUILD_ENV_UNIXLIKE)
         message("**************** gphoto2 lib:" ${GPHOTO2_LIB})
         find_library(GPHOTO2_PORT_LIB gphoto2_port)
         message("**************** gphoto2_port lib:" ${GPHOTO2_PORT_LIB})
+    endif()
+
+    # If compiling with OpenEXR
+    find_package(OpenEXR)
+    if((OpenEXR_VERSION VERSION_EQUAL 3.2) OR (OpenEXR_VERSION GREATER 3.2))
+        # OpenEXR requires libdeflate starting with 3.2.0
+        # https://openexr.com/en/latest/news.html#august-30-2023-openexr-v3-2-0-released
+        if(DEFLATE-NOTFOUND)
+          pkg_check_modules(DEFLATE REQUIRED deflate)
+        endif()
+        if (TARGET deflate::deflate)
+          set(DEFLATE_LIB deflate::deflate)
+        else()
+          # use custom Find module if there is one?
+          set(DEFLATE_LIB ${Deflate_LIBRARY})
+        endif()
     endif()
 endif()
 
