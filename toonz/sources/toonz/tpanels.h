@@ -369,4 +369,15 @@ public:
   void reset() override;
 };
 
+//=========================================================
+// AlignmentPanel
+//---------------------------------------------------------
+
+class AlignmentPanel final : public TPanel {
+  Q_OBJECT
+
+public:
+  AlignmentPanel(QWidget *parent);
+};
+
 #endif

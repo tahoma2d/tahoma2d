@@ -28,6 +28,7 @@
 #include "expressionreferencemanager.h"
 #include "stopmotioncontroller.h"
 #include "motionpathpanel.h"
+#include "alignmentpane.h"
 
 #include "tasksviewer.h"
 #include "batchserversviewer.h"
@@ -1700,3 +1701,39 @@ public:
 OpenFloatingPanel openVectorGuidedDrawingPanelCommand(
     MI_OpenGuidedDrawingControls, "VectorGuidedDrawingPanel",
     QObject::tr("Vector Guided Tweening Controls"));
+
+//=========================================================
+// AlignmentPanel
+//---------------------------------------------------------
+
+AlignmentPanel::AlignmentPanel(QWidget *parent) : TPanel(parent) {
+  AlignmentPane *pane = new AlignmentPane(this);
+  setWidget(pane);
+  setIsMaximizable(false);
+}
+
+//=============================================================================
+// AlignmentFactory
+//-----------------------------------------------------------------------------
+
+class AlignmentFactory final : public TPanelFactory {
+public:
+  AlignmentFactory() : TPanelFactory("AlignmentPanel") {}
+  TPanel *createPanel(QWidget *parent) override {
+    TPanel *panel = new AlignmentPanel(parent);
+    panel->setObjectName(getPanelType());
+    panel->setWindowTitle(QObject::tr("Align and Distribute"));
+    panel->setMinimumSize(235, 198);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
+
+    return panel;
+  }
+  void initialize(TPanel *panel) override {}
+} AlignmentFactory;
+
+//=============================================================================
+OpenFloatingPanel openVectorAlignmentPanelCommand(
+    MI_OpenAlignmentPanel, "AlignmentPanel",
+    QObject::tr("Align and Distribute"));

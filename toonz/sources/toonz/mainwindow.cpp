@@ -2425,6 +2425,9 @@ void MainWindow::defineActions() {
   createMenuWindowsAction(MI_OpenGuidedDrawingControls,
                           QT_TR_NOOP("Guided Tweening Controls"), "",
                           "guided_drawing");
+  createMenuWindowsAction(MI_OpenAlignmentPanel,
+                          QT_TR_NOOP("Align and Distribute Panel"), "",
+                          "");
 
   createMenuAction(MI_OpenCustomPanels, QT_TR_NOOP("&Custom Panels"), files, "",
                    false);

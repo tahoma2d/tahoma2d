@@ -515,4 +515,7 @@
 #define MI_ToggleLightTable "MI_ToggleLightTable"
 
 #define MI_CurrentDrawingOnTop "MI_CurrentDrawingOnTop"
+
+#define MI_OpenAlignmentPanel "MI_OpenAlignmentPanel"
+
 #endif

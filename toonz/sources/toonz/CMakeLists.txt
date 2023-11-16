@@ -143,6 +143,7 @@ set(MOC_HEADERS
     navtageditorpopup.h
     viewereventlogpopup.h
     xshbreadcrumbs.h
+    alignmentpane.h
 )
 
 set(HEADERS
@@ -392,6 +393,7 @@ set(SOURCES
     navtageditorpopup.cpp
     viewereventlogpopup.cpp
     xshbreadcrumbs.cpp
+    alignmentpane.cpp
 )
 
 if(WITH_TRANSLATION)
