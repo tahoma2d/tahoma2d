@@ -26,7 +26,8 @@ AlignmentPane::AlignmentPane(QWidget* parent, Qt::WindowFlags flags)
 
   m_alignMethodCB = new QComboBox();
   QStringList inputs;
-  inputs << tr("Selection Area") << tr("Smallest Object")
+  inputs << tr("Selection Area") << tr("First Selected")
+         << tr("Last Selected") << tr("Smallest Object")
          << tr("Largest Object") << tr("Camera");
   m_alignMethodCB->addItems(inputs);
   m_alignMethodCB->setCurrentIndex(0);
@@ -143,13 +144,56 @@ AlignmentPane::AlignmentPane(QWidget* parent, Qt::WindowFlags flags)
 void AlignmentPane::updateButtons() {
   TTool* tool = TApp::instance()->getCurrentTool()->getTool();
 
+  QStringList inputs;
+  int method = m_alignMethodCB->currentIndex();
+
+  m_alignMethodCB->blockSignals(true);
   if (tool->getName() == T_Selection) {
     m_alignMethodCB->setEnabled(true);
 
-    int method = m_alignMethodCB->currentIndex();
-    // Disable distribute if using Smallest/Largest object or if other buttons
+    inputs << tr("Selection Area") << tr("First Selected")
+           << tr("Last Selected") << tr("Smallest Object")
+           << tr("Largest Object") << tr("Camera");
+    m_alignMethodCB->clear();
+    m_alignMethodCB->addItems(inputs);
+    if (method >= inputs.size()) method = 0;
+    m_alignMethodCB->setCurrentIndex(method);
+  } else if (tool->getName() == T_ControlPointEditor) {
+    m_alignMethodCB->setEnabled(true);
+
+    QStringList inputs;
+    inputs << tr("Selection Area") << tr("First Selected")
+           << tr("Last Selected");
+    m_alignMethodCB->clear();
+    m_alignMethodCB->addItems(inputs);
+    if (method >= inputs.size()) method = 0;
+    m_alignMethodCB->setCurrentIndex(method);
+
+    // Disable edge alignments if first/last selected or if other buttons
     // are disabled
-    if (method == 1 || method == 2 ||
+    if (method == ALIGN_METHOD::FIRST_SELECTED ||
+        method == ALIGN_METHOD::LAST_SELECTED ||
+        !m_alignCenterHBtn->actions()[0]->isEnabled()) {
+      m_alignLeftBtn->actions()[0]->setEnabled(false);
+      m_alignRightBtn->actions()[0]->setEnabled(false);
+      m_alignTopBtn->actions()[0]->setEnabled(false);
+      m_alignBottomBtn->actions()[0]->setEnabled(false);
+
+    } else {
+      m_alignLeftBtn->actions()[0]->setEnabled(true);
+      m_alignRightBtn->actions()[0]->setEnabled(true);
+      m_alignTopBtn->actions()[0]->setEnabled(true);
+      m_alignBottomBtn->actions()[0]->setEnabled(true);
+    }
+  } else
+    m_alignMethodCB->setEnabled(false);
+  m_alignMethodCB->blockSignals(false);
+
+  if (tool->getName() == T_Selection ||
+      tool->getName() == T_ControlPointEditor) {
+    // Disable distribute if not Selection Area or Camera or if other buttons
+    // are disabled
+    if ((method > ALIGN_METHOD::SELECT_AREA && method < ALIGN_METHOD::CAMERA) ||
         !m_alignLeftBtn->actions()[0]->isEnabled()) {
       m_distributeHBtn->actions()[0]->setEnabled(false);
       m_distributeVBtn->actions()[0]->setEnabled(false);
@@ -157,8 +201,7 @@ void AlignmentPane::updateButtons() {
       m_distributeHBtn->actions()[0]->setEnabled(true);
       m_distributeVBtn->actions()[0]->setEnabled(true);
     }
-  } else
-    m_alignMethodCB->setEnabled(false);
+  }
 
   m_alignLeftBtn->setEnabled(m_alignLeftBtn->actions()[0]->isEnabled());
   m_alignRightBtn->setEnabled(m_alignRightBtn->actions()[0]->isEnabled());

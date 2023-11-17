@@ -563,18 +563,20 @@ StrokeSelection &StrokeSelection::operator=(const StrokeSelection &other) {
 //-----------------------------------------------------------------------------
 
 void StrokeSelection::select(int index, bool on) {
-  if (on)
-    m_indexes.insert(index);
-  else
-    m_indexes.erase(index);
+  std::vector<int>::iterator it = std::find(m_indexes.begin(), m_indexes.end(), index);
+  if (on) {
+    if (it == m_indexes.end()) m_indexes.push_back(index);
+  } else {
+    if (it != m_indexes.end()) m_indexes.erase(it);
+  }
 }
 
 //-----------------------------------------------------------------------------
 
 void StrokeSelection::toggle(int index) {
-  std::set<int>::iterator it = m_indexes.find(index);
+  std::vector<int>::iterator it = std::find(m_indexes.begin(), m_indexes.end(), index);
   if (it == m_indexes.end())
-    m_indexes.insert(index);
+    m_indexes.push_back(index);
   else
     m_indexes.erase(it);
 }
@@ -626,7 +628,7 @@ void StrokeSelection::selectAll() {
   int sCount = int(m_vi->getStrokeCount());
 
   for (int s = 0; s < sCount; ++s) {
-    m_indexes.insert(s);
+    m_indexes.push_back(s);
   }
 
   StrokeSelection *selection = dynamic_cast<StrokeSelection *>(
@@ -659,9 +661,11 @@ void StrokeSelection::deleteStrokes() {
         tool->getXsheet()->getStageObject(tool->getObjectId())->getSpline());
 
   StrokesData *data = new StrokesData();
-  data->setImage(m_vi, m_indexes);
-  std::set<int> oldIndexes = m_indexes;
-  deleteStrokesWithoutUndo(m_vi, m_indexes);
+  std::set<int> indexSet(m_indexes.begin(), m_indexes.end());
+  data->setImage(m_vi, indexSet);
+  std::set<int> oldIndexes = indexSet;
+  deleteStrokesWithoutUndo(m_vi, indexSet);
+  m_indexes.clear();
 
   if (!isSpline) {
     TXshSimpleLevel *level =
@@ -684,7 +688,8 @@ void StrokeSelection::copy() {
   if (m_indexes.empty()) return;
   QClipboard *clipboard = QApplication::clipboard();
   QMimeData *oldData    = cloneData(clipboard->mimeData());
-  copyStrokesWithoutUndo(m_vi, m_indexes);
+  std::set<int> indexSet(m_indexes.begin(), m_indexes.end());
+  copyStrokesWithoutUndo(m_vi, indexSet);
   QMimeData *newData = cloneData(clipboard->mimeData());
 
   // TUndoManager::manager()->add(new CopyStrokesUndo(oldData, newData));
@@ -731,12 +736,16 @@ void StrokeSelection::paste() {
   TPaletteP palette       = tarImg->getPalette();
   TPaletteP oldPalette    = new TPalette();
   if (palette) oldPalette = palette->clone();
-  bool isPaste = pasteStrokesWithoutUndo(tarImg, m_indexes, m_sceneHandle);
+  std::set<int> indexSet(m_indexes.begin(), m_indexes.end());
+  bool isPaste = pasteStrokesWithoutUndo(tarImg, indexSet, m_sceneHandle);
+
   if (isPaste) {
+    m_indexes.clear();
+    std::copy(indexSet.begin(), indexSet.end(), std::back_inserter(m_indexes));
     TXshSimpleLevel *level =
         TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
     TUndoManager::manager()->add(new PasteStrokesUndo(
-        level, tool->getCurrentFid(), m_indexes, oldPalette, m_sceneHandle,
+        level, tool->getCurrentFid(), indexSet, oldPalette, m_sceneHandle,
         tool->m_isFrameCreated, tool->m_isLevelCreated));
     m_updateSelectionBBox = isPaste;
   }
@@ -773,9 +782,11 @@ void StrokeSelection::cut() {
         tool->getXsheet()->getStageObject(tool->getObjectId())->getSpline());
 
   StrokesData *data = new StrokesData();
-  data->setImage(m_vi, m_indexes);
-  std::set<int> oldIndexes = m_indexes;
-  cutStrokesWithoutUndo(m_vi, m_indexes);
+  std::set<int> indexSet(m_indexes.begin(), m_indexes.end());
+  data->setImage(m_vi, indexSet);
+  std::set<int> oldIndexes = indexSet;
+  cutStrokesWithoutUndo(m_vi, indexSet);
+  m_indexes.clear();
   if (!isSpline) {
     TXshSimpleLevel *level =
         tool->getApplication()->getCurrentLevel()->getSimpleLevel();
@@ -804,7 +815,7 @@ void StrokeSelection::cut() {
 //    distribute h: min midX, max midX
 //    distribute v: min midY, max midY
 TPointD getAnchorPoint(ALIGN_TYPE alignType, int alignMethod, TVectorImageP vi,
-                       std::set<int> indexes) {
+                       std::vector<int> indexes) {
   double x, midX, maxX, midXLen, y, midY, maxY, midYLen;
   TRectD cameraRect = TTool::getApplication()
                           ->getCurrentScene()
@@ -848,7 +859,7 @@ TPointD getAnchorPoint(ALIGN_TYPE alignType, int alignMethod, TVectorImageP vi,
     midX        = bbox.x0 + midXLen;
     midYLen     = (bbox.getLy() / 2.0);
     midY        = bbox.y0 + midYLen;
-    if (!ptSet) {
+    if (!ptSet || alignMethod == ALIGN_METHOD::LAST_SELECTED) {
       ptSet    = true;
       lastArea = area;
       if (alignType == ALIGN_TYPE::ALIGN_LEFT ||
@@ -874,6 +885,8 @@ TPointD getAnchorPoint(ALIGN_TYPE alignType, int alignMethod, TVectorImageP vi,
         x = y = midY;
         lenA = lenB = midYLen;
       }
+
+      if (alignMethod == ALIGN_METHOD::FIRST_SELECTED) break;
     } else {
       if (alignType == ALIGN_TYPE::DISTRIBUTE_H) {
         // Note: y will be used as maxX
@@ -1601,7 +1614,7 @@ void StrokeSelection::changeColorStyle(int styleIndex) {
   if (m_indexes.empty()) return;
 
   UndoSetStrokeStyle *undo = new UndoSetStrokeStyle(img, styleIndex);
-  std::set<int>::iterator it;
+  std::vector<int>::iterator it;
   for (it = m_indexes.begin(); it != m_indexes.end(); ++it) {
     int index = *it;
     assert(0 <= index && index < (int)img->getStrokeCount());

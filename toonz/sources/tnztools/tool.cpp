@@ -1422,9 +1422,9 @@ void TTool::tweenGuideStrokeToSelected() {
   StrokeSelection *strokeSelection =
       dynamic_cast<StrokeSelection *>(getSelection());
   if (!strokeSelection || strokeSelection->isEmpty()) return;
-  const std::set<int> &selectedStrokeIdxs = strokeSelection->getSelection();
-  const std::set<int>::iterator it        = selectedStrokeIdxs.begin();
-  int cStrokeIdx                          = *it;
+  const std::vector<int> &selectedStrokeIdxs = strokeSelection->getSelection();
+  std::vector<int>::const_iterator it        = selectedStrokeIdxs.begin();
+  int cStrokeIdx                             = *it;
 
   TStroke *cStroke = cvi->getStroke(cStrokeIdx);
   if (!cStroke) return;

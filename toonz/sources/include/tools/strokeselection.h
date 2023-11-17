@@ -40,7 +40,7 @@ class TSceneHandle;
 
 class DVAPI StrokeSelection final : public TSelection {
 public:
-  typedef std::set<int> IndexesContainer;
+  typedef std::vector<int> IndexesContainer;
 
 public:
   StrokeSelection();
@@ -59,7 +59,10 @@ public:
 
   bool isEmpty() const override { return m_indexes.empty(); }
   bool updateSelectionBBox() const { return m_updateSelectionBBox; }
-  bool isSelected(int index) const { return (m_indexes.count(index) > 0); }
+  bool isSelected(int index) const {
+    return (std::find(m_indexes.begin(), m_indexes.end(), index) !=
+            m_indexes.end());
+  }
   void select(int index, bool on);
   void toggle(int index);
   void selectNone() override { m_indexes.clear(); }

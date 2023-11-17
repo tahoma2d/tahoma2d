@@ -428,10 +428,9 @@ AdjustThicknessPopup::SelectionData::SelectionData(const TSelection *sel)
         resetIfInvalid();
 
         if (*m_this) {
-          const std::set<int> &strokeIdxs = selection.getSelection();
+          const std::vector<int> &strokeIdxs = selection.getSelection();
 
-          m_this->m_idxs =
-              std::vector<int>(strokeIdxs.begin(), strokeIdxs.end());
+          m_this->m_idxs = std::vector<int>(strokeIdxs);
 
           // Reset to empty in case no stroke was selected
           if (m_this->m_idxs.empty()) *m_this = SelectionData();
