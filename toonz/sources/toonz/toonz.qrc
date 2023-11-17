@@ -602,6 +602,14 @@
 
     <file>icons/dark/actions/16/clipping_mask.svg</file>
 
+    <file>icons/dark/actions/16/export_oca.svg</file>
+    <file>icons/dark/actions/16/export_xdts.svg</file>
+    <file>icons/dark/actions/16/export_tvpaint.svg</file>
+    <file>icons/dark/actions/16/export_soundtrack.svg</file>
+    <file>icons/dark/actions/16/export_cameratrack.svg</file>
+    <file>icons/dark/actions/16/export_xsheetpdf.svg</file>
+    <file>icons/dark/actions/16/export_smimages.svg</file>
+
     <!-- Keyframe -->
 		<file>icons/dark/actions/20/key_off.svg</file>
 		<file>icons/dark/actions/20/key_on.svg</file>
