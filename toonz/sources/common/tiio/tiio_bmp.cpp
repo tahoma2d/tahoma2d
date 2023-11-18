@@ -10,6 +10,7 @@
 #include "tpixelgr.h"
 #include "tproperty.h"
 //#include "tconvert.h"
+#include "texception.h"
 #include <stdio.h>
 
 //=========================================================
@@ -156,7 +157,10 @@ void BmpReader::open(FILE *file) {
 //---------------------------------------------------------
 
 void BmpReader::readHeader() {
-  if (!m_chan) return;
+  if (!m_chan) {
+    throw TException("Can't open file");
+    return;
+  }
 
   fseek(m_chan, 0L, SEEK_END);
   m_header.biFilesize = ftell(m_chan);
@@ -168,6 +172,7 @@ void BmpReader::readHeader() {
   signature[1] = fgetc(m_chan);
   if (signature[0] != 'B' || signature[1] != 'M') {
     m_corrupted = true;
+    throw TException("Unable to read file");
     return;
   }
 

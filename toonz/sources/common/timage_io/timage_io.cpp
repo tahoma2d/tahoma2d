@@ -132,12 +132,14 @@ void TImageReader::open() {
       }
     } catch (TException &e) {
       close();  // close() chiude il file e setta m_file a NULL.
-      QString msg = QString::fromStdWString(e.getMessage());
-      if (msg == QString("Old 4.1 Palette")) throw e;
-    } catch (std::string str) {
-      if (str == "Tiff file closed") m_file = NULL;
+//      QString msg = QString::fromStdWString(e.getMessage());
+//      if (msg == QString("Old 4.1 Palette")) throw e;
+      throw e;
+//    } catch (std::string str) {
+//      if (str == "Tiff file closed") m_file = NULL;
     } catch (...) {
       close();
+      throw;
     }
   }
 }
