@@ -31,6 +31,8 @@
 #include "toonz/toonzfolders.h"
 #include "toonz/tcolumnfx.h"
 
+#include "toonzqt/dvdialog.h"
+
 // TnzCore includes
 #include "timagecache.h"
 #include "tstream.h"
@@ -440,6 +442,11 @@ void ToonzScene::loadResources(bool withProgressDialog) {
     TXshLevel *level = m_levelSet->getLevel(i);
     try {
       level->load();
+    } catch (TException &e) {
+      QString msg;
+      msg = QObject::tr("It is not possible to load file %1.")
+                .arg(level->getPath().getQString());
+      DVGui::error(msg);
     } catch (...) {
     }
   }

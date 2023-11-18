@@ -1243,6 +1243,14 @@ void FlipBook::setLevel(const TFilePath &fp, TPalette *palette, int from,
     m_flipConsole->enableButton(FlipConsole::eSave, isSavable());
     m_flipConsole->showCurrentFrame();
     if (m_flags & eDontKeepFilesOpened) m_lr = TLevelReaderP();
+  } catch (TException &e) {
+//    QString msg = QString::fromStdWString(e.getMessage());
+
+    QString msg;
+    msg = QObject::tr("It is not possible to load file %1.").arg(fp.getQString());
+    DVGui::error(msg);
+
+    return;
   } catch (...) {
     return;
   }

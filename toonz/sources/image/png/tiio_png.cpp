@@ -120,18 +120,24 @@ public:
     try {
       m_chan = file;
     } catch (...) {
-      perror("uffa");
+      throw TException("Can't open file");
       return;
     }
 
     unsigned char signature[8];  // da 1 a 8 bytes
     fread(signature, 1, sizeof signature, m_chan);
     bool isPng = !png_sig_cmp(signature, 0, sizeof signature);
-    if (!isPng) return;
+    if (!isPng) {
+      throw TException("Can't open file");
+      return;
+    }
 
     m_png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, &m_canDelete,
                                        tnz_error_fun, 0);
-    if (!m_png_ptr) return;
+    if (!m_png_ptr) {
+      throw TException("Unable to read file");
+      return;
+    }
 
 #if defined(PNG_LIBPNG_VER)
 #if (PNG_LIBPNG_VER >= 10527)
@@ -144,11 +150,13 @@ public:
     m_info_ptr  = png_create_info_struct(m_png_ptr);
     if (!m_info_ptr) {
       png_destroy_read_struct(&m_png_ptr, (png_infopp)0, (png_infopp)0);
+      throw TException("Unable to read file");
       return;
     }
     m_end_info_ptr = png_create_info_struct(m_png_ptr);
     if (!m_end_info_ptr) {
       png_destroy_read_struct(&m_png_ptr, &m_info_ptr, (png_infopp)0);
+      throw TException("Unable to read file");
       return;
     }
 
@@ -268,11 +276,15 @@ public:
       if (m_tempBuffer && m_y == ly) {
         m_tempBuffer.reset();
       }
+      throw TException("Unable to read file");
       return;
     }
 
     int y = m_info.m_ly - 1 - m_y;
-    if (y < 0) return;
+    if (y < 0) {
+      throw TException("Unable to read file");
+      return;
+    }
     m_y++;
 
     png_bytep row_pointer = m_rowBuffer.get();
