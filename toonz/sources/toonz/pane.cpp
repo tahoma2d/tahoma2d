@@ -814,8 +814,12 @@ TPanel *TPanelFactory::createPanel(QWidget *parent, QString panelType) {
   if (it == tableInstance().end()) {
     if (panelType.startsWith("Custom_")) {
       panelType = panelType.right(panelType.size() - 7);
-      return CustomPanelManager::instance()->createCustomPanel(panelType,
-                                                               parent);
+      panel =
+          CustomPanelManager::instance()->createCustomPanel(panelType, parent);
+      panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+      connect(TApp::instance(), SIGNAL(showTitleBars(bool)),
+              panel->getTitleBar(), SLOT(showTitleBar(bool)));
+      return panel;
     }
 
     TPanel *panel = new TPanel(parent);
