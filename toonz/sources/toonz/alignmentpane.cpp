@@ -25,11 +25,7 @@ AlignmentPane::AlignmentPane(QWidget* parent, Qt::WindowFlags flags)
   setObjectName("AlignmentPanel");
 
   m_alignMethodCB = new QComboBox();
-  QStringList inputs;
-  inputs << tr("Selection Area") << tr("First Selected")
-         << tr("Last Selected") << tr("Smallest Object")
-         << tr("Largest Object") << tr("Camera");
-  m_alignMethodCB->addItems(inputs);
+  m_alignMethodCB->addItem(tr("Selection Area"));
   m_alignMethodCB->setCurrentIndex(0);
 
   QAction* action;
@@ -153,7 +149,7 @@ void AlignmentPane::updateButtons() {
 
     inputs << tr("Selection Area") << tr("First Selected")
            << tr("Last Selected") << tr("Smallest Object")
-           << tr("Largest Object") << tr("Camera");
+           << tr("Largest Object") << tr("Camera Area");
     m_alignMethodCB->clear();
     m_alignMethodCB->addItems(inputs);
     if (method >= inputs.size()) method = 0;
@@ -193,7 +189,8 @@ void AlignmentPane::updateButtons() {
       tool->getName() == T_ControlPointEditor) {
     // Disable distribute if not Selection Area or Camera or if other buttons
     // are disabled
-    if ((method > ALIGN_METHOD::SELECT_AREA && method < ALIGN_METHOD::CAMERA) ||
+    if ((method > ALIGN_METHOD::SELECT_AREA &&
+         method < ALIGN_METHOD::CAMERA_AREA) ||
         !m_alignLeftBtn->actions()[0]->isEnabled()) {
       m_distributeHBtn->actions()[0]->setEnabled(false);
       m_distributeVBtn->actions()[0]->setEnabled(false);

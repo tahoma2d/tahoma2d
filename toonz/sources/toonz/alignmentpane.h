@@ -29,7 +29,7 @@ enum ALIGN_METHOD {
   LAST_SELECTED,
   SMALLEST_OBJECT,
   LARGEST_OBJECT,
-  CAMERA
+  CAMERA_AREA
 };
 
 class AlignmentPane final : public QFrame {

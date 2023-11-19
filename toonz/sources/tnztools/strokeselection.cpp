@@ -387,7 +387,7 @@ public:
     TVectorImageP vi = m_level->getFrame(m_frameId, true);
     std::vector<std::pair<TStroke *, TPointD>> newPts;
 
-    int strokeCount = m_alignMethod == ALIGN_METHOD::CAMERA ? -1 : 0;
+    int strokeCount = m_alignMethod == ALIGN_METHOD::CAMERA_AREA ? -1 : 0;
     double shift;
     std::set<int> groups;
     int groupDepth = vi->isInsideGroup();
@@ -824,7 +824,7 @@ TPointD getAnchorPoint(ALIGN_TYPE alignType, int alignMethod, TVectorImageP vi,
                           ->getStageRect();
 
   // Camera - except distribution
-  if (alignMethod == ALIGN_METHOD::CAMERA &&
+  if (alignMethod == ALIGN_METHOD::CAMERA_AREA &&
       alignType != ALIGN_TYPE::DISTRIBUTE_H &&
       alignType != ALIGN_TYPE::DISTRIBUTE_V) {
     if (alignType == ALIGN_TYPE::ALIGN_LEFT ||
@@ -890,7 +890,7 @@ TPointD getAnchorPoint(ALIGN_TYPE alignType, int alignMethod, TVectorImageP vi,
     } else {
       if (alignType == ALIGN_TYPE::DISTRIBUTE_H) {
         // Note: y will be used as maxX
-        if (alignMethod == ALIGN_METHOD::CAMERA) {
+        if (alignMethod == ALIGN_METHOD::CAMERA_AREA) {
           if (midX < x) {
             x    = midX;
             lenA = midXLen;
@@ -905,7 +905,7 @@ TPointD getAnchorPoint(ALIGN_TYPE alignType, int alignMethod, TVectorImageP vi,
         }
       } else if (alignType == ALIGN_TYPE::DISTRIBUTE_V) {
         // Note: x will be used as minY
-        if (alignMethod == ALIGN_METHOD::CAMERA) {
+        if (alignMethod == ALIGN_METHOD::CAMERA_AREA) {
           if (midY < x) {
             x    = midY;
             lenA = midYLen;
@@ -963,7 +963,7 @@ TPointD getAnchorPoint(ALIGN_TYPE alignType, int alignMethod, TVectorImageP vi,
   if (alignType == ALIGN_TYPE::ALIGN_CENTER_H ||
       alignType == ALIGN_TYPE::ALIGN_CENTER_V)
     return TPointD((maxX + x) / 2.0, (maxY + y) / 2.0);
-  else if (alignMethod == ALIGN_METHOD::CAMERA) {
+  else if (alignMethod == ALIGN_METHOD::CAMERA_AREA) {
     if (alignType == ALIGN_TYPE::DISTRIBUTE_H)
       return TPointD(cameraRect.x0 + lenA, cameraRect.x1 - lenB);
     else if (alignType == ALIGN_TYPE::DISTRIBUTE_V)
@@ -980,7 +980,7 @@ void StrokeSelection::alignStrokesLeft() {
   if (!tool) return;
 
   int alignMethod = tool->getAlignMethod();
-  if (alignMethod != ALIGN_METHOD::CAMERA && m_indexes.size() < 2) return;
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 2) return;
 
   if (!isEditable()) {
     DVGui::error(QObject::tr("The selection is not editable."));
@@ -1034,7 +1034,7 @@ void StrokeSelection::alignStrokesRight() {
   if (!tool) return;
 
   int alignMethod = tool->getAlignMethod();
-  if (alignMethod != ALIGN_METHOD::CAMERA && m_indexes.size() < 2) return;
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 2) return;
 
   if (!isEditable()) {
     DVGui::error(QObject::tr("The selection is not editable."));
@@ -1088,7 +1088,7 @@ void StrokeSelection::alignStrokesTop() {
   if (!tool) return;
 
   int alignMethod = tool->getAlignMethod();
-  if (alignMethod != ALIGN_METHOD::CAMERA && m_indexes.size() < 2) return;
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 2) return;
 
   if (!isEditable()) {
     DVGui::error(QObject::tr("The selection is not editable."));
@@ -1142,7 +1142,7 @@ void StrokeSelection::alignStrokesBottom() {
   if (!tool) return;
 
   int alignMethod = tool->getAlignMethod();
-  if (alignMethod != ALIGN_METHOD::CAMERA && m_indexes.size() < 2) return;
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 2) return;
 
   if (!isEditable()) {
     DVGui::error(QObject::tr("The selection is not editable."));
@@ -1196,7 +1196,7 @@ void StrokeSelection::alignStrokesCenterH() {
   if (!tool) return;
 
   int alignMethod = tool->getAlignMethod();
-  if (alignMethod != ALIGN_METHOD::CAMERA && m_indexes.size() < 2) return;
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 2) return;
 
   if (!isEditable()) {
     DVGui::error(QObject::tr("The selection is not editable."));
@@ -1249,7 +1249,7 @@ void StrokeSelection::alignStrokesCenterV() {
   if (!tool) return;
 
   int alignMethod = tool->getAlignMethod();
-  if (alignMethod != ALIGN_METHOD::CAMERA && m_indexes.size() < 2) return;
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 2) return;
 
   if (!isEditable()) {
     DVGui::error(QObject::tr("The selection is not editable."));
@@ -1323,7 +1323,7 @@ void StrokeSelection::distributeStrokesH() {
   if (!tool) return;
 
   int alignMethod = tool->getAlignMethod();
-  if (alignMethod != ALIGN_METHOD::CAMERA && m_indexes.size() < 3 ||
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 3 ||
       m_indexes.size() < 2)
     return;
 
@@ -1366,7 +1366,8 @@ void StrokeSelection::distributeStrokesH() {
     TRectD gBBox;
     if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
     double midX = bbox.x0 + (bbox.getLx() / 2.0);
-    if (alignMethod != ALIGN_METHOD::CAMERA && (midX == minX || midX == maxX))
+    if (alignMethod != ALIGN_METHOD::CAMERA_AREA &&
+        (midX == minX || midX == maxX))
       continue;
     int groupId = m_vi->getGroupByStroke(e);
     if (groupId < 0 || strokeGroupDepth == groupDepth)
@@ -1379,7 +1380,7 @@ void StrokeSelection::distributeStrokesH() {
     undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
   }
 
-  if (alignMethod == ALIGN_METHOD::CAMERA) strokeCount -= 2;
+  if (alignMethod == ALIGN_METHOD::CAMERA_AREA) strokeCount -= 2;
 
   double distX = (maxX - minX) / (double)(strokeCount + 1);
 
@@ -1428,7 +1429,7 @@ void StrokeSelection::distributeStrokesV() {
   if (!tool) return;
 
   int alignMethod = tool->getAlignMethod();
-  if (alignMethod != ALIGN_METHOD::CAMERA && m_indexes.size() < 3 ||
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 3 ||
       m_indexes.size() < 2)
     return;
 
@@ -1471,7 +1472,8 @@ void StrokeSelection::distributeStrokesV() {
     TRectD gBBox;
     if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
     double midY = bbox.y0 + (bbox.getLy() / 2.0);
-    if (alignMethod != ALIGN_METHOD::CAMERA && (midY == minY || midY == maxY))
+    if (alignMethod != ALIGN_METHOD::CAMERA_AREA &&
+        (midY == minY || midY == maxY))
       continue;
     int groupId = m_vi->getGroupByStroke(e);
     if (groupId < 0 || strokeGroupDepth == groupDepth)
@@ -1484,7 +1486,7 @@ void StrokeSelection::distributeStrokesV() {
     undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
   }
 
-  if (alignMethod == ALIGN_METHOD::CAMERA) strokeCount -= 2;
+  if (alignMethod == ALIGN_METHOD::CAMERA_AREA) strokeCount -= 2;
 
   double distY = (maxY - minY) / (double)(strokeCount + 1);
 
