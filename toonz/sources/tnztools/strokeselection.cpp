@@ -35,6 +35,7 @@
 #include "toonz/tframehandle.h"
 #include "toonz/txsheethandle.h"
 #include "toonz/tstageobject.h"
+#include "toonz/tcolumnhandle.h"
 
 // TnzCore includes
 #include "tthreadmessage.h"
@@ -43,6 +44,8 @@
 #include "tvectorimage.h"
 #include "tcolorstyles.h"
 #include "tpalette.h"
+
+#include "toonz/tstageobject.h"
 
 // Qt includes
 #include <QApplication>
@@ -822,6 +825,38 @@ TPointD getAnchorPoint(ALIGN_TYPE alignType, int alignMethod, TVectorImageP vi,
                           ->getScene()
                           ->getCurrentCamera()
                           ->getStageRect();
+
+  TApplication *app   = TTool::getApplication();
+  bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
+
+  if (alignMethod == ALIGN_METHOD::CAMERA_AREA && !isEditingLevel) {
+    TTool *tool = app->getCurrentTool()->getTool();
+    if (tool) {
+      int frame    = app->getCurrentFrame()->getFrameIndex();
+      int col      = app->getCurrentColumn()->getColumnIndex();
+      TXsheet *xsh = tool->getXsheet();
+      TStageObjectId currentCamId =
+          TStageObjectId::CameraId(xsh->getCameraColumnIndex());
+      TStageObjectId levelId = TStageObjectId::ColumnId(col);
+
+      TAffine camAff = xsh->getPlacement(currentCamId, frame);
+      TAffine lvlAff = xsh->getPlacement(levelId, frame);
+
+      TPointD blPt =
+          lvlAff.inv() * camAff * TPointD(cameraRect.x0, cameraRect.y0);
+      TPointD brPt =
+          lvlAff.inv() * camAff * TPointD(cameraRect.x1, cameraRect.y0);
+      TPointD tlPt =
+          lvlAff.inv() * camAff * TPointD(cameraRect.x0, cameraRect.y1);
+      TPointD trPt =
+          lvlAff.inv() * camAff * TPointD(cameraRect.x1, cameraRect.y1);
+
+      cameraRect.x0 = (blPt.x + tlPt.x) / 2.0;
+      cameraRect.y0 = (blPt.y + brPt.y) / 2.0;
+      cameraRect.x1 = (brPt.x + trPt.x) / 2.0;
+      cameraRect.y1 = (tlPt.y + trPt.y) / 2.0;
+    }
+  }
 
   // Camera - except distribution
   if (alignMethod == ALIGN_METHOD::CAMERA_AREA &&
