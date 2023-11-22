@@ -693,6 +693,12 @@ bool GPhotoCam::getGPhotocamImage() {
 
   l_quitLoop = false;
   StopMotion::instance()->m_liveViewImage = converter->getImage();
+
+  if (!StopMotion::instance()->m_liveViewImage) {
+    m_previewImageReady = false;
+    return false;
+  }
+
   StopMotion::instance()->m_hasLiveViewImage = true;
 
   m_previewImageReady = false;

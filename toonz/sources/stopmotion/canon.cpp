@@ -1352,6 +1352,10 @@ bool Canon::downloadEVFData() {
 
     l_quitLoop                                 = false;
     StopMotion::instance()->m_liveViewImage    = converter->getImage();
+
+    if (!StopMotion::instance()->m_liveViewImage)
+      return false;
+
     StopMotion::instance()->m_hasLiveViewImage = true;
 
     uchar* imgBuf = StopMotion::instance()->m_liveViewImage->getRawData();
