@@ -303,7 +303,10 @@ StopMotion::StopMotion() {
                        SLOT(directDslrImage()));
   assert(ret);
   ret = ret && connect(m_canon, SIGNAL(canonCameraChanged(QString)), this,
-                       SLOT(onCanonCameraChanged(QString)));
+                       SLOT(onCameraChanged(QString)));
+  ret = ret && connect(m_gphotocam, SIGNAL(gphotoCameraChanged(QString)), this,
+                       SLOT(onCameraChanged(QString)));
+
   assert(ret);
 
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
@@ -464,8 +467,7 @@ void StopMotion::disconnectAllCameras() {
   m_liveViewDpi             = TPointD(0, 0);
 
   emit(intervalToggled(false));
-  emit(liveViewChanged(false));
-  emit(liveViewStopped());
+  stopLiveView();
   emit(newCameraSelected(0));
   toggleNumpadShortcuts(false);
 }
@@ -3380,8 +3382,7 @@ void StopMotion::changeCameras(int comboIndex, CameraType cameraType,
   if (m_isTimeLapse && m_intervalStarted) {
     stopInterval();
   }
-  emit(liveViewStopped());
-  emit(liveViewChanged(false));
+  stopLiveView();
   refreshFrameInfo();
   // after all live view data is cleared, start it again.
   if (liveViewStatus > LiveViewClosed) {
@@ -3478,8 +3479,7 @@ bool StopMotion::toggleLiveView() {
     if (m_currentCameraType == CameraType::Web) m_webcam->releaseWebcam();
 
     m_timer->stop();
-    emit(liveViewStopped());
-    emit(liveViewChanged(false));
+    stopLiveView();
     if (m_turnOnRewind) {
       Preferences::instance()->setValue(rewindAfterPlayback, true);
     }
@@ -3516,8 +3516,10 @@ void StopMotion::toggleAlwaysUseLiveViewImages() {
 
 //-----------------------------------------------------------------
 
-void StopMotion::onCanonCameraChanged(QString camera) {
+void StopMotion::onCameraChanged(QString camera) {
+  if (camera.isEmpty()) m_currentCameraType = CameraType::None;
   emit(cameraChanged(camera));
+  emit(updateStopMotionControls());
 }
 
 //-----------------------------------------------------------------
@@ -3660,6 +3662,14 @@ void StopMotion::adjustLiveViewZoomPickPoint(int x, int y) {
     m_gphotocam->m_liveViewZoomPickPoint.y += y;
   }
 #endif
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::stopLiveView() {
+  m_liveViewStatus = 0;
+  emit(liveViewChanged(false));
+  emit(liveViewStopped());
 }
 
 //=============================================================================

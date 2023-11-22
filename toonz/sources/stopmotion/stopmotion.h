@@ -252,6 +252,8 @@ public:
   void setZoomPoint();
   void adjustLiveViewZoomPickPoint(int x, int y);
 
+  void stopLiveView();
+
 public slots:
   // timers
   void onTimeout();
@@ -263,7 +265,7 @@ public slots:
   void directDslrImage();
   void onSceneSwitched();
   void onPlaybackChanged();
-  void onCanonCameraChanged(QString);
+  void onCameraChanged(QString);
 
 signals:
   // camera stuff
