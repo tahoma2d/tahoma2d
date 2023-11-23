@@ -1831,6 +1831,12 @@ void StopMotion::captureImage() {
     return;
   }
 
+  if (m_currentCameraType == CameraType::Web &&
+      (!m_hasLiveViewImage || m_liveViewStatus != LiveViewOpen)) {
+    DVGui::warning(tr("Cannot capture image unless live view is active."));
+    return;
+  }
+
   if (m_isTimeLapse && !m_intervalStarted) {
     startInterval();
     return;
@@ -1839,12 +1845,6 @@ void StopMotion::captureImage() {
     stopInterval();
     return;
   }
-/*
-  if (!m_hasLiveViewImage || m_liveViewStatus != LiveViewOpen) {
-    DVGui::warning(tr("Cannot capture image unless live view is active."));
-    return;
-  }
-*/
 
   bool sessionOpen = false;
 #ifdef WITH_CANON
