@@ -21,8 +21,6 @@ then
    rm -rf $TOONZDIR/Tahoma2D.app/tahomastuff
 fi
 
-find $TOONZDIR/Tahoma2D.app/tahomastuff -name .gitkeep -exec rm -f {} \;
-
 if [ -d thirdparty/apps/ffmpeg/bin ]
 then
    echo ">>> Copying FFmpeg to Tahoma2D.app/ffmpeg"
@@ -187,6 +185,8 @@ echo ">>> Creating Tahoma2D-portable-osx.dmg"
 
 cp -R stuff $TOONZDIR/Tahoma2D.app/tahomastuff
 chmod -R 777 $TOONZDIR/Tahoma2D.app/tahomastuff
+
+find $TOONZDIR/Tahoma2D.app/tahomastuff -name .gitkeep -exec rm -f {} \;
    
 $QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -dmg -verbose=0
 
