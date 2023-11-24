@@ -1036,13 +1036,11 @@ void MainWindow::onUndo() {
 
   ToolHandle *toolH = TApp::instance()->getCurrentTool();
 
-  // end tool use to avoid applying tool on removed layer on undo
-  if (toolH->isToolBusy()) {
-    toolH->getTool()->onDeactivate();
+  // do not use undo if tool is currently in use
+  if (!toolH->isToolBusy()) {
+    bool ret = TUndoManager::manager()->undo();
+    if (!ret) DVGui::error(QObject::tr("No more Undo operations available."));
   }
-
-  bool ret = TUndoManager::manager()->undo();
-  if (!ret) DVGui::error(QObject::tr("No more Undo operations available."));
 }
 
 //-----------------------------------------------------------------------------
