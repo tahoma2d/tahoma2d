@@ -1866,6 +1866,8 @@ void StopMotion::captureImage() {
     m_camSnapSound->play();
   }
 
+  emit captureStarted();
+
   if (m_currentCameraType == CameraType::Web) {
     captureWebcamImage();
   } else {
@@ -1890,6 +1892,7 @@ void StopMotion::captureWebcamImage() {
     m_hasLineUpImage = true;
     emit(newLiveViewImageReady());
     importImage();
+    emit captureComplete();
     return;
   }
 }
@@ -1971,6 +1974,8 @@ void StopMotion::directDslrImage() {
   else
     importImage();
 
+   emit captureComplete();
+
 #ifdef WITH_CANON
   if (m_currentCameraType == CameraType::CanonDSLR &&
       m_canon->m_liveViewExposureOffset != 0)
@@ -2009,6 +2014,17 @@ void StopMotion::postImportProcess() {
 //-----------------------------------------------------------------
 
 void StopMotion::takeTestShot() {
+  if (m_currentCameraType == CameraType::None) {
+    DVGui::warning(tr("No camera selected."));
+    return;
+  }
+
+  if (m_currentCameraType == CameraType::Web &&
+      (!m_hasLiveViewImage || m_liveViewStatus != LiveViewOpen)) {
+    DVGui::warning(tr("Cannot capture image unless live view is active."));
+    return;
+  }
+
   bool sessionOpen = false;
 #ifdef WITH_CANON
   if (m_currentCameraType == CameraType::CanonDSLR)
@@ -2024,13 +2040,18 @@ void StopMotion::takeTestShot() {
     DVGui::warning(tr("Please start live view before capturing an image."));
     return;
   }
+
   m_isTestShot = true;
+
+  emit captureStarted();
+
   if (m_currentCameraType == CameraType::Web) {
     if (m_light->useOverlays()) {
       m_light->showOverlays();
       m_webcamOverlayTimer->start(500);
     } else {
       saveTestShot();
+      emit captureComplete();
     }
   } else {
     TApp *app           = TApp::instance();

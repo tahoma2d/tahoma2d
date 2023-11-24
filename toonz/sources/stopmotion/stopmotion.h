@@ -276,6 +276,8 @@ signals:
   void updateCameraList(QString);
   void changeCameraIndex(int);
   void updateStopMotionControls();
+  void captureStarted();
+  void captureComplete();
 
   // live view and images
   void newLiveViewImageReady();
