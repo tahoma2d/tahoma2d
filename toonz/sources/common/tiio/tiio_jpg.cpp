@@ -86,6 +86,15 @@ JpgReader::~JpgReader() {
 Tiio::RowOrder JpgReader::getRowOrder() const { return Tiio::TOP2BOTTOM; }
 
 void JpgReader::open(FILE *file) {
+  // Let's check to see if it is really a JPEG file
+  unsigned char signature[3];
+  fread(signature, 3, 1, file);
+  fseek(file, 0, SEEK_SET);
+  if (signature[0] != 0xff || signature[1] != 0xd8 || signature[2] != 0xff) {
+    throw TException("Can't open file");
+    return;
+  }
+
   m_cinfo.err                 = jpeg_std_error(&m_jerr);
   m_cinfo.err->error_exit     = tnz_error_exit;
   m_cinfo.err->output_message = tnz_output_message;
