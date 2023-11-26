@@ -271,6 +271,8 @@ ResourceData TFxCacheManager::getResource(const std::string &alias,
                                           const TRenderSettings &rs) {
   TCacheResourceP result, temp;
 
+  if (rs.m_applyMask) return ResourceData(0, result);
+
   // Seek the associated infos
   Imp::ResourceInstanceDataMap::iterator jt =
       m_imp->m_resourcesData.find(alias);
