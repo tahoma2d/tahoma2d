@@ -35,12 +35,21 @@ void doGPSleep(int ms) {
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
+bool gp_crit_error;
+QString gp_error_msg;
+char *gp_error_data;
 
 static void logdump(GPLogLevel level, const char *domain, const char *str,
                     void *data) {
-  if (level == GP_LOG_ERROR)
+  if (level == GP_LOG_ERROR) {
     qDebug() << "[GP_ERROR] " << QString(str);
-  else if (level == GP_LOG_VERBOSE) {
+    if (QString(str).contains("PTP No Device") ||
+        QString(str).contains("No such device")) {
+      gp_crit_error = true;
+      gp_error_msg  = QString(str);
+      gp_error_data = (char *)data;
+    }
+  } else if (level == GP_LOG_VERBOSE) {
     qDebug() << "[GP_VERBOSE] " << QString(str);
   } else if (level == GP_LOG_DEBUG) {
     qDebug() << "[GP_DEBUG] " << QString(str);
@@ -312,6 +321,21 @@ void GPhotoCam::onTimeout() {
   while (1) {
     if (!m_gpContext || !m_camera || m_exitRequested) break;
 
+    if (gp_crit_error) {
+      if (debug)
+        qDebug() << "[GphotoCamEventHandler] GP_ERROR " << (char *)gp_error_data
+                 << " encountered: " << gp_error_msg;
+      gp_crit_error = false;
+      gp_error_msg  = "";
+      free(gp_error_data);
+
+      m_sessionOpen = false;
+      releaseCamera();
+      StopMotion::instance()->stopLiveView();
+      emit gphotoCameraChanged(QString(""));
+      break;
+    }
+
     retVal =
         gp_camera_wait_for_event(m_camera, 1, &evttype, &evtdata, m_gpContext);
     if (retVal < GP_OK) break;
@@ -528,6 +552,10 @@ bool GPhotoCam::getCamera(int index) {
 bool GPhotoCam::initializeCamera() {
   if (!m_camera) return false;
 
+  gp_crit_error = false;
+  gp_error_msg  = "";
+  gp_error_data = 0;
+
   int retVal = gp_camera_init(m_camera, m_gpContext);
   if (retVal < GP_OK) return false;
 
@@ -665,6 +693,12 @@ bool GPhotoCam::getGPhotocamImage() {
 
   l_quitLoop = false;
   StopMotion::instance()->m_liveViewImage = converter->getImage();
+
+  if (!StopMotion::instance()->m_liveViewImage) {
+    m_previewImageReady = false;
+    return false;
+  }
+
   StopMotion::instance()->m_hasLiveViewImage = true;
 
   m_previewImageReady = false;

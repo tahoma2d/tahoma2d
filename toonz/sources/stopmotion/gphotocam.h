@@ -252,6 +252,7 @@ signals:
   void liveViewOffsetChangedSignal(int);
   void focusCheckToggled(bool);
   void pickFocusCheckToggled(bool);
+  void gphotoCameraChanged(QString);
 };
 
 #endif  // GPHOTOCAM_H

@@ -263,6 +263,8 @@ protected:
   void resizeEvent(QResizeEvent *event) override;
   void reflowTestShots();
 
+  void updateCaptureButton(bool captureStarted);
+
 protected slots:
   void refreshCameraList(QString activeCamera = "");
   void refreshCameraListCalled();
@@ -414,6 +416,8 @@ protected slots:
   void onNewCameraSelected(int);
   void onCameraIndexChanged(int);
   void onUpdateStopMotionControls();
+  void onCaptureStarted();
+  void onCaptureComplete();
 
   // webcam
   void onWebcamResolutionsChanged();
