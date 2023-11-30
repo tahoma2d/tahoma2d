@@ -2361,6 +2361,7 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
   m_invertMask->blockSignals(true);
   m_renderMask->blockSignals(true);
   if (containsVectorLevel(m_column->getIndex())) {
+    m_maskGroupBox->setVisible(true);
     m_maskGroupBox->setChecked(m_column->isMask());
     m_maskGroupBox->setEnabled(true);
     m_invertMask->setChecked(m_column->isInvertedMask());
@@ -2370,6 +2371,7 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
     m_maskGroupBox->setEnabled(false);
     m_invertMask->setChecked(false);
     m_renderMask->setChecked(false);
+    m_maskGroupBox->setVisible(false);
   }
   m_maskGroupBox->blockSignals(false);
   m_invertMask->blockSignals(false);
@@ -2999,23 +3001,32 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
         m_columnTransparencyPopup->move(event->globalPos().x() + x,
                                         event->globalPos().y() - y);
 
+        openTransparencyPopup();
+
         // make sure the popup doesn't go off the screen to the right
         QDesktopWidget *desktop = qApp->desktop();
         QRect screenRect        = desktop->screenGeometry(app->getMainWindow());
 
-        int popupLeft  = event->globalPos().x() + x;
-        int popupRight = popupLeft + m_columnTransparencyPopup->width();
+        int popupLeft   = event->globalPos().x() + x;
+        int popupRight  = popupLeft + m_columnTransparencyPopup->width();
+        int popupTop    = event->globalPos().y() - y;
+        int popupBottom = popupTop + m_columnTransparencyPopup->height();
 
         // first condition checks if popup is on same monitor as main app;
         // if popup is on different monitor, leave as is
-        if (popupLeft < screenRect.right() && popupRight > screenRect.right()) {
-          int distance = popupRight - screenRect.right();
-          m_columnTransparencyPopup->move(
-              m_columnTransparencyPopup->x() - distance,
-              m_columnTransparencyPopup->y());
+        int distanceX = 0;
+        int distanceY = 0;
+        if (popupLeft < screenRect.right() && popupRight > screenRect.right())
+          distanceX = popupRight - screenRect.right();
+        if (popupTop < screenRect.bottom() &&
+            popupBottom > screenRect.bottom()) {
+          distanceY = popupBottom - screenRect.bottom();
+          distanceX -= configRect.width() - 1;  // Move right to not hide button
         }
-
-        openTransparencyPopup();
+        if (distanceX != 0 || distanceY != 0)
+          m_columnTransparencyPopup->move(
+              m_columnTransparencyPopup->x() - distanceX,
+              m_columnTransparencyPopup->y() - distanceY);
       }
     } else if (m_doOnRelease == ToggleAllPreviewVisible) {
       for (col = 0; col < totcols; col++) {

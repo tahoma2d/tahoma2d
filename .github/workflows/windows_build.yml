@@ -24,11 +24,11 @@ jobs:
       - name: Get CanonSDK
         if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' }}
         run: |
-          curl -H "Authorization: token ${{ secrets.TAHOMA2D_TOKEN }}" -H "Accept:application/octet-stream" -fsSL -o EDSDK_v131231_Windows.zip https://api.github.com/repos/tahoma2d/CanonSDK/releases/assets/25267396
-          7z x EDSDK_v131231_Windows.zip -oEDSDK_v131231_Windows
-          move EDSDK_v131231_Windows\EDSDK\Header thirdparty\canon
-          move EDSDK_v131231_Windows\EDSDK_64\Dll thirdparty\canon
-          move EDSDK_v131231_Windows\EDSDK_64\Library thirdparty\canon
+          curl -H "Authorization: token ${{ secrets.TAHOMA2D_TOKEN }}" -H "Accept:application/octet-stream" -fsSL -o EDSDK_Windows.zip https://api.github.com/repos/tahoma2d/CanonSDK/releases/assets/132789036
+          7z x EDSDK_Windows.zip -oEDSDK_Windows
+          move EDSDK_Windows\EDSDK\Header thirdparty\canon
+          move EDSDK_Windows\EDSDK_64\Dll thirdparty\canon
+          move EDSDK_Windows\EDSDK_64\Library thirdparty\canon
       - name: Get 3rd Party Apps
         run: |
           ci-scripts\windows\tahoma-get3rdpartyapps.bat

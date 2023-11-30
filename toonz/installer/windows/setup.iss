@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Tahoma2D"
-#define MyAppVersion "1.3"
+#define MyAppVersion "1.4"
 #define MyAppPublisher "Tahoma2D"
 #define MyAppURL "https://tahoma2d.org/"
 #define MyAppExeName "Tahoma2D.exe"

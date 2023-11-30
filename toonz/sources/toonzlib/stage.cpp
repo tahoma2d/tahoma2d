@@ -633,7 +633,7 @@ void StageBuilder::addCellWithOnionSkin(PlayerSet &players, ToonzScene *scene,
 #ifdef NUOVO_ONION
       m_onionSkinDistance = rows[i] - row;
 #else
-      if (!Preferences::instance()->isAnimationSheetEnabled() ||
+      if (m_onionSkinMask.isEveryFrame() ||
           !alreadyAdded(xsh, row, i, rows, col)) {
         m_onionSkinDistance = (rows[i] - row) < 0 ? --backPos : ++frontPos;
         addCell(players, scene, xsh, rows[i], col, level, subSheetColIndex);

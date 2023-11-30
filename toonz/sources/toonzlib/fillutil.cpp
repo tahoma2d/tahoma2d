@@ -143,124 +143,6 @@ bool areRectPixelsTransparent(TPixel32 *pixels, TRect rect, int wrap) {
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-
-void finishGapLine(const TRasterCM32P &r, const TRasterCM32P &combined,
-                   const TPoint &pin, int clickedColorStyle, int fillColorStyle,
-                   int closeColorStyle, int searchRay, TRect *insideRect,
-                   bool closeGaps) {
-  r->lock();
-
-  TRasterCM32P myCombined;
-  if (!combined.getPointer() || combined->isEmpty()) {
-    myCombined = r;
-  } else {
-    myCombined = combined;
-  }
-
-  TPixelCM32 *pixels         = (TPixelCM32 *)r->getRawData();
-  TPixelCM32 *combinedPixels = (TPixelCM32 *)myCombined->getRawData();
-  ;
-  TPoint p             = pin;
-  int filledNeighbor   = 0;
-  int unfilledNeighbor = 0;
-  int inkStyle         = 0;
-  int paintStyle       = 0;
-  int toneValue        = 0;
-
-  TPixelCM32 *pix  = pixels + (p.y * r->getWrap() + p.x);
-  TPixelCM32 *pixc = combinedPixels + (p.y * myCombined->getWrap() + p.x);
-
-  std::stack<TPoint> gapLinePixels;
-  std::stack<TPoint> seeds;
-  seeds.push(p);
-
-  while (!seeds.empty()) {
-    p = seeds.top();
-    seeds.pop();
-
-    if (!r->getBounds().contains(p)) {
-      continue;
-    }
-    if (insideRect && !insideRect->contains(p)) {
-      continue;
-    }
-
-    TPixelCM32 *pix  = pixels + (p.y * r->getWrap() + p.x);
-    TPixelCM32 *pixc = combinedPixels + (p.y * myCombined->getWrap() + p.x);
-
-    // handle gap close pixel
-    if (pix->getInk() == GAP_CLOSE_USED) continue;
-    if (pix->getInk() == GAP_CLOSE_TEMP) {
-      pix->setInk(GAP_CLOSE_USED);
-      // push to the gapLinePixels collection for later processing as a line
-      gapLinePixels.push(p);
-
-      // push neighboring pixels into the seeds queue
-      seeds.push(TPoint(p.x - 1, p.y - 1));  // sw
-      seeds.push(TPoint(p.x - 1, p.y));      // west
-      seeds.push(TPoint(p.x - 1, p.y + 1));  // nw
-      seeds.push(TPoint(p.x, p.y - 1));      // south
-      seeds.push(TPoint(p.x, p.y + 1));      // north
-      seeds.push(TPoint(p.x + 1, p.y - 1));  // se
-      seeds.push(TPoint(p.x + 1, p.y));      // east
-      seeds.push(TPoint(p.x + 1, p.y + 1));  // ne
-      continue;
-    }
-    // a neighboring filled pixel
-    if (pix->getTone() > 0 && pix->getPaint() == fillColorStyle) {
-      filledNeighbor++;
-      continue;
-    }
-    // a neighboring fillable but unfilled pixel
-    if ((pix->getTone() == 255 &&
-         ((pix->getPaint() == clickedColorStyle) || (pix->getPaint() == 0) ||
-          (pix->getPaint() == IGNORECOLORSTYLE))) &&
-        (pixc->getTone() == 255 && ((pixc->getPaint() == clickedColorStyle) ||
-                                    (pixc->getPaint() == 0)))) {
-      unfilledNeighbor++;
-      continue;
-    }
-  }
-
-  // determine the final disposition of the gap line
-  if (filledNeighbor > 0) {
-    if (unfilledNeighbor > 0) {
-      if (closeGaps) {
-        inkStyle   = closeColorStyle;
-        paintStyle = fillColorStyle;
-        toneValue  = 0;
-      } else {
-        inkStyle   = 0;
-        paintStyle = fillColorStyle;
-        toneValue  = 255;
-      }
-    } else {
-      inkStyle   = 0;
-      paintStyle = fillColorStyle;
-      toneValue  = 255;
-    }
-  } else {
-    inkStyle   = IGNORECOLORSTYLE;
-    paintStyle = 0;
-    toneValue  = 0;
-  }
-
-  // process the stored gap close line pixels
-  while (!gapLinePixels.empty()) {
-    p = gapLinePixels.top();
-    gapLinePixels.pop();
-
-    TPixelCM32 *pix = pixels + (p.y * r->getWrap() + p.x);
-
-    pix->setInk(inkStyle);
-    pix->setPaint(paintStyle);
-    pix->setTone(toneValue);
-  }
-
-  r->unlock();
-}
-
-//-----------------------------------------------------------------------------
 // This function finishes candidate gap lines that were created
 // during a fill process.
 // combined is the levels combined as is done for the "use visible" tool option
@@ -269,42 +151,219 @@ void finishGapLines(TRasterCM32P &rin, TRect &rect, const TRasterCM32P &rbefore,
                     int clickedColorStyle, int fillIndex, int closeColorStyle,
                     bool closeGaps) {
   assert(plt);
+  rin->lock();
+
   TRasterCM32P r = rin->extract(rect);
   assert(r->getSize() == rbefore->getSize());
   assert(r->getSize() == combined->getSize());
+
+  TRasterCM32P myCombined;
+  if (!combined.getPointer() || combined->isEmpty()) {
+    myCombined = r;
+  } else {
+    myCombined = combined;
+  }
+
   int i, j;
 
+  int filledNeighbor   = 0;
+  int unfilledNeighbor = 0;
+
+  std::stack<TPoint> gapLinePixels;
+  TPoint p;
+
+  // process all the pixels looking for gap close pixels
   for (i = 0; i < r->getLy(); i++) {
     TPixelCM32 *pix  = r->pixels(i);
     TPixelCM32 *pixb = rbefore->pixels(i);
+    TPixelCM32 *pixc = myCombined->pixels(i);
+
     for (j = 0; j < r->getLx(); j++, pix++, pixb++) {
       int paint = pix->getPaint();
       int tone  = pix->getTone();
       int ink   = pix->getInk();
 
-      if (ink == GAP_CLOSE_TEMP &&
-          (
-              // north
-              (i < rin->getLy() - 1 &&
-               (pix + rin->getWrap())->getPaint() == fillIndex &&
-               (pix + rin->getWrap())->getPaint() !=
-                   (pixb + rbefore->getWrap())->getPaint())
-              // south
-              || (i > 0 && (pix - rin->getWrap())->getPaint() == fillIndex &&
-                  (pix - rin->getWrap())->getPaint() !=
-                      (pixb - rbefore->getWrap())->getPaint())
-              // east
-              || (j < rin->getLx() - 1 && (pix + 1)->getPaint() == fillIndex &&
-                  (pix + 1)->getPaint() != (pixb + 1)->getPaint())
-              // west
-              || (j > 0 && (pix - 1)->getPaint() == fillIndex &&
-                  (pix - 1)->getPaint() != (pixb - 1)->getPaint()))) {
-        finishGapLine(rin, combined, TPoint(j, i) + rect.getP00(),
-                      clickedColorStyle, fillIndex, closeColorStyle, 0, &rect,
-                      closeGaps);
+      if (ink != GAP_CLOSE_TEMP) continue;
+      // current pixel is a gap close pixel, does it qualify to be kept?
+      filledNeighbor   = 0;
+      unfilledNeighbor = 0;
+
+      // check for new filled neighbor
+      // north
+      if (i < rin->getLy() - 1 && (pix + rin->getWrap())->getTone() == 255 &&
+          (pix + rin->getWrap())->getInk() < IGNORECOLORSTYLE &&
+          (pix + rin->getWrap())->getPaint() == fillIndex &&
+          (pix + rin->getWrap())->getPaint() !=
+              (pixb + rbefore->getWrap())->getPaint()) {
+        filledNeighbor++;
+      }
+      // south
+      if (i > 0 && (pix - rin->getWrap())->getTone() == 255 &&
+          (pix - rin->getWrap())->getInk() < IGNORECOLORSTYLE &&
+          (pix - rin->getWrap())->getPaint() == fillIndex &&
+          (pix - rin->getWrap())->getPaint() !=
+              (pixb - rbefore->getWrap())->getPaint()) {
+        filledNeighbor++;
+      }
+      // east
+      if (j < rin->getLx() - 1 && (pix + 1)->getTone() == 255 &&
+          (pix + 1)->getInk() < IGNORECOLORSTYLE &&
+          (pix + 1)->getPaint() == fillIndex &&
+          (pix + 1)->getPaint() != (pixb + 1)->getPaint()) {
+        filledNeighbor++;
+      }
+      // west
+      if (j > 0 && (pix - 1)->getTone() == 255 &&
+          (pix - 1)->getInk() < IGNORECOLORSTYLE &&
+          (pix - 1)->getPaint() == fillIndex &&
+          (pix - 1)->getPaint() != (pixb - 1)->getPaint()) {
+        filledNeighbor++;
+      }
+
+      // Check for fillable but unfilled pixel neighbor
+      // north
+      if ((i < rin->getLy() - 1 && (pix + rin->getWrap())->getTone() == 255 &&
+           (((pix + rin->getWrap())->getPaint() == clickedColorStyle) ||
+            ((pix + rin->getWrap())->getPaint() == 0) ||
+            ((pix + rin->getWrap())->getPaint() == IGNORECOLORSTYLE))) &&
+          ((pixc + myCombined->getWrap())->getTone() == 255 &&
+           (((pixc + myCombined->getWrap())->getPaint() == clickedColorStyle) ||
+            ((pixc + myCombined->getWrap())->getPaint() == 0)))) {
+        unfilledNeighbor++;
+      }
+      // south
+      if ((i > 0 && (pix - rin->getWrap())->getTone() == 255 &&
+           (((pix - rin->getWrap())->getPaint() == clickedColorStyle) ||
+            ((pix - rin->getWrap())->getPaint() == 0) ||
+            ((pix - rin->getWrap())->getPaint() == IGNORECOLORSTYLE))) &&
+          ((pixc - myCombined->getWrap())->getTone() == 255 &&
+           (((pixc - myCombined->getWrap())->getPaint() == clickedColorStyle) ||
+            ((pixc - myCombined->getWrap())->getPaint() == 0)))) {
+        unfilledNeighbor++;
+      }
+
+      // east
+      if ((j < rin->getLx() - 1 && (pix + 1)->getTone() == 255 &&
+           (((pix + 1)->getPaint() == clickedColorStyle) ||
+            ((pix + 1)->getPaint() == 0) ||
+            ((pix + 1)->getPaint() == IGNORECOLORSTYLE))) &&
+          ((pixc + 1)->getTone() == 255 &&
+           (((pixc + 1)->getPaint() == clickedColorStyle) ||
+            ((pixc + 1)->getPaint() == 0)))) {
+        unfilledNeighbor++;
+      }
+
+      // west
+      if ((j > 0 && (pix - 1)->getTone() == 255 &&
+           (((pix - 1)->getPaint() == clickedColorStyle) ||
+            ((pix - 1)->getPaint() == 0) ||
+            ((pix - 1)->getPaint() == IGNORECOLORSTYLE))) &&
+          ((pixc - 1)->getTone() == 255 &&
+           (((pixc - 1)->getPaint() == clickedColorStyle) ||
+            ((pixc - 1)->getPaint() == 0)))) {
+        unfilledNeighbor++;
+      }
+
+      // determine the final disposition of the gap line pixel
+      if (filledNeighbor > 0) {
+        if (unfilledNeighbor > 0) {
+          // keep
+          if (closeGaps) {
+            // ink
+            pix->setInk(closeColorStyle);
+            pix->setPaint(fillIndex);
+            pix->setTone(0);
+          } else {
+            // paint
+            pix->setInk(GAP_CLOSE_USED);
+            pix->setPaint(fillIndex);
+            pix->setTone(255);
+            gapLinePixels.push(TPoint(j, i));
+          }
+
+          // Print out the neighbors of kept gap close pixels, for testing
+          // purposes
+          // TSystem::outputDebug("i:"+ std::to_string(i)+", j:"+
+          // std::to_string(j)+", filledNeighbor:" +
+          // std::to_string(filledNeighbor) + ", unfilledNeighbor:" +
+          // std::to_string(unfilledNeighbor));
+          //// north
+          // if (i < rin->getLy() - 1){
+          //  TSystem::outputDebug("North, r:" + std::to_string((pix +
+          //  rin->getWrap())->getInk()) + "." + std::to_string((pix +
+          //  rin->getWrap())->getPaint()) + "." + std::to_string((pix +
+          //  rin->getWrap())->getTone())
+          //  + ", combined:" + std::to_string((pixc +
+          //  myCombined->getWrap())->getInk()) + "." + std::to_string((pixc +
+          //  myCombined->getWrap())->getPaint()) + "." + std::to_string((pixc +
+          //  myCombined->getWrap())->getTone())
+          //  );
+          //}
+          //// south
+          // if (i > 0) {
+          //  TSystem::outputDebug("South, r:" + std::to_string((pix -
+          //  rin->getWrap())->getInk()) + "." + std::to_string((pix -
+          //  rin->getWrap())->getPaint()) + "." + std::to_string((pix -
+          //  rin->getWrap())->getTone())
+          //    + ", combined:" + std::to_string((pixc -
+          //    myCombined->getWrap())->getInk()) + "." + std::to_string((pixc -
+          //    myCombined->getWrap())->getPaint()) + "." + std::to_string((pixc
+          //    - myCombined->getWrap())->getTone())
+          //  );
+          //}
+
+          //// east
+          // if (j < rin->getLx() - 1){
+          //  TSystem::outputDebug("East, r:" + std::to_string((pix +
+          //  1)->getInk()) + "." + std::to_string((pix + 1)->getPaint()) + "."
+          //  + std::to_string((pix + 1)->getTone())
+          //    + ", combined:" + std::to_string((pixc + 1)->getInk()) + "." +
+          //    std::to_string((pixc + 1)->getPaint()) + "." +
+          //    std::to_string((pixc + 1)->getTone())
+          //  );
+          //}
+
+          //// west
+          // if (j > 0) {
+          //  TSystem::outputDebug("West, r:" + std::to_string((pix -
+          //  1)->getInk()) + "." + std::to_string((pix - 1)->getPaint()) + "."
+          //  + std::to_string((pix - 1)->getTone())
+          //    + ", combined:" + std::to_string((pixc - 1)->getInk()) + "." +
+          //    std::to_string((pixc - 1)->getPaint()) + "." +
+          //    std::to_string((pixc - 1)->getTone())
+          //  );
+          //}
+        } else {
+          // paint
+          pix->setInk(GAP_CLOSE_USED);
+          pix->setPaint(fillIndex);
+          pix->setTone(255);
+          gapLinePixels.push(TPoint(j, i));
+        }
+      } else {
+        // ignore
+        pix->setInk(IGNORECOLORSTYLE);
+        pix->setPaint(0);
+        pix->setTone(0);
       }
     }
   }
+
+  // process all the GAP_CLOSE_USED ink values.
+  TPixelCM32 *pixels = (TPixelCM32 *)r->getRawData();
+
+  while (!gapLinePixels.empty()) {
+    p = gapLinePixels.top();
+    gapLinePixels.pop();
+    TPixelCM32 *pix = pixels + (p.y * r->getWrap() + p.x);
+
+    // TSystem::outputDebug("gapLinePixels, p.y:" + std::to_string(p.y) + ",
+    // p.x:" + std::to_string(p.x) + ", getInk():" +
+    // std::to_string(pix->getInk()));
+    pix->setInk(0);
+  }
+
+  rin->unlock();
 }
 
 //=============================================================================

@@ -1,5 +1,5 @@
 #!/bin/bash
-export TAHOMA2DVERSION=1.3
+export TAHOMA2DVERSION=1.4
 
 if [ -d /usr/local/Cellar/qt@5 ]
 then
@@ -20,8 +20,6 @@ then
    # In case of prior builds, replace stuff folder
    rm -rf $TOONZDIR/Tahoma2D.app/tahomastuff
 fi
-
-find $TOONZDIR/Tahoma2D.app/tahomastuff -name .gitkeep -exec rm -f {} \;
 
 if [ -d thirdparty/apps/ffmpeg/bin ]
 then
@@ -153,7 +151,7 @@ function checkLibFile() {
             echo "Fixing $DEPFILE in $LIBFILE"
             if [ "$X" != "" ]
             then
-               local Y=`echo $DEPFILE | sed -e"s/^.*\/\.\.\///"`
+               local Y=`echo $DEPFILE | sed -e"s/^.*\/\.\.\///" -e"s/@rpath.//"`
                install_name_tool -change $DEPFILE @executable_path/../Frameworks/$Y $LIBFILE
             else
                install_name_tool -change $DEPFILE @executable_path/../Frameworks/$Y $LIBFILE
@@ -187,6 +185,8 @@ echo ">>> Creating Tahoma2D-portable-osx.dmg"
 
 cp -R stuff $TOONZDIR/Tahoma2D.app/tahomastuff
 chmod -R 777 $TOONZDIR/Tahoma2D.app/tahomastuff
+
+find $TOONZDIR/Tahoma2D.app/tahomastuff -name .gitkeep -exec rm -f {} \;
    
 $QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -dmg -verbose=0
 

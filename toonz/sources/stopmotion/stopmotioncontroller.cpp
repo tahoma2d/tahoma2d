@@ -1907,6 +1907,10 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(onCameraIndexChanged(int)));
   ret = ret && connect(m_stopMotion, SIGNAL(updateStopMotionControls()), this,
                        SLOT(onUpdateStopMotionControls()));
+  ret = ret && connect(m_stopMotion, SIGNAL(captureStarted()), this,
+                       SLOT(onCaptureStarted()));
+  ret = ret && connect(m_stopMotion, SIGNAL(captureComplete()), this,
+                       SLOT(onCaptureComplete()));
 
   // EOS Connections
   ret = ret &&
@@ -2022,8 +2026,9 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   ret = ret && connect(m_stopMotion->m_gphotocam,
                        SIGNAL(liveViewOffsetChangedSignal(int)), this,
                        SLOT(onLiveViewCompensationChangedSignal(int)));
-  ret = ret && connect(m_stopMotion->m_canon, SIGNAL(focusCheckToggled(bool)),
-                       this, SLOT(onFocusCheckToggled(bool)));
+  ret =
+      ret && connect(m_stopMotion->m_gphotocam, SIGNAL(focusCheckToggled(bool)),
+                     this, SLOT(onFocusCheckToggled(bool)));
   ret = ret &&
         connect(m_stopMotion->m_gphotocam, SIGNAL(pickFocusCheckToggled(bool)),
                 this, SLOT(onPickFocusCheckToggled(bool)));
@@ -3347,6 +3352,14 @@ void StopMotionController::onUpdateStopMotionControls() {
 
 //-----------------------------------------------------------------------------
 
+void StopMotionController::onCaptureStarted() { updateCaptureButton(true); }
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::onCaptureComplete() { updateCaptureButton(false); }
+
+//-----------------------------------------------------------------------------
+
 void StopMotionController::onWebcamResolutionsChanged() {
   m_resolutionCombo->clear();
   QList<QSize> resolutions = m_stopMotion->m_webcam->getWebcamResolutions();
@@ -4515,9 +4528,7 @@ void StopMotionController::updateStopMotion() {}
 //-----------------------------------------------------------------------------
 
 void StopMotionController::onTakeTestButtonClicked() {
-  if (m_stopMotion->m_liveViewStatus == StopMotion::LiveViewOpen) {
-    m_stopMotion->takeTestShot();
-  }
+  m_stopMotion->takeTestShot();
 }
 
 //-----------------------------------------------------------------------------
@@ -4707,6 +4718,16 @@ void StopMotionController::reflowTestShots() {
     // m_testsOutsideLayout->addLayout(layout);
     m_testsInsideLayout->insertLayout(m_testsInsideLayout->count() - 1, layout);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void StopMotionController::updateCaptureButton(bool captureStarted) {
+  // If checkable, it's interval capture. Don't disable the button
+  if (!m_captureButton->isCheckable())
+    m_captureButton->setDisabled(captureStarted);
+
+  m_settingsTakeTestButton->setDisabled(captureStarted);
 }
 
 //-----------------------------------------------------------------------------

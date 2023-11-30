@@ -1,4 +1,4 @@
-set(VERSION 1.3.1)
+set(VERSION 1.4.0)
 
 set(MOC_HEADERS
     aboutpopup.h
@@ -453,6 +453,10 @@ include_directories(
 
 if (WITH_CANON)
     add_definitions(-DWITH_CANON)
+endif()
+
+if (WITH_GPHOTO2)
+    add_definitions(-DWITH_GPHOTO2)
 endif()
 
 if (WITH_WINTAB AND BUILD_TARGET_WIN AND (PLATFORM EQUAL 64))

@@ -2,6 +2,7 @@
 
 // TnzCore includes
 #include "tfilepath.h"
+#include "tenv.h"
 
 // TnzLib includes
 #include "toonz/txshsimplelevel.h"
@@ -53,6 +54,16 @@ double inline getIncrement(int paperThickness) {
 //***************************************************************************
 //    OnionSkinMask  implementation
 //***************************************************************************
+
+TEnv::IntVar WholeScene("OnionSkinWholeScene", 0);
+TEnv::IntVar EveryFrame("OnionSkinEveryFrame", 1);
+
+OnionSkinMask::OnionSkinMask() {
+  m_enabled = false;
+  m_wholeScene = WholeScene;
+  m_everyFrame = EveryFrame;
+  m_LightTableStatus = false;
+}
 
 void OnionSkinMask::clear() {
   m_fos.clear();
@@ -151,6 +162,20 @@ bool OnionSkinMask::getMosRange(int &drow0, int &drow1) const {
     drow0 = m_mos.front(), drow1 = m_mos.back();
     return true;
   }
+}
+
+//-------------------------------------------------------------------
+
+void OnionSkinMask::setIsWholeScene(bool wholeScene) { 
+  m_wholeScene = wholeScene; 
+  WholeScene = (int)m_wholeScene;
+}
+
+//-------------------------------------------------------------------
+
+void OnionSkinMask::setIsEveryFrame(bool everyFrame) { 
+  m_everyFrame = everyFrame; 
+  EveryFrame = (int)m_everyFrame;
 }
 
 //-------------------------------------------------------------------

@@ -10,25 +10,25 @@ I will first review the request, then I'll accept it, add comments for rework, o
 
 ### Workflow
 
-0. `fork` Tahoma2D to your GitHub account from `tahoma2d/tahoma2d`.
+1. `fork` Tahoma2D to your GitHub account from `tahoma2d/tahoma2d`.
   - (use the `fork` button at the https://github.com/tahoma2d/tahoma2d)
-0. `clone` the repository.
+2. `clone` the repository.
   - `git clone git@github.com:your-github-account/tahoma2d.git`
   - `git remote add upstream https://github.com/tahoma2d/tahoma2d.git`, additionally.
-0. modify the codes.
+3. modify the codes.
   - `git checkout -b your-branch-name`
     - `your-branch-name` is a name of your modifications, for example,
       `fix/fatal-bugs`, `feature/new-useful-gui` and so on.
   - fix codes, then test them.
   - `git commit` them with good commit messages.
-0. `pull` the latest changes form the `master` branch of the upstream.
+4. `pull` the latest changes from the `master` branch of the upstream.
   - `git pull upstream master` or `git pull --rebase upstream master`.
   - apply [clang-format](http://clang.llvm.org/docs/ClangFormat.html) with `toonz/sources/.clang-format`.
     - `cd toonz/sources`
     - `./beautification.sh` or `beautification.bat`.
   - `git commit` them.
   - `git push origin your-branch-name`.
-0. make a pull request.
+5. make a pull request.
 
 ## Bugs
 
@@ -38,7 +38,7 @@ and information directly relating to the issue. Links to screen captures of what
 observed on screen or video of specific steps to produce the problem are very helpful.  
 Then we will try to reproduce the bugs and fix them.
 Unfortunately, bugs can sometimes only be reproduced in your own environment, 
-so we cannot reproduce them. 
+so we cannot reproduce them.
 If you believe you can fix the bug, please submit a pull request.
 
 ## Features

@@ -1244,6 +1244,9 @@ public:
     SceneBrowser *browser = new SceneBrowser(panel, Qt::WindowFlags(), false, true);
     panel->setWidget(browser);
     panel->setWindowTitle(QObject::tr("Preproduction Board"));
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
     TFilePath scenesFolder =
         TProjectManager::instance()->getCurrentProject()->getScenesPath();
     browser->setFolder(scenesFolder, true);

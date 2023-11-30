@@ -33,12 +33,15 @@ public:
 
   bool isActive() const;
   bool isWholeScene() const;
+  bool isEveryFrame() const;
 
 public slots:
   void activate();
   void deactivate();
   void setWholeScene();
   void setSingleLevel();
+  void setEveryFrame();
+  void setNewExposure();
   void clearFOS();
   void clearMOS();
   void clearOS();

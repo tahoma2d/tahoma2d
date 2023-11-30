@@ -587,7 +587,7 @@ void Preferences::definePreferenceItems() {
          "inputCellsWithoutDoubleClickingEnabled", QMetaType::Bool, false);
   define(shortcutCommandsWhileRenamingCellEnabled,
          "shortcutCommandsWhileRenamingCellEnabled", QMetaType::Bool, false);
-  define(showQuickToolbar, "showQuickToolbar", QMetaType::Bool, false);
+  define(showQuickToolbar, "showQuickToolbar", QMetaType::Bool, true);
   define(showXsheetBreadcrumbs, "showXsheetBreadcrumbs", QMetaType::Bool,
          false);
   define(expandFunctionHeader, "expandFunctionHeader", QMetaType::Bool, false);

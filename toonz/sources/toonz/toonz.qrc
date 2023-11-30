@@ -400,6 +400,8 @@
 		<file>icons/dark/actions/16/next_nav_tag.svg</file>
 		<file>icons/dark/actions/16/prev_nav_tag.svg</file>
 
+    <file>icons/dark/actions/16/toggle_sub_nav.svg</file>
+
 		<!-- Modes, Types, Options -->
 		<file>icons/dark/actions/16/ink_check.svg</file>
 		<file>icons/dark/actions/16/inks_only.svg</file>
@@ -599,6 +601,14 @@
     <file>icons/dark/actions/16/motion_path.svg</file>
 
     <file>icons/dark/actions/16/clipping_mask.svg</file>
+
+    <file>icons/dark/actions/16/export_oca.svg</file>
+    <file>icons/dark/actions/16/export_xdts.svg</file>
+    <file>icons/dark/actions/16/export_tvpaint.svg</file>
+    <file>icons/dark/actions/16/export_soundtrack.svg</file>
+    <file>icons/dark/actions/16/export_cameratrack.svg</file>
+    <file>icons/dark/actions/16/export_xsheetpdf.svg</file>
+    <file>icons/dark/actions/16/export_smimages.svg</file>
 
     <!-- Keyframe -->
 		<file>icons/dark/actions/20/key_off.svg</file>

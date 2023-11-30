@@ -26,11 +26,11 @@ jobs:
       - name: Get CanonSDK
         if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' }}
         run: |
-          wget --header="Authorization: token ${{ secrets.TAHOMA2D_TOKEN }}" --header="Accept:application/octet-stream" -O EDSDK_v131231_Macintosh.zip https://api.github.com/repos/tahoma2d/CanonSDK/releases/assets/25267390
-          unzip EDSDK_v131231_Macintosh.zip -d EDSDK_v131231_Macintosh
-          unzip EDSDK_v131231_Macintosh/Macintosh.dmg.zip -d EDSDK_v131231_Macintosh
-          7z x EDSDK_v131231_Macintosh/Macintosh.dmg -oEDSDK_v131231_Macintosh
-          mv EDSDK_v131231_Macintosh/Macintosh/EDSDK/* thirdparty/canon
+          wget --header="Authorization: token ${{ secrets.TAHOMA2D_TOKEN }}" --header="Accept:application/octet-stream" -O EDSDK_Macintosh.zip https://api.github.com/repos/tahoma2d/CanonSDK/releases/assets/132789028
+          unzip EDSDK_Macintosh.zip -d EDSDK_Macintosh
+          unzip EDSDK_Macintosh/Macintosh.dmg.zip -d EDSDK_Macintosh
+          7z x EDSDK_Macintosh/Macintosh.dmg -oEDSDK_Macintosh
+          mv EDSDK_Macintosh/Macintosh/EDSDK/* thirdparty/canon
           cd thirdparty/canon/framework/EDSDK.framework/Versions
           rm Current
           ln -s A Current

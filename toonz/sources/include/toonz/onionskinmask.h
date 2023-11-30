@@ -46,8 +46,7 @@ public:
   };
 
 public:
-  OnionSkinMask()
-      : m_enabled(false), m_wholeScene(false), m_LightTableStatus(false) {}
+  OnionSkinMask();
 
   void clear();
 
@@ -87,7 +86,10 @@ public:
   void enable(bool on) { m_enabled = on; }
 
   bool isWholeScene() const { return m_wholeScene; }
-  void setIsWholeScene(bool wholeScene) { m_wholeScene = wholeScene; }
+  void setIsWholeScene(bool wholeScene);
+
+  bool isEveryFrame() const { return m_everyFrame; }
+  void setIsEveryFrame(bool everyFrame);
 
   /*!
 Returns the fade (transparency) value, in the [0.0, 1.0] range, corresponding to
@@ -142,6 +144,7 @@ private:
   std::vector<int> m_fos, m_mos;  //!< Fixed and Mobile Onion Skin indices
   bool m_enabled;                 //!< Whether onion skin is enabled
   bool m_wholeScene;              //!< Whether the OS works on the entire scene
+  bool m_everyFrame;              //!< Whether the OS renders every frame or only on new exposures.
 
   ShiftTraceStatus m_shiftTraceStatus;
   TAffine m_ghostAff[2];

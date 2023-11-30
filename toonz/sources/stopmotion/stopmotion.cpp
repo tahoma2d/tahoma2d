@@ -303,7 +303,10 @@ StopMotion::StopMotion() {
                        SLOT(directDslrImage()));
   assert(ret);
   ret = ret && connect(m_canon, SIGNAL(canonCameraChanged(QString)), this,
-                       SLOT(onCanonCameraChanged(QString)));
+                       SLOT(onCameraChanged(QString)));
+  ret = ret && connect(m_gphotocam, SIGNAL(gphotoCameraChanged(QString)), this,
+                       SLOT(onCameraChanged(QString)));
+
   assert(ret);
 
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
@@ -464,8 +467,7 @@ void StopMotion::disconnectAllCameras() {
   m_liveViewDpi             = TPointD(0, 0);
 
   emit(intervalToggled(false));
-  emit(liveViewChanged(false));
-  emit(liveViewStopped());
+  stopLiveView();
   emit(newCameraSelected(0));
   toggleNumpadShortcuts(false);
 }
@@ -1829,6 +1831,12 @@ void StopMotion::captureImage() {
     return;
   }
 
+  if (m_currentCameraType == CameraType::Web &&
+      (!m_hasLiveViewImage || m_liveViewStatus != LiveViewOpen)) {
+    DVGui::warning(tr("Cannot capture image unless live view is active."));
+    return;
+  }
+
   if (m_isTimeLapse && !m_intervalStarted) {
     startInterval();
     return;
@@ -1837,12 +1845,6 @@ void StopMotion::captureImage() {
     stopInterval();
     return;
   }
-/*
-  if (!m_hasLiveViewImage || m_liveViewStatus != LiveViewOpen) {
-    DVGui::warning(tr("Cannot capture image unless live view is active."));
-    return;
-  }
-*/
 
   bool sessionOpen = false;
 #ifdef WITH_CANON
@@ -1863,6 +1865,8 @@ void StopMotion::captureImage() {
   if (m_playCaptureSound) {
     m_camSnapSound->play();
   }
+
+  emit captureStarted();
 
   if (m_currentCameraType == CameraType::Web) {
     captureWebcamImage();
@@ -1888,6 +1892,7 @@ void StopMotion::captureWebcamImage() {
     m_hasLineUpImage = true;
     emit(newLiveViewImageReady());
     importImage();
+    emit captureComplete();
     return;
   }
 }
@@ -1969,6 +1974,8 @@ void StopMotion::directDslrImage() {
   else
     importImage();
 
+   emit captureComplete();
+
 #ifdef WITH_CANON
   if (m_currentCameraType == CameraType::CanonDSLR &&
       m_canon->m_liveViewExposureOffset != 0)
@@ -2007,6 +2014,17 @@ void StopMotion::postImportProcess() {
 //-----------------------------------------------------------------
 
 void StopMotion::takeTestShot() {
+  if (m_currentCameraType == CameraType::None) {
+    DVGui::warning(tr("No camera selected."));
+    return;
+  }
+
+  if (m_currentCameraType == CameraType::Web &&
+      (!m_hasLiveViewImage || m_liveViewStatus != LiveViewOpen)) {
+    DVGui::warning(tr("Cannot capture image unless live view is active."));
+    return;
+  }
+
   bool sessionOpen = false;
 #ifdef WITH_CANON
   if (m_currentCameraType == CameraType::CanonDSLR)
@@ -2022,13 +2040,18 @@ void StopMotion::takeTestShot() {
     DVGui::warning(tr("Please start live view before capturing an image."));
     return;
   }
+
   m_isTestShot = true;
+
+  emit captureStarted();
+
   if (m_currentCameraType == CameraType::Web) {
     if (m_light->useOverlays()) {
       m_light->showOverlays();
       m_webcamOverlayTimer->start(500);
     } else {
       saveTestShot();
+      emit captureComplete();
     }
   } else {
     TApp *app           = TApp::instance();
@@ -3380,8 +3403,7 @@ void StopMotion::changeCameras(int comboIndex, CameraType cameraType,
   if (m_isTimeLapse && m_intervalStarted) {
     stopInterval();
   }
-  emit(liveViewStopped());
-  emit(liveViewChanged(false));
+  stopLiveView();
   refreshFrameInfo();
   // after all live view data is cleared, start it again.
   if (liveViewStatus > LiveViewClosed) {
@@ -3478,8 +3500,7 @@ bool StopMotion::toggleLiveView() {
     if (m_currentCameraType == CameraType::Web) m_webcam->releaseWebcam();
 
     m_timer->stop();
-    emit(liveViewStopped());
-    emit(liveViewChanged(false));
+    stopLiveView();
     if (m_turnOnRewind) {
       Preferences::instance()->setValue(rewindAfterPlayback, true);
     }
@@ -3516,8 +3537,10 @@ void StopMotion::toggleAlwaysUseLiveViewImages() {
 
 //-----------------------------------------------------------------
 
-void StopMotion::onCanonCameraChanged(QString camera) {
+void StopMotion::onCameraChanged(QString camera) {
+  if (camera.isEmpty()) m_currentCameraType = CameraType::None;
   emit(cameraChanged(camera));
+  emit(updateStopMotionControls());
 }
 
 //-----------------------------------------------------------------
@@ -3660,6 +3683,14 @@ void StopMotion::adjustLiveViewZoomPickPoint(int x, int y) {
     m_gphotocam->m_liveViewZoomPickPoint.y += y;
   }
 #endif
+}
+
+//-----------------------------------------------------------------
+
+void StopMotion::stopLiveView() {
+  m_liveViewStatus = 0;
+  emit(liveViewChanged(false));
+  emit(liveViewStopped());
 }
 
 //=============================================================================
