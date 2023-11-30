@@ -1529,7 +1529,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Snap At Intersection</source>
-        <translation>在焦点吸附</translation>
+        <translation>在交点吸附</translation>
     </message>
     <message>
         <source>It is not possible to animate unlinked motion paths.</source>
@@ -2271,7 +2271,7 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Include Intersection</source>
-        <translation type="unfinished"></translation>
+        <translation>包括交集</translation>
     </message>
 </context>
 <context>

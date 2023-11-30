@@ -9,7 +9,7 @@
     </message>
     <message>
         <source> </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Tahoma2D License</source>
@@ -22,7 +22,8 @@
     <message>
         <source>Tahoma2D ships with FFmpeg.  
 FFmpeg is licensed under the LGPLv2.1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tahoma2D 包含 FFmpeg.  
+FFmpeg is licensed under the LGPLv2.1</translation>
     </message>
     <message>
         <source>Tahoma2D is made possible with the help of patrons.
