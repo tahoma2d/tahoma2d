@@ -22,13 +22,14 @@
     <message>
         <source>Tahoma2D ships with FFmpeg.  
 FFmpeg is licensed under the LGPLv2.1</source>
-        <translation type="unfinished">Tahoma2D 包含 FFmpeg.  
-FFmpeg is licensed under the LGPLv2.1</translation>
+        <translation>Tahoma2D 包含 FFmpeg.  
+FFmpeg 采用宽通用公共许可证第2.1版(LGPLv2.1)</translation>
     </message>
     <message>
         <source>Tahoma2D is made possible with the help of patrons.
 Special thanks to:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tahoma2D 在赞助人的帮助下得以实现。
+特别感谢:</translation>
     </message>
     <message>
         <source>Close</source>
@@ -36,7 +37,7 @@ Special thanks to:</source>
     </message>
     <message>
         <source>Please consider sponsoring Tahoma2D developers on GitHub.</source>
-        <translation type="unfinished"></translation>
+        <translation>请考虑在GitHub上赞助 Tahoma2D 开发人员。</translation>
     </message>
 </context>
 <context>
@@ -191,55 +192,55 @@ Please select a different device or check the microphone.</source>
     </message>
     <message>
         <source>Device: </source>
-        <translation type="unfinished"></translation>
+        <translation>设备: </translation>
     </message>
     <message>
         <source>Sample rate: </source>
-        <translation type="unfinished"></translation>
+        <translation>采样率: </translation>
     </message>
     <message>
         <source>Sample format: </source>
-        <translation type="unfinished"></translation>
+        <translation>采样格式: </translation>
     </message>
     <message>
         <source>8000 Hz</source>
-        <translation type="unfinished"></translation>
+        <translation>8000赫兹</translation>
     </message>
     <message>
         <source>11025 Hz</source>
-        <translation type="unfinished"></translation>
+        <translation>11025赫兹</translation>
     </message>
     <message>
         <source>22050 Hz</source>
-        <translation type="unfinished"></translation>
+        <translation>22050赫兹</translation>
     </message>
     <message>
         <source>44100 Hz</source>
-        <translation type="unfinished"></translation>
+        <translation>44100赫兹</translation>
     </message>
     <message>
         <source>48000 Hz</source>
-        <translation type="unfinished"></translation>
+        <translation>48000赫兹</translation>
     </message>
     <message>
         <source>96000 Hz</source>
-        <translation type="unfinished"></translation>
+        <translation>96000赫兹</translation>
     </message>
     <message>
         <source>Mono 8-Bits</source>
-        <translation type="unfinished"></translation>
+        <translation>单声道8位</translation>
     </message>
     <message>
         <source>Stereo 8-Bits</source>
-        <translation type="unfinished"></translation>
+        <translation>立体声8位</translation>
     </message>
     <message>
         <source>Mono 16-Bits</source>
-        <translation type="unfinished"></translation>
+        <translation>单声道16位</translation>
     </message>
     <message>
         <source>Stereo 16-Bits</source>
-        <translation type="unfinished"></translation>
+        <translation>立体声16位</translation>
     </message>
     <message>
         <source>Audio input device to record</source>
@@ -278,27 +279,28 @@ Make sure you have write permissions in folder.</source>
     <message>
         <source>Audio format unsupported:
 Nearest format will be internally used.</source>
-        <translation type="unfinished"></translation>
+        <translation>不支援的音频格式:
+最接近的格式将在内部使用。</translation>
     </message>
     <message>
         <source>192000 Hz</source>
-        <translation type="unfinished"></translation>
+        <translation>192000赫兹</translation>
     </message>
     <message>
         <source>Mono 24-Bits</source>
-        <translation type="unfinished"></translation>
+        <translation>单声道24位</translation>
     </message>
     <message>
         <source>Stereo 24-Bits</source>
-        <translation type="unfinished"></translation>
+        <translation>立体声24位</translation>
     </message>
     <message>
         <source>Mono 32-Bits</source>
-        <translation type="unfinished"></translation>
+        <translation>单声道32位</translation>
     </message>
     <message>
         <source>Stereo 32-Bits</source>
-        <translation type="unfinished"></translation>
+        <translation>立体声32位</translation>
     </message>
 </context>
 <context>
@@ -399,11 +401,11 @@ pick up all frames in the selected level.</source>
     <name>BaseViewerPanel</name>
     <message>
         <source>GUI Show / Hide</source>
-        <translation type="unfinished">显示/隐藏界面</translation>
+        <translation>显示/隐藏界面</translation>
     </message>
     <message>
         <source>Playback Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>回访工具栏</translation>
     </message>
     <message>
         <source>Frame Slider</source>
@@ -411,7 +413,7 @@ pick up all frames in the selected level.</source>
     </message>
     <message>
         <source>Safe Area (Right Click to Select)</source>
-        <translation type="unfinished">安全区域(右键单击可选择)</translation>
+        <translation>安全区域(右键单击可选择)</translation>
     </message>
     <message>
         <source>Grids and Overlays
@@ -424,15 +426,15 @@ Right click to adjust.</source>
     </message>
     <message>
         <source>Camera Stand View</source>
-        <translation type="unfinished">摄影机位视图</translation>
+        <translation>摄影机位视图</translation>
     </message>
     <message>
         <source>3D View</source>
-        <translation type="unfinished">3D 视图</translation>
+        <translation>3D 视图</translation>
     </message>
     <message>
         <source>Camera View</source>
-        <translation type="unfinished">摄影机视图</translation>
+        <translation>摄影机视图</translation>
     </message>
     <message>
         <source>Change camera view transparency.</source>
@@ -440,43 +442,43 @@ Right click to adjust.</source>
     </message>
     <message>
         <source>Freeze</source>
-        <translation type="unfinished">冻结</translation>
+        <translation>冻结</translation>
     </message>
     <message>
         <source>Preview</source>
-        <translation type="unfinished">预览</translation>
+        <translation>预览</translation>
     </message>
     <message>
         <source>Sub-camera Preview</source>
-        <translation type="unfinished">子摄影机预览</translation>
+        <translation>子摄影机预览</translation>
     </message>
     <message>
         <source>Untitled</source>
-        <translation type="unfinished">未命名</translation>
+        <translation>未命名</translation>
     </message>
     <message>
         <source>Scene: </source>
-        <translation type="unfinished">场景: </translation>
+        <translation>场景: </translation>
     </message>
     <message>
         <source>   ::   Frame: </source>
-        <translation type="unfinished"></translation>
+        <translation>   ::   帧: </translation>
     </message>
     <message>
         <source>  ::  Zoom : </source>
-        <translation type="unfinished">    ::    缩放: </translation>
+        <translation>  ::  缩放: </translation>
     </message>
     <message>
         <source> (Flipped)</source>
-        <translation type="unfinished"> (已翻转)</translation>
+        <translation> (已翻转)</translation>
     </message>
     <message>
         <source>   ::   Level: </source>
-        <translation type="unfinished"></translation>
+        <translation>   ::   层级: </translation>
     </message>
     <message>
         <source>Level: </source>
-        <translation type="unfinished">层级: </translation>
+        <translation>层级: </translation>
     </message>
 </context>
 <context>
@@ -787,18 +789,18 @@ Stop it or wait for its completion before removing it.</source>
     <name>CameraTrackPreviewArea</name>
     <message>
         <source>Fit To Window</source>
-        <translation type="unfinished">适合窗口</translation>
+        <translation>适合窗口</translation>
     </message>
 </context>
 <context>
     <name>Canon</name>
     <message>
         <source>AC Power</source>
-        <translation type="unfinished"></translation>
+        <translation>交流电</translation>
     </message>
     <message>
         <source>Full</source>
-        <translation type="unfinished"></translation>
+        <translation>满</translation>
     </message>
     <message>
         <source>An error occurred.  Please try again.</source>
@@ -1282,7 +1284,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Format:</source>
-        <translation type="unfinished">格式:</translation>
+        <translation>格式:</translation>
     </message>
 </context>
 <context>
@@ -1342,15 +1344,15 @@ What do you want to do?</source>
     <name>ColorFiltersPopup</name>
     <message>
         <source>Color Filters Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>色彩滤镜设置</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>清除</translation>
     </message>
     <message>
         <source>Color Filter %1</source>
-        <translation type="unfinished"></translation>
+        <translation>色彩滤镜 %1</translation>
     </message>
 </context>
 <context>
@@ -1537,7 +1539,7 @@ What do you want to do? </source>
     </message>
     <message>
         <source>Playback Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>回放工具条</translation>
     </message>
     <message>
         <source>Frame Slider</source>
@@ -1594,7 +1596,7 @@ What do you want to do? </source>
     </message>
     <message>
         <source>Commands</source>
-        <translation type="unfinished"></translation>
+        <translation>命令</translation>
     </message>
     <message>
         <source>Duplicated commands will be ignored. Only the last one will appear in the toolbar.</source>
@@ -1602,11 +1604,11 @@ What do you want to do? </source>
     </message>
     <message>
         <source>Search:</source>
-        <translation type="unfinished">搜索:</translation>
+        <translation>搜索:</translation>
     </message>
     <message>
         <source>Save as Default</source>
-        <translation type="unfinished"></translation>
+        <translation>保存为默认</translation>
     </message>
 </context>
 <context>
@@ -2056,7 +2058,7 @@ contain the dpi information, then the current camera dpi will be used.
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">关闭</translation>
+        <translation>关闭</translation>
     </message>
     <message>
         <source>Do you want to save the log?</source>
@@ -2142,7 +2144,7 @@ contain the dpi information, then the current camera dpi will be used.
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <source>Failed to create folder.</source>
@@ -2182,7 +2184,7 @@ contain the dpi information, then the current camera dpi will be used.
     </message>
     <message>
         <source>Search:</source>
-        <translation type="unfinished">搜索:</translation>
+        <translation>搜索:</translation>
     </message>
 </context>
 <context>
@@ -2880,7 +2882,7 @@ Unchecked: Vectors are saved as SVG</source>
     <name>ExportXDTSCommand</name>
     <message>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
 </context>
 <context>
@@ -2919,11 +2921,11 @@ Unchecked: Vectors are saved as SVG</source>
     </message>
     <message>
         <source>Text</source>
-        <translation type="unfinished">文本</translation>
+        <translation>文本</translation>
     </message>
     <message>
         <source>Image</source>
-        <translation type="unfinished">图像</translation>
+        <translation>图像</translation>
     </message>
     <message>
         <source>&lt; Prev</source>
@@ -2943,7 +2945,7 @@ Unchecked: Vectors are saved as SVG</source>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <source>ACTIONS</source>
@@ -2963,7 +2965,7 @@ Unchecked: Vectors are saved as SVG</source>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <source>Template Settings</source>
@@ -3011,11 +3013,11 @@ Unchecked: Vectors are saved as SVG</source>
     </message>
     <message>
         <source>Save in:</source>
-        <translation type="unfinished">保存位置:</translation>
+        <translation>保存位置:</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished">名称:</translation>
+        <translation>名称:</translation>
     </message>
     <message>
         <source>B4 size, 3 seconds sheet</source>
@@ -13778,12 +13780,12 @@ Allow duplicate?</source>
     <message>
         <source>Dot</source>
         <comment>XSheetPDF CellMark</comment>
-        <translation type="unfinished"></translation>
+        <translation>点</translation>
     </message>
     <message>
         <source>Circle</source>
         <comment>XSheetPDF CellMark</comment>
-        <translation type="unfinished"></translation>
+        <translation>圆圈</translation>
     </message>
     <message>
         <source>Filled circle</source>
@@ -14339,31 +14341,31 @@ These levels can&apos;t be exported with this tool.</source>
     <name>Room</name>
     <message>
         <source>2D</source>
-        <translation type="unfinished"></translation>
+        <translation>二维</translation>
     </message>
     <message>
         <source>StopMotion</source>
-        <translation type="unfinished"></translation>
+        <translation>定格</translation>
     </message>
     <message>
         <source>Timing</source>
-        <translation type="unfinished"></translation>
+        <translation>时序</translation>
     </message>
     <message>
         <source>FX</source>
-        <translation type="unfinished"></translation>
+        <translation>效果</translation>
     </message>
     <message>
         <source>Browser</source>
-        <translation type="unfinished">浏览器</translation>
+        <translation>浏览器</translation>
     </message>
     <message>
         <source>History</source>
-        <translation type="unfinished">历史记录</translation>
+        <translation>历史记录</translation>
     </message>
     <message>
         <source>New Room</source>
-        <translation type="unfinished">新建工作区</translation>
+        <translation>新建工作区</translation>
     </message>
 </context>
 <context>
@@ -15419,7 +15421,7 @@ Please commit or revert changes first.</source>
     <name>SceneBrowser</name>
     <message>
         <source>Folder: </source>
-        <translation type="unfinished">路径: </translation>
+        <translation>路径: </translation>
     </message>
     <message>
         <source>Open folder failed</source>
@@ -15443,7 +15445,7 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Couldn&apos;t rename </source>
-        <translation type="unfinished">无法重命名</translation>
+        <translation>无法重命名</translation>
     </message>
     <message>
         <source>Load As Sub-xsheet</source>
@@ -15451,11 +15453,11 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Load</source>
-        <translation type="unfinished">加载</translation>
+        <translation>加载</translation>
     </message>
     <message>
         <source>Rename</source>
-        <translation type="unfinished">重命名</translation>
+        <translation>重命名</translation>
     </message>
     <message>
         <source>Convert to Painted TLV</source>
@@ -15471,7 +15473,7 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished">编辑</translation>
+        <translation>编辑</translation>
     </message>
     <message>
         <source>Edit Frame Range...</source>
@@ -15487,11 +15489,11 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Get</source>
-        <translation type="unfinished">获取</translation>
+        <translation>获取</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">删除</translation>
+        <translation>删除</translation>
     </message>
     <message>
         <source>Get Revision...</source>
@@ -15499,7 +15501,7 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Unlock</source>
-        <translation type="unfinished">解锁</translation>
+        <translation>解锁</translation>
     </message>
     <message>
         <source>Edit Info</source>
@@ -15535,11 +15537,11 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">是</translation>
+        <translation>是</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">否</translation>
+        <translation>否</translation>
     </message>
     <message>
         <source>Done: All Levels  converted to TLV Format</source>
@@ -15555,7 +15557,7 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>New Folder</source>
-        <translation type="unfinished">新建文件夹</translation>
+        <translation>新建文件夹</translation>
     </message>
     <message>
         <source>It is not possible to create the %1 folder.</source>
@@ -17997,7 +17999,7 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
     <message>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation>色彩</translation>
     </message>
     <message>
         <source>Adjust the color value(s) of the selected style.</source>
@@ -18005,7 +18007,7 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
     <message>
         <source>Texture</source>
-        <translation type="unfinished"></translation>
+        <translation>纹理</translation>
     </message>
     <message>
         <source>Apply a texture to the selected style.                    This only works on Vector and Smart Raster Levels.                    Smart Raster levels require preview to be on to see the style.</source>
@@ -18013,7 +18015,7 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
     <message>
         <source>Vector</source>
-        <translation type="unfinished"></translation>
+        <translation>矢量</translation>
     </message>
     <message>
         <source>Apply unique strokes and fills to vector styles.</source>
@@ -18021,7 +18023,7 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
     <message>
         <source>Raster</source>
-        <translation type="unfinished"></translation>
+        <translation>栅格</translation>
     </message>
     <message>
         <source>Use MyPaint brushes on Smart Raster and Raster levels.</source>
@@ -18029,7 +18031,7 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
     <message>
         <source>Settings</source>
-        <translation type="unfinished">设置</translation>
+        <translation>设置</translation>
     </message>
     <message>
         <source>Adjust the settings depending on the style you have selected.</source>
@@ -18436,7 +18438,7 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
     <message>
         <source>Whole Scene</source>
-        <translation type="unfinished"></translation>
+        <translation>整个场景</translation>
     </message>
 </context>
 <context>
@@ -18493,15 +18495,15 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
     <message>
         <source>Group</source>
-        <translation type="unfinished">群组</translation>
+        <translation>群组</translation>
     </message>
     <message>
         <source>Arrange</source>
-        <translation type="unfinished">安排</translation>
+        <translation>安排</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished">新建</translation>
+        <translation>新建</translation>
     </message>
     <message>
         <source>Adjust</source>
@@ -18521,7 +18523,7 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
     <message>
         <source>Step</source>
-        <translation type="unfinished">步长</translation>
+        <translation>步长</translation>
     </message>
     <message>
         <source>Each</source>
@@ -19181,14 +19183,14 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
 </context>
 <context>
     <name>XsheetGUI::ChangeObjectParent</name>
     <message>
         <source>Table</source>
-        <translation type="unfinished">动画台</translation>
+        <translation>动画台</translation>
     </message>
 </context>
 <context>
@@ -19347,11 +19349,11 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Unlock</source>
-        <translation type="unfinished">解锁</translation>
+        <translation>解锁</translation>
     </message>
     <message>
         <source>Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定</translation>
     </message>
 </context>
 <context>
@@ -19398,7 +19400,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Lock Column</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定部列</translation>
     </message>
     <message>
         <source>Invert Mask</source>
@@ -19413,15 +19415,15 @@ Please refer to the user guide for details.</source>
     <name>XsheetGUI::FooterNoteArea</name>
     <message>
         <source>Add New Memo</source>
-        <translation type="unfinished">添加新备忘</translation>
+        <translation>添加新备忘</translation>
     </message>
     <message>
         <source>Previous Memo</source>
-        <translation type="unfinished">前一个备忘</translation>
+        <translation>前一个备忘</translation>
     </message>
     <message>
         <source>Next Memo</source>
-        <translation type="unfinished">下一个备忘</translation>
+        <translation>下一个备忘</translation>
     </message>
 </context>
 <context>
@@ -19460,7 +19462,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Add New Level</source>
-        <translation type="unfinished"></translation>
+        <translation>添加新层级</translation>
     </message>
 </context>
 <context>
@@ -19610,7 +19612,7 @@ Hold F3 Key on the Viewer to Show This Frame Only</source>
     <name>XsheetPdfPreviewArea</name>
     <message>
         <source>Fit To Window</source>
-        <translation type="unfinished">适合窗口</translation>
+        <translation>适合窗口</translation>
     </message>
 </context>
 <context>
@@ -19665,11 +19667,11 @@ Hold F3 Key on the Viewer to Show This Frame Only</source>
     </message>
     <message>
         <source>Level: </source>
-        <translation type="unfinished">层级: </translation>
+        <translation>层级: </translation>
     </message>
     <message>
         <source>Selected: </source>
-        <translation type="unfinished"></translation>
+        <translation>选中: </translation>
     </message>
 </context>
 </TS>
