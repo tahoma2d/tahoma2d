@@ -89,27 +89,27 @@
     </message>
     <message>
         <source>X:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Y:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Flip Object Horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>水平旋转对象</translation>
     </message>
     <message>
         <source>Flip Object Vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直旋转对象</translation>
     </message>
     <message>
         <source>Rotate Object Left</source>
-        <translation type="unfinished"></translation>
+        <translation>向左旋转对象</translation>
     </message>
     <message>
         <source>Rotate Object Right</source>
-        <translation type="unfinished"></translation>
+        <translation>向右旋转对象</translation>
     </message>
 </context>
 <context>
@@ -286,31 +286,31 @@
     </message>
     <message>
         <source>Snap</source>
-        <translation type="unfinished">吸附</translation>
+        <translation>吸附</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished">类型:</translation>
+        <translation>类型:</translation>
     </message>
     <message>
         <source>Rectangular</source>
-        <translation type="unfinished">矩形</translation>
+        <translation>矩形</translation>
     </message>
     <message>
         <source>Freehand</source>
-        <translation type="unfinished">手绘</translation>
+        <translation>手绘</translation>
     </message>
     <message>
         <source>Low</source>
-        <translation type="unfinished">低</translation>
+        <translation>低</translation>
     </message>
     <message>
         <source>Med</source>
-        <translation type="unfinished">中</translation>
+        <translation>中</translation>
     </message>
     <message>
         <source>High</source>
-        <translation type="unfinished">高</translation>
+        <translation>高</translation>
     </message>
 </context>
 <context>
@@ -459,23 +459,23 @@
     </message>
     <message>
         <source>Lock Center X</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定中心点(X)</translation>
     </message>
     <message>
         <source>Lock Center Y</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定中心点(Y)</translation>
     </message>
     <message>
         <source>Lock Position X</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定位置(X)</translation>
     </message>
     <message>
         <source>Lock Position Y</source>
-        <translation type="unfinished"></translation>
+        <translation>锁定位置(Y)</translation>
     </message>
     <message>
         <source>X and Y Positions</source>
-        <translation type="unfinished"></translation>
+        <translation>X和Y位置</translation>
     </message>
 </context>
 <context>
@@ -542,27 +542,27 @@
     </message>
     <message>
         <source>Segment</source>
-        <translation type="unfinished">自动分段</translation>
+        <translation>自动分段</translation>
     </message>
     <message>
         <source>Linear</source>
-        <translation type="unfinished">线性</translation>
+        <translation>线性</translation>
     </message>
     <message>
         <source>Ease In</source>
-        <translation type="unfinished"></translation>
+        <translation>渐入</translation>
     </message>
     <message>
         <source>Ease Out</source>
-        <translation type="unfinished"></translation>
+        <translation>渐出</translation>
     </message>
     <message>
         <source>Ease In/Out</source>
-        <translation type="unfinished"></translation>
+        <translation>渐入/出</translation>
     </message>
     <message>
         <source>Savebox</source>
-        <translation type="unfinished"></translation>
+        <translation>保存框</translation>
     </message>
 </context>
 <context>
@@ -637,39 +637,39 @@
     </message>
     <message>
         <source>Distance:</source>
-        <translation type="unfinished">距离:</translation>
+        <translation>距离:</translation>
     </message>
     <message>
         <source>Style Index:</source>
-        <translation type="unfinished">样式索引:</translation>
+        <translation>样式索引:</translation>
     </message>
     <message>
         <source>Gaps:</source>
-        <translation type="unfinished"></translation>
+        <translation>间距:</translation>
     </message>
     <message>
         <source>Fill Gaps</source>
-        <translation type="unfinished"></translation>
+        <translation>填充间距</translation>
     </message>
     <message>
         <source>Close and Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>闭合填充</translation>
     </message>
     <message>
         <source>Refer Visible</source>
-        <translation type="unfinished"></translation>
+        <translation>参考可见</translation>
     </message>
     <message>
         <source>Savebox</source>
-        <translation type="unfinished"></translation>
+        <translation>保存框</translation>
     </message>
     <message>
         <source>Ignore Gaps</source>
-        <translation type="unfinished"></translation>
+        <translation>忽略间距</translation>
     </message>
     <message>
         <source>Pick+Freehand</source>
-        <translation type="unfinished"></translation>
+        <translation>选择+手绘</translation>
     </message>
 </context>
 <context>
@@ -731,7 +731,7 @@
     </message>
     <message>
         <source>Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>网格</translation>
     </message>
 </context>
 <context>
@@ -785,31 +785,31 @@
     </message>
     <message>
         <source>Refer Visible</source>
-        <translation type="unfinished"></translation>
+        <translation>参考可见</translation>
     </message>
     <message>
         <source>Distance:</source>
-        <translation type="unfinished">距离:</translation>
+        <translation>距离:</translation>
     </message>
     <message>
         <source>Style Index:</source>
-        <translation type="unfinished">样式索引:</translation>
+        <translation>样式索引:</translation>
     </message>
     <message>
         <source>Gaps:</source>
-        <translation type="unfinished"></translation>
+        <translation>间距:</translation>
     </message>
     <message>
         <source>Ignore Gaps</source>
-        <translation type="unfinished"></translation>
+        <translation>忽略间距</translation>
     </message>
     <message>
         <source>Fill Gaps</source>
-        <translation type="unfinished"></translation>
+        <translation>填充间距</translation>
     </message>
     <message>
         <source>Close and Fill</source>
-        <translation type="unfinished"></translation>
+        <translation>闭合填充</translation>
     </message>
 </context>
 <context>
@@ -861,133 +861,133 @@
     </message>
     <message>
         <source>Pressure</source>
-        <translation type="unfinished">压感</translation>
+        <translation>压感</translation>
     </message>
     <message>
         <source>Lock Alpha</source>
-        <translation type="unfinished">锁定透明度</translation>
+        <translation>锁定透明度</translation>
     </message>
 </context>
 <context>
     <name>PerspectiveGridToolOptionBox</name>
     <message>
         <source>Spacing:</source>
-        <translation type="unfinished"></translation>
+        <translation>间距:</translation>
     </message>
     <message>
         <source>Rotation:</source>
-        <translation type="unfinished">旋转:</translation>
+        <translation>旋转:</translation>
     </message>
     <message>
         <source>Rotate Perspective Left</source>
-        <translation type="unfinished"></translation>
+        <translation>向左旋转透视</translation>
     </message>
     <message>
         <source>Rotate Perspective Right</source>
-        <translation type="unfinished"></translation>
+        <translation>向右旋转透视</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished">类型:</translation>
+        <translation>类型:</translation>
     </message>
     <message>
         <source>Opacity:</source>
-        <translation type="unfinished">不透明度:</translation>
+        <translation>不透明度:</translation>
     </message>
     <message>
         <source>Color:</source>
-        <translation type="unfinished"></translation>
+        <translation>颜色:</translation>
     </message>
     <message>
         <source>Preset:</source>
-        <translation type="unfinished">预设:</translation>
+        <translation>预设:</translation>
     </message>
     <message>
         <source>Preset Name</source>
-        <translation type="unfinished">预设名称</translation>
+        <translation>预设名称</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">确定</translation>
+        <translation>确定</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <source>Save As Library Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>保存为库预设</translation>
     </message>
 </context>
 <context>
     <name>PerspectiveTool</name>
     <message>
         <source>Type:</source>
-        <translation type="unfinished">类型:</translation>
+        <translation>类型:</translation>
     </message>
     <message>
         <source>Vanishing Point</source>
-        <translation type="unfinished"></translation>
+        <translation>消失点</translation>
     </message>
     <message>
         <source>Line</source>
-        <translation type="unfinished">线</translation>
+        <translation>线</translation>
     </message>
     <message>
         <source>Color:</source>
-        <translation type="unfinished"></translation>
+        <translation>颜色:</translation>
     </message>
     <message>
         <source>Magenta</source>
-        <translation type="unfinished"></translation>
+        <translation>品红</translation>
     </message>
     <message>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>红</translation>
     </message>
     <message>
         <source>Green</source>
-        <translation type="unfinished"></translation>
+        <translation>绿</translation>
     </message>
     <message>
         <source>Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>蓝</translation>
     </message>
     <message>
         <source>Yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>黄</translation>
     </message>
     <message>
         <source>Cyan</source>
-        <translation type="unfinished"></translation>
+        <translation>青</translation>
     </message>
     <message>
         <source>Black</source>
-        <translation type="unfinished"></translation>
+        <translation>黑</translation>
     </message>
     <message>
         <source>Opacity:</source>
-        <translation type="unfinished">不透明度:</translation>
+        <translation>不透明度:</translation>
     </message>
     <message>
         <source>Horizon</source>
-        <translation type="unfinished"></translation>
+        <translation>水平</translation>
     </message>
     <message>
         <source>Parallel</source>
-        <translation type="unfinished"></translation>
+        <translation>平行</translation>
     </message>
     <message>
         <source>Advanced Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>高级控制</translation>
     </message>
     <message>
         <source>Preset:</source>
-        <translation type="unfinished">预设:</translation>
+        <translation>预设:</translation>
     </message>
     <message>
         <source>&lt;custom&gt;</source>
-        <translation type="unfinished">&lt;定制&gt;</translation>
+        <translation>&lt;定制&gt;</translation>
     </message>
 </context>
 <context>
@@ -1295,31 +1295,31 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>MultiArc</source>
-        <translation type="unfinished"></translation>
+        <translation>多弧形</translation>
     </message>
     <message>
         <source>Smooth</source>
-        <translation type="unfinished">平滑</translation>
+        <translation>平滑</translation>
     </message>
     <message>
         <source>Draw Under</source>
-        <translation type="unfinished"></translation>
+        <translation>在下面绘制</translation>
     </message>
     <message>
         <source>Rotate</source>
-        <translation type="unfinished"></translation>
+        <translation>旋转</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished">大小</translation>
+        <translation>大小</translation>
     </message>
     <message>
         <source>Eraser</source>
-        <translation type="unfinished">橡皮差</translation>
+        <translation>橡皮差</translation>
     </message>
     <message>
         <source>Pressure</source>
-        <translation type="unfinished">压感</translation>
+        <translation>压感</translation>
     </message>
 </context>
 <context>
@@ -1529,19 +1529,19 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Snap At Intersection</source>
-        <translation type="unfinished"></translation>
+        <translation>在交点吸附</translation>
     </message>
     <message>
         <source>It is not possible to animate unlinked motion paths.</source>
-        <translation type="unfinished"></translation>
+        <translation>无法对未连接的运动路径进行动画。</translation>
     </message>
     <message>
         <source>The current tool cannot be used on empty frames of a Single Frame level.</source>
-        <translation type="unfinished"></translation>
+        <translation>当前工具不能用在单帧层级的空帧上。</translation>
     </message>
     <message>
         <source>The current tool cannot be used on a stop frame.</source>
-        <translation type="unfinished"></translation>
+        <translation>当前工具不能用在停止帧上。</translation>
     </message>
 </context>
 <context>
@@ -1586,7 +1586,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Modify Savebox</source>
-        <translation>修改保险框</translation>
+        <translation>修改保存框</translation>
     </message>
 </context>
 <context>
@@ -1742,27 +1742,27 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>X:</source>
-        <translation type="unfinished"></translation>
+        <translation>横坐标:</translation>
     </message>
     <message>
         <source>Y:</source>
-        <translation type="unfinished"></translation>
+        <translation>纵坐标:</translation>
     </message>
     <message>
         <source>Flip Selection Horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>水平旋转选区</translation>
     </message>
     <message>
         <source>Flip Selection Vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直旋转选区</translation>
     </message>
     <message>
         <source>Rotate Selection Left</source>
-        <translation type="unfinished"></translation>
+        <translation>向左旋转选区</translation>
     </message>
     <message>
         <source>Rotate Selection Right</source>
-        <translation type="unfinished"></translation>
+        <translation>向右旋转选区</translation>
     </message>
 </context>
 <context>
@@ -1873,102 +1873,102 @@ moved to the end of the first page of the palette.</source>
     <name>SymmetryTool</name>
     <message>
         <source>Lines:</source>
-        <translation type="unfinished"></translation>
+        <translation>线:</translation>
     </message>
     <message>
         <source>Opacity</source>
-        <translation type="unfinished">不透明度</translation>
+        <translation>不透明度</translation>
     </message>
     <message>
         <source>Color:</source>
-        <translation type="unfinished"></translation>
+        <translation>颜色:</translation>
     </message>
     <message>
         <source>Magenta</source>
-        <translation type="unfinished"></translation>
+        <translation>品红</translation>
     </message>
     <message>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>红</translation>
     </message>
     <message>
         <source>Green</source>
-        <translation type="unfinished"></translation>
+        <translation>绿</translation>
     </message>
     <message>
         <source>Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>蓝</translation>
     </message>
     <message>
         <source>Yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>黄</translation>
     </message>
     <message>
         <source>Cyan</source>
-        <translation type="unfinished"></translation>
+        <translation>青</translation>
     </message>
     <message>
         <source>Black</source>
-        <translation type="unfinished"></translation>
+        <translation>黑</translation>
     </message>
     <message>
         <source>Line Symmetry</source>
-        <translation type="unfinished"></translation>
+        <translation>线对称</translation>
     </message>
     <message>
         <source>Preset:</source>
-        <translation type="unfinished">预设:</translation>
+        <translation>预设:</translation>
     </message>
     <message>
         <source>&lt;custom&gt;</source>
-        <translation type="unfinished">&lt;定制&gt;</translation>
+        <translation>&lt;定制&gt;</translation>
     </message>
 </context>
 <context>
     <name>SymmetryToolOptionBox</name>
     <message>
         <source>Rotation:</source>
-        <translation type="unfinished">旋转:</translation>
+        <translation>旋转:</translation>
     </message>
     <message>
         <source>Rotate Perspective Left</source>
-        <translation type="unfinished"></translation>
+        <translation>向左旋转透视</translation>
     </message>
     <message>
         <source>Rotate Perspective Right</source>
-        <translation type="unfinished"></translation>
+        <translation>向右旋转透视</translation>
     </message>
     <message>
         <source>Reset Position</source>
-        <translation type="unfinished">重置位置</translation>
+        <translation>重置位置</translation>
     </message>
     <message>
         <source>Lines:</source>
-        <translation type="unfinished"></translation>
+        <translation>线:</translation>
     </message>
     <message>
         <source>Opacity:</source>
-        <translation type="unfinished">不透明度:</translation>
+        <translation>不透明度:</translation>
     </message>
     <message>
         <source>Color:</source>
-        <translation type="unfinished"></translation>
+        <translation>颜色:</translation>
     </message>
     <message>
         <source>Preset:</source>
-        <translation type="unfinished">预设:</translation>
+        <translation>预设:</translation>
     </message>
     <message>
         <source>Preset Name</source>
-        <translation type="unfinished">预设名称</translation>
+        <translation>预设名称</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">确定</translation>
+        <translation>确定</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">取消</translation>
+        <translation>取消</translation>
     </message>
 </context>
 <context>
@@ -2019,11 +2019,11 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Lock Alpha</source>
-        <translation type="unfinished">锁定透明度</translation>
+        <translation>锁定透明度</translation>
     </message>
     <message>
         <source>Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>网格</translation>
     </message>
 </context>
 <context>
@@ -2134,19 +2134,19 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Draw Under</source>
-        <translation type="unfinished"></translation>
+        <translation>在下面绘制</translation>
     </message>
     <message>
         <source>Auto Close</source>
-        <translation type="unfinished"></translation>
+        <translation>自动闭合</translation>
     </message>
     <message>
         <source>Auto Fill</source>
-        <translation type="unfinished">自动填充</translation>
+        <translation>自动填充</translation>
     </message>
     <message>
         <source>Auto Group</source>
-        <translation type="unfinished">自动成组</translation>
+        <translation>自动成组</translation>
     </message>
 </context>
 <context>
@@ -2161,11 +2161,11 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>X:</source>
-        <translation>X:</translation>
+        <translation>横坐标:</translation>
     </message>
     <message>
         <source>Y:</source>
-        <translation>Y:</translation>
+        <translation>纵坐标:</translation>
     </message>
 </context>
 <context>
@@ -2271,7 +2271,7 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Include Intersection</source>
-        <translation type="unfinished"></translation>
+        <translation>包括交集</translation>
     </message>
 </context>
 <context>
