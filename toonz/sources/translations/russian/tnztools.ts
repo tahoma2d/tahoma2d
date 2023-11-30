@@ -14,125 +14,125 @@
         <translation type="vanished">N/S:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="462"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="464"/>
         <source>SO:</source>
         <translatorcomment>порядок размещения:</translatorcomment>
         <translation>Порядок:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="630"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="632"/>
         <source>Position</source>
         <translation>Положение</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="444"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="446"/>
         <source>Z:</source>
         <translatorcomment>глубина</translatorcomment>
         <translation>Z:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="653"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="655"/>
         <source>(</source>
         <translation>(</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="655"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="657"/>
         <source>)</source>
         <translation>)</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="678"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="680"/>
         <source>Rotation</source>
         <translation>Вращение</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="702"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="704"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="483"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="485"/>
         <source>Global:</source>
         <translation>Глобальный:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="445"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="447"/>
         <source>Position:</source>
         <translation>Положение:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="446"/>
-        <location filename="../../tnztools/tooloptions.cpp" line="529"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="448"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="531"/>
         <source>X:</source>
         <translation>X:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="447"/>
-        <location filename="../../tnztools/tooloptions.cpp" line="530"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="449"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="532"/>
         <source>Y:</source>
         <translation>Y:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="467"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="469"/>
         <source>Rotation:</source>
         <translation>Вращение:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="484"/>
-        <location filename="../../tnztools/tooloptions.cpp" line="510"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="486"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="512"/>
         <source>H:</source>
         <translatorcomment>горизонтально</translatorcomment>
         <translation>H:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="485"/>
-        <location filename="../../tnztools/tooloptions.cpp" line="511"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="487"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="513"/>
         <source>V:</source>
         <translatorcomment>вертикально</translatorcomment>
         <translation>V:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="590"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="592"/>
         <source>Flip Object Horizontally</source>
         <translation>Отразить объект по горизонтали</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="591"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="593"/>
         <source>Flip Object Vertically</source>
         <translation>Отразить объект по вертикали</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="592"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="594"/>
         <source>Rotate Object Left</source>
         <translation>Повернуть объект влево</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="593"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="595"/>
         <source>Rotate Object Right</source>
         <translation>Повернуть объект вправо</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="727"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="729"/>
         <source>Maintain:</source>
         <translation>Поддерживать:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="747"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="749"/>
         <source>Shear</source>
         <translation>Скос</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="779"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="781"/>
         <source>Center Position</source>
         <translation>Центральное положение</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="992"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="994"/>
         <source>Table</source>
         <translation>Стол</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="613"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="615"/>
         <source>Pick:</source>
         <translation>Выбрать:</translation>
     </message>
@@ -278,19 +278,16 @@
 <context>
     <name>BrushToolOptionsBox</name>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2053"/>
         <source>Preset Name</source>
-        <translation>Имя предустановки</translation>
+        <translation type="vanished">Имя предустановки</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2057"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="vanished">OK</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2059"/>
         <source>Cancel</source>
-        <translation>Отмена</translation>
+        <translation type="vanished">Отмена</translation>
     </message>
 </context>
 <context>
@@ -352,51 +349,50 @@
 <context>
     <name>DVGui::StyleIndexLineEdit</name>
     <message>
-        <location filename="../../tnztools/tooloptionscontrols.cpp" line="549"/>
         <source>current</source>
-        <translation>текущий</translation>
+        <translation type="vanished">текущий</translation>
     </message>
 </context>
 <context>
     <name>EditTool</name>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="740"/>
+        <location filename="../../tnztools/edittool.cpp" line="737"/>
         <source>Scale Constraint:</source>
         <translation>Ограничение масштаба:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="741"/>
-        <location filename="../../tnztools/edittool.cpp" line="746"/>
+        <location filename="../../tnztools/edittool.cpp" line="738"/>
+        <location filename="../../tnztools/edittool.cpp" line="743"/>
         <source>None</source>
         <translation>Нет</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="742"/>
+        <location filename="../../tnztools/edittool.cpp" line="739"/>
         <source>A/R</source>
         <translation>A/R</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="743"/>
+        <location filename="../../tnztools/edittool.cpp" line="740"/>
         <source>Mass</source>
         <translation>Масса</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="745"/>
+        <location filename="../../tnztools/edittool.cpp" line="742"/>
         <source>Auto Select Column</source>
         <translation>Автовыбор столбца</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="747"/>
+        <location filename="../../tnztools/edittool.cpp" line="744"/>
         <source>Column</source>
         <translation>Столбец</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="748"/>
+        <location filename="../../tnztools/edittool.cpp" line="745"/>
         <source>Pegbar</source>
         <translation>Pegbar</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="750"/>
+        <location filename="../../tnztools/edittool.cpp" line="747"/>
         <source>Global Key</source>
         <translation>Глобальный ключ</translation>
     </message>
@@ -417,32 +413,32 @@
         <translation type="vanished">Блокировать положение N/S</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="755"/>
+        <location filename="../../tnztools/edittool.cpp" line="752"/>
         <source>Lock Rotation</source>
         <translation>Блокировать вращение</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="756"/>
+        <location filename="../../tnztools/edittool.cpp" line="753"/>
         <source>Lock Shear H</source>
         <translation>Болкировать сдвиг H</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="757"/>
+        <location filename="../../tnztools/edittool.cpp" line="754"/>
         <source>Lock Shear V</source>
         <translation>Болкировать сдвиг V</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="758"/>
+        <location filename="../../tnztools/edittool.cpp" line="755"/>
         <source>Lock Scale H</source>
         <translation>Болкировать масштаб H</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="759"/>
+        <location filename="../../tnztools/edittool.cpp" line="756"/>
         <source>Lock Scale V</source>
         <translation>Болкировать масштаб V</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="760"/>
+        <location filename="../../tnztools/edittool.cpp" line="757"/>
         <source>Lock Global Scale</source>
         <translation>Болкировать глобальный  масштаб</translation>
     </message>
@@ -451,90 +447,90 @@
         <translation type="vanished">E/W и N/S положение</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="751"/>
+        <location filename="../../tnztools/edittool.cpp" line="748"/>
         <source>Lock Center X</source>
         <translation>Блокировать центр X</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="752"/>
+        <location filename="../../tnztools/edittool.cpp" line="749"/>
         <source>Lock Center Y</source>
         <translation>Блокировать центр Y</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="753"/>
+        <location filename="../../tnztools/edittool.cpp" line="750"/>
         <source>Lock Position X</source>
         <translation>Блокировка положения X</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="754"/>
+        <location filename="../../tnztools/edittool.cpp" line="751"/>
         <source>Lock Position Y</source>
         <translation>Блокировка положения Y</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="761"/>
+        <location filename="../../tnztools/edittool.cpp" line="758"/>
         <source>X and Y Positions</source>
         <translation>X и Y положение</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="762"/>
+        <location filename="../../tnztools/edittool.cpp" line="759"/>
         <source>Z Position</source>
         <translation>Z положение</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="763"/>
+        <location filename="../../tnztools/edittool.cpp" line="760"/>
         <source>SO</source>
         <translatorcomment>порядок размещения</translatorcomment>
         <translation>Порядок</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="764"/>
-        <location filename="../../tnztools/edittool.cpp" line="772"/>
+        <location filename="../../tnztools/edittool.cpp" line="761"/>
+        <location filename="../../tnztools/edittool.cpp" line="769"/>
         <source>Rotation</source>
         <translation>Вращение</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="765"/>
+        <location filename="../../tnztools/edittool.cpp" line="762"/>
         <source>Global Scale</source>
         <translation>Глобальный масштаб</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="766"/>
+        <location filename="../../tnztools/edittool.cpp" line="763"/>
         <source>Horizontal and Vertical Scale</source>
         <translation>Горизонтальное и вертикальное масштабирование</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="767"/>
-        <location filename="../../tnztools/edittool.cpp" line="774"/>
+        <location filename="../../tnztools/edittool.cpp" line="764"/>
+        <location filename="../../tnztools/edittool.cpp" line="771"/>
         <source>Shear</source>
         <translation>Скос</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="768"/>
+        <location filename="../../tnztools/edittool.cpp" line="765"/>
         <source>Center Position</source>
         <translation>Центральное положение</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="770"/>
+        <location filename="../../tnztools/edittool.cpp" line="767"/>
         <source>Active Axis</source>
         <translation>Активная ось</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="771"/>
+        <location filename="../../tnztools/edittool.cpp" line="768"/>
         <source>Position</source>
         <translation>Положение</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="773"/>
+        <location filename="../../tnztools/edittool.cpp" line="770"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="775"/>
+        <location filename="../../tnztools/edittool.cpp" line="772"/>
         <source>Center</source>
         <translation>Центр</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="776"/>
+        <location filename="../../tnztools/edittool.cpp" line="773"/>
         <source>All</source>
         <translation>Все</translation>
     </message>
@@ -542,56 +538,56 @@
 <context>
     <name>EraserTool</name>
     <message>
-        <location filename="../../tnztools/vectorerasertool.cpp" line="435"/>
         <location filename="../../tnztools/rastererasertool.cpp" line="863"/>
+        <location filename="../../tnztools/vectorerasertool.cpp" line="435"/>
         <source>Size:</source>
         <translation>Размер:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorerasertool.cpp" line="436"/>
         <location filename="../../tnztools/rastererasertool.cpp" line="878"/>
+        <location filename="../../tnztools/vectorerasertool.cpp" line="436"/>
         <source>Selective</source>
         <translation>Избирательно</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorerasertool.cpp" line="437"/>
         <location filename="../../tnztools/rastererasertool.cpp" line="879"/>
+        <location filename="../../tnztools/vectorerasertool.cpp" line="437"/>
         <source>Invert</source>
         <translation>Инвертировать</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorerasertool.cpp" line="438"/>
         <location filename="../../tnztools/rastererasertool.cpp" line="880"/>
+        <location filename="../../tnztools/vectorerasertool.cpp" line="438"/>
         <source>Frame Range</source>
         <translation>Диапазон кадров</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorerasertool.cpp" line="439"/>
         <location filename="../../tnztools/rastererasertool.cpp" line="866"/>
+        <location filename="../../tnztools/vectorerasertool.cpp" line="439"/>
         <source>Type:</source>
         <translation>Тип:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorerasertool.cpp" line="440"/>
         <location filename="../../tnztools/rastererasertool.cpp" line="867"/>
+        <location filename="../../tnztools/vectorerasertool.cpp" line="440"/>
         <source>Normal</source>
         <translation>Обычный</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorerasertool.cpp" line="441"/>
         <location filename="../../tnztools/rastererasertool.cpp" line="868"/>
+        <location filename="../../tnztools/vectorerasertool.cpp" line="441"/>
         <source>Rectangular</source>
         <translation>Прямоугольный</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorerasertool.cpp" line="442"/>
         <location filename="../../tnztools/rastererasertool.cpp" line="869"/>
+        <location filename="../../tnztools/vectorerasertool.cpp" line="442"/>
         <source>Freehand</source>
         <translation>От руки</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorerasertool.cpp" line="443"/>
         <location filename="../../tnztools/rastererasertool.cpp" line="870"/>
+        <location filename="../../tnztools/vectorerasertool.cpp" line="443"/>
         <source>Polyline</source>
         <translation>Полилиния</translation>
     </message>
@@ -601,8 +597,8 @@
         <translation>Жесткость:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorerasertool.cpp" line="444"/>
         <location filename="../../tnztools/rastererasertool.cpp" line="871"/>
+        <location filename="../../tnztools/vectorerasertool.cpp" line="444"/>
         <source>Segment</source>
         <translation>Сегмент</translation>
     </message>
@@ -660,117 +656,117 @@
 <context>
     <name>FillTool</name>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2420"/>
+        <location filename="../../tnztools/filltool.cpp" line="2399"/>
         <source>Frame Range</source>
         <translation>Диапазон кадров</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2422"/>
+        <location filename="../../tnztools/filltool.cpp" line="2401"/>
         <source>Type:</source>
         <translation>Тип:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2423"/>
+        <location filename="../../tnztools/filltool.cpp" line="2402"/>
         <source>Normal</source>
         <translation>Обычная</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2424"/>
+        <location filename="../../tnztools/filltool.cpp" line="2403"/>
         <source>Rectangular</source>
         <translation>Прямоугольная</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2425"/>
+        <location filename="../../tnztools/filltool.cpp" line="2404"/>
         <source>Freehand</source>
         <translation>От руки</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2426"/>
+        <location filename="../../tnztools/filltool.cpp" line="2405"/>
         <source>Polyline</source>
         <translation>Полилиния</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2427"/>
+        <location filename="../../tnztools/filltool.cpp" line="2406"/>
         <source>Pick+Freehand</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбор+От руки</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2429"/>
+        <location filename="../../tnztools/filltool.cpp" line="2408"/>
         <source>Selective</source>
         <translation>Избирательно</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2431"/>
+        <location filename="../../tnztools/filltool.cpp" line="2410"/>
         <source>Mode:</source>
         <translation>Режим:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2432"/>
+        <location filename="../../tnztools/filltool.cpp" line="2411"/>
         <source>Lines</source>
         <translation>Линии</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2433"/>
+        <location filename="../../tnztools/filltool.cpp" line="2412"/>
         <source>Areas</source>
         <translation>Области</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2434"/>
+        <location filename="../../tnztools/filltool.cpp" line="2413"/>
         <source>Lines &amp; Areas</source>
         <translation>Линии и области</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2436"/>
+        <location filename="../../tnztools/filltool.cpp" line="2415"/>
         <source>Onion Skin</source>
         <translation>Калька</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2437"/>
+        <location filename="../../tnztools/filltool.cpp" line="2416"/>
         <source>Refer Visible</source>
         <translation>Учитывать видимые</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2438"/>
+        <location filename="../../tnztools/filltool.cpp" line="2417"/>
         <source>Fill Depth</source>
         <translation>Глубина заливки</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2439"/>
+        <location filename="../../tnztools/filltool.cpp" line="2418"/>
         <source>Segment</source>
         <translation>Сегмент</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2440"/>
+        <location filename="../../tnztools/filltool.cpp" line="2419"/>
         <source>Maximum Gap</source>
         <translation>Максимальный зазор</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2441"/>
+        <location filename="../../tnztools/filltool.cpp" line="2420"/>
         <source>Autopaint Lines</source>
         <translation>Автозаливка линий</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2442"/>
+        <location filename="../../tnztools/filltool.cpp" line="2421"/>
         <source>Savebox</source>
         <translation>Сейвбокс</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2443"/>
+        <location filename="../../tnztools/filltool.cpp" line="2422"/>
         <source>Distance:</source>
         <translation>Расстояние:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2444"/>
+        <location filename="../../tnztools/filltool.cpp" line="2423"/>
         <source>Style Index:</source>
         <translation>Номер cтиля:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2445"/>
+        <location filename="../../tnztools/filltool.cpp" line="2424"/>
         <source>Gaps:</source>
         <translation>Разрывы:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2446"/>
+        <location filename="../../tnztools/filltool.cpp" line="2425"/>
         <source>Ignore Gaps</source>
         <translation>Игнорировать разрывы</translation>
     </message>
@@ -779,12 +775,12 @@
         <translation type="vanished">Игнорировать разрывы</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2447"/>
+        <location filename="../../tnztools/filltool.cpp" line="2426"/>
         <source>Fill Gaps</source>
         <translation>Заполнить разрывы</translation>
     </message>
     <message>
-        <location filename="../../tnztools/filltool.cpp" line="2448"/>
+        <location filename="../../tnztools/filltool.cpp" line="2427"/>
         <source>Close and Fill</source>
         <translation>Замкнуть и залить</translation>
     </message>
@@ -920,38 +916,38 @@
     <message>
         <location filename="../../tnztools/fullcolorfilltool.cpp" line="183"/>
         <source>Distance:</source>
-        <translation type="unfinished">Расстояние:</translation>
+        <translation>Расстояние:</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorfilltool.cpp" line="184"/>
         <source>Style Index:</source>
-        <translation type="unfinished">Номер cтиля:</translation>
+        <translation>Номер cтиля:</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorfilltool.cpp" line="185"/>
         <source>Gaps:</source>
-        <translation type="unfinished">Разрывы:</translation>
+        <translation>Разрывы:</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorfilltool.cpp" line="186"/>
         <source>Ignore Gaps</source>
-        <translation type="unfinished">Игнорировать разрывы</translation>
+        <translation>Игнорировать разрывы</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorfilltool.cpp" line="187"/>
         <source>Fill Gaps</source>
-        <translation type="unfinished">Заполнить разрывы</translation>
+        <translation>Заполнить разрывы</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorfilltool.cpp" line="188"/>
         <source>Close and Fill</source>
-        <translation type="unfinished">Замкнуть и залить</translation>
+        <translation>Замкнуть и залить</translation>
     </message>
 </context>
 <context>
     <name>HandToolOptionsBox</name>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3615"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3617"/>
         <source>Reset Position</source>
         <translation>Сбросить расположение</translation>
     </message>
@@ -959,7 +955,7 @@
 <context>
     <name>HookTool</name>
     <message>
-        <location filename="../../tnztools/hooktool.cpp" line="192"/>
+        <location filename="../../tnztools/hooktool.cpp" line="185"/>
         <source>Snap</source>
         <translation>Привязка</translation>
     </message>
@@ -967,7 +963,7 @@
 <context>
     <name>MagnetTool</name>
     <message>
-        <location filename="../../tnztools/magnettool.cpp" line="158"/>
+        <location filename="../../tnztools/magnettool.cpp" line="156"/>
         <source>Size:</source>
         <translation>Размер:</translation>
     </message>
@@ -1018,62 +1014,42 @@
 <context>
     <name>PerspectiveGridToolOptionBox</name>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2981"/>
-        <source>Preset Name</source>
-        <translation type="unfinished">Имя предустановки</translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2984"/>
-        <source>Save As Library Preset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2987"/>
-        <source>OK</source>
-        <translation type="unfinished">OK</translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2989"/>
-        <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3028"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3030"/>
         <source>Spacing:</source>
         <translation>Расстояние:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3033"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3035"/>
         <source>Rotation:</source>
         <translation>Вращение:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3049"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3051"/>
         <source>Rotate Perspective Left</source>
         <translation>Повернуть перспективу влево</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3050"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3052"/>
         <source>Rotate Perspective Right</source>
         <translation>Повернуть перспективу вправо</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3083"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3085"/>
         <source>Type:</source>
         <translation>Тип:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3088"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3090"/>
         <source>Opacity:</source>
         <translation>Непрозрачность:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3105"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3107"/>
         <source>Color:</source>
         <translation>Цвет:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3122"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3124"/>
         <source>Preset:</source>
         <translation>Предустановка:</translation>
     </message>
@@ -1170,17 +1146,17 @@
 <context>
     <name>PinchTool</name>
     <message>
-        <location filename="../../tnztools/pinchtool.cpp" line="117"/>
+        <location filename="../../tnztools/pinchtool.cpp" line="111"/>
         <source>Size:</source>
         <translation>Размер:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/pinchtool.cpp" line="118"/>
+        <location filename="../../tnztools/pinchtool.cpp" line="112"/>
         <source>Corner:</source>
         <translation>Угол:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/pinchtool.cpp" line="119"/>
+        <location filename="../../tnztools/pinchtool.cpp" line="113"/>
         <source>Manual</source>
         <translation>Вручную</translation>
     </message>
@@ -1585,12 +1561,12 @@ Do you want to proceed?</source>
 <context>
     <name>PumpTool</name>
     <message>
-        <location filename="../../tnztools/pumptool.cpp" line="111"/>
+        <location filename="../../tnztools/pumptool.cpp" line="105"/>
         <source>Size:</source>
         <translation>Размер:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/pumptool.cpp" line="112"/>
+        <location filename="../../tnztools/pumptool.cpp" line="106"/>
         <source>Accuracy:</source>
         <translation>Точность:</translation>
     </message>
@@ -1598,8 +1574,8 @@ Do you want to proceed?</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../tnztools/strokeselection.cpp" line="130"/>
         <location filename="../../tnztools/rasterselection.cpp" line="1167"/>
+        <location filename="../../tnztools/strokeselection.cpp" line="130"/>
         <source>The copied selection cannot be pasted in the current drawing.</source>
         <translation>Скопированное выделение невозможно вставить в текущий рисунок.</translation>
     </message>
@@ -1609,15 +1585,15 @@ Do you want to proceed?</source>
         <translation>Не удается обновить выделенное. Не редактируется.</translation>
     </message>
     <message>
+        <location filename="../../tnztools/rasterselection.cpp" line="1089"/>
         <location filename="../../tnztools/strokeselection.cpp" line="510"/>
         <location filename="../../tnztools/strokeselection.cpp" line="624"/>
-        <location filename="../../tnztools/rasterselection.cpp" line="1089"/>
         <source>The selection cannot be deleted. It is not editable.</source>
         <translation>Невозможно удалить выделенное. Не редактируется.</translation>
     </message>
     <message>
-        <location filename="../../tnztools/strokeselection.cpp" line="563"/>
         <location filename="../../tnztools/rasterselection.cpp" line="1213"/>
+        <location filename="../../tnztools/strokeselection.cpp" line="563"/>
         <source>The selection cannot be pasted. It is not editable.</source>
         <translation>Не удается вставить выделенное. Не редактируется.</translation>
     </message>
@@ -1628,14 +1604,14 @@ Do you want to proceed?</source>
         <translation>Вставить</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="223"/>
-        <location filename="../../tnztools/tooloptions.cpp" line="235"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="225"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="237"/>
         <source>Min:</source>
         <translation>Мин:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="223"/>
-        <location filename="../../tnztools/tooloptions.cpp" line="235"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="225"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="237"/>
         <source>Max:</source>
         <translation>Макс:</translation>
     </message>
@@ -1645,7 +1621,7 @@ Do you want to proceed?</source>
         <translation>Задать окно сохранения : (X%1,Y%2,W%3,H%4)-&gt;(X%5,Y%6,W%7,H%8)</translation>
     </message>
     <message>
-        <location filename="../../tnztools/selectiontool.cpp" line="306"/>
+        <location filename="../../tnztools/selectiontool.cpp" line="308"/>
         <source>Move Center</source>
         <translation>Переместить центр</translation>
     </message>
@@ -1733,24 +1709,24 @@ Do you want to proceed?</source>
         <translation>Изменить Fx-гаджет  </translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="1698"/>
+        <location filename="../../tnztools/edittool.cpp" line="1679"/>
         <source>It is not possible to animate unlinked motion paths.</source>
         <translation>Невозможно анимировать несвязанные пути движения.</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="1724"/>
+        <location filename="../../tnztools/edittool.cpp" line="1705"/>
         <location filename="../../tnztools/tool.cpp" line="1005"/>
         <source>The current column is locked.</source>
         <translation>Текущий столбец на замке.</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="1728"/>
+        <location filename="../../tnztools/edittool.cpp" line="1709"/>
         <location filename="../../tnztools/tool.cpp" line="1008"/>
         <source>The current column is hidden.</source>
         <translation>Текущий столбец скрыт.</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="1711"/>
+        <location filename="../../tnztools/edittool.cpp" line="1692"/>
         <location filename="../../tnztools/tool.cpp" line="1012"/>
         <source>It is not possible to edit the audio column.</source>
         <translation>Невозможно редактировать столбец аудио.</translation>
@@ -1760,7 +1736,7 @@ Do you want to proceed?</source>
         <translation type="obsolete">Редактировать столбец Magpie невозможно.</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="1715"/>
+        <location filename="../../tnztools/edittool.cpp" line="1696"/>
         <location filename="../../tnztools/tool.cpp" line="1017"/>
         <source>Note columns can only be edited in the xsheet or timeline.</source>
         <translation>Столбцы заметок можно редактировать только в Xsheet или на временной шкале.</translation>
@@ -1776,7 +1752,7 @@ Do you want to proceed?</source>
         <translation>Текущий инструмент нельзя использовать в столбце полисетки.</translation>
     </message>
     <message>
-        <location filename="../../tnztools/edittool.cpp" line="1689"/>
+        <location filename="../../tnztools/edittool.cpp" line="1670"/>
         <location filename="../../tnztools/tool.cpp" line="1039"/>
         <source>The current tool cannot be used in Level Strip mode.</source>
         <translation>Текущий инструмент нельзя использовать в режиме &quot;Полоса уровней&quot;.</translation>
@@ -1833,20 +1809,16 @@ Do you want to proceed?</source>
         <translation>Текущий инструмент нельзя использовать в стоп-кадре.</translation>
     </message>
     <message>
-        <location filename="../../include/tools/toolutils.h" line="180"/>
         <source>%1   Level : %2  Frame : %3</source>
-        <translation>%1   Уровень : %2 Кадр : %3</translation>
+        <translation type="vanished">%1   Уровень : %2 Кадр : %3</translation>
     </message>
     <message>
-        <location filename="../../include/tools/toolutils.h" line="271"/>
-        <location filename="../../include/tools/toolutils.h" line="294"/>
         <source>Modify Stroke Tool</source>
-        <translation>Изменить метод обводки</translation>
+        <translation type="vanished">Изменить метод обводки</translation>
     </message>
     <message>
-        <location filename="../../include/tools/toolutils.h" line="385"/>
         <source>Modify Spline</source>
-        <translation>Изменить сплайн</translation>
+        <translation type="vanished">Изменить сплайн</translation>
     </message>
     <message>
         <location filename="../../tnztools/rasterselectiontool.h" line="71"/>
@@ -1900,7 +1872,7 @@ Do you want to proceed?</source>
 <context>
     <name>RGBPickerToolOptionsBox</name>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2710"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="2712"/>
         <source>Pick Screen</source>
         <translation>Экранный выбор</translation>
     </message>
@@ -1908,12 +1880,12 @@ Do you want to proceed?</source>
 <context>
     <name>RasterSelectionTool</name>
     <message>
-        <location filename="../../tnztools/rasterselectiontool.cpp" line="1103"/>
+        <location filename="../../tnztools/rasterselectiontool.cpp" line="1086"/>
         <source>Modify Savebox</source>
         <translation>Изменить Savebox</translation>
     </message>
     <message>
-        <location filename="../../tnztools/rasterselectiontool.cpp" line="1105"/>
+        <location filename="../../tnztools/rasterselectiontool.cpp" line="1088"/>
         <source>No Antialiasing</source>
         <translation>Без сглаживания</translation>
     </message>
@@ -1987,7 +1959,7 @@ Do you want to proceed?</source>
 <context>
     <name>RotateToolOptionsBox</name>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3588"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3590"/>
         <source>Reset Rotation</source>
         <translation>Сбросить вращение</translation>
     </message>
@@ -1995,37 +1967,37 @@ Do you want to proceed?</source>
 <context>
     <name>RulerToolOptionsBox</name>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2471"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="2473"/>
         <source>X:</source>
         <comment>ruler tool option</comment>
         <translation>X:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2477"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="2479"/>
         <source>Y:</source>
         <comment>ruler tool option</comment>
         <translation>Y:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2485"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="2487"/>
         <source>W:</source>
         <comment>ruler tool option</comment>
         <translation>Ш:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2491"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="2493"/>
         <source>H:</source>
         <comment>ruler tool option</comment>
         <translation>В:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2499"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="2501"/>
         <source>A:</source>
         <comment>ruler tool option</comment>
         <translation>У:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2504"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="2506"/>
         <source>L:</source>
         <comment>ruler tool option</comment>
         <translation>Д:</translation>
@@ -2034,22 +2006,22 @@ Do you want to proceed?</source>
 <context>
     <name>SelectionTool</name>
     <message>
-        <location filename="../../tnztools/selectiontool.cpp" line="925"/>
+        <location filename="../../tnztools/selectiontool.cpp" line="927"/>
         <source>Type:</source>
         <translation>Тип:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/selectiontool.cpp" line="926"/>
+        <location filename="../../tnztools/selectiontool.cpp" line="928"/>
         <source>Rectangular</source>
         <translation>Прямоугольный</translation>
     </message>
     <message>
-        <location filename="../../tnztools/selectiontool.cpp" line="927"/>
+        <location filename="../../tnztools/selectiontool.cpp" line="929"/>
         <source>Freehand</source>
         <translation>От руки</translation>
     </message>
     <message>
-        <location filename="../../tnztools/selectiontool.cpp" line="928"/>
+        <location filename="../../tnztools/selectiontool.cpp" line="930"/>
         <source>Polyline</source>
         <translation>Полилиния</translation>
     </message>
@@ -2057,53 +2029,53 @@ Do you want to proceed?</source>
 <context>
     <name>SelectionToolOptionsBox</name>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1143"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1145"/>
         <source>H:</source>
         <translation>H:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1145"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1147"/>
         <source>V:</source>
         <translation>V:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1147"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1149"/>
         <source>Link</source>
         <translation>Связать</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1150"/>
-        <location filename="../../tnztools/tooloptions.cpp" line="1151"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1152"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1153"/>
         <source>Rotation</source>
         <translation>Вращение</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1153"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1155"/>
         <source>X:</source>
         <translation>X:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1155"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1157"/>
         <source>Y:</source>
         <translation>Y:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1187"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1189"/>
         <source>Flip Selection Horizontally</source>
         <translation>Отразить выделение по горизонтали</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1188"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1190"/>
         <source>Flip Selection Vertically</source>
         <translation>Отразить выделение по вертикали</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1189"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1191"/>
         <source>Rotate Selection Left</source>
         <translation>Повернуть выделение влево</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1190"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1192"/>
         <source>Rotate Selection Right</source>
         <translation>Повернуть выделение вправо</translation>
     </message>
@@ -2116,18 +2088,18 @@ Do you want to proceed?</source>
         <translation type="vanished">N/S:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1206"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1208"/>
         <source>Scale</source>
         <translation>Масштаб</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1227"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1229"/>
         <source>Position</source>
         <translation>Положение</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="1244"/>
-        <location filename="../../tnztools/tooloptions.cpp" line="1245"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1246"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="1247"/>
         <source>Thickness</source>
         <translation>Толщина</translation>
     </message>
@@ -2135,22 +2107,22 @@ Do you want to proceed?</source>
 <context>
     <name>ShiftTraceToolOptionBox</name>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2847"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="2849"/>
         <source>Reset Previous</source>
         <translation>Сбросить изменения</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2848"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="2850"/>
         <source>Reset Following</source>
         <translation>Сбросить изменения</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2854"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="2856"/>
         <source>Previous Drawing</source>
         <translation>Предыдущий рисунок</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2855"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="2857"/>
         <source>Following Drawing</source>
         <translation>Следующий рисунок</translation>
     </message>
@@ -2196,54 +2168,55 @@ Do you want to proceed?</source>
 <context>
     <name>StyleIndexLineEdit</name>
     <message>
+        <location filename="../../tnztools/tooloptionscontrols.cpp" line="549"/>
         <source>current</source>
-        <translation type="vanished">текущий</translation>
+        <translation>текущий</translation>
     </message>
 </context>
 <context>
     <name>StylePickerTool</name>
     <message>
-        <location filename="../../tnztools/stylepickertool.cpp" line="289"/>
+        <location filename="../../tnztools/stylepickertool.cpp" line="272"/>
         <source>No current level.</source>
         <translation>Нет текущего уровня.</translation>
     </message>
     <message>
-        <location filename="../../tnztools/stylepickertool.cpp" line="294"/>
+        <location filename="../../tnztools/stylepickertool.cpp" line="277"/>
         <source>Current level has no available palette.</source>
         <translation>У текущего уровеня нет доступной палитры.</translation>
     </message>
     <message>
-        <location filename="../../tnztools/stylepickertool.cpp" line="305"/>
+        <location filename="../../tnztools/stylepickertool.cpp" line="288"/>
         <source>Palette must have more than one palette to be organized.</source>
         <translation>Для упорядочивания палитры требуется более одной страницы.</translation>
     </message>
     <message>
-        <location filename="../../tnztools/stylepickertool.cpp" line="346"/>
+        <location filename="../../tnztools/stylepickertool.cpp" line="329"/>
         <source>Mode:</source>
         <translation>Режим:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/stylepickertool.cpp" line="347"/>
+        <location filename="../../tnztools/stylepickertool.cpp" line="330"/>
         <source>Lines</source>
         <translation>Линии</translation>
     </message>
     <message>
-        <location filename="../../tnztools/stylepickertool.cpp" line="348"/>
+        <location filename="../../tnztools/stylepickertool.cpp" line="331"/>
         <source>Areas</source>
         <translation>Области</translation>
     </message>
     <message>
-        <location filename="../../tnztools/stylepickertool.cpp" line="349"/>
+        <location filename="../../tnztools/stylepickertool.cpp" line="332"/>
         <source>Lines &amp; Areas</source>
         <translation>Линии и области</translation>
     </message>
     <message>
-        <location filename="../../tnztools/stylepickertool.cpp" line="350"/>
+        <location filename="../../tnztools/stylepickertool.cpp" line="333"/>
         <source>Passive Pick</source>
         <translation>Пассивная пипетка</translation>
     </message>
     <message>
-        <location filename="../../tnztools/stylepickertool.cpp" line="351"/>
+        <location filename="../../tnztools/stylepickertool.cpp" line="334"/>
         <source>Organize Palette</source>
         <translation>Упорядочить палитру</translation>
     </message>
@@ -2251,7 +2224,7 @@ Do you want to proceed?</source>
 <context>
     <name>StylePickerToolOptionsBox</name>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="2796"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="2798"/>
         <source>With this option being activated, the picked style will be
 moved to the end of the first page of the palette.</source>
         <translation>При активации этого параметра, выбранный стиль будет перемещен в конец первой страницы палитры.</translation>
@@ -2260,127 +2233,112 @@ moved to the end of the first page of the palette.</source>
 <context>
     <name>SymmetryTool</name>
     <message>
-        <location filename="../../tnztools/symmetrytool.cpp" line="247"/>
-        <source>Lines:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/symmetrytool.cpp" line="249"/>
-        <source>Opacity</source>
-        <translation type="unfinished">Непрозрачность</translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/symmetrytool.cpp" line="251"/>
-        <source>Color:</source>
-        <translation type="unfinished">Цвет:</translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/symmetrytool.cpp" line="252"/>
-        <source>Magenta</source>
-        <translation type="unfinished">Magenta</translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/symmetrytool.cpp" line="253"/>
-        <source>Red</source>
-        <translation type="unfinished">Красный</translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/symmetrytool.cpp" line="254"/>
-        <source>Green</source>
-        <translation type="unfinished">Зелёный</translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/symmetrytool.cpp" line="255"/>
-        <source>Blue</source>
-        <translation type="unfinished">Синий</translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/symmetrytool.cpp" line="256"/>
-        <source>Yellow</source>
-        <translation type="unfinished">Жёлтый</translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/symmetrytool.cpp" line="257"/>
-        <source>Cyan</source>
-        <translation type="unfinished">Cyan</translation>
-    </message>
-    <message>
         <location filename="../../tnztools/symmetrytool.cpp" line="258"/>
-        <source>Black</source>
-        <translation type="unfinished">Чёрный</translation>
+        <source>Lines:</source>
+        <translation>Линии:</translation>
     </message>
     <message>
         <location filename="../../tnztools/symmetrytool.cpp" line="260"/>
-        <source>Line Symmetry</source>
-        <translation type="unfinished"></translation>
+        <source>Opacity</source>
+        <translation>Непрозрачность</translation>
     </message>
     <message>
         <location filename="../../tnztools/symmetrytool.cpp" line="262"/>
-        <source>Preset:</source>
-        <translation type="unfinished">Предустановка:</translation>
+        <source>Color:</source>
+        <translation>Цвет:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/symmetrytool.cpp" line="361"/>
+        <location filename="../../tnztools/symmetrytool.cpp" line="263"/>
+        <source>Magenta</source>
+        <translation>Magenta</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/symmetrytool.cpp" line="264"/>
+        <source>Red</source>
+        <translation>Красный</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/symmetrytool.cpp" line="265"/>
+        <source>Green</source>
+        <translation>Зелёный</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/symmetrytool.cpp" line="266"/>
+        <source>Blue</source>
+        <translation>Синий</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/symmetrytool.cpp" line="267"/>
+        <source>Yellow</source>
+        <translation>Жёлтый</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/symmetrytool.cpp" line="268"/>
+        <source>Cyan</source>
+        <translation>Cyan</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/symmetrytool.cpp" line="269"/>
+        <source>Black</source>
+        <translation>Чёрный</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/symmetrytool.cpp" line="271"/>
+        <source>Line Symmetry</source>
+        <translation>Линейная симметрия</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/symmetrytool.cpp" line="273"/>
+        <source>Preset:</source>
+        <translation>Предустановка:</translation>
+    </message>
+    <message>
+        <location filename="../../tnztools/symmetrytool.cpp" line="372"/>
         <source>&lt;custom&gt;</source>
-        <translation type="unfinished">&lt;пользовательская&gt;</translation>
+        <translation>&lt;пользовательская&gt;</translation>
     </message>
 </context>
 <context>
     <name>SymmetryToolOptionBox</name>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3320"/>
-        <source>Preset Name</source>
-        <translation type="unfinished">Имя предустановки</translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3324"/>
-        <source>OK</source>
-        <translation type="unfinished">OK</translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3326"/>
-        <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
-    </message>
-    <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3355"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3357"/>
         <source>Rotation:</source>
-        <translation type="unfinished">Вращение:</translation>
+        <translation>Вращение:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3371"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3373"/>
         <source>Rotate Perspective Left</source>
-        <translation type="unfinished">Повернуть перспективу влево</translation>
+        <translation>Повернуть перспективу влево</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3372"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3374"/>
         <source>Rotate Perspective Right</source>
-        <translation type="unfinished">Повернуть перспективу вправо</translation>
+        <translation>Повернуть перспективу вправо</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3382"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3384"/>
         <source>Reset Position</source>
-        <translation type="unfinished">Сбросить расположение</translation>
+        <translation>Сбросить расположение</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3401"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3403"/>
         <source>Lines:</source>
-        <translation type="unfinished"></translation>
+        <translation>Линии:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3406"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3408"/>
         <source>Opacity:</source>
-        <translation type="unfinished">Непрозрачность:</translation>
+        <translation>Непрозрачность:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3418"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3420"/>
         <source>Color:</source>
-        <translation type="unfinished">Цвет:</translation>
+        <translation>Цвет:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3427"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3429"/>
         <source>Preset:</source>
-        <translation type="unfinished">Предустановка:</translation>
+        <translation>Предустановка:</translation>
     </message>
 </context>
 <context>
@@ -2656,107 +2614,107 @@ moved to the end of the first page of the palette.</source>
 <context>
     <name>VectorSelectionTool</name>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1329"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1332"/>
         <source>Mode:</source>
         <translation>Режим:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1330"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1333"/>
         <source>Standard</source>
         <translation>Обычный</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1331"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1334"/>
         <source>Selected Frames</source>
         <translation>Выбраные кадры</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1332"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1335"/>
         <source>Whole Level</source>
         <translation>Уровень целиком</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1333"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1336"/>
         <source>Same Style</source>
         <translation>Того же стиля</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1335"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1338"/>
         <source>Same Style on Selected Frames</source>
         <translation>Того же стиля на выбранных кадрах</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1337"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1340"/>
         <source>Same Style on Whole Level</source>
         <translation>Того же стиля во всем уровне</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1338"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1341"/>
         <source>Boundary Strokes</source>
         <translation>Отделяющие линии</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1340"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1343"/>
         <source>Boundaries on Selected Frames</source>
         <translation>Отделяющие линии на выбранных кадрах</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1342"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1345"/>
         <source>Boundaries on Whole Level</source>
         <translation>Отделяющие линии на всём уровне</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1344"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1347"/>
         <source>Include Intersection</source>
         <translation>Выделять пересечением</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1345"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1348"/>
         <source>Preserve Thickness</source>
         <translation>Сохранять толщину</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1347"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1350"/>
         <source>Cap</source>
         <translation>Конец</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1348"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1351"/>
         <source>Butt cap</source>
         <translation>Обрубок</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1349"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1352"/>
         <source>Round cap</source>
         <translation>Закругленный</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1350"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1353"/>
         <source>Projecting cap</source>
         <translation>Плоский колпачок</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1352"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1355"/>
         <source>Join</source>
         <translation>Изгиб</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1353"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1356"/>
         <source>Miter join</source>
         <translation>Острый изгиб</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1354"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1357"/>
         <source>Round join</source>
         <translation>Закругленный изгиб</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1355"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1358"/>
         <source>Bevel join</source>
         <translation>Скошенный изгиб</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectorselectiontool.cpp" line="1357"/>
+        <location filename="../../tnztools/vectorselectiontool.cpp" line="1360"/>
         <source>Miter:</source>
         <translation>Скос:</translation>
     </message>
@@ -2764,52 +2722,52 @@ moved to the end of the first page of the palette.</source>
 <context>
     <name>VectorTapeTool</name>
     <message>
-        <location filename="../../tnztools/vectortapetool.cpp" line="260"/>
+        <location filename="../../tnztools/vectortapetool.cpp" line="264"/>
         <source>Smooth</source>
         <translation>Плавность</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectortapetool.cpp" line="261"/>
+        <location filename="../../tnztools/vectortapetool.cpp" line="265"/>
         <source>Join Vectors</source>
         <translation>Соединять векторы</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectortapetool.cpp" line="262"/>
+        <location filename="../../tnztools/vectortapetool.cpp" line="266"/>
         <source>Distance</source>
         <translation>Расстояние</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectortapetool.cpp" line="264"/>
+        <location filename="../../tnztools/vectortapetool.cpp" line="268"/>
         <source>Mode:</source>
         <translation>Режим:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectortapetool.cpp" line="265"/>
+        <location filename="../../tnztools/vectortapetool.cpp" line="269"/>
         <source>Endpoint to Endpoint</source>
         <translation>Вершина к вершине</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectortapetool.cpp" line="266"/>
+        <location filename="../../tnztools/vectortapetool.cpp" line="270"/>
         <source>Endpoint to Line</source>
         <translation>Вершина к линии</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectortapetool.cpp" line="267"/>
+        <location filename="../../tnztools/vectortapetool.cpp" line="271"/>
         <source>Line to Line</source>
         <translation>Линия к линии</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectortapetool.cpp" line="269"/>
+        <location filename="../../tnztools/vectortapetool.cpp" line="273"/>
         <source>Type:</source>
         <translation>Тип:</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectortapetool.cpp" line="270"/>
+        <location filename="../../tnztools/vectortapetool.cpp" line="274"/>
         <source>Normal</source>
         <translation>Обычный</translation>
     </message>
     <message>
-        <location filename="../../tnztools/vectortapetool.cpp" line="271"/>
+        <location filename="../../tnztools/vectortapetool.cpp" line="275"/>
         <source>Rectangular</source>
         <translation>Прямоугольный</translation>
     </message>
@@ -2817,7 +2775,7 @@ moved to the end of the first page of the palette.</source>
 <context>
     <name>ZoomToolOptionsBox</name>
     <message>
-        <location filename="../../tnztools/tooloptions.cpp" line="3561"/>
+        <location filename="../../tnztools/tooloptions.cpp" line="3563"/>
         <source>Reset Zoom</source>
         <translation>Сбросить приближение</translation>
     </message>
