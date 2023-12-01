@@ -267,15 +267,15 @@
     <name>BrushToolOptionsBox</name>
     <message>
         <source>Preset Name</source>
-        <translation type="vanished">プリセット名</translation>
+        <translation>プリセット名</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="vanished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">キャンセル</translation>
+        <translation>キャンセル</translation>
     </message>
 </context>
 <context>
@@ -328,7 +328,7 @@
     <name>DVGui::StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="vanished">選択色</translation>
+        <translation>選択色</translation>
     </message>
 </context>
 <context>
@@ -898,6 +898,22 @@
         <source>Preset:</source>
         <translation type="unfinished">プリセット：</translation>
     </message>
+    <message>
+        <source>Preset Name</source>
+        <translation type="unfinished">プリセット名</translation>
+    </message>
+    <message>
+        <source>Save As Library Preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
 </context>
 <context>
     <name>PerspectiveTool</name>
@@ -1433,15 +1449,15 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
-        <translation type="vanished">%1   レベル : %2  フレーム : %3</translation>
+        <translation>%1   レベル : %2  フレーム : %3</translation>
     </message>
     <message>
         <source>Modify Stroke Tool</source>
-        <translation type="vanished">アイロンツール</translation>
+        <translation>アイロンツール</translation>
     </message>
     <message>
         <source>Modify Spline</source>
-        <translation type="vanished">スプラインを編集</translation>
+        <translation>スプラインを編集</translation>
     </message>
     <message>
         <source>Deform Raster</source>
@@ -1799,7 +1815,7 @@ Do you want to proceed?</source>
     <name>StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="unfinished">選択色</translation>
+        <translation type="obsolete">選択色</translation>
     </message>
 </context>
 <context>
@@ -1938,6 +1954,18 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Preset:</source>
         <translation type="unfinished">プリセット：</translation>
+    </message>
+    <message>
+        <source>Preset Name</source>
+        <translation type="unfinished">プリセット名</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
     </message>
 </context>
 <context>

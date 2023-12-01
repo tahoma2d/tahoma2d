@@ -167,7 +167,15 @@
     <name>BrushToolOptionsBox</name>
     <message>
         <source>Cancel</source>
-        <translation type="obsolete">Annullare</translation>
+        <translation type="unfinished">Annullare</translation>
+    </message>
+    <message>
+        <source>Preset Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -214,6 +222,13 @@
     <message>
         <source>Set Nonlinear Control Point</source>
         <translation>Imposta un punto di Controllo Non Lineare</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::StyleIndexLineEdit</name>
+    <message>
+        <source>current</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -782,6 +797,22 @@
     <message>
         <source>Preset:</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preset Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save As Library Preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annullare</translation>
     </message>
 </context>
 <context>
@@ -1395,6 +1426,18 @@ Procedere?</translation>
         <source>The current tool cannot be used on a stop frame.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>%1   Level : %2  Frame : %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modify Stroke Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Modify Spline</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RGBPickerTool</name>
@@ -1668,13 +1711,6 @@ Procedere?</translation>
     </message>
 </context>
 <context>
-    <name>StyleIndexLineEdit</name>
-    <message>
-        <source>current</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>StylePickerTool</name>
     <message>
         <source>No current level.</source>
@@ -1809,6 +1845,18 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Preset:</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preset Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annullare</translation>
     </message>
 </context>
 <context>

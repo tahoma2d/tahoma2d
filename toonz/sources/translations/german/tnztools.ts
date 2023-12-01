@@ -183,15 +183,15 @@
     <name>BrushToolOptionsBox</name>
     <message>
         <source>Preset Name</source>
-        <translation type="vanished">Name der Vorlage</translation>
+        <translation>Name der Vorlage</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="vanished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
 </context>
 <context>
@@ -238,6 +238,13 @@
     <message>
         <source>Set Nonlinear Control Point</source>
         <translation>Nicht-Linearen Kontrollpunkt setzen</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::StyleIndexLineEdit</name>
+    <message>
+        <source>current</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -807,6 +814,22 @@
         <source>Preset:</source>
         <translation type="unfinished">Vorlage:</translation>
     </message>
+    <message>
+        <source>Preset Name</source>
+        <translation type="unfinished">Name der Vorlage</translation>
+    </message>
+    <message>
+        <source>Save As Library Preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbrechen</translation>
+    </message>
 </context>
 <context>
     <name>PerspectiveTool</name>
@@ -1342,15 +1365,15 @@ Möchten Sie fortfahren?</translation>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
-        <translation type="vanished">%1   Ebene : %2  Frame : %3</translation>
+        <translation>%1   Ebene : %2  Frame : %3</translation>
     </message>
     <message>
         <source>Modify Stroke Tool</source>
-        <translation type="vanished">Kontur-Werkzeug modifizieren</translation>
+        <translation>Kontur-Werkzeug modifizieren</translation>
     </message>
     <message>
         <source>Modify Spline</source>
-        <translation type="vanished">Spline modifizieren</translation>
+        <translation>Spline modifizieren</translation>
     </message>
     <message>
         <source>Deform Raster</source>
@@ -1705,13 +1728,6 @@ Möchten Sie fortfahren?</translation>
     </message>
 </context>
 <context>
-    <name>StyleIndexLineEdit</name>
-    <message>
-        <source>current</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>StylePickerTool</name>
     <message>
         <source>No current level.</source>
@@ -1846,6 +1862,18 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Preset:</source>
         <translation type="unfinished">Vorlage:</translation>
+    </message>
+    <message>
+        <source>Preset Name</source>
+        <translation type="unfinished">Name der Vorlage</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbrechen</translation>
     </message>
 </context>
 <context>

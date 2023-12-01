@@ -29,27 +29,27 @@
     <message>
         <location filename="../../colorfx/flowlinestrokestyle.cpp" line="129"/>
         <source>Density</source>
-        <translation type="unfinished">Плотность</translation>
+        <translation>Плотность</translation>
     </message>
     <message>
         <location filename="../../colorfx/flowlinestrokestyle.cpp" line="131"/>
         <source>Extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Расширение</translation>
     </message>
     <message>
         <location filename="../../colorfx/flowlinestrokestyle.cpp" line="133"/>
         <source>Width Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Масштаб ширины</translation>
     </message>
     <message>
         <location filename="../../colorfx/flowlinestrokestyle.cpp" line="135"/>
         <source>Straighten Ends</source>
-        <translation type="unfinished"></translation>
+        <translation>Выпрямить концы</translation>
     </message>
     <message>
         <location filename="../../colorfx/flowlinestrokestyle.h" line="58"/>
         <source>Flow Line</source>
-        <translation type="unfinished"></translation>
+        <translation>Поточная линия</translation>
     </message>
 </context>
 <context>

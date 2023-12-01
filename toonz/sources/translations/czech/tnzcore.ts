@@ -4,27 +4,32 @@
 <context>
     <name>BmpWriterProperties</name>
     <message>
+        <location filename="../../common/tiio/tiio_bmp.cpp" line="755"/>
         <source>Bits Per Pixel</source>
-        <translation type="vanished">Bitů na obrazový bod (pixel)</translation>
+        <translation>Bitů na obrazový bod (pixel)</translation>
     </message>
     <message>
+        <location filename="../../common/tiio/tiio_bmp.cpp" line="756"/>
         <source>24 bits</source>
-        <translation type="vanished">24 bitů</translation>
+        <translation>24 bitů</translation>
     </message>
     <message>
+        <location filename="../../common/tiio/tiio_bmp.cpp" line="757"/>
         <source>8 bits (Greyscale)</source>
-        <translation type="vanished">8 bitů (odstíny šedi)</translation>
+        <translation>8 bitů (odstíny šedi)</translation>
     </message>
 </context>
 <context>
     <name>JpgWriterProperties</name>
     <message>
+        <location filename="../../common/tiio/tiio_jpg.cpp" line="284"/>
         <source>Quality</source>
-        <translation type="vanished">Jakost</translation>
+        <translation>Jakost</translation>
     </message>
     <message>
+        <location filename="../../common/tiio/tiio_jpg.cpp" line="285"/>
         <source>Smoothing</source>
-        <translation type="vanished">Vyhlazování</translation>
+        <translation>Vyhlazování</translation>
     </message>
 </context>
 <context>
@@ -44,8 +49,9 @@
         <translation type="vanished">Poškozený název snímku</translation>
     </message>
     <message>
+        <location filename="../../include/tundo.h" line="49"/>
         <source>Unidentified Action</source>
-        <translation type="vanished">Neznámá činnost</translation>
+        <translation>Neznámá činnost</translation>
     </message>
 </context>
 <context>
@@ -90,32 +96,27 @@
 <context>
     <name>Tiio::BmpWriterProperties</name>
     <message>
-        <location filename="../../common/tiio/tiio_bmp.cpp" line="755"/>
         <source>Bits Per Pixel</source>
-        <translation type="unfinished">Bitů na obrazový bod (pixel)</translation>
+        <translation type="obsolete">Bitů na obrazový bod (pixel)</translation>
     </message>
     <message>
-        <location filename="../../common/tiio/tiio_bmp.cpp" line="756"/>
         <source>24 bits</source>
-        <translation type="unfinished">24 bitů</translation>
+        <translation type="obsolete">24 bitů</translation>
     </message>
     <message>
-        <location filename="../../common/tiio/tiio_bmp.cpp" line="757"/>
         <source>8 bits (Greyscale)</source>
-        <translation type="unfinished">8 bitů (odstíny šedi)</translation>
+        <translation type="obsolete">8 bitů (odstíny šedi)</translation>
     </message>
 </context>
 <context>
     <name>Tiio::JpgWriterProperties</name>
     <message>
-        <location filename="../../common/tiio/tiio_jpg.cpp" line="284"/>
         <source>Quality</source>
-        <translation type="unfinished">Jakost</translation>
+        <translation type="obsolete">Jakost</translation>
     </message>
     <message>
-        <location filename="../../common/tiio/tiio_jpg.cpp" line="285"/>
         <source>Smoothing</source>
-        <translation type="unfinished">Vyhlazování</translation>
+        <translation type="obsolete">Vyhlazování</translation>
     </message>
 </context>
 </TS>

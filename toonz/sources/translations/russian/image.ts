@@ -6,17 +6,17 @@
     <message>
         <location filename="../../image/ffmpeg/tiio_apng.cpp" line="225"/>
         <source>Scale</source>
-        <translation type="unfinished">Масштаб</translation>
+        <translation>Масштаб</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_apng.cpp" line="226"/>
         <source>Looping</source>
-        <translation type="unfinished">Зациклить</translation>
+        <translation>Зациклить</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_apng.cpp" line="227"/>
         <source>Write as .png</source>
-        <translation type="unfinished"></translation>
+        <translation>Написать как .png</translation>
     </message>
 </context>
 <context>
@@ -37,90 +37,90 @@
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="290"/>
         <source>Bits Per Pixel</source>
-        <translation type="unfinished">Битов на пиксель</translation>
+        <translation>Битов на пиксель</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="292"/>
         <source>48(RGB Half Float)</source>
-        <translation type="unfinished"></translation>
+        <translation>48(RGB Half Float)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="293"/>
         <source>64(RGBA Half Float)</source>
-        <translation type="unfinished"></translation>
+        <translation>64(RGBA Half Float)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="294"/>
         <source>96(RGB Float)</source>
-        <translation type="unfinished"></translation>
+        <translation>96(RGB Float)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="295"/>
         <source>128(RGBA Float)</source>
-        <translation type="unfinished"></translation>
+        <translation>128(RGBA Float)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="299"/>
         <source>Compression Type</source>
-        <translation type="unfinished">Тип сжатия</translation>
+        <translation>Тип сжатия</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="301"/>
         <source>No compression</source>
-        <translation type="unfinished"></translation>
+        <translation>Без сжатия</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="304"/>
         <source>Run Length Encoding (RLE)</source>
-        <translation type="unfinished"></translation>
+        <translation>Кодирование длины серии (RLE)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="307"/>
         <source>ZIP compression per Scanline (ZIPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>Сжатие ZIP на строку сканирования (ZIPS)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="310"/>
         <source>ZIP compression per scanline band (ZIP)</source>
-        <translation type="unfinished"></translation>
+        <translation>ZIP-сжатие на полосу развертки (ZIP)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="313"/>
         <source>PIZ-based wavelet compression (PIZ)</source>
-        <translation type="unfinished"></translation>
+        <translation>Вейвлет-сжатие на основе PIZ (PIZ)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="315"/>
         <source>Storage Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип хранилища</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="316"/>
         <source>Scan-line based</source>
-        <translation type="unfinished"></translation>
+        <translation>На основе строк сканирования</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="317"/>
         <source>Tile based</source>
-        <translation type="unfinished"></translation>
+        <translation>На основе плитки</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="319"/>
         <source>Color Space Gamma</source>
-        <translation type="unfinished"></translation>
+        <translation>Гамма цветового пространства</translation>
     </message>
 </context>
 <context>
     <name>FFMovWriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="234"/>
+        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="237"/>
         <source>Quality</source>
-        <translation type="unfinished">Качество</translation>
+        <translation>Качество</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="235"/>
+        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="238"/>
         <source>Scale</source>
-        <translation type="unfinished">Масштаб</translation>
+        <translation>Масштаб</translation>
     </message>
 </context>
 <context>
@@ -243,7 +243,7 @@
 <context>
     <name>PngWriterProperties</name>
     <message>
-        <location filename="../../image/png/tiio_png.cpp" line="757"/>
+        <location filename="../../image/png/tiio_png.cpp" line="763"/>
         <source>Alpha Channel</source>
         <translation>Альфа канал</translation>
     </message>
