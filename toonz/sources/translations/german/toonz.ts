@@ -13377,6 +13377,14 @@ Do you want to continue?</source>
         <source>Toggle render column mask. </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Onion Skin On All Frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Onion Skin On Drawings</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ReframePopup</name>
@@ -16292,6 +16300,10 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
     </message>
     <message>
         <source>Unable to start Live View.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot capture image unless live view is active.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

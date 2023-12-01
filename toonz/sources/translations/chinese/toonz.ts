@@ -8405,7 +8405,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Circle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">圆圈</translation>
     </message>
     <message>
         <source>Ellipse</source>
@@ -11270,19 +11270,19 @@ Note that this mode uses regular expression for file name validation and may slo
     </message>
     <message>
         <source>1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">二维 {1?}</translation>
     </message>
     <message>
         <source>2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">二维 {2?}</translation>
     </message>
     <message>
         <source>3</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">二维 {3?}</translation>
     </message>
     <message>
         <source>5</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">二维 {5?}</translation>
     </message>
     <message>
         <source>Unlimited</source>
@@ -14149,6 +14149,14 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Toggle render column mask. </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Onion Skin On All Frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Onion Skin On Drawings</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -17234,6 +17242,10 @@ Please click the Check button in the Settings tab.</source>
     </message>
     <message>
         <source>Unable to start Live View.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot capture image unless live view is active.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

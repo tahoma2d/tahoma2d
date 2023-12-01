@@ -2761,7 +2761,7 @@ contém informação de DPI, então o DPI da câmera atual será usado.</transla
 <context>
     <name>ExportCalibrationFilePopup</name>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="5069"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="5090"/>
         <source>Export Camera Calibration Settings</source>
         <translation>Exportar Configurações de Calibragem de Câmera</translation>
     </message>
@@ -4116,7 +4116,7 @@ Gostaria de Substituí-lo?</translation>
 <context>
     <name>GPhotoCam</name>
     <message>
-        <location filename="../../stopmotion/gphotocam.cpp" line="729"/>
+        <location filename="../../stopmotion/gphotocam.cpp" line="763"/>
         <source>An error occurred.  Please try again.</source>
         <translation>Um Erro ocorreu.  Por favor tente novamente.</translation>
     </message>
@@ -5024,7 +5024,7 @@ Por favor escolha um arquivo de informação de Sincronia Labial válido para co
 <context>
     <name>LoadCalibrationFilePopup</name>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="5085"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="5106"/>
         <source>Load Camera Calibration Settings</source>
         <translation>Carregar Configurações de Calibragem de Câmera</translation>
     </message>
@@ -5703,3245 +5703,3245 @@ Cômodos customizados não serão tocados.</translation>
         <translation>Exportar Animação de Células Abertas(OCA)</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1868"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1869"/>
         <source>Export TVPaint JSON File</source>
         <translation>Exportar arquivo JSON TVPaint</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1870"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1872"/>
         <source>Run Script...</source>
         <translation>Executar Script...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1871"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1873"/>
         <source>Run a script to perform a series of actions on a scene.</source>
         <translation>Executa um script para realizar uma série de ações em uma cena.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1873"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1875"/>
         <source>Open Script Console...</source>
         <translation>Abrir um Console de Script...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1875"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1877"/>
         <source>Open a console window where you can enter script commands.</source>
         <translation>Abre um console onde podem ser escritos comandos de script.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1876"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1878"/>
         <source>&amp;Print Current Frame...</source>
         <translation>&amp;Imprimir Quadro Atual...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1878"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1880"/>
         <source>&amp;Quit</source>
         <translation>&amp;Sair</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1879"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1881"/>
         <source>Bye.</source>
         <translation>Tchau!</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1881"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1883"/>
         <source>Reload qss</source>
         <translation>Recarregar qss</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1883"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1885"/>
         <source>&amp;Load Recent Image Files</source>
         <translation>&amp;Carregar Imagens Recentes</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1886"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1888"/>
         <source>&amp;Clear Recent Flipbook Image List</source>
         <translation>&amp;Limpar Lista de Imagem Recente no Flipbook</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1887"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1889"/>
         <source>&amp;Clear Cache Folder</source>
         <translation>&amp;Limpar Pasta de Cache</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1890"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1892"/>
         <source>&amp;Export Current Scene</source>
         <translation>&amp;Exportar Cena atual</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1891"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1893"/>
         <source>Export the current scene to another project.</source>
         <translation>Exporta a cena atual para outro projeto.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1892"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1894"/>
         <source>&amp;Export Camera Track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1897"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1899"/>
         <source>&amp;Select All</source>
         <translation>&amp;Selecionar Tudo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1899"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1901"/>
         <source>&amp;Invert Selection</source>
         <translation>&amp;Inverter Seleção</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1901"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1903"/>
         <source>&amp;Undo</source>
         <translation>&amp;Desfazer</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1902"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1904"/>
         <source>&amp;Redo</source>
         <translation>&amp;Refazer</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1903"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1905"/>
         <source>&amp;Cut</source>
         <translation>&amp;Recortar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1904"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1906"/>
         <source>&amp;Copy</source>
         <translation>&amp;Copiar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1905"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1907"/>
         <source>&amp;Paste Insert</source>
         <translation>&amp;Colar Inserção</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1907"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1909"/>
         <source>&amp;Paste Insert Below/Before</source>
         <translation>&amp;Colar Inserção Abaixo/Antes</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1909"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1911"/>
         <source>&amp;Paste as a Copy</source>
         <translation>&amp;Colar como uma Cópia</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1911"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1913"/>
         <source>&amp;Paste Into</source>
         <translation>&amp;Colar em</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1918"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1920"/>
         <source>&amp;Delete</source>
         <translation>&amp;Ecluir</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1919"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1921"/>
         <source>&amp;Insert</source>
         <translation>&amp;Inserir</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1920"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1922"/>
         <source>&amp;Insert Below/Before</source>
         <translation>&amp;Inserir Abaixo/Antes</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1922"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1924"/>
         <source>&amp;Group</source>
         <translation>&amp;Agrupar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1923"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1925"/>
         <source>&amp;Ungroup</source>
         <translation>&amp;Desagrupar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1925"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1927"/>
         <source>&amp;Enter Group</source>
         <translation>&amp;Entrar no Grupo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1927"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1929"/>
         <source>&amp;Exit Group</source>
         <translation>&amp;Sair do Grupo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1929"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1931"/>
         <source>&amp;Move to Back</source>
         <translation>&amp;Mover para Trás</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1931"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1933"/>
         <source>&amp;Move Back One</source>
         <translation>&amp;Mover Um para Trás</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1933"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1935"/>
         <source>&amp;Move Forward One</source>
         <translation>&amp;Mover Um para Frente</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1935"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1937"/>
         <source>&amp;Move to Front</source>
         <translation>&amp;Mover para Frente</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1938"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1940"/>
         <source>&amp;Clear Recent Project List</source>
         <translation>&amp;Limpar Lista de Projetos Recentes</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1939"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1941"/>
         <source>Remove everything from the recent project list.</source>
         <translation>Remove tudo da lista de projetos recentes.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1941"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1943"/>
         <source>&amp;Clear Frames</source>
         <translation>&amp;Limpar Quadros</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1942"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1944"/>
         <source>&amp;Remove Cells</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1948"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1950"/>
         <source>&amp;Cleanup Settings...</source>
         <translation>&amp;Configurações de Limpeza de Linha...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1950"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1952"/>
         <source>&amp;Preview Cleanup</source>
         <translation>&amp;Pré-visualizar Limpeza de Linha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1953"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1955"/>
         <source>&amp;Camera Test</source>
         <translation>&amp;Teste de Câmera</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1956"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1958"/>
         <source>&amp;Opacity Check</source>
         <translation>&amp;Checagem de Opacidade</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1958"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1960"/>
         <source>&amp;Cleanup</source>
         <translation>&amp;Limpeza de Linha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1963"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1965"/>
         <source>&amp;New Level...</source>
         <translation>&amp;Novo Nível...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1964"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1966"/>
         <source>Create a new drawing layer.</source>
         <translation>Cria uma nova camada de desenho.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1965"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1967"/>
         <source>&amp;New Vector Level</source>
         <translation>&amp;Novo Nível Vetor</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1967"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1969"/>
         <source>Create a new vector level.</source>
         <translation>Cria um novo nível vetorial.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1968"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1970"/>
         <source>Vectors can be manipulated easily and have some extra tools and features.</source>
         <translation>Vetores podem ser manipulados facilmente e possuem ferramentas e funções extras.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1971"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1973"/>
         <source>&amp;New Smart Raster Level</source>
         <translation>&amp;Novo Nível Raster Inteligente</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1973"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1975"/>
         <source>Create a new Smart Raster level.</source>
         <translation>&amp;Cria um novo nível raster inteligente.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1974"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1976"/>
         <source>Smart Raster levels are color mapped making the colors easier to adjust at any time.</source>
         <translation>Níveis Raster Inteligente mapeam as cores tornando mais fácil ajustá-las a qualquer momento.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1977"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1979"/>
         <source>&amp;New Raster Level</source>
         <translation>&amp;Novo Nível Raster</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1979"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1981"/>
         <source>Create a new raster level</source>
         <translation>Cria um novo nível raster.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1980"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1982"/>
         <source>Raster levels are traditional drawing levels</source>
         <translation>Níveis Raster são camadas de desenho tradicionais</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1981"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1983"/>
         <source>Imported images will be imported as raster levels.</source>
         <translation>Imagens importadas serão colocadas como nível raster.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1982"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1984"/>
         <source>&amp;Load Level...</source>
         <translation>&amp;Carregar Nível...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1983"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1985"/>
         <source>Load an existing level.</source>
         <translation>Carrega um nível existente.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1984"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1986"/>
         <source>&amp;Save Level</source>
         <translation>&amp;Salvar Nível</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1986"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1988"/>
         <source>Save the current level.</source>
         <translation>&amp;Salva o Nível atual.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1987"/>
-        <location filename="../../toonz/mainwindow.cpp" line="1991"/>
-        <location filename="../../toonz/mainwindow.cpp" line="1995"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1989"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1993"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1997"/>
         <source>This does not save the scene info.</source>
         <translation>Isto não salva a informação da cena.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1989"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1991"/>
         <source>&amp;Save All Levels</source>
         <translation>&amp;Salvar Todos os Níveis</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1990"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1992"/>
         <source>Save all levels loaded into the scene.</source>
         <translation>Salva todos os níveis carregados na cena.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1993"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1995"/>
         <source>&amp;Save Level As...</source>
         <translation>&amp;Salvar Nível como...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1994"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1996"/>
         <source>Save the current level as a different name.</source>
         <translation>Salva o nível atual com um nome diferente.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1996"/>
+        <location filename="../../toonz/mainwindow.cpp" line="1998"/>
         <source>&amp;Export Level...</source>
         <translation>&amp;Exportar Nível...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="1998"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2000"/>
         <source>Export the current level as an image sequence.</source>
         <translation>Exporta o nível atual como uma sequência de imagem.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2000"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2002"/>
         <source>&amp;Remove Vector Overflow</source>
         <translation>&amp;Remover Transbordamento de Vetor</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2002"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2004"/>
         <source>&amp;Add Frames...</source>
         <translation>&amp;Adicionar Quadros...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2004"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2006"/>
         <source>&amp;Renumber...</source>
         <translation>&amp;Renumerar...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2006"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2008"/>
         <source>&amp;Replace Level...</source>
         <translation>&amp;Substituir Nível...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2009"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2011"/>
         <source>&amp;Revert to Cleaned Up</source>
         <translation>&amp;Reverter para Limpeza de Linha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2011"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2013"/>
         <source>&amp;Reload</source>
         <translation>&amp;Recarregar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2013"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2015"/>
         <source>&amp;Expose in Scene</source>
         <translation>&amp;Expor na Cena</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2014"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2016"/>
         <source>&amp;Display in Level Strip</source>
         <translation>&amp;Mostrar na Fita de Nível</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2016"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2018"/>
         <source>&amp;Level Settings...</source>
         <translation>&amp;Configurações de Nível...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2018"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2020"/>
         <source>Adjust Levels...</source>
         <translation>Ajustar Níveis...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2020"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2022"/>
         <source>Adjust Thickness...</source>
         <translation>Ajustar Espessura...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2022"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2024"/>
         <source>&amp;Antialias...</source>
         <translation>&amp;Antiserrilhamento</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2024"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2026"/>
         <source>&amp;Binarize...</source>
         <translation>&amp;Binarizar...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2027"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2029"/>
         <source>&amp;Brightness and Contrast...</source>
         <translation>&amp;Brilho e Contraste...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2029"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2031"/>
         <source>&amp;Color Fade...</source>
         <translation>&amp;Desvanecimento de Cor...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2031"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2033"/>
         <source>&amp;Canvas Size...</source>
         <translation>&amp;Tamanho da Tela...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2034"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2036"/>
         <source>&amp;Info...</source>
         <translation>&amp;Informações...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2036"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2038"/>
         <source>&amp;Remove All Unused Levels</source>
         <translation>&amp;Remover todos os Níveis não utilizados</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2039"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2041"/>
         <source>&amp;Replace Parent Directory...</source>
         <translation>&amp;Substituir Diretório Parente...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2041"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2043"/>
         <source>New Note Level</source>
         <translation>Novo Nível de Anotação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2044"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2046"/>
         <source>Convert to Vectors...</source>
         <translation>Converter para Vetores...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2046"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2048"/>
         <source>Vectors to Smart Raster</source>
         <translation>Vetores para Raster Inteligente</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2049"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2051"/>
         <source>Replace Vectors with Simplified Vectors</source>
         <translation>Substituir Vetores com Vetores Simplificados</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2052"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2054"/>
         <source>Tracking...</source>
         <translation>Rastreamento...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2054"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2056"/>
         <source>&amp;New Motion Path</source>
         <translation>&amp;Nova Linha de Movimento</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2055"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2057"/>
         <source>Create a new motion path.</source>
         <translation>Cria uma nova linha de movimento.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2056"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2058"/>
         <source>Motion paths can be used as animation guides, or you can animate objects along a motion path.</source>
         <translation>Linhas de movimento podem ser usados como guias de animação, ou para animar objetos seguindo uma linha.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2061"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2063"/>
         <source>&amp;Scene Settings...</source>
         <translation>&amp;Configurações da Cena...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2063"/>
-        <location filename="../../toonz/mainwindow.cpp" line="3201"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2065"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3204"/>
         <source>&amp;Camera Settings...</source>
         <translation>&amp;Configurações da Câmera...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2065"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2067"/>
         <source>&amp;Open Sub-Scene</source>
         <translation>&amp;Abrir SubCena</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2067"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2069"/>
         <source>&amp;Close Sub-Scene</source>
         <translation>&amp;Fechar SubCena</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2069"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2071"/>
         <source>Explode Sub-Scene</source>
         <translation>Explodir SubCena</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2071"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2073"/>
         <source>Collapse</source>
         <translation>Colapsar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2073"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2075"/>
         <source>&amp;Toggle Edit In Place</source>
         <translation>&amp;Alterar Edição no Lugar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2077"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2079"/>
         <source>&amp;Save Sub-Scene As...</source>
         <translation>&amp;Salvar SubCena como...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2079"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2081"/>
         <source>Clone Sub-Scene</source>
         <translation>Clonar SubCena</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2082"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2084"/>
         <source>&amp;Apply Match Lines...</source>
         <translation>&amp;Aplicar Combinar Linhas...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2084"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2086"/>
         <source>&amp;Merge Tlv Levels...</source>
         <translation>&amp;Unir Níveis Tlv...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2086"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2088"/>
         <source>&amp;Delete Match Lines</source>
         <translation>&amp;Excluir Combinar Linhas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2088"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2090"/>
         <source>&amp;Delete Lines...</source>
         <translation>&amp;Excluir Linhas...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2090"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2092"/>
         <source>&amp;Merge Levels</source>
         <translation>&amp;Unir Níveis</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2092"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2094"/>
         <source>&amp;New FX...</source>
         <translation>&amp;Novo Efeito...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2094"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2096"/>
         <source>&amp;New Output</source>
         <translation>&amp;Nova Saída</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2096"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2098"/>
         <source>Insert Frame</source>
         <translation>Inserir Quadro</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2098"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2100"/>
         <source>Remove Frame</source>
         <translation>Remover Quadro</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2101"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2103"/>
         <source>Insert Multiple Keys</source>
         <translation>Inserir Múltiplos Chaves</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2104"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2106"/>
         <source>Remove Multiple Keys</source>
         <translation>Remover Múltiplos Chaves</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2107"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2109"/>
         <source>Set Multiple Stop Frames</source>
         <translation>Colocar Múltiplos Quadros de Parada</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2109"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2111"/>
         <source>Remove Multiple Stop Frames</source>
         <translation>Remover Múltiplos Quadros de Parada</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2111"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2113"/>
         <source>Remove Empty Columns</source>
         <translation>Remover Colunas Vazias</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2114"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2116"/>
         <source>Convert to use Implicit Holds</source>
         <translation>Converter para Holds Implícitos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2116"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2118"/>
         <source>Convert to use Explicit Holds</source>
         <translation>Converter para Holds Explícitos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2118"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2120"/>
         <source>&amp;Apply Lip Sync to Column</source>
         <translation>&amp;Aplicar Sincronia Labial para Coluna</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2120"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2122"/>
         <source>Resequence</source>
         <translation>Resequenciar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2122"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2124"/>
         <source>Set Start Marker</source>
         <translation>Colocar Marcador de Início</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2123"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2125"/>
         <source>Set Stop Marker</source>
         <translation>Colocar Marcador de Final</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2124"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2126"/>
         <source>Remove Markers</source>
         <translation>Remover Marcadores</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2125"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2127"/>
         <source>Set Auto Markers</source>
         <translation>Colocar Marcadores Automáticos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2127"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2129"/>
         <source>Set Markers to Current Frame</source>
         <translation>Posicionar Marcadores para o Quadro Atual</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2129"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2131"/>
         <source>Set Markers to Selected Range</source>
         <translation>Posicionar Marcadores no Escopo Selecionado</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2131"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2133"/>
         <source>Toggle Navigation Tag</source>
         <translation>Alterar Etiqueta de Navegação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2133"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2135"/>
         <source>Next Tag</source>
         <translation>Etiqueta Seguinte</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2135"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2137"/>
         <source>Previous Tag</source>
         <translation>Etiqueta Anterior</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2137"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2139"/>
         <source>Edit Tag</source>
         <translation>Editar Etiqueta</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2138"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2140"/>
         <source>Remove Tags</source>
         <translation>Remover Etiquetas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2146"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2148"/>
         <source>&amp;Merge</source>
         <translation>&amp;Unir</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2147"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2149"/>
         <source>&amp;Reverse</source>
         <translation>&amp;Reverter</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2148"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2150"/>
         <source>&amp;Swing</source>
         <translation>&amp;Balançar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2149"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2151"/>
         <source>&amp;Random</source>
         <translation>&amp;Aleatório</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2150"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2152"/>
         <source>&amp;Autoexpose</source>
         <translation>&amp;Autoexposição</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2152"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2154"/>
         <source>&amp;Repeat...</source>
         <translation>&amp;Repetir...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2153"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2155"/>
         <source>&amp;Reset Step</source>
         <translation>&amp;Restaurar Intervalos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2155"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2157"/>
         <source>&amp;Increase Step</source>
         <translation>&amp;Aumentar Intervalo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2157"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2159"/>
         <source>&amp;Decrease Step</source>
         <translation>&amp;Diminuir Intervalo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2159"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2161"/>
         <source>&amp;Step 2</source>
         <translation>&amp;2 Intervalos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2160"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2162"/>
         <source>&amp;Step 3</source>
         <translation>&amp;3 Intervalos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2161"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2163"/>
         <source>&amp;Step 4</source>
         <translation>&amp;4 Intervalos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2162"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2164"/>
         <source>&amp;Each 2</source>
         <translation>&amp;Cada 2</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2163"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2165"/>
         <source>&amp;Each 3</source>
         <translation>&amp;Cada 3</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2164"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2166"/>
         <source>&amp;Each 4</source>
         <translation>&amp;Cada 4</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2165"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2167"/>
         <source>&amp;Roll Up</source>
         <translation>&amp;Rolar para Cima</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2166"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2168"/>
         <source>&amp;Roll Down</source>
         <translation>&amp;Rolar para Baixo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2167"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2169"/>
         <source>&amp;Time Stretch...</source>
         <translation>&amp;Ajuste Temporal...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2170"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2172"/>
         <source>&amp;Create Blank Drawing</source>
         <translation>&amp;Criar Desenho em Branco</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2172"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2174"/>
         <source>&amp;Stop Frame Hold</source>
         <translation>&amp;Parar Quadro de Hold</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2174"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2176"/>
         <source>&amp;Duplicate Drawing  </source>
         <translation>&amp;Duplicar Desenho  </translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2176"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2178"/>
         <source>&amp;Autorenumber</source>
         <translation>&amp;Autorenumerar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2178"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2180"/>
         <source>&amp;Clone Cells</source>
         <translation>&amp;Clonar Células</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2181"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2183"/>
         <source>Drawing Substitution Forward</source>
         <translation>Substituição do Desenho Seguinte</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2183"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2185"/>
         <source>Drawing Substitution Backward</source>
         <translation>Substituição do Desenho Anterior</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2185"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2187"/>
         <source>Similar Drawing Substitution Forward</source>
         <translation>Substituição do Desenho Parecido Seguinte</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2188"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2190"/>
         <source>Similar Drawing Substitution Backward</source>
         <translation>Substituição do Desenho Parecido Anterior</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2190"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2192"/>
         <source>Reframe on 1&apos;s</source>
         <translation>Reenquadrar em 1&apos;s</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2191"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2193"/>
         <source>Reframe on 2&apos;s</source>
         <translation>Reenquadrar em 2&apos;s</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2192"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2194"/>
         <source>Reframe on 3&apos;s</source>
         <translation>Reenquadrar em 3&apos;s</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2193"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2195"/>
         <source>Reframe on 4&apos;s</source>
         <translation>Reenquadrar em 4&apos;s</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2195"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2197"/>
         <source>Reframe with Empty Inbetweens...</source>
         <translation>Reenquadrar com Entremeios vazios...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2198"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2200"/>
         <source>Auto Input Cell Number...</source>
         <translation>Automaticamente colocar Números de Células...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2200"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2202"/>
         <source>&amp;Fill In Empty Cells</source>
         <translation>&amp;Preencher Células Vazias</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2205"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2207"/>
         <source>Link Flipbooks</source>
         <translation>Conectar Flipbooks</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2207"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2209"/>
         <source>Play</source>
         <translation>Reproduzir</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2208"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2210"/>
         <source>Short Play</source>
         <translation>Reprodução Curta</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2209"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2211"/>
         <source>Loop</source>
         <translation>Loop</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2210"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2212"/>
         <source>Pause</source>
         <translation>Pause</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2211"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2213"/>
         <source>First Frame</source>
         <translation>Primeiro Quadro</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2213"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2215"/>
         <source>Last Frame</source>
         <translation>Último Quadro</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2215"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2217"/>
         <source>Previous Frame</source>
         <translation>Quadro Anterior</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2217"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2219"/>
         <source>Next Frame</source>
         <translation>Quadro Seguinte</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2219"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2221"/>
         <source>Next Drawing</source>
         <translation>Desenho Seguinte</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2221"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2223"/>
         <source>Previous Drawing</source>
         <translation>Desenho Anterior</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2223"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2225"/>
         <source>Next Step</source>
         <translation>Intervalo Seguinte</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2224"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2226"/>
         <source>Previous Step</source>
         <translation>Intervalo Anterior</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2226"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2228"/>
         <source>Next Key</source>
         <translation>Chave Seguinte</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2228"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2230"/>
         <source>Previous Key</source>
         <translation>Chave Anterior</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2230"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2232"/>
         <source>Toggle Blank Frames</source>
         <translation>Habilitar Quadros Vazios</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2236"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2238"/>
         <source>&amp;Output Settings...</source>
         <translation>&amp;Configurações de Saída...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2238"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2240"/>
         <source>Control the output settings for the current scene.</source>
         <translation>Controla as configurações de saída da Cena atual.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2239"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2241"/>
         <source>You can render from the output settings window also.</source>
         <translation>Você também pode renderizar através das configurações de saída.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2241"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2243"/>
         <source>&amp;Preview Settings...</source>
         <translation>&amp;Configurações da Previsualização...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2243"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2245"/>
         <source>Control the settings that will be used to preview the scene.</source>
         <translation>Controla as configurações que serão usadas para pré-visualizar a Cena.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2244"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2246"/>
         <source>&amp;Render</source>
         <translation>&amp;Renderizar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2246"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2248"/>
         <source>Renders according to the settings and location set in Output Settings.</source>
         <translation>Renderiza de acordo com as configurações e localização das Configurações de Saída.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2249"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2251"/>
         <source>&amp;Fast Render to MP4</source>
         <translation>&amp;Render Rápido para MP4</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2251"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2253"/>
         <source>Exports an MP4 file to the location specified in the preferences.</source>
         <translation>Exporta um arquivo MP4 para a localização especificada em Preferências.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2253"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2255"/>
         <source>This is quicker than going into the Output Settings and setting up an MP4 render.</source>
         <translation>Isto é mais rápido do que ir até Configurações de Saída e configurar para um render em MP4.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2256"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2258"/>
         <source>&amp;Preview</source>
         <translation>&amp;Pré-visualizar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2257"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2259"/>
         <source>Previews the current scene with all effects applied.</source>
         <translation>Previsualiza a Cena atual com efeitos aplicados.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2259"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2261"/>
         <source>&amp;Save Previewed Frames</source>
         <translation>&amp;Salvar Quadros Pré-visualizados</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2261"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2263"/>
         <source>Save the images created during preview to a specified location.</source>
         <translation>Salva as imagens criadas durante o processo de previsualização para um local especificado.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2262"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2264"/>
         <source>Toggle Viewer Preview</source>
         <translation>Habilitar Pré-visualização do Visualizador</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2265"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2267"/>
         <source>Toggle Viewer Sub-camera Preview</source>
         <translation>Habilitar Pré-visualização do Visualizador da SubCâmera</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2269"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2271"/>
         <source>&amp;Save and Render</source>
         <translation>&amp;Salvar e Renderizar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2270"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2272"/>
         <source>Saves the current scene and renders according to the settings and location set in Output Settings.</source>
         <translation>Salva a Cena atual e renderiza de acordo com as configurações e localização das Configurações de Saída.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2275"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2277"/>
         <source>&amp;Camera Box</source>
         <translation>&amp;Caixa da Câmera</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2277"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2279"/>
         <source>&amp;Table</source>
         <translation>&amp;Mesa</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2279"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2281"/>
         <source>&amp;Grids and Overlays</source>
         <translation>&amp;Grades e Sobreposições</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2281"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2283"/>
         <source>&amp;Raster Bounding Box</source>
         <translation>&amp;Caixa de Contorno Raster</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2283"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2285"/>
         <source>&amp;Safe Area</source>
         <translation>&amp;Área Segura</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2285"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2287"/>
         <source>&amp;Camera BG Color</source>
         <translation>&amp;Cor de Fundo da Câmera</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2287"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2289"/>
         <source>&amp;Guide</source>
         <translation>&amp;Guia</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2289"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2291"/>
         <source>&amp;Ruler</source>
         <translation>&amp;Régua</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2291"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2293"/>
         <source>&amp;Transparency Check  </source>
         <translation>&amp;Checagem de Transparência  </translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2294"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2296"/>
         <source>&amp;Ink Check</source>
         <translation>&amp;Checagem de Tinta</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2300"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2302"/>
         <source>&amp;Ink#1 Check</source>
         <translation>&amp;Checagem de Tinta#1</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2306"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2308"/>
         <source>&amp;Paint Check</source>
         <translation>&amp;Checagem de Pintura</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2308"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2310"/>
         <source>Inks &amp;Only</source>
         <translation>Apenas &amp;Pinturas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2310"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2312"/>
         <source>&amp;Fill Check</source>
         <translation>&amp;Checagem de Preenchimento</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2312"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2314"/>
         <source>&amp;Black BG Check</source>
         <translation>&amp;Checagem de Fundo Preto</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2315"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2317"/>
         <source>&amp;Gap Check</source>
         <translation>&amp;Checagem de Buracos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2317"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2319"/>
         <source>Shift and Trace</source>
         <translation>Arrastar &amp; Traçar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2319"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2321"/>
         <source>Edit Shift</source>
         <translation>Editar Posição</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2321"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2323"/>
         <source>No Shift</source>
         <translation>Sem Posicionar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2325"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2327"/>
         <source>Reset Shift</source>
         <translation>Restaurar Posição</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2327"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2329"/>
         <source>Vector Guided Tweening</source>
         <translation>Interpolação Guiada por Vetor</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2331"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2333"/>
         <source>&amp;Visualize Vector As Raster</source>
         <translation>&amp;Visualizar Vetor como Raster</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2336"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2338"/>
         <source>Light Table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2338"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2340"/>
         <source>Current Drawing On Top</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2343"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2345"/>
         <source>&amp;File Browser</source>
         <translation>&amp;Navegador de Arquivos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2346"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2348"/>
         <source>&amp;Preproduction Board</source>
         <translation>&amp;Quadro de Pré-Produção</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2347"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2349"/>
         <source>&amp;Flipbook</source>
         <translation>&amp;Flipbook</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2349"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2351"/>
         <source>&amp;Function Editor</source>
         <translation>&amp;Editor Gráfico</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2351"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2353"/>
         <source>&amp;Level Strip</source>
         <translation>&amp;Fita de Nível</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2353"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2355"/>
         <source>&amp;Palette</source>
         <translation>&amp;Paleta</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2355"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2357"/>
         <source>&amp;Tasks</source>
         <translation>&amp;Tarefas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2356"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2358"/>
         <source>&amp;Batch Servers</source>
         <translation>&amp;Servidores em Série</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2358"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2360"/>
         <source>&amp;Message Center</source>
         <translation>&amp;Centro de Mensagens</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2360"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2362"/>
         <source>&amp;Color Model</source>
         <translation>&amp;Modelo de Cor</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2362"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2364"/>
         <source>&amp;Studio Palette</source>
         <translation>&amp;Paleta Studio</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2364"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2366"/>
         <source>&amp;Schematic</source>
         <translation>&amp;Esquemática</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2366"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2368"/>
         <source>&amp;FX Editor</source>
         <translation>&amp;Editor de Efeitos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2369"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2371"/>
         <source>&amp;Cleanup Settings</source>
         <translation>&amp;Configurações de Limpeza de Linha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2371"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2373"/>
         <source>&amp;Scene Cast</source>
         <translation>&amp;Elenco da Cena</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2373"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2375"/>
         <source>&amp;Style Editor</source>
         <translation>&amp;Editor de Estilos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2375"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2377"/>
         <source>&amp;Toolbar</source>
         <translation>&amp;Barra de Ferramentas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2376"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2378"/>
         <source>&amp;Tool Option Bar</source>
         <translation>&amp;Barra de Opções de Ferramenta</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2378"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2380"/>
         <source>&amp;Command Bar</source>
         <translation>&amp;Barra de Comandos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2381"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2383"/>
         <source>&amp;Stop Motion Controls</source>
         <translation>&amp;Controles de Stop-Motion</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2383"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2385"/>
         <source>&amp;Viewer</source>
         <translation>&amp;Visualizador</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2385"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2387"/>
         <source>&amp;Xsheet</source>
         <translation>&amp;XSheet</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2386"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2388"/>
         <source>&amp;Timeline</source>
         <translation>&amp;Timeline</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2388"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2390"/>
         <source>&amp;ComboViewer</source>
         <translation>&amp;Visualizador Combo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2390"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2392"/>
         <source>&amp;History</source>
         <translation>&amp;Histórico</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2392"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2394"/>
         <source>Record Audio</source>
         <translation>Gravação de Áudio</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2395"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2397"/>
         <source>&amp;Reset All Default Rooms</source>
         <translation>&amp;Restaurar todos os Cômodos Padrões</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2396"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2398"/>
         <source>Toggle Maximize Panel</source>
         <translation>Maximizar Painel</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2399"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2401"/>
         <source>Toggle Main Window&apos;s Full Screen Mode</source>
         <translation>Deixar a Tela Principal em Modo Tela Cheia</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2401"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2403"/>
         <source>&amp;Startup Popup...</source>
         <translation>&amp;Pop-up Inicial</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2404"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2406"/>
         <source>Guided Tweening Controls</source>
         <translation>Controle de Interpolação Guiada</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2407"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2409"/>
         <source>&amp;Custom Panels</source>
         <translation>&amp;Painéis Personalizados</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2410"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2412"/>
         <source>&amp;Custom Panel Editor...</source>
         <translation>&amp;Editor de Painel Personalizado</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2416"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2418"/>
         <source>&amp;Export</source>
         <translation>&amp;Exportar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2417"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2419"/>
         <source>&amp;Motion Paths</source>
         <translation>&amp;Linhas de Movimento</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2422"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2424"/>
         <source>&amp;Online Manual...</source>
         <translation>&amp;Manual Online</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2424"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2426"/>
         <source>&amp;What&apos;s New...</source>
         <translation>&amp;Novidades...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2426"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2428"/>
         <source>&amp;Community Forum...</source>
         <translation>&amp;Fórum da Comunidade...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2428"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2430"/>
         <source>&amp;Report a Bug...</source>
         <translation>&amp;Reportar um Bug...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2430"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2432"/>
         <source>&amp;About Tahoma2D...</source>
         <translation>&amp;Sobre o Tahoma2D...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2439"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2441"/>
         <source>Toggle Autofill on Current Palette Color</source>
         <translation>Habilitar Autopreenchimento na Cor de Paleta Atual</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2446"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2448"/>
         <source>&amp;Save Palette As...</source>
         <translation>&amp;Salvar Paleta como...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2447"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2449"/>
         <source>Save the current style palette as a separate file with a new name.</source>
         <translation>Salva a paleta de estilos atual como um arquivo separado com um novo nome.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2449"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2451"/>
         <source>&amp;Save Palette</source>
         <translation>&amp;Salvar Paleta</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2450"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2452"/>
         <source>Save the current style palette as a separate file.</source>
         <translation>Salva a paleta de estilos atual como um arquivo separado.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2452"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2454"/>
         <source>&amp;Regenerate Preview</source>
         <translation>&amp;Regenerar Pré-visualização</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2453"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2455"/>
         <source>Recreates a set of preview images.</source>
         <translation>Recria um grupo de imagens de previsualização.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2455"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2457"/>
         <source>&amp;Regenerate Frame Preview</source>
         <translation>&amp;Regenerar Pré-visualização de Quadros</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2456"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2458"/>
         <source>Regenerate the frame preview.</source>
         <translation>Restaura a pré-visualização de quadros.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2457"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2459"/>
         <source>&amp;Clone Preview</source>
         <translation>&amp;Clonar Pré-visualização</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2459"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2461"/>
         <source>Creates a clone of the previewed images.</source>
         <translation>Cria um clone das imagens previsualizadas.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2461"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2463"/>
         <source>&amp;Freeze//Unfreeze Preview</source>
         <translation>&amp;Congelar/Descongelar Previsualização</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2462"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2464"/>
         <source>Prevent the preview from being updated.</source>
         <translation>Impedir a previsualização de atualizar.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2464"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2466"/>
         <source>Freeze Preview</source>
         <translation>Congelar Pré-visualização</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2464"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2466"/>
         <source>Unfreeze Preview</source>
         <translation>Descongelar Pré-visualização</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2465"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2467"/>
         <source>&amp;Save As Preset</source>
         <translation>&amp;Salvar como uma Predefinição</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2466"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2468"/>
         <source>Preview Fx</source>
         <translation>Pré-visualizar Efeitos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2467"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2469"/>
         <source>&amp;Paste Color &amp;&amp; Name</source>
         <translation>&amp;Colar Cor &amp;&amp; Nome</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2469"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2471"/>
         <source>Paste Color</source>
         <translation>Colar Cor</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2471"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2473"/>
         <source>Paste Name</source>
         <translation>Colar Nome</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2474"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2476"/>
         <source>Get Color from Studio Palette</source>
         <translation>Retirar Cor da Paleta Studio</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2476"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2478"/>
         <source>Toggle Link to Studio Palette</source>
         <translation>Habilitar Conexão com a Paleta Studio</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2478"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2480"/>
         <source>Remove Reference to Studio Palette</source>
         <translation>Remover Referência à Paleta Studio</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2480"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2482"/>
         <source>&amp;View...</source>
         <translation>&amp;Visualizar...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2483"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2485"/>
         <source>Toggle Quick Toolbar</source>
         <translation>Habilitar Barra Rápida de Ferramentas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2485"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2487"/>
         <source>Toggle Sub-Scene Navigation Bar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2487"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2490"/>
         <source>Show/Hide Camera Column</source>
         <translation>Mostrar/Esconder Coluna da Câmera</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2488"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2491"/>
         <source>&amp;Set Key</source>
         <translation>&amp;Colocar Chave</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2491"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2494"/>
         <source>&amp;Shift Keys Down</source>
         <translation>&amp;Arrastar Chaves para Baixo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2493"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2496"/>
         <source>&amp;Shift Keys Up</source>
         <translation>&amp;Arrastar Chaves para Cima</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2495"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2498"/>
         <source>&amp;Paste Numbers</source>
         <translation>&amp;Colar Números</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2498"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2501"/>
         <source>&amp;Paste Cell Content</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2499"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2502"/>
         <source>&amp;Histogram</source>
         <translation>&amp;Histograma</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2502"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2505"/>
         <source>&amp;Viewer Histogram</source>
         <translation>&amp;Visualizador do Histograma</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2505"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2508"/>
         <source>&amp;Blend colors</source>
         <translation>&amp;Mesclar cores</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2506"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2509"/>
         <source>Onion Skin Toggle</source>
         <translation>Habilitar Onion Skin</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2508"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2511"/>
         <source>Zero Thick Lines</source>
         <translation>Zerar Linhas Espessas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2510"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2513"/>
         <source>Toggle Cursor Size Outline</source>
         <translation>Habilitar Traço de Tamanho do Cursor</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2513"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2516"/>
         <source>Toggle Current Time Indicator</source>
         <translation>Habilitar Indicador de Tempo Atual</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2514"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2517"/>
         <source>Duplicate</source>
         <translation>Duplicar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2517"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2520"/>
         <source>Show Folder Contents</source>
         <translation>Mostrar Conteúdos da Pasta</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2519"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2522"/>
         <source>Convert...</source>
         <translation>Converter...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2521"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2524"/>
         <source>Collect Assets</source>
         <translation>Adquirir Conteúdos Externos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2523"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2526"/>
         <source>Import Scene</source>
         <translation>Importar Cena</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2525"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2528"/>
         <source>Export Scene...</source>
         <translation>Exportar Cena...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2527"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2530"/>
         <source>Remove Level</source>
         <translation>Remover Nível</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2530"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2533"/>
         <source>Add As Render Task</source>
         <translation>Adicionar como Tarefa de Render</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2532"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2535"/>
         <source>Add As Cleanup Task</source>
         <translation>Adicionar como Tarefa de Limpeza de Linha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2535"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2538"/>
         <source>Select All Keys in this Frame</source>
         <translation>Selecionar Todos os Chaves neste Quadro</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2537"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2540"/>
         <source>Select All Keys in this Column</source>
         <translation>Selecionar Todos os Chaves nesta Coluna</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2539"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2542"/>
         <source>Select All Keys</source>
         <translation>Selecionar Todos os Chaves</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2541"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2544"/>
         <source>Select All Following Keys</source>
         <translation>Selecionar Todos os Chaves Seguintes</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2543"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2546"/>
         <source>Select All Previous Keys</source>
         <translation>Selecionar Todos os Chaves Anteriores</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2545"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2548"/>
         <source>Select Previous Keys in this Column</source>
         <translation>Selecionar Chaves Anteriores nesta Coluna</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2548"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2551"/>
         <source>Select Following Keys in this Column</source>
         <translation>Selecionar Chaves Seguintes nesta Coluna</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2551"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2554"/>
         <source>Select Previous Keys in this Frame</source>
         <translation>Selecionar Chaves Anteriores neste Quadro</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2554"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2557"/>
         <source>Select Following Keys in this Frame</source>
         <translation>Selecionar Chaves Seguintes neste Quadro</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2557"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2560"/>
         <source>Invert Key Selection</source>
         <translation>Inverter Seleção de Chaves</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2558"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2561"/>
         <source>Set Acceleration</source>
         <translation>Definir Aceleração</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2560"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2563"/>
         <source>Set Deceleration</source>
         <translation>Definir Desaceleração</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2563"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2566"/>
         <source>Set Constant Speed</source>
         <translation>Definir Velocidade Constante</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2565"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2568"/>
         <source>Reset Interpolation</source>
         <translation>Restaurar Interpolação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2567"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2570"/>
         <source>Linear Interpolation</source>
         <translation>Interpolação Linear</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2569"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2572"/>
         <source>Speed In / Speed Out Interpolation</source>
         <translation>Interpolação Velocidade In / Velocidade Out</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2572"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2575"/>
         <source>Ease In / Ease Out Interpolation</source>
         <translation>Interpolação Ease In / Ease Out</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2575"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2578"/>
         <source>Ease In / Ease Out (%) Interpolation</source>
         <translation>Interpolação Ease In / Ease Out (%)</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2578"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2581"/>
         <source>Exponential Interpolation</source>
         <translation>Interpolação Exponencial</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2580"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2583"/>
         <source>Expression Interpolation</source>
         <translation>Interpolação de Expressão</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2582"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2585"/>
         <source>File Interpolation</source>
         <translation>Interpolação de Arquivo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2584"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2587"/>
         <source>Constant Interpolation</source>
         <translation>Interpolação Constante</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2585"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2588"/>
         <source>Fold Column</source>
         <translation>Dobrar Coluna</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2588"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2591"/>
         <source>Show This Only</source>
         <translation>Mostrar Apenas Isto</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2590"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2593"/>
         <source>Show Selected</source>
         <translation>Mostrar Selecionados</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2591"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2594"/>
         <source>Show All</source>
         <translation>Mostrar Todos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2593"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2596"/>
         <source>Hide Selected</source>
         <translation>Esconder Selecionados</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2594"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2597"/>
         <source>Hide All</source>
         <translation>Esconder Todos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2597"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2600"/>
         <source>Toggle Show/Hide</source>
         <translation>Mostrar/Esconder</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2599"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2602"/>
         <source>ON This Only</source>
         <translation>Ligar Apenas Isso</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2601"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2604"/>
         <source>ON Selected</source>
         <translation>Ligar Selecionado</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2602"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2605"/>
         <source>ON All</source>
         <translation>Ligar Todos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2603"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2606"/>
         <source>OFF All</source>
         <translation>Desligar Todos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2605"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2608"/>
         <source>OFF Selected</source>
         <translation>Desligar Selecionados</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2606"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2609"/>
         <source>Swap ON/OFF</source>
         <translation>Trocar Ligado/Desligado</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2609"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2612"/>
         <source>Lock This Only</source>
         <translation>Travar Apenas Este</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2611"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2614"/>
         <source>Lock Selected</source>
         <translation>Travar Selecionados</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2612"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2615"/>
         <source>Lock All</source>
         <translation>Travar Todos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2615"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2618"/>
         <source>Unlock Selected</source>
         <translation>Destravar Selecionados</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2616"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2619"/>
         <source>Unlock All</source>
         <translation>Destravar Todos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2619"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2622"/>
         <source>Swap Lock/Unlock</source>
         <translation>Trocar Travado/Destravado</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2621"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2624"/>
         <source>Hide Upper Columns</source>
         <translation>Esconder Colunas Superiores</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2623"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2626"/>
         <source>Separate Colors...</source>
         <translation>Separar Cores...</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2625"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2628"/>
         <source>&amp;Palette Gizmo</source>
         <translation>&amp;Paleta Gizmo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2628"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2631"/>
         <source>&amp;Delete Unused Styles</source>
         <translation>&amp;Excluir Estilos Inutilizados</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2637"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2640"/>
         <source>&amp;Save Studio Palette</source>
         <translation>&amp;Salvar Paleta Studio</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2638"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2641"/>
         <source>Save the current Studio Palette.</source>
         <translation>Salvar Paleta Studio atual.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2640"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2643"/>
         <source>&amp;Save As Default Palette</source>
         <translation>&amp;Salvar como Paleta Padrão</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2641"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2644"/>
         <source>Save the current style palette as the default for new levels of the current level type.</source>
         <translation>Salva a atual paleta de estilos como padrão para novos níveis do tipo atual.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2643"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2646"/>
         <source>Toggle Auto-Creation</source>
         <translation>Habilitar Autocriação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2646"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2649"/>
         <source>Toggles the auto-creation of frames when drawing in blank cells on the timeline/xsheet.</source>
         <translation>Habilita a auto-criação de quadros quando desenhar em células vázias na Timeline/XSheet.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2649"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2652"/>
         <source>Toggle Creation In Hold Cells</source>
         <translation>Habilitar Criação em Células Hold</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2652"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2655"/>
         <source>Toggles the auto-creation of frames when drawing in held cells on the timeline/xsheet.</source>
         <translation>Habilita a auto-criação de quadros quando desenhar em células de Hold na Timeline/XSheet.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2654"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2657"/>
         <source>Toggle Auto-Stretch</source>
         <translation>Habilitar Auto-Esticar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2657"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2660"/>
         <source>Toggles the auto-stretch of a frame to the next frame</source>
         <translation>Habilita o Auto-Esticar de um quadro até o próximo quadro.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2658"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2661"/>
         <source>Toggle Viewer Indicators</source>
         <translation>Habilitar Indicadores de Visualizador</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2661"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2664"/>
         <source>Toggle Implicit Hold</source>
         <translation>Habilitar Holds Implícitos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2664"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2667"/>
         <source>Toggles the implicit hold of a frame to the next frame</source>
         <translation>Habilita Holds Implícitos de um quadro até o próximo quadro.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2668"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2671"/>
         <source>Animate Tool</source>
         <translation>Ferramenta de Animação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2669"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2672"/>
         <source>Animate Tool: Modifies the position, rotation and size of the current column</source>
         <translation>Ferramenta de Animação: Modifica a posição, rotação e tamanho da Coluna atual.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2672"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2675"/>
         <source>Selection Tool</source>
         <translation>Ferramenta de Seleção</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2673"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2676"/>
         <source>Selection Tool: Select parts of your image to transform it.</source>
         <translation>Ferramenta de Seleção: Seleciona partes da sua imagem para transformá-la.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2674"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2677"/>
         <source>Brush Tool</source>
         <translation>Ferramenta de Pincel</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2675"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2678"/>
         <source>Brush Tool: Draws in the work area freehand</source>
         <translation>Ferramenta de Pincel: Desenha na área útil livremente.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2676"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2679"/>
         <source>Geometry Tool</source>
         <translation>Ferramenta Geométrica</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2677"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2680"/>
         <source>Geometry Tool: Draws geometric shapes</source>
         <translation>Ferramenta Geométrica: Desenha formas geométricas.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2678"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2681"/>
         <source>Type Tool</source>
         <translation>Ferramenta Tipográfica</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2679"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2682"/>
         <source>Type Tool: Adds text</source>
         <translation>Ferramenta Tipográfica: Adiciona Texto.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2680"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2683"/>
         <source>Fill Tool</source>
         <translation>Ferramente de Preenchimento</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2681"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2684"/>
         <source>Fill Tool: Fills drawing areas with the current style</source>
         <translation>Ferramenta de Preenchimento: Preenche áreas com o Estilo atual.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2683"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2686"/>
         <source>Smart Raster Paint Tool</source>
         <translation>Ferramenta de Pintura Raster Inteligente</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2684"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2687"/>
         <source>Smart Raster Paint: Paints areas in Smart Raster levels</source>
         <translation>Ferramenta de Pintura Raster Inteligente: Preenche áreas em Níveis de Raster Inteligente.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2685"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2688"/>
         <source>Eraser Tool</source>
         <translation>Ferramenta de Borracha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2686"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2689"/>
         <source>Eraser Tool: Erases lines and areas</source>
         <translation>Ferramenta de Borracha: Apaga Linhas e Preenchimentos.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2688"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2691"/>
         <source>Tape Tool</source>
         <translation>Ferramenta de Fita</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2689"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2692"/>
         <source>Tape Tool: Closes gaps in raster, joins edges in vector</source>
         <translation>Ferramenta de Fita: Fecha buracos em Raster, une arestas em Vetor.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2691"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2694"/>
         <source>Style Picker Tool</source>
         <translation>Ferramenta de Seleção de Estilo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2692"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2695"/>
         <source>Style Picker: Selects style on current drawing</source>
         <translation>Seletor de Estilo: Seleciona o Estilo no Desenho atual.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2694"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2697"/>
         <source>RGB Picker Tool</source>
         <translation>Ferramenta de Seleção RGB</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2695"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2698"/>
         <source>RGB Picker: Picks color on screen and applies to current style</source>
         <translation>Seletor RGB: Seleciona a cor na tela e aplica ao Estilo atual.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2697"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2700"/>
         <source>Control Point Editor Tool</source>
         <translation>Ferramenta de Edição de Pontos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2698"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2701"/>
         <source>Control Point Editor: Modifies vector lines by editing its control points</source>
         <translation>Editor de Pontos: Modifica linhas de vetor editando seus pontos de controle.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2700"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2703"/>
         <source>Pinch Tool</source>
         <translation>Ferramenta Apertar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2701"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2704"/>
         <source>Pinch Tool: Pulls vector drawings</source>
         <translation>Ferramenta Apertar: Puxa desenhos Vetoriais.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2702"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2705"/>
         <source>Pump Tool</source>
         <translation>Ferramenta de Bomba</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2703"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2706"/>
         <source>Pump Tool: Changes vector thickness</source>
         <translation>Ferramenta de Bomba: Muda a espessura de Vetores.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2704"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2707"/>
         <source>Magnet Tool</source>
         <translation>Ferramenta de Imã</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2705"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2708"/>
         <source>Magnet Tool: Deforms vector lines</source>
         <translation>Ferramenta de Imã: Deforma linhas de Vetores.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2707"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2710"/>
         <source>Bender Tool</source>
         <translation>Ferramenta de Entortar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2708"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2711"/>
         <source>Bender Tool: Bends vector shapes around the first click</source>
         <translation>Ferramenta de Entortar: Entorta formas Vetoriais em volta do primeiro clique.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2709"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2712"/>
         <source>Iron Tool</source>
         <translation>Ferramenta de Ferro</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2710"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2713"/>
         <source>Iron Tool: Smooths out vector lines</source>
         <translation>Ferramenta de Ferro: Suaviza linhas de Vetores.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2712"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2715"/>
         <source>Cutter Tool</source>
         <translation>Ferramenta de Corte</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2713"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2716"/>
         <source>Cutter Tool: Splits vector lines</source>
         <translation>Ferramenta de Corte: Separa linhas de Vetor.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2714"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2717"/>
         <source>Skeleton Tool</source>
         <translation>Ferramenta de Esqueleto</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2715"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2718"/>
         <source>Skeleton Tool: Allows to build a skeleton and animate in a cut-out workflow</source>
         <translation>Ferramenta de Esqueleto: Permite a construção de um esqueleto para animação de workflow cut-out.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2718"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2721"/>
         <source>Tracker Tool</source>
         <translation>Ferramenta de Rastreio</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2719"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2722"/>
         <source>Tracker Tool: Tracks specific regions in a sequence of images</source>
         <translation>Rastreador: Rastreia regiões específicas em uma sequência de imagens.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2720"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2723"/>
         <source>Hook Tool</source>
         <translation>Ferramenta de Gancho</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2721"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2724"/>
         <source>Zoom Tool</source>
         <translation>Ferramenta de Zoom</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2722"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2725"/>
         <source>Zoom Tool: Zooms viewer</source>
         <translation>Ferramenta de Zoom: Dá Zoom no Visualizador.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2723"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2726"/>
         <source>Rotate Tool</source>
         <translation>Ferramenta de Rotação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2724"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2727"/>
         <source>Rotate Tool: Rotate the viewer</source>
         <translation>Ferramenta de Rotação: Rotaciona a Área de Trabalho.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2725"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2728"/>
         <source>Hand Tool</source>
         <translation>Ferramenta de Mão</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2726"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2729"/>
         <source>Hand Tool: Pans the workspace</source>
         <translation>Ferramenta de Mão: Move a área de trabalho.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2727"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2730"/>
         <source>Plastic Tool</source>
         <translation>Ferramenta de Plástico</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2728"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2731"/>
         <source>Plastic Tool: Builds a mesh that allows to deform and animate a level</source>
         <translation>Ferramenta de Plástico: Constrói uma malha que permite a deformação e animação do Nível.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2730"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2733"/>
         <source>Ruler Tool</source>
         <translation>Ferramenta de Régua</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2731"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2734"/>
         <source>Ruler Tool: Measure distances on the canvas</source>
         <translation>Ferramenta de Régua: Mede a distância na tela.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2733"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2736"/>
         <source>Perspective Grid Tool</source>
         <translation>Ferramenta de Guia de Perspectiva</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2734"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2737"/>
         <source>Perspective Grid Tool: Set up perspective grids</source>
         <translation>Ferramenta de Guia de Perspectiva: Posiciona grades de perspectiva.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2735"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2738"/>
         <source>Symmetry Tool</source>
         <translation>Ferramenta de Simetria</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2736"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2739"/>
         <source>Symmetry Tool: Set up symmetrical guide</source>
         <translation>Ferramenta de Simetria: Posiciona Guia Simétrico</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2737"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2740"/>
         <source>Finger Tool</source>
         <translation>Ferramenta de Dedo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2738"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2741"/>
         <source>Finger Tool: Smudges small areas to cover with line</source>
         <translation>Ferramenta de Dedo: Borra pequenas áreas para cobrir com linha.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2741"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2744"/>
         <source>Animate Tool - Next Mode</source>
         <translation>Ferramenta de Animação - Próximo Modo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2743"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2746"/>
         <source>Animate Tool - Position</source>
         <translation>Ferramenta de Animação - Posicionamento</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2745"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2748"/>
         <source>Animate Tool - Rotation</source>
         <translation>Ferramenta de Animação - Rotação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2747"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2750"/>
         <source>Animate Tool - Scale</source>
         <translation>Ferramenta de Animação - Escala</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2749"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2752"/>
         <source>Animate Tool - Shear</source>
         <translation>Ferramenta de Animação - Inclinação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2751"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2754"/>
         <source>Animate Tool - Center</source>
         <translation>Ferramenta de Animação - Centro</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2753"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2756"/>
         <source>Animate Tool - All</source>
         <translation>Ferramenta de Animação - Todos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2757"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2760"/>
         <source>Selection Tool - Next Type</source>
         <translation>Ferramenta de Seleção - Próximo Tipo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2760"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2763"/>
         <source>Selection Tool - Rectangular</source>
         <translation>Ferramenta de Seleção - Retangular</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2762"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2765"/>
         <source>Selection Tool - Freehand</source>
         <translation>Ferramenta de Seleção - Livre</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2764"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2767"/>
         <source>Selection Tool - Polyline</source>
         <translation>Ferramenta de Seleção - Polilinha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2768"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2771"/>
         <source>Brush Tool - Auto Fill On</source>
         <translation>Ferramenta de Pincel - Auto-Preenchimento Ligado</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2770"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2773"/>
         <source>Brush Tool - Auto Fill Off</source>
         <translation>Ferramenta de Pincel - Auto-Preenchimento Desligado</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2774"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2777"/>
         <source>Geometric Tool - Next Shape</source>
         <translation>Ferramenta Geométrica - Próxima Forma</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2776"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2779"/>
         <source>Geometric Tool - Rectangle</source>
         <translation>Ferramenta Geométrica - Retângulo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2778"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2781"/>
         <source>Geometric Tool - Circle</source>
         <translation>Ferramenta Geométrica - Círculo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2780"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2783"/>
         <source>Geometric Tool - Ellipse</source>
         <translation>Ferramenta Geométrica - Elipse</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2782"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2785"/>
         <source>Geometric Tool - Line</source>
         <translation>Ferramenta Geométrica - Linha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2784"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2787"/>
         <source>Geometric Tool - Polyline</source>
         <translation>Ferramenta Geométrica - Polilinha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2786"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2789"/>
         <source>Geometric Tool - Arc</source>
         <translation>Ferramenta Geométrica - Arco</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2788"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2791"/>
         <source>Geometric Tool - MultiArc</source>
         <translation>Ferramenta Geométrica - MultiArco</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2790"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2793"/>
         <source>Geometric Tool - Polygon</source>
         <translation>Ferramenta Geométrica - Polígono</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2794"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2797"/>
         <source>Type Tool - Next Style</source>
         <translation>Ferramenta Tipográfica - Próximo Estilo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2796"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2799"/>
         <source>Type Tool - Oblique</source>
         <translation>Ferramenta Tipográfica - Oblíquo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2798"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2801"/>
         <source>Type Tool - Regular</source>
         <translation>Ferramenta Tipográfica - Regular</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2800"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2803"/>
         <source>Type Tool - Bold Oblique</source>
         <translation>Ferramenta Tipográfica - Oblíquo em Negrito</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2802"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2805"/>
         <source>Type Tool - Bold</source>
         <translation>Ferramenta Tipográfica - Negrito</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2806"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2809"/>
         <source>Paint Brush - Next Mode</source>
         <translation>Pincel - Próximo Modo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2808"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2811"/>
         <source>Paint Brush - Areas</source>
         <translation>Pincel - Áreas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2810"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2813"/>
         <source>Paint Brush - Lines</source>
         <translation>Pincel - Linhas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2813"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2816"/>
         <source>Paint Brush - Lines &amp; Areas</source>
         <translation>Pincel - Linhas e Áreas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2817"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2820"/>
         <source>Fill Tool - Next Type</source>
         <translation>Ferramenta de Preenchimento - Próximo Tipo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2819"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2822"/>
         <source>Fill Tool - Normal</source>
         <translation>Ferramenta de Preenchimento - Normal</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2821"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2824"/>
         <source>Fill Tool - Rectangular</source>
         <translation>Ferramenta de Preenchimento - Retangular</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2823"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2826"/>
         <source>Fill Tool - Freehand</source>
         <translation>Ferramenta de Preenchimento - Livre</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2825"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2828"/>
         <source>Fill Tool - Polyline</source>
         <translation>Ferramenta de Preenchimento - Polilinha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2827"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2830"/>
         <source>Fill Tool - Pick+Freehand</source>
         <translation>Ferramenta de Preenchimento - Escolher+Mão Livre</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2829"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2832"/>
         <source>Fill Tool - Next Mode</source>
         <translation>Ferramenta de Preenchimento - Próximo Modo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2831"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2834"/>
         <source>Fill Tool - Areas</source>
         <translation>Ferramenta de Preenchimento - Áreas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2833"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2836"/>
         <source>Fill Tool - Lines</source>
         <translation>Ferramenta de Preenchimento - Linhas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2835"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2838"/>
         <source>Fill Tool - Lines &amp; Areas</source>
         <translation>Ferramenta de Preenchimento - Linhas e Áreas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2839"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2842"/>
         <source>Eraser Tool - Next Type</source>
         <translation>Ferramenta de Borracha - Próximo Tipo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2841"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2844"/>
         <source>Eraser Tool - Normal</source>
         <translation>Ferramenta de Borracha - Normal</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2843"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2846"/>
         <source>Eraser Tool - Rectangular</source>
         <translation>Ferramenta de Borracha - Retangular</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2845"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2848"/>
         <source>Eraser Tool - Freehand</source>
         <translation>Ferramenta de Borracha - Livre</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2847"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2850"/>
         <source>Eraser Tool - Polyline</source>
         <translation>Ferramenta de Borracha - Polilinha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2849"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2852"/>
         <source>Eraser Tool - Segment</source>
         <translation>Ferramenta de Borracha - Segmento</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2853"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2856"/>
         <source>Tape Tool - Next Type</source>
         <translation>Ferramenta de Fita - Próximo Tipo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2855"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2858"/>
         <source>Tape Tool - Normal</source>
         <translation>Ferramenta de Fita - Normal</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2857"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2860"/>
         <source>Tape Tool - Rectangular</source>
         <translation>Ferramenta de Fita - Retangular</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2859"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2862"/>
         <source>Tape Tool - Next Mode</source>
         <translation>Ferramenta de Fita - Próximo Modo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2862"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2865"/>
         <source>Tape Tool - Endpoint to Endpoint</source>
         <translation>Ferramenta de Fita - Ponto-final até Ponto-final</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2865"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2868"/>
         <source>Tape Tool - Endpoint to Line</source>
         <translation>Ferramenta de Fita - Ponto-final até Linha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2867"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2870"/>
         <source>Tape Tool - Line to Line</source>
         <translation>Ferramenta de Fita - Linha até Linha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2872"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2875"/>
         <source>Style Picker Tool - Next Mode</source>
         <translation>Ferramenta de Seleção de Estilo - Próximo Modo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2874"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2877"/>
         <source>Style Picker Tool - Areas</source>
         <translation>Ferramenta de Seleção de Estilo - Áreas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2876"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2879"/>
         <source>Style Picker Tool - Lines</source>
         <translation>Ferramenta de Seleção de Estilo - Linhas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2879"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2882"/>
         <source>Style Picker Tool - Lines &amp; Areas</source>
         <translation>Ferramenta de Seleção de Estilo - Linhas e Áreas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2883"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2886"/>
         <source>RGB Picker Tool - Next Type</source>
         <translation>Ferramenta de Seleção RGB - Próximo Tipo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2885"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2888"/>
         <source>RGB Picker Tool - Normal</source>
         <translation>Ferramenta de Seleção RGB - Normal</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2888"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2891"/>
         <source>RGB Picker Tool - Rectangular</source>
         <translation>Ferramenta de Seleção RGB - Retangular</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2890"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2893"/>
         <source>RGB Picker Tool - Freehand</source>
         <translation>Ferramenta de Seleção RGB - Livre</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2892"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2895"/>
         <source>RGB Picker Tool - Polyline</source>
         <translation>Ferramenta de Seleção RGB - Polilinha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2896"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2899"/>
         <source>Skeleton Tool - Next Mode</source>
         <translation>Ferramenta de Esqueleto - Próximo Modo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2899"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2902"/>
         <source>Skeleton Tool - Build Skeleton</source>
         <translation>Ferramenta de Esqueleto - Construir Esqueleto</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2901"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2904"/>
         <source>Skeleton Tool - Animate</source>
         <translation>Ferramenta de Esqueleto - Animação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2904"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2907"/>
         <source>Skeleton Tool - Inverse Kinematics</source>
         <translation>Ferramenta de Esqueleto - Cinemática Inversa</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2908"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2911"/>
         <source>Plastic Tool - Next Mode</source>
         <translation>Ferramenta de Plástico - Próximo Modo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2910"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2913"/>
         <source>Plastic Tool - Edit Mesh</source>
         <translation>Ferramenta de Plástico - Editação de Malha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2912"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2915"/>
         <source>Plastic Tool - Paint Rigid</source>
         <translation>Ferramenta de Plástico - Pintar Rígido</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2915"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2918"/>
         <source>Plastic Tool - Build Skeleton</source>
         <translation>Ferramenta de Plástico - Construção de Esqueleto</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2917"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2920"/>
         <source>Plastic Tool - Animate</source>
         <translation>Ferramenta de Plástico - Animação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2923"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2926"/>
         <source>Select Next Frame Guide Stroke</source>
         <translation>Selecionar Traço Guia do Próximo Quadro</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2925"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2928"/>
         <source>Select Previous Frame Guide Stroke</source>
         <translation>Selecionar Traço Guia do Quadro Anterior</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2928"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2931"/>
         <source>Select Prev &amp;&amp; Next Frame Guide Strokes</source>
         <translation>Selecionar Traço Guia do Quadro Anterior e do Próximo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2932"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2935"/>
         <source>Reset Guide Stroke Selections</source>
         <translation>Restaurar Seleção do Traço Guia</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2934"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2937"/>
         <source>Tween Selected Guide Strokes</source>
         <translation>Interpolar Traços Guia Selecionados</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2936"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2939"/>
         <source>Tween Guide Strokes to Selected</source>
         <translation>Interpolar Traços Guia até o Selecionado</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2938"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2941"/>
         <source>Select Guide Strokes &amp;&amp; Tween Mode</source>
         <translation>Selecionar Traços Guia &amp;&amp; Modo de Interpolação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2940"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2943"/>
         <source>Flip Next Guide Stroke Direction</source>
         <translation>Inverter Direção do Próximo Traço Guia</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2942"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2945"/>
         <source>Flip Previous Guide Stroke Direction</source>
         <translation>Inverter Direção do Traço Guia Anterior</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2944"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2947"/>
         <source>Global Key</source>
         <translation>Chave Global</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2948"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2951"/>
         <source>Brush size - Increase max</source>
         <translation>Tamanho do Pincel - Aumentar máx.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2950"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2953"/>
         <source>Brush size - Decrease max</source>
         <translation>Tamanho do Pincel - Diminuir máx.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2952"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2955"/>
         <source>Brush size - Increase min</source>
         <translation>Tamanho do Pincel - Aumentar min.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2954"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2957"/>
         <source>Brush size - Decrease min</source>
         <translation>Tamanho do Pincel - Diminuir min.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2956"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2959"/>
         <source>Brush hardness - Increase</source>
         <translation>Dureza do Pincel - Aumentar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2958"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2961"/>
         <source>Brush hardness - Decrease</source>
         <translation>Dureza do Pincel - Diminuir</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2960"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2963"/>
         <source>Snap Sensitivity</source>
         <translation>Sensibilidade de Encaixe</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2961"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2964"/>
         <source>Auto Group</source>
         <translation>Agrupamento Automático</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2964"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2967"/>
         <source>Break sharp angles</source>
         <translation>Quebrar ângulos agudos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2965"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2968"/>
         <source>Frame range</source>
         <translation>Escopo de Quadros</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2967"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2970"/>
         <source>Inverse Kinematics</source>
         <translation>Cinemática Inversa</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2969"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2972"/>
         <source>Invert</source>
         <translation>Inverter</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2970"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2973"/>
         <source>Manual</source>
         <translation>Manual</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2971"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2974"/>
         <source>Onion skin</source>
         <translation>Onion Skin</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2973"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2976"/>
         <source>Orientation</source>
         <translation>Orientação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2975"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2978"/>
         <source>Pencil Mode</source>
         <translation>Modo Lápis</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2978"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2981"/>
         <source>Preserve Thickness</source>
         <translation>Preservar Espessura</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2980"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2983"/>
         <source>Pressure Sensitivity</source>
         <translation>Preservar Sensibilidade</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2981"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2984"/>
         <source>Segment Ink</source>
         <translation>Tinta de Segmento</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2983"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2986"/>
         <source>Selective</source>
         <translation>Seletivo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2986"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2989"/>
         <source>Brush Tool - Draw Order</source>
         <translation>Ferramenta de Pincel - Ordem de Desenho</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2987"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2990"/>
         <source>Smooth</source>
         <translation>Suavizar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2988"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2991"/>
         <source>Snap</source>
         <translation>Encaixar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2990"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2993"/>
         <source>Auto Select Drawing</source>
         <translation>Selecionar Desenho Automaticamente</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2991"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2994"/>
         <source>Auto Fill</source>
         <translation>Preenchimento Automático</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2993"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2996"/>
         <source>Join Vectors</source>
         <translation>Unir Vetores</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2995"/>
+        <location filename="../../toonz/mainwindow.cpp" line="2998"/>
         <source>Show Only Active Skeleton</source>
         <translation>Mostrar Apenas Esqueleto Ativo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="2997"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3000"/>
         <source>Brush Tool - Eraser (Raster option)</source>
         <translation>Ferramenta de Pincel - Borracha (Opção Raster)</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3000"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3003"/>
         <source>Brush Tool - Lock Alpha</source>
         <translation>Ferramenta de Pincel - Travar Alpha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3003"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3006"/>
         <source>Brush Preset</source>
         <translation>Predefinição de Pincel</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3005"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3008"/>
         <source>Geometric Shape</source>
         <translation>Forma Geométrica</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3007"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3010"/>
         <source>Geometric Shape Rectangle</source>
         <translation>Forma Geométrica Retângulo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3009"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3012"/>
         <source>Geometric Shape Circle</source>
         <translation>Forma Geométrica Círculo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3011"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3014"/>
         <source>Geometric Shape Ellipse</source>
         <translation>Forma Geométrica Elipse</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3013"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3016"/>
         <source>Geometric Shape Line</source>
         <translation>Forma Geométrica Linha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3015"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3018"/>
         <source>Geometric Shape Polyline</source>
         <translation>Forma Geométrica Polilinha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3017"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3020"/>
         <source>Geometric Shape Arc</source>
         <translation>Forma Geométrica Arco</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3019"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3022"/>
         <source>Geometric Shape MultiArc</source>
         <translation>Forma Geométrica MultiArco</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3021"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3024"/>
         <source>Geometric Shape Polygon</source>
         <translation>Forma Geométrica Polígono</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3023"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3026"/>
         <source>Geometric Edge</source>
         <translation>Contorno Geométrico</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3024"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3027"/>
         <source>Mode</source>
         <translation>Modo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3027"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3030"/>
         <source>Mode - Areas</source>
         <translation>Modo - Áreas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3030"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3033"/>
         <source>Mode - Lines</source>
         <translation>Modo - Linhas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3032"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3035"/>
         <source>Mode - Lines &amp;&amp; Areas</source>
         <translation>Modo - Linhas &amp;&amp; Áreas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3035"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3038"/>
         <source>Mode - Endpoint to Endpoint</source>
         <translation>Modo - Ponto-final até Ponto-final</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3037"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3040"/>
         <source>Mode - Endpoint to Line</source>
         <translation>Modo - Ponto-final até Linha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3039"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3042"/>
         <source>Mode - Line to Line</source>
         <translation>Modo - Linha até Linha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3040"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3043"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3043"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3046"/>
         <source>Type - Normal</source>
         <translation>Tipo - Normal</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3047"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3050"/>
         <source>Type - Rectangular</source>
         <translation>Tipo - Retângulo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3051"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3054"/>
         <source>Type - Freehand</source>
         <translation>Tipo - Livre</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3055"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3058"/>
         <source>Type - Polyline</source>
         <translation>Tipo - Polilinha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3059"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3062"/>
         <source>Type - Pick+Freehand</source>
         <translation>Tipo - Escolher+Mão Livre</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3063"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3066"/>
         <source>Type - Segment</source>
         <translation>Tipo - Segmento</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3066"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3069"/>
         <source>TypeTool Font</source>
         <translation>Ferramenta Tipográfica Fonte</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3068"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3071"/>
         <source>TypeTool Size</source>
         <translation>Ferramenta Tipográfica Tamanho</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3071"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3074"/>
         <source>TypeTool Style</source>
         <translation>Ferramenta Tipográfica Estilo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3073"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3076"/>
         <source>TypeTool Style - Oblique</source>
         <translation>Ferramenta Tipográfica - Oblíquo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3075"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3078"/>
         <source>TypeTool Style - Regular</source>
         <translation>Ferramenta Tipográfica - Regular</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3077"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3080"/>
         <source>TypeTool Style - Bold Oblique</source>
         <translation>Ferramenta Tipográfica - Oblíquo em Negrito</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3079"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3082"/>
         <source>TypeTool Style - Bold</source>
         <translation>Ferramenta Tipográfica - Negrito</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3082"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3085"/>
         <source>Active Axis</source>
         <translation>Eixo Ativo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3084"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3087"/>
         <source>Active Axis - Position</source>
         <translation>Eixo Ativo - Posição</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3086"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3089"/>
         <source>Active Axis - Rotation</source>
         <translation>Eixo Ativo - Rotação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3088"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3091"/>
         <source>Active Axis - Scale</source>
         <translation>Eixo Ativo - Escala</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3090"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3093"/>
         <source>Active Axis - Shear</source>
         <translation>Eixo Ativo - Inclinação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3092"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3095"/>
         <source>Active Axis - Center</source>
         <translation>Eixo Ativo - Centro</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3094"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3097"/>
         <source>Active Axis - All</source>
         <translation>Eixo Ativo - Todos</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3097"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3100"/>
         <source>Skeleton Mode</source>
         <translation>Modo Esqueleto</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3099"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3102"/>
         <source>Edit Mesh Mode</source>
         <translation>Editar Modo de Malha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3101"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3104"/>
         <source>Paint Rigid Mode</source>
         <translation>Modo de Pintura Rígida</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3103"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3106"/>
         <source>Build Skeleton Mode</source>
         <translation>Modo de Construção de Esqueleto</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3105"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3108"/>
         <source>Animate Mode</source>
         <translation>Modo de Animação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3107"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3110"/>
         <source>Inverse Kinematics Mode</source>
         <translation>Modo de Cinemática Inversa</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3109"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3112"/>
         <source>None Pick Mode</source>
         <translation>Modo de Escolha Vazio</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3111"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3114"/>
         <source>Column Pick Mode</source>
         <translation>Modo de Escolha Coluna</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3113"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3116"/>
         <source>Pegbar Pick Mode</source>
         <translation>Modo de Escolha Pegbar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3115"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3118"/>
         <source>Pick Screen</source>
         <translation>Escolhar Tela</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3117"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3120"/>
         <source>Create Mesh</source>
         <translation>Criar Malha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3122"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3125"/>
         <source>Fill Tool - Autopaint Lines</source>
         <translation>Ferramenta de Preenchimento - Autopintar Linhas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3126"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3129"/>
         <source>Auto Close</source>
         <translation>Fechar Automaticamente</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3128"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3131"/>
         <source>Draw Under</source>
         <translation>Desenhar Abaixo</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3132"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3135"/>
         <source>Flip Selection/Object Horizontally</source>
         <translation>Inverter Seleção/Objeto Horizontalmente</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3134"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3137"/>
         <source>Flip Selection/Object Vertically</source>
         <translation>Inverter Seleção/Objeto Verticalmente</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3136"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3139"/>
         <source>Rotate Selection/Object Left</source>
         <translation>Rotacionar Seleção/Objeto para Esquerda</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3138"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3141"/>
         <source>Rotate Selection/Object Right</source>
         <translation>Rotacionar Seleção/Objeto para Direita</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3141"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3144"/>
         <source>Zoom In</source>
         <translation>Zoom In</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3142"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3145"/>
         <source>Zoom Out</source>
         <translation>Zoom Out</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3143"/>
-        <location filename="../../toonz/mainwindow.cpp" line="3178"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3146"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3181"/>
         <source>Reset View</source>
         <translation>Restaurar Visão</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3144"/>
-        <location filename="../../toonz/mainwindow.cpp" line="3180"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3147"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3183"/>
         <source>Fit to Window</source>
         <translation>Preencher Tela</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3145"/>
-        <location filename="../../toonz/mainwindow.cpp" line="3182"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3148"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3185"/>
         <source>Reset Zoom</source>
         <translation>Restaurar Zoom</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3146"/>
-        <location filename="../../toonz/mainwindow.cpp" line="3184"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3149"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3187"/>
         <source>Reset Rotation</source>
         <translation>Restaurar Rotação</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3147"/>
-        <location filename="../../toonz/mainwindow.cpp" line="3187"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3150"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3190"/>
         <source>Reset Position</source>
         <translation>Restaurar Posição</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3149"/>
-        <location filename="../../toonz/mainwindow.cpp" line="3189"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3152"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3192"/>
         <source>Actual Pixel Size</source>
         <translation>Tamanho Real do Píxel</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3150"/>
-        <location filename="../../toonz/mainwindow.cpp" line="3191"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3153"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3194"/>
         <source>Flip Viewer Horizontally</source>
         <translation>Inverter Visualizador Horizontalmente</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3151"/>
-        <location filename="../../toonz/mainwindow.cpp" line="3193"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3154"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3196"/>
         <source>Flip Viewer Vertically</source>
         <translation>Inverter Visualizador Verticalmente</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3152"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3155"/>
         <source>Show//Hide Full Screen</source>
         <translation>Mostrar/Esconder Tela Cheia</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3155"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3158"/>
         <source>Full Screen Mode</source>
         <translation>Modo de Tela Cheia</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3156"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3159"/>
         <source>Exit Full Screen Mode</source>
         <translation>Sair do Modo Tela Cheia</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3157"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3160"/>
         <source>Compare to Snapshot</source>
         <translation>Comparar com Snapshot</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3159"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3162"/>
         <source>&amp;Show Status Bar</source>
         <translation>&amp;Mostrar Barra de Status</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3163"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3166"/>
         <source>&amp;Toggle Transparency</source>
         <translation>&amp;Habilitar Transparência</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3198"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3201"/>
         <source>&amp;Touch Gesture Control</source>
         <translation>&amp;Controle de Toque e Gesto</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3203"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3206"/>
         <source>Refresh Folder Tree</source>
         <translation>Atualizar Árvore de Pastas</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3204"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3207"/>
         <source>Refresh</source>
         <translation>Atualizar</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3206"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3209"/>
         <source>Toggle FX/Stage schematic</source>
         <translation>Habilitar esquemática de FX/Palco</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3213"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3216"/>
         <source>Red Channel</source>
         <translation>Canal Vermelho</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3214"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3217"/>
         <source>Green Channel</source>
         <translation>Canal Verde</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3215"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3218"/>
         <source>Blue Channel</source>
         <translation>Canal Azul</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3216"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3219"/>
         <source>Alpha Channel</source>
         <translation>Canal Alpha</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3217"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3220"/>
         <source>Red Channel Greyscale</source>
         <translation>Canal Vermelho em Escala de Cinza</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3220"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3223"/>
         <source>Green Channel Greyscale</source>
         <translation>Canal Verde em Escala de Cinza</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3222"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3225"/>
         <source>Blue Channel Greyscale</source>
         <translation>Canal Azul em Escala de Cinza</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3228"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3231"/>
         <source>&amp;Export Stop Motion Image Sequence</source>
         <translation>&amp;Exportar Sequência de Imagem Stop-Motion</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3229"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3232"/>
         <source>Exports the full resolution stop motion image sequence.</source>
         <translation>Exporta toda a resolução da sequência de imagem Stop-Motion.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3230"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3233"/>
         <source>This is especially useful if using a DSLR camera.</source>
         <translation>Isto é especialmente útil caso esteja usando uma câmera DSLR.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3232"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3235"/>
         <source>Capture Stop Motion Frame</source>
         <translation>Capturar Quadro Stop-Motion</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3234"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3237"/>
         <source>Raise Stop Motion Opacity</source>
         <translation>Aumentar Opacidade Stop-Motion</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3236"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3239"/>
         <source>Lower Stop Motion Opacity</source>
         <translation>Abaixar Opacidade Stop-Motion</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3238"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3241"/>
         <source>Toggle Stop Motion Live View</source>
         <translation>Habilitar Visão em Tempo Real Stop-Motion</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3240"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3243"/>
         <source>Toggle Stop Motion Zoom</source>
         <translation>Habilitar Zoom Stop-Motion</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3242"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3245"/>
         <source>Pick Focus Check Location</source>
         <translation>Escolher Localização do Cheque de Foco</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3244"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3247"/>
         <source>Lower Stop Motion Level Subsampling</source>
         <translation>Abaixar Nível de Subsampling Stop-Motion</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3246"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3249"/>
         <source>Raise Stop Motion Level Subsampling</source>
         <translation>Aumentar Nível de Subsampling Stop-Motion</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3248"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3251"/>
         <source>Go to Stop Motion Insert Frame</source>
         <translation>Ir para Inserção de Quadro Stop-Motion</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3250"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3253"/>
         <source>Remove frame before Stop Motion Camera</source>
         <translation>Remover Quadro antes da Câmera Stop-Motion</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3253"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3256"/>
         <source>Next Frame including Stop Motion Camera</source>
         <translation>Próximo Quadro incluindo Câmera Stop-Motion</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3256"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3259"/>
         <source>Show original live view images.</source>
         <translation>Mostrar Imagens originais em Tempo Real</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3262"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3265"/>
         <source>Set Cell Mark </source>
         <translation>Estabelecer Marcação de Célula</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3355"/>
-        <location filename="../../toonz/mainwindow.cpp" line="3379"/>
-        <location filename="../../toonz/mainwindow.cpp" line="3392"/>
-        <location filename="../../toonz/mainwindow.cpp" line="3397"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3358"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3382"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3395"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3400"/>
         <source>Clear Cache Folder</source>
         <translation>Limpar Pasta de Cache</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3356"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3359"/>
         <source>There are no unused items in the cache folder.</source>
         <translation>Não há itens inutilizados na Pasta de Cache.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3360"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3363"/>
         <source>Deleting the following items:
 </source>
         <translation>Excluindo os seguintes itens:
 </translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3364"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3367"/>
         <source>&lt;DIR&gt; </source>
         <translation>&lt;DIR&gt;.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3372"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3375"/>
         <source>   ... and %1 more items
 </source>
         <translation>   ... e %1 itens
 </translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3375"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3378"/>
         <source>
 Are you sure?
 
@@ -8954,23 +8954,23 @@ N.B Tenha certeza de que você não está rodando outro processo do Tahoma2D,
 ou você poderá excluir arquivos necessários.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3393"/>
-        <location filename="../../toonz/mainwindow.cpp" line="3398"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3396"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3401"/>
         <source>Can&apos;t delete %1 : </source>
         <translation>Impossível excluir %1 : </translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3435"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3438"/>
         <source>Tahoma2D Transparency</source>
         <translation>Transparência Tahoma2D</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3437"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3440"/>
         <source>Close to turn off Transparency.</source>
         <translation>Feche para desligar Transparência.</translation>
     </message>
     <message>
-        <location filename="../../toonz/mainwindow.cpp" line="3451"/>
+        <location filename="../../toonz/mainwindow.cpp" line="3454"/>
         <source>Amount: </source>
         <translation>Quantia: </translation>
     </message>
@@ -11833,9 +11833,9 @@ O que gostaria de fazer?</translation>
         <translation>Automaticamente colocar Números de Células: %1</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1591"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1625"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2849"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1593"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1627"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2872"/>
         <location filename="../../toonz/convertfolderpopup.cpp" line="159"/>
         <location filename="../../toonz/exportxsheetpdf.cpp" line="2598"/>
         <location filename="../../toonz/exportxsheetpdf.cpp" line="2668"/>
@@ -11884,7 +11884,7 @@ O que gostaria de fazer?</translation>
         <translation>Mover Nível para a Pasta de Elenco</translation>
     </message>
     <message>
-        <location filename="../../toonz/tpanels.cpp" line="1263"/>
+        <location filename="../../toonz/tpanels.cpp" line="1266"/>
         <location filename="../../toonz/castviewer.cpp" line="926"/>
         <source>Scene Cast</source>
         <translation>Elenco da Cena</translation>
@@ -12084,11 +12084,11 @@ O que gostaria de fazer?</translation>
         <translation>Criar um Novo Nível</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4747"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4998"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1592"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1626"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2850"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4768"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="5019"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1594"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1628"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2873"/>
         <location filename="../../toonz/exportxsheetpdf.cpp" line="2599"/>
         <location filename="../../toonz/exportxsheetpdf.cpp" line="2609"/>
         <location filename="../../toonz/exportxsheetpdf.cpp" line="2669"/>
@@ -12499,7 +12499,7 @@ Gostaria de salvar suas mudanças?</translation>
     </message>
     <message>
         <location filename="../../toonz/cleanupsettingspopup.cpp" line="872"/>
-        <location filename="../../toonz/tpanels.cpp" line="1511"/>
+        <location filename="../../toonz/tpanels.cpp" line="1514"/>
         <source>Cleanup Settings</source>
         <translation>Configurações de Limpeza de Linha</translation>
     </message>
@@ -12636,8 +12636,8 @@ Gostaria de salvar suas mudanças?</translation>
     </message>
     <message>
         <location filename="../../toonz/curveio.cpp" line="159"/>
-        <location filename="../../toonz/tpanels.cpp" line="1297"/>
-        <location filename="../../toonz/tpanels.cpp" line="1308"/>
+        <location filename="../../toonz/tpanels.cpp" line="1300"/>
+        <location filename="../../toonz/tpanels.cpp" line="1311"/>
         <source>Export</source>
         <translation>Exportar</translation>
     </message>
@@ -12983,7 +12983,7 @@ Alguns arquivos podem estar perdidos.</translation>
         <translation>O arquivo %1  foi exportado com sucesso.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4998"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="5019"/>
         <location filename="../../toonz/exportxsheetpdf.cpp" line="2723"/>
         <location filename="../../toonz/tvpjson_io.cpp" line="506"/>
         <location filename="../../toonz/ocaio.cpp" line="526"/>
@@ -13040,8 +13040,8 @@ Alguns arquivos podem estar perdidos.</translation>
         <translation>Aviso: Nível %1 já existe; substituir?</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1651"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2091"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1653"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2114"/>
         <location filename="../../toonz/startuppopup.cpp" line="642"/>
         <location filename="../../toonz/shortcutpopup.cpp" line="594"/>
         <location filename="../../toonz/shortcutpopup.cpp" line="668"/>
@@ -13058,8 +13058,8 @@ Alguns arquivos podem estar perdidos.</translation>
         <translation>Sim</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1651"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2091"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1653"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2114"/>
         <location filename="../../toonz/iocommand.cpp" line="2514"/>
         <location filename="../../toonz/startuppopup.cpp" line="642"/>
         <location filename="../../toonz/shortcutpopup.cpp" line="594"/>
@@ -14140,37 +14140,47 @@ Visite o Site para mais informações.</translation>
         <translation>Apenas não é possível unir Níveis Vetor Toonz ou Níveis Raster comuns.</translation>
     </message>
     <message>
-        <location filename="../../toonz/onionskinmaskgui.cpp" line="113"/>
+        <location filename="../../toonz/onionskinmaskgui.cpp" line="136"/>
         <source>Deactivate Onion Skin</source>
         <translation>Desativar Onion Skin</translation>
     </message>
     <message>
-        <location filename="../../toonz/onionskinmaskgui.cpp" line="119"/>
+        <location filename="../../toonz/onionskinmaskgui.cpp" line="142"/>
         <source>Limit Onion Skin To Level</source>
         <translation>Limitar Onion Skin para o Nível</translation>
     </message>
     <message>
-        <location filename="../../toonz/onionskinmaskgui.cpp" line="124"/>
+        <location filename="../../toonz/onionskinmaskgui.cpp" line="147"/>
         <source>Extend Onion Skin To Scene</source>
         <translation>Estender Onion Skin para a Cena</translation>
     </message>
     <message>
-        <location filename="../../toonz/onionskinmaskgui.cpp" line="131"/>
+        <location filename="../../toonz/onionskinmaskgui.cpp" line="153"/>
+        <source>Onion Skin On All Frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonz/onionskinmaskgui.cpp" line="158"/>
+        <source>Onion Skin On Drawings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonz/onionskinmaskgui.cpp" line="165"/>
         <source>Clear All Onion Skin Markers</source>
         <translation>Limpar Todos os Marcadores da Onion Skin</translation>
     </message>
     <message>
-        <location filename="../../toonz/onionskinmaskgui.cpp" line="137"/>
+        <location filename="../../toonz/onionskinmaskgui.cpp" line="171"/>
         <source>Clear All Fixed Onion Skin Markers</source>
         <translation>Limpar Todos os Marcadores da Onion Skin Fixados</translation>
     </message>
     <message>
-        <location filename="../../toonz/onionskinmaskgui.cpp" line="141"/>
+        <location filename="../../toonz/onionskinmaskgui.cpp" line="175"/>
         <source>Clear All Relative Onion Skin Markers</source>
         <translation>Limpar Todos os Marcadores da Onion Skin Relativos</translation>
     </message>
     <message>
-        <location filename="../../toonz/onionskinmaskgui.cpp" line="148"/>
+        <location filename="../../toonz/onionskinmaskgui.cpp" line="182"/>
         <source>Activate Onion Skin</source>
         <translation>Ativar Onion Skin</translation>
     </message>
@@ -14470,7 +14480,7 @@ Salve a Cena primeiro.</translation>
     </message>
     <message>
         <location filename="../../toonz/scriptconsolepanel.cpp" line="130"/>
-        <location filename="../../toonz/tpanels.cpp" line="1397"/>
+        <location filename="../../toonz/tpanels.cpp" line="1400"/>
         <source>Script Console</source>
         <translation>Console de Script</translation>
     </message>
@@ -14639,56 +14649,56 @@ Selecionar uma Célula da SubCena.</translation>
         <translation>Flipbook</translation>
     </message>
     <message>
-        <location filename="../../toonz/tpanels.cpp" line="1337"/>
-        <location filename="../../toonz/tpanels.cpp" line="1350"/>
+        <location filename="../../toonz/tpanels.cpp" line="1340"/>
+        <location filename="../../toonz/tpanels.cpp" line="1353"/>
         <source>Function Editor</source>
         <translation>Editor Gráfico</translation>
     </message>
     <message>
-        <location filename="../../toonz/tpanels.cpp" line="1360"/>
-        <location filename="../../toonz/tpanels.cpp" line="1370"/>
+        <location filename="../../toonz/tpanels.cpp" line="1363"/>
+        <location filename="../../toonz/tpanels.cpp" line="1373"/>
         <source>Message Center</source>
         <translation>Centro de Mensagens</translation>
     </message>
     <message>
-        <location filename="../../toonz/tpanels.cpp" line="1434"/>
-        <location filename="../../toonz/tpanels.cpp" line="1443"/>
+        <location filename="../../toonz/tpanels.cpp" line="1437"/>
+        <location filename="../../toonz/tpanels.cpp" line="1446"/>
         <source>Combo Viewer</source>
         <translation>Visualizador Combo</translation>
     </message>
     <message>
-        <location filename="../../toonz/tpanels.cpp" line="1479"/>
-        <location filename="../../toonz/tpanels.cpp" line="1488"/>
+        <location filename="../../toonz/tpanels.cpp" line="1482"/>
+        <location filename="../../toonz/tpanels.cpp" line="1491"/>
         <source>Viewer</source>
         <translation>Visualizador</translation>
     </message>
     <message>
-        <location filename="../../toonz/tpanels.cpp" line="1526"/>
-        <location filename="../../toonz/tpanels.cpp" line="1535"/>
+        <location filename="../../toonz/tpanels.cpp" line="1529"/>
+        <location filename="../../toonz/tpanels.cpp" line="1538"/>
         <source>History</source>
         <translation>Histórico</translation>
     </message>
     <message>
-        <location filename="../../toonz/tpanels.cpp" line="1552"/>
-        <location filename="../../toonz/tpanels.cpp" line="1563"/>
+        <location filename="../../toonz/tpanels.cpp" line="1555"/>
+        <location filename="../../toonz/tpanels.cpp" line="1566"/>
         <source>Stop Motion Controller</source>
         <translation>Controlador de Stop-Motion</translation>
     </message>
     <message>
-        <location filename="../../toonz/tpanels.cpp" line="1580"/>
-        <location filename="../../toonz/tpanels.cpp" line="1591"/>
+        <location filename="../../toonz/tpanels.cpp" line="1583"/>
+        <location filename="../../toonz/tpanels.cpp" line="1594"/>
         <source>Motion Paths</source>
         <translation>Linhas de Movimento</translation>
     </message>
     <message>
-        <location filename="../../toonz/tpanels.cpp" line="1649"/>
-        <location filename="../../toonz/tpanels.cpp" line="1664"/>
+        <location filename="../../toonz/tpanels.cpp" line="1652"/>
+        <location filename="../../toonz/tpanels.cpp" line="1667"/>
         <source>Fx Settings</source>
         <translation>Configurações de Efeitos</translation>
     </message>
     <message>
-        <location filename="../../toonz/tpanels.cpp" line="1688"/>
-        <location filename="../../toonz/tpanels.cpp" line="1702"/>
+        <location filename="../../toonz/tpanels.cpp" line="1691"/>
+        <location filename="../../toonz/tpanels.cpp" line="1705"/>
         <source>Vector Guided Tweening Controls</source>
         <translation>Controles da Interpolação Guiada por Vetor</translation>
     </message>
@@ -15044,7 +15054,7 @@ Gostaria de continuar?</translation>
         <translation>Quadro de Pré-Produção</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4747"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4768"/>
         <source>Restart</source>
         <translation>Reiniciar</translation>
     </message>
@@ -18257,275 +18267,282 @@ Possivelmente o arquivo da Pré-Definição foi corrompido.</translation>
         <translation>Não</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="649"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="678"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="651"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="680"/>
         <source>Please start live view before using time lapse.</source>
         <translation>Por favor inice a Visão em Tempor Real antes de usar time-lapse.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1520"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2067"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2746"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1522"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2090"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2769"/>
         <source>No level name specified: please choose a valid level name</source>
         <translation>Nenhum nome de Nível especificado: Por favor escolha um nome de Nível válido</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1566"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1568"/>
         <source>The level name specified is already used: please choose a different level name.</source>
         <translation>O nome do Nível especificado já está em uso: por favor escolha um nome de Nível diferente.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1575"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2786"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1577"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2809"/>
         <source>The save in path specified does not match with the existing level.</source>
         <translation>O Caminho de salvamento especificado não bate com o Nível existente.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1581"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1614"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1583"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1616"/>
         <source>The captured image size does not match with the existing level.</source>
         <translation>O tamanho da Imagem capturada não bate com o Nível existente.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1589"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1623"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1591"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1625"/>
         <source>File %1 already exists.
 Do you want to overwrite it?</source>
         <translation>Arquivo %1 já existe.
 Gostaria de substituí-lo?</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1604"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1606"/>
         <source>Failed to load %1.</source>
         <translation>Falha ao carregar %1.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1649"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2089"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1651"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2112"/>
         <source>Folder %1 doesn&apos;t exist.
 Do you want to create it?</source>
         <translation>A Pasta %1 não existe.
 Gostaria de criá-la?</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1657"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1667"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1676"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2097"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2107"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2116"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1659"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1669"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1678"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2120"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2130"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2139"/>
         <source>Unable to create</source>
         <translation>Não foi possível criar</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1828"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3437"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1830"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2018"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3459"/>
         <source>No camera selected.</source>
         <translation>Nenhuma câmera selecionada.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1859"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2022"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1836"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2024"/>
+        <source>Cannot capture image unless live view is active.</source>
+        <translation type="unfinished">Não é possível Capturar imagens sem que a Visualização em Tempo Real esteja ativa.</translation>
+    </message>
+    <message>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1861"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2040"/>
         <source>Please start live view before capturing an image.</source>
         <translation>Por favor inicie a Visão Tempo Real antes de Capturar uma Imagem.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="1921"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="1926"/>
         <source>Can&apos;t capture an image with focus check on.
 Please click the Check button in the Settings tab.</source>
         <translation>Não é possível Capturar uma Imagem com a Checagem de Foco ligada.
 Por favor desative a Checagem na aba de Configurações.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2769"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2792"/>
         <source>No level exists with the current name.</source>
         <translation>Nenhum Nível existe com o nome atual.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2775"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2798"/>
         <source>This is not an image level.</source>
         <translation>Isto não é um Nível de Imagem.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2779"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2802"/>
         <source>This is not a stop motion level.</source>
         <translation>Isto não é um Nível de Stop-Motion.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2807"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2830"/>
         <source>Could not find an xsheet level with  the current level</source>
         <translation>Não foi possível encontrar um Nível de XSheet com o Nível atual</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2819"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2842"/>
         <source>No export path given.</source>
         <translation>Nenhum Caminho de Exportação dado.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2841"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2864"/>
         <source>Could not find the source file.</source>
         <translation>Não foi possível encontrar a Pasta raiz.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2848"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2871"/>
         <source>Overwrite existing files?</source>
         <translation>Substituir Arquivos existentes?</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2859"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2882"/>
         <source>An error occurred.  Aborting.</source>
         <translation>Um Erro ocorreu.  Abortando.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2863"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2886"/>
         <source>Successfully exported </source>
         <translation>Exportado com sucesso.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2864"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2887"/>
         <source> images.</source>
         <translation> imagens.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2960"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2965"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2972"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2977"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2996"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2983"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2988"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="2995"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3000"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3019"/>
         <source>UNDEFINED WARNING</source>
         <translation>AVISO NÃO DEFINIDO</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="2987"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3010"/>
         <source>The level is not registered in the scene, but exists in the file system.</source>
         <translation>O Nível não está registrado na Cena, mas existe no Sistema de Arquivos.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3003"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3026"/>
         <source>
 WARNING : Image size mismatch. The saved image size is %1 x %2.</source>
         <translation>
 AVISO: Confusão com o Tamanho da Imagem. O Tamanho da Imagem salvo é %1 x %2.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3007"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3057"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3067"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3030"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3080"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3090"/>
         <source>WARNING </source>
         <translation>AVISO </translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3013"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3074"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3036"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3097"/>
         <source>
 Frame %1 exists.</source>
         <translation>
 Quadro %1 existe.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3016"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3077"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3039"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3100"/>
         <source>
 Frames %1 exist.</source>
         <translation>
 Quadros %1 existem.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3020"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3089"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3043"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3112"/>
         <source>OVERWRITE 1 of</source>
         <translation>SUBSTITUIR 1 de</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3023"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3094"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3046"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3117"/>
         <source>ADD to</source>
         <translation>Adicionar para</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3027"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3098"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3050"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3121"/>
         <source> %1 frame</source>
         <translation> %1 Quadro</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3029"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3100"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3052"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3123"/>
         <source> %1 frames</source>
         <translation> %1 Quadros</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3035"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3058"/>
         <source>The level will be newly created.</source>
         <translation>O Nível será criado como novo.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3036"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3059"/>
         <source>NEW</source>
         <translation>NOVO</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3044"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3067"/>
         <source>The level is already registered in the scene.</source>
         <translation>O Nível já está registrado na Cena.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3045"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3068"/>
         <source>
 NOTE : The level is not saved.</source>
         <translation>
 NOTA: O Nível não está salvo.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3055"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3078"/>
         <source>
 WARNING : Failed to get image size of the existing level %1.</source>
         <translation>
 AVISO: Falha ao adquirir tamanho da Imagem do Nível existente %1.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3063"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3086"/>
         <source>
 WARNING : Image size mismatch. The existing level size is %1 x %2.</source>
         <translation>
 AVISO: Confusão com o Tamanho da Imagem. O Tamanho do Nível salvo é %1 x %2.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3110"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3133"/>
         <source>WARNING : Level name conflicts. There already is a level %1 in the scene with the path                        
           %2.</source>
         <translation>AVISO: Conflitos com o nome do Nível. Já existe um Nível %1 na Cena com o caminho                        
           %2.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3118"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3141"/>
         <source>
 WARNING : Image size mismatch. The size of level with the same name is is %1 x %2.</source>
         <translation>
 AVISO: Confusão com o Tamanho da Imagem. O Tamanho do Nível de mesmo nome é %1 x %2.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3128"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3151"/>
         <source>WARNING : Level path conflicts. There already is a level with the path %1                        
           in the scene with the name %2.</source>
         <translation>AVISO: Conflitos com o Caminho do Nível. Já Já existe um Nível %1 na Cena com o caminho                        
           na Cena com o nome %2.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3136"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3159"/>
         <source>
 WARNING : Image size mismatch. The size of level with the same path is %1 x %2.</source>
         <translation>
 AVISO: Confusão com o Tamanho da Imagem. O Tamanho do Nível com o mesmo caminho é %1 x %2.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3142"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3165"/>
         <source>WARNING</source>
         <translation>AVISO</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3448"/>
-        <location filename="../../stopmotion/stopmotion.cpp" line="3456"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3470"/>
+        <location filename="../../stopmotion/stopmotion.cpp" line="3478"/>
         <source>Unable to start Live View.</source>
         <translation>Não foi possível iniciar Visão em Tempo Real</translation>
     </message>
@@ -18539,7 +18556,7 @@ AVISO: Confusão com o Tamanho da Imagem. O Tamanho do Nível com o mesmo caminh
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="822"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2225"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2230"/>
         <source>Settings</source>
         <translation>Configurações</translation>
     </message>
@@ -18636,15 +18653,15 @@ AVISO: Confusão com o Tamanho da Imagem. O Tamanho do Nível com o mesmo caminh
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="935"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2618"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4337"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2623"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4350"/>
         <source>Start Live View</source>
         <translation>Iniciar Visão em Tempo Real</translation>
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="938"/>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1401"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4422"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4435"/>
         <source>Capture</source>
         <translation>Capturar</translation>
     </message>
@@ -18735,9 +18752,9 @@ AVISO: Confusão com o Tamanho da Imagem. O Tamanho do Nível com o mesmo caminh
     </message>
     <message>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="1144"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3064"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3855"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3885"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3069"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3868"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3898"/>
         <source>Temperature: </source>
         <translation>Temperatura:</translation>
     </message>
@@ -19049,104 +19066,104 @@ Dividir = Checagem de Foco</translation>
         <translation>Opacidade:</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2612"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2617"/>
         <source>No camera detected.</source>
         <translation>Nenhuma Câmera detectada.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2613"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2618"/>
         <source>No camera detected</source>
         <translation>Nenhuma Câmera detectada</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2621"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2626"/>
         <source>- Select camera -</source>
         <translation>- Selecionar Câm. -</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2733"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2738"/>
         <source>Mode: </source>
         <translation>Modo: </translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2765"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2770"/>
         <source>Aperture: Auto</source>
         <translation>Obturador: Automático</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2770"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3579"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3609"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2775"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3592"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3622"/>
         <source>Aperture: </source>
         <translation>Obturador: </translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2816"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2821"/>
         <source>Shutter Speed: Auto</source>
         <translation>Velocidade de Obturação: Automático</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2821"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3646"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3681"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2826"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3659"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3694"/>
         <source>Shutter Speed: </source>
         <translation>Velocidade de Obturação: </translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2868"/>
         <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2873"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3714"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3744"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2878"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3727"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3757"/>
         <source>Iso: </source>
         <translation>Iso: </translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2868"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2873"/>
         <source>Auto</source>
         <translation>Automático</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2917"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2964"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3105"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3152"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3199"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2922"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="2969"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3110"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3157"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="3204"/>
         <source>Disabled</source>
         <translation>Desabilitado</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4027"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4040"/>
         <source>Live View Offset: </source>
         <translation>Deslocamento da Visualização em Tempo Real: </translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4334"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4347"/>
         <source>Stop Live View</source>
         <translation>Parar Visão em Tempo Real</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4420"/>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4438"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4433"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4451"/>
         <source>Start Capturing</source>
         <translation>Começar Captura</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4428"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4441"/>
         <source>Stop Capturing</source>
         <translation>Parar Capturar</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4735"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4756"/>
         <source>Cannot capture image unless live view is active.</source>
         <translation>Não é possível Capturar imagens sem que a Visualização em Tempo Real esteja ativa.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4745"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4766"/>
         <source>Do you want to restart camera calibration?</source>
         <translation>Gostaria de reiniciar a Calibragem de Câmera?</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4848"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4869"/>
         <source>Unable to find complete checkerboard pattern. Check pattern position and camera settings.
 
 Print and use %1 to calibrate.</source>
@@ -19155,22 +19172,22 @@ Print and use %1 to calibrate.</source>
 Imprima e use %1 para calibrar.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4926"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4947"/>
         <source>Failed to save calibration settings to %1.</source>
         <translation>Falha ao salvar configurações de calibragem para %1.</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4992"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="5013"/>
         <source>Couldn&apos;t load %1</source>
         <translation>Não foi possível carregar %1</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="4997"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="5018"/>
         <source>Overwriting the current calibration. Are you sure?</source>
         <translation>Substituindo Calibragem atual. Tem certeza?</translation>
     </message>
     <message>
-        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="5034"/>
+        <location filename="../../stopmotion/stopmotioncontroller.cpp" line="5055"/>
         <source>Couldn&apos;t save %1</source>
         <translation>Não foi possível salvar %1</translation>
     </message>
@@ -20900,155 +20917,155 @@ Por favor se refira ao guia de usuário para detalhes.</translation>
         <translation>&amp;Subamostragem 4</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2564"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2566"/>
         <source>Unlock</source>
         <translation>Destravar</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2564"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2566"/>
         <source>Lock</source>
         <translation>Travar</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2892"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2894"/>
         <source>Click to select camera</source>
         <translation>Clique para selecionar Câmera</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2894"/>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2897"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2896"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2899"/>
         <source>Click to select column, drag to move it</source>
         <translation>Clique para selecionar Coluna, arraste para movê-la</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2899"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2901"/>
         <source>Click to select column</source>
         <translation>Clique para selecionar Coluna</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2903"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2905"/>
         <source>Click to select column, drag to move it, double-click to edit</source>
         <translation>Clique para selecionar Coluna, arraste para movê-la, clique duplo para editá-la</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2907"/>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2926"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2909"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2928"/>
         <source>Click to play the soundtrack back</source>
         <translation>Clique para Reproduzir a trilha sonora</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2910"/>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2929"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2912"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2931"/>
         <source>Set the volume of the soundtrack</source>
         <translation>Atribuir volume da trilha sonora</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2912"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2914"/>
         <source>Click to select column, double-click to edit</source>
         <translation>Clique para selecionar Coluna, clique duplo para editá-la</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2914"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2916"/>
         <source>Lock Toggle</source>
         <translation>Travar Botão</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2916"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2918"/>
         <source>Additional column settings</source>
         <translation>Configuração de Coluna Adicional</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2918"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2920"/>
         <source>Preview Visibility Toggle</source>
         <translation>Habilitar Visibilidade de Pré-Visualização</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2921"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2923"/>
         <source>Camera Stand Visibility Toggle</source>
         <translation>Habilitar a Visibilidade do Estande da Câmera</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2932"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2934"/>
         <source>Alt + Click to Toggle Thumbnail</source>
         <translation>Alt + Clique para habilitar Thumbnail</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3225"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3236"/>
         <source>Hide Camera Column</source>
         <translation>Esconder Coluna da Câmera</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3227"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3238"/>
         <source>Show Camera Column</source>
         <translation>Mostrar Coluna da Câmera</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3234"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3245"/>
         <source>Toggle Orientation</source>
         <translation>Alterar Orientação</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3236"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3247"/>
         <source>Toggle Between Timeline and Xsheet View</source>
         <translation>Trocar entre visão de Timeline ou de XSheet</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3251"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3262"/>
         <source>Reframe</source>
         <translation>Reexpor</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3266"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3277"/>
         <source>Subsampling</source>
         <translation>Subamostragem</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3284"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3295"/>
         <source>Show Column Parent Colors</source>
         <translation>Mostrar Cores de Colunas Parentes</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3289"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3300"/>
         <source>Show the column parent&apos;s color in the Xsheet</source>
         <translation>Mostrar a cor da coluna parente na XSheet</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3307"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3318"/>
         <source>&amp;Insert After</source>
         <translation>&amp;Inserir Depois</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3308"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3319"/>
         <source>&amp;Insert Before</source>
         <translation>&amp;Inserir Antes</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3309"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3320"/>
         <source>&amp;Paste Insert After</source>
         <translation>&amp;Colar Inserção Depois</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3310"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3321"/>
         <source>&amp;Paste Insert Before</source>
         <translation>&amp;Colar Inserção Antes</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3312"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3323"/>
         <source>&amp;Insert Above</source>
         <translation>&amp;Inserir Acima</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3313"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3324"/>
         <source>&amp;Insert Below</source>
         <translation>&amp;Inserir Abaixo</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3314"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3325"/>
         <source>&amp;Paste Insert Above</source>
         <translation>&amp;Colar Inserção Acima</translation>
     </message>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="3315"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="3326"/>
         <source>&amp;Paste Insert Below</source>
         <translation>&amp;Colar Inserção Abaixo</translation>
     </message>
@@ -21264,7 +21281,7 @@ Segure a tecla F3 no Visualizador para Mostrar Apenas Este Quadro</translation>
 <context>
     <name>XsheetGUI::SoundColumnPopup</name>
     <message>
-        <location filename="../../toonz/xshcolumnviewer.cpp" line="2416"/>
+        <location filename="../../toonz/xshcolumnviewer.cpp" line="2418"/>
         <source>Volume:</source>
         <translation>Volume:</translation>
     </message>
