@@ -102,6 +102,16 @@
 		<file>icons/dark/actions/16/move_to_back.svg</file>
 		<file>icons/dark/actions/16/move_to_front.svg</file>
 
+    <!-- Alignment -->
+		<file>icons/dark/actions/16/select_align_left.svg</file>
+		<file>icons/dark/actions/16/select_align_right.svg</file>
+		<file>icons/dark/actions/16/select_align_top.svg</file>
+		<file>icons/dark/actions/16/select_align_bottom.svg</file>
+		<file>icons/dark/actions/16/select_align_center_h.svg</file>
+		<file>icons/dark/actions/16/select_align_center_v.svg</file>
+		<file>icons/dark/actions/16/select_distribute_h.svg</file>
+		<file>icons/dark/actions/16/select_distribute_v.svg</file>
+    
 		<!-- Group -->
 		<file>icons/dark/actions/16/group.svg</file>
 		<file>icons/dark/actions/16/ungroup.svg</file>
@@ -609,6 +619,9 @@
     <file>icons/dark/actions/16/export_cameratrack.svg</file>
     <file>icons/dark/actions/16/export_xsheetpdf.svg</file>
     <file>icons/dark/actions/16/export_smimages.svg</file>
+
+    <file>icons/dark/actions/16/set_linear_cp.svg</file>
+    <file>icons/dark/actions/16/set_nonlinear_cp.svg</file>
 
     <!-- Keyframe -->
 		<file>icons/dark/actions/20/key_off.svg</file>

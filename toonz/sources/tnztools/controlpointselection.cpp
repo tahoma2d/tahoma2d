@@ -12,6 +12,8 @@
 #include "toonz/txshlevelhandle.h"
 #include "toonz/tstageobject.h"
 
+#include "../../toonz/alignmentpane.h"
+
 using namespace ToolUtils;
 
 namespace {
@@ -987,19 +989,22 @@ ControlPointEditorStroke::PointType ControlPointEditorStroke::getPointTypeAt(
 //-----------------------------------------------------------------------------
 
 bool ControlPointSelection::isSelected(int index) const {
-  return m_selectedPoints.find(index) != m_selectedPoints.end();
+  return std::find(m_selectedPoints.begin(), m_selectedPoints.end(), index) !=
+         m_selectedPoints.end();
 }
 
 //-----------------------------------------------------------------------------
 
 void ControlPointSelection::select(int index) {
-  m_selectedPoints.insert(index);
+  m_selectedPoints.push_back(index);
 }
 
 //-----------------------------------------------------------------------------
 
 void ControlPointSelection::unselect(int index) {
-  m_selectedPoints.erase(index);
+  std::vector<int>::iterator it =
+      std::find(m_selectedPoints.begin(), m_selectedPoints.end(), index);
+  if (it != m_selectedPoints.end()) m_selectedPoints.erase(it);
 }
 
 //-----------------------------------------------------------------------------
@@ -1010,13 +1015,30 @@ void ControlPointSelection::addMenuItems(QMenu *menu) {
       (m_controlPointEditorStroke &&
        m_controlPointEditorStroke->getControlPointCount() <= 1))
     return;
-  QAction *linear   = menu->addAction(tr("Set Linear Control Point"));
-  QAction *unlinear = menu->addAction(tr("Set Nonlinear Control Point"));
+  menu->addAction(CommandManager::instance()->getAction("MI_SetLinearControlPoint"));
+  menu->addAction(CommandManager::instance()->getAction("MI_SetNonLinearControlPoint"));
   menu->addSeparator();
-  bool ret = connect(linear, SIGNAL(triggered()), this, SLOT(setLinear()));
-  ret =
-      ret && connect(unlinear, SIGNAL(triggered()), this, SLOT(setUnlinear()));
   assert(ret);
+}
+
+//---------------------------------------------------------------------------
+
+TUndo *ControlPointSelection::initSelectionUndo(int strokeIndex,
+                                                bool clearSelection) {
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (TTool::getApplication()->getCurrentObject()->isSpline())
+    return new UndoPath(
+        tool->getXsheet()->getStageObject(tool->getObjectId())->getSpline());
+
+  TVectorImageP vi(tool->getImage(false));
+  if (!vi) return 0;
+  TXshSimpleLevel *level =
+      TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+  UndoControlPointEditor *undo =
+      new UndoControlPointEditor(level, tool->getCurrentFid(), clearSelection);
+  if (strokeIndex > -1)
+    undo->addOldStroke(strokeIndex, vi->getVIStroke(strokeIndex));
+  return undo;
 }
 
 //-----------------------------------------------------------------------------
@@ -1026,23 +1048,13 @@ void ControlPointSelection::setLinear() {
   int currentStrokeIndex = m_controlPointEditorStroke->getStrokeIndex();
   TVectorImageP vi(tool->getImage(false));
   if (!vi || isEmpty() || currentStrokeIndex == -1) return;
-  TUndo *undo;
-  if (tool->getApplication()->getCurrentObject()->isSpline())
-    undo = new UndoPath(
-        tool->getXsheet()->getStageObject(tool->getObjectId())->getSpline());
-  else {
-    TXshSimpleLevel *level =
-        tool->getApplication()->getCurrentLevel()->getSimpleLevel();
-    UndoControlPointEditor *cpEditorUndo =
-        new UndoControlPointEditor(level, tool->getCurrentFid());
-    cpEditorUndo->addOldStroke(currentStrokeIndex,
-                               vi->getVIStroke(currentStrokeIndex));
-    undo = cpEditorUndo;
-  }
+  TUndo *undo = initSelectionUndo(currentStrokeIndex);
   if (m_controlPointEditorStroke->getControlPointCount() == 0) return;
 
-  bool isChanged = m_controlPointEditorStroke->setControlPointsLinear(
-      m_selectedPoints, true);
+  std::set<int> selectedPtsSet(m_selectedPoints.begin(),
+                               m_selectedPoints.end());
+  bool isChanged =
+      m_controlPointEditorStroke->setControlPointsLinear(selectedPtsSet, true);
 
   if (!isChanged) return;
   TUndoManager::manager()->add(undo);
@@ -1057,23 +1069,13 @@ void ControlPointSelection::setUnlinear() {
   TVectorImageP vi(tool->getImage(false));
   if (!vi || isEmpty() || currentStrokeIndex == -1) return;
 
-  TUndo *undo;
-  if (tool->getApplication()->getCurrentObject()->isSpline())
-    undo = new UndoPath(
-        tool->getXsheet()->getStageObject(tool->getObjectId())->getSpline());
-  else {
-    TXshSimpleLevel *level =
-        tool->getApplication()->getCurrentLevel()->getSimpleLevel();
-    UndoControlPointEditor *cpEditorUndo =
-        new UndoControlPointEditor(level, tool->getCurrentFid());
-    cpEditorUndo->addOldStroke(currentStrokeIndex,
-                               vi->getVIStroke(currentStrokeIndex));
-    undo = cpEditorUndo;
-  }
+  TUndo *undo = initSelectionUndo(currentStrokeIndex);
   if (m_controlPointEditorStroke->getControlPointCount() == 0) return;
 
-  bool isChanged = m_controlPointEditorStroke->setControlPointsLinear(
-      m_selectedPoints, false);
+  std::set<int> selectedPtsSet(m_selectedPoints.begin(),
+                               m_selectedPoints.end());
+  bool isChanged =
+      m_controlPointEditorStroke->setControlPointsLinear(selectedPtsSet, false);
 
   if (!isChanged) return;
   TUndoManager::manager()->add(undo);
@@ -1094,21 +1096,9 @@ void ControlPointSelection::deleteControlPoints() {
   if (!vi || isEmpty() || currentStrokeIndex == -1) return;
 
   // Inizializzo l'UNDO
-  TUndo *undo;
+  TUndo *undo = initSelectionUndo(currentStrokeIndex);
   bool isCurrentObjectSpline =
       tool->getApplication()->getCurrentObject()->isSpline();
-  if (isCurrentObjectSpline)
-    undo = new UndoPath(
-        tool->getXsheet()->getStageObject(tool->getObjectId())->getSpline());
-  else {
-    TXshSimpleLevel *level =
-        tool->getApplication()->getCurrentLevel()->getSimpleLevel();
-    UndoControlPointEditor *cpEditorUndo =
-        new UndoControlPointEditor(level, tool->getCurrentFid());
-    cpEditorUndo->addOldStroke(currentStrokeIndex,
-                               vi->getVIStroke(currentStrokeIndex));
-    undo = cpEditorUndo;
-  }
 
   int i;
   for (i = m_controlPointEditorStroke->getControlPointCount() - 1; i >= 0; i--)
@@ -1143,7 +1133,380 @@ void ControlPointSelection::deleteControlPoints() {
 }
 
 //-----------------------------------------------------------------------------
+// Anchor points
+// Align Type
+//    left: minX
+//    right: maxX
+//    top: maxY
+//    bottom: minY
+//    center h: (maxY + minY) / 2.0;
+//    center v: (maxX + minX) / 2.0;
+TPointD getAnchorPoint(ALIGN_TYPE alignType, int alignMethod,
+                       ControlPointEditorStroke *stroke,
+                       std::vector<int> indexes) {
+  double x, maxX, y, maxY;
+
+  bool ptSet = false;
+
+  for (auto const &e : indexes) {
+    TThickPoint point = stroke->getControlPoint(e);
+    if (!ptSet || alignMethod == ALIGN_METHOD::LAST_SELECTED) {
+      ptSet = true;
+
+      x = maxX = point.x;
+      y = maxY = point.y;
+
+      if (alignMethod == ALIGN_METHOD::FIRST_SELECTED) break;
+    } else {
+      if (alignType == ALIGN_TYPE::ALIGN_LEFT ||
+          alignType == ALIGN_TYPE::ALIGN_BOTTOM) {
+        x = std::min(x, point.x);
+        y = std::min(y, point.y);
+      } else if (alignType == ALIGN_TYPE::ALIGN_RIGHT ||
+                 alignType == ALIGN_TYPE::ALIGN_TOP) {
+        x = std::max(x, point.x);
+        y = std::max(y, point.y);
+      } else if (alignType == ALIGN_TYPE::ALIGN_CENTER_H ||
+                 alignType == ALIGN_TYPE::ALIGN_CENTER_V) {
+        x    = std::min(x, point.x);
+        maxX = std::max(maxX, point.x);
+        y    = std::min(y, point.y);
+        maxY = std::max(maxY, point.y);
+      }
+    }
+  }
+
+  if (alignType == ALIGN_TYPE::ALIGN_CENTER_H ||
+      alignType == ALIGN_TYPE::ALIGN_CENTER_V)
+    return TPointD((maxX + x) / 2.0, (maxY + y) / 2.0);
+
+  return TPointD(x, y);
+}
+
+void ControlPointSelection::alignControlPointsLeft() {
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+
+  TVectorImageP vi(tool->getImage(false));
+  int currentStrokeIndex = m_controlPointEditorStroke->getStrokeIndex();
+  if (!vi || isEmpty() || currentStrokeIndex == -1 ||
+      m_selectedPoints.size() < 2)
+    return;
+
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
+
+  // Find anchor point
+  int alignMethod = tool->getAlignMethod();
+
+  TPointD anchor(getAnchorPoint(ALIGN_TYPE::ALIGN_LEFT, alignMethod,
+                                m_controlPointEditorStroke, m_selectedPoints));
+  double newX = anchor.x;
+
+  // Move selected points
+  std::vector<int>::iterator it;
+  for (it = m_selectedPoints.begin(); it != m_selectedPoints.end(); it++) {
+    TThickPoint point = m_controlPointEditorStroke->getControlPoint(*it);
+    if (point.x == newX) continue;
+    m_controlPointEditorStroke->moveControlPoint(*it,
+                                                 TPointD(newX - point.x, 0));
+  }
+
+  tool->notifyImageChanged();
+  TUndoManager::manager()->add(undo);
+}
+
+//-----------------------------------------------------------------------------
+
+void ControlPointSelection::alignControlPointsRight() {
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+
+  TVectorImageP vi(tool->getImage(false));
+  int currentStrokeIndex = m_controlPointEditorStroke->getStrokeIndex();
+  if (!vi || isEmpty() || currentStrokeIndex == -1 ||
+      m_selectedPoints.size() < 2)
+    return;
+
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
+
+  // Find anchor point
+  int alignMethod = tool->getAlignMethod();
+
+  TPointD anchor(getAnchorPoint(ALIGN_TYPE::ALIGN_RIGHT, alignMethod,
+                                m_controlPointEditorStroke, m_selectedPoints));
+  double newX = anchor.x;
+
+  // Move selected points
+  std::vector<int>::iterator it;
+  for (it = m_selectedPoints.begin(); it != m_selectedPoints.end(); it++) {
+    TThickPoint point = m_controlPointEditorStroke->getControlPoint(*it);
+    if (point.x == newX) continue;
+    m_controlPointEditorStroke->moveControlPoint(*it,
+                                                 TPointD(newX - point.x, 0));
+  }
+
+  tool->notifyImageChanged();
+  TUndoManager::manager()->add(undo);
+}
+
+//-----------------------------------------------------------------------------
+
+void ControlPointSelection::alignControlPointsTop() {
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+
+  TVectorImageP vi(tool->getImage(false));
+  int currentStrokeIndex = m_controlPointEditorStroke->getStrokeIndex();
+  if (!vi || isEmpty() || currentStrokeIndex == -1 ||
+      m_selectedPoints.size() < 2)
+    return;
+
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
+
+  // Find anchor point
+  int alignMethod = tool->getAlignMethod();
+
+  TPointD anchor(getAnchorPoint(ALIGN_TYPE::ALIGN_TOP, alignMethod,
+                                m_controlPointEditorStroke, m_selectedPoints));
+  double newY = anchor.y;
+
+  // Move selected points
+  std::vector<int>::iterator it;
+  for (it = m_selectedPoints.begin(); it != m_selectedPoints.end(); it++) {
+    TThickPoint point = m_controlPointEditorStroke->getControlPoint(*it);
+    if (point.y == newY) continue;
+    m_controlPointEditorStroke->moveControlPoint(*it,
+                                                 TPointD(0, newY - point.y));
+  }
+
+  tool->notifyImageChanged();
+  TUndoManager::manager()->add(undo);
+}
+
+//-----------------------------------------------------------------------------
+
+void ControlPointSelection::alignControlPointsBottom() {
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+
+  TVectorImageP vi(tool->getImage(false));
+  int currentStrokeIndex = m_controlPointEditorStroke->getStrokeIndex();
+  if (!vi || isEmpty() || currentStrokeIndex == -1 ||
+      m_selectedPoints.size() < 2)
+    return;
+
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
+
+  // Find anchor point
+  int alignMethod = tool->getAlignMethod();
+
+  TPointD anchor(getAnchorPoint(ALIGN_TYPE::ALIGN_BOTTOM, alignMethod,
+                                m_controlPointEditorStroke, m_selectedPoints));
+  double newY = anchor.y;
+
+  // Move selected points
+  std::vector<int>::iterator it;
+  for (it = m_selectedPoints.begin(); it != m_selectedPoints.end(); it++) {
+    TThickPoint point = m_controlPointEditorStroke->getControlPoint(*it);
+    if (point.y == newY) continue;
+    m_controlPointEditorStroke->moveControlPoint(*it,
+                                                 TPointD(0, newY - point.y));
+  }
+
+  tool->notifyImageChanged();
+  TUndoManager::manager()->add(undo);
+}
+
+//-----------------------------------------------------------------------------
+
+void ControlPointSelection::alignControlPointsCenterH() {
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+
+  TVectorImageP vi(tool->getImage(false));
+  int currentStrokeIndex = m_controlPointEditorStroke->getStrokeIndex();
+  if (!vi || isEmpty() || currentStrokeIndex == -1 ||
+      m_selectedPoints.size() < 2)
+    return;
+
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
+
+  // Find anchor point
+  int alignMethod = tool->getAlignMethod();
+
+  TPointD anchor(getAnchorPoint(ALIGN_TYPE::ALIGN_CENTER_H, alignMethod,
+                                m_controlPointEditorStroke, m_selectedPoints));
+  double newY = anchor.y;
+
+  // Move selected points
+  std::vector<int>::iterator it;
+  for (it = m_selectedPoints.begin(); it != m_selectedPoints.end(); it++) {
+    TThickPoint point = m_controlPointEditorStroke->getControlPoint(*it);
+    if (point.y == newY) continue;
+    m_controlPointEditorStroke->moveControlPoint(*it,
+                                                 TPointD(0, newY - point.y));
+  }
+
+  tool->notifyImageChanged();
+  TUndoManager::manager()->add(undo);
+}
+
+//-----------------------------------------------------------------------------
+
+void ControlPointSelection::alignControlPointsCenterV() {
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+
+  TVectorImageP vi(tool->getImage(false));
+  int currentStrokeIndex = m_controlPointEditorStroke->getStrokeIndex();
+  if (!vi || isEmpty() || currentStrokeIndex == -1 ||
+      m_selectedPoints.size() < 2)
+    return;
+
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
+
+  // Find anchor point
+  int alignMethod = tool->getAlignMethod();
+
+  TPointD anchor(getAnchorPoint(ALIGN_TYPE::ALIGN_CENTER_V, alignMethod,
+                                m_controlPointEditorStroke, m_selectedPoints));
+  double newX = anchor.x;
+
+  // Move selected points
+  std::vector<int>::iterator it;
+  for (it = m_selectedPoints.begin(); it != m_selectedPoints.end(); it++) {
+    TThickPoint point = m_controlPointEditorStroke->getControlPoint(*it);
+    if (point.x == newX) continue;
+    m_controlPointEditorStroke->moveControlPoint(*it,
+                                                 TPointD(newX - point.x, 0));
+  }
+
+  tool->notifyImageChanged();
+  TUndoManager::manager()->add(undo);
+}
+
+//-----------------------------------------------------------------------------
+
+class XStrokePointSorter {
+  ControlPointEditorStroke *m_stroke;
+
+public:
+  XStrokePointSorter(ControlPointEditorStroke *stroke) : m_stroke(stroke) {}
+
+  bool operator()(int a, int &b) {
+    return (m_stroke->getControlPoint(a).x < m_stroke->getControlPoint(b).x);
+  }
+};
+
+void ControlPointSelection::distributeControlPointsH() {
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+
+  TVectorImageP vi(tool->getImage(false));
+  int currentStrokeIndex = m_controlPointEditorStroke->getStrokeIndex();
+  if (!vi || isEmpty() || currentStrokeIndex == -1 ||
+      m_selectedPoints.size() < 3)
+    return;
+
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
+
+  // Sort the points based on X
+  std::vector<int> sortedPoints(m_selectedPoints.begin(),
+                                m_selectedPoints.end());
+  std::sort(sortedPoints.begin(), sortedPoints.end(),
+            XStrokePointSorter(m_controlPointEditorStroke));
+
+  // Find anchor point
+  double minX =
+      m_controlPointEditorStroke->getControlPoint(*sortedPoints.begin()).x;
+  double maxX =
+      m_controlPointEditorStroke->getControlPoint(*sortedPoints.rbegin()).x;
+
+  double distX = (maxX - minX) / (double)(m_selectedPoints.size() - 1);
+
+  // Move selected points
+  int index = 0;
+  std::vector<int>::iterator it;
+  for (it = sortedPoints.begin(); it != sortedPoints.end(); it++, index++) {
+    TThickPoint point = m_controlPointEditorStroke->getControlPoint(*it);
+    if (point.x == minX || point.x == maxX) continue;
+    double newX = minX + (distX * index);
+    m_controlPointEditorStroke->moveControlPoint(*it,
+                                                 TPointD((newX - point.x), 0));
+  }
+
+  tool->notifyImageChanged();
+  TUndoManager::manager()->add(undo);
+}
+
+//-----------------------------------------------------------------------------
+
+class YStrokePointSorter {
+  ControlPointEditorStroke *m_stroke;
+
+public:
+  YStrokePointSorter(ControlPointEditorStroke *stroke) : m_stroke(stroke) {}
+
+  bool operator()(int a, int &b) {
+    return (m_stroke->getControlPoint(a).y < m_stroke->getControlPoint(b).y);
+  }
+};
+
+void ControlPointSelection::distributeControlPointsV() {
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+
+  TVectorImageP vi(tool->getImage(false));
+  int currentStrokeIndex = m_controlPointEditorStroke->getStrokeIndex();
+  if (!vi || isEmpty() || currentStrokeIndex == -1 ||
+      m_selectedPoints.size() < 3)
+    return;
+
+  TUndo *undo = initSelectionUndo(currentStrokeIndex, false);
+
+  // Sort the points based on Y
+  std::vector<int> sortedPoints(m_selectedPoints.begin(),
+                                m_selectedPoints.end());
+  std::sort(sortedPoints.begin(), sortedPoints.end(),
+            YStrokePointSorter(m_controlPointEditorStroke));
+
+  // Find anchor point
+  double minY =
+      m_controlPointEditorStroke->getControlPoint(*sortedPoints.begin()).y;
+  double maxY =
+      m_controlPointEditorStroke->getControlPoint(*sortedPoints.rbegin()).y;
+
+  double distY = (maxY - minY) / (double)(m_selectedPoints.size() - 1);
+
+  // Move selected points
+  int index = 0;
+  std::vector<int>::iterator it;
+  for (it = sortedPoints.begin(); it != sortedPoints.end(); it++, index++) {
+    TThickPoint point = m_controlPointEditorStroke->getControlPoint(*it);
+    if (point.y == minY || point.y == maxY) continue;
+    double newY = minY + (distY * index);
+    m_controlPointEditorStroke->moveControlPoint(*it,
+                                                 TPointD(0, (newY - point.y)));
+  }
+
+  tool->notifyImageChanged();
+  TUndoManager::manager()->add(undo);
+}
+
+//-----------------------------------------------------------------------------
 
 void ControlPointSelection::enableCommands() {
   enableCommand(this, "MI_Clear", &ControlPointSelection::deleteControlPoints);
+  enableCommand(this, "MI_SetLinearControlPoint",
+                &ControlPointSelection::setLinear);
+  enableCommand(this, "MI_SetNonLinearControlPoint",
+                &ControlPointSelection::setUnlinear);
+  enableCommand(this, "MI_AlignLeft",
+                &ControlPointSelection::alignControlPointsLeft);
+  enableCommand(this, "MI_AlignRight",
+                &ControlPointSelection::alignControlPointsRight);
+  enableCommand(this, "MI_AlignTop",
+                &ControlPointSelection::alignControlPointsTop);
+  enableCommand(this, "MI_AlignBottom",
+                &ControlPointSelection::alignControlPointsBottom);
+  enableCommand(this, "MI_AlignCenterHorizontal",
+                &ControlPointSelection::alignControlPointsCenterH);
+  enableCommand(this, "MI_AlignCenterVertical",
+                &ControlPointSelection::alignControlPointsCenterV);
+  enableCommand(this, "MI_DistributeHorizontal",
+                &ControlPointSelection::distributeControlPointsH);
+  enableCommand(this, "MI_DistributeVertical",
+                &ControlPointSelection::distributeControlPointsV);
 }

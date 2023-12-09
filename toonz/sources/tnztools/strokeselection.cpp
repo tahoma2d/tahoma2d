@@ -2,6 +2,8 @@
 
 #include "tools/strokeselection.h"
 
+#include "../../toonz/alignmentpane.h"
+
 // TnzTools includes
 #include "tools/imagegrouping.h"
 #include "tools/toolhandle.h"
@@ -23,6 +25,7 @@
 #include "toonz/txshlevelhandle.h"
 #include "toonz/tscenehandle.h"
 #include "toonz/txsheethandle.h"
+#include "toonz/tcamera.h"
 
 #include "toonz/tcenterlinevectorizer.h"
 #include "toonz/stage.h"
@@ -32,6 +35,7 @@
 #include "toonz/tframehandle.h"
 #include "toonz/txsheethandle.h"
 #include "toonz/tstageobject.h"
+#include "toonz/tcolumnhandle.h"
 
 // TnzCore includes
 #include "tthreadmessage.h"
@@ -41,12 +45,36 @@
 #include "tcolorstyles.h"
 #include "tpalette.h"
 
+#include "toonz/tstageobject.h"
+
 // Qt includes
 #include <QApplication>
 #include <QClipboard>
 
 //=============================================================================
 namespace {
+
+bool getGroupBBox(TVectorImageP vi, int strokeIndex, TRectD &gBox) {
+  if (!vi->isStrokeGrouped(strokeIndex)) return false;
+
+  gBox             = vi->getStroke(strokeIndex)->getBBox();
+  bool boxExpanded = false;
+
+  int groupDepth       = vi->isInsideGroup();
+  int strokeGroupDepth = vi->getGroupDepth(strokeIndex);
+  if (vi->getGroupDepth(strokeIndex) == groupDepth) return false;
+  int s, sCount = int(vi->getStrokeCount());
+  for (s = 0; s != sCount; ++s) {
+    int sGroupDepth = vi->getGroupDepth(s);
+    if ((vi->sameGroup(s, strokeIndex) ||
+         vi->sameParentGroupStrokes(s, strokeIndex)) &&
+        sGroupDepth > groupDepth) {
+      TRectD sBox = vi->getStroke(s)->getBBox();
+      gBox += vi->getStroke(s)->getBBox();
+    }
+  }
+  return true;
+}
 
 void vectorizeToonzImageData(const TVectorImageP &image,
                              const ToonzImageData *tiData,
@@ -312,6 +340,122 @@ public:
 
   int getSize() const override { return sizeof(*this); }
 };
+
+//=============================================================================
+// AlignStrokesUndo
+//-----------------------------------------------------------------------------
+
+class AlignStrokesUndo final : public TUndo {
+  TXshSimpleLevelP m_level;
+  TFrameId m_frameId;
+  std::vector<std::pair<int, TStroke *>> m_strokes;
+  ALIGN_TYPE m_alignType;
+  int m_alignMethod;
+  double m_alignX, m_alignY;
+
+public:
+  AlignStrokesUndo(TXshSimpleLevel *level, const TFrameId &frameId,
+                   std::vector<std::pair<int, TStroke *>> strokes,
+                   ALIGN_TYPE alignType, int alignMethod, double alignX,
+                   double alignY)
+      : m_level(level)
+      , m_frameId(frameId)
+      , m_strokes(strokes)
+      , m_alignType(alignType)
+      , m_alignMethod(alignMethod)
+      , m_alignX(alignX)
+      , m_alignY(alignY) {}
+
+  ~AlignStrokesUndo() {
+    int i;
+    for (i = 0; i < (int)m_strokes.size(); i++) delete m_strokes[i].second;
+  }
+
+  void undo() const override {
+    TVectorImageP vi = m_level->getFrame(m_frameId, true);
+    int i;
+    for (i = 0; i < (int)m_strokes.size(); i++) {
+      TStroke *stroke     = vi->getStroke(m_strokes[i].first);
+      TStroke *origStroke = m_strokes[i].second;
+      for (int j = 0, count = stroke->getControlPointCount(); j < count; ++j) {
+        stroke->setControlPoint(j, origStroke->getControlPoint(j));
+      }
+    }
+
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
+  }
+
+  void redo() const override {
+    int i;
+    TVectorImageP vi = m_level->getFrame(m_frameId, true);
+    std::vector<std::pair<TStroke *, TPointD>> newPts;
+
+    int strokeCount = m_alignMethod == ALIGN_METHOD::CAMERA_AREA ? -1 : 0;
+    double shift;
+    std::set<int> groups;
+    int groupDepth = vi->isInsideGroup();
+    for (i = 0; i < (int)m_strokes.size(); i++) {
+      TStroke *stroke      = vi->getStroke(m_strokes[i].first);
+      int strokeGroupDepth = vi->getGroupDepth(m_strokes[i].first);
+      TRectD bbox          = stroke->getBBox();
+      TRectD gBBox;
+
+      if (getGroupBBox(vi, m_strokes[i].first, gBBox)) bbox = gBBox;
+
+      double newX, newY;
+      if (m_alignType == ALIGN_TYPE::ALIGN_LEFT)
+        newX = m_alignX - bbox.x0;
+      else if (m_alignType == ALIGN_TYPE::ALIGN_RIGHT)
+        newX = m_alignX - bbox.x1;
+      else if (m_alignType == ALIGN_TYPE::ALIGN_TOP)
+        newY = m_alignY - bbox.y1;
+      else if (m_alignType == ALIGN_TYPE::ALIGN_BOTTOM)
+        newY = m_alignY - bbox.y0;
+      else if (m_alignType == ALIGN_TYPE::ALIGN_CENTER_H)
+        newY = (m_alignY - bbox.y0) - (bbox.getLy() / 2.0);
+      else if (m_alignType == ALIGN_TYPE::ALIGN_CENTER_V)
+        newX = (m_alignX - bbox.x0) - (bbox.getLx() / 2.0);
+      else if (m_alignType == ALIGN_TYPE::DISTRIBUTE_H) {
+        // m_alignX = 1st X point. m_alignY = X spacing between points
+        int groupId = vi->getGroupByStroke(m_strokes[i].first);
+        if (groupId < 0 || strokeGroupDepth == groupDepth)
+          strokeCount++;
+        else if (groups.find(groupId) == groups.end()) {
+          groups.insert(groupId);
+          strokeCount++;
+        }
+        newX = m_alignX - bbox.x0 + (m_alignY * (double)strokeCount) -
+               (bbox.getLx() / 2.0);
+      } else if (m_alignType == ALIGN_TYPE::DISTRIBUTE_V) {
+        // m_alignX = 1st Y point. m_alignY = Y spacing between points
+        int groupId = vi->getGroupByStroke(m_strokes[i].first);
+        if (groupId < 0 || strokeGroupDepth == groupDepth)
+          strokeCount++;
+        else if (groups.find(groupId) == groups.end()) {
+          groups.insert(groupId);
+          strokeCount++;
+        }
+        newY = m_alignX - bbox.y0 + (m_alignY * (double)strokeCount) -
+               (bbox.getLy() / 2.0);
+      }
+
+      newPts.push_back(std::make_pair(stroke, TPointD(newX, newY)));
+    }
+
+    for (i = 0; i < (int)newPts.size(); i++) {
+      TStroke *stroke = newPts[i].first;
+      for (int j = 0, count = stroke->getControlPointCount(); j < count; ++j) {
+        TThickPoint p = stroke->getControlPoint(j);
+        p             = TThickPoint(p + newPts[i].second, p.thick);
+        stroke->setControlPoint(j, p);
+      }
+    }
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
+  }
+
+  int getSize() const override { return sizeof(*this); }
+};
+
 //=============================================================================
 // DeleteFramesUndo
 //-----------------------------------------------------------------------------
@@ -422,18 +566,20 @@ StrokeSelection &StrokeSelection::operator=(const StrokeSelection &other) {
 //-----------------------------------------------------------------------------
 
 void StrokeSelection::select(int index, bool on) {
-  if (on)
-    m_indexes.insert(index);
-  else
-    m_indexes.erase(index);
+  std::vector<int>::iterator it = std::find(m_indexes.begin(), m_indexes.end(), index);
+  if (on) {
+    if (it == m_indexes.end()) m_indexes.push_back(index);
+  } else {
+    if (it != m_indexes.end()) m_indexes.erase(it);
+  }
 }
 
 //-----------------------------------------------------------------------------
 
 void StrokeSelection::toggle(int index) {
-  std::set<int>::iterator it = m_indexes.find(index);
+  std::vector<int>::iterator it = std::find(m_indexes.begin(), m_indexes.end(), index);
   if (it == m_indexes.end())
-    m_indexes.insert(index);
+    m_indexes.push_back(index);
   else
     m_indexes.erase(it);
 }
@@ -485,7 +631,7 @@ void StrokeSelection::selectAll() {
   int sCount = int(m_vi->getStrokeCount());
 
   for (int s = 0; s < sCount; ++s) {
-    m_indexes.insert(s);
+    m_indexes.push_back(s);
   }
 
   StrokeSelection *selection = dynamic_cast<StrokeSelection *>(
@@ -518,9 +664,11 @@ void StrokeSelection::deleteStrokes() {
         tool->getXsheet()->getStageObject(tool->getObjectId())->getSpline());
 
   StrokesData *data = new StrokesData();
-  data->setImage(m_vi, m_indexes);
-  std::set<int> oldIndexes = m_indexes;
-  deleteStrokesWithoutUndo(m_vi, m_indexes);
+  std::set<int> indexSet(m_indexes.begin(), m_indexes.end());
+  data->setImage(m_vi, indexSet);
+  std::set<int> oldIndexes = indexSet;
+  deleteStrokesWithoutUndo(m_vi, indexSet);
+  m_indexes.clear();
 
   if (!isSpline) {
     TXshSimpleLevel *level =
@@ -543,7 +691,8 @@ void StrokeSelection::copy() {
   if (m_indexes.empty()) return;
   QClipboard *clipboard = QApplication::clipboard();
   QMimeData *oldData    = cloneData(clipboard->mimeData());
-  copyStrokesWithoutUndo(m_vi, m_indexes);
+  std::set<int> indexSet(m_indexes.begin(), m_indexes.end());
+  copyStrokesWithoutUndo(m_vi, indexSet);
   QMimeData *newData = cloneData(clipboard->mimeData());
 
   // TUndoManager::manager()->add(new CopyStrokesUndo(oldData, newData));
@@ -590,12 +739,16 @@ void StrokeSelection::paste() {
   TPaletteP palette       = tarImg->getPalette();
   TPaletteP oldPalette    = new TPalette();
   if (palette) oldPalette = palette->clone();
-  bool isPaste = pasteStrokesWithoutUndo(tarImg, m_indexes, m_sceneHandle);
+  std::set<int> indexSet(m_indexes.begin(), m_indexes.end());
+  bool isPaste = pasteStrokesWithoutUndo(tarImg, indexSet, m_sceneHandle);
+
   if (isPaste) {
+    m_indexes.clear();
+    std::copy(indexSet.begin(), indexSet.end(), std::back_inserter(m_indexes));
     TXshSimpleLevel *level =
         TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
     TUndoManager::manager()->add(new PasteStrokesUndo(
-        level, tool->getCurrentFid(), m_indexes, oldPalette, m_sceneHandle,
+        level, tool->getCurrentFid(), indexSet, oldPalette, m_sceneHandle,
         tool->m_isFrameCreated, tool->m_isLevelCreated));
     m_updateSelectionBBox = isPaste;
   }
@@ -632,9 +785,11 @@ void StrokeSelection::cut() {
         tool->getXsheet()->getStageObject(tool->getObjectId())->getSpline());
 
   StrokesData *data = new StrokesData();
-  data->setImage(m_vi, m_indexes);
-  std::set<int> oldIndexes = m_indexes;
-  cutStrokesWithoutUndo(m_vi, m_indexes);
+  std::set<int> indexSet(m_indexes.begin(), m_indexes.end());
+  data->setImage(m_vi, indexSet);
+  std::set<int> oldIndexes = indexSet;
+  cutStrokesWithoutUndo(m_vi, indexSet);
+  m_indexes.clear();
   if (!isSpline) {
     TXshSimpleLevel *level =
         tool->getApplication()->getCurrentLevel()->getSimpleLevel();
@@ -644,6 +799,745 @@ void StrokeSelection::cut() {
     assert(undo);
     if (undo) TUndoManager::manager()->add(undo);
   }
+}
+
+//=============================================================================
+//
+// Align and Distribute
+//
+//-----------------------------------------------------------------------------
+
+// Anchor points
+// Align Type
+//    left: minX
+//    right: maxX
+//    top: maxY
+//    bottom: minY
+//    center h: (maxY + minY) / 2.0;
+//    center v: (maxX + minX) / 2.0;
+//    distribute h: min midX, max midX
+//    distribute v: min midY, max midY
+TPointD getAnchorPoint(ALIGN_TYPE alignType, int alignMethod, TVectorImageP vi,
+                       std::vector<int> indexes) {
+  double x, midX, maxX, midXLen, y, midY, maxY, midYLen;
+  TRectD cameraRect = TTool::getApplication()
+                          ->getCurrentScene()
+                          ->getScene()
+                          ->getCurrentCamera()
+                          ->getStageRect();
+
+  TApplication *app   = TTool::getApplication();
+  bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
+
+  if (alignMethod == ALIGN_METHOD::CAMERA_AREA && !isEditingLevel) {
+    TTool *tool = app->getCurrentTool()->getTool();
+    if (tool) {
+      int frame    = app->getCurrentFrame()->getFrameIndex();
+      int col      = app->getCurrentColumn()->getColumnIndex();
+      TXsheet *xsh = tool->getXsheet();
+      TStageObjectId currentCamId =
+          TStageObjectId::CameraId(xsh->getCameraColumnIndex());
+      TStageObjectId levelId = TStageObjectId::ColumnId(col);
+
+      TAffine camAff = xsh->getPlacement(currentCamId, frame);
+      TAffine lvlAff = xsh->getPlacement(levelId, frame);
+
+      TPointD blPt =
+          lvlAff.inv() * camAff * TPointD(cameraRect.x0, cameraRect.y0);
+      TPointD brPt =
+          lvlAff.inv() * camAff * TPointD(cameraRect.x1, cameraRect.y0);
+      TPointD tlPt =
+          lvlAff.inv() * camAff * TPointD(cameraRect.x0, cameraRect.y1);
+      TPointD trPt =
+          lvlAff.inv() * camAff * TPointD(cameraRect.x1, cameraRect.y1);
+
+      cameraRect.x0 = (blPt.x + tlPt.x) / 2.0;
+      cameraRect.y0 = (blPt.y + brPt.y) / 2.0;
+      cameraRect.x1 = (brPt.x + trPt.x) / 2.0;
+      cameraRect.y1 = (tlPt.y + trPt.y) / 2.0;
+    }
+  }
+
+  // Camera - except distribution
+  if (alignMethod == ALIGN_METHOD::CAMERA_AREA &&
+      alignType != ALIGN_TYPE::DISTRIBUTE_H &&
+      alignType != ALIGN_TYPE::DISTRIBUTE_V) {
+    if (alignType == ALIGN_TYPE::ALIGN_LEFT ||
+        alignType == ALIGN_TYPE::ALIGN_BOTTOM) {
+      x = cameraRect.x0;
+      y = cameraRect.y0;
+    } else if (alignType == ALIGN_TYPE::ALIGN_RIGHT ||
+               alignType == ALIGN_TYPE::ALIGN_TOP) {
+      x = cameraRect.x1;
+      y = cameraRect.y1;
+    } else if (alignType == ALIGN_TYPE::ALIGN_CENTER_H ||
+               alignType == ALIGN_TYPE::ALIGN_CENTER_V) {
+      x = (cameraRect.x1 + cameraRect.x0) / 2.0;
+      y = (cameraRect.y1 + cameraRect.y0) / 2.0;
+    }
+
+    return TPointD(x, y);
+  }
+
+  bool ptSet = false;
+  double lastArea;
+  double lenA, lenB;
+
+  for (auto const &e : indexes) {
+    TStroke *stroke = vi->getStroke(e);
+    if (!vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(vi, e, gBBox)) bbox = gBBox;
+    double area = bbox.getLx() * bbox.getLy();
+    midXLen     = (bbox.getLx() / 2.0);
+    midX        = bbox.x0 + midXLen;
+    midYLen     = (bbox.getLy() / 2.0);
+    midY        = bbox.y0 + midYLen;
+    if (!ptSet || alignMethod == ALIGN_METHOD::LAST_SELECTED) {
+      ptSet    = true;
+      lastArea = area;
+      if (alignType == ALIGN_TYPE::ALIGN_LEFT ||
+          alignType == ALIGN_TYPE::ALIGN_BOTTOM) {
+        x = bbox.x0;
+        y = bbox.y0;
+      } else if (alignType == ALIGN_TYPE::ALIGN_RIGHT ||
+                 alignType == ALIGN_TYPE::ALIGN_TOP) {
+        x = bbox.x1;
+        y = bbox.y1;
+      } else if (alignType == ALIGN_TYPE::ALIGN_CENTER_H ||
+                 alignType == ALIGN_TYPE::ALIGN_CENTER_V) {
+        x    = bbox.x0;
+        maxX = bbox.x1;
+        y    = bbox.y0;
+        maxY = bbox.y1;
+      } else if (alignType == ALIGN_TYPE::DISTRIBUTE_H) {
+        // Note: y will be used as maxX
+        x = y = midX;
+        lenA = lenB = midXLen;
+      } else if (alignType == ALIGN_TYPE::DISTRIBUTE_V) {
+        // Note: x will be used as minY
+        x = y = midY;
+        lenA = lenB = midYLen;
+      }
+
+      if (alignMethod == ALIGN_METHOD::FIRST_SELECTED) break;
+    } else {
+      if (alignType == ALIGN_TYPE::DISTRIBUTE_H) {
+        // Note: y will be used as maxX
+        if (alignMethod == ALIGN_METHOD::CAMERA_AREA) {
+          if (midX < x) {
+            x    = midX;
+            lenA = midXLen;
+          }
+          if (midX >= y) {
+            y    = midX;
+            lenB = midXLen;
+          }
+        } else {
+          x = std::min(x, midX);
+          y = std::max(y, midX);
+        }
+      } else if (alignType == ALIGN_TYPE::DISTRIBUTE_V) {
+        // Note: x will be used as minY
+        if (alignMethod == ALIGN_METHOD::CAMERA_AREA) {
+          if (midY < x) {
+            x    = midY;
+            lenA = midYLen;
+          }
+          if (midY >= y) {
+            y    = midY;
+            lenB = midYLen;
+          }
+        } else {
+          x = std::min(x, midY);
+          y = std::max(y, midY);
+        }
+      } else if (!alignMethod ||
+                 (alignMethod == ALIGN_METHOD::SMALLEST_OBJECT &&
+                  area <= lastArea) ||
+                 (alignMethod == ALIGN_METHOD::LARGEST_OBJECT &&
+                  area >= lastArea)) {
+        if (alignType == ALIGN_TYPE::ALIGN_LEFT ||
+            alignType == ALIGN_TYPE::ALIGN_BOTTOM) {
+          if (alignMethod && area != lastArea) {
+            x = bbox.x0;
+            y = bbox.y0;
+          } else {
+            x = std::min(x, bbox.x0);
+            y = std::min(y, bbox.y0);
+          }
+        } else if (alignType == ALIGN_TYPE::ALIGN_RIGHT ||
+                   alignType == ALIGN_TYPE::ALIGN_TOP) {
+          if (alignMethod && area != lastArea) {
+            x = bbox.x1;
+            y = bbox.y1;
+          } else {
+            x = std::max(x, bbox.x1);
+            y = std::max(y, bbox.y1);
+          }
+        } else if (alignType == ALIGN_TYPE::ALIGN_CENTER_H ||
+                   alignType == ALIGN_TYPE::ALIGN_CENTER_V) {
+          if (alignMethod && area != lastArea) {
+            x    = bbox.x0;
+            maxX = bbox.x1;
+            y    = bbox.y0;
+            maxY = bbox.y1;
+          } else {
+            x    = std::min(x, bbox.x0);
+            maxX = std::max(maxX, bbox.x1);
+            y    = std::min(y, bbox.y0);
+            maxY = std::max(maxY, bbox.y1);
+          }
+        }
+        lastArea = area;
+      }
+    }
+  }
+
+  if (alignType == ALIGN_TYPE::ALIGN_CENTER_H ||
+      alignType == ALIGN_TYPE::ALIGN_CENTER_V)
+    return TPointD((maxX + x) / 2.0, (maxY + y) / 2.0);
+  else if (alignMethod == ALIGN_METHOD::CAMERA_AREA) {
+    if (alignType == ALIGN_TYPE::DISTRIBUTE_H)
+      return TPointD(cameraRect.x0 + lenA, cameraRect.x1 - lenB);
+    else if (alignType == ALIGN_TYPE::DISTRIBUTE_V)
+      return TPointD(cameraRect.y0 + lenA, cameraRect.y1 - lenB);
+  }
+
+  return TPointD(x, y);
+}
+
+void StrokeSelection::alignStrokesLeft() {
+  if (!m_vi) return;
+  if (m_indexes.empty()) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  int alignMethod = tool->getAlignMethod();
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 2) return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Find anchor point
+  TPointD anchor(
+      getAnchorPoint(ALIGN_TYPE::ALIGN_LEFT, alignMethod, m_vi, m_indexes));
+  double newX = anchor.x;
+
+  // Store moving strokes
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    if (bbox.x0 == newX) continue;
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo =
+        new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                             ALIGN_TYPE::ALIGN_LEFT, alignMethod, newX, 0);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
+}
+
+//-----------------------------------------------------------------------------
+
+void StrokeSelection::alignStrokesRight() {
+  if (!m_vi) return;
+  if (m_indexes.empty()) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  int alignMethod = tool->getAlignMethod();
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 2) return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Find anchor point
+  TPointD anchor(
+      getAnchorPoint(ALIGN_TYPE::ALIGN_RIGHT, alignMethod, m_vi, m_indexes));
+  double newX = anchor.x;
+
+  // Store moving strokes
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    if (bbox.x1 == newX) continue;
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo =
+        new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                             ALIGN_TYPE::ALIGN_RIGHT, alignMethod, newX, 0);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
+}
+
+//-----------------------------------------------------------------------------
+
+void StrokeSelection::alignStrokesTop() {
+  if (!m_vi) return;
+  if (m_indexes.empty()) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  int alignMethod = tool->getAlignMethod();
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 2) return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Find anchor point
+  TPointD anchor(
+      getAnchorPoint(ALIGN_TYPE::ALIGN_TOP, alignMethod, m_vi, m_indexes));
+  double newY = anchor.y;
+
+  // Store moving strokes
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    if (bbox.y1 == newY) continue;
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo =
+        new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                             ALIGN_TYPE::ALIGN_TOP, alignMethod, 0, newY);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
+}
+
+//-----------------------------------------------------------------------------
+
+void StrokeSelection::alignStrokesBottom() {
+  if (!m_vi) return;
+  if (m_indexes.empty()) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  int alignMethod = tool->getAlignMethod();
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 2) return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Find anchor point
+  TPointD anchor(
+      getAnchorPoint(ALIGN_TYPE::ALIGN_BOTTOM, alignMethod, m_vi, m_indexes));
+  double newY = anchor.y;
+
+  // Store moving strokes
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    if (bbox.y0 == newY) continue;
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo =
+        new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                             ALIGN_TYPE::ALIGN_BOTTOM, alignMethod, 0, newY);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
+}
+
+//-----------------------------------------------------------------------------
+
+void StrokeSelection::alignStrokesCenterH() {
+  if (!m_vi) return;
+  if (m_indexes.empty()) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  int alignMethod = tool->getAlignMethod();
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 2) return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Find anchor point
+  TPointD anchor(
+      getAnchorPoint(ALIGN_TYPE::ALIGN_CENTER_H, alignMethod, m_vi, m_indexes));
+  double newY = anchor.y;
+
+  // Store moving strokes
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo =
+        new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                             ALIGN_TYPE::ALIGN_CENTER_H, alignMethod, 0, newY);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
+}
+
+//-----------------------------------------------------------------------------
+
+void StrokeSelection::alignStrokesCenterV() {
+  if (!m_vi) return;
+  if (m_indexes.empty()) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  int alignMethod = tool->getAlignMethod();
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 2) return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Find anchor point
+  TPointD anchor(
+      getAnchorPoint(ALIGN_TYPE::ALIGN_CENTER_H, alignMethod, m_vi, m_indexes));
+  double newX = anchor.x;
+
+  // Store moving strokes
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    TRectD bbox = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo =
+        new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                             ALIGN_TYPE::ALIGN_CENTER_V, alignMethod, newX, 0);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
+}
+
+//-----------------------------------------------------------------------------
+
+class MidXStrokeSorter {
+  TVectorImageP m_vi;
+
+public:
+  MidXStrokeSorter(TVectorImageP vi) : m_vi(vi) {}
+
+  bool operator()(int a, int &b) {
+    TStroke *strokeA = m_vi->getStroke(a);
+    TStroke *strokeB = m_vi->getStroke(b);
+    TRectD gBox;
+    TRectD bboxA = strokeA->getBBox();
+    if (getGroupBBox(m_vi, a, gBox)) bboxA = gBox;
+    TRectD bboxB = strokeB->getBBox();
+    if (getGroupBBox(m_vi, b, gBox)) bboxB = gBox;
+    double midA = bboxA.x0 + (bboxA.getLx() / 2.0);
+    double midB = bboxB.x0 + (bboxB.getLx() / 2.0);
+
+    return (midA < midB);
+  }
+};
+
+void StrokeSelection::distributeStrokesH() {
+  if (!m_vi) return;
+  if (m_indexes.empty()) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  int alignMethod = tool->getAlignMethod();
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 3 ||
+      m_indexes.size() < 2)
+    return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Sort the points based on X
+  std::vector<int> sortedStrokes;
+
+  // Remove strokes not in group
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    sortedStrokes.push_back(e);
+  }
+  std::sort(sortedStrokes.begin(), sortedStrokes.end(), MidXStrokeSorter(m_vi));
+
+  // Find anchor point
+  TPointD anchor(
+      getAnchorPoint(ALIGN_TYPE::DISTRIBUTE_H, alignMethod, m_vi, m_indexes));
+  double minX = anchor.x, maxX = anchor.y;
+
+  // Store moving strokes
+  int strokeCount = 0;
+  std::set<int> groups;
+  int groupDepth = m_vi->isInsideGroup();
+  for (auto const &e : sortedStrokes) {
+    TStroke *stroke      = m_vi->getStroke(e);
+    int strokeGroupDepth = m_vi->getGroupDepth(e);
+    TRectD bbox          = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    double midX = bbox.x0 + (bbox.getLx() / 2.0);
+    if (alignMethod != ALIGN_METHOD::CAMERA_AREA &&
+        (midX == minX || midX == maxX))
+      continue;
+    int groupId = m_vi->getGroupByStroke(e);
+    if (groupId < 0 || strokeGroupDepth == groupDepth)
+      strokeCount++;
+    else if (groups.find(groupId) == groups.end()) {
+      groups.insert(groupId);
+      strokeCount++;
+    }
+
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+
+  if (alignMethod == ALIGN_METHOD::CAMERA_AREA) strokeCount -= 2;
+
+  double distX = (maxX - minX) / (double)(strokeCount + 1);
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo = new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                                       ALIGN_TYPE::DISTRIBUTE_H, alignMethod,
+                                       minX, distX);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
+}
+
+//-----------------------------------------------------------------------------
+
+class MidYStrokeSorter {
+  TVectorImageP m_vi;
+
+public:
+  MidYStrokeSorter(TVectorImageP vi) : m_vi(vi) {}
+
+  bool operator()(int a, int &b) {
+    TStroke *strokeA = m_vi->getStroke(a);
+    TStroke *strokeB = m_vi->getStroke(b);
+    TRectD gBox;
+    TRectD bboxA = strokeA->getBBox();
+    if (getGroupBBox(m_vi, a, gBox)) bboxA = gBox;
+    TRectD bboxB = strokeB->getBBox();
+    if (getGroupBBox(m_vi, b, gBox)) bboxB = gBox;
+    double midA = bboxA.y0 + (bboxA.getLy() / 2.0);
+    double midB = bboxB.y0 + (bboxB.getLy() / 2.0);
+
+    return (midA < midB);
+  }
+};
+
+void StrokeSelection::distributeStrokesV() {
+  if (!m_vi) return;
+  if (m_indexes.empty()) return;
+  TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
+  if (!tool) return;
+
+  int alignMethod = tool->getAlignMethod();
+  if (alignMethod != ALIGN_METHOD::CAMERA_AREA && m_indexes.size() < 3 ||
+      m_indexes.size() < 2)
+    return;
+
+  if (!isEditable()) {
+    DVGui::error(QObject::tr("The selection is not editable."));
+    return;
+  }
+
+  bool isSpline = tool->getApplication()->getCurrentObject()->isSpline();
+  if (isSpline) return;
+
+  std::vector<std::pair<int, TStroke *>> undoData;
+
+  m_vi->findRegions();
+
+  // Sort the points based on Y
+  std::vector<int> sortedStrokes;
+
+  // Remove strokes not in group
+  for (auto const &e : m_indexes) {
+    TStroke *stroke = m_vi->getStroke(e);
+    if (!m_vi->isEnteredGroupStroke(e)) continue;
+    sortedStrokes.push_back(e);
+  }
+  std::sort(sortedStrokes.begin(), sortedStrokes.end(), MidYStrokeSorter(m_vi));
+
+  // Find anchor point
+  TPointD anchor(
+      getAnchorPoint(ALIGN_TYPE::DISTRIBUTE_V, alignMethod, m_vi, m_indexes));
+  double minY = anchor.x, maxY = anchor.y;
+
+  // Store moving strokes
+  int strokeCount = 0;
+  std::set<int> groups;
+  int groupDepth = m_vi->isInsideGroup();
+  for (auto const &e : sortedStrokes) {
+    TStroke *stroke      = m_vi->getStroke(e);
+    int strokeGroupDepth = m_vi->getGroupDepth(e);
+    TRectD bbox          = stroke->getBBox();
+    TRectD gBBox;
+    if (getGroupBBox(m_vi, e, gBBox)) bbox = gBBox;
+    double midY = bbox.y0 + (bbox.getLy() / 2.0);
+    if (alignMethod != ALIGN_METHOD::CAMERA_AREA &&
+        (midY == minY || midY == maxY))
+      continue;
+    int groupId = m_vi->getGroupByStroke(e);
+    if (groupId < 0 || strokeGroupDepth == groupDepth)
+      strokeCount++;
+    else if (groups.find(groupId) == groups.end()) {
+      groups.insert(groupId);
+      strokeCount++;
+    }
+
+    undoData.push_back(std::pair<int, TStroke *>(e, new TStroke(*stroke)));
+  }
+
+  if (alignMethod == ALIGN_METHOD::CAMERA_AREA) strokeCount -= 2;
+
+  double distY = (maxY - minY) / (double)(strokeCount + 1);
+
+  if (!undoData.empty()) {
+    TXshSimpleLevel *level =
+        TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
+    TUndo *undo = new AlignStrokesUndo(level, tool->getCurrentFid(), undoData,
+                                       ALIGN_TYPE::DISTRIBUTE_V, alignMethod,
+                                       minY, distY);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+
+  m_updateSelectionBBox = true;
+  tool->notifyImageChanged();
+  m_updateSelectionBBox = false;
 }
 
 //=============================================================================
@@ -671,6 +1565,19 @@ void StrokeSelection::enableCommands() {
 
   enableCommand(this, MI_RemoveEndpoints, &StrokeSelection::removeEndpoints);
   enableCommand(this, MI_SelectAll, &StrokeSelection::selectAll);
+
+  enableCommand(this, MI_AlignLeft, &StrokeSelection::alignStrokesLeft);
+  enableCommand(this, MI_AlignRight, &StrokeSelection::alignStrokesRight);
+  enableCommand(this, MI_AlignTop, &StrokeSelection::alignStrokesTop);
+  enableCommand(this, MI_AlignBottom, &StrokeSelection::alignStrokesBottom);
+  enableCommand(this, MI_AlignCenterHorizontal,
+                &StrokeSelection::alignStrokesCenterH);
+  enableCommand(this, MI_AlignCenterVertical,
+                &StrokeSelection::alignStrokesCenterV);
+  enableCommand(this, MI_DistributeHorizontal,
+                &StrokeSelection::distributeStrokesH);
+  enableCommand(this, MI_DistributeVertical,
+                &StrokeSelection::distributeStrokesV);
 }
 
 //===================================================================
@@ -744,7 +1651,7 @@ void StrokeSelection::changeColorStyle(int styleIndex) {
   if (m_indexes.empty()) return;
 
   UndoSetStrokeStyle *undo = new UndoSetStrokeStyle(img, styleIndex);
-  std::set<int>::iterator it;
+  std::vector<int>::iterator it;
   for (it = m_indexes.begin(); it != m_indexes.end(); ++it) {
     int index = *it;
     assert(0 <= index && index < (int)img->getStrokeCount());

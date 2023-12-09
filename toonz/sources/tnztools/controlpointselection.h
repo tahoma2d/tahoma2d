@@ -8,6 +8,7 @@
 #include "tstroke.h"
 #include "tvectorimage.h"
 #include "tcurves.h"
+#include "tundo.h"
 
 //=============================================================================
 // ControlPointEditorStroke
@@ -137,7 +138,7 @@ class ControlPointSelection final : public QObject, public TSelection {
   Q_OBJECT
 
 private:
-  std::set<int> m_selectedPoints;
+  std::vector<int> m_selectedPoints;
   int m_strokeIndex;
   ControlPointEditorStroke *m_controlPointEditorStroke;
 
@@ -156,7 +157,18 @@ public:
   void select(int index);
   void unselect(int index);
 
+  TUndo *initSelectionUndo(int strokeIndex, bool clearSelection = true);
+
   void deleteControlPoints();
+
+  void alignControlPointsLeft();
+  void alignControlPointsRight();
+  void alignControlPointsTop();
+  void alignControlPointsBottom();
+  void alignControlPointsCenterH();
+  void alignControlPointsCenterV();
+  void distributeControlPointsH();
+  void distributeControlPointsV();
 
   void addMenuItems(QMenu *menu);
 
