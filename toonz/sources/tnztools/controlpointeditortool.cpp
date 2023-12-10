@@ -504,7 +504,7 @@ void ControlPointEditorTool::leftButtonDown(const TPointD &pos,
         startFreehand(pos);
       }
     }
-    if (e.isCtrlPressed())
+    if (e.isShiftPressed())
       m_selection.holdSelection();
     else
       m_selection.selectNone();
@@ -543,7 +543,7 @@ void ControlPointEditorTool::leftButtonDown(const TPointD &pos,
       m_undo = 0;
       return;
     }
-    if (e.isCtrlPressed()) {
+    if (e.isShiftPressed()) {
       if (m_selection.isSelected(pointIndex))
         m_selection.unselect(pointIndex);
       else
@@ -726,7 +726,7 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
     if (m_selectingRect.y0 > m_selectingRect.y1)
       std::swap(m_selectingRect.y1, m_selectingRect.y0);
     int i;
-    if (e.isCtrlPressed())
+    if (e.isShiftPressed())
       m_selection.restoreSelection();
     else
       m_selection.selectNone();
