@@ -70,6 +70,8 @@ void TXshSoundLevel::loadSoundTrack() {
     loadSoundTrack(path);
   } catch (TException &e) {
     throw TException(e.getMessage());
+  } catch (...) {
+    throw;
   }
 }
 
@@ -86,6 +88,8 @@ void TXshSoundLevel::loadSoundTrack(const TFilePath &fileName) {
       setSoundTrack(st);
     }
   } catch (TException &) {
+    return;
+  } catch (...) {
     return;
   }
 }

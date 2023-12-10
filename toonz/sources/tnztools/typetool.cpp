@@ -564,6 +564,8 @@ void TypeTool::loadFonts() {
   } catch (TFontLibraryLoadingError &) {
     m_validFonts = false;
     //    TMessage::error(toString(e.getMessage()));
+  } catch (...) {
+    m_validFonts = false;
   }
 
   if (!m_validFonts) return;
@@ -641,6 +643,9 @@ void TypeTool::setFont(std::wstring family) {
     //    TMessage::error(toString(e.getMessage()));
     assert(m_fontFamily == instance->getCurrentFamily());
     m_fontFamilyMenu.setValue(m_fontFamily);
+  } catch (...) {
+    assert(m_fontFamily == instance->getCurrentFamily());
+    m_fontFamilyMenu.setValue(m_fontFamily);
   }
 }
 
@@ -656,6 +661,9 @@ void TypeTool::setTypeface(std::wstring typeface) {
     invalidate();
   } catch (TFontCreationError &) {
     //    TMessage::error(toString(e.getMessage()));
+    assert(m_typeface == instance->getCurrentTypeface());
+    m_typeFaceMenu.setValue(m_typeface);
+  } catch (...) {
     assert(m_typeface == instance->getCurrentTypeface());
     m_typeFaceMenu.setValue(m_typeface);
   }

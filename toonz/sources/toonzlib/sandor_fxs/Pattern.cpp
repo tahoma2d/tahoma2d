@@ -38,6 +38,8 @@ CPattern::CPattern(RASTER *imgContour) : m_lX(0), m_lY(0) {
     optimalizeSize();
   } catch (SMemAllocError) {
     throw;
+  } catch (...) {
+    throw;
   }
 }
 
@@ -262,6 +264,8 @@ void CPattern::rotate(const double angle) {
   try {
     optimalizeSize();
   } catch (SMemAllocError) {
+    throw;
+  } catch (...) {
     throw;
   }
 }

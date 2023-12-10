@@ -907,6 +907,7 @@ void ParamsPageSet::createControls(const TFxP &fx, int index) {
 
       while (!is.matchEndTag()) createPage(is, fx, index);
     } catch (TException const &) {
+    } catch (...) {
     }
   }
   // else createEmptyPage();

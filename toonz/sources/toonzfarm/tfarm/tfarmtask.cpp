@@ -531,6 +531,7 @@ QString TFarmTask::getCommandLineArguments() const {
     try {
       outputPath = TSystem::toUNC(m_outputPath);
     } catch (TException &) {
+    } catch (...) {
     }
 
     cmdline +=
@@ -587,6 +588,7 @@ QStringList TFarmTask::getCommandLineArgumentsList() const {
     try {
       outputPath = TSystem::toUNC(m_outputPath);
     } catch (TException &) {
+    } catch (...) {
     }
 
     ret << "-o" << QString::fromStdWString(outputPath.getWideString());
@@ -691,6 +693,7 @@ bool TFarmTaskGroup::changeChunkSize(int chunksize) {
         addTask(subTask);
       } catch (TException &) {
         // TMessage::error(toString(e.getMessage()));
+      } catch (...) {
       }
 
       ra = rb + 1;
@@ -737,6 +740,7 @@ TFarmTaskGroup::TFarmTaskGroup(
         addTask(subTask);
       } catch (TException &) {
         // TMessage::error(toString(e.getMessage()));
+      } catch (...) {
       }
 
       ra = rb + 1;

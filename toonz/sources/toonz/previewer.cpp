@@ -921,6 +921,9 @@ bool Previewer::Imp::doSaveRenderedFrames(TFilePath fp) {
   } catch (TImageException &e) {
     error(QString::fromStdString(::to_string(e.getMessage())));
     return false;
+  } catch (...) {
+    error("Unhandled exception encountered");
+    return false;
   }
 
   m_lw->setFrameRate(outputSettings->getFrameRate());

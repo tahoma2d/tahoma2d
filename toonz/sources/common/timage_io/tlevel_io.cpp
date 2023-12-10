@@ -134,6 +134,11 @@ TLevelP TLevelReader::loadInfo() {
             tmfe.getMessage() + L": " +
             QObject::tr("Skipping frame.").toStdWString()));
         continue;
+      } catch (...) {
+        DVGui::warning(QString::fromStdWString(
+            QObject::tr("Unhandled exception encountered: Skipping frame.")
+                .toStdWString()));
+        continue;
       }
     }
   }

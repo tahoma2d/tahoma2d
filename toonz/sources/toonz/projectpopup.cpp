@@ -493,6 +493,9 @@ void ProjectSettingsPopup::onSomethingChanged() {
   } catch (TSystemException se) {
     DVGui::warning(QString::fromStdWString(se.getMessage()));
     return;
+  } catch (...) {
+    DVGui::warning("Unhandled exception encountered");
+    return;
   }
   DvDirModel::instance()->refreshFolder(project->getProjectFolder());
 }
@@ -610,6 +613,9 @@ void ProjectCreatePopup::createProject() {
                        .arg(toQString(projectPath)));
   } catch (TSystemException se) {
     DVGui::warning(QString::fromStdWString(se.getMessage()));
+    return;
+  } catch (...) {
+    DVGui::warning("Unhandled exception encountered");
     return;
   }
   pm->setCurrentProjectPath(projectPath);

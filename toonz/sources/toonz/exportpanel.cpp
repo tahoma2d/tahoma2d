@@ -345,6 +345,11 @@ you want to do?";*/
                           "included in the rendered clip.")
                            .arg(QString::fromStdWString(fp.getLevelNameW()));
         DVGui::warning(text);
+      } catch (...) {
+        QString text =
+            tr("Unhandled exception encountered.\nThe audio file will not be "
+               "included in the rendered clip.");
+        DVGui::warning(text);
       }
     }
 

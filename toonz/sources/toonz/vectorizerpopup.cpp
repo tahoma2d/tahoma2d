@@ -1515,6 +1515,8 @@ void VectorizerPopup::saveParameters() {
       locals.saveParams(fileName);
     } catch (const TException &e) {
       DVGui::error(QString::fromStdWString(e.getMessage()));
+    } catch (...) {
+      DVGui::error("Unhandled exception encountered");
     }
   }
 }
@@ -1571,6 +1573,8 @@ void VectorizerPopup::loadParameters() {
       refreshPopup();  // Update GUI to reflect changes
     } catch (const TException &e) {
       DVGui::error(QString::fromStdWString(e.getMessage()));
+    } catch (...) {
+      DVGui::error("Unhandled exception encountered");
     }
   }
 }

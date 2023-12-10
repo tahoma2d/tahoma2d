@@ -265,6 +265,14 @@ public:
 
       errorDialog->exec();
       errorDialog->deleteLater();
+    } catch (...) {
+      DVGui::Dialog *errorDialog = DVGui::createMsgBox(
+          DVGui::WARNING,
+          "Can't copy resources: Unhandled exception encountered",
+          QStringList("OK"), 0);
+
+      errorDialog->exec();
+      errorDialog->deleteLater();
     }
     // notify
     FileBrowser::refreshFolder(actualDstPath.getParentDir());
@@ -991,6 +999,10 @@ TXshLevel *loadLevel(ToonzScene *scene,
       else
         error(QString::fromStdWString(e.getMessage()));
 
+      return 0;
+    } catch (...) {
+      if (convertingPopup->isVisible()) convertingPopup->hide();
+      error("Unhandled exception encountered");
       return 0;
     }
 
@@ -2287,6 +2299,8 @@ static int createSubXSheetFromPSDFolder(IoCmd::LoadResourceArguments &args,
                             col1, false);
       } catch (TException &e) {
         error(QString::fromStdWString(e.getMessage()));
+      } catch (...) {
+        error("Unhandled exception encountered");
       }
       if (xl) {
         // lo importo nell'xsheet
@@ -2356,6 +2370,8 @@ static int loadPSDResource(IoCmd::LoadResourceArguments &args,
                             col1, !popup->subxsheet());
       } catch (TException &e) {
         error(QString::fromStdWString(e.getMessage()));
+      } catch (...) {
+        error("Unhandled exception encountered");
       }
       if (xl) {
         // lo importo nell'xsheet
@@ -2595,6 +2611,9 @@ int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
       } catch (std::string msg) {
         error(QString::fromStdString(msg));
         continue;
+      } catch (...) {
+        error("Unhandled exception encountered");
+        continue;
       }
 
       if (importDialog.aborted()) break;
@@ -2638,6 +2657,8 @@ int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
         }
       } catch (TException &e) {
         error(QString::fromStdWString(e.getMessage()));
+      } catch (...) {
+        error("Unhandled exception encountered");
       }
       // if load success
       if (xl) {
@@ -3039,6 +3060,9 @@ public:
       TProjectManager::instance()->saveTemplate(scene);
     } catch (TSystemException se) {
       DVGui::warning(QString::fromStdWString(se.getMessage()));
+      return;
+    } catch (...) {
+      DVGui::warning("Unhandled exception encountered");
       return;
     }
   }

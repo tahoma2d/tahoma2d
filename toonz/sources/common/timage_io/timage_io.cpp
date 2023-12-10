@@ -136,6 +136,8 @@ void TImageReader::open() {
       if (msg == QString("Old 4.1 Palette")) throw e;
     } catch (std::string str) {
       if (str == "Tiff file closed") m_file = NULL;
+    } catch (...) {
+      close();
     }
   }
 }

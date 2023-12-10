@@ -489,6 +489,8 @@ bool TMeasuredValue::setValue(std::wstring s, int *pErr) {
       return false;
     } catch (const std::out_of_range &) {
       return false;
+    } catch (...) {
+      return false;
     }
 
     valueFlag = true;

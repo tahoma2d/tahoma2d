@@ -724,6 +724,10 @@ bool Usage::parse(int argc, char *argv[], std::ostream &err) {
     err << "Usage error: " << e.getError() << endl;
     m_imp->printUsageLines(err);
     return false;
+  } catch (...) {
+    err << "Usage error: Unhandled exception encountered" << endl;
+    m_imp->printUsageLines(err);
+    return false;
   }
 }
 

@@ -736,6 +736,7 @@ void FarmController::loadServersData(const TFilePath &globalRoot) {
         try {
           server->attachController(m_hostName, m_addr, m_port);
         } catch (TException &) {
+        } catch (...) {
         }
       }
     }
@@ -1124,6 +1125,8 @@ void FarmController::startTask(CtrlFarmTask *task, FarmServerProxy *server) {
     server->addTask(taskToBeSubmitted);
   } catch (TException &e) {
     throw e;
+  } catch (...) {
+    throw;
   }
 
   if (rc == 0) {
@@ -1287,6 +1290,8 @@ bool FarmController::tryToStartTask(CtrlFarmTask *task) {
               startTask(task, server);
             } catch (TException & /*e*/) {
               continue;
+            } catch (...) {
+              continue;
             }
 
             return true;
@@ -1303,6 +1308,8 @@ bool FarmController::tryToStartTask(CtrlFarmTask *task) {
         try {
           startTask(task, server);
         } catch (TException & /*e*/) {
+          continue;
+        } catch (...) {
           continue;
         }
       }
@@ -1366,6 +1373,8 @@ public:
       m_server->queryHwInfo(hwInfo);
     } catch (TException & /*e*/) {
       return;
+    } catch (...) {
+      return;
     }
 
     m_server->m_attached = true;
@@ -1383,6 +1392,10 @@ void FarmController::initServer(FarmServerProxy *server) {
   try {
     server->queryHwInfo(hwInfo);
   } catch (TException & /*e*/) {
+    TThread::Executor exec;
+    exec.addTask(new ServerInitializer(server));
+    return;
+  } catch (...) {
     TThread::Executor exec;
     exec.addTask(new ServerInitializer(server));
     return;
@@ -1807,6 +1820,8 @@ void FarmController::taskSubmissionError(const QString &taskId, int errCode) {
           startTask(task, server);
         } catch (TException & /*e*/) {
           continue;
+        } catch (...) {
+          continue;
         }
 
         break;
@@ -1988,6 +2003,7 @@ void FarmController::taskCompleted(const QString &taskId, int exitCode) {
         } else
           startTask(task, server);
       } catch (TException & /*e*/) {
+      } catch (...) {
       }
     }
   }
@@ -2072,6 +2088,7 @@ void FarmController::activateServer(const QString &id) {
           } else
             startTask(task, server);
         } catch (TException & /*e*/) {
+        } catch (...) {
         }
       }
     }
@@ -2196,6 +2213,7 @@ void FarmController::activateReadyServers() {
             } else
               startTask(task, server);
           } catch (TException & /*e*/) {
+          } catch (...) {
           }
         }
       }

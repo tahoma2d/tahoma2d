@@ -760,6 +760,12 @@ void convertOldLevel2Tlv(const TFilePath &source, const TFilePath &dest,
     if (TSystem::doesExistFileOrLevel(dest)) TSystem::removeFileOrLevel(dest);
     frameNotifier->notifyError();
     return;
+  } catch (...) {
+    DVGui::warning("Unknown exception encountered");
+    lw = TLevelWriterP();
+    if (TSystem::doesExistFileOrLevel(dest)) TSystem::removeFileOrLevel(dest);
+    frameNotifier->notifyError();
+    return;
   }
   lw = TLevelWriterP();
 }

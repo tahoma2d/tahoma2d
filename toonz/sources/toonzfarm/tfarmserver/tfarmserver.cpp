@@ -854,6 +854,12 @@ void FarmServerService::onStart(int argc, char *argv[]) {
     errMsg += ::to_string(e.getMessage());
     addToMessageLog(errMsg);
     setStatus(TService::Stopped, NO_ERROR, 0);  // exit the program
+  } catch (...) {
+    std::string errMsg("Unable to start the Server");
+    errMsg += "\n";
+    errMsg += "Unhandled exception encountered";
+    addToMessageLog(errMsg);
+    setStatus(TService::Stopped, NO_ERROR, 0);  // exit the program
   }
 
   if (isRunningAsConsoleApp()) {
@@ -900,6 +906,7 @@ void FarmServerService::onStart(int argc, char *argv[]) {
     m_farmServer->getController()->attachServer(TSystem::getHostName(), m_addr,
                                                 m_port);
   } catch (TException const &) {
+  } catch (...) {
   }
 
 #ifdef _WIN32
@@ -976,6 +983,7 @@ void FarmServerService::onStop() {
     m_farmServer->getController()->detachServer(TSystem::getHostName(), m_addr,
                                                 m_port);
   } catch (TException & /*e*/) {
+  } catch (...) {
   }
 
 // i dischi vengono montati al primo task di tipo "runcasm"

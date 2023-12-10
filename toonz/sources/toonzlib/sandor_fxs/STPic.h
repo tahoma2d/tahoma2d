@@ -97,6 +97,9 @@ public:
     } catch (SMemAllocError) {
       null();
       throw;
+    } catch (...) {
+      null();
+      throw;
     }
   }
 
@@ -110,6 +113,9 @@ public:
       initPic();
       copyPic(sp);
     } catch (SMemAllocError) {
+      null();
+      throw;
+    } catch (...) {
       null();
       throw;
     }
@@ -479,6 +485,9 @@ public:
     } catch (SMemAllocError) {
       null();
       throw;
+    } catch (...) {
+      null();
+      throw;
     }
   }
 
@@ -492,6 +501,9 @@ public:
       initPic();
       copyPic(sp);
     } catch (SMemAllocError) {
+      null();
+      throw;
+    } catch (...) {
       null();
       throw;
     }

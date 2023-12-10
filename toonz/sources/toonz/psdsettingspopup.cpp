@@ -102,6 +102,9 @@ static void doPSDInfo(TFilePath psdpath, QTreeWidget *psdTree) {
   } catch (TImageException &e) {
     error(QString::fromStdString(::to_string(e.getMessage())));
     return;
+  } catch (...) {
+    error("Unhandled exception encountered");
+    return;
   }
 }
 
@@ -374,6 +377,9 @@ void PsdSettingsPopup::doPsdParser() {
     }
   } catch (TImageException &e) {
     error(QString::fromStdString(::to_string(e.getMessage())));
+    return;
+  } catch (...) {
+    error("Unhandled exception encountered");
     return;
   }
 }
