@@ -625,6 +625,40 @@ void ControlPointEditorTool::rightButtonDown(const TPointD &pos,
 
 //---------------------------------------------------------------------------
 
+void ControlPointEditorTool::leftButtonDoubleClick(const TPointD &pos,
+                                                   const TMouseEvent &e) {
+  if (getViewer() && getViewer()->getGuidedStrokePickerMode())
+    return;
+
+  m_pos           = pos;
+  double pix      = getPixelSize() * 2.0f;
+  double maxDist  = 5 * pix;
+  double maxDist2 = maxDist * maxDist;
+  double dist2    = 0;
+  int pointIndex;
+  ControlPointEditorStroke::PointType pointType =
+      m_controlPointEditorStroke.getPointTypeAt(pos, maxDist2, pointIndex);
+
+  TVectorImageP vi = getImage(true);
+  if (!vi) return;
+
+  if (pointType != ControlPointEditorStroke::SEGMENT) return;
+
+  m_selection.selectNone();
+  // Aggiungo un punto
+  initUndo();
+  pointIndex = m_controlPointEditorStroke.addControlPoint(pos);
+  m_selection.select(pointIndex);
+  m_action = CP_MOVEMENT;
+  TUndoManager::manager()->add(m_undo);
+  m_lastPointSelected = -1;
+  notifyImageChanged();
+
+  m_selection.makeCurrent();
+}
+
+//---------------------------------------------------------------------------
+
 void ControlPointEditorTool::moveControlPoints(const TPointD &delta) {
   int i;
   int cpCount = m_controlPointEditorStroke.getControlPointCount();

@@ -105,6 +105,7 @@ public:
   void mouseMove(const TPointD& pos, const TMouseEvent& e) override;
   void leftButtonDown(const TPointD& pos, const TMouseEvent& e) override;
   void rightButtonDown(const TPointD& pos, const TMouseEvent&) override;
+  void leftButtonDoubleClick(const TPointD& pos, const TMouseEvent& e) override;
 
   void moveControlPoints(const TPointD& delta);
   void moveSpeed(const TPointD& delta, bool isIn);
