@@ -70,7 +70,7 @@ class ControlPointEditorTool final : public TTool {
 
   TUndo* m_undo;
 
-  void selectRegion(TStroke* stroke);
+  void selectRegion(TStroke* stroke, bool unselect);
   void startFreehand(const TPointD& pos);
   void freehandDrag(const TPointD& pos);
   void closeFreehand(const TPointD& pos);

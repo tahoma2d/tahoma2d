@@ -504,7 +504,7 @@ void ControlPointEditorTool::leftButtonDown(const TPointD &pos,
         startFreehand(pos);
       }
     }
-    if (e.isShiftPressed())
+    if (e.isShiftPressed() || e.isAltPressed())
       m_selection.holdSelection();
     else
       m_selection.selectNone();
@@ -760,14 +760,18 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
     if (m_selectingRect.y0 > m_selectingRect.y1)
       std::swap(m_selectingRect.y1, m_selectingRect.y0);
     int i;
-    if (e.isShiftPressed())
+    if (e.isShiftPressed() || e.isAltPressed())
       m_selection.restoreSelection();
     else
       m_selection.selectNone();
     for (i = 0; i < cpCount; i++)
       if (m_selectingRect.contains(
-              m_controlPointEditorStroke.getControlPoint(i)))
-        m_selection.select(i);
+              m_controlPointEditorStroke.getControlPoint(i))) {
+        if (e.isAltPressed())
+          m_selection.unselect(i);
+        else
+          m_selection.select(i);
+      }
   } else if (m_action == FREEHAND_SELECTION) {
     freehandDrag(pos);
   }
@@ -776,7 +780,7 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
 }
 
 //---------------------------------------------------------------------------
-void ControlPointEditorTool::selectRegion(TStroke *stroke) {
+void ControlPointEditorTool::selectRegion(TStroke *stroke, bool unselect) {
   int cpCount = m_controlPointEditorStroke.getControlPointCount();
 
   TVectorImage img;
@@ -786,7 +790,10 @@ void ControlPointEditorTool::selectRegion(TStroke *stroke) {
     TRegion *region = img.getRegion(rI);
     for (int i = 0; i < cpCount; i++) {
       if (region->contains(m_controlPointEditorStroke.getControlPoint(i))) {
-        m_selection.select(i);
+        if (unselect)
+          m_selection.unselect(i);
+        else
+          m_selection.select(i);
       }
     }
   }
@@ -814,7 +821,7 @@ void ControlPointEditorTool::leftButtonUp(const TPointD &realPos,
   if (m_action == RECT_SELECTION || m_action == FREEHAND_SELECTION) {
     if (m_action == FREEHAND_SELECTION) {
       closeFreehand(pos);
-      selectRegion(m_stroke);
+      selectRegion(m_stroke, e.isAltPressed());
       m_track.clear();
     }
 
