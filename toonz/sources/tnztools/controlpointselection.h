@@ -139,6 +139,7 @@ class ControlPointSelection final : public QObject, public TSelection {
 
 private:
   std::vector<int> m_selectedPoints;
+  std::vector<int> m_originalPoints;
   int m_strokeIndex;
   ControlPointEditorStroke *m_controlPointEditorStroke;
 
@@ -158,6 +159,9 @@ public:
   void unselect(int index);
 
   TUndo *initSelectionUndo(int strokeIndex, bool clearSelection = true);
+
+  void holdSelection();
+  void restoreSelection();
 
   void deleteControlPoints();
 

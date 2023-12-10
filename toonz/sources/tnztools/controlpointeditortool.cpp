@@ -504,7 +504,10 @@ void ControlPointEditorTool::leftButtonDown(const TPointD &pos,
         startFreehand(pos);
       }
     }
-    m_selection.selectNone();
+    if (e.isCtrlPressed())
+      m_selection.holdSelection();
+    else
+      m_selection.selectNone();
     return;
   }
   TVectorImageP vi = getImage(true);
@@ -723,7 +726,10 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
     if (m_selectingRect.y0 > m_selectingRect.y1)
       std::swap(m_selectingRect.y1, m_selectingRect.y0);
     int i;
-    m_selection.selectNone();
+    if (e.isCtrlPressed())
+      m_selection.restoreSelection();
+    else
+      m_selection.selectNone();
     for (i = 0; i < cpCount; i++)
       if (m_selectingRect.contains(
               m_controlPointEditorStroke.getControlPoint(i)))
