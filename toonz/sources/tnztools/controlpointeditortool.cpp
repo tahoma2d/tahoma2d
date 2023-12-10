@@ -718,7 +718,7 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
   TPointD delta = pos - m_pos;
 
   if (m_action == CP_MOVEMENT) {
-    if (!m_selection.isSelected(m_lastPointSelected) && e.isCtrlPressed())
+    if (!m_selection.isSelected(m_lastPointSelected) && e.isShiftPressed())
       m_selection.select(m_lastPointSelected);  // Controllo che non venga
                                                 // deselezionata l'ultima
                                                 // selezione nel movimento
