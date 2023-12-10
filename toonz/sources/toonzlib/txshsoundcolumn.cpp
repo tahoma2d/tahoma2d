@@ -786,6 +786,7 @@ void TXshSoundColumn::play(TSoundTrackP soundtrack, int s0, int s1, bool loop) {
       m_timer.start();
 #endif
     } catch (TSoundDeviceException &) {
+    } catch (...) {
     }
   }
 }
@@ -827,6 +828,7 @@ void TXshSoundColumn::play(int currentFrame) {
     } else {
       throw TSoundDeviceException(e.getType(), e.getMessage());
     }
+  } catch (...) {
   }
 }
 
@@ -925,6 +927,7 @@ void TXshSoundColumn::scrub(int fromFrame, int toFrame) {
     } else {
       throw TSoundDeviceException(e.getType(), e.getMessage());
     }
+  } catch (...) {
   }
 }
 
@@ -1043,6 +1046,7 @@ TSoundTrackP TXshSoundColumn::getOverallSoundTrack(int fromFrame, int toFrame,
   try {
     overallSoundTrack = TSoundTrack::create(format, lsamp);
   } catch (TSoundDeviceException &) {
+  } catch (...) {
   }
 
   // Blank the whole track

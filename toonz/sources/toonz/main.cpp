@@ -611,6 +611,8 @@ int main(int argc, char *argv[]) {
           TSystem::mkDir(localPath);
         } catch (TException &e) {
           fatalError(QString::fromStdWString(e.getMessage()));
+        } catch (...) {
+          fatalError("Unhandled exception encountered");
         }
       }
       projectManager->addSVNProjectsRoot(localPath);
@@ -840,6 +842,8 @@ int main(int argc, char *argv[]) {
     isItalic   = fontMgr->isItalic(fontName, fontStyle);
     hasKerning = fontMgr->hasKerning();
   } catch (TFontCreationError &) {
+    // Do nothing. A default font should load
+  } catch (...) {
     // Do nothing. A default font should load
   }
 

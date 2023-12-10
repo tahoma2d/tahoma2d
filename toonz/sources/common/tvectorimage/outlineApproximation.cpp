@@ -246,6 +246,10 @@ void makeOutline(/*std::ofstream& cout,*/
     delete edge.first;
     delete edge.second;
     return;
+  } catch (...) {
+    delete edge.first;
+    delete edge.second;
+    return;
   }
 
   const TQuadratic *q_up     = edge.first;

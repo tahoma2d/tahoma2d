@@ -2162,6 +2162,7 @@ void OutputSettingsPopup::onPresetSelected(const QString &str) {
               try {
                 enumProp->setValue(enumAppProp->getValue());
               } catch (TProperty::RangeError &) {
+              } catch (...) {
               }
             } else
               throw TException();

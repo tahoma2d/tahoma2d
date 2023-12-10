@@ -139,6 +139,7 @@ void CaptureParameters::loadData(TIStream &is) {
               try {
                 enumProp->setValue(enumAppProp->getValue());
               } catch (TProperty::RangeError &) {
+              } catch (...) {
               }
             } else
               throw TException();

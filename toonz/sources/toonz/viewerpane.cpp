@@ -851,6 +851,8 @@ bool BaseViewerPanel::hasSoundtrack() {
     } else {
       throw TSoundDeviceException(e.getType(), e.getMessage());
     }
+  } catch (...) {
+    std::cout << "Unhandled exception encountered" << std::endl;
   }
   if (m_sound == NULL) {
     m_hasSoundtrack = false;

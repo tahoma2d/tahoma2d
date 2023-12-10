@@ -562,6 +562,10 @@ static int importScene(TFilePath scenePath) {
     DVGui::error(QObject::tr("There was an error saving the %1 scene.")
                      .arg(toQString(scenePath)));
     return 0;
+  } catch (...) {
+    DVGui::error(QObject::tr("There was an error saving the %1 scene.")
+                     .arg(toQString(scenePath)));
+    return 0;
   }
 
   DvDirModel::instance()->refreshFolder(

@@ -53,6 +53,8 @@ CPatternMapParam::CPatternMapParam(const int argc, const char *argv[],
     }
   } catch (SError) {
     throw;
+  } catch (...) {
+    throw;
   }
 }
 

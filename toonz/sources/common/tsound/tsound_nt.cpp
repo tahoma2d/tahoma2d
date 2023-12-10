@@ -743,6 +743,9 @@ void TSoundOutputDevice::play(const TSoundTrackP &st, TINT32 s0, TINT32 s1,
     } catch (TSoundDeviceException &e) {
       throw TSoundDeviceException(TSoundDeviceException::UnsupportedFormat,
                                   e.getMessage());
+    } catch (...) {
+      throw TSoundDeviceException(TSoundDeviceException::UnsupportedFormat,
+                                  "Unhandled exception encountered");
     }
 
     assert(s1 >= s0);
@@ -854,6 +857,9 @@ TSoundTrackFormat TSoundOutputDevice::getPreferredFormat(
   } catch (TSoundDeviceException &e) {
     throw TSoundDeviceException(TSoundDeviceException::UnsupportedFormat,
                                 e.getMessage());
+  } catch (...) {
+    throw TSoundDeviceException(TSoundDeviceException::UnsupportedFormat,
+                                "Unhandled exception encountered");
   }
 }
 
@@ -1091,6 +1097,7 @@ TSoundInputDeviceImp::~TSoundInputDeviceImp() {
         delete[] m_recordedBlocks[i];
       close();
     } catch (TException &) {
+    } catch (...) {
     }
   }
   CloseHandle(m_hLastBlockDone);
@@ -1199,6 +1206,9 @@ throw TException("This format is not supported for recording");*/
   } catch (TSoundDeviceException &e) {
     throw TSoundDeviceException(TSoundDeviceException::UnsupportedFormat,
                                 e.getMessage());
+  } catch (...) {
+    throw TSoundDeviceException(TSoundDeviceException::UnsupportedFormat,
+                                "Unhandled exception encountered");
   }
 
   if (!setRecordLine(devtype))
@@ -1226,6 +1236,10 @@ throw TException("This format is not supported for recording");*/
     m_imp->m_isRecording = false;
     throw TSoundDeviceException(TSoundDeviceException::UnableOpenDevice,
                                 e.getMessage());
+  } catch (...) {
+    m_imp->m_isRecording = false;
+    throw TSoundDeviceException(TSoundDeviceException::UnableOpenDevice,
+                                "Unhandled exception encountered");
   }
   for (; m_imp->m_index < (int)(m_imp->m_whdr.size() - 1); ++m_imp->m_index) {
     try {
@@ -1241,6 +1255,10 @@ throw TException("This format is not supported for recording");*/
           } catch (TException &e) {
             throw TSoundDeviceException(
                 TSoundDeviceException::UnableCloseDevice, e.getMessage());
+          } catch (...) {
+            throw TSoundDeviceException(
+                TSoundDeviceException::UnableCloseDevice,
+                "Unhandled exception encountered");
           }
           delete[] m_imp->m_whdr[j].lpData;
         } else if (j == m_imp->m_index)
@@ -1248,6 +1266,10 @@ throw TException("This format is not supported for recording");*/
       }
       throw TSoundDeviceException(TSoundDeviceException::UnablePrepare,
                                   e.getMessage());
+    } catch (...) {
+      m_imp->m_isRecording = false;
+      throw TSoundDeviceException(TSoundDeviceException::UnablePrepare,
+                                  "Unhandled exception encountered");
     }
   }
 
@@ -1275,6 +1297,9 @@ throw TException("This format is not supported for recording");*/
   } catch (TSoundDeviceException &e) {
     throw TSoundDeviceException(TSoundDeviceException::UnsupportedFormat,
                                 e.getMessage());
+  } catch (...) {
+    throw TSoundDeviceException(TSoundDeviceException::UnsupportedFormat,
+                                "Unhandled exception encountered");
   }
 
   if (!setRecordLine(devtype))
@@ -1307,6 +1332,13 @@ throw TException("This format is not supported for recording");*/
 
     throw TSoundDeviceException(TSoundDeviceException::UnablePrepare,
                                 e.getMessage());
+  } catch (...) {
+    m_imp->m_isRecording = false;
+    if (m_imp->m_whdr[m_imp->m_index].dwFlags & WHDR_PREPARED)
+      m_imp->unprepareHeader(m_imp->m_whdr[m_imp->m_index]);
+
+    throw TSoundDeviceException(TSoundDeviceException::UnablePrepare,
+                                "Unhandled exception encountered");
   }
 
   m_imp->m_executor.addTask(new RecordTask(m_imp));
@@ -1329,12 +1361,32 @@ TSoundTrackP TSoundInputDevice::stop() {
         } catch (TException &e) {
           throw TSoundDeviceException(TSoundDeviceException::UnablePrepare,
                                       e.getMessage());
+        } catch (...) {
+          throw TSoundDeviceException(TSoundDeviceException::UnablePrepare,
+                                      "Unhandled exception encountered");
         }
         delete[] m_imp->m_whdr[j].lpData;
       }
     }
     throw TSoundDeviceException(TSoundDeviceException::UnableCloseDevice,
                                 e.getMessage());
+  } catch (...) {
+    for (int j = 0; j < (int)m_imp->m_whdr.size(); ++j) {
+      if (m_imp->m_whdr[j].dwFlags & WHDR_PREPARED) {
+        try {
+          m_imp->unprepareHeader(m_imp->m_whdr[j]);
+        } catch (TException &e) {
+          throw TSoundDeviceException(TSoundDeviceException::UnablePrepare,
+                                      e.getMessage());
+        } catch (...) {
+          throw TSoundDeviceException(TSoundDeviceException::UnablePrepare,
+                                      "Unhandled exception encountered");
+        }
+        delete[] m_imp->m_whdr[j].lpData;
+      }
+    }
+    throw TSoundDeviceException(TSoundDeviceException::UnableCloseDevice,
+                                "Unhandled exception encountered");
   }
 
   if (m_imp->m_allocateBuff) {
@@ -1371,6 +1423,9 @@ TSoundTrackP TSoundInputDevice::stop() {
     } catch (TException &e) {
       throw TSoundDeviceException(TSoundDeviceException::UnableCloseDevice,
                                   e.getMessage());
+    } catch (...) {
+      throw TSoundDeviceException(TSoundDeviceException::UnableCloseDevice,
+                                  "Unhandled exception encountered");
     }
     return st;
   } else {
@@ -1380,6 +1435,9 @@ TSoundTrackP TSoundInputDevice::stop() {
     } catch (TException &e) {
       throw TSoundDeviceException(TSoundDeviceException::UnableCloseDevice,
                                   e.getMessage());
+    } catch (...) {
+      throw TSoundDeviceException(TSoundDeviceException::UnableCloseDevice,
+                                  "Unhandled exception encountered");
     }
     return m_imp->m_st;
   }
@@ -1419,6 +1477,10 @@ void RecordTask::run() {
           for (int i = 0; i < (int)m_dev->m_recordedBlocks.size(); ++i)
             delete[] m_dev->m_recordedBlocks[i];
           return;
+        } catch (...) {
+          for (int i = 0; i < (int)m_dev->m_recordedBlocks.size(); ++i)
+            delete[] m_dev->m_recordedBlocks[i];
+          return;
         }
 
         if (byteRecorded == 0) {
@@ -1438,6 +1500,11 @@ void RecordTask::run() {
             for (int i = 0; i < (int)m_dev->m_recordedBlocks.size(); ++i)
               delete[] m_dev->m_recordedBlocks[i];
             return;
+          } catch (...) {
+            m_dev->m_isRecording = false;
+            for (int i = 0; i < (int)m_dev->m_recordedBlocks.size(); ++i)
+              delete[] m_dev->m_recordedBlocks[i];
+            return;
           }
         }
 
@@ -1451,6 +1518,9 @@ void RecordTask::run() {
       m_dev->unprepareHeader(m_dev->m_whdr[m_dev->m_index]);
       m_dev->m_isRecording = false;
     } catch (TException &) {
+      m_dev->m_isRecording = false;
+      return;
+    } catch (...) {
       m_dev->m_isRecording = false;
       return;
     }
@@ -1753,6 +1823,9 @@ TSoundTrackFormat TSoundInputDevice::getPreferredFormat(
   } catch (TSoundDeviceException &e) {
     throw TSoundDeviceException(TSoundDeviceException::UnsupportedFormat,
                                 e.getMessage());
+  } catch (...) {
+    throw TSoundDeviceException(TSoundDeviceException::UnsupportedFormat,
+                                "Unhandled exception encountered");
   }
 }
 

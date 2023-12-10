@@ -52,6 +52,8 @@ void FarmServerListView::update() {
     }
   } catch (TException &e) {
     DVGui::warning(QString::fromStdString(::to_string(e.getMessage())));
+  } catch (...) {
+    DVGui::warning("Unhandled exception encountered");
   }
 }
 
@@ -68,6 +70,8 @@ void FarmServerListView::activate() {
     static_cast<BatchServersViewer *>(parentWidget())->updateSelected();
   } catch (TException &e) {
     DVGui::warning(QString::fromStdString(::to_string(e.getMessage())));
+  } catch (...) {
+    DVGui::warning("Unhandled exception encountered");
   }
 }
 
@@ -84,6 +88,8 @@ void FarmServerListView::deactivate() {
     static_cast<BatchServersViewer *>(parentWidget())->updateSelected();
   } catch (TException &e) {
     DVGui::warning(QString::fromStdString(::to_string(e.getMessage())));
+  } catch (...) {
+    DVGui::warning("Unhandled exception encountered");
   }
 }
 //-----------------------------------------------------------------------------
@@ -100,6 +106,9 @@ void FarmServerListView::openContextMenu(const QPoint &p) {
     state = controller->queryServerState2(item->m_id);
   } catch (TException &e) {
     DVGui::warning(QString::fromStdString(::to_string(e.getMessage())));
+    return;
+  } catch (...) {
+    DVGui::warning("Unhandled exception encountered");
     return;
   }
 
@@ -170,6 +179,8 @@ void BatchServersViewer::updateServerInfo(const QString &id) {
     controller->queryServerInfo(id, info);
   } catch (TException &e) {
     DVGui::warning(QString::fromStdString(::to_string(e.getMessage())));
+  } catch (...) {
+    DVGui::warning("Unhandled exception encountered");
   }
 
   switch (info.m_state) {
@@ -212,6 +223,9 @@ void BatchServersViewer::updateServerInfo(const QString &id) {
     } catch (TException &e) {
       m_tasks->setText("");
       DVGui::warning(QString::fromStdString(::to_string(e.getMessage())));
+    } catch (...) {
+      m_tasks->setText("");
+      DVGui::warning("Unhandled exception encountered");
     }
   }
 
@@ -344,6 +358,10 @@ void BatchServersViewer::onProcessWith(int index) {
     return;
   } catch (TException &e) {
     DVGui::warning(QString::fromStdString(::to_string(e.getMessage())));
+    m_processWith->setCurrentIndex(0);
+    return;
+  } catch (...) {
+    DVGui::warning("Unhandled exception encountered");
     m_processWith->setCurrentIndex(0);
     return;
   }

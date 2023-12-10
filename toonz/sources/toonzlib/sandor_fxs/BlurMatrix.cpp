@@ -42,6 +42,8 @@ CBlurMatrix::CBlurMatrix(const CBlurMatrix &m)
     for (int i = 0; i < NBRS; i++) m_m[i] = m.m_m[i];
   } catch (exception) {
     throw SBlurMatrixError();
+  } catch (...) {
+    throw SBlurMatrixError();
   }
 }
 
@@ -62,6 +64,8 @@ CBlurMatrix::CBlurMatrix(const double d, const int nb, const bool isSAC,
 
     if (m_isSAC) addPath();
   } catch (SBlurMatrixError) {
+    throw;
+  } catch (...) {
     throw;
   }
 }
@@ -114,6 +118,8 @@ void CBlurMatrix::createRandom(const double d, const int nb)
       }
     }
   } catch (exception) {
+    throw SBlurMatrixError();
+  } catch (...) {
     throw SBlurMatrixError();
   }
 }
@@ -182,6 +188,8 @@ void CBlurMatrix::createEqual(const double d, const int nb)
     }
   } catch (exception) {
     throw SBlurMatrixError();
+  } catch (...) {
+    throw SBlurMatrixError();
   }
 }
 
@@ -206,6 +214,8 @@ void CBlurMatrix::addPath(vector<BLURSECTION>::iterator pBS)
     }
   } catch (exception) {
     throw;
+  } catch (...) {
+    throw;
   }
 }
 
@@ -219,6 +229,8 @@ void CBlurMatrix::addPath()  // throw(SBlurMatrixError)
       }
     }
   } catch (exception) {
+    throw SBlurMatrixError();
+  } catch (...) {
     throw SBlurMatrixError();
   }
 }

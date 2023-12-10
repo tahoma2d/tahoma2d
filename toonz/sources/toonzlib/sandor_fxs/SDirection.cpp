@@ -38,6 +38,8 @@ CSDirection::CSDirection(const int lX, const int lY, const UCHAR *sel,
     }
   } catch (SMemAllocError) {
     throw;
+  } catch (...) {
+    throw;
   }
 }
 
@@ -59,6 +61,8 @@ CSDirection::CSDirection(const int lX, const int lY, const UCHAR *sel,
       makeDirFilter(sens);
     }
   } catch (SMemAllocError) {
+    throw;
+  } catch (...) {
     throw;
   }
 }
@@ -382,6 +386,8 @@ void CSDirection::doRadius(const double rH, const double rLR, const double rV,
 
     if (dBlur > 0) blurRadius(dBlur);
   } catch (SMemAllocError) {
+    throw;
+  } catch (...) {
     throw;
   }
 }

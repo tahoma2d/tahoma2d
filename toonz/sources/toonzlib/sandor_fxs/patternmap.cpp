@@ -118,6 +118,7 @@ static void patternmapUC(
     //	SWriteRasterError();
   } catch (SFileReadError) {
     //	SFileReadError();
+  } catch (...) {
   }
 }
 
@@ -198,6 +199,7 @@ static void patternmapUS(
     //	SWriteRasterError();
   } catch (SFileReadError) {
     //	SFileReadError();
+  } catch (...) {
   }
 }
 
@@ -234,6 +236,9 @@ int patternmap(const RASTER *iras, RASTER *oras, const int border, int argc,
     return 0;
   } catch (SFileReadError e) {
     e.debug_print();
+    COPY_RASTER(iras, oras, border);
+    return 0;
+  } catch (...) {
     COPY_RASTER(iras, oras, border);
     return 0;
   }

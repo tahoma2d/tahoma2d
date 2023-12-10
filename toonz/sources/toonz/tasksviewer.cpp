@@ -1275,6 +1275,8 @@ void TaskTreeModel::start(bool) {
       }
   } catch (TException &e) {
     DVGui::warning(QString::fromStdString(::to_string(e.getMessage())));
+  } catch (...) {
+    DVGui::warning("Unhandled exception encountered");
   }
 
   emit layoutChanged();
@@ -1305,6 +1307,8 @@ void TaskTreeModel::stop(bool) {
       }
   } catch (TException &e) {
     DVGui::warning(QString::fromStdString(::to_string(e.getMessage())));
+  } catch (...) {
+    DVGui::warning("Unhandled exception encountered");
   }
 
   emit layoutChanged();

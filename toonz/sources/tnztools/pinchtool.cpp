@@ -273,6 +273,9 @@ void PinchTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
     } catch (TDoubleProperty::RangeError &) {
       m_toolRange.setValue((prop_range.first + prop_range.second) * 0.5);
       TTool::getApplication()->getCurrentTool()->notifyToolChanged();
+    } catch (...) {
+      m_toolRange.setValue((prop_range.first + prop_range.second) * 0.5);
+      TTool::getApplication()->getCurrentTool()->notifyToolChanged();
     }
 
     m_selector.setLength(m_toolRange.getValue());

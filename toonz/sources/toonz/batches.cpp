@@ -321,6 +321,7 @@ void BatchesController::addCleanupTask(const TFilePath &taskFilePath) {
   try {
     BatchesController::instance()->addTask(id, taskGroup);
   } catch (TException &) {
+  } catch (...) {
   }
 }
 
@@ -332,6 +333,7 @@ void BatchesController::addComposerTask(const TFilePath &_taskFilePath) {
   try {
     taskFilePath = TSystem::toUNC(_taskFilePath);
   } catch (TException &) {
+  } catch (...) {
   }
 
   ToonzScene scene;
@@ -394,6 +396,7 @@ void BatchesController::addComposerTask(const TFilePath &_taskFilePath) {
     BatchesController::instance()->addTask(id, taskGroup);
   } catch (TException &) {
     // TMessage::error(toString(e.getMessage()));
+  } catch (...) {
   }
   // m_data->m_scene.setProject( mainprogramProj);
   // TModalPopup::closePopup();
@@ -1000,6 +1003,9 @@ void BatchesController::update() {
         }
       }
     } catch (TException &e) {
+      ControllerFailureMsg(e).send();
+    } catch (...) {
+      TException e("Unhandled exception encountered");
       ControllerFailureMsg(e).send();
     }
   }

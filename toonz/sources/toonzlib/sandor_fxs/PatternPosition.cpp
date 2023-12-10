@@ -59,6 +59,10 @@ void CPatternPosition::makeRandomPositions(const int nbPat, const int nbPixel,
     char s[50];
     snprintf(s, sizeof(s), "in Pattern Position Generation");
     throw SMemAllocError(s);
+  } catch (...) {
+    char s[50];
+    snprintf(s, sizeof(s), "Unhandled exception encountered");
+    throw SMemAllocError(s);
   }
 }
 
@@ -159,6 +163,10 @@ void CPatternPosition::prepareCircle(vector<SPOINT> &v, const double r) {
     char s[50];
     snprintf(s, sizeof(s), "Position Generation");
     throw SMemAllocError(s);
+  } catch (...) {
+    char s[50];
+    snprintf(s, sizeof(s), "Unhandled exception encountered");
+    throw SMemAllocError(s);
   }
 }
 
@@ -182,6 +190,8 @@ void CPatternPosition::makeDDPositions(const int lX, const int lY, UCHAR *sel,
         prepareCircle(ddc[i], dist);
     }
   } catch (SMemAllocError) {
+    throw;
+  } catch (...) {
     throw;
   }
   // Preparing local selection
@@ -210,6 +220,10 @@ void CPatternPosition::makeDDPositions(const int lX, const int lY, UCHAR *sel,
   } catch (exception) {
     char s[50];
     snprintf(s, sizeof(s), "in Pattern Position Generation");
+    throw SMemAllocError(s);
+  } catch (...) {
+    char s[50];
+    snprintf(s, sizeof(s), "Unhandled exception encountered");
     throw SMemAllocError(s);
   }
   //	memcpy(sel,lSel,lX*lY);
