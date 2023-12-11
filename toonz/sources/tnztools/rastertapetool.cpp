@@ -122,6 +122,7 @@ class RasterTapeTool final : public TTool {
   TPropertyGroup m_prop;
   TBoolProperty m_multi;
   TFrameId m_firstFrameId, m_veryFirstFrameId;
+  int m_firstFrameIdx;
   bool m_isXsheetCell;
   std::pair<int, int> m_currCell;
 
@@ -363,6 +364,68 @@ public:
     //		TNotifier::instance()->notify(TStageChange());
   }
 
+  void multiApplyAutoclose(
+      int firstFrame, int lastFrame, std::wstring closeType, TRectD firstRect,
+      TRectD lastRect,
+      std::vector<TStroke *> firstStrokes = std::vector<TStroke *>(),
+      std::vector<TStroke *> lastStrokes  = std::vector<TStroke *>()) {
+    bool backward = false;
+    if (firstFrame > lastFrame) {
+      std::swap(firstFrame, lastFrame);
+      backward = true;
+    }
+    assert(firstFrame <= lastFrame);
+
+    TTool::Application *app = TTool::getApplication();
+    TFrameId lastFrameId;
+    int col = app->getCurrentColumn()->getColumnIndex();
+    int row;
+
+    std::vector<std::pair<int, TXshCell>> cellList;
+
+    for (row = firstFrame; row <= lastFrame; row++) {
+      TXshCell cell = app->getCurrentXsheet()->getXsheet()->getCell(row, col);
+      if (cell.isEmpty()) continue;
+      TFrameId fid = cell.getFrameId();
+      if (lastFrameId == fid) continue;  // Skip held cells
+      cellList.push_back(std::pair<int, TXshCell>(row, cell));
+      lastFrameId = fid;
+    }
+
+    int m = cellList.size();
+
+    TVectorImageP firstImage;
+    TVectorImageP lastImage;
+    if ((closeType == FREEHAND_CLOSE || closeType == POLYLINE_CLOSE) &&
+        firstStrokes.size() && lastStrokes.size()) {
+      firstImage = new TVectorImage();
+      lastImage  = new TVectorImage();
+      for (int i = 0; i < firstStrokes.size(); i++)
+        firstImage->addStroke(firstStrokes[i]);
+      for (int i = 0; i < lastStrokes.size(); i++)
+        lastImage->addStroke(lastStrokes[i]);
+    }
+
+    TUndoManager::manager()->beginBlock();
+    for (int i = 0; i < m; ++i) {
+      row              = cellList[i].first;
+      TXshCell cell    = cellList[i].second;
+      TFrameId fid     = cell.getFrameId();
+      TToonzImageP img = (TToonzImageP)cell.getImage(true);
+      if (!img) continue;
+      double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+      if (closeType == RECT_CLOSE)
+        applyAutoclose(img, fid, interpolateRect(firstRect, lastRect, t));
+      else if ((closeType == FREEHAND_CLOSE || closeType == POLYLINE_CLOSE) &&
+               firstStrokes.size() && lastStrokes.size())
+        doClose(t, fid, img, firstImage, lastImage);
+      m_level->getProperties()->setDirtyFlag(true);
+    }
+    TUndoManager::manager()->endBlock();
+
+    TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
   //----------------------------------------------------------------------
 
   void multiApplyAutoclose(TFrameId firstFrameId, TFrameId lastFrameId) {
@@ -387,6 +450,34 @@ public:
 
     //		TNotifier::instance()->notify(TLevelChange());
     //		TNotifier::instance()->notify(TStageChange());
+  }
+
+  //----------------------------------------------------------------------
+
+  void multiApplyAutoclose(int firstFrameIdx, int lastFrameIdx) {
+    if (firstFrameIdx > lastFrameIdx) {
+      std::swap(firstFrameIdx, lastFrameIdx);
+    }
+    if ((lastFrameIdx - firstFrameIdx) < 2) return;
+
+    TTool::Application *app = TTool::getApplication();
+    TFrameId lastFrameId;
+    int col = app->getCurrentColumn()->getColumnIndex();
+
+    TUndoManager::manager()->beginBlock();
+    for (int i = firstFrameIdx; i <= lastFrameIdx; ++i) {
+      TXshCell cell = app->getCurrentXsheet()->getXsheet()->getCell(i, col);
+      if (cell.isEmpty()) continue;
+      TFrameId fid = cell.getFrameId();
+      if (lastFrameId == fid) continue;  // Skip held cells
+      TToonzImageP img = (TToonzImageP)cell.getImage(true);
+      if (!img) continue;
+      lastFrameId = fid;
+      applyAutoclose(img, fid);
+    }
+    TUndoManager::manager()->endBlock();
+
+    TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
   //----------------------------------------------------------------------
@@ -424,13 +515,18 @@ public:
               lastStrokes.push_back(m_polyline.makeRectangleStroke(i));
             multiAutocloseRegion(lastStrokes, POLYLINE_CLOSE, e);
           } else {
-            multiApplyAutoclose(m_firstFrameId, getFrameId(), RECT_CLOSE,
-                                m_firstRect, m_selectingRect);
+            if (m_isXsheetCell)
+              multiApplyAutoclose(m_firstFrameIdx, getFrame(), RECT_CLOSE,
+                                  m_firstRect, m_selectingRect);
+            else
+              multiApplyAutoclose(m_firstFrameId, getFrameId(), RECT_CLOSE,
+                                  m_firstRect, m_selectingRect);
           }
           invalidate(m_selectingRect.enlarge(2));
           if (e.isShiftPressed()) {
-            m_firstRect    = m_selectingRect;
-            m_firstFrameId = getFrameId();
+            m_firstRect     = m_selectingRect;
+            m_firstFrameId  = getFrameId();
+            m_firstFrameIdx = getFrame();
             m_firstStrokes.clear();
             if (m_polyline.size() > 1) {
               for (int i = 0; i < m_polyline.getBrushCount(); i++)
@@ -639,6 +735,7 @@ public:
                   ? app->getCurrentLevel()->getSimpleLevel()
                   : 0;
     m_firstFrameId = m_veryFirstFrameId = getFrameId();
+    m_firstFrameIdx                     = getFrame();
     m_firstStrokes.clear();
   }
 
@@ -657,7 +754,8 @@ public:
           m_closeType.getValue() == POLYLINE_CLOSE) &&
          !m_firstStrokes.size()))
       resetMulti();
-    else if (m_firstFrameId == getFrameId())
+    else if ((!m_isXsheetCell && m_firstFrameId == getFrameId()) ||
+             (m_isXsheetCell && m_firstFrameIdx == getFrame()))
       m_firstFrameSelected = false;  // nel caso sono passato allo stato 1 e
                                      // torno all'immagine iniziale, torno allo
                                      // stato iniziale
@@ -716,7 +814,10 @@ public:
       if (m_multi.getValue()) {
         TTool::Application *app = TTool::getApplication();
         if (m_firstFrameSelected) {
-          multiApplyAutoclose(m_firstFrameId, getFrameId());
+          if (m_isXsheetCell)
+            multiApplyAutoclose(m_firstFrameIdx, getFrame());
+          else
+            multiApplyAutoclose(m_firstFrameId, getFrameId());
           invalidate();
           if (m_isXsheetCell) {
             app->getCurrentColumn()->setColumnIndex(m_currCell.first);
@@ -953,8 +1054,12 @@ public:
                             const TMouseEvent &e) {
     TTool::Application *app = TTool::getApplication();
     if (m_firstStrokes.size()) {
-      multiApplyAutoclose(m_firstFrameId, getFrameId(), eraseType, TRectD(),
-                          TRectD(), m_firstStrokes, laststrokes);
+      if (m_isXsheetCell)
+        multiApplyAutoclose(m_firstFrameIdx, getFrame(), eraseType, TRectD(),
+                            TRectD(), m_firstStrokes, laststrokes);
+      else
+        multiApplyAutoclose(m_firstFrameId, getFrameId(), eraseType, TRectD(),
+                            TRectD(), m_firstStrokes, laststrokes);
       invalidate();
       if (e.isShiftPressed()) {
         m_firstStrokes.clear();
@@ -968,7 +1073,8 @@ public:
           for (int i = 0; i < m_track.getBrushCount(); i++)
             m_firstStrokes.push_back(m_track.makeStroke(error, i));
         }
-        m_firstFrameId = getFrameId();
+        m_firstFrameId  = getFrameId();
+        m_firstFrameIdx = getFrame();
       } else {
         if (m_isXsheetCell) {
           app->getCurrentColumn()->setColumnIndex(m_currCell.first);
