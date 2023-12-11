@@ -332,9 +332,15 @@ public:
   void update(const TRasterImageP &ri, TRectD selArea,
               const TXshSimpleLevelP &level, bool multi = false,
               const TFrameId &frameId = -1);
-  void multiUpdate(const TRectD firstRect, const TRectD lastRect);
+  void multiUpdate(TFrameId &firstFid, TFrameId &lastFid,
+                   const TRectD firstRect, const TRectD lastRect);
+  void multiUpdate(int firstFidx, int lastFidx, const TRectD firstRect,
+                   const TRectD lastRect);
 
   void multiAreaEraser(TFrameId &firstFid, TFrameId &lastFid,
+                       std::vector<TStroke *> firstStrokes,
+                       std::vector<TStroke *> lastStrokes);
+  void multiAreaEraser(int firstFidx, int lastFidx,
                        std::vector<TStroke *> firstStrokes,
                        std::vector<TStroke *> lastStrokes);
 
@@ -358,6 +364,7 @@ private:
   std::pair<int, int> m_currCell;
 
   TFrameId m_firstFrameId, m_veryFirstFrameId;
+  int m_firstFrameIdx;
 
   TRaster32P m_workRaster;
   TRasterP m_backUpRas;
@@ -769,15 +776,22 @@ void FullColorEraserTool::leftButtonUp(const TPointD &pos,
     if (m_multi.getValue()) {
       TTool::Application *app = TTool::getApplication();
       if (m_firstFrameSelected) {
+        TFrameId tmp = getCurrentFid();
+        int tmpx     = getFrame();
         if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
           // We'll use polyline
-          TFrameId tmp = getCurrentFid();
           std::vector<TStroke *> lastStrokes;
           for (int i = 0; i < m_polyline.getBrushCount(); i++)
             lastStrokes.push_back(m_polyline.makeRectangleStroke(i));
-          multiAreaEraser(m_firstFrameId, tmp, m_firstStrokes, lastStrokes);
+          if (m_isXsheetCell)
+            multiAreaEraser(m_firstFrameIdx, tmpx, m_firstStrokes, lastStrokes);
+          else
+            multiAreaEraser(m_firstFrameId, tmp, m_firstStrokes, lastStrokes);
         } else {
-          multiUpdate(m_firstRect, m_selectingRect);
+          if (m_isXsheetCell)
+            multiUpdate(m_firstFrameIdx, tmpx, m_firstRect, m_selectingRect);
+          else
+            multiUpdate(m_firstFrameId, tmp, m_firstRect, m_selectingRect);
         }
         notifyImageChanged();
 
@@ -888,11 +902,15 @@ void FullColorEraserTool::leftButtonUp(const TPointD &pos,
     {
       if (m_firstFrameSelected) {
         TFrameId tmp = getCurrentFid();
+        int tmpx     = getFrame();
         if (m_firstStrokes.size() && stroke) {
           std::vector<TStroke *> lastStrokes;
           for (int i = 0; i < m_track.getBrushCount(); i++)
             lastStrokes.push_back(m_track.makeStroke(error, i));
-          multiAreaEraser(m_firstFrameId, tmp, m_firstStrokes, lastStrokes);
+          if (m_isXsheetCell)
+            multiAreaEraser(m_firstFrameIdx, tmpx, m_firstStrokes, lastStrokes);
+          else
+            multiAreaEraser(m_firstFrameId, tmp, m_firstStrokes, lastStrokes);
         }
         notifyImageChanged();
         if (e.isShiftPressed()) {
@@ -974,11 +992,15 @@ void FullColorEraserTool::leftButtonDoubleClick(const TPointD &pos,
   {
     if (m_firstFrameSelected) {
       TFrameId tmp = getFrameId();
+      int tmpx     = getFrame();
       if (m_firstStrokes.size() && stroke) {
         std::vector<TStroke *> lastStrokes;
         for (int i = 0; i < m_polyline.getBrushCount(); i++)
           lastStrokes.push_back(m_polyline.makePolylineStroke(i));
-        multiAreaEraser(m_firstFrameId, tmp, m_firstStrokes, lastStrokes);
+        if (m_isXsheetCell)
+          multiAreaEraser(m_firstFrameIdx, tmpx, m_firstStrokes, lastStrokes);
+        else
+          multiAreaEraser(m_firstFrameId, tmp, m_firstStrokes, lastStrokes);
       }
       if (e.isShiftPressed()) {
         m_firstStrokes.clear();
@@ -1193,6 +1215,7 @@ void FullColorEraserTool::resetMulti() {
                 ? app->getCurrentLevel()->getSimpleLevel()
                 : 0;
   m_firstFrameId = m_veryFirstFrameId = getCurrentFid();
+  m_firstFrameIdx                     = getFrame();
   m_firstStrokes.clear();
 }
 
@@ -1208,7 +1231,8 @@ void FullColorEraserTool::onImageChanged() {
   if (!xshl || m_level.getPointer() != xshl ||
       (m_selectingRect.isEmpty() && !m_firstStrokes.size()))
     resetMulti();
-  else if (m_firstFrameId == getCurrentFid())
+  else if ((!m_isXsheetCell && m_firstFrameId == getCurrentFid()) ||
+           (m_isXsheetCell && m_firstFrameIdx == getFrame()))
     m_firstFrameSelected = false;  // nel caso sono passato allo stato 1 e torno
                                    // all'immagine iniziale, torno allo stato
                                    // iniziale
@@ -1224,11 +1248,10 @@ void FullColorEraserTool::onImageChanged() {
 
 //----------------------------------------------------------------------------------------------------------
 
-void FullColorEraserTool::multiUpdate(const TRectD firstRect,
+void FullColorEraserTool::multiUpdate(TFrameId &firstFid, TFrameId &lastFid,
+                                      const TRectD firstRect,
                                       const TRectD lastRect) {
   bool backward     = false;
-  TFrameId firstFid = m_firstFrameId;
-  TFrameId lastFid  = getCurrentFid();
   if (firstFid > lastFid) {
     std::swap(firstFid, lastFid);
     backward = true;
@@ -1252,6 +1275,65 @@ void FullColorEraserTool::multiUpdate(const TRectD firstRect,
     TFrameId fid = fids[i];
     assert(firstFid <= fid && fid <= lastFid);
     TRasterImageP ri = m_level->getFrame(fid, true);
+    assert(ri);
+    double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    TRectD rect = interpolateRect(firstRect, lastRect, backward ? 1 - t : t);
+    if (m_invertOption.getValue()) {
+      TRectD rect01 =
+          TRectD(TPointD(-100000., -100000.), TPointD(rect.x0, 100000.));
+      update(ri, rect01, m_level, true, fid);
+      TRectD rect02 = TRectD(rect.getP01(), TPointD(rect.x1, 100000.));
+      update(ri, rect02, m_level, true, fid);
+      TRectD rect03 = TRectD(TPointD(rect.x0, -100000.), rect.getP10());
+      update(ri, rect03, m_level, true, fid);
+      TRectD rect04 =
+          TRectD(TPointD(rect.x1, -100000.), TPointD(100000., 100000.));
+      update(ri, rect04, m_level, true, fid);
+    } else
+      update(ri, rect, m_level, true, fid);
+    m_level->getProperties()->setDirtyFlag(true);
+    notifyImageChanged(fid);
+  }
+  TUndoManager::manager()->endBlock();
+}
+
+//----------------------------------------------------------------------------------------------------------
+
+void FullColorEraserTool::multiUpdate(int firstFidx, int lastFidx,
+                                      const TRectD firstRect,
+                                      const TRectD lastRect) {
+  bool backward = false;
+  if (firstFidx > lastFidx) {
+    std::swap(firstFidx, lastFidx);
+    backward = true;
+  }
+  assert(firstFidx <= lastFidx);
+
+  TTool::Application *app = TTool::getApplication();
+  TFrameId lastFrameId;
+  int col = app->getCurrentColumn()->getColumnIndex();
+  int row;
+
+  std::vector<std::pair<int, TXshCell>> cellList;
+
+  for (row = firstFidx; row <= lastFidx; row++) {
+    TXshCell cell = app->getCurrentXsheet()->getXsheet()->getCell(row, col);
+    if (cell.isEmpty()) continue;
+    TFrameId fid = cell.getFrameId();
+    if (lastFrameId == fid) continue;  // Skip held cells
+    cellList.push_back(std::pair<int, TXshCell>(row, cell));
+    lastFrameId = fid;
+  }
+
+  int m = cellList.size();
+
+  TUndoManager::manager()->beginBlock();
+  for (int i = 0; i < m; ++i) {
+    row           = cellList[i].first;
+    TXshCell cell = cellList[i].second;
+    TFrameId fid  = cell.getFrameId();
+    TRasterImageP ri = (TRasterImageP)cell.getImage(true);
+    if (!ri) continue;
     assert(ri);
     double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
     TRectD rect = interpolateRect(firstRect, lastRect, backward ? 1 - t : t);
@@ -1325,6 +1407,58 @@ void FullColorEraserTool::multiAreaEraser(TFrameId &firstFid, TFrameId &lastFid,
     TFrameId fid = fids[i];
     assert(firstFid <= fid && fid <= lastFid);
     TImageP img = m_level->getFrame(fid, true);
+    double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    doMultiEraser(img, backward ? 1 - t : t, fid, firstImage, lastImage);
+    m_level->getProperties()->setDirtyFlag(true);
+    notifyImageChanged(fid);
+  }
+  TUndoManager::manager()->endBlock();
+}
+
+//----------------------------------------------------------------------------------------------------------
+
+void FullColorEraserTool::multiAreaEraser(int firstFidx, int lastFidx,
+                                          std::vector<TStroke *> firstStrokes,
+                                          std::vector<TStroke *> lastStrokes) {
+  TVectorImageP firstImage = new TVectorImage();
+  TVectorImageP lastImage  = new TVectorImage();
+  for (int i = 0; i < firstStrokes.size(); i++)
+    firstImage->addStroke(firstStrokes[i]);
+  for (int i = 0; i < lastStrokes.size(); i++)
+    lastImage->addStroke(lastStrokes[i]);
+
+  bool backward = false;
+  if (firstFidx > lastFidx) {
+    std::swap(firstFidx, lastFidx);
+    backward = true;
+  }
+  assert(firstFidx <= lastFidx);
+
+  TTool::Application *app = TTool::getApplication();
+  TFrameId lastFrameId;
+  int col = app->getCurrentColumn()->getColumnIndex();
+  int row;
+
+  std::vector<std::pair<int, TXshCell>> cellList;
+
+  for (row = firstFidx; row <= lastFidx; row++) {
+    TXshCell cell = app->getCurrentXsheet()->getXsheet()->getCell(row, col);
+    if (cell.isEmpty()) continue;
+    TFrameId fid = cell.getFrameId();
+    if (lastFrameId == fid) continue;  // Skip held cells
+    cellList.push_back(std::pair<int, TXshCell>(row, cell));
+    lastFrameId = fid;
+  }
+
+  int m = cellList.size();
+
+  TUndoManager::manager()->beginBlock();
+  for (int i = 0; i < m; ++i) {
+    row               = cellList[i].first;
+    TXshCell cell     = cellList[i].second;
+    TFrameId fid      = cell.getFrameId();
+    TImageP img       = (TImageP)cell.getImage(true);
+    if (!img) continue;
     double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
     doMultiEraser(img, backward ? 1 - t : t, fid, firstImage, lastImage);
     m_level->getProperties()->setDirtyFlag(true);
