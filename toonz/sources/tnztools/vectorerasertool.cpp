@@ -324,6 +324,7 @@ private:
   TRectD m_selectingRect, m_firstRect;
 
   TFrameId m_firstFrameId, m_veryFirstFrameId;
+  int m_firstFrameIdx;
 
   TXshSimpleLevelP m_level;
   std::pair<int, int> m_currCell;
@@ -362,7 +363,13 @@ private:
 
   void multiEraseRect(TFrameId firstFrameId, TFrameId lastFrameId,
                       TRectD firstRect, TRectD lastRect, bool invert);
+  void multiEraseRect(int firstFrameIdx, int lastFrameIdx, TRectD firstRect,
+                      TRectD lastRect, bool invert);
   void doMultiErase(TFrameId &firstFrameId, TFrameId &lastFrameId,
+                    const std::vector<TStroke *> firstStrokes,
+                    const std::vector<TStroke *> lastStrokes,
+                    EraseFunction eraseFunction);
+  void doMultiErase(int firstFrameIdx, int lastFrameIdx,
                     const std::vector<TStroke *> firstStrokes,
                     const std::vector<TStroke *> lastStrokes,
                     EraseFunction eraseFunction);
@@ -530,6 +537,7 @@ void EraserTool::resetMulti() {
   if (!application) return;
 
   m_firstFrameId = m_veryFirstFrameId = getCurrentFid();
+  m_firstFrameIdx                     = getFrame();
   m_level = application->getCurrentLevel()->getLevel()
                 ? application->getCurrentLevel()->getLevel()->getSimpleLevel()
                 : 0;
@@ -973,12 +981,65 @@ void EraserTool::multiEraseRect(TFrameId firstFrameId, TFrameId lastFrameId,
 
     // Setto fid come corrente per notificare il cambiamento dell'immagine
     TTool::Application *app = TTool::getApplication();
-    if (app) {
-      if (app->getCurrentFrame()->isEditingScene())
-        app->getCurrentFrame()->setFrame(fid.getNumber() - 1);
-      else
-        app->getCurrentFrame()->setFid(fid);
-    }
+    if (app) app->getCurrentFrame()->setFid(fid);
+
+    erase(img, rect);
+
+    notifyImageChanged();
+  }
+  TUndoManager::manager()->endBlock();
+}
+
+//-----------------------------------------------------------------------------
+
+void EraserTool::multiEraseRect(int firstFrameIdx, int lastFrameIdx,
+                                TRectD firstRect, TRectD lastRect,
+                                bool invert) {
+  if (firstFrameIdx > lastFrameIdx) {
+    std::swap(firstFrameIdx, lastFrameIdx);
+    std::swap(firstRect, lastRect);
+  }
+  if ((lastFrameIdx - firstFrameIdx) < 1) return;
+
+  TTool::Application *app = TTool::getApplication();
+  TFrameId lastFrameId;
+  int col = app->getCurrentColumn()->getColumnIndex();
+  int row;
+
+  std::vector<std::pair<int, TXshCell>> cellList;
+
+  for (row = firstFrameIdx; row <= lastFrameIdx; row++) {
+    TXshCell cell = app->getCurrentXsheet()->getXsheet()->getCell(row, col);
+    if (cell.isEmpty()) continue;
+    TFrameId fid = cell.getFrameId();
+    if (lastFrameId == fid) continue;  // Skip held cells
+    cellList.push_back(std::pair<int, TXshCell>(row, cell));
+    lastFrameId = fid;
+  }
+
+  int m = cellList.size();
+
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (m_interpolation.getValue() == EASE_IN_INTERPOLATION) {
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (m_interpolation.getValue() == EASE_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (m_interpolation.getValue() == EASE_IN_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
+  TUndoManager::manager()->beginBlock();
+  for (int i = 0; i < m; ++i) {
+    row               = cellList[i].first;
+    TXshCell cell     = cellList[i].second;
+    TFrameId fid      = cell.getFrameId();
+    TVectorImageP img = (TVectorImageP)cell.getImage(true);
+    if (!img) continue;
+    double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t           = TInbetween::interpolation(t, algorithm);
+    TRectD rect = interpolateRect(firstRect, lastRect, t);
+
+    if (app) app->getCurrentFrame()->setFrame(row);
 
     erase(img, rect);
 
@@ -1000,6 +1061,8 @@ void EraserTool::onImageChanged() {
   if (application->getCurrentLevel()->getLevel())
     xshl = application->getCurrentLevel()->getLevel()->getSimpleLevel();
 
+  bool isEditingLevel = application->getCurrentFrame()->isEditingLevel();
+
   if (!xshl || m_level.getPointer() != xshl ||
       (m_eraseType.getValue() == RECT_ERASE && m_selectingRect.isEmpty()) ||
       ((m_eraseType.getValue() == FREEHAND_ERASE ||
@@ -1007,7 +1070,8 @@ void EraserTool::onImageChanged() {
         m_eraseType.getValue() == SEGMENT_ERASE) &&
        !m_firstStrokes.size()))
     resetMulti();
-  else if (m_firstFrameId == getCurrentFid())
+  else if ((isEditingLevel && m_firstFrameId == getCurrentFid()) ||
+           (!isEditingLevel && m_firstFrameIdx == getFrame()))
     m_firstFrameSelected = false;  // nel caso sono passato allo stato 1 e torno
                                    // all'immagine iniziale, torno allo stato
                                    // iniziale
@@ -1048,6 +1112,8 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
 
     if (m_multi.getValue()) {
       if (m_firstFrameSelected) {
+        bool isEditingLevel = application->getCurrentFrame()->isEditingLevel();
+
         if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
           // We'll use polyline
           TFrameId tmp = getCurrentFid();
@@ -1056,8 +1122,12 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
             lastStrokes.push_back(m_polyline.makeRectangleStroke(i));
           multiErase(lastStrokes, POLYLINE_ERASE, e, &EraserTool::eraseRegion);
         } else {
-          multiEraseRect(m_firstFrameId, getCurrentFid(), m_firstRect,
-                         m_selectingRect, m_invertOption.getValue());
+          if (isEditingLevel)
+            multiEraseRect(m_firstFrameId, getCurrentFid(), m_firstRect,
+                           m_selectingRect, m_invertOption.getValue());
+          else
+            multiEraseRect(m_firstFrameIdx, getFrame(), m_firstRect,
+                           m_selectingRect, m_invertOption.getValue());
         }
 
         if (e.isShiftPressed()) {
@@ -1710,15 +1780,7 @@ void EraserTool::doMultiErase(TFrameId &firstFrameId, TFrameId &lastFrameId,
   int m = fids.size();
   assert(m > 0);
 
-  // Find the starting frame for the current level in the XSheet.
   TTool::Application *app = TTool::getApplication();
-  int startRowInXSheet = 0, endRowInXSheet = 0;
-  if (app && app->getCurrentFrame()->isEditingScene()) {
-    int currentRow     = getFrame();
-    TXsheet *xSheet    = getXsheet();
-    TXshColumn *column = xSheet->getColumn(getColumnIndex());
-    column->getLevelRange(currentRow, startRowInXSheet, endRowInXSheet);
-  }
 
   enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
   if (m_interpolation.getValue() == EASE_IN_INTERPOLATION) {
@@ -1736,13 +1798,76 @@ void EraserTool::doMultiErase(TFrameId &firstFrameId, TFrameId &lastFrameId,
     double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
     t        = TInbetween::interpolation(t, algorithm);
     // Setto il fid come corrente per notificare il cambiamento dell'immagine
-    if (app) {
-      if (app->getCurrentFrame()->isEditingScene())
-        app->getCurrentFrame()->setFrame(startRowInXSheet + fid.getNumber() -
-                                         1);
-      else
-        app->getCurrentFrame()->setFid(fid);
-    }
+    if (app) app->getCurrentFrame()->setFid(fid);
+
+    doErase(backward ? 1 - t : t, sl, fid, firstImage, lastImage,
+            eraseFunction);
+    notifyImageChanged();
+  }
+  TUndoManager::manager()->endBlock();
+}
+
+//-----------------------------------------------------------------------------
+
+void EraserTool::doMultiErase(int firstFrameIdx, int lastFrameIdx,
+                              const std::vector<TStroke *> firstStrokes,
+                              const std::vector<TStroke *> lastStrokes,
+                              EraserTool::EraseFunction eraseFunction) {
+  TXshSimpleLevel *sl =
+      TTool::getApplication()->getCurrentLevel()->getLevel()->getSimpleLevel();
+  TVectorImageP firstImage = new TVectorImage();
+  TVectorImageP lastImage  = new TVectorImage();
+  for (int i = 0; i < firstStrokes.size(); i++)
+    firstImage->addStroke(firstStrokes[i]);
+  for (int i = 0; i < lastStrokes.size(); i++)
+    lastImage->addStroke(lastStrokes[i]);
+
+  bool backward = false;
+  if (firstFrameIdx > lastFrameIdx) {
+    std::swap(firstFrameIdx, lastFrameIdx);
+    backward = true;
+  }
+  assert(firstFrameIdx <= lastFrameIdx);
+
+  TTool::Application *app = TTool::getApplication();
+  TFrameId lastFrameId;
+  int col = app->getCurrentColumn()->getColumnIndex();
+  int row;
+
+  std::vector<std::pair<int, TXshCell>> cellList;
+
+  for (row = firstFrameIdx; row <= lastFrameIdx; row++) {
+    TXshCell cell = app->getCurrentXsheet()->getXsheet()->getCell(row, col);
+    if (cell.isEmpty()) continue;
+    TFrameId fid = cell.getFrameId();
+    if (lastFrameId == fid) continue;  // Skip held cells
+    cellList.push_back(std::pair<int, TXshCell>(row, cell));
+    lastFrameId = fid;
+  }
+
+  int m = cellList.size();
+
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (m_interpolation.getValue() == EASE_IN_INTERPOLATION) {
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (m_interpolation.getValue() == EASE_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (m_interpolation.getValue() == EASE_IN_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
+  TUndoManager::manager()->beginBlock();
+  for (int i = 0; i < m; ++i) {
+    row               = cellList[i].first;
+    TXshCell cell     = cellList[i].second;
+    TFrameId fid      = cell.getFrameId();
+    TVectorImageP img = (TVectorImageP)cell.getImage(true);
+    if (!img) continue;
+    double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t        = TInbetween::interpolation(t, algorithm);
+    // Setto il fid come corrente per notificare il cambiamento dell'immagine
+    if (app) app->getCurrentFrame()->setFrame(row);
+
     doErase(backward ? 1 - t : t, sl, fid, firstImage, lastImage,
             eraseFunction);
     notifyImageChanged();
@@ -1793,10 +1918,17 @@ void EraserTool::multiErase(std::vector<TStroke *> lastStrokes, const std::wstri
   if (!application) return;
 
   if (m_firstFrameSelected) {
+    bool isEditingLevel = application->getCurrentFrame()->isEditingLevel();
+
     if (m_firstStrokes.size() && lastStrokes.size()) {
       TFrameId tmpFrameId = getCurrentFid();
-      doMultiErase(m_firstFrameId, tmpFrameId, m_firstStrokes, lastStrokes,
-                   eraseFunction);
+      int tmpFrameIdx     = getFrame();
+      if (isEditingLevel)
+        doMultiErase(m_firstFrameId, tmpFrameId, m_firstStrokes, lastStrokes,
+                     eraseFunction);
+      else
+        doMultiErase(m_firstFrameIdx, tmpFrameIdx, m_firstStrokes, lastStrokes,
+                     eraseFunction);
     }
     if (e.isShiftPressed()) {
       m_firstStrokes.clear();
