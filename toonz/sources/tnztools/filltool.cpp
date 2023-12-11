@@ -1289,10 +1289,7 @@ void SequencePainter::processSequence(TXshSimpleLevel *sl, TFrameId firstFid,
     // Setto il fid come corrente per notificare il cambiamento dell'immagine
     TTool::Application *app = TTool::getApplication();
     if (app) {
-      if (app->getCurrentFrame()->isEditingScene())
-        app->getCurrentFrame()->setFrame(fid.getNumber());
-      else
-        app->getCurrentFrame()->setFid(fid);
+      app->getCurrentFrame()->setFid(fid);
       TTool *tool = app->getCurrentTool()->getTool();
       if (tool) tool->notifyImageChanged(fid);
     }
@@ -1336,6 +1333,7 @@ void SequencePainter::processSequence(TXshSimpleLevel *sl, int firstFidx,
     TXshCell cell = cellList[i].second;
     TFrameId fid  = cell.getFrameId();
     TImageP img   = cell.getImage(true);
+    if (!img) continue;
     double t      = m > 1 ? (double)i / (double)(m - 1) : 1.0;
     process(img, backwardidx ? 1 - t : t, sl, fid, row);
     // Setto il fid come corrente per notificare il cambiamento dell'immagine
@@ -1649,6 +1647,7 @@ void AreaFillTool::resetMulti() {
   TXshLevel *xl           = app->getCurrentLevel()->getLevel();
   m_level                 = xl ? xl->getSimpleLevel() : 0;
   m_firstFrameId = m_veryFirstFrameId = m_parent->getCurrentFid();
+  m_firstFrameIdx                     = app->getCurrentFrame()->getFrameIndex();
   m_firstStrokes.clear();
 }
 
@@ -1760,6 +1759,9 @@ void AreaFillTool::leftButtonDoubleClick(const TPointD &pos,
   if (m_frameRange)  // stroke multi
   {
     if (m_firstFrameSelected) {
+      bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
+      m_lastFrameIdx      = app->getCurrentFrame()->getFrameIndex();
+
       std::vector<TStroke *> lastStrokes;
       for (int i = 0; i < m_polyline.getBrushCount(); i++)
         lastStrokes.push_back(m_polyline.makePolylineStroke(i));
@@ -1768,8 +1770,12 @@ void AreaFillTool::leftButtonDoubleClick(const TPointD &pos,
                              m_colorType, styleIndex, m_autopaintLines,
                              fillGaps, closeGaps, closeStyleIndex,
                              m_fillOnlySavebox);
-      filler.processSequence(m_level.getPointer(), m_firstFrameId,
-                             m_parent->getCurrentFid());
+      if (isEditingLevel)
+        filler.processSequence(m_level.getPointer(), m_firstFrameId,
+                               m_parent->getCurrentFid());
+      else
+        filler.processSequence(m_level.getPointer(), m_firstFrameIdx,
+                               m_lastFrameIdx);
       m_parent->invalidate(m_selectingRect.enlarge(2));
       if (e.isShiftPressed()) {
         m_firstStrokes.clear();
@@ -1902,6 +1908,9 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
 
     if (m_frameRange) {
       if (m_firstFrameSelected) {
+        bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
+        m_lastFrameIdx      = app->getCurrentFrame()->getFrameIndex();
+
         if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
           // We'll use polyline
           std::vector<TStroke *> lastStrokes;
@@ -1912,15 +1921,23 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
                                  m_colorType, styleIndex, m_autopaintLines,
                                  fillGaps, closeGaps, closeStyleIndex,
                                  m_fillOnlySavebox);
-          filler.processSequence(m_level.getPointer(), m_firstFrameId,
-                                 m_parent->getCurrentFid());
+          if (isEditingLevel)
+            filler.processSequence(m_level.getPointer(), m_firstFrameId,
+                                   m_parent->getCurrentFid());
+          else
+            filler.processSequence(m_level.getPointer(), m_firstFrameIdx,
+                                   m_lastFrameIdx);
         } else {
           MultiAreaFiller filler(m_firstRect, m_selectingRect, m_onlyUnfilled,
                                  m_colorType, styleIndex, m_autopaintLines,
                                  fillGaps, closeGaps, closeStyleIndex,
                                  m_fillOnlySavebox);
-          filler.processSequence(m_level.getPointer(), m_firstFrameId,
-                                 m_parent->getCurrentFid());
+          if (isEditingLevel)
+            filler.processSequence(m_level.getPointer(), m_firstFrameId,
+                                   m_parent->getCurrentFid());
+          else
+            filler.processSequence(m_level.getPointer(), m_firstFrameIdx,
+                                   m_lastFrameIdx);
         }
         m_parent->invalidate(m_selectingRect.enlarge(2));
         if (e.isShiftPressed()) {
@@ -2030,6 +2047,9 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
     if (m_frameRange)  // stroke multi
     {
       if (m_firstFrameSelected) {
+        bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
+        m_lastFrameIdx      = app->getCurrentFrame()->getFrameIndex();
+
         std::vector<TStroke *> lastStrokes;
         for (int i = 0; i < m_track.getBrushCount(); i++)
           lastStrokes.push_back(m_track.makeStroke(error, i));
@@ -2038,8 +2058,12 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
                                m_colorType, styleIndex, m_autopaintLines,
                                fillGaps, closeGaps, closeStyleIndex,
                                m_fillOnlySavebox);
-        filler.processSequence(m_level.getPointer(), m_firstFrameId,
-                               m_parent->getCurrentFid());
+        if (isEditingLevel)
+          filler.processSequence(m_level.getPointer(), m_firstFrameId,
+                                 m_parent->getCurrentFid());
+        else
+          filler.processSequence(m_level.getPointer(), m_firstFrameIdx,
+                                 m_lastFrameIdx);
         m_parent->invalidate(m_selectingRect.enlarge(2));
         if (e.isShiftPressed()) {
           m_firstStrokes.clear();
@@ -2130,11 +2154,13 @@ void AreaFillTool::onImageChanged() {
   TTool::Application *app = TTool::getApplication();
   if (!app) return;
   TXshLevel *xshl = app->getCurrentLevel()->getLevel();
+  bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
 
   if (!xshl || m_level.getPointer() != xshl ||
       (m_selectingRect.isEmpty() && !m_firstStrokes.size()))
     resetMulti();
-  else if (m_firstFrameId == m_parent->getCurrentFid())
+  else if ((isEditingLevel && m_firstFrameId == m_parent->getCurrentFid()) ||
+           (!isEditingLevel && m_firstFrameIdx == m_parent->getFrame()))
     m_firstFrameSelected = false;  // nel caso sono passato allo stato 1 e
                                    // torno all'immagine iniziale, torno allo
                                    // stato iniziale
