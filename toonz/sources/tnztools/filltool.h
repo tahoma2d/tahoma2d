@@ -44,6 +44,7 @@ private:
   bool m_firstFrameSelected;
   TXshSimpleLevelP m_level;
   TFrameId m_firstFrameId, m_veryFirstFrameId;
+  int m_firstFrameIdx, m_lastFrameIdx;
   TTool *m_parent;
   std::wstring m_colorType;
   std::pair<int, int> m_currCell;
