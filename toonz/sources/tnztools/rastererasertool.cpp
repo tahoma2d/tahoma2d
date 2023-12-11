@@ -697,6 +697,10 @@ public:
   void multiAreaEraser(const TXshSimpleLevelP &sl, TFrameId &firstFid,
                        TFrameId &lastFid, std::vector<TStroke *> firstStrokes,
                        std::vector<TStroke *> lastStrokes);
+  void multiAreaEraser(const TXshSimpleLevelP &sl, int firstFidx,
+                       int lastFidx, std::vector<TStroke *> firstStrokes,
+                       std::vector<TStroke *> lastStrokes);
+
   void doMultiEraser(const TImageP &img, double t, const TXshSimpleLevelP &sl,
                      const TFrameId &fid, const TVectorImageP &firstImage,
                      const TVectorImageP &lastImage);
@@ -714,6 +718,8 @@ public:
 
   void multiUpdate(const TXshSimpleLevelP &level, TFrameId firstFrameId,
                    TFrameId lastFrameId, TRectD firstRect, TRectD lastRect);
+  void multiUpdate(const TXshSimpleLevelP &level, int firstFrameIdx,
+                   int lastFrameIdx, TRectD firstRect, TRectD lastRect);
 
   TPropertyGroup *getProperties(int targetType) override { return &m_prop; }
 
@@ -752,6 +758,7 @@ private:
   std::pair<int, int> m_currCell;
 
   TFrameId m_firstFrameId, m_veryFirstFrameId;
+  int m_firstFrameIdx;
 
   VectorBrush m_track;
 
@@ -1037,6 +1044,7 @@ void EraserTool::resetMulti() {
                 ? app->getCurrentLevel()->getSimpleLevel()
                 : 0;
   m_firstFrameId = m_veryFirstFrameId = getFrameId();
+  m_firstFrameIdx                     = getFrame();
   m_firstStrokes.clear();
 }
 
@@ -1073,6 +1081,78 @@ void EraserTool::multiUpdate(const TXshSimpleLevelP &level, TFrameId firstFid,
     TFrameId fid = fids[i];
     assert(firstFid <= fid && fid <= lastFid);
     TToonzImageP ti = level->getFrame(fid, true);
+    if (!ti) continue;
+    /*--補間の係数を取得 --*/
+    double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    /*--invertがONのとき、外側領域を4つのRectに分けてupdate--*/
+    if (m_invertOption.getValue()) {
+      TRect rect =
+          convert(interpolateRect(firstRect, lastRect, backward ? 1 - t : t));
+      TRectD rect01 = TRectD(TPointD(-100000., -100000.),
+                             TPointD((double)rect.x0, 100000.));
+      update(ti, rect01, level, true, fid);
+      TRectD rect02 =
+          TRectD(convert(rect.getP01()), TPointD((double)rect.x1, 100000.));
+      update(ti, rect02, level, true, fid);
+      TRectD rect03 =
+          TRectD(TPointD((double)rect.x0, -100000.), convert(rect.getP10()));
+      update(ti, rect03, level, true, fid);
+      TRectD rect04 =
+          TRectD(TPointD((double)rect.x1, -100000.), TPointD(100000., 100000.));
+      update(ti, rect04, level, true, fid);
+    } else
+      update(ti, interpolateRect(firstRect, lastRect, backward ? 1 - t : t),
+             level, true, fid);
+
+    TRect savebox;
+    TRop::computeBBox(ti->getRaster(), savebox);
+    ti->setSavebox(savebox);
+
+    level->getProperties()->setDirtyFlag(true);
+    notifyImageChanged(fid);
+  }
+  TUndoManager::manager()->endBlock();
+}
+
+//----------------------------------------------------------------------
+
+void EraserTool::multiUpdate(const TXshSimpleLevelP &level, int firstFidx,
+                             int lastFidx, TRectD firstRect,
+                             TRectD lastRect) {
+  bool backward = false;
+  if (firstFidx > lastFidx) {
+    std::swap(firstFidx, lastFidx);
+    backward = true;
+  }
+  assert(firstFidx <= lastFidx);
+
+  TTool::Application *app = TTool::getApplication();
+  TFrameId lastFrameId;
+  int col = app->getCurrentColumn()->getColumnIndex();
+  int row;
+
+  std::vector<std::pair<int, TXshCell>> cellList;
+
+  for (row = firstFidx; row <= lastFidx; row++) {
+    TXshCell cell = app->getCurrentXsheet()->getXsheet()->getCell(row, col);
+    if (cell.isEmpty()) continue;
+    TFrameId fid = cell.getFrameId();
+    if (lastFrameId == fid) continue;  // Skip held cells
+    cellList.push_back(std::pair<int, TXshCell>(row, cell));
+    lastFrameId = fid;
+  }
+
+  int m = cellList.size();
+
+  std::wstring levelName = level->getName();
+
+  /*-- FrameRangeの各フレームについて --*/
+  TUndoManager::manager()->beginBlock();
+  for (int i = 0; i < m; ++i) {
+    row             = cellList[i].first;
+    TXshCell cell   = cellList[i].second;
+    TFrameId fid    = cell.getFrameId();
+    TToonzImageP ti = (TToonzImageP)cell.getImage(true);
     if (!ti) continue;
     /*--補間の係数を取得 --*/
     double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
@@ -1446,7 +1526,8 @@ void EraserTool::onImageChanged() {
   if (!xshl || m_level.getPointer() != xshl ||
       (m_selectingRect.isEmpty() && !m_firstStrokes.size()))
     resetMulti();
-  else if (m_firstFrameId == getFrameId())
+  else if ((!m_isXsheetCell && m_firstFrameId == getFrameId()) ||
+           (m_isXsheetCell && m_firstFrameIdx == getFrame()))
     m_firstFrameSelected = false;  // nel caso sono passato allo stato 1 e torno
                                    // all'immagine iniziale, torno allo stato
                                    // iniziale
@@ -1494,14 +1575,23 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
           if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
             // We'll use polyline
             TFrameId tmp = getCurrentFid();
+            int tmpx     = getFrame();
             std::vector<TStroke *> lastStrokes;
             for (int i = 0; i < m_polyline.getBrushCount(); i++)
               lastStrokes.push_back(m_polyline.makeRectangleStroke(i));
-            multiAreaEraser(m_level, m_firstFrameId, tmp, m_firstStrokes,
-                            lastStrokes);
+            if (m_isXsheetCell)
+              multiAreaEraser(m_level, m_firstFrameIdx, tmpx, m_firstStrokes,
+                              lastStrokes);
+            else
+              multiAreaEraser(m_level, m_firstFrameId, tmp, m_firstStrokes,
+                              lastStrokes);
           } else {
-            multiUpdate(m_level, m_firstFrameId, getFrameId(), m_firstRect,
-                        m_selectingRect);
+            if (m_isXsheetCell)
+              multiUpdate(m_level, m_firstFrameIdx, getFrame(), m_firstRect,
+                          m_selectingRect);
+            else
+              multiUpdate(m_level, m_firstFrameId, getFrameId(), m_firstRect,
+                          m_selectingRect);
           }
 
           if (e.isShiftPressed()) {
@@ -1715,11 +1805,17 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
       {
         if (m_firstFrameSelected) {
           TFrameId tmp = getFrameId();
+          int tmpx     = getFrame();
           if (m_firstStrokes.size() && stroke) {
             std::vector<TStroke *> lastStrokes;
             for (int i = 0; i < m_track.getBrushCount(); i++)
               lastStrokes.push_back(m_track.makeStroke(error, i));
-            multiAreaEraser(m_level, m_firstFrameId, tmp, m_firstStrokes, lastStrokes);
+            if (m_isXsheetCell)
+              multiAreaEraser(m_level, m_firstFrameIdx, tmpx, m_firstStrokes,
+                              lastStrokes);
+            else
+              multiAreaEraser(m_level, m_firstFrameId, tmp, m_firstStrokes,
+                              lastStrokes);
           }
           notifyImageChanged();
           if (e.isShiftPressed()) {
@@ -1802,12 +1898,17 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
       {
         if (m_firstFrameSelected) {
           TFrameId tmp = getFrameId();
+          int tmpx     = getFrame();
           if (m_firstStrokes.size() && stroke) {
             std::vector<TStroke *> lastStrokes;
             for (int i = 0; i < m_track.getBrushCount(); i++)
               lastStrokes.push_back(m_track.makeStroke(error, i));
-            multiAreaEraser(m_level, m_firstFrameId, tmp, m_firstStrokes,
-                            lastStrokes);
+            if (m_isXsheetCell)
+              multiAreaEraser(m_level, m_firstFrameIdx, tmpx, m_firstStrokes,
+                              lastStrokes);
+            else
+              multiAreaEraser(m_level, m_firstFrameId, tmp, m_firstStrokes,
+                              lastStrokes);
           }
           notifyImageChanged();
           if (e.isShiftPressed()) {
@@ -1899,12 +2000,17 @@ void EraserTool::leftButtonDoubleClick(const TPointD &pos,
   {
     if (m_firstFrameSelected) {
       TFrameId tmp = getFrameId();
+      int tmpx     = getFrame();
       if (m_firstStrokes.size() && stroke) {
         std::vector<TStroke *> lastStrokes;
         for (int i = 0; i < m_polyline.getBrushCount(); i++)
           lastStrokes.push_back(m_polyline.makePolylineStroke(i));
-        multiAreaEraser(m_level, m_firstFrameId, tmp, m_firstStrokes,
-                        lastStrokes);
+        if (m_isXsheetCell)
+          multiAreaEraser(m_level, m_firstFrameIdx, tmpx, m_firstStrokes,
+                          lastStrokes);
+        else
+          multiAreaEraser(m_level, m_firstFrameId, tmp, m_firstStrokes,
+                          lastStrokes);
       }
       if (e.isShiftPressed()) {
         m_firstStrokes.clear();
@@ -2168,6 +2274,63 @@ void EraserTool::multiAreaEraser(const TXshSimpleLevelP &sl, TFrameId &firstFid,
     TFrameId fid = fids[i];
     assert(firstFid <= fid && fid <= lastFid);
     TImageP img = sl->getFrame(fid, true);
+    double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    if (m_eraseType.getValue() == SEGMENTERASE)
+      doMultiSegmentEraser(img, backward ? 1 - t : t, sl, fid, firstImage,
+                           lastImage);
+    else
+      doMultiEraser(img, backward ? 1 - t : t, sl, fid, firstImage, lastImage);
+    sl->getProperties()->setDirtyFlag(true);
+    notifyImageChanged(fid);
+  }
+  TUndoManager::manager()->endBlock();
+}
+
+//------------------------------------------------------------------------------------------------------------
+
+void EraserTool::multiAreaEraser(const TXshSimpleLevelP &sl, int firstFidx,
+                                 int lastFidx,
+                                 std::vector<TStroke *> firstStrokes,
+                                 std::vector<TStroke *> lastStrokes) {
+  TVectorImageP firstImage = new TVectorImage();
+  TVectorImageP lastImage  = new TVectorImage();
+  for (int i = 0; i < firstStrokes.size(); i++)
+    firstImage->addStroke(firstStrokes[i]);
+  for (int i = 0; i < lastStrokes.size(); i++)
+    lastImage->addStroke(lastStrokes[i]);
+
+  bool backward = false;
+  if (firstFidx > lastFidx) {
+    std::swap(firstFidx, lastFidx);
+    backward = true;
+  }
+  assert(firstFidx <= lastFidx);
+
+  TTool::Application *app = TTool::getApplication();
+  TFrameId lastFrameId;
+  int col = app->getCurrentColumn()->getColumnIndex();
+  int row;
+
+  std::vector<std::pair<int, TXshCell>> cellList;
+
+  for (row = firstFidx; row <= lastFidx; row++) {
+    TXshCell cell = app->getCurrentXsheet()->getXsheet()->getCell(row, col);
+    if (cell.isEmpty()) continue;
+    TFrameId fid = cell.getFrameId();
+    if (lastFrameId == fid) continue;  // Skip held cells
+    cellList.push_back(std::pair<int, TXshCell>(row, cell));
+    lastFrameId = fid;
+  }
+
+  int m = cellList.size();
+
+  TUndoManager::manager()->beginBlock();
+  for (int i = 0; i < m; ++i) {
+    row           = cellList[i].first;
+    TXshCell cell = cellList[i].second;
+    TFrameId fid  = cell.getFrameId();
+    TImageP img   = (TImageP)cell.getImage(true);
+    if (!img) continue;
     double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
     if (m_eraseType.getValue() == SEGMENTERASE)
       doMultiSegmentEraser(img, backward ? 1 - t : t, sl, fid, firstImage,
