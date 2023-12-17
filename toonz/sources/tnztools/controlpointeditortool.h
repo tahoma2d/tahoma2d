@@ -70,7 +70,7 @@ class ControlPointEditorTool final : public TTool {
 
   TUndo* m_undo;
 
-  void selectRegion(TStroke* stroke);
+  void selectRegion(TStroke* stroke, bool unselect);
   void startFreehand(const TPointD& pos);
   void freehandDrag(const TPointD& pos);
   void closeFreehand(const TPointD& pos);
@@ -105,6 +105,7 @@ public:
   void mouseMove(const TPointD& pos, const TMouseEvent& e) override;
   void leftButtonDown(const TPointD& pos, const TMouseEvent& e) override;
   void rightButtonDown(const TPointD& pos, const TMouseEvent&) override;
+  void leftButtonDoubleClick(const TPointD& pos, const TMouseEvent& e) override;
 
   void moveControlPoints(const TPointD& delta);
   void moveSpeed(const TPointD& delta, bool isIn);

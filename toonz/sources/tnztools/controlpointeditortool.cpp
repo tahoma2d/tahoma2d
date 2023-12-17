@@ -504,7 +504,10 @@ void ControlPointEditorTool::leftButtonDown(const TPointD &pos,
         startFreehand(pos);
       }
     }
-    m_selection.selectNone();
+    if (e.isShiftPressed() || e.isAltPressed())
+      m_selection.holdSelection();
+    else
+      m_selection.selectNone();
     return;
   }
   TVectorImageP vi = getImage(true);
@@ -540,7 +543,7 @@ void ControlPointEditorTool::leftButtonDown(const TPointD &pos,
       m_undo = 0;
       return;
     }
-    if (e.isCtrlPressed()) {
+    if (e.isShiftPressed()) {
       if (m_selection.isSelected(pointIndex))
         m_selection.unselect(pointIndex);
       else
@@ -622,6 +625,40 @@ void ControlPointEditorTool::rightButtonDown(const TPointD &pos,
 
 //---------------------------------------------------------------------------
 
+void ControlPointEditorTool::leftButtonDoubleClick(const TPointD &pos,
+                                                   const TMouseEvent &e) {
+  if (getViewer() && getViewer()->getGuidedStrokePickerMode())
+    return;
+
+  m_pos           = pos;
+  double pix      = getPixelSize() * 2.0f;
+  double maxDist  = 5 * pix;
+  double maxDist2 = maxDist * maxDist;
+  double dist2    = 0;
+  int pointIndex;
+  ControlPointEditorStroke::PointType pointType =
+      m_controlPointEditorStroke.getPointTypeAt(pos, maxDist2, pointIndex);
+
+  TVectorImageP vi = getImage(true);
+  if (!vi) return;
+
+  if (pointType != ControlPointEditorStroke::SEGMENT) return;
+
+  m_selection.selectNone();
+  // Aggiungo un punto
+  initUndo();
+  pointIndex = m_controlPointEditorStroke.addControlPoint(pos);
+  m_selection.select(pointIndex);
+  m_action = CP_MOVEMENT;
+  TUndoManager::manager()->add(m_undo);
+  m_lastPointSelected = -1;
+  notifyImageChanged();
+
+  m_selection.makeCurrent();
+}
+
+//---------------------------------------------------------------------------
+
 void ControlPointEditorTool::moveControlPoints(const TPointD &delta) {
   int i;
   int cpCount = m_controlPointEditorStroke.getControlPointCount();
@@ -681,7 +718,7 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
   TPointD delta = pos - m_pos;
 
   if (m_action == CP_MOVEMENT) {
-    if (!m_selection.isSelected(m_lastPointSelected) && e.isCtrlPressed())
+    if (!m_selection.isSelected(m_lastPointSelected) && e.isShiftPressed())
       m_selection.select(m_lastPointSelected);  // Controllo che non venga
                                                 // deselezionata l'ultima
                                                 // selezione nel movimento
@@ -723,11 +760,18 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
     if (m_selectingRect.y0 > m_selectingRect.y1)
       std::swap(m_selectingRect.y1, m_selectingRect.y0);
     int i;
-    m_selection.selectNone();
+    if (e.isShiftPressed() || e.isAltPressed())
+      m_selection.restoreSelection();
+    else
+      m_selection.selectNone();
     for (i = 0; i < cpCount; i++)
       if (m_selectingRect.contains(
-              m_controlPointEditorStroke.getControlPoint(i)))
-        m_selection.select(i);
+              m_controlPointEditorStroke.getControlPoint(i))) {
+        if (e.isAltPressed())
+          m_selection.unselect(i);
+        else
+          m_selection.select(i);
+      }
   } else if (m_action == FREEHAND_SELECTION) {
     freehandDrag(pos);
   }
@@ -736,7 +780,7 @@ void ControlPointEditorTool::leftButtonDrag(const TPointD &pos,
 }
 
 //---------------------------------------------------------------------------
-void ControlPointEditorTool::selectRegion(TStroke *stroke) {
+void ControlPointEditorTool::selectRegion(TStroke *stroke, bool unselect) {
   int cpCount = m_controlPointEditorStroke.getControlPointCount();
 
   TVectorImage img;
@@ -746,7 +790,10 @@ void ControlPointEditorTool::selectRegion(TStroke *stroke) {
     TRegion *region = img.getRegion(rI);
     for (int i = 0; i < cpCount; i++) {
       if (region->contains(m_controlPointEditorStroke.getControlPoint(i))) {
-        m_selection.select(i);
+        if (unselect)
+          m_selection.unselect(i);
+        else
+          m_selection.select(i);
       }
     }
   }
@@ -774,7 +821,7 @@ void ControlPointEditorTool::leftButtonUp(const TPointD &realPos,
   if (m_action == RECT_SELECTION || m_action == FREEHAND_SELECTION) {
     if (m_action == FREEHAND_SELECTION) {
       closeFreehand(pos);
-      selectRegion(m_stroke);
+      selectRegion(m_stroke, e.isAltPressed());
       m_track.clear();
     }
 

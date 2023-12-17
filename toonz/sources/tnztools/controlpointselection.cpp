@@ -996,6 +996,7 @@ bool ControlPointSelection::isSelected(int index) const {
 //-----------------------------------------------------------------------------
 
 void ControlPointSelection::select(int index) {
+  if (isSelected(index)) return;
   m_selectedPoints.push_back(index);
 }
 
@@ -1005,6 +1006,18 @@ void ControlPointSelection::unselect(int index) {
   std::vector<int>::iterator it =
       std::find(m_selectedPoints.begin(), m_selectedPoints.end(), index);
   if (it != m_selectedPoints.end()) m_selectedPoints.erase(it);
+}
+
+//-----------------------------------------------------------------------------
+
+void ControlPointSelection::holdSelection() {
+  m_originalPoints = m_selectedPoints;
+}
+
+//-----------------------------------------------------------------------------
+
+void ControlPointSelection::restoreSelection() {
+  m_selectedPoints = m_originalPoints;
 }
 
 //-----------------------------------------------------------------------------
