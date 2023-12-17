@@ -1656,6 +1656,7 @@ void TXsheet::scrub(int frame, bool isPreview) {
     } else {
       throw TSoundDeviceException(e.getType(), e.getMessage());
     }
+  } catch (...) {
   }
 }
 
@@ -1676,6 +1677,7 @@ void TXsheet::play(TSoundTrackP soundtrack, int s0, int s1, bool loop) {
     try {
       m_player->play(soundtrack, s0, s1, loop);
     } catch (TSoundDeviceException &) {
+    } catch (...) {
     }
   }
 }

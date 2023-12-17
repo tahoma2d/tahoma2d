@@ -292,6 +292,10 @@ void TAutocloser::Imp::compute(std::vector<Segment> &closingSegmentArray) {
   catch (TException &e) {
     throw e;
   }
+
+  catch (...) {
+    throw;
+  }
 }
 
 /*------------------------------------------------------------------------*/

@@ -934,7 +934,8 @@ void TFx::loadPreset(TIStream &is) {
             TParamP param = getParams()->getParam(paramName);
             param->loadData(is);
           } catch (TException &) { /*skip*/
-          }                        // il parametro non e' presente
+          } catch (...) {          // il parametro non e' presente
+          }
           is.closeChild();
         }
       }

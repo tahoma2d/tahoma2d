@@ -763,6 +763,7 @@ void TSceneProperties::loadData(TIStream &is, bool isLoadingProject) {
                       try {
                         enumProp->setValue(enumAppProp->getValue());
                       } catch (TProperty::RangeError &) {
+                      } catch (...) {
                       }
                     } else
                       throw TException();

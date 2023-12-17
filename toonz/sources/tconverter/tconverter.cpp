@@ -460,6 +460,9 @@ int main(int argc, char *argv[]) {
     msg = "Untrapped exception: " + ::to_string(e.getMessage());
     cout << msg << endl;
     return -1;
+  } catch (...) {
+    cout << "Unhandled exception" << endl;
+    return -1;
   }
   msg = "Conversion terminated!";
   cout << endl << msg << endl;

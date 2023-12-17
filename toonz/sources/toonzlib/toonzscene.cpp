@@ -1121,6 +1121,7 @@ bool ToonzScene::convertLevelIfNeeded(TFilePath &levelPath) {
           TSystem::removeFileOrLevel(levelPath);
         throw e;
       }
+    } catch (...) {
     }
     lw = TLevelWriterP();  // bisogna liberare prima lw di outLevel,
     // altrimenti la paletta che lw vuole scrivere e' gia' stata
@@ -1165,6 +1166,9 @@ TXshLevel *ToonzScene::loadLevel(const TFilePath &actualPath,
     {
       throw TException(msg);
     }  // from load, and rethrowing... curious!
+    catch (...) {
+      throw;
+    }
 
     m_levelSet->insertLevel(sl);
     return sl;
@@ -1185,6 +1189,8 @@ TXshLevel *ToonzScene::loadLevel(const TFilePath &actualPath,
         xl->load();
     } catch (const std::string &msg) {
       throw TException(msg);
+    } catch (...) {
+      throw;
     }
 
     if (ltype.m_oldLevelFlag)

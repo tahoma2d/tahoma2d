@@ -67,6 +67,8 @@ bool ImageLoader::getInfo(TImageInfo &info, int imFlags, void *extData) {
     if (msg == QString("Old 4.1 Palette")) throw;
 
     return false;
+  } catch (...) {
+    return false;
   }
 }
 

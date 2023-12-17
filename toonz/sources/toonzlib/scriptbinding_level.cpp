@@ -208,6 +208,8 @@ QScriptValue Level::save(const QScriptValue &fpArg) {
     return context()->throwError(
         tr("Exception writing %1")
             .arg(QString::fromStdWString(se.getMessage())));
+  } catch (...) {
+    return context()->throwError(tr("Unhandled exception encountered"));
   }
   return context()->thisObject();
 }

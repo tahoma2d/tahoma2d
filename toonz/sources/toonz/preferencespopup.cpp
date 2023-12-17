@@ -452,6 +452,9 @@ QList<ComboBoxItem> PreferencesPopup::buildFontStyleList() const {
   } catch (TFontCreationError&) {
     it = typefaces.begin();
     typefaces.insert(it, style.toStdWString());
+  } catch (...) {
+    it = typefaces.begin();
+    typefaces.insert(it, style.toStdWString());
   }
   QList<ComboBoxItem> styleList;
   for (it = typefaces.begin(); it != typefaces.end(); ++it)

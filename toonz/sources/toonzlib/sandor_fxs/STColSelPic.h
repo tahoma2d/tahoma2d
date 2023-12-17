@@ -79,6 +79,8 @@ public:
       }
     } catch (SMemAllocError) {
       throw;
+    } catch (...) {
+      throw;
     }
     return (*this);
   }
@@ -612,6 +614,8 @@ void expand(const int border) throw(SMemAllocError)
           m_sel=nSel;
   }
   catch (SMemAllocError) {
+          throw;
+  catch (...) {
           throw;
   }
 }

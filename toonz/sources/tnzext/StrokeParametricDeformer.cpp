@@ -30,6 +30,8 @@ ToonzExt::StrokeParametricDeformer::StrokeParametricDeformer(
     ref_copy_ = new TStroke(*s);
   } catch (std::bad_alloc &) {
     throw std::invalid_argument("Not possible to have a copy of stroke!!!");
+  } catch (...) {
+    throw std::invalid_argument("Unhandled exception encountered");
   }
 
   assert(0.0 <= startParameter_ && startParameter_ <= 1.0);

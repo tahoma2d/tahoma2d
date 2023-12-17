@@ -176,6 +176,10 @@ static int create_param_view(toonz_node_handle_t node,
     printf("create_param_view: exception: %s\n", e.what());
     delete p;
     return TOONZ_ERROR_UNKNOWN;
+  } catch (...) {
+    printf("create_param_view: Unhandled exception encountered\n");
+    delete p;
+    return TOONZ_ERROR_UNKNOWN;
   }
   return TOONZ_OK;
 }
@@ -190,7 +194,10 @@ static int setup_input_port(toonz_node_handle_t node, const char *name,
       return TOONZ_ERROR_BUSY;
     }
   } catch (const std::exception &e) {
-    printf("setup_putput_port: exception: %s\n", e.what());
+    printf("setup_input_port: exception: %s\n", e.what());
+    return TOONZ_ERROR_UNKNOWN;
+  } catch (...) {
+    printf("setup_input_port: Unhandled exception encountered\n");
     return TOONZ_ERROR_UNKNOWN;
   }
   return TOONZ_OK;
@@ -206,7 +213,10 @@ static int setup_output_port(toonz_node_handle_t node, const char *name,
       return TOONZ_ERROR_BUSY;
     }
   } catch (const std::exception &e) {
-    printf("setup_putput_port: exception: %s\n", e.what());
+    printf("setup_output_port: exception: %s\n", e.what());
+    return TOONZ_ERROR_UNKNOWN;
+  } catch (...) {
+    printf("setup_output_port: Unhandled exception encountered\n");
     return TOONZ_ERROR_UNKNOWN;
   }
   return TOONZ_OK;
@@ -227,6 +237,9 @@ static int add_input_port(toonz_node_handle_t node, const char *name, int type,
     *port = p.get();
   } catch (const std::exception &e) {
     printf("add_input_port: exception: %s\n", e.what());
+    return TOONZ_ERROR_UNKNOWN;
+  } catch (...) {
+    printf("add_input_port: Unhandled exception encountered\n");
     return TOONZ_ERROR_UNKNOWN;
   }
   return TOONZ_OK;
@@ -264,6 +277,9 @@ static int add_output_port(toonz_node_handle_t node, const char *name, int type,
     }
     *port = p;
   } catch (const std::exception &) {
+    delete p;
+    return TOONZ_ERROR_UNKNOWN;
+  } catch (...) {
     delete p;
     return TOONZ_ERROR_UNKNOWN;
   }
@@ -314,6 +330,10 @@ static int add_preference(toonz_node_handle_t node, const char *name,
     printf("add_preference: exception: %s\n", e.what());
     delete p;
     return TOONZ_ERROR_UNKNOWN;
+  } catch (...) {
+    printf("add_preference: Unhandled exception encountered\n");
+    delete p;
+    return TOONZ_ERROR_UNKNOWN;
   }
   return TOONZ_OK;
 }
@@ -338,6 +358,10 @@ static int add_param(toonz_node_handle_t node, const char *name, int type,
     printf("add_param: exception: %s\n", e.what());
     delete p;
     return TOONZ_ERROR_UNKNOWN;
+  } catch (...) {
+    printf("add_param: Unhandled exception encountered\n");
+    delete p;
+    return TOONZ_ERROR_UNKNOWN;
   }
   return TOONZ_OK;
 }
@@ -358,6 +382,7 @@ static int get_param(toonz_node_handle_t node, const char *name,
       return TOONZ_ERROR_NOT_FOUND;
     }
   } catch (const std::exception &) {
+  } catch (...) {
   }
   return TOONZ_OK;
 }
@@ -1318,6 +1343,8 @@ static int query_interface(const UUID *uuid, void **interf) {
     return TOONZ_ERROR_OUT_OF_MEMORY;
   } catch (const std::exception &) {
     return TOONZ_ERROR_UNKNOWN;
+  } catch (...) {
+    return TOONZ_ERROR_UNKNOWN;
   }
 
   return TOONZ_OK;
@@ -1504,6 +1531,8 @@ toonz_plugin_info で検索し、なければ toonz_plugin_probe() を呼び出�
             }
           } catch (const std::exception &e) {
             printf("Exception occurred after plugin loading: %s\n", e.what());
+          } catch (...) {
+            printf("Unhandled exception encountered after plugin loading\n");
           }
 
           if (pi->handler_ && pi->handler_->setup) {
@@ -1523,6 +1552,10 @@ toonz_plugin_info で検索し、なければ toonz_plugin_probe() を呼び出�
       }
     } catch (const std::exception &e) {
       printf("Exception occurred while plugin loading: %s\n", e.what());
+      delete pi;
+      pi = NULL;
+    } catch (...) {
+      printf("Unhandled exception occurred while plugin loading\n");
       delete pi;
       pi = NULL;
     }

@@ -136,6 +136,8 @@ public:
       }
     } catch (SMemAllocError) {
       throw;
+    } catch (...) {
+      throw;
     }
   }
 };

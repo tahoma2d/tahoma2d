@@ -88,6 +88,7 @@ static void calligraphUC(
     //	SMemAllocError();
   } catch (SWriteRasterError) {
     // SWriteRasterError();
+  } catch (...) {
   }
 }
 
@@ -139,6 +140,7 @@ static void calligraphUS(
     // SMemAllocError();
   } catch (SWriteRasterError) {
     // SWriteRasterError();
+  } catch (...) {
   }
 }
 
@@ -171,6 +173,9 @@ int calligraph(const RASTER *inr, RASTER *outr, const int border, int argc,
     return 0;
   } catch (SWriteRasterError e) {
     e.debug_print();
+    COPY_RASTER(inr, outr, border);
+    return 0;
+  } catch (...) {
     COPY_RASTER(inr, outr, border);
     return 0;
   }

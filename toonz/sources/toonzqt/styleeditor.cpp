@@ -2173,6 +2173,9 @@ void StyleChooserPage::onRemoveStyleSet() {
   } catch (TSystemException se) {
     DVGui::warning(QString::fromStdWString(se.getMessage()));
     return;
+  } catch (...) {
+    DVGui::warning("Unhandled exception encountered");
+    return;
   }
 
   m_editor->removeStyleSet(this);
@@ -2507,6 +2510,9 @@ bool StyleChooserPage::copyFilesToStyleFolder(TFilePathSet srcFiles,
       TSystem::mkDir(destDir);
     } catch (TSystemException se) {
       DVGui::warning(QString::fromStdWString(se.getMessage()));
+      return false;
+    } catch (...) {
+      DVGui::warning("Unhandled exception encountered");
       return false;
     }
 
@@ -3593,6 +3599,9 @@ void SpecialStyleChooserPage::addSelectedStylesToSet(std::vector<int> selection,
       if (!TFileStatus(setPath).doesExist()) TSystem::mkDir(setPath);
     } catch (TSystemException se) {
       DVGui::warning(QString::fromStdWString(se.getMessage()));
+      return;
+    } catch (...) {
+      DVGui::warning("Unhandled exception encountered");
       return;
     }
 
@@ -6874,6 +6883,9 @@ void StyleEditor::createNewStyleSet(StylePageType pageType, TFilePath pagePath,
   } catch (TSystemException se) {
     DVGui::warning(QString::fromStdWString(se.getMessage()));
     return;
+  } catch (...) {
+    DVGui::warning("Unhandled exception encountered");
+    return;
   }
 
   QString filters;
@@ -7085,6 +7097,9 @@ void StyleEditor::renameStyleSet(StyleChooserPage *styleSetPage,
     TSystem::rmDirTree(styleSetPage->getStylesFolder());
   } catch (TSystemException se) {
     DVGui::warning(QString::fromStdWString(se.getMessage()));
+    return;
+  } catch (...) {
+    DVGui::warning("Unhandled exception encountered");
     return;
   }
 

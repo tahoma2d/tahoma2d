@@ -1505,8 +1505,12 @@ void FlipBook::playAudioFrame(int frame) {
         } catch (TSoundDeviceException &ex) {
           throw TException(ex.getMessage());
           return;
+        } catch (...) {
+          throw TException("Unhandled exception encountered");
+          return;
         }
       }
+    } catch (...) {
     }
   }
 }

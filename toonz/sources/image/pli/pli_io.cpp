@@ -185,6 +185,8 @@ void MyIfstream::open(const TFilePath &filename) {
     m_fp = fopen(filename, "rb");
   } catch (TException &) {
     throw TImageException(filename, "File not found");
+  } catch (...) {
+    throw TImageException(filename, "Unhandled exception encountered");
   }
 }
 

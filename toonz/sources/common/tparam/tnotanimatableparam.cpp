@@ -239,6 +239,8 @@ void TEnumParam::loadData(TIStream &is) {
     setValue(value, false);
   } catch (TException &) {
     TNotAnimatableParam<int>::reset();
+  } catch (...) {
+    TNotAnimatableParam<int>::reset();
   }
 }
 
