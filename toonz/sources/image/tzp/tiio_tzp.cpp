@@ -83,7 +83,10 @@ void TzpReader::open(FILE *file) {
   oldhandler = TIFFSetWarningHandler(NULL);
   m_tiff     = TIFFFdOpen(fd, "", "rb");
   TIFFSetWarningHandler(oldhandler);
-  if (!m_tiff) return;
+  if (!m_tiff) {
+    throw TException("Can't open file");
+    return;
+  }
 
   uint32 w = 0, h = 0, bps = 0, spp = 0, rps = 0;
   uint32 tileWidth = 0, tileLength = 0;

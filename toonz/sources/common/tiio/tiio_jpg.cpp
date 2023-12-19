@@ -13,6 +13,10 @@
 #include "tproperty.h"
 #include "tpixel.h"
 
+#include "../../libjpeg-turbo/include/jerror.h"
+
+#include "texception.h"
+
 /*
  * Include file for users of JPEG library.
  * You will need to have included system headers that define at least
@@ -30,9 +34,18 @@ const std::string Tiio::JpgWriterProperties::QUALITY("Quality");
 
 //=========================================================
 
+int tnz_err_code;
+char tnz_err_msg[JMSG_LENGTH_MAX];
+
 extern "C" {
 static void tnz_error_exit(j_common_ptr cinfo) {
   //  throw "merda";
+}
+
+METHODDEF(void)
+tnz_output_message(j_common_ptr cinfo) {
+  tnz_err_code = cinfo->err->msg_code;
+  (*cinfo->err->format_message)(cinfo, tnz_err_msg);
 }
 }
 
@@ -73,8 +86,21 @@ JpgReader::~JpgReader() {
 Tiio::RowOrder JpgReader::getRowOrder() const { return Tiio::TOP2BOTTOM; }
 
 void JpgReader::open(FILE *file) {
-  m_cinfo.err             = jpeg_std_error(&m_jerr);
-  m_cinfo.err->error_exit = tnz_error_exit;
+  // Let's check to see if it is really a JPEG file
+  unsigned char signature[3];
+  fread(signature, 3, 1, file);
+  fseek(file, 0, SEEK_SET);
+  if (signature[0] != 0xff || signature[1] != 0xd8 || signature[2] != 0xff) {
+    throw TException("Can't open file");
+    return;
+  }
+
+  m_cinfo.err                 = jpeg_std_error(&m_jerr);
+  m_cinfo.err->error_exit     = tnz_error_exit;
+  m_cinfo.err->output_message = tnz_output_message;
+
+  tnz_err_code = 0;
+  memset(&tnz_err_msg, 0, JMSG_LENGTH_MAX);
 
   jpeg_create_decompress(&m_cinfo);
 
@@ -82,6 +108,11 @@ void JpgReader::open(FILE *file) {
   jpeg_stdio_src(&m_cinfo, m_chan);
   jpeg_save_markers(&m_cinfo, JPEG_APP0 + 1, 0xffff);  // EXIF
   bool ret = jpeg_read_header(&m_cinfo, TRUE);
+
+  if (tnz_err_code > 0) {
+    throw TException("Unable to read file. " + std::string(tnz_err_msg));
+    return;
+  }
 
   bool resolutionFoundInExif = false;
   jpeg_saved_marker_ptr mark;
@@ -107,7 +138,10 @@ void JpgReader::open(FILE *file) {
   }
 
   ret = ret && jpeg_start_decompress(&m_cinfo);
-  if (!ret) return;
+  if (!ret) {
+    throw TException("Unable to read file");
+    return;
+  }
 
   int row_stride = m_cinfo.output_width * m_cinfo.output_components;
   m_buffer = (*m_cinfo.mem->alloc_sarray)((j_common_ptr)&m_cinfo, JPOOL_IMAGE,

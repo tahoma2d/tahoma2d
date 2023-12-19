@@ -5,7 +5,7 @@
 #pragma warning(disable : 4996)
 #endif
 
-//#include "texception.h"
+#include "texception.h"
 //#include "tfilepath.h"
 #include "tiio_tga.h"
 #include "tpixel.h"
@@ -216,7 +216,7 @@ void TgaReader::open(FILE *file) {
     try {
       m_chan = file;
     } catch (...) {
-      perror("uffa");
+      throw TException("Can't open file");
       return;
     }
     readTgaHeader(m_header, m_chan);
