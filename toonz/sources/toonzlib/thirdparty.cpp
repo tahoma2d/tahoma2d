@@ -110,6 +110,7 @@ QString autodetectFFmpeg() {
 #endif
 
 #ifndef _WIN32
+  folderList.append("/app/bin");
   folderList.append("/usr/local/bin");
   folderList.append("/usr/bin");
   folderList.append("/bin");
@@ -282,6 +283,7 @@ QString autodetectRhubarb() {
 #endif
 
 #ifndef _WIN32
+  folderList.append("/app/bin");
   folderList.append("/usr/local/bin");
   folderList.append("/usr/bin");
   folderList.append("/bin");
