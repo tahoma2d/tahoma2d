@@ -699,12 +699,29 @@ TAHOMA2DCONFIG=\"\$HOME/.config/Tahoma2D/stuff/config\"
 TAHOMA2DFXPRESETS=\"\$HOME/.config/Tahoma2D/stuff/fxs\"
 TAHOMA2DLIBRARY=\"\$HOME/.config/Tahoma2D/stuff/library\"
 TAHOMA2DPROJECTS=\"$HOME/.config/Tahoma2D/stuff/projects\"
-TAHOMA2DROOT=\"\$HOME/.config/Tahoma2D/stuff\"
 TAHOMA2DSTUDIOPALETTE=\"\$HOME/.config/Tahoma2D/stuff/studiopalette\"
 EOF
 fi
 
 export ${PRELOAD_VARIABLE}=\${TAHOMA2D_BASE}/lib/tahoma2d:\${${PRELOAD_VARIABLE}}
+
+IFS=:
+for LIBPATH in \$LD_LIBRARY_PATH
+do
+  if [ \"\$CAMLIBS\" = \"\" -a -d \$LIBPATH/libgphoto2 ]
+  then
+     export CAMLIBS=`find \$LIBPATH/libgphoto2 -mindepth 1 -type d`
+  fi
+
+  if [ \"\$IOLIBS\" = \"\" -a -d \$LIBPATH/libgphoto2_port ]
+  then
+     export IOLIBS=`find \$LIBPATH/libgphoto2_port -mindepth 1 -type d`
+  fi
+done
+unset IFS
+
+echo \"CAMLIBS: \$CAMLIBS\"
+echo \"IOLIBS: \$IOLIBS\"
 
 exec \$TAHOMA2D_BASE/bin/Tahoma2D \"\$@\"
 ")
