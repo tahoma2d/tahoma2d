@@ -185,7 +185,7 @@ public:
     // from v1.3, registry root is moved to SOFTWARE\\Tahoma\\Tahoma
     m_registryRoot = TFilePath("SOFTWARE\\Tahoma2D\\") + m_version.getAppName();
 #endif
-    m_systemVarPrefix = m_version.getAppName();
+    m_systemVarPrefix = toUpper(m_version.getAppName());
     updateEnvFile();
   }
 
