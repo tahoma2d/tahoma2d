@@ -138,7 +138,7 @@ DVAPI TFilePath getConfigDir();
 // DVAPI TFilePath getProfilesDir();
 DVAPI TFilePath getWorkingDirectory();
 
-// per l'utilizzo di ToonzLib senza che sia definita una TOONZROOT
+// per l'utilizzo di ToonzLib senza che sia definita una TAHOMA2DROOT
 // bisogna chiamare TEnv::setStuffDir(stuffdir) prima di ogni altra operazione
 DVAPI void setStuffDir(const TFilePath &stuffDir);
 
