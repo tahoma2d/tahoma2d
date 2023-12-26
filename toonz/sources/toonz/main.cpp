@@ -169,10 +169,10 @@ static void initToonzEnv(QHash<QString, QString> &argPathValues) {
   QCoreApplication::setApplicationName(
       QString::fromStdString(TEnv::getApplicationName()));
 
-  /*-- TOONZROOTのPathの確認 --*/
+  /*-- TAHOMA2DROOTのPathの確認 --*/
   // controllo se la xxxroot e' definita e corrisponde ad un folder esistente
 
-  /*-- ENGLISH: Confirm TOONZROOT Path
+  /*-- ENGLISH: Confirm TAHOMA2DROOT Path
         Check if the xxxroot is defined and corresponds to an existing folder
   --*/
 
@@ -214,7 +214,7 @@ static void initToonzEnv(QHash<QString, QString> &argPathValues) {
   // for (it = projectsRoots.begin(); it != projectsRoots.end(); ++it)
   //  projectManager->addProjectsRoot(*it);
 
-  /*-- もしまだ無ければ、TOONZROOT/sandboxにsandboxプロジェクトを作る --*/
+  /*-- もしまだ無ければ、TAHOMA2DROOT/sandboxにsandboxプロジェクトを作る --*/
   projectManager->createSandboxIfNeeded();
 
   /*

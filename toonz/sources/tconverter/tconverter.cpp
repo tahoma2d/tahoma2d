@@ -41,8 +41,8 @@ typedef QualifierT<TFilePath> FilePathQualifier;
 
 #define RENDER_LICENSE_NOT_FOUND 888
 
-const char *rootVarName     = "TOONZROOT";
-const char *systemVarPrefix = "TOONZ";
+const char *rootVarName     = "TAHOMA2DROOT";
+const char *systemVarPrefix = "TAHOMA2D";
 
 namespace {
 
