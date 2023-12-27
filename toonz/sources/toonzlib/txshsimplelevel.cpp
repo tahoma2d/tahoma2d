@@ -1724,25 +1724,30 @@ void TXshSimpleLevel::saveSimpleLevel(const TFilePath &decodedFp,
     // Dobbiamo
     // ripensarci con piu' calma. Per ora cerco di fare meno danno possibile).
     TDimension oldRes(0, 0);
+    bool fileOrLevelRemoved = false;
 
     if (TSystem::doesExistFileOrLevel(decodedFp)) {
       TLevelReaderP lr(decodedFp);
       lr->doReadPalette(false);
-      const TImageInfo *imageInfo = m_frames.empty()
-                                        ? lr->getImageInfo()
-                                        : lr->getImageInfo(*(m_frames.begin()));
+      try {
+        const TImageInfo *imageInfo =
+            m_frames.empty() ? lr->getImageInfo()
+                             : lr->getImageInfo(*(m_frames.begin()));
 
-      if (imageInfo) {
-        oldRes.lx = imageInfo->m_lx;
-        oldRes.ly = imageInfo->m_ly;
-        lr        = TLevelReaderP();
-        if (getProperties()->getImageRes() != oldRes) {
-          // Il comando canvas size cambia le dimensioni del livello!!!
-          // Se il file già esiste, nel level writer vengono risettate le
-          // dimesnioni del file esistente
-          // e salva male
-          TSystem::removeFileOrLevel(decodedFp);
+        if (getType() != MESH_XSHLEVEL && imageInfo) {
+          oldRes.lx = imageInfo->m_lx;
+          oldRes.ly = imageInfo->m_ly;
+          lr        = TLevelReaderP();
+          if (getProperties()->getImageRes() != oldRes) {
+            // Il comando canvas size cambia le dimensioni del livello!!!
+            // Se il file già esiste, nel level writer vengono risettate le
+            // dimesnioni del file esistente
+            // e salva male
+            TSystem::removeFileOrLevel(decodedFp);
+            fileOrLevelRemoved = true;
+          }
         }
+      } catch (...) {
       }
     }
     // overwrite tlv
@@ -1802,7 +1807,9 @@ void TXshSimpleLevel::saveSimpleLevel(const TFilePath &decodedFp,
         for (auto const &fid : fids) {
           std::string imageId = getImageId(
               fid, Normal);  // Retrieve the actual level frames ("L_whatever")
-          if (!ImageManager::instance()->isModified(imageId)) continue;
+          if (!fileOrLevelRemoved &&
+              !ImageManager::instance()->isModified(imageId))
+            continue;
 
           extData.m_fid = fid;
           TImageP img =
@@ -1869,7 +1876,9 @@ void TXshSimpleLevel::saveSimpleLevel(const TFilePath &decodedFp,
         for (auto const &fid : fids) {
           std::string imageId = getImageId(
               fid, Normal);  // Retrieve the actual level frames ("L_whatever")
-          if (!ImageManager::instance()->isModified(imageId)) continue;
+          if (!fileOrLevelRemoved &&
+              !ImageManager::instance()->isModified(imageId))
+            continue;
 
           extData.m_fid = fid;
           TImageP img =
