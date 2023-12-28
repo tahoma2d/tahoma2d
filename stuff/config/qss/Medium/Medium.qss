@@ -2256,7 +2256,7 @@ Ruler {
   padding-right: 3;
 }
 #XsheetBreadcrumbs {
-  padding: 0;
+  padding: 0 5px 0 5px;
   margin: 0;
   border-bottom: 1 solid #2c2c2c;
 }

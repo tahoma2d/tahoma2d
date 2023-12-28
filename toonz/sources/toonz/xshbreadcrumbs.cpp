@@ -304,7 +304,7 @@ void BreadcrumbArea::updateBreadcrumbs() {
   m_breadcrumbLayout->setSpacing(0);
   {
     if (!m_viewer->orientation()->isVerticalTimeline())
-      m_breadcrumbLayout->addSpacing(220);
+      m_breadcrumbLayout->addSpacing(215);
     m_breadcrumbLayout->addWidget(new QLabel(tr("Scene Depth:"), this), 0,
                                   Qt::AlignCenter);
     m_breadcrumbLayout->addSpacing(5);
