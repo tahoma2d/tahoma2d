@@ -83,7 +83,8 @@ void Breadcrumb::onButtonClicked() {
 
     app->getCurrentColumn()->setColumnIndex(m_col);
     app->getCurrentFrame()->setFrameIndex(r);
-    app->getCurrentSelection()->getSelection()->selectNone();
+    if (app->getCurrentSelection()->getSelection())
+      app->getCurrentSelection()->getSelection()->selectNone();
 
     QAction *openChildAction =
         CommandManager::instance()->getAction(MI_OpenChild);
@@ -123,7 +124,8 @@ void Breadcrumb::onComboBoxIndexChanged(int index) {
 
   app->getCurrentColumn()->setColumnIndex(col);
   app->getCurrentFrame()->setFrameIndex(r);
-  app->getCurrentSelection()->getSelection()->selectNone();
+  if (app->getCurrentSelection()->getSelection())
+    app->getCurrentSelection()->getSelection()->selectNone();
 
   QAction *openChildAction =
       CommandManager::instance()->getAction(MI_OpenChild);
