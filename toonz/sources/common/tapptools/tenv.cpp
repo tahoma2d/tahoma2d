@@ -112,7 +112,7 @@ public:
 #else
     TFilePath systemVarPath = getSystemVarPath(varName);
     if (systemVarPath.isEmpty()) {
-      std::cout << "varName:" << varName << " TOONZROOT not set..."
+      std::cout << "varName:" << varName << " TAHOMA2DROOT not set..."
                 << std::endl;
       return "";
     }
@@ -122,13 +122,13 @@ public:
                         if (!value)
                                 {
                                 std::cout << varName << " not set, returning
-   TOONZROOT" << std::endl;
-        //value = getenv("TOONZROOT");
+   TAHOMA2DROOT" << std::endl;
+        //value = getenv("TAHOMA2DROOT");
                         value="";
                         std::cout << "!!!value= "<< value << std::endl;
                         if (!value)
                                         {
-                                        std::cout << varName << "TOONZROOT not
+                                        std::cout << varName << "TAHOMA2DROOT not
    set..." << std::endl;
                                         //exit(-1);
                                         return "";
@@ -185,7 +185,7 @@ public:
     // from v1.3, registry root is moved to SOFTWARE\\Tahoma\\Tahoma
     m_registryRoot = TFilePath("SOFTWARE\\Tahoma2D\\") + m_version.getAppName();
 #endif
-    m_systemVarPrefix = m_version.getAppName();
+    m_systemVarPrefix = toUpper(m_version.getAppName());
     updateEnvFile();
   }
 
@@ -642,7 +642,7 @@ void TEnv::loadAllEnvVariables() { VariableSet::instance()->load(); }
 
 bool TEnv::setArgPathValue(std::string key, std::string value) {
   EnvGlobals *eg = EnvGlobals::instance();
-  // in case of "-TOONZROOT" , set the all unregistered paths
+  // in case of "-TAHOMA2DROOT" , set the all unregistered paths
   if (key == getRootVarName()) {
     TFilePath rootPath(value);
     eg->setStuffDir(rootPath);
