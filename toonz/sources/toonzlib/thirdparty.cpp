@@ -75,10 +75,10 @@ bool findFFmpeg(QString dir) {
 
 bool checkFFmpeg() {
   // Path in preferences
-  bool found = findFFmpeg(Preferences::instance()->getFfmpegPath());
-  if (found) return true;
+  QString path = Preferences::instance()->getFfmpegPath();
+  if (!path.isEmpty() && findFFmpeg(path)) return true;
 
-  QString path = autodetectFFmpeg();
+  path = autodetectFFmpeg();
   if (path.isEmpty()) return false;
 
   setFFmpegDir(path);
@@ -90,7 +90,7 @@ bool checkFFmpeg() {
 
 QString autodetectFFmpeg() {
   QString dir = Preferences::instance()->getFfmpegPath();
-  if (findFFmpeg(dir)) return dir;
+  if (!dir.isEmpty() && findFFmpeg(dir)) return dir;
 
   // Let's try and autodetect the exe included with release
   QStringList folderList;
@@ -110,6 +110,7 @@ QString autodetectFFmpeg() {
 #endif
 
 #ifndef _WIN32
+  folderList.append("/app/bin");
   folderList.append("/usr/local/bin");
   folderList.append("/usr/bin");
   folderList.append("/bin");
@@ -248,10 +249,10 @@ bool findRhubarb(QString dir) {
 
 bool checkRhubarb() {
   // Path in preferences
-  bool found = findRhubarb(Preferences::instance()->getRhubarbPath());
-  if (found) return true;
+  QString path = Preferences::instance()->getRhubarbPath();
+  if (!path.isEmpty() && findRhubarb(path)) return true;
 
-  QString path = autodetectRhubarb();
+  path = autodetectRhubarb();
   if (path.isEmpty()) return false;
 
   setRhubarbDir(path);
@@ -262,7 +263,7 @@ bool checkRhubarb() {
 
 QString autodetectRhubarb() {
   QString dir = Preferences::instance()->getRhubarbPath();
-  if (findRhubarb(dir)) return dir;
+  if (!dir.isEmpty() && findRhubarb(dir)) return dir;
 
   // Let's try and autodetect the exe included with release
   QStringList folderList;
@@ -282,6 +283,7 @@ QString autodetectRhubarb() {
 #endif
 
 #ifndef _WIN32
+  folderList.append("/app/bin");
   folderList.append("/usr/local/bin");
   folderList.append("/usr/bin");
   folderList.append("/bin");
