@@ -445,6 +445,7 @@ void XsheetViewer::positionSections() {
                                          XsheetGUI::BREADCRUMB_HEIGHT);
       bodyLayer = bodyLayer.adjusted(XsheetGUI::BREADCRUMB_HEIGHT, 0);
     }
+    m_breadcrumbArea->updateBreadcrumbs();
   } else {
     m_breadcrumbArea->showBreadcrumbs(false);
     m_breadcrumbScrollArea->setGeometry(0, 0, 0, 0);
