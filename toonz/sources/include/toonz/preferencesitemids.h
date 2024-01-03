@@ -147,6 +147,7 @@ enum PreferencesItemId {
   currentCellColor,
   levelNameDisplayType,
   showFrameNumberWithLetters,
+  showDragBars,
 
   //----------
   // Animation

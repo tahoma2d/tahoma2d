@@ -441,6 +441,9 @@ public:
   bool isShowFrameNumberWithLettersEnabled() const {
     return getBoolValue(showFrameNumberWithLetters);
   }
+  bool isShowDragBarsEnabled() const {
+    return getBoolValue(showDragBars);
+  }
 
   // Animation  tab
   int getKeyframeType() const { return getIntValue(keyframeType); }

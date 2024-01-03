@@ -1372,6 +1372,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {xsheetLayoutPreference, tr("Column Header Layout*:")},
       {xsheetStep, tr("Next/Previous Step Frames:")},
       {xsheetAutopanEnabled, tr("Autopan during Playback")},
+      {showDragBars, tr("Show Column and Cell Drag Bars")},
       {DragCellsBehaviour, tr("Cell-dragging Behaviour:")},
       {pasteCellsBehavior, tr("Paste Cells Behaviour:")},
       {ignoreAlphaonColumn1Enabled,
@@ -2127,6 +2128,7 @@ QWidget* PreferencesPopup::createXsheetPage() {
   insertUI(levelNameDisplayType, lay, getComboItemList(levelNameDisplayType));
   insertUI(xsheetStep, lay);
   insertUI(xsheetAutopanEnabled, lay);
+  insertUI(showDragBars, lay);
   insertUI(DragCellsBehaviour, lay, getComboItemList(DragCellsBehaviour));
   insertUI(pasteCellsBehavior, lay, getComboItemList(pasteCellsBehavior));
   insertUI(ignoreAlphaonColumn1Enabled, lay);
@@ -2166,6 +2168,8 @@ QWidget* PreferencesPopup::createXsheetPage() {
                            &PreferencesPopup::onShowQuickToolbarClicked);
   m_onEditedFuncMap.insert(showXsheetBreadcrumbs,
                            &PreferencesPopup::onShowXsheetBreadcrumbsClicked);
+  m_onEditedFuncMap.insert(showDragBars,
+                           &PreferencesPopup::onShowKeyframesOnCellAreaChanged);
 
   return widget;
 }
