@@ -87,6 +87,8 @@ TEnv::IntVar NoShiftToggleAction("NoShiftToggleAction", 0);
 TEnv::IntVar TouchGestureControl("TouchGestureControl", 0);
 TEnv::IntVar TransparencySliderValue("TransparencySliderValue", 50);
 
+TEnv::StringVar SkipVersion("SkipVersion", "0.0");
+
 //=============================================================================
 namespace {
 //=============================================================================
@@ -1351,16 +1353,19 @@ void MainWindow::onUpdateCheckerDone(bool error) {
 
   int const software_version =
       get_version_code_from(TEnv::getApplicationVersion());
+  QString latestVersionStr = m_updateChecker->getLatestVersion();
   int const latest_version =
-      get_version_code_from(m_updateChecker->getLatestVersion().toStdString());
-  if (software_version < latest_version) {
+      get_version_code_from(latestVersionStr.toStdString());
+  int skip_version = get_version_code_from(SkipVersion.getValue());
+  if (software_version < latest_version && skip_version != latest_version) {
     QStringList buttons;
     buttons.push_back(QObject::tr("Visit Web Site"));
+    buttons.push_back(QObject::tr("Skip version"));
     buttons.push_back(QObject::tr("Cancel"));
     DVGui::MessageAndCheckboxDialog *dialog = DVGui::createMsgandCheckbox(
-        DVGui::INFORMATION,
-        QObject::tr("An update is available for this software.\nVisit the Web "
-                    "site for more information."),
+        DVGui::INFORMATION, QObject::tr("Version %1 is now available.\n\nVisit "
+                                        "the Web site for more information.\n")
+                                .arg(latestVersionStr),
         QObject::tr("Check for the latest version on launch."), buttons, 0,
         Qt::Checked);
     int ret = dialog->exec();
@@ -1371,6 +1376,8 @@ void MainWindow::onUpdateCheckerDone(bool error) {
       // Write the new last date to file
       QDesktopServices::openUrl(
           QObject::tr("https://github.com/tahoma2d/tahoma2d/releases/latest"));
+    } else if (ret == 2) {
+      SkipVersion = latestVersionStr.toStdString();
     }
   }
 
