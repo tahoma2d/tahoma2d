@@ -301,6 +301,13 @@ int TKeyframeSelection::getFirstRow() const {
 
 //-----------------------------------------------------------------------------
 
+int TKeyframeSelection::getFirstCol() const {
+  if (isEmpty()) return 0;
+  return m_positions.begin()->second;
+}
+
+//-----------------------------------------------------------------------------
+
 void TKeyframeSelection::unselectLockedColumn() {
   TApp *app = TApp::instance();
   assert(app);

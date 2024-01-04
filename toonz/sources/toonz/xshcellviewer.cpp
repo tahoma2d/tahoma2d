@@ -3638,7 +3638,7 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
         if (column && !m_viewer->getCellSelection()->isCellSelected(row, col)) {
           int r0, r1;
           column->getLevelRange(row, r0, r1);
-          if (event->modifiers() & Qt::AltModifier) {
+          if (event->modifiers() & Qt::ControlModifier) {
             m_viewer->getCellKeyframeSelection()->makeCurrent();
             m_viewer->getCellKeyframeSelection()->selectCellsKeyframes(r0, col,
                                                                        r1, col);

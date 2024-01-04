@@ -272,7 +272,7 @@ public:
 KeyframeMoverTool::KeyframeMoverTool(XsheetViewer *viewer, bool justMovement)
     : XsheetGUI::DragTool(viewer)
     , m_startSelection()
-    , m_offset(0)
+    , m_offset(0, 0)
     , m_firstRow(0)
     , m_selecting(false)
     , m_startPos()
@@ -287,6 +287,12 @@ KeyframeMoverTool::KeyframeMoverTool(XsheetViewer *viewer, bool justMovement)
 
 TKeyframeSelection *KeyframeMoverTool::getSelection() {
   return getViewer()->getKeyframeSelection();
+}
+
+//-----------------------------------------------------------------------------
+
+TCellSelection *KeyframeMoverTool::getCellSelection() {
+  return getViewer()->getCellSelection();
 }
 
 //-----------------------------------------------------------------------------
@@ -387,7 +393,7 @@ bool KeyframeMoverTool::canMove(const TPoint &pos) {
   if (usePos.x < 0) return false;
 
   int col      = usePos.x;
-  int startCol = getViewer()->xyToPosition(m_startPos).layer();
+  int startCol = getViewer()->xyToPosition(m_startPos).layer() - m_offset.y;
   if (col != startCol) return false;
 
   return true;
@@ -395,9 +401,13 @@ bool KeyframeMoverTool::canMove(const TPoint &pos) {
 
 //-----------------------------------------------------------------------------
 
+bool KeyframeMoverTool::hasSelection() { return !m_startSelection.isEmpty(); }
+
+//-----------------------------------------------------------------------------
+
 void KeyframeMoverTool::onCellChange(int row, int col) {
-  int lastRow  = getSelection()->getFirstRow() + m_offset;
-  int firstRow = m_startSelection.getFirstRow() + m_offset;
+  int lastRow  = getSelection()->getFirstRow() + m_offset.x;
+  int firstRow = m_startSelection.getFirstRow() + m_offset.x;
   int dr       = row - lastRow;
   int dfr      = row - firstRow;
   int d = (m_mover->getQualifiers() & KeyframeMover::eMoveKeyframes) ? dr : dfr;
@@ -432,8 +442,15 @@ void KeyframeMoverTool::onClick(const QMouseEvent *event) {
     }
     getSelection()->makeCurrent();
   }
-  if (!getSelection()->isEmpty())
-    m_offset       = row - getSelection()->getFirstRow();
+  if (!getSelection()->isEmpty()) {
+    m_offset.x = row - getSelection()->getFirstRow();
+    m_offset.y = col - getSelection()->getFirstCol();
+  } else if (!getCellSelection()->isEmpty()) {
+    int r0, r1, c0, c1;
+    getCellSelection()->getSelectedCells(r0, c0, r1, c1);
+    m_offset.x = row - r0;
+    m_offset.y = col - c0;
+  }
   m_startSelection = *getSelection();
   getViewer()->update();
   m_startPos = TPointD(event->pos().x(), event->pos().y());
@@ -478,7 +495,7 @@ void KeyframeMoverTool::onRelease(const CellPosition &pos) {
     getViewer()->updateCells();
     return;
   }
-  m_offset = 0;
+  m_offset.x = m_offset.y = 0;
   int dr   = getSelection()->getFirstRow() - m_startSelection.getFirstRow();
   if (dr) {
     TUndoManager::manager()->add(new UndoMoveKeyFrame(dr, m_mover));

@@ -1065,7 +1065,9 @@ class CellKeyframeMoverTool final : public LevelMoverTool {
 
 protected:
   bool canMove(const TPoint &pos) override {
-    if (!m_keyframeMoverTool->canMove(pos)) return false;
+    if (m_keyframeMoverTool->hasSelection() &&
+        !m_keyframeMoverTool->canMove(pos))
+      return false;
     return LevelMoverTool::canMove(pos);
   }
 
