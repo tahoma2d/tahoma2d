@@ -1177,7 +1177,11 @@ void ColumnArea::DrawHeader::drawColumnNumber() const {
 
   int valign = o->isVerticalTimeline() ? Qt::AlignVCenter : Qt::AlignBottom;
 
-  if (!o->isVerticalTimeline()) pos.adjust(0, -1, 0, -1);
+  if (!o->isVerticalTimeline()) {
+    pos.adjust(0, -1, 0, -1);
+    if (!Preferences::instance()->isShowDragBarsEnabled())
+      pos.adjust(0, -3, 0, -3);
+  }
 
   p.drawText(pos, Qt::AlignHCenter | valign | Qt::TextSingleLine,
              QString::number(col + 1));
@@ -1266,7 +1270,12 @@ void ColumnArea::DrawHeader::drawColumnName() const {
 
   int vertAdj = 0;
 
-  if (!o->isVerticalTimeline()) vertAdj = col < 0 || isEmpty ? -4 : -1;
+  if (!o->isVerticalTimeline()) {
+    vertAdj = col < 0 || isEmpty ? -4 : -1;
+    if (!Preferences::instance()->isShowDragBarsEnabled() && col >= 0 &&
+        !isEmpty)
+      vertAdj -= 3;
+  }
 
   p.drawText(columnName.adjusted(leftadj, vertAdj, rightadj, vertAdj),
              Qt::AlignLeft | valign | Qt::TextSingleLine,
@@ -3183,6 +3192,11 @@ void ColumnArea::mouseDoubleClickEvent(QMouseEvent *event) {
 
   QRect nameRect = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_NAME
                                      : PredefinedRect::LAYER_NAME);
+
+  if (!Preferences::instance()->isShowDragBarsEnabled() &&
+      !o->isVerticalTimeline())
+    nameRect.adjust(0, -3, 0, -3);
+
   if (!nameRect.contains(mouseInCell)) return;
 
   TXsheet *xsh = m_viewer->getXsheet();
