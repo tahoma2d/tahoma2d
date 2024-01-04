@@ -2781,8 +2781,10 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
   TXshCell prevCell;
   bool prevIsImplicit = false;
 
-  TCellSelection *cellSelection = m_viewer->getCellSelection();
-  bool isSelected               = cellSelection->isCellSelected(row, col);
+  TCellSelection *cellSelection     = m_viewer->getCellSelection();
+  TColumnSelection *columnSelection = m_viewer->getColumnSelection();
+  bool isSelected                   = cellSelection->isCellSelected(row, col) ||
+                    columnSelection->isColumnSelected(col);
   bool isImplicitCell           = xsh->isImplicitCell(row, col);
   bool isStopFrame = isImplicitCell ? false : cell.getFrameId().isStopFrame();
 
