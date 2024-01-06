@@ -58,7 +58,6 @@ public:
   TSelection *clone() const { return new TKeyframeSelection(m_positions); }
 
   int getFirstRow() const;
-  int getFirstCol() const;
 
   void unselectLockedColumn();
   bool select(const TSelection *s);
