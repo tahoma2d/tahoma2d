@@ -129,15 +129,21 @@ public:
     int col          = pos.layer();
     m_firstCol       = col;
     m_firstRow       = row;
+
+    int r0, c0, r1, c1;
+    bool shiftPressed = false;
+    if (m_modifier & Qt::ShiftModifier) {
+      shiftPressed = true;
+      getViewer()->getCellSelection()->getSelectedCells(r0, c0, r1, c1);
+    }
+
     // First, check switching of the selection types. This may clear the
     // previous selection.
     if (m_modifier & Qt::ControlModifier)
       getViewer()->getCellKeyframeSelection()->makeCurrent();
     else
       getViewer()->getCellSelection()->makeCurrent();
-    if (m_modifier & Qt::ShiftModifier) {
-      int r0, c0, r1, c1;
-      getViewer()->getCellSelection()->getSelectedCells(r0, c0, r1, c1);
+    if (shiftPressed) {
       if (r0 <= r1 && c0 <= c1) {
         if (abs(row - r0) < abs(row - r1)) {
           m_firstRow = r1;

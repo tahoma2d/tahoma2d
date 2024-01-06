@@ -3682,7 +3682,9 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
         if (!isInDragArea && !isCellEmpty) {
           setDragTool(XsheetGUI::DragTool::makeSelectionTool(m_viewer));
           m_viewer->dragToolClick(event);
-          if (!(event->modifiers() & Qt::AltModifier)) isInDragArea = true;
+          if (!(event->modifiers() & Qt::ShiftModifier) &&
+              !(event->modifiers() & Qt::AltModifier))
+            isInDragArea = true;
         } else if (isInDragArea && isEmptySelection) {
           setDragTool(XsheetGUI::DragTool::makeSelectionTool(m_viewer));
           m_viewer->dragToolClick(event);
