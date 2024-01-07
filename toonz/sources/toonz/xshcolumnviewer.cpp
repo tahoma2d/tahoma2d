@@ -2839,15 +2839,13 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
 
           if (!isInDragArea) {
             if (!(event->modifiers() & Qt::ControlModifier) &&
-                !(event->modifiers() & Qt::ShiftModifier) &&
-                !(event->modifiers() & Qt::AltModifier)) {
+                !(event->modifiers() & Qt::ShiftModifier)) {
               // Switch to column and allow immediate drag
               setDragTool(XsheetGUI::DragTool::makeSelectionTool(m_viewer));
               m_viewer->dragToolClick(event);
               isInDragArea = true;
             }
-          } else if ((event->modifiers() & Qt::AltModifier) ||
-                     (event->modifiers() & Qt::ControlModifier))
+          } else if (event->modifiers() & Qt::ControlModifier)
             isInDragArea = false;
         }
 
@@ -2890,8 +2888,7 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
 
         bool isEmptySelection = !hasNonEmptyCol(colSelection);
 
-        if (isEmptySelection || (event->modifiers() & Qt::ControlModifier) ||
-            (event->modifiers() & Qt::AltModifier))
+        if (isEmptySelection || (event->modifiers() & Qt::ControlModifier))
           isInDragArea = false;
         else {
           std::set<int> colSet       = colSelection->getIndices();

@@ -3668,6 +3668,10 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
       bool isCellEmpty =
           (xsh->getCell(row, col).isEmpty() || xsh->isImplicitCell(row, col));
 
+      bool isKeySelection = hasDragBar
+                                ? event->modifiers() & Qt::ControlModifier
+                                : event->modifiers() & Qt::AltModifier;
+
       // When no drag bars..
       if (!isSoundPreviewArea && !hasDragBar) {
         isInDragArea = m_viewer->getCellSelection()->isCellSelected(row, col);
@@ -3683,7 +3687,7 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
           setDragTool(XsheetGUI::DragTool::makeSelectionTool(m_viewer));
           m_viewer->dragToolClick(event);
           if (!(event->modifiers() & Qt::ShiftModifier) &&
-              !(event->modifiers() & Qt::AltModifier))
+              !(event->modifiers() & Qt::ControlModifier))
             isInDragArea = true;
         } else if (isInDragArea && isEmptySelection) {
           setDragTool(XsheetGUI::DragTool::makeSelectionTool(m_viewer));
@@ -3697,7 +3701,7 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
         if (column && !m_viewer->getCellSelection()->isCellSelected(row, col)) {
           int r0, r1;
           column->getLevelRange(row, r0, r1);
-          if (event->modifiers() & Qt::ControlModifier) {
+          if (isKeySelection) {
             m_viewer->getCellKeyframeSelection()->makeCurrent();
             m_viewer->getCellKeyframeSelection()->selectCellsKeyframes(r0, col,
                                                                        r1, col);
