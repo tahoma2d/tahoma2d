@@ -130,6 +130,7 @@ void TImageReader::open() {
         else
           throw TImageException(m_path, "Image format not supported");
       }
+/*
     } catch (TException &e) {
       close();  // close() chiude il file e setta m_file a NULL.
 //      QString msg = QString::fromStdWString(e.getMessage());
@@ -137,6 +138,7 @@ void TImageReader::open() {
       throw e;
 //    } catch (std::string str) {
 //      if (str == "Tiff file closed") m_file = NULL;
+*/
     } catch (...) {
       close();
       throw;
@@ -748,16 +750,20 @@ TImageWriterP::TImageWriterP(const TFilePath &path) {
 
 bool TImageReader::load(const TFilePath &path, TRasterP &raster) {
   raster = TRasterP();
-  TImageReaderP ir(path);
-  if (!ir) return false;
-  TImageP img = ir->load();
-  if (!img) return false;
+  try {
+    TImageReaderP ir(path);
+    if (!ir) return false;
+    TImageP img = ir->load();
+    if (!img) return false;
 
-  TRasterImageP ri(img);
-  if (!ri) return false;
+    TRasterImageP ri(img);
+    if (!ri) return false;
 
-  raster = ri->getRaster();
-  return true;
+    raster = ri->getRaster();
+    return true;
+  } catch (...) {
+    return false;
+  }
 }
 
 //-----------------------------------------------------------
