@@ -1974,10 +1974,9 @@ void CellArea::drawCellMarker(QPainter &p, int markId, QRect rect,
   p.setBrush(cellColor);
   p.setPen(borderColor);
   // Adjust for drag bar
-  if (hasFrame) {
+  if (hasFrame && Preferences::instance()->isShowDragBarsEnabled()) {
     QRect dragBar = o->rect(PredefinedRect::DRAG_AREA);
-    if (!o->isVerticalTimeline() &&
-        Preferences::instance()->isShowDragBarsEnabled())
+    if (!o->isVerticalTimeline())
       rect.adjust(0, dragBar.height() - 1, 0, 0);
     else
       rect.adjust(dragBar.width() - 1, 0, 0, 0);
