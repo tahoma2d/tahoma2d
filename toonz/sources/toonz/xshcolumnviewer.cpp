@@ -2703,8 +2703,7 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
             event->button() == Qt::RightButton)
           return;
 
-        if (hasDragBar)
-          setDragTool(XsheetGUI::DragTool::makeColumnSelectionTool(m_viewer));
+        setDragTool(XsheetGUI::DragTool::makeColumnSelectionTool(m_viewer));
       }
     }
     // clicking on the normal columns
