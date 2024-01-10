@@ -148,6 +148,7 @@ enum PreferencesItemId {
   levelNameDisplayType,
   showFrameNumberWithLetters,
   showDragBars,
+  timelineLayoutPreference,
 
   //----------
   // Animation

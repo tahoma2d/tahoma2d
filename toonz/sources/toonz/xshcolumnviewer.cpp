@@ -958,13 +958,13 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
   // Fill base color, in timeline view adjust it right upto thumbnail so column
   // head color doesn't show under icon switches.
   if (isEmpty)
-    p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(80, 0, 0, 0),
+    p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(73, 0, 0, 0),
                m_viewer->getEmptyColumnHeadColor());
   else if (col < 0)
-    p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(80, 0, 0, 0),
+    p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(73, 0, 0, 0),
                columnColor);
   else {
-    p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(80, 0, 0, 0),
+    p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(73, 0, 0, 0),
                columnColor);
 
     if (Preferences::instance()->isShowDragBarsEnabled() &&
@@ -996,7 +996,7 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
   QColor pastelizer(m_viewer->getColumnHeadPastelizer());
 
   QColor colorSelection(m_viewer->getSelectedColumnHead());
-  p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(80, 0, 0, 0),
+  p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(73, 0, 0, 0),
              isSelected ? colorSelection : pastelizer);
 }
 
@@ -1233,8 +1233,14 @@ void ColumnArea::DrawHeader::drawColumnName() const {
         p.fillRect(columnName, m_viewer->getXsheetColumnNameBgColor());
     }
 
-    if (o->flag(PredefinedFlag::LAYER_NAME_BORDER))
-      p.drawRect(columnName.adjusted(0, 0, 2, 0));
+    if (o->flag(PredefinedFlag::LAYER_NAME_BORDER)) {
+      int adjust = (!o->isVerticalTimeline() && !showDragBars &&
+                    Preferences::instance()->getTimelineLayoutPreference() ==
+                        "NoDragMinimum")
+                       ? 6
+                       : 2;
+      p.drawRect(columnName.adjusted(0, 0, adjust, 0));
+    }
 
     if (o->isVerticalTimeline() &&
         m_viewer->getXsheetLayout() == QString("Classic")) {
@@ -1820,6 +1826,13 @@ void ColumnArea::drawCurrentColumnFocus(QPainter &p, int col) {
   QRect rect = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_NAME
                                  : PredefinedRect::LAYER_NAME)
                    .translated(orig);
+  int adjust = (!o->isVerticalTimeline() &&
+                !Preferences::instance()->isShowDragBarsEnabled() &&
+                Preferences::instance()->getTimelineLayoutPreference() ==
+                    "NoDragMinimum")
+                   ? 6
+                   : 0;
+  rect.adjust(0, 0, adjust, 0);
 
   p.setPen(m_viewer->getColumnFocusColor());
   p.setBrush(Qt::NoBrush);
@@ -3194,6 +3207,15 @@ void ColumnArea::mouseDoubleClickEvent(QMouseEvent *event) {
       (col < 0 && o->isVerticalTimeline()) ? nameRect.topLeft() : topLeft;
   QRect renameRect =
       o->rect(PredefinedRect::RENAME_COLUMN).translated(fieldPos);
+
+  int adjust = (!o->isVerticalTimeline() &&
+                !Preferences::instance()->isShowDragBarsEnabled() &&
+                Preferences::instance()->getTimelineLayoutPreference() ==
+                    "NoDragMinimum")
+                   ? 6
+                   : 0;
+  renameRect.adjust(0, 0, adjust, 0);
+
   m_renameColumnField->show(renameRect, col);
 }
 

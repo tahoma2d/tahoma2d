@@ -225,9 +225,14 @@ const Orientation *Orientations::topToBottom() {
 }
 const Orientation *Orientations::leftToRight() {
   bool showDragBars = Preferences::instance()->isShowDragBarsEnabled();
+  QString timelineLayout =
+      showDragBars ? "Roomy"
+                   : Preferences::instance()->getTimelineLayoutPreference();
 
-  // For now only show compact mode. NoDragMinimum to come later
-  if (!showDragBars) return instance()._leftToRight_nodragcompact;
+  if (timelineLayout == "NoDragCompact")
+    return instance()._leftToRight_nodragcompact;
+  else if (timelineLayout == "NoDragMinimum")
+    return instance()._leftToRight_nodragminimum;
 
   return instance()._leftToRight_roomy;
 }
@@ -238,7 +243,9 @@ const Orientation *Orientations::byName(const QString &name) {
   std::vector<const Orientation *> m_all = all();
 
   bool showDragBars = Preferences::instance()->isShowDragBarsEnabled();
-  QString timelineLayout = showDragBars ? "Roomy" : "NoDragCompact";
+  QString timelineLayout =
+      showDragBars ? "Roomy"
+                   : Preferences::instance()->getTimelineLayoutPreference();
 
   for (auto it = m_all.begin(); it != m_all.end(); it++) {
     if ((*it)->name() != name) continue;
@@ -1208,7 +1215,7 @@ LeftToRightOrientation::LeftToRightOrientation(QString layout) {
     ICON_OFFSET = ICON_WIDTH;
     ICONS_WIDTH = ICON_OFFSET * 4;
     LAYER_HEADER_WIDTH =
-        ICONS_WIDTH + THUMBNAIL_WIDTH + LAYER_NUMBER_WIDTH + LAYER_NAME_WIDTH;
+        ICONS_WIDTH + THUMBNAIL_WIDTH + LAYER_NUMBER_WIDTH + LAYER_NAME_WIDTH + 4;
     FOLDED_LAYER_HEADER_WIDTH = LAYER_HEADER_WIDTH;
   } else
     addDimension(PredefinedDimension::INDEX, 1);

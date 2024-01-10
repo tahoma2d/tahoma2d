@@ -1889,10 +1889,16 @@ void CellArea::drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
   bool useSmall =
       m_viewer->getFrameZoomFactor() <=
       m_viewer->orientation()->dimension(PredefinedDimension::SCALE_THRESHOLD);
+
+  bool showDragBars = Preferences::instance()->isShowDragBarsEnabled();
+  bool isMinimumLayout =
+      Preferences::instance()->getTimelineLayoutPreference() == "NoDragMinimum";
+
   if (isKeyFrame) {
     if (!m_viewer->orientation()->isVerticalTimeline()) {
-      bool showDragBars = Preferences::instance()->isShowDragBarsEnabled();
-      int adjust = (isCamera && showDragBars) ? -3 : 0;
+      int adjust = (isCamera && showDragBars)
+                       ? -3
+                       : ((!showDragBars && isMinimumLayout) ? 1 : 0);
       dotRect.adjust(0, adjust, 0, adjust);
     }
 
@@ -1904,6 +1910,9 @@ void CellArea::drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
                                  dotRect.adjusted(1, 1, 1, 1).center(), color,
                                  outlineColor);
   } else {
+    int adjust = (!isCamera && !showDragBars && isMinimumLayout) ? 1 : 0;
+    dotRect.adjust(0, adjust, 0, adjust);
+
     // move to column center
     if (m_viewer->orientation()->isVerticalTimeline()) {
       PredefinedLine which =
@@ -3085,6 +3094,9 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
     if (!Preferences::instance()->isShowDragBarsEnabled() &&
         !o->isVerticalTimeline()) {
       int adjust = col < 0 ? 4 : 1;
+      if (Preferences::instance()->getTimelineLayoutPreference() ==
+          "NoDragMinimum")
+        adjust++;
       tmpKeyRect.adjust(0, adjust, 0, adjust);
     }
 
@@ -3241,6 +3253,9 @@ void CellArea::drawKeyframeLine(QPainter &p, int col,
   if (!Preferences::instance()->isShowDragBarsEnabled() &&
       !m_viewer->orientation()->isVerticalTimeline()) {
     int adjust = col < 0 ? 3 : 0;
+    if (Preferences::instance()->getTimelineLayoutPreference() ==
+        "NoDragMinimum")
+      adjust++;
     begin.setY(begin.y() + adjust);
     end.setY(end.y() + adjust);
   }
@@ -3413,14 +3428,18 @@ bool CellArea::isKeyFrameArea(int col, int row, QPoint mouseInCell) {
                .contains(mouseInCell) &&
            row < k1 + 1;
 
+  bool showDragBars = Preferences::instance()->isShowDragBarsEnabled();
+  bool isMinimumLayout =
+      Preferences::instance()->getTimelineLayoutPreference() == "NoDragMinimum";
+
 //  QRect activeArea = (m_viewer->getFrameZoomFactor() >
 //                              o->dimension(PredefinedDimension::SCALE_THRESHOLD)
 //                          ? o->rect(PredefinedRect::KEYFRAME_AREA)
 //                          : o->rect(PredefinedRect::FRAME_MARKER_AREA));
   QRect activeArea = o->rect(PredefinedRect::KEYFRAME_AREA);
-  if (!Preferences::instance()->isShowDragBarsEnabled() &&
-      !o->isVerticalTimeline()) {
+  if (!showDragBars && !o->isVerticalTimeline()) {
     int adjust = col < 0 ? 1 : -1;
+    if (isMinimumLayout) adjust++;
     activeArea.adjust(0, adjust, 0, adjust);
   }
 
@@ -3435,9 +3454,9 @@ bool CellArea::isKeyFrameArea(int col, int row, QPoint mouseInCell) {
       (col >= 0)
           ? o->rect(PredefinedRect::KEY_ICON).translated(-frameAdj / 2)
           : o->rect(PredefinedRect::CAMERA_KEY_ICON).translated(-frameAdj / 2);
-  if (!Preferences::instance()->isShowDragBarsEnabled() &&
-      !o->isVerticalTimeline()) {
+  if (!showDragBars && !o->isVerticalTimeline()) {
     int adjust = col < 0 ? 4 : -1;
+    if (isMinimumLayout) adjust++;
     easeRect.adjust(0, adjust, 0, adjust);
   }
 
@@ -3461,9 +3480,9 @@ bool CellArea::isKeyFrameArea(int col, int row, QPoint mouseInCell) {
   if (m_viewer->getFrameZoomFactor() > 50) {
     activeArea = o->rect(PredefinedRect::FRAME_MARKER_AREA);
     if (!m_viewer->orientation()->isVerticalTimeline()) {
-      bool isCamera     = col < 0;
-      bool showDragBars = Preferences::instance()->isShowDragBarsEnabled();
-      int adjust = (isCamera && showDragBars) ? -3 : (!showDragBars ? 1 : 0);
+      bool isCamera = col < 0;
+      int adjust    = (isCamera && showDragBars) ? -3 : (!showDragBars ? 1 : 0);
+      if (isMinimumLayout) adjust++;
       activeArea.adjust(0, adjust, 0, adjust);
     }
   }
@@ -3601,6 +3620,8 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
       if (!Preferences::instance()->isShowDragBarsEnabled() &&
           !o->isVerticalTimeline()) {
         int adjust = col < 0 ? 4 : 1;
+        if (Preferences::instance()->getTimelineLayoutPreference() == "NoDragMinimum")
+          adjust++;
         loopRect.adjust(0, adjust, 0, adjust);
       }
 
@@ -3845,6 +3866,9 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
   if (!Preferences::instance()->isShowDragBarsEnabled() &&
       !o->isVerticalTimeline()) {
     int adjust = col < 0 ? 4 : 1;
+    if (Preferences::instance()->getTimelineLayoutPreference() ==
+        "NoDragMinimum")
+      adjust++;
     loopRect.adjust(0, adjust, 0, adjust);
   }
 
