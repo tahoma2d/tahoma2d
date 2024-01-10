@@ -2850,7 +2850,6 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
                 !(event->modifiers() & Qt::ShiftModifier)) {
               // Switch to column and allow immediate drag
               setDragTool(XsheetGUI::DragTool::makeSelectionTool(m_viewer));
-              m_viewer->dragToolClick(event);
               isInDragArea = true;
             }
           } else if (event->modifiers() & Qt::ControlModifier)
