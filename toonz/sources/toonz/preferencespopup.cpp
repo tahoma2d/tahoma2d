@@ -745,6 +745,16 @@ void PreferencesPopup::onShowXsheetBreadcrumbsClicked() {
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onShowDragBarsChanged() {
+  DVGui::MsgBoxInPopup(DVGui::MsgType(INFORMATION),
+                       tr("Please restart to update Timeline height."));
+
+  TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
+      "XsheetDragBars");
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onModifyExpressionOnMovingReferencesChanged() {
   TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
       "modifyExpressionOnMovingReferences");
@@ -2169,7 +2179,7 @@ QWidget* PreferencesPopup::createXsheetPage() {
   m_onEditedFuncMap.insert(showXsheetBreadcrumbs,
                            &PreferencesPopup::onShowXsheetBreadcrumbsClicked);
   m_onEditedFuncMap.insert(showDragBars,
-                           &PreferencesPopup::onShowKeyframesOnCellAreaChanged);
+                           &PreferencesPopup::onShowDragBarsChanged);
 
   return widget;
 }

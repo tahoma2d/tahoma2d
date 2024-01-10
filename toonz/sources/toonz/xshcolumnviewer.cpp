@@ -1179,8 +1179,6 @@ void ColumnArea::DrawHeader::drawColumnNumber() const {
 
   if (!o->isVerticalTimeline()) {
     pos.adjust(0, -1, 0, -1);
-    if (!Preferences::instance()->isShowDragBarsEnabled())
-      pos.adjust(0, -3, 0, -3);
   }
 
   p.drawText(pos, Qt::AlignHCenter | valign | Qt::TextSingleLine,
@@ -1215,6 +1213,8 @@ void ColumnArea::DrawHeader::drawColumnName() const {
                                        : PredefinedRect::LAYER_NAME)
                          .translated(orig);
 
+  bool showDragBars = Preferences::instance()->isShowDragBarsEnabled();
+
   bool nameBacklit = false;
   int rightadj     = -2;
   int leftadj      = 3;
@@ -1225,8 +1225,7 @@ void ColumnArea::DrawHeader::drawColumnName() const {
         m_viewer->getXsheetLayout() !=
             QString("Classic"))  // Legacy - No background
     {
-      if (Preferences::instance()->isShowDragBarsEnabled() &&
-          columnName.contains(area->m_pos) && col >= 0) {
+      if (showDragBars && columnName.contains(area->m_pos) && col >= 0) {
         p.fillRect(columnName.adjusted(0, -1, 0, 0),
                    m_viewer->getXsheetDragBarHighlightColor());  // Qt::yellow);
         nameBacklit = true;
@@ -1270,12 +1269,9 @@ void ColumnArea::DrawHeader::drawColumnName() const {
 
   int vertAdj = 0;
 
-  if (!o->isVerticalTimeline()) {
-    vertAdj = col < 0 || isEmpty ? -4 : -1;
-    if (!Preferences::instance()->isShowDragBarsEnabled() && col >= 0 &&
-        !isEmpty)
-      vertAdj -= 3;
-  }
+  if (!o->isVerticalTimeline())
+    vertAdj = ((col < 0 || isEmpty) && showDragBars) ? -4 : -1;
+
 
   p.drawText(columnName.adjusted(leftadj, vertAdj, rightadj, vertAdj),
              Qt::AlignLeft | valign | Qt::TextSingleLine,
@@ -3188,10 +3184,6 @@ void ColumnArea::mouseDoubleClickEvent(QMouseEvent *event) {
 
   QRect nameRect = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_NAME
                                      : PredefinedRect::LAYER_NAME);
-
-  if (!Preferences::instance()->isShowDragBarsEnabled() &&
-      !o->isVerticalTimeline())
-    nameRect.adjust(0, -3, 0, -3);
 
   if (!nameRect.contains(mouseInCell)) return;
 

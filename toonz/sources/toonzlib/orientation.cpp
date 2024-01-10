@@ -99,7 +99,7 @@ public:
 
 class LeftToRightOrientation : public Orientation {
   const int CELL_WIDTH           = 50;
-  const int CELL_HEIGHT          = 24;
+  int BASE_CELL_HEIGHT           = 24;
   const int CELL_DRAG_HEIGHT     = 7;
   const int EXTENDER_WIDTH       = 8;
   const int EXTENDER_HEIGHT      = 12;
@@ -124,7 +124,9 @@ class LeftToRightOrientation : public Orientation {
   const int SHIFTTRACE_DOT_OFFSET      = 5;
   const int LAYER_HEADER_PANEL_HEIGHT  = 20;
   const int LAYER_FOOTER_PANEL_HEIGHT  = 16;
-  const int CAMERA_CELL_HEIGHT         = CELL_HEIGHT;
+  int BASE_CAMERA_CELL_HEIGHT          = BASE_CELL_HEIGHT;
+
+  int CELL_HEIGHT, CAMERA_CELL_HEIGHT;
 
 public:
   LeftToRightOrientation();
@@ -1152,6 +1154,14 @@ CellPosition TopToBottomOrientation::arrowShift(int direction) const {
 /// --------------------------------------------------------------------------------
 
 LeftToRightOrientation::LeftToRightOrientation() {
+  CELL_HEIGHT        = BASE_CELL_HEIGHT;
+  CAMERA_CELL_HEIGHT = BASE_CAMERA_CELL_HEIGHT;
+
+  if (!Preferences::instance()->isShowDragBarsEnabled()) {
+    CELL_HEIGHT -= 4;
+    CAMERA_CELL_HEIGHT -= 4;
+  }
+
   //
   // Ranges
   //
