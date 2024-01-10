@@ -746,9 +746,6 @@ void PreferencesPopup::onShowXsheetBreadcrumbsClicked() {
 //-----------------------------------------------------------------------------
 
 void PreferencesPopup::onShowDragBarsChanged() {
-  DVGui::MsgBoxInPopup(DVGui::MsgType(INFORMATION),
-                       tr("Please restart to update Timeline height."));
-
   TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
       "XsheetDragBars");
 }
