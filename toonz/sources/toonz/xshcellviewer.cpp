@@ -3315,7 +3315,8 @@ public:
   int getHistoryType() override { return HistoryType::Xsheet; }
 };
 //----------------------------------------------------------
-bool CellArea::isKeyFrameArea(int col, int row, QPoint mouseInCell) {
+bool CellArea::isKeyFrameArea(int col, int row, QPoint mouseInCell,
+                              bool withFrameLine) {
   if (!Preferences::instance()->isShowKeyframesOnXsheetCellAreaEnabled())
     return false;
 
@@ -3359,7 +3360,7 @@ bool CellArea::isKeyFrameArea(int col, int row, QPoint mouseInCell) {
   int r0, r1;
   double e0, e1;
   if (pegbar->getKeyframeSpan(row, r0, e0, r1, e1)) {
-    if (r1 - r0 > 4) {
+    if (r1 - r0 > 2) {
       int rh0, rh1;
       if (getEaseHandles(r0, r1, e0, e1, rh0, rh1)) {
         if (row == rh0 && easeRect.contains(mouseInCell))
@@ -3370,6 +3371,8 @@ bool CellArea::isKeyFrameArea(int col, int row, QPoint mouseInCell) {
       }
     }
   }
+
+  if (!withFrameLine) return false;
 
   // In the white line area, if zoomed in.. narrow height by using frame marker
   // area since it has a narrower height
@@ -3875,7 +3878,7 @@ void CellArea::contextMenuEvent(QContextMenuEvent *event) {
       Preferences::instance()->isShowKeyframesOnXsheetCellAreaEnabled() &&
       pegbar && pegbar->getKeyframeRange(k0, k1) && k0 <= row && row <= k1 + 1;
 
-  if (isKeyframeFrame && isKeyFrameArea(col, row, mouseInCell)) {
+  if (isKeyframeFrame && isKeyFrameArea(col, row, mouseInCell, true)) {
     TStageObjectId objectId;
     if (col < 0)
       objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
