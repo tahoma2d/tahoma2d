@@ -17,6 +17,8 @@
 // Tnz6 includes
 #include "cellselection.h"
 
+#define DEBUG_saveSceneAs
+
 //========================================================
 
 //    Forward declaration

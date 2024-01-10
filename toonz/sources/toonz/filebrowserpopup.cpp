@@ -644,8 +644,15 @@ bool SaveSceneAsPopup::execute() {
   if (isSpaceString(QString::fromStdString(
           fp.getName())))  // Lol. Cmon! Really necessary?
     return false;
-
+#ifdef DEBUG_saveSceneAs
+  bool result = IoCmd::saveScene(fp, 0);
+  if (result)
+      return IoCmd::saveAll(0);
+  else
+    return false;
+#else
   return IoCmd::saveScene(fp, 0);
+#endif
 }
 
 void SaveSceneAsPopup::initFolder() {
