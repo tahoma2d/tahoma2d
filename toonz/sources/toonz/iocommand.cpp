@@ -1585,6 +1585,11 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
   CleanupParameters oldCP(*cp);
   cp->assign(&CleanupParameters::GlobalParameters);
 
+  // Must wait for current save to finish, just in case
+  while (TApp::instance()->isSaveInProgress())
+    ;
+
+  TApp::instance()->setSaveInProgress(true);
   try {
     scene->save(scenePath, xsheet);
   } catch (const TSystemException &se) {
@@ -1592,6 +1597,7 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
   } catch (...) {
     DVGui::error(QObject::tr("Couldn't save %1").arg(toQString(scenePath)));
   }
+  TApp::instance()->setSaveInProgress(false);
 
   cp->assign(&oldCP);
 
@@ -1654,6 +1660,7 @@ bool IoCmd::saveScene(int flags) {
   } else {
     TFilePath fp = scene->getScenePath();
     // salva la scena con il nome fp. se fp esiste gia' lo sovrascrive
+    // NOTE: saveScene already check saveInProgress
     return saveScene(fp, SILENTLY_OVERWRITE | flags);
   }
 }
@@ -1802,13 +1809,20 @@ bool IoCmd::saveLevel(TXshSimpleLevel *sl) {
 bool IoCmd::saveAll(int flags) {
   // try to save as much as possible
   // if anything is wrong, return false
+  // NOTE: saveScene already check saveInProgress
   bool result = saveScene(flags);
 
   TApp *app         = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
   bool untitled     = scene->isUntitled();
   SceneResources resources(scene, 0);
+  // Must wait for current save to finish, just in case
+  while (TApp::instance()->isSaveInProgress())
+    ;
+
+  TApp::instance()->setSaveInProgress(true);
   result = result && resources.save(scene->getScenePath());
+  TApp::instance()->setSaveInProgress(false);
   resources.updatePaths();
 
   // for update title bar
@@ -1835,7 +1849,13 @@ void IoCmd::saveNonSceneFiles() {
   ToonzScene *scene = app->getCurrentScene()->getScene();
   bool untitled     = scene->isUntitled();
   SceneResources resources(scene, 0);
+  // Must wait for current save to finish, just in case
+  while (TApp::instance()->isSaveInProgress())
+    ;
+
+  TApp::instance()->setSaveInProgress(true);
   resources.save(scene->getScenePath());
+  TApp::instance()->setSaveInProgress(false);
   if (untitled) scene->setUntitled();
   resources.updatePaths();
 
