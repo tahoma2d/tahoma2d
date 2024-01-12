@@ -1262,7 +1262,7 @@ void CellArea::drawFrameSeparator(QPainter &p, int row, int col,
       frameAxis, layerAxisRange.adjusted(handleSize - 1, 1));
   if (heldFrame) {
     int x = horizontalLine.x1();
-    int y = horizontalLine.y2() - 2;
+    int y = horizontalLine.y2() - 4;
     horizontalLine.setP1(QPoint(x, y));
     color.setAlpha(120);
   } else if (!o->isVerticalTimeline() && !isAfterMarkers && emptyFrame)
@@ -1397,6 +1397,11 @@ void CellArea::drawCells(QPainter &p, const QRect toBeUpdated) {
           drawLevelCell(p, row, col, isReference, showLevelName);
       }
     }
+  }
+
+  for (col = c0; col <= c1; col++) {
+    // x in vertical timeline / y in horizontal
+    int layerAxis = m_viewer->columnToLayerAxis(col);
 
     // draw vertical line
     if (layerAxis > 0) {
@@ -1586,9 +1591,9 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
   QRect cellRect  = o->rect(PredefinedRect::CELL).translated(QPoint(x, y));
   cellRect.adjust(0, 0, -frameAdj.x(), -frameAdj.y());
   QRect rect = cellRect.adjusted(
-      1, 1,
-      (!m_viewer->orientation()->isVerticalTimeline() && !isNextEmpty ? 2 : 0),
-      0);
+      0, 0,
+      (!m_viewer->orientation()->isVerticalTimeline() && !isNextEmpty ? 2 : -1),
+      (m_viewer->orientation()->isVerticalTimeline() ? -1 : 0));
 
   int markId = soundColumn->getCellMark(row);
 
@@ -1659,9 +1664,10 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
       Preferences::instance()->isCurrentTimelineIndicatorEnabled())
     drawCurrentTimeIndicator(p, xy);
 
-  drawDragHandle(p, isFirstRow, xy, sideColor);
+  drawDragHandle(p, isFirstRow, isLastRow, xy, sideColor);
   drawEndOfDragHandle(p, isLastRow, xy, cellColor);
-  drawLockedDottedLine(p, soundColumn->isLocked(), isFirstRow, xy, cellColor);
+  drawLockedDottedLine(p, soundColumn->isLocked(), isFirstRow, isLastRow, xy,
+                       cellColor);
 
   QRect trackRect = o->rect(PredefinedRect::SOUND_TRACK)
                         .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
@@ -1755,28 +1761,21 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
 //-----------------------------------------------------------------------------
 
 // paint side bar
-void CellArea::drawDragHandle(QPainter &p, bool isStart, const QPoint &xy,
-                              const QColor &sideColor) const {
+void CellArea::drawDragHandle(QPainter &p, bool isStart, bool isLastRow,
+                              const QPoint &xy, const QColor &sideColor) const {
   QPoint frameAdj      = m_viewer->getFrameZoomAdjustment();
   QRect dragHandleRect = m_viewer->orientation()
                              ->rect(PredefinedRect::DRAG_HANDLE_CORNER)
                              .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
                              .translated(xy);
-  if (isStart) {
-    if (m_viewer->orientation()->isVerticalTimeline())
-      dragHandleRect.adjust(0, 1, 0, 0);
-    else
-      dragHandleRect.adjust(1, 0, 0, 0);
-  } else {
-    if (xy.x() > 1 && !m_viewer->orientation()->isVerticalTimeline())
-      dragHandleRect.adjust(-1, 0, 0, 0);  
-    else if (xy.y() > 1 && m_viewer->orientation()->isVerticalTimeline())
-      dragHandleRect.adjust(0, -1, 0, 0);
-  }
 
   // Adjust for 1st row
-  if (xy.x() <= 1 && !m_viewer->orientation()->isVerticalTimeline())
-    dragHandleRect.adjust(0, 0, -1, 0);
+  if (!m_viewer->orientation()->isVerticalTimeline())
+    dragHandleRect.adjust((xy.x() <= 1 ? -1 : (!isStart ? -1 : 0)), 0,
+                          (xy.x() <= 1 ? -2 : (isLastRow ? -1 : 0)), 0);
+  else
+    dragHandleRect.adjust(0, (xy.y() <= 1 ? -1 : (!isStart ? -1 : 0)), 0,
+                          (xy.y() <= 1 ? -2 : -1));
 
   p.fillRect(dragHandleRect, QBrush(sideColor));
 }
@@ -1789,8 +1788,10 @@ void CellArea::drawEndOfDragHandle(QPainter &p, bool isEnd, const QPoint &xy,
   QPoint lxy = xy;
 
   // Adjust left for 1st row
-  if (lxy.x() <= 1 && !m_viewer->orientation()->isVerticalTimeline())
-    lxy.setX(lxy.x() - 1);
+  if (!m_viewer->orientation()->isVerticalTimeline())
+    lxy.setX(lxy.x() - (lxy.x() <= 1 ? 2 : 1));
+  else
+    lxy.setY(lxy.y() - (lxy.y() <= 1 ? 2 : 1));
 
   QPoint frameAdj     = m_viewer->getFrameZoomAdjustment();
   QPainterPath corner = m_viewer->orientation()
@@ -1801,7 +1802,7 @@ void CellArea::drawEndOfDragHandle(QPainter &p, bool isEnd, const QPoint &xy,
 
 // draw dot line if the column is locked
 void CellArea::drawLockedDottedLine(QPainter &p, bool isLocked, bool isStart,
-                                    const QPoint &xy,
+                                    bool isLastRow, const QPoint &xy,
                                     const QColor &cellColor) const {
   if (!isLocked) return;
 
@@ -1813,13 +1814,13 @@ void CellArea::drawLockedDottedLine(QPainter &p, bool isLocked, bool isStart,
       lxy.setX(lxy.x() + 1); // Adjust for 1st row
       adjEndX = -2;
     } else
-      adjEndX = -1;
+      adjEndX = isLastRow ? -2 : -1;
   } else {
     if (lxy.y() <= 1) {
       lxy.setY(lxy.y() + 1);
       adjEndY = -2;
     } else
-      adjEndY = -1;
+      adjEndY = isLastRow ? -2 : -1;
   }
 
   p.setPen(QPen(cellColor, 2, Qt::DotLine));
@@ -2025,12 +2026,12 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
           .translated(QPoint(x, y));
   cellRect.adjust(0, 0, -frameAdj.x(), -frameAdj.y());
   QRect rect = cellRect.adjusted(
-      1, 1, (!o->isVerticalTimeline() && !nextCell.isEmpty() &&
+      0, 0, (!o->isVerticalTimeline() && !nextCell.isEmpty() &&
                      !xsh->isImplicitCell(row + 1, col) &&
                      !nextCell.getFrameId().isStopFrame()
                  ? 2
-                 : 0),
-      0);
+                 : -1),
+      (m_viewer->orientation()->isVerticalTimeline() ? -1 : 0));
 
   QRect markRect =
       o->rect(PredefinedRect::CELL_MARK_AREA)
@@ -2175,15 +2176,15 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     drawCurrentTimeIndicator(p, xy);
 
   if (!isImplicitCell) {
-    bool isStart = row > 0 && (prevCell.isEmpty() || prevIsImplicit);
-    drawDragHandle(p, isStart, xy, sideColor);
-
+    bool isStart =
+        row > 0 && (prevCell.isEmpty() || prevIsImplicit ||
+                    prevCell.m_level.getPointer() != cell.m_level.getPointer());
     bool isLastRow = nextCell.isEmpty() || isImplicitCellNext ||
                      cell.m_level.getPointer() != nextCell.m_level.getPointer();
+    drawDragHandle(p, isStart, isLastRow, xy, sideColor);
     drawEndOfDragHandle(p, isLastRow, xy, cellColor);
-
-    drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), isStart, xy,
-                         cellColor);
+    drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), isStart, isLastRow,
+                         xy, cellColor);
   }
 
 
@@ -2317,7 +2318,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
 }
 
 //-----------------------------------------------------------------------------
-
+/*
 void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
   const Orientation *o = m_viewer->orientation();
   TXsheet *xsh         = m_viewer->getXsheet();
@@ -2353,11 +2354,11 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
   QRect cellRect    = o->rect(PredefinedRect::CELL).translated(QPoint(x, y));
   cellRect.adjust(0, 0, -frameAdj.x(), -frameAdj.y());
   QRect rect = cellRect.adjusted(
-      1, 1,
+      0, 0,
       (!m_viewer->orientation()->isVerticalTimeline() && !nextCell.isEmpty()
            ? 2
-           : 0),
-      0);
+           : -1),
+      (m_viewer->orientation()->isVerticalTimeline() ? -1 : 0));
   int markId = xsh->getColumn(col)->getCellColumn()->getCellMark(row);
 
   if (cell.isEmpty() && prevCell.isEmpty()) {
@@ -2417,14 +2418,14 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
       Preferences::instance()->isCurrentTimelineIndicatorEnabled())
     drawCurrentTimeIndicator(p, xy);
 
-  bool isStart = row > 0 && (prevCell.isEmpty() || prevIsImplicit);
-  drawDragHandle(p, isStart, xy, sideColor);
-
+  bool isStart =
+      row > 0 && (prevCell.isEmpty() || prevIsImplicit ||
+                  prevCell.m_level.getPointer() != cell.m_level.getPointer());
   bool isLastRow = nextCell.isEmpty() ||
                    cell.m_level.getPointer() != nextCell.m_level.getPointer();
+  drawDragHandle(p, isStart, isLastRow, xy, sideColor);
   drawEndOfDragHandle(p, isLastRow, xy, cellColor);
-
-  drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), isStart, xy,
+  drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), isStart, isLastRow, xy,
                        cellColor);
 
   TFrameId fid = cell.m_frameId;
@@ -2475,7 +2476,7 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
   if (!sameLevel || prevCell.m_frameId != cell.m_frameId)
     p.drawText(nameRect, Qt::AlignLeft | Qt::AlignBottom, elidaName);
 }
-
+*/
 //-----------------------------------------------------------------------------
 
 void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
@@ -2635,11 +2636,11 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
         drawCurrentTimeIndicator(p, info.xy);
 
       bool isStart = row > 0 && (prevCell.isEmpty() || prevIsImplicit ||
-                                 info.row == rowFrom);
-      drawDragHandle(p, isStart, info.xy, sideColor);
+                                 info.row != rowFrom);
+      drawDragHandle(p, isStart, info.isEndOfRange, info.xy, sideColor);
       drawEndOfDragHandle(p, info.isEndOfRange, info.xy, tmpCellColor);
-      drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), isStart, info.xy,
-                           tmpCellColor);
+      drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), isStart,
+                           info.isEndOfRange, info.xy, tmpCellColor);
     }
 
     // draw text from here
@@ -2791,13 +2792,13 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
   QRect cellRect  = o->rect(PredefinedRect::CELL).translated(QPoint(x, y));
   cellRect.adjust(0, 0, -frameAdj.x(), -frameAdj.y());
   QRect rect = cellRect.adjusted(
-      1, 1,
+      0, 0,
       (!m_viewer->orientation()->isVerticalTimeline() && !nextCell.isEmpty() &&
                !xsh->isImplicitCell(row + 1, col) &&
                !nextCell.getFrameId().isStopFrame()
            ? 2
-           : 0),
-      0);
+           : -1),
+      (m_viewer->orientation()->isVerticalTimeline() ? -1 : 0));
   int markId = xsh->getColumn(col)->getCellColumn()->getCellMark(row);
 
   if (cell.isEmpty() && prevCell.isEmpty()) {
@@ -2894,13 +2895,15 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
     drawCurrentTimeIndicator(p, xy);
 
   if (!isImplicitCell) {
-    bool isStart = row > 0 && (prevCell.isEmpty() || prevIsImplicit);
-    drawDragHandle(p, isStart, xy, sideColor);
+    bool isStart =
+        row > 0 && (prevCell.isEmpty() || prevIsImplicit ||
+                    prevCell.m_level.getPointer() != cell.m_level.getPointer());
     bool isLastRow = nextCell.isEmpty() || isImplicitCellNext ||
                      cell.m_level.getPointer() != nextCell.m_level.getPointer();
+    drawDragHandle(p, isStart, isLastRow, xy, sideColor);
     drawEndOfDragHandle(p, isLastRow, xy, cellColor);
-    drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), isStart, xy,
-                         cellColor);
+    drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), isStart, isLastRow,
+                         xy, cellColor);
   }
 
   if ((sameLevel && prevCell.m_frameId == cell.m_frameId && !isAfterMarkers) ||
