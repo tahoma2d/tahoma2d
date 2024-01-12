@@ -5,6 +5,7 @@
 
 #include "xsheetdragtool.h"
 #include "keyframeselection.h"
+#include "cellselection.h"
 #include "keyframedata.h"
 #include "toonz/txshcell.h"
 
@@ -67,7 +68,7 @@ public:
 
 class KeyframeMoverTool final : public XsheetGUI::DragTool {
   TKeyframeSelection m_startSelection;
-  int m_offset;
+  TPointD m_offset;
   int m_firstRow, m_firstCol;
   bool m_selecting;
   bool m_justMovement;
@@ -77,6 +78,7 @@ class KeyframeMoverTool final : public XsheetGUI::DragTool {
 
   //! Helper method: returns the current keyframe selection
   TKeyframeSelection *getSelection();
+  TCellSelection *getCellSelection();
 
   void ctrlSelect(int row, int col);
   void shiftSelect(int row, int col);
@@ -87,6 +89,7 @@ public:
   KeyframeMoverTool(XsheetViewer *viewer, bool justMovement = false);
 
   bool canMove(const TPoint &pos);
+  bool hasSelection();
 
   void onCellChange(int row, int col);
 

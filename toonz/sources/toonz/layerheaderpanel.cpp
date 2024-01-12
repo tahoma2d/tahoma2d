@@ -32,8 +32,14 @@ LayerHeaderPanel::LayerHeaderPanel(XsheetViewer *viewer, QWidget *parent,
   // Define style and icon size for all buttons
   QString buttonStyleSheet =
       "QToolButton { padding: 0px; margin: 0px; }";
-  QSize iconSize(16, 16);
-  QSize buttonSize(20, 20);
+
+  int iconAdj = (!Preferences::instance()->isShowDragBarsEnabled() &&
+                 Preferences::instance()->getTimelineLayoutPreference() ==
+                     "NoDragMinimum")
+                    ? 2
+                    : 0;
+  QSize iconSize(16 - iconAdj, 16 - iconAdj);
+  QSize buttonSize(20 - iconAdj, 20 - iconAdj);
 
   QList<QToolButton *> buttonList = {m_previewButton, m_camstandButton,
                                      m_lockButton};
