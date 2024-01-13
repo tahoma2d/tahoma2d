@@ -1899,12 +1899,15 @@ void CellArea::drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
   bool showDragBars = Preferences::instance()->isShowDragBarsEnabled();
   bool isMinimumLayout =
       Preferences::instance()->getTimelineLayoutPreference() == "NoDragMinimum";
+  bool isRoomyLayout =
+      Preferences::instance()->getTimelineLayoutPreference() == "Roomy";
 
   if (isKeyFrame) {
     if (!m_viewer->orientation()->isVerticalTimeline()) {
-      int adjust = (isCamera && showDragBars)
-                       ? -3
-                       : ((!showDragBars && isMinimumLayout) ? 1 : 0);
+      int adjust =
+          (isCamera && showDragBars) || (!showDragBars && isRoomyLayout)
+              ? -3
+              : ((!showDragBars && isMinimumLayout) ? 1 : 0);
       dotRect.adjust(0, adjust, 0, adjust);
     }
 
@@ -1916,7 +1919,10 @@ void CellArea::drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
                                  dotRect.adjusted(1, 1, 1, 1).center(), color,
                                  outlineColor);
   } else {
-    int adjust = (!isCamera && !showDragBars && isMinimumLayout) ? 1 : 0;
+    int adjust =
+        (!isCamera && !showDragBars && isMinimumLayout)
+            ? 1
+            : ((!isCamera && !showDragBars && isRoomyLayout) ? -2 : 0);
     dotRect.adjust(0, adjust, 0, adjust);
 
     // move to column center
@@ -2235,6 +2241,13 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   }
 
   nameRect.adjust(0, 0, -frameAdj.x(), -frameAdj.y());
+
+  if (!Preferences::instance()->isShowDragBarsEnabled()) {
+    if (o->isVerticalTimeline())
+      nameRect.adjust(-3, 0, 0, 0);
+    else if (Preferences::instance()->getTimelineLayoutPreference() == "Roomy")
+      nameRect.adjust(0, -3, -0, -3);
+  }
 
   // draw text in red if the file does not exist
   bool isRed          = false;
@@ -2564,6 +2577,14 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
                 (!m_viewer->orientation()->isVerticalTimeline() && r == 0 ? -1
                                                                           : 0),
                 0, -frameAdj.x(), -frameAdj.y());
+
+    if (!Preferences::instance()->isShowDragBarsEnabled()) {
+      if (o->isVerticalTimeline())
+        ret.nameRect.adjust(-3, 0, 0, 0);
+      else if (Preferences::instance()->getTimelineLayoutPreference() ==
+               "Roomy")
+        ret.nameRect.adjust(0, -3, -0, -3);
+    }
 
     return ret;
   };
@@ -3008,6 +3029,14 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
 
     nameRect.adjust(0, 0, -frameAdj.x(), -frameAdj.y());
 
+    if (!Preferences::instance()->isShowDragBarsEnabled()) {
+      if (o->isVerticalTimeline())
+        nameRect.adjust(-3, 0, 0, 0);
+      else if (Preferences::instance()->getTimelineLayoutPreference() ==
+               "Roomy")
+        nameRect.adjust(0, -3, -0, -3);
+    }
+
     QColor penColor = isRed ? QColor(m_viewer->getErrorTextColor())
                             : m_viewer->getTextColor();
     p.setPen(penColor);
@@ -3103,6 +3132,9 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
       if (Preferences::instance()->getTimelineLayoutPreference() ==
           "NoDragMinimum")
         adjust++;
+      else if (Preferences::instance()->getTimelineLayoutPreference() ==
+               "Roomy")
+        adjust -= 3;
       tmpKeyRect.adjust(0, adjust, 0, adjust);
     }
 
@@ -3271,6 +3303,9 @@ void CellArea::drawKeyframeLine(QPainter &p, int col,
     if (Preferences::instance()->getTimelineLayoutPreference() ==
         "NoDragMinimum")
       adjust++;
+    else if (Preferences::instance()->getTimelineLayoutPreference() ==
+             "Roomy")
+      adjust -= 3;
     begin.setY(begin.y() + adjust);
     end.setY(end.y() + adjust);
   }
