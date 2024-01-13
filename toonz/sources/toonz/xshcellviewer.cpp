@@ -1961,15 +1961,15 @@ void CellArea::drawCellMarker(QPainter &p, int markId, QRect rect,
   if (hasFrame) {
     QRect dragBar = o->rect(PredefinedRect::DRAG_AREA);
     if (!o->isVerticalTimeline())
-      rect.adjust(0, dragBar.height() - 1, 0, 0);
+      rect.adjust(0, dragBar.height(), 0, 0);
     else
-      rect.adjust(dragBar.width() - 1, 0, 0, 0);
+      rect.adjust(dragBar.width(), 0, 0, 0);
   }
   // Adjust right and bottom
   if (!o->isVerticalTimeline())
-    rect.adjust(0, 0, (!isNextEmpty ? -3 : -1), -1);
+    rect.adjust(1, 1, (!isNextEmpty ? -3 : -1), -1);
   else
-    rect.adjust(0, 0, -1, -1);
+    rect.adjust(1, 1, -1, -1);
   p.drawRect(rect);
 
   p.setBrush(origBrush);
