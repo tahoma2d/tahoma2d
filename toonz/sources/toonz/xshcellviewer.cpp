@@ -2245,6 +2245,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   if (!Preferences::instance()->isShowDragBarsEnabled()) {
     if (o->isVerticalTimeline())
       nameRect.adjust(-3, 0, 0, 0);
+    else if (Preferences::instance()->getTimelineLayoutPreference() == "NoDragCompact")
+      nameRect.adjust(0, -1, -0, -1);
     else if (Preferences::instance()->getTimelineLayoutPreference() == "Roomy")
       nameRect.adjust(0, -3, -0, -3);
   }
@@ -2581,6 +2583,9 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
     if (!Preferences::instance()->isShowDragBarsEnabled()) {
       if (o->isVerticalTimeline())
         ret.nameRect.adjust(-3, 0, 0, 0);
+      else if (Preferences::instance()->getTimelineLayoutPreference() ==
+               "NoDragCompact")
+        ret.nameRect.adjust(0, -1, -0, -1);
       else if (Preferences::instance()->getTimelineLayoutPreference() ==
                "Roomy")
         ret.nameRect.adjust(0, -3, -0, -3);
@@ -3032,6 +3037,9 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
     if (!Preferences::instance()->isShowDragBarsEnabled()) {
       if (o->isVerticalTimeline())
         nameRect.adjust(-3, 0, 0, 0);
+      else if (Preferences::instance()->getTimelineLayoutPreference() ==
+               "NoDragCompact")
+        nameRect.adjust(0, -1, -0, -1);
       else if (Preferences::instance()->getTimelineLayoutPreference() ==
                "Roomy")
         nameRect.adjust(0, -3, -0, -3);

@@ -1180,9 +1180,12 @@ void ColumnArea::DrawHeader::drawColumnNumber() const {
   if (!o->isVerticalTimeline()) {
     pos.adjust(0, -1, 0, -1);
 
-    if (!Preferences::instance()->isShowDragBarsEnabled() &&
-        Preferences::instance()->getTimelineLayoutPreference() == "Roomy")
-      pos.adjust(0, -3, 0, -3);
+    if (!Preferences::instance()->isShowDragBarsEnabled()) {
+      if (Preferences::instance()->getTimelineLayoutPreference() == "NoDragCompact")
+        pos.adjust(0, -1, 0, -1);
+      else if (Preferences::instance()->getTimelineLayoutPreference() == "Roomy")
+        pos.adjust(0, -3, 0, -3);
+    }
   }
 
   p.drawText(pos, Qt::AlignHCenter | valign | Qt::TextSingleLine,
@@ -1282,9 +1285,12 @@ void ColumnArea::DrawHeader::drawColumnName() const {
   if (!o->isVerticalTimeline()) {
     vertAdj = ((col < 0 || isEmpty) && showDragBars) ? -4 : -1;
 
-    if (!showDragBars &&
-        Preferences::instance()->getTimelineLayoutPreference() == "Roomy")
-      vertAdj -= 3;
+    if (!showDragBars) {
+      if (Preferences::instance()->getTimelineLayoutPreference() == "NoDragCompact")
+        vertAdj -= 1;
+      else if (Preferences::instance()->getTimelineLayoutPreference() == "Roomy")
+        vertAdj -= 3;
+    }
   }
 
   p.drawText(columnName.adjusted(leftadj, vertAdj, rightadj, vertAdj),
