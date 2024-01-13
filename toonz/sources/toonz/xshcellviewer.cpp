@@ -1678,7 +1678,8 @@ void CellArea::drawSoundCell(QPainter &p, int row, int col, bool isReference) {
     drawEndOfDragHandle(p, isLastRow, xy, cellColor);
     dottedLineColor = cellColor;
   } else
-    dottedLineColor = Qt::black;
+    dottedLineColor = sideColor;
+
 
   drawLockedDottedLine(p, soundColumn->isLocked(), isFirstRow, isLastRow, xy,
                        dottedLineColor);
@@ -1841,7 +1842,9 @@ void CellArea::drawLockedDottedLine(QPainter &p, bool isLocked, bool isStart,
       adjEndY = isLastRow ? -2 : -1;
   }
 
-  p.setPen(QPen(cellColor, 2, Qt::DotLine));
+  int dashWidth = !Preferences::instance()->isShowDragBarsEnabled() ? 3 : 2;
+
+  p.setPen(QPen(cellColor, dashWidth, Qt::DotLine));
   QPoint frameAdj = m_viewer->getFrameZoomAdjustment();
   QLine dottedLine =
       m_viewer->orientation()->line(PredefinedLine::LOCKED).translated(lxy);
@@ -2223,7 +2226,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
       drawEndOfDragHandle(p, isLastRow, xy, cellColor);
       dottedLineColor = cellColor;
     } else
-      dottedLineColor = Qt::black;
+      dottedLineColor = sideColor;
 
     drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), isStart, isLastRow,
                          xy, dottedLineColor);
@@ -2479,7 +2482,7 @@ void CellArea::drawSoundTextCell(QPainter &p, int row, int col) {
     drawEndOfDragHandle(p, isLastRow, xy, cellColor);
     dottedLineColor = cellColor;
   } else
-    dottedLineColor = Qt::black;
+    dottedLineColor = sideColor;
 
   drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), isStart, isLastRow,
 xy,
@@ -2712,7 +2715,7 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
         drawEndOfDragHandle(p, info.isEndOfRange, info.xy, tmpCellColor);
         dottedLineColor = tmpCellColor;
       } else
-        dottedLineColor = Qt::black;
+        dottedLineColor = sideColor;
 
       drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), isStart,
                            info.isEndOfRange, info.xy, dottedLineColor);
@@ -2983,7 +2986,7 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
       drawEndOfDragHandle(p, isLastRow, xy, cellColor);
       dottedLineColor = cellColor;
     } else
-      dottedLineColor = Qt::black;
+      dottedLineColor = sideColor;
 
     drawLockedDottedLine(p, xsh->getColumn(col)->isLocked(), isStart, isLastRow,
                          xy, dottedLineColor);
