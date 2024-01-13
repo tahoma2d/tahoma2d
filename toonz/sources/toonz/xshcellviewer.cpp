@@ -1524,11 +1524,17 @@ void CellArea::drawExtenderHandles(QPainter &p) {
   y0 = selected.top();
   y1 = selected.bottom();
 
+  bool keysOnXsheet =
+      Preferences::instance()->isShowKeyframesOnXsheetCellAreaEnabled();
+  bool showDragBars = Preferences::instance()->isShowDragBarsEnabled();
+  bool isRoomyLayout =
+      Preferences::instance()->getTimelineLayoutPreference() == "Roomy";
+
   // smart tab
-  QPoint smartTabPosOffset =
-      Preferences::instance()->isShowKeyframesOnXsheetCellAreaEnabled()
-          ? QPoint(0, 0)
-          : o->point(PredefinedPoint::KEY_HIDDEN);
+  QPoint smartTabPosOffset = (keysOnXsheet && (o->isVerticalTimeline() ||
+                                               showDragBars || isRoomyLayout))
+                                 ? QPoint(0, 0)
+                                 : o->point(PredefinedPoint::KEY_HIDDEN);
 
   int distance, offset, secDistance;
   TApp::instance()->getCurrentScene()->getScene()->getProperties()->getMarkers(
@@ -3194,6 +3200,15 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
           !o->isVerticalTimeline()) {
         int adjust = col < 0 ? -1 : -1;
         target.setY(target.y() + adjust);
+
+        if (Preferences::instance()->getTimelineLayoutPreference() != "Roomy") {
+          TCellSelection *cellSelection = m_viewer->getCellSelection();
+          if (cellSelection) {
+            int r0, r1, c0, c1;
+            cellSelection->getSelectedCells(r0, c0, r1, c1);
+            if (col == c0 && r1 == row1) target.setX(target.x() + 10);
+          }
+        }
       }
 
       p.drawRect(QRect(target, QSize(10, 10)));
@@ -3619,10 +3634,20 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
                                          : PredefinedRect::LOOP_ICON);
       if (!Preferences::instance()->isShowDragBarsEnabled() &&
           !o->isVerticalTimeline()) {
-        int adjust = col < 0 ? 4 : 1;
-        if (Preferences::instance()->getTimelineLayoutPreference() == "NoDragMinimum")
-          adjust++;
-        loopRect.adjust(0, adjust, 0, adjust);
+        int adjustY = col < 0 ? 4 : 1;
+        int adjustX = 0;
+        if (Preferences::instance()->getTimelineLayoutPreference() ==
+            "NoDragMinimum")
+          adjustY++;
+        if (Preferences::instance()->getTimelineLayoutPreference() != "Roomy") {
+          TCellSelection *cellSelection = m_viewer->getCellSelection();
+          if (cellSelection) {
+            int r0, r1, c0, c1;
+            cellSelection->getSelectedCells(r0, c0, r1, c1);
+            if (col == c0 && r1 == k1) adjustX = 10;
+          }
+        }
+        loopRect.adjust(adjustX, adjustY, adjustX, adjustY);
       }
 
       if (isKeyframeFrame &&
@@ -3865,13 +3890,21 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
                                      : PredefinedRect::LOOP_ICON);
   if (!Preferences::instance()->isShowDragBarsEnabled() &&
       !o->isVerticalTimeline()) {
-    int adjust = col < 0 ? 4 : 1;
+    int adjustY = col < 0 ? 4 : 1;
+    int adjustX = 0;
     if (Preferences::instance()->getTimelineLayoutPreference() ==
         "NoDragMinimum")
-      adjust++;
-    loopRect.adjust(0, adjust, 0, adjust);
+      adjustY++;
+    if (Preferences::instance()->getTimelineLayoutPreference() != "Roomy") {
+      TCellSelection *cellSelection = m_viewer->getCellSelection();
+      if (cellSelection) {
+        int r0, r1, c0, c1;
+        cellSelection->getSelectedCells(r0, c0, r1, c1);
+        if (col == c0 && r1 == k1) adjustX = 10;
+      }
+    }
+    loopRect.adjust(adjustX, adjustY, adjustX, adjustY);
   }
-
 
   if (isKeyframeFrame && isKeyFrameArea(col, row, mouseInCell)) {
     if (pegbar->isKeyframe(row))  // key frame
