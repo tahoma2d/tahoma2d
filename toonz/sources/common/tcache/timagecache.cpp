@@ -32,6 +32,7 @@
 #include "tsystem.h"
 
 #include "traster.h"
+#include "tpalette.h"
 
 //#include "tstopwatch.h"
 #include "tbigmemorymanager.h"
@@ -96,14 +97,16 @@ public:
       : m_cantCompress(false)
       , m_builder(0)
       , m_imageInfo(0)
-      , m_modified(false) {}
+      , m_modified(false)
+      , m_palette(0) {}
 
-  CacheItem(ImageBuilder *builder, ImageInfo *imageInfo)
+  CacheItem(ImageBuilder *builder, ImageInfo *imageInfo, TPalette *palette)
       : m_cantCompress(false)
       , m_builder(builder)
       , m_imageInfo(imageInfo)
       , m_historyCount(0)
-      , m_modified(false) {}
+      , m_modified(false)
+      , m_palette(palette) {}
 
   virtual ~CacheItem() {}
 
@@ -118,6 +121,7 @@ public:
   std::string m_id;
   TUINT32 m_historyCount;
   bool m_modified;
+  TPalette *m_palette;
 };
 
 #ifdef _WIN32
@@ -145,7 +149,8 @@ class ImageBuilder {
 public:
   virtual ~ImageBuilder() {}
   virtual ImageBuilder *clone() = 0;
-  virtual TImageP build(ImageInfo *info, const TRasterP &ras) = 0;
+  virtual TImageP build(ImageInfo *info, const TRasterP &ras,
+                        TPalette *palette) = 0;
 };
 
 //------------------------------------------------------------------------------
@@ -245,10 +250,12 @@ class RasterImageBuilder final : public ImageBuilder {
 public:
   ImageBuilder *clone() override { return new RasterImageBuilder(*this); }
 
-  TImageP build(ImageInfo *info, const TRasterP &ras) override;
+  TImageP build(ImageInfo *info, const TRasterP &ras,
+                TPalette *palette) override;
 };
 
-TImageP RasterImageBuilder::build(ImageInfo *info, const TRasterP &ras) {
+TImageP RasterImageBuilder::build(ImageInfo *info, const TRasterP &ras,
+                                  TPalette *palette) {
   RasterImageInfo *riInfo = dynamic_cast<RasterImageInfo *>(info);
   assert(riInfo);
 
@@ -258,6 +265,7 @@ TImageP RasterImageBuilder::build(ImageInfo *info, const TRasterP &ras) {
   ras->m_cashed = true;
 #endif
   ri->setRaster(ras);
+  ri->setPalette(palette);
   riInfo->setInfo(ri);
   assert(ras->getRefCount() > rcount);
   return ri;
@@ -271,10 +279,12 @@ class ToonzImageBuilder final : public ImageBuilder {
 public:
   ImageBuilder *clone() override { return new ToonzImageBuilder(*this); }
 
-  TImageP build(ImageInfo *info, const TRasterP &ras) override;
+  TImageP build(ImageInfo *info, const TRasterP &ras,
+                TPalette *palette) override;
 };
 
-TImageP ToonzImageBuilder::build(ImageInfo *info, const TRasterP &ras) {
+TImageP ToonzImageBuilder::build(ImageInfo *info, const TRasterP &ras,
+                                 TPalette *palette) {
   ToonzImageInfo *tiInfo = dynamic_cast<ToonzImageInfo *>(info);
   assert(tiInfo);
 
@@ -299,6 +309,7 @@ TImageP ToonzImageBuilder::build(ImageInfo *info, const TRasterP &ras) {
   imgRasCM32->m_cashed = true;
 #endif
   TToonzImageP ti = new TToonzImage(imgRasCM32, tiInfo->m_savebox);
+  ti->setPalette(palette);
   tiInfo->setInfo(ti);
   return ti;
 }
@@ -374,7 +385,8 @@ public:
   CompressedOnMemoryCacheItem(const TImageP &img);
 
   CompressedOnMemoryCacheItem(const TRasterP &compressedRas,
-                              ImageBuilder *builder, ImageInfo *info);
+                              ImageBuilder *builder, ImageInfo *info,
+                              TPalette *palette);
 
   ~CompressedOnMemoryCacheItem();
 
@@ -403,6 +415,7 @@ CompressedOnMemoryCacheItem::CompressedOnMemoryCacheItem(const TImageP &img)
     TINT32 buffSize = 0;
     m_compressedRas =
         TheCodec::instance()->compress(ri->getRaster(), 1, buffSize);
+    m_palette       = img->getPalette();
   }
 #ifndef TNZCORE_LIGHT
   else {
@@ -413,6 +426,7 @@ CompressedOnMemoryCacheItem::CompressedOnMemoryCacheItem(const TImageP &img)
       TRasterCM32P rasCM32 = ti->getRaster();
       TINT32 buffSize      = 0;
       m_compressedRas = TheCodec::instance()->compress(rasCM32, 1, buffSize);
+      m_palette       = ti->getPalette();
     } else
       assert(false);
   }
@@ -426,8 +440,9 @@ CompressedOnMemoryCacheItem::CompressedOnMemoryCacheItem(const TImageP &img)
 
 CompressedOnMemoryCacheItem::CompressedOnMemoryCacheItem(const TRasterP &ras,
                                                          ImageBuilder *builder,
-                                                         ImageInfo *info)
-    : CacheItem(builder, info), m_compressedRas(ras) {}
+                                                         ImageInfo *info,
+                                                         TPalette *palette)
+    : CacheItem(builder, info, palette), m_compressedRas(ras) {}
 
 //------------------------------------------------------------------------------
 
@@ -459,10 +474,10 @@ TImageP CompressedOnMemoryCacheItem::getImage() const {
 #ifndef TNZCORE_LIGHT
   ToonzImageBuilder *tibuilder = dynamic_cast<ToonzImageBuilder *>(m_builder);
   if (tibuilder)
-    return tibuilder->build(m_imageInfo, ras);
+    return tibuilder->build(m_imageInfo, ras, m_palette);
   else
 #endif
-    return m_builder->build(m_imageInfo, ras);
+    return m_builder->build(m_imageInfo, ras, m_palette);
 }
 
 //------------------------------------------------------------------------------
@@ -470,7 +485,8 @@ TImageP CompressedOnMemoryCacheItem::getImage() const {
 class CompressedOnDiskCacheItem final : public CacheItem {
 public:
   CompressedOnDiskCacheItem(const TFilePath &fp, const TRasterP &compressedRas,
-                            ImageBuilder *builder, ImageInfo *info);
+                            ImageBuilder *builder, ImageInfo *info,
+                            TPalette *palette);
 
   ~CompressedOnDiskCacheItem();
 
@@ -491,8 +507,8 @@ typedef TDerivedSmartPointerT<CompressedOnDiskCacheItem, CacheItem>
 
 CompressedOnDiskCacheItem::CompressedOnDiskCacheItem(
     const TFilePath &fp, const TRasterP &compressedRas, ImageBuilder *builder,
-    ImageInfo *info)
-    : CacheItem(builder, info), m_fp(fp) {
+    ImageInfo *info, TPalette *palette)
+    : CacheItem(builder, info, palette), m_fp(fp) {
   compressedRas->lock();
 
   Tofstream oss(m_fp);
@@ -525,7 +541,7 @@ TImageP CompressedOnDiskCacheItem::getImage() const {
   assert(!is.fail());
   ras->unlock();
   CompressedOnMemoryCacheItem item(ras, m_builder->clone(),
-                                   m_imageInfo->clone());
+                                   m_imageInfo->clone(), m_palette);
   return item.getImage();
 }
 
@@ -535,7 +551,8 @@ class UncompressedOnDiskCacheItem final : public CacheItem {
   int m_pixelsize;
 
 public:
-  UncompressedOnDiskCacheItem(const TFilePath &fp, const TImageP &img);
+  UncompressedOnDiskCacheItem(const TFilePath &fp, const TImageP &img,
+                              TPalette *palette);
 
   ~UncompressedOnDiskCacheItem();
 
@@ -556,14 +573,16 @@ typedef TDerivedSmartPointerT<UncompressedOnDiskCacheItem, CacheItem>
 //------------------------------------------------------------------------------
 
 UncompressedOnDiskCacheItem::UncompressedOnDiskCacheItem(const TFilePath &fp,
-                                                         const TImageP &image)
-    : CacheItem(0, 0), m_fp(fp) {
+                                                         const TImageP &image,
+                                                         TPalette *palette)
+    : CacheItem(0, 0, 0), m_fp(fp) {
   TRasterImageP ri = image;
 
   TRasterP ras;
   if (ri) {
     m_imageInfo = new RasterImageInfo(ri);
     ras         = ri->getRaster();
+    m_palette   = palette;
   }
 #ifndef TNZCORE_LIGHT
   else {
@@ -571,6 +590,7 @@ UncompressedOnDiskCacheItem::UncompressedOnDiskCacheItem(const TFilePath &fp,
     if (ti) {
       m_imageInfo = new ToonzImageInfo(ti);
       ras         = ti->getRaster();
+      m_palette   = palette;
     } else
       assert(false);
   }
@@ -645,7 +665,7 @@ TImageP UncompressedOnDiskCacheItem::getImage() const {
     ras->m_cashed = true;
 #endif
 
-    return RasterImageBuilder().build(m_imageInfo, ras);
+    return RasterImageBuilder().build(m_imageInfo, ras, m_palette);
   }
 #ifndef TNZCORE_LIGHT
   else {
@@ -660,7 +680,7 @@ TImageP UncompressedOnDiskCacheItem::getImage() const {
       ras->m_cashed = true;
 #endif
 
-      return ToonzImageBuilder().build(m_imageInfo, ras);
+      return ToonzImageBuilder().build(m_imageInfo, ras, m_palette);
     } else {
       assert(false);
       return 0;
@@ -834,7 +854,8 @@ void TImageCache::Imp::doCompress() {
         assert(m_rootDir != TFilePath());
         TFilePath fp =
             m_rootDir + TFilePath(std::to_string(TImageCache::Imp::m_fileid++));
-        newItem = new UncompressedOnDiskCacheItem(fp, item->getImage());
+        newItem = new UncompressedOnDiskCacheItem(
+            fp, item->getImage(), item->getImage()->getPalette());
       }
       m_compressedItems[id] = newItem;
       item                  = CacheItemP();
@@ -866,7 +887,7 @@ void TImageCache::Imp::doCompress() {
 
       CacheItemP newItem = new CompressedOnDiskCacheItem(
           fp, citem->m_compressedRas, citem->m_builder->clone(),
-          citem->m_imageInfo->clone());
+          citem->m_imageInfo->clone(), citem->m_palette);
 
       itc->second                   = 0;
       m_compressedItems[itc->first] = newItem;
@@ -925,7 +946,8 @@ void TImageCache::Imp::doCompress(std::string id) {
     assert(m_rootDir != TFilePath());
     TFilePath fp =
         m_rootDir + TFilePath(std::to_string(TImageCache::Imp::m_fileid++));
-    newItem = new UncompressedOnDiskCacheItem(fp, item->getImage());
+    newItem = new UncompressedOnDiskCacheItem(fp, item->getImage(),
+                                              item->getImage()->getPalette());
   }
   m_compressedItems[id] = newItem;
   item                  = CacheItemP();
@@ -1006,7 +1028,8 @@ UCHAR *TImageCache::Imp::compressAndMalloc(TUINT32 size) {
       assert(m_rootDir != TFilePath());
       TFilePath fp =
           m_rootDir + TFilePath(std::to_string(TImageCache::Imp::m_fileid++));
-      newItem = new UncompressedOnDiskCacheItem(fp, item->getImage());
+      newItem = new UncompressedOnDiskCacheItem(fp, item->getImage(),
+                                                item->getImage()->getPalette());
       //  }
 
       m_compressedItems[it->first] = newItem;
@@ -1043,7 +1066,7 @@ UCHAR *TImageCache::Imp::compressAndMalloc(TUINT32 size) {
 
       CacheItemP newItem = new CompressedOnDiskCacheItem(
           fp, citem->m_compressedRas, citem->m_builder->clone(),
-          citem->m_imageInfo->clone());
+          citem->m_imageInfo->clone(), citem->m_palette);
 
       itc->second                   = 0;
       m_compressedItems[itc->first] = newItem;
