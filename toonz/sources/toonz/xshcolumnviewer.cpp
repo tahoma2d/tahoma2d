@@ -2798,6 +2798,8 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
         if (column && !column->getSoundTextColumn() &&
             !column->getSoundColumn()) {
           int y = Preferences::instance()->isShowQuickToolbarEnabled() ? 30 : 0;
+          y += Preferences::instance()->isShowXsheetBreadcrumbsEnabled() ? 30
+                                                                         : 0;
           TStageObjectId columnId = m_viewer->getObjectId(m_col);
           bool isColumn = xsh->getStageObject(columnId)->getParent().isColumn();
           bool clickChangeParent =
