@@ -87,6 +87,7 @@ class TApp final : public QObject,
 
   int m_autosavePeriod;  // minutes
   bool m_autosaveSuspended;
+  bool m_saveInProgress;
   QTimer *m_autosaveTimer;
   StatusBar *m_statusBar;
   TApp();
@@ -217,6 +218,9 @@ public:
   void setStatusBarFrameInfo(QString text);
 
   void refreshStatusBar() override;
+
+  bool isSaveInProgress() { return m_saveInProgress; }
+  void setSaveInProgress(bool inProgress) { m_saveInProgress = inProgress; }
 
 protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
