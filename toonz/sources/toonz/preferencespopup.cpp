@@ -745,6 +745,16 @@ void PreferencesPopup::onShowXsheetBreadcrumbsClicked() {
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onShowDragBarsChanged() {
+  bool enabled = m_pref->getBoolValue(showDragBars);
+  m_controlIdMap.key(timelineLayoutPreference)->setEnabled(!enabled);
+
+  TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
+      "XsheetDragBars");
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onModifyExpressionOnMovingReferencesChanged() {
   TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
       "modifyExpressionOnMovingReferences");
@@ -1200,23 +1210,28 @@ void PreferencesPopup::insertDualUIs(
     PreferencesItemId leftId, PreferencesItemId rightId, QGridLayout* layout,
     const QList<ComboBoxItem>& leftComboItems,
     const QList<ComboBoxItem>& rightComboItems) {
-  // currently this function does not suppose that the checkbox is on the left
-  assert(m_pref->getItem(leftId).type != QMetaType::Bool);
   int row = layout->rowCount();
-  layout->addWidget(new QLabel(getUIString(leftId), this), row, 0,
-                    Qt::AlignRight | Qt::AlignVCenter);
+  int col = 0;
+  if (m_pref->getItem(leftId).type != QMetaType::Bool) {
+    col = 1;
+    layout->addWidget(new QLabel(getUIString(leftId), this), row, 0,
+                      Qt::AlignRight | Qt::AlignVCenter);
+  }
   QHBoxLayout* innerLay = new QHBoxLayout();
   innerLay->setMargin(0);
-  innerLay->setSpacing(10);
+  innerLay->setSpacing(5);
   {
     innerLay->addWidget(createUI(leftId, leftComboItems), 0);
+    if (m_pref->getItem(leftId).type == QMetaType::Bool &&
+        m_pref->getItem(rightId).type != QMetaType::Bool)
+      innerLay->addSpacing(40);
     if (m_pref->getItem(rightId).type != QMetaType::Bool)
       innerLay->addWidget(new QLabel(getUIString(rightId), this), 0,
                           Qt::AlignRight | Qt::AlignVCenter);
     innerLay->addWidget(createUI(rightId, rightComboItems), 0);
     innerLay->addStretch(1);
   }
-  layout->addLayout(innerLay, row, 1, 1, 2);
+  layout->addLayout(innerLay, row, col, 1, 2);
 }
 
 //-----------------------------------------------------------------------------
@@ -1369,9 +1384,11 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
        tr("Magnet Tool Size Slider - Non-Linear mode*")},
 
       // Xsheet
-      {xsheetLayoutPreference, tr("Column Header Layout*:")},
+      {xsheetLayoutPreference, tr("Xsheet Header Layout*:")},
       {xsheetStep, tr("Next/Previous Step Frames:")},
       {xsheetAutopanEnabled, tr("Autopan during Playback")},
+      {showDragBars, tr("Show Column and Cell Drag Bars")},
+      {timelineLayoutPreference, tr("Timeline Layer Layout:")},
       {DragCellsBehaviour, tr("Cell-dragging Behaviour:")},
       {pasteCellsBehavior, tr("Paste Cells Behaviour:")},
       {ignoreAlphaonColumn1Enabled,
@@ -1537,6 +1554,10 @@ QList<ComboBoxItem> PreferencesPopup::getComboItemList(
        {{tr("Compact"), "Compact"},
         {tr("Roomy"), "Roomy"},
         {tr("Minimum"), "Minimum"}}},
+      {timelineLayoutPreference,
+       {{tr("Compact"), "NoDragCompact"},
+        {tr("Roomy"), "Roomy"},
+        {tr("Minimum"), "NoDragMinimum"}}},
       {levelNameDisplayType,
        {{tr("Default"), Preferences::ShowLevelName_Default},
         {tr("Display on Each Marker"), Preferences::ShowLevelNameOnEachMarker},
@@ -2127,6 +2148,9 @@ QWidget* PreferencesPopup::createXsheetPage() {
   insertUI(levelNameDisplayType, lay, getComboItemList(levelNameDisplayType));
   insertUI(xsheetStep, lay);
   insertUI(xsheetAutopanEnabled, lay);
+  insertDualUIs(showDragBars, timelineLayoutPreference, lay,
+                QList<ComboBoxItem>(),
+                getComboItemList(timelineLayoutPreference));
   insertUI(DragCellsBehaviour, lay, getComboItemList(DragCellsBehaviour));
   insertUI(pasteCellsBehavior, lay, getComboItemList(pasteCellsBehavior));
   insertUI(ignoreAlphaonColumn1Enabled, lay);
@@ -2166,6 +2190,10 @@ QWidget* PreferencesPopup::createXsheetPage() {
                            &PreferencesPopup::onShowQuickToolbarClicked);
   m_onEditedFuncMap.insert(showXsheetBreadcrumbs,
                            &PreferencesPopup::onShowXsheetBreadcrumbsClicked);
+  m_onEditedFuncMap.insert(showDragBars,
+                           &PreferencesPopup::onShowDragBarsChanged);
+  m_onEditedFuncMap.insert(timelineLayoutPreference,
+                           &PreferencesPopup::onShowDragBarsChanged);
 
   return widget;
 }

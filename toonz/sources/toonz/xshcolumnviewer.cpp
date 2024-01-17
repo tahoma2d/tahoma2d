@@ -958,16 +958,17 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
   // Fill base color, in timeline view adjust it right upto thumbnail so column
   // head color doesn't show under icon switches.
   if (isEmpty)
-    p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(80, 0, 0, 0),
+    p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(73, 0, 0, 0),
                m_viewer->getEmptyColumnHeadColor());
   else if (col < 0)
-    p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(80, 0, 0, 0),
+    p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(73, 0, 0, 0),
                columnColor);
   else {
-    p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(80, 0, 0, 0),
+    p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(73, 0, 0, 0),
                columnColor);
 
-    if (o->flag(PredefinedFlag::DRAG_LAYER_VISIBLE)) {
+    if (Preferences::instance()->isShowDragBarsEnabled() &&
+        o->flag(PredefinedFlag::DRAG_LAYER_VISIBLE)) {
       // column handle
       QRect sideBar = o->rect(PredefinedRect::DRAG_LAYER).translated(x0, y0);
 
@@ -995,7 +996,7 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
   QColor pastelizer(m_viewer->getColumnHeadPastelizer());
 
   QColor colorSelection(m_viewer->getSelectedColumnHead());
-  p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(80, 0, 0, 0),
+  p.fillRect(o->isVerticalTimeline() ? rect : rect.adjusted(73, 0, 0, 0),
              isSelected ? colorSelection : pastelizer);
 }
 
@@ -1176,7 +1177,9 @@ void ColumnArea::DrawHeader::drawColumnNumber() const {
 
   int valign = o->isVerticalTimeline() ? Qt::AlignVCenter : Qt::AlignBottom;
 
-  if (!o->isVerticalTimeline()) pos.adjust(0, -1, 0, -1);
+  if (!o->isVerticalTimeline()) {
+    pos.adjust(0, -1, 0, -1);
+  }
 
   p.drawText(pos, Qt::AlignHCenter | valign | Qt::TextSingleLine,
              QString::number(col + 1));
@@ -1210,6 +1213,8 @@ void ColumnArea::DrawHeader::drawColumnName() const {
                                        : PredefinedRect::LAYER_NAME)
                          .translated(orig);
 
+  bool showDragBars = Preferences::instance()->isShowDragBarsEnabled();
+
   bool nameBacklit = false;
   int rightadj     = -2;
   int leftadj      = 3;
@@ -1220,7 +1225,7 @@ void ColumnArea::DrawHeader::drawColumnName() const {
         m_viewer->getXsheetLayout() !=
             QString("Classic"))  // Legacy - No background
     {
-      if (columnName.contains(area->m_pos) && col >= 0) {
+      if (showDragBars && columnName.contains(area->m_pos) && col >= 0) {
         p.fillRect(columnName.adjusted(0, -1, 0, 0),
                    m_viewer->getXsheetDragBarHighlightColor());  // Qt::yellow);
         nameBacklit = true;
@@ -1228,8 +1233,14 @@ void ColumnArea::DrawHeader::drawColumnName() const {
         p.fillRect(columnName, m_viewer->getXsheetColumnNameBgColor());
     }
 
-    if (o->flag(PredefinedFlag::LAYER_NAME_BORDER))
-      p.drawRect(columnName.adjusted(0, 0, 2, 0));
+    if (o->flag(PredefinedFlag::LAYER_NAME_BORDER)) {
+      int adjust = (!o->isVerticalTimeline() && !showDragBars &&
+                    Preferences::instance()->getTimelineLayoutPreference() ==
+                        "NoDragMinimum")
+                       ? 6
+                       : 2;
+      p.drawRect(columnName.adjusted(0, 0, adjust, 0));
+    }
 
     if (o->isVerticalTimeline() &&
         m_viewer->getXsheetLayout() == QString("Classic")) {
@@ -1264,7 +1275,9 @@ void ColumnArea::DrawHeader::drawColumnName() const {
 
   int vertAdj = 0;
 
-  if (!o->isVerticalTimeline()) vertAdj = col < 0 || isEmpty ? -4 : -1;
+  if (!o->isVerticalTimeline())
+    vertAdj = ((col < 0 || isEmpty) && showDragBars) ? -4 : -1;
+
 
   p.drawText(columnName.adjusted(leftadj, vertAdj, rightadj, vertAdj),
              Qt::AlignLeft | valign | Qt::TextSingleLine,
@@ -1813,6 +1826,13 @@ void ColumnArea::drawCurrentColumnFocus(QPainter &p, int col) {
   QRect rect = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_NAME
                                  : PredefinedRect::LAYER_NAME)
                    .translated(orig);
+  int adjust = (!o->isVerticalTimeline() &&
+                !Preferences::instance()->isShowDragBarsEnabled() &&
+                Preferences::instance()->getTimelineLayoutPreference() ==
+                    "NoDragMinimum")
+                   ? 6
+                   : 0;
+  rect.adjust(0, 0, adjust, 0);
 
   p.setPen(m_viewer->getColumnFocusColor());
   p.setBrush(Qt::NoBrush);
@@ -2619,6 +2639,20 @@ void ColumnArea::startTransparencyPopupTimer(QMouseEvent *e) {  // AREA
 
 //----------------------------------------------------------------
 
+bool hasNonEmptyCol(TColumnSelection *colSelection) {
+  if (!colSelection || colSelection->isEmpty()) return false;
+
+  std::set<int> colSet = colSelection->getIndices();
+  std::set<int>::iterator it;
+  for (it = colSet.begin(); it != colSet.end(); it++) {
+    TXsheet *xsh    = TApp::instance()->getCurrentXsheet()->getXsheet();
+    TXshColumn *col = xsh->getColumn(*it);
+    if (col && !col->isEmpty()) return true;
+  }
+
+  return false;
+}
+
 void ColumnArea::mousePressEvent(QMouseEvent *event) {
   const Orientation *o = m_viewer->orientation();
 
@@ -2658,6 +2692,8 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
     // QPoint mouseInCell(x, y);
     int x = mouseInCell.x(), y = mouseInCell.y();
 
+    bool hasDragBar = Preferences::instance()->isShowDragBarsEnabled();
+
     // clicking on the camera column
     if (m_col < 0) {
       if (o->rect(PredefinedRect::CAMERA_LOCK_AREA).contains(mouseInCell)) {
@@ -2675,21 +2711,13 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
         if (m_viewer->getColumnSelection()->isColumnSelected(m_col) &&
             event->button() == Qt::RightButton)
           return;
+
         setDragTool(XsheetGUI::DragTool::makeColumnSelectionTool(m_viewer));
       }
     }
     // clicking on the normal columns
     else if (!isEmpty) {
-      // grabbing the left side of the column enables column move
-      if (o->rect(PredefinedRect::DRAG_LAYER).contains(mouseInCell) ||
-          (!o->flag(PredefinedFlag::DRAG_LAYER_VISIBLE)  // If dragbar hidden,
-                                                         // layer name/number
-                                                         // becomes dragbar
-           && (o->rect(PredefinedRect::LAYER_NUMBER).contains(mouseInCell) ||
-               o->rect(PredefinedRect::LAYER_NAME).contains(mouseInCell)))) {
-        m_viewer->setCurrentColumn(m_col);
-        setDragTool(XsheetGUI::DragTool::makeColumnMoveTool(m_viewer));
-      } else if (o->rect(PredefinedRect::LOCK_AREA).contains(mouseInCell)) {
+      if (o->rect(PredefinedRect::LOCK_AREA).contains(mouseInCell)) {
         // lock button
         if (event->button() != Qt::LeftButton) return;
         m_doOnRelease = isCtrlPressed ? ToggleAllLock : ToggleLock;
@@ -2728,88 +2756,131 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
           // do nothing
         } else
           m_doOnRelease = OpenSettings;
-      } else if (column && column->getSoundColumn()) {
-        // sound column
-        if (o->rect(PredefinedRect::SOUND_ICON).contains(mouseInCell)) {
-          TXshSoundColumn *s = column->getSoundColumn();
-          if (s) {
-            if (s->isPlaying())
-              s->stop();
-            else {
-              s->play();
-              if (!s->isPlaying())
-                s->stop();  // Serve per vista, quando le casse non sono
-                            // attaccate
-            }
-            int interval = 0;
-            if (s->isPlaying()) {
-              TSoundTrackP sTrack = s->getCurrentPlaySoundTruck();
-              interval            = sTrack->getDuration() * 1000 + 300;
-            }
-            if (s->isPlaying() && interval > 0) {
-              QTimer::singleShot(interval, this, [this, s] {
-                if (s && s->isPlaying()) s->stop();
-                update();
-              });
-            }
-          }
-          update();
-        } else if (!o->flag(PredefinedFlag::CONFIG_AREA_VISIBLE) &&
-                   o->rect(PredefinedRect::VOLUME_AREA).contains(mouseInCell))
-          setDragTool(XsheetGUI::DragTool::makeVolumeDragTool(m_viewer));
-        else
-          setDragTool(XsheetGUI::DragTool::makeColumnSelectionTool(m_viewer));
       } else {
+        if (column && column->getSoundColumn() && !event->modifiers()) {
+          // sound column
+          if (o->rect(PredefinedRect::SOUND_ICON).contains(mouseInCell)) {
+            TXshSoundColumn *s = column->getSoundColumn();
+            if (s) {
+              if (s->isPlaying())
+                s->stop();
+              else {
+                s->play();
+                if (!s->isPlaying())
+                  s->stop();  // Serve per vista, quando le casse non sono
+                              // attaccate
+              }
+              int interval = 0;
+              if (s->isPlaying()) {
+                TSoundTrackP sTrack = s->getCurrentPlaySoundTruck();
+                interval            = sTrack->getDuration() * 1000 + 300;
+              }
+              if (s->isPlaying() && interval > 0) {
+                QTimer::singleShot(interval, this, [this, s] {
+                  if (s && s->isPlaying()) s->stop();
+                  update();
+                });
+              }
+            }
+            update();
+            return;
+          } else if (!o->flag(PredefinedFlag::CONFIG_AREA_VISIBLE) &&
+                     o->rect(PredefinedRect::VOLUME_AREA)
+                         .contains(mouseInCell)) {
+            setDragTool(XsheetGUI::DragTool::makeVolumeDragTool(m_viewer));
+            return;
+          }
+        }
+
         // clicking another area means column selection
         m_viewer->setCurrentColumn(m_col);
         if (event->button() != Qt::LeftButton) return;
-        if (xsh->getColumn(m_col)->getSoundTextColumn()) return;
-
-        int y = Preferences::instance()->isShowQuickToolbarEnabled() ? 30 : 0;
-        TStageObjectId columnId = m_viewer->getObjectId(m_col);
-        bool isColumn = xsh->getStageObject(columnId)->getParent().isColumn();
-        bool clickChangeParent =
-            isColumn
-                ? o->rect(PredefinedRect::PEGBAR_NAME)
-                      .adjusted(0, 0, -20, 0)
-                      .contains(mouseInCell)
-                : o->rect(PredefinedRect::PEGBAR_NAME).contains(mouseInCell);
-        if (clickChangeParent) {
-          m_changeObjectParent->refresh();
-          m_changeObjectParent->show(
-              QPoint(o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
-                     QPoint(o->rect(PredefinedRect::CAMERA_CELL).width(), 0) +
-                     m_viewer->positionToXY(CellPosition(0, m_col)) +
-                     QPoint(-m_viewer->getColumnScrollValue(), y)));
-          return;
+        if (column && !column->getSoundTextColumn() &&
+            !column->getSoundColumn()) {
+          int y = Preferences::instance()->isShowQuickToolbarEnabled() ? 30 : 0;
+          y += Preferences::instance()->isShowXsheetBreadcrumbsEnabled() ? 30
+                                                                         : 0;
+          TStageObjectId columnId = m_viewer->getObjectId(m_col);
+          bool isColumn = xsh->getStageObject(columnId)->getParent().isColumn();
+          bool clickChangeParent =
+              isColumn
+                  ? o->rect(PredefinedRect::PEGBAR_NAME)
+                        .adjusted(0, 0, -20, 0)
+                        .contains(mouseInCell)
+                  : o->rect(PredefinedRect::PEGBAR_NAME).contains(mouseInCell);
+          if (clickChangeParent) {
+            m_changeObjectParent->refresh();
+            m_changeObjectParent->show(QPoint(
+                o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
+                QPoint(o->rect(PredefinedRect::CAMERA_CELL).width(), 0) +
+                m_viewer->positionToXY(CellPosition(0, m_col)) +
+                QPoint(-m_viewer->getColumnScrollValue(), y)));
+            return;
+          }
+          if (isColumn &&
+              o->rect(PredefinedRect::PARENT_HANDLE_NAME)
+                  .contains(mouseInCell)) {
+            m_changeObjectHandle->refresh();
+            m_changeObjectHandle->show(QPoint(
+                o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
+                m_viewer->positionToXY(CellPosition(0, m_col + 1)) +
+                QPoint(-m_viewer->getColumnScrollValue(), y)));
+            return;
+          }
         }
-        if (isColumn &&
-            o->rect(PredefinedRect::PARENT_HANDLE_NAME).contains(mouseInCell)) {
-          m_changeObjectHandle->refresh();
-          m_changeObjectHandle->show(
-              QPoint(o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
-                     m_viewer->positionToXY(CellPosition(0, m_col + 1)) +
-                     QPoint(-m_viewer->getColumnScrollValue(), y)));
-          return;
+
+        bool isInDragArea =
+            o->rect(PredefinedRect::DRAG_LAYER).contains(mouseInCell) ||
+            (!o->flag(PredefinedFlag::DRAG_LAYER_VISIBLE)  // If dragbar hidden,
+                                                           // layer name/number
+                                                           // becomes dragbar
+             && (o->rect(PredefinedRect::LAYER_NUMBER).contains(mouseInCell) ||
+                 o->rect(PredefinedRect::LAYER_NAME).contains(mouseInCell)));
+
+        // When no drag bars..
+        if (!hasDragBar) {
+          isInDragArea = false;
+
+          TColumnSelection *colSelection = m_viewer->getColumnSelection();
+          std::set<int> colSet           = colSelection->getIndices();
+          std::set<int>::iterator it     = colSet.find(m_col);
+
+          if (it != colSet.end()) isInDragArea = true;
+
+          if (!isInDragArea) {
+            if (!(event->modifiers() & Qt::ControlModifier) &&
+                !(event->modifiers() & Qt::ShiftModifier)) {
+              // Switch to column and allow immediate drag
+              setDragTool(XsheetGUI::DragTool::makeSelectionTool(m_viewer));
+              isInDragArea = true;
+            }
+          } else if (event->modifiers() & Qt::ControlModifier)
+            isInDragArea = false;
         }
 
-        setDragTool(XsheetGUI::DragTool::makeColumnSelectionTool(m_viewer));
+        // grabbing the left side of the column enables column move
+        if (isInDragArea) {
+          m_viewer->setCurrentColumn(m_col);
+          setDragTool(XsheetGUI::DragTool::makeColumnMoveTool(m_viewer));
+        } else {
+          setDragTool(XsheetGUI::DragTool::makeColumnSelectionTool(m_viewer));
 
-        if (column) {
-          // toggle columnIcon visibility with alt+click
-          TXshLevelColumn *levelColumn = column->getLevelColumn();
-          TXshMeshColumn *meshColumn   = column->getMeshColumn();
-          TXshZeraryFxColumn *zColumn =
-              dynamic_cast<TXshZeraryFxColumn *>(column);
-          if (Preferences::instance()->getColumnIconLoadingPolicy() ==
-                  Preferences::LoadOnDemand &&
-              (event->modifiers() & Qt::AltModifier)) {
-            if (levelColumn)
-              levelColumn->setIconVisible(!levelColumn->isIconVisible());
-            else if (meshColumn)
-              meshColumn->setIconVisible(!meshColumn->isIconVisible());
-            else if (zColumn)
-              zColumn->setIconVisible(!zColumn->isIconVisible());
+          if (column) {
+            // toggle columnIcon visibility with alt+click
+            TXshLevelColumn *levelColumn = column->getLevelColumn();
+            TXshMeshColumn *meshColumn   = column->getMeshColumn();
+            TXshZeraryFxColumn *zColumn =
+                dynamic_cast<TXshZeraryFxColumn *>(column);
+            if (Preferences::instance()->getColumnIconLoadingPolicy() ==
+                    Preferences::LoadOnDemand &&
+                (event->modifiers() & Qt::AltModifier)) {
+              if (levelColumn)
+                levelColumn->setIconVisible(!levelColumn->isIconVisible());
+              else if (meshColumn)
+                meshColumn->setIconVisible(!meshColumn->isIconVisible());
+              else if (zColumn)
+                zColumn->setIconVisible(!zColumn->isIconVisible());
+            }
           }
         }
       }
@@ -2819,11 +2890,32 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
         TApp::instance()->getCurrentFx()->setFx(fx);
       }
     } else {
+      bool isInDragArea = false;
+
+      if (!hasDragBar) {
+        TColumnSelection *colSelection = m_viewer->getColumnSelection();
+
+        bool isEmptySelection = !hasNonEmptyCol(colSelection);
+
+        if (isEmptySelection || (event->modifiers() & Qt::ControlModifier))
+          isInDragArea = false;
+        else {
+          std::set<int> colSet       = colSelection->getIndices();
+          std::set<int>::iterator it = colSet.find(m_col);
+
+          if (it != colSet.end()) isInDragArea = true;
+        }
+      }
+
       m_viewer->setCurrentColumn(m_col);
       if (m_viewer->getColumnSelection()->isColumnSelected(m_col) &&
           event->button() == Qt::RightButton)
         return;
-      setDragTool(XsheetGUI::DragTool::makeColumnSelectionTool(m_viewer));
+
+      if (isInDragArea)
+        setDragTool(XsheetGUI::DragTool::makeColumnMoveTool(m_viewer));
+      else
+        setDragTool(XsheetGUI::DragTool::makeColumnSelectionTool(m_viewer));
     }
 
     m_viewer->dragToolClick(event);
@@ -3106,6 +3198,7 @@ void ColumnArea::mouseDoubleClickEvent(QMouseEvent *event) {
 
   QRect nameRect = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_NAME
                                      : PredefinedRect::LAYER_NAME);
+
   if (!nameRect.contains(mouseInCell)) return;
 
   TXsheet *xsh = m_viewer->getXsheet();
@@ -3115,6 +3208,15 @@ void ColumnArea::mouseDoubleClickEvent(QMouseEvent *event) {
       (col < 0 && o->isVerticalTimeline()) ? nameRect.topLeft() : topLeft;
   QRect renameRect =
       o->rect(PredefinedRect::RENAME_COLUMN).translated(fieldPos);
+
+  int adjust = (!o->isVerticalTimeline() &&
+                !Preferences::instance()->isShowDragBarsEnabled() &&
+                Preferences::instance()->getTimelineLayoutPreference() ==
+                    "NoDragMinimum")
+                   ? 6
+                   : 0;
+  renameRect.adjust(0, 0, adjust, 0);
+
   m_renameColumnField->show(renameRect, col);
 }
 

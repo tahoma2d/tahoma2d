@@ -441,6 +441,12 @@ public:
   bool isShowFrameNumberWithLettersEnabled() const {
     return getBoolValue(showFrameNumberWithLetters);
   }
+  bool isShowDragBarsEnabled() const {
+    return getBoolValue(showDragBars);
+  }
+  QString getTimelineLayoutPreference() const {
+    return getStringValue(timelineLayoutPreference);
+  }
 
   // Animation  tab
   int getKeyframeType() const { return getIntValue(keyframeType); }
