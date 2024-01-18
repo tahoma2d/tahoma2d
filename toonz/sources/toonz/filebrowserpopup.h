@@ -18,6 +18,7 @@
 #include "cellselection.h"
 
 #define DEBUG_saveSceneAs
+#define FEATURE_copyLevelsOnSaveSceneAs
 
 //========================================================
 
