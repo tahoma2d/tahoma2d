@@ -666,7 +666,8 @@ bool SaveSceneAsPopup::execute() {
                   << pathQString.toStdString() << std::endl;
         auto newPath = TFilePath(pathQString);
         // 1 - Save level to a folder using new scene name
-        IoCmd::saveLevel(newPath, lvl->getSimpleLevel(), true);
+        if (Preferences::instance()->isSaveLevelsOnSaveSceneEnabled())
+          IoCmd::saveLevel(newPath, lvl->getSimpleLevel(), true);
         // 2 - Update level's path property
         lvl->getSimpleLevel()->setPath(newPath);
       } else {
@@ -683,8 +684,13 @@ bool SaveSceneAsPopup::execute() {
 #ifdef DEBUG_saveSceneAs
   bool result = IoCmd::saveScene(fp, 0);
   // automatic "save all" (otherwize, unsaved level changes would be lost)
-  if (result)
+  if (result) {
+    // 1 - Save level to a folder using new scene name
+    if (Preferences::instance()->isSaveLevelsOnSaveSceneEnabled())
       return IoCmd::saveAll(0);
+    else
+      return result;
+  }
   else
     return false;
 #else

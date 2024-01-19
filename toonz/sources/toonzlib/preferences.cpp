@@ -499,6 +499,8 @@ void Preferences::definePreferenceItems() {
   QString userName = TSystem::getUserName();
   define(recordAsUsername, "recordAsUsername", QMetaType::QString, userName);
 
+  define(saveLevelsOnSaveSceneEnabled, "saveLevelsOnSaveSceneEnabled", QMetaType::Bool, false);
+
   // Import / Export
   define(ffmpegPath, "ffmpegPath", QMetaType::QString, "");
   define(ffmpegTimeout, "ffmpegTimeout", QMetaType::Int, 0, 0,
