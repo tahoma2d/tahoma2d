@@ -645,7 +645,51 @@ bool SaveSceneAsPopup::execute() {
           fp.getName())))  // Lol. Cmon! Really necessary?
     return false;
 
-  return IoCmd::saveScene(fp, 0);
+  // copy and replace all levels if project option "Separate assets into scene sub-folders" is checked
+  TProjectP project = TProjectManager::instance()->getCurrentProject();
+  if (project->getUseSubScenePath()) {
+    ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+    TLevelSet *levelSet = scene->getLevelSet();
+    for (int i = 0; i < levelSet->getLevelCount(); i++) {
+      TXshLevel *lvl = levelSet->getLevel(i);
+      auto pathQString = lvl->getPath().getQString();
+      QString oldSceneName = QString::fromStdString(scene->getScenePath().getName());
+      QString newSceneName = QString::fromStdString(fp.getName());
+      std::cout << "SaveSceneAsPopup: oldSceneName: " 
+                << oldSceneName.toStdString()
+                << " newSceneName : " << newSceneName.toStdString()
+                << std::endl;
+      if (oldSceneName != newSceneName) {
+        pathQString = pathQString.replace(oldSceneName, newSceneName);
+        std::cout << "SaveSceneAsPopup: saveLevel to "
+                  << pathQString.toStdString() << std::endl;
+        auto newPath = TFilePath(pathQString);
+        // 1 - Save level to a folder using new scene name
+        if (Preferences::instance()->isSaveLevelsOnSaveSceneEnabled())
+          IoCmd::saveLevel(newPath, lvl->getSimpleLevel(), true);
+        // 2 - Update level's path property
+        lvl->getSimpleLevel()->setPath(newPath);
+      } else {
+        std::cout << "SaveSceneAsPopup: oldSceneName == newSceneName, keeping level paths intact "
+                  << std::endl;
+      }
+    }
+    // 3 - Notify xsheet scene and level of this change, of crash sooner or later ?
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    TApp::instance()->getCurrentScene()->notifyCastChange();
+    TApp::instance()->getCurrentLevel()->notifyLevelChange();
+  }
+  bool result = IoCmd::saveScene(fp, 0);
+  // automatic "save all" (otherwize, unsaved level changes would be lost)
+  if (result) {
+    // 1 - Save level to a folder using new scene name
+    if (Preferences::instance()->isSaveLevelsOnSaveSceneEnabled())
+      return IoCmd::saveAll(0);
+    else
+      return result;
+  }
+  else
+    return false;
 }
 
 void SaveSceneAsPopup::initFolder() {
