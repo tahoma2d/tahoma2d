@@ -645,7 +645,6 @@ bool SaveSceneAsPopup::execute() {
           fp.getName())))  // Lol. Cmon! Really necessary?
     return false;
 
-#ifdef FEATURE_copyLevelsOnSaveSceneAs
   // copy and replace all levels if project option "Separate assets into scene sub-folders" is checked
   TProjectP project = TProjectManager::instance()->getCurrentProject();
   if (project->getUseSubScenePath()) {
@@ -680,8 +679,6 @@ bool SaveSceneAsPopup::execute() {
     TApp::instance()->getCurrentScene()->notifyCastChange();
     TApp::instance()->getCurrentLevel()->notifyLevelChange();
   }
-#endif
-#ifdef DEBUG_saveSceneAs
   bool result = IoCmd::saveScene(fp, 0);
   // automatic "save all" (otherwize, unsaved level changes would be lost)
   if (result) {
@@ -693,9 +690,6 @@ bool SaveSceneAsPopup::execute() {
   }
   else
     return false;
-#else
-  return IoCmd::saveScene(fp, 0);
-#endif
 }
 
 void SaveSceneAsPopup::initFolder() {

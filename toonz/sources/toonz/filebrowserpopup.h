@@ -17,8 +17,6 @@
 // Tnz6 includes
 #include "cellselection.h"
 
-#define DEBUG_saveSceneAs
-#define FEATURE_copyLevelsOnSaveSceneAs
 
 //========================================================
 
