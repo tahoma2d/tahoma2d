@@ -99,7 +99,7 @@ public:
 
 class LeftToRightOrientation : public Orientation {
   const int CELL_WIDTH           = 50;
-  int BASE_CELL_HEIGHT           = 24;
+  const int CELL_HEIGHT          = 24;
   const int CELL_DRAG_HEIGHT     = 7;
   const int EXTENDER_WIDTH       = 8;
   const int EXTENDER_HEIGHT      = 12;
@@ -109,28 +109,25 @@ class LeftToRightOrientation : public Orientation {
   const int ONION_SIZE         = 19;
   const int ONION_DOT_SIZE     = 8;
   const int PLAY_RANGE_Y       = ONION_SIZE;
-  int BASE_ICON_WIDTH          = 20;
-  int BASE_ICON_HEIGHT         = 20;
-  int BASE_ICON_OFFSET         = BASE_ICON_WIDTH;
-  int BASE_ICONS_WIDTH         = BASE_ICON_OFFSET * 4;  // 88
+  const int ICON_WIDTH         = 20;
+  const int ICON_HEIGHT        = 20;
+  const int ICON_OFFSET        = ICON_WIDTH;
+  const int ICONS_WIDTH        = ICON_OFFSET * 4;  // 88
   const int THUMBNAIL_WIDTH    = 43;
   const int LAYER_NUMBER_WIDTH = 20;
   const int LAYER_NAME_WIDTH   = 150;
-  int BASE_LAYER_HEADER_WIDTH =
-      BASE_ICONS_WIDTH + THUMBNAIL_WIDTH + LAYER_NUMBER_WIDTH + LAYER_NAME_WIDTH;
+  const int LAYER_HEADER_WIDTH =
+      ICONS_WIDTH + THUMBNAIL_WIDTH + LAYER_NUMBER_WIDTH + LAYER_NAME_WIDTH;
   const int FOLDED_LAYER_HEADER_HEIGHT = 8;
-  int BASE_FOLDED_LAYER_HEADER_WIDTH  = BASE_LAYER_HEADER_WIDTH;
+  const int FOLDED_LAYER_HEADER_WIDTH  = LAYER_HEADER_WIDTH;
   const int TRACKLEN                   = 60;
   const int SHIFTTRACE_DOT_OFFSET      = 5;
   const int LAYER_HEADER_PANEL_HEIGHT  = 20;
   const int LAYER_FOOTER_PANEL_HEIGHT  = 16;
-  int BASE_CAMERA_CELL_HEIGHT          = BASE_CELL_HEIGHT;
-
-  int CELL_HEIGHT, CAMERA_CELL_HEIGHT, ICON_WIDTH, ICON_HEIGHT, ICON_OFFSET,
-      ICONS_WIDTH, LAYER_HEADER_WIDTH, FOLDED_LAYER_HEADER_WIDTH;
+  const int CAMERA_CELL_HEIGHT         = CELL_HEIGHT;
 
 public:
-  LeftToRightOrientation(QString layout);
+  LeftToRightOrientation();
   virtual ~LeftToRightOrientation(){};
 
   virtual CellPosition xyToPosition(const QPoint &xy,
@@ -189,30 +186,18 @@ double NumberRange::ratio(int at) const {
 
 // const int Orientations::COUNT = 2;
 
-Orientations::Orientations()
-    : _topToBottom(nullptr)
-    , _leftToRight_roomy(nullptr)
-    , _leftToRight_nodragcompact(nullptr)
-    , _leftToRight_nodragminimum(nullptr) {
-  _topToBottom               = new TopToBottomOrientation();
-  _leftToRight_roomy         = new LeftToRightOrientation("Roomy");
-  _leftToRight_nodragcompact = new LeftToRightOrientation("NoDragCompact");
-  _leftToRight_nodragminimum = new LeftToRightOrientation("NoDragMinimum");
+Orientations::Orientations() : _topToBottom(nullptr), _leftToRight(nullptr) {
+  _topToBottom = new TopToBottomOrientation();
+  _leftToRight = new LeftToRightOrientation();
 
   _all.push_back(_topToBottom);
-  _all.push_back(_leftToRight_roomy);
-  _all.push_back(_leftToRight_nodragcompact);
-  _all.push_back(_leftToRight_nodragminimum);
+  _all.push_back(_leftToRight);
 }
 Orientations::~Orientations() {
   delete _topToBottom;
   _topToBottom = nullptr;
-  delete _leftToRight_roomy;
-  _leftToRight_roomy = nullptr;
-  delete _leftToRight_nodragcompact;
-  _leftToRight_nodragcompact = nullptr;
-  delete _leftToRight_nodragminimum;
-  _leftToRight_nodragminimum = nullptr;
+  delete _leftToRight;
+  _leftToRight = nullptr;
 }
 
 const Orientations &Orientations::instance() {
@@ -224,38 +209,15 @@ const Orientation *Orientations::topToBottom() {
   return instance()._topToBottom;
 }
 const Orientation *Orientations::leftToRight() {
-  bool showDragBars = Preferences::instance()->isShowDragBarsEnabled();
-  QString timelineLayout =
-      showDragBars ? "Roomy"
-                   : Preferences::instance()->getTimelineLayoutPreference();
-
-  if (timelineLayout == "NoDragCompact")
-    return instance()._leftToRight_nodragcompact;
-  else if (timelineLayout == "NoDragMinimum")
-    return instance()._leftToRight_nodragminimum;
-
-  return instance()._leftToRight_roomy;
+  return instance()._leftToRight;
 }
 const std::vector<const Orientation *> &Orientations::all() {
   return instance()._all;
 }
 const Orientation *Orientations::byName(const QString &name) {
   std::vector<const Orientation *> m_all = all();
-
-  bool showDragBars = Preferences::instance()->isShowDragBarsEnabled();
-  QString timelineLayout =
-      showDragBars ? "Roomy"
-                   : Preferences::instance()->getTimelineLayoutPreference();
-
-  for (auto it = m_all.begin(); it != m_all.end(); it++) {
-    if ((*it)->name() != name) continue;
-
-    // Currently only 1 option for vertical
-    if ((*it)->isVerticalTimeline()) return *it;
-
-    if (!(*it)->isVerticalTimeline() && (*it)->layoutName() == timelineLayout)
-      return *it;
-  }
+  for (auto it = m_all.begin(); it != m_all.end(); it++)
+    if ((*it)->name() == name) return *it;
   throw std::runtime_error(
       (QString("no such orientation: ") + name).toStdString().c_str());
 }
@@ -1189,38 +1151,7 @@ CellPosition TopToBottomOrientation::arrowShift(int direction) const {
 
 /// --------------------------------------------------------------------------------
 
-LeftToRightOrientation::LeftToRightOrientation(QString layout) {
-  setLayoutName(layout);
-
-  CELL_HEIGHT               = BASE_CELL_HEIGHT;
-  CAMERA_CELL_HEIGHT        = BASE_CAMERA_CELL_HEIGHT;
-  ICON_WIDTH                = BASE_ICON_WIDTH;
-  ICON_HEIGHT               = BASE_ICON_HEIGHT;
-  ICON_OFFSET               = BASE_ICON_OFFSET;
-  ICONS_WIDTH               = BASE_ICONS_WIDTH;
-  LAYER_HEADER_WIDTH        = BASE_LAYER_HEADER_WIDTH;
-  FOLDED_LAYER_HEADER_WIDTH = BASE_FOLDED_LAYER_HEADER_WIDTH;
-
-  //  if (!Preferences::instance()->isShowDragBarsEnabled()) {
-  if (layout == QString("NoDragCompact")) {
-    addDimension(PredefinedDimension::INDEX, 2);
-    CELL_HEIGHT -= 4;
-    CAMERA_CELL_HEIGHT -= 4;
-  } else if (layout == QString("NoDragMinimum")) {
-    addDimension(PredefinedDimension::INDEX, 3);
-    CELL_HEIGHT -= CELL_DRAG_HEIGHT;
-    CAMERA_CELL_HEIGHT -= CELL_DRAG_HEIGHT;
-    ICON_WIDTH -= 1;
-    ICON_HEIGHT -= 1;
-    ICON_OFFSET = ICON_WIDTH;
-    ICONS_WIDTH = ICON_OFFSET * 4;
-    LAYER_HEADER_WIDTH =
-        ICONS_WIDTH + THUMBNAIL_WIDTH + LAYER_NUMBER_WIDTH + LAYER_NAME_WIDTH + 4;
-    FOLDED_LAYER_HEADER_WIDTH = LAYER_HEADER_WIDTH;
-  } else
-    addDimension(PredefinedDimension::INDEX, 1);
-
-
+LeftToRightOrientation::LeftToRightOrientation() {
   //
   // Ranges
   //
@@ -1484,7 +1415,7 @@ LeftToRightOrientation::LeftToRightOrientation(QString layout) {
   //
   addDimension(PredefinedDimension::LAYER, CELL_HEIGHT);
   addDimension(PredefinedDimension::FRAME, CELL_WIDTH);
-//  addDimension(PredefinedDimension::INDEX, 1);
+  addDimension(PredefinedDimension::INDEX, 1);
   addDimension(PredefinedDimension::SOUND_AMPLITUDE, soundRect.height() / 2);
   addDimension(PredefinedDimension::FRAME_LABEL_ALIGN,
                Qt::AlignHCenter | Qt::AlignBottom | Qt::TextWordWrap);

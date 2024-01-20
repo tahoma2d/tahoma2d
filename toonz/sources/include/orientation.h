@@ -228,8 +228,6 @@ protected:
   std::map<PredefinedRange, NumberRange> _ranges;
   std::map<PredefinedFlag, bool> _flags;
 
-  QString _layoutName;
-
 public:
   virtual ~Orientation(){};
   virtual CellPosition xyToPosition(const QPoint &xy,
@@ -288,10 +286,7 @@ public:
   virtual int cellHeight() const     = 0;
   virtual int foldedCellSize() const = 0;
 
-  virtual QString layoutName() const { return _layoutName; }
-
 protected:
-  void setLayoutName(QString layoutName) { _layoutName = layoutName; }
   void addRect(PredefinedRect which, const QRect &rect);
   void addLine(PredefinedLine which, const QLine &line);
   void addDimension(PredefinedDimension which, int dimension);
@@ -303,8 +298,7 @@ protected:
 
 // Enumerates all orientations available in the system as global const objects.
 class DVAPI Orientations {
-  const Orientation *_topToBottom, *_leftToRight_roomy,
-      *_leftToRight_nodragcompact, *_leftToRight_nodragminimum;
+  const Orientation *_topToBottom, *_leftToRight;
   std::vector<const Orientation *> _all;
 
   Orientations();
@@ -314,7 +308,7 @@ public:
 
   static const Orientations &instance();
 
-  static const int COUNT = 4;
+  static const int COUNT = 2;
 
   static const Orientation *topToBottom();
   static const Orientation *leftToRight();

@@ -106,13 +106,12 @@ class CellArea final : public QWidget {
   void drawSelectionBackground(QPainter &p) const;
   void drawExtenderHandles(QPainter &p);
 
-  void drawDragHandle(QPainter &p, bool isStart, bool isLastRow,
-                      const QPoint &xy, const QColor &sideColor) const;
+  void drawDragHandle(QPainter &p, bool isStart, const QPoint &xy,
+                      const QColor &sideColor) const;
   void drawEndOfDragHandle(QPainter &p, bool isEnd, const QPoint &xy,
                            const QColor &cellColor) const;
   void drawLockedDottedLine(QPainter &p, bool isLocked, bool isStart,
-                            bool isLastRow, const QPoint &xy,
-                            const QColor &cellColor) const;
+                            const QPoint &xy, const QColor &cellColor) const;
 
   void drawFrameSeparator(QPainter &p, int row, int col, bool emptyFrame,
                           bool heldFrame = false);
@@ -144,7 +143,7 @@ class CellArea final : public QWidget {
   // Restistusce true
   bool getEaseHandles(int r0, int r1, double e0, double e1, int &rh0, int &rh1);
 
-  bool isKeyFrameArea(int col, int row, QPoint mouseInCell, bool withFrameLine = false);
+  bool isKeyFrameArea(int col, int row, QPoint mouseInCell);
 
   DragTool *getDragTool() const;
   void setDragTool(DragTool *dragTool);

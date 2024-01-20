@@ -612,9 +612,6 @@ void Preferences::definePreferenceItems() {
          0);  // default
   define(showFrameNumberWithLetters, "showFrameNumberWithLetters",
          QMetaType::Bool, false);
-  define(showDragBars, "showDragBars", QMetaType::Bool, false);
-  define(timelineLayoutPreference, "timelineLayoutPreference", QMetaType::QString,
-         "NoDragCompact");
 
   // Animation
   define(keyframeType, "keyframeType", QMetaType::Int, 2);  // Linear

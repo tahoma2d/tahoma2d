@@ -375,10 +375,7 @@ const Orientation *XsheetViewer::orientation() const {
 }
 
 void XsheetViewer::flipOrientation() {
-  if (orientation()->isVerticalTimeline())
-    m_orientation = Orientations::instance().leftToRight();
-  else
-    m_orientation = Orientations::instance().topToBottom();
+  m_orientation = orientation()->next();
 
   int factor = (m_orientation->isVerticalTimeline()) ? m_frameZoomFactor : 100;
   TApp::instance()->getCurrentXsheet()->notifyZoomScaleChanged(factor);
@@ -1504,10 +1501,6 @@ void XsheetViewer::onPreferenceChanged(const QString &prefName) {
     positionSections();
     refreshContentSize(0, 0);
   } else if (prefName == "XsheetCamera") {
-    refreshContentSize(0, 0);
-  } else if (prefName == "XsheetDragBars" &&
-             !m_orientation->isVerticalTimeline()) {
-    m_orientation = Orientations::instance().leftToRight();
     refreshContentSize(0, 0);
   }
 }

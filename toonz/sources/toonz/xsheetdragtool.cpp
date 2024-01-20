@@ -117,15 +117,10 @@ void XsheetGUI::DragTool::onRelease(const QMouseEvent *event) {
 class XsheetSelectionDragTool final : public XsheetGUI::DragTool {
   int m_firstRow, m_firstCol;
   Qt::KeyboardModifiers m_modifier;
-  bool m_keySelection;
 
 public:
   XsheetSelectionDragTool(XsheetViewer *viewer)
-      : DragTool(viewer)
-      , m_firstRow(0)
-      , m_firstCol(0)
-      , m_modifier()
-      , m_keySelection(false) {}
+      : DragTool(viewer), m_firstRow(0), m_firstCol(0), m_modifier() {}
   // activate when clicked the cell
   void onClick(const QMouseEvent *event) override {
     m_modifier       = event->modifiers();
@@ -134,25 +129,15 @@ public:
     int col          = pos.layer();
     m_firstCol       = col;
     m_firstRow       = row;
-
-    m_keySelection = Preferences::instance()->isShowDragBarsEnabled()
-                         ? m_modifier & Qt::ControlModifier
-                         : m_modifier & Qt::AltModifier;
-
-    int r0, c0, r1, c1;
-    bool shiftPressed = false;
-    if (m_modifier & Qt::ShiftModifier) {
-      shiftPressed = true;
-      getViewer()->getCellSelection()->getSelectedCells(r0, c0, r1, c1);
-    }
-
     // First, check switching of the selection types. This may clear the
     // previous selection.
-    if (m_keySelection)
+    if (m_modifier & Qt::ControlModifier)
       getViewer()->getCellKeyframeSelection()->makeCurrent();
     else
       getViewer()->getCellSelection()->makeCurrent();
-    if (shiftPressed) {
+    if (m_modifier & Qt::ShiftModifier) {
+      int r0, c0, r1, c1;
+      getViewer()->getCellSelection()->getSelectedCells(r0, c0, r1, c1);
       if (r0 <= r1 && c0 <= c1) {
         if (abs(row - r0) < abs(row - r1)) {
           m_firstRow = r1;
@@ -168,13 +153,13 @@ public:
           m_firstCol = c0;
           c1         = col;
         }
-        if (m_keySelection)
+        if (m_modifier & Qt::ControlModifier)
           getViewer()->getCellKeyframeSelection()->selectCellsKeyframes(r0, c0,
                                                                         r1, c1);
         else
           getViewer()->getCellSelection()->selectCells(r0, c0, r1, c1);
       } else {
-        if (m_keySelection)
+        if (m_modifier & Qt::ControlModifier)
           getViewer()->getCellKeyframeSelection()->selectCellsKeyframes(
               row, col, row, col);
         else
@@ -187,7 +172,7 @@ public:
       getViewer()->setCurrentColumn(col);
       if (Preferences::instance()->isMoveCurrentEnabled())
         getViewer()->setCurrentRow(row);
-      if (m_keySelection)
+      if (m_modifier & Qt::ControlModifier)
         getViewer()->getCellKeyframeSelection()->selectCellKeyframe(row, col);
       else
         getViewer()->getCellSelection()->selectCell(row, col);
@@ -204,7 +189,7 @@ public:
                            col >= xsh->getColumnCount()))
       return;
     if (row < 0) row = 0;
-    if (m_keySelection)
+    if (m_modifier & Qt::ControlModifier)
       getViewer()->getCellKeyframeSelection()->selectCellsKeyframes(
           m_firstRow, m_firstCol, row, col);
     else
@@ -1080,9 +1065,7 @@ class CellKeyframeMoverTool final : public LevelMoverTool {
 
 protected:
   bool canMove(const TPoint &pos) override {
-    if (m_keyframeMoverTool->hasSelection() &&
-        !m_keyframeMoverTool->canMove(pos))
-      return false;
+    if (!m_keyframeMoverTool->canMove(pos)) return false;
     return LevelMoverTool::canMove(pos);
   }
 
@@ -1554,7 +1537,6 @@ namespace {
 class ColumnSelectionTool final : public XsheetGUI::DragTool {
   int m_firstColumn;
   bool m_enabled;
-  std::set<int> m_colSet;
 
 public:
   ColumnSelectionTool(XsheetViewer *viewer)
@@ -1568,8 +1550,6 @@ public:
     bool isSelected             = selection->isColumnSelected(col);
     if (event->modifiers() & Qt::ControlModifier) {
       selection->selectColumn(col, !isSelected);
-      m_enabled = true;
-      m_colSet  = selection->getIndices();
     } else if (event->modifiers() & Qt::ShiftModifier) {
       // m_enabled = true;
       if (isSelected) return;
@@ -1604,17 +1584,11 @@ public:
     int i, ia = m_firstColumn, ib = col;
     if (ia > ib) std::swap(ia, ib);
     for (i = ia; i <= ib; i++) selection->selectColumn(i, true);
-    if (m_colSet.size()) {
-      std::set<int>::iterator it;
-      for (it = m_colSet.begin(); it != m_colSet.end(); it++)
-        selection->selectColumn((*it), true);
-    }
     getViewer()->update();
     refreshCellsArea();
     return;
   }
   void onRelease(const CellPosition &pos) override {
-    m_colSet.clear();
     TSelectionHandle::getCurrent()->notifySelectionChanged();
   }
 };
