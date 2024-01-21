@@ -661,14 +661,25 @@ bool SaveSceneAsPopup::execute() {
                 << std::endl;
       if (oldSceneName != newSceneName) {
         pathQString = pathQString.replace(oldSceneName, newSceneName);
-        std::cout << "SaveSceneAsPopup: saveLevel to "
-                  << pathQString.toStdString() << std::endl;
         auto newPath = TFilePath(pathQString);
-        // 1 - Save level to a folder using new scene name
-        if (Preferences::instance()->isSaveLevelsOnSaveSceneEnabled())
+        if (Preferences::instance()->isSaveLevelsOnSaveSceneEnabled()) {
+          std::cout << "SaveSceneAsPopup: saveLevel to "
+                    << pathQString.toStdString() << std::endl;
+          // 1 - Save level to a folder using new scene name
           IoCmd::saveLevel(newPath, lvl->getSimpleLevel(), true);
-        // 2 - Update level's path property
-        lvl->getSimpleLevel()->setPath(newPath);
+          // 2 - Update level's path property
+          lvl->getSimpleLevel()->setPath(newPath);
+        } else {
+          TFilePath dOldPath = scene->decodeFilePath(lvl->getPath());
+          TFilePath dNewPath = scene->decodeFilePath(TFilePath(pathQString));
+          std::cout << "SaveSceneAsPopup: copyFiles from "
+                    << dOldPath.getQString().toStdString() << " to " 
+                    << dNewPath.getQString().toStdString() << std::endl;
+          // 1 - Copy level to a folder using new scene name
+          lvl->getSimpleLevel()->copyFiles(dNewPath, dOldPath);
+          // 2 - Update level's path property
+          lvl->getSimpleLevel()->setPath(newPath, true);
+        }
       } else {
         std::cout << "SaveSceneAsPopup: oldSceneName == newSceneName, keeping level paths intact "
                   << std::endl;
