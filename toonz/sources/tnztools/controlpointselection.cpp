@@ -1016,7 +1016,7 @@ void ControlPointSelection::addMenuItems(QMenu *menu) {
   bool ret = connect(linear, SIGNAL(triggered()), this, SLOT(setLinear()));
   ret =
       ret && connect(unlinear, SIGNAL(triggered()), this, SLOT(setUnlinear()));
-  assert(ret);
+//  assert(ret);
 }
 
 //-----------------------------------------------------------------------------

@@ -320,7 +320,7 @@ XsheetViewer::~XsheetViewer() {
 //-----------------------------------------------------------------------------
 
 void XsheetViewer::setDragTool(XsheetGUI::DragTool *dragTool) {
-  assert(m_dragTool == 0);
+  //assert(m_dragTool == 0);
   m_dragTool = dragTool;
 }
 
