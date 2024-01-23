@@ -108,6 +108,7 @@ since underlying onion-skinned drawings must be visible.
   }
 
   bool isShiftTraceEnabled() const { return m_shiftTraceStatus != DISABLED; }
+  bool isEditingShift() const { return m_shiftTraceStatus == EDITING_GHOST; }
 
   bool getLightTableStatus() const { return m_LightTableStatus; }
   void setLightTableStatus(bool status) { m_LightTableStatus = status; }
