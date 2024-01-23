@@ -2223,6 +2223,163 @@ bool IoCmd::loadScene() {
   }
 }
 //===========================================================================
+// IoCmd::saveSceneVersion()
+//---------------------------------------------------------------------------
+
+
+bool IoCmd::saveSceneAs(const TFilePath &fp) {
+  // copy and replace all levels if project option "Separate assets into scene
+  // sub-folders" is checked
+  TProjectP project = TProjectManager::instance()->getCurrentProject();
+  bool saveTwice    = false;
+  if (project->getUseSubScenePath()) {
+    // save scene a first time before updating levels paths just to make
+    // getDefaultLevelPath method happy (and avoid serach repalace old/new scene
+    // name)...
+    saveTwice   = true;
+    bool result = IoCmd::saveScene(fp, 0);
+
+    ToonzScene *scene   = TApp::instance()->getCurrentScene()->getScene();
+    TLevelSet *levelSet = scene->getLevelSet();
+    for (int i = 0; i < levelSet->getLevelCount(); i++) {
+      TXshLevel *lvl = levelSet->getLevel(i);
+      auto oldPath   = lvl->getPath();
+      auto newPath = scene->getDefaultLevelPath(lvl->getType(), lvl->getName());
+      if (oldPath != newPath) {
+        std::cout << "SaveSceneAsPopup: level oldPath: "
+                  << oldPath.getQString().toStdString()
+                  << " newPath : " << newPath.getQString().toStdString()
+                  << std::endl;
+        if (Preferences::instance()->isSaveLevelsOnSaveSceneEnabled()) {
+          std::cout << "SaveSceneAsPopup: saveLevel to "
+                    << newPath.getQString().toStdString() << std::endl;
+          // 1 - Save level to a folder using new scene name
+          IoCmd::saveLevel(newPath, lvl->getSimpleLevel(), true);
+          // 2 - Update level's path property
+          lvl->getSimpleLevel()->setPath(newPath);
+        } else {
+          TFilePath dOldPath = scene->decodeFilePath(oldPath);
+          TFilePath dNewPath = scene->decodeFilePath(newPath);
+          std::cout << "SaveSceneAsPopup: copyFiles from "
+                    << dOldPath.getQString().toStdString() << " to "
+                    << dNewPath.getQString().toStdString() << std::endl;
+          // 1 - Copy level to a folder using new scene name
+          lvl->getSimpleLevel()->copyFiles(dNewPath, dOldPath);
+          // 2 - Update level's path property
+          lvl->getSimpleLevel()->setPath(newPath, true);
+        }
+      } else {
+        std::cout << "SaveSceneAsPopup: level oldPath == newPath, keeping "
+                     "level paths intact "
+                  << std::endl;
+      }
+    }
+    // 3 - Notify xsheet scene and level of this change, of crash sooner or
+    // later ?
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    TApp::instance()->getCurrentScene()->notifyCastChange();
+    TApp::instance()->getCurrentLevel()->notifyLevelChange();
+  }
+  bool result = IoCmd::saveScene(fp, saveTwice ? IoCmd::SILENTLY_OVERWRITE : 0);
+  // automatic "save all" (otherwize, unsaved level changes would be lost)
+  if (result) {
+    // 1 - Save level to a folder using new scene name
+    if (Preferences::instance()->isSaveLevelsOnSaveSceneEnabled())
+      return IoCmd::saveAll(0);
+    else
+      return result;
+  } else
+    return false;
+}
+
+// Utility static methods for file naming
+// I put it here because statics in tfilepath header would need a long rebuild for each code change...
+#include <sstream>
+#include <iomanip>
+static bool fileExists(std::string fileName) {
+  std::ifstream infile(fileName.c_str());
+  return infile.good();
+}
+static std::string makeNumberedFilename(std::string prefix, int frame, 
+                                        std::string extension, int padding) {
+  std::ostringstream filenameSs;
+  filenameSs << prefix << std::setfill('0') << std::setw(padding) << frame
+             << "." << extension;
+  return filenameSs.str();
+}
+
+static void incrementNumberedFilename(std::string &str) {
+  // input string can be the full path : 
+  // string searches are made backward from the end of the string
+  int padding           = 0;
+  std::string extension = "";
+  int lastPoint         = str.rfind(".");
+  if (lastPoint != std::string::npos)
+    extension = str.substr(lastPoint + 1);  // tnz (no dot!)
+  else
+    lastPoint = str.length();
+  int n = lastPoint - 1;
+  while (isdigit(str[n])) {
+    n--;
+  }
+  int lastNum = n + 1;
+  auto numStr = str.substr(lastNum, lastPoint - lastNum);
+
+  int intValue;
+  std::string prefix = str.substr(0, lastNum);
+  if (numStr.length() > 0) {
+    std::istringstream iss(numStr);
+    iss >> intValue;
+    padding = numStr.length();
+    intValue++;
+  } else {
+    intValue = 1;
+  }
+  // avoid overwriting scene files...
+  while (
+      fileExists(makeNumberedFilename(prefix, intValue, extension, padding))) {
+    intValue++;
+  }
+  std::cout << "incrementStringSuffix input str:: " << str << std::endl;
+  std::cout << "incrementStringSuffix prefix: " << prefix
+            << " intValue: " << intValue << " extension: " << extension
+            << std::endl;
+  str = makeNumberedFilename(prefix, intValue, extension, padding);
+  std::cout << "incrementStringSuffix concat [prefix][intValue][extension]: " << str
+            << std::endl;
+}
+
+bool IoCmd::saveSceneVersion() { 
+
+  auto oldScenePath = TApp::instance()
+                          ->getCurrentScene()
+                          ->getScene()
+                          ->getScenePath()
+                          .getQString()
+                          .toStdString();
+  auto newScenePath = oldScenePath;
+  incrementNumberedFilename(newScenePath);
+  std::cout << "saveSceneVersion oldScenePath: " << oldScenePath
+            << " newScenePath: " << newScenePath << std::endl;
+  return saveSceneAs(TFilePath(newScenePath));
+
+  //// I couldn't understand how to use existing toonz numbered file naming methods :
+  //// this example removes the version number...
+  //auto scenePath = TApp::instance()->getCurrentScene()->getScene()->getScenePath();
+  //auto newScenePath = scenePath;
+  //scenePath.setUnderscoreFormatAllowed(true);
+  //scenePath.setFilePathProperties(false, true, 4);
+  //auto frame = scenePath.getFrame();
+  //frame.setZeroPadding(4);
+  //if (frame == TFrameId::EMPTY_FRAME || frame == TFrameId::NO_FRAME) 
+  //  scenePath.withFrame(1);
+  //else
+  //  scenePath.withFrame(frame.getNumber() + 1);
+  //std::cout << "saveSceneVersion oldScenePath: " << scenePath << " frame: " << frame
+  //          << " newScenePath: " << newScenePath << std::endl;
+  //return false;
+}
+//===========================================================================
 // IoCmd::loadSubScene()
 //---------------------------------------------------------------------------
 

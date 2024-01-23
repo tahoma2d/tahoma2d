@@ -314,6 +314,7 @@ void TopBar::loadMenubar() {
   {
     addMenuItem(saveOtherMenu, MI_SaveScene);
     addMenuItem(saveOtherMenu, MI_SaveSceneAs);
+    addMenuItem(saveOtherMenu, MI_SaveSceneVersion);
   }
   addMenuItem(fileMenu, MI_OpenRecentScene);
   addMenuItem(fileMenu, MI_RevertScene);
