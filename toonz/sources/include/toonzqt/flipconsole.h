@@ -216,6 +216,7 @@ public:
     eBegin,
     ePlay,
     eLoop,
+    ePingPong,
     ePause,
     ePrev,
     eNext,
@@ -388,6 +389,8 @@ private:
   ImagePainter::VisualSettings m_settings;
 
   bool m_isPlay;
+  bool m_isLoop;
+  bool m_isPingPong;
   int m_fps, m_sceneFps;
   bool m_reverse;
   int m_markerFrom, m_markerTo;

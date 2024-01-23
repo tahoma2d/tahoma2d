@@ -270,6 +270,7 @@ public:
 VcrCommand playCommand(MI_Play, FlipConsole::ePlay),
     pauseCommand(MI_Pause, FlipConsole::ePause),
     loopCommand(MI_Loop, FlipConsole::eLoop),
+    pingPongCommand(MI_PingPong, FlipConsole::ePingPong),
     firstFrameCommand(MI_FirstFrame, FlipConsole::eFirst),
     lastFrameCommand(MI_LastFrame, FlipConsole::eLast),
     nextFrameCommand(MI_NextFrame, FlipConsole::eNext),

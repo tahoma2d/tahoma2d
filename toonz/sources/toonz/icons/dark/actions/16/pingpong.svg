@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="16px"
+   height="16px"
+   version="1.1"
+   xml:space="preserve"
+   style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"
+   id="svg12"
+   sodipodi:docname="loop_swing.svg"
+   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs16">
+        
+    
+            
+            
+        
+                
+            </defs><sodipodi:namedview
+   id="namedview14"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   showgrid="true"
+   inkscape:zoom="44.9375"
+   inkscape:cx="8"
+   inkscape:cy="8.3449235"
+   inkscape:window-width="1920"
+   inkscape:window-height="1141"
+   inkscape:window-x="-7"
+   inkscape:window-y="-7"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="svg12"><inkscape:grid
+     type="xygrid"
+     id="grid833" /></sodipodi:namedview>
+    <g
+   id="bg"
+   transform="matrix(0.110345,0,0,0.121212,-16.2207,-18.909)">
+                <rect
+   x="147"
+   y="156"
+   width="145"
+   height="132"
+   style="fill:#878787;fill-opacity:0"
+   id="rect2" />
+            </g><path
+   d="M 5.003,4 H 11 V 1 l 4,4 -4,4 V 6 H 4.997 Z"
+   style="fill-rule:nonzero"
+   id="path5"
+   sodipodi:nodetypes="cccccccc" /><path
+   d="M 1,11 5,7 5.003,10 H 11 v 2 H 4.997 L 5,15 Z"
+   style="clip-rule:evenodd;fill-rule:nonzero;stroke-linejoin:round;stroke-miterlimit:2"
+   id="path5-4"
+   sodipodi:nodetypes="cccccccc" />
+</svg>
