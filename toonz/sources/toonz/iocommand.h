@@ -180,6 +180,7 @@ bool loadScene(ToonzScene &scene, const TFilePath &scenePath, bool import);
 bool loadScene(const TFilePath &scenePath, bool updateRecentFile = true,
                bool checkSaveOldScene = true);
 bool loadScene();
+bool saveSceneAs(const TFilePath &fp);
 
 bool loadSubScene();
 bool loadSubScene(const TFilePath &scenePath);
