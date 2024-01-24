@@ -354,6 +354,8 @@ void ShiftTraceTool::onDeactivate() {
   if (!shiftTrace->isChecked()) return;
   QAction *action = CommandManager::instance()->getAction("MI_EditShift");
   action->setChecked(false);
+  action = CommandManager::instance()->getAction("MI_ShowShiftOrigin");
+  action->setChecked(false);
 }
 
 ShiftTraceTool::GadgetId ShiftTraceTool::getGadget(const TPointD &p) {
