@@ -837,16 +837,20 @@ void EraserTool::erase(TVectorImageP vi, TRectD &rect) {
 void EraserTool::stopErase(TVectorImageP vi) {
   assert(m_undo != 0);
 
-  UINT size = m_indexes.size();
+  if (m_undo) {
+    UINT size = m_indexes.size();
 
-  assert(size == vi->getStrokeCount());
-  UINT i = 0;
-  for (; i < size; i++) {
-    if (m_indexes[i] == -1) m_undo->addNewStroke(i, vi->getVIStroke(i));
+    assert(size == vi->getStrokeCount());
+    UINT i = 0;
+    for (; i < size; i++) {
+      if (m_indexes[i] == -1) m_undo->addNewStroke(i, vi->getVIStroke(i));
+    }
+    TUndoManager::manager()->add(m_undo);
+    m_undo = 0;
   }
-  TUndoManager::manager()->add(m_undo);
-  m_undo   = 0;
+
   m_active = false;
+  m_indexes.clear();
   invalidate();
   notifyImageChanged();
 }
