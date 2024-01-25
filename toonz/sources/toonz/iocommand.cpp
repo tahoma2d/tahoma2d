@@ -2234,7 +2234,7 @@ bool IoCmd::saveSceneAs(const TFilePath &fp) {
   bool saveTwice    = false;
   if (project->getUseSubScenePath()) {
     // save scene a first time before updating levels paths just to make
-    // getDefaultLevelPath method happy (and avoid serach repalace old/new scene
+    // getDefaultLevelPath method happy (and avoid search/replace old/new scene
     // name)...
     saveTwice   = true;
     bool result = IoCmd::saveScene(fp, 0);
@@ -2246,13 +2246,7 @@ bool IoCmd::saveSceneAs(const TFilePath &fp) {
       auto oldPath   = lvl->getPath();
       auto newPath = scene->getDefaultLevelPath(lvl->getType(), lvl->getName());
       if (oldPath != newPath) {
-        std::cout << "SaveSceneAsPopup: level oldPath: "
-                  << oldPath.getQString().toStdString()
-                  << " newPath : " << newPath.getQString().toStdString()
-                  << std::endl;
         if (Preferences::instance()->isSaveLevelsOnSaveSceneEnabled()) {
-          std::cout << "SaveSceneAsPopup: saveLevel to "
-                    << newPath.getQString().toStdString() << std::endl;
           // 1 - Save level to a folder using new scene name
           IoCmd::saveLevel(newPath, lvl->getSimpleLevel(), true);
           // 2 - Update level's path property
@@ -2260,18 +2254,11 @@ bool IoCmd::saveSceneAs(const TFilePath &fp) {
         } else {
           TFilePath dOldPath = scene->decodeFilePath(oldPath);
           TFilePath dNewPath = scene->decodeFilePath(newPath);
-          std::cout << "SaveSceneAsPopup: copyFiles from "
-                    << dOldPath.getQString().toStdString() << " to "
-                    << dNewPath.getQString().toStdString() << std::endl;
           // 1 - Copy level to a folder using new scene name
           lvl->getSimpleLevel()->copyFiles(dNewPath, dOldPath);
           // 2 - Update level's path property
           lvl->getSimpleLevel()->setPath(newPath, true);
         }
-      } else {
-        std::cout << "SaveSceneAsPopup: level oldPath == newPath, keeping "
-                     "level paths intact "
-                  << std::endl;
       }
     }
     // 3 - Notify xsheet scene and level of this change, of crash sooner or
@@ -2340,13 +2327,7 @@ static void incrementNumberedFilename(std::string &str) {
       fileExists(makeNumberedFilename(prefix, intValue, extension, padding))) {
     intValue++;
   }
-  std::cout << "incrementStringSuffix input str:: " << str << std::endl;
-  std::cout << "incrementStringSuffix prefix: " << prefix
-            << " intValue: " << intValue << " extension: " << extension
-            << std::endl;
   str = makeNumberedFilename(prefix, intValue, extension, padding);
-  std::cout << "incrementStringSuffix concat [prefix][intValue][extension]: " << str
-            << std::endl;
 }
 
 bool IoCmd::saveSceneVersion() { 
@@ -2359,8 +2340,6 @@ bool IoCmd::saveSceneVersion() {
                           .toStdString();
   auto newScenePath = oldScenePath;
   incrementNumberedFilename(newScenePath);
-  std::cout << "saveSceneVersion oldScenePath: " << oldScenePath
-            << " newScenePath: " << newScenePath << std::endl;
   return saveSceneAs(TFilePath(newScenePath));
 
   //// I couldn't understand how to use existing toonz numbered file naming methods :
