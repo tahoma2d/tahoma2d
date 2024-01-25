@@ -2331,13 +2331,10 @@ static void incrementNumberedFilename(std::string &str) {
 }
 
 bool IoCmd::saveSceneVersion() { 
-
-  auto oldScenePath = TApp::instance()
-                          ->getCurrentScene()
-                          ->getScene()
-                          ->getScenePath()
-                          .getQString()
-                          .toStdString();
+  auto scene = TApp::instance()->getCurrentScene()->getScene();
+  if (scene->isUntitled())
+    return saveScene(0);
+  auto oldScenePath = scene->getScenePath().getQString().toStdString();
   auto newScenePath = oldScenePath;
   incrementNumberedFilename(newScenePath);
   return saveSceneAs(TFilePath(newScenePath));
