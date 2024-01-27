@@ -391,6 +391,10 @@ void OCAData::build(ToonzScene *scene, TXsheet *xsheet, QString name,
   }
 }
 
+//void OCAIo::OCAData::read(QJsonObject &json) { 
+//    m_name = json["name"]; 
+//}
+
 class ExportOCACommand final : public MenuItemHandler {
 public:
   ExportOCACommand() : MenuItemHandler(MI_ExportOCA) {}
@@ -535,3 +539,236 @@ void ExportOCACommand::execute() {
       QDesktopServices::openUrl(QUrl::fromLocalFile(folderPath.getQString()));
   }
 }
+
+/// <summary>
+///  OCA importer
+/// currently importing external raster image's is unclear to me.
+/// there is no simple importLevel command
+/// I m try to refer to code found in :
+/// LevelCreatePopup pasteRasterImageInCellWithoutUndo LoadLevelPopup TImageReader::load() ResourceImportDialog...
+/// </summary>
+
+class ImportOCACommand final : public MenuItemHandler {
+public:
+  ImportOCACommand() : MenuItemHandler(MI_ImportOCA) {}
+  void execute() override;
+} ImportOCACommand;
+
+void ImportOCACommand::execute() {
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  TXsheet *xsheet   = TApp::instance()->getCurrentXsheet()->getXsheet();
+  TFilePath fp      = scene->getScenePath().withType("oca");
+  static GenericLoadFilePopup *loadPopup = 0;
+  if (!loadPopup) {
+    loadPopup             = new GenericLoadFilePopup( QObject::tr("Import Open Cel Animation (OCA)") );
+    loadPopup->addFilterType("oca");
+  }
+  if (!scene->isUntitled())
+    loadPopup->setFolder(fp.getParentDir());
+  else
+    loadPopup->setFolder(
+        TProjectManager::instance()->getCurrentProject()->getScenesPath());
+
+  loadPopup->setFilename(fp.withoutParentDir());
+  fp = loadPopup->getPath();
+  if (fp.isEmpty()) {
+    DVGui::info(QObject::tr("Open OCA file cancelled : empty filepath."));
+    return;
+  } else {
+    DVGui::info(QObject::tr("Open OCA file : ") + fp.getQString());
+  }
+  QString ocafile = fp.getQString();
+  //QString ocafolder(ocafile);
+  //ocafolder.replace(".", "_");
+  //DVGui::info(QObject::tr("Open OCA ocafolder : ") + ocafolder +
+  //            QObject::tr("Open OCA ocafile : ") + ocafile);
+  //QFile loadFile(ocafile);
+  //if (!loadFile.open(QIODevice::ReadOnly)) {
+  //  DVGui::error(QObject::tr("Unable to open OCA file for loading."));
+  //  return;
+  //}
+
+  OCAInputData ocaInputData = OCAInputData(scene, xsheet);
+  QJsonObject ocaObject;
+  ocaInputData.load(ocafile, ocaObject);
+  ocaInputData.getSceneData();  // gather default values
+  ocaInputData.read(ocaObject); // parser
+  ocaInputData.setSceneData();  // set scene/xsheet values
+  // if (ocaInputData.isEmpty()) {}
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  TApp::instance()->getCurrentScene()->notifyCastChange();
+  //TApp::instance()->getCurrentLevel()->notifyLevelChange();
+}
+
+OCAIo::OCAInputData::OCAInputData(ToonzScene *scene, TXsheet *xsheet) {
+  m_scene  = scene;
+  m_xsheet = xsheet;
+  m_oprop  = scene->getProperties()->getOutputProperties();
+}
+
+void OCAIo::OCAInputData::load(QString path, QJsonObject &json) { 
+  //see XdtsIo::loadXdtsScene
+  m_path = path;
+  m_parentDir = TFilePath(m_path).getParentDir();
+  // 1. Open the QFile and write it to a byteArray and close the file
+  QFile file;
+  file.setFileName(path);
+  if (!file.open(QIODevice::ReadOnly)) {
+    DVGui::error(QObject::tr("Unable to open OCA file for loading."));
+    return;
+  } else {
+    DVGui::info(QObject::tr("Loading : ") + path);
+  }
+  QByteArray byteArray;
+  byteArray = file.readAll();
+  file.close();
+
+  // 2. Format the content of the byteArray as QJsonDocument and check on parse
+  // Errors
+  QJsonParseError parseError;
+  QJsonDocument jsonDoc;
+  jsonDoc = QJsonDocument::fromJson(byteArray, &parseError);
+  if (parseError.error != QJsonParseError::NoError) {
+    DVGui::warning(QObject::tr("Parse error at %1 while loading OCA file.")
+                       .arg(parseError.offset));
+    return;
+  }
+  //else {
+  //  DVGui::info(QObject::tr("jsonDoc content : ") +
+  //              jsonDoc.toJson(QJsonDocument::Indented));
+  //}
+  json = jsonDoc.object();
+}
+
+void OCAIo::OCAInputData::getSceneData() {
+  // gather default values from current scene in case their missing in oca file...
+  m_framerate = m_oprop->getFrameRate();
+  int from, to, step;
+  if (m_scene->getTopXsheet() == m_xsheet &&
+      m_oprop->getRange(from, to, step)) {
+    m_startTime = from;
+    m_endTime   = to;
+    // m_stepTime  = step;
+  } else {
+    m_startTime = 0;
+    m_endTime   = m_xsheet->getFrameCount() - 1;
+    // m_stepTime  = 1;
+  }
+  if (m_endTime < 0) m_endTime = 0;
+  m_width  = m_scene->getCurrentCamera()->getRes().lx;
+  m_height = m_scene->getCurrentCamera()->getRes().ly;
+}
+
+void OCAIo::OCAInputData::read(QJsonObject &json) {
+  m_name       = json.value("name").toString();
+  m_framerate  = json.value("frameRate").toInt(m_framerate);
+  m_width      = json.value("width").toInt(m_width);
+  m_height     = json.value("height").toInt(m_height);
+  m_startTime  = json.value("startTime").toInt(m_startTime);
+  m_endTime    = json.value("endTime").toInt(m_endTime);
+  m_colorDepth = json.value("colorDepth").toString();
+  // Background color
+  QJsonArray bgColorArray = json["backgroundColor"].toArray();
+  m_bgRed                 = bgColorArray[0].toDouble();
+  m_bgGreen               = bgColorArray[1].toDouble();
+  m_bgBlue                = bgColorArray[3].toDouble();
+  m_bgAlpha               = bgColorArray[4].toDouble();
+  m_layers                = json.value("layers").toArray();
+
+  for (auto jsonLayer : m_layers) {
+    importOcaLayer(jsonLayer.toObject());
+  }
+  m_originApp             = json.value("originApp").toString();
+  m_originAppVersion      = json.value("originAppVersion").toString();
+  m_ocaVersion            = json.value("ocaVersion").toString();
+}
+
+void OCAIo::OCAInputData::setSceneData() {
+  m_scene->setSceneName(m_name.toStdWString());
+  m_oprop->setFrameRate(m_framerate);
+  m_scene->getCurrentCamera()->setRes(TDimension(m_width, m_height));
+  m_oprop->setRange(m_startTime, m_endTime, 1);
+}
+
+void OCAIo::OCAInputData::importOcaLayer(QJsonObject &jsonLayer) {
+  // see LevelCreatePopup pasteRasterImageInCellWithoutUndo...
+  // the column is created,
+  // but i can't find a way to fill the cells with external images :
+  // in importOcaFrame sl->setFrame(fid, img); doesn't seem to be enough...
+  // should i manipulate the cells instead ?,
+  if (jsonLayer["type"] == "paintlayer") {
+    if (jsonLayer["blendingMode"].toString() != "normal") {
+      DVGui::warning(QObject::tr("importOcaLayer : blending modes not implemented ") +
+                  jsonLayer["name"].toString());
+    }
+    DVGui::info(QObject::tr("importOcaLayer : ") +
+                jsonLayer["name"].toString());
+    auto levelType   = OVL_XSHLEVEL; // OVL_XSHLEVEL is for raster images while TZP_XSHLEVEL is for toonz levels (smart rasters with palette)
+    auto dim         = TDimension(jsonLayer["width"].toInt(), jsonLayer["height"].toInt());
+    auto dpi         = 300;
+    TXshLevel *level = m_scene->createNewLevel(
+        levelType, jsonLayer["name"].toString().toStdWString(), dim, dpi);
+    TXshSimpleLevel *sl = dynamic_cast<TXshSimpleLevel *>(level);
+    // see LoadLevelUndo
+    m_scene->getLevelSet()->insertLevel(level);
+
+    sl->getProperties()->setDpiPolicy( LevelProperties::DP_CustomDpi);
+    sl->setName(jsonLayer["name"].toString().toStdWString());
+    //sl->setProperty()
+    m_xsheet->insertColumn(m_xsheet->getColumnCount(),
+                         TXshColumn::ColumnType::eLevelType);
+    TApp::instance()->getCurrentLevel()->setLevel(level);
+    for (auto frame : jsonLayer["frames"].toArray())
+      importOcaFrame(frame.toObject(), sl);
+
+    // many questions....
+    if (!jsonLayer["animated"].toBool()) {
+      // nothing special ?
+    }
+    for (auto layer : jsonLayer["childLayers"].toArray()) {
+      // nothing special ?
+      importOcaLayer(layer.toObject());
+    }
+    // should we set level path, while each frame has it's own path set in importOcaFrame ? 
+    // I guess not : external images are not single file like tlv files
+    // sl->setPath(levelFp, true);
+    // is it necessary to mark dirty and trigger signals
+    level->setDirtyFlag(true);
+    TApp::instance()->getCurrentLevel()->notifyLevelChange();
+  } else {
+    DVGui::warning(QObject::tr("importOcaLayer skipping unimplemented layer type : ") +
+        jsonLayer["type"].toString() + " : " + jsonLayer["name"].toString()
+    );
+  }
+}
+
+void OCAIo::OCAInputData::importOcaFrame(QJsonObject &jsonFrame,
+                                         TXshSimpleLevel *sl) {
+  // see LoadLevelPopup, TImageP TImageReader::load(), ResourceImportDialog
+  TFrameId fid(jsonFrame["frameNumber"].toInt());
+  // sl->setFrame(fid, TImageP());
+  auto path       = TFilePath(m_parentDir.getQString() + "/" +
+                        jsonFrame["fileName"].toString());
+  bool fileExists = TFileStatus(path).doesExist();
+  TImageP img;
+  if (fileExists) {
+    auto imageReader = TImageReaderP(path);
+    img = imageReader->load();
+    if (img->getType() != TImage::RASTER) {
+      DVGui::warning(
+          QObject::tr("importOcaFrame skipping unimplemented image type : ") +
+          jsonFrame["name"].toString());
+    }
+    auto info = imageReader->getImageInfo();
+    DVGui::info(QObject::tr("importOcaFrame : ") + path.getQString() +
+                " width: " + QString::number(info->m_lx) +
+                " height: " + QString::number(info->m_ly) 
+                + " bits: " + QString::number(info->m_bitsPerSample) );
+
+  } else {
+    DVGui::error(QObject::tr("importOcaFrame file not found! : ") + path.getQString());
+    img = sl->createEmptyFrame();
+  }
+  sl->setFrame(fid, img);
+}
+
