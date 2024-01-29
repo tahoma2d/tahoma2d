@@ -558,6 +558,7 @@ void TopBar::loadMenubar() {
   addMenuItem(playMenu, MI_Play);
   addMenuItem(playMenu, MI_Pause);
   addMenuItem(playMenu, MI_Loop);
+  addMenuItem(playMenu, MI_PingPong);
   playMenu->addSeparator();
   addMenuItem(playMenu, MI_FirstFrame);
   addMenuItem(playMenu, MI_LastFrame);
