@@ -31,6 +31,7 @@
 #include "tlevel_io.h"
 #include "tvectorimage.h"
 #include "exportlevelcommand.h"
+#include "iocommand.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -546,6 +547,13 @@ void ExportOCACommand::execute() {
 /// there is no simple importLevel command
 /// I m try to refer to code found in :
 /// LevelCreatePopup pasteRasterImageInCellWithoutUndo LoadLevelPopup TImageReader::load() ResourceImportDialog...
+/// 
+/// Roadmap:
+/// - finish this basic importer
+/// - add the option to update the current scene from OCA, importing only the missing layers 
+/// (example : import a krita paint layer, but keep the tlv with their palette as smart rasters...)
+/// - keyframe animation transfert for camera, pegs, etc...
+/// that would be another tool and another open file format (ascii (json or xml?) or binary (faster for huge scenes?) ?).
 /// </summary>
 
 class ImportOCACommand final : public MenuItemHandler {
@@ -577,27 +585,21 @@ void ImportOCACommand::execute() {
   } else {
     DVGui::info(QObject::tr("Open OCA file : ") + fp.getQString());
   }
-  QString ocafile = fp.getQString();
-  //QString ocafolder(ocafile);
-  //ocafolder.replace(".", "_");
-  //DVGui::info(QObject::tr("Open OCA ocafolder : ") + ocafolder +
-  //            QObject::tr("Open OCA ocafile : ") + ocafile);
-  //QFile loadFile(ocafile);
-  //if (!loadFile.open(QIODevice::ReadOnly)) {
-  //  DVGui::error(QObject::tr("Unable to open OCA file for loading."));
-  //  return;
-  //}
 
+  QString ocafile = fp.getQString();
   OCAInputData ocaInputData = OCAInputData(scene, xsheet);
   QJsonObject ocaObject;
   ocaInputData.load(ocafile, ocaObject);
-  ocaInputData.getSceneData();  // gather default values
+  if (ocaInputData.isEmpty()) {
+    DVGui::warning(QObject::tr("OCA file has no layer to import: ") + fp.getQString());
+  }
+  ocaInputData.getSceneData();   // gather default values
   ocaInputData.read(ocaObject); // parser
   ocaInputData.setSceneData();  // set scene/xsheet values
-  // if (ocaInputData.isEmpty()) {}
+  // TApp::instance()->getCurrentLevel()->notifyLevelChange(); > importOcaLayer
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   TApp::instance()->getCurrentScene()->notifyCastChange();
-  //TApp::instance()->getCurrentLevel()->notifyLevelChange();
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
 }
 
 OCAIo::OCAInputData::OCAInputData(ToonzScene *scene, TXsheet *xsheet) {
@@ -640,8 +642,11 @@ void OCAIo::OCAInputData::load(QString path, QJsonObject &json) {
   json = jsonDoc.object();
 }
 
+/// <summary>
+/// Gather default values from current scene, 
+/// just in case they are missing in the oca file...
+/// </summary>
 void OCAIo::OCAInputData::getSceneData() {
-  // gather default values from current scene in case their missing in oca file...
   m_framerate = m_oprop->getFrameRate();
   int from, to, step;
   if (m_scene->getTopXsheet() == m_xsheet &&
@@ -659,43 +664,52 @@ void OCAIo::OCAInputData::getSceneData() {
   m_height = m_scene->getCurrentCamera()->getRes().ly;
 }
 
+/// <summary>
+/// json OCA parser, getting global properties and creating the layers
+/// </summary>
+/// <param name="json"></param>
 void OCAIo::OCAInputData::read(QJsonObject &json) {
-  m_name       = json.value("name").toString();
+  m_originApp        = json.value("originApp").toString();
+  m_originAppVersion = json.value("originAppVersion").toString();
+  m_ocaVersion       = json.value("ocaVersion").toString();
+  m_name             = json.value("name").toString();
   m_framerate  = json.value("frameRate").toInt(m_framerate);
   m_width      = json.value("width").toInt(m_width);
   m_height     = json.value("height").toInt(m_height);
   m_startTime  = json.value("startTime").toInt(m_startTime);
   m_endTime    = json.value("endTime").toInt(m_endTime);
   m_colorDepth = json.value("colorDepth").toString();
-  // Background color
   QJsonArray bgColorArray = json["backgroundColor"].toArray();
   m_bgRed                 = bgColorArray[0].toDouble();
   m_bgGreen               = bgColorArray[1].toDouble();
-  m_bgBlue                = bgColorArray[3].toDouble();
-  m_bgAlpha               = bgColorArray[4].toDouble();
+  m_bgBlue                = bgColorArray[2].toDouble();
+  m_bgAlpha               = bgColorArray[3].toDouble();
   m_layers                = json.value("layers").toArray();
-
   for (auto jsonLayer : m_layers) {
     importOcaLayer(jsonLayer.toObject());
   }
-  m_originApp             = json.value("originApp").toString();
-  m_originAppVersion      = json.value("originAppVersion").toString();
-  m_ocaVersion            = json.value("ocaVersion").toString();
 }
 
+/// <summary>
+/// Updates global scene properties.
+/// </summary>
 void OCAIo::OCAInputData::setSceneData() {
   m_scene->setSceneName(m_name.toStdWString());
   m_oprop->setFrameRate(m_framerate);
   m_scene->getCurrentCamera()->setRes(TDimension(m_width, m_height));
+  m_xsheet->updateFrameCount();
   m_oprop->setRange(m_startTime, m_endTime, 1);
+  TPixel32 color = TPixel32(m_bgRed * 255.0, m_bgGreen * 255.0,
+                            m_bgBlue * 255.0, m_bgAlpha * 255.0);
+  m_scene->getProperties()->setBgColor(color);
 }
 
+/// <summary>
+/// creates level from OCA layer, and exposes it in the xsheet
+/// see OCA layer specs https://github.com/RxLaboratory/OCA/blob/master/src-docs/docs/specs/layer.md?plain=1
+/// </summary>
+/// <param name="jsonLayer"></param>
 void OCAIo::OCAInputData::importOcaLayer(QJsonObject &jsonLayer) {
-  // see LevelCreatePopup pasteRasterImageInCellWithoutUndo...
-  // the column is created,
-  // but i can't find a way to fill the cells with external images :
-  // in importOcaFrame sl->setFrame(fid, img); doesn't seem to be enough...
-  // should i manipulate the cells instead ?,
   if (jsonLayer["type"] == "paintlayer") {
     if (jsonLayer["blendingMode"].toString() != "normal") {
       DVGui::warning(QObject::tr("importOcaLayer : blending modes not implemented ") +
@@ -706,35 +720,117 @@ void OCAIo::OCAInputData::importOcaLayer(QJsonObject &jsonLayer) {
     auto levelType   = OVL_XSHLEVEL; // OVL_XSHLEVEL is for raster images while TZP_XSHLEVEL is for toonz levels (smart rasters with palette)
     auto dim         = TDimension(jsonLayer["width"].toInt(), jsonLayer["height"].toInt());
     auto dpi         = 300;
-    TXshLevel *level = m_scene->createNewLevel(
-        levelType, jsonLayer["name"].toString().toStdWString(), dim, dpi);
+    float antialiasSoftness = 0;
+    TXshLevel *level = m_scene->createNewLevel( levelType, jsonLayer["name"].toString().toStdWString(), dim, dpi);
     TXshSimpleLevel *sl = dynamic_cast<TXshSimpleLevel *>(level);
-    // see LoadLevelUndo
-    m_scene->getLevelSet()->insertLevel(level);
 
-    sl->getProperties()->setDpiPolicy( LevelProperties::DP_CustomDpi);
+    //doAntialias softness colorSpaceGamma
+    // we filmmakers don't use dpi ??
+    //sl->getProperties()->setDpiPolicy( LevelProperties::DP_CustomDpi);
+    sl->getProperties()->setWhiteTransp(true);
+    sl->getProperties()->setDoPremultiply(false);
+    sl->getProperties()->setDoAntialias(antialiasSoftness);
+    // m_colorDepth (json["colorDepth"]) doesn't tell if the image is linear or not... 
+    // (a 32 bit tif could very well be non-linear, or a linear exr could be 16 bit only, usually probalby half float 16 bit ...)
+    if (sl->getPath().getType() == "exr") 
+        sl->getProperties()->setColorSpaceGamma(2.2); // or rec709 2.4 if you have a grading monitor ? 
+    // colorspaces todo... 
+    // Why is colorSpaceGamma disabled in the level settings ui ??
+    // see render>output settings> color settings
     sl->setName(jsonLayer["name"].toString().toStdWString());
     //sl->setProperty()
-    m_xsheet->insertColumn(m_xsheet->getColumnCount(),
-                         TXshColumn::ColumnType::eLevelType);
-    TApp::instance()->getCurrentLevel()->setLevel(level);
-    for (auto frame : jsonLayer["frames"].toArray())
+    std::vector<TFrameId> fids;
+    for (auto frame : jsonLayer["frames"].toArray()) {
       importOcaFrame(frame.toObject(), sl);
-
-    // many questions....
-    if (!jsonLayer["animated"].toBool()) {
-      // nothing special ?
+      TFrameId fid(frame.toObject()["frameNumber"].toInt());
+      fids.push_back(fid);
     }
+    // update level_s frame range
+    
+
+    // insert column just creates an empty column :
+    // m_xsheet->insertColumn(m_xsheet->getColumnCount(), TXshColumn::ColumnType::eLevelType);
+    // But how to fill the xsheet column ? looking at :
+    // Looking in LoadLevelPopup::execute().
+    // This works but doesn't expose correct timing (exposes in 1's) :
+    // IoCmd::exposeLevel(sl, 0, m_xsheet->getColumnCount(), true, true); 
+    // ok but, strangely, even the following methods, with fids argument, don't expose with correct timing !  (exposes in 1's) :
+    // fids are only used for source time, not destination time (even when isAnimationSheetEnabled is true)
+    // IoCmd::exposeLevel( sl, 0, m_xsheet->getColumnCount(), fids, true, true);
+    // IoCmd::exposeLevel( sl, 0, m_xsheet->getColumnCount(), fids);
+    // m_xsheet->exposeLevel(0, m_xsheet->getFirstFreeColumnIndex(), sl, fids, true);
+    // I think this method should be fixed to use the fids for destination time in the column
+    // (eventually adding an optional bool argument timingUseFids,
+    // but i don't get why we pass fids if we're not using those ??)...
+
+    // that's the simple solution...
+    int emptyColumnIndex = m_xsheet->getFirstFreeColumnIndex();
+    for (auto fid : fids)
+      m_xsheet->setCell(fid.getNumber(), emptyColumnIndex, TXshCell(sl, fid));
+
+    // column properties
+    auto column = m_xsheet->getColumn(emptyColumnIndex);
+    column->setOpacity(byteFromFloat(
+        jsonLayer["opacity"].toDouble() *
+        255.0));  // not sure if byteFromFloat is necessary...
+    // confusing but preview is render visibility
+    column->setPreviewVisible(!jsonLayer["reference"].toBool());
+    // and Camstand is viewport visibility
+    column->setCamstandVisible(jsonLayer["visible"].toBool());
+    // jsonLayer["label"]
+    // https://github.com/RxLaboratory/OCA/blob/master/src-docs/docs/specs/layer-labels.md
+    // Most drawing and animation applications are able to
+    // label the layers. These labels are often just different colors to display
+    // the layers and used to differentiate them. OCA stores a simple number to
+    // identify these labels. If this number is less than 0, it means the layer
+    // is not labelled.
+    // We use column filters...
+    column->setColorFilterId(jsonLayer["label"].toInt());
+    // column->setColorTag(jsonLayer["label"].toInt()); what is the difference
+    // between ColorTag and  ColorFilterId ??
+
+
+    ////// unused OCA properties:
+    // - jsonLayer["animated"] Whether this layer is a single frame or not.
+    // - jsonLayer["fileType"] The file extension, without the initial dot.
+    // - Blending Modes
+    // jsonLayer["blendingMode"] This could be supported with the fx schematic
+    // (that wouldn't help while animating)
+    // side note about blending mode :
+    // I think blending modes should be implemented as realtime shaders in the viewport (fbo pingpong + glsl)
+    // exposed in the ui as an easy to use column property in the column header (like opacity etc...)
+    // the taoist RGB white japanese method of dealing with transparency based on white level,
+    // or "RGBM" as it's called,
+    // make it very paintfull to not have blending mode while animating... 
+    // (ex : shoot paper drawings and they are opaque rasters, so onion skin doesn' work.
+    // Ok you can set white level in the capture setting image ajust,
+    // and check White As Transparent in the raster level settings,
+    // The level premult option doesn't make onion skin work, if white level is too low...
+    // but that's destructive.
+    // And the level premult option doesn't make onion skin work, if white level is too low...
+    // I would even add a realtime shader for chromakey and lumakey in the column header 
+    // (even though i agree that it would be painfull to have all necessary keying parameters exposed column header in the ui)
+    // - Frame tags
+    // NavigationTags (frame tags) should be supported by OCA
+    // NavigationTags *navTags = xsh->getNavigationTags();
+    // this could be a great base to implement an onion skin filter... (like TVPaint has)
+    // (ex : onion skin displays only 1 prev + 1 next key drawing, etc...)
+    // Unfortunately, OCA doesn't support that.
+
+    // recursion for sublayers : nothing special to do ?
+    // see CHILD_XSHLEVEL ?
     for (auto layer : jsonLayer["childLayers"].toArray()) {
-      // nothing special ?
+      // I guess we dont need to deal with jsonLayer["passThrough"] ?
+      // when passThrough is false, the group content *must* be merged in rendering, 
+      // else the group is only used as a way to group the layers in the UI of the application
       importOcaLayer(layer.toObject());
     }
-    // should we set level path, while each frame has it's own path set in importOcaFrame ? 
-    // I guess not : external images are not single file like tlv files
-    // sl->setPath(levelFp, true);
-    // is it necessary to mark dirty and trigger signals
-    level->setDirtyFlag(true);
+
+    TApp::instance()->getCurrentLevel()->setLevel(
+        level->getSimpleLevel());  // selects the last created level
     TApp::instance()->getCurrentLevel()->notifyLevelChange();
+    TApp::instance()->getCurrentScene()->notifyCastChange();
+
   } else {
     DVGui::warning(QObject::tr("importOcaLayer skipping unimplemented layer type : ") +
         jsonLayer["type"].toString() + " : " + jsonLayer["name"].toString()
