@@ -82,12 +82,12 @@ class OCAInputData : public OCAData {
 
 public:
   OCAInputData(ToonzScene *scene, TXsheet *xsheet);
-  void load(QString path, QJsonObject &json);
+  bool load(QString path, QJsonObject &json);
   void getSceneData();
-  void read(QJsonObject &json);
+  void read(const QJsonObject &json);
   void setSceneData();
-  void importOcaLayer(QJsonObject &jsonLayer);
-  void importOcaFrame(QJsonObject &jsonFrame, TXshSimpleLevel *sl);
+  void importOcaLayer(const QJsonObject &jsonLayer);
+  void importOcaFrame(const QJsonObject &jsonFrame, TXshSimpleLevel *sl);
 };
 }  // namespace OCAIo
 
