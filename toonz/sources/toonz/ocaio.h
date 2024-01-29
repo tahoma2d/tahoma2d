@@ -79,9 +79,14 @@ class OCAInputData : public OCAData {
   TXsheet *m_xsheet;
   TOutputProperties *m_oprop;
   TFilePath m_parentDir;
+  // hardcoded...
+  int m_dpi                 = 0;
+  float m_antialiasSoftness = 0.0;
+  bool m_whiteTransp        = true;
+  bool m_doPremultiply      = false;
 
 public:
-  OCAInputData(ToonzScene *scene, TXsheet *xsheet);
+  OCAInputData();
   bool load(QString path, QJsonObject &json);
   void getSceneData();
   void read(const QJsonObject &json);

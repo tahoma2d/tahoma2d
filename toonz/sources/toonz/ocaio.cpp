@@ -392,10 +392,6 @@ void OCAData::build(ToonzScene *scene, TXsheet *xsheet, QString name,
   }
 }
 
-//void OCAIo::OCAData::read(QJsonObject &json) { 
-//    m_name = json["name"]; 
-//}
-
 class ExportOCACommand final : public MenuItemHandler {
 public:
   ExportOCACommand() : MenuItemHandler(MI_ExportOCA) {}
@@ -543,11 +539,6 @@ void ExportOCACommand::execute() {
 
 /// <summary>
 ///  OCA importer
-/// currently importing external raster image's is unclear to me.
-/// there is no simple importLevel command
-/// I m try to refer to code found in :
-/// LevelCreatePopup pasteRasterImageInCellWithoutUndo LoadLevelPopup TImageReader::load() ResourceImportDialog...
-/// 
 /// Roadmap:
 /// - finish this basic importer
 /// - add the option to update the current scene from OCA, importing only the missing layers 
@@ -587,15 +578,12 @@ void ImportOCACommand::execute() {
   }
 
   QString ocafile = fp.getQString();
-  OCAInputData ocaInputData = OCAInputData(scene, xsheet);
+  OCAInputData ocaInputData = OCAInputData();
   QJsonObject ocaObject;
   if (!ocaInputData.load(ocafile, ocaObject)) {
     DVGui::warning(QObject::tr("Failed to load OCA file: ") +
                    fp.getQString());
     return;
-  }
-  if (ocaInputData.isEmpty()) {
-    DVGui::warning(QObject::tr("OCA file has no layer to import: ") + fp.getQString());
   }
   ocaInputData.getSceneData();   // gather default values
   ocaInputData.read(ocaObject); // parser
@@ -606,17 +594,17 @@ void ImportOCACommand::execute() {
   TApp::instance()->getCurrentScene()->notifySceneChanged();
 }
 
-OCAIo::OCAInputData::OCAInputData(ToonzScene *scene, TXsheet *xsheet) {
-  m_scene  = scene;
-  m_xsheet = xsheet;
-  m_oprop  = scene->getProperties()->getOutputProperties();
+OCAIo::OCAInputData::OCAInputData() {
+  m_scene  = TApp::instance()->getCurrentScene()->getScene();
+  m_xsheet = TApp::instance()->getCurrentXsheet()->getXsheet();
+  m_oprop  = m_scene->getProperties()->getOutputProperties();
 }
 
 bool OCAIo::OCAInputData::load(QString path, QJsonObject &json) { 
   //see XdtsIo::loadXdtsScene
   m_path = path;
   m_parentDir = TFilePath(m_path).getParentDir();
-  // 1. Open the QFile and write it to a byteArray and close the file
+  // 1. Open the QFile, read it in a byteArray and close the file
   QFile file;
   file.setFileName(path);
   if (!file.open(QIODevice::ReadOnly)) {
@@ -629,8 +617,7 @@ bool OCAIo::OCAInputData::load(QString path, QJsonObject &json) {
   byteArray = file.readAll();
   file.close();
 
-  // 2. Format the content of the byteArray as QJsonDocument and check on parse
-  // Errors
+  // 2. Format the content of the byteArray as QJsonDocument and check on parse Errors
   QJsonParseError parseError;
   QJsonDocument jsonDoc;
   jsonDoc = QJsonDocument::fromJson(byteArray, &parseError);
@@ -639,10 +626,6 @@ bool OCAIo::OCAInputData::load(QString path, QJsonObject &json) {
                        .arg(parseError.offset));
     return false;
   }
-  //else {
-  //  DVGui::info(QObject::tr("jsonDoc content : ") +
-  //              jsonDoc.toJson(QJsonDocument::Indented));
-  //}
   json = jsonDoc.object();
   return true;
 }
@@ -658,11 +641,9 @@ void OCAIo::OCAInputData::getSceneData() {
       m_oprop->getRange(from, to, step)) {
     m_startTime = from;
     m_endTime   = to;
-    // m_stepTime  = step;
   } else {
     m_startTime = 0;
     m_endTime   = m_xsheet->getFrameCount() - 1;
-    // m_stepTime  = 1;
   }
   if (m_endTime < 0) m_endTime = 0;
   m_width  = m_scene->getCurrentCamera()->getRes().lx;
@@ -670,7 +651,7 @@ void OCAIo::OCAInputData::getSceneData() {
 }
 
 /// <summary>
-/// json OCA parser, getting global properties and creating the layers
+/// json OCA parser, getting global properties and import the layers
 /// </summary>
 /// <param name="json"></param>
 void OCAIo::OCAInputData::read(const QJsonObject &json) {
@@ -701,17 +682,51 @@ void OCAIo::OCAInputData::read(const QJsonObject &json) {
 void OCAIo::OCAInputData::setSceneData() {
   m_scene->setSceneName(m_name.toStdWString());
   m_oprop->setFrameRate(m_framerate);
-  m_scene->getCurrentCamera()->setRes(TDimension(m_width, m_height));
+  auto resolution = TDimension(m_width, m_height);
+  m_scene->getCurrentCamera()->setRes(resolution);
+  if (m_dpi > 0) {
+    TDimensionD size(0, 0);
+    size.lx = resolution.lx / m_dpi;
+    size.ly = resolution.ly / m_dpi;
+    m_scene->getCurrentCamera()->setSize(size, false, false);
+  }
   m_xsheet->updateFrameCount();
   m_oprop->setRange(m_startTime, m_endTime, 1);
   TPixel32 color = TPixel32(m_bgRed * 255.0, m_bgGreen * 255.0,
                             m_bgBlue * 255.0, m_bgAlpha * 255.0);
   m_scene->getProperties()->setBgColor(color);
+  // anyway touching rendersettings here doesn't make sense
+  // m_colorDepth (json["colorDepth"]) doesn't tell if the image is linear or
+  // not... (a 32 bit tif could very well be non-linear, or a linear exr could
+  // be 16 bit only, usually probalby half float 16 bit ...)
+  // TRenderSettings renderSettings = m_scene->getProperties()->getOutputProperties()->getRenderSettings(); // incomplete type ?
+  // renderSettings.m_bpp...
+  // https://github.com/RxLaboratory/OCA/blob/master/src-docs/docs/specs/color-depth.md
+  if (m_colorDepth == "U8") m_oprop->setNonlinearBpp(32);
+  else if (m_colorDepth == "U16") m_oprop->setNonlinearBpp(64);
+  else if (m_colorDepth == "F16") m_oprop->setNonlinearBpp(64);
+  else if (m_colorDepth == "U32") m_oprop->setNonlinearBpp(128);
 }
 
 /// <summary>
 /// creates level from OCA layer, and exposes it in the xsheet
 /// see OCA layer specs https://github.com/RxLaboratory/OCA/blob/master/src-docs/docs/specs/layer.md?plain=1
+/// - only raster levels are supported
+/// - whiteTransp / doPremultiply / colorSpaceGamma / antialiasSoftness / dpi are hardcoded
+/// - blendingMode / animated are not used
+/// - OCA doesn't support frame tags (NavigationTags) 
+/// this would be very usefull to mark keys / breakdowns / inbetweens / etc drawing ... 
+/// for the onion skining and fliping
+/// - recursive layers (layer groups) have not neen tested 
+/// (not sure if and how it could translate in toonz ? see CHILD_XSHLEVEL ?)
+/// 
+/// TODO :
+/// - while TZP_XSHLEVEL is for toonz levels (smart rasters with palette)
+/// For roundtrip / scene sharing between softwares,
+/// Smart raster TZP_XSHLEVEL cannot be recreated from raster OVL_XSHLEVEL,
+/// without palette loss. I would thus implement a dialog to let the user load
+/// only missing layers in the scene (in order to keep smart raster levels
+/// intact...)
 /// </summary>
 /// <param name="jsonLayer"></param>
 void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
@@ -722,44 +737,51 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
     }
     DVGui::info(QObject::tr("importOcaLayer : ") +
                 jsonLayer["name"].toString());
-    auto levelType   = OVL_XSHLEVEL; // OVL_XSHLEVEL is for raster images while TZP_XSHLEVEL is for toonz levels (smart rasters with palette)
-    auto dim         = TDimension(jsonLayer["width"].toInt(), jsonLayer["height"].toInt());
-    auto dpi         = 300;
-    float antialiasSoftness = 0;
-    TXshLevel *level = m_scene->createNewLevel( levelType, jsonLayer["name"].toString().toStdWString(), dim, dpi);
-    TXshSimpleLevel *sl = dynamic_cast<TXshSimpleLevel *>(level);
+    auto levelType   = OVL_XSHLEVEL; // OVL_XSHLEVEL is for raster images,
 
-    //doAntialias softness colorSpaceGamma
+    //  I am using my own preference m_dpi / m_antialiasSoftness / m_whiteTransp / m_doPremultiply
+    auto resolution  = TDimension(m_width, m_height);
+    TXshLevel *level = m_scene->createNewLevel(
+        levelType, jsonLayer["name"].toString().toStdWString(), resolution,
+        m_dpi);
+    TXshSimpleLevel *sl = dynamic_cast<TXshSimpleLevel *>(level);
     // we filmmakers don't use dpi ??
-    //sl->getProperties()->setDpiPolicy( LevelProperties::DP_CustomDpi);
-    sl->getProperties()->setWhiteTransp(true);
-    sl->getProperties()->setDoPremultiply(false);
-    sl->getProperties()->setDoAntialias(antialiasSoftness);
-    // m_colorDepth (json["colorDepth"]) doesn't tell if the image is linear or not... 
-    // (a 32 bit tif could very well be non-linear, or a linear exr could be 16 bit only, usually probalby half float 16 bit ...)
-    if (sl->getPath().getType() == "exr") 
-        sl->getProperties()->setColorSpaceGamma(2.2); // or rec709 2.4 if you have a grading monitor ? 
-    // colorspaces todo... 
+    sl->getProperties()->setDpi(m_dpi);
+    sl->getProperties()->setDpiPolicy( LevelProperties::DP_CustomDpi);
+    sl->getProperties()->setWhiteTransp(m_whiteTransp);
+    sl->getProperties()->setDoPremultiply(m_doPremultiply);
+    sl->getProperties()->setDoAntialias(m_antialiasSoftness);
+
+    // float colorSpaceGamma   = 2.2;
+    // we don't need to touch this...
+    // display gamma 2.2 is only valid for srgb color space, and for rec709 is
+    // grading on a computer monitor...but... gamma for rec709 should be 2.4 if
+    // you have a rec709 grading monitor set for HDTV, gamma for rec2020 should
+    // be 2.6 if you have a rec2020 grading monitor, gamma for DCI-P3 should
+    // be 2.4 if you have a DCI-P3 grading theatre !? linear images colorDepth
+    // could be could be F16 or F32 (but the channel
+    // width preference is locked to 32 bit if checking linear color space...) 
+    //if (sl->getPath().getType() == "exr")
+    //    sl->getProperties()->setColorSpaceGamma(colorSpaceGamma); 
     // Why is colorSpaceGamma disabled in the level settings ui ??
     // see render>output settings> color settings
+
     sl->setName(jsonLayer["name"].toString().toStdWString());
-    //sl->setProperty()
     std::vector<TFrameId> fids;
     for (auto frame : jsonLayer["frames"].toArray()) {
       importOcaFrame(frame.toObject(), sl);
       TFrameId fid(frame.toObject()["frameNumber"].toInt());
       fids.push_back(fid);
     }
-    // update level_s frame range
     
-
+    // A comment about the current api : exposeLevel should be fixed to use fids :
     // insert column just creates an empty column :
     // m_xsheet->insertColumn(m_xsheet->getColumnCount(), TXshColumn::ColumnType::eLevelType);
     // But how to fill the xsheet column ? looking at :
     // Looking in LoadLevelPopup::execute().
-    // This works but doesn't expose correct timing (exposes in 1's) :
+    // This works but exposes in 1's :
     // IoCmd::exposeLevel(sl, 0, m_xsheet->getColumnCount(), true, true); 
-    // ok but, strangely, even the following methods, with fids argument, don't expose with correct timing !  (exposes in 1's) :
+    // ok but, strangely, even the following methods, with fids argument, don't expose with correct timing !  (exposes in 1's too) :
     // fids are only used for source time, not destination time (even when isAnimationSheetEnabled is true)
     // IoCmd::exposeLevel( sl, 0, m_xsheet->getColumnCount(), fids, true, true);
     // IoCmd::exposeLevel( sl, 0, m_xsheet->getColumnCount(), fids);
@@ -768,7 +790,7 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
     // (eventually adding an optional bool argument timingUseFids,
     // but i don't get why we pass fids if we're not using those ??)...
 
-    // that's the simple solution...
+    // that's the very simple solution...
     int emptyColumnIndex = m_xsheet->getFirstFreeColumnIndex();
     for (auto fid : fids)
       m_xsheet->setCell(fid.getNumber(), emptyColumnIndex, TXshCell(sl, fid));
@@ -777,7 +799,7 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
     auto column = m_xsheet->getColumn(emptyColumnIndex);
     column->setOpacity(byteFromFloat(
         jsonLayer["opacity"].toDouble() *
-        255.0));  // not sure if byteFromFloat is necessary...
+        255.0));  // not sure if byteFromFloat is really necessary...
     // confusing but preview is render visibility
     column->setPreviewVisible(!jsonLayer["reference"].toBool());
     // and Camstand is viewport visibility
@@ -843,6 +865,19 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
   }
 }
 
+/// <summary>
+/// creates frame from OCA frame
+/// see OCA frame specs
+/// https://github.com/RxLaboratory/OCA/blob/master/src-docs/docs/specs/frame.md
+/// UNUSED properties :
+/// - meta: metadata...
+/// - opacity: per frame opacity isn't used.
+/// - position: transforms handled in a separate file ? (keyframe animation transfert for camera, pegs, etc...) 
+/// And what about scale/rotation ?
+/// - name: could be used to create empty frames (named "_blank")
+/// </summary>
+/// <param name="jsonLayer"></param>
+
 void OCAIo::OCAInputData::importOcaFrame(const QJsonObject &jsonFrame,
                                          TXshSimpleLevel *sl) {
   // see LoadLevelPopup, TImageP TImageReader::load(), ResourceImportDialog
@@ -871,5 +906,8 @@ void OCAIo::OCAInputData::importOcaFrame(const QJsonObject &jsonFrame,
     img = sl->createEmptyFrame();
   }
   sl->setFrame(fid, img);
+  if (!Preferences::instance()->isImplicitHoldEnabled()) {
+      //do something with the image duration ?
+  }
 }
 
