@@ -478,6 +478,7 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler("MI_Undo", this, &MainWindow::onUndo);
   setCommandHandler("MI_Redo", this, &MainWindow::onRedo);
   setCommandHandler("MI_NewScene", this, &MainWindow::onNewScene);
+  setCommandHandler("MI_SaveSceneVersion", this, &MainWindow::onSaveSceneVersion);
   setCommandHandler("MI_LoadScene", this, &MainWindow::onLoadScene);
   setCommandHandler("MI_LoadSubSceneFile", this, &MainWindow::onLoadSubScene);
   setCommandHandler("MI_ResetRoomLayout", this, &MainWindow::resetRoomsLayout);
@@ -1063,6 +1064,8 @@ void MainWindow::onNewScene() {
 //-----------------------------------------------------------------------------
 
 void MainWindow::onLoadScene() { IoCmd::loadScene(); }
+
+void MainWindow::onSaveSceneVersion() { IoCmd::saveSceneVersion(); }
 
 //-----------------------------------------------------------------------------
 
@@ -1803,6 +1806,10 @@ void MainWindow::defineActions() {
                        "save_scene_as",
                        tr("Save ONLY the scene with a new name.") + separator +
                            tr("This does NOT save levels or images."));
+  createMenuFileAction(MI_SaveSceneVersion, QT_TR_NOOP("&Save Scene Version..."), "",
+                       "save_scene_version",
+                       tr("Increment scene version.") + separator +
+                           tr("Add a number suffix if necessary."));
   createMenuFileAction(MI_SaveAll, QT_TR_NOOP("&Save All"), "Ctrl+S", "saveall",
                        tr("Save the scene info and the levels and images.") +
                            separator + tr("Saves everything."));

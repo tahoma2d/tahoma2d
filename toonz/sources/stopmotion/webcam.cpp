@@ -220,6 +220,7 @@ void Webcam::refreshWebcamResolutions() {
     m_webcamResolutions.push_back(QSize(1600, 896));
     m_webcamResolutions.push_back(QSize(1600, 900));
     m_webcamResolutions.push_back(QSize(1920, 1080));
+    m_webcamResolutions.push_back(QSize(3840, 2160));
   }
 }
 
