@@ -107,7 +107,12 @@ since underlying onion-skinned drawings must be visible.
     m_shiftTraceStatus = status;
   }
 
+  bool isShowShiftOrigin() const { return m_showShiftOrigin; }
+  void setShowShiftOrigin(bool showShiftOrigin) {
+    m_showShiftOrigin = showShiftOrigin;
+  }
   bool isShiftTraceEnabled() const { return m_shiftTraceStatus != DISABLED; }
+  bool isEditingShift() const { return m_shiftTraceStatus == EDITING_GHOST; }
 
   bool getLightTableStatus() const { return m_LightTableStatus; }
   void setLightTableStatus(bool status) { m_LightTableStatus = status; }
@@ -147,6 +152,7 @@ private:
   bool m_everyFrame;              //!< Whether the OS renders every frame or only on new exposures.
 
   ShiftTraceStatus m_shiftTraceStatus;
+  bool m_showShiftOrigin;
   TAffine m_ghostAff[2];
   TPointD m_ghostCenter[2];
   int m_ghostFrame[2];         // relative frame position of the ghosts

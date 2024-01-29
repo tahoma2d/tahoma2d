@@ -354,6 +354,15 @@ void ShiftTraceTool::onDeactivate() {
   if (!shiftTrace->isChecked()) return;
   QAction *action = CommandManager::instance()->getAction("MI_EditShift");
   action->setChecked(false);
+  action = CommandManager::instance()->getAction("MI_NoShift");
+  action->setEnabled(true);
+
+  TApplication *app = TTool::getApplication();
+  OnionSkinMask osm = app->getCurrentOnionSkin()->getOnionSkinMask();
+  if (osm.isEditingShift()) {
+    osm.setShiftTraceStatus(OnionSkinMask::ENABLED);
+    TTool::getApplication()->getCurrentOnionSkin()->setOnionSkinMask(osm);
+  }
 }
 
 ShiftTraceTool::GadgetId ShiftTraceTool::getGadget(const TPointD &p) {
