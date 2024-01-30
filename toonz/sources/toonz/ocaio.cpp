@@ -540,7 +540,7 @@ void ExportOCACommand::execute() {
 /// <summary>
 ///  OCA importer
 /// Roadmap:
-/// - finish this basic importer
+/// - test the case of child layer, add progress bar
 /// - add the option to update the current scene from OCA, importing only the missing layers 
 /// (example : import a krita paint layer, but keep the tlv with their palette as smart rasters...)
 /// - keyframe animation transfert for camera, pegs, etc...
@@ -578,7 +578,7 @@ void ImportOCACommand::execute() {
   }
 
   QString ocafile = fp.getQString();
-  OCAInputData ocaInputData = OCAInputData();
+  OCAInputData ocaInputData = OCAInputData(0, true, false);
   QJsonObject ocaObject;
   if (!ocaInputData.load(ocafile, ocaObject)) {
     DVGui::warning(QObject::tr("Failed to load OCA file: ") +
@@ -594,10 +594,14 @@ void ImportOCACommand::execute() {
   TApp::instance()->getCurrentScene()->notifySceneChanged();
 }
 
-OCAIo::OCAInputData::OCAInputData() {
-  m_scene  = TApp::instance()->getCurrentScene()->getScene();
-  m_xsheet = TApp::instance()->getCurrentXsheet()->getXsheet();
-  m_oprop  = m_scene->getProperties()->getOutputProperties();
+OCAIo::OCAInputData::OCAInputData(float antialiasSoftness, bool whiteTransp,
+                                  bool doPremultiply) {
+  m_antialiasSoftness = antialiasSoftness;
+  m_whiteTransp       = whiteTransp;
+  m_doPremultiply     = doPremultiply;
+  m_scene             = TApp::instance()->getCurrentScene()->getScene();
+  m_xsheet            = TApp::instance()->getCurrentXsheet()->getXsheet();
+  m_oprop             = m_scene->getProperties()->getOutputProperties();
 }
 
 bool OCAIo::OCAInputData::load(QString path, QJsonObject &json) { 
@@ -690,6 +694,10 @@ void OCAIo::OCAInputData::setSceneData() {
     size.ly = resolution.ly / m_dpi;
     m_scene->getCurrentCamera()->setSize(size, false, false);
   }
+  //else {
+  //  TDimensionD size(16, 9);
+  //  m_scene->getCurrentCamera()->setSize(size, false, false);
+  //}
   m_xsheet->updateFrameCount();
   m_oprop->setRange(m_startTime, m_endTime, 1);
   TPixel32 color = TPixel32(m_bgRed * 255.0, m_bgGreen * 255.0,
@@ -702,10 +710,16 @@ void OCAIo::OCAInputData::setSceneData() {
   // TRenderSettings renderSettings = m_scene->getProperties()->getOutputProperties()->getRenderSettings(); // incomplete type ?
   // renderSettings.m_bpp...
   // https://github.com/RxLaboratory/OCA/blob/master/src-docs/docs/specs/color-depth.md
-  if (m_colorDepth == "U8") m_oprop->setNonlinearBpp(32);
-  else if (m_colorDepth == "U16") m_oprop->setNonlinearBpp(64);
-  else if (m_colorDepth == "F16") m_oprop->setNonlinearBpp(64);
-  else if (m_colorDepth == "U32") m_oprop->setNonlinearBpp(128);
+  // only raises nonlinearBpp, never make it lower than it is... (the levels could be 8 bit but comp output higher)
+  int nonlinearBpp = m_oprop->getNonlinearBpp();
+  if (m_colorDepth == "U8" && nonlinearBpp < 32)
+    m_oprop->setNonlinearBpp(32);
+  else if (m_colorDepth == "U16" && nonlinearBpp < 64)
+    m_oprop->setNonlinearBpp(64);
+  else if (m_colorDepth == "F16" && nonlinearBpp < 64)
+    m_oprop->setNonlinearBpp(64);
+  else if (m_colorDepth == "U32" && nonlinearBpp < 128)
+    m_oprop->setNonlinearBpp(128);
 }
 
 /// <summary>
@@ -744,13 +758,47 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
     TXshLevel *level = m_scene->createNewLevel(
         levelType, jsonLayer["name"].toString().toStdWString(), resolution,
         m_dpi);
+
     TXshSimpleLevel *sl = dynamic_cast<TXshSimpleLevel *>(level);
-    // we filmmakers don't use dpi ??
-    sl->getProperties()->setDpi(m_dpi);
-    sl->getProperties()->setDpiPolicy( LevelProperties::DP_CustomDpi);
-    sl->getProperties()->setWhiteTransp(m_whiteTransp);
-    sl->getProperties()->setDoPremultiply(m_doPremultiply);
-    sl->getProperties()->setDoAntialias(m_antialiasSoftness);
+    // TXshLevel *ToonzScene::createNewLevel(int type, std::wstring levelName, const TDimension &dim, double dpi, TFilePath fp) 
+    // ignores the resolution argument !
+    sl->getProperties()->setImageRes(resolution);
+
+    // lookup the first frame to eventually load image format loading preferences which is based on frame extention
+    // seeTXshLevel *ToonzScene::loadLevel
+    // the problem is tahomastuff/profiles/users/[username]/preferences.ini doesn't add new image fomats to the list...
+    auto frames = jsonLayer["frames"].toArray();
+    bool formatSpecified = false;
+    LevelProperties *lp  = sl->getProperties();
+    if (frames.size() > 0) {
+      auto jsonFrame      = frames[0].toObject();
+      auto levelPath = TFilePath(m_parentDir.getQString() + "/" +
+                            jsonFrame["fileName"].toString());
+
+      const Preferences &prefs = *Preferences::instance();
+      int formatIdx            = prefs.matchLevelFormat(levelPath);
+      if (formatIdx >= 0) {
+        lp->options()   = prefs.levelFormat(formatIdx).m_options;
+        formatSpecified = true;
+      }
+    }
+    if (formatSpecified) {
+      sl->getProperties()->setWhiteTransp(lp->whiteTransp());
+      sl->getProperties()->setDoPremultiply(lp->doPremultiply());
+      sl->getProperties()->setDoAntialias(lp->antialiasSoftness());
+      sl->getProperties()->setDpi(lp->getDpi());
+      sl->getProperties()->setDpiPolicy(lp->getDpiPolicy());
+      // sl->getProperties()->setImageDpi(lp->getImageDpi()); //?
+      sl->getProperties()->setSubsampling(lp->getSubsampling());
+      sl->getProperties()->setColorSpaceGamma(lp->colorSpaceGamma());
+    } else {
+      sl->getProperties()->setWhiteTransp(m_whiteTransp);
+      sl->getProperties()->setDoPremultiply(m_doPremultiply);
+      sl->getProperties()->setDoAntialias(m_antialiasSoftness);
+      // we filmmakers don't use dpi ??
+      sl->getProperties()->setDpi(m_dpi);
+      sl->getProperties()->setDpiPolicy(LevelProperties::DP_CustomDpi);
+    }
 
     // float colorSpaceGamma   = 2.2;
     // we don't need to touch this...
@@ -774,29 +822,36 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
       fids.push_back(fid);
     }
     
-    // A comment about the current api : exposeLevel should be fixed to use fids :
-    // insert column just creates an empty column :
-    // m_xsheet->insertColumn(m_xsheet->getColumnCount(), TXshColumn::ColumnType::eLevelType);
-    // But how to fill the xsheet column ? looking at :
-    // Looking in LoadLevelPopup::execute().
-    // This works but exposes in 1's :
-    // IoCmd::exposeLevel(sl, 0, m_xsheet->getColumnCount(), true, true); 
-    // ok but, strangely, even the following methods, with fids argument, don't expose with correct timing !  (exposes in 1's too) :
-    // fids are only used for source time, not destination time (even when isAnimationSheetEnabled is true)
-    // IoCmd::exposeLevel( sl, 0, m_xsheet->getColumnCount(), fids, true, true);
-    // IoCmd::exposeLevel( sl, 0, m_xsheet->getColumnCount(), fids);
-    // m_xsheet->exposeLevel(0, m_xsheet->getFirstFreeColumnIndex(), sl, fids, true);
-    // I think this method should be fixed to use the fids for destination time in the column
-    // (eventually adding an optional bool argument timingUseFids,
-    // but i don't get why we pass fids if we're not using those ??)...
-
-    // that's the very simple solution...
+    // Shouldn't api provide a simple method to expose the level using fids in xsheet timing ?
     int emptyColumnIndex = m_xsheet->getFirstFreeColumnIndex();
-    for (auto fid : fids)
-      m_xsheet->setCell(fid.getNumber(), emptyColumnIndex, TXshCell(sl, fid));
+    int frameOffset = 0;
+    if (m_startTime < 1) { // prevent crash if startTime is less than 1 : offset the timing...
+      frameOffset = -m_startTime + 1;
+    }
+    for (auto fid : fids) {
+      if (fid.getNumber() <= 0) {
+        DVGui::warning(
+            QObject::tr("importOcaLayer : skipping frame -1! ") +
+            jsonLayer["name"].toString());
+        continue;
+      }
+      // -1 converts framenumber to index, frameOffset moves the frame range above 0...
+      m_xsheet->setCell(fid.getNumber() - 1 + frameOffset, emptyColumnIndex,
+                        TXshCell(sl, fid));
+    }
 
+    // Note about drawing numbering : I personally frame number as drawing number,
+    // following richard william's animator's survival kit ("The best numbering system", page 76)
+    // In toonz, this means : preference>Drawing>Numbering system = Animation sheet (isAnimationSheetEnabled ==  true) 
+    // + Autorenumber
+    // That way, I can define the timing on paper while numbering drawings
+    // (i write barsheets with music and avoid the computer as much as i can)
     // column properties
     auto column = m_xsheet->getColumn(emptyColumnIndex);
+    TStageObject *stageColumn =
+        m_xsheet->getStageObject(TStageObjectId::ColumnId(emptyColumnIndex));
+    stageColumn->setName(jsonLayer["name"].toString().toStdString());
+    //std::string str = m_columnName.toStdString();
     column->setOpacity(byteFromFloat(
         jsonLayer["opacity"].toDouble() *
         255.0));  // not sure if byteFromFloat is really necessary...
@@ -880,16 +935,30 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
 
 void OCAIo::OCAInputData::importOcaFrame(const QJsonObject &jsonFrame,
                                          TXshSimpleLevel *sl) {
-  // see LoadLevelPopup, TImageP TImageReader::load(), ResourceImportDialog
+  // doesExists (QFileInfo.exists()) should skip empty frames ! but...
   TFrameId fid(jsonFrame["frameNumber"].toInt());
-  // sl->setFrame(fid, TImageP());
+  if (jsonFrame["name"].toString() == "_blank" ||
+      jsonFrame["fileName"].toString() == "") {
+    TImageP img = sl->createEmptyFrame();
+    sl->setFrame(fid, img);
+    return;
+  }
   auto path       = TFilePath(m_parentDir.getQString() + "/" +
                         jsonFrame["fileName"].toString());
   bool fileExists = TFileStatus(path).doesExist();
   TImageP img;
   if (fileExists) {
     auto imageReader = TImageReaderP(path);
-    img = imageReader->load();
+    try {
+      img = imageReader->load();
+      if (img.getPointer() == 0) img = sl->createEmptyFrame();
+    } catch (const std::string &msg)
+    {
+      DVGui::error(QObject::tr("importOcaFrame load failed : ") +
+                   path.getQString());
+      img = sl->createEmptyFrame();
+      throw TException(msg);
+    }
     if (img->getType() != TImage::RASTER) {
       DVGui::warning(
           QObject::tr("importOcaFrame skipping unimplemented image type : ") +
