@@ -2108,8 +2108,9 @@ QWidget* PreferencesPopup::createDrawingPage() {
     getUI<MeasuredDoubleLineEdit*>(DefLevelHeight)->setDecimals(0);
   }
 
-  bool ret = ret && connect(frameFormatBtn, SIGNAL(clicked()), this,
-                            SLOT(onFrameFormatButton()));
+  //bool ret = ret && connect(frameFormatBtn, SIGNAL(clicked()), this,
+  //                          SLOT(onFrameFormatButton()));
+  connect(frameFormatBtn, SIGNAL(clicked()), this, SLOT(onFrameFormatButton()));
 
   return widget;
 }

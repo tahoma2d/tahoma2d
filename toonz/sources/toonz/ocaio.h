@@ -80,13 +80,13 @@ class OCAInputData : public OCAData {
   TOutputProperties *m_oprop;
   TFilePath m_parentDir;
   // hardcoded...
-  int m_dpi                 = 0;
+  int m_dpi                 = 120; // this should match default m_dpi set in startuppopup.cpp@588 !?
   float m_antialiasSoftness = 0.0;
   bool m_whiteTransp        = true;
   bool m_doPremultiply      = false;
 
 public:
-  OCAInputData();
+  OCAInputData(float antialiasSoftness, bool whiteTransp, bool doPremultiply);
   bool load(QString path, QJsonObject &json);
   void getSceneData();
   void read(const QJsonObject &json);

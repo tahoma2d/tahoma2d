@@ -1031,7 +1031,7 @@ void ControlPointSelection::addMenuItems(QMenu *menu) {
   menu->addAction(CommandManager::instance()->getAction("MI_SetLinearControlPoint"));
   menu->addAction(CommandManager::instance()->getAction("MI_SetNonLinearControlPoint"));
   menu->addSeparator();
-  //assert(ret); makes debug build fail
+  //assert(ret);
 }
 
 //---------------------------------------------------------------------------
