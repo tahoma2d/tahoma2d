@@ -1327,6 +1327,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {defaultProjectPath, tr("Default Project Path:")},
       {recordFileHistory, tr("Record File History* (tnz, pli, hst)")},
       {recordAsUsername, tr("History Username*:")},
+      {saveLevelsOnSaveSceneEnabled, tr("Automatically Save Levels On 'Save Scene As'")},
 
       // Import / Export
       {ffmpegPath, tr("Executable Directory:")},
@@ -1980,6 +1981,7 @@ QWidget* PreferencesPopup::createSavingPage() {
   insertUI(rasterBackgroundColor, lay);
   insertUI(resetUndoOnSavingLevel, lay);
   insertUI(doNotShowPopupSaveScene, lay);
+  insertUI(saveLevelsOnSaveSceneEnabled, lay);
 
   insertUI(fastRenderPath, lay);
 

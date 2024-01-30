@@ -83,6 +83,7 @@ TEnv::IntVar ShowStatusBarAction("ShowStatusBarAction", 1);
 // TEnv::IntVar DockingCheckToggleAction("DockingCheckToggleAction", 1);
 TEnv::IntVar ShiftTraceToggleAction("ShiftTraceToggleAction", 0);
 TEnv::IntVar EditShiftToggleAction("EditShiftToggleAction", 0);
+TEnv::IntVar ShowShiftOriginToggleAction("ShowShiftOriginToggleAction", 0);
 TEnv::IntVar NoShiftToggleAction("NoShiftToggleAction", 0);
 TEnv::IntVar TouchGestureControl("TouchGestureControl", 0);
 TEnv::IntVar TransparencySliderValue("TransparencySliderValue", 50);
@@ -478,6 +479,7 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler("MI_Undo", this, &MainWindow::onUndo);
   setCommandHandler("MI_Redo", this, &MainWindow::onRedo);
   setCommandHandler("MI_NewScene", this, &MainWindow::onNewScene);
+  setCommandHandler("MI_SaveSceneVersion", this, &MainWindow::onSaveSceneVersion);
   setCommandHandler("MI_LoadScene", this, &MainWindow::onLoadScene);
   setCommandHandler("MI_LoadSubSceneFile", this, &MainWindow::onLoadSubScene);
   setCommandHandler("MI_ResetRoomLayout", this, &MainWindow::resetRoomsLayout);
@@ -1034,8 +1036,13 @@ void MainWindow::onUndo() {
   while (TApp::instance()->isSaveInProgress())
     ;
 
-  bool ret = TUndoManager::manager()->undo();
-  if (!ret) DVGui::error(QObject::tr("No more Undo operations available."));
+  ToolHandle *toolH = TApp::instance()->getCurrentTool();
+
+  // do not use undo if tool is currently in use
+  if (!toolH->isToolBusy()) {
+    bool ret = TUndoManager::manager()->undo();
+    if (!ret) DVGui::error(QObject::tr("No more Undo operations available."));
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -1057,12 +1064,15 @@ void MainWindow::onNewScene() {
   cm->setChecked(MI_ShiftTrace, false);
   cm->setChecked(MI_EditShift, false);
   cm->setChecked(MI_NoShift, false);
+  cm->setChecked(MI_ShowShiftOrigin, false);
   cm->setChecked(MI_VectorGuidedDrawing, false);
 }
 
 //-----------------------------------------------------------------------------
 
 void MainWindow::onLoadScene() { IoCmd::loadScene(); }
+
+void MainWindow::onSaveSceneVersion() { IoCmd::saveSceneVersion(); }
 
 //-----------------------------------------------------------------------------
 
@@ -1329,6 +1339,8 @@ void MainWindow::onMenuCheckboxChanged() {
     EditShiftToggleAction = isChecked;
   else if (cm->getAction(MI_NoShift) == action)
     NoShiftToggleAction = isChecked;
+  else if (cm->getAction(MI_ShowShiftOrigin) == action)
+    ShowShiftOriginToggleAction = isChecked;
   else if (cm->getAction(MI_TouchGestureControl) == action)
     TouchGestureControl = isChecked;
 }
@@ -1803,6 +1815,10 @@ void MainWindow::defineActions() {
                        "save_scene_as",
                        tr("Save ONLY the scene with a new name.") + separator +
                            tr("This does NOT save levels or images."));
+  createMenuFileAction(MI_SaveSceneVersion, QT_TR_NOOP("&Save Scene Version..."), "",
+                       "save_scene_version",
+                       tr("Increment scene version.") + separator +
+                           tr("Add a number suffix if necessary."));
   createMenuFileAction(MI_SaveAll, QT_TR_NOOP("&Save All"), "Ctrl+S", "saveall",
                        tr("Save the scene info and the levels and images.") +
                            separator + tr("Saves everything."));
@@ -2248,6 +2264,7 @@ void MainWindow::defineActions() {
   createMenuPlayAction(MI_Play, QT_TR_NOOP("Play"), "P", "play");
   createMenuPlayAction(MI_ShortPlay, QT_TR_NOOP("Short Play"), "Alt+P");
   createMenuPlayAction(MI_Loop, QT_TR_NOOP("Loop"), "L", "loop");
+  createMenuPlayAction(MI_PingPong, QT_TR_NOOP("Ping Pong"), "", "pingpong");
   createMenuPlayAction(MI_Pause, QT_TR_NOOP("Pause"), "", "pause");
   createMenuPlayAction(MI_FirstFrame, QT_TR_NOOP("First Frame"), "Alt+,",
                        "framefirst");
@@ -2361,8 +2378,11 @@ void MainWindow::defineActions() {
                MenuViewCommandType, "shift_and_trace_edit");
   createToggle(MI_NoShift, QT_TR_NOOP("No Shift"), "", false,
                MenuViewCommandType, "shift_and_trace_no_shift");
+  createToggle(MI_ShowShiftOrigin, QT_TR_NOOP("Show Shift Origin"), "", false,
+               MenuViewCommandType, "");
   CommandManager::instance()->enable(MI_EditShift, false);
   CommandManager::instance()->enable(MI_NoShift, false);
+  CommandManager::instance()->enable(MI_ShowShiftOrigin, false);
   createAction(MI_ResetShift, QT_TR_NOOP("Reset Shift"), "", "",
                MenuViewCommandType, "shift_and_trace_reset");
   createToggle(MI_VectorGuidedDrawing, QT_TR_NOOP("Vector Guided Tweening"), "",

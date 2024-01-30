@@ -302,7 +302,7 @@ void Preferences::load() {
             formatLess);           // enforced
 
   if (m_roomMaps.key(getStringValue(CurrentRoomChoice), -1) == -1) {
-    assert(!m_roomMaps.isEmpty());
+    // assert(!m_roomMaps.isEmpty());
     setValue(CurrentRoomChoice, m_roomMaps[0]);
   }
 
@@ -520,6 +520,8 @@ void Preferences::definePreferenceItems() {
 
   QString userName = TSystem::getUserName();
   define(recordAsUsername, "recordAsUsername", QMetaType::QString, userName);
+
+  define(saveLevelsOnSaveSceneEnabled, "saveLevelsOnSaveSceneEnabled", QMetaType::Bool, false);
 
   // Import / Export
   define(ffmpegPath, "ffmpegPath", QMetaType::QString, "");

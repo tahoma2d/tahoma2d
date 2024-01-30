@@ -314,6 +314,7 @@ void TopBar::loadMenubar() {
   {
     addMenuItem(saveOtherMenu, MI_SaveScene);
     addMenuItem(saveOtherMenu, MI_SaveSceneAs);
+    addMenuItem(saveOtherMenu, MI_SaveSceneVersion);
   }
   addMenuItem(fileMenu, MI_OpenRecentScene);
   addMenuItem(fileMenu, MI_RevertScene);
@@ -560,6 +561,7 @@ void TopBar::loadMenubar() {
   addMenuItem(playMenu, MI_Play);
   addMenuItem(playMenu, MI_Pause);
   addMenuItem(playMenu, MI_Loop);
+  addMenuItem(playMenu, MI_PingPong);
   playMenu->addSeparator();
   addMenuItem(playMenu, MI_FirstFrame);
   addMenuItem(playMenu, MI_LastFrame);
@@ -618,6 +620,7 @@ void TopBar::loadMenubar() {
   viewMenu->addSeparator();
   addMenuItem(viewMenu, MI_ToggleLightTable);
   addMenuItem(viewMenu, MI_ShiftTrace);
+  addMenuItem(viewMenu, MI_ShowShiftOrigin);
   addMenuItem(viewMenu, MI_EditShift);
   addMenuItem(viewMenu, MI_NoShift);
   addMenuItem(viewMenu, MI_ResetShift);

@@ -645,7 +645,7 @@ bool SaveSceneAsPopup::execute() {
           fp.getName())))  // Lol. Cmon! Really necessary?
     return false;
 
-  return IoCmd::saveScene(fp, 0);
+  return IoCmd::saveSceneAs(fp);
 }
 
 void SaveSceneAsPopup::initFolder() {

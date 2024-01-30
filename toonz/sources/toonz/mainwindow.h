@@ -84,6 +84,7 @@ public:
   void onRedo();
   void onNewScene();
   void onLoadScene();
+  void onSaveSceneVersion();
   void onLoadSubScene();
   void resetRoomsLayout();
   void maximizePanel();
