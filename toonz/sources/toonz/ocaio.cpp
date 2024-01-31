@@ -541,15 +541,25 @@ void ExportOCACommand::execute() {
 ///  OCA importer
 /// 
 /// TODO:
+/// - clearLayout when oca importer is re-opened.
+/// - add "replace","merge" to mergingStatus
+/// merge would add only missing frames ?
+/// replace would avoid duplicate (but load would still be usefull to compare and make changes manually)
+/// - We should be skipping "_blank" frames completely not creating empty image frames.
+/// - copy cells based on duration if !Preferences::instance()->isImplicitHoldEnabled()
+/// - test the case of child layer (subxsheet)
+/// Look at how the column command Collapse works. This command creates childLevels and adds levels into it.
 /// - keyframe animation transfert for camera, pegs, etc...
 /// that would be another tool and another open file format (ascii (json or
 /// xml?) or binary (faster for huge scenes?) ?).
-/// - clearLayout when oca importer is re-opened.
-/// - add "replace","merge" to mergingStatus
-/// - We should be skipping "_blank" frames completely not creating empty image frames.
-/// - copy cells based on duration if !Preferences::instance()->isImplicitHoldEnabled()
-/// - test the case of child layer
-///
+/// - expose per layer options in ui : whiteTransp / doPremultiply /
+/// colorSpaceGamma / antialiasSoftness / dpi (currently hardcoded or using preference if any)
+/// - blendingMode (implement blendingMode in viewport with fbo pingpong ? + ui ComboBoxes on column headers ?)
+/// - OCA doesn't support frame tags (NavigationTags)
+/// this would be very usefull to mark keys / breakdowns / inbetweens / etc
+/// drawing ... for the onion skining and fliping
+/// Use OCA metadata to transfert frame tags ?
+/// 
 /// DONE:
 /// - add the option to update the current scene from OCA, importing only the
 /// missing layers (example : import a krita paint layer, but keep the tlv with
@@ -1127,8 +1137,14 @@ void ocaImportPopup::rebuildCustomLayout(const TFilePath &fp) {
     mainLayout->addWidget(layerNameLabelList.back(), row, column++);
     //connect(levelMergeStatusComboList.back(), SIGNAL(currentIndexChanged(int)),
     //        this, SLOT(onMergeStatusIndexChanged(int)));
+    //// requires C++14
+    //connect(levelMergeStatusCombo,
+    //          qOverload<int>(&QComboBox::currentIndexChanged), [=](int value) {
+    //          onMergeStatusIndexChanged(jsonLayer["name"].toString(), value);
+    //        });
+    //// requires C++11 https://stackoverflow.com/questions/16794695/connecting-overloaded-signals-and-slots-in-qt-5
     connect(levelMergeStatusCombo,
-            qOverload<int>(&QComboBox::currentIndexChanged), [=](int value) {
+            QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int value) {
               onMergeStatusIndexChanged(jsonLayer["name"].toString(), value);
             });
     
