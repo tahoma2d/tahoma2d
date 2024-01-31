@@ -181,6 +181,24 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
+//! The CustomLoadFilePopup is a simple, standard Toonz popup that
+//! asks the user for \a single file to be loaded from disk.
+class CustomLoadFilePopup : public FileBrowserPopup {
+public:
+  CustomLoadFilePopup(const QString &title, QWidget *customWidget = nullptr);
+
+  /*!
+This function shows the popup and blocks until an \a existing
+file has been selected - if the returned path is empty, the action
+was explicitly aborted by the user.
+*/
+  TFilePath getPath();
+
+protected:
+  bool execute() override;
+};
+
+//-----------------------------------------------------------------------------
 
 //! The GenericSaveFilePopup is a simple, standard Toonz popup that
 //! asks the user for a \a single file path to save something to.

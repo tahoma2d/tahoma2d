@@ -13,6 +13,9 @@
 #include <QThread>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QLabel>
+
+#define USE_ocaImportPopup
 
 class ToonzScene;
 class TXshCellColumn;
@@ -74,6 +77,7 @@ class OCAInputData : public OCAData {
   QString m_originApp;
   QString m_originAppVersion;
   QString m_ocaVersion;
+  QJsonObject m_json;
   // toonz objects
   ToonzScene * m_scene;
   TXsheet *m_xsheet;
@@ -83,17 +87,47 @@ class OCAInputData : public OCAData {
   int m_dpi                 = 120; // this should match default m_dpi set in startuppopup.cpp@588 !?
   float m_antialiasSoftness = 0.0;
   bool m_whiteTransp        = true;
-  bool m_doPremultiply      = false;
+  bool m_doPremultiply      = true;
 
 public:
-  OCAInputData(float antialiasSoftness, bool whiteTransp, bool doPremultiply);
+  OCAInputData();
+  //OCAInputData(float antialiasSoftness, bool whiteTransp, bool doPremultiply);
   bool load(QString path, QJsonObject &json);
   void getSceneData();
-  void read(const QJsonObject &json);
+  //void readLayerList(const QJsonObject &json);
+  void read(const QJsonObject &json, QMap<QString, int> importLayerMap);
   void setSceneData();
   void importOcaLayer(const QJsonObject &jsonLayer);
   void importOcaFrame(const QJsonObject &jsonFrame, TXshSimpleLevel *sl);
+  void reset();
+  QJsonObject &getJson() { return m_json; }
+  TFilePath &getParentDir() { return m_parentDir; }
+  ToonzScene *getScene() { return m_scene; }
 };
 }  // namespace OCAIo
 
+#include "filebrowserpopup.h"
+
+class ocaImportPopup : public CustomLoadFilePopup {
+  Q_OBJECT
+
+public:
+  ocaImportPopup(OCAIo::OCAInputData *data);
+  void rebuildCustomLayout(const TFilePath &fp);
+  void removeCustomLayout();
+  void onMergeStatusIndexChanged(QString layerName, int status);
+  QMap<QString, int> &getImportLayerMap() { return m_importLayerMap; }
+
+public slots:
+  void onFileClicked(const TFilePath &);
+
+private:
+  //QWidget *m_customWidget; inherited from parent CustomLoadFilePopup
+  //QGridLayout *m_customLayout; it would crash if not created on the fly
+  QList<QComboBox *> levelMergeStatusComboList;
+  QList<QLabel *> layerNameLabelList;
+  QList<QLabel *> layerPathLabelList;
+  OCAIo::OCAInputData *m_data;
+  QMap<QString, int> m_importLayerMap;
+};
 #endif

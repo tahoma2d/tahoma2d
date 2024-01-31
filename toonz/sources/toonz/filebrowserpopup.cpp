@@ -476,6 +476,32 @@ TFilePath GenericLoadFilePopup::getPath() {
 }
 
 //***********************************************************************************
+//    CustomLoadFilePopup  implementation
+//***********************************************************************************
+
+CustomLoadFilePopup::CustomLoadFilePopup(const QString &title,
+                                         QWidget *customWidget) 
+: FileBrowserPopup(title, Options(STANDARD), "", customWidget) {
+}
+
+//-----------------------------------------------------------------------------
+
+bool CustomLoadFilePopup::execute() {
+  if (m_selectedPaths.empty()) return false;
+
+  const TFilePath &path = *m_selectedPaths.begin();
+  assert(!path.isEmpty());  // Should always be, see
+                            // FileBrowserPopup::onOk..()
+  return TFileStatus(path).doesExist();
+}
+
+//-----------------------------------------------------------------------------
+
+TFilePath CustomLoadFilePopup::getPath() { 
+  return (exec() == QDialog::Rejected) ? TFilePath() : *m_selectedPaths.begin();
+}
+
+//***********************************************************************************
 //    GenericSaveFilePopup  implementation
 //***********************************************************************************
 
@@ -2362,3 +2388,4 @@ OpenReplaceFilePopupHandler<ReplaceLevelPopup> replaceLevelPopupCommand(
     MI_ReplaceLevel);
 OpenReplaceFilePopupHandler<ReplaceParentDirectoryPopup>
     replaceParentFolderPopupCommand(MI_ReplaceParentDirectory);
+

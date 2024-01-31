@@ -43,7 +43,7 @@
 #include <QLabel>
 #include <QSpinBox>
 #include <QCheckBox>
-#include <QVBoxLayout>
+#include <QComboBox>
 
 using namespace OCAIo;
 
@@ -539,13 +539,24 @@ void ExportOCACommand::execute() {
 
 /// <summary>
 ///  OCA importer
-/// Roadmap:
-/// - test the case of child layer, add progress bar
-/// - add the option to update the current scene from OCA, importing only the missing layers 
-/// (example : import a krita paint layer, but keep the tlv with their palette as smart rasters...)
+/// 
+/// TODO:
 /// - keyframe animation transfert for camera, pegs, etc...
-/// that would be another tool and another open file format (ascii (json or xml?) or binary (faster for huge scenes?) ?).
+/// that would be another tool and another open file format (ascii (json or
+/// xml?) or binary (faster for huge scenes?) ?).
+/// - clearLayout when oca importer is re-opened.
+/// - add "replace","merge" to mergingStatus
+/// - We should be skipping "_blank" frames completely not creating empty image frames.
+/// - copy cells based on duration if !Preferences::instance()->isImplicitHoldEnabled()
+/// - test the case of child layer
+///
+/// DONE:
+/// - add the option to update the current scene from OCA, importing only the
+/// missing layers (example : import a krita paint layer, but keep the tlv with
+/// their palette as smart rasters...)
+/// - progress bar
 /// </summary>
+
 
 class ImportOCACommand final : public MenuItemHandler {
 public:
@@ -557,10 +568,61 @@ void ImportOCACommand::execute() {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   TXsheet *xsheet   = TApp::instance()->getCurrentXsheet()->getXsheet();
   TFilePath fp      = scene->getScenePath().withType("oca");
+#ifdef USE_ocaImportPopup
+  // ocaImportPopup let us decide which layer to import
+  static OCAInputData *data        = new OCAInputData();
+  static ocaImportPopup *loadPopup = new ocaImportPopup(data);
+  static DVGui::ProgressDialog *progressDialog =
+      new DVGui::ProgressDialog("", tr("Hide"), 0, 0);
+  loadPopup->addFilterType("oca");
+  if (!scene->isUntitled())
+    loadPopup->setFolder(fp.getParentDir());
+  else
+    loadPopup->setFolder(
+        TProjectManager::instance()->getCurrentProject()->getScenesPath());
+  loadPopup->setFilename(fp.withoutParentDir());
+  loadPopup->show();
+
+  // import the oca file
+  fp = loadPopup->getPath();
+  if (fp.isEmpty()) {
+    DVGui::info(QObject::tr("Open OCA file cancelled : empty filepath."));
+    return;
+  } else {
+    DVGui::info(QObject::tr("Open OCA file : ") + fp.getQString());
+  }
+  if (data == 0) {
+    DVGui::error(QObject::tr("ImportOCACommand::execute: data == 0"));
+    return;
+  }
+  QJsonObject ocaObject;
+  data->setProgressDialog(progressDialog);
+  if (!data->load(fp.getQString(), ocaObject)) {
+    DVGui::warning(QObject::tr("Failed to load OCA file: ") + fp.getQString());
+    return;
+  }
+  progressDialog->setWindowTitle(tr("Importing..."));
+  progressDialog->setWindowFlags(
+      Qt::Dialog | Qt::WindowTitleHint);  // Don't show ? and X buttons
+  progressDialog->setWindowModality(Qt::WindowModal);
+  progressDialog->setLabelText(tr("Starting..."));
+  progressDialog->setValue(0);
+  progressDialog->show();
+  QCoreApplication::processEvents();
+
+  data->getSceneData();  // gather default values
+  data->read(ocaObject, loadPopup->getImportLayerMap());  // parser
+  data->setSceneData();   // set scene/xsheet values
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  TApp::instance()->getCurrentScene()->notifyCastChange();
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
+  progressDialog->close();
+#else
   static GenericLoadFilePopup *loadPopup = 0;
-  if (!loadPopup) {
-    loadPopup             = new GenericLoadFilePopup( QObject::tr("Import Open Cel Animation (OCA)") );
-    loadPopup->addFilterType("oca");
+   if (!loadPopup) {
+    loadPopup = new GenericLoadFilePopup(
+        QObject::tr("Import Open Cel Animation (OCA)"));
+     loadPopup->addFilterType("oca");
   }
   if (!scene->isUntitled())
     loadPopup->setFolder(fp.getParentDir());
@@ -578,7 +640,7 @@ void ImportOCACommand::execute() {
   }
 
   QString ocafile = fp.getQString();
-  OCAInputData ocaInputData = OCAInputData(0, true, false);
+  OCAInputData ocaInputData = OCAInputData();
   QJsonObject ocaObject;
   if (!ocaInputData.load(ocafile, ocaObject)) {
     DVGui::warning(QObject::tr("Failed to load OCA file: ") +
@@ -586,26 +648,22 @@ void ImportOCACommand::execute() {
     return;
   }
   ocaInputData.getSceneData();   // gather default values
-  ocaInputData.read(ocaObject); // parser
+  QMap<QString, int> importLayerMap;
+  ocaInputData.read(ocaObject, importLayerMap);  // parser
   ocaInputData.setSceneData();  // set scene/xsheet values
-  // TApp::instance()->getCurrentLevel()->notifyLevelChange(); > importOcaLayer
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   TApp::instance()->getCurrentScene()->notifyCastChange();
   TApp::instance()->getCurrentScene()->notifySceneChanged();
+#endif
 }
 
-OCAIo::OCAInputData::OCAInputData(float antialiasSoftness, bool whiteTransp,
-                                  bool doPremultiply) {
-  m_antialiasSoftness = antialiasSoftness;
-  m_whiteTransp       = whiteTransp;
-  m_doPremultiply     = doPremultiply;
+OCAIo::OCAInputData::OCAInputData() {
   m_scene             = TApp::instance()->getCurrentScene()->getScene();
   m_xsheet            = TApp::instance()->getCurrentXsheet()->getXsheet();
   m_oprop             = m_scene->getProperties()->getOutputProperties();
 }
 
 bool OCAIo::OCAInputData::load(QString path, QJsonObject &json) { 
-  //see XdtsIo::loadXdtsScene
   m_path = path;
   m_parentDir = TFilePath(m_path).getParentDir();
   // 1. Open the QFile, read it in a byteArray and close the file
@@ -631,6 +689,7 @@ bool OCAIo::OCAInputData::load(QString path, QJsonObject &json) {
     return false;
   }
   json = jsonDoc.object();
+  m_json = json;
   return true;
 }
 
@@ -658,7 +717,8 @@ void OCAIo::OCAInputData::getSceneData() {
 /// json OCA parser, getting global properties and import the layers
 /// </summary>
 /// <param name="json"></param>
-void OCAIo::OCAInputData::read(const QJsonObject &json) {
+void OCAIo::OCAInputData::read(const QJsonObject &json,
+                               QMap<QString, int> importLayerMap) {
   m_originApp        = json.value("originApp").toString();
   m_originAppVersion = json.value("originAppVersion").toString();
   m_ocaVersion       = json.value("ocaVersion").toString();
@@ -675,8 +735,32 @@ void OCAIo::OCAInputData::read(const QJsonObject &json) {
   m_bgBlue                = bgColorArray[2].toDouble();
   m_bgAlpha               = bgColorArray[3].toDouble();
   m_layers                = json.value("layers").toArray();
-  for (auto jsonLayer : m_layers) {
-    importOcaLayer(jsonLayer.toObject());
+
+  int col = 0;
+  for (auto layer : m_layers) {
+    auto jsonLayer = layer.toObject();
+    QString layername = jsonLayer["name"].toString();
+    if (m_progressDialog) {
+      m_progressDialog->setLabelText(QObject::tr("Layer: ") + layername);
+      m_progressDialog->setMaximum(m_xsheet->getColumnCount());
+      m_progressDialog->setValue(col);
+      QCoreApplication::processEvents();
+    }
+    if (importLayerMap.contains(layername)) {
+      switch (importLayerMap[layername]) { 
+      case 0:
+        DVGui::info(QObject::tr("OCA importing layer : ") + layername);
+        importOcaLayer(jsonLayer);
+        break;
+      case 1:
+        DVGui::info(QObject::tr("OCA skipping layer : ") + layername);
+        break;
+      }
+    } else {
+      // no importLayerMap ?
+      importOcaLayer(jsonLayer);
+    }
+    col++;
   }
 }
 
@@ -694,10 +778,6 @@ void OCAIo::OCAInputData::setSceneData() {
     size.ly = resolution.ly / m_dpi;
     m_scene->getCurrentCamera()->setSize(size, false, false);
   }
-  //else {
-  //  TDimensionD size(16, 9);
-  //  m_scene->getCurrentCamera()->setSize(size, false, false);
-  //}
   m_xsheet->updateFrameCount();
   m_oprop->setRange(m_startTime, m_endTime, 1);
   TPixel32 color = TPixel32(m_bgRed * 255.0, m_bgGreen * 255.0,
@@ -980,3 +1060,133 @@ void OCAIo::OCAInputData::importOcaFrame(const QJsonObject &jsonFrame,
   }
 }
 
+void OCAIo::OCAInputData::reset() { 
+    m_json = QJsonObject(); 
+}
+
+/// <summary>
+/// ocaImportPopup
+/// A dynamic ui to let us choose the import behavior for each layer
+/// TODO
+/// - add antialiasSoftness, whitTransp, doPremul to import option ui
+/// </summary>
+/// <param name="data"></param>
+ocaImportPopup::ocaImportPopup(OCAIo::OCAInputData *data) 
+    : CustomLoadFilePopup(tr("Load OCA"), new QWidget(0)) {
+  if (data == nullptr) data = new OCAInputData();
+  m_data = data;
+  connect(this, SIGNAL(filePathClicked(const TFilePath &)), this,
+          SLOT(onFileClicked(const TFilePath &)));
+}
+
+void ocaImportPopup::rebuildCustomLayout(const TFilePath &fp) {
+  DVGui::info(QObject::tr("ocaImportPopup::rebuildLayout()"));
+  if (m_customWidget == 0) {
+    DVGui::error(
+        QObject::tr("ocaImportPopup::rebuildLayout(): m_customWidget == 0"));
+    return;
+  }
+  if (m_data == 0) {
+    DVGui::error(
+        QObject::tr("ocaImportPopup::rebuildLayout(): m_data == 0"));
+    return;
+  }
+  //// clear ui if already build
+  removeCustomLayout();
+
+  // not necessary??
+  //levelMergeStatusComboList.clear();
+  //layerNameLabelList.clear();
+  //layerPathLabelList.clear();
+  //m_data->reset(); 
+  m_importLayerMap.clear();
+
+  m_data->load(fp.getQString(), m_data->getJson());
+  QWidget *optionWidget = (QWidget *)m_customWidget;
+  setModal(false);
+
+  QGridLayout *mainLayout;
+  mainLayout = new QGridLayout();
+  mainLayout->setMargin(5);
+  mainLayout->setSpacing(5);
+
+  // rebuild ui
+  QStringList mergingStatus = {"load", "skip"};
+  // Read layers information to build the ui
+  auto json   = m_data->getJson();
+  auto layers = json.value("layers").toArray();
+  int row = 0, column = 0;
+  auto levelSet = m_data->getScene()->getLevelSet();
+  for (auto layer : layers) {
+    auto jsonLayer = layer.toObject();
+    levelMergeStatusComboList << new QComboBox();
+    auto levelMergeStatusCombo = levelMergeStatusComboList.back();
+    levelMergeStatusCombo->addItems(mergingStatus);
+    layerNameLabelList << new QLabel(jsonLayer["name"].toString());
+    mainLayout->addWidget(levelMergeStatusCombo, row, column++);
+    mainLayout->addWidget(layerNameLabelList.back(), row, column++);
+    //connect(levelMergeStatusComboList.back(), SIGNAL(currentIndexChanged(int)),
+    //        this, SLOT(onMergeStatusIndexChanged(int)));
+    connect(levelMergeStatusCombo,
+            qOverload<int>(&QComboBox::currentIndexChanged), [=](int value) {
+              onMergeStatusIndexChanged(jsonLayer["name"].toString(), value);
+            });
+    
+    if (levelSet->hasLevel(jsonLayer["name"].toString().toStdWString())) {
+      levelMergeStatusCombo->setCurrentIndex(1); // this doesn't trigger signals ?
+      m_importLayerMap[jsonLayer["name"].toString()] = 1;
+    } else {
+      levelMergeStatusCombo->setCurrentIndex(0);
+      m_importLayerMap[jsonLayer["name"].toString()] = 0;
+    }
+
+    auto frames = jsonLayer["frames"].toArray();
+    if (frames.size() > 0) {
+      auto jsonFrame = frames[0].toObject();
+      auto levelPath = TFilePath(m_data->getParentDir().getQString() + "/" +
+                                 jsonFrame["fileName"].toString());
+      layerPathLabelList << new QLabel(levelPath.getQString());
+      mainLayout->addWidget(layerPathLabelList.back(), row, column++);
+      //// not really usefull (tlv would have a different filepath) The comparison only uses layer names for now...
+      //if (levelSet->hasLevel(*m_data->getScene(), levelPath)) {
+      //  levelMergeStatusCombo->setCurrentIndex(1);
+      //  m_importLayerMap[jsonLayer["name"].toString()] = 1;
+      //} else {
+      //  levelMergeStatusCombo->setCurrentIndex(0);
+      //  m_importLayerMap[jsonLayer["name"].toString()] = 0;
+      //}
+    }
+    row++;
+    column = 0;
+  }
+  optionWidget->setLayout(mainLayout);
+}
+
+void ocaImportPopup::removeCustomLayout() {
+    // https://copyprogramming.com/howto/clearing-a-layout-in-qt
+  //QLayout *po_l_layout = QWidget::layout();
+    QLayout *po_l_layout = m_customWidget->layout();
+  if (po_l_layout != 0) {
+    QLayoutItem *item;
+    while ((item = po_l_layout->takeAt(0)) != 0) po_l_layout->removeItem(item);
+    delete po_l_layout;
+  }
+}
+
+void ocaImportPopup::onFileClicked(const TFilePath &fp) { 
+  if (m_data == nullptr) return;
+  DVGui::info(QObject::tr("ocaImportPopup::onFileClicked(): ") +
+              fp.getQString());
+  QJsonObject ocaObject;
+  if (!m_data->load(fp.getQString(), ocaObject)) {
+    DVGui::warning(QObject::tr("Failed to load OCA file: ") + fp.getQString());
+    return;
+  }
+  rebuildCustomLayout(fp);
+}
+
+void ocaImportPopup::onMergeStatusIndexChanged(QString layerName, int status) {
+  DVGui::info(QObject::tr("onMergeStatusIndexChanged: layer: ") + layerName + " status: " +
+              QString::number(status));
+  m_importLayerMap[layerName] = status;
+}

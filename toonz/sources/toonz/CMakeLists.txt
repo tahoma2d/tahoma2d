@@ -65,6 +65,7 @@ set(MOC_HEADERS
     menubar.h
     meshifypopup.h
     messagepanel.h
+    ocaio.h
     onionskinmaskgui.h
     outputsettingspopup.h
     overwritepopup.h
