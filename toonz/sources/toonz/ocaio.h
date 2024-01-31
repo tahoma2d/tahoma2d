@@ -5,6 +5,7 @@
 #include "toonzqt/dvdialog.h"
 #include "tfilepath.h"
 #include "toonz/txshlevelhandle.h"
+#include "toonz/levelproperties.h"
 
 #include <QString>
 #include <QList>
@@ -15,7 +16,6 @@
 #include <QJsonArray>
 #include <QLabel>
 
-#define USE_ocaImportPopup
 
 class ToonzScene;
 class TXshCellColumn;
@@ -25,6 +25,7 @@ class TFrameId;
 class TFilePath;
 class TOutputProperties;
 class TXshLevelHandle;
+class LevelOption;
 
 namespace OCAIo {
 
@@ -95,9 +96,11 @@ public:
   bool load(QString path, QJsonObject &json);
   void getSceneData();
   //void readLayerList(const QJsonObject &json);
-  void read(const QJsonObject &json, QMap<QString, int> importLayerMap);
+  void read(const QJsonObject &json, QMap<QString, int> importLayerMap,
+            QMap<QString, LevelOptions> importOptionMap);
   void setSceneData();
-  void importOcaLayer(const QJsonObject &jsonLayer);
+  void importOcaLayer(const QJsonObject &jsonLayer,
+                      QMap<QString, LevelOptions> importOptionMap);
   void importOcaFrame(const QJsonObject &jsonFrame, TXshSimpleLevel *sl);
   void reset();
   QJsonObject &getJson() { return m_json; }
@@ -117,9 +120,15 @@ public:
   void removeCustomLayout();
   void onMergeStatusIndexChanged(QString layerName, int status);
   QMap<QString, int> &getImportLayerMap() { return m_importLayerMap; }
+  QMap<QString, LevelOptions> &getImportOptionMap() {
+    return m_importOptionMap;
+  }
+  virtual void show();
+  void reset();
 
 public slots:
   void onFileClicked(const TFilePath &);
+  //void onWhiteTranspChanged(int value) { m_importOptionMap[] }
 
 private:
   //QWidget *m_customWidget; inherited from parent CustomLoadFilePopup
@@ -129,5 +138,6 @@ private:
   QList<QLabel *> layerPathLabelList;
   OCAIo::OCAInputData *m_data;
   QMap<QString, int> m_importLayerMap;
+  QMap<QString, LevelOptions> m_importOptionMap;
 };
 #endif

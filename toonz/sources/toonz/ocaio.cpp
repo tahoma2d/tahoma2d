@@ -540,31 +540,48 @@ void ExportOCACommand::execute() {
 /// <summary>
 ///  OCA importer
 /// 
-/// TODO:
-/// - clearLayout when oca importer is re-opened.
-/// - add "replace","merge" to mergingStatus
-/// merge would add only missing frames ?
-/// replace would avoid duplicate (but load would still be usefull to compare and make changes manually)
-/// - We should be skipping "_blank" frames completely not creating empty image frames.
-/// - copy cells based on duration if !Preferences::instance()->isImplicitHoldEnabled()
-/// - test the case of child layer (subxsheet)
-/// Look at how the column command Collapse works. This command creates childLevels and adds levels into it.
-/// - keyframe animation transfert for camera, pegs, etc...
-/// that would be another tool and another open file format (ascii (json or
-/// xml?) or binary (faster for huge scenes?) ?).
-/// - expose per layer options in ui : whiteTransp / doPremultiply /
-/// colorSpaceGamma / antialiasSoftness / dpi (currently hardcoded or using preference if any)
-/// - blendingMode (implement blendingMode in viewport with fbo pingpong ? + ui ComboBoxes on column headers ?)
-/// - OCA doesn't support frame tags (NavigationTags)
-/// this would be very usefull to mark keys / breakdowns / inbetweens / etc
-/// drawing ... for the onion skining and fliping
-/// Use OCA metadata to transfert frame tags ?
-/// 
 /// DONE:
 /// - add the option to update the current scene from OCA, importing only the
 /// missing layers (example : import a krita paint layer, but keep the tlv with
 /// their palette as smart rasters...)
 /// - progress bar
+/// - clearLayout when oca importer is re-opened.
+/// /// - We should be skipping "_blank" frames completely not creating empty image frames.
+/// - copy cells based on duration if !Preferences::instance()->isImplicitHoldEnabled()
+/// - expose per layer options in ui : whiteTransp / doPremultiply
+/// colorSpaceGamma (antialiasSoftness / dpi (currently hardcoded or using
+/// preference if any) not exposed)
+
+/// TODO:
+/// - test the case of child layer (subxsheet) > #define USE_childLayers
+/// - avoid duplicate names with load mergingStatus : increment importer level
+/// name
+/// - add "replace","merge" to mergingStatus
+/// merge would add only missing frames ?
+/// replace would avoid duplicate (but load would still be usefull to compare
+/// and make changes manually)
+/// - avoid replacing tzp levels (using filename comparison)
+/// while TZP_XSHLEVEL is for toonz levels (smart rasters with palette)
+/// For roundtrip / scene sharing between softwares,
+/// Smart raster TZP_XSHLEVEL cannot be recreated from raster
+/// OVL_XSHLEVEL, without palette loss.
+/// The comparison to set levelMergeStatusCombo only uses layer names for
+/// now...
+/// Look at how the column command Collapse works. This command creates
+/// childLevels and adds levels into it.
+/// - keyframe animation transfert for camera, pegs, etc...
+/// that would be another tool and another open file format (ascii (json or
+/// xml?) or binary (faster for huge scenes?) ?).
+/// - blendingMode (implement blendingMode in viewport with fbo pingpong ? + ui
+/// ComboBoxes on column headers ?)
+/// - OCA doesn't support frame tags (NavigationTags)
+/// this would be very usefull to mark keys / breakdowns / inbetweens / etc
+/// drawing ... for the onion skining and fliping
+/// Use OCA metadata to transfert frame tags ?
+/// - increment column names on duplicate columns
+/// - frame position: import from OCA until glTF format support is added
+/// 
+/// DONE:
 /// </summary>
 
 
@@ -578,12 +595,16 @@ void ImportOCACommand::execute() {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   TXsheet *xsheet   = TApp::instance()->getCurrentXsheet()->getXsheet();
   TFilePath fp      = scene->getScenePath().withType("oca");
-#ifdef USE_ocaImportPopup
+  static OCAInputData *data;
+  static ocaImportPopup *loadPopup;
+  static DVGui::ProgressDialog *progressDialog;
   // ocaImportPopup let us decide which layer to import
-  static OCAInputData *data        = new OCAInputData();
-  static ocaImportPopup *loadPopup = new ocaImportPopup(data);
-  static DVGui::ProgressDialog *progressDialog =
-      new DVGui::ProgressDialog("", tr("Hide"), 0, 0);
+  if (data == nullptr || loadPopup == nullptr || progressDialog == nullptr) {
+    data        = new OCAInputData();
+    loadPopup = new ocaImportPopup(data);
+    progressDialog = new DVGui::ProgressDialog("", tr("Hide"), 0, 0);
+    //DVGui::info(QObject::tr("new ocaImportPopup"));
+  }
   loadPopup->addFilterType("oca");
   if (!scene->isUntitled())
     loadPopup->setFolder(fp.getParentDir());
@@ -602,7 +623,7 @@ void ImportOCACommand::execute() {
     DVGui::info(QObject::tr("Open OCA file : ") + fp.getQString());
   }
   if (data == 0) {
-    DVGui::error(QObject::tr("ImportOCACommand::execute: data == 0"));
+    DVGui::error(QObject::tr("ImportOCACommand::execute: no data"));
     return;
   }
   QJsonObject ocaObject;
@@ -621,50 +642,13 @@ void ImportOCACommand::execute() {
   QCoreApplication::processEvents();
 
   data->getSceneData();  // gather default values
-  data->read(ocaObject, loadPopup->getImportLayerMap());  // parser
+  data->read(ocaObject, loadPopup->getImportLayerMap(),
+             loadPopup->getImportOptionMap());  // parser
   data->setSceneData();   // set scene/xsheet values
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   TApp::instance()->getCurrentScene()->notifyCastChange();
   TApp::instance()->getCurrentScene()->notifySceneChanged();
   progressDialog->close();
-#else
-  static GenericLoadFilePopup *loadPopup = 0;
-   if (!loadPopup) {
-    loadPopup = new GenericLoadFilePopup(
-        QObject::tr("Import Open Cel Animation (OCA)"));
-     loadPopup->addFilterType("oca");
-  }
-  if (!scene->isUntitled())
-    loadPopup->setFolder(fp.getParentDir());
-  else
-    loadPopup->setFolder(
-        TProjectManager::instance()->getCurrentProject()->getScenesPath());
-
-  loadPopup->setFilename(fp.withoutParentDir());
-  fp = loadPopup->getPath();
-  if (fp.isEmpty()) {
-    DVGui::info(QObject::tr("Open OCA file cancelled : empty filepath."));
-    return;
-  } else {
-    DVGui::info(QObject::tr("Open OCA file : ") + fp.getQString());
-  }
-
-  QString ocafile = fp.getQString();
-  OCAInputData ocaInputData = OCAInputData();
-  QJsonObject ocaObject;
-  if (!ocaInputData.load(ocafile, ocaObject)) {
-    DVGui::warning(QObject::tr("Failed to load OCA file: ") +
-                   fp.getQString());
-    return;
-  }
-  ocaInputData.getSceneData();   // gather default values
-  QMap<QString, int> importLayerMap;
-  ocaInputData.read(ocaObject, importLayerMap);  // parser
-  ocaInputData.setSceneData();  // set scene/xsheet values
-  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
-  TApp::instance()->getCurrentScene()->notifyCastChange();
-  TApp::instance()->getCurrentScene()->notifySceneChanged();
-#endif
 }
 
 OCAIo::OCAInputData::OCAInputData() {
@@ -728,7 +712,8 @@ void OCAIo::OCAInputData::getSceneData() {
 /// </summary>
 /// <param name="json"></param>
 void OCAIo::OCAInputData::read(const QJsonObject &json,
-                               QMap<QString, int> importLayerMap) {
+                               QMap<QString, int> importLayerMap,
+                               QMap<QString, LevelOptions> importOptionMap) {
   m_originApp        = json.value("originApp").toString();
   m_originAppVersion = json.value("originAppVersion").toString();
   m_ocaVersion       = json.value("ocaVersion").toString();
@@ -760,15 +745,15 @@ void OCAIo::OCAInputData::read(const QJsonObject &json,
       switch (importLayerMap[layername]) { 
       case 0:
         DVGui::info(QObject::tr("OCA importing layer : ") + layername);
-        importOcaLayer(jsonLayer);
+        importOcaLayer(jsonLayer, importOptionMap);
         break;
       case 1:
         DVGui::info(QObject::tr("OCA skipping layer : ") + layername);
         break;
       }
     } else {
-      // no importLayerMap ?
-      importOcaLayer(jsonLayer);
+      // no importLayerMap...
+      //importOcaLayer(jsonLayer, importOptionMap);
     }
     col++;
   }
@@ -793,12 +778,6 @@ void OCAIo::OCAInputData::setSceneData() {
   TPixel32 color = TPixel32(m_bgRed * 255.0, m_bgGreen * 255.0,
                             m_bgBlue * 255.0, m_bgAlpha * 255.0);
   m_scene->getProperties()->setBgColor(color);
-  // anyway touching rendersettings here doesn't make sense
-  // m_colorDepth (json["colorDepth"]) doesn't tell if the image is linear or
-  // not... (a 32 bit tif could very well be non-linear, or a linear exr could
-  // be 16 bit only, usually probalby half float 16 bit ...)
-  // TRenderSettings renderSettings = m_scene->getProperties()->getOutputProperties()->getRenderSettings(); // incomplete type ?
-  // renderSettings.m_bpp...
   // https://github.com/RxLaboratory/OCA/blob/master/src-docs/docs/specs/color-depth.md
   // only raises nonlinearBpp, never make it lower than it is... (the levels could be 8 bit but comp output higher)
   int nonlinearBpp = m_oprop->getNonlinearBpp();
@@ -816,7 +795,6 @@ void OCAIo::OCAInputData::setSceneData() {
 /// creates level from OCA layer, and exposes it in the xsheet
 /// see OCA layer specs https://github.com/RxLaboratory/OCA/blob/master/src-docs/docs/specs/layer.md?plain=1
 /// - only raster levels are supported
-/// - whiteTransp / doPremultiply / colorSpaceGamma / antialiasSoftness / dpi are hardcoded
 /// - blendingMode / animated are not used
 /// - OCA doesn't support frame tags (NavigationTags) 
 /// this would be very usefull to mark keys / breakdowns / inbetweens / etc drawing ... 
@@ -824,23 +802,17 @@ void OCAIo::OCAInputData::setSceneData() {
 /// - recursive layers (layer groups) have not neen tested 
 /// (not sure if and how it could translate in toonz ? see CHILD_XSHLEVEL ?)
 /// 
-/// TODO :
-/// - while TZP_XSHLEVEL is for toonz levels (smart rasters with palette)
-/// For roundtrip / scene sharing between softwares,
-/// Smart raster TZP_XSHLEVEL cannot be recreated from raster OVL_XSHLEVEL,
-/// without palette loss. I would thus implement a dialog to let the user load
-/// only missing layers in the scene (in order to keep smart raster levels
-/// intact...)
 /// </summary>
 /// <param name="jsonLayer"></param>
-void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
+void OCAIo::OCAInputData::importOcaLayer(
+    const QJsonObject &jsonLayer, QMap<QString, LevelOptions> importOptionMap) {
   if (jsonLayer["type"] == "paintlayer") {
     if (jsonLayer["blendingMode"].toString() != "normal") {
       DVGui::warning(QObject::tr("importOcaLayer : blending modes not implemented ") +
                   jsonLayer["name"].toString());
     }
-    DVGui::info(QObject::tr("importOcaLayer : ") +
-                jsonLayer["name"].toString());
+    //DVGui::info(QObject::tr("importOcaLayer : ") +
+    //            jsonLayer["name"].toString());
     auto levelType   = OVL_XSHLEVEL; // OVL_XSHLEVEL is for raster images,
 
     //  I am using my own preference m_dpi / m_antialiasSoftness / m_whiteTransp / m_doPremultiply
@@ -854,33 +826,27 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
     // ignores the resolution argument !
     sl->getProperties()->setImageRes(resolution);
 
-    // lookup the first frame to eventually load image format loading preferences which is based on frame extention
-    // seeTXshLevel *ToonzScene::loadLevel
-    // the problem is tahomastuff/profiles/users/[username]/preferences.ini doesn't add new image fomats to the list...
+
     auto frames = jsonLayer["frames"].toArray();
-    bool formatSpecified = false;
+    //bool formatSpecified = false;
     LevelProperties *lp  = sl->getProperties();
     if (frames.size() > 0) {
       auto jsonFrame      = frames[0].toObject();
       auto levelPath = TFilePath(m_parentDir.getQString() + "/" +
                             jsonFrame["fileName"].toString());
 
-      const Preferences &prefs = *Preferences::instance();
-      int formatIdx            = prefs.matchLevelFormat(levelPath);
-      if (formatIdx >= 0) {
-        lp->options()   = prefs.levelFormat(formatIdx).m_options;
-        formatSpecified = true;
-      }
     }
-    if (formatSpecified) {
-      sl->getProperties()->setWhiteTransp(lp->whiteTransp());
-      sl->getProperties()->setDoPremultiply(lp->doPremultiply());
-      sl->getProperties()->setDoAntialias(lp->antialiasSoftness());
-      sl->getProperties()->setDpi(lp->getDpi());
-      sl->getProperties()->setDpiPolicy(lp->getDpiPolicy());
+    if (importOptionMap.contains(jsonLayer["name"].toString())) {
+    //if (importOptionMap.size()>0) {
+      auto option = importOptionMap[jsonLayer["name"].toString()];
+      sl->getProperties()->setWhiteTransp(option.m_whiteTransp);
+      sl->getProperties()->setDoPremultiply(option.m_premultiply);
+      sl->getProperties()->setDoAntialias(option.m_antialias);
+      sl->getProperties()->setDpi(option.m_dpi);
+      sl->getProperties()->setDpiPolicy(LevelProperties::DP_CustomDpi);
       // sl->getProperties()->setImageDpi(lp->getImageDpi()); //?
-      sl->getProperties()->setSubsampling(lp->getSubsampling());
-      sl->getProperties()->setColorSpaceGamma(lp->colorSpaceGamma());
+      sl->getProperties()->setSubsampling(option.m_subsampling);
+      sl->getProperties()->setColorSpaceGamma(option.m_colorSpaceGamma);
     } else {
       sl->getProperties()->setWhiteTransp(m_whiteTransp);
       sl->getProperties()->setDoPremultiply(m_doPremultiply);
@@ -891,7 +857,6 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
     }
 
     // float colorSpaceGamma   = 2.2;
-    // we don't need to touch this...
     // display gamma 2.2 is only valid for srgb color space, and for rec709 is
     // grading on a computer monitor...but... gamma for rec709 should be 2.4 if
     // you have a rec709 grading monitor set for HDTV, gamma for rec2020 should
@@ -906,10 +871,13 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
 
     sl->setName(jsonLayer["name"].toString().toStdWString());
     std::vector<TFrameId> fids;
+    std::vector<int> durations;
+
     for (auto frame : jsonLayer["frames"].toArray()) {
       importOcaFrame(frame.toObject(), sl);
       TFrameId fid(frame.toObject()["frameNumber"].toInt());
       fids.push_back(fid);
+      durations.push_back(frame.toObject()["duration"].toInt());
     }
     
     // Shouldn't api provide a simple method to expose the level using fids in xsheet timing ?
@@ -918,19 +886,31 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
     if (m_startTime < 1) { // prevent crash if startTime is less than 1 : offset the timing...
       frameOffset = -m_startTime + 1;
     }
-    for (auto fid : fids) {
+    //for (auto fid : fids) {
+    for (int f = 0; f < fids.size() && f < durations.size(); f++) {
+      auto fid = fids[f];
+      auto duration = durations[f];
       if (fid.getNumber() <= 0) {
         DVGui::warning(
             QObject::tr("importOcaLayer : skipping frame -1! ") +
             jsonLayer["name"].toString());
         continue;
       }
+      int frame = fid.getNumber() - 1 + frameOffset;
       // -1 converts framenumber to index, frameOffset moves the frame range above 0...
-      m_xsheet->setCell(fid.getNumber() - 1 + frameOffset, emptyColumnIndex,
+      m_xsheet->setCell(frame, emptyColumnIndex,
                         TXshCell(sl, fid));
+      // sl->setFrame(fid, img);
+      if (!Preferences::instance()->isImplicitHoldEnabled()) {
+        // add cells to hold using image duration
+        for (int f = frame + 1; f <= frame + duration;
+            f++) {
+          m_xsheet->setCell(f, emptyColumnIndex, TXshCell(sl, fid));
+        }
+      }
     }
 
-    // Note about drawing numbering : I personally frame number as drawing number,
+    // Note about drawing numbering : I personally use the frame number as drawing number,
     // following richard william's animator's survival kit ("The best numbering system", page 76)
     // In toonz, this means : preference>Drawing>Numbering system = Animation sheet (isAnimationSheetEnabled ==  true) 
     // + Autorenumber
@@ -949,6 +929,7 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
     column->setPreviewVisible(!jsonLayer["reference"].toBool());
     // and Camstand is viewport visibility
     column->setCamstandVisible(jsonLayer["visible"].toBool());
+
     // jsonLayer["label"]
     // https://github.com/RxLaboratory/OCA/blob/master/src-docs/docs/specs/layer-labels.md
     // Most drawing and animation applications are able to
@@ -960,7 +941,6 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
     column->setColorFilterId(jsonLayer["label"].toInt());
     // column->setColorTag(jsonLayer["label"].toInt()); what is the difference
     // between ColorTag and  ColorFilterId ??
-
 
     ////// unused OCA properties:
     // - jsonLayer["animated"] Whether this layer is a single frame or not.
@@ -987,16 +967,19 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
     // NavigationTags *navTags = xsh->getNavigationTags();
     // this could be a great base to implement an onion skin filter... (like TVPaint has)
     // (ex : onion skin displays only 1 prev + 1 next key drawing, etc...)
-    // Unfortunately, OCA doesn't support that.
+    // Unfortunately, OCA doesn't support that, but it could be added with the metadata tag
 
+#ifdef USE_childLayers
+    // TODO :
     // recursion for sublayers : nothing special to do ?
     // see CHILD_XSHLEVEL ?
     for (auto layer : jsonLayer["childLayers"].toArray()) {
       // I guess we dont need to deal with jsonLayer["passThrough"] ?
       // when passThrough is false, the group content *must* be merged in rendering, 
       // else the group is only used as a way to group the layers in the UI of the application
-      importOcaLayer(layer.toObject());
+      importOcaLayer(layer.toObject(), importOptionMap);
     }
+#endif
 
     TApp::instance()->getCurrentLevel()->setLevel(
         level->getSimpleLevel());  // selects the last created level
@@ -1017,20 +1000,19 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer) {
 /// UNUSED properties :
 /// - meta: metadata...
 /// - opacity: per frame opacity isn't used.
-/// - position: transforms handled in a separate file ? (keyframe animation transfert for camera, pegs, etc...) 
-/// And what about scale/rotation ?
-/// - name: could be used to create empty frames (named "_blank")
+/// - position: And what about scale/rotation ? transforms would be handled in a 
+/// separate file... (keyframe animation transfert for camera, pegs, etc...) 
 /// </summary>
 /// <param name="jsonLayer"></param>
 
 void OCAIo::OCAInputData::importOcaFrame(const QJsonObject &jsonFrame,
                                          TXshSimpleLevel *sl) {
-  // doesExists (QFileInfo.exists()) should skip empty frames ! but...
+  // just skip empty frames
   TFrameId fid(jsonFrame["frameNumber"].toInt());
   if (jsonFrame["name"].toString() == "_blank" ||
       jsonFrame["fileName"].toString() == "") {
-    TImageP img = sl->createEmptyFrame();
-    sl->setFrame(fid, img);
+    //TImageP img = sl->createEmptyFrame();
+    //sl->setFrame(fid, img);
     return;
   }
   auto path       = TFilePath(m_parentDir.getQString() + "/" +
@@ -1041,12 +1023,13 @@ void OCAIo::OCAInputData::importOcaFrame(const QJsonObject &jsonFrame,
     auto imageReader = TImageReaderP(path);
     try {
       img = imageReader->load();
-      if (img.getPointer() == 0) img = sl->createEmptyFrame();
+      sl->setFrame(fid, img);
+      // if (img.getPointer() == 0) img = sl->createEmptyFrame();
     } catch (const std::string &msg)
     {
       DVGui::error(QObject::tr("importOcaFrame load failed : ") +
                    path.getQString());
-      img = sl->createEmptyFrame();
+      //img = sl->createEmptyFrame();
       throw TException(msg);
     }
     if (img->getType() != TImage::RASTER) {
@@ -1062,11 +1045,7 @@ void OCAIo::OCAInputData::importOcaFrame(const QJsonObject &jsonFrame,
 
   } else {
     DVGui::error(QObject::tr("importOcaFrame file not found! : ") + path.getQString());
-    img = sl->createEmptyFrame();
-  }
-  sl->setFrame(fid, img);
-  if (!Preferences::instance()->isImplicitHoldEnabled()) {
-      //do something with the image duration ?
+    //img = sl->createEmptyFrame();
   }
 }
 
@@ -1077,8 +1056,6 @@ void OCAIo::OCAInputData::reset() {
 /// <summary>
 /// ocaImportPopup
 /// A dynamic ui to let us choose the import behavior for each layer
-/// TODO
-/// - add antialiasSoftness, whitTransp, doPremul to import option ui
 /// </summary>
 /// <param name="data"></param>
 ocaImportPopup::ocaImportPopup(OCAIo::OCAInputData *data) 
@@ -1090,7 +1067,7 @@ ocaImportPopup::ocaImportPopup(OCAIo::OCAInputData *data)
 }
 
 void ocaImportPopup::rebuildCustomLayout(const TFilePath &fp) {
-  DVGui::info(QObject::tr("ocaImportPopup::rebuildLayout()"));
+  //DVGui::info(QObject::tr("ocaImportPopup::rebuildLayout()"));
   if (m_customWidget == 0) {
     DVGui::error(
         QObject::tr("ocaImportPopup::rebuildLayout(): m_customWidget == 0"));
@@ -1101,17 +1078,23 @@ void ocaImportPopup::rebuildCustomLayout(const TFilePath &fp) {
         QObject::tr("ocaImportPopup::rebuildLayout(): m_data == 0"));
     return;
   }
-  //// clear ui if already build
+  // clear ui if already build
   removeCustomLayout();
-
-  // not necessary??
-  //levelMergeStatusComboList.clear();
-  //layerNameLabelList.clear();
-  //layerPathLabelList.clear();
-  //m_data->reset(); 
-  m_importLayerMap.clear();
-
-  m_data->load(fp.getQString(), m_data->getJson());
+  // rebuildCustomLayout("") with an empty string creates an empty layout
+  if (fp.getQString() == "") {
+    QWidget *optionWidget = (QWidget *)m_customWidget;
+    setModal(false);
+    QGridLayout *mainLayout;
+    mainLayout = new QGridLayout();
+    mainLayout->setMargin(0);
+    mainLayout->setSpacing(0);
+    optionWidget->setLayout(mainLayout);
+    return;
+  }
+  if (!m_data->load(fp.getQString(), m_data->getJson())) {
+    DVGui::warning(QObject::tr("ocaImportPopup: Failed to load OCA file: ") + fp.getQString());
+    return;
+  }
   QWidget *optionWidget = (QWidget *)m_customWidget;
   setModal(false);
 
@@ -1127,6 +1110,7 @@ void ocaImportPopup::rebuildCustomLayout(const TFilePath &fp) {
   auto layers = json.value("layers").toArray();
   int row = 0, column = 0;
   auto levelSet = m_data->getScene()->getLevelSet();
+  const Preferences &prefs = *Preferences::instance();
   for (auto layer : layers) {
     auto jsonLayer = layer.toObject();
     levelMergeStatusComboList << new QComboBox();
@@ -1135,7 +1119,8 @@ void ocaImportPopup::rebuildCustomLayout(const TFilePath &fp) {
     layerNameLabelList << new QLabel(jsonLayer["name"].toString());
     mainLayout->addWidget(levelMergeStatusCombo, row, column++);
     mainLayout->addWidget(layerNameLabelList.back(), row, column++);
-    //connect(levelMergeStatusComboList.back(), SIGNAL(currentIndexChanged(int)),
+    // connect(levelMergeStatusComboList.back(),
+    // SIGNAL(currentIndexChanged(int)),
     //        this, SLOT(onMergeStatusIndexChanged(int)));
     //// requires C++14
     //connect(levelMergeStatusCombo,
@@ -1156,6 +1141,44 @@ void ocaImportPopup::rebuildCustomLayout(const TFilePath &fp) {
       m_importLayerMap[jsonLayer["name"].toString()] = 0;
     }
 
+    QCheckBox *premultiplyCB = new QCheckBox("Premult");
+    premultiplyCB->setCheckState(Qt::CheckState::Checked);
+    QCheckBox *whiteTranspCB = new QCheckBox("Transparent");
+    whiteTranspCB->setCheckState(Qt::CheckState::Checked);
+    QLabel *colorSpaceGammaLabel   = new QLabel("Gamma");
+    QSlider *colorSpaceGammaSlider = new QSlider();
+    colorSpaceGammaSlider->setValue(
+        m_importOptionMap[jsonLayer["name"].toString()].DefaultColorSpaceGamma);
+    QLabel *antialiasLabel   = new QLabel("Antialias");
+    QSlider *antialiasSlider = new QSlider();
+    antialiasSlider->setValue(0); 
+
+    connect(premultiplyCB, &QCheckBox::stateChanged,
+            [this, premultiplyCB, jsonLayer]() { 
+            m_importOptionMap[jsonLayer["name"].toString()].m_premultiply =
+                  premultiplyCB->isChecked();
+    });
+    connect(whiteTranspCB, &QCheckBox::stateChanged,
+            [this, whiteTranspCB, jsonLayer]() { 
+            m_importOptionMap[jsonLayer["name"].toString()].m_whiteTransp =
+                  whiteTranspCB->isChecked();
+    });
+    connect(colorSpaceGammaSlider, &QSlider::valueChanged,
+        [this, colorSpaceGammaSlider, jsonLayer]() {
+          m_importOptionMap[jsonLayer["name"].toString()].m_colorSpaceGamma =
+              colorSpaceGammaSlider->value();
+    });
+    connect(
+        antialiasSlider, &QSlider::valueChanged,
+        [this, antialiasSlider, jsonLayer]() {
+          m_importOptionMap[jsonLayer["name"].toString()].m_antialias =
+              antialiasSlider->value();
+    });
+
+
+    bool formatSpecified = false;
+    LevelProperties *lp  = new LevelProperties();
+
     auto frames = jsonLayer["frames"].toArray();
     if (frames.size() > 0) {
       auto jsonFrame = frames[0].toObject();
@@ -1163,8 +1186,36 @@ void ocaImportPopup::rebuildCustomLayout(const TFilePath &fp) {
                                  jsonFrame["fileName"].toString());
       layerPathLabelList << new QLabel(levelPath.getQString());
       mainLayout->addWidget(layerPathLabelList.back(), row, column++);
-      //// not really usefull (tlv would have a different filepath) The comparison only uses layer names for now...
-      //if (levelSet->hasLevel(*m_data->getScene(), levelPath)) {
+
+      // display format options
+      int formatIdx            = prefs.matchLevelFormat(levelPath);
+      
+      if (formatIdx >= 0) {
+        lp->options()   = prefs.levelFormat(formatIdx).m_options;
+        formatSpecified = true;
+      }
+      if (formatSpecified) {
+        whiteTranspCB->setCheckState(lp->whiteTransp()
+                                         ? Qt::CheckState::Checked
+                                         : Qt::CheckState::Unchecked);
+        premultiplyCB->setCheckState(lp->doPremultiply()
+                                         ? Qt::CheckState::Checked
+                                         : Qt::CheckState::Unchecked);
+        antialiasSlider->setValue(lp ->antialiasSoftness());
+        colorSpaceGammaSlider->setValue(lp->colorSpaceGamma());
+      } else {
+        lp->setWhiteTransp(whiteTranspCB->checkState());
+        lp->setDoPremultiply(premultiplyCB->checkState());
+        lp->setDoAntialias(antialiasSlider->value());
+        lp->setColorSpaceGamma(colorSpaceGammaSlider->value());
+      }
+      auto options                                    = lp->options();
+      m_importOptionMap[jsonLayer["name"].toString()] = options;
+
+      //// The comparison to set levelMergeStatusCombo only uses layer names for
+      //// now...
+      // 
+      // if (levelSet->hasLevel(*m_data->getScene(), levelPath)) {
       //  levelMergeStatusCombo->setCurrentIndex(1);
       //  m_importLayerMap[jsonLayer["name"].toString()] = 1;
       //} else {
@@ -1172,6 +1223,13 @@ void ocaImportPopup::rebuildCustomLayout(const TFilePath &fp) {
       //  m_importLayerMap[jsonLayer["name"].toString()] = 0;
       //}
     }
+
+    mainLayout->addWidget(premultiplyCB, row, column++);
+    mainLayout->addWidget(whiteTranspCB, row, column++);
+    if (json["colorDepth"].toString() != "U8")
+      mainLayout->addWidget(colorSpaceGammaSlider, row, column++);
+    mainLayout->addWidget(antialiasLabel, row, column++);
+    mainLayout->addWidget(antialiasSlider, row, column++);
     row++;
     column = 0;
   }
@@ -1191,8 +1249,6 @@ void ocaImportPopup::removeCustomLayout() {
 
 void ocaImportPopup::onFileClicked(const TFilePath &fp) { 
   if (m_data == nullptr) return;
-  DVGui::info(QObject::tr("ocaImportPopup::onFileClicked(): ") +
-              fp.getQString());
   QJsonObject ocaObject;
   if (!m_data->load(fp.getQString(), ocaObject)) {
     DVGui::warning(QObject::tr("Failed to load OCA file: ") + fp.getQString());
@@ -1202,7 +1258,14 @@ void ocaImportPopup::onFileClicked(const TFilePath &fp) {
 }
 
 void ocaImportPopup::onMergeStatusIndexChanged(QString layerName, int status) {
-  DVGui::info(QObject::tr("onMergeStatusIndexChanged: layer: ") + layerName + " status: " +
-              QString::number(status));
   m_importLayerMap[layerName] = status;
+}
+
+void ocaImportPopup::show() {
+  reset();
+  FileBrowserPopup::show();
+}
+
+void ocaImportPopup::reset() {
+  rebuildCustomLayout(TFilePath(""));
 }
