@@ -107,15 +107,16 @@ private:
   QWidget* createUI(
       PreferencesItemId id,
       const QList<ComboBoxItem>& comboItems = QList<ComboBoxItem>(),
-      bool isLineEdit                       = false);
+      bool isLineEdit = false, bool useMinMaxSlider = false);
   QGridLayout* insertGroupBoxUI(PreferencesItemId id, QGridLayout* layout);
   void insertUI(PreferencesItemId id, QGridLayout* layout,
                 const QList<ComboBoxItem>& comboItems = QList<ComboBoxItem>(),
-                bool isLineEdit                       = false);
+                bool isLineEdit = false, bool useMinMaxSlider = false);
   void insertDualUIs(
       PreferencesItemId leftId, PreferencesItemId rightId, QGridLayout* layout,
       const QList<ComboBoxItem>& leftComboItems  = QList<ComboBoxItem>(),
-      const QList<ComboBoxItem>& rightComboItems = QList<ComboBoxItem>());
+      const QList<ComboBoxItem>& rightComboItems = QList<ComboBoxItem>(),
+      bool leftMinMaxSlider = false, bool rightMinMaxSlider = false);
   void insertFootNote(QGridLayout* layout);
   QString getUIString(PreferencesItemId id);
   QList<ComboBoxItem> getComboItemList(PreferencesItemId id) const;
@@ -187,6 +188,7 @@ private:
 private slots:
   void onChange();
   void onColorFieldChanged(const TPixel32&, bool);
+  void onSliderChanged(bool);
 
   void onAutoSaveExternallyChanged();
   void onAutoSavePeriodExternallyChanged();

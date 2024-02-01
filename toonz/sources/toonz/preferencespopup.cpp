@@ -1016,7 +1016,7 @@ void PreferencesPopup::onOpenViewerEventLog() {
 
 QWidget* PreferencesPopup::createUI(PreferencesItemId id,
                                     const QList<ComboBoxItem>& comboItems,
-                                    bool isLineEdit) {
+                                    bool isLineEdit, bool useMinMaxSlider) {
   PreferencesItem item = m_pref->getItem(id);
   // create widget depends on the parameter types
   QWidget* widget = nullptr;
@@ -1036,9 +1036,17 @@ QWidget* PreferencesPopup::createUI(PreferencesItemId id,
       for (const ComboBoxItem& item : comboItems)
         combo->addItem(item.first, item.second);
       combo->setCurrentIndex(combo->findData(item.value));
-      ret    = connect(combo, SIGNAL(currentIndexChanged(int)), this,
-                       SLOT(onChange()));
+      ret = connect(combo, SIGNAL(currentIndexChanged(int)), this,
+                    SLOT(onChange()));
       widget = combo;
+    } else if (useMinMaxSlider) {
+      DVGui::IntField* field = new DVGui::IntField(this);
+      field->setRange(item.min.toInt(), item.max.toInt());
+      field->setValue(item.value.toInt());
+      ret = connect(field, SIGNAL(valueEditedByHand()), this, SLOT(onChange()));
+      ret = ret && connect(field, SIGNAL(valueChanged(bool)), this,
+                           SLOT(onSliderChanged(bool)));
+      widget = field;
     } else {  // create IntLineEdit
       assert(item.max.toInt() != -1);
       DVGui::IntLineEdit* field = new DVGui::IntLineEdit(
@@ -1167,10 +1175,10 @@ QGridLayout* PreferencesPopup::insertGroupBoxUI(PreferencesItemId id,
 
 void PreferencesPopup::insertUI(PreferencesItemId id, QGridLayout* layout,
                                 const QList<ComboBoxItem>& comboItems,
-                                bool isLineEdit) {
+                                bool isLineEdit, bool useMinMaxSlider) {
   PreferencesItem item = m_pref->getItem(id);
 
-  QWidget* widget = createUI(id, comboItems, isLineEdit);
+  QWidget* widget = createUI(id, comboItems, isLineEdit, useMinMaxSlider);
   if (!widget) return;
 
   bool isEditBox = false;
@@ -1206,10 +1214,13 @@ void PreferencesPopup::insertUI(PreferencesItemId id, QGridLayout* layout,
 
 //-----------------------------------------------------------------------------
 
-void PreferencesPopup::insertDualUIs(
-    PreferencesItemId leftId, PreferencesItemId rightId, QGridLayout* layout,
-    const QList<ComboBoxItem>& leftComboItems,
-    const QList<ComboBoxItem>& rightComboItems) {
+void PreferencesPopup::insertDualUIs(PreferencesItemId leftId,
+                                     PreferencesItemId rightId,
+                                     QGridLayout* layout,
+                                     const QList<ComboBoxItem>& leftComboItems,
+                                     const QList<ComboBoxItem>& rightComboItems,
+                                     bool leftMinMaxSlider,
+                                     bool rightMinMaxSlider) {
   int row = layout->rowCount();
   int col = 0;
   if (m_pref->getItem(leftId).type != QMetaType::Bool) {
@@ -1221,14 +1232,17 @@ void PreferencesPopup::insertDualUIs(
   innerLay->setMargin(0);
   innerLay->setSpacing(5);
   {
-    innerLay->addWidget(createUI(leftId, leftComboItems), 0);
-    if (m_pref->getItem(leftId).type == QMetaType::Bool &&
-        m_pref->getItem(rightId).type != QMetaType::Bool)
+    innerLay->addWidget(
+        createUI(leftId, leftComboItems, false, leftMinMaxSlider), 0);
+    if ((m_pref->getItem(leftId).type == QMetaType::Bool &&
+         m_pref->getItem(rightId).type != QMetaType::Bool) ||
+        rightMinMaxSlider)
       innerLay->addSpacing(40);
     if (m_pref->getItem(rightId).type != QMetaType::Bool)
       innerLay->addWidget(new QLabel(getUIString(rightId), this), 0,
                           Qt::AlignRight | Qt::AlignVCenter);
-    innerLay->addWidget(createUI(rightId, rightComboItems), 0);
+    innerLay->addWidget(
+        createUI(rightId, rightComboItems, false, rightMinMaxSlider), 0);
     innerLay->addStretch(1);
   }
   layout->addLayout(innerLay, row, col, 1, 2);
@@ -2239,8 +2253,9 @@ QWidget* PreferencesPopup::createPreviewPage() {
   insertUI(generatedMovieViewEnabled, lay);
   QGridLayout* inbetweenfliplay = insertGroupBox(tr("Inbetween Flip"), lay);
   {
+    QList<ComboBoxItem> emptyList;
     insertDualUIs(inbetweenFlipDrawingCount, inbetweenFlipSpeed,
-                  inbetweenfliplay);
+                  inbetweenfliplay, emptyList, emptyList, true, true);
   }
 
 
@@ -2501,6 +2516,25 @@ void PreferencesPopup::onChange() {
     m_pref->setValue(id, groupBox->isChecked());
   else if (LineEdit* lineEdit = dynamic_cast<LineEdit*>(senderWidget))
     m_pref->setValue(id, lineEdit->text());
+  else if (IntField* field = dynamic_cast<IntField*>(senderWidget))
+    m_pref->setValue(id, field->getValue());
+  else
+    return;
+
+  if (m_onEditedFuncMap.contains(id)) (this->*m_onEditedFuncMap[id])();
+}
+
+//-----------------------------------------------------------------------------
+
+void PreferencesPopup::onSliderChanged(bool ignore) {
+  QWidget* senderWidget = qobject_cast<QWidget*>(sender());
+  if (!senderWidget) return;
+  PreferencesItemId id = m_controlIdMap.value(senderWidget);
+
+  if (m_preEditedFuncMap.contains(id)) (this->*m_preEditedFuncMap[id])();
+
+  if (IntField* field = dynamic_cast<IntField*>(senderWidget))
+    m_pref->setValue(id, field->getValue());
   else
     return;
 
