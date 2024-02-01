@@ -652,13 +652,16 @@ void ImportOCACommand::execute() {
 }
 
 OCAIo::OCAInputData::OCAInputData() {
-  m_scene             = TApp::instance()->getCurrentScene()->getScene();
-  m_xsheet            = TApp::instance()->getCurrentXsheet()->getXsheet();
-  m_oprop             = m_scene->getProperties()->getOutputProperties();
 }
 
 bool OCAIo::OCAInputData::load(QString path, QJsonObject &json) { 
-  m_path = path;
+  QFileInfo fi(path);
+  if (fi.isDir()) return false;
+  if (TFilePath(path).getType() != "oca") return false;
+  m_scene     = TApp::instance()->getCurrentScene()->getScene();
+  m_xsheet = TApp::instance()->getCurrentXsheet()->getXsheet();
+  m_oprop  = m_scene->getProperties()->getOutputProperties();
+  m_path      = path;
   m_parentDir = TFilePath(m_path).getParentDir();
   // 1. Open the QFile, read it in a byteArray and close the file
   QFile file;
@@ -1091,7 +1094,8 @@ void ocaImportPopup::rebuildCustomLayout(const TFilePath &fp) {
     optionWidget->setLayout(mainLayout);
     return;
   }
-  if (!m_data->load(fp.getQString(), m_data->getJson())) {
+  QJsonObject ocaObject;
+  if (!m_data->load(fp.getQString(), ocaObject)) {
     DVGui::warning(QObject::tr("ocaImportPopup: Failed to load OCA file: ") + fp.getQString());
     return;
   }
@@ -1248,6 +1252,10 @@ void ocaImportPopup::removeCustomLayout() {
 }
 
 void ocaImportPopup::onFileClicked(const TFilePath &fp) { 
+  QFileInfo fi(fp.getQString());
+  // ignore directories and non oca files....
+  if (fi.isDir()) return;
+  if (fp.getType() != "oca") return;
   if (m_data == nullptr) return;
   QJsonObject ocaObject;
   if (!m_data->load(fp.getQString(), ocaObject)) {
