@@ -236,6 +236,7 @@
 		<file>icons/dark/actions/16/nextkey.svg</file>
     <file>icons/dark/actions/16/prevkey.svg</file>
     <file>icons/dark/actions/16/blankframes.svg</file>
+    <file>icons/dark/actions/16/inbetween_flip.svg</file>
 
 		<file>icons/dark/actions/16/snapshot.svg</file>
 		<file>icons/dark/actions/16/compare.svg</file>

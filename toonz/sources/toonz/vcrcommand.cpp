@@ -6,6 +6,7 @@
 #include "sceneviewer.h"
 #include "stopmotion.h"
 #include "cellselection.h"
+#include "xsheetdragtool.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -263,6 +264,20 @@ public:
   }
 };
 
+//-----------------------------------------------------------------------------
+
+class InbetweenFlipCommand final : public MenuItemHandler {
+public:
+  InbetweenFlipCommand() : MenuItemHandler(MI_InbetweenFlip) {}
+
+  void execute() override {
+    FlipConsole *console = FlipConsole::getCurrent();
+    if (!console) return;
+
+    console->triggerInbetweenFlip();
+  }
+};
+
 //**********************************************************************************
 //    Commands  instantiation
 //**********************************************************************************
@@ -297,3 +312,5 @@ ShortPlayCommand shortPlayCommand;
 
 NextKeyframeCommand nextKeyframeCommand;
 PrevKeyframeCommand prevKeyframeCommand;
+
+InbetweenFlipCommand inbetweenFlipCommand;

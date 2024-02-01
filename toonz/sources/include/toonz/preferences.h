@@ -473,6 +473,10 @@ public:
   bool isGeneratedMovieViewEnabled() const {
     return getBoolValue(generatedMovieViewEnabled);
   }
+  int getInbetweenFlipDrawingCount() const {
+    return getIntValue(inbetweenFlipDrawingCount);
+  }
+  int getInbetweenFlipSpeed() const { return getIntValue(inbetweenFlipSpeed); }
 
   // Onion Skin  tab
   bool isOnionSkinEnabled() const { return getBoolValue(onionSkinEnabled); }

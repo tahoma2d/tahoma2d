@@ -166,6 +166,8 @@ enum PreferencesItemId {
   fitToFlipbook,
   generatedMovieViewEnabled,
   shortPlayFrameCount,
+  inbetweenFlipDrawingCount,
+  inbetweenFlipSpeed,
 
   //----------
   // Onion Skin

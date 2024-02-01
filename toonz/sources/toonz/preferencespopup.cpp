@@ -1436,6 +1436,8 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {previewAlwaysOpenNewFlip, tr("Display in a New Flipbook Window")},
       {fitToFlipbook, tr("Fit to Flipbook")},
       {generatedMovieViewEnabled, tr("Open Flipbook after Rendering")},
+      {inbetweenFlipDrawingCount, tr("Drawings:")},
+      {inbetweenFlipSpeed, tr("Flip Speed (msec):")},
 
       // Onion Skin
       {onionSkinEnabled, tr("Onion Skin ON")},
@@ -2235,6 +2237,12 @@ QWidget* PreferencesPopup::createPreviewPage() {
   insertUI(previewAlwaysOpenNewFlip, lay);
   insertUI(fitToFlipbook, lay);
   insertUI(generatedMovieViewEnabled, lay);
+  QGridLayout* inbetweenfliplay = insertGroupBox(tr("Inbetween Flip"), lay);
+  {
+    insertDualUIs(inbetweenFlipDrawingCount, inbetweenFlipSpeed,
+                  inbetweenfliplay);
+  }
+
 
   lay->setRowStretch(lay->rowCount(), 1);
   widget->setLayout(lay);
