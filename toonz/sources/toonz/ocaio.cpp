@@ -44,6 +44,7 @@
 #include <QSpinBox>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QMessageBox>
 
 using namespace OCAIo;
 
@@ -649,6 +650,8 @@ void ImportOCACommand::execute() {
   TApp::instance()->getCurrentScene()->notifyCastChange();
   TApp::instance()->getCurrentScene()->notifySceneChanged();
   progressDialog->close();
+  if (!data->getMessage().isEmpty())
+    QMessageBox::warning(0, "OCA import", data->getMessage());
 }
 
 OCAIo::OCAInputData::OCAInputData() {
@@ -809,7 +812,7 @@ void OCAIo::OCAInputData::setSceneData() {
 /// <param name="jsonLayer"></param>
 void OCAIo::OCAInputData::importOcaLayer(
     const QJsonObject &jsonLayer, QMap<QString, LevelOptions> importOptionMap) {
-  if (jsonLayer["type"] == "paintlayer") {
+  if (jsonLayer["type"] == "paintlayer" || jsonLayer["type"] == "grouplayer") {
     if (jsonLayer["blendingMode"].toString() != "normal") {
       DVGui::warning(QObject::tr("importOcaLayer : blending modes not implemented ") +
                   jsonLayer["name"].toString());
@@ -874,13 +877,27 @@ void OCAIo::OCAInputData::importOcaLayer(
 
     sl->setName(jsonLayer["name"].toString().toStdWString());
     std::vector<TFrameId> fids;
+    std::vector<int> frameNumbers;
     std::vector<int> durations;
 
     for (auto frame : jsonLayer["frames"].toArray()) {
-      importOcaFrame(frame.toObject(), sl);
-      TFrameId fid(frame.toObject()["frameNumber"].toInt());
+      auto jsonFrame = frame.toObject();
+      importOcaFrame(jsonFrame, sl);
+      TFrameId fid;
+#ifdef USE_EMPTY_FRAME
+      // the exporter marks stop frames as blank too... 
+      if (Preferences::instance()->isImplicitHoldEnabled()
+                   && (jsonFrame["name"] == "_blank" ||
+          jsonFrame["fileName"].toString() == ""))
+        fid = TFrameId(TFrameId::STOP_FRAME); //EMPTY_FRAME
+      else
+        fid = TFrameId(jsonFrame["frameNumber"].toInt());
+#else
+      fid = TFrameId(jsonFrame["frameNumber"].toInt());
+#endif
       fids.push_back(fid);
-      durations.push_back(frame.toObject()["duration"].toInt());
+      frameNumbers.push_back(jsonFrame["frameNumber"].toInt());
+      durations.push_back(jsonFrame["duration"].toInt());
     }
     
     // Shouldn't api provide a simple method to expose the level using fids in xsheet timing ?
@@ -890,25 +907,18 @@ void OCAIo::OCAInputData::importOcaLayer(
       frameOffset = -m_startTime + 1;
     }
     //for (auto fid : fids) {
-    for (int f = 0; f < fids.size() && f < durations.size(); f++) {
+    for (int f = 0; f < fids.size() && f < frameNumbers.size() && f < durations.size(); f++) {
       auto fid = fids[f];
+      auto frameNumber = frameNumbers[f];
       auto duration = durations[f];
-      if (fid.getNumber() <= 0) {
-        DVGui::warning(
-            QObject::tr("importOcaLayer : skipping frame -1! ") +
-            jsonLayer["name"].toString());
-        continue;
-      }
-      int frame = fid.getNumber() - 1 + frameOffset;
       // -1 converts framenumber to index, frameOffset moves the frame range above 0...
-      m_xsheet->setCell(frame, emptyColumnIndex,
-                        TXshCell(sl, fid));
-      // sl->setFrame(fid, img);
+      int frame = frameNumber - 1 + frameOffset;
+      m_xsheet->setCell(frame, emptyColumnIndex, TXshCell(sl, fid)); // should work in all cases (real frame or empty frame)
       if (!Preferences::instance()->isImplicitHoldEnabled()) {
         // add cells to hold using image duration
-        for (int f = frame + 1; f <= frame + duration;
-            f++) {
-          m_xsheet->setCell(f, emptyColumnIndex, TXshCell(sl, fid));
+        for (int f2 = frame + 1; f2 <= frame + duration;
+            f2++) {
+          m_xsheet->setCell(f2, emptyColumnIndex, TXshCell(sl, fid));
         }
       }
     }
@@ -925,25 +935,27 @@ void OCAIo::OCAInputData::importOcaLayer(
         m_xsheet->getStageObject(TStageObjectId::ColumnId(emptyColumnIndex));
     stageColumn->setName(jsonLayer["name"].toString().toStdString());
     //std::string str = m_columnName.toStdString();
-    column->setOpacity(byteFromFloat(
-        jsonLayer["opacity"].toDouble() *
-        255.0));  // not sure if byteFromFloat is really necessary...
-    // confusing but preview is render visibility
-    column->setPreviewVisible(!jsonLayer["reference"].toBool());
-    // and Camstand is viewport visibility
-    column->setCamstandVisible(jsonLayer["visible"].toBool());
+    if (column && jsonLayer["type"].toString() !=
+                      "grouplayer") {  // not sure why it's necessary
+      column->setOpacity(byteFromFloat(
+          jsonLayer["opacity"].toDouble() *
+          255.0));  // not sure if byteFromFloat is really necessary...
+      // confusing but preview is render visibility
+      column->setPreviewVisible(!jsonLayer["reference"].toBool());
+      // and Camstand is viewport visibility
+      column->setCamstandVisible(jsonLayer["visible"].toBool());
 
-    // jsonLayer["label"]
-    // https://github.com/RxLaboratory/OCA/blob/master/src-docs/docs/specs/layer-labels.md
-    // Most drawing and animation applications are able to
-    // label the layers. These labels are often just different colors to display
-    // the layers and used to differentiate them. OCA stores a simple number to
-    // identify these labels. If this number is less than 0, it means the layer
-    // is not labelled.
-    // We use column filters...
-    column->setColorFilterId(jsonLayer["label"].toInt());
-    // column->setColorTag(jsonLayer["label"].toInt()); what is the difference
-    // between ColorTag and  ColorFilterId ??
+      // jsonLayer["label"]
+      // https://github.com/RxLaboratory/OCA/blob/master/src-docs/docs/specs/layer-labels.md
+      // Most drawing and animation applications are able to
+      // label the layers. These labels are often just different colors to
+      // display the layers and used to differentiate them. OCA stores a simple
+      // number to identify these labels. If this number is less than 0, it
+      // means the layer is not labelled. We use column filters...
+      column->setColorFilterId(jsonLayer["label"].toInt());
+      // column->setColorTag(jsonLayer["label"].toInt()); what is the difference
+      // between ColorTag and  ColorFilterId ??
+    }
 
     ////// unused OCA properties:
     // - jsonLayer["animated"] Whether this layer is a single frame or not.
@@ -980,7 +992,18 @@ void OCAIo::OCAInputData::importOcaLayer(
       // I guess we dont need to deal with jsonLayer["passThrough"] ?
       // when passThrough is false, the group content *must* be merged in rendering, 
       // else the group is only used as a way to group the layers in the UI of the application
+      auto jsonChildLayer = layer.toObject();
+      if (jsonLayer["type"] != "grouplayer") {
+        DVGui::warning(QObject::tr("implementation problem: child layer's ") +
+                       jsonChildLayer["name"].toString() +
+                       " parent is not a group layer !? : " +
+                       jsonLayer["name"].toString());
+        continue;
+      }
       importOcaLayer(layer.toObject(), importOptionMap);
+      m_message += "child layer " + jsonChildLayer["name"].toString() +
+                   " was imported but not grouped in " +
+                   jsonLayer["name"].toString() + "\n";
     }
 #endif
 
@@ -1117,6 +1140,11 @@ void ocaImportPopup::rebuildCustomLayout(const TFilePath &fp) {
   const Preferences &prefs = *Preferences::instance();
   for (auto layer : layers) {
     auto jsonLayer = layer.toObject();
+    if (jsonLayer["frames"].toArray().size() == 0) {
+      // skip empty levels (probably grouplayers)
+      row = 0;
+      continue;
+    }
     levelMergeStatusComboList << new QComboBox();
     auto levelMergeStatusCombo = levelMergeStatusComboList.back();
     levelMergeStatusCombo->addItems(mergingStatus);
@@ -1230,10 +1258,11 @@ void ocaImportPopup::rebuildCustomLayout(const TFilePath &fp) {
 
     mainLayout->addWidget(premultiplyCB, row, column++);
     mainLayout->addWidget(whiteTranspCB, row, column++);
-    if (json["colorDepth"].toString() != "U8")
-      mainLayout->addWidget(colorSpaceGammaSlider, row, column++);
-    mainLayout->addWidget(antialiasLabel, row, column++);
-    mainLayout->addWidget(antialiasSlider, row, column++);
+    // no ugly sliders (turn to int fields if desired...)
+    //if (json["colorDepth"].toString() != "U8")
+    //  mainLayout->addWidget(colorSpaceGammaSlider, row, column++);
+    //mainLayout->addWidget(antialiasLabel, row, column++);
+    //mainLayout->addWidget(antialiasSlider, row, column++);
     row++;
     column = 0;
   }

@@ -16,6 +16,8 @@
 #include <QJsonArray>
 #include <QLabel>
 
+#define USE_childLayers
+#define USE_EMPTY_FRAME
 
 class ToonzScene;
 class TXshCellColumn;
@@ -89,6 +91,7 @@ class OCAInputData : public OCAData {
   float m_antialiasSoftness = 0.0;
   bool m_whiteTransp        = true;
   bool m_doPremultiply      = true;
+  QString m_message         = "";
 
 public:
   OCAInputData();
@@ -106,6 +109,7 @@ public:
   QJsonObject &getJson() { return m_json; }
   TFilePath &getParentDir() { return m_parentDir; }
   ToonzScene *getScene() { return m_scene; }
+  QString &getMessage() { return m_message; }
 };
 }  // namespace OCAIo
 
