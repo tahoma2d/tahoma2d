@@ -291,8 +291,7 @@ ToonzScene::ToonzScene()
   m_childStack = new ChildStack(this);
   m_properties = new TSceneProperties();
   m_levelSet   = new TLevelSet();
-  m_project    = new TProject();
-  m_project->addRef();
+  m_project    = std::make_shared<TProject>();
 }
 
 //-----------------------------------------------------------------------------
@@ -302,9 +301,6 @@ ToonzScene::~ToonzScene() {
   delete m_levelSet;
   delete m_childStack;
   delete m_contentHistory;
-
-  assert(m_project);
-  if (m_project) m_project->release();
 }
 
 //-----------------------------------------------------------------------------
@@ -329,19 +325,14 @@ void ToonzScene::clear() {
 
 //-----------------------------------------------------------------------------
 
-void ToonzScene::setProject(TProject *project) {
+void ToonzScene::setProject(std::shared_ptr<TProject> project) {
   assert(project);
-
-  if (project != m_project) {
-    if (project) project->addRef();
-    if (m_project) m_project->release();
-    m_project = project;
-  }
+  m_project = project;
 }
 
 //-----------------------------------------------------------------------------
 
-TProject *ToonzScene::getProject() const { return m_project; }
+std::shared_ptr<TProject> ToonzScene::getProject() const { return m_project; }
 
 //-----------------------------------------------------------------------------
 
@@ -404,11 +395,11 @@ int ToonzScene::loadFrameCount(const TFilePath &fp) {
 void ToonzScene::loadNoResources(const TFilePath &fp) {
   clear();
 
-  TProjectManager *pm    = TProjectManager::instance();
-  TProjectP sceneProject = pm->loadSceneProject(fp);
+  TProjectManager *pm = TProjectManager::instance();
+  auto sceneProject = pm->loadSceneProject(fp);
   if (!sceneProject) return;
 
-  setProject(sceneProject.getPointer());
+  setProject(sceneProject);
 
   loadTnzFile(fp);
   getXsheet()->updateFrameCount();
@@ -1297,7 +1288,7 @@ TXshLevel *ToonzScene::loadLevel(const TFilePath &actualPath,
 //-----------------------------------------------------------------------------
 
 TFilePath ToonzScene::decodeFilePath(const TFilePath &path) const {
-  TProject *project   = getProject();
+  auto project = getProject();
   bool projectIsEmpty = project->getFolderCount() ? false : true;
   TFilePath fp        = path;
 
@@ -1395,7 +1386,7 @@ TFilePath ToonzScene::decodeFilePath(const TFilePath &path) const {
 
 TFilePath ToonzScene::codeFilePath(const TFilePath &path) const {
   TFilePath fp(path);
-  TProject *project = getProject();
+  auto project = getProject();
 
   Preferences::PathAliasPriority priority =
       Preferences::instance()->getPathAliasPriority();
@@ -1438,7 +1429,7 @@ bool ToonzScene::codeFilePathWithSceneFolder(TFilePath &path) const {
 
 TFilePath ToonzScene::getDefaultLevelPath(int levelType,
                                           std::wstring levelName) const {
-  TProject *project = getProject();
+  auto project = getProject();
   assert(project);
   TFilePath levelPath;
   switch (levelType) {
@@ -1522,7 +1513,7 @@ TFilePath ToonzScene::decodeSavePath(TFilePath path) const {
 //-----------------------------------------------------------------------------
 
 bool ToonzScene::isExternPath(const TFilePath &fp) const {
-  TProject *project = m_project;
+  auto project = m_project;
   assert(project);
   for (int i = 0; i < project->getFolderCount(); i++) {
     if (project->getFolderName(i) == "scenes") continue;
