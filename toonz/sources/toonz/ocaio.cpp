@@ -552,11 +552,17 @@ void ExportOCACommand::execute() {
 /// - expose per layer options in ui : whiteTransp / doPremultiply
 /// colorSpaceGamma (antialiasSoftness / dpi (currently hardcoded or using
 /// preference if any) not exposed)
+/// - FIXED level settings telling that images are in extra folder (this happens
+/// when the level path is not valid) - This was causing a crash when saving scene later (copyFile failed...) : 
+/// find first real frame (with non empty file path)
+/// - avoid duplicate names with load mergingStatus : increment imported level's
+/// name when necessary (and column's name too...)
+/// - import child layers as normal layers, but popup message at the end of the import to notify the user that the layer's groups have been ignored.
+/// - ocaImportPopup (selective import ui) : fix the case of no filename or folder filename name in your test/screenshot (Attempting to load my OCA exported test scene, this UI appears bit buggy and cumbersome:).
+/// - Insert stop frames after the last frame + its duration (stop frames are actually already there as "_blank" frames)
 
 /// TODO:
-/// - test the case of child layer (subxsheet) > #define USE_childLayers
-/// - avoid duplicate names with load mergingStatus : increment importer level
-/// name
+/// - ocaImportPopup: fold import options by default (see ex: filebrowserpopup.cpp showSubsequenceButton)
 /// - add "replace","merge" to mergingStatus
 /// merge would add only missing frames ?
 /// replace would avoid duplicate (but load would still be usefull to compare
@@ -582,7 +588,6 @@ void ExportOCACommand::execute() {
 /// - increment column names on duplicate columns
 /// - frame position: import from OCA until glTF format support is added
 /// 
-/// DONE:
 /// </summary>
 
 
@@ -736,22 +741,28 @@ void OCAIo::OCAInputData::read(const QJsonObject &json,
   m_bgBlue                = bgColorArray[2].toDouble();
   m_bgAlpha               = bgColorArray[3].toDouble();
   m_layers                = json.value("layers").toArray();
+  auto flattenLayers      = getFlattenLayers(m_layers);
 
   int col = 0;
-  for (auto layer : m_layers) {
+  for (auto layer : flattenLayers) {
     auto jsonLayer = layer.toObject();
     QString layername = jsonLayer["name"].toString();
     if (m_progressDialog) {
       m_progressDialog->setLabelText(QObject::tr("Layer: ") + layername);
-      m_progressDialog->setMaximum(m_xsheet->getColumnCount());
-      m_progressDialog->setValue(col);
-      QCoreApplication::processEvents();
+      m_progressDialog->setMaximum(importLayerMap.size());
     }
     if (importLayerMap.contains(layername)) {
       switch (importLayerMap[layername]) { 
       case 0:
         DVGui::info(QObject::tr("OCA importing layer : ") + layername);
         importOcaLayer(jsonLayer, importOptionMap);
+        if (parentMap.contains(jsonLayer["name"].toString())) {
+          m_message += "child layer " + jsonLayer["name"].toString() +
+                       " was imported but not grouped in " +
+                       parentMap[jsonLayer["name"].toString()] + "\n";
+        }
+        m_progressDialog->setValue(col);
+
         break;
       case 1:
         DVGui::info(QObject::tr("OCA skipping layer : ") + layername);
@@ -817,12 +828,38 @@ void OCAIo::OCAInputData::importOcaLayer(
       DVGui::warning(QObject::tr("importOcaLayer : blending modes not implemented ") +
                   jsonLayer["name"].toString());
     }
+    int firstRealFrameIndex = findFirstRealFrameIndex(jsonLayer);
+    if (firstRealFrameIndex == -1) {
+      DVGui::warning(
+          QObject::tr("importOcaLayer : layer ") +
+                     jsonLayer["name"].toString() + " has not image frame to import : skipping...");
+      return;
+    }
     //DVGui::info(QObject::tr("importOcaLayer : ") +
     //            jsonLayer["name"].toString());
     auto levelType   = OVL_XSHLEVEL; // OVL_XSHLEVEL is for raster images,
+    // auto increment level and column name...
+    auto layerName = jsonLayer["name"].toString();
+    auto levelSet  = getScene()->getLevelSet();
+    while (levelSet->hasLevel(layerName.toStdWString())) {
+      if (layerName.indexOf("_") == -1) {
+        layerName += "_1";
+      } else {
+        auto tokens = layerName.split("_");
+        auto numStr = tokens.back();
+        bool ok;
+        int version = numStr.toInt(&ok);
+        if (ok)
+          layerName = layerName + "_" + QString::number(++version);
+        else
+          layerName += "_1";
+      }
+    }
 
     //  I am using my own preference m_dpi / m_antialiasSoftness / m_whiteTransp / m_doPremultiply
     auto resolution  = TDimension(m_width, m_height);
+    // problem : ToonzScene::createNewLevel use LevelName for building level's
+    // filepath : change the name later with level->setName ! not here...
     TXshLevel *level = m_scene->createNewLevel(
         levelType, jsonLayer["name"].toString().toStdWString(), resolution,
         m_dpi);
@@ -836,12 +873,13 @@ void OCAIo::OCAInputData::importOcaLayer(
     auto frames = jsonLayer["frames"].toArray();
     //bool formatSpecified = false;
     LevelProperties *lp  = sl->getProperties();
-    if (frames.size() > 0) {
-      auto jsonFrame      = frames[0].toObject();
+    if (frames.size() > 0 && firstRealFrameIndex != -1) {
+      auto jsonFrame = frames[firstRealFrameIndex].toObject();
       auto levelPath = TFilePath(m_parentDir.getQString() + "/" +
                             jsonFrame["fileName"].toString());
-
-    }
+      sl->setPath(levelPath, true); // attempts to fix /extras folder bug
+    } 
+    // else sl->setPath(TFilePath ("")); will never happen
     if (importOptionMap.contains(jsonLayer["name"].toString())) {
     //if (importOptionMap.size()>0) {
       auto option = importOptionMap[jsonLayer["name"].toString()];
@@ -875,7 +913,7 @@ void OCAIo::OCAInputData::importOcaLayer(
     // Why is colorSpaceGamma disabled in the level settings ui ??
     // see render>output settings> color settings
 
-    sl->setName(jsonLayer["name"].toString().toStdWString());
+    sl->setName(layerName.toStdWString());
     std::vector<TFrameId> fids;
     std::vector<int> frameNumbers;
     std::vector<int> durations;
@@ -883,18 +921,17 @@ void OCAIo::OCAInputData::importOcaLayer(
     for (auto frame : jsonLayer["frames"].toArray()) {
       auto jsonFrame = frame.toObject();
       importOcaFrame(jsonFrame, sl);
+
       TFrameId fid;
-#ifdef USE_EMPTY_FRAME
-      // the exporter marks stop frames as blank too... 
+      //fid = TFrameId(jsonFrame["frameNumber"].toInt());
+      // the exporter names stop frames as _blank too... 
       if (Preferences::instance()->isImplicitHoldEnabled()
                    && (jsonFrame["name"] == "_blank" ||
           jsonFrame["fileName"].toString() == ""))
         fid = TFrameId(TFrameId::STOP_FRAME); //EMPTY_FRAME
       else
         fid = TFrameId(jsonFrame["frameNumber"].toInt());
-#else
-      fid = TFrameId(jsonFrame["frameNumber"].toInt());
-#endif
+
       fids.push_back(fid);
       frameNumbers.push_back(jsonFrame["frameNumber"].toInt());
       durations.push_back(jsonFrame["duration"].toInt());
@@ -933,7 +970,9 @@ void OCAIo::OCAInputData::importOcaLayer(
     auto column = m_xsheet->getColumn(emptyColumnIndex);
     TStageObject *stageColumn =
         m_xsheet->getStageObject(TStageObjectId::ColumnId(emptyColumnIndex));
-    stageColumn->setName(jsonLayer["name"].toString().toStdString());
+    //stageColumn->setName(jsonLayer["name"].toString().toStdString());
+
+    stageColumn->setName(layerName.toStdString());
     //std::string str = m_columnName.toStdString();
     if (column && jsonLayer["type"].toString() !=
                       "grouplayer") {  // not sure why it's necessary
@@ -983,29 +1022,6 @@ void OCAIo::OCAInputData::importOcaLayer(
     // this could be a great base to implement an onion skin filter... (like TVPaint has)
     // (ex : onion skin displays only 1 prev + 1 next key drawing, etc...)
     // Unfortunately, OCA doesn't support that, but it could be added with the metadata tag
-
-#ifdef USE_childLayers
-    // TODO :
-    // recursion for sublayers : nothing special to do ?
-    // see CHILD_XSHLEVEL ?
-    for (auto layer : jsonLayer["childLayers"].toArray()) {
-      // I guess we dont need to deal with jsonLayer["passThrough"] ?
-      // when passThrough is false, the group content *must* be merged in rendering, 
-      // else the group is only used as a way to group the layers in the UI of the application
-      auto jsonChildLayer = layer.toObject();
-      if (jsonLayer["type"] != "grouplayer") {
-        DVGui::warning(QObject::tr("implementation problem: child layer's ") +
-                       jsonChildLayer["name"].toString() +
-                       " parent is not a group layer !? : " +
-                       jsonLayer["name"].toString());
-        continue;
-      }
-      importOcaLayer(layer.toObject(), importOptionMap);
-      m_message += "child layer " + jsonChildLayer["name"].toString() +
-                   " was imported but not grouped in " +
-                   jsonLayer["name"].toString() + "\n";
-    }
-#endif
 
     TApp::instance()->getCurrentLevel()->setLevel(
         level->getSimpleLevel());  // selects the last created level
@@ -1075,8 +1091,33 @@ void OCAIo::OCAInputData::importOcaFrame(const QJsonObject &jsonFrame,
   }
 }
 
+int OCAIo::OCAInputData::findFirstRealFrameIndex(const QJsonObject &jsonLayer) {
+  auto frames             = jsonLayer["frames"].toArray();
+  for (int i = 0; i < frames.size(); i++) {
+    auto jsonFrame = frames[i].toObject();
+    if (jsonFrame["fileName"] != "") {
+      return i;
+    }
+  }
+  return -1;
+}
+
+QJsonArray OCAIo::OCAInputData::getFlattenLayers(QJsonArray layers) { 
+  QJsonArray flattenLayers;
+  for (auto layer : layers) {
+    flattenLayers.append(layer);
+    for (auto childLayer : layer.toObject()["childLayers"].toArray()) {
+      parentMap[childLayer.toObject()["name"].toString()] =
+          layer.toObject()["name"].toString();
+      flattenLayers.append(childLayer);
+    }
+  }
+  return flattenLayers;
+}
+
 void OCAIo::OCAInputData::reset() { 
     m_json = QJsonObject(); 
+    parentMap.clear();
 }
 
 /// <summary>
@@ -1135,13 +1176,23 @@ void ocaImportPopup::rebuildCustomLayout(const TFilePath &fp) {
   // Read layers information to build the ui
   auto json   = m_data->getJson();
   auto layers = json.value("layers").toArray();
+  // flat list of all layers...
+  auto flattenLayers = m_data->getFlattenLayers(layers);
   int row = 0, column = 0;
   auto levelSet = m_data->getScene()->getLevelSet();
   const Preferences &prefs = *Preferences::instance();
-  for (auto layer : layers) {
+  //for (auto layer : layers) {
+  for (auto layer : flattenLayers) { // include children...
     auto jsonLayer = layer.toObject();
     if (jsonLayer["frames"].toArray().size() == 0) {
       // skip empty levels (probably grouplayers)
+      //if (jsonLayer["type"].toString() == "grouplayer" || jsonLayer["childLayers"].toArray().size() > 0) ...
+      row = 0;
+      continue;
+    }
+    int firstRealFrameIndex = m_data->findFirstRealFrameIndex(jsonLayer);
+    if (firstRealFrameIndex == -1) {
+      // skip levels with no image
       row = 0;
       continue;
     }
@@ -1213,7 +1264,7 @@ void ocaImportPopup::rebuildCustomLayout(const TFilePath &fp) {
 
     auto frames = jsonLayer["frames"].toArray();
     if (frames.size() > 0) {
-      auto jsonFrame = frames[0].toObject();
+      auto jsonFrame = frames[firstRealFrameIndex].toObject();
       auto levelPath = TFilePath(m_data->getParentDir().getQString() + "/" +
                                  jsonFrame["fileName"].toString());
       layerPathLabelList << new QLabel(levelPath.getQString());
@@ -1245,7 +1296,7 @@ void ocaImportPopup::rebuildCustomLayout(const TFilePath &fp) {
       m_importOptionMap[jsonLayer["name"].toString()] = options;
 
       //// The comparison to set levelMergeStatusCombo only uses layer names for
-      //// now...
+      //// now... NOT filenames...
       // 
       // if (levelSet->hasLevel(*m_data->getScene(), levelPath)) {
       //  levelMergeStatusCombo->setCurrentIndex(1);

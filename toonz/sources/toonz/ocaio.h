@@ -16,7 +16,6 @@
 #include <QJsonArray>
 #include <QLabel>
 
-#define USE_childLayers
 #define USE_EMPTY_FRAME
 
 class ToonzScene;
@@ -105,6 +104,9 @@ public:
   void importOcaLayer(const QJsonObject &jsonLayer,
                       QMap<QString, LevelOptions> importOptionMap);
   void importOcaFrame(const QJsonObject &jsonFrame, TXshSimpleLevel *sl);
+  int findFirstRealFrameIndex(const QJsonObject &jsonLayer);
+  QJsonArray getFlattenLayers(QJsonArray layers);
+  QMap<QString, QString> parentMap;  // groupsMap["child"] = "parent";
   void reset();
   QJsonObject &getJson() { return m_json; }
   TFilePath &getParentDir() { return m_parentDir; }
