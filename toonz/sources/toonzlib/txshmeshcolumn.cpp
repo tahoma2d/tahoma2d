@@ -54,6 +54,7 @@ TXshColumn *TXshMeshColumn::clone() const {
   column->m_first = m_first;
   column->setColorTag(getColorTag());
   column->setColorFilterId(getColorFilterId());
+  column->setFolderIdStack(getFolderIdStack());
 
   return column;
 }
@@ -115,6 +116,8 @@ void TXshMeshColumn::saveData(TOStream &os) {
   }
   // cell marks
   saveCellMarks(os);
+  // folder info
+  saveFolderInfo(os);
 }
 
 //------------------------------------------------------------------
@@ -173,6 +176,8 @@ void TXshMeshColumn::loadData(TIStream &is) {
 
       is.closeChild();
     } else if (loadCellMarks(tagName, is)) {
+      is.closeChild();
+    } else if (loadFolderInfo(tagName, is)) {
       is.closeChild();
     } else
       is.skipCurrentTag();

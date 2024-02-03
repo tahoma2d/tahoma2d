@@ -1462,6 +1462,8 @@ void TCellSelection::setKeyframes() {
 
   int row = m_range.m_r0, col = m_range.m_c0;
 
+  if (xsh->getColumn(col) && xsh->getColumn(col)->getFolderColumn()) return;
+
   const TXshCell &cell = xsh->getCell(row, col);
   if (cell.getSoundLevel() || cell.getSoundTextLevel()) return;
 

@@ -39,6 +39,8 @@
 #include "toonz/fxcommand.h"
 #include "toonz/preferences.h"
 #include "toonz/tstageobjectid.h"
+#include "toonz/columnfan.h"
+#include "toonz/txshfoldercolumn.h"
 
 #include "../toonz/xsheetviewer.h"
 
@@ -322,6 +324,7 @@ void deleteColumnsWithoutUndo(std::set<int> *indices,
     if (!column) continue;
     TFx *fx = column->getFx();
     if (fx) leaves.insert(fx);
+    if (column->getFolderColumn()) xsh->openCloseFolder(index, true);
   }
 
   // e poi ...
@@ -803,6 +806,342 @@ void ColumnCmd::insertEmptyColumn(int index) {
 }
 
 //*************************************************************************
+//    Group Columns  Command
+//*************************************************************************
+
+class GroupColumnsUndo final : public ColumnCommandUndo {
+  int m_folderId;
+  int m_folderCol;
+  std::vector<std::pair<int,QStack<int>>> m_oldIndices;
+
+public:
+  GroupColumnsUndo(const std::set<int> &indices) { initialize(indices); }
+
+  bool isConsistent() const override { return true; }
+
+  void redo() const override;
+  void undo() const override;
+
+  int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override {
+    return QObject::tr("Group Columns");
+  }
+
+  int getHistoryType() override { return HistoryType::Xsheet; }
+
+private:
+  void initialize(const std::set<int> &indices);
+};
+
+//------------------------------------------------------
+
+void GroupColumnsUndo::initialize(const std::set<int> &indices) {
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+
+  m_folderId = xsh->getNewFolderId();
+  m_folderCol = *indices.rbegin() + 1;
+
+  std::set<int>::reverse_iterator it;
+
+  for (it = indices.rbegin(); it != indices.rend(); it++) {
+    if (*it < 0) continue;
+    TXshColumn *column = xsh->getColumn(*it);
+    if (!column) continue;
+
+    m_oldIndices.push_back(std::make_pair(*it, column->getFolderIdStack()));
+  }
+}
+
+//------------------------------------------------------
+
+void GroupColumnsUndo::redo() const {
+  if (!m_oldIndices.size()) return;
+
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+
+  // Create the new folder column
+  xsh->insertColumn(m_folderCol, TXshColumn::eFolderType);
+
+  TStageObject *obj =
+      xsh->getStageObject(TStageObjectId::ColumnId(m_folderCol));
+  QString str = "Folder" + QString::number(m_folderId);
+  obj->setName(str.toStdString());
+
+
+  TXshFolderColumn *folderColumn =
+      xsh->getColumn(m_folderCol)->getFolderColumn();
+
+  folderColumn->setFolderColumnFolderId(m_folderId);
+
+  // Set folder column's folderstack based on 1st (top most) column
+  TXshColumn *topColumn   = xsh->getColumn(m_oldIndices[0].first);
+  QStack<int> addToFolder = topColumn->getFolderIdStack();
+
+  folderColumn->setFolderIdStack(addToFolder);
+
+  // Build newfolderstack list for each column
+  addToFolder.push(m_folderId);
+
+  // Consolidate selection under new column and link them to folder
+  int subfolder = -1;
+  int col       = m_oldIndices.begin()->first;
+  for (int i = 0; i < m_oldIndices.size(); i++) {
+    TXshColumn *column = xsh->getColumn(m_oldIndices[i].first);
+
+    if (subfolder >= 0 && !column->isContainedInFolder(subfolder)) {
+      addToFolder.pop();
+      if (addToFolder.size())
+        subfolder = addToFolder.top();
+      else
+        subfolder = -1;
+    }
+
+    column->setFolderId(m_folderId);
+    column->setFolderIdStack(addToFolder);
+    xsh->moveColumn(m_oldIndices[i].first, col--);
+
+    if (column->getFolderColumn()) {
+      subfolder = column->getFolderColumn()->getFolderColumnFolderId();
+      addToFolder.push(subfolder);
+    }
+  }
+
+  app->getCurrentScene()->setDirtyFlag(true);
+  app->getCurrentXsheet()->notifyXsheetChanged();
+  app->getCurrentObject()->notifyObjectIdSwitched();
+}
+
+//------------------------------------------------------
+
+void GroupColumnsUndo::undo() const {
+  if (!m_oldIndices.size()) return;
+
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+
+  // Move columns back and restore folder links
+  int col = m_oldIndices.begin()->first - m_oldIndices.size() + 1;
+  for (int i = m_oldIndices.size() - 1; i >= 0; i--) {
+    TXshColumn *column = xsh->getColumn(col);
+
+    for (auto o : Orientations::all()) {
+      ColumnFan *columnFan = xsh->getColumnFan(o);
+      if(!columnFan->isVisible(col)) columnFan->show(col);
+    }
+
+    column->setFolderIdStack(m_oldIndices[i].second);
+
+    xsh->moveColumn(col++, m_oldIndices[i].first);
+  }
+
+  // Remove the folder
+  xsh->removeColumn(m_folderCol);
+
+  app->getCurrentScene()->setDirtyFlag(true);
+  app->getCurrentXsheet()->notifyXsheetChanged();
+  app->getCurrentObject()->notifyObjectIdSwitched();
+}
+
+//======================================================
+
+void ColumnCmd::groupColumns(const std::set<int> &indices) {
+  std::set<int> list;
+
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+
+  std::set<int>::iterator it;
+
+  for (it = indices.begin(); it != indices.end(); it++) {
+    if (*it < 0) continue;
+    TXshColumn *column = xsh->getColumn(*it);
+    if (!column) continue;
+
+    list.insert(*it);
+  }
+
+  if (list.empty()) return;
+
+  std::unique_ptr<ColumnCommandUndo> undo(new GroupColumnsUndo(list));
+  if (undo->isConsistent()) {
+    undo->redo();
+    TUndoManager::manager()->add(undo.release());
+  }
+}
+
+//*************************************************************************
+//    Ungroup Columns  Command
+//*************************************************************************
+
+class UngroupColumnsUndo final : public ColumnCommandUndo {
+  std::vector<std::pair<int, QStack<int>>> m_oldIndices;
+  std::vector<std::pair<int, QStack<int>>> m_newIndices;
+  std::vector<int> m_oldFolderIds;
+
+public:
+  UngroupColumnsUndo(std::vector<std::pair<int, QStack<int>>> oldIndices,
+                     std::vector<std::pair<int, QStack<int>>> newIndices)
+      : m_oldIndices(oldIndices), m_newIndices(newIndices) {}
+
+  bool isConsistent() const override { return true; }
+
+  void redo() const override;
+  void undo() const override;
+
+  int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override {
+    return QObject::tr("Ungroup Columns");
+  }
+
+  int getHistoryType() override { return HistoryType::Xsheet; }
+};
+
+//------------------------------------------------------
+
+void UngroupColumnsUndo::redo() const {
+  if (!m_oldIndices.size()) return;
+
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+
+  for (int i = 0; i < m_oldIndices.size(); i++) {
+    TXshColumn *column = xsh->getColumn(m_oldIndices[i].first);
+    column->setFolderIdStack(m_newIndices[i].second);
+
+    xsh->moveColumn(m_oldIndices[i].first, m_newIndices[i].first);
+  }
+
+  app->getCurrentScene()->setDirtyFlag(true);
+  app->getCurrentXsheet()->notifyXsheetChanged();
+  app->getCurrentObject()->notifyObjectIdSwitched();
+}
+
+//------------------------------------------------------
+
+void UngroupColumnsUndo::undo() const {
+  if (!m_oldIndices.size()) return;
+
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+
+  for (int i = m_oldIndices.size() - 1; i >= 0; i--) {
+    xsh->moveColumn(m_newIndices[i].first, m_oldIndices[i].first);
+
+    TXshColumn *column = xsh->getColumn(m_oldIndices[i].first);
+    int oldid          = column->getFolderId(); 
+    column->setFolderIdStack(m_oldIndices[i].second);
+  }
+
+  app->getCurrentScene()->setDirtyFlag(true);
+  app->getCurrentXsheet()->notifyXsheetChanged();
+  app->getCurrentObject()->notifyObjectIdSwitched();
+}
+
+//======================================================
+
+void ColumnCmd::ungroupColumns(const std::set<int> &indices) {
+  std::set<int> list;
+
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+
+  std::set<int>::iterator it;
+
+  for (it = indices.begin(); it != indices.end(); it++) {
+    if (*it < 0) continue;
+    TXshColumn *column = xsh->getColumn(*it);
+    if (!column || (!column->isInFolder() && !column->getFolderColumn()))
+      continue;
+
+    list.insert(*it);
+  }
+
+  if (list.empty()) return;
+
+  std::vector<std::pair<int, QStack<int>>> oldIndices;
+  std::vector<std::pair<int, QStack<int>>> newIndices;
+  std::set<int> removeFolderIds, checkFolders, deleteFolderIds;
+  std::set<int> deleteFolders;
+
+  // Ungroup from folder
+  std::set<int>::reverse_iterator rit;
+  int removeFolderId = 0;
+  for (rit = list.rbegin(); rit != list.rend(); rit++) {
+    int col            = *rit;
+    TXshColumn *column = xsh->getColumn(col);
+    bool isFolder      = column->getFolderColumn() ? true : false;
+
+    oldIndices.insert(oldIndices.begin(),
+                      std::make_pair(col, column->getFolderIdStack()));
+
+    if (!removeFolderId || !column->isContainedInFolder(removeFolderId))
+      removeFolderId =
+          isFolder ? column->getFolderColumn()->getFolderColumnFolderId()
+                   : column->getFolderId();
+
+    int position = column->getFolderIdStack().indexOf(removeFolderId);
+    if (position >= 0)
+      column->removeFolderId(position);
+    else if (isFolder) {
+      column->removeFromAllFolders();
+
+      // Make folder items visible in case it's in a closed folder
+      if (!column->getFolderColumn()->isExpanded())
+        xsh->openCloseFolder(col, true);
+    }
+  }
+
+  // Move column out of group to if it no longer belongs to the group
+  for (it = list.begin(); it != list.end(); it++) {
+    TXshColumn *column = xsh->getColumn(*it);
+    int newCol                = *it;
+    QStack<int> columnFolders = column->getFolderIdStack();
+    bool isFolder             = column->getFolderColumn() ? true : false;
+
+    while (newCol > 0) {
+      TXshColumn *prevColumn = xsh->getColumn(newCol - 1);
+      int prevFolderId       = prevColumn->getFolderId();
+      if (!prevFolderId || column->isContainedInFolder(prevFolderId) ||
+          (isFolder &&
+           column->getFolderColumn()->getFolderColumnFolderId() ==
+               prevFolderId))
+        break;
+      newCol--;
+    }
+    newIndices.push_back(std::make_pair(newCol, columnFolders));
+
+    xsh->moveColumn(*it, newCol);
+
+    // if this is a folder, mark to see if we can delete it later
+    if (isFolder) {
+      bool deleteit = true;
+      if (newCol > 0) {
+        TXshColumn *priorColumn = xsh->getColumn(newCol - 1);
+        if (priorColumn->getFolderId() ==
+            column->getFolderColumn()->getFolderColumnFolderId())
+          deleteit = false;
+      }
+      if (deleteit) deleteFolders.insert(newCol);
+    }
+  }
+
+  if (deleteFolders.size()) TUndoManager::manager()->beginBlock();
+
+  std::unique_ptr<ColumnCommandUndo> undo(new UngroupColumnsUndo(oldIndices, newIndices));
+  if (undo->isConsistent())
+    TUndoManager::manager()->add(undo.release());
+
+  if (deleteFolders.size()) {
+     deleteColumns(deleteFolders, false, false);
+    TUndoManager::manager()->endBlock();
+  }
+}
+
+//*************************************************************************
 //    Copy Columns  Command
 //*************************************************************************
 
@@ -840,6 +1179,44 @@ void ColumnCmd::pasteColumns(std::set<int> &indices,
   // indices will be updated here by inserted column ids after pasting
   bool isPaste = pasteColumnsWithoutUndo(&indices, true, data);
   if (!isPaste) return;
+
+  // Fix folder information
+  TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+  int c        = *indices.begin() - 1;
+  if (c >= 0) {  // column just below insertion point
+    TXshColumn *column    = xsh->getColumn(c);
+    QStack<int> folderIds = column ? column->getFolderIdStack() : QStack<int>();
+    int subfolder         = -1;
+    std::set<int>::reverse_iterator rit;
+    for (rit = indices.rbegin(); rit != indices.rend(); rit++) {
+      int col          = *rit;
+      TXshColumn *item = xsh->getColumn(col);
+      if (!item) continue;
+
+      if (subfolder >= 0 && !item->isContainedInFolder(subfolder)) {
+        folderIds.pop();
+        if (folderIds.size())
+          subfolder = folderIds.top();
+        else
+          subfolder = -1;
+      }
+
+      item->setFolderIdStack(folderIds);
+
+      TXshFolderColumn *folder = item->getFolderColumn();
+      if (folder) {
+        subfolder = item->getFolderColumn()->getFolderColumnFolderId();
+
+        // Always assign a new folder id when pasting
+        int newFolderId = xsh->getNewFolderId();
+        folder->setFolderColumnFolderId(newFolderId);
+        folder->setExpanded(true);
+
+        folderIds.push(newFolderId);
+      }
+    }
+  }
+
   TUndoManager::manager()->add(new PasteColumnsUndo(indices));
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
 }

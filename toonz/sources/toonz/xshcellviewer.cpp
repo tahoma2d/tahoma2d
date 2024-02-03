@@ -848,6 +848,10 @@ void RenameCellField::renameCell() {
 
   TXsheet *xsheet = m_viewer->getXsheet();
 
+  if (xsheet->getColumn(m_col) &&
+      xsheet->getColumn(m_col)->getFolderColumn())
+    return;
+
   // renaming note level column
   if (xsheet->getColumn(m_col) &&
       xsheet->getColumn(m_col)->getSoundTextColumn()) {
@@ -1317,6 +1321,8 @@ void CellArea::drawCells(QPainter &p, const QRect toBeUpdated) {
   // for each layer
   m_soundLevelModifyRects.clear();
   for (col = c0; col <= c1; col++) {
+    if (!columnFan->isVisible(col)) continue;
+
     // x in vertical timeline / y in horizontal
     int layerAxis = m_viewer->columnToLayerAxis(col);
 
@@ -1346,16 +1352,18 @@ void CellArea::drawCells(QPainter &p, const QRect toBeUpdated) {
     bool isSoundColumn     = false;
     bool isPaletteColumn   = false;
     bool isSoundTextColumn = false;
+    bool isFolderColumn    = false;
     bool showLevelName     = true;
     if (isColumn) {
       isSoundColumn     = column->getSoundColumn() != 0;
       isPaletteColumn   = column->getPaletteColumn() != 0;
       isSoundTextColumn = column->getSoundTextColumn() != 0;
+      isFolderColumn    = column->getFolderColumn() != 0;
       if (Preferences::instance()->getLevelNameDisplayType() ==
           Preferences::ShowLevelNameOnColumnHeader)
         showLevelName =
             (isSoundColumn || isPaletteColumn || isSoundTextColumn ||
-             !checkContainsSingleLevel(column));
+             isFolderColumn || !checkContainsSingleLevel(column));
     }
     // check if the column is reference
     bool isReference = true;
@@ -1367,6 +1375,8 @@ void CellArea::drawCells(QPainter &p, const QRect toBeUpdated) {
 
     if (isSoundTextColumn)
       drawSoundTextColumn(p, r0, r1, col);
+    else if (isFolderColumn)
+      drawFolderColumn(p, r0, r1, col);
     else {
       // for each frame
       for (row = r0; row <= r1; row++) {
@@ -3101,6 +3111,69 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
 
 //-----------------------------------------------------------------------------
 
+void CellArea::drawFolderColumn(QPainter &p, int r0, int r1, int col) {
+  const Orientation *o = m_viewer->orientation();
+  TXsheet *xsh         = m_viewer->getXsheet();
+
+  int rStart = r0;
+  int rEnd   = r1;
+
+  QColor cellColor = m_viewer->getFolderColumnColor();
+
+  QColor selectedCellColor = m_viewer->getSelectedFolderColumnColor();
+  QColor sideColor         = m_viewer->getFolderColumnBorderColor();
+
+  TCellSelection *cellSelection     = m_viewer->getCellSelection();
+  TColumnSelection *columnSelection = m_viewer->getColumnSelection();
+  bool isColSelected                = columnSelection->isColumnSelected(col);
+
+  // for each row
+  for (int row = rStart; row <= rEnd; row++) {
+    QPoint xy = m_viewer->positionToXY(CellPosition(row, col));
+    int x     = xy.x();
+    int y     = xy.y();
+    if (row == 0) {
+      if (o->isVerticalTimeline())
+        xy.setY(xy.y() + 1);
+      else
+        xy.setX(xy.x() + 1);
+    }
+
+    QPoint frameAdj = m_viewer->getFrameZoomAdjustment();
+    QRect cellRect =
+        o->rect((col < 0) ? PredefinedRect::CAMERA_CELL : PredefinedRect::CELL)
+            .translated(QPoint(x, y));
+    cellRect.adjust(0, 0, -frameAdj.x(), -frameAdj.y());
+    QRect rect = cellRect.adjusted(
+        0, 0, -1, (m_viewer->orientation()->isVerticalTimeline() ? -1 : 0));
+
+    bool isSelected = isColSelected || cellSelection->isCellSelected(row, col);
+    QColor tmpCellColor = (isSelected) ? selectedCellColor : cellColor;
+    tmpCellColor.setAlpha(50);
+
+    if (o->isVerticalTimeline())
+      // Paint the cell edge-to-edge, we use LightLineColor with low opacity
+      // to pick up the hue of the cell color to make the separator line more
+      // pleasing to the eye.
+      p.fillRect(rect.adjusted(0, 0, 0, 1), QBrush(tmpCellColor));
+    else
+      p.fillRect(rect, QBrush(tmpCellColor));
+
+    // cell mark
+    int markId = xsh->getColumn(col)->getCellColumn()->getCellMark(row);
+    drawCellMarker(p, markId, rect, false);
+
+    drawFrameSeparator(p, row, col, false, false);
+
+    if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
+        !o->isVerticalTimeline() && row == m_viewer->getCurrentRow() &&
+        Preferences::instance()->isCurrentTimelineIndicatorEnabled())
+      drawCurrentTimeIndicator(p, xy);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
   const Orientation *o = m_viewer->orientation();
   int r0, r1, c0, c1;  // range of visible rows and columns
@@ -3119,7 +3192,7 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
   ColumnFan *columnFan = xsh->getColumnFan(o);
   int col;
   for (col = c0; col <= c1; col++) {
-    if (!columnFan->isActive(col)) continue;
+    if (!columnFan->isVisible(col) || !columnFan->isActive(col)) continue;
     int layerAxis = m_viewer->columnToLayerAxis(col);
 
     TStageObject *pegbar = xsh->getStageObject(m_viewer->getObjectId(col));
@@ -4053,7 +4126,7 @@ void CellArea::mouseDoubleClickEvent(QMouseEvent *event) {
   int col                   = cellPosition.layer();
   // Se la colonna e' sound non devo fare nulla
   TXshColumn *column = m_viewer->getXsheet()->getColumn(col);
-  if (column && column->getSoundColumn()) return;
+  if (column && (column->getSoundColumn() || column->getFolderColumn())) return;
 
   // Se ho cliccato su una nota devo aprire il popup
   TXshNoteSet *notes = m_viewer->getXsheet()->getNotes();
@@ -4296,6 +4369,7 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
 
   bool soundCellsSelected     = m_viewer->areSoundCellsSelected();
   bool soundTextCellsSelected = m_viewer->areSoundTextCellsSelected();
+  bool folderCellsSelected    = m_viewer->areFolderCellsSelected();
   bool cameraCellsSelected    = m_viewer->areCameraCellsSelected();
 
   menu.addSeparator();
@@ -4508,10 +4582,12 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
       menu.addMenu(lipSyncMenu);
 
   } else {
-    menu.addAction(cmdManager->getAction(MI_CreateBlankDrawing));
-    menu.addSeparator();
-    menu.addAction(cmdManager->getAction(MI_FillEmptyCell));
-    menu.addAction(cmdManager->getAction(MI_StopFrameHold));
+    if (!folderCellsSelected) {
+      menu.addAction(cmdManager->getAction(MI_CreateBlankDrawing));
+      menu.addSeparator();
+      menu.addAction(cmdManager->getAction(MI_FillEmptyCell));
+      menu.addAction(cmdManager->getAction(MI_StopFrameHold));
+    }
     if (cameraCellsSelected) {
       menu.addSeparator();
       menu.addAction(cmdManager->getAction(MI_SetKeyframes));

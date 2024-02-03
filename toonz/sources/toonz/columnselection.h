@@ -39,6 +39,8 @@ public:
   void cutColumns();
   void insertColumns();
   void insertColumnsBelow();
+  void groupColumns();
+  void ungroupColumns();
 
   void collapse();
   void explodeChild();

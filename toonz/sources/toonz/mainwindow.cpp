@@ -2104,6 +2104,9 @@ void MainWindow::defineActions() {
           tr("Motion paths can be used as animation guides, or you can animate "
              "objects along a motion path."));
 
+  createMenuLevelAction(MI_NewFolder, QT_TR_NOOP("New Folder"), "",
+                        "");
+
   // Menu - Scene
 
   createMenuXsheetAction(MI_SceneSettings, QT_TR_NOOP("&Scene Settings..."), "",

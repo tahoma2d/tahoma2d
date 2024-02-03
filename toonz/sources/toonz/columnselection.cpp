@@ -98,6 +98,8 @@ void TColumnSelection::enableCommands() {
   enableCommand(this, MI_ReframeWithEmptyInbetweens,
                 &TColumnSelection::reframeWithEmptyInbetweens);
   enableCommand(this, MI_Autorenumber, &TColumnSelection::renumberColumns);
+  enableCommand(this, MI_Group, &TColumnSelection::groupColumns);
+  enableCommand(this, MI_Ungroup, &TColumnSelection::ungroupColumns);
 }
 //-----------------------------------------------------------------------------
 
@@ -207,6 +209,18 @@ void TColumnSelection::insertColumns() {
     selectColumn(col, true);
   }
   ColumnCmd::insertEmptyColumns(m_indices, true);
+}
+
+//-----------------------------------------------------------------------------
+
+void TColumnSelection::groupColumns() {
+  ColumnCmd::groupColumns(m_indices);
+}
+
+//-----------------------------------------------------------------------------
+
+void TColumnSelection::ungroupColumns() {
+  ColumnCmd::ungroupColumns(m_indices);
 }
 
 //-----------------------------------------------------------------------------

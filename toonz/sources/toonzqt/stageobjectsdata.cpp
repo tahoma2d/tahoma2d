@@ -345,7 +345,9 @@ TStageObjectId TColumnDataElement::restoreColumn(TXsheet *xsh, int index,
     if (column->getFx())
       dagPos            = column->getFx()->getAttributes()->getDagNodePos();
     if (doClone) column = column->clone();
+    QStack<int> folderStack = column->getFolderIdStack();
     xsh->insertColumn(index, column);
+    column->setFolderIdStack(folderStack);
   } else
     xsh->insertColumn(index);  // Create a new one otherwise
 

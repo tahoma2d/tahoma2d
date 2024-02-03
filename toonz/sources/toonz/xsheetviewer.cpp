@@ -124,6 +124,11 @@ void XsheetViewer::getCellTypeAndColors(int &ltype, QColor &cellColor,
           (isSelected) ? getSelectedPaletteColumnColor() : getPaletteColumnColor();
       sideColor = getPaletteColumnBorderColor();
       break;
+    case FOLDER_XSHLEVEL:
+      cellColor =
+          (isSelected) ? getSelectedFolderColumnColor() : getFolderColumnColor();
+      sideColor = getFolderColumnBorderColor();
+      break;
     case UNKNOWN_XSHLEVEL:
     case NO_XSHLEVEL:
     default:
@@ -151,8 +156,11 @@ void XsheetViewer::getColumnColor(QColor &color, QColor &sideColor, int index,
       int ltype;
       getCellTypeAndColors(ltype, color, sideColor, cell);
     }
+  } else if (xsh->getColumn(index)->getFolderColumn()) {
+    color     = m_folderColumnColor;
+    sideColor = m_folderColumnBorderColor;
   }
-//  if (xsh->getColumn(index)->isMask()) color = QColor(255, 0, 255);
+  //  if (xsh->getColumn(index)->isMask()) color = QColor(255, 0, 255);
 }
 
 //-----------------------------------------------------------------------------
@@ -1039,6 +1047,23 @@ bool XsheetViewer::areSoundTextCellsSelected() {
       return false;
     }
   return !areCellsSelectedEmpty();
+}
+
+//-----------------------------------------------------------------------------
+
+bool XsheetViewer::areFolderCellsSelected() {
+  int r0, c0, r1, c1;
+  getCellSelection()->getSelectedCells(r0, c0, r1, c1);
+  if (c0 < 0) return false;
+  int i, j;
+  for (j = c0; j <= c1; j++) {
+    TXshColumn *column = getXsheet()->getColumn(j);
+    if (column && (column->isEmpty() ||
+                   column->getColumnType() == TXshColumn::eFolderType))
+      continue;
+    return false;
+  }
+  return true;
 }
 
 //-----------------------------------------------------------------------------

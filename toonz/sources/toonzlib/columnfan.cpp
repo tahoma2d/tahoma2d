@@ -33,26 +33,36 @@ void ColumnFan::setDimensions(int unfolded, int cameraColumn) {
 void ColumnFan::update() {
   int lastPos     = -m_unfolded;
   bool lastActive = true;
+  bool lastVisible = true;
   int m           = m_columns.size();
   int i;
   for (i = 0; i < m; i++) {
-    bool active = m_columns[i].m_active;
-    if (lastActive)
-      lastPos += m_unfolded;
-    else if (active)
-      lastPos += m_folded;
+    bool visible = m_columns[i].m_visible;
+    bool active  = m_columns[i].m_active;
+    if (lastVisible) {
+      if (lastActive)
+        lastPos += m_unfolded;
+      else if (active)
+        lastPos += m_folded;
+    }
     m_columns[i].m_pos = lastPos;
     lastActive         = active;
+    lastVisible        = visible;
   }
-  m_firstFreePos = lastPos + (lastActive ? m_unfolded : m_folded);
+  m_firstFreePos = lastPos + (lastVisible ? (lastActive ? m_unfolded : m_folded) : 0);
   m_table.clear();
-  for (i = 0; i < m; i++)
-    if (m_columns[i].m_active)
-      m_table[m_columns[i].m_pos + m_unfolded - 1] = i;
-    else if (i + 1 < m && m_columns[i + 1].m_active)
-      m_table[m_columns[i + 1].m_pos - 1] = i;
+  for (i = 0; i < m; i++) {
+    int pos = -1;
+    if (m_columns[i].m_active && m_columns[i].m_visible)
+      pos = m_columns[i].m_pos + m_unfolded - 1;
+    else if (i + 1 < m && m_columns[i + 1].m_active &&
+             m_columns[i + 1].m_visible)
+      pos = m_columns[i + 1].m_pos - 1;
     else if (i + 1 == m)
-      m_table[m_firstFreePos - 1] = i;
+      pos = m_firstFreePos - (m_columns[i].m_visible ? 1 : 0);
+
+    if (pos >= 0 && m_table.find(pos) == m_table.end()) m_table[pos] = i;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -62,7 +72,7 @@ int ColumnFan::layerAxisToCol(int coord) const {
     int firstCol =
         m_cameraActive
             ? m_cameraColumnDim
-            : ((m_columns.size() > 0 && !m_columns[0].m_active) ? 0 : m_folded);
+            : ((m_columns.size() > 0 && (!m_columns[0].m_active || !m_columns[0].m_visible)) ? 0 : m_folded);
     if (coord < firstCol) return -1;
     coord -= firstCol;
   }
@@ -86,7 +96,7 @@ int ColumnFan::colToLayerAxis(int col) const {
     firstCol =
         m_cameraActive
             ? m_cameraColumnDim
-            : ((m_columns.size() > 0 && !m_columns[0].m_active) ? 0 : m_folded);
+            : ((m_columns.size() > 0 && (!m_columns[0].m_active || !m_columns[0].m_visible)) ? 0 : m_folded);
   }
   if (col >= 0 && col < m)
     return firstCol + m_columns[col].m_pos;
@@ -105,7 +115,7 @@ void ColumnFan::activate(int col) {
   if (col < m) {
     m_columns[col].m_active = true;
     int i;
-    for (i = m - 1; i >= 0 && m_columns[i].m_active; i--) {
+    for (i = m - 1; i >= 0 && m_columns[i].m_active && m_columns[i].m_visible; i--) {
     }
     i++;
     if (i < m) {
@@ -138,14 +148,64 @@ bool ColumnFan::isActive(int col) const {
 
 //-----------------------------------------------------------------------------
 
+void ColumnFan::hide(int col) {
+  if (col < 0) return;
+
+  while ((int)m_columns.size() <= col) m_columns.push_back(Column());
+  m_columns[col].m_visible = false;
+  update();
+}
+
+//-----------------------------------------------------------------------------
+
+void ColumnFan::show(int col) {
+  if (col < 0) return;
+
+  int m = m_columns.size();
+  if (col < m) {
+    m_columns[col].m_visible = true;
+    int i;
+    for (i = m - 1; i >= 0 && m_columns[i].m_visible && m_columns[i].m_active;
+         i--) {
+    }
+    i++;
+    if (i < m) {
+      m = i;
+      m_columns.erase(m_columns.begin() + i, m_columns.end());
+    }
+  }
+  update();
+}
+
+//-----------------------------------------------------------------------------
+
+bool ColumnFan::isVisible(int col) const {
+  return 0 <= col && col < (int)m_columns.size()
+             ? m_columns[col].m_visible
+             : true;
+}
+
+//-----------------------------------------------------------------------------
+
+void ColumnFan::initializeCol(int col) {
+  if (col < 0) return;
+
+  while ((int)m_columns.size() <= col) m_columns.push_back(Column());
+  update();
+}
+
+//-----------------------------------------------------------------------------
+
 bool ColumnFan::isEmpty() const { return m_columns.empty(); }
 
 //-----------------------------------------------------------------------------
 
 void ColumnFan::copyFoldedStateFrom(const ColumnFan &from) {
   m_cameraActive = from.m_cameraActive;
-  for (int i = 0, n = (int)from.m_columns.size(); i < n; i++)
+  for (int i = 0, n = (int)from.m_columns.size(); i < n; i++) {
     if (!from.isActive(i)) deactivate(i);
+    if (!from.isVisible(i)) hide(i);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -181,26 +241,71 @@ void ColumnFan::loadData(TIStream &is) {
 
 //-----------------------------------------------------------------------------
 
+void ColumnFan::saveVisibilityData(
+    TOStream &os) {  // only saves indices of hidden columns
+  int index, n = (int)m_columns.size();
+  bool tagOpened = false;
+  for (index = 0; index < n;) {
+    while (index < n && m_columns[index].m_visible) index++;
+    if (index < n) {
+      if (!tagOpened) {
+        os.openChild("columnFanVisibility");
+        tagOpened = true;
+      }
+
+      int firstIndex = index;
+      os << index;
+      index++;
+      while (index < n && !m_columns[index].m_visible) index++;
+      os << index - firstIndex;
+    }
+  }
+
+  if (tagOpened) os.closeChild();
+}
+
+//-----------------------------------------------------------------------------
+
+void ColumnFan::loadVisibilityData(TIStream &is) {
+  while (!is.eos()) {
+    int index = 0, count = 0;
+    is >> index >> count;
+    int j;
+    for (j = 0; j < count; j++) hide(index + j);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void ColumnFan::rollLeftFoldedState(int index, int count) {
   assert(index >= 0);
   int columnCount = m_columns.size();
-  if (columnCount <= index) return;
-  if (index + count - 1 > columnCount) count = columnCount - index + 1;
+  if (!columnCount) return; // Nothing to role
   if (count < 2) return;
 
   int i = index, j = index + count - 1;
-  bool tmp = isActive(i);
+  if (j >= columnCount) initializeCol(j);
+  bool tmpActive  = isActive(i);
+  bool tmpVisible = isVisible(i);
 
   for (int k = i; k < j; ++k) {
     if (isActive(k) && !isActive(k + 1))
       deactivate(k);
     else if (!isActive(k) && isActive(k + 1))
       activate(k);
+    if (isVisible(k) && !isVisible(k + 1))
+      hide(k);
+    else if (!isVisible(k) && isVisible(k + 1))
+      show(k);
   }
-  if (isActive(j) && !tmp)
+  if (isActive(j) && !tmpActive)
     deactivate(j);
-  else if (!isActive(j) && tmp)
+  else if (!isActive(j) && tmpActive)
     activate(j);
+  if (isVisible(j) && !tmpVisible)
+    hide(j);
+  else if (!isVisible(j) && tmpVisible)
+    show(j);
 
   update();
 }
@@ -211,23 +316,32 @@ void ColumnFan::rollRightFoldedState(int index, int count) {
   assert(index >= 0);
 
   int columnCount = m_columns.size();
-  if (columnCount <= index) return;
-  if (index + count - 1 > columnCount) count = columnCount - index + 1;
+  if (!columnCount) return; // Nothing to roll
   if (count < 2) return;
 
   int i = index, j = index + count - 1;
-  bool tmp = isActive(j);
+  if (j >= columnCount) initializeCol(j);
+  bool tmpActive  = isActive(j);
+  bool tmpVisible = isVisible(j);
 
   for (int k = j; k > i; --k) {
     if (isActive(k) && !isActive(k - 1))
       deactivate(k);
     else if (!isActive(k) && isActive(k - 1))
       activate(k);
+    if (isVisible(k) && !isVisible(k - 1))
+      hide(k);
+    else if (!isVisible(k) && isVisible(k - 1))
+      show(k);
   }
-  if (isActive(i) && !tmp)
+  if (isActive(i) && !tmpActive)
     deactivate(i);
-  else if (!isActive(i) && tmp)
+  else if (!isActive(i) && tmpActive)
     activate(i);
+  if (isVisible(i) && !tmpVisible)
+    hide(i);
+  else if (!isVisible(i) && tmpVisible)
+    show(i);
 
   update();
 }

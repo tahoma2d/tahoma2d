@@ -124,6 +124,7 @@ class CellArea final : public QWidget {
   void drawSoundCell(QPainter &p, int row, int col, bool isReference = false);
   void drawSoundTextColumn(QPainter &p, int r0, int r1, int col);
   void drawPaletteCell(QPainter &p, int row, int col, bool isReference = false);
+  void drawFolderColumn(QPainter &p, int r0, int r1, int col);
 
   void drawKeyframe(QPainter &p, const QRect toBeUpdated);
   void drawKeyframeLine(QPainter &p, int col, const NumberRange &rows) const;

@@ -11,6 +11,7 @@
 #include "toonz/txshzeraryfxcolumn.h"
 #include "toonz/txshsoundtextcolumn.h"
 #include "toonz/txshmeshcolumn.h"
+#include "toonz/txshfoldercolumn.h"
 #include "toonz/txshcell.h"
 #include "toonz/txsheet.h"
 #include "toonz/fxdag.h"
@@ -564,6 +565,8 @@ TXshColumn *TXshColumn::createEmpty(int type) {
     return new TXshSoundTextColumn;
   case eMeshType:
     return new TXshMeshColumn;
+  case eFolderType:
+    return new TXshFolderColumn;
   }
 
   assert(type == eLevelType);
@@ -587,6 +590,8 @@ TXshColumn::ColumnType TXshColumn::toColumnType(int levelType) {
     colType = TXshColumn::eSoundTextType;
   else if (levelType == MESH_XSHLEVEL)
     colType = TXshColumn::eMeshType;
+  else if (levelType == FOLDER_XSHLEVEL)
+    colType = TXshColumn::eFolderType;
   else
     assert(!"Unknown level type!");
 
@@ -790,4 +795,102 @@ void TXshColumn::resetColumnProperties() {
   setOpacity(255);
   setColorTag(0);
   setColorFilterId(0);  // None
+}
+
+
+// Folder management
+
+//-----------------------------------------------------------------------------
+
+int TXshColumn::setFolderId(int value) {
+  m_folderSelector++;
+  m_folderId.insert(m_folderSelector, value);
+  return m_folderSelector;
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshColumn::setFolderId(int value, int position) {
+  assert(position >= 0 && position <= m_folderId.size());
+  m_folderId.insert(position, value);
+  if (m_folderSelector + 1 >= position) m_folderSelector++;
+}
+
+//-----------------------------------------------------------------------------
+
+int TXshColumn::getFolderId() {
+  return m_folderId.isEmpty() || m_folderSelector < 0 ||
+                 m_folderSelector >= m_folderId.size()
+             ? 0
+             : m_folderId[m_folderSelector];
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshColumn::setFolderIdStack(QStack<int> folderIdStack) {
+  m_folderId = folderIdStack;
+  m_folderSelector = folderIdStack.size() - 1;
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshColumn::removeFolderId(int position) {
+  if (!isInFolder()) return;
+  assert(position >= 0 && position <= m_folderId.size());
+  m_folderId.remove(position);
+  if (m_folderSelector + 1 >= position && m_folderSelector > -1)
+    m_folderSelector--;
+}
+
+//-----------------------------------------------------------------------------
+
+int TXshColumn::removeFolderId() {
+  m_folderId.remove(m_folderSelector);
+  if (m_folderSelector > -1) m_folderSelector--;
+  return m_folderSelector + 1;
+}
+
+//-----------------------------------------------------------------------------
+
+bool TXshColumn::isInFolder() { return !m_folderId.isEmpty(); }
+
+//-----------------------------------------------------------------------------
+
+bool TXshColumn::isContainedInFolder(int folderId) {
+  return m_folderId.contains(folderId);
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshColumn::removeFromAllFolders() {
+  m_folderId.clear();
+  m_folderSelector = -1;
+}
+
+//-----------------------------------------------------------------------------
+
+int TXshColumn::folderDepth() { return m_folderId.size(); }
+
+//-----------------------------------------------------------------------------
+
+bool TXshColumn::loadFolderInfo(std::string tagName, TIStream &is) {
+  if (tagName != "folderIds") return false;
+  m_folderId.clear();
+  int folderId;
+  while (!is.eos()) {
+    is >> folderId;
+    m_folderId.push_back(folderId);
+    m_folderSelector++;
+  }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshColumn::saveFolderInfo(TOStream &os) {
+  if (m_folderId.isEmpty()) return;
+
+  os.openChild("folderIds");
+  for (int i = 0; i < m_folderId.size(); i++) os << m_folderId[i];
+  os.closeChild();  // folderIds
 }

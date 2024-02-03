@@ -522,4 +522,6 @@
 
 #define MI_OpenAlignmentPanel "MI_OpenAlignmentPanel"
 
+#define MI_NewFolder "MI_NewFolder"
+
 #endif

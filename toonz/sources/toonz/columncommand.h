@@ -54,6 +54,8 @@ bool checkExpressionReferences(const std::set<int> &indices,
 // checkInvert is always true for collapsing in stage schematic
 bool checkExpressionReferences(const QList<TStageObjectId> &objects);
 
+void groupColumns(const std::set<int> &indices);
+void ungroupColumns(const std::set<int> &indices);
 }  // namespace ColumnCmd
 
 #endif

@@ -785,7 +785,8 @@ bool EditTool::doesApply() const {
       TTool::getApplication()->getCurrentObject()->getObjectId();
   if (objId.isColumn()) {
     TXshColumn *column = xsh->getColumn(objId.getIndex());
-    if (column && column->getSoundColumn()) return false;
+    if (column && (column->getSoundColumn() || column->getFolderColumn()))
+      return false;
   }
   return true;
 }
@@ -1714,6 +1715,11 @@ QString EditTool::updateEnabled(int rowIndex, int columnIndex) {
     return (enable(false),
             QObject::tr(
                 "Note columns can only be edited in the xsheet or timeline."));
+
+  else if (column->getFolderColumn())
+    return (enable(false),
+            QObject::tr("It is not possible to edit the folder column."));
+
 
   // Enable to control Fx gadgets even on the locked or hidden columns
   if (m_fxGadgetController && m_fxGadgetController->hasGadget())

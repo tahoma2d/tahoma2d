@@ -57,6 +57,7 @@ TXshColumn *TXshSoundTextColumn::clone() const {
   column->setStatusWord(getStatusWord());
   column->m_cells = m_cells;
   column->m_first = m_first;
+  column->setFolderIdStack(getFolderIdStack());
   return column;
 }
 
@@ -85,13 +86,15 @@ void TXshSoundTextColumn::loadData(TIStream &is) {
               setCell(r, cell);
           }
         } else
-          throw TException("TXshLevelColumn, unknown tag(2): " + tagName);
+          throw TException("TXshSoundTextColumn, unknown tag(2): " + tagName);
         is.closeChild();
       }
     } else if (loadCellMarks(tagName, is)) {
       // do nothing
+    } else if (loadFolderInfo(tagName, is)) {
+      // do nothing
     } else
-      throw TException("TXshLevelColumn, unknown tag: " + tagName);
+      throw TException("TXshSoundTextColumn, unknown tag: " + tagName);
     is.closeChild();
   }
 }
@@ -143,6 +146,8 @@ void TXshSoundTextColumn::saveData(TOStream &os) {
   }
   // cell marks
   saveCellMarks(os);
+  // folder info
+  saveFolderInfo(os);
 }
 
 PERSIST_IDENTIFIER(TXshSoundTextColumn, "soundTextColumn")

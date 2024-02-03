@@ -89,6 +89,7 @@ TXshColumn *TXshLevelColumn::clone() const {
   column->m_first = m_first;
   column->setColorTag(getColorTag());
   column->setColorFilterId(getColorFilterId());
+  column->setFolderIdStack(getFolderIdStack());
 
   // column->updateIcon();
   return column;
@@ -156,6 +157,8 @@ void TXshLevelColumn::loadData(TIStream &is) {
       fxSet.loadData(is);
     } else if (loadCellMarks(tagName, is)) {
       // do nothing
+    } else if (loadFolderInfo(tagName, is)) {
+      // do nothing
     } else
       throw TException("TXshLevelColumn, unknown tag: " + tagName);
     is.closeChild();
@@ -208,6 +211,8 @@ void TXshLevelColumn::saveData(TOStream &os) {
 
   // cell marks
   saveCellMarks(os);
+  // folder info
+  saveFolderInfo(os);
 }
 
 //-----------------------------------------------------------------------------

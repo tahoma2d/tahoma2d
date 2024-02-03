@@ -526,10 +526,17 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addRect(PredefinedRect::CONFIG_AREA, configArea);
     addRect(PredefinedRect::CONFIG,
             iconRect(configArea, ICON_WIDTH - 1, ICON_HEIGHT - 1));
+
     cameraConfigArea = QRect(INDENT, HDRROW2, CAMERA_CELL_WIDTH, HDRROW_HEIGHT);
     addRect(PredefinedRect::CAMERA_CONFIG_AREA, cameraConfigArea);
     addRect(PredefinedRect::CAMERA_CONFIG,
             iconRect(cameraConfigArea, ICON_WIDTH - 1, ICON_HEIGHT - 1));
+
+    addRect(PredefinedRect::BUTTONS_AREA,
+            QRect(INDENT, HDRROW2, INDENT + eyeArea.width() +
+                                       previewArea.width() + configArea.width(),
+                  HDRROW_HEIGHT));
+
     addRect(PredefinedRect::THUMBNAIL_AREA, QRect(0, 0, -1, -1));
     addRect(PredefinedRect::THUMBNAIL, QRect(0, 0, -1, -1));
     cameraIconArea = QRect(INDENT, HDRROW1, CAMERA_CELL_WIDTH, HDRROW_HEIGHT);
@@ -545,6 +552,8 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addRect(PredefinedRect::VOLUME_AREA, QRect(0, 0, -1, -1));
     addRect(PredefinedRect::PEGBAR_NAME, QRect(0, 0, -1, -1));
     addRect(PredefinedRect::PARENT_HANDLE_NAME, QRect(0, 0, -1, -1));
+
+    addRect(PredefinedRect::FOLDER_TOGGLE_ICON, QRect(0, 0, -1, -1));
 
     addFlag(PredefinedFlag::DRAG_LAYER_BORDER, false);
     addFlag(PredefinedFlag::DRAG_LAYER_VISIBLE, false);
@@ -626,6 +635,12 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addRect(PredefinedRect::CAMERA_CONFIG,
             iconRect(cameraConfigArea, ICON_WIDTH - 1, ICON_HEIGHT - 1));
 
+    addRect(
+        PredefinedRect::BUTTONS_AREA,
+        QRect(INDENT, HDRROW2, INDENT + eyeArea.width() + previewArea.width() +
+                                   lockArea.width() + configArea.width(),
+              HDRROW_HEIGHT));
+
     thumbnailArea = QRect(INDENT, HDRROW3, CELL_WIDTH, THUMBNAIL_HEIGHT);
     addRect(PredefinedRect::THUMBNAIL_AREA, thumbnailArea);
     thumbnail = thumbnailArea.adjusted(1, 1, 0, 0);
@@ -658,6 +673,13 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addRect(
         PredefinedRect::PARENT_HANDLE_NAME,
         QRect(INDENT + pegbarname.width() - 20, HDRROW4, 20, HDRROW_HEIGHT));
+
+    addRect(PredefinedRect::FOLDER_TOGGLE_ICON,
+            QRect(thumbnailArea.topLeft(), QSize(40, 30))
+                .adjusted((thumbnailArea.width() / 2) - (40 / 2),
+                          (thumbnailArea.height() / 2) - (30 / 2),
+                          (thumbnailArea.width() / 2) - (40 / 2),
+                          (thumbnailArea.height() / 2) - (30 / 2)));
 
     addFlag(PredefinedFlag::DRAG_LAYER_BORDER, false);
     addFlag(PredefinedFlag::DRAG_LAYER_VISIBLE, false);
@@ -740,6 +762,12 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addRect(PredefinedRect::CAMERA_CONFIG,
             iconRect(cameraConfigArea, ICON_WIDTH - 1, ICON_HEIGHT - 1));
 
+    addRect(
+        PredefinedRect::BUTTONS_AREA,
+        QRect(INDENT, HDRROW2, INDENT + eyeArea.width() + previewArea.width() +
+                                   lockArea.width() + configArea.width(),
+              HDRROW_HEIGHT));
+
     thumbnailArea = QRect(INDENT, HDRROW4, CELL_WIDTH, THUMBNAIL_HEIGHT);
     addRect(PredefinedRect::THUMBNAIL_AREA, thumbnailArea);
     thumbnail = thumbnailArea.adjusted(1, 1, 0, 0);
@@ -774,6 +802,13 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addRect(
         PredefinedRect::PARENT_HANDLE_NAME,
         QRect(INDENT + pegbarname.width() - 20, HDRROW5, 20, HDRROW_HEIGHT));
+
+    addRect(PredefinedRect::FOLDER_TOGGLE_ICON,
+            QRect(thumbnailArea.topLeft(), QSize(40, 30))
+                .adjusted((thumbnailArea.width() / 2) - (40 / 2),
+                          (thumbnailArea.height() / 2) - (30 / 2),
+                          (thumbnailArea.width() / 2) - (40 / 2),
+                          (thumbnailArea.height() / 2) - (30 / 2)));
 
     addFlag(PredefinedFlag::DRAG_LAYER_BORDER, false);
     addFlag(PredefinedFlag::DRAG_LAYER_VISIBLE, false);
@@ -851,6 +886,11 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addRect(PredefinedRect::CAMERA_CONFIG,
             iconRect(cameraConfigArea, ICON_WIDTH - 1, ICON_HEIGHT - 1));
 
+    addRect(PredefinedRect::BUTTONS_AREA,
+            QRect(INDENT, HDRROW2, INDENT + eyeArea.width() +
+                                       previewArea.width() + lockArea.width(),
+                  HDRROW_HEIGHT));
+
     thumbnailArea =
         QRect(INDENT - 1, HDRROW3, CELL_WIDTH - INDENT - 1, THUMBNAIL_HEIGHT);
     addRect(PredefinedRect::THUMBNAIL_AREA, thumbnailArea);
@@ -885,6 +925,10 @@ TopToBottomOrientation::TopToBottomOrientation() {
             QRect(INDENT + pegbarname.width() - 20, HDRROW4, 20,
                   HDRROW_HEIGHT - 1));
 
+    addRect(
+        PredefinedRect::FOLDER_TOGGLE_ICON,
+        QRect(thumbnailArea.topLeft(), QSize(40, 30)).adjusted(21, 19, 21, 19));
+
     addFlag(PredefinedFlag::DRAG_LAYER_BORDER, false);
     addFlag(PredefinedFlag::DRAG_LAYER_VISIBLE, true);
     addFlag(PredefinedFlag::LAYER_NAME_BORDER, false);
@@ -912,6 +956,9 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addFlag(PredefinedFlag::VOLUME_AREA_VERTICAL, true);
     addFlag(PredefinedFlag::NOTE_AREA_IN_POPUP, false);
   }
+
+  addRect(PredefinedRect::FOLDER_INDICATOR_AREA,
+          layername.adjusted(-1, -1, 0, -((layername.height() * 5)/ 6)));
 
   if (flag(PredefinedFlag::VOLUME_AREA_VERTICAL)) {
     soundTopLeft = QPoint(volumeArea.left() + 4, volumeArea.top() + 4);
@@ -1368,9 +1415,13 @@ LeftToRightOrientation::LeftToRightOrientation(QString layout) {
   addRect(PredefinedRect::CONFIG_AREA, eyeArea.translated(3 * ICON_OFFSET, 0));
   addRect(PredefinedRect::CONFIG,
           eye.translated(3 * ICON_OFFSET, 0).adjusted(1, 1, -1, -1));
+  addRect(PredefinedRect::BUTTONS_AREA,
+          eye.adjusted(1, 1, (3 * ICON_OFFSET), -1));
+
   addRect(PredefinedRect::CAMERA_CONFIG_AREA,
           rect(PredefinedRect::CONFIG_AREA));
   addRect(PredefinedRect::CAMERA_CONFIG, rect(PredefinedRect::CONFIG));
+
   addRect(PredefinedRect::DRAG_LAYER,
           QRect(ICONS_WIDTH + THUMBNAIL_WIDTH + 1, 0,
                 LAYER_HEADER_WIDTH - ICONS_WIDTH - THUMBNAIL_WIDTH - 3,
@@ -1398,6 +1449,13 @@ LeftToRightOrientation::LeftToRightOrientation(QString layout) {
   addRect(PredefinedRect::PARENT_HANDLE_NAME, QRect(0, 0, -1, -1));  // hide
 
   addRect(PredefinedRect::SOUND_ICON,
+          QRect(thumbnailArea.topLeft(), QSize(27, thumbnailArea.height()))
+              .adjusted((thumbnailArea.width() / 2) - (27 / 2), 0,
+                        (thumbnailArea.width() / 2) - (27 / 2), 0));
+
+  addRect(PredefinedRect::FOLDER_INDICATOR_AREA,
+      QRect(ICONS_WIDTH + 1, 0, ICON_WIDTH/3, CELL_HEIGHT));
+  addRect(PredefinedRect::FOLDER_TOGGLE_ICON,
           QRect(thumbnailArea.topLeft(), QSize(27, thumbnailArea.height()))
               .adjusted((thumbnailArea.width() / 2) - (27 / 2), 0,
                         (thumbnailArea.width() / 2) - (27 / 2), 0));

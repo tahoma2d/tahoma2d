@@ -2389,7 +2389,7 @@ void TCellSelection::pasteDuplicateCells() {
         int levelType = level->getType();
         if (levelType == ZERARYFX_XSHLEVEL || levelType == PLT_XSHLEVEL ||
             levelType == SND_XSHLEVEL || levelType == SND_TXT_XSHLEVEL ||
-            levelType == MESH_XSHLEVEL) {
+            levelType == MESH_XSHLEVEL || levelType == FOLDER_XSHLEVEL) {
           DVGui::warning(
               QObject::tr("Cannot duplicate a drawing in the current column"));
           return;
@@ -2862,7 +2862,7 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
     int levelType = level->getType();
     if (levelType == ZERARYFX_XSHLEVEL || levelType == PLT_XSHLEVEL ||
         levelType == SND_XSHLEVEL || levelType == SND_TXT_XSHLEVEL ||
-        levelType == MESH_XSHLEVEL) {
+        levelType == MESH_XSHLEVEL || levelType == FOLDER_XSHLEVEL) {
       if (!multiple)
         DVGui::warning(
             QObject::tr("Cannot create a blank drawing on the current column"));
@@ -3033,7 +3033,8 @@ void TCellSelection::stopFrameHold(int row, int col, bool multiple) {
   }
   if (level) {
     int levelType = level->getType();
-    if (levelType == SND_XSHLEVEL || levelType == SND_TXT_XSHLEVEL) {
+    if (levelType == SND_XSHLEVEL || levelType == SND_TXT_XSHLEVEL ||
+        levelType == FOLDER_XSHLEVEL) {
       if (!multiple)
         DVGui::warning(QObject::tr(
             "Cannot create a stop frame hold on the current column"));
@@ -3127,7 +3128,7 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
     int levelType = level->getType();
     if (levelType == ZERARYFX_XSHLEVEL || levelType == PLT_XSHLEVEL ||
         levelType == SND_XSHLEVEL || levelType == SND_TXT_XSHLEVEL ||
-        levelType == MESH_XSHLEVEL) {
+        levelType == MESH_XSHLEVEL || levelType == FOLDER_XSHLEVEL) {
       if (!multiple)
         DVGui::warning(
             QObject::tr("Cannot duplicate a drawing in the current column"));
@@ -4299,7 +4300,7 @@ void TCellSelection::fillEmptyCell() {
   for (c = c0; c <= c1; c++) {
     TXshColumn *column = xsh->getColumn(c);
     if (!column || column->isEmpty() || column->isLocked() ||
-        column->getSoundColumn())
+        column->getSoundColumn() || column->getFolderColumn())
       continue;
 
     for (r = r1; r >= r0; r--) {

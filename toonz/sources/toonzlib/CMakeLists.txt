@@ -165,6 +165,7 @@ set(HEADERS
     ../include/toonz/expressionreferencemonitor.h
     ../include/toonz/filepathproperties.h
     ../include/toonz/navigationtags.h
+    ../include/toonz/txshfoldercolumn.h
 )
 
 set(SOURCES
@@ -326,6 +327,7 @@ set(SOURCES
     boardsettings.cpp
     filepathproperties.cpp
     navigationtags.cpp
+    txshfoldercolumn.cpp
 )
 
 if(BUILD_TARGET_WIN)

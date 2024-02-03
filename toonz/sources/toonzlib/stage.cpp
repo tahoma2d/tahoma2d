@@ -688,7 +688,8 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
     }
     TXshColumn *column = xsh->getColumn(c);
     bool isMask        = false;
-    if (column && !column->isEmpty() && !column->getSoundColumn()) {
+    if (column && !column->isEmpty() && !column->getSoundColumn() &&
+        !column->getFolderColumn()) {
       if (!column->isPreviewVisible() && checkPreviewVisibility) {
         if (!isMask && column->getColumnType() != TXshColumn::eMeshType) {
           while (m_masks.size() > maskCount) m_masks.pop_back();
