@@ -763,6 +763,8 @@ public:
 
   void setCurrentNoteIndex(int currentNoteIndex);
 
+  void toggleCurrentFolderOpenClose();
+
   // scroll the cell area to make a cell at (row,col) visible
   void scrollTo(int row, int col);
 

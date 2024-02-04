@@ -1803,6 +1803,17 @@ void XsheetViewer::setCurrentNoteIndex(int currentNoteIndex) {
 
 //-----------------------------------------------------------------------------
 
+void XsheetViewer::toggleCurrentFolderOpenClose() {
+  int col = getCurrentColumn();
+  if (col < 0) return;
+  TXsheet *xsh       = getXsheet();
+  TXshColumn *column = xsh->getColumn(col);
+  if (!column || !column->getFolderColumn()) return;
+  m_columnArea->toggleFolderStatus(column);
+}
+
+//-----------------------------------------------------------------------------
+
 void XsheetViewer::resetXsheetNotes() {
   m_noteArea->updateButtons();
   m_layerFooterPanel->m_noteArea->updateButtons();

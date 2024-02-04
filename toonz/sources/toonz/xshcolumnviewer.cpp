@@ -3912,6 +3912,21 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
       }
       menu.addSeparator();
     }
+
+    if (xsh->isFolderColumn(m_menuCol)) {
+      QAction *folderToggle =
+          cmdManager->getAction(MI_ToggleOpenCloseFolder);
+
+      bool isOpen = column->getFolderColumn()->isExpanded();
+      bool cameraVisible =
+          Preferences::instance()->isXsheetCameraColumnVisible();
+      if (isOpen)
+        folderToggle->setText(tr("Close Folder"));
+      else
+        folderToggle->setText(tr("Open Folder"));
+      menu.addAction(folderToggle);
+    }
+
     menu.addAction(cmdManager->getAction(MI_FoldColumns));
     if (Preferences::instance()->isShowKeyframesOnXsheetCellAreaEnabled()) {
       QAction *cameraToggle =

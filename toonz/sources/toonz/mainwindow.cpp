@@ -2545,6 +2545,8 @@ void MainWindow::defineActions() {
                              "toggle_sub_nav");
   createRightClickMenuAction(MI_ToggleXsheetCameraColumn,
                              QT_TR_NOOP("Show/Hide Camera Column"), "");
+  createRightClickMenuAction(MI_ToggleOpenCloseFolder,
+                             QT_TR_NOOP("Open/Close Folder"), "");
   createRightClickMenuAction(MI_SetKeyframes, QT_TR_NOOP("&Set Key"), "Z",
                              "set_key");
   createRightClickMenuAction(MI_ShiftKeyframesDown,

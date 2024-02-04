@@ -2630,6 +2630,19 @@ public:
 
 //-----------------------------------------------------------------------------
 
+class ToggleXsheetOpenCloseFolderCommand final : public MenuItemHandler {
+public:
+  ToggleXsheetOpenCloseFolderCommand()
+      : MenuItemHandler(MI_ToggleOpenCloseFolder) {}
+
+  void execute() override {
+    TApp::instance()->getCurrentXsheetViewer()->toggleCurrentFolderOpenClose();
+  }
+
+} ToggleXsheetOpenCloseFolderCommand;
+
+//-----------------------------------------------------------------------------
+
 class SetCellMarkCommand final : public MenuItemHandler {
   int m_markId;
 
