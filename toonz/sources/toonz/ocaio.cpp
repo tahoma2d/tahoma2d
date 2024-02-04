@@ -560,6 +560,8 @@ void ExportOCACommand::execute() {
 /// - import child layers as normal layers, but popup message at the end of the import to notify the user that the layer's groups have been ignored.
 /// - ocaImportPopup (selective import ui) : fix the case of no filename or folder filename name in your test/screenshot (Attempting to load my OCA exported test scene, this UI appears bit buggy and cumbersome:).
 /// - Insert stop frames after the last frame + its duration (stop frames are actually already there as "_blank" frames)
+/// - force user to save scene when using scenepath + untiledScene + load levels preferences set to import or ask (not load)
+/// I don't have the courage to fix this logical problem now...
 
 /// TODO:
 /// - ocaImportPopup: fold import options by default (see ex: filebrowserpopup.cpp showSubsequenceButton)
@@ -597,10 +599,32 @@ public:
   void execute() override;
 } ImportOCACommand;
 
+// copied from iocommand.h
+enum ImportPolicy  //!  Policy adopted for resources external to current scene.
+{
+  ASK_USER,  //!< User is prompted for a resolution.
+  IMPORT,    //!< Resources are copied to scene folders (\a overwrites).
+  LOAD,      //!< Resources are loaded from their original paths.
+};
+
 void ImportOCACommand::execute() {
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
   TXsheet *xsheet   = TApp::instance()->getCurrentXsheet()->getXsheet();
   TFilePath fp      = scene->getScenePath().withType("oca");
+  auto project      = TProjectManager::instance()->getCurrentProject();
+  // avoids the bug of use case : with untiled scenes when project uses scenepath & preference is not set to keep original level's path
+  if (project->getUseSubScenePath()) {
+    auto defaultImportPolicy = Preferences::instance()->getDefaultImportPolicy();
+    if ((defaultImportPolicy != ImportPolicy::LOAD) &&
+        scene->isUntitled()) {
+      QMessageBox::warning(
+          0, "ImportOCA",
+          "Please save the scene before importing OCA levels, when project uses "
+          "Separate assets into scene sub-folders option and preference is not set to keep original level's path...");
+      return;
+    }
+  }
+
   static OCAInputData *data;
   static ocaImportPopup *loadPopup;
   static DVGui::ProgressDialog *progressDialog;
@@ -725,7 +749,7 @@ void OCAIo::OCAInputData::getSceneData() {
 void OCAIo::OCAInputData::read(const QJsonObject &json,
                                QMap<QString, int> importLayerMap,
                                QMap<QString, LevelOptions> importOptionMap) {
-  m_originApp        = json.value("originApp").toString();
+  m_originApp             = json.value("originApp").toString();
   m_originAppVersion = json.value("originAppVersion").toString();
   m_ocaVersion       = json.value("ocaVersion").toString();
   m_name             = json.value("name").toString();

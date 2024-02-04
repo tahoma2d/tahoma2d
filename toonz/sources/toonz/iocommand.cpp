@@ -83,12 +83,14 @@
 #include <QLabel>
 #include <QApplication>
 #include <QClipboard>
+#include <QMessageBox>
 
 // boost includes
 #include <boost/optional.hpp>
 #include <boost/utility/in_place_factory.hpp>
 
 // #define USE_SQLITE_HDPOOL
+#define USE_fiximportLevelInUntitledScene
 
 using namespace DVGui;
 
@@ -2719,6 +2721,20 @@ int IoCmd::loadResources(LoadResourceArguments &args, bool updateRecentFile,
     if (scene->isExternPath(path) || isScene) {
       // extern resource: import or link?
       int ret = importDialog.askImportQuestion(path);
+#ifdef USE_fiximportLevelInUntitledScene
+      TProjectP project = TProjectManager::instance()->getCurrentProject();
+      if (project->getUseSubScenePath()) {
+        if ((ret == ResourceImportDialog::A_IMPORT ||
+             args.importPolicy == LoadResourceArguments::IMPORT) &&
+            scene->isUntitled()) {
+          QMessageBox::warning(
+              0, "Import level",
+              "Please save the scene before importing levels, when project "
+              "uses Separate assets into scene sub-folders option...");
+          ret = ResourceImportDialog::A_CANCEL;
+        }
+      }
+#endif
       if (ret == ResourceImportDialog::A_CANCEL) break;
     }
 
