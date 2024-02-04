@@ -1771,6 +1771,8 @@ public:
     TColumnSelection *selection = getViewer()->getColumnSelection();
     if (!selection || selection->isEmpty()) return false;
 
+    if (getViewer()->orientation()->isVerticalTimeline()) return true;
+
     std::set<int> indices = selection->getIndices();
     if (indices.find(col) != indices.end()) return false;
 
@@ -1845,11 +1847,11 @@ public:
 
     if (!canDrop(CellPosition(0, col))) return;
 
-    TXsheet *xsh           = getViewer()->getXsheet();
-    TXshColumn *column     = xsh->getColumn(col);
-    if (!column) return;
-
     const Orientation *o = getViewer()->orientation();
+    TXsheet *xsh         = getViewer()->getXsheet();
+    TXshColumn *column   = xsh->getColumn(col);
+    if (!o->isVerticalTimeline() && !column) return;
+
     QPoint orig          = getViewer()->positionToXY(pos);
     int dPos = o->isVerticalTimeline() ? m_curPos.x() - m_firstPos.x()
                                        : m_firstPos.y() - m_curPos.y();
@@ -1859,7 +1861,7 @@ public:
                      ->rect(PredefinedRect::LAYER_HEADER)
                      .translated(orig);
 
-    TXshFolderColumn *folderColumn = column->getFolderColumn();
+    TXshFolderColumn *folderColumn = column ? column->getFolderColumn() : 0;
     int folderAdj = folderColumn && folderColumn->isExpanded() ? 5 : 0;
 
     // See if we're on top of a folder column
@@ -1997,7 +1999,7 @@ public:
 
     TStageObjectId columnId = getViewer()->getObjectId(m_targetCol);
     TXshColumn *column      = xsh->getColumn(m_targetCol);
-    if (!column) return;
+    if (!o->isVerticalTimeline() && !column) return;
 
     QRect rect = getViewer()
                      ->orientation()
@@ -2015,7 +2017,7 @@ public:
 
     int topCol = *indices.rbegin();
 
-    int columnDepth = origColumn->folderDepth();
+    int columnDepth = origColumn ? origColumn->folderDepth() : 0;
     QRect indicatorRect =
         o->rect(PredefinedRect::FOLDER_INDICATOR_AREA).translated(orig);
     if (o->isVerticalTimeline())
