@@ -2419,70 +2419,6 @@ void ColumnArea::toggleFolderStatus(TXshColumn *column) {
 
 //-----------------------------------------------------------------------------
 
-bool ColumnArea::getFolderStatus(int folderItemCol, int statusIndex) {
-  TApp *app    = TApp::instance();
-  TXsheet *xsh = m_viewer->getXsheet();
-
-  TXshColumn *column = xsh->getColumn(folderItemCol);
-  if (!column->isInFolder()) return statusIndex == ToggleLock ? false : true;
-  int folderId = column->getFolderId();
-
-  for (int i = folderItemCol + 1; i < xsh->getColumnCount(); i++) {
-    TXshColumn *folderColumn = xsh->getColumn(i);
-    if (folderColumn->getFolderColumn() &&
-        folderColumn->getFolderColumn()->getFolderColumnFolderId() ==
-            folderId) {
-      switch (statusIndex) {
-      case ToggleTransparency:
-        if (column->getSoundTextColumn() || column->getPaletteColumn())
-          return true;
-        return folderColumn->isCamstandVisible();
-        break;
-      case TogglePreviewVisible:
-        if (column->getSoundTextColumn()) return true;
-        return folderColumn->isPreviewVisible();
-        break;
-      case ToggleLock:
-        return folderColumn->isLocked();
-        break;
-      }
-    }
-    if (!folderColumn->isInFolder()) break;
-  }
-
-  return statusIndex == ToggleLock ? false : true;
-}
-
-//-----------------------------------------------------------------------------
-
-void ColumnArea::syncFolderColumnStatus(int folderCol, int statusIndex,
-                                        bool statusValue) {
-  TApp *app    = TApp::instance();
-  TXsheet *xsh = m_viewer->getXsheet();
-
-  TXshColumn *folderColumn = xsh->getColumn(folderCol);
-  int folderId = folderColumn->getFolderColumn()->getFolderColumnFolderId();
-
-  for (int col = folderCol - 1; col >= 0; col--) {
-    TXshColumn *column = xsh->getColumn(col);
-    if (!column || !column->isContainedInFolder(folderId)) break;
-    if (column->isEmpty()) continue;
-    switch (statusIndex) {
-    case ToggleTransparency:
-      if (!column->getSoundTextColumn() && !column->getPaletteColumn())
-        column->setCamstandVisible(statusValue);
-      break;
-    case TogglePreviewVisible:
-      if (!column->getSoundTextColumn()) column->setPreviewVisible(statusValue);
-      break;
-    case ToggleLock:
-      column->lock(statusValue);
-      break;
-    }
-  }
-}
-
-//-----------------------------------------------------------------------------
 
 void ColumnArea::paintEvent(QPaintEvent *event) {  // AREA
   QRect toBeUpdated = event->rect();
@@ -3573,26 +3509,19 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
   if (m_doOnRelease != 0) {
     TXshColumn *column = xsh->getColumn(m_col);
     if (m_doOnRelease == ToggleTransparency) {
-      if (getFolderStatus(m_col, ToggleTransparency)) {
+      if (column->isFolderCamstandVisible()) {
         column->setCamstandVisible(!column->isCamstandVisible());
         if (column->getSoundColumn())
           app->getCurrentXsheet()->notifyXsheetSoundChanged();
       }
-      if (column->getFolderColumn())
-        syncFolderColumnStatus(m_col, m_doOnRelease,
-                               column->isCamstandVisible());
     } else if (m_doOnRelease == TogglePreviewVisible) {
-      if (getFolderStatus(m_col, TogglePreviewVisible)) {
+      if (column->isFolderPreviewVisible()) {
         column->setPreviewVisible(!column->isPreviewVisible());
       }
-      if (column->getFolderColumn())
-        syncFolderColumnStatus(m_col, m_doOnRelease, column->isPreviewVisible());
     } else if (m_doOnRelease == ToggleLock) {
-      if (!getFolderStatus(m_col, ToggleLock)) {
+      if (!column->isFolderLocked()) {
         column->lock(!column->isLocked());
       }
-      if (column->getFolderColumn())
-        syncFolderColumnStatus(m_col, m_doOnRelease, column->isLocked());
     } else if (m_doOnRelease == OpenSettings) {
       QPoint pos = event->pos();
       int col    = m_viewer->xyToPosition(pos).layer();

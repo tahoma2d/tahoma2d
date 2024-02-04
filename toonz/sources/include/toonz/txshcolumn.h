@@ -276,7 +276,7 @@ Set column color tag to \b colorTag.
   // Folder management
   int setFolderId(int value);
   void setFolderId(int value, int position);
-  int getFolderId();
+  int getFolderId() const;
   QStack<int> getFolderIdStack() const { return m_folderId; }
   void setFolderIdStack(QStack<int> folderIdStack);
   void removeFolderId(int position);
@@ -285,6 +285,11 @@ Set column color tag to \b colorTag.
   bool isContainedInFolder(int folderId);
   void removeFromAllFolders();
   int folderDepth();
+
+  TXshColumn *getFolderColumn() const;
+  bool isFolderCamstandVisible() const;
+  bool isFolderPreviewVisible() const;
+  bool isFolderLocked() const;
 
   bool loadFolderInfo(std::string tagName, TIStream &is);
   void saveFolderInfo(TOStream &os);

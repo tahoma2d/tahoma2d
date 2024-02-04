@@ -682,6 +682,7 @@ void TXshColumn::setCamstandNextState() {
 //-----------------------------------------------------------------------------
 
 bool TXshColumn::isCamstandVisible() const {
+  if (!isFolderCamstandVisible()) return false;
   return (m_status & eCamstandVisible) == 0;
 }
 
@@ -715,6 +716,7 @@ void TXshColumn::setCamstandVisible(bool on) {
 //-----------------------------------------------------------------------------
 
 bool TXshColumn::isPreviewVisible() const {
+  if (!isFolderPreviewVisible()) return false;
   return (m_status & ePreviewVisible) == 0;
 }
 
@@ -730,7 +732,10 @@ void TXshColumn::setPreviewVisible(bool on) {
 
 //-----------------------------------------------------------------------------
 
-bool TXshColumn::isLocked() const { return (m_status & eLocked) != 0; }
+bool TXshColumn::isLocked() const {
+  if (isFolderLocked()) return true;
+  return (m_status & eLocked) != 0;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -818,7 +823,7 @@ void TXshColumn::setFolderId(int value, int position) {
 
 //-----------------------------------------------------------------------------
 
-int TXshColumn::getFolderId() {
+int TXshColumn::getFolderId() const {
   return m_folderId.isEmpty() || m_folderSelector < 0 ||
                  m_folderSelector >= m_folderId.size()
              ? 0
@@ -870,6 +875,52 @@ void TXshColumn::removeFromAllFolders() {
 //-----------------------------------------------------------------------------
 
 int TXshColumn::folderDepth() { return m_folderId.size(); }
+
+//-----------------------------------------------------------------------------
+
+TXshColumn *TXshColumn::getFolderColumn() const {
+  TXsheet *xsh = getXsheet();
+  if (!xsh) return 0;
+
+  if (m_folderId.isEmpty()) return 0;
+
+  for (int i = getIndex() + 1; i < xsh->getColumnCount(); i++) {
+    TXshColumn *folderColumn = xsh->getColumn(i);
+    if (folderColumn->getFolderColumn() &&
+        folderColumn->getFolderColumn()->getFolderColumnFolderId() ==
+            getFolderId())
+      return folderColumn;
+    if (!folderColumn->isInFolder()) break;
+  }
+  return 0;
+}
+
+//-----------------------------------------------------------------------------
+
+bool TXshColumn::isFolderCamstandVisible() const {
+  if (m_folderId.isEmpty()) return true;
+  TXshColumn *column = getFolderColumn();
+
+  return column ? column->isCamstandVisible() : true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool TXshColumn::isFolderPreviewVisible() const {
+  if (m_folderId.isEmpty()) return true;
+  TXshColumn *column = getFolderColumn();
+
+  return column ? column->isPreviewVisible() : true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool TXshColumn::isFolderLocked() const {
+  if (m_folderId.isEmpty()) return false;
+  TXshColumn *column = getFolderColumn();
+
+  return column ? column->isLocked() : false;
+}
 
 //-----------------------------------------------------------------------------
 

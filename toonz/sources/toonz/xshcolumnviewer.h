@@ -403,8 +403,6 @@ public:
   };
 
   void toggleFolderStatus(TXshColumn *column);
-  bool getFolderStatus(int folderItemCol, int statusIndex);
-  void syncFolderColumnStatus(int folderCol, int statusIndex, bool statusValue);
 
 protected:
   void select(int columnIndex, QMouseEvent *event);
