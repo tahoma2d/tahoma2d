@@ -1579,7 +1579,7 @@ public:
         TXshColumn *column = getViewer()->getXsheet()->getColumn(col);
         if (column && column->getColumnType() == TXshColumn::eFolderType) {
           int folderId = column->getFolderColumn()->getFolderColumnFolderId();
-          for (int c = col - 1; c > 0; c--) {
+          for (int c = col - 1; c >= 0; c--) {
             TXshColumn *folderItemCol = getViewer()->getXsheet()->getColumn(c);
             if (!folderItemCol || !folderItemCol->isContainedInFolder(folderId))
               break;
@@ -1614,7 +1614,7 @@ public:
       if (!column || column->getColumnType() != TXshColumn::eFolderType)
         continue;
       int folderId = column->getFolderColumn()->getFolderColumnFolderId();
-      for (int c = (*it) - 1; c > 0; c--) {
+      for (int c = (*it) - 1; c >= 0; c--) {
         TXshColumn *folderItemCol = getViewer()->getXsheet()->getColumn(c);
         if (!folderItemCol || !folderItemCol->isContainedInFolder(folderId))
           break;
@@ -1818,7 +1818,7 @@ public:
       if (!column || column->getColumnType() != TXshColumn::eFolderType)
         continue;
       int folderId = column->getFolderColumn()->getFolderColumnFolderId();
-      for (int c = (*it) - 1; c > 0; c--) {
+      for (int c = (*it) - 1; c >= 0; c--) {
         TXshColumn *folderItemCol = getViewer()->getXsheet()->getColumn(c);
         if (!folderItemCol || !folderItemCol->isContainedInFolder(folderId))
           break;
