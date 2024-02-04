@@ -1238,7 +1238,8 @@ void ColumnArea::DrawHeader::drawColumnName() const {
       if (column->isPreviewVisible() && !column->getSoundTextColumn() &&
           !column->getPaletteColumn() && col >= 0)
         nameBacklit = true;
-    } else if (Preferences::instance()->isShowColumnNumbersEnabled()) {
+    } else if (Preferences::instance()->isShowColumnNumbersEnabled() &&
+               o->flag(PredefinedFlag::LAYER_NUMBER_VISIBLE)) {
       if (o->isVerticalTimeline())
         rightadj = -20;
       else
