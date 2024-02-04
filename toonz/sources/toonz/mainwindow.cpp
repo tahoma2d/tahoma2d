@@ -2278,7 +2278,8 @@ void MainWindow::defineActions() {
                        "prevkey");
   createMenuPlayAction(MI_ToggleBlankFrames, QT_TR_NOOP("Toggle Blank Frames"),
                        "", "blankframes");
-
+  createMenuPlayAction(MI_InbetweenFlip, QT_TR_NOOP("Inbetween Flip"), "",
+                       "inbetween_flip");
   // Menu - Render
 
   createMenuRenderAction(

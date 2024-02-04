@@ -802,6 +802,18 @@ bool FlipConsole::drawBlanks(int from, int to, QElapsedTimer *timer,
 void FlipConsole::onNextFrame(int fps, QElapsedTimer *timer,
                               qint64 targetInstant) {
   if (playbackExecutor().isAborted()) return;
+
+  if (m_isInbetweenFlip) {
+    if (m_inbetweenFlipLeft-- > 0 ||
+        (!m_inbetweenFlipDrawings && m_inbetweenFlipRight-- > 0))
+      CommandManager::instance()->execute("MI_PrevDrawing");
+    else if (m_inbetweenFlipDrawings-- > 0)
+      CommandManager::instance()->execute("MI_NextDrawing");
+    else
+      doButtonPressed(ePause);
+    return;
+  }
+
   if (fps < 0)  // can be negative only if is a linked console; it means that
                 // the master console is playing backward
   {
@@ -1706,6 +1718,7 @@ void FlipConsole::doButtonPressed(UINT button) {
   case eLast:
     m_currentFrame = to;
     break;
+  case eInbetweenFlip:
   case ePingPong:
   case ePlay:
   case eLoop:
@@ -1714,24 +1727,32 @@ void FlipConsole::doButtonPressed(UINT button) {
     m_editCurrFrame->disconnect();
     m_currFrameSlider->disconnect();
 
-    m_isPlay     = (button == ePlay);
-    m_isLoop     = (button == eLoop);
-    m_isPingPong = (button == ePingPong);
+    m_isPlay          = (button == ePlay);
+    m_isLoop          = (button == eLoop);
+    m_isPingPong      = (button == ePingPong);
+    m_isInbetweenFlip = (button == eInbetweenFlip);
 
     if (linked && m_isLinkedPlaying) return;
 
-    if ((m_fps == 0 || m_framesCount == 0) && m_playbackExecutor.isRunning()) {
-      doButtonPressed(ePause);
-      if (m_fpsLabel) m_fpsLabel->setText(tr(" FPS ") + QString::number(m_fps));
-      if (m_fpsField) {
-        setFpsFieldColors();
+    if (!m_isInbetweenFlip) {
+      if ((m_fps == 0 || m_framesCount == 0) &&
+          m_playbackExecutor.isRunning()) {
+        doButtonPressed(ePause);
+        if (m_fpsLabel)
+          m_fpsLabel->setText(tr(" FPS ") + QString::number(m_fps));
+        if (m_fpsField) {
+          setFpsFieldColors();
+        }
+        return;
       }
-      return;
+      if (m_fpsLabel) m_fpsLabel->setText(tr(" FPS	") + "/");
+      if (m_fpsField) m_fpsField->setLineEditBackgroundColor(Qt::red);
     }
-    if (m_fpsLabel) m_fpsLabel->setText(tr(" FPS	") + "/");
-    if (m_fpsField) m_fpsField->setLineEditBackgroundColor(Qt::red);
 
-    m_playbackExecutor.resetFps(m_fps);
+    m_playbackExecutor.resetFps(m_isInbetweenFlip
+                                    ? ((float)m_inbetweenFlipDrawings /
+                                       ((float)m_inbetweenFlipSpeed / 1000.0))
+                                    : m_fps);
     if (!m_playbackExecutor.isRunning()) m_playbackExecutor.start();
     m_isLinkedPlaying = linked;
 
@@ -1740,9 +1761,10 @@ void FlipConsole::doButtonPressed(UINT button) {
     if (!linked) {
       // if the play button pressed at the end frame, then go back to the
       // start frame and play
-      if (m_currentFrame <= from ||
-          m_currentFrame >=
-              to)  // the first frame of the playback is drawn right now
+      if (!m_isInbetweenFlip &&
+          (m_currentFrame <= from ||
+           m_currentFrame >=
+               to))  // the first frame of the playback is drawn right now
         m_currentFrame               = m_reverse ? to : from;
       m_settings.m_recomputeIfNeeded = true;
       m_consoleOwner->onDrawFrame(m_currentFrame, m_settings);
@@ -1914,6 +1936,19 @@ void FlipConsole::doButtonPressed(UINT button) {
   m_editCurrFrame->setText(QString::number(m_currentFrame));
   updateCurrentTime();
   m_consoleOwner->onDrawFrame(m_currentFrame, m_settings);
+}
+
+//--------------------------------------------------------------------
+
+void FlipConsole::triggerInbetweenFlip() {
+  if (m_playbackExecutor.isRunning()) return;
+
+  m_inbetweenFlipSpeed = Preferences::instance()->getInbetweenFlipSpeed();
+  m_inbetweenFlipDrawings =
+      Preferences::instance()->getInbetweenFlipDrawingCount() - 1;
+  m_inbetweenFlipRight = m_inbetweenFlipDrawings / 2;
+  m_inbetweenFlipLeft  = m_inbetweenFlipDrawings - m_inbetweenFlipRight;
+  doButtonPressed(eInbetweenFlip);
 }
 
 //--------------------------------------------------------------------
