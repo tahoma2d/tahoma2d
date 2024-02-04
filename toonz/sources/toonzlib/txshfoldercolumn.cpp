@@ -56,6 +56,14 @@ void TXshFolderColumn::loadData(TIStream &is) {
         setOpacity(128);
         status = status & ~eCamstandTransparent43;
       }
+    } else if (tagName == "camerastand_opacity") {
+      int opacity;
+      is >> opacity;
+      setOpacity((UCHAR)opacity);
+    } else if (tagName == "filter_color_id") {
+      int id;
+      is >> id;
+      setColorFilterId(id);
     } else if (tagName == "columnFolderId") {
       int id;
       is >> id;
@@ -78,6 +86,9 @@ void TXshFolderColumn::loadData(TIStream &is) {
 
 void TXshFolderColumn::saveData(TOStream &os) {
   os.child("status") << getStatusWord();
+  if (getOpacity() < 255) os.child("camerastand_opacity") << (int)getOpacity();
+  if (getColorFilterId() != 0)
+    os.child("filter_color_id") << (int)getColorFilterId();
 
   os.child("columnFolderId") << getFolderColumnFolderId();
   os.child("expanded") << (isExpanded() ? 1 : 0);

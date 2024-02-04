@@ -713,6 +713,20 @@ void TXshColumn::setCamstandVisible(bool on) {
 
 //-----------------------------------------------------------------------------
 
+UCHAR TXshColumn::getOpacity() const {
+  UCHAR folderOpacity = getFolderOpacity();
+
+  return folderOpacity == 255 ? m_opacity : folderOpacity;
+}
+
+//-----------------------------------------------------------------------------
+
+int TXshColumn::getColorFilterId() const {
+  int folderColorFilterId = getFolderColorFilterId();
+
+  return !folderColorFilterId ? m_colorFilterId : folderColorFilterId;
+}
+
 //-----------------------------------------------------------------------------
 
 bool TXshColumn::isPreviewVisible() const {
@@ -920,6 +934,24 @@ bool TXshColumn::isFolderLocked() const {
   TXshColumn *column = getFolderColumn();
 
   return column ? column->isLocked() : false;
+}
+
+//-----------------------------------------------------------------------------
+
+UCHAR TXshColumn::getFolderOpacity() const {
+  if (m_folderId.isEmpty()) return 255;
+  TXshColumn *column = getFolderColumn();
+
+  return column ? column->getOpacity() : 255;
+}
+
+//-----------------------------------------------------------------------------
+
+int TXshColumn::getFolderColorFilterId() const {
+  if (m_folderId.isEmpty()) return 0;
+  TXshColumn *column = getFolderColumn();
+
+  return column ? column->getColorFilterId() : 0;
 }
 
 //-----------------------------------------------------------------------------

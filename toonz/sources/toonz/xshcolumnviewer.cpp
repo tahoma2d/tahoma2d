@@ -1222,8 +1222,7 @@ void ColumnArea::DrawHeader::drawConfig() const {
 
   TXshZeraryFxColumn *zColumn = dynamic_cast<TXshZeraryFxColumn *>(column);
 
-  if (zColumn || column->getPaletteColumn() || column->getSoundTextColumn() ||
-      column->getFolderColumn())
+  if (zColumn || column->getPaletteColumn() || column->getSoundTextColumn())
     return;
 
   QPixmap icon = svgToPixmap(svgFilePath, configImgRect.size(),
@@ -1648,8 +1647,7 @@ void ColumnArea::DrawHeader::drawParentHandleName() const {
 void ColumnArea::DrawHeader::drawFilterColor() const {
   if (col < 0 || isEmpty || column->getColorFilterId() == 0 ||
       column->getSoundColumn() || column->getSoundTextColumn() ||
-      column->getPaletteColumn() || column->getFolderColumn() ||
-      column->isMask())
+      column->getPaletteColumn() || column->isMask())
     return;
 
   TPixel32 filterColor = TApp::instance()
@@ -2123,14 +2121,15 @@ void ColumnArea::drawFolderColumnHead(QPainter &p, int col) {
   drawHeader.levelColors(columnColor, dragColor);
   drawHeader.drawBaseFill(columnColor, dragColor);
   drawHeader.drawEye();
-  drawHeader.drawPreviewToggle(255);
+  drawHeader.drawPreviewToggle(column ? column->getOpacity() : 0);
   drawHeader.drawLock();
-  drawHeader.drawConfig();
   drawHeader.drawFolderIndicator();
   drawHeader.drawColumnName();
   drawHeader.drawColumnNumber();
   QPixmap iconPixmap = getColumnIcon(col);
   drawHeader.drawThumbnail(iconPixmap);
+  drawHeader.drawFilterColor();
+  drawHeader.drawConfig();
   drawHeader.drawPegbarName();
   drawHeader.drawParentHandleName();
 }
@@ -2727,6 +2726,9 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
   connect(m_value, SIGNAL(textChanged(const QString &)), this,
           SLOT(onValueChanged(const QString &)));
 
+  m_slider->setEnabled(true);
+  if (column->getFolderOpacity() != 255) m_slider->setEnabled(false);
+
   m_filterColorCombo->clear();
   // initialize color filter combo box
   QList<TSceneProperties::ColorFilter> filters = TApp::instance()
@@ -2746,6 +2748,9 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
 
   m_filterColorCombo->setCurrentIndex(
       m_filterColorCombo->findData(m_column->getColorFilterId()));
+
+  m_filterColorCombo->setEnabled(true);
+  if (column->getFolderColorFilterId()) m_filterColorCombo->setEnabled(false);
 
   m_maskGroupBox->blockSignals(true);
   m_invertMask->blockSignals(true);
@@ -3146,9 +3151,8 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
         TXshZeraryFxColumn *zColumn =
             dynamic_cast<TXshZeraryFxColumn *>(column);
 
-        if (column &&
-            (zColumn || column->getPaletteColumn() ||
-             column->getSoundTextColumn() || column->getFolderColumn())) {
+        if (column && (zColumn || column->getPaletteColumn() ||
+                       column->getSoundTextColumn())) {
           // do nothing
         } else
           m_doOnRelease = OpenSettings;

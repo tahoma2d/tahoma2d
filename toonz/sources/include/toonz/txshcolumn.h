@@ -164,7 +164,7 @@ Return true if camera stand is transparent.notice: this value is not relevant if
 camerastandVisible is off.
 \sa setCamstandTransparent()
 */
-  UCHAR getOpacity() const { return m_opacity; }
+  UCHAR getOpacity() const;
   /*!
 Set column status camera stand transparent to \b on. notice: this value is not
 relevant if camerastandVisible is off.
@@ -269,7 +269,7 @@ Set column color tag to \b colorTag.
     m_colorTag = colorTag;
   }  // Usato solo in tabkids
 
-  int getColorFilterId() const { return m_colorFilterId; }
+  int getColorFilterId() const;
   void setColorFilterId(int id) { m_colorFilterId = id; }
   void resetColumnProperties();
 
@@ -290,6 +290,8 @@ Set column color tag to \b colorTag.
   bool isFolderCamstandVisible() const;
   bool isFolderPreviewVisible() const;
   bool isFolderLocked() const;
+  UCHAR getFolderOpacity() const;
+  int getFolderColorFilterId() const;
 
   bool loadFolderInfo(std::string tagName, TIStream &is);
   void saveFolderInfo(TOStream &os);
