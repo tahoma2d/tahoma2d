@@ -159,15 +159,20 @@ bool containsVectorLevel(int col) {
 }
 
 QIcon createLockIcon(XsheetViewer *viewer) {
-  QColor bgColor_on, bgColor_off;
+  const Orientation *o = viewer->orientation();
+  QColor bgColor;
+  QString svgFilePath;
 
-  QString svgFilePath_on  = viewer->getXsheetLockButtonOnImage();
-  QString svgFilePath_off = viewer->getXsheetLockButtonOffImage();
+  viewer->getButton(LOCK_ON_XSHBUTTON, bgColor, svgFilePath,
+                    !o->isVerticalTimeline());
+  QPixmap pm_on =
+      svgToPixmap(svgFilePath, QSize(16, 16), Qt::KeepAspectRatio, bgColor);
 
-  QPixmap pm_on  = svgToPixmap(svgFilePath_on, QSize(16, 16),
-                               Qt::KeepAspectRatio, bgColor_on);
-  QPixmap pm_off = svgToPixmap(svgFilePath_off, QSize(16, 16),
-                               Qt::KeepAspectRatio, bgColor_off);
+  viewer->getButton(LOCK_OFF_XSHBUTTON, bgColor, svgFilePath,
+                    !o->isVerticalTimeline());
+  QPixmap pm_off =
+      svgToPixmap(svgFilePath, QSize(16, 16), Qt::KeepAspectRatio, bgColor);
+
   QIcon lockIcon;
   lockIcon.addPixmap(pm_off);
   lockIcon.addPixmap(pm_on, QIcon::Normal, QIcon::On);
@@ -2147,6 +2152,7 @@ m_value->setFont(font);*/
   // Lock button is moved in the popup for Minimum layout
   if (m_viewer->getXsheetLayout() == "Minimum") {
     m_lockBtn = new QPushButton(tr("Lock Column"), this);
+    m_lockBtn->setObjectName("ColumnLockButton");
     m_lockBtn->setCheckable(true);
     m_lockBtn->setIcon(createLockIcon(m_viewer));
     m_lockExtraBtn = new QPushButton(this);
