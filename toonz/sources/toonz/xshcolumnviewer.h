@@ -222,7 +222,7 @@ class ColumnTransparencyPopup final : public QWidget {
   QComboBox *m_filterColorCombo;
 
   XsheetViewer *m_viewer;
-  QPushButton *m_lockBtn;
+  QPushButton *m_lockBtn, *m_lockExtraBtn;
 
   QGroupBox *m_maskGroupBox;
   QCheckBox *m_invertMask;

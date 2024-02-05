@@ -2179,12 +2179,11 @@ m_value->setFont(font);*/
   m_maskGroupBox->setLayout(maskLay);
 
   // Lock button is moved in the popup for Minimum layout
-  QPushButton *lockExtraBtn = nullptr;
   if (m_viewer->getXsheetLayout() == "Minimum") {
     m_lockBtn = new QPushButton(tr("Lock Column"), this);
     m_lockBtn->setCheckable(true);
     m_lockBtn->setIcon(createLockIcon(m_viewer));
-    lockExtraBtn = new QPushButton(this);
+    m_lockExtraBtn = new QPushButton(this);
     QMenu *menu  = new QMenu();
     menu->setObjectName("xsheetColumnAreaMenu_Lock");
     CommandManager *cmdManager = CommandManager::instance();
@@ -2194,8 +2193,8 @@ m_value->setFont(font);*/
     menu->addAction(cmdManager->getAction("MI_UnlockSelectedColumns"));
     menu->addAction(cmdManager->getAction("MI_UnlockAllColumns"));
     menu->addAction(cmdManager->getAction("MI_ToggleColumnLocks"));
-    lockExtraBtn->setMenu(menu);
-    lockExtraBtn->setFixedSize(20, 20);
+    m_lockExtraBtn->setMenu(menu);
+    m_lockExtraBtn->setFixedSize(20, 20);
   }
 
   QGridLayout *mainLayout = new QGridLayout();
@@ -2228,7 +2227,7 @@ m_value->setFont(font);*/
       lockLay->setSpacing(3);
       {
         lockLay->addWidget(m_lockBtn, 0);
-        lockLay->addWidget(lockExtraBtn, 0);
+        lockLay->addWidget(m_lockExtraBtn, 0);
       }
       mainLayout->addLayout(lockLay, 3, 1, Qt::AlignLeft | Qt::AlignVCenter);
     }
@@ -2412,7 +2411,12 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
   m_invertMask->blockSignals(false);
   m_renderMask->blockSignals(false);
 
-  if (m_lockBtn) m_lockBtn->setChecked(m_column->isLocked());
+  if (m_lockBtn) {
+    m_lockBtn->setChecked(m_column->isLocked());
+    bool isVertical = m_viewer->orientation()->isVerticalTimeline();
+    m_lockBtn->setVisible(isVertical);
+    m_lockExtraBtn->setVisible(isVertical);
+  }
 }
 
 /*void ColumnTransparencyPopup::mouseMoveEvent ( QMouseEvent * e )
@@ -2594,7 +2598,8 @@ void ColumnArea::openCameraColumnPopup(QPoint pos) {
     menu.addAction(action);
   }
   // Lock button is moved in this menu for Minimum layout
-  if (m_viewer->getXsheetLayout() == "Minimum") {
+  if (m_viewer->getXsheetLayout() == "Minimum" &&
+      m_viewer->orientation()->isVerticalTimeline()) {
     menu.addSeparator();
     bool isLocked = m_viewer->getXsheet()->getColumn(-1)->isLocked();
     QAction *lockAction =
