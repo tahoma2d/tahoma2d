@@ -975,7 +975,7 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
   QRect rect = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_HEADER
                                  : PredefinedRect::LAYER_HEADER)
                    .translated(orig);
-  if (!o->isVerticalTimeline()) rect.adjust(80, 0, 0, 0);
+  if (!o->isVerticalTimeline()) rect.adjust(73, 0, 0, 0);
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
   if (column && column->folderDepth() && !o->isVerticalTimeline())
