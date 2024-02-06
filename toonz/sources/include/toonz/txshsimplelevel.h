@@ -130,6 +130,9 @@ public:
   TFilePath getScannedPath() const { return m_scannedPath; }
   void setScannedPath(const TFilePath &path);
 
+  TFilePath getOriginalPath() const { return m_originalPath; }
+  void setOriginalPath(const TFilePath &path) { m_originalPath = path; }
+
   /*! \details      Each level frame have a corresponding image retrievable
               with the getFrame() method and similar.
 
@@ -388,6 +391,7 @@ private:
   std::set<TFrameId> m_editableRange;
 
   TFilePath m_path, m_scannedPath;
+  TFilePath m_originalPath;
 
   std::string m_idBase;
   std::wstring m_editableRangeUserInfo;

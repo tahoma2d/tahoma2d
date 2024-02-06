@@ -446,7 +446,7 @@ void ToonzScene::loadResources(bool withProgressDialog) {
       QString msg;
       msg = QObject::tr("It is not possible to load file %1.")
                 .arg(level->getPath().getQString());
-      DVGui::error(msg);
+      DVGui::error(msg + " exception: "  + QString::fromStdWString(e.getMessage()));
     } catch (...) {
     }
   }
