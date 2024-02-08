@@ -669,6 +669,35 @@ void ToonzScene::save(const TFilePath &fp, TXsheet *subxsh) {
       subxsh->getUsedLevels(saveSet);
       m_levelSet->setSaveSet(saveSet);
     }
+
+    // Scene path changed (Untitled -> final  or Save As changed scene name when
+    // scene subfolders are used)
+    if (oldScenePath != newScenePath && (wasUntitled ||
+                                         TProjectManager::instance()
+                                             ->getCurrentProject()
+                                             ->getUseSubScenePath())) {
+      std::string oldSceneName = oldScenePath.getName();
+      std::string newSceneName = fp.getName();
+      for (int i = 0; i < m_levelSet->getLevelCount(); i++) {
+        TXshLevel *level = m_levelSet->getLevel(i);
+        if (!level) continue;
+        TFilePath levelFp = level->getPath();
+        if (levelFp.isEmpty()) continue;
+        if (levelFp.getParentDir().getName() != oldSceneName) continue;
+
+        levelFp = levelFp.getParentDir().getParentDir() +
+                  TFilePath(newSceneName) + levelFp.withoutParentDir();
+
+        if (level->getPaletteLevel())
+          level->getPaletteLevel()->setPath(levelFp);
+        else if (level->getSoundLevel())
+          level->getSoundLevel()->setPath(levelFp);
+        else if (level->getSimpleLevel()) {
+          level->getSimpleLevel()->setPath(levelFp, true);
+        }
+      }
+    }	
+
     os.openChild("levelSet");
     m_levelSet->saveData(os);
     os.closeChild();

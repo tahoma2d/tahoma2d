@@ -260,7 +260,7 @@ bool importLipSync(TFilePath levelPath, QList<TFrameId> frameList,
 // open a warning popup notifying that such level will lose link.
 bool takeCareSceneFolderItemsOnSaveSceneAs(
     ToonzScene *scene, const TFilePath &newPath, TXsheet *subxsh,
-    QHash<TXshLevel *, TFilePath> &orgLevelPaths);
+    QHash<TXshLevel *, TFilePath> &orgLevelPaths, bool useSceneSubfolders);
 
 }  // namespace IoCmd
 

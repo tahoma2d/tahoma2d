@@ -163,7 +163,6 @@ public:
     return getBoolValue(rasterOptimizedMemory);
   }
   bool isAutosaveEnabled() const { return getBoolValue(autosaveEnabled); }
-  bool isSaveLevelsOnSaveSceneEnabled() const { return getBoolValue(saveLevelsOnSaveSceneEnabled); }
   int getAutosavePeriod() const {
     return getIntValue(autosavePeriod);
   }  // minutes
