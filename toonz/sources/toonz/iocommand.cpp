@@ -1551,9 +1551,11 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
     }
   };
 
+  bool useSceneSubfolders =
+      TProjectManager::instance()->getCurrentProject()->getUseSubScenePath();
   if (!overwrite) {
-    bool ret = takeCareSceneFolderItemsOnSaveSceneAs(scene, scenePath, xsheet,
-                                                     orgLevelPaths);
+    bool ret = takeCareSceneFolderItemsOnSaveSceneAs(
+        scene, scenePath, xsheet, orgLevelPaths, useSceneSubfolders);
     if (!ret) {
       revertOrgLevelPaths();
       return false;
@@ -2225,60 +2227,6 @@ bool IoCmd::loadScene() {
 //===========================================================================
 // IoCmd::saveSceneVersion()
 //---------------------------------------------------------------------------
-
-
-bool IoCmd::saveSceneAs(const TFilePath &fp) {
-  // copy and replace all levels if project option "Separate assets into scene
-  // sub-folders" is checked
-  TProjectP project = TProjectManager::instance()->getCurrentProject();
-  bool saveTwice    = false;
-  if (project->getUseSubScenePath()) {
-    // save scene a first time before updating levels paths just to make
-    // getDefaultLevelPath method happy (and avoid search/replace old/new scene
-    // name)...
-    saveTwice   = true;
-    bool result = IoCmd::saveScene(fp, 0);
-
-    ToonzScene *scene   = TApp::instance()->getCurrentScene()->getScene();
-    TLevelSet *levelSet = scene->getLevelSet();
-    for (int i = 0; i < levelSet->getLevelCount(); i++) {
-      TXshLevel *lvl = levelSet->getLevel(i);
-      auto oldPath   = lvl->getPath();
-      auto newPath = scene->getDefaultLevelPath(lvl->getType(), lvl->getName());
-      if (oldPath != newPath) {
-        if (Preferences::instance()->isSaveLevelsOnSaveSceneEnabled()) {
-          // 1 - Save level to a folder using new scene name
-          IoCmd::saveLevel(newPath, lvl->getSimpleLevel(), true);
-          // 2 - Update level's path property
-          lvl->getSimpleLevel()->setPath(newPath);
-        } else {
-          TFilePath dOldPath = scene->decodeFilePath(oldPath);
-          TFilePath dNewPath = scene->decodeFilePath(newPath);
-          // 1 - Copy level to a folder using new scene name
-          lvl->getSimpleLevel()->copyFiles(dNewPath, dOldPath);
-          // 2 - Update level's path property
-          lvl->getSimpleLevel()->setPath(newPath, true);
-        }
-      }
-    }
-    // 3 - Notify xsheet scene and level of this change, of crash sooner or
-    // later ?
-    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
-    TApp::instance()->getCurrentScene()->notifyCastChange();
-    TApp::instance()->getCurrentLevel()->notifyLevelChange();
-  }
-  bool result = IoCmd::saveScene(fp, saveTwice ? IoCmd::SILENTLY_OVERWRITE : 0);
-  // automatic "save all" (otherwize, unsaved level changes would be lost)
-  if (result) {
-    // 1 - Save level to a folder using new scene name
-    if (Preferences::instance()->isSaveLevelsOnSaveSceneEnabled())
-      return IoCmd::saveAll(0);
-    else
-      return result;
-  } else
-    return false;
-}
-
 // Utility static methods for file naming
 // I put it here because statics in tfilepath header would need a long rebuild for each code change...
 #include <sstream>
@@ -2337,7 +2285,7 @@ bool IoCmd::saveSceneVersion() {
   auto oldScenePath = scene->getScenePath().getQString().toStdString();
   auto newScenePath = oldScenePath;
   incrementNumberedFilename(newScenePath);
-  return saveSceneAs(TFilePath(newScenePath));
+  return saveScene(TFilePath(newScenePath), 0);
 
   //// I couldn't understand how to use existing toonz numbered file naming methods :
   //// this example removes the version number...
@@ -2987,7 +2935,7 @@ bool IoCmd::importLipSync(TFilePath levelPath, QList<TFrameId> frameList,
 // return false if cancelled.
 bool IoCmd::takeCareSceneFolderItemsOnSaveSceneAs(
     ToonzScene *scene, const TFilePath &newPath, TXsheet *subxsh,
-    QHash<TXshLevel *, TFilePath> &orgLevelPaths) {
+    QHash<TXshLevel *, TFilePath> &orgLevelPaths, bool useSceneSubfolders) {
   auto setPathToLevel = [&](TXshLevel *level, TFilePath fp) {
     // in case of saving subxsheet, the current scene will not be switched to
     // the saved one
@@ -3006,7 +2954,7 @@ bool IoCmd::takeCareSceneFolderItemsOnSaveSceneAs(
   TFilePath newSceneFolder = scene->decodeFilePath(newPath).getParentDir();
 
   // in case of saving in the same folder
-  if (oldSceneFolder == newSceneFolder) return true;
+  if (oldSceneFolder == newSceneFolder && !useSceneSubfolders) return true;
 
   TLevelSet *levelSet = scene->getLevelSet();
   std::vector<TXshLevel *> levels;
@@ -3021,28 +2969,89 @@ bool IoCmd::takeCareSceneFolderItemsOnSaveSceneAs(
   else
     levelSet->listLevels(levels);
 
-  QList<TXshLevel *> sceneFolderLevels;
+  std::string oldSceneName = scene->getScenePath().getName();
+  std::string newSceneName = newPath.getName();
+
+  QList<TXshLevel *> sceneFolderLevels, changedFolderLevels;
   QString str;
   int count = 0;
   for (TXshLevel *level : levels) {
-    if (!level->getPath().isEmpty() &&
-        TFilePath("$scenefolder").isAncestorOf(level->getPath())) {
-      TFilePath levelFullPath = scene->decodeFilePath(level->getPath());
-      // check if the path can be re-coded with the new scene folder path
-      if (newSceneFolder.isAncestorOf(levelFullPath)) {
-        // just replace the path without warning
-        TFilePath fp =
-            TFilePath("$scenefolder") + (levelFullPath - newSceneFolder);
-        setPathToLevel(level, fp);
-      }
-      // if re-coding is not possible, then it needs to ask user's preference
-      else {
-        sceneFolderLevels.append(level);
-        if (count < 10) {
-          str.append("    " + QString::fromStdWString(level->getName()) + " (" +
-                     level->getPath().getQString() + ")\n");
+    if (!level->getPath().isEmpty()) {
+      if (TFilePath("$scenefolder").isAncestorOf(level->getPath())) {
+        TFilePath levelFullPath = scene->decodeFilePath(level->getPath());
+        // check if the path can be re-coded with the new scene folder path
+        if (newSceneFolder.isAncestorOf(levelFullPath)) {
+          // just replace the path without warning
+          TFilePath fp =
+              TFilePath("$scenefolder") + (levelFullPath - newSceneFolder);
+          setPathToLevel(level, fp);
         }
-        count++;
+        // if re-coding is not possible, then it needs to ask user's preference
+        else {
+          sceneFolderLevels.append(level);
+          if (count < 10) {
+            str.append("    " + QString::fromStdWString(level->getName()) +
+                       " (" + level->getPath().getQString() + ")\n");
+          }
+          count++;
+        }
+      } else if (useSceneSubfolders) {
+        if (level->getPath().getParentDir().getName() == oldSceneName)
+          changedFolderLevels.append(level);
+      }
+    }
+  }
+
+  // Immediately copy untitled levels to new area
+  if (!changedFolderLevels.isEmpty()) {
+    enum OVERWRITEPOLICY { ASK, YES_FOR_ALL, NO_FOR_ALL } policy = ASK;
+    for (int i = 0; i < changedFolderLevels.size(); i++) {
+      TXshLevel *level = changedFolderLevels.at(i);
+      TFilePath fp     = level->getPath();
+      TFilePath sceneRoot =
+          scene->isUntitled()
+              ? scene->getScenePath().getParentDir()
+              : scene->getScenePath().getParentDir().getParentDir();
+      fp = scene->decodeFilePath(fp) - sceneRoot;
+      fp = fp.getParentDir().getParentDir() + TFilePath(newSceneName) +
+           fp.withoutParentDir();
+      fp = TFilePath(newSceneFolder.getParentDir()) + fp;
+      // check the level existence
+      if (TSystem::doesExistFileOrLevel(fp)) {
+        bool overwrite = (policy == YES_FOR_ALL);
+        if (policy == ASK) {
+          QString question =
+              QObject::tr(
+                  "File %1 already exists.\nDo you want to overwrite it?")
+                  .arg(fp.getQString());
+          int ret_overwrite = DVGui::MsgBox(
+              question, QObject::tr("Overwrite"),
+              QObject::tr("Overwrite for All"), QObject::tr("Don't Overwrite"),
+              QObject::tr("Don't Overwrite for All"), 0);
+          if (ret_overwrite == 0) return false;
+          if (ret_overwrite == 1)
+            overwrite = true;
+          else if (ret_overwrite == 2) {
+            overwrite = true;
+            policy    = YES_FOR_ALL;
+          } else if (ret_overwrite == 4)
+            policy = NO_FOR_ALL;
+        }
+        if (!overwrite) continue;
+      }
+
+      TFilePath srcFp = scene->decodeFilePath(level->getPath());
+      if (TSystem::doesExistFileOrLevel(srcFp) &&
+          !TSystem::copyFileOrLevel(fp, srcFp))
+        warning(QObject::tr("Failed to overwrite %1").arg(fp.getQString()));
+
+      // copy the palette as well
+      if (level->getType() == TZP_XSHLEVEL) {
+        if (TSystem::doesExistFileOrLevel(srcFp.withType("tpl")) &&
+            !TSystem::copyFileOrLevel(fp.withType("tpl"),
+                                      srcFp.withType("tpl")))
+          warning(QObject::tr("Failed to overwrite %1")
+                      .arg(fp.withType("tpl").getQString()));
       }
     }
   }

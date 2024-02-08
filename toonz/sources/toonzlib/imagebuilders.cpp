@@ -54,6 +54,11 @@ ImageLoader::ImageLoader(const TFilePath &path, const TFrameId &fid)
 //-------------------------------------------------------------------------
 
 bool ImageLoader::getInfo(TImageInfo &info, int imFlags, void *extData) {
+  // Update path if image file location was changed
+  BuildExtData *data = static_cast<BuildExtData *>(extData);
+  if (data && !data->m_fullPath.isEmpty() && m_path != data->m_fullPath)
+    m_path = data->m_fullPath;
+
   try {
     TLevelReaderP lr(m_path);
     TImageReaderP fr = lr->getFrameReader(m_fid);
@@ -90,6 +95,10 @@ TImageP ImageLoader::build(int imFlags, void *extData) {
   BuildExtData *data = static_cast<BuildExtData *>(extData);
 
   int subsampling = buildSubsampling(imFlags, data);
+
+  // Update path if image file location was changed
+  if (!data->m_fullPath.isEmpty() && m_path != data->m_fullPath)
+    m_path = data->m_fullPath;
 
   try {
     // Initialize level reader

@@ -75,7 +75,6 @@ enum PreferencesItemId {
   defaultProjectPath,
   recordFileHistory,
   recordAsUsername,
-  saveLevelsOnSaveSceneEnabled,
 
   //----------
   // Import / Export
