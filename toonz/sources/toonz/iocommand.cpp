@@ -1823,7 +1823,7 @@ bool IoCmd::saveAll(int flags) {
     ;
 
   TApp::instance()->setSaveInProgress(true);
-  result = result && resources.save(scene->getScenePath()); //saveAll : crash on TXshSimpleLevel::saveBackup...
+  result = result && resources.save(scene->getScenePath());
   TApp::instance()->setSaveInProgress(false);
   resources.updatePaths();
 
@@ -2246,15 +2246,6 @@ bool IoCmd::saveSceneAs(const TFilePath &fp) {
     for (int i = 0; i < levelSet->getLevelCount(); i++) {
       TXshLevel *lvl = levelSet->getLevel(i);
       auto oldPath   = lvl->getPath();
-      // attempt to fix non-existant extra folder bug...
-      if (lvl->getSimpleLevel()->getOriginalPath() != TFilePath()) {
-        oldPath = lvl->getSimpleLevel()->getOriginalPath();
-        DVGui::info("saveSceneAs level " + QString::fromStdWString(lvl->getName()) +
-                    " original path: " +  lvl->getSimpleLevel()->getOriginalPath());
-      } else {
-        DVGui::info("saveSceneAs getOriginalPath: returned an empty string..." +
-                    lvl->getSimpleLevel()->getOriginalPath());
-      }
       auto newPath = scene->getDefaultLevelPath(lvl->getType(), lvl->getName());
       if (oldPath != newPath) {
         if (Preferences::instance()->isSaveLevelsOnSaveSceneEnabled()) {

@@ -1588,16 +1588,7 @@ void TXshSimpleLevel::save(const TFilePath &fp, const TFilePath &oldFp,
   // backup
   if (Preferences::instance()->isBackupEnabled() && dOldPath == dDstPath &&
       TSystem::doesExistFileOrLevel(dDstPath))
-    if (!getProperties()->isStopMotionLevel()) {
-      //saveBackup(dDstPath); <-- saveAll : crash
-      // and the following tdoesn't fix it...
-      ////try {
-      ////  if (this->getOriginalPath() != TFilePath()) // should we avoid saveBackup when importing files or what else ?
-      ////      saveBackup(dDstPath);
-      ////} catch (...) {
-      ////  //DVGui::warning("TXshSimpleLevel::save: saveBackup was avoided...");
-      ////}
-    }
+    if (!getProperties()->isStopMotionLevel()) saveBackup(dDstPath);
 
   if (isAreadOnlyLevel(dDstPath)) {
     if (m_editableRange.empty() &&

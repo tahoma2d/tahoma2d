@@ -207,7 +207,6 @@ SceneLevel::SceneLevel(ToonzScene *scene, TXshSimpleLevel *sl)
 //-----------------------------------------------------------------------------
 
 void SceneLevel::save() {
-  // saveAll : crash on TXshSimpleLevel::saveBackup...
   TFilePath fp = m_oldPath;
   SceneResource::updatePath(fp);
   TFilePath actualFp      = m_scene->decodeFilePath(fp);
@@ -508,7 +507,7 @@ bool SceneResources::save(const TFilePath newScenePath) {
   m_scene->setScenePath(newScenePath);
   bool saved = false;
   for (int i = 0; i < (int)m_resources.size(); i++) {
-    m_resources[i]->save(); // saveAll : crash on TXshSimpleLevel::saveBackup...
+    m_resources[i]->save();
   }
 
   QStringList failedList;

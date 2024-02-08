@@ -901,8 +901,7 @@ void OCAIo::OCAInputData::importOcaLayer(
       auto jsonFrame = frames[firstRealFrameIndex].toObject();
       auto levelPath = TFilePath(m_parentDir.getQString() + "/" +
                             jsonFrame["fileName"].toString());
-      sl->setPath(levelPath, true);  // attempts to fix /extras folder bug
-      sl->setOriginalPath(levelPath);// store unmodified original path ...
+      sl->setPath(levelPath, true); // attempts to fix /extras folder bug
     } 
     // else sl->setPath(TFilePath ("")); will never happen
     if (importOptionMap.contains(jsonLayer["name"].toString())) {
