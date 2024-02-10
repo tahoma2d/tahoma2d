@@ -159,15 +159,20 @@ bool containsVectorLevel(int col) {
 }
 
 QIcon createLockIcon(XsheetViewer *viewer) {
-  QColor bgColor_on, bgColor_off;
+  const Orientation *o = viewer->orientation();
+  QColor bgColor;
+  QString svgFilePath;
 
-  QString svgFilePath_on  = viewer->getXsheetLockButtonOnImage();
-  QString svgFilePath_off = viewer->getXsheetLockButtonOffImage();
+  viewer->getButton(LOCK_ON_XSHBUTTON, bgColor, svgFilePath,
+                    !o->isVerticalTimeline());
+  QPixmap pm_on =
+      svgToPixmap(svgFilePath, QSize(16, 16), Qt::KeepAspectRatio, bgColor);
 
-  QPixmap pm_on  = svgToPixmap(svgFilePath_on, QSize(16, 16),
-                               Qt::KeepAspectRatio, bgColor_on);
-  QPixmap pm_off = svgToPixmap(svgFilePath_off, QSize(16, 16),
-                               Qt::KeepAspectRatio, bgColor_off);
+  viewer->getButton(LOCK_OFF_XSHBUTTON, bgColor, svgFilePath,
+                    !o->isVerticalTimeline());
+  QPixmap pm_off =
+      svgToPixmap(svgFilePath, QSize(16, 16), Qt::KeepAspectRatio, bgColor);
+
   QIcon lockIcon;
   lockIcon.addPixmap(pm_off);
   lockIcon.addPixmap(pm_on, QIcon::Normal, QIcon::On);
@@ -1256,7 +1261,8 @@ void ColumnArea::DrawHeader::drawColumnName() const {
       if (column->isPreviewVisible() && !column->getSoundTextColumn() &&
           !column->getPaletteColumn() && col >= 0)
         nameBacklit = true;
-    } else if (Preferences::instance()->isShowColumnNumbersEnabled()) {
+    } else if (Preferences::instance()->isShowColumnNumbersEnabled() &&
+               o->flag(PredefinedFlag::LAYER_NUMBER_VISIBLE)) {
       if (o->isVerticalTimeline())
         rightadj = -20;
       else
@@ -2178,12 +2184,12 @@ m_value->setFont(font);*/
   m_maskGroupBox->setLayout(maskLay);
 
   // Lock button is moved in the popup for Minimum layout
-  QPushButton *lockExtraBtn = nullptr;
   if (m_viewer->getXsheetLayout() == "Minimum") {
     m_lockBtn = new QPushButton(tr("Lock Column"), this);
+    m_lockBtn->setObjectName("ColumnLockButton");
     m_lockBtn->setCheckable(true);
     m_lockBtn->setIcon(createLockIcon(m_viewer));
-    lockExtraBtn = new QPushButton(this);
+    m_lockExtraBtn = new QPushButton(this);
     QMenu *menu  = new QMenu();
     menu->setObjectName("xsheetColumnAreaMenu_Lock");
     CommandManager *cmdManager = CommandManager::instance();
@@ -2193,8 +2199,8 @@ m_value->setFont(font);*/
     menu->addAction(cmdManager->getAction("MI_UnlockSelectedColumns"));
     menu->addAction(cmdManager->getAction("MI_UnlockAllColumns"));
     menu->addAction(cmdManager->getAction("MI_ToggleColumnLocks"));
-    lockExtraBtn->setMenu(menu);
-    lockExtraBtn->setFixedSize(20, 20);
+    m_lockExtraBtn->setMenu(menu);
+    m_lockExtraBtn->setFixedSize(20, 20);
   }
 
   QGridLayout *mainLayout = new QGridLayout();
@@ -2227,7 +2233,7 @@ m_value->setFont(font);*/
       lockLay->setSpacing(3);
       {
         lockLay->addWidget(m_lockBtn, 0);
-        lockLay->addWidget(lockExtraBtn, 0);
+        lockLay->addWidget(m_lockExtraBtn, 0);
       }
       mainLayout->addLayout(lockLay, 3, 1, Qt::AlignLeft | Qt::AlignVCenter);
     }
@@ -2411,7 +2417,12 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
   m_invertMask->blockSignals(false);
   m_renderMask->blockSignals(false);
 
-  if (m_lockBtn) m_lockBtn->setChecked(m_column->isLocked());
+  if (m_lockBtn) {
+    m_lockBtn->setChecked(m_column->isLocked());
+    bool isVertical = m_viewer->orientation()->isVerticalTimeline();
+    m_lockBtn->setVisible(isVertical);
+    m_lockExtraBtn->setVisible(isVertical);
+  }
 }
 
 /*void ColumnTransparencyPopup::mouseMoveEvent ( QMouseEvent * e )
@@ -2593,7 +2604,8 @@ void ColumnArea::openCameraColumnPopup(QPoint pos) {
     menu.addAction(action);
   }
   // Lock button is moved in this menu for Minimum layout
-  if (m_viewer->getXsheetLayout() == "Minimum") {
+  if (m_viewer->getXsheetLayout() == "Minimum" &&
+      m_viewer->orientation()->isVerticalTimeline()) {
     menu.addSeparator();
     bool isLocked = m_viewer->getXsheet()->getColumn(-1)->isLocked();
     QAction *lockAction =
