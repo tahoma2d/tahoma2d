@@ -1938,6 +1938,8 @@ public:
         newCol--;
       }
 
+      if (newCol < 0) return;
+
       std::vector<int>::reverse_iterator it;
       int i = 0;
       int subfolder = -1;
