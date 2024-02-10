@@ -978,8 +978,13 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
   if (!o->isVerticalTimeline()) rect.adjust(73, 0, 0, 0);
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-  if (column && column->folderDepth() && !o->isVerticalTimeline())
-    rect.adjust(indicatorRect.width() * column->folderDepth(), 0, 0, 0);
+  if (column && column->folderDepth()) {
+    if (!o->isVerticalTimeline())
+      rect.adjust(indicatorRect.width() * column->folderDepth(), 0, 0, 0);
+    else if (Preferences::instance()->getXsheetLayoutPreference() ==
+             QString("Minimum"))
+      rect.adjust(0, 0, 0, indicatorRect.height() * column->folderDepth());
+  }
 
   int x0 = rect.left();
   int x1 = rect.right();
