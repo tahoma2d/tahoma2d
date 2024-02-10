@@ -1443,9 +1443,7 @@ public:
 static void newFolder() {
   TTool::Application *app = TTool::getApplication();
   TXsheet *xsh            = app->getCurrentScene()->getScene()->getXsheet();
-  int col = TTool::getApplication()->getCurrentColumn()->getColumnIndex();
-  if (col < 0)
-    col = 0;  // Normally insert before. In case of camera, insert after
+  int col = TTool::getApplication()->getCurrentColumn()->getColumnIndex() + 1;
   TXshFolderColumn *folderCol = new TXshFolderColumn();
   int folderId                = xsh->getNewFolderId();
 
