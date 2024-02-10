@@ -276,7 +276,7 @@ Set column color tag to \b colorTag.
   // Folder management
   int setFolderId(int value);
   void setFolderId(int value, int position);
-  int getFolderId() const;
+  int getFolderId(int position = -1) const;
   QStack<int> getFolderIdStack() const { return m_folderId; }
   void setFolderIdStack(QStack<int> folderIdStack);
   void removeFolderId(int position);

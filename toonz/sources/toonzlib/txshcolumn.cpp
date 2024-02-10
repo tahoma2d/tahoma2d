@@ -837,11 +837,11 @@ void TXshColumn::setFolderId(int value, int position) {
 
 //-----------------------------------------------------------------------------
 
-int TXshColumn::getFolderId() const {
-  return m_folderId.isEmpty() || m_folderSelector < 0 ||
-                 m_folderSelector >= m_folderId.size()
+int TXshColumn::getFolderId(int position) const {
+  int pos = position < 0 ? m_folderSelector : position;
+  return m_folderId.isEmpty() || pos < 0 || pos >= m_folderId.size()
              ? 0
-             : m_folderId[m_folderSelector];
+             : m_folderId[pos];
 }
 
 //-----------------------------------------------------------------------------
