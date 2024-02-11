@@ -975,7 +975,8 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
   QRect rect = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_HEADER
                                  : PredefinedRect::LAYER_HEADER)
                    .translated(orig);
-  if (!o->isVerticalTimeline()) rect.adjust(73, 0, 0, 0);
+  if (!o->isVerticalTimeline())
+    rect.adjust(73, 0, m_viewer->getTimelineBodyOffset(), 0);
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
   int folderDepth     = 0;
@@ -1008,6 +1009,8 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
       QRect sideBar =
           o->rect(PredefinedRect::DRAG_LAYER)
               .translated(x0 - 73 - (indicatorRect.width() * folderDepth), y0);
+      if (!o->isVerticalTimeline())
+        sideBar.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
 
       if (o->flag(PredefinedFlag::DRAG_LAYER_BORDER)) {
         p.setPen(m_viewer->getVerticalLineColor());
@@ -1343,6 +1346,8 @@ void ColumnArea::DrawHeader::drawColumnName() const {
   QRect columnName = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_NAME
                                        : PredefinedRect::LAYER_NAME)
                          .translated(orig);
+  if (!o->isVerticalTimeline())
+    columnName.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
 
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
@@ -1857,7 +1862,8 @@ ColumnArea::ColumnArea(XsheetViewer *parent, Qt::WindowFlags flags)
     , m_isPanning(false)
     , m_soundColumnPopup(0)
     , m_menuCol(-999)
-    , m_menuTimer(0) {
+    , m_menuTimer(0)
+    , m_resizingHeader(0) {
   TXsheetHandle *xsheetHandle = TApp::instance()->getCurrentXsheet();
   TObjectHandle *objectHandle = TApp::instance()->getCurrentObject();
   m_changeObjectParent        = new ChangeObjectParent(m_viewer);
@@ -1914,6 +1920,8 @@ void ColumnArea::drawFoldedColumnHead(QPainter &p, int col) {
 
   QPoint orig = m_viewer->positionToXY(CellPosition(0, col));
   QRect rect  = o->rect(PredefinedRect::FOLDED_LAYER_HEADER).translated(orig);
+  if (!o->isVerticalTimeline())
+    rect.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
 
   int x0, y0, x, y;
 
@@ -2021,6 +2029,8 @@ void ColumnArea::drawLevelColumnHead(QPainter &p, int col) {
 
   QPoint orig = m_viewer->positionToXY(CellPosition(0, col));
   QRect rect  = o->rect(PredefinedRect::LAYER_HEADER).translated(orig);
+  if (!o->isVerticalTimeline())
+    rect.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
 
   TApp *app    = TApp::instance();
   TXsheet *xsh = m_viewer->getXsheet();
@@ -2096,6 +2106,8 @@ void ColumnArea::drawFolderColumnHead(QPainter &p, int col) {
 
   QPoint orig = m_viewer->positionToXY(CellPosition(0, col));
   QRect rect  = o->rect(PredefinedRect::LAYER_HEADER).translated(orig);
+  if (!o->isVerticalTimeline())
+    rect.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
 
   TApp *app    = TApp::instance();
   TXsheet *xsh = m_viewer->getXsheet();
@@ -2151,6 +2163,8 @@ void ColumnArea::drawCurrentColumnFocus(QPainter &p, int col) {
   QRect rect = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_NAME
                                  : PredefinedRect::LAYER_NAME)
                    .translated(orig);
+  if (!o->isVerticalTimeline())
+    rect.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
 
   TXshColumn *column = m_viewer->getXsheet()->getColumn(col);
   // Adjust for folder indicator
@@ -2206,6 +2220,8 @@ void ColumnArea::drawSoundColumnHead(QPainter &p, int col) {  // AREA
   QRect rect  = m_viewer->orientation()
                    ->rect(PredefinedRect::LAYER_HEADER)
                    .translated(orig);
+  if (!o->isVerticalTimeline())
+    rect.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
 
   QPoint columnNamePos = orig + QPoint(12, o->cellHeight());
 
@@ -3049,6 +3065,14 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
   m_viewer->setQtModifiers(event->modifiers());
   assert(getDragTool() == 0);
 
+  if (!o->isVerticalTimeline() && !m_resizingHeader &&
+      event->pos().x() >= geometry().width() - 5 &&
+      event->pos().x() <= geometry().width() + 5) {
+    m_pos            = event->pos();
+    m_resizingHeader = true;
+    return;
+  }
+
   m_col = -1;  // new in 6.4
 
   // both left and right click can change the selection
@@ -3255,7 +3279,11 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
 
         bool isInDragArea =
             o->rect(PredefinedRect::DRAG_LAYER)
-                .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
+                .adjusted(0, indicatorYAdj,
+                          (!o->isVerticalTimeline()
+                               ? m_viewer->getTimelineBodyOffset()
+                               : 0),
+                          indicatorYAdj)
                 .contains(mouseInCell) ||
             (!o->flag(PredefinedFlag::DRAG_LAYER_VISIBLE)  // If dragbar hidden,
                                                            // layer name/number
@@ -3363,8 +3391,23 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
 void ColumnArea::mouseMoveEvent(QMouseEvent *event) {
   const Orientation *o = m_viewer->orientation();
 
+  if (m_resizingHeader) {
+    int dPos = event->pos().x() - m_pos.x();
+    int newOffset = m_viewer->getTimelineBodyOffset() + dPos;
+    if (newOffset < 0) newOffset = 0;
+    m_pos                        = event->pos();
+    m_viewer->setTimelineBodyOffset(newOffset);
+    m_viewer->positionSections();
+    return;
+  }
+
   m_viewer->setQtModifiers(event->modifiers());
   QPoint pos = event->pos();
+
+  setCursor(Qt::ArrowCursor);
+  if (!o->isVerticalTimeline() && pos.x() >= geometry().width() - 5 &&
+      pos.x() <= geometry().width() + 5)
+    setCursor(Qt::SizeHorCursor);
 
   if (m_isPanning) {  // Pan tasto centrale
     QPoint delta = m_pos - pos;
@@ -3425,7 +3468,13 @@ void ColumnArea::mouseMoveEvent(QMouseEvent *event) {
 
   if (col < 0)
     m_tooltip = tr("Click to select camera");
-  else if (o->rect(PredefinedRect::DRAG_LAYER).contains(mouseInCell)) {
+  else if (o->rect(PredefinedRect::DRAG_LAYER)
+               .adjusted(
+                   0, indicatorYAdj,
+                   (!o->isVerticalTimeline() ? m_viewer->getTimelineBodyOffset()
+                                             : 0),
+                   indicatorYAdj)
+               .contains(mouseInCell)) {
     m_tooltip = tr("Click to select column, drag to move it");
   } else if (o->rect(PredefinedRect::LAYER_NUMBER)
                  .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
@@ -3515,6 +3564,15 @@ bool ColumnArea::event(QEvent *event) {
 //-----------------------------------------------------------------------------
 
 void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
+  if (m_resizingHeader) {
+    m_resizingHeader = false;
+    if (!m_viewer->orientation()->isVerticalTimeline() &&
+        (event->pos().x() < geometry().width() - 5 ||
+         event->pos().x() > geometry().width() + 5))
+      setCursor(Qt::ArrowCursor);
+    return;
+  }
+
   TApp *app    = TApp::instance();
   TXsheet *xsh = m_viewer->getXsheet();
   int col, totcols = xsh->getColumnCount();
@@ -3686,6 +3744,8 @@ void ColumnArea::mouseDoubleClickEvent(QMouseEvent *event) {
 
   QRect nameRect = o->rect((col < 0) ? PredefinedRect::CAMERA_LAYER_NAME
                                      : PredefinedRect::LAYER_NAME);
+  if (!o->isVerticalTimeline())
+    nameRect.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
 
   TXshColumn *column = m_viewer->getXsheet()->getColumn(col);
   // Adjust for folder indicator
@@ -3707,6 +3767,9 @@ void ColumnArea::mouseDoubleClickEvent(QMouseEvent *event) {
       (col < 0 && o->isVerticalTimeline()) ? nameRect.topLeft() : topLeft;
   QRect renameRect =
       o->rect(PredefinedRect::RENAME_COLUMN).translated(fieldPos);
+  if (!o->isVerticalTimeline())
+    renameRect.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
+
   if (column && column->folderDepth()) {
     if (!o->isVerticalTimeline())
       renameRect.adjust(indicatorRect.width() * column->folderDepth(), 0, 0, 0);

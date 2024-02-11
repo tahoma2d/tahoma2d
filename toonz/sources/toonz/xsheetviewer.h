@@ -635,6 +635,9 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
 
   CellPosition m_ctrlSelectRef;
 
+  int m_xsheetBodyOffset;
+  int m_timelineBodyOffset;
+
 public:
   enum FrameDisplayStyle { Frame = 0, SecAndFrame, SixSecSheet, ThreeSecSheet };
 
@@ -1344,6 +1347,11 @@ public:
   void zoomToFramesPerPage(int frames);
 
   int getContextMenuRow() { return m_rowArea->getContextMenuRow(); }
+
+  int getXsheetBodyOffset() const { return m_xsheetBodyOffset; }
+  void setXsheetBodyOffset(int offset) { m_xsheetBodyOffset = offset; };
+  int getTimelineBodyOffset() const { return m_timelineBodyOffset; }
+  void setTimelineBodyOffset(int offset) { m_timelineBodyOffset = offset; };
 
 protected:
   void scrollToColumn(int col);

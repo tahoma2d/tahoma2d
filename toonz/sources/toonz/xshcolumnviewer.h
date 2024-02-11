@@ -312,6 +312,8 @@ class ColumnArea final : public QWidget {
   QPoint m_pos;
   QString m_tooltip;
 
+  bool m_resizingHeader;
+
   RenameColumnField *m_renameColumnField;
 #ifndef LINETEST
   ChangeObjectParent *m_changeObjectParent;

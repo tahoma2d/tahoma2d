@@ -1860,6 +1860,8 @@ public:
                      ->orientation()
                      ->rect(PredefinedRect::LAYER_HEADER)
                      .translated(orig);
+    if (!o->isVerticalTimeline())
+      rect.adjust(0, 0, getViewer()->getTimelineBodyOffset(), 0);
 
     TXshFolderColumn *folderColumn = column ? column->getFolderColumn() : 0;
     int folderAdj = folderColumn && folderColumn->isExpanded() ? 5 : 0;
@@ -2007,6 +2009,8 @@ public:
                      ->orientation()
                      ->rect(PredefinedRect::LAYER_HEADER)
                      .translated(orig);
+    if (!o->isVerticalTimeline())
+      rect.adjust(0, 0, getViewer()->getTimelineBodyOffset(), 0);
 
     if (!o->isVerticalTimeline()) {
       QRect buttonsRect =
