@@ -978,12 +978,14 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
   if (!o->isVerticalTimeline()) rect.adjust(73, 0, 0, 0);
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
+  int folderDepth     = 0;
   if (column && column->folderDepth()) {
+    folderDepth = column->folderDepth();
     if (!o->isVerticalTimeline())
-      rect.adjust(indicatorRect.width() * column->folderDepth(), 0, 0, 0);
+      rect.adjust(indicatorRect.width() * folderDepth, 0, 0, 0);
     else if (Preferences::instance()->getXsheetLayoutPreference() ==
              QString("Minimum"))
-      rect.adjust(0, 0, 0, indicatorRect.height() * column->folderDepth());
+      rect.adjust(0, 0, 0, indicatorRect.height() * folderDepth);
   }
 
   int x0 = rect.left();
@@ -1003,7 +1005,9 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
     if (Preferences::instance()->isShowDragBarsEnabled() &&
         o->flag(PredefinedFlag::DRAG_LAYER_VISIBLE)) {
       // column handle
-      QRect sideBar = o->rect(PredefinedRect::DRAG_LAYER).translated(x0 - 80, y0);
+      QRect sideBar =
+          o->rect(PredefinedRect::DRAG_LAYER)
+              .translated(x0 - 73 - (indicatorRect.width() * folderDepth), y0);
 
       if (o->flag(PredefinedFlag::DRAG_LAYER_BORDER)) {
         p.setPen(m_viewer->getVerticalLineColor());
