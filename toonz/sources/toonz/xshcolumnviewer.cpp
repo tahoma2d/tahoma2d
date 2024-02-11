@@ -1348,8 +1348,7 @@ void ColumnArea::DrawHeader::drawColumnName() const {
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
   if (column && column->folderDepth()) {
     if (!o->isVerticalTimeline())
-      columnName.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                        indicatorRect.width() * column->folderDepth(), 0);
+      columnName.adjust(indicatorRect.width() * column->folderDepth(), 0, 0, 0);
     else
       columnName.adjust(0, indicatorRect.height() * column->folderDepth(), 0,
                         indicatorRect.height() * column->folderDepth());
