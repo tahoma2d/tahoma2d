@@ -542,6 +542,7 @@ void ExportOCACommand::execute() {
 ///  OCA importer
 /// This is a test for my own purpose.
 /// if this ends up in the tahoma pr, then forgive Github Desktop: i switched to "for my own purpose" before commit and push
+/// following this advise : https://github.com/desktop/desktop/issues/11327 i relaunched the Github Desktop app and retried
 /// DONE:
 /// - add the option to update the current scene from OCA, importing only the
 /// missing layers (example : import a krita paint layer, but keep the tlv with
