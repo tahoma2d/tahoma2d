@@ -888,13 +888,13 @@ void SceneViewer::onPress(const TMouseEvent &event) {
   // separate tablet and mouse events
   if (m_tabletEvent && m_tabletState == Touched) {
     TApp::instance()->getCurrentTool()->setToolBusy(true);
-    tool->setCanUndo(true);
+    tool->setCanUndo(false);
     m_tabletState = StartStroke;
     tool->leftButtonDown(pos, event);
   } else if (m_mouseButton == Qt::LeftButton) {
     m_mouseState = StartStroke;
     TApp::instance()->getCurrentTool()->setToolBusy(true);
-    tool->setCanUndo(true);
+    tool->setCanUndo(false);
     tool->leftButtonDown(pos, event);
   }
   if (m_mouseButton == Qt::RightButton) tool->rightButtonDown(pos, event);
@@ -1039,7 +1039,7 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
     if (m_mouseButton == Qt::LeftButton || m_tabletState == Released) {
       if (!m_toolSwitched) tool->leftButtonUp(pos, event);
       TApp::instance()->getCurrentTool()->setToolBusy(false);
-      tool->setCanUndo(false);
+      tool->setCanUndo(true);
     }
   }
 
