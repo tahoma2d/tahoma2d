@@ -1034,8 +1034,13 @@ void MainWindow::onUndo() {
   while (TApp::instance()->isSaveInProgress())
     ;
 
-  bool ret = TUndoManager::manager()->undo();
-  if (!ret) DVGui::error(QObject::tr("No more Undo operations available."));
+  ToolHandle *toolH = TApp::instance()->getCurrentTool();
+
+  // do not use undo if tool is currently in use
+  if (!toolH->getTool()->isUndoable()) {
+    bool ret = TUndoManager::manager()->undo();
+    if (!ret) DVGui::error(QObject::tr("No more Undo operations available."));
+  }
 }
 
 //-----------------------------------------------------------------------------
