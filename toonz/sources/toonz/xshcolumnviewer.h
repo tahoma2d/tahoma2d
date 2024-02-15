@@ -299,6 +299,7 @@ class ColumnArea final : public QWidget {
   ColumnTransparencyPopup *m_columnTransparencyPopup;
   SoundColumnPopup *m_soundColumnPopup;
   QTimer *m_transparencyPopupTimer;
+  QTimer *m_openCloseFolderTimer;
   int m_doOnRelease;
   XsheetViewer *m_viewer;
   int m_col;
@@ -428,6 +429,7 @@ protected slots:
   void onXsheetCameraChange(int);
   void onMenuAboutToHide();
   void onResetContextMenuTarget();
+  void autoOpenCloseFolder();
 };
 
 //-----------------------------------------------------------------------------

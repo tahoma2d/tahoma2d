@@ -1870,6 +1870,7 @@ ColumnArea::ColumnArea(XsheetViewer *parent, Qt::WindowFlags flags)
     , m_col(-1)
     , m_columnTransparencyPopup(0)
     , m_transparencyPopupTimer(0)
+    , m_openCloseFolderTimer(0)
     , m_isPanning(false)
     , m_soundColumnPopup(0)
     , m_menuCol(-999)
@@ -3026,6 +3027,18 @@ void ColumnArea::onCameraColumnLockToggled(bool lock) {
   m_viewer->getXsheet()->getColumn(-1)->lock(lock);
 }
 
+void ColumnArea::autoOpenCloseFolder() {
+  if (m_openCloseFolderTimer) m_openCloseFolderTimer->stop();
+  if (m_col < 0) return;
+  TXshColumn *column = m_viewer->getXsheet()->getColumn(m_col);
+  if (!column || column->isEmpty() || !column->getFolderColumn()) return;
+
+  toggleFolderStatus(column);
+  delete getDragTool();
+  setDragTool(0);
+  m_doOnRelease = 0;
+}
+
 //----------------------------------------------------------------
 
 void ColumnArea::onXsheetCameraChange(int newIndex) {
@@ -3246,14 +3259,26 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
               return;
             }
           } else if (column->getFolderColumn()) {
-            if (event->button() == Qt::LeftButton &&
-                o->rect(PredefinedRect::FOLDER_TOGGLE_ICON)
-                    .adjusted(indicatorXAdj, xsheetBodyOffset, indicatorXAdj,
-                              xsheetBodyOffset)
-                    .contains(mouseInCell)) {
-              toggleFolderStatus(column);
-              update();
-              return;
+            if (event->button() == Qt::LeftButton) {
+              if (o->rect(PredefinedRect::FOLDER_TOGGLE_ICON)
+                      .adjusted(indicatorXAdj, xsheetBodyOffset, indicatorXAdj,
+                                xsheetBodyOffset)
+                      .contains(mouseInCell)) {
+                toggleFolderStatus(column);
+                update();
+                return;
+              } else if (o->isVerticalTimeline() &&
+                         Preferences::instance()->getXsheetLayoutPreference() ==
+                             "Minimum") {
+                if (!m_openCloseFolderTimer) {
+                  m_openCloseFolderTimer = new QTimer(this);
+                  bool ret = connect(m_openCloseFolderTimer, SIGNAL(timeout()),
+                                     this, SLOT(autoOpenCloseFolder()));
+                  assert(ret);
+                  m_openCloseFolderTimer->setSingleShot(true);
+                }
+                m_openCloseFolderTimer->start(1000);
+              }
             }
           }
         }
@@ -3426,6 +3451,9 @@ void ColumnArea::mouseMoveEvent(QMouseEvent *event) {
     return;
   }
 
+  if (m_openCloseFolderTimer && m_openCloseFolderTimer->isActive())
+    m_openCloseFolderTimer->stop();
+
   m_viewer->setQtModifiers(event->modifiers());
   QPoint pos = event->pos();
 
@@ -3509,7 +3537,8 @@ void ColumnArea::mouseMoveEvent(QMouseEvent *event) {
                    indicatorYAdj)
                .contains(mouseInCell)) {
     m_tooltip = tr("Click to select column, drag to move it");
-  } else if (o->rect(PredefinedRect::LAYER_NUMBER)
+  } else if (o->flag(PredefinedFlag::LAYER_NUMBER_VISIBLE) &&
+             o->rect(PredefinedRect::LAYER_NUMBER)
                  .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
                  .contains(mouseInCell)) {
     if (o->isVerticalTimeline())
@@ -3519,10 +3548,15 @@ void ColumnArea::mouseMoveEvent(QMouseEvent *event) {
   } else if (o->rect(PredefinedRect::LAYER_NAME)
                  .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
                  .contains(mouseInCell)) {
-    if (o->isVerticalTimeline())
-      m_tooltip =
-          tr("Click to select column, drag to move it, double-click to edit");
-    else if (column && column->getSoundColumn()) {
+    if (o->isVerticalTimeline()) {
+      if (column && column->getFolderColumn())
+        m_tooltip =
+            tr("Click to select column, drag to move it, double-click to edit, "
+               "long press to open/close");
+      else
+        m_tooltip =
+            tr("Click to select column, drag to move it, double-click to edit");
+    } else if (column && column->getSoundColumn()) {
       // sound column
       if (o->rect(PredefinedRect::SOUND_ICON)
               .adjusted(indicatorXAdj, xsheetBodyOffset, indicatorXAdj,
@@ -3751,6 +3785,7 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
   }
 
   if (m_transparencyPopupTimer) m_transparencyPopupTimer->stop();
+  if (m_openCloseFolderTimer) m_openCloseFolderTimer->stop();
 
   m_viewer->setQtModifiers(Qt::KeyboardModifiers());
   m_viewer->dragToolRelease(event);
