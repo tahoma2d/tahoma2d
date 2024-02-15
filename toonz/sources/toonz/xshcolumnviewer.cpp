@@ -1006,10 +1006,11 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
         o->flag(PredefinedFlag::DRAG_LAYER_VISIBLE)) {
       // column handle
       QRect sideBar =
-          o->rect(PredefinedRect::DRAG_LAYER)
-              .translated(x0 - 73 - (indicatorRect.width() * folderDepth), y0);
+          o->rect(PredefinedRect::DRAG_LAYER).translated(x0 - 73, y0);
       if (!o->isVerticalTimeline())
-        sideBar.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
+        sideBar.adjust(0, 0, m_viewer->getTimelineBodyOffset() -
+                                 (indicatorRect.width() * folderDepth),
+                       0);
 
       if (o->flag(PredefinedFlag::DRAG_LAYER_BORDER)) {
         p.setPen(m_viewer->getVerticalLineColor());
