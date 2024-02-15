@@ -3549,7 +3549,8 @@ void ColumnArea::mouseMoveEvent(QMouseEvent *event) {
                  .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
                  .contains(mouseInCell)) {
     if (o->isVerticalTimeline()) {
-      if (column && column->getFolderColumn())
+      if (column && column->getFolderColumn() &&
+          Preferences::instance()->getXsheetLayoutPreference() == "Minimum")
         m_tooltip =
             tr("Click to select column, drag to move it, double-click to edit, "
                "long press to open/close");
