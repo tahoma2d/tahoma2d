@@ -490,8 +490,8 @@ TopToBottomOrientation::TopToBottomOrientation() {
     THUMBNAIL_HEIGHT = -1;
     HDRROW_HEIGHT    = CELL_HEIGHT - 1;
     INDENT           = 0;
-    HDRROW1          = 1;                        // Name, number
-    HDRROW2          = HDRROW1 + HDRROW_HEIGHT;  // eye, preview, config
+    HDRROW2 = use_header_height - HDRROW_HEIGHT - 2;  // pegbar, parent handle
+    HDRROW1 = 1;                                      // Name, number
 
     addRect(PredefinedRect::DRAG_LAYER, QRect(0, 0, -1, -1));
 
@@ -584,10 +584,10 @@ TopToBottomOrientation::TopToBottomOrientation() {
     THUMBNAIL_HEIGHT = 44;
     HDRROW_HEIGHT    = CELL_HEIGHT - 2;
     INDENT           = 0;
-    HDRROW1          = 1;                        // Name, number
-    HDRROW2          = HDRROW1 + HDRROW_HEIGHT;  // eye, preview, lock, config
-    HDRROW3          = HDRROW2 + HDRROW_HEIGHT;  // thumbnail
-    HDRROW4          = HDRROW3 + THUMBNAIL_HEIGHT;  // pegbar, parent handle
+    HDRROW4 = use_header_height - HDRROW_HEIGHT - 2;  // pegbar, parent handle
+    HDRROW3 = HDRROW4 - THUMBNAIL_HEIGHT;             // thumbnail
+    HDRROW2 = HDRROW3 - HDRROW_HEIGHT;  // eye, preview, lock, config
+    HDRROW1 = 1;                        // Name, number
 
     addRect(PredefinedRect::DRAG_LAYER, QRect(0, 0, -1, -1));
 
@@ -710,11 +710,11 @@ TopToBottomOrientation::TopToBottomOrientation() {
     THUMBNAIL_HEIGHT = 44;
     HDRROW_HEIGHT    = CELL_HEIGHT - 2;
     INDENT           = 0;
-    HDRROW1          = 1;                           // Name, number
-    HDRROW2          = HDRROW1 + HDRROW_HEIGHT;     // eye, lock
-    HDRROW3          = HDRROW2 + HDRROW_HEIGHT;     // preview, config
-    HDRROW4          = HDRROW3 + HDRROW_HEIGHT;     // thumbnail
-    HDRROW5          = HDRROW4 + THUMBNAIL_HEIGHT;  // pegbar, parent handle
+    HDRROW5 = use_header_height - HDRROW_HEIGHT - 2;  // pegbar, parent handle
+    HDRROW4 = HDRROW5 - THUMBNAIL_HEIGHT;             // thumbnail
+    HDRROW3 = HDRROW4 - HDRROW_HEIGHT;                // preview, config
+    HDRROW2 = HDRROW3 - HDRROW_HEIGHT;                // eye, lock
+    HDRROW1 = 1;                                      // Name, number
 
     addRect(PredefinedRect::DRAG_LAYER,
             QRect(0, 0, -1, -1));  // hide - Theme/Compact
@@ -839,10 +839,10 @@ TopToBottomOrientation::TopToBottomOrientation() {
     THUMBNAIL_HEIGHT = 43;
     HDRROW_HEIGHT    = CELL_HEIGHT - 2;
     INDENT           = CELL_DRAG_WIDTH + 2;
-    HDRROW1          = 7;                               // Name/eye
-    HDRROW2          = HDRROW1 + CELL_HEIGHT;           // lock, preview
-    HDRROW3          = HDRROW2 + CELL_HEIGHT;           // thumbnail
-    HDRROW4          = HDRROW3 + THUMBNAIL_HEIGHT + 5;  // pegbar, parenthandle
+    HDRROW4 = use_header_height - HDRROW_HEIGHT - 2;  // pegbar, parent handle
+    HDRROW3 = HDRROW4 - THUMBNAIL_HEIGHT - 5;         // thumbnail
+    HDRROW2 = HDRROW3 - CELL_HEIGHT;                  // lock, preview
+    HDRROW1 = 7;                                      // Name, eye
 
     addRect(PredefinedRect::DRAG_LAYER,
             QRect(0, 0, CELL_DRAG_WIDTH, use_header_height - 3));

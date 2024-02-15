@@ -421,6 +421,9 @@ void XsheetViewer::positionSections() {
   if (!o->isVerticalTimeline()) {
     headerFrame = headerFrame.adjusted(0, m_timelineBodyOffset);
     m_columnArea->setFixedWidth(headerFrame.to());
+  } else {
+    headerFrame = headerFrame.adjusted(0, m_xsheetBodyOffset);
+    m_columnArea->setFixedHeight(headerFrame.to());
   }
 
   NumberRange bodyLayer(headerLayer.to(), allLayer.to());
@@ -804,10 +807,10 @@ bool XsheetViewer::refreshContentSize(int dx, int dy) {
     NumberRange headerLayer = o->range(PredefinedRange::HEADER_LAYER);
     NumberRange headerFrame = o->range(PredefinedRange::HEADER_FRAME);
 
-    if (!o->isVerticalTimeline()) {
+    if (!o->isVerticalTimeline())
       headerFrame = headerFrame.adjusted(0, m_timelineBodyOffset);
-      m_columnArea->setFixedWidth(headerFrame.to());
-    }
+    else
+      headerFrame = headerFrame.adjusted(0, m_xsheetBodyOffset);
 
     m_isComputingSize = true;
     m_noteArea->setFixedSize(o->rect(PredefinedRect::NOTE_AREA).size());
@@ -857,10 +860,10 @@ void XsheetViewer::updateAreeSize() {
   NumberRange headerLayer = o->range(PredefinedRange::HEADER_LAYER);
   NumberRange headerFrame = o->range(PredefinedRange::HEADER_FRAME);
 
-  if (!o->isVerticalTimeline()) {
+  if (!o->isVerticalTimeline())
     headerFrame = headerFrame.adjusted(0, m_timelineBodyOffset);
-    m_columnArea->setFixedWidth(headerFrame.to());
-  }
+  else
+    headerFrame = headerFrame.adjusted(0, m_xsheetBodyOffset);
 
   m_cellArea->setFixedSize(viewArea.size());
   m_rowArea->setFixedSize(o->frameLayerRect(allFrame, headerLayer).size());

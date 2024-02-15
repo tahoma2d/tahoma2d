@@ -2011,6 +2011,8 @@ public:
                      .translated(orig);
     if (!o->isVerticalTimeline())
       rect.adjust(0, 0, getViewer()->getTimelineBodyOffset(), 0);
+    else
+      rect.adjust(0, 0, 0, getViewer()->getXsheetBodyOffset());
 
     if (!o->isVerticalTimeline()) {
       QRect buttonsRect =

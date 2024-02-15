@@ -977,17 +977,16 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
                    .translated(orig);
   if (!o->isVerticalTimeline())
     rect.adjust(73, 0, m_viewer->getTimelineBodyOffset(), 0);
+  else
+    rect.adjust(0, 0, 0, m_viewer->getXsheetBodyOffset());
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
   int folderDepth     = 0;
-  if (column && column->folderDepth()) {
+  if (column && column->folderDepth() && !o->isVerticalTimeline()) {
     folderDepth = column->folderDepth();
-    if (!o->isVerticalTimeline())
-      rect.adjust(indicatorRect.width() * folderDepth, 0, 0, 0);
-    else if (Preferences::instance()->getXsheetLayoutPreference() ==
-             QString("Minimum"))
-      rect.adjust(0, 0, 0, indicatorRect.height() * folderDepth);
-  }
+    rect.adjust(indicatorRect.width() * folderDepth, 0, 0, 0);
+  } else if (!column || column->isEmpty())
+    rect.adjust(0, 0, 0, m_viewer->getXsheetBodyOffset());
 
   int x0 = rect.left();
   int x1 = rect.right();
@@ -1030,9 +1029,10 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
       o->isVerticalTimeline() && !isEmpty)
     vertical.setP1(QPoint(
         vertical.x1(),
-        vertical.y1() +
-            (indicatorRect.height() *
-             (column->folderDepth()))));
+        vertical.y1() + (indicatorRect.height() * (column->folderDepth()))));
+  if (column && o->isVerticalTimeline())
+    vertical.setP2(
+        QPoint(vertical.x2(), vertical.y2() + m_viewer->getXsheetBodyOffset()));
 
   if (isEmpty || o->isVerticalTimeline()) p.drawLine(vertical);
 
@@ -1061,13 +1061,11 @@ void ColumnArea::DrawHeader::drawEye() const {
 
   QRect prevViewRect = o->rect(PredefinedRect::EYE_AREA).translated(orig);
   QRect eyeRect      = o->rect(PredefinedRect::EYE).translated(orig);
-  // Adjust for folder indicator
-  QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-  if (column && column->folderDepth() && o->isVerticalTimeline()) {
-    prevViewRect.adjust(0, indicatorRect.height() * column->folderDepth(), 0,
-                        indicatorRect.height() * column->folderDepth());
-    eyeRect.adjust(0, indicatorRect.height() * column->folderDepth(), 0,
-                   indicatorRect.height() * column->folderDepth());
+  if (o->isVerticalTimeline()) {
+    prevViewRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                        m_viewer->getXsheetBodyOffset());
+    eyeRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                   m_viewer->getXsheetBodyOffset());
   }
 
   // preview visible toggle
@@ -1113,13 +1111,11 @@ void ColumnArea::DrawHeader::drawPreviewToggle(int opacity) const {
       o->rect(PredefinedRect::PREVIEW_LAYER_AREA).translated(orig);
   QRect tableViewImgRect =
       o->rect(PredefinedRect::PREVIEW_LAYER).translated(orig);
-  // Adjust for folder indicator
-  QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-  if (column && column->folderDepth() && o->isVerticalTimeline()) {
-    tableViewRect.adjust(0, indicatorRect.height() * column->folderDepth(), 0,
-                         indicatorRect.height() * column->folderDepth());
-    tableViewImgRect.adjust(0, indicatorRect.height() * column->folderDepth(),
-                            0, indicatorRect.height() * column->folderDepth());
+  if (o->isVerticalTimeline()) {
+    tableViewRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                         m_viewer->getXsheetBodyOffset());
+    tableViewImgRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                            m_viewer->getXsheetBodyOffset());
   }
 
   if (o->isVerticalTimeline())
@@ -1165,11 +1161,11 @@ void ColumnArea::DrawHeader::drawLock() const {
           .translated(orig);
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-  if (column && column->folderDepth() && o->isVerticalTimeline()) {
-    lockModeRect.adjust(0, indicatorRect.height() * column->folderDepth(), 0,
-                        indicatorRect.height() * column->folderDepth());
-    lockModeImgRect.adjust(0, indicatorRect.height() * column->folderDepth(), 0,
-                            indicatorRect.height() * column->folderDepth());
+  if (col >= 0 && o->isVerticalTimeline()) {
+    lockModeRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                        m_viewer->getXsheetBodyOffset());
+    lockModeImgRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                           m_viewer->getXsheetBodyOffset());
   }
 
   if (o->isVerticalTimeline() &&
@@ -1214,13 +1210,11 @@ void ColumnArea::DrawHeader::drawConfig() const {
   QRect configImgRect = o->rect((col < 0) ? PredefinedRect::CAMERA_CONFIG
                                           : PredefinedRect::CONFIG)
                             .translated(orig);
-  // Adjust for folder indicator
-  QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-  if (column && column->folderDepth() && o->isVerticalTimeline()) {
-    configRect.adjust(0, indicatorRect.height() * column->folderDepth(), 0,
-                      indicatorRect.height() * column->folderDepth());
-    configImgRect.adjust(0, indicatorRect.height() * column->folderDepth(), 0,
-                         indicatorRect.height() * column->folderDepth());
+  if (col >= 0 && o->isVerticalTimeline()) {
+    configRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                      m_viewer->getXsheetBodyOffset());
+    configImgRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                         m_viewer->getXsheetBodyOffset());
   }
   // config button
   if (o->isVerticalTimeline())
@@ -1450,15 +1444,15 @@ void ColumnArea::DrawHeader::drawThumbnail(QPixmap &iconPixmap) const {
   // Minimum layout has no thumbnail area
   if (thumbnailRect.isEmpty()) return;
 
+  if (o->isVerticalTimeline())
+    thumbnailRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                         m_viewer->getXsheetBodyOffset());
+
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-  if (column && column->folderDepth()) {
-    if (!o->isVerticalTimeline())
-      thumbnailRect.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                           indicatorRect.width() * column->folderDepth(), 0);
-    else
-      thumbnailRect.adjust(0, indicatorRect.height() * column->folderDepth(), 0,
-                           0);
+  if (column && column->folderDepth() && !o->isVerticalTimeline()) {
+    thumbnailRect.adjust(indicatorRect.width() * column->folderDepth(), 0,
+                         indicatorRect.width() * column->folderDepth(), 0);
   }
 
   p.setPen(m_viewer->getVerticalLineColor());
@@ -1492,16 +1486,14 @@ void ColumnArea::DrawHeader::drawThumbnail(QPixmap &iconPixmap) const {
   QRect thumbnailImageRect = o->rect((col < 0) ? PredefinedRect::CAMERA_ICON
                                                : PredefinedRect::THUMBNAIL)
                                  .translated(orig);
+  if (o->isVerticalTimeline())
+    thumbnailImageRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                              m_viewer->getXsheetBodyOffset());
 
   // Adjust for folder indicator
-  if (column && column->folderDepth()) {
-    if (!o->isVerticalTimeline())
-      thumbnailImageRect.adjust(indicatorRect.width() * column->folderDepth(), 0,
-          indicatorRect.width() * column->folderDepth(), 0);
-    else
-      thumbnailImageRect.adjust(
-          0, indicatorRect.height() * column->folderDepth(), 0,
-                           0);
+  if (column && column->folderDepth() && !o->isVerticalTimeline()) {
+    thumbnailImageRect.adjust(indicatorRect.width() * column->folderDepth(), 0,
+                              indicatorRect.width() * column->folderDepth(), 0);
   }
 
   // palette thumbnail
@@ -1583,6 +1575,16 @@ void ColumnArea::DrawHeader::drawPegbarName() const {
 
   // pegbar name
   QRect pegbarnamerect = o->rect(PredefinedRect::PEGBAR_NAME).translated(orig);
+  if (o->isVerticalTimeline())
+    pegbarnamerect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                          m_viewer->getXsheetBodyOffset());
+
+  // Adjust for folder indicator
+  QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
+  if (column && column->folderDepth() && !o->isVerticalTimeline())
+    pegbarnamerect.adjust(indicatorRect.width() * column->folderDepth(), 0,
+                          indicatorRect.width() * column->folderDepth(), 0);
+
   p.setPen(m_viewer->getVerticalLineColor());
   if (o->flag(PredefinedFlag::PEGBAR_NAME_BORDER)) p.drawRect(pegbarnamerect);
 
@@ -1632,6 +1634,16 @@ void ColumnArea::DrawHeader::drawParentHandleName() const {
 
   QRect parenthandleRect =
       o->rect(PredefinedRect::PARENT_HANDLE_NAME).translated(orig);
+  if (o->isVerticalTimeline())
+    parenthandleRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                            m_viewer->getXsheetBodyOffset());
+
+  // Adjust for folder indicator
+  QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
+  if (column && column->folderDepth() && !o->isVerticalTimeline())
+    parenthandleRect.adjust(indicatorRect.width() * column->folderDepth(), 0,
+                            indicatorRect.width() * column->folderDepth(), 0);
+
   p.setPen(Qt::yellow);  // m_viewer->getVerticalLineColor());
   if (o->flag(PredefinedFlag::PARENT_HANDLE_NAME_BORDER))
     p.drawRect(parenthandleRect);
@@ -1660,7 +1672,10 @@ void ColumnArea::DrawHeader::drawParentHandleName() const {
 void ColumnArea::DrawHeader::drawFilterColor() const {
   if (col < 0 || isEmpty || column->getColorFilterId() == 0 ||
       column->getSoundColumn() || column->getSoundTextColumn() ||
-      column->getPaletteColumn() || column->isMask())
+      column->getPaletteColumn() ||
+      (column->isMask() &&
+       (!o->isVerticalTimeline() ||
+        Preferences::instance()->getXsheetLayoutPreference() != "Minimum")))
     return;
 
   TPixel32 filterColor = TApp::instance()
@@ -1673,13 +1688,12 @@ void ColumnArea::DrawHeader::drawFilterColor() const {
       o->rect(PredefinedRect::FILTER_COLOR).translated(orig);
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-  if (column && column->folderDepth()) {
-    if (o->isVerticalTimeline())
-      filterColorRect.adjust(0, indicatorRect.height() * column->folderDepth(),
-                             0, indicatorRect.height() * column->folderDepth());
-    else
-      filterColorRect.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                             indicatorRect.width() * column->folderDepth(), 0);
+  if (o->isVerticalTimeline()) {
+    filterColorRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                           m_viewer->getXsheetBodyOffset());
+  } else if (column && column->folderDepth()) {
+    filterColorRect.adjust(indicatorRect.width() * column->folderDepth(), 0,
+                           indicatorRect.width() * column->folderDepth(), 0);
   }
 
   p.drawPixmap(filterColorRect, getColorChipIcon(filterColor).pixmap(12, 12));
@@ -1713,14 +1727,12 @@ void ColumnArea::DrawHeader::drawClippingMask() const {
       o->rect(PredefinedRect::CLIPPING_MASK_AREA).translated(orig);
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-  if (column && column->folderDepth()) {
-    if (o->isVerticalTimeline())
-      clippingMaskArea.adjust(0, indicatorRect.height() * column->folderDepth(),
-                              0,
-                              indicatorRect.height() * column->folderDepth());
-    else
-      clippingMaskArea.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                              indicatorRect.width() * column->folderDepth(), 0);
+  if (o->isVerticalTimeline()) {
+    clippingMaskArea.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                            m_viewer->getXsheetBodyOffset());
+  } else if (column && column->folderDepth()) {
+    clippingMaskArea.adjust(indicatorRect.width() * column->folderDepth(), 0,
+                            indicatorRect.width() * column->folderDepth(), 0);
   }
 
   p.drawPixmap(clippingMaskArea, maskPixmap);
@@ -1732,12 +1744,12 @@ void ColumnArea::DrawHeader::drawSoundIcon(bool isPlaying) const {
                    .translated(orig);
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-  if (column && column->folderDepth()) {
-    if (!o->isVerticalTimeline())
-      rect.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                  indicatorRect.width() * column->folderDepth(), 0);
-    else
-      rect.adjust(0, indicatorRect.height() * column->folderDepth(), 0, 0);
+  if (o->isVerticalTimeline()) {
+    rect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                m_viewer->getXsheetBodyOffset());
+  } else if (column && column->folderDepth()) {
+    rect.adjust(indicatorRect.width() * column->folderDepth(), 0,
+                indicatorRect.width() * column->folderDepth(), 0);
   }
   p.drawPixmap(rect, isPlaying ? Pixmaps::soundPlaying() : Pixmaps::sound());
 }
@@ -1795,13 +1807,12 @@ void ColumnArea::DrawHeader::drawVolumeControl(double volume) const {
   QRect trackRect = o->rect(PredefinedRect::VOLUME_TRACK).translated(orig);
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-  if (column && column->folderDepth()) {
-    if (!o->isVerticalTimeline())
-      trackRect.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                       indicatorRect.width() * column->folderDepth(), 0);
-    else
-      trackRect.adjust(0, indicatorRect.height() * column->folderDepth(), 0,
-                       indicatorRect.height() * column->folderDepth());
+  if (o->isVerticalTimeline()) {
+    trackRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                     m_viewer->getXsheetBodyOffset());
+  } else if (column && column->folderDepth()) {
+    trackRect.adjust(indicatorRect.width() * column->folderDepth(), 0,
+                     indicatorRect.width() * column->folderDepth(), 0);
   }
   if (o->flag(PredefinedFlag::VOLUME_AREA_VERTICAL)) volume = 1 - volume;
 
@@ -1831,13 +1842,12 @@ void ColumnArea::DrawHeader::drawFolderStatusIcon(bool isOpen) const {
                    .translated(orig);
   // Adjust for folder indicator
   QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-  if (column && column->folderDepth()) {
-    if (!o->isVerticalTimeline())
-      rect.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                       indicatorRect.width() * column->folderDepth(), 0);
-    else
-      rect.adjust(0, indicatorRect.height() * column->folderDepth(), 0,
-                       indicatorRect.height() * column->folderDepth());
+  if (o->isVerticalTimeline()) {
+    rect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                m_viewer->getXsheetBodyOffset());
+  } else if (column && column->folderDepth()) {
+    rect.adjust(indicatorRect.width() * column->folderDepth(), 0,
+                indicatorRect.width() * column->folderDepth(), 0);
   }
   QPixmap openPixmap = o->isVerticalTimeline()
                            ? Pixmaps::folder_arrow_left()
@@ -1922,6 +1932,8 @@ void ColumnArea::drawFoldedColumnHead(QPainter &p, int col) {
   QRect rect  = o->rect(PredefinedRect::FOLDED_LAYER_HEADER).translated(orig);
   if (!o->isVerticalTimeline())
     rect.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
+  else
+    rect.adjust(0, 0, 0, m_viewer->getXsheetBodyOffset());
 
   int x0, y0, x, y;
 
@@ -2027,11 +2039,6 @@ void ColumnArea::drawLevelColumnHead(QPainter &p, int col) {
   int currentColumnIndex = m_viewer->getCurrentColumn();
   int layerAxis          = m_viewer->columnToLayerAxis(col);
 
-  QPoint orig = m_viewer->positionToXY(CellPosition(0, col));
-  QRect rect  = o->rect(PredefinedRect::LAYER_HEADER).translated(orig);
-  if (!o->isVerticalTimeline())
-    rect.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
-
   TApp *app    = TApp::instance();
   TXsheet *xsh = m_viewer->getXsheet();
 
@@ -2103,11 +2110,6 @@ void ColumnArea::drawFolderColumnHead(QPainter &p, int col) {
   // Retrieve reference coordinates
   int currentColumnIndex = m_viewer->getCurrentColumn();
   int layerAxis          = m_viewer->columnToLayerAxis(col);
-
-  QPoint orig = m_viewer->positionToXY(CellPosition(0, col));
-  QRect rect  = o->rect(PredefinedRect::LAYER_HEADER).translated(orig);
-  if (!o->isVerticalTimeline())
-    rect.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
 
   TApp *app    = TApp::instance();
   TXsheet *xsh = m_viewer->getXsheet();
@@ -2217,11 +2219,6 @@ void ColumnArea::drawSoundColumnHead(QPainter &p, int col) {  // AREA
       xsh->getColumn(col) ? xsh->getColumn(col)->getSoundColumn() : 0;
 
   QPoint orig = m_viewer->positionToXY(CellPosition(0, col));
-  QRect rect  = m_viewer->orientation()
-                   ->rect(PredefinedRect::LAYER_HEADER)
-                   .translated(orig);
-  if (!o->isVerticalTimeline())
-    rect.adjust(0, 0, m_viewer->getTimelineBodyOffset(), 0);
 
   QPoint columnNamePos = orig + QPoint(12, o->cellHeight());
 
@@ -2409,7 +2406,8 @@ QPixmap ColumnArea::getColumnIcon(int columnIndex) {
     QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
     if (column && column->folderDepth() && o->isVerticalTimeline())
       thumbnailImageRect.adjust(
-          0, indicatorRect.height() * column->folderDepth(), 0, 0);
+          0, indicatorRect.height() * column->folderDepth(), 0,
+          indicatorRect.height() * column->folderDepth());
 
     return scalePixmapKeepingAspectRatio(icon, thumbnailImageRect.size());
   }
@@ -2450,6 +2448,25 @@ void ColumnArea::paintEvent(QPaintEvent *event) {  // AREA
   p.setClipRect(toBeUpdated);
 
   TXsheet *xsh        = m_viewer->getXsheet();
+
+  ColumnFan *columnFan = xsh->getColumnFan(m_viewer->orientation());
+  if (m_viewer->orientation()->isVerticalTimeline()) {
+    int bodyOffset     = m_viewer->getXsheetBodyOffset();
+    int maxFolderDepth = 0;
+    for (int i = 0; i < xsh->getColumnCount(); i++) {
+      TXshColumn *column = xsh->getColumn(i);
+      if (column && columnFan->isVisible(i))
+        maxFolderDepth = std::max(maxFolderDepth, column->folderDepth());
+    }
+    QRect indicatorRect =
+        m_viewer->orientation()->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
+    int newBodyOffset = indicatorRect.height() * maxFolderDepth;
+    if (newBodyOffset != bodyOffset) {
+      m_viewer->setXsheetBodyOffset(newBodyOffset);
+      m_viewer->positionSections();
+    }
+  }
+
   CellRange cellRange = m_viewer->xyRectToRange(toBeUpdated);
   int c0, c1;  // range of visible columns
   c0 = cellRange.from().layer();
@@ -2459,7 +2476,6 @@ void ColumnArea::paintEvent(QPaintEvent *event) {  // AREA
     c1           = std::min(c1, colCount - 1);
   }
 
-  ColumnFan *columnFan = xsh->getColumnFan(m_viewer->orientation());
   int col;
   for (col = c0; col <= c1; col++) {
     if (!columnFan->isVisible(col)) continue;
@@ -2496,7 +2512,7 @@ void ColumnArea::paintEvent(QPaintEvent *event) {  // AREA
   p.setPen(m_viewer->getVerticalLineHeadColor());
   p.setBrush(Qt::NoBrush);
   if (m_viewer->orientation()->isVerticalTimeline())
-    p.drawRect(toBeUpdated.adjusted(-1, 0, -1, -3));
+    p.drawRect(toBeUpdated.adjusted(-1, 0, -1, -2));
   else
     p.drawRect(toBeUpdated.adjusted(0, 0, -2, -1));
 
@@ -3130,16 +3146,14 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
     }
     // clicking on the normal columns
     else if (!isEmpty) {
+      int xsheetBodyOffset =
+          o->isVerticalTimeline() ? m_viewer->getXsheetBodyOffset() : 0;
       // Adjust for folder indicator
-      int indicatorYAdj = 0;
+      int indicatorYAdj = o->isVerticalTimeline() ? xsheetBodyOffset : 0;
       int indicatorXAdj = 0;
-      if (column && column->folderDepth()) {
-        QRect indicatorRect =
-            o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-        if (o->isVerticalTimeline())
-          indicatorYAdj = indicatorRect.height() * column->folderDepth();
-        else
-          indicatorXAdj = indicatorRect.width() * column->folderDepth();
+      if (column && column->folderDepth() && !o->isVerticalTimeline()) {
+        QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
+        indicatorXAdj       = indicatorRect.width() * column->folderDepth();
       }
 
       if (o->rect(PredefinedRect::LOCK_AREA)
@@ -3253,13 +3267,17 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
           bool clickChangeParent =
               isColumn
                   ? o->rect(PredefinedRect::PEGBAR_NAME)
-                        .adjusted(0, 0, -20, 0)
+                        .adjusted(0, xsheetBodyOffset, -20, xsheetBodyOffset)
                         .contains(mouseInCell)
-                  : o->rect(PredefinedRect::PEGBAR_NAME).contains(mouseInCell);
+                  : o->rect(PredefinedRect::PEGBAR_NAME)
+                        .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
+                        .contains(mouseInCell);
           if (clickChangeParent) {
             m_changeObjectParent->refresh();
-            m_changeObjectParent->show(QPoint(
-                o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
+            m_changeObjectParent->show(
+                QPoint(o->rect(PredefinedRect::PARENT_HANDLE_NAME)
+                           .adjusted(0, 0, 0, xsheetBodyOffset)
+                           .bottomLeft() +
                 QPoint(o->rect(PredefinedRect::CAMERA_CELL).width(), 0) +
                 m_viewer->positionToXY(CellPosition(0, m_col)) +
                 QPoint(-m_viewer->getColumnScrollValue(), y)));
@@ -3267,12 +3285,15 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
           }
           if (isColumn &&
               o->rect(PredefinedRect::PARENT_HANDLE_NAME)
+                  .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
                   .contains(mouseInCell)) {
             m_changeObjectHandle->refresh();
-            m_changeObjectHandle->show(QPoint(
-                o->rect(PredefinedRect::PARENT_HANDLE_NAME).bottomLeft() +
-                m_viewer->positionToXY(CellPosition(0, m_col + 1)) +
-                QPoint(-m_viewer->getColumnScrollValue(), y)));
+            m_changeObjectHandle->show(
+                QPoint(o->rect(PredefinedRect::PARENT_HANDLE_NAME)
+                           .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
+                           .bottomLeft() +
+                       m_viewer->positionToXY(CellPosition(0, m_col + 1)) +
+                       QPoint(-m_viewer->getColumnScrollValue(), y)));
             return;
           }
         }
@@ -3455,15 +3476,15 @@ void ColumnArea::mouseMoveEvent(QMouseEvent *event) {
   TStageObjectId columnId = m_viewer->getObjectId(col);
   TStageObjectId parentId = xsh->getStageObjectParent(columnId);
 
-      // Adjust for folder indicator
-  int indicatorYAdj = 0;
+  // Adjust for folder indicator
+  int xsheetBodyOffset =
+      o->isVerticalTimeline() ? m_viewer->getXsheetBodyOffset() : 0;
+  // Adjust for folder indicator
+  int indicatorYAdj = o->isVerticalTimeline() ? xsheetBodyOffset : 0;
   int indicatorXAdj = 0;
-  if (column && column->folderDepth()) {
+  if (column && column->folderDepth() && !o->isVerticalTimeline()) {
     QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-    if (o->isVerticalTimeline())
-      indicatorYAdj = indicatorRect.height() * column->folderDepth();
-    else
-      indicatorXAdj = indicatorRect.width() * column->folderDepth();
+    indicatorXAdj       = indicatorRect.width() * column->folderDepth();
   }
 
   if (col < 0)
@@ -3603,13 +3624,9 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
       // Adjust for folder indicator
       QRect indicatorRect = m_viewer->orientation()->rect(
           PredefinedRect::FOLDER_INDICATOR_AREA);
-      if (column && column->folderDepth()) {
-        if (!m_viewer->orientation()->isVerticalTimeline())
-          configRect.adjust(indicatorRect.width() * column->folderDepth(), 0,
-                            indicatorRect.width() * column->folderDepth(), 0);
-        else
-          configRect.adjust(0, indicatorRect.height() * column->folderDepth(),
-                            0, indicatorRect.height() * column->folderDepth());
+      if (col >= 0 && m_viewer->orientation()->isVerticalTimeline()) {
+        configRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                          m_viewer->getXsheetBodyOffset());
       }
       CellPosition cellPosition(0, col);
       QPoint topLeft     = m_viewer->positionToXY(cellPosition);
