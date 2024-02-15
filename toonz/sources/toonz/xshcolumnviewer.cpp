@@ -3493,9 +3493,15 @@ void ColumnArea::mouseMoveEvent(QMouseEvent *event) {
       indicatorYAdj = indicatorRect.height() * column->folderDepth();
   }
 
-  if (col < 0)
-    m_tooltip = tr("Click to select camera");
-  else if (o->rect(PredefinedRect::DRAG_LAYER)
+  m_tooltip = "";
+  if (col < 0) {
+    if (o->rect(PredefinedRect::CAMERA_LOCK_AREA).contains(mouseInCell)) {
+      m_tooltip = tr("Lock Toggle");
+    } else if (o->rect(PredefinedRect::CAMERA_CONFIG_AREA)
+                   .contains(mouseInCell)) {
+      m_tooltip = tr("Click to select camera");
+    } 
+  } else if (o->rect(PredefinedRect::DRAG_LAYER)
                .adjusted(
                    0, indicatorYAdj,
                    (!o->isVerticalTimeline() ? m_viewer->getTimelineBodyOffset()
@@ -3570,8 +3576,6 @@ void ColumnArea::mouseMoveEvent(QMouseEvent *event) {
     } else if (Preferences::instance()->getColumnIconLoadingPolicy() ==
                Preferences::LoadOnDemand)
       m_tooltip = tr("Alt + Click to Toggle Thumbnail");
-    else
-      m_tooltip = tr("");
   }
   update();
 }
