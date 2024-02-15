@@ -180,7 +180,6 @@ bool loadScene(ToonzScene &scene, const TFilePath &scenePath, bool import);
 bool loadScene(const TFilePath &scenePath, bool updateRecentFile = true,
                bool checkSaveOldScene = true);
 bool loadScene();
-bool saveSceneAs(const TFilePath &fp);
 bool saveSceneVersion();
 
 bool loadSubScene();
@@ -261,7 +260,7 @@ bool importLipSync(TFilePath levelPath, QList<TFrameId> frameList,
 // open a warning popup notifying that such level will lose link.
 bool takeCareSceneFolderItemsOnSaveSceneAs(
     ToonzScene *scene, const TFilePath &newPath, TXsheet *subxsh,
-    QHash<TXshLevel *, TFilePath> &orgLevelPaths);
+    QHash<TXshLevel *, TFilePath> &orgLevelPaths, bool useSceneSubfolders);
 
 }  // namespace IoCmd
 

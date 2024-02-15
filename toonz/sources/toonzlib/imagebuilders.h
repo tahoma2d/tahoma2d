@@ -40,10 +40,16 @@ public:
     //!< m_sl's subsampling property otherwise)
     bool m_icon;  //!< Whether the icon (if any) should be loaded instead
 
+    TFilePath m_fullPath;
+
   public:
     BuildExtData(const TXshSimpleLevel *sl, const TFrameId &fid, int subs = 0,
-                 bool icon = false)
-        : m_sl(sl), m_fid(fid), m_subs(subs), m_icon(icon) {}
+                 bool icon = false, TFilePath fullPath = TFilePath())
+        : m_sl(sl)
+        , m_fid(fid)
+        , m_subs(subs)
+        , m_icon(icon)
+        , m_fullPath(fullPath) {}
   };
 
 public:

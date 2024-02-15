@@ -13,6 +13,8 @@
 
 #include "toonz/stageplayer.h"
 
+#include "toonz/toonzscene.h"
+
 using namespace Stage;
 
 //*****************************************************************************************
@@ -67,7 +69,9 @@ TImageP Stage::Player::image() const {
       (slType == OVL_XSHLEVEL || slType == TZI_XSHLEVEL))
     id = id + "_filled";
 
-  ImageLoader::BuildExtData extData(m_sl, m_fid);
+  ImageLoader::BuildExtData extData(
+      m_sl, m_fid, 0, false,
+      m_xsh->getScene()->decodeFilePath(m_sl->getPath()));
   return ImageManager::instance()->getImage(id, ImageManager::none, &extData);
 }
 
