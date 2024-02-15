@@ -985,7 +985,7 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
   if (column && column->folderDepth() && !o->isVerticalTimeline()) {
     folderDepth = column->folderDepth();
     rect.adjust(indicatorRect.width() * folderDepth, 0, 0, 0);
-  } else if (!column || column->isEmpty())
+  } else if (col >= 0 && (!column || column->isEmpty()))
     rect.adjust(0, 0, 0, m_viewer->getXsheetBodyOffset());
 
   int x0 = rect.left();
@@ -1445,7 +1445,7 @@ void ColumnArea::DrawHeader::drawThumbnail(QPixmap &iconPixmap) const {
   // Minimum layout has no thumbnail area
   if (thumbnailRect.isEmpty()) return;
 
-  if (o->isVerticalTimeline())
+  if (col >= 0 && o->isVerticalTimeline())
     thumbnailRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
                          m_viewer->getXsheetBodyOffset());
 
@@ -1487,7 +1487,7 @@ void ColumnArea::DrawHeader::drawThumbnail(QPixmap &iconPixmap) const {
   QRect thumbnailImageRect = o->rect((col < 0) ? PredefinedRect::CAMERA_ICON
                                                : PredefinedRect::THUMBNAIL)
                                  .translated(orig);
-  if (o->isVerticalTimeline())
+  if (col >= 0 && o->isVerticalTimeline())
     thumbnailImageRect.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
                               m_viewer->getXsheetBodyOffset());
 
@@ -3150,21 +3150,24 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
       int xsheetBodyOffset =
           o->isVerticalTimeline() ? m_viewer->getXsheetBodyOffset() : 0;
       // Adjust for folder indicator
-      int indicatorYAdj = o->isVerticalTimeline() ? xsheetBodyOffset : 0;
+      int indicatorYAdj = 0;
       int indicatorXAdj = 0;
-      if (column && column->folderDepth() && !o->isVerticalTimeline()) {
+      if (column && column->folderDepth()) {
         QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-        indicatorXAdj       = indicatorRect.width() * column->folderDepth();
+        if (!o->isVerticalTimeline())
+          indicatorXAdj = indicatorRect.width() * column->folderDepth();
+        else
+          indicatorYAdj = indicatorRect.height() * column->folderDepth();
       }
 
       if (o->rect(PredefinedRect::LOCK_AREA)
-              .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
+              .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
               .contains(mouseInCell)) {
         // lock button
         if (event->button() != Qt::LeftButton) return;
         m_doOnRelease = isCtrlPressed ? ToggleAllLock : ToggleLock;
       } else if (o->rect(PredefinedRect::EYE_AREA)
-                     .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
+                     .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
                      .contains(mouseInCell)) {
         // preview button
         if (event->button() != Qt::LeftButton) return;
@@ -3177,7 +3180,7 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
             TApp::instance()->getCurrentXsheet()->notifyXsheetSoundChanged();
         }
       } else if (o->rect(PredefinedRect::PREVIEW_LAYER_AREA)
-                     .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
+                     .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
                      .contains(mouseInCell)) {
         // camstand button
         if (event->button() != Qt::LeftButton) return;
@@ -3191,7 +3194,7 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
             startTransparencyPopupTimer(event);
         }
       } else if (o->rect(PredefinedRect::CONFIG_AREA)
-                     .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
+                     .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
                      .contains(mouseInCell)) {
         // config button
         if (event->button() != Qt::LeftButton) return;
@@ -3208,8 +3211,8 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
           // sound column
           if (column->getSoundColumn()) {
             if (o->rect(PredefinedRect::SOUND_ICON)
-                    .adjusted(indicatorXAdj, indicatorYAdj, indicatorXAdj,
-                              indicatorYAdj)
+                    .adjusted(indicatorXAdj, xsheetBodyOffset, indicatorXAdj,
+                              xsheetBodyOffset)
                     .contains(mouseInCell)) {
               TXshSoundColumn *s = column->getSoundColumn();
               if (s) {
@@ -3237,7 +3240,7 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
               return;
             } else if (!o->flag(PredefinedFlag::CONFIG_AREA_VISIBLE) &&
                        o->rect(PredefinedRect::VOLUME_AREA)
-                           .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
+                           .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
                            .contains(mouseInCell)) {
               setDragTool(XsheetGUI::DragTool::makeVolumeDragTool(m_viewer));
               return;
@@ -3245,8 +3248,8 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
           } else if (column->getFolderColumn()) {
             if (event->button() == Qt::LeftButton &&
                 o->rect(PredefinedRect::FOLDER_TOGGLE_ICON)
-                    .adjusted(indicatorXAdj, indicatorYAdj, indicatorXAdj,
-                              indicatorYAdj)
+                    .adjusted(indicatorXAdj, xsheetBodyOffset, indicatorXAdj,
+                              xsheetBodyOffset)
                     .contains(mouseInCell)) {
               toggleFolderStatus(column);
               update();
@@ -3477,15 +3480,17 @@ void ColumnArea::mouseMoveEvent(QMouseEvent *event) {
   TStageObjectId columnId = m_viewer->getObjectId(col);
   TStageObjectId parentId = xsh->getStageObjectParent(columnId);
 
-  // Adjust for folder indicator
   int xsheetBodyOffset =
       o->isVerticalTimeline() ? m_viewer->getXsheetBodyOffset() : 0;
   // Adjust for folder indicator
-  int indicatorYAdj = o->isVerticalTimeline() ? xsheetBodyOffset : 0;
+  int indicatorYAdj = 0;
   int indicatorXAdj = 0;
-  if (column && column->folderDepth() && !o->isVerticalTimeline()) {
+  if (column && column->folderDepth()) {
     QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
-    indicatorXAdj       = indicatorRect.width() * column->folderDepth();
+    if (!o->isVerticalTimeline())
+      indicatorXAdj = indicatorRect.width() * column->folderDepth();
+    else
+      indicatorYAdj = indicatorRect.height() * column->folderDepth();
   }
 
   if (col < 0)
@@ -3514,52 +3519,52 @@ void ColumnArea::mouseMoveEvent(QMouseEvent *event) {
     else if (column && column->getSoundColumn()) {
       // sound column
       if (o->rect(PredefinedRect::SOUND_ICON)
-              .adjusted(indicatorXAdj, indicatorYAdj, indicatorXAdj,
-                        indicatorYAdj)
+              .adjusted(indicatorXAdj, xsheetBodyOffset, indicatorXAdj,
+                        xsheetBodyOffset)
               .contains(mouseInCell))
         m_tooltip = tr("Click to play the soundtrack back");
       else if (!o->flag(PredefinedFlag::CONFIG_AREA_VISIBLE) &&
                o->rect(PredefinedRect::VOLUME_AREA)
-                   .adjusted(indicatorXAdj, indicatorYAdj, indicatorXAdj,
-                             indicatorYAdj)
+                   .adjusted(indicatorXAdj, xsheetBodyOffset, indicatorXAdj,
+                             xsheetBodyOffset)
                    .contains(mouseInCell))
         m_tooltip = tr("Set the volume of the soundtrack");
     } else
       m_tooltip = tr("Click to select column, double-click to edit");
   } else if (o->rect(PredefinedRect::LOCK_AREA)
-                 .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
+                 .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
                  .contains(mouseInCell)) {
     m_tooltip = tr("Lock Toggle");
   } else if (o->rect(PredefinedRect::CONFIG_AREA)
-                 .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
+                 .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
                  .contains(mouseInCell)) {
     m_tooltip = tr("Additional column settings");
   } else if (o->rect(PredefinedRect::EYE_AREA)
-                 .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
+                 .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
                  .contains(mouseInCell)) {
     m_tooltip = tr("Preview Visibility Toggle");
   } else if (o->rect(PredefinedRect::PREVIEW_LAYER_AREA)
-                 .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
+                 .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
                  .contains(mouseInCell)) {
     m_tooltip = tr("Camera Stand Visibility Toggle");
   } else {
     if (column && column->getSoundColumn()) {
       // sound column
       if (o->rect(PredefinedRect::SOUND_ICON)
-              .adjusted(indicatorXAdj, indicatorYAdj, indicatorXAdj,
-                        indicatorYAdj)
+              .adjusted(indicatorXAdj, xsheetBodyOffset, indicatorXAdj,
+                        xsheetBodyOffset)
               .contains(mouseInCell))
         m_tooltip = tr("Click to play the soundtrack back");
       else if (!o->flag(PredefinedFlag::CONFIG_AREA_VISIBLE) &&
                o->rect(PredefinedRect::VOLUME_AREA)
-                   .adjusted(indicatorXAdj, indicatorYAdj, indicatorXAdj,
-                             indicatorYAdj)
+                   .adjusted(indicatorXAdj, xsheetBodyOffset, indicatorXAdj,
+                             xsheetBodyOffset)
                    .contains(mouseInCell))
         m_tooltip = tr("Set the volume of the soundtrack");
     } else if (column && column->getFolderColumn()) {
       if (o->rect(PredefinedRect::FOLDER_TOGGLE_ICON)
-              .adjusted(indicatorXAdj, indicatorYAdj, indicatorXAdj,
-                        indicatorYAdj)
+              .adjusted(indicatorXAdj, xsheetBodyOffset, indicatorXAdj,
+                        xsheetBodyOffset)
               .contains(mouseInCell)) 
         m_tooltip = tr("Open/Close folder");
     } else if (Preferences::instance()->getColumnIconLoadingPolicy() ==
@@ -3834,8 +3839,11 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
 
   CommandManager *cmdManager = CommandManager::instance();
 
+  int xsheetBodyOffset = o->isVerticalTimeline() && !isCamera
+                             ? m_viewer->getXsheetBodyOffset()
+                             : 0;
   // Adjust for folder indicator
-  int indicatorYAdj = 0;
+  int indicatorYAdj  = 0;
   int indicatorXAdj  = 0;
   TXshColumn *column = xsh->getColumn(m_menuCol);
   if (!isCamera && column && column->folderDepth()) {
@@ -3849,7 +3857,9 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
   //---- Preview
   if (((isCamera && !o->isVerticalTimeline()) ||
        !xsh->isColumnEmpty(m_menuCol)) &&
-      o->rect(PredefinedRect::EYE_AREA).adjusted(0, indicatorYAdj, 0, indicatorYAdj).contains(mouseInCell)) {
+      o->rect(PredefinedRect::EYE_AREA)
+          .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
+          .contains(mouseInCell)) {
     menu.setObjectName("xsheetColumnAreaMenu_Preview");
 
     menu.addAction(cmdManager->getAction("MI_EnableThisColumnOnly"));
@@ -3863,7 +3873,7 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
   else if ((isCamera || !xsh->isColumnEmpty(m_menuCol)) &&
            o->rect((isCamera) ? PredefinedRect::CAMERA_LOCK_AREA
                               : PredefinedRect::LOCK_AREA)
-               .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
+               .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
                .contains(mouseInCell)) {
     menu.setObjectName("xsheetColumnAreaMenu_Lock");
 
@@ -3878,7 +3888,7 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
   else if (((isCamera && !o->isVerticalTimeline()) ||
             !xsh->isColumnEmpty(m_menuCol)) &&
            o->rect(PredefinedRect::PREVIEW_LAYER_AREA)
-               .adjusted(0, indicatorYAdj, 0, indicatorYAdj)
+               .adjusted(0, xsheetBodyOffset, 0, xsheetBodyOffset)
                .contains(mouseInCell)) {
     menu.setObjectName("xsheetColumnAreaMenu_Camstand");
 
