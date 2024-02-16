@@ -1754,7 +1754,7 @@ public:
 class ColumnMoveDragTool final : public XsheetGUI::DragTool {
   QPoint m_firstPos, m_curPos;
   int m_firstCol, m_targetCol;
-  bool m_dropOnColumnFolder;
+  bool m_dropOnColumnFolder, m_folderChanged;
   QStack<int> m_addToFolder;
 
 public:
@@ -1762,7 +1762,8 @@ public:
       : XsheetGUI::DragTool(viewer)
       , m_firstCol(-1)
       , m_targetCol(-1)
-      , m_dropOnColumnFolder(false) {}
+      , m_dropOnColumnFolder(false)
+      , m_folderChanged(false) {}
 
   bool canDrop(const CellPosition &pos) {
     int col = pos.layer();
@@ -1780,7 +1781,13 @@ public:
   }
 
   void onClick(const QMouseEvent *event) override {
-    m_firstPos                   = event->pos();
+    m_targetCol          = -1;
+    m_firstCol           = -1;
+    m_dropOnColumnFolder = false;
+    m_folderChanged      = false;
+    m_addToFolder.clear();
+
+    m_firstPos                  = event->pos();
     CellPosition pos            = getViewer()->xyToPosition(m_firstPos);
     int col                     = pos.layer();
     TColumnSelection *selection = getViewer()->getColumnSelection();
@@ -1807,7 +1814,6 @@ public:
     indices.erase(-1);
     if (indices.empty()) return;
     m_firstCol = *indices.begin(); //col;
-    m_targetCol = -1;
     assert(m_firstCol >= 0);
 
     // Look for folders and add contents to folder list if not already included
@@ -1840,10 +1846,14 @@ public:
     m_curPos             = e->pos();
     m_targetCol          = -1;
     m_dropOnColumnFolder = false;
+    m_folderChanged      = false;
     m_addToFolder.clear();
 
     CellPosition pos = getViewer()->xyToPosition(m_curPos);
     int col          = pos.layer();
+
+    CellPosition firstPos = getViewer()->xyToPosition(m_firstPos);
+    int firstCol          = firstPos.layer();
 
     if (!canDrop(CellPosition(0, col))) return;
 
@@ -1855,6 +1865,8 @@ public:
     QPoint orig          = getViewer()->positionToXY(pos);
     int dPos = o->isVerticalTimeline() ? m_curPos.x() - m_firstPos.x()
                                        : m_firstPos.y() - m_curPos.y();
+    // Minimum movement
+    if (dPos > -5 && dPos < 5) return;
 
     QRect rect = getViewer()
                      ->orientation()
@@ -1875,6 +1887,7 @@ public:
       int folderId = column->getFolderColumn()->getFolderColumnFolderId();
       m_addToFolder = column->getFolderColumn()->getFolderIdStack();
       m_addToFolder.push(folderId);
+      m_folderChanged = true;
     }
 
     if (!m_dropOnColumnFolder) {
@@ -1887,9 +1900,9 @@ public:
         rect.adjust(0, 0, 0, -rect.height() / 2);
 
       if (dPos > 0 && !rect.contains(m_curPos))
-        col--;
+        col = firstCol == col ? col : col - 1;
       else if (dPos <= 0 && rect.contains(m_curPos))
-        col++;
+        col = firstCol == col ? col : col + 1;
 
       if (col < 0) return;
 
@@ -1899,6 +1912,7 @@ public:
         TXshColumn *prev = xsh->getColumn(origCol - 1);
         if (prev && prev->getFolderId() != column->getFolderId()) {
           m_addToFolder = column->getFolderIdStack();
+          m_folderChanged = true;
         }
       }
 
@@ -1907,6 +1921,7 @@ public:
             getViewer()->getXsheet()->getColumn(dPos < 0 ? col - 1 : col);
         if (priorColumn) { 
           m_addToFolder = priorColumn->getFolderIdStack();
+          m_folderChanged = true;
         }
       }
     }
@@ -1925,7 +1940,7 @@ public:
       if (offset > 0) offset -= (oldIndices.size() - 1);
     }
 
-    if (offset != 0) {
+    if (offset != 0 || m_folderChanged) {
       TXsheet *xsh = getViewer()->getXsheet();
       std::set<int> newIndices;
       std::vector<int> vOldIndices, vNewIndices;
@@ -2022,6 +2037,9 @@ public:
 
     int dPos = o->isVerticalTimeline() ? m_curPos.x() - m_firstPos.x()
                                        : m_firstPos.y() - m_curPos.y();
+
+    // Minimum movement
+    if (dPos > -5 && dPos < 5) return;
 
     int topCol = *indices.rbegin();
 
