@@ -1772,8 +1772,6 @@ public:
     TColumnSelection *selection = getViewer()->getColumnSelection();
     if (!selection || selection->isEmpty()) return false;
 
-    if (getViewer()->orientation()->isVerticalTimeline()) return true;
-
     std::set<int> indices = selection->getIndices();
     if (indices.find(col) != indices.end()) return false;
 
