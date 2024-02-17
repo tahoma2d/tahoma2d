@@ -976,7 +976,7 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
                                  : PredefinedRect::LAYER_HEADER)
                    .translated(orig);
   if (!o->isVerticalTimeline())
-    rect.adjust(73, 0, m_viewer->getTimelineBodyOffset(), 0);
+    rect.adjust(isEmpty ? 0 : 73, 0, m_viewer->getTimelineBodyOffset(), 0);
   else
     rect.adjust(0, 0, 0, m_viewer->getXsheetBodyOffset());
   // Adjust for folder indicator
@@ -985,7 +985,8 @@ void ColumnArea::DrawHeader::drawBaseFill(const QColor &columnColor,
   if (column && column->folderDepth() && !o->isVerticalTimeline()) {
     folderDepth = column->folderDepth();
     rect.adjust(indicatorRect.width() * folderDepth, 0, 0, 0);
-  } else if (col >= 0 && (!column || column->isEmpty()))
+  } else if (col >= 0 && o->isVerticalTimeline() &&
+             (!column || column->isEmpty()))
     rect.adjust(0, 0, 0, m_viewer->getXsheetBodyOffset());
 
   int x0 = rect.left();
