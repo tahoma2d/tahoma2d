@@ -3449,6 +3449,7 @@ void ColumnArea::mouseMoveEvent(QMouseEvent *event) {
     m_pos                        = event->pos();
     m_viewer->setTimelineBodyOffset(newOffset);
     m_viewer->positionSections();
+    m_viewer->refreshContentSize(0, 0);
     return;
   }
 
