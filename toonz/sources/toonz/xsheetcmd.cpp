@@ -1443,7 +1443,8 @@ public:
 static void newFolder() {
   TTool::Application *app = TTool::getApplication();
   TXsheet *xsh            = app->getCurrentScene()->getScene()->getXsheet();
-  int col = TTool::getApplication()->getCurrentColumn()->getColumnIndex() + 1;
+  int col = TTool::getApplication()->getCurrentColumn()->getColumnIndex();
+  if (!xsh->isColumnEmpty(col)) col++;
   TXshFolderColumn *folderCol = new TXshFolderColumn();
   int folderId                = xsh->getNewFolderId();
 
