@@ -92,8 +92,7 @@ inline bool formatLess(const Preferences::LevelFormat &a,
 //=================================================================
 
 void getDefaultLevelFormats(LevelFormatVector &lfv) {
-  //lfv.resize(2);
-  lfv.resize(5);
+  lfv.resize(2);
   {
     LevelFormat &lf = lfv[0];
 
@@ -112,27 +111,6 @@ void getDefaultLevelFormats(LevelFormatVector &lfv) {
     // lfv[2].m_name                  = Preferences::tr("PNG");
     // lfv[2].m_pathFormat            = QRegExp("..*\\.png",
     // Qt::CaseInsensitive); lfv[2].m_options.m_premultiply = true;
-
-    // for all PNG files, set premultiply by default
-    lfv[2].m_name                  = Preferences::tr("PNG");
-    lfv[2].m_pathFormat            = QRegExp("..*\\.png", Qt::CaseInsensitive);
-    lfv[2].m_options.m_premultiply = true;
-    lfv[2].m_options.m_whiteTransp = true;
-    //lfv[2].m_options.m_antialias   = 70;
-
-    // for all TIF files, set premultiply by default
-    lfv[3].m_name                  = Preferences::tr("TIF");
-    lfv[3].m_pathFormat            = QRegExp("..*\\.tif", Qt::CaseInsensitive);
-    lfv[3].m_options.m_premultiply = true;
-    lfv[3].m_options.m_whiteTransp = true;
-    //lfv[3].m_options.m_antialias   = 70;
-
-    // for all EXR files, set premultiply by default
-    lfv[4].m_name                  = Preferences::tr("EXR");
-    lfv[4].m_pathFormat            = QRegExp("..*\\.exr", Qt::CaseInsensitive);
-    lfv[4].m_options.m_premultiply = true;
-    lfv[4].m_options.m_whiteTransp = true;
-    //lfv[4].m_options.m_antialias   = 70;
   }
 }
 

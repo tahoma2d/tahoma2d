@@ -75,24 +75,26 @@ class OCAInputData : public OCAData {
   QString m_originAppVersion;
   QString m_ocaVersion;
   // toonz objects
-  ToonzScene * m_scene;
+  ToonzScene *m_scene;
   TXsheet *m_xsheet;
   TOutputProperties *m_oprop;
   TFilePath m_parentDir;
-  // hardcoded...
-  int m_dpi                 = 120; // this should match default m_dpi set in startuppopup.cpp@588 !?
-  float m_antialiasSoftness = 0.0;
-  bool m_whiteTransp        = true;
-  bool m_doPremultiply      = false;
+  int m_dpi;
+  float m_antialiasSoftness;
+  bool m_whiteTransp, m_doPremultiply;
+
+  bool m_supressImportMessages;
 
 public:
-  OCAInputData(float antialiasSoftness, bool whiteTransp, bool doPremultiply);
-  bool load(QString path, QJsonObject &json);
+  OCAInputData(float antialiasSoftness = (float)0.0, bool whiteTransp = true,
+               bool doPremultiply = false);
+  bool read(QString path, QJsonObject &json);
   void getSceneData();
-  void read(const QJsonObject &json);
+  void load(const QJsonObject &json, bool importFiles = true);
   void setSceneData();
-  void importOcaLayer(const QJsonObject &jsonLayer);
-  void importOcaFrame(const QJsonObject &jsonFrame, TXshSimpleLevel *sl);
+  void importOcaLayer(const QJsonObject &jsonLayer, bool importFiles);
+
+  void showImportMessage(DVGui::MsgType type, QString msg);
 };
 }  // namespace OCAIo
 
