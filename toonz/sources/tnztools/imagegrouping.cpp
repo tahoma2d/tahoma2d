@@ -342,15 +342,17 @@ if (i == vimg->getStrokeCount())
   // PER l'UNGROUP: si ungruppa solo se tutti gli stroke selezionati stanno nel
   // gruppo (anche piu' gruppi insieme)
 
+  bool ungroupingMakesSense = false;
   for (i = 0; i < vimg->getStrokeCount(); i++) {
     if (m_sel->isSelected(i)) {
-      if (!vimg->isStrokeGrouped(i)) break;
+      if (!vimg->isStrokeGrouped(i)) continue;
       for (j = 0; j < vimg->getStrokeCount(); j++)
         if (!m_sel->isSelected(j) && vimg->sameSubGroup(i, j)) break;
-      if (j < vimg->getStrokeCount()) break;
+      if (j < vimg->getStrokeCount()) continue;
+      ungroupingMakesSense = true;
     }
   }
-  if (i == vimg->getStrokeCount()) mask |= UNGROUP;
+  if (ungroupingMakesSense) mask |= UNGROUP;
 
   // PER il GROUP: si raggruppa solo  se:
   // //almeno una delle  stroke selezionate non fa parte di gruppi o e' di un
