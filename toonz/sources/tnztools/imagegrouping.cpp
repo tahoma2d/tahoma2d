@@ -87,11 +87,13 @@ public:
   void undo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
     if (image) ungroupWithoutUndo(image.getPointer(), m_selection.get());
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
 
   void redo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
     if (image) groupWithoutUndo(image.getPointer(), m_selection.get());
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
 
   int getSize() const override { return sizeof(*this); }
@@ -114,11 +116,13 @@ public:
   void undo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
     if (image) groupWithoutUndo(image.getPointer(), m_selection.get());
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
 
   void redo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
     if (image) ungroupWithoutUndo(image.getPointer(), m_selection.get());
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
 
   int getSize() const override { return sizeof(*this); }
@@ -226,6 +230,54 @@ public:
 
     return QObject::tr("Move Group") + commandTypeStrMap.value(m_moveType);
   }
+};
+
+//=============================================================================
+// UndoEnterGroup
+//-----------------------------------------------------------------------------
+
+class UndoEnterGroup final : public TUndo {
+  int m_strokeIndex;
+  TVectorImageP m_vi;
+
+public:
+  UndoEnterGroup(TVectorImageP vi, int strokeIndex)
+      : m_vi(vi), m_strokeIndex(strokeIndex) {}
+  void undo() const override {
+    m_vi->exitGroup();
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
+  }
+  void redo() const override {
+    m_vi->enterGroup(m_strokeIndex);
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
+  }
+  int getSize() const override { return sizeof(*this); }
+  QString getHistoryString() override { return QObject::tr("Enter Group"); }
+};
+
+//=============================================================================
+// UndoExitGroup
+//-----------------------------------------------------------------------------
+
+class UndoExitGroup final : public TUndo {
+  int m_strokeIndex;
+  TVectorImageP m_vi;
+
+public:
+  UndoExitGroup(TVectorImageP vi, int strokeIndex)
+      : m_vi(vi), m_strokeIndex(strokeIndex) {}
+  void undo() const override {
+    m_vi->enterGroup(m_strokeIndex);
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
+  }
+  void redo() const override {
+    m_vi->exitGroup();
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
+  }
+
+  int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override { return QObject::tr("Exit Group"); }
 };
 
 //-----------------------------------------------------------------------------
@@ -525,6 +577,7 @@ void TGroupCommand::enterGroup() {
   vimg->enterGroup(index);
   TSelection *selection = TSelection::getCurrent();
   if (selection) selection->selectNone();
+  TUndoManager::manager()->add(new UndoEnterGroup(vimg, index));
 
   TTool::getApplication()->getCurrentScene()->notifySceneChanged();
 }
@@ -537,7 +590,9 @@ void TGroupCommand::exitGroup() {
   TVectorImage *vimg = (TVectorImage *)tool->getImage(true);
 
   if (!vimg) return;
-  vimg->exitGroup();
+  int index = vimg->exitGroup();
+  TUndoManager::manager()->add(new UndoExitGroup(vimg, index));
+
   TTool::getApplication()->getCurrentScene()->notifySceneChanged();
 }
 
