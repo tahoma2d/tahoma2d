@@ -2124,23 +2124,20 @@ TImageP TImageReaderSvg::load() {
     // TPalette* appPlt = new TPalette();
     // vapp->setPalette(appPlt);
 
-    TPixel color(shape->fillColor & 0xFF, (shape->fillColor >> 8) & 0xFF,
-                 shape->fillColor >> 16, shape->fillColor >> 24);
-    if (!shape->hasFill) {
-      assert(color == TPixel::Black);
+    inkIndex   = shape->hasStroke ? findColor(plt, shape->strokeColor) : 1;
+    paintIndex = shape->hasFill ? findColor(plt, shape->fillColor) : 1;
+    if (!shape->hasFill && (!shape->hasStroke || !shape->strokeWidth)) {
       shape->hasFill = true;
     }
-    if (shape->hasStroke) inkIndex = findColor(plt, shape->strokeColor);
-
-    if (shape->hasFill) paintIndex = findColor(plt, shape->fillColor);
 
     // vapp->setPalette(plt.getPointer());
     int startStrokeIndex = vimage->getStrokeCount();
     for (; path; path = path->next) {
       TStroke *s = buildStroke(path, shape->hasStroke ? shape->strokeWidth : 0);
       if (!s) continue;
-      s->setStyle(shape->hasStroke ? inkIndex : 0);
+      s->setStyle(inkIndex);
       vimage->addStroke(s);
+      if (s->isSelfLoop() && !shape->hasFill) shape->hasFill = true;
     }
     if (startStrokeIndex == vimage->getStrokeCount()) continue;
 
