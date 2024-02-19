@@ -77,22 +77,41 @@ void ungroupWithoutUndo(TVectorImage *vimg, StrokeSelection *selection) {
 //-----------------------------------------------------------------------------
 
 class GroupUndo final : public ToolUtils::TToolUndo {
+  std::vector<std::pair<int, int>> m_origIdIndex;
+  std::unique_ptr<StrokeSelection> m_origSelection;
   std::unique_ptr<StrokeSelection> m_selection;
 
 public:
   GroupUndo(TXshSimpleLevel *level, const TFrameId &frameId,
+            StrokeSelection *origSelection,
+            std::vector<std::pair<int, int>> origIdIndex,
             StrokeSelection *selection)
-      : ToolUtils::TToolUndo(level, frameId), m_selection(selection) {}
+      : ToolUtils::TToolUndo(level, frameId)
+      , m_origSelection(origSelection)
+      , m_origIdIndex(origIdIndex)
+      , m_selection(selection) {}
 
   void undo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
-    if (image) ungroupWithoutUndo(image.getPointer(), m_selection.get());
+    if (!image) return;
+    ungroupWithoutUndo(image.getPointer(), m_selection.get());
+
+    // Need to move strokes back due to group reordering
+    //    for (int i = 0; i < m_origIdIndex.size(); i++) {
+    for (int i = m_origIdIndex.size() - 1; i >= 0; i--) {
+      int newIndex = image->getStrokeIndexById(m_origIdIndex[i].first);
+      if (newIndex == m_origIdIndex[i].second) continue;
+      image->moveStrokes(newIndex, 1, m_origIdIndex[i].second);
+    }
+
     TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
 
   void redo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
-    if (image) groupWithoutUndo(image.getPointer(), m_selection.get());
+    if (!image) return;
+    StrokeSelection *origSelection = new StrokeSelection(*m_origSelection);
+    groupWithoutUndo(image.getPointer(), origSelection);
     TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
 
@@ -543,12 +562,24 @@ void TGroupCommand::group() {
     return;
   }
 
+  // Need to store some stroke information before groupWithoutUndo changes
+  // stroke order
+  StrokeSelection *origSelection = new StrokeSelection(*m_sel);
+  std::vector<std::pair<int, int>> origIdIndex;
+  std::vector<int> indexes = m_sel->getSelection();
+  for (int i = 0; i < indexes.size(); i++)
+    origIdIndex.push_back(
+        std::make_pair(vimg->getStroke(indexes[i])->getId(), indexes[i]));
+
   QMutexLocker lock(vimg->getMutex());
   groupWithoutUndo(vimg, m_sel);
+
   TXshSimpleLevel *level =
       TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
-  TUndoManager::manager()->add(
-      new GroupUndo(level, tool->getCurrentFid(), new StrokeSelection(*m_sel)));
+
+  TUndoManager::manager()->add(new GroupUndo(level, tool->getCurrentFid(),
+                                             origSelection, origIdIndex,
+                                             new StrokeSelection(*m_sel)));
 }
 
 //-----------------------------------------------------------------------------
