@@ -2032,7 +2032,7 @@ void TImageWriterSvg::save(const TImageP &img) {
 
 namespace {
 int addColorToPalette(TPalette *plt, unsigned int _color) {
-  TPixel color(_color & 0xFF, (_color >> 8) & 0xFF, _color >> 16);
+  TPixel color(_color & 0xFF, (_color >> 8) & 0xFF, _color >> 16, _color >> 24);
   for (int i = 0; i < plt->getStyleCount(); i++)
     if (plt->getStyle(i)->getMainColor() == color) return i;
   TPalette::Page *page = plt->getPage(0);
@@ -2041,7 +2041,7 @@ int addColorToPalette(TPalette *plt, unsigned int _color) {
 }
 
 int findColor(TPalette *plt, unsigned int _color) {
-  TPixel color(_color & 0xFF, (_color >> 8) & 0xFF, _color >> 16);
+  TPixel color(_color & 0xFF, (_color >> 8) & 0xFF, _color >> 16, _color >> 24);
   for (int i = 0; i < plt->getStyleCount(); i++)
     if (plt->getStyle(i)->getMainColor() == color) return i;
   assert(false);
@@ -2125,7 +2125,7 @@ TImageP TImageReaderSvg::load() {
     // vapp->setPalette(appPlt);
 
     TPixel color(shape->fillColor & 0xFF, (shape->fillColor >> 8) & 0xFF,
-                 shape->fillColor >> 16);
+                 shape->fillColor >> 16, shape->fillColor >> 24);
     if (!shape->hasFill) {
       assert(color == TPixel::Black);
       shape->hasFill = true;
