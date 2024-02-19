@@ -2476,17 +2476,21 @@ int TVectorImage::getCommonGroupDepth(int index0, int index1) const {
 //-------------------------------------------------------------------
 
 int TVectorImage::ungroup(int fromIndex) {
-  m_imp->m_insideGroup = TGroupId();
-
   assert(m_imp->m_strokes[fromIndex]->m_groupId.isGrouped() != 0);
   std::vector<int> changedStrokes;
 
+  std::vector<int> outerGroups = m_imp->m_insideGroup.m_id;
+  std::vector<int> groupIds    = m_imp->m_strokes[fromIndex]->m_groupId.m_id;
+  for (int x        = 0; x < outerGroups.size(); x++) groupIds.pop_back();
+  int removeGroupId = groupIds.back();
+
   int toIndex = fromIndex + 1;
 
-  while (toIndex < (int)m_imp->m_strokes.size() &&
-         m_imp->m_strokes[fromIndex]->m_groupId.getCommonParentDepth(
-             m_imp->m_strokes[toIndex]->m_groupId) >= 1)
+  while (toIndex < (int)m_imp->m_strokes.size()) {
+    std::vector<int> ids = m_imp->m_strokes[toIndex]->m_groupId.m_id;
+    if (std::find(ids.begin(), ids.end(), removeGroupId) == ids.end()) break;
     toIndex++;
+  }
 
   toIndex--;
 
@@ -2505,7 +2509,20 @@ int TVectorImage::ungroup(int fromIndex) {
        i <= toIndex || (i < (int)m_imp->m_strokes.size() &&
                         m_imp->m_strokes[i]->m_groupId.isGrouped(true) != 0);
        i++) {
-    m_imp->m_strokes[i]->m_groupId.ungroup(groupId);
+    // Popup outer groups
+    for (int x = 0; x < outerGroups.size(); x++)
+      m_imp->m_strokes[i]->m_groupId.m_id.pop_back();
+
+    // Pop top most group
+    m_imp->m_strokes[i]->m_groupId.m_id.pop_back();
+
+    // Push back outer groups
+    for (int x = 0; x < outerGroups.size(); x++)
+      m_imp->m_strokes[i]->m_groupId.m_id.push_back(outerGroups[x]);
+
+    if (m_imp->m_strokes[i]->m_groupId.m_id.empty())
+      m_imp->m_strokes[i]->m_groupId.m_id.push_back(groupId.m_id[0]);
+
     changedStrokes.push_back(i);
   }
 
@@ -2566,11 +2583,23 @@ void TVectorImage::group(int fromIndex, int count) {
   assert(count >= 0);
   std::vector<int> changedStroke;
 
+  std::vector<int> outerGroups = m_imp->m_insideGroup.m_id;
+
   TGroupId parent = TGroupId(this, false);
 
   for (i = 0; i < count; i++) {
+    // Popup outer groups
+    for (int x = 0; x < outerGroups.size(); x++)
+      m_imp->m_strokes[fromIndex + i]->m_groupId.m_id.pop_back();
+
+    // Push the new group
     m_imp->m_strokes[fromIndex + i]->m_groupId =
         TGroupId(parent, m_imp->m_strokes[fromIndex + i]->m_groupId);
+
+    // Push back outer groups
+    for (int x = 0; x < outerGroups.size(); x++)
+      m_imp->m_strokes[fromIndex + i]->m_groupId.m_id.push_back(outerGroups[x]);
+
     changedStroke.push_back(fromIndex + i);
   }
 

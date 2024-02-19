@@ -61,7 +61,7 @@ void groupWithoutUndo(TVectorImage *vimg, StrokeSelection *selection) {
 
 void ungroupWithoutUndo(TVectorImage *vimg, StrokeSelection *selection) {
   for (int i = 0; i < (int)vimg->getStrokeCount();)
-    if (selection->isSelected(i)) {
+    if (vimg->isEnteredGroupStroke(i) && selection->isSelected(i)) {
       if (!vimg->isStrokeGrouped(i)) {
         i++;
         continue;
@@ -402,6 +402,7 @@ if (i == vimg->getStrokeCount())
         if (!m_sel->isSelected(j) && vimg->sameSubGroup(i, j)) break;
       if (j < vimg->getStrokeCount()) continue;
       ungroupingMakesSense = true;
+      break;
     }
   }
   if (ungroupingMakesSense) mask |= UNGROUP;
@@ -423,9 +424,11 @@ if (i == vimg->getStrokeCount())
           groupingMakesSense = true;  // gli storke selezionati non sono gia'
                                       // tutti dello stesso gruppo
         for (j = 0; j < vimg->getStrokeCount(); j++)
-          if (!m_sel->isSelected(j) && vimg->sameGroup(i, j)) return mask;
+          if (!m_sel->isSelected(j) && vimg->sameGroup(i, j))
+            groupingMakesSense = true;
       } else
         groupingMakesSense = true;
+      if (groupingMakesSense) break;
     }
 
   if (groupingMakesSense) mask |= GROUP;
