@@ -2143,13 +2143,14 @@ TImageP TImageReaderSvg::load() {
     }
     if (startStrokeIndex == vimage->getStrokeCount()) continue;
 
-    vimage->group(startStrokeIndex,
-                  vimage->getStrokeCount() - startStrokeIndex);
     if (shape->hasFill) {
+      vimage->group(startStrokeIndex,
+                    vimage->getStrokeCount() - startStrokeIndex);
       vimage->enterGroup(startStrokeIndex);
       vimage->selectFill(TRectD(-9999999, -9999999, 9999999, 9999999), 0,
                          paintIndex, true, true, false);
       vimage->exitGroup();
+      vimage->ungroup(startStrokeIndex);
     }
 
     /* vapp->findRegions();
