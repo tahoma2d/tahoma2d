@@ -33,7 +33,8 @@ struct NSVGpath {
 struct NSVGshape {
   unsigned int fillColor;    // Fill color
   unsigned int strokeColor;  // Stroke color
-  float strokeWidth;         // Stroke width (scaled)
+  float strokeWidth;         // Stroke width
+  float scale;               // Stroke scale
   char hasFill;              // Flag indicating if fill exists.
   char hasStroke;            // Flag indicating id store exists
   struct NSVGpath *paths;    // Linked list of paths in the image.
@@ -414,7 +415,6 @@ void nsvg__popAttr(struct NSVGParser *p) {
 
 void nsvg__addShape(struct NSVGParser *p) {
   struct NSVGAttrib *attr = nsvg__getAttr(p);
-  float scale             = 1.0f;
   struct NSVGshape *shape, *cur, *prev;
 
   if (p->plist == NULL) return;
@@ -423,10 +423,10 @@ void nsvg__addShape(struct NSVGParser *p) {
   if (shape == NULL) goto error;
   memset(shape, 0, sizeof(struct NSVGshape));
 
-  scale              = nsvg__maxf(fabsf(attr->xform[0]), fabsf(attr->xform[3]));
+  shape->scale       = nsvg__maxf(fabsf(attr->xform[0]), fabsf(attr->xform[3]));
   shape->hasFill     = attr->hasFill;
   shape->hasStroke   = attr->hasStroke;
-  shape->strokeWidth = attr->strokeWidth * scale;
+  shape->strokeWidth = attr->strokeWidth;
 
   shape->fillColor = attr->fillColor;
   if (shape->hasFill)
@@ -2050,7 +2050,7 @@ int findColor(TPalette *plt, unsigned int _color) {
 
 //-----------------------------------------------------------------------------
 
-TStroke *buildStroke(NSVGpath *path, float width) {
+TStroke *buildStroke(NSVGpath *path, float width, float scale) {
   assert((path->npts - 1) % 3 == 0);
 
   TThickPoint p0 = TThickPoint(path->pts[0], -path->pts[1], width);
@@ -2096,6 +2096,7 @@ TStroke *buildStroke(NSVGpath *path, float width) {
   }
 
   s->reshape(&tpoints[0], tpoints.size());
+  s->transform(TScale(scale));
 
   return s;
 }
@@ -2133,7 +2134,8 @@ TImageP TImageReaderSvg::load() {
     // vapp->setPalette(plt.getPointer());
     int startStrokeIndex = vimage->getStrokeCount();
     for (; path; path = path->next) {
-      TStroke *s = buildStroke(path, shape->hasStroke ? shape->strokeWidth : 0);
+      TStroke *s = buildStroke(path, shape->hasStroke ? shape->strokeWidth : 0,
+                               shape->scale);
       if (!s) continue;
       s->setStyle(inkIndex);
       vimage->addStroke(s);
