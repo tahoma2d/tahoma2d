@@ -358,6 +358,17 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   Q_PROPERTY(QColor SelectedMeshColumnColor READ getSelectedMeshColumnColor
                  WRITE setSelectedMeshColumnColor)
 
+  // Folder column
+  QColor m_folderColumnColor;
+  QColor m_folderColumnBorderColor;
+  QColor m_selectedFolderColumnColor;
+  Q_PROPERTY(
+      QColor FolderColumnColor READ getFolderColumnColor WRITE setFolderColumnColor)
+  Q_PROPERTY(QColor FolderColumnBorderColor READ getFolderColumnBorderColor WRITE
+                 setFolderColumnBorderColor)
+  Q_PROPERTY(QColor SelectedFolderColumnColor READ getSelectedFolderColumnColor
+                 WRITE setSelectedFolderColumnColor)
+
   // Implicit Cell alpha
   int m_implicitCellAlpha;
   Q_PROPERTY(int ImplicitCellAlpha READ getImplicitCellAlpha WRITE
@@ -624,6 +635,9 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
 
   CellPosition m_ctrlSelectRef;
 
+  int m_xsheetBodyOffset;
+  int m_timelineBodyOffset;
+
 public:
   enum FrameDisplayStyle { Frame = 0, SecAndFrame, SixSecSheet, ThreeSecSheet };
 
@@ -663,6 +677,7 @@ public:
   /*! Return true if selection contain only sound cell.*/
   bool areSoundCellsSelected();
   bool areSoundTextCellsSelected();
+  bool areFolderCellsSelected();
   bool areCameraCellsSelected();
 
   XsheetGUI::DragTool *getDragTool() const { return m_dragTool; };
@@ -750,6 +765,8 @@ public:
   void discardNoteWidget();
 
   void setCurrentNoteIndex(int currentNoteIndex);
+
+  void toggleCurrentFolderOpenClose();
 
   // scroll the cell area to make a cell at (row,col) visible
   void scrollTo(int row, int col);
@@ -977,6 +994,23 @@ public:
   QColor getMeshColumnBorderColor() const { return m_meshColumnBorderColor; }
   QColor getSelectedMeshColumnColor() const {
     return m_selectedMeshColumnColor;
+  }
+  // Folder column
+  void setFolderColumnColor(const QColor &color) {
+    m_folderColumnColor = color;
+  }
+  void setFolderColumnBorderColor(const QColor &color) {
+    m_folderColumnBorderColor = color;
+  }
+  void setSelectedFolderColumnColor(const QColor &color) {
+    m_selectedFolderColumnColor = color;
+  }
+  QColor getFolderColumnColor() const { return m_folderColumnColor; }
+  QColor getFolderColumnBorderColor() const {
+    return m_folderColumnBorderColor;
+  }
+  QColor getSelectedFolderColumnColor() const {
+    return m_selectedFolderColumnColor;
   }
 
   // Implicit Cell Alpha
@@ -1313,6 +1347,11 @@ public:
   void zoomToFramesPerPage(int frames);
 
   int getContextMenuRow() { return m_rowArea->getContextMenuRow(); }
+
+  int getXsheetBodyOffset() const { return m_xsheetBodyOffset; }
+  void setXsheetBodyOffset(int offset) { m_xsheetBodyOffset = offset; };
+  int getTimelineBodyOffset() const { return m_timelineBodyOffset; }
+  void setTimelineBodyOffset(int offset) { m_timelineBodyOffset = offset; };
 
 protected:
   void scrollToColumn(int col);

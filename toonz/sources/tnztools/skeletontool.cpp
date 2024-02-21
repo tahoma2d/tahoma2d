@@ -306,7 +306,8 @@ bool SkeletonTool::doesApply() const {
   TStageObjectId objId = app->getCurrentObject()->getObjectId();
   if (objId.isColumn()) {
     TXshColumn *column = xsh->getColumn(objId.getIndex());
-    if (column && column->getSoundColumn()) return false;
+    if (column && (column->getSoundColumn() || column->getFolderColumn()))
+      return false;
   }
   return true;
 }

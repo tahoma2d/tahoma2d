@@ -184,7 +184,8 @@ TStageObject *ViewerKeyframeNavigator::getStageObject() const {
   // Se e' una colonna sound non posso settare chiavi
   if (objectId.isColumn()) {
     TXshColumn *column = xsh->getColumn(objectId.getIndex());
-    if (column && column->getSoundColumn()) return 0;
+    if (column && (column->getSoundColumn() || column->getFolderColumn()))
+      return 0;
   }
   return xsh->getStageObject(objectId);
 }

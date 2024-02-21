@@ -51,6 +51,7 @@
 #include "toonz/preferences.h"
 #include "toonz/columnfan.h"
 #include "toonz/navigationtags.h"
+#include "toonz/txshfoldercolumn.h"
 
 // TnzBase includes
 #include "tfx.h"
@@ -400,6 +401,7 @@ public:
     int r1       = m_row + m_rowCount - 1;
     for (int c = 0; c < m_colCount; c++) {
       TXshColumn *column = xsh->getColumn(c);
+      if (column && column->getFolderColumn()) continue;
       bool isSoundColumn = (column && column->getSoundColumn());
       int col = m_col + c;
       xsh->insertCells(r0, col, count);
@@ -446,6 +448,7 @@ public:
     }
     for (int c = 0; c < m_colCount; c++) {
       TXshColumn *column = xsh->getColumn(c);
+      if (column && column->getFolderColumn()) continue;
       bool isSoundColumn = (column && column->getSoundColumn());
       int col = m_col + c;
       for (int r = r0; r <= r1; r++) {
@@ -780,6 +783,7 @@ public:
 
       for (int c = 0; c < m_colCount; c++) {
         TXshColumn *column = xsh->getColumn(m_c0 + c);
+        if (column && column->getFolderColumn()) continue;
         bool isSoundColumn = (column && column->getSoundColumn());
         if (m_insert) xsh->insertCells(m_r1 + 1, m_c0 + c, dr);
         for (int r = m_r1 + 1; r <= r1; r++)
@@ -839,6 +843,7 @@ public:
     else {
       for (int c = 0; c < m_colCount; c++) {
         TXshColumn *column = xsh->getColumn(m_c0 + c);
+        if (column && column->getFolderColumn()) continue;
         bool isSoundColumn = (column && column->getSoundColumn());
         for (int r = r0; r <= m_r0 - 1; r++) {
           if (isSoundColumn)
@@ -1569,7 +1574,21 @@ public:
     if (event->modifiers() & Qt::ControlModifier) {
       selection->selectColumn(col, !isSelected);
       m_enabled = true;
-      m_colSet  = selection->getIndices();
+
+      if (isSelected) {
+        TXshColumn *column = getViewer()->getXsheet()->getColumn(col);
+        if (column && column->getColumnType() == TXshColumn::eFolderType) {
+          int folderId = column->getFolderColumn()->getFolderColumnFolderId();
+          for (int c = col - 1; c >= 0; c--) {
+            TXshColumn *folderItemCol = getViewer()->getXsheet()->getColumn(c);
+            if (!folderItemCol || !folderItemCol->isContainedInFolder(folderId))
+              break;
+            selection->selectColumn(c, !isSelected);
+          }
+        }
+      }
+
+      m_colSet = selection->getIndices();
     } else if (event->modifiers() & Qt::ShiftModifier) {
       // m_enabled = true;
       if (isSelected) return;
@@ -1586,6 +1605,23 @@ public:
       selection->selectNone();
       selection->selectColumn(col, true);
     }
+
+    // Look for folders and add contents to folder list if not already included
+    std::set<int> orig = selection->getIndices();
+    std::set<int>::iterator it;
+    for (it = orig.begin(); it != orig.end(); it++) {
+      TXshColumn *column = getViewer()->getXsheet()->getColumn(*it);
+      if (!column || column->getColumnType() != TXshColumn::eFolderType)
+        continue;
+      int folderId = column->getFolderColumn()->getFolderColumnFolderId();
+      for (int c = (*it) - 1; c >= 0; c--) {
+        TXshColumn *folderItemCol = getViewer()->getXsheet()->getColumn(c);
+        if (!folderItemCol || !folderItemCol->isContainedInFolder(folderId))
+          break;
+        selection->selectColumn(c, true);
+      }
+    }
+
     selection->makeCurrent();
     getViewer()->update();
   }
@@ -1632,64 +1668,81 @@ XsheetGUI::DragTool *XsheetGUI::DragTool::makeColumnSelectionTool(
 // Column Movement
 //-----------------------------------------------------------------------------
 
-static void moveColumns(const std::set<int> &indices, int delta) {
-  if (indices.empty()) return;
-  if (delta < 0 && *indices.begin() + delta < 0) delta = -*indices.begin();
-  if (delta == 0) return;
+static void moveColumns(const std::set<int> &oldIndices,
+                        const std::set<int> &newIndices,
+                        const std::vector<QStack<int>> &newFolders) {
+  if (oldIndices.empty() || newIndices.empty() || oldIndices.size() != newIndices.size()) return;
 
   TApp *app    = TApp::instance();
   TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
-  std::vector<int> ii;
-  if (delta > 0)
-    ii.assign(indices.rbegin(), indices.rend());
-  else
-    ii.assign(indices.begin(), indices.end());
-  int i, m = ii.size();
-  for (i = 0; i < m; i++) {
-    int a = ii[i];
-    int b = a + delta;
-    xsh->moveColumn(a, b);
+  std::vector<int> oldSet;
+  std::vector<int> newSet;
+  std::vector<QStack<int>> newFolderSet;
+  if ((*newIndices.begin() - *oldIndices.begin()) > 0) {
+    oldSet.assign(oldIndices.rbegin(), oldIndices.rend());
+    newSet.assign(newIndices.rbegin(), newIndices.rend());
+    newFolderSet.assign(newFolders.rbegin(), newFolders.rend());
+  } else {
+    oldSet.assign(oldIndices.begin(), oldIndices.end());
+    newSet.assign(newIndices.begin(), newIndices.end());
+    newFolderSet.assign(newFolders.begin(), newFolders.end());
   }
-  int col = app->getCurrentColumn()->getColumnIndex();
-  if (indices.count(col) > 0)
-    app->getCurrentColumn()->setColumnIndex(col + delta);
-}
 
+  int currentCol = app->getCurrentColumn()->getColumnIndex();
+  int newCurrentCol = currentCol;
+
+  int i, m = oldSet.size();
+  for (i = 0; i < m; i++) {
+    xsh->moveColumn(oldSet[i], newSet[i]);
+
+    TXshColumn *column = xsh->getColumn(newSet[i]);
+    column->setFolderIdStack(newFolderSet[i]);
+
+    if (oldSet[i] == currentCol) newCurrentCol = newSet[i];
+  }
+
+  app->getCurrentColumn()->setColumnIndex(newCurrentCol);
+}
 //-----------------------------------------------------------------------------
 
 class ColumnMoveUndo final : public TUndo {
-  std::set<int> m_indices;
-  int m_delta;
+  std::set<int> m_oldIndices;
+  std::set<int> m_newIndices;
+
+  std::vector<QStack<int>> m_oldFolders, m_newFolders;
 
 public:
   // nota: indices sono gli indici DOPO aver fatto il movimento
-  ColumnMoveUndo(const std::set<int> &indices, int delta)
-      : m_indices(indices), m_delta(delta) {
-    assert(delta != 0);
-    assert(!indices.empty());
-    assert(*indices.begin() >= 0);
-    assert(delta < 0 || *indices.begin() - delta >= 0);
+  ColumnMoveUndo(const std::set<int> &oldIndices,
+                 const std::vector<QStack<int>> oldFolders,
+                 const std::set<int> &newIndices,
+                 const std::vector<QStack<int>> newFolders)
+      : m_oldIndices(oldIndices)
+      , m_newIndices(newIndices)
+      , m_oldFolders(oldFolders)
+      , m_newFolders(newFolders) {
+    assert(!oldIndices.empty());
+    assert(*oldIndices.begin() >= 0);
+    assert(!newIndices.empty());
+    assert(*newIndices.begin() >= 0);
   }
   void undo() const override {
-    moveColumns(m_indices, -m_delta);
+    moveColumns(m_newIndices, m_oldIndices, m_oldFolders);
     TSelection *selection =
         TApp::instance()->getCurrentSelection()->getSelection();
     if (selection) selection->selectNone();
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
   void redo() const override {
-    std::set<int> ii;
-    for (std::set<int>::const_iterator it = m_indices.begin();
-         it != m_indices.end(); ++it)
-      ii.insert(*it - m_delta);
-    moveColumns(ii, m_delta);
+    moveColumns(m_oldIndices, m_newIndices, m_newFolders);
     TSelection *selection =
         TApp::instance()->getCurrentSelection()->getSelection();
     if (selection) selection->selectNone();
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
   int getSize() const override {
-    return sizeof(*this) + m_indices.size() * sizeof(int);
+    return sizeof(*this) + m_oldIndices.size() * sizeof(int) +
+           m_newIndices.size() * sizeof(int);
   }
 
   QString getHistoryString() override { return QObject::tr("Move Columns"); }
@@ -1699,19 +1752,41 @@ public:
 //-----------------------------------------------------------------------------
 
 class ColumnMoveDragTool final : public XsheetGUI::DragTool {
-  int m_offset, m_firstCol, m_lastCol, m_origOffset;
+  QPoint m_firstPos, m_curPos;
+  int m_firstCol, m_targetCol;
+  bool m_dropOnColumnFolder, m_folderChanged;
+  QStack<int> m_addToFolder;
 
 public:
   ColumnMoveDragTool(XsheetViewer *viewer)
       : XsheetGUI::DragTool(viewer)
       , m_firstCol(-1)
-      , m_lastCol(-1)
-      , m_offset(0)
-      , m_origOffset(0) {}
+      , m_targetCol(-1)
+      , m_dropOnColumnFolder(false)
+      , m_folderChanged(false) {}
+
+  bool canDrop(const CellPosition &pos) {
+    int col = pos.layer();
+    if (col < 0) return false;
+
+    TColumnSelection *selection = getViewer()->getColumnSelection();
+    if (!selection || selection->isEmpty()) return false;
+
+    std::set<int> indices = selection->getIndices();
+    if (indices.find(col) != indices.end()) return false;
+
+    return true;
+  }
 
   void onClick(const QMouseEvent *event) override {
-    QPoint xy                   = event->pos();
-    CellPosition pos            = getViewer()->xyToPosition(xy);
+    m_targetCol          = -1;
+    m_firstCol           = -1;
+    m_dropOnColumnFolder = false;
+    m_folderChanged      = false;
+    m_addToFolder.clear();
+
+    m_firstPos                  = event->pos();
+    CellPosition pos            = getViewer()->xyToPosition(m_firstPos);
     int col                     = pos.layer();
     TColumnSelection *selection = getViewer()->getColumnSelection();
     if (!selection->isColumnSelected(col)) {
@@ -1734,86 +1809,269 @@ public:
       selection->makeCurrent();
     }
     std::set<int> indices = selection->getIndices();
+    indices.erase(-1);
     if (indices.empty()) return;
-    m_firstCol = m_lastCol = *indices.begin();
+    m_firstCol = *indices.begin(); //col;
     assert(m_firstCol >= 0);
-    m_origOffset = m_offset = m_firstCol - col;
-    assert(m_lastCol == *indices.begin());
+
+    // Look for folders and add contents to folder list if not already included
+    std::set<int> orig = indices;
+    std::set<int>::iterator it;
+    for (it = orig.begin(); it != orig.end(); it++) {
+      TXshColumn *column = getViewer()->getXsheet()->getColumn(*it);
+      if (!column || column->getColumnType() != TXshColumn::eFolderType)
+        continue;
+      int folderId = column->getFolderColumn()->getFolderColumnFolderId();
+      for (int c = (*it) - 1; c >= 0; c--) {
+        TXshColumn *folderItemCol = getViewer()->getXsheet()->getColumn(c);
+        if (!folderItemCol || !folderItemCol->isContainedInFolder(folderId))
+          break;
+        indices.insert(c);
+      }
+    }
+
+    selection->selectNone();
+    for (std::set<int>::iterator it = indices.begin(); it != indices.end();
+         ++it)
+      selection->selectColumn(*it, true);
+
     getViewer()->update();
 
     if (!getViewer()->orientation()->isVerticalTimeline())
       TUndoManager::manager()->beginBlock();
   }
-  void onDrag(const CellPosition &pos) override {
-    int col                     = pos.layer();
-    TColumnSelection *selection = getViewer()->getColumnSelection();
-    TApp *app                   = TApp::instance();
-    TXsheet *xsh                = app->getCurrentXsheet()->getXsheet();
+  void onDrag(const QMouseEvent *e) override {
+    m_curPos             = e->pos();
+    m_targetCol          = -1;
+    m_dropOnColumnFolder = false;
+    m_folderChanged      = false;
+    m_addToFolder.clear();
 
-    std::set<int> indices = selection->getIndices();
-    indices.erase(-1);  // Ignore camera column
-    if (indices.empty()) return;
+    CellPosition pos = getViewer()->xyToPosition(m_curPos);
+    int col          = pos.layer();
 
-    assert(m_lastCol == *indices.begin());
+    CellPosition firstPos = getViewer()->xyToPosition(m_firstPos);
+    int firstCol          = firstPos.layer();
 
-    int currEnd = xsh->getColumnCount() - 1;
-    int origCol = col;
-    if (col < 0)
-      col = 0;
-    else if (!getViewer()->orientation()->isVerticalTimeline() && col > currEnd)
-      col = currEnd;
-    int dCol = col - (m_lastCol - m_offset);
+    if (!canDrop(CellPosition(0, col))) return;
 
-    // ignore if the cursor moves in the drag-starting column
-    if (dCol == 0) return;
+    const Orientation *o = getViewer()->orientation();
+    TXsheet *xsh         = getViewer()->getXsheet();
+    TXshColumn *column   = xsh->getColumn(col);
+    if (!o->isVerticalTimeline() && !column) return;
 
-    if (dCol < 0 &&
-        !xsh->getColumnFan(getViewer()->orientation())->isActive(col)) {
-      while (
-          col != 0 &&
-          !xsh->getColumnFan(getViewer()->orientation())->isActive(col - 1)) {
-        col--;
-        dCol--;
+    QPoint orig          = getViewer()->positionToXY(pos);
+    int dPos = o->isVerticalTimeline() ? m_curPos.x() - m_firstPos.x()
+                                       : m_firstPos.y() - m_curPos.y();
+    // Minimum movement
+    if (dPos > -5 && dPos < 5) return;
+
+    QRect rect = getViewer()
+                     ->orientation()
+                     ->rect(PredefinedRect::LAYER_HEADER)
+                     .translated(orig);
+    if (!o->isVerticalTimeline())
+      rect.adjust(0, 0, getViewer()->getTimelineBodyOffset(), 0);
+
+    TXshFolderColumn *folderColumn = column ? column->getFolderColumn() : 0;
+    int folderAdj = folderColumn && folderColumn->isExpanded() ? 5 : 0;
+
+    // See if we're on top of a folder column
+    if (column && folderColumn &&
+        (o->isVerticalTimeline()
+             ? rect.adjusted(5, 0, -folderAdj, 0).contains(m_curPos)
+             : rect.adjusted(0, 5, 0, -folderAdj).contains(m_curPos))) {
+      m_dropOnColumnFolder = true;
+      int folderId = column->getFolderColumn()->getFolderColumnFolderId();
+      m_addToFolder = column->getFolderColumn()->getFolderIdStack();
+      m_addToFolder.push(folderId);
+      m_folderChanged = true;
+    }
+
+    if (!m_dropOnColumnFolder) {
+      int origCol = col;
+
+      // Split rect in 1/2, keeping Top/Right
+      if (o->isVerticalTimeline())
+        rect.adjust(rect.width() / 2, 0, 0, 0);
+      else
+        rect.adjust(0, 0, 0, -rect.height() / 2);
+
+      if (dPos > 0 && !rect.contains(m_curPos))
+        col = firstCol == col ? col : col - 1;
+      else if (dPos <= 0 && rect.contains(m_curPos))
+        col = firstCol == col ? col : col + 1;
+
+      if (col < 0) return;
+
+      // See if we are on the bottom of folder
+      if (column && column->isInFolder() && !column->getFolderColumn() &&
+          ((dPos > 0 && origCol != col) || (dPos < 0 && origCol == col))) {
+        TXshColumn *prev = xsh->getColumn(origCol - 1);
+        if (prev && prev->getFolderId() != column->getFolderId()) {
+          m_addToFolder = column->getFolderIdStack();
+          m_folderChanged = true;
+        }
+      }
+
+      if (m_addToFolder.isEmpty()) {
+        TXshColumn *priorColumn =
+            getViewer()->getXsheet()->getColumn(dPos < 0 ? col - 1 : col);
+        if (priorColumn) { 
+          m_addToFolder = priorColumn->getFolderIdStack();
+          m_folderChanged = true;
+        }
       }
     }
 
-    int newBegin = *indices.begin() + dCol;
-    int newEnd   = *indices.rbegin() + dCol;
-
-    if (newBegin < 0)
-      dCol -= newBegin;
-    else if (!getViewer()->orientation()->isVerticalTimeline() &&
-             newEnd > currEnd)
-      dCol -= (newEnd - currEnd);
-
-    // ignore if the dragged columns comes up against the end of column stack
-    if (dCol == 0) return;
-
-    m_lastCol += dCol;
-
-    assert(*indices.begin() + dCol >= 0);
-
-    moveColumns(indices, dCol);
-
-    selection->selectNone();
-    for (std::set<int>::iterator it = indices.begin(); it != indices.end();
-         ++it)
-      selection->selectColumn(*it + dCol, true);
+    m_targetCol = col;
   }
   void onRelease(const CellPosition &pos) override {
-    int delta = m_lastCol - m_firstCol;
-    if (delta != 0) {
-      TColumnSelection *selection = getViewer()->getColumnSelection();
-      std::set<int> indices       = selection->getIndices();
-      if (!indices.empty()) {
-        TUndoManager::manager()->add(new ColumnMoveUndo(indices, delta));
-        TApp::instance()->getCurrentScene()->setDirtyFlag(true);
-        TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    int offset = 0;
+
+    TColumnSelection *selection = getViewer()->getColumnSelection();
+    std::set<int> oldIndices    = selection->getIndices();
+    oldIndices.erase(-1);
+
+    if (!oldIndices.empty() && m_targetCol >= 0) {
+      offset = m_targetCol - m_firstCol;
+      if (offset > 0) offset -= (oldIndices.size() - 1);
+    }
+
+    if (offset != 0 || m_folderChanged) {
+      TXsheet *xsh = getViewer()->getXsheet();
+      std::set<int> newIndices;
+      std::vector<int> vOldIndices, vNewIndices;
+      std::vector<QStack<int>> vOldFolders, vNewFolders;
+      vOldIndices.assign(oldIndices.begin(), oldIndices.end());
+      int newCol = m_firstCol + offset;
+
+      // Dropping into folder
+      if (!m_addToFolder.isEmpty() && offset > 0 && xsh->getColumn(m_targetCol)->getFolderColumn() &&
+          xsh->getColumn(m_targetCol)->getFolderColumn()->getFolderColumnFolderId() == m_addToFolder.back()) {
+        xsh->openCloseFolder(m_targetCol, true);
+        newCol--;
       }
+
+      if (newCol < 0) return;
+
+      std::vector<int>::reverse_iterator it;
+      int i = 0;
+      int subfolder = -1;
+      QStack<int> folderList = m_addToFolder;
+      for (it = vOldIndices.rbegin(); it != vOldIndices.rend(); it++, i++) {
+        newIndices.insert(newCol + i);
+
+        TXshColumn *column = xsh->getColumn(*it);
+        QStack<int> folderIdStack = column->getFolderIdStack();
+        vOldFolders.insert(vOldFolders.begin(), folderIdStack);
+  
+        if (subfolder >= 0 && !column->isContainedInFolder(subfolder)) {
+          folderList.pop();
+          if (folderList.size())
+            subfolder = folderList.top();
+          else
+            subfolder = -1;
+        }
+
+        vNewFolders.insert(vNewFolders.begin(), folderList);
+
+        if (column->getFolderColumn()) {
+          subfolder = column->getFolderColumn()->getFolderColumnFolderId();
+          folderList.push(subfolder);
+        }
+      }
+
+      moveColumns(oldIndices, newIndices, vNewFolders);
+
+      selection->selectNone();
+      for (std::set<int>::iterator it = newIndices.begin();
+           it != newIndices.end(); ++it)
+        selection->selectColumn(*it, true);
+
+      TUndoManager::manager()->add(new ColumnMoveUndo(
+          oldIndices, vOldFolders, newIndices, vNewFolders));
+      TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+      TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
     }
 
     if (!getViewer()->orientation()->isVerticalTimeline())
       TUndoManager::manager()->endBlock();
+  }
+  void drawColumnsArea(QPainter &p) {
+    if (m_targetCol < 0) return;
+
+    TColumnSelection *selection = getViewer()->getColumnSelection();
+    if (!selection || selection->isEmpty()) return;
+
+    TXsheet *xsh = getViewer()->getXsheet();
+
+    std::set<int> indices  = selection->getIndices();
+    CellPosition pos       = getViewer()->xyToPosition(m_curPos);
+    int origCol            = pos.layer();
+    TXshColumn *origColumn = xsh->getColumn(origCol);
+
+    const Orientation *o = getViewer()->orientation();
+    QPoint orig = getViewer()->positionToXY(CellPosition(0, m_targetCol));
+
+    TStageObjectId columnId = getViewer()->getObjectId(m_targetCol);
+    TXshColumn *column      = xsh->getColumn(m_targetCol);
+    if (!o->isVerticalTimeline() && !column) return;
+
+    QRect rect = getViewer()
+                     ->orientation()
+                     ->rect(PredefinedRect::LAYER_HEADER)
+                     .translated(orig);
+    if (!o->isVerticalTimeline())
+      rect.adjust(0, 0, getViewer()->getTimelineBodyOffset(), 0);
+    else
+      rect.adjust(0, 0, 0, getViewer()->getXsheetBodyOffset());
+
+    if (!o->isVerticalTimeline()) {
+      QRect buttonsRect =
+          o->rect(PredefinedRect::BUTTONS_AREA).translated(orig);
+      rect.adjust(buttonsRect.width(), 0, 0, 0);
+    }
+
+    int dPos = o->isVerticalTimeline() ? m_curPos.x() - m_firstPos.x()
+                                       : m_firstPos.y() - m_curPos.y();
+
+    // Minimum movement
+    if (dPos > -5 && dPos < 5) return;
+
+    int topCol = *indices.rbegin();
+
+    int columnDepth = origColumn ? origColumn->folderDepth() : 0;
+    QRect indicatorRect =
+        o->rect(PredefinedRect::FOLDER_INDICATOR_AREA).translated(orig);
+    if (o->isVerticalTimeline())
+      rect.adjust(0, indicatorRect.height() * columnDepth, 0, 0);
+    else
+      rect.adjust(indicatorRect.width() * columnDepth, 0, 0, 0);
+
+    p.setPen(QColor(190, 220, 255));
+    p.setBrush(Qt::NoBrush);
+    if (m_dropOnColumnFolder) {
+      for (int i = 0; i < 3; i++)  // thick border within name area
+        p.drawRect(QRect(rect.topLeft() + QPoint(i, i),
+                         rect.size() - QSize(2 * i, 2 * i)));
+    } else {
+      if (o->isVerticalTimeline()) {
+        QPoint begin = dPos > 0 ? rect.topRight() : rect.topLeft();
+        QPoint end   = dPos > 0 ? rect.bottomRight() : rect.bottomLeft();
+
+        p.drawLine(begin + QPoint(-1, 0), end + QPoint(-1, 0));
+        p.drawLine(begin, end);
+        p.drawLine(begin + QPoint(1, 0), end + QPoint(1, 0));
+      } else {
+        QPoint begin = dPos > 0 ? rect.topLeft() : rect.bottomLeft();
+        QPoint end   = dPos > 0 ? rect.topRight() : rect.bottomRight();
+
+        p.drawLine(begin + QPoint(0, -1), end + QPoint(0, -1));
+        p.drawLine(begin, end);
+        p.drawLine(begin + QPoint(0, 1), end + QPoint(0, 1));
+      }
+    }
   }
 };
 
@@ -1882,7 +2140,8 @@ public:
       parentId = TStageObjectId::CameraId(
           getViewer()->getXsheet()->getCameraColumnIndex());
     if (getViewer()->getXsheet()->getColumn(m_lastCol) &&
-        getViewer()->getXsheet()->getColumn(m_lastCol)->getSoundColumn())
+        (getViewer()->getXsheet()->getColumn(m_lastCol)->getSoundColumn() ||
+         getViewer()->getXsheet()->getColumn(m_lastCol)->getFolderColumn()))
       return;
 
     if (m_firstCol == m_lastCol && m_firstCol != -1) {

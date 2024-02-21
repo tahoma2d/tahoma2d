@@ -155,6 +155,10 @@ XsheetViewer {
   qproperty-SoundColumnHlColor: @xsheet-SoundColumnHL-color;
   qproperty-SoundColumnTrackColor: @xsheet-SoundColumnTrack-color;
 
+  qproperty-FolderColumnColor: @xsheet-FolderColumn-color;
+  qproperty-FolderColumnBorderColor: desaturate(darken(@xsheet-FolderColumn-color, @columnBorderDarkness), @columnBorderDesaturation);
+  qproperty-SelectedFolderColumnColor: mix(shade(@xsheet-FolderColumn-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
+ 
   qproperty-ActiveCameraColor: @xsheet-ActiveCamera-color;
   qproperty-SelectedActiveCameraColor: mix(shade(@xsheet-ActiveCamera-color, @cellHighlightLightness), @cellHighlightTintColor, @cellHighlightTintAmount);
   qproperty-OtherCameraColor: @xsheet-OtherCamera-color;

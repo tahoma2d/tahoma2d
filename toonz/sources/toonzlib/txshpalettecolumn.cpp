@@ -26,6 +26,7 @@ TXshColumn *TXshPaletteColumn::clone() const {
   column->setStatusWord(getStatusWord());
   column->m_cells = m_cells;
   column->m_first = m_first;
+  column->setFolderIdStack(getFolderIdStack());
 
   // column->updateIcon();
   return column;
@@ -75,8 +76,10 @@ void TXshPaletteColumn::loadData(TIStream &is) {
       if (TFx *fx = dynamic_cast<TFx *>(p)) setFx(fx);
     } else if (loadCellMarks(tagName, is)) {
       // do nothing
+    } else if (loadFolderInfo(tagName, is)) {
+      // do nothing
     } else {
-      throw TException("TXshLevelColumn, unknown tag: " + tagName);
+      throw TException("TXshPaletteColumn, unknown tag: " + tagName);
     }
     is.closeChild();
   }
@@ -112,6 +115,8 @@ void TXshPaletteColumn::saveData(TOStream &os) {
 
   // cell marks
   saveCellMarks(os);
+  // folder info
+  saveFolderInfo(os);
 }
 
 PERSIST_IDENTIFIER(TXshPaletteColumn, "paletteColumn")

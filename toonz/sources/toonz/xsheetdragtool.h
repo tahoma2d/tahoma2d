@@ -12,6 +12,7 @@ class XsheetViewer;
 class QMouseEvent;
 class QDropEvent;
 class TXshSoundColumn;
+class QPoint;
 
 namespace XsheetGUI {
 

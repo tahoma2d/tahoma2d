@@ -2362,6 +2362,9 @@ XsheetViewer {
   qproperty-SelectedSoundColumnColor: #7692a1;
   qproperty-SoundColumnHlColor: #34FE5E;
   qproperty-SoundColumnTrackColor: rgba(0, 0, 0, 0.8);
+  qproperty-FolderColumnColor: #c4a972;
+  qproperty-FolderColumnBorderColor: #b5934e;
+  qproperty-SelectedFolderColumnColor: #dbaf8b;
   qproperty-ActiveCameraColor: #4073a3;
   qproperty-SelectedActiveCameraColor: #617db8;
   qproperty-OtherCameraColor: #5e9aa3;

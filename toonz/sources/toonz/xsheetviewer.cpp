@@ -124,6 +124,11 @@ void XsheetViewer::getCellTypeAndColors(int &ltype, QColor &cellColor,
           (isSelected) ? getSelectedPaletteColumnColor() : getPaletteColumnColor();
       sideColor = getPaletteColumnBorderColor();
       break;
+    case FOLDER_XSHLEVEL:
+      cellColor =
+          (isSelected) ? getSelectedFolderColumnColor() : getFolderColumnColor();
+      sideColor = getFolderColumnBorderColor();
+      break;
     case UNKNOWN_XSHLEVEL:
     case NO_XSHLEVEL:
     default:
@@ -151,8 +156,11 @@ void XsheetViewer::getColumnColor(QColor &color, QColor &sideColor, int index,
       int ltype;
       getCellTypeAndColors(ltype, color, sideColor, cell);
     }
+  } else if (xsh->getColumn(index)->getFolderColumn()) {
+    color     = m_folderColumnColor;
+    sideColor = m_folderColumnBorderColor;
   }
-//  if (xsh->getColumn(index)->isMask()) color = QColor(255, 0, 255);
+  //  if (xsh->getColumn(index)->isMask()) color = QColor(255, 0, 255);
 }
 
 //-----------------------------------------------------------------------------
@@ -237,7 +245,9 @@ XsheetViewer::XsheetViewer(QWidget *parent, Qt::WindowFlags flags)
     , m_orientation(nullptr)
     , m_xsheetLayout("Classic")
     , m_frameZoomFactor(100)
-    , m_ctrlSelectRef(CellPosition(0, 0)) {
+    , m_ctrlSelectRef(CellPosition(0, 0))
+    , m_xsheetBodyOffset(0)
+    , m_timelineBodyOffset(0) {
   m_xsheetLayout = Preferences::instance()->getLoadedXsheetLayout();
 
   setFocusPolicy(Qt::StrongFocus);
@@ -407,6 +417,15 @@ void XsheetViewer::positionSections() {
 
   NumberRange headerLayer = o->range(PredefinedRange::HEADER_LAYER);
   NumberRange headerFrame = o->range(PredefinedRange::HEADER_FRAME);
+
+  if (!o->isVerticalTimeline()) {
+    headerFrame = headerFrame.adjusted(0, m_timelineBodyOffset);
+    m_columnArea->setFixedWidth(headerFrame.to());
+  } else {
+    headerFrame = headerFrame.adjusted(0, m_xsheetBodyOffset);
+    m_columnArea->setFixedHeight(headerFrame.to());
+  }
+
   NumberRange bodyLayer(headerLayer.to(), allLayer.to());
   NumberRange bodyFrame(headerFrame.to(), allFrame.to());
 
@@ -788,6 +807,11 @@ bool XsheetViewer::refreshContentSize(int dx, int dy) {
     NumberRange headerLayer = o->range(PredefinedRange::HEADER_LAYER);
     NumberRange headerFrame = o->range(PredefinedRange::HEADER_FRAME);
 
+    if (!o->isVerticalTimeline())
+      headerFrame = headerFrame.adjusted(0, m_timelineBodyOffset);
+    else
+      headerFrame = headerFrame.adjusted(0, m_xsheetBodyOffset);
+
     m_isComputingSize = true;
     m_noteArea->setFixedSize(o->rect(PredefinedRect::NOTE_AREA).size());
     m_cellArea->setFixedSize(actualSize);
@@ -835,6 +859,11 @@ void XsheetViewer::updateAreeSize() {
   NumberRange allFrame    = o->frameSide(viewArea);
   NumberRange headerLayer = o->range(PredefinedRange::HEADER_LAYER);
   NumberRange headerFrame = o->range(PredefinedRange::HEADER_FRAME);
+
+  if (!o->isVerticalTimeline())
+    headerFrame = headerFrame.adjusted(0, m_timelineBodyOffset);
+  else
+    headerFrame = headerFrame.adjusted(0, m_xsheetBodyOffset);
 
   m_cellArea->setFixedSize(viewArea.size());
   m_rowArea->setFixedSize(o->frameLayerRect(allFrame, headerLayer).size());
@@ -1039,6 +1068,23 @@ bool XsheetViewer::areSoundTextCellsSelected() {
       return false;
     }
   return !areCellsSelectedEmpty();
+}
+
+//-----------------------------------------------------------------------------
+
+bool XsheetViewer::areFolderCellsSelected() {
+  int r0, c0, r1, c1;
+  getCellSelection()->getSelectedCells(r0, c0, r1, c1);
+  if (c0 < 0) return false;
+  int i, j;
+  for (j = c0; j <= c1; j++) {
+    TXshColumn *column = getXsheet()->getColumn(j);
+    if (column && (column->isEmpty() ||
+                   column->getColumnType() == TXshColumn::eFolderType))
+      continue;
+    return false;
+  }
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -1778,6 +1824,17 @@ void XsheetViewer::setCurrentNoteIndex(int currentNoteIndex) {
 
 //-----------------------------------------------------------------------------
 
+void XsheetViewer::toggleCurrentFolderOpenClose() {
+  int col = getCurrentColumn();
+  if (col < 0) return;
+  TXsheet *xsh       = getXsheet();
+  TXshColumn *column = xsh->getColumn(col);
+  if (!column || !column->getFolderColumn()) return;
+  m_columnArea->toggleFolderStatus(column);
+}
+
+//-----------------------------------------------------------------------------
+
 void XsheetViewer::resetXsheetNotes() {
   m_noteArea->updateButtons();
   m_layerFooterPanel->m_noteArea->updateButtons();
@@ -1907,11 +1964,15 @@ void XsheetViewer::setFrameDisplayStyle(FrameDisplayStyle style) {
 void XsheetViewer::save(QSettings &settings, bool forPopupIni) const {
   settings.setValue("orientation", orientation()->name());
   settings.setValue("frameZoomFactor", m_frameZoomFactor);
+  settings.setValue("xsheetBodyOffset", m_xsheetBodyOffset);
+  settings.setValue("timelineBodyOffset", m_timelineBodyOffset);
 }
 
 void XsheetViewer::load(QSettings &settings) {
-  QVariant zoomFactor = settings.value("frameZoomFactor");
-  QVariant name       = settings.value("orientation");
+  QVariant zoomFactor         = settings.value("frameZoomFactor");
+  QVariant name               = settings.value("orientation");
+  QVariant timelineBodyOffset = settings.value("timelineBodyOffset");
+  QVariant xsheetBodyOffset   = settings.value("xsheetBodyOffset");
 
   if (zoomFactor.canConvert(QVariant::Int)) {
     m_frameZoomFactor = zoomFactor.toInt();
@@ -1921,6 +1982,14 @@ void XsheetViewer::load(QSettings &settings) {
   if (name.canConvert(QVariant::String)) {
     m_orientation = Orientations::byName(name.toString());
     emit orientationChanged(orientation());
+  }
+
+  if (timelineBodyOffset.canConvert(QVariant::Int)) {
+    m_timelineBodyOffset = timelineBodyOffset.toInt();
+  }
+
+  if (xsheetBodyOffset.canConvert(QVariant::Int)) {
+    m_xsheetBodyOffset = xsheetBodyOffset.toInt();
   }
 }
 

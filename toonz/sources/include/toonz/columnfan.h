@@ -36,7 +36,8 @@ class DVAPI ColumnFan {
   public:
     bool m_active;
     int m_pos;
-    Column() : m_active(true), m_pos(0) {}
+    bool m_visible;
+    Column() : m_active(true), m_pos(0), m_visible(true) {}
   };
   std::vector<Column> m_columns;
   std::map<int, int> m_table;
@@ -93,9 +94,17 @@ of column identified by \b col.
 
   void saveData(TOStream &os);
   void loadData(TIStream &is);
+  void saveVisibilityData(TOStream &os);
+  void loadVisibilityData(TIStream &is);
 
   void rollLeftFoldedState(int index, int count);
   void rollRightFoldedState(int index, int count);
+
+  void hide(int col);
+  void show(int col);
+  bool isVisible(int col) const;
+
+  void initializeCol(int col);
 };
 
 #endif

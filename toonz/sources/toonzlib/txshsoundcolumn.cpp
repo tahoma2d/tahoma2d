@@ -197,6 +197,7 @@ TXshColumn *TXshSoundColumn::clone() const {
   int i;
   for (i = 0; i < m_levels.size(); i++)
     column->insertColumnLevel(m_levels.at(i)->clone(), i);
+  column->setFolderIdStack(getFolderIdStack());
 
   return column;
 }
@@ -265,8 +266,12 @@ void TXshSoundColumn::loadData(TIStream &is) {
 
   std::string tagName;
   while (is.openChild(tagName)) {
-    if (!loadCellMarks(tagName, is))
-      throw TException("TXshLevelColumn, unknown tag: " + tagName);
+    if (loadCellMarks(tagName, is)) {
+      // do nothing
+    } else if (loadFolderInfo(tagName, is)) {
+      // do nothing
+    } else
+      throw TException("TXshSoundColumn, unknown tag: " + tagName);
     is.closeChild();
   }
 }
@@ -283,6 +288,8 @@ void TXshSoundColumn::saveData(TOStream &os) {
   os << getStatusWord();
   // cell marks
   saveCellMarks(os);
+  // folder info
+  saveFolderInfo(os);
 }
 
 //-----------------------------------------------------------------------------

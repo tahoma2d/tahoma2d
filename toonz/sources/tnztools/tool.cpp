@@ -917,12 +917,13 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
   // find the nearest level before it
   if (levelType == NO_XSHLEVEL &&
       !m_application->getCurrentFrame()->isEditingLevel()) {
-      if (!column || (column && !column->getSoundColumn())) {
-          TXshCell cell = xsh->getCell(rowIndex, columnIndex);
-          xl = cell.isEmpty() ? 0 : (TXshLevel*)(&cell.m_level);
-          sl = cell.isEmpty() ? 0 : cell.getSimpleLevel();
-          levelType = cell.isEmpty() ? NO_XSHLEVEL : cell.m_level->getType();
-      }
+    if (!column ||
+        (column && !column->getSoundColumn() && !column->getFolderColumn())) {
+      TXshCell cell = xsh->getCell(rowIndex, columnIndex);
+      xl            = cell.isEmpty() ? 0 : (TXshLevel *)(&cell.m_level);
+      sl            = cell.isEmpty() ? 0 : cell.getSimpleLevel();
+      levelType     = cell.isEmpty() ? NO_XSHLEVEL : cell.m_level->getType();
+    }
   }
 
   bool spline = m_application->getCurrentObject()->isSpline();
@@ -939,7 +940,8 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
     // find the nearest level before it
     if (levelType == NO_XSHLEVEL &&
         !m_application->getCurrentFrame()->isEditingLevel()) {
-        if (!column || (column && !column->getSoundColumn())) {
+      if (!column ||
+          (column && !column->getSoundColumn() && !column->getFolderColumn())) {
             int r0, r1;
             xsh->getCellRange(columnIndex, r0, r1);
             for (int r = std::min(r1, rowIndex); r > r0; r--) {
@@ -1016,6 +1018,10 @@ QString TTool::updateEnabled(int rowIndex, int columnIndex) {
           enable(false),
           QObject::tr(
               "Note columns can only be edited in the xsheet or timeline."));
+
+    else if (column->getFolderColumn())
+      return (enable(false),
+              QObject::tr("It is not possible to edit the folder column."));
 
     if (toolType == TTool::ColumnTool) {
       // Check column target

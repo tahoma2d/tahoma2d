@@ -398,7 +398,12 @@
 		<file>icons/dark/actions/30/sound_header_on.svg</file>
 		<file>icons/dark/actions/74/notelevel.svg</file>
 
-		<file>icons/dark/actions/16/connect.svg</file>
+		<file>icons/dark/actions/30/folder_arrow_left.svg</file>
+		<file>icons/dark/actions/30/folder_arrow_right.svg</file>
+		<file>icons/dark/actions/30/folder_arrow_up.svg</file>
+		<file>icons/dark/actions/30/folder_arrow_down.svg</file>
+
+ 		<file>icons/dark/actions/16/connect.svg</file>
 		<file>icons/dark/actions/16/disconnect.svg</file>
 		<file>icons/dark/actions/16/xsheet_connect.svg</file>
 		<file>icons/dark/actions/16/xsheet_disconnect.svg</file>

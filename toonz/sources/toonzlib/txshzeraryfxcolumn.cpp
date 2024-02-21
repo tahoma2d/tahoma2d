@@ -79,7 +79,9 @@ bool TXshZeraryFxColumn::canSetCell(const TXshCell &cell) const {
 //-----------------------------------------------------------------------------
 
 TXshColumn *TXshZeraryFxColumn::clone() const {
-  return new TXshZeraryFxColumn(*this);
+  TXshZeraryFxColumn *column = new TXshZeraryFxColumn(*this);
+  column->setFolderIdStack(getFolderIdStack());
+  return column;
 }
 
 //-----------------------------------------------------------------------------
@@ -179,6 +181,8 @@ void TXshZeraryFxColumn::loadData(TIStream &is) {
       }
     } else if (loadCellMarks(tagName, is)) {
       // do nothing
+    } else if (loadFolderInfo(tagName, is)) {
+      // do nothing
     } else
       throw TException("expected <status> or <cells>");
     is.closeChild();
@@ -231,6 +235,8 @@ void TXshZeraryFxColumn::saveData(TOStream &os) {
   }
   // cell marks
   saveCellMarks(os);
+  // folder info
+  saveFolderInfo(os);
 }
 
 //-----------------------------------------------------------------------------

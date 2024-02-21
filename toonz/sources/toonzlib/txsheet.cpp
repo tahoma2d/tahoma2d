@@ -34,6 +34,7 @@
 #include "orientation.h"
 #include "toonz/expressionreferencemonitor.h"
 #include "toonz/navigationtags.h"
+#include "toonz/txshfoldercolumn.h"
 
 #include "toonz/txsheet.h"
 #include "toonz/preferences.h"
@@ -105,6 +106,8 @@ struct TXsheet::TXsheetImp {
 
   ExpressionReferenceMonitor *m_expRefMonitor;
 
+  int m_folderIdCount;
+
 public:
   TXsheetImp();
   ~TXsheetImp();
@@ -158,7 +161,8 @@ TXsheet::TXsheetImp::TXsheetImp()
     , m_viewColumn(-1)
     , m_mixedSound(0)
     , m_scene(0)
-    , m_expRefMonitor(new ExpressionReferenceMonitor()) {
+    , m_expRefMonitor(new ExpressionReferenceMonitor())
+    , m_folderIdCount(0) {
   initColumnFans();
 }
 
@@ -312,7 +316,10 @@ bool TXsheet::setCell(int row, int col, const TXshCell &cell) {
     TXshLevel *level = cell.m_level.getPointer();
     assert(level);
 
-    int levelType               = level->getType();
+    int levelType = level->getType();
+
+    if (levelType == TXshColumn::eFolderType) return false;
+
     TXshColumn::ColumnType type = TXshColumn::eLevelType;
 
     if (levelType == SND_XSHLEVEL)
@@ -400,6 +407,8 @@ bool TXsheet::setCells(int row, int col, int rowCount, const TXshCell cells[]) {
   if (i < rowCount) {
     TXshLevel *level = cells[i].m_level.getPointer();
     int levelType    = level->getType();
+
+    if (levelType == TXshColumn::eFolderType) return false;
 
     if (levelType == SND_XSHLEVEL)
       type = TXshColumn::eSoundType;
@@ -1329,6 +1338,10 @@ void TXsheet::loadData(TIStream &is) {
             }
           }
         }
+        if (column->getFolderColumn() &&
+            m_imp->m_folderIdCount < column->getFolderColumn()->getFolderColumnFolderId())
+          m_imp->m_folderIdCount =
+              column->getFolderColumn()->getFolderColumnFolderId();
       }
     } else if (tagName == "cameraColumn") {
       while (is.openChild(tagName)) {
@@ -1372,6 +1385,9 @@ void TXsheet::loadData(TIStream &is) {
       fxSet.loadData(is);
     } else if (tagName == "columnFan") {
       m_imp->m_columnFans[0].loadData(is);
+      m_imp->copyFoldedState();
+    } else if (tagName == "columnFanVisibility") {
+      m_imp->m_columnFans[0].loadVisibilityData(is);
       m_imp->copyFoldedState();
     } else if (tagName == "noteSet") {
       m_notes->loadData(is);
@@ -1418,6 +1434,8 @@ void TXsheet::saveData(TOStream &os) {
     os.openChild("columnFan");
     columnFan->saveData(os);
     os.closeChild();
+
+    columnFan->saveVisibilityData(os);
   }
 
   TXshNoteSet *notes = getNotes();
@@ -1450,6 +1468,10 @@ void TXsheet::insertColumn(int col, TXshColumn::ColumnType type) {
 void TXsheet::insertColumn(int col, TXshColumn *column) {
   if (col < 0) col = 0;
   column->setXsheet(this);
+  if (col > 0) {
+    TXshColumn *prevColumn = getColumn(col - 1);
+    if (prevColumn) column->setFolderIdStack(prevColumn->getFolderIdStack());
+  }
   m_imp->m_columnSet.insertColumn(col, column);
   m_imp->m_pegTree->insertColumn(col);
   if (column->getPaletteColumn() ==
@@ -2120,4 +2142,64 @@ void TXsheet::toggleTaggedFrame(int frame) {
     m_navigationTags->removeTag(frame);
   else
     m_navigationTags->addTag(frame);
+}
+
+//---------------------------------------------------------
+
+int TXsheet::getNewFolderId() { return ++m_imp->m_folderIdCount; }
+
+//---------------------------------------------------------
+
+bool TXsheet::isFolderColumn(int col) {
+  TXshColumn *column = getColumn(col);
+  if (!column) return false;
+
+  return column->getFolderColumn() ? true : false;
+}
+
+//---------------------------------------------------------
+
+void TXsheet::openCloseFolder(int folderCol, bool openFolder) {
+  if (folderCol < 0) return;
+
+  TXshColumn *folder = getColumn(folderCol);
+  if (!folder) return;
+
+  TXshFolderColumn *folderColumn = folder->getFolderColumn();
+  if (!folderColumn) return;
+
+  // No change
+  if (folderColumn->isExpanded() == openFolder) return;
+
+  int folderId = folderColumn->getFolderColumnFolderId();
+  std::set<int> closedSubFolders;
+
+  folderColumn->setExpanded(openFolder);
+  for (int i = folderCol - 1; i >= 0; i--) {
+    TXshColumn *folderItem = getColumn(i);
+    if (!folderItem->isContainedInFolder(folderId)) break;
+
+    if (openFolder) {
+      // When opening, keep closed subfolders closed.
+      TXshFolderColumn *subfolder = folderItem->getFolderColumn();
+      if (subfolder && !subfolder->isExpanded())
+        closedSubFolders.insert(subfolder->getFolderColumnFolderId());
+
+      QStack<int> folderList = folderItem->getFolderIdStack();
+      bool keepHidden        = false;
+      for (int j = 0; j < folderList.size(); j++) {
+        if (closedSubFolders.find(folderList[j]) != closedSubFolders.end())
+          keepHidden = true;
+      }
+      if (keepHidden) continue;
+    }
+
+    for (auto o : Orientations::all()) {
+      ColumnFan *columnFan = getColumnFan(o);
+      if (openFolder)
+        columnFan->show(i);
+      else
+        columnFan->hide(i);
+    }
+  }
 }

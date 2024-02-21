@@ -10,6 +10,7 @@
 #include <QPair>
 #include <QString>
 #include <QMap>
+#include <QStack>
 
 #undef DVAPI
 #undef DVVAR
@@ -30,6 +31,7 @@ class TXshCellColumn;
 class TXshPaletteColumn;
 class TXshZeraryFxColumn;
 class TXshMeshColumn;
+class TXshFolderColumn;
 class TXsheet;
 class TXshCell;
 class TFx;
@@ -67,6 +69,9 @@ class DVAPI TXshColumn : public TColumnHeader, public TPersist {
   TXsheet *m_xsheet;
   int m_colorTag;  // Usato solo in tabkids
   UCHAR m_opacity;
+
+  QStack<int> m_folderId;
+  int m_folderSelector;
 
 public:
 private:
@@ -106,6 +111,7 @@ Constructs a TXshColumn with default value.
       , m_colorTag(0)
       , m_opacity(255)
       , m_colorFilterId(0)  // None
+      , m_folderSelector(-1)
   {}
 
   enum ColumnType {
@@ -114,7 +120,8 @@ Constructs a TXshColumn with default value.
     eSoundTextType,
     eZeraryFxType,
     ePaletteType,
-    eMeshType
+    eMeshType,
+    eFolderType
   };
 
   virtual ColumnType getColumnType() const = 0;
@@ -135,6 +142,7 @@ Constructs a TXshColumn with default value.
   virtual TXshPaletteColumn *getPaletteColumn() { return 0; }
   virtual TXshZeraryFxColumn *getZeraryFxColumn() { return 0; }
   virtual TXshMeshColumn *getMeshColumn() { return 0; }
+  virtual TXshFolderColumn *getFolderColumn() { return 0; }
 
   virtual int getMaxFrame(bool ignoreLastStop = false) const = 0;
 
@@ -156,7 +164,7 @@ Return true if camera stand is transparent.notice: this value is not relevant if
 camerastandVisible is off.
 \sa setCamstandTransparent()
 */
-  UCHAR getOpacity() const { return m_opacity; }
+  UCHAR getOpacity() const;
   /*!
 Set column status camera stand transparent to \b on. notice: this value is not
 relevant if camerastandVisible is off.
@@ -261,9 +269,32 @@ Set column color tag to \b colorTag.
     m_colorTag = colorTag;
   }  // Usato solo in tabkids
 
-  int getColorFilterId() const { return m_colorFilterId; }
+  int getColorFilterId() const;
   void setColorFilterId(int id) { m_colorFilterId = id; }
   void resetColumnProperties();
+
+  // Folder management
+  int setFolderId(int value);
+  void setFolderId(int value, int position);
+  int getFolderId(int position = -1) const;
+  QStack<int> getFolderIdStack() const { return m_folderId; }
+  void setFolderIdStack(QStack<int> folderIdStack);
+  void removeFolderId(int position);
+  int removeFolderId();
+  bool isInFolder();
+  bool isContainedInFolder(int folderId);
+  void removeFromAllFolders();
+  int folderDepth();
+
+  TXshColumn *getFolderColumn() const;
+  bool isFolderCamstandVisible() const;
+  bool isFolderPreviewVisible() const;
+  bool isFolderLocked() const;
+  UCHAR getFolderOpacity() const;
+  int getFolderColorFilterId() const;
+
+  bool loadFolderInfo(std::string tagName, TIStream &is);
+  void saveFolderInfo(TOStream &os);
 };
 
 #ifdef _WIN32

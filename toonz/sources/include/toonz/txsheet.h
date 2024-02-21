@@ -604,6 +604,10 @@ in TXsheetImp.
   bool isCurrentDrawingOnTop() { return m_currentDrawingOnTop; }
   void setCurrentDrawingOnTop(bool onTop) { m_currentDrawingOnTop = onTop; }
 
+  int getNewFolderId();
+  bool isFolderColumn(int col);
+  void openCloseFolder(int folderCol, bool openFolder);
+
 protected:
   bool checkCircularReferences(TXsheet *childCandidate);
 

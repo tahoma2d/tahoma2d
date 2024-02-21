@@ -44,6 +44,7 @@
 #include "toonz/preferences.h"
 #include "toonz/txshlevelcolumn.h"
 #include "toonz/navigationtags.h"
+#include "toonz/txshfoldercolumn.h"
 
 // TnzQt includes
 #include "toonzqt/tselectionhandle.h"
@@ -453,7 +454,7 @@ void GlobalKeyframeUndo::doInsertGlobalKeyframes(
     TStageObjectId objectId;
 
     TXshColumn *column = xsh->getColumn(c);
-    if (column && column->getSoundColumn()) continue;
+    if (column && (column->getSoundColumn() || column->getFolderColumn())) continue;
 
     if (c == -1)
       objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
@@ -480,7 +481,7 @@ void GlobalKeyframeUndo::doRemoveGlobalKeyframes(
     TStageObjectId objectId;
 
     TXshColumn *column = xsh->getColumn(c);
-    if (column && column->getSoundColumn()) continue;
+    if (column && (column->getSoundColumn() || column->getFolderColumn())) continue;
 
     if (c == -1)
       objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
@@ -705,8 +706,8 @@ SetGlobalStopframeUndo::SetGlobalStopframeUndo(int frame,
 
     TXshColumn *xshColumn = xsh->getColumn(c);
     if (!xshColumn || xshColumn->getSoundColumn() ||
-        xshColumn->getSoundTextColumn() || xshColumn->isLocked() ||
-        xshColumn->isEmpty())
+        xshColumn->getSoundTextColumn() || xshColumn->getFolderColumn() ||
+        xshColumn->isLocked() || xshColumn->isEmpty())
       continue;
 
     TXshCellColumn *cellColumn = xshColumn->getCellColumn();
@@ -729,8 +730,8 @@ void SetGlobalStopframeUndo::redo() const {
 
     TXshColumn *xshColumn = xsh->getColumn(c);
     if (!xshColumn || xshColumn->getSoundColumn() ||
-        xshColumn->getSoundTextColumn() || xshColumn->isLocked() ||
-        xshColumn->isEmpty())
+        xshColumn->getSoundTextColumn() || xshColumn->getFolderColumn() ||
+        xshColumn->isLocked() || xshColumn->isEmpty())
       continue;
 
     TXshCellColumn *cellColumn = xshColumn->getCellColumn();
@@ -839,8 +840,8 @@ RemoveGlobalStopframeUndo::RemoveGlobalStopframeUndo(
 
     TXshColumn *xshColumn = xsh->getColumn(c);
     if (!xshColumn || xshColumn->getSoundColumn() ||
-        xshColumn->getSoundTextColumn() || xshColumn->isLocked() ||
-        xshColumn->isEmpty())
+        xshColumn->getSoundTextColumn() || xshColumn->getFolderColumn() ||
+        xshColumn->isLocked() || xshColumn->isEmpty())
       continue;
 
     TXshCellColumn *cellColumn = xshColumn->getCellColumn();
@@ -863,8 +864,8 @@ void RemoveGlobalStopframeUndo::redo() const {
 
     TXshColumn *xshColumn = xsh->getColumn(c);
     if (!xshColumn || xshColumn->getSoundColumn() ||
-        xshColumn->getSoundTextColumn() || xshColumn->isLocked() ||
-        xshColumn->isEmpty())
+        xshColumn->getSoundTextColumn() || xshColumn->getFolderColumn() ||
+        xshColumn->isLocked() || xshColumn->isEmpty())
       continue;
 
     TXshCellColumn *cellColumn = xshColumn->getCellColumn();
@@ -1396,6 +1397,78 @@ public:
   NewNoteLevelCommand() : MenuItemHandler(MI_NewNoteLevel) {}
   void execute() override { XshCmd::newNoteLevel(); }
 } NewNoteLevelCommand;
+
+//============================================================
+
+class NewFolderUndo final : public TUndo {
+  TXshFolderColumnP m_folderColumn;
+  int m_col;
+  QString m_columnName;
+
+public:
+  NewFolderUndo(TXshFolderColumn *folderColumn, int col,
+                   QString columnName)
+      : m_folderColumn(folderColumn)
+      , m_col(col)
+      , m_columnName(columnName) {}
+
+  void undo() const override {
+    TApp *app    = TApp::instance();
+    TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+    xsh->removeColumn(m_col);
+    app->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  void redo() const override {
+    TApp *app    = TApp::instance();
+    TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+    xsh->insertColumn(m_col, m_folderColumn.getPointer());
+
+    TStageObject *obj = xsh->getStageObject(TStageObjectId::ColumnId(m_col));
+    std::string str   = m_columnName.toStdString();
+    obj->setName(str);
+
+    app->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override { return QObject::tr("New Level Folder"); }
+
+  int getHistoryType() override { return HistoryType::Xsheet; }
+};
+
+//============================================================
+
+static void newFolder() {
+  TTool::Application *app = TTool::getApplication();
+  TXsheet *xsh            = app->getCurrentScene()->getScene()->getXsheet();
+  int col = TTool::getApplication()->getCurrentColumn()->getColumnIndex();
+  if (!xsh->isColumnEmpty(col)) col++;
+  TXshFolderColumn *folderCol = new TXshFolderColumn();
+  int folderId                = xsh->getNewFolderId();
+
+  folderCol->setXsheet(xsh);
+  folderCol->setFolderColumnFolderId(folderId);
+  xsh->insertColumn(col, folderCol);
+
+  TStageObject *obj = xsh->getStageObject(TStageObjectId::ColumnId(col));
+  QString str       = "Folder" + QString::number(folderId);
+  obj->setName(str.toStdString());
+
+  TUndoManager::manager()->add(new NewFolderUndo(folderCol, col, str));
+
+  TXsheetHandle *xshHandle = app->getCurrentXsheet();
+  xshHandle->notifyXsheetChanged();
+}
+
+//============================================================
+
+class NewFolderCommand final : public MenuItemHandler {
+public:
+  NewFolderCommand() : MenuItemHandler(MI_NewFolder) {}
+  void execute() override { XshCmd::newFolder(); }
+} NewFolderCommand;
 
 //============================================================
 
@@ -2553,6 +2626,19 @@ public:
   }
 
 } ToggleXsheetCameraColumnCommand;
+
+//-----------------------------------------------------------------------------
+
+class ToggleXsheetOpenCloseFolderCommand final : public MenuItemHandler {
+public:
+  ToggleXsheetOpenCloseFolderCommand()
+      : MenuItemHandler(MI_ToggleOpenCloseFolder) {}
+
+  void execute() override {
+    TApp::instance()->getCurrentXsheetViewer()->toggleCurrentFolderOpenClose();
+  }
+
+} ToggleXsheetOpenCloseFolderCommand;
 
 //-----------------------------------------------------------------------------
 

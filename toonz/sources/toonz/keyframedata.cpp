@@ -115,7 +115,8 @@ bool TKeyframeData::getKeyframes(std::set<Position> &positions,
     int col      = c0 + pos.second;
     positions.insert(std::make_pair(row, col));
     TXshColumn *column = xsh->getColumn(col);
-    if (column && column->getSoundColumn()) continue;
+    if (column && (column->getSoundColumn() || column->getFolderColumn()))
+      continue;
     TStageObject *pegbar = xsh->getStageObject(
         col >= 0 ? TStageObjectId::ColumnId(col) : cameraId);
     if (xsh->getColumn(col) && xsh->getColumn(col)->isLocked()) continue;

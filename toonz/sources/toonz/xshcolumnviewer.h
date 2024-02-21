@@ -299,6 +299,7 @@ class ColumnArea final : public QWidget {
   ColumnTransparencyPopup *m_columnTransparencyPopup;
   SoundColumnPopup *m_soundColumnPopup;
   QTimer *m_transparencyPopupTimer;
+  QTimer *m_openCloseFolderTimer;
   int m_doOnRelease;
   XsheetViewer *m_viewer;
   int m_col;
@@ -311,6 +312,8 @@ class ColumnArea final : public QWidget {
 
   QPoint m_pos;
   QString m_tooltip;
+
+  bool m_resizingHeader;
 
   RenameColumnField *m_renameColumnField;
 #ifndef LINETEST
@@ -359,6 +362,7 @@ class ColumnArea final : public QWidget {
     void drawPreviewToggle(int opacity) const;
     void drawLock() const;
     void drawConfig() const;
+    void drawFolderIndicator() const;
     void drawColumnNumber() const;
     void drawColumnName() const;
     void drawThumbnail(QPixmap &iconPixmap) const;
@@ -369,6 +373,7 @@ class ColumnArea final : public QWidget {
 
     void drawSoundIcon(bool isPlaying) const;
     void drawVolumeControl(double volume) const;
+    void drawFolderStatusIcon(bool isOpen) const;
   };
 
 public:
@@ -383,6 +388,7 @@ public:
   void drawSoundColumnHead(QPainter &p, int col);
   void drawPaletteColumnHead(QPainter &p, int col);
   void drawSoundTextColumnHead(QPainter &p, int col);
+  void drawFolderColumnHead(QPainter &p, int col);
   void drawCurrentColumnFocus(QPainter &p, int col);
 
   QPixmap getColumnIcon(int columnIndex);
@@ -393,7 +399,13 @@ public:
   public:
     static const QPixmap &sound();
     static const QPixmap &soundPlaying();
+    static const QPixmap &folder_arrow_left();
+    static const QPixmap &folder_arrow_right();
+    static const QPixmap &folder_arrow_up();
+    static const QPixmap &folder_arrow_down();
   };
+
+  void toggleFolderStatus(TXshColumn *column);
 
 protected:
   void select(int columnIndex, QMouseEvent *event);
@@ -417,6 +429,7 @@ protected slots:
   void onXsheetCameraChange(int);
   void onMenuAboutToHide();
   void onResetContextMenuTarget();
+  void autoOpenCloseFolder();
 };
 
 //-----------------------------------------------------------------------------
