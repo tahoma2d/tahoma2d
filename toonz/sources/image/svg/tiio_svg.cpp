@@ -900,6 +900,7 @@ int nsvg__parseAttr(struct NSVGParser *p, const char *name, const char *value) {
       attr->fillColor = nsvg__parseColor(value);
     }
   } else if (strcmp(name, "fill-opacity") == 0) {
+    attr->hasFill = 1;
     attr->fillOpacity = nsvg__parseFloat(value);
   } else if (strcmp(name, "stroke") == 0) {
     if (strcmp(value, "none") == 0) {
