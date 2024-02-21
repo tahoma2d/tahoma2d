@@ -16,6 +16,7 @@
 #include "tregion.h"
 #include "tcurves.h"
 #include "tpalette.h"
+#include "tstroke.h"
 
 //=------------------------------------------------------------------------------------------------------------------------------
 //=------------------------------------------------------------------------------------------------------------------------------
@@ -1895,7 +1896,7 @@ static void writeRegion(TRegion *r, TPalette *plt, QTextStream &out,
   if (col == TPixel::Transparent) col = TPixel::White;
 
   out << "style=\"fill:rgb(" << col.r << "," << col.g << "," << col.b
-      << ")\" \n";
+      << ");fill-opacity:" << (col.m / 255.0) << "\" \n";
   out << "d=\"M " << quadsOutline[0]->getP0().x << " "
       << ly - quadsOutline[0]->getP0().y << "\n";
 
@@ -1923,7 +1924,7 @@ static void writeOutlineStroke(TStroke *s, TPalette *plt, QTextStream &out,
   TPixel32 col = plt->getStyle(s->getStyle())->getMainColor();
 
   out << "style=\"fill:rgb(" << col.r << "," << col.g << "," << col.b
-      << ")\" \n";
+      << ");fill-opacity:" << (col.m / 255.0) << "\" \n";
   out << "d=\"M " << quadsOutline[0]->getP0().x << " "
       << ly - quadsOutline[0]->getP0().y << "\n";
 
@@ -1962,8 +1963,40 @@ static void writeCenterlineStroke(TStroke *s, TPalette *plt, QTextStream &out,
   out << "<path  \n";
   TPixel32 col = plt->getStyle(s->getStyle())->getMainColor();
 
+  int capStyle    = s->outlineOptions().m_capStyle;
+  QString lineCap = "";
+  switch (capStyle) {
+  case TStroke::OutlineOptions::PROJECTING_CAP:
+    lineCap = "square";
+    break;
+  case TStroke::OutlineOptions::ROUND_CAP:
+    lineCap = "round";
+    break;
+  default:
+  case TStroke::OutlineOptions::BUTT_CAP:
+    lineCap = "butt";
+    break;
+  }
+  int joinStyle    = s->outlineOptions().m_joinStyle;
+  QString lineJoin = "";
+  switch (joinStyle) {
+  case TStroke::OutlineOptions::BEVEL_JOIN:
+    lineJoin = "bevel";
+    break;
+  case TStroke::OutlineOptions::ROUND_JOIN:
+    lineJoin = "round";
+    break;
+  default:
+  case TStroke::OutlineOptions::MITER_JOIN:
+    lineJoin = "miter";
+    break;
+  }
+
   out << "style=\"stroke:rgb(" << col.r << "," << col.g << "," << col.b
-      << ")\" stroke-width=\"" << thick << " \"  \n";
+      << ");stroke-width:" << thick << ";stroke-linecap:" << lineCap
+      << ";stroke-linejoin:" << lineJoin
+      << ";stroke-miterlimit:" << s->outlineOptions().m_miterUpper
+      << ";stroke-opacity:" << (col.m / 255.0) << "\"  \n";
   out << "d=\"M " << s->getChunk(0)->getP0().x << " "
       << ly - s->getChunk(0)->getP0().y << "\n";
 
