@@ -1637,11 +1637,30 @@ void nsvg__parseSVG(struct NSVGParser *p, const char **attr) {
   for (i = 0; attr[i]; i += 2) {
     if (!nsvg__parseAttr(p, attr[i], attr[i + 1])) {
       if (strcmp(attr[i], "width") == 0) {
+        float w;
+        char units[8];
+        units[0]            = '\0';
         p->image->wunits[0] = '\0';
-        sscanf(attr[i + 1], "%f%s", &p->image->width, p->image->wunits);
+        sscanf(attr[i + 1], "%f%s", &w, units);
+        if (strcmp(units, "%") != 0) {
+          p->image->width = w;
+          strcpy(p->image->wunits, units);
+        }
       } else if (strcmp(attr[i], "height") == 0) {
+        float h;
+        char units[8];
+        units[0]            = '\0';
         p->image->hunits[0] = '\0';
-        sscanf(attr[i + 1], "%f%s", &p->image->height, p->image->hunits);
+        sscanf(attr[i + 1], "%f%s", &h, units);
+        if (strcmp(units, "%") != 0) {
+          p->image->height = h;
+          strcpy(p->image->hunits, units);
+        }
+      } else if (strcmp(attr[i], "viewBox") == 0) {
+        float x, y, w, h;
+        sscanf(attr[i + 1], "%f %f %f %f", &x, &y, &w, &h);
+        if (p->image->width <= 0) p->image->width = w;
+        if (p->image->height <= 0) p->image->height = h;
       }
     }
   }
@@ -2169,6 +2188,11 @@ indexes[i] = vimage->getStrokeCount()+i;
 vimage->insertImage(vapp, indexes);*/
     // delete appPlt;
   }
+  double dx =
+      (svgImg->width > 0 ? svgImg->width : vimage->getBBox().getLx()) * 0.5;
+  double dy =
+      (svgImg->height > 0 ? svgImg->height : vimage->getBBox().getLy()) * 0.5;
+  vimage->transform(TTranslation(-dx, dy));
 
   nsvgDelete(svgImg);
   // if (m_level)
