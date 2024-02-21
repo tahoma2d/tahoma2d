@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QTextStream>
 #include <QFile>
 
@@ -2107,6 +2109,8 @@ TStroke *buildStroke(NSVGpath *path, float width, float scale) {
 //-----------------------------------------------------------------------------
 
 TImageP TImageReaderSvg::load() {
+  static int devPixRatio = QApplication::desktop()->devicePixelRatio();
+
   NSVGimage *svgImg =
       nsvgParseFromFile(m_path.getQString().toStdString().c_str());
   if (!svgImg) return TImageP();
@@ -2135,8 +2139,9 @@ TImageP TImageReaderSvg::load() {
     // vapp->setPalette(plt.getPointer());
     int startStrokeIndex = vimage->getStrokeCount();
     for (; path; path = path->next) {
-      TStroke *s = buildStroke(path, shape->hasStroke ? shape->strokeWidth : 0,
-                               shape->scale);
+      TStroke *s = buildStroke(
+          path, shape->hasStroke ? shape->strokeWidth / devPixRatio : 0,
+          shape->scale);
       if (!s) continue;
       s->setStyle(inkIndex);
       vimage->addStroke(s);
