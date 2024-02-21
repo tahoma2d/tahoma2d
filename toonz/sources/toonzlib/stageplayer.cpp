@@ -70,8 +70,7 @@ TImageP Stage::Player::image() const {
     id = id + "_filled";
 
   ImageLoader::BuildExtData extData(
-      m_sl, m_fid, 0, false,
-      m_xsh->getScene()->decodeFilePath(m_sl->getPath()));
+      m_sl, m_fid, 0, false, m_sl->getScene()->decodeFilePath(m_sl->getPath()));
   return ImageManager::instance()->getImage(id, ImageManager::none, &extData);
 }
 
