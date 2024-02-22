@@ -2202,13 +2202,18 @@ TImageP TImageReaderSvg::load() {
     if (startStrokeIndex == vimage->getStrokeCount()) continue;
 
     if (shape->hasFill) {
-      vimage->group(startStrokeIndex,
-                    vimage->getStrokeCount() - startStrokeIndex);
+      int c = vimage->getStrokeCount() - startStrokeIndex;
+      vimage->group(startStrokeIndex, c);
       vimage->enterGroup(startStrokeIndex);
-      vimage->selectFill(TRectD(-9999999, -9999999, 9999999, 9999999), 0,
-                         paintIndex, true, true, false);
+      if (c > 1) {
+        TStroke *s = vimage->getStroke(vimage->getStrokeCount() - 1);
+        for (int i = 0; i < s->getControlPointCount(); i++)
+          vimage->fill(s->getControlPoint(i), paintIndex, true);
+      } else
+        vimage->selectFill(TRectD(-9999999, -9999999, 9999999, 9999999), 0,
+                           paintIndex, true, true, false);
       vimage->exitGroup();
-      vimage->ungroup(startStrokeIndex);
+      if (c == 1) vimage->ungroup(startStrokeIndex);
     }
 
     /* vapp->findRegions();
