@@ -307,7 +307,7 @@ bool OCAData::buildLayer(QJsonObject &json, const QList<int> &rows,
 
   json["frames"]       = jsonFrames;
   json["childLayers"]  = QJsonArray();
-  json["type"]         = "paintlayer";
+  json["type"]         = json["fileType"] == "svg" ? "vectorlayer" : "paintlayer";
   json["blendingMode"] = "normal";  // OT uses nodes Fx to make blending
                                     // possible, how to approach this?
   json["animated"]     = jsonFrames.count() >= 2;
