@@ -201,6 +201,7 @@ struct NSVGAttrib {
   char hasFillColor;
   unsigned int strokeColor;
   char hasStrokeColor;
+  float opacity;
   float fillOpacity;
   float strokeOpacity;
   float strokeWidth;
@@ -324,6 +325,7 @@ struct NSVGParser *nsvg__createParser() {
   p->attr[0].hasFillColor   = 1;
   p->attr[0].strokeColor    = 0;
   p->attr[0].hasStrokeColor = 1;
+  p->attr[0].opacity        = 1;
   p->attr[0].fillOpacity    = 1;
   p->attr[0].strokeOpacity  = 1;
   p->attr[0].strokeWidth    = 1;
@@ -444,12 +446,14 @@ void nsvg__addShape(struct NSVGParser *p) {
   shape->fillColor    = attr->fillColor;
   shape->hasFillColor = attr->hasFillColor;
   if (shape->hasFillColor)
-    shape->fillColor |= (unsigned int)(attr->fillOpacity * 255) << 24;
+    shape->fillColor |= (unsigned int)(attr->opacity * attr->fillOpacity * 255)
+                        << 24;
 
   shape->strokeColor    = attr->strokeColor;
   shape->hasStrokeColor = attr->hasStrokeColor;
   if (shape->hasStrokeColor)
-    shape->strokeColor |= (unsigned int)(attr->strokeOpacity * 255) << 24;
+    shape->strokeColor |=
+        (unsigned int)(attr->opacity * attr->strokeOpacity * 255) << 24;
 
   shape->paths = p->plist;
   p->plist     = NULL;
@@ -909,6 +913,8 @@ int nsvg__parseAttr(struct NSVGParser *p, const char *name, const char *value) {
       attr->visible = 0;
     else
       attr->visible = 1;
+  } else if (strcmp(name, "opacity") == 0) {
+    attr->opacity = nsvg__parseFloat(value);
   } else if (strcmp(name, "fill") == 0) {
     attr->hasFillInfo = 1;
     if (strcmp(value, "none") == 0) {
