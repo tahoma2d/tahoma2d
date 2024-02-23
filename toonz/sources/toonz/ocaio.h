@@ -18,6 +18,7 @@ class ToonzScene;
 class TXshCellColumn;
 class TXsheet;
 class TXshSimpleLevel;
+class TXshFolderColumn;
 class TFrameId;
 class TFilePath;
 class TOutputProperties;
@@ -55,9 +56,12 @@ public:
   bool saveCell(TXshCellColumn *column, int row, const QString &cellname,
                 OCAAsset &out);
   int frameLen(TXshCellColumn *column, const QList<int> &rows, int index);
-  bool isGroup(TXshCellColumn *column);
-  bool buildGroup(QJsonObject &json, const QList<int> &rows,
-                  TXshCellColumn *column, bool exportReferences);
+  bool isSubSceneGroup(TXshCellColumn *column);
+  bool buildSubSceneGroup(QJsonObject &json, const QList<int> &rows,
+                          TXshCellColumn *column, bool exportReferences);
+  bool buildFolderGroup(QJsonObject &json, const QList<int> &rows,
+                        int columnIndex, int folderId, TXshCellColumn *column,
+                        bool exportReferences);
   bool buildLayer(QJsonObject &json, const QList<int> &rows,
                   TXshCellColumn *column);
 

@@ -166,14 +166,15 @@ bool OCAData::saveCell(TXshCellColumn *column, int row,
   return true;
 }
 
-bool OCAData::isGroup(TXshCellColumn *column) {
+bool OCAData::isSubSceneGroup(TXshCellColumn *column) {
   TXshCell firstcell = column->getCell(column->getFirstRow());
   TXshChildLevel *cl = firstcell.getChildLevel();
   return cl;
 }
 
-bool OCAData::buildGroup(QJsonObject &json, const QList<int> &rows,
-                         TXshCellColumn *column, bool exportReferences) {
+bool OCAData::buildSubSceneGroup(QJsonObject &json, const QList<int> &rows,
+                                 TXshCellColumn *column,
+                                 bool exportReferences) {
   QString layername;
   if (!getLayerName(column, layername)) return false;
 
@@ -198,16 +199,28 @@ bool OCAData::buildGroup(QJsonObject &json, const QList<int> &rows,
   int subID = ++m_subId;
   QJsonArray layers;
   for (int col = 0; col < xsheet->getFirstFreeColumnIndex(); col++) {
-    if (xsheet->isColumnEmpty(col)) continue;
+    if (xsheet->isColumnEmpty(col) || xsheet->isFolderColumn(col)) continue;
     TXshCellColumn *column = xsheet->getColumn(col)->getCellColumn();
-    if (!column) continue;                      // skip non-cell column
+    if (!column) continue;  // skip non-cell column
     if (!exportReferences && !column->isPreviewVisible())
       continue;  // skip inactive column
 
     if (column->getColumnType() == column->eLevelType) {
       QJsonObject json;
-      if (isGroup(column)) {
-        if (buildGroup(json, crows, column, exportReferences))
+      if (column->isInFolder()) {
+        int folderId = column->getFolderIdStack().front();
+        if (buildFolderGroup(json, rows, col, folderId, column,
+                             exportReferences)) {
+          layers.append(json);
+          for (int i = col; i < xsheet->getColumnCount(); i++) {
+            TXshColumn *skipColumn = xsheet->getColumn(i);
+            if (!skipColumn || !skipColumn->isContainedInFolder(folderId))
+              break;  // Should be breaking on the folder column itself
+            col++;
+          }
+        }
+      } else if (isSubSceneGroup(column)) {
+        if (buildSubSceneGroup(json, crows, column, exportReferences))
           layers.append(json);
       } else {
         if (buildLayer(json, crows, column)) layers.append(json);
@@ -233,6 +246,94 @@ bool OCAData::buildGroup(QJsonObject &json, const QList<int> &rows,
   json["visible"]      = column->isCamstandVisible();
   json["passThrough"]  = false;
   json["reference"]    = !column->isPreviewVisible();
+  json["inheritAlpha"] = false;
+
+  return true;
+}
+
+bool OCAData::buildFolderGroup(QJsonObject &json, const QList<int> &rows,
+                               int columnIndex, int folderId,
+                               TXshCellColumn *column, bool exportReferences) {
+  // Bottom most folder item.
+  TXsheet *xsheet = column->getXsheet();
+  if (!xsheet) return false;
+
+  // Find the actual folder column
+  int folderCol = columnIndex;
+  TXshFolderColumn *folderColumn;
+  for (; folderCol < xsheet->getFirstFreeColumnIndex(); folderCol++) {
+    TXshColumn *column = xsheet->getColumn(folderCol);
+    if (!column || column->isEmpty() ||
+        !(folderColumn = column->getFolderColumn()))
+      continue;
+    if (folderColumn->getFolderColumnFolderId() != folderId) {
+      folderColumn = 0;
+      continue;
+    }
+    break;
+  }
+
+  if (!folderColumn) return false;
+
+  TStageObject *columnObject =
+      xsheet->getStageObject(TStageObjectId::ColumnId(folderCol));
+  QString layername(QString::fromStdString(columnObject->getName()));
+
+  // Build group's childlayer
+  QJsonArray layers;
+
+  for (int col = columnIndex; col < folderCol; col++) {
+    if (xsheet->isColumnEmpty(col) || xsheet->isFolderColumn(col)) continue;
+    TXshCellColumn *column = xsheet->getColumn(col)->getCellColumn();
+    if (!column) continue;  // skip non-cell column
+    if (!exportReferences && !column->isPreviewVisible())
+      continue;  // skip inactive column
+
+    if (column->getColumnType() == column->eLevelType) {
+      QJsonObject json;
+
+      QStack<int> folderIds = column->getFolderIdStack();
+      while (folderIds.front() != folderId) folderIds.pop_front();
+      folderIds.pop_front();
+      if (folderIds.size()) {
+        int subfolderId = folderIds.front();
+        if (buildFolderGroup(json, rows, col, subfolderId, column,
+                             exportReferences)) {
+          layers.append(json);
+          for (int i = col; i < folderCol; i++) {
+            TXshColumn *skipColumn = xsheet->getColumn(i);
+            if (!skipColumn || !skipColumn->isContainedInFolder(subfolderId))
+              break;  // Should be breaking on the folder column itself
+            col++;
+          }
+        }
+      } else if (isSubSceneGroup(column)) {
+        if (buildSubSceneGroup(json, rows, column, exportReferences))
+          layers.append(json);
+      } else {
+        if (buildLayer(json, rows, column)) layers.append(json);
+      }
+    }
+  }
+
+  QJsonArray jsonBlankPos;
+  jsonBlankPos.append(m_width / 2);
+  jsonBlankPos.append(m_height / 2);
+  json["name"]         = layername;
+  json["position"]     = jsonBlankPos;
+  json["width"]        = m_width;
+  json["height"]       = m_height;
+  json["frames"]       = QJsonArray();
+  json["childLayers"]  = layers;
+  json["type"]         = "grouplayer";
+  json["fileType"]     = "png";
+  json["blendingMode"] = "normal";
+  json["animated"]     = false;
+  json["label"]        = 0;
+  json["opacity"]      = folderColumn->getOpacity() / 255.0;
+  json["visible"]      = folderColumn->isCamstandVisible();
+  json["passThrough"]  = false;
+  json["reference"]    = !folderColumn->isPreviewVisible();
   json["inheritAlpha"] = false;
 
   return true;
@@ -371,7 +472,7 @@ void OCAData::build(ToonzScene *scene, TXsheet *xsheet, QString name,
   // Build all columns from current xsheet
   m_layers.empty();
   for (int col = 0; col < xsheet->getColumnCount(); col++) {
-    if (xsheet->isColumnEmpty(col)) continue;
+    if (xsheet->isColumnEmpty(col) || xsheet->isFolderColumn(col)) continue;
     TXshCellColumn *column = xsheet->getColumn(col)->getCellColumn();
     if (!column) continue;  // skip non-cell column
     if (!exportReferences && !column->isPreviewVisible())
@@ -388,8 +489,20 @@ void OCAData::build(ToonzScene *scene, TXsheet *xsheet, QString name,
       }
 
       QJsonObject json;
-      if (isGroup(column)) {
-        if (buildGroup(json, rows, column, exportReferences))
+      if (column->isInFolder()) {
+        int folderId = column->getFolderIdStack().front();
+        if (buildFolderGroup(json, rows, col, folderId, column,
+                             exportReferences)) {
+          m_layers.append(json);
+          for (int i = col; i < xsheet->getColumnCount(); i++) {
+            TXshColumn *skipColumn = xsheet->getColumn(i);
+            if (!skipColumn || !skipColumn->isContainedInFolder(folderId))
+              break;  // Should be breaking on the folder column itself
+            col++;
+          }
+        }
+      } else if (isSubSceneGroup(column)) {
+        if (buildSubSceneGroup(json, rows, column, exportReferences))
           m_layers.append(json);
       } else {
         if (buildLayer(json, rows, column)) m_layers.append(json);
