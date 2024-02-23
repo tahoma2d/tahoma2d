@@ -20,6 +20,7 @@
 #include "toonz/tstageobject.h"
 #include "toutputproperties.h"
 #include "toonz/txshlevelcolumn.h"
+#include "toonz/txshfoldercolumn.h"
 
 #include "toonzqt/menubarcommand.h"
 #include "toonzqt/gutil.h"
@@ -673,8 +674,10 @@ void OCAIo::OCAInputData::load(const QJsonObject &json, bool importFiles) {
   m_bgBlue                = bgColorArray[2].toDouble();
   m_bgAlpha               = bgColorArray[3].toDouble();
   m_layers                = json.value("layers").toArray();
+
+  QStack<int> folderIds;
   for (auto jsonLayer : m_layers) {
-    importOcaLayer(jsonLayer.toObject(), importFiles);
+    importOcaLayer(jsonLayer.toObject(), importFiles, folderIds);
   }
 }
 
@@ -716,7 +719,8 @@ void OCAIo::OCAInputData::setSceneData() {
 }
 
 void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer,
-                                         bool importFiles) {
+                                         bool importFiles,
+                                         QStack<int> folderIds) {
   if (jsonLayer["type"] == "paintlayer" || jsonLayer["type"] == "vectorlayer") {
     if (jsonLayer["blendingMode"].toString() != "normal") {
       showImportMessage(
@@ -823,6 +827,8 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer,
     column->setCamstandVisible(jsonLayer["visible"].toBool());
     column->setColorFilterId(jsonLayer["label"].toInt());
 
+    column->setFolderIdStack(folderIds);
+
     int lastFrame = 0;
     for (auto frame : jsonLayer["frames"].toArray()) {
       TXshCell cell;
@@ -853,16 +859,34 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer,
     TApp::instance()->getCurrentLevel()->notifyLevelChange();
     TApp::instance()->getCurrentScene()->notifyCastChange();
   } else if (jsonLayer["type"] == "grouplayer") {
-    showImportMessage(
-        DVGui::WARNING,
-        QObject::tr(
-            "Sub-layers in grouplayer '%1' will be imported without grouping.")
-            .arg(jsonLayer["name"].toString()));
+    int newFolderId = m_xsheet->getNewFolderId();
 
-    // For now, import the child layers without grouping information
+    // Import child layers first.  Folder column created afterwards
+    folderIds.push_back(newFolderId);
     for (auto layer : jsonLayer["childLayers"].toArray()) {
-      importOcaLayer(layer.toObject(), importFiles);
+      importOcaLayer(layer.toObject(), importFiles, folderIds);
     }
+
+    folderIds.pop_back();
+
+    // Now create the folder column
+    int col = m_xsheet->getFirstFreeColumnIndex();
+
+    TXshFolderColumn *column = new TXshFolderColumn();
+    m_xsheet->insertColumn(col, column);
+
+    TStageObject *stageColumn =
+        m_xsheet->getStageObject(TStageObjectId::ColumnId(col));
+    stageColumn->setName(jsonLayer["name"].toString().toStdString());
+    column->setOpacity(byteFromFloat(
+        jsonLayer["opacity"].toDouble() *
+        255.0));  // not sure if byteFromFloat is really necessary...
+    column->setPreviewVisible(!jsonLayer["reference"].toBool());
+    column->setCamstandVisible(jsonLayer["visible"].toBool());
+    column->setColorFilterId(jsonLayer["label"].toInt());
+
+    column->setFolderColumnFolderId(newFolderId);
+    column->setFolderIdStack(folderIds);
   } else {
     showImportMessage(DVGui::WARNING,
                       QObject::tr("Skipping unimplemented %1 '%2'")

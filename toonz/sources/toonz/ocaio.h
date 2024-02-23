@@ -91,7 +91,8 @@ public:
   void getSceneData();
   void load(const QJsonObject &json, bool importFiles = true);
   void setSceneData();
-  void importOcaLayer(const QJsonObject &jsonLayer, bool importFiles);
+  void importOcaLayer(const QJsonObject &jsonLayer, bool importFiles,
+                      QStack<int> folderIds);
 
   void showImportMessage(DVGui::MsgType type, QString msg);
 };
