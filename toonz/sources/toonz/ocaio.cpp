@@ -15,9 +15,11 @@
 #include "toonz/txsheethandle.h"
 #include "toonz/tscenehandle.h"
 #include "toonz/preferences.h"
+#include "toonz/preferencesitemids.h"
 #include "toonz/sceneproperties.h"
 #include "toonz/tstageobject.h"
 #include "toutputproperties.h"
+#include "toonz/txshlevelcolumn.h"
 
 #include "toonzqt/menubarcommand.h"
 #include "toonzqt/gutil.h"
@@ -31,6 +33,7 @@
 #include "tlevel_io.h"
 #include "tvectorimage.h"
 #include "exportlevelcommand.h"
+#include "iocommand.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
@@ -534,4 +537,368 @@ void ExportOCACommand::execute() {
     else
       QDesktopServices::openUrl(QUrl::fromLocalFile(folderPath.getQString()));
   }
+}
+
+//-------------------------------------------------
+
+class ImportOCACommand final : public MenuItemHandler {
+public:
+  ImportOCACommand() : MenuItemHandler(MI_ImportOCA) {}
+  void execute() override;
+} ImportOCACommand;
+
+void ImportOCACommand::execute() {
+  bool importEnabled = false;
+  ToonzScene *scene  = TApp::instance()->getCurrentScene()->getScene();
+  TXsheet *xsheet    = TApp::instance()->getCurrentXsheet()->getXsheet();
+  TFilePath fp       = scene->getScenePath().withType("oca");
+  static GenericLoadFilePopup *loadPopup = 0;
+  if (!loadPopup) {
+    loadPopup = new GenericLoadFilePopup(
+        QObject::tr("Import Open Cel Animation (OCA)"));
+    loadPopup->addFilterType("oca");
+  }
+  if (!scene->isUntitled())
+    loadPopup->setFolder(fp.getParentDir());
+  else
+    loadPopup->setFolder(
+        TProjectManager::instance()->getCurrentProject()->getScenesPath());
+
+  loadPopup->setFilename(fp.withoutParentDir());
+  fp = loadPopup->getPath();
+  if (fp.isEmpty()) {
+    DVGui::info(QObject::tr("OCA Import cancelled : empty filepath."));
+    return;
+  } else {
+    DVGui::info(QObject::tr("OCA Import file : %1").arg(fp.getQString()));
+
+    QString label = QObject::tr(
+        "Do you want to import or load image files from their original "
+        "location?");
+    QStringList buttons;
+    buttons << QObject::tr("Import") << QObject::tr("Load")
+            << QObject::tr("Cancel");
+    DVGui::Dialog *importDialog =
+        DVGui::createMsgBox(DVGui::QUESTION, label, buttons, 0);
+    int ret = importDialog->exec();
+    importDialog->deleteLater();
+
+    if (ret == 0 || ret == 3) return;
+
+    importEnabled = (ret == 1);
+  }
+
+  QString ocafile           = fp.getQString();
+  OCAInputData ocaInputData = OCAInputData(0, false, false);
+  QJsonObject ocaObject;
+  if (!ocaInputData.read(ocafile, ocaObject)) {
+    DVGui::warning(
+        QObject::tr("Failed to load OCA file: %1").arg(fp.getQString()));
+    return;
+  }
+  ocaInputData.getSceneData();                  // gather default values
+  ocaInputData.load(ocaObject, importEnabled);  // load resources
+  ocaInputData.setSceneData();                  // set scene/xsheet values
+  // TApp::instance()->getCurrentLevel()->notifyLevelChange(); > importOcaLayer
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  TApp::instance()->getCurrentScene()->notifyCastChange();
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
+}
+
+OCAIo::OCAInputData::OCAInputData(float antialiasSoftness, bool whiteTransp,
+                                  bool doPremultiply)
+    : m_antialiasSoftness(antialiasSoftness)
+    , m_whiteTransp(whiteTransp)
+    , m_doPremultiply(doPremultiply)
+    , m_supressImportMessages(false) {
+  m_scene  = TApp::instance()->getCurrentScene()->getScene();
+  m_xsheet = TApp::instance()->getCurrentXsheet()->getXsheet();
+  m_oprop  = m_scene->getProperties()->getOutputProperties();
+  m_dpi    = Preferences::instance()->getDefLevelDpi();
+}
+
+bool OCAIo::OCAInputData::read(QString path, QJsonObject &json) {
+  // see XdtsIo::loadXdtsScene
+  m_path      = path;
+  m_parentDir = TFilePath(m_path).getParentDir();
+  // 1. Open the QFile, read it in a byteArray and close the file
+  QFile file;
+  file.setFileName(path);
+  if (!file.open(QIODevice::ReadOnly)) {
+    DVGui::error(QObject::tr("Unable to open OCA file for loading."));
+    return false;
+  } else {
+    DVGui::info(QObject::tr("Reading OCA file: %1").arg(path));
+  }
+  QByteArray byteArray;
+  byteArray = file.readAll();
+  file.close();
+
+  // 2. Format the content of the byteArray as QJsonDocument and check on parse
+  // Errors
+  QJsonParseError parseError;
+  QJsonDocument jsonDoc;
+  jsonDoc = QJsonDocument::fromJson(byteArray, &parseError);
+  if (parseError.error != QJsonParseError::NoError) {
+    DVGui::warning(QObject::tr("Parse error at %1 while loading OCA file.")
+                       .arg(parseError.offset));
+    return false;
+  }
+  json = jsonDoc.object();
+  return true;
+}
+
+void OCAIo::OCAInputData::getSceneData() {
+  m_framerate = m_oprop->getFrameRate();
+  int from, to, step;
+  if (m_scene->getTopXsheet() == m_xsheet &&
+      m_oprop->getRange(from, to, step)) {
+    m_startTime = from;
+    m_endTime   = to;
+  } else {
+    m_startTime = 0;
+    m_endTime   = m_xsheet->getFrameCount() - 1;
+  }
+  if (m_endTime < 0) m_endTime = 0;
+
+  m_width  = m_scene->getCurrentCamera()->getRes().lx;
+  m_height = m_scene->getCurrentCamera()->getRes().ly;
+}
+
+void OCAIo::OCAInputData::load(const QJsonObject &json, bool importFiles) {
+  m_originApp             = json.value("originApp").toString();
+  m_originAppVersion      = json.value("originAppVersion").toString();
+  m_ocaVersion            = json.value("ocaVersion").toString();
+  m_name                  = json.value("name").toString();
+  m_framerate             = json.value("frameRate").toInt(m_framerate);
+  m_width                 = json.value("width").toInt(m_width);
+  m_height                = json.value("height").toInt(m_height);
+  m_startTime             = json.value("startTime").toInt(m_startTime);
+  m_endTime               = json.value("endTime").toInt(m_endTime);
+  m_colorDepth            = json.value("colorDepth").toString();
+  QJsonArray bgColorArray = json["backgroundColor"].toArray();
+  m_bgRed                 = bgColorArray[0].toDouble();
+  m_bgGreen               = bgColorArray[1].toDouble();
+  m_bgBlue                = bgColorArray[2].toDouble();
+  m_bgAlpha               = bgColorArray[3].toDouble();
+  m_layers                = json.value("layers").toArray();
+  for (auto jsonLayer : m_layers) {
+    importOcaLayer(jsonLayer.toObject(), importFiles);
+  }
+}
+
+void OCAIo::OCAInputData::setSceneData() {
+  // Only set scene data if this is an untitled scene
+  if (!m_scene->isUntitled()) return;
+
+  // Never set scene name
+  // m_scene->setSceneName(m_name.toStdWString());
+  m_oprop->setFrameRate(m_framerate);
+  auto resolution = TDimension(m_width, m_height);
+  if (m_dpi > 0) {
+    TDimensionD size(0, 0);
+    size.lx = resolution.lx / m_dpi;
+    size.ly = resolution.ly / m_dpi;
+    m_scene->getCurrentCamera()->setSize(size, false, false);
+  }
+  m_scene->getCurrentCamera()->setRes(resolution);
+
+  m_xsheet->updateFrameCount();
+  m_oprop->setRange(m_startTime, m_endTime, 1);
+
+  // If background is all 0s, use our default Bg color
+  if (m_bgRed || m_bgGreen || m_bgBlue || m_bgAlpha) {
+    TPixel32 color = TPixel32(m_bgRed * 255.0, m_bgGreen * 255.0,
+                              m_bgBlue * 255.0, m_bgAlpha * 255.0);
+    m_scene->getProperties()->setBgColor(color);
+  }
+
+  int nonlinearBpp = m_oprop->getNonlinearBpp();
+  if (m_colorDepth == "U8" && nonlinearBpp < 32)
+    m_oprop->setNonlinearBpp(32);
+  else if (m_colorDepth == "U16" && nonlinearBpp < 64)
+    m_oprop->setNonlinearBpp(64);
+  else if (m_colorDepth == "F16" && nonlinearBpp < 64)
+    m_oprop->setNonlinearBpp(64);
+  else if (m_colorDepth == "U32" && nonlinearBpp < 128)
+    m_oprop->setNonlinearBpp(128);
+}
+
+void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer,
+                                         bool importFiles) {
+  if (jsonLayer["type"] == "paintlayer" || jsonLayer["type"] == "vectorlayer") {
+    if (jsonLayer["blendingMode"].toString() != "normal") {
+      showImportMessage(
+          DVGui::WARNING,
+          QObject::tr("Blending mode '%1' not implemented for %2 '%3'")
+              .arg(jsonLayer["blendingMode"].toString())
+              .arg(jsonLayer["type"].toString())
+              .arg(jsonLayer["name"].toString()));
+    }
+
+    //
+    // Create level from image files
+    //
+    IoCmd::LoadResourceArguments args;
+    args.expose       = false;
+    args.importPolicy = importFiles
+                            ? IoCmd::LoadResourceArguments::ImportPolicy::IMPORT
+                            : IoCmd::LoadResourceArguments::ImportPolicy::LOAD;
+
+    auto frames = jsonLayer["frames"].toArray();
+    for (int i = 0; i < frames.size(); i++) {
+      auto jsonFrame = frames[i].toObject();
+      if (jsonFrame["fileName"].toString() == "") continue;
+      TFilePath fp = m_parentDir + TFilePath(jsonFrame["fileName"].toString());
+      fp           = fp.getParentDir() + fp.getLevelName();
+      args.resourceDatas.push_back(fp);
+      break;
+    }
+
+    // Do not create levels without images!
+    if (args.resourceDatas.empty()) {
+      showImportMessage(DVGui::WARNING,
+                        QObject::tr("Skipped %1 '%2'. No image file indicated.")
+                            .arg(jsonLayer["type"].toString())
+                            .arg(jsonLayer["name"].toString()));
+      return;
+    }
+
+    IoCmd::loadResources(args);
+
+    if (args.loadedLevels.empty()) {
+      showImportMessage(DVGui::CRITICAL,
+                        QObject::tr("Unable to load images for %1 '%2'.")
+                            .arg(jsonLayer["type"].toString())
+                            .arg(jsonLayer["name"].toString()));
+      return;
+    }
+
+    //
+    // Set level properties
+    //
+    TXshLevel *level = *args.loadedLevels.begin();
+    if (!level) return;
+
+    TXshSimpleLevel *sl = dynamic_cast<TXshSimpleLevel *>(level);
+    if (!sl) return;
+
+    auto resolution = TDimension(m_width, m_height);
+    sl->getProperties()->setImageRes(resolution);
+
+    bool formatSpecified = false;
+    LevelProperties *lp  = sl->getProperties();
+    if (frames.size() > 0) {
+      const Preferences &prefs = *Preferences::instance();
+      int formatIdx = prefs.matchLevelFormat(TFilePath(level->getPath()));
+      if (formatIdx >= 0) {
+        lp->options()   = prefs.levelFormat(formatIdx).m_options;
+        formatSpecified = true;
+      }
+    }
+    if (formatSpecified) {
+      sl->getProperties()->setWhiteTransp(lp->whiteTransp());
+      sl->getProperties()->setDoPremultiply(lp->doPremultiply());
+      sl->getProperties()->setDoAntialias(lp->antialiasSoftness());
+      sl->getProperties()->setDpi(lp->getDpi());
+      sl->getProperties()->setDpiPolicy(lp->getDpiPolicy());
+      // sl->getProperties()->setImageDpi(lp->getImageDpi()); //?
+      sl->getProperties()->setSubsampling(lp->getSubsampling());
+      sl->getProperties()->setColorSpaceGamma(lp->colorSpaceGamma());
+    } else {
+      sl->getProperties()->setWhiteTransp(m_whiteTransp);
+      sl->getProperties()->setDoPremultiply(m_doPremultiply);
+      sl->getProperties()->setDoAntialias(m_antialiasSoftness);
+      // we filmmakers don't use dpi ??
+      sl->getProperties()->setDpi(m_dpi);
+      sl->getProperties()->setDpiPolicy(LevelProperties::DP_CustomDpi);
+    }
+
+    //
+    // Load level into xsheet
+    //
+    int col = m_xsheet->getFirstFreeColumnIndex();
+
+    TXshLevelColumn *column = new TXshLevelColumn();
+    m_xsheet->insertColumn(col, column);
+
+    TStageObject *stageColumn =
+        m_xsheet->getStageObject(TStageObjectId::ColumnId(col));
+    stageColumn->setName(jsonLayer["name"].toString().toStdString());
+    column->setOpacity(byteFromFloat(
+        jsonLayer["opacity"].toDouble() *
+        255.0));  // not sure if byteFromFloat is really necessary...
+    column->setPreviewVisible(!jsonLayer["reference"].toBool());
+    column->setCamstandVisible(jsonLayer["visible"].toBool());
+    column->setColorFilterId(jsonLayer["label"].toInt());
+
+    int frameOffset                  = 0;
+    if (m_startTime < 1) frameOffset = -m_startTime + 1;
+
+    int lastFrame = 0;
+    for (auto frame : jsonLayer["frames"].toArray()) {
+      TXshCell cell;
+      if (frame.toObject()["name"].toString() == "_blank" ||
+          frame.toObject()["fileName"].toString() == "") {
+        cell = TXshCell(0, TFrameId::EMPTY_FRAME);
+      } else {
+        TFilePath fp(frame.toObject()["fileName"].toString());
+        TFrameId fid = fp.getFrame();
+        if (fp.getDots() != "..")
+          fid = jsonLayer["type"] == "vectorlayer" ? 65534 : TFrameId::NO_FRAME;
+        cell  = TXshCell(sl, fid);
+      }
+
+      int row = frame.toObject()["frameNumber"].toInt();
+
+      // -1 converts framenumber to index, frameOffset moves the frame range
+      // above 0...
+      row = row - 1 + frameOffset;
+
+      int duration = frame.toObject()["duration"].toInt();
+      lastFrame += duration;
+      if (Preferences::instance()->isImplicitHoldEnabled()) duration = 1;
+
+      for (int i = 0; i < duration; i++) m_xsheet->setCell(row + i, col, cell);
+    }
+    if (Preferences::instance()->isImplicitHoldEnabled())
+      m_xsheet->setCell(lastFrame, col, TXshCell(sl, TFrameId::STOP_FRAME));
+
+    TApp::instance()->getCurrentLevel()->setLevel(
+        level->getSimpleLevel());  // selects the last created level
+    TApp::instance()->getCurrentLevel()->notifyLevelChange();
+    TApp::instance()->getCurrentScene()->notifyCastChange();
+  } else if (jsonLayer["type"] == "grouplayer") {
+    showImportMessage(
+        DVGui::WARNING,
+        QObject::tr(
+            "Sub-layers in grouplayer '%1' will be imported without grouping.")
+            .arg(jsonLayer["name"].toString()));
+
+    // For now, import the child layers without grouping information
+    for (auto layer : jsonLayer["childLayers"].toArray()) {
+      importOcaLayer(layer.toObject(), importFiles);
+    }
+  } else {
+    showImportMessage(DVGui::WARNING,
+                      QObject::tr("Skipping unimplemented %1 '%2'")
+                          .arg(jsonLayer["type"].toString())
+                          .arg(jsonLayer["name"].toString()));
+  }
+}
+
+void OCAIo::OCAInputData::showImportMessage(DVGui::MsgType msgType,
+                                            QString msg) {
+  if (m_supressImportMessages) return;
+
+  QString checkBoxLabel = QObject::tr("Ignore all future warnings and errors.");
+  QStringList buttons;
+  buttons << QObject::tr("Ok");
+  DVGui::MessageAndCheckboxDialog *importDialog = DVGui::createMsgandCheckbox(
+      msgType, msg, checkBoxLabel, buttons, 0, Qt::Unchecked);
+  int ret     = importDialog->exec();
+  int checked = importDialog->getChecked();
+  importDialog->deleteLater();
+
+  if (checked > 0) m_supressImportMessages = true;
 }
