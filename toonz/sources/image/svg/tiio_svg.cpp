@@ -2137,7 +2137,8 @@ TStroke *buildStroke(NSVGpath *path, float width, float scale) {
 
   points.push_back(p0);
 
-  for (int i = 1; i < path->npts; i += 3) {
+  int npts = path->npts + (path->closed ? -3 : 0);
+  for (int i = 1; i < npts; i += 3) {
     std::vector<TThickQuadratic *> chunkArray;
 
     computeQuadraticsFromCubic(
