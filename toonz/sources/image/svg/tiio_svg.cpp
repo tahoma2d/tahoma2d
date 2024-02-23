@@ -34,12 +34,15 @@ struct NSVGpath {
 };
 
 struct NSVGshape {
+  char id[50];
   unsigned int fillColor;    // Fill color
+  char hasFillColor;         // Flag indicating we have a fill color
   unsigned int strokeColor;  // Stroke color
+  char hasStrokeColor;       // Flag indicating we have a stroke color
   float strokeWidth;         // Stroke width
   float scale;               // Stroke scale
-  char hasFill;              // Flag indicating if fill exists.
-  char hasStroke;            // Flag indicating id store exists
+  char hasFillInfo;          // Flag indicating if fill exists.
+  char hasStrokeInfo;        // Flag indicating id store exists
   struct NSVGpath *paths;    // Linked list of paths in the image.
   struct NSVGshape *next;    // Pointer to next shape, or NULL if last element.
 };
@@ -193,13 +196,16 @@ int nsvg__parseXML(char *input, void (*startelCb)(void *ud, const char *el,
 
 struct NSVGAttrib {
   float xform[6];
+  char id[50];
   unsigned int fillColor;
+  char hasFillColor;
   unsigned int strokeColor;
+  char hasStrokeColor;
   float fillOpacity;
   float strokeOpacity;
   float strokeWidth;
-  char hasFill;
-  char hasStroke;
+  char hasFillInfo;
+  char hasStrokeInfo;
   char visible;
 };
 
@@ -313,14 +319,17 @@ struct NSVGParser *nsvg__createParser() {
 
   // Init style
   nsvg__xformSetIdentity(p->attr[0].xform);
-  p->attr[0].fillColor     = 0;
-  p->attr[0].strokeColor   = 0;
-  p->attr[0].fillOpacity   = 1;
-  p->attr[0].strokeOpacity = 1;
-  p->attr[0].strokeWidth   = 1;
-  p->attr[0].hasFill       = 0;
-  p->attr[0].hasStroke     = 0;
-  p->attr[0].visible       = 1;
+  strcpy(p->attr[0].id,"default");
+  p->attr[0].fillColor      = 0;
+  p->attr[0].hasFillColor   = 1;
+  p->attr[0].strokeColor    = 0;
+  p->attr[0].hasStrokeColor = 1;
+  p->attr[0].fillOpacity    = 1;
+  p->attr[0].strokeOpacity  = 1;
+  p->attr[0].strokeWidth    = 1;
+  p->attr[0].hasFillInfo    = 0;
+  p->attr[0].hasStrokeInfo  = 0;
+  p->attr[0].visible        = 1;
 
   return p;
 
@@ -427,16 +436,19 @@ void nsvg__addShape(struct NSVGParser *p) {
   memset(shape, 0, sizeof(struct NSVGshape));
 
   shape->scale       = nsvg__maxf(fabsf(attr->xform[0]), fabsf(attr->xform[3]));
-  shape->hasFill     = attr->hasFill;
-  shape->hasStroke   = attr->hasStroke;
-  shape->strokeWidth = attr->strokeWidth;
+  shape->hasFillInfo = attr->hasFillInfo;
+  shape->hasStrokeInfo = attr->hasStrokeInfo;
+  shape->strokeWidth   = attr->strokeWidth;
 
-  shape->fillColor = attr->fillColor;
-  if (shape->hasFill)
+  strcpy(shape->id, attr->id);
+  shape->fillColor    = attr->fillColor;
+  shape->hasFillColor = attr->hasFillColor;
+  if (shape->hasFillColor)
     shape->fillColor |= (unsigned int)(attr->fillOpacity * 255) << 24;
 
-  shape->strokeColor = attr->strokeColor;
-  if (shape->hasStroke)
+  shape->strokeColor    = attr->strokeColor;
+  shape->hasStrokeColor = attr->hasStrokeColor;
+  if (shape->hasStrokeColor)
     shape->strokeColor |= (unsigned int)(attr->strokeOpacity * 255) << 24;
 
   shape->paths = p->plist;
@@ -888,7 +900,9 @@ int nsvg__parseAttr(struct NSVGParser *p, const char *name, const char *value) {
   struct NSVGAttrib *attr = nsvg__getAttr(p);
   if (!attr) return 0;
 
-  if (strcmp(name, "style") == 0) {
+  if (strcmp(name, "id") == 0) {
+    strcpy(attr->id, value);
+  } else if (strcmp(name, "style") == 0) {
     nsvg__parseStyle(p, value);
   } else if (strcmp(name, "display") == 0) {
     if (strcmp(value, "none") == 0)
@@ -896,25 +910,29 @@ int nsvg__parseAttr(struct NSVGParser *p, const char *name, const char *value) {
     else
       attr->visible = 1;
   } else if (strcmp(name, "fill") == 0) {
+    attr->hasFillInfo = 1;
     if (strcmp(value, "none") == 0) {
-      attr->hasFill = 0;
+      attr->hasFillColor = 0;
     } else {
-      attr->hasFill   = 1;
-      attr->fillColor = nsvg__parseColor(value);
+      attr->hasFillColor = 1;
+      attr->fillColor    = nsvg__parseColor(value);
     }
   } else if (strcmp(name, "fill-opacity") == 0) {
-    attr->hasFill = 1;
+    attr->hasFillInfo = 1;
     attr->fillOpacity = nsvg__parseFloat(value);
   } else if (strcmp(name, "stroke") == 0) {
+    attr->hasStrokeInfo = 1;
     if (strcmp(value, "none") == 0) {
-      attr->hasStroke = 0;
+      attr->hasStrokeColor = 0;
     } else {
-      attr->hasStroke   = 1;
-      attr->strokeColor = nsvg__parseColor(value);
+      attr->hasStrokeInfo = 1;
+      attr->strokeColor   = nsvg__parseColor(value);
     }
   } else if (strcmp(name, "stroke-width") == 0) {
-    attr->strokeWidth = nsvg__parseFloat(value);
+    attr->hasStrokeInfo = 1;
+    attr->strokeWidth   = nsvg__parseFloat(value);
   } else if (strcmp(name, "stroke-opacity") == 0) {
+    attr->hasStrokeInfo = 1;
     attr->strokeOpacity = nsvg__parseFloat(value);
   } else if (strcmp(name, "transform") == 0) {
     nsvg__parseTransform(p, value);
@@ -2182,26 +2200,29 @@ TImageP TImageReaderSvg::load() {
     // TPalette* appPlt = new TPalette();
     // vapp->setPalette(appPlt);
 
-    inkIndex   = shape->hasStroke ? findColor(plt, shape->strokeColor) : 1;
-    paintIndex = shape->hasFill ? findColor(plt, shape->fillColor) : 1;
-    if (!shape->hasFill && (!shape->hasStroke || !shape->strokeWidth)) {
-      shape->hasFill = true;
+    bool applyFill = shape->hasFillColor;
+
+    float strokeWidth =
+        shape->hasStrokeColor ? shape->strokeWidth / devPixRatio : 0;
+
+    inkIndex   = shape->hasStrokeColor ? findColor(plt, shape->strokeColor) : 0;
+    paintIndex = shape->hasFillColor ? findColor(plt, shape->fillColor) : 0;
+    if (!applyFill && (!shape->hasStrokeColor || !strokeWidth)) {
+      applyFill = true;
     }
 
     // vapp->setPalette(plt.getPointer());
     int startStrokeIndex = vimage->getStrokeCount();
     for (; path; path = path->next) {
-      TStroke *s = buildStroke(
-          path, shape->hasStroke ? shape->strokeWidth / devPixRatio : 0,
-          shape->scale);
+      TStroke *s = buildStroke(path, strokeWidth, shape->scale);
       if (!s) continue;
       s->setStyle(inkIndex);
       vimage->addStroke(s);
-      if (s->isSelfLoop() && !shape->hasFill) shape->hasFill = true;
+      if (s->isSelfLoop() && shape->hasFillColor) applyFill = true;
     }
     if (startStrokeIndex == vimage->getStrokeCount()) continue;
 
-    if (shape->hasFill) {
+    if (applyFill) {
       int c = vimage->getStrokeCount() - startStrokeIndex;
       vimage->group(startStrokeIndex, c);
       vimage->enterGroup(startStrokeIndex);
@@ -2213,7 +2234,6 @@ TImageP TImageReaderSvg::load() {
         vimage->selectFill(TRectD(-9999999, -9999999, 9999999, 9999999), 0,
                            paintIndex, true, true, false);
       vimage->exitGroup();
-      if (c == 1) vimage->ungroup(startStrokeIndex);
     }
 
     /* vapp->findRegions();
@@ -2261,9 +2281,9 @@ TLevelP TLevelReaderSvg::loadInfo() {
     if (!svgImg) continue;
 
     for (NSVGshape *shape = svgImg->shapes; shape; shape = shape->next) {
-      if (shape->hasStroke) addColorToPalette(plt, shape->strokeColor);
+      if (shape->hasStrokeColor) addColorToPalette(plt, shape->strokeColor);
 
-      if (shape->hasFill) addColorToPalette(plt, shape->fillColor);
+      if (shape->hasFillColor) addColorToPalette(plt, shape->fillColor);
     }
 
     nsvgDelete(svgImg);
