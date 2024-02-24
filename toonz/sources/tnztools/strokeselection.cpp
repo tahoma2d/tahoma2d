@@ -638,6 +638,7 @@ void StrokeSelection::selectAll() {
   int sCount = int(m_vi->getStrokeCount());
 
   for (int s = 0; s < sCount; ++s) {
+    if (!m_vi->isEnteredGroupStroke(s)) continue;
     m_indexes.push_back(s);
   }
 

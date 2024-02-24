@@ -61,7 +61,7 @@ void groupWithoutUndo(TVectorImage *vimg, StrokeSelection *selection) {
 
 void ungroupWithoutUndo(TVectorImage *vimg, StrokeSelection *selection) {
   for (int i = 0; i < (int)vimg->getStrokeCount();)
-    if (selection->isSelected(i)) {
+    if (vimg->isEnteredGroupStroke(i) && selection->isSelected(i)) {
       if (!vimg->isStrokeGrouped(i)) {
         i++;
         continue;
@@ -77,21 +77,42 @@ void ungroupWithoutUndo(TVectorImage *vimg, StrokeSelection *selection) {
 //-----------------------------------------------------------------------------
 
 class GroupUndo final : public ToolUtils::TToolUndo {
+  std::vector<std::pair<int, int>> m_origIdIndex;
+  std::unique_ptr<StrokeSelection> m_origSelection;
   std::unique_ptr<StrokeSelection> m_selection;
 
 public:
   GroupUndo(TXshSimpleLevel *level, const TFrameId &frameId,
+            StrokeSelection *origSelection,
+            std::vector<std::pair<int, int>> origIdIndex,
             StrokeSelection *selection)
-      : ToolUtils::TToolUndo(level, frameId), m_selection(selection) {}
+      : ToolUtils::TToolUndo(level, frameId)
+      , m_origSelection(origSelection)
+      , m_origIdIndex(origIdIndex)
+      , m_selection(selection) {}
 
   void undo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
-    if (image) ungroupWithoutUndo(image.getPointer(), m_selection.get());
+    if (!image) return;
+    ungroupWithoutUndo(image.getPointer(), m_selection.get());
+
+    // Need to move strokes back due to group reordering
+    //    for (int i = 0; i < m_origIdIndex.size(); i++) {
+    for (int i = m_origIdIndex.size() - 1; i >= 0; i--) {
+      int newIndex = image->getStrokeIndexById(m_origIdIndex[i].first);
+      if (newIndex == m_origIdIndex[i].second) continue;
+      image->moveStrokes(newIndex, 1, m_origIdIndex[i].second);
+    }
+
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
 
   void redo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
-    if (image) groupWithoutUndo(image.getPointer(), m_selection.get());
+    if (!image) return;
+    StrokeSelection *origSelection = new StrokeSelection(*m_origSelection);
+    groupWithoutUndo(image.getPointer(), origSelection);
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
 
   int getSize() const override { return sizeof(*this); }
@@ -114,11 +135,13 @@ public:
   void undo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
     if (image) groupWithoutUndo(image.getPointer(), m_selection.get());
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
 
   void redo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
     if (image) ungroupWithoutUndo(image.getPointer(), m_selection.get());
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
 
   int getSize() const override { return sizeof(*this); }
@@ -226,6 +249,54 @@ public:
 
     return QObject::tr("Move Group") + commandTypeStrMap.value(m_moveType);
   }
+};
+
+//=============================================================================
+// UndoEnterGroup
+//-----------------------------------------------------------------------------
+
+class UndoEnterGroup final : public TUndo {
+  int m_strokeIndex;
+  TVectorImageP m_vi;
+
+public:
+  UndoEnterGroup(TVectorImageP vi, int strokeIndex)
+      : m_vi(vi), m_strokeIndex(strokeIndex) {}
+  void undo() const override {
+    m_vi->exitGroup();
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
+  }
+  void redo() const override {
+    m_vi->enterGroup(m_strokeIndex);
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
+  }
+  int getSize() const override { return sizeof(*this); }
+  QString getHistoryString() override { return QObject::tr("Enter Group"); }
+};
+
+//=============================================================================
+// UndoExitGroup
+//-----------------------------------------------------------------------------
+
+class UndoExitGroup final : public TUndo {
+  int m_strokeIndex;
+  TVectorImageP m_vi;
+
+public:
+  UndoExitGroup(TVectorImageP vi, int strokeIndex)
+      : m_vi(vi), m_strokeIndex(strokeIndex) {}
+  void undo() const override {
+    m_vi->enterGroup(m_strokeIndex);
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
+  }
+  void redo() const override {
+    m_vi->exitGroup();
+    TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
+  }
+
+  int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override { return QObject::tr("Exit Group"); }
 };
 
 //-----------------------------------------------------------------------------
@@ -342,15 +413,18 @@ if (i == vimg->getStrokeCount())
   // PER l'UNGROUP: si ungruppa solo se tutti gli stroke selezionati stanno nel
   // gruppo (anche piu' gruppi insieme)
 
+  bool ungroupingMakesSense = false;
   for (i = 0; i < vimg->getStrokeCount(); i++) {
     if (m_sel->isSelected(i)) {
-      if (!vimg->isStrokeGrouped(i)) break;
+      if (!vimg->isStrokeGrouped(i)) continue;
       for (j = 0; j < vimg->getStrokeCount(); j++)
         if (!m_sel->isSelected(j) && vimg->sameSubGroup(i, j)) break;
-      if (j < vimg->getStrokeCount()) break;
+      if (j < vimg->getStrokeCount()) continue;
+      ungroupingMakesSense = true;
+      break;
     }
   }
-  if (i == vimg->getStrokeCount()) mask |= UNGROUP;
+  if (ungroupingMakesSense) mask |= UNGROUP;
 
   // PER il GROUP: si raggruppa solo  se:
   // //almeno una delle  stroke selezionate non fa parte di gruppi o e' di un
@@ -369,9 +443,11 @@ if (i == vimg->getStrokeCount())
           groupingMakesSense = true;  // gli storke selezionati non sono gia'
                                       // tutti dello stesso gruppo
         for (j = 0; j < vimg->getStrokeCount(); j++)
-          if (!m_sel->isSelected(j) && vimg->sameGroup(i, j)) return mask;
+          if (!m_sel->isSelected(j) && vimg->sameGroup(i, j))
+            groupingMakesSense = true;
       } else
         groupingMakesSense = true;
+      if (groupingMakesSense) break;
     }
 
   if (groupingMakesSense) mask |= GROUP;
@@ -486,12 +562,24 @@ void TGroupCommand::group() {
     return;
   }
 
+  // Need to store some stroke information before groupWithoutUndo changes
+  // stroke order
+  StrokeSelection *origSelection = new StrokeSelection(*m_sel);
+  std::vector<std::pair<int, int>> origIdIndex;
+  std::vector<int> indexes = m_sel->getSelection();
+  for (int i = 0; i < indexes.size(); i++)
+    origIdIndex.push_back(
+        std::make_pair(vimg->getStroke(indexes[i])->getId(), indexes[i]));
+
   QMutexLocker lock(vimg->getMutex());
   groupWithoutUndo(vimg, m_sel);
+
   TXshSimpleLevel *level =
       TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
-  TUndoManager::manager()->add(
-      new GroupUndo(level, tool->getCurrentFid(), new StrokeSelection(*m_sel)));
+
+  TUndoManager::manager()->add(new GroupUndo(level, tool->getCurrentFid(),
+                                             origSelection, origIdIndex,
+                                             new StrokeSelection(*m_sel)));
 }
 
 //-----------------------------------------------------------------------------
@@ -523,6 +611,7 @@ void TGroupCommand::enterGroup() {
   vimg->enterGroup(index);
   TSelection *selection = TSelection::getCurrent();
   if (selection) selection->selectNone();
+  TUndoManager::manager()->add(new UndoEnterGroup(vimg, index));
 
   TTool::getApplication()->getCurrentScene()->notifySceneChanged();
 }
@@ -535,7 +624,9 @@ void TGroupCommand::exitGroup() {
   TVectorImage *vimg = (TVectorImage *)tool->getImage(true);
 
   if (!vimg) return;
-  vimg->exitGroup();
+  int index = vimg->exitGroup();
+  TUndoManager::manager()->add(new UndoExitGroup(vimg, index));
+
   TTool::getApplication()->getCurrentScene()->notifySceneChanged();
 }
 

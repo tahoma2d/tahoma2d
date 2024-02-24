@@ -1174,6 +1174,7 @@ public:
     TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
   }
   int getSize() const override { return sizeof(*this); }
+  QString getHistoryString() override { return QObject::tr("Enter Group"); }
 };
 
 //=============================================================================
@@ -1197,6 +1198,8 @@ public:
   }
 
   int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override { return QObject::tr("Exit Group"); }
 };
 
 }  // namespace
