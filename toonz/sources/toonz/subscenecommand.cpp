@@ -628,7 +628,8 @@ std::set<int> explodeStageObjects(
     const GroupData &fxGroupData, QList<TStageObject *> &pegObjects,
     QMap<TFx *, QPair<TFx *, int>> &fxs,
     QMap<TStageObjectSpline *, TStageObjectSpline *> &splines,
-    QMap<TStageObjectId, TStageObjectId> &ids, bool onlyColumn) {
+    QMap<TStageObjectId, TStageObjectId> &ids, bool onlyColumn,
+    QStack<int> folderIds) {
   /*- SubXsheet, 親Xsheet両方のツリーを取得 -*/
   TStageObjectTree *innerTree = subXsh->getStageObjectTree();
   TStageObjectTree *outerTree = xsh->getStageObjectTree();
@@ -707,6 +708,13 @@ std::set<int> explodeStageObjects(
     TFx *outerFx = outerColumn->getFx();
 
     xsh->insertColumn(index, outerColumn);
+
+    QStack<int> oldOuterFolderIds = innerColumn->getFolderIdStack();
+    QStack<int> newOuterFolderIds = folderIds;
+    for (int j = 0; j < oldOuterFolderIds.size(); j++)
+      newOuterFolderIds.push(oldOuterFolderIds[j]);
+    outerColumn->setFolderIdStack(newOuterFolderIds);
+
     // the above insertion operation may increment the parentId, in case that
     // 1, the parent object is column, and
     // 2, the parent column is placed on the right side of the inserted column
@@ -948,14 +956,14 @@ std::set<int> explode(TXsheet *xsh, TXsheet *subXsh, int index,
                  const TPointD &fxSubPos, QList<TStageObject *> &pegObjects,
                  QMap<TStageObjectSpline *, TStageObjectSpline *> &splines,
                  const std::vector<TFxPort *> &outPorts, bool onlyColumn,
-                 bool linkToXsheet) {
+                 bool linkToXsheet, QStack<int> folderIds) {
   // innerFx->outerFxs
   QMap<TFx *, QPair<TFx *, int>> fxs;
   // inner id->outer id
   QMap<TStageObjectId, TStageObjectId> objIds;
   std::set<int> indexes = explodeStageObjects(
       xsh, subXsh, index, parentId, objGroupData, stageSubPos, fxGroupData,
-      pegObjects, fxs, splines, objIds, onlyColumn);
+      pegObjects, fxs, splines, objIds, onlyColumn, folderIds);
   explodeFxs(xsh, subXsh, fxGroupData, fxs, fxSubPos, outPorts, linkToXsheet);
 
   assert(TApp::instance()->getCurrentXsheet()->getXsheet() == xsh);
@@ -2552,6 +2560,8 @@ void SubsceneCmd::explode(int index) {
   TPointD fxSubPos    = attr->getDagNodePos();
   TPointD stageSubPos = obj->getDagNodePos();
 
+  QStack<int> folderIds = column->getFolderIdStack();
+
   if (removeColumn) {
     /*- SubXsheetカラムノードから繋がっているFxPortのリストを取得 (outPorts) -*/
     for (i = 0; i < columnFx->getOutputConnectionCount(); i++)
@@ -2589,7 +2599,7 @@ void SubsceneCmd::explode(int index) {
     std::set<int> newIndexes =
         ::explode(xsh, childLevel->getXsheet(), index, parentId, objGroupData,
                   stageSubPos, fxGroupData, fxSubPos, pegObjects, splines,
-                  outPorts, ret == 2, wasLinkedToXsheet);
+                  outPorts, ret == 2, wasLinkedToXsheet, folderIds);
 
     /*- Redoのためのデータの取得 -*/
     StageObjectsData *newData = new StageObjectsData();
@@ -2625,7 +2635,7 @@ void SubsceneCmd::explode(int index) {
     std::set<int> newIndexes = ::explode(
         xsh, childLevel->getXsheet(), index + 1, parentId, objGroupData,
         stageSubPos + TPointD(10, 10), fxGroupData, fxSubPos + TPointD(10, 10),
-        pegObjects, splines, outPorts, ret == 2, true);
+        pegObjects, splines, outPorts, ret == 2, true, folderIds);
 
     StageObjectsData *newData = new StageObjectsData();
     newData->storeColumns(newIndexes, xsh, 0);
