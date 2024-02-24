@@ -32,6 +32,7 @@
 #include "toonz/tcamera.h"
 #include "toonz/expressionreferencemonitor.h"
 #include "toonz/preferences.h"
+#include "toonz/txshfoldercolumn.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -1291,6 +1292,61 @@ void removeFx(TXsheet *xsh, TFx *fx) {
 }
 
 //-----------------------------------------------------------------------------
+QStack<int> getNewSubSceneFolders(std::set<int> indices) {
+  if (indices.empty()) return QStack<int>();
+
+  int index             = *indices.begin();
+  TApp *app             = TApp::instance();
+  TXsheet *xsh          = app->getCurrentXsheet()->getXsheet();
+
+  TXshColumn *column    = xsh->getColumn(index);
+  QStack<int> folderIds = column->getFolderIdStack();
+  // Remove folderIds included in the collapse
+  for (int i = 0; i < folderIds.size(); i++) {
+    int folderId = folderIds.top();
+    std::set<int>::iterator it;
+    for (it = indices.begin(); it != indices.end(); it++) {
+      TXshColumn *checkColumn = xsh->getColumn(*it);
+      if (!checkColumn || !checkColumn->getFolderColumn() ||
+          checkColumn->getFolderColumn()->getFolderColumnFolderId() != folderId)
+        continue;
+      folderIds.pop();
+      i = -1;
+      break;
+    }
+    if (folderIds.top() == folderId) break;
+  }
+
+  return folderIds;
+}
+
+void removeFolderIdsNotInSelection(std::set<int> indices, TXsheet *xsh) {
+  if (indices.empty()) return;
+  TApp *app = TApp::instance();
+
+  std::set<int> folderIds;
+
+  // Build a list of folders in the selection
+  std::set<int>::iterator it;
+  for (it = indices.begin(); it != indices.end(); it++) {
+    TXshColumn *column = xsh->getColumn(*it);
+    if (!column || !column->getFolderColumn()) continue;
+    folderIds.insert(column->getFolderColumn()->getFolderColumnFolderId());
+  }
+
+  // Remove folder ids not in the selection
+  for (it = indices.begin(); it != indices.end(); it++) {
+    TXshColumn *column = xsh->getColumn(*it);
+    if (!column || !column->isInFolder()) continue;
+    QStack<int> oldFolders = column->getFolderIdStack();
+    QStack<int> newFolders;
+    while (oldFolders.size()) {
+      int id = oldFolders.pop();
+      if (folderIds.find(id) != folderIds.end()) newFolders.push_front(id);
+    }
+    column->setFolderIdStack(newFolders);
+  }
+}
 
 void collapseColumns(std::set<int> indices, bool columnsOnly) {
   // return if there is no selected columns
@@ -1299,6 +1355,8 @@ void collapseColumns(std::set<int> indices, bool columnsOnly) {
   int index    = *indices.begin();
   TApp *app    = TApp::instance();
   TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+
+  QStack<int> folderIds = getNewSubSceneFolders(indices);
 
   std::set<int> oldIndices = indices;
 
@@ -1325,6 +1383,7 @@ void collapseColumns(std::set<int> indices, bool columnsOnly) {
   // restore data into sub xsheet
   data->restoreObjects(newIndices, restoredSplineIds, childXsh, 0, idTable,
                        fxTable);
+  removeFolderIdsNotInSelection(newIndices, childXsh);
 
   // bring pegbars into sub xsheet
   if (!columnsOnly)
@@ -1345,6 +1404,9 @@ void collapseColumns(std::set<int> indices, bool columnsOnly) {
 
   // insert subxsheet column at the leftmost of the deleted columns
   xsh->insertColumn(index);
+
+  TXshColumn *column = xsh->getColumn(index);
+  column->setFolderIdStack(folderIds);
 
   // set subxsheet cells in the parent xhseet
   int r, rowCount = childXsh->getFrameCount();
@@ -1407,6 +1469,8 @@ void collapseColumns(std::set<int> indices,
 
   int index = *indices.begin();
 
+  QStack<int> folderIds = getNewSubSceneFolders(indices);
+
   std::vector<TStageObjectId> roots = getRoots(objIds, app->getCurrentXsheet());
   TStageObject *rootObj             = 0;
   if (roots.size() == 1) {
@@ -1436,6 +1500,7 @@ void collapseColumns(std::set<int> indices,
   QMap<TFx *, TFx *> fxTable;
   data->restoreObjects(newIndices, restoredSplineIds, childXsh, 0, idTable,
                        fxTable);
+  removeFolderIdsNotInSelection(newIndices, childXsh);
   childXsh->updateFrameCount();
 
   ExpressionReferenceManager::instance()->refreshXsheetRefInfo(childXsh);
@@ -1449,6 +1514,9 @@ void collapseColumns(std::set<int> indices,
   app->getCurrentObject()->blockSignals(false);
 
   xsh->insertColumn(index);
+
+  TXshColumn *column = xsh->getColumn(index);
+  column->setFolderIdStack(folderIds);
 
   int r, rowCount = childXsh->getFrameCount();
   for (r = 0; r < rowCount; r++)
@@ -1477,6 +1545,8 @@ void collapseColumns(std::set<int> indices, const std::set<TFx *> &fxs,
   TApp *app    = TApp::instance();
   TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
 
+  QStack<int> folderIds = getNewSubSceneFolders(indices);
+
   std::set<int> oldIndices = indices;
   //++++++++++++++++++++++++++++++
 
@@ -1499,6 +1569,7 @@ void collapseColumns(std::set<int> indices, const std::set<TFx *> &fxs,
   QMap<TFx *, TFx *> fxTable;
   data->restoreObjects(newIndices, restoredSplineIds, childXsh, 0, idTable,
                        fxTable);
+  removeFolderIdsNotInSelection(newIndices, childXsh);
 
   if (!columnsOnly)
     bringPegbarsInsideChildXsheet(xsh, childXsh, indices, newIndices, idTable);
@@ -1517,6 +1588,9 @@ void collapseColumns(std::set<int> indices, const std::set<TFx *> &fxs,
   app->getCurrentXsheet()->blockSignals(false);
   app->getCurrentObject()->blockSignals(false);
   xsh->insertColumn(index);
+
+  TXshColumn *column = xsh->getColumn(index);
+  column->setFolderIdStack(folderIds);
 
   std::set<TFx *>::const_iterator it;
   for (it = fxs.begin(); it != fxs.end(); it++) {
