@@ -645,12 +645,18 @@ void TGroupCommand::ungroup() {
     return;
   }
 
+  // Let's remove entries not in a group
+  StrokeSelection *sel = new StrokeSelection(*m_sel);
+  StrokeSelection::IndexesContainer selection = sel->getSelection();
+  for (int i = 0; i < selection.size(); i++)
+    if (!vimg->isStrokeGrouped(selection[i])) sel->select(selection[i], false);
+
   QMutexLocker lock(vimg->getMutex());
-  ungroupWithoutUndo(vimg, m_sel);
+  ungroupWithoutUndo(vimg, sel);
   TXshSimpleLevel *level =
       TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
   TUndoManager::manager()->add(new UngroupUndo(level, tool->getCurrentFid(),
-                                               new StrokeSelection(*m_sel)));
+                                               new StrokeSelection(*sel)));
 }
 
 //-----------------------------------------------------------------------------
