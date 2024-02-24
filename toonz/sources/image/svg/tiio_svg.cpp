@@ -2228,6 +2228,16 @@ TImageP TImageReaderSvg::load() {
       s->setStyle(inkIndex);
       vimage->addStroke(s);
       if (s->isSelfLoop() && shape->hasFillColor) applyFill = true;
+      if (!s->isSelfLoop() && shape->hasFillColor) {
+        // Create a connecting line for fill
+        std::vector<TPointD> pts;
+        pts.push_back(s->getControlPoint(0));
+        pts.push_back(s->getControlPoint(s->getControlPointCount()));
+        s = new TStroke(pts);
+        s->setStyle(0);
+        vimage->addStroke(s);
+        applyFill = true;
+      }
     }
     if (startStrokeIndex == vimage->getStrokeCount()) continue;
 
