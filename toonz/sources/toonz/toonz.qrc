@@ -333,7 +333,8 @@
 		<file>icons/dark/actions/16/new_note_level.svg</file>
 		<file>icons/dark/actions/16/new_vector_level.svg</file>
 		<file>icons/dark/actions/16/new_toonz_raster_level.svg</file>
-		<file>icons/dark/actions/16/save_level.svg</file>
+    <file>icons/dark/actions/16/new_folder_column.svg</file>
+    <file>icons/dark/actions/16/save_level.svg</file>
 		<file>icons/dark/actions/16/save_level_as.svg</file>
 		<file>icons/dark/actions/16/save_all_levels.svg</file>
 		<file>icons/dark/actions/16/replace_level.svg</file>
