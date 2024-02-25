@@ -40,6 +40,7 @@
 #include "tools/toolhandle.h"
 
 #include "../tnztools/symmetrytool.h"
+#include "../tnztools/perspectivetool.h"
 
 // Tnz6 includes
 #include "tapp.h"
@@ -550,6 +551,10 @@ void BaseViewerPanel::onSymmetryGuideToggled(bool value) {
 
 void BaseViewerPanel::onPerspectiveGuideToggled(bool value) {
   ShowPerspectiveGrids = value > 0 ? 1 : 0;
+  PerspectiveTool *perspectiveTool = dynamic_cast<PerspectiveTool *>(
+      TTool::getTool(T_PerspectiveGrid, TTool::RasterImage));
+  if (perspectiveTool)
+    perspectiveTool->setGuideEnabled(ShowPerspectiveGrids);
   m_perspectiveButton->setPressed(ShowPerspectiveGrids);
   m_sceneViewer->update();
 }
