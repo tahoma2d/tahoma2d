@@ -90,9 +90,10 @@
 
 #include "sceneviewer.h"
 
-TEnv::IntVar ShowPerspectiveGrids("ShowPerspectiveGrids", 1);
-TEnv::IntVar ShowSymmetryGuide("ShowSymmetryGuide", 1);
 TEnv::IntVar ShowSceneOverlay("ShowSceneOverlay", 1);
+
+extern TEnv::IntVar ShowPerspectiveGrids;
+extern TEnv::IntVar ShowSymmetryGuide;
 
 void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
                 double pixelSize);
@@ -296,6 +297,8 @@ ToggleCommandHandler editInPlaceToggle(MI_ToggleEditInPlace, false);
 ToggleCommandHandler fieldGuideToggle(MI_FieldGuide, false);
 ToggleCommandHandler safeAreaToggle(MI_SafeArea, false);
 ToggleCommandHandler rasterizePliToggle(MI_RasterizePli, false);
+ToggleCommandHandler symmetryGuideToggle(MI_ShowSymmetryGuide, false);
+ToggleCommandHandler perspectiveGridsToggle(MI_ShowPerspectiveGrids, false);
 
 ToggleCommandHandler viewClcToggle("MI_ViewColorcard", false);
 ToggleCommandHandler viewCameraToggle("MI_ViewCamera", false);
@@ -1912,8 +1915,7 @@ void SceneViewer::drawOverlay() {
   TTool *perspectiveTool =
       TTool::getTool(T_PerspectiveGrid, TTool::VectorImage);
   if (tool && perspectiveTool &&
-      ((fieldGuideToggle.getStatus() && ShowPerspectiveGrids) ||
-       tool == perspectiveTool)) {
+      (ShowPerspectiveGrids || tool == perspectiveTool)) {
     glPushMatrix();
     if (m_draw3DMode) {
       mult3DMatrix();
@@ -1925,9 +1927,7 @@ void SceneViewer::drawOverlay() {
   }
 
   TTool *symmetryTool = TTool::getTool(T_Symmetry, TTool::VectorImage);
-  if (tool && symmetryTool &&
-      ((fieldGuideToggle.getStatus() && ShowSymmetryGuide) ||
-       tool == symmetryTool)) {
+  if (tool && symmetryTool && (ShowSymmetryGuide || tool == symmetryTool)) {
     glPushMatrix();
     if (m_draw3DMode) {
       mult3DMatrix();

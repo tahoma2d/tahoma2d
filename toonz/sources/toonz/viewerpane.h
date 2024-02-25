@@ -53,6 +53,7 @@ protected:
   TPanelTitleBarButtonSet *m_referenceModeBs;
   TPanelTitleBarButtonForPreview *m_previewButton;
   TPanelTitleBarButtonForPreview *m_subcameraPreviewButton;
+  TPanelTitleBarButton *m_symmetryButton, *m_perspectiveButton;
   bool m_onionSkinActive = false;
   UINT m_visiblePartsFlag;
   bool m_playSound     = true;
@@ -118,6 +119,8 @@ public slots:
   void enableFullPreview(bool enabled);
   void enableSubCameraPreview(bool enabled);
   void changeSceneFps(int value);
+  void onSymmetryGuideToggled(bool value);
+  void onPerspectiveGuideToggled(bool value);
 
 protected slots:
 
@@ -129,6 +132,7 @@ protected slots:
   void onShowHideActionTriggered(QAction *);
   void onPreviewStatusChanged();
   void onActiveViewerChanged();
+  void onToolSwitched();
 };
  
 class SceneViewerPanel final : public BaseViewerPanel {

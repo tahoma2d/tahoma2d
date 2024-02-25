@@ -87,6 +87,8 @@ TEnv::IntVar ShowShiftOriginToggleAction("ShowShiftOriginToggleAction", 0);
 TEnv::IntVar NoShiftToggleAction("NoShiftToggleAction", 0);
 TEnv::IntVar TouchGestureControl("TouchGestureControl", 0);
 TEnv::IntVar TransparencySliderValue("TransparencySliderValue", 50);
+TEnv::IntVar ShowPerspectiveGrids("ShowPerspectiveGrids", 0);
+TEnv::IntVar ShowSymmetryGuide("ShowSymmetryGuide", 0);
 
 TEnv::StringVar SkipVersion("SkipVersion", "0.0");
 
@@ -1295,6 +1297,10 @@ void MainWindow::onMenuCheckboxChanged() {
     EditInPlaceToggleAction = isChecked;
   else if (cm->getAction(MI_ViewBBox) == action)
     ViewBBoxToggleAction = isChecked;
+  else if (cm->getAction(MI_ShowSymmetryGuide) == action)
+    ShowSymmetryGuide = isChecked;
+  else if (cm->getAction(MI_ShowPerspectiveGrids) == action)
+    ShowPerspectiveGrids = isChecked;
   else if (cm->getAction(MI_FieldGuide) == action)
     FieldGuideToggleAction = isChecked;
   else if (cm->getAction(MI_RasterizePli) == action) {
@@ -2333,6 +2339,10 @@ void MainWindow::defineActions() {
                ViewCameraToggleAction ? 1 : 0, MenuViewCommandType);
   createToggle(MI_ViewTable, QT_TR_NOOP("&Table"), "",
                ViewTableToggleAction ? 1 : 0, MenuViewCommandType);
+  createToggle(MI_ShowSymmetryGuide, QT_TR_NOOP("&Symmetry Guide"), "",
+               ShowSymmetryGuide ? 1 : 0, MenuViewCommandType);
+  createToggle(MI_ShowPerspectiveGrids, QT_TR_NOOP("&Perspective Grids"), "",
+               ShowPerspectiveGrids ? 1 : 0, MenuViewCommandType);
   createToggle(MI_FieldGuide, QT_TR_NOOP("&Grids and Overlays"), "Shift+G",
                FieldGuideToggleAction ? 1 : 0, MenuViewCommandType);
   createToggle(MI_ViewBBox, QT_TR_NOOP("&Raster Bounding Box"), "",
