@@ -36,9 +36,9 @@ struct NSVGpath {
 struct NSVGshape {
   char id[50];
   unsigned int fillColor;    // Fill color
-  char hasFillColor;         // Flag indicating we have a fill color
+  char hasFillNone;          // Flag indicating we have a fill = none
   unsigned int strokeColor;  // Stroke color
-  char hasStrokeColor;       // Flag indicating we have a stroke color
+  char hasStrokeNone;        // Flag indicating stroke color = none
   float strokeWidth;         // Stroke width
   float scale;               // Stroke scale
   char hasFillInfo;          // Flag indicating if fill exists.
@@ -198,9 +198,9 @@ struct NSVGAttrib {
   float xform[6];
   char id[50];
   unsigned int fillColor;
-  char hasFillColor;
+  char hasFillNone;
   unsigned int strokeColor;
-  char hasStrokeColor;
+  char hasStrokeNone;
   float opacity;
   float fillOpacity;
   float strokeOpacity;
@@ -322,13 +322,13 @@ struct NSVGParser *nsvg__createParser() {
   nsvg__xformSetIdentity(p->attr[0].xform);
   strcpy(p->attr[0].id,"default");
   p->attr[0].fillColor      = 0;
-  p->attr[0].hasFillColor   = 1;
+  p->attr[0].hasFillNone    = 0;
   p->attr[0].strokeColor    = 0;
-  p->attr[0].hasStrokeColor = 1;
+  p->attr[0].hasStrokeNone  = 0;
   p->attr[0].opacity        = 1;
   p->attr[0].fillOpacity    = 1;
   p->attr[0].strokeOpacity  = 1;
-  p->attr[0].strokeWidth    = 1;
+  p->attr[0].strokeWidth    = 0;
   p->attr[0].hasFillInfo    = 0;
   p->attr[0].hasStrokeInfo  = 0;
   p->attr[0].visible        = 1;
@@ -443,17 +443,15 @@ void nsvg__addShape(struct NSVGParser *p) {
   shape->strokeWidth   = attr->strokeWidth;
 
   strcpy(shape->id, attr->id);
-  shape->fillColor    = attr->fillColor;
-  shape->hasFillColor = attr->hasFillColor;
-  if (shape->hasFillColor)
-    shape->fillColor |= (unsigned int)(attr->opacity * attr->fillOpacity * 255)
-                        << 24;
+  shape->fillColor = attr->fillColor;
+  shape->fillColor |= (unsigned int)(attr->opacity * attr->fillOpacity * 255)
+                      << 24;
+  shape->hasFillNone = attr->hasFillNone;
 
-  shape->strokeColor    = attr->strokeColor;
-  shape->hasStrokeColor = attr->hasStrokeColor;
-  if (shape->hasStrokeColor)
-    shape->strokeColor |=
-        (unsigned int)(attr->opacity * attr->strokeOpacity * 255) << 24;
+  shape->strokeColor = attr->strokeColor;
+  shape->strokeColor |=
+      (unsigned int)(attr->opacity * attr->strokeOpacity * 255) << 24;
+  shape->hasStrokeNone = attr->hasStrokeNone;
 
   shape->paths = p->plist;
   p->plist     = NULL;
@@ -918,10 +916,9 @@ int nsvg__parseAttr(struct NSVGParser *p, const char *name, const char *value) {
   } else if (strcmp(name, "fill") == 0) {
     attr->hasFillInfo = 1;
     if (strcmp(value, "none") == 0) {
-      attr->hasFillColor = 0;
+      attr->hasFillNone = 1;
     } else {
-      attr->hasFillColor = 1;
-      attr->fillColor    = nsvg__parseColor(value);
+      attr->fillColor = nsvg__parseColor(value);
     }
   } else if (strcmp(name, "fill-opacity") == 0) {
     attr->hasFillInfo = 1;
@@ -929,10 +926,10 @@ int nsvg__parseAttr(struct NSVGParser *p, const char *name, const char *value) {
   } else if (strcmp(name, "stroke") == 0) {
     attr->hasStrokeInfo = 1;
     if (strcmp(value, "none") == 0) {
-      attr->hasStrokeColor = 0;
+      attr->hasStrokeNone = 1;
     } else {
-      attr->hasStrokeInfo = 1;
-      attr->strokeColor   = nsvg__parseColor(value);
+      attr->strokeColor = nsvg__parseColor(value);
+      if (!attr->strokeWidth) attr->strokeWidth = 1;
     }
   } else if (strcmp(name, "stroke-width") == 0) {
     attr->hasStrokeInfo = 1;
@@ -2209,41 +2206,52 @@ TImageP TImageReaderSvg::load() {
     // TPalette* appPlt = new TPalette();
     // vapp->setPalette(appPlt);
 
-    bool applyFill = shape->hasFillColor;
+    bool applyFill = shape->hasFillInfo && !shape->hasFillNone;
 
     float strokeWidth =
-        shape->hasStrokeColor ? shape->strokeWidth / devPixRatio : 0;
+        !shape->hasStrokeNone ? shape->strokeWidth / devPixRatio : 0;
 
-    inkIndex   = shape->hasStrokeColor ? findColor(plt, shape->strokeColor) : 0;
-    paintIndex = shape->hasFillColor ? findColor(plt, shape->fillColor) : 0;
-    if (!applyFill && (!shape->hasStrokeColor || !strokeWidth)) {
+    inkIndex   = !shape->hasStrokeNone ? findColor(plt, shape->strokeColor) : 0;
+    paintIndex = !shape->hasFillNone ? findColor(plt, shape->fillColor) : 0;
+    if (!applyFill && !shape->hasFillNone &&
+        (!shape->hasStrokeNone || !strokeWidth)) {
       applyFill = true;
     }
 
     // vapp->setPalette(plt.getPointer());
     int startStrokeIndex = vimage->getStrokeCount();
+    int strokeCount      = 0;
     for (; path; path = path->next) {
       TStroke *s = buildStroke(path, strokeWidth, shape->scale);
       if (!s) continue;
       s->setStyle(inkIndex);
       vimage->addStroke(s);
-      if (s->isSelfLoop() && shape->hasFillColor) applyFill = true;
-      if (!s->isSelfLoop() && shape->hasFillColor) {
+      strokeCount++;
+      int currentIndex = vimage->getStrokeCount() - 1;
+      if (s->isSelfLoop() && !shape->hasFillNone) applyFill = true;
+      // Single unconnected stroke shape with fill
+      if (!s->isSelfLoop() && !shape->hasFillNone) {
         // Create a connecting line for fill
         std::vector<TPointD> pts;
         pts.push_back(s->getControlPoint(0));
         pts.push_back(s->getControlPoint(s->getControlPointCount()));
-        s = new TStroke(pts);
-        s->setStyle(0);
-        vimage->addStroke(s);
-        applyFill = true;
+        TStroke *hiddenStroke = new TStroke(pts);
+        hiddenStroke->setStyle(0);
+        vimage->addStroke(hiddenStroke);
+        // Immediately group and fill
+        vimage->group(currentIndex, 2);
+        vimage->enterGroup(startStrokeIndex);
+        vimage->selectFill(TRectD(-9999999, -9999999, 9999999, 9999999), 0,
+                           paintIndex, true, true, false);
+        vimage->exitGroup();
       }
     }
     if (startStrokeIndex == vimage->getStrokeCount()) continue;
 
     if (applyFill) {
       int c = vimage->getStrokeCount() - startStrokeIndex;
-      vimage->group(startStrokeIndex, c);
+      if (!vimage->isStrokeGrouped(startStrokeIndex) || c > 2)
+        vimage->group(startStrokeIndex, c);
       vimage->enterGroup(startStrokeIndex);
       if (c > 1) {
         TStroke *s = vimage->getStroke(vimage->getStrokeCount() - 1);
@@ -2300,9 +2308,11 @@ TLevelP TLevelReaderSvg::loadInfo() {
     if (!svgImg) continue;
 
     for (NSVGshape *shape = svgImg->shapes; shape; shape = shape->next) {
-      if (shape->hasStrokeColor) addColorToPalette(plt, shape->strokeColor);
+      if (!shape->hasStrokeNone)
+        addColorToPalette(plt, shape->strokeColor);
 
-      if (shape->hasFillColor) addColorToPalette(plt, shape->fillColor);
+      if (!shape->hasFillNone)
+        addColorToPalette(plt, shape->fillColor);
     }
 
     nsvgDelete(svgImg);
