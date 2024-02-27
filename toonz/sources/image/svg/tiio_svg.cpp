@@ -918,7 +918,8 @@ int nsvg__parseAttr(struct NSVGParser *p, const char *name, const char *value) {
     if (strcmp(value, "none") == 0) {
       attr->hasFillNone = 1;
     } else {
-      attr->fillColor = nsvg__parseColor(value);
+      attr->hasFillNone = 0;
+      attr->fillColor   = nsvg__parseColor(value);
     }
   } else if (strcmp(name, "fill-opacity") == 0) {
     attr->hasFillInfo = 1;
@@ -928,7 +929,8 @@ int nsvg__parseAttr(struct NSVGParser *p, const char *name, const char *value) {
     if (strcmp(value, "none") == 0) {
       attr->hasStrokeNone = 1;
     } else {
-      attr->strokeColor = nsvg__parseColor(value);
+      attr->hasStrokeInfo = 0;
+      attr->strokeColor   = nsvg__parseColor(value);
       if (!attr->strokeWidth) attr->strokeWidth = 1;
     }
   } else if (strcmp(name, "stroke-width") == 0) {
@@ -2232,21 +2234,23 @@ TImageP TImageReaderSvg::load() {
       TStroke *s = buildStroke(path, strokeWidth, shape->scale);
       if (!s) continue;
       s->setStyle(inkIndex);
-      vimage->addStroke(s);
+      int currentIndex = vimage->addStroke(s);
       strokeCount++;
-      int currentIndex = vimage->getStrokeCount() - 1;
       if (s->isSelfLoop() && !shape->hasFillNone) applyFill = true;
       // Single unconnected stroke shape with fill
       if (!s->isSelfLoop() && !shape->hasFillNone) {
+        int x = 1;
         // Create a connecting line for fill
         std::vector<TPointD> pts;
         pts.push_back(s->getControlPoint(0));
         pts.push_back(s->getControlPoint(s->getControlPointCount()));
-        TStroke *hiddenStroke = new TStroke(pts);
-        hiddenStroke->setStyle(0);
-        vimage->addStroke(hiddenStroke);
+        if (pts.front() != pts.back()) {
+          TStroke *hiddenStroke = new TStroke(pts);
+          hiddenStroke->setStyle(0);
+          if (vimage->addStroke(hiddenStroke) >= 0) x++;
+        }
         // Immediately group and fill
-        vimage->group(currentIndex, 2);
+        vimage->group(currentIndex, x);
         vimage->enterGroup(startStrokeIndex);
         vimage->selectFill(TRectD(-9999999, -9999999, 9999999, 9999999), 0,
                            paintIndex, true, true, false);
