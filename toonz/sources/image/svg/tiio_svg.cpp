@@ -2156,7 +2156,11 @@ TStroke *buildStroke(NSVGpath *path, float width, float scale) {
   if (points.empty()) return 0;
 
   if (path->closed) {
-    if (points.back() != points.front()) {
+    // Compare front and back points. We'll adjust to compare to 2 decimal
+    // places only due to precision difference between absolute and relative
+    // calculations
+    if (((int)(points.back().x * 100) != (int)(points.front().x * 100)) ||
+        (int)(points.back().y * 100) != (int)(points.front().y * 100)) {
       points.push_back(0.5 * (points.back() + points.front()));
       points.push_back(points.front());
     } else {
