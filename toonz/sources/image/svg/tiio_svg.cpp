@@ -1927,7 +1927,7 @@ static void writeRegion(TRegion *r, TPalette *plt, QTextStream &out,
     out << "Q " << quadsOutline[i]->getP1().x << ","
         << ly - quadsOutline[i]->getP1().y << "," << quadsOutline[i]->getP2().x
         << "," << ly - quadsOutline[i]->getP2().y << "\n";
-  out << " \" /> \n";
+  out << "Z \" /> \n";
   for (int i = 0; i < (int)r->getSubregionCount(); i++)
     writeRegion(r->getSubregion(i), plt, out, ly);
 }
@@ -1955,7 +1955,7 @@ static void writeOutlineStroke(TStroke *s, TPalette *plt, QTextStream &out,
     out << "Q " << quadsOutline[i]->getP1().x << ","
         << ly - quadsOutline[i]->getP1().y << "," << quadsOutline[i]->getP2().x
         << "," << ly - quadsOutline[i]->getP2().y << "\n";
-  out << " \" /> \n";
+  out << "Z \" /> \n";
 }
 
 //----------------------------------------------------------
@@ -2027,7 +2027,10 @@ static void writeCenterlineStroke(TStroke *s, TPalette *plt, QTextStream &out,
     out << "Q " << s->getChunk(i)->getP1().x << ","
         << ly - s->getChunk(i)->getP1().y << "," << s->getChunk(i)->getP2().x
         << "," << ly - s->getChunk(i)->getP2().y << "\n";
-  out << " \" /> \n";
+  if (s->isSelfLoop())
+    out << "Z \" /> \n";
+  else
+    out << " \" /> \n";
 }
 
 //----------------------------------------------------------
