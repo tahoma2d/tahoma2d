@@ -44,7 +44,6 @@ protected:
   int m_subId;
   QMap<QString, OCAAsset> m_assets;
   bool m_raEXR, m_veSVG;
-  int m_stOff;
 
   DVGui::ProgressDialog *m_progressDialog;
 
@@ -64,8 +63,7 @@ public:
 
   void setProgressDialog(DVGui::ProgressDialog *dialog);
   void build(ToonzScene *scene, TXsheet *xsheet, QString name, QString path,
-             int startOffset, bool useEXR, bool vectorAsSVG,
-             bool exportReferences);
+             bool useEXR, bool vectorAsSVG, bool exportReferences);
   bool isEmpty() { return m_layers.isEmpty(); }
 };
 
