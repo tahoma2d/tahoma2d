@@ -44,7 +44,6 @@ protected:
   int m_subId;
   QMap<QString, OCAAsset> m_assets;
   bool m_raEXR, m_veSVG;
-  int m_stOff;
 
   DVGui::ProgressDialog *m_progressDialog;
 
@@ -58,13 +57,13 @@ public:
   int frameLen(TXshCellColumn *column, const QList<int> &rows, int index);
   bool isGroup(TXshCellColumn *column);
   bool buildGroup(QJsonObject &json, const QList<int> &rows,
-                  TXshCellColumn *column);
+                  TXshCellColumn *column, bool exportReferences);
   bool buildLayer(QJsonObject &json, const QList<int> &rows,
                   TXshCellColumn *column);
 
   void setProgressDialog(DVGui::ProgressDialog *dialog);
   void build(ToonzScene *scene, TXsheet *xsheet, QString name, QString path,
-             int startOffset, bool useEXR, bool vectorAsSVG);
+             bool useEXR, bool vectorAsSVG, bool exportReferences);
   bool isEmpty() { return m_layers.isEmpty(); }
 };
 

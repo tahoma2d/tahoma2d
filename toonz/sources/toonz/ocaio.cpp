@@ -55,8 +55,8 @@ void OCAData::write(QJsonObject &json) const {
   json["frameRate"]  = m_framerate;
   json["width"]      = m_width;
   json["height"]     = m_height;
-  json["startTime"]  = m_startTime + m_stOff;
-  json["endTime"]    = m_endTime + m_stOff;
+  json["startTime"]  = m_startTime;
+  json["endTime"]    = m_endTime;
   json["colorDepth"] = m_raEXR ? "U16" : "U8";
 
   // Background color
@@ -172,7 +172,7 @@ bool OCAData::isGroup(TXshCellColumn *column) {
 }
 
 bool OCAData::buildGroup(QJsonObject &json, const QList<int> &rows,
-                         TXshCellColumn *column) {
+                         TXshCellColumn *column, bool exportReferences) {
   QString layername;
   if (!getLayerName(column, layername)) return false;
 
@@ -200,12 +200,14 @@ bool OCAData::buildGroup(QJsonObject &json, const QList<int> &rows,
     if (xsheet->isColumnEmpty(col)) continue;
     TXshCellColumn *column = xsheet->getColumn(col)->getCellColumn();
     if (!column) continue;                      // skip non-cell column
-    if (!column->isPreviewVisible()) continue;  // skip inactive column
+    if (!exportReferences && !column->isPreviewVisible())
+      continue;  // skip inactive column
 
     if (column->getColumnType() == column->eLevelType) {
       QJsonObject json;
       if (isGroup(column)) {
-        if (buildGroup(json, crows, column)) layers.append(json);
+        if (buildGroup(json, crows, column, exportReferences))
+          layers.append(json);
       } else {
         if (buildLayer(json, crows, column)) layers.append(json);
       }
@@ -229,7 +231,7 @@ bool OCAData::buildGroup(QJsonObject &json, const QList<int> &rows,
   json["opacity"]      = column->getOpacity() / 255.0;
   json["visible"]      = column->isCamstandVisible();
   json["passThrough"]  = false;
-  json["reference"]    = false;
+  json["reference"]    = !column->isPreviewVisible();
   json["inheritAlpha"] = false;
 
   return true;
@@ -264,7 +266,7 @@ bool OCAData::buildLayer(QJsonObject &json, const QList<int> &rows,
     jsonPosition.append(m_height / 2);
     int len = frameLen(column, rows, i);
 
-    frame["frameNumber"] = i + m_stOff;
+    frame["frameNumber"] = i;
     frame["position"]    = jsonPosition;
     frame["opacity"]     = 1.0;  // OT uses Transparency Fx node
     frame["duration"]    = len;
@@ -307,7 +309,7 @@ bool OCAData::buildLayer(QJsonObject &json, const QList<int> &rows,
 
   json["frames"]       = jsonFrames;
   json["childLayers"]  = QJsonArray();
-  json["type"]         = "paintlayer";
+  json["type"]         = json["fileType"] == "svg" ? "vectorlayer" : "paintlayer";
   json["blendingMode"] = "normal";  // OT uses nodes Fx to make blending
                                     // possible, how to approach this?
   json["animated"]     = jsonFrames.count() >= 2;
@@ -315,7 +317,7 @@ bool OCAData::buildLayer(QJsonObject &json, const QList<int> &rows,
   json["opacity"]      = column->getOpacity() / 255.0;
   json["visible"]      = column->isCamstandVisible();
   json["passThrough"]  = false;
-  json["reference"]    = false;
+  json["reference"]    = !column->isPreviewVisible();
   json["inheritAlpha"] = false;
 
   return true;
@@ -326,14 +328,13 @@ void OCAData::setProgressDialog(DVGui::ProgressDialog *dialog) {
 }
 
 void OCAData::build(ToonzScene *scene, TXsheet *xsheet, QString name,
-                    QString path, int startOffset, bool useEXR,
-                    bool vectorAsSVG) {
+                    QString path, bool useEXR, bool vectorAsSVG,
+                    bool exportReferences) {
   m_name  = name;
   m_path  = path;
   m_subId = 0;
   m_raEXR = useEXR;
   m_veSVG = vectorAsSVG;
-  m_stOff = startOffset;
 
   // if the current xsheet is top xsheet in the scene and the output
   // frame range is specified, set the "to" frame value as duration
@@ -372,7 +373,8 @@ void OCAData::build(ToonzScene *scene, TXsheet *xsheet, QString name,
     if (xsheet->isColumnEmpty(col)) continue;
     TXshCellColumn *column = xsheet->getColumn(col)->getCellColumn();
     if (!column) continue;  // skip non-cell column
-    if (!column->isPreviewVisible()) continue;  // skip inactive column
+    if (!exportReferences && !column->isPreviewVisible())
+      continue;  // skip inactive column
 
     if (column->getColumnType() == column->eLevelType) {
       if (m_progressDialog) {
@@ -386,7 +388,8 @@ void OCAData::build(ToonzScene *scene, TXsheet *xsheet, QString name,
 
       QJsonObject json;
       if (isGroup(column)) {
-        if (buildGroup(json, rows, column)) m_layers.append(json);
+        if (buildGroup(json, rows, column, exportReferences))
+          m_layers.append(json);
       } else {
         if (buildLayer(json, rows, column)) m_layers.append(json);
       }
@@ -409,21 +412,16 @@ void ExportOCACommand::execute() {
   static QCheckBox *exrImageFormat       = nullptr;
   static QCheckBox *rasVectors           = nullptr;
   static QCheckBox *doKeyframing         = nullptr;
-  static QHBoxLayout *startingOffsetLay  = nullptr;
-  static QLabel *startingOffsetLab       = nullptr;
-  static QSpinBox *startingOffsetSpin    = nullptr;
+  static QCheckBox *exportReferences     = nullptr;
 
   static DVGui::ProgressDialog *progressDialog = nullptr;
 
   if (!savePopup) {
     QWidget *customWidget = new QWidget();
 
-    exrImageFormat = new QCheckBox(tr("Save Images in EXR Format"));
-    rasVectors     = new QCheckBox(tr("Rasterize Vectors"));
-
-    startingOffsetLay  = new QHBoxLayout();
-    startingOffsetLab  = new QLabel(tr("Frame Offset: "));
-    startingOffsetSpin = new QSpinBox();
+    exrImageFormat   = new QCheckBox(tr("Save Images in EXR Format"));
+    rasVectors       = new QCheckBox(tr("Rasterize Vectors"));
+    exportReferences = new QCheckBox(tr("Export Reference Layers"));
 
     exrImageFormat->setToolTip(
         tr("Checked: Images are saved as EXR\nUnchecked: Images are "
@@ -431,25 +429,18 @@ void ExportOCACommand::execute() {
     rasVectors->setToolTip(
         tr("Checked: Rasterize into EXR/PNG\nUnchecked: Vectors are "
            "saved as SVG"));
-    startingOffsetLab->setToolTip(tr("Starting Frame Offset"));
-    startingOffsetSpin->setToolTip(tr("Starting Frame Offset"));
+    exportReferences->setToolTip(
+        tr("Checked: Layers with Preview Visible OFF are also "
+           "exported\nUnchecked: Only layers with Preview Visible ON are "
+           "exported"));
     rasVectors->setChecked(true);
-
-    startingOffsetSpin->setValue(1);
-    startingOffsetSpin->setMinimum(0);
-    startingOffsetSpin->setMaximum(1000000);
-    startingOffsetLab->adjustSize();
-    startingOffsetLay->setMargin(0);
-    startingOffsetLay->setSpacing(0);
-    startingOffsetLay->addWidget(startingOffsetLab, 0, Qt::AlignRight);
-    startingOffsetLay->addWidget(startingOffsetSpin);
 
     QGridLayout *customLay = new QGridLayout();
     customLay->setMargin(5);
     customLay->setSpacing(5);
     customLay->addWidget(exrImageFormat, 0, 0);
     customLay->addWidget(rasVectors, 1, 0);
-    customLay->addLayout(startingOffsetLay, 0, 1);
+    customLay->addWidget(exportReferences, 2, 0);
     customWidget->setLayout(customLay);
 
     progressDialog = new DVGui::ProgressDialog("", tr("Hide"), 0, 0);
@@ -472,9 +463,9 @@ void ExportOCACommand::execute() {
   fp = savePopup->getPath();
   if (fp.isEmpty()) return;
 
-  int frameOffset  = startingOffsetSpin->value();
   bool exrImageFmt = exrImageFormat->isChecked();
   bool rasterVecs  = rasVectors->isChecked();
+  bool exportRefs  = exportReferences->isChecked();
 
   // Export
 
@@ -506,7 +497,7 @@ void ExportOCACommand::execute() {
   OCAData ocaData;
   ocaData.setProgressDialog(progressDialog);
   ocaData.build(scene, xsheet, QString::fromStdString(fp.getName()), ocafolder,
-                frameOffset, exrImageFmt, !rasterVecs);
+                exrImageFmt, !rasterVecs, exportRefs);
   if (ocaData.isEmpty()) {
     progressDialog->close();
     DVGui::error(QObject::tr("No columns can be exported."));
@@ -832,9 +823,6 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer,
     column->setCamstandVisible(jsonLayer["visible"].toBool());
     column->setColorFilterId(jsonLayer["label"].toInt());
 
-    int frameOffset                  = 0;
-    if (m_startTime < 1) frameOffset = -m_startTime + 1;
-
     int lastFrame = 0;
     for (auto frame : jsonLayer["frames"].toArray()) {
       TXshCell cell;
@@ -850,10 +838,6 @@ void OCAIo::OCAInputData::importOcaLayer(const QJsonObject &jsonLayer,
       }
 
       int row = frame.toObject()["frameNumber"].toInt();
-
-      // -1 converts framenumber to index, frameOffset moves the frame range
-      // above 0...
-      row = row - 1 + frameOffset;
 
       int duration = frame.toObject()["duration"].toInt();
       lastFrame += duration;

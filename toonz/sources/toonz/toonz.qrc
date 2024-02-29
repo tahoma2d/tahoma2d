@@ -630,6 +630,8 @@
     <file>icons/dark/actions/16/set_linear_cp.svg</file>
     <file>icons/dark/actions/16/set_nonlinear_cp.svg</file>
 
+    <file>icons/dark/actions/16/import_oca.svg</file>
+
     <!-- Keyframe -->
 		<file>icons/dark/actions/20/key_off.svg</file>
 		<file>icons/dark/actions/20/key_on.svg</file>
