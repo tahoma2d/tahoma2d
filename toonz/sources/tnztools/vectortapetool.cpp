@@ -815,14 +815,14 @@ public:
     if (symmetryTool && symmetryTool->isGuideEnabled())
       TUndoManager::manager()->beginBlock();
 
+    TStroke *stroke1   = vi->getStroke(m_strokeIndex1);
+    TStroke *stroke2   = vi->getStroke(m_strokeIndex2);
+    TThickPoint point1 = stroke1->getPoint(m_w1);
+    TThickPoint point2 = stroke2->getPoint(m_w2);
+
     tapeStrokes(vi, m_strokeIndex1, m_strokeIndex2);
 
     if (symmetryTool && symmetryTool->isGuideEnabled()) {
-      TStroke *stroke1   = vi->getStroke(m_strokeIndex1);
-      TStroke *stroke2   = vi->getStroke(m_strokeIndex2);
-      TThickPoint point1 = stroke1->getPoint(m_w1);
-      TThickPoint point2 = stroke2->getPoint(m_w2);
-
       std::vector<TPointD> firstPts = symmetryTool->getSymmetryPoints(
           point1, TPointD(), getViewer()->getDpiScale());
       std::vector<TPointD> secondPts = symmetryTool->getSymmetryPoints(
