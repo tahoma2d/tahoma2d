@@ -2109,7 +2109,7 @@ void MainWindow::defineActions() {
              "objects along a motion path."));
 
   createMenuLevelAction(MI_NewFolder, QT_TR_NOOP("New Folder"), "",
-                        "");
+                        "new_folder_column");
 
   // Menu - Scene
 
