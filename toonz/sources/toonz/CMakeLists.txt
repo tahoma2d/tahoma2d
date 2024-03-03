@@ -530,6 +530,10 @@ elseif(BUILD_ENV_APPLE)
         set(EXTRA_LIBS ${EXTRA_LIBS} ${GPHOTO2_LIB} ${GPHOTO2_PORT_LIB})
     endif()
 
+    if(DEFLATE)
+        set(EXTRA_LIBS ${EXTRA_LIBS} ${DEFLATE_LIB})
+    endif()
+
     add_dependencies(Tahoma2D tnzcore tnzbase toonzlib colorfx tnzext image sound toonzqt tnztools tnzstdfx tfarm)
 
     target_link_libraries(Tahoma2D
@@ -553,6 +557,10 @@ elseif(BUILD_ENV_UNIXLIKE)
 
     if(BUILD_TARGET_WIN)
         set(EXTRA_LIBS ${EXTRA_LIBS} Qt5::WinMain -lstrmiids -mwindows)
+    endif()
+
+    if(DEFLATE)
+        set(EXTRA_LIBS ${EXTRA_LIBS} ${DEFLATE_LIB})
     endif()
 
     target_link_libraries(
