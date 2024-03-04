@@ -257,9 +257,6 @@ public:
   void setGuideEnabled(bool enabled) { m_guideEnabled = enabled; }
   void toggleGuideEnabled() { m_guideEnabled = !m_guideEnabled; }
   bool isGuideEnabled() {
-    if (!CommandManager::instance()->getAction(MI_FieldGuide)->isChecked())
-      return false;
-
     return m_guideEnabled;
   }
 

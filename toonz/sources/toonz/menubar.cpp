@@ -607,6 +607,8 @@ void TopBar::loadMenubar() {
   addMenuItem(viewMenu, MI_ViewColorcard);
   addMenuItem(viewMenu, MI_ViewBBox);
   viewMenu->addSeparator();
+  addMenuItem(viewMenu, MI_ShowSymmetryGuide);
+  addMenuItem(viewMenu, MI_ShowPerspectiveGrids);
   addMenuItem(viewMenu, MI_SafeArea);
   addMenuItem(viewMenu, MI_FieldGuide);
   addMenuItem(viewMenu, MI_ViewRuler);

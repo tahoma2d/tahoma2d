@@ -35,7 +35,12 @@
 #include "toonzqt/imageutils.h"
 
 // TnzTools includes
+#include "tools/tool.h"
+#include "tools/toolcommandids.h"
 #include "tools/toolhandle.h"
+
+#include "../tnztools/symmetrytool.h"
+#include "../tnztools/perspectivetool.h"
 
 // Tnz6 includes
 #include "tapp.h"
@@ -69,6 +74,8 @@
 using namespace DVGui;
 
 extern TEnv::IntVar EnvViewerPreviewBehavior;
+extern TEnv::IntVar ShowPerspectiveGrids;
+extern TEnv::IntVar ShowSymmetryGuide;
 
 // this enum is to keep comaptibility with older versions
 enum OldV_Parts {
@@ -232,6 +239,10 @@ void BaseViewerPanel::addShowHideContextMenu(QMenu *menu) {
   showHideMenu->addSeparator();
   showHideMenu->addAction(CommandManager::instance()->getAction(MI_ViewCamera));
   showHideMenu->addAction(CommandManager::instance()->getAction(MI_ViewTable));
+  showHideMenu->addAction(
+      CommandManager::instance()->getAction(MI_ShowSymmetryGuide));
+  showHideMenu->addAction(
+      CommandManager::instance()->getAction(MI_ShowPerspectiveGrids));
   showHideMenu->addAction(CommandManager::instance()->getAction(MI_FieldGuide));
   showHideMenu->addAction(CommandManager::instance()->getAction(MI_SafeArea));
   showHideMenu->addAction(CommandManager::instance()->getAction(MI_ViewBBox));
@@ -355,6 +366,9 @@ void BaseViewerPanel::showEvent(QShowEvent *event) {
 
   ret = ret && connect(app->getCurrentTool(), SIGNAL(toolSwitched()),
                        m_sceneViewer, SLOT(onToolSwitched()));
+  ret = ret && connect(app->getCurrentTool(), SIGNAL(toolSwitched()), this,
+                       SLOT(onToolSwitched()));
+
   ret =
       ret && connect(sceneHandle, SIGNAL(preferenceChanged(const QString &)),
                      m_flipConsole, SLOT(onPreferenceChanged(const QString &)));
@@ -388,14 +402,44 @@ void BaseViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
 
   TPanelTitleBarButtonSet *viewModeButtonSet;
   m_referenceModeBs = viewModeButtonSet = new TPanelTitleBarButtonSet();
-  int x                                 = -272;
+  int x                                 = -311;
   int iconWidth                         = 20;
   TPanelTitleBarButton *button;
+
+  m_symmetryButton =
+      new TPanelTitleBarButton(titleBar, getIconPath("pane_symmetry"));
+  m_symmetryButton->setToolTip(tr("Show Symmetry Guide"));
+  titleBar->add(QPoint(x, 0), m_symmetryButton);
+  ret = ret &&
+        connect(m_symmetryButton, SIGNAL(toggled(bool)),
+                CommandManager::instance()->getAction(MI_ShowSymmetryGuide),
+                SLOT(trigger()));
+  ret = ret &&
+        connect(CommandManager::instance()->getAction(MI_ShowSymmetryGuide),
+                SIGNAL(triggered(bool)), this,
+                SLOT(onSymmetryGuideToggled(bool)));
+  onSymmetryGuideToggled(ShowSymmetryGuide);
+
+  m_perspectiveButton =
+      new TPanelTitleBarButton(titleBar, getIconPath("pane_perspective"));
+  m_perspectiveButton->setToolTip(tr("Show Perspective Grids"));
+  x += 1 + iconWidth;
+  titleBar->add(QPoint(x, 0), m_perspectiveButton);
+  ret = ret &&
+        connect(m_perspectiveButton, SIGNAL(toggled(bool)),
+                CommandManager::instance()->getAction(MI_ShowPerspectiveGrids),
+                SLOT(trigger()));
+  ret = ret &&
+        connect(CommandManager::instance()->getAction(MI_ShowPerspectiveGrids),
+                SIGNAL(triggered(bool)), this,
+                SLOT(onPerspectiveGuideToggled(bool)));
+  onPerspectiveGuideToggled(ShowPerspectiveGrids);
 
   // buttons for show / hide toggle for the field guide and the safe area
   TPanelTitleBarButtonForSafeArea *safeAreaButton =
       new TPanelTitleBarButtonForSafeArea(titleBar, getIconPath("pane_safe"));
   safeAreaButton->setToolTip(tr("Safe Area (Right Click to Select)"));
+  x += 1 + iconWidth;
   titleBar->add(QPoint(x, 0), safeAreaButton);
   ret = ret && connect(safeAreaButton, SIGNAL(toggled(bool)),
                        CommandManager::instance()->getAction(MI_SafeArea),
@@ -490,6 +534,29 @@ void BaseViewerPanel::initializeTitleBar(TPanelTitleBar *titleBar) {
   //                      SLOT(enableSubCameraPreview(bool)));
 
   assert(ret);
+}
+
+//-----------------------------------------------------------------------------
+
+void BaseViewerPanel::onSymmetryGuideToggled(bool value) {
+  ShowSymmetryGuide          = value > 0 ? 1 : 0;
+  SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
+      TTool::getTool(T_Symmetry, TTool::RasterImage));
+  if (symmetryTool) symmetryTool->setGuideEnabled(ShowSymmetryGuide);
+  m_symmetryButton->setPressed(ShowSymmetryGuide);
+  m_sceneViewer->update();
+}
+
+//-----------------------------------------------------------------------------
+
+void BaseViewerPanel::onPerspectiveGuideToggled(bool value) {
+  ShowPerspectiveGrids = value > 0 ? 1 : 0;
+  PerspectiveTool *perspectiveTool = dynamic_cast<PerspectiveTool *>(
+      TTool::getTool(T_PerspectiveGrid, TTool::RasterImage));
+  if (perspectiveTool)
+    perspectiveTool->setGuideEnabled(ShowPerspectiveGrids);
+  m_perspectiveButton->setPressed(ShowPerspectiveGrids);
+  m_sceneViewer->update();
 }
 
 //-----------------------------------------------------------------------------
@@ -1015,6 +1082,22 @@ void BaseViewerPanel::onActiveViewerChanged() {
     m_isActive = false;
   }
   assert(ret);
+}
+
+void BaseViewerPanel::onToolSwitched() {
+  TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+
+  if (tool->getName() == T_Symmetry) {
+    if (!ShowSymmetryGuide) {
+      m_symmetryButton->setPressed(true);
+      m_symmetryButton->toggled(true);
+    }
+  } else if (tool->getName() == T_PerspectiveGrid) {
+    if (!ShowPerspectiveGrids) {
+      m_perspectiveButton->setPressed(true);
+      m_perspectiveButton->toggled(true);
+    }
+  }
 }
 
 //=============================================================================

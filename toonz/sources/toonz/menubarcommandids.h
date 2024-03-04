@@ -526,4 +526,6 @@
 
 #define MI_NewFolder "MI_NewFolder"
 
+#define MI_ShowSymmetryGuide "MI_ShowSymmetryGuide"
+#define MI_ShowPerspectiveGrids "MI_ShowPerspectiveGrids"
 #endif

@@ -512,7 +512,8 @@ PerspectiveTool::PerspectiveTool()
     , m_selecting(false)
     , m_selectingRect(TRectD())
     , m_firstTime(false)
-    , m_undo(0) {
+    , m_undo(0)
+    , m_guideEnabled(false) {
   bind(TTool::AllTargets);
 
   m_prop.bind(m_type);

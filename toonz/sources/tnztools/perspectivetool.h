@@ -444,6 +444,8 @@ public:
 
   void setPerspectiveObjects(std::vector<PerspectiveObject *> objs);
   std::vector<PerspectiveObject *> getPerspectiveObjects() {
+    if (!m_guideEnabled) return std::vector<PerspectiveObject *>();
+
     return m_perspectiveObjs;
   }
 
@@ -462,6 +464,10 @@ public:
 
   void onEnter() override;
   void onDeactivate() override;
+
+  void setGuideEnabled(bool enabled) { m_guideEnabled = enabled; }
+  void toggleGuideEnabled() { m_guideEnabled = !m_guideEnabled; }
+  bool isGuideEnabled() { return m_guideEnabled; }
 
   void initPresets();
   void loadPreset();
@@ -524,6 +530,8 @@ protected:
   PerspectivePresetManager m_presetsManager;
 
   PerspectiveObjectUndo *m_undo;
+
+  bool m_guideEnabled;
 };
 
 #endif
