@@ -2256,6 +2256,7 @@ TImageP TImageReaderSvg::load() {
                            paintIndex, true, true, false);
         vimage->exitGroup();
       }
+      vimage->findRegions();
     }
     if (startStrokeIndex == vimage->getStrokeCount()) continue;
 
