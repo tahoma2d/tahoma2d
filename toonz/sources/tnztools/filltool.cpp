@@ -1781,7 +1781,8 @@ void AreaFillTool::leftButtonDoubleClick(const TPointD &pos,
         m_firstStrokes.clear();
         for (int i = 0; i < m_polyline.getBrushCount(); i++)
           m_firstStrokes.push_back(m_polyline.makePolylineStroke(i));
-        m_firstFrameId = m_parent->getCurrentFid();
+        m_firstFrameId  = m_parent->getCurrentFid();
+        m_firstFrameIdx = app->getCurrentFrame()->getFrameIndex();
       } else {
         if (app->getCurrentFrame()->isEditingScene()) {
           app->getCurrentColumn()->setColumnIndex(m_currCell.first);
@@ -1941,8 +1942,9 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
         }
         m_parent->invalidate(m_selectingRect.enlarge(2));
         if (e.isShiftPressed()) {
-          m_firstRect    = m_selectingRect;
-          m_firstFrameId = m_parent->getCurrentFid();
+          m_firstRect     = m_selectingRect;
+          m_firstFrameId  = m_parent->getCurrentFid();
+          m_firstFrameIdx = app->getCurrentFrame()->getFrameIndex();
           m_firstStrokes.clear();
           if (m_polyline.size() > 1) {
             for (int i = 0; i < m_polyline.getBrushCount(); i++)
@@ -2069,7 +2071,8 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
           m_firstStrokes.clear();
           for (int i = 0; i < m_track.getBrushCount(); i++)
             m_firstStrokes.push_back(m_track.makeStroke(error, i));
-          m_firstFrameId = m_parent->getCurrentFid();
+          m_firstFrameId  = m_parent->getCurrentFid();
+          m_firstFrameIdx = app->getCurrentFrame()->getFrameIndex();
         } else {
           if (app->getCurrentFrame()->isEditingScene()) {
             app->getCurrentColumn()->setColumnIndex(m_currCell.first);
