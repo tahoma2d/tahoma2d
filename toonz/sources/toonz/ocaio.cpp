@@ -787,7 +787,9 @@ void OCAIo::OCAInputData::setSceneData() {
   m_scene->getCurrentCamera()->setRes(resolution);
 
   m_xsheet->updateFrameCount();
-  m_oprop->setRange(m_startTime, m_endTime, 1);
+
+  // Don't set output settings frame range from import
+  //  m_oprop->setRange(m_startTime, m_endTime, 1);
 
   // If background is all 0s, use our default Bg color
   if (m_bgRed || m_bgGreen || m_bgBlue || m_bgAlpha) {
