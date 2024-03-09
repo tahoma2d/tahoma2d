@@ -612,7 +612,7 @@ TFxTimeRegion TFx::getTimeRegion(bool ignoreImplicit) const {
     if (port && port->isConnected() && !port->isaControlPort()) {
       TFx *fx = port->getFx();
       std::wstring fxName = fx->getName();
-      tr += fx->getTimeRegion((fx->getFxType() == "Toonz_columnFx" ? true : ignoreImplicit));
+      tr += fx->getTimeRegion(ignoreImplicit);
     }
   }
 
