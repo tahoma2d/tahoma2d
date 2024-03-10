@@ -206,7 +206,7 @@ bool OCAData::buildSubSceneGroup(QJsonObject &json, const QList<int> &rows,
       QJsonObject json;
       if (column->isInFolder()) {
         int folderId = column->getFolderIdStack().front();
-        if (buildFolderGroup(json, rows, col, folderId, column,
+        if (buildFolderGroup(json, crows, col, folderId, column,
                              exportReferences)) {
           layers.append(json);
           for (int i = col; i < xsheet->getColumnCount(); i++) {
