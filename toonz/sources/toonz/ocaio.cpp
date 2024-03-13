@@ -187,12 +187,9 @@ bool OCAData::buildSubSceneGroup(QJsonObject &json, const QList<int> &rows,
 
   // Build a list of child rows
   QList<int> crows;
-  for (int i = m_startTime; i <= m_endTime; i++) {
-    TXshCell cell = column->getCell(i);
-    if (cell.isEmpty() || cell.getFrameId().isStopFrame())
-      crows.append(-1);
-    else
-      crows.append(cell.getFrameId().getNumber() - 1);
+  int crow = xsheet->getFrameCount() - 1;
+  for (int i = 0; i <= crow; i++) {
+      crows.append(i);
   }
 
   // Build all columns from sub-xsheet
@@ -209,7 +206,7 @@ bool OCAData::buildSubSceneGroup(QJsonObject &json, const QList<int> &rows,
       QJsonObject json;
       if (column->isInFolder()) {
         int folderId = column->getFolderIdStack().front();
-        if (buildFolderGroup(json, rows, col, folderId, column,
+        if (buildFolderGroup(json, crows, col, folderId, column,
                              exportReferences)) {
           layers.append(json);
           for (int i = col; i < xsheet->getColumnCount(); i++) {
@@ -438,20 +435,9 @@ void OCAData::build(ToonzScene *scene, TXsheet *xsheet, QString name,
   m_raEXR = useEXR;
   m_veSVG = vectorAsSVG;
 
-  // if the current xsheet is top xsheet in the scene and the output
-  // frame range is specified, set the "to" frame value as duration
   TOutputProperties *oprop = scene->getProperties()->getOutputProperties();
-  int from, to, step;
-  if (scene->getTopXsheet() == xsheet && oprop->getRange(from, to, step)) {
-    m_startTime = from;
-    m_endTime   = to;
-    //m_stepTime  = step;
-  } else {
-    m_startTime = 0;
-    m_endTime   = xsheet->getFrameCount() - 1;
-    //m_stepTime  = 1;
-  }
-  if (m_endTime < 0) m_endTime = 0;
+  m_startTime = 0;
+  m_endTime   = xsheet->getFrameCount() - 1;
 
   // Build a list of rows
   QList<int> rows;
@@ -755,16 +741,6 @@ bool OCAIo::OCAInputData::read(QString path, QJsonObject &json) {
 
 void OCAIo::OCAInputData::getSceneData() {
   m_framerate = m_oprop->getFrameRate();
-  int from, to, step;
-  if (m_scene->getTopXsheet() == m_xsheet &&
-      m_oprop->getRange(from, to, step)) {
-    m_startTime = from;
-    m_endTime   = to;
-  } else {
-    m_startTime = 0;
-    m_endTime   = m_xsheet->getFrameCount() - 1;
-  }
-  if (m_endTime < 0) m_endTime = 0;
 
   m_width  = m_scene->getCurrentCamera()->getRes().lx;
   m_height = m_scene->getCurrentCamera()->getRes().ly;
@@ -811,7 +787,9 @@ void OCAIo::OCAInputData::setSceneData() {
   m_scene->getCurrentCamera()->setRes(resolution);
 
   m_xsheet->updateFrameCount();
-  m_oprop->setRange(m_startTime, m_endTime, 1);
+
+  // Don't set output settings frame range from import
+  //  m_oprop->setRange(m_startTime, m_endTime, 1);
 
   // If background is all 0s, use our default Bg color
   if (m_bgRed || m_bgGreen || m_bgBlue || m_bgAlpha) {
