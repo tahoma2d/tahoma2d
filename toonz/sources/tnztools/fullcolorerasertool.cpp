@@ -49,6 +49,11 @@ using namespace ToolUtils;
 #define FREEHANDERASE L"Freehand"
 #define POLYLINEERASE L"Polyline"
 
+#define LINEAR_INTERPOLATION L"Linear"
+#define EASE_IN_INTERPOLATION L"Ease In"
+#define EASE_OUT_INTERPOLATION L"Ease Out"
+#define EASE_IN_OUT_INTERPOLATION L"Ease In/Out"
+
 TEnv::DoubleVar FullcolorEraseMinSize("FullcolorEraseMinSize", 1);
 TEnv::DoubleVar FullcolorEraseSize("FullcolorEraseSize", 5);
 TEnv::DoubleVar FullcolorEraseHardness("FullcolorEraseHardness", 100);
@@ -57,6 +62,7 @@ TEnv::StringVar FullcolorEraserType("FullcolorEraseType", "Normal");
 TEnv::IntVar FullcolorEraserInvert("FullcolorEraseInvert", 0);
 TEnv::IntVar FullcolorEraserRange("FullcolorEraseRange", 0);
 TEnv::IntVar FullcolorEraserPressure("FullcolorEraserPressure", 1);
+TEnv::StringVar FullcolorEraserInterpolation("FullcolorEraserInterpolation", "Linear");
 
 //**********************************************************************************
 //    Local namespace  stuff
@@ -359,6 +365,7 @@ private:
   TDoubleProperty m_opacity;
   TDoubleProperty m_hardness;
   TEnumProperty m_eraseType;
+  TEnumProperty m_interpolation;
   TBoolProperty m_invertOption;
   TBoolProperty m_multi;
 
@@ -413,7 +420,8 @@ FullColorEraserTool::FullColorEraserTool(std::string name)
     , m_selecting(false)
     , m_firstFrameSelected(false)
     , m_isXsheetCell(false)
-    , m_pressure("Pressure", true) {
+    , m_pressure("Pressure", true)
+    , m_interpolation("interpolation:") {
   bind(TTool::RasterImage);
 
   m_size.setNonLinearSlider();
@@ -425,16 +433,23 @@ FullColorEraserTool::FullColorEraserTool(std::string name)
   m_prop.bind(m_pressure);
   m_prop.bind(m_invertOption);
   m_prop.bind(m_multi);
+  m_prop.bind(m_interpolation);
 
   m_eraseType.addValue(NORMALERASE);
   m_eraseType.addValue(RECTERASE);
   m_eraseType.addValue(FREEHANDERASE);
   m_eraseType.addValue(POLYLINEERASE);
 
+  m_interpolation.addValue(LINEAR_INTERPOLATION);
+  m_interpolation.addValue(EASE_IN_INTERPOLATION);
+  m_interpolation.addValue(EASE_OUT_INTERPOLATION);
+  m_interpolation.addValue(EASE_IN_OUT_INTERPOLATION);
+
   m_eraseType.setId("Type");
   m_pressure.setId("PressureSensitivity");
   m_invertOption.setId("Invert");
   m_multi.setId("FrameRange");
+  m_interpolation.setId("Interpolation");
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -457,6 +472,12 @@ void FullColorEraserTool::updateTranslation() {
 
   m_invertOption.setQStringName(tr("Invert"));
   m_multi.setQStringName(tr("Frame Range"));
+
+  m_interpolation.setQStringName(tr(""));
+  m_interpolation.setItemUIName(LINEAR_INTERPOLATION, tr("Linear"));
+  m_interpolation.setItemUIName(EASE_IN_INTERPOLATION, tr("Ease In"));
+  m_interpolation.setItemUIName(EASE_OUT_INTERPOLATION, tr("Ease Out"));
+  m_interpolation.setItemUIName(EASE_IN_OUT_INTERPOLATION, tr("Ease In/Out"));
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -472,6 +493,7 @@ void FullColorEraserTool::onActivate() {
     m_pressure.setValue((bool)FullcolorEraserPressure);
     m_invertOption.setValue((bool)FullcolorEraserInvert);
     m_multi.setValue((bool)FullcolorEraserRange);
+    m_interpolation.setValue(::to_wstring(FullcolorEraserInterpolation.getValue()));
     m_firstTime = false;
   }
 
@@ -1196,14 +1218,15 @@ void FullColorEraserTool::draw() {
 //----------------------------------------------------------------------------------------------------------
 
 bool FullColorEraserTool::onPropertyChanged(std::string propertyName) {
-  FullcolorEraseMinSize   = m_size.getValue().first;
-  FullcolorEraseSize      = m_size.getValue().second;
-  FullcolorEraseHardness  = m_hardness.getValue();
-  FullcolorEraserOpacity  = m_opacity.getValue();
-  FullcolorEraserType     = ::to_string(m_eraseType.getValue());
-  FullcolorEraserPressure = (int)m_pressure.getValue();
-  FullcolorEraserInvert   = (int)m_invertOption.getValue();
-  FullcolorEraserRange    = (int)m_multi.getValue();
+  FullcolorEraseMinSize        = m_size.getValue().first;
+  FullcolorEraseSize           = m_size.getValue().second;
+  FullcolorEraseHardness       = m_hardness.getValue();
+  FullcolorEraserOpacity       = m_opacity.getValue();
+  FullcolorEraserType          = ::to_string(m_eraseType.getValue());
+  FullcolorEraserPressure      = (int)m_pressure.getValue();
+  FullcolorEraserInvert        = (int)m_invertOption.getValue();
+  FullcolorEraserRange         = (int)m_multi.getValue();
+  FullcolorEraserInterpolation = ::to_string(m_interpolation.getValue());
   if (propertyName == "Hardness:" || propertyName == "Size:") {
     m_brushPad =
         getBrushPad(m_size.getValue().second, m_hardness.getValue() * 0.01);
@@ -1315,6 +1338,15 @@ void FullColorEraserTool::multiUpdate(TFrameId &firstFid, TFrameId &lastFid,
   int m = fids.size();
   assert(m > 0);
 
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (m_interpolation.getValue() == EASE_IN_INTERPOLATION) {
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (m_interpolation.getValue() == EASE_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (m_interpolation.getValue() == EASE_IN_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
   TUndoManager::manager()->beginBlock();
   for (int i = 0; i < m; ++i) {
     TFrameId fid = fids[i];
@@ -1322,6 +1354,7 @@ void FullColorEraserTool::multiUpdate(TFrameId &firstFid, TFrameId &lastFid,
     TRasterImageP ri = m_level->getFrame(fid, true);
     assert(ri);
     double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t           = TInbetween::interpolation(t, algorithm);
     TRectD rect = interpolateRect(firstRect, lastRect, backward ? 1 - t : t);
     if (m_invertOption.getValue()) {
       TRectD rect01 =
@@ -1372,6 +1405,15 @@ void FullColorEraserTool::multiUpdate(int firstFidx, int lastFidx,
 
   int m = cellList.size();
 
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (m_interpolation.getValue() == EASE_IN_INTERPOLATION) {
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (m_interpolation.getValue() == EASE_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (m_interpolation.getValue() == EASE_IN_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
   TUndoManager::manager()->beginBlock();
   for (int i = 0; i < m; ++i) {
     row           = cellList[i].first;
@@ -1381,6 +1423,7 @@ void FullColorEraserTool::multiUpdate(int firstFidx, int lastFidx,
     if (!ri) continue;
     assert(ri);
     double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t           = TInbetween::interpolation(t, algorithm);
     TRectD rect = interpolateRect(firstRect, lastRect, backward ? 1 - t : t);
     if (m_invertOption.getValue()) {
       TRectD rect01 =
@@ -1447,12 +1490,23 @@ void FullColorEraserTool::multiAreaEraser(TFrameId &firstFid, TFrameId &lastFid,
   std::vector<TFrameId> fids(i0, i1);
   int m = fids.size();
   assert(m > 0);
+
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (m_interpolation.getValue() == EASE_IN_INTERPOLATION) {
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (m_interpolation.getValue() == EASE_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (m_interpolation.getValue() == EASE_IN_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
   TUndoManager::manager()->beginBlock();
   for (int i = 0; i < m; ++i) {
     TFrameId fid = fids[i];
     assert(firstFid <= fid && fid <= lastFid);
     TImageP img = m_level->getFrame(fid, true);
     double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t           = TInbetween::interpolation(t, algorithm);
     doMultiEraser(img, backward ? 1 - t : t, fid, firstImage, lastImage);
     m_level->getProperties()->setDirtyFlag(true);
     notifyImageChanged(fid);
@@ -1497,6 +1551,15 @@ void FullColorEraserTool::multiAreaEraser(int firstFidx, int lastFidx,
 
   int m = cellList.size();
 
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (m_interpolation.getValue() == EASE_IN_INTERPOLATION) {
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (m_interpolation.getValue() == EASE_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (m_interpolation.getValue() == EASE_IN_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
   TUndoManager::manager()->beginBlock();
   for (int i = 0; i < m; ++i) {
     row               = cellList[i].first;
@@ -1504,7 +1567,8 @@ void FullColorEraserTool::multiAreaEraser(int firstFidx, int lastFidx,
     TFrameId fid      = cell.getFrameId();
     TImageP img       = (TImageP)cell.getImage(true);
     if (!img) continue;
-    double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t        = TInbetween::interpolation(t, algorithm);
     doMultiEraser(img, backward ? 1 - t : t, fid, firstImage, lastImage);
     m_level->getProperties()->setDirtyFlag(true);
     notifyImageChanged(fid);

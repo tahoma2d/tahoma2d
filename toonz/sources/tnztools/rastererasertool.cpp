@@ -67,6 +67,11 @@ using namespace ToolUtils;
 #define POLYLINEERASE L"Polyline"
 #define SEGMENTERASE L"Segment"
 
+#define LINEAR_INTERPOLATION L"Linear"
+#define EASE_IN_INTERPOLATION L"Ease In"
+#define EASE_OUT_INTERPOLATION L"Ease Out"
+#define EASE_IN_OUT_INTERPOLATION L"Ease In/Out"
+
 TEnv::DoubleVar EraseMinSize("InknpaintEraseMinSize", 1);
 TEnv::DoubleVar EraseSize("InknpaintEraseSize", 10);
 TEnv::StringVar EraseType("InknpaintEraseType", "Normal");
@@ -78,6 +83,8 @@ TEnv::DoubleVar EraseHardness("EraseHardness", 100);
 TEnv::IntVar ErasePencil("InknpaintErasePencil", 0);
 TEnv::IntVar EraseOnlySavebox("InknpaintEraseOnlySavebox", 0);
 TEnv::IntVar ErasePressure("InknpaintErasePressure", 1);
+TEnv::StringVar EraseInterpolation("InknpaintEraseInterpolation",
+                                         "Linear");
 
 namespace {
 
@@ -753,6 +760,7 @@ private:
   TPropertyGroup m_prop;
 
   TEnumProperty m_eraseType;
+  TEnumProperty m_interpolation;
   TIntPairProperty m_toolSize;
   TBoolProperty m_pressure;
   TDoubleProperty m_hardness;
@@ -842,7 +850,8 @@ EraserTool::EraserTool(std::string name)
     , m_workingFrameId(TFrameId())
     , m_isLeftButtonPressed(false)
     , m_eraseOnlySavebox("Savebox", false)
-    , m_pressure("Pressure", true) {
+    , m_pressure("Pressure", true)
+    , m_interpolation("interpolation:") {
   bind(TTool::ToonzImage);
 
   m_toolSize.setNonLinearSlider();
@@ -865,6 +874,11 @@ EraserTool::EraserTool(std::string name)
   m_prop.bind(m_currentStyle);
   m_prop.bind(m_invertOption);
   m_prop.bind(m_multi);
+  m_prop.bind(m_interpolation);
+  m_interpolation.addValue(LINEAR_INTERPOLATION);
+  m_interpolation.addValue(EASE_IN_INTERPOLATION);
+  m_interpolation.addValue(EASE_OUT_INTERPOLATION);
+  m_interpolation.addValue(EASE_IN_OUT_INTERPOLATION);
   m_prop.bind(m_pencil);
   m_prop.bind(m_eraseOnlySavebox);
 
@@ -876,6 +890,7 @@ EraserTool::EraserTool(std::string name)
   m_colorType.setId("Mode");
   m_eraseType.setId("Type");
   m_eraseOnlySavebox.setId("EraseOnlySavebox");
+  m_interpolation.setId("Interpolation");
 }
 
 //------------------------------------------------------------------------
@@ -902,6 +917,12 @@ void EraserTool::updateTranslation() {
   m_multi.setQStringName(tr("Frame Range"));
   m_pencil.setQStringName(tr("Pencil Mode"));
   m_eraseOnlySavebox.setQStringName(tr("Savebox"));
+
+  m_interpolation.setQStringName(tr(""));
+  m_interpolation.setItemUIName(LINEAR_INTERPOLATION, tr("Linear"));
+  m_interpolation.setItemUIName(EASE_IN_INTERPOLATION, tr("Ease In"));
+  m_interpolation.setItemUIName(EASE_OUT_INTERPOLATION, tr("Ease Out"));
+  m_interpolation.setItemUIName(EASE_IN_OUT_INTERPOLATION, tr("Ease In/Out"));
 }
 
 //-------------------------------------------------------------------------------------------------------
@@ -1093,6 +1114,15 @@ void EraserTool::multiUpdate(const TXshSimpleLevelP &level, TFrameId firstFid,
 
   std::wstring levelName = level->getName();
 
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (m_interpolation.getValue() == EASE_IN_INTERPOLATION) {
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (m_interpolation.getValue() == EASE_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (m_interpolation.getValue() == EASE_IN_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
   /*-- FrameRangeの各フレームについて --*/
   TUndoManager::manager()->beginBlock();
   for (int i = 0; i < m; ++i) {
@@ -1102,6 +1132,7 @@ void EraserTool::multiUpdate(const TXshSimpleLevelP &level, TFrameId firstFid,
     if (!ti) continue;
     /*--補間の係数を取得 --*/
     double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t        = TInbetween::interpolation(t, algorithm);
     /*--invertがONのとき、外側領域を4つのRectに分けてupdate--*/
     if (m_invertOption.getValue()) {
       TRect rect =
@@ -1164,6 +1195,15 @@ void EraserTool::multiUpdate(const TXshSimpleLevelP &level, int firstFidx,
 
   std::wstring levelName = level->getName();
 
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (m_interpolation.getValue() == EASE_IN_INTERPOLATION) {
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (m_interpolation.getValue() == EASE_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (m_interpolation.getValue() == EASE_IN_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
   /*-- FrameRangeの各フレームについて --*/
   TUndoManager::manager()->beginBlock();
   for (int i = 0; i < m; ++i) {
@@ -1174,6 +1214,7 @@ void EraserTool::multiUpdate(const TXshSimpleLevelP &level, int firstFidx,
     if (!ti) continue;
     /*--補間の係数を取得 --*/
     double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t        = TInbetween::interpolation(t, algorithm);
     /*--invertがONのとき、外側領域を4つのRectに分けてupdate--*/
     if (m_invertOption.getValue()) {
       TRect rect =
@@ -2149,6 +2190,9 @@ bool EraserTool::onPropertyChanged(std::string propertyName) {
     EraseOnlySavebox = (int)(m_eraseOnlySavebox.getValue());
   }
 
+  else if (propertyName == m_interpolation.getName())
+    EraseInterpolation = ::to_string(m_interpolation.getValue());
+
   if (propertyName == m_hardness.getName() ||
       propertyName == m_toolSize.getName()) {
     m_brushPad = ToolUtils::getBrushPad(m_toolSize.getValue().second,
@@ -2247,6 +2291,7 @@ void EraserTool::onEnter() {
     m_hardness.setValue(EraseHardness);
     m_pencil.setValue(ErasePencil);
     m_eraseOnlySavebox.setValue(EraseOnlySavebox ? 1 : 0);
+    m_interpolation.setValue(::to_wstring(EraseInterpolation.getValue()));
     m_firstTime = false;
   }
   double x = m_toolSize.getValue().second;
@@ -2322,12 +2367,23 @@ void EraserTool::multiAreaEraser(const TXshSimpleLevelP &sl, TFrameId &firstFid,
   std::vector<TFrameId> fids(i0, i1);
   int m = fids.size();
   assert(m > 0);
+
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (m_interpolation.getValue() == EASE_IN_INTERPOLATION) {
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (m_interpolation.getValue() == EASE_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (m_interpolation.getValue() == EASE_IN_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
   TUndoManager::manager()->beginBlock();
   for (int i = 0; i < m; ++i) {
     TFrameId fid = fids[i];
     assert(firstFid <= fid && fid <= lastFid);
     TImageP img = sl->getFrame(fid, true);
     double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t           = TInbetween::interpolation(t, algorithm);
     if (m_eraseType.getValue() == SEGMENTERASE)
       doMultiSegmentEraser(img, backward ? 1 - t : t, sl, fid, firstImage,
                            lastImage);
@@ -2377,6 +2433,15 @@ void EraserTool::multiAreaEraser(const TXshSimpleLevelP &sl, int firstFidx,
 
   int m = cellList.size();
 
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (m_interpolation.getValue() == EASE_IN_INTERPOLATION) {
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (m_interpolation.getValue() == EASE_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (m_interpolation.getValue() == EASE_IN_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
   TUndoManager::manager()->beginBlock();
   for (int i = 0; i < m; ++i) {
     row           = cellList[i].first;
@@ -2384,7 +2449,8 @@ void EraserTool::multiAreaEraser(const TXshSimpleLevelP &sl, int firstFidx,
     TFrameId fid  = cell.getFrameId();
     TImageP img   = (TImageP)cell.getImage(true);
     if (!img) continue;
-    double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t        = TInbetween::interpolation(t, algorithm);
     if (m_eraseType.getValue() == SEGMENTERASE)
       doMultiSegmentEraser(img, backward ? 1 - t : t, sl, fid, firstImage,
                            lastImage);
