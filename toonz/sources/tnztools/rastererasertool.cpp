@@ -1595,8 +1595,9 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
           }
 
           if (e.isShiftPressed()) {
-            m_firstRect    = m_selectingRect;
-            m_firstFrameId = getFrameId();
+            m_firstRect     = m_selectingRect;
+            m_firstFrameId  = getFrameId();
+            m_firstFrameIdx = getFrame();
             m_firstStrokes.clear();
             if (m_polyline.size() > 1) {
               for (int i = 0; i < m_polyline.getBrushCount(); i++)
@@ -1823,7 +1824,8 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
             for (int i = 0; i < m_track.getBrushCount(); i++)
               m_firstStrokes.push_back(m_track.makeStroke(error, i));
             invalidate();
-            m_firstFrameId = getFrameId();
+            m_firstFrameId  = getFrameId();
+            m_firstFrameIdx = getFrame();
           } else {
             if (m_isXsheetCell) {
               app->getCurrentColumn()->setColumnIndex(m_currCell.first);
@@ -1916,7 +1918,8 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
             for (int i = 0; i < m_track.getBrushCount(); i++)
               m_firstStrokes.push_back(m_track.makeStroke(error, i));
             invalidate();
-            m_firstFrameId = getFrameId();
+            m_firstFrameId  = getFrameId();
+            m_firstFrameIdx = getFrame();
           } else {
             if (m_isXsheetCell) {
               app->getCurrentColumn()->setColumnIndex(m_currCell.first);
@@ -2017,7 +2020,8 @@ void EraserTool::leftButtonDoubleClick(const TPointD &pos,
         for (int i = 0; i < m_polyline.getBrushCount(); i++)
           m_firstStrokes.push_back(m_polyline.makePolylineStroke(i));
         invalidate();
-        m_firstFrameId = getFrameId();
+        m_firstFrameId  = getFrameId();
+        m_firstFrameIdx = getFrame();
       } else {
         if (m_isXsheetCell) {
           app->getCurrentColumn()->setColumnIndex(m_currCell.first);
