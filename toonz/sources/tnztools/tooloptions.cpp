@@ -2297,6 +2297,7 @@ EraserToolOptionsBox::EraserToolOptionsBox(QWidget *parent, TTool *tool,
   m_colorMode = dynamic_cast<ToolOptionCombo *>(m_controls.value("Mode:"));
   if (m_colorMode)
     m_colorModeLabel = m_labels.value(m_colorMode->propertyName());
+  m_pressure = dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Pressure"));
   m_invertMode = dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Invert"));
   m_multiFrameMode =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Frame Range"));
@@ -2325,6 +2326,7 @@ EraserToolOptionsBox::EraserToolOptionsBox(QWidget *parent, TTool *tool,
   if (m_toolType && m_toolType->getProperty()->getValue() == L"Normal") {
     m_invertMode->setEnabled(false);
     m_multiFrameMode->setEnabled(false);
+    m_pressure->setEnabled(true);
   }
 
   if (m_toolType && m_toolType->getProperty()->getValue() == L"Segment") {
@@ -2333,6 +2335,7 @@ EraserToolOptionsBox::EraserToolOptionsBox(QWidget *parent, TTool *tool,
       m_colorModeLabel->setEnabled(false);
     }
     m_invertMode->setEnabled(false);
+    m_pressure->setEnabled(false);
   }
 
   if (m_eraseOnlySavebox) {
@@ -2378,6 +2381,7 @@ void EraserToolOptionsBox::onToolTypeChanged(int index) {
     m_colorMode->setDisabled(isSegment);
     m_colorModeLabel->setDisabled(isSegment);
   }
+  m_pressure->setEnabled(!value);
   m_invertMode->setEnabled(!isSegment && value);
   if (m_eraseOnlySavebox) m_eraseOnlySavebox->setEnabled(isSegment);
 }
