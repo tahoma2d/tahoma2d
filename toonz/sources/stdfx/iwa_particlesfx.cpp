@@ -484,7 +484,7 @@ void Iwa_TiledParticlesFx::doCompute(TTile &tile, double frame,
     TRectD bbox;
 
     for (unsigned int i = 0; i < (int)part_ports.size(); ++i) {
-      const TFxTimeRegion &tr = (*part_ports[i])->getTimeRegion();
+      const TFxTimeRegion &tr = (*part_ports[i])->getTimeRegion(true);
 
       lastframe.push_back(tr.getLastFrame() + 1);
       partLevel.push_back(new TLevel());
