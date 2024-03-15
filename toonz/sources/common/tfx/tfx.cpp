@@ -600,7 +600,7 @@ int TFx::getReferenceColumnIndex() const {
 
 //--------------------------------------------------
 
-TFxTimeRegion TFx::getTimeRegion(bool ignoreImplicit) const {
+TFxTimeRegion TFx::getTimeRegion() const {
   if (m_imp->m_portTable.empty()) return TFxTimeRegion::createUnlimited();
 
   TFxTimeRegion tr((std::numeric_limits<double>::max)(),
@@ -612,7 +612,7 @@ TFxTimeRegion TFx::getTimeRegion(bool ignoreImplicit) const {
     if (port && port->isConnected() && !port->isaControlPort()) {
       TFx *fx = port->getFx();
       std::wstring fxName = fx->getName();
-      tr += fx->getTimeRegion(ignoreImplicit);
+      tr += fx->getTimeRegion();
     }
   }
 

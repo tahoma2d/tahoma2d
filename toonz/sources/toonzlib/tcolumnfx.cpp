@@ -1529,7 +1529,7 @@ std::string TLevelColumnFx::getPluginId() const { return "Toonz_"; }
 
 //-------------------------------------------------------------------
 
-TFxTimeRegion TLevelColumnFx::getTimeRegion(bool ignoreImplicit) const {
+TFxTimeRegion TLevelColumnFx::getTimeRegion() const {
   if (!m_levelColumn) return TFxTimeRegion();
 
   int first = m_levelColumn->getFirstRow();
@@ -1537,7 +1537,7 @@ TFxTimeRegion TLevelColumnFx::getTimeRegion(bool ignoreImplicit) const {
 
   // For implicit hold, if the last frame is not a stop frame, it's held
   // indefinitely
-  if (Preferences::instance()->isImplicitHoldEnabled() && !ignoreImplicit &&
+  if (Preferences::instance()->isImplicitHoldEnabled() &&
       !m_levelColumn->getCell(last - 1).getFrameId().isStopFrame())
     return TFxTimeRegion(0, (std::numeric_limits<double>::max)());
 
@@ -1757,7 +1757,7 @@ std::string TPaletteColumnFx::getPluginId() const { return "Toonz_"; }
 
 //-------------------------------------------------------------------
 
-TFxTimeRegion TPaletteColumnFx::getTimeRegion(bool ignoreImplicit) const {
+TFxTimeRegion TPaletteColumnFx::getTimeRegion() const {
   int first = 0;
   int last  = 11;
   return TFxTimeRegion(first, last);
@@ -1847,7 +1847,7 @@ std::string TZeraryColumnFx::getPluginId() const { return "Toonz_"; }
 
 //-------------------------------------------------------------------
 
-TFxTimeRegion TZeraryColumnFx::getTimeRegion(bool ignoreImplicit) const {
+TFxTimeRegion TZeraryColumnFx::getTimeRegion() const {
   return TFxTimeRegion(0, (std::numeric_limits<double>::max)());
 }
 

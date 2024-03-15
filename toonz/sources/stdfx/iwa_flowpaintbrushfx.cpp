@@ -36,7 +36,7 @@ void Iwa_FlowPaintBrushFx::getBrushRasters(std::vector<TRasterP> &brushRasters,
                                            const TRenderSettings &ri) {
   // ブラシテクスチャ情報
   TPointD b_offset;
-  const TFxTimeRegion &tr = m_brush->getTimeRegion(true);
+  const TFxTimeRegion &tr = m_brush->getTimeRegion();
   lastFrame = (tr.isUnlimited() ? ri.m_lastFrame : tr.getLastFrame()) + 1;
   TLevelP partLevel = new TLevel();
   partLevel->setName(m_brush->getAlias(0, ri));
