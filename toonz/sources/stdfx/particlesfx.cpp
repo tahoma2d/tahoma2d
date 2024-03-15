@@ -424,7 +424,7 @@ void ParticlesFx::doCompute(TTile &tile, double frame,
     TRectD bbox;
 
     for (unsigned int i = 0; i < (int)part_ports.size(); ++i) {
-      const TFxTimeRegion &tr = (*part_ports[i])->getTimeRegion(true);
+      const TFxTimeRegion &tr = (*part_ports[i])->getTimeRegion();
 
       int lastFrameId = tr.isUnlimited() ? ri.m_lastFrame : tr.getLastFrame();
 

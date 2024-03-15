@@ -127,7 +127,7 @@ public:
                        const TRenderSettings &info) const override;
   bool doGetBBox(double frame, TRectD &bBox,
                  const TRenderSettings &info) override;
-  TFxTimeRegion getTimeRegion(bool ignoreImplicit = false) const override {
+  TFxTimeRegion getTimeRegion() const override {
     return TFxTimeRegion::createUnlimited();
   }
 
