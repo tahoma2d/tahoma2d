@@ -208,17 +208,13 @@ void FxTree::searchItems(const QString &searchWord) {
 
                 Inherits \b Dialog.
 */
-InsertFxPopup::InsertFxPopup()
-    : Dialog(TApp::instance()->getMainWindow(), true, false, "InsertFx")
+InsertFxPopup::InsertFxPopup(QWidget *parent, Qt::WindowFlags flags)
+    : QFrame(parent)
     , m_folderIcon(QIcon())
     , m_presetIcon(QIcon())
     , m_fxIcon(QIcon()) {
-  setWindowTitle(tr("FX Browser"));
 
-  setModal(false);
-
-  setTopMargin(0);
-  setTopSpacing(0);
+  QVBoxLayout *browserLay = new QVBoxLayout();
 
   QHBoxLayout *searchLay = new QHBoxLayout();
   QLineEdit *searchEdit  = new QLineEdit(this);
@@ -227,7 +223,7 @@ InsertFxPopup::InsertFxPopup()
   searchLay->setSpacing(5);
   searchLay->addWidget(new QLabel(tr("Search:"), this), 0);
   searchLay->addWidget(searchEdit);
-  addLayout(searchLay);
+  browserLay->addLayout(searchLay);
   connect(searchEdit, SIGNAL(textChanged(const QString &)), this,
           SLOT(onSearchTextChanged(const QString &)));
 
@@ -273,27 +269,44 @@ InsertFxPopup::InsertFxPopup()
   connect(m_fxTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
           SLOT(onItemDoubleClicked(QTreeWidgetItem *, int)));
 
-  addWidget(m_fxTree);
+  browserLay->addWidget(m_fxTree);
+
+  QHBoxLayout *buttonLayout = new QHBoxLayout;
+  buttonLayout->setMargin(0);
+  buttonLayout->setSpacing(5);
+  buttonLayout->setAlignment(Qt::AlignHCenter);
 
   QPushButton *insertBtn = new QPushButton(tr("Insert"), this);
   insertBtn->setMinimumSize(65, 25);
   insertBtn->setObjectName("PushButton_NoPadding");
   connect(insertBtn, SIGNAL(clicked()), this, SLOT(onInsert()));
   insertBtn->setDefault(true);
-  m_buttonLayout->addWidget(insertBtn);
+  buttonLayout->addWidget(insertBtn);
 
   QPushButton *addBtn = new QPushButton(tr("Add"), this);
   addBtn->setMinimumSize(65, 25);
   addBtn->setObjectName("PushButton_NoPadding");
   connect(addBtn, SIGNAL(clicked()), this, SLOT(onAdd()));
-  m_buttonLayout->addWidget(addBtn);
+  buttonLayout->addWidget(addBtn);
 
   QPushButton *replaceBtn = new QPushButton(tr("Replace"), this);
   replaceBtn->setMinimumSize(65, 25);
   replaceBtn->setObjectName("PushButton_NoPadding");
   connect(replaceBtn, SIGNAL(clicked()), this, SLOT(onReplace()));
-  m_buttonLayout->addWidget(replaceBtn);
+  buttonLayout->addWidget(replaceBtn);
+
+  browserLay->addLayout(buttonLayout);
+
+  setLayout(browserLay);
+
+  updatePresets();
+  connect(TApp::instance()->getCurrentFx(), SIGNAL(fxPresetSaved()),
+          SLOT(updatePresets()));
 }
+
+//-------------------------------------------------------------------
+
+InsertFxPopup::~InsertFxPopup() {}
 
 //-------------------------------------------------------------------
 
@@ -531,7 +544,7 @@ TFx *InsertFxPopup::createFx() {
 }
 
 //-----------------------------------------------------------------------------
-
+/*
 void InsertFxPopup::showEvent(QShowEvent *) {
   updatePresets();
   connect(TApp::instance()->getCurrentFx(), SIGNAL(fxPresetSaved()),
@@ -545,7 +558,7 @@ void InsertFxPopup::hideEvent(QHideEvent *e) {
              SLOT(updatePresets()));
   Dialog::hideEvent(e);
 }
-
+*/
 //-----------------------------------------------------------------------------
 
 void InsertFxPopup::contextMenuEvent(QContextMenuEvent *event) {
@@ -634,5 +647,6 @@ void InsertFxPopup::removePreset() {
 }
 
 //=============================================================================
-
+/*
 OpenPopupCommandHandler<InsertFxPopup> openInsertFxPopup(MI_InsertFx);
+*/

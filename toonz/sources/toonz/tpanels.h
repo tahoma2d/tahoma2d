@@ -33,6 +33,7 @@ class VectorGuidedDrawingPane;
 class FxSelection;
 class StageObjectSelection;
 class XsheetViewer;
+class InsertFxPopup;
 
 //=========================================================
 // PaletteViewerPanel
@@ -378,6 +379,19 @@ class AlignmentPanel final : public TPanel {
 
 public:
   AlignmentPanel(QWidget *parent);
+};
+
+//=========================================================
+// FxBrowserPanel
+//---------------------------------------------------------
+
+class FxBrowserPanel final : public TPanel {
+  Q_OBJECT
+
+  InsertFxPopup *m_fxBrowser;
+
+public:
+  FxBrowserPanel(QWidget *parent);
 };
 
 #endif
