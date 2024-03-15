@@ -353,7 +353,8 @@ void BatchesController::addComposerTask(const TFilePath &_taskFilePath) {
 
   int sceneFrameCount = scene.getFrameCount();
   if (r0 < 0) r0 = 0;
-  if (r1 >= sceneFrameCount)
+  if (!Preferences::instance()->isImplicitHoldEnabled() &&
+      r1 >= sceneFrameCount)
     r1 = sceneFrameCount - 1;
   else if (r1 < r0)
     r1 = sceneFrameCount - 1;

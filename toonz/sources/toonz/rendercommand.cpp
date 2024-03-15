@@ -29,6 +29,7 @@
 #include "toonz/scenefx.h"
 #include "toonz/movierenderer.h"
 #include "toonz/multimediarenderer.h"
+#include "toonz/tframehandle.h"
 #include "toutputproperties.h"
 
 #ifdef _WIN32
@@ -490,6 +491,17 @@ void RenderCommand::rasterRender(bool isPreview) {
       (std::numeric_limits<int>::max)(), TOutputProperties::LargeVal,
       TOutputProperties::MediumVal, TOutputProperties::SmallVal};
   rs.m_maxTileSize = maxTileSizes[index];
+
+  int r0, r1, step;
+  prop->getRange(r0, r1, step);
+  if (r0 > r1) {
+    r0 = 0;
+    r1 = (isPreview ? scene->getPreviewFrameCount() : scene->getFrameCount()) -
+         1;
+  }
+  if (isPreview && Preferences::instance()->isImplicitHoldEnabled())
+    r1 = std::max(r1, TApp::instance()->getCurrentFrame()->getFrameIndex());
+  rs.m_lastFrame = r1;
 
   // Build
 

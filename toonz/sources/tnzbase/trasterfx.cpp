@@ -1176,7 +1176,8 @@ TRenderSettings::TRenderSettings()
     , m_applyMask(false)
     , m_invertedMask(false)
     , m_useMaskBox(false)
-    , m_plasticMask(false) {}
+    , m_plasticMask(false)
+    , m_lastFrame(0) {}
 
 //------------------------------------------------------------------------------
 
@@ -1223,7 +1224,8 @@ bool TRenderSettings::operator==(const TRenderSettings &rhs) const {
       m_linearColorSpace != rhs.m_linearColorSpace ||
       m_colorSpaceGamma != rhs.m_colorSpaceGamma ||
       m_applyMask != rhs.m_applyMask || m_invertedMask != rhs.m_invertedMask ||
-      m_useMaskBox != rhs.m_useMaskBox || m_plasticMask != rhs.m_plasticMask)
+      m_useMaskBox != rhs.m_useMaskBox || m_plasticMask != rhs.m_plasticMask ||
+      m_lastFrame != rhs.m_lastFrame)
     return false;
 
   return std::equal(m_data.begin(), m_data.end(), rhs.m_data.begin(), areEqual);

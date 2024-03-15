@@ -718,6 +718,12 @@ void PreviewFxInstance::updateRenderSettings() {
 
   TRenderSettings renderSettings = properties->getRenderSettings();
 
+  int lastFrame = scene->getPreviewFrameCount();
+  if (Preferences::instance()->isImplicitHoldEnabled())
+    lastFrame = std::max(lastFrame,
+                         TApp::instance()->getCurrentFrame()->getFrameIndex());
+  renderSettings.m_lastFrame = lastFrame;
+
   if (m_renderSettings != renderSettings) {
     m_renderSettings = renderSettings;
 

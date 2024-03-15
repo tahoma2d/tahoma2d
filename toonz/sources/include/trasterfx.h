@@ -172,6 +172,8 @@ public:
   bool m_useMaskBox;
   bool m_plasticMask;
 
+  int m_lastFrame;
+
 public:
   TRenderSettings();
   ~TRenderSettings();
