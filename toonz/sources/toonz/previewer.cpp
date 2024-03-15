@@ -355,6 +355,12 @@ void Previewer::Imp::updateRenderSettings() {
   else
     renderSettings.m_shrinkY = renderSettings.m_shrinkX = 1;
 
+  int lastFrame = scene->getPreviewFrameCount();
+  if (Preferences::instance()->isImplicitHoldEnabled())
+    lastFrame = std::max(lastFrame,
+                         TApp::instance()->getCurrentFrame()->getFrameIndex());
+  renderSettings.m_lastFrame = lastFrame;
+
   // In case the settings changed, erase all previously cached images
   if (renderSettings != m_renderSettings) {
     m_renderSettings = renderSettings;

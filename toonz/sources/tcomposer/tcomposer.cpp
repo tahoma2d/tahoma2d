@@ -440,7 +440,7 @@ static std::pair<int, int> generateMovie(ToonzScene *scene, const TFilePath &fp,
   r1 = r1 - 1;
 
   if (r0 < 0) r0 = 0;
-  if (r1 < 0 || r1 >= scene->getFrameCount()) r1 = scene->getFrameCount() - 1;
+  if (r1 < 0) r1 = scene->getFrameCount() - 1;
   string msg;
   assert(r1 >= r0);
   TSceneProperties *sprop          = scene->getProperties();
@@ -914,6 +914,11 @@ int main(int argc, char *argv[]) {
       scene_from++;
       scene_to++;
     }
+
+    TRenderSettings rs = outProp->getRenderSettings();
+    rs.m_lastFrame     = scene_to;
+    outProp->setRenderSettings(rs);
+
     if (range.isSelected()) {
       r0 = range.getFrom();
       r1 = range.getTo();

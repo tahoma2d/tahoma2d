@@ -1747,3 +1747,39 @@ TLevelColumnFx *ToonzScene::getOverlayFx(int row) {
   }
   return m_overlayFx;
 }
+
+//-----------------------------------------------------------------------------
+
+int ToonzScene::getPreviewFrameCount() {
+
+  // If play range markers are set, use that
+  int r0, r1, step;
+  getProperties()->getPreviewProperties()->getRange(r0, r1, step);
+  if (r0 <= r1) return r1;
+
+  TXsheet *xsh = getXsheet();
+  if (!xsh) return 0;
+
+  // Use frame count of the xsheet
+  int frameCount = xsh->getFrameCount();
+
+  // For implicit holds, use last Stop Frame marker or last Key frame marker as
+  // frame count
+  if (Preferences::instance()->isImplicitHoldEnabled()) {
+    for (int c = 0; c < xsh->getColumnCount(); c++) {
+      r1            = xsh->getMaxFrame(c);
+      TXshCell cell = xsh->getCell(r1, c);
+      // If last frame is a stop frame, don't check for keyframe in the same
+      // column in case of overshoot
+      if (cell.getFrameId().isStopFrame()) {
+        frameCount = std::max(frameCount, (r1 + 1));
+        continue;
+      }
+
+      TStageObject *pegbar = xsh->getStageObject(TStageObjectId::ColumnId(c));
+      if (!pegbar) continue;
+      if (!pegbar->getKeyframeRange(r0, r1)) continue;
+      frameCount = std::max(frameCount, (r1 + 1));
+    }
+  }
+}

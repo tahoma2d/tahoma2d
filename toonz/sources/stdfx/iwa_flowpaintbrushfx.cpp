@@ -37,8 +37,8 @@ void Iwa_FlowPaintBrushFx::getBrushRasters(std::vector<TRasterP> &brushRasters,
   // ブラシテクスチャ情報
   TPointD b_offset;
   const TFxTimeRegion &tr = m_brush->getTimeRegion(true);
-  lastFrame               = tr.getLastFrame() + 1;
-  TLevelP partLevel       = new TLevel();
+  lastFrame = (tr.isUnlimited() ? ri.m_lastFrame : tr.getLastFrame()) + 1;
+  TLevelP partLevel = new TLevel();
   partLevel->setName(m_brush->getAlias(0, ri));
 
   // The particles offset must be calculated without considering the
