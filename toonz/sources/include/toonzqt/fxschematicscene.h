@@ -4,6 +4,7 @@
 #define FXSCHEMATIC_H
 
 #include "toonzqt/addfxcontextmenu.h"
+#include "toonz/fxcommand.h"
 #include "schematicviewer.h"
 #include "tgeometry.h"
 #include <QMap>
@@ -12,6 +13,7 @@
 
 // forward declaration
 class FxSchematicNode;
+class FxSchematicLink;
 class TFxHandle;
 class FxSelection;
 class FxSchematicNode;
@@ -25,6 +27,7 @@ class FxSchematicMacroEditor;
 class TMacroFx;
 
 enum SearchDirection { Both = 0, Input, Output };
+enum DragDropAction { None = 0, Add, Insert, Replace };
 //==================================================================
 //
 // FXSchematic
@@ -105,6 +108,12 @@ class FxSchematicScene final : public SchematicScene {
 
   SchematicViewer *m_viewer;
 
+  DragDropAction m_dragDropAction;
+  QList<TFxP> m_fxs;
+  QList<TFxCommand::Link> m_links;
+  FxSchematicLink *m_litLink;
+  FxSchematicNode *m_litNode;
+
 public:
   FxSchematicScene(QWidget *parent);
   ~FxSchematicScene();
@@ -159,6 +168,10 @@ protected:
   void mouseMoveEvent(QGraphicsSceneMouseEvent *me) override;
   void mouseReleaseEvent(QGraphicsSceneMouseEvent *me) override;
   bool event(QEvent *e) override;
+  void dragEnterEvent(QGraphicsSceneDragDropEvent *e) override;
+  void dragMoveEvent(QGraphicsSceneDragDropEvent *e) override;
+  void dropEvent(QGraphicsSceneDragDropEvent *e) override;
+  void dragLeaveEvent(QGraphicsSceneDragDropEvent *e) override;
 
 private:
   FxSchematicNode *addFxSchematicNode(TFx *fx);

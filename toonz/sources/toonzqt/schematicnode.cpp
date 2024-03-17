@@ -614,7 +614,8 @@ SchematicLink::SchematicLink(QGraphicsItem *parent, QGraphicsScene *scene)
     , m_path()
     , m_hitPath()
     , m_lineShaped(false)
-    , m_highlighted(false) {
+    , m_highlighted(false)
+    , m_dropHighlighted(false) {
   scene->addItem(this);
   setFlag(QGraphicsItem::ItemIsMovable, false);
   setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -659,6 +660,10 @@ void SchematicLink::paint(QPainter *painter,
       painter->setPen(QPen(viewer->getMotionPathSelectedLinkColor()));
     else
       painter->setPen(QColor(viewer->getMotionPathLinkColor()));
+  } else if (isDropHighlighted()) {
+    QPen pen(viewer->getSelectedLinkColor());
+    pen.setWidth(3);
+    painter->setPen(pen);
   } else if (isSelected() || isHighlighted())
     painter->setPen(QPen(viewer->getSelectedLinkColor()));
 
@@ -1062,7 +1067,8 @@ SchematicNode::SchematicNode(SchematicScene *scene)
     , m_scene(scene)
     , m_width(0)
     , m_height(0)
-    , m_buttonState(Qt::NoButton) {
+    , m_buttonState(Qt::NoButton)
+    , m_dropHighlighted(false) {
   scene->addItem(this);
   setFlag(QGraphicsItem::ItemIsMovable, false);
   setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -1100,11 +1106,14 @@ void SchematicNode::paint(QPainter *painter,
   }
 
   QPen pen;
-  if (isSelected()) {
+  if (isSelected() || isDropHighlighted()) {
     painter->setBrush(QColor(0, 0, 0, 0));
     pen.setColor(QColor(viewer->getSelectedBorderColor()));
 
-    pen.setWidth(4.0);
+    if (isDropHighlighted())
+      pen.setWidth(7.0);
+    else
+      pen.setWidth(4.0);
     pen.setJoinStyle(Qt::RoundJoin);
     painter->setPen(pen);
     painter->drawRect(-2, -2, m_width + 4, m_height + 4);

@@ -1,10 +1,9 @@
 
 
-#include "insertfxpopup.h"
+#include "toonzqt/insertfxpopup.h"
 
 // Tnz6 includes
-#include "menubarcommandids.h"
-#include "tapp.h"
+#include "../toonz/menubarcommandids.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -39,6 +38,7 @@
 #include "tmacrofx.h"
 #include "tfx.h"
 #include "texternfx.h"
+#include "fxdata.h"
 
 // TnzCore includes
 #include "tsystem.h"
@@ -52,6 +52,12 @@
 #include <QContextMenuEvent>
 #include <QMainWindow>
 #include <QLineEdit>
+#include <QLabel>
+#include <QMimeData>
+#include <QDrag>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QApplication>
 #include <QLabel>
 
 #include <memory>
@@ -90,7 +96,7 @@ TFx *createPresetFxByName(TFilePath path) {
 //-----------------------------------------------------------------------------
 // same as createMacroFxByPath() in addfxcontextmenu.cpp
 
-TFx *createMacroFxByPath(TFilePath path) {
+TFx *createMacroFxByPath(TFilePath path, TApplication *app) {
   try {
     TIStream is(path);
     TPersist *p = 0;
@@ -99,7 +105,6 @@ TFx *createMacroFxByPath(TFilePath path) {
     if (!fx) return 0;
     fx->setName(path.getWideName());
     // Assign a unic ID to each fx in the macro!
-    TApp *app    = TApp::instance();
     TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
     if (!xsh) return fx;
     FxDag *fxDag = xsh->getFxDag();
@@ -141,6 +146,61 @@ TFx *createMacroFxByPath(TFilePath path) {
 //=============================================================================
 // FxTree
 //=============================================================================
+
+//-----------------------------------------------------------------------------
+
+void FxTree::mousePressEvent(QMouseEvent *event) {
+  setCurrentItem(itemAt(event->pos()));
+  
+  QTreeWidgetItem *item = currentItem();
+  if (item == NULL) {
+    QTreeWidget::mousePressEvent(event);
+    return;
+  }
+
+  QString text = item->data(0, Qt::UserRole).toString();
+  QString dragText = item->text(0);
+  if (text.isEmpty() || text.endsWith("macroFx")) {
+    QTreeWidget::mousePressEvent(event);
+    return;
+  }
+  
+  InsertFxPopup *p = dynamic_cast<InsertFxPopup *>(parent());
+  if (!p) {
+    QTreeWidget::mousePressEvent(event);
+    return;
+  }
+
+  TFx *fx = p->createFx();
+  if (!fx) {
+    QTreeWidget::mousePressEvent(event);
+    return;
+  }
+
+  // Let's use FxsData to transfer to schematic
+  FxsData *fxData = new FxsData();
+  QList<TFxP> fxList;
+  fxList.append(fx);
+  fxData->setFxs(fxList, QList<TFxCommand::Link>(), QList<int>(), 0);
+
+  QMimeData *mimeData = new QMimeData;
+  mimeData = (QMimeData *)fxData;
+
+  QFontMetrics fm(QApplication::font());
+  QPixmap pix(fm.boundingRect(dragText).adjusted(-2, -2, 2, 2).size());
+  QPainter painter(&pix);
+  painter.fillRect(pix.rect(), Qt::white);
+  painter.setPen(Qt::black);
+  painter.drawText(pix.rect(), Qt::AlignCenter, dragText);
+
+  QDrag *drag = new QDrag(this);
+  drag->setMimeData(mimeData);
+  drag->setPixmap(pix);
+
+  drag->exec(Qt::CopyAction);
+
+  QTreeWidget::mousePressEvent(event);
+}
 
 void FxTree::displayAll(QTreeWidgetItem *item) {
   int childCount = item->childCount();
@@ -227,7 +287,7 @@ InsertFxPopup::InsertFxPopup(QWidget *parent, Qt::WindowFlags flags)
   connect(searchEdit, SIGNAL(textChanged(const QString &)), this,
           SLOT(onSearchTextChanged(const QString &)));
 
-  m_fxTree = new FxTree();
+  m_fxTree = new FxTree(this);
   m_fxTree->setIconSize(QSize(21, 18));
   m_fxTree->setColumnCount(1);
   m_fxTree->header()->close();
@@ -271,6 +331,7 @@ InsertFxPopup::InsertFxPopup(QWidget *parent, Qt::WindowFlags flags)
 
   browserLay->addWidget(m_fxTree);
 
+/*
   QHBoxLayout *buttonLayout = new QHBoxLayout;
   buttonLayout->setMargin(0);
   buttonLayout->setSpacing(5);
@@ -296,17 +357,23 @@ InsertFxPopup::InsertFxPopup(QWidget *parent, Qt::WindowFlags flags)
   buttonLayout->addWidget(replaceBtn);
 
   browserLay->addLayout(buttonLayout);
-
+*/
   setLayout(browserLay);
 
   updatePresets();
-  connect(TApp::instance()->getCurrentFx(), SIGNAL(fxPresetSaved()),
-          SLOT(updatePresets()));
 }
 
 //-------------------------------------------------------------------
 
 InsertFxPopup::~InsertFxPopup() {}
+
+//-------------------------------------------------------------------
+
+void InsertFxPopup::setApplication(TApplication *app) {
+  m_app = app;
+  connect(m_app->getCurrentFx(), SIGNAL(fxPresetSaved()),
+          SLOT(updatePresets()));
+}
 
 //-------------------------------------------------------------------
 
@@ -455,19 +522,18 @@ void InsertFxPopup::onItemDoubleClicked(QTreeWidgetItem *w, int c) {
 void InsertFxPopup::onInsert() {
   TFx *fx = createFx();
   if (fx) {
-    TApp *app                = TApp::instance();
-    TXsheetHandle *xshHandle = app->getCurrentXsheet();
+    TXsheetHandle *xshHandle = m_app->getCurrentXsheet();
     QList<TFxP> fxs;
     QList<TFxCommand::Link> links;
     FxSelection *selection =
-        dynamic_cast<FxSelection *>(app->getCurrentSelection()->getSelection());
+        dynamic_cast<FxSelection *>(m_app->getCurrentSelection()->getSelection());
     if (selection) {
       fxs   = selection->getFxs();
       links = selection->getLinks();
     }
-    TFxCommand::insertFx(fx, fxs, links, app,
-                         app->getCurrentColumn()->getColumnIndex(),
-                         app->getCurrentFrame()->getFrameIndex());
+    TFxCommand::insertFx(fx, fxs, links, m_app,
+                         m_app->getCurrentColumn()->getColumnIndex(),
+                         m_app->getCurrentFrame()->getFrameIndex());
     xshHandle->notifyXsheetChanged();
   }
 }
@@ -477,14 +543,13 @@ void InsertFxPopup::onInsert() {
 void InsertFxPopup::onAdd() {
   TFx *fx = createFx();
   if (fx) {
-    TApp *app                = TApp::instance();
-    TXsheetHandle *xshHandle = app->getCurrentXsheet();
+    TXsheetHandle *xshHandle = m_app->getCurrentXsheet();
     QList<TFxP> fxs;
     FxSelection *selection =
-        dynamic_cast<FxSelection *>(app->getCurrentSelection()->getSelection());
+        dynamic_cast<FxSelection *>(m_app->getCurrentSelection()->getSelection());
     if (selection) fxs = selection->getFxs();
-    TFxCommand::addFx(fx, fxs, app, app->getCurrentColumn()->getColumnIndex(),
-                      app->getCurrentFrame()->getFrameIndex());
+    TFxCommand::addFx(fx, fxs, m_app, m_app->getCurrentColumn()->getColumnIndex(),
+                      m_app->getCurrentFrame()->getFrameIndex());
     xshHandle->notifyXsheetChanged();
   }
 }
@@ -494,14 +559,13 @@ void InsertFxPopup::onAdd() {
 void InsertFxPopup::onReplace() {
   TFx *fx = createFx();
   if (fx) {
-    TApp *app                = TApp::instance();
-    TXsheetHandle *xshHandle = app->getCurrentXsheet();
+    TXsheetHandle *xshHandle = m_app->getCurrentXsheet();
     QList<TFxP> fxs;
     FxSelection *selection =
-        dynamic_cast<FxSelection *>(app->getCurrentSelection()->getSelection());
+        dynamic_cast<FxSelection *>(m_app->getCurrentSelection()->getSelection());
     if (selection) fxs = selection->getFxs();
-    TFxCommand::replaceFx(fx, fxs, app->getCurrentXsheet(),
-                          app->getCurrentFx());
+    TFxCommand::replaceFx(fx, fxs, m_app->getCurrentXsheet(),
+                          m_app->getCurrentFx());
     xshHandle->notifyXsheetChanged();
   }
 }
@@ -509,8 +573,7 @@ void InsertFxPopup::onReplace() {
 //-----------------------------------------------------------------------------
 
 TFx *InsertFxPopup::createFx() {
-  TApp *app         = TApp::instance();
-  ToonzScene *scene = app->getCurrentScene()->getScene();
+  ToonzScene *scene = m_app->getCurrentScene()->getScene();
   TXsheet *xsh      = scene->getXsheet();
 
   QTreeWidgetItem *item = m_fxTree->currentItem();
@@ -527,7 +590,7 @@ TFx *InsertFxPopup::createFx() {
       TFileStatus(path.getParentDir()).isDirectory()) {
     std::string folder = path.getParentDir().getName();
     if (folder == "macroFx")  // Devo caricare una macro
-      fx = createMacroFxByPath(path);
+      fx = createMacroFxByPath(path, m_app);
     else  // Verifico se devo caricare un preset
     {
       folder = path.getParentDir().getParentDir().getName();
@@ -643,7 +706,7 @@ void InsertFxPopup::removePreset() {
   }
   m_fxTree->removeItemWidget(item, 0);
   delete item;
-  TApp::instance()->getCurrentFx()->notifyFxPresetRemoved();
+  m_app->getCurrentFx()->notifyFxPresetRemoved();
 }
 
 //=============================================================================

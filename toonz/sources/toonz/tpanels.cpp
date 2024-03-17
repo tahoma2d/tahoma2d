@@ -82,7 +82,7 @@
 #include "toonz/fxcommand.h"
 #include "toonz/tstageobjectcmd.h"
 
-#include "../../toonz/insertfxpopup.h"
+#include "toonzqt/insertfxpopup.h"
 
 // TnzBase includes
 #include "trasterfx.h"
@@ -1750,7 +1750,9 @@ OpenFloatingPanel openVectorAlignmentPanelCommand(
 //-----------------------------------------------------------------------------
 
 FxBrowserPanel::FxBrowserPanel(QWidget *parent) : TPanel(parent) {
+  TApp *app   = TApp::instance();
   m_fxBrowser = new InsertFxPopup(parent);
+  m_fxBrowser->setApplication(app);
 
   setWidget(m_fxBrowser);
 }

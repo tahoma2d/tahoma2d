@@ -120,6 +120,8 @@ public:
              QWidget *widget = 0) override;
   void setName(const QString &name) { m_name = name; }
 
+  FxSchematicNode *getNode() { return m_parent; }
+
 protected:
   void contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) override;
 };
