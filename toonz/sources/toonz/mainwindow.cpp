@@ -1211,6 +1211,11 @@ void MainWindow::onCurrentRoomChanged(int newRoomIndex) {
   for (int i = 0; i < paneList.size(); i++) {
     TPanel *pane = paneList.at(i);
     if (pane->isFloating() && !pane->isHidden()) {
+      // Close floating Locator panes
+      if (pane->getPanelType() == "Locator") {
+        pane->close();
+        continue;
+      }
       QRect oldGeometry = pane->geometry();
       // Just setting the new parent is not enough for the new layout manager.
       // Must be removed from the old and added to the new.
@@ -2481,6 +2486,7 @@ void MainWindow::defineActions() {
                    false);
   createMenuWindowsAction(MI_CustomPanelEditor,
                           QT_TR_NOOP("&Custom Panel Editor..."), "", "");
+  createMenuWindowsAction(MI_OpenLocator, QT_TR_NOOP("&Locator"), "", "locator");
 
   // menuAct = createToggle(MI_DockingCheck, QT_TR_NOOP("&Lock Room Panes"), "",
   //                        DockingCheckToggleAction ? 1 : 0,

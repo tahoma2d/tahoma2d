@@ -34,6 +34,7 @@ class FxSelection;
 class StageObjectSelection;
 class XsheetViewer;
 class InsertFxPopup;
+class LocatorPopup;
 
 //=========================================================
 // PaletteViewerPanel
@@ -392,6 +393,19 @@ class FxBrowserPanel final : public TPanel {
 
 public:
   FxBrowserPanel(QWidget *parent);
+};
+
+//=========================================================
+// LocatorPanel
+//---------------------------------------------------------
+
+class LocatorPanel final : public TPanel {
+  Q_OBJECT
+
+  LocatorPopup *m_locator;
+
+public:
+  LocatorPanel(QWidget *parent);
 };
 
 #endif

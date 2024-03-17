@@ -669,6 +669,7 @@ void TopBar::loadMenubar() {
   addMenuItem(windowsMenu, MI_OpenSchematic);
   addMenuItem(windowsMenu, MI_FxParamEditor);
   addMenuItem(windowsMenu, MI_OpenFilmStrip);
+  addMenuItem(windowsMenu, MI_OpenLocator);
   windowsMenu->addSeparator();
   addMenuItem(windowsMenu, MI_OpenFileBrowser);
   addMenuItem(windowsMenu, MI_OpenPreproductionBoard);
