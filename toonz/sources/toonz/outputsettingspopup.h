@@ -3,6 +3,8 @@
 #ifndef OUTPUTSETTINGSPOPUP_H
 #define OUTPUTSETTINGSPOPUP_H
 
+#include "saveloadqsettings.h"
+
 #include "toonzqt/dvdialog.h"
 
 #include "toonz/sceneproperties.h"
@@ -46,7 +48,7 @@ public:
   QColor color() { return Qt::black; }
 };
 
-class OutputSettingsPopup : public QFrame {
+class OutputSettingsPopup : public QFrame, public SaveLoadQSettings {
   Q_OBJECT
 
   QVBoxLayout *m_topLayout;
@@ -109,6 +111,11 @@ class OutputSettingsPopup : public QFrame {
 public:
   OutputSettingsPopup(QWidget *parent = 0, bool isPreview = false);
   ~OutputSettingsPopup() {}
+
+  // SaveLoadQSettings
+  virtual void save(QSettings &settings,
+                    bool forPopupIni = false) const override;
+  virtual void load(QSettings &settings) override;
 
 protected:
   ToonzScene *getCurrentScene() const;
