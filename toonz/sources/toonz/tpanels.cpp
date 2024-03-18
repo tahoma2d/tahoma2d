@@ -83,8 +83,8 @@
 #include "toonz/tstageobjectcmd.h"
 
 #include "toonzqt/insertfxpopup.h"
-
 #include "../../toonz/locatorpopup.h"
+#include "../toonz/outputsettingspopup.h"
 
 // TnzBase includes
 #include "trasterfx.h"
@@ -1827,3 +1827,74 @@ public:
 //=============================================================================
 OpenFloatingPanel openLocatorCommand(MI_OpenLocator, "Locator",
                                        QObject::tr("Locator"));
+
+//=========================================================
+// OutputSettingsPanel
+//---------------------------------------------------------
+
+OutputSettingsPanel::OutputSettingsPanel(QWidget *parent) : TPanel(parent) {
+  OutputSettingsPopup *pane = new OutputSettingsPopup(this);
+  setWidget(pane);
+  setIsMaximizable(false);
+}
+
+//=============================================================================
+// OutputSettingsFactory
+//-----------------------------------------------------------------------------
+
+class OutputSettingsFactory final : public TPanelFactory {
+public:
+  OutputSettingsFactory() : TPanelFactory("OutputSettingsPanel") {}
+  TPanel *createPanel(QWidget *parent) override {
+    TPanel *panel = new OutputSettingsPanel(parent);
+    panel->setObjectName(getPanelType());
+    panel->setWindowTitle(QObject::tr("Output Settings"));
+    panel->setMinimumWidth(378);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
+
+    return panel;
+  }
+  void initialize(TPanel *panel) override {}
+} OutputSettingsFactory;
+
+//=============================================================================
+OpenFloatingPanel openOutputSettingsPanelCommand(
+    MI_OutputSettings, "OutputSettingsPanel",
+    QObject::tr("Output Settings"));
+
+//=========================================================
+// PreviewSettingsPanel
+//---------------------------------------------------------
+
+PreviewSettingsPanel::PreviewSettingsPanel(QWidget *parent) : TPanel(parent) {
+  PreviewSettingsPopup *pane = new PreviewSettingsPopup(this);
+  setWidget(pane);
+  setIsMaximizable(false);
+}
+
+//=============================================================================
+// PreviewSettingsFactory
+//-----------------------------------------------------------------------------
+
+class PreviewSettingsFactory final : public TPanelFactory {
+public:
+  PreviewSettingsFactory() : TPanelFactory("PreviewSettingsPanel") {}
+  TPanel *createPanel(QWidget *parent) override {
+    TPanel *panel = new PreviewSettingsPanel(parent);
+    panel->setObjectName(getPanelType());
+    panel->setWindowTitle(QObject::tr("Preview Settings"));
+    panel->setMinimumWidth(321);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
+
+    return panel;
+  }
+  void initialize(TPanel *panel) override {}
+} PreviewSettingsFactory;
+
+//=============================================================================
+OpenFloatingPanel openPreviewSettingsPanelCommand(
+    MI_PreviewSettings, "PreviewSettingsPanel", QObject::tr("Preview Settings"));

@@ -46,8 +46,10 @@ public:
   QColor color() { return Qt::black; }
 };
 
-class OutputSettingsPopup : public DVGui::Dialog {
+class OutputSettingsPopup : public QFrame {
   Q_OBJECT
+
+  QVBoxLayout *m_topLayout;
 
   DVGui::FileField *m_saveInFileFld;
   DVGui::LineEdit *m_fileNameFld;
@@ -105,7 +107,8 @@ class OutputSettingsPopup : public DVGui::Dialog {
   QFrame *createMoreSettingsBox();
 
 public:
-  OutputSettingsPopup(bool isPreview = false);
+  OutputSettingsPopup(QWidget *parent = 0, bool isPreview = false);
+  ~OutputSettingsPopup() {}
 
 protected:
   ToonzScene *getCurrentScene() const;
@@ -160,7 +163,8 @@ protected slots:
 
 class PreviewSettingsPopup final : public OutputSettingsPopup {
 public:
-  PreviewSettingsPopup() : OutputSettingsPopup(true) {}
+  PreviewSettingsPopup(QWidget *parent = 0)
+      : OutputSettingsPopup(parent, true) {}
 };
 
 #endif  // OUTPUTSETTINGSPOPUP_H

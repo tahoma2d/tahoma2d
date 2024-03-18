@@ -174,9 +174,8 @@ bool checkForSeqNum(QString type) {
    number field
                 to set values for frame and time stretch.
 */
-OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
-    : Dialog(TApp::instance()->getMainWindow(), false, isPreview,
-             isPreview ? "PreviewSettings" : "OutputSettings")
+OutputSettingsPopup::OutputSettingsPopup(QWidget *parent, bool isPreview)
+    : QFrame(parent)
     , m_subcameraChk(nullptr)
     , m_applyShrinkChk(nullptr)
     , m_outputCameraOm(nullptr)
@@ -184,7 +183,6 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
     , m_allowMT(Preferences::instance()->getFfmpegMultiThread())
     , m_presetCombo(nullptr)
     , m_syncColorSettingsButton(nullptr) {
-  setWindowTitle(isPreview ? tr("Preview Settings") : tr("Output Settings"));
   if (!isPreview) setObjectName("OutputSettingsPopup");
   // create panel
   QFrame *panel = createPanel(isPreview);
@@ -194,6 +192,8 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
   renderButton->setIconSize(QSize(20, 20));
   if (isPreview)
     renderButton->setText(tr("Preview"));
+
+  m_topLayout = new QVBoxLayout(this);
 
   // preview settings
   if (isPreview) {
@@ -1083,7 +1083,6 @@ void OutputSettingsPopup::hideEvent(QHideEvent *e) {
                             SLOT(updateField()));
     assert(ret);
   }
-  Dialog::hideEvent(e);
   m_hideAlreadyCalled = true;
 }
 
@@ -2291,8 +2290,9 @@ void OutputSettingsPopup::onBoardSettingsBtnClicked() {
 }
 
 //-----------------------------------------------------------------------------
-
+/*
 OpenPopupCommandHandler<OutputSettingsPopup> openOutputSettingsPopup(
     MI_OutputSettings);
 OpenPopupCommandHandler<PreviewSettingsPopup> openPreviewSettingsPopup(
     MI_PreviewSettings);
+*/
