@@ -13,7 +13,7 @@ class ComboHistogram;
 // HistogramPopup
 //-----------------------------------------------------------------------------
 
-class HistogramPopup : public QDialog {
+class HistogramPopup : public DVGui::Dialog {
   Q_OBJECT
 
 protected:

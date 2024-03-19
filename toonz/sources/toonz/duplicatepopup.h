@@ -15,7 +15,7 @@ class QPushButton;
 // DuplicatePopup
 //-----------------------------------------------------------------------------
 
-class DuplicatePopup final : public QDialog {
+class DuplicatePopup final : public DVGui::Dialog {
   Q_OBJECT
 
   QPushButton *m_okBtn;

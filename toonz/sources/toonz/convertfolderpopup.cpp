@@ -179,7 +179,9 @@ public:
 //=============================================================================
 
 ConvertResultPopup::ConvertResultPopup(QString log, TFilePath path)
-    : QDialog(), m_logTxt(log), m_targetPath(path) {
+    : Dialog(TApp::instance()->getMainWindow())
+    , m_logTxt(log)
+    , m_targetPath(path) {
   setModal(true);
 
   QTextEdit* edit            = new QTextEdit(this);
@@ -206,7 +208,8 @@ ConvertResultPopup::ConvertResultPopup(QString log, TFilePath path)
     }
     mainLay->addLayout(buttonsLay, 0);
   }
-  setLayout(mainLay);
+  m_topLayout->setMargin(0);
+  m_topLayout->addLayout(mainLay);
 
   connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
   connect(saveLogButton, SIGNAL(clicked()), this, SLOT(onSaveLog()));

@@ -39,7 +39,7 @@ class QGroupBox;
 //    CleanupPopup declaration
 //*****************************************************************************
 
-class CleanupPopup final : public QDialog {
+class CleanupPopup final : public DVGui::Dialog {
   Q_OBJECT
 
 public:
