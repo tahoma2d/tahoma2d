@@ -96,7 +96,7 @@ void DuplicateUndo::repeat() const {}
 //-----------------------------------------------------------------------------
 /*--  "Repeat..." というコマンド  --*/
 DuplicatePopup::DuplicatePopup()
-    : QDialog(TApp::instance()->getMainWindow()), m_count(0), m_upTo(0) {
+    : Dialog(TApp::instance()->getMainWindow()), m_count(0), m_upTo(0) {
   setWindowTitle(tr("Repeat"));
 
   m_countFld = new DVGui::IntLineEdit(this);
@@ -133,7 +133,8 @@ DuplicatePopup::DuplicatePopup()
     }
     mainLayout->addLayout(bottomLay, 0);
   }
-  setLayout(mainLayout);
+  m_topLayout->setMargin(0);
+  m_topLayout->addLayout(mainLayout);
 
   //----signal-slot connections
   bool ret = true;

@@ -335,7 +335,7 @@ void PreferencesPopup::Display30bitChecker::GLView::paintGL() {
 
 PreferencesPopup::Display30bitChecker::Display30bitChecker(
     PreferencesPopup* parent)
-    : QDialog(parent) {
+    : Dialog(parent) {
   setModal(true);
   m_currentDefaultFormat = QSurfaceFormat::defaultFormat();
 
@@ -364,7 +364,8 @@ PreferencesPopup::Display30bitChecker::Display30bitChecker(
     lay->addWidget(new QLabel(infoLabel, this));
     lay->addWidget(closeBtn, 0, Qt::AlignCenter);
   }
-  setLayout(lay);
+  m_topLayout->setMargin(0);
+  m_topLayout->addLayout(lay);
   lay->setSizeConstraint(QLayout::SetFixedSize);
 
   connect(closeBtn, SIGNAL(clicked()), this, SLOT(accept()));
@@ -1575,7 +1576,7 @@ inline T PreferencesPopup::getUI(PreferencesItemId id) {
 //**********************************************************************************
 
 PreferencesPopup::PreferencesPopup()
-    : QDialog(TApp::instance()->getMainWindow())
+    : Dialog(TApp::instance()->getMainWindow())
     , m_formatProperties()
     , m_additionalStyleEdit(nullptr)
     , m_viewerEventLogPopup(0) {
@@ -1631,7 +1632,8 @@ PreferencesPopup::PreferencesPopup()
     mainLayout->addLayout(categoryLayout, 0);
     mainLayout->addWidget(m_stackedWidget, 1);
   }
-  setLayout(mainLayout);
+  m_topLayout->setMargin(0);
+  m_topLayout->addLayout(mainLayout);
 
   bool ret = connect(m_categoryList, SIGNAL(currentRowChanged(int)),
                      m_stackedWidget, SLOT(setCurrentIndex(int)));

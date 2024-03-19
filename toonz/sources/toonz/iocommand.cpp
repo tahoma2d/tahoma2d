@@ -1276,7 +1276,7 @@ inline TPaletteP dirtyWhite(const TPaletteP &plt) {
 
 // Per ora e' usato solo per i formato "tzp" e "tzu".
 IoCmd::ConvertingPopup::ConvertingPopup(QWidget *parent, QString fileName)
-    : QDialog(parent) {
+    : Dialog(parent) {
   setModal(true);
   setWindowFlags(Qt::Dialog | Qt::WindowTitleHint);
   setMinimumSize(70, 50);
@@ -1288,7 +1288,8 @@ IoCmd::ConvertingPopup::ConvertingPopup(QWidget *parent, QString fileName)
       QObject::tr("Converting %1 images to tlv format...").arg(fileName)));
   mainLayout->addWidget(label);
 
-  setLayout(mainLayout);
+  m_topLayout->setMargin(0);
+  m_topLayout->addLayout(mainLayout);
 }
 
 IoCmd::ConvertingPopup::~ConvertingPopup() {}

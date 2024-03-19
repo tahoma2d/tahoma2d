@@ -78,7 +78,7 @@
 FileBrowserPopup::FileBrowserPopup(const QString &title, Options options,
                                    QString applyButtonTxt,
                                    QWidget *customWidget)
-    : QDialog(TApp::instance()->getMainWindow())
+    : Dialog(TApp::instance()->getMainWindow(), false, false)
     , m_isDirectoryOnly(false)
     , m_multiSelectionEnabled(options & MULTISELECTION)
     , m_forSaving(options & FOR_SAVING)
@@ -141,7 +141,8 @@ FileBrowserPopup::FileBrowserPopup(const QString &title, Options options,
       }
       mainLayout->addLayout(buttonsLay);
     }
-    setLayout(mainLayout);
+    m_topLayout->setMargin(0);
+    m_topLayout->addLayout(mainLayout);
   }
 
   // Establish connections

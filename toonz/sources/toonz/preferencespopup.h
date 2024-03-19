@@ -59,7 +59,7 @@ class PreferencesPopup;
 
 typedef void (PreferencesPopup::*OnEditedPopupFunc)();
 
-class PreferencesPopup final : public QDialog {
+class PreferencesPopup final : public DVGui::Dialog {
   Q_OBJECT
 
   QMap<QWidget*, PreferencesItemId> m_controlIdMap;
@@ -242,7 +242,7 @@ private slots:
 //   PreferencesPopup::Display30bitCheckerView  definition
 //**********************************************************************************
 
-class PreferencesPopup::Display30bitChecker final : public QDialog {
+class PreferencesPopup::Display30bitChecker final : public DVGui::Dialog {
   Q_OBJECT
 
   QSurfaceFormat m_currentDefaultFormat;

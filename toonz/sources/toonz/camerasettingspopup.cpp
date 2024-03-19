@@ -79,7 +79,7 @@ public:
 std::map<TStageObjectId, CameraSettingsPopup *> CameraSettingsPopup::m_popups;
 
 CameraSettingsPopup::CameraSettingsPopup()
-    : QDialog(TApp::instance()->getMainWindow()) {
+    : Dialog(TApp::instance()->getMainWindow()) {
   m_nameFld              = new LineEdit();
   m_cameraSettingsWidget = new CameraSettingsWidget();
 
@@ -102,7 +102,8 @@ CameraSettingsPopup::CameraSettingsPopup()
 
     mainLay->addWidget(m_cameraSettingsWidget, 1);
   }
-  setLayout(mainLay);
+  m_topLayout->setMargin(0);
+  m_topLayout->addLayout(mainLay);
 
   //---- signal-slot connections
   bool ret = true;

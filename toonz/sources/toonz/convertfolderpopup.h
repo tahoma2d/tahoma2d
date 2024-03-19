@@ -92,7 +92,7 @@ private:
   bool m_isConverting;
 };
 
-class ConvertResultPopup : public QDialog {
+class ConvertResultPopup : public DVGui::Dialog {
   Q_OBJECT
 
   QString m_logTxt;

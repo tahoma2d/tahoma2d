@@ -8,12 +8,11 @@
 // TnzLib includes
 #include "toonz/preferences.h"
 
+#include "toonzqt/dvdialog.h"
+
 // TnzCore includes
 #include "tfilepath.h"
 #include "tundo.h"
-
-// Qt includes
-#include <QDialog>
 
 // boost includes
 #include <boost/optional.hpp>
@@ -166,7 +165,7 @@ public:
 
 //------------------------------------------------------------------------
 
-class ConvertingPopup final : public QDialog {
+class ConvertingPopup final : public DVGui::Dialog {
 public:
   ConvertingPopup(QWidget *parent, QString fileName);
   ~ConvertingPopup();
