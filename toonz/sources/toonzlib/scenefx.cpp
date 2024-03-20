@@ -100,7 +100,7 @@ public:
   void setTimeRegion(const TFxTimeRegion &timeRegion) {
     m_timeRegion = timeRegion;
   }
-  TFxTimeRegion getTimeRegion(bool ignoreImplicit = false) const override {
+  TFxTimeRegion getTimeRegion() const override {
     return m_timeRegion;
   }
 

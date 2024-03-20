@@ -273,6 +273,8 @@ If \b scene is in +scenes/name.tnz return name,
 
   TLevelColumnFx *getOverlayFx(int row);
 
+  int getPreviewFrameCount();
+
 private:
   TFilePath m_scenePath;  //!< Full path to the scene file (.tnz).
 

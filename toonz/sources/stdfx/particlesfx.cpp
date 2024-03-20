@@ -13,6 +13,7 @@
 // TnzBase includes
 #include "trasterfx.h"
 #include "tparamuiconcept.h"
+#include "trenderer.h"
 
 // TnzLib includes
 #include "toonz/toonzimageutils.h"
@@ -423,9 +424,11 @@ void ParticlesFx::doCompute(TTile &tile, double frame,
     TRectD bbox;
 
     for (unsigned int i = 0; i < (int)part_ports.size(); ++i) {
-      const TFxTimeRegion &tr = (*part_ports[i])->getTimeRegion(true);
+      const TFxTimeRegion &tr = (*part_ports[i])->getTimeRegion();
 
-      lastframe.push_back(tr.getLastFrame() + 1);
+      int lastFrameId = tr.isUnlimited() ? ri.m_lastFrame : tr.getLastFrame();
+
+      lastframe.push_back(lastFrameId + 1);
       partLevel.push_back(new TLevel());
       partLevel[i]->setName((*part_ports[i])->getAlias(0, ri));
 
@@ -436,7 +439,7 @@ void ParticlesFx::doCompute(TTile &tile, double frame,
       riZero.m_affine.a13 = riZero.m_affine.a23 = 0;
 
       // Calculate the bboxes union
-      for (int t = 0; t <= tr.getLastFrame(); ++t) {
+      for (int t = 0; t <= lastFrameId; ++t) {
         TRectD inputBox;
         (*part_ports[i])->getBBox(t, inputBox, riZero);
         bbox += inputBox;
