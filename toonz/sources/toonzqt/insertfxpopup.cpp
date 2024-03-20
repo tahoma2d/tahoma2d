@@ -153,7 +153,7 @@ void FxTree::mousePressEvent(QMouseEvent *event) {
   setCurrentItem(itemAt(event->pos()));
   
   QTreeWidgetItem *item = currentItem();
-  if (item == NULL) {
+  if (item == NULL || event->button() == Qt::RightButton) {
     QTreeWidget::mousePressEvent(event);
     return;
   }
@@ -626,6 +626,7 @@ void InsertFxPopup::hideEvent(QHideEvent *e) {
 
 void InsertFxPopup::contextMenuEvent(QContextMenuEvent *event) {
   QTreeWidgetItem *item = m_fxTree->currentItem();
+  if (!item) return;
   QString itemRole      = item->data(0, Qt::UserRole).toString();
 
   TFilePath path = TFilePath(itemRole.toStdWString());
