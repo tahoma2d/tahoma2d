@@ -513,8 +513,14 @@ void InsertFxPopup::loadMacro() {
 //-----------------------------------------------------------------------------
 
 void InsertFxPopup::onItemDoubleClicked(QTreeWidgetItem *w, int c) {
-  if (w->childCount() == 0)  // E' una foglia
-    onInsert();
+  if (w->childCount() == 0) {  // E' una foglia
+    FxSelection *selection = dynamic_cast<FxSelection *>(
+        m_app->getCurrentSelection()->getSelection());
+    if (!selection || selection->getFxs().isEmpty())
+      onAdd();
+    else
+      onInsert();
+  }
 }
 
 //-----------------------------------------------------------------------------
