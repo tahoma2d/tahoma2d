@@ -705,18 +705,20 @@ class InsertFxUndo final : public FxCommandUndo {
   int m_colIdx;
   bool m_columnReplacesHole;
   bool m_attachOutputs;
+  bool m_attachSource;
 
 public:
   InsertFxUndo(const TFxP &fx, int row, int col, const QList<TFxP> &selectedFxs,
                QList<TFxCommand::Link> selectedLinks, TApplication *app,
-               bool attachOutputs = true)
+               bool attachOutputs = true, bool attachSource = true)
       : m_selectedFxs(selectedFxs)
       , m_selectedLinks(selectedLinks)
       , m_insertedColumn(0)
       , m_app(app)
       , m_colIdx(col)
       , m_columnReplacesHole(false)
-      , m_attachOutputs(attachOutputs) {
+      , m_attachOutputs(attachOutputs)
+      , m_attachSource(attachSource) {
     initialize(fx, row, col);
   }
 
@@ -776,10 +778,11 @@ void InsertFxUndo::initialize(const TFxP &newFx, int row, int col) {
       m_columnReplacesHole = true;
   } else {
     if (m_selectedFxs.isEmpty() && m_selectedLinks.isEmpty()) {
-      // Attempt retrieval of current Fx from the fxHandle
-      if (TFx *currentFx = m_app->getCurrentFx()->getFx())
-        m_selectedFxs.push_back(currentFx);
-      else {
+      if (m_attachSource) {
+        // Attempt retrieval of current Fx from the fxHandle
+        if (TFx *currentFx = m_app->getCurrentFx()->getFx())
+          m_selectedFxs.push_back(currentFx);
+      } else {
         // Isolated case
         locals.storeFx(xsh, fx);
         return;
@@ -954,7 +957,7 @@ void TFxCommand::addFx(TFx *newFx, const QList<TFxP> &fxs, TApplication *app,
   if (col < 0) col = 0;
 
   std::unique_ptr<FxCommandUndo> undo(
-      new InsertFxUndo(newFx, row, col, fxs, QList<Link>(), app, false));
+      new InsertFxUndo(newFx, row, col, fxs, QList<Link>(), app, false, false));
   if (!undo->isConsistent()) return;
 
   undo->redo();

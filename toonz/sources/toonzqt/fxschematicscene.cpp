@@ -21,7 +21,6 @@
 #include "toonz/tcolumnfx.h"
 #include "toonz/txshpalettecolumn.h"
 #include "toonz/txshzeraryfxcolumn.h"
-#include "toonz/fxcommand.h"
 #include "toonz/txsheethandle.h"
 #include "toonz/tfxhandle.h"
 #include "toonz/tscenehandle.h"
@@ -323,7 +322,10 @@ FxSchematicScene::FxSchematicScene(QWidget *parent)
     , m_currentFxNode(0)
     , m_gridDimension(eSmall)
     , m_isNormalIconView(!IconifyFxSchematicNodes)
-    , m_viewer() {
+    , m_viewer()
+    , m_dragDropAction(DragDropAction::None)
+    , m_litLink(0)
+    , m_litNode(0) {
   m_viewer = (SchematicViewer *)parent;
 
   m_selection = new FxSelection();
@@ -1760,6 +1762,152 @@ bool FxSchematicScene::event(QEvent *e) {
     m_altPressed = altPressed;
   }
   return ret;
+}
+
+//------------------------------------------------------------------
+
+void FxSchematicScene::dragEnterEvent(QGraphicsSceneDragDropEvent *e) {
+  const QMimeData *mimeData = e->mimeData();
+  const FxsData *fxdata     = dynamic_cast<const FxsData *>(mimeData);
+  if (!fxdata)
+    e->ignore();
+  else
+    e->acceptProposedAction();
+}
+
+//------------------------------------------------------------------
+
+void FxSchematicScene::dragMoveEvent(QGraphicsSceneDragDropEvent *e) {
+  QGraphicsItem *item   = itemAt(e->scenePos(), QTransform());
+  FxSchematicLink *link = dynamic_cast<FxSchematicLink *>(item);
+  FxPainter *painter           = dynamic_cast<FxPainter *>(item);
+  FxSchematicNode *node = dynamic_cast<FxSchematicNode *>(item);
+
+  m_fxs.clear();
+  m_links.clear();
+  if (m_litLink) {
+    m_litLink->setDropHighlighted(false);
+    m_litLink->update();
+    m_litLink = 0;
+  }
+  if (m_litNode) {
+    m_litNode->setDropHighlighted(false);
+    m_litNode->update();
+    m_litNode = 0;
+  }
+
+  TFx *fx = 0;
+
+  if (!item) {
+    m_dragDropAction = DragDropAction::Add;
+  } else if (link) {
+    m_dragDropAction = DragDropAction::Insert;
+
+    m_selection->selectNone();
+
+    m_selection->select(link);
+    m_fxs   = m_selection->getFxs();
+    m_links = m_selection->getLinks();
+
+    link->setDropHighlighted(true);
+    link->update();
+    m_litLink = link;
+  } else {
+    m_dragDropAction = DragDropAction::Replace;
+
+    m_selection->selectNone();
+
+    if (painter) node = painter->getNode();
+
+    if (node) {
+      m_selection->select(node->getFx());
+      node->setDropHighlighted(true);
+      node->update();
+      m_litNode = node;
+    } else {
+      e->ignore();
+      return;
+    }
+
+    m_fxs = m_selection->getFxs();
+  }
+
+  e->acceptProposedAction();
+}
+
+//------------------------------------------------------------------
+
+void FxSchematicScene::dropEvent(QGraphicsSceneDragDropEvent *e) {
+  const QMimeData *mimeData = e->mimeData();
+  const FxsData *fxdata     = dynamic_cast<const FxsData *>(mimeData);
+  if (!fxdata) return;
+
+  QList<TFxP> dropFxs;
+  QMap<TFx *, int> dropFxsMap;
+  QList<TXshColumnP> cols;
+  fxdata->getFxs(dropFxs, dropFxsMap, cols);
+  TFx *dropFx = dropFxs[0].getPointer();
+
+  if (m_dragDropAction == DragDropAction::Replace) {
+    if (m_litNode) {
+      m_litNode->setDropHighlighted(false);
+      m_litNode->update();
+      m_litNode = 0;
+    }
+    TFxCommand::replaceFx(dropFx, m_fxs, m_app->getCurrentXsheet(),
+                          m_app->getCurrentFx());
+  } else {
+    dropFx->getAttributes()->setDagNodePos(
+        TPointD(e->scenePos().x(), e->scenePos().y()));
+
+    if (m_dragDropAction == DragDropAction::Insert) {
+      if (m_litLink) {
+        m_litLink->setDropHighlighted(false);
+        m_litLink->update();
+        m_litLink = 0;
+      }
+      TFxCommand::insertFx(dropFx, m_fxs, m_links, m_app,
+                           m_app->getCurrentColumn()->getColumnIndex(),
+                           m_app->getCurrentFrame()->getFrameIndex());
+    } else {  // DragDropAction::Add: {
+      TFxCommand::addFx(dropFx, QList<TFxP>(), m_app,
+                        m_app->getCurrentColumn()->getColumnIndex(),
+                        m_app->getCurrentFrame()->getFrameIndex());
+    }
+
+    // move the zerary fx node to the clicked position
+    if (dropFx->isZerary() &&
+        dropFx->getAttributes()->getDagNodePos() != TConst::nowhere) {
+      TXsheet *xsh               = m_app->getCurrentXsheet()->getXsheet();
+      int col                    = m_app->getCurrentColumn()->getColumnIndex();
+      if (col < 0) col           = 0;
+      TXshZeraryFxColumn *column = xsh->getColumn(col)->getZeraryFxColumn();
+      if (column)
+        column->getZeraryColumnFx()->getAttributes()->setDagNodePos(
+            dropFx->getAttributes()->getDagNodePos());
+    }
+  }
+  m_xshHandle->notifyXsheetChanged();
+
+  e->accept();
+}
+
+//------------------------------------------------------------------
+
+void FxSchematicScene::dragLeaveEvent(QGraphicsSceneDragDropEvent *e) {
+  m_dragDropAction = DragDropAction::None;
+  m_fxs.clear();
+  m_links.clear();
+  if (m_litLink) {
+    m_litLink->setDropHighlighted(false);
+    m_litLink->update();
+    m_litLink = 0;
+  }
+  if (m_litNode) {
+    m_litNode->setDropHighlighted(false);
+    m_litNode->update();
+    m_litNode = 0;
+  }
 }
 
 //------------------------------------------------------------------

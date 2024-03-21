@@ -757,7 +757,9 @@ ParamsPageSet::ParamsPageSet(QWidget *parent, Qt::WindowFlags flags)
 
     mainLayout->addWidget(m_pagesList);
 
-    mainLayout->addWidget(new Separator("", this), 0);
+    Separator *sep = new Separator("", this);
+    sep->setMaximumHeight(0);
+    mainLayout->addWidget(sep, 0);
   }
   setLayout(mainLayout);
 

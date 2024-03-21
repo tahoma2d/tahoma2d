@@ -82,6 +82,8 @@
 #include "toonz/fxcommand.h"
 #include "toonz/tstageobjectcmd.h"
 
+#include "toonzqt/insertfxpopup.h"
+
 // TnzBase includes
 #include "trasterfx.h"
 #include "toutputproperties.h"
@@ -1740,3 +1742,46 @@ public:
 OpenFloatingPanel openVectorAlignmentPanelCommand(
     MI_OpenAlignmentPanel, "AlignmentPanel",
     QObject::tr("Align and Distribute"));
+
+//-----------------------------------------------------------------------------
+
+//=============================================================================
+// FxBrowserPanel
+//-----------------------------------------------------------------------------
+
+FxBrowserPanel::FxBrowserPanel(QWidget *parent) : TPanel(parent) {
+  TApp *app   = TApp::instance();
+  m_fxBrowser = new InsertFxPopup(parent);
+  m_fxBrowser->setApplication(app);
+
+  setWidget(m_fxBrowser);
+}
+
+//=============================================================================
+// FxSettingsFactory
+//-----------------------------------------------------------------------------
+
+class FxBrowserFactory final : public TPanelFactory {
+public:
+  FxBrowserFactory() : TPanelFactory("FxBrowser") {}
+
+  TPanel *createPanel(QWidget *parent) override {
+    FxBrowserPanel *panel = new FxBrowserPanel(parent);
+    panel->move(qApp->desktop()->screenGeometry(panel).center());
+    panel->setObjectName(getPanelType());
+    panel->setWindowTitle(QObject::tr("Fx Browser"));
+    panel->setMinimumWidth(233);
+    panel->allowMultipleInstances(true);
+    panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+    connect(TApp::instance(), SIGNAL(showTitleBars(bool)), panel->getTitleBar(),
+            SLOT(showTitleBar(bool)));
+    return panel;
+  }
+
+  void initialize(TPanel *panel) override { assert(0); }
+
+} FxBrowserFactory;
+
+//=============================================================================
+OpenFloatingPanel openFxBrowserCommand(MI_InsertFx, "FxBrowser",
+                                        QObject::tr("Fx Browser"));

@@ -70,6 +70,7 @@ set(MOC_HEADERS
     ../include/toonzqt/tselectionhandle.h
     ../include/toonzqt/updatechecker.h
     ../include/toonzqt/validatedchoicedialog.h
+    ../include/toonzqt/insertfxpopup.h
 )
 
 set(HEADERS
@@ -200,6 +201,7 @@ set(SOURCES
     plugin_ui_page_interface.cpp
     toonz_params.cpp
 	lutcalibrator.cpp
+    insertfxpopup.cpp
 )
 
 set(RESOURCES toonzqt.qrc)
