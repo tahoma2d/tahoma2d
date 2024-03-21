@@ -2300,7 +2300,7 @@ EraserToolOptionsBox::EraserToolOptionsBox(QWidget *parent, TTool *tool,
   m_pressure = dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Pressure"));
   m_invertMode = dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Invert"));
   m_multiFrameMode =
-      dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Frame Range"));
+      dynamic_cast<ToolOptionCombo *>(m_controls.value("Frame Range:"));
   m_pencilMode =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Pencil Mode"));
   m_eraseOnlySavebox =

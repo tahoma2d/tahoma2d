@@ -83,9 +83,9 @@ TEnv::IntVar V_VectorBrushSnapGrid("VectorBrushSnapGrid", 0);
 #define CUSTOM_WSTR L"<custom>"
 
 #define LINEAR_WSTR L"Linear"
-#define EASEIN_WSTR L"In"
-#define EASEOUT_WSTR L"Out"
-#define EASEINOUT_WSTR L"In&Out"
+#define EASEIN_WSTR L"Ease In"
+#define EASEOUT_WSTR L"Ease Out"
+#define EASEINOUT_WSTR L"Ease In/Out"
 
 #define LOW_WSTR L"Low"
 #define MEDIUM_WSTR L"Med"
@@ -628,9 +628,9 @@ void ToonzVectorBrushTool::updateTranslation() {
   m_snapSensitivity.setQStringName("");
   m_frameRange.setItemUIName(L"Off", tr("Off"));
   m_frameRange.setItemUIName(LINEAR_WSTR, tr("Linear"));
-  m_frameRange.setItemUIName(EASEIN_WSTR, tr("In"));
-  m_frameRange.setItemUIName(EASEOUT_WSTR, tr("Out"));
-  m_frameRange.setItemUIName(EASEINOUT_WSTR, tr("In&Out"));
+  m_frameRange.setItemUIName(EASEIN_WSTR, tr("Ease In"));
+  m_frameRange.setItemUIName(EASEOUT_WSTR, tr("Ease Out"));
+  m_frameRange.setItemUIName(EASEINOUT_WSTR, tr("Ease In/Out"));
   m_snapSensitivity.setItemUIName(LOW_WSTR, tr("Low"));
   m_snapSensitivity.setItemUIName(MEDIUM_WSTR, tr("Med"));
   m_snapSensitivity.setItemUIName(HIGH_WSTR, tr("High"));
