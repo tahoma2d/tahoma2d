@@ -46,6 +46,11 @@ TEnv::IntVar AutocloseOpacity("InknpaintAutocloseOpacity", 180);
 #define FREEHAND_CLOSE L"Freehand"
 #define POLYLINE_CLOSE L"Polyline"
 
+#define LINEAR_INTERPOLATION L"Linear"
+#define EASE_IN_INTERPOLATION L"Ease In"
+#define EASE_OUT_INTERPOLATION L"Ease Out"
+#define EASE_IN_OUT_INTERPOLATION L"Ease In/Out"
+
 namespace {
 
 //============================================================
@@ -120,7 +125,7 @@ class RasterTapeTool final : public TTool {
   TStyleIndexProperty m_inkIndex;
   TIntProperty m_opacity;
   TPropertyGroup m_prop;
-  TBoolProperty m_multi;
+  TEnumProperty m_multi;
   TFrameId m_firstFrameId, m_veryFirstFrameId;
   int m_firstFrameIdx;
   bool m_isXsheetCell;
@@ -144,7 +149,7 @@ public:
       , m_angle("Angle:", 1, 180, 60)           // W_ToolOptions_Angle
       , m_inkIndex("Style Index:", L"current")  // W_ToolOptions_InkIndex
       , m_opacity("Opacity:", 1, 255, 255)
-      , m_multi("Frame Range", false)  // W_ToolOptions_FrameRange
+      , m_multi("Frame Range:")  // W_ToolOptions_FrameRange
       , m_selecting(false)
       , m_selectingRect()
       , m_firstRect()
@@ -164,10 +169,16 @@ public:
     m_closeType.addValue(FREEHAND_CLOSE);
     m_closeType.addValue(POLYLINE_CLOSE);
     m_prop.bind(m_multi);
+    m_multi.addValue(L"Off");
+    m_multi.addValue(LINEAR_INTERPOLATION);
+    m_multi.addValue(EASE_IN_INTERPOLATION);
+    m_multi.addValue(EASE_OUT_INTERPOLATION);
+    m_multi.addValue(EASE_IN_OUT_INTERPOLATION);
     m_prop.bind(m_distance);
     m_prop.bind(m_angle);
     m_prop.bind(m_inkIndex);
     m_prop.bind(m_opacity);
+
     m_multi.setId("FrameRange");
     m_closeType.setId("Type");
   }
@@ -185,11 +196,17 @@ public:
     m_closeType.setItemUIName(FREEHAND_CLOSE, tr("Freehand"));
     m_closeType.setItemUIName(POLYLINE_CLOSE, tr("Polyline"));
 
+    m_multi.setQStringName(tr("Frame Range:"));
+    m_multi.setItemUIName(L"Off", tr("Off"));
+    m_multi.setItemUIName(LINEAR_INTERPOLATION, tr("Linear"));
+    m_multi.setItemUIName(EASE_IN_INTERPOLATION, tr("Ease In"));
+    m_multi.setItemUIName(EASE_OUT_INTERPOLATION, tr("Ease Out"));
+    m_multi.setItemUIName(EASE_IN_OUT_INTERPOLATION, tr("Ease In/Out"));
+
     m_distance.setQStringName(tr("Distance:"));
     m_inkIndex.setQStringName(tr("Style Index:"));
     m_inkIndex.setValue(tr("current").toStdWString());
     m_opacity.setQStringName(tr("Opacity:"));
-    m_multi.setQStringName(tr("Frame Range"));
     m_angle.setQStringName(tr("Angle:"));
   }
 
@@ -343,12 +360,22 @@ public:
         lastImage->addStroke(lastStrokes[i]);
     }
 
+    enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+    if (m_multi.getIndex() == 2) {  // EASE_IN_INTERPOLATION)
+      algorithm = TInbetween::EaseInInterpolation;
+    } else if (m_multi.getIndex() == 3) {  // EASE_OUT_INTERPOLATION)
+      algorithm = TInbetween::EaseOutInterpolation;
+    } else if (m_multi.getIndex() == 4) {  // EASE_IN_OUT_INTERPOLATION)
+      algorithm = TInbetween::EaseInOutInterpolation;
+    }
+
     TUndoManager::manager()->beginBlock();
     for (int i = 0; i < m; ++i) {
       TFrameId fid     = fids[i];
       TToonzImageP img = (TToonzImageP)m_level->getFrame(fid, true);
       if (!img) continue;
       double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+      t        = TInbetween::interpolation(t, algorithm);
       if (closeType == RECT_CLOSE)
         applyAutoclose(img, fid, interpolateRect(firstRect, lastRect, t));
       else if ((closeType == FREEHAND_CLOSE || closeType == POLYLINE_CLOSE) &&
@@ -406,6 +433,15 @@ public:
         lastImage->addStroke(lastStrokes[i]);
     }
 
+    enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+    if (m_multi.getIndex() == 2) {  // EASE_IN_INTERPOLATION)
+      algorithm = TInbetween::EaseInInterpolation;
+    } else if (m_multi.getIndex() == 3) {  // EASE_OUT_INTERPOLATION)
+      algorithm = TInbetween::EaseOutInterpolation;
+    } else if (m_multi.getIndex() == 4) {  // EASE_IN_OUT_INTERPOLATION)
+      algorithm = TInbetween::EaseInOutInterpolation;
+    }
+
     TUndoManager::manager()->beginBlock();
     for (int i = 0; i < m; ++i) {
       row              = cellList[i].first;
@@ -414,6 +450,7 @@ public:
       TToonzImageP img = (TToonzImageP)cell.getImage(true);
       if (!img) continue;
       double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+      t        = TInbetween::interpolation(t, algorithm);
       if (closeType == RECT_CLOSE)
         applyAutoclose(img, fid, interpolateRect(firstRect, lastRect, t));
       else if ((closeType == FREEHAND_CLOSE || closeType == POLYLINE_CLOSE) &&
@@ -505,7 +542,7 @@ public:
             TPointD(m_selectingRect.x1, m_selectingRect.y1));
       }
 
-      if (m_multi.getValue()) {
+      if (m_multi.getIndex()) {
         if (m_firstFrameSelected) {
           if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
             // We'll use polyline
@@ -587,7 +624,7 @@ public:
     } else if (m_closeType.getValue() == FREEHAND_CLOSE) {
       closeFreehand(pos);
       double error = (30.0 / 11) * sqrt(getPixelSize() * getPixelSize());
-      if (m_multi.getValue()) {
+      if (m_multi.getIndex()) {
         TFrameId tmp = getFrameId();
         if (m_firstStrokes.size() && m_stroke) {
           std::vector<TStroke *> lastStrokes;
@@ -633,7 +670,7 @@ public:
 //                       : TPixel32::Black;
     TPixel color = TPixel32::Red;
     if (m_closeType.getValue() == RECT_CLOSE) {
-    if (m_multi.getValue() && m_firstFrameSelected) {
+      if (m_multi.getIndex() && m_firstFrameSelected) {
         if (m_firstStrokes.size()) {
           tglColor(color);
           for (int i = 0; i < m_firstStrokes.size(); i++)
@@ -642,7 +679,7 @@ public:
           drawRect(m_firstRect, color, 0x3F33, true);
       }
 
-      if (m_selecting || (m_multi.getValue() && !m_firstFrameSelected)) {
+      if (m_selecting || (m_multi.getIndex() && !m_firstFrameSelected)) {
         if (m_polyline.size() > 1) {
           glPushMatrix();
           m_polyline.drawRectangle(color);
@@ -654,7 +691,7 @@ public:
     }
     if ((m_closeType.getValue() == FREEHAND_CLOSE ||
          m_closeType.getValue() == POLYLINE_CLOSE) &&
-        m_multi.getValue()) {
+        m_multi.getIndex()) {
       tglColor(color);
       for (int i = 0; i < m_firstStrokes.size(); i++)
         drawStrokeCenterline(*m_firstStrokes[i], 1);
@@ -666,7 +703,7 @@ public:
       glPushMatrix();
       m_track.drawAllFragments();
       glPopMatrix();
-    } else if (m_multi.getValue() && m_firstFrameSelected) {
+    } else if (m_multi.getIndex() && m_firstFrameSelected) {
       drawCross(m_firstPoint, 5);
 
       SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
@@ -713,7 +750,7 @@ public:
       AutocloseOpacity = m_opacity.getValue();
 
     else if (propertyName == m_multi.getName()) {
-      AutocloseRange = (int)((m_multi.getValue()));
+      AutocloseRange = m_multi.getIndex();
       resetMulti();
     }
 
@@ -742,7 +779,7 @@ public:
   //----------------------------------------------------------------------
 
   void onImageChanged() override {
-    if (!m_multi.getValue()) return;
+    if (!m_multi.getIndex()) return;
     TTool::Application *app = TTool::getApplication();
     TXshSimpleLevel *xshl   = 0;
     if (app->getCurrentLevel()->getLevel())
@@ -811,7 +848,7 @@ public:
       addPointPolyline(pos);
       return;
     } else if (m_closeType.getValue() == NORMAL_CLOSE) {
-      if (m_multi.getValue()) {
+      if (m_multi.getIndex()) {
         TTool::Application *app = TTool::getApplication();
         if (m_firstFrameSelected) {
           if (m_isXsheetCell)
@@ -854,7 +891,7 @@ public:
 
       m_stroke = m_polyline.makePolylineStroke();
       assert(m_stroke->getPoint(0) == m_stroke->getPoint(1));
-      if (m_multi.getValue()) {
+      if (m_multi.getIndex()) {
         if (m_firstStrokes.size()) {
           std::vector<TStroke *> lastStrokes;
           for (int i = 0; i < m_polyline.getBrushCount(); i++)
@@ -916,7 +953,7 @@ public:
       m_distance.setValue(AutocloseDistance);
       m_angle.setValue(AutocloseAngle);
       m_opacity.setValue(AutocloseOpacity);
-      m_multi.setValue(AutocloseRange ? 1 : 0);
+      m_multi.setIndex(AutocloseRange);
       m_firstTime = false;
     }
     //			getApplication()->editImage();
