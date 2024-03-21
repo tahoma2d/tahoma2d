@@ -65,6 +65,11 @@ using namespace ToolUtils;
 #define POLYLINEFILL L"Polyline"
 #define FREEPICKFILL L"Freepick"
 
+#define LINEAR_INTERPOLATION L"Linear"
+#define EASE_IN_INTERPOLATION L"Ease In"
+#define EASE_OUT_INTERPOLATION L"Ease Out"
+#define EASE_IN_OUT_INTERPOLATION L"Ease In/Out"
+
 #define GAP_CLOSE_USED 4095
 #define GAP_CLOSE_TEMP 4094
 #define IGNORECOLORSTYLE 4093
@@ -1248,16 +1253,17 @@ public:
   virtual void process(TImageP img /*, TImageLocation &imgloc*/, double t,
                        TXshSimpleLevel *sl, const TFrameId &fid,
                        int frameIdx = -1) = 0;
-  void processSequence(TXshSimpleLevel *sl, TFrameId firstFid,
-                       TFrameId lastFid);
-  void processSequence(TXshSimpleLevel *sl, int firstFidx, int lastFidx);
+  void processSequence(TXshSimpleLevel *sl, TFrameId firstFid, TFrameId lastFid,
+                       int multi);
+  void processSequence(TXshSimpleLevel *sl, int firstFidx, int lastFidx,
+                       int multi);
   virtual ~SequencePainter() {}
 };
 
 //-----------------------------------------------------------------------------
 
 void SequencePainter::processSequence(TXshSimpleLevel *sl, TFrameId firstFid,
-                                      TFrameId lastFid) {
+                                      TFrameId lastFid, int multi) {
   if (!sl) return;
 
   bool backward = false;
@@ -1279,12 +1285,22 @@ void SequencePainter::processSequence(TXshSimpleLevel *sl, TFrameId firstFid,
   int m = fids.size();
   assert(m > 0);
 
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (multi == 2) {  // EASE_IN_INTERPOLATION)
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (multi == 3) {  // EASE_OUT_INTERPOLATION)
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (multi == 4) {  // EASE_IN_OUT_INTERPOLATION)
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
   TUndoManager::manager()->beginBlock();
   for (int i = 0; i < m; ++i) {
     TFrameId fid = fids[i];
     assert(firstFid <= fid && fid <= lastFid);
     TImageP img = sl->getFrame(fid, true);
     double t    = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t           = TInbetween::interpolation(t, algorithm);
     process(img, backward ? 1 - t : t, sl, fid);
     // Setto il fid come corrente per notificare il cambiamento dell'immagine
     TTool::Application *app = TTool::getApplication();
@@ -1300,7 +1316,7 @@ void SequencePainter::processSequence(TXshSimpleLevel *sl, TFrameId firstFid,
 //-----------------------------------------------------------------------------
 
 void SequencePainter::processSequence(TXshSimpleLevel *sl, int firstFidx,
-                                      int lastFidx) {
+                                      int lastFidx, int multi) {
   if (!sl) return;
 
   bool backwardidx = false;
@@ -1327,6 +1343,15 @@ void SequencePainter::processSequence(TXshSimpleLevel *sl, int firstFidx,
 
   int m = cellList.size();
 
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (multi == 2) {  // EASE_IN_INTERPOLATION)
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (multi == 3) {  // EASE_OUT_INTERPOLATION)
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (multi == 4) {  // EASE_IN_OUT_INTERPOLATION)
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
   TUndoManager::manager()->beginBlock();
   for (int i = 0; i < m; i++) {
     row           = cellList[i].first;
@@ -1334,7 +1359,8 @@ void SequencePainter::processSequence(TXshSimpleLevel *sl, int firstFidx,
     TFrameId fid  = cell.getFrameId();
     TImageP img   = cell.getImage(true);
     if (!img) continue;
-    double t      = m > 1 ? (double)i / (double)(m - 1) : 1.0;
+    double t = m > 1 ? (double)i / (double)(m - 1) : 1.0;
+    t        = TInbetween::interpolation(t, algorithm);
     process(img, backwardidx ? 1 - t : t, sl, fid, row);
     // Setto il fid come corrente per notificare il cambiamento dell'immagine
     if (app) {
@@ -1360,12 +1386,13 @@ class MultiAreaFiller final : public SequencePainter {
   bool m_fillGaps, m_closeGaps;
   int m_closeStyleIndex;
   bool m_fillOnlySavebox;
+  int m_frameRange;
 
 public:
   MultiAreaFiller(const TRectD &firstRect, const TRectD &lastRect,
                   bool unfilledOnly, std::wstring colorType, int styleIndex,
                   bool autopaintLines, bool fillGaps, bool closeGaps,
-                  int closeStyleIndex, bool fillOnlySavebox)
+                  int closeStyleIndex, bool fillOnlySavebox, int frameRange)
       : m_firstRect(firstRect)
       , m_lastRect(lastRect)
       , m_unfilledOnly(unfilledOnly)
@@ -1377,7 +1404,8 @@ public:
       , m_closeGaps(closeGaps)
       , m_closeStyleIndex(closeStyleIndex)
       , m_autopaintLines(autopaintLines)
-      , m_fillOnlySavebox(fillOnlySavebox) {}
+      , m_fillOnlySavebox(fillOnlySavebox)
+      , m_frameRange(frameRange) {}
 
   ~MultiAreaFiller() {
     if (m_firstImage) {
@@ -1390,7 +1418,7 @@ public:
                   std::vector<TStroke *> &lastStrokes, bool unfilledOnly,
                   std::wstring colorType, int styleIndex, bool autopaintLines,
                   bool fillGaps, bool closeGaps, int closeStyleIndex,
-                  bool fillOnlySavebox)
+                  bool fillOnlySavebox, int frameRange)
       : m_firstRect()
       , m_lastRect()
       , m_unfilledOnly(unfilledOnly)
@@ -1400,7 +1428,8 @@ public:
       , m_closeGaps(closeGaps)
       , m_closeStyleIndex(closeStyleIndex)
       , m_autopaintLines(autopaintLines)
-      , m_fillOnlySavebox(fillOnlySavebox) {
+      , m_fillOnlySavebox(fillOnlySavebox)
+      , m_frameRange(frameRange) {
     m_firstImage = new TVectorImage();
     m_lastImage  = new TVectorImage();
 
@@ -1548,7 +1577,7 @@ void drawPolyline(const std::vector<TPointD> &points) {
 //-----------------------------------------------------------------------------
 
 AreaFillTool::AreaFillTool(TTool *parent)
-    : m_frameRange(false)
+    : m_frameRange(0)
     , m_onlyUnfilled(false)
     , m_selecting(false)
     , m_selectingRect(TRectD())
@@ -1769,13 +1798,13 @@ void AreaFillTool::leftButtonDoubleClick(const TPointD &pos,
       MultiAreaFiller filler(m_firstStrokes, lastStrokes, m_onlyUnfilled,
                              m_colorType, styleIndex, m_autopaintLines,
                              fillGaps, closeGaps, closeStyleIndex,
-                             m_fillOnlySavebox);
+                             m_fillOnlySavebox, m_frameRange);
       if (isEditingLevel)
         filler.processSequence(m_level.getPointer(), m_firstFrameId,
-                               m_parent->getCurrentFid());
+                               m_parent->getCurrentFid(), m_frameRange);
       else
         filler.processSequence(m_level.getPointer(), m_firstFrameIdx,
-                               m_lastFrameIdx);
+                               m_lastFrameIdx, m_frameRange);
       m_parent->invalidate(m_selectingRect.enlarge(2));
       if (e.isShiftPressed()) {
         m_firstStrokes.clear();
@@ -1921,24 +1950,24 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
           MultiAreaFiller filler(m_firstStrokes, lastStrokes, m_onlyUnfilled,
                                  m_colorType, styleIndex, m_autopaintLines,
                                  fillGaps, closeGaps, closeStyleIndex,
-                                 m_fillOnlySavebox);
+                                 m_fillOnlySavebox, m_frameRange);
           if (isEditingLevel)
             filler.processSequence(m_level.getPointer(), m_firstFrameId,
-                                   m_parent->getCurrentFid());
+                                   m_parent->getCurrentFid(), m_frameRange);
           else
             filler.processSequence(m_level.getPointer(), m_firstFrameIdx,
-                                   m_lastFrameIdx);
+                                   m_lastFrameIdx, m_frameRange);
         } else {
           MultiAreaFiller filler(m_firstRect, m_selectingRect, m_onlyUnfilled,
                                  m_colorType, styleIndex, m_autopaintLines,
                                  fillGaps, closeGaps, closeStyleIndex,
-                                 m_fillOnlySavebox);
+                                 m_fillOnlySavebox, m_frameRange);
           if (isEditingLevel)
             filler.processSequence(m_level.getPointer(), m_firstFrameId,
-                                   m_parent->getCurrentFid());
+                                   m_parent->getCurrentFid(), m_frameRange);
           else
             filler.processSequence(m_level.getPointer(), m_firstFrameIdx,
-                                   m_lastFrameIdx);
+                                   m_lastFrameIdx, m_frameRange);
         }
         m_parent->invalidate(m_selectingRect.enlarge(2));
         if (e.isShiftPressed()) {
@@ -2059,13 +2088,13 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
         MultiAreaFiller filler(m_firstStrokes, lastStrokes, m_onlyUnfilled,
                                m_colorType, styleIndex, m_autopaintLines,
                                fillGaps, closeGaps, closeStyleIndex,
-                               m_fillOnlySavebox);
+                               m_fillOnlySavebox, m_frameRange);
         if (isEditingLevel)
           filler.processSequence(m_level.getPointer(), m_firstFrameId,
-                                 m_parent->getCurrentFid());
+                                 m_parent->getCurrentFid(), m_frameRange);
         else
           filler.processSequence(m_level.getPointer(), m_firstFrameIdx,
-                                 m_lastFrameIdx);
+                                 m_lastFrameIdx, m_frameRange);
         m_parent->invalidate(m_selectingRect.enlarge(2));
         if (e.isShiftPressed()) {
           m_firstStrokes.clear();
@@ -2177,7 +2206,7 @@ void AreaFillTool::onImageChanged() {
 }
 
 /*--Normal以外のTypeが選択された場合に呼ばれる--*/
-bool AreaFillTool::onPropertyChanged(bool multi, bool onlyUnfilled, bool onion,
+bool AreaFillTool::onPropertyChanged(int multi, bool onlyUnfilled, bool onion,
                                      Type type, std::wstring colorType,
                                      bool autopaintLines,
                                      bool fillOnlySavebox) {
@@ -2347,7 +2376,7 @@ public:
 
 FillTool::FillTool(int targetType)
     : TTool("T_Fill")
-    , m_frameRange("Frame Range", false)  // W_ToolOptions_FrameRange
+    , m_frameRange("Frame Range:")  // W_ToolOptions_FrameRange
     , m_fillType("Type:")
     , m_selective("Selective", false)
     , m_colorType("Mode:")
@@ -2398,6 +2427,12 @@ FillTool::FillTool(int targetType)
   m_prop.bind(m_onion);
   if (targetType == TTool::ToonzImage) m_prop.bind(m_referenced);
   m_prop.bind(m_frameRange);
+  m_frameRange.addValue(L"Off");
+  m_frameRange.addValue(LINEAR_INTERPOLATION);
+  m_frameRange.addValue(EASE_IN_INTERPOLATION);
+  m_frameRange.addValue(EASE_OUT_INTERPOLATION);
+  m_frameRange.addValue(EASE_IN_OUT_INTERPOLATION);
+
   if (targetType == TTool::VectorImage) {
     m_prop.bind(m_maxGapDistance);
     m_maxGapDistance.setId("MaxGapDistance");
@@ -2446,7 +2481,12 @@ int FillTool::getCursorId() const {
 //-----------------------------------------------------------------------------
 
 void FillTool::updateTranslation() {
-  m_frameRange.setQStringName(tr("Frame Range"));
+  m_frameRange.setQStringName(tr("Frame Range:"));
+  m_frameRange.setItemUIName(L"Off", tr("Off"));
+  m_frameRange.setItemUIName(LINEAR_INTERPOLATION, tr("Linear"));
+  m_frameRange.setItemUIName(EASE_IN_INTERPOLATION, tr("Ease In"));
+  m_frameRange.setItemUIName(EASE_OUT_INTERPOLATION, tr("Ease Out"));
+  m_frameRange.setItemUIName(EASE_IN_OUT_INTERPOLATION, tr("Ease In/Out"));
 
   m_fillType.setQStringName(tr("Type:"));
   m_fillType.setItemUIName(NORMALFILL, tr("Normal"));
@@ -2519,7 +2559,7 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
   if (m_onion.getValue()) {
     m_onionStyleId = pickOnionColor(pos);
     if (m_onionStyleId > 0) app->setCurrentLevelStyleIndex(m_onionStyleId);
-  } else if (m_frameRange.getValue()) {
+  } else if (m_frameRange.getIndex()) {
     bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
     if (!m_firstClick) {
       // PRIMO CLICK
@@ -2554,10 +2594,11 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
                          m_closeRasterGaps.getIndex() > 1, closeStyleIndex,
                          rasCenter, dpiScale);
       if (isEditingLevel)
-        filler.processSequence(m_level.getPointer(), m_firstFrameId, fid);
+        filler.processSequence(m_level.getPointer(), m_firstFrameId, fid,
+                               m_frameRange.getIndex());
       else
         filler.processSequence(m_level.getPointer(), m_firstFrameIdx,
-                               m_lastFrameIdx);
+                               m_lastFrameIdx, m_frameRange.getIndex());
       if (e.isShiftPressed()) {
         m_firstPoint   = pos;
         if (isEditingLevel)
@@ -2613,7 +2654,7 @@ void FillTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   if ((m_fillType.getValue() != NORMALFILL && !m_onion.getValue()) ||
       (m_colorType.getValue() == AREAS && m_onion.getValue()))
     m_rectFill->leftButtonDrag(pos, e);
-  else if (!m_onion.getValue() && !m_frameRange.getValue()) {
+  else if (!m_onion.getValue() && !m_frameRange.getIndex()) {
     FillParameters params = getFillParameters();
     if (params.m_fillType == LINES && m_targetType == TTool::ToonzImage) {
       m_normalLineFillTool->leftButtonDrag(pos, e);
@@ -2681,7 +2722,7 @@ void FillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
     return;
   }
 
-  if (!m_frameRange.getValue()) {
+  if (!m_frameRange.getIndex()) {
     TFrameId fid = getCurrentFid();
     // notifyImageChanged();
     if (getFillParameters().m_fillType == LINES &&
@@ -2738,7 +2779,7 @@ bool FillTool::onPropertyChanged(std::string propertyName) {
   }
   // Frame Range
   else if (propertyName == m_frameRange.getName()) {
-    FillRange = (int)(m_frameRange.getValue());
+    FillRange = m_frameRange.getIndex();
     resetMulti();
     rectPropChangedflag = true;
   }
@@ -2834,7 +2875,7 @@ bool FillTool::onPropertyChanged(std::string propertyName) {
       assert(false);
 
     m_rectFill->onPropertyChanged(
-        m_frameRange.getValue(), m_selective.getValue(), m_onion.getValue(),
+        m_frameRange.getIndex(), m_selective.getValue(), m_onion.getValue(),
         type, m_colorType.getValue(), m_autopaintLines.getValue(),
         m_fillOnlySavebox.getValue());
   }
@@ -2897,7 +2938,7 @@ void FillTool::draw() {
     return;
   }
 
-  if (m_frameRange.getValue() && m_firstClick) {
+  if (m_frameRange.getIndex() && m_firstClick) {
     tglColor(TPixel::Red);
     drawCross(m_firstPoint, 6);
 
@@ -2917,7 +2958,7 @@ void FillTool::draw() {
         drawCross(symmPts[i] - rasCenter, 6);
       }
     }
-  } else if (!m_frameRange.getValue() &&
+  } else if (!m_frameRange.getIndex() &&
              getFillParameters().m_fillType == LINES &&
              m_targetType == TTool::ToonzImage)
     m_normalLineFillTool->draw();
@@ -3040,7 +3081,7 @@ void FillTool::onActivate() {
     //		m_onlyEmpty.setValue(FillSelective ? 1 :0);
     m_onion.setValue(FillOnion ? 1 : 0);
     m_segment.setValue(FillSegment ? 1 : 0);
-    m_frameRange.setValue(FillRange ? 1 : 0);
+    m_frameRange.setIndex(FillRange);
     m_fillOnlySavebox.setValue(FillOnlySavebox ? 1 : 0);
     m_referenced.setValue(FillReferenced ? 1 : 0);
     m_autopaintLines.setValue(AutoPaintLines ? 1 : 0);
@@ -3061,7 +3102,7 @@ void FillTool::onActivate() {
         assert(false);
 
       m_rectFill->onPropertyChanged(
-          m_frameRange.getValue(), m_selective.getValue(), m_onion.getValue(),
+          m_frameRange.getIndex(), m_selective.getValue(), m_onion.getValue(),
           type, m_colorType.getValue(), m_autopaintLines.getValue(),
           m_fillOnlySavebox.getValue());
     }

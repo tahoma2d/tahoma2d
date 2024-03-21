@@ -1849,7 +1849,7 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
   m_referenced =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Refer Visible"));
   m_multiFrameMode =
-      dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Frame Range"));
+      dynamic_cast<ToolOptionCombo *>(m_controls.value("Frame Range:"));
   m_autopaintMode =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Autopaint Lines"));
   m_rasterGapSettings =
@@ -1871,8 +1871,8 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
                        SLOT(onToolTypeChanged(int)));
   ret = ret && connect(m_onionMode, SIGNAL(toggled(bool)), this,
                        SLOT(onOnionModeToggled(bool)));
-  ret = ret && connect(m_multiFrameMode, SIGNAL(toggled(bool)), this,
-                       SLOT(onMultiFrameModeToggled(bool)));
+  ret = ret && connect(m_multiFrameMode, SIGNAL(currentIndexChanged(int)), this,
+                       SLOT(onMultiFrameModeChanged(int)));
   if (m_targetType == TTool::ToonzImage) {
     ret = ret && connect(m_rasterGapSettings, SIGNAL(currentIndexChanged(int)),
                          this, SLOT(onGapSettingChanged(int)));
@@ -1888,7 +1888,7 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
       m_fillDepthField->setEnabled(false);
     }
     if (m_toolType->getProperty()->getValue() == L"Normal" ||
-        m_multiFrameMode->isChecked())
+        m_multiFrameMode->getProperty()->getIndex())
       m_onionMode->setEnabled(false);
     if (m_autopaintMode) m_autopaintMode->setEnabled(false);
     if (m_referenced) m_referenced->setEnabled(false);
@@ -1896,7 +1896,7 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
   if (m_toolType->getProperty()->getValue() != L"Normal") {
     if (m_segmentMode) m_segmentMode->setEnabled(false);
     if (m_colorMode->getProperty()->getValue() == L"Lines" ||
-        m_multiFrameMode->isChecked())
+        m_multiFrameMode->getProperty()->getIndex())
       m_onionMode->setEnabled(false);
   }
   if (m_onionMode->isChecked()) m_multiFrameMode->setEnabled(false);
@@ -1926,7 +1926,8 @@ void FillToolOptionsBox::onColorModeChanged(int index) {
     m_segmentMode->setEnabled(
         enabled ? m_toolType->getProperty()->getValue() == L"Normal" : false);
   }
-  enabled = range[index] != L"Lines" && !m_multiFrameMode->isChecked();
+  enabled =
+      range[index] != L"Lines" && !m_multiFrameMode->getProperty()->getIndex();
   m_onionMode->setEnabled(enabled);
   if (m_referenced) m_referenced->setEnabled(enabled);
   checkGapSettingsVisibility();
@@ -1991,7 +1992,7 @@ void FillToolOptionsBox::onToolTypeChanged(int index) {
     m_segmentMode->setEnabled(
         enabled ? m_colorMode->getProperty()->getValue() != L"Areas" : false);
   enabled = enabled || (m_colorMode->getProperty()->getValue() != L"Lines" &&
-                        !m_multiFrameMode->isChecked());
+                        !m_multiFrameMode->getProperty()->getIndex());
   m_onionMode->setEnabled(enabled);
 }
 
@@ -2036,7 +2037,7 @@ void FillToolOptionsBox::onOnionModeToggled(bool value) {
 
 //-----------------------------------------------------------------------------
 
-void FillToolOptionsBox::onMultiFrameModeToggled(bool value) {
+void FillToolOptionsBox::onMultiFrameModeChanged(int value) {
   m_onionMode->setEnabled(!value);
 }
 
