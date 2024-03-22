@@ -528,4 +528,6 @@
 
 #define MI_ShowSymmetryGuide "MI_ShowSymmetryGuide"
 #define MI_ShowPerspectiveGrids "MI_ShowPerspectiveGrids"
+
+#define MI_OpenLocator "MI_OpenLocator"
 #endif
