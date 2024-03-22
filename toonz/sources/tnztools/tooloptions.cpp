@@ -1561,7 +1561,7 @@ void GeometricToolOptionsBox::filterControls() {
                (it.key() == "Opacity:") || (it.key() == "Shape:") ||
                (it.key() == "Polygon Sides:") || (it.key() == "rotate") ||
                (it.key() == "Snap") || (it.key() == "Draw Under") ||
-               (it.key() == "Smooth"));
+               (it.key() == "Smooth" || (it.key() == "Range:")));
     it.value()->setVisible(visible);
   }
 
@@ -1574,7 +1574,7 @@ void GeometricToolOptionsBox::filterControls() {
                (it.key() == "Opacity:") || (it.key() == "Shape:") ||
                (it.key() == "Polygon Sides:") || (it.key() == "rotate") ||
                (it.key() == "Snap") || (it.key() == "Draw Under") ||
-               (it.key() == "Smooth"));
+               (it.key() == "Smooth" || (it.key() == "Range:")));
     if (QWidget *widget = dynamic_cast<QWidget *>(it.value()))
       widget->setVisible(visible);
   }

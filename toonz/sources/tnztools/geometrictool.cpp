@@ -39,6 +39,8 @@
 
 #include "toonz/mypaintbrushstyle.h"
 
+#include "tinbetween.h"
+
 // For Qt translation support
 #include <QCoreApplication>
 
@@ -72,6 +74,7 @@ TEnv::IntVar GeometricModifierJoinStyle("InknpaintGeometricModifierJoinStyle",
                                         0);
 TEnv::DoubleVar GeometricModifierPressure("InknpaintGeometricModifierPressure",
                                           0.5);
+TEnv::IntVar GeometricRange("InknpaintGeometricRange", 0);
 
 //-------------------------------------------------------------------
 
@@ -84,6 +87,11 @@ TEnv::DoubleVar GeometricModifierPressure("InknpaintGeometricModifierPressure",
 #define LOW_WSTR L"Low"
 #define MEDIUM_WSTR L"Medium"
 #define HIGH_WSTR L"High"
+
+#define LINEAR_INTERPOLATION L"Linear"
+#define EASE_IN_INTERPOLATION L"Ease In"
+#define EASE_OUT_INTERPOLATION L"Ease Out"
+#define EASE_IN_OUT_INTERPOLATION L"Ease In/Out"
 
 const double SNAPPING_LOW    = 5.0;
 const double SNAPPING_MEDIUM = 25.0;
@@ -506,6 +514,7 @@ public:
   TBoolProperty m_modifierEraser;
   TEnumProperty m_modifierJoinStyle;
   TDoubleProperty m_modifierPressure;
+  TEnumProperty m_frameRange;
 
   int m_targetType;
 
@@ -539,7 +548,8 @@ public:
       , m_modifierSize("ModifierSize", -3, 3, 0, true)
       , m_modifierEraser("ModifierEraser", false)
       , m_modifierJoinStyle("ModifierJoin")
-      , m_modifierPressure("ModifierPressure", -0.49, 0.5, 0) {
+      , m_modifierPressure("ModifierPressure", -0.49, 0.5, 0)
+      , m_frameRange("Range:") {
     if (targetType & TTool::Vectors) m_prop[0].bind(m_toolSize);
     if (targetType & TTool::ToonzImage || targetType & TTool::RasterImage) {
       m_prop[0].bind(m_modifierSize);
@@ -574,6 +584,14 @@ public:
       m_pencil.setId("PencilMode");
     }
     m_prop[0].bind(m_smooth);
+    m_prop[0].bind(m_frameRange);
+
+    m_frameRange.addValue(L"Off");
+    m_frameRange.addValue(LINEAR_INTERPOLATION);
+    m_frameRange.addValue(EASE_IN_INTERPOLATION);
+    m_frameRange.addValue(EASE_OUT_INTERPOLATION);
+    m_frameRange.addValue(EASE_IN_OUT_INTERPOLATION);
+    m_frameRange.setId("FrameRange");
 
     m_capStyle.addValue(BUTT_WSTR, QString::fromStdWString(BUTT_WSTR));
     m_capStyle.addValue(ROUNDC_WSTR, QString::fromStdWString(ROUNDC_WSTR));
@@ -657,6 +675,13 @@ public:
       m_snapSensitivity.setItemUIName(HIGH_WSTR, tr("High"));
       m_sendToBack.setQStringName(tr("Draw Under"));
     }
+
+    m_frameRange.setQStringName(tr("Range:"));
+    m_frameRange.setItemUIName(L"Off", tr("Off"));
+    m_frameRange.setItemUIName(LINEAR_INTERPOLATION, tr("Linear"));
+    m_frameRange.setItemUIName(EASE_IN_INTERPOLATION, tr("Ease In"));
+    m_frameRange.setItemUIName(EASE_OUT_INTERPOLATION, tr("Ease Out"));
+    m_frameRange.setItemUIName(EASE_IN_OUT_INTERPOLATION, tr("Ease In/Out"));
   }
 };
 
@@ -1183,6 +1208,12 @@ protected:
   TRaster32P m_workRaster;
   TRect m_strokeRect, m_lastRect, m_strokeSegmentRect;
 
+  std::vector<TStroke *> m_firstStrokes;
+  std::pair<int, int> m_currCell;
+  TFrameId m_firstFrameId, m_veryFirstFrameId;
+  int m_firstFrameIdx, m_lastFrameIdx;
+  bool m_shiftPressed;
+
 public:
   GeometricTool(int targetType)
       : TTool("T_Geometric")
@@ -1194,7 +1225,9 @@ public:
       , m_isMyPaintStyleSelected(false)
       , m_notifier(0)
       , m_tileSaverCM32(0)
-      , m_tileSaverFullColor(0) {
+      , m_tileSaverFullColor(0)
+      , m_currCell(-1, -1)
+      , m_shiftPressed(false) {
     bind(targetType);
     if ((targetType & TTool::RasterImage) || (targetType & TTool::ToonzImage)) {
       addPrimitive(new RectanglePrimitive(&m_param, this, true));
@@ -1287,6 +1320,7 @@ public:
     bool isEditingLevel = m_application->getCurrentFrame()->isEditingLevel();
     bool renameColumn   = m_isFrameCreated;
     if (!isEditingLevel && renameColumn) TUndoManager::manager()->beginBlock();
+    m_shiftPressed = e.isShiftPressed();
 
     if (m_primitive) m_primitive->leftButtonUp(p, e);
 
@@ -1481,6 +1515,9 @@ public:
           break;
         }
       }
+      m_param.m_frameRange.setIndex(GeometricRange);
+
+      resetMulti();
     }
     m_primitive->resetSnap();
     /*--
@@ -1508,6 +1545,11 @@ public:
   }
 
   void draw() override {
+    if (m_param.m_frameRange.getIndex() && m_firstStrokes.size()) {
+      tglColor(m_color);
+      for (int i = 0; i < m_firstStrokes.size(); i++)
+        drawStrokeCenterline(*m_firstStrokes[i], sqrt(tglGetPixelSize2()));
+    }
     if (m_isRotatingOrMoving) {
       tglColor(m_color);
       for (int i = 0; i < m_rotatedStroke.size(); i++)
@@ -1616,8 +1658,17 @@ public:
         break;
       }
     }
-
+    // Frame Range
+    else if (propertyName == m_param.m_frameRange.getName()) {
+      GeometricRange = m_param.m_frameRange.getIndex();
+      resetMulti();
+    }
     return false;
+  }
+
+  void resetMulti() {
+    m_firstFrameId = -1;
+    m_firstStrokes.clear();
   }
 
   void addStroke() {
@@ -1640,20 +1691,7 @@ public:
         m_lastMoveStrokePos  = TPointD(0, 0);
         m_wasCtrlPressed     = false;
 
-        const TTool::Application *app = TTool::getApplication();
-        if (!app) {
-          m_color = TPixel32::Red;
-          return;
-        }
-
-        const TColorStyle *style = app->getCurrentLevelStyle();
-        if (!style) {
-          m_color = TPixel32::Red;
-          return;
-        }
-
-        m_color = style->getAverageColor();
-
+        m_color = TPixel32::Red;
         return;
       }
     } else {
@@ -1662,18 +1700,194 @@ public:
       m_rotatedStroke.clear();
     }
 
+    TApplication *app = TTool::getApplication();
+
+    if (m_param.m_frameRange.getIndex()) {
+      if (!m_firstStrokes.size()) {
+        m_currCell     = std::pair<int, int>(getColumnIndex(), getFrame());
+        m_firstStrokes = strokes;
+        m_firstFrameId = m_veryFirstFrameId = getCurrentFid();
+        m_firstFrameIdx = app->getCurrentFrame()->getFrameIndex();
+        m_color         = TPixel32::Red;
+        invalidate();
+      } else {
+        bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
+        qApp->processEvents();
+
+        TFrameId fid   = getCurrentFid();
+        m_lastFrameIdx = app->getCurrentFrame()->getFrameIndex();
+
+        TXshCell cell = app->getCurrentXsheet()->getXsheet()->getCell(
+            m_currCell.second, m_currCell.first);
+        TXshSimpleLevel *sl = cell.getSimpleLevel();
+
+        if (isEditingLevel)
+          processSequence(sl, m_firstStrokes, strokes, m_firstFrameId, fid,
+                          m_param.m_frameRange.getIndex());
+        else
+          processSequence(m_firstStrokes, strokes, m_firstFrameIdx,
+                          m_lastFrameIdx, m_param.m_frameRange.getIndex());
+
+        if (m_shiftPressed) {
+          m_firstStrokes = strokes;
+          if (isEditingLevel)
+            m_firstFrameId = getCurrentFid();
+          else {
+            m_firstFrameIdx = m_lastFrameIdx;
+            app->getCurrentFrame()->setFrame(m_firstFrameIdx);
+          }
+        } else {
+          m_firstStrokes.clear();
+          if (app->getCurrentFrame()->isEditingScene()) {
+            app->getCurrentColumn()->setColumnIndex(m_currCell.first);
+            app->getCurrentFrame()->setFrame(m_currCell.second);
+          } else
+            app->getCurrentFrame()->setFid(m_veryFirstFrameId);
+        }
+      }
+      return;
+    }
+
     if (strokes.size() > 1) TUndoManager::manager()->beginBlock();
     for (int i = 0; i < strokes.size(); i++) {
       TStroke *stroke = strokes[i];
-      addStrokeToImage(stroke);
+      addStrokeToImage(getImage(true), stroke);
     }
     if (strokes.size() > 1) TUndoManager::manager()->endBlock();
   }
 
-  void addStrokeToImage(TStroke *stroke) {
+  void processSequence(TXshSimpleLevel *sl, std::vector<TStroke *> firstStrokes,
+                       std::vector<TStroke *> lastStrokes, TFrameId firstFid,
+                       TFrameId lastFid, int multi) {
+    TTool::Application *app = TTool::getApplication();
+
+    bool backward = false;
+    if (firstFid > lastFid) {
+      std::swap(firstFid, lastFid);
+      backward = true;
+    }
+    assert(firstFid <= lastFid);
+    std::vector<TFrameId> allFids;
+    sl->getFids(allFids);
+
+    std::vector<TFrameId>::iterator i0 = allFids.begin();
+    while (i0 != allFids.end() && *i0 < firstFid) i0++;
+    if (i0 == allFids.end()) return;
+    std::vector<TFrameId>::iterator i1 = i0;
+    while (i1 != allFids.end() && *i1 <= lastFid) i1++;
+    assert(i0 < i1);
+    std::vector<TFrameId> fids(i0, i1);
+    int m = fids.size();
+    assert(m > 0);
+
+    enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+    if (multi == 2) {  // EASE_IN_INTERPOLATION)
+      algorithm = TInbetween::EaseInInterpolation;
+    } else if (multi == 3) {  // EASE_OUT_INTERPOLATION)
+      algorithm = TInbetween::EaseOutInterpolation;
+    } else if (multi == 4) {  // EASE_IN_OUT_INTERPOLATION)
+      algorithm = TInbetween::EaseInOutInterpolation;
+    }
+
+    TVectorImageP firstImage = new TVectorImage();
+    TVectorImageP lastImage  = new TVectorImage();
+
+    for (int i = 0; i < firstStrokes.size(); i++)
+      firstImage->addStroke(new TStroke(*firstStrokes[i]), false);
+
+    for (int i = 0; i < lastStrokes.size(); i++)
+      lastImage->addStroke(new TStroke(*lastStrokes[i]), false);
+
+    TUndoManager::manager()->beginBlock();
+    for (int i = 0; i < m; ++i) {
+      TFrameId fid = fids[i];
+      assert(firstFid <= fid && fid <= lastFid);
+      TImageP img     = sl->getFrame(fid, true);
+      double t        = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+      t               = TInbetween::interpolation(t, algorithm);
+      if (backward) t = 1 - t;
+
+      if (app) app->getCurrentFrame()->setFid(fid);
+
+      TVectorImageP vi = TInbetween(firstImage, lastImage).tween(t);
+      for (int j = 0; j < vi->getStrokeCount(); j++) {
+        TStroke *stroke = new TStroke(*vi->getStroke(j));
+        addStrokeToImage(img.getPointer(), stroke);
+      }
+    }
+    TUndoManager::manager()->endBlock();
+  }
+
+  void processSequence(std::vector<TStroke *> firstStrokes,
+                       std::vector<TStroke *> lastStrokes, int firstFidx,
+                       int lastFidx, int multi) {
+    bool backwardidx = false;
+    if (firstFidx > lastFidx) {
+      std::swap(firstFidx, lastFidx);
+      backwardidx = true;
+    }
+
+    TTool::Application *app = TTool::getApplication();
+    TFrameId lastFrameId;
+    int col = app->getCurrentColumn()->getColumnIndex();
+    int row;
+
+    std::vector<std::pair<int, TXshCell>> cellList;
+
+    for (row = firstFidx; row <= lastFidx; row++) {
+      TXshCell cell = app->getCurrentXsheet()->getXsheet()->getCell(row, col);
+      if (cell.isEmpty()) continue;
+      TFrameId fid = cell.getFrameId();
+      if (lastFrameId == fid) continue;  // Skip held cells
+      cellList.push_back(std::pair<int, TXshCell>(row, cell));
+      lastFrameId = fid;
+    }
+
+    int m = cellList.size();
+
+    enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+    if (multi == 2) {  // EASE_IN_INTERPOLATION)
+      algorithm = TInbetween::EaseInInterpolation;
+    } else if (multi == 3) {  // EASE_OUT_INTERPOLATION)
+      algorithm = TInbetween::EaseOutInterpolation;
+    } else if (multi == 4) {  // EASE_IN_OUT_INTERPOLATION)
+      algorithm = TInbetween::EaseInOutInterpolation;
+    }
+
+    TVectorImageP firstImage = new TVectorImage();
+    TVectorImageP lastImage  = new TVectorImage();
+
+    for (int i = 0; i < firstStrokes.size(); i++)
+      firstImage->addStroke(new TStroke(*firstStrokes[i]), false);
+
+    for (int i = 0; i < lastStrokes.size(); i++)
+      lastImage->addStroke(new TStroke(*lastStrokes[i]), false);
+
+    TUndoManager::manager()->beginBlock();
+    for (int i = 0; i < m; i++) {
+      row           = cellList[i].first;
+      TXshCell cell = cellList[i].second;
+      TFrameId fid  = cell.getFrameId();
+      TImageP img   = cell.getImage(true);
+      if (!img) continue;
+      double t           = m > 1 ? (double)i / (double)(m - 1) : 1.0;
+      t                  = TInbetween::interpolation(t, algorithm);
+      if (backwardidx) t = 1 - t;
+
+      if (app) app->getCurrentFrame()->setFrame(row);
+
+      TVectorImageP vi = TInbetween(firstImage, lastImage).tween(t);
+      for (int j = 0; j < vi->getStrokeCount(); j++) {
+        TStroke *stroke = new TStroke(*vi->getStroke(j));
+        addStrokeToImage(img.getPointer(), stroke);
+      }
+    }
+    TUndoManager::manager()->endBlock();
+  }
+
+  void addStrokeToImage(TImage *image, TStroke *stroke) {
     if (!stroke) return;
 
-    TImage *image = getImage(true);
     TToonzImageP ti(image);
     TVectorImageP vi(image);
     TRasterImageP ri(image);
