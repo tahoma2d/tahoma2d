@@ -136,6 +136,14 @@ public:
       bool withUndo = true, bool sendToBack = false,
       std::vector<TStroke *> firstSymmetryStrokes = std::vector<TStroke *>(),
       std::vector<TStroke *> lastSymmetryStrokes  = std::vector<TStroke *>());
+  bool doFrameRangeStrokes(
+      int firstFrameIdx, TStroke *firstStroke, int lastFrameIdx,
+      TStroke *lastStroke, int interpolationType, bool breakAngles,
+      bool autoGroup = false, bool autoFill = false,
+      bool drawFirstStroke = true, bool drawLastStroke = true,
+      bool withUndo = true, bool sendToBack = false,
+      std::vector<TStroke *> firstSymmetryStrokes = std::vector<TStroke *>(),
+      std::vector<TStroke *> lastSymmetryStrokes  = std::vector<TStroke *>());
   void checkGuideSnapping(bool beforeMousePress, bool invertCheck);
   void checkStrokeSnapping(bool beforeMousePress, bool invertCheck);
   bool doGuidedAutoInbetween(TFrameId cFid, const TVectorImageP &cvi,
@@ -171,6 +179,7 @@ protected:
   TTileSetCM32 *m_tileSet;
   TTileSaverCM32 *m_tileSaver;
   TFrameId m_firstFrameId, m_veryFirstFrameId;
+  int m_firstFrameIdx;
   TPixel32 m_currentColor;
   int m_styleId;
   double m_minThick, m_maxThick;
