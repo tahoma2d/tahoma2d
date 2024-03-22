@@ -36,6 +36,8 @@ public:
       , m_drawToMousePos(true){};
   ~SymmetryStroke() {}
 
+  SymmetryStroke &operator=(const SymmetryStroke &src);
+
   void addSymmetryBrushes(double lines, double rotation, TPointD centerPoint,
                           bool useLineSymmetry, TPointD dpiScale);
   bool hasSymmetryBrushes() { return m_brushCount > 1; }
