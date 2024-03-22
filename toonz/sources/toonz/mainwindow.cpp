@@ -3048,6 +3048,16 @@ void MainWindow::defineActions() {
                           QT_TR_NOOP("Break sharp angles"), "");
   createToolOptionsAction("A_ToolOption_FrameRange", QT_TR_NOOP("Frame range"),
                           "F6");
+  createToolOptionsAction("A_ToolOption_FrameRange:Off",
+                          QT_TR_NOOP("Frame range - Off"), "");
+  createToolOptionsAction("A_ToolOption_FrameRange:Linear",
+                          QT_TR_NOOP("Frame range - Linear"), "");
+  createToolOptionsAction("A_ToolOption_FrameRange:Ease In",
+                          QT_TR_NOOP("Frame range - Ease In"), "");
+  createToolOptionsAction("A_ToolOption_FrameRange:Ease Out",
+                          QT_TR_NOOP("Frame range - Ease Out"), "");
+  createToolOptionsAction("A_ToolOption_FrameRange:Ease In/Out",
+                          QT_TR_NOOP("Frame range - Ease In/Out"), "");
   createToolOptionsAction("A_ToolOption_IK", QT_TR_NOOP("Inverse Kinematics"),
                           "");
   createToolOptionsAction("A_ToolOption_Invert", QT_TR_NOOP("Invert"), "");
