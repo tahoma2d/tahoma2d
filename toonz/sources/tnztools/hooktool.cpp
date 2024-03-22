@@ -33,6 +33,9 @@
 #include "toonz/dpiscale.h"
 #include "toonz/onionskinmask.h"
 #include "toonz/tonionskinmaskhandle.h"
+
+#include "tinbetween.h"
+
 #include <math.h>
 
 // For Qt translation support
@@ -41,6 +44,12 @@
 #include <QPainter>
 
 TEnv::IntVar HookSnap("HookToolSnap", 1);
+TEnv::IntVar HookRange("HookRange", 0);
+
+#define LINEAR_INTERPOLATION L"Linear"
+#define EASE_IN_INTERPOLATION L"Ease In"
+#define EASE_OUT_INTERPOLATION L"Ease Out"
+#define EASE_IN_OUT_INTERPOLATION L"Ease In/Out"
 
 using namespace ToolUtils;
 
@@ -84,6 +93,7 @@ class HookTool final : public TTool {
 
   TPropertyGroup m_prop;
   TBoolProperty m_snappedActive;
+  TEnumProperty m_frameRange;
 
   TPointD m_snappedPos;
   std::string m_snappedReason;
@@ -92,6 +102,13 @@ class HookTool final : public TTool {
 
   bool m_buttonDown;
   TPointD m_pivotOffset;
+
+  bool m_firstClick;
+  TPointD m_firstPoint;
+  std::pair<int, int> m_currCell;
+  TFrameId m_firstFrameId, m_veryFirstFrameId;
+  int m_firstFrameIdx, m_lastFrameIdx;
+  Hook *m_currentHook;
 
   void getOtherHooks(std::vector<OtherHook> &otherHooks);
 
@@ -161,6 +178,11 @@ public:
     getOtherHooks(m_otherHooks);
   }
 
+  Hook *addHook(TFrameId fid, TPointD pos);
+  void multiAddHookPos(const TPointD &pos, TFrameId firstFid, TFrameId lastFid,
+                       int multi);
+  void multiAddHookPos(const TPointD &pos, int firstFidx, int lastFidx,
+                       int multi);
 } hookTool;
 
 //-----------------------------------------------------------------------------
@@ -179,17 +201,34 @@ HookTool::HookTool()
     , m_hookSetChanged(false)
     , m_buttonDown(false)
     , m_pivotOffset()
-    , m_firstTime(false) {
+    , m_firstTime(false)
+    , m_frameRange("Frame Range:")
+    , m_currentHook(0) {
   bind(TTool::CommonLevels);
   m_prop.bind(m_snappedActive);
+  m_prop.bind(m_frameRange);
 
   m_snappedActive.setId("Snap");
+  m_frameRange.setId("FrameRange");
+
+  m_frameRange.addValue(L"Off");
+  m_frameRange.addValue(LINEAR_INTERPOLATION);
+  m_frameRange.addValue(EASE_IN_INTERPOLATION);
+  m_frameRange.addValue(EASE_OUT_INTERPOLATION);
+  m_frameRange.addValue(EASE_IN_OUT_INTERPOLATION);
 }
 
 //-----------------------------------------------------------------------------
 
 void HookTool::updateTranslation() {
   m_snappedActive.setQStringName(tr("Snap"));
+
+  m_frameRange.setQStringName(tr("Frame Range:"));
+  m_frameRange.setItemUIName(L"Off", tr("Off"));
+  m_frameRange.setItemUIName(LINEAR_INTERPOLATION, tr("Linear"));
+  m_frameRange.setItemUIName(EASE_IN_INTERPOLATION, tr("Ease In"));
+  m_frameRange.setItemUIName(EASE_OUT_INTERPOLATION, tr("Ease Out"));
+  m_frameRange.setItemUIName(EASE_IN_OUT_INTERPOLATION, tr("Ease In/Out"));
 }
 
 //-----------------------------------------------------------------------------
@@ -270,6 +309,11 @@ void HookTool::draw() {
   const double v200 = 200.0 / 255.0;
   TImageP image     = getImage(false);
   if (!image) return;
+
+  if (m_frameRange.getIndex() && m_firstClick) {
+    tglColor(TPixel::Red);
+    drawCross(m_firstPoint, 6);
+  }
 
   TToonzImageP ti  = image;
   TVectorImageP vi = image;
@@ -477,26 +521,57 @@ void HookTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
     // non ho cliccato su nulla: con ctrl non faccio nulla, senza creo un nuovo
     // hook
     if (!e.isCtrlPressed()) {
-      m_selection.selectNone();
-      TFrameId fid     = getCurrentFid();
-      HookSet *hookSet = getHookSet();
-      if (hookSet && xl->getSimpleLevel() &&
-          !xl->getSimpleLevel()->isReadOnly()) {
-        Hook *hook       = hookSet->addHook();
-        m_hookSetChanged = true;
-        if (hook) {
-          TPointD ppos(pos);
-          if (m_snappedReason != "") {
-            m_snapped = true;
-            ppos      = m_snappedPos;
+      if (m_frameRange.getIndex()) {
+        bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
+
+        if (!m_firstClick) {
+          m_currCell = std::pair<int, int>(getColumnIndex(), getFrame());
+
+          m_firstClick   = true;
+          m_firstPoint   = pos;
+          m_firstFrameId = m_veryFirstFrameId = getCurrentFid();
+          m_firstFrameIdx = app->getCurrentFrame()->getFrameIndex();
+
+        } else {
+          qApp->processEvents();
+
+          TFrameId fid   = getCurrentFid();
+          m_lastFrameIdx = app->getCurrentFrame()->getFrameIndex();
+
+          if (isEditingLevel)
+            multiAddHookPos(pos, m_firstFrameId, fid, m_frameRange.getIndex());
+          else
+            multiAddHookPos(pos, m_firstFrameIdx, m_lastFrameIdx,
+                            m_frameRange.getIndex());
+
+          if (e.isShiftPressed()) {
+            m_firstPoint = pos;
+            if (isEditingLevel)
+              m_firstFrameId = getCurrentFid();
+            else {
+              m_firstFrameIdx = m_lastFrameIdx;
+              app->getCurrentFrame()->setFrame(m_firstFrameIdx);
+            }
+          } else {
+            m_firstClick  = false;
+            m_currentHook = 0;
+            if (app->getCurrentFrame()->isEditingScene()) {
+              app->getCurrentColumn()->setColumnIndex(m_currCell.first);
+              app->getCurrentFrame()->setFrame(m_currCell.second);
+            } else
+              app->getCurrentFrame()->setFid(m_veryFirstFrameId);
           }
-          m_snappedReason = "";
-          hook->setAPos(fid, ppos);
-          ppos = hook->getAPos(fid);
-          m_selection.select(hook->getId(), 1);
-          m_selection.select(hook->getId(), 2);
         }
+
+        invalidate();
+        return;
       }
+
+      m_selection.selectNone();
+      TFrameId fid = getCurrentFid();
+      Hook *hook   = addHook(fid, pos);
+      m_selection.select(hook->getId(), 1);
+      m_selection.select(hook->getId(), 2);
     }
   }
   m_pivotOffset = TPointD();
@@ -769,6 +844,10 @@ void HookTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 bool HookTool::onPropertyChanged(std::string propertyName) {
   if (propertyName == m_snappedActive.getName())
     HookSnap = (int) m_snappedActive.getValue();
+  // Frame Range
+  else if (propertyName == m_frameRange.getName()) {
+    HookRange = m_frameRange.getIndex();
+  }
 
   return true;
 }
@@ -779,6 +858,7 @@ void HookTool::onActivate() {
   if (!m_firstTime) {
     m_firstTime = true;
     m_snappedActive.setValue(HookSnap ? 1 : 0);
+    m_frameRange.setIndex(HookRange);
   }
 
   // TODO: getApplication()->editImageOrSpline();
@@ -797,3 +877,138 @@ void HookTool::onDeactivate() {
 //-----------------------------------------------------------------------------
 
 void HookTool::onEnter() { m_selection.makeCurrent(); }
+
+//-----------------------------------------------------------------------------
+
+Hook *HookTool::addHook(TFrameId fid, TPointD pos) {
+  TTool::Application *app = TTool::getApplication();
+  TXshLevel *xl           = app->getCurrentLevel()->getLevel();
+
+  HookSet *hookSet = getHookSet();
+  if (!hookSet || !xl->getSimpleLevel() || xl->getSimpleLevel()->isReadOnly())
+    return 0;
+
+  Hook *hook = hookSet->addHook();
+  if (!hook) return 0;
+
+  m_hookSetChanged = true;
+  TPointD ppos(pos);
+  if (m_snappedReason != "") {
+    m_snapped = true;
+    ppos      = m_snappedPos;
+  }
+  m_snappedReason = "";
+  hook->setAPos(fid, ppos);
+
+  return hook;
+}
+
+//-----------------------------------------------------------------------------
+
+void HookTool::multiAddHookPos(const TPointD &pos, TFrameId firstFid,
+                               TFrameId lastFid, int multi) {
+  TTool::Application *app = TTool::getApplication();
+
+  bool backward = false;
+  if (firstFid > lastFid) {
+    std::swap(firstFid, lastFid);
+    backward = true;
+  }
+  assert(firstFid <= lastFid);
+  std::vector<TFrameId> allFids;
+
+  TXshLevel *xl = app->getCurrentLevel()->getLevel();
+  if (!xl || !xl->getSimpleLevel()) return;
+  xl->getFids(allFids);
+
+  std::vector<TFrameId>::iterator i0 = allFids.begin();
+  while (i0 != allFids.end() && *i0 < firstFid) i0++;
+  if (i0 == allFids.end()) return;
+  std::vector<TFrameId>::iterator i1 = i0;
+  while (i1 != allFids.end() && *i1 <= lastFid) i1++;
+  assert(i0 < i1);
+  std::vector<TFrameId> fids(i0, i1);
+  int m = fids.size();
+  assert(m > 0);
+
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (multi == 2) {  // EASE_IN_INTERPOLATION)
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (multi == 3) {  // EASE_OUT_INTERPOLATION)
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (multi == 4) {  // EASE_IN_OUT_INTERPOLATION)
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
+  TUndoManager::manager()->beginBlock();
+
+  if (!m_currentHook) m_currentHook = addHook(fids[0], pos);
+
+  for (int i = 0; i < m; ++i) {
+    double t        = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t               = TInbetween::interpolation(t, algorithm);
+    if (backward) t = 1 - t;
+    TPointD p       = m_firstPoint * (1 - t) + pos * t;
+    if (app) app->getCurrentFrame()->setFid(fids[i]);
+    m_currentHook->setAPos(fids[i], p);
+    m_currentHook->setBPos(fids[i], p);
+  }
+  TUndoManager::manager()->endBlock();
+}
+
+//-----------------------------------------------------------------------------
+
+void HookTool::multiAddHookPos(const TPointD &pos, int firstFidx, int lastFidx,
+                               int multi) {
+  bool backwardidx = false;
+  if (firstFidx > lastFidx) {
+    std::swap(firstFidx, lastFidx);
+    backwardidx = true;
+  }
+
+  TTool::Application *app = TTool::getApplication();
+  TFrameId lastFrameId;
+  int col = app->getCurrentColumn()->getColumnIndex();
+  int row;
+
+  std::vector<std::pair<int, TXshCell>> cellList;
+
+  for (row = firstFidx; row <= lastFidx; row++) {
+    TXshCell cell = app->getCurrentXsheet()->getXsheet()->getCell(row, col);
+    if (cell.isEmpty()) continue;
+    TFrameId fid = cell.getFrameId();
+    if (lastFrameId == fid) continue;  // Skip held cells
+    cellList.push_back(std::pair<int, TXshCell>(row, cell));
+    lastFrameId = fid;
+  }
+
+  int m = cellList.size();
+
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (multi == 2) {  // EASE_IN_INTERPOLATION)
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (multi == 3) {  // EASE_OUT_INTERPOLATION)
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (multi == 4) {  // EASE_IN_OUT_INTERPOLATION)
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
+  TUndoManager::manager()->beginBlock();
+  row                               = cellList[0].first;
+  TXshCell cell                     = cellList[0].second;
+  TFrameId fid                      = cell.getFrameId();
+  if (!m_currentHook) m_currentHook = addHook(fid, pos);
+  for (int i = 0; i < m; i++) {
+    row                = cellList[i].first;
+    cell               = cellList[i].second;
+    fid                = cell.getFrameId();
+    double t           = m > 1 ? (double)i / (double)(m - 1) : 1.0;
+    t                  = TInbetween::interpolation(t, algorithm);
+    if (backwardidx) t = 1 - t;
+    TPointD p          = m_firstPoint * (1 - t) + pos * t;
+    if (app) app->getCurrentFrame()->setFrame(row);
+    m_currentHook->setAPos(fid, p);
+    m_currentHook->setBPos(fid, p);
+  }
+  TUndoManager::manager()->endBlock();
+}
