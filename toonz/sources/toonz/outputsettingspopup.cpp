@@ -174,9 +174,8 @@ bool checkForSeqNum(QString type) {
    number field
                 to set values for frame and time stretch.
 */
-OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
-    : Dialog(TApp::instance()->getMainWindow(), false, isPreview,
-             isPreview ? "PreviewSettings" : "OutputSettings")
+OutputSettingsPopup::OutputSettingsPopup(QWidget *parent, bool isPreview)
+    : QFrame(parent)
     , m_subcameraChk(nullptr)
     , m_applyShrinkChk(nullptr)
     , m_outputCameraOm(nullptr)
@@ -184,7 +183,6 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
     , m_allowMT(Preferences::instance()->getFfmpegMultiThread())
     , m_presetCombo(nullptr)
     , m_syncColorSettingsButton(nullptr) {
-  setWindowTitle(isPreview ? tr("Preview Settings") : tr("Output Settings"));
   if (!isPreview) setObjectName("OutputSettingsPopup");
   // create panel
   QFrame *panel = createPanel(isPreview);
@@ -194,6 +192,8 @@ OutputSettingsPopup::OutputSettingsPopup(bool isPreview)
   renderButton->setIconSize(QSize(20, 20));
   if (isPreview)
     renderButton->setText(tr("Preview"));
+
+  m_topLayout = new QVBoxLayout(this);
 
   // preview settings
   if (isPreview) {
@@ -1083,7 +1083,6 @@ void OutputSettingsPopup::hideEvent(QHideEvent *e) {
                             SLOT(updateField()));
     assert(ret);
   }
-  Dialog::hideEvent(e);
   m_hideAlreadyCalled = true;
 }
 
@@ -2290,9 +2289,47 @@ void OutputSettingsPopup::onBoardSettingsBtnClicked() {
   popup.exec();
 }
 
-//-----------------------------------------------------------------------------
+void OutputSettingsPopup::save(QSettings &settings, bool forPopupIni) const {
+  if (m_isPreviewSettings) return;
 
+  int visibleParts = 0;
+  if (m_showCameraSettingsButton->isChecked()) visibleParts |= 0x01;
+  if (m_showColorSettingsButton->isChecked()) visibleParts |= 0x02;
+  if (m_showAdvancedSettingsButton->isChecked()) visibleParts |= 0x04;
+  if (m_showMoreSettingsButton->isChecked()) visibleParts |= 0x08;
+  settings.setValue("visibleParts", visibleParts);
+}
+
+void OutputSettingsPopup::load(QSettings &settings) {
+  if (m_isPreviewSettings) return;
+
+  QVariant visibleParts = settings.value("visibleParts");
+  if (visibleParts.canConvert(QVariant::Int)) {
+    int visiblePartsInt = visibleParts.toInt();
+
+    if (visiblePartsInt & 0x01)
+      m_showCameraSettingsButton->setChecked(true);
+    else
+      m_showCameraSettingsButton->setChecked(false);
+    if (visiblePartsInt & 0x02)
+      m_showColorSettingsButton->setChecked(true);
+    else
+      m_showColorSettingsButton->setChecked(false);
+    if (visiblePartsInt & 0x04)
+      m_showAdvancedSettingsButton->setChecked(true);
+    else
+      m_showAdvancedSettingsButton->setChecked(false);
+    if (visiblePartsInt & 0x08)
+      m_showMoreSettingsButton->setChecked(true);
+    else
+      m_showMoreSettingsButton->setChecked(false);
+  }
+}
+
+//-----------------------------------------------------------------------------
+/*
 OpenPopupCommandHandler<OutputSettingsPopup> openOutputSettingsPopup(
     MI_OutputSettings);
 OpenPopupCommandHandler<PreviewSettingsPopup> openPreviewSettingsPopup(
     MI_PreviewSettings);
+*/

@@ -408,4 +408,26 @@ public:
   LocatorPanel(QWidget *parent);
 };
 
+//=========================================================
+// OutputSettingsPanel
+//---------------------------------------------------------
+
+class OutputSettingsPanel final : public TPanel {
+  Q_OBJECT
+
+public:
+  OutputSettingsPanel(QWidget *parent);
+};
+
+//=========================================================
+// PreviewSettingsPanel
+//---------------------------------------------------------
+
+class PreviewSettingsPanel final : public TPanel {
+  Q_OBJECT
+
+public:
+  PreviewSettingsPanel(QWidget *parent);
+};
+
 #endif
