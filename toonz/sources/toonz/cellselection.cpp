@@ -1489,7 +1489,96 @@ void getLevelSetFromData(const TCellData *cellData,
       levelSet.insert(tmpLevel.getPointer());
     }
   }
-}
+};
+
+//=============================================================================
+// inbetweenWithoutUndo
+//-----------------------------------------------------------------------------
+
+void inbetweenWithoutUndo(TXshSimpleLevel *sl, std::vector<TFrameId> fids,
+                          TInbetween::TweenAlgorithm algorithm) {
+  if (!sl || fids.empty()) return;
+
+  int m              = fids.size();
+  TVectorImageP img0 = sl->getFrame(fids[0], false);
+  TVectorImageP img1 = sl->getFrame(fids[m - 1], false);
+  if (!img0 || !img1) return;
+
+  TInbetween inbetween(img0, img1);
+
+  for (int i = 1; i < m - 1; ++i) {
+    double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t        = TInbetween::interpolation(t, algorithm);
+
+    TVectorImageP vi = inbetween.tween(t);
+    sl->setFrame(fids[i], vi);
+    IconGenerator::instance()->invalidate(sl, fids[i]);
+  }
+};
+
+//=============================================================================
+// UndoInbetween
+//-----------------------------------------------------------------------------
+
+class UndoInbetween final : public TUndo {
+  TXshSimpleLevelP m_level;
+  std::vector<TFrameId> m_fids;
+  std::vector<TVectorImageP> m_images;
+  TInbetween::TweenAlgorithm m_interpolation;
+
+public:
+  UndoInbetween(TXshSimpleLevel *xl, std::vector<TFrameId> fids,
+                TInbetween::TweenAlgorithm interpolation)
+      : m_level(xl), m_fids(fids), m_interpolation(interpolation) {
+    std::vector<TFrameId>::iterator it = fids.begin();
+    for (; it != fids.end(); ++it)
+      m_images.push_back(m_level->getFrame(*it, false));
+  }
+
+  void undo() const override {
+    UINT levelSize = m_fids.size() - 1;
+    for (UINT count = 1; count != levelSize; count++) {
+      TVectorImageP vImage = m_images[count];
+      m_level->setFrame(m_fids[count], vImage);
+      IconGenerator::instance()->invalidate(m_level.getPointer(),
+                                            m_fids[count]);
+    }
+
+    TApp::instance()->getCurrentLevel()->notifyLevelChange();
+  }
+
+  void redo() const override {
+    TFrameId fid0 = *m_fids.begin();
+    TFrameId fid1 = *(--m_fids.end());
+    inbetweenWithoutUndo(m_level.getPointer(), m_fids, m_interpolation);
+  }
+
+  int getSize() const override {
+    assert(!m_images.empty());
+    return m_images.size() * m_images.front()->getStrokeCount() * 100;
+  }
+
+  QString getHistoryString() override {
+    QString str = QObject::tr("Inbetween  : Level %1,  ")
+                      .arg(QString::fromStdWString(m_level->getName()));
+    switch (m_interpolation) {
+    case FilmstripCmd::II_Linear:
+      str += QString("Linear Interpolation");
+      break;
+    case FilmstripCmd::II_EaseIn:
+      str += QString("Ease In Interpolation");
+      break;
+    case FilmstripCmd::II_EaseOut:
+      str += QString("Ease Out Interpolation");
+      break;
+    case FilmstripCmd::II_EaseInOut:
+      str += QString("Ease In-Out Interpolation");
+      break;
+    }
+    return str;
+  }
+  int getHistoryType() override { return HistoryType::FilmStrip; }
+};
 
 }  // namespace
 //-----------------------------------------------------------------------------
@@ -1592,6 +1681,11 @@ void TCellSelection::enableCommands() {
   enableCommand(this, MI_Duplicate, &TCellSelection::duplicateFrames);
   enableCommand(this, MI_PasteDuplicate, &TCellSelection::pasteDuplicateCells);
   enableCommand(this, MI_StopFrameHold, &TCellSelection::stopFrameHold);
+
+  enableCommand(this, MI_InbetweenLinear, &TCellSelection::inbetweenLinear);
+  enableCommand(this, MI_InbetweenEaseIn, &TCellSelection::inbetweenEaseIn);
+  enableCommand(this, MI_InbetweenEaseOut, &TCellSelection::inbetweenEaseOut);
+  enableCommand(this, MI_InbetweenEaseInOut, &TCellSelection::inbetweenEaseInOut);
 }
 
 //-----------------------------------------------------------------------------
@@ -1603,9 +1697,7 @@ void TCellSelection::setAlternativeCommandNames() {
       {MI_PasteInto, QObject::tr("Overwrite Paste Cells", "TCellSelection")},
       {MI_Cut, QObject::tr("Cut Cells", "TCellSelection")},
       {MI_Clear, QObject::tr("Delete Cells", "TCellSelection")},
-      {MI_Insert, QObject::tr("Insert Cells", "TCellSelection")},
-      {MI_RemoveCells, QObject::tr("Remove Cells", "TCellSelection")},
-      {MI_ClearFrames, QObject::tr("Clear Frames", "TCellSelection")}};
+      {MI_Insert, QObject::tr("Insert Cells", "TCellSelection")}};
 }
 
 //-----------------------------------------------------------------------------
@@ -1653,7 +1745,11 @@ bool TCellSelection::isEnabledCommand(
                                         MI_ConvertVectorToVector,
                                         MI_CreateBlankDrawing,
                                         MI_FillEmptyCell,
-                                        MI_StopFrameHold};
+                                        MI_StopFrameHold,
+                                        MI_InbetweenLinear,
+                                        MI_InbetweenEaseIn,
+                                        MI_InbetweenEaseOut,
+                                        MI_InbetweenEaseInOut};
   return commands.contains(commandId);
 }
 
@@ -4346,4 +4442,56 @@ void TCellSelection::fillEmptyCell() {
   if (initUndo) TUndoManager::manager()->endBlock();
 
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+//-----------------------------------------------------------------------------
+// Vector interpolation
+
+void TCellSelection::inbetween(TInbetween::TweenAlgorithm algorithm) {
+  if (isEmpty()) return;
+
+  // set up basics
+  bool initUndo = false;
+  TXsheet *xsh  = TApp::instance()->getCurrentXsheet()->getXsheet();
+  int r, r0, c0, c, r1, c1;
+
+  getSelectedCells(r0, c0, r1, c1);
+
+  TUndoManager::manager()->beginBlock();
+  for (c = c0; c <= c1; c++) {
+    TXshColumn *column = xsh->getColumn(c);
+    if (!column || column->isEmpty() || column->isLocked() ||
+        !column->getLevelColumn())
+      continue;
+
+    int cr0, cr1;
+    column->getRange(cr0, cr1);
+    TXshCell cell = xsh->getCell(cr0, c);
+    if (cell.isEmpty()) continue;
+
+    TXshSimpleLevel *sl = cell.getSimpleLevel();
+    if (!sl || sl->getType() != PLI_XSHLEVEL) continue;
+
+    TFrameId lastFrameId;
+    std::vector<TFrameId> fids;
+    for (r = r0; r <= r1; r++) {
+      TXshCell cell = xsh->getCell(r, c);
+      if (cell.isEmpty()) continue;
+      TFrameId fid = cell.getFrameId();
+      if (lastFrameId == fid) continue;  // Skip held cells
+      fids.push_back(fid);
+      lastFrameId = fid;
+    }
+
+    int m = fids.size();
+    if (m < 3) continue;
+
+    TUndoManager::manager()->add(new UndoInbetween(sl, fids, algorithm));
+
+    inbetweenWithoutUndo(sl, fids, algorithm);
+
+    sl->setDirtyFlag(true);
+    TApp::instance()->getCurrentLevel()->notifyLevelChange();
+  }
+  TUndoManager::manager()->endBlock();
 }
