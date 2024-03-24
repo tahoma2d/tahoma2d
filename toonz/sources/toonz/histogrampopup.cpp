@@ -39,7 +39,7 @@ using namespace DVGui;
 //-----------------------------------------------------------------------------
 
 HistogramPopup::HistogramPopup(QString title)
-    : QDialog(TApp::instance()->getMainWindow()) {
+    : Dialog(TApp::instance()->getMainWindow()) {
   setTitle(title);
 
   m_histogram = new ComboHistogram(this);
@@ -48,7 +48,8 @@ HistogramPopup::HistogramPopup(QString title)
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
   { mainLay->addWidget(m_histogram); }
-  setLayout(mainLay);
+  m_topLayout->setMargin(0);
+  m_topLayout->addLayout(mainLay);
   mainLay->setSizeConstraint(QLayout::SetFixedSize);
   setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 }

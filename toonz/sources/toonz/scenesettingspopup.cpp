@@ -167,7 +167,7 @@ QImage::Format_ARGB32);
 // CellMarksPopup
 //-----------------------------------------------------------------------------
 
-CellMarksPopup::CellMarksPopup(QWidget *parent) : QDialog(parent) {
+CellMarksPopup::CellMarksPopup(QWidget *parent) : Dialog(parent) {
   setWindowTitle(tr("Cell Marks Settings"));
 
   QList<TSceneProperties::CellMark> marks = TApp::instance()
@@ -203,7 +203,8 @@ CellMarksPopup::CellMarksPopup(QWidget *parent) : QDialog(parent) {
     }
   }
   layout->setColumnStretch(2, 1);
-  setLayout(layout);
+  m_topLayout->setMargin(0);
+  m_topLayout->addLayout(layout);
 }
 
 void CellMarksPopup::update() {
@@ -284,7 +285,7 @@ void CellMarksPopup::onNameChanged() {
 // ColorFiltersPopup
 //-----------------------------------------------------------------------------
 
-ColorFiltersPopup::ColorFiltersPopup(QWidget *parent) : QDialog(parent) {
+ColorFiltersPopup::ColorFiltersPopup(QWidget *parent) : Dialog(parent) {
   setWindowTitle(tr("Color Filters Settings"));
 
   QList<TSceneProperties::ColorFilter> filters = TApp::instance()
@@ -331,7 +332,8 @@ ColorFiltersPopup::ColorFiltersPopup(QWidget *parent) : QDialog(parent) {
     }
   }
   layout->setColumnStretch(1, 1);
-  setLayout(layout);
+  m_topLayout->setMargin(0);
+  m_topLayout->addLayout(layout);
 }
 
 void ColorFiltersPopup::updateContents() {
@@ -461,7 +463,7 @@ void ColorFiltersPopup::onClearButtonClicked() {
 //-----------------------------------------------------------------------------
 
 SceneSettingsPopup::SceneSettingsPopup()
-    : QDialog(TApp::instance()->getMainWindow())
+    : Dialog(TApp::instance()->getMainWindow())
     , m_cellMarksPopup(nullptr)
     , m_colorFiltersPopup(nullptr) {
   setWindowTitle(tr("Scene Settings"));
@@ -591,7 +593,8 @@ SceneSettingsPopup::SceneSettingsPopup()
   mainLayout->setColumnStretch(3, 0);
   mainLayout->setColumnStretch(4, 1);
   mainLayout->setRowStretch(9, 1);
-  setLayout(mainLayout);
+  m_topLayout->setMargin(0);
+  m_topLayout->addLayout(mainLayout);
 
   // signal-slot connections
   bool ret = true;

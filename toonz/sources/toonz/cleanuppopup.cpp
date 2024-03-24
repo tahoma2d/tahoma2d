@@ -284,7 +284,7 @@ public:
 //*****************************************************************************
 
 CleanupPopup::CleanupPopup()
-    : QDialog(TApp::instance()->getMainWindow())
+    : Dialog(TApp::instance()->getMainWindow(), false, false)
     , m_params(new CleanupParameters)
     , m_updater(new LevelUpdater)
     , m_originalLevelPath()
@@ -343,7 +343,8 @@ CleanupPopup::CleanupPopup()
     mainLayout->addLayout(buttonLay);
     mainLayout->addStretch();
   }
-  setLayout(mainLayout);
+  m_topLayout->setMargin(0);
+  m_topLayout->addLayout(mainLayout);
 
   //--- signal-slot connections
 

@@ -44,7 +44,7 @@ class ColorField;
 //    FileBrowserPopup  declaration
 //********************************************************************************
 
-class FileBrowserPopup : public QDialog {
+class FileBrowserPopup : public DVGui::Dialog {
   Q_OBJECT
 
 public:

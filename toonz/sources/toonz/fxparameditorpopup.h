@@ -9,7 +9,7 @@
 // FxParamEditorPopup
 //-----------------------------------------------------------------------------
 
-class FxParamEditorPopup final : public QDialog {
+class FxParamEditorPopup final : public DVGui::Dialog {
   Q_OBJECT
 
 public:

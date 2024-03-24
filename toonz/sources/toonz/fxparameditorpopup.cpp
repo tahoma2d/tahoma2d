@@ -30,7 +30,7 @@ using namespace DVGui;
 //-----------------------------------------------------------------------------
 
 FxParamEditorPopup::FxParamEditorPopup()
-    : QDialog(TApp::instance()->getMainWindow()) {
+    : Dialog(TApp::instance()->getMainWindow()) {
   setWindowTitle(tr("Fx Settings"));
   setMinimumSize(20, 20);
 
@@ -53,7 +53,8 @@ FxParamEditorPopup::FxParamEditorPopup()
   mainLayout->setMargin(0);
   mainLayout->setSpacing(10);
   { mainLayout->addWidget(fxSettings); }
-  setLayout(mainLayout);
+  m_topLayout->setMargin(0);
+  m_topLayout->addLayout(mainLayout);
 
   move(parentWidget()->geometry().center() - rect().bottomRight() / 2.0);
 }

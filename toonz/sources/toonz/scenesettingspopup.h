@@ -16,7 +16,7 @@ class TSceneProperties;
 class QComboBox;
 class QLineEdit;
 
-class CellMarksPopup final : public QDialog {
+class CellMarksPopup final : public DVGui::Dialog {
   Q_OBJECT
   struct MarkerField {
     int id;
@@ -34,7 +34,7 @@ protected slots:
   void onNameChanged();
 };
 
-class ColorFiltersPopup final : public QDialog {
+class ColorFiltersPopup final : public DVGui::Dialog {
   Q_OBJECT
   struct FilterField {
     DVGui::ColorField *colorField;
@@ -56,7 +56,7 @@ protected slots:
 // SceneSettingsPopup
 //-----------------------------------------------------------------------------
 
-class SceneSettingsPopup final : public QDialog {
+class SceneSettingsPopup final : public DVGui::Dialog {
   Q_OBJECT
 
   DVGui::DoubleLineEdit *m_frameRateFld;
