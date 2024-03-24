@@ -239,6 +239,7 @@ class DVAPI SpreadsheetViewer : public QDialog {
   QColor m_secMarkerLineColor;   // second marker lines
   QColor m_textColor;            // text (black)
   QColor m_currentRowTextColor;  // text color for the current row
+  QColor m_frameTextColor;       // text color for frame numbers
   QColor m_groupNameTextColor;   // text color for group name
   QColor m_channelNameTextColor; // text color for channel name
   QColor m_cycleColor;           // color of zig zag line
@@ -253,6 +254,7 @@ class DVAPI SpreadsheetViewer : public QDialog {
   Q_PROPERTY(QColor TextColor READ getTextColor WRITE setTextColor)
   Q_PROPERTY(QColor CurrentRowTextColor READ getCurrentRowTextColor WRITE
                  setCurrentRowTextColor)
+  Q_PROPERTY(QColor FrameTextColor READ getFrameTextColor WRITE setFrameTextColor)
   Q_PROPERTY(QColor GroupNameTextColor READ getGroupNameTextColor WRITE
                  setGroupNameTextColor)
   Q_PROPERTY(QColor ChannelNameTextColor READ getChannelNameTextColor WRITE
@@ -376,6 +378,8 @@ public:
     m_currentRowTextColor = color;
   }
   QColor getCurrentRowTextColor() const { return m_currentRowTextColor; }
+  void setFrameTextColor(const QColor &color) { m_frameTextColor = color; }
+  QColor getFrameTextColor() const { return m_frameTextColor; }
   void setGroupNameTextColor(const QColor &color) {
     m_groupNameTextColor = color;
   }

@@ -398,7 +398,7 @@ void RowPanel::drawRows(QPainter &p, int r0, int r1) {
 
     // draw numbers
     p.setPen((r == currentRow) ? getViewer()->getCurrentRowTextColor()
-                               : getViewer()->getTextColor());
+                               : getViewer()->getFrameTextColor());
 
     QString number = QString::number(r + 1);
     p.drawText(QRect(x0, y + 1, width() - 4, next_y - y - 1),
