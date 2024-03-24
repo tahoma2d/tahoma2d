@@ -239,6 +239,7 @@ class DVAPI SpreadsheetViewer : public QDialog {
   QColor m_secMarkerLineColor;   // second marker lines
   QColor m_textColor;            // text (black)
   QColor m_currentRowTextColor;  // text color for the current row
+  QColor m_cycleColor;           // color of zig zag line
   QColor m_verticalLineColor;    // vertical line (black)
 
   Q_PROPERTY(QColor CurrentRowBgColor READ getCurrentRowBgColor WRITE
@@ -250,6 +251,7 @@ class DVAPI SpreadsheetViewer : public QDialog {
   Q_PROPERTY(QColor TextColor READ getTextColor WRITE setTextColor)
   Q_PROPERTY(QColor CurrentRowTextColor READ getCurrentRowTextColor WRITE
                  setCurrentRowTextColor)
+  Q_PROPERTY(QColor CycleColor READ getCycleColor WRITE setCycleColor)
   Q_PROPERTY(QColor VerticalLineColor READ getVerticalLineColor WRITE
                  setVerticalLineColor)
 
@@ -368,6 +370,8 @@ public:
     m_currentRowTextColor = color;
   }
   QColor getCurrentRowTextColor() const { return m_currentRowTextColor; }
+  void setCycleColor(const QColor &color) { m_cycleColor = color; }
+  QColor getCycleColor() const { return m_cycleColor; }
   void setVerticalLineColor(const QColor &color) {
     m_verticalLineColor = color;
   }

@@ -889,7 +889,7 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
       int qx             = x0 + 4;
       int qy             = m_sheet->rowToY(kr1 + 1);
       int zig            = 2;
-      QColor zigzagColor = (isStageObjectCycled) ? getViewer()->getTextColor()
+      QColor zigzagColor = (isStageObjectCycled) ? getViewer()->getCycleColor()
                                                  : KeyFrameBorderColor;
       painter.setPen(zigzagColor);
       painter.drawLine(QPoint(qx, qy), QPoint(qx - zig, qy + zig));
