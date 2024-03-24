@@ -220,6 +220,7 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   QColor m_errorTextColor;           // error text color (red, probably)
   QColor m_selectedTextColor;        // text color for the selected cells
   QColor m_frameTextColor;           // text color for frame numbers
+  QColor m_cycleColor;               // color of the zig zag line
   QColor m_currentFrameTextColor;    // text color for the current frame row
   QColor m_previewFrameTextColor;    // frame number in preview range (blue)
   QColor m_onionSkinAreaBgColor;
@@ -245,6 +246,7 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
                  setSelectedTextColor)
   Q_PROPERTY(QColor FrameTextColor READ getFrameTextColor WRITE
                  setFrameTextColor)
+  Q_PROPERTY(QColor CycleColor READ getCycleColor WRITE setCycleColor)
   Q_PROPERTY(QColor PreviewFrameTextColor READ getPreviewFrameTextColor WRITE
                  setPreviewFrameTextColor)
   Q_PROPERTY(QColor OnionSkinAreaBgColor READ getOnionSkinAreaBgColor WRITE
@@ -853,6 +855,10 @@ public:
   QColor getFrameTextColor() const { return m_frameTextColor; }
   void setCurrentFrameTextColor(const QColor &color) {
     m_currentFrameTextColor = color;
+  }
+  QColor getCycleColor() const { return m_cycleColor; }
+  void setCycleColor(const QColor &color) {
+    m_cycleColor = color;
   }
   QColor getCurrentFrameTextColor() const { return m_currentFrameTextColor; }
   void setPreviewFrameTextColor(const QColor &color) {
