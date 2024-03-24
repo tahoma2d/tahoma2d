@@ -1459,7 +1459,7 @@ void ColumnArea::DrawHeader::drawColumnName() const {
     }
 
     p.setPen((nameBacklit || (column && column->getFolderColumn()))
-                 ? Qt::black
+                 ? Qt::black // m_viewer->getHighlightColumnTextColor()
                  : m_viewer->getColumnTextColor());
   } else
     p.setPen(m_viewer->getColumnTextColor());

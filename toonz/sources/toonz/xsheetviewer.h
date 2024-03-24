@@ -257,6 +257,10 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   QColor m_columnTextColor;
   Q_PROPERTY(QColor ColumnTextColor READ getColumnTextColor WRITE
                  setColumnTextColor)
+  QColor m_highlightColumnTextColor;
+  Q_PROPERTY(QColor HighlightColumnTextColor READ
+                 getHighlightColumnTextColor WRITE
+                 setHighlightColumnTextColor)
   QColor m_emptyColumnHeadColor;  // empty column header (200,200,200)
   Q_PROPERTY(QColor EmptyColumnHeadColor READ getEmptyColumnHeadColor WRITE
                  setEmptyColumnHeadColor)
@@ -879,6 +883,12 @@ public:
   }
   QColor getColumnTextColor() const {
     return m_columnTextColor;
+  }
+  void setHighlightColumnTextColor(const QColor &color) {
+    m_highlightColumnTextColor = color;
+  }
+  QColor getHighlightColumnTextColor() const {
+    return m_highlightColumnTextColor;
   }
   void setEmptyColumnHeadColor(const QColor &color) {
     m_emptyColumnHeadColor = color;
