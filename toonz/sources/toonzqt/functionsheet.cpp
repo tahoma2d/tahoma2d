@@ -403,7 +403,7 @@ void FunctionSheetColumnHeadViewer::paintEvent(QPaintEvent *e) {
                        getViewer()->getColumnHeaderBorderColor());
 
     // channel name
-    painter.setPen(getViewer()->getTextColor());
+    painter.setPen(getViewer()->getChannelNameTextColor());
     if (channel->isCurrent())
       painter.setPen(m_sheet->getViewer()->getCurrentTextColor());
 
@@ -424,7 +424,7 @@ void FunctionSheetColumnHeadViewer::paintEvent(QPaintEvent *e) {
     // group name
     if (lastGroupColumn) {
       int tmpwidth = width * groupChannelCount;
-      painter.setPen(getViewer()->getTextColor());
+      painter.setPen(getViewer()->getGroupNameTextColor());
       if (group == currentGroup)
         painter.setPen(m_sheet->getViewer()->getCurrentTextColor());
       text = group->getLongName();

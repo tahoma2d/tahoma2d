@@ -239,6 +239,8 @@ class DVAPI SpreadsheetViewer : public QDialog {
   QColor m_secMarkerLineColor;   // second marker lines
   QColor m_textColor;            // text (black)
   QColor m_currentRowTextColor;  // text color for the current row
+  QColor m_groupNameTextColor;   // text color for group name
+  QColor m_channelNameTextColor; // text color for channel name
   QColor m_cycleColor;           // color of zig zag line
   QColor m_verticalLineColor;    // vertical line (black)
 
@@ -251,6 +253,10 @@ class DVAPI SpreadsheetViewer : public QDialog {
   Q_PROPERTY(QColor TextColor READ getTextColor WRITE setTextColor)
   Q_PROPERTY(QColor CurrentRowTextColor READ getCurrentRowTextColor WRITE
                  setCurrentRowTextColor)
+  Q_PROPERTY(QColor GroupNameTextColor READ getGroupNameTextColor WRITE
+                 setGroupNameTextColor)
+  Q_PROPERTY(QColor ChannelNameTextColor READ getChannelNameTextColor WRITE
+                 setChannelNameTextColor)
   Q_PROPERTY(QColor CycleColor READ getCycleColor WRITE setCycleColor)
   Q_PROPERTY(QColor VerticalLineColor READ getVerticalLineColor WRITE
                  setVerticalLineColor)
@@ -370,6 +376,14 @@ public:
     m_currentRowTextColor = color;
   }
   QColor getCurrentRowTextColor() const { return m_currentRowTextColor; }
+  void setGroupNameTextColor(const QColor &color) {
+    m_groupNameTextColor = color;
+  }
+  QColor getGroupNameTextColor() const { return m_groupNameTextColor; }
+  void setChannelNameTextColor(const QColor &color) {
+    m_channelNameTextColor = color;
+  }
+  QColor getChannelNameTextColor() const { return m_channelNameTextColor; }
   void setCycleColor(const QColor &color) { m_cycleColor = color; }
   QColor getCycleColor() const { return m_cycleColor; }
   void setVerticalLineColor(const QColor &color) {
