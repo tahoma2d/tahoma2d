@@ -2322,6 +2322,8 @@ XsheetViewer {
   qproperty-OnionSkinAreaBgColor: #c2c2c2;
   qproperty-ColumnIconLineColor: #707070;
   qproperty-EmptyColumnHeadColor: #DBDBDB;
+  qproperty-ColumnTextColor: #000;
+  qproperty-HighlightColumnTextColor: #000;
   qproperty-ColumnHeadPastelizer: rgba(0, 0, 0, 0);
   qproperty-SelectedColumnHead: rgba(0, 0, 0, 0.15);
   qproperty-PlayRangeColor: #DBDBDB;
