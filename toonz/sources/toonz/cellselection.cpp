@@ -1499,10 +1499,15 @@ void inbetweenWithoutUndo(TXshSimpleLevel *sl, std::vector<TFrameId> fids,
                           TInbetween::TweenAlgorithm algorithm) {
   if (!sl || fids.empty()) return;
 
-  int m              = fids.size();
-  TVectorImageP img0 = sl->getFrame(fids[0], false);
-  TVectorImageP img1 = sl->getFrame(fids[m - 1], false);
+  int m         = fids.size();
+  TFrameId fid0 = fids[0];
+  TFrameId fid1 = fids[m - 1];
+
+  TVectorImageP img0 = sl->getFrame(fid0, false);
+  TVectorImageP img1 = sl->getFrame(fid1, false);
   if (!img0 || !img1) return;
+
+  HookSet *hooks = sl->getHookSet();
 
   TInbetween inbetween(img0, img1);
 
@@ -1513,6 +1518,22 @@ void inbetweenWithoutUndo(TXshSimpleLevel *sl, std::vector<TFrameId> fids,
     TVectorImageP vi = inbetween.tween(t);
     sl->setFrame(fids[i], vi);
     IconGenerator::instance()->invalidate(sl, fids[i]);
+
+    if (hooks) {
+      for (int j = 0; j < hooks->getHookCount(); j++) {
+        Hook *hook = hooks->getHook(j);
+        if (!hook) continue;
+        TPointD firstPos = hook->getAPos(fid0);
+        TPointD lastPos  = hook->getAPos(fid1);
+        TPointD iPos     = firstPos * (1 - t) + lastPos * t;
+        hook->setAPos(fids[i], iPos);
+
+        firstPos = hook->getBPos(fid0);
+        lastPos  = hook->getBPos(fid1);
+        iPos     = firstPos * (1 - t) + lastPos * t;
+        hook->setBPos(fids[i], iPos);
+      }
+    }
   }
 };
 
@@ -1522,6 +1543,7 @@ void inbetweenWithoutUndo(TXshSimpleLevel *sl, std::vector<TFrameId> fids,
 
 class UndoInbetween final : public TUndo {
   TXshSimpleLevelP m_level;
+  HookSet m_oldHooks;
   std::vector<TFrameId> m_fids;
   std::vector<TVectorImageP> m_images;
   TInbetween::TweenAlgorithm m_interpolation;
@@ -1533,6 +1555,9 @@ public:
     std::vector<TFrameId>::iterator it = fids.begin();
     for (; it != fids.end(); ++it)
       m_images.push_back(m_level->getFrame(*it, false));
+
+    HookSet *hookSet = m_level->getHookSet();
+    m_oldHooks       = *hookSet;
   }
 
   void undo() const override {
@@ -1543,6 +1568,9 @@ public:
       IconGenerator::instance()->invalidate(m_level.getPointer(),
                                             m_fids[count]);
     }
+
+    HookSet *hookSet = m_level->getHookSet();
+    if (hookSet) *hookSet = m_oldHooks;
 
     TApp::instance()->getCurrentLevel()->notifyLevelChange();
   }
