@@ -1782,4 +1782,6 @@ int ToonzScene::getPreviewFrameCount() {
       frameCount = std::max(frameCount, (r1 + 1));
     }
   }
+
+  return frameCount;
 }
