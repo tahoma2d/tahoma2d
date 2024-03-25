@@ -183,6 +183,7 @@ public:
                        int multi);
   void multiAddHookPos(const TPointD &pos, int firstFidx, int lastFidx,
                        int multi);
+  void processFrameRange(TPointD pos, bool isEditingLevel, bool shiftPressed);
 } hookTool;
 
 //-----------------------------------------------------------------------------
@@ -493,6 +494,25 @@ void HookTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
           m_selection.select(m_hookId, 1);
           m_selection.select(m_hookId, 2);
         }
+      } else if (m_frameRange.getIndex()) {
+        bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
+
+        if (!m_firstClick) {
+          m_currentHook = xl->getHookSet()->getHook(m_hookId);
+          m_currCell    = std::pair<int, int>(getColumnIndex(), getFrame());
+
+          m_selection.selectNone();
+          m_selection.select(m_hookId, 1);
+
+          m_firstClick   = true;
+          m_firstPoint   = m_currentHook->getPos(getCurrentFid());
+          m_firstFrameId = m_veryFirstFrameId = getCurrentFid();
+          m_firstFrameIdx = app->getCurrentFrame()->getFrameIndex();
+        } else {
+          Hook *hook = xl->getHookSet()->getHook(m_hookId);
+          processFrameRange(hook->getPos(getCurrentFid()), isEditingLevel,
+                            e.isShiftPressed());
+        }
       } else {
         // senza control ne' shift ne' alt: se ho cliccato su un hook non
         // selezionato
@@ -531,37 +551,9 @@ void HookTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
           m_firstPoint   = pos;
           m_firstFrameId = m_veryFirstFrameId = getCurrentFid();
           m_firstFrameIdx = app->getCurrentFrame()->getFrameIndex();
-
-        } else {
-          qApp->processEvents();
-
-          TFrameId fid   = getCurrentFid();
-          m_lastFrameIdx = app->getCurrentFrame()->getFrameIndex();
-
-          if (isEditingLevel)
-            multiAddHookPos(pos, m_firstFrameId, fid, m_frameRange.getIndex());
-          else
-            multiAddHookPos(pos, m_firstFrameIdx, m_lastFrameIdx,
-                            m_frameRange.getIndex());
-
-          if (e.isShiftPressed()) {
-            m_firstPoint = pos;
-            if (isEditingLevel)
-              m_firstFrameId = getCurrentFid();
-            else {
-              m_firstFrameIdx = m_lastFrameIdx;
-              app->getCurrentFrame()->setFrame(m_firstFrameIdx);
-            }
-          } else {
-            m_firstClick  = false;
-            m_currentHook = 0;
-            if (app->getCurrentFrame()->isEditingScene()) {
-              app->getCurrentColumn()->setColumnIndex(m_currCell.first);
-              app->getCurrentFrame()->setFrame(m_currCell.second);
-            } else
-              app->getCurrentFrame()->setFid(m_veryFirstFrameId);
-          }
-        }
+          m_currentHook   = 0;
+        } else
+          processFrameRange(pos, isEditingLevel, e.isShiftPressed());
 
         invalidate();
         return;
@@ -940,9 +932,11 @@ void HookTool::multiAddHookPos(const TPointD &pos, TFrameId firstFid,
     algorithm = TInbetween::EaseInOutInterpolation;
   }
 
-  TUndoManager::manager()->beginBlock();
-
-  if (!m_currentHook) m_currentHook = addHook(fids[0], pos);
+  bool hookCreated = false;
+  if (!m_currentHook) {
+    m_currentHook = addHook(fids[0], pos);
+    hookCreated   = true;
+  }
 
   for (int i = 0; i < m; ++i) {
     double t        = m > 1 ? (double)i / (double)(m - 1) : 0.5;
@@ -953,7 +947,8 @@ void HookTool::multiAddHookPos(const TPointD &pos, TFrameId firstFid,
     m_currentHook->setAPos(fids[i], p);
     m_currentHook->setBPos(fids[i], p);
   }
-  TUndoManager::manager()->endBlock();
+
+  if (!hookCreated) m_hookSetChanged = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -993,11 +988,16 @@ void HookTool::multiAddHookPos(const TPointD &pos, int firstFidx, int lastFidx,
     algorithm = TInbetween::EaseInOutInterpolation;
   }
 
-  TUndoManager::manager()->beginBlock();
   row                               = cellList[0].first;
   TXshCell cell                     = cellList[0].second;
   TFrameId fid                      = cell.getFrameId();
-  if (!m_currentHook) m_currentHook = addHook(fid, pos);
+
+  bool hookCreated = false;
+  if (!m_currentHook) {
+    m_currentHook = addHook(fid, pos);
+    hookCreated   = true;
+  }
+
   for (int i = 0; i < m; i++) {
     row                = cellList[i].first;
     cell               = cellList[i].second;
@@ -1010,5 +1010,41 @@ void HookTool::multiAddHookPos(const TPointD &pos, int firstFidx, int lastFidx,
     m_currentHook->setAPos(fid, p);
     m_currentHook->setBPos(fid, p);
   }
-  TUndoManager::manager()->endBlock();
+
+  if (!hookCreated) m_hookSetChanged = true;
+}
+
+//-----------------------------------------------------------------------------
+
+void HookTool::processFrameRange(TPointD pos, bool isEditingLevel, bool shiftPressed) {
+  TTool::Application *app = TTool::getApplication();
+
+  qApp->processEvents();
+
+  TFrameId fid   = getCurrentFid();
+  m_lastFrameIdx = app->getCurrentFrame()->getFrameIndex();
+
+  if (isEditingLevel)
+    multiAddHookPos(pos, m_firstFrameId, fid, m_frameRange.getIndex());
+  else
+    multiAddHookPos(pos, m_firstFrameIdx, m_lastFrameIdx,
+                    m_frameRange.getIndex());
+
+  if (shiftPressed) {
+    m_firstPoint = pos;
+    if (isEditingLevel)
+      m_firstFrameId = getCurrentFid();
+    else {
+      m_firstFrameIdx = m_lastFrameIdx;
+      app->getCurrentFrame()->setFrame(m_firstFrameIdx);
+    }
+  } else {
+    m_firstClick  = false;
+    m_currentHook = 0;
+    if (app->getCurrentFrame()->isEditingScene()) {
+      app->getCurrentColumn()->setColumnIndex(m_currCell.first);
+      app->getCurrentFrame()->setFrame(m_currCell.second);
+    } else
+      app->getCurrentFrame()->setFid(m_veryFirstFrameId);
+  }
 }
