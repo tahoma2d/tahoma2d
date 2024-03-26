@@ -302,7 +302,7 @@ Por favor tente aumentar o tempo de espera do FFmpeg em Preferências.</translat
     </message>
     <message>
         <location filename="../../image/sgi/filesgi.cpp" line="1235"/>
-        <source>Endianess</source>
+        <source>Endianness</source>
         <translation>Extremidade</translation>
     </message>
     <message>
