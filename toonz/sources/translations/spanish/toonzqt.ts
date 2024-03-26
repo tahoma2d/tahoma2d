@@ -2409,7 +2409,7 @@ and tone may be slightly discretized.</source>
         <translation>Ruta de salida: </translation>
     </message>
     <message>
-        <source>Endianess:      </source>
+        <source>Endianness:       </source>
         <translation>Orden:      </translation>
     </message>
     <message>
