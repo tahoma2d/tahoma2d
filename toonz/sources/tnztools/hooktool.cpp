@@ -184,6 +184,8 @@ public:
   void multiAddHookPos(const TPointD &pos, int firstFidx, int lastFidx,
                        int multi);
   void processFrameRange(TPointD pos, bool isEditingLevel, bool shiftPressed);
+  void resetMulti();
+
 } hookTool;
 
 //-----------------------------------------------------------------------------
@@ -295,8 +297,8 @@ void HookTool::drawHooks(HookSet *hookSet, const TFrameId &fid, bool isOnion) {
       p1 += m_pivotOffset;
     }
     bool linked = p0 == p1;
-    drawHook(p0, linked ? NormalHook : PassHookA, m_selection.isSelected(i, 1),
-             isOnion);
+    drawHook(p0, linked ? NormalHook : PassHookA,
+             m_currentHook == hook || m_selection.isSelected(i, 1), isOnion);
     if (!linked) drawHook(p1, PassHookB, m_selection.isSelected(i, 2), isOnion);
   }
 }
@@ -477,9 +479,25 @@ void HookTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
   m_hookId = -1, m_hookSide = 0;
   m_deselectArmed = false;
   if (pick(m_hookId, m_hookSide, pos)) {
-    if (m_hookSide == 3)  // ho cliccato su un cerchio-croce
-    {
-      if (e.isAltPressed())  // con l'alt voglio dividere
+    if (m_frameRange.getIndex()) {
+      m_selection.selectNone();
+      bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
+
+      if (!m_firstClick) {
+        m_currentHook = xl->getHookSet()->getHook(m_hookId);
+        m_currCell    = std::pair<int, int>(getColumnIndex(), getFrame());
+
+        m_firstClick   = true;
+        m_firstPoint   = m_currentHook->getPos(getCurrentFid());
+        m_firstFrameId = m_veryFirstFrameId = getCurrentFid();
+        m_firstFrameIdx = app->getCurrentFrame()->getFrameIndex();
+      } else {
+        Hook *hook = xl->getHookSet()->getHook(m_hookId);
+        processFrameRange(hook->getPos(getCurrentFid()), isEditingLevel,
+                          e.isShiftPressed());
+      }
+    } else if (m_hookSide == 3) {  // ho cliccato su un cerchio-croce
+      if (e.isAltPressed())        // con l'alt voglio dividere
       {
         m_selection.selectNone();
         m_selection.select(m_hookId, 2);
@@ -493,25 +511,6 @@ void HookTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
         {
           m_selection.select(m_hookId, 1);
           m_selection.select(m_hookId, 2);
-        }
-      } else if (m_frameRange.getIndex()) {
-        bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
-
-        if (!m_firstClick) {
-          m_currentHook = xl->getHookSet()->getHook(m_hookId);
-          m_currCell    = std::pair<int, int>(getColumnIndex(), getFrame());
-
-          m_selection.selectNone();
-          m_selection.select(m_hookId, 1);
-
-          m_firstClick   = true;
-          m_firstPoint   = m_currentHook->getPos(getCurrentFid());
-          m_firstFrameId = m_veryFirstFrameId = getCurrentFid();
-          m_firstFrameIdx = app->getCurrentFrame()->getFrameIndex();
-        } else {
-          Hook *hook = xl->getHookSet()->getHook(m_hookId);
-          processFrameRange(hook->getPos(getCurrentFid()), isEditingLevel,
-                            e.isShiftPressed());
         }
       } else {
         // senza control ne' shift ne' alt: se ho cliccato su un hook non
@@ -540,30 +539,28 @@ void HookTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
   } else {
     // non ho cliccato su nulla: con ctrl non faccio nulla, senza creo un nuovo
     // hook
-    if (!e.isCtrlPressed()) {
-      if (m_frameRange.getIndex()) {
-        bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
+    if (m_frameRange.getIndex()) {
+      m_selection.selectNone();
+      bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
 
-        if (!m_firstClick) {
-          m_currCell = std::pair<int, int>(getColumnIndex(), getFrame());
+      if (!m_firstClick) {
+        m_currCell = std::pair<int, int>(getColumnIndex(), getFrame());
 
-          m_firstClick   = true;
-          m_firstPoint   = pos;
-          m_firstFrameId = m_veryFirstFrameId = getCurrentFid();
-          m_firstFrameIdx = app->getCurrentFrame()->getFrameIndex();
-          m_currentHook   = 0;
-        } else
-          processFrameRange(pos, isEditingLevel, e.isShiftPressed());
-
-        invalidate();
-        return;
-      }
-
+        m_firstClick   = true;
+        m_firstPoint   = pos;
+        m_firstFrameId = m_veryFirstFrameId = getCurrentFid();
+        m_firstFrameIdx = app->getCurrentFrame()->getFrameIndex();
+        m_currentHook   = 0;
+      } else
+        processFrameRange(pos, isEditingLevel, e.isShiftPressed());
+    } else if (!e.isCtrlPressed()) {
       m_selection.selectNone();
       TFrameId fid = getCurrentFid();
       Hook *hook   = addHook(fid, pos);
-      m_selection.select(hook->getId(), 1);
-      m_selection.select(hook->getId(), 2);
+      if (hook) {
+        m_selection.select(hook->getId(), 1);
+        m_selection.select(hook->getId(), 2);
+      }
     }
   }
   m_pivotOffset = TPointD();
@@ -577,7 +574,7 @@ void HookTool::leftButtonDrag(const TPointD &pp, const TMouseEvent &e) {
   TTool::Application *app = TTool::getApplication();
   if (!app) return;
 
-  if (m_snapped) return;
+  if (m_snapped || m_frameRange.getIndex()) return;
 
   TFrameId fid = getCurrentFid();
 
@@ -839,6 +836,7 @@ bool HookTool::onPropertyChanged(std::string propertyName) {
   // Frame Range
   else if (propertyName == m_frameRange.getName()) {
     HookRange = m_frameRange.getIndex();
+    resetMulti();
   }
 
   return true;
@@ -852,6 +850,7 @@ void HookTool::onActivate() {
     m_snappedActive.setValue(HookSnap ? 1 : 0);
     m_frameRange.setIndex(HookRange);
   }
+  resetMulti();
 
   // TODO: getApplication()->editImageOrSpline();
   m_otherHooks.clear();
@@ -932,11 +931,11 @@ void HookTool::multiAddHookPos(const TPointD &pos, TFrameId firstFid,
     algorithm = TInbetween::EaseInOutInterpolation;
   }
 
-  bool hookCreated = false;
   if (!m_currentHook) {
     m_currentHook = addHook(fids[0], pos);
-    hookCreated   = true;
+    if (!m_currentHook) return;
   }
+  if (m_currentHook->isEmpty()) return;
 
   for (int i = 0; i < m; ++i) {
     double t        = m > 1 ? (double)i / (double)(m - 1) : 0.5;
@@ -948,7 +947,7 @@ void HookTool::multiAddHookPos(const TPointD &pos, TFrameId firstFid,
     m_currentHook->setBPos(fids[i], p);
   }
 
-  if (!hookCreated) m_hookSetChanged = true;
+  m_hookSetChanged = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -992,11 +991,11 @@ void HookTool::multiAddHookPos(const TPointD &pos, int firstFidx, int lastFidx,
   TXshCell cell                     = cellList[0].second;
   TFrameId fid                      = cell.getFrameId();
 
-  bool hookCreated = false;
   if (!m_currentHook) {
     m_currentHook = addHook(fid, pos);
-    hookCreated   = true;
+    if (!m_currentHook) return;
   }
+  if (m_currentHook->isEmpty()) return;
 
   for (int i = 0; i < m; i++) {
     row                = cellList[i].first;
@@ -1011,7 +1010,7 @@ void HookTool::multiAddHookPos(const TPointD &pos, int firstFidx, int lastFidx,
     m_currentHook->setBPos(fid, p);
   }
 
-  if (!hookCreated) m_hookSetChanged = true;
+  m_hookSetChanged = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -1039,12 +1038,20 @@ void HookTool::processFrameRange(TPointD pos, bool isEditingLevel, bool shiftPre
       app->getCurrentFrame()->setFrame(m_firstFrameIdx);
     }
   } else {
-    m_firstClick  = false;
-    m_currentHook = 0;
     if (app->getCurrentFrame()->isEditingScene()) {
       app->getCurrentColumn()->setColumnIndex(m_currCell.first);
       app->getCurrentFrame()->setFrame(m_currCell.second);
     } else
       app->getCurrentFrame()->setFid(m_veryFirstFrameId);
+    resetMulti();
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void HookTool::resetMulti() {
+  m_firstClick   = false;
+  m_firstFrameId = -1;
+  m_firstPoint   = TPointD();
+  m_currentHook  = 0;
 }
