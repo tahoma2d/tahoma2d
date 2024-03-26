@@ -1522,7 +1522,7 @@ void inbetweenWithoutUndo(TXshSimpleLevel *sl, std::vector<TFrameId> fids,
     if (hooks) {
       for (int j = 0; j < hooks->getHookCount(); j++) {
         Hook *hook = hooks->getHook(j);
-        if (!hook) continue;
+        if (!hook || hook->isEmpty()) continue;
         TPointD firstPos = hook->getAPos(fid0);
         TPointD lastPos  = hook->getAPos(fid1);
         TPointD iPos     = firstPos * (1 - t) + lastPos * t;
