@@ -60,6 +60,10 @@ public:
   void duplicateFrames();
   void exposeFrames();
   void renumberFrames();
+  void inbetweenLinear();
+  void inbetweenEaseIn();
+  void inbetweenEaseOut();
+  void inbetweenEaseInOut();
 };
 
 #endif  // TFILMSTRIPSELECTION_H

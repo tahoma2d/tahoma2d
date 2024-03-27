@@ -549,6 +549,13 @@ void TopBar::loadMenubar() {
     addMenuItem(drawingSubMenu, MI_DrawingSubGroupBackward);
   }
   cellsMenu->addSeparator();
+  QMenu *inbetweenMenu = cellsMenu->addMenu(tr("Inbetween"));
+  {
+    addMenuItem(inbetweenMenu, MI_InbetweenLinear);
+    addMenuItem(inbetweenMenu, MI_InbetweenEaseIn);
+    addMenuItem(inbetweenMenu, MI_InbetweenEaseOut);
+    addMenuItem(inbetweenMenu, MI_InbetweenEaseInOut);
+  }
   addMenuItem(cellsMenu, MI_Autorenumber);
   addMenuItem(cellsMenu, MI_CreateBlankDrawing);
   addMenuItem(cellsMenu, MI_Duplicate);

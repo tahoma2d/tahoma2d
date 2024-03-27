@@ -2266,6 +2266,15 @@ void MainWindow::defineActions() {
   createMenuCellsAction(MI_FillEmptyCell, QT_TR_NOOP("&Fill In Empty Cells"),
                         "", "fill_empty_cells");
 
+  createMenuCellsAction(MI_InbetweenLinear, QT_TR_NOOP("&Linear"), "",
+                        "inbetween_linear");
+  createMenuCellsAction(MI_InbetweenEaseIn, QT_TR_NOOP("&Ease In"), "",
+                        "inbetween_easein");
+  createMenuCellsAction(MI_InbetweenEaseOut, QT_TR_NOOP("&Ease Out"), "",
+                        "inbetween_easeout");
+  createMenuCellsAction(MI_InbetweenEaseInOut, QT_TR_NOOP("&Ease In/Out"), "",
+                        "inbetween_easeinout");
+
   // Menu - Play
 
   createToggle(MI_Link, QT_TR_NOOP("Link Flipbooks"), "",

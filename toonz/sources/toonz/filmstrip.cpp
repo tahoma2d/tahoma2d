@@ -1289,6 +1289,16 @@ void FilmstripFrames::contextMenuEvent(QContextMenuEvent *event) {
   menu->addAction(cm->getAction(MI_ExposeResource));
   if (!isSubsequenceLevel && !isReadOnly) {
     menu->addAction(cm->getAction(MI_AddFrames));
+    if (sl && sl->getType() == PLI_XSHLEVEL) {
+      QMenu *inbetweenMenu = new QMenu(tr("Inbetween"), this);
+      {
+        inbetweenMenu->addAction(cm->getAction(MI_InbetweenLinear));
+        inbetweenMenu->addAction(cm->getAction(MI_InbetweenEaseIn));
+        inbetweenMenu->addAction(cm->getAction(MI_InbetweenEaseOut));
+        inbetweenMenu->addAction(cm->getAction(MI_InbetweenEaseInOut));
+      }
+      menu->addMenu(inbetweenMenu);
+    }
     menu->addAction(cm->getAction(MI_Renumber));
     if (sl && sl->getType() == TZP_XSHLEVEL)
       menu->addAction(cm->getAction(MI_RevertToCleanedUp));

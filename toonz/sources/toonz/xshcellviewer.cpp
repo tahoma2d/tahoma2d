@@ -4444,6 +4444,19 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
 
       menu.addSeparator();
 
+      if (cell.m_level && cell.m_level->getSimpleLevel() &&
+          cell.m_level->getType() == PLI_XSHLEVEL) {
+        QMenu *inbetweenMenu = new QMenu(tr("Inbetween"), this);
+        {
+          inbetweenMenu->addAction(cmdManager->getAction(MI_InbetweenLinear));
+          inbetweenMenu->addAction(cmdManager->getAction(MI_InbetweenEaseIn));
+          inbetweenMenu->addAction(cmdManager->getAction(MI_InbetweenEaseOut));
+          inbetweenMenu->addAction(
+              cmdManager->getAction(MI_InbetweenEaseInOut));
+        }
+        menu.addMenu(inbetweenMenu);
+      }
+
       if (!soundTextCellsSelected && !isImplicitCell)
         menu.addAction(cmdManager->getAction(MI_Autorenumber));
     }
