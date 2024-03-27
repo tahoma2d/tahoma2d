@@ -83,9 +83,9 @@ TEnv::IntVar V_VectorBrushSnapGrid("VectorBrushSnapGrid", 0);
 #define CUSTOM_WSTR L"<custom>"
 
 #define LINEAR_WSTR L"Linear"
-#define EASEIN_WSTR L"In"
-#define EASEOUT_WSTR L"Out"
-#define EASEINOUT_WSTR L"In&Out"
+#define EASEIN_WSTR L"Ease In"
+#define EASEOUT_WSTR L"Ease Out"
+#define EASEINOUT_WSTR L"Ease In/Out"
 
 #define LOW_WSTR L"Low"
 #define MEDIUM_WSTR L"Med"
@@ -628,9 +628,9 @@ void ToonzVectorBrushTool::updateTranslation() {
   m_snapSensitivity.setQStringName("");
   m_frameRange.setItemUIName(L"Off", tr("Off"));
   m_frameRange.setItemUIName(LINEAR_WSTR, tr("Linear"));
-  m_frameRange.setItemUIName(EASEIN_WSTR, tr("In"));
-  m_frameRange.setItemUIName(EASEOUT_WSTR, tr("Out"));
-  m_frameRange.setItemUIName(EASEINOUT_WSTR, tr("In&Out"));
+  m_frameRange.setItemUIName(EASEIN_WSTR, tr("Ease In"));
+  m_frameRange.setItemUIName(EASEOUT_WSTR, tr("Ease Out"));
+  m_frameRange.setItemUIName(EASEINOUT_WSTR, tr("Ease In/Out"));
   m_snapSensitivity.setItemUIName(LOW_WSTR, tr("Low"));
   m_snapSensitivity.setItemUIName(MEDIUM_WSTR, tr("Med"));
   m_snapSensitivity.setItemUIName(HIGH_WSTR, tr("High"));
@@ -1165,6 +1165,7 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
       if (m_autoClose.getValue()) stroke->setSelfLoop(true);
       m_firstStroke                   = new TStroke(*stroke);
       m_firstFrameId                  = getFrameId();
+      m_firstFrameIdx                 = getFrame();
       TTool::Application *application = TTool::getApplication();
       if (application) {
         m_col        = application->getCurrentColumn()->getColumnIndex();
@@ -1220,12 +1221,23 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
             lastStrokes[i]->setSelfLoop(true);
         }
       }
-      bool success = doFrameRangeStrokes(
+      bool success;
+      
+      if (application->getCurrentFrame()->isEditingLevel())
+        success = doFrameRangeStrokes(
           m_firstFrameId, m_firstStroke, getFrameId(), stroke,
           m_frameRange.getIndex(), m_breakAngles.getValue(),
           m_autoGroup.getValue(), m_autoFill.getValue(), m_firstFrameRange,
           true, true, m_sendToBack.getValue() > 0, m_firstSymmetryStrokes,
           lastStrokes);
+      else
+        success = doFrameRangeStrokes(
+            m_firstFrameIdx, m_firstStroke, getFrame(), stroke,
+            m_frameRange.getIndex(), m_breakAngles.getValue(),
+            m_autoGroup.getValue(), m_autoFill.getValue(), m_firstFrameRange,
+            true, true, m_sendToBack.getValue() > 0, m_firstSymmetryStrokes,
+            lastStrokes);
+
       if (e.isCtrlPressed() && e.isAltPressed() && e.isShiftPressed()) {
         if (application) {
           if (m_firstFrameId > currentId) {
@@ -1240,6 +1252,7 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
         m_firstStroke     = new TStroke(*stroke);
         m_rangeTrack      = m_track;
         m_firstFrameId    = currentId;
+        m_firstFrameIdx   = getFrame();
         m_firstFrameRange = false;
       }
 
@@ -1411,26 +1424,23 @@ bool ToonzVectorBrushTool::doFrameRangeStrokes(
                       ? getApplication()->getCurrentFrame()->getFrameIndex()
                       : -1;
   TFrameId cFid = getApplication()->getCurrentFrame()->getFid();
+
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (interpolationType == 2) {  // EASE_IN_INTERPOLATION) {
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (interpolationType == 3) {  // EASE_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (interpolationType == 4) {  // EASE_IN_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
   for (int i = 0; i < m; ++i) {
     TFrameId fid = fids[i];
     assert(firstFrameId <= fid && fid <= lastFrameId);
 
     // This is an attempt to divide the tween evenly
     double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
-    double s = t;
-    switch (interpolationType) {
-    case 1:  // LINEAR_WSTR
-      break;
-    case 2:  // EASEIN_WSTR
-      s = t * (2 - t);
-      break;  // s'(1) = 0
-    case 3:   // EASEOUT_WSTR
-      s = t * t;
-      break;  // s'(0) = 0
-    case 4:   // EASEINOUT_WSTR:
-      s = t * t * (3 - 2 * t);
-      break;  // s'(0) = s'(1) = 0
-    }
+    t        = TInbetween::interpolation(t, algorithm);
 
     TTool::Application *app = TTool::getApplication();
     if (app) app->getCurrentFrame()->setFid(fid);
@@ -1455,8 +1465,142 @@ bool ToonzVectorBrushTool::doFrameRangeStrokes(
     } else {
 //      assert(firstImage->getStrokeCount() == 1);
 //      assert(lastImage->getStrokeCount() == 1);
-      TVectorImageP vi = TInbetween(firstImage, lastImage).tween(s);
+      TVectorImageP vi = TInbetween(firstImage, lastImage).tween(t);
 //      assert(vi->getStrokeCount() == 1);
+      for (int i = 0; i < vi->getStrokeCount(); i++) {
+        if (m_autoClose.getValue()) vi->getStroke(i)->setSelfLoop(true);
+        addStrokeToImage(getApplication(), img, vi->getStroke(i), breakAngles,
+                         autoGroup, autoFill, m_isFrameCreated,
+                         m_isLevelCreated, sl, fid, sendToBack);
+      }
+    }
+  }
+  if (row != -1)
+    getApplication()->getCurrentFrame()->setFrame(row);
+  else
+    getApplication()->getCurrentFrame()->setFid(cFid);
+
+  if (withUndo) TUndoManager::manager()->endBlock();
+  notifyImageChanged();
+  return true;
+}
+
+//--------------------------------------------------------------------------------------------------
+
+bool ToonzVectorBrushTool::doFrameRangeStrokes(
+    int firstFrameIdx, TStroke *firstStroke, int lastFrameIdx,
+    TStroke *lastStroke, int interpolationType, bool breakAngles,
+    bool autoGroup, bool autoFill, bool drawFirstStroke, bool drawLastStroke,
+    bool withUndo, bool sendToBack, std::vector<TStroke *> firstSymmetryStrokes,
+    std::vector<TStroke *> lastSymmetryStrokes) {
+  TXshSimpleLevel *sl =
+      TTool::getApplication()->getCurrentLevel()->getLevel()->getSimpleLevel();
+  TStroke *first           = new TStroke();
+  TStroke *last            = new TStroke();
+  TVectorImageP firstImage = new TVectorImage();
+  TVectorImageP lastImage  = new TVectorImage();
+
+  *first = *firstStroke;
+  *last  = *lastStroke;
+
+  bool swapped = false;
+  if (firstFrameIdx > lastFrameIdx) {
+    std::swap(firstFrameIdx, lastFrameIdx);
+    *first  = *lastStroke;
+    *last   = *firstStroke;
+    swapped = true;
+  }
+
+  if (m_autoClose.getValue()) {
+    first->setSelfLoop(true);
+    last->setSelfLoop(true);
+  }
+
+  firstImage->addStroke(first, false, sendToBack);
+  for (int i = 0; i < firstSymmetryStrokes.size(); i++) {
+    TStroke *stroke =
+        swapped ? lastSymmetryStrokes[i] : firstSymmetryStrokes[i];
+    if (m_autoClose.getValue()) stroke->setSelfLoop(true);
+    firstImage->addStroke(stroke, sendToBack);
+  }
+  lastImage->addStroke(last, false, sendToBack);
+  for (int i = 0; i < lastSymmetryStrokes.size(); i++) {
+    TStroke *stroke =
+        swapped ? firstSymmetryStrokes[i] : lastSymmetryStrokes[i];
+    if (m_autoClose.getValue()) stroke->setSelfLoop(true);
+    lastImage->addStroke(stroke, sendToBack);
+  }
+  assert(firstFrameId <= lastFrameId);
+
+  TTool::Application *app = TTool::getApplication();
+  TFrameId lastFrameId;
+  int col = app->getCurrentColumn()->getColumnIndex();
+  int row;
+
+  std::vector<std::pair<int, TXshCell>> cellList;
+
+  for (row = firstFrameIdx; row <= lastFrameIdx; row++) {
+    TXshCell cell = app->getCurrentXsheet()->getXsheet()->getCell(row, col);
+    if (cell.isEmpty()) continue;
+    TFrameId fid = cell.getFrameId();
+    if (lastFrameId == fid) continue;  // Skip held cells
+    cellList.push_back(std::pair<int, TXshCell>(row, cell));
+    lastFrameId = fid;
+  }
+
+  int m = cellList.size();
+
+  if (withUndo) TUndoManager::manager()->beginBlock();
+  row = getApplication()->getCurrentFrame()->isEditingScene()
+            ? getApplication()->getCurrentFrame()->getFrameIndex()
+            : -1;
+
+  TFrameId cFid = getApplication()->getCurrentFrame()->getFid();
+
+  enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+  if (interpolationType == 2) {  // EASE_IN_INTERPOLATION) {
+    algorithm = TInbetween::EaseInInterpolation;
+  } else if (interpolationType == 3) {  // EASE_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseOutInterpolation;
+  } else if (interpolationType == 4) {  // EASE_IN_OUT_INTERPOLATION) {
+    algorithm = TInbetween::EaseInOutInterpolation;
+  }
+
+  for (int i = 0; i < m; ++i) {
+    int frame         = cellList[i].first;
+    TXshCell cell     = cellList[i].second;
+    TFrameId fid      = cell.getFrameId();
+    TVectorImageP img = (TVectorImageP)cell.getImage(true);
+    if (!img) continue;
+
+    // This is an attempt to divide the tween evenly
+    double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+    t        = TInbetween::interpolation(t, algorithm);
+
+    TTool::Application *app = TTool::getApplication();
+    if (app) app->getCurrentFrame()->setFrame(frame);
+
+    if (t == 0) {
+      if (!swapped && !drawFirstStroke) {
+      } else {
+        for (int i = 0; i < firstImage->getStrokeCount(); i++)
+          addStrokeToImage(getApplication(), img, firstImage->getStroke(i),
+                           breakAngles, autoGroup, autoFill, m_isFrameCreated,
+                           m_isLevelCreated, sl, fid, sendToBack);
+      }
+    } else if (t == 1) {
+      if (swapped && !drawFirstStroke) {
+      } else if (drawLastStroke) {
+        for (int i = 0; i < lastImage->getStrokeCount(); i++)
+          addStrokeToImage(getApplication(), img, lastImage->getStroke(i),
+                           breakAngles, autoGroup, autoFill, m_isFrameCreated,
+                           m_isLevelCreated, sl, fid, sendToBack);
+      }
+    } else {
+      //      assert(firstImage->getStrokeCount() == 1);
+      //      assert(lastImage->getStrokeCount() == 1);
+      TVectorImageP vi = TInbetween(firstImage, lastImage).tween(t);
+      //      assert(vi->getStrokeCount() == 1);
       for (int i = 0; i < vi->getStrokeCount(); i++) {
         if (m_autoClose.getValue()) vi->getStroke(i)->setSelfLoop(true);
         addStrokeToImage(getApplication(), img, vi->getStroke(i), breakAngles,
@@ -1943,6 +2087,7 @@ TPropertyGroup *ToonzVectorBrushTool::getProperties(int idx) {
 void ToonzVectorBrushTool::resetFrameRange() {
   m_rangeTrack.clear();
   m_firstFrameId = -1;
+  m_firstFrameIdx = -1;
   if (m_firstStroke) {
     delete m_firstStroke;
     m_firstStroke = 0;

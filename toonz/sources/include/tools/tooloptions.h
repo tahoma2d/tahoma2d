@@ -530,9 +530,9 @@ class FillToolOptionsBox final : public ToolOptionsBox {
 
   int m_targetType;
   QLabel *m_fillDepthLabel;
-  ToolOptionCombo *m_colorMode, *m_toolType, *m_rasterGapSettings;
-  ToolOptionCheckbox *m_selectiveMode, *m_segmentMode, *m_onionMode,
-      *m_multiFrameMode, *m_autopaintMode;
+  ToolOptionCombo *m_colorMode, *m_toolType, *m_rasterGapSettings,
+      *m_multiFrameMode;
+  ToolOptionCheckbox *m_selectiveMode, *m_segmentMode, *m_onionMode, *m_autopaintMode;
   ToolOptionPairSlider *m_fillDepthField;
   ToolOptionSlider *m_rasterGapSlider;
   StyleIndexFieldAndChip *m_styleIndex;
@@ -550,7 +550,7 @@ protected slots:
   void onColorModeChanged(int);
   void onToolTypeChanged(int);
   void onOnionModeToggled(bool);
-  void onMultiFrameModeToggled(bool);
+  void onMultiFrameModeChanged(int);
   void onGapSettingChanged(int);
 };
 
@@ -604,9 +604,9 @@ protected slots:
 class EraserToolOptionsBox final : public ToolOptionsBox {
   Q_OBJECT
 
-  ToolOptionCheckbox *m_pencilMode, *m_invertMode, *m_multiFrameMode,
-      *m_eraseOnlySavebox, *m_pressure;
-  ToolOptionCombo *m_toolType, *m_colorMode;
+  ToolOptionCheckbox *m_pencilMode, *m_invertMode, *m_eraseOnlySavebox,
+      *m_pressure;
+  ToolOptionCombo *m_toolType, *m_colorMode, *m_multiFrameMode;
   QLabel *m_hardnessLabel, *m_colorModeLabel;
   ToolOptionSlider *m_hardnessField;
 
@@ -665,7 +665,7 @@ class TapeToolOptionsBox final : public ToolOptionsBox {
   Q_OBJECT
 
   ToolOptionCheckbox *m_smoothMode, *m_joinStrokesMode;
-  ToolOptionCombo *m_toolMode, *m_typeMode;
+  ToolOptionCombo *m_toolMode, *m_typeMode, *m_multiFrameMode;
   QLabel *m_autocloseLabel;
   ToolOptionSlider *m_autocloseField;
 

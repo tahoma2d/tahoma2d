@@ -30,6 +30,12 @@ public:
   void redo() const override;
 
   int getSize() const override;
+
+private:
+  QString getHistoryString() override {
+    return QObject::tr("Hook Tool   Level : %1")
+        .arg(QString::fromStdWString(m_level->getName()));
+  }
 };
 
 //=============================================================================

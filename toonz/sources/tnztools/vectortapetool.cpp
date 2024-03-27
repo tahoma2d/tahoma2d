@@ -23,6 +23,8 @@
 #include "tools/toolhandle.h"
 #include "toonz/stage2.h"
 #include "tenv.h"
+#include "tinbetween.h"
+
 // For Qt translation support
 #include <QCoreApplication>
 
@@ -34,11 +36,18 @@ using namespace ToolUtils;
 #define NORMAL L"Normal"
 #define RECT L"Rectangular"
 
+#define LINEAR_INTERPOLATION L"Linear"
+#define EASE_IN_INTERPOLATION L"Ease In"
+#define EASE_OUT_INTERPOLATION L"Ease Out"
+#define EASE_IN_OUT_INTERPOLATION L"Ease In/Out"
+
 TEnv::StringVar TapeMode("InknpaintTapeMode1", "Endpoint to Endpoint");
 TEnv::IntVar TapeSmooth("InknpaintTapeSmooth", 0);
 TEnv::IntVar TapeJoinStrokes("InknpaintTapeJoinStrokes", 0);
 TEnv::StringVar TapeType("InknpaintTapeType1", "Normal");
 TEnv::DoubleVar AutocloseFactor("InknpaintAutocloseFactor", 4.0);
+TEnv::IntVar TapeRange("InknpaintTapeRange", 0);
+
 namespace {
 
 class UndoAutoclose final : public ToolUtils::TToolUndo {
@@ -192,8 +201,17 @@ class VectorTapeTool final : public TTool {
   TPropertyGroup m_prop;
   TDoubleProperty m_autocloseFactor;
   TEnumProperty m_type;
+  TEnumProperty m_multi;
 
   SymmetryStroke m_polyline;
+
+  TRectD m_firstRect;
+  bool m_firstFrameSelected;
+  TFrameId m_firstFrameId, m_veryFirstFrameId;
+  int m_firstFrameIdx;
+  std::pair<int, int> m_currCell;
+  SymmetryStroke m_firstPolyline;
+  TXshSimpleLevelP m_level;
 
 public:
   VectorTapeTool()
@@ -211,11 +229,21 @@ public:
       , m_autocloseFactor("Distance", 0.1, 100, 0.5)
       , m_firstTime(true)
       , m_selectionRect()
-      , m_startRect() {
+      , m_startRect()
+      , m_multi("Frame Range:")
+      , m_firstFrameSelected(false)
+      , m_currCell(-1, -1)
+      , m_level(0) {
     bind(TTool::Vectors);
 
     m_prop.bind(m_type);
     m_prop.bind(m_mode);
+    m_prop.bind(m_multi);
+    m_multi.addValue(L"Off");
+    m_multi.addValue(LINEAR_INTERPOLATION);
+    m_multi.addValue(EASE_IN_INTERPOLATION);
+    m_multi.addValue(EASE_OUT_INTERPOLATION);
+    m_multi.addValue(EASE_IN_OUT_INTERPOLATION);
     m_prop.bind(m_autocloseFactor);
     m_prop.bind(m_joinStrokes);
     m_prop.bind(m_smooth);
@@ -231,6 +259,7 @@ public:
     m_type.setId("Type");
     m_joinStrokes.setId("JoinVectors");
     m_autocloseFactor.setId("Distance");
+    m_multi.setId("FrameRange");
   }
 
   //-----------------------------------------------------------------------------
@@ -242,6 +271,7 @@ public:
   bool onPropertyChanged(std::string propertyName) override {
     TapeMode       = ::to_string(m_mode.getValue());
     TapeSmooth     = (int)(m_smooth.getValue());
+    TapeRange      = m_multi.getIndex();
     std::wstring s = m_type.getValue();
     if (!s.empty()) TapeType = ::to_string(s);
     TapeJoinStrokes = (int)(m_joinStrokes.getValue());
@@ -269,6 +299,13 @@ public:
     m_type.setQStringName(tr("Type:"));
     m_type.setItemUIName(NORMAL, tr("Normal"));
     m_type.setItemUIName(RECT, tr("Rectangular"));
+
+    m_multi.setQStringName(tr("Frame Range:"));
+    m_multi.setItemUIName(L"Off", tr("Off"));
+    m_multi.setItemUIName(LINEAR_INTERPOLATION, tr("Linear"));
+    m_multi.setItemUIName(EASE_IN_INTERPOLATION, tr("Ease In"));
+    m_multi.setItemUIName(EASE_OUT_INTERPOLATION, tr("Ease Out"));
+    m_multi.setItemUIName(EASE_IN_OUT_INTERPOLATION, tr("Ease In/Out"));
   }
 
   //-----------------------------------------------------------------------------
@@ -300,11 +337,18 @@ public:
     // tglMultMatrix(viewMatrix);
     TPixel color = TPixel32::Red;
     if (m_type.getValue() == RECT) {
+      if (m_multi.getIndex() && m_firstFrameSelected) {
+        if (m_firstPolyline.size() > 1) {
+          m_firstPolyline.drawRectangle(color);
+        } else
+          ToolUtils::drawRect(m_firstRect, color, 0x3F33, true);
+      }
+
       if (!m_selectionRect.isEmpty())
         if (m_polyline.size() > 1) {
           m_polyline.drawRectangle(color);
         } else
-          ToolUtils::drawRect(m_selectionRect, TPixel::Black, 0x3F33, true);
+          ToolUtils::drawRect(m_selectionRect, color, 0x3F33, true);
       return;
     }
 
@@ -672,7 +716,13 @@ public:
 #define l2p 3
 #define l2l 4
 
-  void tapeRect(const TVectorImageP &vi, const TRectD &rect) {
+  inline TRectD interpolateRect(const TRectD &r1, const TRectD &r2, double t) {
+    return TRectD(r1.x0 + (r2.x0 - r1.x0) * t, r1.y0 + (r2.y0 - r1.y0) * t,
+                  r1.x1 + (r2.x1 - r1.x1) * t, r1.y1 + (r2.y1 - r1.y1) * t);
+  }
+
+  void tapeRect(const TVectorImageP &vi, const TRectD &rect,
+                bool undoBlockStarted) {
     std::vector<TFilledRegionInf> *fillInformation =
         new std::vector<TFilledRegionInf>;
     ImageUtils::getFillingInformationOverlappingArea(vi, *fillInformation,
@@ -689,7 +739,7 @@ public:
     std::vector<TPointD> startP(startPoints.size()), endP(startPoints.size());
 
     if (!startPoints.empty()) {
-      TUndoManager::manager()->beginBlock();
+      if (!undoBlockStarted) TUndoManager::manager()->beginBlock();
       for (UINT i = 0; i < startPoints.size(); i++) {
         startP[i] = vi->getStroke(startPoints[i].first)
                         ->getPoint(startPoints[i].second);
@@ -720,7 +770,138 @@ public:
         }
       }
     }
-    if (!startPoints.empty()) TUndoManager::manager()->endBlock();
+    if (!startPoints.empty() && !undoBlockStarted)
+      TUndoManager::manager()->endBlock();
+  }
+
+  //----------------------------------------------------------------------
+
+  void multiTapeRect(TFrameId firstFrameId, TFrameId lastFrameId) {
+    TTool::Application *app = TTool::getApplication();
+
+    bool backward = false;
+    if (firstFrameId > lastFrameId) {
+      std::swap(firstFrameId, lastFrameId);
+      backward = true;
+    }
+    assert(firstFid <= lastFid);
+    std::vector<TFrameId> allFids;
+    m_level->getFids(allFids);
+
+    std::vector<TFrameId>::iterator i0 = allFids.begin();
+    while (i0 != allFids.end() && *i0 < firstFrameId) i0++;
+    if (i0 == allFids.end()) return;
+    std::vector<TFrameId>::iterator i1 = i0;
+    while (i1 != allFids.end() && *i1 <= lastFrameId) i1++;
+    assert(i0 < i1);
+    std::vector<TFrameId> fids(i0, i1);
+    int m = fids.size();
+    assert(m > 0);
+
+    enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+    if (m_multi.getIndex() == 2) {  // EASE_IN_INTERPOLATION)
+      algorithm = TInbetween::EaseInInterpolation;
+    } else if (m_multi.getIndex() == 3) {  // EASE_OUT_INTERPOLATION)
+      algorithm = TInbetween::EaseOutInterpolation;
+    } else if (m_multi.getIndex() == 4) {  // EASE_IN_OUT_INTERPOLATION)
+      algorithm = TInbetween::EaseInOutInterpolation;
+    }
+
+    TUndoManager::manager()->beginBlock();
+    for (int i = 0; i <= m; ++i) {
+      TFrameId fid     = fids[i];
+      TVectorImageP vi = (TVectorImageP)m_level->getFrame(fid, true);
+      if (!vi) continue;
+      double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+      t        = TInbetween::interpolation(t, algorithm);
+      app->getCurrentFrame()->setFid(fid);
+
+      tapeRect(vi, interpolateRect(m_firstRect, m_selectionRect, t), true);
+
+      if (m_firstPolyline.hasSymmetryBrushes()) {
+        for (int i = 1; i < m_firstPolyline.getBrushCount(); i++) {
+          TStroke *firstSymmStroke = m_firstPolyline.makeRectangleStroke(i);
+          TRectD firstSymmSelectionRect = firstSymmStroke->getBBox();
+          TStroke *symmStroke           = m_polyline.makeRectangleStroke(i);
+          TRectD symmSelectionRect      = symmStroke->getBBox();
+          tapeRect(
+              vi, interpolateRect(firstSymmSelectionRect, symmSelectionRect, t),
+              true);
+        }
+      }
+    }
+    TUndoManager::manager()->endBlock();
+
+    TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  //----------------------------------------------------------------------
+
+  void multiTapeRect(int firstFrameIdx, int lastFrameIdx) {
+    bool backward = false;
+    if (firstFrameIdx > lastFrameIdx) {
+      std::swap(firstFrameIdx, lastFrameIdx);
+      backward = true;
+    }
+    assert(firstFrame <= lastFrame);
+
+    TTool::Application *app = TTool::getApplication();
+    TFrameId lastFrameId;
+    int col = app->getCurrentColumn()->getColumnIndex();
+    int row;
+
+    std::vector<std::pair<int, TXshCell>> cellList;
+
+    for (row = firstFrameIdx; row <= lastFrameIdx; row++) {
+      TXshCell cell = app->getCurrentXsheet()->getXsheet()->getCell(row, col);
+      if (cell.isEmpty()) continue;
+      TFrameId fid = cell.getFrameId();
+      if (lastFrameId == fid) continue;  // Skip held cells
+      cellList.push_back(std::pair<int, TXshCell>(row, cell));
+      lastFrameId = fid;
+    }
+
+    int m = cellList.size();
+
+    enum TInbetween::TweenAlgorithm algorithm = TInbetween::LinearInterpolation;
+    if (m_multi.getIndex() == 2) {  // EASE_IN_INTERPOLATION)
+      algorithm = TInbetween::EaseInInterpolation;
+    } else if (m_multi.getIndex() == 3) {  // EASE_OUT_INTERPOLATION)
+      algorithm = TInbetween::EaseOutInterpolation;
+    } else if (m_multi.getIndex() == 4) {  // EASE_IN_OUT_INTERPOLATION)
+      algorithm = TInbetween::EaseInOutInterpolation;
+    }
+
+    TUndoManager::manager()->beginBlock();
+    for (int i = firstFrameIdx; i <= lastFrameIdx; ++i) {
+      for (int i = 0; i < m; ++i) {
+        row              = cellList[i].first;
+        TXshCell cell    = cellList[i].second;
+        TFrameId fid     = cell.getFrameId();
+        TVectorImageP vi = (TVectorImageP)cell.getImage(true);
+        if (!vi) continue;
+        double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+        t        = TInbetween::interpolation(t, algorithm);
+        app->getCurrentFrame()->setFrame(row);
+
+        tapeRect(vi, interpolateRect(m_firstRect, m_selectionRect, t), true);
+
+        if (m_firstPolyline.hasSymmetryBrushes()) {
+          for (int i = 1; i < m_firstPolyline.getBrushCount(); i++) {
+            TStroke *firstSymmStroke = m_firstPolyline.makeRectangleStroke(i);
+            TRectD firstSymmSelectionRect = firstSymmStroke->getBBox();
+            TStroke *symmStroke           = m_polyline.makeRectangleStroke(i);
+            TRectD symmSelectionRect      = symmStroke->getBBox();
+            tapeRect(vi, interpolateRect(firstSymmSelectionRect,
+                                         symmSelectionRect, t),
+                     true);
+          }
+        }
+      }
+    }
+    TUndoManager::manager()->endBlock();
+
+    TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
   int doTape(const TVectorImageP &vi,
@@ -772,20 +953,64 @@ public:
 
   //-------------------------------------------------------------------------------
 
-  void leftButtonUp(const TPointD &, const TMouseEvent &) override {
+  void leftButtonUp(const TPointD &, const TMouseEvent &e) override {
+    TTool::Application *app = TTool::getApplication();
+
     TVectorImageP vi(getImage(true));
 
     if (vi && m_type.getValue() == RECT) {
+      bool isEditingLevel = app->getCurrentFrame()->isEditingLevel();
+
+      if (m_multi.getIndex()) {
+        if (!m_firstFrameSelected) {
+          m_currCell     = std::pair<int, int>(getColumnIndex(), getFrame());
+          m_firstRect    = m_selectionRect;
+          m_firstFrameId = m_veryFirstFrameId = getFrameId();
+          m_firstFrameIdx                     = getFrame();
+          m_firstPolyline                     = m_polyline;
+          m_level = app->getCurrentLevel()->getLevel()
+                        ? app->getCurrentLevel()->getSimpleLevel()
+                        : 0;
+          m_firstFrameSelected = true;
+        } else {
+          if (app->getCurrentFrame()->isEditingScene())
+            multiTapeRect(m_firstFrameIdx, getFrame());
+          else
+            multiTapeRect(m_firstFrameId, getFrameId());
+
+          invalidate(m_selectionRect.enlarge(2));
+          if (e.isShiftPressed()) {
+            m_currCell     = std::pair<int, int>(getColumnIndex(), getFrame());
+            m_firstRect    = m_selectionRect;
+            m_firstFrameId = m_veryFirstFrameId = getFrameId();
+            m_firstFrameIdx                     = getFrame();
+            m_firstPolyline                     = m_polyline;
+          } else {
+            if (app->getCurrentFrame()->isEditingScene()) {
+              app->getCurrentColumn()->setColumnIndex(m_currCell.first);
+              app->getCurrentFrame()->setFrame(m_currCell.second);
+            } else
+              app->getCurrentFrame()->setFid(m_veryFirstFrameId);
+            m_firstFrameSelected = false;
+          }
+
+          m_selectionRect = TRectD();
+          m_startRect     = TPointD();
+          m_polyline.reset();
+        }
+        return;
+      }
+
       if (m_polyline.hasSymmetryBrushes())
         TUndoManager::manager()->beginBlock();
 
-      tapeRect(vi, m_selectionRect);
+      tapeRect(vi, m_selectionRect, m_polyline.hasSymmetryBrushes());
 
       if (m_polyline.hasSymmetryBrushes()) {
         for (int i = 1; i < m_polyline.getBrushCount(); i++) {
           TStroke *symmStroke      = m_polyline.makeRectangleStroke(i);
           TRectD symmSelectionRect = symmStroke->getBBox();
-          tapeRect(vi, symmSelectionRect);
+          tapeRect(vi, symmSelectionRect, true);
         }
 
         TUndoManager::manager()->endBlock();
@@ -851,7 +1076,7 @@ public:
 
   void onEnter() override {
     //      getApplication()->editImage();
-    m_selectionRect = TRectD();
+    //    m_selectionRect = TRectD();
     m_startRect     = TPointD();
   }
 
@@ -865,6 +1090,7 @@ public:
     m_autocloseFactor.setValue(AutocloseFactor);
     m_smooth.setValue(TapeSmooth ? 1 : 0);
     m_joinStrokes.setValue(TapeJoinStrokes ? 1 : 0);
+    m_multi.setIndex(TapeRange);
     m_firstTime     = false;
     m_selectionRect = TRectD();
     m_startRect     = TPointD();

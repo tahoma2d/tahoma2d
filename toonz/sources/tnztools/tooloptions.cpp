@@ -1561,7 +1561,7 @@ void GeometricToolOptionsBox::filterControls() {
                (it.key() == "Opacity:") || (it.key() == "Shape:") ||
                (it.key() == "Polygon Sides:") || (it.key() == "rotate") ||
                (it.key() == "Snap") || (it.key() == "Draw Under") ||
-               (it.key() == "Smooth"));
+               (it.key() == "Smooth" || (it.key() == "Range:")));
     it.value()->setVisible(visible);
   }
 
@@ -1574,7 +1574,7 @@ void GeometricToolOptionsBox::filterControls() {
                (it.key() == "Opacity:") || (it.key() == "Shape:") ||
                (it.key() == "Polygon Sides:") || (it.key() == "rotate") ||
                (it.key() == "Snap") || (it.key() == "Draw Under") ||
-               (it.key() == "Smooth"));
+               (it.key() == "Smooth" || (it.key() == "Range:")));
     if (QWidget *widget = dynamic_cast<QWidget *>(it.value()))
       widget->setVisible(visible);
   }
@@ -1849,7 +1849,7 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
   m_referenced =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Refer Visible"));
   m_multiFrameMode =
-      dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Frame Range"));
+      dynamic_cast<ToolOptionCombo *>(m_controls.value("Frame Range:"));
   m_autopaintMode =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Autopaint Lines"));
   m_rasterGapSettings =
@@ -1871,8 +1871,8 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
                        SLOT(onToolTypeChanged(int)));
   ret = ret && connect(m_onionMode, SIGNAL(toggled(bool)), this,
                        SLOT(onOnionModeToggled(bool)));
-  ret = ret && connect(m_multiFrameMode, SIGNAL(toggled(bool)), this,
-                       SLOT(onMultiFrameModeToggled(bool)));
+  ret = ret && connect(m_multiFrameMode, SIGNAL(currentIndexChanged(int)), this,
+                       SLOT(onMultiFrameModeChanged(int)));
   if (m_targetType == TTool::ToonzImage) {
     ret = ret && connect(m_rasterGapSettings, SIGNAL(currentIndexChanged(int)),
                          this, SLOT(onGapSettingChanged(int)));
@@ -1888,7 +1888,7 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
       m_fillDepthField->setEnabled(false);
     }
     if (m_toolType->getProperty()->getValue() == L"Normal" ||
-        m_multiFrameMode->isChecked())
+        m_multiFrameMode->getProperty()->getIndex())
       m_onionMode->setEnabled(false);
     if (m_autopaintMode) m_autopaintMode->setEnabled(false);
     if (m_referenced) m_referenced->setEnabled(false);
@@ -1896,7 +1896,7 @@ FillToolOptionsBox::FillToolOptionsBox(QWidget *parent, TTool *tool,
   if (m_toolType->getProperty()->getValue() != L"Normal") {
     if (m_segmentMode) m_segmentMode->setEnabled(false);
     if (m_colorMode->getProperty()->getValue() == L"Lines" ||
-        m_multiFrameMode->isChecked())
+        m_multiFrameMode->getProperty()->getIndex())
       m_onionMode->setEnabled(false);
   }
   if (m_onionMode->isChecked()) m_multiFrameMode->setEnabled(false);
@@ -1926,7 +1926,8 @@ void FillToolOptionsBox::onColorModeChanged(int index) {
     m_segmentMode->setEnabled(
         enabled ? m_toolType->getProperty()->getValue() == L"Normal" : false);
   }
-  enabled = range[index] != L"Lines" && !m_multiFrameMode->isChecked();
+  enabled =
+      range[index] != L"Lines" && !m_multiFrameMode->getProperty()->getIndex();
   m_onionMode->setEnabled(enabled);
   if (m_referenced) m_referenced->setEnabled(enabled);
   checkGapSettingsVisibility();
@@ -1991,7 +1992,7 @@ void FillToolOptionsBox::onToolTypeChanged(int index) {
     m_segmentMode->setEnabled(
         enabled ? m_colorMode->getProperty()->getValue() != L"Areas" : false);
   enabled = enabled || (m_colorMode->getProperty()->getValue() != L"Lines" &&
-                        !m_multiFrameMode->isChecked());
+                        !m_multiFrameMode->getProperty()->getIndex());
   m_onionMode->setEnabled(enabled);
 }
 
@@ -2036,7 +2037,7 @@ void FillToolOptionsBox::onOnionModeToggled(bool value) {
 
 //-----------------------------------------------------------------------------
 
-void FillToolOptionsBox::onMultiFrameModeToggled(bool value) {
+void FillToolOptionsBox::onMultiFrameModeChanged(int value) {
   m_onionMode->setEnabled(!value);
 }
 
@@ -2300,7 +2301,7 @@ EraserToolOptionsBox::EraserToolOptionsBox(QWidget *parent, TTool *tool,
   m_pressure = dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Pressure"));
   m_invertMode = dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Invert"));
   m_multiFrameMode =
-      dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Frame Range"));
+      dynamic_cast<ToolOptionCombo *>(m_controls.value("Frame Range:"));
   m_pencilMode =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Pencil Mode"));
   m_eraseOnlySavebox =
@@ -2587,11 +2588,13 @@ TapeToolOptionsBox::TapeToolOptionsBox(QWidget *parent, TTool *tool,
       dynamic_cast<ToolOptionSlider *>(m_controls.value("Distance"));
   if (m_autocloseField)
     m_autocloseLabel = m_labels.value(m_autocloseField->propertyName());
+  m_multiFrameMode   = dynamic_cast<ToolOptionCombo *>(m_controls.value("Frame Range:"));
 
   bool isNormalType = m_typeMode->getProperty()->getValue() == L"Normal";
   m_toolMode->setEnabled(isNormalType);
   m_autocloseField->setEnabled(!isNormalType);
   m_autocloseLabel->setEnabled(!isNormalType);
+  m_multiFrameMode->setEnabled(!isNormalType);
 
   bool isLineToLineMode =
       m_toolMode->getProperty()->getValue() == L"Line to Line";
@@ -2625,6 +2628,7 @@ void TapeToolOptionsBox::onToolTypeChanged(int index) {
   m_toolMode->setEnabled(isNormalType);
   m_autocloseField->setEnabled(!isNormalType);
   m_autocloseLabel->setEnabled(!isNormalType);
+  m_multiFrameMode->setEnabled(!isNormalType);
 }
 
 //-----------------------------------------------------------------------------

@@ -10,6 +10,25 @@
 // SymmetryStroke
 //-----------------------------------------------------------------------------
 
+SymmetryStroke &SymmetryStroke::operator=(const SymmetryStroke &src) {
+  m_joinDistance    = src.m_joinDistance;
+  m_allowSpeed      = src.m_allowSpeed;
+  m_radius          = src.m_radius;
+  m_edgeCount       = src.m_edgeCount;
+  m_drawStartCircle = src.m_drawStartCircle;
+  m_drawToMousePos  = src.m_drawToMousePos;
+  m_brushCount      = src.m_brushCount;
+  m_rotation        = src.m_rotation;
+  m_centerPoint     = src.m_centerPoint;
+  m_useLineSymmetry = src.m_useLineSymmetry;
+  m_rasCenter       = src.m_rasCenter;
+  m_dpiScale        = src.m_dpiScale;
+
+  for (int i = 0; i < src.m_brushCount; i++) m_brush[i] = src.m_brush[i];
+
+  return *this;
+}
+
 void SymmetryStroke::addSymmetryBrushes(double lines, double rotation,
                                         TPointD centerPoint,
                                         bool useLineSymmetry,
