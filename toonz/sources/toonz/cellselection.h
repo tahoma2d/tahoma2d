@@ -5,6 +5,7 @@
 
 #include "toonzqt/selection.h"
 #include "tgeometry.h"
+#include "tinbetween.h"
 #include <set>
 
 class TimeStretchPopup;
@@ -133,6 +134,12 @@ public:
   void stopFrameHold(int row, int col, bool inRange);
   void stopFrameHold();
   void fillEmptyCell();
+
+  void inbetween(TInbetween::TweenAlgorithm algorithm);
+  void inbetweenLinear() { inbetween(TInbetween::LinearInterpolation); }
+  void inbetweenEaseIn() { inbetween(TInbetween::EaseInInterpolation); }
+  void inbetweenEaseOut() { inbetween(TInbetween::EaseOutInterpolation); }
+  void inbetweenEaseInOut() { inbetween(TInbetween::EaseInOutInterpolation); }
 };
 
 #endif  // TCELLSELECTION_H

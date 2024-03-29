@@ -2631,6 +2631,7 @@ namespace {
 
 class UndoInbetween final : public TUndo {
   TXshSimpleLevelP m_level;
+  HookSet m_oldHooks;
   std::vector<TFrameId> m_fids;
   std::vector<TVectorImageP> m_images;
   FilmstripCmd::InbetweenInterpolation m_interpolation;
@@ -2645,6 +2646,9 @@ public:
       m_images.push_back(m_level->getFrame(
           *it, false));  // non si fa clone perche' il livello subito dopo
                          // rilascia queste immagini a causa dell'inbetweener
+
+    HookSet *hookSet = m_level->getHookSet();
+    m_oldHooks       = *hookSet;
   }
 
   void undo() const override {
@@ -2655,6 +2659,9 @@ public:
       IconGenerator::instance()->invalidate(m_level.getPointer(),
                                             m_fids[count]);
     }
+
+    HookSet *hookSet      = m_level->getHookSet();
+    if (hookSet) *hookSet = m_oldHooks;
 
     TApp::instance()->getCurrentLevel()->notifyLevelChange();
   }
@@ -2734,6 +2741,8 @@ void FilmstripCmd::inbetweenWithoutUndo(
     break;
   }
 
+  HookSet *hooks = sl->getHookSet();
+
   TInbetween inbetween(img0, img1);
   int i;
   for (i = ia + 1; i < ib; i++) {
@@ -2743,6 +2752,22 @@ void FilmstripCmd::inbetweenWithoutUndo(
     TVectorImageP vi = inbetween.tween(s);
     sl->setFrame(fids[i], vi);
     IconGenerator::instance()->invalidate(sl, fids[i]);
+
+    if (hooks) {
+      for (int j = 0; j < hooks->getHookCount(); j++) {
+        Hook *hook = hooks->getHook(j);
+        if (!hook || hook->isEmpty()) continue;
+        TPointD firstPos = hook->getAPos(fid0);
+        TPointD lastPos  = hook->getAPos(fid1);
+        TPointD iPos     = firstPos * (1 - s) + lastPos * s;
+        hook->setAPos(fids[i], iPos);
+
+        firstPos = hook->getBPos(fid0);
+        lastPos  = hook->getBPos(fid1);
+        iPos     = firstPos * (1 - s) + lastPos * s;
+        hook->setBPos(fids[i], iPos);
+      }
+    }
   }
   sl->setDirtyFlag(true);
   TApp::instance()->getCurrentLevel()->notifyLevelChange();

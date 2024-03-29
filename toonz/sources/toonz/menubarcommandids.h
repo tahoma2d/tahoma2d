@@ -530,4 +530,9 @@
 #define MI_ShowPerspectiveGrids "MI_ShowPerspectiveGrids"
 
 #define MI_OpenLocator "MI_OpenLocator"
+
+#define MI_InbetweenLinear "MI_InbetweenLinear"
+#define MI_InbetweenEaseIn "MI_InbetweenEaseIn"
+#define MI_InbetweenEaseOut "MI_InbetweenEaseOut"
+#define MI_InbetweenEaseInOut "MI_InbetweenEaseInOut"
 #endif
