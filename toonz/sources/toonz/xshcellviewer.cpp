@@ -1964,7 +1964,7 @@ void CellArea::drawEndOfLevelMarker(QPainter &p, QRect rect, bool isNextEmpty,
                                     bool isStopFrame) {
   const Orientation *o = m_viewer->orientation();
 
-  QColor levelEndColor = m_viewer->getTextColor();
+  QColor levelEndColor = m_viewer->getLevelEndColor();
   QPoint topLeft       = rect.topLeft();
   QPoint topRight      = rect.topRight();
   QPoint bottomLeft    = rect.bottomLeft();

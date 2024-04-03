@@ -270,12 +270,14 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   QColor m_emptyCellColor;          // empty cell (124,124,124)
   QColor m_notEmptyColumnColor;     // occupied column (164,164,164)
   QColor m_selectedEmptyCellColor;  // selected empty cell (210,210,210)
+  QColor m_levelEndColor;           // end level cross
   Q_PROPERTY(
       QColor EmptyCellColor READ getEmptyCellColor WRITE setEmptyCellColor)
   Q_PROPERTY(QColor NotEmptyColumnColor READ getNotEmptyColumnColor WRITE
                  setNotEmptyColumnColor)
   Q_PROPERTY(QColor SelectedEmptyCellColor READ getSelectedEmptyCellColor WRITE
                  setSelectedEmptyCellColor)
+  Q_PROPERTY(QColor LevelEndColor READ getLevelEndColor WRITE setLevelEndColor)
 
   // Cell focus
   //  QColor m_cellFocusColor;
@@ -910,6 +912,8 @@ public:
     m_selectedEmptyCellColor = color;
   }
   QColor getSelectedEmptyCellColor() const { return m_selectedEmptyCellColor; }
+  void setLevelEndColor(const QColor &color) { m_levelEndColor = color; }
+  QColor getLevelEndColor() const { return m_levelEndColor; }
 
   // Cell focus
   //  void setCellFocusColor(const QColor &color) { m_cellFocusColor = color; }
