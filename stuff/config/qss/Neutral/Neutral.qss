@@ -582,8 +582,6 @@ DvScrollWidget {
   image: url('../Medium/imgs/black/scroll-down.svg');
 }
 /* -------------------------------------------------------------------------- */
-/* For the buttons to display a BG color we need to set a blank image, setting
-   an empty URL solves this. */
 #keyFrameNavigator {
   background: transparent;
   margin: 0;
@@ -2309,7 +2307,6 @@ XsheetViewer {
   qproperty-SelectedTextColor: #000;
   qproperty-FrameTextColor: #000;
   qproperty-CurrentFrameTextColor: #000;
-  qproperty-CycleColor: #000;
   qproperty-BGColor: #767676;
   qproperty-LightLineColor: rgba(0, 0, 0, 0.15);
   qproperty-MarkerLineColor: rgba(255, 255, 255, 0.2);
@@ -2327,6 +2324,8 @@ XsheetViewer {
   qproperty-ColumnHeadPastelizer: rgba(0, 0, 0, 0);
   qproperty-SelectedColumnHead: rgba(243, 223, 235, 0.3);
   qproperty-PlayRangeColor: #808080;
+  qproperty-KeyframeLineColor: #000;
+  qproperty-LevelEndColor: #000;
   qproperty-FoldedColumnBGColor: #9a9a9a;
   qproperty-FoldedColumnLineColor: #737373;
   qproperty-EmptyCellColor: #6c6c6c;
@@ -2482,7 +2481,7 @@ SpreadsheetViewer {
   qproperty-FrameTextColor: #000;
   qproperty-GroupNameTextColor: #000;
   qproperty-ChannelNameTextColor: #000;
-  qproperty-CycleColor: #000;
+  qproperty-KeyframeLineColor: #000;
   qproperty-ColumnHeaderBorderColor: #343434;
 }
 #ExpressionField {
