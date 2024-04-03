@@ -3355,7 +3355,7 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
       int qy   = icon_frameAxis + 12;
       int zig  = 2;
       int qx   = icon_layerAxis + 5;
-      p.setPen(m_viewer->getCycleColor());
+      p.setPen(m_viewer->getKeyframeLineColor());
       p.drawLine(o->frameLayerToXY(qy, qx) + adjustPt,
                  o->frameLayerToXY(qy + zig, qx - zig) + adjustPt);
       while (qy < ymax) {
@@ -3397,7 +3397,7 @@ void CellArea::drawKeyframeLine(QPainter &p, int col,
     end.setY(end.y() + adjust);
   }
 
-  p.setPen(m_viewer->getTextColor());
+  p.setPen(m_viewer->getKeyframeLineColor());
   p.drawLine(QLine(begin, end));
 }
 

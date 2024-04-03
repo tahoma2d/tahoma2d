@@ -242,7 +242,7 @@ class DVAPI SpreadsheetViewer : public QDialog {
   QColor m_frameTextColor;       // text color for frame numbers
   QColor m_groupNameTextColor;   // text color for group name
   QColor m_channelNameTextColor; // text color for channel name
-  QColor m_cycleColor;           // color of zig zag line
+  QColor m_keyframeLineColor;    // color of keyframe lines
   QColor m_verticalLineColor;    // vertical line (black)
 
   Q_PROPERTY(QColor CurrentRowBgColor READ getCurrentRowBgColor WRITE
@@ -259,7 +259,8 @@ class DVAPI SpreadsheetViewer : public QDialog {
                  setGroupNameTextColor)
   Q_PROPERTY(QColor ChannelNameTextColor READ getChannelNameTextColor WRITE
                  setChannelNameTextColor)
-  Q_PROPERTY(QColor CycleColor READ getCycleColor WRITE setCycleColor)
+  Q_PROPERTY(QColor KeyframeLineColor READ getKeyframeLineColor WRITE
+                 setKeyframeLineColor)
   Q_PROPERTY(QColor VerticalLineColor READ getVerticalLineColor WRITE
                  setVerticalLineColor)
 
@@ -388,8 +389,8 @@ public:
     m_channelNameTextColor = color;
   }
   QColor getChannelNameTextColor() const { return m_channelNameTextColor; }
-  void setCycleColor(const QColor &color) { m_cycleColor = color; }
-  QColor getCycleColor() const { return m_cycleColor; }
+  void setKeyframeLineColor(const QColor &color) { m_keyframeLineColor = color; }
+  QColor getKeyframeLineColor() const { return m_keyframeLineColor; }
   void setVerticalLineColor(const QColor &color) {
     m_verticalLineColor = color;
   }
