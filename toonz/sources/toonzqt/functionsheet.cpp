@@ -841,7 +841,7 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
         if (drawValue == Key || drawValue == Inbetween)
           painter.setPen(getViewer()->getTextColor());
         else {
-          QColor semiTranspTextColor = getViewer()->getTextColor();
+          QColor semiTranspTextColor = getViewer()->getCycleColor();
           semiTranspTextColor.setAlpha(128);
           painter.setPen(semiTranspTextColor);
         }
