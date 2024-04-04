@@ -7461,11 +7461,11 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Style Picker: Selects style on current drawing</source>
-        <translation>样式拾色器：选择当前图形上的样式</translation>
+        <translation>样式吸管：选择当前图形上的样式</translation>
     </message>
     <message>
         <source>RGB Picker: Picks color on screen and applies to current style</source>
-        <translation>RGB拾色器：选取屏幕上的颜色并应用于当前样式</translation>
+        <translation>RGB吸管：选取屏幕上的颜色并应用于当前样式</translation>
     </message>
     <message>
         <source>Control Point Editor: Modifies vector lines by editing its control points</source>
@@ -7569,339 +7569,339 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Selection Tool - Polyline</source>
-        <translation type="unfinished"></translation>
+        <translation>选择工具-折线</translation>
     </message>
     <message>
         <source>Brush Tool - Auto Fill On</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷工具-打开自动填充</translation>
     </message>
     <message>
         <source>Brush Tool - Auto Fill Off</source>
-        <translation type="unfinished"></translation>
+        <translation>笔刷工具-关闭自动填充</translation>
     </message>
     <message>
         <source>Geometric Tool - Next Shape</source>
-        <translation type="unfinished"></translation>
+        <translation>图形工具-下一个形状</translation>
     </message>
     <message>
         <source>Geometric Tool - Rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>图形工具-矩形</translation>
     </message>
     <message>
         <source>Geometric Tool - Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>图形工具-圆</translation>
     </message>
     <message>
         <source>Geometric Tool - Ellipse</source>
-        <translation type="unfinished"></translation>
+        <translation>图形工具-椭圆</translation>
     </message>
     <message>
         <source>Geometric Tool - Line</source>
-        <translation type="unfinished"></translation>
+        <translation>图形工具-线</translation>
     </message>
     <message>
         <source>Geometric Tool - Polyline</source>
-        <translation type="unfinished"></translation>
+        <translation>图形工具-折线</translation>
     </message>
     <message>
         <source>Geometric Tool - Arc</source>
-        <translation type="unfinished"></translation>
+        <translation>图形工具-弧</translation>
     </message>
     <message>
         <source>Geometric Tool - MultiArc</source>
-        <translation type="unfinished"></translation>
+        <translation>图形工具-多段弧</translation>
     </message>
     <message>
         <source>Geometric Tool - Polygon</source>
-        <translation type="unfinished"></translation>
+        <translation>图形工具-多边形</translation>
     </message>
     <message>
         <source>Type Tool - Next Style</source>
-        <translation type="unfinished"></translation>
+        <translation>类型工具-下一个样式</translation>
     </message>
     <message>
         <source>Type Tool - Oblique</source>
-        <translation type="unfinished"></translation>
+        <translation>类型工具-倾斜</translation>
     </message>
     <message>
         <source>Type Tool - Regular</source>
-        <translation type="unfinished"></translation>
+        <translation>类型工具-常规</translation>
     </message>
     <message>
         <source>Type Tool - Bold Oblique</source>
-        <translation type="unfinished"></translation>
+        <translation>类型工具-加粗倾斜</translation>
     </message>
     <message>
         <source>Type Tool - Bold</source>
-        <translation type="unfinished"></translation>
+        <translation>类型工具-加粗</translation>
     </message>
     <message>
         <source>Fill Tool - Next Type</source>
-        <translation type="unfinished"></translation>
+        <translation>填充工具-下一种类型</translation>
     </message>
     <message>
         <source>Fill Tool - Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>填充工具-正常</translation>
     </message>
     <message>
         <source>Fill Tool - Rectangular</source>
-        <translation type="unfinished"></translation>
+        <translation>填充工具-矩形</translation>
     </message>
     <message>
         <source>Fill Tool - Freehand</source>
-        <translation type="unfinished"></translation>
+        <translation>填充工具-手绘</translation>
     </message>
     <message>
         <source>Fill Tool - Polyline</source>
-        <translation type="unfinished"></translation>
+        <translation>填充工具-折线</translation>
     </message>
     <message>
         <source>Fill Tool - Next Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>填充工具-下一模式</translation>
     </message>
     <message>
         <source>Fill Tool - Lines &amp; Areas</source>
-        <translation type="unfinished"></translation>
+        <translation>填充工具-线条区域</translation>
     </message>
     <message>
         <source>Eraser Tool - Next Type</source>
-        <translation type="unfinished"></translation>
+        <translation>橡皮擦工具-下一种类型</translation>
     </message>
     <message>
         <source>Eraser Tool - Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>橡皮擦工具-正常</translation>
     </message>
     <message>
         <source>Eraser Tool - Rectangular</source>
-        <translation type="unfinished"></translation>
+        <translation>橡皮擦工具-矩形</translation>
     </message>
     <message>
         <source>Eraser Tool - Freehand</source>
-        <translation type="unfinished"></translation>
+        <translation>橡皮擦工具-手绘</translation>
     </message>
     <message>
         <source>Eraser Tool - Polyline</source>
-        <translation type="unfinished"></translation>
+        <translation>橡皮擦工具-折线</translation>
     </message>
     <message>
         <source>Eraser Tool - Segment</source>
-        <translation type="unfinished"></translation>
+        <translation>橡皮擦工具-分段</translation>
     </message>
     <message>
         <source>Tape Tool - Next Type</source>
-        <translation type="unfinished"></translation>
+        <translation>磁带工具-下一种类型</translation>
     </message>
     <message>
         <source>Tape Tool - Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>磁带工具-正常</translation>
     </message>
     <message>
         <source>Tape Tool - Rectangular</source>
-        <translation type="unfinished"></translation>
+        <translation>磁带工具-矩形</translation>
     </message>
     <message>
         <source>Tape Tool - Next Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>磁带工具-下一模式</translation>
     </message>
     <message>
         <source>Tape Tool - Endpoint to Endpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>磁带工具-端点到端点</translation>
     </message>
     <message>
         <source>Tape Tool - Endpoint to Line</source>
-        <translation type="unfinished"></translation>
+        <translation>磁带工具-端点到线</translation>
     </message>
     <message>
         <source>Tape Tool - Line to Line</source>
-        <translation type="unfinished"></translation>
+        <translation>胶带工具-线对线</translation>
     </message>
     <message>
         <source>Style Picker Tool - Next Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>样式吸管工具-下一模式</translation>
     </message>
     <message>
         <source>Style Picker Tool - Lines &amp; Areas</source>
-        <translation type="unfinished"></translation>
+        <translation>样式吸管工具-线条区域</translation>
     </message>
     <message>
         <source>RGB Picker Tool - Next Type</source>
-        <translation type="unfinished"></translation>
+        <translation>RGB吸管工具-下一模式</translation>
     </message>
     <message>
         <source>RGB Picker Tool - Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>RGB吸管工具-正常</translation>
     </message>
     <message>
         <source>RGB Picker Tool - Rectangular</source>
-        <translation type="unfinished"></translation>
+        <translation>RGB吸管工具-矩形</translation>
     </message>
     <message>
         <source>RGB Picker Tool - Freehand</source>
-        <translation type="unfinished"></translation>
+        <translation>RGB吸管工具-手绘</translation>
     </message>
     <message>
         <source>RGB Picker Tool - Polyline</source>
-        <translation type="unfinished"></translation>
+        <translation>RGB吸管工具-折线</translation>
     </message>
     <message>
         <source>Skeleton Tool - Next Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>骨架工具-下一模式</translation>
     </message>
     <message>
         <source>Skeleton Tool - Build Skeleton</source>
-        <translation type="unfinished"></translation>
+        <translation>骨架工具-制作骨架</translation>
     </message>
     <message>
         <source>Skeleton Tool - Animate</source>
-        <translation type="unfinished"></translation>
+        <translation>骨架工具-动画</translation>
     </message>
     <message>
         <source>Skeleton Tool - Inverse Kinematics</source>
-        <translation type="unfinished"></translation>
+        <translation>骨架工具-反向运动学</translation>
     </message>
     <message>
         <source>Plastic Tool - Next Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>塑型工具-下一个模式</translation>
     </message>
     <message>
         <source>Plastic Tool - Edit Mesh</source>
-        <translation type="unfinished"></translation>
+        <translation>塑型工具-编辑网格</translation>
     </message>
     <message>
         <source>Plastic Tool - Paint Rigid</source>
-        <translation type="unfinished"></translation>
+        <translation>塑型工具-绘画刚性</translation>
     </message>
     <message>
         <source>Plastic Tool - Build Skeleton</source>
-        <translation type="unfinished"></translation>
+        <translation>塑型工具-制作骨架</translation>
     </message>
     <message>
         <source>Plastic Tool - Animate</source>
-        <translation type="unfinished"></translation>
+        <translation>塑型工具-动画</translation>
     </message>
     <message>
         <source>Geometric Shape Rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>图形形状矩形</translation>
     </message>
     <message>
         <source>Geometric Shape Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>图形形状圆</translation>
     </message>
     <message>
         <source>Geometric Shape Ellipse</source>
-        <translation type="unfinished"></translation>
+        <translation>图形形状椭圆</translation>
     </message>
     <message>
         <source>Geometric Shape Line</source>
-        <translation type="unfinished"></translation>
+        <translation>图形形状线</translation>
     </message>
     <message>
         <source>Geometric Shape Polyline</source>
-        <translation type="unfinished"></translation>
+        <translation>图形形状折线</translation>
     </message>
     <message>
         <source>Geometric Shape Arc</source>
-        <translation type="unfinished"></translation>
+        <translation>图形形状弧</translation>
     </message>
     <message>
         <source>Geometric Shape MultiArc</source>
-        <translation type="unfinished"></translation>
+        <translation>图形形状多段弧</translation>
     </message>
     <message>
         <source>Geometric Shape Polygon</source>
-        <translation type="unfinished"></translation>
+        <translation>图形形状多边形</translation>
     </message>
     <message>
         <source>Mode - Lines &amp;&amp; Areas</source>
-        <translation type="unfinished"></translation>
+        <translation>模式-线条区域</translation>
     </message>
     <message>
         <source>Mode - Endpoint to Endpoint</source>
-        <translation type="unfinished"></translation>
+        <translation>模式-端点到端点</translation>
     </message>
     <message>
         <source>Mode - Endpoint to Line</source>
-        <translation type="unfinished"></translation>
+        <translation>模式-端点到线</translation>
     </message>
     <message>
         <source>Mode - Line to Line</source>
-        <translation type="unfinished"></translation>
+        <translation>模式-线到线</translation>
     </message>
     <message>
         <source>Type - Segment</source>
-        <translation type="unfinished"></translation>
+        <translation>类型-分段</translation>
     </message>
     <message>
         <source>TypeTool Style - Oblique</source>
-        <translation type="unfinished"></translation>
+        <translation>TypeTool样式-倾斜</translation>
     </message>
     <message>
         <source>TypeTool Style - Regular</source>
-        <translation type="unfinished"></translation>
+        <translation>TypeTool样式-常规</translation>
     </message>
     <message>
         <source>TypeTool Style - Bold Oblique</source>
-        <translation type="unfinished"></translation>
+        <translation>TypeTool样式-粗体倾斜</translation>
     </message>
     <message>
         <source>TypeTool Style - Bold</source>
-        <translation type="unfinished"></translation>
+        <translation>TypeTool样式-粗体</translation>
     </message>
     <message>
         <source>Skeleton Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>骨架模式</translation>
     </message>
     <message>
         <source>Edit Mesh Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑网格模式</translation>
     </message>
     <message>
         <source>Paint Rigid Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>绘画刚性模式</translation>
     </message>
     <message>
         <source>Auto Close</source>
-        <translation type="unfinished"></translation>
+        <translation>自动关闭</translation>
     </message>
     <message>
         <source>Draw Under</source>
-        <translation type="unfinished"></translation>
+        <translation>在下面绘制</translation>
     </message>
     <message>
         <source>&amp;Show Status Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>显示状态栏</translation>
     </message>
     <message>
         <source>&amp;Toggle Transparency</source>
-        <translation type="unfinished"></translation>
+        <translation>切换透明度</translation>
     </message>
     <message>
         <source>&amp;Export Stop Motion Image Sequence</source>
-        <translation type="unfinished"></translation>
+        <translation>导出停止运动图像序列</translation>
     </message>
     <message>
         <source>Exports the full resolution stop motion image sequence.</source>
-        <translation type="unfinished"></translation>
+        <translation>导出全分辨率定格图像序列</translation>
     </message>
     <message>
         <source>This is especially useful if using a DSLR camera.</source>
-        <translation type="unfinished"></translation>
+        <translation>如果使用单反相机，这一点尤其有用</translation>
     </message>
     <message>
         <source>Pick Focus Check Location</source>
-        <translation type="unfinished"></translation>
+        <translation>选取焦点检查位置</translation>
     </message>
     <message>
         <source>Remove frame before Stop Motion Camera</source>
-        <translation type="unfinished"></translation>
+        <translation>在停止运动相机之前移除帧</translation>
     </message>
     <message>
         <source>Next Frame including Stop Motion Camera</source>
-        <translation type="unfinished"></translation>
+        <translation>下一帧包括停止运动相机</translation>
     </message>
     <message>
         <source>Show original live view images.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示原始实时视图图像</translation>
     </message>
     <message>
         <source>
@@ -10003,7 +10003,7 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>Multi Layer Style Picker: Switch Levels by Picking</source>
-        <translation>多层样式拾取器: 拾取时切换层级</translation>
+        <translation>多层样式吸管: 拾取时切换层级</translation>
     </message>
     <message>
         <source>Onion Skin ON</source>
