@@ -7909,19 +7909,20 @@ Are you sure?
 
 N.B. Make sure you are not running another process of Tahoma2D,
 or you may delete necessary files for it.</source>
-        <translation type="unfinished"></translation>
+        <translation>请确保您没有运行Tahoma2D的另一个进程，
+        或者您可以删除必要的文件。</translation>
     </message>
     <message>
         <source>Tahoma2D Transparency</source>
-        <translation type="unfinished"></translation>
+        <translation>Tahoma2D透明度</translation>
     </message>
     <message>
         <source>Close to turn off Transparency.</source>
-        <translation type="unfinished"></translation>
+        <translation>“关闭”可关闭“透明度”</translation>
     </message>
     <message>
         <source>Amount: </source>
-        <translation type="unfinished"></translation>
+        <translation>数量：</translation>
     </message>
     <message>
         <source>https://tahoma2d.readthedocs.io/en/latest/whats_new.html</source>
@@ -7929,239 +7930,239 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <source>&amp;Open Recent Project</source>
-        <translation type="unfinished"></translation>
+        <translation>打开最近的项目</translation>
     </message>
     <message>
         <source>&amp;Load Project...</source>
-        <translation type="unfinished"></translation>
+        <translation>加载项目...</translation>
     </message>
     <message>
         <source>Load an existing project.</source>
-        <translation type="unfinished"></translation>
+        <translation>加载一个存在的项目...</translation>
     </message>
     <message>
         <source>&amp;Export Current Scene</source>
-        <translation type="unfinished"></translation>
+        <translation>导出当前场景</translation>
     </message>
     <message>
         <source>Export the current scene to another project.</source>
-        <translation type="unfinished"></translation>
+        <translation>导出当前场景到另一个项目</translation>
     </message>
     <message>
         <source>&amp;Export Xsheet to PDF</source>
-        <translation type="unfinished"></translation>
+        <translation>导出摄影表到PDF</translation>
     </message>
     <message>
         <source>Export TVPaint JSON File</source>
-        <translation type="unfinished"></translation>
+        <translation>导出TVPaint JSON文件</translation>
     </message>
     <message>
         <source>Set Multiple Stop Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>设置多个停止帧</translation>
     </message>
     <message>
         <source>Remove Multiple Stop Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>删除多个停止帧</translation>
     </message>
     <message>
         <source>Convert to use Implicit Holds</source>
-        <translation type="unfinished"></translation>
+        <translation>转换为使用隐性保留</translation>
     </message>
     <message>
         <source>Convert to use Explicit Holds</source>
-        <translation type="unfinished"></translation>
+        <translation>转换为使用显性保留</translation>
     </message>
     <message>
         <source>Toggle Navigation Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>切换导航标记</translation>
     </message>
     <message>
         <source>Next Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>下一个标记</translation>
     </message>
     <message>
         <source>Previous Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>上一个标记</translation>
     </message>
     <message>
         <source>Edit Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑标记</translation>
     </message>
     <message>
         <source>Remove Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>删除标记</translation>
     </message>
     <message>
         <source>&amp;Stop Frame Hold</source>
-        <translation type="unfinished"></translation>
+        <translation>停止帧保持</translation>
     </message>
     <message>
         <source>Vector Guided Tweening</source>
-        <translation type="unfinished"></translation>
+        <translation>矢量引导绘图</translation>
     </message>
     <message>
         <source>Guided Tweening Controls</source>
-        <translation type="unfinished"></translation>
+        <translation>引导绘图控制</translation>
     </message>
     <message>
         <source>Toggle Auto-Creation</source>
-        <translation type="unfinished"></translation>
+        <translation>切换自动创建</translation>
     </message>
     <message>
         <source>Toggles the auto-creation of frames when drawing in blank cells on the timeline/xsheet.</source>
-        <translation type="unfinished"></translation>
+        <translation>在时间轴/摄影表的空白帧上绘制时切换帧的自动创建。</translation>
     </message>
     <message>
         <source>Toggle Creation In Hold Cells</source>
-        <translation type="unfinished"></translation>
+        <translation>切换保留帧中的创建</translation>
     </message>
     <message>
         <source>Toggles the auto-creation of frames when drawing in held cells on the timeline/xsheet.</source>
-        <translation type="unfinished"></translation>
+        <translation>在时间轴/摄影表的保留帧上绘制时切换帧的自动创建。</translation>
     </message>
     <message>
         <source>Toggle Auto-Stretch</source>
-        <translation type="unfinished"></translation>
+        <translation>切换自动拉伸</translation>
     </message>
     <message>
         <source>Toggles the auto-stretch of a frame to the next frame</source>
-        <translation type="unfinished"></translation>
+        <translation>将帧的自动拉伸切换到下一帧</translation>
     </message>
     <message>
         <source>Toggle Viewer Indicators</source>
-        <translation type="unfinished"></translation>
+        <translation>切换查看器指示器</translation>
     </message>
     <message>
         <source>Toggle Implicit Hold</source>
-        <translation type="unfinished"></translation>
+        <translation>切换隐性保持</translation>
     </message>
     <message>
         <source>Toggles the implicit hold of a frame to the next frame</source>
-        <translation type="unfinished"></translation>
+        <translation>将帧的隐性保持切换到下一帧</translation>
     </message>
     <message>
         <source>Perspective Grid Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>透视网格工具</translation>
     </message>
     <message>
         <source>Perspective Grid Tool: Set up perspective grids</source>
-        <translation type="unfinished"></translation>
+        <translation>透视网格工具：设置透视网格</translation>
     </message>
     <message>
         <source>Flip Selection/Object Horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>水平翻转所选内容/对象</translation>
     </message>
     <message>
         <source>Flip Selection/Object Vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>垂直翻转所选内容/对象</translation>
     </message>
     <message>
         <source>Rotate Selection/Object Left</source>
-        <translation type="unfinished"></translation>
+        <translation>向左旋转所选内容/对象</translation>
     </message>
     <message>
         <source>Rotate Selection/Object Right</source>
-        <translation type="unfinished"></translation>
+        <translation>向右旋转所选内容/对象</translation>
     </message>
     <message>
         <source>Set Cell Mark </source>
-        <translation type="unfinished"></translation>
+        <translation>设置帧标记</translation>
     </message>
     <message>
         <source>&amp;Convert TZP Files In Folder...</source>
-        <translation type="unfinished"></translation>
+        <translation>转换文件夹中的TZP文件...</translation>
     </message>
     <message>
         <source>Export Open Cel Animation (OCA)</source>
-        <translation type="unfinished"></translation>
+        <translation>导出Open Cel动画（OCA）</translation>
     </message>
     <message>
         <source>Set Markers to Selected Range</source>
-        <translation type="unfinished"></translation>
+        <translation>将标记设置为选定范围</translation>
     </message>
     <message>
         <source>Toggle Blank Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>切换空白帧</translation>
     </message>
     <message>
         <source>Toggle Viewer Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>切换查看器预览</translation>
     </message>
     <message>
         <source>Toggle Viewer Sub-camera Preview</source>
-        <translation type="unfinished"></translation>
+        <translation>切换查看器子摄影机预览</translation>
     </message>
     <message>
         <source>&amp;Preproduction Board</source>
-        <translation type="unfinished"></translation>
+        <translation>预生产板</translation>
     </message>
     <message>
         <source>&amp;Custom Panels</source>
-        <translation type="unfinished"></translation>
+        <translation>自定义面板</translation>
     </message>
     <message>
         <source>&amp;Custom Panel Editor...</source>
-        <translation type="unfinished"></translation>
+        <translation>自定义面板编辑器...</translation>
     </message>
     <message>
         <source>&amp;Viewer Histogram</source>
-        <translation type="unfinished"></translation>
+        <translation>查看柱状图</translation>
     </message>
     <message>
         <source>Symmetry Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>对称工具</translation>
     </message>
     <message>
         <source>Symmetry Tool: Set up symmetrical guide</source>
-        <translation type="unfinished"></translation>
+        <translation>对称工具：设置对称导向</translation>
     </message>
     <message>
         <source>Paint Brush - Next Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>上色笔工具-下一模式</translation>
     </message>
     <message>
         <source>Paint Brush - Areas</source>
-        <translation type="unfinished"></translation>
+        <translation>上色笔工具-区域</translation>
     </message>
     <message>
         <source>Paint Brush - Lines</source>
-        <translation type="unfinished"></translation>
+        <translation>上色笔工具-线</translation>
     </message>
     <message>
         <source>Paint Brush - Lines &amp; Areas</source>
-        <translation type="unfinished"></translation>
+        <translation>上色笔工具-线和区域</translation>
     </message>
     <message>
         <source>Fill Tool - Pick+Freehand</source>
-        <translation type="unfinished"></translation>
+        <translation>填充工具-拾取+手绘</translation>
     </message>
     <message>
         <source>Type - Pick+Freehand</source>
-        <translation type="unfinished"></translation>
+        <translation>类型-拾取+手绘</translation>
     </message>
     <message>
         <source>&amp;Export Camera Track</source>
-        <translation type="unfinished"></translation>
+        <translation>导出摄影机轨迹</translation>
     </message>
     <message>
         <source>&amp;Remove Cells</source>
-        <translation type="unfinished"></translation>
+        <translation>删除帧</translation>
     </message>
     <message>
         <source>Light Table</source>
-        <translation type="unfinished"></translation>
+        <translation>透光台</translation>
     </message>
     <message>
         <source>Current Drawing On Top</source>
-        <translation type="unfinished"></translation>
+        <translation>顶部当前绘制</translation>
     </message>
     <message>
         <source>Toggle Sub-Scene Navigation Bar</source>
-        <translation type="unfinished"></translation>
+        <translation>切换子场景导航栏</translation>
     </message>
     <message>
         <source>&amp;Paste Cell Content</source>
-        <translation type="unfinished"></translation>
+        <translation>粘贴帧内容</translation>
     </message>
 </context>
 <context>
@@ -8406,51 +8407,51 @@ What do you want to do?</source>
     <name>MotionPathPanel</name>
     <message>
         <source>Rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>矩形</translation>
     </message>
     <message>
         <source>Circle</source>
-        <translation type="unfinished">圆圈</translation>
+        <translation>圆</translation>
     </message>
     <message>
         <source>Ellipse</source>
-        <translation type="unfinished"></translation>
+        <translation>椭圆</translation>
     </message>
     <message>
         <source>Line</source>
-        <translation type="unfinished"></translation>
+        <translation>线</translation>
     </message>
     <message>
         <source>Polyline</source>
-        <translation type="unfinished"></translation>
+        <translation>折线</translation>
     </message>
     <message>
         <source>Arc</source>
-        <translation type="unfinished"></translation>
+        <translation>弧</translation>
     </message>
     <message>
         <source>MultiArc</source>
-        <translation type="unfinished"></translation>
+        <translation>多段弧</translation>
     </message>
     <message>
         <source>Polygon</source>
-        <translation type="unfinished"></translation>
+        <translation>多边形</translation>
     </message>
     <message>
         <source>Path Name</source>
-        <translation type="unfinished"></translation>
+        <translation>路径名称</translation>
     </message>
     <message>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation>宽度</translation>
     </message>
     <message>
         <source>Color</source>
-        <translation type="unfinished"></translation>
+        <translation>颜色</translation>
     </message>
     <message>
         <source>Steps</source>
-        <translation type="unfinished"></translation>
+        <translation>步数</translation>
     </message>
 </context>
 <context>
@@ -8498,43 +8499,43 @@ What do you want to do?</source>
     <name>NavTagEditorPopup</name>
     <message>
         <source>Edit Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑标记</translation>
     </message>
     <message>
         <source>Frame %1 Label:</source>
-        <translation type="unfinished"></translation>
+        <translation >帧%1标签</translation>
     </message>
     <message>
         <source>Magenta</source>
-        <translation type="unfinished"></translation>
+        <translation>洋红</translation>
     </message>
     <message>
         <source>Red</source>
-        <translation type="unfinished">红</translation>
+        <translation>红</translation>
     </message>
     <message>
         <source>Green</source>
-        <translation type="unfinished">绿</translation>
+        <translation>绿</translation>
     </message>
     <message>
         <source>Blue</source>
-        <translation type="unfinished">蓝</translation>
+        <translation>蓝</translation>
     </message>
     <message>
         <source>Yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>黄</translation>
     </message>
     <message>
         <source>Cyan</source>
-        <translation type="unfinished"></translation>
+        <translation>青色</translation>
     </message>
     <message>
         <source>White</source>
-        <translation type="unfinished"></translation>
+        <translation>白色</translation>
     </message>
     <message>
         <source>Color:</source>
-        <translation type="unfinished"></translation>
+        <translation>颜色</translation>
     </message>
     <message>
         <source>Ok</source>
@@ -8546,38 +8547,38 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Dark Magenta</source>
-        <translation type="unfinished"></translation>
+        <translation>深洋红色</translation>
     </message>
     <message>
         <source>Dark Red</source>
-        <translation type="unfinished"></translation>
+        <translation>深红</translation>
     </message>
     <message>
         <source>Dark Green</source>
-        <translation type="unfinished"></translation>
+        <translation>深绿</translation>
     </message>
     <message>
         <source>Dark Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>深蓝</translation>
     </message>
     <message>
         <source>Dark Yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>深黄</translation>
     </message>
     <message>
         <source>Dark Cyan</source>
-        <translation type="unfinished"></translation>
+        <translation>深青色</translation>
     </message>
     <message>
         <source>Dark Gray</source>
-        <translation type="unfinished"></translation>
+        <translation>深灰</translation>
     </message>
 </context>
 <context>
     <name>OpenRecentProjectCommandHandler</name>
     <message>
         <source>Project could not be found.</source>
-        <translation type="unfinished"></translation>
+        <translation>找不到项目</translation>
     </message>
 </context>
 <context>
