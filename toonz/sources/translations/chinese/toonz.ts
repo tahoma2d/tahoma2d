@@ -7289,19 +7289,19 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Reframe on 1&apos;s</source>
-        <translation>在1重新命名 </translation>
+        <translation>在1's重新分配帧 </translation>
     </message>
     <message>
         <source>Reframe on 2&apos;s</source>
-        <translation>在2重新命名</translation>
+        <translation>在2's重新分配帧</translation>
     </message>
     <message>
         <source>Reframe on 3&apos;s</source>
-        <translation>在3重新命名</translation>
+        <translation>在3's重新分配帧</translation>
     </message>
     <message>
         <source>Reframe on 4&apos;s</source>
-        <translation>在4重新命名</translation>
+        <translation>在4's重新分配帧</translation>
     </message>
     <message>
         <source>Previous Drawing</source>
