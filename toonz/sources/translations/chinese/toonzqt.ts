@@ -1443,11 +1443,11 @@ Manually changing any keyframe will clear the warning.</source>
     </message>
     <message>
         <source>&amp;Disconnect from Scene</source>
-        <translation>&amp; 断开与场景的连接</translation>
+        <translation>断开与场景的连接</translation>
     </message>
     <message>
         <source>&amp;Connect to Scene</source>
-        <translation>&amp; 连接到场景</translation>
+        <translation>连接到场景</translation>
     </message>
 </context>
 <context>
@@ -1533,11 +1533,11 @@ Manually changing any keyframe will clear the warning.</source>
     </message>
     <message>
         <source>&amp;Disconnect from Scene</source>
-        <translation>&amp; 断开与场景的连接</translation>
+        <translation>断开与场景的连接</translation>
     </message>
     <message>
         <source>&amp;Connect to Scene</source>
-        <translation>&amp; 连接到场景</translation>
+        <translation>连接到场景</translation>
     </message>
 </context>
 <context>
@@ -1982,19 +1982,19 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>&amp;Save As Default Vector Palette</source>
-        <translation>&amp;另存为默认矢量调色板</translation>
+        <translation>另存为默认矢量调色板</translation>
     </message>
     <message>
         <source>&amp;Save As Default Smart Raster Palette</source>
-        <translation>&amp;另存为默认智能光栅调色板</translation>
+        <translation>另存为默认智能光栅调色板</translation>
     </message>
     <message>
         <source>&amp;Save As Default Raster Palette</source>
-        <translation>&amp;另存为默认光栅调色板</translation>
+        <translation>另存为默认光栅调色板</translation>
     </message>
     <message>
         <source>&amp;Save As Default Palette</source>
-        <translation>&amp;另存为默认调色板</translation>
+        <translation>另存为默认调色板</translation>
     </message>
     <message>
         <source>Stay on Current Palette</source>
@@ -2759,7 +2759,7 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
     </message>
     <message>
         <source>Click &amp; Drag Palette into Studio Palette</source>
-        <translation>单击&amp; 将调色板拖动到工作室调色板中</translation>
+        <translation>单击将调色板拖动到工作室调色板中</translation>
     </message>
     <message>
         <source>Plain color</source>
