@@ -97,7 +97,7 @@
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="316"/>
         <source>Scan-line based</source>
-        <translation type="unfinished"></translation>
+        <translation>基于扫描线</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="317"/>
