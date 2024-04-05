@@ -24,7 +24,7 @@
     <name>FilePath</name>
     <message>
         <source>&quot;%1&quot;</source>
-        <translation type="vanished">&quot;%1&quot;</translation>
+        <translation type="vanished">%1</translation>
     </message>
     <message>
         <source>can&apos;t concatenate an absolute path : %1</source>
@@ -244,7 +244,7 @@
     </message>
     <message>
         <source>Argument &apos;%1&apos; does not look like a FrameId</source>
-        <translation>参数 &apos;%1&apos;不像是帧 ID</translation>
+        <translation>参数 %1不像是帧 ID</translation>
     </message>
     <message>
         <source>First argument must be a scene : %1</source>
@@ -752,7 +752,7 @@
     </message>
     <message>
         <source>Level &apos;%1&apos; is not included in the scene</source>
-        <translation type="vanished">层级 &apos;%1&apos; 没有在这个场景中</translation>
+        <translation type="vanished">层级%1没有在这个场景中</translation>
     </message>
 </context>
 <context>
@@ -778,7 +778,7 @@
     <name>TScriptBinding::FilePath</name>
     <message>
         <source>&quot;%1&quot;</source>
-        <translation>&quot;%1&quot;</translation>
+        <translation>%1</translation>
     </message>
     <message>
         <source>can&apos;t concatenate an absolute path : %1</source>
@@ -984,7 +984,7 @@
     </message>
     <message>
         <source>Level &apos;%1&apos; is not included in the scene</source>
-        <translation>层级 &apos;%1&apos; 没有在这个场景中</translation>
+        <translation>层级%1没有在这个场景中</translation>
     </message>
 </context>
 <context>

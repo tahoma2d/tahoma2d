@@ -153,7 +153,7 @@
     </message>
     <message>
         <source>The preset name must not use &apos;,&apos;(comma).</source>
-        <translation>不能在预设名称中使用 &quot;,&quot; (逗号)。</translation>
+        <translation>不能在预设名称中使用 (逗号)。</translation>
     </message>
     <message>
         <source>DPI</source>
@@ -176,7 +176,7 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>&apos;%1&apos; doesn&apos;t seem a well formed camera preset. 
 Possibly the preset file has been corrupted</source>
-        <translation>%1&apos; 不是格式完好的摄影机预设。
+        <translation>%1不是格式完好的摄影机预设。
 可能预设文件已经被损坏了</translation>
     </message>
     <message>
@@ -576,7 +576,7 @@ Possibly the preset file has been corrupted</source>
     <name>DVGui::LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation>文件名不能包含如下的任一字符: /\:*?&quot;&lt;&gt;|.</translation>
+        <translation>文件名不能包含如下的任一字符: /\:*?;&lt;&gt;|.</translation>
     </message>
 </context>
 <context>
@@ -947,7 +947,7 @@ Control click to reset.</source>
     </message>
     <message>
         <source>&amp;Next Frame</source>
-        <translation>&amp;下一帧</translation>
+        <translation>下一帧</translation>
     </message>
     <message>
         <source>Gain Controls</source>
@@ -955,17 +955,17 @@ Control click to reset.</source>
     </message>
     <message>
         <source>&amp;Reduce gain 1/2 stop (divide by sqrt(2))</source>
-        <translation>&amp；减少增益1/2停止(除以sqrt(2))</translation>
+        <translation>减少增益1/2停止(除以sqrt(2))</translation>
     </message>
     <message>
         <source>Toggle gain between 1 and the previous setting.
 Gain is shown as an f-stop and the &quot;neutral&quot; or 1.0 gain f-stop is f/8.</source>
         <translation>在1和上一设置之间切换增益。
-        增益显示为f-stop和 &quot;中性&quot; 或者1.0增益f-stop是f/8。</translation>
+        增益显示为f-stop和中性; 或者1.0增益f-stop是f/8。</translation>
     </message>
     <message>
         <source>&amp;Increase gain 1/2 stop (multiply by sqrt(2))</source>
-        <translation>&amp；增加增益1/2停止(乘以sqrt(2))</translation>
+        <translation>增加增益1/2停止(乘以sqrt(2))</translation>
     </message>
     <message>
         <source> (gain %1)</source>
@@ -1779,7 +1779,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation type="vanished">文件名能包含如下的任一字符: /\:*?&quot;&lt;&gt;|.</translation>
+        <translation type="vanished">文件名能包含如下的任一字符: /\:*?;&lt;&gt;|.</translation>
     </message>
 </context>
 <context>
@@ -2071,7 +2071,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
         <source>Style 0 is set to full transparent. 
 It can&apos;t be changed.  Ever.</source>
         <translation>样式0设置为完全透明。
-        它&apos; 不能更改。曾经。</translation>
+        它不能更改。曾经。</translation>
     </message>
 </context>
 <context>
@@ -2483,9 +2483,9 @@ and tone may be slightly discretized.</source>
         <translation type="vanished">OpenToonz</translation>
     </message>
     <message>
-        <source>The file name cannot be empty or contain any of the following characters: (new line) \ / : * ? &quot; |</source>
+        <source>The file name cannot be empty or contain any of the following characters: (new line) \ / : * ?; |</source>
         <translation>文件名不能为空也不能包含如下的任一字符:
-\ / : * ? &quot; |</translation>
+\ / : * ?; |</translation>
     </message>
     <message>
         <source>The source image seems not suitable for this kind of conversion</source>
@@ -2707,7 +2707,7 @@ It should start with &quot;3DMESH&quot; keyword.</source>
         <source>Failed to Load 3DLUT File.
 The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;</source>
         <translation>加载 3DLUT 文件失败。
-第二行应该是 &quot;Mesh [Input bit depth] [Output bit depth]&quot;</translation>
+第二行应该是Mesh [Input bit depth] [Output bit depth];</translation>
     </message>
     <message>
         <source>Failed to Load 3DLUT File.</source>
@@ -2798,13 +2798,13 @@ Are you sure?</source>
     <message>
         <source>Emptying Set &quot;%1&quot; will permanently delete all style files for this set. This cannot be undone!
 Are you sure?</source>
-        <translation>清空集合&quot;%1&quot; 将永久删除此集合的所有样式文件。这是无法撤消的！
+        <translation>清空集合将永久删除此集合的所有样式文件。这是无法撤消的！
         你确定吗？</translation>
     </message>
     <message>
         <source>Removing Style Set &quot;%1&quot; will permanently delete all style files for this set. This cannot be undone!
 Are you sure?</source>
-        <translation>正在删除样式集&quot;%1&quot; 将永久删除此集合的所有样式文件。这是无法撤消的！
+        <translation>正在删除样式集将永久删除此集合的所有样式文件。这是无法撤消的！
         你确定吗？</translation>
     </message>
     <message>
@@ -2937,7 +2937,7 @@ Zero is fully transparent.</source>
     </message>
     <message>
         <source>Remove &apos;%1&apos; Style Set</source>
-        <translation>删除 &apos;%1&apos; 样式集</translation>
+        <translation>删除%1样式集</translation>
     </message>
     <message>
         <source>Autopaint for Lines</source>
@@ -3242,7 +3242,7 @@ Zero is fully transparent.</source>
     </message>
     <message>
         <source>the palette &quot;%1&quot;</source>
-        <translation>调色板 &quot;%1&quot;</translation>
+        <translation>调色板 %1</translation>
     </message>
     <message>
         <source>the selected palettes</source>
@@ -3250,7 +3250,7 @@ Zero is fully transparent.</source>
     </message>
     <message>
         <source>Move %1 to &quot;%2&quot;. Are you sure ?</source>
-        <translation>移动  %1 到 &quot;%2&quot;。你确定吗？</translation>
+        <translation>移动  %1 到 %2。你确定吗？</translation>
     </message>
     <message>
         <source>Move</source>
@@ -3291,13 +3291,13 @@ Are you sure ?</source>
     <message>
         <source>Replacing all selected palettes with the palette &quot;%1&quot;. 
 Are you sure ?</source>
-        <translation>用调色板 &quot;%1&quot; 替换所有被选中的调色版。
+        <translation>用调色板 %1替换所有被选中的调色版。
 您确定要这样做吗？</translation>
     </message>
     <message>
         <source>Replacing the palette &quot;%1&quot; with the palette &quot;%2&quot;. 
 Are you sure ?</source>
-        <translation>用调色板 &quot;%2&quot; 替换调色板 &quot;%1&quot;。
+        <translation>用调色板%2替换调色板%1。
 您确定要这样做吗？</translation>
     </message>
     <message>
@@ -3532,8 +3532,8 @@ Apply</source>
     </message>
     <message>
         <source>Style Set Name cannot be empty or contain any of the following characters:
- \ / : * ? &quot; &lt; &gt; |</source>
-        <translation>样式集名称不能为空或包含以下任何字符： \ / : * ? &quot; &lt; &gt; |</translation>
+ \ / : * ?; &lt; &gt; |</source>
+        <translation>样式集名称不能为空或包含以下任何字符： \ / : * ?; &lt; &gt; |</translation>
     </message>
     <message>
         <source>Style Set Name already exists. Please try another name.</source>

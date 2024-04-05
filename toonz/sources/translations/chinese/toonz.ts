@@ -269,7 +269,7 @@ Please select a different device or check the microphone.</source>
     <message>
         <source>Record failed: 
 Make sure there&apos;s XSheet or Timeline in the room.</source>
-        <translation>记录失败：请确保存在&apos；s room中的XSheet或Timeline。</translation>
+        <translation>记录失败：请确保存在 room中的摄影表或时间轴。</translation>
     </message>
     <message>
         <source>Failed to save WAV file:
@@ -534,7 +534,7 @@ Right click to adjust.</source>
     <message>
         <source>The Farm Global Root folder doesn&apos;t exist
 Please create this folder before using the render farm.</source>
-        <translation>Toonz 渲染farm的全局根文件夹&apos;不存在。
+        <translation>Toonz 渲染farm的全局根文件夹不存在。
 请在使用 Toonz 渲染farm之前创建该文件夹。</translation>
     </message>
     <message>
@@ -725,7 +725,7 @@ Stop it or wait for its completion before removing it.</source>
     </message>
     <message>
         <source>Path %1 doesn&apos;t exists.</source>
-        <translation>路径%1不&apos；t存在</translation>
+        <translation>路径%1不存在</translation>
     </message>
 </context>
 <context>
@@ -1053,15 +1053,15 @@ when running the cleanup process.</source>
     </message>
     <message>
         <source>Couldn&apos;t create directory &quot;%1&quot;</source>
-        <translation>无法&apos;t创建目录&quot;%1&quot;</translation>
+        <translation>无法创建目录</translation>
     </message>
     <message>
         <source>Couldn&apos;t open &quot;%1&quot; for write</source>
-        <translation>无法&apos;t打开&quot;%1&quot;用于写入</translation>
+        <translation>无法打开%1用于写入</translation>
     </message>
     <message>
         <source>Couldn&apos;t remove file &quot;%1&quot;</source>
-        <translation>无法&apos;t删除文件&quot;%1&quot;</translation>
+        <translation>无法删除文件%1</translation>
     </message>
     <message>
         <source>View</source>
@@ -1377,7 +1377,7 @@ What do you want to do? </source>
     </message>
     <message>
         <source>Add color model&apos;s palette to the destination palette.</source>
-        <translation>将色彩模型&apos;s调色板添加到目标调色板。</translation>
+        <translation>将色彩模型调色板添加到目标调色板。</translation>
     </message>
     <message>
         <source>Picking Colors from Raster Image</source>
@@ -1905,7 +1905,7 @@ What do you want to do? </source>
     </message>
     <message>
         <source>Warning: Can&apos;t read palette &apos;%1&apos; </source>
-        <translation>警告：Can&apos;t 读取调色板&apos;%1&apos;</translation>
+        <translation>警告：不能读取调色板%1</translation>
     </message>
     <message>
         <source>Level %1 already exists; skipped.</source>
@@ -2077,11 +2077,11 @@ contain the dpi information, then the current camera dpi will be used.
     </message>
     <message>
         <source>To report, click &apos;Open Issue Webpage&apos; to access Tahoma2D&apos;s Issues page on GitHub.</source>
-        <translation>若要报告，请单击&apos;打开问题网页&apos; 访问Tahoma2D&apos;s GitHub上的问题页面。</translation>
+        <translation>若要报告，请单击打开问题网页，访问Tahoma2D GitHub上的问题页面。</translation>
     </message>
     <message>
         <source>Click on the &apos;New issue&apos; button and fill out the form.</source>
-        <translation>单击&apos; 新一期&apos; 按钮并填写表格。</translation>
+        <translation>单击新问题按钮并填写表格。</translation>
     </message>
     <message>
         <source>System Configuration and Problem Details:</source>
@@ -2668,7 +2668,7 @@ contain the dpi information, then the current camera dpi will be used.
     <message>
         <source>The file name cannot be empty or contain any of the following characters:(new line)  \ / : * ? &quot;  |</source>
         <translation>文件名不能为空也不能包含如下的任一字符:
-\ / : * ? &quot;  |</translation>
+\ / : * ? ;  |</translation>
     </message>
     <message>
         <source>File Browser</source>
@@ -2857,7 +2857,7 @@ Unchecked: Vectors are saved as SVG</source>
     <message>
         <source>The project name cannot be empty or contain any of the following characters:(new line)   \ / : * ? &quot;  |</source>
         <translation>项目名称不能为空也不能包含如下的任一字符:
-\ / : * ? &quot;  |</translation>
+\ / : * ? ;  |</translation>
     </message>
     <message>
         <source>The project name you specified is already used.</source>
@@ -2877,7 +2877,7 @@ Unchecked: Vectors are saved as SVG</source>
     </message>
     <message>
         <source>Project &apos;%1&apos; already exists</source>
-        <translation>项目&apos; %1&apos; 已存在</translation>
+        <translation>项目"%1"已存在</translation>
     </message>
 </context>
 <context>
@@ -3094,7 +3094,7 @@ Do you want to create it?</source>
     </message>
     <message>
         <source>Expression modified: &quot;%1&quot; key at frame %2, %3 -&gt; %4</source>
-        <translation>修改的表达式：</translation>
+        <translation>修改的表达式：%1 关键帧 %2, %3, %4</translation>
     </message>
     <message>
         <source>Following parameters will lose reference in expressions:</source>
@@ -3153,19 +3153,19 @@ Do you want to explode anyway ?</source>
     </message>
     <message>
         <source>Can&apos;t change file extension</source>
-        <translation>Can&apos;t 改变文件扩展名</translation>
+        <translation>不能改变文件扩展名</translation>
     </message>
     <message>
         <source>Can&apos;t set a drawing number</source>
-        <translation>Can&apos;t 设置绘图编号</translation>
+        <translation>不能设置绘图编号</translation>
     </message>
     <message>
         <source>Can&apos;t rename. File already exists: </source>
-        <translation>Can&apos;t 重命名。文件已经存在: </translation>
+        <translation>不能重命名。文件已经存在: </translation>
     </message>
     <message>
         <source>Couldn&apos;t rename </source>
-        <translation>Couldn&apos;t 重命名</translation>
+        <translation>不能重命名</translation>
     </message>
     <message>
         <source>Preview Screensaver</source>
@@ -3511,7 +3511,7 @@ Hold F3 Key on the Viewer to Show This Frame Only</source>
     <message>
         <source>The file name cannot be empty or contain any of the following characters:(new line)  \ / : * ? &quot;  |</source>
         <translation>文件名不能为空也不能包含如下的任一字符:
-\ / : * ? &quot;  |</translation>
+\ / : * ?;  |</translation>
     </message>
     <message>
         <source>It is not possible to save because the selected file format is not supported.</source>
@@ -3976,7 +3976,7 @@ Do you want to overwrite it?</source>
     <message>
         <source>Folder %1 doesn&apos;t exist.
 Do you want to create it?</source>
-        <translation>文件夹 %1 &apos;t 不存在。
+        <translation>文件夹 %1 不存在。
 要创建它吗？</translation>
     </message>
     <message>
@@ -6567,7 +6567,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>Toggle Main Window&apos;s Full Screen Mode</source>
-        <translation>切换主窗口&apos;s全屏模式</translation>
+        <translation>切换主窗口全屏模式</translation>
     </message>
     <message>
         <source>Onion Skin Toggle</source>
@@ -6959,7 +6959,7 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <source>Can&apos;t delete %1 : </source>
-        <translation>Can&apos;t 删除 %1 : </translation>
+        <translation>不删除 %1 : </translation>
     </message>
     <message>
         <source>Vector Guided Drawing</source>
@@ -6971,7 +6971,7 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <source>&amp;What&apos;s New...</source>
-        <translation>&amp;What&apos;s 新建...</translation>
+        <translation>新建...</translation>
     </message>
     <message>
         <source>&amp;Community Forum...</source>
@@ -6999,7 +6999,7 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <source>To report a bug, click on the button below to open a web browser window for Tahoma2D&apos;s Issues page on https://github.com.  Click on the &apos;New issue&apos; button and fill out the form.</source>
-        <translation>要报告错误，请单击下面的按钮打开Tahoma2D&apos;s 的web浏览器窗口的“问题”页面https://github.com. 单击 &apos; 新问题&apos; 按钮并填写表格。</translation>
+        <translation>要报告错误，请单击下面的按钮打开Tahoma2D的web浏览器窗口的“问题”页面https://github.com. 单击新问题按钮并填写表格。</translation>
     </message>
     <message>
         <source>Are you sure you want to reload and restore default rooms?
@@ -7089,7 +7089,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Use the current scene&apos;s settings as a template for all new scenes in the current project.</source>
-        <translation>使用当前场景&apos;s 的设置作为当前项目中所有新场景的模板。</translation>
+        <translation>使用当前场景的设置作为当前项目中所有新场景的模板。</translation>
     </message>
     <message>
         <source>Exports the soundtrack to the current scene as a wav file.</source>
@@ -7097,7 +7097,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Change Tahoma2D&apos;s settings.</source>
-        <translation>更改Tahoma2D&apos;s 设置。</translation>
+        <translation>更改Tahoma2D设置。</translation>
     </message>
     <message>
         <source>Change the shortcuts of Tahoma2D.</source>
@@ -7105,7 +7105,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Print the scene&apos;s exposure sheet.</source>
-        <translation>打印场景&apos;s 曝光表</translation>
+        <translation>打印场景曝光表</translation>
     </message>
     <message>
         <source>Run a script to perform a series of actions on a scene.</source>
@@ -7229,7 +7229,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>&amp;New Motion Path</source>
-        <translation>&amp;新运动路径</translation>
+        <translation>新运动路径</translation>
     </message>
     <message>
         <source>Create a new motion path.</source>
@@ -7289,19 +7289,19 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Reframe on 1&apos;s</source>
-        <translation> 在1&apos;s重新命名 </translation>
+        <translation>在1重新命名 </translation>
     </message>
     <message>
         <source>Reframe on 2&apos;s</source>
-        <translation>在2&apos;s重新命名</translation>
+        <translation>在2重新命名</translation>
     </message>
     <message>
         <source>Reframe on 3&apos;s</source>
-        <translation>在3&apos;s重新命名</translation>
+        <translation>在3重新命名</translation>
     </message>
     <message>
         <source>Reframe on 4&apos;s</source>
-        <translation>在4&apos;s重新命名</translation>
+        <translation>在4重新命名</translation>
     </message>
     <message>
         <source>Previous Drawing</source>
@@ -8877,7 +8877,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>&lt;custom&gt;</source>
-        <translation>&lt;自定&gt;</translation>
+        <translation>自定义</translation>
     </message>
     <message>
         <source>Remove preset</source>
@@ -9007,7 +9007,7 @@ The parameters to be saved are:
         <source>Color Space Gamma value is used for conversion between the linear and nonlinear color spaces,
 when the &quot;Linear Color Space&quot; option is enabled.</source>
         <translation>颜色空间伽玛值用于线性和非线性颜色空间之间的转换，
-        当 &quot; 线性颜色空间&quot;  选项已启用。</translation>
+        当线性颜色空间选项已启用。</translation>
     </message>
     <message>
         <source>
@@ -9024,12 +9024,12 @@ Input less than 1.0 to sync the value with the output settings.</source>
     </message>
     <message>
         <source>Can&apos;t apply field rendering in a time stretched scene</source>
-        <translation>Can&apos;t 在时间拉伸的场景中应用场渲染</translation>
+        <translation>不能在时间拉伸的场景中应用场渲染</translation>
     </message>
     <message>
         <source>Can&apos;t stretch time in a field rendered scene
 </source>
-        <translation>Can&apos;t 在场渲染场景中拉伸时间</translation>
+        <translation>不能在场渲染场景中拉伸时间</translation>
     </message>
     <message>
         <source>The file %1 does already exist.
@@ -9040,7 +9040,7 @@ Do you want to overwrite it?</source>
     <message>
         <source>Deleting &quot;%1&quot;.
 Are you sure?</source>
-        <translation>删除 &quot;%1。您确定吗？</translation>
+        <translation>删除%1。您确定吗？</translation>
     </message>
     <message>
         <source>The preset file %1.txt not found</source>
@@ -9547,7 +9547,7 @@ WARNING : Image size mismatch. The saved image size is %1 x %2.</source>
     </message>
     <message>
         <source>Subfolder name should not contain following characters:  * . &quot; / \ [ ] : ; | = , </source>
-        <translation type="vanished">子文件夹名不能包含如下字符:  * . &quot; / \ [ ] : ; | = , </translation>
+        <translation type="vanished">子文件夹名不能包含如下字符:  * . ; / \ [ ] : ; | = , </translation>
     </message>
     <message>
         <source>Folder %1 already exists.</source>
@@ -10780,7 +10780,7 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <source>Enable Tahoma2D Commands&apos; Shortcut Keys While Renaming Cell</source>
-        <translation>启用Tahoma2D命令&apos; 重命名帧时快捷键</translation>
+        <translation>重命名帧时启用Tahoma2D命令快捷键</translation>
     </message>
     <message>
         <source>Show Quick Toolbar</source>
@@ -10800,7 +10800,7 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <source>Use the Curent Theme&apos;s Viewer Background Colors</source>
-        <translation>使用当前主题&apos;s 查看器背景颜色</translation>
+        <translation>使用当前主题查看器背景颜色</translation>
     </message>
     <message>
         <source>Check for the Latest Version of Tahoma2D on Launch</source>
@@ -10926,7 +10926,7 @@ These come bundled with Tahoma2D, but you can set path to a different version.</
     </message>
     <message>
         <source>Show Column Parent&apos;s Color in the Xsheet</source>
-        <translation>在摄影表中显示列父项&apos;s 的颜色</translation>
+        <translation>在摄影表中显示列父项的颜色</translation>
     </message>
     <message>
         <source>Current Cell Color:</source>
@@ -10949,9 +10949,9 @@ for Short Play:</source>
         <source>Use Qt&apos;s Native Windows Ink Support*
 (CAUTION: This options is for maintenance purpose. 
  Do not activate this option or the tablet won&apos;t work properly.)</source>
-        <translation>使用Qt&apos;s 的本机Windows墨迹支持*
+        <translation>使用Qt的本机Windows墨迹支持*
         （注意：此选项用于维护。
-        不要激活此选项，否则平板电脑将丢失&apos;t 工作不正常。）</translation>
+        不要激活此选项，否则平板电脑将丢失工作不正常。）</translation>
     </message>
     <message>
         <source>Minimum</source>
@@ -11144,7 +11144,7 @@ but a random crash might occur, use at your own risk:</source>
     <message>
         <source>The file name cannot be empty or contain any of the following characters:(new line)  \ / : * ? &quot;  |</source>
         <translation type="vanished">文件名不能为空也不能包含如下的任一字符:
-\ / : * ? &quot;  |</translation>
+\ / : * ?;  |</translation>
     </message>
     <message>
         <source>File %1 already exists.
@@ -11222,15 +11222,15 @@ Do you want to overwrite it?</source>
         <source>Project Name cannot be empty or contain any of the following characters:
  \ / : * ? &quot; &lt; &gt; |</source>
         <translation>项目名称不能为空也不能包含如下的任一字符:
- \ / : * ? &quot; &lt; &gt; |</translation>
+ \ / : * ?; &lt; &gt; |</translation>
     </message>
     <message>
         <source>Bad project name: &apos;%1&apos; looks like an absolute file path</source>
-        <translation>错误的项目名称: &apos;%1&apos; 像是一个绝对文件路径</translation>
+        <translation>错误的项目名称: %1像是一个绝对文件路径</translation>
     </message>
     <message>
         <source>Project &apos;%1&apos; already exists</source>
-        <translation>项目 &apos;%1&apos; 已经存在</translation>
+        <translation>项目%1已经存在</translation>
     </message>
     <message>
         <source>Create Project In:</source>
@@ -11489,7 +11489,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Don&apos;t Overwrite</source>
-        <translation>Don&apos;t 覆盖</translation>
+        <translation>不覆盖</translation>
     </message>
     <message>
         <source>Save</source>
@@ -11559,7 +11559,7 @@ What do you want to do? </source>
     </message>
     <message>
         <source>Don&apos;t Duplicate</source>
-        <translation>Don&apos;t 复制</translation>
+        <translation>不复制</translation>
     </message>
     <message numerus="yes">
         <source>Deleting %n files. Are you sure?</source>
@@ -11588,7 +11588,7 @@ The operation cannot be undone: are you sure?</source>
     <message>
         <source>File %1 doesn&apos;t belong to the current project.
 Do you want to import it or load it from its original location?</source>
-        <translation>文件 %1 &apos;t 不属于当前项目。
+        <translation>文件 %1 不属于当前项目。
 您要导入它还是从它的原始位置进行加载？</translation>
     </message>
     <message>
@@ -12009,7 +12009,7 @@ What do you want to do?</source>
         <source>A filename cannot be empty or contain any of the following characters:
  \ / : * ? &quot; &lt; &gt; |</source>
         <translation>文件名不能为空也不能包含如下任一个字符:
-\ / : * ? &quot; &lt; &gt; |</translation>
+\ / : * ?; &lt; &gt; |</translation>
     </message>
     <message>
         <source>The palette %1 already exists.
@@ -12043,7 +12043,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Couldn&apos;t save %1</source>
-        <translation>&apos;t 无法保存 %1</translation>
+        <translation>无法保存 %1</translation>
     </message>
     <message>
         <source>No level selected!</source>
@@ -12079,7 +12079,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>File %1 doesn&apos;t look like a TOONZ Scene</source>
-        <translation>文件 %1 &apos;t 不像是 TOONZ 场景</translation>
+        <translation>文件 %1 不像是 TOONZ 场景</translation>
     </message>
     <message>
         <source>It is not possible to load the scene %1 because it does not belong to any project.</source>
@@ -12111,7 +12111,7 @@ Some levels have not been loaded because their version is not supported</source>
     </message>
     <message>
         <source>The scene %1 doesn&apos;t exist.</source>
-        <translation>场景%1 &apos；不存在。</translation>
+        <translation>场景%1 不存在。</translation>
     </message>
     <message>
         <source>It is not possible to delete the used level %1.</source>
@@ -12412,7 +12412,7 @@ Do you want to overwrite it?</source>
     <message>
         <source>Selected folders don&apos;t belong to the current project.
 Do you want to import them or load from their original location?</source>
-        <translation>所选的文件夹 &apos; 不属于当前项目。
+        <translation>所选的文件夹不属于当前项目。
 您要导入它们还是从它的原始位置进行加载？</translation>
     </message>
     <message>
@@ -12533,7 +12533,7 @@ Are you sure to </source>
     </message>
     <message>
         <source>Don&apos;t Overwrite Palette</source>
-        <translation>&apos; 不覆盖调色板</translation>
+        <translation> 不覆盖调色板</translation>
     </message>
     <message>
         <source>No Current Level</source>
@@ -12616,16 +12616,16 @@ Are you sure to </source>
         <translation>插入列 :  </translation>
     </message>
     <message>
-        <source>Resequence :  Col%1</source>
-        <translation>重新排序 : Col%1</translation>
+        <source>Resequence :  列%1</source>
+        <translation>重新排序 : 列%1</translation>
     </message>
     <message>
         <source>Clone Sub-xsheet :  Col%1</source>
-        <translation>克隆子摄影表 : Col%1</translation>
+        <translation>克隆子摄影表 : 列%1</translation>
     </message>
     <message>
         <source>Clear Cells :  Col%1</source>
-        <translation>清理帧格 : Col%1</translation>
+        <translation>清理帧格 : 列%1</translation>
     </message>
     <message>
         <source>Reverse</source>
@@ -12653,7 +12653,7 @@ Are you sure to </source>
     </message>
     <message>
         <source>Reframe to %1&apos;s</source>
-        <translation>重新调节为 %1&apos;s </translation>
+        <translation>重新调节为 %1</translation>
     </message>
     <message>
         <source>Roll Up</source>
@@ -12665,7 +12665,7 @@ Are you sure to </source>
     </message>
     <message>
         <source>Clone  Level : %1 &gt; %2</source>
-        <translation>克隆 层级 : %1 &gt; %2</translation>
+        <translation>克隆 层级 : %1 %2</translation>
     </message>
     <message>
         <source>Clone  Levels : </source>
@@ -12693,7 +12693,7 @@ Are you sure to </source>
     </message>
     <message>
         <source>Don&apos;t expose</source>
-        <translation>&apos; 不曝光</translation>
+        <translation>不曝光</translation>
     </message>
     <message>
         <source>Paste Key Frames</source>
@@ -12759,7 +12759,7 @@ Are you sure to </source>
     </message>
     <message>
         <source>Modify Play Range  : %1 - %2  &gt;  %3 - %4</source>
-        <translation>编辑播放范围  : %1 - %2  &gt;  %3 - %4</translation>
+        <translation>编辑播放范围  : %1 - %2   %3 - %4</translation>
     </message>
     <message>
         <source>Use Level Extender</source>
@@ -12807,7 +12807,7 @@ Are you sure to </source>
     </message>
     <message>
         <source>Apply Matchline  : Column%1 &lt; Column%2</source>
-        <translation>应用适配线  : 列 %1 &lt; 列 %2</translation>
+        <translation>应用适配线  : 列 %1  列 %2</translation>
     </message>
     <message>
         <source>Palette Gizmo  %1</source>
@@ -12855,11 +12855,11 @@ Are you sure to </source>
     </message>
     <message>
         <source>[Drag&amp;Drop] to copy separator to menu bar</source>
-        <translation type="vanished">[拖放]以拷贝分隔条到菜单栏&amp;D</translation>
+        <translation type="vanished">[拖放]以拷贝分隔条到菜单栏</translation>
     </message>
     <message>
         <source>[Drag&amp;Drop] to copy command to menu bar</source>
-        <translation type="vanished">[拖放]以拷贝命令到菜单栏&amp;D</translation>
+        <translation type="vanished">[拖放]以拷贝命令到菜单栏</translation>
     </message>
     <message>
         <source>Cannot open menubar settings template file. Re-installing Toonz will solve this problem.</source>
@@ -12871,7 +12871,7 @@ Are you sure to </source>
     </message>
     <message>
         <source>Add color model&apos;s palette to the destination palette.</source>
-        <translation type="vanished">将色彩模型&apos;s 的调色板添加到目标调色板。</translation>
+        <translation type="vanished">将色彩模型的调色板添加到目标调色板。</translation>
     </message>
     <message>
         <source>Change current drawing %1</source>
@@ -12940,7 +12940,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>&lt;custom&gt;</source>
-        <translation>&lt;自定&gt;</translation>
+        <translation>自定义</translation>
     </message>
     <message>
         <source>The file name already exists.
@@ -12950,7 +12950,7 @@ Do you want to overwrite it?</source>
     <message>
         <source>Deleting &quot;%1&quot;.
 Are you sure?</source>
-        <translation>删除 &quot;%1。您确定吗？</translation>
+        <translation>删除%1。您确定吗？</translation>
     </message>
     <message>
         <source>FFmpeg not found, please set the location in the Preferences and restart.</source>
@@ -13000,7 +13000,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Reframe to %1&apos;s with %2 blanks</source>
-        <translation>用 %2 空白重排帧到 %1&apos;s</translation>
+        <translation>用 %2 空白重排帧到 %1</translation>
     </message>
     <message>
         <source>File not found</source>
@@ -13008,7 +13008,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Don&apos;t Save</source>
-        <translation type="vanished">&apos; 不保存</translation>
+        <translation type="vanished">不保存</translation>
     </message>
     <message>
         <source>New Note Level</source>
@@ -13048,7 +13048,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Don&apos;t Overwrite for All</source>
-        <translation>&apos; 不要全部覆盖</translation>
+        <translation>不全部覆盖</translation>
     </message>
     <message>
         <source>Failed to overwrite %1</source>
@@ -13106,9 +13106,9 @@ Save the scene first.</source>
 A partial save file was generated and changes may be manually salvaged from &apos;%2&apos;.
 
 Do you wish to continue loading the last good save or stop and try to salvage the prior save?</source>
-        <translation type="vanished">场景 &apos;%1&apos; 的保存被中断了。
+        <translation type="vanished">场景 %1的保存被中断了。
 
-有个保存不完整的文件生成，所做的改动可以从 &apos;%2&apos; 进行手动挽救。
+有个保存不完整的文件生成，所做的改动可以从 %2 进行手动挽救。
 
 你希望间隙加载最后的完好保存或者停下并尝试挽救早前的存档？</translation>
     </message>
@@ -13120,7 +13120,7 @@ Do you wish to continue loading the last good save or stop and try to salvage th
         <source>File &apos;%1&apos; will reload level &apos;%2&apos; as a duplicate column in the xsheet.
 
 Allow duplicate?</source>
-        <translation type="vanished">文件 &apos;%1&apos; 将重载层级 &apos;%2&apos; 到摄影表中作为重复的列。
+        <translation type="vanished">文件 %1 将重载层级 %2 到摄影表中作为重复的列。
 
 允许重复吗？</translation>
     </message>
@@ -13158,7 +13158,7 @@ Allow duplicate?</source>
     </message>
     <message>
         <source>Couldn&apos;t load %1</source>
-        <translation>&apos;无法加载%1</translation>
+        <translation>无法加载%1</translation>
     </message>
     <message>
         <source>Apply Antialias</source>
@@ -13394,7 +13394,7 @@ to use the duplicate command in the xsheet / timeline.</source>
     <message>
         <source>The file name cannot be empty or contain any of the following characters:(new line)  \ / : * ? &quot;  |</source>
         <translation>文件名不能为空也不能包含如下的任一字符:
-\ / : * ? &quot;  |</translation>
+\ / : * ?;  |</translation>
     </message>
     <message>
         <source>Unsopporter raster format, cannot save</source>
@@ -13447,7 +13447,7 @@ to use the duplicate command in the xsheet / timeline.</source>
         <source>File &quot;%1&quot; already exists.
 Do you want to overwrite it?</source>
         <comment>OverwriteDialog</comment>
-        <translation>文件 &quot;%1&quot; 已经存在。
+        <translation>文件 %1已经存在。
 要覆盖它吗？</translation>
     </message>
     <message>
@@ -13470,7 +13470,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Please enable &quot;Show Keyframes on Cell Area&quot; to show or hide the camera column.</source>
-        <translation>请启用 &quot;显示关键帧在帧格位置&quot; 以显示或者隐藏摄影机列。</translation>
+        <translation>请启用显示关键帧在帧格位置以显示或者隐藏摄影机列。</translation>
     </message>
     <message>
         <source>The chosen folder path does not exist.
@@ -13596,7 +13596,7 @@ Do you want to create it?</source>
     </message>
     <message>
         <source>Can&apos;t place drawings on the camera column.</source>
-        <translation>Can&apos;t 不要在相机列上放置绘图</translation>
+        <translation>不要在相机列上放置绘图</translation>
     </message>
     <message>
         <source>Cannot duplicate frames in read only levels</source>
@@ -13624,11 +13624,11 @@ Do you want to create it?</source>
     </message>
     <message>
         <source>Can&apos;t paste full raster data on a non full raster level.</source>
-        <translation>&apos 不能在非完整光栅层级上粘贴完整光栅数据。</translation>
+        <translation>不能在非完整光栅层级上粘贴完整光栅数据。</translation>
     </message>
     <message>
         <source>Can&apos;t delete the last drawing in a level.</source>
-        <translation>&apos;不要在层级上删除最后一个绘图</translation>
+        <translation>不要在层级上删除最后一个绘图</translation>
     </message>
     <message>
         <source>and %1 more item(s).</source>
@@ -13644,7 +13644,7 @@ Please check your work and try again.</source>
         <source>File &apos;%1&apos; will reload level &apos;%2&apos; as a duplicate column in the scene.
 
 Allow duplicate?</source>
-        <translation>文件&apos;%1&apos; 将重新加载层级&apos;%2&apos；作为场景中的重复列。</translation>
+        <translation>文件%1将重新加载层级%2作为场景中的重复列。</translation>
     </message>
     <message>
         <source>This only saves scene data, not unsaved level changes. Did you want to save only the scene, or save all?</source>
@@ -13906,8 +13906,8 @@ Allow duplicate?</source>
 A partial save file was generated and changes may be manually salvaged from &apos;%2&apos;.
 
 Do you wish to continue loading the last good save or stop and try to salvage the prior save?</source>
-        <translation>先前保存的场景&apos;%1&apos; 被严重打断。
-        已生成部分保存文件，可以手动从 &apos;%2&apos;中抢救更改。
+        <translation>先前保存的场景%1被严重打断。
+        已生成部分保存文件，可以手动从%2中抢救更改。
         您希望继续加载最后一次保存，还是停止并尝试挽救前一次保存？</translation>
     </message>
     <message>
@@ -13962,7 +13962,7 @@ Do you wish to continue loading the last good save or stop and try to salvage th
     <message>
         <source>Converting scene to use %1 Holds can only be undone using &apos;Revert Scene&apos;. Save before converting.
 Do you want to continue?</source>
-        <translation>将场景转换为使用%1 Holds只能使用&apos;撤消；还原场景&apos;。转换前保存。
+        <translation>将场景转换为使用%1 Holds只能使用撤消还原场景。转换前保存。
         是否要继续？</translation>
     </message>
     <message>
@@ -14029,7 +14029,7 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Loading file &apos;%1&apos;...</source>
-        <translation>正在加载文件&apos;%1&apos;...</translation>
+        <translation>正在加载文件%1...</translation>
     </message>
     <message>
         <source>Layer: </source>
@@ -14057,11 +14057,11 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Cell Mark for Inbetween Symbol 1 (O)</source>
-        <translation>中间帧符号1（O）的帧标记</translation>
+        <translation>过渡帧符号1（O）的帧标记</translation>
     </message>
     <message>
         <source>Cell Mark for Inbetween Symbol 2 (*)</source>
-        <translation>中间帧符号2的帧标记（*）</translation>
+        <translation>过渡帧符号2的帧标记（*）</translation>
     </message>
     <message>
         <source>Target column</source>
@@ -14265,7 +14265,7 @@ Do you want to continue?</source>
     <message>
         <source>The file name cannot be empty or contain any of the following characters:(new line)  \ / : * ? &quot;  |</source>
         <translation>文件名不能为空也不能包含如下的任一个字符:
- \ / : * ? &quot;  |</translation>
+ \ / : * ?  |</translation>
     </message>
 </context>
 <context>
@@ -14314,7 +14314,7 @@ The audio file will not be included in the rendered clip.</source>
         <source>The %1 scene contains a plastic deformed level.
 These levels can&apos;t be exported with this tool.</source>
         <translation>%1场景包含一个塑型变形层级。
-        这些层级可以&apos；不能使用此工具导出。</translation>
+        这些层级可以不能使用此工具导出。</translation>
     </message>
 </context>
 <context>
@@ -14438,23 +14438,23 @@ These levels can&apos;t be exported with this tool.</source>
     </message>
     <message>
         <source>Reset Room &quot;%1&quot; to Saved Layout</source>
-        <translation>重置Room &quot;%1&quot; 到保存的Layout </translation>
+        <translation>重置Room %1到保存的Layout </translation>
     </message>
     <message>
         <source>Reset Room &quot;%1&quot; to Default Layout</source>
-        <translation>重置Room &quot;%1&quot; 到默认的Layout </translation>
+        <translation>重置Room %1 到默认的Layout </translation>
     </message>
     <message>
         <source>Are you sure you want to remove room &quot;%1&quot;?</source>
-        <translation>您确定要删除 room &quot;%1&quot; ？</translation>
+        <translation>您确定要删除 room %1 ？</translation>
     </message>
     <message>
         <source>Are you sure you want to reset room &quot;%1&quot; to the last saved layout?</source>
-        <translation>您确定要重置 room &quot;%1&quot; 到上次保存的layout?</translation>
+        <translation>您确定要重置 room %1到上次保存的layout?</translation>
     </message>
     <message>
         <source>Are you sure you want to reset room &quot;%1&quot; to the default layout?</source>
-        <translation>您确定要重置 room &quot;%1&quot; 到默认的layout?</translation>
+        <translation>您确定要重置 room %1到默认的layout?</translation>
     </message>
 </context>
 <context>
@@ -15475,19 +15475,19 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Can&apos;t change file extension</source>
-        <translation>&apos;无法改变文件扩展名</translation>
+        <translation>无法改变文件扩展名</translation>
     </message>
     <message>
         <source>Can&apos;t set a drawing number</source>
-        <translation>&apos;无法设置绘图编号</translation>
+        <translation>无法设置绘图编号</translation>
     </message>
     <message>
         <source>Can&apos;t rename. File already exists: </source>
-        <translation>&apos;无法重命名。文件已经存在: </translation>
+        <translation>无法重命名。文件已经存在: </translation>
     </message>
     <message>
         <source>Couldn&apos;t rename </source>
-        <translation>&apos;无法重命名</translation>
+        <translation>无法重命名</translation>
     </message>
     <message>
         <source>Load As Sub-xsheet</source>
@@ -16412,13 +16412,13 @@ Assign to &apos;%3&apos;?</source>
     <message>
         <source>&apos;%1&apos; is already assigned to &apos;%2&apos;
 Assign to &apos;%3&apos;?</source>
-        <translation>&apos;%1&apos; 已分配给 &apos;%2&apos;
-        分配给 &apos;%3&apos;?</translation>
+        <translation>%1已分配给 %2
+        分配给 %3 ?</translation>
     </message>
     <message>
         <source>Initial sequence &apos;%1&apos; is assigned to &apos;%2&apos; which takes priority.
 Assign shortcut sequence anyway?</source>
-        <translation>初始序列&apos;%1&apos;已分配给&apos;%2&apos; 这是优先的。
+        <translation>初始序列%1已分配给%2，这是优先的。
         是否分配快捷方式序列？</translation>
     </message>
 </context>
@@ -16733,7 +16733,7 @@ Assign shortcut sequence anyway?</source>
     </message>
     <message>
         <source>The preset name must not use &apos;,&apos;(comma).</source>
-        <translation>预设名称不能使用&apos&apos；逗号</translation>
+        <translation>预设名称不能使用逗号</translation>
     </message>
     <message>
         <source>Bad camera preset</source>
@@ -16742,7 +16742,7 @@ Assign shortcut sequence anyway?</source>
     <message>
         <source>&apos;%1&apos; doesn&apos;t seem to be a well formed camera preset.
 Possibly the preset file has been corrupted</source>
-        <translation type="vanished">&apos;%1&apos; 不是正确格式的摄影机预设。
+        <translation type="vanished">%1不是正确格式的摄影机预设。
 可能该预设文件已经被损坏了。</translation>
     </message>
     <message>
@@ -16756,7 +16756,7 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>&apos;%1&apos; doesn&apos;t seem to be a well formed camera preset. 
 Possibly the preset file has been corrupted</source>
-        <translation>&apos;%1&apos; 不是格式完好的摄影机预设，
+        <translation>%1不是格式完好的摄影机预设，
 可能该预设文件已经被损坏了。</translation>
     </message>
     <message>
@@ -17110,7 +17110,7 @@ Do you want to overwrite it?</source>
     <message>
         <source>Folder %1 doesn&apos;t exist.
 Do you want to create it?</source>
-        <translation>文件夹 %1 &apos; 不存在。
+        <translation>文件夹 %1 不存在。
 要创建它吗？</translation>
     </message>
     <message>
@@ -17235,7 +17235,7 @@ WARNING : Image size mismatch. The size of level with the same path is %1 x %2.<
     <message>
         <source>Can&apos;t capture an image with focus check on.
 Please click the Check button in the Settings tab.</source>
-        <translation>&apos;不能在启用焦点检查的情况下拍摄图像。
+        <translation>不能在启用焦点检查的情况下拍摄图像。
         请单击“设置”选项卡中的“检查”按钮。</translation>
     </message>
     <message>
@@ -17551,11 +17551,11 @@ Please click the Check button in the Settings tab.</source>
     </message>
     <message>
         <source>Couldn&apos;t load %1</source>
-        <translation>&apos;不能加载%1</translation>
+        <translation>不能加载%1</translation>
     </message>
     <message>
         <source>Couldn&apos;t save %1</source>
-        <translation>&apos;无法保存 %1</translation>
+        <translation>无法保存 %1</translation>
     </message>
     <message>
         <source>Light</source>
@@ -17921,7 +17921,7 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>Subfolder name should not contain following characters:  * . &quot; / \ [ ] : ; | = , </source>
-        <translation>子文件夹名不能包含如下字符:  * . &quot; / \ [ ] : ; | = , </translation>
+        <translation>子文件夹名不能包含如下字符:  * . / \ [ ] : ; | = , </translation>
     </message>
     <message>
         <source>Folder %1 already exists.</source>
@@ -19412,7 +19412,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Show the column parent&apos;s color in the Xsheet</source>
-        <translation>显示列父项&apos;s 在摄影表中的颜色</translation>
+        <translation>显示列父项在摄影表中的颜色</translation>
     </message>
     <message>
         <source>Unlock</source>
