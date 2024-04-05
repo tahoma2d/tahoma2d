@@ -2933,7 +2933,7 @@ Zero is fully transparent.</source>
     </message>
     <message>
         <source>Scan for Style Set Changes</source>
-        <translation type>扫描样式集更改</translation>
+        <translation>扫描样式集更改</translation>
     </message>
     <message>
         <source>Remove &apos;%1&apos; Style Set</source>
