@@ -17559,7 +17559,7 @@ Please click the Check button in the Settings tab.</source>
     </message>
     <message>
         <source>Light</source>
-        <translation>亮度</translation>
+        <translation>灯光</translation>
     </message>
     <message>
         <source>Tests</source>
