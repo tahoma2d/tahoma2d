@@ -3023,19 +3023,19 @@ Unchecked: Vectors are saved as SVG</source>
     </message>
     <message>
         <source>B4 size, 3 seconds sheet</source>
-        <translation type="unfinished"></translation>
+        <translation>B4尺寸，3秒表单</translation>
     </message>
     <message>
         <source>B4 size, 6 seconds sheet</source>
-        <translation type="unfinished"></translation>
+        <translation>B4尺寸，6秒表单</translation>
     </message>
     <message>
         <source>A3 size, 3 seconds sheet</source>
-        <translation type="unfinished"></translation>
+        <translation>A3尺寸，3秒表单</translation>
     </message>
     <message>
         <source>A3 size, 6 seconds sheet</source>
-        <translation type="unfinished"></translation>
+        <translation>A3尺寸，6秒表单</translation>
     </message>
     <message>
         <source>Col%1</source>
@@ -3047,7 +3047,7 @@ Unchecked: Vectors are saved as SVG</source>
     </message>
     <message numerus="yes">
         <source>%n page(s)</source>
-        <translation> %n 页(s) </translation>
+        <translation></translation>
     </message>
     <message>
         <source>%1 x %2 pages</source>
