@@ -7457,7 +7457,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Tape Tool: Closes gaps in raster, joins edges in vector</source>
-        <translation>磁带工具：关闭光栅中的间隙，连接矢量中的边</translation>
+        <translation>连接工具：关闭光栅中的间隙，连接矢量中的边</translation>
     </message>
     <message>
         <source>Style Picker: Selects style on current drawing</source>
@@ -8781,15 +8781,15 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Cubic convolution, a = .5</source>
-        <translation></translation>
+        <translation>三次卷积，a = .5</translation>
     </message>
     <message>
         <source>Cubic convolution, a = .75</source>
-        <translation></translation>
+        <translation>三次卷积，a = .75</translation>
     </message>
     <message>
         <source>Cubic convolution, a = 1</source>
-        <translation></translation>
+        <translation>三次卷积，a = 1</translation>
     </message>
     <message>
         <source>Hann window, rad = 2</source>
@@ -8801,11 +8801,11 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Hamming window, rad = 2</source>
-        <translation></translation>
+        <translation>汉明窗口, rad = 2</translation>
     </message>
     <message>
         <source>Hamming window, rad = 3</source>
-        <translation></translation>
+        <translation>汉明窗口, rad = 3</translation>
     </message>
     <message>
         <source>Lanczos window, rad = 2</source>
@@ -8817,7 +8817,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Gaussian convolution</source>
-        <translation></translation>
+        <translation>高斯卷积</translation>
     </message>
     <message>
         <source>Closest Pixel (Nearest Neighbor)</source>
@@ -10689,11 +10689,11 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <source>Please restart to reload the icons.</source>
-        <translation type="unfinished"></translation>
+        <translation>请重新启动以重新加载图标</translation>
     </message>
     <message>
         <source>* Changes will take effect the next time you run Tahoma2D</source>
-        <translation type="unfinished"></translation>
+        <translation>更改将在下次运行Tahoma2D时生效</translation>
     </message>
     <message>
         <source>Show Startup Window when Tahoma2D Starts</source>
