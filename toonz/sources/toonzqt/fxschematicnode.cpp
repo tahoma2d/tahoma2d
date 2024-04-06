@@ -3887,7 +3887,7 @@ void FxPassThroughPainter::paint(QPainter *painter,
     painter->setFont(fnt);
   }
 
-  painter->setPen(viewer->getTextColor());
+  painter->setPen(viewer->getPassThroughTextColor());
 
   if (!m_parent->isNameEditing()) {
     // if this is a current object
