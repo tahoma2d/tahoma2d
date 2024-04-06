@@ -3471,7 +3471,7 @@ Hold F3 Key on the Viewer to Show This Frame Only</source>
     </message>
     <message>
         <source>Toggle Orientation</source>
-        <translation>切换方向</translation>
+        <translation>开关方向</translation>
     </message>
     <message>
         <source>Show/Hide Drop Down Menu</source>
@@ -5543,7 +5543,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>Toggle FX/Stage schematic</source>
-        <translation>切换特效/场景示意图</translation>
+        <translation>开关特效/场景示意图</translation>
     </message>
     <message>
         <source>&amp;Scene Cast</source>
@@ -5779,7 +5779,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>Geometric Tool</source>
-        <translation type="vanished">图形工具</translation>
+        <translation>图形工具</translation>
     </message>
     <message>
         <source>Type Tool</source>
@@ -5799,7 +5799,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>Paint Brush Tool</source>
-        <translation type="vanished">上色笔工具</translation>
+        <translation>上色笔工具</translation>
     </message>
     <message>
         <source>Eraser Tool</source>
@@ -6167,7 +6167,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>Toggle Autofill on Current Palette Color</source>
-        <translation>切换当前调色板颜色的自动填充</translation>
+        <translation>开关当前调色板颜色的自动填充</translation>
     </message>
     <message>
         <source>&amp;Export</source>
@@ -6407,7 +6407,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>Toggle Show/Hide</source>
-        <translation>切换显示/隐藏</translation>
+        <translation>开关显示/隐藏</translation>
     </message>
     <message>
         <source>ON This Only</source>
@@ -6567,7 +6567,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>Toggle Main Window&apos;s Full Screen Mode</source>
-        <translation>切换主窗口全屏模式</translation>
+        <translation>开关主窗口全屏模式</translation>
     </message>
     <message>
         <source>Onion Skin Toggle</source>
@@ -6903,11 +6903,11 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>Toggle Stop Motion Live View</source>
-        <translation>打开/关闭定格实况视图</translation>
+        <translation>开关定格实况视图</translation>
     </message>
     <message>
         <source>Toggle Stop Motion Zoom</source>
-        <translation>打开/关闭定格缩放</translation>
+        <translation>开关定格缩放</translation>
     </message>
     <message>
         <source>Lower Stop Motion Level Subsampling</source>
@@ -7877,7 +7877,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>&amp;Toggle Transparency</source>
-        <translation>切换透明度</translation>
+        <translation>开关透明度</translation>
     </message>
     <message>
         <source>&amp;Export Stop Motion Image Sequence</source>
@@ -7978,7 +7978,7 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <source>Toggle Navigation Tag</source>
-        <translation>切换导航标记</translation>
+        <translation>开关导航标记</translation>
     </message>
     <message>
         <source>Next Tag</source>
@@ -8010,35 +8010,35 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <source>Toggle Auto-Creation</source>
-        <translation>切换自动创建</translation>
+        <translation>开关自动创建</translation>
     </message>
     <message>
         <source>Toggles the auto-creation of frames when drawing in blank cells on the timeline/xsheet.</source>
-        <translation>在时间轴/摄影表的空白帧上绘制时切换帧的自动创建。</translation>
+        <translation>在时间轴/摄影表的空白帧上绘制时自动创建。</translation>
     </message>
     <message>
         <source>Toggle Creation In Hold Cells</source>
-        <translation>切换保留帧中创建</translation>
+        <translation>开关在保留帧上创建</translation>
     </message>
     <message>
         <source>Toggles the auto-creation of frames when drawing in held cells on the timeline/xsheet.</source>
-        <translation>在时间轴/摄影表的保留帧上绘制时切换帧的自动创建。</translation>
+        <translation>在时间轴/摄影表的保留帧上绘制时自动创建。</translation>
     </message>
     <message>
         <source>Toggle Auto-Stretch</source>
-        <translation>切换自动拉伸</translation>
+        <translation>开关自动拉伸</translation>
     </message>
     <message>
         <source>Toggles the auto-stretch of a frame to the next frame</source>
-        <translation>将帧的自动拉伸切换到下一帧</translation>
+        <translation>将一帧自动拉伸到下一帧</translation>
     </message>
     <message>
         <source>Toggle Viewer Indicators</source>
-        <translation>切换查看器指示器</translation>
+        <translation>开关查看器指示器</translation>
     </message>
     <message>
         <source>Toggle Implicit Hold</source>
-        <translation>切换隐藏保留</translation>
+        <translation>隐藏保留</translation>
     </message>
     <message>
         <source>Toggles the implicit hold of a frame to the next frame</source>
@@ -8086,15 +8086,15 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <source>Toggle Blank Frames</source>
-        <translation>切换空白帧</translation>
+        <translation>开关空白帧</translation>
     </message>
     <message>
         <source>Toggle Viewer Preview</source>
-        <translation>切换查看器预览</translation>
+        <translation>开关查看器预览</translation>
     </message>
     <message>
         <source>Toggle Viewer Sub-camera Preview</source>
-        <translation>切换查看器子摄影机预览</translation>
+        <translation>开关查看器子摄影机预览</translation>
     </message>
     <message>
         <source>&amp;Preproduction Board</source>
@@ -8162,7 +8162,7 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <source>Toggle Sub-Scene Navigation Bar</source>
-        <translation>切换子场景导航栏</translation>
+        <translation>开关子场景导航栏</translation>
     </message>
     <message>
         <source>&amp;Paste Cell Content</source>
@@ -10535,7 +10535,7 @@ Also the initial output destination for new scenes will be set to $scenefolder a
     </message>
     <message>
         <source>Toggle Between Graph Editor and Spreadsheet</source>
-        <translation>切换图表编辑器和电子表格</translation>
+        <translation>开关图表编辑器和电子表格</translation>
     </message>
     <message>
         <source>Function Editor*:</source>
@@ -12839,7 +12839,7 @@ Are you sure to </source>
     </message>
     <message>
         <source>Toggle cycle of  %1</source>
-        <translation>切换是否循环 %1</translation>
+        <translation>%1 的切换周期</translation>
     </message>
     <message>
         <source>[Drag] to move position</source>
@@ -12954,7 +12954,7 @@ Do you want to overwrite it?</source>
     <message>
         <source>Deleting &quot;%1&quot;.
 Are you sure?</source>
-        <translation>删除%1。您确定吗？</translation>
+        <translation>删除%1，您确定吗？</translation>
     </message>
     <message>
         <source>FFmpeg not found, please set the location in the Preferences and restart.</source>
@@ -12962,7 +12962,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Skipping frame.</source>
-        <translation>跳帧。</translation>
+        <translation>跳帧</translation>
     </message>
     <message>
         <source>Always do this action.</source>
@@ -14178,15 +14178,15 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Toggle column as mask. </source>
-        <translation>切换列为遮罩</translation>
+        <translation>开关列遮罩</translation>
     </message>
     <message>
         <source>Toggle invert column mask. </source>
-        <translation>反转列遮罩</translation>
+        <translation>开关反转列遮罩</translation>
     </message>
     <message>
         <source>Toggle render column mask. </source>
-        <translation>切换渲染列遮罩</translation>
+        <translation>开关渲染列遮罩</translation>
     </message>
     <message>
         <source>Onion Skin On All Frames</source>
@@ -19328,11 +19328,11 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Preview Visibility Toggle</source>
-        <translation>切换预览的可见性</translation>
+        <translation>开关预览的可见性</translation>
     </message>
     <message>
         <source>Camera Stand Visibility Toggle</source>
-        <translation>切换摄影机位的可见性</translation>
+        <translation>开关摄影机位的可见性</translation>
     </message>
     <message>
         <source>Alt + Click to Toggle Thumbnail</source>
@@ -19467,11 +19467,11 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Opacity:</source>
-        <translation>不透明性:</translation>
+        <translation>不透明度:</translation>
     </message>
     <message>
         <source>Lock Column</source>
-        <translation>锁定部列</translation>
+        <translation>锁定列</translation>
     </message>
     <message>
         <source>Invert Mask</source>
