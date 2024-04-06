@@ -3079,11 +3079,11 @@ Do you want to create it?</source>
     </message>
     <message>
         <source>Inbetween mark 1:</source>
-        <translation>中间帧标记1：</translation>
+        <translation>中间画标记1：</translation>
     </message>
     <message>
         <source>Inbetween mark 2:</source>
-        <translation>中间帧标记2：</translation>
+        <translation>中间画标记2：</translation>
     </message>
 </context>
 <context>
@@ -3459,11 +3459,11 @@ Hold F3 Key on the Viewer to Show This Frame Only</source>
     </message>
     <message>
         <source>Auto Inbetween</source>
-        <translation>自动中间帧</translation>
+        <translation>自动中间画</translation>
     </message>
     <message>
         <source>INBETWEEN</source>
-        <translation>中间帧</translation>
+        <translation>中间画</translation>
     </message>
     <message>
         <source>Panel Settings</source>
@@ -3713,7 +3713,7 @@ Do you want to overwrite it?</source>
     <name>InbetweenDialog</name>
     <message>
         <source>Inbetween</source>
-        <translation>过渡帧</translation>
+        <translation>中间画</translation>
     </message>
     <message>
         <source>Linear</source>
@@ -12605,7 +12605,7 @@ Are you sure to </source>
     </message>
     <message>
         <source>Inbetween  : Level %1,  </source>
-        <translation>过渡帧  : 层级 %1  </translation>
+        <translation>中间画  : 层级 %1  </translation>
     </message>
     <message>
         <source>Paste Column :  </source>
@@ -14061,11 +14061,11 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Cell Mark for Inbetween Symbol 1 (O)</source>
-        <translation>过渡帧符号1（O）的帧标记</translation>
+        <translation>中间画符号1（O）的帧标记</translation>
     </message>
     <message>
         <source>Cell Mark for Inbetween Symbol 2 (*)</source>
-        <translation>过渡帧符号2的帧标记（*）</translation>
+        <translation>中间画符号2的帧标记（*）</translation>
     </message>
     <message>
         <source>Target column</source>
@@ -15871,7 +15871,7 @@ Please commit or revert changes first.</source>
     </message>
     <message>
         <source>Auto Inbetween</source>
-        <translation>自动中间帧</translation>
+        <translation>自动中间画</translation>
     </message>
     <message>
         <source>Linear Interpolation</source>
@@ -18671,7 +18671,7 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
     <message>
         <source>Auto Inbetween</source>
-        <translation>自动中间帧</translation>
+        <translation>自动中间画</translation>
     </message>
     <message>
         <source>Linear</source>
@@ -18715,7 +18715,7 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
     <message>
         <source>Select Guide Strokes &amp;&amp; Tween Mode</source>
-        <translation>选择导引描绘模式 &amp;&amp; 补间模式</translation>
+        <translation>选择导引描绘模式和补间模式</translation>
     </message>
     <message>
         <source>Interpolation:</source>
@@ -18723,22 +18723,22 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
     <message>
         <source>Use Onion Skin Frames:</source>
-        <translation>使用洋葱皮帧: </translation>
+        <translation>引导帧: </translation>
     </message>
     <message>
         <source>Select Stroke:</source>
-        <translation>选择描线: </translation>
+        <translation>选择引导描绘: </translation>
     </message>
     <message>
         <source>Flip Stroke Direction:</source>
-        <translation>翻转描线方向: </translation>
+        <translation>翻转引导描绘: </translation>
     </message>
 </context>
 <context>
     <name>VectorizerPopup</name>
     <message>
         <source>Convert-to-Vector Settings</source>
-        <translation>转换为矢量 设置</translation>
+        <translation>转换为矢量设置</translation>
     </message>
     <message>
         <source>The current selection is invalid.</source>
@@ -19140,11 +19140,11 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Cell Mark for Inbetween Symbol 1 (O)</source>
-        <translation>中间帧符号1（O）的帧格标记</translation>
+        <translation>中间画符号1（O）的帧格标记</translation>
     </message>
     <message>
         <source>Cell Mark for Inbetween Symbol 2 (*)</source>
-        <translation>中间帧符号2的帧格标记（*）</translation>
+        <translation>中间画符号2的帧格标记（*）</translation>
     </message>
 </context>
 <context>

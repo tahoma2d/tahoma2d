@@ -1316,11 +1316,11 @@ Gain is shown as an f-stop and the &quot;neutral&quot; or 1.0 gain f-stop is f/8
     </message>
     <message>
         <source>Show Inbetween Values</source>
-        <translation>显示中间帧的值</translation>
+        <translation>显示中间画的值</translation>
     </message>
     <message>
         <source>Hide Inbetween Values</source>
-        <translation>隐藏中间帧的值</translation>
+        <translation>隐藏中间画的值</translation>
     </message>
     <message>
         <source>Change Interpolation</source>
