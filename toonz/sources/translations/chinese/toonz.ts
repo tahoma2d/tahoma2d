@@ -6971,7 +6971,7 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <source>&amp;What&apos;s New...</source>
-        <translation>新建...</translation>
+        <translation>新功能...</translation>
     </message>
     <message>
         <source>&amp;Community Forum...</source>
@@ -8078,7 +8078,7 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <source>Export Open Cel Animation (OCA)</source>
-        <translation>导出Open Cel动画（OCA）</translation>
+        <translation>导出Open Cel Animation(OCA)</translation>
     </message>
     <message>
         <source>Set Markers to Selected Range</source>
