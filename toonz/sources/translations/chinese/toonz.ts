@@ -269,7 +269,7 @@ Please select a different device or check the microphone.</source>
     <message>
         <source>Record failed: 
 Make sure there&apos;s XSheet or Timeline in the room.</source>
-        <translation>记录失败：请确保存在 room中的摄影表或时间轴。</translation>
+        <translation>记录失败：请确保存在工作区中的摄影表或时间轴。</translation>
     </message>
     <message>
         <source>Failed to save WAV file:
@@ -418,11 +418,11 @@ pick up all frames in the selected level.</source>
     <message>
         <source>Grids and Overlays
 Right click to adjust.</source>
-        <translation>右键单击以调整Grids and Overlays。</translation>
+        <translation>右键单击以调整规格版。</translation>
     </message>
     <message>
         <source>Grids and Overlays Settings</source>
-        <translation>Grids and Overlays设置</translation>
+        <translation>规格版</translation>
     </message>
     <message>
         <source>Camera Stand View</source>
@@ -7004,8 +7004,8 @@ or you may delete necessary files for it.</source>
     <message>
         <source>Are you sure you want to reload and restore default rooms?
 Custom rooms will not be touched.</source>
-        <translation>是否确实要重新加载并恢复默认rooms ？
-        自定义rooms不会被触碰。</translation>
+        <translation>是否确实要重新加载并恢复默认工作区 ？
+        自定义工作区不会被触碰。</translation>
     </message>
     <message>
         <source>Create a new scene.</source>
@@ -7357,11 +7357,11 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>&amp;Grids and Overlays</source>
-        <translation>&amp;网格和Overlays</translation>
+        <translation>规格板</translation>
     </message>
     <message>
         <source>&amp;Reset All Default Rooms</source>
-        <translation>重置所有默认rooms</translation>
+        <translation>重置所有默认工作区</translation>
     </message>
     <message>
         <source>&amp;Motion Paths</source>
@@ -7429,7 +7429,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Geometry Tool</source>
-        <translation>几何图形工具</translation>
+        <translation>图形工具</translation>
     </message>
     <message>
         <source>Geometry Tool: Draws geometric shapes</source>
@@ -7504,6 +7504,14 @@ Custom rooms will not be touched.</source>
         <translation>跟踪工具：跟踪图像序列中的特定区域</translation>
     </message>
     <message>
+        <source>Hook Tool: Hooks are reference points that can be defined for any animation level directly in the viewer</source>
+        <translation>挂钩工具：跟踪图像序列中的特定区域</translation>
+    </message>
+    <message>
+        <source>Plastic Tool: Builds a mesh that allows to deform and animate a level</source>
+        <translation>塑型工具：构建一个网格，使级别变形并设置动画</translation>
+    </message>
+    <message>
         <source>Zoom Tool: Zooms viewer</source>
         <translation>缩放工具：缩放查看器</translation>
     </message>
@@ -7514,10 +7522,6 @@ Custom rooms will not be touched.</source>
     <message>
         <source>Hand Tool: Pans the workspace</source>
         <translation>抓手工具：平移工作空间</translation>
-    </message>
-    <message>
-        <source>Plastic Tool: Builds a mesh that allows to deform and animate a level</source>
-        <translation>塑型工具：构建一个网格，使级别变形并设置动画</translation>
     </message>
     <message>
         <source>Ruler Tool: Measure distances on the canvas</source>
@@ -10820,7 +10824,7 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <source>Roomy</source>
-        <translation type="unfinished"></translation>
+        <translation>工作区</translation>
     </message>
     <message>
         <source>Scene</source>
@@ -10866,11 +10870,11 @@ These come bundled with Tahoma2D, but you can set path to a different version.</
     </message>
     <message>
         <source>Room Layouts</source>
-        <translation>Room布局</translation>
+        <translation>工作区布局</translation>
     </message>
     <message>
         <source>Sandbox and Projects</source>
-        <translation type="unfinished"></translation>
+        <translation>Sandbox和项目</translation>
     </message>
     <message>
         <source>Fx and Plugins</source>
@@ -13282,7 +13286,7 @@ to use the duplicate command in the xsheet / timeline.</source>
     <message>
         <source>layer </source>
         <comment>MultimediaProgressBar label (mode name)</comment>
-        <translation>层级</translation>
+        <translation>图层</translation>
     </message>
     <message>
         <source>Rendering %1%2, frame %3 / %4</source>
@@ -13676,7 +13680,7 @@ Allow duplicate?</source>
     </message>
     <message>
         <source>Failed to reset room!</source>
-        <translation>重置room失败！</translation>
+        <translation>重置工作区失败！</translation>
     </message>
     <message>
         <source>Close Sub-Scene</source>
@@ -14033,7 +14037,7 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Layer: </source>
-        <translation>层级: </translation>
+        <translation>图层: </translation>
     </message>
     <message>
         <source>Export Open Cel Animation (OCA)</source>
@@ -14166,7 +14170,7 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Unable to create folder for saving layers.</source>
-        <translation>无法创建用于保存层级的文件夹。</translation>
+        <translation>无法创建用于保存图层的文件夹。</translation>
     </message>
     <message>
         <source>Edit Color Filter #%1</source>
@@ -14438,23 +14442,23 @@ These levels can&apos;t be exported with this tool.</source>
     </message>
     <message>
         <source>Reset Room &quot;%1&quot; to Saved Layout</source>
-        <translation>重置Room %1到保存的Layout </translation>
+        <translation>重置工作区 %1到保存的布局 </translation>
     </message>
     <message>
         <source>Reset Room &quot;%1&quot; to Default Layout</source>
-        <translation>重置Room %1 到默认的Layout </translation>
+        <translation>重置工作区 %1 到默认的布局 </translation>
     </message>
     <message>
         <source>Are you sure you want to remove room &quot;%1&quot;?</source>
-        <translation>您确定要删除 room %1 ？</translation>
+        <translation>您确定要删除工作区 %1 ？</translation>
     </message>
     <message>
         <source>Are you sure you want to reset room &quot;%1&quot; to the last saved layout?</source>
-        <translation>您确定要重置 room %1到上次保存的layout?</translation>
+        <translation>您确定要重置工作区 %1到上次保存的布局?</translation>
     </message>
     <message>
         <source>Are you sure you want to reset room &quot;%1&quot; to the default layout?</source>
-        <translation>您确定要重置 room %1到默认的layout?</translation>
+        <translation>您确定要重置工作区 %1到默认的布局?</translation>
     </message>
 </context>
 <context>
@@ -17749,11 +17753,11 @@ Divide = Focus Check</source>
     </message>
     <message>
         <source>Use current frame as overlay.</source>
-        <translation>使用当前帧作为overlay</translation>
+        <translation>使用当前帧作为布局</translation>
     </message>
     <message>
         <source>Use the current scene frame as an overlay.</source>
-        <translation>使用当前场景帧作为overlay</translation>
+        <translation>使用当前场景帧作为布局</translation>
     </message>
     <message>
         <source>Screen 1</source>
@@ -17785,7 +17789,7 @@ Divide = Focus Check</source>
     </message>
     <message>
         <source>Iso: </source>
-        <translation type="unfinished"></translation>
+        <translation>ISO</translation>
     </message>
     <message>
         <source>Live View Offset: </source>
@@ -18135,7 +18139,7 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
     <message>
         <source>Scene Overlay</source>
-        <translation>场景 Overlay</translation>
+        <translation>场景布局</translation>
     </message>
 </context>
 <context>
@@ -18601,15 +18605,15 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
     <message>
         <source>Lock Rooms</source>
-        <translation>锁定Rooms</translation>
+        <translation>锁定工作区</translation>
     </message>
     <message>
         <source>Unlocking this enables creating new rooms and rearranging the workspace.</source>
-        <translation>解锁此选项可以创建新rooms并重新安排工作空间。</translation>
+        <translation>解锁此选项可以创建新工作区并重新安排工作空间。</translation>
     </message>
     <message>
         <source>Locking this prevents the workspace from being changed and prevents new rooms from being created.  Unlock this to change the workspace or create new rooms.</source>
-        <translation>锁定此选项可防止更改工作空间并防止创建新rooms。解除锁定以更改工作空间或创建新rooms。</translation>
+        <translation>锁定此选项可防止更改工作空间并防止创建新工作区。解除锁定以更改工作空间或创建新工作区。</translation>
     </message>
 </context>
 <context>
