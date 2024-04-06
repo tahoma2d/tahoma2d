@@ -358,7 +358,7 @@ Please try raising the FFmpeg timeout in Preferences.</source>
     <message>
         <location filename="../../image/sprite/tiio_sprite.cpp" line="319"/>
         <source>Grid</source>
-        <translation>格子</translation>
+        <translation>网格</translation>
     </message>
     <message>
         <location filename="../../image/sprite/tiio_sprite.cpp" line="320"/>

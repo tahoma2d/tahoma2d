@@ -6619,7 +6619,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>&amp;New Vector Level</source>
-        <translation>新矢量层级(&amp;N)</translation>
+        <translation>新建矢量层级(&amp;N)</translation>
     </message>
     <message>
         <source>New Vector Level</source>
@@ -6635,7 +6635,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>&amp;New Raster Level</source>
-        <translation>新光栅层级(&amp;N)</translation>
+        <translation>新建光栅层级(&amp;N)</translation>
     </message>
     <message>
         <source>New Raster Level</source>
@@ -7173,7 +7173,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>&amp;New Smart Raster Level</source>
-        <translation>新智能光栅层级</translation>
+        <translation>新建智能光栅层级</translation>
     </message>
     <message>
         <source>Create a new Smart Raster level.</source>
@@ -8018,7 +8018,7 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <source>Toggle Creation In Hold Cells</source>
-        <translation>切换保留帧中的创建</translation>
+        <translation>切换保留帧中创建</translation>
     </message>
     <message>
         <source>Toggles the auto-creation of frames when drawing in held cells on the timeline/xsheet.</source>
@@ -8038,11 +8038,11 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <source>Toggle Implicit Hold</source>
-        <translation>切换隐性保持</translation>
+        <translation>切换隐藏保留</translation>
     </message>
     <message>
         <source>Toggles the implicit hold of a frame to the next frame</source>
-        <translation>将帧的隐性保持切换到下一帧</translation>
+        <translation>将帧的隐藏保留切换到下一帧</translation>
     </message>
     <message>
         <source>Perspective Grid Tool</source>
@@ -17047,7 +17047,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Perspective Grid Tool: Set up perspective grids</source>
-        <translation>透视栅格工具：设置透视栅格</translation>
+        <translation>透视栅格工具：设置透视网格</translation>
     </message>
     <message>
         <source>%1%2Move entire object</source>
