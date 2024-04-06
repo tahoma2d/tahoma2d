@@ -8038,7 +8038,7 @@ or you may delete necessary files for it.</source>
     </message>
     <message>
         <source>Toggle Implicit Hold</source>
-        <translation>隐藏保留</translation>
+        <translation>开关隐藏保留</translation>
     </message>
     <message>
         <source>Toggles the implicit hold of a frame to the next frame</source>
