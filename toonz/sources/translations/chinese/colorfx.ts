@@ -575,11 +575,11 @@
     </message>
     <message>
         <source>X Position</source>
-        <translation>水平位置</translation>
+        <translation>X 水平位置</translation>
     </message>
     <message>
         <source>Y Position</source>
-        <translation>垂直位置</translation>
+        <translation>Y 垂直位置</translation>
     </message>
     <message>
         <source>Radius</source>
