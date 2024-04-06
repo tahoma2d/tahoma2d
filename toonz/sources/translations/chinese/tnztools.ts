@@ -208,7 +208,7 @@
     </message>
     <message>
         <source>In&amp;Out</source>
-        <translation type="vanished">内&amp;外</translation>
+        <translation type="vanished">内和外</translation>
     </message>
     <message>
         <source>Low</source>
@@ -719,7 +719,7 @@
     </message>
     <message>
         <source>Eraser</source>
-        <translation>橡皮差</translation>
+        <translation>橡皮擦</translation>
     </message>
     <message>
         <source>Lock Alpha</source>
