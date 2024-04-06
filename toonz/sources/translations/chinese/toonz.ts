@@ -6811,7 +6811,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>Brush Tool - Lock Alpha</source>
-        <translation>画笔 - 锁定透明度</translation>
+        <translation>画笔工具 - 锁定透明度</translation>
     </message>
     <message>
         <source>&amp;Import Toonz Lip Sync File...</source>
@@ -7425,7 +7425,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Brush Tool: Draws in the work area freehand</source>
-        <translation>笔刷工具：在工作区域中徒手绘制</translation>
+        <translation>画笔工具：在工作区域中徒手绘制</translation>
     </message>
     <message>
         <source>Geometry Tool</source>
@@ -7505,7 +7505,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Hook Tool: Hooks are reference points that can be defined for any animation level directly in the viewer</source>
-        <translation>挂钩工具：跟踪图像序列中的特定区域</translation>
+        <translation>挂钩工具：钩子是参考点，可以使用钩子工具直接在查看器中为任何动画关卡定义。</translation>
     </message>
     <message>
         <source>Plastic Tool: Builds a mesh that allows to deform and animate a level</source>
@@ -7577,11 +7577,11 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Brush Tool - Auto Fill On</source>
-        <translation>笔刷工具-打开自动填充</translation>
+        <translation>画笔工具-打开自动填充</translation>
     </message>
     <message>
         <source>Brush Tool - Auto Fill Off</source>
-        <translation>笔刷工具-关闭自动填充</translation>
+        <translation>画笔工具-关闭自动填充</translation>
     </message>
     <message>
         <source>Geometric Tool - Next Shape</source>
@@ -19517,7 +19517,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Toggle Xsheet/Timeline</source>
-        <translation>开关摄影表/时间轴</translation>
+        <translation>切换摄影表/时间轴</translation>
     </message>
     <message>
         <source>Add New Memo</source>
