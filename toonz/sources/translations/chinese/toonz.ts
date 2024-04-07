@@ -6027,7 +6027,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>Type</source>
-        <translation>文本</translation>
+        <translation>文字</translation>
     </message>
     <message>
         <source>Normal Type</source>
@@ -7621,23 +7621,23 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Type Tool - Next Style</source>
-        <translation>类型工具-下一个样式</translation>
+        <translation>文本工具-下一个样式</translation>
     </message>
     <message>
         <source>Type Tool - Oblique</source>
-        <translation>类型工具-倾斜</translation>
+        <translation>文本工具-倾斜</translation>
     </message>
     <message>
         <source>Type Tool - Regular</source>
-        <translation>类型工具-常规</translation>
+        <translation>文本工具-常规</translation>
     </message>
     <message>
         <source>Type Tool - Bold Oblique</source>
-        <translation>类型工具-加粗倾斜</translation>
+        <translation>文本工具-加粗倾斜</translation>
     </message>
     <message>
         <source>Type Tool - Bold</source>
-        <translation>类型工具-加粗</translation>
+        <translation>文本工具-加粗</translation>
     </message>
     <message>
         <source>Fill Tool - Next Type</source>
@@ -7833,23 +7833,23 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Type - Segment</source>
-        <translation>文本-分段</translation>
+        <translation>文字-分段</translation>
     </message>
     <message>
         <source>TypeTool Style - Oblique</source>
-        <translation>文本工具样式-倾斜</translation>
+        <translation>文字工具样式-倾斜</translation>
     </message>
     <message>
         <source>TypeTool Style - Regular</source>
-        <translation>文本工具样式-常规</translation>
+        <translation>文字工具样式-常规</translation>
     </message>
     <message>
         <source>TypeTool Style - Bold Oblique</source>
-        <translation>文本工具样式-粗体倾斜</translation>
+        <translation>文字工具样式-粗体倾斜</translation>
     </message>
     <message>
         <source>TypeTool Style - Bold</source>
-        <translation>文本工具样式-粗体</translation>
+        <translation>文字工具样式-粗体</translation>
     </message>
     <message>
         <source>Skeleton Mode</source>
@@ -19472,6 +19472,10 @@ Please refer to the user guide for details.</source>
     <message>
         <source>Lock Column</source>
         <translation>锁定列</translation>
+    </message>
+    <message>
+        <source>Clipping Mask</source>
+        <translation>剪贴蒙版</translation>
     </message>
     <message>
         <source>Invert Mask</source>
