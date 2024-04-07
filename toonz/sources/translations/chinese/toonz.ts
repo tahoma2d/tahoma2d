@@ -7529,7 +7529,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Finger Tool: Smudges small areas to cover with line</source>
-        <translation>涂抹工具：涂抹小区域以覆盖线条</translation>
+        <translation>涂抹工具：涂抹小区域以填充描边和填充之间的任何微小间隙。</translation>
     </message>
     <message>
         <source>Animate Tool - Next Mode</source>
