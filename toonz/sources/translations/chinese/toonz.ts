@@ -5783,7 +5783,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>Type Tool</source>
-        <translation>文本工具</translation>
+        <translation>文字工具</translation>
     </message>
     <message>
         <source>Fill Tool</source>
@@ -7133,19 +7133,19 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>&amp;Move to Back</source>
-        <translation>移到后面</translation>
+        <translation>移到到最后面</translation>
     </message>
     <message>
         <source>&amp;Move Back One</source>
-        <translation>后退一步</translation>
+        <translation>移动到后一个</translation>
     </message>
     <message>
         <source>&amp;Move Forward One</source>
-        <translation>向前移动</translation>
+        <translation>移动到前一个</translation>
     </message>
     <message>
         <source>&amp;Move to Front</source>
-        <translation>移动到前面</translation>
+        <translation>移动到最前面</translation>
     </message>
     <message>
         <source>&amp;Clear Recent Project List</source>
@@ -7437,7 +7437,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Type Tool: Adds text</source>
-        <translation>类型工具：添加文本</translation>
+        <translation>文字工具：添加文本</translation>
     </message>
     <message>
         <source>Fill Tool: Fills drawing areas with the current style</source>
@@ -7621,23 +7621,23 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Type Tool - Next Style</source>
-        <translation>文本工具-下一个样式</translation>
+        <translation>文字工具-下一个样式</translation>
     </message>
     <message>
         <source>Type Tool - Oblique</source>
-        <translation>文本工具-倾斜</translation>
+        <translation>文字工具-倾斜</translation>
     </message>
     <message>
         <source>Type Tool - Regular</source>
-        <translation>文本工具-常规</translation>
+        <translation>文字工具-常规</translation>
     </message>
     <message>
         <source>Type Tool - Bold Oblique</source>
-        <translation>文本工具-加粗倾斜</translation>
+        <translation>文字工具-加粗倾斜</translation>
     </message>
     <message>
         <source>Type Tool - Bold</source>
-        <translation>文本工具-加粗</translation>
+        <translation>文字工具-加粗</translation>
     </message>
     <message>
         <source>Fill Tool - Next Type</source>
@@ -16943,7 +16943,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Type Tool: Adds text</source>
-        <translation>文本工具：添加文本</translation>
+        <translation>文字工具：添加文本</translation>
     </message>
     <message>
         <source>Fill Tool: Fills drawing areas with the current style</source>
