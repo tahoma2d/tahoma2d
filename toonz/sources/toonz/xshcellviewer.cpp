@@ -3870,6 +3870,8 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
           m_viewer->dragToolClick(event);
           isInDragArea = false;
         }
+        // Before switching drag tool, trigger cell selection switch notification
+        if (m_viewer->getDragTool()) m_viewer->dragToolRelease(event);
       }
 
       if (isInDragArea) {
