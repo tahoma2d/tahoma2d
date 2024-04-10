@@ -24,7 +24,7 @@
     <name>FilePath</name>
     <message>
         <source>&quot;%1&quot;</source>
-        <translation type="vanished">&quot;%1&quot;</translation>
+        <translation type="vanished">%1</translation>
     </message>
     <message>
         <source>can&apos;t concatenate an absolute path : %1</source>
@@ -244,7 +244,7 @@
     </message>
     <message>
         <source>Argument &apos;%1&apos; does not look like a FrameId</source>
-        <translation>参数 &apos;%1&apos;不像是帧 ID</translation>
+        <translation>参数 %1不像是帧 ID</translation>
     </message>
     <message>
         <source>First argument must be a scene : %1</source>
@@ -614,83 +614,83 @@
     </message>
     <message>
         <source>and %1 more item(s).</source>
-        <translation type="unfinished"></translation>
+        <translation>还有%1个项目。</translation>
     </message>
     <message>
         <source>Move X</source>
-        <translation type="unfinished"></translation>
+        <translation>移动 X</translation>
     </message>
     <message>
         <source>Move Y</source>
-        <translation type="unfinished"></translation>
+        <translation>移动 Y</translation>
     </message>
     <message>
         <source>Failed to save palette.</source>
-        <translation type="unfinished"></translation>
+        <translation>未能保存调色板。</translation>
     </message>
     <message>
         <source>Orange</source>
-        <translation type="unfinished"></translation>
+        <translation>橙色</translation>
     </message>
     <message>
         <source>Yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>黄色</translation>
     </message>
     <message>
         <source>Light Green</source>
-        <translation type="unfinished"></translation>
+        <translation>浅绿</translation>
     </message>
     <message>
         <source>Light Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>浅蓝</translation>
     </message>
     <message>
         <source>Dark Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>深蓝</translation>
     </message>
     <message>
         <source>Purple</source>
-        <translation type="unfinished"></translation>
+        <translation>紫色</translation>
     </message>
     <message>
         <source>Pink</source>
-        <translation type="unfinished"></translation>
+        <translation>粉色</translation>
     </message>
     <message>
         <source>Dark Pink</source>
-        <translation type="unfinished"></translation>
+        <translation>深粉</translation>
     </message>
     <message>
         <source>White</source>
-        <translation type="unfinished"></translation>
+        <translation>白色</translation>
     </message>
     <message>
         <source>Load From File</source>
-        <translation type="unfinished"></translation>
+        <translation>从文件加载</translation>
     </message>
     <message>
         <source>Use As Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>用作图案</translation>
     </message>
     <message>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation>位置</translation>
     </message>
     <message>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>缩放</translation>
     </message>
     <message>
         <source>Rotation(degrees)</source>
-        <translation type="unfinished"></translation>
+        <translation>旋转</translation>
     </message>
     <message>
         <source>X displ</source>
-        <translation type="unfinished"></translation>
+        <translation>X 显示</translation>
     </message>
     <message>
         <source>Y displ</source>
-        <translation type="unfinished"></translation>
+        <translation>Y 显示</translation>
     </message>
 </context>
 <context>
@@ -752,7 +752,7 @@
     </message>
     <message>
         <source>Level &apos;%1&apos; is not included in the scene</source>
-        <translation type="vanished">层级 &apos;%1&apos; 没有在这个场景中</translation>
+        <translation type="vanished">层级%1没有在这个场景中</translation>
     </message>
 </context>
 <context>
@@ -778,7 +778,7 @@
     <name>TScriptBinding::FilePath</name>
     <message>
         <source>&quot;%1&quot;</source>
-        <translation>&quot;%1&quot;</translation>
+        <translation>%1</translation>
     </message>
     <message>
         <source>can&apos;t concatenate an absolute path : %1</source>
@@ -984,7 +984,7 @@
     </message>
     <message>
         <source>Level &apos;%1&apos; is not included in the scene</source>
-        <translation>层级 &apos;%1&apos; 没有在这个场景中</translation>
+        <translation>层级%1没有在这个场景中</translation>
     </message>
 </context>
 <context>
