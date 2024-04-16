@@ -1530,7 +1530,7 @@ bool ToonzVectorBrushTool::doFrameRangeStrokes(
     if (m_autoClose.getValue()) stroke->setSelfLoop(true);
     lastImage->addStroke(stroke, sendToBack);
   }
-  assert(firstFrameId <= lastFrameId);
+  assert(firstFrameIdx <= lastFrameIdx);
 
   TTool::Application *app = TTool::getApplication();
   TFrameId lastFrameId;
