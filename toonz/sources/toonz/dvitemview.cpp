@@ -1489,7 +1489,7 @@ DvItemViewer::DvItemViewer(QWidget *parent, bool noContextMenu,
   setStyleSheet("#BrowserTreeView {qproperty-autoFillBackground: true;}");
 
   setWidget(m_panel);
-  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
   setAcceptDrops(true);
 }
@@ -1511,6 +1511,10 @@ void DvItemViewer::updateContentSize() {
   int h = m_panel->getContentHeight(w) +
           20;  // 20 is margin for showing the empty area
   if (h < height()) h = height();
+
+  if (horizontalScrollBar()->isVisible()) h -= horizontalScrollBar()->height();
+  if (verticalScrollBar()->isVisible()) w -= verticalScrollBar()->width();
+
   m_panel->resize(w, h);
 }
 
