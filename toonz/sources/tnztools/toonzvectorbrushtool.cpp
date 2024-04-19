@@ -1790,7 +1790,7 @@ void ToonzVectorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   if (e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed() &&
       Preferences::instance()->useCtrlAltToResizeBrushEnabled()) {
     // Resize the brush if CTRL+ALT is pressed and the preference is enabled.
-    const TPointD &diff = pos - m_mousePos;
+    const TPointD &diff = m_windowMousePos - -e.m_pos;
     double max          = diff.x / 2;
     double min          = diff.y / 2;
 
@@ -1803,6 +1803,7 @@ void ToonzVectorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   } else {
     m_mousePos = pos;
     m_brushPos = pos;
+    m_windowMousePos = -e.m_pos;
 
     TPointD snapThick(6.0 * m_pixelSize, 6.0 * m_pixelSize);
     // In order to clear the previous snap indicator

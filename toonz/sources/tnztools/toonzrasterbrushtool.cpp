@@ -2307,7 +2307,7 @@ void ToonzRasterBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   if (e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed() &&
       Preferences::instance()->useCtrlAltToResizeBrushEnabled()) {
     // Resize the brush if CTRL+ALT is pressed and the preference is enabled.
-    const TPointD &diff = pos - m_mousePos;
+    const TPointD &diff = m_windowMousePos - -e.m_pos;
     double max          = diff.x / 2;
     double min          = diff.y / 2;
 
@@ -2320,6 +2320,7 @@ void ToonzRasterBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   } else {
     m_mousePos = pos;
     m_brushPos = getCenteredCursorPos(pos);
+    m_windowMousePos = -e.m_pos;
 
     invalidateRect += TRectD(pos - halfThick, pos + halfThick);
   }
