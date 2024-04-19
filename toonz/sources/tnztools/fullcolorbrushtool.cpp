@@ -759,7 +759,7 @@ void FullColorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   //} else
   if (e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed() &&
       Preferences::instance()->useCtrlAltToResizeBrushEnabled()) {
-    const TPointD &diff = pos - m_mousePos;
+    const TPointD &diff = m_windowMousePos - -e.m_pos;
     double max          = diff.x / 2;
     double min          = diff.y / 2;
 
@@ -769,6 +769,7 @@ void FullColorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   }
 
   m_mousePos = pos;
+  m_windowMousePos = -e.m_pos;
 
   invalidate();
 }
