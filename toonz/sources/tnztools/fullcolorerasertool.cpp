@@ -384,6 +384,7 @@ private:
   TRectD m_selectingRect, m_firstRect;
 
   TPointD m_mousePos, m_brushPos, m_firstPos;
+  TPointD m_windowMousePos;
   TMouseEvent m_mouseEvent;
   double m_thick;
 
@@ -1085,7 +1086,7 @@ void FullColorEraserTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   switch (e.getModifiersMask()) {
   case TMouseEvent::ALT_KEY: {
     // User wants to alter the maximum brush size
-    const TPointD &diff = pos - m_mousePos;
+    const TPointD &diff = m_windowMousePos - -e.m_pos;
     double add          = (fabs(diff.x) > fabs(diff.y)) ? diff.x : diff.y;
 
     locals.addValue(m_size, add);
@@ -1098,6 +1099,7 @@ void FullColorEraserTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   }
 
   m_mousePos = pos;
+  m_windowMousePos = -e.m_pos;
   invalidate();
 }
 
