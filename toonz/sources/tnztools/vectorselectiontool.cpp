@@ -1104,20 +1104,19 @@ void DragSelectionTool::VectorChangeThicknessTool::addUndo() {
 void DragSelectionTool::VectorChangeThicknessTool::leftButtonDown(
     const TPointD &pos, const TMouseEvent &e) {
   m_curPos   = pos;
-  m_firstPos = pos;
+  m_firstPos = e.m_pos;
 }
 
 //-----------------------------------------------------------------------------
 
 void DragSelectionTool::VectorChangeThicknessTool::leftButtonDrag(
     const TPointD &pos, const TMouseEvent &e) {
-  TAffine aff;
-  TPointD delta    = pos - m_curPos;
+  TPointD delta = e.m_pos - m_firstPos;
   TVectorImageP vi = getTool()->getImage(true);
   if (!vi) return;
   VectorSelectionTool *tool = dynamic_cast<VectorSelectionTool *>(m_tool);
   tool->setResetCenter(false);
-  m_thicknessChange = (pos.y - m_firstPos.y) * 0.2;
+  m_thicknessChange = delta.y * m_tool->getViewer()->getPixelSize() * 0.2;
   changeImageThickness(*vi, m_thicknessChange);
   getTool()->m_deformValues.m_maxSelectionThickness = m_thicknessChange;
   getTool()->computeBBox();
