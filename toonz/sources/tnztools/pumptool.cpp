@@ -299,8 +299,8 @@ void PumpTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
   QMutexLocker lock(vi->getMutex());
 
   // set current point and init parameters
-  m_oldPoint  = pos;
-  m_downPoint = pos;
+  m_oldPoint  = e.m_pos;
+  m_downPoint = e.m_pos;
 
   m_inStroke = m_outStroke = 0;
   m_stroke1Idx = m_stroke2Idx = -1;
@@ -373,7 +373,7 @@ void PumpTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
   delete m_outStroke;
 
   // Retrieve cursor's vertical displacement
-  TPointD delta = TPointD(0, (pos - m_downPoint).y);
+  TPointD delta = TPointD(0, (e.m_pos - m_downPoint).y * getPixelSize());
   int deltaSign = tsign(delta.y);
   if (deltaSign == 0) {
     // Use a copy of the original stroke
@@ -442,7 +442,7 @@ void PumpTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
     }
 
     if (m_outStroke &&
-        !areAlmostEqual(m_downPoint, pos, PickRadius * getPixelSize())) {
+        !areAlmostEqual(m_downPoint, e.m_pos, PickRadius * getPixelSize())) {
       // Accept action
 
       // Clone input stroke - it is someway needed by the stroke change
@@ -502,11 +502,11 @@ void PumpTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   m_isCtrlPressed = e.isCtrlPressed();
 
   // Cursor preview updates on 3-pixel steps
-  if (tdistance2(pos, m_oldPoint) < 9.0 * sq(getPixelSize())) return;
+  if (tdistance2(e.m_pos, m_oldPoint) < 9.0 * sq(getPixelSize())) return;
 
   if (!m_draw) m_draw = true;
 
-  m_oldPoint = pos;
+  m_oldPoint = e.m_pos;
 
   if (moveCursor(pos)) {
     m_cursorEnabled = true;
