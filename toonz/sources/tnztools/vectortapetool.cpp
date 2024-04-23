@@ -784,7 +784,7 @@ public:
       std::swap(firstFrameId, lastFrameId);
       backward = true;
     }
-    assert(firstFid <= lastFid);
+    assert(firstFrameId <= lastFrameId);
     std::vector<TFrameId> allFids;
     m_level->getFids(allFids);
 
@@ -843,7 +843,7 @@ public:
       std::swap(firstFrameIdx, lastFrameIdx);
       backward = true;
     }
-    assert(firstFrame <= lastFrame);
+    assert(firstFrameIdx <= lastFrameIdx);
 
     TTool::Application *app = TTool::getApplication();
     TFrameId lastFrameId;
