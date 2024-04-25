@@ -329,6 +329,8 @@ private:
       m_firstPos;      //!< Either The first point inserted either in m_track or
                        //! m_polyline
   //!  (depending on selected erase mode).
+  TPointD m_windowMousePos;
+
   UndoEraser *m_undo;
   std::vector<int> m_indexes;
 
@@ -1387,7 +1389,7 @@ void EraserTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   switch (e.getModifiersMask()) {
   case TMouseEvent::ALT_KEY: {
     // User wants to alter the maximum brush size
-    const TPointD &diff = pos - m_mousePos;
+    const TPointD &diff = m_windowMousePos - -e.m_pos;
     double max          = diff.x / 2;
     double min          = diff.y / 2;
 
@@ -1401,6 +1403,7 @@ void EraserTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   }
 
   m_oldMousePos = m_mousePos = pos;
+  m_windowMousePos = -e.m_pos;
   invalidate();
 }
 

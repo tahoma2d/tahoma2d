@@ -194,7 +194,9 @@ protected:
   TPointD m_dpiScale,
       m_mousePos,  //!< Current mouse position, in world coordinates.
       m_brushPos,  //!< World position the brush will be painted at.
-      m_firstSnapPoint, m_lastSnapPoint;
+      m_firstSnapPoint, m_lastSnapPoint,
+      m_windowMousePos; //!< Current mouse position, in window coordinates.
+
 
   QRadialGradient m_brushPad;
 
