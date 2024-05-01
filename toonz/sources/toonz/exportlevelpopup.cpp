@@ -355,7 +355,8 @@ ExportLevelPopup::ExportLevelPopup()
     }
     mainLayout->addLayout(bottomLay, 0);
   }
-  setLayout(mainLayout);
+  m_topLayout->setMargin(0);
+  m_topLayout->addLayout(mainLayout);
 
   // Establish connections
   bool ret = true;
