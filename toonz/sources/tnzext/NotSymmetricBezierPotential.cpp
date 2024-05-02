@@ -13,11 +13,10 @@ using namespace ToonzExt;
 //-----------------------------------------------------------------------------
 
 namespace {
-typedef unary_function<double, double> unary_functionDD;
 
 //---------------------------------------------------------------------------
 
-class myBlendFunc : unary_functionDD {
+struct myBlendFunc final {
   // TCubic  c;
   TQuadratic curve;
 
@@ -28,9 +27,9 @@ public:
     curve.setP2(TPointD(1.0, 0.0));
   }
 
-  result_type operator()(argument_type x) {
-    result_type out = 0.0;
-    x               = fabs(x);
+  double operator()(double x) {
+    double out = 0.0;
+    x          = fabs(x);
     if (x >= 1.0) return 0.0;
     out = curve.getPoint(x).y;
     return out;

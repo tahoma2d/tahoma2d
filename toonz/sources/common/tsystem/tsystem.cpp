@@ -2,8 +2,6 @@
 
 #include "tsystem.h"
 
-using namespace std;
-
 #include <set>
 #include "tfilepath_io.h"
 #include "tconvert.h"
@@ -157,7 +155,7 @@ TFilePath TSystem::getTempDir() {
 
 //------------------------------------------------------------
 
-TFilePath TSystem::getTestDir(string name) {
+TFilePath TSystem::getTestDir(std::string name) {
   return TFilePath("C:") + TFilePath(name);
 }
 
@@ -423,13 +421,12 @@ void TSystem::hideFile(const TFilePath &fp) {
 
 //------------------------------------------------------------
 
-class CaselessFilepathLess final
-    : public std::binary_function<TFilePath, TFilePath, bool> {
+class CaselessFilepathLess final {
 public:
   bool operator()(const TFilePath &a, const TFilePath &b) const {
     // Perform case sensitive compare, fallback to case insensitive.
-    const wstring a_str = a.getWideString();
-    const wstring b_str = b.getWideString();
+    const std::wstring a_str = a.getWideString();
+    const std::wstring b_str = b.getWideString();
 
     unsigned int i   = 0;
     int case_compare = -1;
@@ -1046,8 +1043,8 @@ bool TSystem::showDocument(const TFilePath &path) {
   }
   return true;
 #else
-  string cmd = "open ";
-  string thePath(::to_string(path));
+  std::string cmd = "open ";
+  std::string thePath(::to_string(path));
   UINT pos = 0, count = 0;
   // string newPath;
   char newPath[2048];
@@ -1061,7 +1058,7 @@ bool TSystem::showDocument(const TFilePath &path) {
   }
   newPath[count] = 0;
 
-  cmd = cmd + string(newPath);
+  cmd = cmd + std::string(newPath);
   system(cmd.c_str());
   return true;
 #endif
@@ -1114,7 +1111,7 @@ TSystemException::TSystemException(const TFilePath &fname,
     : m_fname(fname), m_err(-1), m_msg(::to_wstring(msg)) {}
 //--------------------------------------------------------------
 
-TSystemException::TSystemException(const TFilePath &fname, const wstring &msg)
+TSystemException::TSystemException(const TFilePath &fname, const std::wstring &msg)
     : m_fname(fname), m_err(-1), m_msg(msg) {}
 
 //--------------------------------------------------------------
@@ -1123,5 +1120,5 @@ TSystemException::TSystemException(const std::string &msg)
     : m_fname(""), m_err(-1), m_msg(::to_wstring(msg)) {}
 //--------------------------------------------------------------
 
-TSystemException::TSystemException(const wstring &msg)
+TSystemException::TSystemException(const std::wstring &msg)
     : m_fname(""), m_err(-1), m_msg(msg) {}

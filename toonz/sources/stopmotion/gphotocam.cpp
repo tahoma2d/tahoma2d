@@ -303,7 +303,10 @@ void GPhotoCam::onTimeout() {
         m_cameraName.contains("1000D") || m_cameraName.contains("40D")) {
       // Nikon: Turn off autofocus from a libgphoto2 point of view.
       // Does not work for Canon but may work for others.
-      retVal = gp_setting_set("ptp2", "autofocus", "off");
+      char id[5] = "ptp2";
+      char key[10] = "autofocus";
+      char value[4] = "off";
+      retVal = gp_setting_set(id, key, value);
       retVal = gp_camera_trigger_capture(m_camera, m_gpContext);
     } else {
       retVal = setCameraConfigValue("eosremoterelease", "Immediate");

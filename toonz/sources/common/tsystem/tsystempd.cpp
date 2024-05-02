@@ -611,9 +611,13 @@ void TSystem::moveFileToRecycleBin(const TFilePath &fp) {
 
   QTextStream stream(&infoFile);
 
-  stream << "[Trash Info]" << endl;
-  stream << "Path=" + QString(QUrl::toPercentEncoding(FileName.absoluteFilePath(), "~_-./")) << endl;     // convert path to percentage encoded string
-  stream << "DeletionDate=" + currentTime.toString("yyyy-MM-dd") + "T" + currentTime.toString("hh:mm:ss") << endl;      // get date and time in format YYYY-MM-DDThh:mm:ss
+  stream << "[Trash Info]" << Qt::endl;
+  stream << "Path=" + QString(QUrl::toPercentEncoding(
+                          FileName.absoluteFilePath(), "~_-./"))
+         << Qt::endl;  // convert path to percentage encoded string
+  stream << "DeletionDate=" + currentTime.toString("yyyy-MM-dd") + "T" +
+                currentTime.toString("hh:mm:ss")
+         << Qt::endl;  // get date and time in format YYYY-MM-DDThh:mm:ss
 
   infoFile.close();
 

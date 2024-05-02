@@ -200,7 +200,7 @@ static IMAGERGB *iopen(int fd, OpenMode openMode, unsigned int type,
                        unsigned int dim, unsigned int xsize, unsigned int ysize,
                        unsigned int zsize, short dorev) {
   IMAGERGB *image;
-  extern int errno;
+//  extern int errno;
   int tablesize, f = fd;
 
   image = (IMAGERGB *)malloc((int)sizeof(IMAGERGB));
