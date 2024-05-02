@@ -98,11 +98,7 @@ void getFileFids(TFilePath path, std::vector<TFrameId> &fids) {
 
 QString hyphenText(const QString &srcText, const QFont &font, int width) {
   QFontMetrics metrics(font);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
   int srcWidth = metrics.horizontalAdvance(srcText);
-#else
-  int srcWidth = metrics.width(srcText);
-#endif
   if (srcWidth < width) return srcText;
 
   int count = double(srcWidth) / double(width);
@@ -114,13 +110,8 @@ QString hyphenText(const QString &srcText, const QFont &font, int width) {
   int hyphenCount = 1;
   for (i = 0; i < srcText.size(); i++) {
     QChar c       = srcText.at(i);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
     int cWidth    = metrics.horizontalAdvance(c);
     int textWidth = metrics.horizontalAdvance(text) + cWidth;
-#else
-    int cWidth    = metrics.width(c);
-    int textWidth = metrics.width(text) + cWidth;
-#endif
     if ((c.isSpace() && textWidth > (hyphenCount - 1) * width + diff) ||
         (textWidth > hyphenCount * width)) {
       ++hyphenCount;

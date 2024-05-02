@@ -1742,7 +1742,7 @@ void ToonzVectorBrushTool::flushTrackPoint() {
 //---------------------------------------------------------------------------------------------------------------
 
 void ToonzVectorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
-#if (!defined(LINUX) && !defined(FREEBSD)) || QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#if (!defined(LINUX) && !defined(FREEBSD))
   qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
 #endif
 

@@ -485,13 +485,8 @@ void CustomPanelEditorPopup::onTemplateSwitched() {
 
   delete customWidget;
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   if (customPaneFolderPath().isAncestorOf(TFilePath(fp)))
     m_panelNameEdit->setText(m_templateCombo->currentText().chopped(7));
-#else
-  if (customPaneFolderPath().isAncestorOf(TFilePath(fp)))
-    m_panelNameEdit->setText(m_templateCombo->currentText().left(7));
-#endif
 
   updateGeometry();
 }

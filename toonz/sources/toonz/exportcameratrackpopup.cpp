@@ -795,15 +795,7 @@ QImage ExportCameraTrackPopup::generateCameraTrackImg(
     QPointF textPos = data.textPos + QPointF(5, 0);
     textRect.translate(textPos);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
     while (data.polygon.intersects(textRect)) {
-#else
-    while (
-        data.polygon.containsPoint(textRect.topLeft(), Qt::OddEvenFill) ||
-        data.polygon.containsPoint(textRect.topRight(), Qt::OddEvenFill) ||
-        data.polygon.containsPoint(textRect.bottomLeft(), Qt::OddEvenFill) ||
-        data.polygon.containsPoint(textRect.bottomRight(), Qt::OddEvenFill)) {
-#endif
       textRect.translate(data.offsetVec.toPointF());
       textPos += QPointF(data.offsetVec.toPointF());
     }
@@ -901,13 +893,8 @@ void ExportCameraTrackPopup::getInfoFromUI(ExportCameraTrackInfo& info) {
   // camera rect settings
   info.cameraRectOnKeys = m_cameraRectOnKeysCB->isChecked();
   info.cameraRectOnTags = m_cameraRectOnTagsCB->isChecked();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
   QStringList framesStrList =
       m_cameraRectFramesEdit->text().split(",", Qt::SkipEmptyParts);
-#else
-  QStringList framesStrList =
-      m_cameraRectFramesEdit->text().split(",", QString::SkipEmptyParts);
-#endif
   for (auto fStr : framesStrList) {
     bool ok;
     int f = fStr.toInt(&ok);

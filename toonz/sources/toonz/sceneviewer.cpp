@@ -893,10 +893,8 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
 
   if (Preferences::instance()->isColorCalibrationEnabled())
     m_lutCalibrator = new LutCalibrator();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   if (Preferences::instance()->is30bitDisplayEnabled())
     setTextureFormat(TGL_TexFmt10);
-#endif
 }
 
 //-----------------------------------------------------------------------------

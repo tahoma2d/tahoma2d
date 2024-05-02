@@ -997,13 +997,8 @@ void XSheetPDFTemplate::drawCellNumber(QPainter& painter, QRect rect,
       circlePen.setWidth(mm2px(0.3));
       painter.setPen(circlePen);
       QFontMetrics fm(font);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
       int keyR_width =
         std::max(param(RowHeight), fm.horizontalAdvance(str) + mm2px(1));
-#else
-      int keyR_width =
-        std::max(param(RowHeight), fm.boundingRect(str).width() + mm2px(1));
-#endif
       QRect keyR(0, 0, keyR_width, param(RowHeight));
       keyR.moveCenter(rect.center());
       painter.drawEllipse(keyR);
@@ -1693,11 +1688,7 @@ XSheetPDFTemplate_Custom::XSheetPDFTemplate_Custom(
     m_p.documentPageSize = str2PageSizeId(pageStr);
 
     QString marginStr = s.value("Margin").toString();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     QStringList m = marginStr.split(QLatin1Char(','), Qt::SkipEmptyParts);
-#else
-    QStringList m = marginStr.split(QLatin1Char(','), QString::SkipEmptyParts);
-#endif
     assert(m.size() == 4);
     if (m.size() == 4)
       m_p.documentMargin = QMarginsF(m[0].toDouble(), m[1].toDouble(),
@@ -1739,12 +1730,7 @@ XSheetPDFTemplate_Custom::XSheetPDFTemplate_Custom(
     {
       for (auto key : s.childKeys()) {
         QString rectStr = s.value(key).toString();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
         QStringList r = rectStr.split(QLatin1Char(','), Qt::SkipEmptyParts);
-#else
-        QStringList r =
-            rectStr.split(QLatin1Char(','), QString::SkipEmptyParts);
-#endif
         assert(r.size() == 4);
         if (r.size() == 4)
           m_dataRects[dataStr2Type(key)] =

@@ -1049,11 +1049,7 @@ QString Preferences::getCurrentStyleSheet() const {
   // to apply an extra adjustment when it is run on the older versions (5.9.x)
   // of Qt
   // Update: confirmed that the bug does not appear at least in Qt 5.12.8
-#if QT_VERSION < QT_VERSION_CHECK(5, 12, 9)
-  baseSheetStr += "QMenu::Item{ padding: 3 28 3 28; }";
-#else
   baseSheetStr += "QMenu::Item{ padding: 3 28 3 8; }";
-#endif
 
 // Linux system font size appears a lot smaller than it should be despite
 // setting QApplication's setPixelSize = 12 in main.cpp. We'll correct it using

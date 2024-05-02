@@ -179,11 +179,7 @@ TPoint TFont::drawChar(QImage &outImage, TPoint &unused, wchar_t charcode,
   // (21/1/2022) Use this workaround for all platforms as the crash also
   // occurred in windows when the display is scaled up.
   if (chars[0].isSpace()) {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
     int w = QFontMetrics(m_pimpl->m_font).horizontalAdvance(chars[0]);
-#else
-    int w = raw.averageCharWidth();
-#endif
 
     outImage =
         QImage(w, raw.ascent() + raw.descent(), QImage::Format_Grayscale8);
@@ -285,11 +281,7 @@ TPoint TFont::drawChar(TRaster32P &outImage, TPoint &unused, TPixel32 color,
 
 TPoint TFont::getDistance(wchar_t firstChar, wchar_t secondChar) const {
   QFontMetrics metrics(m_pimpl->m_font);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
   return TPoint(metrics.horizontalAdvance(QChar(firstChar)), 0);
-#else
-  return TPoint(metrics.width(QChar(firstChar)), 0);
-#endif
 }
 
 //-----------------------------------------------------------------------------

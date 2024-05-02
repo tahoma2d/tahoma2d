@@ -265,15 +265,9 @@ void ParamsPage::setPageField(TIStream &is, const TFxP &fx, bool isVertical) {
           tmpWidget->setVisible(shrink == 1);
         } else {  // modeSensitiveStr != ""
           QList<int> modes;
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
           QStringList modeListStr =
               QString::fromStdString(is.getTagAttribute("mode"))
                   .split(',', Qt::SkipEmptyParts);
-#else
-          QStringList modeListStr =
-              QString::fromStdString(is.getTagAttribute("mode"))
-                  .split(',', QString::SkipEmptyParts);
-#endif
           for (QString modeNum : modeListStr) modes.push_back(modeNum.toInt());
           // find the mode combobox
           ModeChangerParamField *modeChanger = nullptr;
@@ -632,11 +626,7 @@ void updateMaximumPageSize(QGridLayout *layout, int &maxLabelWidth,
     QGroupBox *gBox =
         dynamic_cast<QGroupBox *>(layout->itemAtPosition(r, 0)->widget());
     if (label) {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
       int tmpWidth = label->fontMetrics().horizontalAdvance(label->text());
-#else
-      int tmpWidth = label->fontMetrics().width(label->text());
-#endif
       if (maxLabelWidth < tmpWidth) maxLabelWidth = tmpWidth;
     }
     /*-- PlugInFxのGroupパラメータのサイズ --*/

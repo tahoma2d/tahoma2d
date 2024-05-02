@@ -299,9 +299,7 @@ PreferencesPopup::Display30bitChecker::GLView::GLView(QWidget* parent,
                                                       bool is30bit)
     : QOpenGLWidget(parent), m_is30bit(is30bit) {
   setFixedSize(500, 100);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   if (m_is30bit) setTextureFormat(TGL_TexFmt10);
-#endif
 }
 
 void PreferencesPopup::Display30bitChecker::GLView::initializeGL() {
@@ -1851,11 +1849,9 @@ QWidget* PreferencesPopup::createInterfacePage() {
 
   QGridLayout* colorCalibLay = insertGroupBoxUI(colorCalibrationEnabled, lay);
   { insertUI(colorCalibrationLutPaths, colorCalibLay); }
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   insertUI(displayIn30bit, lay);
   row = lay->rowCount();
   lay->addWidget(check30bitBtn, row - 1, 2, Qt::AlignRight);
-#endif
   if (Preferences::instance()->isShowAdvancedOptionsEnabled())
     insertUI(showIconsInMenu, lay);
 
@@ -2383,7 +2379,7 @@ QWidget* PreferencesPopup::createVersionControlPage() {
 
 QWidget* PreferencesPopup::createTouchTabletPage() {
   bool winInkAvailable = false;
-#if defined(_WIN32) && QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
+#if defined(_WIN32)
   winInkAvailable = KisTabletSupportWin8::isAvailable();
 #endif
 
