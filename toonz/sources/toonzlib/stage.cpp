@@ -45,7 +45,7 @@
 #include <QPainter>
 #include <QPolygon>
 #include <QThreadStorage>
-#include <QMatrix>
+#include <QTransform>
 
 #include "toonz/stage.h"
 

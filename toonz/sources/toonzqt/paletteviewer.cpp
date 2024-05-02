@@ -158,7 +158,7 @@ PaletteViewer::PaletteViewer(QWidget *parent, PaletteViewType viewType,
   }
 
   QHBoxLayout *newPageLayout = new QHBoxLayout(toolBarWidget);
-  newPageLayout->setMargin(0);
+  newPageLayout->setContentsMargins(0, 0, 0, 0);
   newPageLayout->setSpacing(0);
   newPageLayout->addWidget(m_newPageToolbar, 0, Qt::AlignRight);
   newPageWidget->setLayout(newPageLayout);
@@ -166,7 +166,7 @@ PaletteViewer::PaletteViewer(QWidget *parent, PaletteViewType viewType,
   createToolBar();
 
   QHBoxLayout *toolBarLayout = new QHBoxLayout(toolBarWidget);
-  toolBarLayout->setMargin(0);
+  toolBarLayout->setContentsMargins(0, 0, 0, 0);
   toolBarLayout->setSpacing(0);
   {
     toolBarLayout->addWidget(m_paletteToolBar, 0, Qt::AlignLeft);
@@ -182,12 +182,12 @@ PaletteViewer::PaletteViewer(QWidget *parent, PaletteViewType viewType,
   m_tabBarContainer = new TabBarContainter(this);
 
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
   {
     // To add 6px (on the left) before the TabBar
     QHBoxLayout *hLayout = new QHBoxLayout;
-    hLayout->setMargin(0);
+    hLayout->setContentsMargins(0, 0, 0, 0);
     // hLayout->setAlignment(Qt::AlignLeft);
     // hLayout->addSpacing(6);
     {
@@ -201,7 +201,7 @@ PaletteViewer::PaletteViewer(QWidget *parent, PaletteViewType viewType,
     mainLayout->addWidget(m_pageViewerScrollArea, 1);
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
-    bottomLayout->setMargin(0);
+    bottomLayout->setContentsMargins(0, 0, 0, 0);
     bottomLayout->addWidget(toolbarScrollWidget, 0);
     outerToolbarFrame->setLayout(bottomLayout);
     mainLayout->addWidget(outerToolbarFrame);

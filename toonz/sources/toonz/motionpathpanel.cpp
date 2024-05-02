@@ -53,11 +53,11 @@ double distanceSquared(QPoint p1, QPoint p2) {
 MotionPathPanel::MotionPathPanel(QWidget* parent)
     : QWidget(parent), m_currentSpline(0), m_playbackExecutor() {
   m_outsideLayout = new QVBoxLayout();
-  m_outsideLayout->setMargin(0);
+  m_outsideLayout->setContentsMargins(0, 0, 0, 0);
   m_outsideLayout->setSpacing(0);
 
   m_insideLayout = new QVBoxLayout();
-  m_insideLayout->setMargin(0);
+  m_insideLayout->setContentsMargins(0, 0, 0, 0);
   m_insideLayout->setSpacing(0);
 
   m_pathsLayout = new QGridLayout();
@@ -103,7 +103,7 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
   m_toolbar->setIconSize(QSize(16, 16));
   m_toolLayout = new QHBoxLayout();
   m_toolLayout->setSpacing(2);
-  m_toolLayout->setMargin(2);
+  m_toolLayout->setContentsMargins(2, 2, 2, 2);
   m_toolLayout->addWidget(m_toolbar);
 
   QStringList geomOptions;
@@ -136,11 +136,11 @@ MotionPathPanel::MotionPathPanel(QWidget* parent)
   container->setLayout(m_toolLayout);
 
   m_controlsLayout = new QVBoxLayout();
-  m_controlsLayout->setMargin(10);
+  m_controlsLayout->setContentsMargins(10, 10, 10, 10);;
   m_controlsLayout->setSpacing(3);
 
   QHBoxLayout* graphLayout = new QHBoxLayout();
-  graphLayout->setMargin(0);
+  graphLayout->setContentsMargins(0, 0, 0, 0);
   graphLayout->setSpacing(0);
   graphLayout->addWidget(m_graphArea);
 

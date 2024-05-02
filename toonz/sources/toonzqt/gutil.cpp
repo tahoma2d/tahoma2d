@@ -30,7 +30,7 @@
 #include <QKeyEvent>
 #include <QUrl>
 #include <QFileInfo>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QSvgRenderer>
 #include <QScreen>
 #include <QWindow>
@@ -44,7 +44,7 @@ inline bool hasScreensWithDifferentDevPixRatio() {
   static bool ret     = false;
   static bool checked = false;
   if (!checked) {  // check once
-    int dpr = QApplication::desktop()->devicePixelRatio();
+    int dpr = QApplication::primaryScreen()->devicePixelRatio();
     for (auto screen : QGuiApplication::screens()) {
       if ((int)screen->devicePixelRatio() != dpr) {
         ret = true;
@@ -192,7 +192,7 @@ int getDevicePixelRatio(const QWidget *widget) {
   if (hasScreensWithDifferentDevPixRatio() && widget) {
     return widget->screen()->devicePixelRatio();
   }
-  static int devPixRatio = QApplication::desktop()->devicePixelRatio();
+  static int devPixRatio = QApplication::primaryScreen()->devicePixelRatio();
   return devPixRatio;
 }
 
@@ -777,7 +777,7 @@ QString elideText(const QString &srcText, const QFont &font, int width) {
   QFontMetrics metrix(font);
   int srcWidth = metrix.horizontalAdvance(srcText);
   if (srcWidth < width) return srcText;
-  int tilde = metrix.width("~");
+  int tilde = metrix.horizontalAdvance("~");
   int block = (width - tilde) / 2;
   QString text("");
   int i;

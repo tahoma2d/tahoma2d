@@ -5,7 +5,7 @@
 
 #include <QOpenGLWidget>
 #include <QApplication>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QOpenGLFunctions>
 #include "toonzqt/gutil.h"
 

@@ -17,6 +17,8 @@ class ScreenPicker final : public QObject, public DVGui::ScreenBoard::Drawing {
 
   bool m_mousePressed, m_mouseGrabbed;
 
+  QWidget *m_pickWidget;
+
 public:
   ScreenPicker(QWidget *parent = 0);
 

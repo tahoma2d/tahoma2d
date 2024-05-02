@@ -944,7 +944,7 @@ void HexagonalColorWheel::mouseReleaseEvent(QMouseEvent *event) {
 void HexagonalColorWheel::clickLeftWheel(const QPoint &pos) {
   QLineF p(m_wp[0] + m_wheelPosition, QPointF(pos));
   QLineF horizontal(0, 0, 1, 0);
-  float theta = (p.dy() < 0) ? p.angle(horizontal) : 360 - p.angle(horizontal);
+  float theta = (p.dy() < 0) ? p.angleTo(horizontal) : 360 - p.angleTo(horizontal);
   float phi   = theta;
   while (phi >= 60.0f) phi -= 60.0f;
   phi -= 30.0f;
@@ -1291,7 +1291,7 @@ ColorSliderBar::ColorSliderBar(QWidget *parent, Qt::Orientation orientation)
     layout = new QVBoxLayout(this);
 
   layout->setSpacing(0);
-  layout->setMargin(0);
+  layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(first, 0, Qt::AlignCenter);
   layout->addWidget(m_colorSlider, 1);
   layout->addWidget(last, 0, Qt::AlignCenter);
@@ -1397,7 +1397,7 @@ ColorChannelControl::ColorChannelControl(ColorChannel channel, QWidget *parent)
   m_label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
 
   m_field->setObjectName("colorSliderField");
-  m_field->setFixedWidth(fontMetrics().width('0') * 4);
+  m_field->setFixedWidth(fontMetrics().horizontalAdvance('0') * 4);
   m_field->setMinimumHeight(7);
 
   addButton->setObjectName("colorSliderAddButton");
@@ -1418,7 +1418,7 @@ ColorChannelControl::ColorChannelControl(ColorChannel channel, QWidget *parent)
   subButton->setFocusPolicy(Qt::NoFocus);
 
   QHBoxLayout *mainLayout = new QHBoxLayout(this);
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(1);
   {
     mainLayout->addWidget(m_label, 0);
@@ -1681,21 +1681,21 @@ PlainColorPage::PlainColorPage(QWidget *parent)
   // layout
   QVBoxLayout *mainLayout = new QVBoxLayout();
   mainLayout->setSpacing(0);
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   {
     QHBoxLayout *wheelLayout = new QHBoxLayout();
-    wheelLayout->setMargin(5);
+    wheelLayout->setContentsMargins(5, 5, 5, 5);
     wheelLayout->setSpacing(0);
     { wheelLayout->addWidget(m_hexagonalColorWheel); }
     m_wheelFrame->setLayout(wheelLayout);
     m_vSplitter->addWidget(m_wheelFrame);
 
     QVBoxLayout *slidersLayout = new QVBoxLayout();
-    slidersLayout->setMargin(0);
+    slidersLayout->setContentsMargins(0, 0, 0, 0);
     slidersLayout->setSpacing(0);
     {
       QVBoxLayout *hsvLayout = new QVBoxLayout();
-      hsvLayout->setMargin(4);
+      hsvLayout->setContentsMargins(4, 4, 4, 4);
       hsvLayout->setSpacing(4);
       {
         hsvLayout->addWidget(m_channelControls[eHue]);
@@ -1706,14 +1706,14 @@ PlainColorPage::PlainColorPage(QWidget *parent)
       slidersLayout->addWidget(m_hsvFrame, 3);
 
       QVBoxLayout *alphaLayout = new QVBoxLayout();
-      alphaLayout->setMargin(4);
+      alphaLayout->setContentsMargins(4, 4, 4, 4);
       alphaLayout->setSpacing(4);
       { alphaLayout->addWidget(m_channelControls[eAlpha]); }
       m_alphaFrame->setLayout(alphaLayout);
       slidersLayout->addWidget(m_alphaFrame, 1);
 
       QVBoxLayout *rgbLayout = new QVBoxLayout();
-      rgbLayout->setMargin(4);
+      rgbLayout->setContentsMargins(4, 4, 4, 4);
       rgbLayout->setSpacing(4);
       {
         rgbLayout->addWidget(m_channelControls[eRed]);
@@ -1932,7 +1932,7 @@ void StyleChooserPage::paintEvent(QPaintEvent *) {
 
   QPainter p(this);
   // p.setRenderHint(QPainter::SmoothPixmapTransform);
-  bool origAA = p.testRenderHint(QPainter::HighQualityAntialiasing);
+  bool origAA = p.testRenderHint(QPainter::Antialiasing);
   bool origS  = p.testRenderHint(QPainter::SmoothPixmapTransform);
   if (m_chipPerRow == 0 || getChipCount() == 0) return;
 
@@ -1978,10 +1978,10 @@ void StyleChooserPage::paintEvent(QPaintEvent *) {
         QPen checkPen(Qt::red);
         checkPen.setWidthF(1.5);
         p.setPen(checkPen);
-        if (!origAA) p.setRenderHint(QPainter::HighQualityAntialiasing, true);
+        if (!origAA) p.setRenderHint(QPainter::Antialiasing, true);
         if (!origS) p.setRenderHint(QPainter::SmoothPixmapTransform, true);
         p.drawPath(checkmark);
-        p.setRenderHint(QPainter::HighQualityAntialiasing, origAA);
+        p.setRenderHint(QPainter::Antialiasing, origAA);
         p.setRenderHint(QPainter::SmoothPixmapTransform, origS);
       }
 
@@ -3627,7 +3627,7 @@ SettingBox::SettingBox(QWidget *parent, int index)
 {
         QHBoxLayout* hLayout = new QHBoxLayout(this);
         hLayout->setSpacing(5);
-        hLayout->setMargin(0);
+        hLayout->setContentsMargins(0, 0, 0, 0);
         hLayout->addSpacing(10);
         m_name = new QLabel(this);
         m_name->setFixedSize(82,20);
@@ -3727,7 +3727,7 @@ SettingsPage::SettingsPage(QWidget *parent)
   setWidget(paramsContainer);
 
   QVBoxLayout *paramsContainerLayout = new QVBoxLayout(this);
-  paramsContainerLayout->setMargin(10);
+  paramsContainerLayout->setContentsMargins(10, 10, 10, 10);;
   paramsContainerLayout->setSpacing(10);
   paramsContainer->setLayout(paramsContainerLayout);
 
@@ -3742,7 +3742,7 @@ SettingsPage::SettingsPage(QWidget *parent)
 
   // Prepare the style parameters layout
   m_paramsLayout = new QGridLayout;
-  m_paramsLayout->setMargin(0);
+  m_paramsLayout->setContentsMargins(0, 0, 0, 0);
   m_paramsLayout->setVerticalSpacing(8);
   m_paramsLayout->setHorizontalSpacing(5);
   paramsContainerLayout->addLayout(m_paramsLayout);
@@ -4228,11 +4228,11 @@ StyleEditor::StyleEditor(PaletteController *paletteController, QWidget *parent)
 
   /* ------- layout ------- */
   QGridLayout *mainLayout = new QGridLayout;
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
   {
     QHBoxLayout *hLayout = new QHBoxLayout;
-    hLayout->setMargin(0);
+    hLayout->setContentsMargins(0, 0, 0, 0);
     {
       hLayout->addSpacing(0);
       hLayout->addWidget(m_styleBar);
@@ -4396,7 +4396,7 @@ QFrame *StyleEditor::createBottomWidget() {
 
   m_autoApplyWidget = new QWidget(this);
   QHBoxLayout *autoApplyLayout = new QHBoxLayout;
-  autoApplyLayout->setMargin(0);
+  autoApplyLayout->setContentsMargins(0, 0, 0, 0);
   autoApplyLayout->setSpacing(0);
   {
     autoApplyLayout->addWidget(m_autoButton);
@@ -4408,17 +4408,17 @@ QFrame *StyleEditor::createBottomWidget() {
 
   /* ------ layout ------ */
   QHBoxLayout *mainLayout = new QHBoxLayout;
-  mainLayout->setMargin(2);
+  mainLayout->setContentsMargins(2, 2, 2, 2);
   mainLayout->setSpacing(0);
   {
     mainLayout->addWidget(m_autoApplyWidget);
 
     QVBoxLayout *colorLay = new QVBoxLayout();
-    colorLay->setMargin(0);
+    colorLay->setContentsMargins(0, 0, 0, 0);
     colorLay->setSpacing(0);
     {
       QHBoxLayout *chipLay = new QHBoxLayout();
-      chipLay->setMargin(0);
+      chipLay->setContentsMargins(0, 0, 0, 0);
       chipLay->setSpacing(0);
       {
         chipLay->addWidget(m_newColor, 1);
@@ -4432,7 +4432,7 @@ QFrame *StyleEditor::createBottomWidget() {
     mainLayout->addLayout(colorLay, 1);
 
     QVBoxLayout *hexLay = new QVBoxLayout();
-    hexLay->setMargin(0);
+    hexLay->setContentsMargins(0, 0, 0, 0);
     hexLay->setSpacing(0);
     {
       hexLay->addWidget(m_hexLineEdit);
@@ -4502,12 +4502,12 @@ QFrame *StyleEditor::createTexturePage() {
 
   /* ------ layout ------ */
   QVBoxLayout *textureOutsideLayout = new QVBoxLayout();
-  textureOutsideLayout->setMargin(0);
+  textureOutsideLayout->setContentsMargins(0, 0, 0, 0);
   textureOutsideLayout->setSpacing(0);
   textureOutsideLayout->setSizeConstraint(QLayout::SetNoConstraint);
   {
     QVBoxLayout *textureLayout = new QVBoxLayout();
-    textureLayout->setMargin(0);
+    textureLayout->setContentsMargins(0, 0, 0, 0);
     textureLayout->setSpacing(0);
     textureLayout->setSizeConstraint(QLayout::SetNoConstraint);
     {
@@ -4516,7 +4516,7 @@ QFrame *StyleEditor::createTexturePage() {
       std::vector<QPushButton *>::iterator itB      = m_textureButtons.begin();
       for (; itP != m_texturePages.end(); itP++, itL++, itB++) {
         QHBoxLayout *setLabelLay = new QHBoxLayout();
-        setLabelLay->setMargin(0);
+        setLabelLay->setContentsMargins(0, 0, 0, 0);
         setLabelLay->setSpacing(3);
         {
           setLabelLay->addWidget(*itB, 0);
@@ -4536,7 +4536,7 @@ QFrame *StyleEditor::createTexturePage() {
     textureOutsideLayout->addWidget(m_textureArea);
 
     QHBoxLayout *searchLayout = new QHBoxLayout();
-    searchLayout->setMargin(2);
+    searchLayout->setContentsMargins(2, 2, 2, 2);
     searchLayout->setSpacing(0);
     searchLayout->setSizeConstraint(QLayout::SetNoConstraint);
     {
@@ -4574,12 +4574,12 @@ QFrame *StyleEditor::createVectorPage() {
 
   /* ------ layout ------ */
   QVBoxLayout *vectorOutsideLayout = new QVBoxLayout();
-  vectorOutsideLayout->setMargin(0);
+  vectorOutsideLayout->setContentsMargins(0, 0, 0, 0);
   vectorOutsideLayout->setSpacing(0);
   vectorOutsideLayout->setSizeConstraint(QLayout::SetNoConstraint);
   {
     QVBoxLayout *vectorLayout = new QVBoxLayout();
-    vectorLayout->setMargin(0);
+    vectorLayout->setContentsMargins(0, 0, 0, 0);
     vectorLayout->setSpacing(0);
     vectorLayout->setSizeConstraint(QLayout::SetNoConstraint);
     {
@@ -4588,7 +4588,7 @@ QFrame *StyleEditor::createVectorPage() {
       std::vector<QPushButton *>::iterator itB      = m_vectorButtons.begin();
       for (; itP != m_vectorPages.end(); itP++, itL++, itB++) {
         QHBoxLayout *setLabelLay = new QHBoxLayout();
-        setLabelLay->setMargin(0);
+        setLabelLay->setContentsMargins(0, 0, 0, 0);
         setLabelLay->setSpacing(3);
         {
           setLabelLay->addWidget(*itB, 0);
@@ -4608,7 +4608,7 @@ QFrame *StyleEditor::createVectorPage() {
     vectorOutsideLayout->addWidget(m_vectorArea);
 
     QHBoxLayout *searchLayout = new QHBoxLayout();
-    searchLayout->setMargin(2);
+    searchLayout->setContentsMargins(2, 2, 2, 2);
     searchLayout->setSpacing(0);
     searchLayout->setSizeConstraint(QLayout::SetNoConstraint);
     {
@@ -4647,12 +4647,12 @@ QFrame *StyleEditor::createRasterPage() {
 
   /* ------ layout ------ */
   QVBoxLayout *rasterOutsideLayout = new QVBoxLayout();
-  rasterOutsideLayout->setMargin(0);
+  rasterOutsideLayout->setContentsMargins(0, 0, 0, 0);
   rasterOutsideLayout->setSpacing(0);
   rasterOutsideLayout->setSizeConstraint(QLayout::SetNoConstraint);
   {
     QVBoxLayout *rasterLayout = new QVBoxLayout();
-    rasterLayout->setMargin(0);
+    rasterLayout->setContentsMargins(0, 0, 0, 0);
     rasterLayout->setSpacing(0);
     rasterLayout->setSizeConstraint(QLayout::SetNoConstraint);
     {
@@ -4661,7 +4661,7 @@ QFrame *StyleEditor::createRasterPage() {
       std::vector<QPushButton *>::iterator itB      = m_rasterButtons.begin();
       for (; itP != m_rasterPages.end(); itP++, itL++, itB++) {
         QHBoxLayout *setLabelLay = new QHBoxLayout();
-        setLabelLay->setMargin(0);
+        setLabelLay->setContentsMargins(0, 0, 0, 0);
         setLabelLay->setSpacing(3);
         {
           setLabelLay->addWidget(*itB, 0);
@@ -4681,7 +4681,7 @@ QFrame *StyleEditor::createRasterPage() {
     rasterOutsideLayout->addWidget(m_rasterArea);
 
     QHBoxLayout *searchLayout = new QHBoxLayout();
-    searchLayout->setMargin(2);
+    searchLayout->setContentsMargins(2, 2, 2, 2);
     searchLayout->setSpacing(0);
     searchLayout->setSizeConstraint(QLayout::SetNoConstraint);
     {
@@ -7242,7 +7242,7 @@ NewStyleSetPopup::NewStyleSetPopup(StylePageType pageType, QWidget *parent)
   connect(okBtn, SIGNAL(clicked()), this, SLOT(createStyleSet()));
   connect(cancelBtn, SIGNAL(clicked()), this, SLOT(reject()));
 
-  m_buttonLayout->setMargin(0);
+  m_buttonLayout->setContentsMargins(0, 0, 0, 0);
   m_buttonLayout->setSpacing(20);
   {
     m_buttonLayout->addStretch();
@@ -7251,11 +7251,11 @@ NewStyleSetPopup::NewStyleSetPopup(StylePageType pageType, QWidget *parent)
   }
 
   //----layout
-  m_topLayout->setMargin(5);
+  m_topLayout->setContentsMargins(5, 5, 5, 5);
   m_topLayout->setSpacing(10);
   {
     QGridLayout *upperLayout = new QGridLayout();
-    upperLayout->setMargin(5);
+    upperLayout->setContentsMargins(5, 5, 5, 5);
     upperLayout->setHorizontalSpacing(5);
     upperLayout->setVerticalSpacing(10);
     {

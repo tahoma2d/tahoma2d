@@ -1218,7 +1218,7 @@ StudioPaletteViewer::StudioPaletteViewer(QWidget *parent,
   // First Splitter Widget
   QWidget *treeWidget      = new QWidget(this);
   QVBoxLayout *treeVLayout = new QVBoxLayout(treeWidget);
-  treeVLayout->setMargin(0);
+  treeVLayout->setContentsMargins(0, 0, 0, 0);
   treeVLayout->setSpacing(0);
 
   m_studioPaletteTreeViewer = new StudioPaletteTreeViewer(

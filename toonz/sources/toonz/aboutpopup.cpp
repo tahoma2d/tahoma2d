@@ -5,7 +5,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QApplication>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QTextEdit>
 #include <QDesktopServices>
 

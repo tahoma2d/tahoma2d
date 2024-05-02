@@ -222,6 +222,7 @@ add_definitions(
     -DQT_NETWORK_LIB
     -DQT_CORE_LIB
     -DQT_SHARED
+    -DQT_DISABLE_DEPRECATED_BEFORE=0x050F02
 )
 
 # Find includes in corresponding build directories

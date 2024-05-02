@@ -405,11 +405,11 @@ ConvertPopup::ConvertPopup(bool specifyInput)
   m_progressDialog->setWindowModality(Qt::WindowModal);
 
   //----layout
-  m_topLayout->setMargin(5);
+  m_topLayout->setContentsMargins(5, 5, 5, 5);
   m_topLayout->setSpacing(5);
   {
     QGridLayout *upperLay = new QGridLayout();
-    upperLay->setMargin(0);
+    upperLay->setContentsMargins(0, 0, 0, 0);
     upperLay->setSpacing(5);
     {
       int row = 0;
@@ -461,7 +461,7 @@ ConvertPopup::ConvertPopup(bool specifyInput)
     m_topLayout->addWidget(m_tlvFrame);
   }
 
-  m_buttonLayout->setMargin(0);
+  m_buttonLayout->setContentsMargins(0, 0, 0, 0);
   m_buttonLayout->setSpacing(20);
   {
     m_buttonLayout->addWidget(m_okBtn);

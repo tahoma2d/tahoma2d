@@ -23,7 +23,7 @@
 // Qt includes
 #include <QTimer>
 #include <QMainWindow>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QFocusEvent>
 #include <QScreen>
 
@@ -45,10 +45,10 @@ HistogramPopup::HistogramPopup(QString title)
   m_histogram = new ComboHistogram(this);
 
   QVBoxLayout *mainLay = new QVBoxLayout();
-  mainLay->setMargin(0);
+  mainLay->setContentsMargins(0, 0, 0, 0);
   mainLay->setSpacing(0);
   { mainLay->addWidget(m_histogram); }
-  m_topLayout->setMargin(0);
+  m_topLayout->setContentsMargins(0, 0, 0, 0);
   m_topLayout->addLayout(mainLay);
   mainLay->setSizeConstraint(QLayout::SetFixedSize);
   setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);

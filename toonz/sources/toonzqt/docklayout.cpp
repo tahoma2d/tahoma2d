@@ -8,7 +8,7 @@
 
 #include <QTextStream>
 #include <QApplication>
-#include <QDesktopWidget>
+#include <QScreen>
 
 //========================================================
 
@@ -1536,8 +1536,7 @@ bool DockLayout::restoreState(const State &state) {
     if (item->m_saveIndex > 0) {
       // Ensure that floating panels are not placed in
       // unavailable positions
-      if ((geoms[j] & QApplication::desktop()->availableGeometry(item))
-              .isEmpty())
+      if ((geoms[j] & item->screen()->availableGeometry()).isEmpty())
         item->move(recoverX += 50, recoverY += 50);
 
       // Set floating appearances

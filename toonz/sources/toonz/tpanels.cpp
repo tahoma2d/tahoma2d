@@ -284,9 +284,12 @@ void SchematicScenePanel::onDeleteFxs(const FxSelection *selection) {
   if (!ColumnCmd::checkExpressionReferences(colIndices, fxs)) return;
 
   TApp *app = TApp::instance();
-  TFxCommand::deleteSelection(selection->getFxs().toStdList(),
-                              selection->getLinks().toStdList(),
-                              selection->getColumnIndexes().toStdList(),
+  TFxCommand::deleteSelection(
+      std::list<TFxP>(selection->getFxs().begin(), selection->getFxs().end()),
+      std::list<Link>(selection->getLinks().begin(),
+                      selection->getLinks().end()),
+      std::list<int>(selection->getColumnIndexes().begin(),
+                selection->getColumnIndexes().end()),
                               app->getCurrentXsheet(), app->getCurrentFx());
 }
 
@@ -300,8 +303,12 @@ void SchematicScenePanel::onDeleteStageObjects(
 
   TApp *app = TApp::instance();
   TStageObjectCmd::deleteSelection(
-      selection->getObjects().toVector().toStdVector(),
-      selection->getLinks().toStdList(), selection->getSplines().toStdList(),
+      std::vector<TStageObjectId>(selection->getObjects().toVector().begin(),
+                  selection->getObjects().toVector().end()),
+      std::list<QPair<TStageObjectId, TStageObjectId>>(
+          selection->getLinks().begin(), selection->getLinks().end()),
+      std::list<int>(selection->getSplines().begin(),
+                     selection->getSplines().end()),
       app->getCurrentXsheet(), app->getCurrentObject(), app->getCurrentFx());
 }
 
@@ -1636,7 +1643,7 @@ void FxSettingsPanel::restoreFloatingPanelState() {
 
   QRect geom = settings.value("geometry", saveGeometry()).toRect();
   // check if it can be visible in the current screen
-  if (!(geom & QApplication::desktop()->availableGeometry(this)).isEmpty())
+  if (!(geom & this->screen()->availableGeometry()).isEmpty())
     move(geom.topLeft());
 
   // FxSettings has no optional settings (SaveLoadQSettings) to load
@@ -1652,7 +1659,7 @@ public:
 
   TPanel *createPanel(QWidget *parent) override {
     FxSettingsPanel *panel = new FxSettingsPanel(parent);
-    panel->move(qApp->desktop()->screenGeometry(panel).center());
+    panel->move(panel->screen()->geometry().center());
     panel->setObjectName(getPanelType());
     panel->setWindowTitle(QObject::tr("Fx Settings"));
     panel->setMinimumSize(390, 85);
@@ -1769,7 +1776,7 @@ public:
 
   TPanel *createPanel(QWidget *parent) override {
     FxBrowserPanel *panel = new FxBrowserPanel(parent);
-    panel->move(qApp->desktop()->screenGeometry(panel).center());
+    panel->move(panel->screen()->geometry().center());
     panel->setObjectName(getPanelType());
     panel->setWindowTitle(QObject::tr("Fx Browser"));
     panel->setMinimumWidth(233);
@@ -1810,7 +1817,7 @@ public:
 
   TPanel *createPanel(QWidget *parent) override {
     LocatorPanel *panel = new LocatorPanel(parent);
-    panel->move(qApp->desktop()->screenGeometry(panel).center());
+    panel->move(panel->screen()->geometry().center());
     panel->setObjectName(getPanelType());
     panel->setWindowTitle(QObject::tr("Locator"));
     panel->allowMultipleInstances(false);

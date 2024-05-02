@@ -14,7 +14,7 @@
 #include <QTextBlock>
 #include <QMenuBar>
 #include <QPolygonF>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QClipboard>
 #include "tundo.h"
 #include "toonzqt/menubarcommand.h"

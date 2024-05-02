@@ -1138,7 +1138,7 @@ void DvDirModelRootNode::refreshDefaultProjectPath() {
       Preferences::instance()->getDefaultProjectPath();
   if (!defaultProjectPaths.isEmpty()) {
     QStringList projectRoots =
-        defaultProjectPaths.split(";", QString::SkipEmptyParts);
+        defaultProjectPaths.split(";", Qt::SkipEmptyParts);
     int folderCount = 0;
     for (int i = 0; i < projectRoots.size(); i++) {
       TFilePath projectRootDir(projectRoots.at(i));
@@ -1207,7 +1207,7 @@ void DvDirModelRootNode::refreshChildren() {
         Preferences::instance()->getDefaultProjectPath();
     if (!defaultProjectPaths.isEmpty()) {
       QStringList projectRoots =
-          defaultProjectPaths.split(";", QString::SkipEmptyParts);
+          defaultProjectPaths.split(";", Qt::SkipEmptyParts);
       for (int i = 0; i < projectRoots.size(); i++) {
         TFilePath projectRootDir(projectRoots.at(i));
         if (!TFileStatus(projectRootDir).isDirectory()) continue;

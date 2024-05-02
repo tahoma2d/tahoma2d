@@ -5,7 +5,7 @@
 #include <math.h>
 
 #include <QApplication>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QTextStream>
 #include <QFile>
 
@@ -2194,7 +2194,7 @@ TStroke *buildStroke(NSVGpath *path, float width, float scale) {
 //-----------------------------------------------------------------------------
 
 TImageP TImageReaderSvg::load() {
-  static int devPixRatio = QApplication::desktop()->devicePixelRatio();
+  static int devPixRatio = QApplication::primaryScreen()->devicePixelRatio();
 
   NSVGimage *svgImg =
       nsvgParseFromFile(m_path.getQString().toStdString().c_str());

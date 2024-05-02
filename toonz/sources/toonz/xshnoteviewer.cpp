@@ -63,7 +63,7 @@ NotePopup::NotePopup(XsheetViewer *viewer, int noteIndex)
   beginVLayout();
 
   QGridLayout *layout = new QGridLayout();
-  layout->setMargin(1);
+  layout->setContentsMargins(1, 1, 1, 1);
   layout->setColumnStretch(7, 10);
   layout->setColumnStretch(8, 10);
   int row = 0;
@@ -493,7 +493,7 @@ NoteArea::NoteArea(XsheetViewer *parent, Qt::WindowFlags flags)
   m_newLevelButton->setIcon(createQIcon("newmemo"));
   m_newLevelButton->setToolTip(tr("Add New Level"));
 
-  m_noteButton->getContentsMargins(0, 0, 0, 0);
+  m_noteButton->setContentsMargins(0, 0, 0, 0);
   m_noteButton->setStyleSheet("padding: 0px; margin: 0px;");
   m_noteButton->setObjectName("ToolbarToolButton");
   m_noteButton->setFixedSize(32, 16);
@@ -599,7 +599,7 @@ void NoteArea::createLayout() {
               SLOT(onClickHamburger()));
     }
     QVBoxLayout *lay = new QVBoxLayout();
-    lay->setMargin(5);
+    lay->setContentsMargins(5, 5, 5, 5);
     lay->setSpacing(5);
     lay->addWidget(m_hamburgerButton, 1, Qt::AlignCenter);
     setLayout(lay);
@@ -611,14 +611,14 @@ void NoteArea::createLayout() {
 
   // has two elements: main layout and header panel
   QVBoxLayout *panelLayout = new QVBoxLayout();
-  panelLayout->setMargin(1);
+  panelLayout->setContentsMargins(1, 1, 1, 1);
   panelLayout->setSpacing(0);
   {
     QBoxLayout *mainLayout = new QBoxLayout(QBoxLayout::Direction(
         o->dimension(PredefinedDimension::QBOXLAYOUT_DIRECTION)));
     Qt::AlignmentFlag centerAlign =
         Qt::AlignmentFlag(o->dimension(PredefinedDimension::CENTER_ALIGN));
-    mainLayout->setMargin(1);
+    mainLayout->setContentsMargins(1, 1, 1, 1);
     mainLayout->setSpacing(0);
     {
       mainLayout->addWidget(m_flipOrientationButton, 0, centerAlign);
@@ -630,7 +630,7 @@ void NoteArea::createLayout() {
       mainLayout->addStretch(1);
 
       QHBoxLayout *buttonsLayout = new QHBoxLayout();
-      buttonsLayout->setMargin(0);
+      buttonsLayout->setContentsMargins(0, 0, 0, 0);
       buttonsLayout->setSpacing(0);
       {
         buttonsLayout->addWidget(m_precNoteButton, 0);
@@ -761,13 +761,13 @@ FooterNoteArea::FooterNoteArea(QWidget *parent, XsheetViewer *viewer,
   m_noteButton     = new QToolButton(this);
   m_precNoteButton = new QToolButton(this);
   m_nextNoteButton = new QToolButton(this);
-  m_noteButton->getContentsMargins(0, 0, 0, 0);
+  m_noteButton->setContentsMargins(0, 0, 0, 0);
   m_noteButton->setStyleSheet("padding: 0px; margin: 0px;");
 
-  m_precNoteButton->getContentsMargins(0, 0, 0, 0);
+  m_precNoteButton->setContentsMargins(0, 0, 0, 0);
   m_precNoteButton->setStyleSheet("padding: 0px; margin: 0px;");
 
-  m_nextNoteButton->getContentsMargins(0, 0, 0, 0);
+  m_nextNoteButton->setContentsMargins(0, 0, 0, 0);
   m_nextNoteButton->setStyleSheet("padding: 0px; margin: 0px;");
 
   //-----
@@ -832,7 +832,7 @@ void FooterNoteArea::createLayout() {
   setFixedSize(rect.size());
 
   QHBoxLayout *buttonsLayout = new QHBoxLayout();
-  buttonsLayout->setMargin(0);
+  buttonsLayout->setContentsMargins(0, 0, 0, 0);
   buttonsLayout->setSpacing(0);
   {
     buttonsLayout->addWidget(m_precNoteButton, 0);

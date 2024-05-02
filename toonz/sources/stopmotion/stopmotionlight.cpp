@@ -5,7 +5,7 @@
 
 #include <QDialog>
 #include <QApplication>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QWindow>
 #include <QPainter>
 #include <QLabel>
@@ -24,7 +24,7 @@ TEnv::IntVar StopMotionBlackCapture("StopMotionBlackCapture", 0);
 
 StopMotionLight::StopMotionLight() {
   m_blackCapture = StopMotionBlackCapture;
-  m_screenCount  = QApplication::desktop()->screenCount();
+  m_screenCount  = QApplication::screens().size();
 
   for (int i = 0; i < m_screenCount; i++) {
     QScreen* screen      = QGuiApplication::screens().at(i);
@@ -45,7 +45,7 @@ StopMotionLight::StopMotionLight() {
   m_label1  = new QLabel();
   m_layout1 = new QHBoxLayout();
   m_layout1->addWidget(m_label1);
-  m_layout1->setMargin(0);
+  m_layout1->setContentsMargins(0, 0, 0, 0);
   m_layout1->setSpacing(0);
   m_fullScreen1->setLayout(m_layout1);
 
@@ -56,7 +56,7 @@ StopMotionLight::StopMotionLight() {
     m_label2  = new QLabel();
     m_layout2 = new QHBoxLayout();
     m_layout2->addWidget(m_label2);
-    m_layout2->setMargin(0);
+    m_layout2->setContentsMargins(0, 0, 0, 0);
     m_layout2->setSpacing(0);
     m_fullScreen2->setLayout(m_layout2);
 
@@ -67,7 +67,7 @@ StopMotionLight::StopMotionLight() {
       m_label3  = new QLabel();
       m_layout3 = new QHBoxLayout();
       m_layout3->addWidget(m_label3);
-      m_layout3->setMargin(0);
+      m_layout3->setContentsMargins(0, 0, 0, 0);
       m_layout3->setSpacing(0);
       m_fullScreen3->setLayout(m_layout3);
     }
@@ -188,7 +188,7 @@ void StopMotionLight::showOverlays() {
       m_label1->clear();
     }
     m_fullScreen1->showFullScreen();
-    m_fullScreen1->setGeometry(QApplication::desktop()->screenGeometry(0));
+    m_fullScreen1->setGeometry(QApplication::screens()[0]->geometry());
     m_shown = true;
   }
   if (m_screenCount > 1 && (getBlackCapture() || m_useScreen2Overlay) &&
@@ -199,7 +199,7 @@ void StopMotionLight::showOverlays() {
       m_label2->clear();
     }
     m_fullScreen2->showFullScreen();
-    m_fullScreen2->setGeometry(QApplication::desktop()->screenGeometry(1));
+    m_fullScreen2->setGeometry(QApplication::screens()[1]->geometry());
     m_shown = true;
   }
   if (m_screenCount > 2 && (getBlackCapture() || m_useScreen3Overlay) &&
@@ -210,7 +210,7 @@ void StopMotionLight::showOverlays() {
       m_label3->clear();
     }
     m_fullScreen3->showFullScreen();
-    m_fullScreen3->setGeometry(QApplication::desktop()->screenGeometry(2));
+    m_fullScreen3->setGeometry(QApplication::screens()[2]->geometry());
     m_shown = true;
   }
 

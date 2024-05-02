@@ -91,7 +91,7 @@ AlignmentPane::AlignmentPane(QWidget* parent, Qt::WindowFlags flags)
   connect(m_distributeVBtn, SIGNAL(clicked()), action, SLOT(trigger()));
 
   QGridLayout* mainlayout = new QGridLayout();
-  mainlayout->setMargin(5);
+  mainlayout->setContentsMargins(5, 5, 5, 5);
   mainlayout->setSpacing(2);
   {
     mainlayout->addWidget(new QLabel(tr("Relative to: ")), 0, 0,
@@ -100,7 +100,7 @@ AlignmentPane::AlignmentPane(QWidget* parent, Qt::WindowFlags flags)
 
     QGroupBox* alignBox      = new QGroupBox(tr("Align"), this);
     QGridLayout* alignLayout = new QGridLayout();
-    alignLayout->setMargin(1);
+    alignLayout->setContentsMargins(1, 1, 1, 1);
     alignLayout->setSpacing(1);
     {
       alignLayout->addWidget(m_alignLeftBtn, 0, 0, Qt::AlignCenter);
@@ -116,7 +116,7 @@ AlignmentPane::AlignmentPane(QWidget* parent, Qt::WindowFlags flags)
 
     QGroupBox* distributeBox      = new QGroupBox(tr("Distribute"), this);
     QGridLayout* distributeLayout = new QGridLayout();
-    distributeLayout->setMargin(1);
+    distributeLayout->setContentsMargins(1, 1, 1, 1);
     distributeLayout->setSpacing(1);
     {
       distributeLayout->addWidget(m_distributeHBtn, 0, 0, Qt::AlignCenter);

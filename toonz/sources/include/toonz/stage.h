@@ -32,7 +32,7 @@ class TRasterImage;
 class TToonzImage;
 class QPainter;
 class QPolygon;
-class QMatrix;
+class QTransform;
 //=============================================================================
 
 //=============================================================================

@@ -38,7 +38,7 @@ SVNLockFrameRangeDialog::SVNLockFrameRangeDialog(QWidget *parent,
 
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->setAlignment(Qt::AlignHCenter);
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
 
   QHBoxLayout *hLayout = new QHBoxLayout;
 
@@ -368,7 +368,7 @@ SVNLockMultiFrameRangeDialog::SVNLockMultiFrameRangeDialog(
 
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->setAlignment(Qt::AlignHCenter);
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
 
   QHBoxLayout *hLayout = new QHBoxLayout;
 
@@ -666,7 +666,7 @@ SVNUnlockFrameRangeDialog::SVNUnlockFrameRangeDialog(QWidget *parent,
 
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->setAlignment(Qt::AlignHCenter);
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
 
   QHBoxLayout *hLayout = new QHBoxLayout;
 
@@ -901,7 +901,7 @@ SVNUnlockMultiFrameRangeDialog::SVNUnlockMultiFrameRangeDialog(
 
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->setAlignment(Qt::AlignHCenter);
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
 
   QHBoxLayout *hLayout = new QHBoxLayout;
 

@@ -275,7 +275,7 @@ void DvDirTreeViewDelegate::setModelData(QWidget *editor,
                                          const QModelIndex &index) const {
   if (index.data().canConvert(QMetaType::QString)) {
     NodeEditor *nodeEditor = qobject_cast<NodeEditor *>(editor);
-    model->setData(index, qVariantFromValue(
+    model->setData(index, QVariant::fromValue(
                               nodeEditor->getText()));  // starEditor->text()));
   } else
     QAbstractItemDelegate::setModelData(editor, model, index);
@@ -1702,7 +1702,7 @@ NodeEditor::NodeEditor(QWidget *parent, QRect rect, int leftMargin)
   setGeometry(rect);
   m_lineEdit          = new LineEdit();
   QHBoxLayout *layout = new QHBoxLayout();
-  layout->setMargin(0);
+  layout->setContentsMargins(0, 0, 0, 0);
   layout->addSpacing(leftMargin);
   layout->addWidget(m_lineEdit);
   setLayout(layout);

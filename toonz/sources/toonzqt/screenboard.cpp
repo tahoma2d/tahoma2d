@@ -1,7 +1,7 @@
 
 
 #include <QPaintEvent>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QApplication>
 #include <QMetaObject>
 #include <QCursor>
@@ -178,8 +178,6 @@ void ScreenBoard::releaseMouse() {
 
 // Refresh the screen widgets pool, depending on stored drawings
 void ScreenBoard::reallocScreenWidgets() {
-  QDesktopWidget *desktop = QApplication::desktop();
-
   int i;
   int screensCount = QGuiApplication::screens().count();
 

@@ -177,7 +177,7 @@ CellMarksPopup::CellMarksPopup(QWidget *parent) : Dialog(parent) {
                                                 ->getCellMarks();
 
   QGridLayout *layout = new QGridLayout();
-  layout->setMargin(10);
+  layout->setContentsMargins(10, 10, 10, 10);;
   layout->setHorizontalSpacing(5);
   layout->setVerticalSpacing(10);
   {
@@ -203,7 +203,7 @@ CellMarksPopup::CellMarksPopup(QWidget *parent) : Dialog(parent) {
     }
   }
   layout->setColumnStretch(2, 1);
-  m_topLayout->setMargin(0);
+  m_topLayout->setContentsMargins(0, 0, 0, 0);
   m_topLayout->addLayout(layout);
 }
 
@@ -295,7 +295,7 @@ ColorFiltersPopup::ColorFiltersPopup(QWidget *parent) : Dialog(parent) {
                                                      ->getColorFilters();
 
   QGridLayout *layout = new QGridLayout();
-  layout->setMargin(10);
+  layout->setContentsMargins(10, 10, 10, 10);;
   layout->setHorizontalSpacing(5);
   layout->setVerticalSpacing(10);
   {
@@ -332,7 +332,7 @@ ColorFiltersPopup::ColorFiltersPopup(QWidget *parent) : Dialog(parent) {
     }
   }
   layout->setColumnStretch(1, 1);
-  m_topLayout->setMargin(0);
+  m_topLayout->setContentsMargins(0, 0, 0, 0);
   m_topLayout->addLayout(layout);
 }
 
@@ -528,7 +528,7 @@ SceneSettingsPopup::SceneSettingsPopup()
 
   // layout
   QGridLayout *mainLayout = new QGridLayout();
-  mainLayout->setMargin(10);
+  mainLayout->setContentsMargins(10, 10, 10, 10);;
   mainLayout->setHorizontalSpacing(5);
   mainLayout->setVerticalSpacing(15);
   {
@@ -593,7 +593,7 @@ SceneSettingsPopup::SceneSettingsPopup()
   mainLayout->setColumnStretch(3, 0);
   mainLayout->setColumnStretch(4, 1);
   mainLayout->setRowStretch(9, 1);
-  m_topLayout->setMargin(0);
+  m_topLayout->setContentsMargins(0, 0, 0, 0);
   m_topLayout->addLayout(mainLayout);
 
   // signal-slot connections

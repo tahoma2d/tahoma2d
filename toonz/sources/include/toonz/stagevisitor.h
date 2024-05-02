@@ -44,7 +44,7 @@ class TToonzImage;
 class TMeshImage;
 class QPainter;
 class QPolygon;
-class QMatrix;
+class QTransform;
 
 namespace Stage {
 class Player;
@@ -287,7 +287,7 @@ public:
   int getNodesCount();
   void clearNodes();
 
-  TRasterP getRaster(int index, QMatrix &matrix);
+  TRasterP getRaster(int index, QTransform &matrix);
 
   void flushRasterImages();
   void drawRasterImages(QPainter &p, QPolygon cameraRect);

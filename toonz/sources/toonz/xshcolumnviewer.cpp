@@ -66,7 +66,7 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QPushButton>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QGroupBox>
 
 #include <QBitmap>
@@ -612,7 +612,7 @@ void ChangeObjectParent::refresh() {
   for (i = 0; i < pegbarListID.size(); i++)
     addText(pegbarListID.at(i), pegbarListTr.at(i), pegbarListColor.at(i));
 
-  m_width = fontMetrics().width(theLongestTxt) + 32;
+  m_width = fontMetrics().horizontalAdvance(theLongestTxt) + 32;
   selectCurrent(currentId);
 }
 
@@ -1568,11 +1568,11 @@ void ColumnArea::DrawHeader::drawPegbarName() const {
   std::string handle = xsh->getStageObject(columnId)->getParentHandle();
   if (handle == "B") handleWidth = 0;  // Default handle
 
-  int width = QFontMetrics(font).width(name);
+  int width = QFontMetrics(font).horizontalAdvance(name);
 
   while (width > o->rect(PredefinedRect::PEGBAR_NAME).width() - handleWidth) {
     name.remove(-1, 1000);
-    width = QFontMetrics(font).width(name);
+    width = QFontMetrics(font).horizontalAdvance(name);
   }
 
   // pegbar name
@@ -2565,7 +2565,7 @@ m_value->setFont(font);*/
   m_maskGroupBox = new QGroupBox("Clipping Mask", this);
   m_maskGroupBox->setCheckable(true);
   QGridLayout *maskLay = new QGridLayout();
-  maskLay->setMargin(5);
+  maskLay->setContentsMargins(5, 5, 5, 5);
   maskLay->setHorizontalSpacing(6);
   maskLay->setVerticalSpacing(6);
   maskLay->setColumnStretch(2, 1);
@@ -2596,14 +2596,14 @@ m_value->setFont(font);*/
   }
 
   QGridLayout *mainLayout = new QGridLayout();
-  mainLayout->setMargin(3);
+  mainLayout->setContentsMargins(3, 3, 3, 3);
   mainLayout->setHorizontalSpacing(6);
   mainLayout->setVerticalSpacing(6);
   {
     mainLayout->addWidget(new QLabel(tr("Opacity:"), this), 0, 0,
                           Qt::AlignRight | Qt::AlignVCenter);
     QHBoxLayout *hlayout = new QHBoxLayout;
-    hlayout->setMargin(0);
+    hlayout->setContentsMargins(0, 0, 0, 0);
     hlayout->setSpacing(3);
     {
       hlayout->addWidget(m_slider);
@@ -2621,7 +2621,7 @@ m_value->setFont(font);*/
 
     if (m_lockBtn) {
       QHBoxLayout *lockLay = new QHBoxLayout();
-      lockLay->setMargin(0);
+      lockLay->setContentsMargins(0, 0, 0, 0);
       lockLay->setSpacing(3);
       {
         lockLay->addWidget(m_lockBtn, 0);
@@ -2862,12 +2862,12 @@ SoundColumnPopup::SoundColumnPopup(QWidget *parent)
   QLabel *sliderLabel = new QLabel(tr("Volume:"), this);
 
   QVBoxLayout *mainLayout = new QVBoxLayout();
-  mainLayout->setMargin(3);
+  mainLayout->setContentsMargins(3, 3, 3, 3);
   mainLayout->setSpacing(3);
   {
     QHBoxLayout *hlayout = new QHBoxLayout;
     // hlayout->setContentsMargins(0, 3, 0, 3);
-    hlayout->setMargin(0);
+    hlayout->setContentsMargins(0, 0, 0, 0);
     hlayout->setSpacing(3);
     hlayout->addWidget(sliderLabel, 0);
     hlayout->addWidget(m_slider);
@@ -3434,7 +3434,7 @@ void ColumnArea::mousePressEvent(QMouseEvent *event) {
     m_viewer->dragToolClick(event);
     update();
 
-  } else if (event->button() == Qt::MidButton) {
+  } else if (event->button() == Qt::MiddleButton) {
     m_viewer->setCurrentColumn(m_col);
     m_pos       = event->pos();
     m_isPanning = true;
@@ -3710,8 +3710,7 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
         openTransparencyPopup();
 
         // make sure the popup doesn't go off the screen to the right
-        QDesktopWidget *desktop = qApp->desktop();
-        QRect screenRect        = desktop->screenGeometry(app->getMainWindow());
+        QRect screenRect = QApplication::primaryScreen()->geometry();
 
         int popupLeft   = event->globalPos().x() + x;
         int popupRight  = popupLeft + m_columnTransparencyPopup->width();

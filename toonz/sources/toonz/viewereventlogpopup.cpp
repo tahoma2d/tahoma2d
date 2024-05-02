@@ -58,7 +58,7 @@ ViewerEventLogPopup::ViewerEventLogPopup(QWidget *parent)
 
   QFrame *filterBox          = new QFrame(this);
   QVBoxLayout *vFilterLayout = new QVBoxLayout(filterBox);
-  vFilterLayout->setMargin(10);
+  vFilterLayout->setContentsMargins(10, 10, 10, 10);
   vFilterLayout->setSpacing(5);
 
   vFilterLayout->addWidget(new QLabel(tr("Capture events:"), this));
@@ -156,7 +156,7 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
     QTabletEvent *te = dynamic_cast<QTabletEvent *>(e);
     QString operation =
         ((te->buttons() & Qt::LeftButton) ||
-         (te->buttons() & Qt::RightButton) || (te->buttons() & Qt::MidButton))
+         (te->buttons() & Qt::RightButton) || (te->buttons() & Qt::MiddleButton))
             ? tr("dragged")
             : tr("moved");
     float pressure = (int)(te->pressure() * 1000 + 0.5);
@@ -206,7 +206,7 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
             ? tr("LEFT")
             : (me->buttons() & Qt::RightButton)
                   ? tr("RIGHT")
-                  : (me->buttons() & Qt::MidButton) ? tr("MIDDLE") : tr("NO");
+                  : (me->buttons() & Qt::MiddleButton) ? tr("MIDDLE") : tr("NO");
 
     eventMsg = tr("Mouse %1 button pressed at X=%2 Y=%3")
                    .arg(usedButton)
@@ -220,7 +220,7 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
     QMouseEvent *me = dynamic_cast<QMouseEvent *>(e);
     QString operation =
         ((me->buttons() & Qt::LeftButton) ||
-         (me->buttons() & Qt::RightButton) || (me->buttons() & Qt::MidButton))
+         (me->buttons() & Qt::RightButton) || (me->buttons() & Qt::MiddleButton))
             ? tr("dragged")
             : tr("moved");
     eventMsg = tr("Mouse %1 to X=%2 Y=%3")
@@ -244,7 +244,7 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
             ? tr("LEFT")
             : (me->buttons() & Qt::RightButton)
                   ? tr("RIGHT")
-                  : (me->buttons() & Qt::MidButton) ? tr("MIDDLE") : tr("NO");
+                  : (me->buttons() & Qt::MiddleButton) ? tr("MIDDLE") : tr("NO");
 
     eventMsg = tr("Mouse %1 button double-clicked at X=%2 Y=%3")
                    .arg(usedButton)
