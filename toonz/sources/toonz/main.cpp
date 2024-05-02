@@ -77,7 +77,7 @@
 #include <QAbstractEventDispatcher>
 #include <QAbstractNativeEventFilter>
 #include <QSplashScreen>
-#include <QGLPixelBuffer>
+#include <QOpenGLFramebufferObject>
 #include <QTranslator>
 #include <QFileInfo>
 #include <QSettings>
@@ -558,10 +558,8 @@ int main(int argc, char *argv[]) {
   a.processEvents();
 
   // OpenGL
-  QGLFormat fmt;
-  fmt.setAlpha(true);
-  fmt.setStencil(true);
-  QGLFormat::setDefaultFormat(fmt);
+  QOpenGLFramebufferObjectFormat fmt;
+  fmt.setAttachment(QOpenGLFramebufferObject::Attachment::CombinedDepthStencil);
 
 #ifndef __HAIKU__
   glutInit(&argc, argv);

@@ -1779,7 +1779,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(refreshCameraListCalled()));
   ret = ret && connect(m_cameraListCombo, SIGNAL(activated(int)), this,
                        SLOT(onCameraListComboActivated(int)));
-  ret = ret && connect(m_resolutionCombo, SIGNAL(activated(const QString &)),
+  ret = ret && connect(m_resolutionCombo, SIGNAL(textActivated(const QString &)),
                        this, SLOT(onResolutionComboActivated(const QString &)));
   if (m_captureFilterSettingsBtn)
     ret = ret && connect(m_captureFilterSettingsBtn, SIGNAL(clicked()), this,

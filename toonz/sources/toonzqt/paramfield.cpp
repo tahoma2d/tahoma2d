@@ -1350,7 +1350,7 @@ EnumParamField::EnumParamField(QWidget *parent, QString name,
     QString str;
     m_om->addItem(str.fromStdString(caption));
   }
-  connect(m_om, SIGNAL(activated(const QString &)), this,
+  connect(m_om, SIGNAL(textActivated(const QString &)), this,
           SLOT(onChange(const QString &)));
   m_layout->addWidget(m_om);
 
@@ -1696,9 +1696,9 @@ FontParamField::FontParamField(QWidget *parent, QString name,
   setLayout(m_layout);
 
   bool ret = true;
-  ret = ret && connect(m_fontCombo, SIGNAL(activated(const QString &)), this,
+  ret = ret && connect(m_fontCombo, SIGNAL(textActivated(const QString &)), this,
                        SLOT(onChange()));
-  ret = ret && connect(m_styleCombo, SIGNAL(activated(const QString &)), this,
+  ret = ret && connect(m_styleCombo, SIGNAL(textActivated(const QString &)), this,
                        SLOT(onChange()));
   ret = ret && connect(m_sizeField, SIGNAL(valueChanged(bool)), this,
                        SLOT(onSizeChange(bool)));
@@ -2427,7 +2427,7 @@ RadioButton_enum::RadioButton_enum(QWidget *parent, QString name,
     m_layout->addWidget(button);
   }
 
-  connect(value_, SIGNAL(buttonClicked(int)), this, SLOT(update_value(int)));
+  connect(value_, SIGNAL(idClicked(int)), this, SLOT(update_value(int)));
 
   setLayout(m_layout);
 }

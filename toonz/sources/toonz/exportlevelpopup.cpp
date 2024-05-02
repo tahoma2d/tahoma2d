@@ -362,7 +362,7 @@ ExportLevelPopup::ExportLevelPopup()
   bool ret = true;
   ret      = connect(tabBar, SIGNAL(currentChanged(int)), stackedWidget,
                 SLOT(setCurrentIndex(int)));
-  ret      = connect(m_format, SIGNAL(currentIndexChanged(const QString &)),
+  ret      = connect(m_format, SIGNAL(currentTextChanged(const QString &)),
                 SLOT(onformatChanged(const QString &))) &&
         ret;
   ret = connect(m_retas, SIGNAL(stateChanged(int)), SLOT(onRetas(int))) && ret;

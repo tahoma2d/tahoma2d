@@ -171,7 +171,7 @@ Note that this mode uses regular expression for file name validation and may slo
   pm->addListener(this);
 
   //---------
-  connect(m_rulePreferenceBG, SIGNAL(buttonClicked(int)), this,
+  connect(m_rulePreferenceBG, SIGNAL(idClicked(int)), this,
           SLOT(onRulePreferenceToggled(int)));
 }
 
@@ -385,7 +385,7 @@ ProjectSettingsPopup::ProjectSettingsPopup() : ProjectPopup(false) {
   connect(m_useSubSceneCbs, SIGNAL(stateChanged(int)), this, SLOT(onSomethingChanged()));
 
   // file path settings
-  connect(m_rulePreferenceBG, SIGNAL(buttonClicked(int)), this,
+  connect(m_rulePreferenceBG, SIGNAL(idClicked(int)), this,
           SLOT(onSomethingChanged()));
   connect(m_acceptNonAlphabetSuffixCB, SIGNAL(clicked(bool)), this,
           SLOT(onSomethingChanged()));

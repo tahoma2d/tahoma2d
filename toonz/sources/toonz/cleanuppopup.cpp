@@ -1436,7 +1436,7 @@ CleanupPopup::OverwriteDialog::OverwriteDialog()
     : DVGui::ValidatedChoiceDialog(TApp::instance()->getMainWindow()) {
   setWindowTitle(tr("Warning!"));
 
-  bool ret = connect(m_buttonGroup, SIGNAL(buttonClicked(int)),
+  bool ret = connect(m_buttonGroup, SIGNAL(idClicked(int)),
                      SLOT(onButtonClicked(int)));
   assert(ret);
 

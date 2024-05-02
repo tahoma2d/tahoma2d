@@ -398,7 +398,7 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
   ret = ret && connect(m_useOverlaySettingsBtn, SIGNAL(clicked()), this,
                        SLOT(useOverlaySettings()));
 
-  ret = ret && connect(m_presetListOm, SIGNAL(activated(const QString &)),
+  ret = ret && connect(m_presetListOm, SIGNAL(textActivated(const QString &)),
                        SLOT(onPresetSelected(const QString &)));
   ret = ret && connect(m_addPresetBtn, SIGNAL(clicked()), SLOT(addPreset()));
   ret = ret &&

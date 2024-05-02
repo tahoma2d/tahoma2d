@@ -855,7 +855,7 @@ ExportPanel::ExportPanel(QWidget *parent, Qt::WindowFlags flags)
 
   m_fileFormat->addItems(formats);
   m_fileFormat->setFixedHeight(DVGui::WidgetHeight + 2);
-  connect(m_fileFormat, SIGNAL(currentIndexChanged(const QString &)),
+  connect(m_fileFormat, SIGNAL(currentTextChanged(const QString &)),
           SLOT(onFormatChanged(const QString &)));
 
   QPushButton *fileFormatButton = new QPushButton(QString(tr("Options")));

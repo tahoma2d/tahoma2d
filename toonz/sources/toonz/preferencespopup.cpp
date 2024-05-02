@@ -1080,7 +1080,7 @@ QWidget* PreferencesPopup::createUI(PreferencesItemId id,
     if (id == interfaceFont) {  // create QFontComboBox
       QFontComboBox* combo = new QFontComboBox(this);
       combo->setCurrentText(item.value.toString());
-      ret    = connect(combo, SIGNAL(currentIndexChanged(const QString&)), this,
+      ret    = connect(combo, SIGNAL(currentTextChanged(const QString&)), this,
                        SLOT(onInterfaceFontChanged(const QString&)));
       widget = combo;
     } else if (!comboItems.isEmpty()) {  // create QComboBox

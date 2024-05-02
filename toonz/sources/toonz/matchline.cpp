@@ -468,7 +468,7 @@ MatchlinesDialog::MatchlinesDialog()
           SLOT(onChooseInkClicked(bool)));
   connect(okBtn, SIGNAL(clicked()), this, SLOT(accept()));
   connect(cancelBtn, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(lineStackButtonGroup, SIGNAL(buttonPressed(int)),
+  connect(lineStackButtonGroup, SIGNAL(idPressed(int)),
           SLOT(onLineStackButtonPressed(int)));
   connect(m_inkPrevalence, SIGNAL(valueChanged(bool)),
           SLOT(onInkPrevalenceChanged(bool)));

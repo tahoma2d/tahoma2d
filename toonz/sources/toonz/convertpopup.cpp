@@ -487,14 +487,14 @@ ConvertPopup::ConvertPopup(bool specifyInput)
   qRegisterMetaType<TFilePath>("TFilePath");
 
   bool ret = true;
-  ret = ret && connect(m_tlvMode, SIGNAL(currentIndexChanged(const QString &)),
+  ret = ret && connect(m_tlvMode, SIGNAL(currentTextChanged(const QString &)),
                        this, SLOT(onTlvModeSelected(const QString &)));
   ret = ret && connect(m_fromFld, SIGNAL(editingFinished()), this,
                        SLOT(onRangeChanged()));
   ret = ret && connect(m_toFld, SIGNAL(editingFinished()), this,
                        SLOT(onRangeChanged()));
   ret =
-      ret && connect(m_fileFormat, SIGNAL(currentIndexChanged(const QString &)),
+      ret && connect(m_fileFormat, SIGNAL(currentTextChanged(const QString &)),
                      this, SLOT(onFormatSelected(const QString &)));
   ret = ret && connect(m_formatOptions, SIGNAL(clicked()), this,
                        SLOT(onOptionsClicked()));

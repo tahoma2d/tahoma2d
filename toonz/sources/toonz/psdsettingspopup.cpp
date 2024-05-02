@@ -227,10 +227,10 @@ PsdSettingsPopup::PsdSettingsPopup()
   folderOptLayout->addStretch();
   addLayout(folderOptLayout, false);
 
-  ret = ret && connect(m_loadMode, SIGNAL(currentIndexChanged(const QString &)),
+  ret = ret && connect(m_loadMode, SIGNAL(currentTextChanged(const QString &)),
                        SLOT(onModeChanged()));
   assert(ret);
-  ret = ret && connect(m_psdFolderOptions, SIGNAL(buttonClicked(int)), this,
+  ret = ret && connect(m_psdFolderOptions, SIGNAL(idClicked(int)), this,
                        SLOT(onFolderOptionChange(int)));
   assert(ret);
   m_okBtn     = new QPushButton(tr("OK"), this);

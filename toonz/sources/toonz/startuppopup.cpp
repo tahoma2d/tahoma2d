@@ -318,7 +318,7 @@ StartupPopup::StartupPopup()
         connect(m_resXFld, SIGNAL(valueChanged()), this, SLOT(updateSize()));
   ret = ret &&
         connect(m_resYFld, SIGNAL(valueChanged()), this, SLOT(updateSize()));
-  ret = ret && connect(m_presetCombo, SIGNAL(activated(const QString &)),
+  ret = ret && connect(m_presetCombo, SIGNAL(textActivated(const QString &)),
                        SLOT(onPresetSelected(const QString &)));
   ret = ret && connect(m_addPresetBtn, SIGNAL(clicked()), SLOT(addPreset()));
   ret = ret && connect(m_unitsCB, SIGNAL(currentIndexChanged(int)),

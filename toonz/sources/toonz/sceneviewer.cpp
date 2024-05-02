@@ -84,7 +84,7 @@
 #include <QApplication>
 #include <QScreen>
 #include <QInputMethod>
-#include <QGLContext>
+#include <QOpenGLContext>
 #include <QOpenGLFramebufferObject>
 #include <QMainWindow>
 

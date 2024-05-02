@@ -55,7 +55,7 @@
 #include <QDateTime>
 #include <QInputDialog>
 #include <QDesktopServices>
-#include <QDirModel>
+#include <QFileSystemModel>
 #include <QDir>
 #include <QPixmap>
 #include <QUrl>

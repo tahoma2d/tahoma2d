@@ -1748,7 +1748,7 @@ PlainColorPage::PlainColorPage(QWidget *parent)
   // SLOT(onWheelSliderReleased()));
   // connect( m_verticalSlider,		SIGNAL(sliderReleased()),	this,
   // SLOT(onWheelSliderReleased()));
-  // connect(channelButtonGroup, SIGNAL(buttonClicked(int)), this,
+  // connect(channelButtonGroup, SIGNAL(idClicked(int)), this,
   // SLOT(setWheelChannel(int)));
 }
 

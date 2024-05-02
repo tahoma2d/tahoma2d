@@ -190,7 +190,7 @@ void FormatSettingsPopup::buildPropertyComboBox(int index,
   m_widgets[prop->getName()]        = comboBox;
 
 #ifdef _WIN32
-  connect(comboBox, SIGNAL(currentIndexChanged(const QString &)), this,
+  connect(comboBox, SIGNAL(currentTextChanged(const QString &)), this,
           SLOT(onComboBoxIndexChanged(const QString &)));
 #endif
   TEnumProperty::Range range = prop->getRange();

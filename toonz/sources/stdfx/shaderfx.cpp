@@ -236,7 +236,7 @@ class ShadingContextManager final : public QObject {
 public:
   ShadingContextManager() {
     /*
-The ShadingContext's QGLPixelBuffer must be destroyed *before* the global
+The ShadingContext's QOpenGLFramebufferObject must be destroyed *before* the global
 QApplication
 is. So, we will attach to a suitable parent object whose lifespan is shorter.
 

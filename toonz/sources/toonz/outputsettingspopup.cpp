@@ -284,7 +284,7 @@ OutputSettingsPopup::OutputSettingsPopup(QWidget *parent, bool isPreview)
                        SLOT(onAddPresetButtonPressed()));
   ret = ret && connect(removePresetButton, SIGNAL(pressed()), this,
                        SLOT(onRemovePresetButtonPressed()));
-  ret = ret && connect(m_presetCombo, SIGNAL(activated(const QString &)), this,
+  ret = ret && connect(m_presetCombo, SIGNAL(textActivated(const QString &)), this,
                        SLOT(onPresetSelected(const QString &)));
 //  ret = ret && connect(categoryList, SIGNAL(itemClicked(QListWidgetItem *)),
 //                       this, SLOT(onCategoryActivated(QListWidgetItem *)));
@@ -584,7 +584,7 @@ QFrame *OutputSettingsPopup::createGeneralSettingsBox(bool isPreview) {
   ret = ret && connect(m_fileNameFld, SIGNAL(editingFinished()),
     SLOT(onNameChanged()));
   ret = ret &&
-    connect(m_fileFormat, SIGNAL(currentIndexChanged(const QString &)),
+    connect(m_fileFormat, SIGNAL(currentTextChanged(const QString &)),
       SLOT(onFormatChanged(const QString &)));
   ret = ret && connect(m_fileFormatButton, SIGNAL(pressed()), this,
     SLOT(openSettingsPopup()));
@@ -714,7 +714,7 @@ QFrame *OutputSettingsPopup::createCameraSettingsBox(bool isPreview) {
   }
 
   ret      = ret &&
-        connect(m_outputCameraOm, SIGNAL(currentIndexChanged(const QString &)),
+        connect(m_outputCameraOm, SIGNAL(currentTextChanged(const QString &)),
                 SLOT(onCameraChanged(const QString &)));
   ret = ret && connect(m_shrinkFld, SIGNAL(editingFinished()),
                        SLOT(onFrameFldEditFinished()));
