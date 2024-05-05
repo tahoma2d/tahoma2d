@@ -633,6 +633,9 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
   else
     point = TPointD(pos + rasCenter);
 
+  // Clicked with no movement. Make it look like it moved
+  if (m_strokeRect.isEmpty()) point += TPointD(1, 1);
+
   double pressure;
   if (getApplication()->getCurrentLevelStyle()->getTagId() ==
       4001)  // mypaint brush case
@@ -665,35 +668,36 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
   m_lastRect.empty();
   m_workRaster->unlock();
 
+  bool isEditingLevel = m_application->getCurrentFrame()->isEditingLevel();
+  bool renameColumn   = m_isFrameCreated;
+  if (!isEditingLevel && renameColumn) TUndoManager::manager()->beginBlock();
+  TTool::Application *app   = TTool::getApplication();
+  TXshLevel *level          = app->getCurrentLevel()->getLevel();
+  TXshSimpleLevelP simLevel = level->getSimpleLevel();
+
   if (m_tileSet->getTileCount() > 0) {
     delete m_tileSaver;
-    bool isEditingLevel = m_application->getCurrentFrame()->isEditingLevel();
-    bool renameColumn   = m_isFrameCreated;
-    if (!isEditingLevel && renameColumn) TUndoManager::manager()->beginBlock();
-    TTool::Application *app   = TTool::getApplication();
-    TXshLevel *level          = app->getCurrentLevel()->getLevel();
-    TXshSimpleLevelP simLevel = level->getSimpleLevel();
     TFrameId frameId          = getCurrentFid();
     TRasterP subras           = ras->extract(m_strokeRect)->clone();
     TUndoManager::manager()->add(new FullColorBrushUndo(
         m_tileSet, simLevel.getPointer(), frameId, m_isFrameCreated, subras,
         m_strokeRect.getP00()));
+  }
 
-    // Column name renamed to level name only if was originally empty
-    if (!isEditingLevel && renameColumn) {
-      int col            = app->getCurrentColumn()->getColumnIndex();
-      TXshColumn *column = app->getCurrentXsheet()->getXsheet()->getColumn(col);
-      int r0, r1;
-      column->getRange(r0, r1);
-      if (r0 == r1) {
-        TStageObjectId columnId = TStageObjectId::ColumnId(col);
-        std::string columnName =
-            QString::fromStdWString(simLevel->getName()).toStdString();
-        TStageObjectCmd::rename(columnId, columnName, app->getCurrentXsheet());
-      }
-
-      TUndoManager::manager()->endBlock();
+  // Column name renamed to level name only if was originally empty
+  if (!isEditingLevel && renameColumn) {
+    int col            = app->getCurrentColumn()->getColumnIndex();
+    TXshColumn *column = app->getCurrentXsheet()->getXsheet()->getColumn(col);
+    int r0, r1;
+    column->getRange(r0, r1);
+    if (r0 == r1) {
+      TStageObjectId columnId = TStageObjectId::ColumnId(col);
+      std::string columnName =
+          QString::fromStdWString(simLevel->getName()).toStdString();
+      TStageObjectCmd::rename(columnId, columnName, app->getCurrentXsheet());
     }
+
+    TUndoManager::manager()->endBlock();
   }
 
   notifyImageChanged();
