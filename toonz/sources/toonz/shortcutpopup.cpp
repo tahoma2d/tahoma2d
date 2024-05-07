@@ -119,15 +119,6 @@ void ShortcutViewer::keyPressEvent(QKeyEvent *event) {
       return;
     }
 
-    // Block the arrows
-    int ctl = modifiers | Qt::CTRL;
-    if ((modifiers == Qt::NoModifier) &&
-        (key == Qt::Key_Left || key == Qt::Key_Right || key == Qt::Key_Up ||
-         key == Qt::Key_Down)) {
-      event->ignore();
-      return;
-    }
-
     // If "Use Numpad and Tab keys for Switching Styles" option is activated,
     // then prevent to assign such keys
     if (Preferences::instance()->isUseNumpadForSwitchingStylesEnabled() &&

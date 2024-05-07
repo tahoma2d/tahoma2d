@@ -98,7 +98,6 @@ CommandManager::Node *CommandManager::getNode(CommandId id,
 void CommandManager::setShortcut(CommandId id, QAction *action,
                                  std::string shortcutString) {
   QString shortcutQString = QString::fromStdString(shortcutString);
-  if (!canUseShortcut(shortcutQString)) shortcutQString = "";
   if (shortcutQString != "")
     action->setShortcut(QKeySequence(shortcutQString));
   else
@@ -138,24 +137,12 @@ void CommandManager::define(CommandId id, CommandType type,
   // user defined shortcuts will be loaded afterwards in loadShortcuts()
   QString defaultShortcutQString =
       QString::fromStdString(defaultShortcutString);
-  if (!canUseShortcut(defaultShortcutQString)) defaultShortcutQString = "";
   if (!defaultShortcutQString.isEmpty()) {
     qaction->setShortcut(QKeySequence(defaultShortcutQString));
     m_shortcutTable[defaultShortcutString] = node;
   }
 
   if (type == ToolCommandType) updateToolTip(qaction);
-}
-
-//---------------------------------------------------------
-
-bool CommandManager::canUseShortcut(QString shortcut) {
-  shortcut = shortcut.toLower();
-  if (shortcut == "left" || shortcut == "up" || shortcut == "right" ||
-      shortcut == "down") {
-    return false;
-  }
-  return true;
 }
 
 //---------------------------------------------------------
