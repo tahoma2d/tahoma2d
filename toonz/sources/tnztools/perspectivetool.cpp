@@ -1516,6 +1516,8 @@ void PerspectiveTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
 //----------------------------------------------------------------------------------------------
 
 bool PerspectiveTool::keyDown(QKeyEvent *event) {
+  if (m_selection.isEmpty()) return false;
+
   TPointD delta;
 
   switch (event->key()) {
@@ -1536,10 +1538,16 @@ bool PerspectiveTool::keyDown(QKeyEvent *event) {
     break;
   }
 
+  m_undo = new PerspectiveObjectUndo(m_perspectiveObjs, this);
+
   std::set<int> selectedObjects = m_selection.getSelectedObjects();
   std::set<int>::iterator it;
   for (it = selectedObjects.begin(); it != selectedObjects.end(); it++)
     m_perspectiveObjs[*it]->shiftPerspectiveObject(delta);
+
+  m_undo->setRedoData(m_perspectiveObjs);
+  TUndoManager::manager()->add(m_undo);
+  m_undo = 0;
 
   return true;
 }
@@ -1581,6 +1589,22 @@ void PerspectiveTool::onDeactivate() {
     }
   m_selection.selectNone();
   m_mainControlIndex = -1;
+}
+
+//-----------------------------------------------------------------------------
+
+// returns true if the pressed key is recognized and processed in the tool
+// instead of triggering the shortcut command.
+bool PerspectiveTool::isEventAcceptable(QEvent *e) {
+  if (!isEnabled()) return false;
+  if (m_selection.isEmpty()) return false;
+  // arrow keys will be used for moving the selected points
+  QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+  // shift + arrow will not be recognized for now
+  if (keyEvent->modifiers() & Qt::ShiftModifier) return false;
+  int key = keyEvent->key();
+  return (key == Qt::Key_Up || key == Qt::Key_Down || key == Qt::Key_Left ||
+          key == Qt::Key_Right);
 }
 
 //----------------------------------------------------------------------------------------------
