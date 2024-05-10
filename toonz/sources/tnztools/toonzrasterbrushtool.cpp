@@ -1433,12 +1433,13 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
       }
       m_lastRect = m_strokeRect;
 
+      TThickPoint thickPoint(point, pressure);
       std::vector<TThickPoint> pts;
       if (m_smooth.getValue() == 0) {
-        pts.push_back(point);
+        pts.push_back(thickPoint);
       } else {
         m_smoothStroke.beginStroke(m_smooth.getValue());
-        m_smoothStroke.addPoint(point);
+        m_smoothStroke.addPoint(thickPoint);
         m_smoothStroke.getSmoothPoints(pts);
       }
 
@@ -1787,20 +1788,21 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
     double pressure =
         m_pressure.getValue() && e.isTablet() ? e.m_pressure : 0.5;
 
+    TThickPoint thickPoint(point, pressure);
     std::vector<TThickPoint> pts;
     if (m_smooth.getValue() == 0) {
-      pts.push_back(point);
+      pts.push_back(thickPoint);
     } else {
-      m_smoothStroke.addPoint(point);
+      m_smoothStroke.addPoint(thickPoint);
       m_smoothStroke.getSmoothPoints(pts);
     }
 
     invalidateRect.empty();
     double brushTimer = restartBrushTimer();
     for (size_t i = 0; i < pts.size(); ++i) {
-      const TThickPoint &thickPoint = pts[i];
+      const TThickPoint &thickPoint2 = pts[i];
       m_strokeSegmentRect.empty();
-      m_toonz_brush->strokeTo(thickPoint, pressure, brushTimer);
+      m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, brushTimer);
       TRect updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty()) {
         // ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
@@ -1975,21 +1977,22 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
     TPointD point(pos + rasCenter);
     double pressure = m_pressure.getValue() ? pressureVal : 0.5;
 
+    TThickPoint thickPoint(point, pressure);
     std::vector<TThickPoint> pts;
     if (m_smooth.getValue() == 0 || m_isStraight) {
-      pts.push_back(point);
+      pts.push_back(thickPoint);
     } else {
-      m_smoothStroke.addPoint(point);
+      m_smoothStroke.addPoint(thickPoint);
       m_smoothStroke.endStroke();
       m_smoothStroke.getSmoothPoints(pts);
     }
     TRectD invalidateRect;
     double brushTimer = restartBrushTimer();
     for (size_t i = 0; i < pts.size(); ++i) {
-      const TThickPoint &thickPoint = pts[i];
+      const TThickPoint &thickPoint2 = pts[i];
 
       m_strokeSegmentRect.empty();
-      m_toonz_brush->strokeTo(thickPoint, pressure, brushTimer);
+      m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, brushTimer);
       if (i == pts.size() - 1) m_toonz_brush->endStroke();
       TRect updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty()) {
