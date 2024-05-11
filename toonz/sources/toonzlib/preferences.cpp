@@ -564,6 +564,7 @@ void Preferences::definePreferenceItems() {
          std::numeric_limits<int>::max());
   define(magnetNonLinearSliderEnabled, "magnetNonLinearSliderEnabled",
          QMetaType::Bool, false);
+  define(toolScale, "toolScale", QMetaType::Bool, false);
 
   // Xsheet
   define(xsheetLayoutPreference, "xsheetLayoutPreference", QMetaType::QString,

@@ -370,6 +370,9 @@ public:
   bool isMagnetNonLinearSliderEnabled() const {
     return getBoolValue(magnetNonLinearSliderEnabled);
   }
+  int isToolScaled() const { 
+    return getBoolValue(toolScale); 
+  }
 
   // Xsheet  tab
   QString getXsheetLayoutPreference() const {

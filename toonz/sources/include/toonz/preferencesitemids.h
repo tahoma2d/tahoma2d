@@ -121,6 +121,7 @@ enum PreferencesItemId {
   useCtrlAltToResizeBrush,
   temptoolswitchtimer,
   magnetNonLinearSliderEnabled,
+  toolScale,
 
   //----------
   // Xsheet

@@ -1397,6 +1397,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
        tr("Temporary Tool Switch Shortcut Hold Time (ms):")},
       {magnetNonLinearSliderEnabled,
        tr("Magnet Tool Size Slider - Non-Linear mode*")},
+      {toolScale, tr("Increase Selection and Control Point Editor Tool Widget Size (For 4k Displays)")},
 
       // Xsheet
       {xsheetLayoutPreference, tr("Xsheet Header Layout*:")},
@@ -2143,6 +2144,7 @@ QWidget* PreferencesPopup::createToolsPage() {
     insertUI(useCtrlAltToResizeBrush, lay);
   insertUI(temptoolswitchtimer, lay);
   insertUI(magnetNonLinearSliderEnabled, lay);
+  insertUI(toolScale, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
   widget->setLayout(lay);
