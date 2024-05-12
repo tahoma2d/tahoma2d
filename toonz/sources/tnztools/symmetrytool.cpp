@@ -666,6 +666,55 @@ void SymmetryTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
   m_isRotating     = false;
 }
 
+//-----------------------------------------------------------------------------
+
+// returns true if the pressed key is recognized and processed in the tool
+// instead of triggering the shortcut command.
+bool SymmetryTool::isEventAcceptable(QEvent *e) {
+  if (!isEnabled()) return false;
+  // arrow keys will be used for moving the selected points
+  QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+  // shift + arrow will not be recognized for now
+  if (keyEvent->modifiers() & Qt::ShiftModifier) return false;
+  int key = keyEvent->key();
+  return (key == Qt::Key_Up || key == Qt::Key_Down || key == Qt::Key_Left ||
+          key == Qt::Key_Right);
+}
+
+//----------------------------------------------------------------------------------------------
+
+bool SymmetryTool::keyDown(QKeyEvent *event) {
+  TPointD delta;
+
+  switch (event->key()) {
+  case Qt::Key_Up:
+    delta.y = 1;
+    break;
+  case Qt::Key_Down:
+    delta.y = -1;
+    break;
+  case Qt::Key_Left:
+    delta.x = -1;
+    break;
+  case Qt::Key_Right:
+    delta.x = 1;
+    break;
+  default:
+    return false;
+    break;
+  }
+
+  m_undo = new SymmetryObjectUndo(m_symmetryObj, this);
+
+  m_symmetryObj.shiftSymmetryObject(delta);
+  m_undo->setRedoData(m_symmetryObj);
+
+  TUndoManager::manager()->add(m_undo);
+  m_undo = 0;
+
+  return true;
+}
+
 //----------------------------------------------------------------------------------------------
 
 void SymmetryTool::invalidateControl() {

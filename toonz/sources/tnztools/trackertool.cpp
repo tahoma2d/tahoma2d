@@ -807,7 +807,7 @@ bool TrackerTool::keyDown(QKeyEvent *event) {
   case Qt::Key_Left:
     delta.x = -1;
     break;
-  case Qt::Key_0:
+  case Qt::Key_Right:
     delta.x = 1;
     break;
   case Qt::Key_PageUp:  // converto in Hook

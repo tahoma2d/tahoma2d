@@ -488,6 +488,9 @@ public:
   void onProjectSwitched() override;
   void onProjectChanged() override;
 
+  // returns true if the pressed key is recognized and processed.
+  bool isEventAcceptable(QEvent *e) override;
+
 protected:
   TPropertyGroup m_prop;
   std::vector<PerspectiveGridToolOptionBox *> m_toolOptionsBox;

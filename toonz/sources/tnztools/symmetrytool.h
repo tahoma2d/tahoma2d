@@ -227,6 +227,7 @@ public:
   void leftButtonDown(const TPointD &pos, const TMouseEvent &e) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override;
   void leftButtonUp(const TPointD &pos, const TMouseEvent &) override;
+  bool keyDown(QKeyEvent *event) override;
 
   bool onPropertyChanged(std::string propertyName) override;
 
@@ -267,6 +268,9 @@ public:
   void loadLastSymmetry();
 
   void loadTool() override;
+
+  // returns true if the pressed key is recognized and processed.
+  bool isEventAcceptable(QEvent *e) override;
 
 protected:
   TPropertyGroup m_prop;

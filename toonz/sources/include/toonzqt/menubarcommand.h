@@ -156,7 +156,6 @@ public:
   int getKeyFromId(CommandId id);
   void setShortcut(QAction *action, std::string shortcutString,
                    bool keepDefault = true);
-  bool canUseShortcut(QString shortcut);
   QAction *getAction(CommandId id, bool createIfNeeded = false);
 
   // createAction creates a new independent QAction with text and shortcut
