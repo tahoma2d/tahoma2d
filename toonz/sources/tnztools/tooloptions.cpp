@@ -2176,8 +2176,9 @@ void BrushToolOptionsBox::filterControls() {
   for (QMap<std::string, QLabel *>::iterator it = m_labels.begin();
        it != m_labels.end(); it++) {
     bool isModifier = (it.key().substr(0, 8) == "Modifier");
-    bool isCommon   = (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
-                     it.key() == "Preset:" || it.key() == "Grid");
+    bool isCommon =
+        (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
+         it.key() == "Preset:" || it.key() == "Grid" || it.key() == "Smooth:");
     bool visible = isCommon || (isModifier == showModifiers);
     it.value()->setVisible(visible);
   }
@@ -2185,8 +2186,9 @@ void BrushToolOptionsBox::filterControls() {
   for (QMap<std::string, ToolOptionControl *>::iterator it = m_controls.begin();
        it != m_controls.end(); it++) {
     bool isModifier = (it.key().substr(0, 8) == "Modifier");
-    bool isCommon   = (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
-                     it.key() == "Preset:" || it.key() == "Grid");
+    bool isCommon =
+        (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
+         it.key() == "Preset:" || it.key() == "Grid" || it.key() == "Smooth:");
     bool visible = isCommon || (isModifier == showModifiers);
     if (QWidget *widget = dynamic_cast<QWidget *>(it.value()))
       widget->setVisible(visible);

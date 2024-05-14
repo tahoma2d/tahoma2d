@@ -87,6 +87,7 @@ protected:
   TPropertyGroup m_prop;
 
   TIntPairProperty m_thickness;
+  TDoubleProperty m_smooth;
   TBoolProperty m_pressure;
   TDoublePairProperty m_opacity;
   TDoubleProperty m_hardness;
@@ -109,6 +110,8 @@ protected:
   TRaster32P m_workRaster;
 
   TRect m_strokeRect, m_strokeSegmentRect, m_lastRect;
+
+  SmoothStroke m_smoothStroke;
 
   MyPaintToonzBrush *m_toonz_brush;
   QElapsedTimer m_brushTimer;

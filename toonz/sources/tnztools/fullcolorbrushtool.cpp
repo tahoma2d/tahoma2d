@@ -52,6 +52,7 @@
 
 TEnv::IntVar FullcolorBrushMinSize("FullcolorBrushMinSize", 1);
 TEnv::IntVar FullcolorBrushMaxSize("FullcolorBrushMaxSize", 5);
+TEnv::DoubleVar FullcolorBrushSmooth("FullcolorBrushSmooth", 0);
 TEnv::IntVar FullcolorPressureSensitivity("FullcolorPressureSensitivity", 1);
 TEnv::DoubleVar FullcolorBrushHardness("FullcolorBrushHardness", 100);
 TEnv::DoubleVar FullcolorMinOpacity("FullcolorMinOpacity", 100);
@@ -121,6 +122,7 @@ public:
 FullColorBrushTool::FullColorBrushTool(std::string name)
     : TTool(name)
     , m_thickness("Size", 1, 1000, 1, 5, false)
+    , m_smooth("Smooth:", 0, 50, 0)
     , m_pressure("Pressure", true)
     , m_opacity("Opacity", 0, 100, 100, 100, true)
     , m_hardness("Hardness:", 0, 100, 100)
@@ -144,9 +146,10 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
   m_thickness.setNonLinearSlider();
 
   m_prop.bind(m_thickness);
-  m_prop.bind(m_hardness);
-  m_prop.bind(m_opacity);
   m_prop.bind(m_modifierSize);
+  m_prop.bind(m_hardness);
+  m_prop.bind(m_smooth);
+  m_prop.bind(m_opacity);
   m_prop.bind(m_modifierOpacity);
   m_prop.bind(m_modifierEraser);
   m_prop.bind(m_modifierLockAlpha);
@@ -189,6 +192,7 @@ void FullColorBrushTool::onColorStyleChanged() {
 
 void FullColorBrushTool::updateTranslation() {
   m_thickness.setQStringName(tr("Size"));
+  m_smooth.setQStringName(tr("Smooth:"));
   m_pressure.setQStringName(tr("Pressure"));
   m_opacity.setQStringName(tr("Opacity"));
   m_hardness.setQStringName(tr("Hardness:"));
@@ -398,6 +402,16 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
   if (!updateRect.isEmpty())
     ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
 
+  TThickPoint thickPoint(point, pressure);
+  std::vector<TThickPoint> pts;
+  if (m_smooth.getValue() == 0) {
+    pts.push_back(thickPoint);
+  } else {
+    m_smoothStroke.beginStroke(m_smooth.getValue());
+    m_smoothStroke.addPoint(thickPoint);
+    m_smoothStroke.getSmoothPoints(pts);
+  }
+
   TPointD thickOffset(m_maxCursorThick * 0.5, m_maxCursorThick * 0.5);
   TRectD invalidateRect = convert(m_strokeSegmentRect) - rasCenter;
   invalidateRect += TRectD(m_brushPos - thickOffset, m_brushPos + thickOffset);
@@ -599,17 +613,31 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
   else
     pressure = m_enabledPressure ? e.m_pressure : 1.0;
 
-  m_strokeSegmentRect.empty();
-  m_toonz_brush->strokeTo(point, pressure, restartBrushTimer());
-  TRect updateRect = m_strokeSegmentRect * ras->getBounds();
-  if (!updateRect.isEmpty())
-    ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
+  TThickPoint thickPoint(point, pressure);
+  std::vector<TThickPoint> pts;
+  if (m_smooth.getValue() == 0) {
+    pts.push_back(thickPoint);
+  } else {
+    m_smoothStroke.addPoint(thickPoint);
+    m_smoothStroke.getSmoothPoints(pts);
+  }
+  invalidateRect.empty();
+  double brushTimer = restartBrushTimer();
+  for (size_t i = 0; i < pts.size(); ++i) {
+    const TThickPoint &thickPoint2 = pts[i];
+    m_strokeSegmentRect.empty();
+    m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, brushTimer);
+    TRect updateRect = m_strokeSegmentRect * ras->getBounds();
+    if (!updateRect.isEmpty())
+      ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
 
-  TPointD thickOffset(m_maxCursorThick * 0.5, m_maxCursorThick * 0.5);
-  invalidateRect = convert(m_strokeSegmentRect) - rasCenter;
-  invalidateRect += TRectD(m_brushPos - thickOffset, m_brushPos + thickOffset);
-  invalidateRect +=
-      TRectD(previousBrushPos - thickOffset, previousBrushPos + thickOffset);
+    TPointD thickOffset(m_maxCursorThick * 0.5, m_maxCursorThick * 0.5);
+    invalidateRect += convert(m_strokeSegmentRect) - rasCenter;
+    invalidateRect +=
+        TRectD(m_brushPos - thickOffset, m_brushPos + thickOffset);
+    invalidateRect +=
+        TRectD(previousBrushPos - thickOffset, previousBrushPos + thickOffset);
+  }
   invalidate(invalidateRect.enlarge(2.0));
 }
 
@@ -646,18 +674,33 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
     pressure = m_oldPressure;
   }
 
-  m_strokeSegmentRect.empty();
-  m_toonz_brush->strokeTo(point, pressure, restartBrushTimer());
-  m_toonz_brush->endStroke();
-  TRect updateRect = m_strokeSegmentRect * ras->getBounds();
-  if (!updateRect.isEmpty())
-    ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
+  TThickPoint thickPoint(point, pressure);
+  std::vector<TThickPoint> pts;
+  if (m_smooth.getValue() == 0 || m_isStraight) {
+    pts.push_back(thickPoint);
+  } else {
+    m_smoothStroke.addPoint(thickPoint);
+    m_smoothStroke.endStroke();
+    m_smoothStroke.getSmoothPoints(pts);
+  }
+  TRectD invalidateRect;
+  double brushTimer = restartBrushTimer();
+  for (size_t i = 0; i < pts.size(); ++i) {
+    const TThickPoint &thickPoint2 = pts[i];
+    m_strokeSegmentRect.empty();
+    m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, brushTimer);
+    if (i == pts.size() - 1) m_toonz_brush->endStroke();
+    TRect updateRect = m_strokeSegmentRect * ras->getBounds();
+    if (!updateRect.isEmpty())
+      ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
 
-  TPointD thickOffset(m_maxCursorThick * 0.5, m_maxCursorThick * 0.5);
-  TRectD invalidateRect = convert(m_strokeSegmentRect) - rasCenter;
-  invalidateRect += TRectD(m_brushPos - thickOffset, m_brushPos + thickOffset);
-  invalidateRect +=
-      TRectD(previousBrushPos - thickOffset, previousBrushPos + thickOffset);
+    TPointD thickOffset(m_maxCursorThick * 0.5, m_maxCursorThick * 0.5);
+    invalidateRect += convert(m_strokeSegmentRect) - rasCenter;
+    invalidateRect +=
+        TRectD(m_brushPos - thickOffset, m_brushPos + thickOffset);
+    invalidateRect +=
+        TRectD(previousBrushPos - thickOffset, previousBrushPos + thickOffset);
+  }
   invalidate(invalidateRect.enlarge(2.0));
 
   if (m_toonz_brush) {
@@ -881,6 +924,7 @@ bool FullColorBrushTool::onPropertyChanged(std::string propertyName) {
 
   FullcolorBrushMinSize        = m_thickness.getValue().first;
   FullcolorBrushMaxSize        = m_thickness.getValue().second;
+  FullcolorBrushSmooth         = m_smooth.getValue();
   FullcolorPressureSensitivity = m_pressure.getValue();
   FullcolorBrushHardness       = m_hardness.getValue();
   FullcolorMinOpacity          = m_opacity.getValue().first;
@@ -937,6 +981,7 @@ void FullColorBrushTool::loadPreset() {
   {
     m_thickness.setValue(
         TIntPairProperty::Value(std::max((int)preset.m_min, 1), preset.m_max));
+    m_smooth.setValue(preset.m_smooth, true);
     m_hardness.setValue(preset.m_hardness, true);
     m_opacity.setValue(
         TDoublePairProperty::Value(preset.m_opacityMin, preset.m_opacityMax));
@@ -957,6 +1002,7 @@ void FullColorBrushTool::addPreset(QString name) {
 
   preset.m_min               = m_thickness.getValue().first;
   preset.m_max               = m_thickness.getValue().second;
+  preset.m_smooth            = m_smooth.getValue();
   preset.m_hardness          = m_hardness.getValue();
   preset.m_opacityMin        = m_opacity.getValue().first;
   preset.m_opacityMax        = m_opacity.getValue().second;
@@ -996,6 +1042,7 @@ void FullColorBrushTool::removePreset() {
 void FullColorBrushTool::loadLastBrush() {
   m_thickness.setValue(
       TIntPairProperty::Value(FullcolorBrushMinSize, FullcolorBrushMaxSize));
+  m_smooth.setValue(FullcolorBrushSmooth);
   m_pressure.setValue(FullcolorPressureSensitivity ? 1 : 0);
   m_opacity.setValue(
       TDoublePairProperty::Value(FullcolorMinOpacity, FullcolorMaxOpacity));

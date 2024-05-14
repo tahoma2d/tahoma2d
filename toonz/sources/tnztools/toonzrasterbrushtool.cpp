@@ -935,9 +935,9 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
 
   m_prop[0].bind(m_rasThickness);
   m_prop[0].bind(m_hardness);
+  m_prop[0].bind(m_modifierSize);
   m_prop[0].bind(m_smooth);
   m_prop[0].bind(m_drawOrder);
-  m_prop[0].bind(m_modifierSize);
   m_prop[0].bind(m_modifierLockAlpha);
   m_prop[0].bind(m_pencil);
   m_pencil.setId("PencilMode");
@@ -1433,6 +1433,16 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
       }
       m_lastRect = m_strokeRect;
 
+      TThickPoint thickPoint(point, pressure);
+      std::vector<TThickPoint> pts;
+      if (m_smooth.getValue() == 0) {
+        pts.push_back(thickPoint);
+      } else {
+        m_smoothStroke.beginStroke(m_smooth.getValue());
+        m_smoothStroke.addPoint(thickPoint);
+        m_smoothStroke.getSmoothPoints(pts);
+      }
+
       TPointD thickOffset(m_maxCursorThick * 0.5, m_maxCursorThick * 0.5);
       invalidateRect = convert(m_strokeSegmentRect) - rasCenter;
       invalidateRect +=
@@ -1778,22 +1788,37 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
     double pressure =
         m_pressure.getValue() && e.isTablet() ? e.m_pressure : 0.5;
 
-    m_strokeSegmentRect.empty();
-    m_toonz_brush->strokeTo(point, pressure, restartBrushTimer());
-    TRect updateRect = m_strokeSegmentRect * ras->getBounds();
-    if (!updateRect.isEmpty()) {
-      // ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
-      m_toonz_brush->updateDrawing(ras, m_backupRas, m_strokeSegmentRect,
-                                   m_styleId, m_modifierLockAlpha.getValue());
+    TThickPoint thickPoint(point, pressure);
+    std::vector<TThickPoint> pts;
+    if (m_smooth.getValue() == 0) {
+      pts.push_back(thickPoint);
+    } else {
+      m_smoothStroke.addPoint(thickPoint);
+      m_smoothStroke.getSmoothPoints(pts);
     }
-    m_lastRect = m_strokeRect;
 
-    TPointD thickOffset(m_maxCursorThick * 0.5, m_maxCursorThick * 0.5);
-    invalidateRect = convert(m_strokeSegmentRect) - rasCenter;
-    invalidateRect +=
-        TRectD(centeredPos - thickOffset, centeredPos + thickOffset);
-    invalidateRect +=
-        TRectD(m_brushPos - thickOffset, m_brushPos + thickOffset);
+    invalidateRect.empty();
+    double brushTimer = restartBrushTimer();
+    for (size_t i = 0; i < pts.size(); ++i) {
+      const TThickPoint &thickPoint2 = pts[i];
+      m_strokeSegmentRect.empty();
+      m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, brushTimer);
+      TRect updateRect = m_strokeSegmentRect * ras->getBounds();
+      if (!updateRect.isEmpty()) {
+        // ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
+        m_toonz_brush->updateDrawing(ras, m_backupRas, m_strokeSegmentRect,
+                                     m_styleId, m_modifierLockAlpha.getValue());
+      }
+
+      m_lastRect = m_strokeRect;
+
+      TPointD thickOffset(m_maxCursorThick * 0.5, m_maxCursorThick * 0.5);
+      invalidateRect += convert(m_strokeSegmentRect) - rasCenter;
+      invalidateRect +=
+          TRectD(centeredPos - thickOffset, centeredPos + thickOffset);
+      invalidateRect +=
+          TRectD(m_brushPos - thickOffset, m_brushPos + thickOffset);
+    }
   } else if (m_cmRasterBrush &&
              (m_hardness.getValue() == 100 || m_pencil.getValue())) {
     /*-- Pencilモードでなく、Hardness=100 の場合のブラシサイズを1段階下げる
@@ -1952,19 +1977,34 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
     TPointD point(pos + rasCenter);
     double pressure = m_pressure.getValue() ? pressureVal : 0.5;
 
-    m_strokeSegmentRect.empty();
-    m_toonz_brush->strokeTo(point, pressure, restartBrushTimer());
-    m_toonz_brush->endStroke();
-    TRect updateRect = m_strokeSegmentRect * ras->getBounds();
-    if (!updateRect.isEmpty()) {
-      // ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
-      m_toonz_brush->updateDrawing(ras, m_backupRas, m_strokeSegmentRect,
-                                   m_styleId, m_modifierLockAlpha.getValue());
+    TThickPoint thickPoint(point, pressure);
+    std::vector<TThickPoint> pts;
+    if (m_smooth.getValue() == 0 || m_isStraight) {
+      pts.push_back(thickPoint);
+    } else {
+      m_smoothStroke.addPoint(thickPoint);
+      m_smoothStroke.endStroke();
+      m_smoothStroke.getSmoothPoints(pts);
     }
-    TPointD thickOffset(m_maxCursorThick * 0.5,
-                        m_maxCursorThick * 0.5);  // TODO
-    TRectD invalidateRect = convert(m_strokeSegmentRect) - rasCenter;
-    invalidateRect += TRectD(pos - thickOffset, pos + thickOffset);
+    TRectD invalidateRect;
+    double brushTimer = restartBrushTimer();
+    for (size_t i = 0; i < pts.size(); ++i) {
+      const TThickPoint &thickPoint2 = pts[i];
+
+      m_strokeSegmentRect.empty();
+      m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, brushTimer);
+      if (i == pts.size() - 1) m_toonz_brush->endStroke();
+      TRect updateRect = m_strokeSegmentRect * ras->getBounds();
+      if (!updateRect.isEmpty()) {
+        // ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
+        m_toonz_brush->updateDrawing(ras, m_backupRas, m_strokeSegmentRect,
+                                     m_styleId, m_modifierLockAlpha.getValue());
+      }
+      TPointD thickOffset(m_maxCursorThick * 0.5,
+                          m_maxCursorThick * 0.5);  // TODO
+      invalidateRect += convert(m_strokeSegmentRect) - rasCenter;
+      invalidateRect += TRectD(pos - thickOffset, pos + thickOffset);
+    }
     invalidate(invalidateRect.enlarge(2.0));
 
     if (m_toonz_brush) {
