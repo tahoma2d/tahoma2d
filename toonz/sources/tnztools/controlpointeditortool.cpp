@@ -304,7 +304,7 @@ void ControlPointEditorTool::drawControlPoint() {
   TPixel color_handle   = TPixel(96, 64, 201);
   int controlPointCount = m_controlPointEditorStroke.getControlPointCount();
 
-  double toolScale = Preferences::instance()->isToolScaled() ? 2 : 1;
+  double toolScale = Preferences::instance()->isToolScaled() ? 1.5 : 1;
   double pix    = getPixelSize() * 2.0f * toolScale;
   double pix1_5 = 1.5 * pix, pix2 = pix + pix, pix2_5 = pix1_5 + pix,
          pix3 = pix2 + pix, pix3_5 = pix2_5 + pix, pix4 = pix3 + pix;

@@ -953,7 +953,7 @@ void SelectionTool::updateAction(TPointD pos, const TMouseEvent &e) {
 
   FourPoints bbox = getBBox();
 
-  double toolSize = Preferences::instance()->isToolScaled() ? 3 : 1;
+  double toolSize = Preferences::instance()->isToolScaled() ? 2 : 1;
   double pixelSize = getPixelSize() * toolSize;
   if (!bbox.isEmpty()) {
     double maxDist  = 17 * pixelSize;
@@ -1043,7 +1043,7 @@ void SelectionTool::updateAction(TPointD pos, const TMouseEvent &e) {
         m_what     = DEFORM;
       }
       return;
-    } 
+    }
     TPointD hpos = bbox.getP10() - TPointD(14 * pixelSize, 15 * pixelSize);
     TRectD rect(hpos - TPointD(14 * pixelSize, 5 * pixelSize),
                 hpos + TPointD(14 * pixelSize, 5 * pixelSize));
@@ -1270,7 +1270,7 @@ void SelectionTool::drawCommandHandle(const TImage *image) {
 
   if (!isSelectionEditable()) return;
 
-  double toolScale = Preferences::instance()->isToolScaled() ? 3 : 1;
+  double toolScale = Preferences::instance()->isToolScaled() ? 2 : 1;
   double pixelSize = getPixelSize() * toolScale;
   if (!isLevelType() && !isSelectedFramesType()) {
     TPointD c = getCenter() + TPointD(-pixelSize, +pixelSize);
