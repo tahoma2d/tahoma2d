@@ -649,9 +649,11 @@ void StageBuilder::addCellWithOnionSkin(PlayerSet &players, ToonzScene *scene,
           !alreadyAdded(xsh, row, i, rows, col)) {
         m_onionSkinDistance = (rows[i] - row) < 0 ? --backPos : ++frontPos;
 
-        m_fade = m_onionSkinMask.getFosOpacity(rows[i]);
-        if (m_fade == -1.0)
-          m_fade = m_onionSkinMask.getMosOpacity(rows[i] - row);
+        double fosFade = m_onionSkinMask.getFosOpacity(rows[i]);
+        double mosFade = m_onionSkinMask.getMosOpacity(rows[i] - row);
+        m_fade         = fosFade == -1.0
+                     ? mosFade
+                     : (mosFade == -1 ? fosFade : std::min(fosFade, mosFade));
         addCell(players, scene, xsh, rows[i], col, level, subSheetColIndex);
       }
 #endif
@@ -840,9 +842,12 @@ void StageBuilder::addSimpleLevelFrame(PlayerSet &players,
 #else
       player.m_onionSkinDistance = rows[i] - row < 0 ? --backPos : ++frontPos;
 
-      player.m_fade = m_onionSkinMask.getFosOpacity(rows[i]);
-      if (player.m_fade == -1.0)
-        player.m_fade = m_onionSkinMask.getMosOpacity(rows[i] - row);
+      double fosFade = m_onionSkinMask.getFosOpacity(rows[i]);
+      double mosFade = m_onionSkinMask.getMosOpacity(rows[i] - row);
+      player.m_fade =
+          fosFade == -1.0
+              ? mosFade
+              : (mosFade == -1 ? fosFade : std::min(fosFade, mosFade));
 #endif
       player.m_dpiAff = getDpiAffine(level, fid2);
     }
