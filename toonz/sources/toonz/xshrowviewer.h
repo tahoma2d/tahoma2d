@@ -4,6 +4,9 @@
 #define XSHROWVIEWER_H
 
 #include <QWidget>
+#include <QLineEdit>
+#include <QSlider>
+#include <QCheckBox>
 
 // forward declaration
 class XsheetViewer;
@@ -16,6 +19,34 @@ class DragTool;
 //=============================================================================
 // RowArea
 //-----------------------------------------------------------------------------
+class OnionSkinPopup final : public QWidget {
+  Q_OBJECT
+
+  QSlider *m_slider;
+  QLineEdit *m_value;
+  QCheckBox *m_autoCB;
+
+  int m_os;
+  bool m_isFixed;
+  int m_distance;
+
+  bool m_initializing;
+
+public:
+  OnionSkinPopup(QWidget *parent, bool isVertical = true);
+  void setOnionSkinData(int currentRow, int os, bool isFixed);
+
+protected:
+  // void mouseMoveEvent ( QMouseEvent * e );
+  void mouseReleaseEvent(QMouseEvent *e) override;
+
+protected slots:
+  void onSliderReleased();
+  void onSliderChange(int val);
+  void onSliderValueChanged(int);
+  void onValueChanged(const QString &);
+  void onAutoClicked(bool);
+};
 
 //! La classe si occupa della visualizzazione dell'area che gestisce le righe.
 class RowArea final : public QWidget {
@@ -47,6 +78,8 @@ class RowArea final : public QWidget {
   QTimer *m_resetMenuTimer;
   int m_contextMenuRow;
   bool m_editTagEnabled;
+
+  OnionSkinPopup *m_onionSkinPopup;
 
   // returns true if the frame area can have extra space
   bool checkExpandFrameArea();

@@ -2474,6 +2474,7 @@ void SceneViewer::drawSceneOverlay() {
   player.m_guidedBackStroke       = -1;
   player.m_isVisibleinOSM         = false;
   player.m_onionSkinDistance      = c_noOnionSkin;
+  player.m_fade                   = -1.0;
   player.m_dpiAff                 = getDpiAffine(sl, frameId);
   player.m_ancestorColumnIndex    = -1;
   player.m_opacity                = scene->getOverlayOpacity();
