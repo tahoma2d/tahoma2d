@@ -111,7 +111,8 @@ public:
     CTRL_SELECT,
     START_DRAG_SELECT,
     DRAG_SELECT,
-    ONLY_SELECT
+    ONLY_SELECT,
+    SELECT_EMPTY_SPACE
   };
   void select(int index, SelectionMode mode = SIMPLE_SELECT);
 
