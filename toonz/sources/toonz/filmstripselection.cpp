@@ -134,17 +134,18 @@ void TFilmstripSelection::updateInbetweenRange() {
 void TFilmstripSelection::select(const TFrameId &fid, bool selected) {
   TApp *app = TApp::instance();
 
-  if (selected)
+  TXshSimpleLevel *sl = app->getCurrentLevel()->getSimpleLevel();
+
+  if (selected) {
+    if (sl && !sl->getFrame(fid, false)) return;
     m_selectedFrames.insert(fid);
-  else
+  } else
     m_selectedFrames.erase(fid);
 
   updateInbetweenRange();
 
   TTool *tool = app->getCurrentTool()->getTool();
   if (tool) tool->setSelectedFrames(m_selectedFrames);
-
-  TXshSimpleLevel *sl = app->getCurrentLevel()->getSimpleLevel();
 }
 
 //-----------------------------------------------------------------------------
@@ -279,6 +280,7 @@ void TFilmstripSelection::deleteFrames() {
       DVGui::warning(QObject::tr("Can't delete the last drawing in a level."));
       return;
     }
+    if (!m_selectedFrames.size()) return;
     // find highest numbered frame
     int highestFrame = -1;
     TFrameId fid;
@@ -322,7 +324,14 @@ void TFilmstripSelection::clearFrames() {
 
 void TFilmstripSelection::insertEmptyFrames() {
   TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
-  if (sl) FilmstripCmd::insert(sl, m_selectedFrames, true);
+  if (sl) {
+    if (!m_selectedFrames.size() && sl && sl->getFrameCount()) {
+      TFrameId fid = sl->getLastFid().getNumber() + 1;
+      m_selectedFrames.insert(fid);
+    }
+
+    FilmstripCmd::insert(sl, m_selectedFrames, true);
+  }
 }
 
 //-----------------------------------------------------------------------------

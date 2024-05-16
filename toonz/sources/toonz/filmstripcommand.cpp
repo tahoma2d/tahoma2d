@@ -1764,7 +1764,7 @@ void FilmstripCmd::paste(TXshSimpleLevel *sl, std::set<TFrameId> &frames) {
 //-----------------------------------------------------------------------------
 
 void FilmstripCmd::merge(TXshSimpleLevel *sl, std::set<TFrameId> &frames) {
-  if (!sl || sl->isReadOnly() || sl->isSubsequence()) return;
+  if (!sl || sl->isReadOnly() || sl->isSubsequence() || !frames.size()) return;
 
   std::vector<TFrameId> oldLevelFrameId;
   sl->getFids(oldLevelFrameId);
@@ -2080,7 +2080,7 @@ public:
 //-----------------------------------------------------------------------------
 
 void FilmstripCmd::reverse(TXshSimpleLevel *sl, std::set<TFrameId> &frames) {
-  if (!sl || sl->isSubsequence() || sl->isReadOnly()) return;
+  if (!sl || sl->isSubsequence() || sl->isReadOnly() || !frames.size()) return;
   performReverse(sl, frames);
   TUndoManager::manager()->add(new FilmstripReverseUndo(sl, frames));
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
@@ -2169,7 +2169,7 @@ public:
 //-----------------------------------------------------------------------------
 
 void FilmstripCmd::swing(TXshSimpleLevel *sl, std::set<TFrameId> &frames) {
-  if (!sl || sl->isSubsequence() || sl->isReadOnly()) return;
+  if (!sl || sl->isSubsequence() || sl->isReadOnly() || !frames.size()) return;
   performSwing(sl, frames);
   TUndoManager::manager()->add(new FilmstripSwingUndo(sl, frames));
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
@@ -2285,7 +2285,7 @@ public:
 
 void FilmstripCmd::step(TXshSimpleLevel *sl, std::set<TFrameId> &frames,
                         int step) {
-  if (!sl || sl->isSubsequence() || sl->isReadOnly()) return;
+  if (!sl || sl->isSubsequence() || sl->isReadOnly() || !frames.size()) return;
   QApplication::setOverrideCursor(Qt::WaitCursor);
   StepFilmstripUndo *undo = new StepFilmstripUndo(sl, frames, step);
   stepFilmstripFrames(sl, frames, step);
@@ -2381,7 +2381,7 @@ public:
 
 void FilmstripCmd::each(TXshSimpleLevel *sl, std::set<TFrameId> &frames,
                         int each) {
-  if (!sl || sl->isSubsequence() || sl->isReadOnly()) return;
+  if (!sl || sl->isSubsequence() || sl->isReadOnly() || !frames.size()) return;
   std::map<TFrameId, QString> deletedFrames =
       eachFilmstripFrames(sl, frames, each);
   TUndoManager::manager()->add(
