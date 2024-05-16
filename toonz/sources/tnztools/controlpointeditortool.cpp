@@ -19,6 +19,7 @@
 #include "toonz/tobjecthandle.h"
 #include "toonz/stage2.h"
 #include "toonz/tstageobject.h"
+#include "toonz/preferences.h"
 
 #include "toonzqt/tselectionhandle.h"
 
@@ -303,7 +304,8 @@ void ControlPointEditorTool::drawControlPoint() {
   TPixel color_handle   = TPixel(96, 64, 201);
   int controlPointCount = m_controlPointEditorStroke.getControlPointCount();
 
-  double pix    = getPixelSize() * 2.0f;
+  double toolScale = Preferences::instance()->isToolScaled() ? 1.5 : 1;
+  double pix    = getPixelSize() * 2.0f * toolScale;
   double pix1_5 = 1.5 * pix, pix2 = pix + pix, pix2_5 = pix1_5 + pix,
          pix3 = pix2 + pix, pix3_5 = pix2_5 + pix, pix4 = pix3 + pix;
 
