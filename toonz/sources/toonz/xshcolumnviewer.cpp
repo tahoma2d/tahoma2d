@@ -2683,6 +2683,7 @@ void ColumnTransparencyPopup::onSliderChange(int val) {
   m_value->setText(QString::number(val));
   connect(m_value, SIGNAL(textChanged(const QString &)), this,
           SLOT(onValueChanged(const QString &)));
+  onSliderReleased();
 }
 
 //----------------------------------------------------------------

@@ -85,12 +85,13 @@ void OnionSkinMask::getAll(int currentRow, std::vector<int> &output) const {
   output.clear();
   output.reserve(m_fos.size() + m_mos.size());
 
-  std::vector<int>::const_iterator fosIt, fosEnd(m_fos.end());
-  std::vector<int>::const_iterator mosIt, mosEnd(m_mos.end());
+  std::vector<std::pair<int, double>>::const_iterator fosIt, fosEnd(m_fos.end());
+  std::vector<std::pair<int, double>>::const_iterator mosIt,
+      mosEnd(m_mos.end());
 
   for (fosIt = m_fos.begin(), mosIt = m_mos.begin();
        fosIt != fosEnd && mosIt != mosEnd;) {
-    int fos = *fosIt, mos = *mosIt + currentRow;
+    int fos = fosIt->first, mos = mosIt->first + currentRow;
 
     if (fos < mos) {
       if (fos != currentRow) output.push_back(fos);
@@ -104,10 +105,10 @@ void OnionSkinMask::getAll(int currentRow, std::vector<int> &output) const {
   }
 
   for (; fosIt != fosEnd; ++fosIt)
-    if (*fosIt != currentRow) output.push_back(*fosIt);
+    if (fosIt->first != currentRow) output.push_back(fosIt->first);
 
   for (; mosIt != mosEnd; ++mosIt) {
-    int mos = *mosIt + currentRow;
+    int mos = mosIt->first + currentRow;
     if (mos != currentRow) output.push_back(mos);
   }
 }
@@ -117,39 +118,97 @@ void OnionSkinMask::getAll(int currentRow, std::vector<int> &output) const {
 void OnionSkinMask::setMos(int drow, bool on) {
   assert(drow != 0);
 
-  typedef std::vector<int>::iterator Iter;
-  std::pair<Iter, Iter> r = std::equal_range(m_mos.begin(), m_mos.end(), drow);
+  std::vector<std::pair<int, double>>::iterator r;
+  for (r = m_mos.begin(); r != m_mos.end(); r++) {
+    if (r->first >= drow) break;
+  }
 
   if (on) {
-    if (r.first == r.second) m_mos.insert(r.first, drow);
+    if (r == m_mos.end() || r->first != drow)
+      m_mos.insert(r, std::make_pair(drow, -1));
   } else {
-    if (r.first != r.second) m_mos.erase(r.first, r.second);
+    if (r != m_mos.end()) m_mos.erase(r);
   }
 }
 
 //-------------------------------------------------------------------
 
 void OnionSkinMask::setFos(int row, bool on) {
-  typedef std::vector<int>::iterator Iter;
-  std::pair<Iter, Iter> r = std::equal_range(m_fos.begin(), m_fos.end(), row);
+  std::vector<std::pair<int, double>>::iterator r;
+  for (r = m_fos.begin(); r != m_fos.end(); r++) {
+    if (r->first >= row) break;
+  }
 
   if (on) {
-    if (r.first == r.second) m_fos.insert(r.first, row);
+    if (r == m_fos.end() || r->first != row)
+      m_fos.insert(r, std::make_pair(row, -1));
   } else {
-    if (r.first != r.second) m_fos.erase(r.first, r.second);
+    if (r != m_fos.end()) m_fos.erase(r);
   }
 }
 
 //-------------------------------------------------------------------
 
-bool OnionSkinMask::isFos(int row) const {
-  return std::binary_search(m_fos.begin(), m_fos.end(), row);
+void OnionSkinMask::setMosOpacity(int drow, double opacity) {
+  std::vector<std::pair<int, double>>::iterator r;
+  for (r = m_mos.begin(); r != m_mos.end(); r++) {
+    if (r->first == drow) {
+      r->second = opacity;
+      break;
+    }
+  }
 }
 
 //-------------------------------------------------------------------
 
-bool OnionSkinMask::isMos(int drow) const {
-  return std::binary_search(m_mos.begin(), m_mos.end(), drow);
+double OnionSkinMask::getMosOpacity(int drow) {
+  std::vector<std::pair<int, double>>::iterator r;
+  for (r = m_mos.begin(); r != m_mos.end(); r++)
+    if (r->first == drow) return r->second;
+
+  return -1.0;
+}
+
+//-------------------------------------------------------------------
+
+void OnionSkinMask::setFosOpacity(int row, double opacity) {
+  std::vector<std::pair<int, double>>::iterator r;
+  for (r = m_fos.begin(); r != m_fos.end(); r++) {
+    if (r->first == row) {
+      r->second = opacity;
+      break;
+    }
+  }
+}
+
+//-------------------------------------------------------------------
+
+double OnionSkinMask::getFosOpacity(int drow) {
+  std::vector<std::pair<int, double>>::iterator r;
+  for (r = m_fos.begin(); r != m_fos.end(); r++)
+    if (r->first == drow) return r->second;
+
+  return -1.0;
+}
+
+//-------------------------------------------------------------------
+
+bool OnionSkinMask::isFos(int row) {
+  std::vector<std::pair<int, double>>::iterator r;
+  for (r = m_fos.begin(); r != m_fos.end(); r++)
+    if (r->first == row) return true;
+
+  return false;
+}
+
+//-------------------------------------------------------------------
+
+bool OnionSkinMask::isMos(int drow) {
+  std::vector<std::pair<int, double>>::iterator r;
+  for (r = m_mos.begin(); r != m_mos.end(); r++)
+    if (r->first == drow) return true;
+
+  return false;
 }
 
 //-------------------------------------------------------------------
@@ -159,7 +218,7 @@ bool OnionSkinMask::getMosRange(int &drow0, int &drow1) const {
     drow0 = 0, drow1 = -1;
     return false;
   } else {
-    drow0 = m_mos.front(), drow1 = m_mos.back();
+    drow0 = m_mos.front().first, drow1 = m_mos.back().first;
     return true;
   }
 }

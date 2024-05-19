@@ -62,12 +62,12 @@ public:
 
   int getMos(int index) const {
     assert(0 <= index && index < (int)m_mos.size());
-    return m_mos[index];
+    return m_mos[index].first;
   }
 
   int getFos(int index) const {
     assert(0 <= index && index < (int)m_fos.size());
-    return m_fos[index];
+    return m_fos[index].first;
   }
 
   void setMos(int drow, bool on);  //!< Sets a Mobile OS frame shifted by drow
@@ -75,8 +75,13 @@ public:
   void setFos(int row,
               bool on);  //!< Sets a Fixed OS frame to the specified xsheet row
 
-  bool isMos(int drow) const;
-  bool isFos(int row) const;
+  void setMosOpacity(int drow, double opacity);
+  double getMosOpacity(int drow);
+  void setFosOpacity(int row, double opacity);
+  double getFosOpacity(int row);
+
+  bool isMos(int drow);
+  bool isFos(int row);
 
   bool getMosRange(int &drow0, int &drow1) const;
 
@@ -146,7 +151,8 @@ since underlying onion-skinned drawings must be visible.
   void clearGhostFlipKey() { m_ghostFlipKeys.clear(); }
 
 private:
-  std::vector<int> m_fos, m_mos;  //!< Fixed and Mobile Onion Skin indices
+  std::vector<std::pair<int, double>> m_fos,
+      m_mos;                      //!< Fixed and Mobile Onion Skin indices and opacity
   bool m_enabled;                 //!< Whether onion skin is enabled
   bool m_wholeScene;              //!< Whether the OS works on the entire scene
   bool m_everyFrame;              //!< Whether the OS renders every frame or only on new exposures.

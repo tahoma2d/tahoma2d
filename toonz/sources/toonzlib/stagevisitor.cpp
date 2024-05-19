@@ -876,10 +876,12 @@ void RasterPainter::onVectorImage(TVectorImage *vi,
     double m[4] = {1.0, 1.0, 1.0, 1.0}, c[4];
 
     // Weighted addition to RGB and matte multiplication
-    m[3] = 1.0 -
-           ((player.m_onionSkinDistance == 0)
-                ? 0.1
-                : OnionSkinMask::getOnionSkinFade(player.m_onionSkinDistance));
+    m[3] =
+        1.0 - ((player.m_onionSkinDistance == 0)
+                   ? 0.1
+                   : (player.m_fade != -1.0 ? player.m_fade
+                                            : OnionSkinMask::getOnionSkinFade(
+                                                  player.m_onionSkinDistance)));
     if (player.m_isLightTableEnabled && !player.m_isCurrentColumn) m[3] *= 0.30;
 
     c[0] = (1.0 - m[3]) * bgColor.r, c[1] = (1.0 - m[3]) * bgColor.g,
@@ -943,11 +945,12 @@ void RasterPainter::onVectorImage(TVectorImage *vi,
 
         double guidedM[4] = {1.0, 1.0, 1.0, 1.0}, guidedC[4];
         TPixel32 bgColor  = TPixel32::Blue;
-        guidedM[3] =
-            1.0 -
-            ((player.m_onionSkinDistance == 0)
-                 ? 0.1
-                 : OnionSkinMask::getOnionSkinFade(player.m_onionSkinDistance));
+        guidedM[3]        = 1.0 - ((player.m_onionSkinDistance == 0)
+                                ? 0.1
+                                : (player.m_fade != -1.0
+                                       ? player.m_fade
+                                       : OnionSkinMask::getOnionSkinFade(
+                                             player.m_onionSkinDistance)));
 
         guidedC[0] = (1.0 - guidedM[3]) * bgColor.r,
         guidedC[1] = (1.0 - guidedM[3]) * bgColor.g,
@@ -1030,10 +1033,12 @@ void RasterPainter::onRasterImage(TRasterImage *ri,
     // 1 opaco -> 0 completamente trasparente
     // inverto quindi il risultato della funzione stando attento al caso 0
     // (in cui era scolpito il valore 0.9)
-    double onionSkiFade = player.m_onionSkinDistance == 0
-                              ? 0.9
-                              : (1.0 - OnionSkinMask::getOnionSkinFade(
-                                           player.m_onionSkinDistance));
+    double onionSkiFade =
+        player.m_onionSkinDistance == 0
+            ? 0.9
+            : (1.0 - (player.m_fade != -1.0 ? player.m_fade
+                                            : OnionSkinMask::getOnionSkinFade(
+                                                  player.m_onionSkinDistance)));
     if (player.m_isLightTableEnabled && !player.m_isCurrentColumn)
       onionSkiFade *= 0.30;
     alpha               = tcrop(tround(onionSkiFade * 255.0), 0, 255);
@@ -1099,10 +1104,12 @@ void RasterPainter::onToonzImage(TToonzImage *ti, const Stage::Player &player) {
     //    I therefore reverse the result of the function by being attentive to
     //    case 0
     //    (where the value 0.9 was carved)
-    double onionSkiFade = player.m_onionSkinDistance == 0
-                              ? 0.9
-                              : (1.0 - OnionSkinMask::getOnionSkinFade(
-                                           player.m_onionSkinDistance));
+    double onionSkiFade =
+        player.m_onionSkinDistance == 0
+            ? 0.9
+            : (1.0 - (player.m_fade != -1.0 ? player.m_fade
+                                            : OnionSkinMask::getOnionSkinFade(
+                                                  player.m_onionSkinDistance)));
     if (player.m_isLightTableEnabled && !player.m_isCurrentColumn)
       onionSkiFade *= 0.30;
     alpha               = tcrop(tround(onionSkiFade * 255.0), 0, 255);
@@ -1201,7 +1208,9 @@ void OpenGlPainter::onVectorImage(TVectorImage *vi,
   if (player.m_onionSkinDistance != c_noOnionSkin) {
     TPixel32 bgColor = TPixel32::White;
     fader            = TOnionFader(
-        bgColor, OnionSkinMask::getOnionSkinFade(player.m_onionSkinDistance));
+        bgColor, (player.m_fade != -1.0 ? player.m_fade
+                                        : OnionSkinMask::getOnionSkinFade(
+                                              player.m_onionSkinDistance)));
     cf = &fader;
   }
 
@@ -1256,7 +1265,11 @@ void OpenGlPainter::onRasterImage(TRasterImage *ri,
 
   if (c_noOnionSkin != player.m_onionSkinDistance) {
     double fade =
-        0.5 - 0.45 * (1 - 1 / (1 + 0.15 * abs(player.m_onionSkinDistance)));
+        (player.m_fade != -1.0
+             ? player.m_fade
+             : 0.5 -
+                   0.45 *
+                       (1 - 1 / (1 + 0.15 * abs(player.m_onionSkinDistance))));
     if ((int)matteChan.size() < r->getLx() * r->getLy())
       matteChan.resize(r->getLx() * r->getLy());
 
@@ -1537,7 +1550,10 @@ void onPlasticDeformedImage(TStageObject *playerObj,
           (player.m_onionSkinDistance < 0) ? backOnionColor : frontOnionColor;
 
       pixScale[3] =
-          1.0 - OnionSkinMask::getOnionSkinFade(player.m_onionSkinDistance);
+          1.0 -
+          (player.m_fade != -1.0
+               ? player.m_fade
+               : OnionSkinMask::getOnionSkinFade(player.m_onionSkinDistance));
       pixScale[0] =
           (refColor.r / 255.0) * pixScale[3];  // refColor is not premultiplied
       pixScale[1] = (refColor.g / 255.0) * pixScale[3];
