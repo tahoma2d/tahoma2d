@@ -53,19 +53,19 @@ OnionSkinPopup::OnionSkinPopup(QWidget *parent, bool isVertical)
   m_autoCB->setChecked(true);
 
   QGridLayout *mainLayout = new QGridLayout();
-  mainLayout->setMargin(3);
+  mainLayout->setContentsMargins(3, 3, 3, 3);
   mainLayout->setHorizontalSpacing(6);
   mainLayout->setVerticalSpacing(6);
   {
     if (isVertical) {
       QVBoxLayout *vlayout = new QVBoxLayout;
-      vlayout->setMargin(0);
+      vlayout->setContentsMargins(0, 0, 0, 0);
       vlayout->setSpacing(3);
       {
         vlayout->addWidget(new QLabel(tr("Opacity"), this), 0,
                            Qt::AlignHCenter);
         QHBoxLayout *hlayout = new QHBoxLayout;
-        hlayout->setMargin(0);
+        hlayout->setContentsMargins(0, 0, 0, 0);
         hlayout->setSpacing(3);
         hlayout->setAlignment(Qt::AlignHCenter);
         {
@@ -83,7 +83,7 @@ OnionSkinPopup::OnionSkinPopup(QWidget *parent, bool isVertical)
       mainLayout->addWidget(new QLabel(tr("Opacity:"), this), 0, 0,
                             Qt::AlignRight | Qt::AlignVCenter);
       QHBoxLayout *hlayout = new QHBoxLayout;
-      hlayout->setMargin(0);
+      hlayout->setContentsMargins(0, 0, 0, 0);
       hlayout->setSpacing(3);
       {
         hlayout->addWidget(m_slider);
