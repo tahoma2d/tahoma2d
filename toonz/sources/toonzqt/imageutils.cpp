@@ -896,6 +896,14 @@ bool ShortcutZoomer::exec(QKeyEvent *event) {
 //*********************************************************************************************
 
 FullScreenWidget::FullScreenWidget(QWidget *parent) : QWidget(parent) {
+#if defined(_WIN32)
+  // Allow Lazy Nezumi to hook the canvas
+  setAttribute(Qt::WA_PaintOnScreen);
+  setAttribute(Qt::WA_NoSystemBackground);
+  setAttribute(Qt::WA_NativeWindow);
+  setAttribute(Qt::WA_DontCreateNativeAncestors);
+#endif
+
   QHBoxLayout *layout = new QHBoxLayout(this);
   layout->setContentsMargins(0, 0, 0, 0);
   layout->setSpacing(0);
@@ -1039,7 +1047,6 @@ bool FullScreenWidget::toggleFullScreen(
             this->window()->windowHandle()->setScreen(ptrScreenThisWindowIsOn);
 
             // http://doc.qt.io/qt-5/windows-issues.html#fullscreen-opengl-based-windows
-            this->winId();
             QWindowsWindowFunctions::setHasBorderInFullScreen(
                 this->windowHandle(), true);
 
