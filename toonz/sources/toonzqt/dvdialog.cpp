@@ -305,7 +305,8 @@ Dialog::Dialog(QWidget *parent, bool hasButton, bool hasFixedSize,
     // try and get active screen
     if (parent != NULL) {
       m_currentScreen = parent->screen();
-    }
+    } else
+      m_currentScreen = QGuiApplication::primaryScreen();
     QRect screen = m_currentScreen->availableGeometry();
     int x        = values.at(0).toInt();
     int y        = values.at(1).toInt();
