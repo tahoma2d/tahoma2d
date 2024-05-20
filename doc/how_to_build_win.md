@@ -1,6 +1,6 @@
 # Build Tahoma2D on Windows
 
-This software can be built using Visual Studio 2019 or above and Qt 5.15 (min 5.15.2)
+This software can be built using Visual Studio 2019 or above and Qt 5 (min 5.15.2)
 
 Throughout these instructions `$tahoma2d` represents the full path to your local Git repository for Tahoma2D.
 
@@ -9,12 +9,12 @@ Throughout these instructions `$tahoma2d` represents the full path to your local
 ### Microsoft Visual Studio 2019 or higher for Windows Desktop
 - [ ] Install Microsoft Visual Studio 2019 or higher for Windows Desktop, https://www.visualstudio.com/vs/older-downloads/
   - Community and Professional versions of Visual Studio for Windows Desktop also work.
-  - [ ] Make sure the target platform is "for Windows Desktop", not "for Windows".
+  - [ ] Make sure the architecture is "x64".
   - [ ] During the installation, make sure to select all the Visual C++ packages.
 
 ### Qt - cross-platform GUI framework.
 - [ ] Install via **one** of the following methods.
-  - If you want WinTab support, install the customized Qt 5.15.2 w/ WinTab support created by Shun-iwasawa.
+  - If you want WinTab support, install the customized Qt 5.15.2 w/ WinTab support created by Shun-iwasawa. **(This is required if you plan on running on a Wacom tablet!)**
 	- [ ] Download `Qt5.15.2_wintab.zip` from https://github.com/shun-iwasawa/qt5/releases/tag/v5.15.2_wintab
 	- [ ] Extract the contents to `C:\Qt\5.15.2_wintab`
 
@@ -77,7 +77,7 @@ You can use GitHub Desktop https://desktop.github.com/ or Git command line.
 - [ ] Click on the value for `QT_PATH` in the top half of the CMake window and update the path to match where your QT library was installed.
     - For example: `C:\Qt\5.15.5_wintab\msvc2019_64` for Visual Studio 2019. 
 - [ ] Select the following as desired
-    - `WITH_CANON` - For Stop motion with Canon DSLR cameras.
+    - `WITH_CANON` - For Stop motion with Canon DSLR cameras. (Only use if you have the Canon SDK)
   	- `WITH_GPHOTO2` - For Stop Motion using non-Canon cameras.
   	- `WITH_WINTAB` - Only use if you installed the customized Qt 5.15.2 w/ WinTab, mentioned above
 - [ ] For generating PDB files needed for detailed crash reporting, add `/Zi` to the following entries (example: `/MDd /Zi /Ob0 /Od /RTC1`)
@@ -86,7 +86,6 @@ You can use GitHub Desktop https://desktop.github.com/ or Git command line.
   - `CMAKE_C_FLAGS_DEBUG`
   - `CMAKE_C_FLAGS_RELWITHDEBINFO`
 - [ ] Rerun `Configure`.
-above.
 - [ ] Click on `OpenCV_DIR` and update the path to match where your OpenCV library was installed.
   - For example: `C:\opencv\451\build`.
 - [ ] Rerun `Configure`.
@@ -94,7 +93,7 @@ above.
   - For example: `C:\boost\boost_1_75_0`
 - [ ] Rerun `Configure`.
 - [ ] Review the log for any errors.  If any, resolve errors and reconfigure until no errors are reported.
-- [ ] Click `Generate`
+- [ ] Click `Generate`.
 
 ## Set Up Libraries
 Rename the following files:
@@ -173,8 +172,8 @@ Rename the following files:
   - `$OpenCV_DIR\build\x64\vc15\bin\opencv_world451.dll`
   
 - [ ] Copy the following files and folders from a recent Tahoma2D release to `C:\Tahoma2D`
-  - `EDSDK.dll`
-  - `EdsImage.dll`
+  - `EDSDK.dll` (if you compiled with Canon support)
+  - `EdsImage.dll` (if you compiled with Canon support)
   - `ffmpeg\`
   - `rhubarb\`
 
