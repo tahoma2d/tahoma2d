@@ -1558,7 +1558,7 @@ void CellArea::drawExtenderHandles(QPainter &p) {
           .translated(selected.bottomRight() + smartTabPosOffset);
   p.setPen(Qt::black);
   p.setBrush(SmartTabColor);
-  p.drawRoundRect(m_levelExtenderRect, xyRadius.x(), xyRadius.y());
+  p.drawRoundedRect(m_levelExtenderRect, xyRadius.x(), xyRadius.y());
   QColor color = (distance > 0 && ((selRow1 + 1 - offset) % distance) != 0)
                      ? m_viewer->getLightLineColor()
                      : m_viewer->getMarkerLineColor();
@@ -1574,7 +1574,7 @@ void CellArea::drawExtenderHandles(QPainter &p) {
                                    .translated(properPoint + smartTabPosOffset);
     p.setPen(Qt::black);
     p.setBrush(SmartTabColor);
-    p.drawRoundRect(m_upperLevelExtenderRect, xyRadius.x(), xyRadius.y());
+    p.drawRoundedRect(m_upperLevelExtenderRect, xyRadius.x(), xyRadius.y());
     QColor color = (distance > 0 && ((selRow0 - offset) % distance) != 0)
                        ? m_viewer->getLightLineColor()
                        : m_viewer->getMarkerLineColor();
@@ -2376,7 +2376,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     QString text           = QString::fromStdWString(levelName);
     QFontMetrics fm(font);
     QString elidaName =
-        elideText(text, fm, nameRect.width() - fm.width(fnum), QString("~"));
+        elideText(text, fm, nameRect.width() - fm.horizontalAdvance(fnum), QString("~"));
     p.drawText(nameRect, Qt::AlignLeft | Qt::AlignBottom, elidaName);
   }
 }
@@ -2538,7 +2538,7 @@ xy,
 
   QFontMetrics metric(font);
 
-  int charWidth = metric.width(text, 1);
+  int charWidth = metric.horizontalAdvance(text, 1);
   if ((charWidth * 2) > nameRect.width()) nameRect.adjust(-2, 0, 4, 0);
 
   QString elidaName = elideText(text, metric, nameRect.width(), "~");
@@ -2822,7 +2822,7 @@ void CellArea::drawSoundTextColumn(QPainter &p, int r0, int r1, int col) {
         QString elided = elideText(text, fm, unitedRect.width(), "~");
         QFontMetrics metric(font);
         // If text wider than box, shift box left to display 1st character
-        int charWidth = metric.width(elided, 1);
+        int charWidth = metric.horizontalAdvance(elided, 1);
         if ((charWidth * 2) > unitedRect.width())
           unitedRect.adjust(-2, 0, 4, 0);
         p.drawText(unitedRect, Qt::AlignLeft | Qt::AlignBottom, elided);
@@ -3102,7 +3102,7 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
 
     QString text      = QString::fromStdWString(levelName);
     QString elidaName = elideText(
-        text, fm, nameRect.width() - fm.width(numberStr) - 2, QString("~"));
+        text, fm, nameRect.width() - fm.horizontalAdvance(numberStr) - 2, QString("~"));
 
     if (!sameLevel || isAfterMarkers || prevCell.getFrameId().isStopFrame())
       p.drawText(nameRect, Qt::AlignLeft | Qt::AlignBottom, elidaName);
@@ -3676,7 +3676,7 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
   m_isMousePressed = true;
   QPoint frameAdj  = m_viewer->getFrameZoomAdjustment();
 
-  if (event->button() == Qt::MidButton || m_viewer->m_panningArmed) {
+  if (event->button() == Qt::MiddleButton || m_viewer->m_panningArmed) {
     m_pos       = event->pos();
     m_isPanning = true;
   }

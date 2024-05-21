@@ -914,7 +914,7 @@ void DragSelectionTool::VectorScaleTool::leftButtonDrag(const TPointD &pos,
 DragSelectionTool::VectorChangeThicknessTool::VectorChangeThicknessTool(
     VectorSelectionTool *tool)
     : DragTool(tool), m_curPos(), m_firstPos(), m_thicknessChange(0) {
-  TVectorImageP vi = tool->getImage(false);
+  TVectorImageP vi = TImageP(tool->getImage(false));
   assert(vi);
 
   setStrokesThickness(*vi);
@@ -1039,7 +1039,7 @@ void DragSelectionTool::VectorChangeThicknessTool::changeImageThickness(
 //-----------------------------------------------------------------------------
 
 void DragSelectionTool::VectorChangeThicknessTool::addUndo() {
-  TVectorImageP curVi = getTool()->getImage(true);
+  TVectorImageP curVi = TImageP(getTool()->getImage(true));
   if (!curVi) return;
 
   m_undo->registerStrokes();
@@ -1112,7 +1112,7 @@ void DragSelectionTool::VectorChangeThicknessTool::leftButtonDown(
 void DragSelectionTool::VectorChangeThicknessTool::leftButtonDrag(
     const TPointD &pos, const TMouseEvent &e) {
   TPointD delta = e.m_pos - m_firstPos;
-  TVectorImageP vi = getTool()->getImage(true);
+  TVectorImageP vi = TImageP(getTool()->getImage(true));
   if (!vi) return;
   VectorSelectionTool *tool = dynamic_cast<VectorSelectionTool *>(m_tool);
   tool->setResetCenter(false);
@@ -1130,7 +1130,7 @@ void DragSelectionTool::VectorChangeThicknessTool::leftButtonDrag(
 
 void DragSelectionTool::VectorChangeThicknessTool::leftButtonUp(
     const TPointD &pos, const TMouseEvent &e) {
-  TVectorImageP curVi = getTool()->getImage(true);
+  TVectorImageP curVi = TImageP(getTool()->getImage(true));
   if (!curVi) return;
   addUndo();
   m_strokesThickness.clear();
@@ -1263,8 +1263,8 @@ VectorSelectionTool::VectorSelectionTool(int targetType)
 void VectorSelectionTool::setNewFreeDeformer() {
   clearDeformers();
 
-  TVectorImageP vi =
-      getImage(true);  // BAD: Should not be done at tool creation...
+  TVectorImageP vi = TImageP(getImage(
+      true));  // BAD: Should not be done at tool creation...
   if (!vi) return;
 
   // Current freeDeformer always at index 0
@@ -1435,7 +1435,7 @@ void VectorSelectionTool::updateSelectionTarget() {
 //-----------------------------------------------------------------------------
 
 void VectorSelectionTool::finalizeSelection() {
-  TVectorImageP vi = getImage(false);
+  TVectorImageP vi = TImageP(getImage(false));
   if (vi && !m_levelSelection.isEmpty()) {
     std::vector<int> &selection = m_strokeSelection.getSelection();
     selection.clear();
@@ -1531,7 +1531,7 @@ void VectorSelectionTool::modifySelectionOnClick(TImageP image,
 
 void VectorSelectionTool::leftButtonDoubleClick(const TPointD &pos,
                                                 const TMouseEvent &e) {
-  TVectorImageP vi = getImage(false);
+  TVectorImageP vi = TImageP(getImage(false));
   if (!vi) return;
 
   if (m_strokeSelectionType.getIndex() == POLYLINE_SELECTION_IDX &&
@@ -1573,7 +1573,7 @@ void VectorSelectionTool::leftButtonDrag(const TPointD &pos,
     return;
   }
 
-  TVectorImageP vi = getImage(false);
+  TVectorImageP vi = TImageP(getImage(false));
   if (!vi) return;
 
   double pixelSize        = getPixelSize();
@@ -1682,7 +1682,7 @@ void VectorSelectionTool::leftButtonUp(const TPointD &pos,
   if (!m_selecting) return;
 
   // Complete selection
-  TVectorImageP vi = getImage(false);
+  TVectorImageP vi = TImageP(getImage(false));
 
   if (vi) {
     if (m_strokeSelectionType.getIndex() == RECT_SELECTION_IDX) {
@@ -1785,7 +1785,7 @@ void VectorSelectionTool::drawGroup(const TVectorImage &vi) {
 //-----------------------------------------------------------------------------
 
 void VectorSelectionTool::draw() {
-  TVectorImageP vi = getImage(false);
+  TVectorImageP vi = TImageP(getImage(false));
   if (!vi) return;
 
   if (isLevelType() || isSelectedFramesType()) {
@@ -1825,7 +1825,7 @@ void VectorSelectionTool::draw() {
 
 TSelection *VectorSelectionTool::getSelection() {
   TImage *image    = getImage(false);
-  TVectorImageP vi = image;
+  TVectorImageP vi = TImageP(image);
   if (!vi) return 0;
 
   return &m_strokeSelection;
@@ -1834,8 +1834,8 @@ TSelection *VectorSelectionTool::getSelection() {
 //-----------------------------------------------------------------------------
 
 bool VectorSelectionTool::isSelectionEmpty() {
-  TVectorImageP vi =
-      getImage(false);  // We want at least current image to be visible.
+  TVectorImageP vi = TImageP(getImage(
+      false));           // We want at least current image to be visible.
   if (!vi)              // This is somewhat in line to preventing tool actions
     return true;        // on non-visible levels.
 
@@ -1849,7 +1849,7 @@ void VectorSelectionTool::computeBBox() {
   m_bboxs.clear();
   if (canResetCenter()) m_centers.clear();
 
-  TVectorImageP vi = getImage(false);
+  TVectorImageP vi = TImageP(getImage(false));
   if (!vi) return;
 
   if (isLevelType() || isSelectedFramesType()) {
@@ -1917,7 +1917,7 @@ void VectorSelectionTool::computeBBox() {
 //-----------------------------------------------------------------------------
 
 bool VectorSelectionTool::selectStroke(int index, bool toggle) {
-  TVectorImageP vi = getImage(false);
+  TVectorImageP vi = TImageP(getImage(false));
   assert(vi);
   assert(m_strokeSelection.getImage() == vi);
 
@@ -1986,7 +1986,7 @@ void VectorSelectionTool::onDeactivate() {
 //-----------------------------------------------------------------------------
 
 void VectorSelectionTool::doOnActivate() {
-  TVectorImageP vi = getImage(false);
+  TVectorImageP vi = TImageP(getImage(false));
   m_strokeSelection.setImage(vi);
 
   updateSelectionTarget();
@@ -1998,7 +1998,7 @@ void VectorSelectionTool::doOnActivate() {
 //-----------------------------------------------------------------------------
 
 void VectorSelectionTool::onImageChanged() {
-  TVectorImageP vi          = getImage(false);
+  TVectorImageP vi          = TImageP(getImage(false));
   TVectorImageP selectedImg = m_strokeSelection.getImage();
 
   if (vi != selectedImg) {

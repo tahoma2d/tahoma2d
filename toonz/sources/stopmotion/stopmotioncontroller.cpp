@@ -47,7 +47,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCommonStyle>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -347,11 +347,11 @@ StopMotionSaveInFolderPopup::StopMotionSaveInFolderPopup(QWidget *parent)
   addButtonBarWidget(okBtn, cancelBtn);
 
   //---- layout
-  m_topLayout->setMargin(10);
+  m_topLayout->setContentsMargins(10, 10, 10, 10);
   m_topLayout->setSpacing(10);
   {
     QGridLayout *saveInLay = new QGridLayout();
-    saveInLay->setMargin(0);
+    saveInLay->setContentsMargins(0, 0, 0, 0);
     saveInLay->setHorizontalSpacing(3);
     saveInLay->setVerticalSpacing(0);
     {
@@ -367,11 +367,11 @@ StopMotionSaveInFolderPopup::StopMotionSaveInFolderPopup(QWidget *parent)
     m_topLayout->addWidget(m_subFolderCB, 0, Qt::AlignLeft);
 
     QVBoxLayout *subFolderLay = new QVBoxLayout();
-    subFolderLay->setMargin(0);
+    subFolderLay->setContentsMargins(0, 0, 0, 0);
     subFolderLay->setSpacing(10);
     {
       QGridLayout *infoLay = new QGridLayout();
-      infoLay->setMargin(10);
+      infoLay->setContentsMargins(10, 10, 10, 10);
       infoLay->setHorizontalSpacing(3);
       infoLay->setVerticalSpacing(10);
       {
@@ -393,7 +393,7 @@ StopMotionSaveInFolderPopup::StopMotionSaveInFolderPopup(QWidget *parent)
       subFolderLay->addWidget(infoGroupBox, 0);
 
       QGridLayout *subNameLay = new QGridLayout();
-      subNameLay->setMargin(10);
+      subNameLay->setContentsMargins(10, 10, 10, 10);
       subNameLay->setHorizontalSpacing(3);
       subNameLay->setVerticalSpacing(10);
       {
@@ -841,7 +841,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_saveInFolderPopup = new StopMotionSaveInFolderPopup(this);
   m_cameraListCombo   = new QComboBox(this);
   m_resolutionCombo   = new QComboBox(this);
-  m_resolutionCombo->setFixedWidth(fontMetrics().width("0000 x 0000") + 40);
+  m_resolutionCombo->setFixedWidth(fontMetrics().horizontalAdvance("0000 x 0000") + 40);
   m_resolutionLabel                 = new QLabel(tr("Resolution: "), this);
   m_cameraStatusLabel               = new QLabel(tr("Camera Status"), this);
   QPushButton *refreshCamListButton = new QPushButton(tr("Refresh"), this);
@@ -988,12 +988,12 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
   QVBoxLayout *controlLayout = new QVBoxLayout();
   controlLayout->setSpacing(0);
-  controlLayout->setMargin(5);
+  controlLayout->setContentsMargins(5, 5, 5, 5);
 
   {
     {
       QGridLayout *camLay = new QGridLayout();
-      camLay->setMargin(0);
+      camLay->setContentsMargins(0, 0, 0, 0);
       camLay->setSpacing(3);
       {
         camLay->addWidget(new QLabel(tr("Camera:"), this), 0, 0,
@@ -1015,18 +1015,18 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
       controlLayout->addLayout(camLay, 0);
 
       QVBoxLayout *fileLay = new QVBoxLayout();
-      fileLay->setMargin(8);
+      fileLay->setContentsMargins(8, 8, 8, 8);
       fileLay->setSpacing(5);
       {
         QGridLayout *levelLay = new QGridLayout();
-        levelLay->setMargin(0);
+        levelLay->setContentsMargins(0, 0, 0, 0);
         levelLay->setHorizontalSpacing(3);
         levelLay->setVerticalSpacing(5);
         {
           levelLay->addWidget(new QLabel(tr("Name:"), this), 0, 0,
                               Qt::AlignRight);
           QHBoxLayout *nameLay = new QHBoxLayout();
-          nameLay->setMargin(0);
+          nameLay->setContentsMargins(0, 0, 0, 0);
           nameLay->setSpacing(2);
           {
             nameLay->addWidget(m_previousLevelButton, 0);
@@ -1040,7 +1040,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                               Qt::AlignRight);
 
           QHBoxLayout *frameLay = new QHBoxLayout();
-          frameLay->setMargin(0);
+          frameLay->setContentsMargins(0, 0, 0, 0);
           frameLay->setSpacing(2);
           {
             frameLay->addWidget(m_previousFrameButton, 0);
@@ -1056,7 +1056,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
         fileLay->addLayout(levelLay, 0);
 
         QHBoxLayout *fileTypeLay = new QHBoxLayout();
-        fileTypeLay->setMargin(0);
+        fileTypeLay->setContentsMargins(0, 0, 0, 0);
         fileTypeLay->setSpacing(3);
         {
           // fileTypeLay->addWidget(new QLabel(tr("File Type:"), this), 0);
@@ -1069,7 +1069,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
         fileLay->addLayout(fileTypeLay, 0);
 
         QHBoxLayout *saveInLay = new QHBoxLayout();
-        saveInLay->setMargin(0);
+        saveInLay->setContentsMargins(0, 0, 0, 0);
         saveInLay->setSpacing(3);
         {
           // saveInLay->addWidget(new QLabel(tr("Save In:"), this), 0);
@@ -1083,7 +1083,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
       controlLayout->addWidget(fileFrame, 0);
 
       QGridLayout *displayLay = new QGridLayout();
-      displayLay->setMargin(8);
+      displayLay->setContentsMargins(8, 8, 8, 8);
       displayLay->setHorizontalSpacing(3);
       displayLay->setVerticalSpacing(5);
       {
@@ -1093,7 +1093,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
         displayLay->addWidget(new QLabel(tr("Scene Frame:"), this), 1, 0,
                               Qt::AlignRight);
         QHBoxLayout *xsheetLay = new QHBoxLayout();
-        xsheetLay->setMargin(0);
+        xsheetLay->setContentsMargins(0, 0, 0, 0);
         xsheetLay->setSpacing(2);
         {
           xsheetLay->addWidget(m_previousXSheetFrameButton, Qt::AlignLeft);
@@ -1153,7 +1153,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_pictureStyleCombo   = new QComboBox(this);
     m_cameraSettingsLabel = new QLabel(tr("Camera Model"), this);
     m_cameraModeLabel     = new QLabel(tr("Camera Mode"), this);
-    m_exposureCombo->setFixedWidth(fontMetrics().width("000000") + 25);
+    m_exposureCombo->setFixedWidth(fontMetrics().horizontalAdvance("000000") +
+                                   25);
     m_liveViewCompensationLabel  = new QLabel(tr("Live View Offset: 0"), this);
     m_liveViewCompensationSlider = new QSlider(Qt::Horizontal, this);
     m_liveViewCompensationSlider->setRange(-15, 12);
@@ -1161,11 +1162,11 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_liveViewCompensationSlider->setFixedWidth(260);
     QVBoxLayout *settingsLayout = new QVBoxLayout;
     settingsLayout->setSpacing(0);
-    settingsLayout->setMargin(5);
+    settingsLayout->setContentsMargins(5, 5, 5, 5);
 
     QGridLayout *settingsGridLayout = new QGridLayout;
     {
-      settingsGridLayout->setMargin(0);
+      settingsGridLayout->setContentsMargins(0, 0, 0, 0);
       settingsGridLayout->setSpacing(3);
       settingsGridLayout->addWidget(m_cameraSettingsLabel, 0, 0, 1, 2,
                                     Qt::AlignCenter);
@@ -1224,12 +1225,12 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     settingsLayout->addLayout(settingsGridLayout, 0);
 
     QVBoxLayout *focusTestLayout = new QVBoxLayout;
-    focusTestLayout->setMargin(3);
+    focusTestLayout->setContentsMargins(3, 3, 3, 3);
     focusTestLayout->setSpacing(0);
     {
       focusTestLayout->addSpacing(2);
       m_focusAndZoomLayout = new QHBoxLayout;
-      m_focusAndZoomLayout->setMargin(0);
+      m_focusAndZoomLayout->setContentsMargins(0, 0, 0, 0);
       m_focusAndZoomLayout->setSpacing(0);
       {
         m_focusAndZoomLayout->addWidget(m_manualFocusSlider, Qt::AlignCenter);
@@ -1261,7 +1262,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
     QVBoxLayout *webcamSettingsLayout = new QVBoxLayout;
     webcamSettingsLayout->setSpacing(0);
-    webcamSettingsLayout->setMargin(5);
+    webcamSettingsLayout->setContentsMargins(5, 5, 5, 5);
     QHBoxLayout *webcamLabelLayout = new QHBoxLayout();
     QGroupBox *imageFrame          = new QGroupBox(tr("Image adjust"), this);
     m_webcamLabel        = new QLabel("insert webcam name here", this);
@@ -1296,7 +1297,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     webcamSettingsLayout->addSpacing(5);
 
     QGridLayout *webcamGridLay = new QGridLayout();
-    webcamGridLay->setMargin(0);
+    webcamGridLay->setContentsMargins(0, 0, 0, 0);
     webcamGridLay->setSpacing(3);
     webcamGridLay->setColumnStretch(0, 0);
     webcamGridLay->setColumnStretch(1, 1);
@@ -1368,7 +1369,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     }
 
     QGridLayout *imageLay = new QGridLayout();
-    imageLay->setMargin(8);
+    imageLay->setContentsMargins(8, 8, 8, 8);;
     imageLay->setHorizontalSpacing(3);
     imageLay->setVerticalSpacing(5);
     {
@@ -1420,7 +1421,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
     // Calibration
     QGridLayout *calibLay = new QGridLayout();
-    calibLay->setMargin(8);
+    calibLay->setContentsMargins(8, 8, 8, 8);;
     calibLay->setHorizontalSpacing(3);
     calibLay->setVerticalSpacing(5);
     {
@@ -1428,7 +1429,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
       calibLay->addWidget(m_calibrationUI.loadBtn, 0, 1);
       calibLay->addWidget(m_calibrationUI.exportBtn, 0, 2);
       QHBoxLayout *lay = new QHBoxLayout();
-      lay->setMargin(0);
+      lay->setContentsMargins(0, 0, 0, 0);
       lay->setSpacing(5);
       lay->addWidget(m_calibrationUI.capBtn, 1);
       lay->addWidget(m_calibrationUI.label, 0);
@@ -1440,7 +1441,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
     QVBoxLayout *commonSettingsLayout = new QVBoxLayout;
     commonSettingsLayout->setSpacing(0);
-    commonSettingsLayout->setMargin(5);
+    commonSettingsLayout->setContentsMargins(5, 5, 5, 5);
     commonSettingsLayout->addWidget(m_calibrationUI.groupBox);
     commonSettingsLayout->addStretch();
     m_commonFrame = new QFrame();
@@ -1502,7 +1503,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     QVBoxLayout *optionsOutsideLayout = new QVBoxLayout;
     QGridLayout *optionsLayout        = new QGridLayout;
     optionsLayout->setSpacing(3);
-    optionsLayout->setMargin(5);
+    optionsLayout->setContentsMargins(5, 5, 5, 5);
     QGridLayout *webcamLayout   = new QGridLayout;
     QGridLayout *dslrLayout     = new QGridLayout;
     QGridLayout *checkboxLayout = new QGridLayout;
@@ -1522,7 +1523,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     webcamBox->hide();
 
     QGridLayout *timerLay = new QGridLayout();
-    timerLay->setMargin(8);
+    timerLay->setContentsMargins(8, 8, 8, 8);;
     timerLay->setHorizontalSpacing(3);
     timerLay->setVerticalSpacing(5);
     {
@@ -1655,10 +1656,10 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_motionPage->setLayout(motionOutsideLayout);
 
     m_testsOutsideLayout = new QVBoxLayout;
-    m_testsOutsideLayout->setMargin(0);
+    m_testsOutsideLayout->setContentsMargins(0, 0, 0, 0);
     m_testsOutsideLayout->setSpacing(0);
     m_testsInsideLayout = new QVBoxLayout;
-    m_testsInsideLayout->setMargin(0);
+    m_testsInsideLayout->setContentsMargins(0, 0, 0, 0);
     m_testsInsideLayout->setSpacing(5);
     QVBoxLayout *testsButtonLayout = new QVBoxLayout;
     testsButtonLayout->setContentsMargins(0, 5, 0, 5);
@@ -1688,7 +1689,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_testsPage->setStyleSheet("padding:0; margin:0;");
 
     QVBoxLayout *pathsLayout = new QVBoxLayout(this);
-    pathsLayout->setMargin(0);
+    pathsLayout->setContentsMargins(0, 0, 0, 0);
     pathsLayout->setSpacing(0);
     pathsLayout->addWidget(new MotionPathPanel(this));
     m_pathsPage->setLayout(pathsLayout);
@@ -1737,11 +1738,11 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     controlButtonFrame->setLayout(controlButtonLay);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
     {
       QHBoxLayout *hLayout = new QHBoxLayout;
-      hLayout->setMargin(0);
+      hLayout->setContentsMargins(0, 0, 0, 0);
       {
         hLayout->addSpacing(4);
         hLayout->addWidget(m_tabBar);
@@ -1778,7 +1779,7 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
                        SLOT(refreshCameraListCalled()));
   ret = ret && connect(m_cameraListCombo, SIGNAL(activated(int)), this,
                        SLOT(onCameraListComboActivated(int)));
-  ret = ret && connect(m_resolutionCombo, SIGNAL(activated(const QString &)),
+  ret = ret && connect(m_resolutionCombo, SIGNAL(textActivated(const QString &)),
                        this, SLOT(onResolutionComboActivated(const QString &)));
   if (m_captureFilterSettingsBtn)
     ret = ret && connect(m_captureFilterSettingsBtn, SIGNAL(clicked()), this,
@@ -2628,7 +2629,8 @@ void StopMotionController::refreshCameraList(QString activeCamera) {
       std::string name = webcams.at(c).deviceName().toStdString();
       QString camDesc  = webcams.at(c).description();
       m_cameraListCombo->addItem(camDesc, QVariant::fromValue(c));
-      maxTextLength = std::max(maxTextLength, fontMetrics().width(camDesc));
+      maxTextLength =
+          std::max(maxTextLength, fontMetrics().horizontalAdvance(camDesc));
     }
 #ifdef WITH_CANON
     for (int c = 0; c < m_stopMotion->m_canon->getCameraCount(); c++) {
@@ -2639,14 +2641,16 @@ void StopMotionController::refreshCameraList(QString activeCamera) {
       name = QString::fromStdString(m_stopMotion->m_canon->getCameraName());
       if (!open) m_stopMotion->m_canon->closeCameraSession();
       m_cameraListCombo->addItem(name, QVariant::fromValue(c));
-      maxTextLength = std::max(maxTextLength, fontMetrics().width(name));
+      maxTextLength =
+          std::max(maxTextLength, fontMetrics().horizontalAdvance(name));
     }
 #endif
 #ifdef WITH_GPHOTO2
     for (int c = 0; c < m_stopMotion->m_gphotocam->getCameraCount(); c++) {
       QString name = m_stopMotion->m_gphotocam->getCameraName(c);
       m_cameraListCombo->addItem(name, QVariant::fromValue(c));
-      maxTextLength = std::max(maxTextLength, fontMetrics().width(name));
+      maxTextLength =
+          std::max(maxTextLength, fontMetrics().horizontalAdvance(name));
     }
 #endif
 
@@ -2914,14 +2918,15 @@ void StopMotionController::refreshExposureList() {
 
   int maxTextLength = 0;
   for (int i = 0; i < exposureOptions.size(); i++) {
-    maxTextLength =
-        std::max(maxTextLength, fontMetrics().width(exposureOptions.at(i)));
+    maxTextLength = std::max(
+        maxTextLength, fontMetrics().horizontalAdvance(exposureOptions.at(i)));
   }
 
   if (m_exposureCombo->count() == 0) {
     m_exposureCombo->addItem(tr("Disabled"));
     m_exposureCombo->setDisabled(true);
-    m_exposureCombo->setMaximumWidth(fontMetrics().width("Disabled") + 25);
+    m_exposureCombo->setMaximumWidth(
+        fontMetrics().horizontalAdvance("Disabled") + 25);
   } else {
     m_exposureCombo->setEnabled(true);
     m_exposureCombo->setCurrentText(currentExposure);
@@ -2962,13 +2967,15 @@ void StopMotionController::refreshWhiteBalanceList() {
   int maxTextLength = 0;
   for (int i = 0; i < whiteBalanceOptions.size(); i++) {
     maxTextLength =
-        std::max(maxTextLength, fontMetrics().width(whiteBalanceOptions.at(i)));
+        std::max(maxTextLength,
+                 fontMetrics().horizontalAdvance(whiteBalanceOptions.at(i)));
   }
 
   if (m_whiteBalanceCombo->count() == 0) {
     m_whiteBalanceCombo->addItem(tr("Disabled"));
     m_whiteBalanceCombo->setDisabled(true);
-    m_whiteBalanceCombo->setMaximumWidth(fontMetrics().width("Disabled") + 25);
+    m_whiteBalanceCombo->setMaximumWidth(
+        fontMetrics().horizontalAdvance("Disabled") + 25);
   } else {
     m_whiteBalanceCombo->setEnabled(true);
     m_whiteBalanceCombo->setCurrentText(currentWhiteBalance);
@@ -3103,13 +3110,15 @@ void StopMotionController::refreshImageQualityList() {
   int maxTextLength = 0;
   for (int i = 0; i < imageQualityOptions.size(); i++) {
     maxTextLength =
-        std::max(maxTextLength, fontMetrics().width(imageQualityOptions.at(i)));
+        std::max(maxTextLength,
+                 fontMetrics().horizontalAdvance(imageQualityOptions.at(i)));
   }
 
   if (m_imageQualityCombo->count() == 0) {
     m_imageQualityCombo->addItem(tr("Disabled"));
     m_imageQualityCombo->setDisabled(true);
-    m_imageQualityCombo->setMaximumWidth(fontMetrics().width("Disabled") + 25);
+    m_imageQualityCombo->setMaximumWidth(
+        fontMetrics().horizontalAdvance("Disabled") + 25);
   } else {
     m_imageQualityCombo->setEnabled(true);
     m_imageQualityCombo->setCurrentText(currentImageQuality);
@@ -3149,14 +3158,15 @@ void StopMotionController::refreshImageSizeList() {
   m_imageSizeCombo->addItems(imageSizeOptions);
   int maxTextLength = 0;
   for (int i = 0; i < imageSizeOptions.size(); i++) {
-    maxTextLength =
-        std::max(maxTextLength, fontMetrics().width(imageSizeOptions.at(i)));
+    maxTextLength = std::max(
+        maxTextLength, fontMetrics().horizontalAdvance(imageSizeOptions.at(i)));
   }
 
   if (m_imageSizeCombo->count() == 0) {
     m_imageSizeCombo->addItem(tr("Disabled"));
     m_imageSizeCombo->setDisabled(true);
-    m_imageSizeCombo->setMaximumWidth(fontMetrics().width("Disabled") + 25);
+    m_imageSizeCombo->setMaximumWidth(
+        fontMetrics().horizontalAdvance("Disabled") + 25);
   } else {
     m_imageSizeCombo->setEnabled(true);
     m_imageSizeCombo->setCurrentText(currentImageSize);
@@ -3197,13 +3207,15 @@ void StopMotionController::refreshPictureStyleList() {
   int maxTextLength = 0;
   for (int i = 0; i < pictureStyleOptions.size(); i++) {
     maxTextLength =
-        std::max(maxTextLength, fontMetrics().width(pictureStyleOptions.at(i)));
+        std::max(maxTextLength,
+                 fontMetrics().horizontalAdvance(pictureStyleOptions.at(i)));
   }
 
   if (m_pictureStyleCombo->count() == 0) {
     m_pictureStyleCombo->addItem(tr("Disabled"));
     m_pictureStyleCombo->setDisabled(true);
-    m_pictureStyleCombo->setMaximumWidth(fontMetrics().width("Disabled") + 25);
+    m_pictureStyleCombo->setMaximumWidth(
+        fontMetrics().horizontalAdvance("Disabled") + 25);
   } else {
     m_pictureStyleCombo->setEnabled(true);
     m_pictureStyleCombo->setCurrentText(currentPictureStyle);

@@ -8,7 +8,7 @@
 
 #include <QTextStream>
 #include <QApplication>
-#include <QDesktopWidget>
+#include <QScreen>
 
 //========================================================
 
@@ -1440,11 +1440,7 @@ void DockLayout::writeRegion(Region *r, QString &hierarchy) {
 //! widget has ever been left unchanged or completely restored
 //! as it were when saved. In particular, their ordering must be preserved.
 bool DockLayout::restoreState(const State &state) {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   QStringList vars = state.second.split(" ", Qt::SkipEmptyParts);
-#else
-  QStringList vars = state.second.split(" ", QString::SkipEmptyParts);
-#endif
   if (vars.size() < 1) return 0;
 
   // Check number of items
@@ -1540,8 +1536,7 @@ bool DockLayout::restoreState(const State &state) {
     if (item->m_saveIndex > 0) {
       // Ensure that floating panels are not placed in
       // unavailable positions
-      if ((geoms[j] & QApplication::desktop()->availableGeometry(item))
-              .isEmpty())
+      if ((geoms[j] & item->screen()->availableGeometry()).isEmpty())
         item->move(recoverX += 50, recoverY += 50);
 
       // Set floating appearances

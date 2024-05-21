@@ -316,7 +316,7 @@ CleanupPopup::CleanupPopup()
 
   //---layout
   QVBoxLayout *mainLayout = new QVBoxLayout();
-  mainLayout->setMargin(5);
+  mainLayout->setContentsMargins(5, 5, 5, 5);
   mainLayout->setSpacing(5);
   {
     mainLayout->addWidget(m_progressLabel, 0);
@@ -325,13 +325,13 @@ CleanupPopup::CleanupPopup()
     mainLayout->addWidget(m_cleanupQuestionLabel);
 
     QVBoxLayout *imgBoxLay = new QVBoxLayout();
-    imgBoxLay->setMargin(5);
+    imgBoxLay->setContentsMargins(5, 5, 5, 5);
     { imgBoxLay->addWidget(m_imageViewer); }
     m_imgViewBox->setLayout(imgBoxLay);
     mainLayout->addWidget(m_imgViewBox, 1);
 
     QHBoxLayout *buttonLay = new QHBoxLayout();
-    buttonLay->setMargin(0);
+    buttonLay->setContentsMargins(0, 0, 0, 0);
     buttonLay->setSpacing(5);
     {
       buttonLay->addWidget(m_cleanupButton);
@@ -343,7 +343,7 @@ CleanupPopup::CleanupPopup()
     mainLayout->addLayout(buttonLay);
     mainLayout->addStretch();
   }
-  m_topLayout->setMargin(0);
+  m_topLayout->setContentsMargins(0, 0, 0, 0);
   m_topLayout->addLayout(mainLayout);
 
   //--- signal-slot connections
@@ -1436,7 +1436,7 @@ CleanupPopup::OverwriteDialog::OverwriteDialog()
     : DVGui::ValidatedChoiceDialog(TApp::instance()->getMainWindow()) {
   setWindowTitle(tr("Warning!"));
 
-  bool ret = connect(m_buttonGroup, SIGNAL(buttonClicked(int)),
+  bool ret = connect(m_buttonGroup, SIGNAL(idClicked(int)),
                      SLOT(onButtonClicked(int)));
   assert(ret);
 

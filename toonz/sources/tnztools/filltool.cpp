@@ -2823,7 +2823,7 @@ bool FillTool::onPropertyChanged(std::string propertyName) {
             propertyName == m_maxGapDistance.getName() + "withUndo")) {
     TXshLevel *xl = TTool::getApplication()->getCurrentLevel()->getLevel();
     m_level       = xl ? xl->getSimpleLevel() : 0;
-    if (TVectorImageP vi = getImage(true)) {
+    if (TVectorImageP vi = TImageP(getImage(true))) {
       if (m_changedGapOriginalValue == -1.0) {
         ImageUtils::getFillingInformationInArea(vi, m_oldFillInformation,
                                                 vi->getBBox());
@@ -2896,7 +2896,7 @@ void FillTool::onImageChanged() {
     m_rectFill->onImageChanged();
     return;
   }
-  if (TVectorImageP vi = getImage(true)) {
+  if (TVectorImageP vi = TImageP(getImage(true))) {
     m_frameSwitched = true;
     if (m_maxGapDistance.getValue() != vi->getAutocloseTolerance()) {
       m_maxGapDistance.setValue(vi->getAutocloseTolerance());
@@ -2911,7 +2911,7 @@ void FillTool::onImageChanged() {
 
 void FillTool::onFrameSwitched() {
   m_frameSwitched = true;
-  if (TVectorImageP vi = getImage(true)) {
+  if (TVectorImageP vi = TImageP(getImage(true))) {
     if (m_maxGapDistance.getValue() != vi->getAutocloseTolerance()) {
       m_maxGapDistance.setValue(vi->getAutocloseTolerance());
       getApplication()->getCurrentTool()->notifyToolChanged();

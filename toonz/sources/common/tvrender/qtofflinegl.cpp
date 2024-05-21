@@ -125,39 +125,8 @@ void QtOfflineGL::createContext(TDimension rasterSize,
 
 */
 
-  QGLFormat fmt;
-
-#if defined(_WIN32)
-  fmt.setAlphaBufferSize(8);
-  fmt.setAlpha(true);
-  fmt.setRgba(true);
-  fmt.setDepthBufferSize(32);
-  fmt.setDepth(true);
-  fmt.setStencilBufferSize(32);
-  fmt.setStencil(true);
-  fmt.setAccum(false);
-  fmt.setPlane(0);
-#elif defined(MACOSX)
-  fmt = QGLFormat::defaultFormat();
-  // printf("GL Version: %s\n",glGetString(GL_VERSION));
-  fmt.setVersion(2, 1); /* 3.2 might not work on OSX10.8 */
-#if 0
-  fmt.setAlphaBufferSize(8);
-  fmt.setAlpha(true);
-  fmt.setRgba(true);
-  fmt.setDepthBufferSize(32);
-  fmt.setDepth(true);
-  fmt.setStencilBufferSize(8);
-  fmt.setStencil(true);
-  fmt.setAccum(false);
-  fmt.setPlane(0);
-  fmt.setDirectRendering(false);
-#endif
-#elif defined(LINUX) || defined(FREEBSD)
-  fmt = QGLFormat::defaultFormat();
-  // printf("GL Version: %s\n",glGetString(GL_VERSION));
-  fmt.setVersion(2, 1); /* XXX? */
-#endif
+  QOpenGLFramebufferObjectFormat fmt;
+  fmt.setAttachment(QOpenGLFramebufferObject::Attachment::CombinedDepthStencil);
 
   QSurfaceFormat format;
   format.setProfile(QSurfaceFormat::CompatibilityProfile);
@@ -205,7 +174,7 @@ void QtOfflineGL::doneCurrent() {
 //-----------------------------------------------------------------------------
 
 void QtOfflineGL::saveCurrentContext() {
-  //  m_oldContext = const_cast<QGLContext*>(QGLContext::currentContext());
+  //  m_oldContext = const_cast<QOpenGLContext*>(QOpenGLContext::currentContext());
 }
 
 //-----------------------------------------------------------------------------
@@ -230,7 +199,7 @@ void QtOfflineGL::getRaster(TRaster32P raster) {
   raster->unlock();
 }
 
-// QGLPixelBuffer::hasOpenGLPbuffers() (statica) -> true se la scheda supporta i
+// QOpenGLFramebufferObject::hasOpenGLPbuffers() (statica) -> true se la scheda supporta i
 // PBuffer
 
 //=============================================================================
@@ -277,39 +246,8 @@ SPECIFICHE  MAC = depth_size 24, stencil_size 8, alpha_size 1
 
 */
 
-  QGLFormat fmt;
-
-#if defined(_WIN32)
-  fmt.setAlphaBufferSize(8);
-  fmt.setAlpha(false);
-  fmt.setRgba(true);
-  fmt.setDepthBufferSize(32);
-  fmt.setDepth(true);
-  fmt.setStencilBufferSize(32);
-  fmt.setStencil(true);
-  fmt.setAccum(false);
-  fmt.setPlane(0);
-#elif defined(MACOSX)
-  fmt.setAlphaBufferSize(1);
-  fmt.setAlpha(false);
-  fmt.setRgba(true);
-  fmt.setDepthBufferSize(24);
-  fmt.setDepth(true);
-  fmt.setStencilBufferSize(8);
-  fmt.setStencil(true);
-  fmt.setAccum(false);
-  fmt.setPlane(0);
-#elif defined(LINUX) || defined(FREEBSD)
-  fmt.setAlphaBufferSize(1);
-  fmt.setAlpha(false);
-  fmt.setRgba(true);
-  fmt.setDepthBufferSize(24);
-  fmt.setDepth(true);
-  fmt.setStencilBufferSize(8);
-  fmt.setStencil(true);
-  fmt.setAccum(false);
-  fmt.setPlane(0);
-#endif
+  QOpenGLFramebufferObjectFormat fmt;
+  fmt.setAttachment(QOpenGLFramebufferObject::Attachment::CombinedDepthStencil);
 
   // Il PixelBuffer deve essere con width ed height potenze di 2
 
@@ -320,21 +258,21 @@ SPECIFICHE  MAC = depth_size 24, stencil_size 8, alpha_size 1
   while (pBufferSize < sizeMax) pBufferSize *= 2;
 
   m_context =
-      std::make_shared<QGLPixelBuffer>(QSize(pBufferSize, pBufferSize), fmt);
+      std::make_shared<QOpenGLFramebufferObject>(QSize(pBufferSize, pBufferSize), fmt);
 }
 
 //-----------------------------------------------------------------------------
 
 void QtOfflineGLPBuffer::makeCurrent() {
   if (m_context) {
-    m_context->makeCurrent();
+    m_context->bind();
   }
 }
 
 //-----------------------------------------------------------------------------
 
 void QtOfflineGLPBuffer::doneCurrent() {
-  if (m_context) m_context->doneCurrent();
+  if (m_context) m_context->release();
 }
 
 //-----------------------------------------------------------------------------

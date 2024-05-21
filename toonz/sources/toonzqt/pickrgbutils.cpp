@@ -6,7 +6,7 @@
 #include <QPixmap>
 #include <QImage>
 #include <QOpenGLWidget>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QApplication>
 #include <QScreen>
 
@@ -49,17 +49,15 @@ QRgb meanColor(const QImage &img, const QRect &rect) {
 //==============================================================================
 
 QRgb pickRGB(QWidget *widget, const QRect &rect) {
-  QImage img(QPixmap::grabWidget(widget, rect.x(), rect.y(), rect.width(),
-                                 rect.height())
+  QImage img(widget->grab(QRect(rect.x(), rect.y(), rect.width(),
+                                 rect.height()))
                  .toImage());
   return meanColor(img, img.rect());
 }
 
 //------------------------------------------------------------------------------
 
-QRgb pickScreenRGB(const QRect &rect) {
-  QWidget *widget = QApplication::desktop();
-
+QRgb pickScreenRGB(const QRect &rect, QWidget *widget) {
 #ifdef MACOSX
 
   //   #Bugzilla 6514, possibly related to #QTBUG 23516
@@ -70,7 +68,7 @@ QRgb pickScreenRGB(const QRect &rect) {
   // the workaround is to trivially grab the smallest rect including the
   // requested one and a part of the primary screen.
 
-  const QRect &screen0Geom = QApplication::desktop()->screenGeometry(0);
+  const QRect &screen0Geom = QApplication::primaryScreen()->geometry();
 
   int left   = std::min(rect.left(), screen0Geom.right());
   int top    = std::min(rect.top(), screen0Geom.bottom());
@@ -85,16 +83,10 @@ QRgb pickScreenRGB(const QRect &rect) {
 
 #endif
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   QImage img(widget->screen()
                  ->grabWindow(widget->winId(), theRect.x(), theRect.y(),
                               theRect.width(), theRect.height())
                  .toImage());
-#else
-  QImage img(QPixmap::grabWindow(widget->winId(), theRect.x(), theRect.y(),
-                                 theRect.width(), theRect.height())
-                 .toImage());
-#endif
   return meanColor(
       img, QRect(rect.left() - theRect.left(), rect.top() - theRect.top(),
                  rect.width(), rect.height()));

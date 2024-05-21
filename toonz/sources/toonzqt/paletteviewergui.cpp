@@ -493,11 +493,7 @@ void PageViewer::drawColorName(QPainter &p, QRect &nameRect, TColorStyle *style,
     QRect rect     = nameRect;
     QPen oldPen    = p.pen();
     TPixel32 color = style->getMainColor();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
     int textWidth = QFontMetrics(p.font()).horizontalAdvance(name);
-#else
-    int textWidth = QFontMetrics(p.font()).width(name);
-#endif
     p.setPen(Qt::black);
     if (textWidth < rect.width() - 2)
       p.drawText(rect.adjusted(1,1,1,1), Qt::AlignCenter, name);
@@ -877,12 +873,8 @@ void PageViewer::paintEvent(QPaintEvent *e) {
       tmpFont.setItalic(false);
       p.setFont(tmpFont);
       if (ShowStyleIndex == 1) {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
         int indexWidth =
             fontMetrics().horizontalAdvance(QString().setNum(styleIndex)) + 4;
-#else
-        int indexWidth = fontMetrics().width(QString().setNum(styleIndex)) + 4;
-#endif
         QRect indexRect(chipRect.bottomRight() + QPoint(-indexWidth, -14),
                         chipRect.bottomRight());
         p.setPen(Qt::black);

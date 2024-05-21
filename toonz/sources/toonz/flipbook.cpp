@@ -70,7 +70,7 @@
 
 // Qt includes
 #include <QApplication>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QSettings>
 #include <QPainter>
 #include <QDialogButtonBox>
@@ -210,7 +210,7 @@ FlipBook::FlipBook(QWidget *parent, QString viewerTitle,
 
   // layout
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
   {
     mainLayout->addWidget(fsWidget, 1);
@@ -391,7 +391,7 @@ LoadImagesPopup::LoadImagesPopup(FlipBook *flip)
 
   // layout
   QHBoxLayout *frameRangeLayout = new QHBoxLayout();
-  frameRangeLayout->setMargin(5);
+  frameRangeLayout->setContentsMargins(5, 5, 5, 5);
   frameRangeLayout->setSpacing(5);
   {
     frameRangeLayout->addStretch(1);
@@ -898,8 +898,7 @@ FlipBook *FlipBookPool::pop() {
       flipbook->setPoolIndex(m_geometryPool.begin()->first);
       QRect geometry(m_geometryPool.begin()->second);
       panel->setGeometry(geometry);
-      if ((geometry & QApplication::desktop()->availableGeometry(panel))
-              .isEmpty())
+      if ((geometry & panel->screen()->availableGeometry()).isEmpty())
         panel->move(x += 50, y += 50);
       m_geometryPool.erase(m_geometryPool.begin());
     }
@@ -2017,9 +2016,7 @@ void FlipBook::adaptGeometryForFullPreview(const TRect &imgRect) {
   // Get screen geometry
   TPanel *panel = static_cast<TPanel *>(parentWidget());
   if (!panel->isFloating()) return;
-  QDesktopWidget *desk =
-      static_cast<QApplication *>(QApplication::instance())->desktop();
-  QRect screenGeom = desk->availableGeometry(panel);
+  QRect screenGeom = panel->screen()->availableGeometry();
 
   while (1) {
     TAffine toWidgetRef(m_imageViewer->getImgToWidgetAffine(imgRectD));
@@ -2061,9 +2058,7 @@ void FlipBook::adaptWidGeometry(const TRect &interestWidGeom,
   //  imageGeom.top(), imageGeom.bottom());
 
   // Get screen geometry
-  QDesktopWidget *desk =
-      static_cast<QApplication *>(QApplication::instance())->desktop();
-  QRect screenGeom = desk->availableGeometry(panel);
+  QRect screenGeom = panel->screen()->availableGeometry();
 
   // Get panel margin measures
   QRect margins;

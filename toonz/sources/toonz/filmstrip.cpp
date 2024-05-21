@@ -1166,7 +1166,7 @@ void FilmstripFrames::mouseMoveEvent(QMouseEvent *e) {
     } else
       stopAutoPanning();
     update();
-  } else if (e->buttons() & Qt::MidButton) {
+  } else if (e->buttons() & Qt::MiddleButton) {
     // scroll con il tasto centrale
     pos = e->globalPos();
     if (m_isVertical) {
@@ -1229,12 +1229,12 @@ void FilmstripFrames::keyPressEvent(QKeyEvent *event) {
   else if (event->key() == Qt::Key_PageDown) {
     if (m_isVertical) {
       int frameHeight   = m_iconSize.height();
-      int visibleHeight = visibleRegion().rects()[0].height();
+      int visibleHeight = visibleRegion().begin()[0].height();
       int visibleFrames = double(visibleHeight) / double(frameHeight);
       scroll(visibleFrames * frameHeight);
     } else {
       int frameWidth    = m_iconSize.width();
-      int visibleWidth  = visibleRegion().rects()[0].width();
+      int visibleWidth  = visibleRegion().begin()[0].width();
       int visibleFrames = double(visibleWidth) / double(frameWidth);
       scroll(visibleFrames * frameWidth);
     }
@@ -1242,12 +1242,12 @@ void FilmstripFrames::keyPressEvent(QKeyEvent *event) {
   } else if (event->key() == Qt::Key_PageUp) {
     if (m_isVertical) {
       int frameHeight   = m_iconSize.height();
-      int visibleHeight = visibleRegion().rects()[0].height();
+      int visibleHeight = visibleRegion().begin()[0].height();
       int visibleFrames = double(visibleHeight) / double(frameHeight);
       scroll(-visibleFrames * frameHeight);
     } else {
       int frameWidth    = m_iconSize.width();
-      int visibleWidth  = visibleRegion().rects()[0].width();
+      int visibleWidth  = visibleRegion().begin()[0].width();
       int visibleFrames = double(visibleWidth) / double(frameWidth);
       scroll(-visibleFrames * frameWidth);
     }
@@ -1264,7 +1264,7 @@ void FilmstripFrames::keyPressEvent(QKeyEvent *event) {
 //-----------------------------------------------------------------------------
 
 void FilmstripFrames::wheelEvent(QWheelEvent *event) {
-  scroll(-event->delta());
+  scroll(-event->angleDelta().y());
 }
 
 //-----------------------------------------------------------------------------
@@ -1604,7 +1604,7 @@ Filmstrip::Filmstrip(QWidget *parent, Qt::WindowFlags flags) : QWidget(parent) {
 
   // layout
   QVBoxLayout *mainLayout = new QVBoxLayout();
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
   {
     mainLayout->addWidget(m_chooseLevelCombo, 0);

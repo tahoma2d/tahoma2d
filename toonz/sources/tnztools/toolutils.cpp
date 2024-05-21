@@ -43,7 +43,6 @@
 
 #include <QPainter>
 #include <QPainterPath>
-#include <QGLWidget>  // for QGLWidget::convertToGLFormat
 #include <QFont>
 #include <QFontMetrics>
 
@@ -1641,7 +1640,7 @@ void ToolUtils::drawBalloon(const TPointD &pos, std::string text,
   p.setFont(font);
   p.drawText(textRect, Qt::AlignCenter | Qt::TextDontClip, qText);
 
-  QImage texture = QGLWidget::convertToGLFormat(label);
+  QImage texture = label.mirrored().convertToFormat(QImage::Format_RGBA8888);
 
   glRasterPos2f(pos.x, pos.y);
   glBitmap(0, 0, 0, 0, 0, -size.height() + (y + delta.y), NULL);  //
@@ -1695,7 +1694,7 @@ void ToolUtils::drawHook(const TPointD &pos, ToolUtils::HookType type,
     painter.drawLine(r, 0, r, d);
   }
 
-  QImage texture = QGLWidget::convertToGLFormat(image);
+  QImage texture = image.mirrored().convertToFormat(QImage::Format_RGBA8888);
   glRasterPos2f(pos.x, pos.y);
   glBitmap(0, 0, 0, 0, -r * devPixRatio, -r * devPixRatio, NULL);
   glEnable(GL_BLEND);
@@ -1708,7 +1707,7 @@ void ToolUtils::drawHook(const TPointD &pos, ToolUtils::HookType type,
 //---------------------------------------------------------------------------------------------
 
 bool ToolUtils::isJustCreatedSpline(TImage *image) {
-  TVectorImageP vi = image;
+  TVectorImageP vi = TImageP(image);
   if (!vi) return false;
   if (vi->getStrokeCount() != 1) return false;
   TStroke *stroke = vi->getStroke(0);

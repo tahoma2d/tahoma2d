@@ -147,7 +147,7 @@ void ColumnPainter::paint(QPainter *painter,
   }
 
   if (levelType == PLT_XSHLEVEL)
-    painter->drawRoundRect(0, 0, m_width, m_height, 32, 99);
+    painter->drawRoundedRect(0, 0, m_width, m_height, 32, 99);
   else
     painter->drawRect(0, 0, m_width, m_height);
 
@@ -652,7 +652,7 @@ void SplinePainter::paint(QPainter *painter,
 
   painter->setBrush(viewer->getSplineColor());
   painter->setPen(Qt::NoPen);
-  painter->drawRoundRect(QRectF(0, 0, m_width, m_height), 20, 99);
+  painter->drawRoundedRect(QRectF(0, 0, m_width, m_height), 20, 99);
   if (m_parent->isOpened()) {
     // Draw the pixmap
     painter->setBrush(Qt::NoBrush);
@@ -765,7 +765,7 @@ void StageSchematicNodePort::paint(QPainter *painter,
     painter->drawText(boundingRect(), text, textOption);
   } else {
     QRect imgRect(2, 2, 14, 14);
-    QRect sourceRect = scene->views()[0]->matrix().mapRect(imgRect);
+    QRect sourceRect = scene->views()[0]->transform().mapRect(imgRect);
     QPixmap pixmap;
 
     if (getType() == eStageParentPort || getType() == eStageParentGroupPort) {
@@ -921,7 +921,7 @@ void StageSchematicSplinePort::paint(QPainter *painter,
                                      const QStyleOptionGraphicsItem *option,
                                      QWidget *widget) {
   QRect sourceRect =
-      scene()->views()[0]->matrix().mapRect(boundingRect().toRect());
+      scene()->views()[0]->transform().mapRect(boundingRect().toRect());
   QPixmap pixmap;
 
   if (!m_parent->isParentPort()) {

@@ -140,7 +140,7 @@ void RigidityPainter::paint(const TPointD &pos) {
       dynamic_cast<TXshSimpleLevel *>(cell.m_level.getPointer());
   if (!sl) return;
 
-  TMeshImageP meshImg = TTool::getImage(true);
+  TMeshImageP meshImg = TImageP(TTool::getImage(true));
   if (!meshImg) return;
 
   // Soil the level - schedules it for save

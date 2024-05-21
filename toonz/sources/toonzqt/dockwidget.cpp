@@ -8,7 +8,6 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QScreen>
 
 // STD includes
@@ -81,7 +80,7 @@ inline QRect toRect(const QRectF &rect) {
 
 // Forward declaration
 namespace {
-QDesktopWidget *desktop;
+QScreen *desktop;
 void getClosestAvailableMousePosition(QPoint &globalPos);
 }  // namespace
 
@@ -128,7 +127,7 @@ DockWidget::DockWidget(QWidget *parent, Qt::WindowFlags flags)
   m_decoAllocator = new DockDecoAllocator;
 
   // Make sure the desktop is initialized and known
-  desktop = qApp->desktop();
+  desktop = QApplication::primaryScreen();
 }
 
 //-------------------------------------
@@ -400,19 +399,11 @@ void DockWidget::maximizeDock() {
 void DockWidget::wheelEvent(QWheelEvent *we) {
   if (m_dragging) {
     if (m_selectedPlace) {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
       DockPlaceholder *newSelected =
           (we->angleDelta().y() > 0)
               ? m_selectedPlace->parentPlaceholder()
               : m_selectedPlace->childPlaceholder(parentWidget()->mapFromGlobal(
                     we->globalPosition().toPoint()));
-#else
-      DockPlaceholder *newSelected =
-          (we->angleDelta().y() > 0)
-              ? m_selectedPlace->parentPlaceholder()
-              : m_selectedPlace->childPlaceholder(
-                    parentWidget()->mapFromGlobal(we->globalPos()));
-#endif
       if (newSelected != m_selectedPlace) {
         m_selectedPlace->hide();
         newSelected->show();

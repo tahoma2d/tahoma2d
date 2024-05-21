@@ -49,7 +49,7 @@
 #include <QStackedWidget>
 #include <QSettings>
 #include <QApplication>
-#include <QGLPixelBuffer>
+#include <QOpenGLFramebufferObject>
 #include <QDebug>
 #include <QDesktopServices>
 #include <QButtonGroup>
@@ -440,7 +440,7 @@ MainWindow::MainWindow(const QString &argumentLayoutFileName, QWidget *parent,
 centralWidget->setFrameStyle(QFrame::StyledPanel);
 centralWidget->setObjectName("centralWidget");
 QHBoxLayout *centralWidgetLayout = new QHBoxLayout;
-centralWidgetLayout->setMargin(3);
+centralWidgetLayout->setContentsMargins(3, 3, 3, 3);
 centralWidgetLayout->addWidget(m_stackedWidget);
 centralWidget->setLayout(centralWidgetLayout);*/
 
@@ -1309,7 +1309,7 @@ void MainWindow::onMenuCheckboxChanged() {
   else if (cm->getAction(MI_FieldGuide) == action)
     FieldGuideToggleAction = isChecked;
   else if (cm->getAction(MI_RasterizePli) == action) {
-    if (!QGLPixelBuffer::hasOpenGLPbuffers()) isChecked = 0;
+//    if (!QOpenGLFramebufferObject::hasOpenGLPbuffers()) isChecked = 0;
     RasterizePliToggleAction = isChecked;
   } else if (cm->getAction(MI_SafeArea) == action)
     SafeAreaToggleAction = isChecked;
@@ -2411,12 +2411,12 @@ void MainWindow::defineActions() {
   createToggle(MI_VectorGuidedDrawing, QT_TR_NOOP("Vector Guided Tweening"), "",
                Preferences::instance()->isGuidedDrawingEnabled(),
                MenuViewCommandType, "view_guided_drawing");
-  if (QGLPixelBuffer::hasOpenGLPbuffers())
+//  if (QOpenGLFramebufferObject::hasOpenGLPbuffers())
     createToggle(MI_RasterizePli, QT_TR_NOOP("&Visualize Vector As Raster"), "",
                  RasterizePliToggleAction ? 1 : 0, MenuViewCommandType,
                  "view_vector_as_raster");
-  else
-    RasterizePliToggleAction = 0;
+//  else
+//    RasterizePliToggleAction = 0;
   createToggle(MI_ToggleLightTable, QT_TR_NOOP("Light Table"), "", false,
                MenuViewCommandType, "light_table");
   createToggle(MI_CurrentDrawingOnTop, QT_TR_NOOP("Current Drawing On Top"), "", false,

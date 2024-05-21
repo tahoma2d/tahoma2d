@@ -93,13 +93,13 @@ ToolOptionsBox::ToolOptionsBox(QWidget *parent, bool isScrollable)
   setFixedHeight(26);
 
   m_layout = new QHBoxLayout;
-  m_layout->setMargin(0);
+  m_layout->setContentsMargins(0, 0, 0, 0);
   m_layout->setSpacing(5);
   m_layout->addSpacing(5);
 
   if (isScrollable) {
     QHBoxLayout *hLayout = new QHBoxLayout;
-    hLayout->setMargin(0);
+    hLayout->setContentsMargins(0, 0, 0, 0);
     hLayout->setSpacing(0);
     setLayout(hLayout);
 
@@ -606,7 +606,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
 
     // Pick combobox only available on "All" axis mode
     QHBoxLayout *pickLay = new QHBoxLayout();
-    pickLay->setMargin(0);
+    pickLay->setContentsMargins(0, 0, 0, 0);
     pickLay->setSpacing(0);
     {
       pickLay->addSpacing(5);
@@ -622,7 +622,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
       // Position
       QFrame *posFrame    = new QFrame(this);
       QHBoxLayout *posLay = new QHBoxLayout();
-      posLay->setMargin(0);
+      posLay->setContentsMargins(0, 0, 0, 0);
       posLay->setSpacing(0);
       posFrame->setLayout(posLay);
       {
@@ -670,7 +670,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
       // Rotation
       QFrame *rotFrame    = new QFrame(this);
       QHBoxLayout *rotLay = new QHBoxLayout();
-      rotLay->setMargin(0);
+      rotLay->setContentsMargins(0, 0, 0, 0);
       rotLay->setSpacing(0);
       rotFrame->setLayout(rotLay);
       {
@@ -694,7 +694,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
       // Scale
       QFrame *scaleFrame    = new QFrame(this);
       QHBoxLayout *scaleLay = new QHBoxLayout();
-      scaleLay->setMargin(0);
+      scaleLay->setContentsMargins(0, 0, 0, 0);
       scaleLay->setSpacing(0);
       scaleFrame->setLayout(scaleLay);
       {
@@ -739,7 +739,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
       // Shear
       QFrame *shearFrame    = new QFrame(this);
       QHBoxLayout *shearLay = new QHBoxLayout();
-      shearLay->setMargin(0);
+      shearLay->setContentsMargins(0, 0, 0, 0);
       shearLay->setSpacing(0);
       shearFrame->setLayout(shearLay);
       {
@@ -771,7 +771,7 @@ ArrowToolOptionsBox::ArrowToolOptionsBox(
       // Center Position
       QFrame *centerPosFrame    = new QFrame(this);
       QHBoxLayout *centerPosLay = new QHBoxLayout();
-      centerPosLay->setMargin(0);
+      centerPosLay->setContentsMargins(0, 0, 0, 0);
       centerPosLay->setSpacing(0);
       centerPosFrame->setLayout(centerPosLay);
       {
@@ -2473,7 +2473,7 @@ RulerToolOptionsBox::RulerToolOptionsBox(QWidget *parent, TTool *tool)
 
   // layout
   QHBoxLayout *lay = new QHBoxLayout();
-  lay->setMargin(0);
+  lay->setContentsMargins(0, 0, 0, 0);
   lay->setSpacing(3);
   {
     lay->addWidget(new QLabel(tr("X:", "ruler tool option"), this), 0);
@@ -2719,7 +2719,7 @@ RGBPickerToolOptionsBox::RGBPickerToolOptionsBox(
       CommandManager::instance()->getAction("A_ToolOption_PickScreen");
 
   QPushButton *button = new QPushButton(tr("Pick Screen"));
-  int buttonWidth     = fontMetrics().width(button->text()) + 10;
+  int buttonWidth     = fontMetrics().horizontalAdvance(button->text()) + 10;
   button->setFixedWidth(buttonWidth);
   button->setFixedHeight(20);
   button->addAction(pickScreenAction);
@@ -2857,9 +2857,9 @@ ShiftTraceToolOptionBox::ShiftTraceToolOptionBox(QWidget *parent, TTool *tool)
 
   m_resetPrevGhostBtn  = new QPushButton(tr("Reset Previous"), this);
   m_resetAfterGhostBtn = new QPushButton(tr("Reset Following"), this);
-  int buttonWidth      = fontMetrics().width(m_resetPrevGhostBtn->text()) + 10;
+  int buttonWidth      = fontMetrics().horizontalAdvance(m_resetPrevGhostBtn->text()) + 10;
   m_resetPrevGhostBtn->setFixedWidth(buttonWidth);
-  buttonWidth = fontMetrics().width(m_resetAfterGhostBtn->text()) + 10;
+  buttonWidth = fontMetrics().horizontalAdvance(m_resetAfterGhostBtn->text()) + 10;
   m_resetAfterGhostBtn->setFixedWidth(buttonWidth);
 
   m_prevRadioBtn  = new QRadioButton(tr("Previous Drawing"), this);
@@ -3391,7 +3391,7 @@ SymmetryToolOptionBox::SymmetryToolOptionBox(QWidget *parent, TTool *tool,
   m_useLineSymmetry = new ToolOptionCheckbox(tool, lineSymmetry, toolHandle);
 
   QPushButton *resetButton = new QPushButton(tr("Reset Position"));
-  int buttonWidth          = fontMetrics().width(resetButton->text()) + 10;
+  int buttonWidth          = fontMetrics().horizontalAdvance(resetButton->text()) + 10;
   resetButton->setFixedWidth(buttonWidth);
   resetButton->setFixedHeight(20);
 
@@ -3570,7 +3570,7 @@ ZoomToolOptionsBox::ZoomToolOptionsBox(QWidget *parent, TTool *tool,
       CommandManager::instance()->getAction(VB_ZoomReset);
 
   QPushButton *button = new QPushButton(tr("Reset Zoom"));
-  int buttonWidth     = fontMetrics().width(button->text()) + 10;
+  int buttonWidth     = fontMetrics().horizontalAdvance(button->text()) + 10;
   button->setFixedWidth(buttonWidth);
   button->setFixedHeight(20);
   button->addAction(resetZoomAction);
@@ -3597,7 +3597,7 @@ RotateToolOptionsBox::RotateToolOptionsBox(QWidget *parent, TTool *tool,
       CommandManager::instance()->getAction(VB_RotateReset);
 
   QPushButton *button = new QPushButton(tr("Reset Rotation"));
-  int buttonWidth     = fontMetrics().width(button->text()) + 10;
+  int buttonWidth     = fontMetrics().horizontalAdvance(button->text()) + 10;
   button->setFixedWidth(buttonWidth);
   button->setFixedHeight(20);
   button->addAction(resetRotationAction);
@@ -3624,7 +3624,7 @@ HandToolOptionsBox::HandToolOptionsBox(QWidget *parent, TTool *tool,
       CommandManager::instance()->getAction(VB_PositionReset);
 
   QPushButton *button = new QPushButton(tr("Reset Position"));
-  int buttonWidth     = fontMetrics().width(button->text()) + 20;
+  int buttonWidth     = fontMetrics().horizontalAdvance(button->text()) + 20;
   button->setFixedWidth(buttonWidth);
   button->setFixedHeight(20);
   button->addAction(resetPositionAction);
@@ -3642,7 +3642,7 @@ HandToolOptionsBox::HandToolOptionsBox(QWidget *parent, TTool *tool,
 
 ToolOptions::ToolOptions() : m_panel(0) {
   QHBoxLayout *mainLayout = new QHBoxLayout();
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
   setLayout(mainLayout);
 }

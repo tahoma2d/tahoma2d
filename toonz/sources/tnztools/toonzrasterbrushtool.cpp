@@ -2289,7 +2289,7 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
 //---------------------------------------------------------------------------------------------------------------
 // 明日はここをMyPaintのときにカーソルを消せるように修正する！！！！！！
 void ToonzRasterBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
-#if (!defined(LINUX) && !defined(FREEBSD)) || QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#if (!defined(LINUX) && !defined(FREEBSD))
   qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
 #endif
 

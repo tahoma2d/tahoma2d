@@ -55,7 +55,7 @@
 #include <QDateTime>
 #include <QInputDialog>
 #include <QDesktopServices>
-#include <QDirModel>
+#include <QFileSystemModel>
 #include <QDir>
 #include <QPixmap>
 #include <QUrl>
@@ -171,13 +171,13 @@ SceneBrowser::SceneBrowser(QWidget *parent, Qt::WindowFlags flags,
 
   // layout
   QVBoxLayout *mainLayout = new QVBoxLayout();
-  mainLayout->setMargin(3);
+  mainLayout->setContentsMargins(3, 3, 3, 3);
   mainLayout->setSpacing(2);
   {
     mainLayout->addWidget(buttonBar);
 
     QHBoxLayout *folderLay = new QHBoxLayout();
-    folderLay->setMargin(0);
+    folderLay->setContentsMargins(0, 0, 0, 0);
     folderLay->setSpacing(0);
     {
       folderLay->addWidget(folderLabel, 0);
@@ -187,7 +187,7 @@ SceneBrowser::SceneBrowser(QWidget *parent, Qt::WindowFlags flags,
 
     // m_mainSplitter->addWidget(m_folderTreeView);
     QVBoxLayout *boxLayout = new QVBoxLayout(box);
-    boxLayout->setMargin(0);
+    boxLayout->setContentsMargins(0, 0, 0, 0);
     boxLayout->setSpacing(0);
     {
       boxLayout->addWidget(titleBar, 0);
@@ -562,8 +562,8 @@ void SceneBrowser::refreshCurrentFolderItems() {
         QFileInfo fileInfo(QString::fromStdWString(it->getWideString()));
         // Update level infos
         if (levelItem.m_creationDate.isNull() ||
-            (fileInfo.created() < levelItem.m_creationDate))
-          levelItem.m_creationDate = fileInfo.created();
+            (fileInfo.birthTime() < levelItem.m_creationDate))
+          levelItem.m_creationDate = fileInfo.birthTime();
         if (levelItem.m_modifiedDate.isNull() ||
             (fileInfo.lastModified() > levelItem.m_modifiedDate))
           levelItem.m_modifiedDate = fileInfo.lastModified();
@@ -756,7 +756,7 @@ void SceneBrowser::readInfo(Item &item) {
   TFilePath fp = item.m_path;
   QFileInfo info(toQString(fp));
   if (info.exists()) {
-    item.m_creationDate = info.created();
+    item.m_creationDate = info.birthTime();
     item.m_modifiedDate = info.lastModified();
     item.m_fileType     = info.suffix();
     item.m_fileSize     = info.size();

@@ -1281,14 +1281,14 @@ IoCmd::ConvertingPopup::ConvertingPopup(QWidget *parent, QString fileName)
   setWindowFlags(Qt::Dialog | Qt::WindowTitleHint);
   setMinimumSize(70, 50);
   QVBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->setMargin(5);
+  mainLayout->setContentsMargins(5, 5, 5, 5);
   mainLayout->setSpacing(0);
 
   QLabel *label = new QLabel(QString(
       QObject::tr("Converting %1 images to tlv format...").arg(fileName)));
   mainLayout->addWidget(label);
 
-  m_topLayout->setMargin(0);
+  m_topLayout->setContentsMargins(0, 0, 0, 0);
   m_topLayout->addLayout(mainLayout);
 }
 

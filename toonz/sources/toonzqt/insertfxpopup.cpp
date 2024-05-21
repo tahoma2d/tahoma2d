@@ -279,7 +279,7 @@ InsertFxPopup::InsertFxPopup(QWidget *parent, Qt::WindowFlags flags)
   QHBoxLayout *searchLay = new QHBoxLayout();
   QLineEdit *searchEdit  = new QLineEdit(this);
 
-  searchLay->setMargin(0);
+  searchLay->setContentsMargins(0, 0, 0, 0);
   searchLay->setSpacing(5);
   searchLay->addWidget(new QLabel(tr("Search:"), this), 0);
   searchLay->addWidget(searchEdit);
@@ -333,7 +333,7 @@ InsertFxPopup::InsertFxPopup(QWidget *parent, Qt::WindowFlags flags)
 
 /*
   QHBoxLayout *buttonLayout = new QHBoxLayout;
-  buttonLayout->setMargin(0);
+  buttonLayout->setContentsMargins(0, 0, 0, 0);
   buttonLayout->setSpacing(5);
   buttonLayout->setAlignment(Qt::AlignHCenter);
 

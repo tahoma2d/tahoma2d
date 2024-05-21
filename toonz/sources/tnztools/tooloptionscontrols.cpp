@@ -45,7 +45,7 @@ using namespace DVGui;
 using namespace ToolOptionsControls;
 
 int ToolOptionsControls::getMaximumWidthForMeasuredValueField(QWidget *widget) {
-  static int fieldMaxWidth = widget->fontMetrics().width("-0000.00 field") + 10;
+  static int fieldMaxWidth = widget->fontMetrics().horizontalAdvance("-0000.00 field") + 10;
   return fieldMaxWidth;
 }
 
@@ -147,7 +147,7 @@ ToolOptionSlider::ToolOptionSlider(TTool *tool, TDoubleProperty *property,
   // set the maximum width of the widget according to the text length (with 5
   // pixels margin)
   txt.fill('0', textMaxLength);
-  int widgetWidth = fontMetrics().width(txt) + 5;
+  int widgetWidth = fontMetrics().horizontalAdvance(txt) + 5;
   m_lineEdit->parentWidget()->setMaximumWidth(widgetWidth);
   // set the maximum width of the slider to 250 pixels
   setMaximumWidth(250 + widgetWidth);
@@ -201,7 +201,7 @@ ToolOptionPairSlider::ToolOptionPairSlider(TTool *tool,
   // set the maximum width of the widget according to the text length (with 5
   // pixels margin)
   txt.fill('0', textMaxLength);
-  int widgetWidth = fontMetrics().width(txt) + 5;
+  int widgetWidth = fontMetrics().horizontalAdvance(txt) + 5;
   m_leftLineEdit->setFixedWidth(widgetWidth);
   m_rightLineEdit->setFixedWidth(widgetWidth);
   m_leftMargin  = widgetWidth + 12;
@@ -363,7 +363,7 @@ void ToolOptionCombo::loadEntries() {
                       }");
       }
     }
-    int tmpWidth = fontMetrics().width(items[i].UIName);
+    int tmpWidth = fontMetrics().horizontalAdvance(items[i].UIName);
     if (tmpWidth > maxWidth) maxWidth = tmpWidth;
   }
 

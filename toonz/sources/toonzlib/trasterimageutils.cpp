@@ -367,11 +367,7 @@ void TRasterImageUtils::addSceneNumbering(const TRasterImageP &ri,
   QString sceneNumberingString =
       QString::fromStdWString(sceneName) + ": " + sceneFrame;
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
   int sceneNumberingWidth = fm.horizontalAdvance(sceneNumberingString);
-#else
-  int sceneNumberingWidth = fm.width(sceneNumberingString);
-#endif
   p.setPen(Qt::NoPen);
   p.setBrush(QColor(255, 255, 255, 255));
   p.drawRect(offset, ly - offset - fontHeight, sceneNumberingWidth + offset * 2,
@@ -386,11 +382,7 @@ void TRasterImageUtils::addSceneNumbering(const TRasterImageP &ri,
   QString globalFrame = QString::number(globalIndex);
   while (globalFrame.size() < 4) globalFrame.push_front("0");
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
   int gloablNumberingWidth = fm.horizontalAdvance(globalFrame);
-#else
-  int gloablNumberingWidth = fm.width(globalFrame);
-#endif
   p.setPen(Qt::NoPen);
   p.setBrush(QColor(255, 255, 255, 255));
   p.drawRect(lx - 3 * offset - gloablNumberingWidth, ly - offset - fontHeight,
@@ -429,11 +421,7 @@ void TRasterImageUtils::addGlobalNumbering(const TRasterImageP &ri,
   QString globalNumberingString =
       QString::fromStdWString(sceneName) + ": " + globalFrame;
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
   int globalNumberingWidth = fm.horizontalAdvance(globalNumberingString);
-#else
-  int globalNumberingWidth = fm.width(globalNumberingString);
-#endif
   p.setPen(Qt::NoPen);
   p.setBrush(QColor(255, 255, 255, 255));
   p.drawRect(offset, ly - offset - fontHeight,

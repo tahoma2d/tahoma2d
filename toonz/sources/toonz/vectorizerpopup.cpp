@@ -478,7 +478,7 @@ VectorizerPopup::VectorizerPopup(QWidget *parent, Qt::WindowFlags flags)
     QHBoxLayout *toolbarsLayout = new QHBoxLayout(toolbarsContainer);
     toolbarsContainer->setLayout(toolbarsLayout);
 
-    toolbarsLayout->setMargin(0);
+    toolbarsLayout->setContentsMargins(0, 0, 0, 0);
     toolbarsLayout->setSpacing(0);
 
     QToolBar *spacingToolBar = new QToolBar(
@@ -832,7 +832,7 @@ paramsLayout->addWidget(m_cThicknessRatio, row++, 1);*/
 
   // Connect value changes to update the global
   // VectorizerPopUpSettingsContainer.
-  // connect(m_typeMenu,SIGNAL(currentIndexChanged(const QString
+  // connect(m_typeMenu,SIGNAL(currentTextChanged(const QString
   // &)),this,SLOT(updateSceneSettings()));
   connect(m_cThreshold, SIGNAL(valueChanged(bool)), this,
           SLOT(onValueEdited(bool)));

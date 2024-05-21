@@ -97,11 +97,11 @@ DoubleValueField::DoubleValueField(QWidget *parent,
 
   //---layout
   QHBoxLayout *layout = new QHBoxLayout(this);
-  layout->setMargin(0);
+  layout->setContentsMargins(0, 0, 0, 0);
   layout->setSpacing(5);
   {
     QVBoxLayout *vLayout = new QVBoxLayout(field);
-    vLayout->setMargin(0);
+    vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->setSpacing(0);
     {
       vLayout->addWidget(m_lineEdit);

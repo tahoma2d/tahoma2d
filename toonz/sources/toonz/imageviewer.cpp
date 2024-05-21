@@ -247,10 +247,8 @@ ImageViewer::ImageViewer(QWidget *parent, FlipBook *flipbook,
   if (Preferences::instance()->isColorCalibrationEnabled())
     m_lutCalibrator = new LutCalibrator();
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   if (Preferences::instance()->is30bitDisplayEnabled())
     setTextureFormat(TGL_TexFmt10);
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1311,13 +1309,8 @@ void ImageViewer::wheelEvent(QWheelEvent *event) {
          m_touchDevice == QTouchDevice::TouchScreen) ||
         m_gestureActive == false) {
       int d = delta > 0 ? 120 : -120;
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
       QPoint center(event->position().x() * getDevPixRatio() - width() / 2,
                     -event->position().y() * getDevPixRatio() + height() / 2);
-#else
-      QPoint center(event->pos().x() * getDevPixRatio() - width() / 2,
-                    -event->pos().y() * getDevPixRatio() + height() / 2);
-#endif
       zoomQt(center, exp(0.001 * d));
     }
   }

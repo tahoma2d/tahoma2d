@@ -70,7 +70,7 @@ XDTSImportPopup::XDTSImportPopup(QStringList levelNames, ToonzScene* scene,
   QWidget* fieldsWidget = new QWidget(this);
 
   QGridLayout* fieldsLay = new QGridLayout();
-  fieldsLay->setMargin(0);
+  fieldsLay->setContentsMargins(0, 0, 0, 0);
   fieldsLay->setHorizontalSpacing(10);
   fieldsLay->setVerticalSpacing(10);
   fieldsLay->addWidget(new QLabel(tr("Level Name"), this), 0, 0,
@@ -97,7 +97,7 @@ XDTSImportPopup::XDTSImportPopup(QStringList levelNames, ToonzScene* scene,
 
   // cell mark area
   QGridLayout* markLay = new QGridLayout();
-  markLay->setMargin(0);
+  markLay->setContentsMargins(0, 0, 0, 0);
   markLay->setHorizontalSpacing(10);
   markLay->setVerticalSpacing(10);
   {

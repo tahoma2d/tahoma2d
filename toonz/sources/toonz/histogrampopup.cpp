@@ -23,7 +23,7 @@
 // Qt includes
 #include <QTimer>
 #include <QMainWindow>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QFocusEvent>
 #include <QScreen>
 
@@ -45,10 +45,10 @@ HistogramPopup::HistogramPopup(QString title)
   m_histogram = new ComboHistogram(this);
 
   QVBoxLayout *mainLay = new QVBoxLayout();
-  mainLay->setMargin(0);
+  mainLay->setContentsMargins(0, 0, 0, 0);
   mainLay->setSpacing(0);
   { mainLay->addWidget(m_histogram); }
-  m_topLayout->setMargin(0);
+  m_topLayout->setContentsMargins(0, 0, 0, 0);
   m_topLayout->addLayout(mainLay);
   mainLay->setSizeConstraint(QLayout::SetFixedSize);
   setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -127,12 +127,7 @@ void HistogramPopup::moveNextToWidget(QWidget *widget) {
   if (minimumSize().isEmpty()) grab();
   QSize popupSize = frameSize();
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
   QRect screenRect = widget->screen()->availableGeometry();
-#else
-  int currentScreen = QApplication::desktop()->screenNumber(widget);
-  QRect screenRect  = QApplication::desktop()->availableGeometry(currentScreen);
-#endif
   QRect viewerRect = widget->rect();
   viewerRect.moveTo(widget->mapToGlobal(QPoint(0, 0)));
   // decide which side to open the popup

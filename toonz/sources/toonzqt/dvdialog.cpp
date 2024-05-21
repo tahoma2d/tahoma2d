@@ -28,7 +28,7 @@
 #include <QPainter>
 #include <QRadioButton>
 #include <QThread>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QCheckBox>
 
 #include <algorithm>
@@ -126,7 +126,7 @@ void Separator::paintEvent(QPaintEvent *) {
 
   QRect contents(contentsRect());
 
-  int textWidth = p.fontMetrics().width(m_name);
+  int textWidth = p.fontMetrics().horizontalAdvance(m_name);
 
   p.drawText(contents.left(), 10, m_name);
 
@@ -231,16 +231,17 @@ Dialog::Dialog(QWidget *parent, bool hasButton, bool hasFixedSize,
     , m_layoutSpacing(5)
     , m_layoutMargin(0)
     , m_labelWidth(100)
-    , m_name() {
+    , m_name()
+    , m_currentScreen(0) {
   QVBoxLayout *mainLayout = new QVBoxLayout;
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
   m_mainFrame = new QFrame(this);
   m_mainFrame->setObjectName("dialogMainFrame");
   m_mainFrame->setMinimumHeight(41);
   m_mainFrame->setFrameStyle(QFrame::StyledPanel);
   m_topLayout = new QVBoxLayout;
-  m_topLayout->setMargin(12);
+  m_topLayout->setContentsMargins(12, 12, 12, 12);
   m_topLayout->setSpacing(m_layoutSpacing);
   m_topLayout->setAlignment(Qt::AlignCenter);
   m_mainFrame->setLayout(m_topLayout);
@@ -257,7 +258,7 @@ Dialog::Dialog(QWidget *parent, bool hasButton, bool hasFixedSize,
     m_buttonFrame->setFixedHeight(45);
 
     m_buttonLayout = new QHBoxLayout;
-    m_buttonLayout->setMargin(0);
+    m_buttonLayout->setContentsMargins(0, 0, 0, 0);
     m_buttonLayout->setSpacing(20);
     m_buttonLayout->setAlignment(Qt::AlignHCenter);
 
@@ -303,9 +304,10 @@ Dialog::Dialog(QWidget *parent, bool hasButton, bool hasFixedSize,
 
     // try and get active screen
     if (parent != NULL) {
-      m_currentScreen = QApplication::desktop()->screenNumber(parent);
-    }
-    QRect screen = QApplication::desktop()->availableGeometry(m_currentScreen);
+      m_currentScreen = parent->screen();
+    } else
+      m_currentScreen = QGuiApplication::primaryScreen();
+    QRect screen = m_currentScreen->availableGeometry();
     int x        = values.at(0).toInt();
     int y        = values.at(1).toInt();
 
@@ -361,18 +363,17 @@ void Dialog::hideEvent(QHideEvent *event) {
   int x = pos().rx();
   int y = pos().ry();
   // make sure the dialog is actually visible on a screen
-  int screenCount = QApplication::desktop()->screenCount();
-  int currentScreen;
+  int screenCount = QApplication::screens().size();
+  QScreen  *currentScreen;
   for (int i = 0; i < screenCount; i++) {
-    if (QApplication::desktop()->screenGeometry(i).contains(pos())) {
-      currentScreen = i;
+    if ((currentScreen = QApplication::screenAt(pos()))) {
       break;
     } else {
       // if not - put it back on the main window
       currentScreen = m_currentScreen;
     }
   }
-  QRect screen = QApplication::desktop()->availableGeometry(currentScreen);
+  QRect screen = currentScreen->availableGeometry();
 
   if (x > screen.right() - 50) x  = screen.right() - 50;
   if (x < screen.left()) x        = screen.left();
@@ -398,11 +399,13 @@ void Dialog::beginVLayout() {
   m_isMainVLayout = true;
 
   m_leftVLayout = new QVBoxLayout;
-  m_leftVLayout->setMargin(m_layoutMargin);
+  m_leftVLayout->setContentsMargins(m_layoutMargin, m_layoutMargin,
+                                    m_layoutMargin, m_layoutMargin);
   m_leftVLayout->setSpacing(m_layoutSpacing);
 
   m_rightVLayout = new QVBoxLayout;
-  m_rightVLayout->setMargin(m_layoutMargin);
+  m_rightVLayout->setContentsMargins(m_layoutMargin, m_layoutMargin,
+                                     m_layoutMargin, m_layoutMargin);
   m_rightVLayout->setSpacing(m_layoutSpacing);
 }
 
@@ -415,7 +418,8 @@ void Dialog::endVLayout() {
   m_isMainVLayout = false;
 
   QHBoxLayout *layout = new QHBoxLayout;
-  layout->setMargin(m_layoutMargin);
+  layout->setContentsMargins(m_layoutMargin, m_layoutMargin, m_layoutMargin,
+                             m_layoutMargin);
   layout->setSpacing(m_layoutSpacing);
   layout->setSizeConstraint(QLayout::SetFixedSize);
 
@@ -436,7 +440,8 @@ void Dialog::endVLayout() {
 void Dialog::beginHLayout() {
   m_isMainHLayout = true;
   m_mainHLayout   = new QHBoxLayout;
-  m_mainHLayout->setMargin(m_layoutMargin);
+  m_mainHLayout->setContentsMargins(m_layoutMargin, m_layoutMargin,
+                                    m_layoutMargin, m_layoutMargin);
   m_mainHLayout->setSpacing(m_layoutSpacing);
 }
 
@@ -497,7 +502,8 @@ void Dialog::addWidgets(QWidget *firstW, QWidget *secondW) {
     return;
   }
   QHBoxLayout *pairLayout = new QHBoxLayout;
-  pairLayout->setMargin(m_layoutMargin);
+  pairLayout->setContentsMargins(m_layoutMargin, m_layoutMargin, m_layoutMargin,
+                                 m_layoutMargin);
   pairLayout->setSpacing(m_layoutSpacing);
   pairLayout->addWidget(firstW);
   pairLayout->addWidget(secondW);
@@ -563,7 +569,8 @@ layout containing
                 \b widget and \b layout and add it to horizontal layout.
 */
 void Dialog::addWidgetLayout(QWidget *widget, QLayout *layout) {
-  layout->setMargin(m_layoutMargin);
+  layout->setContentsMargins(m_layoutMargin, m_layoutMargin, m_layoutMargin,
+                             m_layoutMargin);
   layout->setSpacing(m_layoutSpacing);
 
   if (m_isMainVLayout) {
@@ -574,7 +581,8 @@ void Dialog::addWidgetLayout(QWidget *widget, QLayout *layout) {
   }
 
   QHBoxLayout *pairLayout = new QHBoxLayout;
-  pairLayout->setMargin(m_layoutMargin);
+  pairLayout->setContentsMargins(m_layoutMargin, m_layoutMargin, m_layoutMargin,
+                                 m_layoutMargin);
   pairLayout->setSpacing(m_layoutSpacing);
   pairLayout->addWidget(widget);
   pairLayout->addLayout(layout);
@@ -615,9 +623,11 @@ layout containing
                 \b firstL and \b secondL and add it to horizontal layout.
 */
 void Dialog::addLayouts(QLayout *firstL, QLayout *secondL) {
-  firstL->setMargin(m_layoutMargin);
+  firstL->setContentsMargins(m_layoutMargin, m_layoutMargin, m_layoutMargin,
+                             m_layoutMargin);
   firstL->setSpacing(m_layoutSpacing);
-  secondL->setMargin(m_layoutMargin);
+  secondL->setContentsMargins(m_layoutMargin, m_layoutMargin, m_layoutMargin,
+                              m_layoutMargin);
   secondL->setSpacing(m_layoutSpacing);
 
   if (m_isMainVLayout) {
@@ -628,7 +638,8 @@ void Dialog::addLayouts(QLayout *firstL, QLayout *secondL) {
   }
 
   QHBoxLayout *pairLayout = new QHBoxLayout;
-  pairLayout->setMargin(m_layoutMargin);
+  pairLayout->setContentsMargins(m_layoutMargin, m_layoutMargin, m_layoutMargin,
+                                 m_layoutMargin);
   pairLayout->setSpacing(m_layoutSpacing);
   pairLayout->addLayout(firstL);
   pairLayout->addLayout(secondL);
@@ -716,13 +727,15 @@ int Dialog::getLayoutInsertedSpacing() { return m_layoutSpacing; }
 //-----------------------------------------------------------------------------
 /*! Set to \b margin margin of main part of dialog.
  */
-void Dialog::setTopMargin(int margin) { m_topLayout->setMargin(margin); }
+void Dialog::setTopMargin(int margin) {
+  m_topLayout->setContentsMargins(margin, margin, margin, margin);
+}
 
 //-----------------------------------------------------------------------------
 /*! Set to \b margin margin of button part of dialog.
  */
 void Dialog::setButtonBarMargin(int margin) {
-  m_buttonLayout->setMargin(margin);
+  m_buttonLayout->setContentsMargins(margin, margin, margin, margin);
 }
 
 //-----------------------------------------------------------------------------
@@ -846,7 +859,7 @@ RadioButtonDialog::RadioButtonDialog(const QString &labelText,
     addWidget(radioButton);
   }
 
-  bool ret = connect(buttonGroup, SIGNAL(buttonClicked(int)),
+  bool ret = connect(buttonGroup, SIGNAL(idClicked(int)),
                      SLOT(onButtonClicked(int)));
 
   endVLayout();
@@ -1017,7 +1030,7 @@ int DVGui::MsgBox(MsgType type, const QString &text,
     buttonGroup->addButton(button, i + 1);
   }
 
-  QObject::connect(buttonGroup, SIGNAL(buttonPressed(int)), &dialog,
+  QObject::connect(buttonGroup, SIGNAL(idPressed(int)), &dialog,
                    SLOT(done(int)));
 
   dialog.raise();
@@ -1067,7 +1080,7 @@ void DVGui::MsgBoxInPopup(MsgType type, const QString &text) {
   button->setDefault(true);
   dialog.addButtonBarWidget(button);
   buttonGroup->addButton(button, 1);
-  QObject::connect(buttonGroup, SIGNAL(buttonPressed(int)), &dialog,
+  QObject::connect(buttonGroup, SIGNAL(idPressed(int)), &dialog,
                    SLOT(done(int)));
 
   while (!messageQueue.empty()) {
@@ -1141,7 +1154,7 @@ int DVGui::MsgBox(const QString &text, const QString &button1Text,
   dialog.addButtonBarWidget(button3);
   buttonGroup->addButton(button3, 3);
 
-  QObject::connect(buttonGroup, SIGNAL(buttonPressed(int)), &dialog,
+  QObject::connect(buttonGroup, SIGNAL(idPressed(int)), &dialog,
                    SLOT(done(int)));
   dialog.raise();
   return dialog.exec();
@@ -1200,7 +1213,7 @@ int DVGui::MsgBox(const QString &text, const QString &button1Text,
   dialog.addButtonBarWidget(button4);
   buttonGroup->addButton(button4, 4);
 
-  QObject::connect(buttonGroup, SIGNAL(buttonPressed(int)), &dialog,
+  QObject::connect(buttonGroup, SIGNAL(idPressed(int)), &dialog,
                    SLOT(done(int)));
   dialog.raise();
   return dialog.exec();
@@ -1261,7 +1274,7 @@ Dialog *DVGui::createMsgBox(MsgType type, const QString &text,
     buttonGroup->addButton(button, i + 1);
   }
 
-  QObject::connect(buttonGroup, SIGNAL(buttonPressed(int)), dialog,
+  QObject::connect(buttonGroup, SIGNAL(idPressed(int)), dialog,
                    SLOT(done(int)));
 
   return dialog;
@@ -1320,7 +1333,7 @@ MessageAndCheckboxDialog *DVGui::createMsgandCheckbox(
 
   QObject::connect(dialogCheckBox, SIGNAL(stateChanged(int)), dialog,
                    SLOT(onCheckboxChanged(int)));
-  QObject::connect(buttonGroup, SIGNAL(buttonPressed(int)), dialog,
+  QObject::connect(buttonGroup, SIGNAL(idPressed(int)), dialog,
                    SLOT(onButtonPressed(int)));
 
   return dialog;

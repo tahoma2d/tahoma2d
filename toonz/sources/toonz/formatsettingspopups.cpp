@@ -66,7 +66,7 @@ FormatSettingsPopup::FormatSettingsPopup(QWidget *parent,
   setWindowFlags(Qt::Dialog | Qt::WindowStaysOnTopHint);
 
   m_mainLayout = new QGridLayout();
-  m_mainLayout->setMargin(0);
+  m_mainLayout->setContentsMargins(0, 0, 0, 0);
   m_mainLayout->setVerticalSpacing(5);
   m_mainLayout->setHorizontalSpacing(5);
   m_mainLayout->setColumnStretch(0, 0);
@@ -190,7 +190,7 @@ void FormatSettingsPopup::buildPropertyComboBox(int index,
   m_widgets[prop->getName()]        = comboBox;
 
 #ifdef _WIN32
-  connect(comboBox, SIGNAL(currentIndexChanged(const QString &)), this,
+  connect(comboBox, SIGNAL(currentTextChanged(const QString &)), this,
           SLOT(onComboBoxIndexChanged(const QString &)));
 #endif
   TEnumProperty::Range range = prop->getRange();

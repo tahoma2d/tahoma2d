@@ -55,7 +55,7 @@ OverwriteDialog::OverwriteDialog()
 
   QButtonGroup *buttonGroup = new QButtonGroup(this);
   buttonGroup->setExclusive(true);
-  bool ret = connect(buttonGroup, SIGNAL(buttonClicked(int)), this,
+  bool ret = connect(buttonGroup, SIGNAL(idClicked(int)), this,
                      SLOT(onButtonClicked(int)));
 
   beginVLayout();
@@ -81,7 +81,7 @@ OverwriteDialog::OverwriteDialog()
   m_suffix->setEnabled(false);
 
   QHBoxLayout *boxLayout = new QHBoxLayout();
-  boxLayout->setMargin(0);
+  boxLayout->setContentsMargins(0, 0, 0, 0);
   boxLayout->setSpacing(0);
   boxLayout->addWidget(m_rename);
   boxLayout->addWidget(m_suffix);

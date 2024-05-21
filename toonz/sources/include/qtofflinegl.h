@@ -6,9 +6,8 @@
 #include <memory>
 
 #include <QtOpenGL>
-#include <QGLFormat>
-#include <QGLContext>
-#include <QGLPixelBuffer>
+#include <QOpenGLFramebufferObjectFormat>
+#include <QOpenGLContext>
 #include <QOpenGLFramebufferObject>
 
 #include "tofflinegl.h"
@@ -38,7 +37,7 @@ public:
 
 class QtOfflineGLPBuffer final : public TOfflineGL::Imp {
 public:
-  std::shared_ptr<QGLPixelBuffer> m_context;
+  std::shared_ptr<QOpenGLFramebufferObject> m_context;
 
   QtOfflineGLPBuffer(TDimension rasterSize);
   ~QtOfflineGLPBuffer();

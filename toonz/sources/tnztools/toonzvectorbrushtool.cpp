@@ -1072,7 +1072,7 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
     }
     int points = stroke->getControlPointCount();
 
-    TVectorImageP vi = getImage(true);
+    TVectorImageP vi = TImageP(getImage(true));
     struct Cleanup {
       ToonzVectorBrushTool *m_this;
       ~Cleanup() { m_this->m_track.clear(), m_this->invalidate(); }
@@ -1105,7 +1105,7 @@ void ToonzVectorBrushTool::leftButtonUp(const TPointD &pos,
     return;
   }
 
-  TVectorImageP vi = getImage(true);
+  TVectorImageP vi = TImageP(getImage(true));
   if (m_track.isEmpty()) {
     m_styleId = 0;
     m_track.clear();
@@ -1742,7 +1742,7 @@ void ToonzVectorBrushTool::flushTrackPoint() {
 //---------------------------------------------------------------------------------------------------------------
 
 void ToonzVectorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
-#if (!defined(LINUX) && !defined(FREEBSD)) || QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#if (!defined(LINUX) && !defined(FREEBSD))
   qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
 #endif
 

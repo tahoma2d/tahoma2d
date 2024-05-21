@@ -53,7 +53,7 @@
 #include <QApplication>
 #include <QMenu>
 #include <QGraphicsSceneMouseEvent>
-#include <QDesktopWidget>
+#include <QScreen>
 
 //********************************************************************************
 //    Local namespace
@@ -442,9 +442,9 @@ void FxPalettePainter::paint(QPainter *painter,
   painter->setPen(Qt::NoPen);
 
   if (m_parent->isNormalIconView())
-    painter->drawRoundRect(QRectF(0, 0, m_width, m_height), 35, 99);
+    painter->drawRoundedRect(QRectF(0, 0, m_width, m_height), 35, 99);
   else
-    painter->drawRoundRect(QRectF(0, 0, m_width, m_height), 10, 30);
+    painter->drawRoundedRect(QRectF(0, 0, m_width, m_height), 10, 30);
 
   bool showColumnNumber = Preferences::instance()->isShowColumnNumbersEnabled();
   int rectAdj           = 0;
@@ -1310,7 +1310,7 @@ void FxSchematicPort::paint(QPainter *painter,
     case eFxInputPort:
     case eFxGroupedInPort: {
       QRect targetRect =
-          scene()->views()[0]->matrix().mapRect(boundingRect()).toRect();
+          scene()->views()[0]->transform().mapRect(boundingRect()).toRect();
       static QIcon fxPortRedIcon(":Resources/fxport_red.svg");
       static QIcon fxPortPassThroughRedIcon(":Resources/fxport_pt_red.svg");
       QPixmap redPm = (m_isPassThrough)
@@ -1322,7 +1322,7 @@ void FxSchematicPort::paint(QPainter *painter,
     case eFxOutputPort:
     case eFxGroupedOutPort: {
       QRect sourceRect =
-          scene()->views()[0]->matrix().mapRect(boundingRect()).toRect();
+          scene()->views()[0]->transform().mapRect(boundingRect()).toRect();
       static QIcon fxPortBlueIcon(":Resources/fxport_blue.svg");
       QPixmap bluePm = fxPortBlueIcon.pixmap(sourceRect.size());
       sourceRect     = QRect(0, 0, bluePm.width(), bluePm.height());
@@ -1346,7 +1346,7 @@ void FxSchematicPort::paint(QPainter *painter,
     case eFxLinkPort:  // LinkPort
     default: {         //ここから！！！
       QRect sourceRect =
-          scene()->views()[0]->matrix().mapRect(boundingRect()).toRect();
+          scene()->views()[0]->transform().mapRect(boundingRect()).toRect();
       QPixmap linkPm =
           QIcon(":Resources/schematic_link.svg").pixmap(sourceRect.size());
       painter->drawPixmap(boundingRect().toRect(), linkPm);
@@ -1370,7 +1370,7 @@ void FxSchematicPort::paint(QPainter *painter,
     case eFxLinkPort:  // LinkPort
     {
       QRect sourceRect =
-          scene()->views()[0]->matrix().mapRect(boundingRect()).toRect();
+          scene()->views()[0]->transform().mapRect(boundingRect()).toRect();
       QPixmap linkPm = QIcon(":Resources/schematic_link_small.svg")
                            .pixmap(sourceRect.size());
       painter->drawPixmap(boundingRect().toRect(), linkPm);
@@ -2751,7 +2751,7 @@ void FxSchematicNormalFxNode::mouseDoubleClickEvent(
 #endif
   }
   static QFont font(fontName, 10, QFont::Normal);
-  int width = QFontMetrics(font).width(m_name);
+  int width = QFontMetrics(font).horizontalAdvance(m_name);
   QRectF nameArea(0, 0, width, 14);
   if (nameArea.contains(me->pos())) {
     m_nameItem->setPlainText(m_name);
@@ -3734,7 +3734,9 @@ void FxGroupNode::onNameChanged() {
   setFlag(QGraphicsItem::ItemIsSelectable, true);
   FxSchematicScene *fxScene = dynamic_cast<FxSchematicScene *>(scene());
   if (!fxScene) return;
-  TFxCommand::renameGroup(m_groupedFxs.toStdList(), m_name.toStdWString(),
+  TFxCommand::renameGroup(
+      std::list<TFxP>(m_groupedFxs.begin(), m_groupedFxs.end()),
+                          m_name.toStdWString(),
                           false, fxScene->getXsheetHandle());
   update();
 }
@@ -3865,7 +3867,7 @@ void FxPassThroughPainter::paint(QPainter *painter,
   if (!m_showName) return;
 
   QFont fnt = painter->font();
-  int width = QFontMetrics(fnt).width(m_name) + 1;
+  int width = QFontMetrics(fnt).horizontalAdvance(m_name) + 1;
   QRectF nameArea(0, 0, width, 14);
 
   if (m_parent->isNormalIconView()) {
@@ -4038,7 +4040,7 @@ void FxSchematicPassThroughNode::mouseDoubleClickEvent(
 #endif
   }
   static QFont font(fontName, 10, QFont::Normal);
-  int width = QFontMetrics(font).width(m_name);
+  int width = QFontMetrics(font).horizontalAdvance(m_name);
   QRectF nameArea(0, 0, width, 14);
 
   m_nameItem->setPlainText(m_name);

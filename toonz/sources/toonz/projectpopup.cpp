@@ -131,11 +131,11 @@ Note that this mode uses regular expression for file name validation and may slo
   m_settingsBox   = createSettingsBox();
 
   //----layout
-  m_topLayout->setMargin(5);
+  m_topLayout->setContentsMargins(5, 5, 5, 5);
   m_topLayout->setSpacing(10);
   {
     QGridLayout *upperLayout = new QGridLayout();
-    upperLayout->setMargin(5);
+    upperLayout->setContentsMargins(5, 5, 5, 5);
     upperLayout->setHorizontalSpacing(5);
     upperLayout->setVerticalSpacing(10);
     {
@@ -154,7 +154,7 @@ Note that this mode uses regular expression for file name validation and may slo
     m_topLayout->addLayout(upperLayout);
 
     QHBoxLayout *settingsLabelLay = new QHBoxLayout();
-    settingsLabelLay->setMargin(0);
+    settingsLabelLay->setContentsMargins(0, 0, 0, 0);
     settingsLabelLay->setSpacing(3);
     {
       settingsLabelLay->addWidget(m_showSettingsButton, 0);
@@ -171,7 +171,7 @@ Note that this mode uses regular expression for file name validation and may slo
   pm->addListener(this);
 
   //---------
-  connect(m_rulePreferenceBG, SIGNAL(buttonClicked(int)), this,
+  connect(m_rulePreferenceBG, SIGNAL(idClicked(int)), this,
           SLOT(onRulePreferenceToggled(int)));
 }
 
@@ -186,7 +186,7 @@ QFrame *ProjectPopup::createSettingsBox() {
   QTabWidget *tabWidget = new QTabWidget(this);
 
   QVBoxLayout *settingsLayout       = new QVBoxLayout();
-  settingsLayout->setMargin(5);
+  settingsLayout->setContentsMargins(5, 5, 5, 5);
   settingsLayout->setSpacing(10);
   {
     settingsLayout->addWidget(tabWidget, 1);
@@ -194,7 +194,7 @@ QFrame *ProjectPopup::createSettingsBox() {
     // project folder settings
     QWidget *projectFolderPanel = new QWidget(this);
     QGridLayout *folderLayout = new QGridLayout();
-    folderLayout->setMargin(5);
+    folderLayout->setContentsMargins(5, 5, 5, 5);
     folderLayout->setHorizontalSpacing(5);
     folderLayout->setVerticalSpacing(10);
     {
@@ -223,7 +223,7 @@ QFrame *ProjectPopup::createSettingsBox() {
     // file path settings
     QWidget *filePathPanel = new QWidget(this);
     QVBoxLayout *fpLayout  = new QVBoxLayout();
-    fpLayout->setMargin(5);
+    fpLayout->setContentsMargins(5, 5, 5, 5);
     fpLayout->setSpacing(10);
     {
       fpLayout->addWidget(m_rulePreferenceBG->buttons()[0], 0); // standardRB
@@ -231,7 +231,7 @@ QFrame *ProjectPopup::createSettingsBox() {
 
       // add some indent
       QGridLayout *customLay = new QGridLayout();
-      customLay->setMargin(10);
+      customLay->setContentsMargins(10, 10, 10, 10);;
       customLay->setHorizontalSpacing(10);
       customLay->setVerticalSpacing(10);
       {
@@ -385,7 +385,7 @@ ProjectSettingsPopup::ProjectSettingsPopup() : ProjectPopup(false) {
   connect(m_useSubSceneCbs, SIGNAL(stateChanged(int)), this, SLOT(onSomethingChanged()));
 
   // file path settings
-  connect(m_rulePreferenceBG, SIGNAL(buttonClicked(int)), this,
+  connect(m_rulePreferenceBG, SIGNAL(idClicked(int)), this,
           SLOT(onSomethingChanged()));
   connect(m_acceptNonAlphabetSuffixCB, SIGNAL(clicked(bool)), this,
           SLOT(onSomethingChanged()));
@@ -539,7 +539,7 @@ ProjectCreatePopup::ProjectCreatePopup() : ProjectPopup(true) {
   connect(okBtn, SIGNAL(clicked()), this, SLOT(createProject()));
   connect(cancelBtn, SIGNAL(clicked()), this, SLOT(reject()));
 
-  m_buttonLayout->setMargin(0);
+  m_buttonLayout->setContentsMargins(0, 0, 0, 0);
   m_buttonLayout->setSpacing(20);
   {
     m_buttonLayout->addStretch();

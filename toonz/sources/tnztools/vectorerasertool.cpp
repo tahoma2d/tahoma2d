@@ -1310,7 +1310,7 @@ void EraserTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
   viene richiamato il metodo \b eraseRegion*/
 void EraserTool::leftButtonDoubleClick(const TPointD &pos,
                                        const TMouseEvent &e) {
-  TVectorImageP vi = getImage(true);
+  TVectorImageP vi = TImageP(getImage(true));
   if (m_eraseType.getValue() == POLYLINE_ERASE) {
     closePolyline(pos);
 

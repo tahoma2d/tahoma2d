@@ -198,7 +198,7 @@ OutputSettingsPopup::OutputSettingsPopup(QWidget *parent, bool isPreview)
   // preview settings
   if (isPreview) {
 
-    m_topLayout->setMargin(5);
+    m_topLayout->setContentsMargins(5, 5, 5, 5);
     m_topLayout->addWidget(panel, 0);
     m_topLayout->addWidget(renderButton, 0);
 
@@ -240,10 +240,10 @@ OutputSettingsPopup::OutputSettingsPopup(QWidget *parent, bool isPreview)
   saveAndRenderButton->setIcon(createQIcon("render"));
   saveAndRenderButton->setIconSize(QSize(20, 20));
 
-  m_topLayout->setMargin(5);
+  m_topLayout->setContentsMargins(5, 5, 5, 5);
   {
     QHBoxLayout *presetLay = new QHBoxLayout();
-    presetLay->setMargin(0);
+    presetLay->setContentsMargins(0, 0, 0, 0);
     presetLay->setSpacing(5);
     {
       presetLay->addStretch(1);
@@ -256,7 +256,7 @@ OutputSettingsPopup::OutputSettingsPopup(QWidget *parent, bool isPreview)
     m_topLayout->addLayout(presetLay, 0);
 
     QHBoxLayout *middleLay = new QHBoxLayout();
-    middleLay->setMargin(0);
+    middleLay->setContentsMargins(0, 0, 0, 0);
     middleLay->setSpacing(5);
     {
 //      middleLay->addWidget(categoryList, 0);
@@ -284,7 +284,7 @@ OutputSettingsPopup::OutputSettingsPopup(QWidget *parent, bool isPreview)
                        SLOT(onAddPresetButtonPressed()));
   ret = ret && connect(removePresetButton, SIGNAL(pressed()), this,
                        SLOT(onRemovePresetButtonPressed()));
-  ret = ret && connect(m_presetCombo, SIGNAL(activated(const QString &)), this,
+  ret = ret && connect(m_presetCombo, SIGNAL(textActivated(const QString &)), this,
                        SLOT(onPresetSelected(const QString &)));
 //  ret = ret && connect(categoryList, SIGNAL(itemClicked(QListWidgetItem *)),
 //                       this, SLOT(onCategoryActivated(QListWidgetItem *)));
@@ -386,7 +386,7 @@ QFrame *OutputSettingsPopup::createPanel(bool isPreview) {
   }
 
   QVBoxLayout *lay = new QVBoxLayout();
-  lay->setMargin(5);
+  lay->setContentsMargins(5, 5, 5, 5);
   lay->setSpacing(3);
   {
     if (!isPreview) {
@@ -396,7 +396,7 @@ QFrame *OutputSettingsPopup::createPanel(bool isPreview) {
     }
 
     QHBoxLayout *cameraSettingsLabelLay = new QHBoxLayout();
-    cameraSettingsLabelLay->setMargin(0);
+    cameraSettingsLabelLay->setContentsMargins(0, 0, 0, 0);
     cameraSettingsLabelLay->setSpacing(3);
     {
       if (!isPreview)
@@ -409,7 +409,7 @@ QFrame *OutputSettingsPopup::createPanel(bool isPreview) {
     lay->addSpacing(10);
 
     QHBoxLayout *colorLabelLay = new QHBoxLayout();
-    colorLabelLay->setMargin(0);
+    colorLabelLay->setContentsMargins(0, 0, 0, 0);
     colorLabelLay->setSpacing(3);
     {
       if (!isPreview) colorLabelLay->addWidget(m_showColorSettingsButton, 0);
@@ -424,7 +424,7 @@ QFrame *OutputSettingsPopup::createPanel(bool isPreview) {
 
 
     QHBoxLayout *advancedSettingsLabelLay = new QHBoxLayout();
-    advancedSettingsLabelLay->setMargin(0);
+    advancedSettingsLabelLay->setContentsMargins(0, 0, 0, 0);
     advancedSettingsLabelLay->setSpacing(3);
     {
       if (!isPreview)
@@ -439,7 +439,7 @@ QFrame *OutputSettingsPopup::createPanel(bool isPreview) {
       lay->addSpacing(10);
 
       QHBoxLayout *moreSettingsLabelLay = new QHBoxLayout();
-      moreSettingsLabelLay->setMargin(0);
+      moreSettingsLabelLay->setContentsMargins(0, 0, 0, 0);
       moreSettingsLabelLay->setSpacing(3);
       {
         moreSettingsLabelLay->addWidget(m_showMoreSettingsButton, 0);
@@ -517,12 +517,12 @@ QFrame *OutputSettingsPopup::createGeneralSettingsBox(bool isPreview) {
   //-----
 
   QVBoxLayout *lay = new QVBoxLayout();
-  lay->setMargin(10);
+  lay->setContentsMargins(10, 10, 10, 10);;
   lay->setSpacing(10);
   {
     // Frame start/end
     QGridLayout *frameStepLay = new QGridLayout();
-    frameStepLay->setMargin(0);
+    frameStepLay->setContentsMargins(0, 0, 0, 0);
     frameStepLay->setHorizontalSpacing(5);
     frameStepLay->setVerticalSpacing(10);
     {
@@ -546,7 +546,7 @@ QFrame *OutputSettingsPopup::createGeneralSettingsBox(bool isPreview) {
     lay->addLayout(frameStepLay);
 
     QGridLayout *fileGridLay = new QGridLayout();
-    fileGridLay->setMargin(0);
+    fileGridLay->setContentsMargins(0, 0, 0, 0);
     fileGridLay->setHorizontalSpacing(5);
     fileGridLay->setVerticalSpacing(10);
     {
@@ -584,7 +584,7 @@ QFrame *OutputSettingsPopup::createGeneralSettingsBox(bool isPreview) {
   ret = ret && connect(m_fileNameFld, SIGNAL(editingFinished()),
     SLOT(onNameChanged()));
   ret = ret &&
-    connect(m_fileFormat, SIGNAL(currentIndexChanged(const QString &)),
+    connect(m_fileFormat, SIGNAL(currentTextChanged(const QString &)),
       SLOT(onFormatChanged(const QString &)));
   ret = ret && connect(m_fileFormatButton, SIGNAL(pressed()), this,
     SLOT(openSettingsPopup()));
@@ -630,12 +630,12 @@ QFrame *OutputSettingsPopup::createCameraSettingsBox(bool isPreview) {
   //-----
 
   QVBoxLayout *lay = new QVBoxLayout();
-  lay->setMargin(10);
+  lay->setContentsMargins(10, 10, 10, 10);;
   lay->setSpacing(10);
   {
     // Output Camera
     QHBoxLayout *outCamLay = new QHBoxLayout();
-    outCamLay->setMargin(0);
+    outCamLay->setContentsMargins(0, 0, 0, 0);
     outCamLay->setSpacing(5);
     {
       outCamLay->addWidget(new QLabel(tr("Output Camera:"), this), 0);
@@ -646,7 +646,7 @@ QFrame *OutputSettingsPopup::createCameraSettingsBox(bool isPreview) {
 
     if (!isPreview) {
       QVBoxLayout *camParamLay = new QVBoxLayout();
-      camParamLay->setMargin(5);
+      camParamLay->setContentsMargins(5, 5, 5, 5);
       camParamLay->setSpacing(0);
       { camParamLay->addWidget(m_cameraSettings); }
       cameraParametersBox->setLayout(camParamLay);
@@ -657,7 +657,7 @@ QFrame *OutputSettingsPopup::createCameraSettingsBox(bool isPreview) {
     if (isPreview) {
       // Frame start/end
       QGridLayout *frameStepLay = new QGridLayout();
-      frameStepLay->setMargin(0);
+      frameStepLay->setContentsMargins(0, 0, 0, 0);
       frameStepLay->setHorizontalSpacing(5);
       frameStepLay->setVerticalSpacing(10);
       {
@@ -683,7 +683,7 @@ QFrame *OutputSettingsPopup::createCameraSettingsBox(bool isPreview) {
 
     // Frame start/end
     QGridLayout *frameShrinkLay = new QGridLayout();
-    frameShrinkLay->setMargin(0);
+    frameShrinkLay->setContentsMargins(0, 0, 0, 0);
     frameShrinkLay->setHorizontalSpacing(5);
     frameShrinkLay->setVerticalSpacing(10);
     {
@@ -714,7 +714,7 @@ QFrame *OutputSettingsPopup::createCameraSettingsBox(bool isPreview) {
   }
 
   ret      = ret &&
-        connect(m_outputCameraOm, SIGNAL(currentIndexChanged(const QString &)),
+        connect(m_outputCameraOm, SIGNAL(currentTextChanged(const QString &)),
                 SLOT(onCameraChanged(const QString &)));
   ret = ret && connect(m_shrinkFld, SIGNAL(editingFinished()),
                        SLOT(onFrameFldEditFinished()));
@@ -770,7 +770,7 @@ QFrame *OutputSettingsPopup::createColorSettingsBox(bool isPreview) {
   }
 
   QGridLayout *gridLay = new QGridLayout();
-  gridLay->setMargin(5);
+  gridLay->setContentsMargins(5, 5, 5, 5);
   gridLay->setHorizontalSpacing(5);
   gridLay->setVerticalSpacing(10);
   {
@@ -843,11 +843,11 @@ QFrame *OutputSettingsPopup::createAdvancedSettingsBox(bool isPreview) {
   //-----
 
   QVBoxLayout *lay = new QVBoxLayout();
-  lay->setMargin(10);
+  lay->setContentsMargins(10, 10, 10, 10);;
   lay->setSpacing(10);
   {
     QGridLayout *bottomGridLay = new QGridLayout();
-    bottomGridLay->setMargin(0);
+    bottomGridLay->setContentsMargins(0, 0, 0, 0);
     bottomGridLay->setHorizontalSpacing(5);
     bottomGridLay->setVerticalSpacing(10);
     {
@@ -947,7 +947,7 @@ QFrame *OutputSettingsPopup::createMoreSettingsBox() {
   //-----
 
   QGridLayout *lay = new QGridLayout();
-  lay->setMargin(5);
+  lay->setContentsMargins(5, 5, 5, 5);
   lay->setHorizontalSpacing(5);
   lay->setVerticalSpacing(10);
   {

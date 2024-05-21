@@ -215,7 +215,7 @@ LipSyncPopup::LipSyncPopup()
   m_dataFrame->setContentsMargins(0,0,0,0);
 
   QHBoxLayout *hLayout = new QHBoxLayout;
-  hLayout->setMargin(0);
+  hLayout->setContentsMargins(0, 0, 0, 0);
   {
     hLayout->addSpacing(4);
     hLayout->addWidget(m_tabBar);
@@ -286,7 +286,7 @@ LipSyncPopup::LipSyncPopup()
   rhubarbLayout->addWidget(m_scriptLabel, 2, 0, 1, 3);
   rhubarbLayout->addWidget(m_scriptEdit, 3, 0, 1, 5);
   rhubarbLayout->setSpacing(4);
-  rhubarbLayout->setMargin(10);
+  rhubarbLayout->setContentsMargins(10, 10, 10, 10);;
   m_audioFrame->setLayout(rhubarbLayout);
 
   m_file = new DVGui::FileField(this, QString(""));
@@ -300,7 +300,7 @@ LipSyncPopup::LipSyncPopup()
 
   QGridLayout *fileLay = new QGridLayout();
   fileLay->setSpacing(4);
-  fileLay->setMargin(10);
+  fileLay->setContentsMargins(10, 10, 10, 10);;
   fileLay->addWidget(pathLabel, 0, 0, Qt::AlignLeft);
   fileLay->addWidget(m_file, 1, 0, Qt::AlignLeft);
   fileLay->addWidget(new QLabel(""), 2, 0, Qt::AlignLeft);
@@ -327,7 +327,7 @@ LipSyncPopup::LipSyncPopup()
   }
 
   //--- layout
-  m_topLayout->setMargin(0);
+  m_topLayout->setContentsMargins(0, 0, 0, 0);
   m_topLayout->setSpacing(0);
 
   m_topLayout->addWidget(m_tabBarContainer);
@@ -335,7 +335,7 @@ LipSyncPopup::LipSyncPopup()
 
   {
     QGridLayout *phonemeLay = new QGridLayout();
-    phonemeLay->setMargin(10);
+    phonemeLay->setContentsMargins(10, 10, 10, 10);;
     phonemeLay->setVerticalSpacing(10);
     phonemeLay->setHorizontalSpacing(10);
     int i = 0;  // navButtons
@@ -444,10 +444,10 @@ LipSyncPopup::LipSyncPopup()
   }
 
   QHBoxLayout *optionsLay = new QHBoxLayout();
-  optionsLay->setMargin(10);
+  optionsLay->setContentsMargins(10, 10, 10, 10);;
   optionsLay->setSpacing(15);
   QHBoxLayout *insertAtLay = new QHBoxLayout();
-  insertAtLay->setMargin(0);
+  insertAtLay->setContentsMargins(0, 0, 0, 0);
   insertAtLay->setSpacing(4);
   m_insertAtLabel = new QLabel(tr("Insert at Frame: "));
   insertAtLay->addWidget(m_insertAtLabel);
@@ -458,7 +458,7 @@ LipSyncPopup::LipSyncPopup()
   m_topLayout->addLayout(optionsLay);
 
   m_topLayout->setAlignment(Qt::AlignHCenter);
-  m_buttonLayout->setMargin(0);
+  m_buttonLayout->setContentsMargins(0, 0, 0, 0);
   m_buttonLayout->setSpacing(0);
   {
     m_buttonLayout->addStretch();
@@ -760,7 +760,7 @@ void LipSyncPopup::onOutputReady() {
                .replace("\\\"", "")
                .replace("\"", "");
   QStringList outputList =
-      output.mid(2, (output.size() - 4)).split(", ", QString::SkipEmptyParts);
+      output.mid(2, (output.size() - 4)).split(", ", Qt::SkipEmptyParts);
   if (outputList.size()) {
     QStringList outputType = outputList.at(0).split(": ");
     if (outputType.at(1) == "progress") {

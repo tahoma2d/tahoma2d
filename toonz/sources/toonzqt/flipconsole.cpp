@@ -43,7 +43,7 @@
 #include <QStyle>
 #include <QStylePainter>
 #include <QStyleOption>
-#include <QStyleOptionFrameV3>
+#include <QStyleOptionFrame>
 #include <QSettings>
 #include <QPushButton>
 #include <QScrollBar>
@@ -488,7 +488,7 @@ FlipConsole::FlipConsole(QVBoxLayout *mainLayout, std::vector<int> gadgetsMask,
 
   if (m_gadgetsMask.size() == 0) return;
 
-  // mainLayout->setMargin(1);
+  // mainLayout->setContentsMargins(1, 1, 1, 1);
   // mainLayout->setSpacing(0);
 
   // create toolbars other than frame slider
@@ -498,7 +498,7 @@ FlipConsole::FlipConsole(QVBoxLayout *mainLayout, std::vector<int> gadgetsMask,
     m_playToolBarContainer = new ToolBarContainer();
 
     QHBoxLayout *hLayout = new QHBoxLayout;
-    hLayout->setMargin(0);
+    hLayout->setContentsMargins(0, 0, 0, 0);
     hLayout->setSpacing(0);
     hLayout->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     {
@@ -1975,7 +1975,7 @@ QFrame *FlipConsole::createFrameSlider() {
   m_currFrameSlider->setValue(0);
 
   m_timeLabel = new QLabel(QString("00:00:00"), frameSliderFrame);
-  m_timeLabel->setFixedWidth(m_timeLabel->fontMetrics().width("00:00:00") + 10);
+  m_timeLabel->setFixedWidth(m_timeLabel->fontMetrics().horizontalAdvance("00:00:00") + 10);
   m_timeLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
   m_timeLabel->setStyleSheet("padding: 0px; margin: 0px;");
 
@@ -1994,7 +1994,7 @@ QFrame *FlipConsole::createFrameSlider() {
   // layout
   QHBoxLayout *frameSliderLayout = new QHBoxLayout();
   frameSliderLayout->setSpacing(5);
-  frameSliderLayout->setMargin(2);
+  frameSliderLayout->setContentsMargins(2, 2, 2, 2);
   {
     frameSliderLayout->addWidget(m_timeLabel, 0);
     frameSliderLayout->addWidget(m_editCurrFrame, 0);
@@ -2026,12 +2026,8 @@ QFrame *FlipConsole::createFpsSlider() {
   m_fpsField  = new DVGui::IntLineEdit(fpsSliderFrame, m_fps, -60, 60);
   m_fpsField->setFixedWidth(40);
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
   m_fpsLabel->setMinimumWidth(
       m_fpsLabel->fontMetrics().horizontalAdvance("_FPS_24___"));
-#else
-  m_fpsLabel->setMinimumWidth(m_fpsLabel->fontMetrics().width("_FPS_24___"));
-#endif
   m_fpsLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   m_fpsSlider->setObjectName("ViewerFpsSlider");
   m_fpsSlider->setRange(-60, 60);
@@ -2041,7 +2037,7 @@ QFrame *FlipConsole::createFpsSlider() {
 
   QHBoxLayout *hLay = new QHBoxLayout();
   hLay->setSpacing(0);
-  hLay->setMargin(0);
+  hLay->setContentsMargins(0, 0, 0, 0);
   {
     hLay->addWidget(m_fpsLabel, 0);
     hLay->addWidget(m_fpsField, 0);

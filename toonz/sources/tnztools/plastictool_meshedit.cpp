@@ -870,7 +870,7 @@ public:
   int getSize() const override { return 1 << 20; }
 
   bool do_() const {
-    TMeshImageP mi = TTool::getImage(true);
+    TMeshImageP mi = TImageP(TTool::getImage(true));
 
     if (::cutMesh(*mi, m_edgesSelection)) {
       PlasticDeformerStorage::instance()->releaseMeshData(mi.getPointer());
@@ -897,7 +897,7 @@ public:
   void undo() const override {
     PlasticTool::TemporaryActivation tempActivate(m_row, m_col);
 
-    TMeshImageP mi = TTool::getImage(true);
+    TMeshImageP mi = TImageP(TTool::getImage(true));
 
     // Restore the original image
     *mi = *m_origImage;
@@ -919,7 +919,7 @@ public:
 //****************************************************************************************
 
 void PlasticTool::storeMeshImage() {
-  TMeshImageP mi = getImage(false);
+  TMeshImageP mi = TImageP(getImage(false));
 
   if (mi != m_mi) {
     m_mi = mi;
@@ -1152,7 +1152,7 @@ void PlasticTool::moveVertex_mesh(const std::vector<TPointD> &origVxsPos,
   assert(origVxsPos.size() == m_mvSel.objects().size());
 
   // Move selected vertices
-  TMeshImageP mi = getImage(true);
+  TMeshImageP mi = TImageP(getImage(true));
   assert(m_mi == mi);
 
   int v, vCount = int(m_mvSel.objects().size());

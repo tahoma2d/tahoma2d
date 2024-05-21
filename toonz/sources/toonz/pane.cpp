@@ -34,7 +34,7 @@
 #include <QFile>
 #include <qdrawutil.h>
 #include <assert.h>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QDialog>
 #include <QLineEdit>
 #include <QTextEdit>
@@ -192,7 +192,7 @@ void TPanel::restoreFloatingPanelState() {
 
   QRect geom = settings.value("geometry", saveGeometry()).toRect();
   // check if it can be visible in the current screen
-  if (!(geom & QApplication::desktop()->availableGeometry(this)).isEmpty())
+  if (!(geom & this->screen()->availableGeometry()).isEmpty())
     setGeometry(geom);
   // load optional settings
   if (SaveLoadQSettings *persistent =

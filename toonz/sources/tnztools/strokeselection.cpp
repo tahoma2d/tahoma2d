@@ -725,7 +725,7 @@ void StrokeSelection::paste() {
     const StrokesData *stData = dynamic_cast<const StrokesData *>(
         QApplication::clipboard()->mimeData());
     if (!stData) return;
-    TVectorImageP splineImg = tool->getImage(true);
+    TVectorImageP splineImg = TImageP(tool->getImage(true));
     TVectorImageP img       = stData->m_image;
     if (!splineImg || !img) return;
 
@@ -742,7 +742,7 @@ void StrokeSelection::paste() {
     return;
   }
 
-  TVectorImageP tarImg = tool->touchImage();
+  TVectorImageP tarImg = TImageP(tool->touchImage());
   if (!tarImg) return;
   TPaletteP palette       = tarImg->getPalette();
   TPaletteP oldPalette    = new TPalette();

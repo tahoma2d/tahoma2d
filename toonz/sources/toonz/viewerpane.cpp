@@ -99,7 +99,7 @@ BaseViewerPanel::BaseViewerPanel(QWidget *parent, Qt::WindowFlags flags)
   setFrameStyle(QFrame::StyledPanel);
 
   m_mainLayout = new QVBoxLayout();
-  m_mainLayout->setMargin(0);
+  m_mainLayout->setContentsMargins(0, 0, 0, 0);
   m_mainLayout->setSpacing(0);
 
   // Viewer
@@ -1117,7 +1117,7 @@ SceneViewerPanel::SceneViewerPanel(QWidget *parent, Qt::WindowFlags flags)
 
   {
     QGridLayout *viewerL = new QGridLayout();
-    viewerL->setMargin(0);
+    viewerL->setContentsMargins(0, 0, 0, 0);
     viewerL->setSpacing(0);
     {
       viewerL->addWidget(vRuler, 1, 0);

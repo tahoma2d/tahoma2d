@@ -14,19 +14,17 @@
 #include <QTextBlock>
 #include <QMenuBar>
 #include <QPolygonF>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QClipboard>
 #include "tundo.h"
 #include "toonzqt/menubarcommand.h"
 #include "toonzqt/gutil.h"
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
 #define ACCEL_KEY(k)                                                           \
   (!QCoreApplication::testAttribute(Qt::AA_DontShowShortcutsInContextMenus)    \
        ? QLatin1Char('\t') +                                                   \
              QKeySequence(k).toString(QKeySequence::NativeText)                \
        : QString())
-#endif
 
 //========================================================
 //
@@ -45,7 +43,6 @@ SchematicName::SchematicName(QGraphicsItem *parent, double width, double height)
   setFlag(QGraphicsItem::ItemIsFocusable, true);
   setTextInteractionFlags(Qt::TextEditorInteraction);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   popup = new QMenu();
   popup->setObjectName(QLatin1String("qt_edit_menu"));
 
@@ -73,7 +70,6 @@ SchematicName::SchematicName(QGraphicsItem *parent, double width, double height)
   actionSelectAll->setObjectName(QStringLiteral("select-all"));
 
   connect(popup, SIGNAL(aboutToHide()), this, SLOT(onPopupHide()));
-#endif
 
   connect(document(), SIGNAL(contentsChanged()), this,
           SLOT(onContentsChanged()));
@@ -82,9 +78,7 @@ SchematicName::SchematicName(QGraphicsItem *parent, double width, double height)
 //--------------------------------------------------------
 
 SchematicName::~SchematicName() {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   delete popup;
-#endif
 }
 
 //--------------------------------------------------------
@@ -163,7 +157,6 @@ bool SchematicName::eventFilter(QObject *object, QEvent *event) {
 void SchematicName::focusInEvent(QFocusEvent *fe) {
   QGraphicsTextItem::focusInEvent(fe);
   qApp->installEventFilter(this);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   if (!m_refocus) {
     QTextDocument *doc = document();
     QTextCursor cursor(doc->begin());
@@ -171,16 +164,10 @@ void SchematicName::focusInEvent(QFocusEvent *fe) {
     setTextCursor(cursor);
     m_curName = toPlainText();
   }
-#else
-  QTextDocument *doc = document();
-  QTextCursor cursor(doc->begin());
-  cursor.select(QTextCursor::Document);
-#endif
 }
 
 //--------------------------------------------------------
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
 void SchematicName::contextMenuEvent(QGraphicsSceneContextMenuEvent *cme) {
   QClipboard *clipboard = QApplication::clipboard();
   QTextCursor cursor    = textCursor();
@@ -285,7 +272,6 @@ void SchematicName::onSelectAll() {
   cursor.select(QTextCursor::Document);
   setTextCursor(cursor);
 }
-#endif
 
 //========================================================
 //

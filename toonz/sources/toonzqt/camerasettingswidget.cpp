@@ -302,7 +302,7 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
 
   QVBoxLayout *mainLay = new QVBoxLayout();
   mainLay->setSpacing(3);
-  mainLay->setMargin(3);
+  mainLay->setContentsMargins(3, 3, 3, 3);
   {
     QGridLayout *gridLay = new QGridLayout();
     gridLay->setHorizontalSpacing(2);
@@ -353,7 +353,7 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
 
     QHBoxLayout *resListLay = new QHBoxLayout();
     resListLay->setSpacing(3);
-    resListLay->setMargin(1);
+    resListLay->setContentsMargins(1, 1, 1, 1);
     {
       resListLay->addWidget(m_presetListOm, 1);
       resListLay->addWidget(m_addPresetBtn, 0);
@@ -398,7 +398,7 @@ CameraSettingsWidget::CameraSettingsWidget(bool forCleanup)
   ret = ret && connect(m_useOverlaySettingsBtn, SIGNAL(clicked()), this,
                        SLOT(useOverlaySettings()));
 
-  ret = ret && connect(m_presetListOm, SIGNAL(activated(const QString &)),
+  ret = ret && connect(m_presetListOm, SIGNAL(textActivated(const QString &)),
                        SLOT(onPresetSelected(const QString &)));
   ret = ret && connect(m_addPresetBtn, SIGNAL(clicked()), SLOT(addPreset()));
   ret = ret &&
@@ -507,7 +507,7 @@ bool CameraSettingsWidget::parsePresetString(const QString &str, QString &name,
   in order to keep compatibility with default (Harlequin's) reslist.txt
   */
 
-  QStringList tokens = str.split(",", QString::SkipEmptyParts);
+  QStringList tokens = str.split(",", Qt::SkipEmptyParts);
 
   if (!(tokens.count() == 3 ||
         (!forCleanup && tokens.count() == 4) || /*- with "fx x fy" token -*/

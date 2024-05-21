@@ -40,7 +40,7 @@
 #include <QPushButton>
 #include <QMainWindow>
 #include <QApplication>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QMessageBox>
 #include <QTextStream>
 #include <QFrame>
@@ -188,21 +188,21 @@ StartupPopup::StartupPopup()
   m_buttonFrame->setFixedHeight(34);
 
   //--- layout
-  m_topLayout->setMargin(0);
+  m_topLayout->setContentsMargins(0, 0, 0, 0);
   m_topLayout->setSpacing(0);
   {
     QGridLayout *guiLay      = new QGridLayout();
     QHBoxLayout *projectLay  = new QHBoxLayout();
     QGridLayout *newSceneLay = new QGridLayout();
     m_recentSceneLay         = new QVBoxLayout();
-    guiLay->setMargin(10);
+    guiLay->setContentsMargins(10, 10, 10, 10);;
     guiLay->setVerticalSpacing(10);
     guiLay->setHorizontalSpacing(10);
 
     guiLay->addWidget(label, 0, 0, 1, 2, Qt::AlignLeft);
 
     projectLay->setSpacing(8);
-    projectLay->setMargin(8);
+    projectLay->setContentsMargins(8, 8, 8, 8);;
     {
       projectLay->addWidget(m_projectLocationFld, 1);
       projectLay->addWidget(m_projectsCB, 1);
@@ -212,7 +212,7 @@ StartupPopup::StartupPopup()
     m_projectBox->setLayout(projectLay);
     guiLay->addWidget(m_projectBox, 1, 0, 1, 1, Qt::AlignCenter);
 
-    newSceneLay->setMargin(8);
+    newSceneLay->setContentsMargins(8, 8, 8, 8);;
     newSceneLay->setVerticalSpacing(8);
     newSceneLay->setHorizontalSpacing(8);
     {
@@ -227,7 +227,7 @@ StartupPopup::StartupPopup()
                              Qt::AlignRight | Qt::AlignVCenter);
       QHBoxLayout *resListLay = new QHBoxLayout();
       resListLay->setSpacing(3);
-      resListLay->setMargin(1);
+      resListLay->setContentsMargins(1, 1, 1, 1);
       {
         resListLay->addWidget(m_presetCombo, 1);
         resListLay->addWidget(m_addPresetBtn, 0);
@@ -267,7 +267,7 @@ StartupPopup::StartupPopup()
     m_sceneBox->setLayout(newSceneLay);
     guiLay->addWidget(m_sceneBox, 2, 0, 4, 1, Qt::AlignTop);
 
-    m_recentSceneLay->setMargin(5);
+    m_recentSceneLay->setContentsMargins(5, 5, 5, 5);
     m_recentSceneLay->setSpacing(2);
     {
       // Recent Scene List
@@ -279,7 +279,7 @@ StartupPopup::StartupPopup()
     m_topLayout->addLayout(guiLay, 0);
   }
 
-  m_buttonLayout->setMargin(0);
+  m_buttonLayout->setContentsMargins(0, 0, 0, 0);
   m_buttonLayout->setSpacing(10);
   {
     m_buttonLayout->addWidget(m_showAtStartCB, Qt::AlignLeft);
@@ -318,7 +318,7 @@ StartupPopup::StartupPopup()
         connect(m_resXFld, SIGNAL(valueChanged()), this, SLOT(updateSize()));
   ret = ret &&
         connect(m_resYFld, SIGNAL(valueChanged()), this, SLOT(updateSize()));
-  ret = ret && connect(m_presetCombo, SIGNAL(activated(const QString &)),
+  ret = ret && connect(m_presetCombo, SIGNAL(textActivated(const QString &)),
                        SLOT(onPresetSelected(const QString &)));
   ret = ret && connect(m_addPresetBtn, SIGNAL(clicked()), SLOT(addPreset()));
   ret = ret && connect(m_unitsCB, SIGNAL(currentIndexChanged(int)),
@@ -418,10 +418,8 @@ void StartupPopup::showEvent(QShowEvent *) {
   // clear items if they exist first
   refreshRecentScenes();
   // center window
-  int currentScreen =
-      QApplication::desktop()->screenNumber(TApp::instance()->getMainWindow());
-  QPoint activeMonitorCenter =
-      QApplication::desktop()->availableGeometry(currentScreen).center();
+  QScreen *currentScreen = QApplication::primaryScreen();
+  QPoint activeMonitorCenter = currentScreen->availableGeometry().center();
   QPoint thisPopupCenter         = this->rect().center();
   QPoint centeredOnActiveMonitor = activeMonitorCenter - thisPopupCenter;
   this->move(centeredOnActiveMonitor);
@@ -955,7 +953,7 @@ bool StartupPopup::parsePresetString(const QString &str, QString &name,
   in order to keep compatibility with default (Harlequin's) reslist.txt
   */
 
-  QStringList tokens = str.split(",", QString::SkipEmptyParts);
+  QStringList tokens = str.split(",", Qt::SkipEmptyParts);
 
   if (!(tokens.count() == 3 ||
         (!forCleanup && tokens.count() == 4) || /*- with "fx x fy" token -*/

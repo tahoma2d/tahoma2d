@@ -30,11 +30,7 @@ protected:
 
     QFontMetrics fm    = p.fontMetrics();
     QString elidedText = fm.elidedText(m_text, Qt::ElideRight, width());
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
     qreal textWidth = fm.horizontalAdvance(elidedText);
-#else
-    qreal textWidth    = fm.width(elidedText);
-#endif
     p.drawText((width() - textWidth) * 0.5, (height() - fm.height()) * 0.5,
                elidedText);
   }

@@ -481,7 +481,7 @@ void ControlPointEditorTool::leftButtonDown(const TPointD &pos,
       }
     }
 
-    TVectorImageP vi = getImage(false);
+    TVectorImageP vi = TImageP(getImage(false));
     if (!vi) return;
     double dist2, t = 0;
     UINT index = -1;
@@ -512,7 +512,7 @@ void ControlPointEditorTool::leftButtonDown(const TPointD &pos,
       m_selection.selectNone();
     return;
   }
-  TVectorImageP vi = getImage(true);
+  TVectorImageP vi = TImageP(getImage(true));
   if (!vi) return;
 
   if (pointType == ControlPointEditorStroke::SPEED_IN ||
@@ -613,7 +613,7 @@ void ControlPointEditorTool::leftButtonDown(const TPointD &pos,
 
 void ControlPointEditorTool::rightButtonDown(const TPointD &pos,
                                              const TMouseEvent &) {
-  TVectorImageP vi = getImage(true);
+  TVectorImageP vi = TImageP(getImage(true));
   if (!vi) return;
   double maxDist  = 5 * getPixelSize();
   double maxDist2 = maxDist * maxDist;
@@ -641,7 +641,7 @@ void ControlPointEditorTool::leftButtonDoubleClick(const TPointD &pos,
   ControlPointEditorStroke::PointType pointType =
       m_controlPointEditorStroke.getPointTypeAt(pos, maxDist2, pointIndex);
 
-  TVectorImageP vi = getImage(true);
+  TVectorImageP vi = TImageP(getImage(true));
   if (!vi) return;
 
   if (pointType != ControlPointEditorStroke::SEGMENT) return;

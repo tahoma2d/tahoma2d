@@ -37,7 +37,7 @@ TMainWindow::TMainWindow(QWidget *parent, Qt::WindowFlags flags)
 
   // Set a vertical layout to include menu bars
   QVBoxLayout *vlayout = new QVBoxLayout;
-  vlayout->setMargin(0);
+  vlayout->setContentsMargins(0, 0, 0, 0);
   vlayout->setSpacing(4);
   setLayout(vlayout);
 
@@ -192,7 +192,7 @@ void TDockWidget::setFloatingAppearance() {
   if (m_titlebar) {
     // If has a custom title bar, impose a margin to the layout
     // to provide a frame.
-    layout()->setMargin(m_margin);
+    layout()->setContentsMargins(m_margin, m_margin, m_margin, m_margin);
 
     if (!m_floating)  // was docked
     {
@@ -212,7 +212,7 @@ void TDockWidget::setFloatingAppearance() {
 
 void TDockWidget::setDockedAppearance() {
   // No layout margin is visible when docked
-  layout()->setMargin(0);
+  layout()->setContentsMargins(0, 0, 0, 0);
 
   if (m_floating)  // was floating
   {
@@ -240,8 +240,9 @@ int TDockWidget::isResizeGrip(QPoint p) {
 
   int marginType = 0;
   QRect geom(QPoint(0, 0), QPoint(width(), height()));
-  int margin = layout()->margin();
-  QRect contGeom(geom.adjusted(margin, margin, -margin, -margin));
+  int lmargin, tmargin, rmargin, bmargin;
+  layout()->getContentsMargins(&lmargin, &tmargin, &rmargin, &bmargin);
+  QRect contGeom(geom.adjusted(lmargin, tmargin, -rmargin, -bmargin));
 
   if (geom.contains(p) && !contGeom.contains(p)) {
     if (p.x() < 15) marginType |= leftMargin;

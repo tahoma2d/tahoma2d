@@ -570,7 +570,7 @@ ExportScenePopup::ExportScenePopup(std::vector<TFilePath> scenes)
   layout->addWidget(newProjectWidget);
 
   ret = ret &&
-        connect(group, SIGNAL(buttonClicked(int)), this, SLOT(switchMode(int)));
+        connect(group, SIGNAL(idClicked(int)), this, SLOT(switchMode(int)));
 
   addLayout(layout, false);
 

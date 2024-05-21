@@ -10,20 +10,18 @@ using namespace std;
 //-----------------------------------------------------------------------------
 
 namespace {
-typedef unary_function<double, double> unary_functionDD;
-
 //---------------------------------------------------------------------------
 
-class mySqr : unary_functionDD {
+struct mySqr final {
 public:
-  result_type operator()(argument_type x) { return 1.0 - sq(x); }
+  double operator()(double x) { return 1.0 - sq(x); }
 };
 
 //---------------------------------------------------------------------------
 
-class myExp : unary_functionDD {
+struct myExp final {
 public:
-  result_type operator()(argument_type x) { return exp(-sq(x)); }
+  double operator()(double x) { return exp(-sq(x)); }
 };
 
 //---------------------------------------------------------------------------

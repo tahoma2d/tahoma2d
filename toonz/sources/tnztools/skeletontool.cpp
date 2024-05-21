@@ -40,7 +40,6 @@
 // Qt includes
 #include <QCoreApplication>  // Qt translation support
 #include <QPainter>
-#include <QGLWidget>  // for QGLWidget::convertToGLFormat
 #include <QPainterPath>
 #include <QString>
 #include <QImage>
@@ -1015,7 +1014,7 @@ void SkeletonTool::drawHooks() {
   // glColor3d(0,1,1);
   // tglDrawRect(0,100,Stage::inch,110);
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
 
   m_magicLinks.clear();
@@ -1355,7 +1354,7 @@ void SkeletonTool::drawDrawingBrowser(const TXshCell &cell,
       imgPainter.drawPath(dnArrow);
     }
 
-    QImage texture = QGLWidget::convertToGLFormat(img);
+    QImage texture = img.mirrored().convertToFormat(QImage::Format_RGBA8888);
 
     glRasterPos2f(p.x, p.y);
     // glBitmap(0,0,0,0,  0,-size.height()+(y+delta.y),  NULL); //
@@ -1415,7 +1414,7 @@ void SkeletonTool::drawMainGadget(const TPointD &center) {
 
   p.setBrush(QColor(54, 213, 54));
   p.drawRect(6, 6, 6, 6);
-  QImage texture = QGLWidget::convertToGLFormat(img);
+  QImage texture = img.mirrored().convertToFormat(QImage::Format_RGBA8888);
   // texture.save("c:\\urka.png");
 
   glRasterPos2f(center.x + r * 1.1, center.y - r * 1.1);

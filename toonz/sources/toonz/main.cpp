@@ -77,7 +77,7 @@
 #include <QAbstractEventDispatcher>
 #include <QAbstractNativeEventFilter>
 #include <QSplashScreen>
-#include <QGLPixelBuffer>
+#include <QOpenGLFramebufferObject>
 #include <QTranslator>
 #include <QFileInfo>
 #include <QSettings>
@@ -412,7 +412,7 @@ int main(int argc, char *argv[]) {
 
   // Enable to render smooth icons on high dpi monitors
   a.setAttribute(Qt::AA_UseHighDpiPixmaps);
-#if defined(_WIN32) && QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+#if defined(_WIN32)
   // Compress tablet events with application attributes instead of implementing
   // the delay-timer by ourselves
   a.setAttribute(Qt::AA_CompressHighFrequencyEvents);
@@ -558,10 +558,8 @@ int main(int argc, char *argv[]) {
   a.processEvents();
 
   // OpenGL
-  QGLFormat fmt;
-  fmt.setAlpha(true);
-  fmt.setStencil(true);
-  QGLFormat::setDefaultFormat(fmt);
+  QOpenGLFramebufferObjectFormat fmt;
+  fmt.setAttachment(QOpenGLFramebufferObject::Attachment::CombinedDepthStencil);
 
 #ifndef __HAIKU__
   glutInit(&argc, argv);
@@ -883,7 +881,7 @@ int main(int argc, char *argv[]) {
 
 // Windows Ink Support was introduce into Qt 5.12 so disable
 // our version when compiling with it
-#if defined(_WIN32) && QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
+#if defined(_WIN32)
   if (Preferences::instance()->isWinInkEnabled()) {
     KisTabletSupportWin8 *penFilter = new KisTabletSupportWin8();
     if (penFilter->init()) {

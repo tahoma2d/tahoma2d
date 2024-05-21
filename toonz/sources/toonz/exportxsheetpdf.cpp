@@ -997,13 +997,8 @@ void XSheetPDFTemplate::drawCellNumber(QPainter& painter, QRect rect,
       circlePen.setWidth(mm2px(0.3));
       painter.setPen(circlePen);
       QFontMetrics fm(font);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
       int keyR_width =
         std::max(param(RowHeight), fm.horizontalAdvance(str) + mm2px(1));
-#else
-      int keyR_width =
-        std::max(param(RowHeight), fm.boundingRect(str).width() + mm2px(1));
-#endif
       QRect keyR(0, 0, keyR_width, param(RowHeight));
       keyR.moveCenter(rect.center());
       painter.drawEllipse(keyR);
@@ -1693,11 +1688,7 @@ XSheetPDFTemplate_Custom::XSheetPDFTemplate_Custom(
     m_p.documentPageSize = str2PageSizeId(pageStr);
 
     QString marginStr = s.value("Margin").toString();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     QStringList m = marginStr.split(QLatin1Char(','), Qt::SkipEmptyParts);
-#else
-    QStringList m = marginStr.split(QLatin1Char(','), QString::SkipEmptyParts);
-#endif
     assert(m.size() == 4);
     if (m.size() == 4)
       m_p.documentMargin = QMarginsF(m[0].toDouble(), m[1].toDouble(),
@@ -1739,12 +1730,7 @@ XSheetPDFTemplate_Custom::XSheetPDFTemplate_Custom(
     {
       for (auto key : s.childKeys()) {
         QString rectStr = s.value(key).toString();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
         QStringList r = rectStr.split(QLatin1Char(','), Qt::SkipEmptyParts);
-#else
-        QStringList r =
-            rectStr.split(QLatin1Char(','), QString::SkipEmptyParts);
-#endif
         assert(r.size() == 4);
         if (r.size() == 4)
           m_dataRects[dataStr2Type(key)] =
@@ -1973,16 +1959,16 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
   exportBtn->setObjectName("LargeSizedText");
 
   QHBoxLayout* mainLay = new QHBoxLayout();
-  mainLay->setMargin(0);
+  mainLay->setContentsMargins(0, 0, 0, 0);
   mainLay->setSpacing(5);
   {
     QVBoxLayout* previewLay = new QVBoxLayout();
-    previewLay->setMargin(0);
+    previewLay->setContentsMargins(0, 0, 0, 0);
     previewLay->setSpacing(0);
     {
       previewLay->addWidget(m_previewArea, 1);
       QHBoxLayout* prevBtnLay = new QHBoxLayout();
-      prevBtnLay->setMargin(15);
+      prevBtnLay->setContentsMargins(15, 15, 15, 15);;
       prevBtnLay->setSpacing(10);
       {
         prevBtnLay->addStretch(1);
@@ -1996,20 +1982,20 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
     mainLay->addLayout(previewLay, 1);
 
     QVBoxLayout* rightLay = new QVBoxLayout();
-    rightLay->setMargin(0);
+    rightLay->setContentsMargins(0, 0, 0, 0);
     rightLay->setSpacing(10);
     {
       QScrollArea* scrollArea = new QScrollArea(this);
       scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
       QWidget* scrollPanel    = new QWidget(this);
       QVBoxLayout* controlLay = new QVBoxLayout();
-      controlLay->setMargin(20);
+      controlLay->setContentsMargins(20, 20, 20, 20);
       controlLay->setSpacing(10);
       {
         QGroupBox* tmplGBox = new QGroupBox(tr("Template Settings"), this);
 
         QGridLayout* tmplLay = new QGridLayout();
-        tmplLay->setMargin(10);
+        tmplLay->setContentsMargins(10, 10, 10, 10);;
         tmplLay->setHorizontalSpacing(5);
         tmplLay->setVerticalSpacing(10);
         {
@@ -2043,7 +2029,7 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
         QGroupBox* exportGBox = new QGroupBox(tr("Export Settings"), this);
 
         QGridLayout* exportLay = new QGridLayout();
-        exportLay->setMargin(10);
+        exportLay->setContentsMargins(10, 10, 10, 10);;
         exportLay->setHorizontalSpacing(5);
         exportLay->setVerticalSpacing(10);
         {
@@ -2067,7 +2053,7 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
                                Qt::AlignLeft | Qt::AlignVCenter);
 
           QGridLayout* checksLay = new QGridLayout();
-          checksLay->setMargin(0);
+          checksLay->setContentsMargins(0, 0, 0, 0);
           checksLay->setHorizontalSpacing(10);
           checksLay->setVerticalSpacing(10);
           {
@@ -2116,7 +2102,7 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
       rightLay->addWidget(scrollArea, 1);
 
       QGridLayout* saveLay = new QGridLayout();
-      saveLay->setMargin(15);
+      saveLay->setContentsMargins(15, 15, 15, 15);;
       saveLay->setHorizontalSpacing(5);
       saveLay->setVerticalSpacing(10);
       {
@@ -2132,7 +2118,7 @@ ExportXsheetPdfPopup::ExportXsheetPdfPopup()
       rightLay->addLayout(saveLay, 0);
 
       QHBoxLayout* btnLay = new QHBoxLayout();
-      btnLay->setMargin(10);
+      btnLay->setContentsMargins(10, 10, 10, 10);;
       btnLay->setSpacing(10);
       {
         btnLay->addStretch(1);

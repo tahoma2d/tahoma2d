@@ -405,11 +405,11 @@ ConvertPopup::ConvertPopup(bool specifyInput)
   m_progressDialog->setWindowModality(Qt::WindowModal);
 
   //----layout
-  m_topLayout->setMargin(5);
+  m_topLayout->setContentsMargins(5, 5, 5, 5);
   m_topLayout->setSpacing(5);
   {
     QGridLayout *upperLay = new QGridLayout();
-    upperLay->setMargin(0);
+    upperLay->setContentsMargins(0, 0, 0, 0);
     upperLay->setSpacing(5);
     {
       int row = 0;
@@ -461,7 +461,7 @@ ConvertPopup::ConvertPopup(bool specifyInput)
     m_topLayout->addWidget(m_tlvFrame);
   }
 
-  m_buttonLayout->setMargin(0);
+  m_buttonLayout->setContentsMargins(0, 0, 0, 0);
   m_buttonLayout->setSpacing(20);
   {
     m_buttonLayout->addWidget(m_okBtn);
@@ -487,14 +487,14 @@ ConvertPopup::ConvertPopup(bool specifyInput)
   qRegisterMetaType<TFilePath>("TFilePath");
 
   bool ret = true;
-  ret = ret && connect(m_tlvMode, SIGNAL(currentIndexChanged(const QString &)),
+  ret = ret && connect(m_tlvMode, SIGNAL(currentTextChanged(const QString &)),
                        this, SLOT(onTlvModeSelected(const QString &)));
   ret = ret && connect(m_fromFld, SIGNAL(editingFinished()), this,
                        SLOT(onRangeChanged()));
   ret = ret && connect(m_toFld, SIGNAL(editingFinished()), this,
                        SLOT(onRangeChanged()));
   ret =
-      ret && connect(m_fileFormat, SIGNAL(currentIndexChanged(const QString &)),
+      ret && connect(m_fileFormat, SIGNAL(currentTextChanged(const QString &)),
                      this, SLOT(onFormatSelected(const QString &)));
   ret = ret && connect(m_formatOptions, SIGNAL(clicked()), this,
                        SLOT(onOptionsClicked()));

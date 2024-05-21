@@ -693,7 +693,7 @@ void ExportXDTSCommand::execute() {
     targetColumnCombo->setCurrentIndex(targetColumnCombo->findData(true));
 
     QGridLayout *customLay = new QGridLayout();
-    customLay->setMargin(0);
+    customLay->setContentsMargins(0, 0, 0, 0);
     customLay->setSpacing(10);
     {
       customLay->addWidget(

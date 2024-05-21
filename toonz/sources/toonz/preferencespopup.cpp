@@ -69,7 +69,7 @@ namespace {
 enum DpiPolicy { DP_ImageDpi, DP_CustomDpi };
 
 inline void setupLayout(QGridLayout* lay, int margin = 15) {
-  lay->setMargin(margin);
+  lay->setContentsMargins(margin, margin, margin, margin);
   lay->setHorizontalSpacing(5);
   lay->setVerticalSpacing(10);
   lay->setColumnStretch(2, 1);
@@ -99,7 +99,7 @@ SizeField::SizeField(QSize min, QSize max, QSize value, QWidget* parent)
       new DVGui::IntLineEdit(this, value.height(), min.height(), max.height());
   QHBoxLayout* lay = new QHBoxLayout();
   lay->setSpacing(5);
-  lay->setMargin(0);
+  lay->setContentsMargins(0, 0, 0, 0);
   lay->addWidget(m_fieldX, 1);
   lay->addWidget(new QLabel("x", this), 0);
   lay->addWidget(m_fieldY, 1);
@@ -299,9 +299,7 @@ PreferencesPopup::Display30bitChecker::GLView::GLView(QWidget* parent,
                                                       bool is30bit)
     : QOpenGLWidget(parent), m_is30bit(is30bit) {
   setFixedSize(500, 100);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   if (m_is30bit) setTextureFormat(TGL_TexFmt10);
-#endif
 }
 
 void PreferencesPopup::Display30bitChecker::GLView::initializeGL() {
@@ -356,7 +354,7 @@ PreferencesPopup::Display30bitChecker::Display30bitChecker(
 30bit display is available in the current configuration.");
 
   QVBoxLayout* lay = new QVBoxLayout();
-  lay->setMargin(10);
+  lay->setContentsMargins(10, 10, 10, 10);;
   lay->setSpacing(10);
   {
     lay->addWidget(view8bit);
@@ -364,7 +362,7 @@ PreferencesPopup::Display30bitChecker::Display30bitChecker(
     lay->addWidget(new QLabel(infoLabel, this));
     lay->addWidget(closeBtn, 0, Qt::AlignCenter);
   }
-  m_topLayout->setMargin(0);
+  m_topLayout->setContentsMargins(0, 0, 0, 0);
   m_topLayout->addLayout(lay);
   lay->setSizeConstraint(QLayout::SetFixedSize);
 
@@ -1082,7 +1080,7 @@ QWidget* PreferencesPopup::createUI(PreferencesItemId id,
     if (id == interfaceFont) {  // create QFontComboBox
       QFontComboBox* combo = new QFontComboBox(this);
       combo->setCurrentText(item.value.toString());
-      ret    = connect(combo, SIGNAL(currentIndexChanged(const QString&)), this,
+      ret    = connect(combo, SIGNAL(currentTextChanged(const QString&)), this,
                        SLOT(onInterfaceFontChanged(const QString&)));
       widget = combo;
     } else if (!comboItems.isEmpty()) {  // create QComboBox
@@ -1200,7 +1198,7 @@ void PreferencesPopup::insertUI(PreferencesItemId id, QGridLayout* layout,
     else {
       bool isWideComboBox = false;
       for (auto cbItem : comboItems) {
-        if (widget->fontMetrics().width(cbItem.first) > 100) {
+        if (widget->fontMetrics().horizontalAdvance(cbItem.first) > 100) {
           isWideComboBox = true;
           break;
         }
@@ -1230,7 +1228,7 @@ void PreferencesPopup::insertDualUIs(PreferencesItemId leftId,
                       Qt::AlignRight | Qt::AlignVCenter);
   }
   QHBoxLayout* innerLay = new QHBoxLayout();
-  innerLay->setMargin(0);
+  innerLay->setContentsMargins(0, 0, 0, 0);
   innerLay->setSpacing(5);
   {
     innerLay->addWidget(
@@ -1658,19 +1656,19 @@ PreferencesPopup::PreferencesPopup()
   QPushButton* importPrefButton = new QPushButton("Import Preferences");
 
   QHBoxLayout* mainLayout = new QHBoxLayout();
-  mainLayout->setMargin(0);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
   mainLayout->setSpacing(0);
   {
     // Category
     QVBoxLayout* categoryLayout = new QVBoxLayout();
-    categoryLayout->setMargin(5);
+    categoryLayout->setContentsMargins(5, 5, 5, 5);
     categoryLayout->setSpacing(10);
     categoryLayout->addWidget(m_categoryList, 1);
     categoryLayout->addWidget(importPrefButton, 0);
     mainLayout->addLayout(categoryLayout, 0);
     mainLayout->addWidget(m_stackedWidget, 1);
   }
-  m_topLayout->setMargin(0);
+  m_topLayout->setContentsMargins(0, 0, 0, 0);
   m_topLayout->addLayout(mainLayout);
 
   bool ret = connect(m_categoryList, SIGNAL(currentRowChanged(int)),
@@ -1851,11 +1849,9 @@ QWidget* PreferencesPopup::createInterfacePage() {
 
   QGridLayout* colorCalibLay = insertGroupBoxUI(colorCalibrationEnabled, lay);
   { insertUI(colorCalibrationLutPaths, colorCalibLay); }
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   insertUI(displayIn30bit, lay);
   row = lay->rowCount();
   lay->addWidget(check30bitBtn, row - 1, 2, Qt::AlignRight);
-#endif
   if (Preferences::instance()->isShowAdvancedOptionsEnabled())
     insertUI(showIconsInMenu, lay);
 
@@ -1944,7 +1940,7 @@ QWidget* PreferencesPopup::createLoadingPage() {
   lay->addWidget(new QLabel(tr("Level Settings by File Format:")), row, 0,
                  Qt::AlignRight | Qt::AlignVCenter);
   QHBoxLayout* levelFormatLay = new QHBoxLayout();
-  levelFormatLay->setMargin(0);
+  levelFormatLay->setContentsMargins(0, 0, 0, 0);
   levelFormatLay->setSpacing(5);
   {
     levelFormatLay->addWidget(m_levelFormatNames);
@@ -2383,7 +2379,7 @@ QWidget* PreferencesPopup::createVersionControlPage() {
 
 QWidget* PreferencesPopup::createTouchTabletPage() {
   bool winInkAvailable = false;
-#if defined(_WIN32) && QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
+#if defined(_WIN32)
   winInkAvailable = KisTabletSupportWin8::isAvailable();
 #endif
 
