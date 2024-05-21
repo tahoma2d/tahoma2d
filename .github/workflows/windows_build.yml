@@ -42,11 +42,11 @@ jobs:
           ci-scripts\windows\tahoma-buildpkg.bat
           mkdir artifact
           cp -r toonz\build\Tahoma2D artifact
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: Tahoma2D-portable-win
           path: artifact
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: Tahoma2D-install-win.exe
           path: toonz\build\Tahoma2D-install-win.exe

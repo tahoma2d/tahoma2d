@@ -64,7 +64,7 @@ jobs:
         run: |
           ci-scripts/linux/tahoma-buildpkg.sh
           mv toonz/build/Tahoma2D-linux.tar.gz toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
           path: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
