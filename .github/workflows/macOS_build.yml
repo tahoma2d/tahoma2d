@@ -59,11 +59,11 @@ jobs:
           ci-scripts/osx/tahoma-build.sh
       - name: Create Package
         run: bash ./ci-scripts/osx/tahoma-buildpkg.sh
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: Tahoma2D-portable-osx.dmg
           path: toonz/build/Tahoma2D-portable-osx.dmg
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: Tahoma2D-install-osx.pkg
           path: toonz/build/Tahoma2D-install-osx.pkg
