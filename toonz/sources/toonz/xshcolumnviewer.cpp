@@ -2945,7 +2945,7 @@ void ColumnArea::mouseMoveEvent(QMouseEvent *event) {
         m_tooltip = tr("Set the volume of the soundtrack");
     } else if (Preferences::instance()->getColumnIconLoadingPolicy() ==
                Preferences::LoadOnDemand)
-      m_tooltip = tr("Alt + Click to Toggle Thumbnail");
+      m_tooltip = tr("%1 + Click to Toggle Thumbnail").arg(trModKey("Alt"));
     else
       m_tooltip = tr("");
   }
