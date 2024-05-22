@@ -404,7 +404,8 @@ void ExportSceneTreeViewDelegate::paint(QPainter *painter,
   QPixmap px = node->getPixmap(m_treeView->isExpanded(index));
   if (!px.isNull()) {
     int x = rect.left();
-    int y = rect.top() + (rect.height() - px.height()) / 2;
+    int y =
+        rect.top() + (rect.height() - px.height() / px.devicePixelRatio()) / 2;
     painter->drawPixmap(QPoint(x, y), px);
   }
   rect.adjust(pnode ? 31 : 22, 0, 0, 0);
