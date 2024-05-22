@@ -373,8 +373,11 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
   if (getApplication()->getCurrentLevelStyle()->getTagId() ==
       4001)  // mypaint brush case
     pressure = m_enabledPressure && e.isTablet() ? e.m_pressure : 0.5;
-  else
-    pressure    = m_enabledPressure ? e.m_pressure : 1.0;
+  else {
+    pressure = m_enabledPressure && e.isTablet() ? e.m_pressure : 1.0;
+    if (m_enabledPressure && e.m_pressure == 1.0)
+      pressure = 0.1;
+  }
   m_oldPressure = pressure;
 
   m_tileSet   = new TTileSetFullColor(ras->getSize());
@@ -668,8 +671,11 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
   if (getApplication()->getCurrentLevelStyle()->getTagId() ==
       4001)  // mypaint brush case
     pressure = m_enabledPressure && e.isTablet() ? e.m_pressure : 0.5;
-  else
-    pressure = m_enabledPressure ? e.m_pressure : 1.0;
+  else {
+    pressure = m_enabledPressure && e.isTablet() ? e.m_pressure : 1.0;
+    if (m_enabledPressure && e.m_pressure == 1.0)
+      pressure = 0.1;
+  }
   if (m_isStraight) {
     pressure = m_oldPressure;
   }
