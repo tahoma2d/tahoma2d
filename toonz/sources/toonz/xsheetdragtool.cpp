@@ -406,12 +406,18 @@ public:
       int col = m_col + c;
       xsh->insertCells(r0, col, count);
       int r;
+      TXshCell prevCell = xsh->getCell(r0, c);
       for (r = r0; r <= r1; r++) {
-        int k = (r - m_row) * m_colCount + c;
-        if (isSoundColumn)
+        int k         = (r - m_row) * m_colCount + c;
+        TXshCell cell = m_cells[k];
+        if (isSoundColumn ||
+            (Preferences::instance()->isImplicitHoldEnabled() &&
+             prevCell == cell))
           xsh->setCell(r, col, TXshCell());
-        else
-          xsh->setCell(r, col, m_cells[k]);
+        else {
+          xsh->setCell(r, col, cell);
+          prevCell = cell;
+        }
       }
     }
   }
@@ -786,11 +792,18 @@ public:
         if (column && column->getFolderColumn()) continue;
         bool isSoundColumn = (column && column->getSoundColumn());
         if (m_insert) xsh->insertCells(m_r1 + 1, m_c0 + c, dr);
-        for (int r = m_r1 + 1; r <= r1; r++)
-          if (isSoundColumn)
+        TXshCell prevCell = xsh->getCell(m_r1, c);
+        for (int r = m_r1 + 1; r <= r1; r++) {
+          TXshCell cell = m_columns[c].generate(r);
+          if (isSoundColumn ||
+              (Preferences::instance()->isImplicitHoldEnabled() &&
+               prevCell == cell))
             xsh->setCell(r, m_c0 + c, TXshCell());
-          else
-            xsh->setCell(r, m_c0 + c, m_columns[c].generate(r));
+          else {
+            xsh->setCell(r, m_c0 + c, cell);
+            prevCell = cell;
+          }
+        }
       }
     }
     m_r1 = r1;
