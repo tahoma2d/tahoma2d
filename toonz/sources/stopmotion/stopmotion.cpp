@@ -1750,6 +1750,7 @@ bool StopMotion::importImage() {
     for (int i = 0; i < m_captureNumberOfFrames; i++) {
       xsh->insertCells(row + i, col);
       xsh->setCell(row + i, col, TXshCell(sl, fid));
+      if (Preferences::instance()->isImplicitHoldEnabled()) break;
     }
     app->getCurrentColumn()->setColumnIndex(col);
     if (getReviewTimeDSec() == 0 || m_isTimeLapse)
@@ -1796,6 +1797,7 @@ bool StopMotion::importImage() {
     for (int i = 0; i < m_captureNumberOfFrames; i++) {
       xsh->insertCells(row + i, foundCol);
       xsh->setCell(row + i, foundCol, TXshCell(sl, fid));
+      if (Preferences::instance()->isImplicitHoldEnabled()) break;
     }
     app->getCurrentColumn()->setColumnIndex(foundCol);
     if (getReviewTimeDSec() == 0 || m_isTimeLapse)
@@ -1812,6 +1814,7 @@ bool StopMotion::importImage() {
     }
     for (int i = 0; i < m_captureNumberOfFrames; i++) {
       xsh->setCell(row + i, col, TXshCell(sl, fid));
+      if (Preferences::instance()->isImplicitHoldEnabled()) break;
     }
     app->getCurrentColumn()->setColumnIndex(col);
     if (getReviewTimeDSec() == 0 || m_isTimeLapse)
