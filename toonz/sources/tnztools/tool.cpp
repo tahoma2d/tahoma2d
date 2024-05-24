@@ -110,7 +110,7 @@ TFrameId getNewFrameId(TXshSimpleLevel *sl, int row) {
 }
 
 TFrameId getDesiredFId(TXshCellColumn *column, int r0, TXshSimpleLevel *sl,
-                       int row, TFrameId &maxFId) {
+                       int row, TFrameId &maxFId, bool forDuplicate) {
   // search upper cells in the current column and return the next fids to be
   // inserted if the maximum fid has no suffix it returns next number, otherwise
   // returns next suffix.
@@ -122,7 +122,10 @@ TFrameId getDesiredFId(TXshCellColumn *column, int r0, TXshSimpleLevel *sl,
     if (sl != column->getCell(r).getSimpleLevel()) continue;
     TFrameId tmpFId = column->getCell(r).getFrameId();
     if (neighborFId.isEmptyFrame()) neighborFId = tmpFId;
-    if (maxFId < tmpFId) maxFId = tmpFId;
+    if (maxFId < tmpFId) {
+      maxFId = tmpFId;
+      if (forDuplicate) break;
+    }
   }
 
   QByteArray suffix = maxFId.getLetter().toUtf8();
@@ -292,7 +295,7 @@ TImage *TTool::getImage(bool toBeModified, int subsampling) {
 
 //-----------------------------------------------------------------------------
 
-TImage *TTool::touchImage() {
+TImage *TTool::touchImage(bool forDuplicate) {
   if (!m_application) return 0;
 
   m_cellsData.clear();
@@ -401,7 +404,7 @@ TImage *TTool::touchImage() {
       // find the proper frameid
       TFrameId fid;
       TXshCellColumn *column = xsh->getColumn(col)->getCellColumn();
-      if (isAutoRenumberEnabled && column) {
+      if ((isAutoRenumberEnabled && column) || forDuplicate) {
         TFrameId maxFid;
         if (animationSheetEnabled) {
           fid    = TFrameId(row + 1);
@@ -409,7 +412,7 @@ TImage *TTool::touchImage() {
         } else {
           int r_begin, r_end;
           column->getRange(r_begin, r_end);
-          fid = getDesiredFId(column, r_begin, sl, row, maxFid);
+          fid = getDesiredFId(column, r_begin, sl, row, maxFid, forDuplicate);
         }
         // renumber fids
         sl->getFids(m_oldFids);
@@ -506,7 +509,7 @@ TImage *TTool::touchImage() {
         TFrameId maxFid(row);
         fid = (animationSheetEnabled)
                   ? TFrameId(row + 1)
-                  : getDesiredFId(column, r0, sl, row, maxFid);
+                  : getDesiredFId(column, r0, sl, row, maxFid, forDuplicate);
         sl->getFids(m_oldFids);
         m_isLevelRenumbererd = ToolUtils::renumberForInsertFId(
             sl, fid, maxFid, scene->getTopXsheet());

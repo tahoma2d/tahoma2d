@@ -3191,7 +3191,7 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
     Preferences::instance()->setValue(EnableCreationInHoldCells, true, false);
   //------------------
 
-  TImage *img = toolHandle->getTool()->touchImage();
+  TImage *img = toolHandle->getTool()->touchImage(true);
   if (!img) {
     //----- Restore previous states of autocreation
     if (!isAutoCreateEnabled)
