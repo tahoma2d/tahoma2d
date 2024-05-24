@@ -321,8 +321,10 @@ public:
       bool toBeModified,
       int subsampling = 0);  //!< Returns the image to be edited by the tool.
 
-  static TImage *touchImage();  //!< Returns a pointer to the actual image - the
-                                //!  one of the frame that has been selected.
+  static TImage *touchImage(
+      bool forDuplicate =
+          false);  //!< Returns a pointer to the actual image - the
+                   //!  one of the frame that has been selected.
 
   /*! \details      This function is necessary since tools are created before
 the main
