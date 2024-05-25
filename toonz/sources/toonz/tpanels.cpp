@@ -303,8 +303,8 @@ void SchematicScenePanel::onDeleteStageObjects(
 
   TApp *app = TApp::instance();
   TStageObjectCmd::deleteSelection(
-      std::vector<TStageObjectId>(selection->getObjects().toVector().begin(),
-                  selection->getObjects().toVector().end()),
+      std::vector<TStageObjectId>(selection->getObjects().begin(),
+                                  selection->getObjects().end()),
       std::list<QPair<TStageObjectId, TStageObjectId>>(
           selection->getLinks().begin(), selection->getLinks().end()),
       std::list<int>(selection->getSplines().begin(),
