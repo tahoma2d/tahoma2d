@@ -2377,6 +2377,7 @@ void ToonzRasterBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 
 void ToonzRasterBrushTool::draw() {
   if (m_isStraight) {
+    tglColor(TPixel32::Red);
     tglDrawSegment(m_firstPoint, m_lastPoint);
   }
   if (m_minThick == 0 && m_maxThick == 0 &&

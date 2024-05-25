@@ -820,6 +820,7 @@ void FullColorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 void FullColorBrushTool::draw() {
   if (TRasterImageP ri = TRasterImageP(getImage(false))) {
     if (m_isStraight) {
+      tglColor(TPixel32::Red);
       tglDrawSegment(m_firstPoint, m_lastPoint);
     }
     // If toggled off, don't draw brush outline
