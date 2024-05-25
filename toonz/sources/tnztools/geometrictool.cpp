@@ -2302,6 +2302,7 @@ void RectanglePrimitive::draw() {
       areAlmostEqual(m_selectingRect.x0, m_selectingRect.x1) ||
       areAlmostEqual(m_selectingRect.y0, m_selectingRect.y1)) {
 //    tglColor(m_isEditing ? m_color : TPixel32::Green);
+    tglColor(TPixel32::Red);
 
     if (m_rectangle.hasSymmetryBrushes()) {
       double pixelSize = m_tool->getPixelSize();
@@ -3725,7 +3726,8 @@ void PolygonPrimitive::draw() {
     return;
   }
 
-  tglColor(m_isEditing ? m_color : TPixel32::Green);
+//  tglColor(m_isEditing ? m_color : TPixel32::Green);
+  tglColor(TPixel32::Red);
 
   int edgeCount = m_param->m_edgeCount.getValue();
   if (edgeCount == 0) return;
