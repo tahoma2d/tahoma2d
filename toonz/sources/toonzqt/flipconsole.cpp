@@ -854,7 +854,8 @@ void FlipConsole::setFpsFieldColors() {
       m_fpsField->setLineEditBackgroundColor(QColor(255, 69, 0));
       m_fpsField->setToolTip(
           tr("This value is different than the scene framerate.\n"
-             "Control click to reset."));
+             "%1 + Click to reset.")
+              .arg(trModKey("Ctrl")));
     }
   }
 }

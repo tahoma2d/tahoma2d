@@ -527,8 +527,9 @@ ComboHistogram::ComboHistogram(QWidget *parent)
 
     mainLayout->addWidget(m_rgbLabel, 0, Qt::AlignCenter);
 
-    mainLayout->addWidget(new QLabel(tr("Average Color (Ctrl + Drag)"), this),
-                          0, Qt::AlignLeft | Qt::AlignVCenter);
+    mainLayout->addWidget(
+        new QLabel(tr("Average Color (%1 + Drag)").arg(trModKey("Ctrl")), this),
+        0, Qt::AlignLeft | Qt::AlignVCenter);
     mainLayout->addWidget(m_rectAverageRgbLabel, 0, Qt::AlignCenter);
 
     QHBoxLayout *infoParamLay = new QHBoxLayout();

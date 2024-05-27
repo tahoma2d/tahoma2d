@@ -3616,7 +3616,7 @@ void ColumnArea::mouseMoveEvent(QMouseEvent *event) {
         m_tooltip = tr("Open/Close folder");
     } else if (Preferences::instance()->getColumnIconLoadingPolicy() ==
                Preferences::LoadOnDemand)
-      m_tooltip = tr("Alt + Click to Toggle Thumbnail");
+      m_tooltip = tr("%1 + Click to Toggle Thumbnail").arg(trModKey("Alt"));
   }
   update();
 }
