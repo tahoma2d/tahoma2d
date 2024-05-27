@@ -57,7 +57,7 @@ QRgb pickRGB(QWidget *widget, const QRect &rect) {
 
 //------------------------------------------------------------------------------
 
-QRgb pickScreenRGB(const QRect &rect, QWidget *widget) {
+QRgb pickScreenRGB(const QRect &rect) {
 #ifdef MACOSX
 
   //   #Bugzilla 6514, possibly related to #QTBUG 23516
@@ -83,8 +83,8 @@ QRgb pickScreenRGB(const QRect &rect, QWidget *widget) {
 
 #endif
 
-  QImage img(widget->screen()
-                 ->grabWindow(widget->winId(), theRect.x(), theRect.y(),
+  QImage img(QApplication::primaryScreen()
+                 ->grabWindow(0, theRect.x(), theRect.y(),
                               theRect.width(), theRect.height())
                  .toImage());
   return meanColor(
