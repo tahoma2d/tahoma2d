@@ -1028,10 +1028,11 @@ bool VectorizerPopup::apply() {
       TXsheet *xsheet = TApp::instance()->getCurrentXsheet()->getXsheet();
       xsheet->insertColumn(newIndexColumn);
 
+      bool implicitMode = Preferences::instance()->isImplicitHoldEnabled();
       int r, c;
       for (c = c0; c <= c1; c++) {
         for (r = r0; r <= r1; r++) {
-          TXshCell cell = xsheet->getCell(r, c);
+          TXshCell cell = xsheet->getCell(r, c, !implicitMode);
           TXshSimpleLevel *level =
               (!cell.isEmpty()) ? cell.getSimpleLevel() : 0;
           if (level != sl) continue;

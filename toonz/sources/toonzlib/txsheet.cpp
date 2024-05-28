@@ -771,9 +771,11 @@ bool TXsheet::incrementCells(int r0, int c0, int r1, int c1,
         TXshCell cell(0, TFrameId::NO_FRAME);
         forUndo.push_back(std::pair<TRect, TXshCell>(
             TRect(i + 1, j, i + 1 + numCells - 1, j), cell));
-        for (int k = 1; k <= numCells; k++) {
-          TXshCell cell = getCell(CellPosition(i, j), false);
-          setCell(i + k, j, cell);
+        if (!Preferences::instance()->isImplicitHoldEnabled()) {
+          for (int k = 1; k <= numCells; k++) {
+            TXshCell cell = getCell(CellPosition(i, j), false);
+            setCell(i + k, j, cell);
+          }
         }
         i += numCells;
         r1 += numCells;
@@ -1015,7 +1017,9 @@ int TXsheet::reframeCells(int r0, int r1, int col, int step, int withBlank) {
     if (useImplicitHold && !level) level = getCell(i, col).m_level;
     for (int i1 = 0; i1 < step; i1++) {
       // Cell is empty, find last level
-      if (cells[k].isEmpty() || (useImplicitHold && i1 > 0))
+      if (cells[k].isEmpty() ||
+          (useImplicitHold &&
+           (i1 > 0 || (k == 0 && i == r0 && getCell(i, col, false).isEmpty()))))
         clearCells(i + i1, col);
       else
         setCell(i + i1, col, cells[k]);

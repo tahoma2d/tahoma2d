@@ -4256,9 +4256,10 @@ void TCellSelection::convertToToonzRaster() {
   TUndoManager::manager()->add(undo);
 
   // expose the new frames in the column
+  bool implicitMode = Preferences::instance()->isImplicitHoldEnabled();
   for (i = 0; i < totalImages; i++) {
     for (int k = r0; k <= r1; k++) {
-      TXshCell oldCell = xsh->getCell(k, c0);
+      TXshCell oldCell = xsh->getCell(k, c0, !implicitMode);
       TXshCell newCell(sl, newFids[i]);
       if (oldCell.getFrameId() == frameIds[i]) {
         xsh->setCell(k, col, newCell);
