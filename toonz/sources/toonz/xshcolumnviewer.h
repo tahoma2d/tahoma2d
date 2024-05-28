@@ -149,6 +149,8 @@ class RenameColumnField final : public QLineEdit {
 
   TXsheetHandle *m_xsheetHandle;
 
+  bool m_contextMenuActive;
+
 public:
   RenameColumnField(QWidget *parent, XsheetViewer *viewer);
   ~RenameColumnField() {}
@@ -161,6 +163,7 @@ public:
 
 protected:
   void focusOutEvent(QFocusEvent *) override;
+  void contextMenuEvent(QContextMenuEvent *) override;
 
 protected slots:
   void renameColumn();
