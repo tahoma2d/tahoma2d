@@ -7374,7 +7374,8 @@ void ClickableLabel::mousePressEvent(QMouseEvent *event) {
 // RenameStyleSet
 //-----------------------------------------------------------------------------
 
-RenameStyleSet::RenameStyleSet(QWidget *parent) : QLineEdit(parent) {
+RenameStyleSet::RenameStyleSet(QWidget *parent)
+    : QLineEdit(parent), m_contextMenuActive(false) {
   m_editor = dynamic_cast<StyleEditor *>(parent);
 
   setFixedSize(200, 20);
@@ -7403,7 +7404,8 @@ void RenameStyleSet::show(const QRect &rect) {
   setText(name);
   selectAll();
 
-  m_validatingName = false;
+  m_validatingName    = false;
+  m_contextMenuActive = false;
   QWidget::show();
   raise();
   setFocus();
@@ -7442,6 +7444,8 @@ void RenameStyleSet::renameSet() {
 //-----------------------------------------------------------------------------
 
 void RenameStyleSet::focusOutEvent(QFocusEvent *e) {
+  if (m_contextMenuActive) return;
+
   if (!m_validatingName) {
     std::wstring newName = text().toStdWString();
     if (!newName.empty())
@@ -7451,4 +7455,12 @@ void RenameStyleSet::focusOutEvent(QFocusEvent *e) {
   }
 
   QLineEdit::focusOutEvent(e);
+}
+
+//-----------------------------------------------------------------------------
+
+void RenameStyleSet::contextMenuEvent(QContextMenuEvent *e) {
+  m_contextMenuActive = true;
+  QLineEdit::contextMenuEvent(e);
+  m_contextMenuActive = false;
 }
