@@ -11,6 +11,8 @@
 
 #include <QMutex>
 
+#include <QAbstractItemModel>
+
 #undef DVAPI
 #undef DVVAR
 
@@ -318,6 +320,8 @@ Split a stroke at parameter t
 
   //! Only for debug
   void print(std::ostream &os = std::cout) const;
+  void addChunkRows(QAbstractItemModel *model, int stroke,
+                    std::vector<int> groupIds, int currentGroup);
 
   //! change tangent versus in the stroke
   /*!
@@ -449,6 +453,14 @@ public:
 //***************************************************************************
 //    Related Non-member functions
 //***************************************************************************
+
+void addVectorDataRow(QAbstractItemModel *model, const QString &stroke,
+                      const QString &groupid, const QString &id,
+                      const QString &styleid, const QString &selfLoop,
+                      const QString &quad, const QString &p, const QString &x,
+                      const QString &y, const QString &thickness);
+
+//=============================================================================
 
 //! return the stroke equal to the join of stroke1 and stroke2 (that are not
 //! deleted)

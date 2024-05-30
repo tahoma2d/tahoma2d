@@ -1,0 +1,1361 @@
+diff --git a/toonz/sources/common/tvectorimage/tstroke.cpp b/toonz/sources/common/tvectorimage/tstroke.cpp
+index d0f2e8d6d..27d1ae80a 100644
+--- a/toonz/sources/common/tvectorimage/tstroke.cpp
++++ b/toonz/sources/common/tvectorimage/tstroke.cpp
+@@ -2287,6 +2287,107 @@ void TStroke::print(ostream &os) const {
+      << q->getThickP2().thick << endl;
+ }
+ 
++//-----------------------------------------------------------------------------
++void TStroke::addChunkRows(QAbstractItemModel *model, int stroke,
++                           std::vector<int> groupIds, int currentGroup) {
++  const TThickQuadratic *q;
++
++  QString strokeIndex =
++      QString::fromStdString(std::to_string(stroke));  // stroke index
++  QString strokeID =
++      QString::fromStdString(std::to_string(getId()));  // stroke ID
++  QString styleID =
++      QString::fromStdString(std::to_string(m_imp->m_styleId));  // style ID
++  QString selfLoop = QString::fromStdString(
++      (m_imp->m_selfLoop) ? "true" : "false");  // self loop
++
++  string groupIdsString = "";
++  int *groupIdData      = groupIds.data();
++  for (std::ptrdiff_t i = groupIds.size() - 1; i > -1; --i) {
++    if (currentGroup == groupIdData[i]) {
++      groupIdsString = groupIdsString + "(" + std::to_string(groupIdData[i]) +
++                       (i > 0 ? "." : "") + ")";
++
++    } else {
++      groupIdsString =
++          groupIdsString + std::to_string(groupIdData[i]) + (i > 0 ? "." : "");
++    }
++  }
++
++  QString groupIDs = QString::fromStdString(groupIdsString);  // group IDs
++
++  int i = 0;
++  for (i = 0; i < getChunkCount(); ++i) {
++    q = getChunk(i);
++
++    // addVectorDataRow for P0
++    addVectorDataRow(
++        model, strokeIndex,                         // stroke index
++        groupIDs,                                   // group IDs
++        strokeID,                                   // stroke ID
++        styleID,                                    // style ID
++        selfLoop,                                   // self loop
++        QString::fromStdString(std::to_string(i)),  // quad
++        QString::fromStdString("0"),                // Pn
++        QString::fromStdString(std::to_string(q->getThickP0().x)),  // x
++        QString::fromStdString(std::to_string(q->getThickP0().y)),  // y
++        QString::fromStdString(
++            std::to_string(q->getThickP0().thick)));  // thickness
++
++    // addVectorDataRow for P1
++    addVectorDataRow(
++        model, strokeIndex,                         // stroke index
++        groupIDs,                                   // group IDs
++        strokeID,                                   // stroke ID
++        styleID,                                    // style ID
++        selfLoop,                                   // self loop
++        QString::fromStdString(std::to_string(i)),  // quad
++        QString::fromStdString("1"),                // Pn
++        QString::fromStdString(std::to_string(q->getThickP1().x)),  // x
++        QString::fromStdString(std::to_string(q->getThickP1().y)),  // y
++        QString::fromStdString(
++            std::to_string(q->getThickP1().thick)));  // thickness
++
++    assert(i == getChunkCount() - 1 ||
++           (getChunk(i)->getThickP2() == getChunk(i + 1)->getThickP0()));
++  }
++
++  q = getChunk(getChunkCount() - 1);
++
++  // addVectorDataRow for P2
++  addVectorDataRow(
++      model, strokeIndex,                           // stroke index
++      groupIDs,                                     // group IDs
++      strokeID,                                     // stroke ID
++      styleID,                                      // style ID
++      selfLoop,                                     // self loop
++      QString::fromStdString(std::to_string(--i)),  // quad
++      QString::fromStdString("2"),                  // Pn
++      QString::fromStdString(std::to_string(q->getThickP2().x)),  // x
++      QString::fromStdString(std::to_string(q->getThickP2().y)),  // y
++      QString::fromStdString(
++          std::to_string(q->getThickP2().thick)));  // thickness
++}
++
++//---------------------------------------------------------------------------------------------
++void addVectorDataRow(QAbstractItemModel *model, const QString &stroke,
++                      const QString &groupid, const QString &id,
++                      const QString &styleid, const QString &selfLoop,
++                      const QString &quad, const QString &p, const QString &x,
++                      const QString &y, const QString &thickness) {
++  model->insertRow(0);
++  model->setData(model->index(0, 0), stroke);
++  model->setData(model->index(0, 1), groupid);
++  model->setData(model->index(0, 2), id);
++  model->setData(model->index(0, 3), styleid);
++  model->setData(model->index(0, 4), selfLoop);
++  model->setData(model->index(0, 5), quad);
++  model->setData(model->index(0, 6), p);
++  model->setData(model->index(0, 7), x);
++  model->setData(model->index(0, 8), y);
++  model->setData(model->index(0, 9), thickness);
++}
++
+ //-----------------------------------------------------------------------------
+ 
+ void TStroke::transform(const TAffine &aff, bool doChangeThickness) {
+diff --git a/toonz/sources/common/tvectorimage/tvectorimage.cpp b/toonz/sources/common/tvectorimage/tvectorimage.cpp
+index 49346b23b..eaf24ce8e 100644
+--- a/toonz/sources/common/tvectorimage/tvectorimage.cpp
++++ b/toonz/sources/common/tvectorimage/tvectorimage.cpp
+@@ -1,4 +1,4 @@
+-
++#include "../../include/tvectorimage.h"
+ 
+ #include "tcurves.h"
+ // #include "tpalette.h"
+@@ -16,6 +16,7 @@
+ #include "tsimplecolorstyles.h"
+ #include "tcomputeregions.h"
+ 
++#include <QStandardItemModel>
+ #include <memory>
+ 
+ //=============================================================================
+@@ -225,8 +226,12 @@ void TVectorImage::Imp::moveStrokes(int fromIndex, int count, int moveBefore,
+ 
+   std::vector<int> changedStrokes;
+   if (regroup) regroupGhosts(changedStrokes);
+-  if (!changedStrokes.empty())
++  if (!changedStrokes.empty()) {
+     notifyChangedStrokes(changedStrokes, std::vector<TStroke *>(), false);
++  }
++  emit m_vi->changedStrokeOrder(
++      fromIndex, count, moveBefore,
++      regroup);  // notify that strokes have moved in the stack order
+ }
+ 
+ //-----------------------------------------------------------------------------
+@@ -406,6 +411,27 @@ else
+ 
+ UINT TVectorImage::getStrokeCount() const { return m_imp->m_strokes.size(); }
+ 
++//--------------------------------------------------------------------
++
++void TVectorImage::getStrokeListData(QObject *parent,
++                                      QAbstractItemModel *model) {
++  // Clear the data while preserving headers
++  if (model->rowCount() > 0) {
++    model->removeRows(0, model->rowCount());
++  }
++
++  int currentGroup = 0;
++  if (m_imp->m_insideGroup.m_id.size() > 0) {
++    currentGroup = m_imp->m_insideGroup.m_id[0];
++  }
++
++  for (uint i = 0; i < (UINT)m_imp->m_strokes.size(); i++) {
++    // add vector chunk details
++    m_imp->m_strokes[i]->m_s->addChunkRows(
++        model, i, m_imp->m_strokes[i]->m_groupId.m_id, currentGroup);
++  }
++}
++
+ //-----------------------------------------------------------------------------
+ /*
+ void  TVectorImage::addSeed(const TPointD& p, const TPixel& color)
+@@ -1127,6 +1153,7 @@ void TVectorImage::Imp::notifyChangedStrokes(
+ #ifdef _DEBUG
+   checkIntersections();
+ #endif
++  emit m_vi->changedStrokes();
+ }
+ 
+ //-----------------------------------------------------------------------------
+@@ -2553,6 +2580,9 @@ bool TVectorImage::enterGroup(int index) {
+   if (newGroupId == m_imp->m_insideGroup) return false;
+ 
+   m_imp->m_insideGroup = newGroupId;
++
++  emit enteredGroup();
++
+   return true;
+ }
+ 
+@@ -2573,6 +2603,9 @@ int TVectorImage::exitGroup() {
+   assert(i != m_imp->m_strokes.size());
+ 
+   m_imp->m_insideGroup = m_imp->m_insideGroup.getParent();
++
++  emit exitedGroup();
++
+   return ret;
+ }
+ 
+diff --git a/toonz/sources/include/tstroke.h b/toonz/sources/include/tstroke.h
+index 19d622f73..c9153fb88 100644
+--- a/toonz/sources/include/tstroke.h
++++ b/toonz/sources/include/tstroke.h
+@@ -11,6 +11,8 @@
+ 
+ #include <QMutex>
+ 
++#include <QAbstractItemModel>
++
+ #undef DVAPI
+ #undef DVVAR
+ 
+@@ -318,6 +320,8 @@ Split a stroke at parameter t
+ 
+   //! Only for debug
+   void print(std::ostream &os = std::cout) const;
++  void addChunkRows(QAbstractItemModel *model, int stroke,
++                    std::vector<int> groupIds, int currentGroup);
+ 
+   //! change tangent versus in the stroke
+   /*!
+@@ -450,6 +454,14 @@ public:
+ //    Related Non-member functions
+ //***************************************************************************
+ 
++void addVectorDataRow(QAbstractItemModel *model, const QString &stroke,
++                      const QString &groupid, const QString &id,
++                      const QString &styleid, const QString &selfLoop,
++                      const QString &quad, const QString &p, const QString &x,
++                      const QString &y, const QString &thickness);
++
++//=============================================================================
++
+ //! return the stroke equal to the join of stroke1 and stroke2 (that are not
+ //! deleted)
+ DVAPI TStroke *joinStrokes(const TStroke *stroke1, const TStroke *stroke2);
+diff --git a/toonz/sources/include/tvectorimage.h b/toonz/sources/include/tvectorimage.h
+index 9f8393877..ca17da1b1 100644
+--- a/toonz/sources/include/tvectorimage.h
++++ b/toonz/sources/include/tvectorimage.h
+@@ -4,12 +4,13 @@
+ #define TVECTORIMAGE_INCLUDED
+ 
+ #include <memory>
+-
++#include <QObject>
+ #include "timage.h"
+ 
+ // da togliere spostando cose in altri file!!
+ #include "traster.h"
+ #include "tstream.h"
++#include <QStandardItemModel>
+ 
+ #include <set>
+ 
+@@ -55,7 +56,10 @@ class VIStroke;
+     A vector image is a set of strokes and regions.
+   \relates  TImage
+ */
+-class DVAPI TVectorImage final : public TImage {
++
++class DVAPI TVectorImage final : public QObject, public TImage {
++  Q_OBJECT
++
+   class Imp;
+   int pickGroup(const TPointD &pos, bool onEnteredGroup) const;
+ 
+@@ -113,6 +117,11 @@ public:
+ 
+   //! Return the strokes' count
+   UINT getStrokeCount() const;
++
++  //! Get a list of stroke data
++  void getStrokeListData(QObject *parent,
++                                        QAbstractItemModel *model);
++
+   //! Get a \b TStroke stroke at index position
+   TStroke *getStroke(UINT index) const;
+   //! Get a \b VIStroke stroke at index position
+@@ -396,6 +405,15 @@ existing stroke. this method is used for undoing removeEndpoints . */
+ 
+   int getStrokeIndexAtPos(TPointD pos, double maxDistance = 1);
+ 
++signals:
++  void enteredGroup();    // Signal for entering a group
++  void exitedGroup();     // Signal for exiting a group
++  void changedStrokes();  // Signal for strokes changed
++  void changedStrokeOrder(
++      int fromIndex, int count, int moveBefore,
++      bool regroup);          // Signal for strokes moved up/down the stack
++  void selectedAllStrokes();  // Signal for selected all strokes
++
+ private:  // not implemented
+   TVectorImage(const TVectorImage &);
+   TVectorImage &operator=(const TVectorImage &);
+diff --git a/toonz/sources/tnzcore/CMakeLists.txt b/toonz/sources/tnzcore/CMakeLists.txt
+index 398b87bcb..067486361 100644
+--- a/toonz/sources/tnzcore/CMakeLists.txt
++++ b/toonz/sources/tnzcore/CMakeLists.txt
+@@ -6,6 +6,7 @@ set(MOC_HEADERS
+     ../include/tipcsrvP.h
+     ../include/tmsgcore.h
+     ../include/tfunctorinvoker.h
++    ../include/tvectorimage.h
+ )
+ 
+ set(HEADERS ${MOC_HEADERS}
+@@ -68,7 +69,6 @@ set(HEADERS ${MOC_HEADERS}
+     ../include/tstroke.h
+     ../include/tstrokeoutline.h
+     ../include/tsweepboundary.h
+-    ../include/tvectorimage.h
+     ../include/tgl.h
+     ../include/tstencilcontrol.h
+     ../include/tsop.h
+diff --git a/toonz/sources/tnztools/strokeselection.cpp b/toonz/sources/tnztools/strokeselection.cpp
+index 7976fcf9a..e4000193a 100644
+--- a/toonz/sources/tnztools/strokeselection.cpp
++++ b/toonz/sources/tnztools/strokeselection.cpp
+@@ -644,7 +644,10 @@ void StrokeSelection::selectAll() {
+ 
+   StrokeSelection *selection = dynamic_cast<StrokeSelection *>(
+       TTool::getApplication()->getCurrentSelection()->getSelection());
+-  if (selection) selection->notifyView();
++  if (selection) {
++    selection->notifyView();
++    emit selection->getImage()->selectedAllStrokes();
++  }
+ }
+ 
+ //=============================================================================
+diff --git a/toonz/sources/toonz/CMakeLists.txt b/toonz/sources/toonz/CMakeLists.txt
+index 7046d4649..8e1e2e72b 100644
+--- a/toonz/sources/toonz/CMakeLists.txt
++++ b/toonz/sources/toonz/CMakeLists.txt
+@@ -48,6 +48,8 @@ set(MOC_HEADERS
+     fxparameditorpopup.h
+     histogrampopup.h
+     historypane.h
++    multicolumnsortproxymodel.h
++    vectorinspector.h
+     imageviewer.h
+     layerfooterpanel.h
+     layerheaderpanel.h
+@@ -350,6 +352,8 @@ set(SOURCES
+     mergecmapped.cpp
+     comboviewerpane.cpp
+     historypane.cpp
++    multicolumnsortproxymodel.cpp
++    vectorinspector.cpp
+     cleanupsettingspane.cpp
+     audiorecordingpopup.cpp
+     locatorpopup.cpp
+diff --git a/toonz/sources/toonz/mainwindow.cpp b/toonz/sources/toonz/mainwindow.cpp
+index 349205919..e99a28f90 100644
+--- a/toonz/sources/toonz/mainwindow.cpp
++++ b/toonz/sources/toonz/mainwindow.cpp
+@@ -2471,6 +2471,9 @@ void MainWindow::defineActions() {
+                           "timeline");
+   createMenuWindowsAction(MI_OpenComboViewer, QT_TR_NOOP("&ComboViewer"), "",
+                           "comboviewer");
++  createMenuWindowsAction(MI_OpenVectorInspectorPanel,
++                          QT_TR_NOOP("Vector Inspector"), "",
++                          "vectorinspector");
+   createMenuWindowsAction(MI_OpenHistoryPanel, QT_TR_NOOP("&History"), "Ctrl+H",
+                           "history");
+   createMenuWindowsAction(MI_AudioRecording, QT_TR_NOOP("Record Audio"),
+diff --git a/toonz/sources/toonz/menubar.cpp b/toonz/sources/toonz/menubar.cpp
+index 0d70afc08..a9321380c 100644
+--- a/toonz/sources/toonz/menubar.cpp
++++ b/toonz/sources/toonz/menubar.cpp
+@@ -694,6 +694,7 @@ void TopBar::loadMenubar() {
+   addMenuItem(windowsMenu, MI_OpenGuidedDrawingControls);
+   addMenuItem(windowsMenu, MI_OpenAlignmentPanel);
+   addMenuItem(windowsMenu, MI_OpenCustomPanels);
++  addMenuItem(windowsMenu, MI_OpenVectorInspectorPanel);
+   // windowsMenu->addSeparator();
+   // addMenuItem(windowsMenu, MI_OpenExport);
+   windowsMenu->addSeparator();
+diff --git a/toonz/sources/toonz/menubarcommandids.h b/toonz/sources/toonz/menubarcommandids.h
+index 45ff64d77..344f77e1c 100644
+--- a/toonz/sources/toonz/menubarcommandids.h
++++ b/toonz/sources/toonz/menubarcommandids.h
+@@ -348,6 +348,7 @@
+ #define MI_ClearRecentImage "MI_ClearRecentImage"
+ 
+ #define MI_OpenComboViewer "MI_OpenComboViewer"
++#define MI_OpenVectorInspectorPanel "MI_OpenVectorInspectorPanel"
+ #define MI_OpenHistoryPanel "MI_OpenHistoryPanel"
+ #define MI_ReplaceParentDirectory "MI_ReplaceParentDirectory"
+ #define MI_Reframe1 "MI_Reframe1"
+diff --git a/toonz/sources/toonz/multicolumnsortproxymodel.cpp b/toonz/sources/toonz/multicolumnsortproxymodel.cpp
+new file mode 100644
+index 000000000..1b5c2669f
+--- /dev/null
++++ b/toonz/sources/toonz/multicolumnsortproxymodel.cpp
+@@ -0,0 +1,40 @@
++#include <multicolumnsortproxymodel.h>
++
++MultiColumnSortProxyModel::MultiColumnSortProxyModel(QObject *parent)
++    : QSortFilterProxyModel(parent) {}
++
++bool MultiColumnSortProxyModel::lessThan(const QModelIndex &left,
++                                         const QModelIndex &right) const {
++  int primaryColumn   = 0;  // Stroke column on the VectorInspectorPanel
++  int secondaryColumn = 5;  // Quad column on the VectorInspectorPanel
++  int tertiaryColumn  = 6;  // P column on the VectorInspectorPanel
++
++  // A difference in the first column values?
++  QModelIndex leftPrimaryIndex  = left.sibling(left.row(), primaryColumn);
++  QModelIndex rightPrimaryIndex = right.sibling(right.row(), primaryColumn);
++
++  QString leftPrimary  = sourceModel()->data(leftPrimaryIndex).toString();
++  QString rightPrimary = sourceModel()->data(rightPrimaryIndex).toString();
++
++  if (leftPrimary != rightPrimary) return leftPrimary < rightPrimary;
++
++  // No difference, check the secondary column.
++  QModelIndex leftSecondaryIndex  = left.sibling(left.row(), secondaryColumn);
++  QModelIndex rightSecondaryIndex = right.sibling(right.row(), secondaryColumn);
++
++  QString leftSecondary  = sourceModel()->data(leftSecondaryIndex).toString();
++  QString rightSecondary = sourceModel()->data(rightSecondaryIndex).toString();
++
++  // sort as numbers because of double digit values
++  if (leftSecondary != rightSecondary)
++    return leftSecondary.toInt() < rightSecondary.toInt();
++
++  // No difference, check the tertiary column.
++  QModelIndex leftTertiaryIndex  = left.sibling(left.row(), tertiaryColumn);
++  QModelIndex rightTertiaryIndex = right.sibling(right.row(), tertiaryColumn);
++
++  QString leftTertiary  = sourceModel()->data(leftTertiaryIndex).toString();
++  QString rightTertiary = sourceModel()->data(rightTertiaryIndex).toString();
++
++  return leftTertiary < rightTertiary;
++}
+\ No newline at end of file
+diff --git a/toonz/sources/toonz/multicolumnsortproxymodel.h b/toonz/sources/toonz/multicolumnsortproxymodel.h
+new file mode 100644
+index 000000000..adad25bf7
+--- /dev/null
++++ b/toonz/sources/toonz/multicolumnsortproxymodel.h
+@@ -0,0 +1,15 @@
++#ifndef MULTICOLUMNSORTPROXYMODEL_H
++#define MULTICOLUMNSORTPROXYMODEL_H
++
++#include <QSortFilterProxyModel>
++
++class MultiColumnSortProxyModel : public QSortFilterProxyModel {
++public:
++  MultiColumnSortProxyModel(QObject *parent = nullptr);
++
++protected:
++  bool lessThan(const QModelIndex &left,
++                const QModelIndex &right) const override;
++};
++
++#endif  // MULTICOLUMNSORTPROXYMODEL_H
+diff --git a/toonz/sources/toonz/tpanels.cpp b/toonz/sources/toonz/tpanels.cpp
+index 8c323f292..fe234f17c 100644
+--- a/toonz/sources/toonz/tpanels.cpp
++++ b/toonz/sources/toonz/tpanels.cpp
+@@ -23,6 +23,7 @@
+ #include "previewfxmanager.h"
+ #include "comboviewerpane.h"
+ #include "historypane.h"
++#include "vectorinspector.h"
+ #include "cleanupsettingspane.h"
+ #include "vectorguideddrawingpane.h"
+ #include "expressionreferencemanager.h"
+@@ -1233,7 +1234,8 @@ class BrowserFactory final : public TPanelFactory {
+ public:
+   BrowserFactory() : TPanelFactory("Browser") {}
+   void initialize(TPanel *panel) override {
+-    FileBrowser *browser = new FileBrowser(panel, Qt::WindowFlags(), false, true);
++    FileBrowser *browser =
++        new FileBrowser(panel, Qt::WindowFlags(), false, true);
+     panel->setWidget(browser);
+     panel->setWindowTitle(QObject::tr("File Browser"));
+     panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
+@@ -1549,6 +1551,25 @@ public:
+ OpenFloatingPanel openHistoryPanelCommand(MI_OpenHistoryPanel, "HistoryPanel",
+                                           QObject::tr("History"));
+ //=============================================================================
++// Vector Inspector
++//-----------------------------------------------------------------------------
++
++class VectorInspectorPanelFactory final : public TPanelFactory {
++public:
++  VectorInspectorPanelFactory() : TPanelFactory("VectorInspectorPanel") {}
++  void initialize(TPanel *panel) override {
++    VectorInspectorPanel *vectorInspector = new VectorInspectorPanel(panel);
++    panel->setWidget(vectorInspector);
++    panel->setWindowTitle(QObject::tr("Vector Inspector"));
++    panel->setIsMaximizable(false);
++  }
++} vectorInspectorPanelFactory;
++
++//=============================================================================
++OpenFloatingPanel openVectorInspectorPanelCommand(
++    MI_OpenVectorInspectorPanel, "VectorInspectorPanel",
++    QObject::tr("Vector Inspector"));
++//-----------------------------------------------------------------------------
+ 
+ //=============================================================================
+ // StopMotion Controller
+diff --git a/toonz/sources/toonz/vectorinspector.cpp b/toonz/sources/toonz/vectorinspector.cpp
+new file mode 100644
+index 000000000..fd87872da
+--- /dev/null
++++ b/toonz/sources/toonz/vectorinspector.cpp
+@@ -0,0 +1,736 @@
++#include "vectorinspector.h"
++#include <multicolumnsortproxymodel.h>
++
++#include "tapp.h"
++
++#include "toonz/txshlevelhandle.h"
++#include "toonz/txshleveltypes.h"
++#include "toonz/txshsimplelevel.h"
++#include "toonz/tframehandle.h"
++#include "toonz/tcolumnhandle.h"
++#include "toonz/txsheethandle.h"
++#include "toonz/txshcell.h"
++
++#include "tvectorimage.h"
++#include "toonz/tvectorimageutils.h"
++#include "tstroke.h"
++#include "toonz/tobjecthandle.h"
++#include "toonzqt/selection.h"
++#include "toonzqt/tselectionhandle.h"
++#include "tools/tool.h"
++#include "tools/toolhandle.h"
++#include "tools/strokeselection.h"
++#include "../tnztools/vectorselectiontool.h"
++
++#include <QApplication>
++#include <QVBoxLayout>
++#include <QLabel>
++
++#include <QtWidgets>
++
++QStandardItemModel *sourceModel;
++//------------------------------------------------------------------------------
++
++VectorInspectorPanel::VectorInspectorPanel(QWidget *parent,
++                                           Qt::WindowFlags flags)
++    : QWidget(parent) {
++  initiatedByVectorInspector   = false;
++  initiatedBySelectTool        = false;
++  strokeOrderChangedInProgress = false;
++  selectingRowsForStroke       = false;
++
++  std::vector<int> m_selectedStrokeIndexes = {};
++
++  proxyModel = new MultiColumnSortProxyModel;
++
++  // Initialize the source model
++  sourceModel = new QStandardItemModel(0, 10, this);
++  sourceModel->setHeaderData(0, Qt::Horizontal, tr("Stroke Order"));
++  sourceModel->setHeaderData(1, Qt::Horizontal, tr("Group Id"));
++  sourceModel->setHeaderData(2, Qt::Horizontal, tr("Id"));
++  sourceModel->setHeaderData(3, Qt::Horizontal, tr("StyleId"));
++  sourceModel->setHeaderData(4, Qt::Horizontal, tr("Self Loop"));
++  sourceModel->setHeaderData(5, Qt::Horizontal, tr("Quad"));
++  sourceModel->setHeaderData(6, Qt::Horizontal, tr("P"));
++  sourceModel->setHeaderData(7, Qt::Horizontal, tr("x"));
++  sourceModel->setHeaderData(8, Qt::Horizontal, tr("y"));
++  sourceModel->setHeaderData(9, Qt::Horizontal, tr("Thickness"));
++
++  // Set the source model for the proxy model
++  proxyModel->setSourceModel(sourceModel);
++
++  proxyView = new QTreeView;
++  proxyView->setRootIsDecorated(false);
++  proxyView->setAlternatingRowColors(true);
++  proxyView->setModel(proxyModel);
++  proxyView->setSortingEnabled(true);
++
++  proxyView->setSelectionMode(QAbstractItemView::ExtendedSelection);
++  proxyView->setSelectionBehavior(QAbstractItemView::SelectRows);
++
++  proxyView->setContextMenuPolicy(Qt::CustomContextMenu);
++  connect(proxyView, &QWidget::customContextMenuRequested, this,
++          &VectorInspectorPanel::showContextMenu);
++
++  filterPatternLineEdit = new QLineEdit;
++  filterPatternLabel    = new QLabel(tr("&Filter pattern (example 0|1):"));
++  filterPatternLabel->setBuddy(filterPatternLineEdit);
++  filterPatternLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
++
++  filterSyntaxComboBox = new QComboBox;
++  filterSyntaxComboBox->addItem(tr("Regular expression"), QRegExp::RegExp);
++  filterSyntaxComboBox->addItem(tr("Wildcard"), QRegExp::Wildcard);
++  filterSyntaxComboBox->addItem(tr("Fixed string"), QRegExp::FixedString);
++  filterSyntaxLabel = new QLabel(tr("Filter &syntax:"));
++  filterSyntaxLabel->setBuddy(filterSyntaxComboBox);
++  filterSyntaxLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
++
++  filterColumnComboBox = new QComboBox;
++  filterColumnComboBox->addItem(tr("Stroke Order"));
++  filterColumnComboBox->addItem(tr("Group Id"));
++  filterColumnComboBox->addItem(tr("Id"));
++  filterColumnComboBox->addItem(tr("StyleId"));
++  filterColumnComboBox->addItem(tr("Self Loop"));
++  filterColumnComboBox->addItem(tr("Quad"));
++  filterColumnComboBox->addItem(tr("P"));
++  filterColumnComboBox->addItem(tr("x"));
++  filterColumnComboBox->addItem(tr("y"));
++  filterColumnComboBox->addItem(tr("Thickness"));
++
++  filterColumnLabel = new QLabel(tr("Filter &column:"));
++  filterColumnLabel->setBuddy(filterColumnComboBox);
++  filterColumnLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
++
++  setHeaderToolTips();
++
++  connect(filterPatternLineEdit, &QLineEdit::textChanged, this,
++          &VectorInspectorPanel::filterRegExpChanged);
++  connect(filterSyntaxComboBox,
++          QOverload<int>::of(&QComboBox::currentIndexChanged), this,
++          &VectorInspectorPanel::filterRegExpChanged);
++  connect(filterColumnComboBox,
++          QOverload<int>::of(&QComboBox::currentIndexChanged), this,
++          &VectorInspectorPanel::filterColumnChanged);
++
++  connect(proxyView, &QTreeView::clicked, this,
++          &VectorInspectorPanel::onSelectedStroke);
++
++  connect(proxyView->selectionModel(), &QItemSelectionModel::selectionChanged,
++          this, &VectorInspectorPanel::onVectorInspectorSelectionChanged);
++
++  proxyGroupBox = new QFrame();
++  proxyGroupBox->setContentsMargins(0, 0, 0, 0);
++
++  QGridLayout *proxyLayout = new QGridLayout;
++
++  // Set size policy for proxyView to be expanding
++  proxyView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
++
++  // Create a QScrollArea and set proxyView as its widget
++  QScrollArea *scrollArea = new QScrollArea;
++  scrollArea->setWidget(proxyView);
++  scrollArea->setWidgetResizable(true);
++
++  // Add the scroll area to the layout instead of the proxyView directly
++  proxyLayout->addWidget(scrollArea, 0, 0, 1, 3);
++
++  proxyLayout->addWidget(filterPatternLabel, 1, 0, Qt::AlignRight);
++  proxyLayout->addWidget(filterPatternLineEdit, 1, 1, 1, 2);
++  proxyLayout->addWidget(filterSyntaxLabel, 2, 0, Qt::AlignRight);
++  proxyLayout->addWidget(filterSyntaxComboBox, 2, 1, 1, 2);
++  proxyLayout->addWidget(filterColumnLabel, 3, 0, Qt::AlignRight);
++  proxyLayout->addWidget(filterColumnComboBox, 3, 1, 1, 2);
++  proxyLayout->setContentsMargins(0, 0, 0, 0);
++
++  // Set margins and spacing to zero
++  proxyLayout->setContentsMargins(0, 0, 0, 0);
++  proxyLayout->setSpacing(0);
++
++  proxyGroupBox->setLayout(proxyLayout);
++
++  // Add the scroll area to your main layout or widget
++  QVBoxLayout *mainLayout = new QVBoxLayout;
++
++  // Set margins and spacing to zero
++  mainLayout->setContentsMargins(0, 0, 0, 0);
++  mainLayout->setSpacing(0);
++
++  // Add the proxyGroupBox to the main layout
++  mainLayout->addWidget(proxyGroupBox, 1);
++
++  setLayout(mainLayout);
++
++  proxyView->sortByColumn(0, Qt::AscendingOrder);
++  filterColumnComboBox->setCurrentIndex(
++      6);  // position 6 for the 'P' column of the Vector Inspector QTreeView
++  filterPatternLineEdit->setText(
++      "2");  // set default filter here, like: "0|1" to filter on value 0 or 1
++}
++
++//-----------------------------------------------------------------------------
++
++void VectorInspectorPanel::setHeaderToolTips() {
++  // Get the source model and set the tooltips
++  QStandardItemModel *model = sourceModel;
++  if (model) {
++    model->setHeaderData(0, Qt::Horizontal,
++                         tr("Order of the stroke in the sequence"),
++                         Qt::ToolTipRole);
++    model->setHeaderData(1, Qt::Horizontal, tr("Identifier for the group"),
++                         Qt::ToolTipRole);
++    model->setHeaderData(2, Qt::Horizontal,
++                         tr("Unique identifier for the stroke"),
++                         Qt::ToolTipRole);
++    model->setHeaderData(3, Qt::Horizontal,
++                         tr("The palette style index assigned to the stroke"),
++                         Qt::ToolTipRole);
++    model->setHeaderData(4, Qt::Horizontal,
++                         tr("Indicates if the stroke is a closed shape"),
++                         Qt::ToolTipRole);
++    model->setHeaderData(
++        5, Qt::Horizontal,
++        tr("Order of the quadratic equation in the sequence per stroke"),
++        Qt::ToolTipRole);
++    model->setHeaderData(
++        6, Qt::Horizontal,
++        tr("This point is parameter P0, P1, or P2 in the Quad equation"),
++        Qt::ToolTipRole);
++    model->setHeaderData(7, Qt::Horizontal, tr("X coordinate of the point"),
++                         Qt::ToolTipRole);
++    model->setHeaderData(8, Qt::Horizontal, tr("Y coordinate of the point"),
++                         Qt::ToolTipRole);
++    model->setHeaderData(9, Qt::Horizontal,
++                         tr("Thickness of the stroke at this point"),
++                         Qt::ToolTipRole);
++  }
++}
++
++//-----------------------------------------------------------------------------
++
++void VectorInspectorPanel::onLevelSwitched() {
++  std::string levelType = "";
++
++  switch (TApp::instance()->getCurrentImageType()) {
++  case TImage::MESH:
++    levelType = "Mesh";
++    break;
++  case TImage::VECTOR:
++    levelType = "Vector";
++    break;
++  case TImage::TOONZ_RASTER:
++    levelType = "ToonzRaster";
++    break;
++  case TImage::RASTER:
++    levelType = "Raster";
++    break;
++  default:
++    levelType = "Unknown";
++  }
++
++  if (levelType == "Vector") {
++    // ----------------------- the new stuff ----------------------------------
++
++    // to prevent multiple connections, try to disconnect first in case
++    // already connected previously.
++
++    QObject::disconnect(TApp::instance()->getCurrentSelection(),
++                        &TSelectionHandle::selectionChanged, this,
++                        &VectorInspectorPanel::onSelectionChanged);
++    QObject::connect(TApp::instance()->getCurrentSelection(),
++                     &TSelectionHandle::selectionChanged, this,
++                     &VectorInspectorPanel::onSelectionChanged);
++
++    QObject::disconnect(TApp::instance()->getCurrentTool(),
++                        &ToolHandle::toolSwitched, this,
++                        &VectorInspectorPanel::onToolSwitched);
++    QObject::connect(TApp::instance()->getCurrentTool(),
++                     &ToolHandle::toolSwitched, this,
++                     &VectorInspectorPanel::onToolSwitched);
++
++    QObject::disconnect(TApp::instance()->getCurrentScene(),
++                        &TSceneHandle::sceneSwitched, this,
++                        &VectorInspectorPanel::onSceneChanged);
++    QObject::connect(TApp::instance()->getCurrentScene(),
++                     &TSceneHandle::sceneSwitched, this,
++                     &VectorInspectorPanel::onSceneChanged);
++
++    QObject::connect(TApp::instance()->getCurrentScene(),
++                     &TSceneHandle::sceneChanged, this,
++                     &VectorInspectorPanel::onSceneChanged);
++    QObject::connect(TApp::instance()->getCurrentScene(),
++                     &TSceneHandle::sceneChanged, this,
++                     &VectorInspectorPanel::onSceneChanged);
++
++    TApp *app = TApp::instance();
++
++    TXshLevelHandle *currentLevel = app->getCurrentLevel();
++
++    TFrameHandle *currentFrame = app->getCurrentFrame();
++
++    TColumnHandle *currentColumn = app->getCurrentColumn();
++
++    int frameIndex = currentFrame->getFrameIndex();
++
++    TXshSimpleLevel *currentSimpleLevel = currentLevel->getSimpleLevel();
++
++    int row = currentFrame->getFrame();
++    int col = currentColumn->getColumnIndex();
++
++    TXsheet *xsheet = app->getCurrentXsheet()->getXsheet();
++
++    const TXshCell cell = xsheet->getCell(row, col);
++
++    TVectorImageP vectorImage = cell.getImage(false);
++    m_vectorImage             = vectorImage.getPointer();
++
++    UINT strokeCount = vectorImage->getStrokeCount();
++
++    if (vectorImage) {
++      QObject::disconnect(m_vectorImage, &TVectorImage::changedStrokes, this,
++                          &VectorInspectorPanel::onChangedStrokes);
++
++      QObject::connect(m_vectorImage, &TVectorImage::changedStrokes, this,
++                       &VectorInspectorPanel::onChangedStrokes);
++
++      QObject::disconnect(m_vectorImage, &TVectorImage::enteredGroup, this,
++                          &VectorInspectorPanel::onEnteredGroup);
++
++      QObject::connect(m_vectorImage, &TVectorImage::enteredGroup, this,
++                       &VectorInspectorPanel::onEnteredGroup);
++
++      QObject::disconnect(m_vectorImage, &TVectorImage::exitedGroup, this,
++                          &VectorInspectorPanel::onExitedGroup);
++
++      QObject::connect(m_vectorImage, &TVectorImage::exitedGroup, this,
++                       &VectorInspectorPanel::onExitedGroup);
++
++      QObject::disconnect(m_vectorImage, &TVectorImage::changedStrokeOrder,
++                          this, &VectorInspectorPanel::onStrokeOrderChanged);
++
++      QObject::connect(m_vectorImage, &TVectorImage::changedStrokeOrder, this,
++                       &VectorInspectorPanel::onStrokeOrderChanged);
++
++      QObject::disconnect(m_vectorImage, &TVectorImage::selectedAllStrokes,
++                          this, &VectorInspectorPanel::onSelectedAllStrokes);
++
++      QObject::connect(m_vectorImage, &TVectorImage::selectedAllStrokes, this,
++                       &VectorInspectorPanel::onSelectedAllStrokes);
++
++      m_vectorImage->getStrokeListData(parentWidget(), sourceModel);
++      setSourceModel(sourceModel);
++      proxyModel->invalidate();
++
++      // Autosizing columns after the model is populated
++      for (int column = 1; column < proxyModel->columnCount(); ++column) {
++        proxyView->resizeColumnToContents(column);
++      }
++      proxyView->setColumnWidth(0, 100);  // Stroke Order column width
++    }
++
++  } else {
++    // disconnect all signals when the current level is not Vector
++    QObject::disconnect(TApp::instance()->getCurrentSelection(),
++                        &TSelectionHandle::selectionChanged, this,
++                        &VectorInspectorPanel::onSelectionChanged);
++
++    QObject::disconnect(TApp::instance()->getCurrentTool(),
++                        &ToolHandle::toolSwitched, this,
++                        &VectorInspectorPanel::onToolSwitched);
++
++    QObject::disconnect(TApp::instance()->getCurrentScene(),
++                        &TSceneHandle::sceneSwitched, this,
++                        &VectorInspectorPanel::onSceneChanged);
++
++    QObject::disconnect(TApp::instance()->getCurrentScene(),
++                        &TSceneHandle::sceneChanged, this,
++                        &VectorInspectorPanel::onSceneChanged);
++
++    setSourceModel(new MultiColumnSortProxyModel);
++  }
++  update();
++  changeWindowTitle();
++}
++
++//-------------------------------------------------------------------------------------------------
++void VectorInspectorPanel::onSelectionSwitched(TSelection *selectionFrom,
++                                               TSelection *selectionTo) {}
++
++//-------------------------------------------------------------------------------------------------
++void VectorInspectorPanel::setRowHighlighting() {
++  disconnect(proxyView->selectionModel(),
++             &QItemSelectionModel::selectionChanged, this,
++             &VectorInspectorPanel::onVectorInspectorSelectionChanged);
++  QItemSelectionModel *selectionModel = proxyView->selectionModel();
++
++  // Clear the previous selection
++  selectionModel->clearSelection();
++  proxyModel->invalidate();
++
++  m_selectedStrokeIndexes = {};
++
++  QModelIndex index =
++      proxyModel->index(0, 0);  // the first column of the first row
++
++  ToolHandle *currentTool = TApp::instance()->getCurrentTool();
++
++  if ("T_Selection" == currentTool->getTool()->getName()) {
++    StrokeSelection *strokeSelection =
++        dynamic_cast<StrokeSelection *>(currentTool->getTool()->getSelection());
++
++    if (strokeSelection) {
++      if (strokeSelection) {
++        // initialize the lookup value list.
++        for (int i = 0; i < (int)proxyModel->rowCount(); i++) {
++          if (strokeSelection->isSelected(i)) {
++            index = proxyModel->index(i, 0);
++            m_selectedStrokeIndexes.push_back(i);
++          }
++        }
++        // now if selected rows then set them in the QTreeView
++        if (m_selectedStrokeIndexes.size() > 0) {
++          for (int i = 0; i < (int)proxyModel->rowCount(); i++) {
++            if (isSelected(proxyModel->index(i, 0).data().toInt())) {
++              index = proxyModel->index(i, 0);
++              selectionModel->select(index, QItemSelectionModel::Select |
++                                                QItemSelectionModel::Rows);
++            }
++          }
++        } else {
++          selectionModel->clearSelection();
++        }
++      }
++    }
++    // scroll to show selected rows
++    QModelIndexList selectedIndexes = selectionModel->selectedIndexes();
++
++    if (!selectedIndexes.isEmpty()) {
++      QModelIndex firstSelectedIndex = selectedIndexes.first();
++      proxyView->scrollTo(firstSelectedIndex, QAbstractItemView::PositionAtTop);
++    }
++  }
++  connect(proxyView->selectionModel(), &QItemSelectionModel::selectionChanged,
++          this, &VectorInspectorPanel::onVectorInspectorSelectionChanged);
++}
++
++//-------------------------------------------------------------------------------------------------
++
++bool VectorInspectorPanel::isSelected(int index) const {
++  return (std::find(m_selectedStrokeIndexes.begin(),
++                    m_selectedStrokeIndexes.end(),
++                    index) != m_selectedStrokeIndexes.end());
++}
++
++//-------------------------------------------------------------------------------------------------
++
++void VectorInspectorPanel::onSelectionChanged() {
++  if (initiatedByVectorInspector) {
++  } else {
++    initiatedBySelectTool = true;
++
++    setRowHighlighting();
++
++    initiatedBySelectTool = false;
++  }
++}
++
++//-----------------------------------------------------------------------------
++void VectorInspectorPanel::showEvent(QShowEvent *) {
++  QObject::connect(TApp::instance()->getCurrentLevel(),
++                   &TXshLevelHandle::xshLevelSwitched, this,
++                   &VectorInspectorPanel::onLevelSwitched);
++
++  QObject::connect(TApp::instance()->getCurrentFrame(),
++                   &TFrameHandle::frameSwitched, this,
++                   &VectorInspectorPanel::onLevelSwitched);
++
++  QObject::connect(TApp::instance()->getCurrentSelection(),
++                   &TSelectionHandle::selectionSwitched, this,
++                   &VectorInspectorPanel::onSelectionSwitched);
++
++  onLevelSwitched();
++  onSelectionChanged();
++}
++
++//-----------------------------------------------------------------------------
++
++void VectorInspectorPanel::hideEvent(QHideEvent *) {
++  QObject::disconnect(TApp::instance()->getCurrentLevel(),
++                      &TXshLevelHandle::xshLevelSwitched, this,
++                      &VectorInspectorPanel::onLevelSwitched);
++
++  QObject::disconnect(TApp::instance()->getCurrentFrame(),
++                      &TFrameHandle::frameSwitched, this,
++                      &VectorInspectorPanel::onLevelSwitched);
++
++  QObject::disconnect(TApp::instance()->getCurrentSelection(),
++                      &TSelectionHandle::selectionSwitched, this,
++                      &VectorInspectorPanel::onSelectionSwitched);
++}
++
++void VectorInspectorPanel::setSourceModel(QAbstractItemModel *model) {
++  proxyModel->setSourceModel(model);
++}
++
++void VectorInspectorPanel::filterRegExpChanged() {
++  QRegExp::PatternSyntax syntax = QRegExp::PatternSyntax(
++      filterSyntaxComboBox->itemData(filterSyntaxComboBox->currentIndex())
++          .toInt());
++
++  QRegExp regExp(filterPatternLineEdit->text(), Qt::CaseInsensitive, syntax);
++  proxyModel->setFilterRegExp(regExp);
++  setRowHighlighting();
++}
++
++void VectorInspectorPanel::filterColumnChanged() {
++  proxyModel->setFilterKeyColumn(filterColumnComboBox->currentIndex());
++}
++
++void VectorInspectorPanel::sortChanged() {}
++
++void VectorInspectorPanel::copySelectedItemsToClipboard() {
++  QModelIndexList indexes = proxyView->selectionModel()->selectedIndexes();
++
++  QString selectedText;
++  QMap<int, QString> rows;  // Use a map to sort by row number automatically
++
++  // Collect data from each selected cell, grouped by row
++  for (const QModelIndex &index : qAsConst(indexes)) {
++    rows[index.row()] +=
++        index.data(Qt::DisplayRole).toString() + "\t";  // Tab-separated values
++  }
++
++  // Concatenate rows into a single string, each row separated by a newline
++  for (const QString &row : qAsConst(rows)) {
++    selectedText += row.trimmed() + "\n";  // Remove trailing tab
++  }
++
++  // Copy the collected data to the clipboard
++  QClipboard *clipboard = QApplication::clipboard();
++  clipboard->setText(selectedText);
++}
++
++void VectorInspectorPanel::contextMenuEvent(QContextMenuEvent *event) {
++  QMenu menu(this);
++  QAction *copyAction = menu.addAction(tr("Copy"));
++  connect(copyAction, &QAction::triggered, this,
++          &VectorInspectorPanel::copySelectedItemsToClipboard);
++
++  // Show the menu at the cursor position
++  menu.exec(event->globalPos());
++}
++
++void VectorInspectorPanel::showContextMenu(const QPoint &pos) {
++  QPoint globalPos = proxyView->viewport()->mapToGlobal(pos);
++  QMenu menu;
++  QAction *copyAction = menu.addAction(tr("Copy"));
++  connect(copyAction, &QAction::triggered, this,
++          &VectorInspectorPanel::copySelectedItemsToClipboard);
++
++  menu.exec(globalPos);
++}
++
++void VectorInspectorPanel::onEnteredGroup() {
++  m_vectorImage->getStrokeListData(parentWidget(), sourceModel);
++  setSourceModel(sourceModel);
++  proxyModel->invalidate();
++  proxyView->selectionModel()->clearSelection();
++}
++
++void VectorInspectorPanel::onExitedGroup() {
++  m_vectorImage->getStrokeListData(parentWidget(), sourceModel);
++  setSourceModel(sourceModel);
++  setRowHighlighting();
++}
++
++void VectorInspectorPanel::onChangedStrokes() {
++  m_vectorImage->getStrokeListData(parentWidget(), sourceModel);
++  setSourceModel(sourceModel);
++  setRowHighlighting();
++}
++
++void VectorInspectorPanel::onToolEditingFinished() {}
++
++void VectorInspectorPanel::onSceneChanged() {}
++
++void VectorInspectorPanel::onStrokeOrderChanged(int fromIndex, int count,
++                                                int moveBefore, bool regroup) {
++  strokeOrderChangedInProgress = true;
++  bool isSortOrderAscending    = true;
++
++  ToolHandle *currentTool = TApp::instance()->getCurrentTool();
++  StrokeSelection *strokeSelection =
++      dynamic_cast<StrokeSelection *>(currentTool->getTool()->getSelection());
++
++  strokeSelection->notifyView();
++
++  m_vectorImage->getStrokeListData(parentWidget(), proxyModel);
++  setSourceModel(proxyModel);
++
++  std::vector<int> theIndexes = strokeSelection->getSelection();
++
++  QItemSelectionModel *selectionModel = proxyView->selectionModel();
++
++  selectionModel->clearSelection();
++
++  Qt::SortOrder sortOrder = proxyView->header()->sortIndicatorOrder();
++
++  if (sortOrder == Qt::AscendingOrder) {
++    isSortOrderAscending = true;
++  } else if (sortOrder == Qt::DescendingOrder) {
++    isSortOrderAscending = false;
++  }
++
++  QModelIndex index =
++      proxyModel->index(0, 0);  // the first column of the first row
++
++  int moveAmount = (fromIndex < moveBefore) ? moveBefore - 1 - fromIndex
++                                            : moveBefore - fromIndex;
++
++  int maxIndexValue   = proxyModel->rowCount() - 1;  // theIndexes.size() - 1;
++  int minIndexValue   = 0;
++  int currentRowIndex = 0;
++
++  // get the maximum stroke index value, assume sorted values, no gaps
++  int lastRow            = proxyModel->rowCount() - 1;
++  QModelIndex firstIndex = proxyModel->index(0, 0);
++  QModelIndex lastIndex  = proxyModel->index(lastRow, 0);
++  int maxStrokeIndex     = std::max(proxyModel->data(firstIndex).toInt(),
++                                proxyModel->data(lastIndex).toInt());
++
++  // iterate and create list of selected indexes
++  m_selectedStrokeIndexes.clear();
++
++  if (moveAmount >= 0) {
++    for (auto it = theIndexes.rbegin(); it != theIndexes.rend(); ++it) {
++      currentRowIndex = *it + moveAmount;
++
++      // at the upper row limit?
++      if (currentRowIndex > maxIndexValue) {
++        currentRowIndex = maxIndexValue;
++        maxIndexValue--;
++      }
++      m_selectedStrokeIndexes.push_back(currentRowIndex);
++    }
++  } else {
++    for (auto it = theIndexes.begin(); it != theIndexes.end(); ++it) {
++      currentRowIndex = *it + moveAmount;
++
++      // at the lower row limit?
++      if (currentRowIndex < minIndexValue) {
++        currentRowIndex = minIndexValue;
++        minIndexValue++;
++      }
++      m_selectedStrokeIndexes.push_back(currentRowIndex);
++    }
++  }
++
++  // now set selected rows in the QTreeView
++  for (int i = 0; i < (int)proxyModel->rowCount(); i++) {
++    if (isSelected(proxyModel->index(i, 0).data().toInt())) {
++      index = proxyModel->index(i, 0);
++      selectionModel->select(
++          index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
++    }
++  }
++
++  // scroll to show selected rows
++  QModelIndexList selectedIndexes = selectionModel->selectedIndexes();
++
++  if (!selectedIndexes.isEmpty()) {
++    QModelIndex firstSelectedIndex = selectedIndexes.first();
++    proxyView->scrollTo(firstSelectedIndex, QAbstractItemView::PositionAtTop);
++  }
++
++  strokeOrderChangedInProgress = false;
++}
++
++void VectorInspectorPanel::onToolSwitched() {
++  QObject::disconnect(TApp::instance()->getCurrentTool(),
++                      &ToolHandle::toolEditingFinished, this,
++                      &VectorInspectorPanel::onToolEditingFinished);
++
++  QObject::connect(TApp::instance()->getCurrentTool(),
++                   &ToolHandle::toolEditingFinished, this,
++                   &VectorInspectorPanel::onToolEditingFinished);
++
++  setRowHighlighting();
++}
++
++void VectorInspectorPanel::onSelectedAllStrokes() { setRowHighlighting(); }
++
++void VectorInspectorPanel::onSelectedStroke(const QModelIndex &index) {
++  selectingRowsForStroke = true;
++  setRowHighlighting();
++  selectingRowsForStroke = false;
++}
++
++void VectorInspectorPanel::onVectorInspectorSelectionChanged(
++    const QItemSelection &selected, const QItemSelection &deselected) {
++  // Handle the selection changed event
++  if (strokeOrderChangedInProgress) {
++  } else if (initiatedBySelectTool) {
++  } else if (selectingRowsForStroke) {
++  } else {
++    initiatedByVectorInspector = true;
++
++    updateSelectToolSelectedRows(selected, deselected);
++
++    initiatedByVectorInspector = false;
++  }
++}
++
++void VectorInspectorPanel::updateSelectToolSelectedRows(
++    const QItemSelection &selected, const QItemSelection &deselected) {
++  ToolHandle *currentTool = TApp::instance()->getCurrentTool();
++  VectorSelectionTool *vectorSelectionTool =
++      dynamic_cast<VectorSelectionTool *>(currentTool->getTool());
++  StrokeSelection *strokeSelection =
++      dynamic_cast<StrokeSelection *>(currentTool->getTool()->getSelection());
++
++  if (strokeSelection) {
++    disconnect(proxyView, &QTreeView::clicked, this,
++               &VectorInspectorPanel::onSelectedStroke);
++
++    QModelIndexList selectedIndexes = selected.indexes();
++    for (const QModelIndex &index : selectedIndexes) {
++      if (index.column() == 0) {  // Check if the column is the first column
++        int selectedStrokeIndex = index.data(Qt::DisplayRole).toInt();
++        strokeSelection->select(selectedStrokeIndex, 1);
++        strokeSelection->notifyView();
++      }
++    }
++
++    QModelIndexList deselectedIndexes = deselected.indexes();
++    int priorRowStrokeIndexValue      = -1;
++    for (const QModelIndex &index : deselectedIndexes) {
++      if (index.column() == 0) {  // Check if the column is the first column
++        int deselectedStrokeIndex = index.data(Qt::DisplayRole).toInt();
++        if (deselectedStrokeIndex == priorRowStrokeIndexValue) {
++        } else {
++          strokeSelection->select(deselectedStrokeIndex, 0);
++          strokeSelection->notifyView();
++          priorRowStrokeIndexValue = deselectedStrokeIndex;
++        }
++      }
++    }
++    connect(proxyView, &QTreeView::clicked, this,
++            &VectorInspectorPanel::onSelectedStroke);
++  }
++}
++
++void VectorInspectorPanel::changeWindowTitle() {
++  TApp *app = TApp::instance();
++
++  TXshSimpleLevel *currentLevel = app->getCurrentLevel()->getSimpleLevel();
++  std::wstring levelName = (currentLevel) ? currentLevel->getName() : L"";
++
++  TFrameHandle *currentFrame = app->getCurrentFrame();
++  std::string frameNumber =
++      (currentFrame) ? std::to_string(currentFrame->getFrame() + 1) : "";
++
++  QString name =
++      "Vector Inspector  ::  Level : " + QString::fromStdWString(levelName) +
++      "  ::  Frame : " + QString::fromStdString(frameNumber);
++
++  parentWidget()->setWindowTitle(name);
++}
+\ No newline at end of file
+diff --git a/toonz/sources/toonz/vectorinspector.h b/toonz/sources/toonz/vectorinspector.h
+new file mode 100644
+index 000000000..0bc3d5672
+--- /dev/null
++++ b/toonz/sources/toonz/vectorinspector.h
+@@ -0,0 +1,104 @@
++#pragma once
++
++#ifndef VECTORINSPECTOR_H
++#define VECTORINSPECTOR_H
++
++#include <QScrollArea>
++#include <QLabel>
++#include "multicolumnsortproxymodel.h"
++#include "toonzqt/tselectionhandle.h"
++#include "tvectorimage.h"
++#include "toonz/tscenehandle.h"
++
++// added for tooltips - begin
++#include <QHeaderView>
++#include <QStandardItemModel>
++#include <QScrollArea>
++#include <QVBoxLayout>
++#include <QGridLayout>
++#include <QLabel>
++#include <QLineEdit>
++#include <QComboBox>
++#include <QTreeView>
++// added for tooltips - end
++
++QT_BEGIN_NAMESPACE
++class QAbstractItemModel;
++class QCheckBox;
++class QComboBox;
++class QGroupBox;
++class QLabel;
++class QLineEdit;
++class QSortFilterProxyModel;
++class QTreeView;
++QT_END_NAMESPACE
++
++class VectorInspectorPanel final : public QWidget {
++  Q_OBJECT
++
++  QScrollArea *m_frameArea;
++
++  TVectorImage *m_vectorImage;
++  std::vector<int> m_selectedStrokeIndexes;
++
++public:
++  VectorInspectorPanel(QWidget *parent       = 0,
++                       Qt::WindowFlags flags = Qt::WindowFlags());
++  ~VectorInspectorPanel(){};
++
++  void setHeaderToolTips();
++  void setSourceModel(QAbstractItemModel *model);
++  void showContextMenu(const QPoint &pos);
++  void copySelectedItemsToClipboard();
++  void contextMenuEvent(QContextMenuEvent *event);
++  void getVectorLineData(std::ostream &os, int stroke,
++                         std::vector<int> groupIds) const {}
++
++public slots:
++  void onLevelSwitched();
++  void onSelectionSwitched(TSelection *selectionFrom, TSelection *selectionTo);
++  void setRowHighlighting();
++  void onSelectionChanged();
++  void onEnteredGroup();
++  void onExitedGroup();
++  void onChangedStrokes();
++  void onToolEditingFinished();
++  void onSceneChanged();
++  void onStrokeOrderChanged(int, int, int, bool);
++  void onToolSwitched();
++  void onSelectedAllStrokes();
++  void onSelectedStroke(const QModelIndex &);
++  void onVectorInspectorSelectionChanged(const QItemSelection &,
++                                         const QItemSelection &);
++  void updateSelectToolSelectedRows(const QItemSelection &,
++                                    const QItemSelection &);
++
++protected:
++  void showEvent(QShowEvent *) override;
++  void hideEvent(QHideEvent *) override;
++
++private slots:
++  void filterRegExpChanged();
++  void filterColumnChanged();
++  void sortChanged();
++
++private:
++  MultiColumnSortProxyModel *proxyModel;
++
++  QFrame *proxyGroupBox;
++  QTreeView *proxyView;
++  QLabel *filterPatternLabel;
++  QLabel *filterSyntaxLabel;
++  QLabel *filterColumnLabel;
++  QLineEdit *filterPatternLineEdit;
++  QComboBox *filterSyntaxComboBox;
++  QComboBox *filterColumnComboBox;
++  bool initiatedByVectorInspector;
++  bool initiatedBySelectTool;
++  bool strokeOrderChangedInProgress;
++  bool isSelected(int) const;
++  bool selectingRowsForStroke;
++  void changeWindowTitle();
++};
++
++#endif  // VECTORINSPECTOR_H

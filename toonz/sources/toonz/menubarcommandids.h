@@ -348,6 +348,7 @@
 #define MI_ClearRecentImage "MI_ClearRecentImage"
 
 #define MI_OpenComboViewer "MI_OpenComboViewer"
+#define MI_OpenVectorInspectorPanel "MI_OpenVectorInspectorPanel"
 #define MI_OpenHistoryPanel "MI_OpenHistoryPanel"
 #define MI_ReplaceParentDirectory "MI_ReplaceParentDirectory"
 #define MI_Reframe1 "MI_Reframe1"

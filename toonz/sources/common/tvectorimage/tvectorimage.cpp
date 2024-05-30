@@ -1,4 +1,4 @@
-
+#include "../../include/tvectorimage.h"
 
 #include "tcurves.h"
 // #include "tpalette.h"
@@ -16,6 +16,7 @@
 #include "tsimplecolorstyles.h"
 #include "tcomputeregions.h"
 
+#include <QStandardItemModel>
 #include <memory>
 
 //=============================================================================
@@ -225,8 +226,12 @@ void TVectorImage::Imp::moveStrokes(int fromIndex, int count, int moveBefore,
 
   std::vector<int> changedStrokes;
   if (regroup) regroupGhosts(changedStrokes);
-  if (!changedStrokes.empty())
+  if (!changedStrokes.empty()) {
     notifyChangedStrokes(changedStrokes, std::vector<TStroke *>(), false);
+  }
+  emit m_vi->changedStrokeOrder(
+      fromIndex, count, moveBefore,
+      regroup);  // notify that strokes have moved in the stack order
 }
 
 //-----------------------------------------------------------------------------
@@ -405,6 +410,27 @@ else
 //-----------------------------------------------------------------------------
 
 UINT TVectorImage::getStrokeCount() const { return m_imp->m_strokes.size(); }
+
+//--------------------------------------------------------------------
+
+void TVectorImage::getStrokeListData(QObject *parent,
+                                      QAbstractItemModel *model) {
+  // Clear the data while preserving headers
+  if (model->rowCount() > 0) {
+    model->removeRows(0, model->rowCount());
+  }
+
+  int currentGroup = 0;
+  if (m_imp->m_insideGroup.m_id.size() > 0) {
+    currentGroup = m_imp->m_insideGroup.m_id[0];
+  }
+
+  for (uint i = 0; i < (UINT)m_imp->m_strokes.size(); i++) {
+    // add vector chunk details
+    m_imp->m_strokes[i]->m_s->addChunkRows(
+        model, i, m_imp->m_strokes[i]->m_groupId.m_id, currentGroup);
+  }
+}
 
 //-----------------------------------------------------------------------------
 /*
@@ -1127,6 +1153,7 @@ void TVectorImage::Imp::notifyChangedStrokes(
 #ifdef _DEBUG
   checkIntersections();
 #endif
+  emit m_vi->changedStrokes();
 }
 
 //-----------------------------------------------------------------------------
@@ -2553,6 +2580,9 @@ bool TVectorImage::enterGroup(int index) {
   if (newGroupId == m_imp->m_insideGroup) return false;
 
   m_imp->m_insideGroup = newGroupId;
+
+  emit enteredGroup();
+
   return true;
 }
 
@@ -2573,6 +2603,9 @@ int TVectorImage::exitGroup() {
   assert(i != m_imp->m_strokes.size());
 
   m_imp->m_insideGroup = m_imp->m_insideGroup.getParent();
+
+  emit exitedGroup();
+
   return ret;
 }
 

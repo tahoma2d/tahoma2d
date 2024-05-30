@@ -644,7 +644,10 @@ void StrokeSelection::selectAll() {
 
   StrokeSelection *selection = dynamic_cast<StrokeSelection *>(
       TTool::getApplication()->getCurrentSelection()->getSelection());
-  if (selection) selection->notifyView();
+  if (selection) {
+    selection->notifyView();
+    emit selection->getImage()->selectedAllStrokes();
+  }
 }
 
 //=============================================================================
