@@ -48,6 +48,8 @@ set(MOC_HEADERS
     fxparameditorpopup.h
     histogrampopup.h
     historypane.h
+    multicolumnsortproxymodel.h
+    vectorinspector.h
     imageviewer.h
     layerfooterpanel.h
     layerheaderpanel.h
@@ -350,6 +352,8 @@ set(SOURCES
     mergecmapped.cpp
     comboviewerpane.cpp
     historypane.cpp
+    multicolumnsortproxymodel.cpp
+    vectorinspector.cpp
     cleanupsettingspane.cpp
     audiorecordingpopup.cpp
     locatorpopup.cpp

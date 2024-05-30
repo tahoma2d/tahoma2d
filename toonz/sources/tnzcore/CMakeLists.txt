@@ -6,6 +6,7 @@ set(MOC_HEADERS
     ../include/tipcsrvP.h
     ../include/tmsgcore.h
     ../include/tfunctorinvoker.h
+    ../include/tvectorimage.h
 )
 
 set(HEADERS ${MOC_HEADERS}
@@ -68,7 +69,6 @@ set(HEADERS ${MOC_HEADERS}
     ../include/tstroke.h
     ../include/tstrokeoutline.h
     ../include/tsweepboundary.h
-    ../include/tvectorimage.h
     ../include/tgl.h
     ../include/tstencilcontrol.h
     ../include/tsop.h
