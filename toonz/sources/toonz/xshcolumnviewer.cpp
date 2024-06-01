@@ -756,7 +756,7 @@ void ChangeObjectHandle::selectCurrent(const QString &text) {
 //-----------------------------------------------------------------------------
 
 RenameColumnField::RenameColumnField(QWidget *parent, XsheetViewer *viewer)
-    : QLineEdit(parent), m_col(-1) {
+    : QLineEdit(parent), m_col(-1), m_contextMenuActive(false) {
   setFixedSize(20, 20);
   connect(this, SIGNAL(returnPressed()), SLOT(renameColumn()));
 }
@@ -795,6 +795,7 @@ void RenameColumnField::show(const QRect &rect, int col) {
   setText(QString(name.c_str()));
   selectAll();
 
+  m_contextMenuActive = false;
   QWidget::show();
   raise();
   setFocus();
@@ -823,6 +824,8 @@ void RenameColumnField::renameColumn() {
 //-----------------------------------------------------------------------------
 
 void RenameColumnField::focusOutEvent(QFocusEvent *e) {
+  if (m_contextMenuActive) return;
+
   std::wstring newName = text().toStdWString();
   if (!newName.empty())
     renameColumn();
@@ -830,6 +833,14 @@ void RenameColumnField::focusOutEvent(QFocusEvent *e) {
     hide();
 
   QLineEdit::focusOutEvent(e);
+}
+
+//-----------------------------------------------------------------------------
+
+void RenameColumnField::contextMenuEvent(QContextMenuEvent *e) {
+  m_contextMenuActive = true;
+  QLineEdit::contextMenuEvent(e);
+  m_contextMenuActive = false;
 }
 
 //=============================================================================

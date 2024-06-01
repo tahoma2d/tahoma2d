@@ -774,6 +774,7 @@ protected:
   StyleEditor *m_editor;
 
   bool m_validatingName;
+  bool m_contextMenuActive;
 
 public:
   RenameStyleSet(QWidget *parent);
@@ -786,6 +787,7 @@ public:
 
 protected:
   void focusOutEvent(QFocusEvent *) override;
+  void contextMenuEvent(QContextMenuEvent *) override;
 
 protected slots:
   void renameSet();
