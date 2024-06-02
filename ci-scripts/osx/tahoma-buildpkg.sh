@@ -1,5 +1,5 @@
 #!/bin/bash
-export TAHOMA2DVERSION=1.4.2
+export TAHOMA2DVERSION=1.4.3
 
 if [ -d /usr/local/Cellar/qt@5 ]
 then
