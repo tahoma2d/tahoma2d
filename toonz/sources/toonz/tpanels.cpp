@@ -23,6 +23,7 @@
 #include "previewfxmanager.h"
 #include "comboviewerpane.h"
 #include "historypane.h"
+#include "vectorinspector.h"
 #include "cleanupsettingspane.h"
 #include "vectorguideddrawingpane.h"
 #include "expressionreferencemanager.h"
@@ -1233,7 +1234,8 @@ class BrowserFactory final : public TPanelFactory {
 public:
   BrowserFactory() : TPanelFactory("Browser") {}
   void initialize(TPanel *panel) override {
-    FileBrowser *browser = new FileBrowser(panel, Qt::WindowFlags(), false, true);
+    FileBrowser *browser =
+        new FileBrowser(panel, Qt::WindowFlags(), false, true);
     panel->setWidget(browser);
     panel->setWindowTitle(QObject::tr("File Browser"));
     panel->getTitleBar()->showTitleBar(TApp::instance()->getShowTitleBars());
@@ -1549,6 +1551,25 @@ public:
 OpenFloatingPanel openHistoryPanelCommand(MI_OpenHistoryPanel, "HistoryPanel",
                                           QObject::tr("History"));
 //=============================================================================
+// Vector Inspector
+//-----------------------------------------------------------------------------
+
+class VectorInspectorPanelFactory final : public TPanelFactory {
+public:
+  VectorInspectorPanelFactory() : TPanelFactory("VectorInspectorPanel") {}
+  void initialize(TPanel *panel) override {
+    VectorInspectorPanel *vectorInspector = new VectorInspectorPanel(panel);
+    panel->setWidget(vectorInspector);
+    panel->setWindowTitle(QObject::tr("Vector Inspector"));
+    panel->setIsMaximizable(false);
+  }
+} vectorInspectorPanelFactory;
+
+//=============================================================================
+OpenFloatingPanel openVectorInspectorPanelCommand(
+    MI_OpenVectorInspectorPanel, "VectorInspectorPanel",
+    QObject::tr("Vector Inspector"));
+//-----------------------------------------------------------------------------
 
 //=============================================================================
 // StopMotion Controller

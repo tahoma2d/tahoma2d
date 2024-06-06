@@ -4,12 +4,13 @@
 #define TVECTORIMAGE_INCLUDED
 
 #include <memory>
-
+#include <QObject>
 #include "timage.h"
 
 // da togliere spostando cose in altri file!!
 #include "traster.h"
 #include "tstream.h"
+#include <QStandardItemModel>
 
 #include <set>
 
@@ -55,7 +56,10 @@ class VIStroke;
     A vector image is a set of strokes and regions.
   \relates  TImage
 */
-class DVAPI TVectorImage final : public TImage {
+
+class DVAPI TVectorImage final : public QObject, public TImage {
+  Q_OBJECT
+
   class Imp;
   int pickGroup(const TPointD &pos, bool onEnteredGroup) const;
 
@@ -113,6 +117,11 @@ public:
 
   //! Return the strokes' count
   UINT getStrokeCount() const;
+
+  //! Get a list of stroke data
+  void getStrokeListData(QObject *parent,
+                                        QAbstractItemModel *model);
+
   //! Get a \b TStroke stroke at index position
   TStroke *getStroke(UINT index) const;
   //! Get a \b VIStroke stroke at index position
@@ -395,6 +404,15 @@ existing stroke. this method is used for undoing removeEndpoints . */
 #endif
 
   int getStrokeIndexAtPos(TPointD pos, double maxDistance = 1);
+
+signals:
+  void enteredGroup();    // Signal for entering a group
+  void exitedGroup();     // Signal for exiting a group
+  void changedStrokes();  // Signal for strokes changed
+  void changedStrokeOrder(
+      int fromIndex, int count, int moveBefore,
+      bool regroup);          // Signal for strokes moved up/down the stack
+  void selectedAllStrokes();  // Signal for selected all strokes
 
 private:  // not implemented
   TVectorImage(const TVectorImage &);
