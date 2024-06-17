@@ -127,7 +127,7 @@ void OnionSkinMask::setMos(int drow, bool on) {
     if (r == m_mos.end() || r->first != drow)
       m_mos.insert(r, std::make_pair(drow, -1));
   } else {
-    if (r != m_mos.end()) m_mos.erase(r);
+    if (r != m_mos.end() && r->first == drow) m_mos.erase(r);
   }
 }
 
@@ -143,7 +143,7 @@ void OnionSkinMask::setFos(int row, bool on) {
     if (r == m_fos.end() || r->first != row)
       m_fos.insert(r, std::make_pair(row, -1));
   } else {
-    if (r != m_fos.end()) m_fos.erase(r);
+    if (r != m_fos.end() && r->first == row) m_fos.erase(r);
   }
 }
 
