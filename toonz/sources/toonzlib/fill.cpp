@@ -510,6 +510,8 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   int paint = params.m_styleId;
   int fillDepth =
       params.m_shiftFill ? params.m_maxFillDepth : params.m_minFillDepth;
+  if (xsheet)  // convert fillDepth range from [0 - 15] to [0 - 255]
+    fillDepth = (fillDepth << 4) | fillDepth;
   TRasterCM32P tempRaster, cr, refCMRaster;
   int styleIndex                                 = GAP_CLOSE_TEMP;
   int fakeStyleIndex                             = GAP_CLOSE_USED;
@@ -1047,7 +1049,7 @@ void fullColorFill(const TRaster32P &ras, const FillParameters &params,
   TPointD m_firstPoint, m_clickPoint;
 
   // convert fillDepth range from [0 - 15] to [0 - 255]
-  fillDepth = ((15 - fillDepth) << 4) | (15 - fillDepth);
+  fillDepth = (fillDepth << 4) | fillDepth;
 
   std::stack<FillSeed> seeds;
   std::map<int, std::vector<std::pair<int, int>>> segments;
