@@ -550,6 +550,55 @@ void tglDraw(const TRectD &rect, const TRaster32P &tex, bool blending) {
   texture->unlock();
 }
 
+//-------------------------------------------------------------------
+
+void tglDrawMask(const TRectD& rect, const TRaster32P& ras) {
+  TRaster32P mask = ras->clone();
+  int lx          = rect.getLx();
+
+  // Set used pixels to full color/alpha for masking purposes
+  for (int y = 0; y < mask->getLy(); y++) {
+    TPixel32 *pix    = mask->pixels(y);
+    TPixel32 *pixEnd = pix + lx;
+    while (pix < pixEnd) {
+      if (*pix != TPixel32(0, 0, 0, 0)) *pix = TPixel32(255, 255, 255, 255);
+      pix++;
+    }
+  }
+
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+  glPushMatrix();
+  glLoadIdentity();
+
+  glRasterPos2d(rect.x0, rect.y0);
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+  GLboolean red, green, blue, alpha;
+  tglGetColorMask(red, green, blue, alpha);
+
+  // Draw RGB channels
+  tglEnableBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glColorMask(red, green, blue, GL_FALSE);
+
+  glDrawPixels(mask->getLx(), mask->getLy(),  // Perform the over
+               GL_STENCIL_INDEX, GL_UNSIGNED_INT, mask->getRawData());
+
+  // Draw Matte channel
+  tglEnableBlending(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+  glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, alpha);
+
+  glDrawPixels(mask->getLx(), mask->getLy(),  // Perform the over
+               GL_STENCIL_INDEX, GL_UNSIGNED_INT, mask->getRawData());
+
+  glColorMask(red, green, blue, alpha);
+
+  glPopMatrix();
+
+  glPopAttrib();  // Restore blending status
+}
+
 //-----------------------------------------------------------------------------
 
 void tglBuildMipmaps(std::vector<TRaster32P> &rasters,
