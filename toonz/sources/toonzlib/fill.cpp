@@ -510,8 +510,6 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   int paint = params.m_styleId;
   int fillDepth =
       params.m_shiftFill ? params.m_maxFillDepth : params.m_minFillDepth;
-  if (xsheet)  // convert fillDepth range from [0 - 15] to [0 - 255]
-    fillDepth = (fillDepth << 4) | fillDepth;
   TRasterCM32P tempRaster, cr, refCMRaster;
   int styleIndex                                 = GAP_CLOSE_TEMP;
   int fakeStyleIndex                             = GAP_CLOSE_USED;
@@ -611,8 +609,10 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
 
   assert(fillDepth >= 0 && fillDepth < 16);
 
-  if (xsheet)
-    fillDepth = ((15 - fillDepth) << 4) | (15 - fillDepth);
+  // For refer visible on Smart Raster, use Raster fill depth calculation
+  // since refer visible uses a raster image
+  if (xsheet)  // convert fillDepth range from [0 - 15] to [0 - 255]
+    fillDepth = (fillDepth << 4) | fillDepth;
   else
     switch (TPixelCM32::getMaxTone()) {
     case 15:
