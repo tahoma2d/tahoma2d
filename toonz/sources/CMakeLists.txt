@@ -540,6 +540,8 @@ elseif(BUILD_ENV_UNIXLIKE)
         find_library(GPHOTO2_PORT_LIB gphoto2_port)
         message("**************** gphoto2_port lib:" ${GPHOTO2_PORT_LIB})
     endif()
+	
+	find_library(DEFLATE_LIB deflate)
 endif()
 
 

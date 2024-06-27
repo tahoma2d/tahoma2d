@@ -164,6 +164,7 @@ elseif(BUILD_ENV_UNIXLIKE)
     # Generic Unix
     set(EXTRA_LIBS
         ${TNZLIBS}
+        ${DEFLATE_LIB}
     )
 
     if(BUILD_TARGET_WIN)
