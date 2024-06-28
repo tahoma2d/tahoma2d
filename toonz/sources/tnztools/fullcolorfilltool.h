@@ -30,6 +30,8 @@ class FullColorFillTool final : public QObject, public TTool {
   TEnumProperty m_closeRasterGaps;
   TStyleIndexProperty m_closeStyleIndex;
 
+  bool m_filledOnPress;
+
 public:
   FullColorFillTool();
 
@@ -43,6 +45,7 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &e) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &e) override;
 
   bool onPropertyChanged(std::string propertyName) override;
 
