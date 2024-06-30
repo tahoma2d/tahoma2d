@@ -2363,7 +2363,8 @@ FillTool::FillTool(int targetType)
     , m_firstTime(true)
     , m_autopaintLines("Autopaint Lines", true)
     , m_fillOnlySavebox("Savebox", false)
-    , m_referenced("Refer Visible", false) {
+    , m_referenced("Refer Visible", false)
+    , m_filledOnPress(false) {
   m_rectFill           = new AreaFillTool(this);
   m_normalLineFillTool = new NormalLineFillTool(this);
 
@@ -2588,6 +2589,8 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
              closeStyleIndex, app->getCurrentFrame()->getFrameIndex());
       invalidate();
     }
+
+    m_filledOnPress = true;
   }
 }
 
@@ -2614,6 +2617,15 @@ void FillTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
       (m_colorType.getValue() == AREAS && m_onion.getValue()))
     m_rectFill->leftButtonDrag(pos, e);
   else if (!m_onion.getValue() && !m_frameRange.getValue()) {
+    // On a tap durning normal fills, the fill happens on the initial press and
+    // may delay the release event.  Movement may occur inbetween and where it
+    // registers the movement may cause accidental drag fills.  If this is the
+    // 1st movement after an initial press, ignore it by changing click point
+    if (m_filledOnPress) {
+      m_filledOnPress = false;
+      m_clickPoint    = pos;
+    }
+
     FillParameters params = getFillParameters();
     if (params.m_fillType == LINES && m_targetType == TTool::ToonzImage) {
       m_normalLineFillTool->leftButtonDrag(pos, e);
@@ -2657,6 +2669,8 @@ void FillTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 //-----------------------------------------------------------------------------
 
 void FillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
+  m_filledOnPress = false;
+  
   int closeStyleIndex = m_closeStyleIndex.getStyleIndex();
   if (closeStyleIndex == -1) {
     closeStyleIndex =

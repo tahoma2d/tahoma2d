@@ -325,7 +325,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
       onContextMenu(e->pos(), e->globalPos());
     }
 #endif
-
+    e->accept();
   } break;
   case QEvent::TabletRelease: {
 #ifdef MACOSX
@@ -347,6 +347,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     } else
       m_tabletEvent = false;
 #endif
+    e->accept();
   } break;
   case QEvent::TabletMove: {
 #ifdef MACOSX
@@ -384,9 +385,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     // So I fire the interval timer in order to limit the following process
     // to be called in 50fps in maximum.
     if (curPos != m_lastMousePos && !m_isBusyOnTabletMove) {
-#ifndef LINUX
       m_isBusyOnTabletMove = true;
-#endif
       TMouseEvent mouseEvent;
       initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
       QTimer::singleShot(20, this, SLOT(releaseBusyOnTabletMove()));
@@ -401,12 +400,6 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
         m_tabletState       = Released;
         mouseEvent.m_button = Qt::LeftButton;
         onRelease(mouseEvent);
-      } else if (m_tabletState == StartStroke) {
-        // Single tap of stylus still records TableMoves before TabletRelease.
-        // Skip the 1st TabletMove to give time for TabletRelease to show up
-        // This way we don't try to do a LeftButtonDrag operation (i.e. normal
-        // fill) too soon.
-        m_tabletState = OnStroke;
       } else {
         m_tabletMove = true;
         onMove(mouseEvent);  // m_tabletState is set to OnStrole here
@@ -416,6 +409,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     // call the fake leave event if the pen is hovering the viewer edge
     if (!isHoveringInsideViewer) onLeave();
 #endif
+    if (e->button() != Qt::NoButton) e->accept();
   } break;
   default:
     break;

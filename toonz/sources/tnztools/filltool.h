@@ -125,6 +125,8 @@ class FillTool final : public QObject, public TTool {
 
   int m_firstFrameIdx, m_lastFrameIdx;
 
+  bool m_filledOnPress;
+
 public:
   FillTool(int targetType);
 
