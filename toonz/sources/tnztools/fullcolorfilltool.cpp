@@ -166,7 +166,8 @@ FullColorFillTool::FullColorFillTool()
     , m_rasterGapDistance("Distance:", 1, 100, 10)
     , m_closeRasterGaps("Gaps:")
     , m_frameRange("Frame Range:") 
-    , m_currCell(-1, -1) {
+    , m_currCell(-1, -1)
+    , m_filledOnPress(false) {
   bind(TTool::RasterImage);
   m_prop.bind(m_fillDepth);
   m_prop.bind(m_closeRasterGaps);
@@ -292,6 +293,8 @@ void FullColorFillTool::leftButtonDown(const TPointD &pos,
     return;
   }
 
+  m_filledOnPress = true;
+
   int frameIndex = app->getCurrentFrame()->getFrameIndex();
 
   applyFill(getImage(true), pos, params, e.isShiftPressed(),
@@ -303,6 +306,15 @@ void FullColorFillTool::leftButtonDown(const TPointD &pos,
 
 void FullColorFillTool::leftButtonDrag(const TPointD &pos,
                                        const TMouseEvent &e) {
+  // On a tap durning normal fills, the fill happens on the initial press and
+  // may delay the release event.  Movement may occur inbetween and where it
+  // registers the movement may cause accidental drag fills.  If this is the 1st
+  // movement after an initial press, ignore it by changing click point
+  if (m_filledOnPress) {
+    m_filledOnPress = false;
+    m_clickPoint    = pos;
+  }
+
   if (m_frameRange.getIndex()) return;
 
   FillParameters params = getFillParameters();
@@ -345,6 +357,10 @@ void FullColorFillTool::leftButtonDrag(const TPointD &pos,
             closeStyleIndex, false);
 
   invalidate();
+}
+
+void FullColorFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
+  m_filledOnPress = false;
 }
 
 void FullColorFillTool::resetMulti() {
