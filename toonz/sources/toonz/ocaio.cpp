@@ -691,6 +691,9 @@ void ImportOCACommand::execute() {
     importEnabled = (ret == 1);
   }
 
+  // Check if this is a directory or the actual file
+  if (TFileStatus(fp).isDirectory()) fp = fp + fp.withoutParentDir();
+
   QString ocafile           = fp.getQString();
   OCAInputData ocaInputData = OCAInputData(0, false, false);
   QJsonObject ocaObject;
