@@ -42,6 +42,8 @@ class FullColorFillTool final : public QObject, public TTool {
   TFrameId m_firstFrameId, m_veryFirstFrameId;
   int m_firstFrameIdx, m_lastFrameIdx;
 
+  bool m_filledOnPress;
+
 public:
   FullColorFillTool();
 
@@ -55,6 +57,7 @@ public:
 
   void leftButtonDown(const TPointD &pos, const TMouseEvent &e) override;
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override;
+  void leftButtonUp(const TPointD &pos, const TMouseEvent &e) override;
 
   void resetMulti();
   bool onPropertyChanged(std::string propertyName) override;
