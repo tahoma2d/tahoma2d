@@ -28,6 +28,8 @@
 
 #include <QtWidgets>
 
+#include <QRegularExpression>
+
 //------------------------------------------------------------------------------
 
 VectorInspectorPanel::VectorInspectorPanel(QWidget* parent,
@@ -80,9 +82,9 @@ VectorInspectorPanel::VectorInspectorPanel(QWidget* parent,
   filterPatternLabel->setBuddy(filterPatternLineEdit);
   filterPatternLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-  filterSyntaxComboBox->addItem(tr("Regular expression"), QRegExp::RegExp);
-  filterSyntaxComboBox->addItem(tr("Wildcard"), QRegExp::Wildcard);
-  filterSyntaxComboBox->addItem(tr("Fixed string"), QRegExp::FixedString);
+  filterSyntaxComboBox->addItem(tr("Regular expression"));
+  filterSyntaxComboBox->addItem(tr("Wildcard"));
+  filterSyntaxComboBox->addItem(tr("Fixed string"));
   filterSyntaxLabel->setBuddy(filterSyntaxComboBox);
   filterSyntaxLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
@@ -472,12 +474,17 @@ void VectorInspectorPanel::setSourceModel(QAbstractItemModel* model) {
 }
 
 void VectorInspectorPanel::filterRegExpChanged() {
-  QRegExp::PatternSyntax syntax = QRegExp::PatternSyntax(
-      filterSyntaxComboBox->itemData(filterSyntaxComboBox->currentIndex())
-          .toInt());
-
-  QRegExp regExp(filterPatternLineEdit->text(), Qt::CaseInsensitive, syntax);
-  proxyModel->setFilterRegExp(regExp);
+  QString pattern = filterPatternLineEdit->text();
+  switch (filterSyntaxComboBox->currentIndex()) {
+  case 1: // Wildcard
+    pattern = QRegularExpression::wildcardToRegularExpression("*" + pattern + "*");
+    break;
+  case 2: // FixedString
+    pattern = QRegularExpression::escape(pattern);
+    break;
+  }
+  QRegularExpression regExp(pattern, QRegularExpression::CaseInsensitiveOption);
+  proxyModel->setFilterRegularExpression(regExp);
   setRowHighlighting();
 }
 
