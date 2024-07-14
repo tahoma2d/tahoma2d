@@ -409,7 +409,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     // call the fake leave event if the pen is hovering the viewer edge
     if (!isHoveringInsideViewer) onLeave();
 #endif
-    if (e->button() != Qt::NoButton) e->accept();
+    if (e->buttons() != Qt::NoButton) e->accept();
   } break;
   default:
     break;
@@ -521,6 +521,13 @@ void SceneViewer::onMove(const TMouseEvent &event) {
   // in case mouseReleaseEvent is not called, finish the action for the previous
   // button first.
   if (m_mouseButton != Qt::NoButton && event.m_buttons == Qt::NoButton) {
+#ifdef _WIN32
+    // Somehow, even though we are actively dragging QT sometimes loses the
+    // button being pressed but still think there is pressure. This causes the
+    // stylus to relase. Don't treat these as valid pen events because the
+    // pressure values appear incorrect. Skip it insteead.
+    if (event.m_isTablet && event.m_pressure != 0.0) return;
+#endif
     TMouseEvent preEvent = event;
     preEvent.m_button    = m_mouseButton;
     onRelease(preEvent);
