@@ -885,7 +885,8 @@ item.m_validInfo = true;*/
 //! calculated by using a dedicated thread and therefore cannot be simply
 //! classified as *valid* or *invalid* infos...
 void FileBrowser::readFrameCount(Item &item) {
-  if (TFileType::isViewable(TFileType::getInfo(item.m_path))) {
+  if (!item.m_isFolder &&
+      TFileType::isViewable(TFileType::getInfo(item.m_path))) {
     if (isMultipleFrameType(item.m_path.getType()))
       item.m_frameCount = m_frameCountReader.getFrameCount(item.m_path);
     else
