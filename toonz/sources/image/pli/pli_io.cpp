@@ -747,6 +747,14 @@ void ParsedPliImp::loadInfo(bool readPlt, TPalette *&palette,
   // palette = new TPalette();
   // for (int i=0; i<256; i++)
   //  palette->getPage(0)->addStyle(TPixel::Black);
+
+  // File is missing frames!  Load what we can.
+  // Last frame is likely an unusable image. Allow to load in case it was also
+  // the 1st frame, so we don't crash.
+  if (m_framesNumber > m_frameOffsInFile.size()) {
+    m_framesNumber = m_frameOffsInFile.size();
+    throw TException("Not all frames loaded.");
+  }
 }
 
 /*=====================================================================*/
