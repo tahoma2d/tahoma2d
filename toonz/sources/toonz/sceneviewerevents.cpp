@@ -364,7 +364,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     }
 #endif
     QPointF curPos = e->posF() * getDevPixRatio();
-#if defined(_WIN32)
+
     // Use the application attribute Qt::AA_CompressTabletEvents instead of the
     // delay timer
     // 21/4/2021 High frequent tablet event caused slowness when deforming with
@@ -379,16 +379,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
         m_isBusyOnTabletMove = true;
         QTimer::singleShot(20, this, SLOT(releaseBusyOnTabletMove()));
       }
-#else
-    // It seems that the tabletEvent is called more often than mouseMoveEvent.
-    // So I fire the interval timer in order to limit the following process
-    // to be called in 50fps in maximum.
-    if (curPos != m_lastMousePos && !m_isBusyOnTabletMove) {
-      m_isBusyOnTabletMove = true;
-      TMouseEvent mouseEvent;
-      initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
-      QTimer::singleShot(20, this, SLOT(releaseBusyOnTabletMove()));
-#endif
+
       // cancel stroke to prevent drawing while floating
       // 23/1/2018 There is a case that the pressure becomes zero at the start
       // and the end of stroke. For such case, stroke should not be cancelled.
@@ -408,7 +399,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     // call the fake leave event if the pen is hovering the viewer edge
     if (!isHoveringInsideViewer) onLeave();
 #endif
-    if (e->button() != Qt::NoButton) e->accept();
+    if (e->buttons() != Qt::NoButton) e->accept();
   } break;
   default:
     break;
@@ -520,6 +511,13 @@ void SceneViewer::onMove(const TMouseEvent &event) {
   // in case mouseReleaseEvent is not called, finish the action for the previous
   // button first.
   if (m_mouseButton != Qt::NoButton && event.m_buttons == Qt::NoButton) {
+#ifdef _WIN32
+    // Somehow, even though we are actively dragging QT sometimes loses the
+    // button being pressed but still think there is pressure. This causes the
+    // stylus to relase. Don't treat these as valid pen events because the
+    // pressure values appear incorrect. Skip it insteead.
+    if (event.m_isTablet && event.m_pressure != 0.0) return;
+#endif
     TMouseEvent preEvent = event;
     preEvent.m_button    = m_mouseButton;
     onRelease(preEvent);
@@ -748,7 +746,12 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
   // so m_gestureActive is the marker for rejecting touch events
   int source = event->source();
   // if this is called just after tabletEvent, skip the execution
-  if (m_tabletEvent) return;
+  if (m_tabletEvent
+#ifdef _WIN32
+    // See SceneViewer::doQuit() for why this is here
+    || m_tabletState == Released
+#endif
+    ) return;
   // and touchscreens but not touchpads...
   if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen) {
     return;
@@ -1044,12 +1047,29 @@ void SceneViewer::doQuit() {
   m_mouseButton = Qt::NoButton;
   // Leave m_tabletEvent as-is in order to check whether the onRelease is called
   // from tabletEvent or not in mouseReleaseEvent.
-  if (m_tabletState == Released)  // only clear if tabletRelease event
+  if (m_tabletState == Released) {  // only clear if tabletRelease event
+#ifdef _WIN32
+    // If this was a mouse event and tablet was just relased, clear tablet state now
+    if (!m_tabletEvent) m_tabletState = None;
+#endif
     m_tabletEvent = false;
+  }
   // If m_tabletState is "Touched", we've been called by tabletPress event.
   // Don't clear it out table state so the tablePress event will process
   // correctly.
-  if (m_tabletState != Touched) m_tabletState = None;
+  if (m_tabletState != Touched
+#ifdef _WIN32
+      // On some Window systems and perhaps tablets, when you tap with a stylus,
+      // it submits a TabletPress+TabletRelease immediately followed by a
+      // MousePress+MouseRleaese, rather than interleaved. This results in
+      // tapping 2x (not a double-tap), and causes an issue with stuff like
+      // arc, multi-arc and polyline modes.
+      // To fix, keep the Released state until we get the mouse release
+      && m_tabletState != Released
+#endif
+      )
+    m_tabletState = None;
+
   m_mouseState                                = None;
   m_tabletMove                                = false;
   m_pressure                                  = 0;
