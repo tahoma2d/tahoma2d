@@ -48,7 +48,7 @@ TPoint StylePicker::getRasterPoint(const TPointD &p) const {
  * 1=Line, 2=Line&Areas(default)  --*/
 int StylePicker::pickStyleId(const TPointD &pos, double radius, double scale2,
                              int mode) const {
-  int styleId = 0;
+  int styleId = -1;
   if (TToonzImageP ti = m_image) {
     TRasterCM32P ras = ti->getRaster();
     TPoint point     = getRasterPoint(pos);
@@ -57,9 +57,11 @@ int StylePicker::pickStyleId(const TPointD &pos, double radius, double scale2,
 
     switch (mode) {
     case 0:  // AREAS
+      if (col.isPureInk()) return -1;
       styleId = col.getPaint();
       break;
     case 1:  // LINES
+      if (col.isPurePaint()) return -1;
       styleId = col.getInk();
       break;
     case 2:  // ALL (Line & Area)
@@ -78,27 +80,33 @@ int StylePicker::pickStyleId(const TPointD &pos, double radius, double scale2,
     styleId      = palette->getClosestStyle(col);
   } else if (TVectorImageP vi = m_image) {
     // prima cerca lo stile della regione piu' vicina
-    TRegion *r = vi->getRegion(pos);
-    if (r) styleId = r->getStyle();
-    bool strokeFound;
-    double dist2, w, thick;
-    UINT index;
-    //! funzionerebbe ancora meglio con un getNearestStroke che considera
-    // la thickness, cioe' la min distance dalla outline e non dalla centerLine
-    strokeFound = vi->getNearestStroke(pos, w, index, dist2);
-    if (strokeFound) {
-      int devPixRatio = getDevicePixelRatio(m_widget);
-      dist2 *= scale2;
-      TStroke *stroke = vi->getStroke(index);
-      thick           = stroke->getThickPoint(w).thick;
-      double len2 = thick * thick * scale2;
-      const double minDist2 =
-          (styleId == 0) ? radius * radius * (double)(devPixRatio * devPixRatio)
-                         : 0;
-      double checkDist = std::max(minDist2, len2);
-      if (dist2 < checkDist) {
-        assert(stroke);
-        styleId = stroke->getStyle();
+    if (mode == 2 || mode == 0) {  // ALL or AREAS
+      TRegion *r = vi->getRegion(pos);
+      styleId    = r ? r->getStyle() : 0;
+    }
+    if (mode == 2 || mode == 1) {  // ALL or LINES
+      bool strokeFound;
+      double dist2, w, thick;
+      UINT index;
+      //! funzionerebbe ancora meglio con un getNearestStroke che considera
+      // la thickness, cioe' la min distance dalla outline e non dalla
+      // centerLine
+      strokeFound = vi->getNearestStroke(pos, w, index, dist2);
+      if (strokeFound) {
+        int devPixRatio = getDevicePixelRatio(m_widget);
+        dist2 *= scale2;
+        TStroke *stroke = vi->getStroke(index);
+        thick           = stroke->getThickPoint(w).thick;
+        double len2     = thick * thick * scale2;
+        const double minDist2 =
+            (styleId <= 0)
+                ? radius * radius * (double)(devPixRatio * devPixRatio)
+                : 0;
+        double checkDist = std::max(minDist2, len2);
+        if (dist2 < checkDist) {
+          assert(stroke);
+          styleId = stroke->getStyle();
+        }
       }
     }
   }

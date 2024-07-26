@@ -222,8 +222,8 @@ void StylePickerTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
   int subsampling = level->getImageSubsampling(getCurrentFid());
   StylePicker picker(getViewer()->viewerWidget(), image);
   TPointD pickPos(TScale(1.0 / subsampling) * pos + TPointD(-0.5, -0.5));
-  int inkStyleId = picker.pickStyleId(pickPos, 10.0, scale2, 1);
-  int paintStyleId = picker.pickStyleId(pickPos, 10.0, scale2, 0);
+  int inkStyleId   = std::max(picker.pickStyleId(pickPos, 10.0, scale2, 1), 0);
+  int paintStyleId = std::max(picker.pickStyleId(pickPos, 10.0, scale2, 0), 0);
   int tone = picker.pickTone(pickPos);
   controller->notifyStylePassivePicked(inkStyleId, paintStyleId, tone);
 }

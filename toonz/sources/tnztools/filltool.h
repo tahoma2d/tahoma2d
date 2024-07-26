@@ -150,7 +150,8 @@ public:
   void draw() override;
 
   // if frame = -1 it uses current frame
-  int pick(const TImageP &image, const TPointD &pos, const int frame = -1);
+  int pick(const TImageP &image, const TPointD &pos, const int frame = -1,
+           const int mode = 2);
   int pickOnionColor(const TPointD &pos);
 
   void onEnter() override;

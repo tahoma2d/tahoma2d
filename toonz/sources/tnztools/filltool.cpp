@@ -2583,6 +2583,11 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
     if (params.m_fillType == LINES && m_targetType == TTool::ToonzImage)
       m_normalLineFillTool->leftButtonDown(pos, e);
     else {
+      int fillMode =
+          params.m_fillType == AREAS ? 0 : params.m_fillType == LINES ? 1 : 2;
+      int currentStyleId = pick(getImage(false), pos, -1, fillMode);
+      if (currentStyleId == -1 || currentStyleId == params.m_styleId) return;
+
       applyFill(getImage(true), pos, params, e.isShiftPressed(),
              m_level.getPointer(), getCurrentFid(), m_autopaintLines.getValue(),
              m_closeRasterGaps.getIndex() > 0, m_closeRasterGaps.getIndex() > 1,
@@ -2634,22 +2639,13 @@ void FillTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
     if (m_clickPoint == pos) return;
     TImageP img = getImage(true);
     int styleId = params.m_styleId;
-    if (TVectorImageP vi = img) {
-      TRegion *r = vi->getRegion(pos);
-      if (r && r->getStyle() == styleId) return;
-    } else if (TToonzImageP ti = img) {
-      TRasterCM32P ras = ti->getRaster();
-      if (!ras) return;
-      TPointD center = ras->getCenterD();
-      TPoint ipos    = convert(pos + center);
-      if (!ras->getBounds().contains(ipos)) return;
-      TPixelCM32 pix = ras->pixels(ipos.y)[ipos.x];
-      if (pix.getPaint() == styleId) {
-        invalidate();
-        return;
-      }
-      //TSystem::outputDebug("ok. pix=" + std::to_string(pix.getTone()) + "," +
-      //                     std::to_string(pix.getPaint()));
+    TVectorImageP vi = img;
+    TToonzImageP ti  = img;
+    if (vi || ti) {
+      int fillMode =
+          params.m_fillType == AREAS ? 0 : params.m_fillType == LINES ? 1 : 2;
+      int currentStyleId = pick(img, pos, -1, fillMode);
+      if (currentStyleId == -1 || currentStyleId == styleId) return;
     } else
       return;
     int closeStyleIndex = m_closeStyleIndex.getStyleIndex();
@@ -2939,7 +2935,8 @@ void FillTool::draw() {
 
 //-----------------------------------------------------------------------------
 
-int FillTool::pick(const TImageP &image, const TPointD &pos, const int frame) {
+int FillTool::pick(const TImageP &image, const TPointD &pos, const int frame,
+                   const int mode) {
   TToonzImageP ti  = image;
   TVectorImageP vi = image;
   if (!ti && !vi) return 0;
@@ -2962,7 +2959,7 @@ int FillTool::pick(const TImageP &image, const TPointD &pos, const int frame) {
     pickPos.y /= dpiScale.y;
   }
   // thin stroke can be picked with 10 pixel range
-  return picker.pickStyleId(pickPos, 10.0, scale2);
+  return picker.pickStyleId(pickPos, 10.0, scale2, mode);
 }
 
 //-----------------------------------------------------------------------------
