@@ -325,7 +325,9 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
       onContextMenu(e->pos(), e->globalPos());
     }
 #endif
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     e->accept();
+#endif
   } break;
   case QEvent::TabletRelease: {
 #ifdef MACOSX
@@ -365,6 +367,7 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     }
 #endif
     QPointF curPos = e->posF() * getDevPixRatio();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
     // Use the application attribute Qt::AA_CompressTabletEvents instead of the
     // delay timer
     // 21/4/2021 High frequent tablet event caused slowness when deforming with
@@ -379,7 +382,16 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
         m_isBusyOnTabletMove = true;
         QTimer::singleShot(20, this, SLOT(releaseBusyOnTabletMove()));
       }
-
+#else
+    // It seems that the tabletEvent is called more often than mouseMoveEvent.
+    // So I fire the interval timer in order to limit the following process
+    // to be called in 50fps in maximum.
+    if (curPos != m_lastMousePos && !m_isBusyOnTabletMove) {
+      m_isBusyOnTabletMove = true;
+      TMouseEvent mouseEvent;
+      initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
+      QTimer::singleShot(20, this, SLOT(releaseBusyOnTabletMove()));
+#endif
       // cancel stroke to prevent drawing while floating
       // 23/1/2018 There is a case that the pressure becomes zero at the start
       // and the end of stroke. For such case, stroke should not be cancelled.
