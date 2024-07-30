@@ -130,16 +130,10 @@ public:
 
   void undo() const override {
     doRemoveSceneFrame(m_frame);
-
-    TApp::instance()->getCurrentScene()->setDirtyFlag(true);
-    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
   void redo() const override {
     doInsertSceneFrame(m_frame);
-
-    TApp::instance()->getCurrentScene()->setDirtyFlag(true);
-    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
 
   int getSize() const override { return sizeof(*this); }
@@ -151,16 +145,17 @@ public:
   int getHistoryType() override { return HistoryType::Xsheet; }
 
 protected:
-  static void doInsertSceneFrame(int frame);
-  static void doRemoveSceneFrame(int frame);
+  static void doInsertSceneFrame(int frame, bool notify = true);
+  static void doRemoveSceneFrame(int frame, bool notify = true);
 };
 
 //-----------------------------------------------------------------------------
 
-void InsertSceneFrameUndo::doInsertSceneFrame(int frame) {
+void InsertSceneFrameUndo::doInsertSceneFrame(int frame, bool notify) {
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
   int c, colsCount = xsh->getColumnCount();
+  bool updateSound = false;
   for (c = -1; c < colsCount; ++c) {
     TStageObjectId objectId;
 
@@ -174,6 +169,8 @@ void InsertSceneFrameUndo::doInsertSceneFrame(int frame) {
       if (!Preferences::instance()->isImplicitHoldEnabled() && frame > 0)
         cell = xsh->getCell(frame - 1, c);
       xsh->setCell(frame, c, cell);
+      if (xsh->getColumn(c) && xsh->getColumn(c)->getSoundColumn())
+        updateSound = true;
     }
 
     if (!xsh->getColumn(c) || xsh->getColumn(c)->isLocked()) continue;
@@ -183,12 +180,21 @@ void InsertSceneFrameUndo::doInsertSceneFrame(int frame) {
   }
 
   xsh->getNavigationTags()->shiftTags(frame, 1);
+
+  if (notify) {
+    TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    if (updateSound)
+      TApp::instance()->getCurrentXsheet()->notifyXsheetSoundChanged();
+  }
 }
 
 //-----------------------------------------------------------------------------
 
-void InsertSceneFrameUndo::doRemoveSceneFrame(int frame) {
+void InsertSceneFrameUndo::doRemoveSceneFrame(int frame, bool notify) {
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+
+  bool updateSound = false;
 
   for (int c = -1; c != xsh->getColumnCount(); ++c) {
     TStageObjectId objectId;
@@ -197,6 +203,9 @@ void InsertSceneFrameUndo::doRemoveSceneFrame(int frame) {
       objectId = TStageObjectId::CameraId(xsh->getCameraColumnIndex());
     else {
       objectId = TStageObjectId::ColumnId(c);
+
+      if (xsh->getColumn(c) && xsh->getColumn(c)->getSoundColumn())
+        updateSound = true;
 
       xsh->removeCells(frame, c);
     }
@@ -209,6 +218,13 @@ void InsertSceneFrameUndo::doRemoveSceneFrame(int frame) {
 
   if (xsh->isFrameTagged(frame)) xsh->getNavigationTags()->removeTag(frame);
   xsh->getNavigationTags()->shiftTags(frame, -1);
+
+  if (notify) {
+    TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    if (updateSound)
+      TApp::instance()->getCurrentXsheet()->notifyXsheetSoundChanged();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -358,7 +374,7 @@ public:
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
     // Insert an empty frame, need space for our stored stuff
-    doInsertSceneFrame(m_frame);
+    doInsertSceneFrame(m_frame, false);
 
     // Insert cells
     int cellsCount = m_cells.size();
@@ -370,8 +386,13 @@ public:
       cameraObj->setKeyframeWithoutUndo(m_frame, m_keyframes[cellsCount]);
     }
 
+    bool updateSound = false;
+
     for (int c = 0; c != cellsCount; ++c) {
       xsh->setCell(m_frame, c, m_cells[c]);
+
+      if (xsh->getColumn(c) && xsh->getColumn(c)->getSoundColumn())
+        updateSound = true;
 
       if (m_keyframes[c].m_isKeyframe) {
         TStageObject *obj = xsh->getStageObject(TStageObjectId::ColumnId(c));
@@ -385,6 +406,8 @@ public:
 
     TApp::instance()->getCurrentScene()->setDirtyFlag(true);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    if (updateSound)
+      TApp::instance()->getCurrentXsheet()->notifyXsheetSoundChanged();
   }
 
   int getSize() const override {
