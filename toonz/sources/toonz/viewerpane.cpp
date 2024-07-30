@@ -578,6 +578,7 @@ void BaseViewerPanel::onXshLevelSwitched(TXshLevel *) {
 
 void BaseViewerPanel::onPlayingStatusChanged(bool playing) {
   if (playing) {
+    hasSoundtrack();
     m_playing = true;
   } else {
     m_playing = false;
@@ -746,7 +747,6 @@ void BaseViewerPanel::onSceneChanged() {
   int frameIndex = TApp::instance()->getCurrentFrame()->getFrameIndex();
   if (m_keyFrameButton->getCurrentFrame() != frameIndex)
     m_keyFrameButton->setCurrentFrame(frameIndex);
-  hasSoundtrack();
 }
 
 //-----------------------------------------------------------------------------
@@ -765,6 +765,7 @@ void BaseViewerPanel::onSceneSwitched() {
                                   ->getFrameRate());
   m_sceneViewer->setEditPreviewSubcamera(false);
   onSceneChanged();
+  hasSoundtrack();
 }
 
 //-----------------------------------------------------------------------------
