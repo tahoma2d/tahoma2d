@@ -3832,9 +3832,10 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
     } else {
       bool hasDragBar = Preferences::instance()->isShowDragBarsEnabled();
 
-      bool isInDragArea = o->rect(PredefinedRect::DRAG_AREA)
-                              .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
-                              .contains(mouseInCell);
+      bool isInDragArea =
+          col < 0 ? false : o->rect(PredefinedRect::DRAG_AREA)
+                                .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
+                                .contains(mouseInCell);
       bool isSoundPreviewArea =
           isSoundColumn &&
           o->rect(PredefinedRect::PREVIEW_TRACK)
