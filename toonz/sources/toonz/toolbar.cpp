@@ -48,6 +48,7 @@ Toolbar::Toolbar(QWidget *parent, bool isViewerToolbar)
   if (m_isViewerToolbar) m_isVertical = false;
 
   m_panel      = dynamic_cast<TPanel *>(parent);
+  if (m_panel) m_panel->resize(44, 780);
 
   setMovable(false);
   setIconSize(QSize(20, 20));
