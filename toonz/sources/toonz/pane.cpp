@@ -191,13 +191,13 @@ void TPanel::restoreFloatingPanelState() {
   settings.beginGroup(QString::fromStdString(m_panelType));
 
   QRect geom = settings.value("geometry", saveGeometry()).toRect();
-  // check if it can be visible in the current screen
-  if (!(geom & this->screen()->availableGeometry()).isEmpty())
-    setGeometry(geom);
   // load optional settings
   if (SaveLoadQSettings *persistent =
           dynamic_cast<SaveLoadQSettings *>(widget()))
     persistent->load(settings);
+  // check if it can be visible in the current screen
+  if (!(geom & this->screen()->availableGeometry()).isEmpty())
+    setGeometry(geom);
 }
 
 //=============================================================================
