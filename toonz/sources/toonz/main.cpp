@@ -333,6 +333,12 @@ int main(int argc, char *argv[]) {
   // constructed. Available from Qt 5.6.
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+#ifdef Q_OS_WIN
+  //	Since currently Tahoma does not work with OpenGL of software or
+  // angle,	force Qt to use desktop OpenGL
+  QApplication::setAttribute(Qt::AA_UseDesktopOpenGL, true);
+#endif
+
   QApplication a(argc, argv);
 
 #ifdef MACOSX
@@ -368,14 +374,6 @@ int main(int argc, char *argv[]) {
   };
 
   a.installNativeEventFilter(new OSXMouseDragFilter);
-#endif
-
-#ifdef Q_OS_WIN
-  //	Since currently Tahoma does not work with OpenGL of software or
-  // angle,	force Qt to use desktop OpenGL
-  // FIXME: This options should be called before constructing the application.
-  // Thus, ANGLE seems to be enabled as of now.
-  a.setAttribute(Qt::AA_UseDesktopOpenGL, true);
 #endif
 
   // Some Qt objects are destroyed badly without a living qApp. So, we must
