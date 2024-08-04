@@ -1054,10 +1054,27 @@ TRasterP TRasterFx::applyAffine(TTile &tileOut, const TTile &tileIn,
       TRasterP rasOut(dst_ras->extract(geomIn));
 
       if (info.m_applyMask) {
+        TRasterP tmp_ras(rasIn->clone());
+
+        // Set used pixels to full color/alpha for masking purposes
+        tmp_ras->lock();
+        int lx = tmp_ras->getLx();
+        for (int y = 0; y < tmp_ras->getLy(); y++) {
+          unsigned char *rawdata = (unsigned char *)tmp_ras->getRawData(0, y);
+          TPixel32 *pix = (TPixel32 *)rawdata;
+          TPixel32 *pixEnd = pix + lx;
+          while (pix < pixEnd) {
+            if (*pix != TPixel32(0, 0, 0, 0))
+              *pix = TPixel32(255, 255, 255, 255);
+            pix++;
+          }
+        }
+        tmp_ras->unlock();
+
         if (info.m_invertedMask)
-          TRop::ropout(rasOut, rasIn, rasOut);
+          TRop::ropout(rasOut, tmp_ras, rasOut);
         else
-          TRop::ropin(rasOut, rasIn, rasOut);
+          TRop::ropin(rasOut, tmp_ras, rasOut);
       } else
         TRop::copy(rasOut, rasIn);
       return dst_ras;
@@ -1133,6 +1150,21 @@ TRasterP TRasterFx::applyAffine(TTile &tileOut, const TTile &tileIn,
     TRasterP tmp_ras(dst_ras->clone());
     tmp_ras->clear();
     TRop::resample(tmp_ras, src_ras, rasterAff, qual);
+
+    // Set used pixels to full color/alpha for masking purposes
+    tmp_ras->lock();
+    int lx = tmp_ras->getLx();
+    for (int y = 0; y < tmp_ras->getLy(); y++) {
+      unsigned char *rawdata = (unsigned char *)tmp_ras->getRawData(0, y);
+      TPixel32 *pix          = (TPixel32 *)rawdata;
+      TPixel32 *pixEnd       = pix + lx;
+      while (pix < pixEnd) {
+        if (*pix != TPixel32(0, 0, 0, 0)) *pix = TPixel32(255, 255, 255, 255);
+        pix++;
+      }
+    }
+    tmp_ras->unlock();
+
     if (info.m_invertedMask)
       TRop::ropout(dst_ras, tmp_ras, dst_ras);
     else
