@@ -747,7 +747,8 @@ void TSop::convert(TSoundTrackP &dst, const TSoundTrackP &src) {
     dst_bits  = dst->getBitPerSample();
 
     if (src_chans == dst_chans && src_bits == dst_bits)
-      if (src->isSampleSigned() == dst->isSampleSigned())
+      if (src->isSampleSigned() == dst->isSampleSigned() &&
+          src->getSampleType() == dst->getSampleType())
         order = RESORDER_RATE;
       else
         order = RESORDER_SIGN;
