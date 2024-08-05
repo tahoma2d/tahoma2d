@@ -255,7 +255,7 @@ QFrame *ProjectPopup::createSettingsBox() {
 
 //-----------------------------------------------------------------------------
 
-void ProjectPopup::updateFieldsFromProject(TProject *project) {
+void ProjectPopup::updateFieldsFromProject(std::shared_ptr<TProject> project) {
   m_nameFld->setText(toQString(project->getName()));
   m_nameAsLabel->setText(toQString(project->getName()));
   int i;
@@ -294,7 +294,7 @@ void ProjectPopup::updateFieldsFromProject(TProject *project) {
 
 //-----------------------------------------------------------------------------
 
-void ProjectPopup::updateProjectFromFields(TProject *project) {
+void ProjectPopup::updateProjectFromFields(std::shared_ptr<TProject> project) {
   int i;
   for (i = 0; i < m_folderFlds.size(); i++) {
     std::string folderName = m_folderFlds[i].first;
@@ -331,15 +331,15 @@ void ProjectPopup::updateProjectFromFields(TProject *project) {
 //-----------------------------------------------------------------------------
 
 void ProjectPopup::onProjectSwitched() {
-  TProjectP currentProject = TProjectManager::instance()->getCurrentProject();
-  updateFieldsFromProject(currentProject.getPointer());
+  auto currentProject = TProjectManager::instance()->getCurrentProject();
+  updateFieldsFromProject(currentProject);
 }
 
 //-----------------------------------------------------------------------------
 
 void ProjectPopup::showEvent(QShowEvent *) {
-  TProjectP currentProject = TProjectManager::instance()->getCurrentProject();
-  updateFieldsFromProject(currentProject.getPointer());
+  auto currentProject = TProjectManager::instance()->getCurrentProject();
+  updateFieldsFromProject(currentProject);
 }
 
 //-----------------------------------------------------------------------------
@@ -454,16 +454,15 @@ void ProjectSettingsPopup::projectChanged() {
 
   pm->setCurrentProjectPath(path);
 
-  TProject *projectP =
-      TProjectManager::instance()->getCurrentProject().getPointer();
+  auto project = TProjectManager::instance()->getCurrentProject();
 
   // In case the project file was upgraded to current version, save it now
-  if (projectP->getProjectPath() != path) {
-    projectP->save();
+  if (project->getProjectPath() != path) {
+    project->save();
   }
   RecentFiles::instance()->addFilePath(path.getParentDir().getQString(),
                                        RecentFiles::Project);
-  updateFieldsFromProject(projectP);
+  updateFieldsFromProject(project);
   IoCmd::newScene();
   accept();
 }
@@ -479,15 +478,15 @@ void ProjectSettingsPopup::onProjectChanged() {
                                     ->getProjectFolder()
                                     .getQString());
   m_projectLocationFld->blockSignals(false);
-  TProjectP currentProject = TProjectManager::instance()->getCurrentProject();
-  updateFieldsFromProject(currentProject.getPointer());
+  auto currentProject = TProjectManager::instance()->getCurrentProject();
+  updateFieldsFromProject(currentProject);
 }
 
 //-----------------------------------------------------------------------------
 
 void ProjectSettingsPopup::onSomethingChanged() {
-  TProjectP project = TProjectManager::instance()->getCurrentProject();
-  updateProjectFromFields(project.getPointer());
+  auto project = TProjectManager::instance()->getCurrentProject();
+  updateProjectFromFields(project);
   try {
     project->save();
   } catch (TSystemException se) {
@@ -503,8 +502,8 @@ void ProjectSettingsPopup::onSomethingChanged() {
 //-----------------------------------------------------------------------------
 
 void ProjectSettingsPopup::showEvent(QShowEvent *) {
-  TProjectP currentProject = TProjectManager::instance()->getCurrentProject();
-  updateFieldsFromProject(currentProject.getPointer());
+  auto currentProject = TProjectManager::instance()->getCurrentProject();
+  updateFieldsFromProject(currentProject);
 
   QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
   sizePolicy.setHorizontalStretch(0);
@@ -602,9 +601,9 @@ void ProjectCreatePopup::createProject() {
     return;
   }
 
-  TProject *project = new TProject();
+  auto project            = std::shared_ptr<TProject>();
   updateProjectFromFields(project);
-  TProjectP currentProject = pm->getCurrentProject();
+  auto currentProject = pm->getCurrentProject();
   project->setSceneProperties(currentProject->getSceneProperties());
   try {
     bool isSaved = project->save(projectPath);
@@ -733,12 +732,11 @@ public:
 
     pm->setCurrentProjectPath(path);
 
-    TProject *projectP =
-        TProjectManager::instance()->getCurrentProject().getPointer();
+    auto project = TProjectManager::instance()->getCurrentProject();
 
     // In case the project file was upgraded to current version, save it now
-    if (projectP->getProjectPath() != path) {
-      projectP->save();
+    if (project->getProjectPath() != path) {
+      project->save();
     }
     RecentFiles::instance()->addFilePath(fp.getQString(), RecentFiles::Project);
     IoCmd::newScene();
@@ -778,12 +776,11 @@ public:
 
     pm->setCurrentProjectPath(path);
 
-    TProject *projectP =
-        TProjectManager::instance()->getCurrentProject().getPointer();
+    auto project = TProjectManager::instance()->getCurrentProject();
 
     // In case the project file was upgraded to current version, save it now
-    if (projectP->getProjectPath() != path) {
-      projectP->save();
+    if (project->getProjectPath() != path) {
+      project->save();
     }
     RecentFiles::instance()->addFilePath(fp.getQString(), RecentFiles::Project);
     IoCmd::newScene();

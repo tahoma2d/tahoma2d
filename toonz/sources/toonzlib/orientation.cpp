@@ -481,9 +481,9 @@ TopToBottomOrientation::TopToBottomOrientation() {
   static int HDRROW3;
   static int HDRROW4;
   static int HDRROW5;
-  QRect layername, eyeArea, previewArea, lockArea, cameraLockArea, configArea,
-      cameraConfigArea, thumbnailArea, thumbnail, cameraIconArea, pegbarname,
-      volumeArea;
+  QRect layername, eyeArea, previewArea, unifiedViewArea, lockArea,
+      cameraLockArea, configArea, cameraConfigArea, thumbnailArea, thumbnail,
+      cameraIconArea, pegbarname, volumeArea;
   QPoint soundTopLeft;
 
   if (layout == QString("Minimum")) {
@@ -515,6 +515,12 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addRect(PredefinedRect::PREVIEW_LAYER_AREA, previewArea);
     addRect(PredefinedRect::PREVIEW_LAYER,
             iconRect(previewArea, ICON_WIDTH, ICON_HEIGHT - 1, 1));
+
+    unifiedViewArea = QRect(
+        INDENT, HDRROW2, eyeArea.width() + previewArea.width(), HDRROW_HEIGHT);
+    addRect(PredefinedRect::UNIFIEDVIEW_LAYER_AREA, unifiedViewArea);
+    addRect(PredefinedRect::UNIFIEDVIEW_LAYER,
+            iconRect(unifiedViewArea, ICON_WIDTH, ICON_HEIGHT - 1, 1));
 
     addRect(PredefinedRect::LOCK_AREA, QRect(0, 0, -1, -1));
     addRect(PredefinedRect::LOCK, QRect(0, 0, -1, -1));
@@ -613,6 +619,12 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addRect(PredefinedRect::PREVIEW_LAYER_AREA, previewArea);
     addRect(PredefinedRect::PREVIEW_LAYER,
             iconRect(previewArea, ICON_WIDTH, ICON_HEIGHT - 1, 1));
+
+    unifiedViewArea = QRect(
+        INDENT, HDRROW2, eyeArea.width() + previewArea.width(), HDRROW_HEIGHT);
+    addRect(PredefinedRect::UNIFIEDVIEW_LAYER_AREA, unifiedViewArea);
+    addRect(PredefinedRect::UNIFIEDVIEW_LAYER,
+            iconRect(unifiedViewArea, ICON_WIDTH, ICON_HEIGHT - 1, 1));
 
     lockArea = QRect(INDENT + eyeArea.width() + previewArea.width(), HDRROW2,
                      ICON_WIDTH, HDRROW_HEIGHT);
@@ -742,6 +754,12 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addRect(PredefinedRect::PREVIEW_LAYER,
             iconRect(previewArea, ICON_WIDTH, ICON_HEIGHT - 1, 1));
 
+    unifiedViewArea =
+        QRect(INDENT, HDRROW2, CELL_WIDTH - ICON_WIDTH, HDRROW_HEIGHT * 2);
+    addRect(PredefinedRect::UNIFIEDVIEW_LAYER_AREA, unifiedViewArea);
+    addRect(PredefinedRect::UNIFIEDVIEW_LAYER,
+            iconRect(unifiedViewArea, ICON_WIDTH, ICON_HEIGHT - 1, 1));
+
     lockArea =
         QRect(INDENT + eyeArea.width(), HDRROW2, ICON_WIDTH, HDRROW_HEIGHT);
     addRect(PredefinedRect::LOCK_AREA, lockArea);
@@ -869,6 +887,13 @@ TopToBottomOrientation::TopToBottomOrientation() {
     addRect(PredefinedRect::PREVIEW_LAYER_AREA, previewArea);
     addRect(PredefinedRect::PREVIEW_LAYER,
             previewArea.adjusted(previewArea.width() - ICON_WIDTH, 0, 0, 0));
+
+    unifiedViewArea =
+        QRect(INDENT, HDRROW2, CELL_WIDTH - INDENT - 2, HDRROW_HEIGHT - 1);
+    addRect(PredefinedRect::UNIFIEDVIEW_LAYER_AREA, unifiedViewArea);
+    addRect(PredefinedRect::UNIFIEDVIEW_LAYER,
+            unifiedViewArea.adjusted(unifiedViewArea.width() - ICON_WIDTH, 0, 0,
+                                     0));
 
     lockArea = QRect(INDENT, HDRROW2, ICON_WIDTH - 1, HDRROW_HEIGHT - 1);
     addRect(PredefinedRect::LOCK_AREA, lockArea);
@@ -1407,6 +1432,10 @@ LeftToRightOrientation::LeftToRightOrientation(QString layout) {
           eyeArea.translated(ICON_OFFSET, 0));
   addRect(PredefinedRect::PREVIEW_LAYER,
           eye.translated(ICON_OFFSET, 0).adjusted(1, 1, -1, -1));
+
+  addRect(PredefinedRect::UNIFIEDVIEW_LAYER_AREA, eyeArea);
+  addRect(PredefinedRect::UNIFIEDVIEW_LAYER, eye.adjusted(1, 1, -1, -1));
+
   addRect(PredefinedRect::LOCK_AREA, eyeArea.translated(2 * ICON_OFFSET, 0));
   addRect(PredefinedRect::LOCK,
           eye.translated(2 * ICON_OFFSET, 0).adjusted(1, 1, -1, -1));

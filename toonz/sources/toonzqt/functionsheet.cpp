@@ -403,7 +403,7 @@ void FunctionSheetColumnHeadViewer::paintEvent(QPaintEvent *e) {
                        getViewer()->getColumnHeaderBorderColor());
 
     // channel name
-    painter.setPen(getViewer()->getTextColor());
+    painter.setPen(getViewer()->getChannelNameTextColor());
     if (channel->isCurrent())
       painter.setPen(m_sheet->getViewer()->getCurrentTextColor());
 
@@ -424,7 +424,7 @@ void FunctionSheetColumnHeadViewer::paintEvent(QPaintEvent *e) {
     // group name
     if (lastGroupColumn) {
       int tmpwidth = width * groupChannelCount;
-      painter.setPen(getViewer()->getTextColor());
+      painter.setPen(getViewer()->getGroupNameTextColor());
       if (group == currentGroup)
         painter.setPen(m_sheet->getViewer()->getCurrentTextColor());
       text = group->getLongName();
@@ -841,7 +841,7 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
         if (drawValue == Key || drawValue == Inbetween)
           painter.setPen(getViewer()->getTextColor());
         else {
-          QColor semiTranspTextColor = getViewer()->getTextColor();
+          QColor semiTranspTextColor = getViewer()->getKeyframeLineColor();
           semiTranspTextColor.setAlpha(128);
           painter.setPen(semiTranspTextColor);
         }
@@ -889,8 +889,9 @@ void FunctionSheetCellViewer::drawCells(QPainter &painter, int r0, int c0,
       int qx             = x0 + 4;
       int qy             = m_sheet->rowToY(kr1 + 1);
       int zig            = 2;
-      QColor zigzagColor = (isStageObjectCycled) ? getViewer()->getTextColor()
-                                                 : KeyFrameBorderColor;
+      QColor zigzagColor = (isStageObjectCycled)
+                               ? getViewer()->getKeyframeLineColor()
+                               : KeyFrameBorderColor;
       painter.setPen(zigzagColor);
       painter.drawLine(QPoint(qx, qy), QPoint(qx - zig, qy + zig));
       qy += zig;

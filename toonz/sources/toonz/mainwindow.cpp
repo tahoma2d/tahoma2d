@@ -535,7 +535,7 @@ void MainWindow::changeWindowTitle() {
   ToonzScene *scene = app->getCurrentScene()->getScene();
   if (!scene) return;
 
-  TProject *project   = scene->getProject();
+  auto project = scene->getProject();
   QString projectName = QString::fromStdString(project->getName().getName());
 
   QString sceneName = QString::fromStdWString(scene->getSceneName());
@@ -1038,8 +1038,13 @@ void MainWindow::onUndo() {
   while (TApp::instance()->isSaveInProgress())
     ;
 
-  bool ret = TUndoManager::manager()->undo();
-  if (!ret) DVGui::error(QObject::tr("No more Undo operations available."));
+  ToolHandle *toolH = TApp::instance()->getCurrentTool();
+
+  // do not use undo if tool is currently in use
+  if (toolH->getTool()->isUndoable()) {
+    bool ret = TUndoManager::manager()->undo();
+    if (!ret) DVGui::error(QObject::tr("No more Undo operations available."));
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -3268,6 +3273,12 @@ void MainWindow::defineActions() {
                                              tr("Exit Full Screen Mode"));
   createViewerAction(MI_CompareToSnapshot, QT_TR_NOOP("Compare to Snapshot"),
                      "");
+  createViewerAction(MI_ZoomInAndFitPanel,
+                     QT_TR_NOOP("Zoom In And Fit Floating Panel"),
+                     "Ctrl+Alt++");
+  createViewerAction(MI_ZoomOutAndFitPanel,
+                     QT_TR_NOOP("Zoom Out And Fit Floating Panel"),
+                     "Ctrl+Alt+-");
   menuAct = createToggle(MI_ShowStatusBar, QT_TR_NOOP("&Show Status Bar"), "",
                          ShowStatusBarAction ? 1 : 0, MenuViewCommandType);
   connect(menuAct, SIGNAL(triggered(bool)), this, SLOT(toggleStatusBar(bool)));

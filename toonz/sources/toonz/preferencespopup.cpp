@@ -11,6 +11,7 @@
 #include "formatsettingspopups.h"
 #include "tenv.h"
 #include "mainwindow.h"
+#include "columncommand.h"
 
 // TnzQt includes
 #include "toonzqt/tabbar.h"
@@ -754,6 +755,18 @@ void PreferencesPopup::onShowDragBarsChanged() {
 
 //-----------------------------------------------------------------------------
 
+void PreferencesPopup::onUnifyColumnVisibilityTogglesChanged() {
+  // Check if any column has visibility toggles with different states and the
+  // "unify visibility toggles" option is enabled
+  if (Preferences::instance()->isUnifyColumnVisibilityTogglesEnabled())
+    ColumnCmd::unifyColumnVisibilityToggles();
+
+  TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
+      "unifyColumnVisibilityToggles");
+}
+
+//-----------------------------------------------------------------------------
+
 void PreferencesPopup::onModifyExpressionOnMovingReferencesChanged() {
   TApp::instance()->getCurrentScene()->notifyPreferenceChanged(
       "modifyExpressionOnMovingReferences");
@@ -1420,6 +1433,8 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {showXsheetBreadcrumbs, tr("Show Sub-Scene Navigation Bar")},
       {expandFunctionHeader, tr("Expand Function Editor Header to Match Xsheet Header Height*")},
       {showColumnNumbers, tr("Show Column Numbers")},
+      {unifyColumnVisibilityToggles,
+       tr("Unify Preview and Camstand Visibility Toggles")},
       {parentColorsInXsheetColumn,
        tr("Show Column Parent's Color in the Xsheet")},
       {highlightLineEverySecond, tr("Highlight Line Every Second")},
@@ -1581,7 +1596,9 @@ QList<ComboBoxItem> PreferencesPopup::getComboItemList(
         {tr("Display on Column Header"),
          Preferences::ShowLevelNameOnColumnHeader}}},
       {DragCellsBehaviour,
-       {{tr("Cells Only"), 0}, {tr("Cells and Column Data"), 1}}},
+       {{tr("Cells Only"), 0},
+        {tr("Cells and Column Data"), 1},
+        {tr("Disable Dragging Cells"), 2}}},
       {pasteCellsBehavior,
        {{tr("Insert Paste Whole Data"), 0},
         {tr("Overwrite Paste Cell Numbers"), 1}}},
@@ -2185,6 +2202,7 @@ QWidget* PreferencesPopup::createXsheetPage() {
     insertUI(expandFunctionHeader, xshToolbarLay);
   }
   insertUI(showColumnNumbers, lay);
+  insertUI(unifyColumnVisibilityToggles, lay);
   insertUI(parentColorsInXsheetColumn, lay);
   insertUI(highlightLineEverySecond, lay);
   if (Preferences::instance()->isShowAdvancedOptionsEnabled()) {
@@ -2204,6 +2222,9 @@ QWidget* PreferencesPopup::createXsheetPage() {
                            &PreferencesPopup::onShowKeyframesOnCellAreaChanged);
   m_onEditedFuncMap.insert(showXsheetCameraColumn,
                            &PreferencesPopup::onShowKeyframesOnCellAreaChanged);
+  m_onEditedFuncMap.insert(
+      unifyColumnVisibilityToggles,
+      &PreferencesPopup::onUnifyColumnVisibilityTogglesChanged);
   m_onEditedFuncMap.insert(showQuickToolbar,
                            &PreferencesPopup::onShowQuickToolbarClicked);
   m_onEditedFuncMap.insert(showXsheetBreadcrumbs,

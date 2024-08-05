@@ -302,7 +302,7 @@ Please try raising the FFmpeg timeout in Preferences.</source>
     </message>
     <message>
         <location filename="../../image/sgi/filesgi.cpp" line="1235"/>
-        <source>Endianess</source>
+        <source>Endianness</source>
         <translation>Порядок байтов</translation>
     </message>
     <message>
@@ -591,7 +591,7 @@ Please try raising the FFmpeg timeout in Preferences.</source>
         <translation type="vanished">8 бита (оттенки серого)</translation>
     </message>
     <message>
-        <source>Endianess</source>
+        <source>Endianness</source>
         <translation type="vanished">Порядок байтов</translation>
     </message>
     <message>

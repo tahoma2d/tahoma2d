@@ -214,6 +214,10 @@ class DVAPI SchematicViewer final : public QWidget {
   QColor m_textColor;  // text color (black)
   Q_PROPERTY(QColor TextColor READ getTextColor WRITE setTextColor)
 
+  QColor m_passThroughTextColor;  // text outside of the node rect
+  Q_PROPERTY(QColor PassThroughTextColor READ getPassThroughTextColor WRITE
+                 setPassThroughTextColor)
+
   QColor m_verticalLineColor;
   Q_PROPERTY(QColor VerticalLineColor READ getVerticalLineColor WRITE
                  setVerticalLineColor)
@@ -387,6 +391,11 @@ public:
 
   void setTextColor(const QColor &color) { m_textColor = color; }
   QColor getTextColor() const { return m_textColor; }
+
+  void setPassThroughTextColor(const QColor &color) {
+    m_passThroughTextColor = color;
+  }
+  QColor getPassThroughTextColor() const { return m_passThroughTextColor; }
 
   void setVerticalLineColor(const QColor &color) {
     m_verticalLineColor = color;

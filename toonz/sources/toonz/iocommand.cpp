@@ -22,6 +22,7 @@
 #include "xdtsio.h"
 #include "expressionreferencemanager.h"
 #include "levelcommand.h"
+#include "columncommand.h"
 
 // TnzTools includes
 #include "tools/toolhandle.h"
@@ -805,7 +806,7 @@ void ChildLevelResourceImporter::process(TXshSoundLevel *sl) {
 TXshLevel *loadChildLevel(ToonzScene *parentScene, TFilePath actualPath,
                           int row, int &col,
                           ResourceImportDialog &importStrategy) {
-  TProjectP project = TProjectManager::instance()->loadSceneProject(actualPath);
+  auto project = TProjectManager::instance()->loadSceneProject(actualPath);
 
   // In Tab mode we don't need the project. Otherwise if it is not available
   // we must exit
@@ -814,7 +815,7 @@ TXshLevel *loadChildLevel(ToonzScene *parentScene, TFilePath actualPath,
   // load the subxsheet
   ToonzScene scene;
   scene.loadTnzFile(actualPath);
-  scene.setProject(project.getPointer());
+  scene.setProject(project);
   std::wstring subSceneName = actualPath.getWideName();
 
   // camera settings. get the child camera ...
@@ -1270,7 +1271,6 @@ inline TPaletteP dirtyWhite(const TPaletteP &plt) {
   return out;
 }
 
-//---------------------------------------------------------------------------
 }  // namespace
 //---------------------------------------------------------------------------
 
@@ -1912,19 +1912,17 @@ bool IoCmd::loadScene(ToonzScene &scene, const TFilePath &scenePath,
   if (!TSystem::doesExistFileOrLevel(scenePath)) return false;
   scene.load(scenePath);
   // import if needed
-  TProjectManager *pm      = TProjectManager::instance();
-  TProjectP currentProject = pm->getCurrentProject();
+  auto currentProject = TProjectManager::instance()->getCurrentProject();
   if (!scene.getProject()) return false;
   if (scene.getProject()->getProjectPath() !=
       currentProject->getProjectPath()) {
     ResourceImportDialog resourceLoader;
     // resourceLoader.setImportEnabled(true);
-    ResourceImporter importer(&scene, currentProject.getPointer(),
-                              resourceLoader);
+    ResourceImporter importer(&scene, currentProject, resourceLoader);
     SceneResources resources(&scene, scene.getXsheet());
     resources.accept(&importer);
     scene.setScenePath(importer.getImportedScenePath());
-    scene.setProject(currentProject.getPointer());
+    scene.setProject(currentProject);
   }
   return true;
 }
@@ -1972,8 +1970,8 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
       TSystem::removeFileOrLevel(scenePathTemp);
   }
 
-  TProjectManager *pm    = TProjectManager::instance();
-  TProjectP sceneProject = pm->loadSceneProject(scenePath);
+  TProjectManager *pm = TProjectManager::instance();
+  auto sceneProject = pm->loadSceneProject(scenePath);
   if (!sceneProject) {
     QString msg;
     msg = QObject::tr(
@@ -2048,18 +2046,17 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
       scene->load(scenePath);
     // import if needed
     TProjectManager *pm      = TProjectManager::instance();
-    TProjectP currentProject = pm->getCurrentProject();
+    auto currentProject = pm->getCurrentProject();
     if (!scene->getProject() ||
         scene->getProject()->getProjectPath() !=
             currentProject->getProjectPath()) {
       ResourceImportDialog resourceLoader;
       // resourceLoader.setImportEnabled(true);
-      ResourceImporter importer(scene, currentProject.getPointer(),
-                                resourceLoader);
+      ResourceImporter importer(scene, currentProject, resourceLoader);
       SceneResources resources(scene, scene->getXsheet());
       resources.accept(&importer);
       scene->setScenePath(importer.getImportedScenePath());
-      scene->setProject(currentProject.getPointer());
+      scene->setProject(currentProject);
     }
     VersionControlManager::instance()->setFrameRange(scene->getLevelSet());
   } catch (...) {
@@ -2072,9 +2069,9 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
     DVGui::warning(msg);
   }
   printf("%s:%s end load:\n", __FILE__, __FUNCTION__);
-  TProject *project = scene->getProject();
+  auto project = scene->getProject();
   if (!project) {
-    project = new TProject();
+    project = std::make_shared<TProject>();
     project->setFolder("project", scenePath);
     scene->setProject(project);
   }
@@ -2184,6 +2181,11 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
       app->getCurrentScene()->setDirtyFlag(true);
     }
   }
+
+  // Check if any column has visibility toggles with different states and the
+  // "unify visibility toggles" option is enabled
+  if (Preferences::instance()->isUnifyColumnVisibilityTogglesEnabled())
+    ColumnCmd::unifyColumnVisibilityToggles();
 
   // caching raster levels
   int cacheRasterBehavior =

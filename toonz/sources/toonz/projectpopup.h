@@ -59,8 +59,8 @@ public:
   // da TProjectManager::Listener
   void onProjectChanged() override {}
 
-  void updateProjectFromFields(TProject *);
-  void updateFieldsFromProject(TProject *);
+  void updateProjectFromFields(std::shared_ptr<TProject>);
+  void updateFieldsFromProject(std::shared_ptr<TProject>);
 
   QFrame *createSettingsBox();
 

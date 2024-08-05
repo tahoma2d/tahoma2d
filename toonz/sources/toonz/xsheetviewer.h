@@ -41,7 +41,8 @@ enum TXshButtonType {
   CAMSTAND_TRANSP_XSHBUTTON,
   LOCK_ON_XSHBUTTON,
   LOCK_OFF_XSHBUTTON,
-  CONFIG_XSHBUTTON
+  CONFIG_XSHBUTTON,
+  UNIFIED_TRANSP_XSHBUTTON
 };
 
 namespace XsheetGUI {
@@ -218,6 +219,8 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   QColor m_textColor;                // text color (black)
   QColor m_errorTextColor;           // error text color (red, probably)
   QColor m_selectedTextColor;        // text color for the selected cells
+  QColor m_frameTextColor;           // text color for frame numbers
+  QColor m_keyframeLineColor;        // color of keyframe lines
   QColor m_currentFrameTextColor;    // text color for the current frame row
   QColor m_previewFrameTextColor;    // frame number in preview range (blue)
   QColor m_onionSkinAreaBgColor;
@@ -241,6 +244,10 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
                  setCurrentFrameTextColor)
   Q_PROPERTY(QColor SelectedTextColor READ getSelectedTextColor WRITE
                  setSelectedTextColor)
+  Q_PROPERTY(QColor FrameTextColor READ getFrameTextColor WRITE
+                 setFrameTextColor)
+  Q_PROPERTY(QColor KeyframeLineColor READ getKeyframeLineColor WRITE
+                 setKeyframeLineColor)
   Q_PROPERTY(QColor PreviewFrameTextColor READ getPreviewFrameTextColor WRITE
                  setPreviewFrameTextColor)
   Q_PROPERTY(QColor OnionSkinAreaBgColor READ getOnionSkinAreaBgColor WRITE
@@ -248,6 +255,13 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   Q_PROPERTY(QColor FrameRangeMarkerLineColor READ getFrameRangeMarkerLineColor
                  WRITE setFrameRangeMarkerLineColor)
   // Column
+  QColor m_columnTextColor;
+  Q_PROPERTY(QColor ColumnTextColor READ getColumnTextColor WRITE
+                 setColumnTextColor)
+  QColor m_highlightColumnTextColor;
+  Q_PROPERTY(QColor HighlightColumnTextColor READ
+                 getHighlightColumnTextColor WRITE
+                 setHighlightColumnTextColor)
   QColor m_emptyColumnHeadColor;  // empty column header (200,200,200)
   Q_PROPERTY(QColor EmptyColumnHeadColor READ getEmptyColumnHeadColor WRITE
                  setEmptyColumnHeadColor)
@@ -256,12 +270,14 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   QColor m_emptyCellColor;          // empty cell (124,124,124)
   QColor m_notEmptyColumnColor;     // occupied column (164,164,164)
   QColor m_selectedEmptyCellColor;  // selected empty cell (210,210,210)
+  QColor m_levelEndColor;           // end level cross
   Q_PROPERTY(
       QColor EmptyCellColor READ getEmptyCellColor WRITE setEmptyCellColor)
   Q_PROPERTY(QColor NotEmptyColumnColor READ getNotEmptyColumnColor WRITE
                  setNotEmptyColumnColor)
   Q_PROPERTY(QColor SelectedEmptyCellColor READ getSelectedEmptyCellColor WRITE
                  setSelectedEmptyCellColor)
+  Q_PROPERTY(QColor LevelEndColor READ getLevelEndColor WRITE setLevelEndColor)
 
   // Cell focus
   //  QColor m_cellFocusColor;
@@ -450,6 +466,7 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   QString m_xsheetPreviewButtonOnImage;
   QColor m_xsheetPreviewButtonBgOffColor;
   QString m_xsheetPreviewButtonOffImage;
+  QString m_xsheetUnifiedButtonTranspImage;
   Q_PROPERTY(
       QColor XsheetPreviewButtonBgOnColor READ getXsheetPreviewButtonBgOnColor
           WRITE setXsheetPreviewButtonBgOnColor)
@@ -462,6 +479,9 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   Q_PROPERTY(
       QString XsheetPreviewButtonOffImage READ getXsheetPreviewButtonOffImage
           WRITE setXsheetPreviewButtonOffImage)
+  Q_PROPERTY(QString XsheetUnifiedButtonTranspImage READ
+                 getXsheetUnifiedButtonTranspImage WRITE
+                     setXsheetUnifiedButtonTranspImage)
   // Xsheet Camstand Button
   QColor m_xsheetCamstandButtonBgOnColor;
   QString m_xsheetCamstandButtonOnImage;
@@ -509,6 +529,7 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   QString m_timelinePreviewButtonOnImage;
   QColor m_timelinePreviewButtonBgOffColor;
   QString m_timelinePreviewButtonOffImage;
+  QString m_timelineUnifiedButtonTranspImage;
   Q_PROPERTY(QColor TimelinePreviewButtonBgOnColor READ
                  getTimelinePreviewButtonBgOnColor WRITE
                      setTimelinePreviewButtonBgOnColor)
@@ -521,6 +542,9 @@ class XsheetViewer final : public QFrame, public SaveLoadQSettings {
   Q_PROPERTY(
       QString TimelinePreviewButtonOffImage READ getTimelinePreviewButtonOffImage
           WRITE setTimelinePreviewButtonOffImage)
+  Q_PROPERTY(QString TimelineUnifiedButtonTranspImage READ
+                 getTimelineUnifiedButtonTranspImage WRITE
+                     setTimelineUnifiedButtonTranspImage)
   // Timeline Camstand Button
   QColor m_timelineCamstandButtonBgOnColor;
   QString m_timelineCamstandButtonOnImage;
@@ -835,8 +859,16 @@ public:
     m_selectedTextColor = color;
   }
   QColor getSelectedTextColor() const { return m_selectedTextColor; }
+  void setFrameTextColor(const QColor &color) {
+    m_frameTextColor = color;
+  }
+  QColor getFrameTextColor() const { return m_frameTextColor; }
   void setCurrentFrameTextColor(const QColor &color) {
     m_currentFrameTextColor = color;
+  }
+  QColor getKeyframeLineColor() const { return m_keyframeLineColor; }
+  void setKeyframeLineColor(const QColor &color) {
+    m_keyframeLineColor = color;
   }
   QColor getCurrentFrameTextColor() const { return m_currentFrameTextColor; }
   void setPreviewFrameTextColor(const QColor &color) {
@@ -849,6 +881,18 @@ public:
   QColor getOnionSkinAreaBgColor() const { return m_onionSkinAreaBgColor; }
 
   // Column
+  void setColumnTextColor(const QColor &color) {
+    m_columnTextColor = color;
+  }
+  QColor getColumnTextColor() const {
+    return m_columnTextColor;
+  }
+  void setHighlightColumnTextColor(const QColor &color) {
+    m_highlightColumnTextColor = color;
+  }
+  QColor getHighlightColumnTextColor() const {
+    return m_highlightColumnTextColor;
+  }
   void setEmptyColumnHeadColor(const QColor &color) {
     m_emptyColumnHeadColor = color;
   }
@@ -868,6 +912,8 @@ public:
     m_selectedEmptyCellColor = color;
   }
   QColor getSelectedEmptyCellColor() const { return m_selectedEmptyCellColor; }
+  void setLevelEndColor(const QColor &color) { m_levelEndColor = color; }
+  QColor getLevelEndColor() const { return m_levelEndColor; }
 
   // Cell focus
   //  void setCellFocusColor(const QColor &color) { m_cellFocusColor = color; }
@@ -1115,6 +1161,9 @@ public:
   void setXsheetPreviewButtonOffImage(const QString &svgFIlePath) {
     m_xsheetPreviewButtonOffImage = svgFIlePath;
   }
+  void setXsheetUnifiedButtonTranspImage(const QString &svgFIlePath) {
+    m_xsheetUnifiedButtonTranspImage = svgFIlePath;
+  }
   QColor getXsheetPreviewButtonBgOnColor() const {
     return m_xsheetPreviewButtonBgOnColor;
   }
@@ -1126,6 +1175,9 @@ public:
   }
   QString getXsheetPreviewButtonOffImage() const {
     return m_xsheetPreviewButtonOffImage;
+  }
+  QString getXsheetUnifiedButtonTranspImage() const {
+    return m_xsheetUnifiedButtonTranspImage;
   }
   // Xsheet Camstand Button
   void setXsheetCamstandButtonBgOnColor(const QColor &color) {
@@ -1209,6 +1261,9 @@ public:
   void setTimelinePreviewButtonOffImage(const QString &svgFIlePath) {
     m_timelinePreviewButtonOffImage = svgFIlePath;
   }
+  void setTimelineUnifiedButtonTranspImage(const QString &svgFIlePath) {
+    m_timelineUnifiedButtonTranspImage = svgFIlePath;
+  }
   QColor getTimelinePreviewButtonBgOnColor() const {
     return m_timelinePreviewButtonBgOnColor;
   }
@@ -1220,6 +1275,9 @@ public:
   }
   QString getTimelinePreviewButtonOffImage() const {
     return m_timelinePreviewButtonOffImage;
+  }
+  QString getTimelineUnifiedButtonTranspImage() const {
+    return m_timelineUnifiedButtonTranspImage;
   }
   // Timeline Camstand Button
   void setTimelineCamstandButtonBgOnColor(const QColor &color) {

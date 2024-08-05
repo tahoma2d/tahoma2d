@@ -388,7 +388,7 @@ void RowArea::drawRows(QPainter &p, int r0, int r1) {
     }
     // not in preview range
     else
-      p.setPen(m_viewer->getTextColor());
+      p.setPen(m_viewer->getFrameTextColor());
 
     QPoint basePoint = m_viewer->positionToXY(CellPosition(r, -1));
     if (!o->isVerticalTimeline())

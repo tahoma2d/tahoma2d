@@ -546,7 +546,7 @@ void StartupPopup::onProjectComboChanged(int index) {
 
   pm->setCurrentProjectPath(projectFp);
 
-  TProjectP currentProject = pm->getCurrentProject();
+  auto currentProject = pm->getCurrentProject();
 
   // In case the project file was upgraded to current version, save it now
   if (currentProject->getProjectPath() != projectFp) {
@@ -752,8 +752,7 @@ void StartupPopup::onProjectLocationChanged() {
     TProjectManager *pm   = TProjectManager::instance();
     TFilePath projectPath = pm->projectFolderToProjectPath(path);
     pm->setCurrentProjectPath(projectPath);
-    TProject *projectP =
-        TProjectManager::instance()->getCurrentProject().getPointer();
+    auto projectP = TProjectManager::instance()->getCurrentProject();
 
     // In case the project file was upgraded to current version, save it now
     if (projectP->getProjectPath() != projectPath) {
@@ -774,7 +773,7 @@ void StartupPopup::onProjectChanged(int index) {
   TProjectManager *pm = TProjectManager::instance();
   pm->setCurrentProjectPath(projectFp);
 
-  TProjectP currentProject = pm->getCurrentProject();
+  auto currentProject = pm->getCurrentProject();
 
   // In case the project file was upgraded to current version, save it now
   if (currentProject->getProjectPath() != projectFp) {

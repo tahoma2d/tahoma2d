@@ -27,15 +27,18 @@ Ffmpeg::Ffmpeg() {
 Ffmpeg::~Ffmpeg() {}
 
 bool Ffmpeg::checkFormat(std::string format) {
-  QStringList args;
-  args << "-formats";
-  QProcess ffmpeg;
-  ThirdParty::runFFmpeg(ffmpeg, args);
-  ffmpeg.waitForFinished();
-  QString results = ffmpeg.readAllStandardError();
-  results += ffmpeg.readAllStandardOutput();
-  ffmpeg.close();
-  std::string strResults = results.toStdString();
+  static std::string strResults = "";
+  if (strResults.empty()) {
+    QStringList args;
+    args << "-formats";
+    QProcess ffmpeg;
+    ThirdParty::runFFmpeg(ffmpeg, args);
+    ffmpeg.waitForFinished();
+    QString results = ffmpeg.readAllStandardError();
+    results += ffmpeg.readAllStandardOutput();
+    ffmpeg.close();
+    strResults = results.toStdString();
+  }
   std::string::size_type n;
   n = strResults.find(format);
   if (n != std::string::npos)

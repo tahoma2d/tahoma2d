@@ -1511,6 +1511,9 @@ void CellArea::drawExtenderHandles(QPainter &p) {
   TCellSelection *cellSelection = m_viewer->getCellSelection();
   if (cellSelection->isEmpty() || m_viewer->areSoundCellsSelected()) return;
 
+  // if the drag move is disabled, the extender handles won't appear
+  if (Preferences::instance()->getDragCellsBehaviour() == 2) return;
+
   int selRow0, selCol0, selRow1, selCol1;
   cellSelection->getSelectedCells(selRow0, selCol0, selRow1, selCol1);
 
@@ -1961,7 +1964,7 @@ void CellArea::drawEndOfLevelMarker(QPainter &p, QRect rect, bool isNextEmpty,
                                     bool isStopFrame) {
   const Orientation *o = m_viewer->orientation();
 
-  QColor levelEndColor = m_viewer->getTextColor();
+  QColor levelEndColor = m_viewer->getLevelEndColor();
   QPoint topLeft       = rect.topLeft();
   QPoint topRight      = rect.topRight();
   QPoint bottomLeft    = rect.bottomLeft();
@@ -3352,7 +3355,7 @@ void CellArea::drawKeyframe(QPainter &p, const QRect toBeUpdated) {
       int qy   = icon_frameAxis + 12;
       int zig  = 2;
       int qx   = icon_layerAxis + 5;
-      p.setPen(m_viewer->getTextColor());
+      p.setPen(m_viewer->getKeyframeLineColor());
       p.drawLine(o->frameLayerToXY(qy, qx) + adjustPt,
                  o->frameLayerToXY(qy + zig, qx - zig) + adjustPt);
       while (qy < ymax) {
@@ -3394,7 +3397,7 @@ void CellArea::drawKeyframeLine(QPainter &p, int col,
     end.setY(end.y() + adjust);
   }
 
-  p.setPen(m_viewer->getTextColor());
+  p.setPen(m_viewer->getKeyframeLineColor());
   p.drawLine(QLine(begin, end));
 }
 
@@ -3896,7 +3899,7 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
         if (TCellKeyframeSelection *cellKeyframeSelection =
                 dynamic_cast<TCellKeyframeSelection *>(selection))
           setDragTool(XsheetGUI::DragTool::makeCellKeyframeMoverTool(m_viewer));
-        else
+        else if (Preferences::instance()->getDragCellsBehaviour() != 2)
           setDragTool(XsheetGUI::DragTool::makeLevelMoverTool(m_viewer));
       } else {
         m_viewer->getKeyframeSelection()->selectNone();

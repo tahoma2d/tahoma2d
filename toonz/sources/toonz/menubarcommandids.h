@@ -501,6 +501,9 @@
 // mark id is added for each actual command (i.g. MI_SetCellMark1)
 #define MI_SetCellMark "MI_SetCellMark"
 
+#define MI_ZoomInAndFitPanel "MI_ZoomInAndFitPanel"
+#define MI_ZoomOutAndFitPanel "MI_ZoomOutAndFitPanel"
+
 #define MI_OpenCustomPanels "MI_OpenCustomPanels"
 #define MI_CustomPanelEditor "MI_CustomPanelEditor"
 

@@ -582,8 +582,6 @@ DvScrollWidget {
   image: url('../Medium/imgs/black/scroll-down.svg');
 }
 /* -------------------------------------------------------------------------- */
-/* For the buttons to display a BG color we need to set a blank image, setting
-   an empty URL solves this. */
 #keyFrameNavigator {
   background: transparent;
   margin: 0;
@@ -1768,6 +1766,7 @@ ProjectPopup QLabel {
 ----------------------------------------------------------------------------- */
 SchematicViewer {
   qproperty-TextColor: #000;
+  qproperty-PassThroughTextColor: #000;
   qproperty-VerticalLineColor: rgba(0, 0, 0, 0.3);
   qproperty-LevelColumnColor: #78a578;
   qproperty-VectorColumnColor: #a7637d;
@@ -2307,6 +2306,7 @@ XsheetViewer {
   qproperty-TextColor: #000;
   qproperty-ErrorTextColor: #c01111;
   qproperty-SelectedTextColor: #000;
+  qproperty-FrameTextColor: #000;
   qproperty-CurrentFrameTextColor: #000;
   qproperty-BGColor: #767676;
   qproperty-LightLineColor: rgba(0, 0, 0, 0.15);
@@ -2320,9 +2320,13 @@ XsheetViewer {
   qproperty-OnionSkinAreaBgColor: #6c6c6c;
   qproperty-ColumnIconLineColor: #4d4d4d;
   qproperty-EmptyColumnHeadColor: #808080;
+  qproperty-ColumnTextColor: #000;
+  qproperty-HighlightColumnTextColor: #000;
   qproperty-ColumnHeadPastelizer: rgba(0, 0, 0, 0);
   qproperty-SelectedColumnHead: rgba(243, 223, 235, 0.3);
   qproperty-PlayRangeColor: #808080;
+  qproperty-KeyframeLineColor: #000;
+  qproperty-LevelEndColor: #000;
   qproperty-FoldedColumnBGColor: #9a9a9a;
   qproperty-FoldedColumnLineColor: #737373;
   qproperty-EmptyCellColor: #6c6c6c;
@@ -2381,6 +2385,7 @@ XsheetViewer {
   qproperty-XsheetPreviewButtonOnImage: url('../Medium/imgs/black/x_prev_eye_on.svg');
   qproperty-XsheetPreviewButtonBgOffColor: transparent;
   qproperty-XsheetPreviewButtonOffImage: url('../Medium/imgs/black/x_prev_eye_off.svg');
+  qproperty-XsheetUnifiedButtonTranspImage: url('../Medium/imgs/black/x_prev_eye_transp.svg');
   qproperty-XsheetCamstandButtonBgOnColor: #eb906b;
   qproperty-XsheetCamstandButtonOnImage: url('../Medium/imgs/black/x_table_view_on.svg');
   qproperty-XsheetCamstandButtonTranspImage: url('../Medium/imgs/black/x_table_view_transp.svg');
@@ -2397,6 +2402,7 @@ XsheetViewer {
   qproperty-TimelinePreviewButtonOnImage: url('../Medium/imgs/black/preview_small.svg');
   qproperty-TimelinePreviewButtonBgOffColor: #808080;
   qproperty-TimelinePreviewButtonOffImage: url('../Medium/imgs/black/transparent.svg');
+  qproperty-TimelineUnifiedButtonTranspImage: url('../Medium/imgs/black/preview_trans_small.svg');
   qproperty-TimelineCamstandButtonBgOnColor: #808080;
   qproperty-TimelineCamstandButtonOnImage: url('../Medium/imgs/black/table_small.svg');
   qproperty-TimelineCamstandButtonTranspImage: url('../Medium/imgs/black/trans_small.svg');
@@ -2473,6 +2479,10 @@ SpreadsheetViewer {
   qproperty-SelectedSceneRangeEmptyColor: rgba(165, 146, 157, 0.5);
   qproperty-TextColor: #000;
   qproperty-CurrentRowTextColor: #000;
+  qproperty-FrameTextColor: #000;
+  qproperty-GroupNameTextColor: #000;
+  qproperty-ChannelNameTextColor: #000;
+  qproperty-KeyframeLineColor: #000;
   qproperty-ColumnHeaderBorderColor: #343434;
 }
 #ExpressionField {

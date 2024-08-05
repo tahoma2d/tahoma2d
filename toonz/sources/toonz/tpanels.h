@@ -196,6 +196,7 @@ protected slots:
   void onDeleteFxs(const FxSelection *);
   void onDeleteStageObjects(const StageObjectSelection *);
   void onColumnPaste(const QList<TXshColumnP> &);
+  void onPreferenceChanged(const QString &);
 };
 
 //=========================================================
@@ -253,9 +254,20 @@ public:
 // FlipbookPanel
 //---------------------------------------------------------
 
-class FlipbookPanel final : public TPanel {
+// share the base class between Flipbook and Color Model panels
+class FlipbookBasePanel : public TPanel {
   Q_OBJECT
+protected:
   FlipBook *m_flipbook;
+
+public:
+  FlipbookBasePanel(QWidget *parent) : TPanel(parent) {}
+  void zoomContentsAndFitGeometry(bool forward) override;
+  void setFlipbook(FlipBook *fb) { m_flipbook = fb; }
+};
+
+class FlipbookPanel final : public FlipbookBasePanel {
+  Q_OBJECT
 
   QSize m_floatingSize;
   TPanelTitleBarButton *m_button;

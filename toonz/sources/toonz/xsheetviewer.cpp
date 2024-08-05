@@ -216,6 +216,12 @@ void XsheetViewer::getButton(const int &btype, QColor &bgColor,
     svgIconPath = (isTimeline) ? getTimelineConfigButtonImage()
                              : getXsheetConfigButtonImage();
     break;
+  case UNIFIED_TRANSP_XSHBUTTON:
+    bgColor = (isTimeline) ? getTimelinePreviewButtonBgOnColor()
+                           : getXsheetPreviewButtonBgOnColor();
+    svgIconPath = (isTimeline) ? getTimelineUnifiedButtonTranspImage()
+                               : getXsheetUnifiedButtonTranspImage();
+    break;
   default:
     bgColor = grey210;
     static QImage iconignored;
@@ -1863,7 +1869,7 @@ void XsheetViewer::changeWindowTitle() {
   TApp *app         = TApp::instance();
   ToonzScene *scene = app->getCurrentScene()->getScene();
   if (!scene || !app->getCurrentFrame()->isEditingScene()) return;
-  TProject *project = scene->getProject();
+  auto project = scene->getProject();
   QString sceneName = QString::fromStdWString(scene->getSceneName());
   if (sceneName.isEmpty()) sceneName = tr("Untitled");
   if (app->getCurrentScene()->getDirtyFlag()) sceneName += QString("*");

@@ -85,6 +85,7 @@ XsheetViewer {
   qproperty-TextColor: @xsheet-text-color;
   qproperty-ErrorTextColor: @xsheet-error-text-color;
   qproperty-SelectedTextColor: @xsheet-selected-text-color;
+  qproperty-FrameTextColor: @xsheet-text-color; 
   qproperty-CurrentFrameTextColor: @xsheet-currentFrame-text-color;
   qproperty-BGColor: @xsheet-bg-color;
   qproperty-LightLineColor: @xsheet-LightLine-color;
@@ -98,9 +99,13 @@ XsheetViewer {
   qproperty-OnionSkinAreaBgColor: @xsheet-OnionSkinAreaBG-color;
   qproperty-ColumnIconLineColor: @xsheet-ColumnIconLine-color;
   qproperty-EmptyColumnHeadColor: @xsheet-EmptyColumnHead-color;
+  qproperty-ColumnTextColor: @xsheet-text-color;
+  qproperty-HighlightColumnTextColor: #000;
   qproperty-ColumnHeadPastelizer: @xsheet-ColumnHeadPastelizer-color;
   qproperty-SelectedColumnHead: @xsheet-SelectedColumnHead-color;
   qproperty-PlayRangeColor: @xsheet-PlayRange-Color;
+  qproperty-KeyframeLineColor: @xsheet-KeyframeLine-color;
+  qproperty-LevelEndColor: @xsheet-LevelEnd-color;
 
   qproperty-FoldedColumnBGColor: @xsheet-FoldedColumnBG-color;
   qproperty-FoldedColumnLineColor: @xsheet-FoldedColumnLine-color;
@@ -181,6 +186,8 @@ XsheetViewer {
   qproperty-XsheetPreviewButtonBgOffColor: transparent;
   qproperty-XsheetPreviewButtonOffImage: url('@{img-url}/x_prev_eye_off.svg');
 
+  qproperty-XsheetUnifiedButtonTranspImage: url('@{img-url}/x_prev_eye_transp.svg');
+
   qproperty-XsheetCamstandButtonBgOnColor: @xsheet-CamstandButtonBgOn-color;
   qproperty-XsheetCamstandButtonOnImage: url('@{img-url}/x_table_view_on.svg');
   qproperty-XsheetCamstandButtonTranspImage: url('@{img-url}/x_table_view_transp.svg');
@@ -202,6 +209,8 @@ XsheetViewer {
   qproperty-TimelinePreviewButtonOnImage: url('@{img-url}/preview_small.svg');
   qproperty-TimelinePreviewButtonBgOffColor: @bg;
   qproperty-TimelinePreviewButtonOffImage: url('@{img-url}/transparent.svg');
+
+  qproperty-TimelineUnifiedButtonTranspImage: url('@{img-url}/preview_trans_small.svg');
 
   qproperty-TimelineCamstandButtonBgOnColor: @bg;
   qproperty-TimelineCamstandButtonOnImage: url('@{img-url}/table_small.svg');
@@ -302,6 +311,10 @@ SpreadsheetViewer {
   qproperty-SelectedSceneRangeEmptyColor: @function-SelectedSceneRangeEmpty-color;
   qproperty-TextColor: @xsheet-text-color; // paired
   qproperty-CurrentRowTextColor: @xsheet-currentFrame-text-color; // paired
+  qproperty-FrameTextColor: @xsheet-text-color;
+  qproperty-GroupNameTextColor: @xsheet-text-color;
+  qproperty-ChannelNameTextColor: @xsheet-text-color;
+  qproperty-KeyframeLineColor: @xsheet-KeyframeLine-color;
   qproperty-ColumnHeaderBorderColor: @function-ColumnHeaderBorder-color; // paired
 }
 

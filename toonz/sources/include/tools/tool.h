@@ -534,6 +534,9 @@ transformation.
     return m_selectedFrames;
   }
 
+  void setCanUndo(bool on) { m_canUndo = on; }
+  bool isUndoable() const { return m_canUndo; }
+
   void tweenSelectedGuideStrokes();
   void tweenGuideStrokeToSelected();
   void flipGuideStrokeDirection(int mode);
@@ -574,6 +577,7 @@ protected:
   int m_targetType;  //!< The tool's image type target.
 
   bool m_enabled;  //!< Whether the tool allows user interaction.
+  bool m_canUndo = true; //!< Whether the tool allows the user to undo while the tool is selected
   bool m_active;
   bool m_picking;
 
