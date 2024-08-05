@@ -88,6 +88,8 @@ Return \b TZeraryColumnFx.
    * icon. */
   void updateIcon() {}
 
+  std::vector<TXshColumn *> getColumnMasks();
+
 private:
   // not implemented
   TXshZeraryFxColumn &operator=(const TXshZeraryFxColumn &);

@@ -1895,7 +1895,25 @@ void TZeraryColumnFx::setZeraryFx(TFx *fx) {
 
 std::string TZeraryColumnFx::getAlias(double frame,
                                       const TRenderSettings &info) const {
-  return "TZeraryColumnFx[" + m_fx->getAlias(frame, info) + "]";
+  std::string rdata = "";
+
+  if (m_zeraryFxColumn) {
+    std::vector<TXshColumn *> masks = m_zeraryFxColumn->getColumnMasks();
+    if (masks.size()) {
+      std::string maskAlias = "masked";
+      for (int i = 0; i < masks.size(); i++) {
+        TXshLevelColumn *mask = masks[i]->getLevelColumn();
+        if (!mask) break;
+
+        if (mask->isInvertedMask()) maskAlias += "inv";
+        if (mask->canRenderMask()) maskAlias += "render";
+        break;
+      }
+      rdata += "," + maskAlias;
+    }
+  }
+
+  return "TZeraryColumnFx[" + m_fx->getAlias(frame, info) + rdata + "]";
 }
 
 //-------------------------------------------------------------------
