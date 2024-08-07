@@ -3655,7 +3655,7 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
         openTransparencyPopup();
 
         // make sure the popup doesn't go off the screen to the right
-        QRect screenRect = QApplication::primaryScreen()->geometry();
+        QRect screenRect = screen()->geometry();
 
         int popupLeft   = event->globalPos().x() + x;
         int popupRight  = popupLeft + m_columnTransparencyPopup->width();

@@ -1,6 +1,7 @@
 #include "aboutpopup.h"
 #include "tenv.h"
 #include "tsystem.h"
+#include "tapp.h"
 
 #include <QPushButton>
 #include <QLabel>
@@ -8,6 +9,7 @@
 #include <QScreen>
 #include <QTextEdit>
 #include <QDesktopServices>
+#include <QMainWindow>
 
 AboutClickableLabel::AboutClickableLabel(QWidget* parent, Qt::WindowFlags f)
     : QLabel(parent) {
@@ -23,7 +25,7 @@ void AboutClickableLabel::mousePressEvent(QMouseEvent* event) {
 AboutPopup::AboutPopup(QWidget* parent)
     : DVGui::Dialog(parent, true, true, "About Tahoma2D") {
   setFixedWidth(360);
-  setFixedHeight(350);
+  setFixedHeight(383);
 
   setWindowTitle(tr("About Tahoma2D"));
   setTopMargin(0);
@@ -44,7 +46,6 @@ AboutPopup::AboutPopup(QWidget* parent)
 
   QLabel* blankLabel = new QLabel(this);
   blankLabel->setText(tr(" "));
-  blankLabel->setWordWrap(true);
 
   mainLayout->addWidget(blankLabel);
 
@@ -115,4 +116,15 @@ AboutPopup::AboutPopup(QWidget* parent)
   button->setDefault(true);
   addButtonBarWidget(button);
   connect(button, SIGNAL(clicked()), this, SLOT(accept()));
+}
+
+void AboutPopup::showEvent(QShowEvent *event) {
+
+  // center window
+  QScreen* currentScreen         = TApp::instance()->getMainWindow()->screen();
+  QPoint activeMonitorCenter     = currentScreen->availableGeometry().center();
+  QPoint thisPopupCenter         = this->rect().center();
+  QPoint centeredOnActiveMonitor = activeMonitorCenter - thisPopupCenter;
+  this->move(centeredOnActiveMonitor);
+
 }

@@ -9,6 +9,7 @@
 #include <QScreen>
 #include <QApplication>
 #include <QScreen>
+#include <QWidget>
 
 #include "toonzqt/pickrgbutils.h"
 
@@ -57,7 +58,9 @@ QRgb pickRGB(QWidget *widget, const QRect &rect) {
 
 //------------------------------------------------------------------------------
 
-QRgb pickScreenRGB(const QRect &rect) {
+QRgb pickScreenRGB(const QRect &rect, QWidget *widget) {
+  QScreen *screen = widget->screen();
+
 #ifdef MACOSX
 
   //   #Bugzilla 6514, possibly related to #QTBUG 23516
@@ -83,7 +86,7 @@ QRgb pickScreenRGB(const QRect &rect) {
 
 #endif
 
-  QImage img(QApplication::primaryScreen()
+  QImage img(screen
                  ->grabWindow(0, theRect.x(), theRect.y(),
                               theRect.width(), theRect.height())
                  .toImage());
