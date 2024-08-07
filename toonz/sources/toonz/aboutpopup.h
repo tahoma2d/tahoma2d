@@ -38,6 +38,9 @@ class AboutPopup final : public DVGui::Dialog {
 
 public:
   AboutPopup(QWidget* parent);
+
+protected:
+  void showEvent(QShowEvent *) override;
 };
 
 #endif  // ABOUTPOPUP_H

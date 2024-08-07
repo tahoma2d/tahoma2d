@@ -14,6 +14,7 @@ class ScreenPicker final : public QObject, public DVGui::ScreenBoard::Drawing {
 
   QPoint m_start;
   QRect m_geometry;
+  QWidget *m_widget;
 
   bool m_mousePressed, m_mouseGrabbed;
 

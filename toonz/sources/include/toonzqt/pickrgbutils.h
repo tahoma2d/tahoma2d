@@ -63,9 +63,9 @@ inline QRgb pickRGB(QOpenGLWidget *widget, const QPoint &pos) {
 \warning In general, grabbing an area outside the screen is not safe.
          This depends on the underlying window system.
 */
-QRgb DVAPI pickScreenRGB(const QRect &rect);
-inline QRgb pickScreenRGB(const QPoint &pos) {
-  return pickScreenRGB(QRect(pos.x(), pos.y(), 1, 1));
+QRgb DVAPI pickScreenRGB(const QRect &rect, QWidget *widget);
+inline QRgb pickScreenRGB(const QPoint &pos, QWidget *widget) {
+  return pickScreenRGB(QRect(pos.x(), pos.y(), 1, 1), widget);
 }
 
 #endif  // PICK_RGB_UTILS_H

@@ -418,7 +418,7 @@ void StartupPopup::showEvent(QShowEvent *) {
   // clear items if they exist first
   refreshRecentScenes();
   // center window
-  QScreen *currentScreen = QApplication::primaryScreen();
+  QScreen *currentScreen = TApp::instance()->getMainWindow()->screen();
   QPoint activeMonitorCenter = currentScreen->availableGeometry().center();
   QPoint thisPopupCenter         = this->rect().center();
   QPoint centeredOnActiveMonitor = activeMonitorCenter - thisPopupCenter;
