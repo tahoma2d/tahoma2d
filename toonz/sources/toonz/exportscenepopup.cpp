@@ -703,7 +703,7 @@ TFilePath ExportScenePopup::createNewProject() {
   auto project = std::make_shared<TProject>();
 
   auto currentProject = pm->getCurrentProject();
-  assert(currentProject);
+  assert(currentProject->isLoaded());
   int i;
   for (i = 0; i < (int)currentProject->getFolderCount(); i++)
     project->setFolder(currentProject->getFolderName(i),
