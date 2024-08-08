@@ -630,6 +630,16 @@ void RasterPainter::flushRasterImages() {
     TRop::quickPut(ras2, ras, TAffine());
   }
 
+  if (m_maskLevel > 0) {
+    TRaster32P mask = ras2->clone();
+
+    tglDrawMask(TRectD(rect.x0, rect.y0, rect.x1, rect.y0), ras2);
+
+    ras->unlock();
+    m_nodes.clear();
+    return;
+  }
+
   // Now, output the raster buffer on top of the OpenGL buffer
   glPushAttrib(GL_COLOR_BUFFER_BIT);  // Preserve blending and stuff
 
@@ -1075,6 +1085,8 @@ void RasterPainter::onRasterImage(TRasterImage *ri,
                          player.m_frame, player.m_isCurrentColumn, onionMode,
                          doPremultiply, whiteTransp, ignoreAlpha,
                          player.m_filterColor));
+
+  if (m_maskLevel > 0) flushRasterImages();
 }
 
 //-----------------------------------------------------------------------------
@@ -1131,6 +1143,8 @@ void RasterPainter::onToonzImage(TToonzImage *ti, const Stage::Player &player) {
   m_nodes.push_back(Node(r, ti->getPalette(), alpha, aff, ti->getSavebox(),
                          bbox, player.m_frame, player.m_isCurrentColumn,
                          onionMode, false, false, false, player.m_filterColor));
+
+  if (m_maskLevel > 0) flushRasterImages();
 }
 
 //**********************************************************************************************
