@@ -60,7 +60,7 @@ public:
       folderPath = folderPath.getParentDir();
     else {
       auto currentProject = TProjectManager::instance()->getCurrentProject();
-      if (currentProject)
+      if (currentProject->isLoaded())
         folderPath =
             currentProject->decode(currentProject->getFolder(TProject::Inputs));
     }

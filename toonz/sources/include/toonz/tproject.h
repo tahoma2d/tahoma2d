@@ -31,6 +31,8 @@ class DVAPI TProject final {
 
   FilePathProperties *m_fpProp;
 
+  bool m_isLoaded;
+
 public:
   // default folders names
   static const std::string Inputs;
@@ -95,7 +97,9 @@ public:
 
   static bool isAProjectPath(const TFilePath &fp);
 
-private:
+  bool isLoaded() const { return m_isLoaded; }
+
+  private:
   // not implemented
   TProject(const TProject &src);
   TProject &operator=(const TProject &);
