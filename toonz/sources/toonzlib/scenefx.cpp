@@ -1055,7 +1055,8 @@ PlacedFx FxBuilder::makePF(TZeraryColumnFx *zcfx) {
   assert(zcfx);
   assert(zcfx->getColumn());
 
-  if (!zcfx->getColumn()->isPreviewVisible())  // ...
+  TXshZeraryFxColumn *column = zcfx->getColumn();
+  if (!column->isPreviewVisible())  // ...
     return PlacedFx();
 
   if (!zcfx->getAttributes()->isEnabled())  // ...
@@ -1067,11 +1068,11 @@ PlacedFx FxBuilder::makePF(TZeraryColumnFx *zcfx) {
                                                  // truly works !
     return PlacedFx();
 
-  TXshCell cell = zcfx->getColumn()->getCell(tfloor(m_frame));
+  TXshCell cell = column->getCell(tfloor(m_frame));
 
   // Build
   PlacedFx pf;
-  pf.m_columnIndex = zcfx->getColumn()->getIndex();
+  pf.m_columnIndex = column->getIndex();
 
   // if the cell is empty, only inherits its placement
   if (cell.isEmpty() || cell.getFrameId().isStopFrame()) {
@@ -1143,9 +1144,29 @@ PlacedFx FxBuilder::makePF(TZeraryColumnFx *zcfx) {
   }
 
   // Add the column placement NaAffineFx
-  if (getColumnPlacement(pf, m_xsh, m_frame, pf.m_columnIndex, m_isPreview))
+  if (getColumnPlacement(pf, m_xsh, m_frame, pf.m_columnIndex, m_isPreview)) {
+    // Add check for/create all ClippingMaskFx here
+    if (m_applyMasks) {
+      m_applyMasks                    = false;
+      std::vector<TXshColumn *> masks = column->getColumnMasks();
+      for (int i = 0; i < masks.size(); i++) {
+        TXshLevelColumn *mask = masks[i]->getLevelColumn();
+        if (!mask) break;
+        TXshCell maskCell = mask->getCell(m_frame);
+        if (maskCell.isEmpty() || maskCell.getFrameId() == TFrameId::STOP_FRAME)
+          continue;
+        PlacedFx maskPf = makePF(mask->getFx());
+
+        maskPf.m_fx = getFxWithColumnMovements(maskPf);
+        maskPf.m_fx = TFxUtil::makeAffine(maskPf.m_fx, pf.m_aff.inv());
+
+        pf.m_fx = TFxUtil::makeMask(zcfx, maskPf.m_fx);
+      }
+      m_applyMasks = true;
+    }
+
     return pf;
-  else
+  } else
     return PlacedFx();
 }
 
