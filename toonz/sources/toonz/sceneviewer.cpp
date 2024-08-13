@@ -2815,13 +2815,13 @@ double SceneViewer::getZoomScaleFittingWithScreen() {
 
   // get the image size to be rendered
 
-  if (isPreviewEnabled())
+  if (isPreviewEnabled()) {
     imgSize = TApp::instance()
                   ->getCurrentScene()
                   ->getScene()
                   ->getCurrentCamera()
                   ->getRes();
-  else if (TApp::instance()->getCurrentFrame()->isEditingLevel()) {
+  } else if (TApp::instance()->getCurrentFrame()->isEditingLevel()) {
     TXshSimpleLevel *sl = TApp::instance()->getCurrentLevel()->getSimpleLevel();
     if (!sl || sl->getType() == PLI_XSHLEVEL || sl->getImageDpi() == TPointD())
       return 0.0;
@@ -2842,7 +2842,7 @@ double SceneViewer::getZoomScaleFittingWithScreen() {
   // add small margin on the edge of the image
   int margin = 20;
   // get the desktop resolution
-  QRect rec = QApplication::primaryScreen()->geometry();
+  QRect rec = screen()->geometry();
 
   // fit to either direction
   int moni_x = rec.width() - (margin * 2);

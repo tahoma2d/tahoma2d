@@ -16,6 +16,8 @@
 #include <QCoreApplication>
 #include <QCursor>
 #include <QTimer>
+#include <QScreen>
+#include <QApplication>
 
 #include "tools/screenpicker.h"
 
@@ -93,6 +95,12 @@ void ScreenPicker::mouseReleaseEvent(QWidget *widget, QMouseEvent *me) {
 
   QPoint pos(widget->mapToGlobal(me->pos()));
   m_geometry = QRect(QRect(m_start, QSize(1, 1)) | QRect(pos, QSize(1, 1)));
+  m_widget   = widget;
+  if (widget->screen() != QApplication::primaryScreen()) {
+    m_geometry.adjust(
+        -widget->screen()->geometry().x(), -widget->screen()->geometry().y(),
+        -widget->screen()->geometry().x(), -widget->screen()->geometry().y());
+  }
 
   // TimerEvents execution is delayed until all other events have been
   // processed.
@@ -108,7 +116,7 @@ void ScreenPicker::pick() {
   // Process them before picking.
   QCoreApplication::processEvents();
 
-  QColor color(pickScreenRGB(m_geometry));
+  QColor color(pickScreenRGB(m_geometry, m_widget));
   RGBPicker::setCurrentColorWithUndo(
       TPixel32(color.red(), color.green(), color.blue()));
 
