@@ -1913,7 +1913,7 @@ bool IoCmd::loadScene(ToonzScene &scene, const TFilePath &scenePath,
   scene.load(scenePath);
   // import if needed
   auto currentProject = TProjectManager::instance()->getCurrentProject();
-  if (!scene.getProject()) return false;
+  if (!scene.getProject()->isLoaded()) return false;
   if (scene.getProject()->getProjectPath() !=
       currentProject->getProjectPath()) {
     ResourceImportDialog resourceLoader;
@@ -2047,7 +2047,7 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
     // import if needed
     TProjectManager *pm      = TProjectManager::instance();
     auto currentProject = pm->getCurrentProject();
-    if (!scene->getProject() ||
+    if (!scene->getProject()->isLoaded() ||
         scene->getProject()->getProjectPath() !=
             currentProject->getProjectPath()) {
       ResourceImportDialog resourceLoader;
@@ -2070,8 +2070,7 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
   }
   printf("%s:%s end load:\n", __FILE__, __FUNCTION__);
   auto project = scene->getProject();
-  if (!project) {
-    project = std::make_shared<TProject>();
+  if (!project->isLoaded()) {
     project->setFolder("project", scenePath);
     scene->setProject(project);
   }

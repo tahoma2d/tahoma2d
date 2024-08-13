@@ -327,7 +327,8 @@ TProject::TProject()
     : m_name()
     , m_path()
     , m_sprop(new TSceneProperties())
-    , m_fpProp(new FilePathProperties()) {}
+    , m_fpProp(new FilePathProperties())
+    , m_isLoaded(false) {}
 
 //-------------------------------------------------------------------
 
@@ -748,6 +749,7 @@ void TProject::load(const TFilePath &projectPath) {
   }
 
   setUseSubScenePath(useSubScenePath);
+  m_isLoaded = true;
 }
 
 //-------------------------------------------------------------------
@@ -1056,10 +1058,11 @@ TFilePath TProjectManager::getCurrentProjectPath() {
    current project path.
 */
 std::shared_ptr<TProject> TProjectManager::getCurrentProject() {
-  if (!currentProject) {
+  if (!currentProject) currentProject = std::make_shared<TProject>();
+
+  if (!currentProject->isLoaded()) {
     TFilePath fp = getCurrentProjectPath();
     assert(TProject::isAProjectPath(fp));
-    currentProject = std::make_shared<TProject>();
     currentProject->load(fp);
 
     // update TFilePath condition on loading the current project
