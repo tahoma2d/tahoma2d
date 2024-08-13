@@ -851,18 +851,20 @@ ShortcutZoomer::ShortcutZoomer(QWidget *zoomingWidget)
 //--------------------------------------------------------------------------
 
 bool ShortcutZoomer::exec(QKeyEvent *event) {
+  int key = event->key();
+  if (key == Qt::Key_Control || key == Qt::Key_Shift || key == Qt::Key_Alt)
+    return false;
+
+  if (event->modifiers() & Qt::KeypadModifier)
+    key = key |
+          event->modifiers() &
+              (~0xf0000000);  // Ignore if the key is a numpad key
+
   int zoomInKey, zoomOutKey, viewResetKey, zoomFitKey, showHideFullScreenKey,
       actualPixelSize, flipX, flipY, zoomReset, rotateReset, positionReset;
   getViewerShortcuts(zoomInKey, zoomOutKey, viewResetKey, zoomFitKey,
                      showHideFullScreenKey, actualPixelSize, flipX, flipY,
                      zoomReset, rotateReset, positionReset);
-
-  int key = event->key();
-  if (key == Qt::Key_Control || key == Qt::Key_Shift || key == Qt::Key_Alt)
-    return false;
-
-  key = key | event->modifiers() &
-                  (~0xf0000000);  // Ignore if the key is a numpad key
 
   return (key == showHideFullScreenKey)
              ? toggleFullScreen()
