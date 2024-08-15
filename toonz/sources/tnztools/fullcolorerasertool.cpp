@@ -1140,20 +1140,15 @@ void FullColorEraserTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 
   } locals = {this};
 
-  switch (e.getModifiersMask()) {
-  case TMouseEvent::ALT_KEY: {
+  if (m_eraseType.getValue() == NORMALERASE && e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed()) {
     // User wants to alter the maximum brush size
     const TPointD &diff = m_windowMousePos - -e.m_pos;
     double max          = diff.x / 2;
     double min          = diff.y / 2;
 
     locals.addMinMaxSeparate(m_size, min, max);
-    break;
-  }
-
-  default:
+  } else { 
     m_brushPos = pos;
-    break;
   }
 
   m_mousePos = pos;

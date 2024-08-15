@@ -1386,20 +1386,15 @@ void EraserTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 
   } locals = {this};
 
-  switch (e.getModifiersMask()) {
-  case TMouseEvent::ALT_KEY: {
+  if (m_eraseType.getValue() == NORMAL_ERASE && e.isCtrlPressed() && e.isAltPressed() && !e.isShiftPressed()) {
     // User wants to alter the maximum brush size
     const TPointD &diff = m_windowMousePos - -e.m_pos;
     double max          = diff.x / 2;
     double min          = diff.y / 2;
 
     locals.addMinMaxSeparate(m_toolSize, min, max);
-    break;
-  }
-
-  default:
+  } else {
     m_brushPos = pos;
-    break;
   }
 
   m_oldMousePos = m_mousePos = pos;
