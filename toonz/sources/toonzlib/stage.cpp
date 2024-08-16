@@ -687,7 +687,8 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
       if (column->isCamstandVisible() ||
           includeUnvisible)  // se l'"occhietto" non e' chiuso
       {
-        if (column->isMask())  // se e' una maschera (usate solo in tab pro)
+        if (column->isMask() && !column->isCellEmpty(row) &&
+            !xsh->getCell(row, c).getFrameId().isStopFrame())
         {
           if (column->canRenderMask())
             addCellWithOnionSkin(players, scene, xsh, row, c, level,
