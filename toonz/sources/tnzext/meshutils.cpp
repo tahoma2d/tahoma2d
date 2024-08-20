@@ -317,8 +317,8 @@ void tglDrawRigidity(const TMeshImage &image, double minColor[4],
 //***********************************************************************************************
 
 void tglDraw(const TMeshImage &meshImage, const DrawableTextureData &texData,
-             const TAffine &meshToTexAff,
-             const PlasticDeformerDataGroup &group) {
+             const TAffine &meshToTexAff, const PlasticDeformerDataGroup &group,
+             bool isMask) {
   typedef MeshTexturizer::TextureData::TileData TileData;
 
   // Prepare OpenGL
@@ -448,7 +448,7 @@ GL_SRC_ALPHA, while the latter uses GL_ONE. The result is a PREMULTIPLIED image.
            drawEd2 = (ed2.facesCount() < 2);
 
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+      if (!isMask) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 
       glBegin(GL_LINES);
       {
@@ -472,7 +472,7 @@ GL_SRC_ALPHA, while the latter uses GL_ONE. The result is a PREMULTIPLIED image.
       glEnd();
 
       glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-      glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
+      if(!isMask) glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
 
       glBegin(GL_LINES);
       {
@@ -497,7 +497,7 @@ GL_SRC_ALPHA, while the latter uses GL_ONE. The result is a PREMULTIPLIED image.
 
       // Finally, draw the face
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+      if (!isMask) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 
       glBegin(GL_TRIANGLES);
       {
@@ -508,7 +508,7 @@ GL_SRC_ALPHA, while the latter uses GL_ONE. The result is a PREMULTIPLIED image.
       glEnd();
 
       glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-      glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
+      if (!isMask) glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
 
       glBegin(GL_TRIANGLES);
       {

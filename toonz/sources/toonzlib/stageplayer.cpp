@@ -81,7 +81,7 @@ DrawableTextureDataP Stage::Player::texture() const {
   if (m_sl) {
     // Ask the sLevel directly
     return texture_utils::getTextureData(
-        m_sl, m_fid, -1);  // -1 stands for 'current subsampling'
+        m_sl, m_fid, -1, m_isMask);  // -1 stands for 'current subsampling'
   }
 
   // The level is supposedly a sub-xsheet one. It means we have to build the

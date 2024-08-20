@@ -1649,7 +1649,7 @@ void onPlasticDeformedImage(TStageObject *playerObj,
   // Applying modulation by the specified transparency parameter
 
   glColor4d(pixScale[3], pixScale[3], pixScale[3], pixScale[3]);
-  tglDraw(*mi, *texData, meshToTextureAff, *dataGroup);
+  tglDraw(*mi, *texData, meshToTextureAff, *dataGroup, player.m_isMask);
 
   glDisable(GL_TEXTURE_2D);
 

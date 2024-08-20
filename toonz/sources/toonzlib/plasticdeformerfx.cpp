@@ -408,7 +408,7 @@ void PlasticDeformerFx::doCompute(TTile &tile, double frame,
     glEnable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
 
-    tglDraw(*mi, *texData, meshToTextureAff, *dataGroup);
+    tglDraw(*mi, *texData, meshToTextureAff, *dataGroup, info.m_applyMask);
 
     // Retrieve drawing and copy to output tile
 

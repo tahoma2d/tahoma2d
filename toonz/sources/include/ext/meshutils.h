@@ -125,7 +125,8 @@ DVAPI void tglDraw(
     const TAffine
         &meshToTexAffine,  //!< Transform from mesh to texture coordinates.
     const PlasticDeformerDataGroup
-        &deformerDatas  //!< Data structure of a deformation of the input image.
+        &deformerDatas,  //!< Data structure of a deformation of the input image.
+    bool isMask
     );
 
 #endif  // MESHUTILS_H
