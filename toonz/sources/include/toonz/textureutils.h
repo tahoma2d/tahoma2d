@@ -31,7 +31,8 @@ namespace texture_utils {
 //! Returns the OpenGL data of a loaded texture corresponding to sl's content
 //! at fid with specified subsampling.
 DrawableTextureDataP getTextureData(const TXshSimpleLevel *sl,
-                                    const TFrameId &fid, int subsampling);
+                                    const TFrameId &fid, int subsampling,
+                                    bool isMask);
 
 //! Invalidates any currently stored texture associated with sl at the specified
 //! fid.
