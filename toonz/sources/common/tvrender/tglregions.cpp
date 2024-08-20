@@ -420,8 +420,11 @@ void tglDrawMask(const TVectorRenderData &rd1, const TVectorImage *vim) {
     assert(vPalette);
     rd.m_palette = vPalette;
   }
-  for (i = 0; i < vim->getRegionCount(); i++)
-    tglDraw(rd, vim->getRegion(i), false);
+// Expand clipping mask to strokes too, not just filled regions
+//  for (i = 0; i < vim->getRegionCount(); i++)
+//    tglDraw(rd, vim->getRegion(i), false);
+
+  tglDraw(rd, vim);
 
   glPopAttrib();
 }
