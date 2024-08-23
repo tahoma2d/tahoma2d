@@ -831,7 +831,7 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
     , m_viewMode(SCENE_VIEWMODE)
     , m_pos(0, 0)
     , m_pan3D(TPointD(0, 0))
-    , m_zoomScale3D(0.1)
+    , m_zoomScale3D(1.0)
     , m_theta3D(20)
     , m_phi3D(30)
     , m_dpiScale(TPointD(1, 1))
@@ -3100,12 +3100,12 @@ void SceneViewer::resetSceneViewer() {
 
   m_pos         = QPoint(0, 0);
   m_pan3D       = TPointD(0, 0);
-  m_zoomScale3D = 0.1;
   m_theta3D     = 20;
   m_phi3D       = 30;
   m_isFlippedX  = false;
   m_isFlippedY  = false;
   fitToCameraOutline();
+  m_zoomScale3D = 1.0;
   emit onZoomChanged();
   emit onFlipHChanged(m_isFlippedX);
   emit onFlipVChanged(m_isFlippedY);
@@ -3190,7 +3190,7 @@ void SceneViewer::setActualPixelSize() {
 
   m_pos         = QPoint(0, 0);
   m_pan3D       = TPointD(0, 0);
-  m_zoomScale3D = 0.1;
+  m_zoomScale3D = 1.0;
   m_theta3D     = 20;
   m_phi3D       = 30;
   emit onZoomChanged();
