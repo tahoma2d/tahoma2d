@@ -224,7 +224,7 @@ public:
                   \b TXshChildLevel, recall \b addFrame().
   */
   void addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh, int row,
-               int col, int level, int subSheetColIndex = -1);
+               int col, int level, bool isMask, int subSheetColIndex = -1);
 
   /*! Verify if onion-skin is active and recall \b addCell().
   \n	Compute the distance between each cell with active onion-skin and
@@ -234,7 +234,7 @@ public:
                   with argument current cell.
   */
   void addCellWithOnionSkin(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
-                            int row, int col, int level,
+                            int row, int col, int level, bool isMask,
                             int subSheetColIndex = -1);
 
   /*!Recall \b addCellWithOnionSkin() for each cell of row \b row.*/
@@ -323,7 +323,8 @@ void StageBuilder::dumpAll(std::ostream &out) {
 //-----------------------------------------------------------------------------
 
 void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
-                           int row, int col, int level, int subSheetColIndex) {
+                           int row, int col, int level, bool isMask,
+                           int subSheetColIndex) {
   // Local functions
   struct locals {
     static inline bool isMeshDeformed(TXsheet *xsh, TStageObject *obj,
@@ -423,9 +424,9 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
     player.m_opacity             = column->getOpacity();
     player.m_filterColor =
         scene->getProperties()->getColorFilterColor(column->getColorFilterId());
-    player.m_isMask              = column->isMask();
-    player.m_isInvertedMask      = column->isInvertedMask();
-    player.m_canRenderMask       = column->canRenderMask();
+    player.m_isMask              = isMask;
+    player.m_isInvertedMask      = isMask ? column->isInvertedMask() : false;
+    player.m_canRenderMask       = isMask ? column->canRenderMask() : false;
 
     if (m_subXSheetStack.empty()) {
       player.m_z         = columnZ;
@@ -560,7 +561,8 @@ static bool alreadyAdded(TXsheet *xsh, int row, int index,
 
 void StageBuilder::addCellWithOnionSkin(PlayerSet &players, ToonzScene *scene,
                                         TXsheet *xsh, int row, int col,
-                                        int level, int subSheetColIndex) {
+                                        int level, bool isMask,
+                                        int subSheetColIndex) {
   struct locals {
     static inline bool hasOnionSkinnedMeshParent(StageBuilder *sb, TXsheet *xsh,
                                                  int col) {
@@ -601,7 +603,7 @@ void StageBuilder::addCellWithOnionSkin(PlayerSet &players, ToonzScene *scene,
           (cell.getSimpleLevel() == 0 ||
            xsh->getCell(r, col).getSimpleLevel() == cell.getSimpleLevel())) {
         m_shiftTraceGhostId = FIRST_GHOST;
-        addCell(players, scene, xsh, r, col, level, subSheetColIndex);
+        addCell(players, scene, xsh, r, col, level, isMask, subSheetColIndex);
       }
 
       r = row + m_onionSkinMask.getShiftTraceGhostFrameOffset(1);
@@ -609,13 +611,13 @@ void StageBuilder::addCellWithOnionSkin(PlayerSet &players, ToonzScene *scene,
           (cell.getSimpleLevel() == 0 ||
            xsh->getCell(r, col).getSimpleLevel() == cell.getSimpleLevel())) {
         m_shiftTraceGhostId = SECOND_GHOST;
-        addCell(players, scene, xsh, r, col, level, subSheetColIndex);
+        addCell(players, scene, xsh, r, col, level, isMask, subSheetColIndex);
       }
 
       // draw current working frame
       if (!cell.isEmpty()) {
         m_shiftTraceGhostId = TRACED;
-        addCell(players, scene, xsh, row, col, level, subSheetColIndex);
+        addCell(players, scene, xsh, row, col, level, isMask, subSheetColIndex);
         m_shiftTraceGhostId = NO_GHOST;
       }
     }
@@ -624,12 +626,12 @@ void StageBuilder::addCellWithOnionSkin(PlayerSet &players, ToonzScene *scene,
       int flipKey = m_onionSkinMask.getGhostFlipKey();
       if (flipKey == Qt::Key_F1) {
         int r = row + m_onionSkinMask.getShiftTraceGhostFrameOffset(0);
-        addCell(players, scene, xsh, r, col, level, subSheetColIndex);
+        addCell(players, scene, xsh, r, col, level, isMask, subSheetColIndex);
       } else if (flipKey == Qt::Key_F3) {
         int r = row + m_onionSkinMask.getShiftTraceGhostFrameOffset(1);
-        addCell(players, scene, xsh, r, col, level, subSheetColIndex);
+        addCell(players, scene, xsh, r, col, level, isMask, subSheetColIndex);
       } else
-        addCell(players, scene, xsh, row, col, level, subSheetColIndex);
+        addCell(players, scene, xsh, row, col, level, isMask, subSheetColIndex);
     }
   } else if (locals::doStandardOnionSkin(this, xsh, level, col)) {
     std::vector<int> rows;
@@ -654,19 +656,20 @@ void StageBuilder::addCellWithOnionSkin(PlayerSet &players, ToonzScene *scene,
         m_fade         = fosFade == -1.0
                      ? mosFade
                      : (mosFade == -1 ? fosFade : std::min(fosFade, mosFade));
-        addCell(players, scene, xsh, rows[i], col, level, subSheetColIndex);
+        addCell(players, scene, xsh, rows[i], col, level, isMask,
+                subSheetColIndex);
       }
 #endif
     }
 
     m_onionSkinDistance = 0;
     m_fade              = 0.0;
-    addCell(players, scene, xsh, row, col, level, subSheetColIndex);
+    addCell(players, scene, xsh, row, col, level, isMask, subSheetColIndex);
 
     m_onionSkinDistance = c_noOnionSkin;
     m_fade              = -1.0;
   } else
-    addCell(players, scene, xsh, row, col, level, subSheetColIndex);
+    addCell(players, scene, xsh, row, col, level, isMask, subSheetColIndex);
 }
 
 //-----------------------------------------------------------------------------
@@ -712,7 +715,7 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
             !xsh->getCell(row, c).getFrameId().isStopFrame())
         {
           if (column->canRenderMask())
-            addCellWithOnionSkin(players, scene, xsh, row, c, level,
+            addCellWithOnionSkin(players, scene, xsh, row, c, level, false,
                                  subSheetColIndex);
           isMask = true;
           std::vector<int> saveMasks;
@@ -720,12 +723,12 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
           int maskIndex   = m_maskPool.size();
           PlayerSet *mask = new PlayerSet();
           m_maskPool.push_back(mask);
-          addCellWithOnionSkin(*mask, scene, xsh, row, c, level);
+          addCellWithOnionSkin(*mask, scene, xsh, row, c, level, true);
           std::stable_sort(mask->begin(), mask->end(), PlayerLt());
           saveMasks.swap(m_masks);
           m_masks.push_back(maskIndex);
         } else
-          addCellWithOnionSkin(players, scene, xsh, row, c, level,
+          addCellWithOnionSkin(players, scene, xsh, row, c, level, false,
                                subSheetColIndex);
       }
     }

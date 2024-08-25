@@ -112,8 +112,9 @@ TRasterImageP getTexture(const TXshSimpleLevel *sl, const TFrameId &fid,
 
 DrawableTextureDataP texture_utils::getTextureData(const TXshSimpleLevel *sl,
                                                    const TFrameId &fid,
-                                                   int subsampling) {
-  const std::string &texId = sl->getImageId(fid);
+                                                   int subsampling,
+                                                   bool isMask) {
+  const std::string &texId = sl->getImageId(fid) + (isMask ? "masked" : "");
 
   // Now, we must associate a texture
   DrawableTextureDataP data(
