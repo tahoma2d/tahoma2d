@@ -2160,8 +2160,6 @@ void MainWindow::defineActions() {
                          "delete_lines");
   createMenuXsheetAction(MI_MergeColumns, QT_TR_NOOP("&Merge Levels"), "",
                          "merge_levels");
-  createMenuXsheetAction(MI_InsertFx, QT_TR_NOOP("&New FX..."), "Ctrl+F",
-                         "fx_logo");
   createMenuXsheetAction(MI_NewOutputFx, QT_TR_NOOP("&New Output"), "Alt+O",
                          "output");
   createMenuXsheetAction(MI_InsertSceneFrame, QT_TR_NOOP("Insert Frame"), "",
@@ -2452,6 +2450,8 @@ void MainWindow::defineActions() {
                           "", "studiopalette");
   createMenuWindowsAction(MI_OpenSchematic, QT_TR_NOOP("&Schematic"), "",
                           "schematic");
+  createMenuWindowsAction(MI_InsertFx, QT_TR_NOOP("&FX Browser"), "Ctrl+F",
+                          "fx_logo");
   createMenuWindowsAction(MI_FxParamEditor, QT_TR_NOOP("&FX Editor"), "Ctrl+K",
                           "fx_settings");
   createMenuWindowsAction(MI_OpenCleanupSettings,
