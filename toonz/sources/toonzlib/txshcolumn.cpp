@@ -190,9 +190,16 @@ void TXshCellColumn::getCells(int row, int rowCount, TXshCell cells[],
   TXshCell *endDstCell = dstCell + dst;
   while (dstCell < endDstCell) *dstCell++ = emptyCell;
   endDstCell += n;
+  TXshCell tmpCell;
   while (dstCell < endDstCell) {
     TXshCell cell = m_cells[src];
-    if (cell.isEmpty() && implicitLookup) cell = getCell(src + dst);
+    if (implicitLookup) {
+      if (cell.isEmpty() && src > 0 &&
+          !tmpCell.isEmpty()) {
+        cell = tmpCell;
+      } else if (!cell.getFrameId().isStopFrame())
+        tmpCell = cell;
+    }
     *dstCell++ = cell;
     src++;
   }
