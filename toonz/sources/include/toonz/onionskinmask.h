@@ -46,11 +46,6 @@ public:
     ENABLED_WITHOUT_GHOST_MOVEMENTS
   };
 
-  enum RelativeSkinMode {
-    FRAMES,
-    DRAWING
-  };
-
 public:
   OnionSkinMask();
 
@@ -70,8 +65,7 @@ public:
     return m_dos.size();
   }  //!< Returns the Drawing OS frames count
   int getRosCount() const {
-    return m_relativeSkinMode == RelativeSkinMode::FRAMES ? getMosCount()
-                                                          : getDosCount();
+    return m_isRelativeFrameMode ? getMosCount() : getDosCount();
   }
 
   int getMos(int index) const {
@@ -90,8 +84,7 @@ public:
   }
 
   int getRos(int index) const {
-    return m_relativeSkinMode == RelativeSkinMode::FRAMES ? getMos(index)
-                                                          : getDos(index);
+    return m_isRelativeFrameMode ? getMos(index) : getDos(index);
   }
 
   void setMos(int drow, bool on);  //!< Sets a Mobile OS frame shifted by drow
@@ -102,7 +95,7 @@ public:
   void setDos(int drow,
               bool on);  //!< Sets a Drawing OS frame to the specified xsheet row
   void setRos(int drow, bool on) {
-    if (m_relativeSkinMode == RelativeSkinMode::FRAMES)
+    if (m_isRelativeFrameMode)
       setMos(drow, on);
     else
       setDos(drow, on);
@@ -115,31 +108,28 @@ public:
   void setDosOpacity(int drow, double opacity);
   double getDosOpacity(int drow);
   void setRosOpacity(int drow, double opacity) {
-    if (m_relativeSkinMode == RelativeSkinMode::FRAMES)
+    if (m_isRelativeFrameMode)
       setMosOpacity(drow, opacity);
     else
       setDosOpacity(drow, opacity);
   }
   double getRosOpacity(int drow) {
-    return m_relativeSkinMode == RelativeSkinMode::FRAMES ? getMosOpacity(drow)
-                                                          : getDosOpacity(drow);
+    return m_isRelativeFrameMode ? getMosOpacity(drow) : getDosOpacity(drow);
   }
 
   bool isMos(int drow);
   bool isFos(int row);
   bool isDos(int drow);
   bool isRos(int drow) {
-    return m_relativeSkinMode == RelativeSkinMode::FRAMES ? isMos(drow)
-                                                          : isDos(drow);
+    return m_isRelativeFrameMode ? isMos(drow) : isDos(drow);
   }
 
   bool getMosRange(int &drow0, int &drow1) const;
   bool getDosRange(int &drow0, int &drow1) const;
 
   bool isEmpty() const {
-    return ((m_relativeSkinMode == RelativeSkinMode::FRAMES && m_mos.empty()) ||
-            (m_relativeSkinMode == RelativeSkinMode::DRAWING &&
-             m_dos.empty())) &&
+    return ((m_isRelativeFrameMode && m_mos.empty()) ||
+            (!m_isRelativeFrameMode && m_dos.empty())) &&
            m_fos.empty();
   }
 
@@ -206,10 +196,8 @@ since underlying onion-skinned drawings must be visible.
   void removeGhostFlipKey(int key) { m_ghostFlipKeys.removeAll(key); }
   void clearGhostFlipKey() { m_ghostFlipKeys.clear(); }
 
-  bool isRelativeFrameMode() {
-    return m_relativeSkinMode == RelativeSkinMode::FRAMES;
-  }
-  void setRelativeSkinMode(RelativeSkinMode mode) { m_relativeSkinMode = mode; }
+  bool isRelativeFrameMode() const { return m_isRelativeFrameMode; }
+  void setRelativeFrameMode(bool on);
 
 private:
   std::vector<std::pair<int, double>> m_fos,
@@ -229,7 +217,7 @@ private:
 
   bool m_LightTableStatus;
 
-  RelativeSkinMode m_relativeSkinMode;
+  bool m_isRelativeFrameMode;
 };
 
 //***************************************************************************

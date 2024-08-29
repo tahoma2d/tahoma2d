@@ -148,13 +148,13 @@ void OnioniSkinMaskGUI::OnionSkinSwitcher::clearOS() {
 
 void OnioniSkinMaskGUI::OnionSkinSwitcher::enableRelativeFrameMode() {
   OnionSkinMask osm = getMask();
-  osm.setRelativeSkinMode(osm.FRAMES);
+  osm.setRelativeFrameMode(true);
   setMask(osm);
 }
 
 void OnioniSkinMaskGUI::OnionSkinSwitcher::enableRelativeDrawingMode() {
   OnionSkinMask osm = getMask();
-  osm.setRelativeSkinMode(osm.DRAWING);
+  osm.setRelativeFrameMode(false);
   setMask(osm);
 }
 

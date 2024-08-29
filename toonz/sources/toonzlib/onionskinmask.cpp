@@ -59,13 +59,14 @@ double inline getIncrement(int paperThickness) {
 
 TEnv::IntVar WholeScene("OnionSkinWholeScene", 0);
 TEnv::IntVar EveryFrame("OnionSkinEveryFrame", 1);
+TEnv::IntVar RelativeFrameMode("OnionSkinRelativeFrameMode", 1);
 
 OnionSkinMask::OnionSkinMask() {
   m_enabled = false;
   m_wholeScene = WholeScene;
   m_everyFrame = EveryFrame;
   m_LightTableStatus = false;
-  m_relativeSkinMode = RelativeSkinMode::FRAMES;
+  m_isRelativeFrameMode = RelativeFrameMode;
 }
 
 void OnionSkinMask::clear() {
@@ -88,17 +89,16 @@ void OnionSkinMask::clear() {
 void OnionSkinMask::getAll(int currentRow,
                            std::vector<std::pair<int, double>> &output,
                            TXsheet *xsh, int col) const {
-  bool framesMode = m_relativeSkinMode == RelativeSkinMode::FRAMES;
-
   output.clear();
-  output.reserve(m_fos.size() + (framesMode ? m_mos.size() : m_dos.size()));
+  output.reserve(m_fos.size() +
+                 (m_isRelativeFrameMode ? m_mos.size() : m_dos.size()));
 
   std::vector<std::pair<int, double>>::const_iterator fosIt(m_fos.begin()), fosEnd(m_fos.end());
   std::vector<std::pair<int, double>> dos2mos;
   std::vector<std::pair<int, double>>::const_iterator dosIt(m_dos.begin()),
       dosEnd(m_dos.end());
 
-  if (!framesMode && xsh && col >= 0) {
+  if (!m_isRelativeFrameMode && xsh && col >= 0) {
     // Translate relative drawing position to frame drawing position
     int r0, r1;
     int n = xsh->getCellRange(col, r0, r1);
@@ -146,8 +146,8 @@ void OnionSkinMask::getAll(int currentRow,
   }
 
   std::vector<std::pair<int, double>>::const_iterator rosIt(
-      framesMode ? m_mos.begin() : dos2mos.begin()),
-      rosEnd(framesMode ? m_mos.end() : dos2mos.end());
+      m_isRelativeFrameMode ? m_mos.begin() : dos2mos.begin()),
+      rosEnd(m_isRelativeFrameMode ? m_mos.end() : dos2mos.end());
 
   for (; fosIt != fosEnd && rosIt != rosEnd;) {
     int fos = fosIt->first;
@@ -393,6 +393,11 @@ void OnionSkinMask::setShiftTraceGhostAff(int index, const TAffine &aff) {
 void OnionSkinMask::setShiftTraceGhostCenter(int index, const TPointD &center) {
   assert(0 <= index && index < 2);
   m_ghostCenter[index] = center;
+}
+
+void OnionSkinMask::setRelativeFrameMode(bool on) {
+  m_isRelativeFrameMode = on;
+  RelativeFrameMode     = m_isRelativeFrameMode;
 }
 
 //***************************************************************************
