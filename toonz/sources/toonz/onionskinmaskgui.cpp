@@ -32,7 +32,7 @@ void OnioniSkinMaskGUI::OnionSkinSwitcher::setMask(const OnionSkinMask &mask) {
 
 bool OnioniSkinMaskGUI::OnionSkinSwitcher::isActive() const {
   OnionSkinMask osm = getMask();
-  return osm.isEnabled() && !osm.isEmpty();
+  return osm.isEnabled();// && !osm.isEmpty();
 }
 
 //------------------------------------------------------------------------------
@@ -51,6 +51,13 @@ bool OnioniSkinMaskGUI::OnionSkinSwitcher::isEveryFrame() const {
 
 //------------------------------------------------------------------------------
 
+bool OnioniSkinMaskGUI::OnionSkinSwitcher::isRelativeFrameMode() const {
+  OnionSkinMask osm = getMask();
+  return osm.isRelativeFrameMode();
+}
+
+//------------------------------------------------------------------------------
+
 void OnioniSkinMaskGUI::OnionSkinSwitcher::activate() {
   OnionSkinMask osm = getMask();
   if (osm.isEnabled() && !osm.isEmpty()) return;
@@ -58,6 +65,8 @@ void OnioniSkinMaskGUI::OnionSkinSwitcher::activate() {
     osm.setMos(-1, true);
     osm.setMos(-2, true);
     osm.setMos(-3, true);
+    osm.setDos(-1, true);
+    osm.setDos(1, true);
   }
   osm.enable(true);
   setMask(osm);
@@ -67,7 +76,7 @@ void OnioniSkinMaskGUI::OnionSkinSwitcher::activate() {
 
 void OnioniSkinMaskGUI::OnionSkinSwitcher::deactivate() {
   OnionSkinMask osm = getMask();
-  if (!osm.isEnabled() || osm.isEmpty()) return;
+  if (!osm.isEnabled()) return;// || osm.isEmpty()) return;
   osm.enable(false);
   setMask(osm);
 }
@@ -122,9 +131,31 @@ void OnioniSkinMaskGUI::OnionSkinSwitcher::clearMOS() {
   setMask(osm);
 }
 
+void OnioniSkinMaskGUI::OnionSkinSwitcher::clearDOS() {
+  OnionSkinMask osm = getMask();
+
+  for (int i = (osm.getDosCount() - 1); i >= 0; i--)
+    osm.setDos(osm.getDos(i), false);
+
+  setMask(osm);
+}
+
 void OnioniSkinMaskGUI::OnionSkinSwitcher::clearOS() {
   clearFOS();
   clearMOS();
+  clearDOS();
+}
+
+void OnioniSkinMaskGUI::OnionSkinSwitcher::enableRelativeFrameMode() {
+  OnionSkinMask osm = getMask();
+  osm.setRelativeSkinMode(osm.FRAMES);
+  setMask(osm);
+}
+
+void OnioniSkinMaskGUI::OnionSkinSwitcher::enableRelativeDrawingMode() {
+  OnionSkinMask osm = getMask();
+  osm.setRelativeSkinMode(osm.DRAWING);
+  setMask(osm);
 }
 
 //------------------------------------------------------------------------------
@@ -137,6 +168,17 @@ void OnioniSkinMaskGUI::addOnionSkinCommand(QMenu *menu, bool isFilmStrip) {
     menu->connect(dectivateOnionSkin, SIGNAL(triggered()), &switcher,
                   SLOT(deactivate()));
     if (!isFilmStrip) {
+      if (switcher.isRelativeFrameMode()) {
+        QAction *relativeSkinMode = menu->addAction(
+            QString(QObject::tr("Switch To Relative Drawing Onion Skin")));
+        menu->connect(relativeSkinMode, SIGNAL(triggered()), &switcher,
+                      SLOT(enableRelativeDrawingMode()));
+      } else {
+        QAction *relativeSkinMode = menu->addAction(
+            QString(QObject::tr("Switch To Relative Frame Onion Skin")));
+        menu->connect(relativeSkinMode, SIGNAL(triggered()), &switcher,
+                      SLOT(enableRelativeFrameMode()));
+      }
       if (switcher.isWholeScene()) {
         QAction *limitOnionSkinToLevel =
             menu->addAction(QString(QObject::tr("Limit Onion Skin To Level")));
@@ -160,21 +202,27 @@ void OnioniSkinMaskGUI::addOnionSkinCommand(QMenu *menu, bool isFilmStrip) {
                       SLOT(setNewExposure()));
       }
       OnionSkinMask osm = switcher.getMask();
-      if (osm.getFosCount() || osm.getMosCount()) {
+      if (osm.getFosCount() || osm.getMosCount() || osm.getDosCount()) {
         QAction *clearAllOnionSkins = menu->addAction(
             QString(QObject::tr("Clear All Onion Skin Markers")));
         menu->connect(clearAllOnionSkins, SIGNAL(triggered()), &switcher,
                       SLOT(clearOS()));
       }
-      if (osm.getFosCount() && osm.getMosCount()) {
+      if (osm.getFosCount() &&
+          ((osm.isRelativeFrameMode() && osm.getMosCount()) ||
+           (!osm.isRelativeFrameMode() && osm.getDosCount()))) {
         QAction *clearFixedOnionSkins = menu->addAction(
             QString(QObject::tr("Clear All Fixed Onion Skin Markers")));
         menu->connect(clearFixedOnionSkins, SIGNAL(triggered()), &switcher,
                       SLOT(clearFOS()));
         QAction *clearRelativeOnionSkins = menu->addAction(
             QString(QObject::tr("Clear All Relative Onion Skin Markers")));
-        menu->connect(clearRelativeOnionSkins, SIGNAL(triggered()), &switcher,
-                      SLOT(clearMOS()));
+        if (osm.isRelativeFrameMode())
+          menu->connect(clearRelativeOnionSkins, SIGNAL(triggered()), &switcher,
+                        SLOT(clearMOS()));
+        else
+          menu->connect(clearRelativeOnionSkins, SIGNAL(triggered()), &switcher,
+                        SLOT(clearDOS()));
       }
     }
   } else {
@@ -182,6 +230,17 @@ void OnioniSkinMaskGUI::addOnionSkinCommand(QMenu *menu, bool isFilmStrip) {
         menu->addAction(QString(QObject::tr("Activate Onion Skin")));
     menu->connect(activateOnionSkin, SIGNAL(triggered()), &switcher,
                   SLOT(activate()));
+    if (switcher.isRelativeFrameMode()) {
+      QAction *relativeSkinMode = menu->addAction(
+          QString(QObject::tr("Switch To Relative Drawing Onion Skin")));
+      menu->connect(relativeSkinMode, SIGNAL(triggered()), &switcher,
+                    SLOT(enableRelativeDrawingMode()));
+    } else {
+      QAction *relativeSkinMode = menu->addAction(
+          QString(QObject::tr("Switch To Relative Frane Onion Skin")));
+      menu->connect(relativeSkinMode, SIGNAL(triggered()), &switcher,
+                    SLOT(enableRelativeFrameMode()));
+    }
   }
 }
 

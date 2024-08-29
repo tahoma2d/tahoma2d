@@ -34,6 +34,7 @@ public:
   bool isActive() const;
   bool isWholeScene() const;
   bool isEveryFrame() const;
+  bool isRelativeFrameMode() const;
 
 public slots:
   void activate();
@@ -44,7 +45,10 @@ public slots:
   void setNewExposure();
   void clearFOS();
   void clearMOS();
+  void clearDOS();
   void clearOS();
+  void enableRelativeFrameMode();
+  void enableRelativeDrawingMode();
 };
 
 //-----------------------------------------------------------------------------

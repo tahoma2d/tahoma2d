@@ -111,9 +111,12 @@ OnionSkinPopup::OnionSkinPopup(QWidget *parent, bool isVertical)
 }
 
 //----------------------------------------------------------------
-bool descending(int i, int j) { return (i > j); }
+bool descending(std::pair<int, double> i, std::pair<int, double> j) {
+  return (i.first > j.first);
+}
 
-void OnionSkinPopup::setOnionSkinData(int currentRow, int os, bool isFixed) {
+void OnionSkinPopup::setOnionSkinData(int currentRow, int os, bool isFixed,
+                                      TXsheet *xsh, int currentCol) {
   OnionSkinMask osMask =
       TApp::instance()->getCurrentOnionSkin()->getOnionSkinMask();
 
@@ -123,23 +126,23 @@ void OnionSkinPopup::setOnionSkinData(int currentRow, int os, bool isFixed) {
   m_isFixed  = isFixed;
   m_distance = 0;
 
-  std::vector<int> rows;
-  osMask.getAll(currentRow, rows);
-  std::vector<int>::iterator it = rows.begin();
-  while (it != rows.end() && *it < currentRow) it++;
+  std::vector<std::pair<int, double>> rows;
+  osMask.getAll(currentRow, rows, xsh, currentCol);
+  std::vector<std::pair<int, double>>::iterator it = rows.begin();
+  while (it != rows.end() && (*it).first < currentRow) it++;
   std::sort(rows.begin(), it, descending);
 
   int frontPos = 0, backPos = 0;
   for (int i = 0; i < (int)rows.size(); i++) {
-    if (rows[i] == currentRow) continue;
+    if (rows[i].first == currentRow) continue;
     if (osMask.isEveryFrame()) {
-      m_distance = (rows[i] - currentRow) < 0 ? --backPos : ++frontPos;
+      m_distance = (rows[i].first - currentRow) < 0 ? --backPos : ++frontPos;
     }
-    if ((m_isFixed && m_os == rows[i]) || (!m_isFixed && (rows[i] - currentRow) == os)) break;
+    if ((m_isFixed && m_os == rows[i].first) || (!m_isFixed && (rows[i].first - currentRow) == os)) break;
   }
 
   double opacity =
-      isFixed ? osMask.getFosOpacity(os) : osMask.getMosOpacity(os);
+      isFixed ? osMask.getFosOpacity(os) : osMask.getRosOpacity(os);
 
   if (opacity == -1.0) {
     autoOpacity = true;
@@ -169,7 +172,7 @@ void OnionSkinPopup::onSliderReleased() {
   if (m_isFixed)
     osMask.setFosOpacity(m_os, opacity);
   else
-    osMask.setMosOpacity(m_os, opacity);
+    osMask.setRosOpacity(m_os, opacity);
 
   TApp::instance()->getCurrentOnionSkin()->setOnionSkinMask(osMask);
 
@@ -770,22 +773,22 @@ void RowArea::drawOnionSkinSelection(QPainter &p) {
   //-- draw movable onions
 
   // draw line between onion skin range
-  int minMos   = 0;
-  int maxMos   = 0;
-  int mosCount = osMask.getMosCount();
-  for (int i = 0; i < mosCount; i++) {
-    int mos = osMask.getMos(i);
-    if (minMos > mos) minMos = mos;
-    if (maxMos < mos) maxMos = mos;
+  int minRos   = 0;
+  int maxRos   = 0;
+  int rosCount = osMask.getRosCount();
+  for (int i = 0; i < rosCount; i++) {
+    int ros = osMask.getRos(i);
+    if (minRos > ros) minRos = ros;
+    if (maxRos < ros) maxRos = ros;
   }
   p.setBrush(Qt::NoBrush);
   int frameAdj_i = (m_viewer->orientation()->isVerticalTimeline())
                        ? frameAdj.y()
                        : frameAdj.x();
-  if (minMos < 0)  // previous frames
+  if (minRos < 0)  // previous frames
   {
     int layerAxis     = onionCenter_layer;
-    int fromFrameAxis = m_viewer->rowToFrameAxis(currentRow + minMos) +
+    int fromFrameAxis = m_viewer->rowToFrameAxis(currentRow + minRos) +
                         onionCenter_frame - (frameAdj_i / 2);
     int toFrameAxis = m_viewer->rowToFrameAxis(currentRow) + onionCenter_frame -
                       (frameAdj_i / 2);
@@ -799,12 +802,12 @@ void RowArea::drawOnionSkinSelection(QPainter &p) {
       p.drawLine(verticalLine.x1() + 5, verticalLine.y1(),
                  verticalLine.x2() - 10, verticalLine.y2());
   }
-  if (maxMos > 0)  // forward frames
+  if (maxRos > 0)  // forward frames
   {
     int layerAxis     = onionCenter_layer;
     int fromFrameAxis = m_viewer->rowToFrameAxis(currentRow) +
                         onionCenter_frame - (frameAdj_i / 2);
-    int toFrameAxis = m_viewer->rowToFrameAxis(currentRow + maxMos) +
+    int toFrameAxis = m_viewer->rowToFrameAxis(currentRow + maxRos) +
                       onionCenter_frame - (frameAdj_i / 2);
     QLine verticalLine = m_viewer->orientation()->verticalLine(
         layerAxis, NumberRange(fromFrameAxis, toFrameAxis));
@@ -834,21 +837,21 @@ void RowArea::drawOnionSkinSelection(QPainter &p) {
   p.setBrush(QBrush(frontColor));
   p.drawChord(handleRect, turn + angle180, angle180);
 
-  // draw onion skin dots
-  for (int i = 0; i < mosCount; i++) {
-    // mos : frame offset from the current frame
-    int mos = osMask.getMos(i);
+  // draw relative onion skin dots
+  for (int i = 0; i < rosCount; i++) {
+    // ros : frame offset from the current frame
+    int ros = osMask.getRos(i);
     // skip drawing if the frame is under the mouse cursor
-    if (m_showOnionToSet == Mos && currentRow + mos == m_row) continue;
+    if (m_showOnionToSet == Mos && currentRow + ros == m_row) continue;
 
-    p.setPen(mos < 0 ? backDotOutlineColor : frontDotOutlineColor);
+    p.setPen(ros < 0 ? backDotOutlineColor : frontDotOutlineColor);
     if (osMask.isEnabled()) {
-      QColor dotColor = mos < 0 ? backDotColor : frontDotColor;
-      if (osMask.getMosOpacity(mos) != -1.0) dotColor = dotColor.darker(200);
+      QColor dotColor = ros < 0 ? backDotColor : frontDotColor;
+      if (osMask.getRosOpacity(ros) != -1.0) dotColor = dotColor.darker(200);
       p.setBrush(dotColor);
     } else
       p.setBrush(Qt::NoBrush);
-    QPoint topLeft = m_viewer->positionToXY(CellPosition(currentRow + mos, -1));
+    QPoint topLeft = m_viewer->positionToXY(CellPosition(currentRow + ros, -1));
     if (!m_viewer->orientation()->isVerticalTimeline())
       topLeft.setY(0);
     else
@@ -857,7 +860,10 @@ void RowArea::drawOnionSkinSelection(QPainter &p) {
                         ->rect(PredefinedRect::ONION_DOT)
                         .translated(topLeft)
                         .translated(-frameAdj / 2);
-    p.drawEllipse(dotRect);
+    if (osMask.isRelativeFrameMode())
+      p.drawEllipse(dotRect);
+    else
+      p.drawRect(dotRect);
   }
 
   //-- draw fixed onions
@@ -909,7 +915,10 @@ void RowArea::drawOnionSkinSelection(QPainter &p) {
                                            : PredefinedRect::ONION_DOT)
             .translated(topLeft)
             .translated(-frameAdj / 2);
-    p.drawEllipse(dotRect);
+    if (m_showOnionToSet == Fos || osMask.isRelativeFrameMode())
+      p.drawEllipse(dotRect);
+    else
+      p.drawRect(dotRect);
   }
 }
 
@@ -1606,7 +1615,9 @@ void RowArea::contextMenuEvent(QContextMenuEvent *event) {
 
           m_onionSkinPopup->move(event->globalPos().x(),
                                  event->globalPos().y());
-          m_onionSkinPopup->setOnionSkinData(currentRow, fos, true);
+          m_onionSkinPopup->setOnionSkinData(currentRow, fos, true,
+                                             m_viewer->getXsheet(),
+                                             m_viewer->getCurrentColumn());
           m_onionSkinPopup->show();
 
           event->accept();
@@ -1616,19 +1627,21 @@ void RowArea::contextMenuEvent(QContextMenuEvent *event) {
     } else if (o->rect(PredefinedRect::ONION_DOT_AREA)
                    .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
                    .contains(mouseInCell)) {
-      int mosCount = osMask.getMosCount();
-      int mos;
-      for (int i = 0; i < mosCount; i++) {
+      int rosCount   = osMask.getRosCount();
+      int ros;
+      for (int i = 0; i < rosCount; i++) {
         // mos : frame offset from the current frame
-        mos = osMask.getMos(i);
-        if (currentRow + mos == m_contextMenuRow) {
+        ros = osMask.getRos(i);
+        if (currentRow + ros == m_contextMenuRow) {
           if (!m_onionSkinPopup)
             m_onionSkinPopup = new OnionSkinPopup(
                 this, !m_viewer->orientation()->isVerticalTimeline());
 
           m_onionSkinPopup->move(event->globalPos().x(),
                                  event->globalPos().y());
-          m_onionSkinPopup->setOnionSkinData(currentRow, mos, false);
+          m_onionSkinPopup->setOnionSkinData(currentRow, ros, false,
+                                             m_viewer->getXsheet(),
+                                             m_viewer->getCurrentColumn());
           m_onionSkinPopup->show();
           event->accept();
           return;

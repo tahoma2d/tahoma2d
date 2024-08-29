@@ -2316,8 +2316,8 @@ void SceneViewer::drawScene() {
       Stage::visit(painter, app->getCurrentLevel()->getLevel(),
                    app->getCurrentFrame()->getFid(),
                    app->getCurrentOnionSkin()->getOnionSkinMask(),
-                   frameHandle->isPlaying(), useGuidedDrawing, guidedBackStroke,
-                   guidedFrontStroke);
+                   frameHandle->isPlaying(), xsh, useGuidedDrawing,
+                   guidedBackStroke, guidedFrontStroke);
     } else {
       std::pair<TXsheet *, int> xr;
       int xsheetLevel = 0;
@@ -3432,14 +3432,14 @@ int SceneViewer::posToRow(const TPointD &p, double distance,
   Stage::Picker picker(getViewMatrix(), pos, m_visualSettings,
                        getDevPixRatio());
   picker.setMinimumDistance(distance);
-
+  
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
   if (app->getCurrentFrame()->isEditingLevel()) {
     Stage::visit(picker, app->getCurrentLevel()->getLevel(),
                  app->getCurrentFrame()->getFid(), osm,
-                 app->getCurrentFrame()->isPlaying(), false);
+                 app->getCurrentFrame()->isPlaying(), xsh, false);
   } else {
     ToonzScene *scene      = app->getCurrentScene()->getScene();
-    TXsheet *xsh           = app->getCurrentXsheet()->getXsheet();
     int frame              = app->getCurrentFrame()->getFrame();
     int currentColumnIndex = app->getCurrentColumn()->getColumnIndex();
 

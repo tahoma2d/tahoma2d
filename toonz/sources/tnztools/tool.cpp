@@ -1173,9 +1173,9 @@ void TTool::Viewer::getGuidedFrameIdx(int *backIdx, int *frontIdx) {
   TFrameHandle *currentFrame = getApplication()->getCurrentFrame();
 
   int cidx     = currentFrame->getFrameIndex();
-  int mosBack  = 0;
-  int mosFront = 0;
-  int mosCount = osMask.getMosCount();
+  int rosBack  = 0;
+  int rosFront = 0;
+  int rosCount = osMask.getRosCount();
   int fosBack  = -1;
   int fosFront = -1;
   int fosCount = osMask.getFosCount();
@@ -1183,18 +1183,18 @@ void TTool::Viewer::getGuidedFrameIdx(int *backIdx, int *frontIdx) {
   // Find onion-skinned drawing that is being used for guided auto inbetween
   if (Preferences::instance()->getGuidedDrawingType() == 1) {
     // Get closest moving unionskin
-    for (int i = 0; i < mosCount; i++) {
-      int cmos = osMask.getMos(i);
+    for (int i = 0; i < rosCount; i++) {
+      int cmos = osMask.getRos(i);
       if (cmos == 0) continue;  // skip current
-      if (cmos < 0 && (!mosBack || cmos > mosBack)) mosBack = cmos;
-      if (cmos > 0 && (!mosFront || cmos < mosFront)) mosFront = cmos;
+      if (cmos < 0 && (!rosBack || cmos > rosBack)) rosBack = cmos;
+      if (cmos > 0 && (!rosFront || cmos < rosFront)) rosFront = cmos;
     }
-    if (mosBack) *backIdx = mosBack + cidx;
-    if (mosFront) *frontIdx = mosFront + cidx;
+    if (rosBack) *backIdx = rosBack + cidx;
+    if (rosFront) *frontIdx = rosFront + cidx;
 
     // Get closest fixed onionskin
     for (int i = 0; i < fosCount; i++) {
-      int cfos = osMask.getFos(i);
+      int cfos = osMask.getRos(i);
       if (cfos == cidx) continue;  // skip current
       if (cfos < cidx && (fosBack == -1 || cfos > fosBack)) fosBack = cfos;
       if (cfos > cidx && (fosFront == -1 || cfos < fosFront)) fosFront = cfos;
@@ -1211,18 +1211,18 @@ void TTool::Viewer::getGuidedFrameIdx(int *backIdx, int *frontIdx) {
   } else if (Preferences::instance()->getGuidedDrawingType() ==
              2) {  // Furthest drawing
                    // Get moving unionskin
-    for (int i = 0; i < mosCount; i++) {
-      int cmos = osMask.getMos(i);
+    for (int i = 0; i < rosCount; i++) {
+      int cmos = osMask.getRos(i);
       if (cmos == 0) continue;  // skip current
-      if (cmos < 0 && (!mosBack || cmos < mosBack)) mosBack = cmos;
-      if (cmos > 0 && (!mosFront || cmos > mosFront)) mosFront = cmos;
+      if (cmos < 0 && (!rosBack || cmos < rosBack)) rosBack = cmos;
+      if (cmos > 0 && (!rosFront || cmos > rosFront)) rosFront = cmos;
     }
-    if (mosBack) *backIdx = mosBack + cidx;
-    if (mosFront) *frontIdx = mosFront + cidx;
+    if (rosBack) *backIdx = rosBack + cidx;
+    if (rosFront) *frontIdx = rosFront + cidx;
 
     // Get fixed onionskin
     for (int i = 0; i < fosCount; i++) {
-      int cfos = osMask.getFos(i);
+      int cfos = osMask.getRos(i);
       if (cfos == cidx) continue;  // skip current
       if (cfos < cidx && (fosBack == -1 || cfos < fosBack)) fosBack = cfos;
       if (cfos > cidx && (fosFront == -1 || cfos > fosFront)) fosFront = cfos;

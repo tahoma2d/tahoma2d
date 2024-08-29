@@ -843,23 +843,24 @@ public:
 
 void doRectAutofill(const TImageP &img, const TRectD selectingRect,
                     bool onlyUnfilled, const OnionSkinMask &osMask,
-                    TXshSimpleLevel *sl, const TFrameId &currentFid) {
+                    TXshSimpleLevel *sl, const TFrameId &currentFid,
+                    TXsheet *xsh, int col) {
   TToonzImageP ti(img);
   TVectorImageP vi(img);
   if (!img || !sl) return;
 
-  std::vector<int> rows;
-  osMask.getAll(sl->guessIndex(currentFid), rows);
+  std::vector<std::pair<int, double>> rows;
+  osMask.getAll(sl->guessIndex(currentFid), rows, xsh, col);
   if (rows.empty()) return;
 
   TFrameId onionFid;
   int i;
   for (i = 0; i < (int)rows.size(); i++) {
-    const TFrameId &app = sl->index2fid(rows[i]);
+    const TFrameId &app = sl->index2fid(rows[i].first);
     if (app > currentFid) break;
     onionFid = app;
   }
-  if (onionFid.isEmptyFrame()) onionFid = sl->index2fid(rows[0]);
+  if (onionFid.isEmptyFrame()) onionFid = sl->index2fid(rows[0].first);
   if (onionFid.isEmptyFrame() || onionFid == currentFid || !sl->isFid(onionFid))
     return;
   if (ti) {
@@ -902,23 +903,24 @@ void doRectAutofill(const TImageP &img, const TRectD selectingRect,
 
 void doStrokeAutofill(const TImageP &img, TStroke *selectingStroke,
                       bool onlyUnfilled, const OnionSkinMask &osMask,
-                      TXshSimpleLevel *sl, const TFrameId &currentFid) {
+                      TXshSimpleLevel *sl, const TFrameId &currentFid,
+                      TXsheet *xsh, int col) {
   TToonzImageP ti(img);
   TVectorImageP vi(img);
   if (!img || !sl) return;
 
-  std::vector<int> rows;
-  osMask.getAll(sl->guessIndex(currentFid), rows);
+  std::vector<std::pair<int, double>> rows;
+  osMask.getAll(sl->guessIndex(currentFid), rows, xsh, col);
   if (rows.empty()) return;
 
   TFrameId onionFid;
   int i;
   for (i = 0; i < (int)rows.size(); i++) {
-    const TFrameId &app = sl->index2fid(rows[i]);
+    const TFrameId &app = sl->index2fid(rows[i].first);
     if (app > currentFid) break;
     onionFid = app;
   }
-  if (onionFid.isEmptyFrame()) onionFid = sl->index2fid(rows[0]);
+  if (onionFid.isEmptyFrame()) onionFid = sl->index2fid(rows[0].first);
   if (onionFid.isEmptyFrame() || onionFid == currentFid || !sl->isFid(onionFid))
     return;
   if (ti) {
@@ -1838,7 +1840,8 @@ void AreaFillTool::leftButtonDoubleClick(const TPointD &pos,
 
       OnionSkinMask osMask = app->getCurrentOnionSkin()->getOnionSkinMask();
       doStrokeAutofill(m_parent->getImage(true), stroke, m_onlyUnfilled, osMask,
-                       m_level.getPointer(), m_parent->getCurrentFid());
+                       m_level.getPointer(), m_parent->getCurrentFid(),
+                       m_parent->getXsheet(), m_parent->getColumnIndex());
 
       if (m_polyline.hasSymmetryBrushes()) {
         for (int i = 1; i < m_polyline.getBrushCount(); i++) {
@@ -1846,7 +1849,8 @@ void AreaFillTool::leftButtonDoubleClick(const TPointD &pos,
           symmStroke->setStyle(stroke->getStyle());
           doStrokeAutofill(m_parent->getImage(true), symmStroke, m_onlyUnfilled,
                            osMask, m_level.getPointer(),
-                           m_parent->getCurrentFid());
+                           m_parent->getCurrentFid(), m_parent->getXsheet(),
+                           m_parent->getColumnIndex());
         }
 
         TUndoManager::manager()->endBlock();
@@ -2011,14 +2015,16 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
 
               doStrokeAutofill(m_parent->getImage(true), stroke,
                                m_onlyUnfilled, osMask, m_level.getPointer(),
-                               m_parent->getCurrentFid());
+                               m_parent->getCurrentFid(), m_parent->getXsheet(),
+                               m_parent->getColumnIndex());
             }
 
             TUndoManager::manager()->endBlock();
         } else
           doRectAutofill(m_parent->getImage(true), m_selectingRect,
                          m_onlyUnfilled, osMask, m_level.getPointer(),
-                         m_parent->getCurrentFid());
+                         m_parent->getCurrentFid(), m_parent->getXsheet(),
+                         m_parent->getColumnIndex());
       } else if (m_polyline.size() > 1 && m_polyline.hasSymmetryBrushes()) {
         TUndoManager::manager()->beginBlock();
 
@@ -2130,7 +2136,8 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
         OnionSkinMask osMask = app->getCurrentOnionSkin()->getOnionSkinMask();
         doStrokeAutofill(m_parent->getImage(true), stroke, m_onlyUnfilled,
                          osMask, m_level.getPointer(),
-                         m_parent->getCurrentFid());
+                         m_parent->getCurrentFid(), m_parent->getXsheet(),
+                         m_parent->getColumnIndex());
 
         if (m_track.hasSymmetryBrushes()) {
           std::vector<TStroke *> symmStrokes =
@@ -2139,7 +2146,8 @@ void AreaFillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e,
             symmStrokes[i]->setStyle(stroke->getStyle());
             doStrokeAutofill(m_parent->getImage(true), symmStrokes[i],
                              m_onlyUnfilled, osMask, m_level.getPointer(),
-                             m_parent->getCurrentFid());
+                             m_parent->getCurrentFid(), m_parent->getXsheet(),
+                             m_parent->getColumnIndex());
           }
 
           TUndoManager::manager()->endBlock();
@@ -2240,7 +2248,9 @@ void AreaFillTool::onEnter() {
   // getApplication()->editImage();
 }
 
-bool descending(int i, int j) { return (i > j); }
+bool descending(std::pair<int, double> i, std::pair<int, double> j) {
+  return (i.first > j.first);
+}
 
 }  // namespace
 
@@ -3016,17 +3026,19 @@ int FillTool::pickOnionColor(const TPointD &pos) {
   TXshSimpleLevel *sl = m_level.getPointer();
   if (!sl) return 0;
 
-  std::vector<int> rows;
+  std::vector<std::pair<int, double>> rows;
   // level editing case
   if (app->getCurrentFrame()->isEditingLevel()) {
-    osMask.getAll(sl->guessIndex(fid), rows);
+    osMask.getAll(sl->guessIndex(fid), rows,
+                  app->getCurrentXsheet()->getXsheet(),
+                  app->getCurrentColumn()->getColumnIndex());
     int i, j;
     for (i = 0; i < (int)rows.size(); i++)
-      if (sl->index2fid(rows[i]) > fid) break;
+      if (sl->index2fid(rows[i].first) > fid) break;
 
     int onionStyleId = 0;
     for (j = i - 1; j >= 0; j--) {
-      TFrameId onionFid = sl->index2fid(rows[j]);
+      TFrameId onionFid = sl->index2fid(rows[j].first);
       if (onionFid != fid &&
           ((onionStyleId =
                 pick(m_level->getFrame(onionFid, ImageManager::none, 1), pos)) >
@@ -3035,7 +3047,7 @@ int FillTool::pickOnionColor(const TPointD &pos) {
     }
     if (onionStyleId == 0)
       for (j = i; j < (int)rows.size(); j++) {
-        TFrameId onionFid = sl->index2fid(rows[j]);
+        TFrameId onionFid = sl->index2fid(rows[j].first);
         if (onionFid != fid &&
             ((onionStyleId = pick(
                   m_level->getFrame(onionFid, ImageManager::none, 1), pos)) >
@@ -3047,19 +3059,19 @@ int FillTool::pickOnionColor(const TPointD &pos) {
     TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
     int colId = app->getCurrentColumn()->getColumnIndex();
     int row = app->getCurrentFrame()->getFrame();
-    osMask.getAll(row, rows);
-    std::vector<int>::iterator it = rows.begin();
-    while (it != rows.end() && *it < row) it++;
+    osMask.getAll(row, rows, xsh, colId);
+    std::vector<std::pair<int, double>>::iterator it = rows.begin();
+    while (it != rows.end() && (*it).first < row) it++;
     std::sort(rows.begin(), it, descending);
     int onionStyleId = 0;
     for (int i = 0; i < (int)rows.size(); i++) {
-      if (rows[i] == row) continue;
-      TXshCell cell = xsh->getCell(rows[i], colId);
+      if (rows[i].first == row) continue;
+      TXshCell cell = xsh->getCell(rows[i].first, colId);
       TXshLevel *xl = cell.m_level.getPointer();
       if (!xl || xl->getSimpleLevel() != sl) continue;
       TFrameId onionFid = cell.getFrameId();
       onionStyleId = pick(m_level->getFrame(onionFid, ImageManager::none, 1),
-                          pos, rows[i]);
+                          pos, rows[i].first);
       if (onionStyleId > 0) break;
     }
     return onionStyleId;
