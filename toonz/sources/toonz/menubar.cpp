@@ -431,7 +431,6 @@ void TopBar::loadMenubar() {
   addMenuItem(sceneMenu, MI_DeleteMatchLines);
   addMenuItem(sceneMenu, MI_DeleteInk);
   sceneMenu->addSeparator();
-  addMenuItem(sceneMenu, MI_InsertFx);
   addMenuItem(sceneMenu, MI_NewOutputFx);
   sceneMenu->addSeparator();
   addMenuItem(sceneMenu, MI_InsertSceneFrame);
@@ -674,6 +673,7 @@ void TopBar::loadMenubar() {
   addMenuItem(windowsMenu, MI_OpenTimelineView);
   addMenuItem(windowsMenu, MI_OpenFunctionEditor);
   addMenuItem(windowsMenu, MI_OpenSchematic);
+  addMenuItem(windowsMenu, MI_InsertFx);
   addMenuItem(windowsMenu, MI_FxParamEditor);
   addMenuItem(windowsMenu, MI_OpenFilmStrip);
   addMenuItem(windowsMenu, MI_OpenLocator);
