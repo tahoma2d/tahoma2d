@@ -19,6 +19,8 @@
 #include "timageinfo.h"
 #include "trasterimage.h"
 
+#include "dllblacklist.h"
+
 #include <type_traits>
 
 //------------------------------------------------------------------------------
@@ -1112,7 +1114,7 @@ LRESULT safe_ICCompressQuery(hic_t const &hic, BITMAPINFO *lpbiInput,
 
 Tiio::AviWriterProperties::AviWriterProperties() : m_codec("Codec") {
   if (m_defaultCodec.getRange().empty()) {
-    char descr[2048], name[2048];
+    char descr[2048], name[2048], driver[2048];
     DWORD fccType = 0;
     ICINFO icinfo;
     BITMAPINFO inFmt;
@@ -1146,13 +1148,16 @@ Tiio::AviWriterProperties::AviWriterProperties() : m_codec("Codec") {
 
         WideChar2Char(icinfo.szDescription, descr, sizeof(descr));
         WideChar2Char(icinfo.szName, name, sizeof(name));
+        WideChar2Char(icinfo.szDriver, driver, sizeof(driver));
         if ((strstr(name, "IYUV") != 0) ||
             ((strstr(name, "IR32") != 0) && (bpp == 24))) {
           continue;
         }
         // Give up to load codecs once the blackmagic codec is found -
         // as it seems to cause crash for unknown reasons (issue #138)
-        if (strstr(descr, "Blackmagic") != 0) break;
+        if (isDLLBlacklisted(QString(driver)) ||
+            strstr(descr, "Blackmagic") != 0)
+          break;
 
         std::string compressorName;
         compressorName = std::string(name) + " '" + std::to_string(bpp) + "' " +

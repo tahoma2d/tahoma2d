@@ -2,6 +2,7 @@
 
 #include "avicodecrestrictions.h"
 #include "tconvert.h"
+#include "dllblacklist.h"
 #include <windows.h>
 #include <vfw.h>
 
@@ -205,7 +206,7 @@ QMap<std::wstring, bool> AviCodecRestrictions::getUsableCodecs(
   ICINFO icinfo;
   memset(&icinfo, 0, sizeof(ICINFO));
 
-  char descr[2048], name[2048];
+  char descr[2048], name[2048], driver[2048];
   DWORD fccType = 0;
 
   BITMAPINFO inFmt;
@@ -227,9 +228,12 @@ QMap<std::wstring, bool> AviCodecRestrictions::getUsableCodecs(
                           sizeof(descr), 0, 0);
       WideCharToMultiByte(CP_ACP, 0, icinfo.szName, -1, name, sizeof(name), 0,
                           0);
+      WideCharToMultiByte(CP_ACP, 0, icinfo.szDriver, -1, driver,
+                          sizeof(driver), 0, 0); 
       // Give up to load codecs once the blackmagic codec is found -
       // as it seems to cause crash for unknown reasons (issue #138)
-      if (strstr(descr, "Blackmagic") != 0) break;
+      if (isDLLBlacklisted(QString(driver)) || strstr(descr, "Blackmagic") != 0)
+        break;
 
       std::wstring compressorName;
       compressorName =
