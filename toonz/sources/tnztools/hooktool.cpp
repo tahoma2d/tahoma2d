@@ -341,14 +341,16 @@ void HookTool::draw() {
   TXshSimpleLevel *level  = 0;
 
   OnionSkinMask osm = app->getCurrentOnionSkin()->getOnionSkinMask();
-  std::vector<int> os;
+  std::vector<std::pair<int, double>> os;
 
   if (isEditingScene())
-    osm.getAll(getFrame(), os);
+    osm.getAll(getFrame(), os, getXsheet(),
+               app->getCurrentColumn()->getColumnIndex());
   else {
     level = app->getCurrentLevel()->getSimpleLevel();
     assert(level);
-    osm.getAll(level->guessIndex(fid), os);
+    osm.getAll(level->guessIndex(fid), os, getXsheet(),
+               app->getCurrentColumn()->getColumnIndex());
   }
 
   int i;
@@ -356,10 +358,10 @@ void HookTool::draw() {
     for (i = 0; i < (int)os.size(); i++) {
       if (isEditingScene()) {
         const TXshCell &cell = getXsheet()->getCell(
-            os[i], app->getCurrentColumn()->getColumnIndex());
+            os[i].first, app->getCurrentColumn()->getColumnIndex());
         drawHooks(hookSet, cell.getFrameId(), true);
       } else {
-        const TFrameId &fid2 = level->index2fid(os[i]);
+        const TFrameId &fid2 = level->index2fid(os[i].first);
         drawHooks(hookSet, fid2, true);
       }
     }

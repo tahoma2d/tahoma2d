@@ -11,6 +11,7 @@
 // forward declaration
 class XsheetViewer;
 class QMenu;
+class TXsheet;
 
 namespace XsheetGUI {
 
@@ -34,7 +35,8 @@ class OnionSkinPopup final : public QWidget {
 
 public:
   OnionSkinPopup(QWidget *parent, bool isVertical = true);
-  void setOnionSkinData(int currentRow, int os, bool isFixed);
+  void setOnionSkinData(int currentRow, int os, bool isFixed, TXsheet *xsh,
+                        int currentCol);
 
 protected:
   // void mouseMoveEvent ( QMouseEvent * e );

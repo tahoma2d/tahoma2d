@@ -6,6 +6,7 @@
 // TnzCore includes
 #include "tcommon.h"
 #include "tgeometry.h"
+#include "txsheet.h"
 
 #include <QList>
 
@@ -51,7 +52,8 @@ public:
   void clear();
 
   //! Fills in the output vector with the absolute frames to be onion-skinned.
-  void getAll(int currentRow, std::vector<int> &output) const;
+  void getAll(int currentRow, std::vector<std::pair<int, double>> &output,
+              TXsheet *xsh, int col) const;
 
   int getMosCount() const {
     return m_mos.size();
@@ -59,6 +61,12 @@ public:
   int getFosCount() const {
     return m_fos.size();
   }  //!< Returns the Fixed OS frames count
+  int getDosCount() const {
+    return m_dos.size();
+  }  //!< Returns the Drawing OS frames count
+  int getRosCount() const {
+    return m_isRelativeFrameMode ? getMosCount() : getDosCount();
+  }
 
   int getMos(int index) const {
     assert(0 <= index && index < (int)m_mos.size());
@@ -70,22 +78,60 @@ public:
     return m_fos[index].first;
   }
 
+  int getDos(int index) const {
+    assert(0 <= index && index < (int)m_dos.size());
+    return m_dos[index].first;
+  }
+
+  int getRos(int index) const {
+    return m_isRelativeFrameMode ? getMos(index) : getDos(index);
+  }
+
   void setMos(int drow, bool on);  //!< Sets a Mobile OS frame shifted by drow
                                    //! around current xsheet frame
   void setFos(int row,
               bool on);  //!< Sets a Fixed OS frame to the specified xsheet row
 
+  void setDos(int drow,
+              bool on);  //!< Sets a Drawing OS frame to the specified xsheet row
+  void setRos(int drow, bool on) {
+    if (m_isRelativeFrameMode)
+      setMos(drow, on);
+    else
+      setDos(drow, on);
+  }
+
   void setMosOpacity(int drow, double opacity);
   double getMosOpacity(int drow);
   void setFosOpacity(int row, double opacity);
   double getFosOpacity(int row);
+  void setDosOpacity(int drow, double opacity);
+  double getDosOpacity(int drow);
+  void setRosOpacity(int drow, double opacity) {
+    if (m_isRelativeFrameMode)
+      setMosOpacity(drow, opacity);
+    else
+      setDosOpacity(drow, opacity);
+  }
+  double getRosOpacity(int drow) {
+    return m_isRelativeFrameMode ? getMosOpacity(drow) : getDosOpacity(drow);
+  }
 
   bool isMos(int drow);
   bool isFos(int row);
+  bool isDos(int drow);
+  bool isRos(int drow) {
+    return m_isRelativeFrameMode ? isMos(drow) : isDos(drow);
+  }
 
   bool getMosRange(int &drow0, int &drow1) const;
+  bool getDosRange(int &drow0, int &drow1) const;
 
-  bool isEmpty() const { return m_mos.empty() && m_fos.empty(); }
+  bool isEmpty() const {
+    return ((m_isRelativeFrameMode && m_mos.empty()) ||
+            (!m_isRelativeFrameMode && m_dos.empty())) &&
+           m_fos.empty();
+  }
 
   bool isEnabled() const { return m_enabled; }
   void enable(bool on) { m_enabled = on; }
@@ -150,9 +196,13 @@ since underlying onion-skinned drawings must be visible.
   void removeGhostFlipKey(int key) { m_ghostFlipKeys.removeAll(key); }
   void clearGhostFlipKey() { m_ghostFlipKeys.clear(); }
 
+  bool isRelativeFrameMode() const { return m_isRelativeFrameMode; }
+  void setRelativeFrameMode(bool on);
+
 private:
   std::vector<std::pair<int, double>> m_fos,
-      m_mos;                      //!< Fixed and Mobile Onion Skin indices and opacity
+      m_mos, m_dos;               //!< Fixed, Mobile (relative frames mode), Drawing Onion Skin
+                                  //!< indices and opacity
   bool m_enabled;                 //!< Whether onion skin is enabled
   bool m_wholeScene;              //!< Whether the OS works on the entire scene
   bool m_everyFrame;              //!< Whether the OS renders every frame or only on new exposures.
@@ -166,6 +216,8 @@ private:
                                // display the corresponding ghost
 
   bool m_LightTableStatus;
+
+  bool m_isRelativeFrameMode;
 };
 
 //***************************************************************************

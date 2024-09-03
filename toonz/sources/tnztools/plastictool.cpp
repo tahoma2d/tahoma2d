@@ -1936,10 +1936,11 @@ void PlasticTool::drawOnionSkinSkeletons_build(double pixelSize) {
   const OnionSkinMask &os =
       TTool::getApplication()->getCurrentOnionSkin()->getOnionSkinMask();
 
-  std::vector<int> osRows;
+  std::vector<std::pair<int, double>> osRows;
   int currentRow = ::row();
 
-  os.getAll(currentRow, osRows);
+  os.getAll(currentRow, osRows, getXsheet(),
+            TTool::getApplication()->getCurrentColumn()->getColumnIndex());
 
   TStageObject *obj = ::stageObject();
 
@@ -1948,16 +1949,16 @@ void PlasticTool::drawOnionSkinSkeletons_build(double pixelSize) {
 
   int r, rCount = int(osRows.size());
   for (r = 0; r != rCount; ++r) {
-    assert(osRows[r] != currentRow);
+    assert(osRows[r].first != currentRow);
 
-    double sdFrame = obj->paramsTime(double(osRows[r] - 1));
+    double sdFrame = obj->paramsTime(double(osRows[r].first - 1));
     int skelId     = m_sd->skeletonId(sdFrame);
 
     UCHAR &skelAlpha = skelAlphas[skelId];
 
     UCHAR alpha =
         255 -
-        UCHAR(255.0 * OnionSkinMask::getOnionSkinFade(osRows[r] - currentRow));
+        UCHAR(255.0 * OnionSkinMask::getOnionSkinFade(osRows[r].first - currentRow));
     skelAlpha = std::max(skelAlpha, alpha);
   }
 
@@ -1976,24 +1977,25 @@ void PlasticTool::drawOnionSkinSkeletons_animate(double pixelSize) {
   const OnionSkinMask &os =
       TTool::getApplication()->getCurrentOnionSkin()->getOnionSkinMask();
 
-  std::vector<int> osRows;
+  std::vector<std::pair<int, double>> osRows;
   int currentRow = ::row();
 
-  os.getAll(currentRow, osRows);
+  os.getAll(currentRow, osRows, getXsheet(),
+            TTool::getApplication()->getCurrentColumn()->getColumnIndex());
 
   TStageObject *obj = ::stageObject();
 
   int r, rCount = int(osRows.size());
   for (r = 0; r != rCount; ++r) {
-    assert(osRows[r] != currentRow);
+    assert(osRows[r].first != currentRow);
 
-    double sdFrame = obj->paramsTime(double(osRows[r] - 1));
+    double sdFrame = obj->paramsTime(double(osRows[r].first - 1));
 
     PlasticSkeleton skel;
     m_sd->storeDeformedSkeleton(m_sd->skeletonId(sdFrame), sdFrame, skel);
 
     UCHAR alpha = 255 - 255.0 * OnionSkinMask::getOnionSkinFade(
-                                    abs(osRows[r] - currentRow));
+                                    abs(osRows[r].first - currentRow));
     drawSkeleton(skel, pixelSize, alpha);
   }
 }

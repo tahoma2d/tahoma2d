@@ -10,6 +10,8 @@
 
 #include "toonz/onionskinmask.h"
 
+#include "toonz/txshcell.h"
+
 //*****************************************************************************************
 //    Macros
 //*****************************************************************************************
@@ -57,17 +59,20 @@ double inline getIncrement(int paperThickness) {
 
 TEnv::IntVar WholeScene("OnionSkinWholeScene", 0);
 TEnv::IntVar EveryFrame("OnionSkinEveryFrame", 1);
+TEnv::IntVar RelativeFrameMode("OnionSkinRelativeFrameMode", 1);
 
 OnionSkinMask::OnionSkinMask() {
   m_enabled = false;
   m_wholeScene = WholeScene;
   m_everyFrame = EveryFrame;
   m_LightTableStatus = false;
+  m_isRelativeFrameMode = RelativeFrameMode;
 }
 
 void OnionSkinMask::clear() {
   m_fos.clear();
   m_mos.clear();
+  m_dos.clear();
 
   m_shiftTraceStatus = DISABLED;
 
@@ -81,35 +86,100 @@ void OnionSkinMask::clear() {
 
 //-------------------------------------------------------------------
 
-void OnionSkinMask::getAll(int currentRow, std::vector<int> &output) const {
+void OnionSkinMask::getAll(int currentRow,
+                           std::vector<std::pair<int, double>> &output,
+                           TXsheet *xsh, int col) const {
   output.clear();
-  output.reserve(m_fos.size() + m_mos.size());
+  output.reserve(m_fos.size() +
+                 (m_isRelativeFrameMode ? m_mos.size() : m_dos.size()));
 
-  std::vector<std::pair<int, double>>::const_iterator fosIt, fosEnd(m_fos.end());
-  std::vector<std::pair<int, double>>::const_iterator mosIt,
-      mosEnd(m_mos.end());
+  std::vector<std::pair<int, double>>::const_iterator fosIt(m_fos.begin()), fosEnd(m_fos.end());
+  std::vector<std::pair<int, double>> dos2mos;
+  std::vector<std::pair<int, double>>::const_iterator dosIt(m_dos.begin()),
+      dosEnd(m_dos.end());
 
-  for (fosIt = m_fos.begin(), mosIt = m_mos.begin();
-       fosIt != fosEnd && mosIt != mosEnd;) {
-    int fos = fosIt->first, mos = mosIt->first + currentRow;
+  if (!m_isRelativeFrameMode && xsh && col >= 0) {
+    // Translate relative drawing position to frame drawing position
+    int r0, r1;
+    int n = xsh->getCellRange(col, r0, r1);
+    std::vector<TXshCell> cells(n);
+    bool useImplicit = Preferences::instance()->isImplicitHoldEnabled();
+    xsh->getCells(r0, col, n, &cells[0]);
+    TXshCell startCell = xsh->getCell(currentRow, col);
+    for (; dosIt != dosEnd;) {
+      int r             = currentRow - r0;
+      TXshCell prevCell = startCell;
+      if (r >= n)  // after last cell
+        r = n - 1;
+      else if (r < 0)  // Before the 1st cell
+        r = 0;
+      if (prevCell.getFrameId().isStopFrame()) prevCell = TXshCell();
 
-    if (fos < mos) {
-      if (fos != currentRow) output.push_back(fos);
+      int x = dosIt->first;
+      if (x < 0) {
+        // Find Previous Drawings
+        for (; r >= 0; r--) {
+          if (cells[r].isEmpty() || cells[r].getFrameId().isStopFrame())
+            continue;
+          if (cells[r] != prevCell) {
+            prevCell = cells[r];
+            x++;
+            if (!x) break;
+          }
+        }
+      } else if (x > 0) {
+        // Find Next Drawings
+        for (; r < n; r++) {
+          if (cells[r].isEmpty() || cells[r].getFrameId().isStopFrame())
+            continue;
+          if (cells[r] != prevCell) {
+            prevCell = cells[r];
+            x--;
+            if (!x) break;
+          }
+        }
+      }
+      if (r >= 0 && r < n)
+        dos2mos.push_back(std::make_pair((r + r0 - currentRow), dosIt->second));
+      ++dosIt;
+    }
+  }
+
+  std::vector<std::pair<int, double>>::const_iterator rosIt(
+      m_isRelativeFrameMode ? m_mos.begin() : dos2mos.begin()),
+      rosEnd(m_isRelativeFrameMode ? m_mos.end() : dos2mos.end());
+
+  for (; fosIt != fosEnd && rosIt != rosEnd;) {
+    int fos = fosIt->first;
+    int ros = rosIt->first + currentRow;
+
+    if (fos < ros) {
+      if (fos != currentRow)
+        output.push_back(std::make_pair(fos, fosIt->second));
 
       ++fosIt;
     } else {
-      if (mos != currentRow) output.push_back(mos);
+      double opacity = rosIt->second;
+      if (fos == ros) {
+        double fosFade = fosIt->second;
+        double rosFade = rosIt->second;
+        opacity        = fosFade == -1.0
+                      ? rosFade
+                      : (rosFade == -1 ? fosFade : std::min(fosFade, rosFade));
+      }
+      if (ros != currentRow) output.push_back(std::make_pair(ros, opacity));
 
-      ++mosIt;
+      ++rosIt;
     }
   }
 
   for (; fosIt != fosEnd; ++fosIt)
-    if (fosIt->first != currentRow) output.push_back(fosIt->first);
+    if (fosIt->first != currentRow)
+      output.push_back(std::make_pair(fosIt->first, fosIt->second));
 
-  for (; mosIt != mosEnd; ++mosIt) {
-    int mos = mosIt->first + currentRow;
-    if (mos != currentRow) output.push_back(mos);
+  for (; rosIt != rosEnd; ++rosIt) {
+    int ros = rosIt->first + currentRow;
+    if (ros != currentRow) output.push_back(std::make_pair(ros, rosIt->second));
   }
 }
 
@@ -144,6 +214,24 @@ void OnionSkinMask::setFos(int row, bool on) {
       m_fos.insert(r, std::make_pair(row, -1));
   } else {
     if (r != m_fos.end() && r->first == row) m_fos.erase(r);
+  }
+}
+
+//-------------------------------------------------------------------
+
+void OnionSkinMask::setDos(int drow, bool on) {
+  assert(drow != 0);
+
+  std::vector<std::pair<int, double>>::iterator r;
+  for (r = m_dos.begin(); r != m_dos.end(); r++) {
+    if (r->first >= drow) break;
+  }
+
+  if (on) {
+    if (r == m_dos.end() || r->first != drow)
+      m_dos.insert(r, std::make_pair(drow, -1));
+  } else {
+    if (r != m_dos.end() && r->first == drow) m_dos.erase(r);
   }
 }
 
@@ -193,6 +281,28 @@ double OnionSkinMask::getFosOpacity(int drow) {
 
 //-------------------------------------------------------------------
 
+void OnionSkinMask::setDosOpacity(int drow, double opacity) {
+  std::vector<std::pair<int, double>>::iterator r;
+  for (r = m_dos.begin(); r != m_dos.end(); r++) {
+    if (r->first == drow) {
+      r->second = opacity;
+      break;
+    }
+  }
+}
+
+//-------------------------------------------------------------------
+
+double OnionSkinMask::getDosOpacity(int drow) {
+  std::vector<std::pair<int, double>>::iterator r;
+  for (r = m_dos.begin(); r != m_dos.end(); r++)
+    if (r->first == drow) return r->second;
+
+  return -1.0;
+}
+
+//-------------------------------------------------------------------
+
 bool OnionSkinMask::isFos(int row) {
   std::vector<std::pair<int, double>>::iterator r;
   for (r = m_fos.begin(); r != m_fos.end(); r++)
@@ -213,12 +323,34 @@ bool OnionSkinMask::isMos(int drow) {
 
 //-------------------------------------------------------------------
 
+bool OnionSkinMask::isDos(int drow) {
+  std::vector<std::pair<int, double>>::iterator r;
+  for (r = m_dos.begin(); r != m_dos.end(); r++)
+    if (r->first == drow) return true;
+
+  return false;
+}
+
+//-------------------------------------------------------------------
+
 bool OnionSkinMask::getMosRange(int &drow0, int &drow1) const {
   if (m_mos.empty()) {
     drow0 = 0, drow1 = -1;
     return false;
   } else {
     drow0 = m_mos.front().first, drow1 = m_mos.back().first;
+    return true;
+  }
+}
+
+//-------------------------------------------------------------------
+
+bool OnionSkinMask::getDosRange(int &drow0, int &drow1) const {
+  if (m_dos.empty()) {
+    drow0 = 0, drow1 = -1;
+    return false;
+  } else {
+    drow0 = m_dos.front().first, drow1 = m_dos.back().first;
     return true;
   }
 }
@@ -263,6 +395,11 @@ void OnionSkinMask::setShiftTraceGhostCenter(int index, const TPointD &center) {
   m_ghostCenter[index] = center;
 }
 
+void OnionSkinMask::setRelativeFrameMode(bool on) {
+  m_isRelativeFrameMode = on;
+  RelativeFrameMode     = m_isRelativeFrameMode;
+}
+
 //***************************************************************************
 //    OnionSkinMaskModifier  implementation
 //***************************************************************************
@@ -298,14 +435,14 @@ void OnionSkinMaskModifier::click(int row, bool isFos) {
     }
   } else {
     int drow = row - m_curRow;
-    if (drow != 0 && m_curMask.isEnabled() && m_curMask.isMos(drow)) {
+    if (drow != 0 && m_curMask.isEnabled() && m_curMask.isRos(drow)) {
       m_status = 4;  // spegnere mos
-      m_curMask.setMos(drow, false);
+      m_curMask.setRos(drow, false);
     } else if (drow == 0) {
       m_status = 8 + 4 + 1;  // accendere mos; partito da 0
     } else {
       if (!m_curMask.isEnabled()) m_curMask.enable(true);
-      m_curMask.setMos(drow, true);
+      m_curMask.setRos(drow, true);
       m_status = 4 + 1;  // accendere mos;
     }
   }
@@ -331,7 +468,7 @@ void OnionSkinMaskModifier::drag(int row) {
         m_curMask.clear();
         m_curMask.enable(true);
       }
-      if (r != m_curRow) m_curMask.setMos(r - m_curRow, (m_status & 1) != 0);
+      if (r != m_curRow) m_curMask.setRos(r - m_curRow, (m_status & 1) != 0);
     } else
       m_curMask.setFos(r, (m_status & 1) != 0);
   }
@@ -354,6 +491,8 @@ void OnionSkinMaskModifier::release(int row) {
         m_curMask.setMos(-1, true);
         m_curMask.setMos(-2, true);
         m_curMask.setMos(-3, true);
+        m_curMask.setDos(-1, true);
+        m_curMask.setDos(1, true);
       }
     }
   }
