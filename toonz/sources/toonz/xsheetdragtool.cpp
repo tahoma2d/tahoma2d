@@ -773,7 +773,7 @@ public:
         TXshColumn *column = xsh->getColumn(m_c0 + c);
         bool isSoundColumn = (column && column->getSoundColumn());
         if (m_insert) xsh->insertCells(m_r1 + 1, m_c0 + c, dr);
-        TXshCell prevCell = xsh->getCell(m_r1, c);
+        TXshCell prevCell = xsh->getCell(m_r1, m_c0 + c);
         for (int r = m_r1 + 1; r <= r1; r++) {
           TXshCell cell = m_columns[c].generate(r);
           if (isSoundColumn ||
