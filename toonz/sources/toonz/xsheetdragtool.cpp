@@ -1960,10 +1960,11 @@ public:
       int newCol = m_firstCol + offset;
 
       // Dropping into folder
-      if (!m_addToFolder.isEmpty() && offset > 0 && xsh->getColumn(m_targetCol)->getFolderColumn() &&
+      if (!m_addToFolder.isEmpty() && offset && xsh->getColumn(m_targetCol)->getFolderColumn() &&
           xsh->getColumn(m_targetCol)->getFolderColumn()->getFolderColumnFolderId() == m_addToFolder.back()) {
         xsh->openCloseFolder(m_targetCol, true);
-        newCol--;
+        if (offset > 0)
+          newCol--;
       }
 
       if (newCol < 0) return;
@@ -1975,10 +1976,10 @@ public:
       for (it = vOldIndices.rbegin(); it != vOldIndices.rend(); it++, i++) {
         newIndices.insert(newCol + i);
 
-        TXshColumn *column = xsh->getColumn(*it);
+        TXshColumn *column        = xsh->getColumn(*it);
         QStack<int> folderIdStack = column->getFolderIdStack();
         vOldFolders.insert(vOldFolders.begin(), folderIdStack);
-  
+
         if (subfolder >= 0 && !column->isContainedInFolder(subfolder)) {
           folderList.pop();
           if (folderList.size())
