@@ -1741,16 +1741,48 @@ public:
   }
   void undo() const override {
     moveColumns(m_newIndices, m_oldIndices, m_oldFolders);
+
     TSelection *selection =
         TApp::instance()->getCurrentSelection()->getSelection();
     if (selection) selection->selectNone();
+
+    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+    for (std::set<int>::iterator it = m_oldIndices.begin();
+         it != m_oldIndices.end(); ++it) {
+      TXshColumn *column   = xsh->getColumn(*it);
+      bool isColumnVisible = column->isColumnVisible();
+      for (auto o : Orientations::all()) {
+        ColumnFan *columnFan = xsh->getColumnFan(o);
+        if (isColumnVisible)
+          columnFan->show(*it);
+        else
+          columnFan->hide(*it);
+      }
+    }
+
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
   void redo() const override {
     moveColumns(m_oldIndices, m_newIndices, m_newFolders);
+
     TSelection *selection =
         TApp::instance()->getCurrentSelection()->getSelection();
     if (selection) selection->selectNone();
+
+    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+    for (std::set<int>::iterator it = m_newIndices.begin();
+         it != m_newIndices.end(); ++it) {
+      TXshColumn *column   = xsh->getColumn(*it);
+      bool isColumnVisible = column->isColumnVisible();
+      for (auto o : Orientations::all()) {
+        ColumnFan *columnFan = xsh->getColumnFan(o);
+        if (isColumnVisible)
+          columnFan->show(*it);
+        else
+          columnFan->hide(*it);
+      }
+    }
+
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
   int getSize() const override {
@@ -2000,8 +2032,19 @@ public:
 
       selection->selectNone();
       for (std::set<int>::iterator it = newIndices.begin();
-           it != newIndices.end(); ++it)
+           it != newIndices.end(); ++it) {
         selection->selectColumn(*it, true);
+
+        TXshColumn *column = xsh->getColumn(*it);
+        bool isColumnVisible = column->isColumnVisible();
+        for (auto o : Orientations::all()) {
+          ColumnFan *columnFan = xsh->getColumnFan(o);
+          if (isColumnVisible)
+            columnFan->show(*it);
+          else
+            columnFan->hide(*it);
+        }
+      }
 
       TUndoManager::manager()->add(new ColumnMoveUndo(
           oldIndices, vOldFolders, newIndices, vNewFolders));
