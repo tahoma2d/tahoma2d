@@ -557,7 +557,7 @@ bool pasteStrokesInCellWithoutUndo(
   } else {
     vi = cell.getImage(true);
     sl = cell.getSimpleLevel();
-    if (sl->getType() == OVL_XSHLEVEL && sl->getPath().isUneditable())
+    if (!sl || (sl->getType() == OVL_XSHLEVEL && sl->getPath().isUneditable()))
       return false;
     fid = cell.getFrameId();
     if (!vi) {
