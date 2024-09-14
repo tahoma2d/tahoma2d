@@ -593,7 +593,10 @@ void StrokeSelection::paste() {
   }
 
   TVectorImageP tarImg = tool->touchImage();
-  if (!tarImg) return;
+  if (!tarImg) {
+    tool->removeTouchedImageIfNeeded(0);
+    return;
+  }
   TPaletteP palette       = tarImg->getPalette();
   TPaletteP oldPalette    = new TPalette();
   if (palette) oldPalette = palette->clone();
@@ -605,7 +608,8 @@ void StrokeSelection::paste() {
         level, tool->getCurrentFid(), m_indexes, oldPalette, m_sceneHandle,
         tool->m_isFrameCreated, tool->m_isLevelCreated));
     m_updateSelectionBBox = isPaste;
-  }
+  } else
+    tool->removeTouchedImageIfNeeded(oldPalette);
   tool->notifyImageChanged();
   tool->getApplication()
       ->getPaletteController()

@@ -35,6 +35,7 @@
 #include "toonz/palettecontroller.h"
 #include "toonz/tonionskinmaskhandle.h"
 #include "toutputproperties.h"
+#include "toonz/levelset.h"
 
 // TnzCore includes
 #include "tvectorimage.h"
@@ -1571,4 +1572,60 @@ void TTool::flipGuideStrokeDirection(int mode) {
   sl->setDirtyFlag(true);
   getViewer()->invalidateAll();
   m_application->getCurrentLevel()->notifyLevelChange();
+}
+
+//-------------------------------------------------------------------------------------------------------------
+
+void TTool::removeTouchedImageIfNeeded(const TPaletteP &oldPalette) {
+  TXshSimpleLevel *sl =
+      m_application->getCurrentLevel()->getLevel()->getSimpleLevel();
+  if (!sl) return;
+
+  TFrameId frameId = getCurrentFid();
+
+  int col = m_application->getCurrentColumn()->getColumnIndex();
+  int row = m_application->getCurrentFrame()->getFrameIndex();
+
+  if (m_isFrameCreated) {
+    sl->eraseFrame(frameId);
+    if (!m_application->getCurrentFrame()->isEditingLevel()) {
+      TXsheet *xsh = m_application->getCurrentXsheet()->getXsheet();
+      TXshCell cell;
+      for (const TTool::CellOps &cellOps : TTool::m_cellsData) {
+        if (cellOps.type == TTool::CellOps::ExistingToNew)
+          cell = xsh->getCell(cellOps.r0 - 1, col);
+        for (int r = cellOps.r0; r <= cellOps.r1; r++)
+          xsh->setCell(r, col, cell);
+      }
+      if (TTool::m_cellsData.size() < 1) {
+        xsh->setCell(row, col, cell);
+      }
+    }
+    if (m_isLevelCreated) {
+      TLevelSet *levelSet =
+          m_application->getCurrentScene()->getScene()->getLevelSet();
+      if (levelSet) {
+        levelSet->removeLevel(sl);
+        m_application->getCurrentScene()->notifyCastChange();
+      }
+    }
+  }
+  if (oldPalette.getPointer()) {
+    sl->getPalette()->assign(oldPalette->clone());
+    m_application->getPaletteController()
+        ->getCurrentLevelPalette()
+        ->notifyPaletteChanged();
+  }
+  if (m_isLevelRenumbererd) {
+    TXsheet *xsh = m_application->getCurrentScene()->getScene()->getTopXsheet();
+    std::vector<TXshChildLevel *> childLevels;
+    ToolUtils::doUpdateXSheet(sl, m_newFids, m_oldFids, xsh, childLevels);
+    sl->renumber(m_oldFids);
+    m_application->getCurrentXsheet()->notifyXsheetChanged();
+  }
+  if (m_isFrameCreated || m_isLevelCreated)
+    m_application->getCurrentLevel()->notifyLevelChange();
+  m_isFrameCreated     = false;
+  m_isLevelCreated     = false;
+  m_isLevelRenumbererd = false;
 }

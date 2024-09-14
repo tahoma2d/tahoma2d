@@ -1243,6 +1243,7 @@ void RasterSelection::pasteSelection() {
   int levelType       = sl ? sl->getType() : NO_XSHLEVEL;
 
   if (!isEditable()) {
+    tool->removeTouchedImageIfNeeded(0);
     DVGui::error(
         QObject::tr("The selection cannot be pasted. It is not editable."));
     return;
@@ -1257,7 +1258,10 @@ void RasterSelection::pasteSelection() {
   const StrokesData *stData =
       dynamic_cast<const StrokesData *>(clipboard->mimeData());
   QImage clipImage = clipboard->image();
-  if (!riData && !stData && clipImage.height() == 0) return;
+  if (!riData && !stData && clipImage.height() == 0) {
+    tool->removeTouchedImageIfNeeded(0);
+    return;
+  }
   if (isFloating()) pasteFloatingSelection();
   selectNone();
   m_isPastedSelection = true;
@@ -1273,7 +1277,10 @@ void RasterSelection::pasteSelection() {
 
     TToonzImageP ti  = (TToonzImageP)image;
     TRasterImageP ri = (TRasterImageP)image;
-    if (!ti && !ri) return;
+    if (!ti && !ri) {
+      tool->removeTouchedImageIfNeeded(0);
+      return;
+    }
 
     makeCurrent();
     setCurrentImage(image, imageCell);
@@ -1328,7 +1335,10 @@ void RasterSelection::pasteSelection() {
     r *= convertRasterToWorld(box, m_currentImage);
     if (!r.isEmpty()) {
       TStroke stroke = getStrokeByRect(r);
-      if ((int)stroke.getControlPointCount() == 0) return;
+      if ((int)stroke.getControlPointCount() == 0) {
+        tool->removeTouchedImageIfNeeded(m_oldPalette);
+        return;
+      }
       m_strokes.push_back(stroke);
       m_originalStrokes.push_back(stroke);
     }
@@ -1345,8 +1355,10 @@ void RasterSelection::pasteSelection() {
     riData = qimageData;
   }
 
-  if (!riData) return;
-  if (!pasteSelection(riData)) return;
+  if (!riData || !pasteSelection(riData)) {
+    tool->removeTouchedImageIfNeeded(m_oldPalette);
+    return;
+  }
 
   app->getPaletteController()->getCurrentLevelPalette()->notifyPaletteChanged();
   notify();

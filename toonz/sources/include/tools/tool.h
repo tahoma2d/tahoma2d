@@ -9,6 +9,7 @@
 #include "toonz/imagepainter.h"
 #include "toonz/tapplication.h"
 #include "tools/cursors.h"
+#include "tpalette.h"
 
 // TnzCore includes
 #include "tcommon.h"
@@ -545,6 +546,8 @@ transformation.
 
   virtual void saveTool(){};
   virtual void loadTool(){};
+
+  void removeTouchedImageIfNeeded(const TPaletteP &oldPalette);
 
 public:
   struct CellOps {
