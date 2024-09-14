@@ -9,6 +9,7 @@
 #include "toonz/imagepainter.h"
 #include "toonz/tapplication.h"
 #include "tools/cursors.h"
+#include "tpalette.h"
 
 // TnzCore includes
 #include "tcommon.h"
@@ -549,6 +550,8 @@ transformation.
   void setAlignMethod(int method) { m_alignMethod = method; }
   int getAlignMethod() { return m_alignMethod; }
  
+  void removeTouchedImageIfNeeded(const TPaletteP &oldPalette);
+
 public:
   struct CellOps {
     int r0;
