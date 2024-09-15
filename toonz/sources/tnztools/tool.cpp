@@ -370,6 +370,8 @@ TImage *TTool::touchImage(bool forDuplicate) {
   // Stop frames cannot be modified
   if (cell.getFrameId().isStopFrame()) return 0;
 
+  if (cell.getChildLevel()) return 0;
+
   TXshSimpleLevel *sl = cell.getSimpleLevel();
 
   if (sl) {
