@@ -86,9 +86,11 @@ TLevelWriterMp4::~TLevelWriterMp4() {
 
   postIArgs << "-pix_fmt";
   postIArgs << "yuv420p";
-  postIArgs << "-s";
-  postIArgs << QString::number(outLx) + "x" + QString::number(outLy);
-  postIArgs << "-b";
+  postIArgs << "-vf";
+  postIArgs << "scale=" + QString::number(outLx) + "x" +
+                   QString::number(outLy) +
+                   ":in_color_matrix=bt709:out_color_matrix=bt709";
+  postIArgs << "-b:v";
   postIArgs << QString::number(finalBitrate) + "k";
   if (Ffmpeg::checkCodecs("libopenh264")) {
     postIArgs << "-c:v";
