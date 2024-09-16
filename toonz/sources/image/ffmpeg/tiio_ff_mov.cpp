@@ -94,9 +94,28 @@ TLevelWriterFFMov::~TLevelWriterFFMov() {
   postIArgs << "yuva444p10le";
   postIArgs << "-profile:v";
   postIArgs << "4";
-  postIArgs << "-s";
-  postIArgs << QString::number(outLx) + "x" + QString::number(outLy);
-  postIArgs << "-b";
+/* KONERO_VERSION
+  postIArgs << "-vf";
+  postIArgs << "scale=" + QString::number(outLx) + "x" +
+                   QString::number(outLy) +
+                   ":in_color_matrix=bt709:out_color_matrix=bt709";
+*/
+// RODNEY VERSION
+  postIArgs << "-vf";
+  postIArgs
+      << "scale=" + QString::number(outLx) + "x" + QString::number(outLy) +
+             "," +
+             "colorspace=all=bt709:iall=bt601-6-625:fast=1";  // Adding color
+                                                              // space
+                                                              // conversion
+  postIArgs << "-color_primaries";
+  postIArgs << "bt709";
+  postIArgs << "-color_trc";
+  postIArgs << "bt709";
+  postIArgs << "-colorspace";
+  postIArgs << "bt709";
+//
+  postIArgs << "-b:v";
   postIArgs << QString::number(finalBitrate) + "k";
 
   ffmpegWriter->runFfmpeg(preIArgs, postIArgs, false, false, true);
