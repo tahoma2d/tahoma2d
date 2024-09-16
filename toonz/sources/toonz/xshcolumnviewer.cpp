@@ -2692,7 +2692,7 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
           SLOT(onValueChanged(const QString &)));
 
   m_slider->setEnabled(true);
-  if (column->getFolderOpacity() != 255) m_slider->setEnabled(false);
+  if (column->getParentFolderOpacity() != 255) m_slider->setEnabled(false);
 
   m_filterColorCombo->clear();
   // initialize color filter combo box
@@ -2715,7 +2715,8 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
       m_filterColorCombo->findData(m_column->getColorFilterId()));
 
   m_filterColorCombo->setEnabled(true);
-  if (column->getFolderColorFilterId()) m_filterColorCombo->setEnabled(false);
+  if (column->getParentFolderColorFilterId())
+    m_filterColorCombo->setEnabled(false);
 
   m_maskGroupBox->blockSignals(true);
   m_invertMask->blockSignals(true);
@@ -3593,7 +3594,7 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
   if (m_doOnRelease != 0) {
     TXshColumn *column = xsh->getColumn(m_col);
     if (m_doOnRelease == ToggleTransparency) {
-      if (column->isFolderCamstandVisible()) {
+      if (column->isParentFolderCamstandVisible()) {
         column->setCamstandVisible(!column->isCamstandVisible());
         // sync eye button
         if (Preferences::instance()->isUnifyColumnVisibilityTogglesEnabled())
@@ -3602,11 +3603,11 @@ void ColumnArea::mouseReleaseEvent(QMouseEvent *event) {
           app->getCurrentXsheet()->notifyXsheetSoundChanged();
       }
     } else if (m_doOnRelease == TogglePreviewVisible) {
-      if (column->isFolderPreviewVisible()) {
+      if (column->isParentFolderPreviewVisible()) {
         column->setPreviewVisible(!column->isPreviewVisible());
       }
     } else if (m_doOnRelease == ToggleLock) {
-      if (!column->isFolderLocked()) {
+      if (!column->isParentFolderLocked()) {
         column->lock(!column->isLocked());
       }
     } else if (m_doOnRelease == OpenSettings) {

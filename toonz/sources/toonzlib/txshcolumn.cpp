@@ -685,7 +685,7 @@ void TXshColumn::setCamstandNextState() {
 //-----------------------------------------------------------------------------
 
 bool TXshColumn::isCamstandVisible() const {
-  if (!isFolderCamstandVisible()) return false;
+  if (!isParentFolderCamstandVisible()) return false;
   return (m_status & eCamstandVisible) == 0;
 }
 
@@ -717,7 +717,7 @@ void TXshColumn::setCamstandVisible(bool on) {
 //-----------------------------------------------------------------------------
 
 UCHAR TXshColumn::getOpacity() const {
-  UCHAR folderOpacity = getFolderOpacity();
+  UCHAR folderOpacity = getParentFolderOpacity();
 
   return folderOpacity == 255 ? m_opacity : folderOpacity;
 }
@@ -725,7 +725,7 @@ UCHAR TXshColumn::getOpacity() const {
 //-----------------------------------------------------------------------------
 
 int TXshColumn::getColorFilterId() const {
-  int folderColorFilterId = getFolderColorFilterId();
+  int folderColorFilterId = getParentFolderColorFilterId();
 
   return !folderColorFilterId ? m_colorFilterId : folderColorFilterId;
 }
@@ -733,7 +733,7 @@ int TXshColumn::getColorFilterId() const {
 //-----------------------------------------------------------------------------
 
 bool TXshColumn::isPreviewVisible() const {
-  if (!isFolderPreviewVisible()) return false;
+  if (!isParentFolderPreviewVisible()) return false;
   return (m_status & ePreviewVisible) == 0;
 }
 
@@ -750,7 +750,7 @@ void TXshColumn::setPreviewVisible(bool on) {
 //-----------------------------------------------------------------------------
 
 bool TXshColumn::isLocked() const {
-  if (isFolderLocked()) return true;
+  if (isParentFolderLocked()) return true;
   return (m_status & eLocked) != 0;
 }
 
@@ -895,7 +895,7 @@ int TXshColumn::folderDepth() { return m_folderId.size(); }
 
 //-----------------------------------------------------------------------------
 
-TXshColumn *TXshColumn::getFolderColumn() const {
+TXshColumn *TXshColumn::getParentFolder(int position) const {
   TXsheet *xsh = getXsheet();
   if (!xsh) return 0;
 
@@ -905,7 +905,7 @@ TXshColumn *TXshColumn::getFolderColumn() const {
     TXshColumn *folderColumn = xsh->getColumn(i);
     if (folderColumn->getFolderColumn() &&
         folderColumn->getFolderColumn()->getFolderColumnFolderId() ==
-            getFolderId())
+            getFolderId(position))
       return folderColumn;
     if (!folderColumn->isInFolder()) break;
   }
@@ -914,47 +914,60 @@ TXshColumn *TXshColumn::getFolderColumn() const {
 
 //-----------------------------------------------------------------------------
 
-bool TXshColumn::isFolderCamstandVisible() const {
+bool TXshColumn::isParentFolderCamstandVisible() const {
   if (m_folderId.isEmpty()) return true;
-  TXshColumn *column = getFolderColumn();
+  TXshColumn *column = getParentFolder();
 
   return column ? column->isCamstandVisible() : true;
 }
 
 //-----------------------------------------------------------------------------
 
-bool TXshColumn::isFolderPreviewVisible() const {
+bool TXshColumn::isParentFolderPreviewVisible() const {
   if (m_folderId.isEmpty()) return true;
-  TXshColumn *column = getFolderColumn();
+  TXshColumn *column = getParentFolder();
 
   return column ? column->isPreviewVisible() : true;
 }
 
 //-----------------------------------------------------------------------------
 
-bool TXshColumn::isFolderLocked() const {
+bool TXshColumn::isParentFolderLocked() const {
   if (m_folderId.isEmpty()) return false;
-  TXshColumn *column = getFolderColumn();
+  TXshColumn *column = getParentFolder();
 
   return column ? column->isLocked() : false;
 }
 
 //-----------------------------------------------------------------------------
 
-UCHAR TXshColumn::getFolderOpacity() const {
+UCHAR TXshColumn::getParentFolderOpacity() const {
   if (m_folderId.isEmpty()) return 255;
-  TXshColumn *column = getFolderColumn();
+  TXshColumn *column = getParentFolder();
 
   return column ? column->getOpacity() : 255;
 }
 
 //-----------------------------------------------------------------------------
 
-int TXshColumn::getFolderColorFilterId() const {
+int TXshColumn::getParentFolderColorFilterId() const {
   if (m_folderId.isEmpty()) return 0;
-  TXshColumn *column = getFolderColumn();
+  TXshColumn *column = getParentFolder();
 
   return column ? column->getColorFilterId() : 0;
+}
+
+//-----------------------------------------------------------------------------
+
+bool TXshColumn::isColumnVisible() {
+  if (m_folderId.isEmpty()) return true;
+
+  for (int i = 0; i < m_folderId.size(); i++) {
+    TXshColumn *folder = getParentFolder(i);
+    if (folder && !folder->getFolderColumn()->isExpanded()) return false;
+  }
+
+  return true;
 }
 
 //-----------------------------------------------------------------------------

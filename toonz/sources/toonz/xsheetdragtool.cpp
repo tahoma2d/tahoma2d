@@ -1741,16 +1741,48 @@ public:
   }
   void undo() const override {
     moveColumns(m_newIndices, m_oldIndices, m_oldFolders);
+
     TSelection *selection =
         TApp::instance()->getCurrentSelection()->getSelection();
     if (selection) selection->selectNone();
+
+    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+    for (std::set<int>::iterator it = m_oldIndices.begin();
+         it != m_oldIndices.end(); ++it) {
+      TXshColumn *column   = xsh->getColumn(*it);
+      bool isColumnVisible = column->isColumnVisible();
+      for (auto o : Orientations::all()) {
+        ColumnFan *columnFan = xsh->getColumnFan(o);
+        if (isColumnVisible)
+          columnFan->show(*it);
+        else
+          columnFan->hide(*it);
+      }
+    }
+
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
   void redo() const override {
     moveColumns(m_oldIndices, m_newIndices, m_newFolders);
+
     TSelection *selection =
         TApp::instance()->getCurrentSelection()->getSelection();
     if (selection) selection->selectNone();
+
+    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+    for (std::set<int>::iterator it = m_newIndices.begin();
+         it != m_newIndices.end(); ++it) {
+      TXshColumn *column   = xsh->getColumn(*it);
+      bool isColumnVisible = column->isColumnVisible();
+      for (auto o : Orientations::all()) {
+        ColumnFan *columnFan = xsh->getColumnFan(o);
+        if (isColumnVisible)
+          columnFan->show(*it);
+        else
+          columnFan->hide(*it);
+      }
+    }
+
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
   }
   int getSize() const override {
@@ -1960,10 +1992,11 @@ public:
       int newCol = m_firstCol + offset;
 
       // Dropping into folder
-      if (!m_addToFolder.isEmpty() && offset > 0 && xsh->getColumn(m_targetCol)->getFolderColumn() &&
+      if (!m_addToFolder.isEmpty() && offset && xsh->getColumn(m_targetCol)->getFolderColumn() &&
           xsh->getColumn(m_targetCol)->getFolderColumn()->getFolderColumnFolderId() == m_addToFolder.back()) {
         xsh->openCloseFolder(m_targetCol, true);
-        newCol--;
+        if (offset > 0)
+          newCol--;
       }
 
       if (newCol < 0) return;
@@ -1975,10 +2008,10 @@ public:
       for (it = vOldIndices.rbegin(); it != vOldIndices.rend(); it++, i++) {
         newIndices.insert(newCol + i);
 
-        TXshColumn *column = xsh->getColumn(*it);
+        TXshColumn *column        = xsh->getColumn(*it);
         QStack<int> folderIdStack = column->getFolderIdStack();
         vOldFolders.insert(vOldFolders.begin(), folderIdStack);
-  
+
         if (subfolder >= 0 && !column->isContainedInFolder(subfolder)) {
           folderList.pop();
           if (folderList.size())
@@ -1999,8 +2032,19 @@ public:
 
       selection->selectNone();
       for (std::set<int>::iterator it = newIndices.begin();
-           it != newIndices.end(); ++it)
+           it != newIndices.end(); ++it) {
         selection->selectColumn(*it, true);
+
+        TXshColumn *column = xsh->getColumn(*it);
+        bool isColumnVisible = column->isColumnVisible();
+        for (auto o : Orientations::all()) {
+          ColumnFan *columnFan = xsh->getColumnFan(o);
+          if (isColumnVisible)
+            columnFan->show(*it);
+          else
+            columnFan->hide(*it);
+        }
+      }
 
       TUndoManager::manager()->add(new ColumnMoveUndo(
           oldIndices, vOldFolders, newIndices, vNewFolders));

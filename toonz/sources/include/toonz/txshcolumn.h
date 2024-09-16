@@ -286,12 +286,14 @@ Set column color tag to \b colorTag.
   void removeFromAllFolders();
   int folderDepth();
 
-  TXshColumn *getFolderColumn() const;
-  bool isFolderCamstandVisible() const;
-  bool isFolderPreviewVisible() const;
-  bool isFolderLocked() const;
-  UCHAR getFolderOpacity() const;
-  int getFolderColorFilterId() const;
+  TXshColumn *getParentFolder(int position = -1) const;
+  bool isParentFolderCamstandVisible() const;
+  bool isParentFolderPreviewVisible() const;
+  bool isParentFolderLocked() const;
+  UCHAR getParentFolderOpacity() const;
+  int getParentFolderColorFilterId() const;
+
+  bool isColumnVisible();
 
   bool loadFolderInfo(std::string tagName, TIStream &is);
   void saveFolderInfo(TOStream &os);
