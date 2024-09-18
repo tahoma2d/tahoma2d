@@ -855,16 +855,29 @@ bool ShortcutZoomer::exec(QKeyEvent *event) {
   if (key == Qt::Key_Control || key == Qt::Key_Shift || key == Qt::Key_Alt)
     return false;
 
-  if (event->modifiers() & Qt::KeypadModifier)
-    key = key |
-          event->modifiers() &
-              (~0xf0000000);  // Ignore if the key is a numpad key
-
   int zoomInKey, zoomOutKey, viewResetKey, zoomFitKey, showHideFullScreenKey,
       actualPixelSize, flipX, flipY, zoomReset, rotateReset, positionReset;
   getViewerShortcuts(zoomInKey, zoomOutKey, viewResetKey, zoomFitKey,
                      showHideFullScreenKey, actualPixelSize, flipX, flipY,
                      zoomReset, rotateReset, positionReset);
+
+  if ((event->modifiers() & Qt::ControlModifier) ||
+      (event->modifiers() & Qt::AltModifier) ||
+      (event->modifiers() & Qt::MetaModifier)) {
+    key = key | event->modifiers();
+  } else if ((event->modifiers() & Qt::ShiftModifier)) {
+    // A shifted key may be represented differently here vs what is in the
+    // defined shortcuts. For example + (Shift+=) and + (numpad) or M and
+    // Shift+M.
+    // Check key w/ SHIFT included and use that if it matches one of the
+    // shortcuts otherwise use the original key
+    int key2 = key | event->modifiers();
+    if (key2 == zoomInKey || key2 == zoomOutKey || key2 == viewResetKey ||
+        key2 == zoomFitKey || key2 == showHideFullScreenKey ||
+        key2 == actualPixelSize || key2 == flipX || key2 == flipY ||
+        key2 == zoomReset || key2 == rotateReset || key2 == positionReset)
+      key = key2;
+  }
 
   return (key == showHideFullScreenKey)
              ? toggleFullScreen()
