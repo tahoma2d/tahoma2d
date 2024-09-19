@@ -372,6 +372,9 @@ void TApp::updateXshLevel() {
                                           ->m_levels.at(0)
                                           ->getSoundLevel());
       }
+    } else if (xsheet->getColumn(column) &&
+               xsheet->getColumn(column)->getFolderColumn()) {
+      getCurrentSelection()->setSelection(0);
     } else if (xsheet && column >= 0 && frame >= 0 &&
                !xsheet->isColumnEmpty(column)) {
       TXshCell cell = xsheet->getCell(frame, column);
