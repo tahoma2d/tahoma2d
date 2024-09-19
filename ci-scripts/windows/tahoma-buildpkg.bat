@@ -48,6 +48,9 @@ IF EXIST "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC" set
 
 %QT_PATH%\bin\windeployqt.exe Tahoma2D\Tahoma2D.exe
 
+xcopy /Y /E /I %VCINSTALLDIR%\Redist\MSVC\14.29.30133\x64\Microsoft.VC142.CRT Tahoma2D
+xcopy /Y /E /I %VCINSTALLDIR%\Redist\MSVC\14.29.30133\x64\Microsoft.VC142.OpenMP Tahoma2D
+
 del /A- /S Tahoma2D\tahomastuff\*.gitkeep
 
 IF EXIST ..\..\thirdparty\apps\ffmpeg\bin (
