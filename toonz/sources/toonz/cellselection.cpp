@@ -557,7 +557,7 @@ bool pasteStrokesInCellWithoutUndo(
   } else {
     vi = cell.getImage(true);
     sl = cell.getSimpleLevel();
-    if (sl->getType() == OVL_XSHLEVEL && sl->getPath().isUneditable())
+    if (!sl || (sl->getType() == OVL_XSHLEVEL && sl->getPath().isUneditable()))
       return false;
     fid = cell.getFrameId();
     if (!vi) {
@@ -692,6 +692,12 @@ bool pasteRasterImageInCellWithoutUndo(int row, int col,
   TApp *app      = TApp::instance();
   TXsheet *xsh   = app->getCurrentXsheet()->getXsheet();
   TXshCell cell  = xsh->getCell(row, col);
+  if (col < 0 || xsh->getColumn(col)->getFolderColumn()) {
+    DVGui::error(
+        QObject::tr("It is not possible to paste image on the current cell."));
+    return false;
+  }
+
   TImageP img;
   TXshSimpleLevel *sl = 0;
   TFrameId fid(1);
