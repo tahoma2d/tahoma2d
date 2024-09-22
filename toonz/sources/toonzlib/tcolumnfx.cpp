@@ -847,6 +847,11 @@ bool TLevelColumnFx::canHandle(const TRenderSettings &info, double frame) {
   TXshSimpleLevel *sl = cell.m_level->getSimpleLevel();
   if (!sl) return true;
 
+  // For non-Vector masks, must return true so it is not cached
+  if (sl->getType() != PLI_XSHLEVEL && m_levelColumn->isMask() &&
+      info.m_applyMask)
+    return true;
+
   return (sl->getType() == PLI_XSHLEVEL &&
           !vectorMustApplyCmappedFx(info.m_data));
 }
@@ -1246,6 +1251,8 @@ void TLevelColumnFx::doCompute(TTile &tile, double frame,
       TRenderSettings infoAux(info);
       assert(info.m_affine.isTranslation());
       infoAux.m_data.clear();
+      if (infoAux.m_applyMask)
+        infoAux.m_invertedMask = m_levelColumn->isInvertedMask();
 
       // Place the output rect in the image's reference
       tileRectD += TPointD(lx_2 - info.m_affine.a13, ly_2 - info.m_affine.a23);

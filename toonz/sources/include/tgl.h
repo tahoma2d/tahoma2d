@@ -240,6 +240,8 @@ void DVAPI tglDraw(const TRectD &rect, const std::vector<TRaster32P> &textures,
 void DVAPI tglDraw(const TRectD &rect, const TRaster32P &tex,
                    bool blending = true);
 
+void DVAPI tglDrawMask(const TRectD &rect, const TRaster32P &mask);
+
 void DVAPI tglBuildMipmaps(std::vector<TRaster32P> &rasters,
                            const TFilePath &filepath);
 

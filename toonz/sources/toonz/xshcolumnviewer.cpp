@@ -159,6 +159,23 @@ bool containsVectorLevel(int col) {
   return false;
 }
 
+bool canUseAsMask(int col) {
+  TXshColumn *column =
+      TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(col);
+  TXshColumn::ColumnType type = column->getColumnType();
+  if (type != TXshColumn::eLevelType) return false;
+
+  const QSet<TXshLevel *> levels = getLevels(column);
+  QSet<TXshLevel *>::const_iterator it2;
+  for (it2 = levels.begin(); it2 != levels.end(); it2++) {
+    TXshLevel *lvl = *it2;
+    int type       = lvl->getType();
+    if (type == PLI_XSHLEVEL || type == TZP_XSHLEVEL || type == OVL_XSHLEVEL)
+      return true;
+  }
+  return false;
+}
+
 QIcon createLockIcon(XsheetViewer *viewer) {
   const Orientation *o = viewer->orientation();
   QColor bgColor;
@@ -202,7 +219,7 @@ public:
     TXshColumn::ColumnType type = column->getColumnType();
     if (type != TXshColumn::eLevelType) return;
 
-    if (containsVectorLevel(m_col)) {
+    if (canUseAsMask(m_col)) {
       column->setIsMask(!m_isMask);
       TApp::instance()->getCurrentScene()->notifySceneChanged();
       TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
@@ -216,7 +233,7 @@ public:
     TXshColumn::ColumnType type = column->getColumnType();
     if (type != TXshColumn::eLevelType) return;
 
-    if (containsVectorLevel(m_col)) {
+    if (canUseAsMask(m_col)) {
       column->setIsMask(m_isMask);
       TApp::instance()->getCurrentScene()->notifySceneChanged();
       TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
@@ -248,7 +265,7 @@ public:
     TXshColumn::ColumnType type = column->getColumnType();
     if (type != TXshColumn::eLevelType) return;
 
-    if (containsVectorLevel(m_col)) {
+    if (canUseAsMask(m_col)) {
       column->setInvertedMask(!m_invertMask);
       TApp::instance()->getCurrentScene()->notifySceneChanged();
       TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
@@ -262,7 +279,7 @@ public:
     TXshColumn::ColumnType type = column->getColumnType();
     if (type != TXshColumn::eLevelType) return;
 
-    if (containsVectorLevel(m_col)) {
+    if (canUseAsMask(m_col)) {
       column->setInvertedMask(m_invertMask);
       TApp::instance()->getCurrentScene()->notifySceneChanged();
       TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
@@ -294,7 +311,7 @@ public:
     TXshColumn::ColumnType type = column->getColumnType();
     if (type != TXshColumn::eLevelType) return;
 
-    if (containsVectorLevel(m_col)) {
+    if (canUseAsMask(m_col)) {
       column->setCanRenderMask(!m_renderMask);
       TApp::instance()->getCurrentScene()->notifySceneChanged();
       TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
@@ -308,7 +325,7 @@ public:
     TXshColumn::ColumnType type = column->getColumnType();
     if (type != TXshColumn::eLevelType) return;
 
-    if (containsVectorLevel(m_col)) {
+    if (canUseAsMask(m_col)) {
       column->setCanRenderMask(m_renderMask);
       TApp::instance()->getCurrentScene()->notifySceneChanged();
       TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
@@ -2721,7 +2738,7 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
   m_maskGroupBox->blockSignals(true);
   m_invertMask->blockSignals(true);
   m_renderMask->blockSignals(true);
-  if (containsVectorLevel(m_column->getIndex())) {
+  if (canUseAsMask(m_column->getIndex())) {
     m_maskGroupBox->setVisible(true);
     m_maskGroupBox->setChecked(m_column->isMask());
     m_maskGroupBox->setEnabled(true);
