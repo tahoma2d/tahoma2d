@@ -76,7 +76,9 @@ public:
     int frameCount = xsh->getFrameCount();
     while (row < frameCount) {
       row++;
-      if (xsh->getCell(row, col).isEmpty()) continue;
+      if (xsh->getCell(row, col).isEmpty() ||
+          xsh->getCell(row, col).getFrameId().isStopFrame())
+        continue;
       if (xsh->getCell(row, col) != cell) {
         TApp::instance()->getCurrentFrame()->setFrame(row);
 
@@ -106,7 +108,9 @@ public:
     // Get *last* cell in previous uniform cell block
     while (row >= 0) {
       row--;
-      if (xsh->getCell(row, col).isEmpty()) continue;
+      if (xsh->getCell(row, col).isEmpty() ||
+          xsh->getCell(row, col).getFrameId().isStopFrame())
+        continue;
       if (xsh->getCell(row, col) != cell) {
         cell = xsh->getCell(row, col);
         break;
