@@ -682,6 +682,10 @@ void Preferences::definePreferenceItems() {
   // Touch / Tablet Settings
   // TounchGestureControl // Touch Gesture is a checkable command and not in
   // preferences.ini
+  define(gestureUndoMethod, "gestureUndoMethod", QMetaType::Int,
+         (int)TwoFingerTap);
+  define(gestureRedoMethod, "gestureRedoMethod", QMetaType::Int,
+         (int)ThreeFingerTap);
   define(winInkEnabled, "winInkEnabled", QMetaType::Bool, false);
   // This option will be shown & available only when WITH_WINTAB is defined
   define(useQtNativeWinInk, "useQtNativeWinInk", QMetaType::Bool, false);

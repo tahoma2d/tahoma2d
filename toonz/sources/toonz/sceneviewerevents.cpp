@@ -914,6 +914,17 @@ void SceneViewer::mouseReleaseEvent(QMouseEvent *event) {
   }
   // for touchscreens but not touchpads...
   if (m_gestureActive && m_touchDevice == QTouchDevice::TouchScreen) {
+    if (m_touchPoints == 2 &&
+        Preferences::instance()->getGestureUndoMethod() ==
+            Preferences::TwoFingerTap) {
+      CommandManager::instance()->execute("MI_Undo");
+    } else if (m_touchPoints == 3 &&
+               Preferences::instance()->getGestureRedoMethod() ==
+                   Preferences::ThreeFingerTap) {
+      CommandManager::instance()->execute("MI_Redo");
+    }
+    m_touchPoints   = 0;
+
     m_gestureActive = false;
     m_rotating      = false;
     m_zooming       = false;
@@ -1221,6 +1232,7 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
         if (m_zooming) {
           zoomQt(firstCenter * getDevPixRatio(), scaleFactor);
           m_panning = false;
+          m_touchPoints = 100; // This will block undo/redo action
         }
         m_gestureActive = true;
       }
@@ -1239,14 +1251,16 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
         }
         if (m_rotating) {
           rotate(center, -rotationDelta);
+          m_touchPoints = 100;  // This will block undo/redo action
         }
       }
 
       if (changeFlags & QPinchGesture::CenterPointChanged) {
         QPointF centerDelta = (gesture->centerPoint() * getDevPixRatio()) -
                               (gesture->lastCenterPoint() * getDevPixRatio());
-        if (centerDelta.manhattanLength() > 1) {
+        if (centerDelta.manhattanLength() > 10) {
           // panQt(centerDelta.toPoint());
+          m_touchPoints = 100;  // This will block undo/redo action
         }
         m_gestureActive = true;
       }
@@ -1256,15 +1270,21 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
 }
 
 void SceneViewer::touchEvent(QTouchEvent *e, int type) {
+  static QElapsedTimer clock;
+
   if (type == QEvent::TouchBegin) {
     if (m_tabletEvent) return;
 
     m_touchActive   = true;
+    m_touchPoints   = std::max(e->touchPoints().count(), m_touchPoints);
     m_firstPanPoint = e->touchPoints().at(0).pos();
     m_undoPoint     = m_firstPanPoint;
     // obtain device type
     m_touchDevice = e->device()->type();
+
+    clock.start();
   } else if (m_touchActive) {
+    m_touchPoints = std::max(e->touchPoints().count(), m_touchPoints);
     // touchpads must have 2 finger panning for tools and navigation to be
     // functional
     // on other devices, 1 finger panning is preferred
@@ -1285,22 +1305,34 @@ void SceneViewer::touchEvent(QTouchEvent *e, int type) {
         QPointF centerDelta = (panPoint.pos() * getDevPixRatio()) -
                               (panPoint.lastPos() * getDevPixRatio());
         panQt(centerDelta.toPoint());
+        m_touchPoints = 100;  // This will block undo/redo action
       }
     } else if (e->touchPoints().count() == 3) {
+
       QPointF newPoint = e->touchPoints().at(0).pos();
-      if (m_undoPoint.x() - newPoint.x() > 100) {
+      if ((m_undoPoint.x() - newPoint.x()) > 100 &&
+          Preferences::instance()->getGestureUndoMethod() ==
+              Preferences::ThreeFingerDragLeft) {
         CommandManager::instance()->execute("MI_Undo");
         m_undoPoint = newPoint;
+        m_touchPoints = 100;  // This will block undo/redo action
       }
-      if (m_undoPoint.x() - newPoint.x() < -100) {
+      if ((m_undoPoint.x() - newPoint.x()) < -100 &&
+          Preferences::instance()->getGestureRedoMethod() ==
+              Preferences::ThreeFingerDragRight) {
         CommandManager::instance()->execute("MI_Redo");
         m_undoPoint = newPoint;
+        m_touchPoints = 100;  // This will block undo/redo action
       }
     }
   }
   if (type == QEvent::TouchEnd || type == QEvent::TouchCancel) {
     m_touchActive = false;
     m_panning     = false;
+    if (clock.isValid() && clock.elapsed() > 250) {
+      if (m_touchPoints > 1)
+        m_touchPoints = 100;  // This will block undo/redo action
+    }
   }
   e->accept();
 }

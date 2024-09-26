@@ -98,6 +98,9 @@ public:
                     header)     */
   };
 
+  enum GestureUndoMethod { TwoFingerTap, ThreeFingerDragLeft };
+  enum GestureRedoMethod { ThreeFingerTap, ThreeFingerDragRight };
+
   enum SnappingTarge { SnapStrokes, SnapGuides, SnapAll };
 
   enum PathAliasPriority {
@@ -534,6 +537,12 @@ public:
   }
 
   // Tablet tab
+  GestureUndoMethod getGestureUndoMethod() const {
+    return GestureUndoMethod(getIntValue(gestureUndoMethod));
+  }
+  GestureRedoMethod getGestureRedoMethod() const {
+    return GestureRedoMethod(getIntValue(gestureRedoMethod));
+  }
   bool isWinInkEnabled() const { return getBoolValue(winInkEnabled); }
   bool isQtNativeWinInkEnabled() const {
     return getBoolValue(useQtNativeWinInk);

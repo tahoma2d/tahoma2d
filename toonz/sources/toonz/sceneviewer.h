@@ -100,6 +100,7 @@ class SceneViewer final : public GLWidgetForHighDpi,
   bool m_rotating                        = false;
   bool m_zooming                         = false;
   bool m_panning                         = false;
+  int m_touchPoints                      = 0;
 
   // These are for mouse based zoom, rotate, pan
   int m_mouseRotating   = 0;
