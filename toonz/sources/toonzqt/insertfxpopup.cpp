@@ -180,7 +180,7 @@ void FxTree::mousePressEvent(QMouseEvent *event) {
   // Let's use FxsData to transfer to schematic
   FxsData *fxData = new FxsData();
   QList<TFxP> fxList;
-  fxList.append(fx);
+  fxList.append(fx->clone());
   fxData->setFxs(fxList, QList<TFxCommand::Link>(), QList<int>(), 0);
 
   QMimeData *mimeData = new QMimeData;
