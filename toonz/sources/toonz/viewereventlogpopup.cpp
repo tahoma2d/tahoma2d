@@ -23,66 +23,98 @@ ViewerEventLogPopup::ViewerEventLogPopup(QWidget *parent)
   setFrameStyle(QFrame::StyledPanel);
 
   //-------Left side
-  m_eventEnter              = new QCheckBox(tr("Enter"), this);
-  m_eventLeave              = new QCheckBox(tr("Leave"), this);
-  m_eventTabletPress        = new QCheckBox(tr("Stylus Press"), this);
-  m_eventTabletMove         = new QCheckBox(tr("Stylus Move"), this);
-  m_eventTabletRelease      = new QCheckBox(tr("Stylus Release"), this);
-  m_eventTouchBegin         = new QCheckBox(tr("Touch Begin"), this);
-  m_eventTouchEnd           = new QCheckBox(tr("Touch End"), this);
-  m_eventTouchCancel        = new QCheckBox(tr("Touch Cancel"), this);
-  m_eventGesture            = new QCheckBox(tr("Gesture"), this);
-  m_eventMouseButtonPress   = new QCheckBox(tr("Mouse Button Press"), this);
-  m_eventMouseMove          = new QCheckBox(tr("Mouse Move"), this);
-  m_eventMouseButtonRelease = new QCheckBox(tr("Mouse Button Release"), this);
-  m_eventMouseButtonDblClick =
-      new QCheckBox(tr("Mouse Button Double-Click"), this);
-  m_eventKeyPress   = new QCheckBox(tr("Key Press"), this);
-  m_eventKeyRelease = new QCheckBox(tr("Key Release"), this);
+  m_toggleAllOnOff = new QCheckBox(tr("Capture events:"), this);
+  m_toggleAllOnOff->setChecked(true);
 
-  m_eventEnter->setChecked(true);
-  m_eventLeave->setChecked(true);
-  m_eventTabletPress->setChecked(true);
-  m_eventTabletMove->setChecked(true);
-  m_eventTabletRelease->setChecked(true);
-  m_eventTouchBegin->setChecked(true);
-  m_eventTouchEnd->setChecked(true);
-  m_eventTouchCancel->setChecked(true);
-  m_eventGesture->setChecked(true);
-  m_eventMouseButtonPress->setChecked(true);
-  m_eventMouseMove->setChecked(true);
-  m_eventMouseButtonRelease->setChecked(true);
-  m_eventMouseButtonDblClick->setChecked(true);
-  m_eventKeyPress->setChecked(true);
-  m_eventKeyRelease->setChecked(true);
+  for (int i = 0; i < VIEWEREVENT::Count; i++) {
+    QString label;
+    switch (i) {
+    case VIEWEREVENT::Enter:
+      label = tr("Enter");
+      break;
+    case VIEWEREVENT::Leave:
+      label = tr("Leave");
+      break;
+    case VIEWEREVENT::TabletPress:
+      label = tr("Stylus Press");
+      break;
+    case VIEWEREVENT::TabletMove:
+      label = tr("Stylus Move");
+      break;
+    case VIEWEREVENT::TabletRelease:
+      label = tr("Stylus Release");
+      break;
+    case VIEWEREVENT::TouchBegin:
+      label = tr("Touch Begin");
+      break;
+    case VIEWEREVENT::TouchUpdate:
+      label = tr("Touch Update");
+      break;
+    case VIEWEREVENT::TouchEnd:
+      label = tr("Touch End");
+      break;
+    case VIEWEREVENT::TouchCancel:
+      label = tr("Touch Cancel");
+      break;
+    case VIEWEREVENT::Gesture:
+      label = tr("Gesture");
+      break;
+    case VIEWEREVENT::MouseButtonPress:
+      label = tr("Mouse Button Press");
+      break;
+    case VIEWEREVENT::MouseMove:
+      label = tr("Mouse Move");
+      break;
+    case VIEWEREVENT::MouseButtonRelease:
+      label = tr("Mouse Button Release");
+      break;
+    case VIEWEREVENT::MouseButtonDblClick:
+      label = tr("Mouse Button Double-Click");
+      break;
+    case VIEWEREVENT::KeyPress:
+      label = tr("Key Press");
+      break;
+    case VIEWEREVENT::KeyRelease:
+      label = tr("Key Release");
+      break;
+    }
+    m_eventCheckBox[i] = new QCheckBox(label, this);
+    m_eventCheckBox[i]->setChecked(true);
+  }
+
+  m_eventCount = VIEWEREVENT::Count;
 
   QFrame *filterBox          = new QFrame(this);
   QVBoxLayout *vFilterLayout = new QVBoxLayout(filterBox);
   vFilterLayout->setContentsMargins(10, 10, 10, 10);
   vFilterLayout->setSpacing(5);
+  {
+    vFilterLayout->addWidget(m_toggleAllOnOff);
 
-  vFilterLayout->addWidget(new QLabel(tr("Capture events:"), this));
-  vFilterLayout->addWidget(m_eventEnter);
-  vFilterLayout->addWidget(m_eventLeave);
-  vFilterLayout->addWidget(m_eventTabletPress);
-  vFilterLayout->addWidget(m_eventTabletMove);
-  vFilterLayout->addWidget(m_eventTabletRelease);
-  vFilterLayout->addWidget(m_eventTouchBegin);
-  vFilterLayout->addWidget(m_eventTouchEnd);
-  vFilterLayout->addWidget(m_eventTouchCancel);
-  vFilterLayout->addWidget(m_eventGesture);
-  vFilterLayout->addWidget(m_eventMouseButtonPress);
-  vFilterLayout->addWidget(m_eventMouseMove);
-  vFilterLayout->addWidget(m_eventMouseButtonRelease);
-  vFilterLayout->addWidget(m_eventMouseButtonDblClick);
-  vFilterLayout->addWidget(m_eventKeyPress);
-  vFilterLayout->addWidget(m_eventKeyRelease);
+    QVBoxLayout *vEventListLayout = new QVBoxLayout(filterBox);
+    vEventListLayout->setContentsMargins(10, 0, 10, 10);
+    vEventListLayout->setSpacing(5);
+    {
+      for (int i = 0; i < VIEWEREVENT::Count; i++) {
+        vEventListLayout->addWidget(m_eventCheckBox[i]);
+      }
+    }
+    vFilterLayout->addLayout(vEventListLayout);
 
+  }
   vFilterLayout->addStretch();
 
   filterBox->setLayout(vFilterLayout);
 
   addWidget(filterBox);
+
+  connect(m_toggleAllOnOff, SIGNAL(stateChanged(int)), this,
+          SLOT(onToggleAllOnOff()));
+
+  for (int i = 0; i < VIEWEREVENT::Count; i++) {
+    connect(m_eventCheckBox[i], SIGNAL(stateChanged(int)), this,
+            SLOT(onEventFilterUpdated()));
+  }
   //------end left side
 
   //------begin right side
@@ -123,6 +155,34 @@ ViewerEventLogPopup::ViewerEventLogPopup(QWidget *parent)
 
 //--------------------------------------------------
 
+void ViewerEventLogPopup::onToggleAllOnOff() {
+  bool enable = m_eventCount != VIEWEREVENT::Count ? true : false;
+
+  m_eventCount = enable ? VIEWEREVENT::Count : 0;
+
+  for (int i = 0; i < VIEWEREVENT::Count; i++) {
+    m_eventCheckBox[i]->blockSignals(true);
+    m_eventCheckBox[i]->setChecked(enable);
+    m_eventCheckBox[i]->blockSignals(false);
+  }
+}
+
+//--------------------------------------------------
+
+void ViewerEventLogPopup::onEventFilterUpdated() {
+  QWidget *senderWidget = static_cast<QWidget *>(sender());
+  if (static_cast<QCheckBox *>(senderWidget)->isChecked())
+    m_eventCount++;
+  else
+    m_eventCount--;
+
+  m_toggleAllOnOff->blockSignals(true);
+  m_toggleAllOnOff->setChecked(false);
+  m_toggleAllOnOff->blockSignals(false);
+}
+
+//--------------------------------------------------
+
 void ViewerEventLogPopup::addEventMessage(QEvent *e) {
   if (!m_logging) return;
 
@@ -130,17 +190,17 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
 
   switch (e->type()) {
   case QEvent::Enter: {
-    if (!m_eventEnter->isChecked()) return;
+    if (!m_eventCheckBox[VIEWEREVENT::Enter]->isChecked()) return;
     eventMsg = tr("Entered viewer");
   } break;
 
   case QEvent::Leave: {
-    if (!m_eventLeave->isChecked()) return;
+    if (!m_eventCheckBox[VIEWEREVENT::Leave]->isChecked()) return;
     eventMsg = tr("Left viewer");
   } break;
 
   case QEvent::TabletPress: {
-    if (!m_eventTabletPress->isChecked()) return;
+    if (!m_eventCheckBox[VIEWEREVENT::TabletPress]->isChecked()) return;
 
     QTabletEvent *te = dynamic_cast<QTabletEvent *>(e);
     float pressure   = (int)(te->pressure() * 1000 + 0.5);
@@ -151,7 +211,7 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
   } break;
 
   case QEvent::TabletMove: {
-    if (!m_eventTabletMove->isChecked()) return;
+    if (!m_eventCheckBox[VIEWEREVENT::TabletMove]->isChecked()) return;
 
     QTabletEvent *te = dynamic_cast<QTabletEvent *>(e);
     QString operation =
@@ -168,37 +228,59 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
   } break;
 
   case QEvent::TabletRelease: {
-    if (!m_eventTabletRelease->isChecked()) return;
+    if (!m_eventCheckBox[VIEWEREVENT::TabletRelease]->isChecked()) return;
 
     eventMsg = tr("Stylus released");
   } break;
 
   case QEvent::TouchBegin: {
-    if (!m_eventTouchBegin->isChecked()) return;
+    if (!m_eventCheckBox[VIEWEREVENT::TouchBegin]->isChecked()) return;
 
-    eventMsg = tr("Touch begins");
+    QTouchEvent *te = dynamic_cast<QTouchEvent *>(e);
+    QString device  = ((te->device()->type() == QTouchDevice::TouchPad)
+                          ? "touchpad"
+                          : ((te->device()->type() == QTouchDevice::TouchScreen)
+                                 ? "touchscreen"
+                                 : "unknown"));
+    eventMsg = tr("Touch begins (%1; %2pts)")
+                   .arg(device)
+                   .arg(te->touchPoints().count());
+  } break;
+
+  case QEvent::TouchUpdate: {
+    if (!m_eventCheckBox[VIEWEREVENT::TouchUpdate]->isChecked()) return;
+
+    QTouchEvent *te = dynamic_cast<QTouchEvent *>(e);
+    QString device  = ((te->device()->type() == QTouchDevice::TouchPad)
+                          ? "touchpad"
+                          : ((te->device()->type() == QTouchDevice::TouchScreen)
+                                 ? "touchscreen"
+                                 : "unknown"));
+    eventMsg = tr("Touch updated (%1; %2pts)")
+                   .arg(device)
+                   .arg(te->touchPoints().count());
   } break;
 
   case QEvent::TouchEnd: {
-    if (!m_eventTouchEnd->isChecked()) return;
+    if (!m_eventCheckBox[VIEWEREVENT::TouchEnd]->isChecked()) return;
 
     eventMsg = tr("Touch ended");
   } break;
 
   case QEvent::TouchCancel: {
-    if (!m_eventTouchCancel->isChecked()) return;
+    if (!m_eventCheckBox[VIEWEREVENT::TouchCancel]->isChecked()) return;
 
     eventMsg = tr("Touch cancelled");
   } break;
 
   case QEvent::Gesture: {
-    if (!m_eventGesture->isChecked()) return;
+    if (!m_eventCheckBox[VIEWEREVENT::Gesture]->isChecked()) return;
 
     eventMsg = tr("Gesture encountered");
   } break;
 
   case QEvent::MouseButtonPress: {
-    if (!m_eventMouseButtonPress->isChecked()) return;
+    if (!m_eventCheckBox[VIEWEREVENT::MouseButtonPress]->isChecked()) return;
 
     QMouseEvent *me = dynamic_cast<QMouseEvent *>(e);
     QString usedButton =
@@ -215,7 +297,7 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
   } break;
 
   case QEvent::MouseMove: {
-    if (!m_eventMouseMove->isChecked()) return;
+    if (!m_eventCheckBox[VIEWEREVENT::MouseMove]->isChecked()) return;
 
     QMouseEvent *me = dynamic_cast<QMouseEvent *>(e);
     QString operation =
@@ -230,13 +312,13 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
   } break;
 
   case QEvent::MouseButtonRelease: {
-    if (!m_eventMouseButtonRelease->isChecked()) return;
+    if (!m_eventCheckBox[VIEWEREVENT::MouseButtonRelease]->isChecked()) return;
 
     eventMsg = tr("Mouse button released");
   } break;
 
   case QEvent::MouseButtonDblClick: {
-    if (!m_eventMouseButtonDblClick->isChecked()) return;
+    if (!m_eventCheckBox[VIEWEREVENT::MouseButtonDblClick]->isChecked()) return;
 
     QMouseEvent *me = dynamic_cast<QMouseEvent *>(e);
     QString usedButton =
@@ -253,7 +335,7 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
   } break;
 
   case QEvent::KeyPress: {
-    if (!m_eventKeyPress->isChecked()) return;
+    if (!m_eventCheckBox[VIEWEREVENT::KeyPress]->isChecked()) return;
 
     QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(e);
     QString keyStr =
@@ -262,7 +344,7 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
   } break;
 
   case QEvent::KeyRelease: {
-    if (!m_eventKeyRelease->isChecked()) return;
+    if (!m_eventCheckBox[VIEWEREVENT::KeyRelease]->isChecked()) return;
 
     QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(e);
     QString keyStr =
@@ -276,17 +358,17 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
 
   if (m_lastMsg == eventMsg) {
     m_lastMsgCount++;
+    m_eventLog->undo();
+    m_eventLog->append(m_lastMsg + " [x" + QString::number(m_lastMsgCount) +
+                       "]");
+    m_eventLog->moveCursor(QTextCursor::End);
     return;
   }
-
-  m_lastMsg = eventMsg;
-
-  if (m_lastMsgCount > 1)
-    eventMsg += " [x" + QString::number(m_lastMsgCount) + "]";
 
   m_eventLog->append(eventMsg);
   m_eventLog->moveCursor(QTextCursor::End);
 
+  m_lastMsg = eventMsg;
   m_lastMsgCount = 1;
 }
 

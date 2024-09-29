@@ -1308,7 +1308,6 @@ void SceneViewer::touchEvent(QTouchEvent *e, int type) {
         m_touchPoints = 100;  // This will block undo/redo action
       }
     } else if (e->touchPoints().count() == 3) {
-
       QPointF newPoint = e->touchPoints().at(0).pos();
       if ((m_undoPoint.x() - newPoint.x()) > 100 &&
           Preferences::instance()->getGestureUndoMethod() ==
@@ -1347,6 +1346,7 @@ bool SceneViewer::event(QEvent *e) {
   case QEvent::TabletMove:
   case QEvent::TabletRelease:
   case QEvent::TouchBegin:
+  case QEvent::TouchUpdate:
   case QEvent::TouchEnd:
   case QEvent::TouchCancel:
   case QEvent::Gesture:
