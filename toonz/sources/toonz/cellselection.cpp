@@ -3057,7 +3057,7 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
     xsh->getCellRange(col, r0, r1);
     for (int r = std::min(r1, row); r > r0; r--) {
       TXshCell cell = xsh->getCell(r, col);
-      if (cell.isEmpty()) continue;
+      if (cell.isEmpty() || cell.getFrameId().isStopFrame()) continue;
       level = cell.m_level.getPointer();
       if (!level) continue;
       break;

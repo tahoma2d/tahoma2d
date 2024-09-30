@@ -478,10 +478,12 @@ TImage *TTool::touchImage(bool forDuplicate) {
     // find the last not-empty cell before the current one (a) and the first
     // after (b)
     int a = row - 1, b = row + 1;
-    while (a >= r0 && xsh->getCell(a, col).isEmpty()) a--;
-    while (b <= r1 && xsh->getCell(b, col).isEmpty()) b++;
-
-    if (a >= r0 && xsh->getCell(a, col).getFrameId().isStopFrame()) a = r0 - 1;
+    while (a >= r0 && (xsh->getCell(a, col).isEmpty() ||
+                       xsh->getCell(a, col).getFrameId().isStopFrame()))
+      a--;
+    while (b <= r1 && (xsh->getCell(b, col).isEmpty() ||
+                       xsh->getCell(b, col).getFrameId().isStopFrame()))
+      b++;
 
     // find the level we must attach to
     if (a >= r0) {
