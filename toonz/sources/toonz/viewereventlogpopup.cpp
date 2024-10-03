@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QTabletEvent>
+#include <QGestureEvent>
 #include <QTextEdit>
 #include <QVBoxLayout>
 #include <QApplication>
@@ -275,8 +276,45 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
 
   case QEvent::Gesture: {
     if (!m_eventCheckBox[VIEWEREVENT::Gesture]->isChecked()) return;
+    QGestureEvent *ge = dynamic_cast<QGestureEvent *>(e);
+    QString action;
+    for (int i = 0; i < ge->gestures().count(); i++) {
+      if (i > 0) action += ",";
+      QGesture *g = ge->gestures()[i];
+      switch (g->gestureType()) {
+      case Qt::GestureType::PanGesture:
+        action += "pan";
+        break;
+      case Qt::GestureType::SwipeGesture:
+        action += "swipe";
+        break;
+      case Qt::GestureType::PinchGesture:
+        action += "pinch";
+        break;
+      case Qt::GestureType::TapGesture:
+        action += "tap";
+        break;
+      default:
+        action += "unknown";
+        break;
+      }
+      switch (g->state()) {
+      case Qt::GestureState::GestureStarted:
+        action += "-started";
+        break;
+      case Qt::GestureState::GestureUpdated:
+        action += "-updated";
+        break;
+      case Qt::GestureState::GestureFinished:
+        action += "-finished";
+        break;
+      case Qt::GestureState::GestureCanceled:
+        action += "-cancelled";
+        break;
+      }
+    }
 
-    eventMsg = tr("Gesture encountered");
+    eventMsg = tr("Gesture encountered (%1)").arg(action);
   } break;
 
   case QEvent::MouseButtonPress: {

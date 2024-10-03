@@ -1192,6 +1192,8 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
     m_gestureActive = true;
   } else if (QGesture *pan = e->gesture(Qt::PanGesture)) {
     m_gestureActive = true;
+  } else if (QGesture *pan = e->gesture(Qt::TapGesture)) {
+    m_gestureActive = true;
   }
   if (QGesture *pinch = e->gesture(Qt::PinchGesture)) {
     QPinchGesture *gesture = static_cast<QPinchGesture *>(pinch);

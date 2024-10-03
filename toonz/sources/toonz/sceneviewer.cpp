@@ -888,6 +888,7 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
   grabGesture(Qt::SwipeGesture);
   grabGesture(Qt::PanGesture);
   grabGesture(Qt::PinchGesture);
+  grabGesture(Qt::TapGesture);
 
   setUpdateBehavior(QOpenGLWidget::PartialUpdate);
 
