@@ -420,7 +420,9 @@ public:
     return getBoolValue(showColumnNumbers);
   }
   bool isUnifyColumnVisibilityTogglesEnabled() const {
-    return getBoolValue(unifyColumnVisibilityToggles);
+  // Disabled until OT officially releases it
+  //  return getBoolValue(unifyColumnVisibilityToggles);
+    return false;
   }
   bool isParentColorsInXsheetColumnEnabled() const {
     return getBoolValue(parentColorsInXsheetColumn);
