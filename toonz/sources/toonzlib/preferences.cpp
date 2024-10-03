@@ -291,6 +291,12 @@ void Preferences::load() {
     setValue(CurrentLanguageName, "English");
 
   TImageWriter::setBackgroundColor(getColorValue(rasterBackgroundColor));
+
+#ifdef MACOSX
+  // Can only support 3-finger swipe undo/redo gestures for now
+  setValue(gestureUndoMethod, GestureUndoMethod::ThreeFingerDragLeft);
+  setValue(gestureRedoMethod, GestureRedoMethod::ThreeFingerDragRight);
+#endif
 }
 
 //-----------------------------------------------------------------
@@ -682,10 +688,19 @@ void Preferences::definePreferenceItems() {
   // Touch / Tablet Settings
   // TounchGestureControl // Touch Gesture is a checkable command and not in
   // preferences.ini
+#ifdef MACOSX
+  // Currently 2/3 fingre tapping doesn't work on macOS for either touchpad or
+  // touchscreen. For now, force to only use 3-finger swping
+  define(gestureUndoMethod, "gestureUndoMethod", QMetaType::Int,
+         (int)ThreeFingerDragLeft);
+  define(gestureRedoMethod, "gestureRedoMethod", QMetaType::Int,
+         (int)ThreeFingerDragRight);
+#else
   define(gestureUndoMethod, "gestureUndoMethod", QMetaType::Int,
          (int)TwoFingerTap);
   define(gestureRedoMethod, "gestureRedoMethod", QMetaType::Int,
          (int)ThreeFingerTap);
+#endif  // !MACOS
   define(winInkEnabled, "winInkEnabled", QMetaType::Bool, false);
   // This option will be shown & available only when WITH_WINTAB is defined
   define(useQtNativeWinInk, "useQtNativeWinInk", QMetaType::Bool, false);
