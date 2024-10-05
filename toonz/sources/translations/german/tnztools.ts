@@ -183,15 +183,15 @@
     <name>BrushToolOptionsBox</name>
     <message>
         <source>Preset Name</source>
-        <translation>Name der Vorlage</translation>
+        <translation type="vanished">Name der Vorlage</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="vanished">OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation type="vanished">Abbrechen</translation>
     </message>
 </context>
 <context>
@@ -233,18 +233,11 @@
     <name>ControlPointSelection</name>
     <message>
         <source>Set Linear Control Point</source>
-        <translation>Linearen Kontrollpunkt setzen</translation>
+        <translation type="vanished">Linearen Kontrollpunkt setzen</translation>
     </message>
     <message>
         <source>Set Nonlinear Control Point</source>
-        <translation>Nicht-Linearen Kontrollpunkt setzen</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::StyleIndexLineEdit</name>
-    <message>
-        <source>current</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">Nicht-Linearen Kontrollpunkt setzen</translation>
     </message>
 </context>
 <context>
@@ -422,7 +415,7 @@
     </message>
     <message>
         <source>Frame Range</source>
-        <translation>Frame-Bereich</translation>
+        <translation type="vanished">Frame-Bereich</translation>
     </message>
     <message>
         <source>Pencil Mode</source>
@@ -480,12 +473,24 @@
         <source>Savebox</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished">Druck</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FillTool</name>
     <message>
         <source>Frame Range</source>
-        <translation>Frame-Reichweite</translation>
+        <translation type="vanished">Frame-Reichweite</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -583,6 +588,30 @@
         <source>Pick+Freehand</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FingerTool</name>
@@ -645,6 +674,10 @@
         <source>Grid</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Smooth:</source>
+        <translation type="unfinished">Glätten:</translation>
+    </message>
 </context>
 <context>
     <name>FullColorEraserTool</name>
@@ -670,7 +703,7 @@
     </message>
     <message>
         <source>Frame Range</source>
-        <translation>Frame-Bereich</translation>
+        <translation type="vanished">Frame-Bereich</translation>
     </message>
     <message>
         <source>Normal</source>
@@ -686,6 +719,34 @@
     </message>
     <message>
         <source>Polyline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished">Druck</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -723,6 +784,30 @@
         <source>Close and Fill</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>HandToolOptionsBox</name>
@@ -736,6 +821,30 @@
     <message>
         <source>Snap</source>
         <translation>Einrasten</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -816,19 +925,15 @@
     </message>
     <message>
         <source>Preset Name</source>
-        <translation type="unfinished">Name der Vorlage</translation>
-    </message>
-    <message>
-        <source>Save As Library Preset</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Name der Vorlage</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation type="obsolete">OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation type="obsolete">Abbrechen</translation>
     </message>
 </context>
 <context>
@@ -1233,6 +1338,30 @@ Möchten Sie fortfahren?</translation>
         <source>Pressure</source>
         <translation type="unfinished">Druck</translation>
     </message>
+    <message>
+        <source>Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PumpTool</name>
@@ -1365,15 +1494,15 @@ Möchten Sie fortfahren?</translation>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
-        <translation>%1   Ebene : %2  Frame : %3</translation>
+        <translation type="vanished">%1   Ebene : %2  Frame : %3</translation>
     </message>
     <message>
         <source>Modify Stroke Tool</source>
-        <translation>Kontur-Werkzeug modifizieren</translation>
+        <translation type="vanished">Kontur-Werkzeug modifizieren</translation>
     </message>
     <message>
         <source>Modify Spline</source>
-        <translation>Spline modifizieren</translation>
+        <translation type="vanished">Spline modifizieren</translation>
     </message>
     <message>
         <source>Deform Raster</source>
@@ -1455,6 +1584,26 @@ Möchten Sie fortfahren?</translation>
         <source>The current tool cannot be used on a stop frame.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>It is not possible to edit the folder column.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hook Tool   Level : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exit Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The selection is not editable.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RGBPickerTool</name>
@@ -1521,7 +1670,7 @@ Möchten Sie fortfahren?</translation>
     </message>
     <message>
         <source>Frame Range</source>
-        <translation>Frame-Reichweite</translation>
+        <translation type="vanished">Frame-Reichweite</translation>
     </message>
     <message>
         <source>Angle:</source>
@@ -1545,6 +1694,30 @@ Möchten Sie fortfahren?</translation>
     </message>
     <message>
         <source>current</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1728,6 +1901,13 @@ Möchten Sie fortfahren?</translation>
     </message>
 </context>
 <context>
+    <name>StyleIndexLineEdit</name>
+    <message>
+        <source>current</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>StylePickerTool</name>
     <message>
         <source>No current level.</source>
@@ -1865,15 +2045,15 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Preset Name</source>
-        <translation type="unfinished">Name der Vorlage</translation>
+        <translation type="obsolete">Name der Vorlage</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation type="obsolete">OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation type="obsolete">Abbrechen</translation>
     </message>
 </context>
 <context>
@@ -1990,18 +2170,6 @@ moved to the end of the first page of the palette.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>In</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Out</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>In&amp;Out</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Low</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2052,6 +2220,18 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Auto Group</source>
         <translation type="unfinished">Automatisches Gruppieren</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2219,6 +2399,30 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Rectangular</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

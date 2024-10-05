@@ -124,6 +124,77 @@ Special thanks to:</source>
     </message>
 </context>
 <context>
+    <name>AlignmentPane</name>
+    <message>
+        <source>Selection Area</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align Bottom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align Center Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align Center Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distribute Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distribute Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relative to: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distribute</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>First Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smallest Object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Largest Object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera Area</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AntialiasPopup</name>
     <message>
         <source>Apply Antialias</source>
@@ -470,6 +541,14 @@ Right click to adjust.</source>
         <source>Level: </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Show Symmetry Guide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Perspective Grids</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BatchServersViewer</name>
@@ -738,7 +817,7 @@ Zastavte ji nebo počkejte na její dokončení, předtím než ji odstraníte.<
     <name>CameraCaptureLevelHistogram</name>
     <message>
         <source>Click to Update Histogram</source>
-        <translation type="vanished">Klepnout pro obnovení histogramu</translation>
+        <translation>Klepnout pro obnovení histogramu</translation>
     </message>
     <message>
         <source>Drag to Move White Point</source>
@@ -1834,7 +1913,7 @@ Co chcete dělat?</translation>
     </message>
     <message>
         <source>                      Palette:</source>
-        <translation type="vanished">　　　　　Paleta:</translation>
+        <translation type="vanished">&#x3000;&#x3000;&#x3000;&#x3000;&#x3000;Paleta:</translation>
     </message>
     <message>
         <source>Tolerance:</source>
@@ -2800,10 +2879,6 @@ contain the dpi information, then the current camera dpi will be used.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Frame Offset: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Checked: Images are saved as EXR
 Unchecked: Images are saved as PNG</source>
         <translation type="unfinished"></translation>
@@ -2811,10 +2886,6 @@ Unchecked: Images are saved as PNG</source>
     <message>
         <source>Checked: Rasterize into EXR/PNG
 Unchecked: Vectors are saved as SVG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Starting Frame Offset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2827,6 +2898,15 @@ Unchecked: Vectors are saved as SVG</source>
     </message>
     <message>
         <source>Starting...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export Reference Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Checked: Layers with Preview Visible OFF are also exported
+Unchecked: Only layers with Preview Visible ON are exported</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3431,7 +3511,7 @@ Do you want to explode anyway ?</source>
     <name>FileViewerPopup</name>
     <message>
         <source>Viewer</source>
-        <translation type="obsolete">Prohlížeč</translation>
+        <translation type="unfinished">Prohlížeč</translation>
     </message>
 </context>
 <context>
@@ -3527,6 +3607,10 @@ Podržte klávesu F3 v prohlížeči pro ukázání pouze tohoto snímku</transl
     <message>
         <source>Select Level</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inbetween</source>
+        <translation type="unfinished">Mezilehlé snímky</translation>
     </message>
 </context>
 <context>
@@ -3835,55 +3919,51 @@ Chcete jej přepsat?</translation>
     <name>InsertFxPopup</name>
     <message>
         <source>FX Browser</source>
-        <translation>Nový efekt</translation>
+        <translation type="vanished">Nový efekt</translation>
     </message>
     <message>
         <source>Insert</source>
-        <translation>Vložit</translation>
+        <translation type="vanished">Vložit</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation>Přidat</translation>
+        <translation type="vanished">Přidat</translation>
     </message>
     <message>
         <source>Replace</source>
-        <translation>Nahradit</translation>
+        <translation type="vanished">Nahradit</translation>
     </message>
     <message>
         <source>Macro</source>
-        <translation>Makro</translation>
+        <translation type="vanished">Makro</translation>
     </message>
     <message>
         <source>Remove Macro FX</source>
-        <translation>Odstranit makro-efekt</translation>
+        <translation type="vanished">Odstranit makro-efekt</translation>
     </message>
     <message>
         <source>Remove Preset</source>
-        <translation>Odstranit přednastavení</translation>
+        <translation type="vanished">Odstranit přednastavení</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation>Ano</translation>
+        <translation type="vanished">Ano</translation>
     </message>
     <message>
         <source>No</source>
-        <translation>Ne</translation>
+        <translation type="vanished">Ne</translation>
     </message>
     <message>
         <source>Are you sure you want to delete %1?</source>
-        <translation>Opravdu chcete smazat %1?</translation>
+        <translation type="vanished">Opravdu chcete smazat %1?</translation>
     </message>
     <message>
         <source>It is not possible to delete %1.</source>
-        <translation>%1 nelze smazat.</translation>
+        <translation type="vanished">%1 nelze smazat.</translation>
     </message>
     <message>
         <source>Search:</source>
-        <translation type="unfinished">Hledat:</translation>
-    </message>
-    <message>
-        <source>Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Hledat:</translation>
     </message>
 </context>
 <context>
@@ -4807,6 +4887,13 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
 </context>
 <context>
+    <name>LoadScriptPopup</name>
+    <message>
+        <source>Load script</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LoadSettingsPopup</name>
     <message>
         <source>Load Cleanup Settings</source>
@@ -5356,7 +5443,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>&amp;New FX...</source>
-        <translation>&amp;Nový efekt...</translation>
+        <translation type="vanished">&amp;Nový efekt...</translation>
     </message>
     <message>
         <source>&amp;New Output</source>
@@ -8263,6 +8350,150 @@ or you may delete necessary files for it.</source>
         <source>&amp;Paste Cell Content</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;Save Scene Version...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Increment scene version.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add a number suffix if necessary.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import Open Cel Animation (OCA)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Align Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Align Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Align Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Align Bottom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Align Center Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Align Center Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Distribute Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Distribute Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Folder</source>
+        <translation type="unfinished">Nová složka</translation>
+    </message>
+    <message>
+        <source>&amp;Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ping Pong</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inbetween Flip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Symmetry Guide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Perspective Grids</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Shift Origin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;FX Browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vector Inspector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align and Distribute Panel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Locator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open/Close Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Set Linear Control Point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Set Nonlinear Control Point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame range - Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame range - Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame range - Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame range - Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame range - Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom In And Fit Floating Panel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom Out And Fit Floating Panel</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -8816,11 +9047,11 @@ Co chcete dělat?</translation>
     </message>
     <message>
         <source>Preview Settings</source>
-        <translation>Nastavení náhledu</translation>
+        <translation type="vanished">Nastavení náhledu</translation>
     </message>
     <message>
         <source>Output Settings</source>
-        <translation>Nastavení výstupu</translation>
+        <translation type="vanished">Nastavení výstupu</translation>
     </message>
     <message>
         <source>8 bits</source>
@@ -10489,7 +10720,7 @@ if both are possible on coding file path.</source>
     </message>
     <message>
         <source>Column Header Layout*:</source>
-        <translation>Rozvržení záhlaví sloupců*:</translation>
+        <translation type="vanished">Rozvržení záhlaví sloupců*:</translation>
     </message>
     <message>
         <source>Show Cursor Size Outlines</source>
@@ -10744,10 +10975,6 @@ v obrázkových formátech, kde není povolen kanál alfa.</translation>
     </message>
     <message>
         <source>Analyze Audio Timeout (seconds):</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Ctrl+Alt to Resize Brush</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11057,6 +11284,66 @@ but a random crash might occur, use at your own risk:</source>
     </message>
     <message>
         <source>Open Viewer Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use %1 to Resize Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Increase Selection and Control Point Editor Tool Widget Size (For 4k Displays)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Xsheet Header Layout*:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Column and Cell Drag Bars</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Timeline Layer Layout:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unify Preview and Camstand Visibility Toggles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drawings:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Speed (msec):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Undo Gesture:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Redo Gesture:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>2-Finger Tap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3-Finger Drag Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3-Finger Tap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3-Finger Drag Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inbetween Flip</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11661,7 +11948,7 @@ Chcete jej zavést nebo nebo jej nahrát z jeho původního umístění?</transl
     <message>
         <source>An update is available for this software.
 Visit the Web site for more information.</source>
-        <translation>Pro tento program je dostupná aktualizace.
+        <translation type="vanished">Pro tento program je dostupná aktualizace.
 Navštivte, prosím, internetové stránky pro více informací.</translation>
     </message>
     <message>
@@ -14100,16 +14387,6 @@ Do you want to continue?</source>
         <translation type="unfinished">Vložit prázdnét buňky</translation>
     </message>
     <message>
-        <source>Remove Cells</source>
-        <comment>TCellSelection</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Clear Frames</source>
-        <comment>TCellSelection</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Copy Columns</source>
         <comment>TColumnSelection</comment>
         <translation type="unfinished"></translation>
@@ -14184,6 +14461,143 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Onion Skin On Drawings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Group Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ungroup Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The visibility toggles of following columns are modified 
+due to &quot;Unify Preview and Camstand Visibility Toggles&quot; preference option : 
+  %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unhandled exception encountered: Skipping frame.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It is not possible to load file %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skip version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Version %1 is now available.
+
+Visit the Web site for more information.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to create OCA folder.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import Open Cel Animation (OCA)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OCA Import cancelled : empty filepath.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OCA Import file : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you want to import or load image files from their original location?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to load OCA file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to open OCA file for loading.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reading OCA file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Parse error at %1 while loading OCA file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blending mode &apos;%1&apos; not implemented for %2 &apos;%3&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skipped %1 &apos;%2&apos;. No image file indicated.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to load images for %1 &apos;%2&apos;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skipping unimplemented %1 &apos;%2&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ignore all future warnings and errors.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Switch To Relative Drawing Onion Skin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Switch To Relative Frame Onion Skin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Switch To Relative Frane Onion Skin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Don&apos;t Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vector Inspector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align and Distribute</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fx Browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locator</source>
+        <translation type="unfinished">Hledač</translation>
+    </message>
+    <message>
+        <source>Output Settings</source>
+        <translation type="unfinished">Nastavení výstupu</translation>
+    </message>
+    <message>
+        <source>Preview Settings</source>
+        <translation type="unfinished">Nastavení náhledu</translation>
+    </message>
+    <message>
+        <source>New Level Folder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14310,6 +14724,11 @@ Výsledek výstupu se může lišit od toho, který byl očekáván. Co chcete d
     <message>
         <source>The %1 scene contains a plastic deformed level.
 These levels can&apos;t be exported with this tool.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unhandled exception encountered.
+The audio file will not be included in the rendered clip.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -16416,6 +16835,19 @@ Assign to &apos;%3&apos;?</source>
 Assign shortcut sequence anyway?</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Using &apos;%1&apos; arrow %2 may block navigation or movement operations in certain panels.
+Use anyway?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>to start of a shortcut sequence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>as a shortcut</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StackedMenuBar</name>
@@ -17907,14 +18339,66 @@ Nastavit cestu k výstupní složce také na podsložku.</translation>
     <name>StudioPaletteTreeViewer</name>
     <message>
         <source>New Folder</source>
-        <translation type="obsolete">Nová složka</translation>
+        <translation type="unfinished">Nová složka</translation>
+    </message>
+    <message>
+        <source>This folder is not empty. Delete anyway?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Cleanup Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load into Current Cleaunp Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Replace with Current Cleaunp Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load into Current Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Merge to Current Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Replace with Current Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search for Palettes</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
     <message>
         <source>&amp;Delete</source>
-        <translation type="obsolete">S&amp;mazat</translation>
+        <translation type="unfinished">S&amp;mazat</translation>
+    </message>
+    <message>
+        <source>&amp;New Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;New Palette</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -18032,14 +18516,6 @@ Klepněte na tlačítko pro vytvoření nového pod-Xsheet</translation>
     <message>
         <source>Field Guide</source>
         <translation type="unfinished">Praktický úvod</translation>
-    </message>
-    <message>
-        <source>Perspective Grids</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Symmetry Guide</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Scene Overlay</source>
@@ -18523,6 +18999,10 @@ Klepněte na tlačítko pro vytvoření nového pod-Xsheet</translation>
         <source>Locking this prevents the workspace from being changed and prevents new rooms from being created.  Unlock this to change the workspace or create new rooms.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Inbetween</source>
+        <translation type="unfinished">Mezilehlé snímky</translation>
+    </message>
 </context>
 <context>
     <name>TrackerPopup</name>
@@ -18639,6 +19119,117 @@ Klepněte na tlačítko pro vytvoření nového pod-Xsheet</translation>
     </message>
     <message>
         <source>Flip Stroke Direction:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>VectorInspectorPanel</name>
+    <message>
+        <source>&amp;Filter pattern (example 0|1):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filter &amp;syntax:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filter &amp;column:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stroke Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Group Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>StyleId</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Self Loop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quad</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x</source>
+        <translation type="unfinished">x</translation>
+    </message>
+    <message>
+        <source>y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thickness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Regular expression</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wildcard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fixed string</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Order of the stroke in the sequence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identifier for the group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unique identifier for the stroke</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The palette style index assigned to the stroke</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Indicates if the stroke is a closed shape</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Order of the quadratic equation in the sequence per stroke</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This point is parameter P0, P1, or P2 in the Quad equation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>X coordinate of the point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Y coordinate of the point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thickness of the stroke at this point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -18946,19 +19537,11 @@ Please refer to the user guide for details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Touch begins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Touch ended</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Touch cancelled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Gesture encountered</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -18999,6 +19582,22 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Key released: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Touch Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Touch begins (%1; %2pts)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Touch updated (%1; %2pts)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gesture encountered (%1)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -19157,6 +19756,10 @@ Please refer to the user guide for details.</source>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Inbetween</source>
+        <translation type="unfinished">Mezilehlé snímky</translation>
+    </message>
 </context>
 <context>
     <name>XsheetGUI::ChangeObjectParent</name>
@@ -19237,7 +19840,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Alt + Click to Toggle Thumbnail</source>
-        <translation>Alt+klepnutí pro přepnutí náhledu</translation>
+        <translation type="vanished">Alt+klepnutí pro přepnutí náhledu</translation>
     </message>
     <message>
         <source>Reframe</source>
@@ -19325,6 +19928,26 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Lock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click to select column, drag to move it, double-click to edit, long press to open/close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open/Close folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 + Click to Toggle Thumbnail</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -19421,6 +20044,21 @@ Please refer to the user guide for details.</source>
     </message>
 </context>
 <context>
+    <name>XsheetGUI::OnionSkinPopup</name>
+    <message>
+        <source>Auto</source>
+        <translation type="unfinished">Automaticky</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opacity:</source>
+        <translation type="unfinished">Neprůhlednost:</translation>
+    </message>
+</context>
+<context>
     <name>XsheetGUI::QuickToolbar</name>
     <message>
         <source>Customize Quick Toolbar</source>
@@ -19439,11 +20077,11 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Relative Onion Skin Toggle</source>
-        <translation>Přepnout relativní cibulový vzhled</translation>
+        <translation type="vanished">Přepnout relativní cibulový vzhled</translation>
     </message>
     <message>
         <source>Fixed Onion Skin Toggle</source>
-        <translation>Přepnout pevný cibulový vzhled</translation>
+        <translation type="vanished">Přepnout pevný cibulový vzhled</translation>
     </message>
     <message>
         <source>Playback Start Marker</source>
@@ -19523,6 +20161,16 @@ Podržte klávesu F3 v prohlížeči pro ukázání pouze tohoto snímku</transl
         <source>%1+Click	- Set Playback Start Marker
 %2+Click 	- Set Playback End Marker
 %3+Click	- Remove Playback Markers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fixed Onion Skin Toggle
+Right-Click to adjust opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relative Onion Skin Toggle
+Right-Click to adjust opacity</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

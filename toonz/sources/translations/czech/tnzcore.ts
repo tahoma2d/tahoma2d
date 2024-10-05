@@ -4,38 +4,33 @@
 <context>
     <name>BmpWriterProperties</name>
     <message>
-        <location filename="../../common/tiio/tiio_bmp.cpp" line="755"/>
         <source>Bits Per Pixel</source>
-        <translation>Bitů na obrazový bod (pixel)</translation>
+        <translation type="vanished">Bitů na obrazový bod (pixel)</translation>
     </message>
     <message>
-        <location filename="../../common/tiio/tiio_bmp.cpp" line="756"/>
         <source>24 bits</source>
-        <translation>24 bitů</translation>
+        <translation type="vanished">24 bitů</translation>
     </message>
     <message>
-        <location filename="../../common/tiio/tiio_bmp.cpp" line="757"/>
         <source>8 bits (Greyscale)</source>
-        <translation>8 bitů (odstíny šedi)</translation>
+        <translation type="vanished">8 bitů (odstíny šedi)</translation>
     </message>
 </context>
 <context>
     <name>JpgWriterProperties</name>
     <message>
-        <location filename="../../common/tiio/tiio_jpg.cpp" line="284"/>
         <source>Quality</source>
-        <translation>Jakost</translation>
+        <translation type="vanished">Jakost</translation>
     </message>
     <message>
-        <location filename="../../common/tiio/tiio_jpg.cpp" line="285"/>
         <source>Smoothing</source>
-        <translation>Vyhlazování</translation>
+        <translation type="vanished">Vyhlazování</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../common/tvrender/tpalette.cpp" line="265"/>
+        <location filename="../../common/tvrender/tpalette.cpp" line="257"/>
         <source>colors</source>
         <translation>barvy</translation>
     </message>
@@ -45,13 +40,17 @@
         <translation>Přeskakuje se snímek.</translation>
     </message>
     <message>
+        <location filename="../../common/timage_io/tlevel_io.cpp" line="139"/>
+        <source>Unhandled exception encountered: Skipping frame.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Malformed frame name</source>
         <translation type="vanished">Poškozený název snímku</translation>
     </message>
     <message>
-        <location filename="../../include/tundo.h" line="49"/>
         <source>Unidentified Action</source>
-        <translation>Neznámá činnost</translation>
+        <translation type="vanished">Neznámá činnost</translation>
     </message>
 </context>
 <context>
@@ -96,27 +95,32 @@
 <context>
     <name>Tiio::BmpWriterProperties</name>
     <message>
+        <location filename="../../common/tiio/tiio_bmp.cpp" line="760"/>
         <source>Bits Per Pixel</source>
-        <translation type="obsolete">Bitů na obrazový bod (pixel)</translation>
+        <translation type="unfinished">Bitů na obrazový bod (pixel)</translation>
     </message>
     <message>
+        <location filename="../../common/tiio/tiio_bmp.cpp" line="761"/>
         <source>24 bits</source>
-        <translation type="obsolete">24 bitů</translation>
+        <translation type="unfinished">24 bitů</translation>
     </message>
     <message>
+        <location filename="../../common/tiio/tiio_bmp.cpp" line="762"/>
         <source>8 bits (Greyscale)</source>
-        <translation type="obsolete">8 bitů (odstíny šedi)</translation>
+        <translation type="unfinished">8 bitů (odstíny šedi)</translation>
     </message>
 </context>
 <context>
     <name>Tiio::JpgWriterProperties</name>
     <message>
+        <location filename="../../common/tiio/tiio_jpg.cpp" line="318"/>
         <source>Quality</source>
-        <translation type="obsolete">Jakost</translation>
+        <translation type="unfinished">Jakost</translation>
     </message>
     <message>
+        <location filename="../../common/tiio/tiio_jpg.cpp" line="319"/>
         <source>Smoothing</source>
-        <translation type="obsolete">Vyhlazování</translation>
+        <translation type="unfinished">Vyhlazování</translation>
     </message>
 </context>
 </TS>

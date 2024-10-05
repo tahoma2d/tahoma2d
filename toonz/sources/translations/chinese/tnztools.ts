@@ -267,15 +267,15 @@
     <name>BrushToolOptionsBox</name>
     <message>
         <source>Preset Name</source>
-        <translation>预设名称</translation>
+        <translation type="vanished">预设名称</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation type="vanished">确定</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation type="vanished">取消</translation>
     </message>
 </context>
 <context>
@@ -317,18 +317,18 @@
     <name>ControlPointSelection</name>
     <message>
         <source>Set Linear Control Point</source>
-        <translation>设置线性控制点</translation>
+        <translation type="vanished">设置线性控制点</translation>
     </message>
     <message>
         <source>Set Nonlinear Control Point</source>
-        <translation>设置非线性控制点</translation>
+        <translation type="vanished">设置非线性控制点</translation>
     </message>
 </context>
 <context>
     <name>DVGui::StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation>当前</translation>
+        <translation type="vanished">当前</translation>
     </message>
 </context>
 <context>
@@ -506,7 +506,7 @@
     </message>
     <message>
         <source>Frame Range</source>
-        <translation>帧范围</translation>
+        <translation type="vanished">帧范围</translation>
     </message>
     <message>
         <source>Pencil Mode</source>
@@ -564,12 +564,24 @@
         <source>Savebox</source>
         <translation>保存框</translation>
     </message>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished">压感</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">关闭</translation>
+    </message>
 </context>
 <context>
     <name>FillTool</name>
     <message>
         <source>Frame Range</source>
-        <translation>帧范围</translation>
+        <translation type="vanished">帧范围</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -671,6 +683,30 @@
         <source>Pick+Freehand</source>
         <translation>选择+手绘</translation>
     </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">关闭</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">线性</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished">渐入</translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished">渐出</translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished">渐入/出</translation>
+    </message>
 </context>
 <context>
     <name>FingerTool</name>
@@ -733,6 +769,10 @@
         <source>Grid</source>
         <translation>网格</translation>
     </message>
+    <message>
+        <source>Smooth:</source>
+        <translation type="unfinished">平滑:</translation>
+    </message>
 </context>
 <context>
     <name>FullColorEraserTool</name>
@@ -758,7 +798,7 @@
     </message>
     <message>
         <source>Frame Range</source>
-        <translation>帧范围</translation>
+        <translation type="vanished">帧范围</translation>
     </message>
     <message>
         <source>Normal</source>
@@ -775,6 +815,34 @@
     <message>
         <source>Polyline</source>
         <translation>折线</translation>
+    </message>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished">压感</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">关闭</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">线性</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished">渐入</translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished">渐出</translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished">渐入/出</translation>
     </message>
 </context>
 <context>
@@ -811,6 +879,30 @@
         <source>Close and Fill</source>
         <translation>闭合填充</translation>
     </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">关闭</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">线性</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished">渐入</translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished">渐出</translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished">渐入/出</translation>
+    </message>
 </context>
 <context>
     <name>HandToolOptionsBox</name>
@@ -824,6 +916,30 @@
     <message>
         <source>Snap</source>
         <translation>吸附</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">关闭</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">线性</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished">渐入</translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished">渐出</translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished">渐入/出</translation>
     </message>
 </context>
 <context>
@@ -904,19 +1020,19 @@
     </message>
     <message>
         <source>Preset Name</source>
-        <translation>预设名称</translation>
+        <translation type="vanished">预设名称</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation type="vanished">确定</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation type="vanished">取消</translation>
     </message>
     <message>
         <source>Save As Library Preset</source>
-        <translation>保存为库预设</translation>
+        <translation type="vanished">保存为库预设</translation>
     </message>
 </context>
 <context>
@@ -1321,6 +1437,30 @@ Do you want to proceed?</source>
         <source>Pressure</source>
         <translation>压感</translation>
     </message>
+    <message>
+        <source>Range:</source>
+        <translation type="unfinished">范围:</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">关闭</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">线性</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished">渐入</translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished">渐出</translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished">渐入/出</translation>
+    </message>
 </context>
 <context>
     <name>PumpTool</name>
@@ -1453,15 +1593,15 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
-        <translation>%1   层级 : %2  帧 : %3</translation>
+        <translation type="vanished">%1   层级 : %2  帧 : %3</translation>
     </message>
     <message>
         <source>Modify Stroke Tool</source>
-        <translation>修改描边工具</translation>
+        <translation type="vanished">修改描边工具</translation>
     </message>
     <message>
         <source>Modify Spline</source>
-        <translation>修改样条线</translation>
+        <translation type="vanished">修改样条线</translation>
     </message>
     <message>
         <source>Deform Raster</source>
@@ -1543,6 +1683,26 @@ Do you want to proceed?</source>
         <source>The current tool cannot be used on a stop frame.</source>
         <translation>当前工具不能用在停止帧上。</translation>
     </message>
+    <message>
+        <source>It is not possible to edit the folder column.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hook Tool   Level : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exit Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The selection is not editable.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RGBPickerTool</name>
@@ -1609,7 +1769,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Frame Range</source>
-        <translation>帧范围</translation>
+        <translation type="vanished">帧范围</translation>
     </message>
     <message>
         <source>Angle:</source>
@@ -1634,6 +1794,30 @@ Do you want to proceed?</source>
     <message>
         <source>current</source>
         <translation>当前</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">关闭</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">线性</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished">渐入</translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished">渐出</translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished">渐入/出</translation>
     </message>
 </context>
 <context>
@@ -1819,7 +2003,7 @@ Do you want to proceed?</source>
     <name>StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="obsolete">当前</translation>
+        <translation type="unfinished">当前</translation>
     </message>
 </context>
 <context>
@@ -1960,15 +2144,15 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Preset Name</source>
-        <translation>预设名称</translation>
+        <translation type="vanished">预设名称</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation type="vanished">确定</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation type="vanished">取消</translation>
     </message>
 </context>
 <context>
@@ -2086,15 +2270,15 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>In</source>
-        <translation>内</translation>
+        <translation type="vanished">内</translation>
     </message>
     <message>
         <source>Out</source>
-        <translation>外</translation>
+        <translation type="vanished">外</translation>
     </message>
     <message>
         <source>In&amp;Out</source>
-        <translation>内&amp;外</translation>
+        <translation type="vanished">内&amp;外</translation>
     </message>
     <message>
         <source>Low</source>
@@ -2147,6 +2331,18 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Auto Group</source>
         <translation>自动成组</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished">渐入</translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished">渐出</translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished">渐入/出</translation>
     </message>
 </context>
 <context>
@@ -2315,6 +2511,30 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Rectangular</source>
         <translation>矩形</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">关闭</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">线性</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished">渐入</translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished">渐出</translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished">渐入/出</translation>
     </message>
 </context>
 <context>

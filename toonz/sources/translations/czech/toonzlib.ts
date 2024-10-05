@@ -4,171 +4,215 @@
 <context>
     <name>CenterlineVectorizer</name>
     <message>
+        <location filename="../../toonzlib/scriptbinding_centerline_vectorizer.cpp" line="69"/>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="obsolete">Nelze vektorizovat úroveň %1</translation>
+        <translation type="unfinished">Nelze vektorizovat úroveň %1</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_centerline_vectorizer.cpp" line="72"/>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="obsolete">Nelze vektorizovat úroveň bez snímků</translation>
+        <translation type="unfinished">Nelze vektorizovat úroveň bez snímků</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_centerline_vectorizer.cpp" line="77"/>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="obsolete">Nelze vektorizovat obrázek %1</translation>
+        <translation type="unfinished">Nelze vektorizovat obrázek %1</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_centerline_vectorizer.cpp" line="83"/>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="obsolete">Špatný argument (%1): měl by to být obrázek nebo úroveň</translation>
+        <translation type="unfinished">Špatný argument (%1): měl by to být obrázek nebo úroveň</translation>
     </message>
 </context>
 <context>
     <name>FilePath</name>
     <message>
+        <location filename="../../toonzlib/scriptbinding_files.cpp" line="29"/>
         <source>&quot;%1&quot;</source>
-        <translation type="obsolete">&quot;%1&quot;</translation>
+        <translation type="unfinished">&quot;%1&quot;</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_files.cpp" line="107"/>
         <source>can&apos;t concatenate an absolute path : %1</source>
-        <translation type="obsolete">nemůže zřetězit absolutní cestu: %1</translation>
+        <translation type="unfinished">nemůže zřetězit absolutní cestu: %1</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_files.cpp" line="115"/>
         <source>%1 is not a directory</source>
-        <translation type="obsolete">%1 není adresář</translation>
+        <translation type="unfinished">%1 není adresář</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_files.cpp" line="129"/>
         <source>can&apos;t read directory %1</source>
-        <translation type="obsolete">Nelze přečíst adresář %1</translation>
+        <translation type="unfinished">Nelze přečíst adresář %1</translation>
     </message>
 </context>
 <context>
     <name>Image</name>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image.cpp" line="102"/>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="obsolete">Soubor %1 neexistuje</translation>
+        <translation type="unfinished">Soubor %1 neexistuje</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image.cpp" line="126"/>
         <source>Loaded first frame of %1</source>
-        <translation type="obsolete">Nahrán první snímek z %1</translation>
+        <translation type="unfinished">Nahrán první snímek z %1</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image.cpp" line="144"/>
         <source>Unexpected error while reading image</source>
-        <translation type="obsolete">Neočekávaná chyba při nahrávání obrázku</translation>
+        <translation type="unfinished">Neočekávaná chyba při nahrávání obrázku</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image.cpp" line="171"/>
         <source>Unrecognized file type :</source>
-        <translation type="obsolete">Nerozpoznaný typ souboru:</translation>
+        <translation type="unfinished">Nerozpoznaný typ souboru:</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image.cpp" line="175"/>
         <source>Can&apos;t save a %1 image to this file type : %2</source>
-        <translation type="obsolete">Nelze uložit %1 obrázek do tohoto typu souboru: %2</translation>
+        <translation type="unfinished">Nelze uložit %1 obrázek do tohoto typu souboru: %2</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image.cpp" line="196"/>
         <source>Unexpected error while writing image</source>
-        <translation type="obsolete">Neočekávaná chyba při zapisování obrázku</translation>
+        <translation type="unfinished">Neočekávaná chyba při zapisování obrázku</translation>
     </message>
 </context>
 <context>
     <name>ImageBuilder</name>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="101"/>
         <source>Bad argument (%1): should be &apos;Raster&apos; or ToonzRaster&apos;</source>
-        <translation type="obsolete">Špatný argument (%1): má to být rastr nebo ToonzRaster</translation>
+        <translation type="unfinished">Špatný argument (%1): má to být rastr nebo ToonzRaster</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="138"/>
         <source>ImageBuilder(%1 image)</source>
-        <translation type="obsolete">ImageBuilder (%1 obrázek)</translation>
+        <translation type="unfinished">ImageBuilder (%1 obrázek)</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="265"/>
+        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="285"/>
         <source>%1 : %2</source>
-        <translation type="obsolete">%1: %2</translation>
+        <translation type="unfinished">%1: %2</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="278"/>
         <source>Bad argument (%1): should be a Transformation</source>
-        <translation type="obsolete">Špatný argument (%1): má to být proměna</translation>
+        <translation type="unfinished">Špatný argument (%1): má to být proměna</translation>
     </message>
 </context>
 <context>
     <name>Level</name>
     <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="67"/>
         <source>%1 frames</source>
-        <translation type="obsolete">%1 snímků</translation>
+        <translation type="unfinished">%1 snímků</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="122"/>
         <source>Bad argument (%1). It should be FilePath or string</source>
-        <translation type="obsolete">Špatný argument (%1): má to být souborová cesta nebo řetězec</translation>
+        <translation type="unfinished">Špatný argument (%1): má to být souborová cesta nebo řetězec</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="130"/>
         <source>Exception loading level (%1)</source>
-        <translation type="obsolete">Výjimka při nahrávání úrovně (%1)</translation>
+        <translation type="unfinished">Výjimka při nahrávání úrovně (%1)</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="151"/>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="obsolete">Soubor %1 neexistuje</translation>
+        <translation type="unfinished">Soubor %1 neexistuje</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="161"/>
         <source>File %1 is unsupported</source>
-        <translation type="obsolete">Soubor %1 není podporován</translation>
+        <translation type="unfinished">Soubor %1 není podporován</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="170"/>
         <source>Exception reading %1</source>
-        <translation type="obsolete">Výjimka při čtení %1</translation>
+        <translation type="unfinished">Výjimka při čtení %1</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="176"/>
         <source>Can&apos;t save an empty level</source>
-        <translation type="obsolete">Nelze uložit prázdnou úroveň</translation>
+        <translation type="unfinished">Nelze uložit prázdnou úroveň</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="196"/>
         <source>Unrecognized file type :</source>
-        <translation type="obsolete">Nerozpoznaný typ souboru:</translation>
+        <translation type="unfinished">Nerozpoznaný typ souboru:</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="200"/>
         <source>Can&apos;t save a %1 level to this file type : %2</source>
-        <translation type="obsolete">Nelze uložit %1 úroveň do tohoto typu souboru: %2</translation>
+        <translation type="unfinished">Nelze uložit %1 úroveň do tohoto typu souboru: %2</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="209"/>
         <source>Exception writing %1</source>
-        <translation type="obsolete">Výjimka při zápisu %1</translation>
+        <translation type="unfinished">Výjimka při zápisu %1</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="212"/>
+        <source>Unhandled exception encountered</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="266"/>
         <source>frame index (%1) must be a number</source>
-        <translation type="obsolete">Číslo snímku (%1) musí být číslo</translation>
+        <translation type="unfinished">Číslo snímku (%1) musí být číslo</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="270"/>
         <source>frame index (%1) is out of range (0-%2)</source>
-        <translation type="obsolete">Číslo snímku (%1) je mimo rozsah (0-%2)</translation>
+        <translation type="unfinished">Číslo snímku (%1) je mimo rozsah (0-%2)</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="293"/>
         <source>second argument (%1) is not an image</source>
-        <translation type="obsolete">druhýý argument (%1) není obrázkem</translation>
+        <translation type="unfinished">druhýý argument (%1) není obrázkem</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="306"/>
         <source>can not insert a %1 image into a level</source>
-        <translation type="obsolete">nelze vložit %1 obrázek do úrovně</translation>
+        <translation type="unfinished">nelze vložit %1 obrázek do úrovně</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="327"/>
         <source>can not insert a %1 image to a %2 level</source>
-        <translation type="obsolete">nelze vložit %1 obrázek do %2 úrovně</translation>
+        <translation type="unfinished">nelze vložit %1 obrázek do %2 úrovně</translation>
     </message>
 </context>
 <context>
     <name>OutlineVectorizer</name>
     <message>
+        <location filename="../../toonzlib/scriptbinding_outline_vectorizer.cpp" line="62"/>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="obsolete">Nelze vektorizovat úroveň %1</translation>
+        <translation type="unfinished">Nelze vektorizovat úroveň %1</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_outline_vectorizer.cpp" line="65"/>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="obsolete">Nelze vektorizovat úroveň bez snímků</translation>
+        <translation type="unfinished">Nelze vektorizovat úroveň bez snímků</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_outline_vectorizer.cpp" line="70"/>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="obsolete">Nelze vektorizovat obrázek %1</translation>
+        <translation type="unfinished">Nelze vektorizovat obrázek %1</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_outline_vectorizer.cpp" line="76"/>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="obsolete">Špatný argument (%1): měl by to být obrázek nebo úroveň</translation>
+        <translation type="unfinished">Špatný argument (%1): měl by to být obrázek nebo úroveň</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_outline_vectorizer.cpp" line="175"/>
         <source>Invalid color : </source>
-        <translation type="obsolete">Neplatná barva: </translation>
+        <translation type="unfinished">Neplatná barva: </translation>
     </message>
 </context>
 <context>
@@ -389,98 +433,98 @@ Pravděpodobně kodek nemůže pracovat řádně.</translation>
         <translation>Obnovit barvy použitím vybraných poloh v paletě %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="917"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="920"/>
         <source>Add Fx  : </source>
         <translation>Přidat efekt: </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="918"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="921"/>
         <source>Insert Fx  : </source>
         <translation>Vložit efekt: </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1082"/>
         <location filename="../../toonzlib/fxcommand.cpp" line="1085"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1088"/>
         <source>Create Linked Fx  : %1</source>
         <translation>Vytvořit propojený efekt: %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1307"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1310"/>
         <source>Replace Fx  : </source>
         <translation>Nahradit efekt: %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1373"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1376"/>
         <source>Unlink Fx  : %1 - - %2</source>
         <translation>Zrušit propojení efektu: %1 - - %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1414"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1417"/>
         <source>Make Macro Fx  : %1</source>
         <translation>Vytvořit makro efekt: %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1557"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1560"/>
         <source>Explode Macro Fx  : %1</source>
         <translation>Rozbalit makro efekt: %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1620"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1623"/>
         <source>Create Output Fx</source>
         <translation>Vytvořit výstupní efekt</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1711"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1714"/>
         <source>Connect to Xsheet  : </source>
         <translation>Spojit s Xsheet: </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="1771"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="1774"/>
         <source>Disconnect from Xsheet  : </source>
         <translation>Odpojit od Xsheet: </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="2044"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="2047"/>
         <source>Delete Link</source>
         <translation>Smazat spojení</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="2331"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="2334"/>
         <source>Delete Fx Node : %1</source>
         <translation>Smazat uzel efektu: %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="2739"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="2742"/>
         <source>Paste Fx  :  </source>
         <translation>Vložit efekt:  </translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3108"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3111"/>
         <source>Disconnect Fx</source>
         <translation>Odpojit od efekt</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3360"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3363"/>
         <source>Connect Fx : %1 - %2</source>
         <translation>Spojit efekt: %1 - %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3542"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3545"/>
         <source>Rename Fx : %1 &gt; %2</source>
         <translation>Přejmenovat efekt: %1 - %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3594"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3597"/>
         <source>Group Fx</source>
         <translation>Seskupit efekt</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3698"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3701"/>
         <source>Ungroup Fx</source>
         <translation>Zrušit seskupení efektu</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/fxcommand.cpp" line="3800"/>
+        <location filename="../../toonzlib/fxcommand.cpp" line="3803"/>
         <source>Rename Group  : %1 &gt; %2</source>
         <translation>Přejmenovat skupinu: %1 &gt; %2</translation>
     </message>
@@ -677,13 +721,13 @@ Pravděpodobně kodek nemůže pracovat řádně.</translation>
         <translation>Nelze zpracovat prázdný záběr</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_outline_vectorizer.cpp" line="41"/>
         <location filename="../../toonzlib/scriptbinding_centerline_vectorizer.cpp" line="43"/>
+        <location filename="../../toonzlib/scriptbinding_outline_vectorizer.cpp" line="41"/>
         <source>Vectorization failed</source>
         <translation>Vektorizace selhala</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="231"/>
+        <location filename="../../toonzlib/scriptbinding_level.cpp" line="233"/>
         <source>Argument &apos;%1&apos; does not look like a FrameId</source>
         <translation>Argument &apos;%1&apos; nevypadá jako ID snímku</translation>
     </message>
@@ -740,7 +784,7 @@ Pravděpodobně kodek nemůže pracovat řádně.</translation>
         <translation>Xsheet</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/orientation.cpp" line="155"/>
+        <location filename="../../toonzlib/orientation.cpp" line="158"/>
         <source>Timeline</source>
         <translation>Časová osa</translation>
     </message>
@@ -750,8 +794,8 @@ Pravděpodobně kodek nemůže pracovat řádně.</translation>
         <translation>Jas</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/imagestyles.cpp" line="554"/>
         <location filename="../../toonzlib/cleanupcolorstyles.cpp" line="95"/>
+        <location filename="../../toonzlib/imagestyles.cpp" line="554"/>
         <source>Contrast</source>
         <translation>Kontrast</translation>
     </message>
@@ -776,19 +820,16 @@ Pravděpodobně kodek nemůže pracovat řádně.</translation>
         <translation>Prahová hodnota bílé</translation>
     </message>
     <message>
-        <location filename="../../include/toonz/stageobjectutil.h" line="133"/>
         <source>Set Keyframe   %1 at frame %2</source>
-        <translation>Nastavit klíčový snímek: %1 snímek %2</translation>
+        <translation type="vanished">Nastavit klíčový snímek: %1 snímek %2</translation>
     </message>
     <message>
-        <location filename="../../include/toonz/stageobjectutil.h" line="177"/>
         <source>Remove Keyframe   %1 at frame %2</source>
-        <translation>Odstranit klíčový snímek: %1 snímek %2</translation>
+        <translation type="vanished">Odstranit klíčový snímek: %1 snímek %2</translation>
     </message>
     <message>
-        <location filename="../../include/toonz/stageobjectutil.h" line="212"/>
         <source>Move Center   %1  Frame %2</source>
-        <translation>Přesunout střed   %1 snímek %2</translation>
+        <translation type="vanished">Přesunout střed   %1 snímek %2</translation>
     </message>
     <message>
         <location filename="../../toonzlib/imagestyles.cpp" line="540"/>
@@ -825,456 +866,422 @@ Pravděpodobně kodek nemůže pracovat řádně.</translation>
         <source>Y displ</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../toonzlib/toonzscene.cpp" line="439"/>
+        <source>It is not possible to load file %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>
     <message>
+        <location filename="../../toonzlib/scriptbinding_rasterizer.cpp" line="77"/>
         <source>Expected a vector image: %1</source>
-        <translation type="obsolete">Očekáván vektorový obrázek: %1</translation>
+        <translation type="unfinished">Očekáván vektorový obrázek: %1</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_rasterizer.cpp" line="82"/>
         <source>Expected a vector level: %1</source>
-        <translation type="obsolete">Očekávána vektorová úroveň: %1</translation>
+        <translation type="unfinished">Očekávána vektorová úroveň: %1</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_rasterizer.cpp" line="87"/>
         <source>Argument must be a vector level or image : </source>
-        <translation type="obsolete">Argument musí být vektorová úroveň nebo obrázek: </translation>
+        <translation type="unfinished">Argument musí být vektorová úroveň nebo obrázek: </translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_rasterizer.cpp" line="90"/>
         <source>%1 has no palette</source>
-        <translation type="obsolete">%1 nemá žádnou paletu</translation>
+        <translation type="unfinished">%1 nemá žádnou paletu</translation>
     </message>
 </context>
 <context>
     <name>Scene</name>
     <message>
-        <source>File %1 doesn&apos;t exist</source>
-        <translation type="obsolete">Soubor %1 neexistuje</translation>
-    </message>
-    <message>
-        <source>Exception reading %1</source>
-        <translation type="obsolete">Výjimka při čtení %1</translation>
-    </message>
-    <message>
-        <source>Exception writing %1</source>
-        <translation type="obsolete">Výjimka při zápisu %1</translation>
-    </message>
-    <message>
-        <source>Bad level type (%1): must be Vector,Raster or ToonzRaster</source>
-        <translation type="obsolete">Špatný argument (%1): musí to být vektor, rastr nebo ToonzRaster</translation>
-    </message>
-    <message>
-        <source>Can&apos;t add the level: name(%1) is already used</source>
-        <translation type="obsolete">Nelze přidat úroveň: název (%1) se již používá</translation>
-    </message>
-    <message>
-        <source>Can&apos;t load this kind of file as a level : %1</source>
-        <translation type="obsolete">Nelze nahrát tento druh souboru jako úroveň: %1</translation>
-    </message>
-    <message>
-        <source>Could not load level %1</source>
-        <translation type="obsolete">Nepodařilo se nahrát úroveň %1</translation>
-    </message>
-    <message>
-        <source>Level is not included in the scene : %1</source>
-        <translation type="obsolete">Úroveň není zahrnuta v záběru: %1</translation>
-    </message>
-    <message>
-        <source>%1 : Expected a Level instance or a level name</source>
-        <translation type="obsolete">%1: Očekávána instance úrovně nebo název úrovně</translation>
-    </message>
-    <message>
-        <source>Level &apos;%1&apos; is not included in the scene</source>
-        <translation type="obsolete">Úroveň &apos;%1&apos; není zahrnuta v záběru</translation>
-    </message>
-</context>
-<context>
-    <name>TScriptBinding::CenterlineVectorizer</name>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_centerline_vectorizer.cpp" line="69"/>
-        <source>Can&apos;t vectorize a %1 level</source>
-        <translation>Nelze vektorizovat úroveň %1</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_centerline_vectorizer.cpp" line="72"/>
-        <source>Can&apos;t vectorize a level with no frames</source>
-        <translation>Nelze vektorizovat úroveň bez snímků</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_centerline_vectorizer.cpp" line="77"/>
-        <source>Can&apos;t vectorize a %1 image</source>
-        <translation>Nelze vektorizovat obrázek %1</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_centerline_vectorizer.cpp" line="83"/>
-        <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation>Špatný argument (%1): měl by to být obrázek nebo úroveň</translation>
-    </message>
-</context>
-<context>
-    <name>TScriptBinding::FilePath</name>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_files.cpp" line="29"/>
-        <source>&quot;%1&quot;</source>
-        <translation>&quot;%1&quot;</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_files.cpp" line="107"/>
-        <source>can&apos;t concatenate an absolute path : %1</source>
-        <translation>nemůže zřetězit absolutní cestu: %1</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_files.cpp" line="115"/>
-        <source>%1 is not a directory</source>
-        <translation>%1 není adresář</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_files.cpp" line="129"/>
-        <source>can&apos;t read directory %1</source>
-        <translation>Nelze přečíst adresář %1</translation>
-    </message>
-</context>
-<context>
-    <name>TScriptBinding::Image</name>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_image.cpp" line="102"/>
-        <source>File %1 doesn&apos;t exist</source>
-        <translation>Soubor %1 neexistuje</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_image.cpp" line="126"/>
-        <source>Loaded first frame of %1</source>
-        <translation>Nahrán první snímek z %1</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_image.cpp" line="144"/>
-        <source>Unexpected error while reading image</source>
-        <translation>Neočekávaná chyba při nahrávání obrázku</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_image.cpp" line="171"/>
-        <source>Unrecognized file type :</source>
-        <translation>Nerozpoznaný typ souboru:</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_image.cpp" line="175"/>
-        <source>Can&apos;t save a %1 image to this file type : %2</source>
-        <translation>Nelze uložit %1 obrázek do tohoto typu souboru: %2</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_image.cpp" line="196"/>
-        <source>Unexpected error while writing image</source>
-        <translation>Neočekávaná chyba při zapisování obrázku</translation>
-    </message>
-</context>
-<context>
-    <name>TScriptBinding::ImageBuilder</name>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="101"/>
-        <source>Bad argument (%1): should be &apos;Raster&apos; or ToonzRaster&apos;</source>
-        <translation>Špatný argument (%1): má to být rastr nebo ToonzRaster</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="138"/>
-        <source>ImageBuilder(%1 image)</source>
-        <translation>ImageBuilder (%1 obrázek)</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="265"/>
-        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="285"/>
-        <source>%1 : %2</source>
-        <translation>%1: %2</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="278"/>
-        <source>Bad argument (%1): should be a Transformation</source>
-        <translation>Špatný argument (%1): má to být proměna</translation>
-    </message>
-</context>
-<context>
-    <name>TScriptBinding::Level</name>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="67"/>
-        <source>%1 frames</source>
-        <translation>%1 snímků</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="122"/>
-        <source>Bad argument (%1). It should be FilePath or string</source>
-        <translation>Špatný argument (%1): má to být souborová cesta nebo řetězec</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="130"/>
-        <source>Exception loading level (%1)</source>
-        <translation>Výjimka při nahrávání úrovně (%1)</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="151"/>
-        <source>File %1 doesn&apos;t exist</source>
-        <translation>Soubor %1 neexistuje</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="161"/>
-        <source>File %1 is unsupported</source>
-        <translation>Soubor %1 není podporován</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="170"/>
-        <source>Exception reading %1</source>
-        <translation>Výjimka při čtení %1</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="176"/>
-        <source>Can&apos;t save an empty level</source>
-        <translation>Nelze uložit prázdnou úroveň</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="196"/>
-        <source>Unrecognized file type :</source>
-        <translation>Nerozpoznaný typ souboru:</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="200"/>
-        <source>Can&apos;t save a %1 level to this file type : %2</source>
-        <translation>Nelze uložit %1 úroveň do tohoto typu souboru: %2</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="209"/>
-        <source>Exception writing %1</source>
-        <translation>Výjimka při zápisu %1</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="264"/>
-        <source>frame index (%1) must be a number</source>
-        <translation>Číslo snímku (%1) musí být číslo</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="268"/>
-        <source>frame index (%1) is out of range (0-%2)</source>
-        <translation>Číslo snímku (%1) je mimo rozsah (0-%2)</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="291"/>
-        <source>second argument (%1) is not an image</source>
-        <translation>druhýý argument (%1) není obrázkem</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="304"/>
-        <source>can not insert a %1 image into a level</source>
-        <translation>nelze vložit %1 obrázek do úrovně</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_level.cpp" line="325"/>
-        <source>can not insert a %1 image to a %2 level</source>
-        <translation>nelze vložit %1 obrázek do %2 úrovně</translation>
-    </message>
-</context>
-<context>
-    <name>TScriptBinding::OutlineVectorizer</name>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_outline_vectorizer.cpp" line="62"/>
-        <source>Can&apos;t vectorize a %1 level</source>
-        <translation>Nelze vektorizovat úroveň %1</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_outline_vectorizer.cpp" line="65"/>
-        <source>Can&apos;t vectorize a level with no frames</source>
-        <translation>Nelze vektorizovat úroveň bez snímků</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_outline_vectorizer.cpp" line="70"/>
-        <source>Can&apos;t vectorize a %1 image</source>
-        <translation>Nelze vektorizovat obrázek %1</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_outline_vectorizer.cpp" line="76"/>
-        <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation>Špatný argument (%1): měl by to být obrázek nebo úroveň</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_outline_vectorizer.cpp" line="175"/>
-        <source>Invalid color : </source>
-        <translation>Neplatná barva: </translation>
-    </message>
-</context>
-<context>
-    <name>TScriptBinding::Rasterizer</name>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_rasterizer.cpp" line="77"/>
-        <source>Expected a vector image: %1</source>
-        <translation>Očekáván vektorový obrázek: %1</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_rasterizer.cpp" line="82"/>
-        <source>Expected a vector level: %1</source>
-        <translation>Očekávána vektorová úroveň: %1</translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_rasterizer.cpp" line="87"/>
-        <source>Argument must be a vector level or image : </source>
-        <translation>Argument musí být vektorová úroveň nebo obrázek: </translation>
-    </message>
-    <message>
-        <location filename="../../toonzlib/scriptbinding_rasterizer.cpp" line="90"/>
-        <source>%1 has no palette</source>
-        <translation>%1 nemá žádnou paletu</translation>
-    </message>
-</context>
-<context>
-    <name>TScriptBinding::Scene</name>
-    <message>
         <location filename="../../toonzlib/scriptbinding_scene.cpp" line="51"/>
         <source>File %1 doesn&apos;t exist</source>
-        <translation>Soubor %1 neexistuje</translation>
+        <translation type="unfinished">Soubor %1 neexistuje</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_scene.cpp" line="57"/>
         <source>Exception reading %1</source>
-        <translation>Výjimka při čtení %1</translation>
+        <translation type="unfinished">Výjimka při čtení %1</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_scene.cpp" line="72"/>
         <source>Exception writing %1</source>
-        <translation>Výjimka při zápisu %1</translation>
+        <translation type="unfinished">Výjimka při zápisu %1</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_scene.cpp" line="113"/>
         <source>Bad level type (%1): must be Vector,Raster or ToonzRaster</source>
-        <translation>Špatný argument (%1): musí to být vektor, rastr nebo ToonzRaster</translation>
+        <translation type="unfinished">Špatný argument (%1): musí to být vektor, rastr nebo ToonzRaster</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_scene.cpp" line="118"/>
         <location filename="../../toonzlib/scriptbinding_scene.cpp" line="129"/>
         <source>Can&apos;t add the level: name(%1) is already used</source>
-        <translation>Nelze přidat úroveň: název (%1) se již používá</translation>
+        <translation type="unfinished">Nelze přidat úroveň: název (%1) se již používá</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_scene.cpp" line="136"/>
         <source>Can&apos;t load this kind of file as a level : %1</source>
-        <translation>Nelze nahrát tento druh souboru jako úroveň: %1</translation>
+        <translation type="unfinished">Nelze nahrát tento druh souboru jako úroveň: %1</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_scene.cpp" line="141"/>
         <source>Could not load level %1</source>
-        <translation>Nepodařilo se nahrát úroveň %1</translation>
+        <translation type="unfinished">Nepodařilo se nahrát úroveň %1</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_scene.cpp" line="160"/>
         <source>Level is not included in the scene : %1</source>
-        <translation>Úroveň není zahrnuta v záběru: %1</translation>
+        <translation type="unfinished">Úroveň není zahrnuta v záběru: %1</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_scene.cpp" line="166"/>
         <source>%1 : Expected a Level instance or a level name</source>
-        <translation>%1: Očekávána instance úrovně nebo název úrovně</translation>
+        <translation type="unfinished">%1: Očekávána instance úrovně nebo název úrovně</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_scene.cpp" line="171"/>
         <source>Level &apos;%1&apos; is not included in the scene</source>
-        <translation>Úroveň &apos;%1&apos; není zahrnuta v záběru</translation>
+        <translation type="unfinished">Úroveň &apos;%1&apos; není zahrnuta v záběru</translation>
+    </message>
+</context>
+<context>
+    <name>TScriptBinding::CenterlineVectorizer</name>
+    <message>
+        <source>Can&apos;t vectorize a %1 level</source>
+        <translation type="vanished">Nelze vektorizovat úroveň %1</translation>
+    </message>
+    <message>
+        <source>Can&apos;t vectorize a level with no frames</source>
+        <translation type="vanished">Nelze vektorizovat úroveň bez snímků</translation>
+    </message>
+    <message>
+        <source>Can&apos;t vectorize a %1 image</source>
+        <translation type="vanished">Nelze vektorizovat obrázek %1</translation>
+    </message>
+    <message>
+        <source>Bad argument (%1): should be an Image or a Level</source>
+        <translation type="vanished">Špatný argument (%1): měl by to být obrázek nebo úroveň</translation>
+    </message>
+</context>
+<context>
+    <name>TScriptBinding::FilePath</name>
+    <message>
+        <source>&quot;%1&quot;</source>
+        <translation type="vanished">&quot;%1&quot;</translation>
+    </message>
+    <message>
+        <source>can&apos;t concatenate an absolute path : %1</source>
+        <translation type="vanished">nemůže zřetězit absolutní cestu: %1</translation>
+    </message>
+    <message>
+        <source>%1 is not a directory</source>
+        <translation type="vanished">%1 není adresář</translation>
+    </message>
+    <message>
+        <source>can&apos;t read directory %1</source>
+        <translation type="vanished">Nelze přečíst adresář %1</translation>
+    </message>
+</context>
+<context>
+    <name>TScriptBinding::Image</name>
+    <message>
+        <source>File %1 doesn&apos;t exist</source>
+        <translation type="vanished">Soubor %1 neexistuje</translation>
+    </message>
+    <message>
+        <source>Loaded first frame of %1</source>
+        <translation type="vanished">Nahrán první snímek z %1</translation>
+    </message>
+    <message>
+        <source>Unexpected error while reading image</source>
+        <translation type="vanished">Neočekávaná chyba při nahrávání obrázku</translation>
+    </message>
+    <message>
+        <source>Unrecognized file type :</source>
+        <translation type="vanished">Nerozpoznaný typ souboru:</translation>
+    </message>
+    <message>
+        <source>Can&apos;t save a %1 image to this file type : %2</source>
+        <translation type="vanished">Nelze uložit %1 obrázek do tohoto typu souboru: %2</translation>
+    </message>
+    <message>
+        <source>Unexpected error while writing image</source>
+        <translation type="vanished">Neočekávaná chyba při zapisování obrázku</translation>
+    </message>
+</context>
+<context>
+    <name>TScriptBinding::ImageBuilder</name>
+    <message>
+        <source>Bad argument (%1): should be &apos;Raster&apos; or ToonzRaster&apos;</source>
+        <translation type="vanished">Špatný argument (%1): má to být rastr nebo ToonzRaster</translation>
+    </message>
+    <message>
+        <source>ImageBuilder(%1 image)</source>
+        <translation type="vanished">ImageBuilder (%1 obrázek)</translation>
+    </message>
+    <message>
+        <source>%1 : %2</source>
+        <translation type="vanished">%1: %2</translation>
+    </message>
+    <message>
+        <source>Bad argument (%1): should be a Transformation</source>
+        <translation type="vanished">Špatný argument (%1): má to být proměna</translation>
+    </message>
+</context>
+<context>
+    <name>TScriptBinding::Level</name>
+    <message>
+        <source>%1 frames</source>
+        <translation type="vanished">%1 snímků</translation>
+    </message>
+    <message>
+        <source>Bad argument (%1). It should be FilePath or string</source>
+        <translation type="vanished">Špatný argument (%1): má to být souborová cesta nebo řetězec</translation>
+    </message>
+    <message>
+        <source>Exception loading level (%1)</source>
+        <translation type="vanished">Výjimka při nahrávání úrovně (%1)</translation>
+    </message>
+    <message>
+        <source>File %1 doesn&apos;t exist</source>
+        <translation type="vanished">Soubor %1 neexistuje</translation>
+    </message>
+    <message>
+        <source>File %1 is unsupported</source>
+        <translation type="vanished">Soubor %1 není podporován</translation>
+    </message>
+    <message>
+        <source>Exception reading %1</source>
+        <translation type="vanished">Výjimka při čtení %1</translation>
+    </message>
+    <message>
+        <source>Can&apos;t save an empty level</source>
+        <translation type="vanished">Nelze uložit prázdnou úroveň</translation>
+    </message>
+    <message>
+        <source>Unrecognized file type :</source>
+        <translation type="vanished">Nerozpoznaný typ souboru:</translation>
+    </message>
+    <message>
+        <source>Can&apos;t save a %1 level to this file type : %2</source>
+        <translation type="vanished">Nelze uložit %1 úroveň do tohoto typu souboru: %2</translation>
+    </message>
+    <message>
+        <source>Exception writing %1</source>
+        <translation type="vanished">Výjimka při zápisu %1</translation>
+    </message>
+    <message>
+        <source>frame index (%1) must be a number</source>
+        <translation type="vanished">Číslo snímku (%1) musí být číslo</translation>
+    </message>
+    <message>
+        <source>frame index (%1) is out of range (0-%2)</source>
+        <translation type="vanished">Číslo snímku (%1) je mimo rozsah (0-%2)</translation>
+    </message>
+    <message>
+        <source>second argument (%1) is not an image</source>
+        <translation type="vanished">druhýý argument (%1) není obrázkem</translation>
+    </message>
+    <message>
+        <source>can not insert a %1 image into a level</source>
+        <translation type="vanished">nelze vložit %1 obrázek do úrovně</translation>
+    </message>
+    <message>
+        <source>can not insert a %1 image to a %2 level</source>
+        <translation type="vanished">nelze vložit %1 obrázek do %2 úrovně</translation>
+    </message>
+</context>
+<context>
+    <name>TScriptBinding::OutlineVectorizer</name>
+    <message>
+        <source>Can&apos;t vectorize a %1 level</source>
+        <translation type="vanished">Nelze vektorizovat úroveň %1</translation>
+    </message>
+    <message>
+        <source>Can&apos;t vectorize a level with no frames</source>
+        <translation type="vanished">Nelze vektorizovat úroveň bez snímků</translation>
+    </message>
+    <message>
+        <source>Can&apos;t vectorize a %1 image</source>
+        <translation type="vanished">Nelze vektorizovat obrázek %1</translation>
+    </message>
+    <message>
+        <source>Bad argument (%1): should be an Image or a Level</source>
+        <translation type="vanished">Špatný argument (%1): měl by to být obrázek nebo úroveň</translation>
+    </message>
+    <message>
+        <source>Invalid color : </source>
+        <translation type="vanished">Neplatná barva: </translation>
+    </message>
+</context>
+<context>
+    <name>TScriptBinding::Rasterizer</name>
+    <message>
+        <source>Expected a vector image: %1</source>
+        <translation type="vanished">Očekáván vektorový obrázek: %1</translation>
+    </message>
+    <message>
+        <source>Expected a vector level: %1</source>
+        <translation type="vanished">Očekávána vektorová úroveň: %1</translation>
+    </message>
+    <message>
+        <source>Argument must be a vector level or image : </source>
+        <translation type="vanished">Argument musí být vektorová úroveň nebo obrázek: </translation>
+    </message>
+    <message>
+        <source>%1 has no palette</source>
+        <translation type="vanished">%1 nemá žádnou paletu</translation>
+    </message>
+</context>
+<context>
+    <name>TScriptBinding::Scene</name>
+    <message>
+        <source>File %1 doesn&apos;t exist</source>
+        <translation type="vanished">Soubor %1 neexistuje</translation>
+    </message>
+    <message>
+        <source>Exception reading %1</source>
+        <translation type="vanished">Výjimka při čtení %1</translation>
+    </message>
+    <message>
+        <source>Exception writing %1</source>
+        <translation type="vanished">Výjimka při zápisu %1</translation>
+    </message>
+    <message>
+        <source>Bad level type (%1): must be Vector,Raster or ToonzRaster</source>
+        <translation type="vanished">Špatný argument (%1): musí to být vektor, rastr nebo ToonzRaster</translation>
+    </message>
+    <message>
+        <source>Can&apos;t add the level: name(%1) is already used</source>
+        <translation type="vanished">Nelze přidat úroveň: název (%1) se již používá</translation>
+    </message>
+    <message>
+        <source>Can&apos;t load this kind of file as a level : %1</source>
+        <translation type="vanished">Nelze nahrát tento druh souboru jako úroveň: %1</translation>
+    </message>
+    <message>
+        <source>Could not load level %1</source>
+        <translation type="vanished">Nepodařilo se nahrát úroveň %1</translation>
+    </message>
+    <message>
+        <source>Level is not included in the scene : %1</source>
+        <translation type="vanished">Úroveň není zahrnuta v záběru: %1</translation>
+    </message>
+    <message>
+        <source>%1 : Expected a Level instance or a level name</source>
+        <translation type="vanished">%1: Očekávána instance úrovně nebo název úrovně</translation>
+    </message>
+    <message>
+        <source>Level &apos;%1&apos; is not included in the scene</source>
+        <translation type="vanished">Úroveň &apos;%1&apos; není zahrnuta v záběru</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::ToonzRasterConverter</name>
     <message>
-        <location filename="../../toonzlib/scriptbinding_toonz_raster_converter.cpp" line="34"/>
         <source>Can&apos;t convert a %1 level</source>
-        <translation>Nelze převést úroveň %1</translation>
+        <translation type="vanished">Nelze převést úroveň %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_toonz_raster_converter.cpp" line="36"/>
         <source>Can&apos;t convert a level with no frames</source>
-        <translation>Nelze převést úroveň bez snímků</translation>
+        <translation type="vanished">Nelze převést úroveň bez snímků</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_toonz_raster_converter.cpp" line="40"/>
         <source>Can&apos;t convert a %1 image</source>
-        <translation>Nelze převést obrázek %1</translation>
+        <translation type="vanished">Nelze převést obrázek %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_toonz_raster_converter.cpp" line="43"/>
         <source>Bad argument (%1): should be a raster Level or a raster Image</source>
-        <translation>Špatný argument (%1): má to být rastrová úroveň nebo rastrový obrázek</translation>
+        <translation type="vanished">Špatný argument (%1): má to být rastrová úroveň nebo rastrový obrázek</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Transform</name>
     <message>
-        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="23"/>
         <source>Identity</source>
-        <translation>Matice totožnosti</translation>
+        <translation type="vanished">Matice totožnosti</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="25"/>
-        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="30"/>
         <source>Translation(%1,%2)</source>
-        <translation>Překlad (%1,%2)</translation>
+        <translation type="vanished">Překlad (%1,%2)</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="35"/>
         <source>Rotation(%1)</source>
-        <translation>Otočení (%1)</translation>
+        <translation type="vanished">Otočení (%1)</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="43"/>
         <source>Scale(%1%)</source>
-        <translation>Měřítko (%1%)</translation>
+        <translation type="vanished">Měřítko (%1%)</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="45"/>
         <source>Scale(%1%, %2%)</source>
-        <translation>Měřítko (%1%, %2%)</translation>
+        <translation type="vanished">Měřítko (%1%, %2%)</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="53"/>
         <source>Transform(%1, %2, %3;  %4, %5, %6)</source>
-        <translation>Proměna (%1, %2, %3;  %4, %5, %6)</translation>
+        <translation type="vanished">Proměna (%1, %2, %3;  %4, %5, %6)</translation>
     </message>
 </context>
 <context>
     <name>ToonzRasterConverter</name>
     <message>
+        <location filename="../../toonzlib/scriptbinding_toonz_raster_converter.cpp" line="34"/>
         <source>Can&apos;t convert a %1 level</source>
-        <translation type="obsolete">Nelze převést úroveň %1</translation>
+        <translation type="unfinished">Nelze převést úroveň %1</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_toonz_raster_converter.cpp" line="36"/>
         <source>Can&apos;t convert a level with no frames</source>
-        <translation type="obsolete">Nelze převést úroveň bez snímků</translation>
+        <translation type="unfinished">Nelze převést úroveň bez snímků</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_toonz_raster_converter.cpp" line="40"/>
         <source>Can&apos;t convert a %1 image</source>
-        <translation type="obsolete">Nelze převést obrázek %1</translation>
+        <translation type="unfinished">Nelze převést obrázek %1</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_toonz_raster_converter.cpp" line="43"/>
         <source>Bad argument (%1): should be a raster Level or a raster Image</source>
-        <translation type="obsolete">Špatný argument (%1): má to být rastrová úroveň nebo rastrový obrázek</translation>
+        <translation type="unfinished">Špatný argument (%1): má to být rastrová úroveň nebo rastrový obrázek</translation>
     </message>
 </context>
 <context>
     <name>Transform</name>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="23"/>
         <source>Identity</source>
-        <translation type="obsolete">Matice totožnosti</translation>
+        <translation type="unfinished">Matice totožnosti</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="25"/>
+        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="30"/>
         <source>Translation(%1,%2)</source>
-        <translation type="obsolete">Překlad (%1,%2)</translation>
+        <translation type="unfinished">Překlad (%1,%2)</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="35"/>
         <source>Rotation(%1)</source>
-        <translation type="obsolete">Otočení (%1)</translation>
+        <translation type="unfinished">Otočení (%1)</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="43"/>
         <source>Scale(%1%)</source>
-        <translation type="obsolete">Měřítko (%1%)</translation>
+        <translation type="unfinished">Měřítko (%1%)</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="45"/>
         <source>Scale(%1%, %2%)</source>
-        <translation type="obsolete">Měřítko (%1%, %2%)</translation>
+        <translation type="unfinished">Měřítko (%1%, %2%)</translation>
     </message>
     <message>
+        <location filename="../../toonzlib/scriptbinding_image_builder.cpp" line="53"/>
         <source>Transform(%1, %2, %3;  %4, %5, %6)</source>
-        <translation type="obsolete">Proměna (%1, %2, %3;  %4, %5, %6)</translation>
+        <translation type="unfinished">Proměna (%1, %2, %3;  %4, %5, %6)</translation>
     </message>
 </context>
 </TS>

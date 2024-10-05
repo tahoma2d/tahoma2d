@@ -267,15 +267,15 @@
     <name>BrushToolOptionsBox</name>
     <message>
         <source>Preset Name</source>
-        <translation>プリセット名</translation>
+        <translation type="vanished">プリセット名</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="vanished">OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>キャンセル</translation>
+        <translation type="vanished">キャンセル</translation>
     </message>
 </context>
 <context>
@@ -317,18 +317,18 @@
     <name>ControlPointSelection</name>
     <message>
         <source>Set Linear Control Point</source>
-        <translation>コーナーポイントに変更</translation>
+        <translation type="vanished">コーナーポイントに変更</translation>
     </message>
     <message>
         <source>Set Nonlinear Control Point</source>
-        <translation>スムーズポイントに変更</translation>
+        <translation type="vanished">スムーズポイントに変更</translation>
     </message>
 </context>
 <context>
     <name>DVGui::StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation>選択色</translation>
+        <translation type="vanished">選択色</translation>
     </message>
 </context>
 <context>
@@ -506,7 +506,7 @@
     </message>
     <message>
         <source>Frame Range</source>
-        <translation>フレーム範囲</translation>
+        <translation type="vanished">フレーム範囲</translation>
     </message>
     <message>
         <source>Pencil Mode</source>
@@ -564,12 +564,24 @@
         <source>Savebox</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished">圧力感知</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">無効</translation>
+    </message>
 </context>
 <context>
     <name>FillTool</name>
     <message>
         <source>Frame Range</source>
-        <translation>フレーム範囲</translation>
+        <translation type="vanished">フレーム範囲</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -667,6 +679,30 @@
         <source>Pick+Freehand</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">無効</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">均等割り</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FingerTool</name>
@@ -729,6 +765,10 @@
         <source>Grid</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Smooth:</source>
+        <translation type="unfinished">平滑化：</translation>
+    </message>
 </context>
 <context>
     <name>FullColorEraserTool</name>
@@ -754,7 +794,7 @@
     </message>
     <message>
         <source>Frame Range</source>
-        <translation>フレーム範囲</translation>
+        <translation type="vanished">フレーム範囲</translation>
     </message>
     <message>
         <source>Normal</source>
@@ -771,6 +811,34 @@
     <message>
         <source>Polyline</source>
         <translation>多角形</translation>
+    </message>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished">圧力感知</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">無効</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">均等割り</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -807,6 +875,30 @@
         <source>Close and Fill</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">無効</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">均等割り</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>HandToolOptionsBox</name>
@@ -820,6 +912,30 @@
     <message>
         <source>Snap</source>
         <translation>スナップ</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">無効</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">均等割り</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -900,19 +1016,15 @@
     </message>
     <message>
         <source>Preset Name</source>
-        <translation type="unfinished">プリセット名</translation>
-    </message>
-    <message>
-        <source>Save As Library Preset</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">プリセット名</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation type="obsolete">OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation type="obsolete">キャンセル</translation>
     </message>
 </context>
 <context>
@@ -1317,6 +1429,30 @@ Do you want to proceed?</source>
         <source>Pressure</source>
         <translation type="unfinished">圧力感知</translation>
     </message>
+    <message>
+        <source>Range:</source>
+        <translation type="unfinished">中割り：</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">無効</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">均等割り</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PumpTool</name>
@@ -1449,15 +1585,15 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
-        <translation>%1   レベル : %2  フレーム : %3</translation>
+        <translation type="vanished">%1   レベル : %2  フレーム : %3</translation>
     </message>
     <message>
         <source>Modify Stroke Tool</source>
-        <translation>アイロンツール</translation>
+        <translation type="vanished">アイロンツール</translation>
     </message>
     <message>
         <source>Modify Spline</source>
-        <translation>スプラインを編集</translation>
+        <translation type="vanished">スプラインを編集</translation>
     </message>
     <message>
         <source>Deform Raster</source>
@@ -1539,6 +1675,26 @@ Do you want to proceed?</source>
         <source>The current tool cannot be used on a stop frame.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>It is not possible to edit the folder column.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hook Tool   Level : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exit Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The selection is not editable.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RGBPickerTool</name>
@@ -1605,7 +1761,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Frame Range</source>
-        <translation>フレーム範囲</translation>
+        <translation type="vanished">フレーム範囲</translation>
     </message>
     <message>
         <source>Angle:</source>
@@ -1630,6 +1786,30 @@ Do you want to proceed?</source>
     <message>
         <source>current</source>
         <translation>選択色</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">無効</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">均等割り</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1815,7 +1995,7 @@ Do you want to proceed?</source>
     <name>StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="obsolete">選択色</translation>
+        <translation type="unfinished">選択色</translation>
     </message>
 </context>
 <context>
@@ -1957,15 +2137,15 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Preset Name</source>
-        <translation type="unfinished">プリセット名</translation>
+        <translation type="obsolete">プリセット名</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation type="obsolete">OK</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">キャンセル</translation>
+        <translation type="obsolete">キャンセル</translation>
     </message>
 </context>
 <context>
@@ -2083,15 +2263,15 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>In</source>
-        <translation>イーズイン</translation>
+        <translation type="vanished">イーズイン</translation>
     </message>
     <message>
         <source>Out</source>
-        <translation>イーズアウト</translation>
+        <translation type="vanished">イーズアウト</translation>
     </message>
     <message>
         <source>In&amp;Out</source>
-        <translation>イーズインアウト</translation>
+        <translation type="vanished">イーズインアウト</translation>
     </message>
     <message>
         <source>Low</source>
@@ -2144,6 +2324,18 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Auto Group</source>
         <translation type="unfinished">自動グループ化</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2312,6 +2504,30 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Rectangular</source>
         <translation>長方形</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">無効</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">均等割り</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

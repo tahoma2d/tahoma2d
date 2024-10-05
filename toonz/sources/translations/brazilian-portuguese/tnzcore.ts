@@ -4,32 +4,27 @@
 <context>
     <name>BmpWriterProperties</name>
     <message>
-        <location filename="../../common/tiio/tiio_bmp.cpp" line="755"/>
         <source>Bits Per Pixel</source>
-        <translation type="unfinished">Bits Por Pixel</translation>
+        <translation type="obsolete">Bits Por Pixel</translation>
     </message>
     <message>
-        <location filename="../../common/tiio/tiio_bmp.cpp" line="756"/>
         <source>24 bits</source>
-        <translation type="unfinished">24 bits</translation>
+        <translation type="obsolete">24 bits</translation>
     </message>
     <message>
-        <location filename="../../common/tiio/tiio_bmp.cpp" line="757"/>
         <source>8 bits (Greyscale)</source>
-        <translation type="unfinished">8 bits (Escala de Cinza)</translation>
+        <translation type="obsolete">8 bits (Escala de Cinza)</translation>
     </message>
 </context>
 <context>
     <name>JpgWriterProperties</name>
     <message>
-        <location filename="../../common/tiio/tiio_jpg.cpp" line="284"/>
         <source>Quality</source>
-        <translation type="unfinished">Qualidade</translation>
+        <translation type="obsolete">Qualidade</translation>
     </message>
     <message>
-        <location filename="../../common/tiio/tiio_jpg.cpp" line="285"/>
         <source>Smoothing</source>
-        <translation type="unfinished">Suavização</translation>
+        <translation type="obsolete">Suavização</translation>
     </message>
 </context>
 <context>
@@ -40,14 +35,14 @@
         <translation>Pulando Quadros.</translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tpalette.cpp" line="265"/>
-        <source>colors</source>
-        <translation>cores</translation>
+        <location filename="../../common/timage_io/tlevel_io.cpp" line="139"/>
+        <source>Unhandled exception encountered: Skipping frame.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../include/tundo.h" line="49"/>
-        <source>Unidentified Action</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../common/tvrender/tpalette.cpp" line="257"/>
+        <source>colors</source>
+        <translation>cores</translation>
     </message>
 </context>
 <context>
@@ -92,27 +87,32 @@
 <context>
     <name>Tiio::BmpWriterProperties</name>
     <message>
+        <location filename="../../common/tiio/tiio_bmp.cpp" line="760"/>
         <source>Bits Per Pixel</source>
-        <translation type="vanished">Bits Por Pixel</translation>
+        <translation>Bits Por Pixel</translation>
     </message>
     <message>
+        <location filename="../../common/tiio/tiio_bmp.cpp" line="761"/>
         <source>24 bits</source>
-        <translation type="vanished">24 bits</translation>
+        <translation>24 bits</translation>
     </message>
     <message>
+        <location filename="../../common/tiio/tiio_bmp.cpp" line="762"/>
         <source>8 bits (Greyscale)</source>
-        <translation type="vanished">8 bits (Escala de Cinza)</translation>
+        <translation>8 bits (Escala de Cinza)</translation>
     </message>
 </context>
 <context>
     <name>Tiio::JpgWriterProperties</name>
     <message>
+        <location filename="../../common/tiio/tiio_jpg.cpp" line="318"/>
         <source>Quality</source>
-        <translation type="vanished">Qualidade</translation>
+        <translation>Qualidade</translation>
     </message>
     <message>
+        <location filename="../../common/tiio/tiio_jpg.cpp" line="319"/>
         <source>Smoothing</source>
-        <translation type="vanished">Suavização</translation>
+        <translation>Suavização</translation>
     </message>
 </context>
 </TS>

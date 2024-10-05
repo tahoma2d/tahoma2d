@@ -306,19 +306,31 @@ Possibly the preset file has been corrupted</source>
     <name>ColorField</name>
     <message>
         <source>R:</source>
-        <translation type="obsolete">R:</translation>
+        <translation type="unfinished">R:</translation>
     </message>
     <message>
         <source>G:</source>
-        <translation type="obsolete">G:</translation>
+        <translation type="unfinished">G:</translation>
     </message>
     <message>
         <source>B:</source>
-        <translation type="obsolete">B:</translation>
+        <translation type="unfinished">B:</translation>
     </message>
     <message>
         <source>A:</source>
-        <translation type="obsolete">A:</translation>
+        <translation type="unfinished">A:</translation>
+    </message>
+    <message>
+        <source>Paste Color</source>
+        <translation type="unfinished">粘贴颜色</translation>
+    </message>
+    <message>
+        <source>Paste Color of %1</source>
+        <translation type="unfinished">粘贴%1的颜色</translation>
+    </message>
+    <message>
+        <source>Copy Color</source>
+        <translation type="unfinished">复制颜色</translation>
     </message>
 </context>
 <context>
@@ -355,7 +367,7 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Average Color (Ctrl + Drag)</source>
-        <translation>平均色(Ctrl + 拖拽)</translation>
+        <translation type="vanished">平均色(Ctrl + 拖拽)</translation>
     </message>
     <message>
         <source>X:</source>
@@ -375,6 +387,10 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>0.0-1.0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Average Color (%1 + Drag)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -428,230 +444,35 @@ Possibly the preset file has been corrupted</source>
     <name>DVGui::ColorField</name>
     <message>
         <source>R:</source>
-        <translation>R:</translation>
+        <translation type="vanished">R:</translation>
     </message>
     <message>
         <source>G:</source>
-        <translation>G:</translation>
+        <translation type="vanished">G:</translation>
     </message>
     <message>
         <source>B:</source>
-        <translation>B:</translation>
+        <translation type="vanished">B:</translation>
     </message>
     <message>
         <source>A:</source>
-        <translation>A:</translation>
+        <translation type="vanished">A:</translation>
     </message>
     <message>
         <source>Paste Color</source>
-        <translation>粘贴颜色</translation>
+        <translation type="vanished">粘贴颜色</translation>
     </message>
     <message>
         <source>Paste Color of %1</source>
-        <translation>粘贴%1的颜色</translation>
+        <translation type="vanished">粘贴%1的颜色</translation>
     </message>
     <message>
         <source>Copy Color</source>
-        <translation>复制颜色</translation>
+        <translation type="vanished">复制颜色</translation>
     </message>
 </context>
 <context>
     <name>DVGui::DvTextEdit</name>
-    <message>
-        <source>Bold</source>
-        <translation>粗体</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation>斜体</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation>下划线</translation>
-    </message>
-    <message>
-        <source>Align Left</source>
-        <translation>左对齐</translation>
-    </message>
-    <message>
-        <source>Align Center</source>
-        <translation>居中对齐</translation>
-    </message>
-    <message>
-        <source>Align Right</source>
-        <translation>右对齐</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::FileField</name>
-    <message>
-        <source>...</source>
-        <translation>...</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::HexColorNamesEditor</name>
-    <message>
-        <source>OK</source>
-        <translation>确定</translation>
-    </message>
-    <message>
-        <source>Apply</source>
-        <translation>应用</translation>
-    </message>
-    <message>
-        <source>Hex Color Names Editor</source>
-        <translation>十六进制颜色名称编辑器</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>关闭</translation>
-    </message>
-    <message>
-        <source>Unselect</source>
-        <translation>不选择</translation>
-    </message>
-    <message>
-        <source>Add Color</source>
-        <translation>添加颜色</translation>
-    </message>
-    <message>
-        <source>Delete Color</source>
-        <translation>删除颜色</translation>
-    </message>
-    <message>
-        <source>User Defined Colors</source>
-        <translation>用户定义的颜色</translation>
-    </message>
-    <message>
-        <source>Default Main Colors</source>
-        <translation>默认主颜色</translation>
-    </message>
-    <message>
-        <source>Enable Auto-Complete</source>
-        <translation>启用自动完成</translation>
-    </message>
-    <message>
-        <source>Import</source>
-        <translation>导入</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation>导出</translation>
-    </message>
-    <message>
-        <source>Open Color Names</source>
-        <translation>打开颜色名称</translation>
-    </message>
-    <message>
-        <source>Text or XML (*.txt *.xml);;Text files (*.txt);;XML files (*.xml)</source>
-        <translation>文本或XML（*.txt*.XML）；；文本文件（*.txt）；；XML文件（*.XML）</translation>
-    </message>
-    <message>
-        <source>Hex Color Names Import</source>
-        <translation>导入十六进制颜色名称</translation>
-    </message>
-    <message>
-        <source>Do you want to merge with existing entries?</source>
-        <translation>是否要与现有条目合并？</translation>
-    </message>
-    <message>
-        <source>Error importing color names XML</source>
-        <translation>导入颜色名称XML时出错</translation>
-    </message>
-    <message>
-        <source>Save Color Names</source>
-        <translation>保存颜色名称</translation>
-    </message>
-    <message>
-        <source>XML files (*.xml);;Text files (*.txt)</source>
-        <translation>XML文件（*.XML）；；文本文件（*.txt）</translation>
-    </message>
-    <message>
-        <source>Error exporting color names XML</source>
-        <translation>导出颜色名称XML时出错</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::LineEdit</name>
-    <message>
-        <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation>文件名不能包含如下的任一字符: /\:*?;&lt;&gt;|.</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::ProgressDialog</name>
-    <message>
-        <source>Toonz</source>
-        <translation type="vanished">OpenToonz</translation>
-    </message>
-    <message>
-        <source>OpenToonz</source>
-        <translation type="vanished">OpenToonz</translation>
-    </message>
-    <message>
-        <source>Tahoma2D</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::RadioButtonDialog</name>
-    <message>
-        <source>Toonz</source>
-        <translation type="vanished">OpenToonz</translation>
-    </message>
-    <message>
-        <source>OpenToonz</source>
-        <translation type="vanished">OpenToonz</translation>
-    </message>
-    <message>
-        <source>Tahoma2D</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::StyleIndexLineEdit</name>
-    <message>
-        <source>current</source>
-        <translation>当前</translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::ToneCurveField</name>
-    <message>
-        <source>Channel:</source>
-        <translation>通道:</translation>
-    </message>
-    <message>
-        <source>Range:</source>
-        <translation>范围:</translation>
-    </message>
-    <message>
-        <source>Output:</source>
-        <translation>输出: </translation>
-    </message>
-    <message>
-        <source>Input:</source>
-        <translation>输入: </translation>
-    </message>
-</context>
-<context>
-    <name>DVGui::ValidatedChoiceDialog</name>
-    <message>
-        <source>Apply</source>
-        <translation>应用</translation>
-    </message>
-    <message>
-        <source>Apply to All</source>
-        <translation>全部应用</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>取消</translation>
-    </message>
-</context>
-<context>
-    <name>DvTextEdit</name>
     <message>
         <source>Bold</source>
         <translation type="vanished">粗体</translation>
@@ -675,6 +496,193 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>Align Right</source>
         <translation type="vanished">右对齐</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::FileField</name>
+    <message>
+        <source>...</source>
+        <translation type="vanished">...</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::HexColorNamesEditor</name>
+    <message>
+        <source>OK</source>
+        <translation type="vanished">确定</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="vanished">应用</translation>
+    </message>
+    <message>
+        <source>Hex Color Names Editor</source>
+        <translation type="vanished">十六进制颜色名称编辑器</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="vanished">关闭</translation>
+    </message>
+    <message>
+        <source>Unselect</source>
+        <translation type="vanished">不选择</translation>
+    </message>
+    <message>
+        <source>Add Color</source>
+        <translation type="vanished">添加颜色</translation>
+    </message>
+    <message>
+        <source>Delete Color</source>
+        <translation type="vanished">删除颜色</translation>
+    </message>
+    <message>
+        <source>User Defined Colors</source>
+        <translation type="vanished">用户定义的颜色</translation>
+    </message>
+    <message>
+        <source>Default Main Colors</source>
+        <translation type="vanished">默认主颜色</translation>
+    </message>
+    <message>
+        <source>Enable Auto-Complete</source>
+        <translation type="vanished">启用自动完成</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation type="vanished">导入</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="vanished">导出</translation>
+    </message>
+    <message>
+        <source>Open Color Names</source>
+        <translation type="vanished">打开颜色名称</translation>
+    </message>
+    <message>
+        <source>Text or XML (*.txt *.xml);;Text files (*.txt);;XML files (*.xml)</source>
+        <translation type="vanished">文本或XML（*.txt*.XML）；；文本文件（*.txt）；；XML文件（*.XML）</translation>
+    </message>
+    <message>
+        <source>Hex Color Names Import</source>
+        <translation type="vanished">导入十六进制颜色名称</translation>
+    </message>
+    <message>
+        <source>Do you want to merge with existing entries?</source>
+        <translation type="vanished">是否要与现有条目合并？</translation>
+    </message>
+    <message>
+        <source>Error importing color names XML</source>
+        <translation type="vanished">导入颜色名称XML时出错</translation>
+    </message>
+    <message>
+        <source>Save Color Names</source>
+        <translation type="vanished">保存颜色名称</translation>
+    </message>
+    <message>
+        <source>XML files (*.xml);;Text files (*.txt)</source>
+        <translation type="vanished">XML文件（*.XML）；；文本文件（*.txt）</translation>
+    </message>
+    <message>
+        <source>Error exporting color names XML</source>
+        <translation type="vanished">导出颜色名称XML时出错</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::LineEdit</name>
+    <message>
+        <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
+        <translation type="vanished">文件名不能包含如下的任一字符: /\:*?;&lt;&gt;|.</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ProgressDialog</name>
+    <message>
+        <source>Toonz</source>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+    <message>
+        <source>OpenToonz</source>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::RadioButtonDialog</name>
+    <message>
+        <source>Toonz</source>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+    <message>
+        <source>OpenToonz</source>
+        <translation type="vanished">OpenToonz</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::StyleIndexLineEdit</name>
+    <message>
+        <source>current</source>
+        <translation type="vanished">当前</translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ToneCurveField</name>
+    <message>
+        <source>Channel:</source>
+        <translation type="vanished">通道:</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation type="vanished">范围:</translation>
+    </message>
+    <message>
+        <source>Output:</source>
+        <translation type="vanished">输出: </translation>
+    </message>
+    <message>
+        <source>Input:</source>
+        <translation type="vanished">输入: </translation>
+    </message>
+</context>
+<context>
+    <name>DVGui::ValidatedChoiceDialog</name>
+    <message>
+        <source>Apply</source>
+        <translation>应用</translation>
+    </message>
+    <message>
+        <source>Apply to All</source>
+        <translation>全部应用</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+</context>
+<context>
+    <name>DvTextEdit</name>
+    <message>
+        <source>Bold</source>
+        <translation>粗体</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation>斜体</translation>
+    </message>
+    <message>
+        <source>Underline</source>
+        <translation>下划线</translation>
+    </message>
+    <message>
+        <source>Align Left</source>
+        <translation>左对齐</translation>
+    </message>
+    <message>
+        <source>Align Center</source>
+        <translation>居中对齐</translation>
+    </message>
+    <message>
+        <source>Align Right</source>
+        <translation>右对齐</translation>
     </message>
 </context>
 <context>
@@ -703,7 +711,7 @@ Possibly the preset file has been corrupted</source>
     <name>FileField</name>
     <message>
         <source>...</source>
-        <translation type="vanished">...</translation>
+        <translation>...</translation>
     </message>
 </context>
 <context>
@@ -930,7 +938,7 @@ Possibly the preset file has been corrupted</source>
     <message>
         <source>This value is different than the scene framerate.
 Control click to reset.</source>
-        <translation>该值与场景帧速率不同。
+        <translation type="vanished">该值与场景帧速率不同。
         控制单击以重置。</translation>
     </message>
     <message>
@@ -970,6 +978,15 @@ Gain is shown as an f-stop and the &quot;neutral&quot; or 1.0 gain f-stop is f/8
     <message>
         <source> (gain %1)</source>
         <translation>(增益 %1)</translation>
+    </message>
+    <message>
+        <source>This value is different than the scene framerate.
+%1 + Click to reset.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ping Pong</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1376,7 +1393,16 @@ Manually changing any keyframe will clear the warning.</source>
     <message>
         <source>Some key(s) in this parameter loses original reference in expression.
 Manually changing any keyframe will clear the warning.</source>
-        <translation>此参数中的某些键在表达式中丢失了原始引用。
+        <translation type="vanished">此参数中的某些键在表达式中丢失了原始引用。
+        手动更改任何关键帧都将清除警告。</translation>
+    </message>
+</context>
+<context>
+    <name>FunctionTreeModel::Channel</name>
+    <message>
+        <source>Some key(s) in this parameter loses original reference in expression.
+Manually changing any keyframe will clear the warning.</source>
+        <translation type="unfinished">此参数中的某些键在表达式中丢失了原始引用。
         手动更改任何关键帧都将清除警告。</translation>
     </message>
 </context>
@@ -1643,7 +1669,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>FxSchematicXSheetNode</name>
     <message>
         <source>XSheet</source>
-        <translation>摄影表</translation>
+        <translation type="vanished">摄影表</translation>
     </message>
     <message>
         <source>Scene</source>
@@ -1715,11 +1741,83 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>HexColorNamesEditor</name>
     <message>
         <source>OK</source>
-        <translation type="obsolete">确定</translation>
+        <translation type="unfinished">确定</translation>
     </message>
     <message>
         <source>Apply</source>
-        <translation type="obsolete">应用</translation>
+        <translation type="unfinished">应用</translation>
+    </message>
+    <message>
+        <source>Hex Color Names Editor</source>
+        <translation type="unfinished">十六进制颜色名称编辑器</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">关闭</translation>
+    </message>
+    <message>
+        <source>Unselect</source>
+        <translation type="unfinished">不选择</translation>
+    </message>
+    <message>
+        <source>Add Color</source>
+        <translation type="unfinished">添加颜色</translation>
+    </message>
+    <message>
+        <source>Delete Color</source>
+        <translation type="unfinished">删除颜色</translation>
+    </message>
+    <message>
+        <source>User Defined Colors</source>
+        <translation type="unfinished">用户定义的颜色</translation>
+    </message>
+    <message>
+        <source>Default Main Colors</source>
+        <translation type="unfinished">默认主颜色</translation>
+    </message>
+    <message>
+        <source>Enable Auto-Complete</source>
+        <translation type="unfinished">启用自动完成</translation>
+    </message>
+    <message>
+        <source>Import</source>
+        <translation type="unfinished">导入</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished">导出</translation>
+    </message>
+    <message>
+        <source>Open Color Names</source>
+        <translation type="unfinished">打开颜色名称</translation>
+    </message>
+    <message>
+        <source>Text or XML (*.txt *.xml);;Text files (*.txt);;XML files (*.xml)</source>
+        <translation type="unfinished">文本或XML（*.txt*.XML）；；文本文件（*.txt）；；XML文件（*.XML）</translation>
+    </message>
+    <message>
+        <source>Hex Color Names Import</source>
+        <translation type="unfinished">导入十六进制颜色名称</translation>
+    </message>
+    <message>
+        <source>Do you want to merge with existing entries?</source>
+        <translation type="unfinished">是否要与现有条目合并？</translation>
+    </message>
+    <message>
+        <source>Error importing color names XML</source>
+        <translation type="unfinished">导入颜色名称XML时出错</translation>
+    </message>
+    <message>
+        <source>Save Color Names</source>
+        <translation type="unfinished">保存颜色名称</translation>
+    </message>
+    <message>
+        <source>XML files (*.xml);;Text files (*.txt)</source>
+        <translation type="unfinished">XML文件（*.XML）；；文本文件（*.txt）</translation>
+    </message>
+    <message>
+        <source>Error exporting color names XML</source>
+        <translation type="unfinished">导出颜色名称XML时出错</translation>
     </message>
 </context>
 <context>
@@ -1761,6 +1859,45 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
 </context>
 <context>
+    <name>InsertFxPopup</name>
+    <message>
+        <source>Search:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Plugins</source>
+        <translation type="unfinished">插件</translation>
+    </message>
+    <message>
+        <source>Macro</source>
+        <translation type="unfinished">宏</translation>
+    </message>
+    <message>
+        <source>Remove Macro FX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to delete %1?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished">是</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished">否</translation>
+    </message>
+    <message>
+        <source>It is not possible to delete %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>KeyframeNavigator</name>
     <message>
         <source>Previous Key</source>
@@ -1779,7 +1916,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>LineEdit</name>
     <message>
         <source>A file name cannot contains any of the following characters: /\:*?&quot;&lt;&gt;|.</source>
-        <translation type="vanished">文件名能包含如下的任一字符: /\:*?;&lt;&gt;|.</translation>
+        <translation>文件名能包含如下的任一字符: /\:*?;&lt;&gt;|.</translation>
     </message>
 </context>
 <context>
@@ -1843,7 +1980,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>New Style</source>
-        <translation type="vanished">新建样式</translation>
+        <translation>新建样式</translation>
     </message>
     <message>
         <source>New Page</source>
@@ -1851,11 +1988,21 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>- No Styles -</source>
-        <translation type="vanished">- 无样式 -</translation>
+        <translation>- 无样式 -</translation>
     </message>
     <message>
         <source>Name Editor</source>
         <translation type="vanished">名字编辑器</translation>
+    </message>
+    <message>
+        <source> + </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Style 0 is set to full transparent. 
+It can&apos;t be changed.  Ever.</source>
+        <translation type="unfinished">样式0设置为完全透明。
+        它不能更改。曾经。</translation>
     </message>
 </context>
 <context>
@@ -2045,7 +2192,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <name>PaletteViewerGUI::PageViewer</name>
     <message>
         <source>- No Styles -</source>
-        <translation>- 无样式 -</translation>
+        <translation type="vanished">- 无样式 -</translation>
     </message>
     <message>
         <source>Remove Links</source>
@@ -2053,7 +2200,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
     </message>
     <message>
         <source>New Style</source>
-        <translation>新建样式</translation>
+        <translation type="vanished">新建样式</translation>
     </message>
     <message>
         <source>New Page</source>
@@ -2064,13 +2211,9 @@ Select FX nodes and related links before copying or cutting the selection you wa
         <translation type="vanished">名字编辑器</translation>
     </message>
     <message>
-        <source> + </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Style 0 is set to full transparent. 
 It can&apos;t be changed.  Ever.</source>
-        <translation>样式0设置为完全透明。
+        <translation type="vanished">样式0设置为完全透明。
         它不能更改。曾经。</translation>
     </message>
 </context>
@@ -2180,6 +2323,10 @@ and tone may be slightly discretized.</source>
     <message>
         <source>OpenToonz</source>
         <translation type="vanished">OpenToonz</translation>
+    </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2484,7 +2631,7 @@ and tone may be slightly discretized.</source>
     </message>
     <message>
         <source>The file name cannot be empty or contain any of the following characters: (new line) \ / : * ?; |</source>
-        <translation>文件名不能为空也不能包含如下的任一字符:
+        <translation type="vanished">文件名不能为空也不能包含如下的任一字符:
 \ / : * ?; |</translation>
     </message>
     <message>
@@ -2640,11 +2787,11 @@ Are you sure?</source>
     </message>
     <message>
         <source>Modify Fx Param : %1 Key : %2  Frame %3</source>
-        <translation>修改特效参数: 关键帧 %1 : %2  帧 %3</translation>
+        <translation type="vanished">修改特效参数: 关键帧 %1 : %2  帧 %3</translation>
     </message>
     <message>
         <source>Set</source>
-        <translation>设置</translation>
+        <translation type="vanished">设置</translation>
     </message>
     <message>
         <source>OpenToonz 1.1</source>
@@ -2652,7 +2799,7 @@ Are you sure?</source>
     </message>
     <message>
         <source>Remove Reference  in Palette : %1</source>
-        <translation>移除调色板%1中的引用</translation>
+        <translation type="vanished">移除调色板%1中的引用</translation>
     </message>
     <message>
         <source>It is not possible to assign a shortcut with modifiers to the visualization commands.</source>
@@ -2947,6 +3094,14 @@ Zero is fully transparent.</source>
         <source>Reset to default</source>
         <translation>重新初始化</translation>
     </message>
+    <message>
+        <source>The file name cannot be empty or contain any of the following characters: (new line) \ / : * ? &quot; |</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Reference in Palette : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -2964,6 +3119,10 @@ Zero is fully transparent.</source>
     <message>
         <source>OpenToonz</source>
         <translation type="vanished">OpenToonz</translation>
+    </message>
+    <message>
+        <source>Tahoma2D</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3533,7 +3692,7 @@ Apply</source>
     <message>
         <source>Style Set Name cannot be empty or contain any of the following characters:
  \ / : * ?; &lt; &gt; |</source>
-        <translation>样式集名称不能为空或包含以下任何字符： \ / : * ?; &lt; &gt; |</translation>
+        <translation type="vanished">样式集名称不能为空或包含以下任何字符： \ / : * ?; &lt; &gt; |</translation>
     </message>
     <message>
         <source>Style Set Name already exists. Please try another name.</source>
@@ -3554,6 +3713,11 @@ Apply</source>
     <message>
         <source>Show Auto/Apply</source>
         <translation>显示自动/应用</translation>
+    </message>
+    <message>
+        <source>Style Set Name cannot be empty or contain any of the following characters:
+ \ / : * ? &quot; &lt; &gt; |</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3594,7 +3758,7 @@ Apply</source>
     <name>StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="obsolete">当前</translation>
+        <translation type="unfinished">当前</translation>
     </message>
 </context>
 <context>
@@ -3685,11 +3849,19 @@ Apply</source>
     <name>ToneCurveField</name>
     <message>
         <source>Channel:</source>
-        <translation type="vanished">通道:</translation>
+        <translation>通道:</translation>
     </message>
     <message>
         <source>Range:</source>
-        <translation type="obsolete">范围:</translation>
+        <translation type="unfinished">范围:</translation>
+    </message>
+    <message>
+        <source>Output:</source>
+        <translation type="unfinished">输出: </translation>
+    </message>
+    <message>
+        <source>Input:</source>
+        <translation type="unfinished">输入: </translation>
     </message>
 </context>
 <context>
