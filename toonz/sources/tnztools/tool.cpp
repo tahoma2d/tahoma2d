@@ -310,7 +310,7 @@ TImage *TTool::touchImage(bool forDuplicate) {
 
   bool isAutoCreateEnabled        = pref->isAutoCreateEnabled();
   bool animationSheetEnabled      = pref->isAnimationSheetEnabled();
-  bool isAutoStretchEnabled       = pref->isAutoStretchEnabled();
+  bool isAutoStretchEnabled       = pref->isImplicitHoldEnabled() ? false : pref->isAutoStretchEnabled();
   bool isAutoRenumberEnabled      = pref->isAutorenumberEnabled();
   bool isCreateInHoldCellsEnabled =
       isAutoCreateEnabled && pref->isCreationInHoldCellsEnabled();
