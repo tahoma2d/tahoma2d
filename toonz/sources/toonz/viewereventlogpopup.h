@@ -3,6 +3,8 @@
 #ifndef VIEWER_EVENT_LOG_H
 #define VIEWER_EVENT_LOG_H
 
+#include "saveloadqsettings.h"
+
 #include <QSplitter>
 #include <QEvent>
 
@@ -13,16 +15,31 @@ class QPushButton;
 //**************************************************************
 //    Viewer Event Log Popup
 //**************************************************************
+enum VIEWEREVENT {
+  Enter = 0,
+  Leave,
+  TabletPress,
+  TabletMove,
+  TabletRelease,
+  TouchBegin,
+  TouchUpdate,
+  TouchEnd,
+  TouchCancel,
+  Gesture,
+  MouseButtonPress,
+  MouseMove,
+  MouseButtonRelease,
+  MouseButtonDblClick,
+  KeyPress,
+  KeyRelease,
+  Count
+};
 
 class ViewerEventLogPopup final : public QSplitter {
   Q_OBJECT
 
   QTextEdit *m_eventLog;
-  QCheckBox *m_eventEnter, *m_eventLeave, *m_eventTabletPress,
-      *m_eventTabletMove, *m_eventTabletRelease, *m_eventTouchBegin,
-      *m_eventTouchEnd, *m_eventTouchCancel, *m_eventGesture,
-      *m_eventMouseButtonPress, *m_eventMouseMove, *m_eventMouseButtonRelease,
-      *m_eventMouseButtonDblClick, *m_eventKeyPress, *m_eventKeyRelease;
+  QCheckBox *m_toggleAllOnOff, *m_eventCheckBox[VIEWEREVENT::Count];
 
   QPushButton *m_pauseBtn;
 
@@ -30,6 +47,8 @@ class ViewerEventLogPopup final : public QSplitter {
   int m_lastMsgCount;
 
   bool m_logging;
+
+  int m_eventCount;
 
 public:
   ViewerEventLogPopup(QWidget *parent = 0);
@@ -42,6 +61,8 @@ public slots:
   void onPauseButtonPressed();
   void onCopyButtonPressed();
   void onClearButtonPressed();
+  void onToggleAllOnOff();
+  void onEventFilterUpdated();
 };
 
 //**************************************************************

@@ -1501,6 +1501,8 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       // Touch / Tablet Settings
       // TounchGestureControl // Touch Gesture is a checkable command and not in
       // preferences.ini
+      {gestureUndoMethod, tr("Undo Gesture:")},
+      {gestureRedoMethod, tr("Redo Gesture:")},
       {winInkEnabled, tr("Enable Windows Ink Support* (EXPERIMENTAL)")},
       {useQtNativeWinInk,
        tr("Use Qt's Native Windows Ink Support*\n(CAUTION: This options is for "
@@ -1614,7 +1616,13 @@ QList<ComboBoxItem> PreferencesPopup::getComboItemList(
         {tr("Expression "), 7},
         {tr("File"), 8}}},
       {animatedGuidedDrawing,
-       {{tr("Arrow Markers"), 0}, {tr("Animated Guide"), 1}}}};
+       {{tr("Arrow Markers"), 0}, {tr("Animated Guide"), 1}}},
+      {gestureUndoMethod,
+       {{tr("2-Finger Tap"), Preferences::TwoFingerTap},
+        {tr("3-Finger Drag Left"), Preferences::ThreeFingerDragLeft}}},
+      {gestureRedoMethod,
+       {{tr("3-Finger Tap"), Preferences::ThreeFingerTap},
+        {tr("3-Finger Drag Right"), Preferences::ThreeFingerDragRight}}}};
   assert(comboItemsTable.contains(id));
   return comboItemsTable.value(id, QList<ComboBoxItem>());
 }
@@ -2410,9 +2418,6 @@ QWidget* PreferencesPopup::createTouchTabletPage() {
 
   QAction* touchAction =
       CommandManager::instance()->getAction(MI_TouchGestureControl);
-  CheckBox* enableTouchGestures =
-      new CheckBox(tr("Enable Touch Gesture Controls"));
-  enableTouchGestures->setChecked(touchAction->isChecked());
 
   QPushButton* viewerEventLogBtn =
       new QPushButton(tr("Open Viewer Event Log"));
@@ -2421,8 +2426,22 @@ QWidget* PreferencesPopup::createTouchTabletPage() {
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
 
-  lay->addWidget(enableTouchGestures, 0, 0, 1, 2);
-  lay->addWidget(viewerEventLogBtn, 0, 3, 1, 1);
+  QGroupBox* touchGesturesBox =
+      new QGroupBox(tr("Enable Touch Gesture Controls"), this);
+  touchGesturesBox->setCheckable(true);
+  touchGesturesBox->setChecked(touchAction->isChecked());
+  QGridLayout* touchGestureslay = new QGridLayout();
+  setupLayout(touchGestureslay, 5);
+  touchGesturesBox->setLayout(touchGestureslay);
+  {
+    insertUI(gestureUndoMethod, touchGestureslay,
+             getComboItemList(gestureUndoMethod));
+    insertUI(gestureRedoMethod, touchGestureslay,
+             getComboItemList(gestureRedoMethod));
+  }
+
+  lay->addWidget(touchGesturesBox, 0, 0, 1, 2);
+  lay->addWidget(viewerEventLogBtn, 0, 3, 2, 1, Qt::AlignTop);
   if (winInkAvailable) insertUI(winInkEnabled, lay);
 #ifdef WITH_WINTAB
   insertUI(useQtNativeWinInk, lay);
@@ -2432,11 +2451,17 @@ QWidget* PreferencesPopup::createTouchTabletPage() {
   if (winInkAvailable) insertFootNote(lay);
   widget->setLayout(lay);
 
+#ifdef MACOSX
+  // Can only support 3-finger swipe undo/redo gestures for now
+  m_controlIdMap.key(gestureUndoMethod)->setEnabled(false);
+  m_controlIdMap.key(gestureRedoMethod)->setEnabled(false);
+#endif
+
   bool ret = true;
-  ret = ret && connect(enableTouchGestures, SIGNAL(clicked(bool)), touchAction,
+  ret = ret && connect(touchGesturesBox, SIGNAL(clicked(bool)), touchAction,
                        SLOT(setChecked(bool)));
-  ret = ret && connect(touchAction, SIGNAL(triggered(bool)),
-                       enableTouchGestures, SLOT(setChecked(bool)));
+  ret = ret && connect(touchAction, SIGNAL(triggered(bool)), touchGesturesBox,
+                       SLOT(setChecked(bool)));
   ret = ret && connect(viewerEventLogBtn, SIGNAL(clicked()), this,
                        SLOT(onOpenViewerEventLog()));
 
