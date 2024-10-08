@@ -127,6 +127,77 @@ Special thanks to:</source>
     </message>
 </context>
 <context>
+    <name>AlignmentPane</name>
+    <message>
+        <source>Selection Area</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align Bottom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align Center Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align Center Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distribute Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distribute Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relative to: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distribute</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>First Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smallest Object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Largest Object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera Area</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AntialiasPopup</name>
     <message>
         <source>Apply Antialias</source>
@@ -480,6 +551,14 @@ Right click to adjust.</source>
         <source>Level: </source>
         <translation>层级: </translation>
     </message>
+    <message>
+        <source>Show Symmetry Guide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Perspective Grids</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BatchServersViewer</name>
@@ -751,7 +830,7 @@ Stop it or wait for its completion before removing it.</source>
     <name>CameraCaptureLevelHistogram</name>
     <message>
         <source>Click to Update Histogram</source>
-        <translation type="vanished">点击更新直方图</translation>
+        <translation>点击更新直方图</translation>
     </message>
     <message>
         <source>Drag to Move White Point</source>
@@ -2160,7 +2239,7 @@ contain the dpi information, then the current camera dpi will be used.
     </message>
     <message>
         <source>Custom Panel Editor</source>
-        <translation type="自定义面板编辑器"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Command List</source>
@@ -2632,7 +2711,7 @@ contain the dpi information, then the current camera dpi will be used.
     <name>ExportCurvePopup</name>
     <message>
         <source>Export Curve</source>
-        <translation>导出曲线</translation>
+        <translation type="vanished">导出曲线</translation>
     </message>
     <message>
         <source>Export</source>
@@ -2762,7 +2841,7 @@ contain the dpi information, then the current camera dpi will be used.
     </message>
     <message>
         <source>Frame Offset: </source>
-        <translation>帧偏移</translation>
+        <translation type="vanished">帧偏移</translation>
     </message>
     <message>
         <source>Checked: Images are saved as EXR
@@ -2778,7 +2857,7 @@ Unchecked: Vectors are saved as SVG</source>
     </message>
     <message>
         <source>Starting Frame Offset</source>
-        <translation>起始帧偏移</translation>
+        <translation type="vanished">起始帧偏移</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -2791,6 +2870,15 @@ Unchecked: Vectors are saved as SVG</source>
     <message>
         <source>Starting...</source>
         <translation>开始...</translation>
+    </message>
+    <message>
+        <source>Export Reference Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Checked: Layers with Preview Visible OFF are also exported
+Unchecked: Only layers with Preview Visible ON are exported</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2877,7 +2965,7 @@ Unchecked: Vectors are saved as SVG</source>
     </message>
     <message>
         <source>Project &apos;%1&apos; already exists</source>
-        <translation>项目"%1"已存在</translation>
+        <translation>项目&quot;%1&quot;已存在</translation>
     </message>
 </context>
 <context>
@@ -3047,7 +3135,9 @@ Unchecked: Vectors are saved as SVG</source>
     </message>
     <message numerus="yes">
         <source>%n page(s)</source>
-        <translation></translation>
+        <translation>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message>
         <source>%1 x %2 pages</source>
@@ -3388,7 +3478,7 @@ Do you want to explode anyway ?</source>
     <name>FileViewerPopup</name>
     <message>
         <source>Viewer</source>
-        <translation type="vanished">查看器</translation>
+        <translation>查看器</translation>
     </message>
 </context>
 <context>
@@ -3484,6 +3574,10 @@ Hold F3 Key on the Viewer to Show This Frame Only</source>
     <message>
         <source>Select Level</source>
         <translation>选择层级</translation>
+    </message>
+    <message>
+        <source>Inbetween</source>
+        <translation type="unfinished">中间画</translation>
     </message>
 </context>
 <context>
@@ -3744,55 +3838,55 @@ Do you want to overwrite it?</source>
     <name>InsertFxPopup</name>
     <message>
         <source>FX Browser</source>
-        <translation>特效浏览器</translation>
+        <translation type="vanished">特效浏览器</translation>
     </message>
     <message>
         <source>Insert</source>
-        <translation>插入</translation>
+        <translation type="vanished">插入</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation>添加</translation>
+        <translation type="vanished">添加</translation>
     </message>
     <message>
         <source>Replace</source>
-        <translation>替换</translation>
+        <translation type="vanished">替换</translation>
     </message>
     <message>
         <source>Macro</source>
-        <translation>宏</translation>
+        <translation type="vanished">宏</translation>
     </message>
     <message>
         <source>Remove Macro FX</source>
-        <translation>删除宏特效</translation>
+        <translation type="vanished">删除宏特效</translation>
     </message>
     <message>
         <source>Remove Preset</source>
-        <translation>删除预设</translation>
+        <translation type="vanished">删除预设</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation>是</translation>
+        <translation type="vanished">是</translation>
     </message>
     <message>
         <source>No</source>
-        <translation>否</translation>
+        <translation type="vanished">否</translation>
     </message>
     <message>
         <source>Are you sure you want to delete %1?</source>
-        <translation>您确定要删除 %1 吗？</translation>
+        <translation type="vanished">您确定要删除 %1 吗？</translation>
     </message>
     <message>
         <source>It is not possible to delete %1.</source>
-        <translation>无法删除 %1。</translation>
+        <translation type="vanished">无法删除 %1。</translation>
     </message>
     <message>
         <source>Search:</source>
-        <translation>搜索:</translation>
+        <translation type="vanished">搜索:</translation>
     </message>
     <message>
         <source>Plugins</source>
-        <translation>插件</translation>
+        <translation type="vanished">插件</translation>
     </message>
 </context>
 <context>
@@ -4657,7 +4751,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>Level Settings &amp; Arrangement in Xsheet</source>
-        <translation>摄影表种的层级设置 &amp; 排列</translation>
+        <translation type="vanished">摄影表种的层级设置 &amp; 排列</translation>
     </message>
     <message>
         <source>Premultiply</source>
@@ -4718,7 +4812,7 @@ Please choose a valid lip sync data file to continue.</source>
     <name>LoadScriptPopup</name>
     <message>
         <source>Load script</source>
-        <translation type="vanished">加载脚本</translation>
+        <translation>加载脚本</translation>
     </message>
 </context>
 <context>
@@ -5271,7 +5365,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>&amp;New FX...</source>
-        <translation>新建特效(&amp;N)...</translation>
+        <translation type="vanished">新建特效(&amp;N)...</translation>
     </message>
     <message>
         <source>&amp;New Output</source>
@@ -5779,7 +5873,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>Geometric Tool</source>
-        <translation>图形工具</translation>
+        <translation type="vanished">图形工具</translation>
     </message>
     <message>
         <source>Type Tool</source>
@@ -5799,7 +5893,7 @@ Please choose a valid lip sync data file to continue.</source>
     </message>
     <message>
         <source>Paint Brush Tool</source>
-        <translation>上色笔工具</translation>
+        <translation type="vanished">上色笔工具</translation>
     </message>
     <message>
         <source>Eraser Tool</source>
@@ -7289,19 +7383,19 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Reframe on 1&apos;s</source>
-        <translation>在1's重新分配帧 </translation>
+        <translation>在1&apos;s重新分配帧 </translation>
     </message>
     <message>
         <source>Reframe on 2&apos;s</source>
-        <translation>在2's重新分配帧</translation>
+        <translation>在2&apos;s重新分配帧</translation>
     </message>
     <message>
         <source>Reframe on 3&apos;s</source>
-        <translation>在3's重新分配帧</translation>
+        <translation>在3&apos;s重新分配帧</translation>
     </message>
     <message>
         <source>Reframe on 4&apos;s</source>
-        <translation>在4's重新分配帧</translation>
+        <translation>在4&apos;s重新分配帧</translation>
     </message>
     <message>
         <source>Previous Drawing</source>
@@ -7505,7 +7599,7 @@ Custom rooms will not be touched.</source>
     </message>
     <message>
         <source>Hook Tool: Hooks are reference points that can be defined for any animation level directly in the viewer</source>
-        <translation>挂钩工具：钩子是参考点，可以使用钩子工具直接在查看器中为任何动画关卡定义。</translation>
+        <translation type="vanished">挂钩工具：钩子是参考点，可以使用钩子工具直接在查看器中为任何动画关卡定义。</translation>
     </message>
     <message>
         <source>Plastic Tool: Builds a mesh that allows to deform and animate a level</source>
@@ -8168,6 +8262,150 @@ or you may delete necessary files for it.</source>
         <source>&amp;Paste Cell Content</source>
         <translation>粘贴帧内容</translation>
     </message>
+    <message>
+        <source>&amp;Save Scene Version...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Increment scene version.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add a number suffix if necessary.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import Open Cel Animation (OCA)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Align Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Align Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Align Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Align Bottom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Align Center Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Align Center Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Distribute Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Distribute Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Folder</source>
+        <translation type="unfinished">新建文件夹</translation>
+    </message>
+    <message>
+        <source>&amp;Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ping Pong</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inbetween Flip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Symmetry Guide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Perspective Grids</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Shift Origin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;FX Browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vector Inspector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align and Distribute Panel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Locator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open/Close Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Set Linear Control Point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Set Nonlinear Control Point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame range - Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame range - Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame range - Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame range - Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame range - Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom In And Fit Floating Panel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom Out And Fit Floating Panel</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -8507,7 +8745,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Frame %1 Label:</source>
-        <translation >帧%1标签</translation>
+        <translation>帧%1标签</translation>
     </message>
     <message>
         <source>Magenta</source>
@@ -8729,11 +8967,11 @@ What do you want to do?</source>
     </message>
     <message>
         <source>Preview Settings</source>
-        <translation>预览设置</translation>
+        <translation type="vanished">预览设置</translation>
     </message>
     <message>
         <source>Output Settings</source>
-        <translation>输出设置</translation>
+        <translation type="vanished">输出设置</translation>
     </message>
     <message>
         <source>8 bits</source>
@@ -10501,7 +10739,7 @@ if both are possible on coding file path.</source>
     </message>
     <message>
         <source>Column Header Layout*:</source>
-        <translation>列头的布局*:</translation>
+        <translation type="vanished">列头的布局*:</translation>
     </message>
     <message>
         <source>Color Calibration using 3D Look-up Table*</source>
@@ -10772,7 +11010,7 @@ in non alpha-enabled image format.</source>
     </message>
     <message>
         <source>Use Ctrl+Alt to Resize Brush</source>
-        <translation>使用Ctrl+Alt调整笔刷大小</translation>
+        <translation type="vanished">使用Ctrl+Alt调整笔刷大小</translation>
     </message>
     <message>
         <source>Temporary Tool Switch Shortcut Hold Time (ms):</source>
@@ -11086,6 +11324,66 @@ but a random crash might occur, use at your own risk:</source>
     <message>
         <source>Open Viewer Event Log</source>
         <translation>打开查看器事件日志</translation>
+    </message>
+    <message>
+        <source>Use %1 to Resize Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Increase Selection and Control Point Editor Tool Widget Size (For 4k Displays)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Xsheet Header Layout*:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Column and Cell Drag Bars</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Timeline Layer Layout:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unify Preview and Camstand Visibility Toggles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Drawings:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Speed (msec):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Undo Gesture:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Redo Gesture:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>2-Finger Tap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3-Finger Drag Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3-Finger Tap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>3-Finger Drag Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Inbetween Flip</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11666,7 +11964,7 @@ Do you want to import it or load it from its original location?</source>
     <message>
         <source>An update is available for this software.
 Visit the Web site for more information.</source>
-        <translation>本软件有可用更新。
+        <translation type="vanished">本软件有可用更新。
 请访问网站获取更多信息。</translation>
     </message>
     <message>
@@ -12621,7 +12919,7 @@ Are you sure to </source>
     </message>
     <message>
         <source>Resequence :  列%1</source>
-        <translation>重新排序 : 列%1</translation>
+        <translation type="vanished">重新排序 : 列%1</translation>
     </message>
     <message>
         <source>Clone Sub-xsheet :  Col%1</source>
@@ -13008,11 +13306,11 @@ Are you sure?</source>
     </message>
     <message>
         <source>File not found</source>
-        <translation type="vanished">文件没找到</translation>
+        <translation>文件没找到</translation>
     </message>
     <message>
         <source>Don&apos;t Save</source>
-        <translation type="vanished">不保存</translation>
+        <translation>不保存</translation>
     </message>
     <message>
         <source>New Note Level</source>
@@ -14112,12 +14410,12 @@ Do you want to continue?</source>
     <message>
         <source>Remove Cells</source>
         <comment>TCellSelection</comment>
-        <translation>移除帧格</translation>
+        <translation type="vanished">移除帧格</translation>
     </message>
     <message>
         <source>Clear Frames</source>
         <comment>TCellSelection</comment>
-        <translation>清除帧</translation>
+        <translation type="vanished">清除帧</translation>
     </message>
     <message>
         <source>Copy Columns</source>
@@ -14195,6 +14493,139 @@ Do you want to continue?</source>
     <message>
         <source>Onion Skin On Drawings</source>
         <translation>绘图上的洋葱皮</translation>
+    </message>
+    <message>
+        <source>Group Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ungroup Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resequence :  Col%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The visibility toggles of following columns are modified 
+due to &quot;Unify Preview and Camstand Visibility Toggles&quot; preference option : 
+  %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unhandled exception encountered: Skipping frame.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It is not possible to load file %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skip version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Version %1 is now available.
+
+Visit the Web site for more information.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to create OCA folder.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import Open Cel Animation (OCA)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OCA Import cancelled : empty filepath.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OCA Import file : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Do you want to import or load image files from their original location?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to load OCA file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to open OCA file for loading.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reading OCA file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Parse error at %1 while loading OCA file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blending mode &apos;%1&apos; not implemented for %2 &apos;%3&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skipped %1 &apos;%2&apos;. No image file indicated.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to load images for %1 &apos;%2&apos;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Skipping unimplemented %1 &apos;%2&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ignore all future warnings and errors.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Switch To Relative Drawing Onion Skin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Switch To Relative Frame Onion Skin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Switch To Relative Frane Onion Skin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vector Inspector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Align and Distribute</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fx Browser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Locator</source>
+        <translation type="unfinished">定位器</translation>
+    </message>
+    <message>
+        <source>Output Settings</source>
+        <translation type="unfinished">输出设置</translation>
+    </message>
+    <message>
+        <source>Preview Settings</source>
+        <translation type="unfinished">预览设置</translation>
+    </message>
+    <message>
+        <source>New Level Folder</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -14319,6 +14750,11 @@ The audio file will not be included in the rendered clip.</source>
 These levels can&apos;t be exported with this tool.</source>
         <translation>%1场景包含一个塑型变形层级。
         这些层级可以不能使用此工具导出。</translation>
+    </message>
+    <message>
+        <source>Unhandled exception encountered.
+The audio file will not be included in the rendered clip.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -16425,6 +16861,19 @@ Assign shortcut sequence anyway?</source>
         <translation>初始序列%1已分配给%2，这是优先的。
         是否分配快捷方式序列？</translation>
     </message>
+    <message>
+        <source>Using &apos;%1&apos; arrow %2 may block navigation or movement operations in certain panels.
+Use anyway?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>to start of a shortcut sequence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>as a shortcut</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StackedMenuBar</name>
@@ -17947,66 +18396,66 @@ Set the output folder path to the subfolder as well.</source>
     <name>StudioPaletteTreeViewer</name>
     <message>
         <source>This folder is not empty. Delete anyway?</source>
-        <translation type="vanished">文件夹不是空的，还要删除马？</translation>
+        <translation>文件夹不是空的，还要删除马？</translation>
     </message>
     <message>
         <source>New Palette</source>
-        <translation type="vanished">新建调色板</translation>
+        <translation>新建调色板</translation>
     </message>
     <message>
         <source>New Folder</source>
-        <translation type="vanished">新建文件夹</translation>
+        <translation>新建文件夹</translation>
     </message>
     <message>
         <source>New Cleanup Palette</source>
-        <translation type="vanished">新建清稿调色板</translation>
+        <translation>新建清稿调色板</translation>
     </message>
     <message>
         <source>Delete Folder</source>
-        <translation type="vanished">删除文件夹</translation>
+        <translation>删除文件夹</translation>
     </message>
     <message>
         <source>Load into Current Cleaunp Palette</source>
-        <translation type="vanished">加载到当前清稿调色板中</translation>
+        <translation>加载到当前清稿调色板中</translation>
     </message>
     <message>
         <source>Replace with Current Cleaunp Palette</source>
-        <translation type="vanished">用当前清稿调色板替换</translation>
+        <translation>用当前清稿调色板替换</translation>
     </message>
     <message>
         <source>Load into Current Palette</source>
-        <translation type="vanished">加载到当前调色板中</translation>
+        <translation>加载到当前调色板中</translation>
     </message>
     <message>
         <source>Merge to Current Palette</source>
-        <translation type="vanished">合并到当前调色板上</translation>
+        <translation>合并到当前调色板上</translation>
     </message>
     <message>
         <source>Replace with Current Palette</source>
-        <translation type="vanished">用当前调色板替换</translation>
+        <translation>用当前调色板替换</translation>
     </message>
     <message>
         <source>Delete Palette</source>
-        <translation type="vanished">删除调色板</translation>
+        <translation>删除调色板</translation>
     </message>
     <message>
         <source>Search for Palettes</source>
-        <translation type="vanished">搜索调色板</translation>
+        <translation>搜索调色板</translation>
     </message>
 </context>
 <context>
     <name>StudioPaletteViewer</name>
     <message>
         <source>&amp;New Folder</source>
-        <translation type="vanished">新建文件夹(&amp;N)</translation>
+        <translation>新建文件夹(&amp;N)</translation>
     </message>
     <message>
         <source>&amp;New Palette</source>
-        <translation type="vanished">新建调色板(&amp;N)</translation>
+        <translation>新建调色板(&amp;N)</translation>
     </message>
     <message>
         <source>&amp;Delete</source>
-        <translation type="vanished">删除(&amp;D)</translation>
+        <translation>删除(&amp;D)</translation>
     </message>
 </context>
 <context>
@@ -18131,11 +18580,11 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
     <message>
         <source>Perspective Grids</source>
-        <translation>透视网格</translation>
+        <translation type="vanished">透视网格</translation>
     </message>
     <message>
         <source>Symmetry Guide</source>
-        <translation>对称向导</translation>
+        <translation type="vanished">对称向导</translation>
     </message>
     <message>
         <source>Scene Overlay</source>
@@ -18615,6 +19064,10 @@ Click the arrow button to create a new sub-xsheet</source>
         <source>Locking this prevents the workspace from being changed and prevents new rooms from being created.  Unlock this to change the workspace or create new rooms.</source>
         <translation>锁定此选项可防止更改工作空间并防止创建新工作区。解除锁定以更改工作空间或创建新工作区。</translation>
     </message>
+    <message>
+        <source>Inbetween</source>
+        <translation type="unfinished">中间画</translation>
+    </message>
 </context>
 <context>
     <name>TrackerPopup</name>
@@ -18732,6 +19185,117 @@ Click the arrow button to create a new sub-xsheet</source>
     <message>
         <source>Flip Stroke Direction:</source>
         <translation>翻转引导描绘: </translation>
+    </message>
+</context>
+<context>
+    <name>VectorInspectorPanel</name>
+    <message>
+        <source>&amp;Filter pattern (example 0|1):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filter &amp;syntax:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filter &amp;column:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stroke Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Group Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>StyleId</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Self Loop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quad</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>x</source>
+        <translation type="unfinished">x</translation>
+    </message>
+    <message>
+        <source>y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thickness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Regular expression</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wildcard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fixed string</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Order of the stroke in the sequence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identifier for the group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unique identifier for the stroke</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The palette style index assigned to the stroke</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Indicates if the stroke is a closed shape</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Order of the quadratic equation in the sequence per stroke</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This point is parameter P0, P1, or P2 in the Quad equation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>X coordinate of the point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Y coordinate of the point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thickness of the stroke at this point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -19046,7 +19610,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Touch begins</source>
-        <translation>开始触摸</translation>
+        <translation type="vanished">开始触摸</translation>
     </message>
     <message>
         <source>Touch ended</source>
@@ -19058,7 +19622,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Gesture encountered</source>
-        <translation>遇到手势</translation>
+        <translation type="vanished">遇到手势</translation>
     </message>
     <message>
         <source>LEFT</source>
@@ -19099,6 +19663,22 @@ Please refer to the user guide for details.</source>
     <message>
         <source>Key released: %1</source>
         <translation>释放按键：%1</translation>
+    </message>
+    <message>
+        <source>Touch Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Touch begins (%1; %2pts)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Touch updated (%1; %2pts)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gesture encountered (%1)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -19163,7 +19743,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Main</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">主</translation>
     </message>
     <message>
         <source>Scene Depth:</source>
@@ -19256,6 +19836,10 @@ Please refer to the user guide for details.</source>
         <source>None</source>
         <translation>无</translation>
     </message>
+    <message>
+        <source>Inbetween</source>
+        <translation type="unfinished">中间画</translation>
+    </message>
 </context>
 <context>
     <name>XsheetGUI::ChangeObjectParent</name>
@@ -19336,7 +19920,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Alt + Click to Toggle Thumbnail</source>
-        <translation>[Alt + 点按]以显示/隐藏缩略图</translation>
+        <translation type="vanished">[Alt + 点按]以显示/隐藏缩略图</translation>
     </message>
     <message>
         <source>Reframe</source>
@@ -19426,6 +20010,26 @@ Please refer to the user guide for details.</source>
         <source>Lock</source>
         <translation>锁定</translation>
     </message>
+    <message>
+        <source>Click to select column, drag to move it, double-click to edit, long press to open/close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open/Close folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 + Click to Toggle Thumbnail</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>XsheetGUI::ColumnTransparencyPopup</name>
@@ -19475,7 +20079,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Clipping Mask</source>
-        <translation>剪贴蒙版</translation>
+        <translation type="vanished">剪贴蒙版</translation>
     </message>
     <message>
         <source>Invert Mask</source>
@@ -19556,6 +20160,21 @@ Please refer to the user guide for details.</source>
     </message>
 </context>
 <context>
+    <name>XsheetGUI::OnionSkinPopup</name>
+    <message>
+        <source>Auto</source>
+        <translation type="unfinished">自动</translation>
+    </message>
+    <message>
+        <source>Opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opacity:</source>
+        <translation type="unfinished">不透明度:</translation>
+    </message>
+</context>
+<context>
     <name>XsheetGUI::QuickToolbar</name>
     <message>
         <source>Customize Quick Toolbar</source>
@@ -19574,11 +20193,11 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Relative Onion Skin Toggle</source>
-        <translation>显示/隐藏相关洋葱皮</translation>
+        <translation type="vanished">显示/隐藏相关洋葱皮</translation>
     </message>
     <message>
         <source>Fixed Onion Skin Toggle</source>
-        <translation>显示/隐藏固定洋葱皮</translation>
+        <translation type="vanished">显示/隐藏固定洋葱皮</translation>
     </message>
     <message>
         <source>Playback Start Marker</source>
@@ -19661,6 +20280,16 @@ Hold F3 Key on the Viewer to Show This Frame Only</source>
         <translation>%1+单击-设置播放开始标记
         %2+单击-设置播放结束标记
         %3+单击-删除播放标记</translation>
+    </message>
+    <message>
+        <source>Fixed Onion Skin Toggle
+Right-Click to adjust opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relative Onion Skin Toggle
+Right-Click to adjust opacity</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

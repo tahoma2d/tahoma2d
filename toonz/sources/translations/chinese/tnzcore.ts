@@ -5,26 +5,26 @@
     <name>BmpWriterProperties</name>
     <message>
         <source>Bits Per Pixel</source>
-        <translation>像素位数</translation>
+        <translation type="vanished">像素位数</translation>
     </message>
     <message>
         <source>24 bits</source>
-        <translation>24位</translation>
+        <translation type="vanished">24位</translation>
     </message>
     <message>
         <source>8 bits (Greyscale)</source>
-        <translation>8位(灰阶)</translation>
+        <translation type="vanished">8位(灰阶)</translation>
     </message>
 </context>
 <context>
     <name>JpgWriterProperties</name>
     <message>
         <source>Quality</source>
-        <translation>质量</translation>
+        <translation type="vanished">质量</translation>
     </message>
     <message>
         <source>Smoothing</source>
-        <translation>平滑</translation>
+        <translation type="vanished">平滑</translation>
     </message>
 </context>
 <context>
@@ -35,7 +35,7 @@
     </message>
     <message>
         <source>Unidentified Action</source>
-        <translation>未标识的动作</translation>
+        <translation type="vanished">未标识的动作</translation>
     </message>
     <message>
         <source>Skipping frame.</source>
@@ -44,6 +44,10 @@
     <message>
         <source>Malformed frame name</source>
         <translation type="vanished">不合格的帧名</translation>
+    </message>
+    <message>
+        <source>Unhandled exception encountered: Skipping frame.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -83,26 +87,26 @@
     <name>Tiio::BmpWriterProperties</name>
     <message>
         <source>Bits Per Pixel</source>
-        <translation type="obsolete">像素位数</translation>
+        <translation type="unfinished">像素位数</translation>
     </message>
     <message>
         <source>24 bits</source>
-        <translation type="obsolete">24位</translation>
+        <translation type="unfinished">24位</translation>
     </message>
     <message>
         <source>8 bits (Greyscale)</source>
-        <translation type="obsolete">8位(灰阶)</translation>
+        <translation type="unfinished">8位(灰阶)</translation>
     </message>
 </context>
 <context>
     <name>Tiio::JpgWriterProperties</name>
     <message>
         <source>Quality</source>
-        <translation type="obsolete">质量</translation>
+        <translation type="unfinished">质量</translation>
     </message>
     <message>
         <source>Smoothing</source>
-        <translation type="obsolete">平滑</translation>
+        <translation type="unfinished">平滑</translation>
     </message>
 </context>
 </TS>

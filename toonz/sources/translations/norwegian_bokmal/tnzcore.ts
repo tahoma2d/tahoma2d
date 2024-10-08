@@ -9,7 +9,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tpalette.cpp" line="265"/>
+        <location filename="../../common/timage_io/tlevel_io.cpp" line="139"/>
+        <source>Unhandled exception encountered: Skipping frame.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/tvrender/tpalette.cpp" line="257"/>
         <source>colors</source>
         <translation type="unfinished"></translation>
     </message>
@@ -56,17 +61,17 @@
 <context>
     <name>Tiio::BmpWriterProperties</name>
     <message>
-        <location filename="../../common/tiio/tiio_bmp.cpp" line="755"/>
+        <location filename="../../common/tiio/tiio_bmp.cpp" line="760"/>
         <source>Bits Per Pixel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/tiio/tiio_bmp.cpp" line="756"/>
+        <location filename="../../common/tiio/tiio_bmp.cpp" line="761"/>
         <source>24 bits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/tiio/tiio_bmp.cpp" line="757"/>
+        <location filename="../../common/tiio/tiio_bmp.cpp" line="762"/>
         <source>8 bits (Greyscale)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -74,12 +79,12 @@
 <context>
     <name>Tiio::JpgWriterProperties</name>
     <message>
-        <location filename="../../common/tiio/tiio_jpg.cpp" line="284"/>
+        <location filename="../../common/tiio/tiio_jpg.cpp" line="318"/>
         <source>Quality</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/tiio/tiio_jpg.cpp" line="285"/>
+        <location filename="../../common/tiio/tiio_jpg.cpp" line="319"/>
         <source>Smoothing</source>
         <translation type="unfinished"></translation>
     </message>

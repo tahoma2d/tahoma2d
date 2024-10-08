@@ -5,170 +5,174 @@
     <name>CenterlineVectorizer</name>
     <message>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="obsolete">レベル%1をベクター化できません</translation>
+        <translation type="unfinished">レベル%1をベクター化できません</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="obsolete">フレームのないレベルはベクター化できません</translation>
+        <translation type="unfinished">フレームのないレベルはベクター化できません</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="obsolete">画像 %1 をベクター化できません</translation>
+        <translation type="unfinished">画像 %1 をベクター化できません</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="obsolete">不正な引数 (%1): 画像またはレベルを指定する必要があります</translation>
+        <translation type="unfinished">不正な引数 (%1): 画像またはレベルを指定する必要があります</translation>
     </message>
 </context>
 <context>
     <name>FilePath</name>
     <message>
         <source>&quot;%1&quot;</source>
-        <translation type="obsolete">&quot;%1&quot;</translation>
+        <translation type="unfinished">&quot;%1&quot;</translation>
     </message>
     <message>
         <source>can&apos;t concatenate an absolute path : %1</source>
-        <translation type="obsolete">絶対パス %1 を連結することができません</translation>
+        <translation type="unfinished">絶対パス %1 を連結することができません</translation>
     </message>
     <message>
         <source>%1 is not a directory</source>
-        <translation type="obsolete">%1 はディレクトリではありません</translation>
+        <translation type="unfinished">%1 はディレクトリではありません</translation>
     </message>
     <message>
         <source>can&apos;t read directory %1</source>
-        <translation type="obsolete">ディレクトリ %1 を読み取ることができません</translation>
+        <translation type="unfinished">ディレクトリ %1 を読み取ることができません</translation>
     </message>
 </context>
 <context>
     <name>Image</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="obsolete">ファイル %1 は存在しません</translation>
+        <translation type="unfinished">ファイル %1 は存在しません</translation>
     </message>
     <message>
         <source>Loaded first frame of %1</source>
-        <translation type="obsolete">%1 の最初のフレームを読み込みました</translation>
+        <translation type="unfinished">%1 の最初のフレームを読み込みました</translation>
     </message>
     <message>
         <source>Unexpected error while reading image</source>
-        <translation type="obsolete">画像の読み取り中に想定外のエラーが発生しました</translation>
+        <translation type="unfinished">画像の読み取り中に想定外のエラーが発生しました</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="obsolete">認識できないファイル形式 :</translation>
+        <translation type="unfinished">認識できないファイル形式 :</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 image to this file type : %2</source>
-        <translation type="obsolete">画像 %1 をこのファイル形式で保存できません : %2</translation>
+        <translation type="unfinished">画像 %1 をこのファイル形式で保存できません : %2</translation>
     </message>
     <message>
         <source>Unexpected error while writing image</source>
-        <translation type="obsolete">画像の書き込み中に想定外のエラーが発生しました</translation>
+        <translation type="unfinished">画像の書き込み中に想定外のエラーが発生しました</translation>
     </message>
 </context>
 <context>
     <name>ImageBuilder</name>
     <message>
         <source>Bad argument (%1): should be &apos;Raster&apos; or ToonzRaster&apos;</source>
-        <translation type="obsolete">不正な引数 (%1): ラスターまたはToonzラスターを指定する必要があります</translation>
+        <translation type="unfinished">不正な引数 (%1): ラスターまたはToonzラスターを指定する必要があります</translation>
     </message>
     <message>
         <source>ImageBuilder(%1 image)</source>
-        <translation type="obsolete">イメージビルダー(%1 画像)</translation>
+        <translation type="unfinished">イメージビルダー(%1 画像)</translation>
     </message>
     <message>
         <source>%1 : %2</source>
-        <translation type="obsolete">%1 : %2</translation>
+        <translation type="unfinished">%1 : %2</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a Transformation</source>
-        <translation type="obsolete">不正な引数 (%1): 幾何変換を指定する必要があります</translation>
+        <translation type="unfinished">不正な引数 (%1): 幾何変換を指定する必要があります</translation>
     </message>
 </context>
 <context>
     <name>Level</name>
     <message>
         <source>%1 frames</source>
-        <translation type="obsolete">%1 フレーム</translation>
+        <translation type="unfinished">%1 フレーム</translation>
     </message>
     <message>
         <source>Bad argument (%1). It should be FilePath or string</source>
-        <translation type="obsolete">不正な引数 (%1): ファイルパスまたは文字列を指定する必要があります</translation>
+        <translation type="unfinished">不正な引数 (%1): ファイルパスまたは文字列を指定する必要があります</translation>
     </message>
     <message>
         <source>Exception loading level (%1)</source>
-        <translation type="obsolete">レベル読み込みの例外 (%1)</translation>
+        <translation type="unfinished">レベル読み込みの例外 (%1)</translation>
     </message>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="obsolete">ファイル %1 は存在しません</translation>
+        <translation type="unfinished">ファイル %1 は存在しません</translation>
     </message>
     <message>
         <source>File %1 is unsupported</source>
-        <translation type="obsolete">ファイル %1 はサポートされていません</translation>
+        <translation type="unfinished">ファイル %1 はサポートされていません</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation type="obsolete">%1 読み取り中の例外</translation>
+        <translation type="unfinished">%1 読み取り中の例外</translation>
     </message>
     <message>
         <source>Can&apos;t save an empty level</source>
-        <translation type="obsolete">空のレベルを保存できません</translation>
+        <translation type="unfinished">空のレベルを保存できません</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="obsolete">認識できないファイル形式 :</translation>
+        <translation type="unfinished">認識できないファイル形式 :</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 level to this file type : %2</source>
-        <translation type="obsolete">レベル %1 をこのファイル形式で保存できません : %2</translation>
+        <translation type="unfinished">レベル %1 をこのファイル形式で保存できません : %2</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation type="obsolete">%1 書き込み中の例外</translation>
+        <translation type="unfinished">%1 書き込み中の例外</translation>
     </message>
     <message>
         <source>frame index (%1) must be a number</source>
-        <translation type="obsolete">フレームインデックス (%1) は数字でなくてはなりません</translation>
+        <translation type="unfinished">フレームインデックス (%1) は数字でなくてはなりません</translation>
     </message>
     <message>
         <source>frame index (%1) is out of range (0-%2)</source>
-        <translation type="obsolete">フレームインデックス (%1)は範囲外です (0-%2)</translation>
+        <translation type="unfinished">フレームインデックス (%1)は範囲外です (0-%2)</translation>
     </message>
     <message>
         <source>second argument (%1) is not an image</source>
-        <translation type="obsolete">2番目の引数 (%1) が画像ではありません</translation>
+        <translation type="unfinished">2番目の引数 (%1) が画像ではありません</translation>
     </message>
     <message>
         <source>can not insert a %1 image into a level</source>
-        <translation type="obsolete">画像 %1 をレベルに挿入できません</translation>
+        <translation type="unfinished">画像 %1 をレベルに挿入できません</translation>
     </message>
     <message>
         <source>can not insert a %1 image to a %2 level</source>
-        <translation type="obsolete">画像 %1 をレベル %2 に挿入できません</translation>
+        <translation type="unfinished">画像 %1 をレベル %2 に挿入できません</translation>
+    </message>
+    <message>
+        <source>Unhandled exception encountered</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>OutlineVectorizer</name>
     <message>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="obsolete">レベル%1をベクター化できません</translation>
+        <translation type="unfinished">レベル%1をベクター化できません</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="obsolete">フレームのないレベルはベクター化できません</translation>
+        <translation type="unfinished">フレームのないレベルはベクター化できません</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="obsolete">画像 %1 をベクター化できません</translation>
+        <translation type="unfinished">画像 %1 をベクター化できません</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="obsolete">不正な引数 (%1): 画像またはレベルを指定する必要があります</translation>
+        <translation type="unfinished">不正な引数 (%1): 画像またはレベルを指定する必要があります</translation>
     </message>
     <message>
         <source>Invalid color : </source>
-        <translation type="obsolete">無効な色 : </translation>
+        <translation type="unfinished">無効な色 : </translation>
     </message>
 </context>
 <context>
@@ -496,15 +500,15 @@
     </message>
     <message>
         <source>Set Keyframe   %1 at frame %2</source>
-        <translation>キーフレームを設定   %1  フレーム %2</translation>
+        <translation type="vanished">キーフレームを設定   %1  フレーム %2</translation>
     </message>
     <message>
         <source>Remove Keyframe   %1 at frame %2</source>
-        <translation>キーフレームを消去   %1  フレーム %2</translation>
+        <translation type="vanished">キーフレームを消去   %1  フレーム %2</translation>
     </message>
     <message>
         <source>Move Center   %1  Frame %2</source>
-        <translation>センター位置を移動   %1  フレーム %2</translation>
+        <translation type="vanished">センター位置を移動   %1  フレーム %2</translation>
     </message>
     <message>
         <source>color model</source>
@@ -516,7 +520,7 @@
     </message>
     <message>
         <source>Update Colors by Using Picked Positions in Palette %1</source>
-        <translation>パレット%1　サンプル位置を用いて色を更新</translation>
+        <translation>パレット%1&#x3000;サンプル位置を用いて色を更新</translation>
     </message>
     <message>
         <source>Can&apos;t save</source>
@@ -692,391 +696,395 @@
         <source>Y displ</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>It is not possible to load file %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>
     <message>
         <source>Expected a vector image: %1</source>
-        <translation type="obsolete">ベクター画像ではありません: %1</translation>
+        <translation type="unfinished">ベクター画像ではありません: %1</translation>
     </message>
     <message>
         <source>Expected a vector level: %1</source>
-        <translation type="obsolete">ベクターレベルではありません: %1</translation>
+        <translation type="unfinished">ベクターレベルではありません: %1</translation>
     </message>
     <message>
         <source>Argument must be a vector level or image : </source>
-        <translation type="obsolete">引数はベクターレベルまたは画像である必要があります : </translation>
+        <translation type="unfinished">引数はベクターレベルまたは画像である必要があります : </translation>
     </message>
     <message>
         <source>%1 has no palette</source>
-        <translation type="obsolete">%1 にはパレットがありません</translation>
+        <translation type="unfinished">%1 にはパレットがありません</translation>
     </message>
 </context>
 <context>
     <name>Scene</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="obsolete">ファイル %1 は存在しません</translation>
+        <translation type="unfinished">ファイル %1 は存在しません</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation type="obsolete">%1 読み取り中の例外</translation>
+        <translation type="unfinished">%1 読み取り中の例外</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation type="obsolete">%1 書き込み中の例外</translation>
+        <translation type="unfinished">%1 書き込み中の例外</translation>
     </message>
     <message>
         <source>Bad level type (%1): must be Vector,Raster or ToonzRaster</source>
-        <translation type="obsolete">不正なレベルタイプ (%1): ベクター、ラスターまたはToonzラスターである必要があります</translation>
+        <translation type="unfinished">不正なレベルタイプ (%1): ベクター、ラスターまたはToonzラスターである必要があります</translation>
     </message>
     <message>
         <source>Can&apos;t add the level: name(%1) is already used</source>
-        <translation type="obsolete">レベルを追加できません: レベル名(%1)は既に使用されています</translation>
+        <translation type="unfinished">レベルを追加できません: レベル名(%1)は既に使用されています</translation>
     </message>
     <message>
         <source>Can&apos;t load this kind of file as a level : %1</source>
-        <translation type="obsolete">この形式のファイルをレベルとして読み込むことはできません : %1</translation>
+        <translation type="unfinished">この形式のファイルをレベルとして読み込むことはできません : %1</translation>
     </message>
     <message>
         <source>Could not load level %1</source>
-        <translation type="obsolete">レベル %1 を読み込めませんでした</translation>
+        <translation type="unfinished">レベル %1 を読み込めませんでした</translation>
     </message>
     <message>
         <source>Level is not included in the scene : %1</source>
-        <translation type="obsolete">レベルはシーンに含まれていません : %1</translation>
+        <translation type="unfinished">レベルはシーンに含まれていません : %1</translation>
     </message>
     <message>
         <source>%1 : Expected a Level instance or a level name</source>
-        <translation type="obsolete">%1 : レベルインスタンスまたはレベルではありません</translation>
+        <translation type="unfinished">%1 : レベルインスタンスまたはレベルではありません</translation>
     </message>
     <message>
         <source>Level &apos;%1&apos; is not included in the scene</source>
-        <translation type="obsolete">レベル &apos;%1&apos; はシーンに含まれていません</translation>
+        <translation type="unfinished">レベル &apos;%1&apos; はシーンに含まれていません</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::CenterlineVectorizer</name>
     <message>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation>レベル%1をベクター化できません</translation>
+        <translation type="vanished">レベル%1をベクター化できません</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation>フレームのないレベルはベクター化できません</translation>
+        <translation type="vanished">フレームのないレベルはベクター化できません</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation>画像 %1 をベクター化できません</translation>
+        <translation type="vanished">画像 %1 をベクター化できません</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation>不正な引数 (%1): 画像またはレベルを指定する必要があります</translation>
+        <translation type="vanished">不正な引数 (%1): 画像またはレベルを指定する必要があります</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::FilePath</name>
     <message>
         <source>&quot;%1&quot;</source>
-        <translation>&quot;%1&quot;</translation>
+        <translation type="vanished">&quot;%1&quot;</translation>
     </message>
     <message>
         <source>can&apos;t concatenate an absolute path : %1</source>
-        <translation>絶対パス %1 を連結することができません</translation>
+        <translation type="vanished">絶対パス %1 を連結することができません</translation>
     </message>
     <message>
         <source>%1 is not a directory</source>
-        <translation>%1 はディレクトリではありません</translation>
+        <translation type="vanished">%1 はディレクトリではありません</translation>
     </message>
     <message>
         <source>can&apos;t read directory %1</source>
-        <translation>ディレクトリ %1 を読み取ることができません</translation>
+        <translation type="vanished">ディレクトリ %1 を読み取ることができません</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Image</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation>ファイル %1 は存在しません</translation>
+        <translation type="vanished">ファイル %1 は存在しません</translation>
     </message>
     <message>
         <source>Loaded first frame of %1</source>
-        <translation>%1 の最初のフレームを読み込みました</translation>
+        <translation type="vanished">%1 の最初のフレームを読み込みました</translation>
     </message>
     <message>
         <source>Unexpected error while reading image</source>
-        <translation>画像の読み取り中に想定外のエラーが発生しました</translation>
+        <translation type="vanished">画像の読み取り中に想定外のエラーが発生しました</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation>認識できないファイル形式 :</translation>
+        <translation type="vanished">認識できないファイル形式 :</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 image to this file type : %2</source>
-        <translation>画像 %1 をこのファイル形式で保存できません : %2</translation>
+        <translation type="vanished">画像 %1 をこのファイル形式で保存できません : %2</translation>
     </message>
     <message>
         <source>Unexpected error while writing image</source>
-        <translation>画像の書き込み中に想定外のエラーが発生しました</translation>
+        <translation type="vanished">画像の書き込み中に想定外のエラーが発生しました</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::ImageBuilder</name>
     <message>
         <source>Bad argument (%1): should be &apos;Raster&apos; or ToonzRaster&apos;</source>
-        <translation>不正な引数 (%1): ラスターまたはToonzラスターを指定する必要があります</translation>
+        <translation type="vanished">不正な引数 (%1): ラスターまたはToonzラスターを指定する必要があります</translation>
     </message>
     <message>
         <source>ImageBuilder(%1 image)</source>
-        <translation>イメージビルダー(%1 画像)</translation>
+        <translation type="vanished">イメージビルダー(%1 画像)</translation>
     </message>
     <message>
         <source>%1 : %2</source>
-        <translation>%1 : %2</translation>
+        <translation type="vanished">%1 : %2</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a Transformation</source>
-        <translation>不正な引数 (%1): 幾何変換を指定する必要があります</translation>
+        <translation type="vanished">不正な引数 (%1): 幾何変換を指定する必要があります</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Level</name>
     <message>
         <source>%1 frames</source>
-        <translation>%1 フレーム</translation>
+        <translation type="vanished">%1 フレーム</translation>
     </message>
     <message>
         <source>Bad argument (%1). It should be FilePath or string</source>
-        <translation>不正な引数 (%1): ファイルパスまたは文字列を指定する必要があります</translation>
+        <translation type="vanished">不正な引数 (%1): ファイルパスまたは文字列を指定する必要があります</translation>
     </message>
     <message>
         <source>Exception loading level (%1)</source>
-        <translation>レベル読み込みの例外 (%1)</translation>
+        <translation type="vanished">レベル読み込みの例外 (%1)</translation>
     </message>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation>ファイル %1 は存在しません</translation>
+        <translation type="vanished">ファイル %1 は存在しません</translation>
     </message>
     <message>
         <source>File %1 is unsupported</source>
-        <translation>ファイル %1 はサポートされていません</translation>
+        <translation type="vanished">ファイル %1 はサポートされていません</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation>%1 読み取り中の例外</translation>
+        <translation type="vanished">%1 読み取り中の例外</translation>
     </message>
     <message>
         <source>Can&apos;t save an empty level</source>
-        <translation>空のレベルを保存できません</translation>
+        <translation type="vanished">空のレベルを保存できません</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation>認識できないファイル形式 :</translation>
+        <translation type="vanished">認識できないファイル形式 :</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 level to this file type : %2</source>
-        <translation>レベル %1 をこのファイル形式で保存できません : %2</translation>
+        <translation type="vanished">レベル %1 をこのファイル形式で保存できません : %2</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation>%1 書き込み中の例外</translation>
+        <translation type="vanished">%1 書き込み中の例外</translation>
     </message>
     <message>
         <source>frame index (%1) must be a number</source>
-        <translation>フレームインデックス (%1) は数字でなくてはなりません</translation>
+        <translation type="vanished">フレームインデックス (%1) は数字でなくてはなりません</translation>
     </message>
     <message>
         <source>frame index (%1) is out of range (0-%2)</source>
-        <translation>フレームインデックス (%1)は範囲外です (0-%2)</translation>
+        <translation type="vanished">フレームインデックス (%1)は範囲外です (0-%2)</translation>
     </message>
     <message>
         <source>second argument (%1) is not an image</source>
-        <translation>2番目の引数 (%1) が画像ではありません</translation>
+        <translation type="vanished">2番目の引数 (%1) が画像ではありません</translation>
     </message>
     <message>
         <source>can not insert a %1 image into a level</source>
-        <translation>画像 %1 をレベルに挿入できません</translation>
+        <translation type="vanished">画像 %1 をレベルに挿入できません</translation>
     </message>
     <message>
         <source>can not insert a %1 image to a %2 level</source>
-        <translation>画像 %1 をレベル %2 に挿入できません</translation>
+        <translation type="vanished">画像 %1 をレベル %2 に挿入できません</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::OutlineVectorizer</name>
     <message>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation>レベル%1をベクター化できません</translation>
+        <translation type="vanished">レベル%1をベクター化できません</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation>フレームのないレベルはベクター化できません</translation>
+        <translation type="vanished">フレームのないレベルはベクター化できません</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation>画像 %1 をベクター化できません</translation>
+        <translation type="vanished">画像 %1 をベクター化できません</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation>不正な引数 (%1): 画像またはレベルを指定する必要があります</translation>
+        <translation type="vanished">不正な引数 (%1): 画像またはレベルを指定する必要があります</translation>
     </message>
     <message>
         <source>Invalid color : </source>
-        <translation>無効な色 : </translation>
+        <translation type="vanished">無効な色 : </translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Rasterizer</name>
     <message>
         <source>Expected a vector image: %1</source>
-        <translation>ベクター画像ではありません: %1</translation>
+        <translation type="vanished">ベクター画像ではありません: %1</translation>
     </message>
     <message>
         <source>Expected a vector level: %1</source>
-        <translation>ベクターレベルではありません: %1</translation>
+        <translation type="vanished">ベクターレベルではありません: %1</translation>
     </message>
     <message>
         <source>Argument must be a vector level or image : </source>
-        <translation>引数はベクターレベルまたは画像である必要があります : </translation>
+        <translation type="vanished">引数はベクターレベルまたは画像である必要があります : </translation>
     </message>
     <message>
         <source>%1 has no palette</source>
-        <translation>%1 にはパレットがありません</translation>
+        <translation type="vanished">%1 にはパレットがありません</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Scene</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation>ファイル %1 は存在しません</translation>
+        <translation type="vanished">ファイル %1 は存在しません</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation>%1 読み取り中の例外</translation>
+        <translation type="vanished">%1 読み取り中の例外</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation>%1 書き込み中の例外</translation>
+        <translation type="vanished">%1 書き込み中の例外</translation>
     </message>
     <message>
         <source>Bad level type (%1): must be Vector,Raster or ToonzRaster</source>
-        <translation>不正なレベルタイプ (%1): ベクター、ラスターまたはToonzラスターである必要があります</translation>
+        <translation type="vanished">不正なレベルタイプ (%1): ベクター、ラスターまたはToonzラスターである必要があります</translation>
     </message>
     <message>
         <source>Can&apos;t add the level: name(%1) is already used</source>
-        <translation>レベルを追加できません: レベル名(%1)は既に使用されています</translation>
+        <translation type="vanished">レベルを追加できません: レベル名(%1)は既に使用されています</translation>
     </message>
     <message>
         <source>Can&apos;t load this kind of file as a level : %1</source>
-        <translation>この形式のファイルをレベルとして読み込むことはできません : %1</translation>
+        <translation type="vanished">この形式のファイルをレベルとして読み込むことはできません : %1</translation>
     </message>
     <message>
         <source>Could not load level %1</source>
-        <translation>レベル %1 を読み込めませんでした</translation>
+        <translation type="vanished">レベル %1 を読み込めませんでした</translation>
     </message>
     <message>
         <source>Level is not included in the scene : %1</source>
-        <translation>レベルはシーンに含まれていません : %1</translation>
+        <translation type="vanished">レベルはシーンに含まれていません : %1</translation>
     </message>
     <message>
         <source>%1 : Expected a Level instance or a level name</source>
-        <translation>%1 : レベルインスタンスまたはレベルではありません</translation>
+        <translation type="vanished">%1 : レベルインスタンスまたはレベルではありません</translation>
     </message>
     <message>
         <source>Level &apos;%1&apos; is not included in the scene</source>
-        <translation>レベル &apos;%1&apos; はシーンに含まれていません</translation>
+        <translation type="vanished">レベル &apos;%1&apos; はシーンに含まれていません</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::ToonzRasterConverter</name>
     <message>
         <source>Can&apos;t convert a %1 level</source>
-        <translation>レベル%1を変換できません</translation>
+        <translation type="vanished">レベル%1を変換できません</translation>
     </message>
     <message>
         <source>Can&apos;t convert a level with no frames</source>
-        <translation>フレームのないレベルは変換できません</translation>
+        <translation type="vanished">フレームのないレベルは変換できません</translation>
     </message>
     <message>
         <source>Can&apos;t convert a %1 image</source>
-        <translation>画像%1を変換できません</translation>
+        <translation type="vanished">画像%1を変換できません</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a raster Level or a raster Image</source>
-        <translation>不正な引数 (%1): レベルまたはラスター画像を指定する必要があります</translation>
+        <translation type="vanished">不正な引数 (%1): レベルまたはラスター画像を指定する必要があります</translation>
     </message>
 </context>
 <context>
     <name>TScriptBinding::Transform</name>
     <message>
         <source>Identity</source>
-        <translation>単位行列</translation>
+        <translation type="vanished">単位行列</translation>
     </message>
     <message>
         <source>Translation(%1,%2)</source>
-        <translation>移動(%1,%2)</translation>
+        <translation type="vanished">移動(%1,%2)</translation>
     </message>
     <message>
         <source>Rotation(%1)</source>
-        <translation>回転(%1)</translation>
+        <translation type="vanished">回転(%1)</translation>
     </message>
     <message>
         <source>Scale(%1%)</source>
-        <translation>拡大縮小(%1%)</translation>
+        <translation type="vanished">拡大縮小(%1%)</translation>
     </message>
     <message>
         <source>Scale(%1%, %2%)</source>
-        <translation>拡大縮小(%1%, %2%)</translation>
+        <translation type="vanished">拡大縮小(%1%, %2%)</translation>
     </message>
     <message>
         <source>Transform(%1, %2, %3;  %4, %5, %6)</source>
-        <translation>幾何変換(%1, %2, %3;  %4, %5, %6)</translation>
+        <translation type="vanished">幾何変換(%1, %2, %3;  %4, %5, %6)</translation>
     </message>
 </context>
 <context>
     <name>ToonzRasterConverter</name>
     <message>
         <source>Can&apos;t convert a %1 level</source>
-        <translation type="obsolete">レベル%1を変換できません</translation>
+        <translation type="unfinished">レベル%1を変換できません</translation>
     </message>
     <message>
         <source>Can&apos;t convert a level with no frames</source>
-        <translation type="obsolete">フレームのないレベルは変換できません</translation>
+        <translation type="unfinished">フレームのないレベルは変換できません</translation>
     </message>
     <message>
         <source>Can&apos;t convert a %1 image</source>
-        <translation type="obsolete">画像%1を変換できません</translation>
+        <translation type="unfinished">画像%1を変換できません</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a raster Level or a raster Image</source>
-        <translation type="obsolete">不正な引数 (%1): レベルまたはラスター画像を指定する必要があります</translation>
+        <translation type="unfinished">不正な引数 (%1): レベルまたはラスター画像を指定する必要があります</translation>
     </message>
 </context>
 <context>
     <name>Transform</name>
     <message>
         <source>Identity</source>
-        <translation type="obsolete">単位行列</translation>
+        <translation type="unfinished">単位行列</translation>
     </message>
     <message>
         <source>Translation(%1,%2)</source>
-        <translation type="obsolete">移動(%1,%2)</translation>
+        <translation type="unfinished">移動(%1,%2)</translation>
     </message>
     <message>
         <source>Rotation(%1)</source>
-        <translation type="obsolete">回転(%1)</translation>
+        <translation type="unfinished">回転(%1)</translation>
     </message>
     <message>
         <source>Scale(%1%)</source>
-        <translation type="obsolete">拡大縮小(%1%)</translation>
+        <translation type="unfinished">拡大縮小(%1%)</translation>
     </message>
     <message>
         <source>Scale(%1%, %2%)</source>
-        <translation type="obsolete">拡大縮小(%1%, %2%)</translation>
+        <translation type="unfinished">拡大縮小(%1%, %2%)</translation>
     </message>
     <message>
         <source>Transform(%1, %2, %3;  %4, %5, %6)</source>
-        <translation type="obsolete">幾何変換(%1, %2, %3;  %4, %5, %6)</translation>
+        <translation type="unfinished">幾何変換(%1, %2, %3;  %4, %5, %6)</translation>
     </message>
 </context>
 </TS>

@@ -113,12 +113,12 @@
 <context>
     <name>FFMovWriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="237"/>
+        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="256"/>
         <source>Quality</source>
         <translation type="unfinished">品質</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="238"/>
+        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="257"/>
         <source>Scale</source>
         <translation type="unfinished">スケール(%)</translation>
     </message>
@@ -230,12 +230,12 @@
 <context>
     <name>Mp4WriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="241"/>
+        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="260"/>
         <source>Quality</source>
         <translation>品質</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="242"/>
+        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="261"/>
         <source>Scale</source>
         <translation>スケール(%)</translation>
     </message>
@@ -243,7 +243,7 @@
 <context>
     <name>PngWriterProperties</name>
     <message>
-        <location filename="../../image/png/tiio_png.cpp" line="763"/>
+        <location filename="../../image/png/tiio_png.cpp" line="775"/>
         <source>Alpha Channel</source>
         <translation>アルファチャンネル</translation>
     </message>
@@ -251,13 +251,13 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="193"/>
+        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="196"/>
         <source>FFmpeg returned error-code: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="181"/>
-        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="197"/>
+        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="184"/>
+        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="200"/>
         <source>FFmpeg timed out.
 Please check the file for errors.
 If the file doesn&apos;t play or is incomplete, 
@@ -381,37 +381,37 @@ Please try raising the FFmpeg timeout in Preferences.</source>
 <context>
     <name>SvgWriterProperties</name>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="1969"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2052"/>
         <source>Stroke Mode</source>
         <translation>モード</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="1970"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2053"/>
         <source>Outline Quality</source>
         <translation>アウトラインの品質</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="1971"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2054"/>
         <source>Centerline</source>
         <translation>中心線</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="1972"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2055"/>
         <source>Outline</source>
         <translation>アウトライン</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="1973"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2056"/>
         <source>High</source>
         <translation>高</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="1974"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2057"/>
         <source>Medium</source>
         <translation>中</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="1975"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2058"/>
         <source>Low</source>
         <translation>低</translation>
     </message>
@@ -447,37 +447,37 @@ Please try raising the FFmpeg timeout in Preferences.</source>
 <context>
     <name>TifWriterProperties</name>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="730"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="731"/>
         <source>Byte Ordering</source>
         <translation>バイト順序</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="731"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="732"/>
         <source>Compression Type</source>
         <translation>圧縮方式</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="732"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="733"/>
         <source>Bits Per Pixel</source>
         <translation>色深度</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="733"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="734"/>
         <source>24(RGB)</source>
         <translation>24ビット (RGB)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="734"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="735"/>
         <source>48(RGB)</source>
         <translation>48ビット (RGB)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="735"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="736"/>
         <source> 1(BW)</source>
         <translation> 1ビット (白黒二値)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="736"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="737"/>
         <source> 8(GREYTONES)</source>
         <translation> 8ビット (グレースケール)</translation>
     </message>
@@ -490,57 +490,57 @@ Please try raising the FFmpeg timeout in Preferences.</source>
         <translation type="vanished">64ビット (RGBA)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="737"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="738"/>
         <source>32(RGBA)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="738"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="739"/>
         <source>64(RGBA)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="739"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="740"/>
         <source>Orientation</source>
         <translation>画素の記録方向</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="740"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="741"/>
         <source>Top Left</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="741"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="742"/>
         <source>Top Right</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="742"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="743"/>
         <source>Bottom Right</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="743"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="744"/>
         <source>Bottom Left</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="744"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="745"/>
         <source>Left Top</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="745"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="746"/>
         <source>Left Bottom</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="746"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="747"/>
         <source>Right Top</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="747"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="748"/>
         <source>Right Bottom</source>
         <translation></translation>
     </message>

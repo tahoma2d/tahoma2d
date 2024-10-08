@@ -207,15 +207,15 @@
     <name>BrushToolOptionsBox</name>
     <message>
         <source>Preset Name</source>
-        <translation>사전설정 이름</translation>
+        <translation type="vanished">사전설정 이름</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>네</translation>
+        <translation type="vanished">네</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>취소</translation>
+        <translation type="vanished">취소</translation>
     </message>
 </context>
 <context>
@@ -257,18 +257,18 @@
     <name>ControlPointSelection</name>
     <message>
         <source>Set Linear Control Point</source>
-        <translation>선형 제어지점 설정</translation>
+        <translation type="vanished">선형 제어지점 설정</translation>
     </message>
     <message>
         <source>Set Nonlinear Control Point</source>
-        <translation>비선형 제어 설정</translation>
+        <translation type="vanished">비선형 제어 설정</translation>
     </message>
 </context>
 <context>
     <name>DVGui::StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation>현재</translation>
+        <translation type="vanished">현재</translation>
     </message>
 </context>
 <context>
@@ -434,7 +434,7 @@
     </message>
     <message>
         <source>Frame Range</source>
-        <translation>프레임 범위</translation>
+        <translation type="vanished">프레임 범위</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -504,12 +504,24 @@
         <source>Savebox</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished">압력</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">끄기</translation>
+    </message>
 </context>
 <context>
     <name>FillTool</name>
     <message>
         <source>Frame Range</source>
-        <translation>프레임 범위</translation>
+        <translation type="vanished">프레임 범위</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -607,6 +619,30 @@
         <source>Pick+Freehand</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">끄기</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">선형</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FingerTool</name>
@@ -657,6 +693,10 @@
         <source>Grid</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Smooth:</source>
+        <translation type="unfinished">부드러운:</translation>
+    </message>
 </context>
 <context>
     <name>FullColorEraserTool</name>
@@ -698,7 +738,35 @@
     </message>
     <message>
         <source>Frame Range</source>
-        <translation>프레임 범위</translation>
+        <translation type="vanished">프레임 범위</translation>
+    </message>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished">압력</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">끄기</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">선형</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -735,6 +803,30 @@
         <source>Close and Fill</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">끄기</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">선형</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>HandToolOptionsBox</name>
@@ -748,6 +840,30 @@
     <message>
         <source>Snap</source>
         <translation>스냅</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">끄기</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">선형</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -828,19 +944,15 @@
     </message>
     <message>
         <source>Preset Name</source>
-        <translation type="unfinished">사전설정 이름</translation>
-    </message>
-    <message>
-        <source>Save As Library Preset</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">사전설정 이름</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">네</translation>
+        <translation type="obsolete">네</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">취소</translation>
+        <translation type="obsolete">취소</translation>
     </message>
 </context>
 <context>
@@ -1245,6 +1357,30 @@ Do you want to proceed?</source>
         <source>Pressure</source>
         <translation type="unfinished">압력</translation>
     </message>
+    <message>
+        <source>Range:</source>
+        <translation type="unfinished">범위:</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">끄기</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">선형</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PumpTool</name>
@@ -1405,15 +1541,15 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>%1   Level : %2  Frame : %3</source>
-        <translation>%1 레벨 : %2 프레임 : %3</translation>
+        <translation type="vanished">%1 레벨 : %2 프레임 : %3</translation>
     </message>
     <message>
         <source>Modify Stroke Tool</source>
-        <translation>선 수정도구</translation>
+        <translation type="vanished">선 수정도구</translation>
     </message>
     <message>
         <source>Modify Spline</source>
-        <translation>스플라인 수정</translation>
+        <translation type="vanished">스플라인 수정</translation>
     </message>
     <message>
         <source>The selection cannot be updated. It is not editable.</source>
@@ -1457,6 +1593,26 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>The current tool cannot be used on a stop frame.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>It is not possible to edit the folder column.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hook Tool   Level : %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exit Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The selection is not editable.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1545,11 +1701,35 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Frame Range</source>
-        <translation>프레임 범위</translation>
+        <translation type="vanished">프레임 범위</translation>
     </message>
     <message>
         <source>Angle:</source>
         <translation>각도:</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">끄기</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">선형</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1727,7 +1907,7 @@ Do you want to proceed?</source>
     <name>StyleIndexLineEdit</name>
     <message>
         <source>current</source>
-        <translation type="vanished">현재</translation>
+        <translation>현재</translation>
     </message>
 </context>
 <context>
@@ -1868,15 +2048,15 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Preset Name</source>
-        <translation type="unfinished">사전설정 이름</translation>
+        <translation type="obsolete">사전설정 이름</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished">네</translation>
+        <translation type="obsolete">네</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished">취소</translation>
+        <translation type="obsolete">취소</translation>
     </message>
 </context>
 <context>
@@ -1994,15 +2174,15 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>In</source>
-        <translation>가속</translation>
+        <translation type="vanished">가속</translation>
     </message>
     <message>
         <source>Out</source>
-        <translation>감속</translation>
+        <translation type="vanished">감속</translation>
     </message>
     <message>
         <source>In&amp;Out</source>
-        <translation>가속&amp;감속</translation>
+        <translation type="vanished">가속&amp;감속</translation>
     </message>
     <message>
         <source>Low</source>
@@ -2055,6 +2235,18 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Auto Group</source>
         <translation type="unfinished">자동 그룹</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2223,6 +2415,30 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Rectangular</source>
         <translation>직사각형</translation>
+    </message>
+    <message>
+        <source>Frame Range:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">끄기</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">선형</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

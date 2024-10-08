@@ -113,12 +113,12 @@
 <context>
     <name>FFMovWriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="237"/>
+        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="256"/>
         <source>Quality</source>
         <translation type="unfinished">Jakost</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="238"/>
+        <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="257"/>
         <source>Scale</source>
         <translation type="unfinished">Měřítko</translation>
     </message>
@@ -230,12 +230,12 @@
 <context>
     <name>Mp4WriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="241"/>
+        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="260"/>
         <source>Quality</source>
         <translation>Jakost</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="242"/>
+        <location filename="../../image/ffmpeg/tiio_mp4.cpp" line="261"/>
         <source>Scale</source>
         <translation>Měřítko</translation>
     </message>
@@ -243,7 +243,7 @@
 <context>
     <name>PngWriterProperties</name>
     <message>
-        <location filename="../../image/png/tiio_png.cpp" line="763"/>
+        <location filename="../../image/png/tiio_png.cpp" line="775"/>
         <source>Alpha Channel</source>
         <translation>Alfa kanál</translation>
     </message>
@@ -251,13 +251,13 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="193"/>
+        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="196"/>
         <source>FFmpeg returned error-code: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="181"/>
-        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="197"/>
+        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="184"/>
+        <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="200"/>
         <source>FFmpeg timed out.
 Please check the file for errors.
 If the file doesn&apos;t play or is incomplete, 
@@ -382,37 +382,37 @@ zkuste, prosím, zvednout dobu pro vypršení pro FFmpeg v Nastavení.</translat
 <context>
     <name>SvgWriterProperties</name>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="1969"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2052"/>
         <source>Stroke Mode</source>
         <translation>Režim tahu</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="1970"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2053"/>
         <source>Outline Quality</source>
         <translation>Jakost obrysu</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="1971"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2054"/>
         <source>Centerline</source>
         <translation>Středová čára</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="1972"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2055"/>
         <source>Outline</source>
         <translation>Obrys</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="1973"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2056"/>
         <source>High</source>
         <translation>Vysoká</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="1974"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2057"/>
         <source>Medium</source>
         <translation>Střední</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="1975"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2058"/>
         <source>Low</source>
         <translation>Nízká</translation>
     </message>
@@ -448,37 +448,37 @@ zkuste, prosím, zvednout dobu pro vypršení pro FFmpeg v Nastavení.</translat
 <context>
     <name>TifWriterProperties</name>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="730"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="731"/>
         <source>Byte Ordering</source>
         <translation>Pořadí bytů</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="731"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="732"/>
         <source>Compression Type</source>
         <translation>Typ komprese</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="732"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="733"/>
         <source>Bits Per Pixel</source>
         <translation>Bitů na obrazový bod (pixel)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="733"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="734"/>
         <source>24(RGB)</source>
         <translation>24 (RGB)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="734"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="735"/>
         <source>48(RGB)</source>
         <translation>48 (RGB)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="735"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="736"/>
         <source> 1(BW)</source>
         <translation> 1 (černá bílá)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="736"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="737"/>
         <source> 8(GREYTONES)</source>
         <translation> 8 (odstíny šedi)</translation>
     </message>
@@ -491,57 +491,57 @@ zkuste, prosím, zvednout dobu pro vypršení pro FFmpeg v Nastavení.</translat
         <translation type="vanished">64 (RGBM)</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="737"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="738"/>
         <source>32(RGBA)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="738"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="739"/>
         <source>64(RGBA)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="739"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="740"/>
         <source>Orientation</source>
         <translation>Natočení</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="740"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="741"/>
         <source>Top Left</source>
         <translation>Nahoře vlevo</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="741"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="742"/>
         <source>Top Right</source>
         <translation>Nahoře vpravo</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="742"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="743"/>
         <source>Bottom Right</source>
         <translation>Dole vpravo</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="743"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="744"/>
         <source>Bottom Left</source>
         <translation>Dole vlevo</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="744"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="745"/>
         <source>Left Top</source>
         <translation>Vlevo nahoře</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="745"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="746"/>
         <source>Left Bottom</source>
         <translation>Vlevo dole</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="746"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="747"/>
         <source>Right Top</source>
         <translation>Vpravo nahoře</translation>
     </message>
     <message>
-        <location filename="../../image/tif/tiio_tif.cpp" line="747"/>
+        <location filename="../../image/tif/tiio_tif.cpp" line="748"/>
         <source>Right Bottom</source>
         <translation>Vpravo dole</translation>
     </message>
