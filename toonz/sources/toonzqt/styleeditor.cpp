@@ -1584,7 +1584,8 @@ void ColorParameterSelector::clear() {
   if (isVisible()) {
     hide();
     update();
-    qApp->processEvents();
+// Can cause crash when palette switching if stylus used to switch columns
+//    qApp->processEvents();
   }
 }
 
