@@ -2082,6 +2082,8 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
   if (app->getCurrentLevel() && app->getCurrentLevel()->getSimpleLevel())
     palette = app->getCurrentLevel()->getSimpleLevel()->getPalette();
   app->getCurrentPalette()->setPalette(palette);
+  // In case cleanup palette is showing, switch to level palette
+  app->getPaletteController()->editLevelPalette();
   app->getCurrentXsheet()->notifyXsheetSoundChanged();
   app->getCurrentObject()->setIsSpline(false);
 

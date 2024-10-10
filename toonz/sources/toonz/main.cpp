@@ -39,6 +39,7 @@
 #include "toonz/txshsimplelevel.h"
 #include "toonz/tproject.h"
 #include "toonz/scriptengine.h"
+#include "toonz/palettecontroller.h"
 
 // TnzSound includes
 #include "tnzsound.h"
@@ -894,6 +895,9 @@ int main(int argc, char *argv[]) {
 #endif
 
   a.installEventFilter(TApp::instance());
+
+  // In case cleanup palette loaded last, switch to level palette
+  TApp::instance()->getPaletteController()->editLevelPalette();
 
   int ret = a.exec();
 
