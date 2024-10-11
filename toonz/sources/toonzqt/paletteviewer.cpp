@@ -653,14 +653,12 @@ void PaletteViewer::createSavePaletteToolBar() {
 
     // overwrite palette
     QAction *savePalette =
-        new QAction(createQIcon("save", false, true), tr("&Save Palette"),
-                    m_savePaletteToolBar);
+        CommandManager::instance()->getAction("MI_OverwritePalette");
     m_viewMode->addAction(savePalette);
 
     // save palette as
     QAction *saveAsPalette =
-        new QAction(createQIcon("saveas", false, true), tr("&Save Palette As"),
-                    m_savePaletteToolBar);
+        CommandManager::instance()->getAction("MI_SavePaletteAs");
     m_viewMode->addAction(saveAsPalette);
 
     // save as default palette
