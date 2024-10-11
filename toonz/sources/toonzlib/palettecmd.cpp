@@ -198,6 +198,7 @@ public:
     TPalette::Page *dstPage = m_palette->getPage(m_dstPageIndex);
     assert(dstPage);
     std::vector<int> styles;
+    StyleAnimationTable styleAnimations;
     int count = m_srcIndicesInPage.size();
     int h     = m_dstIndexInPage;
     std::set<int>::const_iterator i;
@@ -210,13 +211,18 @@ public:
     assert(h + count - 1 <= dstPage->getStyleCount());
     int k;
     for (k = 0; k < count; k++) {
-      styles.push_back(dstPage->getStyleId(h));
+      int styleId = dstPage->getStyleId(h);
+      styles.push_back(styleId);
+      styleAnimations.insert(
+          std::make_pair(styleId, m_palette->getStyleAnimation(styleId)));
       dstPage->removeStyle(h, true);
     }
     k = 0;
     for (i = m_srcIndicesInPage.begin(); i != m_srcIndicesInPage.end();
-         ++i, ++k)
+         ++i, ++k) {
       srcPage->insertStyle(*i, styles[k]);
+      m_palette->setStyleAnimation(styles[k], styleAnimations[styles[k]]);
+    }
 
     m_paletteHandle->notifyPaletteChanged();
   }
@@ -227,17 +233,23 @@ public:
     assert(dstPage);
 
     std::vector<int> styles;
+    StyleAnimationTable styleAnimations;
     std::set<int>::const_reverse_iterator i;
     std::vector<int>::iterator j;
     int k = m_dstIndexInPage;
     for (i = m_srcIndicesInPage.rbegin(); i != m_srcIndicesInPage.rend(); ++i) {
       int index = *i;
       if (m_dstPageIndex == m_srcPageIndex && index < k) k--;
-      styles.push_back(srcPage->getStyleId(index));
+      int styleId = srcPage->getStyleId(index);
+      styles.push_back(styleId);
+      styleAnimations.insert(
+          std::make_pair(styleId, m_palette->getStyleAnimation(styleId)));
       srcPage->removeStyle(index, true);
     }
-    for (j = styles.begin(); j != styles.end(); ++j)
+    for (j = styles.begin(); j != styles.end(); ++j) {
       dstPage->insertStyle(k, *j);
+      m_palette->setStyleAnimation(*j, styleAnimations[*j]);
+    }
     m_palette->setDirtyFlag(true);
     m_paletteHandle->notifyPaletteChanged();
   }

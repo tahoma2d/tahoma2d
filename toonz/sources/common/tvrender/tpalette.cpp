@@ -209,6 +209,7 @@ void TPalette::Page::removeStyle(int indexInPage, bool flagOnly) {
   assert(0 <= styleId && styleId < m_palette->getStyleCount());
   assert(m_palette->m_styles[styleId].first == this);
   m_palette->m_styles[styleId].first = 0;
+  m_palette->m_styleAnimationTable.erase(styleId);
   if (!flagOnly)
     m_palette->m_styles[styleId].second =
         TColorStyleP(new TSolidColorStyle(TPixel32::Black));
@@ -299,6 +300,14 @@ TColorStyle *TPalette::getStyle(int index) const {
 
 //-------------------------------------------------------------------
 
+StyleAnimation TPalette::getStyleAnimation(int styleId) const {
+  StyleAnimationTable::const_iterator sat = m_styleAnimationTable.find(styleId);
+  if (sat == m_styleAnimationTable.end()) return StyleAnimation();
+  return sat->second;
+}
+
+//-------------------------------------------------------------------
+
 int TPalette::getStyleInPagesCount() const {
   int styleInPagesCount = 0;
   for (int i = 0; i < getStyleCount(); i++)
@@ -368,6 +377,16 @@ void TPalette::setStyle(int styleId, TColorStyle *style) {
 
 void TPalette::setStyle(int styleId, const TPixelRGBM32 &color) {
   setStyle(styleId, new TSolidColorStyle(color));
+}
+
+//-------------------------------------------------------------------
+
+void TPalette::setStyleAnimation(int styleId, StyleAnimation styleAnimation) {
+  if (!styleAnimation.size()) {
+    m_styleAnimationTable.erase(styleId);
+    return;
+  }
+  m_styleAnimationTable[styleId] = styleAnimation;
 }
 
 //-------------------------------------------------------------------

@@ -58,7 +58,7 @@ void copyStylesWithoutUndo(TPalette *palette, TPaletteHandle *pltHandle,
     TColorStyle *style = page->getStyle(indexInPage);
     if (!style) continue;
     TColorStyle *newStyle = style->clone();
-    data->addStyle(styleId, newStyle);
+    data->addStyle(styleId, newStyle, palette->getStyleAnimation(styleId));
   }
   QApplication::clipboard()->setMimeData(data);
 }
@@ -98,6 +98,9 @@ bool pasteStylesDataWithoutUndo(TPalette *palette, TPaletteHandle *pltHandle,
       palette->setStyle(styleId, style);
     else
       styleId = palette->addStyle(style);
+
+    palette->setStyleAnimation(styleId,
+                               data->getStyleAnimation(data->getStyleIndex(i)));
 
     // check the type of the original(copied) style
     // If the original is NormalStyle
@@ -242,6 +245,7 @@ void insertStylesWithoutUndo(TPalette *palette, TPaletteHandle *pltHandle,
     styleId            = data->getStyleIndex(i);
     TColorStyle *style = data->getStyle(i)->clone();
     palette->setStyle(styleId, style);
+    palette->setStyleAnimation(styleId, data->getStyleAnimation(styleId));
 
     // inserisco lo stile nella pagina
     int index = *it;
@@ -603,7 +607,7 @@ void TStyleSelection::cutStyles() {
     int styleId = page->getStyleId(j);
     if (styleId < 0) continue;
     TColorStyle *style = page->getStyle(j)->clone();
-    data->addStyle(styleId, style);
+    data->addStyle(styleId, style, palette->getStyleAnimation(styleId));
     styleIds.push_back(page->getStyleId(*it));
   }
 
@@ -673,7 +677,7 @@ void TStyleSelection::deleteStyles() {
     int styleId = page->getStyleId(j);
     if (styleId < 0) continue;
     TColorStyle *style = page->getStyle(j)->clone();
-    data->addStyle(styleId, style);
+    data->addStyle(styleId, style, palette->getStyleAnimation(styleId));
     styleIds.push_back(page->getStyleId(*it));
   }
 
@@ -786,7 +790,8 @@ void TStyleSelection::eraseUnusedStyle() {
     TPalette::Page *page             = palette->getPage(pageIndex);
     for (auto indexInPage : styleIndicesInPage) {
       int styleId = page->getStyleId(indexInPage);
-      data->addStyle(styleId, page->getStyle(indexInPage)->clone());
+      data->addStyle(styleId, page->getStyle(indexInPage)->clone(),
+                     palette->getStyleAnimation(styleId));
     }
 
     // Cancello gli stili
@@ -1006,10 +1011,11 @@ public:
     if (m_itemsInserted.size() != 0) {
       StyleData *newData = new StyleData();
       int j;
-      for (j = 0; j < (int)m_itemsInserted.size(); j++)
-        newData->addStyle(m_itemsInserted[j]->m_index,
-                          m_itemsInserted[j]->m_newStyle->clone());
-
+      for (j = 0; j < (int)m_itemsInserted.size(); j++) {
+        int styleId = m_itemsInserted[j]->m_index;
+        newData->addStyle(styleId, m_itemsInserted[j]->m_newStyle->clone(),
+                          getPalette()->getStyleAnimation(styleId));
+      }
       std::set<int> styleIndicesInPage;
       pasteStylesDataWithoutUndo(getPalette(), m_paletteHandle, newData,
                                  indexInPage + 1, m_pageIndex,
@@ -1198,8 +1204,11 @@ void TStyleSelection::pasteStylesValues(bool pasteName, bool pasteColor) {
   if (i < dataStyleCount) {
     StyleData *newData = new StyleData();
     int j;
-    for (j = i; j < dataStyleCount; j++)
-      newData->addStyle(data->getStyleIndex(j), data->getStyle(j)->clone());
+    for (j = i; j < dataStyleCount; j++) {
+      int styleId = data->getStyleIndex(j);
+      newData->addStyle(styleId, data->getStyle(j)->clone(),
+                        palette->getStyleAnimation(styleId));
+    }
 
     std::set<int> styleIndicesInPage;
     pasteStylesDataWithoutUndo(m_paletteHandle->getPalette(), m_paletteHandle,
