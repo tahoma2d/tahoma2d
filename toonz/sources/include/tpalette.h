@@ -81,6 +81,9 @@ ASAP.
 
 \sa The TColorStyle class.
 */
+typedef std::map<int, TColorStyleP> StyleAnimation;  //!< Style keyframes list.
+typedef std::map<int, StyleAnimation>
+    StyleAnimationTable;  //!< Style keyframes list per style id.
 
 class DVAPI TPalette final : public TPersist, public TSmartObject {
   DECLARE_CLASS_CODE
@@ -176,11 +179,6 @@ public:
   };
 
 private:
-  typedef std::map<int, TColorStyleP>
-      StyleAnimation;  //!< Style keyframes list.
-  typedef std::map<int, StyleAnimation>
-      StyleAnimationTable;  //!< Style keyframes list per style id.
-
   friend class Page;
 
 private:
@@ -256,6 +254,7 @@ public:
   TColorStyle *getStyle(int styleId)
       const;  //!< Returns a pointer to the color style with the specified id,
               //!  or \p 0 if said id is not stored in the palette.
+  StyleAnimation getStyleAnimation(int styleId) const;
   int getStyleCount() const {
     return (int)m_styles.size();
   }  //!< Returns the number of the color styles in the palette.
@@ -284,7 +283,8 @@ public:
       TColorStyle *style);  //!< Replaces the style with the specified style id.
   void setStyle(int styleId, const TPixelRGBM32 &color);  //!< Replaces the
                                                           //! style with the
-  //! specified style id.
+                                                          //! specified style id.
+  void setStyleAnimation(int styleId, StyleAnimation styleAnimation);
 
   int getPageCount() const;  //!< Returns the pages count.
 
