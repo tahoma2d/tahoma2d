@@ -192,18 +192,25 @@ cd $TOONZDIR
 
 # Due to random ERROR: Bundle creation error: "hdiutil: create failed - Resource busy\n"
 # We'll try to create the DMG a few times
-'
-let X=5
-while [ $X -gt 0 ]
+
+let MAXTRY=10
+
+for TRY in $(seq 1 $MAXTRY)
 do
+   if [ $TRY -gt  1 ]
+   then
+      echo ">>> DMG file creation failed.  Retrying $TRY/$MAXTRY..."
+   fi
+
     $QTDIR/bin/macdeployqt Tahoma2D.app -dmg -verbose=0
     if [ -f Tahoma2D.dmg ]
     then
+       echo ">>> DMG file created successfully"
        mv Tahoma2D.dmg ../Tahoma2D-portable-osx.dmg
        exit 0
     fi
-    let X=$X-1
 done
 
+echo ">>> DMG file creation failed after too many attempts. Aborting!"
 exit 1
 
