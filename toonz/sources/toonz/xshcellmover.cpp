@@ -250,9 +250,9 @@ void CellsMover::undoMoveCells(const TPoint &pos) const {
           cellCol->getRange(r0, r1);
           cellCol->clearCells(r0, r1 - r0 + 1);
           QList<int> implicitKeys = m_implicitCellInfo[infoId].keys();
-          for (int k = 0; k < implicitKeys.size() - 1; k++) {
+          for (int k = 0; k < implicitKeys.size(); k++) {
             int from = implicitKeys[k];
-            int to   = implicitKeys[k + 1] - 1;
+            int to   = k + 1 >= implicitKeys.size() ? from : (implicitKeys[k + 1] - 1);
             for (int f = from; f <= to; f++)
               cellCol->setCell(f, m_implicitCellInfo[infoId].value(from));
           }
