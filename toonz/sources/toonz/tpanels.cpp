@@ -905,8 +905,7 @@ CleanupColorFieldEditorController::CleanupColorFieldEditorController()
     : m_currentColorField(0)
     , m_colorFieldHandle(new TPaletteHandle)
     , m_palette(new TPalette) {
-  std::wstring name = L"EmptyColorFieldPalette";
-  m_palette->setPaletteName(name);
+  m_palette->setIsCleanupPalette(true);
   m_colorFieldHandle->setPalette(m_palette.getPointer(), 1);
   DVGui::CleanupColorField::setEditorController(this);
 }
@@ -927,8 +926,11 @@ void CleanupColorFieldEditorController::edit(
 
   m_blackColor = dynamic_cast<TBlackCleanupStyle *>(fieldStyle);
   if (m_blackColor) {
-    m_palette->setStyle(1, new TSolidColorStyle);
-    m_palette->getStyle(1)->setMainColor(fieldStyle->getColorParamValue(1));
+    m_palette->setStyle(1, new TBlackCleanupStyle);
+    m_palette->getStyle(1)->setColorParamValue(
+        0, fieldStyle->getColorParamValue(0));
+    m_palette->getStyle(1)->setColorParamValue(
+        1, fieldStyle->getColorParamValue(1));
   } else {
     m_palette->setStyle(1, new TColorCleanupStyle);
 
@@ -961,9 +963,12 @@ void CleanupColorFieldEditorController::onColorStyleChanged() {
 
   TColorStyle *style = m_palette->getStyle(1);
   if (m_blackColor) {
-    if (m_currentColorField->getOutputColor() == style->getMainColor()) return;
+    if (m_currentColorField->getColor() == style->getColorParamValue(0) &&
+        m_currentColorField->getOutputColor() == style->getColorParamValue(1))
+      return;
 
-    m_currentColorField->setOutputColor(style->getMainColor());
+    m_currentColorField->setColor(style->getColorParamValue(0));
+    m_currentColorField->setOutputColor(style->getColorParamValue(1));
   } else {
     if (m_currentColorField->getColor() == style->getMainColor() &&
         m_currentColorField->getOutputColor() == style->getColorParamValue(1))
