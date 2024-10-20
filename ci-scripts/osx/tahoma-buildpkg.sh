@@ -187,7 +187,30 @@ cp -R stuff $TOONZDIR/Tahoma2D.app/tahomastuff
 chmod -R 777 $TOONZDIR/Tahoma2D.app/tahomastuff
 
 find $TOONZDIR/Tahoma2D.app/tahomastuff -name .gitkeep -exec rm -f {} \;
-   
-$QTDIR/bin/macdeployqt $TOONZDIR/Tahoma2D.app -dmg -verbose=0
 
-mv $TOONZDIR/Tahoma2D.dmg $TOONZDIR/../Tahoma2D-portable-osx.dmg
+cd $TOONZDIR
+
+# Due to random ERROR: Bundle creation error: "hdiutil: create failed - Resource busy\n"
+# We'll try to create the DMG a few times
+
+let MAXTRY=10
+
+for TRY in $(seq 1 $MAXTRY)
+do
+   if [ $TRY -gt  1 ]
+   then
+      echo ">>> DMG file creation failed.  Retrying $TRY/$MAXTRY..."
+   fi
+
+    $QTDIR/bin/macdeployqt Tahoma2D.app -dmg -verbose=0
+    if [ -f Tahoma2D.dmg ]
+    then
+       echo ">>> DMG file created successfully"
+       mv Tahoma2D.dmg ../Tahoma2D-portable-osx.dmg
+       exit 0
+    fi
+done
+
+echo ">>> DMG file creation failed after too many attempts. Aborting!"
+exit 1
+
