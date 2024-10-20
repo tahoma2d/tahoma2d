@@ -731,6 +731,8 @@ void FullColorEraserTool::leftButtonUp(const TPointD &pos,
   TRasterImageP ri        = (TRasterImageP)getImage(true);
   if (!ri) return;
   if (m_eraseType.getValue() == NORMALERASE) {
+    if (!m_brush) return;
+
     int maxThick  = m_size.getValue().second;
     int thickness = (m_pressure.getValue() && e.isTablet())
                         ? computeThickness(e.m_pressure, m_size)
@@ -757,10 +759,8 @@ void FullColorEraserTool::leftButtonUp(const TPointD &pos,
       invalidate(invalidateRect.enlarge(2) - rasCenter);
     }
 
-    if (m_brush) {
-      delete m_brush;
-      m_brush = 0;
-    }
+    delete m_brush;
+    m_brush = 0;
 
     m_workRaster->unlock();
     double opacity  = m_opacity.getValue() * 0.01;
