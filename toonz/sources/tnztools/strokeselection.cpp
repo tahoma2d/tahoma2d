@@ -648,6 +648,10 @@ void StrokeSelection::selectAll() {
     selection->notifyView();
     emit selection->getImage()->selectedAllStrokes();
   }
+
+  TTool::getApplication()
+      ->getCurrentTool()
+      ->notifyToolChanged();  // Refreshes toolbar values
 }
 
 //=============================================================================
