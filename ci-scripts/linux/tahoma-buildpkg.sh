@@ -2,7 +2,8 @@
 source /opt/qt515/bin/qt515-env.sh
 
 echo ">>> Temporary install of Tahoma2D"
-export BUILDDIR=$(pwd)/toonz/build
+SCRIPTPATH=`dirname "$0"`
+export BUILDDIR=$SCRIPTPATH/../../toonz/build
 cd $BUILDDIR
 sudo make install
 
