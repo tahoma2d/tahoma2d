@@ -22,7 +22,10 @@ void ToonzExt::LinearPotential::setParameters_(const TStroke *ref, double par,
   leftFactor_ = lengthAtParam_;
 
   // lunghezza dal pto di click alla fine
-  rightFactor_ = strokeLength_ - lengthAtParam_;
+  if (areAlmostEqual(strokeLength_, lengthAtParam_, 0.001))
+    rightFactor_ = 0.0;
+  else
+    rightFactor_ = strokeLength_ - lengthAtParam_;
 
   // considero come intervallo di mapping [-range,range].
   //  4 ha come valore c.a. 10exp-6
