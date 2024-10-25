@@ -2370,19 +2370,19 @@ void TCellSelection::pasteCells() {
       TXshSimpleLevel *sl   = xsh->getCell(r0, c0).getSimpleLevel();
       if (!sl && r0 > 0) sl = xsh->getCell(r0 - 1, c0).getSimpleLevel();
       bool newLevel         = false;
+      if (!sl &&
+          (xsh->isColumnEmpty(c0) || xsh->getColumn(c0)->getLevelColumn()))
+        newLevel = true;      
       TRasterImageP ri(img);
       if (clipImage.height() > 0) {
         // This stuff is only if we have a pasted image from outside Tahoma
 
-        // check the size of the incoming image
-        bool tooBig = false;
-
+        bool checkImgSize = false;
+        double w, h;
         if (sl && sl->getType() == OVL_XSHLEVEL) {
           // offer to make a new level or paste in place
-          if (sl && (sl->getResolution().lx < clipImage.width() ||
-                     sl->getResolution().ly < clipImage.height())) {
-            tooBig = true;
-          }
+          w = sl->getResolution().lx;
+          h = sl->getResolution().ly;
 
           QString question =
               QObject::tr("Paste in place or create a new level?");
@@ -2408,13 +2408,8 @@ void TCellSelection::pasteCells() {
             TApp::instance()->getCurrentColumn()->setColumn(col);
             TApp::instance()->getCurrentFrame()->setFrame(r0);
             newLevel = true;
-          } else {
-            if (tooBig) {
-              clipImage =
-                  clipImage.scaled(sl->getResolution().lx,
-                                   sl->getResolution().ly, Qt::KeepAspectRatio);
-            }
-          }
+          } else
+            checkImgSize = true;
         } else if (sl) {
           // not on a raster level
           // find an empty column
@@ -2427,6 +2422,34 @@ void TCellSelection::pasteCells() {
           TApp::instance()->getCurrentColumn()->setColumn(col);
           TApp::instance()->getCurrentFrame()->setFrame(r0);
           newLevel = true;
+        }
+
+        if (newLevel) {
+          // We need to scale it to the default raster size if too big
+          double dpi, dpiY;
+          Preferences *pref = Preferences::instance();
+          if (pref->isNewLevelSizeToCameraSizeEnabled()) {
+            ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+            TDimensionD camSize = scene->getCurrentCamera()->getSize();
+            w                   = camSize.lx;
+            h                   = camSize.ly;
+            dpi                 = scene->getCurrentCamera()->getDpi().x;
+            dpiY                = scene->getCurrentCamera()->getDpi().y;
+          } else {
+            w    = pref->getDefLevelWidth();
+            h    = pref->getDefLevelHeight();
+            dpi  = pref->getDefLevelDpi();
+            dpiY = dpi;
+          }
+
+          w            = tround(w * dpi);
+          h            = tround(h * dpiY);
+          checkImgSize = true;
+        }
+
+        // Scale down image to fit level if too big
+        if (checkImgSize && (w < clipImage.width() || h < clipImage.height())) {
+          clipImage = clipImage.scaled(w, h, Qt::KeepAspectRatio);
         }
 
         // create variables to go into the Full Color Raster Selection data
