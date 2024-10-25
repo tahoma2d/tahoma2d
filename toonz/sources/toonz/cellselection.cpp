@@ -780,6 +780,11 @@ bool pasteRasterImageInCellWithoutUndo(int row, int col,
     // Don't know why.
     cell = xsh->getCell(row, col);
     sl   = cell.getSimpleLevel();
+    if (!sl) {
+      DVGui::error(QObject::tr(
+          "It is not possible to paste image on the current cell."));
+      return false;
+    }
     fid  = cell.getFrameId();
     img  = cell.getImage(true);
     if (!img->getPalette()) {
