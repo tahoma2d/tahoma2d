@@ -16,4 +16,4 @@ rm -f '/usr/local/bin/python3.12-config'
 brew install boost qt@5 clang-format glew lz4 lzo libmypaint jpeg-turbo nasm yasm fontconfig freetype gnutls lame libass libbluray libsoxr libvorbis libvpx opencore-amr openh264 openjpeg opus rav1e sdl2 snappy speex tesseract theora webp xvid xz gsed
 #brew install dav1d
 brew install meson ninja
-brew install automake autoconf gettext pkg-config libtool libusb-compat gd libexif
+brew install automake autoconf gettext pkg-config libtool libusb-compat gd libexif libdeflate

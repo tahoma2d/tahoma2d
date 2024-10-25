@@ -159,6 +159,7 @@ elseif(BUILD_ENV_APPLE)
         ${CARBON_LIB}
         ${CORE_SERVICES_LIB}
         ${QD_LIB}
+        ${DEFLATE_LIB}		
     )
 elseif(BUILD_ENV_UNIXLIKE)
     # Generic Unix

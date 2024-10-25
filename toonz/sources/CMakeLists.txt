@@ -480,6 +480,8 @@ elseif(BUILD_ENV_APPLE)
         find_library(GPHOTO2_PORT_LIB gphoto2_port)
         message("**************** gphoto2_port lib:" ${GPHOTO2_PORT_LIB})
     endif()
+
+    find_library(DEFLATE_LIB deflate)
 elseif(BUILD_ENV_UNIXLIKE)
     if(BUILD_TARGET_WIN)
         find_library(GL_LIB opengl32)
@@ -557,7 +559,7 @@ elseif(BUILD_ENV_UNIXLIKE)
         message("**************** gphoto2_port lib:" ${GPHOTO2_PORT_LIB})
     endif()
 	
-	find_library(DEFLATE_LIB deflate)
+    find_library(DEFLATE_LIB deflate)
 endif()
 
 
