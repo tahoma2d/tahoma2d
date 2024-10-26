@@ -71,7 +71,10 @@ void ToonzExt::NotSymmetricExpPotential::setParameters_(const TStroke *ref,
                     actionLength_ * 0.5);  // lengthAtParam_ / strokeLength_;
 
   // lunghezza dal pto di click alla fine
-  rightFactor_ = min(strokeLength_ - lengthAtParam_, actionLength_ * 0.5);
+  if (areAlmostEqual(strokeLength_, lengthAtParam_, 0.001))
+    rightFactor_ = 0.0;
+  else
+    rightFactor_ = min(strokeLength_ - lengthAtParam_, actionLength_ * 0.5);
 
   // considero come intervallo di mapping [-range,range].
   //  4 ha come valore c.a. 10exp-6
