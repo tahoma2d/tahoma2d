@@ -11,4 +11,4 @@ echo "CAMLIBS: $CAMLIBS"
 export IOLIBS=`find $APPDIR/usr/lib/libgphoto2_port -mindepth 1 -type d`
 echo "IOLIBS: $IOLIBS"
 
-$APPDIR/usr/bin/Tahoma2D
+$APPDIR/usr/bin/Tahoma2D "$@"
