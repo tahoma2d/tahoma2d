@@ -195,7 +195,7 @@ DrawableTextureDataP texture_utils::getTextureData(const TXsheet *xsh,
 
   // Render the xsheet on the specified bbox
   bool masked = TStencilControl::instance()->isMaskEnabled();
-#ifdef MACOSX
+#if defined(MACOSX) || defined(LINUX) || defined(FREEBSD)
   // Must move masks aside when building texture
   if (masked) TStencilControl::instance()->stashMask();
   xsh->getScene()->renderFrame(tex, frame, xsh, bbox, TAffine());
