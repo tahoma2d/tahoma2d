@@ -402,17 +402,19 @@ public:
     for (int c = 0; c < m_colCount; c++) {
       TXshColumn *column = xsh->getColumn(c);
       if (column && column->getFolderColumn()) continue;
-      bool isSoundColumn = (column && column->getSoundColumn());
-      int col = m_col + c;
+      bool isSoundColumn     = (column && column->getSoundColumn());
+      bool isSoundTextColumn = (column && column->getSoundTextColumn());
+      int col                = m_col + c;
       xsh->insertCells(r0, col, count);
       int r;
       TXshCell prevCell = xsh->getCell(r0, c);
       for (r = r0; r <= r1; r++) {
         int k         = (r - m_row) * m_colCount + c;
         TXshCell cell = m_cells[k];
-        if (isSoundColumn ||
-            (Preferences::instance()->isImplicitHoldEnabled() &&
-             prevCell == cell))
+        if (!isSoundTextColumn &&
+            (isSoundColumn ||
+             (Preferences::instance()->isImplicitHoldEnabled() &&
+              prevCell == cell)))
           xsh->setCell(r, col, TXshCell());
         else {
           xsh->setCell(r, col, cell);
@@ -790,14 +792,16 @@ public:
       for (int c = 0; c < m_colCount; c++) {
         TXshColumn *column = xsh->getColumn(m_c0 + c);
         if (column && column->getFolderColumn()) continue;
-        bool isSoundColumn = (column && column->getSoundColumn());
+        bool isSoundColumn     = (column && column->getSoundColumn());
+        bool isSountTextColumn = (column && column->getSoundTextColumn());
         if (m_insert) xsh->insertCells(m_r1 + 1, m_c0 + c, dr);
         TXshCell prevCell = xsh->getCell(m_r1, m_c0 + c);
         for (int r = m_r1 + 1; r <= r1; r++) {
           TXshCell cell = m_columns[c].generate(r);
-          if (isSoundColumn ||
-              (Preferences::instance()->isImplicitHoldEnabled() &&
-               prevCell == cell))
+          if (!isSountTextColumn &&
+              (isSoundColumn ||
+               (Preferences::instance()->isImplicitHoldEnabled() &&
+                prevCell == cell)))
             xsh->setCell(r, m_c0 + c, TXshCell());
           else {
             xsh->setCell(r, m_c0 + c, cell);
