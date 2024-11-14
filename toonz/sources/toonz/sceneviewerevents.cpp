@@ -942,8 +942,30 @@ void SceneViewer::mouseReleaseEvent(QMouseEvent *event) {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::onRelease(const TMouseEvent &event) {
+  // tool is declared up here to prevent an error with jumping to goto before
+  // all variables are instantiated.
+  TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+
   m_dragging = false;
   if (m_mousePanning > 0 || m_mouseRotating > 0 || m_mouseZooming > 0) {
+    // We did a temp tool switch and released while actively doing something.
+    // Need to tell the tool we released also
+    if (tool && tool->isEnabled() &&
+        TApp::instance()->getCurrentTool()->isToolBusy()) {
+      tool->setViewer(this);
+      TPointD pos = tool->getMatrix().inv() * winToWorld(m_lastMousePos);
+
+      TObjectHandle *objHandle = TApp::instance()->getCurrentObject();
+      if (tool->getToolType() & TTool::LevelTool && !objHandle->isSpline()) {
+        pos.x /= m_dpiScale.x;
+        pos.y /= m_dpiScale.y;
+      }
+
+      tool->leftButtonUp(pos, event);
+      TApp::instance()->getCurrentTool()->setToolBusy(false);
+      tool->setCanUndo(true);
+    }
+
     if (m_resetOnRelease) {
       m_mousePanning  = 0;
       m_mouseRotating = 0;
@@ -977,10 +999,6 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
     return;
   }
   m_buttonClicked = false;
-
-  // tool is declared up here to prevent an error with jumping to goto before
-  // all variables are instantiated.
-  TTool *tool = TApp::instance()->getCurrentTool()->getTool();
 
   bool canonJumpToQuit = false;
 
