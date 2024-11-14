@@ -15,7 +15,7 @@ namespace {
 //-----------------------------------------------------------------------------
 
 class ZoomTool final : public TTool {
-  int m_oldY;
+  double m_oldY;
   TPointD m_center;
   bool m_dragging;
   double m_factor;
@@ -41,7 +41,7 @@ public:
     invalidate();
   }
   void leftButtonDrag(const TPointD &pos, const TMouseEvent &e) override {
-    int d    = m_oldY - e.m_pos.y;
+    double d = m_oldY - e.m_pos.y;
     m_oldY   = e.m_pos.y;
     double f = exp(-d * 0.01);
     m_factor = f;

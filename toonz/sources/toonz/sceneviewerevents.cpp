@@ -2014,7 +2014,7 @@ void SceneViewer::mousePan(const TMouseEvent &e) {
 //-----------------------------------------------------------------------------
 
 void SceneViewer::mouseZoom(const TMouseEvent &e) {
-  int d    = m_oldY - e.m_pos.y;
+  double d = m_oldY - e.m_pos.y;
   m_oldY   = e.m_pos.y;
   double f = exp(-d * 0.01);
   m_factor = f;

@@ -113,7 +113,7 @@ class SceneViewer final : public GLWidgetForHighDpi,
   TPointD m_center;
   bool m_dragging;
   // zoom variables
-  int m_oldY;
+  double m_oldY;
   double m_factor;
   // rotate variables
   double m_angle;
