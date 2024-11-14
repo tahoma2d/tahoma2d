@@ -337,6 +337,8 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
 
     if (TApp::instance()->getCurrentTool()->isToolBusy())
       TApp::instance()->getCurrentTool()->setToolBusy(false);
+    if (toolHandle->getTool() && !toolHandle->getTool()->isUndoable())
+      toolHandle->getTool()->setCanUndo(true);
 #else
     if (m_tabletState == StartStroke || m_tabletState == OnStroke) {
       m_tabletState = Released;
@@ -1125,6 +1127,8 @@ void SceneViewer::resetTabletStatus() {
   m_buttonClicked = false;
   if (TApp::instance()->getCurrentTool()->isToolBusy())
     TApp::instance()->getCurrentTool()->setToolBusy(false);
+  TTool *tool = TApp::instance()->getCurrentTool()->getTool();
+  if (tool && !tool->isUndoable()) tool->setCanUndo(true);
 }
 
 //-----------------------------------------------------------------------------
