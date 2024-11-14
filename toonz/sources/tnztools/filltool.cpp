@@ -592,15 +592,13 @@ public:
 
     TRasterCM32P tempRaster;
     int styleIndex = GAP_CLOSE_TEMP;
+    TToonzImageP tempTi = image->clone();
+    tempRaster          = tempTi->getRaster();
     if (m_fillGaps) {
-      TToonzImageP tempTi   = image->clone();
-      tempRaster            = tempTi->getRaster();
       TRectD doubleFillArea = convert(m_fillArea);
       applyAutoclose(tempTi, AutocloseDistance, AutocloseAngle,
                      AutocloseOpacity, GAP_CLOSE_TEMP, doubleFillArea, m_s);
-    } else {
-      tempRaster = ras;
-    }
+    } 
 
     AreaFiller filler(tempRaster);
     if (!m_s)
@@ -610,34 +608,22 @@ public:
       filler.strokeFill(m_s, m_paintId, m_onlyUnfilled, m_colorType != LINES,
                         m_colorType != AREAS, m_fillArea);
     
-    if (m_fillGaps) {
+    TRect rect = m_fillArea;
+    finishGapLines(tempRaster, rect, ras, tempRaster, m_palette, 0, m_paintId,
+                   m_closeStyleIndex, m_closeGaps);
 
-      TRect rect = m_fillArea;
-      finishGapLines(
-        tempRaster,
-        rect, 
-        ras,
-        tempRaster,
-        m_palette,
-        0,
-        m_paintId,
-        m_closeStyleIndex,
-        m_closeGaps);
-
-      TPixelCM32 *tempPix = tempRaster->pixels();
-      TPixelCM32 *keepPix = ras->pixels();
-      for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
-        for (int tempX = 0; tempX < tempRaster->getLx();
-             tempX++, tempPix++, keepPix++) {
-          keepPix->setPaint(tempPix->getPaint());
-          if (tempPix->getInk() >= IGNORECOLORSTYLE || tempPix->getPaint() >= IGNORECOLORSTYLE) {
-            continue;
-          } else {
-            keepPix->setInk(tempPix->getInk());
-            keepPix->setPaint(tempPix->getPaint());
-            keepPix->setTone(tempPix->getTone());
-          }
+    TPixelCM32 *tempPix = tempRaster->pixels();
+    TPixelCM32 *keepPix = ras->pixels();
+    for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
+      for (int tempX = 0; tempX < tempRaster->getLx();
+           tempX++, tempPix++, keepPix++) {
+        if (tempPix->getInk() < IGNORECOLORSTYLE) {
+          keepPix->setInk(tempPix->getInk());
         }
+        if (tempPix->getPaint() < IGNORECOLORSTYLE) {
+          keepPix->setPaint(tempPix->getPaint());
+        }
+        keepPix->setTone(tempPix->getTone());
       }
     }
 
@@ -1028,7 +1014,6 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
     tempRaster = tempTi->getRaster();
 
     if (fillGaps) {
-
       applyAutoclose(tempTi, AutocloseDistance, AutocloseAngle,
                      AutocloseOpacity, GAP_CLOSE_TEMP, convert(rasterFillArea), stroke);
 
@@ -1052,14 +1037,12 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
     TPixelCM32 *tempPix = tempRaster->pixels();
     TPixelCM32 *keepPix = ras->pixels();
 
-
     finishGapLines(tempRaster, rasterFillArea, ras, ras, ti->getPalette(), 0,
                    cs, closeStyleIndex, closeGaps);
 
     for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
       for (int tempX = 0; tempX < tempRaster->getLx();
            tempX++, tempPix++, keepPix++) {
-
         if (tempPix->getInk() < IGNORECOLORSTYLE) {
           keepPix->setInk(tempPix->getInk());
         }
