@@ -609,20 +609,24 @@ public:
                         m_colorType != AREAS, m_fillArea);
     
     TRect rect = m_fillArea;
-    finishGapLines(tempRaster, rect, ras, tempRaster, m_palette, 0, m_paintId,
-                   m_closeStyleIndex, m_closeGaps);
+    if (m_fillGaps)
+      finishGapLines(tempRaster, rect, ras, tempRaster, m_palette, 0, m_paintId,
+                     m_closeStyleIndex, m_closeGaps);
 
     TPixelCM32 *tempPix = tempRaster->pixels();
     TPixelCM32 *keepPix = ras->pixels();
     for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
       for (int tempX = 0; tempX < tempRaster->getLx();
            tempX++, tempPix++, keepPix++) {
-        if (tempPix->getInk() < IGNORECOLORSTYLE) {
+        if (tempPix->getInk() < IGNORECOLORSTYLE)
           keepPix->setInk(tempPix->getInk());
+        else {
+          // Style ignored. Set up to keep paint and tone in paint check
+          tempPix->setPaint(keepPix->getPaint());
+          tempPix->setTone(keepPix->getTone());
         }
-        if (tempPix->getPaint() < IGNORECOLORSTYLE) {
+        if (tempPix->getPaint() < IGNORECOLORSTYLE)
           keepPix->setPaint(tempPix->getPaint());
-        }
         keepPix->setTone(tempPix->getTone());
       }
     }
@@ -1037,18 +1041,22 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
     TPixelCM32 *tempPix = tempRaster->pixels();
     TPixelCM32 *keepPix = ras->pixels();
 
-    finishGapLines(tempRaster, rasterFillArea, ras, ras, ti->getPalette(), 0,
-                   cs, closeStyleIndex, closeGaps);
+    if (fillGaps)
+      finishGapLines(tempRaster, rasterFillArea, ras, ras, ti->getPalette(), 0,
+                     cs, closeStyleIndex, closeGaps);
 
     for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
       for (int tempX = 0; tempX < tempRaster->getLx();
            tempX++, tempPix++, keepPix++) {
-        if (tempPix->getInk() < IGNORECOLORSTYLE) {
+        if (tempPix->getInk() < IGNORECOLORSTYLE)
           keepPix->setInk(tempPix->getInk());
+        else {
+          // Style ignored. Set up to keep paint and tone in paint check
+          tempPix->setPaint(keepPix->getPaint());
+          tempPix->setTone(keepPix->getTone());
         }
-        if (tempPix->getPaint() < IGNORECOLORSTYLE) {
+        if (tempPix->getPaint() < IGNORECOLORSTYLE) 
           keepPix->setPaint(tempPix->getPaint());
-        }
         keepPix->setTone(tempPix->getTone());
       }
     }
