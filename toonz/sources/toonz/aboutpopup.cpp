@@ -79,7 +79,7 @@ AboutPopup::AboutPopup(QWidget* parent)
 
   QLabel* ffmpegLabel = new QLabel(this);
   ffmpegLabel->setText(tr(
-      "Tahoma2D ships with FFmpeg.  \nFFmpeg is licensed under the LGPLv2.1"));
+      "Tahoma2D ships with FFmpeg.\nFFmpeg is licensed under the LGPLv2.1"));
   mainLayout->addWidget(ffmpegLabel);
 
   mainLayout->addSpacerItem(new QSpacerItem(this->width(), 10));
@@ -88,8 +88,9 @@ AboutPopup::AboutPopup(QWidget* parent)
       new QLabel(tr("Tahoma2D is made possible with the help of "
                     "patrons.\nSpecial thanks to:")));
   QLabel* patrons = new QLabel(
-      "<i>Rodney Baker, Hans Jacob Wagner, Pierre Coffin, Adam Earle</i>");
+      "<i>Rodney Baker, Hans Jacob Wagner, Pierre Coffin, Adam Earle, MelieConieK</i>");
   patrons->setTextFormat(Qt::TextFormat::RichText);
+  patrons->setWordWrap(true);
   mainLayout->addWidget(patrons);
   mainLayout->addWidget(new QLabel("  "));
 
