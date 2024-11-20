@@ -1282,6 +1282,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {autosaveSceneEnabled, tr("Automatically Save the Scene File")},
       {autosaveOtherFilesEnabled, tr("Automatically Save Non-Scene Files")},
       {startupPopupEnabled, tr("Show Startup Window when Tahoma2D Starts")},
+      {tipsPopupEnabled, tr("Show Tips Window when Tahoma2D Starts")},
       {undoMemorySize, tr("Undo Memory Size (MB):")},
       {taskchunksize, tr("Render Task Chunk Size:")},
       {replaceAfterSaveLevelAs,
@@ -1734,6 +1735,7 @@ QWidget* PreferencesPopup::createGeneralPage() {
   insertUI(defaultViewerEnabled, lay);
   insertUI(rasterOptimizedMemory, lay);
   insertUI(startupPopupEnabled, lay);
+  insertUI(tipsPopupEnabled, lay);
   insertUI(undoMemorySize, lay);
   insertUI(taskchunksize, lay);
   insertUI(sceneNumberingEnabled, lay);

@@ -12,6 +12,7 @@
 #include "expressionreferencemanager.h"
 #include "thirdparty.h"
 #include "startuppopup.h"
+#include "tipspopup.h"
 #include "tw/stringtable.h"
 
 // TnzTools includes
@@ -816,6 +817,13 @@ int main(int argc, char *argv[]) {
     startupPopup->show();
     startupPopup->raise();
     startupPopup->activateWindow();
+  }
+
+  if (Preferences::instance()->isTipsPopupEnabled()) {
+    TipsPopup *tipsPopup = new TipsPopup();
+    tipsPopup->show();
+    tipsPopup->raise();
+    tipsPopup->activateWindow();
   }
 
   CommandManager::instance()->execute(T_Hand);

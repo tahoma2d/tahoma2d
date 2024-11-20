@@ -705,6 +705,7 @@ void TopBar::loadMenubar() {
   // Menu' HELP
   QMenu *helpMenu = addMenu(ShortcutTree::tr("Help"), m_menuBar);
   addMenuItem(helpMenu, MI_OpenOnlineManual);
+  addMenuItem(helpMenu, MI_OpenTips);
   addMenuItem(helpMenu, MI_OpenWhatsNew);
   addMenuItem(helpMenu, MI_OpenCommunityForum);
   helpMenu->addSeparator();

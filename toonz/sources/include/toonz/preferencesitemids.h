@@ -21,6 +21,7 @@ enum PreferencesItemId {
   customProjectRoot,
   pathAliasPriority,
   showAdvancedOptions,
+  tipsPopupEnabled,
 
   //----------
   // Interface
