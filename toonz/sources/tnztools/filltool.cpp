@@ -592,15 +592,13 @@ public:
 
     TRasterCM32P tempRaster;
     int styleIndex = GAP_CLOSE_TEMP;
+    TToonzImageP tempTi = image->clone();
+    tempRaster          = tempTi->getRaster();
     if (m_fillGaps) {
-      TToonzImageP tempTi   = image->clone();
-      tempRaster            = tempTi->getRaster();
       TRectD doubleFillArea = convert(m_fillArea);
       applyAutoclose(tempTi, AutocloseDistance, AutocloseAngle,
                      AutocloseOpacity, GAP_CLOSE_TEMP, doubleFillArea, m_s);
-    } else {
-      tempRaster = ras;
-    }
+    } 
 
     AreaFiller filler(tempRaster);
     if (!m_s)
@@ -610,34 +608,26 @@ public:
       filler.strokeFill(m_s, m_paintId, m_onlyUnfilled, m_colorType != LINES,
                         m_colorType != AREAS, m_fillArea);
     
-    if (m_fillGaps) {
+    TRect rect = m_fillArea;
+    if (m_fillGaps)
+      finishGapLines(tempRaster, rect, ras, tempRaster, m_palette, 0, m_paintId,
+                     m_closeStyleIndex, m_closeGaps);
 
-      TRect rect = m_fillArea;
-      finishGapLines(
-        tempRaster,
-        rect, 
-        ras,
-        tempRaster,
-        m_palette,
-        0,
-        m_paintId,
-        m_closeStyleIndex,
-        m_closeGaps);
-
-      TPixelCM32 *tempPix = tempRaster->pixels();
-      TPixelCM32 *keepPix = ras->pixels();
-      for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
-        for (int tempX = 0; tempX < tempRaster->getLx();
-             tempX++, tempPix++, keepPix++) {
-          keepPix->setPaint(tempPix->getPaint());
-          if (tempPix->getInk() >= IGNORECOLORSTYLE || tempPix->getPaint() >= IGNORECOLORSTYLE) {
-            continue;
-          } else {
-            keepPix->setInk(tempPix->getInk());
-            keepPix->setPaint(tempPix->getPaint());
-            keepPix->setTone(tempPix->getTone());
-          }
+    TPixelCM32 *tempPix = tempRaster->pixels();
+    TPixelCM32 *keepPix = ras->pixels();
+    for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
+      for (int tempX = 0; tempX < tempRaster->getLx();
+           tempX++, tempPix++, keepPix++) {
+        if (tempPix->getInk() < IGNORECOLORSTYLE)
+          keepPix->setInk(tempPix->getInk());
+        else {
+          // Style ignored. Set up to keep paint and tone in paint check
+          tempPix->setPaint(keepPix->getPaint());
+          tempPix->setTone(keepPix->getTone());
         }
+        if (tempPix->getPaint() < IGNORECOLORSTYLE)
+          keepPix->setPaint(tempPix->getPaint());
+        keepPix->setTone(tempPix->getTone());
       }
     }
 
@@ -1028,7 +1018,6 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
     tempRaster = tempTi->getRaster();
 
     if (fillGaps) {
-
       applyAutoclose(tempTi, AutocloseDistance, AutocloseAngle,
                      AutocloseOpacity, GAP_CLOSE_TEMP, convert(rasterFillArea), stroke);
 
@@ -1052,20 +1041,22 @@ void fillAreaWithUndo(const TImageP &img, const TRectD &area, TStroke *stroke,
     TPixelCM32 *tempPix = tempRaster->pixels();
     TPixelCM32 *keepPix = ras->pixels();
 
-
-    finishGapLines(tempRaster, rasterFillArea, ras, ras, ti->getPalette(), 0,
-                   cs, closeStyleIndex, closeGaps);
+    if (fillGaps)
+      finishGapLines(tempRaster, rasterFillArea, ras, ras, ti->getPalette(), 0,
+                     cs, closeStyleIndex, closeGaps);
 
     for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
       for (int tempX = 0; tempX < tempRaster->getLx();
            tempX++, tempPix++, keepPix++) {
-
-        if (tempPix->getInk() < IGNORECOLORSTYLE) {
+        if (tempPix->getInk() < IGNORECOLORSTYLE)
           keepPix->setInk(tempPix->getInk());
+        else {
+          // Style ignored. Set up to keep paint and tone in paint check
+          tempPix->setPaint(keepPix->getPaint());
+          tempPix->setTone(keepPix->getTone());
         }
-        if (tempPix->getPaint() < IGNORECOLORSTYLE) {
+        if (tempPix->getPaint() < IGNORECOLORSTYLE) 
           keepPix->setPaint(tempPix->getPaint());
-        }
         keepPix->setTone(tempPix->getTone());
       }
     }
@@ -2568,6 +2559,11 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
   /*--以下、NormalFillの場合--*/
   FillParameters params = getFillParameters();
 
+  bool fillGap =
+      m_colorType.getValue() != LINES && m_closeRasterGaps.getIndex() > 0;
+  bool closeGap =
+      m_colorType.getValue() != LINES && m_closeRasterGaps.getIndex() > 1;
+
   if (m_onion.getValue()) {
     m_onionStyleId = pickOnionColor(pos);
     if (m_onionStyleId > 0) app->setCurrentLevelStyleIndex(m_onionStyleId);
@@ -2602,9 +2598,8 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       TPointD rasCenter = ti ? ras->getCenterD() : TPointD(0, 0);
       TPointD dpiScale  = getViewer()->getDpiScale();
       MultiFiller filler(m_firstPoint, pos, params, m_autopaintLines.getValue(),
-                         m_closeRasterGaps.getIndex() > 0,
-                         m_closeRasterGaps.getIndex() > 1, closeStyleIndex,
-                         rasCenter, dpiScale);
+                         fillGap, closeGap, closeStyleIndex, rasCenter,
+                         dpiScale);
       if (isEditingLevel)
         filler.processSequence(m_level.getPointer(), m_firstFrameId, fid,
                                m_frameRange.getIndex());
@@ -2641,9 +2636,9 @@ void FillTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
       if (currentStyleId == -1 || currentStyleId == params.m_styleId) return;
 
       applyFill(getImage(true), pos, params, e.isShiftPressed(),
-             m_level.getPointer(), getCurrentFid(), m_autopaintLines.getValue(),
-             m_closeRasterGaps.getIndex() > 0, m_closeRasterGaps.getIndex() > 1,
-             closeStyleIndex, app->getCurrentFrame()->getFrameIndex());
+                m_level.getPointer(), getCurrentFid(),
+                m_autopaintLines.getValue(), fillGap, closeGap, closeStyleIndex,
+                app->getCurrentFrame()->getFrameIndex());
       invalidate();
     }
 
@@ -2660,8 +2655,11 @@ void FillTool::leftButtonDoubleClick(const TPointD &pos, const TMouseEvent &e) {
         TTool::getApplication()->getCurrentPalette()->getStyleIndex();
   }
   if (m_fillType.getValue() != NORMALFILL) {
-    m_rectFill->leftButtonDoubleClick(pos, e, m_closeRasterGaps.getIndex() > 0,
-                                      m_closeRasterGaps.getIndex() > 1,
+    bool fillGap =
+        m_colorType.getValue() != LINES && m_closeRasterGaps.getIndex() > 0;
+    bool closeGap =
+        m_colorType.getValue() != LINES && m_closeRasterGaps.getIndex() > 1;
+    m_rectFill->leftButtonDoubleClick(pos, e, fillGap, closeGap,
                                       closeStyleIndex);
     return;
   }
@@ -2706,10 +2704,13 @@ void FillTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
           TTool::getApplication()->getCurrentPalette()->getStyleIndex();
     }
     TTool::Application *app = TTool::getApplication();
+    bool fillGap =
+        m_colorType.getValue() != LINES && m_closeRasterGaps.getIndex() > 0;
+    bool closeGap =
+        m_colorType.getValue() != LINES && m_closeRasterGaps.getIndex() > 1;
     applyFill(img, pos, params, e.isShiftPressed(), m_level.getPointer(),
-           getCurrentFid(), m_autopaintLines.getValue(),
-           m_closeRasterGaps.getIndex() > 0, m_closeRasterGaps.getIndex() > 1, closeStyleIndex,
-              app->getCurrentFrame()->getFrameIndex());
+              getCurrentFid(), m_autopaintLines.getValue(), fillGap, closeGap,
+              closeStyleIndex, app->getCurrentFrame()->getFrameIndex());
     invalidate();
   }
 }
@@ -2718,28 +2719,31 @@ void FillTool::leftButtonDrag(const TPointD &pos, const TMouseEvent &e) {
 
 void FillTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
   m_filledOnPress = false;
-  
+
   int closeStyleIndex = m_closeStyleIndex.getStyleIndex();
   if (closeStyleIndex == -1) {
     closeStyleIndex =
         TTool::getApplication()->getCurrentPalette()->getStyleIndex();
   }
+
+  bool fillGap =
+      m_colorType.getValue() != LINES && m_closeRasterGaps.getIndex() > 0;
+  bool closeGap =
+      m_colorType.getValue() != LINES && m_closeRasterGaps.getIndex() > 1;
+
   if (m_onion.getValue()) {
     if (m_fillType.getValue() != NORMALFILL && m_colorType.getValue() == AREAS)
-      m_rectFill->leftButtonUp(pos, e, m_closeRasterGaps.getIndex() > 0,
-                               m_closeRasterGaps.getIndex() > 1,
-                               closeStyleIndex);
+      m_rectFill->leftButtonUp(pos, e, fillGap, closeGap, closeStyleIndex);
     else if (m_onionStyleId > 0) {
       FillParameters tmp = getFillParameters();
-      applyFill(getImage(true), pos, tmp, e.isShiftPressed(), m_level.getPointer(),
-             getCurrentFid(), m_autopaintLines.getValue(),
-             m_closeRasterGaps.getIndex() > 0, m_closeRasterGaps.getIndex() > 1,
-             closeStyleIndex);
+      applyFill(getImage(true), pos, tmp, e.isShiftPressed(),
+                m_level.getPointer(), getCurrentFid(),
+                m_autopaintLines.getValue(), fillGap, closeGap,
+                closeStyleIndex);
       invalidate();
     }
   } else if (m_fillType.getValue() != NORMALFILL) {
-    m_rectFill->leftButtonUp(pos, e, m_closeRasterGaps.getIndex() > 0,
-                             m_closeRasterGaps.getIndex() > 1, closeStyleIndex);
+    m_rectFill->leftButtonUp(pos, e, fillGap, closeGap, closeStyleIndex);
     return;
   }
 
