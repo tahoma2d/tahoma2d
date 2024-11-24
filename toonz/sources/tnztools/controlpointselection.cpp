@@ -971,7 +971,7 @@ ControlPointEditorStroke::PointType ControlPointEditorStroke::getPointTypeAt(
 
   if (minDistance2 < distance2)
     distance2 = minDistance2;
-  else if (strokeDistance > distance2) {
+  else if (strokeDistance > distance2 || nextIndex(precPointIndex) == -1) {
     distance2 = strokeDistance;
     index     = -1;
     type      = NONE;
