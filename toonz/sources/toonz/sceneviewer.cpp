@@ -3287,7 +3287,7 @@ int SceneViewer::pick(const TPointD &point) {
   // (to exploit the bug: open the FxEditor preview and then select the edit
   // tool)
   m_isPicking = true;
-  makeCurrent();
+  QOpenGLWidget::makeCurrent();
   assert(glGetError() == GL_NO_ERROR);
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
@@ -3362,6 +3362,7 @@ int SceneViewer::pick(const TPointD &point) {
     }
     p += nameCount;
   }
+  QOpenGLWidget::doneCurrent();
   assert(glGetError() == GL_NO_ERROR);
   m_isPicking = false;
   return ret;
