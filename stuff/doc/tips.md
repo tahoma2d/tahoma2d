@@ -29,3 +29,13 @@ If you are coming from Tahoma2D 1.2 or OpenToonz, here are a few things you shou
   - Converted existing scene to/from using implicit holds with `Scene` -> `Convert to use xxxx Holds`.
 - Some OpenToonz features and settings are hidden.
   - Enable it with `Preferences` -> `General` -> `Show Advanced Preferences and Options` then restart.
+
+-----
+## Tips
+- Scene animation and assets (drawings) are stored in separate files within a project folder.
+- Create a `Tahoma2D` project in your Documents folder and use as your general project folder instead of the default `sandbox`.
+- Use `Save All`, regularly, to save both scene and asset files. `Save Scene` does not save asset changes, just the scene changes.
+- When using external assets, we recommend using the `Import` option to keep the original untouched.
+- For multiple raster files to appear in 1 level, they must follow the naming convention `levelname.###.ext` or `levelname_###.ext`. (i.e ABC.001.png, ABC.002.png, etc...)
+- Keep an eye on the Status bar for additional tool information.
+- Need more help? Join the Tahoma2D Discord or other social social sites listed at https://tahoma2d.org.
