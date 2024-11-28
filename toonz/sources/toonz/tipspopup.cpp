@@ -112,6 +112,7 @@ void TipsPopup::loadTips() {
   QFile f(tipsFp.getQString());
   if (f.open(QFile::ReadOnly | QFile::Text)) {
     QTextStream ts(&f);
+    ts.setCodec("UTF-8");
     m_tips->setMarkdown(ts.readAll());
     f.close();
   }
