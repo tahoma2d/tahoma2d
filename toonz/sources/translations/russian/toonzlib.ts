@@ -159,7 +159,7 @@
     <message>
         <location filename="../../toonzlib/scriptbinding_level.cpp" line="212"/>
         <source>Unhandled exception encountered</source>
-        <translation type="unfinished"></translation>
+        <translation>Обнаружено необработанное исключение</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_level.cpp" line="266"/>
@@ -869,7 +869,7 @@
     <message>
         <location filename="../../toonzlib/toonzscene.cpp" line="439"/>
         <source>It is not possible to load file %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно загрузить файл %1.</translation>
     </message>
 </context>
 <context>

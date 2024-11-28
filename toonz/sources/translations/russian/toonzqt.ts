@@ -189,7 +189,7 @@
     <message>
         <location filename="../../toonzqt/camerasettingswidget.cpp" line="223"/>
         <source>Use Scene Overlay Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать настройки наложения</translation>
     </message>
     <message>
         <location filename="../../toonzqt/camerasettingswidget.cpp" line="451"/>
@@ -417,7 +417,7 @@ Zero is fully transparent.</source>
     <message>
         <location filename="../../toonzqt/combohistogram.cpp" line="531"/>
         <source>Average Color (%1 + Drag)</source>
-        <translation type="unfinished"></translation>
+        <translation>Средний цвет (%1 + перетаскивание)</translation>
     </message>
     <message>
         <source>Average Color (Ctrl + Drag)</source>
@@ -802,7 +802,8 @@ Zero is fully transparent.</source>
         <location filename="../../toonzqt/flipconsole.cpp" line="856"/>
         <source>This value is different than the scene framerate.
 %1 + Click to reset.</source>
-        <translation type="unfinished"></translation>
+        <translation>Это значение отличается от частоты кадров сцены.
+%1 + Нажмите для сброса.</translation>
     </message>
     <message>
         <location filename="../../toonzqt/flipconsole.cpp" line="1242"/>
@@ -968,7 +969,7 @@ Control click to reset.</source>
     <message>
         <location filename="../../toonzqt/flipconsole.cpp" line="1382"/>
         <source>Ping Pong</source>
-        <translation type="unfinished"></translation>
+        <translation>Пинг-понг</translation>
     </message>
     <message>
         <location filename="../../toonzqt/flipconsole.cpp" line="1386"/>
@@ -2148,47 +2149,47 @@ Select FX nodes and related links before copying or cutting the selection you wa
     <message>
         <location filename="../../toonzqt/insertfxpopup.cpp" line="284"/>
         <source>Search:</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск:</translation>
     </message>
     <message>
         <location filename="../../toonzqt/insertfxpopup.cpp" line="311"/>
         <source>Plugins</source>
-        <translation type="unfinished">Плагины</translation>
+        <translation>Плагины</translation>
     </message>
     <message>
         <location filename="../../toonzqt/insertfxpopup.cpp" line="494"/>
         <source>Macro</source>
-        <translation type="unfinished">Макрос</translation>
+        <translation>Макрос</translation>
     </message>
     <message>
         <location filename="../../toonzqt/insertfxpopup.cpp" line="645"/>
         <source>Remove Macro FX</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить макро FX</translation>
     </message>
     <message>
         <location filename="../../toonzqt/insertfxpopup.cpp" line="653"/>
         <source>Remove Preset</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить предустановку</translation>
     </message>
     <message>
         <location filename="../../toonzqt/insertfxpopup.cpp" line="704"/>
         <source>Are you sure you want to delete %1?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы уверены, что хотите удалить %1?</translation>
     </message>
     <message>
         <location filename="../../toonzqt/insertfxpopup.cpp" line="705"/>
         <source>Yes</source>
-        <translation type="unfinished">Да</translation>
+        <translation>Да</translation>
     </message>
     <message>
         <location filename="../../toonzqt/insertfxpopup.cpp" line="705"/>
         <source>No</source>
-        <translation type="unfinished">Нет</translation>
+        <translation>Нет</translation>
     </message>
     <message>
         <location filename="../../toonzqt/insertfxpopup.cpp" line="711"/>
         <source>It is not possible to delete %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно удалить %1.</translation>
     </message>
 </context>
 <context>
@@ -2821,7 +2822,7 @@ Are you sure?</source>
     <message>
         <location filename="../../toonzqt/styleselection.cpp" line="1647"/>
         <source>Remove Reference in Palette : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить референс в палитре: %1</translation>
     </message>
     <message>
         <source>Remove Reference  in Palette : %1</source>
