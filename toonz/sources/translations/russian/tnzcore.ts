@@ -42,7 +42,7 @@
     <message>
         <location filename="../../common/timage_io/tlevel_io.cpp" line="139"/>
         <source>Unhandled exception encountered: Skipping frame.</source>
-        <translation type="unfinished"></translation>
+        <translation>Обнаружено необработанное исключение: пропуск кадра.</translation>
     </message>
     <message>
         <source>Malformed frame name</source>

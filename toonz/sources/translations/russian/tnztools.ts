@@ -622,7 +622,7 @@
         <location filename="../../tnztools/rastererasertool.cpp" line="910"/>
         <location filename="../../tnztools/vectorerasertool.cpp" line="457"/>
         <source>Pressure</source>
-        <translation type="unfinished">Нажим</translation>
+        <translation>Нажим</translation>
     </message>
     <message>
         <location filename="../../tnztools/rastererasertool.cpp" line="913"/>
@@ -638,13 +638,13 @@
         <location filename="../../tnztools/rastererasertool.cpp" line="916"/>
         <location filename="../../tnztools/vectorerasertool.cpp" line="467"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Диапазон кадров:</translation>
     </message>
     <message>
         <location filename="../../tnztools/rastererasertool.cpp" line="917"/>
         <location filename="../../tnztools/vectorerasertool.cpp" line="468"/>
         <source>Off</source>
-        <translation type="unfinished">Выкл</translation>
+        <translation>Выкл</translation>
     </message>
     <message>
         <location filename="../../tnztools/rastererasertool.cpp" line="918"/>
@@ -680,32 +680,32 @@
     <message>
         <location filename="../../tnztools/filltool.cpp" line="2495"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Диапазон кадров:</translation>
     </message>
     <message>
         <location filename="../../tnztools/filltool.cpp" line="2496"/>
         <source>Off</source>
-        <translation type="unfinished">Выкл</translation>
+        <translation>Выкл</translation>
     </message>
     <message>
         <location filename="../../tnztools/filltool.cpp" line="2497"/>
         <source>Linear</source>
-        <translation type="unfinished">Линейный</translation>
+        <translation>Линейный</translation>
     </message>
     <message>
         <location filename="../../tnztools/filltool.cpp" line="2498"/>
         <source>Ease In</source>
-        <translation type="unfinished">Замедление</translation>
+        <translation>Замедление</translation>
     </message>
     <message>
         <location filename="../../tnztools/filltool.cpp" line="2499"/>
         <source>Ease Out</source>
-        <translation type="unfinished">Ускорение</translation>
+        <translation>Ускорение</translation>
     </message>
     <message>
         <location filename="../../tnztools/filltool.cpp" line="2500"/>
         <source>Ease In/Out</source>
-        <translation type="unfinished">Замедл. в начале/в конце</translation>
+        <translation>Замедл. в начале/в конце</translation>
     </message>
     <message>
         <location filename="../../tnztools/filltool.cpp" line="2502"/>
@@ -856,7 +856,7 @@
     <message>
         <location filename="../../tnztools/fullcolorbrushtool.cpp" line="195"/>
         <source>Smooth:</source>
-        <translation type="unfinished">Плавность:</translation>
+        <translation>Плавность:</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorbrushtool.cpp" line="196"/>
@@ -910,7 +910,7 @@
     <message>
         <location filename="../../tnztools/fullcolorerasertool.cpp" line="460"/>
         <source>Pressure</source>
-        <translation type="unfinished">Нажим</translation>
+        <translation>Нажим</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorerasertool.cpp" line="461"/>
@@ -955,32 +955,32 @@
     <message>
         <location filename="../../tnztools/fullcolorerasertool.cpp" line="472"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Диапазон кадров:</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorerasertool.cpp" line="473"/>
         <source>Off</source>
-        <translation type="unfinished">Выкл</translation>
+        <translation>Выкл</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorerasertool.cpp" line="474"/>
         <source>Linear</source>
-        <translation type="unfinished">Линейный</translation>
+        <translation>Линейный</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorerasertool.cpp" line="475"/>
         <source>Ease In</source>
-        <translation type="unfinished">Замедление</translation>
+        <translation>Замедление</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorerasertool.cpp" line="476"/>
         <source>Ease Out</source>
-        <translation type="unfinished">Ускорение</translation>
+        <translation>Ускорение</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorerasertool.cpp" line="477"/>
         <source>Ease In/Out</source>
-        <translation type="unfinished">Замедл. в начале/в конце</translation>
+        <translation>Замедл. в начале/в конце</translation>
     </message>
     <message>
         <source>Frame Range</source>
@@ -1032,32 +1032,32 @@
     <message>
         <location filename="../../tnztools/fullcolorfilltool.cpp" line="205"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Диапазон кадров:</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorfilltool.cpp" line="206"/>
         <source>Off</source>
-        <translation type="unfinished">Выкл</translation>
+        <translation>Выкл</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorfilltool.cpp" line="207"/>
         <source>Linear</source>
-        <translation type="unfinished">Линейный</translation>
+        <translation>Линейный</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorfilltool.cpp" line="208"/>
         <source>Ease In</source>
-        <translation type="unfinished">Замедление</translation>
+        <translation>Замедление</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorfilltool.cpp" line="209"/>
         <source>Ease Out</source>
-        <translation type="unfinished">Ускорение</translation>
+        <translation>Ускорение</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorfilltool.cpp" line="210"/>
         <source>Ease In/Out</source>
-        <translation type="unfinished">Замедл. в начале/в конце</translation>
+        <translation>Замедл. в начале/в конце</translation>
     </message>
 </context>
 <context>
@@ -1078,32 +1078,32 @@
     <message>
         <location filename="../../tnztools/hooktool.cpp" line="229"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Диапазон кадров:</translation>
     </message>
     <message>
         <location filename="../../tnztools/hooktool.cpp" line="230"/>
         <source>Off</source>
-        <translation type="unfinished">Выкл</translation>
+        <translation>Выкл</translation>
     </message>
     <message>
         <location filename="../../tnztools/hooktool.cpp" line="231"/>
         <source>Linear</source>
-        <translation type="unfinished">Линейный</translation>
+        <translation>Линейный</translation>
     </message>
     <message>
         <location filename="../../tnztools/hooktool.cpp" line="232"/>
         <source>Ease In</source>
-        <translation type="unfinished">Замедление</translation>
+        <translation>Замедление</translation>
     </message>
     <message>
         <location filename="../../tnztools/hooktool.cpp" line="233"/>
         <source>Ease Out</source>
-        <translation type="unfinished">Ускорение</translation>
+        <translation>Ускорение</translation>
     </message>
     <message>
         <location filename="../../tnztools/hooktool.cpp" line="234"/>
         <source>Ease In/Out</source>
-        <translation type="unfinished">Замедл. в начале/в конце</translation>
+        <translation>Замедл. в начале/в конце</translation>
     </message>
 </context>
 <context>
@@ -1718,32 +1718,32 @@ Do you want to proceed?</source>
     <message>
         <location filename="../../tnztools/geometrictool.cpp" line="679"/>
         <source>Range:</source>
-        <translation type="unfinished">Диапазон:</translation>
+        <translation>Диапазон:</translation>
     </message>
     <message>
         <location filename="../../tnztools/geometrictool.cpp" line="680"/>
         <source>Off</source>
-        <translation type="unfinished">Выкл</translation>
+        <translation>Выкл</translation>
     </message>
     <message>
         <location filename="../../tnztools/geometrictool.cpp" line="681"/>
         <source>Linear</source>
-        <translation type="unfinished">Линейный</translation>
+        <translation>Линейный</translation>
     </message>
     <message>
         <location filename="../../tnztools/geometrictool.cpp" line="682"/>
         <source>Ease In</source>
-        <translation type="unfinished">Замедление</translation>
+        <translation>Замедление</translation>
     </message>
     <message>
         <location filename="../../tnztools/geometrictool.cpp" line="683"/>
         <source>Ease Out</source>
-        <translation type="unfinished">Ускорение</translation>
+        <translation>Ускорение</translation>
     </message>
     <message>
         <location filename="../../tnztools/geometrictool.cpp" line="684"/>
         <source>Ease In/Out</source>
-        <translation type="unfinished">Замедл. в начале/в конце</translation>
+        <translation>Замедл. в начале/в конце</translation>
     </message>
 </context>
 <context>
@@ -1782,7 +1782,7 @@ Do you want to proceed?</source>
         <location filename="../../tnztools/strokeselection.cpp" line="1381"/>
         <location filename="../../tnztools/strokeselection.cpp" line="1487"/>
         <source>The selection is not editable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выделенный фрагмент не подлежит редактированию.</translation>
     </message>
     <message>
         <location filename="../../tnztools/rasterselection.cpp" line="1123"/>
@@ -1879,13 +1879,13 @@ Do you want to proceed?</source>
         <location filename="../../tnztools/imagegrouping.cpp" line="274"/>
         <location filename="../../tnztools/vectorselectiontool.cpp" line="1176"/>
         <source>Enter Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Войти в группу</translation>
     </message>
     <message>
         <location filename="../../tnztools/imagegrouping.cpp" line="299"/>
         <location filename="../../tnztools/vectorselectiontool.cpp" line="1201"/>
         <source>Exit Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Выйти из группы</translation>
     </message>
     <message>
         <location filename="../../tnztools/imagegrouping.cpp" line="561"/>
@@ -1929,7 +1929,7 @@ Do you want to proceed?</source>
         <location filename="../../tnztools/edittool.cpp" line="1721"/>
         <location filename="../../tnztools/tool.cpp" line="1032"/>
         <source>It is not possible to edit the folder column.</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать столбец папки невозможно.</translation>
     </message>
     <message>
         <location filename="../../tnztools/edittool.cpp" line="1730"/>
@@ -2056,7 +2056,7 @@ Do you want to proceed?</source>
     <message>
         <location filename="../../tnztools/hookselection.h" line="36"/>
         <source>Hook Tool   Level : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Уровень инструмента крюка: %1</translation>
     </message>
 </context>
 <context>
@@ -2148,32 +2148,32 @@ Do you want to proceed?</source>
     <message>
         <location filename="../../tnztools/rastertapetool.cpp" line="199"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Диапазон кадров:</translation>
     </message>
     <message>
         <location filename="../../tnztools/rastertapetool.cpp" line="200"/>
         <source>Off</source>
-        <translation type="unfinished">Выкл</translation>
+        <translation>Выкл</translation>
     </message>
     <message>
         <location filename="../../tnztools/rastertapetool.cpp" line="201"/>
         <source>Linear</source>
-        <translation type="unfinished">Линейный</translation>
+        <translation>Линейный</translation>
     </message>
     <message>
         <location filename="../../tnztools/rastertapetool.cpp" line="202"/>
         <source>Ease In</source>
-        <translation type="unfinished">Замедление</translation>
+        <translation>Замедление</translation>
     </message>
     <message>
         <location filename="../../tnztools/rastertapetool.cpp" line="203"/>
         <source>Ease Out</source>
-        <translation type="unfinished">Ускорение</translation>
+        <translation>Ускорение</translation>
     </message>
     <message>
         <location filename="../../tnztools/rastertapetool.cpp" line="204"/>
         <source>Ease In/Out</source>
-        <translation type="unfinished">Замедл. в начале/в конце</translation>
+        <translation>Замедл. в начале/в конце</translation>
     </message>
     <message>
         <location filename="../../tnztools/rastertapetool.cpp" line="206"/>
@@ -2751,17 +2751,17 @@ moved to the end of the first page of the palette.</source>
     <message>
         <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="631"/>
         <source>Ease In</source>
-        <translation type="unfinished">Замедление</translation>
+        <translation>Замедление</translation>
     </message>
     <message>
         <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="632"/>
         <source>Ease Out</source>
-        <translation type="unfinished">Ускорение</translation>
+        <translation>Ускорение</translation>
     </message>
     <message>
         <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="633"/>
         <source>Ease In/Out</source>
-        <translation type="unfinished">Замедл. в начале/в конце</translation>
+        <translation>Замедл. в начале/в конце</translation>
     </message>
     <message>
         <source>In</source>
@@ -3050,32 +3050,32 @@ moved to the end of the first page of the palette.</source>
     <message>
         <location filename="../../tnztools/vectortapetool.cpp" line="303"/>
         <source>Frame Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Диапазон кадров:</translation>
     </message>
     <message>
         <location filename="../../tnztools/vectortapetool.cpp" line="304"/>
         <source>Off</source>
-        <translation type="unfinished">Выкл</translation>
+        <translation>Выкл</translation>
     </message>
     <message>
         <location filename="../../tnztools/vectortapetool.cpp" line="305"/>
         <source>Linear</source>
-        <translation type="unfinished">Линейный</translation>
+        <translation>Линейный</translation>
     </message>
     <message>
         <location filename="../../tnztools/vectortapetool.cpp" line="306"/>
         <source>Ease In</source>
-        <translation type="unfinished">Замедление</translation>
+        <translation>Замедление</translation>
     </message>
     <message>
         <location filename="../../tnztools/vectortapetool.cpp" line="307"/>
         <source>Ease Out</source>
-        <translation type="unfinished">Ускорение</translation>
+        <translation>Ускорение</translation>
     </message>
     <message>
         <location filename="../../tnztools/vectortapetool.cpp" line="308"/>
         <source>Ease In/Out</source>
-        <translation type="unfinished">Замедл. в начале/в конце</translation>
+        <translation>Замедл. в начале/в конце</translation>
     </message>
 </context>
 <context>
