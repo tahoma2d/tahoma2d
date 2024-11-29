@@ -535,6 +535,8 @@
 
 #define MI_OpenLocator "MI_OpenLocator"
 
+#define MI_OpenTips "MI_OpenTips"
+
 #define MI_InbetweenLinear "MI_InbetweenLinear"
 #define MI_InbetweenEaseIn "MI_InbetweenEaseIn"
 #define MI_InbetweenEaseOut "MI_InbetweenEaseOut"

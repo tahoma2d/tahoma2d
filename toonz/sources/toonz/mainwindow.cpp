@@ -2517,6 +2517,7 @@ void MainWindow::defineActions() {
 
   createMenuHelpAction(MI_OpenOnlineManual, QT_TR_NOOP("&Online Manual..."),
                        "F1", "manual");
+  createMenuHelpAction(MI_OpenTips, QT_TR_NOOP("&Tips..."), "", "");
   createMenuHelpAction(MI_OpenWhatsNew, QT_TR_NOOP("&What's New..."), "",
                        "web");
   createMenuHelpAction(MI_OpenCommunityForum, QT_TR_NOOP("&Community Forum..."),

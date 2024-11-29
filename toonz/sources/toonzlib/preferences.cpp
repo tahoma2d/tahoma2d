@@ -404,6 +404,8 @@ void Preferences::definePreferenceItems() {
 
   define(showAdvancedOptions, "showAdvancedOptions", QMetaType::Bool, false);
 
+  define(tipsPopupEnabled, "tipsPopupEnabled", QMetaType::Bool, true);
+
   setCallBack(autosaveEnabled, &Preferences::enableAutosave);
   setCallBack(autosavePeriod, &Preferences::setAutosavePeriod);
   setCallBack(undoMemorySize, &Preferences::setUndoMemorySize);

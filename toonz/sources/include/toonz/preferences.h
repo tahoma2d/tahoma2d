@@ -199,6 +199,8 @@ public:
     return getBoolValue(showAdvancedOptions);
   }
 
+  bool isTipsPopupEnabled() { return getBoolValue(tipsPopupEnabled); }
+
   // Interface  tab
   QStringList getStyleSheetList() const { return m_styleSheetList; }
   bool getIconTheme() const { return getBoolValue(iconTheme); }

@@ -144,6 +144,7 @@ set(MOC_HEADERS
     viewereventlogpopup.h
     xshbreadcrumbs.h
     alignmentpane.h
+    tipspopup.h
 )
 
 set(HEADERS
@@ -395,6 +396,7 @@ set(SOURCES
     viewereventlogpopup.cpp
     xshbreadcrumbs.cpp
     alignmentpane.cpp
+    tipspopup.cpp
 )
 
 if(WITH_TRANSLATION)
