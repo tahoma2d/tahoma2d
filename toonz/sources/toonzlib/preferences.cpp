@@ -469,6 +469,8 @@ void Preferences::definePreferenceItems() {
   define(viewerIndicatorEnabled, "viewerIndicatorEnabled", QMetaType::Bool,
          true);
 
+  define(highDpiScalingEnabled, "highDpiScalingEnabled", QMetaType::Bool, true);
+
   // Visualization
   define(show0ThickLines, "show0ThickLines", QMetaType::Bool, true);
   define(regionAntialias, "regionAntialias", QMetaType::Bool, false);

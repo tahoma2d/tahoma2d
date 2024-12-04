@@ -252,6 +252,10 @@ public:
     return getBoolValue(viewerIndicatorEnabled);
   }
 
+  bool isHighDpiScalingEnabled() const {
+    return getBoolValue(highDpiScalingEnabled);
+  }
+
   // Visualization  tab
   bool getShow0ThickLines() const { return getBoolValue(show0ThickLines); }
   bool getRegionAntialias() const { return getBoolValue(regionAntialias); }

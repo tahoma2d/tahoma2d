@@ -1329,6 +1329,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {displayIn30bit, tr("30bit Display*")},
       {showIconsInMenu, tr("Show Icons In Menu*")},
       {viewerIndicatorEnabled, tr("Show Viewer Indicators")},
+      {highDpiScalingEnabled, tr("Enable High DPI Scaling*")},
 
       // Visualization
       {show0ThickLines, tr("Show Lines with Thickness 0")},
@@ -1884,6 +1885,8 @@ QWidget* PreferencesPopup::createInterfacePage() {
   lay->addWidget(check30bitBtn, row - 1, 2, Qt::AlignRight);
   if (Preferences::instance()->isShowAdvancedOptionsEnabled())
     insertUI(showIconsInMenu, lay);
+
+  insertUI(highDpiScalingEnabled, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
   insertFootNote(lay);
