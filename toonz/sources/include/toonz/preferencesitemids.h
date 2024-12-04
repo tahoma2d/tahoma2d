@@ -50,6 +50,7 @@ enum PreferencesItemId {
   showIconsInMenu,
   displayIn30bit,
   viewerIndicatorEnabled,
+  highDpiScalingEnabled,
 
   //----------
   // Visualization
