@@ -731,7 +731,8 @@ public:
     invalidateAll();
   }
 
-  void getGuidedFrameIdx(int *backIdx, int *frontIdx);
+  void getGuidedFrameIdx(TXsheet *xsh, int row, int col, int *backIdx,
+                         int *frontIdx);
   void doPickGuideStroke(const TPointD &pos);
 
   QWidget *viewerWidget() { return m_viewerWidget; }

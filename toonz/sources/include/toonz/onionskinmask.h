@@ -199,6 +199,8 @@ since underlying onion-skinned drawings must be visible.
   bool isRelativeFrameMode() const { return m_isRelativeFrameMode; }
   void setRelativeFrameMode(bool on);
 
+  int getFrameIdxFromRos(int ros, TXsheet *xsh, int row, int col);
+
 private:
   std::vector<std::pair<int, double>> m_fos,
       m_mos, m_dos;               //!< Fixed, Mobile (relative frames mode), Drawing Onion Skin
