@@ -1167,7 +1167,8 @@ void TTool::setSelectedFrames(const std::set<TFrameId> &selectedFrames) {
 
 //-------------------------------------------------------------------------------------------------------------
 
-void TTool::Viewer::getGuidedFrameIdx(int *backIdx, int *frontIdx) {
+void TTool::Viewer::getGuidedFrameIdx(TXsheet *xsh, int row, int col,
+                                      int *backIdx, int *frontIdx) {
   if (!Preferences::instance()->isGuidedDrawingEnabled()) return;
 
   OnionSkinMask osMask =
@@ -1177,7 +1178,6 @@ void TTool::Viewer::getGuidedFrameIdx(int *backIdx, int *frontIdx) {
 
   TFrameHandle *currentFrame = getApplication()->getCurrentFrame();
 
-  int cidx     = currentFrame->getFrameIndex();
   int rosBack  = 0;
   int rosFront = 0;
   int rosCount = osMask.getRosCount();
@@ -1191,18 +1191,19 @@ void TTool::Viewer::getGuidedFrameIdx(int *backIdx, int *frontIdx) {
     for (int i = 0; i < rosCount; i++) {
       int cmos = osMask.getRos(i);
       if (cmos == 0) continue;  // skip current
-      if (cmos < 0 && (!rosBack || cmos > rosBack)) rosBack = cmos;
+      if (cmos < 0 && (!rosBack || cmos > rosBack)) rosBack    = cmos;
       if (cmos > 0 && (!rosFront || cmos < rosFront)) rosFront = cmos;
     }
-    if (rosBack) *backIdx = rosBack + cidx;
-    if (rosFront) *frontIdx = rosFront + cidx;
+    if (rosBack) *backIdx = osMask.getFrameIdxFromRos(rosBack, xsh, row, col);
+    if (rosFront)
+      *frontIdx = osMask.getFrameIdxFromRos(rosFront, xsh, row, col);
 
     // Get closest fixed onionskin
     for (int i = 0; i < fosCount; i++) {
       int cfos = osMask.getFos(i);
-      if (cfos == cidx) continue;  // skip current
-      if (cfos < cidx && (fosBack == -1 || cfos > fosBack)) fosBack = cfos;
-      if (cfos > cidx && (fosFront == -1 || cfos < fosFront)) fosFront = cfos;
+      if (cfos == row) continue;  // skip current
+      if (cfos < row && (fosBack == -1 || cfos > fosBack)) fosBack    = cfos;
+      if (cfos > row && (fosFront == -1 || cfos < fosFront)) fosFront = cfos;
     }
 
     if (*backIdx == -1)
@@ -1219,18 +1220,19 @@ void TTool::Viewer::getGuidedFrameIdx(int *backIdx, int *frontIdx) {
     for (int i = 0; i < rosCount; i++) {
       int cmos = osMask.getRos(i);
       if (cmos == 0) continue;  // skip current
-      if (cmos < 0 && (!rosBack || cmos < rosBack)) rosBack = cmos;
+      if (cmos < 0 && (!rosBack || cmos < rosBack)) rosBack    = cmos;
       if (cmos > 0 && (!rosFront || cmos > rosFront)) rosFront = cmos;
     }
-    if (rosBack) *backIdx = rosBack + cidx;
-    if (rosFront) *frontIdx = rosFront + cidx;
+    if (rosBack) *backIdx = osMask.getFrameIdxFromRos(rosBack, xsh, row, col);
+    if (rosFront)
+      *frontIdx = osMask.getFrameIdxFromRos(rosFront, xsh, row, col);
 
     // Get fixed onionskin
     for (int i = 0; i < fosCount; i++) {
       int cfos = osMask.getFos(i);
-      if (cfos == cidx) continue;  // skip current
-      if (cfos < cidx && (fosBack == -1 || cfos < fosBack)) fosBack = cfos;
-      if (cfos > cidx && (fosFront == -1 || cfos > fosFront)) fosFront = cfos;
+      if (cfos == row) continue;  // skip current
+      if (cfos < row && (fosBack == -1 || cfos < fosBack)) fosBack    = cfos;
+      if (cfos > row && (fosFront == -1 || cfos > fosFront)) fosFront = cfos;
     }
 
     if (*backIdx == -1)
@@ -1257,7 +1259,16 @@ void TTool::Viewer::doPickGuideStroke(const TPointD &pos) {
   int osFront = -1;
   int os      = -1;
 
-  getGuidedFrameIdx(&osBack, &osFront);
+  TXshSimpleLevel *sl =
+      getApplication()->getCurrentLevel()->getLevel()->getSimpleLevel();
+  if (!sl) return;
+
+  TFrameHandle *currentFrame = getApplication()->getCurrentFrame();
+  TXsheet *xsh = getApplication()->getCurrentXsheet()->getXsheet();
+  int row      = currentFrame->getFrameIndex();
+  int col      = getApplication()->getCurrentColumn()->getColumnIndex();
+
+  getGuidedFrameIdx(xsh, row, col, &osBack, &osFront);
 
   if (pickerMode < 0)  // Previous Frame
     os = osBack;
@@ -1265,14 +1276,8 @@ void TTool::Viewer::doPickGuideStroke(const TPointD &pos) {
     os = osFront;
 
   TFrameId fid;
-  TFrameHandle *currentFrame = getApplication()->getCurrentFrame();
-  TXshSimpleLevel *sl =
-      getApplication()->getCurrentLevel()->getLevel()->getSimpleLevel();
-  if (!sl) return;
 
   if (currentFrame->isEditingScene()) {
-    TXsheet *xsh = getApplication()->getCurrentXsheet()->getXsheet();
-    int col      = getApplication()->getCurrentColumn()->getColumnIndex();
     if (xsh && col >= 0) {
       TXshCell cell = xsh->getCell(os, col);
       if (!cell.isEmpty()) fid = cell.getFrameId();
@@ -1337,12 +1342,15 @@ void TTool::tweenSelectedGuideStrokes() {
 
   int backIdx = -1, frontIdx = -1;
 
-  getViewer()->getGuidedFrameIdx(&backIdx, &frontIdx);
+  TFrameHandle *currentFrame = getApplication()->getCurrentFrame();
+  TXsheet *xsh               = m_application->getCurrentXsheet()->getXsheet();
+  int row                    = currentFrame->getFrameIndex();
+  int col = m_application->getCurrentColumn()->getColumnIndex();
+
+  getViewer()->getGuidedFrameIdx(xsh, row, col, &backIdx, &frontIdx);
 
   if (backIdx == -1 || frontIdx == -1) return;
 
-  TFrameHandle *currentFrame = getApplication()->getCurrentFrame();
-  int row                    = currentFrame->getFrameIndex();
   TFrameId bFid, cFid, fFid;
 
   cFid = getCurrentFid();
@@ -1354,8 +1362,6 @@ void TTool::tweenSelectedGuideStrokes() {
   int cStrokeCount = cvi->getStrokeCount();
 
   if (currentFrame->isEditingScene()) {
-    TXsheet *xsh = m_application->getCurrentXsheet()->getXsheet();
-    int col      = m_application->getCurrentColumn()->getColumnIndex();
     if (xsh && col >= 0) {
       TXshCell cell = xsh->getCell(backIdx, col);
       if (!cell.isEmpty()) bFid = cell.getFrameId();
@@ -1417,10 +1423,13 @@ void TTool::tweenGuideStrokeToSelected() {
 
   int backIdx = -1, frontIdx = -1;
 
-  getViewer()->getGuidedFrameIdx(&backIdx, &frontIdx);
-
   TFrameHandle *currentFrame = getApplication()->getCurrentFrame();
+  TXsheet *xsh               = m_application->getCurrentXsheet()->getXsheet();
   int row                    = currentFrame->getFrameIndex();
+  int col = m_application->getCurrentColumn()->getColumnIndex();
+
+  getViewer()->getGuidedFrameIdx(xsh, row, col, &backIdx, &frontIdx);
+
   TFrameId bFid, cFid, fFid;
   TVectorImageP bvi, cvi, fvi;
 
@@ -1445,8 +1454,6 @@ void TTool::tweenGuideStrokeToSelected() {
 
   if (backIdx != -1) {
     if (currentFrame->isEditingScene()) {
-      TXsheet *xsh = m_application->getCurrentXsheet()->getXsheet();
-      int col      = m_application->getCurrentColumn()->getColumnIndex();
       if (xsh && col >= 0) {
         TXshCell cell = xsh->getCell(backIdx, col);
         if (!cell.isEmpty()) bFid = cell.getFrameId();
@@ -1530,7 +1537,12 @@ void TTool::flipGuideStrokeDirection(int mode) {
   int os      = -1;
   int strokeIdx;
 
-  getViewer()->getGuidedFrameIdx(&osBack, &osFront);
+  TFrameHandle *currentFrame = getApplication()->getCurrentFrame();
+  TXsheet *xsh = getApplication()->getCurrentXsheet()->getXsheet();
+  int row      = currentFrame->getFrameIndex();
+  int col      = getApplication()->getCurrentColumn()->getColumnIndex();
+
+  getViewer()->getGuidedFrameIdx(xsh, row, col, &osBack, &osFront);
 
   if (mode < 0) {  // Previous Frame
     os        = osBack;
@@ -1542,9 +1554,7 @@ void TTool::flipGuideStrokeDirection(int mode) {
 
   if (os < 0) return;
 
-  TFrameHandle *currentFrame = getApplication()->getCurrentFrame();
-  int row                    = currentFrame->getFrameIndex();
-  TFrameId cFid              = getCurrentFid();
+  TFrameId cFid = getCurrentFid();
   if (cFid.isEmptyFrame()) return;
 
   TVectorImageP cvi = sl->getFrame(cFid, false);
@@ -1554,8 +1564,6 @@ void TTool::flipGuideStrokeDirection(int mode) {
 
   TFrameId fid;
   if (currentFrame->isEditingScene()) {
-    TXsheet *xsh = getApplication()->getCurrentXsheet()->getXsheet();
-    int col      = getApplication()->getCurrentColumn()->getColumnIndex();
     if (xsh && col >= 0) {
       TXshCell cell = xsh->getCell(os, col);
       if (!cell.isEmpty()) fid = cell.getFrameId();
