@@ -215,6 +215,8 @@ Set column status mask to \b on.
   void setInvertedMask(bool on);
   void setCanRenderMask(bool on);
 
+  std::vector<TXshColumn *> getColumnMasks(int frame);
+
   void setAlphaLocked(bool on);
 
   virtual bool isEmpty() const { return true; }
