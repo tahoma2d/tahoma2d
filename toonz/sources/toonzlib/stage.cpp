@@ -701,7 +701,9 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
     TXshColumn *column = xsh->getColumn(c);
     bool isMask        = false;
     if (column && !column->isEmpty() && !column->getSoundColumn() &&
-        !column->getFolderColumn()) {
+        !column->getFolderColumn() &&
+        (!column->isMask() || column->canRenderMask())) {
+
       if (!column->isPreviewVisible() && checkPreviewVisibility) {
         if (!isMask && column->getColumnType() != TXshColumn::eMeshType) {
           while (m_masks.size() > maskCount) m_masks.pop_back();
@@ -711,25 +713,33 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
       if (column->isCamstandVisible() ||
           includeUnvisible)  // se l'"occhietto" non e' chiuso
       {
-        if (column->isMask() && !column->isCellEmpty(row) &&
-            !xsh->getCell(row, c).getFrameId().isStopFrame())
-        {
-          if (column->canRenderMask())
-            addCellWithOnionSkin(players, scene, xsh, row, c, level, false,
-                                 subSheetColIndex);
+        // scan ahead for masks
+        for (int x = c + 1; x < columnCount; x++) {
+          TXshColumn *maskCol = xsh->getColumn(x);
+          if (!maskCol || maskCol->isCellEmpty(row) ||
+              xsh->getCell(row, x).getFrameId().isStopFrame() ||
+              !maskCol->isCamstandVisible())
+            break;
+
+          // Skip mesh files
+          if (maskCol->getColumnType() == TXshColumn::eMeshType) continue;
+
+          if (!maskCol->isMask()) break;
+
           isMask = true;
           std::vector<int> saveMasks;
           saveMasks.swap(m_masks);
           int maskIndex   = m_maskPool.size();
           PlayerSet *mask = new PlayerSet();
           m_maskPool.push_back(mask);
-          addCellWithOnionSkin(*mask, scene, xsh, row, c, level, true);
+          addCellWithOnionSkin(*mask, scene, xsh, row, x, level, true);
           std::stable_sort(mask->begin(), mask->end(), PlayerLt());
           saveMasks.swap(m_masks);
-          m_masks.push_back(maskIndex);
-        } else
-          addCellWithOnionSkin(players, scene, xsh, row, c, level, false,
-                               subSheetColIndex);
+          m_masks.insert(m_masks.begin(), maskIndex);
+        }
+
+        addCellWithOnionSkin(players, scene, xsh, row, c, level, false,
+                             subSheetColIndex);
       }
     }
     if (!isMask && column->getColumnType() != TXshColumn::eMeshType) {
