@@ -241,7 +241,7 @@ void TXshZeraryFxColumn::saveData(TOStream &os) {
 
 //-----------------------------------------------------------------------------
 
-std::vector<TXshColumn *> TXshZeraryFxColumn::getColumnMasks() {
+std::vector<TXshColumn *> TXshZeraryFxColumn::getColumnMasks(int frame) {
   std::vector<TXshColumn *> masks;
 
   if (m_index <= 0) return masks;
@@ -254,6 +254,8 @@ std::vector<TXshColumn *> TXshZeraryFxColumn::getColumnMasks() {
     if (mcol->getColumnType() == TXshColumn::eMeshType)
       continue;  // ignore mesh levels
     if (!mcol->isMask() || !mcol->isPreviewVisible()) break;
+    TXshCell cell = xsh->getCell(frame, i);
+    if (cell.isEmpty() || cell.getFrameId().isStopFrame()) break;
     masks.push_back(mcol);
   }
 

@@ -315,19 +315,48 @@ bool TXshLevelColumn::setNumbers(int row, int rowCount,
 
 //-----------------------------------------------------------------------------
 
-std::vector<TXshColumn *> TXshLevelColumn::getColumnMasks() {
+std::vector<TXshColumn *> TXshLevelColumn::getColumnMasks(int frame) {
   std::vector<TXshColumn *> masks;
 
   if (m_index <= 0) return masks;
 
-  TXsheet *xsh = getXsheet();
-  for (int i = m_index - 1; i >= 0; i--) {
+  int startIndex = m_index - 1;
+
+  TXsheet *xsh    = getXsheet();
+  TXshColumn *col = xsh->getColumn(m_index);
+
+  // Find the reference column (essentially the mask)
+  if (col->isAlphaLocked()) {
+    for (int i = startIndex; i >= 0; i--) {
+      TXshColumn *rcol = xsh->getColumn(i);
+
+      if (!rcol || rcol->isEmpty()) break;
+      // ignore mesh levels and other alpha locked columns
+      if (rcol->getColumnType() == TXshColumn::eMeshType ||
+          rcol->getColumnType() == TXshColumn::eAlphaLocked)
+        continue;
+      if (rcol->getColumnType() == TXshColumn::eLevelType &&
+          rcol->isPreviewVisible()) {
+        TXshCell cell = xsh->getCell(frame, i);
+        if (cell.isEmpty() || cell.getFrameId().isStopFrame()) break;
+        masks.push_back(rcol);
+        startIndex--;
+      }
+      break;
+    }
+
+    if (!masks.size()) return masks;
+  }
+
+  for (int i = startIndex; i >= 0; i--) {
     TXshColumn *mcol = xsh->getColumn(i);
 
     if (!mcol || mcol->isEmpty()) break;
     if (mcol->getColumnType() == TXshColumn::eMeshType)
       continue;  // ignore mesh levels
     if (!mcol->isMask() || !mcol->isPreviewVisible()) break;
+    TXshCell cell = xsh->getCell(frame, i);
+    if (cell.isEmpty() || cell.getFrameId().isStopFrame()) break;
     masks.push_back(mcol);
   }
 

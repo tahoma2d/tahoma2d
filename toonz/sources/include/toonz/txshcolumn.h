@@ -85,7 +85,8 @@ protected:
     eMasked                = 0x10,
     eCamstandTransparent43 = 0x20,  // obsoleto, solo per retrocompatibilita'
     eInvertedMask          = 0x80,
-    eRenderMask            = 0x100
+    eRenderMask            = 0x100,
+    eAlphaLocked           = 0x200
   };
 
   TRaster32P m_icon;
@@ -205,6 +206,7 @@ Return true if column is a mask.
   bool isInvertedMask() const;
   bool canRenderMask() const;
 
+  bool isAlphaLocked() const;
   /*!
 Set column status mask to \b on.
 \sa isMask()
@@ -212,6 +214,8 @@ Set column status mask to \b on.
   void setIsMask(bool on);
   void setInvertedMask(bool on);
   void setCanRenderMask(bool on);
+
+  void setAlphaLocked(bool on);
 
   virtual bool isEmpty() const { return true; }
 

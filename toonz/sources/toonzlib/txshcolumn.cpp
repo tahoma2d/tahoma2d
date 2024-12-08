@@ -782,6 +782,12 @@ bool TXshColumn::canRenderMask() const {
 
 //-----------------------------------------------------------------------------
 
+bool TXshColumn::isAlphaLocked() const {
+  return (m_status & eAlphaLocked) != 0;
+}
+
+//-----------------------------------------------------------------------------
+
 void TXshColumn::setIsMask(bool on) {
   const int mask = eMasked;
   if (on)
@@ -804,6 +810,16 @@ void TXshColumn::setInvertedMask(bool on) {
 
 void TXshColumn::setCanRenderMask(bool on) {
   const int mask = eRenderMask;
+  if (on)
+    m_status |= mask;
+  else
+    m_status &= ~mask;
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshColumn::setAlphaLocked(bool on) {
+  const int mask = eAlphaLocked;
   if (on)
     m_status |= mask;
   else

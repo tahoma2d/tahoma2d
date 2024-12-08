@@ -88,7 +88,7 @@ Return \b TZeraryColumnFx.
    * icon. */
   void updateIcon() {}
 
-  std::vector<TXshColumn *> getColumnMasks();
+  std::vector<TXshColumn *> getColumnMasks(int frame);
 
 private:
   // not implemented
