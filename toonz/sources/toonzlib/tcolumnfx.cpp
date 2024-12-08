@@ -1622,7 +1622,7 @@ std::string TLevelColumnFx::getAlias(double frame,
       rdata += "column_0";
   }
 
-  std::vector<TXshColumn *> masks = m_levelColumn->getColumnMasks();
+  std::vector<TXshColumn *> masks = m_levelColumn->getColumnMasks(frame);
   if (masks.size()) {
     std::string maskAlias = "masked";
     for (int i = 0; i < masks.size(); i++) {
@@ -1905,7 +1905,7 @@ std::string TZeraryColumnFx::getAlias(double frame,
   std::string rdata = "";
 
   if (m_zeraryFxColumn) {
-    std::vector<TXshColumn *> masks = m_zeraryFxColumn->getColumnMasks();
+    std::vector<TXshColumn *> masks = m_zeraryFxColumn->getColumnMasks(frame);
     if (masks.size()) {
       std::string maskAlias = "masked";
       for (int i = 0; i < masks.size(); i++) {

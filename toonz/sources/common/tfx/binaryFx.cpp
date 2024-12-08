@@ -696,11 +696,13 @@ class ColumnMaskFx final : public TBaseRasterFx {
   FX_DECLARATION(ColumnMaskFx)
 
   TRasterFxPort m_source, m_mask;
+  TBoolParamP m_isAlphaLockMask;
 
 public:
-  ColumnMaskFx() {
+  ColumnMaskFx() : m_isAlphaLockMask(false) {
     addInputPort("Source", m_source);
     addInputPort("Mask", m_mask);
+    bindParam(this, "isAlphaLockMask", m_isAlphaLockMask);
     setName(L"ColumnMaskFx");
     enableComputeInFloat(true);
   }
@@ -737,6 +739,7 @@ public:
                                  frame, maskRi);
 
     maskRi.m_applyMask = true;
+    maskRi.m_isAlphaLockMask = m_isAlphaLockMask;
     m_mask->compute(srcTile, frame, maskRi);
 
     // Replace original tile with masked tile
