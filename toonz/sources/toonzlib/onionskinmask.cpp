@@ -400,6 +400,44 @@ void OnionSkinMask::setRelativeFrameMode(bool on) {
   RelativeFrameMode     = m_isRelativeFrameMode;
 }
 
+int OnionSkinMask::getFrameIdxFromRos(int ros, TXsheet *xsh, int row, int col) {
+  if (isRelativeFrameMode()) return row + ros;
+
+  if (!ros || !xsh || col < 0) return -1;
+  int r0, r1;
+  xsh->getCellRange(col, r0, r1);
+  
+  if (r1 <= r0) return -1;
+
+  if (ros < 0) {
+    std::vector<TXshCell> prevCells(row - r0 + 1);
+    xsh->getCells(r0, col, prevCells.size(), &(prevCells[0]));
+    TXshCell lastCell;
+    for (int x = prevCells.size() - 2; x >= 0; x--) {
+      if (prevCells[x].isEmpty() || prevCells[x].getFrameId().isStopFrame() ||
+          prevCells[x] == lastCell)
+        continue;
+      lastCell = prevCells[x];
+      ros++;
+      if (!ros) return x;
+    }
+  } else if (ros > 0) {
+    std::vector<TXshCell> nextCells(r1 - row + 1);
+    xsh->getCells(row, col, nextCells.size(), &(nextCells[0]));
+    TXshCell lastCell = nextCells[0];
+    for (int x = 1; x < nextCells.size(); x++) {
+      if (nextCells[x].isEmpty() || nextCells[x].getFrameId().isStopFrame() ||
+          nextCells[x] == lastCell)
+        continue;
+      lastCell = nextCells[x];
+      ros--;
+      if (!ros) return row + x;
+    }
+  }
+
+  return -1;
+}
+
 //***************************************************************************
 //    OnionSkinMaskModifier  implementation
 //***************************************************************************
