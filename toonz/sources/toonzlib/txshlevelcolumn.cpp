@@ -333,7 +333,7 @@ std::vector<TXshColumn *> TXshLevelColumn::getColumnMasks(int frame) {
       if (!rcol || rcol->isEmpty()) break;
       // ignore mesh levels and other alpha locked columns
       if (rcol->getColumnType() == TXshColumn::eMeshType ||
-          rcol->getColumnType() == TXshColumn::eAlphaLocked)
+          rcol->isAlphaLocked())
         continue;
       if (rcol->getColumnType() == TXshColumn::eLevelType &&
           rcol->isPreviewVisible()) {
