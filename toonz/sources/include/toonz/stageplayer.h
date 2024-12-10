@@ -123,6 +123,8 @@ public:
   bool m_isInvertedMask;
   bool m_canRenderMask;
 
+  bool m_isAlphaLocked;
+
 public:
   Player();
 

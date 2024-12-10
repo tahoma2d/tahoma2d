@@ -1751,7 +1751,7 @@ void ColumnArea::DrawHeader::drawFilterColor() const {
   if (col < 0 || isEmpty || column->getColorFilterId() == 0 ||
       column->getSoundColumn() || column->getSoundTextColumn() ||
       column->getPaletteColumn() ||
-      (column->isMask() &&
+      ((column->isMask() || column->isAlphaLocked()) &&
        (!o->isVerticalTimeline() ||
         Preferences::instance()->getXsheetLayoutPreference() != "Minimum")))
     return;
@@ -1778,7 +1778,7 @@ void ColumnArea::DrawHeader::drawFilterColor() const {
 }
 
 void ColumnArea::DrawHeader::drawClippingMask() const {
-  if (col < 0 || isEmpty || !column->isMask() ||
+  if (col < 0 || isEmpty || (!column->isMask() && !column->isAlphaLocked()) ||
       !o->flag(PredefinedFlag::THUMBNAIL_AREA_VISIBLE))
     return;
 
@@ -1795,11 +1795,17 @@ void ColumnArea::DrawHeader::drawClippingMask() const {
                      filterColor.m);
   }
 
-  static QPixmap basePixmap = generateIconPixmap(
+  static QPixmap baseMaskPixmap = generateIconPixmap(
       "clipping_mask", qreal(1.0), QSize(), Qt::KeepAspectRatio, false);
 
+  static QPixmap baseAlphPixmap = generateIconPixmap(
+      "alpha_locked", qreal(1.0), QSize(), Qt::KeepAspectRatio, false);
+
   ThemeManager &themeManager = ThemeManager::getInstance();
-  QPixmap maskPixmap = themeManager.recolorBlackPixels(basePixmap, maskColor);
+  QPixmap maskPixmap =
+      column->isMask()
+          ? themeManager.recolorBlackPixels(baseMaskPixmap, maskColor)
+          : themeManager.recolorBlackPixels(baseAlphPixmap, maskColor);
 
   QRect clippingMaskArea =
       o->rect(PredefinedRect::CLIPPING_MASK_AREA).translated(orig);
@@ -2494,6 +2500,9 @@ m_value->setFont(font);*/
   // contents of the combo box will be updated in setColumn
   m_filterColorCombo = new QComboBox(this);
 
+  m_alphaLock = new QCheckBox(tr("Alpha Lock"), this);
+  m_alphaLock->setCheckable(true);
+
   m_invertMask = new QCheckBox(tr("Invert Mask"), this);
   m_invertMask->setCheckable(true);
 
@@ -2555,7 +2564,8 @@ m_value->setFont(font);*/
     mainLayout->addWidget(m_filterColorCombo, 1, 1,
                           Qt::AlignLeft | Qt::AlignVCenter);
 
-    mainLayout->addWidget(m_maskGroupBox, 2, 0, 1, 2);
+    mainLayout->addWidget(m_alphaLock, 2, 0);
+    mainLayout->addWidget(m_maskGroupBox, 3, 0, 1, 2);
 
     if (m_lockBtn) {
       QHBoxLayout *lockLay = new QHBoxLayout();
@@ -2588,6 +2598,9 @@ m_value->setFont(font);*/
                        SLOT(onInvertMaskCBChanged(int)));
   ret = ret && connect(m_renderMask, SIGNAL(stateChanged(int)), this,
                        SLOT(onRenderMaskCBChanged(int)));
+
+  ret = ret && connect(m_alphaLock, SIGNAL(stateChanged(int)), this,
+                       SLOT(onAlphaLockCBChanged(int)));
 
   if (m_lockBtn)
     ret = ret && connect(m_lockBtn, SIGNAL(clicked(bool)), this,
@@ -2664,6 +2677,10 @@ void ColumnTransparencyPopup::onLockButtonClicked(bool on) {
 void ColumnTransparencyPopup::onMaskGroupBoxChanged(bool clicked) {
   int col = m_column->getIndex();
 
+  m_alphaLock->blockSignals(true);
+  m_alphaLock->setEnabled(!clicked);
+  m_alphaLock->blockSignals(false);
+
   ColumnMaskUndo *undo = new ColumnMaskUndo(col, m_maskGroupBox->isChecked());
   undo->redo();
   TUndoManager::manager()->add(undo);
@@ -2693,6 +2710,32 @@ void ColumnTransparencyPopup::onRenderMaskCBChanged(int checkedState) {
   ColumnMaskRenderUndo *undo = new ColumnMaskRenderUndo(col, checked);
   undo->redo();
   TUndoManager::manager()->add(undo);
+  update();
+}
+
+//-----------------------------------------------------------------------------
+
+void ColumnTransparencyPopup::onAlphaLockCBChanged(int checkedState) {
+  bool checked = checkedState == Qt::Checked;
+
+  int col = m_column->getIndex();
+
+  m_maskGroupBox->blockSignals(true);
+  m_maskGroupBox->setEnabled(!checked);
+  m_maskGroupBox->blockSignals(false);
+
+  TXshColumn *column =
+      TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(col);
+  TXshColumn::ColumnType type = column->getColumnType();
+  if (type != TXshColumn::eLevelType) return;
+
+  if (canUseAsMask(col)) {
+    column->setAlphaLocked(checked);
+    TApp::instance()->getCurrentScene()->notifySceneChanged();
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+    TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+  }
+
   update();
 }
 
@@ -2738,22 +2781,34 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
   m_maskGroupBox->blockSignals(true);
   m_invertMask->blockSignals(true);
   m_renderMask->blockSignals(true);
+  m_alphaLock->blockSignals(true);
   if (canUseAsMask(m_column->getIndex())) {
     m_maskGroupBox->setVisible(true);
+    m_alphaLock->setVisible(true);
+
+    m_maskGroupBox->setEnabled(!m_column->isAlphaLocked());
+    m_alphaLock->setEnabled(!m_column->isMask());
+
     m_maskGroupBox->setChecked(m_column->isMask());
-    m_maskGroupBox->setEnabled(true);
     m_invertMask->setChecked(m_column->isInvertedMask());
     m_renderMask->setChecked(m_column->canRenderMask());
+
+    m_alphaLock->setChecked(m_column->isAlphaLocked());
   } else {
     m_maskGroupBox->setChecked(false);
     m_maskGroupBox->setEnabled(false);
     m_invertMask->setChecked(false);
     m_renderMask->setChecked(false);
     m_maskGroupBox->setVisible(false);
+
+    m_alphaLock->setVisible(false);
+    m_alphaLock->setEnabled(false);
+    m_alphaLock->setChecked(false);
   }
   m_maskGroupBox->blockSignals(false);
   m_invertMask->blockSignals(false);
   m_renderMask->blockSignals(false);
+  m_alphaLock->blockSignals(false);
 
   if (m_lockBtn) {
     m_lockBtn->setChecked(m_column->isLocked());

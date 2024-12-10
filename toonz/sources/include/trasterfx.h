@@ -172,6 +172,8 @@ public:
   bool m_useMaskBox;
   bool m_plasticMask;
 
+  bool m_isAlphaLockMask;
+
   int m_lastFrame;
 
 public:

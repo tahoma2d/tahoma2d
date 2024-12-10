@@ -38,6 +38,8 @@
 
 #include "toonz/scenefx.h"
 
+#include "trop.h"
+
 #include <QList>
 
 /*
@@ -123,6 +125,23 @@ public:
                  const TRenderSettings &ri) override {
     if (!m_port.isConnected()) {
       tile.getRaster()->clear();
+      return;
+    }
+
+    if (ri.m_isAlphaLockMask) {
+      TRenderSettings maskRi(ri);
+      maskRi.m_useMaskBox = true;
+
+      TTile srcTile;
+
+      maskRi.m_applyMask       = false;
+      maskRi.m_isAlphaLockMask = false;
+      TRasterFxP(m_port.getFx())
+          ->allocateAndCompute(srcTile, tile.m_pos, tile.getRaster()->getSize(),
+                               tile.getRaster(), getLevelFrame(frame), maskRi);
+
+      TRop::ropin(tile.getRaster(), srcTile.getRaster(), tile.getRaster());
+
       return;
     }
 
@@ -1009,19 +1028,36 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
     if (m_applyMasks && (sl || isSubXsheet) &&
         (!column->isMask() || column->canRenderMask())) {
       m_applyMasks = false;
-      std::vector<TXshColumn *> masks = column->getColumnMasks();
+      std::vector<TXshColumn *> masks = column->getColumnMasks(m_frame);
+      bool isAlphaLocked              = column->isAlphaLocked();
+      if (isAlphaLocked && !masks.size()) {
+        m_applyMasks = true;
+        return PlacedFx();
+      }
       for (int i = 0; i < masks.size(); i++) {
         TXshLevelColumn *mask = masks[i]->getLevelColumn();
-        if (!mask) break;
+        if (!mask) {
+          if (isAlphaLocked) {
+            m_applyMasks = true;
+            return PlacedFx();
+          } else
+            break;
+        }
         TXshCell maskCell = mask->getCell(m_frame);
-        if (maskCell.isEmpty() || maskCell.getFrameId() == TFrameId::STOP_FRAME)
-          continue;
+        if (maskCell.isEmpty() ||
+            maskCell.getFrameId() == TFrameId::STOP_FRAME) {
+          if (isAlphaLocked) {
+            m_applyMasks = true;
+            return PlacedFx();
+          } else
+            continue;
+        }
         PlacedFx maskPf = makePF(mask->getFx());
 
         maskPf.m_fx = getFxWithColumnMovements(maskPf);
         maskPf.m_fx = TFxUtil::makeAffine(maskPf.m_fx, pf.m_aff.inv());
 
-        pf.m_fx = TFxUtil::makeMask(pf.m_fx, maskPf.m_fx);
+        pf.m_fx = TFxUtil::makeMask(pf.m_fx, maskPf.m_fx, isAlphaLocked);
       }
       m_applyMasks = true;
     }
@@ -1148,7 +1184,7 @@ PlacedFx FxBuilder::makePF(TZeraryColumnFx *zcfx) {
     // Add check for/create all ClippingMaskFx here
     if (m_applyMasks) {
       m_applyMasks                    = false;
-      std::vector<TXshColumn *> masks = column->getColumnMasks();
+      std::vector<TXshColumn *> masks = column->getColumnMasks(m_frame);
       for (int i = 0; i < masks.size(); i++) {
         TXshLevelColumn *mask = masks[i]->getLevelColumn();
         if (!mask) break;
@@ -1160,7 +1196,7 @@ PlacedFx FxBuilder::makePF(TZeraryColumnFx *zcfx) {
         maskPf.m_fx = getFxWithColumnMovements(maskPf);
         maskPf.m_fx = TFxUtil::makeAffine(maskPf.m_fx, pf.m_aff.inv());
 
-        pf.m_fx = TFxUtil::makeMask(zcfx, maskPf.m_fx);
+        pf.m_fx = TFxUtil::makeMask(zcfx, maskPf.m_fx, false);
       }
       m_applyMasks = true;
     }
