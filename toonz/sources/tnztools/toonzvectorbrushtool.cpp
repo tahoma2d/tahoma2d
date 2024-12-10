@@ -1633,9 +1633,13 @@ bool ToonzVectorBrushTool::doGuidedAutoInbetween(
   int osBack  = -1;
   int osFront = -1;
 
-  getViewer()->getGuidedFrameIdx(&osBack, &osFront);
-
   TFrameHandle *currentFrame = getApplication()->getCurrentFrame();
+  TXsheet *xsh               = app->getCurrentXsheet()->getXsheet();
+  int row                    = currentFrame->getFrameIndex();
+  int col                    = app->getCurrentColumn()->getColumnIndex();
+
+  getViewer()->getGuidedFrameIdx(xsh, row, col, &osBack, &osFront);
+
   bool resultBack            = false;
   bool resultFront           = false;
   TFrameId oFid;
@@ -1645,8 +1649,6 @@ bool ToonzVectorBrushTool::doGuidedAutoInbetween(
   TUndoManager::manager()->beginBlock();
   if (osBack != -1) {
     if (currentFrame->isEditingScene()) {
-      TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
-      int col      = app->getCurrentColumn()->getColumnIndex();
       if (xsh && col >= 0) {
         TXshCell cell             = xsh->getCell(osBack, col);
         if (!cell.isEmpty()) oFid = cell.getFrameId();
