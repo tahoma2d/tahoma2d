@@ -318,17 +318,18 @@ bool TXshLevelColumn::setNumbers(int row, int rowCount,
 std::vector<TXshColumn *> TXshLevelColumn::getColumnMasks() {
   std::vector<TXshColumn *> masks;
 
-  if (m_index <= 0) return masks;
+  if (m_index < 0) return masks;
 
   TXsheet *xsh = getXsheet();
-  for (int i = m_index - 1; i >= 0; i--) {
+  for (int i = m_index + 1; i < xsh->getColumnCount(); i++) {
     TXshColumn *mcol = xsh->getColumn(i);
 
     if (!mcol || mcol->isEmpty()) break;
     if (mcol->getColumnType() == TXshColumn::eMeshType)
       continue;  // ignore mesh levels
     if (!mcol->isMask() || !mcol->isPreviewVisible()) break;
-    masks.push_back(mcol);
+    masks.insert(masks.begin(), mcol);
+
   }
 
   return masks;

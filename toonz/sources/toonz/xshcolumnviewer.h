@@ -229,7 +229,6 @@ class ColumnTransparencyPopup final : public QWidget {
 
   QGroupBox *m_maskGroupBox;
   QCheckBox *m_invertMask;
-  QCheckBox *m_renderMask;
 
   QTimer *m_keepClosedTimer;
   bool m_keepClosed;
@@ -258,7 +257,6 @@ protected slots:
 
   void onMaskGroupBoxChanged(bool clicked);
   void onInvertMaskCBChanged(int checkedState);
-  void onRenderMaskCBChanged(int checkedState);
 
   void resetKeepClosed();
 };
