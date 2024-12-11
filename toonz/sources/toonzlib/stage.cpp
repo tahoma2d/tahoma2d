@@ -428,7 +428,6 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
         scene->getProperties()->getColorFilterColor(column->getColorFilterId());
     player.m_isMask              = isMask;
     player.m_isInvertedMask      = isMask ? column->isInvertedMask() : false;
-    player.m_canRenderMask       = isMask ? column->canRenderMask() : false;
 
     if (m_subXSheetStack.empty()) {
       player.m_z         = columnZ;
@@ -701,8 +700,7 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
     TXshColumn *column = xsh->getColumn(c);
     bool isMask        = false;
     if (column && !column->isEmpty() && !column->getSoundColumn() &&
-        !column->getFolderColumn() &&
-        (!column->isMask() || column->canRenderMask())) {
+        !column->getFolderColumn() && !column->isMask()) {
 
       if (!column->isPreviewVisible() && checkPreviewVisibility) {
         if (!isMask && column->getColumnType() != TXshColumn::eMeshType) {
@@ -736,6 +734,7 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
           std::stable_sort(mask->begin(), mask->end(), PlayerLt());
           saveMasks.swap(m_masks);
           m_masks.insert(m_masks.begin(), maskIndex);
+          isMask = false;
         }
 
         addCellWithOnionSkin(players, scene, xsh, row, c, level, false,

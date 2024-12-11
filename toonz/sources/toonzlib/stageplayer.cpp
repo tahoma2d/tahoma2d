@@ -51,8 +51,7 @@ Stage::Player::Player()
     , m_bingoOrder(0)
     , m_currentDrawingOnTop(false)
     , m_isMask(false)
-    , m_isInvertedMask(false)
-    , m_canRenderMask(false) {}
+    , m_isInvertedMask(false) {}
 
 //-----------------------------------------------------------------------------
 

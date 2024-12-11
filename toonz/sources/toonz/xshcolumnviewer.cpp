@@ -296,52 +296,6 @@ public:
   int getHistoryType() override { return HistoryType::Xsheet; }
 };
 
-class ColumnMaskRenderUndo final : public TUndo {
-  int m_col;
-  bool m_renderMask;
-
-public:
-  ColumnMaskRenderUndo(int column, bool renderMask)
-      : m_col(column), m_renderMask(renderMask) {}
-  ~ColumnMaskRenderUndo() {}
-
-  void undo() const override {
-    TXshColumn *column =
-        TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(m_col);
-    TXshColumn::ColumnType type = column->getColumnType();
-    if (type != TXshColumn::eLevelType) return;
-
-    if (canUseAsMask(m_col)) {
-      column->setCanRenderMask(!m_renderMask);
-      TApp::instance()->getCurrentScene()->notifySceneChanged();
-      TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
-      TApp::instance()->getCurrentScene()->setDirtyFlag(true);
-    }
-  }
-
-  void redo() const override {
-    TXshColumn *column =
-        TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(m_col);
-    TXshColumn::ColumnType type = column->getColumnType();
-    if (type != TXshColumn::eLevelType) return;
-
-    if (canUseAsMask(m_col)) {
-      column->setCanRenderMask(m_renderMask);
-      TApp::instance()->getCurrentScene()->notifySceneChanged();
-      TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
-      TApp::instance()->getCurrentScene()->setDirtyFlag(true);
-    }
-  }
-
-  int getSize() const override { return sizeof(*this); }
-
-  QString getHistoryString() override {
-    QString str = QObject::tr("Toggle render column mask. ");
-    return str;
-  }
-  int getHistoryType() override { return HistoryType::Xsheet; }
-};
-
 //-----------------------------------------------------------------------------
 
 namespace XsheetGUI {
@@ -2497,9 +2451,6 @@ m_value->setFont(font);*/
   m_invertMask = new QCheckBox(tr("Invert Mask"), this);
   m_invertMask->setCheckable(true);
 
-  m_renderMask = new QCheckBox(tr("Render Mask"), this);
-  m_renderMask->setCheckable(true);
-
   m_maskGroupBox = new QGroupBox("Clipping Mask", this);
   m_maskGroupBox->setCheckable(true);
   QGridLayout *maskLay = new QGridLayout();
@@ -2509,7 +2460,6 @@ m_value->setFont(font);*/
   maskLay->setColumnStretch(2, 1);
   {
     maskLay->addWidget(m_invertMask, 0, 0, 1, 2);
-    maskLay->addWidget(m_renderMask, 1, 0, 1, 2);
   }
   m_maskGroupBox->setLayout(maskLay);
 
@@ -2586,8 +2536,6 @@ m_value->setFont(font);*/
                        SLOT(onMaskGroupBoxChanged(bool)));
   ret = ret && connect(m_invertMask, SIGNAL(stateChanged(int)), this,
                        SLOT(onInvertMaskCBChanged(int)));
-  ret = ret && connect(m_renderMask, SIGNAL(stateChanged(int)), this,
-                       SLOT(onRenderMaskCBChanged(int)));
 
   if (m_lockBtn)
     ret = ret && connect(m_lockBtn, SIGNAL(clicked(bool)), this,
@@ -2683,19 +2631,6 @@ void ColumnTransparencyPopup::onInvertMaskCBChanged(int checkedState) {
   update();
 }
 
-//-----------------------------------------------------------------------------
-
-void ColumnTransparencyPopup::onRenderMaskCBChanged(int checkedState) {
-  bool checked = checkedState == Qt::Checked;
-
-  int col = m_column->getIndex();
-
-  ColumnMaskRenderUndo *undo = new ColumnMaskRenderUndo(col, checked);
-  undo->redo();
-  TUndoManager::manager()->add(undo);
-  update();
-}
-
 //----------------------------------------------------------------
 
 void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
@@ -2737,23 +2672,19 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
 
   m_maskGroupBox->blockSignals(true);
   m_invertMask->blockSignals(true);
-  m_renderMask->blockSignals(true);
   if (canUseAsMask(m_column->getIndex())) {
     m_maskGroupBox->setVisible(true);
     m_maskGroupBox->setChecked(m_column->isMask());
     m_maskGroupBox->setEnabled(true);
     m_invertMask->setChecked(m_column->isInvertedMask());
-    m_renderMask->setChecked(m_column->canRenderMask());
   } else {
     m_maskGroupBox->setChecked(false);
     m_maskGroupBox->setEnabled(false);
     m_invertMask->setChecked(false);
-    m_renderMask->setChecked(false);
     m_maskGroupBox->setVisible(false);
   }
   m_maskGroupBox->blockSignals(false);
   m_invertMask->blockSignals(false);
-  m_renderMask->blockSignals(false);
 
   if (m_lockBtn) {
     m_lockBtn->setChecked(m_column->isLocked());
