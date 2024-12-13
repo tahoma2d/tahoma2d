@@ -431,7 +431,6 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
         scene->getProperties()->getColorFilterColor(column->getColorFilterId());
     player.m_isMask              = isMask;
     player.m_isInvertedMask      = isMask ? column->isInvertedMask() : false;
-    player.m_canRenderMask       = isMask ? column->canRenderMask() : false;
     player.m_isAlphaLocked       = isAlphaLocked;
 
     if (m_subXSheetStack.empty()) {
@@ -761,8 +760,7 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
     }
 
     if (column && !column->isEmpty() && !column->getSoundColumn() &&
-        !column->getFolderColumn() &&
-        (!column->isMask() || column->canRenderMask())) {
+        !column->getFolderColumn() && !column->isMask()) {
 
       if (!column->isPreviewVisible() && checkPreviewVisibility) {
         if (!isMask && column->getColumnType() != TXshColumn::eMeshType) {

@@ -85,7 +85,7 @@ protected:
     eMasked                = 0x10,
     eCamstandTransparent43 = 0x20,  // obsoleto, solo per retrocompatibilita'
     eInvertedMask          = 0x80,
-    eRenderMask            = 0x100,
+    eRenderMask            = 0x100, // Obsolete but don't remove or it may impact older scens
     eAlphaLocked           = 0x200
   };
 
@@ -204,7 +204,6 @@ Return true if column is a mask.
 */
   bool isMask() const;
   bool isInvertedMask() const;
-  bool canRenderMask() const;
 
   bool isAlphaLocked() const;
   /*!
@@ -213,7 +212,6 @@ Set column status mask to \b on.
 */
   void setIsMask(bool on);
   void setInvertedMask(bool on);
-  void setCanRenderMask(bool on);
 
   std::vector<TXshColumn *> getColumnMasks(int frame);
 

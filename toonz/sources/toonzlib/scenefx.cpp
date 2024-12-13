@@ -1025,8 +1025,7 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
     }
 
     // Add check for/create all ClippingMaskFx here
-    if (m_applyMasks && (sl || isSubXsheet) &&
-        (!column->isMask() || column->canRenderMask())) {
+    if (m_applyMasks && (sl || isSubXsheet) && !column->isMask()) {
       m_applyMasks = false;
       std::vector<TXshColumn *> masks = column->getColumnMasks(m_frame);
       bool isAlphaLocked              = column->isAlphaLocked();

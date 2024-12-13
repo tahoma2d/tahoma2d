@@ -996,8 +996,7 @@ void TLevelColumnFx::doCompute(TTile &tile, double frame,
                                const TRenderSettings &info) {
   if (!m_levelColumn) return;
 
-  if (m_levelColumn->isMask() && !info.m_applyMask &&
-      !m_levelColumn->canRenderMask() && !info.m_plasticMask)
+  if (m_levelColumn->isMask() && !info.m_applyMask && !info.m_plasticMask)
     return;
 
   // Ensure that a corresponding cell and level exists
@@ -1630,7 +1629,6 @@ std::string TLevelColumnFx::getAlias(double frame,
       if (!mask) break;
 
       if (mask->isInvertedMask()) maskAlias += "inv";
-      if (mask->canRenderMask()) maskAlias += "render";
       break;
     }
     rdata += maskAlias;
@@ -1913,7 +1911,6 @@ std::string TZeraryColumnFx::getAlias(double frame,
         if (!mask) break;
 
         if (mask->isInvertedMask()) maskAlias += "inv";
-        if (mask->canRenderMask()) maskAlias += "render";
         break;
       }
       rdata += "," + maskAlias;
