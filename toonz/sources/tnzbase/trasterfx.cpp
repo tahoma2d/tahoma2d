@@ -896,7 +896,10 @@ void TRasterFx::compute(TTile &tile, double frame,
   enlargeToI(bbox);
 
   TRectD interestingRect(tilePlacement * bbox);
-  if (myIsEmpty(interestingRect)) return;
+  if (myIsEmpty(interestingRect)) {
+    if (info.m_isAlphaLockMask) tile.getRaster()->clear();
+    return;
+  }
 
   TDimension tileSize = tile.getRaster()->getSize();
   // The format of the incoming raster depends on whether the previous node
@@ -1224,7 +1227,8 @@ TRenderSettings::TRenderSettings()
     , m_invertedMask(false)
     , m_useMaskBox(false)
     , m_plasticMask(false)
-    , m_lastFrame(0) {}
+    , m_lastFrame(0)
+    , m_isAlphaLockMask(false) {}
 
 //------------------------------------------------------------------------------
 
