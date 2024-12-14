@@ -525,14 +525,15 @@ void TXsheet::clearAll() {
 
 //-----------------------------------------------------------------------------
 
-int TXsheet::getCellRange(int col, int &r0, int &r1) const {
+int TXsheet::getCellRange(int col, int &r0, int &r1,
+                          bool ignoreLastStop) const {
   r0                 = 0;
   r1                 = -1;
   TXshColumnP column = m_imp->m_columnSet.getColumn(col);
   if (!column) return 0;
   TXshCellColumn *cellColumn = column->getCellColumn();
   if (!cellColumn) return 0;
-  return cellColumn->getRange(r0, r1);
+  return cellColumn->getRange(r0, r1, ignoreLastStop);
 }
 
 //-----------------------------------------------------------------------------

@@ -117,6 +117,13 @@ void TXshLevelColumn::loadData(TIStream &is) {
       is >> id;
       setColorFilterId(id);
     } else if (tagName == "cells") {
+      int loopToFrame = 0;
+      is.getTagParam("loopToFrame", loopToFrame);
+      if (loopToFrame > 0) {
+        setLoopLimitEnabled(true);
+        setLoopToFrame(loopToFrame);
+      }
+
       while (is.openChild(tagName)) {
         if (tagName == "cell") {
           TPersist *p = 0;
@@ -174,7 +181,10 @@ void TXshLevelColumn::saveData(TOStream &os) {
     os.child("filter_color_id") << (int)getColorFilterId();
   int r0, r1;
   if (getRange(r0, r1)) {
-    os.openChild("cells");
+    std::map<std::string, std::string> attr;
+    if (isLoopLimited()) attr["loopToFrame"] = std::to_string(getLoopToFrame());
+     
+    os.openChild("cells", attr);
     for (int r = r0; r <= r1; r++) {
       TXshCell cell = getCell(r, false);
       if (cell.isEmpty()) continue;

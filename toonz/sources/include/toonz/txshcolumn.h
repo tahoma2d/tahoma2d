@@ -73,6 +73,9 @@ class DVAPI TXshColumn : public TColumnHeader, public TPersist {
   QStack<int> m_folderId;
   int m_folderSelector;
 
+  bool m_loopLimitEnabled;
+  int m_loopToFrame;
+
 public:
 private:
   int m_colorFilterId;
@@ -86,7 +89,8 @@ protected:
     eCamstandTransparent43 = 0x20,  // obsoleto, solo per retrocompatibilita'
     eInvertedMask          = 0x80,
     eRenderMask            = 0x100,
-    eAlphaLocked           = 0x200
+    eAlphaLocked           = 0x200,
+    eLooped                = 0x800
   };
 
   TRaster32P m_icon;
@@ -113,6 +117,8 @@ Constructs a TXshColumn with default value.
       , m_opacity(255)
       , m_colorFilterId(0)  // None
       , m_folderSelector(-1)
+      , m_loopLimitEnabled(false)
+      , m_loopToFrame(-1)
   {}
 
   enum ColumnType {
@@ -216,6 +222,16 @@ Set column status mask to \b on.
   void setCanRenderMask(bool on);
 
   void setAlphaLocked(bool on);
+
+  bool isLooped() const;
+  void setLooped(bool on);
+  int getLoopedFrame(int row, bool forOnionSkin = false);
+  TXshCell getLoopedCell(int row, bool forOnionSkin = false,
+                         bool implicitLookup = true);
+  bool isLoopLimited() const;
+  void setLoopLimitEnabled(bool on);
+  int getLoopToFrame() const;
+  void setLoopToFrame(int frame);
 
   virtual bool isEmpty() const { return true; }
 

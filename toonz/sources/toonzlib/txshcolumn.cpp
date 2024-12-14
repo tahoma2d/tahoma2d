@@ -53,8 +53,8 @@ int TXshCellColumn::getRange(int &r0, int &r1, bool ignoreLastStop) const {
   for (i = cellCount - 1; i >= 0 && m_cells[i].isEmpty(); i--) {
   }
   r1 = m_first + i;
-  if (r1 < m_cells.size() && r1 > r0 && ignoreLastStop &&
-      m_cells[r1].getFrameId().isStopFrame())
+  if (r1 > r0 && ignoreLastStop &&
+      m_cells[cellCount - 1].getFrameId().isStopFrame())
     r1--;
   return r1 - r0 + 1;
 }
@@ -828,11 +828,79 @@ void TXshColumn::setAlphaLocked(bool on) {
 
 //-----------------------------------------------------------------------------
 
+void TXshColumn::setLooped(bool on) {
+  const int mask = eLooped;
+  if (on)
+    m_status |= mask;
+  else
+    m_status &= ~mask;
+}
+
+//-----------------------------------------------------------------------------
+
+bool TXshColumn::isLooped() const { return (m_status & eLooped) != 0; }
+
+//-----------------------------------------------------------------------------
+
+bool TXshColumn::isLoopLimited() const { return m_loopLimitEnabled; }
+
+//-----------------------------------------------------------------------------
+
+void TXshColumn::setLoopLimitEnabled(bool on) { m_loopLimitEnabled = on; }
+
+//-----------------------------------------------------------------------------
+
+int TXshColumn::getLoopToFrame() const { return m_loopToFrame; }
+
+//-----------------------------------------------------------------------------
+
+void TXshColumn::setLoopToFrame(int frame) { m_loopToFrame = frame; }
+
+//-----------------------------------------------------------------------------
+
+int TXshColumn::getLoopedFrame(int row, bool forOnionSkin) {
+  if ((m_loopLimitEnabled && row >= m_loopToFrame)) return -1;
+
+  TXshCellColumn *cellColumn = getCellColumn();
+  if (!cellColumn) return -1;
+
+  int r0, r1;
+  cellColumn->getRange(r0, r1, true);
+
+  if (r1 < 0 || (!forOnionSkin && row < r0)) return row;
+
+  int totalFrames = r1 - r0 + 1;
+  int adjustedRow = row - r0;
+  if (adjustedRow < 0) adjustedRow += totalFrames;
+
+  int loopedRow   = (adjustedRow % totalFrames) + r0;
+  return loopedRow;
+}
+
+//-----------------------------------------------------------------------------
+
+TXshCell TXshColumn::getLoopedCell(int row, bool forOnionSkin,
+                                   bool implicitLookup) {
+  TXshCellColumn *cellColumn = getCellColumn();
+  if (!cellColumn) return TXshCell();
+
+  int loopedRow = getLoopedFrame(row, forOnionSkin);
+
+  if (loopedRow < 0) return TXshCell();
+
+  return cellColumn->getCell(loopedRow, implicitLookup);
+}
+
+//-----------------------------------------------------------------------------
+
 void TXshColumn::resetColumnProperties() {
   setStatusWord(0);
   setOpacity(255);
   setColorTag(0);
   setColorFilterId(0);  // None
+  setLooped(false);
+  setLoopLimitEnabled(false);
+  setLoopToFrame(-1);
 }
 
 

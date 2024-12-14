@@ -367,7 +367,12 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
   double columnZ        = pegbar->getZ(row);
   double columnNoScaleZ = pegbar->getGlobalNoScaleZ();
 
-  TXshCell cell       = xsh->getCell(row, col);
+  bool isLooped      = column->isLooped();
+  bool loopOnionSkin = isLooped && m_onionSkinDistance != 0 &&
+                       m_onionSkinDistance != c_noOnionSkin;
+
+  TXshCell cell = isLooped ? column->getLoopedCell(row, loopOnionSkin)
+                           : xsh->getCell(row, col);
   TXshLevel *xl       = cell.m_level.getPointer();
   TXshSimpleLevel *sl = xl ? xl->getSimpleLevel() : 0;
   // check the previous row for a stop motion layer

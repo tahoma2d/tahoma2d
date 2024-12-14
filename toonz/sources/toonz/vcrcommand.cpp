@@ -72,11 +72,15 @@ public:
     int row = TApp::instance()->getCurrentFrame()->getFrame();
     int col = TApp::instance()->getCurrentColumn()->getColumnIndex();
 
+    TXshColumn *column = xsh->getColumn(col);
+
     const TXshCell &cell = xsh->getCell(row, col);
 
     int frameCount = xsh->getFrameCount();
     while (row < frameCount) {
       row++;
+      if (row >= frameCount && column && column->isLooped()) row = 0;
+
       if (xsh->getCell(row, col).isEmpty() ||
           xsh->getCell(row, col).getFrameId().isStopFrame())
         continue;
@@ -104,11 +108,16 @@ public:
     int row = TApp::instance()->getCurrentFrame()->getFrame();
     int col = TApp::instance()->getCurrentColumn()->getColumnIndex();
 
+    TXshColumn *column = xsh->getColumn(col);
+
     TXshCell cell = xsh->getCell(row, col);
 
     // Get *last* cell in previous uniform cell block
+    int frameCount = xsh->getFrameCount();
     while (row >= 0) {
       row--;
+      if (row < 0 && column && column->isLooped()) row = frameCount - 1;
+
       if (xsh->getCell(row, col).isEmpty() ||
           xsh->getCell(row, col).getFrameId().isStopFrame())
         continue;

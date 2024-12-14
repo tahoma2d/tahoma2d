@@ -269,7 +269,8 @@ public:
      zero and sets
           \b \e r0 to 0 and \b \e r1 to -1.
   */
-  int getCellRange(int col, int &r0, int &r1) const;
+  int getCellRange(int col, int &r0, int &r1,
+                   bool ignoreLastStop = false) const;
   /*! Returns the max frame number of xsheet column identified by \b \e col and
      calls \b TXshColumn::getMaxFrame().
           \sa getFrameCount()

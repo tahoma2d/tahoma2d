@@ -100,47 +100,66 @@ void OnionSkinMask::getAll(int currentRow,
 
   if (!m_isRelativeFrameMode && xsh && col >= 0) {
     // Translate relative drawing position to frame drawing position
+    TXshColumn *column = xsh->getColumn(col);
+    bool isLooped      = column && column->isLooped();
     int r0, r1;
-    int n = xsh->getCellRange(col, r0, r1);
+    int n = xsh->getCellRange(col, r0, r1, isLooped);
     std::vector<TXshCell> cells(n);
-    bool useImplicit = Preferences::instance()->isImplicitHoldEnabled();
     xsh->getCells(r0, col, n, &cells[0]);
-    TXshCell startCell = xsh->getCell(currentRow, col);
+    int row = currentRow;
+    if (isLooped && (currentRow < r0 || currentRow > r1)) {
+      row = column->getLoopedFrame(currentRow);
+    }
+
+    TXshCell startCell = xsh->getCell(row, col);
     for (; dosIt != dosEnd;) {
-      int r             = currentRow - r0;
-      TXshCell prevCell = startCell;
-      if (r >= n)  // after last cell
-        r = n - 1;
-      else if (r < 0)  // Before the 1st cell
-        r = 0;
+      int dist  = 0;
+      int r     = row - r0;
+      if (r >= n) {  // after last cell
+        r         = n - 1;
+        startCell = cells[r];
+      } else if (r < 0) {  // Before the 1st cell
+        r         = 0;
+        startCell = cells[r];
+      }
+      TXshCell prevCell                                 = startCell;
       if (prevCell.getFrameId().isStopFrame()) prevCell = TXshCell();
 
       int x = dosIt->first;
       if (x < 0) {
+        if ((row + x + 1) < r0) {
+          ++dosIt;
+          continue;
+        }
         // Find Previous Drawings
         for (; r >= 0; r--) {
-          if (cells[r].isEmpty() || cells[r].getFrameId().isStopFrame())
-            continue;
-          if (cells[r] != prevCell) {
+          if (!cells[r].isEmpty() && !cells[r].getFrameId().isStopFrame() &&
+              cells[r] != prevCell) {
             prevCell = cells[r];
             x++;
             if (!x) break;
           }
+          if (r == 0 && isLooped) r = n;
+          dist--;
         }
       } else if (x > 0) {
+        if ((row + x) < r0) {
+          ++dosIt;
+          continue;
+        }
         // Find Next Drawings
         for (; r < n; r++) {
-          if (cells[r].isEmpty() || cells[r].getFrameId().isStopFrame())
-            continue;
-          if (cells[r] != prevCell) {
+          if (!cells[r].isEmpty() && !cells[r].getFrameId().isStopFrame() &&
+              cells[r] != prevCell) {
             prevCell = cells[r];
             x--;
             if (!x) break;
           }
+          if (r == (n - 1) && isLooped) r = -1;
+          dist++;
         }
       }
-      if (r >= 0 && r < n)
-        dos2mos.push_back(std::make_pair((r + r0 - currentRow), dosIt->second));
+      if (dist) dos2mos.push_back(std::make_pair(dist, dosIt->second));
       ++dosIt;
     }
   }

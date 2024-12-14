@@ -11,6 +11,8 @@
 #include "toonz/tcolumnhandle.h"
 #include "toonz/txsheet.h"
 
+#include "toonzqt/intfield.h"
+
 #include "../include/tundo.h"
 #include "../include/historytypes.h"
 
@@ -236,6 +238,10 @@ class ColumnTransparencyPopup final : public QWidget {
   QTimer *m_keepClosedTimer;
   bool m_keepClosed;
 
+  QGroupBox *m_loopGroupBox;
+  QCheckBox *m_loopLimit;
+  DVGui::IntLineEdit *m_loopToFrame;
+
 public:
   ColumnTransparencyPopup(XsheetViewer *viewer, QWidget *parent);
   void setColumn(TXshColumn *column);
@@ -263,6 +269,10 @@ protected slots:
   void onRenderMaskCBChanged(int checkedState);
 
   void onAlphaLockCBChanged(int checkedState);
+
+  void onLoopGroupBoxChanged(bool clicked);
+  void onLoopLimitCBChanged(int checkedState);
+  void onLoopToFrameChanged(const QString &);
 
   void resetKeepClosed();
 };
@@ -378,6 +388,7 @@ class ColumnArea final : public QWidget {
     void drawParentHandleName() const;
     void drawFilterColor() const;
     void drawClippingMask() const;
+    void drawLoopIndicator() const;
 
     void drawSoundIcon(bool isPlaying) const;
     void drawVolumeControl(double volume) const;

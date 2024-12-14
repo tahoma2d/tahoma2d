@@ -116,7 +116,10 @@ public:
 
   int getLevelFrame(int frame) const {
     if (!m_cellColumn) return m_frame;
-    TXshCell cell = m_cellColumn->getCell(tfloor(frame));
+    TXshCell cell = m_cellColumn->isLooped()
+                        ? m_cellColumn->getLoopedCell(tfloor(frame))
+                        : m_cellColumn->getCell(tfloor(frame));
+
     assert(!cell.isEmpty());
     return cell.m_frameId.getNumber() - 1;
   }
@@ -882,7 +885,10 @@ PlacedFx FxBuilder::makePF(TLevelColumnFx *lcfx) {
 
   // Retrieve the corresponding xsheet cell to build up
   /*-- 現在のフレームのセルを取得 --*/
-  TXshCell cell  = lcfx->getColumn()->getCell(tfloor(m_frame));
+  TXshCell cell = lcfx->getColumn()->isLooped()
+                      ? lcfx->getColumn()
+                             ->getLoopedCell(tfloor(m_frame)) : lcfx->getColumn()
+                             ->getCell(tfloor(m_frame));
   int levelFrame = cell.m_frameId.getNumber() - 1;
 
   /*--  ParticlesFxに繋がっておらず、空セルの場合は 中身無しを返す --*/

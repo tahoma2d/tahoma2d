@@ -147,7 +147,8 @@ enum class PredefinedRect {
   CLIPPING_MASK_AREA,
   FOLDER_INDICATOR_AREA,
   FOLDER_TOGGLE_ICON,
-  BUTTONS_AREA
+  BUTTONS_AREA,
+  LOOP_INDICATOR_AREA
 };
 enum class PredefinedLine {
   LOCKED,              //! dotted vertical line when cell is locked

@@ -16,7 +16,6 @@
 #include "toonzqt/tselectionhandle.h"
 #include "toonzqt/gutil.h"
 #include "toonzqt/icongenerator.h"
-#include "toonzqt/intfield.h"
 #include "toonzqt/fxiconmanager.h"
 
 // TnzLib includes
@@ -171,6 +170,24 @@ bool canUseAsMask(int col) {
     TXshLevel *lvl = *it2;
     int type       = lvl->getType();
     if (type == PLI_XSHLEVEL || type == TZP_XSHLEVEL || type == OVL_XSHLEVEL)
+      return true;
+  }
+  return false;
+}
+
+bool canLoop(int col) {
+  TXshColumn *column =
+      TApp::instance()->getCurrentXsheet()->getXsheet()->getColumn(col);
+  TXshColumn::ColumnType type = column->getColumnType();
+  if (type != TXshColumn::eLevelType) return false;
+
+  const QSet<TXshLevel *> levels = getLevels(column);
+  QSet<TXshLevel *>::const_iterator it2;
+  for (it2 = levels.begin(); it2 != levels.end(); it2++) {
+    TXshLevel *lvl = *it2;
+    int type       = lvl->getType();
+    if (type == PLI_XSHLEVEL || type == TZP_XSHLEVEL || type == OVL_XSHLEVEL ||
+        type == CHILD_XSHLEVEL)
       return true;
   }
   return false;
@@ -1750,7 +1767,7 @@ void ColumnArea::DrawHeader::drawParentHandleName() const {
 void ColumnArea::DrawHeader::drawFilterColor() const {
   if (col < 0 || isEmpty || column->getColorFilterId() == 0 ||
       column->getSoundColumn() || column->getSoundTextColumn() ||
-      column->getPaletteColumn() ||
+      column->getPaletteColumn() || column->isLooped() ||
       ((column->isMask() || column->isAlphaLocked()) &&
        (!o->isVerticalTimeline() ||
         Preferences::instance()->getXsheetLayoutPreference() != "Minimum")))
@@ -1820,6 +1837,45 @@ void ColumnArea::DrawHeader::drawClippingMask() const {
   }
 
   p.drawPixmap(clippingMaskArea, maskPixmap);
+}
+
+void ColumnArea::DrawHeader::drawLoopIndicator() const {
+  if (col < 0 || isEmpty || !o->flag(PredefinedFlag::THUMBNAIL_AREA_VISIBLE) ||
+      !column->isLooped())
+    return;
+
+  QColor maskColor = QColor(75, 75, 75);
+
+  if (column->getColorFilterId()) {
+    TPixel32 filterColor =
+        TApp::instance()
+            ->getCurrentScene()
+            ->getScene()
+            ->getProperties()
+            ->getColorFilterColor(column->getColorFilterId());
+    maskColor.setRgb(filterColor.r, filterColor.g, filterColor.b,
+                     filterColor.m);
+  }
+
+  static QPixmap basePixmap = generateIconPixmap("repeat", qreal(1.0), QSize(),
+                                                 Qt::KeepAspectRatio, false);
+
+  ThemeManager &themeManager = ThemeManager::getInstance();
+  QPixmap loopPixmap = themeManager.recolorBlackPixels(basePixmap, maskColor);
+
+  QRect loopIndicatorArea =
+      o->rect(PredefinedRect::LOOP_INDICATOR_AREA).translated(orig);
+  // Adjust for folder indicator
+  QRect indicatorRect = o->rect(PredefinedRect::FOLDER_INDICATOR_AREA);
+  if (o->isVerticalTimeline()) {
+    loopIndicatorArea.adjust(0, m_viewer->getXsheetBodyOffset(), 0,
+                             m_viewer->getXsheetBodyOffset());
+  } else if (column && column->folderDepth()) {
+    loopIndicatorArea.adjust(indicatorRect.width() * column->folderDepth(), 0,
+                             indicatorRect.width() * column->folderDepth(), 0);
+  }
+
+  p.drawPixmap(loopIndicatorArea, loopPixmap);
 }
 
 void ColumnArea::DrawHeader::drawSoundIcon(bool isPlaying) const {
@@ -2124,6 +2180,7 @@ void ColumnArea::drawLevelColumnHead(QPainter &p, int col) {
   drawHeader.drawThumbnail(iconPixmap);
   drawHeader.drawFilterColor();
   drawHeader.drawClippingMask();
+  drawHeader.drawLoopIndicator();
   drawHeader.drawConfig();
   drawHeader.drawPegbarName();
   drawHeader.drawParentHandleName();
@@ -2503,6 +2560,24 @@ m_value->setFont(font);*/
   m_alphaLock = new QCheckBox(tr("Alpha Lock"), this);
   m_alphaLock->setCheckable(true);
 
+  m_loopGroupBox = new QGroupBox(tr("Loop Frames"), this);
+  m_loopGroupBox->setCheckable(true);
+
+  m_loopLimit = new QCheckBox(tr("Loop To Frame:"), this);
+  m_loopLimit->setCheckable(true);
+
+  m_loopToFrame = new DVGui::IntLineEdit(this, 1, 1);
+  m_loopToFrame->setDisabled(true);
+
+  QHBoxLayout *loopLay = new QHBoxLayout();
+  loopLay->setContentsMargins(5, 5, 5, 5);
+  loopLay->setSpacing(6);
+  {
+    loopLay->addWidget(m_loopLimit);
+    loopLay->addWidget(m_loopToFrame, 1);
+  }
+  m_loopGroupBox->setLayout(loopLay);
+
   m_invertMask = new QCheckBox(tr("Invert Mask"), this);
   m_invertMask->setCheckable(true);
 
@@ -2565,7 +2640,8 @@ m_value->setFont(font);*/
                           Qt::AlignLeft | Qt::AlignVCenter);
 
     mainLayout->addWidget(m_alphaLock, 2, 0);
-    mainLayout->addWidget(m_maskGroupBox, 3, 0, 1, 2);
+    mainLayout->addWidget(m_loopGroupBox, 3, 0, 1, 2);
+    mainLayout->addWidget(m_maskGroupBox, 4, 0, 1, 2);
 
     if (m_lockBtn) {
       QHBoxLayout *lockLay = new QHBoxLayout();
@@ -2601,6 +2677,13 @@ m_value->setFont(font);*/
 
   ret = ret && connect(m_alphaLock, SIGNAL(stateChanged(int)), this,
                        SLOT(onAlphaLockCBChanged(int)));
+
+  ret = ret && connect(m_loopGroupBox, SIGNAL(clicked(bool)), this,
+                       SLOT(onLoopGroupBoxChanged(bool)));
+  ret = ret && connect(m_loopLimit, SIGNAL(stateChanged(int)), this,
+                       SLOT(onLoopLimitCBChanged(int)));
+  ret = ret && connect(m_loopToFrame, SIGNAL(textChanged(const QString &)),
+                       this, SLOT(onLoopToFrameChanged(const QString &)));
 
   if (m_lockBtn)
     ret = ret && connect(m_lockBtn, SIGNAL(clicked(bool)), this,
@@ -2739,6 +2822,54 @@ void ColumnTransparencyPopup::onAlphaLockCBChanged(int checkedState) {
   update();
 }
 
+//-----------------------------------------------------------------------------
+
+void ColumnTransparencyPopup::onLoopGroupBoxChanged(bool clicked) {
+  m_column->setLooped(clicked);
+
+  TApp::instance()->getCurrentXsheet()->notifyXsheetSoundChanged();
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  ((ColumnArea *)parent())->update();
+}
+
+//-----------------------------------------------------------------------------
+
+void ColumnTransparencyPopup::onLoopLimitCBChanged(int checkedState) {
+  bool checked = checkedState == Qt::Checked;
+
+  m_column->setLoopLimitEnabled(checked);
+  m_loopToFrame->setEnabled(checked);
+  if (checked) {
+    int r0, r1;
+    m_column->getRange(r0, r1, true);
+    m_loopToFrame->setBottomRange(r1 + 1);
+    if (!m_loopToFrame->getValue()) m_loopToFrame->setValue(r1 + 1);
+  }
+
+  TApp::instance()->getCurrentXsheet()->notifyXsheetSoundChanged();
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  ((ColumnArea *)parent())->update();
+}
+
+//----------------------------------------------------------------
+
+void ColumnTransparencyPopup::onLoopToFrameChanged(const QString &str) {
+  int val = str.toInt();
+
+  int r0, r1;
+  m_column->getRange(r0, r1, true);
+  if(val < (r1 + 1)) val = r1 + 1;
+
+  m_column->setLoopToFrame(val);
+
+  TApp::instance()->getCurrentXsheet()->notifyXsheetSoundChanged();
+  TApp::instance()->getCurrentScene()->notifySceneChanged();
+  TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  ((ColumnArea *)parent())->update();
+}
+
 //----------------------------------------------------------------
 
 void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
@@ -2809,6 +2940,62 @@ void ColumnTransparencyPopup::setColumn(TXshColumn *column) {
   m_invertMask->blockSignals(false);
   m_renderMask->blockSignals(false);
   m_alphaLock->blockSignals(false);
+
+  m_loopGroupBox->blockSignals(true);
+  m_loopLimit->blockSignals(true);
+  m_loopToFrame->blockSignals(true);
+  if (canLoop(m_column->getIndex())) {
+    m_loopGroupBox->setEnabled(true);
+    m_loopGroupBox->setVisible(true);
+    m_loopGroupBox->setChecked(m_column->isLooped());
+
+    m_loopLimit->setChecked(m_column->isLoopLimited());
+    if (m_column->isLoopLimited()) {
+      int r0, r1;
+      m_column->getRange(r0, r1, true);
+      m_loopToFrame->setBottomRange(r1 + 1);
+      m_loopToFrame->setValue(m_column->getLoopToFrame());
+      m_loopToFrame->setEnabled(true);
+    } else
+      m_loopToFrame->clear();
+  } else {
+    m_loopGroupBox->setChecked(false);
+    m_loopGroupBox->setEnabled(false);
+    m_loopGroupBox->setVisible(false);
+    m_loopLimit->setChecked(false);
+    m_loopToFrame->clear();
+  }
+  m_loopGroupBox->blockSignals(false);
+  m_loopLimit->blockSignals(false);
+  m_loopToFrame->blockSignals(false);
+
+  m_loopGroupBox->blockSignals(true);
+  m_loopLimit->blockSignals(true);
+  m_loopToFrame->blockSignals(true);
+  if (canLoop(m_column->getIndex())) {
+    m_loopGroupBox->setEnabled(true);
+    m_loopGroupBox->setVisible(true);
+    m_loopGroupBox->setChecked(m_column->isLooped());
+
+    m_loopLimit->setChecked(m_column->isLoopLimited());
+    if (m_column->isLoopLimited()) {
+      int r0, r1;
+      m_column->getRange(r0, r1, true);
+      m_loopToFrame->setBottomRange(r1 + 1);
+      m_loopToFrame->setValue(m_column->getLoopToFrame());
+      m_loopToFrame->setEnabled(true);
+    } else
+      m_loopToFrame->clear();
+  } else {
+    m_loopGroupBox->setChecked(false);
+    m_loopGroupBox->setEnabled(false);
+    m_loopGroupBox->setVisible(false);
+    m_loopLimit->setChecked(false);
+    m_loopToFrame->clear();
+  }
+  m_loopGroupBox->blockSignals(false);
+  m_loopLimit->blockSignals(false);
+  m_loopToFrame->blockSignals(false);
 
   if (m_lockBtn) {
     m_lockBtn->setChecked(m_column->isLocked());
