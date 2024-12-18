@@ -1836,11 +1836,34 @@ void getClosingSegments(TL2LAutocloser &l2lautocloser, double facMin,
 
 //---------------------------------------------------------------------------------
 
+struct SegmentData {
+  int startIdx;
+  double startValue;
+  bool isStartStrokeStart;
+  int endIdx;
+  bool isEndStrokeStart;
+  double endValue;
+  double distance;
+  int segType;  // 1 = e2e, 2 = e2l, 3 = l2l
+};
+
+bool segmentSorter(const SegmentData &seg1, const SegmentData &seg2) {
+  return seg1.distance < seg2.distance;
+}
+
 void getClosingPoints(const TRectD &rect, double fac, const TVectorImageP &vi,
                       vector<pair<int, double>> &startPoints,
                       vector<pair<int, double>> &endPoints) {
+
   UINT strokeCount = vi->getStrokeCount();
   TL2LAutocloser l2lautocloser;
+
+  std::map<int, SegmentData> strokeSegmentsStart;
+  std::map<int, SegmentData> strokeSegmentsEnd;
+  std::map<int, std::vector<SegmentData>> strokeSegmentsSkipped;
+
+  strokeSegmentsStart.clear();
+  strokeSegmentsEnd.clear();
 
   for (UINT i = 0; i < strokeCount; i++) {
     TStroke *s1 = vi->getStroke(i);
@@ -1876,16 +1899,254 @@ void getClosingPoints(const TRectD &rect, double fac, const TVectorImageP &vi,
       vector<std::pair<double, double>> segments;
       getClosingSegments(l2lautocloser, autoTol, autoTol + fac, s1, s2, 0,
                          segments);
+
+      TPointD s1Start = s1->getPoint(0);
+      TPointD s1End   = s1->getPoint(1);
+      TPointD s2Start = s2->getPoint(0);
+      TPointD s2End   = s2->getPoint(1);
+
       for (UINT k = 0; k < segments.size(); k++) {
         TPointD p1 = s1->getPoint(segments[k].first);
         TPointD p2 = s2->getPoint(segments[k].second);
+
+        bool isP1EndPt = !s1->isSelfLoop() && (p1 == s1Start || p1 == s1End);
+        bool isP1StrokeStart = !s1->isSelfLoop() && p1 == s1Start;
+        bool isP2EndPt = !s2->isSelfLoop() && (p2 == s2Start || p2 == s2End);
+        bool isP2StrokeStart = !s2->isSelfLoop() && p2 == s2Start;
+
+        // Discard line-2-line segments
+        if ((!isP1EndPt && !isP2EndPt)) continue;
+
+        std::vector<TPointD> pts;
+        pts.push_back(p1);
+        pts.push_back(p2);
+        TStroke *segStroke = new TStroke(pts);
+
+        double d1x     = p2.x - p1.x;
+        double d1y     = p2.y - p1.y;
+        double m1      = d1y / d1x;
+        double m1angle = std::atan2(d1y, d1x) / (3.14159 / 180);
+
+        TPointD p3 = isP1StrokeStart
+                         ? s1->getControlPoint(1)
+                         : s1->getControlPoint(s1->getControlPointCount() - 2);
+        double d2x     = p3.x - p1.x;
+        double d2y     = p3.y - p1.y;
+        double m2      = d2y / d2x;
+        double m2angle = std::atan2(d2y, d2x) / (3.14159 / 180);
+
+        double angle = m2angle - m1angle;
+
+        // Discard segments that create acute angles that make no sense
+        // Only apply to end-2-line or line-2-end segments
+        if (!(isP1EndPt && isP2EndPt) && std::abs(angle) < 45.0) {
+          continue;
+        }
+
+        // Discard segments that cross other existing lines
+        std::vector<DoublePair> intersections;
+        bool intersected = false;
+        for (int z = 0; z < strokeCount; z++) {
+          TStroke *testStroke = vi->getStroke(z);
+          int y = intersect(segStroke, testStroke, intersections, false);
+          if ((y >= 1 && z != i && z != j) || (i == j && y > 2) ||
+              (y >= 2 && i != j && (z == i || z == j))) {
+            intersected = true;
+            break;
+          }
+        }
+        delete segStroke;
+        if (intersected) continue;
+
         if (rect.contains(p1) && rect.contains(p2)) {
           if (segmentAlreadyPresent(vi, p1, p2)) continue;
-          startPoints.push_back(pair<int, double>(i, segments[k].first));
-          endPoints.push_back(pair<int, double>(j, segments[k].second));
+          // If line-2-end, normalize to end-2-line
+          SegmentData data;
+          data.startIdx   = (!isP1EndPt && isP2EndPt) ? j : i;
+          data.startValue = (!isP1EndPt && isP2EndPt) ? segments[k].second
+                                                      : segments[k].first;
+          data.isStartStrokeStart =
+              (!isP1EndPt && isP2EndPt) ? isP2StrokeStart : isP1StrokeStart;
+
+          data.endIdx   = (!isP1EndPt && isP2EndPt) ? i : j;
+          data.endValue = (!isP1EndPt && isP2EndPt) ? segments[k].first
+                                                    : segments[k].second;
+          data.isEndStrokeStart =
+              (!isP1EndPt && isP2EndPt) ? isP1StrokeStart : isP2StrokeStart;
+
+          data.distance = tdistance(p1, p2);
+          data.segType  = (isP1EndPt && isP2EndPt)
+                             ? 1                                  // end-2-end
+                             : ((!isP1EndPt && !isP2EndPt) ? 3    // line-2-line
+                                                           : 2);  // end-2-line
+
+          // End-2-End or End-2-Line or line-2-end
+          if (isP1EndPt || isP2EndPt) {
+            if (data.isStartStrokeStart) {
+              if (strokeSegmentsStart.find(data.startIdx) !=
+                      strokeSegmentsStart.end() &&
+                  strokeSegmentsStart[data.startIdx].segType != 3 &&
+                  strokeSegmentsStart[data.startIdx].distance < data.distance) {
+                strokeSegmentsSkipped[data.startIdx].push_back(data);
+                std::sort(strokeSegmentsSkipped[data.startIdx].begin(),
+                          strokeSegmentsSkipped[data.startIdx].end(),
+                          segmentSorter);
+                continue;
+              }
+
+              // Check for any strokes terminating at this endpoint
+              bool ignoreCurrent = false;
+              for (int x = 0; x < strokeCount; x++) {
+                if (x == data.startIdx) continue;
+                if (strokeSegmentsStart.find(x) != strokeSegmentsStart.end() &&
+                    strokeSegmentsStart[x].endIdx == data.startIdx &&
+                    strokeSegmentsStart[x].endValue == data.startValue) {
+                  if (strokeSegmentsStart[x].distance < data.distance)
+                    ignoreCurrent = true;
+                  else {
+                    strokeSegmentsStart.erase(x);
+
+                    if (strokeSegmentsSkipped.find(x) !=
+                        strokeSegmentsSkipped.end()) {
+                      std::vector<SegmentData>::iterator it =
+                          strokeSegmentsSkipped[x].begin();
+                      for (; it != strokeSegmentsSkipped[x].end(); it++) {
+                        SegmentData segData = *it;
+                        if (segData.isStartStrokeStart != data.startValue)
+                          continue;
+                        strokeSegmentsStart[x] = segData;
+                        strokeSegmentsSkipped[x].erase(it);
+                        break;
+                      }
+                    }
+                  }
+                }
+
+                if (strokeSegmentsEnd.find(x) != strokeSegmentsEnd.end() &&
+                    strokeSegmentsEnd[x].endIdx == data.startIdx &&
+                    strokeSegmentsEnd[x].endValue == data.startValue) {
+                  if (strokeSegmentsEnd[x].distance < data.distance)
+                    ignoreCurrent = true;
+                  else {
+                    strokeSegmentsEnd.erase(x);
+                    if (strokeSegmentsSkipped.find(x) !=
+                        strokeSegmentsSkipped.end()) {
+                      std::vector<SegmentData>::iterator it =
+                          strokeSegmentsSkipped[x].begin();
+                      for (; it != strokeSegmentsSkipped[x].end(); it++) {
+                        SegmentData segData = *it;
+                        if (segData.isStartStrokeStart != data.startValue)
+                          continue;
+                        strokeSegmentsEnd[x] = segData;
+                        strokeSegmentsSkipped[x].erase(it);
+                        break;
+                      }
+                    }
+                  }
+                }
+              }
+              if (ignoreCurrent) {
+                strokeSegmentsSkipped[data.startIdx].push_back(data);
+                std::sort(strokeSegmentsSkipped[data.startIdx].begin(),
+                          strokeSegmentsSkipped[data.startIdx].end(),
+                          segmentSorter);
+                continue;
+              }
+
+              strokeSegmentsStart[data.startIdx] = data;
+            } else {
+              if (strokeSegmentsEnd.find(data.startIdx) !=
+                      strokeSegmentsEnd.end() &&
+                  strokeSegmentsEnd[data.startIdx].segType != 3 &&
+                  strokeSegmentsEnd[data.startIdx].distance < data.distance) {
+                strokeSegmentsSkipped[data.startIdx].push_back(data);
+                std::sort(strokeSegmentsSkipped[data.startIdx].begin(),
+                          strokeSegmentsSkipped[data.startIdx].end(),
+                          segmentSorter);
+                continue;
+              }
+
+              // Check for any stroke terminating at this endpoint
+              bool ignoreCurrent = false;
+              for (int x = 0; x < strokeCount; x++) {
+                if (x == data.startIdx) continue;
+                if (strokeSegmentsStart.find(x) != strokeSegmentsStart.end() &&
+                    strokeSegmentsStart[x].endIdx == data.startIdx &&
+                    strokeSegmentsStart[x].endValue == data.startValue) {
+                  if (strokeSegmentsStart[x].distance < data.distance)
+                    ignoreCurrent = true;
+                  else {
+                    strokeSegmentsStart.erase(x);
+                    if (strokeSegmentsSkipped.find(x) !=
+                        strokeSegmentsSkipped.end()) {
+                      std::vector<SegmentData>::iterator it =
+                          strokeSegmentsSkipped[x].begin();
+                      for (; it != strokeSegmentsSkipped[x].end(); it++) {
+                        SegmentData segData = *it;
+                        if (segData.isStartStrokeStart != data.startValue)
+                          continue;
+                        strokeSegmentsStart[x] = segData;
+                        strokeSegmentsSkipped[x].erase(it);
+                        break;
+                      }
+                    }
+                  }
+                }
+                if (strokeSegmentsEnd.find(x) != strokeSegmentsEnd.end() &&
+                    strokeSegmentsEnd[x].endIdx == data.startIdx &&
+                    strokeSegmentsEnd[x].endValue == data.startValue) {
+                  if (strokeSegmentsEnd[x].distance < data.distance)
+                    ignoreCurrent = true;
+                  else {
+                    strokeSegmentsEnd.erase(x);
+                    if (strokeSegmentsSkipped.find(x) !=
+                        strokeSegmentsSkipped.end()) {
+                      std::vector<SegmentData>::iterator it =
+                          strokeSegmentsSkipped[x].begin();
+                      for (; it != strokeSegmentsSkipped[x].end(); it++) {
+                        SegmentData segData = *it;
+                        if (segData.isStartStrokeStart != data.startValue)
+                          continue;
+                        strokeSegmentsEnd[x] = segData;
+                        strokeSegmentsSkipped[x].erase(it);
+                        break;
+                      }
+                    }
+                  }
+                }
+              }
+              if (ignoreCurrent) {
+                strokeSegmentsSkipped[data.startIdx].push_back(data);
+                std::sort(strokeSegmentsSkipped[data.startIdx].begin(),
+                          strokeSegmentsSkipped[data.startIdx].end(),
+                          segmentSorter);
+                continue;
+              }
+
+              strokeSegmentsEnd[data.startIdx] = data;
+            }
+          }
         }
       }
     }
+  }
+
+  std::map<int, SegmentData>::iterator it = strokeSegmentsStart.begin();
+
+  for (; it != strokeSegmentsStart.end(); it++) {
+    SegmentData segData = it->second;
+    startPoints.push_back(
+        pair<int, double>(segData.startIdx, segData.startValue));
+    endPoints.push_back(pair<int, double>(segData.endIdx, segData.endValue));
+  }
+
+  it = strokeSegmentsEnd.begin();
+
+  for (; it != strokeSegmentsEnd.end(); it++) {
+    SegmentData segData = it->second;
+    startPoints.push_back(
+        pair<int, double>(segData.startIdx, segData.startValue));
+    endPoints.push_back(pair<int, double>(segData.endIdx, segData.endValue));
   }
 }
 
