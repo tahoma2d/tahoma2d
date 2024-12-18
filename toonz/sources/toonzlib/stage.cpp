@@ -431,7 +431,6 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
         scene->getProperties()->getColorFilterColor(column->getColorFilterId());
     player.m_isMask              = isMask;
     player.m_isInvertedMask      = isMask ? column->isInvertedMask() : false;
-    player.m_canRenderMask       = isMask ? column->canRenderMask() : false;
     player.m_isAlphaLocked       = isAlphaLocked;
 
     if (m_subXSheetStack.empty()) {
@@ -509,6 +508,7 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
         mask->push_back(alphaRefPlayer);
         m_maskPool.push_back(mask);
         std::stable_sort(mask->begin(), mask->end(), PlayerLt());
+        player.m_masks.insert(player.m_masks.end(), alphaRefPlayer.m_masks.begin(), alphaRefPlayer.m_masks.end());
         player.m_masks.push_back(maskIndex);
       }
     }
@@ -740,11 +740,11 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
       // Find the immediate column that this is using as reference
       for (int a = i - 1; a >= 0; a--) {
         TXshColumnP alphaColumn = xsh->getColumn(a);
-        if (!alphaColumn || alphaColumn->isEmpty())
-          break;
-        // Ignore other alpha locked and mesh type columns
+        if (!alphaColumn || alphaColumn->isEmpty()) break;
+        // Ignore other alpha locked, mesh and mask columns
         if (alphaColumn->isAlphaLocked() ||
-            alphaColumn->getColumnType() == TXshColumn::eMeshType)
+            alphaColumn->getColumnType() == TXshColumn::eMeshType ||
+            alphaColumn->isMask())
           continue;
         if (alphaColumn->getColumnType() == TXshColumn::eLevelType &&
             alphaColumn->isCamstandVisible()) {
@@ -760,7 +760,8 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
     }
 
     if (column && !column->isEmpty() && !column->getSoundColumn() &&
-        !column->getFolderColumn()) {
+        !column->getFolderColumn() && !column->isMask()) {
+
       if (!column->isPreviewVisible() && checkPreviewVisibility) {
         if (!isMask && column->getColumnType() != TXshColumn::eMeshType) {
           while (m_masks.size() > maskCount) m_masks.pop_back();
@@ -770,27 +771,34 @@ void StageBuilder::addFrame(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
       if (column->isCamstandVisible() ||
           includeUnvisible)  // se l'"occhietto" non e' chiuso
       {
-        if (column->isMask() && !column->isCellEmpty(row) &&
-            !xsh->getCell(row, c).getFrameId().isStopFrame())
-        {
-          if (column->canRenderMask())
-            addCellWithOnionSkin(players, scene, xsh, row, c, level, false,
-                                 isAlphaLocked, lockedAlphaColIndex,
-                                 subSheetColIndex);
+        // scan ahead for masks
+        for (int x = c + 1; x < columnCount; x++) {
+          TXshColumn *maskCol = xsh->getColumn(x);
+          if (!maskCol || maskCol->isCellEmpty(row) ||
+              xsh->getCell(row, x).getFrameId().isStopFrame() ||
+              !maskCol->isCamstandVisible())
+            break;
+
+          // Skip mesh files
+          if (maskCol->getColumnType() == TXshColumn::eMeshType) continue;
+
+          if (!maskCol->isMask()) break;
+
           isMask = true;
           std::vector<int> saveMasks;
           saveMasks.swap(m_masks);
           int maskIndex   = m_maskPool.size();
           PlayerSet *mask = new PlayerSet();
           m_maskPool.push_back(mask);
-          addCellWithOnionSkin(*mask, scene, xsh, row, c, level, true, false, -1);
+          addCellWithOnionSkin(*mask, scene, xsh, row, x, level, true, false, -1);
           std::stable_sort(mask->begin(), mask->end(), PlayerLt());
           saveMasks.swap(m_masks);
-          m_masks.push_back(maskIndex);
-        } else
-          addCellWithOnionSkin(players, scene, xsh, row, c, level, false,
-                               isAlphaLocked, lockedAlphaColIndex,
-                               subSheetColIndex);
+          m_masks.insert(m_masks.begin(), maskIndex);
+        }
+
+        addCellWithOnionSkin(players, scene, xsh, row, c, level, false,
+                             isAlphaLocked, lockedAlphaColIndex,
+                             subSheetColIndex);
       }
     }
     if (!isMask && column->getColumnType() != TXshColumn::eMeshType) {
@@ -929,7 +937,6 @@ void StageBuilder::addSimpleLevelFrame(PlayerSet &players,
 }
 
 //-----------------------------------------------------------------------------
-
 void StageBuilder::visit(PlayerSet &players, Visitor &visitor, bool isPlaying) {
   std::vector<int> masks;
   int m                = players.size();
@@ -961,14 +968,6 @@ void StageBuilder::visit(PlayerSet &players, Visitor &visitor, bool isPlaying) {
         }
         visitor.enableMask(maskType);
         i++;
-
-        // For alpha locked columns, draw alpha locked image on top
-        // of each mask except last one which we'll do later.
-        if (player.m_isAlphaLocked && i < player.m_masks.size()) {
-          visitor.onImage(player);
-          masks.pop_back();
-          visitor.disableMask();
-        }
       }
     }
     player.m_isPlaying = isPlaying;
