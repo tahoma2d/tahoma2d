@@ -32,12 +32,12 @@
     <message>
         <location filename="../../common/timage_io/tlevel_io.cpp" line="135"/>
         <source>Skipping frame.</source>
-        <translation>Pulando Quadros.</translation>
+        <translation>Pulando Quadro.</translation>
     </message>
     <message>
         <location filename="../../common/timage_io/tlevel_io.cpp" line="139"/>
         <source>Unhandled exception encountered: Skipping frame.</source>
-        <translation type="unfinished"></translation>
+        <translation>Exceção não resolvida encontrada: Pulando Quadro.</translation>
     </message>
     <message>
         <location filename="../../common/tvrender/tpalette.cpp" line="257"/>

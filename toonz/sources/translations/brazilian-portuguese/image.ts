@@ -16,7 +16,7 @@
     <message>
         <location filename="../../image/ffmpeg/tiio_apng.cpp" line="227"/>
         <source>Write as .png</source>
-        <translation>Salvar como PNG</translation>
+        <translation>Salvar como .png</translation>
     </message>
 </context>
 <context>
@@ -57,7 +57,7 @@
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="295"/>
         <source>128(RGBA Float)</source>
-        <translation>128(RGB Float)</translation>
+        <translation>128(RGBA Float)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="299"/>
@@ -198,7 +198,7 @@
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="368"/>
         <source>Looping</source>
-        <translation>Looping</translation>
+        <translation>Em Loop</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="369"/>
@@ -326,12 +326,12 @@ Por favor tente aumentar o tempo de espera do FFmpeg em Preferências.</translat
     <message>
         <location filename="../../image/sprite/tiio_sprite.cpp" line="313"/>
         <source>Top Padding</source>
-        <translation>Marge do Topo</translation>
+        <translation>Margem do Topo</translation>
     </message>
     <message>
         <location filename="../../image/sprite/tiio_sprite.cpp" line="314"/>
         <source>Bottom Padding</source>
-        <translation>Marge de Baixo</translation>
+        <translation>Margem de Baixo</translation>
     </message>
     <message>
         <location filename="../../image/sprite/tiio_sprite.cpp" line="315"/>

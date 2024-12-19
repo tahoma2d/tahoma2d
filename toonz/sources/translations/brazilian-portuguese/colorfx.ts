@@ -11,7 +11,7 @@
     <message>
         <location filename="../../colorfx/regionstyles.cpp" line="1787"/>
         <source>Vert Offset</source>
-        <translation>Desolcamento Vert.</translation>
+        <translation>Deslocamento Vert.</translation>
     </message>
     <message>
         <location filename="../../colorfx/regionstyles.cpp" line="1790"/>
@@ -62,7 +62,7 @@
     <message>
         <location filename="../../colorfx/regionstyles.cpp" line="105"/>
         <source>Vert Offset</source>
-        <translation>Desolcamento Vert.</translation>
+        <translation>Deslocamento Vert.</translation>
     </message>
     <message>
         <location filename="../../colorfx/regionstyles.h" line="73"/>
@@ -416,12 +416,12 @@
     <message>
         <location filename="../../colorfx/strokestyles.cpp" line="772"/>
         <source>Gap</source>
-        <translation>Brecha</translation>
+        <translation>Lacuna</translation>
     </message>
     <message>
         <location filename="../../colorfx/strokestyles.h" line="260"/>
         <source>Vanishing</source>
-        <translation>Sumir</translation>
+        <translation>Desaparecimento</translation>
     </message>
 </context>
 <context>
