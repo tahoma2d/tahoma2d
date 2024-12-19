@@ -498,7 +498,12 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
       PlayerSet::iterator it;
       for (it = players.begin(); it != players.end(); it++) {
         Player alphaRefPlayer = *it;
-        if (alphaRefPlayer.m_ancestorColumnIndex != alphaRefColIdx) continue;
+        if ((subSheetColIndex != -1 &&
+             (alphaRefPlayer.m_ancestorColumnIndex != subSheetColIndex ||
+              alphaRefPlayer.m_column != alphaRefColIdx)) ||
+            (subSheetColIndex == -1 &&
+             alphaRefPlayer.m_ancestorColumnIndex != alphaRefColIdx))
+          continue;
 
         Player alphaPlayer = player;
 
@@ -968,6 +973,14 @@ void StageBuilder::visit(PlayerSet &players, Visitor &visitor, bool isPlaying) {
         }
         visitor.enableMask(maskType);
         i++;
+
+        // For alpha locked columns, draw alpha locked image on top
+        // of each mask except last one which we'll do later.
+        if (player.m_isAlphaLocked && i < player.m_masks.size()) {
+          visitor.onImage(player);
+          masks.pop_back();
+          visitor.disableMask();
+        }
       }
     }
     player.m_isPlaying = isPlaying;
