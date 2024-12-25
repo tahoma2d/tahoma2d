@@ -34,7 +34,6 @@ Se estiver migrando do Tahoma2D 1.2 ou do OpenToonz, aqui estão algumas diferen
 ## Dicas
 - Animações e recursos externos (desenhos) de uma Cena são salvos em arquivos separados dentro de uma pasta de Projeto.
 - Crie um Projeto `Tahoma2D` em sua pasta Documentos e use como seu projeto geral ao invés do padrão `sandbox`.
-- Use `Save All`, regularly, to save both scene and asset files. `Save Scene` does not save asset changes, just the scene changes.
 - Use `Salvar Tudo` (CTRL+S), regularmente, para salvar tanto a Cena quanto os recursos externos. `Salvar Cena` não salva mudanças nos recursos externos, apenas mudanças na Cena.
 - Quando importar recursos externos, recomenda-se usar a opção `Importar` para manter o original intocado.
 - Para múltiplos arquivos raster serem importados em 1 Nível, eles devem seguir a convenção de nome `NomeDoNível.####.ext` ou `NomeDoNível_####.ext`. (ex: ABC.0001.png, ABC.0002.png, etc...)
