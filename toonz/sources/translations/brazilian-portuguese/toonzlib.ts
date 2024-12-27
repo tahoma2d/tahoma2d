@@ -34,7 +34,7 @@
     <message>
         <location filename="../../toonzlib/scriptbinding_files.cpp" line="107"/>
         <source>can&apos;t concatenate an absolute path : %1</source>
-        <translation>Não é possível concatenar caminho absoluto: %1</translation>
+        <translation>Não é possível concatenar um caminho absoluto: %1</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_files.cpp" line="115"/>
@@ -109,7 +109,7 @@
     <message>
         <location filename="../../toonzlib/scriptbinding_level.cpp" line="67"/>
         <source>%1 frames</source>
-        <translation>%1 Quadros</translation>
+        <translation>%1 quadros</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_level.cpp" line="122"/>
@@ -159,7 +159,7 @@
     <message>
         <location filename="../../toonzlib/scriptbinding_level.cpp" line="212"/>
         <source>Unhandled exception encountered</source>
-        <translation type="unfinished"></translation>
+        <translation>Exceção inesperada encontrada</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_level.cpp" line="266"/>
@@ -169,7 +169,7 @@
     <message>
         <location filename="../../toonzlib/scriptbinding_level.cpp" line="270"/>
         <source>frame index (%1) is out of range (0-%2)</source>
-        <translation>Índice de Quadro (%1) está fora do escopo (0-%2)</translation>
+        <translation>Índice de Quadro (%1) está fora da faixa (0-%2)</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_level.cpp" line="293"/>
@@ -281,7 +281,7 @@ Provavelmente o codec não está funcionando corretamente.</translation>
     <message>
         <location filename="../../toonzlib/cleanupcolorstyles.cpp" line="228"/>
         <source>HRange</source>
-        <translation>EscopoH</translation>
+        <translation>FaixaH</translation>
     </message>
     <message>
         <location filename="../../toonzlib/cleanupcolorstyles.cpp" line="229"/>
@@ -291,17 +291,17 @@ Provavelmente o codec não está funcionando corretamente.</translation>
     <message>
         <location filename="../../toonzlib/cleanupcolorstyles.cpp" line="312"/>
         <source>ColorThres</source>
-        <translation>Limiar da Cor</translation>
+        <translation>Limite de Cor</translation>
     </message>
     <message>
         <location filename="../../toonzlib/cleanupcolorstyles.cpp" line="314"/>
         <source>WhiteThres</source>
-        <translation>Limiar de Branco</translation>
+        <translation>Limite de Branco</translation>
     </message>
     <message>
         <location filename="../../toonzlib/doubleparamcmd.cpp" line="73"/>
         <source>Set Keyframe</source>
-        <translation>Estabelecer Quadro Chave</translation>
+        <translation>Colocar Quadro Chave</translation>
     </message>
     <message>
         <location filename="../../toonzlib/doubleparamcmd.cpp" line="817"/>
@@ -316,43 +316,43 @@ Provavelmente o codec não está funcionando corretamente.</translation>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="920"/>
         <source>Add Fx  : </source>
-        <translation>Adicionar FX: </translation>
+        <translation>Adicionar Efeito: </translation>
     </message>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="921"/>
         <source>Insert Fx  : </source>
-        <translation>Inserir FX: </translation>
+        <translation>Inserir Efeito: </translation>
     </message>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="1085"/>
         <location filename="../../toonzlib/fxcommand.cpp" line="1088"/>
         <source>Create Linked Fx  : %1</source>
-        <translation>Criar FX vinculado: %1</translation>
+        <translation>Criar Efeito vinculado: %1</translation>
     </message>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="1310"/>
         <source>Replace Fx  : </source>
-        <translation>Substituir FX: </translation>
+        <translation>Substituir Efeito: </translation>
     </message>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="1376"/>
         <source>Unlink Fx  : %1 - - %2</source>
-        <translation>Desvincular FX: %1 - - %2</translation>
+        <translation>Desvincular Efeito: %1 - - %2</translation>
     </message>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="1417"/>
         <source>Make Macro Fx  : %1</source>
-        <translation>Fazer Macro FX: %1</translation>
+        <translation>Fazer Macro Efeito: %1</translation>
     </message>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="1560"/>
         <source>Explode Macro Fx  : %1</source>
-        <translation>Expandir Macro FX: %1</translation>
+        <translation>Expandir Macro Efeito: %1</translation>
     </message>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="1623"/>
         <source>Create Output Fx</source>
-        <translation>Criar Saída FX</translation>
+        <translation>Criar Saída Efeito</translation>
     </message>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="1714"/>
@@ -372,37 +372,37 @@ Provavelmente o codec não está funcionando corretamente.</translation>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="2334"/>
         <source>Delete Fx Node : %1</source>
-        <translation>Excluir Nó de FX: %1</translation>
+        <translation>Excluir Nó de Efeito: %1</translation>
     </message>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="2742"/>
         <source>Paste Fx  :  </source>
-        <translation>Colar FX: </translation>
+        <translation>Colar Efeito: </translation>
     </message>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="3111"/>
         <source>Disconnect Fx</source>
-        <translation>Desconectar FX</translation>
+        <translation>Desconectar Efeito</translation>
     </message>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="3363"/>
         <source>Connect Fx : %1 - %2</source>
-        <translation>Conectar FX: %1 - %2</translation>
+        <translation>Conectar Efeito: %1 - %2</translation>
     </message>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="3545"/>
         <source>Rename Fx : %1 &gt; %2</source>
-        <translation>Renomear FX: %1 &gt; %2</translation>
+        <translation>Renomear Efeito: %1 &gt; %2</translation>
     </message>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="3597"/>
         <source>Group Fx</source>
-        <translation>Agrupar FX</translation>
+        <translation>Agrupar Efeito</translation>
     </message>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="3701"/>
         <source>Ungroup Fx</source>
-        <translation>Desagrupar FX</translation>
+        <translation>Desagrupar Efeito</translation>
     </message>
     <message>
         <location filename="../../toonzlib/fxcommand.cpp" line="3803"/>
@@ -447,7 +447,7 @@ Provavelmente o codec não está funcionando corretamente.</translation>
     <message>
         <location filename="../../toonzlib/palettecmd.cpp" line="791"/>
         <source>Load Color Model %1  to Palette %2</source>
-        <translation>Carregar Modeleo de Cor %1 na Paleta %2</translation>
+        <translation>Carregar Modelo de Cor %1 na Paleta %2</translation>
     </message>
     <message>
         <location filename="../../toonzlib/palettecmd.cpp" line="889"/>
@@ -472,12 +472,12 @@ Provavelmente o codec não está funcionando corretamente.</translation>
     <message>
         <location filename="../../toonzlib/palettecmd.cpp" line="1237"/>
         <source>Set Picked Position of Style#%1 in Palette%2 : %3,%4</source>
-        <translation>Estabelecer Posição Escolhida do Estilo#%1 na Paleta %2: %3, %4</translation>
+        <translation>Definir Posição Escolhida do Estilo#%1 na Paleta %2: %3, %4</translation>
     </message>
     <message>
         <location filename="../../toonzlib/palettecmd.cpp" line="1316"/>
         <source>Update Colors by Using Picked Positions in Palette %1</source>
-        <translation>Atualizar cores usando Posições Escolhidas na Paleta %1</translation>
+        <translation>Atualizar Cores usando Posições Escolhidas na Paleta %1</translation>
     </message>
     <message>
         <location filename="../../toonzlib/sceneproperties.cpp" line="28"/>
@@ -577,7 +577,7 @@ Provavelmente o codec não está funcionando corretamente.</translation>
     <message>
         <location filename="../../toonzlib/scriptbinding.cpp" line="95"/>
         <source>%1 is not a valid color (valid color names are &apos;red&apos;, &apos;transparent&apos;, &apos;#FF8800&apos;, ecc.)</source>
-        <translation>%1 não é uma cor válida (nomes de cor válidas são &apos;vermelho&apos;, &apos;transparent&apos;, &apos;#FF8800&apos;, etc.)</translation>
+        <translation>%1 não é uma cor válida (nomes de cores válidas são &apos;vermelho&apos;, &apos;transparente&apos;, &apos;#FF8800&apos;, etc.)</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_centerline_vectorizer.cpp" line="43"/>
@@ -593,7 +593,7 @@ Provavelmente o codec não está funcionando corretamente.</translation>
     <message>
         <location filename="../../toonzlib/scriptbinding_image.cpp" line="205"/>
         <source>Bad argument (%1): should be an Image (not empty)</source>
-        <translation>Argumento ruim (%1): deveria ser uma imagem(não vazia)</translation>
+        <translation>Argumento ruim (%1): deveria ser uma imagem (não vazia)</translation>
     </message>
     <message>
         <location filename="../../toonzlib/scriptbinding_level.cpp" line="233"/>
@@ -664,12 +664,12 @@ Provavelmente o codec não está funcionando corretamente.</translation>
     <message>
         <location filename="../../toonzlib/stageobjectutil.cpp" line="191"/>
         <source>Edit Shear X</source>
-        <translation>Editar inclinação X</translation>
+        <translation>Editar Inclinação X</translation>
     </message>
     <message>
         <location filename="../../toonzlib/stageobjectutil.cpp" line="194"/>
         <source>Edit Shear Y</source>
-        <translation>Editar inclinação Y</translation>
+        <translation>Editar Inclinação Y</translation>
     </message>
     <message>
         <location filename="../../toonzlib/stageobjectutil.cpp" line="202"/>
@@ -764,7 +764,7 @@ Provavelmente o codec não está funcionando corretamente.</translation>
     <message>
         <location filename="../../toonzlib/tstageobjectcmd.cpp" line="187"/>
         <source>Set Active Camera  %1 &gt; %2</source>
-        <translation>Estabelecer Câmera Ativa: %1 &gt; %2</translation>
+        <translation>Definir Câmera Ativa: %1 &gt; %2</translation>
     </message>
     <message>
         <location filename="../../toonzlib/tstageobjectcmd.cpp" line="245"/>
@@ -814,42 +814,42 @@ Provavelmente o codec não está funcionando corretamente.</translation>
     <message>
         <location filename="../../toonzlib/imagestyles.cpp" line="540"/>
         <source>Load From File</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregar de Arquivo</translation>
     </message>
     <message>
         <location filename="../../toonzlib/imagestyles.cpp" line="542"/>
         <source>Use As Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>Usar como Padrão</translation>
     </message>
     <message>
         <location filename="../../toonzlib/imagestyles.cpp" line="544"/>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation>Posição</translation>
     </message>
     <message>
         <location filename="../../toonzlib/imagestyles.cpp" line="546"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Escala</translation>
     </message>
     <message>
         <location filename="../../toonzlib/imagestyles.cpp" line="548"/>
         <source>Rotation(degrees)</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotação (Graus)</translation>
     </message>
     <message>
         <location filename="../../toonzlib/imagestyles.cpp" line="550"/>
         <source>X displ</source>
-        <translation type="unfinished"></translation>
+        <translation>X displ</translation>
     </message>
     <message>
         <location filename="../../toonzlib/imagestyles.cpp" line="552"/>
         <source>Y displ</source>
-        <translation type="unfinished"></translation>
+        <translation>Y displ</translation>
     </message>
     <message>
         <location filename="../../toonzlib/toonzscene.cpp" line="439"/>
         <source>It is not possible to load file %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não é possível carregar arquivo %1.</translation>
     </message>
 </context>
 <context>
