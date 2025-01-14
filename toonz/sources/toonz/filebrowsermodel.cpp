@@ -1459,14 +1459,28 @@ void DvDirModel::refresh(const QModelIndex &index) {
   DvDirModelNode *node = getNode(index);
   if (!node) return;
   emit layoutAboutToBeChanged();
-  bool emitBeginAndEnd = false;
-  int rc               = rowCount(index);
-  int cc               = node->getChildCount();
-  if (cc < rc) emitBeginAndEnd = true;
-  if (emitBeginAndEnd) emit beginRemoveRows(index, 0, node->getChildCount());
-  node->refreshChildren();
-  if (emitBeginAndEnd) emit endRemoveRows();
-  emit layoutChanged();
+
+  int oldChildren = node->getChildCount();
+  if (oldChildren > 0) {
+    emit beginRemoveRows(index, 0, oldChildren - 1);
+    node->refreshChildren();
+    emit endRemoveRows();
+  }
+  else if (oldChildren == 0) {
+    node->refreshChildren();
+  }
+  else {
+    emit layoutChanged();
+    return;
+  }
+
+  int newChildren = node->getChildCount();
+  if(newChildren > 0){
+    emit beginInsertRows(index, 0, newChildren - 1);
+    emit endInsertRows();
+  }
+  
+   emit layoutChanged();
 }
 
 //-----------------------------------------------------------------------------
