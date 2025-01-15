@@ -754,7 +754,7 @@ static void buildAutocloseImage(
     points[0]       = p1;
     points[1]       = 0.5 * (p1 + p2);
     points[2]       = p2;
-    points[0].thick = points[1].thick = points[2].thick = 0.0;
+    points[0].thick = points[1].thick = points[2].thick = 0.25;
     TStroke *auxStroke                                  = new TStroke(points);
     auxStroke->setStyle(2);
     vaux->addStroke(auxStroke);
