@@ -2164,8 +2164,8 @@ void getClosingPoints(const TRectD &rect, double fac, const TVectorImageP &vi,
 
   for (; it != strokeStartSegments.end(); it++) {
     SegmentData segData = it->second;
-    if (segData.distance == 0) continue;
-//    if (segData.distance < autoTol) continue;
+//    if (segData.distance == 0) continue;
+    if (segData.distance < autoTol) continue;
     if (segData.segType == 1 && segData.startIdx > segData.endIdx) continue;
 
     startPoints.push_back(
@@ -2177,8 +2177,8 @@ void getClosingPoints(const TRectD &rect, double fac, const TVectorImageP &vi,
 
   for (; it != strokeEndSegments.end(); it++) {
     SegmentData segData = it->second;
-    if (segData.distance == 0) continue;
-//    if (segData.distance < autoTol) continue;
+//    if (segData.distance == 0) continue;
+    if (segData.distance < autoTol) continue;
     if (segData.segType == 1 && segData.startIdx > segData.endIdx) continue;
 
     startPoints.push_back(
