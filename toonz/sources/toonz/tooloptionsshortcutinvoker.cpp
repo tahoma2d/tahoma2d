@@ -600,7 +600,7 @@ void ToolOptionsShortcutInvoker::initialize() {
 void ToolOptionsShortcutInvoker::notifyTool(TTool* tool, TProperty* p,
                                             bool addToUndo) {
   std::string tempPropertyName = p->getName();
-  if (addToUndo && tempPropertyName == "Maximum Gap")
+  if (addToUndo && tempPropertyName == "Auto Close Gap")
     tempPropertyName = tempPropertyName + "withUndo";
   tool->onPropertyChanged(tempPropertyName);
 }

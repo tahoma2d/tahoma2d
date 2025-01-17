@@ -61,7 +61,7 @@ ToolOptionControl::ToolOptionControl(TTool *tool, std::string propertyName,
 
 void ToolOptionControl::notifyTool(bool addToUndo) {
   std::string tempPropertyName = m_propertyName;
-  if (addToUndo && m_propertyName == "Maximum Gap")
+  if (addToUndo && m_propertyName == "Auto Close Gap")
     tempPropertyName = tempPropertyName + "withUndo";
   m_tool->onPropertyChanged(tempPropertyName);
 }
