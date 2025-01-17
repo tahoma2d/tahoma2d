@@ -2387,7 +2387,7 @@ FillTool::FillTool(int targetType)
     , m_segment("Segment", false)
     , m_onionStyleId(0)
     , m_currCell(-1, -1)
-    , m_maxGapDistance("Maximum Gap", 0.01, 10.0, 1.15)
+    , m_maxGapDistance("Auto Close Gap", 0.01, 10.0, 1.15)
     , m_closeStyleIndex("Style Index:", L"current")  // W_ToolOptions_InkIndex
     , m_rasterGapDistance("Distance:", 1, 100, 10)
     , m_closeRasterGaps("Gaps:")
@@ -2509,7 +2509,7 @@ void FillTool::updateTranslation() {
   m_referenced.setQStringName(tr("Refer Visible"));
   m_fillDepth.setQStringName(tr("Fill Depth"));
   m_segment.setQStringName(tr("Segment"));
-  m_maxGapDistance.setQStringName(tr("Maximum Gap"));
+  m_maxGapDistance.setQStringName(tr("Auto Close Gap"));
   m_autopaintLines.setQStringName(tr("Autopaint Lines"));
   m_fillOnlySavebox.setQStringName(tr("Savebox"));
   m_rasterGapDistance.setQStringName(tr("Distance:"));
