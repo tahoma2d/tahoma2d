@@ -1836,20 +1836,20 @@ void getClosingSegments(TL2LAutocloser &l2lautocloser, double facMin,
 
   double w;
   if (isCloseEnoughP2L(facMin, facMax, s1, 0.0, s2, w, forAutoClose) &&
-      w != 0.0 && w != 1.0)
+      (forAutoClose || (w != 0.0 && w != 1.0)))
     segments.push_back(std::pair<double, double>(0.0, w));
 
   if (isCloseEnoughP2L(facMin, facMax, s2, 1.0, s1, w, forAutoClose) &&
-      w != 0.0 && w != 1.0)
+      (forAutoClose || (w != 0.0 && w != 1.0)))
     segments.push_back(std::pair<double, double>(w, 1.0));
 
   if (s1 != s2) {
     if (isCloseEnoughP2L(facMin, facMax, s2, 0.0, s1, w, forAutoClose) &&
-        w != 0.0 && w != 1.0)
+        (forAutoClose || (w != 0.0 && w != 1.0)))
       segments.push_back(std::pair<double, double>(w, 0.0));
 
     if (isCloseEnoughP2L(facMin, facMax, s1, 1.0, s2, w, forAutoClose) &&
-        w != 0.0 && w != 1.0)
+        (forAutoClose || (w != 0.0 && w != 1.0)))
       segments.push_back(std::pair<double, double>(1.0, w));
   }
 }
