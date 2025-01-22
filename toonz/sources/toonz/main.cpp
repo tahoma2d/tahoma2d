@@ -72,6 +72,7 @@
 
 #ifdef MACOSX
 #include "tipc.h"
+#include <mach-o/dyld.h>
 #endif
 
 // Qt includes
@@ -331,6 +332,30 @@ int main(int argc, char *argv[]) {
     argc = 1;
   }
 
+  // Set the app's locale for numeric stuff to standard C. This is important for
+  // atof() and similar
+  // calls that are locale-dependent.
+  setlocale(LC_NUMERIC, "C");
+
+// Set current directory to the bundle/application path - this is needed to have
+// correct relative paths
+#ifdef MACOSX
+  {
+    char path[PATH_MAX];
+    uint32_t size = sizeof(path);
+
+    if (_NSGetExecutablePath(path, &size) == 0) {
+      QDir appDir(QString::fromStdString(path));
+      appDir.cdUp(), appDir.cdUp(), appDir.cdUp();
+
+      bool ret = QDir::setCurrent(appDir.absolutePath());
+      assert(ret);
+    }
+  }
+#endif
+  
+  TEnv::setApplicationFileName(argv[0]);
+
   // Enables high-DPI scaling. This attribute must be set before QApplication is
   // constructed. Available from Qt 5.6.
   if (Preferences::instance()->isHighDpiScalingEnabled())
@@ -432,25 +457,6 @@ int main(int argc, char *argv[]) {
   // be different between for menu bar and for tool bar.
   a.setAttribute(Qt::AA_Use96Dpi);
 #endif
-
- // Set the app's locale for numeric stuff to standard C. This is important for
-  // atof() and similar
-  // calls that are locale-dependent.
-  setlocale(LC_NUMERIC, "C");
-
-// Set current directory to the bundle/application path - this is needed to have
-// correct relative paths
-#ifdef MACOSX
-  {
-    QDir appDir(QApplication::applicationDirPath());
-    appDir.cdUp(), appDir.cdUp(), appDir.cdUp();
-
-    bool ret = QDir::setCurrent(appDir.absolutePath());
-    assert(ret);
-  }
-#endif
-
-  TEnv::setApplicationFileName(argv[0]);
 
   // Set show icons in menus flag (use iconVisibleInMenu to disable selectively)
   bool dontShowIcon =

@@ -228,14 +228,14 @@ public:
   void setWorkingDirectory() {
     QString workingDirectoryTmp = QDir::currentPath();
 
-#if defined(LINUX) || defined(FREEBSD)
-    QString appPath =
-        workingDirectoryTmp + "/" + QCoreApplication::applicationName();
-    QDir appDir(appPath);
-    appPath = appDir.canonicalPath();
-    if (!appPath.isEmpty())
-      workingDirectoryTmp = TFilePath(appPath).getParentDir().getQString();
-#endif
+//#if defined(LINUX) || defined(FREEBSD)
+//    QString appPath =
+//        workingDirectoryTmp + "/" + QCoreApplication::applicationName();
+//    QDir appDir(appPath);
+//    appPath = appDir.canonicalPath();
+//    if (!appPath.isEmpty())
+//      workingDirectoryTmp = TFilePath(appPath).getParentDir().getQString();
+//#endif
 
     QByteArray ba                = workingDirectoryTmp.toLatin1();
     const char *workingDirectory = ba.data();
