@@ -24,7 +24,7 @@ jobs:
       - name: Get CanonSDK
         if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' }}
         run: |
-          curl -H "Authorization: token ${{ secrets.TAHOMA2D_TOKEN }}" -H "Accept:application/octet-stream" -fsSL -o EDSDK_Windows.zip https://github.com/tahoma2d/CanonSDK/releases/download/v13.18.40/EDSDK_v13.18.40_Windows.zip
+          curl -H "Authorization: token ${{ secrets.TAHOMA2D_TOKEN }}" -H "Accept:application/octet-stream" -fsSL -o EDSDK_Windows.zip https://api.github.com/repos/tahoma2d/CanonSDK/releases/assets/223415203
           7z x EDSDK_Windows.zip -oEDSDK_Windows
           move EDSDK_Windows\EDSDK\Header thirdparty\canon
           move EDSDK_Windows\EDSDK_64\Dll thirdparty\canon
