@@ -422,7 +422,7 @@ private:  // not implemented
 DVAPI VIStroke *cloneVIStroke(VIStroke *vs);
 DVAPI void deleteVIStroke(VIStroke *vs);
 
-DVAPI void getClosingPoints(const TRectD &rect, double fac,
+DVAPI void getClosingPoints(const TRectD &rect, double minfac, double fac,
                             const TVectorImageP &vi,
                             std::vector<std::pair<int, double>> &startPoints,
                             std::vector<std::pair<int, double>> &endPoints);

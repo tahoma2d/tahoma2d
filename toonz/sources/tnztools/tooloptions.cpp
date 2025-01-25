@@ -2587,7 +2587,7 @@ TapeToolOptionsBox::TapeToolOptionsBox(QWidget *parent, TTool *tool,
   m_toolMode = dynamic_cast<ToolOptionCombo *>(m_controls.value("Mode"));
   m_typeMode = dynamic_cast<ToolOptionCombo *>(m_controls.value("Type"));
   m_autocloseField =
-      dynamic_cast<ToolOptionSlider *>(m_controls.value("Distance"));
+      dynamic_cast<ToolOptionPairSlider *>(m_controls.value("Distance"));
   if (m_autocloseField)
     m_autocloseLabel = m_labels.value(m_autocloseField->propertyName());
   m_multiFrameMode   = dynamic_cast<ToolOptionCombo *>(m_controls.value("Frame Range:"));

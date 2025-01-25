@@ -1862,8 +1862,10 @@ struct SegmentData {
   int startIdx;
   double startValue;
   bool isStartStrokeStart;
+  bool isStartSelfLoop;
   int endIdx;
   bool isEndStrokeStart;
+  bool isEndSelfLoop;
   double endValue;
   double distance;
   int segType;  // 1 = e2e, 2 = e2l, 3 = l2l
@@ -1884,12 +1886,21 @@ void addToSegmentList(std::vector<std::pair<double, double>> segments,
     TPointD p1 = s1->getPoint(segments[k].first);
     TPointD p2 = s2->getPoint(segments[k].second);
 
+    if (!rect.isEmpty() && (!rect.contains(p1) || !rect.contains(p2))) continue;
+
+    if (segmentAlreadyPresent(strokeList, p1, p2)) continue;
+
     bool isP1EndPt = !s1->isSelfLoop() &&
                      (segments[k].first == 0.0 || segments[k].first == 1.0);
     bool isP1StrokeStart = !s1->isSelfLoop() && segments[k].first == 0.0;
+    bool isP1SelfLoop    = s1->isSelfLoop();
     bool isP2EndPt       = !s2->isSelfLoop() &&
                      (segments[k].second == 0.0 || segments[k].second == 1.0);
     bool isP2StrokeStart = !s2->isSelfLoop() && segments[k].second == 0.0;
+    bool isP2SelfLoop    = s2->isSelfLoop();
+
+    // Discard line-2-line segments
+    if ((!isP1EndPt && !isP2EndPt)) continue;
 
     std::vector<TPointD> pts;
     pts.push_back(p1);
@@ -1930,9 +1941,6 @@ void addToSegmentList(std::vector<std::pair<double, double>> segments,
     double angle =
         m2angle > m1angle ? (m2angle - m1angle) : (m1angle - m2angle);
 
-    // Discard line-2-line segments
-    if ((!isP1EndPt && !isP2EndPt)) continue;
-
     // Discard segments that create acute angles that make no sense
     // Only apply to end-2-line or line-2-end segments
     if (!(isP1EndPt && isP2EndPt) && (angle < 45.0 || angle > 315.0)) continue;
@@ -1944,22 +1952,17 @@ void addToSegmentList(std::vector<std::pair<double, double>> segments,
       TStroke *testStroke = strokeList[z]->m_s;
       int y = intersect(segStroke, testStroke, intersections, false);
       for (int a = 0; a < intersections.size(); a++) {
-        if (intersections[a].first == 0.0 || intersections[a].second == 0.0 ||
-            intersections[a].first == 1.0 || intersections[a].second == 1.0)
-          y--;
-      }
-      if ((y >= 1 && z != i && z != j) || (i == j && y > 2) ||
-          (y >= 2 && i != j && (z == i || z == j))) {
+        if (areAlmostEqual(0.0, intersections[a].first, 0.0001) ||
+            areAlmostEqual(0.0, intersections[a].second, 0.0001) ||
+            areAlmostEqual(intersections[a].first, 1.0, 0.0001) ||
+            areAlmostEqual(intersections[a].second, 1.0, 0.0001))
+          continue;
         intersectsOther = true;
         break;
       }
     }
     delete segStroke;
     if (intersectsOther) continue;
-
-    if (!rect.isEmpty() && (!rect.contains(p1) || !rect.contains(p2))) continue;
-
-    if (segmentAlreadyPresent(strokeList, p1, p2)) continue;
 
     // If line-2-end, normalize to end-2-line
     SegmentData data;
@@ -1968,12 +1971,16 @@ void addToSegmentList(std::vector<std::pair<double, double>> segments,
         (!isP1EndPt && isP2EndPt) ? segments[k].second : segments[k].first;
     data.isStartStrokeStart =
         (!isP1EndPt && isP2EndPt) ? isP2StrokeStart : isP1StrokeStart;
+    data.isStartSelfLoop =
+        (!isP1EndPt && isP2EndPt) ? isP2SelfLoop : isP1SelfLoop;
 
     data.endIdx = (!isP1EndPt && isP2EndPt) ? i : j;
     data.endValue =
         (!isP1EndPt && isP2EndPt) ? segments[k].first : segments[k].second;
     data.isEndStrokeStart =
         (!isP1EndPt && isP2EndPt) ? isP1StrokeStart : isP2StrokeStart;
+    data.isEndSelfLoop =
+        (!isP1EndPt && isP2EndPt) ? isP1SelfLoop : isP2SelfLoop;
 
     data.distance = tdistance(p1, p2);
     data.segType  = (isP1EndPt && isP2EndPt)
@@ -1991,116 +1998,102 @@ void addToSegmentList(std::vector<std::pair<double, double>> segments,
 void filterSegmentList(std::vector<SegmentData> segmentList,
                        std::map<int, SegmentData> &strokeStartSegments,
                        std::map<int, SegmentData> &strokeEndSegments) {
+  // Sort segments from smallest to largest
   std::sort(segmentList.begin(), segmentList.end(), segmentSorter);
 
   for (int x = 0; x < segmentList.size(); x++) {
     SegmentData data = segmentList[x];
-    SegmentData holdStart, holdEnd;
-    int heldStart = -1, heldEnd = -1;
 
-    // For gaps between the same 2 lines, favor end-2-end over end-2-line if
-    // it's close enough
-    if (data.segType == 1) {
-      // At start of stroke: New segment start is the same as existing segment
-      // start. Compare the new segment end with the existing segment end
-      if (strokeStartSegments.find(data.startIdx) !=
-              strokeStartSegments.end() &&
-          strokeStartSegments[data.startIdx].startValue == data.startValue &&
-          strokeStartSegments[data.startIdx].endIdx == data.endIdx &&
-          strokeStartSegments[data.startIdx].segType > 1 &&
-          areAlmostEqual(data.endValue,
-                         strokeStartSegments[data.startIdx].endValue, 0.08)) {
-        holdStart = strokeStartSegments[data.startIdx];
-        heldStart = data.startIdx;
-        strokeStartSegments.erase(data.startIdx);
+    // Promote end-2-line to end-2-end if close enough
+    if (data.segType == 2 && !data.isEndSelfLoop) {
+      if (areAlmostEqual(0.0, data.endValue, 0.08)) {
+        data.endValue         = 0;
+        data.isEndStrokeStart = true;
+        data.segType          = 1;
+      } else if (areAlmostEqual(data.endValue, 1.0, 0.08)) {
+        data.endValue         = 1.0;
+        data.isEndStrokeStart = false;
+        data.segType          = 1;
       }
+    }
 
-      // At start of stroke: New segment end is the same as existing segment
-      // start. Compare the new segment start with the existing segment end
-      if (strokeStartSegments.find(data.endIdx) != strokeStartSegments.end() &&
-          strokeStartSegments[data.endIdx].startValue == data.endValue &&
-          strokeStartSegments[data.endIdx].endIdx == data.startIdx &&
-          strokeStartSegments[data.endIdx].segType > 1 &&
-          areAlmostEqual(data.startValue,
-                         strokeStartSegments[data.endIdx].endValue, 0.08)) {
-        holdStart = strokeStartSegments[data.endIdx];
-        heldStart = data.endIdx;
-        strokeStartSegments.erase(data.endIdx);
-      }
+    SegmentData revData;
+    revData.startIdx           = data.endIdx;
+    revData.startValue         = data.endValue;
+    revData.isStartStrokeStart = data.isEndStrokeStart;
+    revData.isStartSelfLoop    = data.isEndSelfLoop;
+    revData.endIdx             = data.startIdx;
+    revData.endValue           = data.startValue;
+    revData.isEndStrokeStart   = data.isStartStrokeStart;
+    revData.isEndSelfLoop      = data.isStartSelfLoop;
+    revData.segType            = data.segType;
+    revData.distance           = data.distance;
 
-      // At end of stroke: New segment start is the same as existing segment
-      // start. Compare the new segment end with the existing segment end
-      if (strokeEndSegments.find(data.startIdx) != strokeEndSegments.end() &&
-          strokeEndSegments[data.startIdx].startValue == data.startValue &&
-          strokeEndSegments[data.startIdx].endIdx == data.endIdx &&
-          strokeEndSegments[data.startIdx].segType > 1 &&
-          areAlmostEqual(data.endValue,
-                         strokeEndSegments[data.startIdx].endValue, 0.08)) {
-        holdEnd = strokeEndSegments[data.startIdx];
-        heldEnd = data.startIdx;
-        strokeEndSegments.erase(data.startIdx);
-      }
-
-      // At end of Stroke: New segment end is the same as existing segment
-      // start. Compare the new segment start with the existing segment end
-      if (strokeEndSegments.find(data.endIdx) != strokeEndSegments.end() &&
-          strokeEndSegments[data.endIdx].startValue == data.endValue &&
-          strokeEndSegments[data.endIdx].endIdx == data.startIdx &&
-          strokeEndSegments[data.endIdx].segType > 1 &&
-          areAlmostEqual(data.startValue,
-                         strokeEndSegments[data.endIdx].endValue, 0.08)) {
-        holdEnd = strokeEndSegments[data.endIdx];
-        heldEnd = data.endIdx;
-        strokeEndSegments.erase(data.endIdx);
-      }
-
-      if (data.distance != 0 &&
-          ((strokeStartSegments.find(data.endIdx) !=
-                strokeStartSegments.end() &&
-            strokeStartSegments[data.endIdx].startValue == data.endValue) ||
-           (strokeEndSegments.find(data.endIdx) != strokeEndSegments.end() &&
-            strokeEndSegments[data.endIdx].startValue == data.endValue))) {
-        if (heldStart >= 0) strokeStartSegments[heldStart] = holdStart;
-        if (heldEnd >= 0) strokeEndSegments[heldEnd]       = holdEnd;
+    if (data.distance != 0) {
+      if ((strokeStartSegments.find(data.startIdx) !=
+               strokeStartSegments.end() &&
+           strokeStartSegments[data.startIdx].startValue == data.startValue &&
+           strokeStartSegments[data.startIdx].endIdx == data.endIdx) ||
+          (strokeEndSegments.find(data.startIdx) != strokeEndSegments.end() &&
+           strokeEndSegments[data.startIdx].startValue == data.startValue) &&
+              strokeEndSegments[data.startIdx].endIdx == data.endIdx) {
         continue;
       }
+
+      // See if this segment starting point already has another segment
+      if ((strokeStartSegments.find(data.startIdx) !=
+               strokeStartSegments.end() &&
+           strokeStartSegments[data.startIdx].startValue == data.startValue) ||
+          (strokeEndSegments.find(data.startIdx) != strokeEndSegments.end() &&
+           strokeEndSegments[data.startIdx].startValue == data.startValue)) {
+        if (data.segType != 1) {
+          continue;
+        } else {
+          if ((strokeStartSegments.find(data.endIdx) !=
+                   strokeStartSegments.end() &&
+               strokeStartSegments[data.endIdx].startValue == data.endValue) ||
+              (strokeEndSegments.find(data.endIdx) != strokeEndSegments.end() &&
+               strokeEndSegments[data.endIdx].startValue == data.endValue)) {
+            continue;
+          }
+
+          data = revData;
+        }
+      } else { // Check if the reverse of this segment already exists
+        if (
+            (strokeStartSegments.find(revData.startIdx) != strokeStartSegments.end() &&
+             strokeStartSegments[revData.startIdx].startValue == revData.startValue &&
+             strokeStartSegments[revData.startIdx].endIdx == revData.endIdx &&
+             strokeStartSegments[revData.startIdx].endValue == revData.endValue) 
+          ||
+            (strokeEndSegments.find(revData.startIdx) != strokeEndSegments.end() &&
+             strokeEndSegments[revData.startIdx].startValue == revData.startValue &&
+             strokeEndSegments[revData.startIdx].endIdx == revData.endIdx &&
+             strokeEndSegments[revData.startIdx].endValue == revData.endValue)           
+          ) {
+          continue;
+        }
+      }
     }
 
-    if (data.distance != 0 &&
-        ((strokeStartSegments.find(data.startIdx) !=
-              strokeStartSegments.end() &&
-          strokeStartSegments[data.startIdx].startValue == data.startValue) ||
-         (strokeEndSegments.find(data.startIdx) != strokeEndSegments.end() &&
-          strokeEndSegments[data.startIdx].startValue == data.startValue))) {
-      if (heldStart >= 0) strokeStartSegments[heldStart] = holdStart;
-      if (heldEnd >= 0) strokeEndSegments[heldEnd]       = holdEnd;
-      continue;
-    }
-
-    if (data.isStartStrokeStart)
+    if (data.isStartStrokeStart) {
       strokeStartSegments[data.startIdx] = data;
-    else
+    } else {
       strokeEndSegments[data.startIdx] = data;
+    }
 
-    if (data.segType == 1) {
-      SegmentData revData;
-      revData.startIdx           = data.endIdx;
-      revData.startValue         = data.endValue;
-      revData.isStartStrokeStart = data.isEndStrokeStart;
-      revData.endIdx             = data.startIdx;
-      revData.endValue           = data.startValue;
-      revData.isEndStrokeStart   = data.isStartStrokeStart;
-      revData.segType            = data.segType;
-
-      if (revData.isStartStrokeStart)
+    if (data.distance == 0) {
+      if (revData.isStartStrokeStart) {
         strokeStartSegments[revData.startIdx] = revData;
-      else
+      } else {
         strokeEndSegments[revData.startIdx] = revData;
+      }
     }
   }
 }
 
-void getClosingPoints(const TRectD &rect, double fac, const TVectorImageP &vi,
+void getClosingPoints(const TRectD &rect, double minfac, double fac,
+                      const TVectorImageP &vi,
                       vector<pair<int, double>> &startPoints,
                       vector<pair<int, double>> &endPoints) {
   UINT strokeCount = vi->getStrokeCount();
@@ -2119,12 +2112,6 @@ void getClosingPoints(const TRectD &rect, double fac, const TVectorImageP &vi,
     strokeList.push_back(new VIStroke(vi->getStroke(i), TGroupId()));
   }
 
-#ifdef NEW_REGION_FILL
-  double autoTol = 0;
-#else
-  double autoTol = vi->getAutocloseTolerance();
-#endif
-
   for (UINT i = 0; i < strokeCount; i++) {
     TStroke *s1 = vi->getStroke(i);
     if (!rect.overlaps(s1->getBBox())) continue;
@@ -2137,11 +2124,11 @@ void getClosingPoints(const TRectD &rect, double fac, const TVectorImageP &vi,
       if (s2->getControlPointCount() == 1) continue;
 
       double enlarge1 =
-          (autoTol + 0.7) *
+          (minfac + 0.7) *
               (s1->getMaxThickness() > 0 ? s1->getMaxThickness() : 2.5) +
           fac;
       double enlarge2 =
-          (autoTol + 0.7) *
+          (minfac + 0.7) *
               (s2->getMaxThickness() > 0 ? s2->getMaxThickness() : 2.5) +
           fac;
 
@@ -2165,8 +2152,7 @@ void getClosingPoints(const TRectD &rect, double fac, const TVectorImageP &vi,
   for (; it != strokeStartSegments.end(); it++) {
     SegmentData segData = it->second;
 //    if (segData.distance == 0) continue;
-    if (segData.distance < autoTol) continue;
-    if (segData.segType == 1 && segData.startIdx > segData.endIdx) continue;
+    if (segData.distance < minfac) continue;
 
     startPoints.push_back(
         pair<int, double>(segData.startIdx, segData.startValue));
@@ -2178,8 +2164,7 @@ void getClosingPoints(const TRectD &rect, double fac, const TVectorImageP &vi,
   for (; it != strokeEndSegments.end(); it++) {
     SegmentData segData = it->second;
 //    if (segData.distance == 0) continue;
-    if (segData.distance < autoTol) continue;
-    if (segData.segType == 1 && segData.startIdx > segData.endIdx) continue;
+    if (segData.distance < minfac) continue;
 
     startPoints.push_back(
         pair<int, double>(segData.startIdx, segData.startValue));
