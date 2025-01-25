@@ -761,6 +761,7 @@ static void buildAutocloseImage(
   }
 }
 
+TEnv::DoubleVar AutocloseFactorMin("InknpaintAutocloseFactorMin", 1.15);
 TEnv::DoubleVar AutocloseFactor("InknpaintAutocloseFactor", 4.0);
 
 static void drawAutocloses(TVectorImage *vi, TVectorRenderData &rd) {
@@ -771,7 +772,8 @@ static void drawAutocloses(TVectorImage *vi, TVectorRenderData &rd) {
   }
 
   std::vector<std::pair<int, double>> startPoints, endPoints;
-  getClosingPoints(vi->getBBox(), AutocloseFactor, vi, startPoints, endPoints);
+  getClosingPoints(vi->getBBox(), AutocloseFactorMin, AutocloseFactor, vi,
+                   startPoints, endPoints);
   TVectorImage *vaux = new TVectorImage();
 
   rd.m_palette = plt;

@@ -667,7 +667,7 @@ class TapeToolOptionsBox final : public ToolOptionsBox {
   ToolOptionCheckbox *m_smoothMode, *m_joinStrokesMode;
   ToolOptionCombo *m_toolMode, *m_typeMode, *m_multiFrameMode;
   QLabel *m_autocloseLabel;
-  ToolOptionSlider *m_autocloseField;
+  ToolOptionPairSlider *m_autocloseField;
 
 public:
   TapeToolOptionsBox(QWidget *parent, TTool *tool, TPaletteHandle *pltHandle,
