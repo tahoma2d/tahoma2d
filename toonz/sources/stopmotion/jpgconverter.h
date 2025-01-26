@@ -34,7 +34,7 @@ class JpgConverter : public QThread {
 #endif
 
 #if defined(MACOSX) || defined(LINUX)
-  unsigned long long m_dataSize = 0;
+  EdsUInt64 m_dataSize = 0;
 #else
   unsigned __int64 m_dataSize = 0;
 #endif
