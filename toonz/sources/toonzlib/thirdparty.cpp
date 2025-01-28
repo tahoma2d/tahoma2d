@@ -98,16 +98,8 @@ QString autodetectFFmpeg() {
   folderList.append(".");
   folderList.append("./ffmpeg");  // ffmpeg folder
 
-#ifdef MACOSX
-  // Look inside app
-  folderList.append("./" +
-                    QString::fromStdString(TEnv::getApplicationFileName()) +
-                    ".app/ffmpeg");  // ffmpeg folder
-#elif defined(LINUX) || defined(FREEBSD)
-  // Need to account for symbolic links
   folderList.append(TEnv::getWorkingDirectory().getQString() +
                     "/ffmpeg");  // ffmpeg folder
-#endif
 
 #ifndef _WIN32
   folderList.append("/app/bin");
@@ -271,16 +263,8 @@ QString autodetectRhubarb() {
   folderList.append(".");
   folderList.append("./rhubarb");  // rhubarb folder
 
-#ifdef MACOSX
-  // Look inside app
-  folderList.append("./" +
-                    QString::fromStdString(TEnv::getApplicationFileName()) +
-                    ".app/rhubarb");  // rhubarb folder
-#elif defined(LINUX) || defined(FREEBSD)
-  // Need to account for symbolic links
   folderList.append(TEnv::getWorkingDirectory().getQString() +
                     "/rhubarb");  // rhubarb folder
-#endif
 
 #ifndef _WIN32
   folderList.append("/app/bin");

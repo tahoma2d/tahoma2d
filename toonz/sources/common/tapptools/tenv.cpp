@@ -78,8 +78,7 @@ public:
     QString settingsPath;
 
 #ifdef MACOSX
-    settingsPath = QString::fromStdString(getApplicationFileName()) +
-                   QString(".app") +
+    settingsPath = QString::fromStdString(getWorkingDirectory()) +
                    QString("/Contents/Resources/SystemVar.ini");
 #else
 #ifdef HAIKU
@@ -254,8 +253,7 @@ public:
     // everything together when it translocates.
     if (!m_isPortable) {
       portableCheck =
-          TFilePath(m_workingDirectory + "\\" + getApplicationFileName() +
-                    ".app\\tahomastuff\\");
+          TFilePath(m_workingDirectory + "\\tahomastuff\\");
       portableStatus = TFileStatus(portableCheck);
       m_isPortable   = portableStatus.doesExist();
       if (m_isPortable)
