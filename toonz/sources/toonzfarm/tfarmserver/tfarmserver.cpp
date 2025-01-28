@@ -68,7 +68,7 @@ TFilePath getGlobalRoot() {
 #ifdef MACOSX
   // If MACOSX, change to MACOSX path
   std::string unixpath =
-      "./" + tver.getAppName() + ".app/Contents/Resources/configfarmroot.txt";
+      "./Contents/Resources/configfarmroot.txt";
 #else
   // set path to something suitable for most linux (Unix?) systems
   std::string unixpath = "/etc/" + tver.getAppName() + "/tahoma.conf";
@@ -112,7 +112,7 @@ TFilePath getLocalRoot() {
 #ifdef MACOSX
   // If MACOSX, change to MACOSX path
   std::string unixpath =
-      "./" + tver.getAppName() + ".app/Contents/Resources/configfarmroot.txt";
+      "./Contents/Resources/configfarmroot.txt";
 #else
   // set path to something suitable for most linux (Unix?) systems
 #ifdef FREEBSD
@@ -379,8 +379,7 @@ static QString getExeName(bool isComposer) {
   return name + ".exe ";
 #elif defined(MACOSX)
   TVER::ToonzVersion tver;
-  return "\"./" + QString::fromStdString(tver.getAppName()) +
-         ".app/Contents/MacOS/" + name + "\" ";
+  return "\"./Contents/MacOS/" + name + "\" ";
 #else
   return name;
 #endif
