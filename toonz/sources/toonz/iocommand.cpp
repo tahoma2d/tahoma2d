@@ -1454,8 +1454,9 @@ void IoCmd::newScene() {
   app->getCurrentObject()->setIsSpline(false);
   app->getCurrentColumn()->setColumnIndex(0);
 
-  CleanupParameters *cp = scene->getProperties()->getCleanupParameters();
-  CleanupParameters::GlobalParameters.assign(cp);
+  //CleanupParameters *cp = scene->getProperties()->getCleanupParameters();
+  //CleanupParameters::GlobalParameters.assign(cp);
+  //CleanupSettingsModel::onSceneSwitched()
 
   // updateCleanupSettingsPopup();
 
@@ -1584,13 +1585,6 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
 #endif
   }
 
-  //In case of a .cln file be loaded into GlobalParemeters,
-  //we should also write these info into .tnz (scene file)
-  // TODO: optimize the GlobalParemeters sturcture
-  CleanupParameters *cp = scene->getProperties()->getCleanupParameters();
-  //CleanupParameters oldCP(*cp);
-  cp->assign(&CleanupParameters::GlobalParameters);
-
   // Must wait for current save to finish, just in case
   while (TApp::instance()->isSaveInProgress())
     ;
@@ -1604,14 +1598,6 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
     DVGui::error(QObject::tr("Couldn't save %1").arg(toQString(scenePath)));
   }
   TApp::instance()->setSaveInProgress(false);
-
-  //cp->assign(&oldCP);
-
-  // Make sure that the current cleanup palette is set to currentParams' palette
-  TApp::instance()
-      ->getPaletteController()
-      ->getCurrentCleanupPalette()
-      ->setPalette(cp->m_cleanupPalette.getPointer());
 
   // in case of saving subxsheet, revert the level paths after saving
   revertOrgLevelPaths();
@@ -2099,10 +2085,9 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
   Previewer::clearAll();
   PreviewFxManager::instance()->reset();
   // updateCleanupSettingsPopup();
-  /*- CleanupParameterの更新 -*/
-  CleanupParameters *cp = scene->getProperties()->getCleanupParameters();
-  CleanupParameters::GlobalParameters.assign(cp);
-
+  /*- CleanupParameterの更新 -*/ //CleanupSettingsModel::onSceneSwitched()
+  //CleanupParameters *cp = scene->getProperties()->getCleanupParameters();
+  //CleanupParameters::GlobalParameters.assign(cp);
   CacheFxCommand::instance()->onSceneLoaded();
 
 #ifdef USE_SQLITE_HDPOOL
@@ -2205,6 +2190,8 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
                                                    2);  // "All Icons & Images"
 
   printf("%s:%s loadScene() completed :\n", __FILE__, __FUNCTION__);
+  
+  TApp::instance()->getPaletteController()->editLevelPalette();
   return true;
 }
 
