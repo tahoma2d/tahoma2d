@@ -1995,7 +1995,8 @@ void addToSegmentList(std::vector<std::pair<double, double>> segments,
   }
 }
 
-void filterSegmentList(std::vector<SegmentData> segmentList,
+void filterSegmentList(std::vector<VIStroke *> strokeList,
+                       std::vector<SegmentData> segmentList,
                        std::map<int, SegmentData> &strokeStartSegments,
                        std::map<int, SegmentData> &strokeEndSegments) {
   // Sort segments from smallest to largest
@@ -2006,11 +2007,18 @@ void filterSegmentList(std::vector<SegmentData> segmentList,
 
     // Promote end-2-line to end-2-end if close enough
     if (data.segType == 2 && !data.isEndSelfLoop) {
-      if (areAlmostEqual(0.0, data.endValue, 0.08)) {
+      TStroke *s1 = strokeList[data.startIdx]->m_s;
+      TStroke *s2 = strokeList[data.endIdx]->m_s;
+
+      TPointD p1 = s1->getPoint(data.startValue);
+
+      if (areAlmostEqual(0.0, data.endValue, 0.08) &&
+          ((data.distance * 2.5) > tdistance(p1, s2->getPoint(0.0)))) {
         data.endValue         = 0;
         data.isEndStrokeStart = true;
         data.segType          = 1;
-      } else if (areAlmostEqual(data.endValue, 1.0, 0.08)) {
+      } else if (areAlmostEqual(data.endValue, 1.0, 0.08) &&
+                 ((data.distance * 2.5) > tdistance(p1, s2->getPoint(1.0)))) {
         data.endValue         = 1.0;
         data.isEndStrokeStart = false;
         data.segType          = 1;
@@ -2145,7 +2153,8 @@ void getClosingPoints(const TRectD &rect, double minfac, double fac,
     }
   }
 
-  filterSegmentList(segmentList, strokeStartSegments, strokeEndSegments);
+  filterSegmentList(strokeList, segmentList, strokeStartSegments,
+                    strokeEndSegments);
 
   std::map<int, SegmentData>::iterator it = strokeStartSegments.begin();
 
@@ -2662,7 +2671,8 @@ void TVectorImage::Imp::findIntersections() {
   }
 
 #ifdef AUTOCLOSE_FUTURE
-  filterSegmentList(segmentList, strokeStartSegments, strokeEndSegments);
+  filterSegmentList(strokeList, segmentList, strokeStartSegments,
+                    strokeEndSegments);
 
   std::map<int, SegmentData>::iterator segit = strokeStartSegments.begin();
 
