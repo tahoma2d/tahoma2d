@@ -1585,10 +1585,15 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
 #endif
   }
 
+  if (!isAutosave) {
+    CleanupParameters::GlobalParameters.assign(
+        scene->getProperties()->getCleanupParameters());
+  }
+
   // Must wait for current save to finish, just in case
   while (TApp::instance()->isSaveInProgress())
     ;
-
+  
   TApp::instance()->setSaveInProgress(true);
   try {
     scene->save(scenePath, xsheet);
