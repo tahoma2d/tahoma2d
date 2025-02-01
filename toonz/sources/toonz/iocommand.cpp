@@ -1585,6 +1585,8 @@ bool IoCmd::saveScene(const TFilePath &path, int flags) {
 #endif
   }
 
+  // Don't store current cleanup parameters to scene's parameters' cache if autosave
+  // (would save to scene file) .
   if (!isAutosave) {
     CleanupParameters::GlobalParameters.assign(
         scene->getProperties()->getCleanupParameters());
