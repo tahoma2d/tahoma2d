@@ -1698,20 +1698,21 @@ if (isCloseEnoughP2L(factor, s1, w1,  s2, w))
 
 namespace {
 
-inline bool isSegment(const TStroke &s) {
+inline bool isSegment(const TStroke &s, bool forAutoClose) {
   vector<TThickPoint> v;
   s.getControlPoints(v);
   UINT n = v.size();
+  double tol = forAutoClose ? 1e-4 : 5e-3;
   if (areAlmostEqual(v[n - 1].x, v[0].x, 1e-4)) {
     for (UINT i = 1; i < n - 1; i++)
-      if (!areAlmostEqual(v[i].x, v[0].x, 1e-4)) return false;
+      if (!areAlmostEqual(v[i].x, v[0].x, tol)) return false;
   } else if (areAlmostEqual(v[n - 1].y, v[0].y, 1e-4)) {
     for (UINT i = 1; i < n - 1; i++)
-      if (!areAlmostEqual(v[i].y, v[0].y, 1e-4)) return false;
+      if (!areAlmostEqual(v[i].y, v[0].y, tol)) return false;
   } else {
     double fac = (v[n - 1].y - v[0].y) / (v[n - 1].x - v[0].x);
     for (UINT i = 1; i < n - 1; i++)
-      if (!areAlmostEqual((v[i].y - v[0].y) / (v[i].x - v[0].x), fac, 1e-4))
+      if (!areAlmostEqual((v[i].y - v[0].y) / (v[i].x - v[0].x), fac, tol))
         return false;
   }
   return true;
@@ -1741,14 +1742,15 @@ return false;
 //----------------------------------------------------------------------------------
 
 bool segmentAlreadyPresent(const std::vector<VIStroke *> strokeList,
-                           const TPointD &p1, const TPointD &p2) {
+                           const TPointD &p1, const TPointD &p2,
+                           bool forAutoClose) {
   for (UINT i = 0; i < strokeList.size(); i++) {
     TStroke *s = strokeList[i]->m_s;
     if (((areAlmostEqual(s->getPoint(0.0), p1, 1e-4) &&
           areAlmostEqual(s->getPoint(1.0), p2, 1e-4)) ||
          (areAlmostEqual(s->getPoint(0.0), p2, 1e-4) &&
           areAlmostEqual(s->getPoint(1.0), p1, 1e-4))) &&
-        isSegment(*s))
+        isSegment(*s, forAutoClose))
       return true;
   }
   return false;
@@ -1888,7 +1890,7 @@ void addToSegmentList(std::vector<std::pair<double, double>> segments,
 
     if (!rect.isEmpty() && (!rect.contains(p1) || !rect.contains(p2))) continue;
 
-    if (segmentAlreadyPresent(strokeList, p1, p2)) continue;
+    if (segmentAlreadyPresent(strokeList, p1, p2, false)) continue;
 
     bool isP1EndPt = !s1->isSelfLoop() &&
                      (segments[k].first == 0.0 || segments[k].first == 1.0);
@@ -2195,7 +2197,7 @@ static void autoclose(double factor, vector<VIStroke *> &s, int ii, int jj,
 #ifdef AUTOCLOSE_FUTURE
     TPointD p1 = s[ii]->m_s->getPoint(segments[i].first);
     TPointD p2 = s[jj]->m_s->getPoint(segments[i].second);
-    if (segmentAlreadyPresent(s, p1, p2)) continue;
+    if (segmentAlreadyPresent(s, p1, p2, true)) continue;
 #endif // AUTOCLOSE_FUTURE
 
     addAutocloseIntersection(IntData, s, ii, jj, segments[i].first,
