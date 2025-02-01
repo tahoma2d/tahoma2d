@@ -829,7 +829,7 @@ bool Canon::downloadImage(EdsBaseRef object) {
     if ((m_imageQuality.toLower().contains("jpeg") ||
          m_imageQuality.toLower().contains("jpg")) &&
         m_imageQuality.toLower().contains("raw")) {
-#ifdef MACOSX
+#if defined(MACOSX) || defined(LINUX)
       EdsUInt64 rawStreamSize = 0;
 #else
       unsigned __int64 rawStreamSize = 0;
@@ -872,7 +872,7 @@ bool Canon::downloadImage(EdsBaseRef object) {
     bufferSize = width * height * 4;
   }
 
-#ifdef MACOSX
+#if defined(MACOSX) || defined(LINUX)
   EdsUInt64 jpgStreamSize = 0;
   EdsUInt64 rawStreamSize = 0;
 #else

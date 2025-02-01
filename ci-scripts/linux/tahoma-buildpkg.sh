@@ -62,6 +62,12 @@ then
    chmod 755 -R Tahoma2D/rhubarb
 fi
 
+if [ -d ../../thirdparty/canon/Library ]
+then
+   echo ">>> Copying canon libraries"
+   cp -R ../../thirdparty/canon/Library/x86_64/* appdir/usr/lib
+fi
+
 echo ">>> Copying libghoto2 supporting directories"
 cp -r /usr/local/lib/libgphoto2 appdir/usr/lib
 cp -r /usr/local/lib/libgphoto2_port appdir/usr/lib

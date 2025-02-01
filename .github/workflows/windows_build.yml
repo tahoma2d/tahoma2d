@@ -22,7 +22,7 @@ jobs:
           key: ${{ runner.os }}-${{ github.sha }}
           restore-keys: ${{ runner.os }}-
       - name: Get CanonSDK
-        if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' }}
+        if: ${{ (github.repository_owner == 'tahoma2d' || github.repository_owner == 'manongjohn') && github.event_name == 'push' }}
         run: |
           curl -H "Authorization: token ${{ secrets.TAHOMA2D_TOKEN }}" -H "Accept:application/octet-stream" -fsSL -o EDSDK_Windows.zip https://api.github.com/repos/tahoma2d/CanonSDK/releases/assets/223415203
           7z x EDSDK_Windows.zip -oEDSDK_Windows
