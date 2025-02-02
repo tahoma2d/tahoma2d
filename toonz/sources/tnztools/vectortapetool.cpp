@@ -45,6 +45,7 @@ TEnv::StringVar TapeMode("InknpaintTapeMode1", "Endpoint to Endpoint");
 TEnv::IntVar TapeSmooth("InknpaintTapeSmooth", 0);
 TEnv::IntVar TapeJoinStrokes("InknpaintTapeJoinStrokes", 0);
 TEnv::StringVar TapeType("InknpaintTapeType1", "Normal");
+TEnv::DoubleVar AutocloseFactorMin("InknpaintAutocloseFactorMin", 1.15);
 TEnv::DoubleVar AutocloseFactor("InknpaintAutocloseFactor", 4.0);
 TEnv::IntVar TapeRange("InknpaintTapeRange", 0);
 
@@ -199,7 +200,7 @@ class VectorTapeTool final : public TTool {
   TBoolProperty m_joinStrokes;
   TEnumProperty m_mode;
   TPropertyGroup m_prop;
-  TDoubleProperty m_autocloseFactor;
+  TDoublePairProperty m_autocloseFactor;
   TEnumProperty m_type;
   TEnumProperty m_multi;
 
@@ -226,7 +227,7 @@ public:
       , m_joinStrokes("JoinStrokes", false)
       , m_mode("Mode")
       , m_type("Type")
-      , m_autocloseFactor("Distance", 0.1, 100, 0.5)
+      , m_autocloseFactor("Distance", 0.01, 100, 1.15, 4)
       , m_firstTime(true)
       , m_selectionRect()
       , m_startRect()
@@ -275,7 +276,8 @@ public:
     std::wstring s = m_type.getValue();
     if (!s.empty()) TapeType = ::to_string(s);
     TapeJoinStrokes = (int)(m_joinStrokes.getValue());
-    AutocloseFactor = (double)(m_autocloseFactor.getValue());
+    AutocloseFactorMin = (double)(m_autocloseFactor.getValue().first);
+    AutocloseFactor = (double)(m_autocloseFactor.getValue().second);
     m_selectionRect = TRectD();
     m_startRect     = TPointD();
 
@@ -731,7 +733,8 @@ public:
     bool initUndoBlock = false;
 
     std::vector<std::pair<int, double>> startPoints, endPoints;
-    getClosingPoints(rect, m_autocloseFactor.getValue(), vi, startPoints,
+    getClosingPoints(rect, m_autocloseFactor.getValue().first,
+                     m_autocloseFactor.getValue().second, vi, startPoints,
                      endPoints);
 
     assert(startPoints.size() == endPoints.size());
@@ -1087,7 +1090,8 @@ public:
     if (s != L"") m_mode.setValue(s);
     s = ::to_wstring(TapeType.getValue());
     if (s != L"") m_type.setValue(s);
-    m_autocloseFactor.setValue(AutocloseFactor);
+    m_autocloseFactor.setValue(
+        TDoublePairProperty::Value(AutocloseFactorMin, AutocloseFactor));
     m_smooth.setValue(TapeSmooth ? 1 : 0);
     m_joinStrokes.setValue(TapeJoinStrokes ? 1 : 0);
     m_multi.setIndex(TapeRange);

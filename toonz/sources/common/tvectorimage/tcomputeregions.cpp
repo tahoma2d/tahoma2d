@@ -1429,7 +1429,8 @@ static bool addAutocloseIntersection(IntersectionData &intData,
 // double g_autocloseTolerance = c_newAutocloseTolerance;
 
 static bool isCloseEnoughP2P(double facMin, double facMax, TStroke *s1,
-                             double w0, TStroke *s2, double w1) {
+                             double w0, TStroke *s2, double w1,
+                             bool forAutoClose) {
   double autoDistMin, autoDistMax;
 
   TThickPoint p0 = s1->getThickPoint(w0);
@@ -1444,7 +1445,8 @@ static bool isCloseEnoughP2P(double facMin, double facMax, TStroke *s1,
     p0.thick = p1.thick;
   else if (p1.thick == 0)
     p1.thick = p0.thick;
-  if (facMin == 0) {
+
+  if (forAutoClose) {
     autoDistMin = 0;
     autoDistMax =
         std::max(-2.0, facMax * (p0.thick + p1.thick) * (p0.thick + p1.thick));
@@ -1460,7 +1462,8 @@ static bool isCloseEnoughP2P(double facMin, double facMax, TStroke *s1,
     }
   } else {
     autoDistMin =
-        std::max(-2.0, facMin * (p0.thick + p1.thick) * (p0.thick + p1.thick));
+        std::max(-2.0, std::max(facMin, 0.01) * (p0.thick + p1.thick) *
+                           (p0.thick + p1.thick));
     if (autoDistMin < 0.0000001)  //! for strokes without thickness, I connect
                                   //! for distances less than min between 2.5
                                   //! and half of the length of the stroke)
@@ -1473,6 +1476,7 @@ static bool isCloseEnoughP2P(double facMin, double facMax, TStroke *s1,
     }
 
     autoDistMax = autoDistMin + (facMax - facMin) * (facMax - facMin);
+    if (facMin == 0) autoDistMin = facMin;
   }
 
   if (dist2 < autoDistMin || dist2 > autoDistMax) return false;
@@ -1582,7 +1586,9 @@ return -1;
 //-----------------------------------------------------------------------------
 
 static bool isCloseEnoughP2L(double facMin, double facMax, TStroke *s1,
-                             double w1, TStroke *s2, double &w) {
+                             double w1, TStroke *s2, double &w,
+                             bool forAutoClose) {
+  w = -1;
   if (s1->isSelfLoop()) return false;
 
   TThickPoint p0 = s1->getThickPoint(w1);
@@ -1625,7 +1631,8 @@ static bool isCloseEnoughP2L(double facMin, double facMax, TStroke *s1,
     else if (p1.thick == 0)
       p1.thick = p0.thick;
     double autoDistMin, autoDistMax;
-    if (facMin == 0) {
+
+    if (forAutoClose) {
       autoDistMin = 0;
       autoDistMax = std::max(
           -2.0, (facMax + 0.7) * (p0.thick + p1.thick) * (p0.thick + p1.thick));
@@ -1638,8 +1645,9 @@ static bool isCloseEnoughP2L(double facMin, double facMax, TStroke *s1,
         autoDistMax = facMax * std::min(2.5, len1 * len1 / (2 * 2));
       }
     } else {
-      autoDistMin = std::max(
-          -2.0, (facMin + 0.7) * (p0.thick + p1.thick) * (p0.thick + p1.thick));
+      autoDistMin =
+          std::max(-2.0, (std::max(facMin, 0.01) + 0.7) *
+                             (p0.thick + p1.thick) * (p0.thick + p1.thick));
       if (autoDistMin < 0.0000001)  //! for strokes without thickness, I connect
                                     //! for distances less than min between 2.5
                                     //! and half of the length of the pointing
@@ -1651,6 +1659,7 @@ static bool isCloseEnoughP2L(double facMin, double facMax, TStroke *s1,
 
       autoDistMax =
           autoDistMin + (facMax - facMin + 0.7) * (facMax - facMin + 0.7);
+      if (facMin == 0) autoDistMin = facMin;
     }
 
     // double autoDistMin = std::max(-2.0,
@@ -1689,20 +1698,21 @@ if (isCloseEnoughP2L(factor, s1, w1,  s2, w))
 
 namespace {
 
-inline bool isSegment(const TStroke &s) {
+inline bool isSegment(const TStroke &s, bool forAutoClose) {
   vector<TThickPoint> v;
   s.getControlPoints(v);
   UINT n = v.size();
+  double tol = forAutoClose ? 1e-4 : 5e-3;
   if (areAlmostEqual(v[n - 1].x, v[0].x, 1e-4)) {
     for (UINT i = 1; i < n - 1; i++)
-      if (!areAlmostEqual(v[i].x, v[0].x, 1e-4)) return false;
+      if (!areAlmostEqual(v[i].x, v[0].x, tol)) return false;
   } else if (areAlmostEqual(v[n - 1].y, v[0].y, 1e-4)) {
     for (UINT i = 1; i < n - 1; i++)
-      if (!areAlmostEqual(v[i].y, v[0].y, 1e-4)) return false;
+      if (!areAlmostEqual(v[i].y, v[0].y, tol)) return false;
   } else {
     double fac = (v[n - 1].y - v[0].y) / (v[n - 1].x - v[0].x);
     for (UINT i = 1; i < n - 1; i++)
-      if (!areAlmostEqual((v[i].y - v[0].y) / (v[i].x - v[0].x), fac, 1e-4))
+      if (!areAlmostEqual((v[i].y - v[0].y) / (v[i].x - v[0].x), fac, tol))
         return false;
   }
   return true;
@@ -1731,15 +1741,16 @@ return false;
 */
 //----------------------------------------------------------------------------------
 
-bool segmentAlreadyPresent(const TVectorImageP &vi, const TPointD &p1,
-                           const TPointD &p2) {
-  for (UINT i = 0; i < vi->getStrokeCount(); i++) {
-    TStroke *s = vi->getStroke(i);
+bool segmentAlreadyPresent(const std::vector<VIStroke *> strokeList,
+                           const TPointD &p1, const TPointD &p2,
+                           bool forAutoClose) {
+  for (UINT i = 0; i < strokeList.size(); i++) {
+    TStroke *s = strokeList[i]->m_s;
     if (((areAlmostEqual(s->getPoint(0.0), p1, 1e-4) &&
           areAlmostEqual(s->getPoint(1.0), p2, 1e-4)) ||
          (areAlmostEqual(s->getPoint(0.0), p2, 1e-4) &&
           areAlmostEqual(s->getPoint(1.0), p1, 1e-4))) &&
-        isSegment(*s))
+        isSegment(*s, forAutoClose))
       return true;
   }
   return false;
@@ -1764,7 +1775,8 @@ return false;
 void getClosingSegments(TL2LAutocloser &l2lautocloser, double facMin,
                         double facMax, TStroke *s1, TStroke *s2,
                         vector<DoublePair> *intersections,
-                        vector<std::pair<double, double>> &segments) {
+                        vector<std::pair<double, double>> &segments,
+                        bool forAutoClose) {
   bool ret1 = false, ret2 = false, ret3 = false, ret4 = false;
 #define L2LAUTOCLOSE
 #ifdef L2LAUTOCLOSE
@@ -1805,29 +1817,41 @@ void getClosingSegments(TL2LAutocloser &l2lautocloser, double facMin,
   if (s1->isSelfLoop() && s2->isSelfLoop()) return;
 
   if (!s1->isSelfLoop() && !s2->isSelfLoop()) {
-    if ((ret1 = isCloseEnoughP2P(facMin, facMax, s1, 0.0, s2, 1.0)))
+    if ((ret1 =
+             isCloseEnoughP2P(facMin, facMax, s1, 0.0, s2, 1.0, forAutoClose)))
       segments.push_back(std::pair<double, double>(0.0, 1.0));
 
     if (s1 != s2) {
-      if ((ret2 = isCloseEnoughP2P(facMin, facMax, s1, 0.0, s2, 0.0)))
+      if ((ret2 = isCloseEnoughP2P(facMin, facMax, s1, 0.0, s2, 0.0,
+                                   forAutoClose)))
         segments.push_back(std::pair<double, double>(0.0, 0.0));
-      if ((ret3 = isCloseEnoughP2P(facMin, facMax, s1, 1.0, s2, 0.0)))
+
+      if ((ret3 = isCloseEnoughP2P(facMin, facMax, s1, 1.0, s2, 0.0,
+                                   forAutoClose)))
         segments.push_back(std::pair<double, double>(1.0, 0.0));
-      if ((ret4 = isCloseEnoughP2P(facMin, facMax, s1, 1.0, s2, 1.0)))
+
+      if ((ret4 = isCloseEnoughP2P(facMin, facMax, s1, 1.0, s2, 1.0,
+                                   forAutoClose)))
         segments.push_back(std::pair<double, double>(1.0, 1.0));
     }
   }
 
   double w;
-  if (!ret1 && !ret2 && isCloseEnoughP2L(facMin, facMax, s1, 0.0, s2, w))
+  if (isCloseEnoughP2L(facMin, facMax, s1, 0.0, s2, w, forAutoClose) &&
+      (forAutoClose || (w != 0.0 && w != 1.0)))
     segments.push_back(std::pair<double, double>(0.0, w));
-  if (!ret1 && !ret4 && isCloseEnoughP2L(facMin, facMax, s2, 1.0, s1, w))
+
+  if (isCloseEnoughP2L(facMin, facMax, s2, 1.0, s1, w, forAutoClose) &&
+      (forAutoClose || (w != 0.0 && w != 1.0)))
     segments.push_back(std::pair<double, double>(w, 1.0));
 
   if (s1 != s2) {
-    if (!ret2 && !ret3 && isCloseEnoughP2L(facMin, facMax, s2, 0.0, s1, w))
+    if (isCloseEnoughP2L(facMin, facMax, s2, 0.0, s1, w, forAutoClose) &&
+        (forAutoClose || (w != 0.0 && w != 1.0)))
       segments.push_back(std::pair<double, double>(w, 0.0));
-    if (!ret3 && !ret4 && isCloseEnoughP2L(facMin, facMax, s1, 1.0, s2, w))
+
+    if (isCloseEnoughP2L(facMin, facMax, s1, 1.0, s2, w, forAutoClose) &&
+        (forAutoClose || (w != 0.0 && w != 1.0)))
       segments.push_back(std::pair<double, double>(1.0, w));
   }
 }
@@ -1836,35 +1860,285 @@ void getClosingSegments(TL2LAutocloser &l2lautocloser, double facMin,
 
 //---------------------------------------------------------------------------------
 
-void getClosingPoints(const TRectD &rect, double fac, const TVectorImageP &vi,
+struct SegmentData {
+  int startIdx;
+  double startValue;
+  bool isStartStrokeStart;
+  bool isStartSelfLoop;
+  int endIdx;
+  bool isEndStrokeStart;
+  bool isEndSelfLoop;
+  double endValue;
+  double distance;
+  int segType;  // 1 = e2e, 2 = e2l, 3 = l2l
+};
+
+bool segmentSorter(const SegmentData &seg1, const SegmentData &seg2) {
+  return seg1.distance < seg2.distance;
+}
+
+void addToSegmentList(std::vector<std::pair<double, double>> segments,
+                      TRectD rect, std::vector<VIStroke *> strokeList, int i,
+                      int j, std::vector<SegmentData> &segmentList) {
+  int strokeCount = strokeList.size();
+  TStroke *s1 = strokeList[i]->m_s;
+  TStroke *s2 = strokeList[j]->m_s;
+
+  for (UINT k = 0; k < segments.size(); k++) {
+    TPointD p1 = s1->getPoint(segments[k].first);
+    TPointD p2 = s2->getPoint(segments[k].second);
+
+    if (!rect.isEmpty() && (!rect.contains(p1) || !rect.contains(p2))) continue;
+
+    if (segmentAlreadyPresent(strokeList, p1, p2, false)) continue;
+
+    bool isP1EndPt = !s1->isSelfLoop() &&
+                     (segments[k].first == 0.0 || segments[k].first == 1.0);
+    bool isP1StrokeStart = !s1->isSelfLoop() && segments[k].first == 0.0;
+    bool isP1SelfLoop    = s1->isSelfLoop();
+    bool isP2EndPt       = !s2->isSelfLoop() &&
+                     (segments[k].second == 0.0 || segments[k].second == 1.0);
+    bool isP2StrokeStart = !s2->isSelfLoop() && segments[k].second == 0.0;
+    bool isP2SelfLoop    = s2->isSelfLoop();
+
+    // Discard line-2-line segments
+    if ((!isP1EndPt && !isP2EndPt)) continue;
+
+    std::vector<TPointD> pts;
+    pts.push_back(p1);
+    pts.push_back(p2);
+    TStroke *segStroke = new TStroke(pts);
+
+    double d1x, d1y, m1, d2x, d2y, m2;
+    if (isP1EndPt) {
+      d1x = p2.x - p1.x;
+      d1y = p2.y - p1.y;
+      m1  = d1y / d1x;
+
+      TPointD p3 = isP1StrokeStart
+                       ? s1->getControlPoint(1)
+                       : s1->getControlPoint(s1->getControlPointCount() - 2);
+      d2x = p3.x - p1.x;
+      d2y = p3.y - p1.y;
+      m2  = d2y / d2x;
+    } else {
+      d1x = p1.x - p2.x;
+      d1y = p1.y - p2.y;
+      m1  = d1y / d1x;
+
+      TPointD p3 = isP2StrokeStart
+                       ? s2->getControlPoint(1)
+                       : s2->getControlPoint(s2->getControlPointCount() - 2);
+      d2x = p3.x - p2.x;
+      d2y = p3.y - p2.y;
+      m2  = d2y / d2x;
+    }
+
+    double m1angle = std::atan2(d1y, d1x) / (3.14159 / 180);
+    if (m1angle < 0) m1angle += 360;
+
+    double m2angle = std::atan2(d2y, d2x) / (3.14159 / 180);
+    if (m2angle < 0) m2angle += 360;
+
+    double angle =
+        m2angle > m1angle ? (m2angle - m1angle) : (m1angle - m2angle);
+
+    // Discard segments that create acute angles that make no sense
+    // Only apply to end-2-line or line-2-end segments
+    if (!(isP1EndPt && isP2EndPt) && (angle < 45.0 || angle > 315.0)) continue;
+
+    // Discard segments that cross other existing lines
+    std::vector<DoublePair> intersections;
+    bool intersectsOther = false;
+    for (int z = 0; z < strokeCount; z++) {
+      TStroke *testStroke = strokeList[z]->m_s;
+      int y = intersect(segStroke, testStroke, intersections, false);
+      for (int a = 0; a < intersections.size(); a++) {
+        if (areAlmostEqual(0.0, intersections[a].first, 0.0001) ||
+            areAlmostEqual(0.0, intersections[a].second, 0.0001) ||
+            areAlmostEqual(intersections[a].first, 1.0, 0.0001) ||
+            areAlmostEqual(intersections[a].second, 1.0, 0.0001))
+          continue;
+        intersectsOther = true;
+        break;
+      }
+    }
+    delete segStroke;
+    if (intersectsOther) continue;
+
+    // If line-2-end, normalize to end-2-line
+    SegmentData data;
+    data.startIdx = (!isP1EndPt && isP2EndPt) ? j : i;
+    data.startValue =
+        (!isP1EndPt && isP2EndPt) ? segments[k].second : segments[k].first;
+    data.isStartStrokeStart =
+        (!isP1EndPt && isP2EndPt) ? isP2StrokeStart : isP1StrokeStart;
+    data.isStartSelfLoop =
+        (!isP1EndPt && isP2EndPt) ? isP2SelfLoop : isP1SelfLoop;
+
+    data.endIdx = (!isP1EndPt && isP2EndPt) ? i : j;
+    data.endValue =
+        (!isP1EndPt && isP2EndPt) ? segments[k].first : segments[k].second;
+    data.isEndStrokeStart =
+        (!isP1EndPt && isP2EndPt) ? isP1StrokeStart : isP2StrokeStart;
+    data.isEndSelfLoop =
+        (!isP1EndPt && isP2EndPt) ? isP1SelfLoop : isP2SelfLoop;
+
+    data.distance = tdistance(p1, p2);
+    data.segType  = (isP1EndPt && isP2EndPt)
+                       ? 1                                  // end-2-end
+                       : ((!isP1EndPt && !isP2EndPt) ? 3    // line-2-line
+                                                     : 2);  // end-2-line
+
+    // End-2-End or End-2-Line or line-2-end
+    if (isP1EndPt || isP2EndPt) {
+      segmentList.push_back(data);
+    }
+  }
+}
+
+void filterSegmentList(std::vector<VIStroke *> strokeList,
+                       std::vector<SegmentData> segmentList,
+                       std::map<int, SegmentData> &strokeStartSegments,
+                       std::map<int, SegmentData> &strokeEndSegments) {
+  // Sort segments from smallest to largest
+  std::sort(segmentList.begin(), segmentList.end(), segmentSorter);
+
+  for (int x = 0; x < segmentList.size(); x++) {
+    SegmentData data = segmentList[x];
+
+    // Promote end-2-line to end-2-end if close enough
+    if (data.segType == 2 && !data.isEndSelfLoop) {
+      TStroke *s1 = strokeList[data.startIdx]->m_s;
+      TStroke *s2 = strokeList[data.endIdx]->m_s;
+
+      TPointD p1 = s1->getPoint(data.startValue);
+
+      if (areAlmostEqual(0.0, data.endValue, 0.08) &&
+          ((data.distance * 2.5) > tdistance(p1, s2->getPoint(0.0)))) {
+        data.endValue         = 0;
+        data.isEndStrokeStart = true;
+        data.segType          = 1;
+      } else if (areAlmostEqual(data.endValue, 1.0, 0.08) &&
+                 ((data.distance * 2.5) > tdistance(p1, s2->getPoint(1.0)))) {
+        data.endValue         = 1.0;
+        data.isEndStrokeStart = false;
+        data.segType          = 1;
+      }
+    }
+
+    SegmentData revData;
+    revData.startIdx           = data.endIdx;
+    revData.startValue         = data.endValue;
+    revData.isStartStrokeStart = data.isEndStrokeStart;
+    revData.isStartSelfLoop    = data.isEndSelfLoop;
+    revData.endIdx             = data.startIdx;
+    revData.endValue           = data.startValue;
+    revData.isEndStrokeStart   = data.isStartStrokeStart;
+    revData.isEndSelfLoop      = data.isStartSelfLoop;
+    revData.segType            = data.segType;
+    revData.distance           = data.distance;
+
+    if (data.distance != 0) {
+      if ((strokeStartSegments.find(data.startIdx) !=
+               strokeStartSegments.end() &&
+           strokeStartSegments[data.startIdx].startValue == data.startValue &&
+           strokeStartSegments[data.startIdx].endIdx == data.endIdx) ||
+          (strokeEndSegments.find(data.startIdx) != strokeEndSegments.end() &&
+           strokeEndSegments[data.startIdx].startValue == data.startValue) &&
+              strokeEndSegments[data.startIdx].endIdx == data.endIdx) {
+        continue;
+      }
+
+      // See if this segment starting point already has another segment
+      if ((strokeStartSegments.find(data.startIdx) !=
+               strokeStartSegments.end() &&
+           strokeStartSegments[data.startIdx].startValue == data.startValue) ||
+          (strokeEndSegments.find(data.startIdx) != strokeEndSegments.end() &&
+           strokeEndSegments[data.startIdx].startValue == data.startValue)) {
+        if (data.segType != 1) {
+          continue;
+        } else {
+          if ((strokeStartSegments.find(data.endIdx) !=
+                   strokeStartSegments.end() &&
+               strokeStartSegments[data.endIdx].startValue == data.endValue) ||
+              (strokeEndSegments.find(data.endIdx) != strokeEndSegments.end() &&
+               strokeEndSegments[data.endIdx].startValue == data.endValue)) {
+            continue;
+          }
+
+          data = revData;
+        }
+      } else { // Check if the reverse of this segment already exists
+        if (
+            (strokeStartSegments.find(revData.startIdx) != strokeStartSegments.end() &&
+             strokeStartSegments[revData.startIdx].startValue == revData.startValue &&
+             strokeStartSegments[revData.startIdx].endIdx == revData.endIdx &&
+             strokeStartSegments[revData.startIdx].endValue == revData.endValue) 
+          ||
+            (strokeEndSegments.find(revData.startIdx) != strokeEndSegments.end() &&
+             strokeEndSegments[revData.startIdx].startValue == revData.startValue &&
+             strokeEndSegments[revData.startIdx].endIdx == revData.endIdx &&
+             strokeEndSegments[revData.startIdx].endValue == revData.endValue)           
+          ) {
+          continue;
+        }
+      }
+    }
+
+    if (data.isStartStrokeStart) {
+      strokeStartSegments[data.startIdx] = data;
+    } else {
+      strokeEndSegments[data.startIdx] = data;
+    }
+
+    if (data.distance == 0) {
+      if (revData.isStartStrokeStart) {
+        strokeStartSegments[revData.startIdx] = revData;
+      } else {
+        strokeEndSegments[revData.startIdx] = revData;
+      }
+    }
+  }
+}
+
+void getClosingPoints(const TRectD &rect, double minfac, double fac,
+                      const TVectorImageP &vi,
                       vector<pair<int, double>> &startPoints,
                       vector<pair<int, double>> &endPoints) {
   UINT strokeCount = vi->getStrokeCount();
   TL2LAutocloser l2lautocloser;
 
+  std::vector<SegmentData> segmentList;
+  std::map<int, SegmentData> strokeStartSegments;
+  std::map<int, SegmentData> strokeEndSegments;
+
+  segmentList.clear();
+  strokeStartSegments.clear();
+  strokeEndSegments.clear();
+
+  std::vector<VIStroke *> strokeList;
+  for (UINT i = 0; i < strokeCount; i++) {
+    strokeList.push_back(new VIStroke(vi->getStroke(i), TGroupId()));
+  }
+
   for (UINT i = 0; i < strokeCount; i++) {
     TStroke *s1 = vi->getStroke(i);
     if (!rect.overlaps(s1->getBBox())) continue;
-    if (s1->getChunkCount() == 1) continue;
+    if (s1->getControlPointCount() == 1) continue;
 
     for (UINT j = i; j < strokeCount; j++) {
       TStroke *s2 = vi->getStroke(j);
 
-      if (!rect.overlaps(s1->getBBox())) continue;
-      if (s2->getChunkCount() == 1) continue;
-
-#ifdef NEW_REGION_FILL
-      double autoTol = 0;
-#else
-      double autoTol = vi->getAutocloseTolerance();
-#endif
+      if (!rect.overlaps(s2->getBBox())) continue;
+      if (s2->getControlPointCount() == 1) continue;
 
       double enlarge1 =
-          (autoTol + 0.7) *
+          (minfac + 0.7) *
               (s1->getMaxThickness() > 0 ? s1->getMaxThickness() : 2.5) +
           fac;
       double enlarge2 =
-          (autoTol + 0.7) *
+          (minfac + 0.7) *
               (s2->getMaxThickness() > 0 ? s2->getMaxThickness() : 2.5) +
           fac;
 
@@ -1874,18 +2148,38 @@ void getClosingPoints(const TRectD &rect, double fac, const TVectorImageP &vi,
         continue;
 
       vector<std::pair<double, double>> segments;
-      getClosingSegments(l2lautocloser, autoTol, autoTol + fac, s1, s2, 0,
-                         segments);
-      for (UINT k = 0; k < segments.size(); k++) {
-        TPointD p1 = s1->getPoint(segments[k].first);
-        TPointD p2 = s2->getPoint(segments[k].second);
-        if (rect.contains(p1) && rect.contains(p2)) {
-          if (segmentAlreadyPresent(vi, p1, p2)) continue;
-          startPoints.push_back(pair<int, double>(i, segments[k].first));
-          endPoints.push_back(pair<int, double>(j, segments[k].second));
-        }
-      }
+      getClosingSegments(l2lautocloser, 0.0, fac, s1, s2, 0,
+                         segments, false);
+
+      addToSegmentList(segments, rect, strokeList, i, j, segmentList);
     }
+  }
+
+  filterSegmentList(strokeList, segmentList, strokeStartSegments,
+                    strokeEndSegments);
+
+  std::map<int, SegmentData>::iterator it = strokeStartSegments.begin();
+
+  for (; it != strokeStartSegments.end(); it++) {
+    SegmentData segData = it->second;
+//    if (segData.distance == 0) continue;
+    if (segData.distance < minfac) continue;
+
+    startPoints.push_back(
+        pair<int, double>(segData.startIdx, segData.startValue));
+    endPoints.push_back(pair<int, double>(segData.endIdx, segData.endValue));
+  }
+
+  it = strokeEndSegments.begin();
+
+  for (; it != strokeEndSegments.end(); it++) {
+    SegmentData segData = it->second;
+//    if (segData.distance == 0) continue;
+    if (segData.distance < minfac) continue;
+
+    startPoints.push_back(
+        pair<int, double>(segData.startIdx, segData.startValue));
+    endPoints.push_back(pair<int, double>(segData.endIdx, segData.endValue));
   }
 }
 
@@ -1897,11 +2191,18 @@ static void autoclose(double factor, vector<VIStroke *> &s, int ii, int jj,
                       vector<DoublePair> *intersections, bool isVectorized) {
   vector<std::pair<double, double>> segments;
   getClosingSegments(l2lautocloser, 0, factor, s[ii]->m_s, s[jj]->m_s,
-                     intersections, segments);
+                     intersections, segments, true);
 
-  for (UINT i = 0; i < segments.size(); i++)
+  for (UINT i = 0; i < segments.size(); i++) {
+#ifdef AUTOCLOSE_FUTURE
+    TPointD p1 = s[ii]->m_s->getPoint(segments[i].first);
+    TPointD p2 = s[jj]->m_s->getPoint(segments[i].second);
+    if (segmentAlreadyPresent(s, p1, p2, true)) continue;
+#endif // AUTOCLOSE_FUTURE
+
     addAutocloseIntersection(IntData, s, ii, jj, segments[i].first,
                              segments[i].second, strokeSize, isVectorized);
+  }
 }
 
 //------------------------------------------------------------------------------------------------------
@@ -2243,9 +2544,10 @@ void TVectorImage::Imp::findIntersections() {
     if (!strokeArray[i]->m_isNewForFill || strokeArray[i]->m_isPoint) continue;
 
     TRectD bBox   = s1->getBBox();
-    double thick2 = s1->getThickPoint(0).thick *
-                    2.1;  // 2.1 instead of 2.0, for usual problems of approx...
-    if (bBox.getLx() <= thick2 && bBox.getLy() <= thick2) {
+//    double thick2 = s1->getThickPoint(0).thick *
+//                    2.1;  // 2.1 instead of 2.0, for usual problems of approx...
+//    if (bBox.getLx() <= thick2 && bBox.getLy() <= thick2) {
+    if (bBox.getLx() <= 0.0 && bBox.getLy() <= 0.0) {
       strokeArray[i]->m_isPoint = true;
       continue;
     }
@@ -2314,6 +2616,16 @@ void TVectorImage::Imp::findIntersections() {
 #ifdef AUTOCLOSE_ATTIVO
   TL2LAutocloser l2lautocloser;
 
+#ifdef AUTOCLOSE_FUTURE
+  std::vector<SegmentData> segmentList;
+  std::map<int, SegmentData> strokeStartSegments;
+  std::map<int, SegmentData> strokeEndSegments;
+
+  segmentList.clear();
+  strokeStartSegments.clear();
+  strokeEndSegments.clear();
+#endif //AUTOCLOSE_FUTURE
+
   for (i = 0; i < strokeSize; i++) {
     TStroke *s1 = strokeArray[i]->m_s;
     if (strokeArray[i]->m_isPoint) continue;
@@ -2336,16 +2648,59 @@ void TVectorImage::Imp::findIntersections() {
               s2->getBBox().enlarge(enlarge2))) {
         map<pair<int, int>, vector<DoublePair>>::iterator it =
             intersectionMap.find(pair<int, int>(i, j));
+
+#ifdef AUTOCLOSE_FUTURE
+        std::vector<std::pair<double, double>> segments;
+        if (it == intersectionMap.end())
+          getClosingSegments(l2lautocloser, 0.0, m_autocloseTolerance, s1, s2,
+                             0, segments);
+        else
+          getClosingSegments(l2lautocloser, 0.0, m_autocloseTolerance, s1, s2,
+                             &(it->second), segments);
+
+        addToSegmentList(segments, TRectD(), strokeArray, i, j, segmentList);
+#else
         if (it == intersectionMap.end())
           autoclose(m_autocloseTolerance, strokeArray, i, j, intData,
                     strokeSize, l2lautocloser, 0, isVectorized);
         else
           autoclose(m_autocloseTolerance, strokeArray, i, j, intData,
                     strokeSize, l2lautocloser, &(it->second), isVectorized);
+#endif
       }
     }
     strokeArray[i]->m_isNewForFill = false;
   }
+
+#ifdef AUTOCLOSE_FUTURE
+  filterSegmentList(strokeList, segmentList, strokeStartSegments,
+                    strokeEndSegments);
+
+  std::map<int, SegmentData>::iterator segit = strokeStartSegments.begin();
+
+  for (; segit != strokeStartSegments.end(); segit++) {
+    SegmentData segData = segit->second;
+    if (segData.distance == 0) continue;
+    if (segData.segType == 1 && segData.startIdx > segData.endIdx) continue;
+
+    addAutocloseIntersection(intData, strokeArray, segData.startIdx,
+                             segData.endIdx, segData.startValue,
+                             segData.endValue, strokeSize, isVectorized);
+  }
+
+  segit = strokeEndSegments.begin();
+
+  for (; segit != strokeEndSegments.end(); segit++) {
+    SegmentData segData = segit->second;
+    if (segData.distance == 0) continue;
+    if (segData.segType == 1 && segData.startIdx > segData.endIdx) continue;
+
+
+    addAutocloseIntersection(intData, strokeArray, segData.startIdx,
+                             segData.endIdx, segData.startValue,
+                             segData.endValue, strokeSize, isVectorized);
+  }
+#endif // AUTOCLOSE_FUTURE
 #endif
 
   for (i = 0; i < strokeSize; i++) {
