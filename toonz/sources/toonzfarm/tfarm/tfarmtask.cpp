@@ -30,6 +30,7 @@ using namespace TVER;
 // 2017-04-15.
 #include <netdb.h>      // gethostbyname
 #include <arpa/inet.h>  // inet_ntoa
+#include <filesystem>
 #endif
 
 //*************************************************************************
@@ -379,7 +380,10 @@ static QString getExeName(bool isComposer) {
   TVER::ToonzVersion tver;
   return "Contents/MacOS/" + name;
 #else
-  return name;
+  QString appPath =
+      QString::fromStdString(std::filesystem::canonical("/proc/self/exe"));
+  TFilePath path(appPath);
+  return path.getParentDir().getQString() + "/" + name;
 #endif
 }
 

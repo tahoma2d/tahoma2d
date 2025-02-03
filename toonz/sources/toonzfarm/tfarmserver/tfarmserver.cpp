@@ -29,6 +29,9 @@ using namespace TVER;
 #else
 #include <sys/param.h>
 #include <unistd.h>
+#ifndef MACOSX
+#include <filesystem>
+#endif
 #endif
 
 // #define REDIRECT_OUTPUT
@@ -381,7 +384,10 @@ static QString getExeName(bool isComposer) {
   TVER::ToonzVersion tver;
   return "\"./Contents/MacOS/" + name + "\" ";
 #else
-  return name;
+  QString appPath =
+      QString::fromStdString(std::filesystem::canonical("/proc/self/exe"));
+  TFilePath path(appPath);
+  return path.getParentDir().getQString() + "/" + name;
 #endif
 }
 
