@@ -94,13 +94,13 @@ TLevelWriterFFMov::~TLevelWriterFFMov() {
   postIArgs << "yuva444p10le";
   postIArgs << "-profile:v";
   postIArgs << "4";
-/* KONERO_VERSION
+// KONERO_VERSION
   postIArgs << "-vf";
   postIArgs << "scale=" + QString::number(outLx) + "x" +
                    QString::number(outLy) +
                    ":in_color_matrix=bt709:out_color_matrix=bt709";
-*/
-// RODNEY VERSION
+//
+/* RODNEY VERSION
   postIArgs << "-vf";
   postIArgs
       << "scale=" + QString::number(outLx) + "x" + QString::number(outLy) +
@@ -114,7 +114,7 @@ TLevelWriterFFMov::~TLevelWriterFFMov() {
   postIArgs << "bt709";
   postIArgs << "-colorspace";
   postIArgs << "bt709";
-//
+*/
   postIArgs << "-b:v";
   postIArgs << QString::number(finalBitrate) + "k";
 
