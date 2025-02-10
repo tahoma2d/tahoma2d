@@ -1331,6 +1331,19 @@ void SceneViewer::touchEvent(QTouchEvent *e, int type) {
         panQt(centerDelta.toPoint());
         m_touchPoints = 100;  // This will block undo/redo action
       }
+#ifdef MACOS
+      else {
+        // For macs: Might be using 2-finger touchpad tap to undo
+        if (Preferences::instance()->getGestureRedoMethod() ==
+            Preferences::TwoFingerTap) {
+          // Make it look like a gesture from touchscreen
+          m_gestureActive = true;
+          m_touchDevice   = QTouchDevice::TouchScreen;
+          // macOS will generate ButtonPress/Release on a successful 2-finger
+          // tap
+        }
+      }
+#endif
     } else if (e->touchPoints().count() == 3) {
       QPointF newPoint = e->touchPoints().at(0).pos();
       if ((m_undoPoint.x() - newPoint.x()) > 100 &&
@@ -1347,6 +1360,25 @@ void SceneViewer::touchEvent(QTouchEvent *e, int type) {
         m_undoPoint = newPoint;
         m_touchPoints = 100;  // This will block undo/redo action
       }
+#ifdef MACOS
+      // For macs: Might be using 3-finger touchpad tap to redo
+      if (m_touchDevice == QTouchDevice::TouchPad &&
+          Preferences::instance()->getGestureRedoMethod() ==
+          Preferences::ThreeFingerTap) {
+        // Make it look like a gesture from touchscreen
+        m_gestureActive = true;
+        m_touchDevice   = QTouchDevice::TouchScreen;
+
+        // macOS does not generate ButtonPress/Release on a successful 3-finger
+        // tap. Let's create it
+        QMouseEvent fakePress(QEvent::MouseButtonPress, m_firstPanPoint,
+                                Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+        QApplication::instance()->sendEvent(this, &fakePress);
+        QMouseEvent fakeRelease(QEvent::MouseButtonRelease, m_firstPanPoint,
+                                Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
+        QApplication::instance()->sendEvent(this, &fakeRelease);
+      }
+#endif
     }
   }
   if (type == QEvent::TouchEnd || type == QEvent::TouchCancel) {
