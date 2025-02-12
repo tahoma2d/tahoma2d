@@ -110,6 +110,7 @@ protected:
   LevelMoverUndo *m_undo;
   bool m_moved;
   bool m_columnsMoved;
+  bool m_dragged;
 
   bool isTotallyEmptyColumn(int col) const;
   virtual bool canMove(const TPoint &pos);
