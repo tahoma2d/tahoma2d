@@ -3264,6 +3264,8 @@ void MainWindow::defineActions() {
   createViewerAction(V_RotateReset, QT_TR_NOOP("Reset Rotation"), "");
   createViewerAction(V_PositionReset, QT_TR_NOOP("Reset Position"), "");
 
+  createViewerAction(V_Scrub, QT_TR_NOOP("Scrub Key"), "");
+
   createViewerAction(V_ActualPixelSize, QT_TR_NOOP("Actual Pixel Size"), "N");
   createViewerAction(V_FlipX, QT_TR_NOOP("Flip Viewer Horizontally"), "");
   createViewerAction(V_FlipY, QT_TR_NOOP("Flip Viewer Vertically"), "");
