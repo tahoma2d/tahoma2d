@@ -37,6 +37,10 @@ const struct {
   QString manufacturer;
   GPConfigKeys keys;
 } cameraConfigKeys[] = {
+    {"Default",
+     {"expprogram", "Battery Level", "shutterspeed", "f-number", "iso",
+      "whitebalance", 0, "imagequality", "imagesize", "exposurecompensation",
+      "colortemperature", "manualfocusdrive", 0, "viewfinder", 0}},
     // Canon
     {"Canon",
      {"autoexposuremode", "batterylevel", "shutterspeed", "aperture", "iso",
@@ -48,10 +52,13 @@ const struct {
      {"expprogram", "batterylevel", "shutterspeed", "f-number", "iso",
       "whitebalance", 0, "imagequality", "imagesize", "exposurecompensation", 0,
       "manualfocusdrive", "changeafarea", "viewfinder", 0}},
-    {0,
-     {"expprogram", "Battery Level", "shutterspeed", "f-number", "iso",
+    // Sony
+    {"Sony",
+     {"expprogram", "batterylevel", "shutterspeed", "f-number", "iso",
       "whitebalance", 0, "imagequality", "imagesize", "exposurecompensation",
-      "colortemperature", "manualfocusdrive", 0, "viewfinder", 0}}};
+      "colortemperature", "zoom", 0, "movie", 0}}};
+
+#define CAMERACONFIGKEYS_COUNT 4
 
 //-----------------------------------------------------------------
 
