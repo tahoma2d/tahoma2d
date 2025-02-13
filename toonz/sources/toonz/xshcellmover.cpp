@@ -474,7 +474,8 @@ LevelMoverTool::LevelMoverTool(XsheetViewer *viewer)
     , m_validPos(false)
     , m_undo(0)
     , m_moved(false)
-    , m_columnsMoved(false) {}
+    , m_columnsMoved(false)
+    , m_dragged(false) {}
 
 LevelMoverTool::~LevelMoverTool() {}
 
@@ -644,6 +645,8 @@ void LevelMoverTool::onCellChange(int row, int col) {
 
   if (pos == m_aimedPos) return;
 
+  m_dragged = true;
+
   m_aimedPos = pos;
 
   m_validPos = canMoveColumns(pos);
@@ -756,6 +759,16 @@ void LevelMoverTool::onRelease(const CellPosition &pos) {
 
   if (!getViewer()->orientation()->isVerticalTimeline())
     TUndoManager::manager()->endBlock();
+
+  // Reset current selection if we didn't move
+  TCellSelection *selection = getViewer()->getCellSelection();
+  if (!Preferences::instance()->isShowDragBarsEnabled() && !m_dragged &&
+      (cellMover->getRowCount() > 1 || cellMover->getColumnCount() > 1)) {
+    selection->selectNone();
+    selection->selectCell(pos.frame(), pos.layer());
+    getViewer()->setCurrentRow(pos.frame());
+    getViewer()->setCurrentColumn(pos.layer());
+  }
 }
 
 void LevelMoverTool::drawCellsArea(QPainter &p) {

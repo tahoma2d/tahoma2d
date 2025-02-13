@@ -1803,7 +1803,7 @@ public:
 class ColumnMoveDragTool final : public XsheetGUI::DragTool {
   QPoint m_firstPos, m_curPos;
   int m_firstCol, m_targetCol;
-  bool m_dropOnColumnFolder, m_folderChanged;
+  bool m_dropOnColumnFolder, m_folderChanged, m_dragged;
   QStack<int> m_addToFolder;
 
 public:
@@ -1812,7 +1812,8 @@ public:
       , m_firstCol(-1)
       , m_targetCol(-1)
       , m_dropOnColumnFolder(false)
-      , m_folderChanged(false) {}
+      , m_folderChanged(false)
+      , m_dragged(false) {}
 
   bool canDrop(const CellPosition &pos) {
     int col = pos.layer();
@@ -1832,6 +1833,7 @@ public:
     m_firstCol           = -1;
     m_dropOnColumnFolder = false;
     m_folderChanged      = false;
+    m_dragged            = false;
     m_addToFolder.clear();
 
     m_firstPos                  = event->pos();
@@ -1914,6 +1916,8 @@ public:
                                        : m_firstPos.y() - m_curPos.y();
     // Minimum movement
     if (dPos > -5 && dPos < 5) return;
+
+    m_dragged = true;
 
     QRect rect = getViewer()
                      ->orientation()
@@ -2058,6 +2062,14 @@ public:
 
     if (!getViewer()->orientation()->isVerticalTimeline())
       TUndoManager::manager()->endBlock();
+
+    // Reset current selection if we didn't move
+    if (!Preferences::instance()->isShowDragBarsEnabled() && !m_dragged &&
+        !oldIndices.empty() && oldIndices.size() > 1) {
+      selection->selectNone();
+      selection->selectColumn(pos.layer());
+      getViewer()->setCurrentColumn(pos.layer());
+    }
   }
   void drawColumnsArea(QPainter &p) {
     if (m_targetCol < 0) return;
