@@ -106,6 +106,7 @@ class SceneViewer final : public GLWidgetForHighDpi,
   int m_mouseRotating   = 0;
   int m_mouseZooming    = 0;
   int m_mousePanning    = 0;
+  int m_mouseScrubbing  = 0;
   bool m_resetOnRelease = false;
   // shared variables
   TStopWatch m_sw;
@@ -404,6 +405,7 @@ protected:
   void mousePan(const TMouseEvent &e);
   void mouseZoom(const TMouseEvent &e);
   void mouseRotate(const TMouseEvent &e);
+  void mouseScrub(const TMouseEvent &e);
 
   // overridden from TTool::Viewer
   void pan(const TPointD &delta) override { panQt(QPointF(delta.x, delta.y)); }
