@@ -876,29 +876,27 @@ public:
     }
 
     TUndoManager::manager()->beginBlock();
-    for (int i = firstFrameIdx; i <= lastFrameIdx; ++i) {
-      for (int i = 0; i < m; ++i) {
-        row              = cellList[i].first;
-        TXshCell cell    = cellList[i].second;
-        TFrameId fid     = cell.getFrameId();
-        TVectorImageP vi = (TVectorImageP)cell.getImage(true);
-        if (!vi) continue;
-        double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
-        t        = TInbetween::interpolation(t, algorithm);
-        app->getCurrentFrame()->setFrame(row);
+    for (int i = 0; i < m; ++i) {
+      row              = cellList[i].first;
+      TXshCell cell    = cellList[i].second;
+      TFrameId fid     = cell.getFrameId();
+      TVectorImageP vi = (TVectorImageP)cell.getImage(true);
+      if (!vi) continue;
+      double t = m > 1 ? (double)i / (double)(m - 1) : 0.5;
+      t        = TInbetween::interpolation(t, algorithm);
+      app->getCurrentFrame()->setFrame(row);
 
-        tapeRect(vi, interpolateRect(m_firstRect, m_selectionRect, t), true);
+      tapeRect(vi, interpolateRect(m_firstRect, m_selectionRect, t), true);
 
-        if (m_firstPolyline.hasSymmetryBrushes()) {
-          for (int i = 1; i < m_firstPolyline.getBrushCount(); i++) {
-            TStroke *firstSymmStroke = m_firstPolyline.makeRectangleStroke(i);
-            TRectD firstSymmSelectionRect = firstSymmStroke->getBBox();
-            TStroke *symmStroke           = m_polyline.makeRectangleStroke(i);
-            TRectD symmSelectionRect      = symmStroke->getBBox();
-            tapeRect(vi, interpolateRect(firstSymmSelectionRect,
-                                         symmSelectionRect, t),
-                     true);
-          }
+      if (m_firstPolyline.hasSymmetryBrushes()) {
+        for (int j = 1; j < m_firstPolyline.getBrushCount(); j++) {
+          TStroke *firstSymmStroke = m_firstPolyline.makeRectangleStroke(j);
+          TRectD firstSymmSelectionRect = firstSymmStroke->getBBox();
+          TStroke *symmStroke           = m_polyline.makeRectangleStroke(j);
+          TRectD symmSelectionRect      = symmStroke->getBBox();
+          tapeRect(
+              vi, interpolateRect(firstSymmSelectionRect, symmSelectionRect, t),
+              true);
         }
       }
     }
