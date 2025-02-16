@@ -3,14 +3,14 @@
 # ======================================================================
 # File:       linux_linux_depends.sh
 # Author:     Charlie Martínez® <cmartinez@quirinux.org>
-# License:    https://www.gnu.org/licenses/gpl-2.0.txt
+# License:    BSD 3-Clause "New" or "Revised" License
 # Purpose:    Download dependences for compiling Tahoma2d
 # Supported:  Multi-distro (originally for Quirinux 2.0)
 # ======================================================================
 
 #
 # Copyright (c) 2019-2025 Charlie Martínez. All Rights Reserved.  
-# License: https://www.gnu.org/licenses/gpl-2.0.txt  
+# License: BSD 3-Clause "New" or "Revised" License
 # Authorized and unauthorized uses of the Quirinux trademark:  
 # See https://www.quirinux.org/aviso-legal  
 #
