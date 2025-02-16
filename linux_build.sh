@@ -130,6 +130,14 @@ function _msg() {
 		[fr_EXIT]="Quitter"
 		[gl_EXIT]="Saír"
 		[pt_EXIT]="Sair"
+					
+		[es_NOT_REWRITE]="Se utilizará el contenido actual del directorio $TAHOMA_DIR"
+		[en_NOT_REWRITE]="The current content of the $TAHOMA_DIR directory will be used"
+		[it_NOT_REWRITE]="Il contenuto attuale della directory $TAHOMA_DIR verrà utilizzato"
+		[de_NOT_REWRITE]="Der aktuelle Inhalt des Verzeichnisses $TAHOMA_DIR wird verwendet"
+		[fr_NOT_REWRITE]="Le contenu actuel du répertoire $TAHOMA_DIR sera utilisé"
+		[gl_NOT_REWRITE]="Empregarase o contido actual do directorio $TAHOMA_DIR"
+		[pt_NOT_REWRITE]="O conteúdo atual do diretório $TAHOMA_DIR será usado"
 						
 		[es_SOURCES]="Error: El directorio de fuentes $SOURCES_DIR no existe."
 		[en_SOURCES]="Error: The source directory $SOURCES_DIR does not exist."
@@ -252,20 +260,26 @@ function _checkdir() {
         echo -e "\n\n$(_msg DIR_EXISTS)\n\n"
         echo "$(_msg OVERWRITE)"
         read answer
-        if [[ ! "$answer" =~ ^[SsYyOo]$ ]]; then
-            echo "$(_msg CANCEL)"
-            exit 1
+        if [[ "$answer" =~ ^[Nn]$ ]]; then
+            echo -e "\n\n$(_msg NOT_REWRITE)\n\n"
+            sleep 5
         fi
         if [[ "$answer" =~ ^[SsYyOo]$ ]]; then
         rm -rf $TAHOMA_DIR
+        fi
+        if [[ ! "$answer" =~ ^[SsYyOoNn]$ ]]; then
+        echo -e "\n\n$(_msg CANCEL)\n\n"
+        exit 1
         fi
         
     fi
 }
 
 function _cloningTahoma() {
+	if [[ "$answer" =~ ^[YySsOo]$ ]]; then
 	# Clone into the current directory
-    git clone https://github.com/tahoma2d/tahoma2d "$TAHOMA_DIR"
+    git clone https://github.com/tahoma2d/tahoma2d "$TAHOMA_DIR"      
+    fi
 }
 
 function _stuff() {
@@ -299,7 +313,7 @@ function _libTiff() {
     cd "$LIBTIFF_DIR"
     ./configure --with-pic --disable-jbig --disable-webp
     make -j$(nproc)
-    cd "$TAHOMA_DIR"  # Regresar al directorio base
+    cd "$TAHOMA_DIR"  # Return to the base directory.
 }
 
 function _build() {
@@ -311,7 +325,7 @@ function _build() {
 
     mkdir -p "$BUILD_DIR"   
 
-    cd "$BUILD_DIR"  # Asegurarse de que la compilación se haga en el directorio correcto
+    cd "$BUILD_DIR"  # Make sure the compilation is done in the correct directory.
 
     if command -v dnf >/dev/null 2>&1 || command -v yum >/dev/null 2>&1; then
         cmake "$SOURCES_DIR" -DCMAKE_INSTALL_PREFIX="$BUILD_DIR" -DSUPERLU_INCLUDE_DIR=/usr/include/SuperLU
@@ -324,7 +338,7 @@ function _build() {
 
 
 function _run() {
-    # Running Tahoma2D usando absolute path
+    # Running Tahoma2D using absolute path
     clear
     LD_LIBRARY_PATH="$BUILD_DIR/lib/opentoonz:$LD_LIBRARY_PATH"
     ./bin/Tahoma2D
