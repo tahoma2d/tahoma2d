@@ -1,5 +1,14 @@
 # Setting up the development environment for GNU/Linux
 
+## New Method: Automated Multi-Language Scripts  
+
+You can use the automated multi-language scripts `linux_depends.sh` and `linux_build.sh`.  
+
+- `linux_depends.sh` must be run with root permissions. It will install the necessary dependencies using your distribution's package manager.  
+- `linux_build.sh` must be run **without** root permissions. It will handle the compilation process from source.
+
+## Traditional Method:
+
 ## Required software
 
 Building Tahoma2D from source requires the following dependencies:
