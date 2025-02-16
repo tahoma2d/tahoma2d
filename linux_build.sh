@@ -31,7 +31,7 @@
     STUFF_DIR="$TAHOMA_DIR/stuff"
     LIBTIFF_DIR="$TAHOMA_DIR/thirdparty/tiff-4.2.0/"
     TOONZ_DIR="$TAHOMA_DIR/toonz/"
-    BUILD_DIR="$TOONZ_DIR/build/"
+    BUILD_DIR="$TAHOMA_DIR/build/"
     SOURCES_DIR="$TOONZ_DIR/sources"
 
 # ======================================================================
@@ -299,28 +299,26 @@ function _libTiff() {
     cd "$LIBTIFF_DIR"
     ./configure --with-pic --disable-jbig --disable-webp
     make -j$(nproc)
+    cd "$TAHOMA_DIR"  # Regresar al directorio base
 }
 
 function _build() {
-
-    # If the source directory does not exist, exit
     if [ ! -d "$SOURCES_DIR" ]; then
-		clear
-        echo -e "\n\n($_msg SOURCES)\n\n"
+        clear
+        echo -e "\n\n$(_msg SOURCES)\n\n"
         exit 1
     fi
 
-    # Create build directory if it doesn't exist
     mkdir -p "$BUILD_DIR"   
 
-    # Detect if we are on Fedora or a RedHat-based distribution
+    cd "$BUILD_DIR"  # Asegurarse de que la compilación se haga en el directorio correcto
+
     if command -v dnf >/dev/null 2>&1 || command -v yum >/dev/null 2>&1; then
         cmake "$SOURCES_DIR" -DCMAKE_INSTALL_PREFIX="$BUILD_DIR" -DSUPERLU_INCLUDE_DIR=/usr/include/SuperLU
     else
         cmake "$SOURCES_DIR" -DCMAKE_INSTALL_PREFIX="$BUILD_DIR"
     fi
 
-    # Run the build process
     make -j$(nproc)
 }
 
