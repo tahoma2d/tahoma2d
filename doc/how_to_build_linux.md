@@ -220,3 +220,6 @@ It may be helpful to use existing packages as a reference when creating a packag
 - App-Image (Portable):
   https://github.com/morevnaproject/morevna-builds
 
+  -Quirinux (.deb):
+  https://repo.quirinux.org/pool/main/t/tahoma2d/
+
