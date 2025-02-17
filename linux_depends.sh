@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ======================================================================
-# File:       linux_linux_depends.sh
+# File:       linux_depends.sh
 # Author:     Charlie Martínez® <cmartinez@quirinux.org>
 # License:    BSD 3-Clause "New" or "Revised" License
 # Purpose:    Download dependences for compiling Tahoma2d
