@@ -1,5 +1,14 @@
 # Setting up the development environment for GNU/Linux
 
+## New: The Quick Way
+
+We have added 2 new multi-language scripts compatible with Ubuntu, Debian, Fedora, Arch, OpenSUSE, and their derivatives:
+
+- `linux_depends.sh` installs the necessary dependencies.
+- `linux_build.sh` executes the local build.
+
+Basically, they automate the following steps:
+
 ## Required software
 
 Building Tahoma2D from source requires the following dependencies:
