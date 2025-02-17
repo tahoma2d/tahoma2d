@@ -325,6 +325,13 @@ function _build() {
         echo -e "\n\n$(_msg SOURCES)\n\n"
         exit 1
     fi
+    
+    if [ -d "$BUILD_DIR" ]; then # If it exists, it deletes it to create a new build. *
+    rm -rf "$BUILD_DIR" 
+    fi
+    
+    # * Use case: you don't want to download the sources again, 
+    # but rather, you've modified them and want to compile locally again to test your changes.
 
     mkdir -p "$BUILD_DIR"   
 
