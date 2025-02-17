@@ -4,7 +4,7 @@
 # File:       linux_build.sh
 # Author:     Charlie Martínez® <cmartinez@quirinux.org>
 # License:    BSD 3-Clause "New" or "Revised" License
-# Purpose:    Script para compilar Tahoma2D
+# Purpose:    Script to Compile Tahoma2D
 # Supported:  Multi-distro (originally for Quirinux 2.0)
 # ======================================================================
 
