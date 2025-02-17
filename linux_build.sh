@@ -4,7 +4,7 @@
 # File:       linux_build.sh
 # Author:     Charlie Martínez® <cmartinez@quirinux.org>
 # License:    BSD 3-Clause "New" or "Revised" License
-# Purpose:    Script to Compile Tahoma2D
+# Purpose:    Script para compilar Tahoma2D
 # Supported:  Multi-distro (originally for Quirinux 2.0)
 # ======================================================================
 
@@ -31,7 +31,7 @@
     STUFF_DIR="$TAHOMA_DIR/stuff"
     LIBTIFF_DIR="$TAHOMA_DIR/thirdparty/tiff-4.2.0"
     TOONZ_DIR="$TAHOMA_DIR/toonz"
-    BUILD_DIR="$TAHOMA_DIR/build"
+    BUILD_DIR="$TOONZ_DIR/build"
     SOURCES_DIR="$TOONZ_DIR/sources"
 
 # ======================================================================
@@ -290,7 +290,7 @@ function _stuff() {
     mkdir -p "$USER_CONFIG_DIR"
     # Check if the 'stuff' directory exists before copying
     if [ -d "$STUFF_DIR" ]; then
-        cp -r "$STUFF_DIR" "$USER_CONFIG_DIR/"
+        cp -rf "$STUFF_DIR" "$USER_CONFIG_DIR/"
     fi
 }
 
@@ -343,8 +343,8 @@ function _build() {
 function _run() {
     # Running Tahoma2D using absolute path
     clear
-    LD_LIBRARY_PATH="$BUILD_DIR/lib/opentoonz:$LD_LIBRARY_PATH"
-    ./bin/Tahoma2D
+    LD_LIBRARY_PATH="$BUILD_DIR/lib/tahoma2d:$LD_LIBRARY_PATH"
+    $BUILD_DIR/bin/Tahoma2D
 }
 
 function _install() {
