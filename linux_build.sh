@@ -26,12 +26,12 @@
 
     # Determine the script's execution directory
     SCRIPT_DIR="$(dirname "$(realpath "$0")")"
-    TAHOMA_DIR="$SCRIPT_DIR/tahoma2d/"
+    TAHOMA_DIR="$SCRIPT_DIR/tahoma2d"
     USER_CONFIG_DIR="$HOME/.config/Tahoma2D" 
     STUFF_DIR="$TAHOMA_DIR/stuff"
-    LIBTIFF_DIR="$TAHOMA_DIR/thirdparty/tiff-4.2.0/"
-    TOONZ_DIR="$TAHOMA_DIR/toonz/"
-    BUILD_DIR="$TAHOMA_DIR/build/"
+    LIBTIFF_DIR="$TAHOMA_DIR/thirdparty/tiff-4.2.0"
+    TOONZ_DIR="$TAHOMA_DIR/toonz"
+    BUILD_DIR="$TAHOMA_DIR/build"
     SOURCES_DIR="$TOONZ_DIR/sources"
 
 # ======================================================================
@@ -279,6 +279,9 @@ function _cloningTahoma() {
 	if [[ "$answer" =~ ^[YySsOo]$ ]]; then
 	# Clone into the current directory
     git clone https://github.com/tahoma2d/tahoma2d "$TAHOMA_DIR"      
+    fi
+    if [ ! -e "$TAHOMA_DIR" ]; then
+    git clone https://github.com/tahoma2d/tahoma2d "$TAHOMA_DIR" 
     fi
 }
 
