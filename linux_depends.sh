@@ -140,7 +140,7 @@ function _debianDepends() {
         libqt5opengl5-dev qtmultimedia5-dev qtwayland5 libqt5multimedia5-plugins libturbojpg0-dev \
         libqt5serialport5-dev libsuperlu-dev liblz4-dev liblzo-dev libmypaint-dev libglew-dev \
         freeglut3-dev qt59multimedia qt59script qt59serialport qt59svg qt59tools libopencv-dev \
-        libgsl2 libopenblas-dev libmypaint-1.5-1 libmypaint; do apt-get install -y $paquetes 
+        libgsl2 libopenblas-dev libmypaint-1.5-1 libmypaint libturbojpeg0-dev; do apt-get install -y $paquetes 
     done
     touch /tmp/ok-packages
     echo -e "\n\n$(_msg OK_DEPENDS)\n\n"
@@ -176,7 +176,7 @@ function _openSuseDepends() {
         libQt5OpenGL-devel libjpeg-devel liblz4-devel libpng16-compat-devel libqt5-linguist-devel \
         libqt5-qtbase-devel libqt5-qtmultimedia-devel libqt5-qtscript-devel libqt5-qtsvg-devel \
         libtiff-devel lzo-devel openblas-devel pkgconfig sed superlu-devel zlib-devel json-c-devel \
-        libqt5-qtmultimedia libmypaint-devel libmypaint; do zypper install -y
+        libqt5-qtmultimedia libmypaint-devel libmypaint libjpeg62-turbo-devel; do zypper install -y
     done
     touch /tmp/ok-packages
     echo -e "\n\n$(_msg OK_DEPENDS})\n\n"
