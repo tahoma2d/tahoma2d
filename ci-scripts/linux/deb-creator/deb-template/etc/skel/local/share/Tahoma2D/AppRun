@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Get the script directory
+DIR="$(dirname "$0")"
+DIR="$(cd "$DIR" && readlink -f "$(pwd)")"
+echo "DIR: $DIR"
+export APPDIR="$DIR"
+
+# Export CAMLIBS and IOLIBS variables
+export CAMLIBS=$(find "$APPDIR/usr/lib/libgphoto2" -mindepth 1 -type d)
+echo "CAMLIBS: $CAMLIBS"
+
+export IOLIBS=$(find "$APPDIR/usr/lib/libgphoto2_port" -mindepth 1 -type d)
+echo "IOLIBS: $IOLIBS"
+
+# Function to change directory and file permissions
+change_permissions() {
+    local path="$1"
+    echo "Cambiando permisos en $path..."
+    find "$path" -type d ! -perm 755 -exec chmod 755 {} +
+    find "$path" -type f ! -perm 644 -exec chmod 644 {} +
+}
+
+# Check and change permissions in specific paths
+[ -d "$HOME/.local/share/Tahoma2D/tahomastuff/profiles" ] && change_permissions "$HOME/.local/share/Tahoma2D/tahomastuff/profiles"
+[ -d "$HOME/.local/share/Tahoma2D/tahomastuff/sandbox" ] && change_permissions "$HOME/.local/share/Tahoma2D/tahomastuff/sandbox"
+[ -d "$HOME/.cache/Tahoma2D/" ] && change_permissions "$HOME/.cache/Tahoma2D/"
+
+# Start Tahoma2D
+exec "$APPDIR/usr/bin/Tahoma2D"
