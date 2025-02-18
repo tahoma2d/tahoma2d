@@ -274,10 +274,17 @@ public:
 
     // rasIn e' un raster dello stesso tipo di tile.getRaster()
 
+    if (infoIn.m_isAlphaLockMask) {
+      infoIn.m_applyMask = false;
+      infoIn.m_isAlphaLockMask = false;
+    }
     TTile inTile;
     m_fx->allocateAndCompute(inTile, rectIn.getP00(),
                              TDimension(rectInI.getLx(), rectInI.getLy()),
                              tile.getRaster(), frame, infoIn);
+
+    infoIn.m_applyMask       = info.m_applyMask;
+    infoIn.m_isAlphaLockMask = info.m_isAlphaLockMask;
 
     infoIn.m_affine = appliedAff;
     TRasterFx::applyAffine(tile, inTile, infoIn);
