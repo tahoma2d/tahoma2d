@@ -22,6 +22,8 @@ Example:
 - `-c` or `--compressed`: Provides the path to the compressed Tahoma2D archive (`.tar.gz` or `.zip`).*
 
 * This is the file that contains the .AppImage and folders, not the source code.
+  
+![example](https://github.com/user-attachments/assets/9d1e1b8d-4270-459e-aef9-741192a2701e)
 
 ## Description
 
