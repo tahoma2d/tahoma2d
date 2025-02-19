@@ -39,11 +39,19 @@ private:
 TLevelWriterWebm::TLevelWriterWebm(const TFilePath &path, TPropertyGroup *winfo)
     : TLevelWriter(path, winfo) {
   if (!m_properties) m_properties = new Tiio::WebmWriterProperties();
+
   std::string scale = m_properties->getProperty("Scale")->getValueAsString();
   m_scale           = QString::fromStdString(scale).toInt();
-  std::string quality =
-      m_properties->getProperty("Quality")->getValueAsString();
-  m_vidQuality = QString::fromStdString(quality).toInt();
+  std::string codec = m_properties->getProperty("Codec")->getValueAsString();
+  m_codec           = QString::fromStdString(codec);
+  std::string speed = m_properties->getProperty("Speed")->getValueAsString();
+  m_speed           = QString::fromStdString(speed);
+  std::string pixelFormat =
+      m_properties->getProperty("Pixel Format")->getValueAsString();
+  m_pixelFormat   = QString::fromStdString(pixelFormat);
+  std::string crf = m_properties->getProperty("CRF")->getValueAsString();
+  m_crf           = QString::fromStdString(crf).toInt();
+
   ffmpegWriter = new Ffmpeg();
   ffmpegWriter->setPath(m_path);
   if (TSystem::doesExistFileOrLevel(m_path)) TSystem::deleteFile(m_path);
@@ -52,7 +60,6 @@ TLevelWriterWebm::TLevelWriterWebm(const TFilePath &path, TPropertyGroup *winfo)
 //-----------------------------------------------------------
 
 TLevelWriterWebm::~TLevelWriterWebm() {
-  // QProcess createWebm;
   QStringList preIArgs;
   QStringList postIArgs;
 
@@ -68,29 +75,38 @@ TLevelWriterWebm::~TLevelWriterWebm() {
   if (outLx % 2 != 0) outLx++;
   if (outLy % 2 != 0) outLy++;
 
-  // calculate quality (bitrate)
-  int pixelCount   = m_lx * m_ly;
-  int bitRate      = pixelCount / 150;  // crude but gets decent values
-  double quality   = m_vidQuality / 100.0;
-  double tempRate  = (double)bitRate * quality;
-  int finalBitrate = (int)tempRate;
-  int crf          = 51 - (m_vidQuality * 51 / 100);
-
-  preIArgs << "-framerate";
-  preIArgs << QString::number(m_frameRate);
-
-  postIArgs << "-auto-alt-ref";
-  postIArgs << "0";
   postIArgs << "-c:v";
-  postIArgs << "libvpx";
-  postIArgs << "-s";
-  postIArgs << QString::number(outLx) + "x" + QString::number(outLy);
-  postIArgs << "-b";
-  postIArgs << QString::number(finalBitrate) + "k";
+  // Select codec based on property
+  if (m_codec == "VP8")
+    postIArgs << "libvpx";
+  else if (m_codec == "VP9")
+    postIArgs << "libvpx-vp9";
+  else
+    postIArgs << "libvpx-vp9";  // Default
+
+  // For VP8/VP9, convert named speeds to speed values
   postIArgs << "-speed";
-  postIArgs << "3";
-  postIArgs << "-quality";
-  postIArgs << "good";
+  if (m_speed == "Best Quality")
+    postIArgs << "0";
+  else if (m_speed == "Good Quality")
+    postIArgs << "1";
+  else if (m_speed == "Balanced")
+    postIArgs << "2";
+  else if (m_speed == "Fast")
+    postIArgs << "3";
+  else if (m_speed == "Faster")
+    postIArgs << "4";
+  else if (m_speed == "Fastest")
+    postIArgs << "5";
+  else
+    postIArgs << "2";  // Default to Balanced
+
+  preIArgs << "-framerate" << QString::number(m_frameRate);
+  postIArgs << "-pix_fmt" << m_pixelFormat;
+  postIArgs << "-crf" << QString::number(m_crf);
+  postIArgs << "-auto-alt-ref" << "1";
+  postIArgs << "-b:v" << "0";
+  postIArgs << "-s" << QString::number(outLx) + "x" + QString::number(outLy);
 
   ffmpegWriter->runFfmpeg(preIArgs, postIArgs, false, false, true);
   ffmpegWriter->cleanUpFiles();
@@ -226,14 +242,45 @@ TImageP TLevelReaderWebm::load(int frameIndex) {
 }
 
 Tiio::WebmWriterProperties::WebmWriterProperties()
-    : m_vidQuality("Quality", 1, 100, 90), m_scale("Scale", 1, 100, 100) {
-  bind(m_vidQuality);
+    : m_scale("Scale", 1, 100, 100)
+    , m_crf("CRF", 4, 63, 23)
+    , m_codec("Codec")
+    , m_speed("Speed")
+    , m_pixelFormat("Pixel Format") {
   bind(m_scale);
+  bind(m_crf);
+  bind(m_codec);
+  bind(m_speed);
+  bind(m_pixelFormat);
+
+  // Codec
+  m_codec.addValue(L"VP9");
+  m_codec.addValue(L"VP8");
+  m_codec.setValue(L"VP9");  // Default
+  // Speed
+  m_speed.addValue(L"Best Quality");  // speed 0
+  m_speed.addValue(L"Good Quality");  // speed 1
+  m_speed.addValue(L"Balanced");      // speed 2
+  m_speed.addValue(L"Fast");          // speed 3
+  m_speed.addValue(L"Faster");        // speed 4
+  m_speed.addValue(L"Fastest");       // speed 5
+  m_speed.setValue(L"Balanced");      // Default
+  // Pixel Format
+  m_pixelFormat.addValue(L"yuv420p");
+  m_pixelFormat.addValue(L"yuv422p");
+  m_pixelFormat.addValue(L"yuv444p");
+  m_pixelFormat.addValue(L"yuv420p10le");
+  m_pixelFormat.addValue(L"yuv422p10le");
+  m_pixelFormat.addValue(L"yuv444p10le");
+  m_pixelFormat.setValue(L"yuv420p");  // Default
 }
 
 void Tiio::WebmWriterProperties::updateTranslation() {
-  m_vidQuality.setQStringName(tr("Quality"));
   m_scale.setQStringName(tr("Scale"));
+  m_codec.setQStringName(tr("Codec"));
+  m_speed.setQStringName(tr("Speed"));
+  m_pixelFormat.setQStringName(tr("Pixel Format"));
+  m_crf.setQStringName(tr("CRF"));
 }
 
 // Tiio::Reader* Tiio::makeWebmReader(){ return nullptr; }
