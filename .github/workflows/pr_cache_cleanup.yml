@@ -15,7 +15,7 @@ jobs:
         
       - name: Cleanup
         run: |
-          BRANCH=${{ github.ref }}
+          BRANCH=refs/pull/${{ github.event.pull_request.number }}/merge
 
           echo "Fetching list of cache keys for $BRANCH"
           cacheKeysForPR=$(gh cache list --ref $BRANCH | cut -f 2 )
