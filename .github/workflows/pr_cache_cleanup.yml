@@ -18,7 +18,7 @@ jobs:
           BRANCH=${{ github.ref }}
 
           echo "Fetching list of cache keys for $BRANCH"
-          cacheKeysForPR=$(gh cache list --ref $BRANCH | cut -f 1 )
+          cacheKeysForPR=$(gh cache list --ref $BRANCH | cut -f 2 )
 
           ## Setting this to not fail the workflow while deleting cache keys. 
           set +e
