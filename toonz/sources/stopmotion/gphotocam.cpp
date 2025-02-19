@@ -140,12 +140,14 @@ void GPhotoCam::resetGphotocam(bool liveViewOpen) {
 //-----------------------------------------------------------------
 
 void GPhotoCam::loadCameraConfigKeys(QString manufacturer) {
-  int i = sizeof(cameraConfigKeys) - 1;
+  int i = 0;
 
-  if (manufacturer.contains("Canon"))
-    i = 0;
-  else if (manufacturer.contains("Nikon"))
-    i = 1;
+  // Look for known T2D configurations
+  for (int x = 1; x < CAMERACONFIGKEYS_COUNT; x++) {
+    if (!manufacturer.contains(cameraConfigKeys[x].manufacturer)) continue;
+    i = x;
+    break;
+  }
 
   m_configKeys.modeKey         = cameraConfigKeys[i].keys.modeKey;
   m_configKeys.batteryLevelKey = cameraConfigKeys[i].keys.batteryLevelKey;
