@@ -1,6 +1,6 @@
 name: Tahoma2D Linux Build
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   Linux:
@@ -21,17 +21,18 @@ jobs:
         run: |
           ci-scripts/linux/tahoma-install.sh
           sudo apt-get install ccache
-      - uses: actions/cache@v4
+      - name: Restore cache
+        id: restore-cache
+        uses: actions/cache/restore@v4
         with:
           path: |
             /home/runner/.ccache
             /home/runner/work/tahoma2d/taoma2d/thirdparty/openh264
             /home/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg
             /home/runner/work/tahoma2d/taoma2d/thirdparty/opencv
-          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ github.sha }}
+          key: ${{ runner.os }}-${{ matrix.compiler }}-refs/heads/master
           restore-keys: |
             ${{ runner.os }}-${{ matrix.compiler }}-
-            ${{ runner.os }}-
       - name: Get CanonSDK
         if: ${{ (github.repository_owner == 'tahoma2d' || github.repository_owner == 'manongjohn') && github.event_name == 'push' }}
         run: |
@@ -117,9 +118,24 @@ jobs:
           name: ${{ env.NIGHTLYDATETIME }}
           omitBodyDuringUpdate: true
           omitNameDuringUpdate: true
-          owner: tahoma2d	  
+          owner: tahoma2d
           prerelease: true
           replacesArtifacts: true
           repo: tahoma2d_nightlies
           tag: nightly-${{ github.sha }}
           token: ${{ secrets.TAHOMA2D_TOKEN }}
+      - name: Remove existing master cache
+        if: ${{ steps.restore-cache.outputs.cache-hit == 'true' && github.ref == 'refs/heads/master' }}
+        run: gh cache delete ${{ runner.os }}-${{ matrix.compiler }}-refs/heads/master
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Save cache
+        if: ${{ steps.restore-cache.outputs.cache-hit == 'false' || github.ref == 'refs/heads/master' }}
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            /home/runner/.ccache
+            /home/runner/work/tahoma2d/taoma2d/thirdparty/openh264
+            /home/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg
+            /home/runner/work/tahoma2d/taoma2d/thirdparty/opencv
+          key: ${{ runner.os }}-${{ matrix.compiler }}-${{ github.ref }}

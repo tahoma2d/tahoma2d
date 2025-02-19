@@ -1,6 +1,6 @@
 name: Tahoma2D Windows Build
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   Windows:
@@ -15,12 +15,15 @@ jobs:
           choco install ccache
           copy C:\ProgramData\chocolatey\lib\ccache\tools\ccache*\ccache.exe C:\ProgramData\chocolatey\bin\cl.exe
           mkdir %LOCALAPPDATA%\ccache
-      - uses: actions/cache@v4
+      - name: Restore cache
+        id: restore-cache
+        uses: actions/cache/restore@v4
         with:
           path: |
             ~/AppData/Local/ccache
-          key: ${{ runner.os }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-
+          key: ${{ runner.os }}-refs/heads/master
+          restore-keys: |
+            ${{ runner.os }}-
       - name: Get CanonSDK
         if: ${{ (github.repository_owner == 'tahoma2d' || github.repository_owner == 'manongjohn') && github.event_name == 'push' }}
         run: |
@@ -100,3 +103,15 @@ jobs:
           repo: tahoma2d_nightlies
           tag: nightly-${{ github.sha }}
           token: ${{ secrets.TAHOMA2D_TOKEN }}
+      - name: Remove existing master cache
+        if: ${{ steps.restore-cache.outputs.cache-hit == 'true' && github.ref == 'refs/heads/master' }}
+        run: gh cache delete ${{ runner.os }}-refs/heads/master
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Save cache
+        if: ${{ steps.restore-cache.outputs.cache-hit == 'false' || github.ref == 'refs/heads/master' }}
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/AppData/Local/ccache
+          key: ${{ runner.os }}-${{ github.ref }}
