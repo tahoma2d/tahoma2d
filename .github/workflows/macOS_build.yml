@@ -1,6 +1,6 @@
 name: Tahoma2D macOS Build
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   macOS:
@@ -14,15 +14,18 @@ jobs:
           ci-scripts/osx/tahoma-install.sh
           brew install ccache
           mkdir /Users/runner/.ccache
-      - uses: actions/cache@v4
+      - name: Restore cache
+        id: restore-cache
+        uses: actions/cache/restore@v4
         with:
           path: |
             /Users/runner/.ccache
             /Users/runner/work/tahoma2d/taoma2d/thirdparty/aom
             /Users/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg
             /Users/runner/work/tahoma2d/taoma2d/thirdparty/opencv
-          key: ${{ runner.os }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-
+          key: ${{ runner.os }}-refs/heads/master
+          restore-keys: |
+            ${{ runner.os }}-
       - name: Get CanonSDK
         if: ${{ github.repository_owner == 'tahoma2d' && github.event_name == 'push' }}
         run: |
@@ -116,3 +119,18 @@ jobs:
           repo: tahoma2d_nightlies
           tag: nightly-${{ github.sha }}
           token: ${{ secrets.TAHOMA2D_TOKEN }}
+      - name: Remove existing master cache
+        if: ${{ steps.restore-cache.outputs.cache-hit == 'true' && github.ref == 'refs/heads/master' }}
+        run: gh cache delete ${{ runner.os }}-refs/heads/master
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Save cache
+        if: ${{ steps.restore-cache.outputs.cache-hit == 'false' || github.ref == 'refs/heads/master' }}
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            /Users/runner/.ccache
+            /Users/runner/work/tahoma2d/taoma2d/thirdparty/aom
+            /Users/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg
+            /Users/runner/work/tahoma2d/taoma2d/thirdparty/opencv
+          key: ${{ runner.os }}-${{ github.ref }}
