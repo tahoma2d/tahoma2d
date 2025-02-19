@@ -125,7 +125,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
       - name: Save cache
-        if: ${{ steps.restore-cache.outputs.cache-hit == 'false' || github.ref == 'refs/heads/master' }}
+        if: ${{ steps.restore-cache.outputs.cache-hit != 'true' || github.ref == 'refs/heads/master' }}
         uses: actions/cache/save@v4
         with:
           path: |
