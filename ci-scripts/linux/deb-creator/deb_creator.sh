@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 # ======================================================================
-# File:       tahoma-debcreator.sh
+# File:       debcreator.sh
 # Author:     Charlie Martínez® <cmartinez@quirinux.org>
 # License:    BSD 3-Clause "New" or "Revised" License
 # Purpose:    Script create a functional .deb from .appimage
