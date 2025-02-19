@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# ======================================================================
+# File:       tahoma-permissions
+# Author:     Charlie Martínez® <cmartinez@quirinux.org>
+# License:    BSD 3-Clause "New" or "Revised" License
+# Purpose:    Script to fix permissions in Tahoma2D installed from the .deb
+# Supported:  Debian and derivatives (originally for Quirinux 2.0)
+# ======================================================================
+
+#
+# Copyright (c) 2019-2025 Charlie Martínez. All Rights Reserved.  
+# License: BSD 3-Clause "New" or "Revised" License
+# Authorized and unauthorized uses of the Quirinux trademark:  
+# See https://www.quirinux.org/aviso-legal  
+#
+# Tahoma2D and OpenToonz are registered trademarks of their respective 
+# owners, and any other third-party projects that may be mentioned or 
+# affected by this code belong to their respective owners and follow 
+# their respective licenses.
+#
+
+# ======================================================================
+# Main proccess
+# ======================================================================
+
+# Fix permissions
+if [ -d "$HOME/.config/Tahoma2D" ]; then
+  # Change permissions in $HOME/.local/share/Tahoma2D (directories and files)
+  find "$HOME/.local/share/Tahoma2D" -type d ! -perm 755 -exec chmod 755 {} +
+  find "$HOME/.local/share/Tahoma2D" -type f ! -perm 644 -exec chmod 644 {} +
+
+  # Change permissions in $HOME/.config/Tahoma2D (directories and files)
+  find "$HOME/.config/Tahoma2D" -type d ! -perm 755 -exec chmod 755 {} +
+  find "$HOME/.config/Tahoma2D" -type f ! -perm 644 -exec chmod 644 {} +
+
+  # Make AppRun executable only if it is not already
+  [ ! -x "$HOME/.local/share/Tahoma2D/AppRun" ] && chmod +x "$HOME/.local/share/Tahoma2D/AppRun"
+
+  # Make files in $HOME/.local/share/Tahoma2D/usr/bin executable, except qt.conf
+  find "$HOME/.local/share/Tahoma2D/usr/bin" -type f ! -name "qt.conf" ! -perm /u+x -exec chmod +x {} +
+  [ -x "$HOME/.local/share/Tahoma2D/usr/bin/qt.conf" ] && chmod -x "$HOME/.local/share/Tahoma2D/usr/bin/qt.conf"
+
+  # Make file in $HOME/.local/share/Tahoma2D/ffmpeg executable
+  find "$HOME/.local/share/Tahoma2D/ffmpeg" -type f ! -perm /u+x -exec chmod +x {} +
+
+  # Make the file in $HOME/.local/share/Tahoma2D/rhubarb/rhubarb executable
+  [ ! -x "$HOME/.local/share/Tahoma2D/rhubarb/rhubarb" ] && chmod +x "$HOME/.local/share/Tahoma2D/rhubarb/rhubarb"
+fi
+
+
+
+

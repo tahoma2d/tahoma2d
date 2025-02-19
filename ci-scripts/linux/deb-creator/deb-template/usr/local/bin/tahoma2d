@@ -1,0 +1,136 @@
+#!/bin/bash
+
+# ======================================================================
+# File:       tahoma2d
+# Author:     Charlie Martínez® <cmartinez@quirinux.org>
+# License:    BSD 3-Clause "New" or "Revised" License
+# Purpose:    Script to start Tahoma2d installed from the .deb
+# Supported:  Debian and derivatives (originally for Quirinux 2.0)
+# ======================================================================
+
+#
+# Copyright (c) 2019-2025 Charlie Martínez. All Rights Reserved.  
+# License: BSD 3-Clause "New" or "Revised" License
+# Authorized and unauthorized uses of the Quirinux trademark:  
+# See https://www.quirinux.org/aviso-legal  
+#
+# Tahoma2D and OpenToonz are registered trademarks of their respective 
+# owners, and any other third-party projects that may be mentioned or 
+# affected by this code belong to their respective owners and follow 
+# their respective licenses.
+#
+
+# ======================================================================
+# Translations
+# ======================================================================
+
+function _msg() {
+	# Return a translated message based on the key and system language   
+    local clave=$1 # Store the key for the requested message
+    declare -A msg=( # Translation messages for different languages
+    
+		[es_CREATING_DIRECTORY]="Creando directorio $FILE..."
+		[en_CREATING_DIRECTORY]="Creating directory $FILE..."
+		[it_CREATING_DIRECTORY]="Creazione della directory $FILE..."
+		[de_CREATING_DIRECTORY]="Erstelle Verzeichnis $FILE..."
+		[fr_CREATING_DIRECTORY]="Création du répertoire $FILE..."
+		[gl_CREATING_DIRECTORY]="Creando directorio $FILE..."
+		[pt_CREATING_DIRECTORY]="Criando diretório $FILE..."
+
+		[es_COPY_FAILED]="Error: Falló la copia de archivos."
+		[en_COPY_FAILED]="Error: File copy failed."
+		[it_COPY_FAILED]="Errore: Copia dei file non riuscita."
+		[de_COPY_FAILED]="Fehler: Datei kopieren fehlgeschlagen."
+		[fr_COPY_FAILED]="Erreur : Échec de la copie des fichiers."
+		[gl_COPY_FAILED]="Erro: Fallou a copia de ficheiros."
+		[pt_COPY_FAILED]="Erro: Falha na cópia de arquivos."
+		
+		[es_SOURCE_DIRECTORY_NOT_EXISTS]="Error: El directorio de origen no existe."
+		[en_SOURCE_DIRECTORY_NOT_EXISTS]="Error: The source directory does not exist."
+		[it_SOURCE_DIRECTORY_NOT_EXISTS]="Errore: La directory di origine non esiste."
+		[de_SOURCE_DIRECTORY_NOT_EXISTS]="Fehler: Das Quellverzeichnis existiert nicht."
+		[fr_SOURCE_DIRECTORY_NOT_EXISTS]="Erreur : Le répertoire source n'existe pas."
+		[gl_SOURCE_DIRECTORY_NOT_EXISTS]="Erro: O directorio de orixe non existe."
+		[pt_SOURCE_DIRECTORY_NOT_EXISTS]="Erro: O diretório de origem não existe."
+
+		[es_STARTING_TAHOMA2D]="Iniciando Tahoma2D desde $FILE..."
+		[en_STARTING_TAHOMA2D]="Starting Tahoma2D from $FILE..."
+		[it_STARTING_TAHOMA2D]="Avviando Tahoma2D da $FILE..."
+		[de_STARTING_TAHOMA2D]="Starte Tahoma2D von $FILE..."
+		[fr_STARTING_TAHOMA2D]="Démarrage de Tahoma2D à partir de $FILE..."
+		[gl_STARTING_TAHOMA2D]="Iniciando Tahoma2D desde $FILE..."
+		[pt_STARTING_TAHOMA2D]="Iniciando Tahoma2D a partir de $FILE..."
+
+		[es_CANNOT_CHANGE_DIR]="Error: No se puede cambiar al directorio $FILE."
+		[en_CANNOT_CHANGE_DIR]="Error: Cannot change to directory $FILE."
+		[it_CANNOT_CHANGE_DIR]="Errore: Impossibile cambiare la directory $FILE."
+		[de_CANNOT_CHANGE_DIR]="Fehler: Kann nicht in das Verzeichnis $FILE wechseln."
+		[fr_CANNOT_CHANGE_DIR]="Erreur : Impossible de changer de répertoire vers $FILE."
+		[gl_CANNOT_CHANGE_DIR]="Erro: Non se pode cambiar ao directorio $FILE."
+		[pt_CANNOT_CHANGE_DIR]="Erro: Não é possível mudar para o diretório $FILE."
+
+		[es_APP_RUN_FAILED]="Error: Falló la ejecución de AppRun."
+		[en_APP_RUN_FAILED]="Error: AppRun execution failed."
+		[it_APP_RUN_FAILED]="Errore: Esecuzione di AppRun fallita."
+		[de_APP_RUN_FAILED]="Fehler: AppRun-Ausführung fehlgeschlagen."
+		[fr_APP_RUN_FAILED]="Erreur : L'exécution de AppRun a échoué."
+		[gl_APP_RUN_FAILED]="Erro: Fallou a execución de AppRun."
+		[pt_APP_RUN_FAILED]="Erro: A execução do AppRun falhou."
+    
+			)
+
+    local idioma=$(echo $LANG | cut -d_ -f1)
+    local mensaje=${msg[${idioma}_$clave]:-${msg[en_$clave]}}
+
+    printf "%s" "$mensaje"
+}
+
+# ======================================================================
+# Functions
+# ======================================================================
+
+FILE="$HOME/.local/share/Tahoma2D"
+
+function _makeDirectory() {
+    echo "$(_msg CREATING_DIRECTORY)"
+    mkdir -p "$FILE"
+}
+
+function _copyFiles() {
+    echo "Copiando archivos desde /etc/skel/.local/share/Tahoma2D/ a $FILE..."
+    if [ -d "/etc/skel/.local/share/Tahoma2D/" ]; then
+        cp -r /etc/skel/.local/share/Tahoma2D/* "$FILE" || {
+            echo "$(_msg COPY_FAILED)" >&2
+            exit 1
+        }
+    else
+        echo "$(_msg SOURCE_DIRECTORY_NOT_EXISTS)" >&2
+        exit 1
+    fi
+}
+
+function _run() {
+    echo "$(_msg STARTING_TAHOMA2D)"
+    cd "$FILE" || {
+        echo "$(_msg CANNOT_CHANGE_DIR)" >&2
+        exit 1
+    }
+    ./AppRun || {
+        echo "$(_msg APP_RUN_FAILED)" >&2
+        exit 1
+    }
+}
+
+# ======================================================================
+# Main proccess
+# ======================================================================
+if [ ! -d "$FILE" ]; then
+    _makeDirectory
+    _copyFiles
+    tahoma-permissions
+    _run
+    tahoma-permissions
+else
+    _run
+    tahoma-permissions
+fi
