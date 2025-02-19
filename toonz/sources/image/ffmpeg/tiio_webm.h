@@ -33,7 +33,10 @@ private:
   Ffmpeg *ffmpegWriter;
   int m_lx, m_ly;
   int m_scale;
-  int m_vidQuality;
+  QString m_codec;
+  QString m_speed;
+  QString m_pixelFormat;
+  int m_crf;
   // void *m_buffer;
 };
 
@@ -74,10 +77,12 @@ namespace Tiio {
 class WebmWriterProperties : public TPropertyGroup {
   Q_DECLARE_TR_FUNCTIONS(WebmWriterProperties)
 public:
-  // TEnumProperty m_pixelSize;
-  // TBoolProperty m_matte;
-  TIntProperty m_vidQuality;
   TIntProperty m_scale;
+  TEnumProperty m_codec;
+  TEnumProperty m_speed;
+  TEnumProperty m_pixelFormat;
+  TIntProperty m_crf;
+
   WebmWriterProperties();
   void updateTranslation() override;
 };
