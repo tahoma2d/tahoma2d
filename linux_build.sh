@@ -194,7 +194,7 @@ function _checkroot() {
 
 function _checkdepends() {
 	# Check if dependencies have been installed
-	if [ ! -e "/tmp/ok-packages" ]; then
+	if [ ! -e "$SCRIPT_DIR/ok-packages" ]; then
 	echo""
 	echo "$(_msg DEPENDS)"
 	echo""
@@ -351,7 +351,8 @@ function _run() {
     # Running Tahoma2D using absolute path
     clear
     LD_LIBRARY_PATH="$BUILD_DIR/lib/tahoma2d:$LD_LIBRARY_PATH"
-    $BUILD_DIR/bin/Tahoma2D
+    cd $BUILD_DIR/bin/
+    ./Tahoma2D
 }
 
 function _install() {
