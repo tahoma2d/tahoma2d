@@ -32,6 +32,7 @@
     LIBTIFF_DIR="$TAHOMA_DIR/thirdparty/tiff-4.2.0"
     TOONZ_DIR="$TAHOMA_DIR/toonz"
     BUILD_DIR="$TOONZ_DIR/build"
+    BIN_DIR="$BUILD_DIR/bin"
     SOURCES_DIR="$TOONZ_DIR/sources"
 
 # ======================================================================
@@ -351,7 +352,7 @@ function _run() {
     # Running Tahoma2D using absolute path
     clear
     LD_LIBRARY_PATH="$BUILD_DIR/lib/tahoma2d:$LD_LIBRARY_PATH"
-    cd $BUILD_DIR/bin/
+    cd $BIN_DIR
     ./Tahoma2D
 }
 
