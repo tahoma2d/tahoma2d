@@ -3691,8 +3691,10 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
           glTranslated(point.x, point.y, 0);
           glRotated(degree, 0, 0, 1);
           glBegin(GL_LINES);
-          glVertex2d(0, 3 + width);
-          glVertex2d(0, -3 - width);
+          // glVertex2d(0, 3 + width); 
+          // glVertex2d(0, -3 - width); 
+          glVertex2d(0, 20 + width); //   Increase Size of Step Lines in Motion Path,
+          glVertex2d(0, -20 - width); //  Improve Visibility
           glEnd();
           if (playing && currentStep == i) {
             tglDrawDisk(TPointD(0, 0), 4 + width * 3);
