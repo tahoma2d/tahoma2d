@@ -18,26 +18,36 @@ class TLevelWriterWebm : public TLevelWriter {
 public:
   TLevelWriterWebm(const TFilePath &path, TPropertyGroup *winfo);
   ~TLevelWriterWebm();
+
+  // Framerate control
   void setFrameRate(double fps) override;
 
+  // Property parsing
+  void parseProperties();
+
+  // Image and frame handling
   TImageWriterP getFrameWriter(TFrameId fid) override;
   void save(const TImageP &image, int frameIndex);
 
+  // Soundtrack handling
   void saveSoundTrack(TSoundTrack *st) override;
 
+  // Factory method for creating instances
   static TLevelWriter *create(const TFilePath &path, TPropertyGroup *winfo) {
     return new TLevelWriterWebm(path, winfo);
   }
 
 private:
+  // FFmpeg writer instance
   Ffmpeg *ffmpegWriter;
-  int m_lx, m_ly;
-  int m_scale;
-  QString m_codec;
-  QString m_speed;
-  QString m_pixelFormat;
-  int m_crf;
-  // void *m_buffer;
+
+  // Video properties
+  int m_lx, m_ly;         // Frame width and height
+  int m_scale;            // Scaling factor
+  QString m_codec;        // Video codec
+  QString m_speed;        // Encoding speed preset
+  QString m_pixelFormat;  // Pixel format
+  int m_crf;              // Constant Rate Factor (CRF) for quality control
 };
 
 //===========================================================
