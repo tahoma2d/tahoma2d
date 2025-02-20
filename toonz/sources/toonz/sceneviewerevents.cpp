@@ -571,6 +571,18 @@ void SceneViewer::onMove(const TMouseEvent &event) {
     // panning
     mousePan(event);
     return;
+  } else if (event.buttons() == Qt::LeftButton && m_mouseScrubbing > 0) {
+    if (m_mouseScrubbing == 1) {
+      m_mouseScrubbing = 2;
+      m_dragging     = true;
+      m_oldPos       = event.m_pos;
+      setToolCursor(this, ToolCursor::ScrubCursor);
+      return;
+    }
+    // panning
+    mouseScrub(event);
+    setToolCursor(this, ToolCursor::ScrubCursor);
+    return;
   }
   if (m_mouseZooming > 0) {
     setToolCursor(this, ToolCursor::ZoomCursor);
@@ -582,6 +594,10 @@ void SceneViewer::onMove(const TMouseEvent &event) {
   }
   if (m_mousePanning > 0) {
     setToolCursor(this, ToolCursor::PanCursor);
+    return;
+  }
+  if (m_mouseScrubbing > 0) {
+    setToolCursor(this, ToolCursor::ScrubCursor);
     return;
   }
 
@@ -775,7 +791,8 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
 
 void SceneViewer::onPress(const TMouseEvent &event) {
   m_dragging = true;
-  if (m_mousePanning > 0 || m_mouseRotating > 0 || m_mouseZooming > 0) {
+  if (m_mousePanning > 0 || m_mouseRotating > 0 || m_mouseZooming > 0 ||
+      m_mouseScrubbing > 0) {
     m_pos           = event.mousePos() * getDevPixRatio();
     m_mouseButton   = event.button();
     m_buttonClicked = true;
@@ -952,7 +969,7 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
   if (m_mousePanning > 0 || m_mouseRotating > 0 || m_mouseZooming > 0) {
     // We did a temp tool switch and released while actively doing something.
     // Need to tell the tool we released also
-    if (tool && tool->isEnabled() &&
+    if (!m_mouseScrubbing && tool && tool->isEnabled() &&
         TApp::instance()->getCurrentTool()->isToolBusy()) {
       tool->setViewer(this);
       TPointD pos = tool->getMatrix().inv() * winToWorld(m_lastMousePos);
@@ -969,9 +986,10 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
     }
 
     if (m_resetOnRelease) {
-      m_mousePanning  = 0;
-      m_mouseRotating = 0;
-      m_mouseZooming  = 0;
+      m_mousePanning   = 0;
+      m_mouseRotating  = 0;
+      m_mouseZooming   = 0;
+      m_mouseScrubbing = 0;
       if (m_keyAction) {
         m_keyAction->setEnabled(true);
         m_keyAction = 0;
@@ -984,6 +1002,8 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
       m_mouseRotating = 1;
     else if (m_mouseZooming > 0)
       m_mouseZooming = 1;
+    else if (m_mouseScrubbing > 0)
+      m_mouseScrubbing = 1;
 
     m_sw.stop();
     invalidateAll();
@@ -1499,6 +1519,15 @@ bool SceneViewer::event(QEvent *e) {
       }
       e->accept();
       return true;
+    } else if (actionId == V_Scrub) {
+      if (m_mouseScrubbing == 0) {
+        m_mouseScrubbing = 1;
+        m_keyAction     = action;
+        m_keyAction->setEnabled(false);
+        setToolCursor(this, ToolCursor::ScrubCursor);
+      }
+      e->accept();
+      return true;
     }
   }
 
@@ -1549,6 +1578,7 @@ bool SceneViewer::event(QEvent *e) {
         m_mousePanning  = 0;
         m_mouseZooming  = 0;
         m_mouseRotating = 0;
+        m_mouseScrubbing = 0;
         m_keyAction->setEnabled(true);
         m_keyAction = 0;
         invalidateToolStatus();
@@ -2085,6 +2115,22 @@ void SceneViewer::mouseRotate(const TMouseEvent &e) {
                  TPointD(m_center.x, u + m_center.y));
 }
 
+
+//-----------------------------------------------------------------------------
+
+void SceneViewer::mouseScrub(const TMouseEvent &e) {
+  TPointD delta = e.m_pos - m_oldPos;
+  
+  if (std::abs(delta.x) < 20) return;
+
+  if (delta.x < 0)
+    CommandManager::instance()->execute(MI_PrevFrame);
+  else if (delta.x > 0)
+    CommandManager::instance()->execute(MI_NextFrame);
+
+  m_oldPos = e.m_pos;
+}
+
 //-----------------------------------------------------------------------------
 
 void SceneViewer::resetNavigation() {
@@ -2094,6 +2140,7 @@ void SceneViewer::resetNavigation() {
     m_mousePanning  = 0;
     m_mouseZooming  = 0;
     m_mouseRotating = 0;
+    m_mouseScrubbing = 0;
     if (m_keyAction) {
       m_keyAction->setEnabled(true);
       m_keyAction = 0;

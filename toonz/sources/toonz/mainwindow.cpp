@@ -1759,6 +1759,16 @@ QAction *MainWindow::createStopMotionAction(const char *id, const char *name,
 
 //-----------------------------------------------------------------------------
 
+QAction *MainWindow::createSpecialModifierAction(const char *id,
+                                                 const char *name,
+                                                 const QString &defaultShortcut,
+                                                 QString newStatusTip) {
+  return createAction(id, name, defaultShortcut, newStatusTip,
+                      SpecialModifierKeyType);
+}
+
+//-----------------------------------------------------------------------------
+
 QAction *MainWindow::createToggle(const char *id, const char *name,
                                   const QString &defaultShortcut,
                                   bool startStatus, CommandType type,
@@ -3378,6 +3388,9 @@ void MainWindow::defineActions() {
                          "");
   createStopMotionAction(MI_StopMotionToggleUseLiveViewImages,
                          QT_TR_NOOP("Show original live view images."), "");
+
+  // Special Modifier Keys
+  createSpecialModifierAction(V_Scrub, QT_TR_NOOP("Viewer Scrub"), "#");
 
   // create cell mark actions
   for (int markId = 0; markId < 12; markId++) {

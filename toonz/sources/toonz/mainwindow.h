@@ -224,6 +224,10 @@ private:
                                   const char *iconSVGName = "",
                                   QString newStatusTip    = "");
 
+  QAction *createSpecialModifierAction(const char *id, const char *name,
+                                       const QString &defaultShortcut,
+                                       QString newStatusTip = "");
+
 protected slots:
   void onCurrentRoomChanged(int newRoomIndex);
   void onIndexSwapped(int firstIndex, int secondIndex);
