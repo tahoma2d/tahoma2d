@@ -67,6 +67,7 @@ enum CommandType {
   CellMarkCommandType,
   MenuCommandType,
   VisualizationButtonCommandType,
+  SpecialModifierKeyType,
   HiddenCommandType
 };
 
