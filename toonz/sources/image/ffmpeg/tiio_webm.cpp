@@ -37,20 +37,10 @@ private:
 //===========================================================
 
 TLevelWriterWebm::TLevelWriterWebm(const TFilePath &path, TPropertyGroup *winfo)
-    : TLevelWriter(path, winfo) {
+    : TLevelWriter(path, winfo), m_lx(0), m_ly(0) {
   if (!m_properties) m_properties = new Tiio::WebmWriterProperties();
 
-  std::string scale = m_properties->getProperty("Scale")->getValueAsString();
-  m_scale           = QString::fromStdString(scale).toInt();
-  std::string codec = m_properties->getProperty("Codec")->getValueAsString();
-  m_codec           = QString::fromStdString(codec);
-  std::string speed = m_properties->getProperty("Speed")->getValueAsString();
-  m_speed           = QString::fromStdString(speed);
-  std::string pixelFormat =
-      m_properties->getProperty("Pixel Format")->getValueAsString();
-  m_pixelFormat   = QString::fromStdString(pixelFormat);
-  std::string crf = m_properties->getProperty("CRF")->getValueAsString();
-  m_crf           = QString::fromStdString(crf).toInt();
+  parseProperties();
 
   ffmpegWriter = new Ffmpeg();
   ffmpegWriter->setPath(m_path);
@@ -63,53 +53,70 @@ TLevelWriterWebm::~TLevelWriterWebm() {
   QStringList preIArgs;
   QStringList postIArgs;
 
+  // Calculate output dimensions
   int outLx = m_lx;
   int outLy = m_ly;
-
-  // set scaling
   if (m_scale != 0) {
     outLx = m_lx * m_scale / 100;
     outLy = m_ly * m_scale / 100;
   }
-  // ffmpeg doesn't like resolutions that aren't divisible by 2.
-  if (outLx % 2 != 0) outLx++;
-  if (outLy % 2 != 0) outLy++;
+  outLx += (outLx % 2);  // Ensure even dimensions
+  outLy += (outLy % 2);
 
-  postIArgs << "-c:v";
-  // Select codec based on property
-  if (m_codec == "VP8")
-    postIArgs << "libvpx";
-  else if (m_codec == "VP9")
-    postIArgs << "libvpx-vp9";
-  else
-    postIArgs << "libvpx-vp9";  // Default
-
-  // For VP8/VP9, convert named speeds to speed values
-  postIArgs << "-speed";
-  if (m_speed == "Best Quality")
-    postIArgs << "0";
-  else if (m_speed == "Good Quality")
-    postIArgs << "1";
-  else if (m_speed == "Balanced")
-    postIArgs << "2";
-  else if (m_speed == "Fast")
-    postIArgs << "3";
-  else if (m_speed == "Faster")
-    postIArgs << "4";
-  else if (m_speed == "Fastest")
-    postIArgs << "5";
-  else
-    postIArgs << "2";  // Default to Balanced
-
+  // Set input args
   preIArgs << "-framerate" << QString::number(m_frameRate);
-  postIArgs << "-pix_fmt" << m_pixelFormat;
-  postIArgs << "-crf" << QString::number(m_crf);
-  postIArgs << "-auto-alt-ref" << "1";
-  postIArgs << "-b:v" << "0";
-  postIArgs << "-s" << QString::number(outLx) + "x" + QString::number(outLy);
+
+  // Set codec
+  postIArgs << "-c:v";
+  postIArgs << (m_codec == "VP8" ? "libvpx" : "libvpx-vp9");
+
+  // Set encoding speed
+  postIArgs << "-speed";
+  const int speed = [this]() {
+    if (m_speed == "Best Quality") return 0;
+    if (m_speed == "Good Quality") return 1;
+    if (m_speed == "Balanced") return 2;
+    if (m_speed == "Fast") return 3;
+    if (m_speed == "Faster") return 4;
+    if (m_speed == "Fastest") return 5;
+    return 2;  // Default to Balanced
+  }();
+  postIArgs << QString::number(speed);
+
+  // Set color space
+  postIArgs << "-color_primaries" << "bt709"
+            << "-color_trc" << "bt709"
+            << "-colorspace" << "bt709";
+
+  // Format settings
+  postIArgs << "-pix_fmt" << m_pixelFormat.toLower();
+
+  // Quality settings
+  postIArgs << "-crf" << QString::number(m_crf) << "-auto-alt-ref" << "1"
+            << "-b:v" << "0";
+
+  // Resolution settings
+  postIArgs << "-s" << QString("%1x%2").arg(outLx).arg(outLy);
 
   ffmpegWriter->runFfmpeg(preIArgs, postIArgs, false, false, true);
   ffmpegWriter->cleanUpFiles();
+}
+
+//-----------------------------------------------------------
+
+void TLevelWriterWebm::parseProperties() {
+  m_scale = QString::fromStdString(
+                m_properties->getProperty("Scale")->getValueAsString())
+                .toInt();
+  m_codec = QString::fromStdString(
+      m_properties->getProperty("Codec")->getValueAsString());
+  m_speed = QString::fromStdString(
+      m_properties->getProperty("Speed")->getValueAsString());
+  m_pixelFormat = QString::fromStdString(
+      m_properties->getProperty("Pixel Format")->getValueAsString());
+  m_crf = QString::fromStdString(
+              m_properties->getProperty("CRF")->getValueAsString())
+              .toInt();
 }
 
 //-----------------------------------------------------------
@@ -254,9 +261,10 @@ Tiio::WebmWriterProperties::WebmWriterProperties()
   bind(m_pixelFormat);
 
   // Codec
-  m_codec.addValue(L"VP9");
   m_codec.addValue(L"VP8");
+  m_codec.addValue(L"VP9");
   m_codec.setValue(L"VP9");  // Default
+
   // Speed
   m_speed.addValue(L"Best Quality");  // speed 0
   m_speed.addValue(L"Good Quality");  // speed 1
@@ -265,14 +273,15 @@ Tiio::WebmWriterProperties::WebmWriterProperties()
   m_speed.addValue(L"Faster");        // speed 4
   m_speed.addValue(L"Fastest");       // speed 5
   m_speed.setValue(L"Balanced");      // Default
+
   // Pixel Format
-  m_pixelFormat.addValue(L"yuv420p");
-  m_pixelFormat.addValue(L"yuv422p");
-  m_pixelFormat.addValue(L"yuv444p");
-  m_pixelFormat.addValue(L"yuv420p10le");
-  m_pixelFormat.addValue(L"yuv422p10le");
-  m_pixelFormat.addValue(L"yuv444p10le");
-  m_pixelFormat.setValue(L"yuv420p");  // Default
+  m_pixelFormat.addValue(L"YUV420P");
+  m_pixelFormat.addValue(L"YUV422P");
+  m_pixelFormat.addValue(L"YUV444P");
+  m_pixelFormat.addValue(L"YUV420P10LE");
+  m_pixelFormat.addValue(L"YUV422P10LE");
+  m_pixelFormat.addValue(L"YUV444P10LE");
+  m_pixelFormat.setValue(L"YUV420P");  // Default
 }
 
 void Tiio::WebmWriterProperties::updateTranslation() {
