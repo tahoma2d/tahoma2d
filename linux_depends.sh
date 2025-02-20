@@ -21,6 +21,13 @@
 #
 
 # ======================================================================
+# Constants
+# ======================================================================
+
+    # Determine the script's execution directory
+    SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+
+# ======================================================================
 # Translations
 # ======================================================================
 
@@ -142,7 +149,7 @@ function _debianDepends() {
         freeglut3-dev qt59multimedia qt59script qt59serialport qt59svg qt59tools libopencv-dev \
         libgsl2 libopenblas-dev libmypaint-1.5-1 libmypaint libturbojpeg0-dev; do apt-get install -y $paquetes 
     done
-    touch /tmp/ok-packages
+    touch $SCRIPT_DIR/ok-packages
     echo -e "\n\n$(_msg OK_DEPENDS)\n\n"
 }
 
