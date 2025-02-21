@@ -336,13 +336,13 @@ function _cloningTahoma() {
 
     local TAHOMA_DIR="./tahoma2d"
     
-    # Verificar si la carpeta existe
+    # Check if the repository local folder exists
     if [ -d "$TAHOMA_DIR" ]; then
         echo "$(_msg TAHOMA2D_FOLDER_FOUND)"
         return
     fi
     
-    # Si no se encuentra, mostrar opciones al usuario
+    # If not found, show options to the use
     while true; do
         echo "$(_msg REPOSITORY_NOT_FOUND)"
         echo "$(_msg OPTIONS)"
@@ -353,7 +353,7 @@ function _cloningTahoma() {
 
         case $option in
             1)
-                continue # Volver a buscar
+                continue # Search again
                 ;;
             2)
                 echo "$(_msg CLONING_REPOSITORY)"
