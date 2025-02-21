@@ -11,15 +11,15 @@ Place these scripts at the same level as the tahoma2d folder that contains the d
 1) Run the `linux_depends.sh` script with root permissions to install the necessary dependencies:
 
    ```bash
-   chmod +x ./linux_depends.sh
-   sudo ./linux_depends.sh
+   chmod +x ./ci-scripts/linux/local-build/linux_depends.sh
+   sudo ./ci-scripts/linux/local-build/linux_depends.sh
    ```
 
 2) Run the `linux_build.sh` script **without** root permissions:
 
    ```bash
-   chmod +x ./linux_build.sh
-   ./linux_build.sh
+   chmod +x ./ci-scripts/linux/local-build/linux_build.sh
+   sudo ./ci-scripts/linux/local-build/linux_build.sh
    ```
 
 ## Important Information
