@@ -356,13 +356,13 @@ function _checkinternet() {
 
 function _warning() {
     # Show warning message before compilation
-    clear
+     
     dialog --title "$(_msg NAVIGATE) ← →  | $(_msg CONFIRM) <Enter>" --backtitle "$(_copyright)" \
         --yesno "$(_msg WARNING)" 10 60 >/dev/tty 2>/dev/tty
     response=$?
     if [ $response -ne 0 ]; then
        	# If the user selects 'No', exit the program
-       	clear
+       	 
        	exit 1
     fi
 }
@@ -476,7 +476,7 @@ function _libTiff() {
 
 function _build() {
     if [ ! -d "$SOURCES_DIR" ]; then
-        clear
+         
         echo -e "\n\n$(_msg SOURCES)\n\n"
         exit 1
     fi
@@ -497,7 +497,7 @@ function _build() {
 
 function _run() {
     # Running Tahoma2D using absolute path
-    clear
+     
     LD_LIBRARY_PATH="$BUILD_DIR/lib/tahoma2d:$LD_LIBRARY_PATH"
     cd $BIN_DIR
     ./Tahoma2D
@@ -505,13 +505,13 @@ function _run() {
 
 function _install() {
     # System installation using absolute paths
-    clear
+     
     su -c "make install"
 }
 
 function _menu() {
     # Display the final menu
-    clear
+     
     opPrincipal=$(dialog --title "$(_msg MAIN_MENU)" --backtitle "$(_copyright)" \
         --nocancel \
         --stdout \
@@ -532,7 +532,7 @@ function _menu() {
 
     if [[ "$opPrincipal" == "3" ]]; then # Install specific components of the derivative.
         dialog --msgbox "$(_msg BYE)" 10 60
-        clear
+         
         exit 0
     fi
 
@@ -548,10 +548,10 @@ _checkinternet      # Check for internet connection
 
 
 # Compile:
-clear
+ 
 _cloningTahoma # Cloning the GIT Tree
 _warning       # Show a warning about compilation time
-clear
+ 
 _stuff         # Copying the 'stuff' Directory
 _systemVar     # Creating SystemVar.ini
 _libTiff       # Building LibTIFF
