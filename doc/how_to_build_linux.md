@@ -2,7 +2,7 @@
 
 ## New: The Easy Way
 
-You can use the [local-build scripts](https://github.com/tahoma2d/tahoma2d/tree/master/ci-scripts/linux/local-build), which eliminate the need to manually download this repository. These scripts automate the steps outlined below, making the process much easier.
+You can use the [local-build scripts](https://github.com/tahoma2d/tahoma2d/tree/master/ci-scripts/linux/local-build), which even eliminate the need to manually download this repository. These scripts automate the steps outlined below, making the process much easier.
 
 ## Required software
 
