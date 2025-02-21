@@ -4,7 +4,7 @@ Interactive and multi-language scripts created solely to facilitate the local co
 
 ## About Cloning:
 
-You don’t need to download the entire repository. Just download these only two scripts. linux_build.sh will handle downloading the repository for you.
+Place these scripts at the same level as the tahoma2d folder that contains the downloaded repository. I you prefer, you don’t need to download the entire repository: just download these only two scripts and linux_build.sh will handle downloading the repository for you.
 
 ## Usage
 
