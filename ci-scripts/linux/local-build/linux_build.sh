@@ -265,6 +265,22 @@ function _msg() {
 		[fr_INTRO_PATH]="Entrez le chemin-> "
 		[gl_INTRO_PATH]="Introduce o path-> "
 		[pt_INTRO_PATH]="Introduza o path-> "		
+  
+  		[es_TAHOMA2D_FOLDER_FOUND_AT]='Carpeta "tahoma2d" encontrada en: '
+		[en_TAHOMA2D_FOLDER_FOUND_AT]="Folder 'tahoma2d' found at: "
+		[it_TAHOMA2D_FOLDER_FOUND_AT]="Cartella 'tahoma2d' trovata in: "
+		[de_TAHOMA2D_FOLDER_FOUND_AT]="Ordner 'tahoma2d' gefunden unter: "
+		[fr_TAHOMA2D_FOLDER_FOUND_AT]="Dossier 'tahoma2d' trouvé à : "
+		[gl_TAHOMA2D_FOLDER_FOUND_AT]="Cartafol 'tahoma2d' atopado en: "
+		[pt_TAHOMA2D_FOLDER_FOUND_AT]="Pasta 'tahoma2d' encontrada em: "		
+				
+		[es_DIRECTORY_NOT_FOUND_RETRY]='Directorio no encontrado. Reintentar. '
+		[en_DIRECTORY_NOT_FOUND_RETRY]="Directory not found. Retry. "
+		[it_DIRECTORY_NOT_FOUND_RETRY]="Directory non trovato. Riprova. "
+		[de_DIRECTORY_NOT_FOUND_RETRY]="Verzeichnis nicht gefunden. Erneut versuchen. "
+		[fr_DIRECTORY_NOT_FOUND_RETRY]="Répertoire introuvable. Réessayer. "
+		[gl_DIRECTORY_NOT_FOUND_RETRY]="Directorio non atopado. Reintentar. "
+		[pt_DIRECTORY_NOT_FOUND_RETRY]="Diretório não encontrado. Tente novamente. "
 	)
 
     local idioma=$(echo $LANG | cut -d_ -f1)
@@ -350,12 +366,14 @@ function _warning() {
        	exit 1
     fi
 }
+
 function _cloningTahoma() {
     local TAHOMA_DIR="./tahoma2d"
     
     # Check if the folder exists in the default location
     if [ -d "$TAHOMA_DIR" ]; then
         echo "$(_msg TAHOMA2D_FOLDER_FOUND)"
+        sleep 2
         return
     fi
     
@@ -378,6 +396,7 @@ function _cloningTahoma() {
                 git clone https://github.com/tahoma2d/tahoma2d "$TAHOMA_DIR"
                 if [ -d "$TAHOMA_DIR" ]; then
                     echo "$(_msg CLONING_COMPLETED_CONTINUING)"
+                    sleep 2
                     return
                 else
                     echo "$(_msg CLONING_ERROR_RETRY)"
@@ -403,9 +422,11 @@ function _cloningTahoma() {
 					export SOURCES_DIR="$TOONZ_DIR/sources"
 
 					echo "$(_msg TAHOMA2D_FOLDER_FOUND_AT) \"$TAHOMA_DIR\""
+					sleep 2
 					return
 				else
 					echo "$(_msg DIRECTORY_NOT_FOUND_RETRY)"
+					sleep 2
 				fi
 				;;
 
