@@ -227,7 +227,7 @@ function _update() {
 		elif command -v dnf &>/dev/null; then
 			dnf update -y
 		elif command -v yum &>/dev/null; then
-			yum update -y
+			pacman -Syu
 		else
 			echo -e "\n\n$(_msg PACKAGE_GESTOR_NOT_FOUND)\n\n"
 			exit 1
