@@ -36,7 +36,7 @@ function _msg() {
     local clave=$1 # Store the key for the requested message
     declare -A msg=( # Translation messages for different languages
     
-    	[es_INTERNET]="Este programar equiere conexión a internet"
+    	        [es_INTERNET]="Este programar equiere conexión a internet"
 		[en_INTERNET]="This program requires an internet connection."
 		[it_INTERNET]="Questo programma richiede una connessione a Internet."
 		[de_INTERNET]="Dieses Programm erfordert eine Internetverbindung."
@@ -84,7 +84,7 @@ function _msg() {
 		[gl_CANCEL]="Cancelar"
 		[pt_CANCEL]="Cancelar"
 
-	    [es_WARNING]="A continuación se instalarán las dependencias necesarias para ejecutar ./linux_build.sh."
+	        [es_WARNING]="A continuación se instalarán las dependencias necesarias para ejecutar ./linux_build.sh."
 		[en_WARNING]="The following dependencies will be installed to run ./linux_build.sh."
 		[it_WARNING]="Le seguenti dipendenze verranno installate per eseguire ./linux_build.sh."
 		[de_WARNING]="Die folgenden Abhängigkeiten werden installiert, um ./linux_build.sh auszuführen."
@@ -170,7 +170,7 @@ function _archDepends() {
 	echo -e "\n\n"
     for paquetes in dialog base-devel git cmake boost boost-libs qt5-base qt5-svg qt5-script \
         qt5-tools qt5-multimedia lz4 lzo libjpeg-turbo glew freeglut freetype2 blas cblas \
-        superlu libmypaint; do pacman -S --needed
+        superlu libmypaint blas cblas; do pacman -S --needed
     done
     touch /tmp/ok-packages
 	echo -e "\n\n$(_msg OK_DEPENDS)\n\n"
@@ -191,7 +191,7 @@ function _openSuseDepends() {
 
 function _verifpackages() {
 	if [ -e "/tmp/ok-packages" ]; then
-	echo -e "\n\n$(_msg OK_DEPENDS)\n\n"
+		echo -e "\n\n$(_msg OK_DEPENDS)\n\n"
 	exit 1
 fi 
 }
@@ -260,9 +260,9 @@ function _depends() {
 # Functions execution
 # ======================================================================
 
-_rootcheck      # Check for root privileges
-_verifpackages  # Verify the existence of the test file
+_rootcheck              # Check for root privileges
+_verifpackages          # Verify the existence of the test file
 _warning		# Show a warning about process
-_update         # Update the system
-_depends        # Install dependencies
+_update        	        # Update the system
+_depends                # Install dependencies
 
