@@ -2,6 +2,10 @@
 
 Interactive and multi-language scripts created solely to facilitate the local compilation of Tahoma2D on Debian-based distributions, Ubuntu, Fedora, Arch, and OpenSuse.
 
+## About Cloning:
+
+You don’t need to download the entire repository. Just download these only two scripts. linux_build.sh will handle downloading the repository for you.
+
 ## Usage
 
 1) Run the `linux_depends.sh` script with root permissions to install the necessary dependencies:
