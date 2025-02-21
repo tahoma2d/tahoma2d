@@ -161,7 +161,7 @@ function _fedoraDepends() {
         qt5-qtscript-devel qt5-qttools qt5-qttools-devel qt5-qtmultimedia-devel blas blas-devel \
         json-c-deve libtool intltool make qt5-qtmultimedia libmypaint-devel libmypaint; do dnf install -y $paquetes
     done
-    touch /tmp/ok-packages
+    touch $SCRIPT_DIR/ok-packages
 	echo -e "\n\n$(_msg OK_DEPENDS)\n\n"
 }
 
