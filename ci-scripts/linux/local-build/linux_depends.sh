@@ -168,9 +168,9 @@ function _fedoraDepends() {
 function _archDepends() {
 	# Install dependencies for Arch Linux-based systems
 	echo -e "\n\n"
-    for paquetes in dialog base-devel git cmake boost boost-libs qt5-base qt5-svg qt5-script \
+    pacman -S --needed dialog base-devel git cmake boost boost-libs qt5-base qt5-svg qt5-script \
         qt5-tools qt5-multimedia lz4 lzo libjpeg-turbo glew freeglut freetype2 blas cblas \
-        superlu libmypaint blas cblas; do pacman -S --needed
+        superlu libmypaint blas cblas; || exit;
     done
     touch /tmp/ok-packages
 	echo -e "\n\n$(_msg OK_DEPENDS)\n\n"
