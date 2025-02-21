@@ -180,14 +180,14 @@ function _msg() {
 		[gl_TAHOMA2D_FOLDER_FOUND]="Atopouse o cartafol Tahoma2D. Continuando..."
 		[pt_TAHOMA2D_FOLDER_FOUND]="Pasta Tahoma2D encontrada. Continuando..."
 		
-		[es_REPOSITORY_NOT_FOUND]="No se encontró el repositorio. Coloque la carpeta Tahoma2D al mismo nivel que este script para continuar."
-		[en_REPOSITORY_NOT_FOUND]="Repository not found. Place the Tahoma2D folder at the same level as this script to continue."
-		[it_REPOSITORY_NOT_FOUND]="Repository non trovato. Posizionare la cartella Tahoma2D allo stesso livello di questo script per continuare."
-		[de_REPOSITORY_NOT_FOUND]="Repository nicht gefunden. Platzieren Sie den Tahoma2D-Ordner auf derselben Ebene wie dieses Skript, um fortzufahren."
-		[fr_REPOSITORY_NOT_FOUND]="Dépôt introuvable. Placez le dossier Tahoma2D au même niveau que ce script pour continuer."
-		[gl_REPOSITORY_NOT_FOUND]="Non se atopou o repositorio. Coloque o cartafol Tahoma2D ao mesmo nivel que este script para continuar."
-		[pt_REPOSITORY_NOT_FOUND]="Repositório não encontrado. Coloque a pasta Tahoma2D no mesmo nível deste script para continuar."
-		
+		[es_REPOSITORY_NOT_FOUND]='No se encontró el repositorio. Coloque la carpeta "tahoma2d" al mismo nivel que este script para continuar'.
+		[en_REPOSITORY_NOT_FOUND]='Repository not found. Place the "tahoma2d"  folder at the same level as this script to continue.'
+		[it_REPOSITORY_NOT_FOUND]='Repository non trovato. Posizionare la cartella "tahoma2d"  allo stesso livello di questo script per continuare.'
+		[de_REPOSITORY_NOT_FOUND]='Repository nicht gefunden. Platzieren Sie den "tahoma2d"-Ordner auf derselben Ebene wie dieses Skript, um fortzufahren.'
+		[fr_REPOSITORY_NOT_FOUND]='Dépôt introuvable. Placez le dossier "tahoma2d"  au même niveau que ce script pour continuer.'
+		[gl_REPOSITORY_NOT_FOUND]='Non se atopou o repositorio. Coloque o cartafol "tahoma2d"  ao mesmo nivel que este script para continuar.'
+		[pt_REPOSITORY_NOT_FOUND]='Repositório não encontrado. Coloque a pasta "tahoma2d"  no mesmo nível deste script para continuar.'
+				
 		[es_OPTIONS]="Opciones:"
 		[en_OPTIONS]="Options:"
 		[it_OPTIONS]="Opzioni:"
@@ -251,6 +251,20 @@ function _msg() {
 		[fr_INVALID_OPTION_RETRY]="Option invalide. Veuillez réessayer."
 		[gl_INVALID_OPTION_RETRY]="Opción non válida. Inténtao de novo."
 		[pt_INVALID_OPTION_RETRY]="Opção inválida. Tente novamente."
+  		
+    		[en_SPECIFY_DIRECTORY]="Specify the path"
+		[it_SPECIFY_DIRECTORY]="Specificare il percorso"
+		[de_SPECIFY_DIRECTORY]="Pfad angeben"
+		[fr_SPECIFY_DIRECTORY]="Spécifier le chemin"
+		[gl_SPECIFY_DIRECTORY]="Especificar a ruta"
+		[pt_SPECIFY_DIRECTORY]="Especificar o path"
+
+		[en_INTRO_PATH]="Enter the path-> "
+		[it_INTRO_PATH]="Inserisci il percorso-> "
+		[de_INTRO_PATH]="Geben Sie den Pfad ein-> "
+		[fr_INTRO_PATH]="Entrez le chemin-> "
+		[gl_INTRO_PATH]="Introduce o path-> "
+		[pt_INTRO_PATH]="Introduza o path-> "		
 	)
 
     local idioma=$(echo $LANG | cut -d_ -f1)
@@ -336,25 +350,24 @@ function _warning() {
        	exit 1
     fi
 }
-
 function _cloningTahoma() {
-
     local TAHOMA_DIR="./tahoma2d"
     
-    # Check if the repository local folder exists
+    # Check if the folder exists in the default location
     if [ -d "$TAHOMA_DIR" ]; then
         echo "$(_msg TAHOMA2D_FOLDER_FOUND)"
         return
     fi
     
-    # If not found, show options to the use
+    # If not found, present options to the user
     while true; do
         echo "$(_msg REPOSITORY_NOT_FOUND)"
         echo "$(_msg OPTIONS)"
         echo "  1) $(_msg SEARCH_AGAIN)"
         echo "  2) $(_msg AUTOMATIC_CLONING)"
-        echo "  3) $(_msg EXIT)"
-        read -p "$(_msg SELECT_OPTION) " option
+        echo "  3) $(_msg SPECIFY_DIRECTORY)"
+        echo "  4) $(_msg EXIT)"
+        read -r -p "$(_msg SELECT_OPTION) " option
 
         case $option in
             1)
@@ -370,7 +383,33 @@ function _cloningTahoma() {
                     echo "$(_msg CLONING_ERROR_RETRY)"
                 fi
                 ;;
-            3)
+			3)
+				read -r -p "$(_msg INTRO_PATH) " USER_DIR
+				USER_DIR=$(echo "$USER_DIR" | sed 's/^"//;s/"$//') # Remove unnecessary quotes
+				USER_DIR=$(eval echo "$USER_DIR") # Expand tilde (~) and environment variables
+
+				# If the user provided the parent directory, correct it automatically
+				if [ -d "$USER_DIR/tahoma2d" ]; then
+					USER_DIR="$USER_DIR/tahoma2d"
+				fi
+
+				if [ -d "$USER_DIR" ]; then
+					export TAHOMA_DIR="$USER_DIR"
+					export STUFF_DIR="$TAHOMA_DIR/stuff"
+					export LIBTIFF_DIR="$TAHOMA_DIR/thirdparty/tiff-4.2.0"
+					export TOONZ_DIR="$TAHOMA_DIR/toonz"
+					export BUILD_DIR="$TOONZ_DIR/build"
+					export BIN_DIR="$BUILD_DIR/bin"
+					export SOURCES_DIR="$TOONZ_DIR/sources"
+
+					echo "$(_msg TAHOMA2D_FOLDER_FOUND_AT) \"$TAHOMA_DIR\""
+					return
+				else
+					echo "$(_msg DIRECTORY_NOT_FOUND_RETRY)"
+				fi
+				;;
+
+            4)
                 exit 1
                 ;;
             *)
