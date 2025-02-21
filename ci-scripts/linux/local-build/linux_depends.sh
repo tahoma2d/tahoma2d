@@ -223,7 +223,7 @@ function _update() {
 
     # Detect the package manager and update the system
 		if command -v apt-get &>/dev/null; then
-			apt-get update && apt-get upgrade -y
+			apt-get update
 		elif command -v dnf &>/dev/null; then
 			dnf update -y
 		elif command -v yum &>/dev/null; then
