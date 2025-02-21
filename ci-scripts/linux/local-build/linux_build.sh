@@ -92,13 +92,13 @@ function _msg() {
 		[gl_CONFIRM]="Confirmar"
 		[pt_CONFIRM]="Confirmar"
 
-		[es_WARNING]="A continuación se compilará Tahoma2D directamente desde su código fuente.\nEsto llevará MUCHO tiempo."
-		[en_WARNING]="Tahoma2D will now be compiled directly from its source code.\nThis will take a LONG time."
-		[it_WARNING]="Tahoma2D verrà ora compilato direttamente dal suo codice sorgente.\nCi vorrà MOLTO tempo."
-		[de_WARNING]="Tahoma2D wird nun direkt aus dem Quellcode kompiliert.\nDies wird VIEL Zeit in Anspruch nehmen."
-		[fr_WARNING]="Tahoma2D sera maintenant compilé directement à partir de son code source.\nCela prendra BEAUCOUP de temps."
-		[gl_WARNING]="A continuación, compilarase Tahoma2D directamente dende o seu código fonte.\nIsto levará MOITO tempo."
-		[pt_WARNING]="Tahoma2D será agora compilado diretamente do seu código-fonte.\nIsso levará MUITO tempo."
+		[es_WARNING]="A continuación se compilará Tahoma2D directamente desde su código fuente.\nEste proceso puede tardar un largo tiempo."
+		[en_WARNING]="Tahoma2D will now be compiled directly from its source code.\nThis process may take a long time."
+		[it_WARNING]="Tahoma2D verrà ora compilato direttamente dal suo codice sorgente.\nQuesto processo potrebbe richiedere molto tempo."
+		[de_WARNING]="Tahoma2D wird nun direkt aus dem Quellcode kompiliert.\nDieser Prozess könnte viel Zeit in Anspruch nehmen."
+		[fr_WARNING]="Tahoma2D sera maintenant compilé directement à partir de son code source.\nCe processus pourrait prendre beaucoup de temps."
+		[gl_WARNING]="A continuación, compilarase Tahoma2D directamente dende o seu código fonte.\nEste proceso pode levar moito tempo."
+		[pt_WARNING]="Tahoma2D será agora compilado diretamente do seu código-fonte.\nEste processo pode levar muito tempo."
 
 		[es_CANCEL]="Compilación cancelada."
 		[en_CANCEL]="Compilation canceled."
@@ -330,6 +330,11 @@ function _warning() {
     dialog --title "$(_msg NAVIGATE) ← →  | $(_msg CONFIRM) <Enter>" --backtitle "$(_copyright)" \
         --yesno "$(_msg WARNING)" 10 60 >/dev/tty 2>/dev/tty
     response=$?
+    if [ $response -ne 0 ]; then
+       	# If the user selects 'No', exit the program
+       	clear
+       	exit 1
+    fi
 }
 
 function _cloningTahoma() {
