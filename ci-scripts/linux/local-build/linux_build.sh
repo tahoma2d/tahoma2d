@@ -205,7 +205,7 @@ function _msg() {
 		[pt_SEARCH_AGAIN]="Procurar novamente"
 		
 		[es_AUTOMATIC_CLONING]="Clonación automática"
-		[en_AUTOMATIC_CLONING]="Automatic cloning"
+		[en_AUTOMATIC_CLONING]="Clone automatically"
 		[it_AUTOMATIC_CLONING]="Clonazione automatica"
 		[de_AUTOMATIC_CLONING]="Automatische Klonung"
 		[fr_AUTOMATIC_CLONING]="Clonage automatique"
