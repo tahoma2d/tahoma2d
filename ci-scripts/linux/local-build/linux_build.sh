@@ -171,6 +171,86 @@ function _msg() {
 		[fr_BYE]="Pour exécuter depuis le répertoire, utilisez : \nLD_LIBRARY_PATH=./lib/opentoonz:$LD_LIBRARY_PATH \n./bin/Tahoma2D \n\nPour installer dans /opt : \nmake install"
 		[gl_BYE]="Para executar dende o directorio, usa: \nLD_LIBRARY_PATH=./lib/opentoonz:$LD_LIBRARY_PATH \n./bin/Tahoma2D \n\nPara instalar en /opt: \nmake install"
 		[pt_BYE]="Para executar a partir do diretório, use: \nLD_LIBRARY_PATH=./lib/opentoonz:$LD_LIBRARY_PATH \n./bin/Tahoma2D \n\nPara instalar em /opt: \nmake install"
+  
+  		[es_TAHOMA2D_FOLDER_FOUND]="Se encontró la carpeta Tahoma2D. Continuando..."
+		[en_TAHOMA2D_FOLDER_FOUND]="Tahoma2D folder found. Continuing..."
+		[it_TAHOMA2D_FOLDER_FOUND]="Cartella Tahoma2D trovata. Continuazione..."
+		[de_TAHOMA2D_FOLDER_FOUND]="Tahoma2D-Ordner gefunden. Fortfahren..."
+		[fr_TAHOMA2D_FOLDER_FOUND]="Dossier Tahoma2D trouvé. Continuation..."
+		[gl_TAHOMA2D_FOLDER_FOUND]="Atopouse o cartafol Tahoma2D. Continuando..."
+		[pt_TAHOMA2D_FOLDER_FOUND]="Pasta Tahoma2D encontrada. Continuando..."
+		
+		[es_REPOSITORY_NOT_FOUND]="No se encontró el repositorio. Coloque la carpeta Tahoma2D al mismo nivel que este script para continuar."
+		[en_REPOSITORY_NOT_FOUND]="Repository not found. Place the Tahoma2D folder at the same level as this script to continue."
+		[it_REPOSITORY_NOT_FOUND]="Repository non trovato. Posizionare la cartella Tahoma2D allo stesso livello di questo script per continuare."
+		[de_REPOSITORY_NOT_FOUND]="Repository nicht gefunden. Platzieren Sie den Tahoma2D-Ordner auf derselben Ebene wie dieses Skript, um fortzufahren."
+		[fr_REPOSITORY_NOT_FOUND]="Dépôt introuvable. Placez le dossier Tahoma2D au même niveau que ce script pour continuer."
+		[gl_REPOSITORY_NOT_FOUND]="Non se atopou o repositorio. Coloque o cartafol Tahoma2D ao mesmo nivel que este script para continuar."
+		[pt_REPOSITORY_NOT_FOUND]="Repositório não encontrado. Coloque a pasta Tahoma2D no mesmo nível deste script para continuar."
+		
+		[es_OPTIONS]="Opciones:"
+		[en_OPTIONS]="Options:"
+		[it_OPTIONS]="Opzioni:"
+		[de_OPTIONS]="Optionen:"
+		[fr_OPTIONS]="Options :"
+		[gl_OPTIONS]="Opcións:"
+		[pt_OPTIONS]="Opções:"
+		
+		[es_SEARCH_AGAIN]="Volver a buscar"
+		[en_SEARCH_AGAIN]="Search again"
+		[it_SEARCH_AGAIN]="Cerca di nuovo"
+		[de_SEARCH_AGAIN]="Erneut suchen"
+		[fr_SEARCH_AGAIN]="Rechercher à nouveau"
+		[gl_SEARCH_AGAIN]="Volver a buscar"
+		[pt_SEARCH_AGAIN]="Procurar novamente"
+		
+		[es_AUTOMATIC_CLONING]="Clonación automática"
+		[en_AUTOMATIC_CLONING]="Automatic cloning"
+		[it_AUTOMATIC_CLONING]="Clonazione automatica"
+		[de_AUTOMATIC_CLONING]="Automatische Klonung"
+		[fr_AUTOMATIC_CLONING]="Clonage automatique"
+		[gl_AUTOMATIC_CLONING]="Clonación automática"
+		[pt_AUTOMATIC_CLONING]="Clonagem automática"
+		
+		[es_SELECT_OPTION]="Seleccione una opción:"
+		[en_SELECT_OPTION]="Select an option:"
+		[it_SELECT_OPTION]="Seleziona un'opzione:"
+		[de_SELECT_OPTION]="Wählen Sie eine Option:"
+		[fr_SELECT_OPTION]="Sélectionnez une option :"
+		[gl_SELECT_OPTION]="Seleccione unha opción:"
+		[pt_SELECT_OPTION]="Selecione uma opção:"
+		
+		[es_CLONING_REPOSITORY]="Clonando el repositorio..."
+		[en_CLONING_REPOSITORY]="Cloning the repository..."
+		[it_CLONING_REPOSITORY]="Clonazione del repository..."
+		[de_CLONING_REPOSITORY]="Repository wird geklont..."
+		[fr_CLONING_REPOSITORY]="Clonage du dépôt..."
+		[gl_CLONING_REPOSITORY]="Clonando o repositorio..."
+		[pt_CLONING_REPOSITORY]="Clonando o repositório..."
+		
+		[es_CLONING_COMPLETED_CONTINUING]="Clonación completada. Continuando..."
+		[en_CLONING_COMPLETED_CONTINUING]="Cloning completed. Continuing..."
+		[it_CLONING_COMPLETED_CONTINUING]="Clonazione completata. Continuando..."
+		[de_CLONING_COMPLETED_CONTINUING]="Klonvorgang abgeschlossen. Fortfahren..."
+		[fr_CLONING_COMPLETED_CONTINUING]="Clonage terminé. Continuation..."
+		[gl_CLONING_COMPLETED_CONTINUING]="Clonación completada. Continuando..."
+		[pt_CLONING_COMPLETED_CONTINUING]="Clonagem concluída. Continuando..."
+		
+		[es_CLONING_ERROR_RETRY]="Error en la clonación. Intente nuevamente."
+		[en_CLONING_ERROR_RETRY]="Cloning error. Please try again."
+		[it_CLONING_ERROR_RETRY]="Errore nella clonazione. Riprova."
+		[de_CLONING_ERROR_RETRY]="Fehler beim Klonen. Bitte versuche es erneut."
+		[fr_CLONING_ERROR_RETRY]="Erreur de clonage. Veuillez réessayer."
+		[gl_CLONING_ERROR_RETRY]="Erro na clonación. Inténtao de novo."
+		[pt_CLONING_ERROR_RETRY]="Erro na clonagem. Tente novamente."
+		
+		[es_INVALID_OPTION_RETRY]="Opción no válida. Intente de nuevo."
+		[en_INVALID_OPTION_RETRY]="Invalid option. Please try again."
+		[it_INVALID_OPTION_RETRY]="Opzione non valida. Riprova."
+		[de_INVALID_OPTION_RETRY]="Ungültige Option. Bitte versuche es erneut."
+		[fr_INVALID_OPTION_RETRY]="Option invalide. Veuillez réessayer."
+		[gl_INVALID_OPTION_RETRY]="Opción non válida. Inténtao de novo."
+		[pt_INVALID_OPTION_RETRY]="Opção inválida. Tente novamente."
 	)
 
     local idioma=$(echo $LANG | cut -d_ -f1)
@@ -252,38 +332,47 @@ function _warning() {
     response=$?
 }
 
-
-
-function _checkdir() {
-	# Check if Tahoma2D already exists in the directory
-    clear
-    if [ -e "$TAHOMA_DIR" ]; then
-        echo -e "\n\n$(_msg DIR_EXISTS)\n\n"
-        echo "$(_msg OVERWRITE)"
-        read answer
-        if [[ "$answer" =~ ^[Nn]$ ]]; then
-            echo -e "\n\n$(_msg NOT_REWRITE)\n\n"
-            sleep 5
-        fi
-        if [[ "$answer" =~ ^[SsYyOo]$ ]]; then
-        rm -rf $TAHOMA_DIR
-        fi
-        if [[ ! "$answer" =~ ^[SsYyOoNn]$ ]]; then
-        echo -e "\n\n$(_msg CANCEL)\n\n"
-        exit 1
-        fi
-        
-    fi
-}
-
 function _cloningTahoma() {
-	if [[ "$answer" =~ ^[YySsOo]$ ]]; then
-	# Clone into the current directory
-    git clone https://github.com/tahoma2d/tahoma2d "$TAHOMA_DIR"      
+
+    local TAHOMA_DIR="./tahoma2d"
+    
+    # Verificar si la carpeta existe
+    if [ -d "$TAHOMA_DIR" ]; then
+        echo "$(_msg TAHOMA2D_FOLDER_FOUND)"
+        return
     fi
-    if [ ! -e "$TAHOMA_DIR" ]; then
-    git clone https://github.com/tahoma2d/tahoma2d "$TAHOMA_DIR" 
-    fi
+    
+    # Si no se encuentra, mostrar opciones al usuario
+    while true; do
+        echo "$(_msg REPOSITORY_NOT_FOUND)"
+        echo "$(_msg OPTIONS)"
+        echo "  1) $(_msg SEARCH_AGAIN)"
+        echo "  2) $(_msg AUTOMATIC_CLONING)"
+        echo "  3) $(_msg EXIT)"
+        read -p "$(_msg SELECT_OPTION) " option
+
+        case $option in
+            1)
+                continue # Volver a buscar
+                ;;
+            2)
+                echo "$(_msg CLONING_REPOSITORY)"
+                git clone https://github.com/tahoma2d/tahoma2d "$TAHOMA_DIR"
+                if [ -d "$TAHOMA_DIR" ]; then
+                    echo "$(_msg CLONING_COMPLETED_CONTINUING)"
+                    return
+                else
+                    echo "$(_msg CLONING_ERROR_RETRY)"
+                fi
+                ;;
+            3)
+                exit 1
+                ;;
+            *)
+                echo "$(_msg INVALID_OPTION_RETRY)"
+                ;;
+        esac
+    done
 }
 
 function _stuff() {
@@ -391,12 +480,13 @@ function _menu() {
 _checkroot     # Check if the script is running WITHOUT root privileges
 _checkdepends  # Ensure dependencies are installed
 _checkinternet      # Check for internet connection
-_warning       # Show a warning about compilation time
-_checkdir
+
 
 # Compile:
-
+clear
 _cloningTahoma # Cloning the GIT Tree
+_warning       # Show a warning about compilation time
+clear
 _stuff         # Copying the 'stuff' Directory
 _systemVar     # Creating SystemVar.ini
 _libTiff       # Building LibTIFF
