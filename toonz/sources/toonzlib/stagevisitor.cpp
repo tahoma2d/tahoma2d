@@ -50,7 +50,6 @@
 #include "imagebuilders.h"
 #include "toonz/tframehandle.h"
 #include "toonz/preferences.h"
-#include "toonz/tcamera.h"
 
 // Qt includes
 #include <QImage>
@@ -1025,14 +1024,13 @@ void RasterPainter::onRasterImage(TRasterImage *ri,
 
   TAffine aff;
   aff = m_viewAff * player.m_placement * player.m_dpiAff;
+  
   aff = TTranslation(m_dim.lx * 0.5, m_dim.ly * 0.5) * aff *
         TTranslation(-r->getCenterD() +
                      convert(ri->getOffset()));  // this offset is !=0 only if
-                                                 // in cleanup camera test mode
-  if (player.m_sl->m_rasterizePli) {
-    TPointD dpi = player.m_xsh->getStageObjectTree()->getCurrentCamera()->getDpi();
-    aff *= TScale(Stage::inch / dpi.x, Stage::inch / dpi.y);
-  }
+                                                 // in cleanup camera test mode 
+                                                 // and rasterizer 
+
   TRectD bbox = TRectD(0, 0, m_dim.lx, m_dim.ly);
   bbox *= convert(m_clipRect);
   if (bbox.isEmpty()) return;
