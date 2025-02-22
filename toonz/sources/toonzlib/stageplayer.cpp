@@ -12,6 +12,8 @@
 #include "imagebuilders.h"
 
 #include "toonz/stageplayer.h"
+#include "toonz/tstageobjecttree.h"
+#include "toonz/tcamera.h"
 
 #include "toonz/toonzscene.h"
 
@@ -72,6 +74,8 @@ TImageP Stage::Player::image() const {
 
   ImageLoader::BuildExtData extData(
       m_sl, m_fid, 0, false, m_sl->getScene()->decodeFilePath(m_sl->getPath()));
+  extData.cameraDpi =
+      m_xsh->getStageObjectTree()->getCurrentCamera()->getDpi();
   return ImageManager::instance()->getImage(id, ImageManager::none, &extData);
 }
 

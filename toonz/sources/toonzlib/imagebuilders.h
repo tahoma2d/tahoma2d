@@ -39,6 +39,8 @@ public:
     //!< 'the currently stored one' if an image is already cached, or
     //!< m_sl's subsampling property otherwise)
     bool m_icon;  //!< Whether the icon (if any) should be loaded instead
+    
+    TPointD cameraDpi;  //!< For Rasterizer scale, set to current camera dpi
 
     TFilePath m_fullPath;
 

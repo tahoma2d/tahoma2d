@@ -24,6 +24,8 @@
 #include "toonz/levelproperties.h"
 #include "toonz/txshsimplelevel.h"
 #include "toonz/fill.h"
+#include "toonz/dpiscale.h"
+#include "toonz/stage.h"
 
 // Qt includes
 #include <QImage>
@@ -300,7 +302,7 @@ TImageP ImageRasterizer::build(int imFlags, void *extData) {
   // Fetch image
   assert(extData);
   ImageLoader::BuildExtData *data = (ImageLoader::BuildExtData *)extData;
-
+  
   const std::string &srcImgId = data->m_sl->getImageId(data->m_fid);
 
   TImageP img = ImageManager::instance()->getImage(srcImgId, imFlags, extData);
@@ -308,14 +310,22 @@ TImageP ImageRasterizer::build(int imFlags, void *extData) {
     TVectorImageP vi = img;
     if (vi) {
       TRectD bbox = vi->getBBox();
-
-      d   = TDimension(tceil(bbox.getLx()) + 1, tceil(bbox.getLy()) + 1);
-      off = TPoint((int)bbox.x0, (int)bbox.y0);
+      d = TDimension(tceil(bbox.getLx() * data->cameraDpi.x / Stage::inch+1),
+                     tceil(bbox.getLy() * data->cameraDpi.x / Stage::inch+1));
+      TScale scale = TScale(data->cameraDpi.x / Stage::inch,
+                            data->cameraDpi.y / Stage::inch);
+      off          = TPoint((int)bbox.x0, (int)bbox.y0);
 
       TPalette *vpalette = vi->getPalette();
-      TVectorRenderData rd(TTranslation(-off.x, -off.y), TRect(TPoint(0, 0), d),
-                           vpalette, 0, true, true);
 
+      //TVectorRenderData rd(scale * TTranslation(-off.x, -off.y),
+         //                  TRect(TPoint(0, 0), TDimension(d.lx, d.ly)),
+           //                vpalette, 0, false, true);
+      TVectorRenderData rd(TVectorRenderData::ProductionSettings(),
+                           scale * TTranslation(-off.x, -off.y),
+                           TRect(TPoint(0, 0), TDimension(d.lx, d.ly)),
+                           vpalette);
+      
       // this is too slow.
       {
         QSurfaceFormat format;
