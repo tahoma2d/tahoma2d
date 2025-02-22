@@ -310,17 +310,16 @@ TImageP ImageRasterizer::build(int imFlags, void *extData) {
     TVectorImageP vi = img;
     if (vi) {
       TRectD bbox = vi->getBBox();
-      d = TDimension(tceil(bbox.getLx() * data->cameraDpi.x / Stage::inch+1),
-                     tceil(bbox.getLy() * data->cameraDpi.x / Stage::inch+1));
-      TScale scale = TScale(data->cameraDpi.x / Stage::inch,
-                            data->cameraDpi.y / Stage::inch);
+      double sx, sy;
+      sx = data->cameraDpi.x / Stage::inch;
+      sy = data->cameraDpi.x / Stage::inch;
+      d = TDimension(tceil(bbox.getLx() * sx)+1,
+                     tceil(bbox.getLy() * sy)+1);
+      TScale scale = TScale(sx,sy);
       off          = TPoint((int)bbox.x0, (int)bbox.y0);
 
       TPalette *vpalette = vi->getPalette();
 
-      //TVectorRenderData rd(scale * TTranslation(-off.x, -off.y),
-         //                  TRect(TPoint(0, 0), TDimension(d.lx, d.ly)),
-           //                vpalette, 0, false, true);
       TVectorRenderData rd(TVectorRenderData::ProductionSettings(),
                            scale * TTranslation(-off.x, -off.y),
                            TRect(TPoint(0, 0), TDimension(d.lx, d.ly)),
@@ -382,8 +381,7 @@ TImageP ImageRasterizer::build(int imFlags, void *extData) {
         glPopAttrib();
 
         TRasterImageP ri = TRasterImageP(ras);
-        ri->setOffset(off + ras->getCenter());
-
+        ri->setOffset(TPoint(off.x*sx,off.y*sy) + ras->getCenter());
         assert(glGetError() == 0);
 
         return ri;
