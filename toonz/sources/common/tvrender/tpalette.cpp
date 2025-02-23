@@ -212,7 +212,7 @@ void TPalette::Page::removeStyle(int indexInPage, bool flagOnly) {
   m_palette->m_styleAnimationTable.erase(styleId);
   if (!flagOnly)
     m_palette->m_styles[styleId].second =
-        TColorStyleP(new TSolidColorStyle(TPixel32::Black));
+        TColorStyleP(new TSolidColorStyle(TPixel32::Red));
   m_styleIds.erase(m_styleIds.begin() + indexInPage);
 }
 
