@@ -418,7 +418,7 @@ void StageBuilder::addCell(PlayerSet &players, ToonzScene *scene, TXsheet *xsh,
     player.m_guidedFrontStroke      = m_guidedFrontStroke;
     player.m_guidedBackStroke       = m_guidedBackStroke;
     if (xsh) {
-      TPointD cameraDpi =
+      TPointD cameraDpi =//use cameraDpi for rasterized vector image
           xsh->getStageObjectTree()->getCurrentCamera()->getDpi();
         player.m_dpiAff =
           sl ? ((sl->getType() == PLI_XSHLEVEL && sl->m_rasterizePli)

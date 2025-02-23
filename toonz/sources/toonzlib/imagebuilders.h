@@ -40,7 +40,7 @@ public:
     //!< m_sl's subsampling property otherwise)
     bool m_icon;  //!< Whether the icon (if any) should be loaded instead
     
-    TPointD cameraDpi;  //!< For Rasterizer scale, set to current camera dpi
+    TPointD m_cameraDpi;  //!< For Rasterizer scale, set to current camera dpi
 
     TFilePath m_fullPath;
 
@@ -99,7 +99,9 @@ public:
   ImageRasterizer() {}
   ~ImageRasterizer() {}
 
-  bool isImageCompatible(int imFlags, void *extData) override { return true; }
+  TPointD oldCameraDpi;
+  //Imagemaneget::getImage
+  bool isImageCompatible(int imFlags, void *extData) override;
 
 protected:
   bool getInfo(TImageInfo &info, int imFlags, void *extData) override;
