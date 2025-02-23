@@ -109,6 +109,7 @@ TLevelWriterWebm::~TLevelWriterWebm() {
     postIArgs << "-lossless" << "1";
     postIArgs << "-tune" << "ssim";
   } else {
+    postIArgs << "-b:v" << "0";
     postIArgs << "-crf" << QString::number(crf);
     postIArgs << "-tune" << "psnr";
   }
