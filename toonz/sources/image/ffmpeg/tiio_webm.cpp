@@ -41,7 +41,22 @@ TLevelWriterWebm::TLevelWriterWebm(const TFilePath &path, TPropertyGroup *winfo)
     : TLevelWriter(path, winfo), m_lx(0), m_ly(0) {
   if (!m_properties) m_properties = new Tiio::WebmWriterProperties();
 
-  parseProperties();
+  m_scale = QString::fromStdString(
+                m_properties->getProperty("Scale")->getValueAsString())
+                .toInt();
+  m_speed = QString::fromStdString(
+      m_properties->getProperty("Encoding Speed")->getValueAsString());
+  m_preserveAlpha =
+      QString::fromStdString(
+          m_properties->getProperty("Preserve Alpha")->getValueAsString())
+          .toInt();
+  m_lossless = QString::fromStdString(
+                   m_properties->getProperty("Lossless")->getValueAsString())
+                   .toInt();
+  m_kfSetting =
+      QString::fromStdString(
+          m_properties->getProperty("Keyframe Interval")->getValueAsString())
+          .toInt();
 
   ffmpegWriter = new Ffmpeg();
   ffmpegWriter->setPath(m_path);
@@ -67,105 +82,84 @@ TLevelWriterWebm::~TLevelWriterWebm() {
   // Input settings
   preIArgs << "-framerate" << QString::number(m_frameRate);
 
-  // Codec selection
-  postIArgs << "-c:v";
-  if (m_codec == "AV1")
-    postIArgs << "libaom-av1";  // AV1 codec
-  else
-    postIArgs << "libvpx-vp9";  // VP9 codec (default)
+  // Codec selection (VP9 only)
+  postIArgs << "-c:v" << "libvpx-vp9";
 
-  // Common encoder settings
-  postIArgs << "-threads" << "auto"      // Auto-detect CPU threads
-            << "-row-mt" << "1"          // Row-based multi-threading
-            << "-static-thresh" << "0";  // Optimize for sharp animation content
+  postIArgs << "-threads" << "auto";     // Auto-detect CPU threads
+  postIArgs << "-row-mt" << "1";         // Row-based multi-threading
+  postIArgs << "-static-thresh" << "0";  // Optimize for sharp animation content
+  postIArgs << "-lag-in-frames" << "24";  // Lookahead
 
-  // Quality settings
-  if (m_crf == 0) {  // Lossless mode
+  // Dynamically calculate CRF based on pixel count
+  auto getAutoCRF = [](int width, int height) -> int {
+    int pixelCount = width * height;
+
+    return (pixelCount >= 3840 * 2160) ? 16 :  // 4K (2160p)
+               (pixelCount >= 2560 * 1440) ? 18
+                                           :  // 1440p
+               (pixelCount >= 1920 * 1080) ? 20
+                                           :  // 1080p (default)
+               (pixelCount >= 1280 * 720) ? 22
+                                          :  // 720p
+               24;                           // SD (480p and lower)
+  };
+  int crf = getAutoCRF(m_lx, m_ly);
+
+  if (m_lossless) {
     postIArgs << "-lossless" << "1";
-    if (m_codec == "VP9")
-      postIArgs << "-tune" << "ssim";  // SSIM tuning for VP9 lossless
-  } else {                             // Lossy mode
-    postIArgs << "-crf" << QString::number(m_crf);  // Constant rate factor
-    if (m_codec == "VP9")
-      postIArgs << "-tune" << "psnr";  // PSNR tuning for VP9 lossy
+    postIArgs << "-tune" << "ssim";
+  } else {
+    postIArgs << "-crf" << QString::number(crf);
+    postIArgs << "-tune" << "psnr";
   }
 
-  // AV1-specific optimizations
-  if (m_codec == "AV1") {
-    postIArgs << "-tune" << "ssim"  // SSIM tuning for animation
-              << "-frame-parallel"
-              << "1"  // Enable frame parallelism (compatibility TBD)
-              << "-denoise-noise-level" << "10";  // Preserve fine noise details
-    int tiles = (outLx >= 1920 || outLy >= 1080)
-                    ? 4
-                    : 2;  // 4x4 tiles for HD+, 2x2 otherwise
-    postIArgs << "-tiles" << QString("%1x%1").arg(tiles) << "-tile-columns"
-              << QString::number(tiles) << "-tile-rows"
-              << QString::number(tiles);
-  }
+  // Disable alt refs for image sequences
+  postIArgs << "-auto-alt-ref" << "0";
 
-  // VP9-specific optimizations
-  if (m_codec == "VP9") {
-    postIArgs << "-auto-alt-ref"
-              << "0";  // Disable alt refs for image sequences
+  // Calculate keyframe interval
+  int kfInterval;
+  switch (m_kfSetting) {
+  case 1:  // Every Frame
+    kfInterval = 1;
+    break;
+  case 2:  // Every Second
+    kfInterval = qRound(m_frameRate);
+    break;
+  case 3:  // Every 2 Seconds
+    kfInterval = qRound(m_frameRate * 2);
+    break;
+  case 4:  // Every 5 Seconds
+    kfInterval = qRound(m_frameRate * 5);
+    break;
+  case 5:  // Every 10 Seconds
+    kfInterval = qRound(m_frameRate * 10);
+    break;
+  default:  // Default to Every Second
+    kfInterval = qRound(m_frameRate);
+    break;
   }
-
-  // Keyframe interval
-  postIArgs << "-g" << QString::number(m_kf);  // Keyframe every # frames
+  postIArgs << "-g" << QString::number(kfInterval);
 
   // Encoding speed
-  if (m_codec == "AV1") {
-    postIArgs << "-speed";
-    int speed = (m_speed == "Slow"       ? 0
-                 : m_speed == "Balanced" ? 4
-                                         : 8);  // 0=slow, 8=fast
-    postIArgs << QString::number(speed);
-  } else {  // VP9
-    postIArgs << "-cpu-used";
-    int cpuUsed = (m_speed == "Slow"       ? 0
-                   : m_speed == "Balanced" ? 2
-                                           : 4);  // 0=slow, 4=fast
-    postIArgs << QString::number(cpuUsed);
-  }
+  postIArgs << "-cpu-used" << m_speed;
 
-  // Color space (BT.709 for standard video)
+  // Colorspace
   postIArgs << "-color_primaries" << "bt709"
             << "-color_trc" << "bt709"
             << "-colorspace" << "bt709";
 
   // Pixel format
-  QString pixFmt = "yuv420p";                 // Default for compatibility
-  if (m_codec == "VP9") pixFmt = "yuva420p";  // VP9 supports alpha
-  postIArgs << "-pix_fmt" << pixFmt;
+  postIArgs << "-pix_fmt" << (m_preserveAlpha ? "yuva420p" : "yuv420p");
 
-  // Output resolution
+  // Scale
   postIArgs << "-s" << QString("%1x%2").arg(outLx).arg(outLy);
 
-  // Debug arguments
+  // Debug
   qDebug() << "preIArgs:" << preIArgs << "postIArgs:" << postIArgs;
 
   // Execute FFmpeg and clean up
   ffmpegWriter->runFfmpeg(preIArgs, postIArgs, false, false, true);
   ffmpegWriter->cleanUpFiles();
-}
-
-//-----------------------------------------------------------
-
-void TLevelWriterWebm::parseProperties() {
-  m_scale = QString::fromStdString(
-                m_properties->getProperty("Scale")->getValueAsString())
-                .toInt();
-  m_codec = QString::fromStdString(
-      m_properties->getProperty("Codec")->getValueAsString());
-  m_speed = QString::fromStdString(
-      m_properties->getProperty("Encoding Speed")->getValueAsString());
-  m_crf = QString::fromStdString(
-              m_properties->getProperty("Quality (CRF)")->getValueAsString())
-              .toInt();
-  m_kf = QString::fromStdString(
-             m_properties->getProperty("Key Frame Every (frames)")
-                 ->getValueAsString())
-             .toInt();
 }
 
 //-----------------------------------------------------------
@@ -299,35 +293,45 @@ TImageP TLevelReaderWebm::load(int frameIndex) {
 
 Tiio::WebmWriterProperties::WebmWriterProperties()
     : m_scale("Scale", 1, 100, 100)
-    , m_crf("Quality (CRF)", 0, 63, 28)  // 0=lossless, 63=worst
-    , m_codec("Codec")
     , m_speed("Encoding Speed")
-    , m_kf("Key Frame Every (frames)", 1, 1000, 24, false) {
+    , m_kf("Keyframe Interval")
+    , m_preserveAlpha("Preserve Alpha", true)
+    , m_lossless("Lossless", false) {
   bind(m_scale);
-  bind(m_crf);
-  bind(m_codec);
   bind(m_speed);
   bind(m_kf);
-
-  // Codecs
-  m_codec.addValue(L"VP9");
-  m_codec.addValue(L"AV1");
+  bind(m_preserveAlpha);
+  bind(m_lossless);
 
   // Encoding Speeds
-  // VP9 speed 0, AV1 speed 0
-  m_speed.addValueWithUIName(L"Slow", tr("Slow (Best Compression)"));
-  // VP9 speed 2, AV1 speed 4
-  m_speed.addValueWithUIName(L"Balanced", tr("Balanced (Recommended)"));
-  // VP9 speed 4, AV1 speed 8
-  m_speed.addValueWithUIName(L"Fast", tr("Fast (Larger File)"));
+  m_speed.addValueWithUIName(L"0",
+                             tr("Placebo (Smallest File)"));  // cpu-used 0
+  m_speed.addValueWithUIName(L"1", tr("Very Slow"));          // cpu-used 1
+  m_speed.addValueWithUIName(L"2", tr("Slower"));             // cpu-used 2
+  m_speed.addValueWithUIName(L"3", tr("Slow"));               // cpu-used 3
+  m_speed.addValueWithUIName(L"4", tr("Medium"));             // cpu-used 4
+  m_speed.addValueWithUIName(L"5", tr("Fast"));               // cpu-used 5
+  m_speed.addValueWithUIName(L"6", tr("Faster"));             // cpu-used 6
+  m_speed.addValueWithUIName(L"7", tr("Very Fast"));          // cpu-used 7
+  m_speed.addValueWithUIName(L"8",
+                             tr("Ultra Fast (Largest File)"));  // cpu-used 8
+  m_speed.setValue(L"1");  // Default to Very Slow (benefits animation)
+
+  // Keyframe Intervals
+  m_kf.addValueWithUIName(L"1", tr("Every Frame"));
+  m_kf.addValueWithUIName(L"2", tr("Every Second"));
+  m_kf.addValueWithUIName(L"3", tr("Every 2 Seconds"));
+  m_kf.addValueWithUIName(L"4", tr("Every 5 Seconds"));
+  m_kf.addValueWithUIName(L"5", tr("Every 10 Seconds"));
+  m_kf.setValue(L"2");  // Default to Every Second
 }
 
 void Tiio::WebmWriterProperties::updateTranslation() {
   m_scale.setQStringName(tr("Scale"));
-  m_codec.setQStringName(tr("Codec"));
   m_speed.setQStringName(tr("Encoding Speed"));
-  m_crf.setQStringName(tr("Quality (CRF)"));
-  m_kf.setQStringName(tr("Key Frame Every (frames)"));
+  m_kf.setQStringName(tr("Keyframe Interval"));
+  m_preserveAlpha.setQStringName(tr("Preserve Alpha"));
+  m_lossless.setQStringName(tr("Lossless"));
 }
 
 // Tiio::Reader* Tiio::makeWebmReader(){ return nullptr; }
