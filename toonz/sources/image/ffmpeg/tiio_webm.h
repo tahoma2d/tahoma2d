@@ -42,12 +42,12 @@ private:
   Ffmpeg *ffmpegWriter;
 
   // Video properties
-  int m_lx, m_ly;         // Frame width and height
-  int m_scale;            // Scaling factor
-  QString m_codec;        // Video codec
-  QString m_speed;        // Encoding speed preset
-  QString m_pixelFormat;  // Pixel format
-  int m_crf;              // Constant Rate Factor (CRF) for quality control
+  int m_lx, m_ly;   // Frame width and height
+  int m_scale;      // Scaling factor
+  QString m_codec;  // Video codec
+  QString m_speed;  // Encoding speed preset
+  int m_crf;        // Constant Rate Factor (CRF) for quality control
+  int m_kf;         // Keyframes
 };
 
 //===========================================================
@@ -90,8 +90,8 @@ public:
   TIntProperty m_scale;
   TEnumProperty m_codec;
   TEnumProperty m_speed;
-  TEnumProperty m_pixelFormat;
   TIntProperty m_crf;
+  TIntProperty m_kf;
 
   WebmWriterProperties();
   void updateTranslation() override;
