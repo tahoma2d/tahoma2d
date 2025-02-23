@@ -63,19 +63,19 @@ TImageP Stage::Player::image() const {
 
   std::string id = m_sl->getImageId(m_fid);
   int slType     = m_sl->getType();
+  ImageLoader::BuildExtData extData(m_sl, m_fid);
 
   if (slType == PLI_XSHLEVEL && TXshSimpleLevel::m_rasterizePli) {
     if (!(m_isCurrentColumn && m_isCurrentXsheetLevel)) id = id + "_rasterized";
+    if(m_xsh)
+        extData.m_cameraDpi =//use cameraDpi to rasterize vector
+        m_xsh->getStageObjectTree()->getCurrentCamera()->getDpi();
   }
 
   if (TXshSimpleLevel::m_fillFullColorRaster &&
       (slType == OVL_XSHLEVEL || slType == TZI_XSHLEVEL))
     id = id + "_filled";
 
-  ImageLoader::BuildExtData extData(
-      m_sl, m_fid, 0, false, m_sl->getScene()->decodeFilePath(m_sl->getPath()));
-  extData.cameraDpi =
-      m_xsh->getStageObjectTree()->getCurrentCamera()->getDpi();
   return ImageManager::instance()->getImage(id, ImageManager::none, &extData);
 }
 

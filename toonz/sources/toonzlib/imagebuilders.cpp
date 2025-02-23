@@ -290,6 +290,14 @@ bool ImageRasterizer::getInfo(TImageInfo &info, int imFlags, void *extData) {
   return false;
 }
 
+bool ImageRasterizer::isImageCompatible(int imFlags, void* extData) { 
+  ImageLoader::BuildExtData *data = (ImageLoader::BuildExtData *)extData;
+  if (data->m_cameraDpi == oldCameraDpi) return true;
+  else {
+    return false;
+  }
+}
+
 //-------------------------------------------------------------------------
 
 TImageP ImageRasterizer::build(int imFlags, void *extData) {
@@ -298,10 +306,11 @@ TImageP ImageRasterizer::build(int imFlags, void *extData) {
 
   TDimension d(10, 10);
   TPoint off(0, 0);
-
+  
   // Fetch image
   assert(extData);
   ImageLoader::BuildExtData *data = (ImageLoader::BuildExtData *)extData;
+  oldCameraDpi                    = data->m_cameraDpi;
   
   const std::string &srcImgId = data->m_sl->getImageId(data->m_fid);
 
@@ -311,8 +320,8 @@ TImageP ImageRasterizer::build(int imFlags, void *extData) {
     if (vi) {
       TRectD bbox = vi->getBBox();
       double sx, sy;
-      sx = data->cameraDpi.x / Stage::inch;
-      sy = data->cameraDpi.x / Stage::inch;
+      sx = data->m_cameraDpi.x / Stage::inch;
+      sy = data->m_cameraDpi.x / Stage::inch;
       d = TDimension(tceil(bbox.getLx() * sx)+1,
                      tceil(bbox.getLy() * sy)+1);
       TScale scale = TScale(sx,sy);
