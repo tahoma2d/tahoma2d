@@ -366,7 +366,7 @@ TImageP ImageRasterizer::build(int imFlags, void *extData) {
 
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
-            glTranslatef(0.375, 0.375, 0.0);
+            glTranslatef(-0.66, -0.2, 0.0);//dirty...
 
             tglDraw(rd, vi.getPointer());
 
