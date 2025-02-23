@@ -22,9 +22,6 @@ public:
   // Framerate control
   void setFrameRate(double fps) override;
 
-  // Property parsing
-  void parseProperties();
-
   // Image and frame handling
   TImageWriterP getFrameWriter(TFrameId fid) override;
   void save(const TImageP &image, int frameIndex);
@@ -42,12 +39,12 @@ private:
   Ffmpeg *ffmpegWriter;
 
   // Video properties
-  int m_lx, m_ly;   // Frame width and height
-  int m_scale;      // Scaling factor
-  QString m_codec;  // Video codec
-  QString m_speed;  // Encoding speed preset
-  int m_crf;        // Constant Rate Factor (CRF) for quality control
-  int m_kf;         // Keyframes
+  int m_lx, m_ly;        // Frame width and height
+  int m_scale;           // Scaling factor
+  QString m_speed;       // Encoding speed preset
+  int m_kfSetting;       // Keyframe interval
+  bool m_preserveAlpha;  // Preserve alpha channel
+  bool m_lossless;       // Lossless quality
 };
 
 //===========================================================
@@ -88,10 +85,10 @@ class WebmWriterProperties : public TPropertyGroup {
   Q_DECLARE_TR_FUNCTIONS(WebmWriterProperties)
 public:
   TIntProperty m_scale;
-  TEnumProperty m_codec;
   TEnumProperty m_speed;
-  TIntProperty m_crf;
-  TIntProperty m_kf;
+  TEnumProperty m_kf;
+  TBoolProperty m_preserveAlpha;
+  TBoolProperty m_lossless;
 
   WebmWriterProperties();
   void updateTranslation() override;
