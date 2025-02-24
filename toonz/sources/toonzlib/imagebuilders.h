@@ -6,6 +6,7 @@
 #include "tfilepath.h"
 
 #include "toonz/imagemanager.h"
+#include "toonz/tcamera.h"
 
 //======================================================
 
@@ -40,7 +41,7 @@ public:
     //!< m_sl's subsampling property otherwise)
     bool m_icon;  //!< Whether the icon (if any) should be loaded instead
     
-    TPointD m_cameraDpi;  //!< For Rasterizer scale, set to current camera dpi
+    TCamera *currentCamera;//for Rasterizer
 
     TFilePath m_fullPath;
 
@@ -51,6 +52,7 @@ public:
         , m_fid(fid)
         , m_subs(subs)
         , m_icon(icon)
+        , currentCamera(nullptr) 
         , m_fullPath(fullPath) {}
   };
 
@@ -99,7 +101,7 @@ public:
   ImageRasterizer() {}
   ~ImageRasterizer() {}
 
-  TPointD oldCameraDpi;
+  TAffine m_aff;
   //Imagemaneget::getImage
   bool isImageCompatible(int imFlags, void *extData) override;
 
