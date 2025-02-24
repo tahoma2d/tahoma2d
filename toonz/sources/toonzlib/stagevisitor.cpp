@@ -1029,7 +1029,6 @@ void RasterPainter::onRasterImage(TRasterImage *ri,
         TTranslation(-r->getCenterD() +
                      convert(ri->getOffset()));  // this offset is !=0 only if
                                                  // in cleanup camera test mode 
-                                                 // and rasterizer 
 
   TRectD bbox = TRectD(0, 0, m_dim.lx, m_dim.ly);
   bbox *= convert(m_clipRect);

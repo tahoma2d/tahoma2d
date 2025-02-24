@@ -13,7 +13,6 @@
 
 #include "toonz/stageplayer.h"
 #include "toonz/tstageobjecttree.h"
-#include "toonz/tcamera.h"
 
 #include "toonz/toonzscene.h"
 
@@ -68,9 +67,9 @@ TImageP Stage::Player::image() const {
   if (slType == PLI_XSHLEVEL && TXshSimpleLevel::m_rasterizePli) {
     if (!(m_isCurrentColumn && m_isCurrentXsheetLevel)) id = id + "_rasterized";
     if(m_xsh)
-        extData.m_cameraDpi =//use cameraDpi to rasterize vector
-        m_xsh->getStageObjectTree()->getCurrentCamera()->getDpi();
-  }
+      extData.currentCamera = m_xsh->getStageObjectTree()->getCurrentCamera();
+  }  // use cameraDpi to rasterize vector
+        
 
   if (TXshSimpleLevel::m_fillFullColorRaster &&
       (slType == OVL_XSHLEVEL || slType == TZI_XSHLEVEL))
