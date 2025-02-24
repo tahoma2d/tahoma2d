@@ -27,6 +27,7 @@
 #include "toonz/dpiscale.h"
 #include "toonz/stage.h"
 #include "toonz/tcamera.h"
+#include "toonz/preferences.h"
 
 // Qt includes
 #include <QImage>
@@ -293,12 +294,10 @@ bool ImageRasterizer::getInfo(TImageInfo &info, int imFlags, void *extData) {
 
 bool ImageRasterizer::isImageCompatible(int imFlags, void* extData) { 
   ImageLoader::BuildExtData *data = (ImageLoader::BuildExtData *)extData;
-
   if (m_aff == data->currentCamera->getStageToCameraRef())
-    return true;
-  else {
-    return false;
-  }
+    if (m_antiAliasing == Preferences::instance()->getRasterizeAntialias())
+        return true;
+  return false;
 }
 
 //-------------------------------------------------------------------------
@@ -320,11 +319,12 @@ TImageP ImageRasterizer::build(int imFlags, void *extData) {
       TRectD bbox = vi->getBBox();
       if (!bbox.isEmpty()) {
           m_aff = data->currentCamera->getStageToCameraRef();
+          m_antiAliasing = Preferences::instance()->getRasterizeAntialias();
           TDimension d = data->currentCamera->getRes();
           TVectorRenderData rd(TVectorRenderData::ProductionSettings(),
               m_aff,
               TRect(), vi->getPalette());
-          rd.m_antiAliasing = true;//TODO: get this value from Preference
+          rd.m_antiAliasing = m_antiAliasing;
 
           //Is this too slow?
           {
