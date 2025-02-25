@@ -27,7 +27,7 @@
 # -f | --ffmpeg :	Compile FFmpeg from sources
 # -g | --gphoto :	Compile Gphoto2 from sources
 # -m | --mypaint :	Compile LibMyPaint from sources
-# -r | --rhubarb :	Compile Rhubarb from sources
+# -r | --rhubarb :	Add Rhubarb
 #
 # -c`| --clear : 
 # 	Deletes check files and the local tahoma2d repository directory 

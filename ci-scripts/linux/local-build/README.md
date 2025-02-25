@@ -59,6 +59,7 @@ The `linux_depends.sh` script accepts the following parameters:
 | `-f`, `--ffmpeg` | Locally compile and install **FFmpeg**. |
 | `-g`, `--gphoto` | Locally compile and install **GPhoto**. |
 | `-m`, `--mpaint` | Locally compile and install **MyPaint**. |
+| `-r`, `--rhubarb` | Add **Rhubarb**. |
 | `-c`, `--clear` | **Deletes check files and the local** `tahoma2d` **repository directory**  (if it is at the same level as the script). |
 
 ##### 🔹 Example Usage:
