@@ -375,7 +375,7 @@ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 	ldconfig
 
 	cd "$SCRIPT_DIR"
-	touch "$CHECKFILE_LIBFFMPEG"
+	touch "$CHECKFILE_FFMPEG"
 }
 
 function _libGphoto2() {
@@ -402,7 +402,7 @@ function _libGphoto2() {
 	  make install || { echo "$(_msg GPHOTO_BUILD_ERROR)"; exit 1; }
 
 	cd "$SCRIPT_DIR"
-	touch "$CHECKFILE_libGphoto2"
+	touch "$CHECKFILE_GPHOTO"
 }
 
 function _libMyPaint() {
@@ -580,7 +580,7 @@ function _arguments() {
 						fi
 						;;
 					-g|--gphoto)
-						if [ -e "$CHECKFILE_libGphoto2" ]; then
+						if [ -e "$CHECKFILE_GPHOTO" ]; then
 							echo -e "\nGPhoto $(_msg ALREADY_COMPILED)"
 						else
 							selected_libraries+=("GPhoto")
