@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# ======================================================================
+# File:       ./assets/var
+# Author:     Charlie Martínez® <cmartinez@quirinux.org>
+# License:    BSD 3-Clause "New" or "Revised" License
+# Purpose:    Variables for local build and depends tahoma2d scripts
+# Supported:  Multi-distro (originally for Quirinux 2.0)
+# ======================================================================
+
+#
+# Copyright (c) 2019-2025 Charlie Martínez. All Rights Reserved.  
+# License: BSD 3-Clause "New" or "Revised" License
+# Authorized and unauthorized uses of the Quirinux trademark:  
+# See https://www.quirinux.org/aviso-legal  
+#
+# Tahoma2D and OpenToonz are registered trademarks of their respective 
+# owners, and any other third-party projects that may be mentioned or 
+# affected by this code belong to their respective owners and follow 
+# their respective licenses.
+#
+
+# ======================================================================
+# Variables
+# ======================================================================
+
+	REPO_URL="https://github.com/tahoma2d/tahoma2d.git"
+	#REPO_URL="https://github.com/charliemartinez/tahoma2d.git" #author script fork
+	OPTS=""
+	SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+
+	# Verify if the script is inside the ci-scripts/linux/local-build directory.
+	if [[ "$SCRIPT_DIR" == */ci-scripts/linux/local-build ]]; then
+		TAHOMA_DIR="$(realpath "$SCRIPT_DIR/../../..")"
+	else
+		TAHOMA_DIR="$SCRIPT_DIR/tahoma2d"
+	fi
+
+	USER_CONFIG_DIR="$HOME/.config/Tahoma2D"
+	STUFF_DIR="$TAHOMA_DIR/stuff"
+	THIRDPARTY_DIR="$TAHOMA_DIR/thirdparty"
+	LIBTIFF_DIR="$THIRDPARTY_DIR/tiff-4.2.0"
+	TOONZ_DIR="$TAHOMA_DIR/toonz"
+	BUILD_DIR="$TOONZ_DIR/build"
+	BIN_DIR="$BUILD_DIR/bin"
+	SOURCES_DIR="$TOONZ_DIR/sources"
+
+	# Checkfiles:
+	CHECK_DIR="$SCRIPT_DIR/checkfiles"
+	CHECKFILE_PACKAGES="$CHECK_DIR/ok-packages"
+	CHECKFILE_OPENCV="$CHECK_DIR/ok-opencv"
+	CHECKFILE_FFMPEG="$CHECK_DIR/ok-ffmpeg"
+	CHECKFILE_GPHOTO="$CHECK_DIR/ok-gphoto"
+	CHECKFILE_MPAINT="$CHECK_DIR/ok-mpaint"
+	CHECKFILE_RHUBARB="$CHECK_DIR/ok-rhubarb"

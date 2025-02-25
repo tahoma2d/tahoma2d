@@ -1,5 +1,9 @@
 # Setting up the development environment for GNU/Linux
 
+## New: The Easy Way
+
+You can use the interactive [local-build scripts](https://github.com/tahoma2d/tahoma2d/tree/master/ci-scripts/linux/local-build), to automate the steps outlined below.
+
 ## Required software
 
 Building Tahoma2D from source requires the following dependencies:
@@ -21,7 +25,7 @@ Building Tahoma2D from source requires the following dependencies:
 ```
 $ sudo apt-get install build-essential git cmake freeglut3-dev libboost-all-dev libegl1-mesa-dev libfreetype6-dev libgles2-mesa-dev libglew-dev libglib2.0-dev libjpeg-dev libjpeg-turbo8-dev libjson-c-dev liblz4-dev liblzma-dev liblzo2-dev libpng-dev libsuperlu-dev pkg-config qt5-default qtbase5-dev libqt5svg5-dev qtscript5-dev qttools5-dev qttools5-dev-tools libqt5opengl5-dev qtmultimedia5-dev qtwayland5 libqt5multimedia5-plugins
 ```
-In Debian / Devuan: replace `libjpeg-turbo8-dev` with `libturbojpg0-dev` and `qt5-default` with `libqt5serialport5-dev` and add: `libsuperlu-dev liblz4-dev liblzo-dev libmypaint-dev libglew-dev freeglut3-dev` 
+In Debian / Devuan: replace `libjpeg-turbo8-dev` with `libturbojpg0-dev` and `qt5-default` with `libqt5serialport5-dev` and add: `liblzo-dev libmypaint-dev` 
 
 
 Find a PPA repository for Qt 5.9 or later and install the following:

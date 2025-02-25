@@ -1,0 +1,331 @@
+#!/bin/bash
+
+# ======================================================================
+# File:       ./assets/lang_build
+# Author:     Charlie Martínez® <cmartinez@quirinux.org>
+# License:    BSD 3-Clause "New" or "Revised" License
+# Purpose:    Translations for local build tahoma2d script
+# Supported:  Multi-distro (originally for Quirinux 2.0)
+# ======================================================================
+
+#
+# Copyright (c) 2019-2025 Charlie Martínez. All Rights Reserved.  
+# License: BSD 3-Clause "New" or "Revised" License
+# Authorized and unauthorized uses of the Quirinux trademark:  
+# See https://www.quirinux.org/aviso-legal  
+#
+# Tahoma2D and OpenToonz are registered trademarks of their respective 
+# owners, and any other third-party projects that may be mentioned or 
+# affected by this code belong to their respective owners and follow 
+# their respective licenses.
+#
+
+function _msg() {
+	# Return a translated message based on the key and system language   
+	local clave=$1 # Store the key for the requested message
+	declare -A msg=( # Translation messages for different languages
+
+		[es_WARNING_YOU_ARE_ROOT]="\n\nADVERTENCIA: Este script no debería utilizarse como root\n\n"
+		[en_WARNING_YOU_ARE_ROOT]="\n\nWARNING: This script should not be run as root\n\n"
+		[it_WARNING_YOU_ARE_ROOT]="\n\nATTENZIONE: Questo script non dovrebbe essere eseguito come root\n\n"
+		[de_WARNING_YOU_ARE_ROOT]="\n\nWARNUNG: Dieses Skript sollte nicht als Root ausgeführt werden\n\n"
+		[fr_WARNING_YOU_ARE_ROOT]="\n\nAVERTISSEMENT : Ce script ne devrait pas être exécuté en tant que root\n\n"
+		[gl_WARNING_YOU_ARE_ROOT]="\n\nAVISO: Este script non debería executarse como root\n\n"
+		[pt_WARNING_YOU_ARE_ROOT]="\n\nAVISO: Este script não deve ser executado como root\n\n"
+
+		[es_DO_YOU_WANT_CONTINUE_ROOT]="¿Deseas continuar de todos modos? (s/n): "
+		[en_DO_YOU_WANT_CONTINUE_ROOT]="Do you want to continue anyway? (y/n): "
+		[it_DO_YOU_WANT_CONTINUE_ROOT]="Vuoi continuare comunque? (s/n): "
+		[de_DO_YOU_WANT_CONTINUE_ROOT]="Möchten Sie trotzdem fortfahren? (j/n): "
+		[fr_DO_YOU_WANT_CONTINUE_ROOT]="Voulez-vous continuer quand même ? (o/n) : "
+		[gl_DO_YOU_WANT_CONTINUE_ROOT]="Desexas continuar de todos os xeitos? (s/n): "
+		[pt_DO_YOU_WANT_CONTINUE_ROOT]="Deseja continuar mesmo assim? (s/n): "
+
+		[es_CONTINUING_ROOT]="Continuando como root..."
+		[en_CONTINUING_ROOT]="Continuing as root..."
+		[it_CONTINUING_ROOT]="Continuando come root..."
+		[de_CONTINUING_ROOT]="Fortfahren als Root..."
+		[fr_CONTINUING_ROOT]="Continuation en tant que root..."
+		[gl_CONTINUING_ROOT]="Continuando como root..."
+		[pt_CONTINUING_ROOT]="Continuando como root..."
+
+
+		[es_DEPENDS]="Primero ejecute ./linux_depends.sh con permisos de root."
+		[en_DEPENDS]="First run ./linux_depends.sh with root privileges."
+		[it_DEPENDS]="Prima esegui ./linux_depends.sh con privilegi di root."
+		[de_DEPENDS]="Führen Sie zuerst ./linux_depends.sh mit Root-Rechten aus."
+		[fr_DEPENDS]="Exécutez d'abord ./linux_depends.sh avec les privilèges root."
+		[gl_DEPENDS]="Primeiro execute ./linux_depends.sh con permisos de root."
+		[pt_DEPENDS]="Primeiro execute ./linux_depends.sh com privilégios de root."
+    
+		[es_INTERNET]="Este programa requiere conexión a internet"
+		[en_INTERNET]="This program requires an internet connection."
+		[it_INTERNET]="Questo programma richiede una connessione a Internet."
+		[de_INTERNET]="Dieses Programm erfordert eine Internetverbindung."
+		[fr_INTERNET]="Ce programme nécessite une connexion Internet."
+		[gl_INTERNET]="Este programa require unha conexión a internet."
+		[pt_INTERNET]="Este programa requer uma conexão com a internet."
+
+		[es_TITLE]="SCRIPT PARA COMPILAR TAHOMA2D"
+		[en_TITLE]="SCRIPT TO COMPILE TAHOMA2D"
+		[it_TITLE]="SCRIPT PER COMPILARE TAHOMA2D"
+		[de_TITLE]="SCRIPT ZUR KOMPILIERUNG VON TAHOMA2D"
+		[fr_TITLE]="SCRIPT POUR COMPILER TAHOMA2D"
+		[gl_TITLE]="SCRIPT PARA COMPILAR TAHOMA2D"
+		[pt_TITLE]="SCRIPT PARA COMPILAR TAHOMA2D"
+
+		[es_NAVIGATE]="Desplazarse"
+		[en_NAVIGATE]="Navigate"
+		[it_NAVIGATE]="Spostarsi"
+		[de_NAVIGATE]="Bewegen"
+		[fr_NAVIGATE]="Se déplacer"
+		[gl_NAVIGATE]="Desprazarse"
+		[pt_NAVIGATE]="Deslocar-se"
+
+		[es_CONFIRM]="Confirmar"
+		[en_CONFIRM]="Confirm"
+		[it_CONFIRM]="Confermare"
+		[de_CONFIRM]="Bestätigen"
+		[fr_CONFIRM]="Confirmer"
+		[gl_CONFIRM]="Confirmar"
+		[pt_CONFIRM]="Confirmar"
+
+		[es_WARNING]="A continuación se compilará Tahoma2D directamente desde su código fuente.\nEste proceso puede tardar un largo tiempo."
+		[en_WARNING]="Tahoma2D will now be compiled directly from its source code.\nThis process may take a long time."
+		[it_WARNING]="Tahoma2D verrà ora compilato direttamente dal suo codice sorgente.\nQuesto processo potrebbe richiedere molto tempo."
+		[de_WARNING]="Tahoma2D wird nun direkt aus dem Quellcode kompiliert.\nDieser Prozess könnte viel Zeit in Anspruch nehmen."
+		[fr_WARNING]="Tahoma2D sera maintenant compilé directement à partir de son code source.\nCe processus pourrait prendre beaucoup de temps."
+		[gl_WARNING]="A continuación, compilarase Tahoma2D directamente dende o seu código fonte.\nEste proceso pode levar moito tempo."
+		[pt_WARNING]="Tahoma2D será agora compilado diretamente do seu código-fonte.\nEste processo pode levar muito tempo."
+
+		[es_CANCEL]="Compilación cancelada."
+		[en_CANCEL]="Compilation canceled."
+		[it_CANCEL]="Compilazione annullata."
+		[de_CANCEL]="Kompilierung abgebrochen."
+		[fr_CANCEL]="Compilation annulée."
+		[gl_CANCEL]="Compilación cancelada."
+		[pt_CANCEL]="Compilação cancelada."
+
+		[es_EXECUTE]="Ejecutar desde el directorio actual"
+		[en_EXECUTE]="Run from the current directory"
+		[it_EXECUTE]="Esegui dalla directory corrente"
+		[de_EXECUTE]="Aus dem aktuellen Verzeichnis ausführen"
+		[fr_EXECUTE]="Exécuter depuis le répertoire actuel"
+		[gl_EXECUTE]="Executar dende o directorio actual"
+		[pt_EXECUTE]="Executar a partir do diretório atual"
+
+		[es_INSTALL]="Instalar en /opt"
+		[en_INSTALL]="Install in /opt"
+		[it_INSTALL]="Installare in /opt"
+		[de_INSTALL]="In /opt installieren"
+		[fr_INSTALL]="Installer dans /opt"
+		[gl_INSTALL]="Instalar en /opt"
+		[pt_INSTALL]="Instalar em /opt"
+
+		[es_EXIT]="Salir"
+		[en_EXIT]="Exit"
+		[it_EXIT]="Esci"
+		[de_EXIT]="Beenden"
+		[fr_EXIT]="Quitter"
+		[gl_EXIT]="Saír"
+		[pt_EXIT]="Sair"
+
+		[es_AVAILABLE_BRANCHES]="Ramas disponibles:"
+		[en_AVAILABLE_BRANCHES]="Available branches:"
+		[it_AVAILABLE_BRANCHES]="Rami disponibili:"
+		[de_AVAILABLE_BRANCHES]="Verfügbare Zweige:"
+		[fr_AVAILABLE_BRANCHES]="Branches disponibles :"
+		[gl_AVAILABLE_BRANCHES]="Ramas dispoñibles:"
+		[pt_AVAILABLE_BRANCHES]="Ramos disponíveis:"
+
+		[es_NOT_REWRITE]="Se utilizará el contenido actual del directorio $TAHOMA_DIR"
+		[en_NOT_REWRITE]="The current content of the $TAHOMA_DIR directory will be used"
+		[it_NOT_REWRITE]="Il contenuto attuale della directory $TAHOMA_DIR verrà utilizzato"
+		[de_NOT_REWRITE]="Der aktuelle Inhalt des Verzeichnisses $TAHOMA_DIR wird verwendet"
+		[fr_NOT_REWRITE]="Le contenu actuel du répertoire $TAHOMA_DIR sera utilisé"
+		[gl_NOT_REWRITE]="Empregarase o contido actual do directorio $TAHOMA_DIR"
+		[pt_NOT_REWRITE]="O conteúdo atual do diretório $TAHOMA_DIR será usado"
+
+		[es_SOURCES]="Error: El directorio de fuentes $SOURCES_DIR no existe."
+		[en_SOURCES]="Error: The source directory $SOURCES_DIR does not exist."
+		[it_SOURCES]="Errore: La directory di origine $SOURCES_DIR non esiste."
+		[de_SOURCES]="Fehler: Das Quellverzeichnis $SOURCES_DIR existiert nicht."
+		[fr_SOURCES]="Erreur : Le répertoire source $SOURCES_DIR n'existe pas."
+		[gl_SOURCES]="Erro: O directorio de fontes $SOURCES_DIR non existe."
+		[pt_SOURCES]="Erro: O diretório de fontes $SOURCES_DIR não existe."
+
+		[es_DIR_EXISTS]="Directorio $TAHOMA_DIR ya existe."
+		[en_DIR_EXISTS]="Directory $TAHOMA_DIR already exists."
+		[it_DIR_EXISTS]="La directory $TAHOMA_DIR esiste."
+		[de_DIR_EXISTS]="Verzeichnis $TAHOMA_DIR existiert."
+		[fr_DIR_EXISTS]="Le répertoire $TAHOMA_DIR existe déjà."
+		[gl_DIR_EXISTS]="Directorio $TAHOMA_DIR xa existe."
+		[pt_DIR_EXISTS]="O diretório $TAHOMA_DIR já existe."
+
+		[es_OVERWRITE]="¿Quieres sobrescribirlo? (S/n)"
+		[en_OVERWRITE]="Do you want to overwrite it? (Y/n)"
+		[it_OVERWRITE]="Vuoi sovrascriverlo? (S/n)"
+		[de_OVERWRITE]="Möchten Sie es überschreiben? (J/n)"
+		[fr_OVERWRITE]="Voulez-vous le remplacer ? (O/n)"
+		[gl_OVERWRITE]="Queres sobrescribilo? (S/n)"
+		[pt_OVERWRITE]="Você deseja sobrescrevê-lo? (S/n)"
+
+		[es_BYE]="Para ejecutar desde el directorio, utiliza: \nLD_LIBRARY_PATH=./lib/opentoonz:\$LD_LIBRARY_PATH \n./bin/Tahoma2D \n\nPara instalar en /opt: \nmake install"
+		[en_BYE]="To run from the directory, use: \nLD_LIBRARY_PATH=./lib/opentoonz:\$LD_LIBRARY_PATH \n./bin/Tahoma2D \n\nTo install in /opt: \nmake install"
+		[it_BYE]="Per eseguire dalla directory, usa: \nLD_LIBRARY_PATH=./lib/opentoonz:\$LD_LIBRARY_PATH \n./bin/Tahoma2D \n\nPer installare in /opt: \nmake install"
+		[de_BYE]="Um aus dem Verzeichnis auszuführen, verwende: \nLD_LIBRARY_PATH=./lib/opentoonz:\$LD_LIBRARY_PATH \n./bin/Tahoma2D \n\nUm in /opt zu installieren: \nmake install"
+		[fr_BYE]="Pour exécuter depuis le répertoire, utilisez : \nLD_LIBRARY_PATH=./lib/opentoonz:\$LD_LIBRARY_PATH \n./bin/Tahoma2D \n\nPour installer dans /opt : \nmake install"
+		[gl_BYE]="Para executar dende o directorio, usa: \nLD_LIBRARY_PATH=./lib/opentoonz:\$LD_LIBRARY_PATH \n./bin/Tahoma2D \n\nPara instalar en /opt: \nmake install"
+		[pt_BYE]="Para executar a partir do diretório, use: \nLD_LIBRARY_PATH=./lib/opentoonz:\$LD_LIBRARY_PATH \n./bin/Tahoma2D \n\nPara instalar em /opt: \nmake install"
+
+		[es_TAHOMA2D_FOLDER_FOUND]="Se encontró la carpeta Tahoma2D. Continuando..."
+		[en_TAHOMA2D_FOLDER_FOUND]="Tahoma2D folder found. Continuing..."
+		[it_TAHOMA2D_FOLDER_FOUND]="Cartella Tahoma2D trovata. Continuazione..."
+		[de_TAHOMA2D_FOLDER_FOUND]="Tahoma2D-Ordner gefunden. Fortfahren..."
+		[fr_TAHOMA2D_FOLDER_FOUND]="Dossier Tahoma2D trouvé. Continuation..."
+		[gl_TAHOMA2D_FOLDER_FOUND]="Atopouse o cartafol Tahoma2D. Continuando..."
+		[pt_TAHOMA2D_FOLDER_FOUND]="Pasta Tahoma2D encontrada. Continuando..."
+
+		[es_REPOSITORY_NOT_FOUND]='No se encontró el repositorio. Coloque la carpeta "tahoma2d" al mismo nivel que este script para continuar'.
+		[en_REPOSITORY_NOT_FOUND]='Repository not found. Place the "tahoma2d"  folder at the same level as this script to continue.'
+		[it_REPOSITORY_NOT_FOUND]='Repository non trovato. Posizionare la cartella "tahoma2d"  allo stesso livello di questo script per continuare.'
+		[de_REPOSITORY_NOT_FOUND]='Repository nicht gefunden. Platzieren Sie den "tahoma2d"-Ordner auf derselben Ebene wie dieses Skript, um fortzufahren.'
+		[fr_REPOSITORY_NOT_FOUND]='Dépôt introuvable. Placez le dossier "tahoma2d"  au même niveau que ce script pour continuer.'
+		[gl_REPOSITORY_NOT_FOUND]='Non se atopou o repositorio. Coloque o cartafol "tahoma2d"  ao mesmo nivel que este script para continuar.'
+		[pt_REPOSITORY_NOT_FOUND]='Repositório não encontrado. Coloque a pasta "tahoma2d"  no mesmo nível deste script para continuar.'
+
+		[es_OPTIONS]="Opciones:"
+		[en_OPTIONS]="Options:"
+		[it_OPTIONS]="Opzioni:"
+		[de_OPTIONS]="Optionen:"
+		[fr_OPTIONS]="Options :"
+		[gl_OPTIONS]="Opcións:"
+		[pt_OPTIONS]="Opções:"
+
+		[es_SEARCH_AGAIN]="Volver a buscar"
+		[en_SEARCH_AGAIN]="Search again"
+		[it_SEARCH_AGAIN]="Cerca di nuovo"
+		[de_SEARCH_AGAIN]="Erneut suchen"
+		[fr_SEARCH_AGAIN]="Rechercher à nouveau"
+		[gl_SEARCH_AGAIN]="Volver a buscar"
+		[pt_SEARCH_AGAIN]="Procurar novamente"
+
+		[es_AUTOMATIC_CLONING]="Clonar de forma automática"
+		[en_AUTOMATIC_CLONING]="Clone automatically"
+		[it_AUTOMATIC_CLONING]="Clonare automaticamente"
+		[de_AUTOMATIC_CLONING]="Automatisch klonen"
+		[fr_AUTOMATIC_CLONING]="Cloner automatiquement"
+		[gl_AUTOMATIC_CLONING]="Clonar automaticamente"
+		[pt_AUTOMATIC_CLONING]="Clonar automaticamente"
+
+		[es_SELECT_OPTION]="Seleccione una opción:"
+		[en_SELECT_OPTION]="Select an option:"
+		[it_SELECT_OPTION]="Seleziona un'opzione:"
+		[de_SELECT_OPTION]="Wählen Sie eine Option:"
+		[fr_SELECT_OPTION]="Sélectionnez une option :"
+		[gl_SELECT_OPTION]="Seleccione unha opción:"
+		[pt_SELECT_OPTION]="Selecione uma opção:"
+
+		[es_OPTION_PROMPT]="Selecciona una opción:\n1) Continuar como root\n2) Salir"
+		[en_OPTION_PROMPT]="Select an option:\n1) Continue as root\n2) Exit"
+		[it_OPTION_PROMPT]="Seleziona un'opzione:\n1) Continuare come root\n2) Uscire"
+		[de_OPTION_PROMPT]="Wählen Sie eine Option:\n1) Als Root fortfahren\n2) Beenden"
+		[fr_OPTION_PROMPT]="Sélectionnez une option :\n1) Continuer en tant que root\n2) Quitter"
+		[gl_OPTION_PROMPT]="Selecciona unha opción:\n1) Continuar como root\n2) Saír"
+		[pt_OPTION_PROMPT]="Selecione uma opção:\n1) Continuar como root\n2) Sair"
+
+		[es_CLONING_REPOSITORY]="Clonando el repositorio..."
+		[en_CLONING_REPOSITORY]="Cloning the repository..."
+		[it_CLONING_REPOSITORY]="Clonazione del repository..."
+		[de_CLONING_REPOSITORY]="Repository wird geklont..."
+		[fr_CLONING_REPOSITORY]="Clonage du dépôt..."
+		[gl_CLONING_REPOSITORY]="Clonando o repositorio..."
+		[pt_CLONING_REPOSITORY]="Clonando o repositório..."
+
+		[es_CLONING_COMPLETED_CONTINUING]="Clonación completada. Continuando..."
+		[en_CLONING_COMPLETED_CONTINUING]="Cloning completed. Continuing..."
+		[it_CLONING_COMPLETED_CONTINUING]="Clonazione completata. Continuando..."
+		[de_CLONING_COMPLETED_CONTINUING]="Klonvorgang abgeschlossen. Fortfahren..."
+		[fr_CLONING_COMPLETED_CONTINUING]="Clonage terminé. Continuation..."
+		[gl_CLONING_COMPLETED_CONTINUING]="Clonación completada. Continuando..."
+		[pt_CLONING_COMPLETED_CONTINUING]="Clonagem concluída. Continuando..."
+
+		[es_CLONING_ERROR_RETRY]="Error en la clonación. Intente nuevamente."
+		[en_CLONING_ERROR_RETRY]="Cloning error. Please try again."
+		[it_CLONING_ERROR_RETRY]="Errore nella clonazione. Riprova."
+		[de_CLONING_ERROR_RETRY]="Fehler beim Klonen. Bitte versuche es erneut."
+		[fr_CLONING_ERROR_RETRY]="Erreur de clonage. Veuillez réessayer."
+		[gl_CLONING_ERROR_RETRY]="Erro na clonación. Inténtao de novo."
+		[pt_CLONING_ERROR_RETRY]="Erro na clonagem. Tente novamente."
+
+		[es_INVALID_OPTION_RETRY]="Opción no válida. Intente de nuevo."
+		[en_INVALID_OPTION_RETRY]="Invalid option. Please try again."
+		[it_INVALID_OPTION_RETRY]="Opzione non valida. Riprova."
+		[de_INVALID_OPTION_RETRY]="Ungültige Option. Bitte versuche es erneut."
+		[fr_INVALID_OPTION_RETRY]="Option invalide. Veuillez réessayer."
+		[gl_INVALID_OPTION_RETRY]="Opción non válida. Inténtao de novo."
+		[pt_INVALID_OPTION_RETRY]="Opção inválida. Tente novamente."
+
+		[es_SPECIFY_DIRECTORY]="Specifica la ruta"
+		[en_SPECIFY_DIRECTORY]="Specify the path"
+		[it_SPECIFY_DIRECTORY]="Specificare il percorso"
+		[de_SPECIFY_DIRECTORY]="Pfad angeben"
+		[fr_SPECIFY_DIRECTORY]="Spécifier le chemin"
+		[gl_SPECIFY_DIRECTORY]="Especificar a ruta"
+		[pt_SPECIFY_DIRECTORY]="Especificar o path"
+
+		[es_INTRO_PATH]='Introduce la ruta donde se encuentra la carpeta "tahoma2d"'
+		[en_INTRO_PATH]="Enter the path where the 'tahoma2d' folder is located"
+		[it_INTRO_PATH]="Inserisci il percorso in cui si trova la cartella 'tahoma2d'"
+		[de_INTRO_PATH]="Geben Sie den Pfad ein, in dem sich der Ordner 'tahoma2d' befindet"
+		[fr_INTRO_PATH]="Entrez le chemin où se trouve le dossier 'tahoma2d'"
+		[gl_INTRO_PATH]="Introduce a ruta onde se atopa a carpeta 'tahoma2d'"
+		[pt_INTRO_PATH]="Digite o caminho onde a pasta 'tahoma2d' está localizada"
+
+		[es_TAHOMA2D_FOLDER_FOUND_AT]='Carpeta "tahoma2d" encontrada en: '
+		[en_TAHOMA2D_FOLDER_FOUND_AT]="Folder 'tahoma2d' found at: "
+		[it_TAHOMA2D_FOLDER_FOUND_AT]="Cartella 'tahoma2d' trovata in: "
+		[de_TAHOMA2D_FOLDER_FOUND_AT]="Ordner 'tahoma2d' gefunden unter: "
+		[fr_TAHOMA2D_FOLDER_FOUND_AT]="Dossier 'tahoma2d' trouvé à : "
+		[gl_TAHOMA2D_FOLDER_FOUND_AT]="Cartafol 'tahoma2d' atopado en: "
+		[pt_TAHOMA2D_FOLDER_FOUND_AT]="Pasta 'tahoma2d' encontrada em: "		
+
+		[es_DIRECTORY_NOT_FOUND_RETRY]='Directorio no encontrado. Reintentar. '
+		[en_DIRECTORY_NOT_FOUND_RETRY]="Directory not found. Retry. "
+		[it_DIRECTORY_NOT_FOUND_RETRY]="Directory non trovato. Riprova. "
+		[de_DIRECTORY_NOT_FOUND_RETRY]="Verzeichnis nicht gefunden. Erneut versuchen. "
+		[fr_DIRECTORY_NOT_FOUND_RETRY]="Répertoire introuvable. Réessayer. "
+		[gl_DIRECTORY_NOT_FOUND_RETRY]="Directorio non atopado. Reintentar. "
+		[pt_DIRECTORY_NOT_FOUND_RETRY]="Diretório não encontrado. Tente novamente. "
+
+		[es_RETRYING_SEARCH]="Reintentando búsqueda..."
+		[en_RETRYING_SEARCH]="Retrying search..."
+		[it_RETRYING_SEARCH]="Riprova la ricerca..."
+		[de_RETRYING_SEARCH]="Suche wird erneut versucht..."
+		[fr_RETRYING_SEARCH]="Nouvelle tentative de recherche..."
+		[gl_RETRYING_SEARCH]="Reintentando a busca..."
+		[pt_RETRYING_SEARCH]="Tentando novamente a pesquisa..."
+
+		[es_ERROR_CLONING_REPOSITORY]="Error: No se pudo clonar el repositorio."
+		[en_ERROR_CLONING_REPOSITORY]="Error: Could not clone the repository."
+		[it_ERROR_CLONING_REPOSITORY]="Errore: Impossibile clonare il repository."
+		[de_ERROR_CLONING_REPOSITORY]="Fehler: Das Repository konnte nicht geklont werden."
+		[fr_ERROR_CLONING_REPOSITORY]="Erreur : Impossible de cloner le dépôt."
+		[gl_ERROR_CLONING_REPOSITORY]="Erro: Non se puido clonar o repositorio."
+		[pt_ERROR_CLONING_REPOSITORY]="Erro: Não foi possível clonar o repositório."
+
+		[es_ERROR_INVALID_PATH]="Error: La ruta ingresada no es válida."
+		[en_ERROR_INVALID_PATH]="Error: The entered path is not valid."
+		[it_ERROR_INVALID_PATH]="Errore: Il percorso inserito non è valido."
+		[de_ERROR_INVALID_PATH]="Fehler: Der eingegebene Pfad ist nicht gültig."
+		[fr_ERROR_INVALID_PATH]="Erreur : Le chemin saisi n'est pas valide."
+		[gl_ERROR_INVALID_PATH]="Erro: A ruta introducida non é válida."
+		[pt_ERROR_INVALID_PATH]="Erro: O caminho inserido não é válido."
+
+	)
+
+	local idioma=$(echo $LANG | cut -d_ -f1)
+	local mensaje=${msg[${idioma}_$clave]:-${msg[en_$clave]}}
+
+	printf "%s" "$mensaje"
+}
