@@ -1,17 +1,17 @@
 #!/bin/bash
-cd thirdparty
+cd thirdparty || exit;
 
 echo ">>> Cloning opencv"
-git clone https://github.com/tahoma2d/opencv
+git clone https://github.com/tahoma2d/opencv || exit;
 
-cd opencv
+cd opencv || exit;
 echo "*" >| .gitignore
 
 if [ ! -d build ]
 then
-   mkdir build
+   mkdir build || exit;
 fi
-cd build
+cd build || exit;
 
 echo ">>> Cmaking openv"
 cmake -DCMAKE_BUILD_TYPE=Release \
@@ -46,11 +46,13 @@ cmake -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_opencv_python2=OFF \
       -DBUILD_opencv_python3=ON \
       -DCMAKE_INSTALL_NAME_DIR=/usr/local/lib \
-      ..
+      .. || exit;
 
 echo ">>> Building opencv"
-make
+# Leave one processor available for other processing if possible
+parallel=$(($(nproc) < 2 ? 1 : $(nproc) - 1)) || exit;
+make -j "$parallel" || exit;
 
 echo ">>> Installing opencv"
-sudo make install
+sudo make -j "$parallel" install || exit;
 
