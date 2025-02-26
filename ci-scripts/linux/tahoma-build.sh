@@ -1,6 +1,8 @@
 #!/bin/bash
+# Leave one processor available for other processing if possible
+parallel=$(($(nproc) < 2 ? 1 : $(nproc) - 1))
 pushd thirdparty/tiff-4.2.0
-CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --disable-jbig --disable-webp && make
+CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure --disable-jbig --disable-webp && make -j "$parallel"
 popd
 
 cd toonz
@@ -19,4 +21,4 @@ cmake ../sources \
     -DWITH_GPHOTO2:BOOL=ON \
     -DWITH_SYSTEM_SUPERLU=ON
 
-make -j7
+make -j "$parallel"
