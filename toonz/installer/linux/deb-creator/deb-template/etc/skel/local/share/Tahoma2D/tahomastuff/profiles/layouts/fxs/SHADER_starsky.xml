@@ -1,7 +1,0 @@
-<fxlayout>
-  <page name="Starsky">
-    <control>color</control>
-    <control>time</control>
-    <control>brightness</control>
-  </page>
-</fxlayout>

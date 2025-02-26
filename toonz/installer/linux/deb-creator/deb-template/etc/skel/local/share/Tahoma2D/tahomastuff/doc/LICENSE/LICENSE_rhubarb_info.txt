@@ -1,7 +1,0 @@
-Tahoma2D ships with Rhubarb Lip Sync, and uses Rhubarb Lip Sync through command line commands.
-Tahoma2D does not directly use Rhubarb Lip Sync libraries or code.
-
-Rhubarb Lip Sync source code can be found at:
-https://github.com/tahoma2d/rhubarb-lip-sync
-or 
-https://github.com/DanielSWolf/rhubarb-lip-sync
