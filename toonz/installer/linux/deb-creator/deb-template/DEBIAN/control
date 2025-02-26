@@ -1,5 +1,5 @@
 Package: tahoma2d
-Version: 2.1.8
+Version: 1.5.1
 Maintainer: Charlie Martinez <cmartinez@quirinux.org>
 Section: graphics
 Installed-Size: 3332895
@@ -7,12 +7,10 @@ Homepage: https://tahoma2d.org/
 Architecture: amd64
 Priority: optional
 Depends: gphoto2
-Description: Tahoma 2D Version 1.5.1 + Quirinux Tweaks
+Description: Tahoma 2D Version 1.5.1
  Original author: Jeremy Bullock
  .
- A modified version of Tahoma2D, a 2D and stop motion animation software. Unlike the original version, our fork incorporates little modifications tailored to the animation workflow of Charlie Martínez's animation studio. These tweaks, developed with the studio's specific needs in mind, are later incorporated into the packages of the Quirinux GNU/Linux distribution.
- .
- Original Tahoma2D is developed primarily by Jeremy Bullock, a middle school teacher in Colorado. Tahoma2D is based on OpenToonz which itself is based on Toonz, developed by Digital Video in Italy.
+ Tahoma2D is developed by Jeremy Bullock, a middle school teacher in Colorado. Tahoma2D is based on OpenToonz which itself is based on Toonz, developed by Digital Video in Italy.
  .
  The mission of Tahoma2D is to be a powerful and user-friendly animation program for digital 2D artists and stop motion animators.
  .
