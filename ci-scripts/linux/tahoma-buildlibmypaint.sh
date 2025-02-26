@@ -15,10 +15,12 @@ echo ">>> Generating libmypaint environment"
 echo ">>> Configuring libmypaint build"
 sudo ./configure
 
+# Leave one processor available for other processing if possible
+parallel=$(($(nproc) < 2 ? 1 : $(nproc) - 1))
 echo ">>> Building libmypaint"
-sudo make
+sudo make -j "$parallel"
 
 echo ">>> Installing libmypaint"
-sudo make install
+sudo make -j "$parallel" install
 
 sudo ldconfig

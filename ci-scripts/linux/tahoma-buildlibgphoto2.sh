@@ -13,10 +13,12 @@ autoreconf --install --symlink
 
 ./configure --prefix=/usr/local
 
+# Leave one processor available for other processing if possible
+parallel=$(($(nproc) < 2 ? 1 : $(nproc) - 1))
 echo ">>> Making libgphoto2"
-make
+make -j "$parallel"
 
 echo ">>> Installing libgphoto2"
-sudo make install
+sudo make -j "$parallel" install
 
 cd ..
