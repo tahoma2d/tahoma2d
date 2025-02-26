@@ -1,105 +1,70 @@
 #!/bin/bash
-set -e  # Detener el script si ocurre un error
+set -e  
 
-# Función para ajustar permisos de directorios y archivos
+# Function to adjust permissions of directories and files
 adjust_permissions() {
   local dir=$1
   if [ -d "$dir" ]; then
-    echo "Ajustando permisos en: $dir"
+    echo "Adjusting permissions in: $dir"
     find "$dir" -type d ! -perm 755 -exec chmod 755 {} +
     find "$dir" -type f ! -perm 644 -exec chmod 644 {} +
   else
-    echo "El directorio $dir no existe."
+    echo "Directory $dir does not exist."
   fi
 }
 
-# Verificar si existe la carpeta /home/quirinux2
-if [ -d "/home/quirinux2" ]; then
-    echo "La carpeta /home/quirinux2 existe. Procediendo con las operaciones."
-
-    # Limpiar doc preservando tips.md
-    DOC_DIR="/etc/skel/.local/share/Tahoma2D/tahomastuff/doc"
-    if [ -d "$DOC_DIR" ]; then
-        echo "Limpiando $DOC_DIR, preservando tips.md..."
-        find "$DOC_DIR" -mindepth 1 ! -name "tips.md" -exec rm -rf {} +
-        rm -rf /etc/skel/.local/share/Tahoma2D/usr/share/doc/*
-    fi
-
-    # Limpiar loc preservando idiomas específicos
-    LOC_DIR="/etc/skel/.local/share/Tahoma2D/tahomastuff/config/loc"
-    EXCLUDE=("Deutsch" "Español" "Français" "Italiano" "Português(Brasil)")
-    if [ -d "$LOC_DIR" ]; then
-        echo "Limpiando $LOC_DIR, preservando carpetas excluidas..."
-        for dir in "$LOC_DIR"/*; do
-            dir_name=$(basename "$dir")
-            if [[ ! " ${EXCLUDE[*]} " =~ " $dir_name " ]]; then
-                rm -rf "$dir"
-            fi
-        done
-    fi
-else
-    echo "La carpeta /home/quirinux2 no existe. No se realizarán cambios en doc o loc."
-fi
-
-# Añadir alias al .bashrc de cada usuario
+# Function to add alias to each user's .bashrc
 add_alias_to_bashrc() {
     local bashrc_file="$1/.bashrc"
     local alias_command="alias tahoma2d='tahoma2d; tahoma-permissions'"
 
     if [ ! -f "$bashrc_file" ]; then
-        echo "Creando $bashrc_file..."
+        echo "Creating $bashrc_file..."
         touch "$bashrc_file"
     fi
 
     if ! grep -qF "$alias_command" "$bashrc_file"; then
-        echo "Añadiendo alias al .bashrc en $bashrc_file..."
+        echo "Adding alias to .bashrc in $bashrc_file..."
         echo "$alias_command" >> "$bashrc_file"
     fi
 }
 
-# Copiar archivos desde /etc/skel y ajustar permisos
+# Copy files from /etc/skel and adjust permissions
 SRC="/etc/skel/.local/share/Tahoma2D"
 if [ ! -d "$SRC" ]; then
-  echo "El directorio fuente $SRC no existe. Abortando."
+  echo "Source directory $SRC does not exist. Aborting."
   exit 1
 fi
 
 for user_dir in /home/*; do
-  if [ -d "$user_dir" ] && [ -f "$user_dir/.bashrc" ]; then  # Verifica si es un directorio de usuario
+  if [ -d "$user_dir" ] && [ -f "$user_dir/.bashrc" ]; then  # Verify if it is a valid user directory
     USER_TAHOMA_DIR="$user_dir/.local/share/Tahoma2D"
     LIBRARY_DIR="$USER_TAHOMA_DIR/tahomastuff/library"
 
-    echo "Procesando $USER_TAHOMA_DIR..."
+    echo "Processing $USER_TAHOMA_DIR..."
 
     mkdir -p "$USER_TAHOMA_DIR"
-    rm -rf "$LIBRARY_DIR"/*
+    [ -d "$LIBRARY_DIR" ] && rm -rf "$LIBRARY_DIR"/*
     cp -ru "$SRC/"* "$USER_TAHOMA_DIR/"
     chown -R "$(basename "$user_dir")":"$(basename "$user_dir")" "$USER_TAHOMA_DIR"
 
-    # Añadir alias al .bashrc
+    # Add alias to .bashrc
     add_alias_to_bashrc "$user_dir"
 
-    # Ajustar permisos
+    # Adjust permissions
     adjust_permissions "$USER_TAHOMA_DIR"
-    [ -f "$USER_TAHOMA_DIR/AppRun" ] && chmod +x "$USER_TAHOMA_DIR/AppRun"
-    [ -f "$USER_TAHOMA_DIR/usr/bin/Tahoma2D" ] && chmod +x "$USER_TAHOMA_DIR/usr/bin/Tahoma2D" 
-    [ -f "$USER_TAHOMA_DIR/usr/bin/tahoma2d" ] && chmod +x "$USER_TAHOMA_DIR/usr/bin/tahoma2d" 
-    [ -f "$USER_TAHOMA_DIR/usr/bin/lzocompress" ] && chmod +x "$USER_TAHOMA_DIR/usr/bin/lzocompress" 
-    [ -f "$USER_TAHOMA_DIR/usr/bin/lzodecompress" ] && chmod +x "$USER_TAHOMA_DIR/usr/bin/lzodecompress" 
-    [ -f "$USER_TAHOMA_DIR/usr/bin/tcleanup" ] && chmod +x "$USER_TAHOMA_DIR/usr/bin/tcleanup"
-    [ -f "$USER_TAHOMA_DIR/usr/bin/tcomposer" ] && chmod +x "$USER_TAHOMA_DIR/usr/bin/tcomposer"
-    [ -f "$USER_TAHOMA_DIR/usr/bin/tfarmcontroller" ] && chmod +x "$USER_TAHOMA_DIR/usr/bin/tfarmcontroller"
-    [ -f "$USER_TAHOMA_DIR/usr/bin/tconverter" ] && chmod +x "$USER_TAHOMA_DIR/usr/bin/tconverter"
-    [ -f "$USER_TAHOMA_DIR/usr/bin/tfarmserver" ] && chmod +x "$USER_TAHOMA_DIR/usr/bin/tfarmserver"
-    [ -f "$USER_TAHOMA_DIR/rhubarb/rhubarb" ] && chmod +x "$USER_TAHOMA_DIR/rhubarb/rhubarb"
-    [ -f "$USER_TAHOMA_DIR/ffmpeg/ffprobe" ] && chmod +x "$USER_TAHOMA_DIR/ffmpeg/ffprobe"
+    for file in AppRun usr/bin/Tahoma2D usr/bin/tahoma2d usr/bin/lzocompress usr/bin/lzodecompress \
+                 usr/bin/tcleanup usr/bin/tcomposer usr/bin/tfarmcontroller usr/bin/tconverter \
+                 usr/bin/tfarmserver rhubarb/rhubarb ffmpeg/ffprobe; do
+        [ -f "$USER_TAHOMA_DIR/$file" ] && chmod +x "$USER_TAHOMA_DIR/$file"
+    done
     find "$USER_TAHOMA_DIR/ffmpeg" -type f ! -perm /u+x -exec chmod +x {} +
   else
-    echo "Ignorando $user_dir: no es un directorio de usuario válido."
+    echo "Skipping $user_dir: not a valid user directory."
   fi
 done
 
-# Ajustar permisos comunes
+# Adjust common permissions
 adjust_permissions "$HOME/.local/share/Tahoma2D/tahomastuff/profiles"
 adjust_permissions "$HOME/.local/share/Tahoma2D/tahomastuff/sandbox"
 adjust_permissions "$HOME/.local/share/Tahoma2D/tahomastuff/doc"
@@ -108,48 +73,9 @@ adjust_permissions "$HOME/.local/share/Tahoma2D/usr/share/doc"
 adjust_permissions "$HOME/.cache/Tahoma2D"
 adjust_permissions "$HOME/.local/share/Trash"
 
-# Shortcuts
-
-# Ruta base de las carpetas de los usuarios
-base_dir="/home"
-
-# Función para procesar cada usuario
-process_user() {
-  local user_home="$1"
-  local user_name=$(basename "$user_home")
-
-  # Rutas necesarias
-  profiles_dir="$user_home/.local/share/Tahoma2D/tahomastuff/profiles/users/$user_name"
-  source_file="$user_home/.local/share/Tahoma2D/tahomastuff/profiles/layouts/shortcuts/deftahoma2d.ini"
-  destination_file="$profiles_dir/shortcuts.ini"
-
-  # Verificar que el directorio de perfiles existe
-  if [ -d "$profiles_dir" ]; then
-    # Verificar que el archivo fuente existe
-    if [ -f "$source_file" ]; then
-      # Copiar el archivo fuente al destino, sobrescribiendo si es necesario
-      cp -f "$source_file" "$destination_file"
-      echo "Archivo copiado: $source_file -> $destination_file"
-    else
-      echo "Archivo fuente no encontrado: $source_file"
-    fi
-  else
-    echo "Directorio del usuario no encontrado: $profiles_dir"
-  fi
-}
-
-# Procesar todas las carpetas en /home
-for user_home in "$base_dir"/*; do
-  # Verificar si es un directorio (ignorar archivos u otros elementos)
-  if [ -d "$user_home" ] && [ -f "$user_home/.bashrc" ]; then  # Verifica si es un directorio de usuario
-    process_user "$user_home"
-  fi
-done
-
-# More permissions
-
+# Set execution permissions for necessary binaries
 chmod +x /usr/local/bin/tahoma-permissions
 chmod +x /usr/local/bin/tahoma2d
 
-echo "Postinst completado con éxito."
+echo "Postinst successfully completed."
 exit 0
