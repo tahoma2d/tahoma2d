@@ -1,0 +1,38 @@
+<MainProgram>
+  <Name>
+    SHADER_fireball
+  </Name>
+  <ProgramFile>
+    "programs/fireball.frag"
+  </ProgramFile>
+</MainProgram>
+
+<Parameters>
+  <Parameter>
+    rgba color1
+    <Default>
+      255 0 0 255
+    </Default>
+  </Parameter>
+  
+  <Parameter>
+    rgba color2
+    <Default>
+      225 200 0 255
+    </Default>
+  </Parameter>
+  
+  <Parameter>
+    float detail
+    <Default>
+      12
+    </Default>
+    <Range>
+      0 10000
+    </Range>
+  </Parameter>
+  
+  <Parameter>
+    float time
+  </Parameter>
+</Parameters>

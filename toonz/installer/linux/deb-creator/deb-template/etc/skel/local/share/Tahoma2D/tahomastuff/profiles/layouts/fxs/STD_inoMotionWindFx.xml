@@ -1,0 +1,24 @@
+<fxlayout help_file="MotionWindIno.pdf">
+  <page name="Motion Wind Ino">
+    <control>direction</control>
+    <control>dark</control>
+    <control>alpha_rendering</control>
+    <control>length_min</control>
+    <control>length_max</control>
+    <control>length_bias</control>
+    <control>length_seed</control>
+    <control>force_min</control>
+    <control>force_max</control>
+    <control>force_bias</control>
+    <control>force_seed</control>
+    <control>density_min</control>
+    <control>density_max</control>
+    <control>density_bias</control>
+    <control>density_seed</control>
+    <separator label=""/>
+      <control>length_ref</control>
+      <control>force_ref</control>
+      <control>density_ref</control>
+      <control>reference</control>
+  </page>
+</fxlayout>

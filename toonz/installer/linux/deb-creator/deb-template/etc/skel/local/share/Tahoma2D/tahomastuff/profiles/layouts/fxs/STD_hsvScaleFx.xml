@@ -1,0 +1,11 @@
+<fxlayout>
+  <page name="HSV Scale">
+     <control>hue</control>
+     <control>saturation</control>
+     <control>value</control>
+     <control>hue_scale</control>
+     <control>saturation_scale</control>
+     <control>value_scale</control>
+  </page>
+
+</fxlayout>

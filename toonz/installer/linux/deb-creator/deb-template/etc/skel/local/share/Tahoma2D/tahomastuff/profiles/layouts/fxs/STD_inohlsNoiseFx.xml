@@ -1,0 +1,17 @@
+<fxlayout help_file="HLSNoiseIno.pdf">
+  <page name="HLS Noise Ino">
+    <control>hue</control>
+    <control>lightness</control>
+    <control>saturation</control>
+    <control>alpha</control>
+    <control>seed</control>
+    <control>nblur</control>
+    <separator label="Limits"/>
+      <control>effective</control>
+      <control>center</control>
+      <control>type</control>
+    <separator label=""/>
+      <control>anti_alias</control>
+      <control>reference</control>
+  </page>
+</fxlayout>

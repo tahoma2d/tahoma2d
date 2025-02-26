@@ -1,0 +1,23 @@
+<fxlayout help_file="LevelRGBAIno.pdf">
+  <page name="Level RGBA Ino">
+    <separator label="Red"/>
+      <control decimals="4">red_in</control>
+      <control decimals="4">red_out</control>
+      <control>red_gamma</control>
+    <separator label="Green"/>
+      <control decimals="4">gre_in</control>
+      <control decimals="4">gre_out</control>
+      <control>gre_gamma</control>
+    <separator label="Blue"/>
+      <control decimals="4">blu_in</control>
+      <control decimals="4">blu_out</control>
+      <control>blu_gamma</control>
+    <separator label="Alpha"/>
+      <control decimals="4">alp_in</control>
+      <control decimals="4">alp_out</control>
+      <control>alp_gamma</control>
+    <separator label=""/>
+      <control>anti_alias</control>
+      <control>reference</control>
+  </page>
+</fxlayout>

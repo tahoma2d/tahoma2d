@@ -1,0 +1,42 @@
+#
+# 12 field Toonz field guide (4 mm from ctr hole to fdg edge), Acme peg holes
+#
+VERSION_1.0
+#
+ HOLE 0
+   X0     253
+   Y0     56
+   X1     256
+   Y1     72
+   X      254.0
+   Y      63.7
+   XSIZE  3
+   YSIZE  16
+   AREA   49
+ END
+ HOLE 1
+   X0    251
+   Y0    162
+   X1    257
+   Y1    168
+   X     254.0
+   Y     165.1
+   XSIZE 6
+   YSIZE 6
+   AREA  32
+ END
+ HOLE 2
+   X0    253
+   Y0    259
+   X1    256
+   Y1    274
+   X     254.0
+   Y     266.5
+   XSIZE 3
+   YSIZE 16
+   AREA  49
+ END
+# OTHER INFO
+DIST_CTR_TO_CTR_HOLE 118.0
+DIST_CTR_HOLE_TO_EDGE 12.7
+

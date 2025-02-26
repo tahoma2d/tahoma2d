@@ -1,0 +1,10 @@
+<fxlayout>
+  <page name="Directional Blur">
+    <control>angle</control>
+    <control>intensity</control>
+    <control>bidirectional</control>
+    <control>spread</control>
+
+  </page>
+
+</fxlayout>

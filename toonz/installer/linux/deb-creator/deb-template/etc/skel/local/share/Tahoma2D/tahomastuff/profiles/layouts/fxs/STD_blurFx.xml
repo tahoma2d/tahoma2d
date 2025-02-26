@@ -1,0 +1,7 @@
+<fxlayout>
+  <page name="Blur">
+    <control>value</control>
+    <control>spread</control>
+  </page>
+
+</fxlayout>

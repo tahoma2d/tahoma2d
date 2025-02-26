@@ -1,0 +1,7 @@
+<fxlayout>
+  <page name="Multiply">
+     <control>value</control>
+     <control>matte</control>
+  </page>
+
+</fxlayout>

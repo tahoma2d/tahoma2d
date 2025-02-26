@@ -1,0 +1,8 @@
+<fxlayout>
+  <page name="Radial Blur">
+        <control>point</control>
+        <control>radius</control>
+        <control>blur</control>
+  </page>
+
+</fxlayout>

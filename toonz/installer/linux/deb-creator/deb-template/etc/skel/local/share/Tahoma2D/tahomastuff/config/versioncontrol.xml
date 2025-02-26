@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Repositories>
+<!-- REMOVE ENTIRELY THIS LINE TO ENABLE SVN
+<repository>
+	<name>PutYourRepositoryName</name>
+	<localPath>putYourWorkingCopyPath</localPath>
+	<repoPath>putYourRepositoryPath</repoPath>
+</repository>
+REMOVE ENTIRELY THIS LINE TO ENABLE SVN --> 
+<svnPath></svnPath>
+</Repositories>

@@ -1,0 +1,9 @@
+<fxlayout>
+  <page name="Color Emboss">
+    <control>intensity</control>
+    <control>elevation</control>
+    <control>direction</control>
+    <control>radius</control>
+  </page>
+ 
+</fxlayout>

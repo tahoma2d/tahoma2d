@@ -1,0 +1,14 @@
+<fxlayout>
+  <page name="Four Points">
+     <control>Point_1</control>
+     <control>Color_1</control>
+     <control>Point_2</control>
+     <control>Color_2</control>
+     <control>Point_3</control>
+     <control>Color_3</control>
+     <control>Point_4</control>
+     <control>Color_4</control>
+
+  </page>
+
+</fxlayout>

@@ -1,0 +1,9 @@
+<fxlayout>
+  <page name="Wavy">
+    <control>color1</control>
+    <control>color2</control>
+    <control>time</control>
+  </page>
+
+
+</fxlayout>

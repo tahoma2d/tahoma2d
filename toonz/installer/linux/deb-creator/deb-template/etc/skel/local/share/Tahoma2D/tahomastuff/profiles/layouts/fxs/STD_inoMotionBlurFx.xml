@@ -1,0 +1,14 @@
+<fxlayout help_file="MotionBlurIno.pdf">
+  <page name="Motion Blur Ino">
+    <control>depend_move</control>
+    <control>x1</control>
+    <control>y1</control>
+    <control>x2</control>
+    <control>y2</control>
+    <control>scale</control>
+    <control>curve</control>
+    <control>zanzo_length</control>
+    <control>zanzo_power</control>
+    <control>alpha_rendering</control>
+  </page>
+</fxlayout>

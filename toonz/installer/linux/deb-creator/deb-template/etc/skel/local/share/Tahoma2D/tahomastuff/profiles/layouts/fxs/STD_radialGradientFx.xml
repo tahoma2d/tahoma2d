@@ -1,0 +1,11 @@
+<fxlayout>
+  <page name="Radial Gradient">
+    <control>innerperiod</control>
+    <control>color1</control>
+    <control>period</control>
+    <control>color2</control>
+	<rgb_link_button>color1 color2</rgb_link_button>
+    <control>curveType</control>
+  </page>
+  
+</fxlayout>

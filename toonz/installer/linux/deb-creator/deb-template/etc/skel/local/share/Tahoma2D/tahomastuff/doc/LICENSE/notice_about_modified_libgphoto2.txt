@@ -1,0 +1,12 @@
+Tahoma2D uses a modified version of libgphoto2.
+
+- Windows version was modified to allow building with MSVC 2019 using a modified
+  MSVC project taken from https://github.com/vividos/RemotePhotoTool.
+
+- OSX version was modified to allow relocation of camlib/iolibs directories relative
+  to libgphoto2/libgphoto2_port dylibs, post build, to allow for packaging and portability.
+
+- Linux version has no changes
+
+Modified source can be found at https://github.com/tahoma2d/libgphoto2 under 
+the `tahoma2d-version` branch.

@@ -1,0 +1,7 @@
+<permissions>
+  <users>
+    <user name="guest">
+      <svn name="guest" password="guest" />
+    </user>
+  </users>
+</permissions>

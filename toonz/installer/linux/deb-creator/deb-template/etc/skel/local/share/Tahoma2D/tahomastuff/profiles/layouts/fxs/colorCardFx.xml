@@ -1,0 +1,6 @@
+<fxlayout>
+  <page name="Color Card">
+        <control>color</control>
+  </page>
+
+</fxlayout>

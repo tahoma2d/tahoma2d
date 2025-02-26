@@ -1,0 +1,8 @@
+<fxlayout>
+  <page name="Warp">
+        <control>intensity</control>
+        <control>sensitivity</control>
+	<control>sharpen</control>
+  </page>
+
+</fxlayout>

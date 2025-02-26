@@ -1,0 +1,9 @@
+<fxlayout>
+  <page name="Palette Filter">
+    <control>indexes</control>
+    <control>type</control>
+    <control>keep</control>
+  </page>
+
+
+</fxlayout>

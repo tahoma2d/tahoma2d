@@ -1,0 +1,7 @@
+<fxlayout>
+  <page name="Diamond Grad">
+     <control>colors</control>
+     <control>size</control>
+  </page>
+
+</fxlayout>

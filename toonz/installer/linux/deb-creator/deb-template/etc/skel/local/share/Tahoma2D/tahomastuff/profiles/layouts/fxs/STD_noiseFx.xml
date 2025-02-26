@@ -1,0 +1,11 @@
+<fxlayout>
+  <page name="Noise">
+    <control>Intensity</control>
+    <control>Red</control>
+    <control>Green</control>
+    <control>Blue</control>
+    <control>Black_White</control>
+    <control>Animate</control>
+  </page>
+
+</fxlayout>

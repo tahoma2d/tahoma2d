@@ -1,0 +1,63 @@
+<html lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <title>SpectrumFx Iwa</title>
+    </head>
+<body bgcolor="#f5f5f5" text="#220011">
+<h1><img src = ".\img\fx_iwa_spectrum.png" width = 30 height = 30 >   SpectrumFx Iwa</h1>
+
+<h4>● Overview</h4>
+This effect produces a rainbow pattern like that of a thin film interference, according to the brightness<br>
+of the input image.<br>
+Even though the rainbow colors generated are not actually a thin film interference, similar results to<br>
+a glare material can be obtained.
+
+  <h4>● Input port</h4>
+<UL>
+<LI><b>Source</b> : Connect the source image. The brightness of the source image, corresponds to the<br>
+thickness of the thin film.<br>
+The brighter the luminosity, the thinner the film thickness will be. A luminosity of 0.0 corresponds to<br>
+"Thickness Min" described later, and a luminosity of 1.0 corresponds to "Thickness Max".</LI>
+<LI><b>Light</b> : Connect the light image.<br>
+When a light image is connected, the output results are as follows:</LI>
+<UL>
+<LI>The Alpha channel of the output result is replaced with the alpha channel of the Light image.</LI>
+<LI>If the "Light Threshold" parameter described below is enabled, the Light image and the generated<br>
+rainbow can be combined and output on the screen.</LI>
+</UL>
+</UL>
+
+<h4>● Parameters</h4>
+<UL>
+<LI><b>Intensity</b> : The light intensity. The higher the value, the brighter the rainbow.</LI>
+<LI><b>Refractive Index</b> : The refractive index of the medium. The higher the value, the brighter the<br>
+rainbow.</LI>
+<LI><b>Thickness Max</b> : Maximum thickness of the thin film. Corresponds to the film thickness of the<br>
+low luminance portion of the Source image.</LI>
+<LI><b>Thickness Min</b> : Minimum thickness of the thin film. Corresponds to the film thickness of the<br>
+high luminance part of the Source image.</LI>
+*Thickness can also take a negative value. In that case, all parts where the film thickness is negative<br>
+are calculated as zero.<br>
+*Thickness Min and Max can be reversed. In that case, the iridescent pattern will be reversed.
+<LI><b>R/G/B Gamma</b> : Gamma correction value for each RGB channel of the rainbow pattern.</LI><br>
+<LI><b>Lens Factor</b> : A gamma correction value that can be added when outputting a rainbow pattern from<br>
+the luminosity of the Source image.<br>
+This allows, for example, concentric patterns to be distorted through a convex / concave lens in the<br>
+iridescent period.</LI>
+<LI><b>Light Threshold</b> : When a Light image is connected, the Light image can be combined with the<br>
+rainbow pattern on the screen.<br>
+Light Threshold is the minimum Alpha channel value of the Light image required for screen composition.<br>
+For each pixel, the following processing will be performed:</LI>
+<UL>
+<LI>When the alpha channel of the Light image is below the Light Threshold: Screen composition is not<br>
+performed.</LI>
+<LI>When the alpha channel of the Light image is 1: The Light image is composited on the screen at 100%.</LI>
+<LI>When the alpha channel of the Light image is greater than the Light Threshold but less than 1: The<br>
+screen composition ratio will be linearly interpolated.</LI>
+</UL>
+The smaller the Light Threshold value, the larger the screen ratio with the Light image, so the output<br>
+image will be brighter. It can also accept negative values.
+</UL>
+</body>
+
+</html>

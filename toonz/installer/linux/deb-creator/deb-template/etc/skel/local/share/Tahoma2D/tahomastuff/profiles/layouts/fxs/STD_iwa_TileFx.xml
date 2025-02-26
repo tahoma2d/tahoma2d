@@ -1,0 +1,17 @@
+<fxlayout help_file="TileIwa.html">
+  <page name="Tile Iwa">
+    <control>inputSize</control>
+
+	<separator label="Tile Horizontally"/>
+    <control>leftQuantity</control>
+    <control>rightQuantity</control>
+    <control>xMirror</control>
+    <control>hMargin</control>
+
+	<separator label="Tile Vertically"/>
+    <control>topQuantity</control>
+    <control>bottomQuantity</control>
+    <control>yMirror</control>
+    <control>vMargin</control>
+  </page>
+</fxlayout>

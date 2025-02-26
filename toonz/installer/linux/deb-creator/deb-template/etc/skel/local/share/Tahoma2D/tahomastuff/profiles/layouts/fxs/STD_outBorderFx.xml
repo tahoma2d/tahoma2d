@@ -1,0 +1,18 @@
+<fxlayout>
+  <page name="OutLine">
+    <control>Thickness</control>
+
+    <control>Accuracy</control>
+    <control>Noise</control>
+
+    <separator label="Thickness variation"/>
+
+    <control>Horizontal</control>
+    <control>Vertical</control>
+    <control>upWDiagonal</control>
+    <control>doWDiagonal</control>
+    
+
+  </page>
+
+</fxlayout>

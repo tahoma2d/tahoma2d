@@ -1,0 +1,42 @@
+#
+# 12 field animation field guide, Oxberry peg holes
+#
+VERSION_1.0
+#
+ HOLE 0
+  X0    252
+  Y0    57
+  X1    258
+  Y1    70
+  X     254.8
+  Y     63.5
+  XSIZE 6
+  YSIZE 13
+  AREA  79
+ END
+ HOLE 1
+  X0    252
+  Y0    162
+  X1    258
+  Y1    168
+  X     254.8
+  Y     165.1
+  XSIZE 6
+  YSIZE 6
+  AREA  24
+ END
+ HOLE 2
+  X0    252
+  Y0    260
+  X1    258
+  Y1    273
+  X     254.8
+  Y     266.7
+  XSIZE 6
+  YSIZE 13
+  AREA  79
+ END
+# OTHER INFO
+DIST_CTR_TO_CTR_HOLE  133.2
+DIST_CTR_HOLE_TO_EDGE 11.9
+

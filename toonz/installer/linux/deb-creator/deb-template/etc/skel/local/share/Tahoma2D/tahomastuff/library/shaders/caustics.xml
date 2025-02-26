@@ -1,0 +1,21 @@
+<MainProgram>
+  <Name>
+    SHADER_caustics
+  </Name>
+  <ProgramFile>
+    "programs/caustics.frag"
+  </ProgramFile>
+</MainProgram>
+
+<Parameters>
+  <Parameter>
+    rgba color
+    <Default>
+      0 120 255 255
+    </Default>
+  </Parameter>
+  
+  <Parameter>
+    float time
+  </Parameter>
+</Parameters>

@@ -1,0 +1,8 @@
+<fxlayout>
+  <page name="Spin Blur">
+        <control>point</control>
+        <control>radius</control>
+        <control>blur</control>
+  </page>
+
+</fxlayout>

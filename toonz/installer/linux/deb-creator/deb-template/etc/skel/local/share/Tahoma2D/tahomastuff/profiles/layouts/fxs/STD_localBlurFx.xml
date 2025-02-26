@@ -1,0 +1,7 @@
+<fxlayout>
+  <page name="Local Blur">
+    <control>value</control>
+
+  </page>
+
+</fxlayout>

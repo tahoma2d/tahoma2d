@@ -1,0 +1,18 @@
+<fxlayout help_file="LineBlurIno.pdf">
+  <page name="Line Blur Ino">
+    <control>action_mode</control>
+    <separator label="Blur"/>
+      <control>blur_count</control>
+      <control>blur_power</control>
+      <control>blur_subpixel</control>
+      <control>blur_near_ref</control>
+      <control>blur_near_len</control>
+    <separator label="Vector Control"/>
+      <control>vector_smooth_retry</control>
+      <control>vector_near_ref</control>
+      <control>vector_near_len</control>
+    <separator label="Smudge"/>
+      <control>smudge_thick</control>
+      <control>smudge_remain</control>
+  </page>
+</fxlayout>

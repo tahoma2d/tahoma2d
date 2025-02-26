@@ -1,0 +1,13 @@
+<fxlayout>
+  <page name="Random Wave">          
+      <separator label="Waves"/>
+        <control>evolution</control>
+        <control>positionx</control>
+        <control>positiony</control>
+      <separator label="Distortion"/>
+        <control>intensity</control>
+        <control>sensitivity</control>
+        <control>sharpen</control>
+  </page>
+
+</fxlayout>

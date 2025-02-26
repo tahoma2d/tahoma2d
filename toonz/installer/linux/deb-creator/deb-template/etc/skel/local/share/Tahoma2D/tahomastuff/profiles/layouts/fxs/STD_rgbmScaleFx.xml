@@ -1,0 +1,9 @@
+<fxlayout>
+  <page name="RGBA Scale">
+     <control>red</control>
+     <control>green</control>
+     <control>blue</control>
+     <control>matte</control>
+  </page>
+
+</fxlayout>

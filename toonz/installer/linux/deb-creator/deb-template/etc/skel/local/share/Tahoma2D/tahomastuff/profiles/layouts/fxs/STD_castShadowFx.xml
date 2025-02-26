@@ -1,0 +1,24 @@
+<fxlayout>
+  <page name="Cast Shadow">
+    <control>distort_type</control>
+   <separator label="Source"/>
+    <control>bottom_left_b</control>
+    <control>bottom_right_b</control>
+    <control>top_left_b</control>
+    <control>top_right_b</control>
+   <separator label="Destination"/>
+    <control>bottom_left_a</control>
+    <control>bottom_right_a</control>
+    <control>top_left_a</control>
+    <control>top_right_a</control>
+    <control>deactivate</control>
+    <control>color</control>
+    <control>fade</control>
+    <control>up_transp</control>
+    <control>down_transp</control>
+    <control>up_blur</control>
+    <control>down_blur</control>
+  </page>
+
+
+</fxlayout>

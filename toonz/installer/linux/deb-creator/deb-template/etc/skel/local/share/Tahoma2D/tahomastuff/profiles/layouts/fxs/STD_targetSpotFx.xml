@@ -1,0 +1,11 @@
+<fxlayout>
+  <page name="Target Spot">
+    <control>z</control>
+    <control>angle</control>
+    <control>decay</control>
+    <control>sizeX</control>
+    <control>sizeY</control>
+    <control>color</control>
+  </page>
+ 
+</fxlayout>

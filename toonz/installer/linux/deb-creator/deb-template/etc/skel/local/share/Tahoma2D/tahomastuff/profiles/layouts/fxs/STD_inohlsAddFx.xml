@@ -1,0 +1,13 @@
+<fxlayout help_file="HLSAddIno.pdf">
+  <page name="HLS Add Ino">
+    <control>from_rgba</control>
+    <control>offset</control>
+    <control>hue</control>
+    <control>lightness</control>
+    <control>saturation</control>
+    <control>alpha</control>
+    <separator label=""/>
+      <control>anti_alias</control>
+      <control>reference</control>
+  </page>
+</fxlayout>

@@ -1,0 +1,28 @@
+<fxlayout help_file="PNPerspectiveIwa.html">
+  <page name="PN Perspective Iwa">
+    <control>renderMode</control>
+    <control>noiseType</control>
+    <control>size</control>
+    <control>evolution</control>
+    <control>octaves</control>
+    <control>offset</control>
+    <control>persistance_intensity</control>
+    <control>persistance_size</control>
+    <control>persistance_evolution</control>
+    <control>persistance_offset</control>
+    <control>fov</control>
+    <control>eyeLevel</control>
+    <control>alpha_rendering</control>
+    <vbox modeSensitive="renderMode" mode="2,3,4">
+      <control>waveHeight</control>
+    </vbox>
+    <vbox modeSensitive="renderMode" mode="3">
+      <control>normalize_fresnel</control>
+      <control>normalize_margin</control>
+    </vbox>
+    <visibleToggle> 
+      <controller>normalize_fresnel</controller>
+      <on>normalize_margin</on>
+    </visibleToggle>
+  </page>
+</fxlayout>

@@ -1,0 +1,17 @@
+<fxlayout>
+  <page name="Art Contour">
+	<separator label="Contour"/>
+    <control>Color_Index</control>
+    <control>Keep_color</control>
+    <control>Keep_Line</control>
+    <control>Include_Alpha</control>
+	<separator label="Pattern"/>
+    
+    <control>Density</control>
+    <control>Distance</control>
+    <control>Size</control>
+    <control>Orientation</control>
+    <control>Randomness</control>
+  </page>
+
+</fxlayout>

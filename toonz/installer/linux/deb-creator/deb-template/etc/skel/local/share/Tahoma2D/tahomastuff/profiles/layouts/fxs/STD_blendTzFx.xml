@@ -1,0 +1,11 @@
+<fxlayout>
+  <page name="Color Blending">
+
+    <control>Color_Index</control>
+    <control>Amount</control>
+    <control>Smoothness</control>
+    <control>noBlending</control>
+
+  </page>
+
+</fxlayout>

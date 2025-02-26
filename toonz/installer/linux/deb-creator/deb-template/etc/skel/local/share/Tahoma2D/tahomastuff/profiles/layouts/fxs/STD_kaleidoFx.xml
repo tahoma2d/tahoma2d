@@ -1,0 +1,9 @@
+<fxlayout>
+  <page name="Kaleido">
+    <control>center</control>
+    <control>angle</control>
+    <control>count</control>
+  </page>
+
+
+</fxlayout>

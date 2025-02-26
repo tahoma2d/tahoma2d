@@ -1,0 +1,13 @@
+<fxlayout help_file="LinearBurnIno.pdf">
+  <page name="Linear Burn Ino">
+    <control>opacity</control>
+    <control>clipping_mask</control>
+    <separator/>
+    <control>colorSpaceMode</control>
+    <vbox modeSensitive="colorSpaceMode" mode="1">
+      <control>gamma</control>
+      <control>gammaAdjust</control>
+      <control>premultiplied</control>
+    </vbox>
+  </page>
+</fxlayout>

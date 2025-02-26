@@ -1,0 +1,7 @@
+<fxlayout>
+  <page name="Contrast">
+    <control>brightness</control>
+    <control>contrast</control>
+  </page>
+
+</fxlayout>

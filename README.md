@@ -1,36 +1,31 @@
-# Tahoma2D
+# Tahoma2D Quirinux Tweaks
 
 [![](https://ci.appveyor.com/api/projects/status/mnc3mepksux9kvap/branch/master?svg=true)](https://ci.appveyor.com/project/tahoma2d/tahoma2d)
 
-## What is Tahoma2D?
+## What is Tahoma2D Quirinux Tweaks?
 
-Tahoma2D is a 2D and stop motion animation software.It is based on **Toonz Studio
-Ghibli Version**, originally developed in Italy by
-[Digital Video, Inc.](http://www.toonz.com/), and customized by
-[Studio Ghibli](http://www.ghibli.jp/) over many years of production.
+**Tahoma2D Quirinux Tweaks** is a modified version of Tahoma2D, a 2D and stop motion animation software. 
+Unlike the original version, our fork incorporates little modifications tailored to the animation workflow of Charlie Martínez's animation studio. These tweaks, developed with the studio's specific needs in mind, are later incorporated into the packages of the **Quirinux GNU/Linux** distribution.
+
+The original Tahoma2D is based on Toonz Studio Ghibli Version, which was originally developed in Italy by [Digital Video, Inc.](https://web.archive.org/web/20230331180319/http://www.toonz.com/), Inc. and later customized by [ Studio Ghibli](http://www.ghibli.jp/) over many years of production.
+
+It is important to note that this is an **unofficial version** of the software. Both the **Tahoma2D** and **OpenToonz** trademarks belong to their respective owners. This repository has no official backing from them, although occasionally some of our modifications may be integrated into the original Tahoma2D code.
 
 ## Program Requirements
 
-Please refer to the Tahoma2D site at <https://tahoma2d.org/download>.
+The package in .deb format created for Quirinux can be run on computers with a 64-bit processor and at least 1 GB of RAM (sufficient for stop motion animation). It's compatible with Debian based distributions.
 
 ## Installation
 
-Please download the latest release at <https://github.com/tahoma2d/tahoma2d/releases>.
-
-## How to Build Locally
-
-- [Windows](./doc/how_to_build_win.md)
-- [OS X](./doc/how_to_build_macosx.md)
-- [Linux](./doc/how_to_build_linux.md)
-
-For instructions on how to build stylesheets, please [see here](./doc/how_to_stylesheet.md).
-
-Can't develop but still want to help? Help us test individual Pull Requests before they are merged with [these steps](./doc/how_to_test_prs.md).
+Preinstalled on Quirinux. For other Debian-based systems, you can download the latest release at  [[https://repo.quirinux.org/](https://repo.quirinux.org/pool/main/t/tahoma2d/)](https://repo.quirinux.org/pool/main/t/tahoma2d/)
 
 ## Community
 
-- To share tips or to troubleshoot, join the [Google Tahoma2D Users forum](hhttps://groups.google.com/g/tahoma2d)
-- If you found a bug with the software after troubleshooting, or are a developer, search the [Github issues](https://github.com/tahoma2d/tahoma2d/issues) and post there.
+https://foro.quirinux.org
+
+## News
+
+https://blog.quirinux.org
 
 ## Licensing
 

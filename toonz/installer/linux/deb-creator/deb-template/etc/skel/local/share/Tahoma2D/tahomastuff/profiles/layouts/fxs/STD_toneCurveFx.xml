@@ -1,0 +1,6 @@
+<fxlayout>
+  <page name="Curves">
+    <control>curve</control>
+  </page>
+
+</fxlayout>

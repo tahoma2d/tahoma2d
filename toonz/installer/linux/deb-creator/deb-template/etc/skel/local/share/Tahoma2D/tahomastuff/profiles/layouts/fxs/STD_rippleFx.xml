@@ -1,0 +1,19 @@
+<fxlayout>
+  <page name="Ripple">          
+      <separator label="Ripples"/>
+        <control>period</control>
+        <control>count</control>
+        <control>cycle</control>
+        <control>center</control>
+        <hbox>
+        <control>scalex</control> 
+        <control>scaley</control> 
+        </hbox>
+        <control>angle</control>         
+      <separator label="Distortion"/>
+        <control>intensity</control>
+        <control>sensitivity</control>
+        <control>sharpen</control>
+  </page>
+
+</fxlayout>

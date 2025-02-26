@@ -1,0 +1,28 @@
+<MainProgram>
+  <Name>
+    SHADER_wavy
+  </Name>
+  <ProgramFile>
+    "programs/wavy.frag"
+  </ProgramFile>
+</MainProgram>
+
+<Parameters>
+  <Parameter>
+    rgba color1
+    <Default>
+      0 0 255 255
+    </Default>
+  </Parameter>
+  
+  <Parameter>
+    rgba color2
+    <Default>
+      255 0 0 255
+    </Default>
+  </Parameter>
+  
+  <Parameter>
+    float time
+  </Parameter>
+</Parameters>

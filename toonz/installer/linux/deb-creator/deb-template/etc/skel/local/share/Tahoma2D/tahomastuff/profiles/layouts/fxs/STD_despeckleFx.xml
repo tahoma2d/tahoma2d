@@ -1,0 +1,8 @@
+<fxlayout>
+  <page name="Despeckle">
+     <control>size</control>
+       <control>detect_speckles_on</control>
+
+  </page>
+
+</fxlayout>

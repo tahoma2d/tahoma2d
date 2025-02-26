@@ -1,0 +1,7 @@
+<fxlayout>
+  <page name="Spin Blur GPU">
+    <control>center</control>
+    <control>radius</control>
+    <control>blur</control>
+  </page>
+</fxlayout>

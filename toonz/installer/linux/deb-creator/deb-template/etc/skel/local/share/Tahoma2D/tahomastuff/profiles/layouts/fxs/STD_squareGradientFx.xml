@@ -1,0 +1,7 @@
+<fxlayout>
+  <page name="Square Gradient">
+    <control>colors</control>
+    <control>size</control>
+  </page>
+  
+</fxlayout>

@@ -1,0 +1,16 @@
+<fxlayout help_file="ChannelSelectorIno.pdf">
+  <page name="Channel Selector Ino">
+    <separator label=""/>
+      <control>red_source</control>
+      <control>red_channel</control>
+    <separator label=""/>
+      <control>green_source</control>
+      <control>green_channel</control>
+    <separator label=""/>
+      <control>blue_source</control>
+      <control>blue_channel</control>
+    <separator label=""/>
+      <control>alpha_source</control>
+      <control>alpha_channel</control>
+  </page>
+</fxlayout>

@@ -1,0 +1,10 @@
+<fxlayout>
+  <page name="Tile">
+    <control>mode</control>
+    <control>xMirror</control>
+    <control>yMirror</control>
+    <control>margin</control>
+  </page>
+
+
+</fxlayout>

@@ -1,0 +1,14 @@
+<fxlayout>
+  <page name="Perlin Noise">
+    <control>type</control>
+    <control>size</control>
+    <control>min</control>
+    <control>max</control>
+    <control>offsetx</control>
+    <control>offsety</control>
+    <control>evolution</control>
+    <control>intensity</control>
+    <control>matte</control>
+  </page>
+
+</fxlayout>

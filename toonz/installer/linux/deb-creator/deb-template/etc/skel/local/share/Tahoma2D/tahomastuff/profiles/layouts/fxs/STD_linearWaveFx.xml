@@ -1,0 +1,19 @@
+<fxlayout>
+  <page name="Linear Wave">          
+      <separator label="Waves"/>
+        <control>count</control>
+        <control>period</control>
+        <control>cycle</control>
+     <separator label="Transverse Wave"/>
+        <control>amplitude</control> 
+        <control>frequency</control> 
+        <control>phase</control> 
+     <separator label="Angle"/>
+        <control>angle</control>         
+      <separator label="Distortion"/>
+        <control>intensity</control>
+        <control>sensitivity</control>
+        <control>sharpen</control>
+  </page>
+
+</fxlayout>

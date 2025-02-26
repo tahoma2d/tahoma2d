@@ -1,0 +1,91 @@
+<MainProgram>
+  <Name>
+    SHADER_glitter
+  </Name>
+  <ProgramFile>
+    "programs/glitter.frag"
+  </ProgramFile>
+</MainProgram>
+
+<InputPorts>
+  <InputPort>
+    "Source"
+  </InputPort>
+  
+  <PortsProgram>
+    <Name>
+      SHADER_glitter_ports
+    </Name>
+    <ProgramFile>
+      "programs/glitter_ports.vert"
+    </ProgramFile>
+  </PortsProgram>
+</InputPorts>
+
+<BBoxProgram>
+  <Name>
+    SHADER_glitter_bbox
+  </Name>
+  <ProgramFile>
+    "programs/glitter_bbox.vert"
+  </ProgramFile>
+</BBoxProgram>
+
+<HandledWorldTransforms>
+  Isotropic
+</HandledWorldTransforms>
+  
+<Parameters>
+  <Parameter>
+    float threshold
+    <Default>
+      30
+    </Default>
+    <Range>
+      0 100
+    </Range>
+  </Parameter>
+  
+  <Parameter>
+    float brightness
+    <Default>
+      30
+    </Default>
+    <Range>
+      0 100
+    </Range>
+  </Parameter>
+  
+  <Parameter>
+    float radius
+    <Concept>
+      radius_ui
+    </Concept>
+    <Default>
+      5.333333333
+    </Default>
+    <Range>
+      0 10000
+    </Range>
+  </Parameter>
+  
+  <Parameter>
+    float angle
+    <Concept>
+      angle_ui
+    </Concept>
+    <Default>
+      45
+    </Default>
+  </Parameter>
+  
+  <Parameter>
+    float halo
+    <Default>
+      1
+    </Default>
+    <Range>
+      0 100
+    </Range>
+  </Parameter>
+</Parameters>

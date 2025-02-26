@@ -1,0 +1,11 @@
+<fxlayout>
+  <page name="Body Highlight">
+        <control>mode</control>
+        <control>point</control>
+        <control>transparency</control>
+        <control>blur</control>
+        <control>color</control>
+        <control>invert</control>
+  </page>
+
+</fxlayout>
