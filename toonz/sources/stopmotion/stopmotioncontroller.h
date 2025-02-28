@@ -166,7 +166,7 @@ protected slots:
 class StopMotionController final : public QWidget {
 //-----------------------------------------------------------
 // To disable the mouse wheel
-	  protected: 
+protected: 
     bool eventFilter(QObject *obj, QEvent *event) override;
 //-----------------------------------------------------------
 
@@ -479,3 +479,4 @@ protected:
 };
 
 #endif  // STOPMOTIONCONTROLLER_H
+
