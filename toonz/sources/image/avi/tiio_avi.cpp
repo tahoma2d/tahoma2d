@@ -1133,6 +1133,20 @@ Tiio::AviWriterProperties::AviWriterProperties() : m_codec("Codec") {
           break;
         }
 
+        // Skip MSVFW32.DLL.  The following DLLs it may access could cause a
+        // crash at startup
+        //    lvcod64.dll
+        //    ff_vfw.dll
+        //    tsccvid64.dll
+        //    hapcodec.dll
+        char driver[2048];
+        WideChar2Char(icinfo.szDriver, driver, sizeof(driver));
+        if (QString::fromStdString(std::string(driver))
+                .toLower()
+                .contains("msvfw32.dll")) {
+          continue;
+        }
+
         auto const hic =
             safe_ICOpen(icinfo.fccType, icinfo.fccHandler, ICMODE_QUERY);
         if (!hic) {
