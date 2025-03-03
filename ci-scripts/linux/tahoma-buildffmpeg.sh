@@ -7,11 +7,13 @@ git clone https://github.com/cisco/openh264.git openh264
 cd openh264
 echo "*" >| .gitignore
 
+# Leave one processor available for other processing if possible
+parallel=$(($(nproc) < 2 ? 1 : $(nproc) - 1))
 echo ">>> Making openh264"
-make
+make -j "$parallel"
 
 echo ">>> Installing openh264"
-sudo make install
+sudo make -j "$parallel" install
 
 cd ..
 
@@ -59,9 +61,9 @@ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
       --disable-indev=jack
 
 echo ">>> Building ffmpeg (shared)"
-make
+make -j "$parallel"
 
 echo ">>> Installing ffmpeg (shared)"
-sudo make install
+sudo make -j "$parallel" install
 
 sudo ldconfig

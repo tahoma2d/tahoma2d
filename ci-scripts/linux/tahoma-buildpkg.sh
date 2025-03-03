@@ -5,7 +5,9 @@ echo ">>> Temporary install of Tahoma2D"
 SCRIPTPATH=`dirname "$0"`
 export BUILDDIR=$SCRIPTPATH/../../toonz/build
 cd $BUILDDIR
-sudo make install
+# Leave one processor available for other processing if possible
+parallel=$(($(nproc) < 2 ? 1 : $(nproc) - 1))
+sudo make -j "$parallel" install
 
 sudo ldconfig
 

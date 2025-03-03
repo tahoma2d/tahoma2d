@@ -48,9 +48,11 @@ cmake -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_NAME_DIR=/usr/local/lib \
       ..
 
+# Leave one processor available for other processing if possible
+parallel=$(($(nproc) < 2 ? 1 : $(nproc) - 1))
 echo ">>> Building opencv"
-make
+make -j "$parallel"
 
 echo ">>> Installing opencv"
-sudo make install
+sudo make -j "$parallel" install
 
