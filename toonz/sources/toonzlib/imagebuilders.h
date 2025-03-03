@@ -101,8 +101,8 @@ public:
   ImageRasterizer() {}
   ~ImageRasterizer() {}
 
-  TAffine m_aff = TAffine();
-  bool m_antiAliasing = true;
+  TPointD m_cameraDPI;
+  bool m_antiAliasing;
 
   //Imagemaneget::getImage
   bool isImageCompatible(int imFlags, void *extData) override;

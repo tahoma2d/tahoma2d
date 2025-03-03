@@ -294,7 +294,7 @@ bool ImageRasterizer::getInfo(TImageInfo &info, int imFlags, void *extData) {
 
 bool ImageRasterizer::isImageCompatible(int imFlags, void* extData) { 
   ImageLoader::BuildExtData *data = (ImageLoader::BuildExtData *)extData;
-  if (m_aff == data->currentCamera->getStageToCameraRef())
+  if (m_cameraDPI == data->currentCamera->getDpi())
     if (m_antiAliasing == Preferences::instance()->getRasterizeAntialias())
         return true;
   return false;
@@ -317,12 +317,24 @@ TImageP ImageRasterizer::build(int imFlags, void *extData) {
     TVectorImageP vi = img;
     if (vi) {
       TRectD bbox = vi->getBBox();
+      m_cameraDPI       = data->currentCamera->getDpi();
+
+      double sx, sy;
+      sx           = m_cameraDPI.x / Stage::inch;
+      sy           = m_cameraDPI.y / Stage::inch;
+      bbox.x0     = std::floor(bbox.x0 * sx);
+      bbox.y0     = std::floor(bbox.y0 * sy);
+      bbox.x1     = std::ceil(bbox.x1 * sx);
+      bbox.y1     = std::ceil(bbox.y1 * sy);
+
+      bbox.x1 += static_cast<int>(std::ceil(bbox.x1 - bbox.x0)) % 2;
+      bbox.y1 += static_cast<int>(std::ceil(bbox.y1 - bbox.y0)) % 2;
+
       if (!bbox.isEmpty()) {
-          m_aff = data->currentCamera->getStageToCameraRef();
           m_antiAliasing = Preferences::instance()->getRasterizeAntialias();
-          TDimension d = data->currentCamera->getRes();
+          TDimension d(bbox.getLx(),bbox.getLy());
           TVectorRenderData rd(TVectorRenderData::ProductionSettings(),
-              m_aff,
+                               TScale(sx,sy),
               TRect(), vi->getPalette());
           rd.m_antiAliasing = m_antiAliasing;
 
@@ -331,9 +343,12 @@ TImageP ImageRasterizer::build(int imFlags, void *extData) {
             QSurfaceFormat format;
             format.setProfile(QSurfaceFormat::CompatibilityProfile);
 
-            std::unique_ptr<QOffscreenSurface> surface(new QOffscreenSurface());
-            surface->setFormat(format);
-            surface->create();
+            static QOffscreenSurface *surface = nullptr;
+            if (!surface) {
+              surface = new QOffscreenSurface();
+              surface->setFormat(format);
+              surface->create();
+            }
 
             TRaster32P ras(d);
 
@@ -341,36 +356,40 @@ TImageP ImageRasterizer::build(int imFlags, void *extData) {
             glMatrixMode(GL_MODELVIEW), glPushMatrix();
             glMatrixMode(GL_PROJECTION), glPushMatrix();
             {
-              std::unique_ptr<QOpenGLFramebufferObject> fb(
-                  new QOpenGLFramebufferObject(d.lx, d.ly));
+              static std::unique_ptr<QOpenGLFramebufferObject> fb;
+              static int lastLx = 0, lastLy = 0;
+              static bool bboxChanged;
 
+              if (!fb || d.lx != lastLx || d.ly != lastLy) {
+                bboxChanged = true;
+              }
+              if (bboxChanged){
+                fb.reset(new QOpenGLFramebufferObject(d.lx, d.ly));
+                lastLx = d.lx;
+                lastLy = d.ly;
+              }
               fb->bind();
 
-              glViewport(0, 0, d.lx, d.ly);
-              glClearColor(0, 0, 0, 0);
-              glClear(GL_COLOR_BUFFER_BIT);
+              if (bboxChanged) {
+                glViewport(0, 0, d.lx, d.ly);
+                glClearColor(0, 0, 0, 0);
+                glClear(GL_COLOR_BUFFER_BIT);
 
-              glMatrixMode(GL_PROJECTION);
-              glLoadIdentity();
-              gluOrtho2D(0, d.lx, 0, d.ly);
+                glMatrixMode(GL_PROJECTION);
+                glLoadIdentity();
+                gluOrtho2D(bbox.x0, bbox.x1, bbox.y0, bbox.y1);
 
-              glMatrixMode(GL_MODELVIEW);
-              glLoadIdentity();
-
+                glMatrixMode(GL_MODELVIEW);
+                glLoadIdentity();
+              }
+              
               tglDraw(rd, vi.getPointer());
 
               glFlush();
 
-              QImage img = fb->toImage();
+              glReadPixels(0, 0, d.lx, d.ly, GL_BGRA, GL_UNSIGNED_BYTE,
+                           ras->getRawData());
 
-              int wrap      = ras->getLx() * sizeof(TPixel32);
-              uchar *srcPix = img.bits();
-              uchar *dstPix = ras->getRawData() + wrap * (d.ly - 1);
-              for (int y = 0; y < d.ly; y++) {
-                memcpy(dstPix, srcPix, wrap);
-                dstPix -= wrap;
-                srcPix += wrap;
-              }
               fb->release();
             }
             glMatrixMode(GL_MODELVIEW), glPopMatrix();
@@ -379,6 +398,11 @@ TImageP ImageRasterizer::build(int imFlags, void *extData) {
             glPopAttrib();
 
             TRasterImageP ri = TRasterImageP(ras);
+
+            int offsetX      = bbox.x1 - (d.lx / 2);
+            int offsetY      = bbox.y1 - (d.ly / 2);
+            ri->setOffset(TPoint(offsetX, offsetY));
+
             assert(glGetError() == 0);
 
             return ri;
