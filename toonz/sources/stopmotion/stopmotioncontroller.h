@@ -164,6 +164,12 @@ protected slots:
 //-----------------------------------------------------------------------------
 
 class StopMotionController final : public QWidget {
+//-----------------------------------------------------------
+// To disable the mouse wheel
+protected: 
+    bool eventFilter(QObject *obj, QEvent *event) override;
+//-----------------------------------------------------------
+
   Q_OBJECT
   StopMotion *m_stopMotion;
 
@@ -453,6 +459,7 @@ public slots:
 
 class ExportCalibrationFilePopup final : public GenericSaveFilePopup {
   Q_OBJECT
+  
 public:
   ExportCalibrationFilePopup(QWidget *parent);
 
@@ -472,3 +479,4 @@ protected:
 };
 
 #endif  // STOPMOTIONCONTROLLER_H
+

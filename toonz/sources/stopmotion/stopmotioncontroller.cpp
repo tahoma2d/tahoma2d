@@ -67,6 +67,8 @@
 #include <QDomDocument>
 #include <QHostInfo>
 #include <QDesktopServices>
+#include <QEvent> 
+#include <QWheelEvent> 
 
 #ifdef _WIN32
 #include <dshow.h>
@@ -297,6 +299,8 @@ StopMotionSaveInFolderPopup::StopMotionSaveInFolderPopup(QWidget *parent)
 
   m_autoSubNameCB      = new QCheckBox(tr("Auto Format:"), this);
   m_subNameFormatCombo = new QComboBox(this);
+  m_subNameFormatCombo->setFocusPolicy(Qt::StrongFocus); 
+  m_subNameFormatCombo->installEventFilter(this); 
   m_subFolderNameField = new QLineEdit(this);
 
   QCheckBox *showPopupOnLaunchCB =
@@ -840,7 +844,11 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
   m_saveInFolderPopup = new StopMotionSaveInFolderPopup(this);
   m_cameraListCombo   = new QComboBox(this);
+  m_cameraListCombo->setFocusPolicy(Qt::StrongFocus); 
+  m_cameraListCombo->installEventFilter(this); 
   m_resolutionCombo   = new QComboBox(this);
+  m_resolutionCombo->setFocusPolicy(Qt::StrongFocus); 
+  m_resolutionCombo->installEventFilter(this); 
   m_resolutionCombo->setFixedWidth(fontMetrics().horizontalAdvance("0000 x 0000") + 40);
   m_resolutionLabel                 = new QLabel(tr("Resolution: "), this);
   m_cameraStatusLabel               = new QLabel(tr("Camera Status"), this);
@@ -872,6 +880,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_onionOpacityFld                  = new DVGui::IntField(this);
 
   m_captureFramesCombo = new QComboBox(this);
+  m_captureFramesCombo->setFocusPolicy(Qt::StrongFocus); 
+  m_captureFramesCombo->installEventFilter(this); 
   m_captureFramesCombo->addItems(
       {"1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s"});
   m_captureFramesCombo->setCurrentIndex(
@@ -880,6 +890,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   // should choosing the file type is disabled for simplicity
   // too many options can be a bad thing
   m_fileTypeCombo          = new QComboBox(this);
+  m_fileTypeCombo->setFocusPolicy(Qt::StrongFocus); 
+  m_fileTypeCombo->installEventFilter(this); 
   m_fileFormatOptionButton = new QPushButton(tr("Options"), this);
   m_fileFormatOptionButton->setFixedHeight(28);
   m_fileFormatOptionButton->setStyleSheet("padding: 0 2;");
@@ -982,6 +994,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
   m_focusFar3Button = new QPushButton(tr(">>>"), this);
   m_focusFar3Button->setFixedSize(32, 28);
   m_manualFocusSlider = new QSlider(Qt::Horizontal, this);
+  m_manualFocusSlider->setFocusPolicy(Qt::StrongFocus); 
+  m_manualFocusSlider->installEventFilter(this); 
   m_manualFocusSlider->setRange(0, 255);
   m_manualFocusSlider->setTickInterval(5);
   //*****//****
@@ -1128,35 +1142,55 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
     m_apertureLabel  = new QLabel(tr(""), this);
     m_apertureSlider = new QSlider(Qt::Horizontal, this);
+    m_apertureSlider->setFocusPolicy(Qt::StrongFocus); 
+    m_apertureSlider->installEventFilter(this); 
     m_apertureSlider->setRange(0, 10);
     m_apertureSlider->setTickInterval(1);
     m_apertureSlider->setFixedWidth(260);
     m_isoLabel  = new QLabel(tr(""), this);
     m_isoSlider = new QSlider(Qt::Horizontal, this);
+    m_isoSlider->setFocusPolicy(Qt::StrongFocus); 
+    m_isoSlider->installEventFilter(this); 
     m_isoSlider->setRange(0, 10);
     m_isoSlider->setTickInterval(1);
     m_isoSlider->setFixedWidth(260);
     m_shutterSpeedLabel  = new QLabel(tr(""), this);
     m_shutterSpeedSlider = new QSlider(Qt::Horizontal, this);
+    m_shutterSpeedSlider->setFocusPolicy(Qt::StrongFocus); 
+    m_shutterSpeedSlider->installEventFilter(this); 
     m_shutterSpeedSlider->setRange(0, 10);
     m_shutterSpeedSlider->setTickInterval(1);
     m_shutterSpeedSlider->setFixedWidth(260);
     m_kelvinValueLabel = new QLabel(tr("Temperature: "), this);
     m_kelvinSlider     = new QSlider(Qt::Horizontal, this);
+    m_kelvinSlider->setFocusPolicy(Qt::StrongFocus); 
+    m_kelvinSlider->installEventFilter(this); 
     m_kelvinSlider->setRange(0, 10);
     m_kelvinSlider->setTickInterval(1);
     m_kelvinSlider->setFixedWidth(260);
     m_exposureCombo       = new QComboBox(this);
+    m_exposureCombo->setFocusPolicy(Qt::StrongFocus); 
+    m_exposureCombo->installEventFilter(this); 
     m_whiteBalanceCombo   = new QComboBox(this);
+    m_whiteBalanceCombo->setFocusPolicy(Qt::StrongFocus); 
+    m_whiteBalanceCombo->installEventFilter(this); 
     m_imageQualityCombo   = new QComboBox(this);
+    m_imageQualityCombo->setFocusPolicy(Qt::StrongFocus); 
+    m_imageQualityCombo->installEventFilter(this); 
     m_imageSizeCombo      = new QComboBox(this);
+    m_imageSizeCombo->setFocusPolicy(Qt::StrongFocus); 
+    m_imageSizeCombo->installEventFilter(this);    
     m_pictureStyleCombo   = new QComboBox(this);
+    m_pictureStyleCombo->setFocusPolicy(Qt::StrongFocus); 
+    m_pictureStyleCombo->installEventFilter(this);        
     m_cameraSettingsLabel = new QLabel(tr("Camera Model"), this);
     m_cameraModeLabel     = new QLabel(tr("Camera Mode"), this);
     m_exposureCombo->setFixedWidth(fontMetrics().horizontalAdvance("000000") +
                                    25);
     m_liveViewCompensationLabel  = new QLabel(tr("Live View Offset: 0"), this);
     m_liveViewCompensationSlider = new QSlider(Qt::Horizontal, this);
+    m_liveViewCompensationSlider->setFocusPolicy(Qt::StrongFocus); 
+    m_liveViewCompensationSlider->installEventFilter(this); 
     m_liveViewCompensationSlider->setRange(-15, 12);
     m_liveViewCompensationSlider->setTickInterval(1);
     m_liveViewCompensationSlider->setFixedWidth(260);
@@ -1267,6 +1301,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     QGroupBox *imageFrame          = new QGroupBox(tr("Image adjust"), this);
     m_webcamLabel        = new QLabel("insert webcam name here", this);
     m_colorTypeCombo     = new QComboBox(this);
+    m_colorTypeCombo->setFocusPolicy(Qt::StrongFocus); 
+    m_colorTypeCombo->installEventFilter(this);     
     m_camCapLevelControl = new CameraCaptureLevelControl(this);
     // m_upsideDownCB = new QCheckBox(tr("Upside down"), this);
     // m_upsideDownCB->setChecked(false);
@@ -1286,6 +1322,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     m_webcamAutoFocusGB->setCheckable(true);
 
     m_webcamFocusSlider = new QSlider(Qt::Horizontal, this);
+    m_webcamFocusSlider->setFocusPolicy(Qt::StrongFocus); 
+    m_webcamFocusSlider->installEventFilter(this); 
     m_webcamFocusSlider->setRange(0, 255);
     m_webcamFocusSlider->setTickInterval(5);
 
@@ -1304,6 +1342,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
     // webcam exposure
     m_webcamExposureSlider = new QSlider(Qt::Horizontal, this);
+    m_webcamExposureSlider->setFocusPolicy(Qt::StrongFocus); 
+    m_webcamExposureSlider->installEventFilter(this); 
     m_webcamExposureSlider->setRange(-13, -1);
     m_webcamExposureSlider->setTickInterval(1);
 
@@ -1315,6 +1355,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
     // webcam brightness
     m_webcamBrightnessSlider = new QSlider(Qt::Horizontal, this);
+    m_webcamBrightnessSlider->setFocusPolicy(Qt::StrongFocus); 
+    m_webcamBrightnessSlider->installEventFilter(this); 
     m_webcamBrightnessSlider->setRange(0, 255);
 
     QHBoxLayout *webcamBrightnessLay = new QHBoxLayout();
@@ -1325,6 +1367,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
     // webcam contrast
     m_webcamContrastSlider = new QSlider(Qt::Horizontal, this);
+    m_webcamContrastSlider->setFocusPolicy(Qt::StrongFocus); 
+    m_webcamContrastSlider->installEventFilter(this); 
     m_webcamContrastSlider->setRange(0, 255);
 
     QHBoxLayout *webcamContrastLay = new QHBoxLayout();
@@ -1335,6 +1379,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
     // webcam gain
     m_webcamGainSlider = new QSlider(Qt::Horizontal, this);
+    m_webcamGainSlider->setFocusPolicy(Qt::StrongFocus); 
+    m_webcamGainSlider->installEventFilter(this); 
     m_webcamGainSlider->setRange(0, 255);
 
     QHBoxLayout *webcamGainLay = new QHBoxLayout();
@@ -1345,6 +1391,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
 
     // webcam saturation
     m_webcamSaturationSlider = new QSlider(Qt::Horizontal, this);
+    m_webcamSaturationSlider->setFocusPolicy(Qt::StrongFocus); 
+    m_webcamSaturationSlider->installEventFilter(this); 
     m_webcamSaturationSlider->setRange(0, 255);
 
     QHBoxLayout *webcamSaturationLay = new QHBoxLayout();
@@ -1639,6 +1687,8 @@ StopMotionController::StopMotionController(QWidget *parent) : QWidget(parent) {
     QVBoxLayout *motionOutsideLayout = new QVBoxLayout;
     // QGridLayout* motionInsideLayout = new QGridLayout;
     m_controlDeviceCombo = new QComboBox(this);
+    m_controlDeviceCombo->setFocusPolicy(Qt::StrongFocus); 
+    m_controlDeviceCombo->installEventFilter(this); 
     m_controlDeviceCombo->addItems(
         m_stopMotion->m_serial->getAvailableSerialPorts());
 
@@ -5114,7 +5164,7 @@ void ExportCalibrationFilePopup::showEvent(QShowEvent *e) {
 
 //=============================================================================
 
-LoadCalibrationFilePopup::LoadCalibrationFilePopup(QWidget *parent)
+LoadCalibrationFilePopup::LoadCalibrationFilePopup(QWidget *parent) 
     : GenericLoadFilePopup(tr("Load Camera Calibration Settings")) {
   Qt::WindowFlags flags = windowFlags();
   setParent(parent);
@@ -5127,3 +5177,17 @@ void LoadCalibrationFilePopup::showEvent(QShowEvent *e) {
   FileBrowserPopup::showEvent(e);
   setFolder(ToonzFolder::getLibraryFolder() + "camera calibration");
 }
+//=============================================================================
+
+// To disable mouse wheel
+
+bool StopMotionController::eventFilter(QObject *obj, QEvent *event) {
+    if (event->type() == QEvent::Wheel) {
+        // Check if the object is a slider or a combo box
+        if (qobject_cast<QSlider *>(obj) || qobject_cast<QComboBox *>(obj)) {
+            return true;  // Blocks the mouse wheel event
+        }
+    }
+    return QWidget::eventFilter(obj, event);
+}
+//=============================================================================
