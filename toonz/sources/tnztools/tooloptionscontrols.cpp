@@ -1533,7 +1533,7 @@ void ThickChangeField::onChange(TMeasuredValue *fld, bool addToUndo) {
   }
   m_tool->computeBBox();
   m_tool->invalidate();
-  m_tool->notifyImageChanged(m_tool->getCurrentFid());
+  m_tool->notifyImageChanged();//overided version of VectorSelectionTool
 }
 
 //-----------------------------------------------------------------------------
