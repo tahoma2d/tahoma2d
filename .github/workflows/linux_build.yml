@@ -97,7 +97,7 @@ jobs:
         with:
           allowUpdates: true
           artifactErrorsFailBuild: false
-          artifacts: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
+          artifacts: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz,toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.deb
           artifactContentType: "raw"
           body: ${{ github.event.head_commit.message }}
           name: Latest Nightly ${{ env.NIGHTLYDATE }}
@@ -111,7 +111,7 @@ jobs:
         with:
           allowUpdates: true
           artifactErrorsFailBuild: false
-          artifacts: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz
+          artifacts: toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.tar.gz,toonz/build/Tahoma2D-linux-${{ matrix.compiler }}.deb
           artifactContentType: "raw"
           body: ${{ github.event.head_commit.message }}
           name: ${{ env.NIGHTLYDATETIME }}
