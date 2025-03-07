@@ -1,4 +1,6 @@
 #!/bin/bash
+export TAHOMA2DVERSION=1.5.1
+
 source /opt/qt515/bin/qt515-env.sh
 
 echo ">>> Temporary install of Tahoma2D"
@@ -21,7 +23,7 @@ mkdir -p appdir/usr
 echo ">>> Copy and configure Tahoma2D installation in appDir"
 cp -r /opt/tahoma2d/* appdir/usr
 cp appdir/usr/share/applications/*.desktop appdir
-cp appdir/usr/share/icons/hicolor/*/apps/*.png appdir
+cp appdir/usr/share/icons/hicolor/128x128/apps/*.png appdir
 mv appdir/usr/lib/tahoma2d/* appdir/usr/lib
 rmdir appdir/usr/lib/tahoma2d
 
@@ -108,3 +110,14 @@ echo ">>> Creating Tahoma2D Linux package"
 
 tar zcf Tahoma2D-linux.tar.gz Tahoma2D
 
+echo ">>> Creating Tahoma2D Debian Package"
+
+chmod +x ../installer/linux/deb-creator/debcreator.sh 
+
+../installer/linux/deb-creator/debcreator.sh \
+ -p $TAHOMA2DVERSION \
+ -v $TAHOMA2DVERSION \
+ -t ../installer/linux/deb-creator/deb-template \
+ -c ./Tahoma2D/Tahoma2D.AppImage
+
+ mv tahoma2d_*_amd64.deb Tahoma2D-linux.deb
