@@ -4,6 +4,7 @@
 #define TPROPERTY_INCLUDED
 
 #include "tconvert.h"
+#include "tstringid.h"
 #include "tpixel.h"
 
 #include <cstdint>
@@ -71,20 +72,28 @@ public:
   class TypeError {};
   class RangeError {};
 
-  TProperty(std::string name) : m_name(name), m_visible(true) {
-    m_qstringName = QString::fromStdString(name);
-  }
+  TProperty(std::string name):
+    m_name(name),
+    m_uiNameOrig(name),
+    m_visible(true),
+    m_qstringName(QString::fromStdString(name))
+    { }
 
   virtual ~TProperty() {}
 
   virtual TProperty *clone() const = 0;
+
+  // Used only for translation in Qt. Original not translated name.
+  const std::string& getUINameOrig() const { return m_uiNameOrig; }
+  void setUINameOrig(const std::string &str) { m_uiNameOrig = str; }
 
   // Used only for translation in Qt
   QString getQStringName() const { return m_qstringName; }
   void setQStringName(const QString &str) { m_qstringName = str; }
   virtual void assignUIName(TProperty *refP);
 
-  std::string getName() const { return m_name; }
+  std::string getName() const { return m_name.str(); }
+  TStringId getNameId() const { return m_name; }
   virtual std::string getValueAsString() = 0;
 
   virtual void accept(Visitor &v) = 0;
@@ -93,6 +102,7 @@ public:
   void removeListener(Listener *listener);
   void notifyListeners() const;
 
+  // Used to pass action name
   std::string getId() const { return m_id; }
   void setId(std::string id) { m_id = id; }
 
@@ -100,7 +110,8 @@ public:
   void setVisible(bool state) { m_visible = state; }
 
 private:
-  std::string m_name;
+  TStringId m_name;
+  std::string m_uiNameOrig;
   QString m_qstringName;
   std::string m_id;
   std::vector<Listener *> m_listeners;
@@ -377,11 +388,14 @@ public:
     return ret;
   }
 
-  void addValue(std::wstring value, const QString &iconName = QString()) {
+  void addValueWithUIName(std::wstring value, const QString &name, const QString &iconName = QString()) {
     if (m_index == -1) m_index = 0;
     m_range.push_back(value);
-    m_items.push_back(Item(QString::fromStdWString(value), iconName));
+    m_items.push_back(Item(name, iconName));
   }
+
+  void addValue(std::wstring value, const QString &iconName = QString())
+    { addValueWithUIName(value, QString::fromStdWString(value), iconName); }
 
   void setItemUIName(std::wstring value, const QString &name) {
     int index = indexOf(value);
@@ -542,7 +556,7 @@ private:
 class DVAPI TPropertyGroup {
 public:
   typedef std::vector<std::pair<TProperty *, bool>> PropertyVector;
-  typedef std::map<std::string, TProperty *> PropertyTable;
+  typedef std::map<TStringId, TProperty *> PropertyTable;
 
   // exception
   class PropertyNotFoundError {};
@@ -559,10 +573,11 @@ public:
   void bind(TProperty &p);
 
   //! returns 0 if the property doesn't exist
-  TProperty *getProperty(std::string name);
-  TProperty *getProperty(int i) {
-    return (i >= (int)m_properties.size()) ? 0 : m_properties[i].first;
-  }
+  TProperty *getProperty(const TStringId &name);
+  TProperty *getProperty(const std::string &name)
+    { return getProperty(TStringId::find(name)); }
+  TProperty *getProperty(int i)
+    { return (i >= (int)m_properties.size()) ? 0 : m_properties[i].first; }
 
   void setProperties(TPropertyGroup *g);
 
