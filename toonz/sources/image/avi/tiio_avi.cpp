@@ -272,6 +272,14 @@ void TLevelWriterAvi::searchForCodec() {
     for (int bpp = 32; (bpp >= 24) && !found; bpp -= 8) {
       inFmt.bmiHeader.biBitCount = bpp;
       for (int i = 0; ICInfo(fccType, i, &icinfo); i++) {
+        // Skip blacklisted DLLs
+        char driver[2048];
+        WideChar2Char(icinfo.szDriver, driver, sizeof(driver));
+        if (TSystem::isDLLBlackListed(
+                QString::fromStdString(std::string(driver)))) {
+          continue;
+        }
+
         hic = ICOpen(icinfo.fccType, icinfo.fccHandler, ICMODE_COMPRESS);
 
         ICGetInfo(hic, &icinfo,
@@ -720,7 +728,11 @@ TLevelReaderAvi::TLevelReaderAvi(const TFilePath &path)
     ICINFO icinfo;
     memset(&icinfo, 0, sizeof(ICINFO));
     ICInfo(ICTYPE_VIDEO, si.fccHandler, &icinfo);
-    m_hic = ICOpen(icinfo.fccType, icinfo.fccHandler, ICMODE_DECOMPRESS);
+
+    char driver[2048];
+    WideChar2Char(icinfo.szDriver, driver, sizeof(driver));
+    if (!TSystem::isDLLBlackListed(driver))
+      m_hic = ICOpen(icinfo.fccType, icinfo.fccHandler, ICMODE_DECOMPRESS);
     if (!m_hic) {
       m_hic = findCandidateDecompressor();
       if (!m_hic)
@@ -785,6 +797,14 @@ HIC TLevelReaderAvi::findCandidateDecompressor() {
   for (DWORD id = 0; ICInfo(ICTYPE_VIDEO, id, &info); ++id) {
     info.dwSize = sizeof(
         ICINFO);  // I don't think this is necessary, but just in case....
+
+    // Skip blacklisted DLLs
+    char driver[2048];
+    WideChar2Char(info.szDriver, driver, sizeof(driver));
+    if (TSystem::isDLLBlackListed(
+            QString::fromStdString(std::string(driver)))) {
+      continue;
+    }
 
     HIC hic = ICOpen(info.fccType, info.fccHandler, ICMODE_DECOMPRESS);
 
@@ -1131,6 +1151,14 @@ Tiio::AviWriterProperties::AviWriterProperties() : m_codec("Codec") {
         memset(&icinfo, 0, sizeof icinfo);
         if (!safe_ICInfo(fccType, i, &icinfo)) {
           break;
+        }
+
+        // Skip blacklisted DLLs
+        char driver[2048];
+        WideChar2Char(icinfo.szDriver, driver, sizeof(driver));
+        if (TSystem::isDLLBlackListed(
+                QString::fromStdString(std::string(driver)))) {
+          continue;
         }
 
         auto const hic =
