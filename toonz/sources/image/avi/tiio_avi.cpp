@@ -8,6 +8,7 @@
 
 #define _WIN32_WINNT 0x0500
 #include "tsystem.h"
+#include "tdllblacklist.h"
 
 #include <windows.h>
 #include <objbase.h>
@@ -1131,6 +1132,13 @@ Tiio::AviWriterProperties::AviWriterProperties() : m_codec("Codec") {
         memset(&icinfo, 0, sizeof icinfo);
         if (!safe_ICInfo(fccType, i, &icinfo)) {
           break;
+        }
+
+        // Skip blacklisted DLLs
+        char driver[2048];
+        WideChar2Char(icinfo.szDriver, driver, sizeof(driver));
+        if (isDLLBlackListed(QString::fromStdString(std::string(driver)))) {
+          continue;
         }
 
         auto const hic =

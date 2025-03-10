@@ -118,6 +118,7 @@ set(HEADERS ${MOC_HEADERS}
     ../include/tmeshimage.h
     ../include/tgldisplaylistsmanager.h
     ../include/tversion.h
+    ../include/tdllblacklist.h
 )
 
 set(SOURCES
