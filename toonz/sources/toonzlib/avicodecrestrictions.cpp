@@ -2,10 +2,15 @@
 
 #include "avicodecrestrictions.h"
 #include "tconvert.h"
+#include "tsystem.h"
 #include <windows.h>
 #include <vfw.h>
 
 namespace {
+
+void WideChar2Char(LPCWSTR wideCharStr, char *str, int strBuffSize) {
+  WideCharToMultiByte(CP_ACP, 0, wideCharStr, -1, str, strBuffSize, 0, 0);
+}
 
 HIC getCodec(const std::wstring &codecName, int &bpp) {
   HIC hic = 0;
@@ -27,6 +32,14 @@ HIC getCodec(const std::wstring &codecName, int &bpp) {
     // find the codec.
     inFmt.bmiHeader.biBitCount = bpp;
     for (int i = 0; ICInfo(fccType, i, &icinfo); i++) {
+      // Skip blacklisted DLLs
+      char driver[2048];
+      WideChar2Char(icinfo.szDriver, driver, sizeof(driver));
+      if (TSystem::isDLLBlackListed(
+              QString::fromStdString(std::string(driver)))) {
+        continue;
+      }
+
       hic = ICOpen(icinfo.fccType, icinfo.fccHandler, ICMODE_COMPRESS);
 
       ICGetInfo(hic, &icinfo, sizeof(ICINFO));  // Find out the compressor name
@@ -220,6 +233,14 @@ QMap<std::wstring, bool> AviCodecRestrictions::getUsableCodecs(
     // find the codec.
     inFmt.bmiHeader.biBitCount = bpp;
     for (int i = 0; ICInfo(fccType, i, &icinfo); i++) {
+      // Skip blacklisted DLLs
+      char driver[2048];
+      WideChar2Char(icinfo.szDriver, driver, sizeof(driver));
+      if (TSystem::isDLLBlackListed(
+              QString::fromStdString(std::string(driver)))) {
+        continue;
+      }
+
       hic = ICOpen(icinfo.fccType, icinfo.fccHandler, ICMODE_COMPRESS);
 
       ICGetInfo(hic, &icinfo, sizeof(ICINFO));  // Find out the compressor name
