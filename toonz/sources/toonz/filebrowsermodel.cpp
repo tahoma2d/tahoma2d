@@ -1689,17 +1689,17 @@ DvDirModel *DvDirModel::instance() {
 void DvDirModel::onSceneSwitched() {
   DvDirModelRootNode *rootNode = dynamic_cast<DvDirModelRootNode *>(m_root);
   if (rootNode) {
-    int projectPaths = rootNode->getProjectPathsSize();
-    m_root->refreshChildren();
-    if (rootNode->getProjectPathsSize() != projectPaths) {
-      TProjectManager *pm   = TProjectManager::instance();
-      TFilePath projectPath = pm->getCurrentProjectPath().getParentDir();
-      QModelIndex index     = getIndexByPath(projectPath);
-      refresh(index);
-      emit(projectAdded());
-    }
     ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
     if (scene) {
+      int projectPaths = rootNode->getProjectPathsSize();
+      m_root->refreshChildren();
+      if (rootNode->getProjectPathsSize() != projectPaths) {
+        TProjectManager *pm   = TProjectManager::instance();
+        TFilePath projectPath = pm->getCurrentProjectPath().getParentDir();
+        QModelIndex index     = getIndexByPath(projectPath);
+        refresh(index);
+        emit(projectAdded());
+      }
       if (scene->isUntitled())
         rootNode->setSceneLocation(TFilePath());
       else
