@@ -2456,12 +2456,6 @@ QWidget* PreferencesPopup::createTouchTabletPage() {
   if (winInkAvailable) insertFootNote(lay);
   widget->setLayout(lay);
 
-#ifdef MACOSX
-  // Can only support 3-finger swipe undo/redo gestures for now
-  m_controlIdMap.key(gestureUndoMethod)->setEnabled(false);
-  m_controlIdMap.key(gestureRedoMethod)->setEnabled(false);
-#endif
-
   bool ret = true;
   ret = ret && connect(touchGesturesBox, SIGNAL(clicked(bool)), touchAction,
                        SLOT(setChecked(bool)));
