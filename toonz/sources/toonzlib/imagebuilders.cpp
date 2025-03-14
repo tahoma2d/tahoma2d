@@ -337,6 +337,8 @@ TImageP ImageRasterizer::build(int imFlags, void *extData) {
                                TScale(sx,sy),
               TRect(), vi->getPalette());
           rd.m_antiAliasing = m_antiAliasing;
+          rd.m_show0ThickStrokes =
+              Preferences::instance()->getShow0ThickLines();
 
           //Is this too slow?
           {
