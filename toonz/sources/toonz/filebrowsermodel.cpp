@@ -289,37 +289,50 @@ void DvDirModelFileFolderNode::refreshChildren() {
   std::vector<std::wstring> names;
   getChildrenNames(names);
 
-  std::vector<DvDirModelNode *> oldChildren;
-  oldChildren.swap(m_children);
+  std::vector<DvDirModelNode *> oldChildren = m_children;
 
-  std::vector<DvDirModelNode *>::iterator j;
-  int i;
+  // synchronize nodes for each items in the current folder
+  QModelIndex index = DvDirModel::instance()->getIndexByNode(this);
+  int i, j;
   for (i = 0; i < (int)names.size(); i++) {
     std::wstring name = names[i];
-    for (j = oldChildren.begin();
-         j != oldChildren.end() && (*j)->getName() != name; ++j) {
+
+    // check if the item is already in the children nodes
+    for (j = i; j < m_children.size() && m_children[j]->getName() != name;
+         j++) {
     }
-    DvDirModelNode *child = 0;
-    if (j != oldChildren.end()) {
-      child = *j;
-      oldChildren.erase(j);
-    } else {
-      child = makeChild(name);
+    // if the child is already registered
+    if (j < m_children.size()) {
+      if (i != j) {
+        // swap node order
+        DvDirModel::instance()->notifyBeginMoveRows(index, j, j, index, i);
+        std::swap(m_children[i], m_children[j]);
+        DvDirModel::instance()->notifyEndMoveRows();
+      }
+    }
+    // if not, create a new child and insert
+    else {
+      DvDirModelNode *child = makeChild(name);
       if (DvDirModelFileFolderNode *folderNode =
               dynamic_cast<DvDirModelFileFolderNode *>(child))
         folderNode->setPeeking(m_peeks);
+      assert(child);
+      DvDirModel::instance()->notifyBeginInsertRows(index, i, i);
+      addChild(child);
+      DvDirModel::instance()->notifyEndInsertRows();
     }
-
-    if (!child) continue;
-
-    addChild(child);
   }
-  for (j = oldChildren.begin(); j != oldChildren.end(); ++j) {
-    DvDirModelNode *child = *j;
+  // delete rest of the children nodes
+  for (j = m_children.size() - 1; j >= i; j--) {
+    DvDirModelNode *child = m_children[j];
+    DvDirModel::instance()->notifyBeginRemoveRows(index, j, j);
+    m_children.erase(m_children.begin() + j);
+    DvDirModel::instance()->notifyEndRemoveRows();
+
     if (!!child && child->hasChildren())
       child->removeChildren(0, child->getChildCount());
 
-    delete *j;
+    delete child;
   }
 
   m_hasChildren = (m_children.size() > 0);
@@ -724,7 +737,7 @@ void DvDirVersionControlProjectNode::refreshChildren() {
   DvDirModelFileFolderNode::refreshChildren();
   int i;
   TProjectManager *pm = TProjectManager::instance();
-  auto project = std::make_shared<TProject>();
+  auto project        = std::make_shared<TProject>();
   project->load(getProjectPath());
   for (i = 0; i < getChildCount(); i++) {
     DvDirModelFileFolderNode *node =
@@ -742,7 +755,7 @@ void DvDirVersionControlProjectNode::getChildrenNames(
     std::vector<std::wstring> &names) const {
   DvDirVersionControlNode::getChildrenNames(names);
   TProjectManager *pm = TProjectManager::instance();
-  auto project = std::make_shared<TProject>();
+  auto project        = std::make_shared<TProject>();
   project->load(getProjectPath());
   int i;
   for (i = 0; i < project->getFolderCount(); i++) {
@@ -807,7 +820,7 @@ void DvDirModelProjectNode::refreshChildren() {
   DvDirModelFileFolderNode::refreshChildren();
   int i;
   TProjectManager *pm = TProjectManager::instance();
-  auto project = std::make_shared<TProject>();
+  auto project        = std::make_shared<TProject>();
   project->load(getProjectPath());
   for (i = 0; i < getChildCount(); i++) {
     DvDirModelFileFolderNode *node =
@@ -825,7 +838,7 @@ void DvDirModelProjectNode::getChildrenNames(
     std::vector<std::wstring> &names) const {
   DvDirModelFileFolderNode::getChildrenNames(names);
   TProjectManager *pm = TProjectManager::instance();
-  auto project = std::make_shared<TProject>();
+  auto project        = std::make_shared<TProject>();
   project->load(getProjectPath());
   int i;
   for (i = 0; i < project->getFolderCount(); i++) {
@@ -843,7 +856,7 @@ void DvDirModelProjectNode::getChildrenNames(
 DvDirModelNode *DvDirModelProjectNode::makeChild(std::wstring name) {
   if (name != L"" && name[0] == L'+') {
     TProjectManager *pm = TProjectManager::instance();
-    auto project = std::make_shared<TProject>();
+    auto project        = std::make_shared<TProject>();
     project->load(getProjectPath());
     std::string folderName = ::to_string(name.substr(1));
     TFilePath folderPath   = project->getFolder(folderName);
@@ -894,14 +907,26 @@ DvDirModelHistoryNode::DvDirModelHistoryNode(DvDirModelNode *parent)
 //-----------------------------------------------------------------------------
 
 void DvDirModelHistoryNode::refreshChildren() {
-  m_children.clear();
-  m_childrenValid = true;
-  History *h      = History::instance();
-  for (int i = 0; i < h->getDayCount(); i++) {
-    const History::Day *day = h->getDay(i);
-    DvDirModelNode *child =
-        new DvDirModelDayNode(this, ::to_wstring(day->getDate()));
-    addChild(child);
+  QModelIndex index = DvDirModel::instance()->getIndexByNode(this);
+  m_childrenValid   = true;
+  if (!m_children.empty()) {
+    DvDirModel::instance()->notifyBeginRemoveRows(index, 0,
+                                                  m_children.size() - 1);
+    clearPointerContainer(m_children);
+    DvDirModel::instance()->notifyEndRemoveRows();
+  }
+
+  History *h   = History::instance();
+  int dayCount = h->getDayCount();
+  if (dayCount > 0) {
+    DvDirModel::instance()->notifyBeginInsertRows(index, 0, dayCount);
+    for (int i = 0; i < dayCount; i++) {
+      const History::Day *day = h->getDay(i);
+      DvDirModelNode *child =
+          new DvDirModelDayNode(this, ::to_wstring(day->getDate()));
+      addChild(child);
+    }
+    DvDirModel::instance()->notifyEndInsertRows();
   }
 }
 
@@ -928,8 +953,15 @@ DvDirModelMyComputerNode::DvDirModelMyComputerNode(DvDirModelNode *parent)
 //-----------------------------------------------------------------------------
 
 void DvDirModelMyComputerNode::refreshChildren() {
-  m_childrenValid = true;
-  if (!m_children.empty()) clearPointerContainer(m_children);
+  QModelIndex index = DvDirModel::instance()->getIndexByNode(this);
+  m_childrenValid   = true;
+
+  if (!m_children.empty()) {
+    DvDirModel::instance()->notifyBeginRemoveRows(index, 0,
+                                                  m_children.size() - 1);
+    clearPointerContainer(m_children);
+    DvDirModel::instance()->notifyEndRemoveRows();
+  }
 
   TFilePathSet fps = TSystem::getDisks();
 
@@ -937,12 +969,14 @@ void DvDirModelMyComputerNode::refreshChildren() {
   fps.push_back(TFilePath("/Volumes/"));
 #endif
 
+  DvDirModel::instance()->notifyBeginInsertRows(index, 0, fps.size() - 1);
   TFilePathSet::iterator it;
   for (it = fps.begin(); it != fps.end(); ++it) {
     DvDirModelNode *child =
         new DvDirModelFileFolderNode(this, it->getWideString(), *it);
     addChild(child);
   }
+  DvDirModel::instance()->notifyEndInsertRows();
 }
 
 //-----------------------------------------------------------------------------
@@ -967,9 +1001,15 @@ DvDirModelNetworkNode::DvDirModelNetworkNode(DvDirModelNode *parent)
 //-----------------------------------------------------------------------------
 
 void DvDirModelNetworkNode::refreshChildren() {
-  m_childrenValid = true;
+  QModelIndex index = DvDirModel::instance()->getIndexByNode(this);
+  m_childrenValid   = true;
 
-  if (!m_children.empty()) clearPointerContainer(m_children);
+  if (!m_children.empty()) {
+    DvDirModel::instance()->notifyBeginRemoveRows(index, 0,
+                                                  m_children.size() - 1);
+    clearPointerContainer(m_children);
+    DvDirModel::instance()->notifyEndRemoveRows();
+  }
 
 #ifdef _WIN32
 
@@ -1002,7 +1042,10 @@ void DvDirModelNetworkNode::refreshChildren() {
               new DvDirModelFileFolderNode(this, wstr, TFilePath(wstr));
           child->setPeeking(false);
 
+          DvDirModel::instance()->notifyBeginInsertRows(
+              index, m_children.size(), m_children.size());
           addChild(child);
+          DvDirModel::instance()->notifyEndInsertRows();
         }
       }
     } else if (err != ERROR_NO_MORE_ITEMS)
@@ -1280,7 +1323,7 @@ void DvDirModelRootNode::refreshChildren() {
 //-----------------------------------------------------------------------------
 DvDirModelNode *DvDirModelRootNode::getNodeByPath(const TFilePath &path) {
   // Check first for version control nodes
-  DvDirModelNode *node = 0;
+  DvDirModelNode *node = 0 ;
   int i;
 
   // search in #1 the project folders, #2 sandbox, #3 other folders in file
@@ -1371,7 +1414,6 @@ DvDirModelNode *DvDirModelRootNode::getNodeByPath(const TFilePath &path) {
   if (m_networkNode) {
     QString pathStr = path.getQString();
     if (pathStr.startsWith("\\\\") || pathStr.startsWith("//")) {
-
       for (i = 0; i < m_networkNode->getChildCount(); i++) {
         DvDirModelNode *node = m_networkNode->getChild(i)->getNodeByPath(path);
         if (node) return node;
@@ -1458,14 +1500,11 @@ void DvDirModel::refresh(const QModelIndex &index) {
   if (!index.isValid()) return;
   DvDirModelNode *node = getNode(index);
   if (!node) return;
+
   emit layoutAboutToBeChanged();
-  bool emitBeginAndEnd = false;
-  int rc               = rowCount(index);
-  int cc               = node->getChildCount();
-  if (cc < rc) emitBeginAndEnd = true;
-  if (emitBeginAndEnd) emit beginRemoveRows(index, 0, node->getChildCount());
+
   node->refreshChildren();
-  if (emitBeginAndEnd) emit endRemoveRows();
+
   emit layoutChanged();
 }
 
@@ -1650,17 +1689,17 @@ DvDirModel *DvDirModel::instance() {
 void DvDirModel::onSceneSwitched() {
   DvDirModelRootNode *rootNode = dynamic_cast<DvDirModelRootNode *>(m_root);
   if (rootNode) {
-    int projectPaths = rootNode->getProjectPathsSize();
-    m_root->refreshChildren();
-    if (rootNode->getProjectPathsSize() != projectPaths) {
-      TProjectManager *pm   = TProjectManager::instance();
-      TFilePath projectPath = pm->getCurrentProjectPath().getParentDir();
-      QModelIndex index     = getIndexByPath(projectPath);
-      refresh(index);
-      emit(projectAdded());
-    }
     ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
     if (scene) {
+      int projectPaths = rootNode->getProjectPathsSize();
+      m_root->refreshChildren();
+      if (rootNode->getProjectPathsSize() != projectPaths) {
+        TProjectManager *pm   = TProjectManager::instance();
+        TFilePath projectPath = pm->getCurrentProjectPath().getParentDir();
+        QModelIndex index     = getIndexByPath(projectPath);
+        refresh(index);
+        emit(projectAdded());
+      }
       if (scene->isUntitled())
         rootNode->setSceneLocation(TFilePath());
       else

@@ -1,29 +1,36 @@
+// Enable Unicode on Windows
 #ifdef _WIN32
 #ifndef UNICODE
 #define UNICODE
 #endif
 #endif
 
+// Standard C++ headers
 #include <memory>
+#include <set>
 
-#include "tsystem.h"
-//#include "tunicode.h"
-#include "tfilepath_io.h"
-#include "tconvert.h"
-
+// Standard C headers
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
-#include <set>
-#include <tenv.h>
 
+// Project-specific headers
+#include "tsystem.h"
+//#include "tunicode.h"  // Uncomment if needed
+#include "tfilepath_io.h"
+#include "tconvert.h"
+#include "tenv.h"
+
+// Undefine PLATFORM to avoid conflicts
 #undef PLATFORM
 
+// Disable specific warnings on MSVC
 #ifdef _MSC_VER
 #pragma warning(disable : 4996)
 #endif
 
+// Platform-specific headers and definitions
 #ifdef _WIN32
 #define PLATFORM WIN32
 #include <process.h>
@@ -32,11 +39,11 @@
 #include <stdlib.h>
 #include <direct.h>
 #include <shellapi.h>
-// gmt: sulla mia macchina cosi' non compila!!!
-// #include "winsock2.h"
-// #include "lmcons.h"
 #include <sys/utime.h>
 #include <lm.h>
+// gmt: On my machine, this doesn't compile!!!
+// #include "winsock2.h"
+// #include "lmcons.h"
 #endif
 
 #ifdef LINUX
@@ -45,9 +52,7 @@
 #include <utime.h>
 #include <sys/param.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <dirent.h>
 #include <sys/dir.h>
 #include <sys/sysinfo.h>
@@ -56,8 +61,9 @@
 #include <pwd.h>
 #include <mntent.h>
 #include <dlfcn.h>
-#include <utime.h>
 #include <sys/time.h>
+
+// Qt headers for Linux
 #include <QDir>
 #include <QFileInfo>
 #include <QStorageInfo>
@@ -85,26 +91,22 @@
 #define pagetok(__nb) ((__nb) * (getpagesize()))
 #endif
 
-
-#if defined(MACOSX)
+#ifdef MACOSX
 #define PLATFORM MACOSX
 #include <grp.h>
 #include <utime.h>
 #include <sys/param.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <dirent.h>
 #include <sys/dir.h>
-#include <sys/param.h>  // for getfsstat
 #include <sys/ucred.h>
 #include <sys/mount.h>
 #include <pwd.h>
 #include <dlfcn.h>
 
+// macOS-specific headers
 #include "Carbon/Carbon.h"
-
 #endif
 
 #ifdef __sgi
@@ -118,9 +120,7 @@
 #include <sys/statfs.h>
 #include <pwd.h>
 #include <mntent.h>
-
 #include <dlfcn.h>
-
 #endif
 
 #ifdef HAIKU
@@ -131,13 +131,10 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <dirent.h>
 #include <pwd.h>
 #include <dlfcn.h>
-#include <utime.h>
 #include <sys/time.h>
-
 #endif
 
 #ifndef PLATFORM
@@ -284,7 +281,7 @@ TINT64 TSystem::getFreeMemorySize(bool onlyPhysicalMemory) {
   }
 
   free(table);
-  totalFree = virtualFree << 4 + physicalFree;
+  totalFree = (virtualFree << 4) + physicalFree;
 
 #elif defined(LINUX)
 

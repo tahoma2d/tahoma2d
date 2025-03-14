@@ -84,7 +84,7 @@ TLevelWriterGif::~TLevelWriterGif() {
   QString palette;
   double framerate = (m_frameRate < 1.0 ? 1.0 : m_frameRate);
 
-  QString filters = "fps=" + QString::number(framerate) +
+  QString filters = "[0:v]fps=" + QString::number(framerate) +
                     ",scale=" + QString::number(outLx) + ":" +
                     QString::number(outLy) + ":flags=lanczos";
 
@@ -92,48 +92,60 @@ TLevelWriterGif::~TLevelWriterGif() {
   const char *ditherConsts[4] = {"none", "sierra2_4a", "bayer:bayer_scale=2",
                                  "bayer:bayer_scale=1"};
 
-  // Please be careful when moving items, logic AND 3 requires alignment
-  switch (m_mode) {
+  // Handle all modes
+ switch (m_mode) {
+  // GLOBAL modes (0-3)
   case 0:
   case 1:
   case 2:
   case 3:
-    filters += ",split[o1][o2];[o1]palettegen";  // "stats_mode=full" is default
+    filters += ",split[x][y];[x]palettegen";  // "stats_mode=full" is default
     if (m_maxcolors != 256) {
       filters += "=max_colors=" + QString::number(m_maxcolors);
     }
-    filters += "[p];[o2]fifo[o3];[o3][p]paletteuse";
+    filters += "[p];[y][p]paletteuse";
     if ((m_mode & 3) != 1) {
       filters += "=dither=" + QString(ditherConsts[m_mode & 3]);
     }
+    filters += "[out]";
     break;
+
+  // DIFF modes (4-7)
   case 4:
   case 5:
   case 6:
   case 7:
-    filters += ",split[o1][o2];[o1]palettegen=stats_mode=diff";
+    filters += ",split[x][y];[x]palettegen=stats_mode=diff";
     if (m_maxcolors != 256) {
       filters += ":max_colors=" + QString::number(m_maxcolors);
     }
-    filters += "[p];[o2]fifo[o3];[o3][p]paletteuse";
+    filters += "[p];[y][p]paletteuse";
     if ((m_mode & 3) != 1) {
       filters += "=dither=" + QString(ditherConsts[m_mode & 3]);
     }
+    filters += "[out]";
     break;
+
+  // NEW modes (8-11)
   case 8:
   case 9:
   case 10:
   case 11:
-    filters += ",split[o1][o2];[o1]palettegen=stats_mode=single";
+    filters += ",split[x][y];[x]palettegen=stats_mode=single";
     if (m_maxcolors != 256) {
       filters += ":max_colors=" + QString::number(m_maxcolors);
     }
-    filters += "[p];[o2]fifo[o3];[o3][p]paletteuse=new=1";
+    filters += "[p];[y][p]paletteuse=new=1";
     if ((m_mode & 3) != 1) {
       filters += ":dither=" + QString(ditherConsts[m_mode & 3]);
     }
+    filters += "[out]";
     break;
+
+  // Default case (12 - NOPAL)
   default:
+    // For the no-palette mode, we'll use a simpler filter chain
+    filters += "[out]";
     break;
   }
 #if 0
@@ -155,6 +167,7 @@ TLevelWriterGif::~TLevelWriterGif() {
   }
 #endif
 
+  // Set up FFmpeg arguments
   preIArgs << "-r";
   preIArgs << QString::number(framerate);
   preIArgs << "-v";
@@ -171,8 +184,12 @@ TLevelWriterGif::~TLevelWriterGif() {
     postIArgs << filters;
   }
 #endif
-  postIArgs << "-vf";
+  postIArgs << "-filter_complex";
   postIArgs << filters;
+  postIArgs << "-map";
+  postIArgs << "[out]";
+  postIArgs << "-f";
+  postIArgs << "gif";
   postIArgs << "-gifflags";
   postIArgs << "0";
 
