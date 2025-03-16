@@ -12,6 +12,7 @@
 #include "imagebuilders.h"
 
 #include "toonz/stageplayer.h"
+#include "toonz/tstageobjecttree.h"
 
 #include "toonz/toonzscene.h"
 
@@ -61,17 +62,19 @@ TImageP Stage::Player::image() const {
 
   std::string id = m_sl->getImageId(m_fid);
   int slType     = m_sl->getType();
+  ImageLoader::BuildExtData extData(m_sl, m_fid);
 
   if (slType == PLI_XSHLEVEL && TXshSimpleLevel::m_rasterizePli) {
     if (!(m_isCurrentColumn && m_isCurrentXsheetLevel)) id = id + "_rasterized";
-  }
+    if(m_xsh)
+      extData.currentCamera = m_xsh->getStageObjectTree()->getCurrentCamera();
+  }  // use cameraDpi to rasterize vector
+        
 
   if (TXshSimpleLevel::m_fillFullColorRaster &&
       (slType == OVL_XSHLEVEL || slType == TZI_XSHLEVEL))
     id = id + "_filled";
 
-  ImageLoader::BuildExtData extData(
-      m_sl, m_fid, 0, false, m_sl->getScene()->decodeFilePath(m_sl->getPath()));
   return ImageManager::instance()->getImage(id, ImageManager::none, &extData);
 }
 
