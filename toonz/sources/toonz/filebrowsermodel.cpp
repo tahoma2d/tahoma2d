@@ -30,6 +30,9 @@
 #ifdef MACOSX
 #include <Cocoa/Cocoa.h>
 #endif
+#ifdef LINUX
+#include <QStandardPaths>
+#endif
 
 namespace {
 TFilePath getMyDocumentsPath() {
@@ -72,6 +75,15 @@ TFilePath getDesktopPath() {
   NSString *desktopDirectory = [foundref objectAtIndex:0];
   return TFilePath((const char *)[desktopDirectory
       cStringUsingEncoding:NSASCIIStringEncoding]);
+#elif defined LINUX
+  QString desktopPath =
+      QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+  if (desktopPath.isEmpty()) {
+    QDir dir = QDir::home();
+    if (!dir.cd("Desktop")) return TFilePath();
+    desktopPath = dir.absolutePath();
+  }
+  return TFilePath(desktopPath.toStdString());
 #else
   QDir dir = QDir::home();
   if (!dir.cd("Desktop")) return TFilePath();
