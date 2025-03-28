@@ -191,7 +191,7 @@ static void drawFirstControlPoint(const TVectorRenderData &rd,
 
   glPushMatrix();
   tglMultMatrix(rd.m_aff);
-  if (!rd.m_animatedGuidedDrawing) glLineWidth(2.0f);
+  if (!rd.m_animatedGuidedDrawing) glLineWidth(2.0f * rd.m_devPixRatio);
   glColor3d(0.0, 1.0, 0.0);
   if (!rd.m_animatedGuidedDrawing) {
     drawArrows(stroke, false);
@@ -235,7 +235,7 @@ static void drawFirstControlPoint(const TVectorRenderData &rd,
     glEnd();
   }
 
-  glLineWidth(1.0f);
+  glLineWidth(1.0f * rd.m_devPixRatio);
   glPopMatrix();
 }
 

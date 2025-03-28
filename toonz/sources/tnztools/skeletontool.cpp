@@ -1432,9 +1432,13 @@ void SkeletonTool::drawMainGadget(const TPointD &center) {
 //-------------------------------------------------------------------
 
 void SkeletonTool::draw() {
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
   // parent object reference system
   // glColor3d(1,0,0);
   // tglDrawRect(0,0,100,100);
+
+  glLineWidth(1.0 * devPixRatio);
 
   if (m_label != "")
     ToolUtils::drawBalloon(m_labelPos, m_label, TPixel32::Red, TPoint(20, -20),

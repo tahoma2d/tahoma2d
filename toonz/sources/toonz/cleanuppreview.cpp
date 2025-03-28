@@ -24,6 +24,7 @@
 
 // TnzQt includes
 #include "toonzqt/icongenerator.h"
+#include "toonzqt/gutil.h"
 #include "historytypes.h"
 
 // Toonz includes
@@ -616,8 +617,11 @@ void CameraTestTool::drawClosestFieldCamera(double pixelSize) {
 //--------------------------------------------------------------------------
 
 void CameraTestTool::draw() {
+  int devPixRatio  = getDevicePixelRatio();
   double pixelSize = getPixelSize();
   glPushMatrix();
+
+  glLineWidth(1.0 * devPixRatio);
 
   CleanupParameters *cp =
       CleanupSettingsModel::instance()->getCurrentParameters();

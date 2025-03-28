@@ -1302,6 +1302,10 @@ void EditTool::draw() {
   /*-- Show nothing on Level Editing mode --*/
   if (TTool::getApplication()->getCurrentFrame()->isEditingLevel()) return;
 
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
+  glLineWidth(1.0 * devPixRatio);
+
   // if the column and its children are all hidden, only draw fx gadgets
   if (!transformEnabled()) {
     m_fxGadgetController->draw(isPicking());

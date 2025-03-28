@@ -43,6 +43,7 @@
 
 #include "toonz/txshcell.h"
 #include "toonzqt/imageutils.h"
+#include "toonzqt/gutil.h"
 #include "autofill.h"
 
 #include "historytypes.h"
@@ -2949,6 +2950,10 @@ void FillTool::onFrameSwitched() {
 //-----------------------------------------------------------------------------
 
 void FillTool::draw() {
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
+  glLineWidth((1.0 * devPixRatio));
+
   if (m_fillOnlySavebox.getValue()) {
     TToonzImageP ti = (TToonzImageP)getImage(false);
     if (ti) {

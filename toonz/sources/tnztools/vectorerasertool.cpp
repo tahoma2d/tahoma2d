@@ -18,6 +18,8 @@
 #include "toonz/stage2.h"
 #include "toonz/preferences.h"
 
+#include "toonzqt/gutil.h"
+
 // TnzBase includes
 #include "tenv.h"
 
@@ -475,6 +477,8 @@ void EraserTool::updateTranslation() {
 //-----------------------------------------------------------------------------
 
 void EraserTool::draw() {
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
   if (!m_multi.getIndex() && m_pointSize <= 0) return;
 
   double pixelSize2 = getPixelSize() * getPixelSize();
@@ -482,6 +486,9 @@ void EraserTool::draw() {
 
   TImageP image(getImage(false));
   TVectorImageP vi = image;
+
+  glLineWidth(1.0 * devPixRatio);
+
   if (vi) {
 //    bool blackBg = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg;
 //    TPixel color = blackBg ? TPixel32::White : TPixel32::Red;

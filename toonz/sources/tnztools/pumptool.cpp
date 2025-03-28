@@ -19,6 +19,8 @@
 #include "toonz/tobjecthandle.h"
 #include "toonz/txshlevelhandle.h"
 
+#include "toonzqt/gutil.h"
+
 // TnzTools includes
 #include "tools/tool.h"
 #include "tools/toolutils.h"
@@ -165,6 +167,8 @@ void PumpTool::onEnter() {
 //----------------------------------------------------------------------
 
 void PumpTool::draw() {
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
   if (!m_draw || !m_enabled) return;
 
   TVectorImageP vi = TImageP(getImage(false));
@@ -174,6 +178,9 @@ void PumpTool::draw() {
 
   TPalette *palette = vi->getPalette();
   assert(palette);
+
+  glLineWidth(1.0 * devPixRatio);
+
   if (m_active) {
     // Editing with the tool
     assert(m_outStroke);

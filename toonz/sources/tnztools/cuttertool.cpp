@@ -19,6 +19,7 @@
 
 #include "toonzqt/imageutils.h"
 #include "toonzqt/tselectionhandle.h"
+#include "toonzqt/gutil.h"
 
 #include "tgl.h"
 
@@ -186,6 +187,8 @@ public:
     // glPushMatrix();
     // tglMultMatrix(viewMatrix);
 
+    int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
     const double pixelSize = getPixelSize();
 
     double len = m_cursor.thick + 15 * pixelSize;
@@ -198,6 +201,8 @@ public:
       v = normalize(v);
 
       v = v * (len);
+
+      glLineWidth(1.0 * devPixRatio);
 
       tglColor(TPixelD(0.1, 0.9, 0.1));
       tglDrawSegment(p - v, p + v);

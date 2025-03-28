@@ -18,6 +18,8 @@
 #include "tconst.h"
 #include "toonz/tframehandle.h"
 
+#include "toonzqt/gutil.h"
+
 //----------------------------------------------------------------------------------------------
 
 RulerTool::RulerTool()
@@ -51,7 +53,10 @@ void RulerTool::onImageChanged() {
 //----------------------------------------------------------------------------------------------
 
 void RulerTool::draw() {
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
   /*--- 始点が設定されていたら、描画 ---*/
+  glLineWidth(1.0 * devPixRatio);
   if (m_firstPos != TConst::nowhere) {
     tglColor((m_dragMode == MoveFirstPos) ? TPixel32(51, 204, 26)
                                           : TPixel32::Red);

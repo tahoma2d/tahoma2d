@@ -39,6 +39,8 @@
 #include "toonz/txshlevelhandle.h"
 #include "toonz/tstageobject.h"
 
+#include "toonzqt/gutil.h"
+
 #include "ext/StrokeDeformation.h"
 #include "ext/SmoothDeformation.h"
 #include "ext/OverallDesigner.h"
@@ -421,6 +423,8 @@ void PinchTool::onImageChanged() {
 //-----------------------------------------------------------------------------
 
 void PinchTool::draw() {
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
   GLMatrixGuard guard;
 
   TVectorImageP img(getImage(true));
@@ -435,12 +439,13 @@ void PinchTool::draw() {
 
   StrokeDeformation *deformation = m_deformation;
 
-  OverallDesigner designer((int)m_curr.x, (int)m_curr.y);
+  OverallDesigner designer((int)m_curr.x, (int)m_curr.y, devPixRatio);
 
   // m_active == true means that a button down is done (drag)
   if (!m_active) {
     if (m_cursorEnabled) {
       glColor3d(1, 0, 1);
+      glLineWidth(1.0 * devPixRatio);
       if (m_cursor.thick > 0) tglDrawCircle(m_cursor, m_cursor.thick);
       tglDrawCircle(m_cursor, m_cursor.thick + 4 * status->pixelSize_);
     }

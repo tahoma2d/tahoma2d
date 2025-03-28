@@ -290,6 +290,8 @@ void TrackerTool::draw() {
   double pixelSize   = getPixelSize();
   int devPixRatio    = getDevicePixelRatio(m_viewer->viewerWidget());
 
+  glLineWidth(1.0 * devPixRatio);
+
   std::vector<TRectD> balloons;  // this is used to avoid balloons overlapping
   // draw hooks
   for (i = 0; i < hookSet->getHookCount(); i++) {

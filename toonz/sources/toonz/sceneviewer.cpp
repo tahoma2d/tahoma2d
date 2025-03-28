@@ -2107,6 +2107,8 @@ void SceneViewer::paintGL() {
     }
   }
 
+  glLineWidth(1.0 * getDevPixRatio());
+
   // Il freezed e' attivo ed e' in stato "normale": mostro l'immagine grabbata.
   if (m_freezedStatus == NORMAL_FREEZED) {
     assert(!!m_viewGrabImage);
@@ -2199,7 +2201,7 @@ void SceneViewer::drawScene() {
   m_minZ = 0;
   if (is3DView()) {
     Stage::OpenGlPainter painter(getViewMatrix(), clipRect, m_visualSettings,
-                                 true, false);
+                                 true, false, getDevPixRatio());
     painter.enableCamera3D(true);
     painter.setPhi(m_phi3D);
     int xsheetLevel = 0;
@@ -2304,7 +2306,7 @@ void SceneViewer::drawScene() {
     m_visualSettings.m_showBBox = viewBBoxToggle.getStatus();
 
     Stage::RasterPainter painter(viewerSize, viewAff, clipRect,
-                                 m_visualSettings, true);
+                                 m_visualSettings, true, getDevPixRatio());
 
     // darken blended view mode for viewing the non-cleanuped and stacked
     // drawings
@@ -2481,7 +2483,7 @@ void SceneViewer::drawSceneOverlay() {
 
   if (is3DView()) {
     Stage::OpenGlPainter painter(viewAff, clipRect, m_visualSettings, true,
-                                 false);
+                                 false, getDevPixRatio());
     painter.enableCamera3D(true);
     painter.setPhi(m_phi3D);
 
@@ -2496,7 +2498,7 @@ void SceneViewer::drawSceneOverlay() {
     TDimension viewerSize(width(), height());
 
     Stage::RasterPainter painter(viewerSize, viewAff, clipRect,
-                                 m_visualSettings, true);
+                                 m_visualSettings, true, getDevPixRatio());
 
     if (ri)
       painter.onRasterImage(ri.getPointer(), player);
@@ -3703,7 +3705,6 @@ void drawSpline(const TAffine &viewMatrix, const TRect &clipRect, bool camera3d,
         }
       }
     }
-    glLineWidth(1.0);
     glDisable(GL_LINE_SMOOTH);
     glDisable(GL_BLEND);
     glPopMatrix();
