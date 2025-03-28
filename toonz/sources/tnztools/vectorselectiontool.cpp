@@ -11,6 +11,7 @@
 #include "toonzqt/selectioncommandids.h"
 #include "toonzqt/tselectionhandle.h"
 #include "toonzqt/imageutils.h"
+#include "toonzqt/gutil.h"
 
 // TnzLib includes
 #include "toonz/txsheethandle.h"
@@ -1785,8 +1786,11 @@ void VectorSelectionTool::drawGroup(const TVectorImage &vi) {
 //-----------------------------------------------------------------------------
 
 void VectorSelectionTool::draw() {
+  int devPixRatio  = getDevicePixelRatio(m_viewer->viewerWidget());
   TVectorImageP vi = TImageP(getImage(false));
   if (!vi) return;
+
+  glLineWidth(1.0 * devPixRatio);
 
   if (isLevelType() || isSelectedFramesType()) {
     drawInLevelType(*vi);

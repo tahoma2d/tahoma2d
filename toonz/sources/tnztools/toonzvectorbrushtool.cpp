@@ -30,6 +30,8 @@
 #include "toonz/toonzfolders.h"
 #include "toonz/tstageobjectcmd.h"
 
+#include "toonzqt/gutil.h"
+
 // TnzCore includes
 #include "tstream.h"
 #include "tcolorstyles.h"
@@ -1982,6 +1984,10 @@ void ToonzVectorBrushTool::checkGuideSnapping(bool beforeMousePress,
 //-------------------------------------------------------------------------------------------------------------
 
 void ToonzVectorBrushTool::draw() {
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
+  glLineWidth(1.0 * devPixRatio);
+
   /*--ショートカットでのツール切り替え時に赤点が描かれるのを防止する--*/
   if (m_minThick == 0 && m_maxThick == 0 &&
       !Preferences::instance()->getShow0ThickLines())

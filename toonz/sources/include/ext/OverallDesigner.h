@@ -30,7 +30,7 @@ class DVAPI OverallDesigner final : public Designer {
   void setPosition();
 
 public:
-  OverallDesigner(int x, int y);
+  OverallDesigner(int x, int y, int devPixRaio);
   virtual ~OverallDesigner();
   void draw(SmoothDeformation *) override;
   void draw(CornerDeformation *) override;

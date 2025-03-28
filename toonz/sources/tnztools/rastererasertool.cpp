@@ -10,6 +10,7 @@
 
 // TnzQt includes
 #include "toonzqt/icongenerator.h"
+#include "toonzqt/gutil.h"
 
 // TnzLib includes
 #include "toonz/ttilesaver.h"
@@ -954,6 +955,10 @@ TPointD EraserTool::fixMousePos(TPointD pos, bool precise) {
 //------------------------------------------------------------------------
 
 void EraserTool::draw() {
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
+  glLineWidth(1.0 * devPixRatio);
+
   if (m_eraseType.getValue() == SEGMENTERASE && m_eraseOnlySavebox.getValue()) {
     TToonzImageP ti = (TToonzImageP)getImage(false);
     if (ti) {

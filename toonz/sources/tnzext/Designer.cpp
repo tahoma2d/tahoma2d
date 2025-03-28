@@ -6,7 +6,7 @@
 
 //-----------------------------------------------------------------------------
 
-ToonzExt::Designer::Designer() {}
+ToonzExt::Designer::Designer(int devPixRatio) : m_devPixRatio(devPixRatio) {}
 
 //-----------------------------------------------------------------------------
 

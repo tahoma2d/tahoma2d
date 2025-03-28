@@ -28,6 +28,7 @@
 
 #include "toonzqt/selection.h"
 #include "toonzqt/imageutils.h"
+#include "toonzqt/gutil.h"
 #include "trop.h"
 #include "toonz/ttileset.h"
 #include "toonz/glrasterpainter.h"
@@ -976,6 +977,8 @@ void TypeTool::updateMouseCursor(const TPointD &pos) {
 void TypeTool::draw() {
   if (!m_active || !getImage(false)) return;
 
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
   TFontManager *instance = TFontManager::instance();
 
   /*TAffine viewMatrix = getViewer()->getViewMatrix();
@@ -991,6 +994,8 @@ glPushMatrix();
   UINT size = m_string.size();
 
   TPoint descenderP(0, TFontManager::instance()->getLineDescender());
+
+  glLineWidth(1.0 * devPixRatio);
 
   for (int j = 0; j < (int)size; j++) {
     if (m_string[j].isReturn()) continue;

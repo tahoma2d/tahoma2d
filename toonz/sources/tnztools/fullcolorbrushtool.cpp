@@ -30,6 +30,8 @@
 #include "toonz/tcolumnhandle.h"
 #include "toonz/tstageobjectcmd.h"
 
+#include "toonzqt/gutil.h"
+
 // TnzCore includes
 #include "tgl.h"
 #include "tproperty.h"
@@ -824,7 +826,11 @@ void FullColorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 //-------------------------------------------------------------------------------------------------------------
 
 void FullColorBrushTool::draw() {
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
   if (TRasterImageP ri = TRasterImageP(getImage(false))) {
+    glLineWidth(1.0 * devPixRatio);
+
     if (m_isStraight) {
       tglColor(TPixel32::Red);
       tglDrawSegment(m_firstPoint, m_lastPoint);

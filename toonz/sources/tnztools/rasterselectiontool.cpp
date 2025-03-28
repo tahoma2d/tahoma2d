@@ -11,6 +11,7 @@
 #include "toonzqt/tselectionhandle.h"
 #include "toonzqt/imageutils.h"
 #include "toonz/txshlevelhandle.h"
+#include "toonzqt/gutil.h"
 
 using namespace ToolUtils;
 using namespace DragSelectionTool;
@@ -875,6 +876,10 @@ void RasterSelectionTool::draw() {
   TToonzImageP ti  = (TToonzImageP)image;
   TRasterImageP ri = (TRasterImageP)image;
   if (!ti && !ri) return;
+
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
+  glLineWidth(1.0 * devPixRatio);
 
   if (m_setSaveboxTool && m_modifySavebox.getValue()) {
     m_setSaveboxTool->draw();

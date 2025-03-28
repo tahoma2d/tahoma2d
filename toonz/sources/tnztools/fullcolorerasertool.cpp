@@ -21,6 +21,8 @@
 #include "toonz/levelproperties.h"
 #include "toonz/preferences.h"
 
+#include "toonzqt/gutil.h"
+
 // TnzBase includes
 #include "tenv.h"
 
@@ -1159,10 +1161,15 @@ void FullColorEraserTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 //----------------------------------------------------------------------------------------------------------
 
 void FullColorEraserTool::draw() {
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
   double pixelSize2 = getPixelSize() * getPixelSize();
   m_thick           = sqrt(pixelSize2) / 2.0;
   TRasterImageP img = (TRasterImageP)getImage(false);
   if (!img) return;
+
+  glLineWidth(1.0 * devPixRatio);
+  
 //  TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
 //                     ? TPixel32::White
 //                     : TPixel32::Black;

@@ -38,6 +38,7 @@
 
 #include "tools/stylepicker.h"
 #include "toonzqt/styleselection.h"
+#include "toonzqt/gutil.h"
 
 #include "cmrasterbrush.h"
 #include "symmetrytool.h"
@@ -442,6 +443,8 @@ void PaintBrushTool::fixMousePos(TPointD pos, bool precise) {
 //-----------------------------------------------------------------------------
 
 void PaintBrushTool::draw() {
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
   // If toggled off, don't draw brush outline
   if (!Preferences::instance()->isCursorOutlineEnabled()) return;
 
@@ -458,6 +461,7 @@ void PaintBrushTool::draw() {
   else
     glColor3d(1.0, 0.0, 0.0);
 
+  glLineWidth(1.0 * devPixRatio);
   drawEmptyCircle(tround(m_rasThickness.getValue().second), m_mousePos, true,
                   lx % 2 == 0, ly % 2 == 0);
   drawEmptyCircle(tround(m_rasThickness.getValue().first), m_mousePos, true,

@@ -43,6 +43,7 @@
 #include "tools/stylepicker.h"
 #include "toonzqt/tselectionhandle.h"
 #include "toonzqt/styleselection.h"
+#include "toonzqt/gutil.h"
 #include "historytypes.h"
 
 using namespace ToolUtils;
@@ -356,6 +357,8 @@ void FingerTool::updateTranslation() {
 //-----------------------------------------------------------------------------
 
 void FingerTool::draw() {
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
   if (m_pointSize == -1) {
     return;
   }
@@ -374,6 +377,8 @@ void FingerTool::draw() {
     glColor3d(0.5, 0.8, 0.8);
   else
     glColor3d(1.0, 0.0, 0.0);
+
+  glLineWidth(1.0 * devPixRatio);
 
   drawEmptyCircle(m_toolSize.getValue(), m_mousePos, true, lx % 2 == 0,
                   ly % 2 == 0);

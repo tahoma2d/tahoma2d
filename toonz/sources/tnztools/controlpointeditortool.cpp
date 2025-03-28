@@ -22,6 +22,7 @@
 #include "toonz/preferences.h"
 
 #include "toonzqt/tselectionhandle.h"
+#include "toonzqt/gutil.h"
 
 #include <QKeyEvent>
 
@@ -367,6 +368,10 @@ void ControlPointEditorTool::draw() {
     m_controlPointEditorStroke.setStroke((TVectorImage *)0, -1);
     return;
   }
+
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
+  glLineWidth(1.0 * devPixRatio);
 
   TPixel color1, color2;
   if (m_action == RECT_SELECTION)  // Disegna il rettangolo per la selezione

@@ -110,6 +110,8 @@ TPointD Selector::getUp() const {
 void Selector::draw(Designer *designer) {
   if (!strokeRef_ || !isVisible_) return;
 
+  int devPixRatio = designer->getDevPixRatio();
+
   pixel_size_ = designer ? sqrt(designer->getPixelSize2()) : 1.0;
 
   TPointD v = this->getUp(), n = normalize(rotate90(v));
@@ -121,6 +123,7 @@ void Selector::draw(Designer *designer) {
   TPointD p(pnt.x, pnt.y), up = p + v * height_, down = p - v * height_;
 
   glColor3fv(s_normalColor);
+  glLineWidth(1.0 * devPixRatio);
   glBegin(GL_LINES);
   tglVertex(down);
   tglVertex(up);

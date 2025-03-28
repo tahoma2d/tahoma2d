@@ -338,7 +338,11 @@ bool VectorizerSwatchArea::Swatch::event(QEvent *e) {
 //-----------------------------------------------------------------------------
 
 void VectorizerSwatchArea::Swatch::paintGL() {
+  int devPixRatio = getDevicePixelRatio();
+
   if (isEnabled()) {
+    glLineWidth(1.0 * devPixRatio);
+
     drawBackground();
 
     if (m_img) {
@@ -378,7 +382,7 @@ void VectorizerSwatchArea::Swatch::drawVectors() {
 
 void VectorizerSwatchArea::Swatch::drawInProgress() {
   glColor3d(1.0, 0.0, 0.0);
-  glLineWidth(3.0);
+  glLineWidth(3.0 * getDevPixRatio());
 
   pushGLWinCoordinates();
 
@@ -394,7 +398,7 @@ void VectorizerSwatchArea::Swatch::drawInProgress() {
 
   popGLCoordinates();
 
-  glLineWidth(1.0);
+  glLineWidth(1.0 * getDevPixRatio());
 }
 
 //*****************************************************************************

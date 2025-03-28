@@ -268,10 +268,12 @@ private:
 
   std::vector<TStroke *> m_guidedStrokes;
 
+  int m_devPixRatio;
+
 public:
   RasterPainter(const TDimension &dim, const TAffine &viewAff,
                 const TRect &rect, const ImagePainter::VisualSettings &vs,
-                bool checkFlags);
+                bool checkFlags, int devPixRatio = 1);
 
   void onImage(const Stage::Player &data) override;
   void onVectorImage(TVectorImage *vi, const Stage::Player &data);
@@ -349,10 +351,12 @@ class DVAPI OpenGlPainter final : public Visitor  // Yep, the name sucks...
 
   bool m_singleColumnEnabled;
 
+  int m_devPixRatio;
+
 public:
   OpenGlPainter(const TAffine &viewAff, const TRect &rect,
                 const ImagePainter::VisualSettings &vs, bool isViewer,
-                bool isAlphaEnabled);
+                bool isAlphaEnabled, int devPixRatio = 1);
 
   bool isViewer() const { return m_isViewer; }
   void enableCamera3D(bool on) { m_camera3d = on; }

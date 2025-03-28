@@ -34,6 +34,8 @@
 #include "toonz/onionskinmask.h"
 #include "toonz/tonionskinmaskhandle.h"
 
+#include "toonzqt/gutil.h"
+
 #include "tinbetween.h"
 
 #include <math.h>
@@ -308,10 +310,14 @@ void HookTool::drawHooks(HookSet *hookSet, const TFrameId &fid, bool isOnion) {
 void HookTool::draw() {
   // ToolUtils::drawRect(TRectD(10,10,110,110), TPixel32(255,200,200), 0xFFF0);
 
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
   // draw the current image bounding box
   const double v200 = 200.0 / 255.0;
   TImageP image     = getImage(false);
   if (!image) return;
+
+  glLineWidth(1.0 * devPixRatio);
 
   if (m_frameRange.getIndex() && m_firstClick) {
     tglColor(TPixel::Red);

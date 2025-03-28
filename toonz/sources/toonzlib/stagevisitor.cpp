@@ -363,7 +363,7 @@ int Picker::getRow() const {
 RasterPainter::RasterPainter(const TDimension &dim, const TAffine &viewAff,
                              const TRect &rect,
                              const ImagePainter::VisualSettings &vs,
-                             bool checkFlags)
+                             bool checkFlags, int devPixRatio)
     : Visitor(vs)
     , m_dim(dim)
     , m_viewAff(viewAff)
@@ -371,7 +371,8 @@ RasterPainter::RasterPainter(const TDimension &dim, const TAffine &viewAff,
     , m_maskLevel(0)
     , m_singleColumnEnabled(false)
     , m_checkFlags(checkFlags)
-    , m_doRasterDarkenBlendedView(false) {}
+    , m_doRasterDarkenBlendedView(false)
+    , m_devPixRatio(devPixRatio) {}
 
 //-----------------------------------------------------------------------------
 
@@ -921,6 +922,7 @@ void RasterPainter::onVectorImage(TVectorImage *vi,
   rd.m_show0ThickStrokes     = prefs.getShow0ThickLines();
   rd.m_regionAntialias       = prefs.getRegionAntialias();
   rd.m_animatedGuidedDrawing = prefs.getAnimatedGuidedDrawing();
+  rd.m_devPixRatio           = m_devPixRatio;
   if (player.m_onionSkinDistance != 0 &&
       (player.m_isCurrentColumn || player.m_isCurrentXsheetLevel)) {
     if (player.m_isGuidedDrawingEnabled == 3         // show guides on all
@@ -1156,7 +1158,7 @@ void RasterPainter::onToonzImage(TToonzImage *ti, const Stage::Player &player) {
 
 OpenGlPainter::OpenGlPainter(const TAffine &viewAff, const TRect &rect,
                              const ImagePainter::VisualSettings &vs,
-                             bool isViewer, bool alphaEnabled)
+                             bool isViewer, bool alphaEnabled, int devPixRatio)
     : Visitor(vs)
     , m_viewAff(viewAff)
     , m_clipRect(rect)
@@ -1167,7 +1169,8 @@ OpenGlPainter::OpenGlPainter(const TAffine &viewAff, const TRect &rect,
     , m_alphaEnabled(alphaEnabled)
     , m_paletteHasChanged(false)
     , m_minZ(0)
-    , m_singleColumnEnabled(false) {}
+    , m_singleColumnEnabled(false)
+    , m_devPixRatio(devPixRatio) {}
 
 //-----------------------------------------------------------------------------
 

@@ -20,6 +20,7 @@
 #include "toonz/stage.h"
 #include "tpixel.h"
 #include "toonzqt/menubarcommand.h"
+#include "toonzqt/gutil.h"
 
 #include "toonz/preferences.h"
 #include "toonzqt/gutil.h"
@@ -581,6 +582,10 @@ void ShiftTraceTool::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
 }
 
 void ShiftTraceTool::draw() {
+  int devPixRatio = getDevicePixelRatio(m_viewer->viewerWidget());
+
+  glLineWidth(1.0 * devPixRatio);
+
   updateData();
   drawControlRect();
   drawCurve();
