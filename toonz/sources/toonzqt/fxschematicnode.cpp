@@ -3232,7 +3232,8 @@ QPixmap FxSchematicColumnNode::getPixmap() {
       TXshCell cell = xsh->getCell(r0, getColumnIndex());
       TXshLevel *xl = cell.m_level.getPointer();
       if (xl)
-        return IconGenerator::instance()->getIcon(xl, cell.m_frameId, false);
+        return IconGenerator::instance()->getIcon(xl, cell.m_frameId,
+                                                  IconType::THUMBNAIL);
     }
   }
   return QPixmap();
