@@ -94,8 +94,8 @@ QPixmap LevelCastItem::getPixmap(bool isSelected) const {
   if (Preferences::instance()->getColumnIconLoadingPolicy() ==
       Preferences::LoadOnDemand)
     onDemand = !isSelected;
-  QPixmap icon = IconGenerator::instance()->getIcon(sl, sl->getFirstFid(),
-                                                    false, onDemand);
+  QPixmap icon = IconGenerator::instance()->getIcon(
+      sl, sl->getFirstFid(), IconType::THUMBNAIL, onDemand);
   return scalePixmapKeepingAspectRatio(icon, m_itemPixmapSize, Qt::transparent);
 }
 

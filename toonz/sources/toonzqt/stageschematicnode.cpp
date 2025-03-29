@@ -1834,8 +1834,8 @@ QPixmap StageSchematicColumnNode::getPixmap() {
             Preferences::LoadOnDemand)
           onDemand =
               stageScene->getColumnHandle()->getColumnIndex() != columnIndex;
-        return IconGenerator::instance()->getIcon(xl, cell.m_frameId, false,
-                                                  onDemand);
+        return IconGenerator::instance()->getIcon(
+            xl, cell.m_frameId, IconType::THUMBNAIL, onDemand);
       }
     }
   }

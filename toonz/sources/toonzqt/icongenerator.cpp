@@ -1371,11 +1371,12 @@ void IconGenerator::addTask(const std::string &id,
 //-----------------------------------------------------------------------------
 
 QPixmap IconGenerator::getIcon(TXshLevel *xl, const TFrameId &fid,
-                               bool filmStrip, bool onDemand) {
+                               IconType iconType, bool onDemand) {
   if (!xl) return QPixmap();
 
   if (TXshChildLevel *cl = xl->getChildLevel()) {
-    if (filmStrip) return QPixmap();
+    if (iconType == IconType::FiLMSTRIP || iconType == IconType::TOOLTIP)
+      return QPixmap();
 
     std::string id = XsheetIconRenderer::getId(cl, fid.getNumber() - 1);
     QPixmap pix;
@@ -1404,7 +1405,17 @@ QPixmap IconGenerator::getIcon(TXshLevel *xl, const TFrameId &fid,
     } else
       id = sl->getIconId(fid);
 
-    if (!filmStrip) id += "_small";
+    switch (iconType) {
+    case IconType::THUMBNAIL:
+      id += "_small";
+      break;
+    case IconType::TOOLTIP:
+      id += "_tooltip";
+      break;
+    case IconType::FiLMSTRIP:
+    default:
+      break;
+    }
 
     QPixmap pix;
     if (::getIcon(id, pix, xl->getSimpleLevel())) return pix;
@@ -1414,9 +1425,13 @@ QPixmap IconGenerator::getIcon(TXshLevel *xl, const TFrameId &fid,
     IconGenerator::Settings oldSettings = m_settings;
 
     // Disable transparency check for cast and xsheet icons
-    if (!filmStrip) m_settings = IconGenerator::Settings();
+    if (iconType != IconType::FiLMSTRIP) m_settings = IconGenerator::Settings();
 
-    TDimension iconSize = filmStrip ? m_iconSize : TDimension(80, 60);
+    TDimension iconSize =
+        iconType == IconType::FiLMSTRIP
+            ? m_iconSize
+            : (iconType == IconType::THUMBNAIL ? TDimension(80, 60)
+                                               : TDimension(160, 90));
 
     // storeIcon(id, QPixmap());
 
@@ -1542,6 +1557,39 @@ QPixmap IconGenerator::getSizedIcon(TXshLevel *xl, const TFrameId &fid,
 
 //-----------------------------------------------------------------------------
 
+void IconGenerator::addInvalidateTask(std::string id, TDimension iconSize,
+                                      TXshSimpleLevel *sl, const TFrameId &fid,
+                                      Settings settings) {
+  if (iconsMap.find(id) == iconsMap.end()) return;
+
+  int type = sl->getType();
+
+  switch (type) {
+  case OVL_XSHLEVEL:
+  case TZI_XSHLEVEL:
+    addTask(id, new RasterImageIconRenderer(id, iconSize, sl, fid));
+    break;
+  case PLI_XSHLEVEL:
+    removeIcon(id);
+    addTask(id, new VectorImageIconRenderer(id, iconSize, sl, fid, settings));
+    break;
+  case TZP_XSHLEVEL:
+    if (sl->getFrameStatus(fid) == TXshSimpleLevel::Scanned)
+      addTask(id, new RasterImageIconRenderer(id, iconSize, sl, fid));
+    else
+      addTask(id, new ToonzImageIconRenderer(id, iconSize, sl, fid, settings));
+    break;
+  case MESH_XSHLEVEL:
+    addTask(id, new MeshImageIconRenderer(id, iconSize, sl, fid, settings));
+    break;
+  default:
+    assert(false);
+    break;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void IconGenerator::invalidate(TXshLevel *xl, const TFrameId &fid,
                                bool onlyFilmStrip) {
   if (!xl) return;
@@ -1549,73 +1597,19 @@ void IconGenerator::invalidate(TXshLevel *xl, const TFrameId &fid,
   if (TXshSimpleLevel *sl = xl->getSimpleLevel()) {
     std::string id = sl->getIconId(fid);
 
-    int type = sl->getType();
-
-    switch (type) {
-    case OVL_XSHLEVEL:
-    case TZI_XSHLEVEL:
-      addTask(id, new RasterImageIconRenderer(id, getIconSize(), sl, fid));
-      break;
-    case PLI_XSHLEVEL:
-      removeIcon(id);
-      addTask(id, new VectorImageIconRenderer(id, getIconSize(), sl, fid,
-                                              m_settings));
-      break;
-    case TZP_XSHLEVEL:
-      if (sl->getFrameStatus(fid) == TXshSimpleLevel::Scanned)
-        addTask(id, new RasterImageIconRenderer(id, getIconSize(), sl, fid));
-      else
-        addTask(id, new ToonzImageIconRenderer(id, getIconSize(), sl, fid,
-                                               m_settings));
-      break;
-    case MESH_XSHLEVEL:
-      addTask(id, new MeshImageIconRenderer(id, getIconSize(), sl, fid,
-                                            m_settings));
-      break;
-    default:
-      assert(false);
-      break;
-    }
+    addInvalidateTask(id, getIconSize(), sl, fid, m_settings);
 
     if (onlyFilmStrip) return;
 
-    id += "_small";
-    if (iconsMap.find(id) == iconsMap.end()) return;
-
     // Not-filmstrip icons disable all checks
-    IconGenerator::Settings oldSettings = m_settings;
-    m_settings.m_transparencyCheck      = false;
-    m_settings.m_inkIndex               = -1;
-    m_settings.m_paintIndex             = -1;
-    m_settings.m_blackBgCheck           = false;
+    IconGenerator::Settings settings = m_settings;
+    settings.m_transparencyCheck     = false;
+    settings.m_inkIndex              = -1;
+    settings.m_paintIndex            = -1;
+    settings.m_blackBgCheck          = false;
 
-    switch (type) {
-    case OVL_XSHLEVEL:
-    case TZI_XSHLEVEL:
-      addTask(id, new RasterImageIconRenderer(id, TDimension(80, 60), sl, fid));
-      break;
-    case PLI_XSHLEVEL:
-      addTask(id, new VectorImageIconRenderer(id, TDimension(80, 60), sl, fid,
-                                              m_settings));
-      break;
-    case TZP_XSHLEVEL:
-      if (sl->getFrameStatus(fid) == TXshSimpleLevel::Scanned)
-        addTask(id,
-                new RasterImageIconRenderer(id, TDimension(80, 60), sl, fid));
-      else
-        addTask(id, new ToonzImageIconRenderer(id, TDimension(80, 60), sl, fid,
-                                               m_settings));
-      break;
-    case MESH_XSHLEVEL:
-      addTask(id, new MeshImageIconRenderer(id, TDimension(80, 60), sl, fid,
-                                            m_settings));
-      break;
-    default:
-      assert(false);
-      break;
-    }
-
-    m_settings = oldSettings;
+    addInvalidateTask(id + "_small", TDimension(80, 60), sl, fid, settings);
+    addInvalidateTask(id + "_tooltip", TDimension(160, 90), sl, fid, settings);
   } else if (TXshChildLevel *cl = xl->getChildLevel()) {
     if (onlyFilmStrip) return;
 

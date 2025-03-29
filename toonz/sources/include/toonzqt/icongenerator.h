@@ -11,6 +11,8 @@
 #include "timage.h"
 #include "tpixel.h"
 
+#include "toonz/txshsimplelevel.h"
+
 // Qt includes
 #include <QPixmap>
 #include <QThreadStorage>
@@ -63,6 +65,8 @@ class TOfflineGL;
             once an icon has been generated.
 */
 
+enum IconType { FiLMSTRIP = 0, THUMBNAIL, TOOLTIP };
+
 class DVAPI IconGenerator final : public QObject {
   Q_OBJECT
 
@@ -103,10 +107,15 @@ public:
   void remove(TStageObjectSpline *spline);
 
   // icons from toonz levels
-  QPixmap getIcon(TXshLevel *sl, const TFrameId &fid, bool filmStrip = true,
+  QPixmap getIcon(TXshLevel *sl, const TFrameId &fid,
+                  IconType iconType = IconType::FiLMSTRIP,
                   bool onDemand = false);
   QPixmap getSizedIcon(TXshLevel *sl, const TFrameId &fid, std::string newId,
                        TDimension dim = TDimension(0, 0));
+  void addInvalidateTask(std::string id, TDimension iconSize,
+                                        TXshSimpleLevel *sl,
+                                        const TFrameId &fid,
+                                        Settings settings);
   void invalidate(TXshLevel *sl, const TFrameId &fid,
                   bool onlyFilmStrip = false);
   void remove(TXshLevel *sl, const TFrameId &fid, bool onlyFilmStrip = false);
