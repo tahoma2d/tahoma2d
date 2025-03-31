@@ -2299,8 +2299,8 @@ QPixmap ColumnArea::getColumnIcon(int columnIndex) {
     QPixmap icon =
         zColumn ? FxIconPixmapManager::instance()->getFxIconPm(
                       zColumn->getZeraryColumnFx()->getZeraryFx()->getFxType())
-                : IconGenerator::instance()->getIcon(xl, cell.m_frameId, false,
-                                                     onDemand);
+            : IconGenerator::instance()->getIcon(xl, cell.m_frameId, false,
+                                                 onDemand);
     QRect thumbnailImageRect = o->rect(PredefinedRect::THUMBNAIL);
     if (thumbnailImageRect.isEmpty()) return QPixmap();
     // Adjust for folder indicator
