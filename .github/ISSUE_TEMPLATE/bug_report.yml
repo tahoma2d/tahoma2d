@@ -40,8 +40,9 @@ body:
       label: Software Version
       description: What version of the software are you running?
       options:
-        - 1.5.1
+        - 1.5.2
         - Nightly (Specify below)
+        - 1.5.1
         - 1.5.0
         - 1.4.5
         - 1.4.4
