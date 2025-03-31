@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.2] - 2025-03-31
+
+### Fixed
+
+- Fix canceling cell/column selection [#1721]
+- Fix Task Render/Cleanup failure (Linux) [#1709]
+- Fix startup crash due to incompatible DLLs [#1711]
+- Fix MOV transparency [#1713]
+- Fix camera loading crash + improve Sony configuration [#1733]
+- Fix Excessive Frame Range Tape lag [#1735]
+- Increase Size of Step Lines in Motion Path [#1750]
+- Fix Delete Style Color [#1754]
+- Disable mouse wheel in stopmotion control panel [#1763]
+- Fix Linux Desktop Path Detection Failure [#1777]
+- Fix project reload fail (OpenToonz port) [#1775[^6]]
+- Fix Failure when updating the folder node (OpenToonz port) [#1775[^6]]
+- Optimize Adjust Current Level to This Palette (OpenToonz port) [#1775[^6]]
+- Avoid endless loop for some small fonts (OpenToonz port) [#1775[^6]]
+- Fix File Browser Model Refreshing (OpenToonz port) [#1775[^6]]
+- Fix selection in File Browser (OpenToonz port) [#1775[^6]]
+- Fix Gif Export for newer FFmpeg versions (OpenToonz port) [#1775[^6]]
+- Fix Clean Up Palette Related Crash and cleanup parameters related adjustment (OpenToonz port) [#1775[^6]]
+
+### Other
+
+- Update Debian dependences doc [#1731]
+- Fix Testing Pull Requests (PRs) instructions [#1741]
+- Update Build Cache Management [#1742, #1744, #1746, #1748]
+- New deb-creator from Appimage script [#1760]
+- Build concurrently to reduce overall build time [#1761]
+- .desktop file comments (with translations) and keywords [#1762]
+- Create Debian Package for Tahoma2D [#1768, #1773]
+- Fix macOS Installer creation [#1787]
+- Include functional in place of removed xstddef (OpenToonz port) [#1775[^6]]
+- Remove any_iterator (OpenToonz port) [#1775[^6]]
+- Cleanup: Replace deprecated endl with Qt::endl and fix operator prece… (OpenToonz port) [#1775[^6]]
+- Update Webm Export (OpenToonz port) [#1775[^6]]
+
 ## [1.5.1] - 2025-02-03
 
 ### Added
@@ -127,10 +165,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix ffmpeg MP4/MOV color space [#1576]
 - Add MSVC DLLs to Windows Package [#1579]
 - Skip Stop Holds with Next/Previous Drawing [#1582]
-- Fix update sound after editing cells (OpenToonz Port) [#1535[^5]]
-- Macos undo freeze (OpenToonz Port) [#1535[^5]]
-- Refactor FFmpeg format check on launch (OpenToonz Port) [#1535[^5]]
-- Fix typo (OpenToonz Port) [#1535[^5]]
+- Fix update sound after editing cells (OpenToonz Port) [#1535[^5]]
+- Macos undo freeze (OpenToonz Port) [#1535[^5]]
+- Refactor FFmpeg format check on launch (OpenToonz Port) [#1535[^5]]
+- Fix typo (OpenToonz Port) [#1535[^5]]
 - Correct Minor Typos (OpenToonz Port) [#1535[^5]]
 
 ## [1.4.4] - 2024-08-01
@@ -148,18 +186,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Updated Chinese translations  [#1438]
-- Add horizontal scrollbar to file browser  [#1446]
-- Fix brush and eraser resizing  [#1450]
-- Fix empty Export Level popup  [#1455]
-- Fix missing undo Raster Create Frame  [#1459, #1480]
-- Fix level strip empty space selection and commands  [#1472]
-- Fix Windows key description for macOS  [#1481]
-- Fix Export Current Scene popup folder tree  [#1482]
-- Fix explicit holds created in implicit mode  [#1484]
-- Fix invisible drawing guides  [#1488]
-- Timeline duplicate created after original in Level Strip  [#1491]
-- Fix context menu in rename fields  [#1494]
+- Updated Chinese translations [#1438]
+- Add horizontal scrollbar to file browser [#1446]
+- Fix brush and eraser resizing [#1450]
+- Fix empty Export Level popup [#1455]
+- Fix missing undo Raster Create Frame [#1459, #1480]
+- Fix level strip empty space selection and commands [#1472]
+- Fix Windows key description for macOS [#1481]
+- Fix Export Current Scene popup folder tree [#1482]
+- Fix explicit holds created in implicit mode [#1484]
+- Fix invisible drawing guides [#1488]
+- Timeline duplicate created after original in Level Strip [#1491]
+- Fix context menu in rename fields [#1494]
 
 ## [1.4.2] - 2024-04-02
 
@@ -201,14 +239,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix segment erase + image change crash [#1368]
 - Fixed crash when holding Ctrl+Z while drawing. (OpenToonz port) [#1361]
 - Fixed deselect of hexlineedit after right click (OpenToonz port) [#1361]
-- Known vector fill glitch fix (OpenToonz port) [#1361]
+- Known vector fill glitch fix (OpenToonz port) [#1361]
 
 ## [1.4.0] - 2023-12-01
 
 Some features, when used, are saved to the scene file and will prevent the scene from opening in prior versions:
 - Scene Overlay Image
-- Floating point & Linear color space rendering (OpenToonz port)
-- Customizable column color filters (OpenToonz port)
+- Floating point & Linear color space rendering (OpenToonz port)
+- Customizable column color filters (OpenToonz port)
 
 ### Added
 
@@ -388,20 +426,20 @@ Some features, when used, are saved to the scene file and will prevent the scene
 
 ### Fixes
 
-- Fix software version check 
+- Fix software version check 
 - Fix Canon Import Image crash
 - Fix parent column indicators
 - Update thirdparty library binaries
-   - Includes updating libtiff to v4.2.0 to address security vulnerabilities
+ - Includes updating libtiff to v4.2.0 to address security vulnerabilities
 - Fix pen issues
-   - Fixes Drawing delay on vector and smart raster levels (Linux issue)
-   - Pen doesn't work in Schematic Viewer. (macOS/Linux issue)
+ - Fixes Drawing delay on vector and smart raster levels (Linux issue)
+ - Pen doesn't work in Schematic Viewer. (macOS/Linux issue)
 - Fix Implicit Hold issues
-   - Fixes Crash when cloning implicitly held cell
-   - Fixes Dragging drawings in cells causes issues
-   - Fixes Crash when merging Smart Raster Levels when the first column has a Stop-frame
-   - Fixes issue where New Level creation with Step > 1 creating explicit cells
-   - Fixes issue creating explicit cells for Implicit cells when collapsing to Subscene
+ - Fixes Crash when cloning implicitly held cell
+ - Fixes Dragging drawings in cells causes issues
+ - Fixes Crash when merging Smart Raster Levels when the first column has a Stop-frame
+ - Fixes issue where New Level creation with Step > 1 creating explicit cells
+ - Fixes issue creating explicit cells for Implicit cells when collapsing to Subscene
 - Fix Autofill toggle command crash
 - Fix Particle Control Port handling
 - Fix Linux plastic tool crash
@@ -410,16 +448,16 @@ Some features, when used, are saved to the scene file and will prevent the scene
 - Fix using favorite Vector Brush not drawing properly
 - Fix moving styles in palette
 - Fix output filename changing to dot
-- Fix loading TZP (OpenToonz port)
-- Fix Mov Settings Updating (OpenToonz port)
-- Fix SoapBubble Iwa fx (OpenToonz port)
-- Fix memory corruption caused by rapid project/scene change (OpenToonz port)
-- Fix preview range not to be negative (OpenToonz port)
-- Style Selection .isEmpty logic fix (OpenToonz port)
-- Fix crash on replacing level's parent directory while opening preview (OpenToonz port)
-- Fix Bokeh Fx White Artifacts (OpenToonz port)
-- Fix Fx obsolete parameter handling (OpenToonz port)
-- Fix Custom File Path Rule Bugs (OpenToonz port)
+- Fix loading TZP (OpenToonz port)
+- Fix Mov Settings Updating (OpenToonz port)
+- Fix SoapBubble Iwa fx (OpenToonz port)
+- Fix memory corruption caused by rapid project/scene change (OpenToonz port)
+- Fix preview range not to be negative (OpenToonz port)
+- Style Selection .isEmpty logic fix (OpenToonz port)
+- Fix crash on replacing level's parent directory while opening preview (OpenToonz port)
+- Fix Bokeh Fx White Artifacts (OpenToonz port)
+- Fix Fx obsolete parameter handling (OpenToonz port)
+- Fix Custom File Path Rule Bugs (OpenToonz port)
 
 ## [1.3.0] - 2022-05-06
 
@@ -823,9 +861,11 @@ Some features, when used, are saved to the scene file and will prevent the scene
 [^1]: Only the cell mark changes were taken from this PR. Rest will be in v1.5
 [^2]: Only the UHD changes were taken from this PR. Rest will be in v1.5
 [^3]: Only changes related to scene saving were taken from this PR. Rest will be in v1.5
-[^4]: Only fixes applicable for this release were applied.  Rest will be in v1.5
-[^5]: Only fixes from this OpentToonz port PR were applied to this release.  Rest will be in v1.5
+[^4]: Only fixes applicable for this release were applied. Rest will be in v1.5
+[^5]: Only fixes from this OpentToonz port PR were applied to this release. Rest will be in v1.5
+[^6]: A few fixes from this OpentToonz port PR were moved to the v1.5.3 fix release
 
+[1.5.2]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/tahoma2d/tahoma2d/compare/v1.5...v1.5.1
 [1.5.0]: https://github.com/tahoma2d/tahoma2d/compare/v1.4.5...v1.5
 [1.4.5]: https://github.com/tahoma2d/tahoma2d/compare/v1.4.4...v1.4.5

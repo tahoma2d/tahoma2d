@@ -62,7 +62,13 @@ sed -e"s/$OLDFULLVERSION/$NEWFULLVERSION/" appveyor.yml >| tmp.txt
 unix2dos tmp.txt
 mv tmp.txt appveyor.yml
 
-# ci-scripts/osx/tahoma-buildpkg.sh
+# ci-scripts/linux/tahoma-buildpkg.sh
+dos2unix ci-scripts/linux/tahoma-buildpkg.sh
+sed -e"s/$USEOLDVERSION/$USENEWVERSION/" ci-scripts/linux/tahoma-buildpkg.sh >| tmp.txt
+unix2dos tmp.txt
+mv tmp.txt ci-scripts/linux/tahoma-buildpkg.sh
+
+# ci-scripts/osx/tahoma-buildpkg.sh0
 dos2unix ci-scripts/osx/tahoma-buildpkg.sh
 sed -e"s/$USEOLDVERSION/$USENEWVERSION/" ci-scripts/osx/tahoma-buildpkg.sh >| tmp.txt
 unix2dos tmp.txt
@@ -73,6 +79,13 @@ dos2unix toonz/cmake/BundleInfo.plist.in
 sed -e"s/$OLDFULLVERSION/$NEWFULLVERSION/" toonz/cmake/BundleInfo.plist.in >| tmp.txt
 unix2dos tmp.txt
 mv tmp.txt toonz/cmake/BundleInfo.plist.in
+
+# toonz/installer/linux/deb-creator/deb-template/DEBIAN/control
+dos2unix toonz/installer/linux/deb-creator/deb-template/DEBIAN/control
+
+sed -e"s/Version: $USEOLDVERSION/Version: $USENEWVERSION/" -e"s/Description: Tahoma 2D Version $USEOLDVERSION/Description: Tahoma 2D Version $USENEWVERSION/" toonz/installer/linux/deb-creator/deb-template/DEBIAN/control >| tmp.txt
+unix2dos tmp.txt
+mv tmp.txt toonz/installer/linux/deb-creator/deb-template/DEBIAN/control
 
 # toonz/installer/windows/setup.iss
 dos2unix toonz/installer/windows/setup.iss
