@@ -64,7 +64,7 @@ exec_with_assert "pkgbuild --root #{VIRTUAL_ROOT} --component-plist #{PKG_PLIST}
 
 # Generate if distribution.xml does not exist
 DIST_XML = "#{BUILD_DIR}/distribution.xml"
-unless File.exists? DIST_XML then
+unless File.exist? DIST_XML then
     exec_with_assert "productbuild --synthesize --package #{PKG_TMP} #{DIST_XML}"
     exec_with_assert "gsed -i -e \"3i <title>Tahoma2D</title>\" #{DIST_XML}"
 end
