@@ -1,5 +1,5 @@
 #!/bin/bash
-export TAHOMA2DVERSION=1.5.1
+export TAHOMA2DVERSION=1.5.2
 
 source /opt/qt515/bin/qt515-env.sh
 
