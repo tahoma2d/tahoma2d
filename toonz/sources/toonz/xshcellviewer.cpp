@@ -3977,10 +3977,18 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
   } else
     m_viewer->stopAutoPan();
 
-  m_pos = pos;
-  CellPosition cellPosition = m_viewer->xyToPosition(pos);
-  int row                   = cellPosition.frame();
-  int col                   = cellPosition.layer();
+  CellPosition cellPosition = m_viewer->xyToPosition(m_pos);
+  int oldRow                = cellPosition.frame();
+  int oldCol                = cellPosition.layer();
+
+  m_pos        = pos;
+  cellPosition = m_viewer->xyToPosition(pos);
+  int row      = cellPosition.frame();
+  int col      = cellPosition.layer();
+
+  if (QToolTip::isVisible() && (oldRow != row || oldCol != col))
+    QToolTip::hideText();
+
   if (getDragTool()) {
     getDragTool()->onDrag(event);
     if (m_keyHighlight != QPoint(-1, -1))
