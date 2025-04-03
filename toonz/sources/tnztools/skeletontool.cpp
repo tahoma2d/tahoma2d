@@ -1373,6 +1373,8 @@ void SkeletonTool::drawDrawingBrowser(const TXshCell &cell,
 void SkeletonTool::drawMainGadget(const TPointD &center) {
   assert(glGetError() == GL_NO_ERROR);
 
+  int devPixRatio = m_viewer->getDevPixRatio();
+
   double r  = 10 * getPixelSize();
   double cx = center.x + r * 1.1;
   double cy = center.y - r * 1.1;
@@ -1386,7 +1388,7 @@ void SkeletonTool::drawMainGadget(const TPointD &center) {
     return;
   }
 
-  QImage img(19, 19, QImage::Format_ARGB32);
+  QImage img(19 * devPixRatio, 19 * devPixRatio, QImage::Format_ARGB32);
   img.fill(Qt::transparent);
   QPainter p(&img);
   // p.setRenderHints(QPainter::Antialiasing|QPainter::TextAntialiasing);
@@ -1394,9 +1396,9 @@ void SkeletonTool::drawMainGadget(const TPointD &center) {
   QPainterPath pp;
   int dx = 1, dy = 0;
   for (int i = 0; i < 4; i++) {
-    int x = 9 + dx * 8;
-    int y = 9 + dy * 8;
-    pp.moveTo(9, 9);
+    int x = 9 * devPixRatio + dx * 8 * devPixRatio;
+    int y = 9 * devPixRatio + dy * 8 * devPixRatio;
+    pp.moveTo(9 * devPixRatio, 9 * devPixRatio);
     pp.lineTo(x, y);
     pp.lineTo(x - 2 * dx - 2 * dy, y - 2 * dy + 2 * dx);
     pp.moveTo(x, y);
@@ -1406,18 +1408,19 @@ void SkeletonTool::drawMainGadget(const TPointD &center) {
     dy    = d;
   }
 
-  p.setPen(QPen(Qt::white, 3));
+  p.setPen(QPen(Qt::white, 3 * devPixRatio));
   p.drawPath(pp);
-  p.setPen(Qt::black);
+  p.setPen(QPen(Qt::black, 1 * devPixRatio));
   p.drawPath(pp);
 
   p.setBrush(QColor(54, 213, 54));
-  p.drawRect(6, 6, 6, 6);
+  p.drawRect(6 * devPixRatio, 6 * devPixRatio, 6 * devPixRatio,
+             6 * devPixRatio);
   QImage texture = img.mirrored().convertToFormat(QImage::Format_RGBA8888);
   // texture.save("c:\\urka.png");
 
   glRasterPos2f(center.x + r * 1.1, center.y - r * 1.1);
-  glBitmap(0, 0, 0, 0, -9, -9, NULL);
+  glBitmap(0, 0, 0, 0, -9 * devPixRatio, -9 * devPixRatio, NULL);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDrawPixels(texture.width(), texture.height(), GL_RGBA, GL_UNSIGNED_BYTE,
