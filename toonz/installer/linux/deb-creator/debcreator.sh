@@ -236,6 +236,13 @@ function _updateInstalledSize() {
     echo "[INFO] Installed size updated to $installed_size KB"
 }
 
+function _postBuildCleanup() {
+    echo "[INFO] Post-build cleanup: Removing $temp_extract/squashfs-root"
+    rm -rf "$temp_extract/squashfs-root"
+    echo "[INFO] Post-build cleanup: Removing $final_folder"
+    rm -rf "$final_folder"
+}
+
 # ======================================================================
 # Main 
 # ======================================================================
@@ -270,6 +277,7 @@ function _main() {
     _updateInstalledSize
     _setPermissions
     _createDeb
+    _postBuildCleanup
 }
 
 _main "$@"
