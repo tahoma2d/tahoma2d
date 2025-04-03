@@ -1452,6 +1452,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {levelNameDisplayType, tr("Level Name Display:")},
       {showFrameNumberWithLetters,
        tr("Show \"ABC\" Appendix to the Frame Number in Scene Cell")},
+      {showImagesInCellTooltip, tr("Show Images in Cell Tooltips")},
 
       // Animation
       {keyframeType, tr("Default Interpolation:")},
@@ -2203,6 +2204,7 @@ QWidget* PreferencesPopup::createXsheetPage() {
   insertDualUIs(showDragBars, timelineLayoutPreference, lay,
                 QList<ComboBoxItem>(),
                 getComboItemList(timelineLayoutPreference));
+  insertUI(showImagesInCellTooltip, lay);
   insertUI(DragCellsBehaviour, lay, getComboItemList(DragCellsBehaviour));
   insertUI(pasteCellsBehavior, lay, getComboItemList(pasteCellsBehavior));
   insertUI(ignoreAlphaonColumn1Enabled, lay);

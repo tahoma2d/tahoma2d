@@ -4092,22 +4092,26 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
     if (isSoundTextColumn)
       m_tooltip = cell.getSoundTextLevel()->getFrameText(
           cell.m_frameId.getNumber() - 1);
-    else if (Preferences::instance()->isShowFrameNumberWithLettersEnabled()) {
-      m_tooltip =
-          (fid.isEmptyFrame() || fid.isNoFrame())
-              ? QString::fromStdWString(levelName)
-              : QString::fromStdWString(levelName) + QString(" ") +
-                    m_viewer->getFrameNumberWithLetters(fid.getNumber());
-      if (cell.getSimpleLevel() && !fid.isStopFrame()) m_tooltipCell = cell;
-    } else {
-      QString frameNumber("");
-      if (fid.getNumber() >= 0) frameNumber = QString::number(fid.getNumber());
-      if (!fid.getLetter().isEmpty()) frameNumber += fid.getLetter();
-      m_tooltip =
-          QString((frameNumber.isEmpty()) ? QString::fromStdWString(levelName)
-                                          : QString::fromStdWString(levelName) +
-                                                QString(" ") + frameNumber);
-      if (cell.getSimpleLevel() && !fid.isStopFrame()) m_tooltipCell = cell;
+    else {
+      if (Preferences::instance()->isShowFrameNumberWithLettersEnabled()) {
+        m_tooltip =
+            (fid.isEmptyFrame() || fid.isNoFrame())
+                ? QString::fromStdWString(levelName)
+                : QString::fromStdWString(levelName) + QString(" ") +
+                      m_viewer->getFrameNumberWithLetters(fid.getNumber());
+      } else {
+        QString frameNumber("");
+        if (fid.getNumber() >= 0)
+          frameNumber = QString::number(fid.getNumber());
+        if (!fid.getLetter().isEmpty()) frameNumber += fid.getLetter();
+        m_tooltip = QString((frameNumber.isEmpty())
+                                ? QString::fromStdWString(levelName)
+                                : QString::fromStdWString(levelName) +
+                                      QString(" ") + frameNumber);
+      }
+      if (Preferences::instance()->isShowImagesInCellTooltipEnabled() &&
+          cell.getSimpleLevel() && !fid.isStopFrame())
+        m_tooltipCell = cell;
     }
   } else if (isSoundColumn &&
              o->rect(PredefinedRect::PREVIEW_TRACK)

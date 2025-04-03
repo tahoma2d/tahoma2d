@@ -465,6 +465,9 @@ public:
   QString getTimelineLayoutPreference() const {
     return getStringValue(timelineLayoutPreference);
   }
+  bool isShowImagesInCellTooltipEnabled() {
+    return getBoolValue(showImagesInCellTooltip);
+  }
 
   // Animation  tab
   int getKeyframeType() const { return getIntValue(keyframeType); }
