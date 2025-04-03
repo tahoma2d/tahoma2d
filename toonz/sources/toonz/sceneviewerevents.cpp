@@ -2079,6 +2079,7 @@ void SceneViewer::mouseRotate(const TMouseEvent &e) {
   }
   m_oldPos = p;
 
+  glLineWidth(1.0 * getDevPixRatio());
   tglDrawSegment(TPointD(-u + m_center.x, m_center.y),
                  TPointD(u + m_center.x, m_center.y));
   tglDrawSegment(TPointD(m_center.x, -u + m_center.y),

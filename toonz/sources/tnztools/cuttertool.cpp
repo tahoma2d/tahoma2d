@@ -186,6 +186,8 @@ public:
     // glPushMatrix();
     // tglMultMatrix(viewMatrix);
 
+    int devPixRatio = m_viewer->getDevPixRatio();
+
     const double pixelSize = getPixelSize();
 
     double len = m_cursor.thick + 15 * pixelSize;
@@ -198,6 +200,8 @@ public:
       v = normalize(v);
 
       v = v * (len);
+
+      glLineWidth(1.0 * devPixRatio);
 
       tglColor(TPixelD(0.1, 0.9, 0.1));
       tglDrawSegment(p - v, p + v);

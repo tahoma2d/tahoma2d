@@ -341,8 +341,6 @@ void PerspectiveControls::drawControls(SceneViewer *viewer) {
   double circleRadius = m_handleRadius * m_unit;
   double diskRadius   = (m_handleRadius - 2) * m_unit;
 
-  glLineWidth(1.5);
-
   glLineStipple(1, 0xFFFF);
   glEnable(GL_LINE_STIPPLE);
 
@@ -699,6 +697,10 @@ void PerspectiveTool::draw(SceneViewer *viewer) {
                           ->getScene()
                           ->getCurrentCamera()
                           ->getStageRect();
+
+  int devPixRatio = viewer->getDevPixRatio();
+
+  glLineWidth(1.0 * devPixRatio);
 
   for (int i = 0; i < m_perspectiveObjs.size(); i++) {
     if (!m_perspectiveObjs[i]) continue;
@@ -1998,7 +2000,6 @@ void VanishingPointPerspective::draw(SceneViewer *viewer, TRectD cameraRect) {
   glEnable(GL_BLEND);
   glEnable(GL_LINE_SMOOTH);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glLineWidth(1.0f);
 
   TPointD p = getCenterPoint();
 
@@ -2164,7 +2165,6 @@ void LinePerspective::draw(SceneViewer *viewer, TRectD cameraRect) {
   glEnable(GL_BLEND);  // Enable blending.
   glEnable(GL_LINE_SMOOTH);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glLineWidth(1.0f);
 
   TPointD p = getCenterPoint();
 
@@ -2231,7 +2231,6 @@ void LinePerspective::draw(SceneViewer *viewer, TRectD cameraRect) {
     }
   }
 
-  glLineWidth(1.0f);
   glDisable(GL_LINE_SMOOTH);
   glDisable(GL_BLEND);
 }

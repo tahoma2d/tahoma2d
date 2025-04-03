@@ -442,6 +442,8 @@ void PaintBrushTool::fixMousePos(TPointD pos, bool precise) {
 //-----------------------------------------------------------------------------
 
 void PaintBrushTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
   // If toggled off, don't draw brush outline
   if (!Preferences::instance()->isCursorOutlineEnabled()) return;
 
@@ -458,6 +460,7 @@ void PaintBrushTool::draw() {
   else
     glColor3d(1.0, 0.0, 0.0);
 
+  glLineWidth(1.0 * devPixRatio);
   drawEmptyCircle(tround(m_rasThickness.getValue().second), m_mousePos, true,
                   lx % 2 == 0, ly % 2 == 0);
   drawEmptyCircle(tround(m_rasThickness.getValue().first), m_mousePos, true,

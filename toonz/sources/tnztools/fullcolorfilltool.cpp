@@ -423,8 +423,13 @@ int FullColorFillTool::getCursorId() const {
 }
 
 void FullColorFillTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
   if (m_frameRange.getIndex() && m_firstClick) {
     tglColor(TPixel::Red);
+
+    glLineWidth((1.0 * devPixRatio));
+
     drawCross(m_firstPoint, 6);
 
     SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(

@@ -13,6 +13,8 @@
 #include "toonz/tframehandle.h"
 #include "toonz/txshsimplelevel.h"
 
+#include "toonzqt/gutil.h"
+
 #include <QKeyEvent>
 
 class Deformation {
@@ -174,6 +176,10 @@ void MorphTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
 }
 
 void MorphTool::draw() {
+  int devPixRatio = getDevicePixelRatio();
+
+  glLineWidth(1.0 * devPixRatio);
+
   m_pixelSize = sqrt(tglGetPixelSize2());
   if (m_vi2) {
     TVectorRenderData rd(TTranslation(10, 10), TRect(), 0, 0);

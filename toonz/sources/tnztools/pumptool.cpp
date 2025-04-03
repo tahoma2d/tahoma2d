@@ -165,6 +165,8 @@ void PumpTool::onEnter() {
 //----------------------------------------------------------------------
 
 void PumpTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
   if (!m_draw || !m_enabled) return;
 
   TVectorImageP vi = TImageP(getImage(false));
@@ -174,6 +176,9 @@ void PumpTool::draw() {
 
   TPalette *palette = vi->getPalette();
   assert(palette);
+
+  glLineWidth(1.0 * devPixRatio);
+
   if (m_active) {
     // Editing with the tool
     assert(m_outStroke);

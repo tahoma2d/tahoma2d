@@ -8,7 +8,6 @@
 #include "toonz/txshlevelhandle.h"
 #include "toonz/tscenehandle.h"
 #include "toonzqt/selectioncommandids.h"
-#include "toonzqt/gutil.h"
 
 #include "toonzqt/selection.h"
 #include "tproperty.h"
@@ -288,7 +287,9 @@ void TrackerTool::draw() {
     selectedObjectId = -1;
   int i              = 0;
   double pixelSize   = getPixelSize();
-  int devPixRatio    = getDevicePixelRatio(m_viewer->viewerWidget());
+  int devPixRatio    = m_viewer->getDevPixRatio();
+
+  glLineWidth(1.0 * devPixRatio);
 
   std::vector<TRectD> balloons;  // this is used to avoid balloons overlapping
   // draw hooks
