@@ -1982,6 +1982,10 @@ void ToonzVectorBrushTool::checkGuideSnapping(bool beforeMousePress,
 //-------------------------------------------------------------------------------------------------------------
 
 void ToonzVectorBrushTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
+  glLineWidth(1.0 * devPixRatio);
+
   /*--ショートカットでのツール切り替え時に赤点が描かれるのを防止する--*/
   if (m_minThick == 0 && m_maxThick == 0 &&
       !Preferences::instance()->getShow0ThickLines())

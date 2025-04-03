@@ -626,7 +626,6 @@ void ViewerDraw::drawGridsAndOverlays(SceneViewer *viewer, double pixelSize) {
   glEnable(GL_LINE_SMOOTH);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glColor4d(1.0, 0.3, 1.0, (double)GuideOpacity / 100.0);
-  glLineWidth(1.0f);
 
   double lengthX = rect.x1 - rect.x0;
   double lengthY = rect.y1 - rect.y0;
@@ -638,7 +637,7 @@ void ViewerDraw::drawGridsAndOverlays(SceneViewer *viewer, double pixelSize) {
 
   double phiX = (rect.x1 - rect.x0) / 1.618;
   double phiY = (rect.y1 - rect.y0) / 1.618;
-  glLineWidth(1.0f);
+
   glDisable(GL_LINE_SMOOTH);
   glDisable(GL_BLEND);
 }
@@ -646,13 +645,15 @@ void ViewerDraw::drawGridsAndOverlays(SceneViewer *viewer, double pixelSize) {
 //-----------------------------------------------------------------------------
 
 void ViewerDraw::drawCameraOverlays(SceneViewer *viewer, double pixelSize) {
+  int devPixRatio = viewer->getDevPixRatio();
+
   TRectD rect = getCameraRect();
 
   glEnable(GL_BLEND);  // Enable blending.
   glEnable(GL_LINE_SMOOTH);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glColor4d(1.0, 0.3, 1.0, (double)GuideOpacity / 100.0);
-  glLineWidth(0.5f);
+  glLineWidth(0.5f * devPixRatio);
 
   double lengthX = rect.x1 - rect.x0;
   double lengthY = rect.y1 - rect.y0;
@@ -696,7 +697,7 @@ void ViewerDraw::drawCameraOverlays(SceneViewer *viewer, double pixelSize) {
     glEnd();
   }
 
-  glLineWidth(1.0f);
+  glLineWidth(1.0f * devPixRatio);
   glDisable(GL_LINE_SMOOTH);
   glDisable(GL_BLEND);
 }

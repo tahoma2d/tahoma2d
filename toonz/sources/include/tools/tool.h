@@ -11,10 +11,15 @@
 #include "tools/cursors.h"
 #include "tpalette.h"
 
+#include "toonzqt/imageutils.h"
+#include "toonzqt/glwidget_for_highdpi.h"
+
 // TnzCore includes
 #include "tcommon.h"
 #include "tgeometry.h"
 #include "tfilepath.h"
+
+#include "toonzqt/gutil.h"
 
 // Qt includes
 #include <QString>
@@ -612,7 +617,7 @@ protected:
   OpenGL).
 */
 
-class TTool::Viewer {
+class TTool::Viewer : public GLWidgetForHighDpi {
 protected:
   ImagePainter::VisualSettings
       m_visualSettings;  //!< Settings used by the Viewer to draw scene contents
@@ -623,7 +628,8 @@ protected:
   QWidget *m_viewerWidget  = nullptr;
 
 public:
-  Viewer(QWidget *widget) : m_viewerWidget(widget) {}
+  Viewer(QWidget *widget, ImageUtils::FullScreenWidget *parent)
+      : GLWidgetForHighDpi(parent), m_viewerWidget(widget) {}
   virtual ~Viewer() {}
 
   const ImagePainter::VisualSettings &visualSettings() const {
@@ -737,6 +743,8 @@ public:
   void doPickGuideStroke(const TPointD &pos);
 
   QWidget *viewerWidget() { return m_viewerWidget; }
+
+  int getDevPixRatio() const { return getDevicePixelRatio(m_viewerWidget); }
 };
 
 #endif

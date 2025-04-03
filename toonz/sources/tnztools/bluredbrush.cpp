@@ -7,7 +7,7 @@
 
 #include <QColor>
 
-namespace {
+namespace BluredBrushUtils {
 
 static QVector<QRgb> colorTable;
 
@@ -185,12 +185,13 @@ BluredBrush::BluredBrush(const TRaster32P &ras, int size,
     , m_lastPoint(0, 0)
     , m_oldOpacity(0)
     , m_enableDynamicOpacity(doDynamicOpacity) {
-  m_rasImage = rasterToQImage(m_ras, false);
+  m_rasImage = BluredBrushUtils::rasterToQImage(m_ras, false);
   m_gradient = gradient;
 
-  if (colorTable.size() == 0) {
+  if (BluredBrushUtils::colorTable.size() == 0) {
     int i;
-    for (i = 0; i < 256; i++) colorTable.append(QColor(i, i, i).rgb());
+    for (i = 0; i < 256; i++)
+      BluredBrushUtils::colorTable.append(QColor(i, i, i).rgb());
   }
 }
 
@@ -198,7 +199,7 @@ BluredBrush::BluredBrush(const TRaster32P &ras, int size,
 
 BluredBrush::BluredBrush(BluredBrush *src) {
   m_ras                  = src->m_ras;
-  m_rasImage             = rasterToQImage(m_ras, false);
+  m_rasImage             = BluredBrushUtils::rasterToQImage(m_ras, false);
   m_size                 = src->m_size;
   m_gradient             = src->m_gradient;
   m_lastPoint            = src->m_lastPoint;
@@ -311,7 +312,7 @@ void BluredBrush::updateDrawing(const TRasterP ras, const TRasterP rasBackup,
   TRect rasRect    = ras->getBounds();
   TRect targetRect = bbox * rasRect;
   if (targetRect.isEmpty()) return;
-  QImage image = rasterToQImage(ras, true);
+  QImage image = BluredBrushUtils::rasterToQImage(ras, true);
   QRect qTargetRect(targetRect.x0, targetRect.y0, targetRect.getLx(),
                     targetRect.getLy());
 
@@ -327,7 +328,8 @@ void BluredBrush::updateDrawing(const TRasterP ras, const TRasterP rasBackup,
     QPainter p(&image);
     p.setClipRect(qTargetRect);
     p.setCompositionMode(QPainter::CompositionMode_Source);
-    p.drawImage(qTargetRect, rasterToQImage(rasBackup, true), qTargetRect);
+    p.drawImage(qTargetRect, BluredBrushUtils::rasterToQImage(rasBackup, true),
+                qTargetRect);
     p.end();
 
     p.begin(&image);
@@ -335,18 +337,18 @@ void BluredBrush::updateDrawing(const TRasterP ras, const TRasterP rasBackup,
     p.drawImage(qTargetRect, app, app.rect());
     p.end();
   } else {
-    QImage targetImage = rasterToQImage(rasBackup).copy(qTargetRect);
+    QImage targetImage = BluredBrushUtils::rasterToQImage(rasBackup).copy(qTargetRect);
     targetImage        = targetImage.convertToFormat(
-        QImage::Format_ARGB32_Premultiplied, colorTable);
+        QImage::Format_ARGB32_Premultiplied, BluredBrushUtils::colorTable);
 
     QPainter p(&targetImage);
     p.setOpacity(m_enableDynamicOpacity ? 1 : opacity);
     p.drawImage(QPoint(), app, app.rect());
     p.end();
-    targetImage =
-        targetImage.convertToFormat(QImage::Format_Indexed8, colorTable);
+    targetImage = targetImage.convertToFormat(QImage::Format_Indexed8,
+                                              BluredBrushUtils::colorTable);
 
-    TRasterGR8P targetRas = rasterFromQImage(targetImage);
+    TRasterGR8P targetRas = BluredBrushUtils::rasterFromQImage(targetImage);
     ras->copy(targetRas, targetRect.getP00());
   }
 }
@@ -363,19 +365,21 @@ void BluredBrush::eraseDrawing(const TRasterP ras, const TRasterP rasBackup,
   QRect qTargetRect(targetRect.x0, targetRect.y0, targetRect.getLx(),
                     targetRect.getLy());
   if (ras->getPixelSize() == 4) {
-    QImage image = rasterToQImage(ras, true);
+    QImage image = BluredBrushUtils::rasterToQImage(ras, true);
     QPainter p(&image);
     p.setClipRect(qTargetRect);
     p.setCompositionMode(QPainter::CompositionMode_Source);
-    p.drawImage(qTargetRect, rasterToQImage(rasBackup, true), qTargetRect);
+    p.drawImage(qTargetRect, BluredBrushUtils::rasterToQImage(rasBackup, true),
+                qTargetRect);
     p.setCompositionMode(QPainter::CompositionMode_DestinationOut);
     p.setOpacity(opacity);
     p.drawImage(qTargetRect, m_rasImage, qTargetRect);
     p.end();
   } else if (ras->getPixelSize() != 4) {
-    QImage targetImage = rasterToQImage(rasBackup).copy(qTargetRect);
-    targetImage        = targetImage.convertToFormat(
-        QImage::Format_ARGB32_Premultiplied, colorTable);
+    QImage targetImage =
+        BluredBrushUtils::rasterToQImage(rasBackup).copy(qTargetRect);
+    targetImage = targetImage.convertToFormat(
+        QImage::Format_ARGB32_Premultiplied, BluredBrushUtils::colorTable);
 
     QImage app(qTargetRect.size(), QImage::Format_ARGB32_Premultiplied);
     QPainter p2(&app);
@@ -389,10 +393,10 @@ void BluredBrush::eraseDrawing(const TRasterP ras, const TRasterP rasBackup,
     p.setOpacity(opacity);
     p.drawImage(QPoint(), app, app.rect());
     p.end();
-    targetImage =
-        targetImage.convertToFormat(QImage::Format_Indexed8, colorTable);
+    targetImage = targetImage.convertToFormat(QImage::Format_Indexed8,
+                                              BluredBrushUtils::colorTable);
 
-    TRasterGR8P targetRas = rasterFromQImage(targetImage);
+    TRasterGR8P targetRas = BluredBrushUtils::rasterFromQImage(targetImage);
     ras->copy(targetRas, targetRect.getP00());
   }
 }
@@ -410,8 +414,9 @@ void BluredBrush::updateDrawing(const TRasterCM32P rasCM,
   if (targetRect.isEmpty()) return;
 
   rasCM->copy(rasBackupCM->extract(targetRect), targetRect.getP00());
-  putOnRasterCM(rasCM->extract(targetRect), m_ras->extract(targetRect), styleId,
-                drawOrderMode, lockAlpha, m_aboveStyleIds);
+  BluredBrushUtils::putOnRasterCM(rasCM->extract(targetRect),
+                                  m_ras->extract(targetRect), styleId,
+                                  drawOrderMode, lockAlpha, m_aboveStyleIds);
 }
 
 //----------------------------------------------------------------------------------
@@ -428,8 +433,9 @@ void BluredBrush::eraseDrawing(const TRasterCM32P rasCM,
   if (targetRect.isEmpty()) return;
 
   rasCM->extract(targetRect)->copy(rasBackupCM->extract(targetRect));
-  eraseFromRasterCM(rasCM->extract(targetRect), m_ras->extract(targetRect),
-                    selective, selectedStyleId, mode);
+  BluredBrushUtils::eraseFromRasterCM(rasCM->extract(targetRect),
+                                      m_ras->extract(targetRect), selective,
+                                      selectedStyleId, mode);
 }
 
 //----------------------------------------------------------------------------------

@@ -541,6 +541,9 @@ void ImageViewer::paintGL() {
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
   // enable checks only in the color model
   m_visualSettings.m_useChecks = m_isColorModel;
+
+  glLineWidth((1.0 * getDevPixRatio()));
+
   ImagePainter::paintImage(m_image, imageSize, viewerSize, aff,
                            m_visualSettings, m_compareSettings, loadbox);
 

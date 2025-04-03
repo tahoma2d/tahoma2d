@@ -876,6 +876,10 @@ void RasterSelectionTool::draw() {
   TRasterImageP ri = (TRasterImageP)image;
   if (!ti && !ri) return;
 
+  int devPixRatio = m_viewer->getDevPixRatio();
+
+  glLineWidth(1.0 * devPixRatio);
+
   if (m_setSaveboxTool && m_modifySavebox.getValue()) {
     m_setSaveboxTool->draw();
     return;

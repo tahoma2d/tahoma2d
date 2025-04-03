@@ -1232,6 +1232,8 @@ void PlasticTool::cutEdges_mesh_undo() {
 //------------------------------------------------------------------------
 
 void PlasticTool::draw_mesh() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
   struct Locals {
     PlasticTool *m_this;
     double m_pixelSize;
@@ -1246,7 +1248,6 @@ void PlasticTool::draw_mesh() {
       const objects_container &objects = m_this->m_mvSel.objects();
 
       glColor3ub(255, 0, 0);  // Red
-      glLineWidth(1.0f);
 
       const double hSize = MESH_SELECTED_HANDLE_SIZE * m_pixelSize;
 
@@ -1259,12 +1260,12 @@ void PlasticTool::draw_mesh() {
       }
     }
 
-    void drawEdgeSelections() {
+    void drawEdgeSelections(int devPixRatio) {
       typedef MeshSelection::objects_container objects_container;
       const objects_container &objects = m_this->m_meSel.objects();
 
       glColor3ub(0, 0, 255);  // Blue
-      glLineWidth(2.0f);
+      glLineWidth(2.0f * devPixRatio);
 
       glBegin(GL_LINES);
 
@@ -1280,6 +1281,7 @@ void PlasticTool::draw_mesh() {
       }
 
       glEnd();
+      glLineWidth(1.0f * devPixRatio); // reset back to baseline
     }
 
     void drawVertexHighlights() {
@@ -1290,7 +1292,6 @@ void PlasticTool::draw_mesh() {
             m_this->m_mi->meshes()[vHigh.m_meshIdx]->vertex(vHigh.m_idx);
 
         glColor3ub(255, 0, 0);  // Red
-        glLineWidth(1.0f);
 
         const double hSize = MESH_HIGHLIGHTED_HANDLE_SIZE * m_pixelSize;
 
@@ -1315,7 +1316,6 @@ void PlasticTool::draw_mesh() {
           glLineStipple(1, 0xCCCC);
 
           glColor3ub(0, 0, 255);  // Blue
-          glLineWidth(1.0f);
 
           glBegin(GL_LINES);
           drawLine(vx0.P(), vx1.P());
@@ -1333,7 +1333,7 @@ void PlasticTool::draw_mesh() {
   // Draw additional overlays
   if (m_mi) {
     locals.drawVertexSelections();
-    locals.drawEdgeSelections();
+    locals.drawEdgeSelections(devPixRatio);
 
     locals.drawVertexHighlights();
     locals.drawEdgeHighlights();

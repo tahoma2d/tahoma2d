@@ -2376,6 +2376,10 @@ void ToonzRasterBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 //-------------------------------------------------------------------------------------------------------------
 
 void ToonzRasterBrushTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+ 
+  glLineWidth(1.0 * devPixRatio);
+
   if (m_isStraight) {
     tglColor(TPixel32::Red);
     tglDrawSegment(m_firstPoint, m_lastPoint);

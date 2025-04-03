@@ -30,7 +30,6 @@
 // TnzQt includes
 #include "toonzqt/selection.h"
 #include "toonzqt/selectioncommandids.h"
-#include "toonzqt/gutil.h"
 
 // TnzTools includes
 #include "tools/tool.h"
@@ -1265,7 +1264,7 @@ void SkeletonTool::drawDrawingBrowser(const TXshCell &cell,
                      std::to_string(cell.m_frameId.getNumber());
 
   QString qText = QString::fromStdString(name);
-  int devPixRatio = getDevicePixelRatio(getViewer()->viewerWidget());
+  int devPixRatio = getViewer()->getDevPixRatio();
   QFont font("Arial", 10 * devPixRatio);  // ,QFont::Bold);
   QFontMetrics fm(font);
   QSize textSize   = fm.boundingRect(qText).size();
@@ -1432,9 +1431,13 @@ void SkeletonTool::drawMainGadget(const TPointD &center) {
 //-------------------------------------------------------------------
 
 void SkeletonTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
   // parent object reference system
   // glColor3d(1,0,0);
   // tglDrawRect(0,0,100,100);
+
+  glLineWidth(1.0 * devPixRatio);
 
   if (m_label != "")
     ToolUtils::drawBalloon(m_labelPos, m_label, TPixel32::Red, TPoint(20, -20),

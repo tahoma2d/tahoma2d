@@ -13,7 +13,6 @@
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
 #include "toonzqt/flipconsole.h"
-#include "toonzqt/glwidget_for_highdpi.h"
 
 // TnzTools includes
 #include "tools/tool.h"
@@ -64,8 +63,7 @@ public:
 // SceneViewer
 //-----------------------------------------------------------------------------
 
-class SceneViewer final : public GLWidgetForHighDpi,
-                          public TTool::Viewer,
+class SceneViewer final : public TTool::Viewer,
                           public Previewer::Listener {
   Q_OBJECT
 

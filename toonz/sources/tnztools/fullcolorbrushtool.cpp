@@ -824,7 +824,11 @@ void FullColorBrushTool::mouseMove(const TPointD &pos, const TMouseEvent &e) {
 //-------------------------------------------------------------------------------------------------------------
 
 void FullColorBrushTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
   if (TRasterImageP ri = TRasterImageP(getImage(false))) {
+    glLineWidth(1.0 * devPixRatio);
+
     if (m_isStraight) {
       tglColor(TPixel32::Red);
       tglDrawSegment(m_firstPoint, m_lastPoint);

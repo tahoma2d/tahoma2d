@@ -479,6 +479,10 @@ void SymmetryTool::draw(SceneViewer *viewer) {
                           ->getCurrentCamera()
                           ->getStageRect();
 
+  int devPixRatio = viewer->getDevPixRatio();
+
+  glLineWidth(1.0f * devPixRatio);
+
   m_symmetryObj.draw(viewer, cameraRect);
 
   bool drawControls = getApplication()->getCurrentTool()->getTool() == this;
@@ -895,7 +899,6 @@ void SymmetryObject::draw(SceneViewer *viewer, TRectD cameraRect) {
   glEnable(GL_BLEND);
   glEnable(GL_LINE_SMOOTH);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glLineWidth(1.0f);
 
   TPointD p = getCenterPoint();
 
@@ -988,8 +991,6 @@ void SymmetryObject::drawControls(SceneViewer *viewer) {
 
   double circleRadius = m_handleRadius * m_unit;
   double diskRadius   = (m_handleRadius - 2) * m_unit;
-
-  glLineWidth(1.5);
 
   glLineStipple(1, 0xFFFF);
   glEnable(GL_LINE_STIPPLE);

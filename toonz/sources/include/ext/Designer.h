@@ -30,8 +30,10 @@ class Selector;
    * @brief This class is a visitor to manage properly Draw method.
    */
 class DVAPI Designer {
+  int m_devPixRatio;
+
 public:
-  Designer();
+  Designer(int devPixRatio = 1.0);
   virtual ~Designer();
   /**
 */
@@ -48,6 +50,8 @@ public:
   virtual void draw(Selector *);
 
   double getPixelSize2() const;
+
+  int getDevPixRatio() const { return m_devPixRatio; }
 };
 }
 #endif  // !defined(DESIGNER_H)

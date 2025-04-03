@@ -421,6 +421,8 @@ void PinchTool::onImageChanged() {
 //-----------------------------------------------------------------------------
 
 void PinchTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
   GLMatrixGuard guard;
 
   TVectorImageP img(getImage(true));
@@ -435,7 +437,9 @@ void PinchTool::draw() {
 
   StrokeDeformation *deformation = m_deformation;
 
-  OverallDesigner designer((int)m_curr.x, (int)m_curr.y);
+  OverallDesigner designer((int)m_curr.x, (int)m_curr.y, devPixRatio);
+
+  glLineWidth(1.0 * devPixRatio);
 
   // m_active == true means that a button down is done (drag)
   if (!m_active) {

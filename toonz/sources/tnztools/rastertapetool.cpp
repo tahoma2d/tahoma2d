@@ -663,12 +663,17 @@ public:
   //------------------------------------------------------------
 
   void draw() override {
+    int devPixRatio   = m_viewer->getDevPixRatio();
+
     double pixelSize2 = getPixelSize() * getPixelSize();
     m_thick           = sqrt(pixelSize2) / 2.0;
 //    TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
 //                       ? TPixel32::White
 //                       : TPixel32::Black;
     TPixel color = TPixel32::Red;
+
+    glLineWidth((1.0 * devPixRatio));
+
     if (m_closeType.getValue() == RECT_CLOSE) {
       if (m_multi.getIndex() && m_firstFrameSelected) {
         if (m_firstStrokes.size()) {

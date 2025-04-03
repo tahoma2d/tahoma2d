@@ -400,6 +400,8 @@ lefrightButtonDown(p);
   };
 
   void draw() override {
+    int devPixRatio  = m_viewer->getDevPixRatio();
+
     TVectorImageP vi = TImageP(getImage(true));
     if (!vi) return;
 
@@ -408,6 +410,8 @@ lefrightButtonDown(p);
     // tglMultMatrix(viewMatrix);
 
     double pointSize = m_toolSize.getValue();
+
+    glLineWidth(1.0 * devPixRatio);
 
     tglColor(TPixel32::Red);
     tglDrawCircle(m_pointAtMove, pointSize);

@@ -4,7 +4,6 @@
 #include "sceneviewer.h"
 #include "tapp.h"
 #include "toonz/tscenehandle.h"
-#include "toonzqt/gutil.h"
 
 #include "toonz/toonzscene.h"
 #include "toonz/stage.h"

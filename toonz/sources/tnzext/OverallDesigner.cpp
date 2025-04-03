@@ -192,7 +192,8 @@ void showCorners(const TStroke *s, int cornerSize, double pixelSize) {
 
 //-----------------------------------------------------------------------------
 
-ToonzExt::OverallDesigner::OverallDesigner(int x, int y) : x_(x), y_(y) {
+ToonzExt::OverallDesigner::OverallDesigner(int x, int y, int devPixRatio)
+    : Designer(devPixRatio), x_(x), y_(y) {
   pixelSize_ = sqrt(this->getPixelSize2());
   scale_     = pixelSize_ != 0.0 ? pixelSize_ : 1.0;
 }
@@ -391,11 +392,11 @@ void ToonzExt::OverallDesigner::draw(ToonzExt::Selector *selector) {
         std::min(stroke_length, length_at_w + emi_selector_length));
   }
 
-  float prev_line_width = 1.0;
+  float prev_line_width = 1.0 * getDevPixRatio();
 
   glGetFloatv(GL_LINE_WIDTH, &prev_line_width);
 
-  glLineWidth(2.0);
+  glLineWidth(2.0 * getDevPixRatio());
   drawStrokeCenterLine(ref, pixelSize_, interval);
   glLineWidth(prev_line_width);
 }
