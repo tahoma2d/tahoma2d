@@ -13,7 +13,7 @@ then
 fi
 cd build
 
-source /opt/qt515/bin/qt515-env.sh
+#source /opt/qt515/bin/qt515-env.sh
 
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 cmake ../sources \
