@@ -60,7 +60,7 @@ $ sudo dnf install libmypaint-devel
 ### Installing Dependencies on ArchLinux
 
 ```
-$ sudo pacman -S base-devel git cmake boost boost-libs qt5-base qt5-svg qt5-script qt5-tools qt5-multimedia lz4 lzo libjpeg-turbo glew freeglut freetype2
+$ sudo pacman -S base-devel git cmake boost boost-libs qt5-base qt5-svg qt5-script qt5-tools qt5-multimedia lz4 lzo libjpeg-turbo glew freeglut freetype2 qt5-serialport
 $ sudo pacman -S blas cblas
 ```
 From AUR, using eg. yaourt:
