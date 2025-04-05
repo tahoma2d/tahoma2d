@@ -154,6 +154,7 @@ enum PreferencesItemId {
   showFrameNumberWithLetters,
   showDragBars,
   timelineLayoutPreference,
+  showImagesInCellTooltip,
 
   //----------
   // Animation

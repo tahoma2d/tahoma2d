@@ -627,6 +627,8 @@ void Preferences::definePreferenceItems() {
   define(showDragBars, "showDragBars", QMetaType::Bool, false);
   define(timelineLayoutPreference, "timelineLayoutPreference", QMetaType::QString,
          "NoDragCompact");
+  define(showImagesInCellTooltip, "showImagesInCellTooltip",
+         QMetaType::Bool, true);
 
   // Animation
   define(keyframeType, "keyframeType", QMetaType::Int, 2);  // Linear
