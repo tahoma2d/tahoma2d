@@ -1,7 +1,6 @@
 #!/bin/bash
 export TAHOMA2DVERSION=1.5.2
-
-source /opt/qt515/bin/qt515-env.sh
+#source /opt/qt515/bin/qt515-env.sh
 
 echo ">>> Temporary install of Tahoma2D"
 SCRIPTPATH=`dirname "$0"`
@@ -82,14 +81,20 @@ find appdir/usr/lib/libgphoto2* -name *.so -exec patchelf --set-rpath '$ORIGIN/.
 
 echo ">>> Creating Tahoma2D/Tahoma2D.AppImage"
 
+if [ -f /usr/lib/qt5/bin/linuxdeployqt ]
+then
+   LINUXDEPLOYQT=/usr/lib/qt5/bin/linuxdeployqt
+else
 if [ ! -f linuxdeployqt*.AppImage ]
 then
    wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
    chmod a+x linuxdeployqt*.AppImage
 fi
+   LINUXDEPLOYQT=./linuxdeployqt*.AppImage
+fi
 
 export LD_LIBRARY_PATH=appdir/usr/lib/tahoma2d
-./linuxdeployqt*.AppImage appdir/usr/bin/Tahoma2D -bundle-non-qt-libs -verbose=0 -always-overwrite -no-strip \
+$LINUXDEPLOYQT appdir/usr/bin/Tahoma2D -bundle-non-qt-libs -verbose=0 -always-overwrite -no-strip \
    -executable=appdir/usr/bin/lzocompress \
    -executable=appdir/usr/bin/lzodecompress \
    -executable=appdir/usr/bin/tcleanup \
@@ -102,7 +107,7 @@ rm appdir/AppRun
 cp ../sources/scripts/AppRun appdir
 chmod 775 appdir/AppRun
 
-./linuxdeployqt*.AppImage appdir/usr/bin/Tahoma2D -appimage -no-strip 
+$LINUXDEPLOYQT appdir/usr/bin/Tahoma2D -appimage -no-strip 
 
 mv Tahoma2D*.AppImage Tahoma2D/Tahoma2D.AppImage
 
