@@ -1514,7 +1514,7 @@ void ToolUtils::drawBalloon(const TPointD &pos, std::string text,
                             std::vector<TRectD> *otherBalloons) {
   TTool::Viewer *viewer =
       TTool::getApplication()->getCurrentTool()->getTool()->getViewer();
-  int devPixRatio = getDevicePixelRatio(viewer->viewerWidget());
+  int devPixRatio = viewer->getDevPixRatio();
   QString qText   = QString::fromStdString(text);
   QFont font("Arial");  // ,QFont::Bold);
   font.setPixelSize(13 * devPixRatio);
@@ -1658,7 +1658,7 @@ void ToolUtils::drawHook(const TPointD &pos, ToolUtils::HookType type,
                          bool highlighted, bool onionSkin) {
   TTool::Viewer *viewer =
       TTool::getApplication()->getCurrentTool()->getTool()->getViewer();
-  int devPixRatio = getDevicePixelRatio(viewer->viewerWidget());
+  int devPixRatio = viewer->getDevPixRatio();
   int r = 10, d = r + r;
   QImage image(d * devPixRatio, d * devPixRatio, QImage::Format_ARGB32);
   image.fill(Qt::transparent);

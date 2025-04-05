@@ -59,7 +59,7 @@ public:
 
   void draw() override {
     if (!m_dragging) return;
-
+    int devPixRatio  = m_viewer->getDevPixRatio();
     TPointD center   = m_viewer->winToWorld(m_center);
     double pixelSize = getPixelSize();
     double unit      = pixelSize;
@@ -69,6 +69,7 @@ public:
     glColor3f(1, 0, 0);
 
     double u = 4;
+    glLineWidth((1.0 * devPixRatio));
     glBegin(GL_LINES);
     glVertex2d(0, -10);
     glVertex2d(0, 10);
@@ -185,6 +186,8 @@ void RotateTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
 }
 
 void RotateTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
   glColor3f(1, 0, 0);
   double u = 50;
   if (m_cameraCentered.getValue())
@@ -196,6 +199,7 @@ void RotateTool::draw() {
     u                                  = u * sqrt(aff.det());
     m_center                           = aff * TPointD(0, 0);
   }
+  glLineWidth(1.0 * devPixRatio);
   tglDrawSegment(TPointD(-u + m_center.x, m_center.y),
                  TPointD(u + m_center.x, m_center.y));
   tglDrawSegment(TPointD(m_center.x, -u + m_center.y),

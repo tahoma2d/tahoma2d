@@ -13,9 +13,9 @@ const GLfloat s_highlightedColor[] = {150.0 / 255.0, 255.0 / 255.0,
                                       140.0 / 255.0};
 const double s_sqrt_2      = sqrt(2.0);
 const double s_radius      = 5.0;
-const double s_over_size   = 10;
-const double s_length      = 15;
-const double s_square_size = 5;
+const double s_over_size   = 10.0;
+const double s_length      = 15.0;
+const double s_square_size = 8.0;
 const double s_arrow_ratio = 2.5;
 
 void drawArrow(const TPointD &from, const TPointD &direction, double length,
@@ -110,7 +110,10 @@ TPointD Selector::getUp() const {
 void Selector::draw(Designer *designer) {
   if (!strokeRef_ || !isVisible_) return;
 
-  pixel_size_ = designer ? sqrt(designer->getPixelSize2()) : 1.0;
+  int devPixRatio = designer->getDevPixRatio();
+
+  pixel_size_ =
+      (designer ? sqrt(designer->getPixelSize2()) : 1.0) * devPixRatio;
 
   TPointD v = this->getUp(), n = normalize(rotate90(v));
 
@@ -144,7 +147,7 @@ void Selector::draw(Designer *designer) {
 
   {
     // the circle center is in
-    TPointD down = -this->getUp(), center = pnt + down * (height_);
+    TPointD down = -this->getUp(), center = pnt + down * (height_ * 1.25);
     const double length = s_square_size * 0.5 * pixel_size_;
 
     TPointD
@@ -311,7 +314,7 @@ Selector::Selection Selector::getSelection(const TPointD &pos) {
   // one pixel of tolerance
   if (tdistance2(center, pos) <= sq(radius + pixel_size_)) return POSITION;
 
-  center = pnt + down * (height_);
+  center = pnt + down * (height_ * 1.25);
 
   // const double  length = s_length * pixel_size_;
   const double length = s_square_size * 0.5 * pixel_size_;

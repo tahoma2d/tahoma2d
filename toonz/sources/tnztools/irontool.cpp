@@ -79,8 +79,11 @@ public:
   ToolType getToolType() const override { return TTool::LevelWriteTool; }
 
   void draw() override {
+    int devPixRatio = m_viewer->getDevPixRatio();
+
     if (m_draw && (TVectorImageP)getImage(false)) {
       glColor3d(1, 0, 1);
+      glLineWidth(1.0 * devPixRatio);
       if (m_cursor.thick > 0) tglDrawCircle(m_cursor, m_cursor.thick);
       tglDrawCircle(m_cursor, m_cursor.thick + 4 * getPixelSize());
     }

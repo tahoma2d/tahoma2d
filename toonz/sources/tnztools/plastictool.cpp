@@ -1740,14 +1740,16 @@ static void drawFilledSquare(const TPointD &pos, double radius) {
 //------------------------------------------------------------------------
 
 static void drawHandle(const TPointD &pos, double radius,
-                       const TPixel32 &color) {
+                       const TPixel32 &color, int devPixRatio) {
   glColor4ub(0, 0, 0, color.m);  // Black border
-  glLineWidth(4.0f);
+  glLineWidth(4.0f * devPixRatio);
   drawSquare(pos, radius);
 
   glColor4ub(color.r, color.g, color.b, color.m);
-  glLineWidth(2.0f);
+  glLineWidth(2.0f * devPixRatio);
   drawSquare(pos, radius);
+
+  glLineWidth(1.0f * devPixRatio);
 }
 
 //------------------------------------------------------------------------
@@ -1796,7 +1798,6 @@ void PlasticTool::drawHighlights(const SkDP &sd,
                                  const PlasticSkeleton *skeleton,
                                  double pixelSize) {
   glColor3f(1.0f, 0.0f, 0.0f);  // Red
-  glLineWidth(1.0f);
 
   // Vertex highlights
   if (m_svHigh >= 0) {
@@ -1834,7 +1835,6 @@ void PlasticTool::drawSelections(const SkDP &sd,
                                  const PlasticSkeleton &skeleton,
                                  double pixelSize) {
   glColor3f(1.0f, 0.0f, 0.0f);  // Red
-  glLineWidth(1.0f);
 
   double handleRadius = SELECTED_HANDLE_SIZE * pixelSize;
 
@@ -1865,6 +1865,8 @@ void PlasticTool::drawSelections(const SkDP &sd,
 
 void PlasticTool::drawSkeleton(const PlasticSkeleton &skel, double pixelSize,
                                UCHAR alpha) {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
   struct locals {
     inline static void drawLine(const TPointD &p0, const TPointD &p1) {
       glVertex2d(p0.x, p0.y);
@@ -1882,7 +1884,7 @@ void PlasticTool::drawSkeleton(const PlasticSkeleton &skel, double pixelSize,
           eEnd(edges.end());
 
       glColor4ub(0, 0, 0, alpha);
-      glLineWidth(4.0f);  // Black border
+      glLineWidth(4.0f * devPixRatio);  // Black border
 
       glBegin(GL_LINES);
       {
@@ -1893,7 +1895,7 @@ void PlasticTool::drawSkeleton(const PlasticSkeleton &skel, double pixelSize,
       glEnd();
 
       glColor4ub(250, 184, 70, alpha);
-      glLineWidth(2.0f);  // Yellow/Orange-ish line center
+      glLineWidth(2.0f * devPixRatio);  // Yellow/Orange-ish line center
 
       glBegin(GL_LINES);
       {
@@ -1902,6 +1904,7 @@ void PlasticTool::drawSkeleton(const PlasticSkeleton &skel, double pixelSize,
                            skel.vertex(et->vertex(1)).P());
       }
       glEnd();
+      glLineWidth(1.0f * devPixRatio);
     }
 
     // Draw vertices
@@ -1922,7 +1925,7 @@ void PlasticTool::drawSkeleton(const PlasticSkeleton &skel, double pixelSize,
       if (vt != vEnd) {
         for (vt = ++vertices.begin(); vt != vEnd; ++vt)
           drawHandle(vt->P(), handleRadius,
-                     vt->m_interpolate ? magenta : yellow);
+                     vt->m_interpolate ? magenta : yellow, devPixRatio);
       }
     }
   }
@@ -2131,6 +2134,10 @@ void PlasticTool::drawAngleLimits(const SkDP &sd, int skelId, int v,
 //------------------------------------------------------------------------
 
 void PlasticTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
+  glLineWidth(1.0 * devPixRatio);
+
   glPushAttrib(GL_LINE_BIT | GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT);
 
   glEnable(GL_BLEND);

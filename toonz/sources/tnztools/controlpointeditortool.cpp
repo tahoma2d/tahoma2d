@@ -368,6 +368,10 @@ void ControlPointEditorTool::draw() {
     return;
   }
 
+  int devPixRatio = m_viewer->getDevPixRatio();
+
+  glLineWidth(1.0 * devPixRatio);
+
   TPixel color1, color2;
   if (m_action == RECT_SELECTION)  // Disegna il rettangolo per la selezione
   {

@@ -1785,8 +1785,11 @@ void VectorSelectionTool::drawGroup(const TVectorImage &vi) {
 //-----------------------------------------------------------------------------
 
 void VectorSelectionTool::draw() {
+  int devPixRatio  = m_viewer->getDevPixRatio();
   TVectorImageP vi = TImageP(getImage(false));
   if (!vi) return;
+
+  glLineWidth(1.0 * devPixRatio);
 
   if (isLevelType() || isSelectedFramesType()) {
     drawInLevelType(*vi);

@@ -51,7 +51,10 @@ void RulerTool::onImageChanged() {
 //----------------------------------------------------------------------------------------------
 
 void RulerTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
   /*--- 始点が設定されていたら、描画 ---*/
+  glLineWidth(1.0 * devPixRatio);
   if (m_firstPos != TConst::nowhere) {
     tglColor((m_dragMode == MoveFirstPos) ? TPixel32(51, 204, 26)
                                           : TPixel32::Red);

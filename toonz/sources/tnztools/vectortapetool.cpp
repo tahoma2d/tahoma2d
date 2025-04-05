@@ -331,8 +331,12 @@ public:
   }
 
   void draw() override {
+    int devPixRatio = m_viewer->getDevPixRatio();
+
     TVectorImageP vi(getImage(false));
     if (!vi) return;
+
+    glLineWidth(1.0 * devPixRatio);
 
     // TAffine viewMatrix = getViewer()->getViewMatrix();
     // glPushMatrix();

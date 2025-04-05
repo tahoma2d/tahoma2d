@@ -677,11 +677,15 @@ void BenderTool::increaseCP(TStroke *tmpStroke, int beginEndOrAll) {
 //-----------------------------------------------------------------------------
 
 void BenderTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
   // TAffine viewMatrix = getViewer()->getViewMatrix();
   // glPushMatrix();
   // tglMultMatrix(viewMatrix);
 
   double pixelSize = getPixelSize();
+
+  glLineWidth((1.0 * devPixRatio));
 
   typedef std::map<TStroke *, ArrayOfStroke>::const_iterator mapTACit;
   for (mapTACit cit1 = m_metaStroke.begin(); cit1 != m_metaStroke.end();

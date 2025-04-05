@@ -22,7 +22,6 @@
 #include "toonzqt/menubarcommand.h"
 
 #include "toonz/preferences.h"
-#include "toonzqt/gutil.h"
 
 #include "tgl.h"
 #include <math.h>
@@ -245,7 +244,7 @@ void ShiftTraceTool::drawControlRect() {  // TODO
                                           inksOnly);
     color       = (m_ghostIndex == 0) ? backOniColor : frontOniColor;
     double unit = sqrt(tglGetPixelSize2());
-    unit *= getDevicePixelRatio(m_viewer->viewerWidget());
+    unit *= m_viewer->getDevPixRatio();
     TRectD coloredBox = box.enlarge(3.0 * unit);
     tglColor(color);
     glBegin(GL_LINE_STRIP);
@@ -581,6 +580,10 @@ void ShiftTraceTool::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
 }
 
 void ShiftTraceTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
+  glLineWidth(1.0 * devPixRatio);
+
   updateData();
   drawControlRect();
   drawCurve();

@@ -1530,8 +1530,11 @@ public:
   }
 
   void onDeactivate() override {
+    int devPixRatio = m_viewer->getDevPixRatio();
+
     if (m_isRotatingOrMoving) {
       tglColor(m_color);
+      glLineWidth(1.0 * devPixRatio);
       for (int i = 0; i < m_rotatedStroke.size(); i++)
         drawStrokeCenterline(*m_rotatedStroke[i], sqrt(tglGetPixelSize2()));
       return;
@@ -1545,6 +1548,10 @@ public:
   }
 
   void draw() override {
+    int devPixRatio = m_viewer->getDevPixRatio();
+
+    glLineWidth(1.0 * devPixRatio);
+
     if (m_param.m_frameRange.getIndex() && m_firstStrokes.size()) {
       tglColor(m_color);
       for (int i = 0; i < m_firstStrokes.size(); i++)

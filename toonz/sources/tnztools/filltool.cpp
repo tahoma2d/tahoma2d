@@ -2949,6 +2949,10 @@ void FillTool::onFrameSwitched() {
 //-----------------------------------------------------------------------------
 
 void FillTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
+  glLineWidth((1.0 * devPixRatio));
+
   if (m_fillOnlySavebox.getValue()) {
     TToonzImageP ti = (TToonzImageP)getImage(false);
     if (ti) {

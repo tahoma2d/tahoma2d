@@ -475,6 +475,8 @@ void EraserTool::updateTranslation() {
 //-----------------------------------------------------------------------------
 
 void EraserTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
   if (!m_multi.getIndex() && m_pointSize <= 0) return;
 
   double pixelSize2 = getPixelSize() * getPixelSize();
@@ -482,6 +484,9 @@ void EraserTool::draw() {
 
   TImageP image(getImage(false));
   TVectorImageP vi = image;
+
+  glLineWidth(1.0 * devPixRatio);
+
   if (vi) {
 //    bool blackBg = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg;
 //    TPixel color = blackBg ? TPixel32::White : TPixel32::Red;

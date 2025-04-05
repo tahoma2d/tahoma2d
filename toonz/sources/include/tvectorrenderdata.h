@@ -90,6 +90,9 @@ public:
   bool m_animatedGuidedDrawing = false;
   //!  \deprecated  Use the above individual options instead.
   //!  \todo  Remove it ASAP.
+ 
+  int m_devPixRatio;
+
 public:
   TVectorRenderData(ViewerSettings, const TAffine &aff,
                     const TRect &clippingRect, const TPalette *palette,
@@ -123,7 +126,8 @@ public:
       , m_indexToHighlight(-1)
       , m_highLightNow(false)
       , m_guidedCf(0)
-      , m_showGuidedDrawing(false) {}
+      , m_showGuidedDrawing(false)
+      , m_devPixRatio(1) {}
 
   TVectorRenderData(ProductionSettings, const TAffine &aff,
                     const TRect &clippingRect, const TPalette *palette,
@@ -154,7 +158,8 @@ public:
       , m_indexToHighlight(-1)
       , m_highLightNow(false)
       , m_guidedCf(0)
-      , m_showGuidedDrawing(false) {}
+      , m_showGuidedDrawing(false)
+      , m_devPixRatio(1) {}
 
   TVectorRenderData(const TVectorRenderData &other, const TAffine &aff,
                     const TRect &clippingRect, const TPalette *palette,
@@ -183,7 +188,8 @@ public:
       , m_indexToHighlight(other.m_indexToHighlight)
       , m_highLightNow(other.m_highLightNow)
       , m_guidedCf(other.m_guidedCf)
-      , m_showGuidedDrawing(other.m_showGuidedDrawing) {
+      , m_showGuidedDrawing(other.m_showGuidedDrawing)
+      , m_devPixRatio(other.m_devPixRatio) {
   }  //!< Constructs from explicit primary context settings while
      //!  copying the rest from another instance.
 
@@ -215,7 +221,8 @@ public:
       , m_indexToHighlight(-1)
       , m_highLightNow(false)
       , m_guidedCf(0)
-      , m_showGuidedDrawing(false) {
+      , m_showGuidedDrawing(false)
+      , m_devPixRatio(1) {
   }  //!< Constructs settings with default ViewerSettings.
      //!  \deprecated   Use constructors with explicit settings type tag.
 };

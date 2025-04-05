@@ -954,6 +954,10 @@ TPointD EraserTool::fixMousePos(TPointD pos, bool precise) {
 //------------------------------------------------------------------------
 
 void EraserTool::draw() {
+  int devPixRatio = m_viewer->getDevPixRatio();
+
+  glLineWidth(1.0 * devPixRatio);
+
   if (m_eraseType.getValue() == SEGMENTERASE && m_eraseOnlySavebox.getValue()) {
     TToonzImageP ti = (TToonzImageP)getImage(false);
     if (ti) {

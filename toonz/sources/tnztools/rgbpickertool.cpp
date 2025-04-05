@@ -267,6 +267,8 @@ void RGBPickerTool::onImageChanged() {
 }
 
 void RGBPickerTool::draw() {
+  int devPixRatio   = m_viewer->getDevPixRatio();
+
   double pixelSize2 = getPixelSize() * getPixelSize();
   m_thick           = sqrt(pixelSize2) / 2.0;
   if (m_makePick) {
@@ -291,6 +293,7 @@ void RGBPickerTool::draw() {
   if (m_passivePick.getValue() == true) {
     passivePick();
   }
+  glLineWidth(1.0 * devPixRatio);
   if (m_pickType.getValue() == RECT_PICK && !m_makePick) {
     TPixel color = ToonzCheck::instance()->getChecks() & ToonzCheck::eBlackBg
                        ? TPixel32::White
