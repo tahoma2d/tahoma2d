@@ -95,6 +95,7 @@ protected:
   TDoubleProperty m_modifierOpacity;
   TBoolProperty m_modifierEraser;
   TBoolProperty m_modifierLockAlpha;
+  TBoolProperty m_modifierPaintBehind;
   TEnumProperty m_preset;
   TBoolProperty m_snapGrid;
 
