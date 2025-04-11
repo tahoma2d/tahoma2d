@@ -2849,6 +2849,8 @@ void BrushData::saveData(TOStream &os) {
   os.closeChild();
   os.openChild("Modifier_LockAlpha");
   os << (int)m_modifierLockAlpha;
+  os.openChild("Modifier_PaintBehind");
+  os << (int)m_modifierPaintBehind;
   os.closeChild();
 }
 
@@ -2885,6 +2887,8 @@ void BrushData::loadData(TIStream &is) {
       is >> val, m_modifierEraser = val, is.matchEndTag();
     else if (tagName == "Modifier_LockAlpha")
       is >> val, m_modifierLockAlpha = val, is.matchEndTag();
+    else if (tagName == "Modifier_PaintBehind")
+      is >> val, m_modifierPaintBehind = val, is.matchEndTag();
     else
       is.skipCurrentTag();
   }

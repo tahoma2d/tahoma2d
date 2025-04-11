@@ -367,7 +367,7 @@ PaintBrushTool::PaintBrushTool()
     // sostituire i nomi con quelli del current, tipo W_ToolOptions...
     , m_rasThickness("Size:", 1, 1000, 10, 5)
     , m_colorType("Mode:")                     // W_ToolOptions_InkOrPaint
-    , m_onlyEmptyAreas("Selective", false)     // W_ToolOptions_Selective
+    , m_onlyEmptyAreas("Paint Behind", false)     // W_ToolOptions_Selective
     , m_firstTime(true)
     , m_pressure("Pressure", true)
     , m_task(PAINTBRUSH)
@@ -387,7 +387,7 @@ PaintBrushTool::PaintBrushTool()
   m_prop.bind(m_pressure);
   m_prop.bind(m_modifierLockAlpha);
 
-  m_onlyEmptyAreas.setId("Selective");
+  m_onlyEmptyAreas.setId("PaintBehind");
   m_colorType.setId("Mode");
   m_pressure.setId("PressureSensitivity");
   m_modifierLockAlpha.setId("LockAlpha");
@@ -403,7 +403,7 @@ void PaintBrushTool::updateTranslation() {
   m_colorType.setItemUIName(AREAS, tr("Areas"));
   m_colorType.setItemUIName(ALL, tr("Lines & Areas"));
 
-  m_onlyEmptyAreas.setQStringName(tr("Selective", NULL));
+  m_onlyEmptyAreas.setQStringName(tr("Paint Behind", NULL));
 
   m_pressure.setQStringName(tr("Pressure"));
 

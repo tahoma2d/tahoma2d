@@ -141,6 +141,9 @@ public:
   void updateDrawing(const TRasterCM32P rasCM, const TRasterCM32P rasBackupCM,
                      const TRect &bbox, int styleId, bool lockAlpha) const;
 
+  void updateDrawing(const TRaster32P ras, const TRaster32P rasBackup,
+                     const TRect &bbox, bool paintBehind) const;
+
   void addSymmetryBrushes(double lines, double rotation, TPointD centerPoint,
                           bool useLineSymmetry, TPointD dpiScale);
   bool hasSymmetryBrushes() { return m_brushCount > 1; }
