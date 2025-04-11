@@ -33,9 +33,6 @@ jobs:
         with:
           path: |
             /home/runner/.ccache
-            /home/runner/work/tahoma2d/taoma2d/thirdparty/openh264
-            /home/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg
-            /home/runner/work/tahoma2d/taoma2d/thirdparty/opencv
           key: ${{ runner.os }}-${{ matrix.compiler }}-refs/heads/master
           restore-keys: |
             ${{ runner.os }}-${{ matrix.compiler }}-
@@ -146,7 +143,4 @@ jobs:
         with:
           path: |
             /home/runner/.ccache
-            /home/runner/work/tahoma2d/taoma2d/thirdparty/openh264
-            /home/runner/work/tahoma2d/taoma2d/thirdparty/ffmpeg
-            /home/runner/work/tahoma2d/taoma2d/thirdparty/opencv
           key: ${{ runner.os }}-${{ matrix.compiler }}-${{ github.ref }}
