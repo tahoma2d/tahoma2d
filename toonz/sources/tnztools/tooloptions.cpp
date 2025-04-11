@@ -1701,7 +1701,7 @@ PaintbrushToolOptionsBox::PaintbrushToolOptionsBox(QWidget *parent, TTool *tool,
 
   m_colorMode = dynamic_cast<ToolOptionCombo *>(m_controls.value("Mode:"));
   m_selectiveMode =
-      dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Selective"));
+      dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Paint Behind"));
   m_lockAlphaMode =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Lock Alpha"));
 
