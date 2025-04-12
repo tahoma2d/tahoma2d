@@ -749,13 +749,15 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
   if (fillGaps) {
     finishGapLines(tempRaster, bbbox, r, refCMRaster, params.m_palette, paintAtClickedPos, paint, closeStyleIndex, closeGaps);
     TPixelCM32 *tempPix, *tempPixRestart;
-    tempPixRestart = tempPix = tempRaster->pixels();
+    tempPixRestart = tempRaster->pixels();
     TPixelCM32 *keepPix, *keepPixRestart;
-    keepPixRestart = keepPix = r->pixels();
+    keepPixRestart = r->pixels();
     int fillNeighbors = 0;
     int paintableNeighbors = 0;
 
     for (int tempY = 0; tempY < tempRaster->getLy(); tempY++) {
+      tempPix = tempPixRestart;
+      keepPix = keepPixRestart;
       for (int tempX = 0; tempX < tempRaster->getLx();
            tempX++, tempPix++, keepPix++) {
         if (tempPix->getInk() >= IGNORECOLORSTYLE || tempPix->getPaint() >= IGNORECOLORSTYLE) {
@@ -765,6 +767,8 @@ bool fill(const TRasterCM32P &r, const FillParameters &params,
         keepPix->setPaint(tempPix->getPaint());
         keepPix->setTone(tempPix->getTone());
       }
+      tempPixRestart += tempRaster->getWrap();
+      keepPixRestart += r->getWrap();
     }
   }
 
