@@ -118,6 +118,9 @@ chmod +x ../installer/linux/deb-creator/debcreator.sh
  -p $TAHOMA2DVERSION \
  -v $TAHOMA2DVERSION \
  -t ../installer/linux/deb-creator/deb-template \
- -c ./Tahoma2D/Tahoma2D.AppImage
+ -x ./appdir \
+ -f ./Tahoma2D/ffmpeg \
+ -r ./Tahoma2D/rhubarb \
+ -s ../../stuff
 
  mv tahoma2d_*_amd64.deb Tahoma2D-linux.deb
