@@ -192,6 +192,8 @@ class RasterSelectionTool final : public SelectionTool {
   //! Used in ToonzRasterImage to switch from selection tool to modify savebox
   //! tool.
   TBoolProperty m_modifySavebox;
+  TBoolProperty m_selective;
+  TEnumProperty m_selectiveMode;
   SetSaveboxTool *m_setSaveboxTool;
   TBoolProperty m_noAntialiasing;
 

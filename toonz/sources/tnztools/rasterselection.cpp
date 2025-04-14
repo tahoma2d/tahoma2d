@@ -96,10 +96,47 @@ TRectD intersection(const TRectD &area, const TImageP image) {
 
 //-----------------------------------------------------------------------------
 
+template <class PIXEL>
+void emptyPixel(PIXEL &pix, PIXEL emptyPix, PIXEL selectivePix,
+                std::wstring selectiveMode) {
+  pix = emptyPix;
+}
+
+void emptyPixel(TPixelCM32 &pix, TPixelCM32 emptyPix, TPixelCM32 selectivePix,
+                std::wstring selectiveMode) {
+  if (selectivePix == TPixelCM32()) {
+    pix = emptyPix;
+    return;
+  }
+
+  if (selectivePix.getInk() == pix.getInk() &&
+      (selectiveMode == LINES || selectiveMode == ALL)) {
+    pix.setInk(emptyPix.getInk());
+    if (pix.getPaint()) {
+      if (!pix.getTone())
+        pix.setPaint(emptyPix.getPaint());
+      else
+        pix.setTone(255);
+    }
+  }
+
+  if (selectivePix.getPaint() == pix.getPaint() &&
+      (selectiveMode == AREAS || selectiveMode == ALL)) {
+    pix.setPaint(emptyPix.getPaint());
+  }
+
+  if (pix.getInk() == emptyPix.getInk() &&
+      pix.getPaint() == emptyPix.getPaint())
+    pix.setTone(emptyPix.getTone());
+}
+
+//-----------------------------------------------------------------------------
+
 // The stroke is in raster coordinates
 template <class PIXEL1, class PIXEL2>
 TRasterPT<PIXEL1> getImageFromStroke(TRasterPT<PIXEL2> ras,
-                                     const TStroke &stroke) {
+                                     const TStroke &stroke,
+                                     RasterSelection &selection) {
   TRectD regionsBoxD = stroke.getBBox();
   // E' volutamente allargato di un pixel!
   TRect regionsBox(tfloor(regionsBoxD.x0), tfloor(regionsBoxD.y0),
@@ -114,6 +151,10 @@ TRasterPT<PIXEL1> getImageFromStroke(TRasterPT<PIXEL2> ras,
   app.addStroke(new TStroke(stroke));
   app.findRegions();
   int reg, j, k, y;
+
+  TPixelCM32 selectivePix    = selection.getSelectivePixelCM32();
+  std::wstring selectiveMode = selection.getSelectiveMode();
+
   ras->lock();
   for (reg = 0; reg < (int)app.getRegionCount(); reg++) {
     // For each region, pixels inside the region are copied in buffer!
@@ -144,7 +185,28 @@ TRasterPT<PIXEL1> getImageFromStroke(TRasterPT<PIXEL2> ras,
             TPixelCM32 *bottomPix =
                 (TPixelCM32 *)bufferLine + k - regionsBox.x0;
             TPixelCM32 *topPix = (TPixelCM32 *)selectedLine + k;
-            *bottomPix         = *topPix;
+            if (selectivePix == TPixelCM32())
+              *bottomPix = *topPix;
+            else {
+              if (selectivePix.getInk() == topPix->getInk() &&
+                  (selectiveMode == LINES || selectiveMode == ALL)) {
+                bottomPix->setInk(topPix->getInk());
+                bottomPix->setTone(topPix->getTone());
+              }
+
+              if (selectivePix.getPaint() == topPix->getPaint() &&
+                  (selectiveMode == AREAS || selectiveMode == ALL)) {
+                bottomPix->setPaint(
+                    (!bottomPix->getInk() && topPix->getTone() < 70)
+                        ? 0
+                        : topPix->getPaint());
+                bottomPix->setTone(!bottomPix->getInk() ? 255
+                                                        : topPix->getTone());
+              }
+
+              if (bottomPix->getInk() == 0 && bottomPix->getPaint() == 0)
+                *bottomPix = TPixelCM32();
+            }
           } else if (buffer32 && ras32) {
             TPixel32 *bottomPix = (TPixel32 *)bufferLine + k - regionsBox.x0;
             TPixel32 *topPix    = (TPixel32 *)selectedLine + k;
@@ -181,7 +243,8 @@ TRasterPT<PIXEL1> getImageFromSelection(TRasterPT<PIXEL2> &ras,
   for (i = 0; i < strokes.size(); i++) {
     TStroke stroke = strokes[i];
     stroke.transform(TTranslation(ras->getCenterD()));
-    TRasterPT<PIXEL1> app = getImageFromStroke<PIXEL1, PIXEL2>(ras, stroke);
+    TRasterPT<PIXEL1> app =
+        getImageFromStroke<PIXEL1, PIXEL2>(ras, stroke, selection);
     if (!app) continue;
     TRectD strokeRectD = stroke.getBBox();
     TRect strokeRect(tfloor(strokeRectD.x0), tfloor(strokeRectD.y0),
@@ -221,7 +284,8 @@ TRasterP getImageFromSelection(const TImageP &image,
 template <typename PIXEL>
 void deleteSelectionWithoutUndo(TRasterPT<PIXEL> &ras,
                                 const std::vector<TStroke> &strokes,
-                                PIXEL emptyValue) {
+                                PIXEL emptyValue, PIXEL selectivePixel,
+                                std::wstring selectiveMode) {
   if (!ras) return;
   unsigned int i;
   for (i = 0; i < strokes.size(); i++) {
@@ -258,7 +322,10 @@ void deleteSelectionWithoutUndo(TRasterPT<PIXEL> &ras,
           if (intersections[j] == intersections[j + 1]) continue;
           int from = std::max(tfloor(intersections[j]), bBox.x0);
           int to   = std::min(tceil(intersections[j + 1]), bBox.x1);
-          for (k = from; k <= to; k++) *(selectedLine + k) = emptyValue;
+          for (k = from; k <= to; k++) {
+            PIXEL *pix = selectedLine + k;
+            emptyPixel(*pix, emptyValue, selectivePixel, selectiveMode);
+          }
         }
       }
     }
@@ -269,18 +336,22 @@ void deleteSelectionWithoutUndo(TRasterPT<PIXEL> &ras,
 //-----------------------------------------------------------------------------
 
 void deleteSelectionWithoutUndo(const TImageP &image,
-                                const std::vector<TStroke> &strokes) {
+                                const std::vector<TStroke> &strokes,
+                                TPixelCM32 selectivePixel,
+                                std::wstring selectiveMode) {
   if (TToonzImageP toonzImage = (TToonzImageP)image) {
     TRasterPT<TPixelCM32> ras = toonzImage->getRaster();
-    deleteSelectionWithoutUndo<TPixelCM32>(ras, strokes, TPixelCM32());
+    deleteSelectionWithoutUndo<TPixelCM32>(ras, strokes, TPixelCM32(),
+                                           selectivePixel, selectiveMode);
   }
   if (TRasterImageP rasterImage = (TRasterImageP)image) {
     TRasterP ras = rasterImage->getRaster();
     if (TRaster32P ras32 = (TRaster32P)ras)
-      deleteSelectionWithoutUndo<TPixel32>(ras32, strokes,
-                                           TPixel32::Transparent);
+      deleteSelectionWithoutUndo<TPixel32>(
+          ras32, strokes, TPixel32::Transparent, TPixel32(), selectiveMode);
     if (TRasterGR8P rasGR8 = (TRasterGR8P)ras)
-      deleteSelectionWithoutUndo<TPixelGR8>(rasGR8, strokes, TPixelGR8::White);
+      deleteSelectionWithoutUndo<TPixelGR8>(rasGR8, strokes, TPixelGR8::White,
+                                            TPixelGR8(), selectiveMode);
   }
 }
 
@@ -315,20 +386,27 @@ class UndoDeleteSelection final : public TUndo {
   TPoint m_erasePoint;
   std::vector<TStroke> m_strokes;
   TTool *m_tool;
+  TPixelCM32 m_selectivePixelCM32;
+  std::wstring m_selectiveMode;
 
 public:
-  UndoDeleteSelection(RasterSelection *selection, TXshSimpleLevel *level)
+  UndoDeleteSelection(RasterSelection *selection, TXshSimpleLevel *level,
+                      TPixelCM32 selectivePixelCM32, std::wstring selectiveMode)
       : TUndo()
       , m_level(level)
       , m_frameId(selection->getFrameId())
-      , m_strokes(selection->getOriginalStrokes()) {
+      , m_strokes(selection->getOriginalStrokes()) 
+      , m_selectivePixelCM32(selectivePixelCM32)
+      , m_selectiveMode(selectiveMode) {
     TImageP image   = m_level->getFrame(m_frameId, true);
     m_erasedImageId = "UndoDeleteSelection" + std::to_string(m_id++);
     TRasterP ras    = getRaster(image);
     TRasterP erasedRas;
-    if (!selection->isFloating())
+    if (!selection->isFloating()) {
+      selection->setSelectivePixelCM32(TPixelCM32(), L"");
       erasedRas = TRasterP(getImageFromSelection(image, *selection));
-    else
+      selection->setSelectivePixelCM32(m_selectivePixelCM32, m_selectiveMode);
+    } else
       erasedRas = TRasterP(selection->getOriginalFloatingSelection());
     TImageP erasedImage;
     if (TRasterCM32P toonzRas = (TRasterCM32P)(erasedRas))
@@ -366,7 +444,8 @@ public:
     TImageP image       = m_level->getFrame(m_frameId, true);
     TImageP erasedImage = TImageCache::instance()->get(m_erasedImageId, false);
     if (!erasedImage) return;
-    deleteSelectionWithoutUndo(image, m_strokes);
+    deleteSelectionWithoutUndo(image, m_strokes, m_selectivePixelCM32,
+                               m_selectiveMode);
 
     ToolUtils::updateSaveBox(m_level, m_frameId);
     if (!m_tool) return;
@@ -443,10 +522,14 @@ class UndoPasteFloatingSelection final : public ToolUtils::TToolUndo {
   TTool *m_tool;
   TFrameId m_frameId;
 
+  TPixelCM32 m_selectivePixelCM32;
+  std::wstring m_selectiveMode;
+
 public:
   UndoPasteFloatingSelection(RasterSelection *currentSelection,
                              TXshSimpleLevel *sl, TPalette *oldPalette,
-                             bool noAntialiasing)
+                             bool noAntialiasing, TPixelCM32 selectivePixelCM32,
+                             std::wstring selectiveMode)
       : TToolUndo(sl, currentSelection->getFrameId(),
                   currentSelection->wasFrameCreated(),
                   currentSelection->wasLevelCreated(), oldPalette,
@@ -459,7 +542,9 @@ public:
       , m_isPastedSelection(currentSelection->isPastedSelection())
       , m_noAntialiasing(noAntialiasing)
       , m_undoImageId("")
-      , m_frameId(currentSelection->getFrameId()) {
+      , m_frameId(currentSelection->getFrameId())
+      , m_selectivePixelCM32(selectivePixelCM32)
+      , m_selectiveMode(selectiveMode) {
     TImageP image(currentSelection->getCurrentImage());
     if (!image) return;
 
@@ -577,7 +662,9 @@ public:
     TXshSimpleLevelP sl(m_imageCell.getSimpleLevel());
     const TFrameId &fid = m_imageCell.m_frameId;
 
-    if (!m_isPastedSelection) deleteSelectionWithoutUndo(image, m_strokes);
+    if (!m_isPastedSelection)
+      deleteSelectionWithoutUndo(image, m_strokes, m_selectivePixelCM32,
+                                 m_selectiveMode);
 
     TRasterP ras = getRaster(image);
     pasteFloatingSelectionWithoutUndo(image, floatingRas, m_transformation,
@@ -907,7 +994,9 @@ RasterSelection::RasterSelection()
     , m_noAntialiasing(false)
     , m_createdFrame(false)
     , m_createdLevel(false)
-    , m_renumberedLevel(false) {
+    , m_renumberedLevel(false)
+    , m_selectivePixelCM32(TPixelCM32())
+    , m_selectiveMode(LINES) {
   m_strokes.clear();
   m_originalStrokes.clear();
 }
@@ -930,8 +1019,8 @@ RasterSelection::RasterSelection(const RasterSelection &src)
     , m_createdFrame(src.m_createdFrame)
     , m_createdLevel(src.m_createdLevel)
     , m_renumberedLevel(src.m_renumberedLevel)
-
-{
+    , m_selectivePixelCM32(src.m_selectivePixelCM32)
+    , m_selectiveMode(src.m_selectiveMode) {
   setView(src.getView());
   if (src.isFloating()) {
     m_floatingSelection = src.m_floatingSelection->clone();
@@ -1057,9 +1146,16 @@ void RasterSelection::makeFloating() {
 
   if (!isEditable()) return;
 
+  // Get original selection
+  TPixelCM32 holdSelective    = m_selectivePixelCM32;
+  m_selectivePixelCM32        = TPixelCM32();
+  m_originalfloatingSelection = getImageFromSelection(m_currentImage, *this);
+
+  // Now get selective selection, if enabled
+  m_selectivePixelCM32        = holdSelective;
   m_floatingSelection         = getImageFromSelection(m_currentImage, *this);
-  m_originalfloatingSelection = m_floatingSelection->clone();
-  deleteSelectionWithoutUndo(m_currentImage, m_strokes);
+  deleteSelectionWithoutUndo(m_currentImage, m_strokes, m_selectivePixelCM32,
+                             m_selectiveMode);
 
   ToolUtils::updateSaveBox();
   TTool *tool = TTool::getApplication()->getCurrentTool()->getTool();
@@ -1094,13 +1190,17 @@ void RasterSelection::pasteFloatingSelection() {
   if (m_transformationCount > 0 || m_isPastedSelection)
     TUndoManager::manager()->add(new UndoPasteFloatingSelection(
         this, m_currentImageCell.getSimpleLevel(), m_oldPalette.getPointer(),
-        m_noAntialiasing));
+        m_noAntialiasing, m_selectivePixelCM32, m_selectiveMode));
   else if (m_transformationCount == 0)
     TUndoManager::manager()->popUndo(-1, true);
 
   TRectD wRect = getSelectionBbox();
-  pasteFloatingSelectionWithoutUndo(m_currentImage, m_floatingSelection,
-                                    m_affine, wRect, m_noAntialiasing);
+  if (!m_transformationCount)
+    pasteFloatingSelectionWithoutUndo(m_currentImage, m_originalfloatingSelection,
+                                      m_affine, wRect, m_noAntialiasing);
+  else
+    pasteFloatingSelectionWithoutUndo(m_currentImage, m_floatingSelection,
+                                      m_affine, wRect, m_noAntialiasing);
 
   ToolUtils::updateSaveBox(m_currentImageCell.getSimpleLevel(),
                            m_currentImageCell.getFrameId());
@@ -1134,10 +1234,12 @@ void RasterSelection::deleteSelection() {
       TUndoManager::manager()->popUndo(m_transformationCount);
   }
   if (!isPastedSelection() && !isEmpty())
-    TUndoManager::manager()->add(new UndoDeleteSelection(this, level));
+    TUndoManager::manager()->add(new UndoDeleteSelection(
+        this, level, m_selectivePixelCM32, m_selectiveMode));
 
   if (!isFloating())
-    deleteSelectionWithoutUndo(m_currentImage, m_strokes);
+    deleteSelectionWithoutUndo(m_currentImage, m_strokes, m_selectivePixelCM32,
+                               m_selectiveMode);
   else if (m_oldPalette)
     m_currentImage->getPalette()->assign(m_oldPalette.getPointer());
   m_floatingSelection         = TRasterP();
