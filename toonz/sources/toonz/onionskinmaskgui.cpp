@@ -237,7 +237,7 @@ void OnioniSkinMaskGUI::addOnionSkinCommand(QMenu *menu, bool isFilmStrip) {
                     SLOT(enableRelativeDrawingMode()));
     } else {
       QAction *relativeSkinMode = menu->addAction(
-          QString(QObject::tr("Switch To Relative Frane Onion Skin")));
+          QString(QObject::tr("Switch To Relative Frame Onion Skin")));
       menu->connect(relativeSkinMode, SIGNAL(triggered()), &switcher,
                     SLOT(enableRelativeFrameMode()));
     }

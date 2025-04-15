@@ -14614,7 +14614,7 @@ Visite o Site para mais informações.</translation>
     </message>
     <message>
         <location filename="../../toonz/onionskinmaskgui.cpp" line="240"/>
-        <source>Switch To Relative Frane Onion Skin</source>
+        <source>Switch To Relative Frame Onion Skin</source>
         <translation>Alternar para Onion Skin Relativa ao Quadro</translation>
     </message>
     <message>

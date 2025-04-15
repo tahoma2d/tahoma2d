@@ -14596,7 +14596,7 @@ Visit the Web site for more information.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Switch To Relative Frane Onion Skin</source>
+        <source>Switch To Relative Frame Onion Skin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
