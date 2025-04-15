@@ -14643,7 +14643,7 @@ Are you sure ?</source>
     </message>
     <message>
         <location filename="../../toonz/onionskinmaskgui.cpp" line="240"/>
-        <source>Switch To Relative Frane Onion Skin</source>
+        <source>Switch To Relative Frame Onion Skin</source>
         <translation>Переключиться на относительный кадр кальки</translation>
     </message>
     <message>
