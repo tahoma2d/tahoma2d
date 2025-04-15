@@ -374,6 +374,9 @@ class SelectionToolOptionsBox final : public ToolOptionsBox,
   TTool *m_tool;
 
   ToolOptionCheckbox *m_setSaveboxCheckbox;
+  ToolOptionCheckbox *m_selective;
+  ToolOptionCombo *m_selectiveMode;
+  QLabel *m_selectiveModeLabel;
   bool m_isVectorSelction;
   QLabel *m_scaleXLabel;
   SelectionScaleField *m_scaleXField;
