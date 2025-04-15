@@ -13,7 +13,7 @@ then
 fi
 cd build
 
-source /opt/qt515/bin/qt515-env.sh
+#source /opt/qt515/bin/qt515-env.sh
 
 if [ -d ../../thirdparty/canon/Header ]
 then
