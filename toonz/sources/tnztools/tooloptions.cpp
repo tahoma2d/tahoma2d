@@ -1129,10 +1129,7 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
     : ToolOptionsBox(parent)
     , m_tool(tool)
     , m_isVectorSelction(false)
-    , m_setSaveboxCheckbox(0)
-    , m_selective(0)
-    , m_selectiveMode(0)
-    , m_selectiveModeLabel(0) {
+    , m_setSaveboxCheckbox(0) {
   TPropertyGroup *props = tool->getProperties(0);
   assert(props->getPropertyCount() > 0);
 
@@ -1160,13 +1157,6 @@ SelectionToolOptionsBox::SelectionToolOptionsBox(QWidget *parent, TTool *tool,
   m_moveYField = new SelectionMoveField(selectionTool, 1, "Move Y");
 
   if (rasterSelectionTool) {
-    m_selective =
-        dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Selective"));
-    m_selectiveMode =
-        dynamic_cast<ToolOptionCombo *>(m_controls.value("Mode:"));
-    if (m_selectiveMode)
-      m_selectiveModeLabel = m_labels.value(m_selectiveMode->propertyName());
-
     TBoolProperty *modifySetSaveboxProp =
         rasterSelectionTool->getModifySaveboxProperty();
     if (modifySetSaveboxProp)
@@ -1354,11 +1344,6 @@ void SelectionToolOptionsBox::updateStatus() {
       if (w && w != m_setSaveboxCheckbox) w->setEnabled(!disable);
     }
     if (disable) return;
-  }
-
-  if (m_selective) {
-    m_selectiveModeLabel->setEnabled(m_selective->isChecked());
-    m_selectiveMode->setEnabled(m_selective->isChecked());
   }
 
   m_scaleXField->updateStatus();

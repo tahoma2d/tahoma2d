@@ -467,7 +467,7 @@ TEnv::StringVar FullColorSelectionType("SelectionToolFullcolorType",
                                        "Rectangular");
 TEnv::IntVar RasterSelectionSelective("SelectionToolInknpaintTypeSelective", 0);
 TEnv::StringVar RasterSelectionSelectiveMode(
-    "SelectionToolInknpaintTypeSelectiveMode", "Lines");
+    "SelectionToolInknpaintTypeSelectiveMode", "Lines & Areas");
 
 //=============================================================================
 // RasterSelectionTool
@@ -483,14 +483,14 @@ RasterSelectionTool::RasterSelectionTool(int targetType)
     , m_selectiveMode("Mode:")
     , m_setSaveboxTool(0) {
   if (m_targetType & ToonzImage) {
-    m_prop.bind(m_selective);
-    m_selective.setId("Selective");
-
     m_selectiveMode.addValue(LINES);
     m_selectiveMode.addValue(AREAS);
     m_selectiveMode.addValue(ALL);
     m_prop.bind(m_selectiveMode);
     m_selective.setId("Mode");
+ 
+    m_prop.bind(m_selective);
+    m_selective.setId("Selective");
   }
   m_prop.bind(m_noAntialiasing);
   m_rasterSelection.setView(this);
@@ -621,13 +621,12 @@ void RasterSelectionTool::leftButtonDown(const TPointD &pos,
   }
 
   TPixelCM32 selectivePix;
-  std::wstring selectiveMode = ALL;
   if (m_selective.getValue()) {
     int styleId   = TTool::getApplication()->getCurrentLevelStyleIndex();
     selectivePix  = TPixelCM32(styleId, styleId, 0);
-    selectiveMode = m_selectiveMode.getValue();
   }
-  m_rasterSelection.setSelectivePixelCM32(selectivePix, selectiveMode);
+  m_rasterSelection.setSelectivePixelCM32(selectivePix,
+                                          m_selectiveMode.getValue());
 
   SelectionTool::leftButtonDown(pos, e);
 }

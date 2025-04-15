@@ -104,13 +104,8 @@ void emptyPixel(PIXEL &pix, PIXEL emptyPix, PIXEL selectivePix,
 
 void emptyPixel(TPixelCM32 &pix, TPixelCM32 emptyPix, TPixelCM32 selectivePix,
                 std::wstring selectiveMode) {
-  if (selectivePix == TPixelCM32()) {
-    pix = emptyPix;
-    return;
-  }
-
-  if (selectivePix.getInk() == pix.getInk() &&
-      (selectiveMode == LINES || selectiveMode == ALL)) {
+  if ((selectiveMode == LINES || selectiveMode == ALL) &&
+      (selectivePix == TPixelCM32() || selectivePix.getInk() == pix.getInk())) {
     pix.setInk(emptyPix.getInk());
     if (pix.getPaint()) {
       if (!pix.getTone())
@@ -120,8 +115,9 @@ void emptyPixel(TPixelCM32 &pix, TPixelCM32 emptyPix, TPixelCM32 selectivePix,
     }
   }
 
-  if (selectivePix.getPaint() == pix.getPaint() &&
-      (selectiveMode == AREAS || selectiveMode == ALL)) {
+  if ((selectiveMode == AREAS || selectiveMode == ALL) &&
+      (selectivePix == TPixelCM32() ||
+       selectivePix.getPaint() == pix.getPaint())) {
     pix.setPaint(emptyPix.getPaint());
   }
 
@@ -185,28 +181,26 @@ TRasterPT<PIXEL1> getImageFromStroke(TRasterPT<PIXEL2> ras,
             TPixelCM32 *bottomPix =
                 (TPixelCM32 *)bufferLine + k - regionsBox.x0;
             TPixelCM32 *topPix = (TPixelCM32 *)selectedLine + k;
-            if (selectivePix == TPixelCM32())
-              *bottomPix = *topPix;
-            else {
-              if (selectivePix.getInk() == topPix->getInk() &&
-                  (selectiveMode == LINES || selectiveMode == ALL)) {
-                bottomPix->setInk(topPix->getInk());
-                bottomPix->setTone(topPix->getTone());
-              }
-
-              if (selectivePix.getPaint() == topPix->getPaint() &&
-                  (selectiveMode == AREAS || selectiveMode == ALL)) {
-                bottomPix->setPaint(
-                    (!bottomPix->getInk() && topPix->getTone() < 70)
-                        ? 0
-                        : topPix->getPaint());
-                bottomPix->setTone(!bottomPix->getInk() ? 255
-                                                        : topPix->getTone());
-              }
-
-              if (bottomPix->getInk() == 0 && bottomPix->getPaint() == 0)
-                *bottomPix = TPixelCM32();
+            if ((selectiveMode == LINES || selectiveMode == ALL) &&
+                (selectivePix == TPixelCM32() ||
+                 selectivePix.getInk() == topPix->getInk())) {
+              bottomPix->setInk(topPix->getInk());
+              bottomPix->setTone(topPix->getTone());
             }
+
+            if ((selectiveMode == AREAS || selectiveMode == ALL) &&
+                (selectivePix == TPixelCM32() ||
+                 selectivePix.getPaint() == topPix->getPaint())) {
+              bottomPix->setPaint(
+                  (!bottomPix->getInk() && topPix->getTone() < 70)
+                      ? 0
+                      : topPix->getPaint());
+              bottomPix->setTone(!bottomPix->getInk() ? 255
+                                                      : topPix->getTone());
+            }
+
+            if (bottomPix->getInk() == 0 && bottomPix->getPaint() == 0)
+              *bottomPix = TPixelCM32();
           } else if (buffer32 && ras32) {
             TPixel32 *bottomPix = (TPixel32 *)bufferLine + k - regionsBox.x0;
             TPixel32 *topPix    = (TPixel32 *)selectedLine + k;
@@ -1147,13 +1141,17 @@ void RasterSelection::makeFloating() {
   if (!isEditable()) return;
 
   // Get original selection
-  TPixelCM32 holdSelective    = m_selectivePixelCM32;
+  TPixelCM32 holdSelectivePixel  = m_selectivePixelCM32;
+  std::wstring holdSelectiveMode = m_selectiveMode;
+
   m_selectivePixelCM32        = TPixelCM32();
+  m_selectiveMode             = ALL;
   m_originalfloatingSelection = getImageFromSelection(m_currentImage, *this);
 
   // Now get selective selection, if enabled
-  m_selectivePixelCM32        = holdSelective;
-  m_floatingSelection         = getImageFromSelection(m_currentImage, *this);
+  m_selectivePixelCM32 = holdSelectivePixel;
+  m_selectiveMode      = holdSelectiveMode;
+  m_floatingSelection  = getImageFromSelection(m_currentImage, *this);
   deleteSelectionWithoutUndo(m_currentImage, m_strokes, m_selectivePixelCM32,
                              m_selectiveMode);
 
