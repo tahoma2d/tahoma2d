@@ -3264,6 +3264,8 @@ void MainWindow::defineActions() {
                           QT_TR_NOOP("Rotate Selection/Object Left"), "");
   createToolOptionsAction("A_ToolOption_RotateRight",
                           QT_TR_NOOP("Rotate Selection/Object Right"), "");
+  createToolOptionsAction("A_ToolOption_PaintBehind", QT_TR_NOOP("Paint Behind"),
+                          "");
   // Visualization
 
   createViewerAction(V_ZoomIn, QT_TR_NOOP("Zoom In"), "+");

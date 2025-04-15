@@ -61,6 +61,7 @@ TEnv::DoubleVar FullcolorModifierSize("FullcolorModifierSize", 0);
 TEnv::DoubleVar FullcolorModifierOpacity("FullcolorModifierOpacity", 100);
 TEnv::IntVar FullcolorModifierEraser("FullcolorModifierEraser", 0);
 TEnv::IntVar FullcolorModifierLockAlpha("FullcolorModifierLockAlpha", 0);
+TEnv::IntVar FullcolorModifierPaintBehind("FullcolorModifierPaintBehind", 0);
 TEnv::StringVar FullcolorBrushPreset("FullcolorBrushPreset", "<custom>");
 TEnv::IntVar FullcolorBrushSnapGrid("FullcolorBrushSnapGrid", 0);
 
@@ -130,6 +131,7 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
     , m_modifierOpacity("ModifierOpacity", 0, 100, 100, true)
     , m_modifierEraser("ModifierEraser", false)
     , m_modifierLockAlpha("Lock Alpha", false)
+    , m_modifierPaintBehind("Paint Behind", false)
     , m_preset("Preset:")
     , m_minCursorThick(0)
     , m_maxCursorThick(0)
@@ -152,6 +154,7 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
   m_prop.bind(m_opacity);
   m_prop.bind(m_modifierOpacity);
   m_prop.bind(m_modifierEraser);
+  m_prop.bind(m_modifierPaintBehind);
   m_prop.bind(m_modifierLockAlpha);
   m_prop.bind(m_pressure);
   m_prop.bind(m_snapGrid);
@@ -159,6 +162,7 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
 
   m_preset.setId("BrushPreset");
   m_modifierEraser.setId("RasterEraser");
+  m_modifierPaintBehind.setId("PaintBehind");
   m_modifierLockAlpha.setId("LockAlpha");
   m_pressure.setId("PressureSensitivity");
   m_snapGrid.setId("SnapGrid");
@@ -201,6 +205,7 @@ void FullColorBrushTool::updateTranslation() {
   m_modifierOpacity.setQStringName(tr("Opacity"));
   m_modifierEraser.setQStringName(tr("Eraser"));
   m_modifierLockAlpha.setQStringName(tr("Lock Alpha"));
+  m_modifierPaintBehind.setQStringName(tr("Paint Behind"));
   m_snapGrid.setQStringName(tr("Grid"));
 }
 
@@ -262,7 +267,8 @@ void FullColorBrushTool::updateWorkAndBackupRasters(const TRect &rect) {
     TRect _rect = enlargedRect * ras->getBounds();
     if (_rect.isEmpty()) return;
 
-    m_workRaster->extract(_rect)->copy(ras->extract(_rect));
+    if (!m_modifierPaintBehind.getValue())
+      m_workRaster->extract(_rect)->copy(ras->extract(_rect));
     m_backUpRas->extract(_rect)->copy(ras->extract(_rect));
   } else {
     if (enlargedRect.x0 < m_lastRect.x0) enlargedRect.x0 -= dx;
@@ -276,7 +282,8 @@ void FullColorBrushTool::updateWorkAndBackupRasters(const TRect &rect) {
     TRect _lastRect    = m_lastRect * ras->getBounds();
     QList<TRect> rects = ToolUtils::splitRect(_rect, _lastRect);
     for (int i = 0; i < rects.size(); i++) {
-      m_workRaster->extract(rects[i])->copy(ras->extract(rects[i]));
+      if (!m_modifierPaintBehind.getValue())
+        m_workRaster->extract(rects[i])->copy(ras->extract(rects[i]));
       m_backUpRas->extract(rects[i])->copy(ras->extract(rects[i]));
     }
   }
@@ -366,6 +373,8 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
 
   m_workRaster->lock();
 
+  if (m_modifierPaintBehind.getValue()) m_workRaster->clear();
+
   TPointD rasCenter = ras->getCenterD();
   TPointD point(pos + rasCenter);
 
@@ -403,7 +412,8 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
   m_toonz_brush->strokeTo(point, pressure, restartBrushTimer());
   TRect updateRect = m_strokeSegmentRect * ras->getBounds();
   if (!updateRect.isEmpty())
-    ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
+    m_toonz_brush->updateDrawing(ras, m_backUpRas, m_strokeSegmentRect,
+                                 m_modifierPaintBehind.getValue());
 
   TThickPoint thickPoint(point, pressure);
   std::vector<TThickPoint> pts;
@@ -632,7 +642,8 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
     m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, brushTimer);
     TRect updateRect = m_strokeSegmentRect * ras->getBounds();
     if (!updateRect.isEmpty())
-      ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
+      m_toonz_brush->updateDrawing(ras, m_backUpRas, m_strokeSegmentRect,
+                                   m_modifierPaintBehind.getValue());
 
     TPointD thickOffset(m_maxCursorThick * 0.5, m_maxCursorThick * 0.5);
     invalidateRect += convert(m_strokeSegmentRect) - rasCenter;
@@ -698,7 +709,8 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
     if (i == pts.size() - 1) m_toonz_brush->endStroke();
     TRect updateRect = m_strokeSegmentRect * ras->getBounds();
     if (!updateRect.isEmpty())
-      ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
+      m_toonz_brush->updateDrawing(ras, m_backUpRas, m_strokeSegmentRect,
+                                   m_modifierPaintBehind.getValue());
 
     TPointD thickOffset(m_maxCursorThick * 0.5, m_maxCursorThick * 0.5);
     invalidateRect += convert(m_strokeSegmentRect) - rasCenter;
@@ -931,6 +943,17 @@ bool FullColorBrushTool::onPropertyChanged(std::string propertyName) {
     getApplication()->getCurrentTool()->notifyToolChanged();
     m_propertyUpdating = false;
     return true;
+  } else if (propertyName == m_modifierLockAlpha.getName()) {
+    if (m_modifierLockAlpha.getValue() && m_modifierPaintBehind.getValue())
+      m_modifierPaintBehind.setValue(false);
+  } else if (propertyName == m_modifierEraser.getName()) {
+    if (m_modifierEraser.getValue() && m_modifierPaintBehind.getValue())
+      m_modifierPaintBehind.setValue(false);
+  } else if (propertyName == m_modifierPaintBehind.getName()) {
+    if (m_modifierPaintBehind.getValue() && m_modifierLockAlpha.getValue())
+      m_modifierLockAlpha.setValue(false);
+    if (m_modifierPaintBehind.getValue() && m_modifierEraser.getValue())
+      m_modifierEraser.setValue(false);
   }
 
   FullcolorBrushMinSize        = m_thickness.getValue().first;
@@ -944,6 +967,7 @@ bool FullColorBrushTool::onPropertyChanged(std::string propertyName) {
   FullcolorModifierOpacity     = m_modifierOpacity.getValue();
   FullcolorModifierEraser      = m_modifierEraser.getValue() ? 1 : 0;
   FullcolorModifierLockAlpha   = m_modifierLockAlpha.getValue() ? 1 : 0;
+  FullcolorModifierPaintBehind = m_modifierPaintBehind.getValue() ? 1 : 0;
   FullcolorBrushSnapGrid       = m_snapGrid.getValue() ? 1 : 0;
 
   if (m_preset.getValue() != CUSTOM_WSTR) {
@@ -1001,6 +1025,7 @@ void FullColorBrushTool::loadPreset() {
     m_modifierOpacity.setValue(preset.m_modifierOpacity);
     m_modifierEraser.setValue(preset.m_modifierEraser);
     m_modifierLockAlpha.setValue(preset.m_modifierLockAlpha);
+    m_modifierPaintBehind.setValue(preset.m_modifierPaintBehind);
   } catch (...) {
   }
 }
@@ -1011,17 +1036,18 @@ void FullColorBrushTool::addPreset(QString name) {
   // Build the preset
   BrushData preset(name.toStdWString());
 
-  preset.m_min               = m_thickness.getValue().first;
-  preset.m_max               = m_thickness.getValue().second;
-  preset.m_smooth            = m_smooth.getValue();
-  preset.m_hardness          = m_hardness.getValue();
-  preset.m_opacityMin        = m_opacity.getValue().first;
-  preset.m_opacityMax        = m_opacity.getValue().second;
-  preset.m_pressure          = m_pressure.getValue();
-  preset.m_modifierSize      = m_modifierSize.getValue();
-  preset.m_modifierOpacity   = m_modifierOpacity.getValue();
-  preset.m_modifierEraser    = m_modifierEraser.getValue();
-  preset.m_modifierLockAlpha = m_modifierLockAlpha.getValue();
+  preset.m_min                 = m_thickness.getValue().first;
+  preset.m_max                 = m_thickness.getValue().second;
+  preset.m_smooth              = m_smooth.getValue();
+  preset.m_hardness            = m_hardness.getValue();
+  preset.m_opacityMin          = m_opacity.getValue().first;
+  preset.m_opacityMax          = m_opacity.getValue().second;
+  preset.m_pressure            = m_pressure.getValue();
+  preset.m_modifierSize        = m_modifierSize.getValue();
+  preset.m_modifierOpacity     = m_modifierOpacity.getValue();
+  preset.m_modifierEraser      = m_modifierEraser.getValue();
+  preset.m_modifierLockAlpha   = m_modifierLockAlpha.getValue();
+  preset.m_modifierPaintBehind = m_modifierPaintBehind.getValue();
 
   // Pass the preset to the manager
   m_presetsManager.addPreset(preset);
@@ -1062,6 +1088,7 @@ void FullColorBrushTool::loadLastBrush() {
   m_modifierOpacity.setValue(FullcolorModifierOpacity);
   m_modifierEraser.setValue(FullcolorModifierEraser ? true : false);
   m_modifierLockAlpha.setValue(FullcolorModifierLockAlpha ? true : false);
+  m_modifierPaintBehind.setValue(FullcolorModifierPaintBehind ? true : false);
   m_snapGrid.setValue(FullcolorBrushSnapGrid ? true : false);
 }
 

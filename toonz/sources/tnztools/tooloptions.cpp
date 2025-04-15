@@ -1701,7 +1701,7 @@ PaintbrushToolOptionsBox::PaintbrushToolOptionsBox(QWidget *parent, TTool *tool,
 
   m_colorMode = dynamic_cast<ToolOptionCombo *>(m_controls.value("Mode:"));
   m_selectiveMode =
-      dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Selective"));
+      dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Paint Behind"));
   m_lockAlphaMode =
       dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Lock Alpha"));
 
@@ -2178,7 +2178,8 @@ void BrushToolOptionsBox::filterControls() {
     bool isModifier = (it.key().substr(0, 8) == "Modifier");
     bool isCommon =
         (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
-         it.key() == "Preset:" || it.key() == "Grid" || it.key() == "Smooth:");
+                     it.key() == "Preset:" || it.key() == "Grid" ||
+                     it.key() == "Smooth:" || it.key() == "Paint Behind");
     bool visible = isCommon || (isModifier == showModifiers);
     it.value()->setVisible(visible);
   }
@@ -2188,7 +2189,8 @@ void BrushToolOptionsBox::filterControls() {
     bool isModifier = (it.key().substr(0, 8) == "Modifier");
     bool isCommon =
         (it.key() == "Lock Alpha" || it.key() == "Pressure" ||
-         it.key() == "Preset:" || it.key() == "Grid" || it.key() == "Smooth:");
+                     it.key() == "Preset:" || it.key() == "Grid" ||
+                     it.key() == "Smooth:" || it.key() == "Paint Behind");
     bool visible = isCommon || (isModifier == showModifiers);
     if (QWidget *widget = dynamic_cast<QWidget *>(it.value()))
       widget->setVisible(visible);

@@ -48,6 +48,36 @@ void putOnRasterCM(const TRasterCM32P &out, const TRaster32P &in, int styleId,
     }
   }
 }
+
+void putOnRaster(const TRaster32P &out, const TRaster32P &in,
+                 bool paintBehind) {
+  if (!out.getPointer() || !in.getPointer()) return;
+  assert(out->getSize() == in->getSize());
+  int x, y;
+  for (y = 0; y < out->getLy(); y++) {
+    for (x = 0; x < out->getLx(); x++) {
+      TPixel32 *inPix = &in->pixels(y)[x];
+      if (inPix->m == 0) continue;
+      TPixel32 *outPix = &out->pixels(y)[x];
+
+      TUINT32 r, g, b, m;
+      if (!paintBehind || *outPix == TPixel32(0, 0, 0, 0))
+        *outPix = *inPix;
+      else if (*outPix == *inPix)
+        continue;
+      else {
+        // Paint behind blend (in/out are swapped)
+        r = outPix->r + inPix->r * (255 - outPix->m) / 255;
+        g = outPix->g + inPix->g * (255 - outPix->m) / 255;
+        b = outPix->b + inPix->b * (255 - outPix->m) / 255;
+        m = 255 - (255 - inPix->m) * (255 - outPix->m) / 255;
+
+        *outPix = TPixel32((r < 255) ? r : 255, (g < 255) ? g : 255,
+                           (b < 255) ? b : 255, m);
+      }
+    }
+  }
+}
 }  // namespace
 
 //=======================================================
@@ -282,4 +312,21 @@ void MyPaintToonzBrush::updateDrawing(const TRasterCM32P rasCM,
   rasCM->copy(rasBackupCM->extract(targetRect), targetRect.getP00());
   putOnRasterCM(rasCM->extract(targetRect), m_ras->extract(targetRect), styleId,
                 lockAlpha);
+}
+
+//----------------------------------------------------------------------------------
+
+void MyPaintToonzBrush::updateDrawing(const TRaster32P ras,
+                                      const TRaster32P rasBackup,
+                                      const TRect &bbox,
+                                      bool paintBehind) const {
+  if (!ras) return;
+
+  TRect rasRect    = ras->getBounds();
+  TRect targetRect = bbox * rasRect;
+  if (targetRect.isEmpty()) return;
+
+  ras->copy(rasBackup->extract(targetRect), targetRect.getP00());
+  putOnRaster(ras->extract(targetRect), m_ras->extract(targetRect),
+              paintBehind);
 }
