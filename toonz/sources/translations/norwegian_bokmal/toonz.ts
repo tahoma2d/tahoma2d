@@ -14059,7 +14059,7 @@ Visit the Web site for more information.
     </message>
     <message>
         <location filename="../../toonz/onionskinmaskgui.cpp" line="240"/>
-        <source>Switch To Relative Frane Onion Skin</source>
+        <source>Switch To Relative Frame Onion Skin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
