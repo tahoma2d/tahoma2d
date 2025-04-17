@@ -185,6 +185,9 @@
 #define MI_Duplicate "MI_Duplicate"
 #define MI_CloneLevel "MI_CloneLevel"
 #define MI_SetKeyframes "MI_SetKeyframes"
+#define MI_SetRestKeyframes "MI_SetRestKeyframes"
+#define MI_SetGlobalKeyframes "MI_SetGlobalKeyframes"
+#define MI_SetGlobalRestKeyframes "MI_SetGlobalRestKeyframes"
 
 #define MI_ViewCamera "MI_ViewCamera"
 #define MI_ViewBBox "MI_ViewBBox"
@@ -438,6 +441,8 @@
 #define MI_PlasticPaintRigid "MI_PlasticPaintRigid"
 #define MI_PlasticBuildSkeleton "MI_PlasticBuildSkeleton"
 #define MI_PlasticAnimate "MI_PlasticAnimate"
+#define MI_PlasticCopySkeleton "MI_PlasticCopySkeleton"
+#define MI_PlasticPasteSkeleton "MI_PlasticPasteSkeleton"
 
 #define MI_BrushAutoFillOn "MI_BrushAutoFillOn"
 #define MI_BrushAutoFillOff "MI_BrushAutoFillOff"

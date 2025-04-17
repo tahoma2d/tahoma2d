@@ -31,6 +31,8 @@
 #include "tcg/tcg_base.h"
 #include "tcg/tcg_controlled_access.h"
 
+#include "../toonz/menubarcommandids.h"
+
 // Qt includes
 #include <QObject>
 
