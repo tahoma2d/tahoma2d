@@ -11,6 +11,9 @@
 
 #include "toonz/onionskinmask.h"
 
+#include "toonzqt/menubarcommand.h"
+#include "../toonz/menubarcommandids.h"
+
 #include <QMenu>
 
 //=============================================================================
@@ -141,6 +144,7 @@ void OnioniSkinMaskGUI::OnionSkinSwitcher::clearDOS() {
 }
 
 void OnioniSkinMaskGUI::OnionSkinSwitcher::clearOS() {
+  if (!switcher.isActive()) return; 
   clearFOS();
   clearMOS();
   clearDOS();
@@ -161,7 +165,6 @@ void OnioniSkinMaskGUI::OnionSkinSwitcher::enableRelativeDrawingMode() {
 //------------------------------------------------------------------------------
 
 void OnioniSkinMaskGUI::addOnionSkinCommand(QMenu *menu, bool isFilmStrip) {
-  static OnioniSkinMaskGUI::OnionSkinSwitcher switcher;
   if (switcher.isActive()) {
     QAction *dectivateOnionSkin =
         menu->addAction(QString(QObject::tr("Deactivate Onion Skin")));
@@ -203,10 +206,9 @@ void OnioniSkinMaskGUI::addOnionSkinCommand(QMenu *menu, bool isFilmStrip) {
       }
       OnionSkinMask osm = switcher.getMask();
       if (osm.getFosCount() || osm.getMosCount() || osm.getDosCount()) {
-        QAction *clearAllOnionSkins = menu->addAction(
-            QString(QObject::tr("Clear All Onion Skin Markers")));
-        menu->connect(clearAllOnionSkins, SIGNAL(triggered()), &switcher,
-                      SLOT(clearOS()));
+        QAction *clearAllOnionSkins =
+            CommandManager::instance()->getAction(MI_ClearAllOnionSkinMarkers);
+        menu->addAction(clearAllOnionSkins);
       }
       if (osm.getFosCount() &&
           ((osm.isRelativeFrameMode() && osm.getMosCount()) ||
@@ -304,5 +306,16 @@ void OnioniSkinMaskGUI::resetShiftTraceFrameOffset() {
       secondOffset++;
     }
     setGhostOffset(firstOffset, secondOffset);
+  }
+}
+
+//------------------------------------------------------------------------------
+
+void OnioniSkinMaskGUI::OnionSkinSwitcher::enableCommands() {
+  QAction *action =
+      CommandManager::instance()->getAction(MI_ClearAllOnionSkinMarkers);
+  if (!action->isEnabled()) {
+    action->setEnabled(true);
+    connect(action, SIGNAL(triggered()), this, SLOT(clearOS()));
   }
 }

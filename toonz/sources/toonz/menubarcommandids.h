@@ -260,6 +260,7 @@
 #define MI_MaximizePanel "MI_MaximizePanel"
 #define MI_FullScreenWindow "MI_FullScreenWindow"
 #define MI_OnionSkin "MI_OnionSkin"
+#define MI_ClearAllOnionSkinMarkers "MI_ClearAllOnionSkinMarkers"
 #define MI_ZeroThick "MI_ZeroThick"
 #define MI_CursorOutline "MI_CursorOutline"
 #define MI_ViewerIndicator "MI_ViewerIndicator"

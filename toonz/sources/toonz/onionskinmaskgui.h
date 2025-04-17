@@ -36,6 +36,8 @@ public:
   bool isEveryFrame() const;
   bool isRelativeFrameMode() const;
 
+  void enableCommands();
+
 public slots:
   void activate();
   void deactivate();
@@ -50,6 +52,8 @@ public slots:
   void enableRelativeFrameMode();
   void enableRelativeDrawingMode();
 };
+
+static OnionSkinSwitcher switcher;
 
 //-----------------------------------------------------------------------------
 }  // namespace OnioniSkinMaskGUI

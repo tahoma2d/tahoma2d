@@ -2626,6 +2626,8 @@ void MainWindow::defineActions() {
                RightClickMenuCommandType, "zero_thick_lines");
   createToggle(MI_CursorOutline, QT_TR_NOOP("Toggle Cursor Size Outline"), "",
                false, RightClickMenuCommandType);
+  createRightClickMenuAction(MI_ClearAllOnionSkinMarkers,
+                             QT_TR_NOOP("&Clear All Onion Skin Markers"), "");
   createRightClickMenuAction(MI_ToggleCurrentTimeIndicator,
                              QT_TR_NOOP("Toggle Current Time Indicator"), "");
   createRightClickMenuAction(MI_DuplicateFile, QT_TR_NOOP("Duplicate"), "",
