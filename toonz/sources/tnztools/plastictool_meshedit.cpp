@@ -683,6 +683,8 @@ public:
     l_plasticTool.invalidate();
     l_plasticTool.notifyImageChanged();
   }
+
+  QString getHistoryString() override { return "Plastic (edit): Move Vertex"; }
 };
 
 //==============================================================================
@@ -721,6 +723,8 @@ public:
 
   void undo() const override { redo(); }  // Operation is idempotent (indices
                                           // are perfectly restored, too)
+
+  QString getHistoryString() override { return "Plastic (edit): Swap Edge"; }
 };
 
 //==============================================================================
@@ -796,6 +800,8 @@ public:
     l_plasticTool.invalidate();
     l_plasticTool.notifyImageChanged();
   }
+
+  QString getHistoryString() override { return "Plastic (edit): Collapse Edge"; }
 };
 
 //==============================================================================
@@ -850,6 +856,8 @@ public:
     l_plasticTool.invalidate();
     l_plasticTool.notifyImageChanged();
   }
+
+  QString getHistoryString() override { return "Plastic (edit): Split Edge"; }
 };
 
 //==============================================================================
@@ -910,6 +918,8 @@ public:
     l_plasticTool.invalidate();
     l_plasticTool.notifyImageChanged();
   }
+
+  QString getHistoryString() override { return "Plastic (edit): Cut Edge"; }
 };
 
 }  // namespace
