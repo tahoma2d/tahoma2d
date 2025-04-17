@@ -60,6 +60,8 @@ public:
     l_suspendParamsObservation = false;
     l_plasticTool.onChange();
   }
+
+  QString getHistoryString() override { return "Plastic (animate): Animate Vertex"; }
 };
 
 }  // namespace

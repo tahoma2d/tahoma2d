@@ -200,6 +200,7 @@ public:
   void undo() const override {
     const_cast<AddVertexUndo &>(*this).VertexUndo::removeVertex();
   }
+  QString getHistoryString() override { return "Plastic (build): Add Vertex"; }
 };
 
 //------------------------------------------------------------------------
@@ -216,6 +217,10 @@ public:
   }
   void undo() const override {
     const_cast<RemoveVertexUndo &>(*this).VertexUndo::insertVertex();
+  }
+
+  QString getHistoryString() override {
+    return "Plastic (build): Remove Vertex";
   }
 };
 
@@ -239,6 +244,10 @@ public:
     TCG_ASSERT(!m_children.empty(), return );
 
     const_cast<InsertVertexUndo &>(*this).VertexUndo::removeVertex();
+  }
+
+  QString getHistoryString() override {
+    return "Plastic (build): Insert Vertex";
   }
 };
 
@@ -267,7 +276,7 @@ public:
 
   void redo() const override {
     PlasticTool::TemporaryActivation tempActivate(m_row, m_col);
-
+    if (!m_skeleton) return;
     l_plasticTool.addSkeleton(m_skelId, new PlasticSkeleton(*m_skeleton));
     ::invalidateXsheet();
   }
@@ -288,6 +297,10 @@ public:
 
   void redo() const override { AddSkeletonUndo::undo(); }
   void undo() const override { AddSkeletonUndo::redo(); }
+
+  QString getHistoryString() override {
+    return QString("Plastic (build): Remove Skeleton Id %1").arg(skeletonId());
+  }
 };
 
 //------------------------------------------------------------------------
@@ -340,6 +353,11 @@ public:
     m_skelIdsKeyframes.clear();
 
     RemoveSkeletonUndo::undo();  // Invalidates the xsheet
+  }
+
+  QString getHistoryString() override {
+    return QString("Plastic (build): Remove Skeleton Id %1 w/ Keyframes")
+        .arg(skeletonId());
   }
 };
 
@@ -413,6 +431,10 @@ public:
         skelIdsParam->deleteKeyframe(kf.m_frame);
     }
   }
+
+  QString getHistoryString() override {
+    return QString("Plastic (build): Set Skeleton Id %1").arg(skeletonId());
+  }
 };
 
 //========================================================================
@@ -462,6 +484,8 @@ public:
         ->invalidate();  // Should be a TStageObject's implementation detail ...
     l_plasticTool.invalidate();
   }
+
+  QString getHistoryString() override { return "Plastic (build): Move Vertex"; }
 };
 
 }  // namespace
@@ -866,8 +890,7 @@ int PlasticTool::addSkeleton_undo(const PlasticSkeletonP &skeleton) {
 
 //------------------------------------------------------------------------
 
-void PlasticTool::addSkeleton_undo(int skelId,
-                                   const PlasticSkeletonP &skeleton) {
+void PlasticTool::addSkeleton_undo(int skelId, const PlasticSkeletonP &skeleton) {
   TUndoManager *manager = TUndoManager::manager();
   manager->beginBlock();
   {
