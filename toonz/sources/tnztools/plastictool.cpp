@@ -12,6 +12,7 @@
 #include "toonzqt/dvmimedata.h"
 #include "toonzqt/dvdialog.h"
 #include "toonzqt/selectioncommandids.h"
+#include "../toonz/menubarcommandids.h"
 
 // TnzLib includes
 #include "toonz/tframehandle.h"
@@ -989,6 +990,18 @@ void PlasticTool::onActivate() {
                 SIGNAL(xsheetSwitched()), this, SLOT(onXsheetChanged())),
   assert(ret);
 
+  QAction *action =
+      CommandManager::instance()->getAction(MI_PlasticCopySkeleton);
+  action->setEnabled(true);
+  ret = connect(action, SIGNAL(triggered()), &l_plasticTool,
+                SLOT(copySkeleton())),
+  assert(ret);
+  action = CommandManager::instance()->getAction(MI_PlasticPasteSkeleton);
+  action->setEnabled(true);
+  ret = connect(action, SIGNAL(triggered()), &l_plasticTool,
+                SLOT(pasteSkeleton_undo())),
+  assert(ret);
+
   onSetViewer();
   onColumnSwitched();
   onFrameSwitched();
@@ -1014,6 +1027,18 @@ void PlasticTool::onDeactivate() {
   assert(ret);
   ret = disconnect(TTool::m_application->getCurrentXsheet(),
                    SIGNAL(xsheetSwitched()), this, SLOT(onXsheetChanged())),
+  assert(ret);
+
+  QAction *action =
+      CommandManager::instance()->getAction(MI_PlasticCopySkeleton);
+  action->setEnabled(false);
+  ret = disconnect(action, SIGNAL(triggered()), &l_plasticTool,
+                   SLOT(copySkeleton())),
+  assert(ret);
+  action = CommandManager::instance()->getAction(MI_PlasticPasteSkeleton);
+  action->setEnabled(false);
+  ret = disconnect(action, SIGNAL(triggered()), &l_plasticTool,
+                   SLOT(pasteSkeleton_undo())),
   assert(ret);
 
   Viewer *viewer = getViewer();
@@ -1093,10 +1118,19 @@ void PlasticTool::onSelectionChanged() {
 //------------------------------------------------------------------------
 
 void PlasticTool::enableCommands() {
-  if (TSelection::getCurrent() == &m_svSel)
+  if (TSelection::getCurrent() == &m_svSel) {
     m_svSel.enableCommand(this, MI_Clear,
                           &PlasticTool::deleteSelectedVertex_undo);
-  else if (TSelection::getCurrent() == &m_meSel) {
+    if (m_mode.getIndex() == ANIMATE_IDX) {
+      m_svSel.enableCommand(this, MI_SetKeyframes, &PlasticTool::setKey_undo);
+      m_svSel.enableCommand(this, MI_SetRestKeyframes,
+                            &PlasticTool::setRestKey_undo);
+      m_svSel.enableCommand(this, MI_SetGlobalKeyframes,
+                            &PlasticTool::setGlobalKey_undo);
+      m_svSel.enableCommand(this, MI_SetGlobalRestKeyframes,
+                            &PlasticTool::setGlobalRestKey_undo);
+    }
+  } else if (TSelection::getCurrent() == &m_meSel) {
     m_meSel.enableCommand(this, MI_Clear, &PlasticTool::collapseEdge_mesh_undo);
     m_meSel.enableCommand(this, MI_Insert, &PlasticTool::splitEdge_mesh_undo);
   }
@@ -1472,17 +1506,16 @@ void PlasticTool::addContextMenuItems(QMenu *menu) {
   bool ret = true;
 
   // Add global actions
+  QAction *action;
   if (m_sd && m_sd->skeleton(::skeletonId())) {
-    QAction *copySkeleton = menu->addAction(tr("Copy Skeleton"));
-    ret = ret && connect(copySkeleton, SIGNAL(triggered()), &l_plasticTool,
-                         SLOT(copySkeleton()));
+    action = CommandManager::instance()->getAction(MI_PlasticCopySkeleton);
+    menu->addAction(action);
   }
 
   if (dynamic_cast<const PlasticSkeletonPMime *>(
           QApplication::clipboard()->mimeData())) {
-    QAction *pasteSkeleton = menu->addAction(tr("Paste Skeleton"));
-    ret = ret && connect(pasteSkeleton, SIGNAL(triggered()), &l_plasticTool,
-                         SLOT(pasteSkeleton_undo()));
+    action = CommandManager::instance()->getAction(MI_PlasticPasteSkeleton);
+    menu->addAction(action);
   }
 
   menu->addSeparator();  // Separate actions type
@@ -1580,6 +1613,9 @@ bool PlasticTool::onPropertyChanged(std::string propertyName) {
       break;
     }
 
+    // Update context menus
+    enableCommands();
+
     m_mode.notifyListeners();  // You thought that was automatic, eh? BTW, this
                                // means
     // we're requesting toolbars to update options visibility
@@ -1667,6 +1703,10 @@ bool PlasticTool::onPropertyChanged(std::string propertyName) {
       m_maxAngle.notifyListeners();  // NOTE: This should NOT invoke this
                                      // function recursively
     }
+  } else if (propertyName == "globalKeyframe") {
+    if (m_mode.getIndex() == ANIMATE_IDX) m_globalKey.notifyListeners();
+  } else if (propertyName == "keepDistance") {
+    if (m_mode.getIndex() == ANIMATE_IDX) m_keepDistance.notifyListeners();
   }
 
   return true;

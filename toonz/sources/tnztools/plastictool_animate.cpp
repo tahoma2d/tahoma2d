@@ -190,23 +190,20 @@ void PlasticTool::addContextMenuActions_animate(QMenu *menu) {
 
   if (m_sd.getPointer() == nullptr) return;
 
+  QAction *action;
   if (!m_svSel.isEmpty()) {
-    QAction *setKey = menu->addAction(tr("Set Key"));
-    ret = ret && connect(setKey, SIGNAL(triggered()), &l_plasticTool,
-                         SLOT(setKey_undo()));
+    action = CommandManager::instance()->getAction(MI_SetKeyframes);
+    menu->addAction(action);
 
-    QAction *setRestKey = menu->addAction(tr("Set Rest Key"));
-    ret = ret && connect(setRestKey, SIGNAL(triggered()), &l_plasticTool,
-                         SLOT(setRestKey_undo()));
+  action = CommandManager::instance()->getAction(MI_SetRestKeyframes);
+    menu->addAction(action);
   }
 
-  QAction *setGlobalKey = menu->addAction(tr("Set Global Key"));
-  ret = ret && connect(setGlobalKey, SIGNAL(triggered()), &l_plasticTool,
-                       SLOT(setGlobalKey_undo()));
+  action = CommandManager::instance()->getAction(MI_SetGlobalKeyframes);
+  menu->addAction(action);
 
-  QAction *setGlobalRestKey = menu->addAction(tr("Set Global Rest Key"));
-  ret = ret && connect(setGlobalRestKey, SIGNAL(triggered()), &l_plasticTool,
-                       SLOT(setGlobalRestKey_undo()));
+  action = CommandManager::instance()->getAction(MI_SetGlobalRestKeyframes);
+  menu->addAction(action);
 
   menu->addSeparator();
 

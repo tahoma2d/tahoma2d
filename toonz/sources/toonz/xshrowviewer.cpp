@@ -272,6 +272,8 @@ RowArea::RowArea(XsheetViewer *parent, Qt::WindowFlags flags)
   // for displaying the pinned center keys when the skeleton tool is selected
   connect(TApp::instance()->getCurrentTool(), SIGNAL(toolSwitched()), this,
           SLOT(update()));
+
+  OnioniSkinMaskGUI::switcher.enableCommands();
 }
 
 //-----------------------------------------------------------------------------
