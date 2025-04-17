@@ -2170,7 +2170,7 @@ void MainWindow::defineActions() {
                          "delete_lines");
   createMenuXsheetAction(MI_MergeColumns, QT_TR_NOOP("&Merge Levels"), "",
                          "merge_levels");
-  createMenuXsheetAction(MI_NewOutputFx, QT_TR_NOOP("&New Output"), "Alt+O",
+  createMenuXsheetAction(MI_NewOutputFx, QT_TR_NOOP("&New Output"), "",
                          "output");
   createMenuXsheetAction(MI_InsertSceneFrame, QT_TR_NOOP("Insert Frame"), "",
                          "insert_frame");
