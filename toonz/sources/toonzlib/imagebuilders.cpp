@@ -409,6 +409,9 @@ TImageP ImageRasterizer::build(int imFlags, void *extData) {
 
             return ri;
           }
+      } else {
+        TRaster32P ras(1, 1);
+        return TRasterImageP(ras);
       }
     }
   }
