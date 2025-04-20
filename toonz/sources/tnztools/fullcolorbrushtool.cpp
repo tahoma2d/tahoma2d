@@ -411,9 +411,13 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
   m_toonz_brush->beginStroke();
   m_toonz_brush->strokeTo(point, pressure, restartBrushTimer());
   TRect updateRect = m_strokeSegmentRect * ras->getBounds();
-  if (!updateRect.isEmpty())
-    m_toonz_brush->updateDrawing(ras, m_backUpRas, m_strokeSegmentRect,
+  if (!updateRect.isEmpty()) {
+    TRaster32P sourceRas = m_modifierPaintBehind.getValue()
+                               ? (TRaster32P)m_backUpRas
+                               : m_workRaster;
+    m_toonz_brush->updateDrawing(ras, sourceRas, m_strokeSegmentRect,
                                  m_modifierPaintBehind.getValue());
+  }
 
   TThickPoint thickPoint(point, pressure);
   std::vector<TThickPoint> pts;
@@ -641,9 +645,13 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
     m_strokeSegmentRect.empty();
     m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, brushTimer);
     TRect updateRect = m_strokeSegmentRect * ras->getBounds();
-    if (!updateRect.isEmpty())
-      m_toonz_brush->updateDrawing(ras, m_backUpRas, m_strokeSegmentRect,
+    if (!updateRect.isEmpty()) {
+      TRaster32P sourceRas = m_modifierPaintBehind.getValue()
+                                 ? (TRaster32P)m_backUpRas
+                                 : m_workRaster;
+      m_toonz_brush->updateDrawing(ras, sourceRas, m_strokeSegmentRect,
                                    m_modifierPaintBehind.getValue());
+    }
 
     TPointD thickOffset(m_maxCursorThick * 0.5, m_maxCursorThick * 0.5);
     invalidateRect += convert(m_strokeSegmentRect) - rasCenter;
@@ -708,9 +716,13 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
     m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, brushTimer);
     if (i == pts.size() - 1) m_toonz_brush->endStroke();
     TRect updateRect = m_strokeSegmentRect * ras->getBounds();
-    if (!updateRect.isEmpty())
-      m_toonz_brush->updateDrawing(ras, m_backUpRas, m_strokeSegmentRect,
+    if (!updateRect.isEmpty()) {
+      TRaster32P sourceRas = m_modifierPaintBehind.getValue()
+                                 ? (TRaster32P)m_backUpRas
+                                 : m_workRaster;
+      m_toonz_brush->updateDrawing(ras, sourceRas, m_strokeSegmentRect,
                                    m_modifierPaintBehind.getValue());
+    }
 
     TPointD thickOffset(m_maxCursorThick * 0.5, m_maxCursorThick * 0.5);
     invalidateRect += convert(m_strokeSegmentRect) - rasCenter;
@@ -944,16 +956,20 @@ bool FullColorBrushTool::onPropertyChanged(std::string propertyName) {
     m_propertyUpdating = false;
     return true;
   } else if (propertyName == m_modifierLockAlpha.getName()) {
-    if (m_modifierLockAlpha.getValue() && m_modifierPaintBehind.getValue())
+    if (m_modifierLockAlpha.getValue()) {
       m_modifierPaintBehind.setValue(false);
-  } else if (propertyName == m_modifierEraser.getName()) {
-    if (m_modifierEraser.getValue() && m_modifierPaintBehind.getValue())
-      m_modifierPaintBehind.setValue(false);
-  } else if (propertyName == m_modifierPaintBehind.getName()) {
-    if (m_modifierPaintBehind.getValue() && m_modifierLockAlpha.getValue())
-      m_modifierLockAlpha.setValue(false);
-    if (m_modifierPaintBehind.getValue() && m_modifierEraser.getValue())
       m_modifierEraser.setValue(false);
+    }
+  } else if (propertyName == m_modifierEraser.getName()) {
+    if (m_modifierEraser.getValue()) {
+      m_modifierLockAlpha.setValue(false);
+      m_modifierPaintBehind.setValue(false);
+    }
+  } else if (propertyName == m_modifierPaintBehind.getName()) {
+    if (m_modifierPaintBehind.getValue()) {
+      m_modifierLockAlpha.setValue(false);
+      m_modifierEraser.setValue(false);
+    }
   }
 
   FullcolorBrushMinSize        = m_thickness.getValue().first;
