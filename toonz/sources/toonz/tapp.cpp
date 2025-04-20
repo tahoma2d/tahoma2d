@@ -119,7 +119,8 @@ TApp::TApp()
     , m_isStarting(false)
     , m_isPenCloseToTablet(false)
     , m_canHideTitleBars(CanHideTitleBarsWhenLocked == 1 ? true : false)
-    , m_showTitleBars(ShowTitleBarsWhenLocked == 1 ? true : false) {
+    , m_showTitleBars(ShowTitleBarsWhenLocked == 1 ? true : false)
+    , m_metaPressed(false) {
   m_currentScene         = new TSceneHandle();
   m_currentXsheet        = new TXsheetHandle();
   m_currentFrame         = new TFrameHandle();
@@ -800,6 +801,30 @@ void TApp::onStopAutoSave() {
 //-----------------------------------------------------------------------------
 
 bool TApp::eventFilter(QObject *watched, QEvent *e) {
+  switch (e->type()) {
+  case QEvent::KeyPress:
+  case QEvent::KeyRelease: {
+    QKeyEvent *ke = dynamic_cast<QKeyEvent *>(e);
+    if (isMetaPressed()) ke->setModifiers(ke->modifiers() | Qt::MetaModifier);
+    break;
+  }
+  case QEvent::MouseButtonPress:
+  case QEvent::MouseButtonRelease:
+  case QEvent::MouseButtonDblClick:
+  case QEvent::MouseMove: {
+    QMouseEvent *me = dynamic_cast<QMouseEvent *>(e);
+    if (isMetaPressed()) me->setModifiers(me->modifiers() | Qt::MetaModifier);
+    break;
+  }
+  case QEvent::TabletPress:
+  case QEvent::TabletRelease:
+  case QEvent::TabletMove: {
+    QTabletEvent *te = dynamic_cast<QTabletEvent *>(e);
+    if (isMetaPressed()) te->setModifiers(te->modifiers() | Qt::MetaModifier);
+    break;
+  }
+  }
+
   if (e->type() == QEvent::TabletEnterProximity) {
     m_isPenCloseToTablet = true;
   } else if (e->type() == QEvent::TabletLeaveProximity) {

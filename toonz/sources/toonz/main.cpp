@@ -95,6 +95,56 @@
 #include <QtPlatformHeaders/QWindowsWindowFunctions>
 #endif
 
+
+// Disable WinKey so we can use it as a Modifier Key
+// Not needed for macOS since Meta key = Command key
+#ifdef _WIN32
+#include <Windows.h>
+
+HHOOK g_hook = nullptr;
+HWND hMainWindow = nullptr;
+
+bool IsOurWindowFocused() {
+  HWND fgWindow = GetForegroundWindow();
+  while (fgWindow != NULL) {
+    if (fgWindow == hMainWindow) return true;
+    fgWindow = GetParent(fgWindow);  // climb the parent chain
+  }
+  return false;
+}
+
+LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
+  if (nCode == HC_ACTION && IsOurWindowFocused()) {
+    KBDLLHOOKSTRUCT *p = (KBDLLHOOKSTRUCT *)lParam;
+
+    // Catch Left or Right Windows key
+    if ((wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN) &&
+        (p->vkCode == VK_LWIN || p->vkCode == VK_RWIN)) {
+      TApp::instance()->setMetaPressed(true);
+      return 1;
+    } else if ((wParam == WM_KEYUP || wParam == WM_SYSKEYUP) &&
+               (p->vkCode == VK_LWIN || p->vkCode == VK_RWIN)) {
+      TApp::instance()->setMetaPressed(false);
+      return 1;
+    }
+  }
+
+  return CallNextHookEx(nullptr, nCode, wParam, lParam);
+}
+
+void InstallKeyboardHook(HWND hwnd) {
+  hMainWindow = hwnd;
+  g_hook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, nullptr, 0);
+}
+
+void UninstallKeyboardHook() {
+  if (g_hook) {
+    UnhookWindowsHookEx(g_hook);
+    g_hook = nullptr;
+  }
+}
+#endif
+
 using namespace DVGui;
 
 TEnv::IntVar EnvSoftwareCurrentFontSize("SoftwareCurrentFontSize", 12);
@@ -688,6 +738,11 @@ int main(int argc, char *argv[]) {
 
   /*-- Layoutファイル名をMainWindowのctorに渡す --*/
   MainWindow w(argumentLayoutFileName);
+
+#ifdef _WIN32
+  InstallKeyboardHook((HWND)w.winId());
+#endif
+
   CrashHandler::attachParentWindow(&w);
   CrashHandler::reportProjectInfo(true);
 
@@ -918,6 +973,10 @@ int main(int argc, char *argv[]) {
 
   TUndoManager::manager()->reset();
   PreviewFxManager::instance()->reset();
+
+#ifdef _WIN32
+  UninstallKeyboardHook();
+#endif
 
   return ret;
 }

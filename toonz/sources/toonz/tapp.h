@@ -97,6 +97,8 @@ class TApp final : public QObject,
   bool m_isStarting;
   bool m_isPenCloseToTablet;
 
+  bool m_metaPressed;
+
 public:
   /*!
           A static pointer to the main application.
@@ -231,6 +233,9 @@ public:
   }
 
   LocatorPopup *getActiveLocator() const { return m_activeLocator; }
+
+  bool isMetaPressed() { return m_metaPressed; }
+  void setMetaPressed(bool pressed) { m_metaPressed = pressed; }
 
 protected:
   bool eventFilter(QObject *obj, QEvent *event) override;
