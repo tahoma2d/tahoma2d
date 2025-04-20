@@ -465,6 +465,9 @@ TEnv::StringVar RasterSelectionType("SelectionToolInknpaintType",
                                     "Rectangular");
 TEnv::StringVar FullColorSelectionType("SelectionToolFullcolorType",
                                        "Rectangular");
+TEnv::IntVar RasterSelectionSelective("SelectionToolInknpaintTypeSelective", 0);
+TEnv::StringVar RasterSelectionSelectiveMode(
+    "SelectionToolInknpaintTypeSelectiveMode", "Lines & Areas");
 
 //=============================================================================
 // RasterSelectionTool
@@ -476,7 +479,19 @@ RasterSelectionTool::RasterSelectionTool(int targetType)
     , m_selectionFreeDeformer(0)
     , m_noAntialiasing("No Antialiasing", false)
     , m_modifySavebox("Modify Savebox", false)
+    , m_selective("Selective", false)
+    , m_selectiveMode("Mode:")
     , m_setSaveboxTool(0) {
+  if (m_targetType & ToonzImage) {
+    m_selectiveMode.addValue(LINES);
+    m_selectiveMode.addValue(AREAS);
+    m_selectiveMode.addValue(ALL);
+    m_prop.bind(m_selectiveMode);
+    m_selective.setId("Mode");
+ 
+    m_prop.bind(m_selective);
+    m_selective.setId("Selective");
+  }
   m_prop.bind(m_noAntialiasing);
   m_rasterSelection.setView(this);
   if (m_targetType & ToonzImage) {
@@ -604,6 +619,15 @@ void RasterSelectionTool::leftButtonDown(const TPointD &pos,
     m_setSaveboxTool->leftButtonDown(pos);
     return;
   }
+
+  TPixelCM32 selectivePix;
+  if (m_selective.getValue()) {
+    int styleId   = TTool::getApplication()->getCurrentLevelStyleIndex();
+    selectivePix  = TPixelCM32(styleId, styleId, 0);
+  }
+  m_rasterSelection.setSelectivePixelCM32(selectivePix,
+                                          m_selectiveMode.getValue());
+
   SelectionTool::leftButtonDown(pos, e);
 }
 
@@ -1066,6 +1090,9 @@ void RasterSelectionTool::onActivate() {
       m_strokeSelectionType.setValue(
           ::to_wstring(RasterSelectionType.getValue()));
       m_modifySavebox.setValue(ModifySavebox ? 1 : 0);
+      m_selective.setValue(RasterSelectionSelective ? 1 : 0);
+      m_selectiveMode.setValue(
+          ::to_wstring(RasterSelectionSelectiveMode.getValue()));
     } else
       m_strokeSelectionType.setValue(
           ::to_wstring(FullColorSelectionType.getValue()));
@@ -1089,7 +1116,9 @@ bool RasterSelectionTool::onPropertyChanged(std::string propertyName) {
   if (SelectionTool::onPropertyChanged(propertyName)) return true;
 
   if (m_targetType & ToonzImage) {
-    ModifySavebox = (int)(m_modifySavebox.getValue());
+    ModifySavebox                = (int)(m_modifySavebox.getValue());
+    RasterSelectionSelective     = (int)(m_selective.getValue());
+    RasterSelectionSelectiveMode = ::to_string(m_selectiveMode.getValue());
     invalidate();
   }
   if (propertyName == m_noAntialiasing.getName()) {
@@ -1103,8 +1132,14 @@ bool RasterSelectionTool::onPropertyChanged(std::string propertyName) {
 //-----------------------------------------------------------------------------
 
 void RasterSelectionTool::updateTranslation() {
-  if (m_targetType & ToonzImage)
+  if (m_targetType & ToonzImage) {
     m_modifySavebox.setQStringName(tr("Modify Savebox"));
+    m_selective.setQStringName(tr("Selective"));
+    m_selectiveMode.setQStringName(tr("Mode:"));
+    m_selectiveMode.setItemUIName(LINES, tr("Lines"));
+    m_selectiveMode.setItemUIName(AREAS, tr("Areas"));
+    m_selectiveMode.setItemUIName(ALL, tr("Lines & Areas"));
+  }
 
   m_noAntialiasing.setQStringName(tr("No Antialiasing"));
   SelectionTool::updateTranslation();
