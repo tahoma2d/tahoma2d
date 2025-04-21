@@ -142,7 +142,9 @@ public:
 
     int r0, c0, r1, c1;
     bool shiftPressed = false;
-    if (m_modifier & Qt::ShiftModifier) {
+    if ((m_modifier & Qt::ShiftModifier) &&
+        (Preferences::instance()->isShowDragBarsEnabled() ||
+         !(m_modifier & Qt::ControlModifier))) {
       shiftPressed = true;
       getViewer()->getCellSelection()->getSelectedCells(r0, c0, r1, c1);
     }
@@ -153,7 +155,52 @@ public:
       getViewer()->getCellKeyframeSelection()->makeCurrent();
     else
       getViewer()->getCellSelection()->makeCurrent();
-    if (shiftPressed) {
+
+    if (!Preferences::instance()->isShowDragBarsEnabled() &&
+        (m_modifier & Qt::ShiftModifier) &&
+        (m_modifier & Qt::ControlModifier)) {
+      getViewer()->setCurrentColumn(col);
+      if (Preferences::instance()->isMoveCurrentEnabled())
+        getViewer()->setCurrentRow(row);
+
+      TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+      if (!xsh->getCell(row, col).isEmpty() || xsh->isImplicitCell(row, col)) {
+        xsh->getCellRange(col, r0, r1);
+        // Find 1st in range
+        int r = std::max(r0, row - 1);
+        for (; r > r0; r--) {
+          TXshCell cell = xsh->getCell(r, col);
+          if (cell.isEmpty() || cell.getFrameId().isStopFrame()) {
+            r++;
+            break;
+          }
+        }
+        r0 = r;
+        // Find last in range
+        r = row;
+        for (; r < r1; r++) {
+          TXshCell cell = xsh->getCell(r, col);
+          if (cell.isEmpty() || cell.getFrameId().isStopFrame()) break;
+        }
+        r1 = r;
+        if (m_keySelection) {
+          // If end of frame range is not a stop frame, extend to last key
+          if (!xsh->getCell(r1, col).getFrameId().isStopFrame()) {
+            TStageObject *pegbar =
+                xsh->getStageObject(getViewer()->getObjectId(col));
+            if (pegbar) {
+              int row0, row1;
+              bool emptyKeyframe     = !pegbar->getKeyframeRange(row0, row1);
+              if (!emptyKeyframe) r1 = row1;
+            }
+          }
+
+          getViewer()->getCellKeyframeSelection()->selectCellsKeyframes(
+              r0, col, r1, col);
+        } else
+          getViewer()->getCellSelection()->selectCells(r0, col, r1, col);
+      }
+    } else if (shiftPressed) {
       if (r0 <= r1 && c0 <= c1) {
         if (abs(row - r0) < abs(row - r1)) {
           m_firstRow = r1;
