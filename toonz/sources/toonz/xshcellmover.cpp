@@ -475,7 +475,8 @@ LevelMoverTool::LevelMoverTool(XsheetViewer *viewer)
     , m_undo(0)
     , m_moved(false)
     , m_columnsMoved(false)
-    , m_dragged(false) {}
+    , m_dragged(false)
+    , m_modifierPressed(false) {}
 
 LevelMoverTool::~LevelMoverTool() {}
 
@@ -552,6 +553,8 @@ void LevelMoverTool::onClick(const QMouseEvent *e) {
   CellPosition cellPosition = getViewer()->xyToPosition(e->pos());
   int row                   = cellPosition.frame();
   int col                   = cellPosition.layer();
+
+  m_modifierPressed = e->modifiers() != Qt::NoModifier;
 
   m_qualifiers = 0;
   if (Preferences::instance()->getDragCellsBehaviour() == 1)
@@ -763,6 +766,7 @@ void LevelMoverTool::onRelease(const CellPosition &pos) {
   // Reset current selection if we didn't move
   TCellSelection *selection = getViewer()->getCellSelection();
   if (!Preferences::instance()->isShowDragBarsEnabled() && !m_dragged &&
+      !m_modifierPressed &&
       (cellMover->getRowCount() > 1 || cellMover->getColumnCount() > 1)) {
     selection->selectNone();
     selection->selectCell(pos.frame(), pos.layer());
