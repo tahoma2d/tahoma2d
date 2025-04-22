@@ -2170,7 +2170,7 @@ void MainWindow::defineActions() {
                          "delete_lines");
   createMenuXsheetAction(MI_MergeColumns, QT_TR_NOOP("&Merge Levels"), "",
                          "merge_levels");
-  createMenuXsheetAction(MI_NewOutputFx, QT_TR_NOOP("&New Output"), "Alt+O",
+  createMenuXsheetAction(MI_NewOutputFx, QT_TR_NOOP("&New Output"), "",
                          "output");
   createMenuXsheetAction(MI_InsertSceneFrame, QT_TR_NOOP("Insert Frame"), "",
                          "insert_frame");
@@ -2597,6 +2597,13 @@ void MainWindow::defineActions() {
                              QT_TR_NOOP("Open/Close Folder"), "");
   createRightClickMenuAction(MI_SetKeyframes, QT_TR_NOOP("&Set Key"), "Z",
                              "set_key");
+  createRightClickMenuAction(MI_SetRestKeyframes, QT_TR_NOOP("&Set Rest Key"),
+                             "", "");
+  createRightClickMenuAction(MI_SetGlobalKeyframes,
+                             QT_TR_NOOP("&Set Global Key"), "", "");
+  createRightClickMenuAction(MI_SetGlobalRestKeyframes,
+                             QT_TR_NOOP("&Set Global Rest Key"), "", "");
+
   createRightClickMenuAction(MI_ShiftKeyframesDown,
                              QT_TR_NOOP("&Shift Keys Down"), "",
                              "shift_keys_down");
@@ -2619,6 +2626,8 @@ void MainWindow::defineActions() {
                RightClickMenuCommandType, "zero_thick_lines");
   createToggle(MI_CursorOutline, QT_TR_NOOP("Toggle Cursor Size Outline"), "",
                false, RightClickMenuCommandType);
+  createRightClickMenuAction(MI_ClearAllOnionSkinMarkers,
+                             QT_TR_NOOP("&Clear All Onion Skin Markers"), "");
   createRightClickMenuAction(MI_ToggleCurrentTimeIndicator,
                              QT_TR_NOOP("Toggle Current Time Indicator"), "");
   createRightClickMenuAction(MI_DuplicateFile, QT_TR_NOOP("Duplicate"), "",
@@ -2744,6 +2753,10 @@ void MainWindow::defineActions() {
   createRightClickMenuAction(MI_SetNonLinearControlPoint,
                              QT_TR_NOOP("&Set Nonlinear Control Point"), "",
                              "set_nonlinear_cp");
+  createRightClickMenuAction(MI_PlasticCopySkeleton,
+                             QT_TR_NOOP("&Copy Skeleton"), "", "");
+  createRightClickMenuAction(MI_PlasticPasteSkeleton,
+                             QT_TR_NOOP("&Paste Skeleton"), "", "");
 
   // createRightClickMenuAction(MI_LoadSubSceneFile, QT_TR_NOOP("Load As
   // Sub-xsheet"),   ""); createRightClickMenuAction(MI_LoadResourceFile,
@@ -3061,6 +3074,8 @@ void MainWindow::defineActions() {
                           "");
   createToolOptionsAction("A_ToolOption_GlobalKey", QT_TR_NOOP("Global Key"),
                           "", "global_key");
+  createToolOptionsAction("A_ToolOption_KeepDistance", QT_TR_NOOP("Keep Distance"),
+                          "", "");
 
   createToolOptionsAction("A_IncreaseMaxBrushThickness",
                           QT_TR_NOOP("Brush size - Increase max"), "I");
