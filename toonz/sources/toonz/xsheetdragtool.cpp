@@ -1803,7 +1803,7 @@ public:
 class ColumnMoveDragTool final : public XsheetGUI::DragTool {
   QPoint m_firstPos, m_curPos;
   int m_firstCol, m_targetCol;
-  bool m_dropOnColumnFolder, m_folderChanged, m_dragged;
+  bool m_dropOnColumnFolder, m_folderChanged, m_dragged, m_modifierPressed;
   QStack<int> m_addToFolder;
 
 public:
@@ -1813,7 +1813,8 @@ public:
       , m_targetCol(-1)
       , m_dropOnColumnFolder(false)
       , m_folderChanged(false)
-      , m_dragged(false) {}
+      , m_dragged(false)
+      , m_modifierPressed(false) {}
 
   bool canDrop(const CellPosition &pos) {
     int col = pos.layer();
@@ -1834,6 +1835,7 @@ public:
     m_dropOnColumnFolder = false;
     m_folderChanged      = false;
     m_dragged            = false;
+    m_modifierPressed    = event->modifiers() != Qt::NoModifier;
     m_addToFolder.clear();
 
     m_firstPos                  = event->pos();
@@ -2065,7 +2067,7 @@ public:
 
     // Reset current selection if we didn't move
     if (!Preferences::instance()->isShowDragBarsEnabled() && !m_dragged &&
-        !oldIndices.empty() && oldIndices.size() > 1) {
+        !m_modifierPressed && !oldIndices.empty() && oldIndices.size() > 1) {
       selection->selectNone();
       selection->selectColumn(pos.layer());
       getViewer()->setCurrentColumn(pos.layer());
