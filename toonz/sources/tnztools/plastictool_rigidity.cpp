@@ -93,6 +93,8 @@ public:
     PlasticDeformerStorage::instance()->invalidateMeshImage(
         mi.getPointer(), PlasticDeformerStorage::MESH);
   }
+
+  QString getHistoryString() override { return "Plastic (rigid): Paint Rigid"; }
 };
 
 }  // namespace
