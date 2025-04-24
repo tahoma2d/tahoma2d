@@ -442,16 +442,15 @@ void MotionPathPanel::highlightActiveSpline() {
         m_graphFrame->show();
         m_playToolbar->show();
       } else {
-        QString qss = "background: rgba(" +
+        QString qss = "QLabel { background: rgba(" +
                       QString::number(m_selectedColor.red()) + ", " +
                       QString::number(m_selectedColor.green()) + ", " +
                       QString::number(m_selectedColor.blue()) +
                       ", 0);"
                       " border-radius: 2;"
                       " padding-left: 2px;"
-                      " padding-right: 2px;"
-                      " :hover{"
-                      " background: rgb(" +
+                      " padding-right: 2px; }"
+                      " QLabel:hover{ background: rgb(" +
                       QString::number(m_hoverColor.red()) + ", " +
                       QString::number(m_hoverColor.green()) + ", " +
                       QString::number(m_hoverColor.blue()) +

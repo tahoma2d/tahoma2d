@@ -767,5 +767,6 @@
 		<file>Resources/match_rup_gap.png</file>
 		<file>Resources/scripticon.png</file>
 		<file>Resources/savescreen.png</file>
-	</qresource>
+		<file>Resources/vcroot.svg</file>
+  </qresource>
 </RCC>
