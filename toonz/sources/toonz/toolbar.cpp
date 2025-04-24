@@ -300,6 +300,7 @@ void Toolbar::updateOrientation(bool isVertical) {
     m_panel->setOrientation(m_isVertical);
     m_panel->setFixedWidth(m_isVertical ? 44 : QWIDGETSIZE_MAX);
     m_panel->setFixedHeight(m_isVertical ? QWIDGETSIZE_MAX : 44);
+    m_panel->setMinimumHeight(44);
     if (m_isVertical)
       m_panel->resize(44, x);
     else
@@ -308,6 +309,7 @@ void Toolbar::updateOrientation(bool isVertical) {
 
   setFixedWidth(m_isVertical ? 34 : QWIDGETSIZE_MAX);
   setFixedHeight(m_isVertical ? QWIDGETSIZE_MAX : 34);
+  setMinimumHeight(34);
   setOrientation(m_isVertical ? Qt::Vertical : Qt::Horizontal);
   setSizePolicy(QSizePolicy::Policy::Expanding,
                   QSizePolicy::Policy::Expanding);

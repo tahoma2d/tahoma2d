@@ -769,5 +769,6 @@
 		<file>Resources/scripticon.png</file>
 		<file>Resources/savescreen.png</file>
 		<file>Resources/scrub.png</file>
-	</qresource>
+		<file>Resources/vcroot.svg</file>
+  </qresource>
 </RCC>
