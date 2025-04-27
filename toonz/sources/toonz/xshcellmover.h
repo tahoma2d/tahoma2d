@@ -111,6 +111,7 @@ protected:
   bool m_moved;
   bool m_columnsMoved;
   bool m_dragged;
+  bool m_modifierPressed;
 
   bool isTotallyEmptyColumn(int col) const;
   virtual bool canMove(const TPoint &pos);
