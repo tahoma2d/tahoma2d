@@ -42,8 +42,7 @@ $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/
 
 In a Terminal window, execute the following statements:
 ```
-$ brew install glew lz4 libjpeg libpng lzo pkg-config cmake git-lfs libmypaint qt opencv jpeg-turbo
-$ git lfs install
+$ brew install glew lz4 libjpeg libpng lzo pkg-config cmake libmypaint qt opencv jpeg-turbo
 ```
 
 NOTE: This will install the latest version of QT which may not be compatible with older OS versions.
@@ -64,7 +63,6 @@ These steps will put the Tahoma2D repository under /Users/yourlogin/Documents.
 $ cd ~/Documents   #or where you want to store the repository#
 $ git clone https://github.com/tahoma2d/tahoma2d
 $ cd tahoma2d
-$ git lfs pull
 $ cd thirdparty/boost
 $ mv ~/Downloads/boost_1_72_0.tar.bz2 .   #or whatever the boost filename you downloaded is#
 $ tar xvjf boost_1_72_0.tar.bz2
