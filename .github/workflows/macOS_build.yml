@@ -7,8 +7,6 @@ jobs:
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
-        with:
-          lfs: true
       - name: Install Dependencies
         run: |
           ci-scripts/osx/tahoma-install.sh
