@@ -27,6 +27,7 @@ jobs:
         run: |
           ci-scripts/linux/tahoma-install.sh
           sudo apt-get install ccache
+          mkdir -p /home/runner/.ccache
       - name: Restore cache
         id: restore-cache
         uses: actions/cache/restore@v4
