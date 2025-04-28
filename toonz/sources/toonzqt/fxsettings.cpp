@@ -1089,7 +1089,7 @@ ParamViewer::ParamViewer(QWidget *parent, Qt::WindowFlags flags)
   {
     mainLayout->addWidget(m_tablePageSet, 1);
 
-    QHBoxLayout *showPreviewButtonLayout = new QHBoxLayout(this);
+    QHBoxLayout *showPreviewButtonLayout = new QHBoxLayout();
     showPreviewButtonLayout->setContentsMargins(3, 3, 3, 3);
     showPreviewButtonLayout->setSpacing(3);
     {
@@ -1248,7 +1248,7 @@ FxSettings::FxSettings(QWidget *parent, const TPixel32 &checkCol1,
   {
     swatchLayout->addWidget(m_viewer, 0, Qt::AlignHCenter);
 
-    QHBoxLayout *toolBarLayout = new QHBoxLayout(swatchContainer);
+    QHBoxLayout *toolBarLayout = new QHBoxLayout();
     {
       toolBarLayout->addWidget(m_toolBar, 0,
                                Qt::AlignHCenter | Qt::AlignBottom);
