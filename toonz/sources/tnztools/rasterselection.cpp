@@ -397,7 +397,7 @@ public:
     TRasterP ras    = getRaster(image);
     TRasterP erasedRas;
     if (!selection->isFloating()) {
-      selection->setSelectivePixelCM32(TPixelCM32(), L"");
+      selection->setSelectivePixelCM32(TPixelCM32(), ALL);
       erasedRas = TRasterP(getImageFromSelection(image, *selection));
       selection->setSelectivePixelCM32(m_selectivePixelCM32, m_selectiveMode);
     } else
@@ -448,6 +448,8 @@ public:
   }
 
   int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override { return QObject::tr("Delete"); }
 };
 
 int UndoDeleteSelection::m_id = 0;
