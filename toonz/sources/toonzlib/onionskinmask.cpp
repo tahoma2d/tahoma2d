@@ -419,7 +419,7 @@ int OnionSkinMask::getFrameIdxFromRos(int ros, TXsheet *xsh, int row, int col) {
         continue;
       lastCell = prevCells[x];
       ros++;
-      if (!ros) return x;
+      if (!ros) return x + r0;
     }
   } else if (ros > 0) {
     std::vector<TXshCell> nextCells(r1 - row + 1);
