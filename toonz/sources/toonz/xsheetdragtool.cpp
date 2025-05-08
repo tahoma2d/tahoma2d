@@ -2498,7 +2498,7 @@ protected:
             xsh->getColumn(c)->getColumnType() !=
                 TXshColumn::ColumnType::eLevelType)
           return false;
-        if (!xsh->getCell(r, c, false).isEmpty()) return false;
+        if (!xsh->getCell(r, c, false, false).isEmpty()) return false;
       }
     }
     return true;
@@ -2681,4 +2681,154 @@ public:
 XsheetGUI::DragTool *XsheetGUI::DragTool::makeNavigationTagDragTool(
     XsheetViewer *viewer) {
   return new NavigationTagDragTool(viewer);
+}
+
+//=============================================================================
+//  LoopFrameMarkerDragTool
+//-----------------------------------------------------------------------------
+
+namespace {
+
+class LoopFrameMarkerDragUndo final : public TUndo {
+  bool m_isStart;
+  int m_col;
+  std::pair<int, int> m_oldLoop, m_newLoop;
+
+public:
+  LoopFrameMarkerDragUndo(bool isStart, int col, std::pair<int, int> oldLoop,
+                          std::pair<int, int> newLoop)
+      : m_isStart(isStart)
+      , m_col(col)
+      , m_oldLoop(oldLoop)
+      , m_newLoop(newLoop) {}
+
+  void undo() const override {
+    TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
+    TXshColumn *column = xsh->getColumn(m_col);
+
+    column->removeLoop(m_newLoop);
+    column->addLoop(m_oldLoop);
+
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  void redo() const override {
+    TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
+    TXshColumn *column = xsh->getColumn(m_col);
+
+    column->removeLoop(m_oldLoop);
+    column->addLoop(m_newLoop);
+
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override {
+    return m_isStart ? QObject::tr("Move Loop Start Marker")
+                     : QObject::tr("Move Loop End Marker");
+  }
+  int getHistoryType() override { return HistoryType::Xsheet; }
+};
+
+class LoopFrameMarkerMoverTool final : public XsheetGUI::DragTool {
+  bool m_isStart;
+  int m_targetCol;
+  int m_markerRow;
+  std::pair<int, int> m_newLoop;
+  std::pair<int, int> m_oldLoop;
+  Qt::KeyboardModifiers m_modifier;
+
+public:
+  LoopFrameMarkerMoverTool(XsheetViewer *viewer, bool isStart)
+      : DragTool(viewer), m_isStart(isStart) {}
+
+  void onClick(const CellPosition &pos) override {
+    int col            = pos.layer();
+    int row            = pos.frame();
+    m_targetCol        = col;
+    m_markerRow        = row;
+    TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
+    TXshColumn *column = xsh->getColumn(m_targetCol);
+    m_newLoop          = column->getLoopWithRow(m_markerRow);
+    m_oldLoop          = m_newLoop;
+    refreshCellsArea();
+  }
+
+  void onDrag(const QMouseEvent *e) override {
+    m_modifier = e->modifiers();
+
+    CellPosition pos = getViewer()->xyToPosition(e->pos());
+    int row          = pos.frame();
+    if (row < 0) row = 0;
+    onRowChange(row);
+    refreshCellsArea();
+  }
+
+  void onRowChange(int row) {
+    if (row < 0) return;
+
+    if (m_markerRow == row) return;
+
+    TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
+    TXshColumn *column = xsh->getColumn(m_targetCol);
+
+    QList<std::pair<int, int>> loops = column->getLoops();
+
+    bool shiftPressed = m_modifier & Qt::ShiftModifier;
+    bool altPressed = m_modifier & Qt::AltModifier;
+
+    int newStart = m_newLoop.first;
+    int newEnd   = m_newLoop.second;
+    int delta    = row - m_markerRow;
+
+    if (m_isStart) {
+      newStart += delta;
+      if (shiftPressed)
+        newEnd += delta;
+      else if (altPressed)
+        newEnd -= delta;
+    } else {
+      newEnd += delta;
+      if (shiftPressed)
+        newStart += delta;
+      else if (altPressed)
+        newStart -= delta;
+    }
+    
+    if (newStart < 0 || (newEnd - newStart + 1) < 2) return;
+
+    // Check for collisions
+    for (auto loop : loops) {
+      if (loop == m_newLoop || m_markerRow <= loop.first) continue;
+      if (newStart <= loop.second) return;
+    }
+
+    for (auto loop : loops) {
+      if (loop == m_newLoop || m_markerRow >= loop.second) continue;
+      if (newEnd >= loop.first) return;
+    }
+
+    m_markerRow = row;
+
+    column->removeLoop(m_newLoop);
+    m_newLoop.first  = newStart;
+    m_newLoop.second = newEnd;
+    column->addLoop(m_newLoop);
+  }
+
+  void onRelease(const CellPosition &pos) override {
+    if (m_newLoop == m_oldLoop) return;
+    TUndoManager::manager()->add(new LoopFrameMarkerDragUndo(
+        m_isStart, m_targetCol, m_oldLoop, m_newLoop));
+    TApp::instance()->getCurrentScene()->setDirtyFlag(true);
+  }
+};
+//-----------------------------------------------------------------------------
+}  // namespace
+//-----------------------------------------------------------------------------
+
+XsheetGUI::DragTool *XsheetGUI::DragTool::makeLoopFrameMarkerMoverTool(
+    XsheetViewer *viewer, bool isStart) {
+  return new LoopFrameMarkerMoverTool(viewer, isStart);
 }

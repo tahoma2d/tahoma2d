@@ -405,7 +405,7 @@ StepUndo::StepUndo(int r0, int c0, int r1, int c1, int step)
   int k        = 0;
   for (int r = r0; r <= r1; ++r)
     for (int c = c0; c <= c1; ++c) {
-      const TXshCell &cell = xsh->getCell(r, c, false);
+      const TXshCell &cell = xsh->getCell(r, c, false, false);
       m_cells[k++] = cell;
     }
 }
@@ -519,7 +519,7 @@ EachUndo::EachUndo(int r0, int c0, int r1, int c1, int each)
   TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   for (int r = r0; r <= r1; ++r)
     for (int c = c0; c <= c1; ++c) {
-      const TXshCell &cell = xsh->getCell(r, c, false);
+      const TXshCell &cell = xsh->getCell(r, c, false, false);
       m_cells[k++] = cell;
     }
 }
@@ -663,13 +663,13 @@ ReframeUndo::ReframeUndo(int r0, int r1, std::vector<int> columnIndeces,
     TXshCellColumn *column = xsh->getColumn(colIndex)->getCellColumn();
     int colLen0, colLen1;
     column->getRange(colLen0, colLen1);
-    TXshCell tmpCell = column->getCell(m_r1);
+    TXshCell tmpCell = column->getCell(m_r1, true, false);
     // For the purposes counting cells at the end, treat stop frames as empty
     // cells
     if (tmpCell.getFrameId().isStopFrame())
       tmpCell = TXshCell(0, TFrameId::EMPTY_FRAME);
     while (rTo < colLen1) {
-      TXshCell nextCell = column->getCell(rTo + 1);
+      TXshCell nextCell = column->getCell(rTo + 1, true, false);
       if (nextCell.getFrameId().isStopFrame())
         nextCell = TXshCell(0, TFrameId::EMPTY_FRAME);
       if (nextCell != tmpCell) break;
@@ -686,7 +686,7 @@ ReframeUndo::ReframeUndo(int r0, int r1, std::vector<int> columnIndeces,
   m_c1         = -1;
   for (int c = 0; c < (int)m_columnIndeces.size(); c++) {
     for (int r = r0; r < r0 + m_orgRows[c] + 1; r++) {
-      const TXshCell &cell = xsh->getCell(r, m_columnIndeces[c], false);
+      const TXshCell &cell = xsh->getCell(r, m_columnIndeces[c], false, false);
       m_cells[k++]         = cell;
     }
     m_c0 = std::min(m_c0, m_columnIndeces[c]);
@@ -1029,8 +1029,8 @@ ResetStepUndo::ResetStepUndo(int r0, int c0, int r1, int c1)
 
     TXsheetP xsh = app->getCurrentXsheet()->getXsheet();
     for (int r = r0; r <= r1; ++r) {
-      const TXshCell &cell = xsh->getCell(r, c);
-      m_cells[k++] = xsh->getCell(r, c, false);
+      const TXshCell &cell = xsh->getCell(r, c, true, false);
+      m_cells[k++] = xsh->getCell(r, c, false, false);
 
       if (prevCell != cell) {
         prevCell = cell;
@@ -1143,8 +1143,8 @@ IncreaseStepUndo::IncreaseStepUndo(int r0, int c0, int r1, int c1)
 
     TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (int r = r0; r <= r1; ++r) {
-      const TXshCell &cell = xsh->getCell(r, c);
-      m_cells[k++] = xsh->getCell(r, c, false);
+      const TXshCell &cell = xsh->getCell(r, c, true, false);
+      m_cells[k++] = xsh->getCell(r, c, false, false);
 
       if (prevCell != cell) {
         prevCell = cell;
@@ -1206,7 +1206,7 @@ void TCellSelection::increaseStepCells() {
     m_range.m_c0 = col;
     m_range.m_c1 = col;
     TXshCell cell;
-    cell = xsh->getCell(row, col);
+    cell = xsh->getCell(row, col, true, false);
     if (cell.isEmpty()) return;
   }
   if (areAllColSelectedLocked()) return;
@@ -1267,15 +1267,15 @@ DecreaseStepUndo::DecreaseStepUndo(int r0, int c0, int r1, int c1)
   int k        = 0;
   TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   for (int c = c0; c <= c1; ++c) {
-    TXshCell prevCell = xsh->getCell(r0, c);
+    TXshCell prevCell = xsh->getCell(r0, c, true, false);
     m_removedCells[c] = 0;
 
     bool removed = false;
-    m_cells[k++] = xsh->getCell(r0, c, false);
+    m_cells[k++] = xsh->getCell(r0, c, false, false);
 
     for (int r = m_r0 + 1; r <= m_r1; ++r) {
-      const TXshCell &cell = xsh->getCell(r, c);
-      m_cells[k++] = xsh->getCell(r, c, false);
+      const TXshCell &cell = xsh->getCell(r, c, true, false);
+      m_cells[k++] = xsh->getCell(r, c, false, false);
 
       if (prevCell == cell && !cell.isEmpty()) {
         if (!removed) {
@@ -1344,11 +1344,11 @@ void TCellSelection::decreaseStepCells() {
     TXshCell cell;
     TXshCell nextCell;
     bool sameCells = true;
-    cell           = xsh->getCell(row, col);
+    cell           = xsh->getCell(row, col, true, false);
     if (cell.isEmpty()) return;
 
     for (int i = 1; sameCells; i++) {
-      nextCell = xsh->getCell(row + i, col);
+      nextCell = xsh->getCell(row + i, col, true, false);
       if (nextCell.m_frameId == cell.m_frameId &&
           nextCell.m_level == cell.m_level &&
           !xsh->isImplicitCell(row + i, col)) {
@@ -1823,7 +1823,7 @@ void CloneLevelUndo::insertCells() const {
   for (int c = m_range.m_c0; c <= m_range.m_c1; ++c) {
     TXshLevelP lastLevel = 0;
     for (int r = m_range.m_r0; r <= m_range.m_r1; ++r) {
-      TXshCell srcCell = xsh->getCell(r, c, false);
+      TXshCell srcCell = xsh->getCell(r, c, false, false);
       if (srcCell.isEmpty() && useImplicitHold &&
           xsh->isColumnEmpty(c + m_range.getColCount()))
         srcCell = xsh->getCell(r, c, true);

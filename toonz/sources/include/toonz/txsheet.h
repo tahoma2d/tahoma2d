@@ -196,14 +196,19 @@ public:
      an empty cell.
           \sa setCell(), getCells(), setCells()
   */
-  const TXshCell &getCell(int row, int col, bool implicitLookup = true) const;
+  const TXshCell &getCell(int row, int col, bool implicitLookup = true,
+                          bool loopedLookup = true) const;
 
-  const TXshCell &getCell(const CellPosition &pos,
-                          bool implicitLookup = true) const;
+  const TXshCell &getCell(const CellPosition &pos, bool implicitLookup = true,
+                          bool loopedLookup = true) const;
 
   bool isImplicitCell(int row, int col) const;
 
   bool isImplicitCell(const CellPosition &pos) const;
+
+  bool isLoopedCell(int row, int col) const;
+
+  bool isLoopedCell(const CellPosition &pos) const;
 
   bool setCell(int row, int col, const TXshCell &cell);
   /*! Set \b \e cells[] to \b \e rowCount cells of column identified by index \b
@@ -213,7 +218,7 @@ public:
           \sa getCells(), setCells(), getCell()
 */
   void getCells(int row, int col, int rowCount, TXshCell cells[],
-                bool implicitLookup = false) const;
+                bool implicitLookup = false, bool loopedLookup = false) const;
   /*! If column identified by index \b \e col is a \b TXshCellColumn or is empty
     and is not
     locked, this method sets to \b \e cells[] the given \b \e rowCount cells of

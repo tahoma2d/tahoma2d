@@ -763,11 +763,11 @@ public:
 
   void drawPredefinedPath(QPainter &p, PredefinedPath which,
                           const CellPosition &pos, optional<QColor> fill,
-                          optional<QColor> outline) const;
+                          optional<QColor> outline, int lineWidth = 1) const;
 
   void drawPredefinedPath(QPainter &p, PredefinedPath which, QPoint xy,
-                          optional<QColor> fill,
-                          optional<QColor> outline) const;
+                          optional<QColor> fill, optional<QColor> outline,
+                          int lineWidth = 1) const;
 
   //---------
 

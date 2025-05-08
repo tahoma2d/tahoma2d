@@ -75,6 +75,16 @@ public:
     const TXshCell &cell = xsh->getCell(row, col);
 
     int frameCount = xsh->getFrameCount();
+    if (row >= frameCount - 1) {
+      if (xsh->getColumn(col)->isLoopedFrame(row)) {
+        std::pair<int, int> loop = xsh->getColumn(col)->getLoopForRow(row);
+        frameCount = row + (loop.second - loop.first + 1);
+      } else if (xsh->getColumn(col)->isInLoopRange(row)) {
+        std::pair<int, int> loop = xsh->getColumn(col)->getLoopWithRow(row);
+        frameCount = row + (loop.second - loop.first + 1);
+      }
+    }
+
     while (row < frameCount) {
       row++;
       if (xsh->getCell(row, col).isEmpty() ||

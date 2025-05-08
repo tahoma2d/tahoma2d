@@ -2287,6 +2287,8 @@ void MainWindow::defineActions() {
                         "inbetween_easeout");
   createMenuCellsAction(MI_InbetweenEaseInOut, QT_TR_NOOP("&Ease In/Out"), "",
                         "inbetween_easeinout");
+  createMenuCellsAction(MI_LoopFrames, QT_TR_NOOP("Loop Frames"), "", "");
+  createMenuCellsAction(MI_RemoveFrameLoop, QT_TR_NOOP("Remove Frame Loop"), "", "");
 
   // Menu - Play
 

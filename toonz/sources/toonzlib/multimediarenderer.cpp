@@ -191,8 +191,8 @@ bool MultimediaRenderer::Imp::hasKeyDrawing(TFx *fx, int row) {
     TXshCellColumn *celCol = col->getCellColumn();
     if (!celCol) return false;
 
-    TXshCell cell     = celCol->getCell(row, false);
-    TXshCell prevCell = row > 0 ? celCol->getCell(row - 1, false) : TXshCell();
+    TXshCell cell     = celCol->getCell(row, false, false);
+    TXshCell prevCell = row > 0 ? celCol->getCell(row - 1, false, false) : TXshCell();
 
     if (cell.isEmpty() || cell.getFrameId().isStopFrame() || cell == prevCell)
       return false;
