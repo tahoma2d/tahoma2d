@@ -102,9 +102,10 @@ void OnionSkinMask::getAll(int currentRow,
     // Translate relative drawing position to frame drawing position
     int r0, r1;
     int n = xsh->getCellRange(col, r0, r1);
+    if (currentRow > n) n = currentRow + 1;
     std::vector<TXshCell> cells(n);
     bool useImplicit = Preferences::instance()->isImplicitHoldEnabled();
-    xsh->getCells(r0, col, n, &cells[0]);
+    xsh->getCells(r0, col, n, &cells[0], false, true);
     TXshCell startCell = xsh->getCell(currentRow, col);
     for (; dosIt != dosEnd;) {
       int r             = currentRow - r0;
@@ -411,7 +412,7 @@ int OnionSkinMask::getFrameIdxFromRos(int ros, TXsheet *xsh, int row, int col) {
 
   if (ros < 0) {
     std::vector<TXshCell> prevCells(row - r0 + 1);
-    xsh->getCells(r0, col, prevCells.size(), &(prevCells[0]));
+    xsh->getCells(r0, col, prevCells.size(), &(prevCells[0]), false, true);
     TXshCell lastCell;
     for (int x = prevCells.size() - 2; x >= 0; x--) {
       if (prevCells[x].isEmpty() || prevCells[x].getFrameId().isStopFrame() ||
@@ -423,7 +424,7 @@ int OnionSkinMask::getFrameIdxFromRos(int ros, TXsheet *xsh, int row, int col) {
     }
   } else if (ros > 0) {
     std::vector<TXshCell> nextCells(r1 - row + 1);
-    xsh->getCells(row, col, nextCells.size(), &(nextCells[0]));
+    xsh->getCells(row, col, nextCells.size(), &(nextCells[0]), false, true);
     TXshCell lastCell = nextCells[0];
     for (int x = 1; x < nextCells.size(); x++) {
       if (nextCells[x].isEmpty() || nextCells[x].getFrameId().isStopFrame() ||

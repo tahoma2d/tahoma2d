@@ -366,6 +366,7 @@ TImage *TTool::touchImage(bool forDuplicate) {
 
   TXshCell cell       = xsh->getCell(row, col);
   bool isImplicitCell = xsh->isImplicitCell(row, col);
+  bool isLoopedCell   = xsh->isLoopedCell(row, col);
 
   // Stop frames cannot be modified
   if (cell.getFrameId().isStopFrame()) return 0;
@@ -393,14 +394,15 @@ TImage *TTool::touchImage(bool forDuplicate) {
 
     // current cell is not empty
     if (isCreateInHoldCellsEnabled && row > 0 &&
-        xsh->getCell(row - 1, col) == xsh->getCell(row, col)) {
+        (isLoopedCell ||
+         (xsh->getCell(row - 1, col) == xsh->getCell(row, col)))) {
       // CreateInHoldCells is enabled and the current cell is a "hold".
       // We must create a new drawing.
       // measure the hold length (starting from the current row) : r0-r1
       int r0 = row, r1 = row;
       if (isAutoStretchEnabled)
         while (!cell.getFrameId().isStopFrame() &&
-               xsh->getCell(r1 + 1, col, false) == cell)
+               xsh->getCell(r1 + 1, col, false, false) == cell)
           r1++;
       // find the proper frameid (possibly addisng suffix, in order to avoid a
       // fid already used)

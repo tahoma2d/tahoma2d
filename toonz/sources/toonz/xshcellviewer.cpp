@@ -1955,7 +1955,7 @@ void CellArea::drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
       QLine continueLine = m_viewer->orientation()->line(which).translated(xy);
       dotRect.moveCenter(QPoint(continueLine.x1() - 1, dotRect.center().y()));
     }
-    p.setPen(outlineColor);
+    p.setPen(color);
     p.setBrush(color);
     p.drawEllipse(dotRect);
     p.setBrush(Qt::NoBrush);
@@ -1965,7 +1965,7 @@ void CellArea::drawFrameMarker(QPainter &p, const QPoint &xy, QColor color,
 //-----------------------------------------------------------------------------
 
 void CellArea::drawEndOfLevelMarker(QPainter &p, QRect rect, bool isNextEmpty,
-                                    bool isStopFrame) {
+                                    bool isStopFrame, bool isLooped) {
   const Orientation *o = m_viewer->orientation();
 
   QColor levelEndColor = m_viewer->getLevelEndColor();
@@ -1974,7 +1974,8 @@ void CellArea::drawEndOfLevelMarker(QPainter &p, QRect rect, bool isNextEmpty,
   QPoint bottomLeft    = rect.bottomLeft();
   QPoint bottomRight   = rect.bottomRight();
   if (!o->isVerticalTimeline()) {
-    if (isStopFrame) {
+    if (Preferences::instance()->isShowDragBarsEnabled() && isStopFrame &&
+        !isLooped) {
       QRect dragRect = o->rect(PredefinedRect::DRAG_AREA);
       topLeft.setY(topLeft.y() + dragRect.height());
       topRight.setY(topRight.y() + dragRect.height());
@@ -1984,7 +1985,7 @@ void CellArea::drawEndOfLevelMarker(QPainter &p, QRect rect, bool isNextEmpty,
       bottomRight.setX(bottomRight.x() - 2);
     }
   }
-  levelEndColor.setAlphaF(0.3);
+  levelEndColor.setAlphaF((!isStopFrame || isLooped) ? 0.3 : 0.75);
   p.setPen(levelEndColor);
   p.drawLine(topLeft, bottomRight);
   p.drawLine(topRight, bottomLeft);
@@ -2034,13 +2035,70 @@ void CellArea::drawCellMarker(QPainter &p, int markId, QRect rect,
 
 //-----------------------------------------------------------------------------
 
+void CellArea::drawLoopFrameMarker(QPainter &p, int row, int col) {
+  TXshColumn *column = m_viewer->getXsheet()->getColumn(col);
+
+  if (!column->hasLoops()) return;
+
+  QList<std::pair<int, int>> loops = column->getLoops();
+
+  bool isStart = false;
+  bool isEnd   = false;
+  int l = -1;
+  for (int x = 0; x < loops.size(); x++) {
+    if (loops.at(x).first == row) {
+      l       = x;
+      isStart = true;
+      break;
+    } else if (loops.at(x).second == row) {
+      l     = x;
+      isEnd = true;
+      break;
+    }
+  }
+
+  if (!isStart && !isEnd) return;
+
+  const Orientation *o = m_viewer->orientation();
+
+  QPoint xy            = m_viewer->positionToXY(CellPosition(row, col));
+  int x     = xy.x();
+  int y     = xy.y();
+  if (row == 0) {
+    if (o->isVerticalTimeline())
+      xy.setY(xy.y() + 1);
+    else
+      xy.setX(xy.x() + 1);
+  }
+
+  PredefinedPath marker = isStart ? PredefinedPath::LOOP_START_MARKER
+                                  : PredefinedPath::LOOP_END_MARKER;
+  QPoint topLeft   = m_viewer->positionToXY(CellPosition(row, col));
+  QRect markerRect = isStart
+                         ? o->rect(PredefinedRect::LOOP_START_MARKER_AREA)
+                               .translated(QPoint(x, y))
+                         : o->rect(PredefinedRect::LOOP_END_MARKER_AREA)
+                               .translated(QPoint(x, y));
+  QPoint frameAdj = m_viewer->getFrameZoomAdjustment();
+  if (isEnd)
+    markerRect.adjust(-frameAdj.x(), -frameAdj.y(), -frameAdj.x(),
+                      -frameAdj.y());
+
+  QColor fill = Qt::transparent, color = Qt::white;
+
+  int lineWidth = 2 + (m_loopFrameMarkerHighlight == QPoint(row, col) ? 1 : 0);
+
+  m_viewer->drawPredefinedPath(p, marker, markerRect.topLeft(), fill, color,
+                               lineWidth);
+}
+
+//-----------------------------------------------------------------------------
+
 void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
                              bool showLevelName) {
   const Orientation *o = m_viewer->orientation();
 
   TXsheet *xsh  = m_viewer->getXsheet();
-  TXshCell cell = xsh->getCell(row, col);
-  TXshCell prevCell;
 
   TXshCellColumn *cellColumn = xsh->getColumn(col)->getCellColumn();
   int markId                 = (cellColumn) ? cellColumn->getCellMark(row) : -1;
@@ -2051,13 +2109,27 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
                     columnSelection->isColumnSelected(col);
   bool isSimpleView = m_viewer->getFrameZoomFactor() <=
                       o->dimension(PredefinedDimension::SCALE_THRESHOLD);
-  bool isImplicitCell = xsh->isImplicitCell(row, col);
-  bool isStopFrame = isImplicitCell ? false : cell.getFrameId().isStopFrame();
 
+  bool isLoopedCell = cellColumn->isLoopedFrame(row);
+  std::pair<int, int> loopRange = cellColumn->getLoopForRow(row);
+  int loopR0 = loopRange.first, loopR1 = loopRange.second;
+
+  TXshCell cell = xsh->getCell(row, col);
+
+  bool isImplicitCell = xsh->isImplicitCell(row, col);
+  bool isStopFrame =
+      (row == loopR1 + 1)
+          ? xsh->getCell(row, col).getFrameId().isStopFrame()
+          : (isImplicitCell ? false : cell.getFrameId().isStopFrame());
+
+  TXshCell prevCell;
   bool prevIsImplicit = false;
+  bool prevIsLooped   = false;
+  int prevFrame = row - 1;
   if (row > 0) {
-    prevCell       = xsh->getCell(row - 1, col);  // cell in previous frame
-    prevIsImplicit = xsh->isImplicitCell(row - 1, col);
+    prevCell       = xsh->getCell(prevFrame, col);  // cell in previous frame
+    prevIsImplicit = xsh->isImplicitCell(prevFrame, col);
+    prevIsLooped   = cellColumn->isLoopedFrame(prevFrame);
   }
 
   bool sameLevel = prevCell.m_level.getPointer() == cell.m_level.getPointer();
@@ -2072,9 +2144,9 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
       xy.setX(xy.x() + 1);
   }
 
-  TXshCell nextCell;
-  nextCell = xsh->getCell(row + 1, col);  // cell in next frame
-  bool isImplicitCellNext = xsh->isImplicitCell(row + 1, col);
+  int nextFrame     = row + 1;
+  TXshCell nextCell = xsh->getCell(nextFrame, col);  // cell in next frame
+  bool isImplicitCellNext = xsh->isImplicitCell(nextFrame, col);
 
   QPoint frameAdj = m_viewer->getFrameZoomAdjustment();
   QRect cellRect =
@@ -2083,7 +2155,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   cellRect.adjust(0, 0, -frameAdj.x(), -frameAdj.y());
   QRect rect = cellRect.adjusted(
       0, 0, (!o->isVerticalTimeline() && !nextCell.isEmpty() &&
-                     !xsh->isImplicitCell(row + 1, col) &&
+                     !xsh->isImplicitCell(nextFrame, col) &&
                      !nextCell.getFrameId().isStopFrame()
                  ? 2
                  : -1),
@@ -2132,11 +2204,16 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
 
     drawFrameSeparator(p, row, col, true);
 
+    drawLoopFrameMarker(p, row, col);
+
     if (TApp::instance()->getCurrentFrame()->isEditingScene() &&
         !m_viewer->orientation()->isVerticalTimeline() &&
         row == m_viewer->getCurrentRow() &&
         Preferences::instance()->isCurrentTimelineIndicatorEnabled())
       drawCurrentTimeIndicator(p, xy);
+
+    drawLoopFrameMarker(p, row, col);
+
     return;
   }
 
@@ -2161,6 +2238,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
         Preferences::instance()->isCurrentTimelineIndicatorEnabled())
       drawCurrentTimeIndicator(p, xy);
 
+    drawLoopFrameMarker(p, row, col);
+
     return;
   }
 
@@ -2175,7 +2254,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     m_viewer->getCellTypeAndColors(levelType, cellColor, sideColor, cell,
                                    isSelected);
     if (isImplicitCell) cellColor.setAlpha(m_viewer->getImplicitCellAlpha());
-    if (isStopFrame) {
+    if (isStopFrame || (isLoopedCell && row > loopR1)) {
       cellColorAlpha = cellColor.alpha();
       cellColor.setAlpha(0);
     }
@@ -2221,7 +2300,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   // Implicit holds use Stop Frame Hold to denote end of level
   if (isStopFrame)
     drawEndOfLevelMarker(p, rect, nextCell.isEmpty() || isImplicitCellNext,
-                         true);
+                         true, isLoopedCell && row > loopR1 + 1);
 
   drawFrameSeparator(p, row, col, false, heldFrame);
 
@@ -2249,6 +2328,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
                          xy, dottedLineColor);
   }
 
+  drawLoopFrameMarker(p, row, col);
 
   QRect nameRect = o->rect(PredefinedRect::CELL_NAME).translated(QPoint(x, y));
 
@@ -2284,6 +2364,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   QColor penColor = isRed        ? QColor(m_viewer->getErrorTextColor())
                     : isSelected ? m_viewer->getSelectedTextColor()
                                  : m_viewer->getTextColor();
+  if (isLoopedCell && row > loopR1) penColor.setAlphaF(0.4);
   p.setPen(penColor);
 
 /*
@@ -2307,8 +2388,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
   // if the same level & same fId with the previous cell,
   // draw continue line
   QString fnum;
-  if ((sameLevel && prevCell.m_frameId == cell.m_frameId && !prevIsImplicit) ||
-      isImplicitCell) {
+  if (sameLevel && prevCell.m_frameId == cell.m_frameId &&
+      (!prevIsImplicit || isLoopedCell || isImplicitCell)) {
     if (o->isVerticalTimeline()) {
       // not on line marker
       PredefinedLine which =
@@ -2338,7 +2419,10 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
       }
 
       if (!isStopFrame)
-        drawFrameMarker(p, QPoint(x, y), (isRed ? Qt::red : Qt::black));
+        drawFrameMarker(
+            p, QPoint(x, y),
+            (isRed ? Qt::red
+                   : (isLoopedCell && row > loopR1 ? Qt::gray : Qt::black)));
       return;
     }
 
@@ -2365,7 +2449,8 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
     p.drawText(nameRect, alignFlag, fnum);
   }
 
-  if (isImplicitCell || isStopFrame) return;
+  if (prevCell == cell || isStopFrame)
+    return;
 
   int distance, offset, secDistance;
   TApp::instance()->getCurrentScene()->getScene()->getProperties()->getMarkers(
@@ -2375,7 +2460,7 @@ void CellArea::drawLevelCell(QPainter &p, int row, int col, bool isReference,
 
   // draw level name
   if (showLevelName &&
-      (!sameLevel || (row > 0 && xsh->isImplicitCell(row - 1, col)) ||
+      (!sameLevel || (row > 0 && prevIsImplicit) ||
        (isAfterMarkers && !isSimpleView &&
         Preferences::instance()->isLevelNameOnEachMarkerEnabled()) ||
        prevCell.getFrameId().isStopFrame())) {
@@ -2910,6 +2995,8 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
         Preferences::instance()->isCurrentTimelineIndicatorEnabled())
       drawCurrentTimeIndicator(p, xy);
 
+    drawLoopFrameMarker(p, row, col);
+
     return;
   }
 
@@ -2940,6 +3027,8 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
         row == m_viewer->getCurrentRow() &&
         Preferences::instance()->isCurrentTimelineIndicatorEnabled())
       drawCurrentTimeIndicator(p, xy);
+
+    drawLoopFrameMarker(p, row, col);
 
     return;
   }
@@ -2990,6 +3079,8 @@ void CellArea::drawPaletteCell(QPainter &p, int row, int col,
       row == m_viewer->getCurrentRow() &&
       Preferences::instance()->isCurrentTimelineIndicatorEnabled())
     drawCurrentTimeIndicator(p, xy);
+
+  drawLoopFrameMarker(p, row, col);
 
   if (!isImplicitCell) {
     bool isStart =
@@ -3666,7 +3757,7 @@ bool hasNonEmptyCell(TSelection *selection) {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (int c = c0; c <= c1; c++) {
       for (int r = r0; r <= r1; r++) {
-        TXshCell cell = xsh->getCell(r, c, false);
+        TXshCell cell = xsh->getCell(r, c, false, false);
         if (!cell.isEmpty()) return true;
       }
     }
@@ -3824,6 +3915,45 @@ void CellArea::mousePressEvent(QMouseEvent *event) {
       // keep searching
     }
 
+    if (col >= 0 && column && column->hasLoops()) {
+      bool isStart = false;
+      bool isEnd   = false;
+      int l        = -1;
+      QList<std::pair<int, int>> loops = column->getLoops();
+      for (int x = 0; x < loops.size(); x++) {
+        if (loops.at(x).first == row) {
+          l       = x;
+          isStart = true;
+          break;
+        } else if (loops.at(x).second == row) {
+          l     = x;
+          isEnd = true;
+          break;
+        }
+      }
+
+      if (isStart && o->rect(PredefinedRect::LOOP_START_MARKER_AREA)
+                        .contains(mouseInCell)) {
+        setDragTool(
+            XsheetGUI::DragTool::makeLoopFrameMarkerMoverTool(m_viewer, true));
+        m_viewer->dragToolClick(event);
+        event->accept();
+        update();
+        return;
+      } else if (isEnd &&
+                 o->rect(PredefinedRect::LOOP_END_MARKER_AREA)
+                     .adjusted(-frameAdj.x(), -frameAdj.y(), -frameAdj.x(),
+                               -frameAdj.y())
+                     .contains(mouseInCell)) {
+        setDragTool(
+            XsheetGUI::DragTool::makeLoopFrameMarkerMoverTool(m_viewer, false));
+        m_viewer->dragToolClick(event);
+        event->accept();
+        update();
+        return;
+      }
+    }
+
     if (m_levelExtenderRect.contains(pos.x, pos.y)) {
       m_viewer->getKeyframeSelection()->selectNone();
       if (event->modifiers() & Qt::ControlModifier)
@@ -3954,6 +4084,33 @@ void CellArea::updateKeyHighlight(int row, int col) {
   }
 }
 
+bool CellArea::isOverLoopFrameMarker(int row, int col, QPoint mouseInCell,
+                                     QPoint frameAdj) {
+  if (col < 0) return false;
+
+  const Orientation *o = m_viewer->orientation();
+
+  TXsheet *xsh       = m_viewer->getXsheet();
+  TXshColumn *column = xsh->getColumn(col);
+  if (!column || column->isEmpty() || !column->hasLoops()) return false;
+
+  QList<std::pair<int, int>> loops = column->getLoops();
+  for (int x = 0; x < loops.size(); x++) {
+    if (loops.at(x).first == row) {
+      if (o->rect(PredefinedRect::LOOP_START_MARKER_AREA).contains(mouseInCell))
+        return true;
+    } else if (loops.at(x).second == row) {
+      if (o->rect(PredefinedRect::LOOP_END_MARKER_AREA)
+              .adjusted(-frameAdj.x(), -frameAdj.y(), -frameAdj.x(),
+                        -frameAdj.y())
+              .contains(mouseInCell))
+        return true;
+    }
+  }
+
+  return false;
+}
+
 void CellArea::mouseMoveEvent(QMouseEvent *event) {
   const Orientation *o = m_viewer->orientation();
   QPoint frameAdj      = m_viewer->getFrameZoomAdjustment();
@@ -4001,8 +4158,10 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
   int y                     = m_pos.y() - cellTopLeft.y();
   QPoint mouseInCell        = m_pos - cellTopLeft;
 
-  bool updateViewer = (m_keyHighlight != QPoint(-1, -1));
-  m_keyHighlight    = QPoint(-1, -1);
+  bool updateViewer = (m_keyHighlight != QPoint(-1, -1)) ||
+                      m_loopFrameMarkerHighlight != QPoint(-1, -1);
+  m_keyHighlight             = QPoint(-1, -1);
+  m_loopFrameMarkerHighlight = QPoint(-1, -1);
 
   TXsheet *xsh = m_viewer->getXsheet();
 
@@ -4070,7 +4229,10 @@ void CellArea::mouseMoveEvent(QMouseEvent *event) {
   } else if (isKeyframeFrame && row == k1 + 1 &&
              loopRect.contains(mouseInCell))  // cycle toggle of key frames
     m_tooltip = tr("Set the cycle of previous keyframes");
-  else if ((!xsh->getCell(row, col).isEmpty()) &&
+  else if (isOverLoopFrameMarker(row, col, mouseInCell, frameAdj)) {
+    m_loopFrameMarkerHighlight = QPoint(row, col);
+    updateViewer               = true;
+  } else if ((!xsh->getCell(row, col).isEmpty()) &&
            Preferences::instance()->isShowDragBarsEnabled() &&
            o->rect(PredefinedRect::DRAG_AREA)
                .adjusted(0, 0, -frameAdj.x(), -frameAdj.y())
@@ -4501,6 +4663,12 @@ void CellArea::createCellMenu(QMenu &menu, bool isCellSelected, TXshCell cell,
               cmdManager->getAction(MI_AutoInputCellNumber));
         }
         menu.addMenu(editCellNumbersMenu);
+      }
+
+      if (!soundTextCellsSelected && !soundCellsSelected &&
+          !folderCellsSelected) {
+        menu.addAction(cmdManager->getAction(MI_LoopFrames));
+        menu.addAction(cmdManager->getAction(MI_RemoveFrameLoop));
       }
 
       menu.addAction(cmdManager->getAction(MI_FillEmptyCell));

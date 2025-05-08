@@ -60,6 +60,9 @@ void unifyColumnVisibilityToggles();
 
 void groupColumns(const std::set<int> &indices);
 void ungroupColumns(const std::set<int> &indices);
+
+void loopColumns(std::set<int> &indices);
+void removeColumnLoops(std::set<int> &indices);
 }  // namespace ColumnCmd
 
 #endif

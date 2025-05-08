@@ -72,6 +72,9 @@ public:
   static DragTool *makeVolumeDragTool(XsheetViewer *viewer);
 
   static DragTool *makeNavigationTagDragTool(XsheetViewer *viewer);
+
+  static DragTool *makeLoopFrameMarkerMoverTool(XsheetViewer *viewer,
+                                                bool isStart);
 };
 
 void setPlayRange(int r0, int r1, int step, bool withUndo = true);

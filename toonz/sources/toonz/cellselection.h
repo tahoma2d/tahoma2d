@@ -140,6 +140,11 @@ public:
   void inbetweenEaseIn() { inbetween(TInbetween::EaseInInterpolation); }
   void inbetweenEaseOut() { inbetween(TInbetween::EaseOutInterpolation); }
   void inbetweenEaseInOut() { inbetween(TInbetween::EaseInOutInterpolation); }
+
+  void loopFrames();
+  void loopFrameRange(int col, int r0, int r1);
+  void removeFrameLoop();
+  void removeFrameLoopRange(int col, int r0, int r1);
 };
 
 #endif  // TCELLSELECTION_H

@@ -1009,13 +1009,19 @@ QRect XsheetViewer::rangeToXYRect(const CellRange &range) const {
 void XsheetViewer::drawPredefinedPath(QPainter &p, PredefinedPath which,
                                       const CellPosition &pos,
                                       optional<QColor> fill,
-                                      optional<QColor> outline) const {
+                                      optional<QColor> outline,
+                                      int lineWidth) const {
   QPoint xy         = positionToXY(pos);
   QPainterPath path = orientation()->path(which).translated(xy);
   if (fill) p.fillPath(path, QBrush(*fill));
   if (outline) {
-    p.setPen(*outline);
+    QPen oldPen = p.pen();
+    QPen newPen = oldPen;
+    newPen.setColor(*outline);
+    newPen.setWidth(lineWidth);
+    p.setPen(newPen);
     p.drawPath(path);
+    p.setPen(oldPen);
   }
 }
 
@@ -1023,12 +1029,18 @@ void XsheetViewer::drawPredefinedPath(QPainter &p, PredefinedPath which,
 
 void XsheetViewer::drawPredefinedPath(QPainter &p, PredefinedPath which,
                                       QPoint xy, optional<QColor> fill,
-                                      optional<QColor> outline) const {
+                                      optional<QColor> outline,
+                                      int lineWidth) const {
   QPainterPath path = orientation()->path(which).translated(xy);
   if (fill) p.fillPath(path, QBrush(*fill));
   if (outline) {
-    p.setPen(*outline);
+    QPen oldPen = p.pen();
+    QPen newPen = oldPen;
+    newPen.setColor(*outline);
+    newPen.setWidth(lineWidth);
+    p.setPen(newPen);
     p.drawPath(path);
+    p.setPen(oldPen);
   }
 }
 

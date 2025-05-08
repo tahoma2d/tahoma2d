@@ -73,6 +73,8 @@ class DVAPI TXshColumn : public TColumnHeader, public TPersist {
   QStack<int> m_folderId;
   int m_folderSelector;
 
+  QList<std::pair<int, int>> m_loops;
+
 public:
 private:
   int m_colorFilterId;
@@ -112,8 +114,9 @@ Constructs a TXshColumn with default value.
       , m_colorTag(0)
       , m_opacity(255)
       , m_colorFilterId(0)  // None
-      , m_folderSelector(-1)
-  {}
+      , m_folderSelector(-1) {
+    m_loops.clear();
+  }
 
   enum ColumnType {
     eLevelType = 0,
@@ -301,6 +304,28 @@ Set column color tag to \b colorTag.
 
   bool loadFolderInfo(std::string tagName, TIStream &is);
   void saveFolderInfo(TOStream &os);
+
+  bool hasLoops() const { return !m_loops.isEmpty(); }
+  QList<std::pair<int, int>> getLoops() const { return m_loops; }
+  void setLoops(QList<std::pair<int, int>> loops) { m_loops = loops; }
+  void addLoop(std::pair<int, int> loop) { m_loops.push_back(loop); }
+  void addLoop(int start, int end) { addLoop(std::pair<int, int>(start, end)); }
+  void removeLoop(std::pair<int, int> loop) {
+    m_loops.erase(m_loops.begin() + m_loops.indexOf(loop));
+  }
+  void removeLoop(int start, int end) {
+    removeLoop(std::pair<int, int>(start, end));
+  }
+  std::pair<int, int> getLoopForRow(int row);
+  std::pair<int, int> getLoopWithRow(int row); 
+  bool isInLoopRange(int row);
+
+  bool isLoopedFrame(int row);
+  int getLoopedFrame(int row, bool forOnionSkin = false);
+  TXshCell getLoopedCell(int row, bool forOnionSkin = false,
+                         bool implicitLookup = true);
+  bool loadLoopInfo(std::string tagName, TIStream &is);
+  void saveLoopInfo(TOStream &os);
 };
 
 #ifdef _WIN32
@@ -387,7 +412,8 @@ Return true if cell in \b row is empty.
 Return cell in \b row.
 \sa getCells and setCell()
 */
-  virtual const TXshCell &getCell(int row, bool implicitLookup = true) const;
+  virtual const TXshCell &getCell(int row, bool implicitLookup = true,
+                                  bool loopedLookup = true) const;
   /*!
 Set cell in \b row to \b TXshCell \b cell.
 \sa setCells() and getCell(); return false if cannot set cells.
@@ -399,7 +425,7 @@ Set \b cells[] from \b row to \b row + \b rowCount to column cells.
 \sa getCell and setCells()
 */
   virtual void getCells(int row, int rowCount, TXshCell cells[],
-                        bool implicitLookup = false);
+                        bool implicitLookup = false, bool loopedLookup = false);
   /*!
 Set column cells from \b row to \b row + \b rowCount to cells[].
 \sa setCell() and getCell(); return false if cannot set cells[].

@@ -153,7 +153,8 @@ AutoInputCellNumberUndo::AutoInputCellNumberUndo(int increment, int interval,
     TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (int c = 0; c < m_columnIndices.size(); ++c) {
       for (int r = m_r0; r <= rowUpTo; ++r) {
-        const TXshCell &cell = xsh->getCell(r, m_columnIndices.at(c), false);
+        const TXshCell &cell =
+            xsh->getCell(r, m_columnIndices.at(c), false, false);
         m_beforeCells[k++] = cell;
       }
     }
@@ -164,7 +165,8 @@ AutoInputCellNumberUndo::AutoInputCellNumberUndo(int increment, int interval,
     int k        = 0;
     TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (int c = 0; c < m_columnIndices.size(); ++c) {
-      const TXshCell &cell = xsh->getCell(m_r0, m_columnIndices.at(c), false);
+      const TXshCell &cell =
+          xsh->getCell(m_r0, m_columnIndices.at(c), false, false);
       m_beforeCells[k++] = cell;
     }
   }
@@ -431,7 +433,7 @@ bool AutoInputCellNumberPopup::getTarget(std::vector<int> &columnIndices,
       if (column->getColumnType() != TXshColumn::eLevelType) continue;
       // try to find the topmost available level in the column
       for (int row = r0; row <= r1; row++) {
-        TXshCell cell = xsh->getCell(row, col);
+        TXshCell cell = xsh->getCell(row, col, true, false);
         if (cell.isEmpty()) continue;
         TXshSimpleLevel *simpleLevel = cell.getSimpleLevel();
         TXshChildLevel *childLevel   = cell.getChildLevel();
@@ -469,7 +471,7 @@ bool AutoInputCellNumberPopup::getTarget(std::vector<int> &columnIndices,
       int tmpR0, tmpR1;
       column->getRange(tmpR0, tmpR1);
       for (int row = tmpR0; row <= tmpR1; row++) {
-        TXshCell cell = xshColumn->getCell(row);
+        TXshCell cell = xshColumn->getCell(row, true, false);
         if (cell.isEmpty()) continue;
         TXshSimpleLevel *simpleLevel = cell.getSimpleLevel();
         TXshChildLevel *childLevel   = cell.getChildLevel();

@@ -539,6 +539,8 @@ void TopBar::loadMenubar() {
   addMenuItem(cellsMenu, MI_Rolldown);
   addMenuItem(cellsMenu, MI_TimeStretch);
   addMenuItem(cellsMenu, MI_AutoInputCellNumber);
+  addMenuItem(cellsMenu, MI_LoopFrames);
+  addMenuItem(cellsMenu, MI_RemoveFrameLoop);
   cellsMenu->addSeparator();
   QMenu *drawingSubMenu = cellsMenu->addMenu(tr("Drawing Substitution"));
   {
