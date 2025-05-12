@@ -137,6 +137,7 @@ const TXshCell &TXshCellColumn::getCell(int row, bool implicitLookup,
           if (adjustedRow < 0) adjustedRow += totalFrames;
           r = (adjustedRow % totalFrames) + r0 - m_first;
           if (r < 0) return emptyCell;
+          if (r >= m_cells.size()) r = m_cells.size() - 1;
           if (!m_cells[r].isEmpty()) return m_cells[r];
         }
       }
