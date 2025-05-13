@@ -1266,7 +1266,7 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
           decimalValue /= 1.5;
           scaleFactor = 1 - decimalValue;
         }
-        if (!m_rotating && !m_zooming) {
+        if (!m_zooming) {
           double delta = scaleFactor - 1;
           m_scaleFactor += delta;
           if (m_scaleFactor > .2 || m_scaleFactor < -.2) {
@@ -1286,7 +1286,7 @@ void SceneViewer::gestureEvent(QGestureEvent *e) {
         if (m_isFlippedX != m_isFlippedY) rotationDelta = -rotationDelta;
         TAffine aff                                     = getViewMatrix().inv();
         TPointD center                                  = aff * TPointD(0, 0);
-        if (!m_rotating && !m_zooming) {
+        if (!m_rotating) {
           m_rotationDelta += rotationDelta;
           double absDelta = std::abs(m_rotationDelta);
           if (absDelta >= 10) {
