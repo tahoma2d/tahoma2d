@@ -75,6 +75,8 @@ class SceneViewer final : public TTool::Viewer,
   QColor m_previewBgColor;
 
   double m_pressure;
+  double m_tiltX, m_tiltY;
+  double m_rotation;
   QPointF m_lastMousePos;
   QPointF m_pos;
   Qt::MouseButton m_mouseButton;

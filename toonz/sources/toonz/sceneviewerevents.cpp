@@ -75,11 +75,15 @@ namespace {
 //-----------------------------------------------------------------------------
 
 void initToonzEvent(TMouseEvent &toonzEvent, QMouseEvent *event,
-                    int widgetHeight, double pressure, int devPixRatio) {
+                    int widgetHeight, double pressure, double tiltX,
+                    double tiltY, double rotation, int devPixRatio) {
   toonzEvent.m_pos = TPointD(event->pos().x() * devPixRatio,
                                   widgetHeight - 1 - event->pos().y() * devPixRatio);
   toonzEvent.m_mousePos = event->pos();
   toonzEvent.m_pressure = 1.0;
+  toonzEvent.m_tiltX    = 0.0;
+  toonzEvent.m_tiltY    = 0.0;
+  toonzEvent.m_rotation = 0.0;
 
   toonzEvent.setModifiers(event->modifiers() & Qt::ShiftModifier,
                           event->modifiers() & Qt::AltModifier,
@@ -93,13 +97,17 @@ void initToonzEvent(TMouseEvent &toonzEvent, QMouseEvent *event,
 //-----------------------------------------------------------------------------
 
 void initToonzEvent(TMouseEvent &toonzEvent, QTabletEvent *event,
-                    int widgetHeight, double pressure, int devPixRatio,
+                    int widgetHeight, double pressure, double tiltX,
+                    double tiltY, double rotation, int devPixRatio,
                     bool isHighFrequent = false) {
   toonzEvent.m_pos = TPointD(
       event->posF().x() * (float)devPixRatio,
       (float)widgetHeight - 1.0f - event->posF().y() * (float)devPixRatio);
   toonzEvent.m_mousePos = event->posF();
   toonzEvent.m_pressure = pressure;
+  toonzEvent.m_tiltX    = tiltX;
+  toonzEvent.m_tiltY    = tiltY;
+  toonzEvent.m_rotation = rotation;
 
   toonzEvent.setModifiers(event->modifiers() & Qt::ShiftModifier,
                           event->modifiers() & Qt::AltModifier,
@@ -118,7 +126,10 @@ void initToonzEvent(TMouseEvent &toonzEvent, QTabletEvent *event,
 void initToonzEvent(TMouseEvent &toonzEvent, QKeyEvent *event) {
   toonzEvent.m_pos      = TPointD();
   toonzEvent.m_mousePos = QPointF();
-  toonzEvent.m_pressure = 0;
+  toonzEvent.m_pressure = 0.0;
+  toonzEvent.m_tiltX    = 0.0;
+  toonzEvent.m_tiltY    = 0.0;
+  toonzEvent.m_rotation = 0.0;
 
   toonzEvent.setModifiers(event->modifiers() & Qt::ShiftModifier,
                           event->modifiers() & Qt::AltModifier,
@@ -256,7 +267,12 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
   // Means we are hovering
   if (m_tabletState != None)
 #endif
+  {
     m_pressure = e->pressure();
+    m_tiltX    = e->xTilt();
+    m_tiltY    = e->yTilt();
+    m_rotation = e->rotation();
+  }
   m_tabletMove = false;
   // Management of the Eraser pointer
   ToolHandle *toolHandle = TApp::instance()->getCurrentTool();
@@ -285,7 +301,8 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     // So call onPress here in order to enable processing.
     if (e->button() == Qt::LeftButton) m_tabletState = Touched;
     TMouseEvent mouseEvent;
-    initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
+    initToonzEvent(mouseEvent, e, height(), m_pressure, m_tiltX, m_tiltY,
+                   m_rotation, getDevPixRatio());
     onPress(mouseEvent);
 
     // create context menu on right click here
@@ -306,7 +323,8 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
       // mousePressEvent gets ignored
       if (m_tabletState == Released || m_tabletState == None) {
         TMouseEvent mouseEvent;
-        initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
+        initToonzEvent(mouseEvent, e, height(), m_pressure, m_tiltX, m_tiltY,
+                       m_rotation, getDevPixRatio());
         m_tabletState = Touched;
         onPress(mouseEvent);
       } else if (m_tabletState == Touched) {
@@ -332,7 +350,8 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
       m_tabletState = Released;
 
     TMouseEvent mouseEvent;
-    initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
+    initToonzEvent(mouseEvent, e, height(), m_pressure, m_tiltX, m_tiltY,
+                   m_rotation, getDevPixRatio());
     onRelease(mouseEvent);
 
     if (TApp::instance()->getCurrentTool()->isToolBusy())
@@ -343,7 +362,8 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     if (m_tabletState == StartStroke || m_tabletState == OnStroke) {
       m_tabletState = Released;
       TMouseEvent mouseEvent;
-      initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio());
+      initToonzEvent(mouseEvent, e, height(), m_pressure, m_tiltX, m_tiltY,
+                     m_rotation, getDevPixRatio());
       onRelease(mouseEvent);
     } else
       m_tabletEvent = false;
@@ -375,7 +395,8 @@ void SceneViewer::tabletEvent(QTabletEvent *e) {
     // 20msec. (See RasterSelectionTool::leftButtonDrag())
     if (curPos != m_lastMousePos) {
       TMouseEvent mouseEvent;
-      initToonzEvent(mouseEvent, e, height(), m_pressure, getDevPixRatio(),
+      initToonzEvent(mouseEvent, e, height(), m_pressure, m_tiltX, m_tiltY,
+                     m_rotation, getDevPixRatio(),
                      m_isBusyOnTabletMove);
       if (!m_isBusyOnTabletMove) {
         m_isBusyOnTabletMove = true;
@@ -502,7 +523,8 @@ void SceneViewer::mouseMoveEvent(QMouseEvent *event) {
   // setTabletTracking(true).
 
   TMouseEvent mouseEvent;
-  initToonzEvent(mouseEvent, event, height(), 1.0, getDevPixRatio());
+  initToonzEvent(mouseEvent, event, height(), 1.0, 0.0, 0.0, 0.0,
+                 getDevPixRatio());
   onMove(mouseEvent);
 }
 
@@ -783,7 +805,8 @@ void SceneViewer::mousePressEvent(QMouseEvent *event) {
 
   TMouseEvent mouseEvent;
   m_mouseState = Touched;
-  initToonzEvent(mouseEvent, event, height(), 1.0, getDevPixRatio());
+  initToonzEvent(mouseEvent, event, height(), 1.0, 0.0, 0.0, 0.0,
+                 getDevPixRatio());
   onPress(mouseEvent);
 }
 
@@ -955,7 +978,8 @@ void SceneViewer::mouseReleaseEvent(QMouseEvent *event) {
 
   TMouseEvent mouseEvent;
   if (m_mouseState != None) m_mouseState = Released;
-  initToonzEvent(mouseEvent, event, height(), 1.0, getDevPixRatio());
+  initToonzEvent(mouseEvent, event, height(), 1.0, 0.0, 0.0, 0.0,
+                 getDevPixRatio());
   onRelease(mouseEvent);
 }
 //-----------------------------------------------------------------------------
@@ -1047,7 +1071,10 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
   if (m_current3DDevice != NONE) {
     m_mouseButton = Qt::NoButton;
     m_tabletEvent = false;
-    m_pressure    = 0;
+    m_pressure    = 0.0;
+    m_tiltX       = 0.0;
+    m_tiltY       = 0.0;
+    m_rotation    = 0.0;
     if (m_current3DDevice == SIDE_LEFT_3D)
       set3DLeftSideView();
     else if (m_current3DDevice == SIDE_RIGHT_3D)
@@ -1126,7 +1153,10 @@ void SceneViewer::doQuit() {
 
   m_mouseState                                = None;
   m_tabletMove                                = false;
-  m_pressure                                  = 0;
+  m_pressure                                  = 0.0;
+  m_tiltX                                     = 0.0;
+  m_tiltY                                     = 0.0;
+  m_rotation                                  = 0.0;
 }
 
 //-----------------------------------------------------------------------------
@@ -1143,7 +1173,10 @@ void SceneViewer::resetTabletStatus() {
   m_tabletEvent   = false;
   m_tabletState   = None;
   m_tabletMove    = false;
-  m_pressure      = 0;
+  m_pressure      = 0.0;
+  m_tiltX         = 0.0;
+  m_tiltY         = 0.0;
+  m_rotation      = 0.0;
   m_buttonClicked = false;
   if (TApp::instance()->getCurrentTool()->isToolBusy())
     TApp::instance()->getCurrentTool()->setToolBusy(false);
@@ -1896,7 +1929,8 @@ void SceneViewer::mouseDoubleClickEvent(QMouseEvent *event) {
   TTool *tool = TApp::instance()->getCurrentTool()->getTool();
   if (!tool || !tool->isEnabled()) return;
   TMouseEvent toonzEvent;
-  initToonzEvent(toonzEvent, event, height(), 1.0, getDevPixRatio());
+  initToonzEvent(toonzEvent, event, height(), 1.0, 0.0, 0.0, 0.0,
+                 getDevPixRatio());
   TPointD pos =
       tool->getMatrix().inv() * winToWorld(event->pos() * getDevPixRatio());
   TObjectHandle *objHandle = TApp::instance()->getCurrentObject();
