@@ -27,6 +27,7 @@ TXshColumn *TXshPaletteColumn::clone() const {
   column->m_cells = m_cells;
   column->m_first = m_first;
   column->setFolderIdStack(getFolderIdStack());
+  column->setLoops(getLoops());
 
   // column->updateIcon();
   return column;

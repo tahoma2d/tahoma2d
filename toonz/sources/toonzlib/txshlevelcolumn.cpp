@@ -90,6 +90,7 @@ TXshColumn *TXshLevelColumn::clone() const {
   column->setColorTag(getColorTag());
   column->setColorFilterId(getColorFilterId());
   column->setFolderIdStack(getFolderIdStack());
+  column->setLoops(getLoops());
 
   // column->updateIcon();
   return column;

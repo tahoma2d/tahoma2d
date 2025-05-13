@@ -81,6 +81,7 @@ bool TXshZeraryFxColumn::canSetCell(const TXshCell &cell) const {
 TXshColumn *TXshZeraryFxColumn::clone() const {
   TXshZeraryFxColumn *column = new TXshZeraryFxColumn(*this);
   column->setFolderIdStack(getFolderIdStack());
+  column->setLoops(getLoops());
   return column;
 }
 
