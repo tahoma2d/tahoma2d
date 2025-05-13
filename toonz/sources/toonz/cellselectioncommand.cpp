@@ -1823,7 +1823,7 @@ void CloneLevelUndo::insertCells() const {
   for (int c = m_range.m_c0; c <= m_range.m_c1; ++c) {
     TXshLevelP lastLevel = 0;
     for (int r = m_range.m_r0; r <= m_range.m_r1; ++r) {
-      TXshCell srcCell = xsh->getCell(r, c, false, false);
+      TXshCell srcCell = xsh->getCell(r, c, false, true);
       if (srcCell.isEmpty() && useImplicitHold &&
           xsh->isColumnEmpty(c + m_range.getColCount()))
         srcCell = xsh->getCell(r, c, true);
