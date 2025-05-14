@@ -241,6 +241,14 @@ LipSyncPopup::LipSyncPopup()
   m_startAt     = new DVGui::IntLineEdit(this, 0);
   m_restToEnd   = new QCheckBox(tr("Extend Rest Drawing to End Marker"), this);
 
+  m_recognizerLabel = new QLabel(tr("Recognizer"));
+  m_recognizer      = new QComboBox(this);
+  m_recognizer->addItem("PocketSphinx (English)");
+  m_recognizer->addItem("Phonetic");
+
+  m_recognizerLabel->hide();
+  m_recognizer->hide();
+
   QImage placeHolder(160, 90, QImage::Format_ARGB32);
   placeHolder.fill(Qt::white);
 
@@ -449,10 +457,14 @@ LipSyncPopup::LipSyncPopup()
   QHBoxLayout *insertAtLay = new QHBoxLayout();
   insertAtLay->setContentsMargins(0, 0, 0, 0);
   insertAtLay->setSpacing(4);
+  // Only 1 of these should be active at any time
   m_insertAtLabel = new QLabel(tr("Insert at Frame: "));
   insertAtLay->addWidget(m_insertAtLabel);
   insertAtLay->addWidget(m_startAt);
+  insertAtLay->addWidget(m_recognizerLabel);
+  insertAtLay->addWidget(m_recognizer);
   insertAtLay->addStretch();
+
   optionsLay->addLayout(insertAtLay);
   optionsLay->addWidget(m_restToEnd);
   m_topLayout->addLayout(optionsLay);
@@ -501,15 +513,21 @@ void LipSyncPopup::setPage(int index) {
   if (index == 1) {
     m_insertAtLabel->show();
     m_startAt->show();
+    m_recognizerLabel->hide();
+    m_recognizer->hide();
   }
   else {
     if (m_soundLevels->currentIndex() < m_soundLevels->count() - 1) {
       m_insertAtLabel->hide();
       m_startAt->hide();
+      m_recognizerLabel->show();
+      m_recognizer->show();
     }
     else {
       m_insertAtLabel->show();
       m_startAt->show();
+      m_recognizerLabel->hide();
+      m_recognizer->hide();
     }
   }
 }
@@ -590,10 +608,14 @@ void LipSyncPopup::refreshSoundLevels() {
   if (m_soundLevels->currentIndex() < m_soundLevels->count() - 1) {
     m_insertAtLabel->hide();
     m_startAt->hide();
+    m_recognizerLabel->show();
+    m_recognizer->show();
   }
   else {
     m_insertAtLabel->show();
     m_startAt->show();
+    m_recognizerLabel->hide();
+    m_recognizer->hide();
   }
 }
 
@@ -739,6 +761,10 @@ void LipSyncPopup::runRhubarb() {
                                 ->getFrameRate());
   args << "--datFrameRate" << QString::number(frameRate) << "--machineReadable";
 
+  if (m_recognizer->currentText() == "Phonetic")
+    args << "-r"
+         << "phonetic";
+
   args << m_audioPath;
   m_progressDialog->show();
   connect(m_rhubarb, &QProcess::readyReadStandardError, this,
@@ -787,10 +813,14 @@ void LipSyncPopup::onLevelChanged(int index) {
   if (m_soundLevels->currentIndex() < m_soundLevels->count() - 1) {
     m_insertAtLabel->hide();
     m_startAt->hide();
+    m_recognizerLabel->show();
+    m_recognizer->show();
   }
   else {
     m_insertAtLabel->show();
     m_startAt->show();
+    m_recognizerLabel->hide();
+    m_recognizer->hide();
   }
 }
 
