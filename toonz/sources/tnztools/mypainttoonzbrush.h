@@ -94,16 +94,22 @@ private:
   struct Params {
     union {
       struct {
-        double x, y, pressure, time;
+        double x, y, pressure, tiltX, tiltY, time;
       };
       struct {
-        double values[4];
+        double values[6];
       };
     };
 
     inline explicit Params(double x = 0.0, double y = 0.0,
-                           double pressure = 0.0, double time = 0.0)
-        : x(x), y(y), pressure(pressure), time(time) {}
+                           double pressure = 0.0, double tiltX = 0.0,
+                           double tiltY = 0.0, double time = 0.0)
+        : x(x)
+        , y(y)
+        , pressure(pressure)
+        , tiltX(tiltX)
+        , tiltY(tiltY)
+        , time(time) {}
 
     inline void setMedian(Params &a, Params &b) {
       for (int i  = 0; i < (int)sizeof(values) / sizeof(values[0]); ++i)
@@ -135,7 +141,8 @@ public:
                     const mypaint::Brush &brush);
   void beginStroke();
   void endStroke();
-  void strokeTo(const TPointD &p, double pressure, double dtime);
+  void strokeTo(const TPointD &p, double pressure, double tiltX, double tiltY,
+                double dtime);
 
   // colormapped
   void updateDrawing(const TRasterCM32P rasCM, const TRasterCM32P rasBackupCM,
