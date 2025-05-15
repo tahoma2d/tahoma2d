@@ -96,6 +96,8 @@ public:
   TPointD m_pos;  //!< Mouse position in window coordinates, bottom-left origin.
   double m_pressure;  //!< Pressure of the tablet pen (0.0 - 1.0) , or 1.0 for
                       //! pure mouse events.
+  double m_tiltX, m_tiltY; //! Tablet pen tilt
+  double m_rotation; //! Tablet pen rotation
 
   ModifierMask m_modifiersMask;  //!< Bitmask specifying key modifiers applying
                                  //! on the event.
@@ -114,7 +116,10 @@ public:
       , m_buttons(Qt::NoButton)
       , m_button(Qt::NoButton)
       , m_isTablet(false)
-      , m_isHighFrequent(false) {}
+      , m_isHighFrequent(false)
+      , m_tiltX(0.0)
+      , m_tiltY(0.0)
+      , m_rotation(0.0) {}
 
   bool isShiftPressed() const { return (m_modifiersMask & SHIFT_KEY); }
   bool isAltPressed() const { return (m_modifiersMask & ALT_KEY); }

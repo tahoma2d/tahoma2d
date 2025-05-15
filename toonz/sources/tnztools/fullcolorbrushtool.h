@@ -98,9 +98,11 @@ protected:
   TBoolProperty m_modifierPaintBehind;
   TEnumProperty m_preset;
   TBoolProperty m_snapGrid;
+  TBoolProperty m_tilt;
 
   TPixel32 m_currentColor;
   bool m_enabledPressure;
+  bool m_enabledTilt;
   int m_minCursorThick, m_maxCursorThick;
 
   TPointD m_mousePos,    //!< Current mouse position, in world coordinates.
