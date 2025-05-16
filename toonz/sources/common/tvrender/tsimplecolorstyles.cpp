@@ -1098,8 +1098,8 @@ void TRasterImagePatternStrokeStyle::getParamRange(int index, double &min,
   assert(0 <= index && index < getParamCount());
 
   if (index == 0) {
-    min = -50;
-    max = 50;
+    min = -100;
+    max = 200;
   } else {
     min = -180;
     max = 180;
@@ -1254,7 +1254,7 @@ void TRasterImagePatternStrokeStyle::computeTransformations(
     int ly    = std::max(1.0, images[index].ly);
     double sc = p.thick / ly;
     transformations.push_back(TTranslation(p) * TRotation(ang) * TScale(sc));
-    double ds = std::max(2.0, sc * images[index].lx * 2 + m_space);
+    double ds = std::max(0.25, sc * images[index].lx * 2 * (m_space * .01 + 1));
     s += ds;
   }
 }
@@ -1278,7 +1278,7 @@ void TRasterImagePatternStrokeStyle::drawStroke(
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_BLEND);
 
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
   GLuint texId;
   glGenTextures(1, &texId);
@@ -1561,8 +1561,8 @@ void TVectorImagePatternStrokeStyle::getParamRange(int index, double &min,
   assert(0 <= index && index < getParamCount());
 
   if (index == 0) {
-    min = -50;
-    max = 50;
+    min = -100;
+    max = 200;
   } else {
     min = -180;
     max = 180;
@@ -1644,7 +1644,7 @@ void TVectorImagePatternStrokeStyle::computeTransformations(
     TAffine aff =
         TTranslation(p) * TRotation(ang) * TScale(sc) * TTranslation(-center);
     transformations.push_back(aff);
-    double ds = std::max(2.0, sc * bbox.getLx() + m_space);
+    double ds = std::max(0.25, sc * bbox.getLx() * (m_space * .01 + 1));
     s += ds;
   }
 }
