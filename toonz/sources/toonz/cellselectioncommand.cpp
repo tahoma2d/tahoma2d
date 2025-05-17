@@ -664,11 +664,14 @@ ReframeUndo::ReframeUndo(int r0, int r1, std::vector<int> columnIndeces,
     int colLen0, colLen1;
     column->getRange(colLen0, colLen1);
     TXshCell tmpCell = column->getCell(m_r1, true, false);
+    bool isLastLooped = column->isLoopedFrame(m_r1);
     // For the purposes counting cells at the end, treat stop frames as empty
     // cells
     if (tmpCell.getFrameId().isStopFrame())
       tmpCell = TXshCell(0, TFrameId::EMPTY_FRAME);
     while (rTo < colLen1) {
+      if (!isLastLooped && column->isLoopedFrame(rTo + 1))
+        break;  // Stop if it's the start of looped frames
       TXshCell nextCell = column->getCell(rTo + 1, true, false);
       if (nextCell.getFrameId().isStopFrame())
         nextCell = TXshCell(0, TFrameId::EMPTY_FRAME);
