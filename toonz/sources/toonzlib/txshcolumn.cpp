@@ -255,7 +255,7 @@ void TXshCellColumn::getCells(int row, int rowCount, TXshCell cells[],
   }
   endDstCell = cells + rowCount;
   while (dstCell < endDstCell) {
-    if(loopsAvailable && isLoopedFrame(src)) {
+    if (loopsAvailable && isLoopedFrame(src + m_first)) {
       int i = getLoopedFrame(src + m_first) - m_first;
       TXshCell cell = i >= m_cells.size() ? emptyCell: m_cells[i];
       *dstCell++    = cell;
