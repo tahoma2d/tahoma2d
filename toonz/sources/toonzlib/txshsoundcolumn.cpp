@@ -323,7 +323,8 @@ int TXshSoundColumn::getFirstRow() const {
 
 //-----------------------------------------------------------------------------
 
-const TXshCell &TXshSoundColumn::getCell(int row, bool implicitLookup) const {
+const TXshCell &TXshSoundColumn::getCell(int row, bool implicitLookup,
+                                         bool loopedLookup) const {
   static TXshCell emptyCell;
 
   ColumnLevel *l = getColumnLevelByFrame(row);
@@ -399,7 +400,7 @@ void TXshSoundColumn::checkColumn() const {
 //-----------------------------------------------------------------------------
 
 void TXshSoundColumn::getCells(int row, int rowCount, TXshCell cells[],
-                               bool implicitLookup) {
+                               bool implicitLookup, bool loopedLookup) {
   // le celle da settare sono [ra, rb]
   int ra = row;
   int rb = row + rowCount - 1;

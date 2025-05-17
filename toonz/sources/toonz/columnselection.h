@@ -58,6 +58,9 @@ public:
   void reframeWithEmptyInbetweens();
 
   void renumberColumns();
+
+  void loopColumns();
+  void removeColumnLoops();
 };
 
 #endif  // TCELLSELECTION_H

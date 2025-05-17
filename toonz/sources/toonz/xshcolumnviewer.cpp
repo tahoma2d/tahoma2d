@@ -4021,6 +4021,8 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
       menu.addMenu(reframeSubMenu);
       menu.addAction(cmdManager->getAction(MI_AutoInputCellNumber));
       menu.addAction(cmdManager->getAction(MI_Autorenumber));
+      menu.addAction(cmdManager->getAction(MI_LoopFrames));
+      menu.addAction(cmdManager->getAction(MI_RemoveFrameLoop));
     }
 
     if (containsRasterLevel(m_viewer->getColumnSelection())) {

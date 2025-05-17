@@ -137,10 +137,12 @@ public:
   /*! Return min row not empty.*/
   int getFirstRow() const override;
 
-  const TXshCell &getCell(int row, bool implicitLookup = false) const override;
+  const TXshCell &getCell(int row, bool implicitLookup = false,
+                          bool loopedLookup = false) const override;
   TXshCell getSoundCell(int row);
   void getCells(int row, int rowCount, TXshCell cells[],
-                bool implicitLookup = false) override;
+                bool implicitLookup = false,
+                bool loopedLookup = false) override;
 
   bool setCell(int row, const TXshCell &cell) override;
   /*! Return false if cannot set cells.*/

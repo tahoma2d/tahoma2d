@@ -55,6 +55,7 @@ TXshColumn *TXshMeshColumn::clone() const {
   column->setColorTag(getColorTag());
   column->setColorFilterId(getColorFilterId());
   column->setFolderIdStack(getFolderIdStack());
+  column->setLoops(getLoops());
 
   return column;
 }
@@ -77,7 +78,7 @@ void TXshMeshColumn::saveData(TOStream &os) {
     os.openChild("cells");
     {
       for (int r = r0; r <= r1; ++r) {
-        TXshCell cell = getCell(r, false);
+        TXshCell cell = getCell(r, false, false);
         if (cell.isEmpty()) continue;
 
         TFrameId fid = cell.m_frameId;
@@ -86,7 +87,7 @@ void TXshMeshColumn::saveData(TOStream &os) {
         // If fid has no letter save more than one cell and its increment -
         // otherwise save just one cell
         if (r < r1 && fid.getLetter().isEmpty()) {
-          TXshCell cell2 = getCell(r + 1, false);
+          TXshCell cell2 = getCell(r + 1, false, false);
           TFrameId fid2  = cell2.m_frameId;
 
           if (cell2.m_level.getPointer() == cell.m_level.getPointer() &&
@@ -95,7 +96,7 @@ void TXshMeshColumn::saveData(TOStream &os) {
             for (++n;; ++n) {
               if (r + n > r1) break;
 
-              cell2         = getCell(r + n, false);
+              cell2         = getCell(r + n, false, false);
               TFrameId fid2 = cell2.m_frameId;
 
               if (cell2.m_level.getPointer() != cell.m_level.getPointer() ||
@@ -118,6 +119,8 @@ void TXshMeshColumn::saveData(TOStream &os) {
   saveCellMarks(os);
   // folder info
   saveFolderInfo(os);
+  // Loop info
+  saveLoopInfo(os);
 }
 
 //------------------------------------------------------------------
@@ -178,6 +181,8 @@ void TXshMeshColumn::loadData(TIStream &is) {
     } else if (loadCellMarks(tagName, is)) {
       is.closeChild();
     } else if (loadFolderInfo(tagName, is)) {
+      is.closeChild();
+    } else if (loadLoopInfo(tagName, is)) {
       is.closeChild();
     } else
       is.skipCurrentTag();

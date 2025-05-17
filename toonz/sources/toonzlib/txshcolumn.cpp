@@ -53,8 +53,8 @@ int TXshCellColumn::getRange(int &r0, int &r1, bool ignoreLastStop) const {
   for (i = cellCount - 1; i >= 0 && m_cells[i].isEmpty(); i--) {
   }
   r1 = m_first + i;
-  if (r1 < m_cells.size() && r1 > r0 && ignoreLastStop &&
-      m_cells[r1].getFrameId().isStopFrame())
+  if (r1 > r0 && ignoreLastStop &&
+      m_cells[cellCount - 1].getFrameId().isStopFrame())
     r1--;
   return r1 - r0 + 1;
 }
@@ -84,8 +84,8 @@ int TXshCellColumn::getMaxFrame(bool ignoreLastStop) const {
 int TXshCellColumn::getFirstRow() const { return m_first; }
 
 //-----------------------------------------------------------------------------
-
-const TXshCell &TXshCellColumn::getCell(int row, bool implicitLookup) const {
+const TXshCell &TXshCellColumn::getCell(int row, bool implicitLookup,
+                                        bool loopedLookup) const {
   static TXshCell emptyCell;
 
   if (row < 0 || row < m_first || !m_cells.size()) return emptyCell;
@@ -95,21 +95,62 @@ const TXshCell &TXshCellColumn::getCell(int row, bool implicitLookup) const {
                          getColumnType() != ColumnType::eSoundTextType &&
                          getColumnType() != ColumnType::eSoundType;
 
-  int r = row - m_first;
+  bool loopsAvailable = loopedLookup && hasLoops();
 
-  if (r >= m_cells.size()) {
-    if (!implicitEnabled) return emptyCell;
+  int r        = row - m_first;
+  bool pastEnd = r >= m_cells.size();
+  if (pastEnd) {
+    if (!implicitEnabled && !loopsAvailable) return emptyCell;
     r = m_cells.size() - 1;
-    if (m_cells[r].getFrameId().isStopFrame()) return emptyCell;
+    if (implicitEnabled && m_cells[r].getFrameId().isStopFrame())
+      return emptyCell;
   }
 
-  if (m_cells[r].isEmpty() && implicitEnabled) {
-    for (; r >= 0; r--) {
-      if (m_cells[r].isEmpty()) continue;
-      if (m_cells[r].getFrameId().isStopFrame()) return emptyCell;
-      break;
+  if (m_cells[r].isEmpty() || pastEnd) {
+    if (loopsAvailable) {
+      int loopIndex = -1;
+      QList<std::pair<int, int>> loops = getLoops();
+      for (int i = 0; i < loops.size(); i++) {
+        // Not a loop frame if within a loop range
+        if (row >= loops.at(i).first && row <= loops.at(i).second) break;
+        // Find the preceeding loop closest to the row
+        if (row > loops.at(i).second &&
+            (loopIndex < 0 || loops.at(i).second > loops.at(loopIndex).second))
+          loopIndex = i;
+      }
+
+      if (loopIndex != -1) {
+        int r0 = getLoops().at(loopIndex).first;
+        int r1 = getLoops().at(loopIndex).second;
+
+        // Check between end of loop range and current row to see if it truely
+        // is a looped frame.
+        for (int r2 = row - 1; r2 > r1; r2--) {
+          int adjR = r2 - m_first;
+          if (adjR >= m_cells.size()) continue;
+          if (!m_cells[adjR].isEmpty()) r0 = r1 = -1;
+        }
+
+        if (r1 >= 0 && row >= r0) {
+          int totalFrames = r1 - r0 + 1;
+          int adjustedRow = row - r0;
+          if (adjustedRow < 0) adjustedRow += totalFrames;
+          r = (adjustedRow % totalFrames) + r0 - m_first;
+          if (r < 0) return emptyCell;
+          if (r >= m_cells.size()) r = m_cells.size() - 1;
+          if (!m_cells[r].isEmpty()) return m_cells[r];
+        }
+      }
     }
-    if (r < 0) return emptyCell;
+
+    if (implicitEnabled) {
+      for (; r >= 0; r--) {
+        if (m_cells[r].isEmpty()) continue;
+        if (m_cells[r].getFrameId().isStopFrame()) return emptyCell;
+        break;
+      }
+      if (r < 0) return emptyCell;
+    } 
   }
 
   return m_cells[r];
@@ -127,8 +168,13 @@ bool TXshCellColumn::isCellImplicit(int row) const {
   if (!Preferences::instance()->isImplicitHoldEnabled() ||
       getColumnType() == ColumnType::eSoundType ||
       getColumnType() == ColumnType::eSoundTextType || row < 0 ||
-      row < m_first || getCell(row).isEmpty())
+      row < m_first || getCell(row).isEmpty() ||
+      getCell(row).getFrameId().isStopFrame())
     return false;
+
+  if (row > 0 && hasLoops() &&
+      getCell(row - 1, false, true) == getCell(row, false, true))
+    return true;
 
   // If we got here, the cell is technically not empty
   // If it is truely empty in the array, then it is implicit
@@ -164,7 +210,7 @@ void TXshCellColumn::checkColumn() const {
 //-----------------------------------------------------------------------------
 
 void TXshCellColumn::getCells(int row, int rowCount, TXshCell cells[],
-                              bool implicitLookup) {
+                              bool implicitLookup, bool loopedLookup) {
   const TXshCell emptyCell;
   int first = m_first;
   int i;
@@ -173,6 +219,8 @@ void TXshCellColumn::getCells(int row, int rowCount, TXshCell cells[],
     for (i = 0; i < rowCount; i++) cells[i] = emptyCell;
     return;
   }
+
+  bool loopsAvailable = loopedLookup && hasLoops();
 
   int dst, src, n, delta;
   n     = rowCount;
@@ -193,10 +241,11 @@ void TXshCellColumn::getCells(int row, int rowCount, TXshCell cells[],
   endDstCell += n;
   TXshCell tmpCell;
   while (dstCell < endDstCell) {
-    TXshCell cell = m_cells[src];
+    int i = !loopsAvailable ? src : (getLoopedFrame(src + m_first) - m_first);
+
+    TXshCell cell = m_cells[i];
     if (implicitLookup) {
-      if (cell.isEmpty() && src > 0 &&
-          !tmpCell.isEmpty()) {
+      if (cell.isEmpty() && i > 0 && !tmpCell.isEmpty()) {
         cell = tmpCell;
       } else if (!cell.getFrameId().isStopFrame())
         tmpCell = cell;
@@ -206,11 +255,20 @@ void TXshCellColumn::getCells(int row, int rowCount, TXshCell cells[],
   }
   endDstCell = cells + rowCount;
   while (dstCell < endDstCell) {
+    if (loopsAvailable && isLoopedFrame(src + m_first)) {
+      int i = getLoopedFrame(src + m_first) - m_first;
+      TXshCell cell = i >= m_cells.size() ? emptyCell: m_cells[i];
+      *dstCell++    = cell;
+      src++;
+      continue;
+    }
+
     TXshCell cell = m_cells[cellCount - 1];
     if (implicitLookup && !cell.getFrameId().isStopFrame())
       *dstCell++ = cell;
     else
       *dstCell++ = emptyCell;
+    src++;
   }
 }
 
@@ -265,6 +323,7 @@ bool TXshCellColumn::setCell(int row, const TXshCell &cell) {
   //"[r0,r1]"
   int index = row - m_first;
   assert(0 <= index && index < (int)m_cells.size());
+
   m_cells[index] = cell;
   // if(index == 0) updateIcon();
   if (cell.isEmpty()) {
@@ -1041,4 +1100,170 @@ void TXshColumn::saveFolderInfo(TOStream &os) {
   os.openChild("folderIds");
   for (int i = 0; i < m_folderId.size(); i++) os << m_folderId[i];
   os.closeChild();  // folderIds
+}
+
+//-----------------------------------------------------------------------------
+
+std::pair<int, int> TXshColumn::getLoopForRow(int row) {
+  if (!hasLoops()) return std::pair<int, int>(-1, -1);
+
+  int loopIndex = -1;
+  for (int i = 0; i < m_loops.size(); i++) {
+    if (row >= m_loops.at(i).first && row <= m_loops.at(i).second) continue;
+    // Find the preceeding loop closest to the row
+    if (row > m_loops.at(i).second &&
+        (loopIndex < 0 || m_loops.at(i).second > m_loops.at(loopIndex).second))
+      loopIndex = i;
+  }
+
+  // Not a loop frame if it's before all loops
+  if (loopIndex != -1) return m_loops.at(loopIndex);
+
+  return std::pair<int, int>(-1, -1);
+}
+
+//-----------------------------------------------------------------------------
+
+std::pair<int, int> TXshColumn::getLoopWithRow(int row) {
+  if (!hasLoops()) return std::pair<int, int>(-1, -1);
+
+  for (int i = 0; i < m_loops.size(); i++) {
+    if (row >= m_loops.at(i).first && row <= m_loops.at(i).second)
+      return m_loops.at(i);
+  }
+
+  return std::pair<int, int>(-1, -1);
+}
+
+//-----------------------------------------------------------------------------
+
+bool TXshColumn::isInLoopRange(int row) {
+  if (!hasLoops()) return false;
+
+  for (int i = 0; i < m_loops.size(); i++) {
+    if (row >= m_loops.at(i).first && row <= m_loops.at(i).second) return true;
+  }
+
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
+bool TXshColumn::isLoopedFrame(int row) {
+  if (!hasLoops()) return false;
+
+  TXshCellColumn *cellColumn = getCellColumn();
+  if (cellColumn) {
+    // Not a loop frame if it is real
+    TXshCell cell = cellColumn->getCell(row, false, false);
+    if (!cell.isEmpty()) return false;
+  }
+  int loopIndex = -1;
+  for (int i = 0; i < m_loops.size(); i++) {
+    // Not a loop frame if within a loop range
+    if (row >= m_loops.at(i).first && row <= m_loops.at(i).second) return false;
+    // Find the preceeding loop closest to the row
+    if (row > m_loops.at(i).second &&
+        (loopIndex < 0 || m_loops.at(i).second > m_loops.at(loopIndex).second))
+      loopIndex = i;
+  }
+
+  // Not a loop frame if it's before all loops
+  if (loopIndex == -1) return false;
+
+  // Check between end of loop range and current row to see if it truely is a
+  // looped frame.
+  if (cellColumn) {
+    for (int r = row - 1; r > m_loops.at(loopIndex).second; r--) {
+      TXshCell cell = cellColumn->getCell(r, false, false);
+      if (!cell.isEmpty()) return false;
+    }
+  }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+int TXshColumn::getLoopedFrame(int row, bool forOnionSkin) {
+  if (!hasLoops()) return row;
+
+  TXshCellColumn *cellColumn = getCellColumn();
+  if (cellColumn) {
+    // Not a loop frame if it is real
+    TXshCell cell = cellColumn->getCell(row, false, false);
+    if (!cell.isEmpty()) return row;
+  }
+
+  int loopIndex = -1;
+  for (int i = 0; i < m_loops.size(); i++) {
+    // Not a loop frame if withing a loop range
+    if (row >= m_loops.at(i).first && row <= m_loops.at(i).second) return row;
+    // Find the preceeding loop closest to the row
+    if (row > m_loops.at(i).second &&
+        (loopIndex < 0 || m_loops.at(i).second > m_loops.at(loopIndex).second))
+      loopIndex = i;
+  }
+
+  // Not a loop frame if it's before all loops
+  if (loopIndex == -1) return row;
+
+  int r0 = m_loops.at(loopIndex).first;
+  int r1 = m_loops.at(loopIndex).second;
+
+  if (cellColumn) {
+    // Check between end of loop range and current row to see if it truely is a
+    // looped frame.  A stop frame between it prevents that from happening
+    for (int r = row - 1; r > r1; r--) {
+      TXshCell cell = cellColumn->getCell(r, false, false);
+      if (!cell.isEmpty()) return row;
+    }
+  }
+
+  if (r1 < 0 || (!forOnionSkin && row < r0)) return row;
+
+  int totalFrames = r1 - r0 + 1;
+  int adjustedRow = row - r0;
+  if (adjustedRow < 0) adjustedRow += totalFrames;
+
+  int loopedRow = (adjustedRow % totalFrames) + r0;
+  return loopedRow;
+}
+
+//-----------------------------------------------------------------------------
+
+TXshCell TXshColumn::getLoopedCell(int row, bool forOnionSkin,
+                                   bool implicitLookup) {
+  TXshCellColumn *cellColumn = getCellColumn();
+  if (!cellColumn) return TXshCell();
+
+  int loopedRow = getLoopedFrame(row, forOnionSkin);
+
+  if (loopedRow < 0) return TXshCell();
+
+  return cellColumn->getCell(loopedRow, implicitLookup);
+}
+
+//-----------------------------------------------------------------------------
+
+bool TXshColumn::loadLoopInfo(std::string tagName, TIStream &is) {
+  if (tagName != "loops") return false;
+  m_loops.clear();
+  while (!is.eos()) {
+    int startFrame, endFrame;
+    is >> startFrame >> endFrame;
+    m_loops.push_back(std::pair<int, int>(startFrame, endFrame));
+  }
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshColumn::saveLoopInfo(TOStream &os) {
+  if (m_loops.isEmpty()) return;
+
+  os.openChild("loops");
+  for (int i = 0; i < m_loops.size(); i++)
+    os << m_loops[i].first << m_loops[i].second;
+  os.closeChild();  // loops
 }

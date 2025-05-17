@@ -100,6 +100,8 @@ void TColumnSelection::enableCommands() {
   enableCommand(this, MI_Autorenumber, &TColumnSelection::renumberColumns);
   enableCommand(this, MI_Group, &TColumnSelection::groupColumns);
   enableCommand(this, MI_Ungroup, &TColumnSelection::ungroupColumns);
+  enableCommand(this, MI_LoopFrames, &TColumnSelection::loopColumns);
+  enableCommand(this, MI_RemoveFrameLoop, &TColumnSelection::removeColumnLoops);
 }
 //-----------------------------------------------------------------------------
 
@@ -370,4 +372,20 @@ void TColumnSelection::hideColumns() {
   // colonne)
   //  TApp::instance()->->notify(TColumnHeadChange());
   app->getCurrentScene()->setDirtyFlag(true);
+}
+
+//-----------------------------------------------------------------------------
+
+void TColumnSelection::loopColumns() {
+  m_indices.erase(-1);  // Ignore camera column
+  if (m_indices.empty()) return;
+  ColumnCmd::loopColumns(m_indices);
+}
+
+//-----------------------------------------------------------------------------
+
+void TColumnSelection::removeColumnLoops() {
+  m_indices.erase(-1);  // Ignore camera column
+  if (m_indices.empty()) return;
+  ColumnCmd::removeColumnLoops(m_indices);
 }
