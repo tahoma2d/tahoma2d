@@ -550,4 +550,6 @@
 
 #define MI_LoopFrames "MI_LoopFrames"
 #define MI_RemoveFrameLoop "MI_RemoveFrameLoop"
+
+#define MI_OpenGPhotoEventLog "MI_OpenGPhotoEventLog"
 #endif

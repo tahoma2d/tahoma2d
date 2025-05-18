@@ -2536,6 +2536,8 @@ void MainWindow::defineActions() {
                        "", "web");
   createMenuHelpAction(MI_OpenReportABug, QT_TR_NOOP("&Report a Bug..."), "",
                        "web");
+  createMenuHelpAction(MI_OpenGPhotoEventLog,
+                       QT_TR_NOOP("GPhoto Event Log"), "", "");
   createMenuHelpAction(MI_About, QT_TR_NOOP("&About Tahoma2D..."), "", "info");
   //  createMenuHelpAction(MI_SupportTahoma2D, QT_TR_NOOP("&Support
   //  Tahoma2D..."), "",

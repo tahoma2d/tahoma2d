@@ -2,6 +2,8 @@
 #include "stopmotion.h"
 #include "tapp.h"
 
+#include "gphotoeventlogpopup.h"
+
 #include "toonz/tscenehandle.h"
 #include "toonz/tcamera.h"
 #include "toonz/toonzscene.h"
@@ -32,31 +34,26 @@ void doGPSleep(int ms) {
 }
 
 #ifdef WITH_GPHOTO2
-#include <QDebug>
 
 //-----------------------------------------------------------------------------
 bool gp_crit_error;
-QString gp_error_msg;
-char *gp_error_data;
 
 static void logdump(GPLogLevel level, const char *domain, const char *str,
                     void *data) {
+  GPHOTOMSG msgType = GPHOTOMSG::GPDebug;
+  QString msg(str);
+
   if (level == GP_LOG_ERROR) {
-    qDebug() << "[GP_ERROR] " << QString(str);
+    msgType = GPHOTOMSG::GPError;
     if (QString(str).contains("PTP No Device") ||
         QString(str).contains("No such device")) {
       gp_crit_error = true;
-      gp_error_msg  = QString(str);
-      gp_error_data = (char *)data;
+      msg = "CRITICAL! " + QString((char *)data) + " encountered: " + msg;
+      free(data);
     }
-  } else if (level == GP_LOG_VERBOSE) {
-    qDebug() << "[GP_VERBOSE] " << QString(str);
-  } else if (level == GP_LOG_DEBUG) {
-    qDebug() << "[GP_DEBUG] " << QString(str);
-  } else if (level == GP_LOG_DATA) {
-    qDebug() << "[GP_DATA] " << QString(str);
-  } else
-    qDebug() << "[GP_UNKNOWN] " << QString(str);
+  }
+
+  GPhotoEventLogManager::instance()->addEventMessage(msgType, msg);
 }
 #endif
 
@@ -80,7 +77,7 @@ GPhotoCam::GPhotoCam() {
   m_cameraImageFilePath = new CameraFilePath;
 
   m_gpContext = gp_context_new();
-  gp_log_add_func(GP_LOG_ERROR, logdump, NULL);
+  gp_log_add_func(GP_LOG_DEBUG, logdump, NULL);
 
   // Load all the camera drivers we have...
   int retVal = gp_abilities_list_new(&m_cameraListMaster);
@@ -286,11 +283,6 @@ EventTrigger checkEventCode(QString manufacturer, char *evtdata) {
 
 void GPhotoCam::onTimeout() {
 #ifdef WITH_GPHOTO2
-  bool debug = false;
-#ifdef _MSC_VER
-  debug = true;
-#endif
-
   CameraEventType evttype;
   CameraFilePath *path;
   void *evtdata;
@@ -327,12 +319,7 @@ void GPhotoCam::onTimeout() {
     if (!m_gpContext || !m_camera || m_exitRequested) break;
 
     if (gp_crit_error) {
-      if (debug)
-        qDebug() << "[GphotoCamEventHandler] GP_ERROR " << (char *)gp_error_data
-                 << " encountered: " << gp_error_msg;
       gp_crit_error = false;
-      gp_error_msg  = "";
-      free(gp_error_data);
 
       m_sessionOpen = false;
       releaseCamera();
@@ -349,9 +336,11 @@ void GPhotoCam::onTimeout() {
     switch (evttype) {
     case GP_EVENT_FILE_ADDED:
       path = (CameraFilePath *)evtdata;
-      if (debug)
-        qDebug() << "[GphotoCamEventHandler] FILE ADDED ON CAMERA: "
-                 << path->folder << "/" << path->name;
+
+      GPhotoEventLogManager::instance()->addEventMessage(
+          GPHOTOMSG::GPEvent, "FILE ADDED ON CAMERA: " +
+                                  QString::fromStdString(path->folder) + "/" +
+                                  QString::fromStdString(path->name));
 
       m_cameraImageFilePath = path;
       downloadImage();
@@ -360,30 +349,37 @@ void GPhotoCam::onTimeout() {
 #ifdef GP_EVENT_FILE_CHANGED
     case GP_EVENT_FILE_CHANGED:
       path = (CameraFilePath *)evtdata;
-      if (debug)
-        qDebug() << "[GphotoCamEventHandler] File CHANGED on the camera: "
-                 << path->folder << "/" << path->name;
+
+      GPhotoEventLogManager::instance()->addEventMessage(
+          GPHOTOMSG::GPEvent, "File CHANGED on the camera: " +
+                                  QString::fromStdString(path->folder) + "/" +
+                                  QString::fromStdString(path->name));
+
       free(evtdata);
       break;
 #endif
     case GP_EVENT_FOLDER_ADDED:
       path = (CameraFilePath *)evtdata;
-      if (debug)
-        qDebug() << "[GphotoCamEventHandler] FOLDER ADDED ON CAMERA: "
-                 << path->folder << "/" << path->name;
+
+      GPhotoEventLogManager::instance()->addEventMessage(
+          GPHOTOMSG::GPEvent, "FOLDER ADDED ON CAMERA: " +
+                                  QString::fromStdString(path->folder) + "/" +
+                                  QString::fromStdString(path->name));
+
       free(evtdata);
       break;
     case GP_EVENT_CAPTURE_COMPLETE:
-      if (debug) qDebug() << "[GphotoCamEventHandler] CAPTURE COMPLETE";
+      GPhotoEventLogManager::instance()->addEventMessage(GPHOTOMSG::GPEvent,
+                                                         "CAPTURE COMPLETE");
       break;
     case GP_EVENT_TIMEOUT:
-      // if (debug) qDebug() << "[GphotoCamEventHandler] TIMEOUT";
+//      GPhotoEventLogManager::instance()->addEventMessage(GPHOTOMSG::GPEvent,
+//                                                         "TIMEOUT");
       break;
     case GP_EVENT_UNKNOWN:
       if (evtdata) {
-        if (debug)
-          qDebug() << "[GphotoCamEventHandler] UNKNOWN EVENT: "
-                   << (char *)evtdata;
+        GPhotoEventLogManager::instance()->addEventMessage(
+            GPHOTOMSG::GPEvent, "UNKNOWN EVENT: " + QString((char *)evtdata));
 
         EventTrigger event =
             checkEventCode(m_cameraManufacturer, (char *)evtdata);
@@ -451,12 +447,13 @@ void GPhotoCam::onTimeout() {
         }
 
         free(evtdata);
-      } else if (debug)
-        qDebug() << "[GphotoCamEventHandler] UNKNOWN EVENT (no data).";
+      } else
+        GPhotoEventLogManager::instance()->addEventMessage(
+            GPHOTOMSG::GPEvent, "UNKNOWN EVENT (no data)");
       break;
     default:
-      if (debug)
-        qDebug() << "[GphotoCamEventHandler] DEFAULT EVENT - Type:" << evttype;
+      GPhotoEventLogManager::instance()->addEventMessage(
+          GPHOTOMSG::GPEvent, "DEFAULT EVENT - Type unknown");
       break;
     }
     if (evttype == GP_EVENT_TIMEOUT) break;
@@ -558,8 +555,6 @@ bool GPhotoCam::initializeCamera() {
   if (!m_camera) return false;
 
   gp_crit_error = false;
-  gp_error_msg  = "";
-  gp_error_data = 0;
 
   int retVal = gp_camera_init(m_camera, m_gpContext);
   if (retVal < GP_OK) return false;
