@@ -541,4 +541,6 @@
 #define MI_InbetweenEaseIn "MI_InbetweenEaseIn"
 #define MI_InbetweenEaseOut "MI_InbetweenEaseOut"
 #define MI_InbetweenEaseInOut "MI_InbetweenEaseInOut"
+
+#define MI_OpenGPhotoEventLog "MI_OpenGPhotoEventLog"
 #endif
