@@ -542,5 +542,9 @@
 #define MI_InbetweenEaseOut "MI_InbetweenEaseOut"
 #define MI_InbetweenEaseInOut "MI_InbetweenEaseInOut"
 
+#define MI_OpenViewerEventLog "MI_OpenViewerEventLog"
 #define MI_OpenGPhotoEventLog "MI_OpenGPhotoEventLog"
+
+#define MI_OpenCrashReportFolder "MI_OpenCrashReportFolder"
+
 #endif

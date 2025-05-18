@@ -35,7 +35,6 @@
 #include "toonz/tonionskinmaskhandle.h"
 #include "toonz/stage.h"
 #include "toonz/toonzfolders.h"
-#include "viewereventlogpopup.h"
 
 // TnzCore includes
 #include "tsystem.h"
@@ -1014,18 +1013,6 @@ void PreferencesPopup::onImportPolicyExternallyChanged(int policy) {
 
 //-----------------------------------------------------------------------------
 
-void PreferencesPopup::onOpenViewerEventLog() {
-  if (!m_viewerEventLogPopup) {
-    m_viewerEventLogPopup = new ViewerEventLogPopup();
-    ViewerEventLogManager::instance()->setViewerEventLogPopup(
-        m_viewerEventLogPopup);
-  }
-
-  m_viewerEventLogPopup->show();
-}
-
-//-----------------------------------------------------------------------------
-
 QWidget* PreferencesPopup::createUI(PreferencesItemId id,
                                     const QList<ComboBoxItem>& comboItems,
                                     bool isLineEdit, bool useMinMaxSlider) {
@@ -1645,8 +1632,7 @@ inline T PreferencesPopup::getUI(PreferencesItemId id) {
 PreferencesPopup::PreferencesPopup()
     : Dialog(TApp::instance()->getMainWindow())
     , m_formatProperties()
-    , m_additionalStyleEdit(nullptr)
-    , m_viewerEventLogPopup(0) {
+    , m_additionalStyleEdit(nullptr) {
   setWindowTitle(tr("Preferences"));
   setObjectName("PreferencesPopup");
 
@@ -2426,9 +2412,6 @@ QWidget* PreferencesPopup::createTouchTabletPage() {
   QAction* touchAction =
       CommandManager::instance()->getAction(MI_TouchGestureControl);
 
-  QPushButton* viewerEventLogBtn =
-      new QPushButton(tr("Open Viewer Event Log"));
-
   QWidget* widget  = new QWidget(this);
   QGridLayout* lay = new QGridLayout();
   setupLayout(lay);
@@ -2448,7 +2431,6 @@ QWidget* PreferencesPopup::createTouchTabletPage() {
   }
 
   lay->addWidget(touchGesturesBox, 0, 0, 1, 2);
-  lay->addWidget(viewerEventLogBtn, 0, 3, 2, 1, Qt::AlignTop);
   if (winInkAvailable) insertUI(winInkEnabled, lay);
 #ifdef WITH_WINTAB
   insertUI(useQtNativeWinInk, lay);
@@ -2469,8 +2451,6 @@ QWidget* PreferencesPopup::createTouchTabletPage() {
                        SLOT(setChecked(bool)));
   ret = ret && connect(touchAction, SIGNAL(triggered(bool)), touchGesturesBox,
                        SLOT(setChecked(bool)));
-  ret = ret && connect(viewerEventLogBtn, SIGNAL(clicked()), this,
-                       SLOT(onOpenViewerEventLog()));
 
   assert(ret);
 
