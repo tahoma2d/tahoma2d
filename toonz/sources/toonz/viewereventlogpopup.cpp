@@ -205,10 +205,14 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
 
     QTabletEvent *te = dynamic_cast<QTabletEvent *>(e);
     float pressure   = (int)(te->pressure() * 1000 + 0.5);
-    eventMsg         = tr("Stylus pressed at X=%1 Y=%2 Pressure=%3%")
+    eventMsg = tr("Stylus pressed at X=%1 Y=%2 Pressure=%3% TiltX=%4 TiltY=%5 "
+                  "Rotation=%6")
                    .arg(te->pos().x())
                    .arg(te->pos().y())
-                   .arg(pressure / 10.0);
+                   .arg(pressure / 10.0)
+                   .arg(te->xTilt())
+                   .arg(te->yTilt())
+                   .arg(te->rotation());
   } break;
 
   case QEvent::TabletMove: {
@@ -221,11 +225,15 @@ void ViewerEventLogPopup::addEventMessage(QEvent *e) {
             ? tr("dragged")
             : tr("moved");
     float pressure = (int)(te->pressure() * 1000 + 0.5);
-    eventMsg       = tr("Stylus %1 to X=%2 Y=%3 Pressure=%4%")
-                   .arg(operation)
-                   .arg(te->pos().x())
-                   .arg(te->pos().y())
-                   .arg(pressure / 10.0);
+    eventMsg =
+        tr("Stylus %1 to X=%2 Y=%3 Pressure=%4% TiltX=%5 TiltY=%6 Rotation=%7")
+            .arg(operation)
+            .arg(te->pos().x())
+            .arg(te->pos().y())
+            .arg(pressure / 10.0)
+            .arg(te->xTilt())
+            .arg(te->yTilt())
+            .arg(te->rotation());
   } break;
 
   case QEvent::TabletRelease: {
