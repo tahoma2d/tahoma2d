@@ -84,6 +84,8 @@ class LipSyncPopup final : public DVGui::Dialog {
   QStackedWidget *m_stackedChooser;
   TabBarContainter *m_tabBarContainer;  //!< Tabs container for pages
   DVGui::TabBar *m_tabBar;
+  QLabel *m_recognizerLabel;
+  QComboBox *m_recognizer;
 
 public:
   LipSyncPopup();
