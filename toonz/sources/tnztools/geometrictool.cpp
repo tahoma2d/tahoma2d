@@ -2126,7 +2126,7 @@ public:
       t   = s->getParameterAtControlPoint(i);
       pos = s->getPoint(t);
       m_strokeSegmentRect.empty();
-      toonz_brush->strokeTo(pos, pressure, 10.0);
+      toonz_brush->strokeTo(pos, pressure, 0, 0, 10.0);
       updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty())
         toonz_brush->updateDrawing(ras, backupRas, m_strokeSegmentRect, styleId,
@@ -2141,7 +2141,7 @@ public:
           toonz_brush->updateDrawing(ras, backupRas, m_strokeSegmentRect,
                                      styleId, false);
         toonz_brush->beginStroke();
-        toonz_brush->strokeTo(pos, pressure, 10.0);
+        toonz_brush->strokeTo(pos, pressure, 0, 0, 10.0);
       }
     }
     if (shiftStartPoint) {
@@ -2149,7 +2149,7 @@ public:
       t   = s->getParameterAtControlPoint(i);
       pos = s->getPoint(t);
       m_strokeSegmentRect.empty();
-      toonz_brush->strokeTo(pos, pressure, 10.0);
+      toonz_brush->strokeTo(pos, pressure, 0, 0, 10.0);
       updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty())
         toonz_brush->updateDrawing(ras, backupRas, m_strokeSegmentRect, styleId,
@@ -2269,7 +2269,7 @@ public:
       t   = s->getParameterAtControlPoint(i);
       pos = s->getPoint(t);
       m_strokeSegmentRect.empty();
-      toonz_brush->strokeTo(pos, pressure, 10.0);
+      toonz_brush->strokeTo(pos, pressure, 0, 0, 10.0);
       updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty())
         ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
@@ -2280,7 +2280,7 @@ public:
         if (!updateRect.isEmpty())
           ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
         toonz_brush->beginStroke();
-        toonz_brush->strokeTo(pos, pressure, 10.0);
+        toonz_brush->strokeTo(pos, pressure, 0, 0, 10.0);
       }
     }
     if (shiftStartPoint) {
@@ -2288,7 +2288,7 @@ public:
       t   = s->getParameterAtControlPoint(i);
       pos = s->getPoint(t);
       m_strokeSegmentRect.empty();
-      toonz_brush->strokeTo(pos, pressure, 10.0);
+      toonz_brush->strokeTo(pos, pressure, 0, 0, 10.0);
       updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty())
         ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));

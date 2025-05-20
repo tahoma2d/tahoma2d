@@ -62,6 +62,7 @@ TEnv::DoubleVar RasterBrushModifierSize("RasterBrushModifierSize", 0);
 TEnv::StringVar RasterBrushPreset("RasterBrushPreset", "<custom>");
 TEnv::IntVar BrushLockAlpha("InknpaintBrushLockAlpha", 0);
 TEnv::IntVar BrushSnapGrid("InknpaintBrushSnapGrid", 0);
+TEnv::IntVar BrushTiltSensitivity("InknpaintTiltSensitivity", 0);
 
 //-------------------------------------------------------------------
 #define CUSTOM_WSTR L"<custom>"
@@ -928,7 +929,8 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
     , m_workingFrameId(TFrameId())
     , m_notifier(0)
     , m_modifierLockAlpha("Lock Alpha", false)
-    , m_snapGrid("Grid", false) {
+    , m_snapGrid("Grid", false)
+    , m_tilt("Tilt", false) {
   bind(targetType);
 
   m_rasThickness.setNonLinearSlider();
@@ -948,6 +950,7 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
   m_drawOrder.setId("DrawOrder");
 
   m_prop[0].bind(m_pressure);
+  m_prop[0].bind(m_tilt);
 
   m_prop[0].bind(m_snapGrid);
   m_snapGrid.setId("SnapGrid");
@@ -957,6 +960,7 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
   m_preset.addValue(CUSTOM_WSTR);
   m_pressure.setId("PressureSensitivity");
   m_modifierLockAlpha.setId("LockAlpha");
+  m_tilt.setId("TiltSensitivity");
 }
 
 //-------------------------------------------------------------------------------------------------------
@@ -1152,6 +1156,7 @@ void ToonzRasterBrushTool::updateTranslation() {
   m_pressure.setQStringName(tr("Pressure"));
   m_modifierLockAlpha.setQStringName(tr("Lock Alpha"));
   m_snapGrid.setQStringName(tr("Grid"));
+  m_tilt.setQStringName(tr("Tilt"));
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -1256,8 +1261,8 @@ void ToonzRasterBrushTool::onDeactivate() {
     m_enabled    = false;
     m_active     = false;
     if (isValid) {
-      finishRasterBrush(m_mousePos,
-                        1); /*-- 最後のストロークの筆圧は1とする --*/
+      finishRasterBrush(m_mousePos, 1, 0,
+                        0); /*-- 最後のストロークの筆圧は1とする --*/
     }
   }
   m_workRas   = TRaster32P();
@@ -1394,6 +1399,10 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
       double pressure =
           m_pressure.getValue() && e.isTablet() ? e.m_pressure : 0.5;
       m_oldPressure = pressure;
+      // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to
+      // 1.0)
+      double tiltX = m_tilt.getValue() ? (e.m_tiltX / 60.0) : 0.0;
+      double tiltY = m_tilt.getValue() ? (e.m_tiltY / 60.0) : 0.0;
       updateCurrentStyle();
       if (!(m_workRas && m_backupRas)) setWorkAndBackupImages();
       m_workRas->lock();
@@ -1424,7 +1433,8 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
       m_strokeRect.empty();
       m_strokeSegmentRect.empty();
       m_toonz_brush->beginStroke();
-      m_toonz_brush->strokeTo(point, pressure, restartBrushTimer());
+      m_toonz_brush->strokeTo(point, pressure, tiltX, tiltY,
+                              restartBrushTimer());
       TRect updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty()) {
         // ras->extract(updateRect)->copy(m_workRas->extract(updateRect));
@@ -1787,6 +1797,10 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
     TPointD point(centeredPos + rasCenter);
     double pressure =
         m_pressure.getValue() && e.isTablet() ? e.m_pressure : 0.5;
+    // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to
+    // 1.0)
+    double tiltX = m_tilt.getValue() ? (e.m_tiltX / 60.0) : 0.0;
+    double tiltY = m_tilt.getValue() ? (e.m_tiltY / 60.0) : 0.0;
 
     TThickPoint thickPoint(point, pressure);
     std::vector<TThickPoint> pts;
@@ -1802,7 +1816,8 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
     for (size_t i = 0; i < pts.size(); ++i) {
       const TThickPoint &thickPoint2 = pts[i];
       m_strokeSegmentRect.empty();
-      m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, brushTimer);
+      m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, tiltX, tiltY,
+                              brushTimer);
       TRect updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty()) {
         // ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
@@ -1942,7 +1957,10 @@ void ToonzRasterBrushTool::leftButtonUp(const TPointD &pos,
   // if (!e.isTablet()) m_oldThickness = -1.0;
   if (m_isStraight && m_isMyPaintStyleSelected && m_oldPressure > 0.0)
     pressure = m_oldPressure;
-  finishRasterBrush(centeredPos, pressure);
+  // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
+  double tiltX = m_tilt.getValue() ? (e.m_tiltX / 60.0) : 0.0;
+  double tiltY = m_tilt.getValue() ? (e.m_tiltY / 60.0) : 0.0;
+  finishRasterBrush(centeredPos, pressure, tiltX, tiltY);
   int tc = ToonzCheck::instance()->getChecks();
   if (tc & ToonzCheck::eGap || tc & ToonzCheck::eAutoclose) invalidate();
   m_perspectiveIndex = -1;
@@ -1953,7 +1971,8 @@ void ToonzRasterBrushTool::leftButtonUp(const TPointD &pos,
  * ドラッグ中にツールが切り替わった場合に備え、onDeactivate時とMouseRelease時にと同じ終了処理を行う
  */
 void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
-                                             double pressureVal) {
+                                             double pressureVal, double tiltX,
+                                             double tiltY) {
   TToonzImageP ti = TImageP(getImage(true));
 
   if (!ti) return;
@@ -1992,7 +2011,8 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
       const TThickPoint &thickPoint2 = pts[i];
 
       m_strokeSegmentRect.empty();
-      m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, brushTimer);
+      m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, tiltX, tiltY,
+                              brushTimer);
       if (i == pts.size() - 1) m_toonz_brush->endStroke();
       TRect updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty()) {
@@ -2530,6 +2550,7 @@ bool ToonzRasterBrushTool::onPropertyChanged(std::string propertyName) {
   RasterBrushModifierSize  = m_modifierSize.getValue();
   BrushLockAlpha           = m_modifierLockAlpha.getValue();
   BrushSnapGrid            = m_snapGrid.getValue();
+  BrushTiltSensitivity     = m_tilt.getValue();
 
   // Recalculate/reset based on changed settings
   if (propertyName == m_rasThickness.getName()) {
@@ -2602,6 +2623,7 @@ void ToonzRasterBrushTool::loadPreset() {
     m_pressure.setValue(preset.m_pressure);
     m_modifierSize.setValue(preset.m_modifierSize);
     m_modifierLockAlpha.setValue(preset.m_modifierLockAlpha);
+    m_tilt.setValue(preset.m_tilt);
 
     // Recalculate based on updated presets
     m_minThick = m_rasThickness.getValue().first;
@@ -2630,6 +2652,7 @@ void ToonzRasterBrushTool::addPreset(QString name) {
   preset.m_pressure          = m_pressure.getValue();
   preset.m_modifierSize      = m_modifierSize.getValue();
   preset.m_modifierLockAlpha = m_modifierLockAlpha.getValue();
+  preset.m_tilt              = m_tilt.getValue();
 
   // Pass the preset to the manager
   m_presetsManager.addPreset(preset);
@@ -2669,6 +2692,7 @@ void ToonzRasterBrushTool::loadLastBrush() {
   m_modifierSize.setValue(RasterBrushModifierSize);
   m_modifierLockAlpha.setValue(BrushLockAlpha ? 1 : 0);
   m_snapGrid.setValue(BrushSnapGrid ? 1 : 0);
+  m_tilt.setValue(BrushTiltSensitivity ? 1 : 0);
 
   // Recalculate based on prior values
   m_minThick = m_rasThickness.getValue().first;
@@ -2702,7 +2726,7 @@ void ToonzRasterBrushTool::onColorStyleChanged() {
     bool isValid = m_enabled && m_active;
     m_enabled    = false;
     if (isValid) {
-      finishRasterBrush(m_mousePos, 1);
+      finishRasterBrush(m_mousePos, 1, 0, 0);
     }
   }
 
@@ -2791,7 +2815,8 @@ BrushData::BrushData()
     , m_modifierSize(0.0)
     , m_modifierOpacity(0.0)
     , m_modifierEraser(0.0)
-    , m_modifierLockAlpha(0.0) {}
+    , m_modifierLockAlpha(0.0)
+    , m_tilt(false) {}
 
 //----------------------------------------------------------------------------------------------------------
 
@@ -2809,7 +2834,8 @@ BrushData::BrushData(const std::wstring &name)
     , m_modifierSize(0.0)
     , m_modifierOpacity(0.0)
     , m_modifierEraser(0.0)
-    , m_modifierLockAlpha(0.0) {}
+    , m_modifierLockAlpha(0.0)
+    , m_tilt(false) {}
 
 //----------------------------------------------------------------------------------------------------------
 
@@ -2852,6 +2878,12 @@ void BrushData::saveData(TOStream &os) {
   os.openChild("Modifier_PaintBehind");
   os << (int)m_modifierPaintBehind;
   os.closeChild();
+  // For backwards compatiblity, only save tilt if enabled
+  if (m_tilt) {
+    os.openChild("Tilt_Sensitivity");
+    os << (int)m_tilt;
+    os.closeChild();
+  }
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -2889,6 +2921,8 @@ void BrushData::loadData(TIStream &is) {
       is >> val, m_modifierLockAlpha = val, is.matchEndTag();
     else if (tagName == "Modifier_PaintBehind")
       is >> val, m_modifierPaintBehind = val, is.matchEndTag();
+    else if (tagName == "Tilt_Sensitivity")
+      is >> val, m_tilt = val, is.matchEndTag();
     else
       is.skipCurrentTag();
   }

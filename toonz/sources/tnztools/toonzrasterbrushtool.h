@@ -43,7 +43,7 @@ struct BrushData final : public TPersist {
 
   std::wstring m_name;
   double m_min, m_max, m_smooth, m_hardness, m_opacityMin, m_opacityMax;
-  bool m_pencil, m_pressure;
+  bool m_pencil, m_pressure, m_tilt;
   int m_drawOrder;
   double m_modifierSize, m_modifierOpacity;
   bool m_modifierEraser, m_modifierLockAlpha, m_modifierPaintBehind;
@@ -162,7 +162,8 @@ public:
 
   void loadLastBrush();
 
-  void finishRasterBrush(const TPointD &pos, double pressureVal);
+  void finishRasterBrush(const TPointD &pos, double pressureVal, double tiltX,
+                         double tiltY);
   // return true if the pencil mode is active in the Brush / PaintBrush / Eraser
   // Tools.
   bool isPencilModeActive() override;
@@ -186,6 +187,7 @@ protected:
   TDoubleProperty m_modifierSize;
   TBoolProperty m_modifierLockAlpha;
   TBoolProperty m_snapGrid;
+  TBoolProperty m_tilt;
 
   CMRasterBrush *m_cmRasterBrush;
   TTileSetCM32 *m_tileSet;
