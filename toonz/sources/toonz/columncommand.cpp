@@ -1840,6 +1840,210 @@ void ColumnCmd::unifyColumnVisibilityToggles() {
 }
 
 //=============================================================================
+// Loop Columns
+//=============================================================================
+
+class LoopColumnsUndo final : public ColumnCommandUndo {
+  std::set<int> m_indices;
+
+public:
+  LoopColumnsUndo(const std::set<int> &indices) : m_indices(indices) {}
+
+  bool isConsistent() const override { return true; }
+
+  void redo() const override;
+  void undo() const override;
+
+  int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override { return QObject::tr("Loop Columns"); }
+
+  int getHistoryType() override { return HistoryType::Xsheet; }
+};
+
+//------------------------------------------------------
+
+void LoopColumnsUndo::redo() const {
+  if (!m_indices.size()) return;
+
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+
+  for (auto c : m_indices) {
+    TXshColumn *column = xsh->getColumn(c);
+
+    int r0, r1;
+    column->getRange(r0, r1);
+
+    column->addLoop(r0, r1);
+  }
+
+  app->getCurrentScene()->setDirtyFlag(true);
+  app->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+//------------------------------------------------------
+
+void LoopColumnsUndo::undo() const {
+  if (!m_indices.size()) return;
+
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+
+  for (auto c : m_indices) {
+    TXshColumn *column = xsh->getColumn(c);
+
+    QList<std::pair<int, int>> loops = column->getLoops();
+
+    for (auto loop : loops) column->removeLoop(loop);
+  }
+
+  app->getCurrentScene()->setDirtyFlag(true);
+  app->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+//------------------------------------------------------
+
+void ColumnCmd::loopColumns(std::set<int> &indices) {
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+
+  std::set<int> newLoops;
+
+  for (auto c : indices) {
+    if (c < 0) continue;
+    TXshColumn *column = xsh->getColumn(c);
+    if (!column || column->isEmpty() || column->getSoundColumn() ||
+        column->getSoundTextColumn() || column->getFolderColumn() ||
+        column->hasLoops())
+      continue;
+
+    int r0, r1;
+    column->getRange(r0, r1);
+    if ((r1 - r0 + 1) <= 1) continue;
+
+    newLoops.insert(c);
+  }
+
+  if (newLoops.size()) {
+    LoopColumnsUndo *undo = new LoopColumnsUndo(newLoops);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+}
+
+//=============================================================================
+// Remove Frame Loops
+//=============================================================================
+
+class RemoveColumnLoopsUndo final : public ColumnCommandUndo {
+  QMap<int, QList<std::pair<int, int>>> m_columnLoops;
+
+public:
+  RemoveColumnLoopsUndo(const std::set<int> &indices) {
+    initialize(indices);
+  }
+
+  bool isConsistent() const override { return true; }
+
+  void redo() const override;
+  void undo() const override;
+
+  int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override {
+    return QObject::tr("Remove Column Loops");
+  }
+
+  int getHistoryType() override { return HistoryType::Xsheet; }
+
+private:
+  void initialize(const std::set<int> &indices);
+};
+
+//------------------------------------------------------
+
+void RemoveColumnLoopsUndo::initialize(const std::set<int> &indices) {
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+
+  m_columnLoops.clear();
+
+  for (auto c : indices) {
+    TXshColumn *column = xsh->getColumn(c);
+
+    QList<std::pair<int, int>> loops = column->getLoops();
+
+    m_columnLoops.insert(c, loops);
+  }
+}
+
+//------------------------------------------------------
+
+void RemoveColumnLoopsUndo::redo() const {
+  if (!m_columnLoops.size()) return;
+
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+
+  for (auto c : m_columnLoops.keys()) {
+    TXshColumn *column = xsh->getColumn(c);
+    for (auto loop : m_columnLoops[c]) {
+      column->removeLoop(loop);
+    }
+  }
+
+  app->getCurrentScene()->setDirtyFlag(true);
+  app->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+//------------------------------------------------------
+
+void RemoveColumnLoopsUndo::undo() const {
+  if (!m_columnLoops.size()) return;
+
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+
+  for (auto c : m_columnLoops.keys()) {
+    TXshColumn *column = xsh->getColumn(c);
+    for (auto loop : m_columnLoops[c]) {
+      column->addLoop(loop);
+    }
+  }
+
+  app->getCurrentScene()->setDirtyFlag(true);
+  app->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+//-----------------------------------------------------------------------------
+
+void ColumnCmd::removeColumnLoops(std::set<int> &indices) {
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+
+  std::set<int> removedLoops;
+
+  for (auto c : indices) {
+    if (c < 0) continue;
+    TXshColumn *column = xsh->getColumn(c);
+    if (!column || !column->hasLoops()) continue;
+
+    int r0, r1;
+    column->getRange(r0, r1);
+    if ((r1 - r0 + 1) <= 1) continue;
+
+    removedLoops.insert(c);
+  }
+
+  if (removedLoops.size()) {
+    RemoveColumnLoopsUndo *undo = new RemoveColumnLoopsUndo(removedLoops);
+    TUndoManager::manager()->add(undo);
+    undo->redo();
+  }
+}
+
+//=============================================================================
 
 namespace {
 

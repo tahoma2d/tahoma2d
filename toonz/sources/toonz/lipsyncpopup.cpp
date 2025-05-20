@@ -902,12 +902,12 @@ void LipSyncPopup::onApplyButton() {
   std::vector<TXshLevelP> previousLevels;
   for (int previousFrame = startFrame; previousFrame < lastFrame;
        previousFrame++) {
-    TXshCell cell = xsh->getCell(previousFrame, m_col, false);
+    TXshCell cell = xsh->getCell(previousFrame, m_col, false, false);
     previousFrameIds.push_back(cell.m_frameId);
     previousLevels.push_back(cell.m_level);
   }
   if (Preferences::instance()->isImplicitHoldEnabled()) {
-    TXshCell cell = xsh->getCell(lastFrame, m_col, false);
+    TXshCell cell = xsh->getCell(lastFrame, m_col, false, false);
     previousFrameIds.push_back(cell.m_frameId);
     previousLevels.push_back(cell.m_level);
   }

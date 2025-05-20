@@ -103,6 +103,7 @@ class CellArea final : public QWidget {
 
   bool m_dragBeginEase, m_dragEndEase, m_dragKeyframe;
   QPoint m_keyHighlight;
+  QPoint m_loopFrameMarkerHighlight;
 
   void drawCells(QPainter &p, const QRect toBeUpdated);
   void drawNonEmptyBackground(QPainter &p) const;
@@ -143,9 +144,10 @@ class CellArea final : public QWidget {
                        bool isKeyFrame = false, bool isCamera = false,
                        bool keyHighlight = false);
   void drawEndOfLevelMarker(QPainter &p, QRect rect, bool isNextEmpty,
-                            bool isStopFrame = false);
+                            bool isStopFrame = false, bool isLooped = false);
   void drawCellMarker(QPainter &p, int markId, QRect rect,
                       bool hasFrame = false, bool isNextEmpty = true);
+  void drawLoopFrameMarker(QPainter &p, int row, int col);
 
   // Restistusce true
   bool getEaseHandles(int r0, int r1, double e0, double e1, int &rh0, int &rh1);
@@ -156,6 +158,9 @@ class CellArea final : public QWidget {
   void setDragTool(DragTool *dragTool);
 
   void updateKeyHighlight(int row, int col);
+
+  bool isOverLoopFrameMarker(int row, int col, QPoint mouseInCell,
+                             QPoint frameAdj);
 
 public:
   CellArea(XsheetViewer *parent, Qt::WindowFlags flags = Qt::WindowFlags());

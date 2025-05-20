@@ -463,6 +463,12 @@ TopToBottomOrientation::TopToBottomOrientation() {
       QRect((FRAME_HEADER_WIDTH - NAV_TAG_HEIGHT) / 2,
             (CELL_HEIGHT - NAV_TAG_WIDTH) / 2, NAV_TAG_HEIGHT, NAV_TAG_WIDTH));
 
+  addRect(PredefinedRect::LOOP_START_MARKER_AREA,
+          QRect(1, 1, CELL_WIDTH - 2, 5));
+  addRect(PredefinedRect::LOOP_END_MARKER_AREA,
+          QRect(1, -1, CELL_WIDTH - 2, 5)
+              .adjusted(0, CELL_HEIGHT - 5, 0, CELL_HEIGHT - 5));
+
   // Column viewer
   addRect(PredefinedRect::LAYER_HEADER,
           QRect(0, 1, CELL_WIDTH, use_header_height - 3));
@@ -1177,6 +1183,18 @@ TopToBottomOrientation::TopToBottomOrientation() {
   tag.lineTo(QPointF(0, -3));
   addPath(PredefinedPath::NAVIGATION_TAG, tag);
 
+  QPainterPath loopStart(QPointF(0, 5));
+  loopStart.lineTo(QPointF(0, 0));
+  loopStart.lineTo(QPointF(CELL_WIDTH - 2, 0));
+  loopStart.lineTo(QPointF(CELL_WIDTH - 2, 5));
+  addPath(PredefinedPath::LOOP_START_MARKER, loopStart);
+
+  QPainterPath loopEnd(QPointF(0, 0));
+  loopEnd.lineTo(QPointF(0, 5));
+  loopEnd.lineTo(QPointF(CELL_WIDTH - 2, 5));
+  loopEnd.lineTo(QPointF(CELL_WIDTH - 2, 0));
+  addPath(PredefinedPath::LOOP_END_MARKER, loopEnd);
+
   //
   // Points
   //
@@ -1410,6 +1428,12 @@ LeftToRightOrientation::LeftToRightOrientation(QString layout) {
           QRect((CELL_WIDTH - NAV_TAG_WIDTH) / 2,
                 (FRAME_HEADER_HEIGHT - NAV_TAG_HEIGHT) / 2, NAV_TAG_WIDTH,
                 NAV_TAG_HEIGHT));
+
+  addRect(PredefinedRect::LOOP_START_MARKER_AREA,
+          QRect(1, 1, 5, CELL_HEIGHT - 2));
+  addRect(PredefinedRect::LOOP_END_MARKER_AREA,
+          QRect(-1, 1, 5, CELL_HEIGHT - 2)
+              .adjusted(CELL_WIDTH - 5, 0, CELL_WIDTH - 5, 0));
 
   // Column viewer
   addRect(PredefinedRect::LAYER_HEADER,
@@ -1688,6 +1712,18 @@ LeftToRightOrientation::LeftToRightOrientation(QString layout) {
   tag.lineTo(QPointF(-3, 9));
   tag.lineTo(QPointF(-3, 0));
   addPath(PredefinedPath::NAVIGATION_TAG, tag);
+
+  QPainterPath loopStart(QPointF(5, CELL_HEIGHT - 2));
+  loopStart.lineTo(QPointF(0, CELL_HEIGHT - 2));
+  loopStart.lineTo(QPointF(0, 1));
+  loopStart.lineTo(QPointF(5, 1));
+  addPath(PredefinedPath::LOOP_START_MARKER, loopStart);
+
+  QPainterPath loopEnd(QPointF(0, CELL_HEIGHT - 2));
+  loopEnd.lineTo(QPointF(5, CELL_HEIGHT - 2));
+  loopEnd.lineTo(QPointF(5, 1));
+  loopEnd.lineTo(QPointF(0, 1));
+  addPath(PredefinedPath::LOOP_END_MARKER, loopEnd);
 
   //
   // Points

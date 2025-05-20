@@ -1485,6 +1485,80 @@ public:
   //-----------------------------------------------------------------------------
 };
 
+//-----------------------------------------------------------------------------
+
+class LoopFramesUndo final : public TUndo {
+  int m_r0, m_r1, m_c;
+
+public:
+  LoopFramesUndo(int r0, int r1, int c) : m_r0(r0), m_r1(r1), m_c(c) {}
+
+  ~LoopFramesUndo() { }
+
+  void undo() const override {
+    TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
+    TXshColumn *column = xsh->getColumn(m_c);
+
+    column->removeLoop(m_r0, m_r1);
+
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  void redo() const override {
+    TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
+    TXshColumn *column = xsh->getColumn(m_c);
+
+    column->addLoop(m_r0, m_r1);
+
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override {
+    return QObject::tr("Loop Frames");
+  }
+
+  int getHistoryType() override { return HistoryType::Xsheet; }
+  //-----------------------------------------------------------------------------
+};
+
+//-----------------------------------------------------------------------------
+
+class RemoveFrameLoopUndo final : public TUndo {
+  int m_r0, m_r1, m_c;
+
+public:
+  RemoveFrameLoopUndo(int r0, int r1, int c) : m_r0(r0), m_r1(r1), m_c(c) {}
+
+  ~RemoveFrameLoopUndo() {}
+
+  void undo() const override {
+    TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
+    TXshColumn *column = xsh->getColumn(m_c);
+
+    column->addLoop(m_r0, m_r1);
+
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  void redo() const override {
+    TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
+    TXshColumn *column = xsh->getColumn(m_c);
+
+    column->removeLoop(m_r0, m_r1);
+
+    TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+  }
+
+  int getSize() const override { return sizeof(*this); }
+
+  QString getHistoryString() override { return QObject::tr("Remove Frames Loop"); }
+
+  int getHistoryType() override { return HistoryType::Xsheet; }
+  //-----------------------------------------------------------------------------
+};
+
 //=============================================================================
 // Duplicate in XSheet Undo
 //-----------------------------------------------------------------------------
@@ -1784,6 +1858,8 @@ void TCellSelection::enableCommands() {
   enableCommand(this, MI_InbetweenEaseIn, &TCellSelection::inbetweenEaseIn);
   enableCommand(this, MI_InbetweenEaseOut, &TCellSelection::inbetweenEaseOut);
   enableCommand(this, MI_InbetweenEaseInOut, &TCellSelection::inbetweenEaseInOut);
+  enableCommand(this, MI_LoopFrames, &TCellSelection::loopFrames);
+  enableCommand(this, MI_RemoveFrameLoop, &TCellSelection::removeFrameLoop);
 }
 
 //-----------------------------------------------------------------------------
@@ -1847,7 +1923,9 @@ bool TCellSelection::isEnabledCommand(
                                         MI_InbetweenLinear,
                                         MI_InbetweenEaseIn,
                                         MI_InbetweenEaseOut,
-                                        MI_InbetweenEaseInOut};
+                                        MI_InbetweenEaseInOut,
+                                        MI_LoopFrames,
+                                        MI_RemoveFrameLoop};
   return commands.contains(commandId);
 }
 
@@ -2933,7 +3011,7 @@ void TCellSelection::clearFrames() {
       continue;
 
     for (r = r1; r >= r0; r--) {
-      TXshCell cell = xsh->getCell(r, c, false);
+      TXshCell cell = xsh->getCell(r, c, false, false);
 
       if (cell.isEmpty() || cell.getFrameId().isStopFrame() ||
           cell.m_level->getChildLevel() || !cell.getImage(false))
@@ -3085,7 +3163,7 @@ void TCellSelection::createBlankDrawing(int row, int col, bool multiple) {
     int r0, r1;
     xsh->getCellRange(col, r0, r1);
     for (int r = std::min(r1, row); r > r0; r--) {
-      TXshCell cell = xsh->getCell(r, col);
+      TXshCell cell = xsh->getCell(r, col, true, false);
       if (cell.isEmpty() || cell.getFrameId().isStopFrame()) continue;
       level = cell.m_level.getPointer();
       if (!level) continue;
@@ -3258,7 +3336,7 @@ void TCellSelection::stopFrameHold(int row, int col, bool multiple) {
     int r0, r1;
     xsh->getCellRange(col, r0, r1);
     for (int r = std::min(r1, row); r >= r0; r--) {
-      TXshCell cell = xsh->getCell(r, col);
+      TXshCell cell = xsh->getCell(r, col, true, false);
       if (cell.isEmpty()) continue;
       level = cell.m_level.getPointer();
       if (!level) continue;
@@ -3293,7 +3371,7 @@ void TCellSelection::stopFrameHold(int row, int col, bool multiple) {
     return;
   }
 
-  TXshCell cell = xsh->getCell(row, col, false);
+  TXshCell cell = xsh->getCell(row, col, false, false);
 
   StopFrameHoldUndo *undo = new StopFrameHoldUndo(lvl, row, col, cell);
   TUndoManager::manager()->add(undo);
@@ -3379,7 +3457,8 @@ void TCellSelection::duplicateFrame(int row, int col, bool multiple) {
   TXshCell prevCell   = xsh->getCell(row - 1, col);
 
   // check if we use the current cell to duplicate or the previous cell
-  if (!targetCell.isEmpty() && targetCell != prevCell) {
+  if (!column->isLoopedFrame(row) && !targetCell.isEmpty() &&
+      targetCell != prevCell) {
     // Current cell has a drawing to duplicate and it's not a hold shift focus
     // to next cell as if they selected that one to duplicate into
     prevCell = targetCell;
@@ -3535,9 +3614,9 @@ static void dRenumberCells(int col, int r0, int r1) {
 
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   for (int r = r0; r <= r1; ++r) {
-    TXshCell cell = xsh->getCell(r, col);
+    TXshCell cell = xsh->getCell(r, col, true, false);
     if (!cell.isEmpty() && cell.getSimpleLevel() &&
-        (r <= 0 || xsh->getCell(r - 1, col) != cell)) {
+        (r <= 0 || xsh->getCell(r - 1, col, true, false) != cell)) {
       // In case the cell was already mapped, skip
       TXshCell &toCell = cellsMap[cell];
       if (!toCell.isEmpty()) continue;
@@ -4586,6 +4665,79 @@ void TCellSelection::fillEmptyCell() {
   if (initUndo) TUndoManager::manager()->endBlock();
 
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
+}
+
+void TCellSelection::loopFrameRange(int col, int r0, int r1) {
+  if (col < 0) return;
+
+  TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
+  TXshColumn *column = xsh->getColumn(col);
+
+  if (column->isEmpty() || column->getSoundColumn() ||
+      column->getSoundTextColumn() || column->getFolderColumn())
+    return;
+
+  if (column->isInLoopRange(r0) || column->isInLoopRange(r1)) return;
+
+  LoopFramesUndo *undo = new LoopFramesUndo(r0, r1, col);
+  TUndoManager::manager()->add(undo);
+
+  column->addLoop(r0, r1);
+}
+
+void TCellSelection::loopFrames() {
+  if (isEmpty() || areAllColSelectedLocked()) return;
+
+  int r0, c0, r1, c1;
+  getSelectedCells(r0, c0, r1, c1);
+
+  if ((r1 - r0 + 1) <= 1) return;
+
+  bool multiple = (c1 - c0 + 1) > 1;
+
+  if (multiple) TUndoManager::manager()->beginBlock();
+  for (int c = c0; c <= c1; c++) loopFrameRange(c, r0, r1);
+  if (multiple) TUndoManager::manager()->endBlock();
+}
+
+void TCellSelection::removeFrameLoopRange(int col, int r0, int r1) {
+  if (col < 0) return;
+
+  TXsheet *xsh       = TApp::instance()->getCurrentXsheet()->getXsheet();
+  TXshColumn *column = xsh->getColumn(col);
+
+  if (!column->hasLoops()) return;
+
+  if (column->isInLoopRange(r0)) {
+    std::pair<int, int> loop = column->getLoopWithRow(r0);
+    RemoveFrameLoopUndo *undo =
+        new RemoveFrameLoopUndo(loop.first, loop.second, col);
+    TUndoManager::manager()->add(undo);
+
+    column->removeLoop(column->getLoopWithRow(r0));
+  }
+
+  if (column->isInLoopRange(r1)) {
+    std::pair<int, int> loop = column->getLoopWithRow(r1);
+    RemoveFrameLoopUndo *undo =
+        new RemoveFrameLoopUndo(loop.first, loop.second, col);
+    TUndoManager::manager()->add(undo);
+
+    column->removeLoop(column->getLoopWithRow(r1));
+  }
+}
+
+void TCellSelection::removeFrameLoop() {
+  if (isEmpty() || areAllColSelectedLocked()) return;
+
+  int r0, c0, r1, c1;
+  getSelectedCells(r0, c0, r1, c1);
+
+  bool multiple = (c1 - c0 + 1) > 1;
+
+  if (multiple) TUndoManager::manager()->beginBlock();
+  for (int c = c0; c <= c1; c++) removeFrameLoopRange(c, r0, r1);
+  if (multiple) TUndoManager::manager()->endBlock();
 }
 
 //-----------------------------------------------------------------------------
