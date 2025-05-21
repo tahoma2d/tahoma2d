@@ -38,12 +38,10 @@ del Tahoma2D\*.ilk
 echo ">>> Configuring Tahoma2D.exe for deployment"
 
 REM Setup for local builds
-REM set QT_PATH=C:\Qt\5.9.7\msvc2019_64
 set QT_PATH=C:\Qt\5.15.2_wintab\msvc2019_64
 
 REM These are effective when running from Actions/Appveyor
-REM IF EXIST D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.9\msvc2019_64 set QT_PATH=D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.9\msvc2019_64
-IF EXIST D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.15.2_wintab\msvc2019_64 set QT_PATH=D:\a\tahoma2d\tahoma2d\thirdparty\qt\5.15.2_wintab\msvc2019_64
+IF EXIST ..\..\thirdparty\qt\5.15.2_wintab\msvc2019_64 set QT_PATH=..\..\thirdparty\qt\5.15.2_wintab\msvc2019_64
 
 set VCINSTALLDIR="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC"
 IF EXIST "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC" set VCINSTALLDIR="C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC"

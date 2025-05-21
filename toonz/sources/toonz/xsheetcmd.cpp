@@ -360,7 +360,7 @@ public:
 
     for (int c = 0; c != colsCount; ++c) {
       // Store cell
-      const TXshCell &cell = xsh->getCell(m_frame, c, false);
+      const TXshCell &cell = xsh->getCell(m_frame, c, false, false);
       m_cells[c] = cell;
 
       // Store stage object keyframes
@@ -736,7 +736,7 @@ SetGlobalStopframeUndo::SetGlobalStopframeUndo(int frame,
     TXshCellColumn *cellColumn = xshColumn->getCellColumn();
     if (!cellColumn || cellColumn->isEmpty()) continue;
 
-    TXshCell cell = cellColumn->getCell(m_frame, false);
+    TXshCell cell = cellColumn->getCell(m_frame, false, false);
     if (!cell.isEmpty()) continue;
 
     m_oldCells.push_back(std::make_pair(c, cell));
@@ -765,7 +765,7 @@ void SetGlobalStopframeUndo::redo() const {
 
     if (cell.isEmpty()) {  // Might have hit a stop frame
       for (int r = m_frame - 1; r >= 0; r--) {
-        cell = cellColumn->getCell(r, false);
+        cell = cellColumn->getCell(r, false, false);
         if (cell.isEmpty()) continue;
         break;
       }
@@ -870,7 +870,7 @@ RemoveGlobalStopframeUndo::RemoveGlobalStopframeUndo(
     TXshCellColumn *cellColumn = xshColumn->getCellColumn();
     if (!cellColumn || cellColumn->isEmpty()) continue;
 
-    TXshCell cell = cellColumn->getCell(m_frame, false);
+    TXshCell cell = cellColumn->getCell(m_frame, false, false);
     if (!cell.getFrameId().isStopFrame()) continue;
 
     m_oldCells.push_back(std::make_pair(c, cell));
@@ -894,7 +894,7 @@ void RemoveGlobalStopframeUndo::redo() const {
     TXshCellColumn *cellColumn = xshColumn->getCellColumn();
     if (!cellColumn || cellColumn->isEmpty()) continue;
 
-    TXshCell cell = cellColumn->getCell(m_frame, false);
+    TXshCell cell = cellColumn->getCell(m_frame, false, false);
     if (!cell.getFrameId().isStopFrame()) continue;
 
     cellColumn->clearCells(m_frame, 1);
@@ -955,7 +955,7 @@ public:
       tempCol = c;
       while (r <= m_range.m_r1 + 1) {
         tempRow = r;
-        if (xsh->getCell(tempRow, tempCol, false).isEmpty())
+        if (xsh->getCell(tempRow, tempCol, false, false).isEmpty())
           emptyCells.push_back(std::make_pair(tempRow, tempCol));
         r++;
       }

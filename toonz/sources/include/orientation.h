@@ -147,7 +147,9 @@ enum class PredefinedRect {
   CLIPPING_MASK_AREA,
   FOLDER_INDICATOR_AREA,
   FOLDER_TOGGLE_ICON,
-  BUTTONS_AREA
+  BUTTONS_AREA,
+  LOOP_START_MARKER_AREA,
+  LOOP_END_MARKER_AREA
 };
 enum class PredefinedLine {
   LOCKED,              //! dotted vertical line when cell is locked
@@ -184,7 +186,9 @@ enum class PredefinedPath {
   FRAME_MARKER_DIAMOND_SMALL,
   FRAME_MARKER_DIAMOND,
   FRAME_MARKER_DIAMOND_LARGE,
-  NAVIGATION_TAG
+  NAVIGATION_TAG,
+  LOOP_START_MARKER,
+  LOOP_END_MARKER
 };
 enum class PredefinedPoint {
   KEY_HIDDEN,  //! move extender handle that much if key icons are disabled

@@ -81,6 +81,7 @@ bool TXshZeraryFxColumn::canSetCell(const TXshCell &cell) const {
 TXshColumn *TXshZeraryFxColumn::clone() const {
   TXshZeraryFxColumn *column = new TXshZeraryFxColumn(*this);
   column->setFolderIdStack(getFolderIdStack());
+  column->setLoops(getLoops());
   return column;
 }
 
@@ -183,6 +184,8 @@ void TXshZeraryFxColumn::loadData(TIStream &is) {
       // do nothing
     } else if (loadFolderInfo(tagName, is)) {
       // do nothing
+    } else if (loadLoopInfo(tagName, is)) {
+      // do nothing
     } else
       throw TException("expected <status> or <cells>");
     is.closeChild();
@@ -198,14 +201,14 @@ void TXshZeraryFxColumn::saveData(TOStream &os) {
   if (getRange(r0, r1)) {
     os.openChild("cells");
     for (int r = r0; r <= r1; r++) {
-      TXshCell cell = getCell(r, false);
+      TXshCell cell = getCell(r, false, false);
       if (cell.isEmpty()) continue;
       int fnum           = cell.m_frameId.getNumber();
       if (fnum > 1) fnum = 1;  // Should always be 1 unless it's stopframe
       int n              = 1;
 
       if (r < r1) {
-        TXshCell cell2 = getCell(r + 1, false);
+        TXshCell cell2 = getCell(r + 1, false, false);
         if (!cell2.isEmpty()) {
           int fnum2            = cell2.m_frameId.getNumber();
           if (fnum2 > 1) fnum2 = 1;  // Should always be 1 unless it's stopframe
@@ -213,7 +216,7 @@ void TXshZeraryFxColumn::saveData(TOStream &os) {
             n++;
             for (;;) {
               if (r + n > r1) break;
-              cell2 = getCell(r + n, false);
+              cell2 = getCell(r + n, false, false);
               if (cell2.isEmpty()) break;
               fnum2 = cell2.m_frameId.getNumber();
               if (fnum2 > 1)
@@ -237,6 +240,8 @@ void TXshZeraryFxColumn::saveData(TOStream &os) {
   saveCellMarks(os);
   // folder info
   saveFolderInfo(os);
+  // Loop info
+  saveLoopInfo(os);
 }
 
 //-----------------------------------------------------------------------------

@@ -547,4 +547,7 @@
 #define MI_InbetweenEaseIn "MI_InbetweenEaseIn"
 #define MI_InbetweenEaseOut "MI_InbetweenEaseOut"
 #define MI_InbetweenEaseInOut "MI_InbetweenEaseInOut"
+
+#define MI_LoopFrames "MI_LoopFrames"
+#define MI_RemoveFrameLoop "MI_RemoveFrameLoop"
 #endif

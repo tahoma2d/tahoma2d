@@ -328,7 +328,7 @@ void doCloneLevelNoSave(const TCellSelection::Range &range,
 
     // OverwriteDialog* dialog = new OverwriteDialog();
     for (int r = range.m_r0; r <= range.m_r1; ++r) {
-      TXshCell cell = xsh->getCell(r, c, false);
+      TXshCell cell = xsh->getCell(r, c, false, false);
 
       fid = cell.getFrameId();
 
@@ -377,13 +377,13 @@ void doCloneLevelNoSave(const TCellSelection::Range &range,
       if (!fid.isStopFrame()) {
         int k;
         for (k = range.m_r0; k < r; k++) {
-          if (xsh->getCell(k, c, false).getImage(true).getPointer() ==
+          if (xsh->getCell(k, c, false, false).getImage(true).getPointer() ==
               img.getPointer()) {
-            TFrameId oldFid = xsh->getCell(k, c, false).getFrameId();
+            TFrameId oldFid = xsh->getCell(k, c, false, false).getFrameId();
             assert(fid == oldFid);
             sl->setFrame(
                 fid,
-                xsh->getCell(k, c + range.getColCount(), false).getImage(true));
+                xsh->getCell(k, c + range.getColCount(), false, false).getImage(true));
             break;
           }
         }
