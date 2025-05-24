@@ -3011,7 +3011,7 @@ void TCellSelection::clearFrames() {
       continue;
 
     for (r = r1; r >= r0; r--) {
-      TXshCell cell = xsh->getCell(r, c, false, false);
+      TXshCell cell = xsh->getCell(r, c);
 
       if (cell.isEmpty() || cell.getFrameId().isStopFrame() ||
           cell.m_level->getChildLevel() || !cell.getImage(false))
