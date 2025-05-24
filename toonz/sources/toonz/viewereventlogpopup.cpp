@@ -1,5 +1,8 @@
 #include "viewereventlogpopup.h"
 
+#include "menubarcommandids.h"
+#include "toonzqt/menubarcommand.h"
+
 #include <QCheckBox>
 #include <QLabel>
 #include <QPushButton>
@@ -152,6 +155,8 @@ ViewerEventLogPopup::ViewerEventLogPopup(QWidget *parent)
   //------end right side (the task sheet)
 
   setStretchFactor(1, 2);
+
+  ViewerEventLogManager::instance()->setViewerEventLogPopup(this);
 }
 
 //--------------------------------------------------
@@ -439,3 +444,8 @@ void ViewerEventLogPopup::onClearButtonPressed() { m_eventLog->clear(); }
 void ViewerEventLogPopup::hideEvent(QHideEvent *e) {
   if (m_logging) onPauseButtonPressed();
 }
+
+//==================================================
+
+OpenPopupCommandHandler<ViewerEventLogPopup> openViewerEventLogPopup(
+    MI_OpenViewerEventLog);

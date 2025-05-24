@@ -550,4 +550,10 @@
 
 #define MI_LoopFrames "MI_LoopFrames"
 #define MI_RemoveFrameLoop "MI_RemoveFrameLoop"
+
+#define MI_OpenViewerEventLog "MI_OpenViewerEventLog"
+#define MI_OpenGPhotoEventLog "MI_OpenGPhotoEventLog"
+
+#define MI_OpenCrashReportFolder "MI_OpenCrashReportFolder"
+
 #endif

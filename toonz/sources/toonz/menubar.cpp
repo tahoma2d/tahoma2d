@@ -696,7 +696,6 @@ void TopBar::loadMenubar() {
   addMenuItem(windowsMenu, MI_OpenGuidedDrawingControls);
   addMenuItem(windowsMenu, MI_OpenAlignmentPanel);
   addMenuItem(windowsMenu, MI_OpenCustomPanels);
-  addMenuItem(windowsMenu, MI_OpenVectorInspectorPanel);
   // windowsMenu->addSeparator();
   // addMenuItem(windowsMenu, MI_OpenExport);
   windowsMenu->addSeparator();
@@ -712,6 +711,16 @@ void TopBar::loadMenubar() {
   addMenuItem(helpMenu, MI_OpenCommunityForum);
   helpMenu->addSeparator();
   //  addMenuItem(helpMenu, MI_SupportTahoma2D);
+  QMenu *troubleshootMenu = helpMenu->addMenu(tr("Troubleshoot"));
+  {
+    addMenuItem(troubleshootMenu, MI_OpenViewerEventLog);
+#ifdef WITH_GPHOTO2
+    addMenuItem(troubleshootMenu, MI_OpenGPhotoEventLog);
+#endif
+    addMenuItem(troubleshootMenu, MI_OpenVectorInspectorPanel);
+  }
+  addMenuItem(helpMenu, MI_OpenCrashReportFolder);
+  helpMenu->addSeparator();
   addMenuItem(helpMenu, MI_OpenReportABug);
   helpMenu->addSeparator();
   addMenuItem(helpMenu, MI_About);
