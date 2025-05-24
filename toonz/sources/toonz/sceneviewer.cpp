@@ -858,8 +858,7 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
     , m_isBusyOnTabletMove(false)
     , m_mousePanning(0)
     , m_mouseZooming(0)
-    , m_mouseRotating(0)
-    , m_keyAction(0) {
+    , m_mouseRotating(0) {
   m_visualSettings.m_sceneProperties =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
   m_stopMotion = StopMotion::instance();

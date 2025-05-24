@@ -215,8 +215,6 @@ class SceneViewer final : public TTool::Viewer,
 
   bool m_firstInitialized = true;
 
-  QAction *m_keyAction;
-
 public:
   enum ReferenceMode {
     NORMAL_REFERENCE   = 1,
