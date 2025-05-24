@@ -811,14 +811,26 @@ bool TApp::eventFilter(QObject *watched, QEvent *e) {
     m_isPenCloseToTablet = false;
     emit tabletLeft();
   }
-  if (e->type() == QEvent::KeyRelease) {
+
+  // Block shortcuts while tool is busy
+  if ((e->type() == QEvent::ShortcutOverride ||
+       e->type() == QEvent::KeyPress) &&
+      (TApp::instance()->getCurrentTool()->isToolBusy() ||
+       TApp::instance()->getCurrentTool()->isTempToolActive())) {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
     std::string keyStr  = QKeySequence(keyEvent->key() + keyEvent->modifiers())
                              .toString()
                              .toStdString();
     QAction *action = CommandManager::instance()->getActionFromShortcut(keyStr);
-    std::string actionId = CommandManager::instance()->getIdFromAction(action);
-    if (actionId == T_Hand || actionId == T_Zoom || actionId == T_Rotate) {
+    if (action) {
+      e->accept();
+      return true;
+    }
+  }
+
+  if (e->type() == QEvent::KeyRelease) {
+    QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+    if (TApp::instance()->getCurrentTool()->isTempToolActive()) {
       if (!keyEvent->isAutoRepeat()) {
         SceneViewer *viewer = getActiveViewer();
         if (viewer) {
