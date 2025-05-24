@@ -967,34 +967,12 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
 
   m_dragging = false;
   if (m_mousePanning > 0 || m_mouseRotating > 0 || m_mouseZooming > 0) {
-    // We did a temp tool switch and released while actively doing something.
-    // Need to tell the tool we released also
-    if (!m_mouseScrubbing && tool && tool->isEnabled() &&
-        TApp::instance()->getCurrentTool()->isToolBusy()) {
-      tool->setViewer(this);
-      TPointD pos = tool->getMatrix().inv() * winToWorld(m_lastMousePos);
-
-      TObjectHandle *objHandle = TApp::instance()->getCurrentObject();
-      if (tool->getToolType() & TTool::LevelTool && !objHandle->isSpline()) {
-        pos.x /= m_dpiScale.x;
-        pos.y /= m_dpiScale.y;
-      }
-
-      tool->leftButtonUp(pos, event);
-      TApp::instance()->getCurrentTool()->setToolBusy(false);
-      tool->setCanUndo(true);
-    }
-
     if (m_resetOnRelease) {
       m_mousePanning   = 0;
       m_mouseRotating  = 0;
       m_mouseZooming   = 0;
       m_mouseScrubbing = 0;
-      if (m_keyAction) {
-        m_keyAction->setEnabled(true);
-        m_keyAction = 0;
-        invalidateToolStatus();
-      }
+      TApp::instance()->getCurrentTool()->setTempToolActive(false);
       m_resetOnRelease = false;
     } else if (m_mousePanning > 0)
       m_mousePanning = 1;
@@ -1011,6 +989,10 @@ void SceneViewer::onRelease(const TMouseEvent &event) {
     invalidateToolStatus();
 
     m_buttonClicked = false;
+
+    TApp::instance()->getCurrentTool()->setToolBusy(false);
+    if(tool) tool->setCanUndo(true);
+
     doQuit();
     return;
   }
@@ -1483,10 +1465,6 @@ bool SceneViewer::event(QEvent *e) {
                     e->type() == QEvent::KeyPress)) {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
 
-    if (!keyEvent->isAutoRepeat()) {
-      TApp::instance()->getCurrentTool()->storeTool();
-    }
-
     std::string keyStr = QKeySequence(keyEvent->key() + keyEvent->modifiers())
                              .toString()
                              .toStdString();
@@ -1495,36 +1473,32 @@ bool SceneViewer::event(QEvent *e) {
     if (actionId == T_Hand) {
       if (m_mousePanning == 0) {
         m_mousePanning = 1;
-        m_keyAction    = action;
-        m_keyAction->setEnabled(false);
         setToolCursor(this, ToolCursor::PanCursor);
+        TApp::instance()->getCurrentTool()->setTempToolActive(true);
       }
       e->accept();
       return true;
     } else if (actionId == T_Zoom) {
       if (m_mouseZooming == 0) {
         m_mouseZooming = 1;
-        m_keyAction    = action;
-        m_keyAction->setEnabled(false);
         setToolCursor(this, ToolCursor::ZoomCursor);
+        TApp::instance()->getCurrentTool()->setTempToolActive(true);
       }
       e->accept();
       return true;
     } else if (actionId == T_Rotate) {
       if (m_mouseRotating == 0) {
         m_mouseRotating = 1;
-        m_keyAction     = action;
-        m_keyAction->setEnabled(false);
         setToolCursor(this, ToolCursor::RotateCursor);
+        TApp::instance()->getCurrentTool()->setTempToolActive(true);
       }
       e->accept();
       return true;
     } else if (actionId == V_Scrub) {
       if (m_mouseScrubbing == 0) {
         m_mouseScrubbing = 1;
-        m_keyAction     = action;
-        m_keyAction->setEnabled(false);
         setToolCursor(this, ToolCursor::ScrubCursor);
+        TApp::instance()->getCurrentTool()->setTempToolActive(true);
       }
       e->accept();
       return true;
@@ -1548,9 +1522,7 @@ bool SceneViewer::event(QEvent *e) {
              TTool::getTool("T_ShiftTrace", TTool::ToonzImage)
                  ->isEventAcceptable(e)) {
       e->accept();
-    } else if (m_keyAction)
-      e->accept();
-
+    }
     // Disable keyboard shortcuts while the tool is busy with a mouse drag
     // operation.
     if (tool->isDragging()) {
@@ -1563,14 +1535,7 @@ bool SceneViewer::event(QEvent *e) {
   if (!isTyping && e->type() == QEvent::KeyRelease) {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
 
-    if (!keyEvent->isAutoRepeat() && !m_keyAction) {
-      QWidget *focusWidget = QApplication::focusWidget();
-      if (focusWidget == 0 ||
-          QString(focusWidget->metaObject()->className()) == "SceneViewer")
-        TApp::instance()->getCurrentTool()->restoreTool();
-    }
-
-    if (m_keyAction) {
+    if (TApp::instance()->getCurrentTool()->isTempToolActive()) {
       if (keyEvent->isAutoRepeat()) {
         e->accept();
         return true;
@@ -1579,8 +1544,7 @@ bool SceneViewer::event(QEvent *e) {
         m_mouseZooming  = 0;
         m_mouseRotating = 0;
         m_mouseScrubbing = 0;
-        m_keyAction->setEnabled(true);
-        m_keyAction = 0;
+        TApp::instance()->getCurrentTool()->setTempToolActive(false);
         invalidateToolStatus();
         e->accept();
         return true;
@@ -2142,10 +2106,7 @@ void SceneViewer::resetNavigation() {
     m_mouseZooming  = 0;
     m_mouseRotating = 0;
     m_mouseScrubbing = 0;
-    if (m_keyAction) {
-      m_keyAction->setEnabled(true);
-      m_keyAction = 0;
-      invalidateToolStatus();
-    }
+    TApp::instance()->getCurrentTool()->setTempToolActive(false);
+    invalidateToolStatus();
   }
 }

@@ -859,7 +859,6 @@ SceneViewer::SceneViewer(ImageUtils::FullScreenWidget *parent)
     , m_mousePanning(0)
     , m_mouseZooming(0)
     , m_mouseRotating(0)
-    , m_keyAction(0)
     , m_mouseScrubbing(0) {
   m_visualSettings.m_sceneProperties =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();

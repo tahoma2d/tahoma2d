@@ -21,7 +21,8 @@ ToolHandle::ToolHandle()
     , m_toolName("")
     , m_toolTargetType(TTool::NoTarget)
     , m_storedToolName("")
-    , m_toolIsBusy(false) {}
+    , m_toolIsBusy(false)
+    , m_tempToolActive(false) {}
 
 //-----------------------------------------------------------------------------
 

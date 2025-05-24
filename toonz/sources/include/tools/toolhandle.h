@@ -38,6 +38,7 @@ class DVAPI ToolHandle final : public QObject {
   QElapsedTimer m_storedToolTime;
   QString m_oldToolName;
   bool m_toolIsBusy;
+  bool m_tempToolActive;
 
 public:
   ToolHandle();
@@ -69,6 +70,9 @@ public:
   void notifyToolComboBoxListChanged(std::string id) {
     emit toolComboBoxListChanged(id);
   }
+
+  void setTempToolActive(bool value) { m_tempToolActive = value; }
+  bool isTempToolActive() { return m_tempToolActive; }
 
 signals:
   void toolComboBoxListChanged(std::string);
