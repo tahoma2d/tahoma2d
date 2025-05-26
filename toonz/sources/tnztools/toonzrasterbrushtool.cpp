@@ -1401,7 +1401,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
       m_oldPressure = pressure;
       // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to
       // 1.0)
-      double tiltX = m_tilt.getValue() ? (e.m_tiltX / 60.0) : 0.0;
+      double tiltX = m_tilt.getValue() ? (e.m_tiltX / -60.0) : 0.0;
       double tiltY = m_tilt.getValue() ? (e.m_tiltY / 60.0) : 0.0;
       updateCurrentStyle();
       if (!(m_workRas && m_backupRas)) setWorkAndBackupImages();
@@ -1799,7 +1799,7 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
         m_pressure.getValue() && e.isTablet() ? e.m_pressure : 0.5;
     // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to
     // 1.0)
-    double tiltX = m_tilt.getValue() ? (e.m_tiltX / 60.0) : 0.0;
+    double tiltX = m_tilt.getValue() ? (e.m_tiltX / -60.0) : 0.0;
     double tiltY = m_tilt.getValue() ? (e.m_tiltY / 60.0) : 0.0;
 
     TThickPoint thickPoint(point, pressure);
@@ -1958,7 +1958,7 @@ void ToonzRasterBrushTool::leftButtonUp(const TPointD &pos,
   if (m_isStraight && m_isMyPaintStyleSelected && m_oldPressure > 0.0)
     pressure = m_oldPressure;
   // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
-  double tiltX = m_tilt.getValue() ? (e.m_tiltX / 60.0) : 0.0;
+  double tiltX = m_tilt.getValue() ? (e.m_tiltX / -60.0) : 0.0;
   double tiltY = m_tilt.getValue() ? (e.m_tiltY / 60.0) : 0.0;
   finishRasterBrush(centeredPos, pressure, tiltX, tiltY);
   int tc = ToonzCheck::instance()->getChecks();

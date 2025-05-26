@@ -396,7 +396,7 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
   m_oldPressure = pressure;
 
   // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
-  double tiltX = m_enabledTilt ? (e.m_tiltX / 60.0) : 0.0;
+  double tiltX = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
   double tiltY = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
 
   m_tileSet   = new TTileSetFullColor(ras->getSize());
@@ -641,7 +641,7 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
     pressure = m_enabledPressure ? e.m_pressure : 1.0;
 
   // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
-  double tiltX = m_enabledTilt ? (e.m_tiltX / 60.0) : 0.0;
+  double tiltX = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
   double tiltY = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
 
   TThickPoint thickPoint(point, pressure);
@@ -714,7 +714,7 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
     pressure = m_oldPressure;
   }
   // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
-  double tiltX = m_enabledTilt ? (e.m_tiltX / 60.0) : 0.0;
+  double tiltX = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
   double tiltY = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
 
   TThickPoint thickPoint(point, pressure);
