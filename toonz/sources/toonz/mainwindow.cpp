@@ -495,6 +495,7 @@ centralWidget->setLayout(centralWidgetLayout);*/
   setCommandHandler(MI_OpenCommunityForum, this,
                     &MainWindow::onOpenCommunityForum);
   setCommandHandler(MI_OpenReportABug, this, &MainWindow::onOpenReportABug);
+  setCommandHandler(MI_OpenCrashReportFolder, this, &MainWindow::onOpenCrashReportFolder);
 
   setCommandHandler(MI_MaximizePanel, this, &MainWindow::maximizePanel);
   setCommandHandler(MI_FullScreenWindow, this, &MainWindow::fullScreenWindow);
@@ -1127,6 +1128,14 @@ void MainWindow::onOpenReportABug() {
     QDesktopServices::openUrl(
         QUrl("https://github.com/tahoma2d/tahoma2d/issues"));
 }
+
+//-----------------------------------------------------------------------------
+
+void MainWindow::onOpenCrashReportFolder() {
+  TFilePath fp = ToonzFolder::getCrashReportFolder();
+  QDesktopServices::openUrl(QUrl("file:///" + fp.getQString()));
+}
+
 //-----------------------------------------------------------------------------
 
 void MainWindow::autofillToggle() {
@@ -2488,9 +2497,6 @@ void MainWindow::defineActions() {
                           "timeline");
   createMenuWindowsAction(MI_OpenComboViewer, QT_TR_NOOP("&ComboViewer"), "",
                           "comboviewer");
-  createMenuWindowsAction(MI_OpenVectorInspectorPanel,
-                          QT_TR_NOOP("Vector Inspector"), "",
-                          "vectorinspector");
   createMenuWindowsAction(MI_OpenHistoryPanel, QT_TR_NOOP("&History"), "Ctrl+H",
                           "history");
   createMenuWindowsAction(MI_AudioRecording, QT_TR_NOOP("Record Audio"),
@@ -2536,6 +2542,14 @@ void MainWindow::defineActions() {
                        "", "web");
   createMenuHelpAction(MI_OpenReportABug, QT_TR_NOOP("&Report a Bug..."), "",
                        "web");
+  createMenuHelpAction(MI_OpenViewerEventLog,
+                       QT_TR_NOOP("Viewer Event Log"), "", "");
+  createMenuHelpAction(MI_OpenGPhotoEventLog,
+                       QT_TR_NOOP("GPhoto Event Log"), "", "");
+  createMenuHelpAction(MI_OpenVectorInspectorPanel,
+                          QT_TR_NOOP("Vector Inspector"), "",
+                          "vectorinspector");
+  createMenuHelpAction(MI_OpenCrashReportFolder, QT_TR_NOOP("&Open Reports Folder..."), "", "");
   createMenuHelpAction(MI_About, QT_TR_NOOP("&About Tahoma2D..."), "", "info");
   //  createMenuHelpAction(MI_SupportTahoma2D, QT_TR_NOOP("&Support
   //  Tahoma2D..."), "",
