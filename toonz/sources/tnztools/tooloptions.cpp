@@ -2181,6 +2181,8 @@ void BrushToolOptionsBox::filterControls() {
                      it.key() == "Preset:" || it.key() == "Grid" ||
                      it.key() == "Smooth:" || it.key() == "Paint Behind");
     bool visible = isCommon || (isModifier == showModifiers);
+    // Temporary since Tilt is only available for MyPaint styles
+    if (it.key() == "Tilt") visible = showModifiers;
     it.value()->setVisible(visible);
   }
 
@@ -2192,6 +2194,8 @@ void BrushToolOptionsBox::filterControls() {
                      it.key() == "Preset:" || it.key() == "Grid" ||
                      it.key() == "Smooth:" || it.key() == "Paint Behind");
     bool visible = isCommon || (isModifier == showModifiers);
+    // Temporary since Tilt is only available for MyPaint styles
+    if (it.key() == "Tilt") visible = showModifiers;
     if (QWidget *widget = dynamic_cast<QWidget *>(it.value()))
       widget->setVisible(visible);
   }
