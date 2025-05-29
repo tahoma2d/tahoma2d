@@ -577,7 +577,7 @@
     </message>
     <message>
         <source>Maximum Gap</source>
-        <translation>최대 간격</translation>
+        <translation type="vanished">최대 간격</translation>
     </message>
     <message>
         <source>Autopaint Lines</source>
@@ -641,6 +641,10 @@
     </message>
     <message>
         <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Close Gap</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

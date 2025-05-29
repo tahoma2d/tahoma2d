@@ -20,11 +20,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tahoma2D ships with FFmpeg.  
-FFmpeg is licensed under the LGPLv2.1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Tahoma2D is made possible with the help of patrons.
 Special thanks to:</source>
         <translation type="unfinished"></translation>
@@ -35,6 +30,11 @@ Special thanks to:</source>
     </message>
     <message>
         <source>Please consider sponsoring Tahoma2D developers on GitHub.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tahoma2D ships with FFmpeg.
+FFmpeg is licensed under the LGPLv2.1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3664,6 +3664,41 @@ Do you want to overwrite it?</source>
     <name>GPhotoCam</name>
     <message>
         <source>An error occurred.  Please try again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GPhotoEventLogPopup</name>
+    <message>
+        <source>GPhoto Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capture messages:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished">Error</translation>
+    </message>
+    <message>
+        <source>Debug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translation type="unfinished">Pausa</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear Log</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8371,6 +8406,22 @@ or you may delete necessary files for it.</source>
         <source>Zoom Out And Fit Floating Panel</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;Tips...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Viewer Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPhoto Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Open Reports Folder...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -11276,10 +11327,6 @@ but a random crash might occur, use at your own risk:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Open Viewer Event Log</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Use %1 to Resize Brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11337,6 +11384,18 @@ but a random crash might occur, use at your own risk:</source>
     </message>
     <message>
         <source>Inbetween Flip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Tips Window when Tahoma2D Starts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable High DPI Scaling*</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rasterize Vector with Anti Aliasing</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14507,10 +14566,6 @@ Visit the Web site for more information.
     </message>
     <message>
         <source>Switch To Relative Drawing Onion Skin</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Switch To Relative Frame Onion Skin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -18870,6 +18925,21 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     </message>
 </context>
 <context>
+    <name>TipsPopup</name>
+    <message>
+        <source>Tahoma2D Tips</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show this at startup</source>
+        <translation type="unfinished">Mostrar esto al inicio</translation>
+    </message>
+    <message>
+        <source>Nothing to see here. Keep movin&apos;...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Toolbar</name>
     <message>
         <source>Collapse toolbar</source>
@@ -18965,6 +19035,10 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     <message>
         <source>Inbetween</source>
         <translation type="unfinished">Intermediar</translation>
+    </message>
+    <message>
+        <source>Troubleshoot</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

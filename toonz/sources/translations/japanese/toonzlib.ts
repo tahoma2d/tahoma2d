@@ -520,7 +520,7 @@
     </message>
     <message>
         <source>Update Colors by Using Picked Positions in Palette %1</source>
-        <translation>パレット%1&#x3000;サンプル位置を用いて色を更新</translation>
+        <translation>パレット%1　サンプル位置を用いて色を更新</translation>
     </message>
     <message>
         <source>Can&apos;t save</source>

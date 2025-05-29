@@ -14,7 +14,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tpalette.cpp" line="257"/>
+        <location filename="../../common/tvrender/tpalette.cpp" line="258"/>
         <source>colors</source>
         <translation type="unfinished"></translation>
     </message>

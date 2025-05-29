@@ -236,34 +236,34 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="86"/>
+        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="99"/>
         <source>No restrictions for uncompressed avi video</source>
         <translation>Нет ограничений для несжатого видео avi</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="93"/>
+        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="106"/>
         <source>It is not possible to communicate with the codec.
  Probably the codec cannot work correctly.</source>
         <translation>Невозможно установить связь с кодеком.
   Вероятно, кодек работает неправильно.</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="125"/>
+        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="138"/>
         <source>video width must be a multiple of %1</source>
         <translation>ширина видео должна быть кратна %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="139"/>
+        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="152"/>
         <source>video length must be a multiple of %1</source>
         <translation>Длина видео должна быть кратна %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="145"/>
+        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="158"/>
         <source>No restrictions for this codec</source>
         <translation>Нет ограничений для этого кодека</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="147"/>
+        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="160"/>
         <source>Resolution restrictions:</source>
         <translation>Ограничения разрешения:</translation>
     </message>
@@ -373,62 +373,62 @@
         <translation>Изменить папку палитры Studio  : %1 : %2 &gt; %3</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="250"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="262"/>
         <source>Arrange Styles  in Palette %1</source>
         <translation>Упорядочить стили в палитре %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="321"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="333"/>
         <source>Create Style#%1  in Palette %2</source>
         <translation>Создать стиль#%1  в палитре %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="454"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="466"/>
         <source>Add Style  to Palette %1</source>
         <translation>Добавить стиль в палитру %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="671"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="683"/>
         <source>Add Page %1 to Palette %2</source>
         <translation>Добавить страницу %1 в палитру %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="736"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="748"/>
         <source>Delete Page %1 from Palette %2</source>
         <translation>Удалить  страницу %1 из палитры %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="791"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="803"/>
         <source>Load Color Model %1  to Palette %2</source>
         <translation>Загрузить цветовую %1 модель в палитру %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="889"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="901"/>
         <source>color model</source>
         <translation>Цветовая модель</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="1057"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="1069"/>
         <source>Move Page</source>
         <translation>Переместить страницу</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="1108"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="1120"/>
         <source>Rename Page  %1 &gt; %2</source>
         <translation>Переименовать страницу  %1 &gt; %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="1172"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="1184"/>
         <source>Rename Style#%1 in Palette%2  : %3 &gt; %4</source>
         <translation>Переименование стиля#%1 в палитре%2 : %3&gt;%4</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="1237"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="1249"/>
         <source>Set Picked Position of Style#%1 in Palette%2 : %3,%4</source>
         <translation>Установить выбранное расположение стиля#%1 в палитре%2 :%3,%4</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="1316"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="1328"/>
         <source>Update Colors by Using Picked Positions in Palette %1</source>
         <translation>Обновление цветов с использованием выбранных расположений в палитре %1</translation>
     </message>

@@ -2659,7 +2659,7 @@ Are you sure?</source>
     <message>
         <source>Failed to get attribute location of %1</source>
         <comment>gl</comment>
-        <translation>%1&#x3000;のアトリビュート位置の取得に失敗しました</translation>
+        <translation>%1　のアトリビュート位置の取得に失敗しました</translation>
     </message>
     <message>
         <source>Failed to get uniform location of %1</source>
@@ -3132,7 +3132,7 @@ Zero is fully transparent.</source>
     <name>StageSchematicNode</name>
     <message>
         <source>Toggle Autorotate Along Motion Path</source>
-        <translation>モーションパスに沿って自動回転&#x3000;の切り替え</translation>
+        <translation>モーションパスに沿って自動回転　の切り替え</translation>
     </message>
     <message>
         <source>Toggle Link Motion Path to Control Points</source>

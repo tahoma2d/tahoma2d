@@ -20,11 +20,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tahoma2D ships with FFmpeg.  
-FFmpeg is licensed under the LGPLv2.1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Tahoma2D is made possible with the help of patrons.
 Special thanks to:</source>
         <translation type="unfinished"></translation>
@@ -35,6 +30,11 @@ Special thanks to:</source>
     </message>
     <message>
         <source>Please consider sponsoring Tahoma2D developers on GitHub.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tahoma2D ships with FFmpeg.
+FFmpeg is licensed under the LGPLv2.1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1672,7 +1672,7 @@ Was möchten Sie tun?</translation>
     </message>
     <message>
         <source>Level %1 has no frame; skipped.</source>
-        <translation type="unfinished">Ebene&#x3000;%1&#x3000;hat keinen Frame. Sie wurde übersprungen.</translation>
+        <translation type="unfinished">Ebene　%1　hat keinen Frame. Sie wurde übersprungen.</translation>
     </message>
     <message>
         <source>Convert TZP In Folder</source>
@@ -1854,7 +1854,7 @@ Was möchten Sie tun?</translation>
     </message>
     <message>
         <source>                      Palette:</source>
-        <translation type="vanished">&#x3000;&#x3000;&#x3000;&#x3000;&#x3000;Palette:</translation>
+        <translation type="vanished">　　　　　Palette:</translation>
     </message>
     <message>
         <source>Tolerance:</source>
@@ -1918,15 +1918,15 @@ Was möchten Sie tun?</translation>
     </message>
     <message>
         <source>Warning: Can&apos;t read palette &apos;%1&apos; </source>
-        <translation>Warnung: Warnung: &#x3000;Palette &apos;%1&apos; kann nicht gelesen werden</translation>
+        <translation>Warnung: Warnung: 　Palette &apos;%1&apos; kann nicht gelesen werden</translation>
     </message>
     <message>
         <source>Level %1 already exists; skipped.</source>
-        <translation>Ebene&#x3000;%1 existiert bereits. Sie wurde übersprungen.</translation>
+        <translation>Ebene　%1 existiert bereits. Sie wurde übersprungen.</translation>
     </message>
     <message>
         <source>Level %1 has no frame; skipped.</source>
-        <translation>Ebene&#x3000;%1&#x3000;hat keinen Frame. Sie wurde übersprungen.</translation>
+        <translation>Ebene　%1　hat keinen Frame. Sie wurde übersprungen.</translation>
     </message>
     <message>
         <source>Unpainted tlv</source>
@@ -1950,7 +1950,7 @@ Was möchten Sie tun?</translation>
     </message>
     <message>
         <source>%1 level(s) skipped</source>
-        <translation>%1&#x3000;Ebene(n) übersprungen</translation>
+        <translation>%1　Ebene(n) übersprungen</translation>
     </message>
     <message>
         <source>Create new palette</source>
@@ -3714,6 +3714,41 @@ Do you want to overwrite it?</source>
     <name>GPhotoCam</name>
     <message>
         <source>An error occurred.  Please try again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GPhotoEventLogPopup</name>
+    <message>
+        <source>GPhoto Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capture messages:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Debug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translation type="unfinished">Pausieren</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear Log</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8286,6 +8321,22 @@ or you may delete necessary files for it.</source>
         <source>Zoom Out And Fit Floating Panel</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;Tips...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Viewer Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPhoto Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Open Reports Folder...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -9278,7 +9329,7 @@ Möchten Sie einen erstellen?</translation>
     </message>
     <message>
         <source>              Color:</source>
-        <translation type="vanished">&#x3000;&#x3000;&#x3000;&#x3000;&#x3000; Farbe:</translation>
+        <translation type="vanished">　　　　　 Farbe:</translation>
     </message>
     <message>
         <source>Fade</source>
@@ -9585,11 +9636,11 @@ Möchten Sie einen erstellen?</translation>
     </message>
     <message>
         <source>   Ink Color on White Bg: </source>
-        <translation type="vanished">&#x3000;Linien und Vektor-Farbe auf weißem Hintergrund:</translation>
+        <translation type="vanished">　Linien und Vektor-Farbe auf weißem Hintergrund:</translation>
     </message>
     <message>
         <source>   Ink Color on Black Bg: </source>
-        <translation type="vanished">&#x3000;Linien und Vektor-Farbe auf schwarzem Hintergrund:</translation>
+        <translation type="vanished">　Linien und Vektor-Farbe auf schwarzem Hintergrund:</translation>
     </message>
     <message>
         <source> Paint Color: </source>
@@ -10569,10 +10620,6 @@ but a random crash might occur, use at your own risk:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Open Viewer Event Log</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Use %1 to Resize Brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10630,6 +10677,18 @@ but a random crash might occur, use at your own risk:</source>
     </message>
     <message>
         <source>Inbetween Flip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Tips Window when Tahoma2D Starts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable High DPI Scaling*</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rasterize Vector with Anti Aliasing</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13749,10 +13808,6 @@ Visit the Web site for more information.
     </message>
     <message>
         <source>Switch To Relative Drawing Onion Skin</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Switch To Relative Frame Onion Skin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -17909,6 +17964,21 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
 </context>
 <context>
+    <name>TipsPopup</name>
+    <message>
+        <source>Tahoma2D Tips</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show this at startup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nothing to see here. Keep movin&apos;...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Toolbar</name>
     <message>
         <source>Collapse toolbar</source>
@@ -18000,6 +18070,10 @@ Click the arrow button to create a new sub-xsheet</source>
     <message>
         <source>Inbetween</source>
         <translation type="unfinished">Inbetween</translation>
+    </message>
+    <message>
+        <source>Troubleshoot</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

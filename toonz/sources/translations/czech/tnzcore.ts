@@ -30,7 +30,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../common/tvrender/tpalette.cpp" line="257"/>
+        <location filename="../../common/tvrender/tpalette.cpp" line="258"/>
         <source>colors</source>
         <translation>barvy</translation>
     </message>

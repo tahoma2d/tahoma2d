@@ -525,10 +525,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Maximum Gap</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Distance:</source>
         <translation type="unfinished">Distance:</translation>
     </message>
@@ -586,6 +582,10 @@
     </message>
     <message>
         <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Close Gap</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

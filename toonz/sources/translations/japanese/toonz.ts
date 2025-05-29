@@ -20,11 +20,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tahoma2D ships with FFmpeg.  
-FFmpeg is licensed under the LGPLv2.1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Tahoma2D is made possible with the help of patrons.
 Special thanks to:</source>
         <translation type="unfinished"></translation>
@@ -35,6 +30,11 @@ Special thanks to:</source>
     </message>
     <message>
         <source>Please consider sponsoring Tahoma2D developers on GitHub.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tahoma2D ships with FFmpeg.
+FFmpeg is licensed under the LGPLv2.1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1177,7 +1177,7 @@ What do you want to do?</source>
     </message>
     <message>
         <source>This is Re-Cleanup. Overwrite only to the no-paint files.</source>
-        <translation>再トレース&#x3000;:&#x3000;no-paintのデータのみに上書きする。</translation>
+        <translation>再トレース　:　no-paintのデータのみに上書きする。</translation>
     </message>
     <message>
         <source>* Palette will not be changed.</source>
@@ -1730,7 +1730,7 @@ What do you want to do? </source>
     </message>
     <message>
         <source>Level %1 has no frame; skipped.</source>
-        <translation type="unfinished">レベル&#x3000;%1&#x3000;はフレームがありません。スキップしました。</translation>
+        <translation type="unfinished">レベル　%1　はフレームがありません。スキップしました。</translation>
     </message>
     <message>
         <source>Convert TZP In Folder</source>
@@ -1912,7 +1912,7 @@ What do you want to do? </source>
     </message>
     <message>
         <source>                      Palette:</source>
-        <translation type="vanished">&#x3000;&#x3000;&#x3000;&#x3000;&#x3000;パレット：</translation>
+        <translation type="vanished">　　　　　パレット：</translation>
     </message>
     <message>
         <source>Tolerance:</source>
@@ -1976,15 +1976,15 @@ What do you want to do? </source>
     </message>
     <message>
         <source>Warning: Can&apos;t read palette &apos;%1&apos; </source>
-        <translation>警告：&#x3000;パレット”%1”を読み込めません</translation>
+        <translation>警告：　パレット”%1”を読み込めません</translation>
     </message>
     <message>
         <source>Level %1 already exists; skipped.</source>
-        <translation>レベル&#x3000;%1&#x3000;は既に存在します。スキップしました。</translation>
+        <translation>レベル　%1　は既に存在します。スキップしました。</translation>
     </message>
     <message>
         <source>Level %1 has no frame; skipped.</source>
-        <translation>レベル&#x3000;%1&#x3000;はフレームがありません。スキップしました。</translation>
+        <translation>レベル　%1　はフレームがありません。スキップしました。</translation>
     </message>
     <message>
         <source>Unpainted tlv</source>
@@ -2000,15 +2000,15 @@ What do you want to do? </source>
     </message>
     <message>
         <source>Convert completed with %1 error(s) and %2 level(s) skipped</source>
-        <translation>変換は完了しました。&#x3000;%1&#x3000;個のエラー、&#x3000;%2&#x3000;個のレベルをスキップしました</translation>
+        <translation>変換は完了しました。　%1　個のエラー、　%2　個のレベルをスキップしました</translation>
     </message>
     <message>
         <source>Convert completed with %1 error(s) </source>
-        <translation>変換は完了しました。&#x3000;%1&#x3000;個のエラー</translation>
+        <translation>変換は完了しました。　%1　個のエラー</translation>
     </message>
     <message>
         <source>%1 level(s) skipped</source>
-        <translation>%1&#x3000;個のレベルをスキップしました</translation>
+        <translation>%1　個のレベルをスキップしました</translation>
     </message>
     <message>
         <source>Create new palette</source>
@@ -2410,7 +2410,7 @@ contain the dpi information, then the current camera dpi will be used.
     </message>
     <message>
         <source>There was an error copying %1 to %2</source>
-        <translation>%2 に&#x3000;%1 をコピーする時、エラーが発生しました</translation>
+        <translation>%2 に　%1 をコピーする時、エラーが発生しました</translation>
     </message>
     <message>
         <source>The local path does not exist:</source>
@@ -3660,6 +3660,41 @@ Do you want to overwrite it?</source>
     <name>GPhotoCam</name>
     <message>
         <source>An error occurred.  Please try again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GPhotoEventLogPopup</name>
+    <message>
+        <source>GPhoto Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capture messages:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished">エラー</translation>
+    </message>
+    <message>
+        <source>Debug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translation type="unfinished">一時停止</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear Log</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8361,6 +8396,22 @@ or you may delete necessary files for it.</source>
         <source>Zoom Out And Fit Floating Panel</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;Tips...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Viewer Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPhoto Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Open Reports Folder...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -9800,7 +9851,7 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>              Color:</source>
-        <translation type="vanished">&#x3000;&#x3000;&#x3000;&#x3000;&#x3000; 色：</translation>
+        <translation type="vanished">　　　　　 色：</translation>
     </message>
     <message>
         <source>Fade</source>
@@ -10039,7 +10090,7 @@ Set the output folder path to the subfolder as well.</source>
     </message>
     <message>
         <source>Level Strip Frames Width*:</source>
-        <translation type="vanished">レベルビューアフレーム&#x3000;幅*：</translation>
+        <translation type="vanished">レベルビューアフレーム　幅*：</translation>
     </message>
     <message>
         <source>Capture</source>
@@ -11267,10 +11318,6 @@ but a random crash might occur, use at your own risk:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Open Viewer Event Log</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Use %1 to Resize Brush</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11328,6 +11375,18 @@ but a random crash might occur, use at your own risk:</source>
     </message>
     <message>
         <source>Inbetween Flip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Tips Window when Tahoma2D Starts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable High DPI Scaling*</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rasterize Vector with Anti Aliasing</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14505,10 +14564,6 @@ Visit the Web site for more information.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Switch To Relative Frame Onion Skin</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>File not found</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16762,7 +16817,7 @@ Please commit or revert changes first.</source>
     <message>
         <source>%1 is already assigned to &apos;%2&apos;
 Assign to &apos;%3&apos;?</source>
-        <translation type="vanished">%1&#x3000;は既に %2 に割り当てられています。
+        <translation type="vanished">%1　は既に %2 に割り当てられています。
 %3 に割り当てますか？</translation>
     </message>
     <message>
@@ -18870,6 +18925,21 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
 </context>
 <context>
+    <name>TipsPopup</name>
+    <message>
+        <source>Tahoma2D Tips</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show this at startup</source>
+        <translation type="unfinished">起動時にこのウィンドウを表示する</translation>
+    </message>
+    <message>
+        <source>Nothing to see here. Keep movin&apos;...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Toolbar</name>
     <message>
         <source>Collapse toolbar</source>
@@ -18965,6 +19035,10 @@ Click the arrow button to create a new sub-xsheet</source>
     <message>
         <source>Inbetween</source>
         <translation type="unfinished">中割り</translation>
+    </message>
+    <message>
+        <source>Troubleshoot</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -641,7 +641,7 @@
     </message>
     <message>
         <source>Maximum Gap</source>
-        <translation>隙間の判定</translation>
+        <translation type="vanished">隙間の判定</translation>
     </message>
     <message>
         <source>Distance:</source>
@@ -701,6 +701,10 @@
     </message>
     <message>
         <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Close Gap</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
