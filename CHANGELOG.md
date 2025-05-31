@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.3] - 2025-06-01
+
+### Added
+
+- GPhoto Event Log Viewer + Help Menu Update [#1838]
+
+### Fixed
+
+- Fix on-canvas widget/indicator visibility [#1782]
+- Fix Fill gap - Savebox fill image corruption [#1792]
+- Correct typo Frane -> Frame [#1800]
+- Fix double-clicking 1st folder item not working [#1807]
+- Fix Plastic Tool crash and history messages [#1808]
+- Fix canceling selection when modifiers used [#1814]
+- Fix startup console warnings and errors [#1815]
+- Fix Relative Drawing Mode Tweening [#1819]
+- Percentage spacing on pattern brushes. [#1829]
+- Fix rasterization of vector [#1843]
+- Block shortcuts while tool is busy [#1844]
+- Fix Implicit Clear Frames [#1845]
+- Fix Mesh Animate crash of SmartVector Level [#1784[^7]]
+- Remove rasterized vector pink box [#1806[^7]]
+- Show 0 thickness strokes in Visualize Vector as Raster [#1775[^6][^7]]
+- Fix Visualize Vector As Raster (OpenToonz port) [#1775[^6]]
+- [VectorSelectionTool] Fix Rasterized Vector Image update failure (OpenToonz port) [#1775[^6]]
+
+### Other
+
+- Update how_to_build_linux.md to include missing dependency to build on arch linux [#1785]
+- Fix github cmake version for Linux builds [#1788]
+- Cleanup post Debian package creation [#1790]
+- Build on Ubuntu 22.04 [#1791]
+- Remove unncessary folders from ccache [#1796]
+- Fix Linux packaging space usage [#1798]
+- Switch from Git LFS to regular files [#1816]
+- Fix missing Linux Action ccache directory [#1818]
+- Fix windows scripting build path [#1840]
+
 ## [1.5.2] - 2025-03-31
 
 ### Fixed
@@ -862,9 +900,11 @@ Some features, when used, are saved to the scene file and will prevent the scene
 [^2]: Only the UHD changes were taken from this PR. Rest will be in v1.5
 [^3]: Only changes related to scene saving were taken from this PR. Rest will be in v1.5
 [^4]: Only fixes applicable for this release were applied. Rest will be in v1.5
-[^5]: Only fixes from this OpentToonz port PR were applied to this release. Rest will be in v1.5
-[^6]: A few fixes from this OpentToonz port PR were moved to the v1.5.3 fix release
+[^5]: Only fixes from this OpenToonz port PR were applied to this release. Rest will be in v1.5
+[^6]: A few fixes from this OpenToonz port PR were moved to the v1.5.3 fix release
+[^7]: Followup fixes made directly in Tahoma2D related to OpenToonz ports
 
+[1.5.3]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.2...v1.5.3
 [1.5.2]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/tahoma2d/tahoma2d/compare/v1.5...v1.5.1
 [1.5.0]: https://github.com/tahoma2d/tahoma2d/compare/v1.4.5...v1.5

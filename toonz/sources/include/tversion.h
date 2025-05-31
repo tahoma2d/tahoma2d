@@ -19,7 +19,7 @@ public:
 private:
   const char *applicationName     = "Tahoma2D";
   const float applicationVersion  = 1.5f;
-  const float applicationRevision = 2;
+  const float applicationRevision = 3;
   const char *applicationNote     = "";
 };
 
