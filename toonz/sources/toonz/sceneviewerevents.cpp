@@ -118,7 +118,16 @@ void initToonzEvent(TMouseEvent &toonzEvent, QTabletEvent *event,
   toonzEvent.m_isHighFrequent = isHighFrequent;
   // this delays autosave during stylus button press until after the next
   // brush stroke - this minimizes problems from interruptions to tablet input
-  TApp::instance()->getCurrentTool()->setToolBusy(true);
+  bool isBusy = ((event->buttons() & Qt::LeftButton) ||
+                 (event->buttons() & Qt::RightButton) ||
+                 (event->buttons() & Qt::MiddleButton))
+#if defined(LINUX) || defined(FREEBSD)
+                // Since Linux doesn't always register leave events, include
+                // pressure in check
+                && pressure != 0.0
+#endif
+      ;
+  TApp::instance()->getCurrentTool()->setToolBusy(isBusy);
 }
 
 //-----------------------------------------------------------------------------
