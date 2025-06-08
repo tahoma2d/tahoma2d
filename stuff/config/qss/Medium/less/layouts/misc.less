@@ -77,3 +77,10 @@ QStatusBar {
 #TitleTxtLabel {
   color: @label-title;
 }
+
+// Prevent OS/theme background mismatch for consistent text visibility
+// e.g., Canvas Size, Export Level, Convert to Vectors.
+
+DVGui--Separator {
+  alternate-background-color: @text-color;
+}
