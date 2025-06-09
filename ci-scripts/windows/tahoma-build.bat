@@ -10,13 +10,13 @@ IF NOT EXIST build mkdir build
 cd build
 
 REM Setup for local builds
-set MSVCVERSION="Visual Studio 16 2019"
-set BOOST_ROOT=C:\boost\boost_1_74_0
-set OPENCV_DIR=C:\opencv\451\build
+set MSVCVERSION="Visual Studio 17 2022"
+set BOOST_ROOT=C:\boost\boost_1_87_0
+set OPENCV_DIR=C:\opencv\4110\build
 set QT_PATH=C:\Qt\5.15.2_wintab\msvc2019_64
 
 REM These are effective when running from Actions
-IF EXIST C:\local\boost_1_74_0 set BOOST_ROOT=C:\local\boost_1_74_0
+IF EXIST C:\local\boost_1_87_0 set BOOST_ROOT=C:\local\boost_1_87_0
 IF EXIST C:\tools\opencv set OPENCV_DIR=C:\tools\opencv\build
 
 set WITH_WINTAB=Y
