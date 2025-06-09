@@ -18,9 +18,9 @@ copy /Y ..\..\thirdparty\libmypaint\dist\64\libjson-c-2.dll Tahoma2D
 copy /Y ..\..\thirdparty\libmypaint\dist\64\libmypaint-1-4-0.dll Tahoma2D
 
 IF EXIST C:\tools\opencv (
-   copy /Y "C:\tools\opencv\build\x64\vc14\bin\opencv_world451.dll" Tahoma2D
+   copy /Y "C:\tools\opencv\build\x64\vc16\bin\opencv_world4110.dll" Tahoma2D
 ) ELSE (
-   copy /Y "C:\opencv\451\build\x64\vc14\bin\opencv_world451.dll" Tahoma2D
+   copy /Y "C:\opencv\4110\build\x64\vc16\bin\opencv_world4110.dll" Tahoma2D
 )
 
 IF EXIST ..\..\thirdparty\canon\Header (
@@ -43,13 +43,13 @@ set QT_PATH=C:\Qt\5.15.2_wintab\msvc2019_64
 REM These are effective when running from Actions/Appveyor
 IF EXIST ..\..\thirdparty\qt\5.15.2_wintab\msvc2019_64 set QT_PATH=..\..\thirdparty\qt\5.15.2_wintab\msvc2019_64
 
-set VCINSTALLDIR="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC"
-IF EXIST "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC" set VCINSTALLDIR="C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC"
+set VCINSTALLDIR="C:\Program Files\Microsoft Visual Studio\2022\Community\VC"
+IF EXIST "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC" set VCINSTALLDIR="C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC"
 
 %QT_PATH%\bin\windeployqt.exe Tahoma2D\Tahoma2D.exe --opengl
 
-xcopy /Y /E /I %VCINSTALLDIR%\Redist\MSVC\14.29.30133\x64\Microsoft.VC142.CRT Tahoma2D
-xcopy /Y /E /I %VCINSTALLDIR%\Redist\MSVC\14.29.30133\x64\Microsoft.VC142.OpenMP Tahoma2D
+xcopy /Y /E /I %VCINSTALLDIR%\Redist\MSVC\14.42.34433\x64\Microsoft.VC143.CRT Tahoma2D
+xcopy /Y /E /I %VCINSTALLDIR%\Redist\MSVC\14.42.34433\x64\Microsoft.VC143.OpenMP Tahoma2D
 
 del /A- /S Tahoma2D\tahomastuff\*.gitkeep
 
