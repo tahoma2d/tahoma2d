@@ -20,7 +20,7 @@ public:
   UINT m_aut_spot_samples;
 
   int m_closingDistance;
-  double m_spotAngle;
+  double m_spotAngle;  // Half Value
   int m_inkIndex;
   int m_opacity;
   TRasterP m_raster;
@@ -555,7 +555,7 @@ void TAutocloser::Imp::findMeetingPoints(
   m_snb = sin(-alfa);
 
   std::vector<Segment> orientedEndpoints(endpoints.size());
-  for (i                       = 0; i < (int)endpoints.size(); i++)
+  for (i = 0; i < (int)endpoints.size(); i++)
     orientedEndpoints[i].first = endpoints[i];
 
   int size = -1;
@@ -596,7 +596,7 @@ bool TAutocloser::Imp::spotResearchTwoPoints(
   while (current < (int)endpoints.size() - 1) {
     found = 0;
     for (i = current + 1; i < (int)marks.size(); i++) marks[i] = false;
-    distance                                                   = 0;
+    distance = 0;
 
     while (!found && (distance <= sqrDistance) && !allMarked(marks, current)) {
       closerIndex = closerPoint(endpoints, marks, current);
@@ -720,7 +720,7 @@ bool TAutocloser::Imp::spotResearchOnePoint(
       Segment segment(endpoints[count].first, p);
       std::vector<Segment>::iterator it =
           std::find(closingSegments.begin(), closingSegments.end(), segment);
-      if (it == closingSegments.end()) {
+      if (it == closingSegments.end() && notInsidePath(endpoints[count].first, p)) {
         ret = true;
         drawInByteRaster(endpoints[count].first, p);
         closingSegments.push_back(Segment(endpoints[count].first, p));
@@ -1163,7 +1163,7 @@ return 0;
 
 TAutocloser::TAutocloser(const TRasterP &r, int distance, double angle,
                          int index, int opacity)
-    : m_imp(new Imp(r, distance, angle, index, opacity)) {}
+    : m_imp(new Imp(r, distance, angle/2, index, opacity)) {}
 
 //...............................
 
