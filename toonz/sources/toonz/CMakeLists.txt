@@ -1,4 +1,4 @@
-set(VERSION 1.5.2)
+set(VERSION 1.5.3)
 
 set(MOC_HEADERS
     aboutpopup.h
@@ -145,6 +145,7 @@ set(MOC_HEADERS
     xshbreadcrumbs.h
     alignmentpane.h
     tipspopup.h
+    gphotoeventlogpopup.h
 )
 
 set(HEADERS
@@ -397,6 +398,7 @@ set(SOURCES
     xshbreadcrumbs.cpp
     alignmentpane.cpp
     tipspopup.cpp
+    gphotoeventlogpopup.cpp
 )
 
 if(WITH_TRANSLATION)

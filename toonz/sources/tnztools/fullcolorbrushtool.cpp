@@ -64,6 +64,7 @@ TEnv::IntVar FullcolorModifierLockAlpha("FullcolorModifierLockAlpha", 0);
 TEnv::IntVar FullcolorModifierPaintBehind("FullcolorModifierPaintBehind", 0);
 TEnv::StringVar FullcolorBrushPreset("FullcolorBrushPreset", "<custom>");
 TEnv::IntVar FullcolorBrushSnapGrid("FullcolorBrushSnapGrid", 0);
+TEnv::IntVar FullcolorTiltSensitivity("FullcolorTiltSensitivity", 0);
 
 //----------------------------------------------------------------------------------
 
@@ -142,7 +143,9 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
     , m_notifier(0)
     , m_presetsLoaded(false)
     , m_firstTime(true)
-    , m_snapGrid("Grid", false) {
+    , m_snapGrid("Grid", false)
+    , m_tilt("Tilt", false)
+    , m_enabledTilt(false) {
   bind(TTool::RasterImage | TTool::EmptyTarget);
 
   m_thickness.setNonLinearSlider();
@@ -157,6 +160,7 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
   m_prop.bind(m_modifierPaintBehind);
   m_prop.bind(m_modifierLockAlpha);
   m_prop.bind(m_pressure);
+  m_prop.bind(m_tilt);
   m_prop.bind(m_snapGrid);
   m_prop.bind(m_preset);
 
@@ -166,6 +170,7 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
   m_modifierLockAlpha.setId("LockAlpha");
   m_pressure.setId("PressureSensitivity");
   m_snapGrid.setId("SnapGrid");
+  m_tilt.setId("TiltSensitivity");
 
   m_brushTimer.start();
 }
@@ -207,6 +212,7 @@ void FullColorBrushTool::updateTranslation() {
   m_modifierLockAlpha.setQStringName(tr("Lock Alpha"));
   m_modifierPaintBehind.setQStringName(tr("Paint Behind"));
   m_snapGrid.setQStringName(tr("Grid"));
+  m_tilt.setQStringName(tr("Tilt"));
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -389,6 +395,10 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
   }
   m_oldPressure = pressure;
 
+  // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
+  double tiltX = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
+  double tiltY = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
+
   m_tileSet   = new TTileSetFullColor(ras->getSize());
   m_tileSaver = new TTileSaverFullColor(ras, m_tileSet);
 
@@ -409,7 +419,7 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
   m_strokeRect.empty();
   m_strokeSegmentRect.empty();
   m_toonz_brush->beginStroke();
-  m_toonz_brush->strokeTo(point, pressure, restartBrushTimer());
+  m_toonz_brush->strokeTo(point, pressure, tiltX, tiltY, restartBrushTimer());
   TRect updateRect = m_strokeSegmentRect * ras->getBounds();
   if (!updateRect.isEmpty()) {
     TRaster32P sourceRas = m_modifierPaintBehind.getValue()
@@ -630,6 +640,10 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
   else
     pressure = m_enabledPressure ? e.m_pressure : 1.0;
 
+  // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
+  double tiltX = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
+  double tiltY = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
+
   TThickPoint thickPoint(point, pressure);
   std::vector<TThickPoint> pts;
   if (m_smooth.getValue() == 0) {
@@ -643,7 +657,8 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
   for (size_t i = 0; i < pts.size(); ++i) {
     const TThickPoint &thickPoint2 = pts[i];
     m_strokeSegmentRect.empty();
-    m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, brushTimer);
+    m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, tiltX, tiltY,
+                            brushTimer);
     TRect updateRect = m_strokeSegmentRect * ras->getBounds();
     if (!updateRect.isEmpty()) {
       TRaster32P sourceRas = m_modifierPaintBehind.getValue()
@@ -698,6 +713,9 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
   if (m_isStraight) {
     pressure = m_oldPressure;
   }
+  // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
+  double tiltX = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
+  double tiltY = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
 
   TThickPoint thickPoint(point, pressure);
   std::vector<TThickPoint> pts;
@@ -713,7 +731,8 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
   for (size_t i = 0; i < pts.size(); ++i) {
     const TThickPoint &thickPoint2 = pts[i];
     m_strokeSegmentRect.empty();
-    m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, brushTimer);
+    m_toonz_brush->strokeTo(thickPoint2, thickPoint2.thick, tiltX, tiltY,
+                            brushTimer);
     if (i == pts.size() - 1) m_toonz_brush->endStroke();
     TRect updateRect = m_strokeSegmentRect * ras->getBounds();
     if (!updateRect.isEmpty()) {
@@ -985,6 +1004,7 @@ bool FullColorBrushTool::onPropertyChanged(std::string propertyName) {
   FullcolorModifierLockAlpha   = m_modifierLockAlpha.getValue() ? 1 : 0;
   FullcolorModifierPaintBehind = m_modifierPaintBehind.getValue() ? 1 : 0;
   FullcolorBrushSnapGrid       = m_snapGrid.getValue() ? 1 : 0;
+  FullcolorTiltSensitivity     = m_tilt.getValue();
 
   if (m_preset.getValue() != CUSTOM_WSTR) {
     m_preset.setValue(CUSTOM_WSTR);
@@ -1042,6 +1062,7 @@ void FullColorBrushTool::loadPreset() {
     m_modifierEraser.setValue(preset.m_modifierEraser);
     m_modifierLockAlpha.setValue(preset.m_modifierLockAlpha);
     m_modifierPaintBehind.setValue(preset.m_modifierPaintBehind);
+    m_tilt.setValue(preset.m_tilt);
   } catch (...) {
   }
 }
@@ -1064,6 +1085,7 @@ void FullColorBrushTool::addPreset(QString name) {
   preset.m_modifierEraser      = m_modifierEraser.getValue();
   preset.m_modifierLockAlpha   = m_modifierLockAlpha.getValue();
   preset.m_modifierPaintBehind = m_modifierPaintBehind.getValue();
+  preset.m_tilt                = m_tilt.getValue();
 
   // Pass the preset to the manager
   m_presetsManager.addPreset(preset);
@@ -1106,6 +1128,7 @@ void FullColorBrushTool::loadLastBrush() {
   m_modifierLockAlpha.setValue(FullcolorModifierLockAlpha ? true : false);
   m_modifierPaintBehind.setValue(FullcolorModifierPaintBehind ? true : false);
   m_snapGrid.setValue(FullcolorBrushSnapGrid ? true : false);
+  m_tilt.setValue(FullcolorTiltSensitivity ? 1 : 0);
 }
 
 //------------------------------------------------------------------
@@ -1138,6 +1161,7 @@ void FullColorBrushTool::updateCurrentStyle() {
         std::max(m_thickness.getValue().second, m_minCursorThick);
     if (!m_enabledPressure) m_minCursorThick = m_maxCursorThick;
   }
+  m_enabledTilt = m_tilt.getValue();
 
   // if this function is called from onEnter(), the clipping rect will not be
   // set in order to update whole viewer.

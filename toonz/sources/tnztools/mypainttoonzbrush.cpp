@@ -190,14 +190,15 @@ void MyPaintToonzBrush::beginStroke() {
 
 void MyPaintToonzBrush::endStroke() {
   if (!reset) {
-    strokeTo(TPointD(current.x, current.y), current.pressure, 0.f);
+    strokeTo(TPointD(current.x, current.y), current.pressure, current.tiltX,
+             current.tiltY, 0.f);
     beginStroke();
   }
 }
 
 void MyPaintToonzBrush::strokeTo(const TPointD &point, double pressure,
-                                 double dtime) {
-  Params next(point.x, point.y, pressure, 0.0);
+                                 double tiltX, double tiltY, double dtime) {
+  Params next(point.x, point.y, pressure, tiltX, tiltY, 0.0);
 
   std::vector<TPointD> prevPoints, currPoints, nextPoints;
 
@@ -253,10 +254,11 @@ void MyPaintToonzBrush::strokeTo(const TPointD &point, double pressure,
 
   for (int i = 0; i < nextPoints.size(); i++) {
     Params prevPt(prevPoints[i].x, prevPoints[i].y, previous.pressure,
-                  previous.time);
+                  previous.tiltX, previous.tiltY, previous.time);
     Params currPt(currPoints[i].x, currPoints[i].y, current.pressure,
-                  current.time);
-    Params nextPt(nextPoints[i].x, nextPoints[i].y, next.pressure, next.time);
+                  current.tiltX, current.tiltY, current.time);
+    Params nextPt(nextPoints[i].x, nextPoints[i].y, next.pressure, next.tiltX,
+                  next.tiltY, next.time);
 
     // set initial segment
     Segment stack[maxLevel + 1];
@@ -279,8 +281,8 @@ void MyPaintToonzBrush::strokeTo(const TPointD &point, double pressure,
         segment = sub;
       } else {
         brushes[i].strokeTo(m_mypaintSurface, segment->p2.x, segment->p2.y,
-                            segment->p2.pressure, 0.f, 0.f,
-                            segment->p2.time - p0.time);
+                            segment->p2.pressure, segment->p2.tiltX,
+                            segment->p2.tiltY, segment->p2.time - p0.time);
         if (segment == stack) break;
         p0 = segment->p2;
         --segment;
