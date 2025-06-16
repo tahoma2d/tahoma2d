@@ -70,6 +70,9 @@
 #include <QCoreApplication>
 #include <QMainWindow>
 #include <QApplication>
+#include <QStandardPaths>
+#include <QDir>
+#include <QTextStream>
 
 //***********************************************************************************
 //    FileBrowserPopup  implementation
@@ -1977,6 +1980,14 @@ LoadColorModelPopup::LoadColorModelPopup()
 }
 
 //--------------------------------------------------------------
+InstallShaderPopup::InstallShaderPopup()
+  : FileBrowserPopup(tr("Import A Shader"), Options(), "", new QFrame(0)) {
+    setOkText(tr("Load"));
+
+    addFilterType("tdgl");
+  }
+
+//--------------------------------------------------------------
 
 void LoadColorModelPopup::onFilePathsSelected(
     const std::set<TFilePath> &paths) {
@@ -2017,6 +2028,8 @@ bool LoadColorModelPopup::execute() {
     DVGui::error(QObject::tr("Cannot load Color Model in current palette."));
     return false;
   }
+
+
 
   PaletteCmd::ColorModelLoadingConfiguration config;
 
@@ -2070,6 +2083,20 @@ bool LoadColorModelPopup::execute() {
   return true;
 }
 
+//--------------------------------------------------------------
+
+bool InstallShaderPopup::execute() {
+  auto tpath = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
+
+  QDir pathDir(tpath);
+
+  
+  
+  
+
+  return true;
+    
+  }
 //--------------------------------------------------------------
 
 void LoadColorModelPopup::showEvent(QShowEvent *e) {
@@ -2350,6 +2377,9 @@ OpenPopupCommandHandler<SavePaletteAsPopup> savePalettePopupCommand(
     MI_SavePaletteAs);
 OpenPopupCommandHandler<LoadColorModelPopup> loadColorModelPopupCommand(
     MI_LoadColorModel);
+OpenPopupCommandHandler<InstallShaderPopup> importShaderFilePopupCommand(
+    MI_ImportShaderFile);
+//Add DeleteShaderPopup
 OpenPopupCommandHandler<ImportMagpieFilePopup> importMagpieFilePopupCommand(
     MI_ImportMagpieFile);
 

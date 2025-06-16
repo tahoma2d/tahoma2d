@@ -14,6 +14,9 @@ project(Tahoma2D)
 # list of var-names
 set(_init_vars)
 
+
+
+
 #-----------------------------------------------------------------------------
 # Select build target
 set(BUILD_TARGET_WIN       OFF)
@@ -228,6 +231,7 @@ elseif(BUILD_ENV_UNIXLIKE)
     set(CMAKE_CXX_STANDARD 17)
 
     find_package(Qt5Widgets)
+    find_package(KF5Archive ${KF_VERSION} REQUIRED)
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
     if (NOT (CMAKE_CXX_COMPILER_ID STREQUAL "Clang"))

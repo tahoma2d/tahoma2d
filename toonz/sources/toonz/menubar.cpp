@@ -326,6 +326,10 @@ void TopBar::loadMenubar() {
   fileMenu->addSeparator();
   addMenuItem(fileMenu, MI_LoadColorModel);
   fileMenu->addSeparator();
+  QMenu *shadersInstallMenu = fileMenu->addMenu(tr("Install Or Delete Shader")); {
+    addMenuItem(shadersInstallMenu, MI_ImportShaderFile);
+    addMenuItem(shadersInstallMenu, MI_DeleteShader);
+  }
   QMenu *projectManagementMenu = fileMenu->addMenu(tr("Project Management"));
   {
     addMenuItem(projectManagementMenu, MI_NewProject);

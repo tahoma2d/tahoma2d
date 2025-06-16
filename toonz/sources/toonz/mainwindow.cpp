@@ -1882,6 +1882,10 @@ void MainWindow::defineActions() {
   createMenuFileAction(MI_LoadColorModel, QT_TR_NOOP("&Load Color Model..."),
                        "", "load_colormodel",
                        tr("Load an image as a color guide."));
+  createMenuFileAction(MI_ImportShaderFile, QT_TR_NOOP("&Import Shader File"),
+                      "","", tr("Import A Shader To Use For Visual Effects Via OpenGL"));
+  createMenuFileAction(MI_DeleteShader, QT_TR_NOOP("&Delete Installed Shader"),
+                      "","",tr("Remove And Delete An Already Installed Shader."));
   createMenuFileAction(MI_ImportMagpieFile,
                        QT_TR_NOOP("&Import Toonz Lip Sync File..."), "",
                        "dialogue_import",

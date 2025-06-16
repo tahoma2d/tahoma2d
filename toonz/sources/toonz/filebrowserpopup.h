@@ -400,6 +400,16 @@ protected slots:
   void onFilePathsSelected(const std::set<TFilePath> &paths);
 };
 
+//----------------------------------------------------------------------------
+class InstallShaderPopup final : public FileBrowserPopup {
+  Q_OBJECT
+
+  public:
+    InstallShaderPopup();
+
+    bool execute() override;
+};
+
 //-----------------------------------------------------------------------------
 
 class ImportMagpieFilePopup final : public FileBrowserPopup {

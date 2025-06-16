@@ -42,6 +42,8 @@
 #define MI_OverwritePalette "MI_OverwritePalette"
 #define MI_SaveAsDefaultPalette "MI_SaveAsDefaultPalette"
 #define MI_LoadColorModel "MI_LoadColorModel"
+#define MI_ImportShaderFile "MI_ImportShaderFile"
+#define MI_DeleteShader "MI_DeleteShader"
 #define MI_ImportMagpieFile "MI_ImportMagpieFile"
 #define MI_NewNoteLevel "MI_NewNoteLevel"
 #define MI_RemoveEmptyColumns "MI_RemoveEmptyColumns"
