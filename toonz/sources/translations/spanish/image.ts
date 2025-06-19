@@ -6,17 +6,17 @@
     <message>
         <location filename="../../image/ffmpeg/tiio_apng.cpp" line="225"/>
         <source>Scale</source>
-        <translation type="unfinished">Escala</translation>
+        <translation>Escala</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_apng.cpp" line="226"/>
         <source>Looping</source>
-        <translation type="unfinished">Ciclo</translation>
+        <translation>Cíclico</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_apng.cpp" line="227"/>
         <source>Write as .png</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar como .png</translation>
     </message>
 </context>
 <context>
@@ -37,77 +37,77 @@
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="290"/>
         <source>Bits Per Pixel</source>
-        <translation type="unfinished">Bits por píxel</translation>
+        <translation>Bits por píxel</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="292"/>
         <source>48(RGB Half Float)</source>
-        <translation type="unfinished"></translation>
+        <translation>48 (color decimal medio)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="293"/>
         <source>64(RGBA Half Float)</source>
-        <translation type="unfinished"></translation>
+        <translation>64 (color + alfa decimal medio)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="294"/>
         <source>96(RGB Float)</source>
-        <translation type="unfinished"></translation>
+        <translation>96 (color decimal)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="295"/>
         <source>128(RGBA Float)</source>
-        <translation type="unfinished"></translation>
+        <translation>128 (color + alfa decimal)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="299"/>
         <source>Compression Type</source>
-        <translation type="unfinished">Tipo de compresión</translation>
+        <translation>Tipo de compresión</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="301"/>
         <source>No compression</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin compresión</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="304"/>
         <source>Run Length Encoding (RLE)</source>
-        <translation type="unfinished"></translation>
+        <translation>Compresión Run Length (RLE)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="307"/>
         <source>ZIP compression per Scanline (ZIPS)</source>
-        <translation type="unfinished"></translation>
+        <translation>Compresión ZIP por línea de barrido (ZIPS)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="310"/>
         <source>ZIP compression per scanline band (ZIP)</source>
-        <translation type="unfinished"></translation>
+        <translation>Compresión ZIP por banda de línea de barrido (ZIP)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="313"/>
         <source>PIZ-based wavelet compression (PIZ)</source>
-        <translation type="unfinished"></translation>
+        <translation>Compresión de ondículas basada en PIZ (PIZ)</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="315"/>
         <source>Storage Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo de almacenamiento</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="316"/>
         <source>Scan-line based</source>
-        <translation type="unfinished"></translation>
+        <translation>Basado en líneas de barrido</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="317"/>
         <source>Tile based</source>
-        <translation type="unfinished"></translation>
+        <translation>Basado en celdas</translation>
     </message>
     <message>
         <location filename="../../image/exr/tiio_exr.cpp" line="319"/>
         <source>Color Space Gamma</source>
-        <translation type="unfinished"></translation>
+        <translation>Gama del espacio de color</translation>
     </message>
 </context>
 <context>
@@ -115,12 +115,12 @@
     <message>
         <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="256"/>
         <source>Quality</source>
-        <translation type="unfinished">Calidad</translation>
+        <translation>Calidad</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_ff_mov.cpp" line="257"/>
         <source>Scale</source>
-        <translation type="unfinished">Escala</translation>
+        <translation>Escala</translation>
     </message>
 </context>
 <context>
@@ -128,67 +128,67 @@
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="359"/>
         <source>Global Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta global</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="360"/>
         <source>Global Palette + Sierra Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta global + difuminado Sierra</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="361"/>
         <source>Global Palette + Bayer2 Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta global + difuminado Bayer 2</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="362"/>
         <source>Global Palette + Bayer1 Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta global + difuminado Bayer 1</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="363"/>
         <source>Diff Palette</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta diferencial</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="364"/>
         <source>Diff Palette + Sierra Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta diferencial + difuminado Sierra</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="365"/>
         <source>Diff Palette + Bayer2 Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta diferencial + difuminado Bayer 2</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="366"/>
         <source>Diff Palette + Bayer1 Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta diferencial + difuminado Bayer 1</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="367"/>
         <source>New Pal Per Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta por fotograma</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="368"/>
         <source>New Pal Per Frame + Sierra Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta por fotograma + difuminado Sierra</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="369"/>
         <source>New Pal Per Frame + Bayer2 Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta por fotograma + difuminado Bayer 2</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="370"/>
         <source>New Pal Per Frame + Bayer1 Dither</source>
-        <translation type="unfinished"></translation>
+        <translation>Paleta por fotograma + difuminado Bayer 1</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="371"/>
         <source>Opaque, Dither, 256 Colors Only</source>
-        <translation type="unfinished"></translation>
+        <translation>Opaco, difuminado, sólo 256 colores</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="384"/>
@@ -208,12 +208,12 @@
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="387"/>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_gif.cpp" line="388"/>
         <source>Max Colors</source>
-        <translation type="unfinished"></translation>
+        <translation>Colores máximos</translation>
     </message>
 </context>
 <context>
@@ -253,7 +253,7 @@
     <message>
         <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="196"/>
         <source>FFmpeg returned error-code: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Código de error devuelto por FFmpeg: %1</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_ffmpeg.cpp" line="184"/>
@@ -493,12 +493,12 @@ intentar aumentar el tiempo de espera en las Preferencias.</translation>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="738"/>
         <source>32(RGBA)</source>
-        <translation type="unfinished"></translation>
+        <translation>32 (color + alfa)</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="739"/>
         <source>64(RGBA)</source>
-        <translation type="unfinished"></translation>
+        <translation>64 (color + alfa)</translation>
     </message>
     <message>
         <location filename="../../image/tif/tiio_tif.cpp" line="740"/>
