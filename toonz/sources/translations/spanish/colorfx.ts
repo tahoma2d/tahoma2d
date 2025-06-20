@@ -24,23 +24,24 @@
     <name>FlowLineStrokeStyle</name>
     <message>
         <source>Density</source>
-        <translation type="unfinished">Densidad</translation>
+        <translatorcomment>	</translatorcomment>
+        <translation>Densidad</translation>
     </message>
     <message>
         <source>Extension</source>
-        <translation type="unfinished"></translation>
+        <translation>Extender</translation>
     </message>
     <message>
         <source>Width Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Escalar ancho</translation>
     </message>
     <message>
         <source>Straighten Ends</source>
-        <translation type="unfinished"></translation>
+        <translation>Enderezar extremos</translation>
     </message>
     <message>
         <source>Flow Line</source>
-        <translation type="unfinished"></translation>
+        <translation>Línea de flujo</translation>
     </message>
 </context>
 <context>

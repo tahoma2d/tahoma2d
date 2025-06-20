@@ -5,174 +5,174 @@
     <name>CenterlineVectorizer</name>
     <message>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="unfinished">No es posible vectorizar un nivel %1</translation>
+        <translation>No es posible vectorizar un nivel %1</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="unfinished">No es posible vectorizar un nivel sin fotogramas</translation>
+        <translation>No es posible vectorizar un nivel sin fotogramas</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="unfinished">No es posible vectorizar una imagen %1</translation>
+        <translation>No es posible vectorizar una imagen %1</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="unfinished">Argumento erróneo (%1): debería ser una imagen o un nivel</translation>
+        <translation>Argumento erróneo (%1): debería ser una imagen o un nivel</translation>
     </message>
 </context>
 <context>
     <name>FilePath</name>
     <message>
         <source>&quot;%1&quot;</source>
-        <translation type="unfinished">&quot;%1&quot;</translation>
+        <translation>&quot;%1&quot;</translation>
     </message>
     <message>
         <source>can&apos;t concatenate an absolute path : %1</source>
-        <translation type="unfinished">no es posible concatenar una ruta absoluta: %1</translation>
+        <translation>no es posible concatenar una ruta absoluta: %1</translation>
     </message>
     <message>
         <source>%1 is not a directory</source>
-        <translation type="unfinished">%1 no es un directorio</translation>
+        <translation>%1 no es una carpeta</translation>
     </message>
     <message>
         <source>can&apos;t read directory %1</source>
-        <translation type="unfinished">no es posible leer el directorio %1</translation>
+        <translation>no es posible leer la carpeta %1</translation>
     </message>
 </context>
 <context>
     <name>Image</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="unfinished">El archivo %1 no existe</translation>
+        <translation>El archivo %1 no existe</translation>
     </message>
     <message>
         <source>Loaded first frame of %1</source>
-        <translation type="unfinished">Se cargó el primer fotograma de %1</translation>
+        <translation>Se cargó el primer fotograma de %1</translation>
     </message>
     <message>
         <source>Unexpected error while reading image</source>
-        <translation type="unfinished">Error inesperado al leer la imagen</translation>
+        <translation>Error inesperado al leer la imagen</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="unfinished">Tipo de archivo no reconocido:</translation>
+        <translation>Tipo de archivo no reconocido:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 image to this file type : %2</source>
-        <translation type="unfinished">No es posible guardar una imagen %1 en este tipo de archivo: %2</translation>
+        <translation>No es posible guardar una imagen %1 en este tipo de archivo: %2</translation>
     </message>
     <message>
         <source>Unexpected error while writing image</source>
-        <translation type="unfinished">Error inesperado al escribir la imagen</translation>
+        <translation>Error inesperado al escribir la imagen</translation>
     </message>
 </context>
 <context>
     <name>ImageBuilder</name>
     <message>
         <source>Bad argument (%1): should be &apos;Raster&apos; or ToonzRaster&apos;</source>
-        <translation type="unfinished">Argumento erróneo (%1): debería ser &apos;Raster&apos; o &apos;ToonzRaster&apos;</translation>
+        <translation>Argumento erróneo (%1): debería ser &apos;Raster&apos; o &apos;ToonzRaster&apos;</translation>
     </message>
     <message>
         <source>ImageBuilder(%1 image)</source>
-        <translation type="unfinished">Constructor de imágenes (imagen %1)</translation>
+        <translation>Constructor de imágenes (imagen %1)</translation>
     </message>
     <message>
         <source>%1 : %2</source>
-        <translation type="unfinished">%1 : %2</translation>
+        <translation>%1 : %2</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a Transformation</source>
-        <translation type="unfinished">Argumento erróneo (%1): debería ser una transformación</translation>
+        <translation>Argumento erróneo (%1): debería ser una transformación</translation>
     </message>
 </context>
 <context>
     <name>Level</name>
     <message>
         <source>%1 frames</source>
-        <translation type="unfinished">%1 fotogramas</translation>
+        <translation>%1 fotogramas</translation>
     </message>
     <message>
         <source>Bad argument (%1). It should be FilePath or string</source>
-        <translation type="unfinished">Argumento erróneo (%1). Debería ser una ruta de archivo o una cadena</translation>
+        <translation>Argumento erróneo (%1). Debería ser una ruta de archivo o una cadena</translation>
     </message>
     <message>
         <source>Exception loading level (%1)</source>
-        <translation type="unfinished">Excepción al cargar un nivel (%1)</translation>
+        <translation>Excepción al cargar un nivel (%1)</translation>
     </message>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="unfinished">El archivo %1 no existe</translation>
+        <translation>El archivo %1 no existe</translation>
     </message>
     <message>
         <source>File %1 is unsupported</source>
-        <translation type="unfinished">El archivo %1 no es soportado</translation>
+        <translation>El archivo %1 no es soportado</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation type="unfinished">Excepción al leer %1</translation>
+        <translation>Excepción al leer %1</translation>
     </message>
     <message>
         <source>Can&apos;t save an empty level</source>
-        <translation type="unfinished">No es posible guardar un nivel vacío</translation>
+        <translation>No es posible guardar un nivel vacío</translation>
     </message>
     <message>
         <source>Unrecognized file type :</source>
-        <translation type="unfinished">Tipo de archivo no reconocido:</translation>
+        <translation>Tipo de archivo no reconocido:</translation>
     </message>
     <message>
         <source>Can&apos;t save a %1 level to this file type : %2</source>
-        <translation type="unfinished">No es posible guardar un nivel %1 en este tipo de archivo: %2</translation>
+        <translation>No es posible guardar un nivel %1 en este tipo de archivo: %2</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation type="unfinished">Excepción al escribir %1</translation>
+        <translation>Excepción al escribir %1</translation>
     </message>
     <message>
         <source>frame index (%1) must be a number</source>
-        <translation type="unfinished">el índice de fotogramas (%1) debe ser numérico</translation>
+        <translation>el identificador de fotogramas (%1) debe ser numérico</translation>
     </message>
     <message>
         <source>frame index (%1) is out of range (0-%2)</source>
-        <translation type="unfinished">el índice de fotogramas (%1) se encuentra fuera de rango (0-%2)</translation>
+        <translation>el identificador de fotogramas (%1) se encuentra fuera de rango (0-%2)</translation>
     </message>
     <message>
         <source>second argument (%1) is not an image</source>
-        <translation type="unfinished">el segundo argumento (%1) no es una imagen</translation>
+        <translation>el segundo argumento (%1) no es una imagen</translation>
     </message>
     <message>
         <source>can not insert a %1 image into a level</source>
-        <translation type="unfinished">no es posible insertar una imagen %1 en un nivel</translation>
+        <translation>no es posible insertar una imagen %1 en un nivel</translation>
     </message>
     <message>
         <source>can not insert a %1 image to a %2 level</source>
-        <translation type="unfinished">no es posible insertar una imagen %1 en un nivel %2</translation>
+        <translation>no es posible insertar una imagen %1 en un nivel %2</translation>
     </message>
     <message>
         <source>Unhandled exception encountered</source>
-        <translation type="unfinished"></translation>
+        <translation>Se encontró una excepción no prevista</translation>
     </message>
 </context>
 <context>
     <name>OutlineVectorizer</name>
     <message>
         <source>Can&apos;t vectorize a %1 level</source>
-        <translation type="unfinished">No es posible vectorizar un nivel %1</translation>
+        <translation>No es posible vectorizar un nivel %1</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a level with no frames</source>
-        <translation type="unfinished">No es posible vectorizar un nivel sin fotogramas</translation>
+        <translation>No es posible vectorizar un nivel sin fotogramas</translation>
     </message>
     <message>
         <source>Can&apos;t vectorize a %1 image</source>
-        <translation type="unfinished">No es posible vectorizar una imagen %1</translation>
+        <translation>No es posible vectorizar una imagen %1</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be an Image or a Level</source>
-        <translation type="unfinished">Argumento erróneo (%1): debería ser una imagen o un nivel</translation>
+        <translation>Argumento erróneo (%1): debería ser una imagen o un nivel</translation>
     </message>
     <message>
         <source>Invalid color : </source>
-        <translation type="unfinished">Color inválido: </translation>
+        <translation>Color inválido: </translation>
     </message>
 </context>
 <context>
@@ -236,7 +236,7 @@
     </message>
     <message>
         <source>Vectorization failed</source>
-        <translation>Falló la vectorización</translation>
+        <translation>Error al vectorizar</translation>
     </message>
     <message>
         <source>Argument doesn&apos;t look like a file path : %1</source>
@@ -260,7 +260,7 @@
     </message>
     <message>
         <source>The autocentering failed on the current drawing.</source>
-        <translation>El centrado automático falló en el dibujo actual</translation>
+        <translation>Error de centrado automático en el dibujo actual</translation>
     </message>
     <message>
         <source>New Camera  %1</source>
@@ -488,11 +488,11 @@
     </message>
     <message>
         <source>Edit Shear X</source>
-        <translation>Editar inclinación X</translation>
+        <translation>Editar sesgo X</translation>
     </message>
     <message>
         <source>Edit Shear Y</source>
-        <translation>Editar inclinación Y</translation>
+        <translation>Editar sesgo Y</translation>
     </message>
     <message>
         <source>%1  %2  Frame : %3</source>
@@ -613,154 +613,155 @@
     <message>
         <source>Failed to save the following resources:
 </source>
-        <translation>Falla al guardar los siguientes recursos:
+        <translation>Error al guardar los siguientes recursos:
 </translation>
     </message>
     <message>
         <source>and %1 more item(s).</source>
-        <translation type="unfinished"></translation>
+        <translation>y %1 elemento(s) más.</translation>
     </message>
     <message>
         <source>Move X</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover en X</translation>
     </message>
     <message>
         <source>Move Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover en Y</translation>
     </message>
     <message>
         <source>Failed to save palette.</source>
-        <translation type="unfinished"></translation>
+        <translation>Error al guardar paleta.</translation>
     </message>
     <message>
         <source>Orange</source>
-        <translation type="unfinished"></translation>
+        <translation>Naranja</translation>
     </message>
     <message>
         <source>Yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>Amarillo</translation>
     </message>
     <message>
         <source>Light Green</source>
-        <translation type="unfinished"></translation>
+        <translation>Verde claro</translation>
     </message>
     <message>
         <source>Light Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Azul claro</translation>
     </message>
     <message>
         <source>Dark Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Azul oscuro</translation>
     </message>
     <message>
         <source>Purple</source>
-        <translation type="unfinished"></translation>
+        <translation>Morado</translation>
     </message>
     <message>
         <source>Pink</source>
-        <translation type="unfinished"></translation>
+        <translation>Rosa</translation>
     </message>
     <message>
         <source>Dark Pink</source>
-        <translation type="unfinished"></translation>
+        <translation>Rosa oscuro</translation>
     </message>
     <message>
         <source>White</source>
-        <translation type="unfinished"></translation>
+        <translation>Blanco</translation>
     </message>
     <message>
         <source>Load From File</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargar desde archivo</translation>
     </message>
     <message>
         <source>Use As Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>Usar como patrón</translation>
     </message>
     <message>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation>Posición</translation>
     </message>
     <message>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Escala</translation>
     </message>
     <message>
         <source>Rotation(degrees)</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotación (grados)</translation>
     </message>
     <message>
         <source>X displ</source>
-        <translation type="unfinished"></translation>
+        <translation>Despl X</translation>
     </message>
     <message>
         <source>Y displ</source>
-        <translation type="unfinished"></translation>
+        <translation>Despl Y</translation>
     </message>
     <message>
         <source>It is not possible to load file %1.</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>No es posible cargar el archivo %1.</translatorcomment>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>Rasterizer</name>
     <message>
         <source>Expected a vector image: %1</source>
-        <translation type="unfinished">Se esperaba una imagen vectorial: %1</translation>
+        <translation>Se esperaba una imagen vectorial: %1</translation>
     </message>
     <message>
         <source>Expected a vector level: %1</source>
-        <translation type="unfinished">Se esperaba un nivel vectorial: %1</translation>
+        <translation>Se esperaba un nivel vectorial: %1</translation>
     </message>
     <message>
         <source>Argument must be a vector level or image : </source>
-        <translation type="unfinished">El argumento debe ser un nivel o imagen vectorial: </translation>
+        <translation>El argumento debe ser un nivel o imagen vectorial: </translation>
     </message>
     <message>
         <source>%1 has no palette</source>
-        <translation type="unfinished">%1 no contiene una paleta</translation>
+        <translation>%1 no contiene una paleta</translation>
     </message>
 </context>
 <context>
     <name>Scene</name>
     <message>
         <source>File %1 doesn&apos;t exist</source>
-        <translation type="unfinished">El archivo %1 no existe</translation>
+        <translation>El archivo %1 no existe</translation>
     </message>
     <message>
         <source>Exception reading %1</source>
-        <translation type="unfinished">Excepción al leer %1</translation>
+        <translation>Excepción al leer %1</translation>
     </message>
     <message>
         <source>Exception writing %1</source>
-        <translation type="unfinished">Excepción al escribir %1</translation>
+        <translation>Excepción al escribir %1</translation>
     </message>
     <message>
         <source>Bad level type (%1): must be Vector,Raster or ToonzRaster</source>
-        <translation type="unfinished">Tipo de nivel erróneo (%1): debe ser vectorial, imagen o ToonzRaster</translation>
+        <translation>Tipo de nivel erróneo (%1): debe ser vectorial, imagen o ToonzRaster</translation>
     </message>
     <message>
         <source>Can&apos;t add the level: name(%1) is already used</source>
-        <translation type="unfinished">No es posible agregar el nivel: el nombre (%1) ya se encuentra en uso</translation>
+        <translation>No es posible agregar el nivel: el nombre (%1) ya se encuentra en uso</translation>
     </message>
     <message>
         <source>Can&apos;t load this kind of file as a level : %1</source>
-        <translation type="unfinished">No es posible cargar este tipo de archivo como un nivel: %1</translation>
+        <translation>No es posible cargar este tipo de archivo como un nivel: %1</translation>
     </message>
     <message>
         <source>Could not load level %1</source>
-        <translation type="unfinished">No fue posible cargar el nivel %1</translation>
+        <translation>No fue posible cargar el nivel %1</translation>
     </message>
     <message>
         <source>Level is not included in the scene : %1</source>
-        <translation type="unfinished">El nivel no se encuentra incluido en la escena: %1</translation>
+        <translation>El nivel no se encuentra incluido en la escena: %1</translation>
     </message>
     <message>
         <source>%1 : Expected a Level instance or a level name</source>
-        <translation type="unfinished">%1: Se esperaba una instancia de nivel o un nombre de nivel</translation>
+        <translation>%1: Se esperaba una instancia de nivel o un nombre de nivel</translation>
     </message>
     <message>
         <source>Level &apos;%1&apos; is not included in the scene</source>
-        <translation type="unfinished">El nivel &apos;%1&apos; no se encuentra incluido en la escena</translation>
+        <translation>El nivel &apos;%1&apos; no se encuentra incluido en la escena</translation>
     </message>
 </context>
 <context>
@@ -1045,46 +1046,46 @@
     <name>ToonzRasterConverter</name>
     <message>
         <source>Can&apos;t convert a %1 level</source>
-        <translation type="unfinished">No es posible convertir un nivel %1</translation>
+        <translation>No es posible convertir un nivel %1</translation>
     </message>
     <message>
         <source>Can&apos;t convert a level with no frames</source>
-        <translation type="unfinished">No es posible convertir un nivel sin fotogramas</translation>
+        <translation>No es posible convertir un nivel sin fotogramas</translation>
     </message>
     <message>
         <source>Can&apos;t convert a %1 image</source>
-        <translation type="unfinished">No es posible convertir una imagen %1</translation>
+        <translation>No es posible convertir una imagen %1</translation>
     </message>
     <message>
         <source>Bad argument (%1): should be a raster Level or a raster Image</source>
-        <translation type="unfinished">Argumento erróneo (%1): debería ser un nivel de imagen o una imagen</translation>
+        <translation>Argumento erróneo (%1): debería ser un nivel de imagen o una imagen</translation>
     </message>
 </context>
 <context>
     <name>Transform</name>
     <message>
         <source>Identity</source>
-        <translation type="unfinished">Identidad</translation>
+        <translation>Identidad</translation>
     </message>
     <message>
         <source>Translation(%1,%2)</source>
-        <translation type="unfinished">Traslación(%1, %2)</translation>
+        <translation>Traslación(%1, %2)</translation>
     </message>
     <message>
         <source>Rotation(%1)</source>
-        <translation type="unfinished">Rotación(%1)</translation>
+        <translation>Rotación(%1)</translation>
     </message>
     <message>
         <source>Scale(%1%)</source>
-        <translation type="unfinished">Escala(%1%)</translation>
+        <translation>Escala(%1%)</translation>
     </message>
     <message>
         <source>Scale(%1%, %2%)</source>
-        <translation type="unfinished">Escala(%1%, %2%)</translation>
+        <translation>Escala(%1%, %2%)</translation>
     </message>
     <message>
         <source>Transform(%1, %2, %3;  %4, %5, %6)</source>
-        <translation type="unfinished">Transformación(%1, %2, %3;  %4, %5, %6)</translation>
+        <translation>Transformación(%1, %2, %3;  %4, %5, %6)</translation>
     </message>
 </context>
 </TS>
