@@ -47,7 +47,7 @@
     </message>
     <message>
         <source>Unhandled exception encountered: Skipping frame.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se encontró una excepción no controlada: Omitiendo fotograma.</translation>
     </message>
 </context>
 <context>
@@ -87,26 +87,26 @@
     <name>Tiio::BmpWriterProperties</name>
     <message>
         <source>Bits Per Pixel</source>
-        <translation type="unfinished">Bits por píxel</translation>
+        <translation>Bits por píxel</translation>
     </message>
     <message>
         <source>24 bits</source>
-        <translation type="unfinished">24 bits</translation>
+        <translation>24 bits</translation>
     </message>
     <message>
         <source>8 bits (Greyscale)</source>
-        <translation type="unfinished">8 bits (escala de grises)</translation>
+        <translation>8 bits (escala de grises)</translation>
     </message>
 </context>
 <context>
     <name>Tiio::JpgWriterProperties</name>
     <message>
         <source>Quality</source>
-        <translation type="unfinished">Calidad</translation>
+        <translation>Calidad</translation>
     </message>
     <message>
         <source>Smoothing</source>
-        <translation type="unfinished">Suavizado</translation>
+        <translation>Suavizado</translation>
     </message>
 </context>
 </TS>
