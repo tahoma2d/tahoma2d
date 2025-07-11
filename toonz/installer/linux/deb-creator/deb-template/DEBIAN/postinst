@@ -41,6 +41,13 @@ for user_home in /home/*; do
 
   echo "Processing user: $username"
 
+  # Create the directory if it doesn't exist
+  if [ ! -d "$USER_TAHOMA" ]; then
+    echo "Directory $USER_TAHOMA does not exist. Creating it..."
+    mkdir -p "$USER_TAHOMA"
+    chown "$username:$username" "$USER_TAHOMA"
+  fi
+
   # Backup sandbox and profiles directories
   mkdir -p "$TMP_RESCUE"
   if [ -d "$USER_TAHOMA/tahomastuff/sandbox" ]; then
