@@ -1,81 +1,100 @@
 #!/bin/bash
-set -e  
+set -e
 
-# Function to adjust permissions of directories and files
-adjust_permissions() {
-  local dir=$1
-  if [ -d "$dir" ]; then
-    echo "Adjusting permissions in: $dir"
-    find "$dir" -type d ! -perm 755 -exec chmod 755 {} +
-    find "$dir" -type f ! -perm 644 -exec chmod 644 {} +
-  else
-    echo "Directory $dir does not exist."
-  fi
-}
-
-# Function to add alias to each user's .bashrc
-add_alias_to_bashrc() {
-    local bashrc_file="$1/.bashrc"
-    local alias_command="alias tahoma2d='tahoma2d; tahoma-permissions'"
-
-    if [ ! -f "$bashrc_file" ]; then
-        echo "Creating $bashrc_file..."
-        touch "$bashrc_file"
-    fi
-
-    if ! grep -qF "$alias_command" "$bashrc_file"; then
-        echo "Adding alias to .bashrc in $bashrc_file..."
-        echo "$alias_command" >> "$bashrc_file"
-    fi
-}
-
-# Copy files from /etc/skel and adjust permissions
 SRC="/etc/skel/.local/share/Tahoma2D"
 if [ ! -d "$SRC" ]; then
   echo "Source directory $SRC does not exist. Aborting."
   exit 1
 fi
 
-for user_dir in /home/*; do
-  if [ -d "$user_dir" ] && [ -f "$user_dir/.bashrc" ]; then  # Verify if it is a valid user directory
-    USER_TAHOMA_DIR="$user_dir/.local/share/Tahoma2D"
-    LIBRARY_DIR="$USER_TAHOMA_DIR/tahomastuff/library"
-
-    echo "Processing $USER_TAHOMA_DIR..."
-
-    mkdir -p "$USER_TAHOMA_DIR"
-    [ -d "$LIBRARY_DIR" ] && rm -rf "$LIBRARY_DIR"/*
-    cp -ru "$SRC/"* "$USER_TAHOMA_DIR/"
-    chown -R "$(basename "$user_dir")":"$(basename "$user_dir")" "$USER_TAHOMA_DIR"
-
-    # Add alias to .bashrc
-    add_alias_to_bashrc "$user_dir"
-
-    # Adjust permissions
-    adjust_permissions "$USER_TAHOMA_DIR"
-    for file in AppRun usr/bin/Tahoma2D usr/bin/tahoma2d usr/bin/lzocompress usr/bin/lzodecompress \
-                 usr/bin/tcleanup usr/bin/tcomposer usr/bin/tfarmcontroller usr/bin/tconverter \
-                 usr/bin/tfarmserver rhubarb/rhubarb ffmpeg/ffprobe; do
-        [ -f "$USER_TAHOMA_DIR/$file" ] && chmod +x "$USER_TAHOMA_DIR/$file"
-    done
-    find "$USER_TAHOMA_DIR/ffmpeg" -type f ! -perm /u+x -exec chmod +x {} +
-  else
-    echo "Skipping $user_dir: not a valid user directory."
+# Adjust permissions of files and directories
+adjust_permissions() {
+  local dir="$1"
+  if [ -d "$dir" ]; then
+    echo "Adjusting permissions in: $dir"
+    find "$dir" -type d -exec chmod 755 {} +
+    find "$dir" -type f -exec chmod 644 {} +
   fi
+}
+
+# Add alias to user's .bashrc
+add_alias_to_bashrc() {
+  local user_home="$1"
+  local bashrc="$user_home/.bashrc"
+  local alias_line="alias tahoma2d='tahoma2d; tahoma-permissions'"
+
+  if [ ! -f "$bashrc" ]; then
+    touch "$bashrc"
+  fi
+
+  if ! grep -qF "$alias_line" "$bashrc"; then
+    echo "$alias_line" >> "$bashrc"
+  fi
+}
+
+# Process each user under /home
+for user_home in /home/*; do
+  [ -d "$user_home" ] || continue
+  username=$(basename "$user_home")
+  USER_TAHOMA="$user_home/.local/share/Tahoma2D"
+  TMP_RESCUE="/tmp/tahoma_${username}_rescue_$$"
+
+  echo "Processing user: $username"
+
+  # Backup sandbox and profiles directories
+  mkdir -p "$TMP_RESCUE"
+  if [ -d "$USER_TAHOMA/tahomastuff/sandbox" ]; then
+    mkdir -p "$TMP_RESCUE/tahomastuff"
+    cp -a "$USER_TAHOMA/tahomastuff/sandbox" "$TMP_RESCUE/tahomastuff/"
+  fi
+  if [ -d "$USER_TAHOMA/tahomastuff/profiles" ]; then
+    mkdir -p "$TMP_RESCUE/tahomastuff"
+    cp -a "$USER_TAHOMA/tahomastuff/profiles" "$TMP_RESCUE/tahomastuff/"
+  fi
+
+  # Remove all contents except sandbox and profiles
+  echo "Cleaning $USER_TAHOMA..."
+  find "$USER_TAHOMA" -mindepth 1 -not -path "$USER_TAHOMA/tahomastuff/sandbox*" \
+                                     -not -path "$USER_TAHOMA/tahomastuff/profiles*" \
+                                     -exec rm -rf {} +
+
+  # Copy all content from /etc/skel to user's Tahoma2D directory
+  echo "Copying from $SRC..."
+  cp -a "$SRC/." "$USER_TAHOMA/"
+
+  # Restore sandbox and profiles directories
+  if [ -d "$TMP_RESCUE/tahomastuff/sandbox" ]; then
+    mkdir -p "$USER_TAHOMA/tahomastuff"
+    cp -a "$TMP_RESCUE/tahomastuff/sandbox" "$USER_TAHOMA/tahomastuff/"
+  fi
+  if [ -d "$TMP_RESCUE/tahomastuff/profiles" ]; then
+    mkdir -p "$USER_TAHOMA/tahomastuff"
+    cp -a "$TMP_RESCUE/tahomastuff/profiles" "$USER_TAHOMA/tahomastuff/"
+  fi
+
+  rm -rf "$TMP_RESCUE"
+
+  # Set ownership, permissions, and alias
+  chown -R "$username:$username" "$USER_TAHOMA"
+  add_alias_to_bashrc "$user_home"
+  adjust_permissions "$USER_TAHOMA"
+
+  # Set executable permissions on binaries
+  for exe in AppRun usr/bin/Tahoma2D usr/bin/tahoma2d usr/bin/lzocompress usr/bin/lzodecompress \
+             usr/bin/tcleanup usr/bin/tcomposer usr/bin/tfarmcontroller usr/bin/tconverter \
+             usr/bin/tfarmserver rhubarb/rhubarb ffmpeg/ffprobe; do
+    [ -f "$USER_TAHOMA/$exe" ] && chmod +x "$USER_TAHOMA/$exe"
+  done
+
+  find "$USER_TAHOMA/ffmpeg" -type f -exec chmod +x {} + 2>/dev/null || true
 done
 
-# Adjust common permissions
-adjust_permissions "$HOME/.local/share/Tahoma2D/tahomastuff/profiles"
-adjust_permissions "$HOME/.local/share/Tahoma2D/tahomastuff/sandbox"
-adjust_permissions "$HOME/.local/share/Tahoma2D/tahomastuff/doc"
-adjust_permissions "$HOME/.local/share/Tahoma2D/tahomastuff/config"
-adjust_permissions "$HOME/.local/share/Tahoma2D/usr/share/doc"
-adjust_permissions "$HOME/.cache/Tahoma2D"
-adjust_permissions "$HOME/.local/share/Trash"
+# Adjust permissions for current user's Tahoma2D directory
+adjust_permissions "$HOME/.local/share/Tahoma2D"
 
-# Set execution permissions for necessary binaries
+# Ensure required scripts are executable
 chmod +x /usr/local/bin/tahoma-permissions
 chmod +x /usr/local/bin/tahoma2d
 
-echo "Postinst successfully completed."
+echo "Post-installation completed successfully."
 exit 0
