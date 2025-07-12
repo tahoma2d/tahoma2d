@@ -41,11 +41,10 @@ for user_home in /home/*; do
 
   echo "Processing user: $username"
 
-  # Create the directory if it doesn't exist
+  # Skip if the Tahoma2D directory doesn't exist
   if [ ! -d "$USER_TAHOMA" ]; then
-    echo "Directory $USER_TAHOMA does not exist. Creating it..."
-    mkdir -p "$USER_TAHOMA"
-    chown "$username:$username" "$USER_TAHOMA"
+    echo "Directory $USER_TAHOMA does not exist. Skipping user $username."
+    continue
   fi
 
   # Backup sandbox and profiles directories
@@ -61,9 +60,10 @@ for user_home in /home/*; do
 
   # Remove all contents except sandbox and profiles
   echo "Cleaning $USER_TAHOMA..."
-  find "$USER_TAHOMA" -mindepth 1 -not -path "$USER_TAHOMA/tahomastuff/sandbox*" \
-                                     -not -path "$USER_TAHOMA/tahomastuff/profiles*" \
-                                     -exec rm -rf {} +
+  find "$USER_TAHOMA" -mindepth 1 \
+    ! -path "$USER_TAHOMA/tahomastuff/sandbox*" \
+    ! -path "$USER_TAHOMA/tahomastuff/profiles*" \
+    -exec rm -rf {} + 2>/dev/null
 
   # Copy all content from /etc/skel to user's Tahoma2D directory
   echo "Copying from $SRC..."
