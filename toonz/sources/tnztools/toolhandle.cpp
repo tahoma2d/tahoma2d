@@ -77,6 +77,7 @@ void ToolHandle::restoreTool() {
           Preferences::instance()->getTempToolSwitchtimer()) {
     setTool(m_storedToolName);
   }
+  m_storedToolName = "";
 }
 
 //-----------------------------------------------------------------------------
