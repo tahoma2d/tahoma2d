@@ -823,6 +823,9 @@ bool TApp::eventFilter(QObject *watched, QEvent *e) {
                              .toStdString();
     QAction *action = CommandManager::instance()->getActionFromShortcut(keyStr);
     if (action) {
+      if (!keyEvent->isAutoRepeat()) {
+        TApp::instance()->getCurrentTool()->storeTool();
+      }
       e->accept();
       return true;
     }

@@ -1507,6 +1507,10 @@ bool SceneViewer::event(QEvent *e) {
                     e->type() == QEvent::KeyPress)) {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
 
+    if (!keyEvent->isAutoRepeat()) {
+      TApp::instance()->getCurrentTool()->storeTool();
+    }
+
     std::string keyStr = QKeySequence(keyEvent->key() + keyEvent->modifiers())
                              .toString()
                              .toStdString();
@@ -1590,6 +1594,13 @@ bool SceneViewer::event(QEvent *e) {
         invalidateToolStatus();
         e->accept();
         return true;
+      }
+    } else {
+      if (!((QKeyEvent *)e)->isAutoRepeat()) {
+        QWidget *focusWidget = QApplication::focusWidget();
+        if (focusWidget == 0 ||
+            QString(focusWidget->metaObject()->className()) == "SceneViewer")
+          TApp::instance()->getCurrentTool()->restoreTool();
       }
     }
   }
