@@ -2875,6 +2875,7 @@ void BrushData::saveData(TOStream &os) {
   os.closeChild();
   os.openChild("Modifier_LockAlpha");
   os << (int)m_modifierLockAlpha;
+  os.closeChild();
   os.openChild("Modifier_PaintBehind");
   os << (int)m_modifierPaintBehind;
   os.closeChild();
