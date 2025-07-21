@@ -40,7 +40,7 @@ jobs:
       - name: Get CanonSDK
         if: ${{ (github.repository_owner == 'tahoma2d' || github.repository_owner == 'manongjohn') && github.event_name == 'push' }}
         run: |
-          wget --header="Authorization: token ${{ secrets.TAHOMA2D_TOKEN }}" --header="Accept:application/octet-stream" -O EDSDK_Linux.zip https://api.github.com/repos/tahoma2d/CanonSDK/releases/assets/223415219
+          curl -H "Authorization: token ${{ secrets.TAHOMA2D_TOKEN }}" -H "Accept:application/octet-stream" -fsSL -o EDSDK_Linux.zip https://api.github.com/repos/tahoma2d/CanonSDK/releases/assets/223415219
           unzip EDSDK_Linux.zip -d EDSDK_Linux
           mv EDSDK_Linux/EDSDK/* thirdparty/canon
           chmod 644 thirdparty/canon/Library/x86_64/lib*
