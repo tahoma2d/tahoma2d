@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.4] - 2025-08-01
+
+### Fixed
+
+- Fix raster autoclose [#1861]
+- Fix Control Point Editor Pen Lag [#1869]
+- Fix temp tool switching [#1882]
+
+### Other
+
+- Spanish translation updates by @gab3d [#1870]
+- Build on MSVC 2022 [#1859]
+- postinst-fix [#1880]
+- Fix wget redirect auth fail [#1884]
+
 ## [1.5.3] - 2025-06-01
 
 ### Added
@@ -904,6 +919,7 @@ Some features, when used, are saved to the scene file and will prevent the scene
 [^6]: A few fixes from this OpenToonz port PR were moved to the v1.5.3 fix release
 [^7]: Followup fixes made directly in Tahoma2D related to OpenToonz ports
 
+[1.5.4]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.3...v1.5.4
 [1.5.3]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.2...v1.5.3
 [1.5.2]: https://github.com/tahoma2d/tahoma2d/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/tahoma2d/tahoma2d/compare/v1.5...v1.5.1
