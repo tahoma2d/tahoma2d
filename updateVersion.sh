@@ -82,7 +82,6 @@ mv tmp.txt toonz/cmake/BundleInfo.plist.in
 
 # toonz/installer/linux/deb-creator/deb-template/DEBIAN/control
 dos2unix toonz/installer/linux/deb-creator/deb-template/DEBIAN/control
-
 sed -e"s/Version: $USEOLDVERSION/Version: $USENEWVERSION/" -e"s/Description: Tahoma 2D Version $USEOLDVERSION/Description: Tahoma 2D Version $USENEWVERSION/" toonz/installer/linux/deb-creator/deb-template/DEBIAN/control >| tmp.txt
 unix2dos tmp.txt
 mv tmp.txt toonz/installer/linux/deb-creator/deb-template/DEBIAN/control
@@ -110,3 +109,12 @@ dos2unix toonz/sources/xdg-data/org.tahoma2d.Tahoma2D.metainfo.xml
 sed -e "s/    <release version=\"$OLDFULLVERSION\"/    <release version=\"$NEWFULLVERSION\" date=\"$RELEASEDATE\"\/>\n&/" toonz/sources/xdg-data/org.tahoma2d.Tahoma2D.metainfo.xml >| tmp.txt
 unix2dos tmp.txt
 mv tmp.txt toonz/sources/xdg-data/org.tahoma2d.Tahoma2D.metainfo.xml
+
+# CHANGELOG.md
+dos2unix CHANGELOG.md
+sed -e "s/^## \[$OLDFULLVERSION\].*$/## \[$NEWFULLVERSION\] - $RELEASEDATE\n\n### Added\n\n- TBD\n\n### Changed\n\n- TBD\n\n### Fixed\n\n- TBD\n\n### Other\n\n- TBD\n\n&/" \
+-e"s/^\[$OLDFULLVERSION\].*$/\[$NEWFULLVERSION\]: https:\/\/github.com\/tahoma2d\/tahoma2d\/compare\/v$USEOLDVERSION...v$USENEWVERSION\n&/" CHANGELOG.md >| tmp.txt
+unix2dos tmp.txt
+mv tmp.txt CHANGELOG.md
+
+echo -e "\n\n******* REMINDER: Update new $NEWFULLVERSION section in CHANGELOG.md *******\n\n"
