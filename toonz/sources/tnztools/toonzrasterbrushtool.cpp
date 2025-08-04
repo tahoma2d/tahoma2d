@@ -930,7 +930,7 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
     , m_notifier(0)
     , m_modifierLockAlpha("Lock Alpha", false)
     , m_snapGrid("Grid", false)
-    , m_tilt("Tilt", false) {
+    , m_tilt("ModifierTilt", false) {
   bind(targetType);
 
   m_rasThickness.setNonLinearSlider();
@@ -2816,7 +2816,9 @@ BrushData::BrushData()
     , m_modifierOpacity(0.0)
     , m_modifierEraser(0.0)
     , m_modifierLockAlpha(0.0)
-    , m_tilt(false) {}
+    , m_tilt(false)
+    , m_opressure(false)
+    , m_otilt(false) {}
 
 //----------------------------------------------------------------------------------------------------------
 
@@ -2835,7 +2837,9 @@ BrushData::BrushData(const std::wstring &name)
     , m_modifierOpacity(0.0)
     , m_modifierEraser(0.0)
     , m_modifierLockAlpha(0.0)
-    , m_tilt(false) {}
+    , m_tilt(false)
+    , m_opressure(false)
+    , m_otilt(false) {}
 
 //----------------------------------------------------------------------------------------------------------
 
@@ -2879,12 +2883,33 @@ void BrushData::saveData(TOStream &os) {
   os.openChild("Modifier_PaintBehind");
   os << (int)m_modifierPaintBehind;
   os.closeChild();
-  // For backwards compatiblity, only save tilt if enabled
-  if (m_tilt) {
-    os.openChild("Tilt_Sensitivity");
-    os << (int)m_tilt;
-    os.closeChild();
-  }
+  os.openChild("Tilt_Sensitivity");
+  os << (int)m_tilt;
+  os.closeChild();
+  os.openChild("OPressure_Sensitivity");
+  os << (int)m_opressure;
+  os.closeChild();
+  os.openChild("OTilt_Sensitivity");
+  os << (int)m_otilt;
+  os.closeChild();
+  os.openChild("Pressure_Curve");
+  for (auto pt : m_pressureCurve) os << pt.x << pt.y;
+  os.closeChild();
+  os.openChild("OPressure_Curve");
+  for (auto pt : m_opressureCurve) os << pt.x << pt.y;
+  os.closeChild();
+  os.openChild("Tilt_Curve");
+  for (auto pt : m_tiltCurve) os << pt.x << pt.y;
+  os.closeChild();
+  os.openChild("OTilt_Curve");
+  for (auto pt : m_otiltCurve) os << pt.x << pt.y;
+  os.closeChild();
+  os.openChild("Modifier_Pressure_Sensitivity");
+  os << (int)m_mypaintPressure;
+  os.closeChild();
+  os.openChild("Modifier_Tilt_Sensitivity");
+  os << (int)m_mypaintTilt;
+  os.closeChild();
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -2924,6 +2949,46 @@ void BrushData::loadData(TIStream &is) {
       is >> val, m_modifierPaintBehind = val, is.matchEndTag();
     else if (tagName == "Tilt_Sensitivity")
       is >> val, m_tilt = val, is.matchEndTag();
+    else if (tagName == "OPressure_Sensitivity")
+      is >> val, m_opressure = val, is.matchEndTag();
+    else if (tagName == "OTilt_Sensitivity")
+      is >> val, m_otilt = val, is.matchEndTag();
+    else if (tagName == "Pressure_Curve") {
+      m_pressureCurve.clear();
+      while (!is.eos()) {
+        TPointD pt;
+        is >> pt.x >> pt.y;
+        m_pressureCurve.push_back(pt);
+      }
+      is.matchEndTag();
+    } else if (tagName == "OPressure_Curve") {
+      m_opressureCurve.clear();
+      while (!is.eos()) {
+        TPointD pt;
+        is >> pt.x >> pt.y;
+        m_opressureCurve.push_back(pt);
+      }
+      is.matchEndTag();
+    } else if (tagName == "Tilt_Curve") {
+      m_tiltCurve.clear();
+      while (!is.eos()) {
+        TPointD pt;
+        is >> pt.x >> pt.y;
+        m_tiltCurve.push_back(pt);
+      }
+      is.matchEndTag();
+    } else if (tagName == "OTilt_Curve") {
+      m_otiltCurve.clear();
+      while (!is.eos()) {
+        TPointD pt;
+        is >> pt.x >> pt.y;
+        m_otiltCurve.push_back(pt);
+      }
+      is.matchEndTag();
+    } else if (tagName == "Modifier_Pressure_Sensitivity")
+      is >> val, m_mypaintPressure = val, is.matchEndTag();
+    else if (tagName == "Modifier_Tilt_Sensitivity")
+      is >> val, m_mypaintTilt = val, is.matchEndTag();
     else
       is.skipCurrentTag();
   }

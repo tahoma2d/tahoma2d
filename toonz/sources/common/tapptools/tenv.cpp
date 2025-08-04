@@ -703,6 +703,14 @@ std::istream &operator>>(std::istream &is, TRect &rect) {
   return is >> rect.x0 >> rect.y0 >> rect.x1 >> rect.y1;
 }
 
+std::istream &operator>>(std::istream &is, QList<TPointD> &pts) {
+  double x, y;
+  while (is >> x >> y) {
+    pts.push_back(TPointD(x, y));
+  }
+  return is;
+}
+
 template <class T>
 std::string toString2(T value) {
   std::ostringstream ss;
@@ -715,6 +723,19 @@ std::string toString2(TRect value) {
   std::ostringstream ss;
   ss << value.x0 << " " << value.y0 << " " << value.x1 << " " << value.y1
      << '\0';
+  return ss.str();
+}
+
+template <>
+std::string toString2(QList<TPointD> value) {
+  std::ostringstream ss;
+  bool first = true;
+  for (auto pt : value) {
+    if (!first) ss << " ";
+    first = false;
+    ss << pt.x << " " << pt.y;
+  }
+  ss << '\0';
   return ss.str();
 }
 
@@ -788,5 +809,20 @@ RectVar::operator TRect() const {
   return v;
 }
 void RectVar::operator=(const TRect &v) { assignValue(toString2(v)); }
+
+
+//-------------------------------------------------------------------
+
+PointListVar::PointListVar(std::string name, const QList<TPointD> &defValue)
+    : Variable(name, toString2(defValue)) {}
+PointListVar::PointListVar(std::string name) : Variable(name) {}
+PointListVar::operator QList<TPointD>() const {
+  QList<TPointD> v;
+  fromString(getValue(), v);
+  return v;
+}
+void PointListVar::operator=(const QList<TPointD> &v) {
+  assignValue(toString2(v));
+}
 
 //=========================================================
