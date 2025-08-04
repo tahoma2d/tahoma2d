@@ -331,6 +331,7 @@ void ToolOptionControlBuilder::visit(TStyleIndexProperty *p) {
       new StyleIndexFieldAndChip(m_tool, p, m_pltHandle, m_toolHandle);
   hLayout()->addWidget(chip, 0);
   m_panel->addControl(chip);
+  hLayout()->addSpacing(5);
 }
 
 //----------------------------------------------------------------------------------
@@ -347,6 +348,26 @@ void ToolOptionControlBuilder::visit(TColorChipProperty *p) {
   ColorChipCombo *chipCombo = new ColorChipCombo(m_tool, p);
   hLayout()->addWidget(chipCombo, 0);
   m_panel->addControl(chipCombo);
+  hLayout()->addSpacing(5);
+}
+
+//-----------------------------------------------------------------------------
+
+void ToolOptionControlBuilder::visit(TStylusProperty *p) {
+  ToolOptionStylusConfigButton *obj =
+      new ToolOptionStylusConfigButton(m_tool, p);
+  obj->setToolTip(p->getQStringName());
+
+  // This should be following another control.  Remove space item added after
+  // last control
+  int x             = hLayout()->count();
+  QLayoutItem *item = hLayout()->itemAt(x - 1);
+  hLayout()->removeItem(item);
+  delete item;
+
+  hLayout()->addWidget(obj, 100);
+  m_panel->addControl(obj);
+  hLayout()->addSpacing(5);
 }
 
 //=============================================================================

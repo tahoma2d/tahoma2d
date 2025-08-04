@@ -33,6 +33,7 @@ private:
   void visit(TStyleIndexProperty* p) override {}
   void visit(TPointerProperty* p) override {}
   void visit(TColorChipProperty* p) override {}
+  void visit(TStylusProperty* p) override {}
 };
 
 //=============================================================================
