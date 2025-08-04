@@ -71,6 +71,7 @@ set(MOC_HEADERS
     ../include/toonzqt/updatechecker.h
     ../include/toonzqt/validatedchoicedialog.h
     ../include/toonzqt/insertfxpopup.h
+    ../include/toonzqt/graphwidget.h
 )
 
 set(HEADERS
@@ -202,6 +203,7 @@ set(SOURCES
     toonz_params.cpp
 	lutcalibrator.cpp
     insertfxpopup.cpp
+    graphwidget.cpp
 )
 
 set(RESOURCES toonzqt.qrc)

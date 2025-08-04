@@ -14,7 +14,7 @@
 #include "tools/toolhandle.h"
 #include "tools/toolcommandids.h"
 #include "tproperty.h"
-#include "graphwidget.h"
+#include "toonzqt/graphwidget.h"
 #include "menubarcommandids.h"
 #include "tstroke.h"
 #include "tgeometry.h"
