@@ -1690,20 +1690,24 @@ QDialog #dialogButtonFrame QPushButton:focus:pressed {
 /* -----------------------------------------------------------------------------
    Preferences
 ----------------------------------------------------------------------------- */
+#StylusConfigPopup QListWidget,
 #PreferencesPopup QListWidget {
   background-color: #767676;
   alternate-background-color: #767676;
   border: 1 solid #5a5a5a;
   font-size: 13px;
 }
+#StylusConfigPopup QListWidget::item,
 #PreferencesPopup QListWidget::item {
   border: 0;
   padding: 3;
 }
+#StylusConfigPopup QListWidget::item:hover,
 #PreferencesPopup QListWidget::item:hover {
   background-color: rgba(255, 255, 255, 0.15);
   color: #000;
 }
+#StylusConfigPopup QListWidget::item:selected,
 #PreferencesPopup QListWidget::item:selected {
   background-color: #c16099;
   color: #000;
