@@ -4,6 +4,7 @@
 #define GPHOTO_EVENT_LOG_H
 
 #include "saveloadqsettings.h"
+#include "gphotocam.h"
 
 #include <QSplitter>
 #include <QEvent>
@@ -48,6 +49,7 @@ public slots:
   void onPauseButtonPressed();
   void onCopyButtonPressed();
   void onClearButtonPressed();
+  void onListAllConfigButtonPressed();
   void onToggleAllOnOff();
   void onEventFilterUpdated();
 };
