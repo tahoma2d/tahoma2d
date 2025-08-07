@@ -37,6 +37,7 @@ void doGPSleep(int ms) {
 
 //-----------------------------------------------------------------------------
 bool gp_crit_error;
+QString gp_crit_message;
 
 static void logdump(GPLogLevel level, const char *domain, const char *str,
                     void *data) {
@@ -46,8 +47,11 @@ static void logdump(GPLogLevel level, const char *domain, const char *str,
   if (level == GP_LOG_ERROR) {
     msgType = GPHOTOMSG::GPError;
     if (QString(str).contains("PTP No Device") ||
-        QString(str).contains("No such device")) {
+        QString(str).contains("No such device") ||
+        QString(str).contains("Could not claim interface") /*||
+        QString(str).contains("Timeout reading from or writing to the port")*/) {
       gp_crit_error = true;
+      gp_crit_message = msg;
       msg = "CRITICAL! " + QString((char *)data) + " encountered: " + msg;
       free(data);
     }
@@ -325,11 +329,19 @@ void GPhotoCam::onTimeout() {
       releaseCamera();
       StopMotion::instance()->stopLiveView();
       emit gphotoCameraChanged(QString(""));
+
+      DVGui::error(tr("A CRITICAL error was encountered with the "
+                      "camera:\n\n'%1'\n\nCamera has been disconnected and may "
+                      "need to be restarted.")
+                       .arg(gp_crit_message));
+
+      gp_crit_message.clear();
+
       break;
     }
 
-    retVal =
-        gp_camera_wait_for_event(m_camera, 1, &evttype, &evtdata, m_gpContext);
+    retVal = gp_camera_wait_for_event(m_camera, 1, &evttype, &evtdata,
+                                      m_gpContext);
     if (retVal < GP_OK) break;
     if (m_exitRequested) break;
 
