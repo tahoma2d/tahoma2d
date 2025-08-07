@@ -511,6 +511,128 @@ void ToolOptionTextField::onValueChanged() {
 
 //=============================================================================
 
+ToolOptionStylusConfigButton::ToolOptionStylusConfigButton(
+    TTool *tool, TStylusProperty *property)
+    : QPushButton()
+    , ToolOptionControl(tool, property->getName())
+    , m_property(property) {
+  setObjectName(QString::fromStdString(property->getName()));
+
+  setFixedSize(QSize(20, 20));
+  setIcon(createQIcon("config"));
+
+  m_property->addListener(this);
+
+  m_stylusConfig =
+      new StylusConfigPopup(QString::fromStdString(m_property->getName()), 0);
+
+  // Pressure
+  m_pressureId = m_stylusConfig->addConfiguration(tr("Pressure"));
+  m_stylusConfig->setConfiguration(
+      m_pressureId, 0, 100, 0, 100,
+      QList<TPointD>{TPointD(0.0, 0.0), TPointD(100.0, 100.0)}, "0%", "",
+      "100%", "Min", "", "Max");
+
+  // Tilt
+  m_tiltId = m_stylusConfig->addConfiguration(tr("Tilt"));
+  m_stylusConfig->setConfiguration(
+      m_tiltId, 0, 90, 0, 100,
+      QList<TPointD>{TPointD(0.0, 0.0), TPointD(90.0, 100.0)}, "0", "", "90",
+      "Min", "", "Max");
+
+  updateStatus();
+
+  connect(this, SIGNAL(clicked()), this, SLOT(onClicked()));
+
+  connect(m_stylusConfig, SIGNAL(configStateChanged(int)), this,
+          SLOT(onConfigStateChanged(int)));
+  connect(m_stylusConfig, SIGNAL(configCurveChanged(int, bool)), this,
+          SLOT(onConfigCurveChanged(int, bool)));
+}
+
+//-----------------------------------------------------------------------------
+
+void ToolOptionStylusConfigButton::updateStatus() {
+  // Pressure
+  m_stylusConfig->setConfigEnabled(m_pressureId,
+                                   m_property->isPressureEnabled());
+  QList<TPointD> curve = m_property->getDefaultPressureCurve();
+  if (!curve.isEmpty())
+    m_stylusConfig->setConfigDefaultCurve(m_pressureId, curve);
+  curve = m_property->getPressureCurve();
+  if (!curve.isEmpty()) m_stylusConfig->setConfigCurve(m_pressureId, curve);
+
+  // Tilt
+  m_stylusConfig->setConfigEnabled(m_tiltId, m_property->isTiltEnabled());
+  curve = m_property->getDefaultTiltCurve();
+  if (!curve.isEmpty()) m_stylusConfig->setConfigDefaultCurve(m_tiltId, curve);
+  curve = m_property->getTiltCurve();
+  if (!curve.isEmpty()) m_stylusConfig->setConfigCurve(m_tiltId, curve);
+
+}
+
+//-----------------------------------------------------------------------------
+
+void ToolOptionStylusConfigButton::onClicked() {
+  if (!m_stylusConfig) return;
+
+  if (m_stylusConfig->isKeepClosed()) return;
+
+  updateStatus();
+
+  m_stylusConfig->show();
+  QPoint configPos= mapToGlobal(QPoint(0, pos().y()));
+  configPos.setY(configPos.y() + height());
+  m_stylusConfig->move(configPos);
+
+  // make sure the popup doesn't go off the screen to the right
+  QRect screenRect = screen()->geometry();
+
+  int popupRight  = configPos.x() + m_stylusConfig->width();
+  int popupBottom = configPos.y() + m_stylusConfig->height();
+
+  // first condition checks if popup is on same monitor as main app;
+  // if popup is on different monitor, leave as is
+  int distanceX = 0;
+  int distanceY = 0;
+  if (configPos.x() < screenRect.right() && popupRight > screenRect.right())
+    distanceX = popupRight - screenRect.right();
+  if (configPos.y() < screenRect.bottom() && popupBottom > screenRect.bottom())
+    distanceY = popupBottom - screenRect.bottom();
+  if (distanceX != 0 || distanceY != 0)
+    m_stylusConfig->move(m_stylusConfig->x() - distanceX,
+                         m_stylusConfig->y() - distanceY);
+}
+
+//-----------------------------------------------------------------------------
+
+void ToolOptionStylusConfigButton::onConfigStateChanged(int configId) {
+  if (!m_stylusConfig) return;
+
+  if (configId == m_pressureId)
+    m_property->setPressureEnabled(m_stylusConfig->isConfigEnabled(configId));
+  else if (configId == m_tiltId)
+    m_property->setTiltEnabled(m_stylusConfig->isConfigEnabled(configId));
+
+  if (m_tool) m_tool->onPropertyChanged(m_property->getName());
+}
+
+//-----------------------------------------------------------------------------
+
+void ToolOptionStylusConfigButton::onConfigCurveChanged(int configId, bool isDragging) {
+  if (!m_stylusConfig) return;
+
+  if (configId == m_pressureId)
+    m_property->setPressureCurve(m_stylusConfig->getConfigCurve(configId));
+  else if (configId == m_tiltId)
+    m_property->setTiltCurve(m_stylusConfig->getConfigCurve(configId));
+
+  // Only update the tool when we're done dragging
+  if (m_tool && !isDragging) m_tool->onPropertyChanged(m_property->getName());
+}
+
+//=============================================================================
+
 StyleIndexFieldAndChip::StyleIndexFieldAndChip(TTool *tool,
                                                TStyleIndexProperty *property,
                                                TPaletteHandle *pltHandle,

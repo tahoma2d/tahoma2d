@@ -280,9 +280,11 @@ void MyPaintToonzBrush::strokeTo(const TPointD &point, double pressure,
         sub->p2.setMedian(sub->p1, segment->p1);
         segment = sub;
       } else {
+        // If initial time is 0.0, let's prevent a large dot from appearing
+        double elapsedTime = p0.time == 0.0 ? 0.5 : segment->p2.time - p0.time;
         brushes[i].strokeTo(m_mypaintSurface, segment->p2.x, segment->p2.y,
                             segment->p2.pressure, segment->p2.tiltX,
-                            segment->p2.tiltY, segment->p2.time - p0.time);
+                            segment->p2.tiltY, elapsedTime);
         if (segment == stack) break;
         p0 = segment->p2;
         --segment;

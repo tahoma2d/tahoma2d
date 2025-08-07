@@ -32,7 +32,13 @@ private:
   TRasterP m_preview;
   TPixel32 m_color;
 
-  std::map<MyPaintBrushSetting, float> m_baseValues;
+  typedef struct {
+    float m_baseValue;
+    std::map<MyPaintBrushInput, int> m_mappingN;
+    std::map<std::pair<MyPaintBrushInput, int>, TPointD> m_mappingPoints;
+  } ModifiedBrushData;
+
+  std::map<MyPaintBrushSetting, ModifiedBrushData> m_modifiedData;
 
   TFilePath decodePath(const TFilePath &path) const;
   void loadBrush(const TFilePath &path);
@@ -81,22 +87,86 @@ public:
     setBaseValue(id, enable, getBaseValue(id));
   }
 
-  const std::map<MyPaintBrushSetting, float> getBaseValues() const {
-    return m_baseValues;
+  void setMappingN(MyPaintBrushSetting id, MyPaintBrushInput input, bool enable,
+                   int value);
+  void resetMapping();
+  void resetMapping(MyPaintBrushSetting id);
+  void resetMapping(MyPaintBrushSetting id, MyPaintBrushInput input);
+
+  void setMappingN(MyPaintBrushSetting id, MyPaintBrushInput input, int value) {
+    setMappingN(id, input, true, value);
+  }
+
+  void setMappingNEnabled(MyPaintBrushSetting id, MyPaintBrushInput input,
+                          bool enable) {
+    setMappingN(id, input, enable, getMappingN(id, input));
+  }
+
+  void setMappingPoint(MyPaintBrushSetting id, MyPaintBrushInput input,
+                       int index, bool enable, TPointD pt);
+
+  void setMappingPoint(MyPaintBrushSetting id, MyPaintBrushInput input,
+                       int index, TPointD pt) {
+    setMappingPoint(id, input, index, true, pt);
+  }
+
+  void setMappingPointEnabled(MyPaintBrushSetting id, MyPaintBrushInput input,
+                              int index, bool enable) {
+    setMappingPoint(id, input, index, enable,
+                    getMappingPoint(id, input, index));
+  }
+
+  const std::map<MyPaintBrushSetting, ModifiedBrushData> getBaseValues() const {
+    return m_modifiedData;
   }
 
   float getBaseValue(MyPaintBrushSetting id) const {
-    std::map<MyPaintBrushSetting, float>::const_iterator i =
-        m_baseValues.find(id);
-    return i == m_baseValues.end() ? m_brushOriginal.getBaseValue(id)
-                                   : i->second;
+    std::map<MyPaintBrushSetting, ModifiedBrushData>::const_iterator i =
+        m_modifiedData.find(id);
+    return i == m_modifiedData.end() ? m_brushOriginal.getBaseValue(id)
+                                     : i->second.m_baseValue;
+  }
+
+  float getDefaultBaseValue(MyPaintBrushSetting id) const {
+    return m_brushOriginal.getBaseValue(id);
   }
 
   bool getBaseValueEnabled(MyPaintBrushSetting id) const {
-    std::map<MyPaintBrushSetting, float>::const_iterator i =
-        m_baseValues.find(id);
-    return i != m_baseValues.end();
+    std::map<MyPaintBrushSetting, ModifiedBrushData>::const_iterator i =
+        m_modifiedData.find(id);
+    return i != m_modifiedData.end();
   }
+
+  int getMappingN(MyPaintBrushSetting id, MyPaintBrushInput input) const;
+
+  int getDefaultMappingN(MyPaintBrushSetting id, MyPaintBrushInput input) const;
+
+  bool getMappingNEnabled(MyPaintBrushSetting id,
+                          MyPaintBrushInput input) const {
+    std::map<MyPaintBrushSetting, ModifiedBrushData>::const_iterator i =
+        m_modifiedData.find(id);
+    return i != m_modifiedData.end() &&
+           i->second.m_mappingN.find(input) != i->second.m_mappingN.end();
+  }
+
+  TPointD getMappingPoint(MyPaintBrushSetting id, MyPaintBrushInput input,
+                          int index) const;
+
+  TPointD getDefaultMappingPoint(MyPaintBrushSetting id,
+                                 MyPaintBrushInput input, int index) const;
+
+  bool getMappingPointEnabled(MyPaintBrushSetting id, MyPaintBrushInput input,
+                              int index) const {
+    std::map<MyPaintBrushSetting, ModifiedBrushData>::const_iterator i =
+        m_modifiedData.find(id);
+
+    return (i != m_modifiedData.end() &&
+            i->second.m_mappingPoints.find({input, index}) !=
+                i->second.m_mappingPoints.end());
+  }
+
+  QString getInputName(MyPaintBrushInput input) const;
+  void getInputRange(MyPaintBrushInput input, double &min, double &max) const;
 
   int getParamCount() const override;
   QString getParamNames(int index) const override;
@@ -107,6 +177,10 @@ public:
   void getParamRange(int index, double &min, double &max) const override;
   void setParamValue(int index, double value) override;
   double getParamValue(double_tag, int index) const override;
+
+  bool isMappingDefault(MyPaintBrushSetting id) const;
+
+  void resetStyle();
 
 protected:
   void makeIcon(const TDimension &d) override;

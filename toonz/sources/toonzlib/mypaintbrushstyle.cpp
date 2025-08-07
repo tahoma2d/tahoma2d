@@ -44,7 +44,7 @@ TMyPaintBrushStyle::TMyPaintBrushStyle(const TMyPaintBrushStyle &other)
     , m_brushModified(other.m_brushModified)
     , m_preview(other.m_preview)
     , m_color(other.m_color)
-    , m_baseValues(other.m_baseValues) {}
+    , m_modifiedData(other.m_modifiedData) {}
 
 //-----------------------------------------------------------------------------
 
@@ -69,7 +69,7 @@ TColorStyle &TMyPaintBrushStyle::copy(const TColorStyle &other) {
     m_brushOriginal = otherBrushStyle->m_brushOriginal;
     m_brushModified = otherBrushStyle->m_brushModified;
     m_preview       = otherBrushStyle->m_preview;
-    m_baseValues    = otherBrushStyle->m_baseValues;
+    m_modifiedData  = otherBrushStyle->m_modifiedData;
   }
   assignBlend(other, other, 0.0);
   return *this;
@@ -170,19 +170,19 @@ static std::string mybToVersion3(std::string origStr) {
       outStr += "            \"inputs\": {\n";
       while (pipe != line.length()) {
         if (startPos > 0) outStr += ",\n";
-        startPos                            = pipe + 1;
-        pipe                                = line.find("|", startPos);
+        startPos = pipe + 1;
+        pipe     = line.find("|", startPos);
         if (pipe == std::string::npos) pipe = line.length();
         settingInfo      = line.substr(startPos, pipe - startPos);
         int firstCharPos = settingInfo.find_first_not_of(" ");
         setting          = settingInfo.substr(firstCharPos,
-                                     settingInfo.find(" ", firstCharPos) - 1);
+                                              settingInfo.find(" ", firstCharPos) - 1);
         outStr += "                \"" + setting + "\": [\n";
         firstCharPos = settingInfo.find_first_not_of(" ", setting.length() + 1);
         baseValue    = settingInfo.substr(firstCharPos, pipe - startPos);
         int comma    = baseValue.find(", ");
         if (comma == std::string::npos) comma = baseValue.length();
-        std::string value                     = baseValue.substr(0, comma);
+        std::string value = baseValue.substr(0, comma);
         std::replace(value.begin(), value.end(), '(', '[');
         std::replace(value.begin(), value.end(), ')', ']');
         std::replace(value.begin(), value.end(), ' ', ',');
@@ -231,12 +231,12 @@ void TMyPaintBrushStyle::loadBrush(const TFilePath &path) {
   }
 
   m_brushModified = m_brushOriginal;
-  std::map<MyPaintBrushSetting, float> baseValuesCopy;
-  baseValuesCopy.swap(m_baseValues);
-  for (std::map<MyPaintBrushSetting, float>::const_iterator i =
-           baseValuesCopy.begin();
-       i != baseValuesCopy.end(); ++i)
-    setBaseValue(i->first, i->second);
+  std::map<MyPaintBrushSetting, ModifiedBrushData> modifiedDataCopy;
+  modifiedDataCopy.swap(m_modifiedData);
+  for (std::map<MyPaintBrushSetting, ModifiedBrushData>::const_iterator i =
+           modifiedDataCopy.begin();
+       i != modifiedDataCopy.end(); ++i)
+    setBaseValue(i->first, i->second.m_baseValue);
 
   TFilePath preview_path =
       m_fullpath.getParentDir() + (m_fullpath.getWideName() + L"_prev.png");
@@ -251,10 +251,16 @@ void TMyPaintBrushStyle::setBaseValue(MyPaintBrushSetting id, bool enable,
                                       float value) {
   float def = m_brushOriginal.getBaseValue(id);
   if (enable && fabsf(value - def) > 0.01) {
-    m_baseValues[id] = value;
+    m_modifiedData[id].m_baseValue = value;
     m_brushModified.setBaseValue(id, value);
   } else {
-    m_baseValues.erase(id);
+    if (m_modifiedData.find(id) != m_modifiedData.end()) {
+      // Delete mapping for id only if there is no modified curve data
+      if (!m_modifiedData[id].m_mappingN.size())
+        m_modifiedData.erase(id);
+      else
+        m_modifiedData[id].m_baseValue = def;
+    }
     m_brushModified.setBaseValue(id, def);
   }
 }
@@ -264,6 +270,160 @@ void TMyPaintBrushStyle::setBaseValue(MyPaintBrushSetting id, bool enable,
 void TMyPaintBrushStyle::resetBaseValues() {
   for (int i = 0; i < MYPAINT_BRUSH_SETTINGS_COUNT; ++i)
     setBaseValueEnabled((MyPaintBrushSetting)i, false);
+}
+
+//-----------------------------------------------------------------------------
+
+void TMyPaintBrushStyle::setMappingN(MyPaintBrushSetting id,
+                                     MyPaintBrushInput input, bool enable,
+                                     int value) {
+  int def = m_brushOriginal.getMappingN(id, input);
+  if (enable) {
+    // If mapping for id does not exist, add mapping entry with default base
+    // value
+    if (m_modifiedData.find(id) == m_modifiedData.end())
+      m_modifiedData[id].m_baseValue = getBaseValue(id);
+
+    m_modifiedData[id].m_mappingN[input] = value;
+    m_brushModified.setMappingN(id, input, value);
+  } else {
+    if (m_modifiedData.find(id) != m_modifiedData.end()) {
+      m_modifiedData[id].m_mappingN.erase(input);
+
+      // Delete mapping for id when the last input is removed and if the base
+      // value matches the default base value
+      float defBase = m_brushOriginal.getBaseValue(id);
+      if (!m_modifiedData[id].m_mappingN.size() &&
+          m_modifiedData[id].m_baseValue == defBase)
+        m_modifiedData.erase(id);
+    }
+    m_brushModified.setMappingN(id, input, def);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TMyPaintBrushStyle::setMappingPoint(MyPaintBrushSetting id,
+                                         MyPaintBrushInput input, int index,
+                                         bool enable, TPointD pt) {
+  if (enable) {
+    // If mapping for id does not exist, add mapping entry with default base
+    // value
+    if (m_modifiedData.find(id) == m_modifiedData.end())
+      m_modifiedData[id].m_baseValue = getBaseValue(id);
+
+    // If mapping input for id doesn't exist or the value is less than current
+    // index, then add/update it
+    if (m_modifiedData[id].m_mappingN.find(input) ==
+            m_modifiedData[id].m_mappingN.end() ||
+        m_modifiedData[id].m_mappingN[input] < index)
+      m_modifiedData[id].m_mappingN[input] = index;
+
+    m_modifiedData[id].m_mappingPoints[{input, index}] = pt;
+    m_brushModified.setMappingPoint(id, input, index, pt.x, pt.y);
+  } else {
+    if (m_modifiedData.find(id) != m_modifiedData.end()) {
+      m_modifiedData[id].m_mappingPoints.erase({input, index});
+    }
+    int n = m_brushOriginal.getMappingN(id, input);
+    if (index < n) {
+      float x, y;
+      m_brushOriginal.getMappingPoint(id, input, index, x, y);
+      m_brushModified.setMappingPoint(id, input, index, x, y);
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TMyPaintBrushStyle::resetMapping() {
+  for (int i = 0; i < MYPAINT_BRUSH_SETTINGS_COUNT; ++i) {
+    for (int j = 0; j < MYPAINT_BRUSH_INPUTS_COUNT; ++j)
+      resetMapping((MyPaintBrushSetting)i, (MyPaintBrushInput)j);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TMyPaintBrushStyle::resetMapping(MyPaintBrushSetting id) {
+  for (int j = 0; j < MYPAINT_BRUSH_INPUTS_COUNT; ++j)
+    resetMapping(id, (MyPaintBrushInput)j);
+}
+
+//-----------------------------------------------------------------------------
+
+void TMyPaintBrushStyle::resetMapping(MyPaintBrushSetting id,
+                                      MyPaintBrushInput input) {
+  int n = getMappingN(id, input);
+  setMappingNEnabled(id, input, false);
+  for (int k = 0; k < n; k++) setMappingPointEnabled(id, input, k, false);
+
+  n = getDefaultMappingN(id, input);
+  for (int k = 0; k < n; k++) setMappingPointEnabled(id, input, k, false);
+}
+
+//-----------------------------------------------------------------------------
+
+int TMyPaintBrushStyle::getMappingN(MyPaintBrushSetting id,
+                                    MyPaintBrushInput input) const {
+  std::map<MyPaintBrushSetting, ModifiedBrushData>::const_iterator i =
+      m_modifiedData.find(id);
+  return i == m_modifiedData.end() ||
+                 i->second.m_mappingN.find(input) == i->second.m_mappingN.end()
+             ? m_brushOriginal.getMappingN(id, input)
+             : i->second.m_mappingN.at(input);
+}
+
+//-----------------------------------------------------------------------------
+
+int TMyPaintBrushStyle::getDefaultMappingN(MyPaintBrushSetting id,
+                                           MyPaintBrushInput input) const {
+  return m_brushOriginal.getMappingN(id, input);
+}
+
+//-----------------------------------------------------------------------------
+
+TPointD TMyPaintBrushStyle::getMappingPoint(MyPaintBrushSetting id,
+                                            MyPaintBrushInput input,
+                                            int index) const {
+  std::map<MyPaintBrushSetting, ModifiedBrushData>::const_iterator i =
+      m_modifiedData.find(id);
+
+  if (i == m_modifiedData.end() ||
+      i->second.m_mappingPoints.find({input, index}) ==
+          i->second.m_mappingPoints.end()) {
+    int n = m_brushOriginal.getMappingN(id, input);
+    if (index >= n) return TPointD(0, 0);
+
+    float x, y;
+    m_brushOriginal.getMappingPoint(id, input, index, x, y);
+    return TPointD(x, y);
+  }
+  return i->second.m_mappingPoints.at({input, index});
+}
+
+//-----------------------------------------------------------------------------
+
+TPointD TMyPaintBrushStyle::getDefaultMappingPoint(MyPaintBrushSetting id,
+                                                   MyPaintBrushInput input,
+                                                   int index) const {
+  float x, y;
+  m_brushOriginal.getMappingPoint(id, input, index, x, y);
+  return TPointD(x, y);
+}
+
+//-----------------------------------------------------------------------------
+
+QString TMyPaintBrushStyle::getInputName(MyPaintBrushInput input) const {
+  return QString::fromStdString(mypaint::Input::byId(input).name);
+}
+
+//-----------------------------------------------------------------------------
+
+void TMyPaintBrushStyle::getInputRange(MyPaintBrushInput input, double &min,
+                                       double &max) const {
+  min = mypaint::Input::byId(input).softMin;
+  max = mypaint::Input::byId(input).softMax;
 }
 
 //-----------------------------------------------------------------------------
@@ -304,7 +464,7 @@ void TMyPaintBrushStyle::makeIcon(const TDimension &d) {
   // Only show color marker when the icon size is 22x22
   if (d.lx == d.ly && d.lx <= 22) {
     int size       = std::min(1 + std::min(d.lx, d.ly) * 2 / 3,
-                        1 + std::max(d.lx, d.ly) / 2);
+                              1 + std::max(d.lx, d.ly) / 2);
     TPixel32 color = getMainColor();
     color.m        = 255;  // show full opac color
     for (int y = 0; y < size; ++y) {
@@ -345,14 +505,31 @@ void TMyPaintBrushStyle::loadData(TInputStreamInterface &is) {
 
   int baseSettingsCount = 0;
   is >> baseSettingsCount;
+
+  const mypaint::Setting *setting;
+  const mypaint::Input *input;
+  int index = 0;
+  TPointD pt;
   for (int i = 0; i < baseSettingsCount; ++i) {
     std::string key;
     double value    = 0.0;
     int inputsCount = 0;
     is >> key;
     is >> value;
-    const mypaint::Setting *setting = mypaint::Setting::findByKey(key);
-    if (setting) setBaseValue(setting->id, value);
+    if (key == "x") {
+      if (!setting || !input) continue;
+      pt.x = value;
+    } else if (key == "y") {
+      if (!setting || !input) continue;
+      pt.y = value;
+      setMappingPoint(setting->id, input->id, index++, pt);
+    } else if (input = mypaint::Input::findByKey(key)) {
+      setMappingN(setting->id, input->id, (int)value);
+      index = 0;
+    } else if (setting = mypaint::Setting::findByKey(key)) {
+      setBaseValue(setting->id, value);
+      index = 0;
+    }
   }
 }
 
@@ -365,12 +542,42 @@ void TMyPaintBrushStyle::saveData(TOutputStreamInterface &os) const {
   os << str;
   os << m_color;
 
-  os << (int)m_baseValues.size();
-  for (std::map<MyPaintBrushSetting, float>::const_iterator i =
-           m_baseValues.begin();
-       i != m_baseValues.end(); ++i) {
+  int x = (int)m_modifiedData.size();
+
+  std::map<MyPaintBrushSetting, ModifiedBrushData>::const_iterator i;
+  std::map<MyPaintBrushInput, int>::const_iterator mi;
+
+  // Precalculate curve information
+  for (i = m_modifiedData.begin(); i != m_modifiedData.end(); i++) {
+    std::map<MyPaintBrushInput, int>::const_iterator mi;
+    for (mi = i->second.m_mappingN.begin(); mi != i->second.m_mappingN.end();
+         mi++) {
+      // 1 for input name and point count (ie pressure 2)
+      // 2 for each individual point w/label (ie x 0 y 0)
+      x += 1 + (mi->second * 2);
+    }
+  }
+
+  os << x;  // Count of pairs of data that follows
+
+  for (i = m_modifiedData.begin(); i != m_modifiedData.end(); ++i) {
+    // Parameter and value
     os << mypaint::Setting::byId(i->first).key;
-    os << (double)i->second;
+    os << (double)i->second.m_baseValue;
+    // Curve data
+    for (mi = i->second.m_mappingN.begin(); mi != i->second.m_mappingN.end();
+         mi++) {
+      os << mypaint::Input::byId(mi->first).key;
+      os << (double)mi->second;
+
+      for (int index = 0; index < mi->second; index++) {
+        TPointD pt = i->second.m_mappingPoints.at({mi->first, index});
+        os << "x";
+        os << pt.x;
+        os << "y";
+        os << pt.y;
+      }
+    }
   }
 }
 
@@ -429,6 +636,23 @@ void TMyPaintBrushStyle::setParamValue(int index, double value) {
 
 double TMyPaintBrushStyle::getParamValue(double_tag, int index) const {
   return getBaseValue((MyPaintBrushSetting)index);
+}
+
+//-----------------------------------------------------------------------------
+
+bool TMyPaintBrushStyle::isMappingDefault(MyPaintBrushSetting id) const {
+  for (int i = 0; i < MYPAINT_BRUSH_INPUTS_COUNT; i++) {
+    if (getMappingNEnabled(id, (MyPaintBrushInput)i)) return true;
+  }
+
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
+void TMyPaintBrushStyle::resetStyle() {
+  resetBaseValues();
+  resetMapping();
 }
 
 //-----------------------------------------------------------------------------

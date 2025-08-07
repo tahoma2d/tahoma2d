@@ -3715,7 +3715,7 @@ m_index) == value)
 //*****************************************************************************
 
 SettingsPage::SettingsPage(QWidget *parent)
-    : QScrollArea(parent), m_updating(false) {
+    : QScrollArea(parent), m_updating(false), m_stylusConfig(0), m_parameterId(-1) {
   bool ret = true;
 
   setObjectName("styleEditorPage");  // It is necessary for the styleSheet
@@ -3889,19 +3889,47 @@ void SettingsPage::setStyle(const TColorStyleP &editedStyle) {
       }
       }
 
+      // MyPaint styles, add a stylus config button
+      if (m_editedStyle->getTagId() == 4001) {
+        QString name = editedStyle->getParamNames(p);
+        if (name != "Fine speed gamma" && name != "Gross speed gamma" &&
+            name != "Opacity linearize" && name != "Pressure gain" &&
+            name != "Save color" && name != "Slow position tracking" &&
+            name != "Stroke threshold" && name != "Tracking noise") {
+          QPushButton *pushButton = new QPushButton;
+          pushButton->setToolTip(QObject::tr("Brush Dynamics"));
+          pushButton->setIcon(createQIcon("config"));
+          pushButton->setFixedSize(24, 24);
+          m_paramsLayout->addWidget(pushButton, p, 2);
+          ret = QObject::connect(pushButton, SIGNAL(clicked(bool)), this,
+                                 SLOT(onOpenStylusConfig())) &&
+                ret;
+        }
+      }
+
       // "reset to default" button
       if (m_editedStyle->hasParamDefault(p)) {
         QPushButton *pushButton = new QPushButton;
         pushButton->setToolTip(QObject::tr("Reset to default"));
         pushButton->setIcon(createQIcon("delete"));
         pushButton->setFixedSize(24, 24);
-        m_paramsLayout->addWidget(pushButton, p, 2);
+        m_paramsLayout->addWidget(pushButton, p,
+                                  (m_editedStyle->getTagId() == 4001 ? 3 : 2));
         ret = QObject::connect(pushButton, SIGNAL(clicked(bool)), this,
                                SLOT(onValueReset())) &&
               ret;
       }
 
       assert(ret);
+    }
+
+    // MyPaint styles, add a reset Style
+    if (m_editedStyle->getTagId() == 4001) {
+      QPushButton *pushButton = new QPushButton(tr("Reset Style"));
+      m_paramsLayout->addWidget(pushButton, p, 0, 1, 4, Qt::AlignHCenter);
+      ret = QObject::connect(pushButton, SIGNAL(clicked(bool)), this,
+                             SLOT(onResetStyle())) &&
+            ret;
     }
   }
 
@@ -3923,13 +3951,22 @@ void SettingsPage::updateValues() {
   // Deal with the autofill
   m_autoFillCheckBox->setChecked(m_editedStyle->getFlags() & 1);
 
+  bool isMyPaint = m_editedStyle->getTagId() == 4001;
   int p, pCount = m_editedStyle->getParamCount();
+  bool resetStyleEnabled = false;
   for (p = 0; p != pCount; ++p) {
     // Update state of "reset to default" button
     if (m_editedStyle->hasParamDefault(p)) {
       QPushButton *pushButton = static_cast<QPushButton *>(
-          m_paramsLayout->itemAtPosition(p, 2)->widget());
-      pushButton->setEnabled(m_editedStyle->isParamDefault(p));
+          m_paramsLayout->itemAtPosition(p, (isMyPaint ? 3 : 2))->widget());
+      bool enabled = m_editedStyle->isParamDefault(p);
+      if (!enabled && isMyPaint) {
+        TMyPaintBrushStyle *myPaintStyle =
+            (TMyPaintBrushStyle *)m_editedStyle.getPointer();
+        enabled = myPaintStyle->isMappingDefault((MyPaintBrushSetting)p);
+      }
+      resetStyleEnabled |= enabled;
+      pushButton->setEnabled(enabled);
     }
 
     // Update editor values
@@ -3994,6 +4031,12 @@ void SettingsPage::updateValues() {
     }
     }
   }
+
+  if (isMyPaint) {
+    QPushButton *pushButton = static_cast<QPushButton *>(
+        m_paramsLayout->itemAtPosition(pCount, 0)->widget());
+    pushButton->setEnabled(resetStyleEnabled);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -4008,9 +4051,10 @@ void SettingsPage::onAutofillChanged() {
 //-----------------------------------------------------------------------------
 
 int SettingsPage::getParamIndex(const QWidget *widget) {
+  bool isMyPaint = m_editedStyle->getTagId() == 4001;
   int p, pCount = m_paramsLayout->rowCount();
   for (p = 0; p != pCount; ++p)
-    for (int c = 0; c < 3; ++c)
+    for (int c = 0; c < (isMyPaint ? 4 : 3); ++c)
       if (QLayoutItem *item = m_paramsLayout->itemAtPosition(p, c))
         if (item->widget() == widget) return p;
   return -1;
@@ -4028,8 +4072,203 @@ void SettingsPage::onValueReset() {
   assert(0 <= p && p < m_editedStyle->getParamCount());
   m_editedStyle->setParamDefault(p);
 
+  bool isMyPaint = m_editedStyle->getTagId() == 4001;
+  if (isMyPaint) {
+    TMyPaintBrushStyle *myPaintStyle =
+        (TMyPaintBrushStyle *)m_editedStyle.getPointer();
+    myPaintStyle->resetMapping((MyPaintBrushSetting)p);
+  }
+
   // Forward the signal to the style editor
   if (!m_updating) emit paramStyleChanged(false);
+}
+
+//-----------------------------------------------------------------------------
+
+void SettingsPage::onResetStyle() {
+  assert(m_editedStyle);
+
+  bool isMyPaint = m_editedStyle->getTagId() == 4001;
+  if (isMyPaint) {
+    TMyPaintBrushStyle *myPaintStyle =
+        (TMyPaintBrushStyle *)m_editedStyle.getPointer();
+    myPaintStyle->resetStyle();
+  }
+
+  if (!m_updating) emit paramStyleChanged(false);
+}
+
+//-----------------------------------------------------------------------------
+
+void SettingsPage::onOpenStylusConfig() {
+  assert(m_editedStyle);
+
+ // Extract the parameter index
+  QWidget *senderWidget = static_cast<QWidget *>(sender());
+  m_parameterId         = getParamIndex(senderWidget);
+
+  if (m_parameterId < 0) return;
+
+  TMyPaintBrushStyle *myPaintStyle =
+      (TMyPaintBrushStyle *)m_editedStyle.getPointer();
+
+  if (!m_stylusConfig) {
+    m_stylusConfig = new StylusConfigPopup(tr("Brush Dynamic"), this);
+  
+    // Initialize all the input graphs
+    for (int j = 0; j < MYPAINT_BRUSH_INPUTS_COUNT; j++) {
+      m_stylusConfig->addConfiguration(
+          myPaintStyle->getInputName((MyPaintBrushInput)j));
+    }
+
+    connect(m_stylusConfig, SIGNAL(configStateChanged(int)), this,
+            SLOT(onConfigStateChanged(int)));
+    connect(m_stylusConfig, SIGNAL(configCurveChanged(int, bool)), this,
+            SLOT(onConfigCurveChanged(int, bool)));
+  }
+
+ 
+  // Configure Stylus Configuration popup
+  QString paramName = m_editedStyle->getParamNames(m_parameterId);
+  m_stylusConfig->setGraphTitle(tr("Brush Dynamic - %1").arg(paramName));
+
+  m_stylusConfig->blockSignals(true);
+
+  for (int j = 0; j < MYPAINT_BRUSH_INPUTS_COUNT; j++) {
+    // Configure input properties
+    double minX, maxX, minY, maxY;
+
+    myPaintStyle->getInputRange((MyPaintBrushInput)j, minX, maxX);
+
+    m_editedStyle->getParamRange(m_parameterId, minY, maxY);
+    double absMaxY = maxY + -minY;
+
+    // get default curve if there is one
+    QList<TPointD> defaultCurve = QList<TPointD>{TPointD(minX, 0.0), TPointD(maxX, 0.0)};
+    int n = myPaintStyle->getDefaultMappingN((MyPaintBrushSetting)m_parameterId,
+                                             (MyPaintBrushInput)j);
+    if (n) {
+      defaultCurve.clear();
+      for (int k = 0; k < n; k++) {
+        float x, y;
+        TPointD pt = myPaintStyle->getDefaultMappingPoint(
+            (MyPaintBrushSetting)m_parameterId, (MyPaintBrushInput)j, k);
+        defaultCurve.push_back(pt);
+      }
+    }
+
+    // Configure graph
+    m_stylusConfig->setConfiguration(j, minX, maxX, -absMaxY, absMaxY,
+                                     defaultCurve);
+
+    // Set active curve
+    QList<TPointD> curve = defaultCurve;
+    n = myPaintStyle->getMappingN((MyPaintBrushSetting)m_parameterId,
+                                  (MyPaintBrushInput)j);
+    m_stylusConfig->setConfigEnabled(j, n ? true : false);
+    if (n) {
+      curve.clear();
+      for (int i = 0; i < n; i++) {
+        TPointD pt = myPaintStyle->getMappingPoint(
+            (MyPaintBrushSetting)m_parameterId, (MyPaintBrushInput)j, i);
+        curve.push_back(pt);
+      }
+      m_stylusConfig->setConfigCurve(j, curve);
+    }
+
+  }
+
+  m_stylusConfig->blockSignals(false);
+
+  // Display Popup -- Accounts for scrolled panel
+  m_stylusConfig->show();
+
+  QScrollArea *sa = (QScrollArea *)senderWidget->parentWidget()
+                        ->parentWidget()
+                        ->parentWidget();
+  QScrollBar *sb   = sa->verticalScrollBar();
+  int scrolled     = sb->value();
+  QPoint configPos = mapToGlobal(
+      QPoint(senderWidget->pos().x(), senderWidget->pos().y() - scrolled));
+  configPos.setX(configPos.x() + senderWidget->width());
+  m_stylusConfig->move(configPos);
+
+  // make sure the popup doesn't go off the screen to the right
+  QRect screenRect = screen()->geometry();
+
+  int popupRight  = configPos.x() + m_stylusConfig->width();
+  int popupBottom = configPos.y() + m_stylusConfig->height();
+
+  // first condition checks if popup is on same monitor as main app;
+  // if popup is on different monitor, leave as is
+  int distanceX = 0;
+  int distanceY = 0;
+  if (configPos.x() < screenRect.right() && popupRight > screenRect.right())
+    distanceX = popupRight - screenRect.right();
+  if (configPos.y() < screenRect.bottom() && popupBottom > screenRect.bottom())
+    distanceY = popupBottom - screenRect.bottom();
+  if (distanceX != 0 || distanceY != 0)
+    m_stylusConfig->move(m_stylusConfig->x() - distanceX,
+                         m_stylusConfig->y() - distanceY);
+}
+
+//-----------------------------------------------------------------------------
+
+void SettingsPage::onConfigStateChanged(int configId) {
+  assert(m_editedStyle);
+
+  if (!m_stylusConfig || m_parameterId < 0) return;
+
+  TMyPaintBrushStyle *myPaintStyle =
+      (TMyPaintBrushStyle *)m_editedStyle.getPointer();
+
+  if (m_stylusConfig->isConfigEnabled(configId))
+    onConfigCurveChanged(configId, false);
+  else {
+    myPaintStyle->setMappingN((MyPaintBrushSetting)m_parameterId,
+                              (MyPaintBrushInput)configId, 0);
+
+    if (myPaintStyle->getDefaultMappingN((MyPaintBrushSetting)m_parameterId,
+                                         (MyPaintBrushInput)configId) == 0)
+      myPaintStyle->setMappingNEnabled((MyPaintBrushSetting)m_parameterId,
+                                       (MyPaintBrushInput)configId, false);
+
+    if (!m_updating) emit paramStyleChanged(false);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void SettingsPage::onConfigCurveChanged(int configId, bool isDragging) {
+  assert(m_editedStyle);
+
+  if (!m_stylusConfig || m_parameterId < 0) return;
+
+  // Don't update the style mappings until we're done dragging
+  if (isDragging) return;
+
+  TMyPaintBrushStyle *myPaintStyle =
+      (TMyPaintBrushStyle *)m_editedStyle.getPointer();
+
+  myPaintStyle->resetMapping((MyPaintBrushSetting)m_parameterId,
+                             (MyPaintBrushInput)configId);
+
+  QList<TPointD> curve = m_stylusConfig->getConfigCurve(configId);
+  myPaintStyle->setMappingN((MyPaintBrushSetting)m_parameterId,
+                            (MyPaintBrushInput)configId, curve.count());
+  for (int i = 0; i < curve.count(); i++)
+    myPaintStyle->setMappingPoint((MyPaintBrushSetting)m_parameterId,
+                                  (MyPaintBrushInput)configId, i,
+                                  TPointD(curve[i].x, curve[i].y));
+
+  if (myPaintStyle->getDefaultMappingN((MyPaintBrushSetting)m_parameterId,
+                                       (MyPaintBrushInput)configId) ==
+          curve.size() &&
+      curve == m_stylusConfig->getConfigDefaultCurve(configId))
+    myPaintStyle->setMappingNEnabled((MyPaintBrushSetting)m_parameterId,
+                                     (MyPaintBrushInput)configId, false);
+
+  if (!m_updating) emit paramStyleChanged(isDragging);
 }
 
 //-----------------------------------------------------------------------------
@@ -5128,7 +5367,17 @@ void StyleEditor::copyEditedStyleToPalette(bool isDragging) {
   int styleIndex = getStyleIndex();
   assert(0 <= styleIndex && styleIndex < palette->getStyleCount());
 
-  if (!(*m_oldStyle == *m_editedStyle) &&
+  bool styleChanged = false;
+  if (m_editedStyle->getTagId() == 4001) {
+    TMyPaintBrushStyle *oldMyPaintStyle =
+        (TMyPaintBrushStyle *)m_oldStyle.getPointer();
+    TMyPaintBrushStyle *newMyPaintStyle =
+        (TMyPaintBrushStyle *)m_editedStyle.getPointer();
+    styleChanged = !(oldMyPaintStyle == newMyPaintStyle);
+  } else
+    styleChanged = !(*m_oldStyle == *m_editedStyle);
+
+  if (styleChanged &&
       (!isDragging || m_paletteController->isColorAutoApplyEnabled()) &&
       m_editedStyle->getGlobalName() != L"" &&
       m_editedStyle->getOriginalName() != L"") {
@@ -5141,7 +5390,7 @@ void StyleEditor::copyEditedStyleToPalette(bool isDragging) {
                     m_editedStyle->clone());  // Must be done *before* setting
                                               // the eventual palette keyframe
   if (!isDragging) {
-    if (!(*m_oldStyle == *m_editedStyle)) {
+    if (styleChanged) {
       // do not register undo if the edited color is special one (e.g. changing
       // the ColorField in the fx settings)
       if (palette->getPaletteName() != L"EmptyColorFieldPalette")
