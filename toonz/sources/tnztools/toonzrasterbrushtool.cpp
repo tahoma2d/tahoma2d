@@ -2965,7 +2965,7 @@ void ToonzRasterBrushTool::applyClassicToonzBrushSettings(
 
     mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_OPAQUE_LINEARIZE, 0);
     mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_DABS_PER_ACTUAL_RADIUS,
-                              0.9);
+                              20);
     mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_DABS_PER_SECOND, 79.69);
     mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_DIRECTION_FILTER, 10);
 
