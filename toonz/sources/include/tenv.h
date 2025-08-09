@@ -80,6 +80,14 @@ public:
   void operator=(const TRect &v);
 };
 
+class DVAPI PointListVar final : public Variable {
+public:
+  PointListVar(std::string name, const QList<TPointD> &defValue);
+  PointListVar(std::string name);
+  operator QList<TPointD>() const;
+  void operator=(const QList<TPointD> &v);
+};
+
 //-------------------------------------------------------
 
 // NOTA BENE: bisogna chiamare setApplication() il prima possibile

@@ -25,6 +25,7 @@
 #include "toonzqt/glwidget_for_highdpi.h"
 #include "toonzqt/dvdialog.h"
 #include "toonzqt/hexcolornames.h"
+#include "toonzqt/stylusconfigpopup.h"
 
 // Qt includes
 #include <QWidget>
@@ -711,6 +712,9 @@ class SettingsPage final : public QScrollArea {
   TColorStyleP m_editedStyle;  //!< A copy of the current style being edited by
                                //! the Style Editor.
 
+  StylusConfigPopup *m_stylusConfig;
+  int m_parameterId;
+
   bool
       m_updating;  //!< Whether the page is copying style content to its widget,
                    //!  to be displayed.
@@ -735,6 +739,10 @@ private slots:
   void onAutofillChanged();
   void onValueChanged(bool isDragging = false);
   void onValueReset();
+  void onResetStyle();
+  void onOpenStylusConfig();
+  void onConfigStateChanged(int);
+  void onConfigCurveChanged(int, bool);
 };
 
 //=============================================================================

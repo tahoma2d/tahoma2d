@@ -167,6 +167,7 @@ private:
   void visit(TStyleIndexProperty *p) override;
   void visit(TPointerProperty *p) override;
   void visit(TColorChipProperty *p) override;
+  void visit(TStylusProperty *p) override;
 };
 
 //***********************************************************************************************
@@ -922,4 +923,4 @@ signals:
   //  void toolOptionChange();
 };
 
-#endif  // PANE_H
+#endif  // TOOLOPTIONS_H

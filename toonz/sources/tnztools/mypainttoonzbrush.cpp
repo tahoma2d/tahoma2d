@@ -12,39 +12,93 @@
 
 namespace {
 void putOnRasterCM(const TRasterCM32P &out, const TRaster32P &in, int styleId,
-                   bool lockAlpha) {
+                   bool lockAlpha, int drawOrderMode, QSet<int> aboveStyleIds) {
   if (!out.getPointer() || !in.getPointer()) return;
   assert(out->getSize() == in->getSize());
   int x, y;
-  for (y = 0; y < out->getLy(); y++) {
-    for (x = 0; x < out->getLx(); x++) {
+  if (drawOrderMode == 0) {  // OverAll
+    for (y = 0; y < out->getLy(); y++) {
+      for (x = 0; x < out->getLx(); x++) {
 #ifdef _DEBUG
-      assert(x >= 0 && x < in->getLx());
-      assert(y >= 0 && y < in->getLy());
-      assert(x >= 0 && x < out->getLx());
-      assert(y >= 0 && y < out->getLy());
+        assert(x >= 0 && x < in->getLx());
+        assert(y >= 0 && y < in->getLy());
+        assert(x >= 0 && x < out->getLx());
+        assert(y >= 0 && y < out->getLy());
 #endif
-      TPixel32 *inPix = &in->pixels(y)[x];
-      if (inPix->m == 0) continue;
-      TPixelCM32 *outPix = &out->pixels(y)[x];
-      if (lockAlpha && !outPix->isPureInk() && outPix->getPaint() == 0 &&
-          outPix->getTone() == 255) {
-        *outPix =
-            TPixelCM32(outPix->getInk(), outPix->getPaint(), outPix->getTone());
-        continue;
-      }
-      bool sameStyleId = styleId == outPix->getInk();
-      // line with lock alpha : use original pixel's tone
-      // line with the same style : multiply tones
-      // line with different style : pick darker tone
-      int tone = lockAlpha ? outPix->getTone()
-                           : sameStyleId
-                                 ? outPix->getTone() * (255 - inPix->m) / 255
+        TPixel32 *inPix = &in->pixels(y)[x];
+        if (inPix->m == 0) continue;
+        TPixelCM32 *outPix = &out->pixels(y)[x];
+        if (lockAlpha && !outPix->isPureInk() && outPix->getPaint() == 0 &&
+            outPix->getTone() == 255) {
+          *outPix = TPixelCM32(outPix->getInk(), outPix->getPaint(),
+                               outPix->getTone());
+          continue;
+        }
+        bool sameStyleId = styleId == outPix->getInk();
+        // line with lock alpha : use original pixel's tone
+        // line with the same style : multiply tones
+        // line with different style : pick darker tone
+        int tone = lockAlpha     ? outPix->getTone()
+                   : sameStyleId ? outPix->getTone() * (255 - inPix->m) / 255
                                  : std::min(255 - inPix->m, outPix->getTone());
-      int ink = !sameStyleId && outPix->getTone() < 255 - inPix->m
-                    ? outPix->getInk()
-                    : styleId;
-      *outPix = TPixelCM32(ink, outPix->getPaint(), tone);
+        int ink  = !sameStyleId && outPix->getTone() < 255 - inPix->m
+                       ? outPix->getInk()
+                       : styleId;
+        *outPix  = TPixelCM32(ink, outPix->getPaint(), tone);
+      }
+    }
+  } else if (drawOrderMode == 1) {  // UnderAll
+    for (y = 0; y < out->getLy(); y++) {
+      for (x = 0; x < out->getLx(); x++) {
+#ifdef _DEBUG
+        assert(x >= 0 && x < in->getLx());
+        assert(y >= 0 && y < in->getLy());
+        assert(x >= 0 && x < out->getLx());
+        assert(y >= 0 && y < out->getLy());
+#endif
+        TPixel32 *inPix = &in->pixels(y)[x];
+        if (inPix->m == 0) continue;
+        TPixelCM32 *outPix = &out->pixels(y)[x];
+        if (lockAlpha && !outPix->isPureInk() && outPix->getPaint() == 0 &&
+            outPix->getTone() == 255) {
+          *outPix = TPixelCM32(outPix->getInk(), outPix->getPaint(),
+                               outPix->getTone());
+          continue;
+        }
+        bool sameStyleId = styleId == outPix->getInk();
+        // line with the same style : multiply tones
+        // line with different style : pick darker tone
+        int tone = sameStyleId ? outPix->getTone() * (255 - inPix->m) / 255
+                               : std::min(255 - inPix->m, outPix->getTone());
+        int ink  = !sameStyleId && outPix->getTone() <= 255 - inPix->m
+                       ? outPix->getInk()
+                       : styleId;
+        *outPix  = TPixelCM32(ink, outPix->getPaint(), tone);
+      }
+    }
+  } else {  // PaletteOrder
+    for (y = 0; y < out->getLy(); y++) {
+      for (x = 0; x < out->getLx(); x++) {
+        TPixel32 *inPix = &in->pixels(y)[x];
+        if (inPix->m == 0) continue;
+        TPixelCM32 *outPix = &out->pixels(y)[x];
+        if (lockAlpha && !outPix->isPureInk() && outPix->getPaint() == 0 &&
+            outPix->getTone() == 255) {
+          *outPix = TPixelCM32(outPix->getInk(), outPix->getPaint(),
+                               outPix->getTone());
+          continue;
+        }
+        bool sameStyleId = styleId == outPix->getInk();
+        // line with the same style : multiply tones
+        // line with different style : pick darker tone
+        int tone = sameStyleId ? outPix->getTone() * (255 - inPix->m) / 255
+                               : std::min(255 - inPix->m, outPix->getTone());
+        bool chooseOutPixInk = outPix->getTone() < 255 - inPix->m ||
+                               (outPix->getTone() == 255 - inPix->m &&
+                                aboveStyleIds.contains(outPix->getInk()));
+        int ink = !sameStyleId && chooseOutPixInk ? outPix->getInk() : styleId;
+        *outPix = TPixelCM32(ink, outPix->getPaint(), tone);
+      }
     }
   }
 }
@@ -280,9 +334,11 @@ void MyPaintToonzBrush::strokeTo(const TPointD &point, double pressure,
         sub->p2.setMedian(sub->p1, segment->p1);
         segment = sub;
       } else {
+        // If initial time is 0.0, let's prevent a large dot from appearing
+        double elapsedTime = p0.time == 0.0 ? 0.5 : segment->p2.time - p0.time;
         brushes[i].strokeTo(m_mypaintSurface, segment->p2.x, segment->p2.y,
                             segment->p2.pressure, segment->p2.tiltX,
-                            segment->p2.tiltY, segment->p2.time - p0.time);
+                            segment->p2.tiltY, elapsedTime);
         if (segment == stack) break;
         p0 = segment->p2;
         --segment;
@@ -304,7 +360,8 @@ void MyPaintToonzBrush::strokeTo(const TPointD &point, double pressure,
 void MyPaintToonzBrush::updateDrawing(const TRasterCM32P rasCM,
                                       const TRasterCM32P rasBackupCM,
                                       const TRect &bbox, int styleId,
-                                      bool lockAlpha) const {
+                                      bool lockAlpha, int drawOrderMode,
+                                      QSet<int> aboveStyleIds) const {
   if (!rasCM) return;
 
   TRect rasRect    = rasCM->getBounds();
@@ -313,7 +370,7 @@ void MyPaintToonzBrush::updateDrawing(const TRasterCM32P rasCM,
 
   rasCM->copy(rasBackupCM->extract(targetRect), targetRect.getP00());
   putOnRasterCM(rasCM->extract(targetRect), m_ras->extract(targetRect), styleId,
-                lockAlpha);
+                lockAlpha, drawOrderMode, aboveStyleIds);
 }
 
 //----------------------------------------------------------------------------------

@@ -48,12 +48,22 @@
 // Qt includes
 #include <QCoreApplication>  // Qt translation support
 
+#define DEFAULTPRESSURECURVE                                                   \
+  QList<TPointD> { TPointD(0.0, 0.0), TPointD(100.0, 100.0) }
+
+#define DEFAULTSIZETILTCURVE                                                   \
+  QList<TPointD> {                                                             \
+    TPointD(0.0, 100.0), TPointD(30.0, 100.0), TPointD(90.0, 0.0)              \
+  }
+
+#define DEFAULTOPACITYTILTCURVE                                                \
+  QList<TPointD> { TPointD(0.0, 0.0), TPointD(30.0, 0.0), TPointD(90.0, 100.0) }
+
 //----------------------------------------------------------------------------------
 
 TEnv::IntVar FullcolorBrushMinSize("FullcolorBrushMinSize", 1);
 TEnv::IntVar FullcolorBrushMaxSize("FullcolorBrushMaxSize", 5);
 TEnv::DoubleVar FullcolorBrushSmooth("FullcolorBrushSmooth", 0);
-TEnv::IntVar FullcolorPressureSensitivity("FullcolorPressureSensitivity", 1);
 TEnv::DoubleVar FullcolorBrushHardness("FullcolorBrushHardness", 100);
 TEnv::DoubleVar FullcolorMinOpacity("FullcolorMinOpacity", 100);
 TEnv::DoubleVar FullcolorMaxOpacity("FullcolorMaxOpacity", 100);
@@ -64,7 +74,22 @@ TEnv::IntVar FullcolorModifierLockAlpha("FullcolorModifierLockAlpha", 0);
 TEnv::IntVar FullcolorModifierPaintBehind("FullcolorModifierPaintBehind", 0);
 TEnv::StringVar FullcolorBrushPreset("FullcolorBrushPreset", "<custom>");
 TEnv::IntVar FullcolorBrushSnapGrid("FullcolorBrushSnapGrid", 0);
+TEnv::IntVar FullcolorPressureSensitivity("FullcolorPressureSensitivity", 1);
+TEnv::PointListVar FullcolorPressureCurvePts("FullcolorPressureCurvePts",
+                                             DEFAULTPRESSURECURVE);
 TEnv::IntVar FullcolorTiltSensitivity("FullcolorTiltSensitivity", 0);
+TEnv::PointListVar FullcolorTiltCurvePts("FullcolorTiltCurvePts",
+                                         DEFAULTSIZETILTCURVE);
+TEnv::IntVar FullcolorOPressureSensitivity("FullcolorOPressureSensitivity", 0);
+TEnv::PointListVar FullcolorOPressureCurvePts("FullcolorOPressureCurvePts",
+                                              DEFAULTPRESSURECURVE);
+TEnv::IntVar FullcolorOTiltSensitivity("FullcolorOTiltSensitivity", 0);
+TEnv::PointListVar FullcolorOTiltCurvePts("FullcolorOTiltCurvePts",
+                                          DEFAULTOPACITYTILTCURVE);
+TEnv::IntVar FullcolorMyPaintPressureSensitivity(
+    "FullcolorMyPaintPressureSensitivity", 1);
+TEnv::IntVar FullcolorMyPaintTiltSensitivity("FullcolorMyPaintTiltSensitivity",
+                                             0);
 
 //----------------------------------------------------------------------------------
 
@@ -125,7 +150,7 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
     : TTool(name)
     , m_thickness("Size", 1, 1000, 1, 5, false)
     , m_smooth("Smooth:", 0, 50, 0)
-    , m_pressure("Pressure", true)
+    , m_mypaintPressure("ModifierPressure", true)
     , m_opacity("Opacity", 0, 100, 100, 100, true)
     , m_hardness("Hardness:", 0, 100, 100)
     , m_modifierSize("ModifierSize", -3, 3, 0, true)
@@ -144,23 +169,30 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
     , m_presetsLoaded(false)
     , m_firstTime(true)
     , m_snapGrid("Grid", false)
-    , m_tilt("Tilt", false)
-    , m_enabledTilt(false) {
+    , m_mypaintTilt("ModifierTilt", false)
+    , m_enabledTilt(false)
+    , m_enabledOPressure(false)
+    , m_enabledOTilt(false)
+    , m_sizeStylusProperty("Stylus Settings - Size")
+    , m_opacityStylusProperty("Stylus Settings - Opacity")
+    , m_isMyPaintStyleSelected(false) {
   bind(TTool::RasterImage | TTool::EmptyTarget);
 
   m_thickness.setNonLinearSlider();
 
   m_prop.bind(m_thickness);
+  m_prop.bind(m_sizeStylusProperty);
   m_prop.bind(m_modifierSize);
   m_prop.bind(m_hardness);
   m_prop.bind(m_smooth);
   m_prop.bind(m_opacity);
+  m_prop.bind(m_opacityStylusProperty);
   m_prop.bind(m_modifierOpacity);
   m_prop.bind(m_modifierEraser);
   m_prop.bind(m_modifierPaintBehind);
   m_prop.bind(m_modifierLockAlpha);
-  m_prop.bind(m_pressure);
-  m_prop.bind(m_tilt);
+  m_prop.bind(m_mypaintPressure);
+  m_prop.bind(m_mypaintTilt);
   m_prop.bind(m_snapGrid);
   m_prop.bind(m_preset);
 
@@ -168,11 +200,16 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
   m_modifierEraser.setId("RasterEraser");
   m_modifierPaintBehind.setId("PaintBehind");
   m_modifierLockAlpha.setId("LockAlpha");
-  m_pressure.setId("PressureSensitivity");
   m_snapGrid.setId("SnapGrid");
-  m_tilt.setId("TiltSensitivity");
+  m_mypaintPressure.setId("PressureSensitivity");
+  m_mypaintTilt.setId("TiltSensitivity");
+  m_sizeStylusProperty.setId("SizeStylusConfig");
+  m_opacityStylusProperty.setId("OpacityStylusConfig");
 
   m_brushTimer.start();
+
+  m_sizeStylusProperty.setDefaultTiltCurve(DEFAULTSIZETILTCURVE);
+  m_opacityStylusProperty.setDefaultTiltCurve(DEFAULTOPACITYTILTCURVE);
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -202,7 +239,6 @@ void FullColorBrushTool::onColorStyleChanged() {
 void FullColorBrushTool::updateTranslation() {
   m_thickness.setQStringName(tr("Size"));
   m_smooth.setQStringName(tr("Smooth:"));
-  m_pressure.setQStringName(tr("Pressure"));
   m_opacity.setQStringName(tr("Opacity"));
   m_hardness.setQStringName(tr("Hardness:"));
   m_preset.setQStringName(tr("Preset:"));
@@ -212,7 +248,10 @@ void FullColorBrushTool::updateTranslation() {
   m_modifierLockAlpha.setQStringName(tr("Lock Alpha"));
   m_modifierPaintBehind.setQStringName(tr("Paint Behind"));
   m_snapGrid.setQStringName(tr("Grid"));
-  m_tilt.setQStringName(tr("Tilt"));
+  m_mypaintPressure.setQStringName(tr("Pressure"));
+  m_mypaintTilt.setQStringName(tr("Tilt"));
+  m_sizeStylusProperty.setQStringName(tr("Stylus Settings - Size"));
+  m_opacityStylusProperty.setQStringName(tr("Stylus Settings - Opacity"));
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -384,20 +423,27 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
   TPointD rasCenter = ras->getCenterD();
   TPointD point(pos + rasCenter);
 
+  if (!e.isTablet()) {
+    m_enabledPressure  = false;
+    m_enabledOPressure = false;
+    m_enabledTilt      = false;
+    m_enabledOTilt     = false;
+  }
+
   double pressure;
   if (getApplication()->getCurrentLevelStyle()->getTagId() ==
       4001)  // mypaint brush case
-    pressure = m_enabledPressure && e.isTablet() ? e.m_pressure : 0.5;
+    pressure = (m_enabledPressure || m_enabledOPressure) ? e.m_pressure : 0.5;
   else {
-    pressure = m_enabledPressure && e.isTablet() ? e.m_pressure : 1.0;
-    if (m_enabledPressure && e.m_pressure == 1.0)
+    pressure = (m_enabledPressure || m_enabledOPressure) ? e.m_pressure : 1.0;
+    if ((m_enabledPressure || m_enabledOPressure) && e.m_pressure == 1.0)
       pressure = 0.1;
   }
   m_oldPressure = pressure;
 
   // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
-  double tiltX = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
-  double tiltY = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
+  double tiltX = (m_enabledTilt || m_enabledOTilt) ? (e.m_tiltX / -60.0) : 0.0;
+  double tiltY = (m_enabledTilt || m_enabledOTilt) ? (e.m_tiltY / 60.0) : 0.0;
 
   m_tileSet   = new TTileSetFullColor(ras->getSize());
   m_tileSaver = new TTileSaverFullColor(ras, m_tileSet);
@@ -636,13 +682,17 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
   double pressure;
   if (getApplication()->getCurrentLevelStyle()->getTagId() ==
       4001)  // mypaint brush case
-    pressure = m_enabledPressure && e.isTablet() ? e.m_pressure : 0.5;
+    pressure = (m_enabledPressure || m_enabledOPressure) ? e.m_pressure : 0.5;
   else
-    pressure = m_enabledPressure ? e.m_pressure : 1.0;
+    pressure = (m_enabledPressure || m_enabledOPressure) ? e.m_pressure : 1.0;
 
   // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
-  double tiltX = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
-  double tiltY = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
+  double tiltX = (m_enabledTilt || m_enabledOTilt) ? (e.m_tiltX / -60.0) : 0.0;
+  double tiltY = (m_enabledTilt || m_enabledOTilt) ? (e.m_tiltY / 60.0) : 0.0;
+
+  // rotation of stylus
+//  double arctan    = atan2(tiltY, tiltX);
+//  double tiltAngle     = arctan * M_180_PI;
 
   TThickPoint thickPoint(point, pressure);
   std::vector<TThickPoint> pts;
@@ -704,18 +754,18 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
   double pressure;
   if (getApplication()->getCurrentLevelStyle()->getTagId() ==
       4001)  // mypaint brush case
-    pressure = m_enabledPressure && e.isTablet() ? e.m_pressure : 0.5;
+    pressure = (m_enabledPressure || m_enabledOPressure) ? e.m_pressure : 0.5;
   else {
-    pressure = m_enabledPressure && e.isTablet() ? e.m_pressure : 1.0;
-    if (m_enabledPressure && e.m_pressure == 1.0)
+    pressure = (m_enabledPressure || m_enabledOPressure) ? e.m_pressure : 1.0;
+    if ((m_enabledPressure || m_enabledOPressure) && e.m_pressure == 1.0)
       pressure = 0.1;
   }
   if (m_isStraight) {
     pressure = m_oldPressure;
   }
   // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
-  double tiltX = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
-  double tiltY = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
+  double tiltX = (m_enabledTilt || m_enabledOTilt) ? (e.m_tiltX / -60.0) : 0.0;
+  double tiltY = (m_enabledTilt || m_enabledOTilt) ? (e.m_tiltY / 60.0) : 0.0;
 
   TThickPoint thickPoint(point, pressure);
   std::vector<TThickPoint> pts;
@@ -991,21 +1041,29 @@ bool FullColorBrushTool::onPropertyChanged(std::string propertyName) {
     }
   }
 
-  FullcolorBrushMinSize        = m_thickness.getValue().first;
-  FullcolorBrushMaxSize        = m_thickness.getValue().second;
-  FullcolorBrushSmooth         = m_smooth.getValue();
-  FullcolorPressureSensitivity = m_pressure.getValue();
-  FullcolorBrushHardness       = m_hardness.getValue();
-  FullcolorMinOpacity          = m_opacity.getValue().first;
-  FullcolorMaxOpacity          = m_opacity.getValue().second;
-  FullcolorModifierSize        = m_modifierSize.getValue();
-  FullcolorModifierOpacity     = m_modifierOpacity.getValue();
-  FullcolorModifierEraser      = m_modifierEraser.getValue() ? 1 : 0;
-  FullcolorModifierLockAlpha   = m_modifierLockAlpha.getValue() ? 1 : 0;
-  FullcolorModifierPaintBehind = m_modifierPaintBehind.getValue() ? 1 : 0;
-  FullcolorBrushSnapGrid       = m_snapGrid.getValue() ? 1 : 0;
-  FullcolorTiltSensitivity     = m_tilt.getValue();
-
+  FullcolorBrushMinSize         = m_thickness.getValue().first;
+  FullcolorBrushMaxSize         = m_thickness.getValue().second;
+  FullcolorBrushSmooth          = m_smooth.getValue();
+  FullcolorBrushHardness        = m_hardness.getValue();
+  FullcolorMinOpacity           = m_opacity.getValue().first;
+  FullcolorMaxOpacity           = m_opacity.getValue().second;
+  FullcolorModifierSize         = m_modifierSize.getValue();
+  FullcolorModifierOpacity      = m_modifierOpacity.getValue();
+  FullcolorModifierEraser       = m_modifierEraser.getValue() ? 1 : 0;
+  FullcolorModifierLockAlpha    = m_modifierLockAlpha.getValue() ? 1 : 0;
+  FullcolorModifierPaintBehind  = m_modifierPaintBehind.getValue() ? 1 : 0;
+  FullcolorBrushSnapGrid        = m_snapGrid.getValue() ? 1 : 0;
+  FullcolorPressureSensitivity  = m_sizeStylusProperty.isPressureEnabled();
+  FullcolorPressureCurvePts     = m_sizeStylusProperty.getPressureCurve();
+  FullcolorTiltSensitivity      = m_sizeStylusProperty.isTiltEnabled();
+  FullcolorTiltCurvePts         = m_sizeStylusProperty.getTiltCurve();
+  FullcolorOPressureSensitivity = m_opacityStylusProperty.isPressureEnabled();
+  FullcolorOPressureCurvePts    = m_opacityStylusProperty.getPressureCurve();
+  FullcolorOTiltSensitivity     = m_opacityStylusProperty.isTiltEnabled();
+  FullcolorOTiltCurvePts        = m_opacityStylusProperty.getTiltCurve();
+  FullcolorMyPaintPressureSensitivity = m_mypaintPressure.getValue();
+  FullcolorMyPaintTiltSensitivity     = m_mypaintTilt.getValue();
+ 
   if (m_preset.getValue() != CUSTOM_WSTR) {
     m_preset.setValue(CUSTOM_WSTR);
     FullcolorBrushPreset = m_preset.getValueAsString();
@@ -1056,13 +1114,23 @@ void FullColorBrushTool::loadPreset() {
     m_hardness.setValue(preset.m_hardness, true);
     m_opacity.setValue(
         TDoublePairProperty::Value(preset.m_opacityMin, preset.m_opacityMax));
-    m_pressure.setValue(preset.m_pressure);
+    m_mypaintPressure.setValue(preset.m_mypaintPressure);
     m_modifierSize.setValue(preset.m_modifierSize);
     m_modifierOpacity.setValue(preset.m_modifierOpacity);
     m_modifierEraser.setValue(preset.m_modifierEraser);
     m_modifierLockAlpha.setValue(preset.m_modifierLockAlpha);
     m_modifierPaintBehind.setValue(preset.m_modifierPaintBehind);
-    m_tilt.setValue(preset.m_tilt);
+    m_mypaintTilt.setValue(preset.m_mypaintTilt);
+
+    m_sizeStylusProperty.setPressureEnabled(preset.m_pressure);
+    m_sizeStylusProperty.setPressureCurve(preset.m_pressureCurve);
+    m_sizeStylusProperty.setTiltEnabled(preset.m_tilt);
+    m_sizeStylusProperty.setTiltCurve(preset.m_tiltCurve);
+
+    m_opacityStylusProperty.setPressureEnabled(preset.m_opressure);
+    m_opacityStylusProperty.setPressureCurve(preset.m_opressureCurve);
+    m_opacityStylusProperty.setTiltEnabled(preset.m_otilt);
+    m_opacityStylusProperty.setTiltCurve(preset.m_otiltCurve);
   } catch (...) {
   }
 }
@@ -1079,13 +1147,21 @@ void FullColorBrushTool::addPreset(QString name) {
   preset.m_hardness            = m_hardness.getValue();
   preset.m_opacityMin          = m_opacity.getValue().first;
   preset.m_opacityMax          = m_opacity.getValue().second;
-  preset.m_pressure            = m_pressure.getValue();
   preset.m_modifierSize        = m_modifierSize.getValue();
   preset.m_modifierOpacity     = m_modifierOpacity.getValue();
   preset.m_modifierEraser      = m_modifierEraser.getValue();
   preset.m_modifierLockAlpha   = m_modifierLockAlpha.getValue();
   preset.m_modifierPaintBehind = m_modifierPaintBehind.getValue();
-  preset.m_tilt                = m_tilt.getValue();
+  preset.m_pressure            = m_sizeStylusProperty.isPressureEnabled();
+  preset.m_pressureCurve       = m_sizeStylusProperty.getPressureCurve();
+  preset.m_tilt                = m_sizeStylusProperty.isTiltEnabled();
+  preset.m_tiltCurve           = m_sizeStylusProperty.getTiltCurve();
+  preset.m_opressure           = m_opacityStylusProperty.isPressureEnabled();
+  preset.m_opressureCurve      = m_opacityStylusProperty.getPressureCurve();
+  preset.m_otilt               = m_opacityStylusProperty.isTiltEnabled();
+  preset.m_otiltCurve          = m_opacityStylusProperty.getTiltCurve();
+  preset.m_mypaintPressure     = m_mypaintPressure.getValue();
+  preset.m_mypaintTilt         = m_mypaintTilt.getValue();
 
   // Pass the preset to the manager
   m_presetsManager.addPreset(preset);
@@ -1118,7 +1194,6 @@ void FullColorBrushTool::loadLastBrush() {
   m_thickness.setValue(
       TIntPairProperty::Value(FullcolorBrushMinSize, FullcolorBrushMaxSize));
   m_smooth.setValue(FullcolorBrushSmooth);
-  m_pressure.setValue(FullcolorPressureSensitivity ? 1 : 0);
   m_opacity.setValue(
       TDoublePairProperty::Value(FullcolorMinOpacity, FullcolorMaxOpacity));
   m_hardness.setValue(FullcolorBrushHardness);
@@ -1128,7 +1203,19 @@ void FullColorBrushTool::loadLastBrush() {
   m_modifierLockAlpha.setValue(FullcolorModifierLockAlpha ? true : false);
   m_modifierPaintBehind.setValue(FullcolorModifierPaintBehind ? true : false);
   m_snapGrid.setValue(FullcolorBrushSnapGrid ? true : false);
-  m_tilt.setValue(FullcolorTiltSensitivity ? 1 : 0);
+  m_mypaintPressure.setValue(FullcolorMyPaintPressureSensitivity ? 1 : 0);
+  m_mypaintTilt.setValue(FullcolorMyPaintTiltSensitivity ? 1 : 0);
+
+  m_sizeStylusProperty.setPressureEnabled(FullcolorPressureSensitivity);
+  m_sizeStylusProperty.setPressureCurve(FullcolorPressureCurvePts);
+  m_sizeStylusProperty.setTiltEnabled(FullcolorTiltSensitivity);
+  m_sizeStylusProperty.setTiltCurve(FullcolorTiltCurvePts);
+
+  m_opacityStylusProperty.setPressureEnabled(FullcolorOPressureSensitivity ? 1
+                                                                           : 0);
+  m_opacityStylusProperty.setPressureCurve(FullcolorOPressureCurvePts);
+  m_opacityStylusProperty.setTiltEnabled(FullcolorOTiltSensitivity ? 1 : 0);
+  m_opacityStylusProperty.setTiltCurve(FullcolorOTiltCurvePts);
 }
 
 //------------------------------------------------------------------
@@ -1142,13 +1229,19 @@ void FullColorBrushTool::updateCurrentStyle() {
       int style               = app->getCurrentLevelStyleIndex();
       TColorStyle *colorStyle = plt->getStyle(style);
       m_currentColor          = colorStyle->getMainColor();
+      TMyPaintBrushStyle *mpbs =
+          dynamic_cast<TMyPaintBrushStyle *>(app->getCurrentLevelStyle());
+      m_isMyPaintStyleSelected = (mpbs) ? true : false;
     }
   }
 
   int prevMinCursorThick = m_minCursorThick;
   int prevMaxCursorThick = m_maxCursorThick;
 
-  m_enabledPressure = m_pressure.getValue();
+  m_enabledPressure  = m_isMyPaintStyleSelected
+                           ? m_mypaintPressure.getValue()
+                           : m_sizeStylusProperty.isPressureEnabled();
+  m_enabledOPressure = m_opacityStylusProperty.isPressureEnabled();
   if (TMyPaintBrushStyle *brushStyle = getBrushStyle()) {
     double radiusLog = brushStyle->getBrush().getBaseValue(
                            MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC) +
@@ -1159,9 +1252,14 @@ void FullColorBrushTool::updateCurrentStyle() {
     m_minCursorThick = std::max(m_thickness.getValue().first, 1);
     m_maxCursorThick =
         std::max(m_thickness.getValue().second, m_minCursorThick);
-    if (!m_enabledPressure) m_minCursorThick = m_maxCursorThick;
+    if (!m_enabledPressure && !m_enabledTilt)
+      m_minCursorThick = m_maxCursorThick;
   }
-  m_enabledTilt = m_tilt.getValue();
+
+  m_enabledTilt  = m_isMyPaintStyleSelected
+                       ? m_mypaintTilt.getValue()
+                       : m_sizeStylusProperty.isTiltEnabled();
+  m_enabledOTilt = m_opacityStylusProperty.isTiltEnabled();
 
   // if this function is called from onEnter(), the clipping rect will not be
   // set in order to update whole viewer.
@@ -1226,6 +1324,8 @@ void FullColorBrushTool::applyClassicToonzBrushSettings(
   mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_OPAQUE_MULTIPLY, 1.0);
   mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_OPAQUE_MULTIPLY,
                            MYPAINT_BRUSH_INPUT_PRESSURE, 0);
+  mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_OPAQUE_MULTIPLY,
+                           MYPAINT_BRUSH_INPUT_TILT_DECLINATION, 0);
 
   mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_HARDNESS,
                             0.5 * hardness + 0.5);
@@ -1237,42 +1337,115 @@ void FullColorBrushTool::applyClassicToonzBrushSettings(
   mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_DABS_PER_BASIC_RADIUS, 0.0);
   mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_DABS_PER_SECOND, 0.0);
 
+  double minThicknessLog  = log(minThickness);
+  double maxThicknessLog  = log(maxThickness);
+  double baseThicknessLog = 0.5 * (minThicknessLog + maxThicknessLog);
+
+  // Each setting is additive. If both on, each will contribute equally to total
+  if (m_enabledPressure && m_enabledTilt) {
+    minThicknessLog *= 0.5;
+    maxThicknessLog *= 0.5;
+  }
+
   // thickness may be dynamic
-  if (minThickness + precision >= maxThickness) {
+  mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
+                            maxThicknessLog);
+  mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
+                           MYPAINT_BRUSH_INPUT_PRESSURE, 0);
+  mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
+                           MYPAINT_BRUSH_INPUT_TILT_DECLINATION, 0);
+
+  if (m_enabledPressure) {
     mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
-                              log(maxThickness));
+                              minThicknessLog);
+    QList<TPointD> curve = m_sizeStylusProperty.getPressureCurve();
+    int n                = curve.count();
     mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
-                             MYPAINT_BRUSH_INPUT_PRESSURE, 0);
-  } else {
-    double minThicknessLog  = log(minThickness);
-    double maxThicknessLog  = log(maxThickness);
-    double baseThicknessLog = 0.5 * (minThicknessLog + maxThicknessLog);
+                             MYPAINT_BRUSH_INPUT_PRESSURE, n);
+    // X = 0.0% - 100.0% input pressure
+    // Y = 0.0% - 100.0% applied to max value
+    for (int i = 0; i < n; i++) {
+      double x = curve[i].x / 100.0;
+      double y = curve[i].y == 0.0
+                     ? 0.0
+                     : (maxThicknessLog * (curve[i].y / 100)) - minThicknessLog;
+      mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
+                                   MYPAINT_BRUSH_INPUT_PRESSURE, i, x, y);
+    }
+  }
+
+  if (m_enabledTilt) {
     mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
-                              baseThicknessLog);
+                              minThicknessLog);
+    QList<TPointD> curve = m_sizeStylusProperty.getTiltCurve();
+    int n                = curve.count();
     mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
-                             MYPAINT_BRUSH_INPUT_PRESSURE, 2);
-    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
-                                 MYPAINT_BRUSH_INPUT_PRESSURE, 0, 0.0,
-                                 minThicknessLog - baseThicknessLog);
-    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
-                                 MYPAINT_BRUSH_INPUT_PRESSURE, 1, 1.0,
-                                 maxThicknessLog - baseThicknessLog);
+                             MYPAINT_BRUSH_INPUT_TILT_DECLINATION, n);
+    // X = horizontal (0.0) - vertical (90.0) input tilt angle
+    //     Qt supports up to a 60 degree angle from the vertical which makes the
+    //     operational range from 30.0 - 90.0
+    // Y = 0.0% - 100.0% applied to max value
+    for (int i = 0; i < n; i++) {
+      double x = curve[i].x;
+      double y = curve[i].y == 0.0
+                     ? 0.0
+                     : (maxThicknessLog * (curve[i].y / 100)) - minThicknessLog;
+      mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
+                                   MYPAINT_BRUSH_INPUT_TILT_DECLINATION, i, x,
+                                   y);
+    }
   }
 
   // opacity may be dynamic
-  if (minOpacity + precision >= maxOpacity) {
-    mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_OPAQUE, maxOpacity);
-    mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_OPAQUE,
-                             MYPAINT_BRUSH_INPUT_PRESSURE, 0);
-  } else {
+  // Each setting is additive. If both on, each will contribute equally to total
+  if (m_enabledOPressure && m_enabledOTilt) {
+    minOpacity *= 0.5;
+    maxOpacity *= 0.5;
+  }
+
+  mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_OPAQUE, maxOpacity);
+  mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_OPAQUE,
+                           MYPAINT_BRUSH_INPUT_PRESSURE, 0);
+  mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_OPAQUE,
+                           MYPAINT_BRUSH_INPUT_TILT_DECLINATION, 0);
+
+  if (m_enabledOPressure) {
     mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_OPAQUE, minOpacity);
+    QList<TPointD> curve = m_opacityStylusProperty.getPressureCurve();
+    int n = curve.count();
     mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_OPAQUE,
-                             MYPAINT_BRUSH_INPUT_PRESSURE, 2);
-    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_OPAQUE,
-                                 MYPAINT_BRUSH_INPUT_PRESSURE, 0, 0.0, 0.0);
-    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_OPAQUE,
-                                 MYPAINT_BRUSH_INPUT_PRESSURE, 1, 1.0,
-                                 maxOpacity - minOpacity);
+                             MYPAINT_BRUSH_INPUT_PRESSURE, n);
+    // X = 0.0% - 100.0% input pressure
+    // Y = 0.0% - 100.0% applied to max value
+    for (int i = 0; i < n; i++) {
+      double x = curve[i].x / 100.0;
+      double y = curve[i].y == 0.0
+                     ? 0.0
+                     : (maxOpacity * (curve[i].y / 100)) - minOpacity;
+      mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_OPAQUE,
+                                   MYPAINT_BRUSH_INPUT_PRESSURE, i, x, y);
+    }
+  }
+
+  if (m_enabledOTilt) {
+    mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_OPAQUE, minOpacity);
+    QList<TPointD> curve = m_opacityStylusProperty.getTiltCurve();
+    int n                = curve.count();
+    mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_OPAQUE,
+                             MYPAINT_BRUSH_INPUT_TILT_DECLINATION, n);
+    // X = horizontal (0.0) - vertical (90.0) input tilt angle
+    //     Qt supports up to a 60 degree angle from the vertical which makes the
+    //     operational range from 30.0 - 90.0
+    // Y = 0.0% - 100.0% applied to max value
+    for (int i = 0; i < n; i++) {
+      double x = curve[i].x;
+      double y = curve[i].y == 0.0
+                     ? 0.0
+                     : (maxOpacity * (curve[i].y / 100)) - minOpacity;
+      mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_OPAQUE,
+                                   MYPAINT_BRUSH_INPUT_TILT_DECLINATION, i, x,
+                                   y);
+    }
   }
 
   if (m_modifierLockAlpha.getValue()) {
