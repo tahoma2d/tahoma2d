@@ -124,6 +124,8 @@ class ToonzRasterBrushTool final : public TTool, public RasterController {
 
   void updateCurrentStyle();
   double restartBrushTimer();
+  void applyClassicToonzBrushSettings(mypaint::Brush &mypaintBrush);
+  void applyToonzBrushSettings(mypaint::Brush &mypaintBrush);
 
 public:
   ToonzRasterBrushTool(std::string name, int targetType);

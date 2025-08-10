@@ -43,6 +43,7 @@
 
 #include "tgl.h"
 #include "trop.h"
+#include "tpixelutils.h"
 
 #include "perspectivetool.h"
 
@@ -1167,7 +1168,9 @@ void ToonzRasterBrushTool::updateWorkAndBackupRasters(const TRect &rect) {
 
   TRasterCM32P ras = ti->getRaster();
 
+#ifdef OLDTOONZENGINE
   if (m_isMyPaintStyleSelected) {
+#endif
     const int denominator = 8;
     TRect enlargedRect    = rect + m_lastRect;
     int dx                = (enlargedRect.getLx() - 1) / denominator + 1;
@@ -1202,6 +1205,7 @@ void ToonzRasterBrushTool::updateWorkAndBackupRasters(const TRect &rect) {
     }
 
     m_lastRect = enlargedRect;
+#ifdef OLDTOONZENGINE
     return;
   }
 
@@ -1221,6 +1225,7 @@ void ToonzRasterBrushTool::updateWorkAndBackupRasters(const TRect &rect) {
     m_workRas->extract(rects[i])->clear();
     m_backupRas->extract(rects[i])->copy(ras->extract(rects[i]));
   }
+#endif
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -1393,8 +1398,10 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
       getAboveStyleIdSet(m_styleId, ri->getPalette(), aboveStyleIds);
     }
 
+#ifdef OLDTOONZENGINE
     // mypaint brush case
     if (m_isMyPaintStyleSelected) {
+#endif
       TPointD point(centeredPos + rasCenter);
       double pressure =
           m_pressure.getValue() && e.isTablet() ? e.m_pressure : 0.5;
@@ -1407,6 +1414,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
       if (!(m_workRas && m_backupRas)) setWorkAndBackupImages();
       m_workRas->lock();
       mypaint::Brush mypaintBrush;
+#ifdef OLDTOONZENGINE
       TMyPaintBrushStyle *mypaintStyle =
           dynamic_cast<TMyPaintBrushStyle *>(app->getCurrentLevelStyle());
       {  // applyToonzBrushSettings
@@ -1417,6 +1425,9 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
         mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
                                   baseSize + modifierSize);
       }
+#else
+      applyToonzBrushSettings(mypaintBrush);
+#endif
 
       m_toonz_brush = new MyPaintToonzBrush(m_workRas, *this, mypaintBrush);
 
@@ -1438,8 +1449,12 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
       TRect updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty()) {
         // ras->extract(updateRect)->copy(m_workRas->extract(updateRect));
+        QSet<int> aboveStyleIds;
+        if (m_drawOrder.getIndex() == PaletteOrder)
+          getAboveStyleIdSet(m_styleId, img->getPalette(), aboveStyleIds);
         m_toonz_brush->updateDrawing(ri->getRaster(), m_backupRas, m_strokeRect,
-                                     m_styleId, m_modifierLockAlpha.getValue());
+                                     m_styleId, m_modifierLockAlpha.getValue(),
+                                     m_drawOrder.getIndex(), aboveStyleIds);
       }
       m_lastRect = m_strokeRect;
 
@@ -1459,6 +1474,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
           TRectD(centeredPos - thickOffset, centeredPos + thickOffset);
       invalidateRect +=
           TRectD(m_brushPos - thickOffset, m_brushPos + thickOffset);
+#ifdef OLDTOONZENGINE
     } else if (m_hardness.getValue() == 100 || m_pencil.getValue()) {
       /*-- Pencilモードでなく、Hardness=100 の場合のブラシサイズを1段階下げる
        * --*/
@@ -1533,6 +1549,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
         m_smoothStroke.getSmoothPoints(pts);
       }
     }
+#endif
     /*-- 作業中のFidを登録 --*/
     m_workingFrameId = getFrameId();
 
@@ -1792,7 +1809,9 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
   double thickness  = (m_pressure.getValue())
                          ? computeThickness(e.m_pressure, m_rasThickness) * 2
                          : maxThickness;
+#ifdef OLDTOONZENGINE
   if (m_isMyPaintStyleSelected) {
+#endif
     TRasterP ras = ti->getRaster();
     TPointD point(centeredPos + rasCenter);
     double pressure =
@@ -1821,19 +1840,28 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
       TRect updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty()) {
         // ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
+        QSet<int> aboveStyleIds;
+        if (m_drawOrder.getIndex() == PaletteOrder)
+          getAboveStyleIdSet(m_styleId, ti->getPalette(), aboveStyleIds);
         m_toonz_brush->updateDrawing(ras, m_backupRas, m_strokeSegmentRect,
-                                     m_styleId, m_modifierLockAlpha.getValue());
+                                     m_styleId, m_modifierLockAlpha.getValue(),
+                                     m_drawOrder.getIndex(), aboveStyleIds);
       }
 
       m_lastRect = m_strokeRect;
 
       TPointD thickOffset(m_maxCursorThick * 0.5, m_maxCursorThick * 0.5);
+      if (!m_isMyPaintStyleSelected) {
+        thickOffset.x = maxThickness;
+        thickOffset.y = maxThickness;
+      }
       invalidateRect += convert(m_strokeSegmentRect) - rasCenter;
       invalidateRect +=
           TRectD(centeredPos - thickOffset, centeredPos + thickOffset);
       invalidateRect +=
           TRectD(m_brushPos - thickOffset, m_brushPos + thickOffset);
     }
+#ifdef OLDTOONZENGINE
   } else if (m_cmRasterBrush &&
              (m_hardness.getValue() == 100 || m_pencil.getValue())) {
     /*-- Pencilモードでなく、Hardness=100 の場合のブラシサイズを1段階下げる
@@ -1926,7 +1954,7 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
       m_strokeRect += bbox;
     }
   }
-
+#endif
   // clear & draw brush tip when drawing smooth stroke
   if (m_smooth.getValue() != 0) {
     TPointD halfThick(m_maxThick * 0.5, m_maxThick * 0.5);
@@ -1991,7 +2019,9 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
    * --*/
   TFrameId frameId =
       m_workingFrameId.isEmptyFrame() ? getCurrentFid() : m_workingFrameId;
+#ifdef OLDTOONZENGINE
   if (m_isMyPaintStyleSelected) {
+#endif
     TRasterCM32P ras = ti->getRaster();
     TPointD point(pos + rasCenter);
     double pressure = m_pressure.getValue() ? pressureVal : 0.5;
@@ -2017,8 +2047,12 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
       TRect updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty()) {
         // ras->extract(updateRect)->copy(m_workRaster->extract(updateRect));
+        QSet<int> aboveStyleIds;
+        if (m_drawOrder.getIndex() == PaletteOrder)
+          getAboveStyleIdSet(m_styleId, ti->getPalette(), aboveStyleIds);
         m_toonz_brush->updateDrawing(ras, m_backupRas, m_strokeSegmentRect,
-                                     m_styleId, m_modifierLockAlpha.getValue());
+                                     m_styleId, m_modifierLockAlpha.getValue(),
+                                     m_drawOrder.getIndex(), aboveStyleIds);
       }
       TPointD thickOffset(m_maxCursorThick * 0.5,
                           m_maxCursorThick * 0.5);  // TODO
@@ -2041,7 +2075,7 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
           m_tileSet, simLevel.getPointer(), frameId, m_isFrameCreated,
           m_isLevelCreated, subras, m_strokeRect.getP00()));
     }
-
+#ifdef OLDTOONZENGINE
   } else if (m_cmRasterBrush &&
              (m_hardness.getValue() == 100 || m_pencil.getValue())) {
     double thickness = m_pressure.getValue()
@@ -2271,7 +2305,7 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
           centerPoint, useLineSymmetry, m_isStraight));
     }
   }
-
+#endif
   // Column name renamed to level name only if was originally empty
   if (!isEditingLevel && renameColumn) {
     int col            = app->getCurrentColumn()->getColumnIndex();
@@ -2505,11 +2539,13 @@ void ToonzRasterBrushTool::setWorkAndBackupImages() {
   TDimension dim = ras->getSize();
 
   double hardness = m_hardness.getValue() * 0.01;
+#ifdef OLDTOONZENGINE
   if (!m_isMyPaintStyleSelected && hardness == 1.0 &&
       ras->getPixelSize() == 4) {
     m_workRas   = TRaster32P();
     m_backupRas = TRasterCM32P();
   } else {
+#endif
     if (!m_workRas || m_workRas->getLx() > dim.lx ||
         m_workRas->getLy() > dim.ly)
       m_workRas = TRaster32P(dim);
@@ -2519,7 +2555,9 @@ void ToonzRasterBrushTool::setWorkAndBackupImages() {
 
     m_strokeRect.empty();
     m_lastRect.empty();
+#ifdef OLDTOONZENGINE
   }
+#endif
 }
 
 //------------------------------------------------------------------
@@ -2765,6 +2803,147 @@ void ToonzRasterBrushTool::updateCurrentStyle() {
     m_minCursorThick = m_maxCursorThick = (int)std::round(2.0 * radius);
   }
 }
+
+//------------------------------------------------------------------
+
+void ToonzRasterBrushTool::applyClassicToonzBrushSettings(
+    mypaint::Brush &mypaintBrush) {
+  const double precision       = 1e-5;
+  const double hardnessOpacity = 0.1;
+
+  double minThickness = 0.5 * m_rasThickness.getValue().first;
+  double maxThickness = 0.5 * m_rasThickness.getValue().second;
+  double hardness     = 0.01 * (m_pencil.getValue() ? 100.0 : m_hardness.getValue());
+
+  TPixelD color = PixelConverter<TPixelD>::from(m_currentColor);
+  double colorH = 0.0;
+  double colorS = 0.0;
+  double colorV = 0.0;
+  RGB2HSV(color.r, color.g, color.b, &colorH, &colorS, &colorV);
+
+  // avoid log(0)
+  if (minThickness < precision) minThickness = precision;
+  if (maxThickness < precision) maxThickness = precision;
+
+  // tune hardness opacity for better visual softness
+  hardness *= hardness;
+  double opacityAmplifier = 1.0 - hardnessOpacity + hardness * hardnessOpacity;
+  double maxOpacity = 1.0 * opacityAmplifier;
+
+  // reset
+  mypaintBrush.fromDefaults();
+  mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_OPAQUE_MULTIPLY, 1.0);
+  mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_OPAQUE_MULTIPLY,
+                           MYPAINT_BRUSH_INPUT_PRESSURE, 0);
+  mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_OPAQUE_MULTIPLY,
+                           MYPAINT_BRUSH_INPUT_TILT_DECLINATION, 0);
+
+  mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_HARDNESS,
+                            0.5 * hardness + 0.5);
+  mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_COLOR_H, colorH / 360.0);
+  mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_COLOR_S, colorS);
+  mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_COLOR_V, colorV);
+  mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_DABS_PER_ACTUAL_RADIUS,
+                            5.0 + hardness * 10.0);
+  mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_DABS_PER_BASIC_RADIUS, 0.0);
+  mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_DABS_PER_SECOND, 0.0);
+
+  double minThicknessLog  = log(minThickness);
+  double maxThicknessLog  = log(maxThickness);
+  double baseThicknessLog = 0.5 * (minThicknessLog + maxThicknessLog);
+
+  // thickness may be dynamic
+  mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
+                            maxThicknessLog);
+  mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
+                           MYPAINT_BRUSH_INPUT_PRESSURE, 0);
+
+  if (m_pressure.getValue()) {
+    mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
+                              baseThicknessLog);
+    mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
+                             MYPAINT_BRUSH_INPUT_PRESSURE, 2);
+    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
+                                 MYPAINT_BRUSH_INPUT_PRESSURE, 0, 0.0,
+                                 minThicknessLog - baseThicknessLog);
+    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
+                                 MYPAINT_BRUSH_INPUT_PRESSURE, 1, 1.0,
+                                 maxThicknessLog - baseThicknessLog);
+  }
+
+  if (m_pencil.getValue()) {
+    // Based on Experimental\pixel_hardink.myb
+    mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_ANTI_ALIASING, 0.0);
+    mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_SNAP_TO_PIXEL, 1.0);
+
+    mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_OPAQUE_LINEARIZE, 0);
+    mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_DABS_PER_ACTUAL_RADIUS,
+                              0.9);
+    mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_DABS_PER_SECOND, 79.69);
+    mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_DIRECTION_FILTER, 10);
+
+    mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_SPEED1_GAMMA, -8);
+    mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_SPEED1_SLOWNESS, 0.2);
+    mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_SPEED2_GAMMA, 3.86);
+
+    mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_ANGLE,
+                             MYPAINT_BRUSH_INPUT_DIRECTION, 5);
+    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_ANGLE,
+                                 MYPAINT_BRUSH_INPUT_DIRECTION, 0, 0.0, -180.0);
+    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_ANGLE,
+                                 MYPAINT_BRUSH_INPUT_DIRECTION, 1, 46.849315,
+                                 180.0);
+    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_ANGLE,
+                                 MYPAINT_BRUSH_INPUT_DIRECTION, 2, 90.0,
+                                 -180.0);
+    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_ANGLE,
+                                 MYPAINT_BRUSH_INPUT_DIRECTION, 3, 136.232877,
+                                 180.0);
+    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_ANGLE,
+                                 MYPAINT_BRUSH_INPUT_DIRECTION, 4, 180.0,
+                                 -180.0);
+
+    mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_RATIO,
+                             MYPAINT_BRUSH_INPUT_DIRECTION, 5);
+    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_RATIO,
+                                 MYPAINT_BRUSH_INPUT_DIRECTION, 0, 0.0, -0.1);
+    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_RATIO,
+                                 MYPAINT_BRUSH_INPUT_DIRECTION, 1, 48.6, 0.1);
+    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_RATIO,
+                                 MYPAINT_BRUSH_INPUT_DIRECTION, 2, 90.0, -0.1);
+    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_RATIO,
+                                 MYPAINT_BRUSH_INPUT_DIRECTION, 3, 136.8, 0.1);
+    mypaintBrush.setMappingPoint(MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_RATIO,
+                                 MYPAINT_BRUSH_INPUT_DIRECTION, 4, 180.0, -0.1);
+  }
+
+  mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_OPAQUE, maxOpacity);
+  mypaintBrush.setMappingN(MYPAINT_BRUSH_SETTING_OPAQUE,
+                           MYPAINT_BRUSH_INPUT_PRESSURE, 0);
+}
+
+void ToonzRasterBrushTool::applyToonzBrushSettings(
+    mypaint::Brush &mypaintBrush) {
+  TTool::Application *app = TTool::getApplication();
+  if (!app) return;
+
+  TMyPaintBrushStyle *mypaintStyle =
+      dynamic_cast<TMyPaintBrushStyle *>(app->getCurrentLevelStyle());
+
+  if (mypaintStyle) {
+    mypaintBrush.fromBrush(mypaintStyle->getBrush());
+
+    double modifierSize    = m_modifierSize.getValue() * log(2.0);
+
+    float baseSize =
+        mypaintBrush.getBaseValue(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC);
+    mypaintBrush.setBaseValue(MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC,
+                              baseSize + modifierSize);
+  } else {
+    applyClassicToonzBrushSettings(mypaintBrush);
+  }
+}
+
 //==========================================================================================================
 
 ToonzRasterBrushToolNotifier::ToonzRasterBrushToolNotifier(

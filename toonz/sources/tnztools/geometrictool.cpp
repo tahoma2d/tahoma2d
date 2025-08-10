@@ -2130,7 +2130,7 @@ public:
       updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty())
         toonz_brush->updateDrawing(ras, backupRas, m_strokeSegmentRect, styleId,
-                                   false);
+                                   false, 0, QSet<int>());
       m_lastRect = m_strokeRect;
 
       if (drawHardAngles) {
@@ -2139,7 +2139,7 @@ public:
         updateRect = m_strokeSegmentRect * ras->getBounds();
         if (!updateRect.isEmpty())
           toonz_brush->updateDrawing(ras, backupRas, m_strokeSegmentRect,
-                                     styleId, false);
+                                     styleId, false, 0, QSet<int>());
         toonz_brush->beginStroke();
         toonz_brush->strokeTo(pos, pressure, 0, 0, 10.0);
       }
@@ -2153,7 +2153,7 @@ public:
       updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty())
         toonz_brush->updateDrawing(ras, backupRas, m_strokeSegmentRect, styleId,
-                                   false);
+                                   false, 0, QSet<int>());
       m_lastRect = m_strokeRect;
     }
 
@@ -2162,7 +2162,7 @@ public:
     updateRect = m_strokeSegmentRect * ras->getBounds();
     if (!updateRect.isEmpty())
       toonz_brush->updateDrawing(ras, backupRas, m_strokeSegmentRect, styleId,
-                                 false);
+                                 false, 0, QSet<int>());
 
     m_workRaster->unlock();
 

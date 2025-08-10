@@ -146,7 +146,8 @@ public:
 
   // colormapped
   void updateDrawing(const TRasterCM32P rasCM, const TRasterCM32P rasBackupCM,
-                     const TRect &bbox, int styleId, bool lockAlpha) const;
+                     const TRect &bbox, int styleId, bool lockAlpha,
+                     int drawOrderMode, QSet<int> aboveStyleIds) const;
 
   void updateDrawing(const TRaster32P ras, const TRaster32P rasBackup,
                      const TRect &bbox, bool paintBehind) const;
