@@ -43,10 +43,11 @@ struct BrushData final : public TPersist {
 
   std::wstring m_name;
   double m_min, m_max, m_smooth, m_hardness, m_opacityMin, m_opacityMax;
-  bool m_pencil, m_pressure, m_tilt;
+  bool m_pencil, m_pressure, m_tilt, m_opressure, m_otilt, m_mypaintPressure, m_mypaintTilt;
   int m_drawOrder;
   double m_modifierSize, m_modifierOpacity;
   bool m_modifierEraser, m_modifierLockAlpha, m_modifierPaintBehind;
+  QList<TPointD> m_pressureCurve, m_opressureCurve, m_tiltCurve, m_otiltCurve;
 
   BrushData();
   BrushData(const std::wstring &name);

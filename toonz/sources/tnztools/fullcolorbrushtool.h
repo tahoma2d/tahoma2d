@@ -88,7 +88,7 @@ protected:
 
   TIntPairProperty m_thickness;
   TDoubleProperty m_smooth;
-  TBoolProperty m_pressure;
+  TBoolProperty m_mypaintPressure;
   TDoublePairProperty m_opacity;
   TDoubleProperty m_hardness;
   TDoubleProperty m_modifierSize;
@@ -98,12 +98,14 @@ protected:
   TBoolProperty m_modifierPaintBehind;
   TEnumProperty m_preset;
   TBoolProperty m_snapGrid;
-  TBoolProperty m_tilt;
+  TBoolProperty m_mypaintTilt;
+  TStylusProperty m_sizeStylusProperty, m_opacityStylusProperty;
 
   TPixel32 m_currentColor;
-  bool m_enabledPressure;
-  bool m_enabledTilt;
+  bool m_enabledPressure, m_enabledOPressure;
+  bool m_enabledTilt, m_enabledOTilt;
   int m_minCursorThick, m_maxCursorThick;
+  bool m_isMyPaintStyleSelected;
 
   TPointD m_mousePos,    //!< Current mouse position, in world coordinates.
       m_brushPos,        //!< World position the brush will be painted at.

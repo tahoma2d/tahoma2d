@@ -6,8 +6,11 @@
 #include "tconvert.h"
 #include "tstringid.h"
 #include "tpixel.h"
+#include "tgeometry.h"
 
 #include <cstdint>
+
+#include <QList>
 
 #undef DVAPI
 #undef DVVAR
@@ -39,6 +42,7 @@ class DVAPI TIntPairProperty;
 class DVAPI TStyleIndexProperty;
 class DVAPI TPointerProperty;
 class DVAPI TColorChipProperty;
+class DVAPI TStylusProperty;
 
 class TIStream;
 class TOStream;
@@ -59,6 +63,7 @@ public:
     virtual void visit(TStyleIndexProperty *p) = 0;
     virtual void visit(TPointerProperty *p)    = 0;
     virtual void visit(TColorChipProperty *p)  = 0;
+    virtual void visit(TStylusProperty *p)  = 0;
     virtual ~Visitor() {}
   };
 
@@ -549,6 +554,51 @@ private:
   Range m_range;
   ColorChips m_chips;
   int m_index;
+};
+
+//---------------------------------------------------------
+
+class DVAPI TStylusProperty final : public TProperty {
+public:
+  TStylusProperty(const std::string &name)
+      : TProperty(name)
+      , m_pressureEnabled(false)
+      , m_tiltEnabled(false) {}
+
+  TProperty *clone() const override { return new TStylusProperty(*this); }
+
+  std::string getValueAsString() override { return "-"; }
+  void setValue(const std::wstring &value) {}
+  std::wstring getValue() const { return L"-"; }
+
+  void accept(Visitor &v) override { v.visit(this); }
+
+  // Pressure
+  void setPressureEnabled(bool enabled) { m_pressureEnabled = enabled; }
+  bool isPressureEnabled() { return m_pressureEnabled; }
+
+  void setPressureCurve(QList<TPointD> curve) { m_pressureCurve = curve; }
+  QList<TPointD> getPressureCurve() { return m_pressureCurve; }
+
+  void setDefaultPressureCurve(QList<TPointD> curve) {
+    m_defaultPressureCurve = curve;
+  }
+  QList<TPointD> getDefaultPressureCurve() { return m_defaultPressureCurve; }
+
+  // Tilt
+  void setTiltEnabled(bool enabled) { m_tiltEnabled = enabled; }
+  bool isTiltEnabled() { return m_tiltEnabled; }
+
+  void setTiltCurve(QList<TPointD> curve) { m_tiltCurve = curve; }
+  QList<TPointD> getTiltCurve() { return m_tiltCurve; }
+
+  void setDefaultTiltCurve(QList<TPointD> curve) { m_defaultTiltCurve = curve; }
+  QList<TPointD> getDefaultTiltCurve() { return m_defaultTiltCurve; }
+
+private:
+  bool m_pressureEnabled, m_tiltEnabled;
+  QList<TPointD> m_pressureCurve, m_tiltCurve;
+  QList<TPointD> m_defaultPressureCurve, m_defaultTiltCurve;
 };
 
 //---------------------------------------------------------

@@ -18,6 +18,7 @@
 #include "toonzqt/checkbox.h"
 #include "toonzqt/doublefield.h"
 #include "toonzqt/popupbutton.h"
+#include "toonzqt/stylusconfigpopup.h"
 
 // TnzLib includes
 #include "toonz/txsheet.h"
@@ -255,6 +256,30 @@ public:
 public slots:
 
   void onValueChanged();
+};
+
+
+//-----------------------------------------------------------------------------
+
+class ToolOptionStylusConfigButton final : public QPushButton,
+                                           public ToolOptionControl {
+  Q_OBJECT
+
+protected:
+  TStylusProperty *m_property;
+
+  StylusConfigPopup *m_stylusConfig;
+  int m_pressureId, m_tiltId;
+
+public:
+  ToolOptionStylusConfigButton(TTool *tool, TStylusProperty *property);
+  void updateStatus() override;
+  TStylusProperty *getProperty() { return m_property; }
+
+public slots:
+  void onClicked();
+  void onConfigStateChanged(int);
+  void onConfigCurveChanged(int, bool);
 };
 
 //-----------------------------------------------------------------------------

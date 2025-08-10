@@ -95,6 +95,7 @@ public:
   void visit(TStyleIndexProperty *dst) override { assign(dst, m_src); }
   void visit(TPointerProperty *dst) override { assign(dst, m_src); }
   void visit(TColorChipProperty *dst) override { assign(dst, m_src); }
+  void visit(TStylusProperty *dst) override { assign(dst, m_src); }
 };
 
 void TPropertyGroup::setProperties(TPropertyGroup *g) {
@@ -217,6 +218,47 @@ public:
     attr["value"] = ::to_string(p->getValue());
     m_os.openCloseChild("property", attr);
   }
+
+  void visit(TStylusProperty *p) override {
+    std::map<std::string, std::string> attr;
+    attr["type"]  = "stylus";
+    attr["name"]  = p->getName();
+    attr["value"] = ::to_string(p->getValue());
+    m_os.openChild("property", attr);
+    // Pressure
+    attr.clear();
+    attr["enabled"]    = p->isPressureEnabled() ? "true" : "false";
+    QList<TPointD> pts = p->getPressureCurve();
+    if (pts.isEmpty())
+      m_os.openCloseChild("pressure", attr);
+    else {
+      m_os.openChild("pressure", attr);
+      for (int i = 0; i < pts.count(); i++) {
+        attr.clear();
+        attr["x"] = std::to_string(pts[i].x);
+        attr["y"] = std::to_string(pts[i].y);
+        m_os.openCloseChild("curvePoint", attr);
+      }
+      m_os.closeChild();
+    }
+    // Tilt
+    attr.clear();
+    attr["enabled"]    = p->isTiltEnabled() ? "true" : "false";
+    pts = p->getTiltCurve();
+    if (pts.isEmpty())
+      m_os.openCloseChild("tilt", attr);
+    else {
+      m_os.openChild("tilt", attr);
+      for (int i = 0; i < pts.count(); i++) {
+        attr.clear();
+        attr["x"] = std::to_string(pts[i].x);
+        attr["y"] = std::to_string(pts[i].y);
+        m_os.openCloseChild("curvePoint", attr);
+      }
+      m_os.closeChild();
+    }
+    m_os.closeChild();
+  }
 };
 
 void TPropertyGroup::loadData(TIStream &is) {
@@ -274,6 +316,45 @@ void TPropertyGroup::loadData(TIStream &is) {
           is.closeChild();
         }
         p->setValue(::to_wstring(svalue));
+        add(p);
+      } else if (type == "stylus") {
+        TStylusProperty *p = new TStylusProperty(name);
+        while (is.matchTag(tagName)) {
+          if (tagName == "pressure") {
+            p->setPressureEnabled(is.getTagAttribute("enabled") == "true" ? true : false);
+            if (!is.isBeginEndTag()) {
+              QList<TPointD> pts;
+              while (is.matchTag(tagName)) {
+                if (tagName == "curvePoint") {
+                  double x = std::stod(is.getTagAttribute("x"));
+                  double y = std::stod(is.getTagAttribute("y"));
+                  pts.push_back(TPointD(x, y));
+                } else
+                  throw TException("unexpected pressure curve property");
+              }
+              p->setPressureCurve(pts);
+              is.closeChild();
+            }
+          } else if (tagName == "tilt") {
+            p->setTiltEnabled(
+                is.getTagAttribute("enabled") == "true" ? true : false);
+            if (!is.isBeginEndTag()) {
+              QList<TPointD> pts;
+              while (is.matchTag(tagName)) {
+                if (tagName == "curvePoint") {
+                  double x = std::stod(is.getTagAttribute("x"));
+                  double y = std::stod(is.getTagAttribute("y"));
+                  pts.push_back(TPointD(x, y));
+                } else
+                  throw TException("unexpected tilt curve property");
+              }
+              p->setTiltCurve(pts);
+              is.closeChild();
+            }
+          } else
+            throw TException("expected range property <item>");
+        }
+        is.closeChild();
         add(p);
       } else
         throw TException("unrecognized property type : " + type);

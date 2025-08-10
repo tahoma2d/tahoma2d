@@ -130,7 +130,6 @@ set(MOC_HEADERS
     convertfolderpopup.h
     exportcameratrackpopup.h
     motionpathpanel.h
-    graphwidget.h
     ../stopmotion/stopmotion.h
     ../stopmotion/stopmotioncontroller.h
     ../stopmotion/webcam.h
@@ -383,7 +382,6 @@ set(SOURCES
     ObjectTracker.cpp
     predict3d.cpp
     motionpathpanel.cpp
-    graphwidget.cpp
     ../stopmotion/stopmotion.cpp
     ../stopmotion/stopmotioncontroller.cpp
     ../stopmotion/webcam.cpp
