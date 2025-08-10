@@ -186,11 +186,15 @@ protected:
   TEnumProperty m_preset;
   TEnumProperty m_drawOrder;
   TBoolProperty m_pencil;
-  TBoolProperty m_pressure;
+  TBoolProperty m_mypaintPressure;
   TDoubleProperty m_modifierSize;
   TBoolProperty m_modifierLockAlpha;
   TBoolProperty m_snapGrid;
-  TBoolProperty m_tilt;
+  TBoolProperty m_mypaintTilt;
+  TStylusProperty m_sizeStylusProperty;
+
+  bool m_enabledPressure;
+  bool m_enabledTilt;
 
   CMRasterBrush *m_cmRasterBrush;
   TTileSetCM32 *m_tileSet;
