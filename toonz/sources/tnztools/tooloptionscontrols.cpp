@@ -536,8 +536,8 @@ ToolOptionStylusConfigButton::ToolOptionStylusConfigButton(
   // Tilt
   m_tiltId = m_stylusConfig->addConfiguration(tr("Tilt"));
   m_stylusConfig->setConfiguration(
-      m_tiltId, 0, 90, 0, 100,
-      QList<TPointD>{TPointD(0.0, 0.0), TPointD(90.0, 100.0)}, "0", "", "90",
+      m_tiltId, 30, 90, 0, 100,
+      QList<TPointD>{TPointD(30.0, 0.0), TPointD(90.0, 100.0)}, "30", "", "90",
       "Min", "", "Max");
 
   updateStatus();

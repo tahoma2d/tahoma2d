@@ -52,12 +52,10 @@
   QList<TPointD> { TPointD(0.0, 0.0), TPointD(100.0, 100.0) }
 
 #define DEFAULTSIZETILTCURVE                                                   \
-  QList<TPointD> {                                                             \
-    TPointD(0.0, 100.0), TPointD(30.0, 100.0), TPointD(90.0, 0.0)              \
-  }
+  QList<TPointD> { TPointD(30.0, 100.0), TPointD(90.0, 0.0) }
 
 #define DEFAULTOPACITYTILTCURVE                                                \
-  QList<TPointD> { TPointD(0.0, 0.0), TPointD(30.0, 0.0), TPointD(90.0, 100.0) }
+  QList<TPointD> { TPointD(30.0, 0.0), TPointD(90.0, 100.0) }
 
 //----------------------------------------------------------------------------------
 
@@ -180,6 +178,9 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
 
   m_thickness.setNonLinearSlider();
 
+  m_sizeStylusProperty.setDefaultTiltCurve(DEFAULTSIZETILTCURVE);
+  m_opacityStylusProperty.setDefaultTiltCurve(DEFAULTOPACITYTILTCURVE);
+
   m_prop.bind(m_thickness);
   m_prop.bind(m_sizeStylusProperty);
   m_prop.bind(m_modifierSize);
@@ -207,9 +208,6 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
   m_opacityStylusProperty.setId("OpacityStylusConfig");
 
   m_brushTimer.start();
-
-  m_sizeStylusProperty.setDefaultTiltCurve(DEFAULTSIZETILTCURVE);
-  m_opacityStylusProperty.setDefaultTiltCurve(DEFAULTOPACITYTILTCURVE);
 }
 
 //---------------------------------------------------------------------------------------------------
