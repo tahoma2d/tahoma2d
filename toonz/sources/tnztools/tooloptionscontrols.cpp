@@ -526,19 +526,23 @@ ToolOptionStylusConfigButton::ToolOptionStylusConfigButton(
   m_stylusConfig =
       new StylusConfigPopup(QString::fromStdString(m_property->getName()), 0);
 
+  bool useLinearCurves = m_property->useLinearCurves();
+  QList<TPointD> defaultPressureCurve =
+      useLinearCurves ? DEFAULTLINEARCURVE : DEFAULTNONLINEARCURVE;
+  QList<TPointD> defaultTiltCurve =
+      useLinearCurves ? DEFAULTLINEARTILTCURVE : DEFAULTNONLINEARTILTCURVE;
+
   // Pressure
   m_pressureId = m_stylusConfig->addConfiguration(tr("Pressure"));
-  m_stylusConfig->setConfiguration(
-      m_pressureId, 0, 100, 0, 100,
-      QList<TPointD>{TPointD(0.0, 0.0), TPointD(100.0, 100.0)}, "0%", "",
-      "100%", "Min", "", "Max");
+  m_stylusConfig->setConfiguration(m_pressureId, useLinearCurves, 0, 100, 0,
+                                   100, defaultPressureCurve, "0%", "", "100%",
+                                   "Min", "", "Max");
 
   // Tilt
   m_tiltId = m_stylusConfig->addConfiguration(tr("Tilt"));
-  m_stylusConfig->setConfiguration(
-      m_tiltId, 0, 90, 0, 100,
-      QList<TPointD>{TPointD(0.0, 0.0), TPointD(90.0, 100.0)}, "0", "", "90",
-      "Min", "", "Max");
+  m_stylusConfig->setConfiguration(m_tiltId, useLinearCurves, 30, 90, 0, 100,
+                                   defaultTiltCurve, "30", "", "90", "Min", "",
+                                   "Max");
 
   updateStatus();
 
@@ -553,22 +557,32 @@ ToolOptionStylusConfigButton::ToolOptionStylusConfigButton(
 //-----------------------------------------------------------------------------
 
 void ToolOptionStylusConfigButton::updateStatus() {
+  bool useLinearCurves = m_property->useLinearCurves();
+  QList<TPointD> defaultPressureCurve =
+      useLinearCurves ? DEFAULTLINEARCURVE : DEFAULTNONLINEARCURVE;
+  QList<TPointD> defaultTiltCurve =
+      useLinearCurves ? DEFAULTLINEARTILTCURVE : DEFAULTNONLINEARTILTCURVE;
+
+  m_stylusConfig->getGraphGUI()->setLinear(useLinearCurves);
+
   // Pressure
   m_stylusConfig->setConfigEnabled(m_pressureId,
                                    m_property->isPressureEnabled());
-  QList<TPointD> curve = m_property->getDefaultPressureCurve();
-  if (!curve.isEmpty())
-    m_stylusConfig->setConfigDefaultCurve(m_pressureId, curve);
-  curve = m_property->getPressureCurve();
-  if (!curve.isEmpty()) m_stylusConfig->setConfigCurve(m_pressureId, curve);
+  QList<TPointD> defaultCurve = m_property->getDefaultPressureCurve();
+  if (defaultCurve.isEmpty()) defaultCurve = defaultPressureCurve;
+  QList<TPointD> curve = m_property->getPressureCurve();
+  m_stylusConfig->setConfigDefaultCurve(m_pressureId, defaultCurve);
+  m_stylusConfig->setConfigCurve(m_pressureId,
+                                 !curve.isEmpty() ? curve : defaultCurve);
 
   // Tilt
   m_stylusConfig->setConfigEnabled(m_tiltId, m_property->isTiltEnabled());
-  curve = m_property->getDefaultTiltCurve();
-  if (!curve.isEmpty()) m_stylusConfig->setConfigDefaultCurve(m_tiltId, curve);
+  defaultCurve = m_property->getDefaultTiltCurve();
+  if (defaultCurve.isEmpty()) defaultCurve = defaultTiltCurve;
   curve = m_property->getTiltCurve();
-  if (!curve.isEmpty()) m_stylusConfig->setConfigCurve(m_tiltId, curve);
-
+  m_stylusConfig->setConfigDefaultCurve(m_tiltId, defaultCurve);
+  m_stylusConfig->setConfigCurve(m_tiltId,
+                                 !curve.isEmpty() ? curve : defaultCurve);
 }
 
 //-----------------------------------------------------------------------------

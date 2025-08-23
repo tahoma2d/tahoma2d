@@ -39,8 +39,9 @@ struct VectorBrushData final : public TPersist {
 
   std::wstring m_name;
   double m_min, m_max, m_acc, m_smooth;
-  bool m_breakAngles, m_pressure;
+  bool m_breakAngles, m_pressure, m_tilt;
   int m_cap, m_join, m_miter;
+  QList<TPointD> m_pressureCurve, m_tiltCurve;
 
   VectorBrushData();
   VectorBrushData(const std::wstring &name);
@@ -159,7 +160,7 @@ protected:
   TDoubleProperty m_smooth;
   TEnumProperty m_preset;
   TBoolProperty m_breakAngles;
-  TBoolProperty m_pressure;
+//  TBoolProperty m_pressure;
   TBoolProperty m_snap;
   TBoolProperty m_sendToBack;
   TBoolProperty m_autoFill;
@@ -171,6 +172,10 @@ protected:
   TEnumProperty m_joinStyle;
   TIntProperty m_miterJoinLimit;
   TBoolProperty m_snapGrid;
+  TStylusProperty m_sizeStylusProperty;
+
+  bool m_enabledPressure;
+  bool m_enabledTilt;
 
   VectorBrush m_track;
   VectorBrush m_rangeTrack;

@@ -563,7 +563,8 @@ public:
   TStylusProperty(const std::string &name)
       : TProperty(name)
       , m_pressureEnabled(false)
-      , m_tiltEnabled(false) {}
+      , m_tiltEnabled(false)
+      , m_useLinearCurves(false) {}
 
   TProperty *clone() const override { return new TStylusProperty(*this); }
 
@@ -572,6 +573,9 @@ public:
   std::wstring getValue() const { return L"-"; }
 
   void accept(Visitor &v) override { v.visit(this); }
+
+  bool useLinearCurves() { return m_useLinearCurves; }
+  void setUseLinearCurves(bool useLinear) { m_useLinearCurves = useLinear; }
 
   // Pressure
   void setPressureEnabled(bool enabled) { m_pressureEnabled = enabled; }
@@ -585,6 +589,8 @@ public:
   }
   QList<TPointD> getDefaultPressureCurve() { return m_defaultPressureCurve; }
 
+  double getOutputPressureForInput(double pressure);
+
   // Tilt
   void setTiltEnabled(bool enabled) { m_tiltEnabled = enabled; }
   bool isTiltEnabled() { return m_tiltEnabled; }
@@ -595,8 +601,11 @@ public:
   void setDefaultTiltCurve(QList<TPointD> curve) { m_defaultTiltCurve = curve; }
   QList<TPointD> getDefaultTiltCurve() { return m_defaultTiltCurve; }
 
+  double getOutputTiltForInput(double tilt);
+
 private:
   bool m_pressureEnabled, m_tiltEnabled;
+  bool m_useLinearCurves;
   QList<TPointD> m_pressureCurve, m_tiltCurve;
   QList<TPointD> m_defaultPressureCurve, m_defaultTiltCurve;
 };

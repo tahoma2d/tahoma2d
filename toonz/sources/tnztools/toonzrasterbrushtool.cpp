@@ -51,18 +51,40 @@
 
 using namespace ToolUtils;
 
+#define DEFAULTPRESSURECURVE                                                   \
+  QList<TPointD> {                                                             \
+    TPointD(-40.0, 0.0), TPointD(-20.0, 0.0), TPointD(-20.0, 0.0),             \
+        TPointD(0.0, 0.0), TPointD(6.3, 6.3), TPointD(93.7, 93.7),             \
+        TPointD(100.0, 100.0), TPointD(120.0, 100.0), TPointD(120.0, 100.0),   \
+        TPointD(140.0, 100.0)                                                  \
+  }
+
+#define DEFAULTSIZETILTCURVE                                              \
+  QList<TPointD> {                                                             \
+    TPointD(-10.0, 100.0), TPointD(10.0, 100.0), TPointD(10.0, 100.0),         \
+        TPointD(30.0, 100.0), TPointD(34.0, 93.0), TPointD(86.0, 7.0),         \
+        TPointD(90.0, 0.0), TPointD(110.0, 0.0), TPointD(110.0, 0.0),          \
+        TPointD(130.0, 0.0)                                                    \
+  }
+
 TEnv::DoubleVar RasterBrushMinSize("InknpaintRasterBrushMinSize", 1);
 TEnv::DoubleVar RasterBrushMaxSize("InknpaintRasterBrushMaxSize", 5);
 TEnv::DoubleVar BrushSmooth("InknpaintBrushSmooth", 0);
 TEnv::IntVar BrushDrawOrder("InknpaintBrushDrawOrder", 0);
 TEnv::IntVar RasterBrushPencilMode("InknpaintRasterBrushPencilMode", 0);
-TEnv::IntVar BrushPressureSensitivity("InknpaintBrushPressureSensitivity", 1);
 TEnv::DoubleVar RasterBrushHardness("RasterBrushHardness", 100);
 TEnv::DoubleVar RasterBrushModifierSize("RasterBrushModifierSize", 0);
 TEnv::StringVar RasterBrushPreset("RasterBrushPreset", "<custom>");
 TEnv::IntVar BrushLockAlpha("InknpaintBrushLockAlpha", 0);
 TEnv::IntVar BrushSnapGrid("InknpaintBrushSnapGrid", 0);
+TEnv::IntVar BrushPressureSensitivity("InknpaintBrushPressureSensitivity", 1);
+TEnv::PointListVar BrushPressureCurvePts("InknPaintBrushPressureCurvePts",
+                                         DEFAULTPRESSURECURVE);
 TEnv::IntVar BrushTiltSensitivity("InknpaintTiltSensitivity", 0);
+TEnv::PointListVar BrushTiltCurvePts("InknPaintTiltCurvePts",
+                                     DEFAULTSIZETILTCURVE);
+TEnv::IntVar BrushMyPaintPressureSensitivity("InknpaintMyPaintPressureSensitivity", 1);
+TEnv::IntVar BrushMyPaintTiltSensitivity("InknpaintMyPaintTiltSensitivity", 0);
 
 //-------------------------------------------------------------------
 #define CUSTOM_WSTR L"<custom>"
@@ -664,21 +686,52 @@ public:
 
 //=========================================================================================================
 
-double computeThickness(double pressure, const TDoublePairProperty &property) {
-  double t                    = pressure * pressure * pressure;
+double computeThickness(bool pressureEnabled, double pressure, bool tiltEnabled,
+                        double tiltMagnitude,
+                        const TDoublePairProperty &property) {
   double thick0               = property.getValue().first;
   double thick1               = property.getValue().second;
   if (thick1 < 0.0001) thick0 = thick1 = 0.0;
-  return (thick0 + (thick1 - thick0) * t) * 0.5;
+
+  double pThick = 0.0, tThick = 0.0;
+
+  if (pressureEnabled) {
+    double t = pressure * pressure * pressure;
+    pThick   = (thick0 + (thick1 - thick0) * t) * 0.5;
+    if (tiltEnabled) pThick *= 0.5;
+  }
+
+  if (tiltEnabled) {
+    double t = tiltMagnitude * tiltMagnitude * tiltMagnitude;
+    tThick   = (thick0 + (thick1 - thick0) * t) * 0.5;
+    if (pressureEnabled) tThick *= 0.5;
+  }
+
+  return pThick + tThick;
 }
 
 //---------------------------------------------------------------------------------------------------------
 
-int computeThickness(double pressure, const TIntPairProperty &property) {
-  double t   = pressure * pressure * pressure;
+int computeThickness(bool pressureEnabled, double pressure, bool tiltEnabled,
+                     double tiltMagnitude, const TIntPairProperty &property) {
   int thick0 = property.getValue().first;
   int thick1 = property.getValue().second;
-  return tround(thick0 + (thick1 - thick0) * t);
+
+  int pThick = 0, tThick = 0;
+
+  if (pressureEnabled) {
+    double t = pressure * pressure * pressure;
+    pThick   = tround(thick0 + (thick1 - thick0) * t);
+    if (pressureEnabled) pThick /= 2;
+  }
+
+  if (tiltEnabled) {
+    double t = tiltMagnitude * tiltMagnitude * tiltMagnitude;
+    tThick   = tround(thick0 + (thick1 - thick0) * t);
+    if (pressureEnabled) tThick /= 2;
+  }
+
+  return pThick + tThick;
 }
 
 }  // namespace
@@ -915,7 +968,7 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
     , m_preset("Preset:")
     , m_drawOrder("Draw Order:")
     , m_pencil("Pencil", false)
-    , m_pressure("Pressure", true)
+    , m_mypaintPressure("ModifierPressure", true)
     , m_modifierSize("ModifierSize", -3, 3, 0, true)
     , m_cmRasterBrush(0)
     , m_styleId(0)
@@ -930,37 +983,45 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
     , m_notifier(0)
     , m_modifierLockAlpha("Lock Alpha", false)
     , m_snapGrid("Grid", false)
-    , m_tilt("ModifierTilt", false) {
+    , m_mypaintTilt("ModifierTilt", false)
+    , m_enabledPressure(false)
+    , m_enabledTilt(false)
+    , m_sizeStylusProperty("Stylus Settings - Size")
+    , m_isMyPaintStyleSelected(false) {
   bind(targetType);
 
   m_rasThickness.setNonLinearSlider();
 
+  m_sizeStylusProperty.setUseLinearCurves(false);
+  m_sizeStylusProperty.setDefaultTiltCurve(DEFAULTSIZETILTCURVE);
+
   m_prop[0].bind(m_rasThickness);
+  m_prop[0].bind(m_sizeStylusProperty);
   m_prop[0].bind(m_hardness);
   m_prop[0].bind(m_modifierSize);
   m_prop[0].bind(m_smooth);
   m_prop[0].bind(m_drawOrder);
   m_prop[0].bind(m_modifierLockAlpha);
   m_prop[0].bind(m_pencil);
+  m_prop[0].bind(m_mypaintPressure);
+  m_prop[0].bind(m_mypaintTilt);
+  m_prop[0].bind(m_snapGrid);
+  m_prop[0].bind(m_preset);
+
   m_pencil.setId("PencilMode");
+  m_drawOrder.setId("DrawOrder");
+  m_snapGrid.setId("SnapGrid");
+  m_preset.setId("BrushPreset");
+  m_mypaintPressure.setId("PressureSensitivity");
+  m_modifierLockAlpha.setId("LockAlpha");
+  m_mypaintTilt.setId("TiltSensitivity");
+  m_sizeStylusProperty.setId("SizeStylusConfig");
 
   m_drawOrder.addValue(L"Over All");
   m_drawOrder.addValue(L"Under All");
   m_drawOrder.addValue(L"Palette Order");
-  m_drawOrder.setId("DrawOrder");
 
-  m_prop[0].bind(m_pressure);
-  m_prop[0].bind(m_tilt);
-
-  m_prop[0].bind(m_snapGrid);
-  m_snapGrid.setId("SnapGrid");
-
-  m_prop[0].bind(m_preset);
-  m_preset.setId("BrushPreset");
   m_preset.addValue(CUSTOM_WSTR);
-  m_pressure.setId("PressureSensitivity");
-  m_modifierLockAlpha.setId("LockAlpha");
-  m_tilt.setId("TiltSensitivity");
 }
 
 //-------------------------------------------------------------------------------------------------------
@@ -1153,10 +1214,11 @@ void ToonzRasterBrushTool::updateTranslation() {
   m_preset.setQStringName(tr("Preset:"));
   m_preset.setItemUIName(CUSTOM_WSTR, tr("<custom>"));
   m_pencil.setQStringName(tr("Pencil"));
-  m_pressure.setQStringName(tr("Pressure"));
   m_modifierLockAlpha.setQStringName(tr("Lock Alpha"));
   m_snapGrid.setQStringName(tr("Grid"));
-  m_tilt.setQStringName(tr("Tilt"));
+  m_mypaintPressure.setQStringName(tr("Pressure"));
+  m_mypaintTilt.setQStringName(tr("Tilt"));
+  m_sizeStylusProperty.setQStringName(tr("Stylus Settings - Size"));
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -1261,7 +1323,7 @@ void ToonzRasterBrushTool::onDeactivate() {
     m_enabled    = false;
     m_active     = false;
     if (isValid) {
-      finishRasterBrush(m_mousePos, 1, 0,
+      finishRasterBrush(m_mousePos, 1, 0, 0,
                         0); /*-- 最後のストロークの筆圧は1とする --*/
     }
   }
@@ -1363,17 +1425,60 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
   TToonzImageP ri(img);
   TRasterCM32P ras = ri->getRaster();
   if (ras) {
+    m_enabledPressure = m_isMyPaintStyleSelected
+                            ? m_mypaintPressure.getValue()
+                            : m_sizeStylusProperty.isPressureEnabled();
+
+    m_enabledTilt = m_isMyPaintStyleSelected
+                        ? m_mypaintTilt.getValue()
+                        : m_sizeStylusProperty.isTiltEnabled();
+
+    if (!e.isTablet()) {
+      m_enabledPressure = false;
+      m_enabledTilt     = false;
+    }
+
+    double pressure = m_enabledPressure ? e.m_pressure : 0.5;
+
+    // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0
+    // to 1.0)
+    double tiltX         = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
+    double tiltY         = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
+    double tiltMagnitude = std::sqrt(tiltX * tiltX + tiltY * tiltY);
+
+  // rotation of stylus
+//  double arctan    = atan2(tiltY, tiltX);
+//  double tiltAngle     = arctan * M_180_PI;
+
+    if (!m_isMyPaintStyleSelected) {
+      // Convert pressure value to % applied to max value
+      if (m_enabledPressure)
+        pressure =
+            m_sizeStylusProperty.getOutputPressureForInput(pressure * 100.0) /
+            100.0;
+
+      // Convert tilt values to % applied to max value
+      if (m_enabledTilt) {
+        // Convert MyPaint magnitude range (0 to 1.0) to graph range (90 - 30)
+        double oldTiltM = 90 - (tiltMagnitude * 60);
+        tiltMagnitude = m_sizeStylusProperty.getOutputTiltForInput(oldTiltM) / 100.0;
+      }
+    }
+
     TPointD rasCenter = ras->getCenterD();
     m_tileSet         = new TTileSetCM32(ras->getSize());
     m_tileSaver       = new TTileSaverCM32(ras, m_tileSet);
     double maxThick   = m_rasThickness.getValue().second;
-    double thickness  = (m_pressure.getValue())
-                           ? computeThickness(e.m_pressure, m_rasThickness) * 2
-                           : maxThick;
+    double thickness =
+        (m_enabledPressure || m_enabledTilt)
+            ? computeThickness(m_enabledPressure, pressure, m_enabledTilt,
+                               tiltMagnitude, m_rasThickness) *
+                  2
+            : maxThick;
 
     /*--- ストロークの最初にMaxサイズの円が描かれてしまう不具合を防止する
      * ---*/
-    if (m_pressure.getValue() && e.m_pressure == 1.0)
+    if (m_enabledPressure && pressure == 1.0)
       thickness = m_rasThickness.getValue().first;
 
     TPointD halfThick(maxThick * 0.5, maxThick * 0.5);
@@ -1396,13 +1501,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
     // mypaint brush case
     if (m_isMyPaintStyleSelected) {
       TPointD point(centeredPos + rasCenter);
-      double pressure =
-          m_pressure.getValue() && e.isTablet() ? e.m_pressure : 0.5;
       m_oldPressure = pressure;
-      // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to
-      // 1.0)
-      double tiltX = m_tilt.getValue() ? (e.m_tiltX / -60.0) : 0.0;
-      double tiltY = m_tilt.getValue() ? (e.m_tiltY / 60.0) : 0.0;
       updateCurrentStyle();
       if (!(m_workRas && m_backupRas)) setWorkAndBackupImages();
       m_workRas->lock();
@@ -1788,19 +1887,44 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
 
   TToonzImageP ti   = TImageP(getImage(true));
   TPointD rasCenter = ti->getRaster()->getCenterD();
-  int maxThickness  = m_rasThickness.getValue().second;
-  double thickness  = (m_pressure.getValue())
-                         ? computeThickness(e.m_pressure, m_rasThickness) * 2
-                         : maxThickness;
+
+  double pressure = m_enabledPressure ? e.m_pressure : 0.5;
+
+  // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
+  double tiltX         = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
+  double tiltY         = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
+  double tiltMagnitude = std::sqrt(tiltX * tiltX + tiltY * tiltY);
+
+  // rotation of stylus
+//  double arctan    = atan2(tiltY, tiltX);
+//  double tiltAngle     = arctan * M_180_PI;
+
+  if (!m_isMyPaintStyleSelected) {
+    // Convert pressure value to % applied to max value
+    if (m_enabledPressure)
+      pressure =
+          m_sizeStylusProperty.getOutputPressureForInput(pressure * 100.0) /
+          100.0;
+
+    // Convert tilt values to % applied to max value
+    if (m_enabledTilt) {
+      // Convert MyPaint magnitude range (0 to 1.0) to graph range (90 - 30)
+      double oldTiltM = 90 - (tiltMagnitude * 60);
+      tiltMagnitude =
+          m_sizeStylusProperty.getOutputTiltForInput(oldTiltM) / 100.0;
+    }
+  }
+
+  int maxThickness = m_rasThickness.getValue().second;
+  double thickness =
+      (m_enabledPressure || m_enabledTilt)
+          ? computeThickness(m_enabledPressure, pressure, m_enabledTilt,
+                             tiltMagnitude, m_rasThickness) *
+                2
+          : maxThickness;
   if (m_isMyPaintStyleSelected) {
     TRasterP ras = ti->getRaster();
     TPointD point(centeredPos + rasCenter);
-    double pressure =
-        m_pressure.getValue() && e.isTablet() ? e.m_pressure : 0.5;
-    // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to
-    // 1.0)
-    double tiltX = m_tilt.getValue() ? (e.m_tiltX / -60.0) : 0.0;
-    double tiltY = m_tilt.getValue() ? (e.m_tiltY / 60.0) : 0.0;
 
     TThickPoint thickPoint(point, pressure);
     std::vector<TThickPoint> pts;
@@ -1953,14 +2077,38 @@ void ToonzRasterBrushTool::leftButtonUp(const TPointD &pos,
   TPointD centeredPos = getCenteredCursorPos(pos);
   if (e.isCtrlPressed() || m_snapGrid.getValue() || e.isAltPressed())
     centeredPos   = getCenteredCursorPos(m_lastPoint);
-  double pressure = m_pressure.getValue() && e.isTablet() ? e.m_pressure : 0.5;
+  double pressure = m_enabledPressure ? e.m_pressure : 0.5;
+
   // if (!e.isTablet()) m_oldThickness = -1.0;
   if (m_isStraight && m_isMyPaintStyleSelected && m_oldPressure > 0.0)
     pressure = m_oldPressure;
+
   // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
-  double tiltX = m_tilt.getValue() ? (e.m_tiltX / -60.0) : 0.0;
-  double tiltY = m_tilt.getValue() ? (e.m_tiltY / 60.0) : 0.0;
-  finishRasterBrush(centeredPos, pressure, tiltX, tiltY);
+  double tiltX         = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
+  double tiltY         = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
+  double tiltMagnitude = std::sqrt(tiltX * tiltX + tiltY * tiltY);
+
+  // rotation of stylus
+//  double arctan    = atan2(tiltY, tiltX);
+//  double tiltAngle     = arctan * M_180_PI;
+
+  if (!m_isMyPaintStyleSelected) {
+    // Convert pressure value to % applied to max value
+    if (m_enabledPressure)
+      pressure =
+          m_sizeStylusProperty.getOutputPressureForInput(pressure * 100.0) /
+          100.0;
+
+    // Convert tilt values to % applied to max value
+    if (m_enabledTilt) {
+      // Convert MyPaint magnitude range (0 to 1.0) to graph range (90 - 30)
+      double oldTiltM = 90 - (tiltMagnitude * 60);
+      tiltMagnitude =
+          m_sizeStylusProperty.getOutputTiltForInput(oldTiltM) / 100.0;
+    }
+  }
+
+  finishRasterBrush(centeredPos, pressure, tiltMagnitude, tiltX, tiltY);
   int tc = ToonzCheck::instance()->getChecks();
   if (tc & ToonzCheck::eGap || tc & ToonzCheck::eAutoclose) invalidate();
   m_perspectiveIndex = -1;
@@ -1971,7 +2119,8 @@ void ToonzRasterBrushTool::leftButtonUp(const TPointD &pos,
  * ドラッグ中にツールが切り替わった場合に備え、onDeactivate時とMouseRelease時にと同じ終了処理を行う
  */
 void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
-                                             double pressureVal, double tiltX,
+                                             double pressureVal,
+                                             double tiltMagnitude, double tiltX,
                                              double tiltY) {
   TToonzImageP ti = TImageP(getImage(true));
 
@@ -1994,7 +2143,7 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
   if (m_isMyPaintStyleSelected) {
     TRasterCM32P ras = ti->getRaster();
     TPointD point(pos + rasCenter);
-    double pressure = m_pressure.getValue() ? pressureVal : 0.5;
+    double pressure = m_enabledPressure ? pressureVal : 0.5;
 
     TThickPoint thickPoint(point, pressure);
     std::vector<TThickPoint> pts;
@@ -2044,12 +2193,14 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
 
   } else if (m_cmRasterBrush &&
              (m_hardness.getValue() == 100 || m_pencil.getValue())) {
-    double thickness = m_pressure.getValue()
-                           ? computeThickness(pressureVal, m_rasThickness)
-                           : m_rasThickness.getValue().second;
+    double thickness =
+        (m_enabledPressure || m_enabledTilt)
+            ? computeThickness(m_enabledPressure, pressureVal, m_enabledTilt,
+                               tiltMagnitude, m_rasThickness)
+            : m_rasThickness.getValue().second;
 
     /*--- ストロークの最初にMaxサイズの円が描かれてしまう不具合を防止する ---*/
-    if (m_pressure.getValue() && pressureVal == 1.0)
+    if (m_enabledPressure && pressureVal == 1.0)
       thickness = m_rasThickness.getValue().first;
 
     /*-- Pencilモードでなく、Hardness=100 の場合のブラシサイズを1段階下げる --*/
@@ -2134,9 +2285,11 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
     m_cmRasterBrush = 0;
   } else {
     double maxThickness = m_rasThickness.getValue().second;
-    double thickness    = (m_pressure.getValue())
-                           ? computeThickness(pressureVal, m_rasThickness)
-                           : maxThickness;
+    double thickness =
+        (m_enabledPressure || m_enabledTilt)
+            ? computeThickness(m_enabledPressure, pressureVal, m_enabledTilt,
+                               tiltMagnitude, m_rasThickness)
+            : maxThickness;
     if (m_isStraight) {
       // if (m_oldThickness > 0.0)
       //  thickness = m_oldThickness;
@@ -2540,17 +2693,21 @@ bool ToonzRasterBrushTool::onPropertyChanged(std::string propertyName) {
     return true;
   }
 
-  RasterBrushMinSize       = m_rasThickness.getValue().first;
-  RasterBrushMaxSize       = m_rasThickness.getValue().second;
-  BrushSmooth              = m_smooth.getValue();
-  BrushDrawOrder           = m_drawOrder.getIndex();
-  RasterBrushPencilMode    = m_pencil.getValue();
-  BrushPressureSensitivity = m_pressure.getValue();
-  RasterBrushHardness      = m_hardness.getValue();
-  RasterBrushModifierSize  = m_modifierSize.getValue();
-  BrushLockAlpha           = m_modifierLockAlpha.getValue();
-  BrushSnapGrid            = m_snapGrid.getValue();
-  BrushTiltSensitivity     = m_tilt.getValue();
+  RasterBrushMinSize              = m_rasThickness.getValue().first;
+  RasterBrushMaxSize              = m_rasThickness.getValue().second;
+  BrushSmooth                     = m_smooth.getValue();
+  BrushDrawOrder                  = m_drawOrder.getIndex();
+  RasterBrushPencilMode           = m_pencil.getValue();
+  RasterBrushHardness             = m_hardness.getValue();
+  RasterBrushModifierSize         = m_modifierSize.getValue();
+  BrushLockAlpha                  = m_modifierLockAlpha.getValue();
+  BrushSnapGrid                   = m_snapGrid.getValue();
+  BrushPressureSensitivity        = m_sizeStylusProperty.isPressureEnabled();
+  BrushPressureCurvePts           = m_sizeStylusProperty.getPressureCurve();
+  BrushTiltSensitivity            = m_sizeStylusProperty.isTiltEnabled();
+  BrushTiltCurvePts               = m_sizeStylusProperty.getTiltCurve();
+  BrushMyPaintPressureSensitivity = m_mypaintPressure.getValue();
+  BrushMyPaintTiltSensitivity     = m_mypaintTilt.getValue();
 
   // Recalculate/reset based on changed settings
   if (propertyName == m_rasThickness.getName()) {
@@ -2620,10 +2777,15 @@ void ToonzRasterBrushTool::loadPreset() {
     m_smooth.setValue(preset.m_smooth, true);
     m_drawOrder.setIndex(preset.m_drawOrder);
     m_pencil.setValue(preset.m_pencil);
-    m_pressure.setValue(preset.m_pressure);
+    m_mypaintPressure.setValue(preset.m_mypaintPressure);
     m_modifierSize.setValue(preset.m_modifierSize);
     m_modifierLockAlpha.setValue(preset.m_modifierLockAlpha);
-    m_tilt.setValue(preset.m_tilt);
+    m_mypaintTilt.setValue(preset.m_mypaintTilt);
+
+    m_sizeStylusProperty.setPressureEnabled(preset.m_pressure);
+    m_sizeStylusProperty.setPressureCurve(preset.m_pressureCurve);
+    m_sizeStylusProperty.setTiltEnabled(preset.m_tilt);
+    m_sizeStylusProperty.setTiltCurve(preset.m_tiltCurve);
 
     // Recalculate based on updated presets
     m_minThick = m_rasThickness.getValue().first;
@@ -2649,10 +2811,14 @@ void ToonzRasterBrushTool::addPreset(QString name) {
   preset.m_hardness          = m_hardness.getValue();
   preset.m_drawOrder         = m_drawOrder.getIndex();
   preset.m_pencil            = m_pencil.getValue();
-  preset.m_pressure          = m_pressure.getValue();
   preset.m_modifierSize      = m_modifierSize.getValue();
   preset.m_modifierLockAlpha = m_modifierLockAlpha.getValue();
-  preset.m_tilt              = m_tilt.getValue();
+  preset.m_pressure          = m_sizeStylusProperty.isPressureEnabled();
+  preset.m_pressureCurve     = m_sizeStylusProperty.getPressureCurve();
+  preset.m_tilt              = m_sizeStylusProperty.isTiltEnabled();
+  preset.m_tiltCurve         = m_sizeStylusProperty.getTiltCurve();
+  preset.m_mypaintPressure   = m_mypaintPressure.getValue();
+  preset.m_mypaintTilt       = m_mypaintTilt.getValue();
 
   // Pass the preset to the manager
   m_presetsManager.addPreset(preset);
@@ -2687,12 +2853,17 @@ void ToonzRasterBrushTool::loadLastBrush() {
   m_drawOrder.setIndex(BrushDrawOrder);
   m_pencil.setValue(RasterBrushPencilMode ? 1 : 0);
   m_hardness.setValue(RasterBrushHardness);
-  m_pressure.setValue(BrushPressureSensitivity ? 1 : 0);
   m_smooth.setValue(BrushSmooth);
   m_modifierSize.setValue(RasterBrushModifierSize);
   m_modifierLockAlpha.setValue(BrushLockAlpha ? 1 : 0);
   m_snapGrid.setValue(BrushSnapGrid ? 1 : 0);
-  m_tilt.setValue(BrushTiltSensitivity ? 1 : 0);
+  m_mypaintPressure.setValue(BrushMyPaintPressureSensitivity ? 1 : 0);
+  m_mypaintTilt.setValue(BrushMyPaintTiltSensitivity ? 1 : 0);
+
+  m_sizeStylusProperty.setPressureEnabled(BrushPressureSensitivity);
+  m_sizeStylusProperty.setPressureCurve(BrushPressureCurvePts);
+  m_sizeStylusProperty.setTiltEnabled(BrushTiltSensitivity);
+  m_sizeStylusProperty.setTiltCurve(BrushTiltCurvePts);
 
   // Recalculate based on prior values
   m_minThick = m_rasThickness.getValue().first;
@@ -2726,7 +2897,7 @@ void ToonzRasterBrushTool::onColorStyleChanged() {
     bool isValid = m_enabled && m_active;
     m_enabled    = false;
     if (isValid) {
-      finishRasterBrush(m_mousePos, 1, 0, 0);
+      finishRasterBrush(m_mousePos, 1, 0, 0, 0);
     }
   }
 
@@ -2765,6 +2936,7 @@ void ToonzRasterBrushTool::updateCurrentStyle() {
     m_minCursorThick = m_maxCursorThick = (int)std::round(2.0 * radius);
   }
 }
+
 //==========================================================================================================
 
 ToonzRasterBrushToolNotifier::ToonzRasterBrushToolNotifier(
