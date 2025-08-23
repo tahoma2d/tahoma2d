@@ -22,6 +22,28 @@ class GraphGUIWidget;
 #define DVVAR DV_IMPORT_VAR
 #endif
 
+#define DEFAULTLINEARCURVE                                             \
+  QList<TPointD> { TPointD(0.0, 0.0), TPointD(100.0, 100.0) }
+
+#define DEFAULTNONLINEARCURVE                                          \
+  QList<TPointD> {                                                             \
+    TPointD(-40.0, 0.0), TPointD(-20.0, 0.0), TPointD(-20.0, 0.0),             \
+        TPointD(0.0, 0.0), TPointD(6.3, 6.3), TPointD(93.7, 93.7),             \
+        TPointD(100.0, 100.0), TPointD(120.0, 100.0), TPointD(120.0, 100.0),   \
+        TPointD(140.0, 100.0)                                                  \
+  }
+
+#define DEFAULTLINEARTILTCURVE                                                 \
+  QList<TPointD> { TPointD(30.0, 0.0), TPointD(90.0, 100.0) }
+
+#define DEFAULTNONLINEARTILTCURVE                                              \
+  QList<TPointD> {                                                             \
+    TPointD(-10.0, 0.0), TPointD(10.0, 0.0), TPointD(10.0, 0.0),               \
+        TPointD(30.0, 0.0), TPointD(34.0, 7.0), TPointD(86.0, 93.0),           \
+        TPointD(90.0, 100.0), TPointD(110.0, 100.0), TPointD(110.0, 100.0),    \
+        TPointD(130.0, 100.0)                                                  \
+  }
+
 //=============================================================================
 //
 // StylusConfigTarget
@@ -33,6 +55,7 @@ class DVAPI StylusConfigPopup final : public QWidget {
 
   struct GraphProperties {
     bool enabled;
+    bool useLinearCurve;
     double minX, maxX, minY, maxY;
     QList<TPointD> defaultCurve, curve;
     QString minXLabel, midXLabel, maxXLabel, minYLabel, midYLabel, maxYLabel;
@@ -56,11 +79,12 @@ public:
 
   int addConfiguration(QString name);
 
-  void setConfiguration(int configId, double minX, double maxX, double minY,
-                        double maxY, QList<TPointD> defaultCurve,
-                        QString minXLabel = "", QString midXLabel = "",
-                        QString maxXLabel = "", QString minYLabel = "",
-                        QString midYLabel = "", QString maxYLabel = "");
+  void setConfiguration(int configId, bool useLineaCurve, double minX,
+                        double maxX, double minY, double maxY,
+                        QList<TPointD> defaultCurve, QString minXLabel = "",
+                        QString midXLabel = "", QString maxXLabel = "",
+                        QString minYLabel = "", QString midYLabel = "",
+                        QString maxYLabel = "");
 
   void setConfigEnabled(int configId, bool enabled) {
     m_configProperties[configId].enabled = enabled;
@@ -73,7 +97,6 @@ public:
 
   void setConfigCurve(int configId, QList<TPointD> curve) {
     m_configProperties[configId].curve = curve;
-    m_graph->setCurve(curve);
   }
   QList<TPointD> getConfigCurve(int configId) {
     return m_configProperties[configId].curve;

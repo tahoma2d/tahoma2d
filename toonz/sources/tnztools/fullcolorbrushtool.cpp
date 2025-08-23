@@ -178,7 +178,9 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
 
   m_thickness.setNonLinearSlider();
 
+  m_sizeStylusProperty.setUseLinearCurves(true);
   m_sizeStylusProperty.setDefaultTiltCurve(DEFAULTSIZETILTCURVE);
+  m_opacityStylusProperty.setUseLinearCurves(true);
   m_opacityStylusProperty.setDefaultTiltCurve(DEFAULTOPACITYTILTCURVE);
 
   m_prop.bind(m_thickness);

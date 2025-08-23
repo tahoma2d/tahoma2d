@@ -4158,7 +4158,7 @@ void SettingsPage::onOpenStylusConfig() {
     }
 
     // Configure graph
-    m_stylusConfig->setConfiguration(j, minX, maxX, -absMaxY, absMaxY,
+    m_stylusConfig->setConfiguration(j, true, minX, maxX, -absMaxY, absMaxY,
                                      defaultCurve);
 
     // Set active curve
