@@ -53,15 +53,30 @@
 
 using namespace ToolUtils;
 
+#define DEFAULTPRESSURECURVE                                                   \
+  QList<TPointD> {                                                             \
+    TPointD(-40.0, 0.0), TPointD(-20.0, 0.0), TPointD(-20.0, 0.0),             \
+        TPointD(0.0, 0.0), TPointD(6.3, 6.3), TPointD(93.7, 93.7),             \
+        TPointD(100.0, 100.0), TPointD(120.0, 100.0), TPointD(120.0, 100.0),   \
+        TPointD(140.0, 100.0)                                                  \
+  }
+
+#define DEFAULTSIZETILTCURVE                                                   \
+  QList<TPointD> {                                                             \
+    TPointD(-10.0, 100.0), TPointD(10.0, 100.0), TPointD(10.0, 100.0),         \
+        TPointD(30.0, 100.0), TPointD(34.0, 93.0), TPointD(86.0, 7.0),         \
+        TPointD(90.0, 0.0), TPointD(110.0, 0.0), TPointD(110.0, 0.0),          \
+        TPointD(130.0, 0.0)                                                    \
+  }
+
 TEnv::DoubleVar V_VectorBrushMinSize("InknpaintVectorBrushMinSize", 1);
 TEnv::DoubleVar V_VectorBrushMaxSize("InknpaintVectorBrushMaxSize", 5);
 TEnv::IntVar V_VectorCapStyle("InknpaintVectorCapStyle", 1);
 TEnv::IntVar V_VectorJoinStyle("InknpaintVectorJoinStyle", 1);
 TEnv::IntVar V_VectorMiterValue("InknpaintVectorMiterValue", 4);
 TEnv::DoubleVar V_BrushAccuracy("InknpaintBrushAccuracy", 20);
-TEnv::DoubleVar V_BrushSmooth("InknpaintBrushSmooth", 0);
+TEnv::DoubleVar V_BrushSmooth("InknpaintVectorBrushSmooth", 0);
 TEnv::IntVar V_BrushBreakSharpAngles("InknpaintBrushBreakSharpAngles", 0);
-TEnv::IntVar V_BrushPressureSensitivity("InknpaintBrushPressureSensitivity", 1);
 TEnv::IntVar V_VectorBrushFrameRange("VectorBrushFrameRange", 0);
 TEnv::IntVar V_VectorBrushSnap("VectorBrushSnap", 0);
 TEnv::IntVar V_VectorBrushSnapSensitivity("VectorBrushSnapSensitivity", 0);
@@ -71,6 +86,13 @@ TEnv::IntVar V_VectorBrushAutoFill("VectorBrushAutoFill", 0);
 TEnv::IntVar V_VectorBrushAutoGroup("VectorBrushAutoGroup", 0);
 TEnv::StringVar V_VectorBrushPreset("VectorBrushPreset", "<custom>");
 TEnv::IntVar V_VectorBrushSnapGrid("VectorBrushSnapGrid", 0);
+TEnv::IntVar V_BrushPressureSensitivity("VectorPressureSensitivity", 1);
+TEnv::PointListVar V_BrushPressureCurvePts("VectorPressureCurvePts",
+                                           DEFAULTPRESSURECURVE);
+TEnv::IntVar V_BrushTiltSensitivity("VectorTiltSensitivity", 0);
+TEnv::PointListVar V_BrushTiltCurvePts("VectorTiltCurvePts",
+                                       DEFAULTSIZETILTCURVE);
+
 
 //-------------------------------------------------------------------
 
@@ -488,14 +510,30 @@ void getAboveStyleIdSet(int styleId, TPaletteP palette,
 
 //=========================================================================================================
 
-double computeThickness(double pressure, const TDoublePairProperty &property,
-                        bool isPath) {
+double computeThickness(bool pressureEnabled, double pressure, bool tiltEnabled,
+                        double tiltMagnitude,
+                        const TDoublePairProperty &property, bool isPath) {
   if (isPath) return 0.0;
-  double t                    = pressure * pressure * pressure;
-  double thick0               = property.getValue().first;
-  double thick1               = property.getValue().second;
+
+  double thick0 = property.getValue().first;
+  double thick1 = property.getValue().second;
   if (thick1 < 0.0001) thick0 = thick1 = 0.0;
-  return (thick0 + (thick1 - thick0) * t) * 0.5;
+
+  double pThick = 0.0, tThick = 0.0;
+
+  if (pressureEnabled) {
+    double t = pressure * pressure * pressure;
+    pThick   = (thick0 + (thick1 - thick0) * t) * 0.5;
+    if (tiltEnabled) pThick *= 0.5;
+  }
+
+  if (tiltEnabled) {
+    double t = tiltMagnitude * tiltMagnitude * tiltMagnitude;
+    tThick   = (thick0 + (thick1 - thick0) * t) * 0.5;
+    if (pressureEnabled) tThick *= 0.5;
+  }
+
+  return pThick + tThick;
 }
 
 }  // namespace
@@ -513,7 +551,6 @@ ToonzVectorBrushTool::ToonzVectorBrushTool(std::string name, int targetType)
     , m_smooth("Smooth:", 0, 50, 0)
     , m_preset("Preset:")
     , m_breakAngles("Break", true)
-    , m_pressure("Pressure", true)
     , m_capStyle("Cap")
     , m_joinStyle("Join")
     , m_miterJoinLimit("Miter:", 0, 100, 4)
@@ -534,71 +571,71 @@ ToonzVectorBrushTool::ToonzVectorBrushTool(std::string name, int targetType)
     , m_autoFill("Auto Fill", false)
     , m_targetType(targetType)
     , m_workingFrameId(TFrameId())
-    , m_snapGrid("Grid", false) {
+    , m_snapGrid("Grid", false)
+    , m_enabledPressure(false)
+    , m_enabledTilt(false)
+    , m_sizeStylusProperty("Stylus Settings - Size") {
   bind(targetType);
 
   m_thickness.setNonLinearSlider();
 
+  m_sizeStylusProperty.setUseLinearCurves(false);
+  m_sizeStylusProperty.setDefaultTiltCurve(DEFAULTSIZETILTCURVE);
+
   m_prop[0].bind(m_thickness);
+  m_prop[0].bind(m_sizeStylusProperty);
   m_prop[0].bind(m_accuracy);
   m_prop[0].bind(m_smooth);
   m_prop[0].bind(m_breakAngles);
-  m_prop[0].bind(m_pressure);
-
   m_prop[0].bind(m_autoClose);
-  m_autoClose.setId("AutoClose");
-
   m_prop[0].bind(m_autoGroup);
-  m_autoGroup.setId("AutoGroup");
-
   m_prop[0].bind(m_autoFill);
-  m_autoFill.setId("Autofill");
-
   m_prop[0].bind(m_sendToBack);
-  m_sendToBack.setId("DrawUnder");
-
   m_prop[0].bind(m_frameRange);
+  m_prop[0].bind(m_snap);
+  m_prop[0].bind(m_snapSensitivity);
+  m_prop[0].bind(m_snapGrid);
+  m_prop[0].bind(m_preset);
+
+  m_prop[1].bind(m_capStyle);
+  m_prop[1].bind(m_joinStyle);
+  m_prop[1].bind(m_miterJoinLimit);
+
+  m_autoClose.setId("AutoClose");
+  m_autoGroup.setId("AutoGroup");
+  m_autoFill.setId("Autofill");
+  m_sendToBack.setId("DrawUnder");
+  m_breakAngles.setId("BreakSharpAngles");
+  m_frameRange.setId("FrameRange");
+  m_snap.setId("Snap");
+  m_snapSensitivity.setId("SnapSensitivity");
+  m_preset.setId("BrushPreset");
+  m_capStyle.setId("Cap");
+  m_joinStyle.setId("Join");
+  m_miterJoinLimit.setId("Miter");
+  m_snapGrid.setId("SnapGrid");
+  m_sizeStylusProperty.setId("SizeStylusConfig");
+
   m_frameRange.addValue(L"Off");
   m_frameRange.addValue(LINEAR_WSTR);
   m_frameRange.addValue(EASEIN_WSTR);
   m_frameRange.addValue(EASEOUT_WSTR);
   m_frameRange.addValue(EASEINOUT_WSTR);
 
-  m_prop[0].bind(m_snap);
-
-  m_prop[0].bind(m_snapSensitivity);
   m_snapSensitivity.addValue(LOW_WSTR);
   m_snapSensitivity.addValue(MEDIUM_WSTR);
   m_snapSensitivity.addValue(HIGH_WSTR);
 
-  m_prop[0].bind(m_snapGrid);
-
-  m_prop[0].bind(m_preset);
   m_preset.addValue(CUSTOM_WSTR);
 
-  m_prop[1].bind(m_capStyle);
   m_capStyle.addValue(BUTT_WSTR, QString::fromStdWString(BUTT_WSTR));
   m_capStyle.addValue(ROUNDC_WSTR, QString::fromStdWString(ROUNDC_WSTR));
   m_capStyle.addValue(PROJECTING_WSTR,
                       QString::fromStdWString(PROJECTING_WSTR));
 
-  m_prop[1].bind(m_joinStyle);
   m_joinStyle.addValue(MITER_WSTR, QString::fromStdWString(MITER_WSTR));
   m_joinStyle.addValue(ROUNDJ_WSTR, QString::fromStdWString(ROUNDJ_WSTR));
   m_joinStyle.addValue(BEVEL_WSTR, QString::fromStdWString(BEVEL_WSTR));
-
-  m_prop[1].bind(m_miterJoinLimit);
-
-  m_breakAngles.setId("BreakSharpAngles");
-  m_frameRange.setId("FrameRange");
-  m_snap.setId("Snap");
-  m_snapSensitivity.setId("SnapSensitivity");
-  m_preset.setId("BrushPreset");
-  m_pressure.setId("PressureSensitivity");
-  m_capStyle.setId("Cap");
-  m_joinStyle.setId("Join");
-  m_miterJoinLimit.setId("Miter");
-  m_snapGrid.setId("SnapGrid");
 }
 
 //-------------------------------------------------------------------------------------------------------
@@ -619,13 +656,18 @@ void ToonzVectorBrushTool::updateTranslation() {
   m_preset.setQStringName(tr("Preset:"));
   m_preset.setItemUIName(CUSTOM_WSTR, tr("<custom>"));
   m_breakAngles.setQStringName(tr("Break"));
-  m_pressure.setQStringName(tr("Pressure"));
   m_capStyle.setQStringName(tr("Cap"));
   m_joinStyle.setQStringName(tr("Join"));
   m_miterJoinLimit.setQStringName(tr("Miter:"));
   m_frameRange.setQStringName(tr("Range:"));
   m_snap.setQStringName(tr("Snap"));
   m_snapSensitivity.setQStringName("");
+  m_sendToBack.setQStringName(tr("Draw Under"));
+  m_autoClose.setQStringName(tr("Auto Close"));
+  m_autoFill.setQStringName(tr("Auto Fill"));
+  m_autoGroup.setQStringName(tr("Auto Group"));
+  m_sizeStylusProperty.setQStringName(tr("Stylus Settings - Size"));
+
   m_frameRange.setItemUIName(L"Off", tr("Off"));
   m_frameRange.setItemUIName(LINEAR_WSTR, tr("Linear"));
   m_frameRange.setItemUIName(EASEIN_WSTR, tr("Ease In"));
@@ -640,10 +682,6 @@ void ToonzVectorBrushTool::updateTranslation() {
   m_joinStyle.setItemUIName(MITER_WSTR, tr("Miter join"));
   m_joinStyle.setItemUIName(ROUNDJ_WSTR, tr("Round join"));
   m_joinStyle.setItemUIName(BEVEL_WSTR, tr("Bevel join"));
-  m_sendToBack.setQStringName(tr("Draw Under"));
-  m_autoClose.setQStringName(tr("Auto Close"));
-  m_autoFill.setQStringName(tr("Auto Fill"));
-  m_autoGroup.setQStringName(tr("Auto Group"));
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -772,12 +810,48 @@ void ToonzVectorBrushTool::leftButtonDown(const TPointD &pos,
     }
   }
 
-  double thickness = (m_pressure.getValue() || m_isPath)
-                         ? computeThickness(e.m_pressure, m_thickness, m_isPath)
-                         : m_thickness.getValue().second * 0.5;
+  m_enabledPressure = m_sizeStylusProperty.isPressureEnabled();
+
+  m_enabledTilt = m_sizeStylusProperty.isTiltEnabled();
+
+  if (!e.isTablet() || m_isPath) {
+    m_enabledPressure = false;
+    m_enabledTilt     = false;
+  }
+
+  double pressure = m_enabledPressure ? e.m_pressure : 0.5;
+
+  // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
+  double tiltX         = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
+  double tiltY         = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
+  double tiltMagnitude = std::sqrt(tiltX * tiltX + tiltY * tiltY);
+
+  // rotation of stylus
+//  double arctan    = atan2(tiltY, tiltX);
+//  double tiltAngle     = arctan * M_180_PI;
+
+  // Convert pressure value to % applied to max value
+  if (m_enabledPressure)
+    pressure =
+        m_sizeStylusProperty.getOutputPressureForInput(pressure * 100.0) /
+        100.0;
+
+  // Convert tilt values to % applied to max value
+  if (m_enabledTilt) {
+    // Convert MyPaint magnitude range (0 to 1.0) to graph range (90 - 30)
+    double oldTiltM = 90 - (tiltMagnitude * 60);
+    tiltMagnitude =
+        m_sizeStylusProperty.getOutputTiltForInput(oldTiltM) / 100.0;
+  }
+
+  double thickness =
+      (m_enabledPressure || m_enabledTilt || m_isPath)
+          ? computeThickness(m_enabledPressure, pressure, m_enabledTilt,
+                             tiltMagnitude, m_thickness, m_isPath)
+          : m_thickness.getValue().second * 0.5;
 
   /*--- ストロークの最初にMaxサイズの円が描かれてしまう不具合を防止する ---*/
-  if (m_pressure.getValue() && e.m_pressure == 1.0)
+  if (m_enabledPressure && e.m_pressure == 1.0)
     thickness     = m_thickness.getValue().first * 0.5;
   m_currThickness = thickness;
   m_smoothStroke.beginStroke(m_smooth.getValue());
@@ -974,9 +1048,36 @@ void ToonzVectorBrushTool::leftButtonDrag(const TPointD &pos,
   m_lastDragPos   = usePos;
   m_lastDragEvent = e;
 
-  double thickness = (m_pressure.getValue() || m_isPath)
-                         ? computeThickness(e.m_pressure, m_thickness, m_isPath)
-                         : m_thickness.getValue().second * 0.5;
+  double pressure = m_enabledPressure ? e.m_pressure : 0.5;
+
+  // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
+  double tiltX         = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
+  double tiltY         = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
+  double tiltMagnitude = std::sqrt(tiltX * tiltX + tiltY * tiltY);
+
+  // rotation of stylus
+//  double arctan    = atan2(tiltY, tiltX);
+//  double tiltAngle     = arctan * M_180_PI;
+
+  // Convert pressure value to % applied to max value
+  if (m_enabledPressure)
+    pressure =
+        m_sizeStylusProperty.getOutputPressureForInput(pressure * 100.0) /
+        100.0;
+
+  // Convert tilt values to % applied to max value
+  if (m_enabledTilt) {
+    // Convert MyPaint magnitude range (0 to 1.0) to graph range (90 - 30)
+    double oldTiltM = 90 - (tiltMagnitude * 60);
+    tiltMagnitude =
+        m_sizeStylusProperty.getOutputTiltForInput(oldTiltM) / 100.0;
+  }
+
+  double thickness =
+      (m_enabledPressure || m_enabledTilt || m_isPath)
+          ? computeThickness(m_enabledPressure, pressure, m_enabledTilt,
+                             tiltMagnitude, m_thickness, m_isPath)
+          : m_thickness.getValue().second * 0.5;
 
   TPointD halfThick(m_maxThick * 0.5, m_maxThick * 0.5);
   TPointD snapThick(6.0 * m_pixelSize, 6.0 * m_pixelSize);
@@ -2131,7 +2232,7 @@ bool ToonzVectorBrushTool::onPropertyChanged(std::string propertyName) {
        propertyName == m_accuracy.getName() ||
        propertyName == m_smooth.getName() ||
        propertyName == m_breakAngles.getName() ||
-       propertyName == m_pressure.getName() ||
+       propertyName == m_sizeStylusProperty.getName() ||
        propertyName == m_capStyle.getName() ||
        propertyName == m_joinStyle.getName() ||
        propertyName == m_miterJoinLimit.getName())) {
@@ -2147,10 +2248,13 @@ bool ToonzVectorBrushTool::onPropertyChanged(std::string propertyName) {
     V_BrushAccuracy            = m_accuracy.getValue();
     V_BrushSmooth              = m_smooth.getValue();
     V_BrushBreakSharpAngles    = m_breakAngles.getValue();
-    V_BrushPressureSensitivity = m_pressure.getValue();
     V_VectorCapStyle           = m_capStyle.getIndex();
     V_VectorJoinStyle          = m_joinStyle.getIndex();
     V_VectorMiterValue         = m_miterJoinLimit.getValue();
+    V_BrushPressureSensitivity = m_sizeStylusProperty.isPressureEnabled();
+    V_BrushPressureCurvePts    = m_sizeStylusProperty.getPressureCurve();
+    V_BrushTiltSensitivity     = m_sizeStylusProperty.isTiltEnabled();
+    V_BrushTiltCurvePts        = m_sizeStylusProperty.getTiltCurve();
   }
 
   // Properties not tracked with preset
@@ -2264,10 +2368,14 @@ void ToonzVectorBrushTool::loadPreset() {
     m_accuracy.setValue(preset.m_acc, true);
     m_smooth.setValue(preset.m_smooth, true);
     m_breakAngles.setValue(preset.m_breakAngles);
-    m_pressure.setValue(preset.m_pressure);
     m_capStyle.setIndex(preset.m_cap);
     m_joinStyle.setIndex(preset.m_join);
     m_miterJoinLimit.setValue(preset.m_miter);
+
+    m_sizeStylusProperty.setPressureEnabled(preset.m_pressure);
+    m_sizeStylusProperty.setPressureCurve(preset.m_pressureCurve);
+    m_sizeStylusProperty.setTiltEnabled(preset.m_tilt);
+    m_sizeStylusProperty.setTiltCurve(preset.m_tiltCurve);
 
     // Recalculate based on updated presets
     m_minThick = m_thickness.getValue().first;
@@ -2288,10 +2396,14 @@ void ToonzVectorBrushTool::addPreset(QString name) {
   preset.m_acc         = m_accuracy.getValue();
   preset.m_smooth      = m_smooth.getValue();
   preset.m_breakAngles = m_breakAngles.getValue();
-  preset.m_pressure    = m_pressure.getValue();
   preset.m_cap         = m_capStyle.getIndex();
   preset.m_join        = m_joinStyle.getIndex();
   preset.m_miter       = m_miterJoinLimit.getValue();
+
+  preset.m_pressure      = m_sizeStylusProperty.isPressureEnabled();
+  preset.m_pressureCurve = m_sizeStylusProperty.getPressureCurve();
+  preset.m_tilt          = m_sizeStylusProperty.isTiltEnabled();
+  preset.m_tiltCurve     = m_sizeStylusProperty.getTiltCurve();
 
   // Pass the preset to the manager
   m_presetsManager.addPreset(preset);
@@ -2329,8 +2441,12 @@ void ToonzVectorBrushTool::loadLastBrush() {
   m_miterJoinLimit.setValue(V_VectorMiterValue);
   m_breakAngles.setValue(V_BrushBreakSharpAngles ? 1 : 0);
   m_accuracy.setValue(V_BrushAccuracy);
-  m_pressure.setValue(V_BrushPressureSensitivity ? 1 : 0);
   m_smooth.setValue(V_BrushSmooth);
+
+  m_sizeStylusProperty.setPressureEnabled(V_BrushPressureSensitivity);
+  m_sizeStylusProperty.setPressureCurve(V_BrushPressureCurvePts);
+  m_sizeStylusProperty.setTiltEnabled(V_BrushTiltSensitivity);
+  m_sizeStylusProperty.setTiltCurve(V_BrushTiltCurvePts);
 
   // Properties not tracked with preset
   m_frameRange.setIndex(V_VectorBrushFrameRange);
@@ -2401,7 +2517,8 @@ VectorBrushData::VectorBrushData()
     , m_pressure(false)
     , m_cap(0)
     , m_join(0)
-    , m_miter(0) {}
+    , m_miter(0)
+    , m_tilt(false) {}
 
 //----------------------------------------------------------------------------------------------------------
 
@@ -2415,7 +2532,8 @@ VectorBrushData::VectorBrushData(const std::wstring &name)
     , m_pressure(false)
     , m_cap(0)
     , m_join(0)
-    , m_miter(0) {}
+    , m_miter(0)
+    , m_tilt(false) {}
 
 //----------------------------------------------------------------------------------------------------------
 
@@ -2447,6 +2565,15 @@ void VectorBrushData::saveData(TOStream &os) {
   os.openChild("Miter");
   os << m_miter;
   os.closeChild();
+  os.openChild("Tilt_Sensitivity");
+  os << (int)m_tilt;
+  os.closeChild();
+  os.openChild("Pressure_Curve");
+  for (auto pt : m_pressureCurve) os << pt.x << pt.y;
+  os.closeChild();
+  os.openChild("Tilt_Curve");
+  for (auto pt : m_tiltCurve) os << pt.x << pt.y;
+  os.closeChild();
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -2474,7 +2601,25 @@ void VectorBrushData::loadData(TIStream &is) {
       is >> m_join, is.matchEndTag();
     else if (tagName == "Miter")
       is >> m_miter, is.matchEndTag();
-    else
+    else if (tagName == "Tilt_Sensitivity")
+      is >> val, m_tilt = val, is.matchEndTag();
+    else if (tagName == "Pressure_Curve") {
+      m_pressureCurve.clear();
+      while (!is.eos()) {
+        TPointD pt;
+        is >> pt.x >> pt.y;
+        m_pressureCurve.push_back(pt);
+      }
+      is.matchEndTag();
+    } else if (tagName == "Tilt_Curve") {
+      m_tiltCurve.clear();
+      while (!is.eos()) {
+        TPointD pt;
+        is >> pt.x >> pt.y;
+        m_tiltCurve.push_back(pt);
+      }
+      is.matchEndTag();
+    } else
       is.skipCurrentTag();
   }
 }
