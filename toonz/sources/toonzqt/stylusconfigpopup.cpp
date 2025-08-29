@@ -79,14 +79,14 @@ int StylusConfigPopup::addConfiguration(QString name) {
   m_configList->addItem(configItem);
 
   GraphProperties configuration;
-  configuration.enabled          = false;
-  configuration.minX             = 0.0;
-  configuration.maxX             = 100.0;
-  configuration.minY             = 0.0;
-  configuration.maxY             = 100.0;
-  configuration.defaultCurve =
-      QList<TPointD>{TPointD(0.0, 0.0), TPointD(100.0, 100.0)};
-  configuration.curve = configuration.defaultCurve;
+  configuration.enabled        = false;
+  configuration.useLinearCurve = false;
+  configuration.minX           = 0.0;
+  configuration.maxX           = 100.0;
+  configuration.minY           = 0.0;
+  configuration.maxY           = 100.0;
+  configuration.defaultCurve   = DEFAULTNONLINEARCURVE;
+  configuration.curve          = configuration.defaultCurve;
 
   m_configProperties.push_back(configuration);
 
@@ -99,8 +99,9 @@ int StylusConfigPopup::addConfiguration(QString name) {
 
 //-----------------------------------------------------------------------------
 
-void StylusConfigPopup::setConfiguration(int configId, double minX, double maxX,
-                                         double minY, double maxY,
+void StylusConfigPopup::setConfiguration(int configId, bool useLinearCurve,
+                                         double minX, double maxX, double minY,
+                                         double maxY,
                                          QList<TPointD> defaultCurve,
                                          QString minXLabel, QString midXLabel,
                                          QString maxXLabel, QString minYLabel,
@@ -108,6 +109,7 @@ void StylusConfigPopup::setConfiguration(int configId, double minX, double maxX,
   if (configId >= m_configList->count()) return;
 
   m_configProperties[configId].enabled          = false;
+  m_configProperties[configId].useLinearCurve   = useLinearCurve;
   m_configProperties[configId].minX             = minX;
   m_configProperties[configId].maxX             = maxX;
   m_configProperties[configId].minY             = minY;
@@ -142,6 +144,8 @@ void StylusConfigPopup::updateGraph() {
   QString minYLabel = m_configProperties[m_currentIndex].minYLabel;
   QString midYLabel = m_configProperties[m_currentIndex].midYLabel;
   QString maxYLabel = m_configProperties[m_currentIndex].maxYLabel;
+
+  m_graph->setLinear(m_configProperties[m_currentIndex].useLinearCurve);
 
   m_graph->setMinXLabel(
       minXLabel.isEmpty()

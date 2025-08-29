@@ -3,6 +3,7 @@
 #include "tproperty.h"
 #include "tstream.h"
 #include "texception.h"
+#include "tcurves.h"
 // #include "tconvert.h"
 
 void TProperty::addListener(Listener *listener) {
@@ -405,4 +406,90 @@ void TColorChipProperty::assignUIName(TProperty *refP) {
     int refIndex = colorChipRefP->indexOf(m_chips[i].UIName.toStdWString());
     if (0 <= refIndex) m_chips[i].UIName = refChips[refIndex].UIName;
   }
+}
+
+TPointD evaluateSegment(const TCubic &seg, double t) {
+  double u = 1 - t;
+  TPointD p;
+  p.x = u * u * u * seg.getP0().x + 3 * u * u * t * seg.getP1().x +
+        3 * u * t * t * seg.getP2().x + t * t * t * seg.getP3().x;
+  p.y = u * u * u * seg.getP0().y + 3 * u * u * t * seg.getP1().y +
+        3 * u * t * t * seg.getP2().y + t * t * t * seg.getP3().y;
+  return p;
+}
+
+bool findPointInSegment(const TCubic &seg, double x_target, double t0,
+                        double t1, double &root) {
+  double epsilon = 1e-6;
+  TPointD p0     = evaluateSegment(seg, t0);
+  TPointD p1     = evaluateSegment(seg, t1);
+
+  if ((p0.x - x_target) * (p1.x - x_target) > 0) return false;
+
+  for (int i = 0; i < 50; ++i) {
+    double tm = 0.5 * (t0 + t1);
+    double xm = evaluateSegment(seg, tm).x;
+    if (std::fabs(xm - x_target) < epsilon) {
+      root = tm;
+      return true;
+    }
+    if ((p0.x - x_target) * (xm - x_target) < 0)
+      t1 = tm;
+    else
+      t0 = tm;
+  }
+
+  root = 0.5 * (t0 + t1);
+  return true;
+}
+
+double findYforX(double x, bool isLinearCurve, QList<TPointD> curve) {
+  double y = x;
+
+  int step = isLinearCurve ? 1 : 3;
+  for (int i = 0; (i + step) < curve.count(); i += step) {
+    TCubic seg;
+
+    seg.setP0(curve[i]);
+    seg.setP1(isLinearCurve ? curve[i] : curve[i + 1]);
+    seg.setP2(isLinearCurve ? curve[i + 1] : curve[i + 2]);
+    seg.setP3(isLinearCurve ? curve[i + 1] : curve[i + 3]);
+
+    TPointD x0 = evaluateSegment(seg, 0.0);
+    TPointD x1 = evaluateSegment(seg, 1.0);
+
+    // Check if x is in this segment's x range
+    if ((x >= x0.x && x <= x1.x) || (x >= x1.x && x <= x0.x)) {
+      double t_found;
+      if (findPointInSegment(seg, x, 0.0, 1.0, t_found)) {
+        y = evaluateSegment(seg, t_found).y;
+        break;
+      }
+    }
+  }
+
+  return y;
+}
+
+double TStylusProperty::getOutputPressureForInput(double pressure) {
+  if (!m_pressureEnabled ||
+      (m_pressureCurve.isEmpty() && m_defaultPressureCurve.isEmpty()))
+    return pressure;
+
+  QList<TPointD> curve =
+      m_pressureCurve.isEmpty() ? m_defaultPressureCurve : m_pressureCurve;
+
+  // Assumes pressure is in range 0 - 100%, returning 0 - 100%
+  return findYforX(pressure, m_useLinearCurves, curve);
+}
+
+double TStylusProperty::getOutputTiltForInput(double tilt) {
+  if (!m_tiltEnabled || (m_tiltCurve.isEmpty() && m_defaultTiltCurve.isEmpty()))
+    return tilt;
+
+  QList<TPointD> curve =
+      m_tiltCurve.isEmpty() ? m_defaultTiltCurve : m_tiltCurve;
+
+  // Assumes tilt is in range 30 - 90 degrees, returning 0 - 100%
+  return findYforX(std::fabs(tilt), m_useLinearCurves, curve);
 }
