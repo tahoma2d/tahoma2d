@@ -33,7 +33,6 @@ class FullColorBrushTool final : public TTool, public RasterController {
 
   void updateCurrentStyle();
   double restartBrushTimer();
-  void applyClassicToonzBrushSettings(mypaint::Brush &mypaintBrush);
   void applyToonzBrushSettings(mypaint::Brush &mypaintBrush);
 
 public:
@@ -137,11 +136,17 @@ protected:
   bool m_isStraight = false;
   TPointD m_firstPoint;
   TPointD m_lastPoint;
-  double m_oldPressure     = -1.0;
+  double m_oldPressure = -1.0;
 
   bool m_propertyUpdating = false;
 
   int m_perspectiveIndex = -1;
+
+  int m_minThick, m_maxThick;
+  double m_oldOpacity;
+  std::vector<TThickPoint> m_points;
+  RasterBlurredBrush *m_bluredBrush;
+  QRadialGradient m_brushPad;
 };
 
 //------------------------------------------------------------
