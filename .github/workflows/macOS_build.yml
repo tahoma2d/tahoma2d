@@ -7,6 +7,12 @@ jobs:
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v4
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.31.6'
+      - name: Use cmake
+        run: cmake --version
       - name: Install Dependencies
         run: |
           ci-scripts/osx/tahoma-install.sh
