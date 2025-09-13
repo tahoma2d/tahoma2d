@@ -102,8 +102,8 @@ endif()
 #-----------------------------------------------------------------------------
 # Build Options
 
-option(WITH_SYSTEM_LZO "Use the system LZO library instead of 'thirdpary'" ${_init_SYSTEM_LZO})
-option(WITH_SYSTEM_SUPERLU "Use the system SuperLU library instead of 'thirdpary'" ${_init_SYSTEM_SUPERLU})
+option(WITH_SYSTEM_LZO "Use the system LZO library instead of 'thirdparty'" ${_init_SYSTEM_LZO})
+option(WITH_SYSTEM_SUPERLU "Use the system SuperLU library instead of 'thirdparty'" ${_init_SYSTEM_SUPERLU})
 option(WITH_CANON "Build with Canon DSLR support - Requires Canon SDK" OFF)
 option(WITH_GPHOTO2 "Build with Libgphoto2" OFF)
 option(WITH_TRANSLATION "Generate translation projects as well" ON)
@@ -144,7 +144,7 @@ if(BUILD_ENV_MSVC)
     endif()
 endif()
 
-message(STATUS "Thirdpary Library Search path:" ${THIRDPARTY_LIBS_HINTS})
+message(STATUS "Thirdparty Library Search path:" ${THIRDPARTY_LIBS_HINTS})
 
 if(BUILD_ENV_MSVC)
     set(QT_PATH "C:/Qt/5.15.2/msvc2019${PLATFORM2}" CACHE PATH "Qt installation directory")
