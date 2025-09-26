@@ -1,4 +1,6 @@
 #!/bin/bash
+# Leave one processor available for other processing if possible
+export parallel=$(($(nproc) < 2 ? 1 : $(nproc) - 1))
 
 cd toonz
 
