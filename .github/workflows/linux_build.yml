@@ -66,8 +66,8 @@ jobs:
           ci-scripts/linux/tahoma-buildlibgphoto2.sh
       - name: Build Tahoma2D
         run: |
-          export CC="ccache ${{ matrix.cc }}"
-          export CXX="ccache ${{ matrix.cxx }}"
+          export CC="${{ matrix.cc }}"
+          export CXX="${{ matrix.cxx }}"
           ci-scripts/linux/tahoma-build.sh
       - name: Get 3rd Party Apps
         run: |
