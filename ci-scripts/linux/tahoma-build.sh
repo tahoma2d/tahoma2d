@@ -16,9 +16,9 @@ then
 fi
 
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-cmake ../sources  $CANON_FLAG \
+CC="gcc" cmake ../sources  $CANON_FLAG \
     -DCMAKE_BUILD_TYPE=RelWithDebInfo \
     -DWITH_GPHOTO2:BOOL=ON \
     -DWITH_SYSTEM_SUPERLU=ON
 
-make -j$(($(nproc) < 2 ? 1 : $(nproc) - 1))
+make
