@@ -1,6 +1,4 @@
 #!/bin/bash
-# Leave one processor available for other processing if possible
-export parallel=$(($(nproc) < 2 ? 1 : $(nproc) - 1))
 
 cd toonz
 
@@ -23,4 +21,4 @@ cmake ../sources  $CANON_FLAG \
     -DWITH_GPHOTO2:BOOL=ON \
     -DWITH_SYSTEM_SUPERLU=ON
 
-make -j "$parallel"
+make -j$(($(nproc) < 2 ? 1 : $(nproc) - 1))
