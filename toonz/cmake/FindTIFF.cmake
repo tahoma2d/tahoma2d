@@ -1,8 +1,7 @@
 # looks for libtiff(4.2.0 modified)
 #
 # Configures and builds the modified libtiff library
-execute_process(COMMAND ./configure --with-pic --disable-jbig --disable-webp WORKING_DIRECTORY ${SDKROOT}/tiff-4.2.0)
-execute_process(COMMAND make  -j$(($(nproc) < 2 ? 1 : $(nproc) - 1)) WORKING_DIRECTORY ${SDKROOT}/tiff-4.2.0)
+execute_process(COMMAND sh ./wrapper WORKING_DIRECTORY ${SDKROOT}/tiff-4.2.0)
 find_path(
     TIFF_INCLUDE_DIR
     NAMES
