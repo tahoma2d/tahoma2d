@@ -144,17 +144,12 @@ EOF
 ```
 Note the generated file must not actually contain `$HOME`, this expands to an absolute path in the generated file.
 
-### Building LibTIFF
+<hr>
+TODO: Make it possible to use the system libtiff.
 
-TODO: make sure we can use the system libtiff instead and remove this section.
-Features from the modified libtiff are needed currently, so this isn't a simple switch.
+Tahoma2D is completely dependent on a tweaked libtiff library that's under the thirdparty directory, which is static linked. The CMake build system will compile for you, but until then, it's stuck on this modified library.
 
-```
-$ cd tahoma2d/thirdparty/tiff-4.2.0
-$ ./configure --with-pic --disable-jbig --disable-webp 
-$ make -j$(nproc)
-$ cd ../../
-```
+
 
 ### Building Tahoma2D
 
