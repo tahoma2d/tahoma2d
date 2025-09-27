@@ -6,3 +6,4 @@
 CC="gcc" CXX="g++" ./configure --with-pic --disable-jbig --disable-webp
 
 make
+
