@@ -10,6 +10,7 @@ sudo apt-get install -y python2 python3-pip
 sudo apt-get install -y build-essential libgirepository1.0-dev autotools-dev intltool gettext libtool patchelf autopoint libusb-1.0-0 libusb-1.0-0-dev
 sudo apt-get install -y libdeflate-dev
 sudo apt-get install -y libfuse2
+sudo apt-get install -y protobuf-compiler libprotobuf-dev
 
 pip3 install --upgrade pip
 pip3 install numpy
