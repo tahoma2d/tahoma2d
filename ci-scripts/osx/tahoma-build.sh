@@ -15,6 +15,10 @@ if [ -d /usr/local/Cellar/qt@5 ]
 then
    QTVERSION=`ls /usr/local/Cellar/qt@5`
    USEQTLIB="/usr/local/opt/qt@5/lib/"
+elif [ -d /opt/homebrew/opt/qt@5 ]
+then
+   QTVERSION=`ls /opt/homebrew/opt/qt@5`
+   USEQTLIB="/opt/homebrew/opt/qt@5/lib/"
 else
    QTVERSION=`ls /usr/local/Cellar/qt`
    USEQTLIB="/usr/local/opt/qt/lib/"

@@ -59,6 +59,7 @@ echo ">>> Configuring to build ffmpeg (shared)"
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 ./configure  --prefix=/usr/local \
+      --extra-libs="-lpthread -lm"
       --enable-shared \
       --enable-pthreads \
       --enable-version3 \

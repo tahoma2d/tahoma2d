@@ -4,6 +4,9 @@ export TAHOMA2DVERSION=1.5.4
 if [ -d /usr/local/Cellar/qt@5 ]
 then
    export QTDIR=/usr/local/opt/qt@5
+elif [ -d /opt/homebrew/opt/qt@5 ]
+then
+   export QTDIR=/opt/homebrew/opt/qt@5
 else
    export QTDIR=/usr/local/opt/qt
 fi
