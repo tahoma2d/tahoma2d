@@ -101,11 +101,11 @@ TRect fastAddInkStroke(const TRasterImageP &ri, TStroke *stroke, TRectD clip,
 
   if (!rectRender.isEmpty()) {
     if (opacity < 1.0) {
-      int styleId    = stroke->getStyle();
-      TPalette *plt  = ri->getPalette();
-      TPixel32 color = plt->getStyle(styleId)->getMainColor();
-      color.m        = 255 * opacity;
-      TPaletteP newPlt(plt);
+      int styleId      = stroke->getStyle();
+      TPalette *plt    = ri->getPalette();
+      TPixel32 color   = plt->getStyle(styleId)->getMainColor();
+      color.m          = 255 * opacity;
+      TPaletteP newPlt = plt->clone();
       newPlt->getStyle(styleId)->setMainColor(color);
       rasterizeWholeStroke(gl, stroke, newPlt.getPointer(), doAntialiasing);
     } else
