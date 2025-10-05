@@ -987,7 +987,8 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
     , m_enabledPressure(false)
     , m_enabledTilt(false)
     , m_sizeStylusProperty("Stylus Settings - Size")
-    , m_isMyPaintStyleSelected(false) {
+    , m_isMyPaintStyleSelected(false)
+    , m_highFreqBrushTimer(0.0) {
   bind(targetType);
 
   m_rasThickness.setNonLinearSlider();
@@ -1534,6 +1535,7 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
       m_toonz_brush->beginStroke();
       m_toonz_brush->strokeTo(point, pressure, tiltX, tiltY,
                               restartBrushTimer());
+      m_highFreqBrushTimer = 0.0;
       TRect updateRect = m_strokeSegmentRect * ras->getBounds();
       if (!updateRect.isEmpty()) {
         // ras->extract(updateRect)->copy(m_workRas->extract(updateRect));
@@ -1937,6 +1939,14 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
 
     invalidateRect.empty();
     double brushTimer = restartBrushTimer();
+    if ((brushTimer + m_highFreqBrushTimer) < 0.01) {
+      m_highFreqBrushTimer += brushTimer;
+      m_mousePos = pos;
+      m_brushPos = getCenteredCursorPos(pos);
+      return;
+    }
+    brushTimer += m_highFreqBrushTimer;
+    m_highFreqBrushTimer = 0.0;
     for (size_t i = 0; i < pts.size(); ++i) {
       const TThickPoint &thickPoint2 = pts[i];
       m_strokeSegmentRect.empty();
@@ -2155,7 +2165,8 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
       m_smoothStroke.getSmoothPoints(pts);
     }
     TRectD invalidateRect;
-    double brushTimer = restartBrushTimer();
+    double brushTimer = restartBrushTimer() + m_highFreqBrushTimer;
+    m_highFreqBrushTimer = 0.0;
     for (size_t i = 0; i < pts.size(); ++i) {
       const TThickPoint &thickPoint2 = pts[i];
 

@@ -120,6 +120,7 @@ protected:
 
   MyPaintToonzBrush *m_toonz_brush;
   QElapsedTimer m_brushTimer;
+  double m_highFreqBrushTimer;
 
   TTileSetFullColor *m_tileSet;
   TTileSaverFullColor *m_tileSaver;

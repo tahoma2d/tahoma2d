@@ -173,7 +173,8 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
     , m_enabledOTilt(false)
     , m_sizeStylusProperty("Stylus Settings - Size")
     , m_opacityStylusProperty("Stylus Settings - Opacity")
-    , m_isMyPaintStyleSelected(false) {
+    , m_isMyPaintStyleSelected(false)
+    , m_highFreqBrushTimer(0.0) {
   bind(TTool::RasterImage | TTool::EmptyTarget);
 
   m_thickness.setNonLinearSlider();
@@ -466,6 +467,7 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
   m_strokeSegmentRect.empty();
   m_toonz_brush->beginStroke();
   m_toonz_brush->strokeTo(point, pressure, tiltX, tiltY, restartBrushTimer());
+  m_highFreqBrushTimer = 0.0;
   TRect updateRect = m_strokeSegmentRect * ras->getBounds();
   if (!updateRect.isEmpty()) {
     TRaster32P sourceRas = m_modifierPaintBehind.getValue()
@@ -704,6 +706,12 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
   }
   invalidateRect.empty();
   double brushTimer = restartBrushTimer();
+  if ((brushTimer + m_highFreqBrushTimer) < 0.01) {
+    m_highFreqBrushTimer += brushTimer;
+    return;
+  }
+  brushTimer += m_highFreqBrushTimer;
+  m_highFreqBrushTimer = 0.0;
   for (size_t i = 0; i < pts.size(); ++i) {
     const TThickPoint &thickPoint2 = pts[i];
     m_strokeSegmentRect.empty();
@@ -777,7 +785,8 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
     m_smoothStroke.getSmoothPoints(pts);
   }
   TRectD invalidateRect;
-  double brushTimer = restartBrushTimer();
+  double brushTimer = restartBrushTimer() + m_highFreqBrushTimer;
+  m_highFreqBrushTimer = 0.0;
   for (size_t i = 0; i < pts.size(); ++i) {
     const TThickPoint &thickPoint2 = pts[i];
     m_strokeSegmentRect.empty();
