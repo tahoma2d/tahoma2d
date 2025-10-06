@@ -427,7 +427,7 @@ void GraphWidget::movePoint(int index, const QPointF delta) {
 void GraphWidget::setPoint(int index, const QPointF p) {
   QPointF newP = p;
   if (m_constrainToBounds) newP = checkPoint(p);
-  m_points.removeAt(index);
+  if (index < m_points.size()) m_points.removeAt(index);
   m_points.insert(index, newP);
 
   int firstIndex = 3;
