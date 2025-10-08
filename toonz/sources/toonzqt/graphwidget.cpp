@@ -138,20 +138,31 @@ QSize GraphWidget::minimumSizeHint() const { return QSize(100, 100); }
 
 //-----------------------------------------------------------------------------
 
+bool GraphWidget::isLinearCurve(QList<TPointD> points) {
+  // Non-linear graphs always have 10 points at a minimum
+  if (points.isEmpty() || points.size() < 10) return true;
+
+  // For non-linear graphs, the 1st 3 Y cooridnates are alway sthe same
+  return points[0].y == points[1].y == points[2].y;
+}
+
 //-----------------------------------------------------------------------------
 
 void GraphWidget::setPoints(QList<TPointD> points) {
-  double xMax = m_maxXValue + m_xyOffset.x();
-
   if (!m_points.isEmpty()) m_points.clear();
 
-  if (m_isLinear) {
+  bool isCurveLinear = isLinearCurve(points);
+
+  if (isCurveLinear) {
     int n = points.count();
 
     // First point
-    setPoint(0, QPointF(-40, points[0].y + m_xyOffset.y()));
-    setPoint(1, QPointF(-20, points[0].y + m_xyOffset.y()));
-    setPoint(2, QPointF(-20, points[0].y + m_xyOffset.y()));
+    setPoint(0, QPointF(points[0].x + m_xyOffset.x() - 40,
+                        points[0].y + m_xyOffset.y()));
+    setPoint(1, QPointF(points[0].x + m_xyOffset.x() - 20,
+                        points[0].y + m_xyOffset.y()));
+    setPoint(2, QPointF(points[0].x + m_xyOffset.x() - 20,
+                        points[0].y + m_xyOffset.y()));
     setPoint(
         3, QPointF(points[0].x + m_xyOffset.x(), points[0].y + m_xyOffset.y()));
     setPoint(
@@ -172,9 +183,16 @@ void GraphWidget::setPoints(QList<TPointD> points) {
                         points[n - 1].y + m_xyOffset.y()));
     setPoint(x + 1, QPointF(points[n - 1].x + m_xyOffset.x(),
                             points[n - 1].y + m_xyOffset.y()));
-    setPoint(x + 2, QPointF(xMax + 20, points[n - 1].y + m_xyOffset.y()));
-    setPoint(x + 3, QPointF(xMax + 20, points[n - 1].y + m_xyOffset.y()));
-    setPoint(x + 4, QPointF(xMax + 40, points[n - 1].y + m_xyOffset.y()));
+    setPoint(x + 2, QPointF(points[n - 1].x + m_xyOffset.x() + 20,
+                            points[n - 1].y + m_xyOffset.y()));
+    setPoint(x + 3, QPointF(points[n - 1].x + m_xyOffset.x() + 20,
+                            points[n - 1].y + m_xyOffset.y()));
+    setPoint(x + 4, QPointF(points[n - 1].x + m_xyOffset.x() + 40,
+                            points[n - 1].y + m_xyOffset.y()));
+
+    // Somehow loading a linear curve into a non-linear graph. Notify we've
+    // changed so source is updated with non-linear curve
+    if (!m_isLinear) emit controlPointChanged(false);
   } else {
     for (const TPointD& point : points)
       m_points.push_back(
@@ -425,13 +443,16 @@ void GraphWidget::movePoint(int index, const QPointF delta) {
 //-----------------------------------------------------------------------------
 
 void GraphWidget::setPoint(int index, const QPointF p) {
-  QPointF newP = p;
-  if (m_constrainToBounds) newP = checkPoint(p);
+  int firstIndex = 3;
+  int lastIndex  = m_points.size() - 4;
+  QPointF newP   = p;
+  if (m_constrainToBounds && (index >= firstIndex || index <= lastIndex))
+    newP = checkPoint(p);
   if (index < m_points.size()) m_points.removeAt(index);
   m_points.insert(index, newP);
 
-  int firstIndex = 3;
-  int lastIndex  = m_points.size() - 4;
+  lastIndex = m_points.size() - 4;
+
   if (index == firstIndex)
     emit firstLastXPostionChanged(newP.x(), m_points.at(lastIndex).x());
   if (index == lastIndex)
@@ -657,27 +678,28 @@ void GraphWidget::selectPreviousControlPoint() {
 //-----------------------------------------------------------------------------
 
 void GraphWidget::initializeSpline() {
+  double xMin = m_minXValue + m_xyOffset.x();
   double xMax = m_maxXValue + m_xyOffset.x();
+  double yMin = m_minYValue + m_xyOffset.y();
   double yMax = m_maxYValue + m_xyOffset.y();
 
   m_points.clear();
 
-  double minY = 0, maxY = yMax;
   double minHYAdj = 0.063, maxHYAdj = 0.937;
 
   // First point
-  setPoint(0, QPointF(-40, minY));
-  setPoint(1, QPointF(-20, minY));
-  setPoint(2, QPointF(-20, minY));
-  setPoint(3, QPointF(0, minY));
+  setPoint(0, QPointF(xMin - 40, yMin));
+  setPoint(1, QPointF(xMin - 20, yMin));
+  setPoint(2, QPointF(xMin - 20, yMin));
+  setPoint(3, QPointF(xMin, yMin));
   setPoint(4, QPointF(xMax * 0.063, yMax * minHYAdj));
 
   // Last point
   setPoint(5, QPointF(xMax * 0.937, yMax * maxHYAdj));
-  setPoint(6, QPointF(xMax, maxY));
-  setPoint(7, QPointF(xMax + 20, maxY));
-  setPoint(8, QPointF(xMax + 20, maxY));
-  setPoint(9, QPointF(xMax + 40, maxY));
+  setPoint(6, QPointF(xMax, yMax));
+  setPoint(7, QPointF(xMax + 20, yMax));
+  setPoint(8, QPointF(xMax + 20, yMax));
+  setPoint(9, QPointF(xMax + 40, yMax));
   update();
 
   m_currentControlPointIndex = -1;
@@ -688,17 +710,18 @@ void GraphWidget::initializeSpline() {
 //-----------------------------------------------------------------------------
 
 void GraphWidget::removeControlPoint(int index) {
+  double xMin = m_minXValue + m_xyOffset.x();
   double xMax = m_maxXValue + m_xyOffset.x();
+  double yMin = m_minYValue + m_xyOffset.y();
   double yMax = m_maxYValue + m_xyOffset.y();
 
   // Don't delete the first cubic
-  double minY = 0, maxY = yMax;
   double minHYAdj = 0.063, maxHYAdj = 0.937;
   if (index <= 4) {
-    setPoint(0, QPointF(-40, minY));
-    setPoint(1, QPointF(-20, minY));
-    setPoint(2, QPointF(-20, minY));
-    setPoint(3, QPointF(0, minY));
+    setPoint(0, QPointF(xMin - 40, yMin));
+    setPoint(1, QPointF(xMin - 20, yMin));
+    setPoint(2, QPointF(xMin - 20, yMin));
+    setPoint(3, QPointF(xMin, yMin));
     setPoint(4, QPointF(xMax * 0.063, yMax * minHYAdj));
     update();
     emit updateCurrentPosition(
@@ -712,10 +735,10 @@ void GraphWidget::removeControlPoint(int index) {
   if (index >= m_points.size() - 5) {
     int i = m_points.size() - 5;
     setPoint(i, QPointF(xMax * 0.937, yMax * maxHYAdj));
-    setPoint(i + 1, QPointF(xMax, maxY));
-    setPoint(i + 2, QPointF(xMax + 20, maxY));
-    setPoint(i + 3, QPointF(xMax + 20, maxY));
-    setPoint(i + 4, QPointF(xMax + 40, maxY));
+    setPoint(i + 1, QPointF(xMax, yMax));
+    setPoint(i + 2, QPointF(xMax + 20, yMax));
+    setPoint(i + 3, QPointF(xMax + 20, yMax));
+    setPoint(i + 4, QPointF(xMax + 40, yMax));
     update();
     emit updateCurrentPosition(
         m_currentControlPointIndex,
