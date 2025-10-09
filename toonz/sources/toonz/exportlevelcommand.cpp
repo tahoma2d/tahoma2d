@@ -305,7 +305,14 @@ TRasterImageP ImageExporter::exportedRasterImage(TVectorImageP vi) {
                        camera.getStageToCameraRef(), TRect(), vi->getPalette());
   rd.m_antiAliasing = !m_opts.m_noAntialias;
 
-  if (!m_glContext.get()) m_glContext.reset(new TOfflineGL(camera.getRes()));
+  if (!m_glContext.get()) {
+    try {
+      m_glContext.reset(new TOfflineGL(camera.getRes()));
+    } catch (...) {
+      DVGui::error(QObject::tr("Unable to generate image. Revise resolution."));
+      return nullptr;
+    }
+  }
 
   // Render the vector image to fullcolor raster
   TRasterImageP ri;

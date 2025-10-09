@@ -613,6 +613,8 @@ void ExportLevelPopup::updatePreview() {
       sl ? IoCmd::exportedImage(ext, *sl, sl->index2fid(frameIdx), opts)
          : TImageP();
 
+  m_okButton->setEnabled(m_swatch->image().getPointer() != nullptr);
+
   m_swatch->update();
 }
 
@@ -898,12 +900,6 @@ ExportLevelPopup::ExportOptions::ExportOptions(QWidget *parent)
     ret = connect(m_heightFld, SIGNAL(valueChanged()), SIGNAL(optionsChanged()),
                   Qt::QueuedConnection) &&
           ret;
-    ret = connect(m_hResFld, SIGNAL(textChanged(const QString &)),
-                  SIGNAL(optionsChanged()), Qt::QueuedConnection) &&
-          ret;
-    ret = connect(m_vResFld, SIGNAL(textChanged(const QString &)),
-                  SIGNAL(optionsChanged()), Qt::QueuedConnection) &&
-          ret;
 
     ret = connect(m_thicknessTransformMode, SIGNAL(currentIndexChanged(int)),
                   SIGNAL(optionsChanged())) &&
@@ -1043,8 +1039,14 @@ void ExportLevelPopup::ExportOptions::updateXRes() {
   double ly = m_heightFld->getValue(), yres = m_vResFld->getValue(),
          dpi = ly > 0 ? yres / ly : 0;
 
-  m_hResFld->setValue(tround(m_widthFld->getValue() * dpi));
+  int value = tround(m_widthFld->getValue() * dpi);
+
+  if (value == m_hResFld->getValue()) return;
+
+  m_hResFld->setValue(value);
   updateDpi();
+
+  emit optionsChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -1053,8 +1055,15 @@ void ExportLevelPopup::ExportOptions::updateYRes() {
   double lx = m_widthFld->getValue(), xres = m_hResFld->getValue(),
          dpi = lx > 0 ? xres / lx : 0;
 
-  m_vResFld->setValue(tround(m_heightFld->getValue() * dpi));
+  int value = tround(m_heightFld->getValue() * dpi);
+
+  if (value == m_vResFld->getValue()) return;
+
+  m_vResFld->setValue(value);
+
   updateDpi();
+
+  emit optionsChanged();
 }
 
 //-----------------------------------------------------------------------------
