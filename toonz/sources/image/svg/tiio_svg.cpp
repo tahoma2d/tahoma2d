@@ -2235,6 +2235,7 @@ TImageP TImageReaderSvg::load() {
       if (!s) continue;
       s->setStyle(inkIndex);
       int currentIndex = vimage->addStroke(s);
+      if (currentIndex < 0) continue;
       strokeCount++;
       if (s->isSelfLoop() && !shape->hasFillNone) applyFill = true;
       // Single unconnected stroke shape with fill
