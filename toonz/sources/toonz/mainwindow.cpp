@@ -2864,7 +2864,9 @@ void MainWindow::defineActions() {
   createToolAction(
       T_Tracker, "radar", QT_TR_NOOP("Tracker Tool"), "",
       tr("Tracker Tool: Tracks specific regions in a sequence of images"));
-  createToolAction(T_Hook, "hook", QT_TR_NOOP("Hook Tool"), "O");
+  createToolAction(T_Hook, "hook", QT_TR_NOOP("Hook Tool"), "O",
+                   tr("Hook Tool: Create reference points to aid in movement "
+                      "or to link other objects by them"));
   createToolAction(T_Zoom, "zoom", QT_TR_NOOP("Zoom Tool"), "Shift+Space",
                    tr("Zoom Tool: Zooms viewer"));
   createToolAction(T_Rotate, "rotate", QT_TR_NOOP("Rotate Tool"), "Ctrl+Space",
