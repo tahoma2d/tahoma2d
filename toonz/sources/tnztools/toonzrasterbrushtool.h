@@ -236,6 +236,7 @@ protected:
   bool m_isMyPaintStyleSelected    = false;
   MyPaintToonzBrush *m_toonz_brush = 0;
   QElapsedTimer m_brushTimer;
+  double m_highFreqBrushTimer;
   int m_minCursorThick, m_maxCursorThick;
 
   bool m_propertyUpdating = false;
