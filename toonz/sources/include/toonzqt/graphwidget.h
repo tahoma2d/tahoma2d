@@ -178,6 +178,8 @@ protected:
   void focusInEvent(QFocusEvent* fe) override;
   void focusOutEvent(QFocusEvent* fe) override;
 
+  bool isLinearCurve(QList<TPointD> points);
+
 signals:
   void focusOut();
   void controlPointChanged(bool isDragging);
