@@ -227,7 +227,7 @@ public:
     TRasterP backUpRas       = ras->clone();
     workRaster->clear();
 
-    RasterBlurredBrush brush(workRaster, m_size, brushPad, false);
+    RasterBlurredBrush brush(workRaster, m_size, brushPad);
 
     if (m_brushCount > 1)
       brush.addSymmetryBrushes(m_brushCount, m_rotation, m_centerPoint,
@@ -548,8 +548,7 @@ void FullColorEraserTool::leftButtonDown(const TPointD &pos,
 
     m_tileSet   = new TTileSetFullColor(ras->getSize());
     m_tileSaver = new TTileSaverFullColor(ras, m_tileSet);
-    m_brush     = new RasterBlurredBrush(m_workRaster, maxThick,
-                                     m_brushPad, false);
+    m_brush     = new RasterBlurredBrush(m_workRaster, maxThick, m_brushPad);
     if (symmetryTool && symmetryTool->isGuideEnabled()) {
       m_brush->addSymmetryBrushes(symmObj.getLines(), symmObj.getRotation(),
                                   symmObj.getCenterPoint(),

@@ -30,6 +30,7 @@ set(MOC_HEADERS
     ../include/toonz/txshlevelhandle.h
     ../include/toonz/txshsimplelevel.h
     ../include/toonz/txshsoundcolumn.h
+    ../include/toonz/brushtipmanager.h
 )
 
 set(HEADERS
@@ -328,6 +329,7 @@ set(SOURCES
     filepathproperties.cpp
     navigationtags.cpp
     txshfoldercolumn.cpp
+    brushtipmanager.cpp
 )
 
 if(BUILD_TARGET_WIN)
@@ -392,4 +394,8 @@ elseif(BUILD_ENV_UNIXLIKE)
     endif()
 
     target_link_libraries(toonzlib Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::Script Qt5::Multimedia ${GLUT_LIB} ${GL_LIB} ${GLEW_LIB} ${EXTRA_LIBS} ${MYPAINT_LIB_LDFLAGS})
+endif()
+
+if(OpenCV_FOUND)
+    target_link_libraries(toonzlib ${OpenCV_LIBS})
 endif()

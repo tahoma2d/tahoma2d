@@ -99,6 +99,7 @@ protected:
   TBoolProperty m_snapGrid;
   TBoolProperty m_mypaintTilt;
   TStylusProperty m_sizeStylusProperty, m_opacityStylusProperty;
+  TBrushTipProperty m_brushTip;
 
   TPixel32 m_currentColor;
   bool m_enabledPressure, m_enabledOPressure;
@@ -137,6 +138,7 @@ protected:
   TPointD m_firstPoint;
   TPointD m_lastPoint;
   double m_oldPressure = -1.0;
+  double m_tiltAngle   = 0;
 
   bool m_propertyUpdating = false;
 

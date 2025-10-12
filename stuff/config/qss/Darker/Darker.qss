@@ -1772,6 +1772,15 @@ ProjectPopup QLabel {
   font-size: 15px;
 }
 /* -----------------------------------------------------------------------------
+   Brush Tip Popup
+----------------------------------------------------------------------------- */
+#BrushTipChooserFrame {
+  qproperty-CommonChipBoxColor: black;
+  qproperty-SolidChipBoxColor: #e41000;
+  qproperty-SelectedChipBoxColor: white;
+  qproperty-SelectedChipBox2Color: #c7ca32;
+}
+/* -----------------------------------------------------------------------------
    Schematic Viewer
 ----------------------------------------------------------------------------- */
 SchematicViewer {

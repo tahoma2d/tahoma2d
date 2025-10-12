@@ -41,6 +41,7 @@
 #include "toonz/tproject.h"
 #include "toonz/scriptengine.h"
 #include "toonz/palettecontroller.h"
+#include "toonz/brushtipmanager.h"
 
 // TnzSound includes
 #include "tnzsound.h"
@@ -656,6 +657,10 @@ int main(int argc, char *argv[]) {
   QApplication::setStyle("windows");
 
   IconGenerator::setFilmstripIconSize(Preferences::instance()->getIconSize());
+
+  splash.showMessage(offsetStr + QObject::tr("Loading brush tips..."),
+                     Qt::AlignRight | Qt::AlignBottom, Qt::black);
+  TBrushTipManager::instance()->loadItems();
 
   splash.showMessage(offsetStr + QObject::tr("Loading shaders..."),
                      Qt::AlignRight | Qt::AlignBottom, Qt::black);

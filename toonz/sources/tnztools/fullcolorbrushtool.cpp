@@ -79,7 +79,7 @@ TEnv::IntVar FullcolorBrushMinSize("FullcolorBrushMinSize", 1);
 TEnv::IntVar FullcolorBrushMaxSize("FullcolorBrushMaxSize", 5);
 TEnv::DoubleVar FullcolorBrushSmooth("FullcolorBrushSmooth", 0);
 TEnv::DoubleVar FullcolorBrushHardness("FullcolorBrushHardness", 100);
-TEnv::DoubleVar FullcolorMinOpacity("FullcolorMinOpacity", 100);
+TEnv::DoubleVar FullcolorMinOpacity("FullcolorMinOpacity", 0);
 TEnv::DoubleVar FullcolorMaxOpacity("FullcolorMaxOpacity", 100);
 TEnv::DoubleVar FullcolorModifierSize("FullcolorModifierSize", 0);
 TEnv::DoubleVar FullcolorModifierOpacity("FullcolorModifierOpacity", 100);
@@ -104,6 +104,14 @@ TEnv::IntVar FullcolorMyPaintPressureSensitivity(
     "FullcolorMyPaintPressureSensitivity", 1);
 TEnv::IntVar FullcolorMyPaintTiltSensitivity("FullcolorMyPaintTiltSensitivity",
                                              0);
+TEnv::DoubleVar FullcolorBrushTipSpacing("FullcolorBrushTipSpacing", 1);
+TEnv::DoubleVar FullcolorBrushTipRotation("FullcolorBrushTipRotation", 0);
+TEnv::IntVar FullcolorBrushTipAutoRotate("FullcolorBrushTipAutoRotate", 1);
+TEnv::IntVar FullcolorBrushTipFlipHorizontal("FullcolorBrushTipFlipHorizontal",
+                                             0);
+TEnv::IntVar FullcolorBrushTipFlipVertical("FullcolorBrushTipFlipVertical", 0);
+TEnv::DoubleVar FullcolorBrushTipScatter("FullcolorBrushTipScatter", 0);
+TEnv::StringVar FullcolorBrushTipId("FullcolorBrushTipId", DEFAULTBRUSHTIPID);
 
 //----------------------------------------------------------------------------------
 
@@ -214,7 +222,7 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
     , m_thickness("Size", 1, 1000, 1, 5, false)
     , m_smooth("Smooth:", 0, 50, 0)
     , m_mypaintPressure("ModifierPressure", true)
-    , m_opacity("Opacity", 0, 100, 100, 100, true)
+    , m_opacity("Opacity", 0, 100, 0, 100, true)
     , m_hardness("Hardness:", 0, 100, 100)
     , m_modifierSize("ModifierSize", -3, 3, 0, true)
     , m_modifierOpacity("ModifierOpacity", 0, 100, 100, true)
@@ -239,9 +247,10 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
     , m_sizeStylusProperty("Stylus Settings - Size")
     , m_opacityStylusProperty("Stylus Settings - Opacity")
     , m_oldOpacity(1)
-    , m_bluredBrush(0),
-      m_isMyPaintStyleSelected(false),
-      m_highFreqBrushTimer(0.0) {
+    , m_bluredBrush(0)
+    , m_isMyPaintStyleSelected(false)
+    , m_highFreqBrushTimer(0.0)
+    , m_brushTip("Brush Tip") {
   bind(TTool::RasterImage | TTool::EmptyTarget);
 
   m_thickness.setNonLinearSlider();
@@ -251,6 +260,7 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
   m_opacityStylusProperty.setUseLinearCurves(false);
   m_opacityStylusProperty.setDefaultTiltCurve(DEFAULTOPACITYTILTCURVE);
 
+  m_prop.bind(m_brushTip);
   m_prop.bind(m_thickness);
   m_prop.bind(m_sizeStylusProperty);
   m_prop.bind(m_modifierSize);
@@ -276,6 +286,7 @@ FullColorBrushTool::FullColorBrushTool(std::string name)
   m_mypaintTilt.setId("TiltSensitivity");
   m_sizeStylusProperty.setId("SizeStylusConfig");
   m_opacityStylusProperty.setId("OpacityStylusConfig");
+  m_brushTip.setId("BrushTip");
 
   m_brushTimer.start();
 }
@@ -320,6 +331,7 @@ void FullColorBrushTool::updateTranslation() {
   m_mypaintTilt.setQStringName(tr("Tilt"));
   m_sizeStylusProperty.setQStringName(tr("Stylus Settings - Size"));
   m_opacityStylusProperty.setQStringName(tr("Stylus Settings - Opacity"));
+  m_brushTip.setQStringName(tr("Brush Tip"));
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -383,12 +395,11 @@ void FullColorBrushTool::updateWorkAndBackupRasters(const TRect &rect) {
     TRect _rect = enlargedRect * ras->getBounds();
     if (_rect.isEmpty()) return;
 
-    if (!m_modifierPaintBehind.getValue()) {
-      if (m_isMyPaintStyleSelected)
+    if (m_isMyPaintStyleSelected) {
+      if (!m_modifierPaintBehind.getValue())
         m_workRaster->extract(_rect)->copy(ras->extract(_rect));
-      else
-        m_workRaster->extract(_rect)->clear();
-    }
+    } else
+      m_workRaster->extract(_rect)->clear();
     m_backUpRas->extract(_rect)->copy(ras->extract(_rect));
   } else {
     if (enlargedRect.x0 < m_lastRect.x0) enlargedRect.x0 -= dx;
@@ -402,12 +413,11 @@ void FullColorBrushTool::updateWorkAndBackupRasters(const TRect &rect) {
     TRect _lastRect    = m_lastRect * ras->getBounds();
     QList<TRect> rects = ToolUtils::splitRect(_rect, _lastRect);
     for (int i = 0; i < rects.size(); i++) {
-      if (!m_modifierPaintBehind.getValue()) {
-        if (m_isMyPaintStyleSelected)
+      if (m_isMyPaintStyleSelected) {
+        if (!m_modifierPaintBehind.getValue())
           m_workRaster->extract(rects[i])->copy(ras->extract(rects[i]));
-        else
-          m_workRaster->extract(rects[i])->clear();
-      }
+      } else
+        m_workRaster->extract(rects[i])->clear();
       m_backUpRas->extract(rects[i])->copy(ras->extract(rects[i]));
     }
   }
@@ -497,7 +507,8 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
 
   m_workRaster->lock();
 
-  if (m_modifierPaintBehind.getValue()) m_workRaster->clear();
+  if (!m_isMyPaintStyleSelected || m_modifierPaintBehind.getValue())
+    m_workRaster->clear();
 
   TPointD rasCenter = ras->getCenterD();
   TPointD point(pos + rasCenter);
@@ -520,9 +531,16 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
   m_oldPressure = opressure = pressure;
 
   // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
+  // Note: xTilt value sign must be flipped so it angles correctly
+  double xTilt = (e.m_tiltX / -60.0);
+  double yTilt = (e.m_tiltY / 60.0);
+  // rotation of stylus
+  double arctan = atan2(yTilt, xTilt);
+  m_tiltAngle = (!e.isTablet() || (!xTilt && !yTilt)) ? 0.0 : arctan * M_180_PI;
+
   double tiltMagnitude, otiltMagnitude;
-  double tiltX = (m_enabledTilt || m_enabledOTilt) ? (e.m_tiltX / -60.0) : 0.0;
-  double tiltY = (m_enabledTilt || m_enabledOTilt) ? (e.m_tiltY / 60.0) : 0.0;
+  double tiltX   = (m_enabledTilt || m_enabledOTilt) ? xTilt : 0.0;
+  double tiltY   = (m_enabledTilt || m_enabledOTilt) ? yTilt : 0.0;
   otiltMagnitude = tiltMagnitude = std::sqrt(tiltX * tiltX + tiltY * tiltY);
 
   m_tileSet   = new TTileSetFullColor(ras->getSize());
@@ -622,7 +640,10 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
         0.01;
     TDimension dim    = ras->getSize();
     TPointD rasCenter = TPointD(dim.lx * 0.5, dim.ly * 0.5);
-    TThickPoint point(pos + rasCenter, thickness);
+    TThickPoint point(
+        pos + rasCenter, thickness,
+        (m_brushTip.getBrushTip() && m_brushTip.isAutoRotate() ? m_tiltAngle
+                                                               : 0));
     TPointD halfThick(maxThick * 0.5, maxThick * 0.5);
     TRectD invalidateRect(pos - halfThick, pos + halfThick);
 
@@ -631,8 +652,11 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
 
     double hardness = m_hardness.getValue() * 0.01;
 
-    m_bluredBrush = new RasterBlurredBrush(m_workRaster, maxThick, m_brushPad,
-                                           hardness == 1.0);
+    m_bluredBrush = new RasterBlurredBrush(
+        m_workRaster, maxThick, m_brushPad, m_brushTip.getBrushTip(),
+        m_brushTip.getSpacing(), m_brushTip.getRotation(),
+        m_brushTip.isFlipHorizontal(), m_brushTip.isFlipVertical(),
+        m_brushTip.getScatter());
 
     SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
         TTool::getTool("T_Symmetry", TTool::RasterImage));
@@ -649,7 +673,18 @@ void FullColorBrushTool::leftButtonDown(const TPointD &pos,
     m_tileSaver->save(m_strokeRect);
     m_bluredBrush->addPoint(point, opacity);
     m_bluredBrush->updateDrawing(ras, m_backUpRas, m_currentColor, m_strokeRect,
-                                 opacity);
+                                 opacity, m_modifierPaintBehind.getValue(),
+                                 m_modifierLockAlpha.getValue());
+
+    std::vector<TThickPoint> pts;
+    if (m_smooth.getValue() == 0) {
+      pts.push_back(point);
+    } else {
+      m_smoothStroke.beginStroke(m_smooth.getValue());
+      m_smoothStroke.addPoint(point);
+      m_smoothStroke.getSmoothPoints(pts);
+    }
+
     m_oldOpacity = opacity;
     m_lastRect   = m_strokeRect;
 
@@ -850,14 +885,17 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
   opressure = pressure;
 
   // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
-  double tiltMagnitude, otiltMagnitude;
-  double tiltX = (m_enabledTilt || m_enabledOTilt) ? (e.m_tiltX / -60.0) : 0.0;
-  double tiltY = (m_enabledTilt || m_enabledOTilt) ? (e.m_tiltY / 60.0) : 0.0;
-  otiltMagnitude = tiltMagnitude = std::sqrt(tiltX * tiltX + tiltY * tiltY);
-
+  // Note: xTilt value sign must be flipped so it angles correctly
+  double xTilt = (e.m_tiltX / -60.0);
+  double yTilt = (e.m_tiltY / 60.0);
   // rotation of stylus
-//  double arctan    = atan2(tiltY, tiltX);
-//  double tiltAngle     = arctan * M_180_PI;
+  double arctan = atan2(yTilt, xTilt);
+  m_tiltAngle = (!e.isTablet() || (!xTilt && !yTilt)) ? 0.0 : arctan * M_180_PI;
+
+  double tiltMagnitude, otiltMagnitude;
+  double tiltX   = (m_enabledTilt || m_enabledOTilt) ? xTilt : 0.0;
+  double tiltY   = (m_enabledTilt || m_enabledOTilt) ? yTilt : 0.0;
+  otiltMagnitude = tiltMagnitude = std::sqrt(tiltX * tiltX + tiltY * tiltY);
 
   if (m_isMyPaintStyleSelected) {
     if (!m_toonz_brush) return;
@@ -948,54 +986,72 @@ void FullColorBrushTool::leftButtonDrag(const TPointD &pos,
         0.01;
     TDimension size   = m_workRaster->getSize();
     TPointD rasCenter = TPointD(size.lx * 0.5, size.ly * 0.5);
-    TThickPoint point(pos + rasCenter, thickness);
+    TThickPoint thickPoint(
+        pos + rasCenter, thickness,
+        (m_brushTip.getBrushTip() && m_brushTip.isAutoRotate() ? m_tiltAngle
+                                                               : 0));
 
-    TThickPoint old = m_points.back();
-    if (norm2(point - old) < 4) return;
-
-    TThickPoint mid((old + point) * 0.5, (point.thick + old.thick) * 0.5);
-    m_points.push_back(mid);
-    m_points.push_back(point);
-
-    TRect bbox;
-    int m = m_points.size();
-    TRectD invalidateRect;
-    std::vector<TThickPoint> points;
-
-    if (m == 3) {
-      // ho appena cominciato. devo disegnare un segmento
-      TThickPoint pa = m_points.front();
-      points.push_back(pa);
-      points.push_back(mid);
-      invalidateRect = ToolUtils::getBounds(points, maxThickness);
-      bbox           = m_bluredBrush->getBoundFromPoints(points);
-      updateWorkAndBackupRasters(bbox + m_lastRect);
-      m_tileSaver->save(bbox);
-      m_bluredBrush->addArc(pa, (pa + mid) * 0.5, mid, m_oldOpacity, opacity);
-      m_lastRect += bbox;
+    std::vector<TThickPoint> pts;
+    if (m_smooth.getValue() == 0) {
+      pts.push_back(thickPoint);
     } else {
-      // caso generale: disegno un arco
-      points.push_back(m_points[m - 4]);
-      points.push_back(old);
-      points.push_back(mid);
-      invalidateRect = ToolUtils::getBounds(points, maxThickness);
-      bbox           = m_bluredBrush->getBoundFromPoints(points);
-      updateWorkAndBackupRasters(bbox + m_lastRect);
-      m_tileSaver->save(bbox);
-      m_bluredBrush->addArc(m_points[m - 4], old, mid, m_oldOpacity, opacity);
-      m_lastRect += bbox;
+      m_smoothStroke.addPoint(thickPoint);
+      m_smoothStroke.getSmoothPoints(pts);
     }
-    m_oldOpacity = opacity;
-    m_bluredBrush->updateDrawing(ri->getRaster(), m_backUpRas, m_currentColor,
-                                 bbox, opacity);
 
-    std::vector<TThickPoint> symmPts = m_bluredBrush->getSymmetryPoints(points);
-    points.insert(points.end(), symmPts.begin(), symmPts.end());
+    for (size_t i = 0; i < pts.size(); ++i) {
+      TThickPoint old = m_points.back();
+      if (norm2(thickPoint - old) < 4) break;
 
-    invalidateRect += ToolUtils::getBounds(points, maxThickness) - rasCenter;
+      const TThickPoint &point = pts[i];
+      TThickPoint mid((old + point) * 0.5, (point.thick + old.thick) * 0.5,
+                      (m_brushTip.getBrushTip() && m_brushTip.isAutoRotate()
+                           ? (point.rotation + old.rotation) * 0.5
+                           : 0));
+      m_points.push_back(mid);
+      m_points.push_back(point);
 
-    invalidate(invalidateRect.enlarge(2));
-    m_strokeRect += bbox;
+      TRect bbox;
+      int m = m_points.size();
+      TRectD invalidateRect;
+      std::vector<TThickPoint> points;
+      if (m == 3) {
+        // ho appena cominciato. devo disegnare un segmento
+        TThickPoint pa = m_points.front();
+        points.push_back(pa);
+        points.push_back(mid);
+        bbox           = m_bluredBrush->getBoundFromPoints(points);
+        updateWorkAndBackupRasters(bbox + m_lastRect);
+        m_tileSaver->save(bbox);
+        m_bluredBrush->addArc(pa, (pa + mid) * 0.5, mid, m_oldOpacity, opacity);
+        m_lastRect += bbox;
+      } else {
+        // caso generale: disegno un arco
+        points.push_back(m_points[m - 4]);
+        points.push_back(old);
+        points.push_back(mid);
+        bbox           = m_bluredBrush->getBoundFromPoints(points);
+        updateWorkAndBackupRasters(bbox + m_lastRect);
+        m_tileSaver->save(bbox);
+        m_bluredBrush->addArc(m_points[m - 4], old, mid, m_oldOpacity, opacity);
+        m_lastRect += bbox;
+      }
+      m_oldOpacity = opacity;
+      m_bluredBrush->updateDrawing(
+          ri->getRaster(), m_backUpRas, m_currentColor, bbox, opacity,
+          m_modifierPaintBehind.getValue(), m_modifierLockAlpha.getValue());
+
+      std::vector<TThickPoint> symmPts =
+          m_bluredBrush->getSymmetryPoints(points);
+      points.insert(points.end(), symmPts.begin(), symmPts.end());
+
+      invalidateRect += ToolUtils::getBounds(points, maxThickness) - rasCenter;
+      if (m_brushTip.getBrushTip() && m_brushTip.getScatter())
+        invalidateRect += convert(bbox + m_lastRect) - rasCenter;
+
+      invalidate(invalidateRect.enlarge(2));
+      m_strokeRect += bbox;
+    }
   }
 }
 
@@ -1035,9 +1091,16 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
   }
 
   // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
+  // Note: xTilt value sign must be flipped so it angles correctly
+  double xTilt = (e.m_tiltX / -60.0);
+  double yTilt = (e.m_tiltY / 60.0);
+  // rotation of stylus
+  double arctan = atan2(yTilt, xTilt);
+  m_tiltAngle = (!e.isTablet() || (!xTilt && !yTilt)) ? 0.0 : arctan * M_180_PI;
+
   double tiltMagnitude, otiltMagnitude;
-  double tiltX = (m_enabledTilt || m_enabledOTilt) ? (e.m_tiltX / -60.0) : 0.0;
-  double tiltY = (m_enabledTilt || m_enabledOTilt) ? (e.m_tiltY / 60.0) : 0.0;
+  double tiltX   = (m_enabledTilt || m_enabledOTilt) ? xTilt : 0.0;
+  double tiltY   = (m_enabledTilt || m_enabledOTilt) ? yTilt : 0.0;
   otiltMagnitude = tiltMagnitude = std::sqrt(tiltX * tiltX + tiltY * tiltY);
 
   if (m_isMyPaintStyleSelected) {
@@ -1114,49 +1177,75 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
           m_opacityStylusProperty.getOutputTiltForInput(oldTiltM) / 100.0;
     }
 
-    if (m_points.size() != 1) {
-      double maxThickness = m_thickness.getValue().second;
-      double thickness =
-          (m_enabledPressure || m_enabledTilt)
-              ? computeThickness(m_enabledPressure, pressure, m_enabledTilt,
-                                 tiltMagnitude, m_thickness)
-              : maxThickness;
+    double maxThickness = m_thickness.getValue().second;
+    double thickness =
+        (m_enabledPressure || m_enabledTilt)
+            ? computeThickness(m_enabledPressure, pressure, m_enabledTilt,
+                               tiltMagnitude, m_thickness)
+            : maxThickness;
 
-      double opacity =
-          ((m_enabledOPressure || m_enabledOTilt)
-               ? computeThickness(m_enabledOPressure, opressure, m_enabledOTilt,
-                                  otiltMagnitude, m_opacity)
-               : m_opacity.getValue().second
+    double opacity =
+        ((m_enabledOPressure || m_enabledOTilt)
+             ? computeThickness(m_enabledOPressure, opressure, m_enabledOTilt,
+                                otiltMagnitude, m_opacity)
+             : m_opacity.getValue().second
 
-           ) *
-          0.01;
-      TPointD rasCenter = ri->getRaster()->getCenterD();
-      TThickPoint point(pos + rasCenter, thickness);
-      m_points.push_back(point);
-      int m = m_points.size();
-      std::vector<TThickPoint> points;
-      points.push_back(m_points[m - 3]);
-      points.push_back(m_points[m - 2]);
-      points.push_back(m_points[m - 1]);
-      TRect bbox = m_bluredBrush->getBoundFromPoints(points);
-      updateWorkAndBackupRasters(bbox);
-      m_tileSaver->save(bbox);
-      m_bluredBrush->addArc(points[0], points[1], points[2], m_oldOpacity,
-                            opacity);
-      m_bluredBrush->updateDrawing(ri->getRaster(), m_backUpRas, m_currentColor,
-                                   bbox, opacity);
+         ) *
+        0.01;
+    TPointD rasCenter = ri->getRaster()->getCenterD();
+    TThickPoint thickPoint(
+        point, thickness,
+        (m_brushTip.getBrushTip() && m_brushTip.isAutoRotate() ? m_tiltAngle
+                                                               : 0));
 
-      std::vector<TThickPoint> symmPts =
-          m_bluredBrush->getSymmetryPoints(points);
-      points.insert(points.end(), symmPts.begin(), symmPts.end());
-
-      TRectD invalidateRect =
-          ToolUtils::getBounds(points, maxThickness) - rasCenter;
-
-      invalidate(invalidateRect.enlarge(2));
-      m_strokeRect += bbox;
-      m_lastRect.empty();
+    std::vector<TThickPoint> pts;
+    if (m_smooth.getValue() == 0 || m_isStraight) {
+      pts.push_back(thickPoint);
+    } else {
+      m_smoothStroke.addPoint(thickPoint);
+      m_smoothStroke.endStroke();
+      m_smoothStroke.getSmoothPoints(pts);
     }
+    if (pts.size() > 0) {
+      for (size_t i = 0; i < pts.size(); ++i) {
+        TThickPoint old = m_points.back();
+
+        const TThickPoint &thickPoint2 = pts[i];
+        TThickPoint mid((old + thickPoint2) * 0.5,
+                        (thickPoint2.thick + old.thick) * 0.5,
+                        (m_brushTip.getBrushTip() && m_brushTip.isAutoRotate()
+                             ? (thickPoint2.rotation + old.rotation) * 0.5
+                             : 0));
+        m_points.push_back(mid);
+        m_points.push_back(thickPoint2);
+        int m = m_points.size();
+        std::vector<TThickPoint> points;
+        points.push_back(m_points[m - 3]);
+        points.push_back(m_points[m - 2]);
+        points.push_back(m_points[m - 1]);
+        TRect bbox = m_bluredBrush->getBoundFromPoints(points);
+        updateWorkAndBackupRasters(bbox);
+        m_tileSaver->save(bbox);
+        m_bluredBrush->addArc(points[0], points[1], points[2], m_oldOpacity,
+                              opacity);
+        m_bluredBrush->updateDrawing(
+            ri->getRaster(), m_backUpRas, m_currentColor, bbox, opacity,
+            m_modifierPaintBehind.getValue(), m_modifierLockAlpha.getValue());
+
+        std::vector<TThickPoint> symmPts =
+            m_bluredBrush->getSymmetryPoints(points);
+        points.insert(points.end(), symmPts.begin(), symmPts.end());
+
+        TRectD invalidateRect =
+            ToolUtils::getBounds(points, maxThickness) - rasCenter;
+        if (m_brushTip.getBrushTip() && m_brushTip.getScatter())
+          invalidateRect += convert(bbox + m_lastRect) - rasCenter;
+
+        invalidate(invalidateRect.enlarge(2));
+        m_strokeRect += bbox;
+      }
+    }
+    m_lastRect.empty();
 
     if (m_bluredBrush) {
       delete m_bluredBrush;
@@ -1205,6 +1294,7 @@ void FullColorBrushTool::leftButtonUp(const TPointD &pos,
   m_isStraight       = false;
   m_oldPressure      = -1.0;
   m_perspectiveIndex = -1;
+  m_tiltAngle        = 0;
 }
 
 //---------------------------------------------------------------------------------------------------------------
@@ -1303,17 +1393,55 @@ void FullColorBrushTool::draw() {
     tglEnableBlending();
     tglEnableLineSmooth(true, 0.5);
 
-    if (m_minCursorThick < m_maxCursorThick - pixelSize) {
-      glColor4d(1.0, 1.0, 1.0, minAlpha);
-      tglDrawCircle(m_brushPos, (m_minCursorThick + 1) * 0.5 - pixelSize);
-      glColor4d(0.0, 0.0, 0.0, minAlpha);
-      tglDrawCircle(m_brushPos, (m_minCursorThick + 1) * 0.5);
-    }
+    if (!m_isMyPaintStyleSelected && m_brushTip.getBrushTip() &&
+        !m_brushTip.getBrushTip()->m_imageContour.empty()) {
+      QSize chipSize   = TBrushTipManager::instance()->getChipSize();
+      double brushSize = (m_maxCursorThick + 1);
 
-    glColor4d(1.0, 1.0, 1.0, maxAlpha);
-    tglDrawCircle(m_brushPos, (m_maxCursorThick + 1) * 0.5 - pixelSize);
-    glColor4d(0.0, 0.0, 0.0, maxAlpha);
-    tglDrawCircle(m_brushPos, (m_maxCursorThick + 1) * 0.5);
+      QTransform transform;
+      transform.translate(m_brushPos.x, m_brushPos.y);
+      transform.rotate(m_brushTip.getRotation());
+      if (m_brushTip.isAutoRotate()) transform.rotate(m_tiltAngle);
+      if (m_brushTip.isFlipHorizontal()) transform.scale(-1.0, 1.0);
+      if (m_brushTip.isFlipVertical()) transform.scale(1.0, -1.0);
+      transform.scale(brushSize / chipSize.width(),
+                      brushSize / chipSize.height());
+
+      std::vector<QPolygonF> contours =
+          m_brushTip.getBrushTip()->m_imageContour;
+      for (int i = 0; i < contours.size(); i++) {
+        QPolygonF poly = transform.map(contours[i]);
+        for (int i = 1; i < poly.count(); i++) {
+          glColor4d(1.0, 1.0, 1.0, maxAlpha);
+          tglDrawSegment(
+              TPointD(poly[i - 1].x() - pixelSize, poly[i - 1].y() - pixelSize),
+              TPointD(poly[i].x() - pixelSize, poly[i].y() - pixelSize));
+          glColor4d(0.0, 0.0, 0.0, maxAlpha);
+          tglDrawSegment(TPointD(poly[i - 1].x(), poly[i - 1].y()),
+                         TPointD(poly[i].x(), poly[i].y()));
+        }
+        glColor4d(1.0, 1.0, 1.0, maxAlpha);
+        tglDrawSegment(
+            TPointD(poly.last().x() - pixelSize, poly.last().y() - pixelSize),
+            TPointD(poly.first().x() - pixelSize,
+                    poly.first().y() - pixelSize));
+        glColor4d(0.0, 0.0, 0.0, maxAlpha);
+        tglDrawSegment(TPointD(poly.last().x(), poly.last().y()),
+                       TPointD(poly.first().x(), poly.first().y()));
+      }
+    } else {
+      if (m_minCursorThick < m_maxCursorThick - pixelSize) {
+        glColor4d(1.0, 1.0, 1.0, minAlpha);
+        tglDrawCircle(m_brushPos, (m_minCursorThick + 1) * 0.5 - pixelSize);
+        glColor4d(0.0, 0.0, 0.0, minAlpha);
+        tglDrawCircle(m_brushPos, (m_minCursorThick + 1) * 0.5);
+      }
+
+      glColor4d(1.0, 1.0, 1.0, maxAlpha);
+      tglDrawCircle(m_brushPos, (m_maxCursorThick + 1) * 0.5 - pixelSize);
+      glColor4d(0.0, 0.0, 0.0, maxAlpha);
+      tglDrawCircle(m_brushPos, (m_maxCursorThick + 1) * 0.5);
+    }
 
     glPopAttrib();
   }
@@ -1449,6 +1577,15 @@ bool FullColorBrushTool::onPropertyChanged(std::string propertyName) {
   FullcolorOTiltCurvePts        = m_opacityStylusProperty.getTiltCurve();
   FullcolorMyPaintPressureSensitivity = m_mypaintPressure.getValue();
   FullcolorMyPaintTiltSensitivity     = m_mypaintTilt.getValue();
+  FullcolorBrushTipSpacing            = m_brushTip.getSpacing();
+  FullcolorBrushTipRotation           = m_brushTip.getRotation();
+  FullcolorBrushTipAutoRotate         = m_brushTip.isAutoRotate() ? 1 : 0;
+  FullcolorBrushTipFlipHorizontal     = m_brushTip.isFlipHorizontal() ? 1 : 0;
+  FullcolorBrushTipFlipVertical       = m_brushTip.isFlipVertical() ? 1 : 0;
+  FullcolorBrushTipScatter            = m_brushTip.getScatter();
+  FullcolorBrushTipId                 = m_brushTip.getBrushTip()
+                                            ? m_brushTip.getBrushTip()->m_idName
+                                            : DEFAULTBRUSHTIPID;
 
   if (m_preset.getValue() != CUSTOM_WSTR) {
     m_preset.setValue(CUSTOM_WSTR);
@@ -1517,6 +1654,15 @@ void FullColorBrushTool::loadPreset() {
     m_opacityStylusProperty.setPressureCurve(preset.m_opressureCurve);
     m_opacityStylusProperty.setTiltEnabled(preset.m_otilt);
     m_opacityStylusProperty.setTiltCurve(preset.m_otiltCurve);
+
+    m_brushTip.setSpacing(preset.m_spacing);
+    m_brushTip.setRotation(preset.m_rotation);
+    m_brushTip.setAutoRotate(preset.m_autoRotate);
+    m_brushTip.setFlipHorizontal(preset.m_flipH);
+    m_brushTip.setFlipVertical(preset.m_flipV);
+    m_brushTip.setScatter(preset.m_scatter);
+    m_brushTip.setBrushTip(
+        TBrushTipManager::instance()->getBrushTipById(preset.m_brushTipId));
   } catch (...) {
   }
 }
@@ -1548,6 +1694,15 @@ void FullColorBrushTool::addPreset(QString name) {
   preset.m_otiltCurve          = m_opacityStylusProperty.getTiltCurve();
   preset.m_mypaintPressure     = m_mypaintPressure.getValue();
   preset.m_mypaintTilt         = m_mypaintTilt.getValue();
+  preset.m_spacing             = m_brushTip.getSpacing();
+  preset.m_rotation            = m_brushTip.getRotation();
+  preset.m_autoRotate          = m_brushTip.isAutoRotate();
+  preset.m_flipH               = m_brushTip.isFlipHorizontal();
+  preset.m_flipV               = m_brushTip.isFlipVertical();
+  preset.m_scatter             = m_brushTip.getScatter();
+  preset.m_brushTipId          = m_brushTip.getBrushTip()
+                                     ? m_brushTip.getBrushTip()->m_idName
+                                     : DEFAULTBRUSHTIPID;
 
   // Pass the preset to the manager
   m_presetsManager.addPreset(preset);
@@ -1602,6 +1757,15 @@ void FullColorBrushTool::loadLastBrush() {
   m_opacityStylusProperty.setPressureCurve(FullcolorOPressureCurvePts);
   m_opacityStylusProperty.setTiltEnabled(FullcolorOTiltSensitivity ? 1 : 0);
   m_opacityStylusProperty.setTiltCurve(FullcolorOTiltCurvePts);
+
+  m_brushTip.setSpacing(FullcolorBrushTipSpacing);
+  m_brushTip.setRotation(FullcolorBrushTipRotation);
+  m_brushTip.setAutoRotate(FullcolorBrushTipAutoRotate ? 1 : 0);
+  m_brushTip.setFlipHorizontal(FullcolorBrushTipFlipHorizontal ? 1 : 0);
+  m_brushTip.setFlipVertical(FullcolorBrushTipFlipVertical ? 1 : 0);
+  m_brushTip.setScatter(FullcolorBrushTipScatter);
+  m_brushTip.setBrushTip(
+      TBrushTipManager::instance()->getBrushTipById(FullcolorBrushTipId));
 }
 
 //------------------------------------------------------------------
@@ -1627,7 +1791,9 @@ void FullColorBrushTool::updateCurrentStyle() {
   m_enabledPressure  = m_isMyPaintStyleSelected
                            ? m_mypaintPressure.getValue()
                            : m_sizeStylusProperty.isPressureEnabled();
-  m_enabledOPressure = m_opacityStylusProperty.isPressureEnabled();
+  m_enabledOPressure = m_isMyPaintStyleSelected
+                           ? false
+                           : m_opacityStylusProperty.isPressureEnabled();
   if (TMyPaintBrushStyle *brushStyle = getBrushStyle()) {
     double radiusLog = brushStyle->getBrush().getBaseValue(
                            MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC) +
@@ -1645,7 +1811,9 @@ void FullColorBrushTool::updateCurrentStyle() {
   m_enabledTilt  = m_isMyPaintStyleSelected
                        ? m_mypaintTilt.getValue()
                        : m_sizeStylusProperty.isTiltEnabled();
-  m_enabledOTilt = m_opacityStylusProperty.isTiltEnabled();
+  m_enabledOTilt = m_isMyPaintStyleSelected
+                       ? false
+                       : m_opacityStylusProperty.isTiltEnabled();
 
   // if this function is called from onEnter(), the clipping rect will not be
   // set in order to update whole viewer.

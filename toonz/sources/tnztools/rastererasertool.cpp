@@ -276,7 +276,7 @@ public:
     TRaster32P workRaster(ras->getSize());
     QRadialGradient brushPad = ToolUtils::getBrushPad(m_size, m_hardness);
     workRaster->clear();
-    RasterBlurredBrush brush(workRaster, m_size, brushPad, false);
+    RasterBlurredBrush brush(workRaster, m_size, brushPad);
 
     if (m_brushCount > 1)
       brush.addSymmetryBrushes(m_brushCount, m_rotation, m_centerPoint,
@@ -1375,7 +1375,7 @@ void EraserTool::leftButtonDown(const TPointD &pos, const TMouseEvent &e) {
         TPointD center = raster->getCenterD();
         TThickPoint point(fixedPos + center, thickness);
         m_points.push_back(point);
-        m_blurredEraser = new RasterBlurredBrush(m_workRas, maxThick, m_brushPad, false);
+        m_blurredEraser = new RasterBlurredBrush(m_workRas, maxThick, m_brushPad);
 
         if (symmetryTool && symmetryTool->isGuideEnabled()) {
           TPointD dpiScale       = getViewer()->getDpiScale();

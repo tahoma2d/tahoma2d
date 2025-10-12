@@ -370,6 +370,17 @@ void ToolOptionControlBuilder::visit(TStylusProperty *p) {
   hLayout()->addSpacing(5);
 }
 
+//-----------------------------------------------------------------------------
+
+void ToolOptionControlBuilder::visit(TBrushTipProperty *p) {
+  ToolOptionBrushTipButton *obj = new ToolOptionBrushTipButton(m_tool, p);
+  obj->setToolTip(p->getQStringName());
+
+  hLayout()->addWidget(obj, 100);
+  m_panel->addControl(obj);
+  hLayout()->addSpacing(5);
+}
+
 //=============================================================================
 // GenericToolOptionsBox
 
@@ -2108,7 +2119,8 @@ BrushToolOptionsBox::BrushToolOptionsBox(QWidget *parent, TTool *tool,
     , m_snapCheckbox(0)
     , m_snapSensitivityCombo(0)
     , m_drawOrderCheckbox(0)
-    , m_miterField(0) {
+    , m_miterField(0)
+    , m_brushTips(0) {
   TPropertyGroup *props = tool->getProperties(0);
   assert(props->getPropertyCount() > 0);
 
@@ -2121,6 +2133,8 @@ BrushToolOptionsBox::BrushToolOptionsBox(QWidget *parent, TTool *tool,
     m_hardnessLabel = m_labels.value(m_hardnessField->propertyName());
   m_pencilMode = dynamic_cast<ToolOptionCheckbox *>(m_controls.value("Pencil"));
   m_presetCombo = dynamic_cast<ToolOptionCombo *>(m_controls.value("Preset:"));
+  m_brushTips =
+      dynamic_cast<ToolOptionBrushTipButton *>(m_controls.value("Brush Tip"));
 
   // Preset +/- buttons
   m_addPresetButton    = new QPushButton(QString("+"));
@@ -2145,6 +2159,7 @@ BrushToolOptionsBox::BrushToolOptionsBox(QWidget *parent, TTool *tool,
     if (m_pencilMode->isChecked()) {
       m_hardnessLabel->setEnabled(false);
       m_hardnessField->setEnabled(false);
+      m_brushTips->setEnabled(false);
     }
   } else if (tool->getTargetType() & TTool::Vectors) {
     // Further vector options
@@ -2172,6 +2187,16 @@ BrushToolOptionsBox::BrushToolOptionsBox(QWidget *parent, TTool *tool,
         dynamic_cast<ToolOptionIntSlider *>(m_controls.value("Miter:"));
     m_miterField->setEnabled(m_joinStyleCombo->currentIndex() ==
                              TStroke::OutlineOptions::MITER_JOIN);
+  }
+
+  if (tool->getTargetType() & TTool::ToonzImage ||
+      tool->getTargetType() & TTool::RasterImage) {
+    assert(m_brushTips);
+    bool ret = connect(m_brushTips, SIGNAL(brushTipSelected(BrushTipData *)),
+                       this, SLOT(onBrushTipChanged()));
+    assert(ret);
+
+    onBrushTipChanged();
   }
   hLayout()->addStretch(1);
   filterControls();
@@ -2237,8 +2262,22 @@ void BrushToolOptionsBox::updateStatus() {
 //-----------------------------------------------------------------------------
 
 void BrushToolOptionsBox::onPencilModeToggled(bool value) {
+  m_brushTips->setEnabled(!value);
+  m_brushTips->updateIcon();
+
+  bool hasBrushTip = m_brushTips->getProperty()->getBrushTip() ? true : false;
+  if (hasBrushTip && !value) return;
+
   m_hardnessLabel->setEnabled(!value);
   m_hardnessField->setEnabled(!value);
+}
+
+//-----------------------------------------------------------------------------
+
+void BrushToolOptionsBox::onBrushTipChanged() {
+  bool hasBrushTip = m_brushTips->getProperty()->getBrushTip() ? true : false;
+  m_hardnessLabel->setEnabled(!hasBrushTip);
+  m_hardnessField->setEnabled(!hasBrushTip);
 }
 
 //-----------------------------------------------------------------------------

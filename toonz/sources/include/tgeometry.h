@@ -366,23 +366,27 @@ TThickPoint describe a thick point.
 class DVAPI TThickPoint final : public TPointD {
 public:
   double thick;
+  double rotation;  // Value is not saved
 
-  TThickPoint() : TPointD(), thick(0) {}
+  TThickPoint() : TPointD(), thick(0), rotation(0) {}
 
-  TThickPoint(double _x, double _y, double _thick = 0)
-      : TPointD(_x, _y), thick(_thick) {}
+  TThickPoint(double _x, double _y, double _thick = 0, double _rotation = 0)
+      : TPointD(_x, _y), thick(_thick), rotation(_rotation) {}
 
-  TThickPoint(const TPointD &_p, double _thick = 0)
-      : TPointD(_p.x, _p.y), thick(_thick) {}
+  TThickPoint(const TPointD &_p, double _thick = 0, double _rotation = 0)
+      : TPointD(_p.x, _p.y), thick(_thick), rotation(_rotation) {}
 
-  TThickPoint(const T3DPointD &_p) : TPointD(_p.x, _p.y), thick(_p.z) {}
+  TThickPoint(const T3DPointD &_p)
+      : TPointD(_p.x, _p.y), thick(_p.z), rotation(0) {}
 
-  TThickPoint(const TThickPoint &_p) : TPointD(_p.x, _p.y), thick(_p.thick) {}
+  TThickPoint(const TThickPoint &_p)
+      : TPointD(_p.x, _p.y), thick(_p.thick), rotation(_p.rotation) {}
 
   inline TThickPoint &operator=(const TThickPoint &a) {
-    x     = a.x;
-    y     = a.y;
-    thick = a.thick;
+    x        = a.x;
+    y        = a.y;
+    thick    = a.thick;
+    rotation = a.rotation;
     return *this;
   }
 
@@ -390,6 +394,7 @@ public:
     x += a.x;
     y += a.y;
     thick += a.thick;
+    rotation += a.rotation;
     return *this;
   }
 
@@ -397,25 +402,30 @@ public:
     x -= a.x;
     y -= a.y;
     thick -= a.thick;
+    rotation -= a.rotation;
     return *this;
   }
 
   inline TThickPoint operator+(const TThickPoint &a) const {
-    return TThickPoint(x + a.x, y + a.y, thick + a.thick);
+    return TThickPoint(x + a.x, y + a.y, thick + a.thick,
+                       rotation + a.rotation);
   }
 
   inline TThickPoint operator-(const TThickPoint &a) const {
-    return TThickPoint(x - a.x, y - a.y, thick - a.thick);
+    return TThickPoint(x - a.x, y - a.y, thick - a.thick,
+                       rotation - a.rotation);
   }
 
-  inline TThickPoint operator-() const { return TThickPoint(-x, -y, -thick); }
+  inline TThickPoint operator-() const {
+    return TThickPoint(-x, -y, -thick, -rotation);
+  }
 
   bool operator==(const TThickPoint &p) const {
-    return x == p.x && y == p.y && thick == p.thick;
+    return x == p.x && y == p.y && thick == p.thick && rotation == p.rotation;
   }
 
   bool operator!=(const TThickPoint &p) const {
-    return x != p.x || y != p.y || thick != p.thick;
+    return x != p.x || y != p.y || thick != p.thick || rotation != p.rotation;
   }
 };
 
@@ -424,11 +434,11 @@ inline double operator*(const TThickPoint &a, const TThickPoint &b) {
 }
 
 inline TThickPoint operator*(double a, const TThickPoint &p) {
-  return TThickPoint(a * p.x, a * p.y, a * p.thick);
+  return TThickPoint(a * p.x, a * p.y, a * p.thick, p.rotation);
 }
 
 inline TThickPoint operator*(const TThickPoint &p, double a) {
-  return TThickPoint(a * p.x, a * p.y, a * p.thick);
+  return TThickPoint(a * p.x, a * p.y, a * p.thick, p.rotation);
 }
 
 /*!

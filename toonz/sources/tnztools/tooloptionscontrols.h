@@ -19,11 +19,13 @@
 #include "toonzqt/doublefield.h"
 #include "toonzqt/popupbutton.h"
 #include "toonzqt/stylusconfigpopup.h"
+#include "toonzqt/brushtippopup.h"
 
 // TnzLib includes
 #include "toonz/txsheet.h"
 #include "toonz/tstageobject.h"
 #include "toonz/stageobjectutil.h"
+#include "toonz/brushtipmanager.h"
 
 // STD includes
 #include <string>
@@ -280,6 +282,34 @@ public slots:
   void onClicked();
   void onConfigStateChanged(int);
   void onConfigCurveChanged(int, bool);
+};
+
+//-----------------------------------------------------------------------------
+
+class ToolOptionBrushTipButton final : public QPushButton,
+                                           public ToolOptionControl {
+  Q_OBJECT
+
+protected:
+  TBrushTipProperty *m_property;
+
+  BrushTipPopup *m_brushTips;
+  int m_pressureId, m_tiltId;
+
+public:
+  ToolOptionBrushTipButton(TTool *tool, TBrushTipProperty *property);
+  void updateStatus() override;
+  TBrushTipProperty *getProperty() { return m_property; }
+
+  void updateIcon();
+
+public slots:
+  void onClicked();
+  void onBrushTipSelected(BrushTipData *);
+  void onBrushTipPropertyChanged();
+
+signals:
+  void brushTipSelected(BrushTipData *);
 };
 
 //-----------------------------------------------------------------------------

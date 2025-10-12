@@ -85,6 +85,13 @@ TEnv::PointListVar BrushTiltCurvePts("InknPaintTiltCurvePts",
                                      DEFAULTSIZETILTCURVE);
 TEnv::IntVar BrushMyPaintPressureSensitivity("InknpaintMyPaintPressureSensitivity", 1);
 TEnv::IntVar BrushMyPaintTiltSensitivity("InknpaintMyPaintTiltSensitivity", 0);
+TEnv::DoubleVar BrushTipSpacing("InknpaintBrushTipSpacing", 1);
+TEnv::DoubleVar BrushTipRotation("InknpaintBrushTipRotation", 0);
+TEnv::IntVar BrushTipAutoRotate("InknpaintBrushTipAutoRotate", 1);
+TEnv::IntVar BrushTipFlipHorizontal("InknpaintBrushTipFlipHorizontal", 0);
+TEnv::IntVar BrushTipFlipVertical("InknpaintBrushTipFlipVertical", 0);
+TEnv::DoubleVar BrushTipScatter("InknpaintBrushTipScatter", 0);
+TEnv::StringVar BrushTipId("InknpaintBrushTipId", DEFAULTBRUSHTIPID);
 
 //-------------------------------------------------------------------
 #define CUSTOM_WSTR L"<custom>"
@@ -471,6 +478,7 @@ class RasterBrushUndo final : public TRasterUndo {
   double m_rotation;
   TPointD m_centerPoint;
   bool m_useLineSymmetry;
+  BrushTipData m_brushTip;
 
 public:
   RasterBrushUndo(TTileSetCM32 *tileSet, const std::vector<TThickPoint> &points,
@@ -544,17 +552,23 @@ class RasterBluredBrushUndo final : public TRasterUndo {
   double m_rotation;
   TPointD m_centerPoint;
   bool m_useLineSymmetry;
+  double m_brushTipRotation;
+  double m_brushTipSpacing;
+  bool m_brushTipFlipH;
+  bool m_brushTipFlipV;
+  double m_brushTipScatter;
+  BrushTipData *m_brushTip;
 
 public:
-  RasterBluredBrushUndo(TTileSetCM32 *tileSet,
-                        const std::vector<TThickPoint> &points, int styleId,
-                        DrawOrder drawOrder, bool lockAlpha,
-                        TXshSimpleLevel *level, const TFrameId &frameId,
-                        int maxThick, double hardness, bool isFrameCreated,
-                        bool isLevelCreated, TPointD dpiScale,
-                        double symmetryLines, double rotation,
-                        TPointD centerPoint, bool useLineSymmetry,
-                        bool isStraight = false)
+  RasterBluredBrushUndo(
+      TTileSetCM32 *tileSet, const std::vector<TThickPoint> &points,
+      int styleId, DrawOrder drawOrder, bool lockAlpha, TXshSimpleLevel *level,
+      const TFrameId &frameId, int maxThick, double hardness,
+      bool isFrameCreated, bool isLevelCreated, TPointD dpiScale,
+      double symmetryLines, double rotation, TPointD centerPoint,
+      bool useLineSymmetry, double brushTipRotation, double brushTipSpacing,
+      bool brushTipFlipH, bool brushTipFlipV, double brushTipScatter,
+      BrushTipData *brushTip, bool isStraight = false)
       : TRasterUndo(tileSet, level, frameId, isFrameCreated, isLevelCreated, 0)
       , m_points(points)
       , m_styleId(styleId)
@@ -567,7 +581,13 @@ public:
       , m_brushCount(symmetryLines)
       , m_rotation(rotation)
       , m_centerPoint(centerPoint)
-      , m_useLineSymmetry(useLineSymmetry) {}
+      , m_useLineSymmetry(useLineSymmetry)
+      , m_brushTipRotation(brushTipRotation)
+      , m_brushTipSpacing(brushTipSpacing)
+      , m_brushTipFlipH(brushTipFlipH)
+      , m_brushTipFlipV(brushTipFlipV)
+      , m_brushTipScatter(brushTipScatter)
+      , m_brushTip(brushTip) {}
 
   void redo() const override {
     if (m_points.size() == 0) return;
@@ -578,7 +598,10 @@ public:
     TRaster32P workRaster(ras->getSize());
     QRadialGradient brushPad = ToolUtils::getBrushPad(m_maxThick, m_hardness);
     workRaster->clear();
-    RasterBlurredBrush brush(workRaster, m_maxThick, brushPad, false);
+    RasterBlurredBrush brush(workRaster, m_maxThick, brushPad, m_brushTip,
+                             m_brushTipSpacing, m_brushTipRotation,
+                             m_brushTipFlipH, m_brushTipFlipV,
+                             m_brushTipScatter);
 
     if (m_brushCount > 1)
       brush.addSymmetryBrushes(m_brushCount, m_rotation, m_centerPoint,
@@ -988,7 +1011,8 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
     , m_enabledTilt(false)
     , m_sizeStylusProperty("Stylus Settings - Size")
     , m_isMyPaintStyleSelected(false)
-    , m_highFreqBrushTimer(0.0) {
+    , m_highFreqBrushTimer(0.0)
+    , m_brushTip("Brush Tip") {
   bind(targetType);
 
   m_rasThickness.setNonLinearSlider();
@@ -996,6 +1020,7 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
   m_sizeStylusProperty.setUseLinearCurves(false);
   m_sizeStylusProperty.setDefaultTiltCurve(DEFAULTSIZETILTCURVE);
 
+  m_prop[0].bind(m_brushTip);
   m_prop[0].bind(m_rasThickness);
   m_prop[0].bind(m_sizeStylusProperty);
   m_prop[0].bind(m_hardness);
@@ -1017,6 +1042,7 @@ ToonzRasterBrushTool::ToonzRasterBrushTool(std::string name, int targetType)
   m_modifierLockAlpha.setId("LockAlpha");
   m_mypaintTilt.setId("TiltSensitivity");
   m_sizeStylusProperty.setId("SizeStylusConfig");
+  m_brushTip.setId("BrushTip");
 
   m_drawOrder.addValue(L"Over All");
   m_drawOrder.addValue(L"Under All");
@@ -1220,6 +1246,7 @@ void ToonzRasterBrushTool::updateTranslation() {
   m_mypaintPressure.setQStringName(tr("Pressure"));
   m_mypaintTilt.setQStringName(tr("Tilt"));
   m_sizeStylusProperty.setQStringName(tr("Stylus Settings - Size"));
+  m_brushTip.setQStringName(tr("Brush Tip"));
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -1324,8 +1351,10 @@ void ToonzRasterBrushTool::onDeactivate() {
     m_enabled    = false;
     m_active     = false;
     if (isValid) {
-      finishRasterBrush(m_mousePos, 1, 0, 0,
-                        0); /*-- 最後のストロークの筆圧は1とする --*/
+      finishRasterBrush(m_mousePos, 1, 0, 0, 0,
+                        m_brushTip.getBrushTip()
+                            ? m_brushTip.getRotation()
+                            : 0); /*-- 最後のストロークの筆圧は1とする --*/
     }
   }
   m_workRas   = TRaster32P();
@@ -1442,14 +1471,17 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
     double pressure = m_enabledPressure ? e.m_pressure : 0.5;
 
     // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0
-    // to 1.0)
-    double tiltX         = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
-    double tiltY         = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
-    double tiltMagnitude = std::sqrt(tiltX * tiltX + tiltY * tiltY);
+    // to 1.0) Note: xTilt value sign must be flipped so it angles correctly
+    double xTilt = (e.m_tiltX / -60.0);
+    double yTilt = (e.m_tiltY / 60.0);
+    // rotation of stylus
+    double arctan = atan2(yTilt, xTilt);
+    m_tiltAngle =
+        (!e.isTablet() || (!xTilt && !yTilt)) ? 0.0 : arctan * M_180_PI;
 
-  // rotation of stylus
-//  double arctan    = atan2(tiltY, tiltX);
-//  double tiltAngle     = arctan * M_180_PI;
+    double tiltX         = m_enabledTilt ? xTilt : 0.0;
+    double tiltY         = m_enabledTilt ? yTilt : 0.0;
+    double tiltMagnitude = std::sqrt(tiltX * tiltX + tiltY * tiltY);
 
     if (!m_isMyPaintStyleSelected) {
       // Convert pressure value to % applied to max value
@@ -1560,7 +1592,8 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
           TRectD(centeredPos - thickOffset, centeredPos + thickOffset);
       invalidateRect +=
           TRectD(m_brushPos - thickOffset, m_brushPos + thickOffset);
-    } else if (m_hardness.getValue() == 100 || m_pencil.getValue()) {
+    } else if ((!m_brushTip.getBrushTip() && m_hardness.getValue() == 100) ||
+               m_pencil.getValue()) {
       /*-- Pencilモードでなく、Hardness=100 の場合のブラシサイズを1段階下げる
        * --*/
       if (!m_pencil.getValue()) thickness -= 1.0;
@@ -1597,11 +1630,18 @@ void ToonzRasterBrushTool::leftButtonDown(const TPointD &pos,
         m_smoothStroke.getSmoothPoints(pts);
       }
     } else {
+      if (!(m_workRas && m_backupRas)) setWorkAndBackupImages();
       m_points.clear();
-      TThickPoint point(centeredPos + rasCenter, thickness);
+      TThickPoint point(
+          centeredPos + rasCenter, thickness,
+          (m_brushTip.getBrushTip() && m_brushTip.isAutoRotate() ? m_tiltAngle
+                                                                 : 0));
       m_points.push_back(point);
-      m_bluredBrush =
-          new RasterBlurredBrush(m_workRas, maxThick, m_brushPad, false);
+      m_bluredBrush = new RasterBlurredBrush(
+          m_workRas, maxThick, m_brushPad, m_brushTip.getBrushTip(),
+          m_brushTip.getSpacing(), m_brushTip.getRotation(),
+          m_brushTip.isFlipHorizontal(), m_brushTip.isFlipVertical(),
+          m_brushTip.getScatter());
 
       SymmetryTool *symmetryTool = dynamic_cast<SymmetryTool *>(
           TTool::getTool("T_Symmetry", TTool::RasterImage));
@@ -1892,14 +1932,17 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
 
   double pressure = m_enabledPressure ? e.m_pressure : 0.5;
 
-  // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
-  double tiltX         = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
-  double tiltY         = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
-  double tiltMagnitude = std::sqrt(tiltX * tiltX + tiltY * tiltY);
-
+  // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0
+  // to 1.0) Note: xTilt value sign must be flipped so it angles correctly
+  double xTilt = (e.m_tiltX / -60.0);
+  double yTilt = (e.m_tiltY / 60.0);
   // rotation of stylus
-//  double arctan    = atan2(tiltY, tiltX);
-//  double tiltAngle     = arctan * M_180_PI;
+  double arctan = atan2(yTilt, xTilt);
+  m_tiltAngle = (!e.isTablet() || (!xTilt && !yTilt)) ? 0.0 : arctan * M_180_PI;
+
+  double tiltX         = m_enabledTilt ? xTilt : 0.0;
+  double tiltY         = m_enabledTilt ? yTilt : 0.0;
+  double tiltMagnitude = std::sqrt(tiltX * tiltX + tiltY * tiltY);
 
   if (!m_isMyPaintStyleSelected) {
     // Convert pressure value to % applied to max value
@@ -2008,7 +2051,10 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
   } else {
     // antialiased brush
     assert(m_workRas.getPointer() && m_backupRas.getPointer());
-    TThickPoint thickPoint(centeredPos + rasCenter, thickness);
+    TThickPoint thickPoint(
+        centeredPos + rasCenter, thickness,
+        (m_brushTip.getBrushTip() && m_brushTip.isAutoRotate() ? m_tiltAngle
+                                                               : 0));
     std::vector<TThickPoint> pts;
     if (m_smooth.getValue() == 0) {
       pts.push_back(thickPoint);
@@ -2020,7 +2066,10 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
       TThickPoint old = m_points.back();
 
       const TThickPoint &point = pts[i];
-      TThickPoint mid((old + point) * 0.5, (point.thick + old.thick) * 0.5);
+      TThickPoint mid((old + point) * 0.5, (point.thick + old.thick) * 0.5,
+                      (m_brushTip.getBrushTip() && m_brushTip.isAutoRotate()
+                           ? (point.rotation + old.rotation) * 0.5
+                           : 0));
       m_points.push_back(mid);
       m_points.push_back(point);
 
@@ -2053,6 +2102,8 @@ void ToonzRasterBrushTool::leftButtonDrag(const TPointD &pos,
       points.insert(points.end(), symmPts.begin(), symmPts.end());
 
       invalidateRect += ToolUtils::getBounds(points, maxThickness) - rasCenter;
+      if (m_brushTip.getBrushTip() && m_brushTip.getScatter())
+        invalidateRect += convert(bbox + m_lastRect) - rasCenter;
 
       m_bluredBrush->updateDrawing(ti->getRaster(), m_backupRas, bbox,
                                    m_styleId, m_drawOrder.getIndex(),
@@ -2093,14 +2144,17 @@ void ToonzRasterBrushTool::leftButtonUp(const TPointD &pos,
   if (m_isStraight && m_isMyPaintStyleSelected && m_oldPressure > 0.0)
     pressure = m_oldPressure;
 
-  // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0 to 1.0)
-  double tiltX         = m_enabledTilt ? (e.m_tiltX / -60.0) : 0.0;
-  double tiltY         = m_enabledTilt ? (e.m_tiltY / 60.0) : 0.0;
-  double tiltMagnitude = std::sqrt(tiltX * tiltX + tiltY * tiltY);
-
+  // Convert QTabletEvent tilt range (-60 to 60) to MyPaint range (-1.0
+  // to 1.0) Note: xTilt value sign must be flipped so it angles correctly
+  double xTilt = (e.m_tiltX / -60.0);
+  double yTilt = (e.m_tiltY / 60.0);
   // rotation of stylus
-//  double arctan    = atan2(tiltY, tiltX);
-//  double tiltAngle     = arctan * M_180_PI;
+  double arctan = atan2(yTilt, xTilt);
+  m_tiltAngle = (!e.isTablet() || (!xTilt && !yTilt)) ? 0.0 : arctan * M_180_PI;
+
+  double tiltX         = m_enabledTilt ? xTilt : 0.0;
+  double tiltY         = m_enabledTilt ? yTilt : 0.0;
+  double tiltMagnitude = std::sqrt(tiltX * tiltX + tiltY * tiltY);
 
   if (!m_isMyPaintStyleSelected) {
     // Convert pressure value to % applied to max value
@@ -2118,10 +2172,12 @@ void ToonzRasterBrushTool::leftButtonUp(const TPointD &pos,
     }
   }
 
-  finishRasterBrush(centeredPos, pressure, tiltMagnitude, tiltX, tiltY);
+  finishRasterBrush(centeredPos, pressure, tiltMagnitude, tiltX, tiltY,
+                    m_tiltAngle);
   int tc = ToonzCheck::instance()->getChecks();
   if (tc & ToonzCheck::eGap || tc & ToonzCheck::eAutoclose) invalidate();
   m_perspectiveIndex = -1;
+  m_tiltAngle        = 0;
 }
 
 //---------------------------------------------------------------------------------------------------------------
@@ -2131,7 +2187,7 @@ void ToonzRasterBrushTool::leftButtonUp(const TPointD &pos,
 void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
                                              double pressureVal,
                                              double tiltMagnitude, double tiltX,
-                                             double tiltY) {
+                                             double tiltY, double tiltAngle) {
   TToonzImageP ti = TImageP(getImage(true));
 
   if (!ti) return;
@@ -2202,8 +2258,8 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
           m_isLevelCreated, subras, m_strokeRect.getP00()));
     }
 
-  } else if (m_cmRasterBrush &&
-             (m_hardness.getValue() == 100 || m_pencil.getValue())) {
+  } else if ((m_cmRasterBrush && m_hardness.getValue() == 100) ||
+             m_pencil.getValue()) {
     double thickness =
         (m_enabledPressure || m_enabledTilt)
             ? computeThickness(m_enabledPressure, pressureVal, m_enabledTilt,
@@ -2309,7 +2365,10 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
     }
     TPointD rasCenter = ti->getRaster()->getCenterD();
     TRectD invalidateRect;
-    TThickPoint thickPoint(pos + rasCenter, thickness);
+    TThickPoint thickPoint(
+        pos + rasCenter, thickness,
+        (m_brushTip.getBrushTip() && m_brushTip.isAutoRotate() ? tiltAngle
+                                                               : 0));
     std::vector<TThickPoint> pts;
     if (m_smooth.getValue() == 0 || m_isStraight) {
       pts.push_back(thickPoint);
@@ -2326,7 +2385,10 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
         TThickPoint old = m_points.back();
 
         const TThickPoint &point = pts[i];
-        TThickPoint mid((old + point) * 0.5, (point.thick + old.thick) * 0.5);
+        TThickPoint mid((old + point) * 0.5, (point.thick + old.thick) * 0.5,
+                        (m_brushTip.getBrushTip() && m_brushTip.isAutoRotate()
+                             ? (point.rotation + old.rotation) * 0.5
+                             : 0));
         m_points.push_back(mid);
         m_points.push_back(point);
 
@@ -2361,6 +2423,8 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
 
         invalidateRect +=
             ToolUtils::getBounds(allPts, maxThickness) - rasCenter;
+        if (m_brushTip.getBrushTip() && m_brushTip.getScatter())
+          invalidateRect += convert(bbox + m_lastRect) - rasCenter;
 
         m_bluredBrush->updateDrawing(ti->getRaster(), m_backupRas, bbox,
                                      m_styleId, m_drawOrder.getIndex(),
@@ -2380,7 +2444,8 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
       } else {
         const TThickPoint point = m_points[0];
         TThickPoint mid((thickPoint + point) * 0.5,
-                        (point.thick + thickPoint.thick) * 0.5);
+                        (point.thick + thickPoint.thick) * 0.5,
+                        (point.rotation + thickPoint.rotation) * 0.5);
         m_points.push_back(mid);
         m_points.push_back(thickPoint);
         points.push_back(m_points[0]);
@@ -2432,7 +2497,10 @@ void ToonzRasterBrushTool::finishRasterBrush(const TPointD &pos,
           m_modifierLockAlpha.getValue(), simLevel.getPointer(), frameId,
           m_rasThickness.getValue().second, m_hardness.getValue() * 0.01,
           m_isFrameCreated, m_isLevelCreated, dpiScale, symmetryLines, rotation,
-          centerPoint, useLineSymmetry, m_isStraight));
+          centerPoint, useLineSymmetry, m_brushTip.getRotation(),
+          m_brushTip.getSpacing(), m_brushTip.isFlipHorizontal(),
+          m_brushTip.isFlipVertical(), m_brushTip.getScatter(),
+          m_brushTip.getBrushTip(), m_isStraight));
     }
   }
 
@@ -2595,7 +2663,42 @@ void ToonzRasterBrushTool::draw() {
     return;
   }
 
-  if (TToonzImageP ti = img) {
+  if (!m_pencil.getValue() && m_brushTip.getBrushTip() &&
+      !m_brushTip.getBrushTip()->m_imageContour.empty()) {
+    double alpha       = 1.0;
+    double alphaRadius = 3.0;
+    double pixelSize   = sqrt(tglGetPixelSize2());
+
+    // circles with lesser radius looks more bold
+    // to avoid these effect we'll reduce alpha for small radiuses
+    double maxX     = tround(m_maxThick) / (alphaRadius * pixelSize);
+    double maxAlpha = alpha * (1.0 - 1.0 / (1.0 + maxX));
+
+    QSize chipSize   = TBrushTipManager::instance()->getChipSize();
+    double brushSize = tround(m_maxThick);
+
+    QTransform transform;
+    transform.translate(m_brushPos.x, m_brushPos.y);
+    transform.rotate(m_brushTip.getRotation());
+    if (m_brushTip.isAutoRotate()) transform.rotate(m_tiltAngle);
+    if (m_brushTip.isFlipHorizontal()) transform.scale(-1.0, 1.0);
+    if (m_brushTip.isFlipVertical()) transform.scale(1.0, -1.0);
+    transform.scale(brushSize / chipSize.width(),
+                    brushSize / chipSize.height());
+
+    std::vector<QPolygonF> contours = m_brushTip.getBrushTip()->m_imageContour;
+    for (int i = 0; i < contours.size(); i++) {
+      QPolygonF poly = transform.map(contours[i]);
+      for (int i = 1; i < poly.count(); i++) {
+        glColor4d(1.0, 0.0, 0.0, maxAlpha);
+        tglDrawSegment(TPointD(poly[i - 1].x(), poly[i - 1].y()),
+                       TPointD(poly[i].x(), poly[i].y()));
+      }
+      glColor4d(1.0, 0.0, 0.0, maxAlpha);
+      tglDrawSegment(TPointD(poly.last().x(), poly.last().y()),
+                     TPointD(poly.first().x(), poly.first().y()));
+    }
+  } else if (TToonzImageP ti = img) {
     TRasterP ras = ti->getRaster();
     int lx       = ras->getLx();
     int ly       = ras->getLy();
@@ -2669,8 +2772,8 @@ void ToonzRasterBrushTool::setWorkAndBackupImages() {
   TDimension dim = ras->getSize();
 
   double hardness = m_hardness.getValue() * 0.01;
-  if (!m_isMyPaintStyleSelected && hardness == 1.0 &&
-      ras->getPixelSize() == 4) {
+  if (!m_isMyPaintStyleSelected && !m_brushTip.getBrushTip() &&
+      hardness == 1.0 && ras->getPixelSize() == 4) {
     m_workRas   = TRaster32P();
     m_backupRas = TRasterCM32P();
   } else {
@@ -2719,6 +2822,14 @@ bool ToonzRasterBrushTool::onPropertyChanged(std::string propertyName) {
   BrushTiltCurvePts               = m_sizeStylusProperty.getTiltCurve();
   BrushMyPaintPressureSensitivity = m_mypaintPressure.getValue();
   BrushMyPaintTiltSensitivity     = m_mypaintTilt.getValue();
+  BrushTipSpacing                 = m_brushTip.getSpacing();
+  BrushTipRotation                = m_brushTip.getRotation();
+  BrushTipAutoRotate              = m_brushTip.isAutoRotate() ? 1 : 0;
+  BrushTipFlipHorizontal          = m_brushTip.isFlipHorizontal() ? 1 : 0;
+  BrushTipFlipVertical            = m_brushTip.isFlipVertical() ? 1 : 0;
+  BrushTipScatter                 = m_brushTip.getScatter();
+  BrushTipId = m_brushTip.getBrushTip() ? m_brushTip.getBrushTip()->m_idName
+                                        : DEFAULTBRUSHTIPID;
 
   // Recalculate/reset based on changed settings
   if (propertyName == m_rasThickness.getName()) {
@@ -2798,6 +2909,15 @@ void ToonzRasterBrushTool::loadPreset() {
     m_sizeStylusProperty.setTiltEnabled(preset.m_tilt);
     m_sizeStylusProperty.setTiltCurve(preset.m_tiltCurve);
 
+    m_brushTip.setSpacing(preset.m_spacing);
+    m_brushTip.setRotation(preset.m_rotation);
+    m_brushTip.setAutoRotate(preset.m_autoRotate);
+    m_brushTip.setFlipHorizontal(preset.m_flipH);
+    m_brushTip.setFlipVertical(preset.m_flipV);
+    m_brushTip.setScatter(preset.m_scatter);
+    m_brushTip.setBrushTip(
+        TBrushTipManager::instance()->getBrushTipById(preset.m_brushTipId));
+
     // Recalculate based on updated presets
     m_minThick = m_rasThickness.getValue().first;
     m_maxThick = m_rasThickness.getValue().second;
@@ -2830,6 +2950,15 @@ void ToonzRasterBrushTool::addPreset(QString name) {
   preset.m_tiltCurve         = m_sizeStylusProperty.getTiltCurve();
   preset.m_mypaintPressure   = m_mypaintPressure.getValue();
   preset.m_mypaintTilt       = m_mypaintTilt.getValue();
+  preset.m_spacing           = m_brushTip.getSpacing();
+  preset.m_rotation          = m_brushTip.getRotation();
+  preset.m_autoRotate        = m_brushTip.isAutoRotate();
+  preset.m_flipH             = m_brushTip.isFlipHorizontal();
+  preset.m_flipV             = m_brushTip.isFlipVertical();
+  preset.m_scatter           = m_brushTip.getScatter();
+  preset.m_brushTipId        = m_brushTip.getBrushTip()
+                                   ? m_brushTip.getBrushTip()->m_idName
+                                   : DEFAULTBRUSHTIPID;
 
   // Pass the preset to the manager
   m_presetsManager.addPreset(preset);
@@ -2876,6 +3005,15 @@ void ToonzRasterBrushTool::loadLastBrush() {
   m_sizeStylusProperty.setTiltEnabled(BrushTiltSensitivity);
   m_sizeStylusProperty.setTiltCurve(BrushTiltCurvePts);
 
+  m_brushTip.setSpacing(BrushTipSpacing);
+  m_brushTip.setRotation(BrushTipRotation);
+  m_brushTip.setAutoRotate(BrushTipAutoRotate ? 1 : 0);
+  m_brushTip.setFlipHorizontal(BrushTipFlipHorizontal ? 1 : 0);
+  m_brushTip.setFlipVertical(BrushTipFlipHorizontal ? 1 : 0);
+  m_brushTip.setScatter(BrushTipScatter);
+  m_brushTip.setBrushTip(
+      TBrushTipManager::instance()->getBrushTipById(BrushTipId));
+
   // Recalculate based on prior values
   m_minThick = m_rasThickness.getValue().first;
   m_maxThick = m_rasThickness.getValue().second;
@@ -2908,7 +3046,9 @@ void ToonzRasterBrushTool::onColorStyleChanged() {
     bool isValid = m_enabled && m_active;
     m_enabled    = false;
     if (isValid) {
-      finishRasterBrush(m_mousePos, 1, 0, 0, 0);
+      finishRasterBrush(
+          m_mousePos, 1, 0, 0, 0,
+          m_brushTip.getBrushTip() ? m_brushTip.getRotation() : 0);
     }
   }
 
@@ -3001,7 +3141,14 @@ BrushData::BrushData()
     , m_modifierLockAlpha(0.0)
     , m_tilt(false)
     , m_opressure(false)
-    , m_otilt(false) {}
+    , m_otilt(false)
+    , m_spacing(0.12)
+    , m_rotation(0)
+    , m_autoRotate(true)
+    , m_flipH(false)
+    , m_flipV(false)
+    , m_scatter(0)
+    , m_brushTipId(DEFAULTBRUSHTIPID) {}
 
 //----------------------------------------------------------------------------------------------------------
 
@@ -3022,7 +3169,14 @@ BrushData::BrushData(const std::wstring &name)
     , m_modifierLockAlpha(0.0)
     , m_tilt(false)
     , m_opressure(false)
-    , m_otilt(false) {}
+    , m_otilt(false)
+    , m_spacing(0.12)
+    , m_rotation(0)
+    , m_autoRotate(true)
+    , m_flipH(false)
+    , m_flipV(false)
+    , m_scatter(0)
+    , m_brushTipId(DEFAULTBRUSHTIPID) {}
 
 //----------------------------------------------------------------------------------------------------------
 
@@ -3092,6 +3246,27 @@ void BrushData::saveData(TOStream &os) {
   os.closeChild();
   os.openChild("Modifier_Tilt_Sensitivity");
   os << (int)m_mypaintTilt;
+  os.closeChild();
+  os.openChild("Brush_Tip_Spacing");
+  os << m_spacing;
+  os.closeChild();
+  os.openChild("Brush_Tip_Rotation");
+  os << m_rotation;
+  os.closeChild();
+  os.openChild("Brush_Tip_AutoRotate");
+  os << (int)m_autoRotate;
+  os.closeChild();
+  os.openChild("Brush_Tip_FlipHorizontal");
+  os << (int)m_flipH;
+  os.closeChild();
+  os.openChild("Brush_Tip_FlipVertical");
+  os << (int)m_flipV;
+  os.closeChild();
+  os.openChild("Brush_Tip_Scatter");
+  os << m_scatter;
+  os.closeChild();
+  os.openChild("Brush_Tip_Id");
+  os << m_brushTipId;
   os.closeChild();
 }
 
@@ -3172,6 +3347,20 @@ void BrushData::loadData(TIStream &is) {
       is >> val, m_mypaintPressure = val, is.matchEndTag();
     else if (tagName == "Modifier_Tilt_Sensitivity")
       is >> val, m_mypaintTilt = val, is.matchEndTag();
+    else if (tagName == "Brush_Tip_Spacing")
+      is >> m_spacing, is.matchEndTag();
+    else if (tagName == "Brush_Tip_Rotation")
+      is >> m_rotation, is.matchEndTag();
+    else if (tagName == "Brush_Tip_AutoRotate")
+      is >> val, m_autoRotate = val, is.matchEndTag();
+    else if (tagName == "Brush_Tip_FlipHorizontal")
+      is >> val, m_flipH = val, is.matchEndTag();
+    else if (tagName == "Brush_Tip_FlipVertical")
+      is >> val, m_flipV = val, is.matchEndTag();
+    else if (tagName == "Brush_Tip_Scatter")
+      is >> m_scatter, is.matchEndTag();
+    else if (tagName == "Brush_Tip_Id")
+      is >> m_brushTipId, is.matchEndTag();
     else
       is.skipCurrentTag();
   }

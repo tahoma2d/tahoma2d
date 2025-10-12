@@ -628,7 +628,7 @@ void ToolOptionStylusConfigButton::onConfigStateChanged(int configId) {
   else if (configId == m_tiltId)
     m_property->setTiltEnabled(m_stylusConfig->isConfigEnabled(configId));
 
-  if (m_tool) m_tool->onPropertyChanged(m_property->getName());
+  notifyTool();
 }
 
 //-----------------------------------------------------------------------------
@@ -642,8 +642,119 @@ void ToolOptionStylusConfigButton::onConfigCurveChanged(int configId, bool isDra
     m_property->setTiltCurve(m_stylusConfig->getConfigCurve(configId));
 
   // Only update the tool when we're done dragging
-  if (m_tool && !isDragging) m_tool->onPropertyChanged(m_property->getName());
+  if (m_tool && !isDragging) notifyTool();
 }
+
+//=============================================================================
+
+ToolOptionBrushTipButton::ToolOptionBrushTipButton(
+    TTool *tool, TBrushTipProperty *property)
+    : QPushButton()
+    , ToolOptionControl(tool, property->getName())
+    , m_property(property) {
+  setObjectName(QString::fromStdString(property->getName()));
+
+  setFixedSize(QSize(20, 20));
+
+  m_property->addListener(this);
+
+  m_brushTips = new BrushTipPopup(0);
+
+  updateStatus();
+
+  connect(this, SIGNAL(clicked()), this, SLOT(onClicked()));
+
+  connect(m_brushTips, SIGNAL(brushTipSelected(BrushTipData *)), this,
+          SLOT(onBrushTipSelected(BrushTipData *)));
+
+  connect(m_brushTips, SIGNAL(brushTipPropertyChanged()), this,
+          SLOT(onBrushTipPropertyChanged()));
+}
+
+//-----------------------------------------------------------------------------
+
+void ToolOptionBrushTipButton::updateStatus() {
+  if (!m_brushTips) return;
+
+  m_brushTips->setBrushTip(m_property->getBrushTip());
+  m_brushTips->setSpacing(m_property->getSpacing());
+  m_brushTips->setRotation(m_property->getRotation());
+  m_brushTips->setAutoRotate(m_property->isAutoRotate());
+  m_brushTips->setFlipHorizontal(m_property->isFlipHorizontal());
+  m_brushTips->setFlipVertical(m_property->isFlipVertical());
+  m_brushTips->setScatter(m_property->getScatter());
+
+  updateIcon();
+}
+
+//-----------------------------------------------------------------------------
+
+void ToolOptionBrushTipButton::updateIcon() {
+  QPixmap pixmap = isEnabled() ? m_brushTips->getBrushTipPixmap()
+                               : m_brushTips->getDefaultBrushTipPixmap();
+  QIcon icon(pixmap);
+  setIcon(icon);
+}
+
+//-----------------------------------------------------------------------------
+
+void ToolOptionBrushTipButton::onClicked() {
+  if (!m_brushTips) return;
+
+  if (m_brushTips->isKeepClosed()) return;
+
+  updateStatus();
+
+  m_brushTips->show();
+  QPoint configPos = mapToGlobal(QPoint(0, pos().y()));
+  configPos.setY(configPos.y() + height());
+  m_brushTips->move(configPos);
+
+  // make sure the popup doesn't go off the screen to the right
+  QRect screenRect = screen()->geometry();
+
+  int popupRight  = configPos.x() + m_brushTips->width();
+  int popupBottom = configPos.y() + m_brushTips->height();
+
+  // first condition checks if popup is on same monitor as main app;
+  // if popup is on different monitor, leave as is
+  int distanceX = 0;
+  int distanceY = 0;
+  if (configPos.x() < screenRect.right() && popupRight > screenRect.right())
+    distanceX = popupRight - screenRect.right();
+  if (configPos.y() < screenRect.bottom() && popupBottom > screenRect.bottom())
+    distanceY = popupBottom - screenRect.bottom();
+  if (distanceX != 0 || distanceY != 0)
+    m_brushTips->move(m_brushTips->x() - distanceX,
+                      m_brushTips->y() - distanceY);
+}
+
+//-----------------------------------------------------------------------------
+
+void ToolOptionBrushTipButton::onBrushTipSelected(BrushTipData *brushTip) {
+  updateIcon();
+
+  m_property->setBrushTip(brushTip);
+
+  emit brushTipSelected(brushTip);
+
+  notifyTool();
+}
+
+//-----------------------------------------------------------------------------
+
+void ToolOptionBrushTipButton::onBrushTipPropertyChanged() {
+  m_property->setSpacing(m_brushTips->getSpacing());
+  m_property->setRotation(m_brushTips->getRotation());
+  m_property->setAutoRotate(m_brushTips->isAutoRotate());
+  m_property->setFlipHorizontal(m_brushTips->isFlipHorizontal());
+  m_property->setFlipVertical(m_brushTips->isFlipVertical());
+  m_property->setScatter(m_brushTips->getScatter());
+
+  notifyTool();
+}
+
+//-----------------------------------------------------------------------------
 
 //=============================================================================
 

@@ -146,7 +146,7 @@ static TRect drawBluredBrush(const TRasterImageP &ri, TStroke *stroke,
   TRaster32P backupRas = ri->getRaster()->clone();
   workRas->clear();
   QRadialGradient brushPad = ToolUtils::getBrushPad(thick, hardness);
-  BluredBrush brush(workRas, thick, brushPad, false);
+  BluredBrush brush(workRas, thick, brushPad);
 
   int i, chunkCount = s->getChunkCount();
   for (i = 0; i < chunkCount; i++) {
@@ -161,8 +161,10 @@ static TRect drawBluredBrush(const TRasterImageP &ri, TStroke *stroke,
     points[1].thick *= 2;
     points[2].thick *= 2;
     TRect chunkBox = brush.getBoundFromPoints(points);
-    brush.addArc(points[0], points[1], points[2], 1, 1);
-    brush.updateDrawing(ri->getRaster(), backupRas, color, chunkBox, opacity);
+    if (i == 0) brush.addPoint(points[0], opacity);
+    brush.addArc(points[0], points[1], points[2], opacity, opacity);
+    brush.updateDrawing(ri->getRaster(), backupRas, color, chunkBox, opacity,
+                        false, false);
   }
 
   delete s;
@@ -187,7 +189,7 @@ static TRect drawBluredBrush(const TToonzImageP &ti, TStroke *stroke, int thick,
   TRasterCM32P backupRas = ti->getRaster()->clone();
   workRas->clear();
   QRadialGradient brushPad = ToolUtils::getBrushPad(thick, hardness);
-  BluredBrush brush(workRas, thick, brushPad, false);
+  BluredBrush brush(workRas, thick, brushPad);
 
   int i, chunkCount = s->getChunkCount();
   for (i = 0; i < chunkCount; i++) {
@@ -202,6 +204,7 @@ static TRect drawBluredBrush(const TToonzImageP &ti, TStroke *stroke, int thick,
     points[1].thick *= 2;
     points[2].thick *= 2;
     TRect chunkBox = brush.getBoundFromPoints(points);
+    if (i == 0) brush.addPoint(points[0], 1);
     brush.addArc(points[0], points[1], points[2], 1, 1);
     brush.updateDrawing(ti->getRaster(), backupRas, chunkBox, styleId,
                         selective, false);
