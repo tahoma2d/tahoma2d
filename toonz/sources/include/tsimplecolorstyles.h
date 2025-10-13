@@ -243,31 +243,42 @@ private:
 //    TRasterImagePatternStrokeStyle  declaration
 //**********************************************************************************
 
-class DVAPI TRasterImagePatternStrokeStyle final : public TColorStyle {
+class DVAPI TRasterImagePatternStrokeStyle final : public TOutlineStyle {
   static TFilePath m_rootDir;
-
-protected:
+  TPixel32 m_color;
+  TPixel32 lastColor;
+  TTessellator *m_tessellator;
+  
+  protected:
   TLevelP m_level;
+  TLevelP m_levelC;
   std::string m_name;
   double m_space, m_rotation;
   TFilePath m_basePath;
 
 public:
-  TRasterImagePatternStrokeStyle();
-  TRasterImagePatternStrokeStyle(const std::string &patternName);
+  TRasterImagePatternStrokeStyle(const TPixel32 &color = TPixel32::Black);
+  TRasterImagePatternStrokeStyle(const std::string &patternName,
+                                 const TPixel32 &color = TPixel32::Black);
   TRasterImagePatternStrokeStyle(TFilePath basePath,
-                                 const std::string &patternName);
-
-  bool isRegionStyle() const override { return false; }
-  bool isStrokeStyle() const override { return true; }
+                                 const std::string &patternName,
+                                 const TPixel32 &color = TPixel32::Black);
+  ~TRasterImagePatternStrokeStyle();
 
   int getLevelFrameCount() { return m_level->getFrameCount(); }
 
   void computeTransformations(std::vector<TAffine> &positions,
                               const TStroke *stroke) const;
+  void colorizeTexture(TPixel32 color) const;
   void drawStroke(const TVectorRenderData &rd,
                   const std::vector<TAffine> &positions,
+                  const TStroke *stroke);
+  void drawStroke(const TColorFunction *cf, TStrokeOutline *outline,
                   const TStroke *stroke) const;
+  void drawRegion(const TColorFunction *cf, 
+                  const bool antiAliasing,
+                  TRegionOutline &boundary) const;
+  
 
   void invalidate(){};
 
@@ -277,15 +288,11 @@ public:
   QString getDescription() const override;
   std::string getBrushIdName() const override;
 
-  bool hasMainColor() const override { return false; }
-  TPixel32 getMainColor() const override { return TPixel32::Black; }
-  void setMainColor(const TPixel32 &) override {}
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
   TStrokeProp *makeStrokeProp(const TStroke *stroke) override;
-  TRegionProp *makeRegionProp(const TRegion *) override {
-    assert(false);
-    return 0;
-  };
 
   int getTagId() const override { return 2000; };
   void getObsoleteTagIds(std::vector<int> &ids) const override;
