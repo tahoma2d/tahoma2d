@@ -71,8 +71,6 @@
 
 #include <QBitmap>
 
-TEnv::IntVar ShowParentColorsInXsheet("ShowParentColorsInXsheet", 1);
-
 //=============================================================================
 
 namespace {
@@ -4046,13 +4044,15 @@ void ColumnArea::contextMenuEvent(QContextMenuEvent *event) {
       QAction *showParentColors =
           new QAction(tr("Show Column Parent Colors"), this);
       showParentColors->setCheckable(true);
-      showParentColors->setChecked(ShowParentColorsInXsheet == 1 ? true
-                                                                 : false);
+      showParentColors->setChecked(
+          Preferences::instance()->isParentColorsInXsheetColumnEnabled());
       showParentColors->setToolTip(
           tr("Show the column parent's color in the Xsheet"));
 
       connect(showParentColors, &QAction::toggled, [=]() {
-        ShowParentColorsInXsheet = showParentColors->isChecked() ? 1 : 0;
+        Preferences::instance()->setValue(
+            parentColorsInXsheetColumn,
+            showParentColors->isChecked() ? true : false);
       });
       menu.addAction(showParentColors);
     }
