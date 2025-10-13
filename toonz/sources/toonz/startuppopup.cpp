@@ -1306,8 +1306,8 @@ void StartupScenesList::clearScenes() {
 void StartupScenesList::addScene(const QString &name, const QString &path) {
   QPixmap pixmap;
   if (path == ":")
-    pixmap = svgToPixmap(ThemeManager::getInstance().getIconPath("new_scene"),
-                         m_iconSize, Qt::KeepAspectRatio);
+    pixmap =
+        generateIconPixmap("new_scene", 1.0, m_iconSize, Qt::KeepAspectRatio);
   else
     pixmap = createScenePreview(name, TFilePath(path));
   QIcon icon(pixmap);
