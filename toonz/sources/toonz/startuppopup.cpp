@@ -100,6 +100,7 @@ QString removeZeros(QString srcStr) {
 
 StartupPopup::StartupPopup()
     : Dialog(TApp::instance()->getMainWindow(), true, true, "StartupPopup") {
+  setObjectName("StartupPopup");
   setWindowTitle(tr("Tahoma2D Startup"));
 
   m_projectBox = new QGroupBox(tr("Current Project"), this);
