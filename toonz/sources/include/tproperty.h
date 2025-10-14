@@ -43,9 +43,11 @@ class DVAPI TStyleIndexProperty;
 class DVAPI TPointerProperty;
 class DVAPI TColorChipProperty;
 class DVAPI TStylusProperty;
+class DVAPI TBrushTipProperty;
 
 class TIStream;
 class TOStream;
+class BrushTipData;
 
 //---------------------------------------------------------
 
@@ -63,7 +65,8 @@ public:
     virtual void visit(TStyleIndexProperty *p) = 0;
     virtual void visit(TPointerProperty *p)    = 0;
     virtual void visit(TColorChipProperty *p)  = 0;
-    virtual void visit(TStylusProperty *p)  = 0;
+    virtual void visit(TStylusProperty *p)     = 0;
+    virtual void visit(TBrushTipProperty *p)   = 0;
     virtual ~Visitor() {}
   };
 
@@ -608,6 +611,55 @@ private:
   bool m_useLinearCurves;
   QList<TPointD> m_pressureCurve, m_tiltCurve;
   QList<TPointD> m_defaultPressureCurve, m_defaultTiltCurve;
+};
+
+//---------------------------------------------------------
+
+class DVAPI TBrushTipProperty final : public TProperty {
+public:
+  TBrushTipProperty(const std::string &name)
+      : TProperty(name)
+      , m_brushTip(0)
+      , m_spacing(0.12)
+      , m_rotation(0)
+      , m_autoRotate(true)
+      , m_flipH(false)
+      , m_flipV(false)
+      , m_scatter(0) {}
+
+  TProperty *clone() const override { return new TBrushTipProperty(*this); }
+
+  std::string getValueAsString() override { return "-"; }
+  void setValue(const std::wstring &value) {}
+  std::wstring getValue() const { return L"-"; }
+
+  void accept(Visitor &v) override { v.visit(this); }
+
+  void setBrushTip(BrushTipData *brushTip) { m_brushTip = brushTip; }
+  BrushTipData *getBrushTip() { return m_brushTip; }
+
+  void setSpacing(double spacing) { m_spacing = spacing; }
+  double getSpacing() { return m_spacing; }
+
+  void setRotation(double rotation) { m_rotation = rotation; }
+  double getRotation() { return m_rotation; }
+
+  void setAutoRotate(bool autoRotate) { m_autoRotate = autoRotate; }
+  bool isAutoRotate() { return m_autoRotate; }
+
+  void setFlipHorizontal(bool flip) { m_flipH = flip; }
+  bool isFlipHorizontal() { return m_flipH; }
+
+  void setFlipVertical(bool flip) { m_flipV = flip; }
+  bool isFlipVertical() { return m_flipV; }
+
+  void setScatter(double scatter) { m_scatter = scatter; }
+  double getScatter() { return m_scatter; }
+
+private:
+  BrushTipData *m_brushTip;
+  double m_spacing, m_rotation, m_scatter;
+  bool m_autoRotate, m_flipH, m_flipV;
 };
 
 //---------------------------------------------------------

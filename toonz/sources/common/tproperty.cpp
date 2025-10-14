@@ -97,6 +97,7 @@ public:
   void visit(TPointerProperty *dst) override { assign(dst, m_src); }
   void visit(TColorChipProperty *dst) override { assign(dst, m_src); }
   void visit(TStylusProperty *dst) override { assign(dst, m_src); }
+  void visit(TBrushTipProperty *dst) override { assign(dst, m_src); }
 };
 
 void TPropertyGroup::setProperties(TPropertyGroup *g) {
@@ -260,6 +261,20 @@ public:
     }
     m_os.closeChild();
   }
+
+  void visit(TBrushTipProperty *p) override {
+    std::map<std::string, std::string> attr;
+    attr["type"]       = "brushTip";
+    attr["name"]       = p->getName();
+    attr["value"]      = ::to_string(p->getValue());
+    attr["spacing"]    = p->getSpacing();
+    attr["rotation"]   = p->getRotation();
+    attr["autoRotate"] = p->isAutoRotate() ? "true" : "false";
+    attr["flipH"]      = p->isFlipHorizontal() ? "true" : "false";
+    attr["flipV"]      = p->isFlipVertical() ? "true" : "false";
+    attr["scatter"]    = p->getScatter();
+    m_os.openCloseChild("property", attr);
+  }
 };
 
 void TPropertyGroup::loadData(TIStream &is) {
@@ -356,6 +371,18 @@ void TPropertyGroup::loadData(TIStream &is) {
             throw TException("expected range property <item>");
         }
         is.closeChild();
+        add(p);
+      } else if (type == "brushTip") {
+        TBrushTipProperty *p = new TBrushTipProperty(name);
+        p->setSpacing(std::stod(is.getTagAttribute("spacing")));
+        p->setRotation(std::stod(is.getTagAttribute("rotation")));
+        p->setAutoRotate(is.getTagAttribute("autoRotate") == "true" ? true
+                                                                    : false);
+        p->setFlipHorizontal(is.getTagAttribute("flipH") == "true" ? true
+                                                                   : false);
+        p->setFlipVertical(is.getTagAttribute("flipV") == "true" ? true
+                                                                 : false);
+        p->setScatter(std::stod(is.getTagAttribute("scatter")));
         add(p);
       } else
         throw TException("unrecognized property type : " + type);

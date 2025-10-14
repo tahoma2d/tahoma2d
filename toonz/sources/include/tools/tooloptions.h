@@ -69,6 +69,7 @@ class PaletteController;
 class ClickableLabel;
 class StyleIndexFieldAndChip;
 class ColorChipCombo;
+class ToolOptionBrushTipButton;
 
 class QLabel;
 class QPushButton;
@@ -168,6 +169,7 @@ private:
   void visit(TPointerProperty *p) override;
   void visit(TColorChipProperty *p) override;
   void visit(TStylusProperty *p) override;
+  void visit(TBrushTipProperty *p) override;
 };
 
 //***********************************************************************************************
@@ -580,6 +582,7 @@ class BrushToolOptionsBox final : public ToolOptionsBox {
   ToolOptionCombo *m_snapSensitivityCombo;
   QPushButton *m_addPresetButton;
   QPushButton *m_removePresetButton;
+  ToolOptionBrushTipButton *m_brushTips;
 
 private:
   class PresetNamePopup;
@@ -595,6 +598,7 @@ public:
 protected slots:
 
   void onPencilModeToggled(bool);
+  void onBrushTipChanged();
   void onAddPreset();
   void onRemovePreset();
 };

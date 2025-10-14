@@ -73,6 +73,7 @@ set(MOC_HEADERS
     ../include/toonzqt/insertfxpopup.h
     ../include/toonzqt/graphwidget.h
     ../include/toonzqt/stylusconfigpopup.h
+    ../include/toonzqt/brushtippopup.h
 )
 
 set(HEADERS
@@ -206,6 +207,7 @@ set(SOURCES
     insertfxpopup.cpp
     graphwidget.cpp
     stylusconfigpopup.cpp
+    brushtippopup.cpp
 )
 
 set(RESOURCES toonzqt.qrc)

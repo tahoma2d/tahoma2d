@@ -34,6 +34,7 @@ private:
   void visit(TPointerProperty* p) override {}
   void visit(TColorChipProperty* p) override {}
   void visit(TStylusProperty* p) override {}
+  void visit(TBrushTipProperty* p) override {}
 };
 
 //=============================================================================

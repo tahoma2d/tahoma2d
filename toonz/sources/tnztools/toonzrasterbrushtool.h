@@ -42,11 +42,14 @@ struct BrushData final : public TPersist {
   // just the overall tool.
 
   std::wstring m_name;
-  double m_min, m_max, m_smooth, m_hardness, m_opacityMin, m_opacityMax;
-  bool m_pencil, m_pressure, m_tilt, m_opressure, m_otilt, m_mypaintPressure, m_mypaintTilt;
+  double m_min, m_max, m_smooth, m_hardness, m_opacityMin, m_opacityMax,
+      m_spacing, m_rotation, m_scatter;
+  bool m_pencil, m_pressure, m_tilt, m_opressure, m_otilt, m_mypaintPressure,
+      m_mypaintTilt, m_autoRotate, m_flipH, m_flipV;
   int m_drawOrder;
   double m_modifierSize, m_modifierOpacity;
   bool m_modifierEraser, m_modifierLockAlpha, m_modifierPaintBehind;
+  std::string m_brushTipId;
   QList<TPointD> m_pressureCurve, m_opressureCurve, m_tiltCurve, m_otiltCurve;
 
   BrushData();
@@ -164,7 +167,8 @@ public:
   void loadLastBrush();
 
   void finishRasterBrush(const TPointD &pos, double pressureVal,
-                         double tiltMagnitude, double tiltX, double tiltY);
+                         double tiltMagnitude, double tiltX, double tiltY,
+                         double tiltAngle);
   // return true if the pencil mode is active in the Brush / PaintBrush / Eraser
   // Tools.
   bool isPencilModeActive() override;
@@ -190,6 +194,7 @@ protected:
   TBoolProperty m_snapGrid;
   TBoolProperty m_mypaintTilt;
   TStylusProperty m_sizeStylusProperty;
+  TBrushTipProperty m_brushTip;
 
   bool m_enabledPressure;
   bool m_enabledTilt;
@@ -247,6 +252,7 @@ protected:
   double m_oldPressure = -1.0;
   // double m_oldThickness = -1.0;
   // int m_dragCount        = 0;
+  double m_tiltAngle = 0.0;
 
   int m_perspectiveIndex = -1;
 

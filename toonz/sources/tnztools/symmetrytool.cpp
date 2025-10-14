@@ -835,13 +835,19 @@ std::vector<TPointD> SymmetryTool::getSymmetryPoints(
   if (oangle < 0.0) oangle += 360.0;
   oangle -= rotation;
 
-  points.push_back(firstPoint);
+  double firstSymm = ceil(oangle / step) * step;
+  double fsadj     = 90 - (floor(firstSymm / step) * step);
+  double dAngle    = firstSymm + fsadj - oangle;
 
+  points.push_back(firstPoint);
   for (int i = 1; i < lines; i++) {
     double angle = ((double)i * step) + oangle;
     if (angle < 90.0) angle += 360.0;
 
-    if (useLineSymmetry && (i % 2) != 0) angle += step + 180 - (oangle * 2);
+    if (useLineSymmetry && (i % 2) != 0) {
+      double prevSymm = (ceil(angle / step) * step) - step + fsadj;
+      angle           = prevSymm + dAngle;
+    }
 
     angle += rotation;
 
