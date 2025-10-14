@@ -1433,7 +1433,6 @@ void TRasterImagePatternStrokeStyle::loadData(int ids,
   std::string name;
   if (ids == 100) is >> name;
   if (ids == 2000) is >> name >> m_space >> m_rotation;
-  m_color = TPixel32::Black;
   if (name != "") {
     try {
       loadLevel(name);
