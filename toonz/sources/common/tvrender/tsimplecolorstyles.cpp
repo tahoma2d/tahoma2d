@@ -971,7 +971,7 @@ TPixel32 TTextureStyle::getMainColor() const
 
 TRasterImagePatternStrokeStyle::TRasterImagePatternStrokeStyle(
     const TPixel32 &color)
-    : m_color(color), m_level(), m_levelC(), m_name(""), m_space(-80), m_rotation(0), m_tessellator(new TglTessellator) {
+    : m_color(color), m_level(), m_levelC(), m_name(""), m_space(20), m_rotation(0), m_tessellator(new TglTessellator) {
   m_basePath = getRootDir();
 }
 
@@ -979,7 +979,7 @@ TRasterImagePatternStrokeStyle::TRasterImagePatternStrokeStyle(
 
 TRasterImagePatternStrokeStyle::TRasterImagePatternStrokeStyle(
     const std::string &patternName, const TPixel32 &color)
-    : m_color(color), m_level(), m_levelC(), m_name(patternName), m_space(-80), m_rotation(0), m_tessellator(new TglTessellator) {
+    : m_color(color), m_level(), m_levelC(), m_name(patternName), m_space(20), m_rotation(0), m_tessellator(new TglTessellator) {
   m_basePath = getRootDir();
   if (m_name != "") loadLevel(m_name);
 }
@@ -992,7 +992,7 @@ TRasterImagePatternStrokeStyle::TRasterImagePatternStrokeStyle(
     , m_level()
     , m_levelC()
     , m_name(patternName)
-    , m_space(-80)
+    , m_space(20)
     , m_rotation(0)
     , m_basePath(basePath)
     , m_tessellator(new TglTessellator) {
@@ -1412,7 +1412,7 @@ void TRasterImagePatternStrokeStyle::loadData(TInputStreamInterface &is) {
   m_level = TLevelP();
   m_name  = "";
   std::string name;
-  is >> name >> m_space >> m_rotation;
+  is >> name >> m_space >> m_rotation >> m_color;
   if (name != "") {
     try {
       loadLevel(name);
@@ -1425,13 +1425,15 @@ void TRasterImagePatternStrokeStyle::loadData(TInputStreamInterface &is) {
 
 void TRasterImagePatternStrokeStyle::loadData(int ids,
                                               TInputStreamInterface &is) {
-  if (ids != 100)
+  if (ids != 100 && ids != 2000)
     throw TException("image pattern stroke style: unknown obsolete format");
 
   m_level = TLevelP();
   m_name  = "";
   std::string name;
-  is >> name;
+  if (ids == 100) is >> name;
+  if (ids == 2000) is >> name >> m_space >> m_rotation;
+  m_color = TPixel32::Black;
   if (name != "") {
     try {
       loadLevel(name);
@@ -1444,7 +1446,7 @@ void TRasterImagePatternStrokeStyle::loadData(int ids,
 
 void TRasterImagePatternStrokeStyle::saveData(
     TOutputStreamInterface &os) const {
-  os << m_name << m_space << m_rotation;
+  os << m_name << m_space << m_rotation << m_color;
 }
 
 //-----------------------------------------------------------------------------
@@ -1463,6 +1465,7 @@ TStrokeProp *TRasterImagePatternStrokeStyle::makeStrokeProp(
 void TRasterImagePatternStrokeStyle::getObsoleteTagIds(
     std::vector<int> &ids) const {
   ids.push_back(100);
+  ids.push_back(2000);
 }
 
 //-----------------------------------------------------------------------------

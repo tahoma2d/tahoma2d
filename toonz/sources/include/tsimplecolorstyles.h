@@ -294,7 +294,7 @@ public:
 
   TStrokeProp *makeStrokeProp(const TStroke *stroke) override;
 
-  int getTagId() const override { return 2000; };
+  int getTagId() const override { return 2100; };
   void getObsoleteTagIds(std::vector<int> &ids) const override;
 
   void loadLevel(const std::string &patternName);
