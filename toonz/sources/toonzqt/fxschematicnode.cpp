@@ -628,17 +628,26 @@ void FxPainter::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     painter->restore();
   }
 
+  bool is_enabled       = m_parent->isEnabled();
+  TZeraryColumnFx *zcFx = dynamic_cast<TZeraryColumnFx *>(m_parent->getFx());
+  if (zcFx) {
+    TXshZeraryFxColumn *col = zcFx->getColumn();
+    if (col) is_enabled = col->isRendered();
+  }
+
   QColor nodeColor;
   SchematicViewer *viewer = sceneFx->getSchematicViewer();
-  viewer->getNodeColor(m_type, nodeColor);
+  if (!is_enabled && zcFx)
+    nodeColor = viewer->getReferenceColumnColor();
+  else
+    viewer->getNodeColor(m_type, nodeColor);
 
   painter->setBrush(nodeColor);
   painter->setPen(Qt::NoPen);
   painter->drawRect(0, 0, m_width, m_height);
 
   // draw diagonal line for disabled fx
-  bool is_enabled = m_parent->isEnabled();
-  if (!is_enabled) {
+  if (!is_enabled && !zcFx) {
     painter->save();
     painter->setPen(QColor(255, 0, 0, 255));
     painter->drawLine(QPointF(0, m_height), QPointF(m_width, 0));
@@ -900,9 +909,19 @@ void FxPainter::paint_small(QPainter *painter) {
     painter->restore();
   }
 
+  bool is_enabled       = m_parent->getFx()->getAttributes()->isEnabled();
+  TZeraryColumnFx *zcFx = dynamic_cast<TZeraryColumnFx *>(m_parent->getFx());
+  if (zcFx) {
+    TXshZeraryFxColumn *col = zcFx->getColumn();
+    if (col) is_enabled = col->isRendered();
+  }
+
   QColor nodeColor;
   SchematicViewer *viewer = sceneFx->getSchematicViewer();
-  viewer->getNodeColor(m_type, nodeColor);
+  if (!is_enabled && zcFx)
+    nodeColor = viewer->getReferenceColumnColor();
+  else
+    viewer->getNodeColor(m_type, nodeColor);
 
   painter->setBrush(nodeColor);
   painter->setPen(Qt::NoPen);
@@ -944,13 +963,7 @@ void FxPainter::paint_small(QPainter *painter) {
   }
 
   // diagonal line for disabled fx
-  bool is_enabled = false;
-  if (TZeraryColumnFx *zcFx =
-          dynamic_cast<TZeraryColumnFx *>(m_parent->getFx()))
-    is_enabled = zcFx->getColumn()->isPreviewVisible();
-  else
-    is_enabled = m_parent->getFx()->getAttributes()->isEnabled();
-  if (!is_enabled) {
+  if (!is_enabled && !zcFx) {
     painter->save();
     painter->setPen(QColor(255, 0, 0, 255));
     painter->drawLine(QPointF(10, m_height), QPointF(m_width - 10, 0));

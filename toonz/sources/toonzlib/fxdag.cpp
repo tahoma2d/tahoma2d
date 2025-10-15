@@ -6,6 +6,7 @@
 #include "toonz/tcolumnfxset.h"
 #include "toonz/tcolumnfx.h"
 #include "tw/stringtable.h"
+#include "toonz/txshzeraryfxcolumn.h"
 
 // TnzBase includes
 #include "tmacrofx.h"
@@ -191,11 +192,22 @@ void FxDag::getFxs(std::vector<TFx *> &fxs) const {
 //-------------------------------------------------------------------
 
 bool FxDag::isRendered(TFx *fx) const {
-  if (m_terminalFxs->containsFx(fx)) return true;
-  if (dynamic_cast<TOutputFx *>(fx)) return true;
+  TFx *checkFx      = fx;
+  TZeraryFx *zoutFx = dynamic_cast<TZeraryFx *>(fx);
+  if (zoutFx) {
+    TZeraryColumnFx *zFx    = zoutFx->getColumnFx();
+    TXshZeraryFxColumn *col = zFx ? zFx->getColumn() : nullptr;
+    if (col) {
+      if (!col->isPreviewVisible()) return false;
+      checkFx = col->getFx();
+    }
+  }
+
+  if (m_terminalFxs->containsFx(checkFx)) return true;
+  if (dynamic_cast<TOutputFx *>(checkFx)) return true;
   int i;
-  for (i = 0; i < fx->getOutputConnectionCount(); i++) {
-    TFx *outFx = fx->getOutputConnection(i)->getOwnerFx();
+  for (i = 0; i < checkFx->getOutputConnectionCount(); i++) {
+    TFx *outFx = checkFx->getOutputConnection(i)->getOwnerFx();
     if (outFx && isRendered(outFx)) return true;
   }
   return false;
@@ -204,14 +216,26 @@ bool FxDag::isRendered(TFx *fx) const {
 //-------------------------------------------------------------------
 
 bool FxDag::isControl(TFx *fx) const {
-  if (m_terminalFxs->containsFx(fx)) return false;
-  if (dynamic_cast<TOutputFx *>(fx)) return false;
+  TFx *checkFx      = fx;
+  TZeraryFx *zoutFx = dynamic_cast<TZeraryFx *>(fx);
+  if (zoutFx) {
+    TZeraryColumnFx *zFx    = zoutFx->getColumnFx();
+    TXshZeraryFxColumn *col = zFx ? zFx->getColumn() : nullptr;
+    if(col) checkFx = col->getFx();
+  }
+
+  if (m_terminalFxs->containsFx(checkFx)) return false;
+  if (dynamic_cast<TOutputFx *>(checkFx)) return false;
   int i;
-  for (i = 0; i < fx->getOutputConnectionCount(); i++) {
-    TFxPort *port = fx->getOutputConnection(i);
+  for (i = 0; i < checkFx->getOutputConnectionCount(); i++) {
+    TFxPort *port = checkFx->getOutputConnection(i);
     TFx *outFx    = port->getOwnerFx();
     if (outFx) {
-      if (outFx->getInputPort(0) != port) return true;
+      for (int j = 0; j < outFx->getInputPortCount(); j++) {
+        if (outFx->getInputPort(j)->isaControlPort() &&
+            outFx->getInputPort(j) == port)
+          return true;
+      }
       if (isControl(outFx)) return true;
     }
   }
