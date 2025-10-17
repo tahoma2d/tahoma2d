@@ -94,6 +94,15 @@ void DoubleValueLineEdit::keyPressEvent(QKeyEvent *event) {
         QKeyEvent dotEvent(QEvent::KeyPress, Qt::Key_Period, Qt::NoModifier, ".");
         QLineEdit::keyPressEvent(&dotEvent);
     } else if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+        // Validate value before emitting signal to prevent crashes
+        double value = getValue();
+        double minValue, maxValue;
+        getRange(minValue, maxValue);
+
+        // Clamp value to valid range before processing
+        if (!std::isfinite(value) || value < minValue || value > maxValue) {
+            setValue(std::clamp(value, minValue, maxValue));
+        }
         emit editingFinished();
         clearFocus();
     } else {
@@ -168,12 +177,12 @@ double DoubleValueField::pos2value(int x) const {
   // nonlinear slider case - use constexpr where is possible
   static constexpr std::array<double, 4> thresholds{0.5, 0.75, 0.9, 1.0};
   const double rangeSize = static_cast<double>(m_slider->maximum() - m_slider->minimum());
-  
+
   // Safety check for zero range
   if (std::abs(rangeSize) < std::numeric_limits<double>::epsilon()) {
       return static_cast<double>(x) * std::pow(0.1, decimal);
   }
-  
+
   const double posRatio = static_cast<double>(x - m_slider->minimum()) / rangeSize;
 
   double t = 0.0;
@@ -241,7 +250,9 @@ void DoubleValueField::setValue(double value) {
   if (!std::isfinite(value) || qFuzzyCompare(m_lineEdit->getValue() + 1.0, value + 1.0)) return;
   double minValue, maxValue;
   getRange(minValue, maxValue);
-  value = std::clamp(value, minValue, maxValue);
+  // Safer clamping
+  if (value < minValue) value = minValue;
+  if (value > maxValue) value = maxValue;
   bool signalsBlocked = m_slider->blockSignals(true);
   m_lineEdit->setValue(value);
   m_roller->setValue(value);
@@ -346,7 +357,7 @@ void DoubleValueField::onRollerValueChanged(bool isDragging) {
   m_lineEdit->setValue(value);
 
   // Make the cursor on the first digit, so if the string to display
-  // is longer than the field the digits that are truncated are the 
+  // is longer than the field the digits that are truncated are the
   // last ones and not the first (they should be the ones after the decimal point).
   m_lineEdit->setCursorPosition(0);
 
@@ -365,6 +376,8 @@ DoubleLineEdit::DoubleLineEdit(QWidget *parent, double value)
   m_validator->setLocale(QLocale::c());
 
   setValidator(m_validator);
+  // Limit maximum characters to prevent extreme values
+  setMaxLength(7);
 
   setValue(value);
 
@@ -447,6 +460,8 @@ MeasuredDoubleLineEdit::MeasuredDoubleLineEdit(QWidget *parent)
     , m_errorHighlightingTimerId(0)
     , m_decimals(7) {
   setObjectName("ValueLineEdit");
+  // Limit character input to prevent extreme values
+  setMaxLength(7);
   m_value = new TMeasuredValue("length");
   valueToText();
   bool ret =
