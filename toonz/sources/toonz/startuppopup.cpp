@@ -18,6 +18,7 @@
 #include "toonzqt/gutil.h"
 #include "toonzqt/doublefield.h"
 #include "toonzqt/lineedit.h"
+#include "toonzqt/icongenerator.h"
 
 // TnzLib includes
 #include "toonz/toonzscene.h"
@@ -45,6 +46,10 @@
 #include <QTextStream>
 #include <QFrame>
 #include <QGroupBox>
+#include <QPainter>
+#include <QScrollBar>
+#include <QMouseEvent>
+#include <QDesktopServices>
 
 using namespace std;
 using namespace DVGui;
@@ -95,20 +100,19 @@ QString removeZeros(QString srcStr) {
 
 StartupPopup::StartupPopup()
     : Dialog(TApp::instance()->getMainWindow(), true, true, "StartupPopup") {
+  setObjectName("StartupPopup");
   setWindowTitle(tr("Tahoma2D Startup"));
 
   m_projectBox = new QGroupBox(tr("Current Project"), this);
-  m_sceneBox   = new QGroupBox(tr("Create a New Scene"), this);
+  m_scenesTab  = new QTabWidget();
   m_recentBox  = new QGroupBox(tr("Recent Scenes [Project]"), this);
   m_projectBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   m_nameFld               = new LineEdit(this);
   m_pathFld               = new FileField(this);
-  m_projectLocationFld    = new FileField(this);
   QString currProjectPath = TProjectManager::instance()
                                 ->getCurrentProjectPath()
                                 .getParentDir()
                                 .getQString();
-  m_projectLocationFld->setPath(currProjectPath);
   m_projectsCB              = new QComboBox(this);
   m_sceneNameLabel          = new QLabel(tr("Scene Name:"));
   m_widthLabel              = new QLabel(tr("Width:"), this);
@@ -140,6 +144,12 @@ StartupPopup::StartupPopup()
   QStringList type;
   type << tr("pixel") << tr("cm") << tr("mm") << tr("inch") << tr("field");
   m_unitsCB->addItems(type);
+
+  QPushButton *openProjectButton = new QPushButton(tr("Open Project..."), this);
+  QPushButton *exploreProjectButton =
+      new QPushButton(tr("Explore Folder"), this);
+
+  m_existingList = new StartupScenesList(this, QSize(96, 54));
 
   // Exclude all character which cannot fit in a filepath (Win).
   // Dots are also prohibited since they are internally managed by Toonz.
@@ -177,14 +187,14 @@ StartupPopup::StartupPopup()
   label->setPixmap(splashPixmap);
 
   m_projectBox->setObjectName("SolidLineFrame");
-  m_sceneBox->setObjectName("SolidLineFrame");
+  m_scenesTab->setObjectName("SolidLineFrame");
   m_recentBox->setObjectName("SolidLineFrame");
   m_projectBox->setContentsMargins(10, 10, 10, 10);
-  m_sceneBox->setContentsMargins(10, 10, 10, 10);
+  m_scenesTab->setContentsMargins(10, 10, 10, 10);
   m_recentBox->setContentsMargins(10, 10, 10, 10);
   m_recentBox->setFixedWidth(200);
-  m_sceneBox->setFixedWidth(480);
-  m_projectBox->setFixedWidth(480);
+  m_scenesTab->setMinimumWidth(480);
+  m_projectBox->setMinimumWidth(480);
   m_buttonFrame->setFixedHeight(34);
 
   //--- layout
@@ -192,8 +202,9 @@ StartupPopup::StartupPopup()
   m_topLayout->setSpacing(0);
   {
     QGridLayout *guiLay      = new QGridLayout();
-    QHBoxLayout *projectLay  = new QHBoxLayout();
+    QGridLayout *projectLay  = new QGridLayout();
     QGridLayout *newSceneLay = new QGridLayout();
+    QWidget *newSceneWidget  = new QWidget();
     m_recentSceneLay         = new QVBoxLayout();
     guiLay->setContentsMargins(10, 10, 10, 10);;
     guiLay->setVerticalSpacing(10);
@@ -201,17 +212,22 @@ StartupPopup::StartupPopup()
 
     guiLay->addWidget(label, 0, 0, 1, 2, Qt::AlignLeft);
 
+    //--- Project
     projectLay->setSpacing(8);
     projectLay->setContentsMargins(8, 8, 8, 8);;
     {
-      projectLay->addWidget(m_projectLocationFld, 1);
-      projectLay->addWidget(m_projectsCB, 1);
-      projectLay->addWidget(newProjectButton, 0);
-      m_projectLocationFld->hide();
+      projectLay->addWidget(m_projectsCB, 0, 0, 1, 3);
+      projectLay->addWidget(newProjectButton, 1, 0);
+      projectLay->addWidget(openProjectButton, 1, 1);
+      projectLay->addWidget(exploreProjectButton, 1, 2);
     }
     m_projectBox->setLayout(projectLay);
     guiLay->addWidget(m_projectBox, 1, 0, 1, 1, Qt::AlignCenter);
 
+    //--- Existing scenes
+    m_scenesTab->addTab(m_existingList, tr("Open Existing Scene"));
+
+    //--- New scene
     newSceneLay->setContentsMargins(8, 8, 8, 8);;
     newSceneLay->setVerticalSpacing(8);
     newSceneLay->setHorizontalSpacing(8);
@@ -264,9 +280,12 @@ StartupPopup::StartupPopup()
       newSceneLay->addWidget(createButton, 6, 1, 1, 3, Qt::AlignLeft);
       newSceneLay->setColumnStretch(4, 1);
     }
-    m_sceneBox->setLayout(newSceneLay);
-    guiLay->addWidget(m_sceneBox, 2, 0, 4, 1, Qt::AlignTop);
+    newSceneWidget->setLayout(newSceneLay);
+    m_scenesTab->addTab(newSceneWidget, tr("Create a New Scene"));
 
+    guiLay->addWidget(m_scenesTab, 2, 0, 4, 1, Qt::AlignTop);
+
+    //--- Recent scenes
     m_recentSceneLay->setContentsMargins(5, 5, 5, 5);
     m_recentSceneLay->setSpacing(2);
     {
@@ -302,8 +321,10 @@ StartupPopup::StartupPopup()
                        SLOT(onSceneChanged()));
   ret = ret && connect(newProjectButton, SIGNAL(clicked()), this,
                        SLOT(onNewProjectButtonPressed()));
-  ret = ret && connect(m_projectLocationFld, SIGNAL(pathChanged()), this,
-                       SLOT(onProjectLocationChanged()));
+  ret      = ret && connect(openProjectButton, SIGNAL(clicked()), this,
+                       SLOT(onOpenProjectButtonPressed()));
+  ret      = ret && connect(exploreProjectButton, SIGNAL(clicked()), this,
+                       SLOT(onExploreProjectButtonPressed()));
   ret = ret && connect(loadOtherSceneButton, SIGNAL(clicked()), this,
                        SLOT(onLoadSceneButtonPressed()));
   ret = ret &&
@@ -333,6 +354,8 @@ StartupPopup::StartupPopup()
                        SLOT(onAutoSaveTimeChanged()));
   ret = ret && connect(m_projectsCB, SIGNAL(currentIndexChanged(int)), this,
                        SLOT(onProjectComboChanged(int)));
+  ret = ret && connect(m_existingList, SIGNAL(itemClicked(int)), this,
+                       SLOT(onExistingSceneClicked(int)));
   assert(ret);
 }
 
@@ -406,9 +429,9 @@ void StartupPopup::showEvent(QShowEvent *) {
   m_resYFld->setDecimals(0);
   // m_dpiFld->setValue(m_dpi);
 
-  int boxWidth  = m_sceneBox->width();
-  int boxHeight = m_sceneBox->height();
-  m_sceneBox->setFixedWidth(boxWidth);
+  int boxWidth  = m_scenesTab->width();
+  int boxHeight = m_scenesTab->height();
+  m_scenesTab->setFixedWidth(boxWidth);
   m_projectBox->setFixedWidth(boxWidth);
   m_recentBox->setMinimumHeight(boxHeight);
   m_autoSaveOnCB->setChecked(Preferences::instance()->isAutosaveEnabled());
@@ -417,6 +440,7 @@ void StartupPopup::showEvent(QShowEvent *) {
   // update recent scenes
   // clear items if they exist first
   refreshRecentScenes();
+  refreshExistingScenes();
   // center window
   QScreen *currentScreen = TApp::instance()->getMainWindow()->screen();
   QPoint activeMonitorCenter = currentScreen->availableGeometry().center();
@@ -498,10 +522,6 @@ void StartupPopup::updateProjectCB() {
     }
   }
 
-  m_projectsCB->addItem(tr("Browse..."));
-  m_projectsCB->setItemData(j, tr("Open a different project."),
-                            Qt::ToolTipRole);
-
   int i;
   for (i = 0; i < m_projectPaths.size(); i++) {
     if (pm->getCurrentProjectPath() == m_projectPaths[i]) {
@@ -523,24 +543,6 @@ void StartupPopup::updateProjectCB() {
 void StartupPopup::onProjectComboChanged(int index) {
   if (m_updating) return;
   TProjectManager *pm = TProjectManager::instance();
-
-  // The last index is Browse. . .
-  if (index == m_projectsCB->count() - 1) {
-    m_projectsCB->blockSignals(true);
-    int i;
-    for (i = 0; i < m_projectPaths.size(); i++) {
-      if (pm->getCurrentProjectPath() == m_projectPaths[i]) {
-        m_projectsCB->setCurrentIndex(i);
-        break;
-      }
-    }
-    if (i >= m_projectPaths.size()) m_projectsCB->setCurrentIndex(0);
-    m_projectsCB->blockSignals(false);
-    m_projectLocationFld->setPath(
-        Preferences::instance()->getDefaultProjectPath());
-    m_projectLocationFld->forceOpenBrowser();
-    return;
-  }
 
   TFilePath projectFp = m_projectPaths[index];
 
@@ -586,6 +588,57 @@ void StartupPopup::onProjectComboChanged(int index) {
   m_dpi = 120.0;
   RecentFiles::instance()->addFilePath(projectFp.getParentDir().getQString(),
                                        RecentFiles::Project);
+}
+
+//-----------------------------------------------------------------------------
+
+void StartupPopup::refreshExistingScenes() {
+  m_existingList->clearScenes();
+  TFilePathSet files, allFiles;
+
+  TFilePath scenesFolder =
+      TProjectManager::instance()->getCurrentProject()->getScenesPath();
+
+  QFileInfo scenesFolderInfo(toQString(scenesFolder));
+  if (scenesFolderInfo.isSymLink()) {
+    scenesFolder = TFilePath(scenesFolderInfo.symLinkTarget());
+  }
+
+  TFileStatus scenesFolderStatus(scenesFolder);
+  if (scenesFolderStatus.doesExist() && scenesFolderStatus.isDirectory() &&
+      scenesFolderStatus.isReadable()) {
+    try {
+      TSystem::readDirectory(files, allFiles, scenesFolder);
+    } catch (...) {
+    }
+  }
+
+  TFilePathSet::iterator it;
+  for (it = files.begin(); it != files.end(); ++it) {
+    if (it->getType() == "tnz") {
+      QString name = QString::fromStdWString(it->getWideName());
+      QString path = it->getQString();
+      m_existingList->addScene(name, path);
+    }
+  }
+  m_existingList->addScene(tr("New Scene"), ":");
+
+  QList<QString> recentFiles =
+      RecentFiles::instance()->getFilesNameList(RecentFiles::Scene);
+  m_existingList->findFirstScenePath(recentFiles);
+}
+
+//-----------------------------------------------------------------------------
+
+void StartupPopup::onExistingSceneClicked(int index) {
+  QString path = m_existingList->getPath(index);
+  if (path == ":") {
+    m_scenesTab->setCurrentIndex(1);
+    m_nameFld->setFocus();
+  } else {
+    IoCmd::loadScene(TFilePath(path.toStdWString()), true, true);
+    hide();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -671,101 +724,6 @@ void StartupPopup::onCreateButton() {
 
 //-----------------------------------------------------------------------------
 
-void StartupPopup::onProjectLocationChanged() {
-  TProjectManager *pm = TProjectManager::instance();
-  TFilePath path      = TFilePath(m_projectLocationFld->getPath());
-  if (!TSystem::doesExistFileOrLevel(path)) {
-    path =
-        TApp::instance()->getCurrentScene()->getScene()->decodeFilePath(path);
-    m_projectLocationFld->setPath(path.getQString());
-    if (!TSystem::doesExistFileOrLevel(path)) {
-      DVGui::warning(tr(
-          "This is not a valid folder.  Please choose an existing location."));
-      // checkProject();
-      m_projectsCB->blockSignals(true);
-      for (int i = 0; i < m_projectPaths.size(); i++) {
-        if (pm->getCurrentProjectPath() == m_projectPaths[i]) {
-          m_projectsCB->setCurrentIndex(i);
-          break;
-        }
-      }
-      m_projectsCB->blockSignals(false);
-      return;
-    }
-  }
-  if (!pm->isProject(path)) {
-    QStringList buttonList;
-    buttonList.append(tr("Yes"));
-    buttonList.append(tr("No"));
-    int answer = DVGui::MsgBox(tr("No project found at this location \n"
-                                  "What would you like to do?"),
-                               tr("Make a new project"), tr("Cancel"), 1, this);
-    if (answer != 1) {
-      m_projectLocationFld->setPath(TApp::instance()
-                                        ->getCurrentScene()
-                                        ->getScene()
-                                        ->getProject()
-                                        ->getProjectFolder()
-                                        .getQString());
-      m_projectsCB->blockSignals(true);
-      for (int i = 0; i < m_projectPaths.size(); i++) {
-        if (pm->getCurrentProjectPath() == m_projectPaths[i]) {
-          m_projectsCB->setCurrentIndex(i);
-          break;
-        }
-      }
-      m_projectsCB->blockSignals(false);
-    } else {
-      // Put the combo box back in case of cancelling
-      m_projectsCB->blockSignals(true);
-      for (int i = 0; i < m_projectPaths.size(); i++) {
-        if (pm->getCurrentProjectPath() == m_projectPaths[i]) {
-          m_projectsCB->setCurrentIndex(i);
-          break;
-        }
-      }
-      m_projectsCB->blockSignals(false);
-      ProjectCreatePopup *popup = new ProjectCreatePopup();
-      popup->setPath(path.getQString());
-      popup->exec();
-    }
-  } else {
-    if (!IoCmd::saveSceneIfNeeded(QObject::tr("Change Project"))) {
-      m_projectsCB->blockSignals(true);
-      for (int i = 0; i < m_projectPaths.size(); i++) {
-        if (pm->getCurrentProjectPath() == m_projectPaths[i]) {
-          m_projectsCB->setCurrentIndex(i);
-          break;
-        }
-      }
-      m_projectsCB->blockSignals(false);
-      m_projectLocationFld->blockSignals(true);
-      m_projectLocationFld->setPath(TApp::instance()
-                                        ->getCurrentScene()
-                                        ->getScene()
-                                        ->getProject()
-                                        ->getProjectFolder()
-                                        .getQString());
-      m_projectLocationFld->blockSignals(false);
-      return;
-    }
-    TProjectManager *pm   = TProjectManager::instance();
-    TFilePath projectPath = pm->projectFolderToProjectPath(path);
-    pm->setCurrentProjectPath(projectPath);
-    auto projectP = TProjectManager::instance()->getCurrentProject();
-
-    // In case the project file was upgraded to current version, save it now
-    if (projectP->getProjectPath() != projectPath) {
-      projectP->save();
-    }
-    RecentFiles::instance()->addFilePath(
-        projectPath.getParentDir().getQString(), RecentFiles::Project);
-    IoCmd::newScene();
-  }
-}
-
-//-----------------------------------------------------------------------------
-
 void StartupPopup::onProjectChanged(int index) {
   if (m_updating) return;
   TFilePath projectFp = m_projectPaths[index];
@@ -780,6 +738,15 @@ void StartupPopup::onProjectChanged(int index) {
     m_projectPaths[index] = currentProject->getProjectPath();
     currentProject->save();
   }
+
+  setupProjectChange();
+}
+
+//-----------------------------------------------------------------------------
+
+void StartupPopup::setupProjectChange() {
+  TProjectManager *pm      = TProjectManager::instance();
+  std::shared_ptr<TProject> currentProject = pm->getCurrentProject();
 
   IoCmd::newScene();
   m_pathFld->setPath(TApp::instance()
@@ -1044,6 +1011,44 @@ void StartupPopup::onNewProjectButtonPressed() {
 
 //-----------------------------------------------------------------------------
 
+void StartupPopup::onOpenProjectButtonPressed() {
+  TProjectManager *pm = TProjectManager::instance();
+
+  FileField::BrowserPopupController *bpc =
+      FileField::getBrowserPopupController();
+  if (!bpc) return;
+
+  QString directory;
+  TFilePath cfp = pm->getCurrentProject()->getProjectFolder();
+  bpc->openPopup(QStringList(), true, cfp.getQString(), this);
+  if (bpc->isExecute()) directory = bpc->getPath(false);
+
+  if (!directory.isEmpty()) {
+    TFilePath fp(directory);
+    TFilePath pfp = pm->projectFolderToProjectPath(fp);
+
+    if (TSystem::doesExistFileOrLevel(pfp))
+      pm->setCurrentProjectPath(pfp);
+    else
+      pm->setCurrentProjectPath(fp);
+
+    setupProjectChange();
+    updateProjectCB();
+    refreshExistingScenes();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void StartupPopup::onExploreProjectButtonPressed() {
+  TProjectManager *pm = TProjectManager::instance();
+  TFilePath cfp = pm->getCurrentProject()->getProjectFolder();
+
+  QDesktopServices::openUrl(QUrl("file:///" + cfp.getQString()));
+}
+
+//-----------------------------------------------------------------------------
+
 void StartupPopup::onSceneChanged() {
   // close the box if a recent scene has been selected
   if (!TApp::instance()->getCurrentScene()->getScene()->isUntitled()) {
@@ -1055,8 +1060,8 @@ void StartupPopup::onSceneChanged() {
                          ->getProject()
                          ->getProjectFolder();
     std::string pathStr = path.getQString().toStdString();
-    m_projectLocationFld->setPath(path.getQString());
     updateProjectCB();
+    refreshExistingScenes();
   }
 }
 
@@ -1239,6 +1244,126 @@ void StartupLabel::mousePressEvent(QMouseEvent *event) {
   m_text              = text();
   std::string strText = m_text.toStdString();
   emit wasClicked(m_index);
+}
+
+//-----------------------------------------------------------------------------
+
+StartupScenesList::StartupScenesList(QWidget *parent, const QSize &iconSize)
+    : QListWidget(parent), m_iconSize(iconSize) {
+  setObjectName("StartupScenesList");
+
+  setMovement(QListWidget::Static);
+  setFlow(QListView::Flow::LeftToRight);
+  setViewMode(QListWidget::IconMode);
+  setIconSize(m_iconSize);
+  setUniformItemSizes(true);
+  setMouseTracking(true);
+  horizontalScrollBar()->setCursor(Qt::ArrowCursor);
+  verticalScrollBar()->setCursor(Qt::ArrowCursor);
+
+  bool ret = connect(this, SIGNAL(itemClicked(QListWidgetItem *)), this,
+                     SLOT(onItemClicked(QListWidgetItem *)));
+  assert(ret);
+
+  clear();
+}
+
+StartupScenesList::~StartupScenesList() {}
+
+QPixmap StartupScenesList::createScenePreview(const QString &name,
+                                              const TFilePath &fp) {
+  TFilePath iconPath = ToonzScene::getIconPath(fp);
+  if (TFileStatus(iconPath).doesExist()) {
+    QPixmap scenePreview(iconPath.getQString());
+    if (!scenePreview.isNull()) {
+      QPixmap pixmap(m_iconSize);
+      pixmap.fill(Qt::transparent);
+      QPainter painter(&pixmap);
+      QPixmap scaledPixmap =
+          scenePreview.scaled(m_iconSize, Qt::AspectRatioMode::KeepAspectRatio);
+      painter.drawPixmap((m_iconSize.width() - scaledPixmap.width()) / 2,
+                         (m_iconSize.height() - scaledPixmap.height()) / 2,
+                         scaledPixmap);
+      QPen pen(Qt::black);
+      pen.setStyle(Qt::DotLine);
+      painter.setPen(pen);
+      painter.drawRect((m_iconSize.width() - scaledPixmap.width()) / 2,
+                       (m_iconSize.height() - scaledPixmap.height()) / 2,
+                       scaledPixmap.width() - 1,
+                       scaledPixmap.height() - 1);
+      return pixmap;
+    }
+  }
+  QPixmap pixmap(m_iconSize);
+  pixmap.fill(Qt::white);
+  return pixmap;
+}
+
+void StartupScenesList::clearScenes() {
+    clear();
+}
+
+void StartupScenesList::addScene(const QString &name, const QString &path) {
+  QPixmap pixmap;
+  if (path == ":")
+    pixmap =
+        generateIconPixmap("new_scene", 1.0, m_iconSize, Qt::KeepAspectRatio);
+  else
+    pixmap = createScenePreview(name, TFilePath(path));
+  QIcon icon(pixmap);
+
+  QListWidgetItem *lw = new QListWidgetItem(name);
+  lw->setData(Qt::UserRole, path);
+  lw->setToolTip(name);
+
+  lw->setIcon(icon);
+  addItem(lw);
+}
+
+void StartupScenesList::findFirstScenePath(const QList<QString> paths) {
+  int scenes = count();
+  if (scenes == 0) {
+    clearSelection();
+    return;
+  }
+
+  QList<QString> scenesPaths;
+  for (int i = 0; i < scenes; ++i) {
+    scenesPaths.append(item(i)->data(Qt::UserRole).toString());
+  }
+
+  int sceneIndex = 0;
+  int pathsCount = paths.count();
+  for (int i = 0; i < pathsCount; ++i) {
+    QString filename =
+        RecentFiles::instance()->getFilePath(i, RecentFiles::Scene);
+    int index = scenesPaths.indexOf(filename);
+    if (index >= 0) {
+      sceneIndex = index;
+      break;
+    }
+  }
+
+  setCurrentItem(item(sceneIndex));
+  clearSelection();
+}
+
+void StartupScenesList::mouseMoveEvent(QMouseEvent *event) {
+  QListWidgetItem *it = itemAt(event->pos());
+  if (it)
+    setCursor(Qt::PointingHandCursor);
+  else
+    unsetCursor();
+  setCurrentItem(it);
+}
+
+void StartupScenesList::leaveEvent(QEvent *event) {
+  unsetCursor();
+  clearSelection();
+}
+
+void StartupScenesList::onItemClicked(QListWidgetItem *item) {
+  emit itemClicked(row(item));
 }
 
 OpenPopupCommandHandler<StartupPopup> openStartupPopup(MI_StartupPopup);

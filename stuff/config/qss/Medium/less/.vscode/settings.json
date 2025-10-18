@@ -15,5 +15,6 @@
     "**/.vscode",
     "**/layouts",
     "**/themes"
-  ]
+  ],
+  "iis.configDir": ""
 }

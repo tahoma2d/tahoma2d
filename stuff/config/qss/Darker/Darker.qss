@@ -1690,6 +1690,7 @@ QDialog #dialogButtonFrame QPushButton:focus:pressed {
 /* -----------------------------------------------------------------------------
    Preferences
 ----------------------------------------------------------------------------- */
+#StartupPopup QListWidget,
 #StylusConfigPopup QListWidget,
 #PreferencesPopup QListWidget {
   background-color: #0c0c0c;
@@ -1697,16 +1698,19 @@ QDialog #dialogButtonFrame QPushButton:focus:pressed {
   border: 1 solid #060606;
   font-size: 13px;
 }
+#StartupPopup QListWidget::item,
 #StylusConfigPopup QListWidget::item,
 #PreferencesPopup QListWidget::item {
   border: 0;
   padding: 3;
 }
+#StartupPopup QListWidget::item:hover,
 #StylusConfigPopup QListWidget::item:hover,
 #PreferencesPopup QListWidget::item:hover {
   background-color: rgba(255, 255, 255, 0.1);
   color: #e6e6e6;
 }
+#StartupPopup QListWidget::item:selected,
 #StylusConfigPopup QListWidget::item:selected,
 #PreferencesPopup QListWidget::item:selected {
   background-color: #a35293;
