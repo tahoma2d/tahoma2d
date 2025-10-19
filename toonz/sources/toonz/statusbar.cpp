@@ -341,7 +341,9 @@ std::unordered_map<std::string, QString> StatusBar::makeMap(
                tr("Bend Tool: Bends vector shapes around the first click")});
   lMap.insert({"T_Iron", tr("Iron Tool: Smooths vector lines")});
   lMap.insert({"T_Cutter", tr("Cutter Tool: Splits vector lines")});
-  lMap.insert({"T_Hook", ""});
+  lMap.insert(
+      {"T_Hook", tr("Hook Tool: Create reference points to aid in movement "
+                    "or to link other objects by them")});
   lMap.insert(
       {"T_Skeleton", tr("Skeleton Tool: Allows to build a skeleton and animate "
                         "in a cut-out workflow")});
