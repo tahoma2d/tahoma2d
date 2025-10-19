@@ -246,7 +246,6 @@ private:
 class DVAPI TRasterImagePatternStrokeStyle final : public TOutlineStyle {
   static TFilePath m_rootDir;
   TPixel32 m_color;
-  TPixel32 lastColor;
   TTessellator *m_tessellator;
   
   protected:
@@ -254,6 +253,8 @@ class DVAPI TRasterImagePatternStrokeStyle final : public TOutlineStyle {
   TLevelP m_levelC;
   std::string m_name;
   double m_space, m_rotation;
+  bool m_flip;
+  TPixel32 lastColor;
   TFilePath m_basePath;
 
 public:
@@ -278,7 +279,6 @@ public:
   void drawRegion(const TColorFunction *cf, 
                   const bool antiAliasing,
                   TRegionOutline &boundary) const;
-  
 
   void invalidate(){};
 
@@ -310,6 +310,8 @@ public:
   void getParamRange(int index, double &min, double &max) const override;
   double getParamValue(TColorStyle::double_tag, int index) const override;
   void setParamValue(int index, double value) override;
+  bool getParamValue(TColorStyle::bool_tag, int index) const override;
+  void setParamValue(int index, bool value) override;
 
   TRectD getStrokeBBox(const TStroke *stroke) const override;
 

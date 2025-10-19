@@ -3472,7 +3472,7 @@ void SpecialStyleChooserPage::loadItems() {
     if (tagId == 3 ||     // solid color
         tagId == 4 ||     // texture
         tagId == 100 ||   // obsolete imagepattern id
-        tagId == 2000 ||  // imagepattern
+        tagId == 2100 ||  // imagepattern
         tagId == 2800 ||  // imagepattern
         tagId == 2001 ||  // cleanup
         tagId == 2002 ||  // black cleanup
