@@ -834,6 +834,8 @@ int main(int argc, char *argv[]) {
 
   if (Preferences::instance()->isTipsPopupEnabled()) {
     TipsPopup *tipsPopup = new TipsPopup();
+    tipsPopup->setModal(true); // On startup only, this forces to the top
+    tipsPopup->resize(600, 600);
     tipsPopup->show();
     tipsPopup->raise();
     tipsPopup->activateWindow();

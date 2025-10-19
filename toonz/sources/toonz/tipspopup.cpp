@@ -47,7 +47,6 @@ TipsPopup::TipsPopup()
   tipsFrame->setLayout(tipsLayout);
 
   QScrollArea *tipsArea = new QScrollArea();
-  tipsArea->setMinimumSize(500, 300);
   tipsArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   tipsArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   tipsArea->setWidgetResizable(true);
