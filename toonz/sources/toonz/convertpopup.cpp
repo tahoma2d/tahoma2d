@@ -45,7 +45,7 @@
 #include <QCheckBox>
 
 /*-- Format --*/
-TEnv::StringVar ConvertPopupFileFormat("ConvertPopupFileFormat", "tga");
+TEnv::StringVar ConvertPopupFileFormat("ConvertPopupFileFormat", "tif");
 /*-- 背景色 --*/
 TEnv::IntVar ConvertPopupBgColorR("ConvertPopupBgColorR", 255);
 TEnv::IntVar ConvertPopupBgColorG("ConvertPopupBgColorG", 255);
@@ -382,7 +382,7 @@ ConvertPopup::ConvertPopup(bool specifyInput)
     m_convertFileFld->setFileMode(QFileDialog::ExistingFile);
     QStringList filter;
     filter << "tif"
-           << "tiff"
+//           << "tiff"
            << "png"
            << "tga"
            << "tlv"
