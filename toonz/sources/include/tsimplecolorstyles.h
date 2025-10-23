@@ -251,19 +251,17 @@ class DVAPI TRasterImagePatternStrokeStyle final : public TOutlineStyle {
   protected:
   TLevelP m_level;
   TLevelP m_levelC;
-  std::string m_name;
+  std::string m_patternName;
   double m_space, m_rotation;
   bool m_flip;
   TPixel32 lastColor;
   TFilePath m_basePath;
 
 public:
-  TRasterImagePatternStrokeStyle(const TPixel32 &color = TPixel32::Black);
-  TRasterImagePatternStrokeStyle(const std::string &patternName,
-                                 const TPixel32 &color = TPixel32::Black);
+  TRasterImagePatternStrokeStyle();
+  TRasterImagePatternStrokeStyle(const std::string &patternName);
   TRasterImagePatternStrokeStyle(TFilePath basePath,
-                                 const std::string &patternName,
-                                 const TPixel32 &color = TPixel32::Black);
+                                 const std::string &patternName);
   ~TRasterImagePatternStrokeStyle();
 
   int getLevelFrameCount() { return m_level->getFrameCount(); }

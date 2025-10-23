@@ -969,54 +969,49 @@ TPixel32 TTextureStyle::getMainColor() const
 //    TRasterImagePatternStrokeStyle  implementation
 //*************************************************************************************
 
-TRasterImagePatternStrokeStyle::TRasterImagePatternStrokeStyle(
-    const TPixel32 &color)
-    : m_color(color), m_level(), m_levelC(), m_name(""), m_space(20), m_rotation(0), m_flip(false), m_tessellator(new TglTessellator) {
+TRasterImagePatternStrokeStyle::TRasterImagePatternStrokeStyle()
+    : m_color(TPixel32::Black), m_patternName(""), m_space(20), m_rotation(0), m_flip(false), m_tessellator(new TglTessellator) {
   m_basePath = getRootDir();
 }
 
 //-----------------------------------------------------------------------------
 
 TRasterImagePatternStrokeStyle::TRasterImagePatternStrokeStyle(
-    const std::string &patternName, const TPixel32 &color)
-    : m_color(color), m_level(), m_levelC(), m_name(patternName), m_space(20), m_rotation(0), m_flip(false), m_tessellator(new TglTessellator) {
+    const std::string &patternName)
+    : m_color(TPixel32::Black), m_patternName(patternName), m_space(20), m_rotation(0), m_flip(false), m_tessellator(new TglTessellator) {
   m_basePath = getRootDir();
-  if (m_name != "") loadLevel(m_name);
+  if (m_patternName != "") loadLevel(m_patternName);
 }
 
 //-----------------------------------------------------------------------------
 
 TRasterImagePatternStrokeStyle::TRasterImagePatternStrokeStyle(
-    TFilePath basePath, const std::string &patternName, const TPixel32 &color)
-    : m_color(color)
-    , m_level()
-    , m_levelC()
-    , m_name(patternName)
+    TFilePath basePath, const std::string &patternName)
+    : m_color(TPixel32::Black)
+    , m_patternName(patternName)
     , m_space(20)
     , m_rotation(0)
     , m_flip(false)
     , m_basePath(basePath)
     , m_tessellator(new TglTessellator) {
-  if (m_name != "") loadLevel(m_name);
+  if (m_patternName != "") loadLevel(m_patternName);
 }
 
 //-----------------------------------------------------------------------------
 
 TColorStyle *TRasterImagePatternStrokeStyle::clone() const {
   TRasterImagePatternStrokeStyle *theClone =
-      new TRasterImagePatternStrokeStyle(m_color);
+      new TRasterImagePatternStrokeStyle();
   theClone->m_level                                      = this->m_level;
-  theClone->m_name                                       = this->m_name;
+  theClone->m_patternName                                = this->m_patternName;
+  theClone->m_color                                      = this->m_color;
   theClone->m_space                                      = this->m_space;
   theClone->m_rotation                                   = this->m_rotation;
   theClone->m_flip                                       = this->m_flip;
   if (!this->m_basePath.isEmpty()) theClone->m_basePath  = this->m_basePath;
+  theClone->assignNames(this);
   return theClone;
 }
-
-//-----------------------------------------------------------------------------
-
-TRasterImagePatternStrokeStyle::~TRasterImagePatternStrokeStyle() { delete m_tessellator; }
 
 //-----------------------------------------------------------------------------
 
@@ -1031,6 +1026,10 @@ TColorStyle *TRasterImagePatternStrokeStyle::clone(
 
 //-----------------------------------------------------------------------------
 
+TRasterImagePatternStrokeStyle::~TRasterImagePatternStrokeStyle() { delete m_tessellator; }
+
+//-----------------------------------------------------------------------------
+
 QString TRasterImagePatternStrokeStyle::getDescription() const {
   return "TRasterImagePatternStrokeStyle";
 }
@@ -1038,13 +1037,13 @@ QString TRasterImagePatternStrokeStyle::getDescription() const {
 //-----------------------------------------------------------------------------
 
 std::string TRasterImagePatternStrokeStyle::getBrushIdName() const {
-  return "RasterImagePatternStrokeStyle:" + m_name;
+  return "RasterImagePatternStrokeStyle:" + m_patternName;
 }
 
 //-----------------------------------------------------------------------------
 
 void TRasterImagePatternStrokeStyle::makeIcon(const TDimension &size) {
-  if (!m_level) loadLevel(m_name);
+  if (!m_level) loadLevel(m_patternName);
   m_icon                   = TRaster32P();
   TLevel::Iterator frameIt = m_level->begin();
 
@@ -1187,7 +1186,7 @@ void TRasterImagePatternStrokeStyle::loadLevel(const std::string &patternName) {
   m_level = TLevelP();
 
   // aggiorno il nome
-  m_name = patternName;
+  m_patternName = patternName;
 
   // getRootDir() e' nulla se non si e' chiamata la setRoot(..)
   assert(!m_basePath.isEmpty());
@@ -1436,7 +1435,7 @@ void TRasterImagePatternStrokeStyle::drawRegion(const TColorFunction *cf, const 
 
 void TRasterImagePatternStrokeStyle::loadData(TInputStreamInterface &is) {
   m_level = TLevelP();
-  m_name  = "";
+  m_patternName  = "";
   std::string name;
   int flip;
   is >> name >> m_space >> m_rotation >> flip >> m_color;
@@ -1457,7 +1456,7 @@ void TRasterImagePatternStrokeStyle::loadData(int ids,
     throw TException("image pattern stroke style: unknown obsolete format");
 
   m_level = TLevelP();
-  m_name  = "";
+  m_patternName  = "";
   std::string name;
   if (ids == 100) is >> name;
   if (ids == 2000) is >> name >> m_space >> m_rotation;
@@ -1474,7 +1473,7 @@ void TRasterImagePatternStrokeStyle::loadData(int ids,
 void TRasterImagePatternStrokeStyle::saveData(
     TOutputStreamInterface &os) const {
   int flip = m_flip ? 1 : 0;
-  os << m_name << m_space << m_rotation << flip << m_color;
+  os << m_patternName << m_space << m_rotation << flip << m_color;
 }
 
 //-----------------------------------------------------------------------------
