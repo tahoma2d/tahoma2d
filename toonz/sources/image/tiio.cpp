@@ -122,7 +122,7 @@ void initImageIo(bool lightVersion) {
   Tiio::defineWriterProperties("png", new Tiio::PngWriterProperties());
 
   Tiio::defineReaderMaker("tga", Tiio::makeTgaReader);
-  Tiio::defineWriterMaker("tga", Tiio::makeTgaWriter, false);
+  Tiio::defineWriterMaker("tga", Tiio::makeTgaWriter, true);
   TFileType::declare("tga", TFileType::RASTER_IMAGE);
   Tiio::defineWriterProperties("tga", new Tiio::TgaWriterProperties());
 
@@ -141,12 +141,12 @@ void initImageIo(bool lightVersion) {
 #endif
 
   Tiio::defineReaderMaker("sgi", Tiio::makeSgiReader);
-  Tiio::defineWriterMaker("sgi", Tiio::makeSgiWriter, false);
+  Tiio::defineWriterMaker("sgi", Tiio::makeSgiWriter, true);
   TFileType::declare("sgi", TFileType::RASTER_IMAGE);
   Tiio::defineWriterProperties("sgi", new Tiio::SgiWriterProperties());
 
   Tiio::defineReaderMaker("rgb", Tiio::makeSgiReader);
-  Tiio::defineWriterMaker("rgb", Tiio::makeSgiWriter, false);
+  Tiio::defineWriterMaker("rgb", Tiio::makeSgiWriter, true);
   TFileType::declare("rgb", TFileType::RASTER_IMAGE);
   Tiio::defineWriterProperties("rgb", new Tiio::SgiWriterProperties());
 
