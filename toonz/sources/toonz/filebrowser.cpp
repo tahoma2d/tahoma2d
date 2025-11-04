@@ -1629,33 +1629,39 @@ void RenameAsToonzPopup::onOk() {
            "characters:(new line)  \\ / : * ? \"  |"));
     return;
   }
+  if (m_name->text() == m_origName) {
+    DVGui::error(tr("Name has not changed. Try something else."));
+    return;
+  }
   if (isReservedFileName_message(m_name->text())) return;
   accept();
 }
 
 RenameAsToonzPopup::RenameAsToonzPopup(const QString name, int frames)
-    : Dialog(TApp::instance()->getMainWindow(), true, true, "RenameAsToonz") {
+    : Dialog(TApp::instance()->getMainWindow(), true, true, "RenameAsToonz")
+    , m_origName(name)
+    , m_frames(frames) {
   setWindowTitle(QString(tr("Rename")));
 
   beginHLayout();
 
   QLabel *lbl;
-  if (frames == -1)
-    lbl = new QLabel(QString(tr("Renaming File ")) + name);
+  if (m_frames == -1)
+    lbl = new QLabel(QString(tr("Renaming File '%1'").arg(name)));
   else
-    lbl = new QLabel(
-        QString(tr("Creating an animation level of %1 frames").arg(frames)));
+    lbl = new QLabel(QString(tr("Renaming File Sequence '%1' [%2 Frame(s)]")
+                                 .arg(name)
+                                 .arg(m_frames)));
   lbl->setFixedHeight(20);
   lbl->setObjectName("TitleTxtLabel");
 
-  m_name = new LineEdit(frames == -1 ? "" : name);
+  m_name = new LineEdit(name);
   m_name->setFixedHeight(20);
   // connect(m_name, SIGNAL(editingFinished()), SLOT(onNameChanged()));
   // addWidget(tr("Level Name:"),m_name);
 
-  m_overwrite = new QCheckBox(tr("Delete Original Files"));
-  m_overwrite->setFixedHeight(20);
-  // addWidget(m_overwrite, false);
+  m_createCopy = new QCheckBox(tr("Create copy and rename"));
+  m_createCopy->setFixedHeight(20);
 
   QFormLayout *formLayout = new QFormLayout;
 
@@ -1665,8 +1671,8 @@ RenameAsToonzPopup::RenameAsToonzPopup(const QString name, int frames)
   labelLayout->addStretch();
 
   formLayout->addRow(labelLayout);
-  formLayout->addRow(tr("Level Name:"), m_name);
-  formLayout->addRow(m_overwrite);
+  formLayout->addRow(tr("New Name:"), m_name);
+  formLayout->addRow(m_createCopy);
 
   addLayout(formLayout);
 
@@ -1705,13 +1711,19 @@ bool parsePathName(const QString &fullpath, QString &parentPath, QString &name,
   if (format == "") return false;
 
   index--;
+
+  if (filename.at(index) == "." || filename.at(index) == "_") {
+    name = filename.left(index);
+    return true;  // .. or ._ file level notation
+  }
+
   if (!filename.at(index).isDigit()) return false;
 
   while (index >= 0 && filename.at(index).isDigit()) index--;
 
   if (index < 0) return false;
 
-  name = filename.left(index + 1);
+  name = filename.left(index);
 
   return true;
 }
@@ -1762,91 +1774,55 @@ QString getFrame(const QString &filename) {
   return QString(padStr);
 }
 
-//------------------------------------------------------------------
+//---------------------------------------------------------
 
-//-----------------------------------------------------------
-
-void renameSingleFileOrToonzLevel(const QString &fullpath) {
+void renameSingleFileOrToonzLevel(const QString &fullpath, int frameCount) {
   TFilePath fpin(fullpath.toStdString());
 
-  RenameAsToonzPopup popup(
-      QString::fromStdWString(fpin.withoutParentDir().getWideString()));
+  QString oldName = QString::fromStdWString(
+      fpin.withoutParentDir().withType("").getWideString());
+  while (oldName.endsWith('_') || oldName.endsWith('.') ||
+         oldName.endsWith(' '))
+    oldName.chop(1);
+
+  RenameAsToonzPopup popup(oldName, frameCount);
   if (popup.exec() != QDialog::Accepted) return;
 
   std::string name = popup.getName().toStdString();
 
-  if (name == fpin.getName()) {
-    DVGui::error(QString(
-        QObject::tr("The specified name is already assigned to the %1 file.")
-            .arg(fullpath)));
-    return;
+  TFilePath newFile = fpin.withName(name);
+
+  if (TSystem::doesExistFileOrLevel(newFile)) {
+    int ret = DVGui::MsgBox(
+        QObject::tr("Warning: file or level %1 already exists; overwrite?")
+            .arg(toQString(newFile)),
+        QObject::tr("Yes"), QObject::tr("No"), 1);
+    if (ret == 2 || ret == 0) return;
+    TSystem::removeFileOrLevel(newFile);
   }
 
-  if (popup.doOverwrite())
-    TSystem::renameFileOrLevel(fpin.withName(name), fpin, true);
-  else
-    TSystem::copyFileOrLevel(fpin.withName(name), fpin);
+  if (!popup.doCreatecopy())
+    TSystem::renameFileOrLevel(newFile, fpin, true);
+  else {
+    if (TSystem::copyFileOrLevel(newFile, fpin)) {
+      if (fpin.getType() == "tlv")
+        TSystem::copyFileOrLevel(newFile.withType("tpl"), fpin.withType("tpl"));
+    }
+  }
 }
 
 //----------------------------------------------------------
 
 void doRenameAsToonzLevel(const QString &fullpath) {
   QString parentPath, name, format;
+  int frameCount = -1;
 
-  if (!parsePathName(fullpath, parentPath, name, format)) {
-    renameSingleFileOrToonzLevel(fullpath);
-    return;
+  if (parsePathName(fullpath, parentPath, name, format)) {
+    QStringList pathIn;
+    getLevelFiles(parentPath, name, format, pathIn);
+    frameCount = pathIn.size();
   }
-
-  QStringList pathIn;
-
-  getLevelFiles(parentPath, name, format, pathIn);
-
-  if (pathIn.empty()) return;
-
-  while (name.endsWith('_') || name.endsWith('.') || name.endsWith(' '))
-    name.chop(1);
-
-  RenameAsToonzPopup popup(name, pathIn.size());
-  if (popup.exec() != QDialog::Accepted) return;
-
-  name = popup.getName();
-
-  QString levelOutStr = parentPath + "/" + name + ".." + format;
-
-  TFilePath levelOut(levelOutStr.toStdWString());
-  if (TSystem::doesExistFileOrLevel(levelOut)) {
-    QApplication::restoreOverrideCursor();
-    int ret = DVGui::MsgBox(
-        QObject::tr("Warning: level %1 already exists; overwrite?")
-            .arg(toQString(levelOut)),
-        QObject::tr("Yes"), QObject::tr("No"), 1);
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    if (ret == 2 || ret == 0) return;
-    TSystem::removeFileOrLevel(levelOut);
-  }
-
-  int i;
-  for (i = 0; i < pathIn.size(); i++) {
-    QString padStr = getFrame(pathIn[i]);
-    if (padStr == "") continue;
-    QString pathOut = parentPath + "/" + name + "." + padStr + "." + format;
-
-    if (popup.doOverwrite()) {
-      if (!QFile::rename(parentPath + "/" + pathIn[i], pathOut)) {
-        QString tmp(parentPath + "/" + pathIn[i]);
-        DVGui::error(QString(
-            QObject::tr("It is not possible to rename the %1 file.").arg(tmp)));
-        return;
-      }
-    } else if (!QFile::copy(parentPath + "/" + pathIn[i], pathOut)) {
-      QString tmp(parentPath + "/" + pathIn[i]);
-      DVGui::error(QString(
-          QObject::tr("It is not possible to copy the %1 file.").arg(tmp)));
-
-      return;
-    }
-  }
+  renameSingleFileOrToonzLevel(fullpath, frameCount);
 }
 
 }  // namespace
