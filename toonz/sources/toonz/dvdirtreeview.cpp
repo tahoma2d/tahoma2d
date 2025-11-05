@@ -117,7 +117,7 @@ QWidget *DvDirTreeViewDelegate::createEditor(QWidget *parent,
       dynamic_cast<DvDirModelFileFolderNode *>(node);
   if (!fnode || fnode->isProjectFolder()) return 0;
   QPixmap px = node->getPixmap(m_treeView->isExpanded(index));
-  QRect rect = option.rect;
+  QRect rect = option.rect.adjusted(-option.decorationSize.width() - 2, 0, 0, 0);
   if (index.data().canConvert(QMetaType::QString)) {
     NodeEditor *editor = new NodeEditor(parent, rect, px.width());
     editor->setText(index.data().toString());
