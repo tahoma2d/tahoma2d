@@ -27,6 +27,8 @@
 #include "toutputproperties.h"
 #include "toonz/preferences.h"
 #include "toonz/tproject.h"
+#include "toonz/txshsimplelevel.h"
+#include "toonz/txshzeraryfxlevel.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -718,11 +720,8 @@ void BaseViewerPanel::changeWindowTitle() {  // �v�m�F
       parentWidget()->setWindowTitle(name);
       return;
     }
-    TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
-    TXshCell cell;
-    if (app->getCurrentColumn()->getColumn() &&
-        !app->getCurrentColumn()->getColumn()->getSoundColumn())
-      cell = xsh->getCell(frame, col);
+    TXsheet *xsh  = app->getCurrentXsheet()->getXsheet();
+    TXshCell cell = xsh->getCell(frame, col);
     if (cell.isEmpty()) {
       if (!m_sceneViewer->is3DView()) {
         TAffine aff = m_sceneViewer->getViewMatrix() *
@@ -738,10 +737,16 @@ void BaseViewerPanel::changeWindowTitle() {  // �v�m�F
       parentWidget()->setWindowTitle(name);
       return;
     }
-    assert(cell.m_level.getPointer());
-    TFilePath fp(cell.m_level->getName());
-    QString imageName =
-        QString::fromStdWString(fp.withFrame(cell.m_frameId).getWideString());
+    QString imageName;
+    if (cell.m_level) {
+      if (cell.getSoundLevel()) {
+        imageName = QString::fromStdWString(cell.getSoundLevel()->getName());
+      } else if (!cell.getSoundTextLevel() && !cell.getZeraryFxLevel()) {
+        TFilePath fp(cell.m_level->getName());
+        imageName = QString::fromStdWString(
+            fp.withFrame(cell.m_frameId).getWideString());
+      }
+    }
     name = name + tr("   ::   Level: ") + imageName;
   }
   // if the frame type is "level editing"
