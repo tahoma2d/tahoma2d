@@ -41,6 +41,7 @@
 // TnzCore includes
 #include "tiio.h"
 #include "tproperty.h"
+#include "tpixelutils.h"
 
 // Qt includes
 #include <QDir>
@@ -178,6 +179,7 @@ void ExportLevelPopup::Swatch::paintGL() {
   // image is supposedly premultiplied - and it works because the
   // viewer's background is opaque.
   // See tpixelutils.h's overPixT function for comparison.
+  // The background color must be premultiplied before draw to m_img
 
   pushGLWorldCoordinates();
   {
@@ -361,9 +363,9 @@ ExportLevelPopup::ExportLevelPopup()
   // Establish connections
   bool ret = true;
   ret      = connect(tabBar, SIGNAL(currentChanged(int)), stackedWidget,
-                SLOT(setCurrentIndex(int)));
-  ret      = connect(m_format, SIGNAL(currentTextChanged(const QString &)),
-                SLOT(onformatChanged(const QString &))) &&
+                     SLOT(setCurrentIndex(int)));
+  ret      = connect(m_format, SIGNAL(currentIndexChanged(const QString &)),
+                     SLOT(onformatChanged(const QString &))) &&
         ret;
   ret = connect(m_retas, SIGNAL(stateChanged(int)), SLOT(onRetas(int))) && ret;
   ret = connect(m_formatOptions, SIGNAL(clicked()), SLOT(onOptionsClicked())) &&
@@ -688,7 +690,7 @@ bool ExportLevelPopup::execute() {
 void ExportLevelPopup::initFolder() {
   TFilePath fp;
 
-  auto project = TProjectManager::instance()->getCurrentProject();
+  auto project      = TProjectManager::instance()->getCurrentProject();
   ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
 
   if (scene) fp = scene->decodeFilePath(TFilePath("+drawings"));
@@ -935,7 +937,8 @@ void ExportLevelPopup::ExportOptions::showEvent(QShowEvent *se) {
 IoCmd::ExportLevelOptions ExportLevelPopup::ExportOptions::getOptions() const {
   IoCmd::ExportLevelOptions opts;
 
-  opts.m_bgColor     = m_bgColorField->getColor();
+  opts.m_bgColor = premultiply(m_bgColorField->getColor());
+
   opts.m_noAntialias = m_noAntialias->isChecked();
 
   opts.m_camera.setSize(

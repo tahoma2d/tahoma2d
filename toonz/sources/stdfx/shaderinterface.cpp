@@ -602,15 +602,14 @@ void ShaderInterface::Parameter::loadData(TIStream &is) {
         (std::numeric_limits<GLfloat>::max)();
     break;
   case VEC3:
-    m_default.m_vec3[0] = m_default.m_vec3[1] = m_default.m_vec3[1] = 0.0;
+    m_default.m_vec3[0] = m_default.m_vec3[1] = m_default.m_vec3[2] = 0.0;
     m_range[0].m_vec3[0] = m_range[0].m_vec3[1] = m_range[0].m_vec3[2] =
         -(std::numeric_limits<GLfloat>::max)();
     m_range[1].m_vec3[0] = m_range[1].m_vec3[1] = m_range[1].m_vec3[2] =
         (std::numeric_limits<GLfloat>::max)();
     break;
   case VEC4:
-    m_default.m_vec4[0] = m_default.m_vec4[1] = m_default.m_vec4[1] =
-        m_default.m_vec4[1]                   = 0.0;
+    m_default.m_vec4[0] = m_default.m_vec4[1] = m_default.m_vec4[2] = m_default.m_vec4[3] = 0.0;
     m_range[0].m_vec4[0] = m_range[0].m_vec4[1] = m_range[0].m_vec4[2] =
         m_range[0].m_vec4[3] = -(std::numeric_limits<GLfloat>::max)();
     m_range[1].m_vec4[0] = m_range[1].m_vec4[1] = m_range[1].m_vec4[2] =
@@ -629,15 +628,14 @@ void ShaderInterface::Parameter::loadData(TIStream &is) {
         (std::numeric_limits<GLint>::max)();
     break;
   case IVEC3:
-    m_default.m_ivec3[0] = m_default.m_ivec3[1] = m_default.m_ivec3[1] = 0;
+    m_default.m_ivec3[0] = m_default.m_ivec3[1] = m_default.m_ivec3[2] = 0;
     m_range[0].m_ivec3[0] = m_range[0].m_ivec3[1] = m_range[0].m_ivec3[2] =
         -(std::numeric_limits<GLint>::max)();
     m_range[1].m_ivec3[0] = m_range[1].m_ivec3[1] = m_range[1].m_ivec3[2] =
         (std::numeric_limits<GLint>::max)();
     break;
   case IVEC4:
-    m_default.m_ivec4[0] = m_default.m_ivec4[1] = m_default.m_ivec4[1] =
-        m_default.m_ivec4[1]                    = 0;
+    m_default.m_ivec4[0] = m_default.m_ivec4[1] = m_default.m_ivec4[2] = m_default.m_ivec4[3] = 0;
     m_range[0].m_ivec4[0] = m_range[0].m_ivec4[1] = m_range[0].m_ivec4[2] =
         m_range[0].m_ivec4[3] = -(std::numeric_limits<GLint>::max)();
     m_range[1].m_ivec4[0] = m_range[1].m_ivec4[1] = m_range[1].m_ivec4[2] =

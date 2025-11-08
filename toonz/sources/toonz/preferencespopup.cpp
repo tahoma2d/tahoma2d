@@ -1689,6 +1689,10 @@ PreferencesPopup::PreferencesPopup()
   m_topLayout->setContentsMargins(0, 0, 0, 0);
   m_topLayout->addLayout(mainLayout);
 
+#ifdef MACOSX
+  setWindowFlags(Qt::Tool);
+#endif
+
   bool ret = connect(m_categoryList, SIGNAL(currentRowChanged(int)),
                      m_stackedWidget, SLOT(setCurrentIndex(int)));
 

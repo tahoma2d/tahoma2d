@@ -1531,6 +1531,9 @@ QStatusBar #StatusBarLabel {
 #TitleTxtLabel {
   color: #000000;
 }
+DVGui--Separator {
+  alternate-background-color: #000;
+}
 /* -----------------------------------------------------------------------------
    Style Editor
 ----------------------------------------------------------------------------- */

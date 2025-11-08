@@ -944,8 +944,7 @@ void HexagonalColorWheel::mouseReleaseEvent(QMouseEvent *event) {
 void HexagonalColorWheel::clickLeftWheel(const QPoint &pos) {
   QLineF p(m_wp[0] + m_wheelPosition, QPointF(pos));
   QLineF horizontal(0, 0, 1, 0);
-  float theta =
-      (p.dy() < 0) ? 360 - p.angleTo(horizontal) : horizontal.angleTo(p);
+  float theta = (p.dy() >= 0) ? horizontal.angleTo(p) : 360 - p.angleTo(horizontal);
   float phi = theta;
   while (phi >= 60.0f) phi -= 60.0f;
   phi -= 30.0f;

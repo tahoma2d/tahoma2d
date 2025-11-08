@@ -277,7 +277,7 @@ public:
   }
 
   void setArgPathValue(std::string key, std::string value) {
-    m_argPathValues.emplace(key, value);
+    m_argPathValues.insert_or_assign(key, value);
     if (key == m_systemVarPrefix + "PROFILES") updateEnvFile();
   }
 

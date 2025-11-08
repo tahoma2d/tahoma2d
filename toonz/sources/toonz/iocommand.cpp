@@ -23,6 +23,7 @@
 #include "expressionreferencemanager.h"
 #include "levelcommand.h"
 #include "columncommand.h"
+#include "tstreamexception.h"
 
 // TnzTools includes
 #include "tools/toolhandle.h"
@@ -2061,6 +2062,17 @@ bool IoCmd::loadScene(const TFilePath &path, bool updateRecentFile,
       scene->setProject(currentProject);
     }
     VersionControlManager::instance()->setFrameRange(scene->getLevelSet());
+  } catch (TException &e) {
+    printf("%s:%s TException ...:\n", __FILE__, __FUNCTION__);
+
+    QString detailMsg = QString::fromStdWString(e.getMessage());
+
+    QString msg =
+        QObject::tr("There were problems loading the scene %1.\nDetails:\n\n%2")
+            .arg(QString::fromStdWString(scenePath.getWideString()))
+            .arg(detailMsg);
+
+    DVGui::warning(msg);
   } catch (...) {
     printf("%s:%s Exception ...:\n", __FILE__, __FUNCTION__);
     QString msg;
