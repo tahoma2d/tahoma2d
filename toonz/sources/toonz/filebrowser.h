@@ -274,12 +274,14 @@ class RenameAsToonzPopup final : public DVGui::Dialog {
   Q_OBJECT
   QPushButton *m_okBtn, *m_cancelBtn;
   DVGui::LineEdit *m_name;
-  QCheckBox *m_overwrite;
+  QCheckBox *m_createCopy;
+  QString m_origName;
+  int m_frames;
 
 public:
   RenameAsToonzPopup(const QString name = "", int frames = -1);
 
-  bool doOverwrite() { return m_overwrite->isChecked(); }
+  bool doCreatecopy() { return m_createCopy->isChecked(); }
   QString getName() { return m_name->text(); }
 
 private:
