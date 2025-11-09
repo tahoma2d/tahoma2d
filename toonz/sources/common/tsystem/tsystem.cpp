@@ -851,6 +851,23 @@ bool TSystem::doesExistFileOrLevel(const TFilePath &fp) {
 
 void TSystem::copyFileOrLevel_throw(const TFilePath &dst,
                                     const TFilePath &src) {
+  if (src.getType() == "tnz") {
+    // Special case: copy scene file icon, if present
+    TFilePath srciconDir = src.getParentDir() + "sceneIcons";
+    TFilePath dsticonDir = src.getParentDir() + "sceneIcons";
+
+    TFilePath srciconname(src.withParentDir(srciconDir)
+                              .withName(src.getName() + " ")
+                              .withType("png"));
+    TFilePath dsticonname(dst.withParentDir(dsticonDir)
+                              .withName(dst.getName() + " ")
+                              .withType("png"));
+
+    if (TSystem::doesExistFileOrLevel(src) &&
+        TSystem::doesExistFileOrLevel(srciconname))
+      TSystem::copyFile(dsticonname, srciconname, false);
+  }
+    
   if (src.isLevelName()) {
     TFilePathSet files;
     files = TSystem::readDirectory(src.getParentDir(), false);
@@ -888,6 +905,23 @@ void TSystem::renameFileOrLevel_throw(const TFilePath &dst,
       TSystem::renameFile(dstpltname, srcpltname, false);
   }
 
+  if (src.getType() == "tnz") {
+    // Special case: rename scene file icon, if present
+    TFilePath srciconDir = src.getParentDir() + "sceneIcons";
+    TFilePath dsticonDir = src.getParentDir() + "sceneIcons";
+
+    TFilePath srciconname(src.withParentDir(srciconDir)
+                              .withName(src.getName() + " ")
+                              .withType("png"));
+    TFilePath dsticonname(dst.withParentDir(dsticonDir)
+                              .withName(dst.getName() + " ")
+                              .withType("png"));
+
+    if (TSystem::doesExistFileOrLevel(src) &&
+        TSystem::doesExistFileOrLevel(srciconname))
+      TSystem::renameFile(dsticonname, srciconname, false);
+  }
+
   if (src.isLevelName()) {
     TFilePathSet files;
     files = TSystem::readDirectory(src.getParentDir(), false);
@@ -907,6 +941,19 @@ void TSystem::renameFileOrLevel_throw(const TFilePath &dst,
 //--------------------------------------------------------------
 
 void TSystem::removeFileOrLevel_throw(const TFilePath &fp) {
+  if (fp.getType() == "tnz") {
+    // Special case: copy scene file icon, if present
+    TFilePath fpiconDir = fp.getParentDir() + "sceneIcons";
+
+    TFilePath fpiconname(fp.withParentDir(fpiconDir)
+                             .withName(fp.getName() + " ")
+                             .withType("png"));
+
+    if (TSystem::doesExistFileOrLevel(fp) &&
+        TSystem::doesExistFileOrLevel(fpiconname))
+      TSystem::deleteFile(fpiconname);
+  }
+
   if (fp.isLevelName()) {
     TFilePathSet files;
     files = TSystem::readDirectory(fp.getParentDir(), false, true, true);
@@ -937,6 +984,19 @@ void TSystem::hideFileOrLevel_throw(const TFilePath &fp) {
 //--------------------------------------------------------------
 
 void TSystem::moveFileOrLevelToRecycleBin_throw(const TFilePath &fp) {
+  if (fp.getType() == "tnz") {
+    // Special case: copy scene file icon, if present
+    TFilePath fpiconDir = fp.getParentDir() + "sceneIcons";
+
+    TFilePath fpiconname(fp.withParentDir(fpiconDir)
+                             .withName(fp.getName() + " ")
+                             .withType("png"));
+
+    if (TSystem::doesExistFileOrLevel(fp) &&
+        TSystem::doesExistFileOrLevel(fpiconname))
+      TSystem::moveFileToRecycleBin(fpiconname);
+  }
+
   if (fp.isLevelName()) {
     TFilePathSet files;
     files = TSystem::readDirectory(fp.getParentDir(), false, true, true);

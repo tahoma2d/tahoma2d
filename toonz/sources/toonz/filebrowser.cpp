@@ -1208,7 +1208,7 @@ QMenu *FileBrowser::getContextMenu(QWidget *parent, int index) {
 
     if (!areFullcolor) menu->addSeparator();
   }
-  if (files.size() == 1 && files[0].getType() != "tnz") {
+  if (files.size() == 1) {
     QAction *action =
         new QAction(QIcon(createQIcon("rename")), tr("Rename"), menu);
     ret = ret && connect(action, SIGNAL(triggered()), this,
@@ -1817,7 +1817,7 @@ void doRenameAsToonzLevel(const QString &fullpath) {
   QString parentPath, name, format;
   int frameCount = -1;
 
-  if (parsePathName(fullpath, parentPath, name, format)) {
+  if (parsePathName(fullpath, parentPath, name, format) && format != "tnz") {
     QStringList pathIn;
     getLevelFiles(parentPath, name, format, pathIn);
     frameCount = pathIn.size();

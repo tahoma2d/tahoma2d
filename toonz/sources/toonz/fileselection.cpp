@@ -151,8 +151,8 @@ public:
     for (i = 0; i < (int)m_newFiles.size(); i++) {
       TFilePath path = m_newFiles[i];
       if (!TSystem::doesExistFileOrLevel(path)) continue;
-      if (path.getType() == "tnz")
-        TSystem::rmDirTree(path.getParentDir() + (path.getName() + "_files"));
+//      if (path.getType() == "tnz")
+//        TSystem::rmDirTree(path.getParentDir() + (path.getName() + "_files"));
       try {
         TSystem::removeFileOrLevel(path);
       } catch (...) {
