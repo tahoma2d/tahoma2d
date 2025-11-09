@@ -301,50 +301,37 @@ void DvDirModelFileFolderNode::refreshChildren() {
   std::vector<std::wstring> names;
   getChildrenNames(names);
 
-  std::vector<DvDirModelNode *> oldChildren = m_children;
+  std::vector<DvDirModelNode *> oldChildren;
+  oldChildren.swap(m_children);
 
-  // synchronize nodes for each items in the current folder
-  QModelIndex index = DvDirModel::instance()->getIndexByNode(this);
-  int i, j;
+  std::vector<DvDirModelNode *>::iterator j;
+  int i;
   for (i = 0; i < (int)names.size(); i++) {
     std::wstring name = names[i];
-
-    // check if the item is already in the children nodes
-    for (j = i; j < m_children.size() && m_children[j]->getName() != name;
-         j++) {
+    for (j = oldChildren.begin();
+         j != oldChildren.end() && (*j)->getName() != name; ++j) {
     }
-    // if the child is already registered
-    if (j < m_children.size()) {
-      if (i != j) {
-        // swap node order
-        DvDirModel::instance()->notifyBeginMoveRows(index, j, j, index, i);
-        std::swap(m_children[i], m_children[j]);
-        DvDirModel::instance()->notifyEndMoveRows();
-      }
-    }
-    // if not, create a new child and insert
-    else {
-      DvDirModelNode *child = makeChild(name);
+    DvDirModelNode *child = 0;
+    if (j != oldChildren.end()) {
+      child = *j;
+      oldChildren.erase(j);
+    } else {
+      child = makeChild(name);
       if (DvDirModelFileFolderNode *folderNode =
               dynamic_cast<DvDirModelFileFolderNode *>(child))
         folderNode->setPeeking(m_peeks);
-      assert(child);
-      DvDirModel::instance()->notifyBeginInsertRows(index, i, i);
-      addChild(child);
-      DvDirModel::instance()->notifyEndInsertRows();
     }
-  }
-  // delete rest of the children nodes
-  for (j = m_children.size() - 1; j >= i; j--) {
-    DvDirModelNode *child = m_children[j];
-    DvDirModel::instance()->notifyBeginRemoveRows(index, j, j);
-    m_children.erase(m_children.begin() + j);
-    DvDirModel::instance()->notifyEndRemoveRows();
 
+    if (!child) continue;
+
+    addChild(child);
+  }
+  for (j = oldChildren.begin(); j != oldChildren.end(); ++j) {
+    DvDirModelNode *child = *j;
     if (!!child && child->hasChildren())
       child->removeChildren(0, child->getChildCount());
 
-    delete child;
+    delete *j;
   }
 
   m_hasChildren = (m_children.size() > 0);
@@ -919,26 +906,14 @@ DvDirModelHistoryNode::DvDirModelHistoryNode(DvDirModelNode *parent)
 //-----------------------------------------------------------------------------
 
 void DvDirModelHistoryNode::refreshChildren() {
-  QModelIndex index = DvDirModel::instance()->getIndexByNode(this);
-  m_childrenValid   = true;
-  if (!m_children.empty()) {
-    DvDirModel::instance()->notifyBeginRemoveRows(index, 0,
-                                                  m_children.size() - 1);
-    clearPointerContainer(m_children);
-    DvDirModel::instance()->notifyEndRemoveRows();
-  }
-
-  History *h   = History::instance();
-  int dayCount = h->getDayCount();
-  if (dayCount > 0) {
-    DvDirModel::instance()->notifyBeginInsertRows(index, 0, dayCount);
-    for (int i = 0; i < dayCount; i++) {
-      const History::Day *day = h->getDay(i);
-      DvDirModelNode *child =
-          new DvDirModelDayNode(this, ::to_wstring(day->getDate()));
-      addChild(child);
-    }
-    DvDirModel::instance()->notifyEndInsertRows();
+  m_children.clear();
+  m_childrenValid = true;
+  History *h      = History::instance();
+  for (int i = 0; i < h->getDayCount(); i++) {
+    const History::Day *day = h->getDay(i);
+    DvDirModelNode *child =
+        new DvDirModelDayNode(this, ::to_wstring(day->getDate()));
+    addChild(child);
   }
 }
 
@@ -965,15 +940,8 @@ DvDirModelMyComputerNode::DvDirModelMyComputerNode(DvDirModelNode *parent)
 //-----------------------------------------------------------------------------
 
 void DvDirModelMyComputerNode::refreshChildren() {
-  QModelIndex index = DvDirModel::instance()->getIndexByNode(this);
-  m_childrenValid   = true;
-
-  if (!m_children.empty()) {
-    DvDirModel::instance()->notifyBeginRemoveRows(index, 0,
-                                                  m_children.size() - 1);
-    clearPointerContainer(m_children);
-    DvDirModel::instance()->notifyEndRemoveRows();
-  }
+  m_childrenValid = true;
+  if (!m_children.empty()) clearPointerContainer(m_children);
 
   TFilePathSet fps = TSystem::getDisks();
 
@@ -981,14 +949,12 @@ void DvDirModelMyComputerNode::refreshChildren() {
   fps.push_back(TFilePath("/Volumes/"));
 #endif
 
-  DvDirModel::instance()->notifyBeginInsertRows(index, 0, fps.size() - 1);
   TFilePathSet::iterator it;
   for (it = fps.begin(); it != fps.end(); ++it) {
     DvDirModelNode *child =
         new DvDirModelFileFolderNode(this, it->getWideString(), *it);
     addChild(child);
   }
-  DvDirModel::instance()->notifyEndInsertRows();
 }
 
 //-----------------------------------------------------------------------------
@@ -1013,15 +979,9 @@ DvDirModelNetworkNode::DvDirModelNetworkNode(DvDirModelNode *parent)
 //-----------------------------------------------------------------------------
 
 void DvDirModelNetworkNode::refreshChildren() {
-  QModelIndex index = DvDirModel::instance()->getIndexByNode(this);
-  m_childrenValid   = true;
+  m_childrenValid = true;
 
-  if (!m_children.empty()) {
-    DvDirModel::instance()->notifyBeginRemoveRows(index, 0,
-                                                  m_children.size() - 1);
-    clearPointerContainer(m_children);
-    DvDirModel::instance()->notifyEndRemoveRows();
-  }
+  if (!m_children.empty()) clearPointerContainer(m_children);
 
 #ifdef _WIN32
 
@@ -1054,10 +1014,7 @@ void DvDirModelNetworkNode::refreshChildren() {
               new DvDirModelFileFolderNode(this, wstr, TFilePath(wstr));
           child->setPeeking(false);
 
-          DvDirModel::instance()->notifyBeginInsertRows(
-              index, m_children.size(), m_children.size());
           addChild(child);
-          DvDirModel::instance()->notifyEndInsertRows();
         }
       }
     } else if (err != ERROR_NO_MORE_ITEMS)
