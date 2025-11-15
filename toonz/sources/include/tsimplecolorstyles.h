@@ -243,13 +243,18 @@ private:
 //    TRasterImagePatternStrokeStyle  declaration
 //**********************************************************************************
 
-class DVAPI TRasterImagePatternStrokeStyle final : public TColorStyle {
+class DVAPI TRasterImagePatternStrokeStyle final : public TOutlineStyle {
   static TFilePath m_rootDir;
-
-protected:
+  TPixel32 m_color;
+  TTessellator *m_tessellator;
+  
+  protected:
   TLevelP m_level;
-  std::string m_name;
+  TLevelP m_levelC;
+  std::string m_patternName;
   double m_space, m_rotation;
+  bool m_flip;
+  TPixel32 lastColor;
   TFilePath m_basePath;
 
 public:
@@ -257,17 +262,21 @@ public:
   TRasterImagePatternStrokeStyle(const std::string &patternName);
   TRasterImagePatternStrokeStyle(TFilePath basePath,
                                  const std::string &patternName);
-
-  bool isRegionStyle() const override { return false; }
-  bool isStrokeStyle() const override { return true; }
+  ~TRasterImagePatternStrokeStyle();
 
   int getLevelFrameCount() { return m_level->getFrameCount(); }
 
   void computeTransformations(std::vector<TAffine> &positions,
                               const TStroke *stroke) const;
+  void colorizeTexture(TPixel32 color) const;
   void drawStroke(const TVectorRenderData &rd,
                   const std::vector<TAffine> &positions,
+                  const TStroke *stroke);
+  void drawStroke(const TColorFunction *cf, TStrokeOutline *outline,
                   const TStroke *stroke) const;
+  void drawRegion(const TColorFunction *cf, 
+                  const bool antiAliasing,
+                  TRegionOutline &boundary) const;
 
   void invalidate(){};
 
@@ -277,17 +286,13 @@ public:
   QString getDescription() const override;
   std::string getBrushIdName() const override;
 
-  bool hasMainColor() const override { return false; }
-  TPixel32 getMainColor() const override { return TPixel32::Black; }
-  void setMainColor(const TPixel32 &) override {}
+  bool hasMainColor() const override { return true; }
+  TPixel32 getMainColor() const override { return m_color; }
+  void setMainColor(const TPixel32 &color) override { m_color = color; }
 
   TStrokeProp *makeStrokeProp(const TStroke *stroke) override;
-  TRegionProp *makeRegionProp(const TRegion *) override {
-    assert(false);
-    return 0;
-  };
 
-  int getTagId() const override { return 2000; };
+  int getTagId() const override { return 2100; };
   void getObsoleteTagIds(std::vector<int> &ids) const override;
 
   void loadLevel(const std::string &patternName);
@@ -303,6 +308,8 @@ public:
   void getParamRange(int index, double &min, double &max) const override;
   double getParamValue(TColorStyle::double_tag, int index) const override;
   void setParamValue(int index, double value) override;
+  bool getParamValue(TColorStyle::bool_tag, int index) const override;
+  void setParamValue(int index, bool value) override;
 
   TRectD getStrokeBBox(const TStroke *stroke) const override;
 
