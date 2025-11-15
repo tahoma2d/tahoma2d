@@ -27,6 +27,8 @@
 #include "toutputproperties.h"
 #include "toonz/preferences.h"
 #include "toonz/tproject.h"
+#include "toonz/txshsimplelevel.h"
+#include "toonz/txshzeraryfxlevel.h"
 
 // TnzQt includes
 #include "toonzqt/menubarcommand.h"
@@ -142,6 +144,12 @@ BaseViewerPanel::BaseViewerPanel(QWidget *parent, Qt::WindowFlags flags)
   m_flipConsole->setFrameHandle(TApp::instance()->getCurrentFrame());
 
   bool ret = true;
+
+  QAction *action = CommandManager::instance()->getAction(MI_RasterizePli);
+  if (action) {
+    ret = ret && connect(action, SIGNAL(changed()), SLOT(changeWindowTitle()));
+  }
+
   // When zoom changed, only if the viewer is active, change window titl
   ret = ret && connect(m_sceneViewer, SIGNAL(onZoomChanged()),
                        SLOT(changeWindowTitle()));
@@ -703,6 +711,10 @@ void BaseViewerPanel::changeWindowTitle() {  // �v�m�F
   // put the titlebar texts in this string
   QString name;
 
+  QAction *action   = CommandManager::instance()->getAction(MI_RasterizePli);
+  bool rasterizePLI = action ? action->isChecked() : false;
+  bool isVector     = false;
+
   // if the frame type is "scene editing"
   if (app->getCurrentFrame()->isEditingScene()) {
     auto project = scene->getProject();
@@ -718,11 +730,8 @@ void BaseViewerPanel::changeWindowTitle() {  // �v�m�F
       parentWidget()->setWindowTitle(name);
       return;
     }
-    TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
-    TXshCell cell;
-    if (app->getCurrentColumn()->getColumn() &&
-        !app->getCurrentColumn()->getColumn()->getSoundColumn())
-      cell = xsh->getCell(frame, col);
+    TXsheet *xsh  = app->getCurrentXsheet()->getXsheet();
+    TXshCell cell = xsh->getCell(frame, col);
     if (cell.isEmpty()) {
       if (!m_sceneViewer->is3DView()) {
         TAffine aff = m_sceneViewer->getViewMatrix() *
@@ -738,10 +747,18 @@ void BaseViewerPanel::changeWindowTitle() {  // �v�m�F
       parentWidget()->setWindowTitle(name);
       return;
     }
-    assert(cell.m_level.getPointer());
-    TFilePath fp(cell.m_level->getName());
-    QString imageName =
-        QString::fromStdWString(fp.withFrame(cell.m_frameId).getWideString());
+    QString imageName;
+    if (cell.m_level) {
+      if (cell.getSoundLevel()) {
+        imageName = QString::fromStdWString(cell.getSoundLevel()->getName());
+      } else if (!cell.getSoundTextLevel() && !cell.getZeraryFxLevel()) {
+        TFilePath fp(cell.m_level->getName());
+        imageName = QString::fromStdWString(
+            fp.withFrame(cell.m_frameId).getWideString());
+
+        isVector = cell.m_level->getType() == PLI_XSHLEVEL;
+      }
+    }
     name = name + tr("   ::   Level: ") + imageName;
   }
   // if the frame type is "level editing"
@@ -752,6 +769,8 @@ void BaseViewerPanel::changeWindowTitle() {  // �v�m�F
       QString imageName = QString::fromStdWString(
           fp.withFrame(app->getCurrentFrame()->getFid()).getWideString());
       name = name + tr("Level: ") + imageName;
+
+      isVector = level->getType() == PLI_XSHLEVEL;
     }
   }
   if (!m_sceneViewer->is3DView()) {
@@ -761,6 +780,9 @@ void BaseViewerPanel::changeWindowTitle() {  // �v�m�F
     if (m_sceneViewer->getIsFlippedY()) aff = aff * TScale(1, -1);
     name = name + tr("  ::  Zoom : ") +
            QString::number(tround(100.0 * sqrt(aff.det()))) + "%";
+    if (isVector && rasterizePLI) {
+      name = name + tr(" (Rasterized Vector View)");
+    }
     if (m_sceneViewer->getIsFlippedX() || m_sceneViewer->getIsFlippedY()) {
       name = name + tr(" (Flipped)");
     }
