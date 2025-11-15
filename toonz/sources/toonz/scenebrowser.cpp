@@ -162,6 +162,8 @@ SceneBrowser::SceneBrowser(QWidget *parent, Qt::WindowFlags flags,
   viewerPanel->setItemViewPlayDelegate(itemViewPlayDelegate);
 
   // m_mainSplitter->setObjectName("SceneBrowserSplitter");
+  m_folderName->setReadOnly(true);
+
   m_folderTreeView->hide();
   m_folderTreeView->setObjectName("DirTreeView");
   box->setObjectName("castFrame");
@@ -1130,7 +1132,7 @@ QMenu *SceneBrowser::getContextMenu(QWidget *parent, int index) {
 
     if (!areFullcolor) menu->addSeparator();
   }
-  if (files.size() == 1 && files[0].getType() != "tnz") {
+  if (files.size() == 1) {
     QAction *action = new QAction(tr("Rename"), menu);
     ret             = ret && connect(action, SIGNAL(triggered()), this,
                                      SLOT(renameAsToonzLevel()));
@@ -1679,7 +1681,7 @@ void doRenameAsToonzLevel(const QString &fullpath) {
   QString parentPath, name, format;
   int frameCount = -1;
 
-  if (parsePathName(fullpath, parentPath, name, format)) {
+  if (parsePathName(fullpath, parentPath, name, format) && format != "tnz") {
     QStringList pathIn;
     getLevelFiles(parentPath, name, format, pathIn);
     frameCount = pathIn.size();
@@ -1884,10 +1886,11 @@ void SceneBrowser::convertToPaintedTlv() {
 //-----------------------------------------------------------------------------
 
 void SceneBrowser::onSceneSwitched() {
-  ToonzScene *scene      = TApp::instance()->getCurrentScene()->getScene();
-  TFilePath scenesFolder = scene->getScenePath().getParentDir();
-  // TFilePath scenesFolder =
-  // TProjectManager::instance()->getCurrentProject()->getScenesPath();
+  ToonzScene *scene = TApp::instance()->getCurrentScene()->getScene();
+  TFilePath scenesFolder =
+      scene && scene->isUntitled()
+          ? TProjectManager::instance()->getCurrentProject()->getScenesPath()
+          : scene->getScenePath().getParentDir();
   setFolder(scenesFolder, true);
 }
 
@@ -1921,12 +1924,12 @@ void SceneBrowser::onClickedItem(int index) {
   if (0 <= index && index < (int)m_items.size()) {
     // if the folder is clicked, then move the current folder
     TFilePath fp = m_items[index].m_path;
-    if (m_items[index].m_isFolder) {
-      setFolder(fp, true);
-      QModelIndex index = m_folderTreeView->currentIndex();
-      if (index.isValid()) m_folderTreeView->scrollTo(index);
-    } else
-      emit filePathClicked(fp);
+    // if (m_items[index].m_isFolder) {
+    //   setFolder(fp, true);
+    //   QModelIndex index = m_folderTreeView->currentIndex();
+    //   if (index.isValid()) m_folderTreeView->scrollTo(index);
+    // } else
+    emit filePathClicked(fp);
   }
 }
 
