@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 21.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   version="1.1"
+   id="svg2"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   sodipodi:docname="prodboard.svg"
+   x="0px"
+   y="0px"
+   viewBox="0 0 60 60"
+   style="enable-background:new 0 0 60 60;"
+   xml:space="preserve"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs1" /><sodipodi:namedview
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:zoom="14.95"
+   inkscape:cx="43.578595"
+   inkscape:cy="30"
+   inkscape:window-width="1920"
+   inkscape:window-height="1141"
+   inkscape:window-x="-7"
+   inkscape:window-y="-7"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="svg2" />
+<style
+   type="text/css"
+   id="style1">
+	.st0{fill:#EBEBEB;}
+	.st1{fill:#404040;}
+	.st2{fill:#EBF8F7;}
+	.st3{fill:#1E1F69;}
+</style>
+<g
+   id="g4">
+	<rect
+   id="rect6"
+   y="0"
+   class="st0"
+   width="60"
+   height="60" />
+	<path
+   id="path8"
+   inkscape:connector-curvature="0"
+   class="st1"
+   d="M60,60H0V0h60V60z M1,1v58h58V1H1z" />
+</g>
+<g
+   id="g10">
+	<rect
+   id="rect12"
+   x="13"
+   y="7"
+   class="st2"
+   width="34"
+   height="46"
+   style="fill:#cdb589;fill-opacity:1" />
+	<path
+   id="path14"
+   inkscape:connector-curvature="0"
+   class="st1"
+   d="M47,53H13V7h34V53z M14,8v44h32V8H14z" />
+</g>
+
+<g
+   id="g22"
+   transform="matrix(0,1.0334448,-1.8509847,0,102.3809,-5.5886289)">
+	<path
+   id="path24"
+   inkscape:connector-curvature="0"
+   class="st2"
+   d="m 20,43 v 4 h -4 v -4 z m 0,-1.838987 h -4 v -4 h 4 z m 0,-5.875126 h -4 v -4 h 4 z"
+   sodipodi:nodetypes="ccccccccccccccc" />
+	<path
+   id="path26"
+   inkscape:connector-curvature="0"
+   class="st1"
+   d="m 20,47 h -4 v -4 h 4 z m -3,-3 v 2 h 2 v -2 z m 3,-2.838987 h -4 v -4 h 4 z m -3,-3 v 2 h 2 v -2 z m 3,-2.875126 h -4 v -4 h 4 z m -3,-3 v 2 h 2 v -2 z"
+   sodipodi:nodetypes="cccccccccccccccccccccccccccccc" />
+</g><g
+   id="g22-7"
+   transform="matrix(0,1.0334448,-1.8509847,0,102.38128,0.48160551)">
+	<path
+   id="path24-6"
+   inkscape:connector-curvature="0"
+   class="st2"
+   d="m 20,43 v 4 h -4 v -4 z m 0,-1.838987 h -4 v -4 h 4 z m 0,-5.875126 h -4 v -4 h 4 z"
+   sodipodi:nodetypes="ccccccccccccccc"
+   style="fill:#ebf8f7" />
+	<path
+   id="path26-1"
+   inkscape:connector-curvature="0"
+   class="st1"
+   d="m 20,47 h -4 v -4 h 4 z m -3,-3 v 2 h 2 v -2 z m 3,-2.838987 h -4 v -4 h 4 z m -3,-3 v 2 h 2 v -2 z m 3,-2.875126 h -4 v -4 h 4 z m -3,-3 v 2 h 2 v -2 z"
+   sodipodi:nodetypes="cccccccccccccccccccccccccccccc"
+   style="fill:#404040" />
+</g><g
+   id="g22-6"
+   transform="matrix(0,1.0334448,-1.8509847,0,102.38128,12.966548)">
+	<path
+   id="path24-1"
+   inkscape:connector-curvature="0"
+   class="st2"
+   d="m 20,43 v 4 h -4 v -4 z m 0,-1.838987 h -4 v -4 h 4 z m 0,-5.875126 h -4 v -4 h 4 z"
+   sodipodi:nodetypes="ccccccccccccccc"
+   style="fill:#ebf8f7" />
+	<path
+   id="path26-8"
+   inkscape:connector-curvature="0"
+   class="st1"
+   d="m 20,47 h -4 v -4 h 4 z m -3,-3 v 2 h 2 v -2 z m 3,-2.838987 h -4 v -4 h 4 z m -3,-3 v 2 h 2 v -2 z m 3,-2.875126 h -4 v -4 h 4 z m -3,-3 v 2 h 2 v -2 z"
+   sodipodi:nodetypes="cccccccccccccccccccccccccccccc"
+   style="fill:#404040" />
+</g><g
+   id="g22-2"
+   transform="matrix(0,1.0334448,-1.8509847,0,102.38128,6.6354518)">
+	<path
+   id="path24-2"
+   inkscape:connector-curvature="0"
+   class="st2"
+   d="m 20,43 v 4 h -4 v -4 z m 0,-1.838987 h -4 v -4 h 4 z m 0,-5.875126 h -4 v -4 h 4 z"
+   sodipodi:nodetypes="ccccccccccccccc"
+   style="fill:#ebf8f7" />
+	<path
+   id="path26-16"
+   inkscape:connector-curvature="0"
+   class="st1"
+   d="m 20,47 h -4 v -4 h 4 z m -3,-3 v 2 h 2 v -2 z m 3,-2.838987 h -4 v -4 h 4 z m -3,-3 v 2 h 2 v -2 z m 3,-2.875126 h -4 v -4 h 4 z m -3,-3 v 2 h 2 v -2 z"
+   sodipodi:nodetypes="cccccccccccccccccccccccccccccc"
+   style="fill:#404040" />
+</g>
+
+</svg>

@@ -1317,6 +1317,7 @@ QString PreferencesPopup::getUIString(PreferencesItemId id) {
       {showIconsInMenu, tr("Show Icons In Menu*")},
       {viewerIndicatorEnabled, tr("Show Viewer Indicators")},
       {highDpiScalingEnabled, tr("Enable High DPI Scaling*")},
+      {iconSizePB, tr("Preproduction Board Thumbnail Size*:")},
 
       // Visualization
       {show0ThickLines, tr("Show Lines with Thickness 0")},
@@ -1879,6 +1880,8 @@ QWidget* PreferencesPopup::createInterfacePage() {
     insertUI(showIconsInMenu, lay);
 
   insertUI(highDpiScalingEnabled, lay);
+
+  insertUI(iconSizePB, lay);
 
   lay->setRowStretch(lay->rowCount(), 1);
   insertFootNote(lay);

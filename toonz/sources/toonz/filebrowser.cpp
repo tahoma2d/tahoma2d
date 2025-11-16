@@ -586,7 +586,7 @@ void FileBrowser::refreshCurrentFolderItems() {
             it->getType() != "tnzbat" && it->getType() != "mpath" &&
             it->getType() != "curve" && it->getType() != "tpl" &&
             it->getType() != "macrofx" && it->getType() != "plugin" &&
-            it->getType() != "grid" &&
+            it->getType() != "grid" && it->getType() != "tnzbrd" &&
             TFileType::getInfo(*it) == TFileType::UNKNOW_FILE)
           continue;
       } else if (!m_filter.contains(QString::fromStdString(it->getType())))
@@ -756,6 +756,7 @@ void FileBrowser::setUnregisteredFolder(const TFilePath &fp) {
         if (it->getType() != "tnz" && it->getType() != "scr" &&
             it->getType() != "tnzbat" && it->getType() != "mpath" &&
             it->getType() != "curve" && it->getType() != "tpl" &&
+            it->getType() != "tnzbrd" &&
             TFileType::getInfo(*it) == TFileType::UNKNOW_FILE)
           continue;
       } else if (!m_filter.contains(QString::fromStdString(it->getType())))

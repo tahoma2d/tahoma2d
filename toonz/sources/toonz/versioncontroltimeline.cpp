@@ -475,6 +475,10 @@ QIcon SVNTimeline::createIcon(const QString &fileName) {
       filePixmap = QPixmap(svgToPixmap(":Resources/tasklist.svg",
                                        QSize(iconSize.lx, iconSize.ly),
                                        Qt::KeepAspectRatio));
+    else if (type == "tnzbrd")
+      filePixmap = QPixmap(svgToPixmap(":Resources/prodboard.svg",
+                                       QSize(iconSize.lx, iconSize.ly),
+                                       Qt::KeepAspectRatio));
     else if (type == "js")
       filePixmap = QPixmap(":Resources/scripticon.png");
     else
