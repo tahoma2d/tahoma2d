@@ -964,6 +964,8 @@ std::string FileIconRenderer::getId(const TFilePath &path,
     return "$:cln";
   else if (type == "tnzbat")
     return "$:tnzbat";
+  else if (type == "tnzbrd")
+    return "$:tnzbrd";
   else
     return "$:unknown";
 }
@@ -1222,6 +1224,12 @@ void FileIconRenderer::run() {
                                       QSize(iconSize.lx, iconSize.ly),
                                       Qt::KeepAspectRatio));
       setIcon(rasterFromQImage(tnzBat));
+      return;
+    } else if (type == "tnzbrd") {
+      QImage tnzBrd(generateIconImage("prodboard_icon", qreal(1.0),
+                                      QSize(iconSize.lx, iconSize.ly),
+                                      Qt::KeepAspectRatio));
+      setIcon(rasterFromQImage(tnzBrd));
       return;
     } else if (type == "tls") {
       QImage tls(svgToImage(":Resources/magpie.svg",
