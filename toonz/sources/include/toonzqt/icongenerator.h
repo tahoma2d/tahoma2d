@@ -114,6 +114,10 @@ public:
   // icons from files
   QPixmap getIcon(const TFilePath &path,
                   const TFrameId &fid = TFrameId::NO_FRAME);
+  QPixmap getSizedIcon(const TFilePath &path,
+                       const TFrameId &fid  = TFrameId::NO_FRAME,
+                       const QSize iconSize = QSize(80, 60),
+                       std::string newId    = "");
   void invalidate(const TFilePath &path,
                   const TFrameId &fid = TFrameId::NO_FRAME);
   void remove(const TFilePath &path, const TFrameId &fid = TFrameId::NO_FRAME);
