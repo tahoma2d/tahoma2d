@@ -30,6 +30,7 @@
 #include "stopmotioncontroller.h"
 #include "motionpathpanel.h"
 #include "alignmentpane.h"
+#include "preproductionboard.h"
 
 #include "tasksviewer.h"
 #include "batchserversviewer.h"
@@ -1316,6 +1317,7 @@ class PreproductionBoardFactory final : public TPanelFactory {
 public:
   PreproductionBoardFactory() : TPanelFactory("PreproductionBoard") {}
   void initialize(TPanel *panel) override {
+/*
     SceneBrowser *browser = new SceneBrowser(panel, Qt::WindowFlags(), false, true);
     panel->setWidget(browser);
     panel->setWindowTitle(QObject::tr("Preproduction Board"));
@@ -1326,6 +1328,12 @@ public:
         TProjectManager::instance()->getCurrentProject()->getScenesPath();
     browser->setFolder(scenesFolder, true);
     browser->enableDoubleClickToOpenScenes();
+*/
+    PreproductionBoard *board =
+        new PreproductionBoard(panel, Qt::WindowFlags(), false, true);
+    panel->setWidget(board);
+    connect(TApp::instance()->getMainWindow(), SIGNAL(exit(bool &)), board,
+            SLOT(onExit(bool &)));
   }
 } PreproductionBoardFactory;
 

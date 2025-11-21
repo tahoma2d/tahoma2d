@@ -13,6 +13,7 @@
 
 #include "tfx.h"
 #include "toonz/txsheet.h"
+#include "toonz/toonzscene.h"
 
 #include <QTimer>
 
@@ -124,11 +125,24 @@ protected:
   TDimension m_dim;
   std::map<std::string, TRect>
       m_loadboxes;  // id in the cash, rect loaded actually
-  class Level {
+  class FlipItem {
   public:
-    Level(const TLevelP &level, const TFilePath &fp, int fromIndex, int toIndex,
-          int step)
+    FlipItem(const TLevelP &level, const TFilePath &fp, int fromIndex,
+             int toIndex, int step)
         : m_level(level)
+        , m_scene(0)
+        , m_fp(fp)
+        , m_fromIndex(fromIndex)
+        , m_toIndex(toIndex)
+        , m_step(step)
+        , m_randomAccessRead(false)
+        , m_incrementalIndexing(false)
+        , m_premultiply(false)
+        , m_colorSpaceGamma(LevelOptions::DefaultColorSpaceGamma) {}
+    FlipItem(ToonzScene *scene, const TFilePath &fp, int fromIndex, int toIndex,
+             int step)
+        : m_level(0)
+        , m_scene(scene)
         , m_fp(fp)
         , m_fromIndex(fromIndex)
         , m_toIndex(toIndex)
@@ -138,6 +152,7 @@ protected:
         , m_premultiply(false)
         , m_colorSpaceGamma(LevelOptions::DefaultColorSpaceGamma) {}
     TLevelP m_level;
+    ToonzScene *m_scene = nullptr;
     int m_fromIndex, m_toIndex, m_step;
     bool m_incrementalIndexing;
     bool m_randomAccessRead;
@@ -157,10 +172,11 @@ protected:
     TFilePath m_fp;
 
     TFrameId flipbookIndexToLevelFrame(int index);
+    int flipbookIndexToSceneFrame(int index);
     int getIndexesCount();
   };
 
-  std::vector<Level> m_levels;
+  std::vector<FlipItem> m_levels;
   std::vector<QString> m_levelNames;
   TPalette *m_palette;
 
@@ -263,7 +279,7 @@ public:
 private:
   // When viewing the tlv, try to cache all frames at the beginning.
   // NOTE : fromFrame and toFrame are frame numbers displayed on the flipbook
-  void loadAndCacheAllTlvImages(Level level, int fromFrame, int toFrame);
+  void loadAndCacheAllTlvImages(FlipItem level, int fromFrame, int toFrame);
 
   friend class PreviewFxManager;
 

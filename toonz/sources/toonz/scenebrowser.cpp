@@ -539,6 +539,7 @@ void SceneBrowser::refreshCurrentFolderItems() {
         if (it->getType() != "tnz" && it->getType() != "scr" &&
             it->getType() != "tnzbat" && it->getType() != "mpath" &&
             it->getType() != "curve" && it->getType() != "tpl" &&
+            it->getType() != "tnzbat" &&
             TFileType::getInfo(*it) == TFileType::UNKNOW_FILE)
           continue;
       } else if (m_filter.contains(QString::fromStdString(it->getType())))
@@ -683,6 +684,7 @@ void SceneBrowser::setUnregisteredFolder(const TFilePath &fp) {
         if (it->getType() != "tnz" && it->getType() != "scr" &&
             it->getType() != "tnzbat" && it->getType() != "mpath" &&
             it->getType() != "curve" && it->getType() != "tpl" &&
+            it->getType() != "tnzbat" &&
             TFileType::getInfo(*it) == TFileType::UNKNOW_FILE)
           continue;
       } else if (m_filter.contains(QString::fromStdString(it->getType())))
@@ -2166,6 +2168,6 @@ void SceneBrowser::tryToOpenScene(const TFilePath &filePath) {
 
 //=============================================================================
 
-OpenFloatingPanel openPreproductionBoardPane(
-    MI_OpenPreproductionBoard, "PreproductionBoard",
-    QObject::tr("Preproduction Board"));
+//OpenFloatingPanel openPreproductionBoardPane(
+//    MI_OpenPreproductionBoard, "PreproductionBoard",
+//    QObject::tr("Preproduction Board"));

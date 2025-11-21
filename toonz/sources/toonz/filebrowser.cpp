@@ -586,7 +586,7 @@ void FileBrowser::refreshCurrentFolderItems() {
             it->getType() != "tnzbat" && it->getType() != "mpath" &&
             it->getType() != "curve" && it->getType() != "tpl" &&
             it->getType() != "macrofx" && it->getType() != "plugin" &&
-            it->getType() != "grid" &&
+            it->getType() != "grid" && it->getType() != "tnzbrd" &&
             TFileType::getInfo(*it) == TFileType::UNKNOW_FILE)
           continue;
       } else if (!m_filter.contains(QString::fromStdString(it->getType())))
@@ -756,6 +756,7 @@ void FileBrowser::setUnregisteredFolder(const TFilePath &fp) {
         if (it->getType() != "tnz" && it->getType() != "scr" &&
             it->getType() != "tnzbat" && it->getType() != "mpath" &&
             it->getType() != "curve" && it->getType() != "tpl" &&
+            it->getType() != "tnzbrd" &&
             TFileType::getInfo(*it) == TFileType::UNKNOW_FILE)
           continue;
       } else if (!m_filter.contains(QString::fromStdString(it->getType())))
@@ -2306,6 +2307,21 @@ int FrameCountReader::getFrameCount(const TFilePath &fp) {
   }
 
 calculateTask:
+
+  if (fp.getType() == "tnz") {
+    ToonzScene scene;
+    try {
+      int frames        = scene.loadFrameCount(fp);
+      frameCountMap[fp].m_frameCount = frames;
+    } catch (...) {
+    }
+    return frameCountMap[fp].m_frameCount;
+  } else if (fp.withoutParentDir().getWideString() !=
+             fp.withoutParentDir().getLevelNameW()) {
+    // Path is a single file and not a level name format (ABC..ext)
+    frameCountMap[fp].m_frameCount = 1;
+    return frameCountMap[fp].m_frameCount;
+  }
 
   // Now, we have to calculate the frame count; first, create a frame count
   // calculation task and submit it.

@@ -255,6 +255,7 @@ public:
   bool isHighDpiScalingEnabled() const {
     return getBoolValue(highDpiScalingEnabled);
   }
+  TDimension getIconSizePB() const { return getSizeValue(iconSizePB); }
 
   // Visualization  tab
   bool getShow0ThickLines() const { return getBoolValue(show0ThickLines); }

@@ -190,6 +190,7 @@
 		<file>icons/dark/mimetypes/script_icon.svg</file>
         <file>icons/dark/mimetypes/broken_icon.svg</file>
         <file>icons/dark/mimetypes/json_icon.svg</file>
+		<file>icons/dark/mimetypes/prodboard_icon.svg</file>
 
 		<!-- Render -->
 		<file>icons/dark/actions/16/render.svg</file>

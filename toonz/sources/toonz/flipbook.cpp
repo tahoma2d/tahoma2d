@@ -34,6 +34,7 @@
 // Qt helpers
 #include "toonzqt/gutil.h"
 #include "toonzqt/imageutils.h"
+#include "toonzqt/icongenerator.h"
 
 // App-Stage includes
 #include "tapp.h"
@@ -498,17 +499,24 @@ void LoadImagesPopup::onFilePathClicked(const TFilePath &fp) {
 
   if (fp == TFilePath()) goto clear;
 
-  lr = TLevelReaderP(fp);
-  if (!lr) goto clear;
+  if (fp.getType() == "tnz") {
+    ToonzScene scene;
+    scene.load(fp);
+    m_from = 1;
+    m_to   = scene.getFrameCount();
+  } else {
+    lr = TLevelReaderP(fp);
+    if (!lr) goto clear;
 
-  level = lr->loadInfo();
+    level = lr->loadInfo();
 
-  if (!level || level->getFrameCount() == 0) goto clear;
+    if (!level || level->getFrameCount() == 0) goto clear;
 
-  it   = level->begin();
-  m_to = m_from = it->first.getNumber();
+    it   = level->begin();
+    m_to = m_from = it->first.getNumber();
 
-  for (; it != level->end(); ++it) m_to = it->first.getNumber();
+    for (; it != level->end(); ++it) m_to = it->first.getNumber();
+  }
 
   if (m_from == -2 && m_to == -2) m_from = m_to = 1;
 
@@ -664,7 +672,7 @@ bool FlipBook::doSaveImages(TFilePath fp) {
     return true;
   }
 
-  if (TFileType::getInfo(fp) == TFileType::RASTER_IMAGE)  
+  if (TFileType::getInfo(fp) == TFileType::RASTER_IMAGE)
     fp = fp.withFrame(TFrameId::EMPTY_FRAME);
 
   fp          = scene->decodeFilePath(fp);
@@ -980,7 +988,7 @@ void FlipBookPool::load(const TFilePath &historyPath) {
 //=============================================================================
 
 //! Returns the level frame number corresponding to passed flipbook index
-TFrameId FlipBook::Level::flipbookIndexToLevelFrame(int index) {
+TFrameId FlipBook::FlipItem::flipbookIndexToLevelFrame(int index) {
   TLevel::Iterator it;
   int levelPos;
   if (m_incrementalIndexing) {
@@ -995,11 +1003,18 @@ TFrameId FlipBook::Level::flipbookIndexToLevelFrame(int index) {
   return it->first;
 }
 
+//! Returns the level frame number corresponding to passed flipbook index
+int FlipBook::FlipItem::flipbookIndexToSceneFrame(int index) {
+  return m_incrementalIndexing ? index : (m_fromIndex + (index - 1) * m_step);
+}
+
 //-----------------------------------------------------------------------------
 
 //! Returns the number of flipbook indexes available for this level
-int FlipBook::Level::getIndexesCount() {
-  return m_incrementalIndexing ? (m_level->getFrameCount() - 1) / m_step + 1
+int FlipBook::FlipItem::getIndexesCount() {
+  int frameCount =
+      m_level ? m_level->getFrameCount() : m_scene->getFrameCount();
+  return m_incrementalIndexing ? (frameCount - 1) / m_step + 1
                                : (m_toIndex - m_fromIndex) / m_step + 1;
 }
 
@@ -1011,7 +1026,8 @@ bool FlipBook::isSavable() const {
   for (int i = 0; i < m_levels.size(); i++)
     if (m_levels[i].m_fp != TFilePath() &&
         (m_levels[i].m_fp.getType() == "tlv" ||
-         m_levels[i].m_fp.getType() == "pli"))
+         m_levels[i].m_fp.getType() == "pli" ||
+         m_levels[i].m_fp.getType() == "tnz"))
       return false;
 
   return true;
@@ -1058,19 +1074,26 @@ void FlipBook::setLevel(const TFilePath &fp, TPalette *palette, int from,
       // m_flipConsole->enableButton(FlipConsole::eCheckBg,
       // true);//fp.getType()!="pli");
 
-      m_lr = TLevelReaderP(fp);
+      TLevelP level;
+      bool randomAccessRead     = false;
+      bool incrementalIndexing  = false;
+      bool supportsRandomAccess = false;
 
-      bool supportsRandomAccess = doesSupportRandomAccess(fp, isToonzOutput);
-      if (supportsRandomAccess) m_lr->enableRandomAccessRead(isToonzOutput);
+      if (fp.getType() != "tnz") {
+        m_lr = TLevelReaderP(fp);
 
-      bool randomAccessRead    = supportsRandomAccess && isToonzOutput;
-      bool incrementalIndexing = m_isPreviewFx ? true : false;
+        supportsRandomAccess = doesSupportRandomAccess(fp, isToonzOutput);
+        if (supportsRandomAccess) m_lr->enableRandomAccessRead(isToonzOutput);
 
-      TLevelP level = m_lr->loadInfo();
+        randomAccessRead    = supportsRandomAccess && isToonzOutput;
+        incrementalIndexing = m_isPreviewFx ? true : false;
 
-      if (!level || level->getFrameCount() == 0) {
-        if (m_flags & eDontKeepFilesOpened) m_lr = TLevelReaderP();
-        return;
+        level = m_lr->loadInfo();
+
+        if (!level || level->getFrameCount() == 0) {
+          if (m_flags & eDontKeepFilesOpened) m_lr = TLevelReaderP();
+          return;
+        }
       }
 
       // For the color model, get the reference fids from palette and delete
@@ -1107,65 +1130,107 @@ void FlipBook::setLevel(const TFilePath &fp, TPalette *palette, int from,
       // in order to avoid that the current frame unexpectedly moves to 1 on the
       // Color Model once editing the style
       int current = -1;
+      TDimension dim(-1, -1);
 
-      if (from == -1 && to == -1) {
-        fromIndex = level->begin()->first.getNumber();
-        toIndex   = (--level->end())->first.getNumber();
-        if (m_imageViewer->isColorModel())
-          current = m_flipConsole->getCurrentFrame();
-        incrementalIndexing = true;
-      } else {
-        TLevel::Iterator it = level->begin();
+      if (fp.getType() == "tnz") {
+        ToonzScene *scene = new ToonzScene();
 
-        // Adjust the frame interval to read. There is one special case:
-        //  If the level read did not support random access, *AND* the level to
-        //  show was just rendered,
-        //  we have to assume that no level update happened, and the
-        //  from-to-step infos are lost.
-        //  So, shift the requested interval from 1 and place step to 1.
-        fromIndex = from;
-        toIndex   = to;
-        if (isToonzOutput && !supportsRandomAccess) {
+        scene->load(fp);
+        m_framesCount = scene->getFrameCount();
+
+        if (from == -1 && to == -1) {
           fromIndex = 1;
-          toIndex   = level->getFrameCount();
-          step      = 1;
-        }
-
-        if (level->begin()->first.getNumber() != TFrameId::NO_FRAME) {
-          fromIndex = std::max(fromIndex, level->begin()->first.getNumber());
-          toIndex   = std::min(toIndex, (--level->end())->first.getNumber());
-        } else {
-          fromIndex           = level->begin()->first.getNumber();
-          toIndex             = (--level->end())->first.getNumber();
+          toIndex   = m_framesCount;
+          if (m_imageViewer->isColorModel())
+            current = m_flipConsole->getCurrentFrame();
           incrementalIndexing = true;
+        } else {
+          fromIndex = std::max(from, 1);
+          toIndex   = std::min(to, m_framesCount);
         }
 
-        // Workaround to display simple background images when loading from
-        // the right-click menu context
-        fromIndex = std::min(fromIndex, toIndex);
+        FlipItem sceneToPush(scene, fp, fromIndex, toIndex, step);
+
+        m_levels.push_back(sceneToPush);
+
+        TDimension cameraRes =
+            scene->getProperties()->getCameras()[0]->getRes();
+
+        dim = TDimension(cameraRes.lx / m_shrink, cameraRes.ly / m_shrink);
+
+        m_framesCount = sceneToPush.getIndexesCount();
+      } else {
+        if (from == -1 && to == -1) {
+          fromIndex = level->begin()->first.getNumber();
+          toIndex   = (--level->end())->first.getNumber();
+          if (m_imageViewer->isColorModel())
+            current = m_flipConsole->getCurrentFrame();
+          incrementalIndexing = true;
+        } else {
+          TLevel::Iterator it = level->begin();
+
+          // Adjust the frame interval to read. There is one special case:
+          //  If the level read did not support random access, *AND* the level
+          //  to show was just rendered, we have to assume that no level update
+          //  happened, and the from-to-step infos are lost. So, shift the
+          //  requested interval from 1 and place step to 1.
+          fromIndex = from;
+          toIndex   = to;
+          if (isToonzOutput && !supportsRandomAccess) {
+            fromIndex = 1;
+            toIndex   = level->getFrameCount();
+            step      = 1;
+          }
+
+          if (level->begin()->first.getNumber() != TFrameId::NO_FRAME) {
+            fromIndex = std::max(fromIndex, level->begin()->first.getNumber());
+            toIndex   = std::min(toIndex, (--level->end())->first.getNumber());
+          } else {
+            fromIndex           = level->begin()->first.getNumber();
+            toIndex             = (--level->end())->first.getNumber();
+            incrementalIndexing = true;
+          }
+
+          // Workaround to display simple background images when loading from
+          // the right-click menu context
+          fromIndex = std::min(fromIndex, toIndex);
+        }
+
+        FlipItem levelToPush(level, fp, fromIndex, toIndex, step);
+        levelToPush.m_randomAccessRead    = randomAccessRead;
+        levelToPush.m_incrementalIndexing = incrementalIndexing;
+
+        int formatIdx = Preferences::instance()->matchLevelFormat(fp);
+        if (formatIdx >= 0) {
+          LevelOptions options =
+              Preferences::instance()->levelFormat(formatIdx).m_options;
+
+          levelToPush.m_premultiply     = options.m_premultiply;
+          levelToPush.m_colorSpaceGamma = options.m_colorSpaceGamma;
+        }
+        m_levels.push_back(levelToPush);
+
+        // Get the frames count to be shown in this flipbook level
+        m_framesCount = levelToPush.getIndexesCount();
+
+        assert(m_framesCount <= level->getFrameCount());
+
+        // this value will be used in loadAndCacheAllTlvImages later
+        int addingFrameAmount = m_framesCount;
+
+        const TImageInfo *ii = m_lr->getImageInfo();
+
+        if (ii) dim = TDimension(ii->m_lx / m_shrink, ii->m_ly / m_shrink);
+
+        // When viewing the tlv, try to cache all frames at the beginning.
+        if (!m_imageViewer->isColorModel() && fp.getType() == "tlv" &&
+            !(m_flags & eDontKeepFilesOpened) && !m_isPreviewFx) {
+          loadAndCacheAllTlvImages(
+              levelToPush,
+              m_framesCount - addingFrameAmount + 1,  // from
+              m_framesCount);                         // to
+        }
       }
-
-      Level levelToPush(level, fp, fromIndex, toIndex, step);
-      levelToPush.m_randomAccessRead    = randomAccessRead;
-      levelToPush.m_incrementalIndexing = incrementalIndexing;
-
-      int formatIdx = Preferences::instance()->matchLevelFormat(fp);
-      if (formatIdx >= 0) {
-        LevelOptions options =
-            Preferences::instance()->levelFormat(formatIdx).m_options;
-
-        levelToPush.m_premultiply     = options.m_premultiply;
-        levelToPush.m_colorSpaceGamma = options.m_colorSpaceGamma;
-      }
-      m_levels.push_back(levelToPush);
-
-      // Get the frames count to be shown in this flipbook level
-      m_framesCount = levelToPush.getIndexesCount();
-
-      assert(m_framesCount <= level->getFrameCount());
-
-      // this value will be used in loadAndCacheAllTlvImages later
-      int addingFrameAmount = m_framesCount;
 
       if (append && !m_levels.empty()) {
         int oldFrom, oldTo, oldStep;
@@ -1181,13 +1246,21 @@ void FlipBook::setLevel(const TFilePath &fp, TPalette *palette, int from,
 
       m_palette = level->getPalette();
 
-      const TImageInfo *ii = m_lr->getImageInfo();
-
-      if (ii) m_dim = TDimension(ii->m_lx / m_shrink, ii->m_ly / m_shrink);
+      if (dim != TDimension(-1, -1)) {
+        if (append && !m_levels.empty())
+          m_dim = TDimension(std::max(dim.lx, m_dim.lx),
+                             std::max(dim.ly, m_dim.ly));
+        else
+          m_dim = dim;
+      }
 
       int levelFrameCount = 0;
-      for (int lev = 0; lev < m_levels.size(); lev++)
-        levelFrameCount += m_levels[lev].m_level->getFrameCount();
+      for (int lev = 0; lev < m_levels.size(); lev++) {
+        if (m_levels[lev].m_scene)
+          levelFrameCount += m_levels[lev].m_scene->getFrameCount();
+        else
+          levelFrameCount += m_levels[lev].m_level->getFrameCount();
+      }
 
       if (levelFrameCount == 1)
         m_title = "  ::  1 Frame";
@@ -1195,9 +1268,9 @@ void FlipBook::setLevel(const TFilePath &fp, TPalette *palette, int from,
         m_title = "  ::  " + QString::number(levelFrameCount) + " Frames";
 
       // color model does not concern about the pixel size
-      if (ii && !m_imageViewer->isColorModel())
-        m_title = m_title + "  ::  " + QString::number(ii->m_lx) + "x" +
-                  QString::number(ii->m_ly) + " Pixels";
+      if (dim != TDimension(-1, -1) && !m_imageViewer->isColorModel())
+        m_title = m_title + "  ::  " + QString::number(dim.lx) + "x" +
+                  QString::number(dim.ly) + " Pixels";
 
       if (shrink > 1)
         m_title = m_title + "  ::  " + "Shrink: " + QString::number(shrink);
@@ -1206,14 +1279,6 @@ void FlipBook::setLevel(const TFilePath &fp, TPalette *palette, int from,
       // names in application's title bar
       QString arg = QString("Flip : %1").arg(m_levelNames[0]);
       emit imageLoaded(arg);
-
-      // When viewing the tlv, try to cache all frames at the beginning.
-      if (!m_imageViewer->isColorModel() && fp.getType() == "tlv" &&
-          !(m_flags & eDontKeepFilesOpened) && !m_isPreviewFx) {
-        loadAndCacheAllTlvImages(levelToPush,
-                                 m_framesCount - addingFrameAmount + 1,  // from
-                                 m_framesCount);                         // to
-      }
 
       // An old archived bug says that simultaneous open for read of the same
       // tlv are not allowed...
@@ -1299,11 +1364,18 @@ void FlipBook::setLevel(TXshSimpleLevel *xl) {
     else
       m_title = m_title + "  ::  " + QString::number(m_framesCount) + " Frames";
 
-    if (p) m_dim = p->getImageRes();
-
+    TDimension dim;
+    if (p) {
+      dim = p->getImageRes();
+      if (!m_levels.empty())
+        m_dim =
+            TDimension(std::max(dim.lx, m_dim.lx), std::max(dim.ly, m_dim.ly));
+      else
+        m_dim = dim;
+    }
     if (p)
-      m_title = m_title + "  ::  " + QString::number(p->getImageRes().lx) +
-                "x" + QString::number(p->getImageRes().ly) + " Pixels";
+      m_title = m_title + "  ::  " + QString::number(dim.lx) + "x" +
+                QString::number(dim.ly) + " Pixels";
 
     if (m_shrink > 1)
       m_title = m_title + "  ::  " + "Shrink: " + QString::number(m_shrink);
@@ -1328,7 +1400,7 @@ void FlipBook::setLevel(TFx *previewedFx, TXsheet *xsh, TLevel *level,
   m_previewXsh  = xsh;
   m_isPreviewFx = true;
   m_levels.clear();
-  m_levels.push_back(Level(level, TFilePath(), from - 1, to - 1, step));
+  m_levels.push_back(FlipItem(level, TFilePath(), from - 1, to - 1, step));
   m_levelNames.clear();
   m_levelNames.push_back(QString::fromStdString(level->getName()));
   m_title = m_viewerTitle;
@@ -1527,11 +1599,14 @@ void FlipBook::playAudioFrame(int frame) {
 TImageP FlipBook::getCurrentImage(int frame) {
   std::string id = "";
   TFrameId fid;
+  TDimension sceneRes;
+  int sceneFrame;
   TFilePath fp;
 
   bool randomAccessRead    = false;
   bool incrementalIndexing = false;
   bool premultiply         = false;
+  bool isScene             = false;
   TSceneProperties *sp =
       TApp::instance()->getCurrentScene()->getScene()->getProperties();
   double colorSpaceGamma = LevelOptions::DefaultColorSpaceGamma;
@@ -1542,6 +1617,7 @@ TImageP FlipBook::getCurrentImage(int frame) {
   } else if (!m_levels.empty())  // is a viewfile or a previewFx
   {
     TLevelP level;
+    ToonzScene *scene = nullptr;
     QString levelName;
     int from, to, step;
     m_flipConsole->getFrameRange(from, to, step);
@@ -1561,23 +1637,40 @@ TImageP FlipBook::getCurrentImage(int frame) {
 
     frame--;
 
-    // Now, get the right frame from the level
+    // Now, get the right frame from the level/scene
+    isScene = m_levels[i].m_scene ? true : false;
 
     level               = m_levels[i].m_level;
+    scene               = m_levels[i].m_scene;
     fp                  = m_levels[i].m_fp;  // fp=empty when previewing fx
     randomAccessRead    = m_levels[i].m_randomAccessRead;
     incrementalIndexing = m_levels[i].m_incrementalIndexing;
     levelName           = m_levelNames[i];
-    fid                 = m_levels[i].flipbookIndexToLevelFrame(frameIndex);
     premultiply         = m_levels[i].m_premultiply;
     colorSpaceGamma     = m_levels[i].m_colorSpaceGamma;
 
-    if (fid == TFrameId()) return 0;
-    id = levelName.toStdString() + fid.expand(TFrameId::NO_PAD) +
-         ((m_isPreviewFx) ? "" : ::to_string(this));
+    if (isScene) {
+      sceneRes =
+          m_levels[i].m_scene->getProperties()->getCameras()[0]->getRes();
+
+      sceneFrame = m_levels[i].flipbookIndexToSceneFrame(frameIndex);
+      id         = levelName.toStdString() + std::to_string(sceneFrame) +
+           ((m_isPreviewFx) ? "" : ::to_string(this));
+    } else {
+      fid = m_levels[i].flipbookIndexToLevelFrame(frameIndex);
+
+      if (fid == TFrameId()) return 0;
+      id = levelName.toStdString() + fid.expand(TFrameId::NO_PAD) +
+           ((m_isPreviewFx) ? "" : ::to_string(this));
+    }
 
     if (!m_isPreviewFx) {
-      m_title1 = m_viewerTitle + " :: " + fp.withoutParentDir().withFrame(fid);
+      if (isScene)
+        m_title1 = m_viewerTitle + " :: " + fp.withoutParentDir() + " (" +
+                   QString::number(sceneFrame) + ")";
+      else
+        m_title1 =
+            m_viewerTitle + " :: " + fp.withoutParentDir().withFrame(fid);
       if (fp.getType() == "exr")
         m_title1 += " :: " + tr("Gamma : %1").arg(colorSpaceGamma);
     } else
@@ -1605,6 +1698,17 @@ TImageP FlipBook::getCurrentImage(int frame) {
   }
   if (fp != TFilePath() && !m_isPreviewFx) {
     int lx = 0, oriLx = 0;
+    if (isScene) {
+      TRaster32P iconRaster =
+          IconGenerator::generateSceneFileIcon(fp, sceneRes, sceneFrame);
+
+      TImageP img = TRasterImageP(iconRaster);
+
+      TImageCache::instance()->add(id, img);
+
+      return img;
+    }
+
     // TLevelReaderP lr(fp);
     if (!m_lr || (fp != m_lr->getFilePath())) {
       m_lr = TLevelReaderP(fp);
@@ -1751,12 +1855,22 @@ void FlipBook::clearCache() {
   int i;
 
   if (!m_levels.empty())  // is a viewfile
-    for (i = 0; i < m_levels.size(); i++)
-      for (it = m_levels[i].m_level->begin(); it != m_levels[i].m_level->end();
-           ++it)
-        TImageCache::instance()->remove(
-            m_levelNames[i].toStdString() + it->first.expand(TFrameId::NO_PAD) +
-            ((m_isPreviewFx) ? "" : ::to_string(this)));
+    for (i = 0; i < m_levels.size(); i++) {
+      if (m_levels[i].m_level) {
+        for (it = m_levels[i].m_level->begin();
+             it != m_levels[i].m_level->end(); ++it)
+          TImageCache::instance()->remove(
+              m_levelNames[i].toStdString() +
+              it->first.expand(TFrameId::NO_PAD) +
+              ((m_isPreviewFx) ? "" : ::to_string(this)));
+      } else {
+        int frames = m_levels[i].m_scene->getFrameCount();
+        for (int x = 1; x <= frames; x++)
+          TImageCache::instance()->remove(
+              m_levelNames[i].toStdString() + std::to_string(x) +
+              ((m_isPreviewFx) ? "" : ::to_string(this)));
+      }
+    }
   else {
     int from, to, step;
     m_flipConsole->getFrameRange(from, to, step);
@@ -1825,8 +1939,7 @@ void FlipBook::dragEnterEvent(QDragEnterEvent *e) {
   for (const QUrl &url : mimeData->urls()) {
     TFilePath fp(url.toLocalFile().toStdWString());
     std::string type = fp.getType();
-    if (type == "tzp" || type == "tzu" || type == "tnz" || type == "scr" ||
-        type == "mesh")
+    if (type == "tzp" || type == "tzu" || type == "scr" || type == "mesh")
       return;
   }
   if (mimeData->hasFormat(CastItems::getMimeFormat())) {
@@ -2205,7 +2318,7 @@ void FlipBook::minimize(bool doMinimize) {
 /*! When viewing the tlv, try to cache all frames at the beginning.
         NOTE : fromFrame and toFrame are frame numbers displayed on the flipbook
 */
-void FlipBook::loadAndCacheAllTlvImages(Level level, int fromFrame,
+void FlipBook::loadAndCacheAllTlvImages(FlipItem level, int fromFrame,
                                         int toFrame) {
   TFilePath fp = level.m_fp;
   if (!m_lr || (fp != m_lr->getFilePath())) m_lr = TLevelReaderP(fp);
@@ -2316,7 +2429,7 @@ FlipBook *viewFile(const TFilePath &path, int from, int to, int step,
   else if (!append)
     flipbook->reset();
 
-  // Assign the passed level with associated infos
+  // Assign the passed level/scene with associated infos
   flipbook->setLevel(path, 0, from, to, step, shrink, snd, append,
                      isToonzOutput);
   return flipbook;

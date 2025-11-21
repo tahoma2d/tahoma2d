@@ -919,8 +919,10 @@ class FileIconRenderer final : public IconRenderer {
 
 public:
   FileIconRenderer(const TDimension &iconSize, const TFilePath &path,
-                   const TFrameId &fid)
-      : IconRenderer(getId(path, fid), iconSize), m_path(path), m_fid(fid) {}
+                   const TFrameId &fid, std::string altId = "")
+      : IconRenderer(altId == "" ? getId(path, fid) : altId, iconSize)
+      , m_path(path)
+      , m_fid(fid) {}
 
   static std::string getId(const TFilePath &path, const TFrameId &fid);
 
@@ -964,6 +966,8 @@ std::string FileIconRenderer::getId(const TFilePath &path,
     return "$:cln";
   else if (type == "tnzbat")
     return "$:tnzbat";
+  else if (type == "tnzbrd")
+    return "$:tnzbrd";
   else
     return "$:unknown";
 }
@@ -1222,6 +1226,12 @@ void FileIconRenderer::run() {
                                       QSize(iconSize.lx, iconSize.ly),
                                       Qt::KeepAspectRatio));
       setIcon(rasterFromQImage(tnzBat));
+      return;
+    } else if (type == "tnzbrd") {
+      QImage tnzBrd(generateIconImage("prodboard_icon", qreal(1.0),
+                                      QSize(iconSize.lx, iconSize.ly),
+                                      Qt::KeepAspectRatio));
+      setIcon(rasterFromQImage(tnzBrd));
       return;
     } else if (type == "tls") {
       QImage tls(svgToImage(":Resources/magpie.svg",
@@ -1679,15 +1689,20 @@ void IconGenerator::remove(TStageObjectSpline *spline) {
 //-----------------------------------------------------------------------------
 
 QPixmap IconGenerator::getIcon(const TFilePath &path, const TFrameId &fid) {
-  std::string id = FileIconRenderer::getId(path, fid);
+  return getSizedIcon(path, fid);
+}
+
+QPixmap IconGenerator::getSizedIcon(const TFilePath &path, const TFrameId &fid,
+                                    const QSize iconSize, std::string newId) {
+  std::string id = newId == "" ? FileIconRenderer::getId(path, fid) : newId;
 
   QPixmap pix;
-  TDimension fileIconSize(80, 60);
+  TDimension fileIconSize(iconSize.width(), iconSize.height());
   // Here the fileIconSize is input in order to check if the icon is obtained
   // with high-dpi (i.e. devPixRatio > 1.0).
   if (::getIcon(id, pix, 0, fileIconSize)) return pix;
 
-  addTask(id, new FileIconRenderer(fileIconSize, path, fid));
+  addTask(id, new FileIconRenderer(fileIconSize, path, fid, id));
 
   return QPixmap();
 }

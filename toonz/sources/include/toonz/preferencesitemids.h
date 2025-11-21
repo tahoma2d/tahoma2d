@@ -51,6 +51,7 @@ enum PreferencesItemId {
   displayIn30bit,
   viewerIndicatorEnabled,
   highDpiScalingEnabled,
+  iconSizePB,
 
   //----------
   // Visualization
