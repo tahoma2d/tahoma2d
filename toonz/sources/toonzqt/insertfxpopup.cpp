@@ -338,20 +338,20 @@ InsertFxPopup::InsertFxPopup(QWidget *parent, Qt::WindowFlags flags)
   buttonLayout->setAlignment(Qt::AlignHCenter);
 
   QPushButton *insertBtn = new QPushButton(tr("Insert"), this);
-  insertBtn->setMinimumSize(65, 25);
+  insertBtn->setMinimumSize(90, 25);
   insertBtn->setObjectName("PushButton_NoPadding");
   connect(insertBtn, SIGNAL(clicked()), this, SLOT(onInsert()));
   insertBtn->setDefault(true);
   buttonLayout->addWidget(insertBtn);
 
   QPushButton *addBtn = new QPushButton(tr("Add"), this);
-  addBtn->setMinimumSize(65, 25);
+  addBtn->setMinimumSize(90, 25);
   addBtn->setObjectName("PushButton_NoPadding");
   connect(addBtn, SIGNAL(clicked()), this, SLOT(onAdd()));
   buttonLayout->addWidget(addBtn);
 
   QPushButton *replaceBtn = new QPushButton(tr("Replace"), this);
-  replaceBtn->setMinimumSize(65, 25);
+  replaceBtn->setMinimumSize(90, 25);
   replaceBtn->setObjectName("PushButton_NoPadding");
   connect(replaceBtn, SIGNAL(clicked()), this, SLOT(onReplace()));
   buttonLayout->addWidget(replaceBtn);
