@@ -1284,7 +1284,7 @@ QPixmap StartupScenesList::createScenePreview(const QString &name,
       painter.drawPixmap((m_iconSize.width() - scaledPixmap.width()) / 2,
                          (m_iconSize.height() - scaledPixmap.height()) / 2,
                          scaledPixmap);
-      QPen pen(Qt::black);
+      QPen pen(palette().text().color());
       pen.setStyle(Qt::DotLine);
       painter.setPen(pen);
       painter.drawRect((m_iconSize.width() - scaledPixmap.width()) / 2,
