@@ -60,6 +60,16 @@ const struct {
 
 #define CAMERACONFIGKEYS_COUNT 4
 
+typedef struct {
+  std::string section;
+  std::string key;
+  QString label;
+  QString readOnly;
+  QString widgetType;
+  QString currentVal;
+  QStringList choices;
+} GPConfig;
+
 //-----------------------------------------------------------------
 
 class GPhotoCam : public QObject {
@@ -187,7 +197,8 @@ public:
   QStringList getPictureStyleOptions() { return m_pictureStyleOptions; }
   QStringList getManualFocusRange() { return m_manualFocusRange;  }
 
-  QStringList getCameraConfigList(const char *key);
+  QList<GPConfig> getCameraAllConfigs();
+  QStringList getCameraConfigChoicesOrRange(const char *key);
   QString getCameraConfigValue(const char *key);
   bool setCameraConfigValue(const char *key, QString value);
 

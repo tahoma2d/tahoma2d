@@ -37,6 +37,7 @@ void doGPSleep(int ms) {
 
 //-----------------------------------------------------------------------------
 bool gp_crit_error;
+QString gp_crit_message;
 
 static void logdump(GPLogLevel level, const char *domain, const char *str,
                     void *data) {
@@ -46,8 +47,11 @@ static void logdump(GPLogLevel level, const char *domain, const char *str,
   if (level == GP_LOG_ERROR) {
     msgType = GPHOTOMSG::GPError;
     if (QString(str).contains("PTP No Device") ||
-        QString(str).contains("No such device")) {
+        QString(str).contains("No such device") ||
+        QString(str).contains("Could not claim interface") /*||
+        QString(str).contains("Timeout reading from or writing to the port")*/) {
       gp_crit_error = true;
+      gp_crit_message = msg;
       msg = "CRITICAL! " + QString((char *)data) + " encountered: " + msg;
       free(data);
     }
@@ -297,11 +301,11 @@ void GPhotoCam::onTimeout() {
         m_cameraName.contains("1000D") || m_cameraName.contains("40D")) {
       // Nikon: Turn off autofocus from a libgphoto2 point of view.
       // Does not work for Canon but may work for others.
-      char id[5] = "ptp2";
-      char key[10] = "autofocus";
+      char id[5]    = "ptp2";
+      char key[10]  = "autofocus";
       char value[4] = "off";
-      retVal = gp_setting_set(id, key, value);
-      retVal = gp_camera_trigger_capture(m_camera, m_gpContext);
+      retVal        = gp_setting_set(id, key, value);
+      retVal        = gp_camera_trigger_capture(m_camera, m_gpContext);
     } else {
       retVal = setCameraConfigValue("eosremoterelease", "Immediate");
       if (retVal >= GP_OK)
@@ -325,11 +329,19 @@ void GPhotoCam::onTimeout() {
       releaseCamera();
       StopMotion::instance()->stopLiveView();
       emit gphotoCameraChanged(QString(""));
+
+      DVGui::error(tr("A CRITICAL error was encountered with the "
+                      "camera:\n\n'%1'\n\nCamera has been disconnected and may "
+                      "need to be restarted.")
+                       .arg(gp_crit_message));
+
+      gp_crit_message.clear();
+
       break;
     }
 
-    retVal =
-        gp_camera_wait_for_event(m_camera, 1, &evttype, &evtdata, m_gpContext);
+    retVal = gp_camera_wait_for_event(m_camera, 1, &evttype, &evtdata,
+                                      m_gpContext);
     if (retVal < GP_OK) break;
     if (m_exitRequested) break;
 
@@ -338,9 +350,9 @@ void GPhotoCam::onTimeout() {
       path = (CameraFilePath *)evtdata;
 
       GPhotoEventLogManager::instance()->addEventMessage(
-          GPHOTOMSG::GPEvent, "FILE ADDED ON CAMERA: " +
-                                  QString::fromStdString(path->folder) + "/" +
-                                  QString::fromStdString(path->name));
+          GPHOTOMSG::GPEvent,
+          "FILE ADDED ON CAMERA: " + QString::fromStdString(path->folder) +
+              "/" + QString::fromStdString(path->name));
 
       m_cameraImageFilePath = path;
       downloadImage();
@@ -362,9 +374,9 @@ void GPhotoCam::onTimeout() {
       path = (CameraFilePath *)evtdata;
 
       GPhotoEventLogManager::instance()->addEventMessage(
-          GPHOTOMSG::GPEvent, "FOLDER ADDED ON CAMERA: " +
-                                  QString::fromStdString(path->folder) + "/" +
-                                  QString::fromStdString(path->name));
+          GPHOTOMSG::GPEvent,
+          "FOLDER ADDED ON CAMERA: " + QString::fromStdString(path->folder) +
+              "/" + QString::fromStdString(path->name));
 
       free(evtdata);
       break;
@@ -566,7 +578,7 @@ bool GPhotoCam::initializeCamera() {
 
   return true;
 }
-  
+
 //-----------------------------------------------------------------------------
 
 bool GPhotoCam::releaseCamera() {
@@ -607,7 +619,6 @@ bool GPhotoCam::openCameraSession() {
 //-----------------------------------------------------------------------------
 
 bool GPhotoCam::closeCameraSession() {
-
   m_sessionOpen = false;
 
   if (!m_camera) return true;
@@ -691,7 +702,7 @@ bool GPhotoCam::getGPhotocamImage() {
     QCoreApplication::processEvents(QEventLoop::AllEvents |
                                     QEventLoop::WaitForMoreEvents);
 
-  l_quitLoop = false;
+  l_quitLoop                              = false;
   StopMotion::instance()->m_liveViewImage = converter->getImage();
 
   if (!StopMotion::instance()->m_liveViewImage) {
@@ -896,7 +907,93 @@ bool GPhotoCam::downloadImage() {
 
 //-----------------------------------------------------------------
 
-QStringList GPhotoCam::getCameraConfigList(const char *key) {
+QList<GPConfig> GPhotoCam::getCameraAllConfigs() {
+  QList<GPConfig> configs;
+  CameraWidget *widget = NULL, *child = NULL, *section = NULL;
+  const char *cvalue;
+  int retVal;
+
+  retVal = gp_camera_get_config(m_camera, &widget, m_gpContext);
+  if (retVal < GP_OK) return configs;
+
+  for (int i = 0; i < gp_widget_count_children(widget); i++) {
+    retVal = gp_widget_get_child(widget, i, &child);
+    if (retVal < GP_OK) continue;
+
+    CameraWidgetType widgetType;
+    retVal = gp_widget_get_type(child, &widgetType);
+    if (retVal < GP_OK) continue;
+      
+    if (widgetType == CameraWidgetType::GP_WIDGET_SECTION) {
+      std::string sectionName;
+
+      retVal = gp_widget_get_name(child, &cvalue);
+      if (retVal < GP_OK) continue;
+      sectionName = cvalue;
+
+      retVal = gp_widget_get_child(widget, i, &section);
+      if (retVal < GP_OK) continue;
+
+      for (int j = 0; j < gp_widget_count_children(section); j++) {
+        GPConfig config;
+
+        retVal = gp_widget_get_child(section, j, &child);
+        if (retVal < GP_OK) continue;
+
+        CameraWidgetType swidgetType;
+        retVal = gp_widget_get_type(child, &swidgetType);
+        if (retVal < GP_OK) continue;
+
+        config.section = sectionName;
+
+        retVal = gp_widget_get_name(child, &cvalue);
+        if (retVal < GP_OK) continue;
+        config.key = cvalue; 
+
+        retVal = gp_widget_get_label(child, &cvalue);
+        if (retVal == GP_OK) config.label = cvalue;
+
+        int readOnly;
+        retVal = gp_widget_get_readonly(child, &readOnly);
+        if (retVal == GP_OK) config.readOnly = QString::number(readOnly);
+
+        switch (swidgetType) {
+        case CameraWidgetType::GP_WIDGET_DATE:
+          config.widgetType = "DATE";
+          break;
+        case CameraWidgetType::GP_WIDGET_MENU:
+          config.widgetType = "MENU";
+          break;
+        case CameraWidgetType::GP_WIDGET_RADIO:
+          config.widgetType = "RADIO";
+          break;
+        case CameraWidgetType::GP_WIDGET_RANGE:
+          config.widgetType = "RANGE";
+          break;
+        case CameraWidgetType::GP_WIDGET_TEXT:
+          config.widgetType = "TEXT";
+          break;
+        case CameraWidgetType::GP_WIDGET_TOGGLE:
+          config.widgetType = "TOGGLE";
+          break;
+        }
+
+        config.currentVal = getCameraConfigValue(config.key.c_str());
+
+        config.choices = getCameraConfigChoicesOrRange(config.key.c_str());
+
+        configs.push_back(config);
+      }
+    }
+  }
+
+  gp_widget_free(widget);
+  return configs;
+}
+
+//-----------------------------------------------------------------
+
+QStringList GPhotoCam::getCameraConfigChoicesOrRange(const char *key) {
   QStringList configList;
   CameraWidget *widget = NULL, *child = NULL;
   CameraWidgetType widgetType;
@@ -991,23 +1088,23 @@ QString GPhotoCam::getCameraConfigValue(const char *key) {
   case GP_WIDGET_RADIO:
   case GP_WIDGET_TEXT: {
     char *cvalue;
-    retVal                            = gp_widget_get_value(child, &cvalue);
+    retVal = gp_widget_get_value(child, &cvalue);
     if (retVal >= GP_OK) currentValue = cvalue;
     break;
   }
   case GP_WIDGET_RANGE: {
     float fvalue;
-    retVal                            = gp_widget_get_value(child, &fvalue);
+    retVal = gp_widget_get_value(child, &fvalue);
     if (retVal >= GP_OK) currentValue = QString::number(fvalue);
     break;
   }
+  case GP_WIDGET_DATE:
   case GP_WIDGET_TOGGLE: {
     int ivalue;
-    retVal                            = gp_widget_get_value(child, &ivalue);
+    retVal = gp_widget_get_value(child, &ivalue);
     if (retVal >= GP_OK) currentValue = QString::number(ivalue);
     break;
   }
-  case GP_WIDGET_DATE:
   case GP_WIDGET_BUTTON:
   case GP_WIDGET_SECTION:
   case GP_WIDGET_WINDOW:
@@ -1077,12 +1174,12 @@ bool GPhotoCam::setCameraConfigValue(const char *key, QString value) {
     retVal       = gp_widget_set_value(child, &fvalue);
     break;
   }
+  case GP_WIDGET_DATE:
   case GP_WIDGET_TOGGLE: {
     int ivalue = value.toInt();
     retVal     = gp_widget_set_value(child, &ivalue);
     break;
   }
-  case GP_WIDGET_DATE:
   case GP_WIDGET_BUTTON:
   case GP_WIDGET_SECTION:
   case GP_WIDGET_WINDOW:
@@ -1104,7 +1201,7 @@ bool GPhotoCam::setCameraConfigValue(const char *key, QString value) {
 bool GPhotoCam::getAvailableApertures() {
   m_apertureOptions.clear();
 
-  m_apertureOptions = getCameraConfigList(m_configKeys.apertureKey);
+  m_apertureOptions = getCameraConfigChoicesOrRange(m_configKeys.apertureKey);
 
   return true;
 }
@@ -1114,7 +1211,8 @@ bool GPhotoCam::getAvailableApertures() {
 bool GPhotoCam::getAvailableShutterSpeeds() {
   m_shutterSpeedOptions.clear();
 
-  m_shutterSpeedOptions = getCameraConfigList(m_configKeys.shutterSpeedKey);
+  m_shutterSpeedOptions =
+      getCameraConfigChoicesOrRange(m_configKeys.shutterSpeedKey);
 
   return true;
 }
@@ -1124,7 +1222,7 @@ bool GPhotoCam::getAvailableShutterSpeeds() {
 bool GPhotoCam::getAvailableIso() {
   m_isoOptions.clear();
 
-  m_isoOptions = getCameraConfigList(m_configKeys.isoKey);
+  m_isoOptions = getCameraConfigChoicesOrRange(m_configKeys.isoKey);
 
   return true;
 }
@@ -1134,7 +1232,8 @@ bool GPhotoCam::getAvailableIso() {
 bool GPhotoCam::getAvailableExposureCompensations() {
   m_exposureOptions.clear();
 
-  m_exposureOptions = getCameraConfigList(m_configKeys.exposureCompensationKey);
+  m_exposureOptions =
+      getCameraConfigChoicesOrRange(m_configKeys.exposureCompensationKey);
 
   return true;
 }
@@ -1144,7 +1243,8 @@ bool GPhotoCam::getAvailableExposureCompensations() {
 bool GPhotoCam::getAvailableWhiteBalances() {
   m_whiteBalanceOptions.clear();
 
-  m_whiteBalanceOptions = getCameraConfigList(m_configKeys.whiteBalanceKey);
+  m_whiteBalanceOptions =
+      getCameraConfigChoicesOrRange(m_configKeys.whiteBalanceKey);
 
   return true;
 }
@@ -1154,7 +1254,8 @@ bool GPhotoCam::getAvailableWhiteBalances() {
 bool GPhotoCam::getAvailableImageQualities() {
   m_imageQualityOptions.clear();
 
-  m_imageQualityOptions = getCameraConfigList(m_configKeys.imageQualityKey);
+  m_imageQualityOptions =
+      getCameraConfigChoicesOrRange(m_configKeys.imageQualityKey);
 
   return true;
 }
@@ -1164,7 +1265,7 @@ bool GPhotoCam::getAvailableImageQualities() {
 bool GPhotoCam::getAvailableImageSizes() {
   m_imageSizeOptions.clear();
 
-  m_imageSizeOptions = getCameraConfigList(m_configKeys.imageSizeKey);
+  m_imageSizeOptions = getCameraConfigChoicesOrRange(m_configKeys.imageSizeKey);
 
   return true;
 }
@@ -1174,7 +1275,8 @@ bool GPhotoCam::getAvailableImageSizes() {
 bool GPhotoCam::getAvailablePictureStyles() {
   m_pictureStyleOptions.clear();
 
-  m_pictureStyleOptions = getCameraConfigList(m_configKeys.pictureStyleKey);
+  m_pictureStyleOptions =
+      getCameraConfigChoicesOrRange(m_configKeys.pictureStyleKey);
 
   return true;
 }
@@ -1184,7 +1286,8 @@ bool GPhotoCam::getAvailablePictureStyles() {
 bool GPhotoCam::getAvailableColorTemperatures() {
   m_colorTempOptions.clear();
 
-  m_colorTempOptions = getCameraConfigList(m_configKeys.colorTemperatureKey);
+  m_colorTempOptions =
+      getCameraConfigChoicesOrRange(m_configKeys.colorTemperatureKey);
 
   return true;
 }
@@ -1194,7 +1297,8 @@ bool GPhotoCam::getAvailableColorTemperatures() {
 bool GPhotoCam::getManualFocusRangeData() {
   m_manualFocusRange.clear();
 
-  m_manualFocusRange = getCameraConfigList(m_configKeys.manualFocusDriveKey);
+  m_manualFocusRange =
+      getCameraConfigChoicesOrRange(m_configKeys.manualFocusDriveKey);
 
   return true;
 }
@@ -1353,7 +1457,7 @@ bool GPhotoCam::setShutterSpeed(QString shutterSpeed, bool withOffset) {
 //-----------------------------------------------------------------
 
 bool GPhotoCam::setIso(QString iso) {
-  bool status                = setCameraConfigValue(m_configKeys.isoKey, iso);
+  bool status = setCameraConfigValue(m_configKeys.isoKey, iso);
   if (status) m_displayedIso = iso;
 
   return status;
@@ -1414,7 +1518,7 @@ bool GPhotoCam::setPictureStyle(QString pictureStyle) {
 
 //-----------------------------------------------------------------
 
-bool GPhotoCam::setManualFocus(int value){
+bool GPhotoCam::setManualFocus(int value) {
   QString strvalue = QString::number(value);
 
   bool status =
@@ -1433,8 +1537,7 @@ void GPhotoCam::setLiveViewOffset(int compensation) {
 //-----------------------------------------------------------------
 
 bool GPhotoCam::zoomLiveView() {
-  if (!m_sessionOpen || !StopMotion::instance()->m_liveViewStatus)
-    return false;
+  if (!m_sessionOpen || !StopMotion::instance()->m_liveViewStatus) return false;
 
   if (m_pickLiveViewZoom) toggleZoomPicking();
 
@@ -1468,7 +1571,7 @@ void GPhotoCam::calculateZoomPoint() {
         TApp::instance()->getCurrentScene()->getScene()->getCurrentCamera();
     TDimensionD size = camera->getSize();
     minimumDpi       = std::min(m_fullImageDimensions.lx / size.lx,
-                          m_fullImageDimensions.ly / size.ly);
+                                m_fullImageDimensions.ly / size.ly);
   } else {
     TDimensionD size =
         TDimensionD((double)m_proxyImageDimensions.lx / Stage::standardDpi,

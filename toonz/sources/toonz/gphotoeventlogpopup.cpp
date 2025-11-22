@@ -1,5 +1,6 @@
 #include "gphotoeventlogpopup.h"
 
+#include "stopmotion.h"
 #include "menubarcommandids.h"
 #include "toonzqt/menubarcommand.h"
 
@@ -28,26 +29,28 @@ GPhotoEventLogPopup::GPhotoEventLogPopup(QWidget *parent)
 
   //-------Left side
   m_toggleAllOnOff = new QCheckBox(tr("Capture messages:"), this);
-  m_toggleAllOnOff->setChecked(true);
+  m_toggleAllOnOff->setChecked(false);
 
   for (int i = 0; i < GPHOTOMSG::Count; i++) {
-    QString label;
+    m_eventCheckBox[i] = new QCheckBox(this);
     switch (i) {
     case GPHOTOMSG::GPEvent:
-      label = tr("Event");
+      m_eventCheckBox[i]->setText(tr("Event"));
+      m_eventCheckBox[i]->setChecked(true);
+      m_msgTypeCount++;
       break;
     case GPHOTOMSG::GPError:
-      label = tr("Error");
+      m_eventCheckBox[i]->setText(tr("Error"));
+      m_eventCheckBox[i]->setChecked(true);
+      m_msgTypeCount++;
       break;
     case GPHOTOMSG::GPDebug:
-      label = tr("Debug");
+      m_eventCheckBox[i]->setText(tr("Debug"));
       break;
     }
-    m_eventCheckBox[i] = new QCheckBox(label, this);
-    m_eventCheckBox[i]->setChecked(true);
   }
 
-  m_msgTypeCount = GPHOTOMSG::Count;
+  QPushButton *listconfigBtn = new QPushButton(tr("List All Configs"), this);
 
   QFrame *filterBox          = new QFrame(this);
   QVBoxLayout *vFilterLayout = new QVBoxLayout(filterBox);
@@ -67,10 +70,14 @@ GPhotoEventLogPopup::GPhotoEventLogPopup(QWidget *parent)
     vFilterLayout->addLayout(vEventListLayout);
   }
   vFilterLayout->addStretch();
+  vFilterLayout->addWidget(listconfigBtn);
 
   filterBox->setLayout(vFilterLayout);
 
   addWidget(filterBox);
+
+
+  connect(listconfigBtn, SIGNAL(pressed()), this, SLOT(onListAllConfigButtonPressed()));
 
   connect(m_toggleAllOnOff, SIGNAL(stateChanged(int)), this,
           SLOT(onToggleAllOnOff()));
@@ -92,7 +99,7 @@ GPhotoEventLogPopup::GPhotoEventLogPopup(QWidget *parent)
 
   m_eventLog = new QTextEdit(this);
   m_eventLog->setReadOnly(true);
-  m_eventLog->setLineWrapMode(QTextEdit::LineWrapMode::NoWrap);
+  m_eventLog->setLineWrapMode(QTextEdit::LineWrapMode::WidgetWidth);
   m_eventLog->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
   QFrame *logBox = new QFrame(this);
@@ -214,6 +221,68 @@ void GPhotoEventLogPopup::onCopyButtonPressed() {
 //--------------------------------------------------
 
 void GPhotoEventLogPopup::onClearButtonPressed() { m_eventLog->clear(); }
+
+//--------------------------------------------------
+
+void GPhotoEventLogPopup::onListAllConfigButtonPressed() {
+  StopMotion *stopMotion = StopMotion::instance();
+  if (!stopMotion) return;
+
+  GPhotoCam *cam = stopMotion->m_gphotocam;
+  if (!cam) return;
+
+  if (!cam->m_sessionOpen) {
+    m_eventLog->append(tr("List All Configs: No camera detected."));
+    return;
+  }
+
+  QList<GPConfig> gpConfigs = cam->getCameraAllConfigs();
+  if (gpConfigs.isEmpty()) {
+    m_eventLog->append(tr("List All Configs: No configurations retrieved."));
+    return;
+  }
+
+  m_eventLog->append(tr("========== All Configs =========="));
+  for (int i = 0; i < gpConfigs.count(); i++) {
+    GPConfig config = gpConfigs[i];
+    if(i > 0) m_eventLog->append("-----");
+    std::string s = config.section;
+    std::string k = config.key;
+    QString fullKey =
+        "/main/" + QString::fromStdString(s) + "/" + QString::fromStdString(k);
+    m_eventLog->append(fullKey);
+    m_eventLog->append(tr("Label: ")+config.label);
+    m_eventLog->append(tr("Readonly: ") + config.readOnly);
+    m_eventLog->append(tr("Type: ") + config.widgetType);
+    m_eventLog->append(tr("Current: ") + config.currentVal);
+    if (config.widgetType == "DATE") {
+      // Convert to local time
+      time_t epoch      = config.currentVal.toInt();
+      std::tm *local_tm = std::localtime(&epoch);
+      char buffer[80];
+      std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", local_tm);
+      m_eventLog->append(tr("Printable: ") + QString::fromStdString(buffer));
+    }
+    for (int j = 0; j < config.choices.count(); j++) {
+      if (config.widgetType == "MENU" || config.widgetType == "RADIO") {
+        m_eventLog->append(tr("Choice ") + (QString::number(j+1)) + ": " + config.choices[j]);
+      } else if (config.widgetType == "RANGE") {
+        switch (j) {
+        case 0:
+          m_eventLog->append(tr("Bottom: ") + config.choices[j]);
+          break;
+        case 1:
+          m_eventLog->append(tr("Top: ") + config.choices[j]);
+          break;
+        case 2:
+          m_eventLog->append(tr("Step: ") + config.choices[j]);
+          break;
+        }
+      }
+    }
+  }
+  m_eventLog->append("=================================");
+}
 
 //--------------------------------------------------
 
