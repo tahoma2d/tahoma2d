@@ -391,15 +391,25 @@ void DoubleLineEdit::setValue(double value) {
   if (!std::isfinite(value)) return;
   double minValue, maxValue;
   getRange(minValue, maxValue);
-  value = std::clamp(value, minValue, maxValue);
+  value        = std::clamp(value, minValue, maxValue);
   QString str;
   str.setNum(value);
   int pos = 0;
-  if (m_validator->validate(str, pos) == QValidator::Acceptable) {
-    setText(str);
-    // Ensures only decimals are truncated, not leading digits.
-    setCursorPosition(0);
+  if (m_validator->validate(str, pos) != QValidator::Acceptable) {
+    // If it fails, check for too many decimal places and truncate if needed
+    int decimals   = getDecimals();
+    int decimalPos = str.indexOf('.');
+    if (decimals != -1 && decimalPos != -1 &&
+        (str.length() - decimalPos - 1) > decimals) {
+      double factor = std::pow(10.0, getDecimals());
+      value         = std::round(value * factor) / factor;
+      str.setNum(value);
+    }
   }
+  setText(str);
+
+  // Ensures only decimals are truncated, not leading digits.
+  setCursorPosition(0);
 }
 
 //-----------------------------------------------------------------------------
