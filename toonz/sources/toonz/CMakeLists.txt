@@ -80,7 +80,6 @@ set(MOC_HEADERS
     reslist.h
     ruler.h
     savepresetpopup.h
-    scenebrowser.h
     scenesettingspopup.h
     sceneviewer.h
     sceneviewercontextmenu.h
@@ -145,6 +144,7 @@ set(MOC_HEADERS
     alignmentpane.h
     tipspopup.h
     gphotoeventlogpopup.h
+    preproductionboard.h
 )
 
 set(HEADERS
@@ -278,8 +278,6 @@ set(SOURCES
     renumberpopup.cpp
     runscriptcommand.cpp
     savepresetpopup.cpp
-    scenebrowser.cpp
-    scenebrowserversioncontrol.cpp
     sceneviewercontextmenu.cpp
     scenesettingspopup.cpp
     scriptconsolepanel.cpp
@@ -397,6 +395,7 @@ set(SOURCES
     alignmentpane.cpp
     tipspopup.cpp
     gphotoeventlogpopup.cpp
+    preproductionboard.cpp
 )
 
 if(WITH_TRANSLATION)

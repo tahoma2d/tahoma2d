@@ -452,6 +452,8 @@ void Preferences::definePreferenceItems() {
   define(colorCalibrationLutPaths, "colorCalibrationLutPaths",
          QMetaType::QVariantMap, QVariantMap());
   define(displayIn30bit, "displayIn30bit", QMetaType::Bool, false);
+  define(iconSizePB, "iconSizePB", QMetaType::QSize, QSize(128, 72), QSize(10, 10),
+         QSize(400, 400));
 
   // hide menu icons by default in macOS since the icon color may not match with
   // the system color theme
