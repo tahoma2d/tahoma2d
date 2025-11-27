@@ -742,10 +742,11 @@ QPixmap BoardList::createThumbnail(const TFilePath &fp) {
       source = QPixmap(iconPath.getQString());
   }
 
-  if (source.isNull()) {
-    pixmap.fill(Qt::white);
-  } else {
+  if (isMissing)
     pixmap.fill(Qt::transparent);
+  else
+    pixmap.fill(Qt::white);
+  if (!source.isNull()) {
     QPainter painter(&pixmap);
     QPixmap scaledPixmap =
         source.scaled(m_iconSize, Qt::AspectRatioMode::KeepAspectRatio);
