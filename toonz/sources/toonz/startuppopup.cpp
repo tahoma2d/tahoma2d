@@ -1277,7 +1277,7 @@ QPixmap StartupScenesList::createScenePreview(const QString &name,
     QPixmap scenePreview(iconPath.getQString());
     if (!scenePreview.isNull()) {
       QPixmap pixmap(m_iconSize);
-      pixmap.fill(Qt::transparent);
+      pixmap.fill(Qt::white);
       QPainter painter(&pixmap);
       QPixmap scaledPixmap =
           scenePreview.scaled(m_iconSize, Qt::AspectRatioMode::KeepAspectRatio);
