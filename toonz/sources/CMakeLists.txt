@@ -247,6 +247,7 @@ add_definitions(
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 if(BUILD_ENV_APPLE)
+    include_directories("/usr/local/include/")
     set(CMAKE_MACOSX_RPATH ON)
     set(CMAKE_SKIP_BUILD_RPATH FALSE)
     set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
