@@ -90,10 +90,8 @@ IF EXIST ..\..\thirdparty\apps\rhubarb (
 )
 
 echo ">>> Remove unnecessary files"
-REM Remove ILK files
-del Tahoma2D\*.ilk
 REM Remove github keep files
-del /A- /S Tahoma2D\tahomastuff\*.gitkeep
+del /A- /S ..\..\stuff\*.gitkeep
 
 echo ">>> Creating Tahoma2D Windows Installer"
 IF NOT EXIST installer mkdir installer
