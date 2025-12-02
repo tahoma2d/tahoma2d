@@ -48,6 +48,8 @@ class TimeStretchUndo final : public TUndo {
   int m_c0Old;
   int m_c1Old;
 
+  QMap<int, QList<std::pair<int, int>>> m_loops;
+
 public:
   TimeStretchUndo(int r0, int c0, int r1, int c1, int newRange,
                   TimeStretchPopup::STRETCH_TYPE type)
@@ -66,11 +68,15 @@ public:
     assert(m_cells);
     int k        = 0;
     TXsheetP xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
-    for (int c = c0; c <= c1; c++)
+    for (int c = c0; c <= c1; c++) {
       for (int r = r0; r <= r1; r++) {
         const TXshCell &cell = xsh->getCell(r, c, false, false);
         m_cells[k++] = cell;
       }
+
+      TXshColumn *column = xsh->getColumn(c);
+      if (column) m_loops.insert(c, column->getLoops());
+    }
   }
 
   ~TimeStretchUndo() {}
@@ -105,6 +111,13 @@ public:
           xsh->setCell(i + m_r0, c, m_cells[i + nr * (c - m_c0)]);
         int dn = oldNr - nr;
         xsh->removeCells(m_r1 + 1, c, dn);
+      }
+    }
+
+    if (m_loops.size()) {
+      foreach (int c, m_loops.keys()) {
+        TXshColumn *column = xsh->getColumn(c);
+        if (column) column->setLoops(m_loops[c]);
       }
     }
 

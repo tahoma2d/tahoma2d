@@ -322,10 +322,16 @@ Set column color tag to \b colorTag.
 
   bool isLoopedFrame(int row);
   int getLoopedFrame(int row, bool forOnionSkin = false);
+  bool isLoopStart(int row);
+  bool isLoopEnd(int row);
   TXshCell getLoopedCell(int row, bool forOnionSkin = false,
                          bool implicitLookup = true);
   bool loadLoopInfo(std::string tagName, TIStream &is);
   void saveLoopInfo(TOStream &os);
+
+  void shiftStartLoop(int row, int shiftAmount);
+  void shiftEndLoop(int row, int shiftAmount);
+  void shiftLoopMarkers(int row, int shiftAmount);
 };
 
 #ifdef _WIN32

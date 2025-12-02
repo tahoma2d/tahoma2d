@@ -166,6 +166,7 @@ void InsertSceneFrameUndo::doInsertSceneFrame(int frame, bool notify) {
       objectId = TStageObjectId::ColumnId(c);
 
       xsh->insertCells(frame, c);
+      xsh->shiftLoopMarkers(frame, c, 1);
       TXshCell cell;
       if (!Preferences::instance()->isImplicitHoldEnabled() && frame > 0)
         cell = xsh->getCell(frame - 1, c);
@@ -209,6 +210,7 @@ void InsertSceneFrameUndo::doRemoveSceneFrame(int frame, bool notify) {
         updateSound = true;
 
       xsh->removeCells(frame, c);
+      xsh->shiftLoopMarkers(frame, c, -1);
     }
 
     if (!xsh->getColumn(c) || xsh->getColumn(c)->isLocked()) continue;
@@ -339,6 +341,7 @@ public:
 class RemoveSceneFrameUndo final : public InsertSceneFrameUndo {
   std::vector<TXshCell> m_cells;
   std::vector<TStageObject::Keyframe> m_keyframes;
+  std::vector<QList<std::pair<int, int>>> m_loops;
   NavigationTags::Tag m_tag;
 
 public:
@@ -350,6 +353,7 @@ public:
 
     m_cells.resize(colsCount);
     m_keyframes.resize(colsCount + 1);
+    m_loops.resize(colsCount);
     m_tag = xsh->getNavigationTags()->getTag(frame);
 
     // Inserting the eventual camera keyframe at the end
@@ -361,7 +365,10 @@ public:
     for (int c = 0; c != colsCount; ++c) {
       // Store cell
       const TXshCell &cell = xsh->getCell(m_frame, c, false, false);
-      m_cells[c] = cell;
+      m_cells[c]           = cell;
+
+      TXshColumn *column = xsh->getColumn(c);
+      if (column) m_loops[c] = column->getLoops();
 
       // Store stage object keyframes
       TStageObject *obj = xsh->getStageObject(TStageObjectId::ColumnId(c));
@@ -392,8 +399,12 @@ public:
     for (int c = 0; c != cellsCount; ++c) {
       xsh->setCell(m_frame, c, m_cells[c]);
 
-      if (xsh->getColumn(c) && xsh->getColumn(c)->getSoundColumn())
-        updateSound = true;
+      TXshColumn *column = xsh->getColumn(c);
+
+      if (column) {
+        column->setLoops(m_loops[c]);
+        if (column->getSoundColumn()) updateSound = true;
+      }
 
       if (m_keyframes[c].m_isKeyframe) {
         TStageObject *obj = xsh->getStageObject(TStageObjectId::ColumnId(c));

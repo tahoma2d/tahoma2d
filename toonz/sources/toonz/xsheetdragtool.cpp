@@ -393,6 +393,7 @@ class LevelExtenderUndo final : public TUndo {
   int m_rowCount;
   int m_col, m_row, m_deltaRow;
   std::vector<TXshCell> m_cells;  // righe x colonne
+  QMap<int, QList<std::pair<int, int>>> m_loops;
 
   bool m_insert;
   bool m_invert;  // upper-directional
@@ -422,6 +423,15 @@ public:
     for (int r = row; r < row + rowCount; r++)
       for (int c = col; c < col + colCount; c++)
         m_cells[k++] = xsh->getCell(r, c);
+
+    // setCells gets called 2x. Only store loops 1x
+    if (m_loops.isEmpty()) {
+      for (int c = col; c < col + colCount; c++) {
+        TXshColumn *column = xsh->getColumn(c);
+        if (!column) continue;
+        m_loops.insert(c, column->getLoops());
+      }
+    }
   }
 
   void setDeltaRow(int drow) {
@@ -435,8 +445,8 @@ public:
     int count    = abs(m_deltaRow);
     int r        = m_row + m_rowCount - count;
     for (int c = m_col; c < m_col + m_colCount; c++) {
-      TXshColumn *column = xsh->getColumn(c);
       xsh->removeCells(r, c, count);
+      xsh->shiftLoopMarkers(r, c, -count);
     }
   }
 
@@ -453,6 +463,7 @@ public:
       bool isSoundTextColumn = (column && column->getSoundTextColumn());
       int col                = m_col + c;
       xsh->insertCells(r0, col, count);
+      xsh->shiftLoopMarkers(r0 - 1, col, count);
       int r;
       TXshCell prevCell = xsh->getCell(r0, c);
       for (r = r0; r <= r1; r++) {
@@ -479,10 +490,10 @@ public:
     int count    = abs(m_deltaRow);
     for (int c = m_col; c < m_col + m_colCount; c++) {
       TXshColumn *column = xsh->getColumn(c);
-      if (m_invert)
-        xsh->clearCells(m_row, c, count);
-      else
-        xsh->clearCells(m_row + m_rowCount - count, c, count);
+      int targetRow      = m_invert ? m_row : (m_row + m_rowCount - count);
+
+      xsh->clearCells(targetRow, c, count);
+      xsh->shiftLoopMarkers(targetRow, c, -count);
     }
   }
 
@@ -510,8 +521,12 @@ public:
         int k = (r - m_row) * m_colCount + c;
         if (isSoundColumn)
           xsh->setCell(r, col, TXshCell());
-        else
+        else {
           xsh->setCell(r, col, m_cells[k]);
+          if (column->isLoopStart(r + 1)) {
+            column->shiftStartLoop(r + 1, r0 - (r + 1));
+          } 
+        }
       }
     }
   }
@@ -524,6 +539,11 @@ public:
       (m_insert) ? removeCells() : clearCells();
     else {
       assert(0);
+    }
+    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
+    for (int i = 0; i < m_colCount; i++) {
+      TXshColumn *column = xsh->getColumn(m_col + i);
+      if (column) column->setLoops(m_loops[m_col + i]);
     }
     TSelection *selection =
         TApp::instance()->getCurrentSelection()->getSelection();
@@ -734,6 +754,8 @@ class LevelExtenderTool final : public XsheetGUI::DragTool {
 
   bool m_refreshSound;
 
+  int m_origStartLoop;
+
 public:
   LevelExtenderTool(XsheetViewer *viewer, bool insert = true,
                     bool invert = false, bool refreshSound = false)
@@ -742,7 +764,8 @@ public:
       , m_undo(0)
       , m_insert(insert)
       , m_invert(invert)
-      , m_refreshSound(refreshSound) {}
+      , m_refreshSound(refreshSound)
+      , m_origStartLoop(-1) {}
 
   // called when the smart tab is clicked
   void onClick(const CellPosition &pos) override {
@@ -806,9 +829,10 @@ public:
     if (dr < 0) {
       for (int c = 0; c < m_colCount; c++) {
         TXshColumn *column = xsh->getColumn(m_c0 + c);
-        if (m_insert)
+        if (m_insert) {
           xsh->removeCells(row, m_c0 + c, -dr);
-        else {
+          xsh->shiftLoopMarkers(row, m_c0 + c, dr);
+        } else {
           for (int r = row; r <= m_r1; r++)
             xsh->setCell(r, m_c0 + c, TXshCell());
         }
@@ -841,7 +865,10 @@ public:
         if (column && column->getFolderColumn()) continue;
         bool isSoundColumn     = (column && column->getSoundColumn());
         bool isSountTextColumn = (column && column->getSoundTextColumn());
-        if (m_insert) xsh->insertCells(m_r1 + 1, m_c0 + c, dr);
+        if (m_insert) {
+          xsh->insertCells(m_r1 + 1, m_c0 + c, dr);
+          xsh->shiftLoopMarkers(m_r1, m_c0 + c, dr);
+        }
         TXshCell prevCell = xsh->getCell(m_r1, m_c0 + c);
         for (int r = m_r1 + 1; r <= r1; r++) {
           TXshCell cell = m_columns[c].generate(r);
@@ -901,6 +928,10 @@ public:
         TXshColumn *column = xsh->getColumn(m_c0 + c);
         if (!column) continue;
         xsh->clearCells(m_r0, m_c0 + c, dr);
+        if (m_origStartLoop != -1) {
+          column->shiftStartLoop(m_r0, 1);
+          if (m_r0 == (m_origStartLoop - 1)) m_origStartLoop = -1;
+        }
       }
     }
     // extend
@@ -912,8 +943,13 @@ public:
         for (int r = r0; r <= m_r0 - 1; r++) {
           if (isSoundColumn)
             xsh->setCell(r, m_c0 + c, TXshCell());
-          else
+          else {
             xsh->setCell(r, m_c0 + c, m_columns[c].generate(r));
+            if (column->isLoopStart(r + 1)) {
+              if (m_origStartLoop == -1) m_origStartLoop = r + 1;
+              column->shiftStartLoop(r + 1, -1);
+            }
+          }
         }
       }
     }

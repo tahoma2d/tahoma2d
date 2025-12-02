@@ -1232,6 +1232,28 @@ int TXshColumn::getLoopedFrame(int row, bool forOnionSkin) {
 
 //-----------------------------------------------------------------------------
 
+bool TXshColumn::isLoopStart(int row) {
+  if (!hasLoops()) return row;
+
+  for (int i = 0; i < m_loops.size(); i++)
+    if (m_loops[i].first == row) return true;
+  
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
+bool TXshColumn::isLoopEnd(int row) {
+  if (!hasLoops()) return row;
+
+  for (int i = 0; i < m_loops.size(); i++)
+    if (m_loops[i].second == row) return true;
+
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
 TXshCell TXshColumn::getLoopedCell(int row, bool forOnionSkin,
                                    bool implicitLookup) {
   TXshCellColumn *cellColumn = getCellColumn();
@@ -1266,4 +1288,46 @@ void TXshColumn::saveLoopInfo(TOStream &os) {
   for (int i = 0; i < m_loops.size(); i++)
     os << m_loops[i].first << m_loops[i].second;
   os.closeChild();  // loops
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshColumn::shiftStartLoop(int row, int shiftAmount) {
+  if (m_loops.isEmpty()) return;
+
+  for (int i = 0; i < m_loops.size(); i++) {
+    if (m_loops[i].first != row) continue;
+    m_loops[i].first += shiftAmount;
+    if ((m_loops[i].second - m_loops[i].first) <= 0) removeLoop(m_loops[i]);
+    break;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshColumn::shiftEndLoop(int row, int shiftAmount) {
+  if (m_loops.isEmpty()) return;
+
+  for (int i = 0; i < m_loops.size(); i++) {
+    if (m_loops[i].second != row) continue;
+    m_loops[i].second += shiftAmount;
+    if ((m_loops[i].second - m_loops[i].first) <= 0) removeLoop(m_loops[i]);
+    break;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TXshColumn::shiftLoopMarkers(int row, int shiftAmount) {
+  if (m_loops.isEmpty()) return;
+
+  std::vector<std::pair<int, int>> invalidLoops;
+  for (int i = 0; i < m_loops.size(); i++) {
+    if (m_loops[i].first > row) m_loops[i].first += shiftAmount;
+    if (m_loops[i].second >= row) m_loops[i].second += shiftAmount;
+    if ((m_loops[i].second - m_loops[i].first) <= 0)
+      invalidLoops.push_back(m_loops[i]);
+  }
+
+  for (int i = 0; i < invalidLoops.size(); i++) removeLoop(invalidLoops[i]);
 }

@@ -613,6 +613,8 @@ in TXsheetImp.
   bool isFolderColumn(int col);
   void openCloseFolder(int folderCol, bool openFolder);
 
+  void shiftLoopMarkers(int row, int col, int rowCount);
+
 protected:
   bool checkCircularReferences(TXsheet *childCandidate);
 
