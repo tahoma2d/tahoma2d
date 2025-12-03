@@ -184,7 +184,7 @@ void CellsMover::moveCells(const TPoint &pos) const {
       if (column) {
         if (column->getCellColumn() == 0 || column->isLocked()) continue;
         xsh->insertCells(r, c + i, m_rowCount);
-        xsh->shiftLoopMarkers(r, c + i, m_rowCount);
+        xsh->shiftMarkers(r, c + i, m_rowCount);
       }
     }
   }
@@ -260,6 +260,7 @@ void CellsMover::undoMoveCells(const TPoint &pos) const {
           infoId++;
 
           column->setLoops(m_loops[c + i]);
+          cellCol->setCellMarks(m_cellMarks[c + i]);
         }
         return;
       }
@@ -268,7 +269,11 @@ void CellsMover::undoMoveCells(const TPoint &pos) const {
     for (int i = 0; i < m_colCount; i++) {
       xsh->removeCells(r, c + i, m_rowCount);
       TXshColumn *column = xsh->getColumn(c + i);
-      if (column) column->setLoops(m_loops[c + i]);
+      if (column) {
+        column->setLoops(m_loops[c + i]);
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn) cellColumn->setCellMarks(m_cellMarks[c + i]);
+      }
     }
   } else {
     for (int i = 0; i < m_colCount; i++) xsh->clearCells(r, c + i, m_rowCount);
@@ -333,7 +338,11 @@ void CellsMover::getColumnsData(int c0, int c1) {
   for (int i = 0; i < colCount; i++) {
     ii.insert(c0 + i);
     TXshColumn *column = xsh->getColumn(c0 + i);
-    if(column) m_loops.insert(c0 + i, column->getLoops());
+    if (column) {
+      m_loops.insert(c0 + i, column->getLoops());
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) m_cellMarks.insert(c0 + i, cellColumn->getCellMarks());
+    }
   }
   m_columnsData->storeColumns(
       ii, xsh,

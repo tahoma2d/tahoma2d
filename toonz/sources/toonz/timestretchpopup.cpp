@@ -49,6 +49,7 @@ class TimeStretchUndo final : public TUndo {
   int m_c1Old;
 
   QMap<int, QList<std::pair<int, int>>> m_loops;
+  QMap<int, QMap<int, int>> m_cellMarks;
 
 public:
   TimeStretchUndo(int r0, int c0, int r1, int c1, int newRange,
@@ -75,7 +76,11 @@ public:
       }
 
       TXshColumn *column = xsh->getColumn(c);
-      if (column) m_loops.insert(c, column->getLoops());
+      if (column) {
+        m_loops.insert(c, column->getLoops());
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn) m_cellMarks.insert(c, cellColumn->getCellMarks());
+      }
     }
   }
 
@@ -118,6 +123,14 @@ public:
       foreach (int c, m_loops.keys()) {
         TXshColumn *column = xsh->getColumn(c);
         if (column) column->setLoops(m_loops[c]);
+      }
+    }
+    if (m_cellMarks.size()) {
+      foreach (int c, m_cellMarks.keys()) {
+        TXshColumn *column = xsh->getColumn(c);
+        if (!column) continue;
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn) cellColumn->setCellMarks(m_cellMarks[c]);
       }
     }
 

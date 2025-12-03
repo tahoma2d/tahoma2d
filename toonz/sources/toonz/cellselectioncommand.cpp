@@ -110,6 +110,7 @@ namespace {
 class SwingUndo final : public TUndo {
   int m_r0, m_c0, m_r1, m_c1;
   QMap<int, QList<std::pair<int, int>>> m_loops;
+  QMap<int, QMap<int, int>> m_cellMarks;
 
 public:
   SwingUndo(int r0, int c0, int r1, int c1);
@@ -131,7 +132,11 @@ SwingUndo::SwingUndo(int r0, int c0, int r1, int c1)
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   for (int c = c0; c <= c1; ++c) {
     TXshColumn *column = xsh->getColumn(c);
-    if (column) m_loops.insert(c, column->getLoops());
+    if (column) {
+      m_loops.insert(c, column->getLoops());
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) m_cellMarks.insert(c, cellColumn->getCellMarks());
+    }
   }
 }
 
@@ -162,6 +167,14 @@ void SwingUndo::undo() const {
     foreach (int c, m_loops.keys()) {
       TXshColumn *column = xsh->getColumn(c);
       if (column) column->setLoops(m_loops[c]);
+    }
+  }
+  if (m_cellMarks.size()) {
+    foreach (int c, m_cellMarks.keys()) {
+      TXshColumn *column = xsh->getColumn(c);
+      if (!column) continue;
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) cellColumn->setCellMarks(m_cellMarks[c]);
     }
   }
 
@@ -390,6 +403,7 @@ class StepUndo final : public TUndo {
 
   std::unique_ptr<TXshCell[]> m_cells;
   QMap<int, QList<std::pair<int, int>>> m_loops;
+  QMap<int, QMap<int, int>> m_cellMarks;
 
 public:
   StepUndo(int r0, int c0, int r1, int c1, int step);
@@ -430,7 +444,11 @@ StepUndo::StepUndo(int r0, int c0, int r1, int c1, int step)
 
   for (int c = c0; c <= c1; ++c) {
     TXshColumn *column = xsh->getColumn(c);
-    if (column) m_loops.insert(c, column->getLoops());
+    if (column) {
+      m_loops.insert(c, column->getLoops());
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) m_cellMarks.insert(c, cellColumn->getCellMarks());
+    }
   }
 }
 
@@ -478,6 +496,14 @@ void StepUndo::undo() const {
       if (column) column->setLoops(m_loops[c]);
     }
   }
+  if (m_cellMarks.size()) {
+    foreach (int c, m_cellMarks.keys()) {
+      TXshColumn *column = xsh->getColumn(c);
+      if (!column) continue;
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) cellColumn->setCellMarks(m_cellMarks[c]);
+    }
+  }
 
   app->getCurrentXsheet()->notifyXsheetChanged();
   app->getCurrentScene()->setDirtyFlag(true);
@@ -517,6 +543,7 @@ class EachUndo final : public TUndo {
 
   std::unique_ptr<TXshCell[]> m_cells;
   QMap<int, QList<std::pair<int, int>>> m_loops;
+  QMap<int, QMap<int, int>> m_cellMarks;
 
 public:
   EachUndo(int r0, int c0, int r1, int c1, int each);
@@ -558,7 +585,11 @@ EachUndo::EachUndo(int r0, int c0, int r1, int c1, int each)
 
   for (int c = c0; c <= c1; ++c) {
     TXshColumn *column = xsh->getColumn(c);
-    if (column) m_loops.insert(c, column->getLoops());
+    if (column) {
+      m_loops.insert(c, column->getLoops());
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) m_cellMarks.insert(c, cellColumn->getCellMarks());
+    }
   }
 }
 
@@ -608,6 +639,14 @@ void EachUndo::undo() const {
       if (column) column->setLoops(m_loops[c]);
     }
   }
+  if (m_cellMarks.size()) {
+    foreach (int c, m_cellMarks.keys()) {
+      TXshColumn *column = xsh->getColumn(c);
+      if (!column) continue;
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) cellColumn->setCellMarks(m_cellMarks[c]);
+    }
+  }
 
   app->getCurrentXsheet()->notifyXsheetChanged();
   app->getCurrentScene()->setDirtyFlag(true);
@@ -654,6 +693,7 @@ class ReframeUndo final : public TUndo {
   std::unique_ptr<TXshCell[]> m_cells;
   std::vector<int> m_columnIndeces;
   QMap<int, QList<std::pair<int, int>>> m_loops;
+  QMap<int, QMap<int, int>> m_cellMarks;
 
 public:
   ReframeUndo(int r0, int r1, std::vector<int> columnIndeces, int step,
@@ -729,6 +769,9 @@ ReframeUndo::ReframeUndo(int r0, int r1, std::vector<int> columnIndeces,
     orgCellAmount += nr + 1;
 
     m_loops.insert(colIndex, column->getLoops());
+
+    TXshCellColumn *cellColumn = column->getCellColumn();
+    if (cellColumn) m_cellMarks.insert(colIndex, cellColumn->getCellMarks());
   }
   m_cells.reset(new TXshCell[orgCellAmount]);
   assert(m_cells);
@@ -786,6 +829,14 @@ void ReframeUndo::undo() const {
     foreach (int c, m_loops.keys()) {
       TXshColumn *column = xsh->getColumn(c);
       if (column) column->setLoops(m_loops[c]);
+    }
+  }
+  if (m_cellMarks.size()) {
+    foreach (int c, m_cellMarks.keys()) {
+      TXshColumn *column = xsh->getColumn(c);
+      if (!column) continue;
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) cellColumn->setCellMarks(m_cellMarks[c]);
     }
   }
 
@@ -1057,6 +1108,7 @@ class ResetStepUndo final : public TUndo {
   std::unique_ptr<TXshCell[]> m_cells;
   QMap<int, int> m_insertedCells;  //!< Count of inserted cells, by column
   QMap<int, QList<std::pair<int, int>>> m_loops;
+  QMap<int, QMap<int, int>> m_cellMarks;
 
 public:
   ResetStepUndo(int r0, int c0, int r1, int c1);
@@ -1099,7 +1151,11 @@ ResetStepUndo::ResetStepUndo(int r0, int c0, int r1, int c1)
     }
 
     TXshColumn *column = xsh->getColumn(c);
-    if (column) m_loops.insert(c, column->getLoops());
+    if (column) {
+      m_loops.insert(c, column->getLoops());
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) m_cellMarks.insert(c, cellColumn->getCellMarks());
+    }
   }
 }
 
@@ -1144,6 +1200,14 @@ void ResetStepUndo::undo() const {
       if (column) column->setLoops(m_loops[c]);
     }
   }
+  if (m_cellMarks.size()) {
+    foreach (int c, m_cellMarks.keys()) {
+      TXshColumn *column = xsh->getColumn(c);
+      if (!column) continue;
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) cellColumn->setCellMarks(m_cellMarks[c]);
+    }
+  }
 
   app->getCurrentXsheet()->notifyXsheetChanged();
   TApp::instance()->getCurrentScene()->setDirtyFlag(true);
@@ -1181,6 +1245,7 @@ class IncreaseStepUndo final : public TUndo {
   std::unique_ptr<TXshCell[]> m_cells;
   QMap<int, int> m_insertedCells;
   QMap<int, QList<std::pair<int, int>>> m_loops;
+  QMap<int, QMap<int, int>> m_cellMarks;
 
 public:
   mutable int m_newR1;  //!< r1 updated by TXsheet::increaseStepCells()
@@ -1224,7 +1289,11 @@ IncreaseStepUndo::IncreaseStepUndo(int r0, int c0, int r1, int c1)
     }
 
     TXshColumn *column = xsh->getColumn(c);
-    if (column) m_loops.insert(c, column->getLoops());
+    if (column) {
+      m_loops.insert(c, column->getLoops());
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) m_cellMarks.insert(c, cellColumn->getCellMarks());
+    }
   }
 }
 
@@ -1261,6 +1330,14 @@ void IncreaseStepUndo::undo() const {
     foreach (int c, m_loops.keys()) {
       TXshColumn *column = xsh->getColumn(c);
       if (column) column->setLoops(m_loops[c]);
+    }
+  }
+  if (m_cellMarks.size()) {
+    foreach (int c, m_cellMarks.keys()) {
+      TXshColumn *column = xsh->getColumn(c);
+      if (!column) continue;
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) cellColumn->setCellMarks(m_cellMarks[c]);
     }
   }
 
@@ -1313,6 +1390,7 @@ class DecreaseStepUndo final : public TUndo {
   std::unique_ptr<TXshCell[]> m_cells;
   QMap<int, int> m_removedCells;
   QMap<int, QList<std::pair<int, int>>> m_loops;
+  QMap<int, QMap<int, int>> m_cellMarks;
 
 public:
   mutable int m_newR1;  //!< r1 updated by TXsheet::decreaseStepCells()
@@ -1371,7 +1449,11 @@ DecreaseStepUndo::DecreaseStepUndo(int r0, int c0, int r1, int c1)
     }
 
     TXshColumn *column = xsh->getColumn(c);
-    if (column) m_loops.insert(c, column->getLoops());
+    if (column) {
+      m_loops.insert(c, column->getLoops());
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) m_cellMarks.insert(c, cellColumn->getCellMarks());
+    }
   }
 }
 
@@ -1409,6 +1491,14 @@ void DecreaseStepUndo::undo() const {
     foreach (int c, m_loops.keys()) {
       TXshColumn *column = xsh->getColumn(c);
       if (column) column->setLoops(m_loops[c]);
+    }
+  }
+  if (m_cellMarks.size()) {
+    foreach (int c, m_cellMarks.keys()) {
+      TXshColumn *column = xsh->getColumn(c);
+      if (!column) continue;
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) cellColumn->setCellMarks(m_cellMarks[c]);
     }
   }
 

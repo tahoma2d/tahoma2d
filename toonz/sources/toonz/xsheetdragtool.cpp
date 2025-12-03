@@ -394,6 +394,7 @@ class LevelExtenderUndo final : public TUndo {
   int m_col, m_row, m_deltaRow;
   std::vector<TXshCell> m_cells;  // righe x colonne
   QMap<int, QList<std::pair<int, int>>> m_loops;
+  QMap<int, QMap<int, int>> m_cellMarks;
 
   bool m_insert;
   bool m_invert;  // upper-directional
@@ -432,6 +433,15 @@ public:
         m_loops.insert(c, column->getLoops());
       }
     }
+    // setCells gets called 2x. Only store cellMarks 1x
+    if (m_cellMarks.isEmpty()) {
+      for (int c = col; c < col + colCount; c++) {
+        TXshColumn *column = xsh->getColumn(c);
+        if (!column) continue;
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn) m_cellMarks.insert(c, cellColumn->getCellMarks());
+      }
+    }
   }
 
   void setDeltaRow(int drow) {
@@ -446,7 +456,7 @@ public:
     int r        = m_row + m_rowCount - count;
     for (int c = m_col; c < m_col + m_colCount; c++) {
       xsh->removeCells(r, c, count);
-      xsh->shiftLoopMarkers(r, c, -count);
+      xsh->shiftMarkers(r, c, -count);
     }
   }
 
@@ -463,7 +473,11 @@ public:
       bool isSoundTextColumn = (column && column->getSoundTextColumn());
       int col                = m_col + c;
       xsh->insertCells(r0, col, count);
-      xsh->shiftLoopMarkers(r0 - 1, col, count);
+      if (column && column->isLoopEnd(r0 - 1)) {
+        xsh->shiftLoopMarkers(r0 - 1, col, count);
+        xsh->shiftCellMarks(r0, col, count);
+      } else
+        xsh->shiftMarkers(r0, col, count);
       int r;
       TXshCell prevCell = xsh->getCell(r0, c);
       for (r = r0; r <= r1; r++) {
@@ -493,7 +507,7 @@ public:
       int targetRow      = m_invert ? m_row : (m_row + m_rowCount - count);
 
       xsh->clearCells(targetRow, c, count);
-      xsh->shiftLoopMarkers(targetRow, c, -count);
+      xsh->shiftMarkers(targetRow, c, -count);
     }
   }
 
@@ -543,7 +557,11 @@ public:
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (int i = 0; i < m_colCount; i++) {
       TXshColumn *column = xsh->getColumn(m_col + i);
-      if (column) column->setLoops(m_loops[m_col + i]);
+      if (column) {
+        column->setLoops(m_loops[m_col + i]);
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn) cellColumn->setCellMarks(m_cellMarks[m_col + i]);
+      }
     }
     TSelection *selection =
         TApp::instance()->getCurrentSelection()->getSelection();
@@ -831,7 +849,7 @@ public:
         TXshColumn *column = xsh->getColumn(m_c0 + c);
         if (m_insert) {
           xsh->removeCells(row, m_c0 + c, -dr);
-          xsh->shiftLoopMarkers(row, m_c0 + c, dr);
+          xsh->shiftMarkers(row, m_c0 + c, dr);
         } else {
           for (int r = row; r <= m_r1; r++)
             xsh->setCell(r, m_c0 + c, TXshCell());
@@ -867,7 +885,11 @@ public:
         bool isSountTextColumn = (column && column->getSoundTextColumn());
         if (m_insert) {
           xsh->insertCells(m_r1 + 1, m_c0 + c, dr);
-          xsh->shiftLoopMarkers(m_r1, m_c0 + c, dr);
+          if (column->isLoopEnd(m_r1)) {
+            xsh->shiftLoopMarkers(m_r1, m_c0 + c, dr);
+            xsh->shiftCellMarks(m_r1 + 1, m_c0 + c, dr);
+          } else
+            xsh->shiftMarkers(m_r1 + 1, m_c0 + c, dr);
         }
         TXshCell prevCell = xsh->getCell(m_r1, m_c0 + c);
         for (int r = m_r1 + 1; r <= r1; r++) {

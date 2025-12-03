@@ -139,7 +139,7 @@ void deleteCellsWithoutUndo(int &r0, int &c0, int &r1, int &c1, bool doShift) {
       if (doShift) {
         int rowCount = r1 - r0 + 1;
         xsh->removeCells(r0, c, rowCount);
-        xsh->shiftLoopMarkers(r0, c, -rowCount);
+        for (int i = 0; i < rowCount; i++) xsh->shiftMarkers(r0, c, -1);
       } else
         xsh->clearCells(r0, c, r1 - r0 + 1);
       // when the column becomes empty after deletion,
@@ -169,13 +169,15 @@ void deleteCellsWithoutUndo(int &r0, int &c0, int &r1, int &c1, bool doShift) {
 
 //-----------------------------------------------------------------------------
 
-void cutCellsWithoutUndo(int &r0, int &c0, int &r1, int &c1, bool shiftMarkers) {
+void cutCellsWithoutUndo(int &r0, int &c0, int &r1, int &c1, bool shiftMarkers, bool keepCellMarks) {
   TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
   int c;
   for (c = c0; c <= c1; c++) {
     int rowCount = r1 - r0 + 1;
-    xsh->removeCells(r0, c, rowCount);
-    if (shiftMarkers) xsh->shiftLoopMarkers(r0, c, -rowCount);
+    xsh->removeCells(r0, c, rowCount, keepCellMarks);
+    if (shiftMarkers) {
+      for (int i = 0; i < rowCount; i++) xsh->shiftMarkers(r0, c, -1);
+    }
     // when the column becomes empty after deletion,
     // ColumnCmd::DeleteColumn() will take care of column related operations
     // like disconnecting from fx nodes etc.
@@ -266,7 +268,7 @@ public:
     int c0BeforeCut = c0;
     int c1BeforeCut = c1;
     // Cut delle celle che sono in newSelection
-    cutCellsWithoutUndo(r0, c0, r1, c1, true);
+    cutCellsWithoutUndo(r0, c0, r1, c1, true, false);
     // Se le colonne erano vuote le resetto (e' necessario farlo per le colonne
     // particolari, colonne sount o palette)
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
@@ -290,7 +292,7 @@ public:
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     int rowCount = r1 - r0 + 1;
     for (int c = c0; c <= c1; c++) {
-      xsh->shiftLoopMarkers(r0, c, rowCount);
+      xsh->shiftMarkers(r0, c, rowCount);
     }
 
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
@@ -316,7 +318,8 @@ class DeleteCellsUndo final : public TUndo {
   TCellSelection *m_selection;
   TCellData *m_data;
   QMap<int, QList<std::pair<int, int>>> m_loops;
- 
+  QMap<int, QMap<int, int>> m_cellMarks;
+
   bool m_doShift;  // whether clear cell or remove and shift cells up
   bool m_containsSoundColumn;
 
@@ -332,9 +335,12 @@ public:
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (int c = c0; c <= c1; c++) {
       TXshColumn *column = xsh->getColumn(c);
-      if (!column) continue;
-      m_loops.insert(c, column->getLoops());
-      if (column->getSoundColumn()) m_containsSoundColumn = true;
+      if (column) {
+        m_loops.insert(c, column->getLoops());
+        if (column->getSoundColumn()) m_containsSoundColumn = true;
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn) m_cellMarks.insert(c, cellColumn->getCellMarks());
+      }
     }
   }
 
@@ -347,13 +353,20 @@ public:
     m_selection->getSelectedCells(r0, c0, r1, c1);
 
     // insert cells if the delete operation had shifted cells up
-    pasteCellsWithoutUndo(m_data, r0, c0, r1, c1, m_doShift, false);
+    pasteCellsWithoutUndo(m_data, r0, c0, r1, c1, m_doShift, false, false);
 
     if (m_loops.size()) {
-      TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
       foreach (int c, m_loops.keys()) {
         TXshColumn *column = xsh->getColumn(c);
         if (column) column->setLoops(m_loops[c]);
+      }
+    }
+    if (m_cellMarks.size()) {
+      foreach (int c, m_cellMarks.keys()) {
+        TXshColumn *column = xsh->getColumn(c);
+        if (!column) continue;
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn) cellColumn->setCellMarks(m_cellMarks[c]);
       }
     }
 
@@ -392,7 +405,8 @@ class CutCellsUndo final : public TUndo {
   TCellSelection *m_selection;
   TCellData *m_data;
   QMap<int, QList<std::pair<int, int>>> m_loops;
-  
+  QMap<int, QMap<int, int>> m_cellMarks;
+ 
   bool m_containsSoundColumn;
 
 public:
@@ -412,9 +426,12 @@ public:
 
     for (int c = c0; c <= c1; c++) {
       TXshColumn *column = xsh->getColumn(c);
-      if (!column) continue;
-      m_loops.insert(c, column->getLoops());
-      if (column->getSoundColumn()) m_containsSoundColumn = true;
+      if (column) {
+        m_loops.insert(c, column->getLoops());
+        if (column->getSoundColumn()) m_containsSoundColumn = true;
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn) m_cellMarks.insert(c, cellColumn->getCellMarks());
+      }
     }
   }
 
@@ -429,11 +446,19 @@ public:
 
     pasteCellsWithoutUndo(m_data, r0, c0, r1, c1, true, true, false);
 
+    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     if (m_loops.size()) {
-      TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
       foreach (int c, m_loops.keys()) {
         TXshColumn *column = xsh->getColumn(c);
         if (column) column->setLoops(m_loops[c]);
+      }
+    }
+    if (m_cellMarks.size()) {
+      foreach (int c, m_cellMarks.keys()) {
+        TXshColumn *column = xsh->getColumn(c);
+        if (!column) continue;
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn) cellColumn->setCellMarks(m_cellMarks[c]);
       }
     }
 
@@ -448,7 +473,7 @@ public:
 
     int r0, c0, r1, c1;
     m_selection->getSelectedCells(r0, c0, r1, c1);
-    cutCellsWithoutUndo(r0, c0, r1, c1, true);
+    cutCellsWithoutUndo(r0, c0, r1, c1, true, false);
 
     clipboard->setMimeData(currentData, QClipboard::Clipboard);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
@@ -471,6 +496,7 @@ public:
 class InsertUndo final : public TUndo {
   TCellSelection::Range m_range;
   QMap<int, QList<std::pair<int, int>>> m_loops;
+  QMap<int, QMap<int, int>> m_cellMarks;
   bool m_containsSoundColumn;
 
 public:
@@ -478,9 +504,12 @@ public:
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     for (int c = m_range.m_c0; c <= m_range.m_c1; c++) {
       TXshColumn *column = xsh->getColumn(c);
-      if (!column) continue;
-      m_loops.insert(c, column->getLoops());
-      if (column->getSoundColumn()) m_containsSoundColumn = true;
+      if (column) {
+        m_loops.insert(c, column->getLoops());
+        if (column->getSoundColumn()) m_containsSoundColumn = true;
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn) m_cellMarks.insert(c, cellColumn->getCellMarks());
+      }
     }
   }
 
@@ -497,6 +526,14 @@ public:
         if (column) column->setLoops(m_loops[c]);
       }
     }
+    if (m_cellMarks.size()) {
+      foreach (int c, m_cellMarks.keys()) {
+        TXshColumn *column = xsh->getColumn(c);
+        if (!column) continue;
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn) cellColumn->setCellMarks(m_cellMarks[c]);
+      }
+    }
 
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
     if (m_containsSoundColumn)
@@ -508,7 +545,7 @@ public:
     int c;
     for (c = m_range.m_c0; c <= m_range.m_c1; c++) {
       xsh->insertCells(m_range.m_r0, c, rowCount);
-      xsh->shiftLoopMarkers(m_range.m_r0, c, rowCount);
+      xsh->shiftMarkers(m_range.m_r0, c, rowCount);
     }
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
     if (m_containsSoundColumn)
@@ -1100,7 +1137,7 @@ public:
     QClipboard *clipboard = QApplication::clipboard();
     int c0BeforeCut       = c0;
     int c1BeforeCut       = c1;
-    cutCellsWithoutUndo(r0, c0, r1, c1, false);
+    cutCellsWithoutUndo(r0, c0, r1, c1, false, true);
 
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     assert(c1BeforeCut - c0BeforeCut + 1 == (int)m_areOldColumnsEmpty.size());
@@ -1221,7 +1258,7 @@ public:
     QClipboard *clipboard = QApplication::clipboard();
     int c0BeforeCut       = c0;
     int c1BeforeCut       = c1;
-    cutCellsWithoutUndo(r0, c0, r1, c1, false);
+    cutCellsWithoutUndo(r0, c0, r1, c1, false, true);
 
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
 
@@ -2207,7 +2244,7 @@ void TCellSelection::pasteCells() {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     int rowCount = r1 - r0 + 1;
     for (int c = c0; c <= c1; c++) {
-      xsh->shiftLoopMarkers(r0, c, rowCount);
+      xsh->shiftMarkers(r0, c, rowCount);
     }
 
     // Se la selezione corrente e' TCellSelection selezione le celle copiate
@@ -2865,7 +2902,7 @@ void TCellSelection::pasteDuplicateCells() {
     bool isPaste = pasteCellsWithoutUndo(newCellData, r0, c0, r1, c1);
     int rowCount = r1 - r0 + 1;
     for (int c = c0; c <= c1; c++) {
-      xsh->shiftLoopMarkers(r0, c, rowCount);
+      xsh->shiftMarkers(r0, c, rowCount);
     }
 
     // Se la selezione corrente e' TCellSelection selezione le celle copiate
@@ -3117,7 +3154,7 @@ void TCellSelection::cutCells(bool withoutCopy) {
     }
   }
 
-  cutCellsWithoutUndo(r0, c0, r1, c1, true);
+  cutCellsWithoutUndo(r0, c0, r1, c1, true, false);
 
   TUndoManager::manager()->add(undo);
 

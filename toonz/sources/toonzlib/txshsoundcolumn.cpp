@@ -548,7 +548,7 @@ void TXshSoundColumn::insertEmptyCells(int row, int rowCount) {
 
 //-----------------------------------------------------------------------------
 
-void TXshSoundColumn::removeCells(int row, int rowCount, bool shift) {
+void TXshSoundColumn::removeCells(int row, int rowCount, bool shift, bool keepCellMarks) {
   // le celle da cancellare sono [ra, rb]
   int ra = row;
   int rb = row + rowCount - 1;
@@ -610,13 +610,13 @@ void TXshSoundColumn::clearCells(int row, int rowCount) {
   if (rowCount <= 0) return;
   if (m_levels.isEmpty())
     return;  // se la colonna e' vuota non devo "sbiancare" celle
-  removeCells(row, rowCount, false);
+  removeCells(row, rowCount, false, false);
 }
 
 //-----------------------------------------------------------------------------
 
-void TXshSoundColumn::removeCells(int row, int rowCount) {
-  removeCells(row, rowCount, true);
+void TXshSoundColumn::removeCells(int row, int rowCount, bool keepCellMarks) {
+  removeCells(row, rowCount, true, false);
 }
 
 //-----------------------------------------------------------------------------

@@ -151,7 +151,7 @@ public:
   void insertEmptyCells(int row, int rowCount) override;
 
   void clearCells(int row, int rowCount) override;
-  void removeCells(int row, int rowCount) override;
+  void removeCells(int row, int rowCount, bool keepCellMarks = false) override;
 
   /*! Check if frames from \b row to \b row+rowCount are in sequence and
    * collapse level if it is true. */
@@ -207,7 +207,7 @@ when the user play a single level and hence the audio behind..*/
 
 protected:
   bool setCell(int row, const TXshCell &cell, bool updateSequence);
-  void removeCells(int row, int rowCount, bool shift);
+  void removeCells(int row, int rowCount, bool shift, bool keepCellMarks);
 
   void setCellInEmptyFrame(int row, const TXshCell &cell);
 

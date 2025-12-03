@@ -484,7 +484,7 @@ void TXsheet::insertCells(int row, int col, int rowCount) {
 
 //-----------------------------------------------------------------------------
 
-void TXsheet::removeCells(int row, int col, int rowCount) {
+void TXsheet::removeCells(int row, int col, int rowCount, bool keepCellMarks) {
   TXshColumnP column = m_imp->m_columnSet.getColumn(col);
   if (!column || column->isLocked()) return;
 
@@ -492,7 +492,7 @@ void TXsheet::removeCells(int row, int col, int rowCount) {
   if (!xshCellColumn) return;
 
   int oldColRowCount = xshCellColumn->getMaxFrame(true) + 1;
-  xshCellColumn->removeCells(row, rowCount);
+  xshCellColumn->removeCells(row, rowCount, keepCellMarks);
 
   // aggiornamento framecount
   if (oldColRowCount == m_imp->m_frameCount) updateFrameCount();
@@ -734,7 +734,7 @@ void TXsheet::swingCells(int r0, int c0, int r1, int c1) {
   int r0Mod = r1 + 1;
   for (int c = c0; c <= c1; ++c) {
     insertCells(r0Mod, c, rowCount);
-    shiftLoopMarkers(r1, c, rowCount);
+    shiftMarkers(r1, c, rowCount);
   }
 
   for (int j = c0; j <= c1; j++) {
@@ -814,7 +814,7 @@ bool TXsheet::incrementCells(int r0, int c0, int r1, int c1,
         TXshCell cell = getCell(CellPosition(i + 1, j), false, false);
         forUndo.push_back(std::pair<TRect, TXshCell>(
             TRect(i + 1, j, i + 1 + numCells - 1, j), cell));
-        removeCells(i + 1, j, numCells);
+        removeCells(i + 1, j, numCells, true);
         r1 -= numCells;
       }
     }
@@ -831,6 +831,7 @@ void TXsheet::duplicateCells(int r0, int c0, int r1, int c1, int upTo) {
   for (int j = c0; j <= c1; j++) {
     insertCells(r1 + 1, j, upTo - (r1 + 1) + 1);
     shiftLoopMarkers(r1, j, upTo - (r1 + 1) + 1);
+    shiftCellMarks(r1 + 1, j, upTo - (r1 + 1) + 1);
     for (int i = r1 + 1; i <= upTo; i++) {
       int row = r0 + ((i - (r1 + 1)) % chunk);
       TXshCell cell = getCell(CellPosition(row, j), false, false);
@@ -871,6 +872,7 @@ void TXsheet::stepCells(int r0, int c0, int r1, int c1, int type) {
           setCell(i + i1, j, cells[k]);
       }
       shiftLoopMarkers(i, j, (type - 1));
+      shiftCellMarks(i + 1, j, (type - 1));
       i += type;  // dipende dal tipo di step (2 o 3 per ora)
     }
   }
@@ -894,6 +896,7 @@ void TXsheet::increaseStepCells(int r0, int c0, int &r1, int c1) {
           setCell(r, c, cell);
         }
         shiftLoopMarkers(r, c, 1);
+        shiftCellMarks(r + 1, c, 1);
         rEnd++;
         r++;
         while (cell == getCell(CellPosition(r, c), true, false) && r <= rEnd)
@@ -928,7 +931,7 @@ void TXsheet::decreaseStepCells(int r0, int c0, int &r1, int c1) {
           if (!removed) {
             removed = true;
             removeCells(r, c);
-            shiftLoopMarkers(r, c, -1);
+            shiftMarkers(r, c, -1);
             rEnd--;
           } else
             r++;
@@ -978,7 +981,7 @@ void TXsheet::eachCells(int r0, int c0, int r1, int c1, int type) {
     for (int r = r0; r < r0 + newRows; r++) {
       for (int i = 0; i < (type - 1); i++) {
         if (!deletedRows) break;
-        shiftLoopMarkers(r + 1, c, -1);
+        shiftMarkers(r + 1, c, -1);
         deletedRows--;
       }
     }
@@ -1058,7 +1061,7 @@ int TXsheet::reframeCells(int r0, int r1, int col, int step, int withBlank) {
   }
   // if needed, remove cells
   else if (nr > nrows) {
-    removeCells(r0 + nrows, col, nr - nrows);
+    removeCells(r0 + nrows, col, nr - nrows, true);
   }
 
   bool useImplicitHold = Preferences::instance()->isImplicitHoldEnabled();
@@ -1092,7 +1095,7 @@ int TXsheet::reframeCells(int r0, int r1, int col, int step, int withBlank) {
   int r = r0;
   for (int i = 0; i < cellSpan.size(); i++) {
     int d = n - cellSpan[i];
-    if (d != 0) shiftLoopMarkers(r, col, d);
+    if (d != 0) shiftMarkers(r + cellSpan[i] - 1, col, d);
     r += n;
   }
 
@@ -1119,7 +1122,7 @@ void TXsheet::resetStepCells(int r0, int c0, int r1, int c1) {
       i++;
     }
 
-    removeCells(r0, c, size);
+    removeCells(r0, c, size, true);
     insertCells(r0, c, i);
     size = i;
     i    = 0;
@@ -1130,7 +1133,10 @@ void TXsheet::resetStepCells(int r0, int c0, int r1, int c1) {
     r = r0;
     for (i = 0; i < cellSpan.size(); i++) {
       int d = 1 - cellSpan[i];
-      if (d != 0) shiftLoopMarkers(r, c, d);
+      if (d != 0) {
+        shiftLoopMarkers(r, c, d);
+        shiftCellMarks(r + 1, c, d);
+      }
       r++;
     }
   }
@@ -1152,7 +1158,7 @@ void TXsheet::rollupCells(int r0, int c0, int r1, int c1) {
   for (k          = c0; k <= c1; k++)
     cells[k - c0] = getCell(CellPosition(r0, k), false, false);
 
-  for (k = c0; k <= c1; k++) removeCells(r0, k, 1);
+  for (k = c0; k <= c1; k++) removeCells(r0, k, 1, true);
 
   for (k = c0; k <= c1; k++) {
     insertCells(r1, k, 1);
@@ -1176,7 +1182,7 @@ void TXsheet::rolldownCells(int r0, int c0, int r1, int c1) {
   for (k          = c0; k <= c1; k++)
     cells[k - c0] = getCell(CellPosition(r1, k), false, false);
 
-  for (k = c0; k <= c1; k++) removeCells(r1, k, 1);
+  for (k = c0; k <= c1; k++) removeCells(r1, k, 1, true);
 
   for (k = c0; k <= c1; k++) {
     insertCells(r0, k, 1);
@@ -1215,7 +1221,7 @@ void TXsheet::timeStretch(int r0, int c0, int r1, int c1, int nr) {
         if (j < i) {
           int prevj = (i - 1) * double(oldNr) / double(nr);
           setCell(i + r0, c, cells[j]);
-          if (j == prevj) shiftLoopMarkers(i + r0 - 1, c, 1);
+          if (j == prevj) shiftMarkers(i + r0 - 1, c, 1);
         }
       }
 
@@ -1266,9 +1272,9 @@ void TXsheet::timeStretch(int r0, int c0, int r1, int c1, int nr) {
           r++;
           continue;
         }
-        shiftLoopMarkers(r, c, -1);
+        shiftMarkers(r, c, -1);
       }
-      shiftLoopMarkers(r, c, -1);
+      shiftMarkers(r, c, -1);
     }
   }
 }
@@ -2017,7 +2023,7 @@ void TXsheet::autoInputCellNumbers(int increment, int interval, int step,
         setCell(r0, columnIndex, cell);
       }
       insertCells(r0, columnIndex, rowsCount);
-      shiftLoopMarkers(r0, columnIndex, rowsCount);
+      shiftMarkers(r0, columnIndex, rowsCount);
     }
 
     // obtain fids to be input
@@ -2329,6 +2335,22 @@ void TXsheet::shiftLoopMarkers(int row, int col, int rowCount) {
   if (!column || column->isLocked()) return;
   TXshCellColumn *xshColumn = column->getCellColumn();
   if (!xshColumn) return;
-  // Shift Loop Markers
   xshColumn->shiftLoopMarkers(row, rowCount);
+}
+
+//---------------------------------------------------------
+
+void TXsheet::shiftCellMarks(int row, int col, int rowCount) {
+  TXshColumnP column = m_imp->m_columnSet.getColumn(col);
+  if (!column || column->isLocked()) return;
+  TXshCellColumn *xshColumn = column->getCellColumn();
+  if (!xshColumn) return;
+  xshColumn->shiftCellMarks(row, rowCount);
+}
+
+//---------------------------------------------------------
+
+void TXsheet::shiftMarkers(int row, int col, int rowCount) {
+  shiftLoopMarkers(row, col, rowCount);
+  shiftCellMarks(row, col, rowCount);
 }

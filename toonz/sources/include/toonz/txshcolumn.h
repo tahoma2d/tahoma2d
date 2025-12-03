@@ -445,7 +445,7 @@ Insert \b rowCount empty cells from line \b row.
   /*!
 Remove \b rowCount cells from line \b row, with shift.
 */
-  virtual void removeCells(int row, int rowCount = 1);
+  virtual void removeCells(int row, int rowCount = 1, bool keepCellMarks = false);
   /*!
 Clear \b rowCount cells from line \b row, without shift.
 */
@@ -476,7 +476,9 @@ last row with not empty cell of same level.
   void setCellMark(int frame, int id);
   int getCellMark(int frame) const;
   QMap<int, int> getCellMarks() const;
+  void setCellMarks(QMap<int, int> cellMarks) { m_cellMarkIds = cellMarks; }
   void clearCellMarks();
+  void shiftCellMarks(int row, int shiftAmount);
 };
 
 #endif

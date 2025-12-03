@@ -476,11 +476,16 @@ void TXshCellColumn::clearCells(int row, int rowCount) {
 //-----------------------------------------------------------------------------
 
 // rimuove le celle [row, row+rowCount-1] (shiftando)
-void TXshCellColumn::removeCells(int row, int rowCount) {
+void TXshCellColumn::removeCells(int row, int rowCount, bool keepCellMarks) {
   if (rowCount <= 0) return;
   if (m_cells.empty()) return;  // se la colonna e' vuota
 
   int cellCount = m_cells.size();
+
+  if (!keepCellMarks) {
+    // Remove cell marks
+    for (int i = 0; i < rowCount; i++) setCellMark(row + i, -1);
+  }
 
   if (row >= m_first + cellCount) return;  // sono "sotto" l'ultima cella
   if (row < m_first) {
@@ -607,6 +612,31 @@ int TXshCellColumn::getCellMark(int frame) const {
 QMap<int, int> TXshCellColumn::getCellMarks() const { return m_cellMarkIds; }
 
 void TXshCellColumn::clearCellMarks() { m_cellMarkIds.clear(); }
+
+void TXshCellColumn::shiftCellMarks(int row, int shiftAmount) {
+  if (m_cellMarkIds.isEmpty() || !shiftAmount) return;
+
+  if (shiftAmount < 0) {  // Shift Left
+    foreach (int r, m_cellMarkIds.keys()) {
+      if (r < row) continue;
+      int id = m_cellMarkIds[r];
+      m_cellMarkIds.remove(r);
+      if (r != 0 && m_cellMarkIds.find(r - 1) == m_cellMarkIds.end())
+        setCellMark(r + shiftAmount, id);
+    }
+  } else { // Shift Right
+    QMapIterator<int, int> it(m_cellMarkIds);
+    it.toBack();  // Start at the end
+    while (it.hasPrevious()) {
+      it.previous();
+      int r = it.key();
+      if (r < row) break;
+      int id = m_cellMarkIds[r];
+      m_cellMarkIds.remove(r);
+      setCellMark(r + shiftAmount, id);
+    }
+  }
+}
 
 //=============================================================================
 // TXshColumn
