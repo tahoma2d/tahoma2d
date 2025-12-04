@@ -83,6 +83,8 @@ bool getPlayRange(int &r0, int &r1, int &step);
 
 bool isPlayRangeEnabled();
 
+void shiftPlayRange(int row, int shiftAmount);
+
 }  // namespace XsheetGUI
 
 #endif

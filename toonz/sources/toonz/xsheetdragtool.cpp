@@ -359,6 +359,18 @@ bool XsheetGUI::isPlayRangeEnabled() {
   return playR0 <= playR1;
 }
 
+//-----------------------------------------------------------------------------
+
+void XsheetGUI::shiftPlayRange(int row, int shiftAmount) {
+  if (!XsheetGUI::isPlayRangeEnabled()) return;
+  int playR0, playR1, step;
+  XsheetGUI::getPlayRange(playR0, playR1, step);
+  if (row < playR0) playR0 += shiftAmount;
+  if (row <= playR1) playR1 += shiftAmount;
+  if (playR1 < playR0) playR1 = playR0;
+  XsheetGUI::setPlayRange(playR0, playR1, step, false);
+}
+
 //=============================================================================
 // LevelMover tool
 //-----------------------------------------------------------------------------

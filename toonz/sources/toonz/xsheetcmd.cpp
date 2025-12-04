@@ -125,12 +125,16 @@ namespace XshCmd {
 class InsertSceneFrameUndo : public TUndo {
 protected:
   int m_frame;
+  int m_playR0, m_playR1, m_playStep;
 
 public:
-  InsertSceneFrameUndo(int frame) : m_frame(frame) {}
+  InsertSceneFrameUndo(int frame) : m_frame(frame) {
+    XsheetGUI::getPlayRange(m_playR0, m_playR1, m_playStep);
+  }
 
   void undo() const override {
     doRemoveSceneFrame(m_frame);
+    XsheetGUI::setPlayRange(m_playR0, m_playR1, m_playStep, false);
   }
 
   void redo() const override {
@@ -182,6 +186,7 @@ void InsertSceneFrameUndo::doInsertSceneFrame(int frame, bool notify) {
   }
 
   xsh->getNavigationTags()->shiftTags(frame, 1);
+  XsheetGUI::shiftPlayRange(frame, 1);
 
   if (notify) {
     TApp::instance()->getCurrentScene()->setDirtyFlag(true);
@@ -221,6 +226,7 @@ void InsertSceneFrameUndo::doRemoveSceneFrame(int frame, bool notify) {
 
   if (xsh->isFrameTagged(frame)) xsh->getNavigationTags()->removeTag(frame);
   xsh->getNavigationTags()->shiftTags(frame, -1);
+  XsheetGUI::shiftPlayRange(frame, -1);
 
   if (notify) {
     TApp::instance()->getCurrentScene()->setDirtyFlag(true);
@@ -383,7 +389,7 @@ public:
     }
   }
 
-  void redo() const override { InsertSceneFrameUndo::undo(); }
+  void redo() const override { doRemoveSceneFrame(m_frame); }
 
   void undo() const override {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
@@ -424,6 +430,7 @@ public:
     // Restore tag if there was one
     if (m_tag.m_frame != -1)
       xsh->getNavigationTags()->addTag(m_tag.m_frame, m_tag.m_label);
+    XsheetGUI::setPlayRange(m_playR0, m_playR1, m_playStep, false);
 
     TApp::instance()->getCurrentScene()->setDirtyFlag(true);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
