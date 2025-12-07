@@ -9,6 +9,8 @@
 // TnzQt includes
 #include "toonzqt/lineedit.h"
 
+#include "toonz/txsheethandle.h"
+
 // Qt includes
 #include <QToolBar>
 #include <QAction>
@@ -66,6 +68,7 @@ class FunctionToolbar final : public DVGui::ToolBar, public TParamObserver {
 
   TDoubleParam *m_curve;
   TFrameHandle *m_frameHandle;
+  TXsheetHandle *m_xsheetHandle;
 
   FunctionSelection *m_selection;
 
@@ -81,6 +84,7 @@ public:
 
   void setSelection(FunctionSelection *);
   void setFrameHandle(TFrameHandle *frameHandle);
+  void setXsheetHandle(TXsheetHandle *xsheetHandle);
 
   void onChange(const TParamChange &) override;
 

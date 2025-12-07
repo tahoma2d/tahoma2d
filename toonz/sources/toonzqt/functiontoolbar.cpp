@@ -42,7 +42,11 @@
 //=========================================================================
 
 FunctionToolbar::FunctionToolbar(QWidget *parent)
-    : DVGui::ToolBar(parent), m_frameHandle(0), m_curve(0), m_selection(0) {
+    : DVGui::ToolBar(parent)
+    , m_frameHandle(0)
+    , m_xsheetHandle(0)
+    , m_curve(0)
+    , m_selection(0) {
   setFixedHeight(28);
   setIconSize(QSize(20, 20));
 
@@ -219,6 +223,13 @@ void FunctionToolbar::setFrameHandle(TFrameHandle *frameHandle) {
             SLOT(onFrameSwitched()));
 
   m_keyframeNavigator->setFrameHandle(frameHandle);
+}
+
+//-------------------------------------------------------------------
+
+void FunctionToolbar::setXsheetHandle(TXsheetHandle *xsheetHandle) {
+  m_xsheetHandle = xsheetHandle;
+  if (m_keyframeNavigator) m_keyframeNavigator->setXsheetHandle(xsheetHandle);
 }
 
 //-------------------------------------------------------------------

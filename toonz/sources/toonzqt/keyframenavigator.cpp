@@ -257,6 +257,7 @@ void ViewerKeyframeNavigator::toggle() {
     undo->setObjectHandle(m_objectHandle);
     TUndoManager::manager()->add(undo);
   }
+  m_xsheetHandle->notifyXsheetChanged();
   m_objectHandle->notifyObjectIdChanged(false);
 }
 

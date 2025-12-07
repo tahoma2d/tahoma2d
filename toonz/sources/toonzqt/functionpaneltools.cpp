@@ -111,7 +111,8 @@ MovePointDragTool::MovePointDragTool(FunctionPanel *panel, TDoubleParam *curve)
   TUndoManager::manager()->beginBlock();
 
   if (curve) {
-    KeyframeSetter *setter = new KeyframeSetter(curve);
+    KeyframeSetter *setter =
+        new KeyframeSetter(curve, m_panel->getXsheetHandle());
     m_setters.push_back(setter);
   } else {
     m_groupEnabled           = true;
@@ -255,7 +256,10 @@ void MovePointDragTool::drag(QMouseEvent *e) {
 
 //-----------------------------------------------------------------------------
 
-void MovePointDragTool::release(QMouseEvent *e) {}
+void MovePointDragTool::release(QMouseEvent *e) {
+  if (m_panel->getXsheetHandle())
+    m_panel->getXsheetHandle()->notifyXsheetChanged();
+}
 
 //=============================================================================
 

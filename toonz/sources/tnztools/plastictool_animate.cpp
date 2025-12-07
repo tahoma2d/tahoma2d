@@ -5,6 +5,7 @@
 
 // TnzLib includes
 #include "toonz/tobjecthandle.h"
+#include "toonz/txsheethandle.h"
 
 #include "plastictool.h"
 
@@ -175,6 +176,7 @@ void PlasticTool::leftButtonUp_animate(const TPointD &pos,
     TUndoManager::manager()->add(undo);
 
     // This is needed to refresh the xsheet (there may be new keyframes)
+    TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
     TTool::getApplication()->getCurrentObject()->notifyObjectIdChanged(false);
   }
 

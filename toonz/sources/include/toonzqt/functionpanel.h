@@ -6,6 +6,8 @@
 #include "tcommon.h"
 #include "functiontreeviewer.h"
 
+#include "toonz/txsheethandle.h"
+
 #include <QDialog>
 #include <set>
 #include <cmath>
@@ -92,6 +94,7 @@ private:
   DragTool *m_dragTool;
   FunctionSelection *m_selection;
   TFrameHandle *m_frameHandle;
+  TXsheetHandle *m_xsheetHandle;
   FunctionTreeModel *m_functionTreeModel;
 
   int m_currentFrameStatus;
@@ -131,6 +134,10 @@ public:
 
   void setFrameHandle(TFrameHandle *frameHandle);
   TFrameHandle *getFrameHandle() const { return m_frameHandle; }
+  void setXsheetHandle(TXsheetHandle *xsheetHandle) {
+    m_xsheetHandle = xsheetHandle;
+  }
+  TXsheetHandle *getXsheetHandle() const { return m_xsheetHandle; }
 
   QTransform getViewTransform() const { return m_viewTransform; }
   void setViewTransform(const QTransform &viewTransform) {

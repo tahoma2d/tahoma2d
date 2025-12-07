@@ -14,11 +14,16 @@ class FrameNavigator;
 class DVAPI FunctionKeyframeNavigator final : public KeyframeNavigator {
   Q_OBJECT
   TDoubleParamP m_curve;
+  TXsheetHandle *m_xsheetHandle;
 
 public:
   FunctionKeyframeNavigator(QWidget *parent);
 
   void setCurve(TDoubleParam *curve);
+
+  void setXsheetHandle(TXsheetHandle *xsheetHandle) {
+    m_xsheetHandle = xsheetHandle;
+  }
 
 protected:
   bool hasNext() const override;

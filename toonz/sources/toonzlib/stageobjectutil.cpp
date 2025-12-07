@@ -13,6 +13,8 @@
 
 #include "toonz/stageobjectutil.h"
 
+#include <QTimer>
+
 //=============================================================================
 // TStageObjectValues
 //-----------------------------------------------------------------------------
@@ -149,6 +151,7 @@ void TStageObjectValues::setGlobalKeyframe() {
   TXsheet *xsh              = m_xsheetHandle->getXsheet();
   TStageObject *stageObject = xsh->getStageObject(m_objectId);
   stageObject->setKeyframeWithoutUndo(m_frame);
+  m_xsheetHandle->notifyXsheetChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -232,6 +235,7 @@ void UndoSetKeyFrame::undo() const {
     if (m_key.m_isKeyframe) obj->setKeyframeWithoutUndo(m_frame, m_key);
   }
 
+  m_xsheetHandle->notifyXsheetChanged();
   m_objectHandle->notifyObjectIdChanged(false);
 }
 
@@ -245,6 +249,7 @@ void UndoSetKeyFrame::redo() const {
   if (TStageObject *obj = xsh->getStageObject(m_objId))
     obj->setKeyframeWithoutUndo(m_frame);
 
+  m_xsheetHandle->notifyXsheetChanged();
   m_objectHandle->notifyObjectIdChanged(false);
 }
 
@@ -278,6 +283,7 @@ void UndoRemoveKeyFrame::undo() const {
     obj->setKeyframeWithoutUndo(m_frame, m_key);
   }
 
+  m_xsheetHandle->notifyXsheetChanged();
   m_objectHandle->notifyObjectIdChanged(false);
 }
 
@@ -291,6 +297,7 @@ void UndoRemoveKeyFrame::redo() const {
   if (TStageObject *obj = xsh->getStageObject(m_objId))
     obj->removeKeyframeWithoutUndo(m_frame);
 
+  m_xsheetHandle->notifyXsheetChanged();
   m_objectHandle->notifyObjectIdChanged(false);
 }
 
@@ -339,12 +346,17 @@ UndoStageObjectMove::UndoStageObjectMove(const TStageObjectValues &before,
 void UndoStageObjectMove::undo() const {
   m_before.applyValues(false);
   m_objectHandle->notifyObjectIdChanged(false);
+
+  // Delay recalculating last scene frame, which might be due to a key, since
+  // the actual removal of the key happens immediately after this.
+  QTimer::singleShot(50, [=]() { m_xsheetHandle->notifyXsheetChanged(); });
 }
 
 //-----------------------------------------------------------------------------
 
 void UndoStageObjectMove::redo() const {
   m_after.applyValues(false);
+  m_xsheetHandle->notifyXsheetChanged();
   m_objectHandle->notifyObjectIdChanged(false);
 }
 

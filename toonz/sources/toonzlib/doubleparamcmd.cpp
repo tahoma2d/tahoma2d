@@ -3,6 +3,7 @@
 #include "toonz/doubleparamcmd.h"
 #include "toonz/preferences.h"
 #include "toonz/tscenehandle.h"
+#include "toonz/txsheethandle.h"
 #include "tdoubleparam.h"
 #include "tdoublekeyframe.h"
 #include "tundo.h"
@@ -21,9 +22,11 @@ class KeyframesUndo final : public TUndo {
   typedef std::map<int, TDoubleKeyframe> Keyframes;
   Keyframes m_oldKeyframes;
   Keyframes m_newKeyframes;
+  TXsheetHandle *m_xsheetHandle;
 
 public:
-  KeyframesUndo(TDoubleParam *param) : m_param(param) {}
+  KeyframesUndo(TDoubleParam *param, TXsheetHandle *xsheetHandle = nullptr)
+      : m_param(param), m_xsheetHandle(xsheetHandle) {}
   void addKeyframe(int kIndex) {
     if (m_oldKeyframes.count(kIndex) > 0) return;
     assert(0 <= kIndex && kIndex < m_param->getKeyframeCount());
@@ -43,6 +46,7 @@ public:
     assert(m_param->keyframeIndexToFrame(kIndex) == oldKeyframe.m_frame);
     assert(m_oldKeyframes.count(kIndex) == 0);
     m_oldKeyframes[kIndex] = oldKeyframe;
+    if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
     return kIndex;
   }
 
@@ -59,12 +63,14 @@ public:
     Keyframes::const_iterator it;
     for (it = m_oldKeyframes.begin(); it != m_oldKeyframes.end(); ++it)
       if (!it->second.m_isKeyframe) m_param->deleteKeyframe(it->second.m_frame);
+    if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
   }
   void redo() const override {
     Keyframes::const_iterator it;
     for (it = m_oldKeyframes.begin(); it != m_oldKeyframes.end(); ++it)
       if (!it->second.m_isKeyframe) m_param->setKeyframe(it->second);
     m_param->setKeyframes(m_newKeyframes);
+    if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
   }
   int getSize() const override {
     return sizeof(*this) +
@@ -85,6 +91,18 @@ KeyframeSetter::KeyframeSetter(TDoubleParam *param, int kIndex, bool enableUndo)
     , m_extraDFrame(0)
     , m_enableUndo(enableUndo)
     , m_undo(new KeyframesUndo(param))
+    , m_changed(false)
+    , m_pixelRatio(1) {
+  if (kIndex >= 0) selectKeyframe(kIndex);
+}
+
+KeyframeSetter::KeyframeSetter(TDoubleParam *param, TXsheetHandle *xsheetHandle,
+                               int kIndex, bool enableUndo)
+    : m_param(param)
+    , m_kIndex(-1)
+    , m_extraDFrame(0)
+    , m_enableUndo(enableUndo)
+    , m_undo(new KeyframesUndo(param, xsheetHandle))
     , m_changed(false)
     , m_pixelRatio(1) {
   if (kIndex >= 0) selectKeyframe(kIndex);
@@ -803,15 +821,24 @@ void KeyframeSetter::setAllParams(
 class RemoveKeyframeUndo final : public TUndo {
   TDoubleParam *m_param;
   TDoubleKeyframe m_keyframe;
+  TXsheetHandle *m_xsheetHandle;
 
 public:
-  RemoveKeyframeUndo(TDoubleParam *param, int kIndex) : m_param(param) {
+  RemoveKeyframeUndo(TDoubleParam *param, int kIndex,
+                     TXsheetHandle *xsheetHandle)
+      : m_param(param), m_xsheetHandle(xsheetHandle) {
     m_param->addRef();
     m_keyframe = m_param->getKeyframe(kIndex);
   }
   ~RemoveKeyframeUndo() { m_param->release(); }
-  void undo() const override { m_param->setKeyframe(m_keyframe); }
-  void redo() const override { m_param->deleteKeyframe(m_keyframe.m_frame); }
+  void undo() const override {
+    m_param->setKeyframe(m_keyframe);
+    if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
+  }
+  void redo() const override {
+    m_param->deleteKeyframe(m_keyframe.m_frame);
+    if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
+  }
   int getSize() const override { return sizeof(*this); }
 
   QString getHistoryString() override { return QObject::tr("Remove Keyframe"); }
@@ -819,13 +846,16 @@ public:
 
 //=============================================================================
 
-void KeyframeSetter::removeKeyframeAt(TDoubleParam *curve, double frame) {
+void KeyframeSetter::removeKeyframeAt(TDoubleParam *curve, double frame,
+                                      TXsheetHandle *xsheetHandle) {
   int kIndex = curve->getClosestKeyframe(frame);
   if (kIndex < 0 || kIndex >= curve->getKeyframeCount() ||
       curve->keyframeIndexToFrame(kIndex) != frame)
     return;
-  TUndoManager::manager()->add(new RemoveKeyframeUndo(curve, kIndex));
+  TUndoManager::manager()->add(
+      new RemoveKeyframeUndo(curve, kIndex, xsheetHandle));
   curve->deleteKeyframe(frame);
+  if (xsheetHandle) xsheetHandle->notifyXsheetChanged();
 }
 
 //=============================================================================

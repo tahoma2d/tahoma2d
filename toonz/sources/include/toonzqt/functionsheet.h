@@ -165,6 +165,7 @@ public:
   bool isSyncSize() { return m_syncSize; }
   void setSyncSize(bool on);
   void setXsheetHandle(TXsheetHandle *xshHandle) { m_xshHandle = xshHandle; }
+  TXsheetHandle *getXsheetHandle() const { return m_xshHandle; }
 
   int getFrameZoomFactor() const override;
 
