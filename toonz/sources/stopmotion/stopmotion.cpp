@@ -339,9 +339,7 @@ void StopMotion::onSceneSwitched() {
   ToonzScene *scene = app->getCurrentScene()->getScene();
   TXsheet *xsh      = TApp::instance()->getCurrentXsheet()->getXsheet();
   setToNextNewLevel();
-  m_filePath = scene->getDefaultLevelPath(OVL_TYPE, m_levelName.toStdWString())
-                   .getParentDir()
-                   .getQString();
+  m_filePath    = "+stopmotion";
   m_frameNumber = 1;
   m_liveViewImageMap.clear();
 
