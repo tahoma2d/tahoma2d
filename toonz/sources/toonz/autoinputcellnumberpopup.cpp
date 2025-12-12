@@ -41,6 +41,8 @@ class AutoInputCellNumberUndo final : public TUndo {
 
   int m_rowsCount;
   std::unique_ptr<TXshCell[]> m_beforeCells;
+  QMap<int, QList<std::pair<int, int>>> m_loops;
+  QMap<int, QMap<int, int>> m_cellMarks;
 
 public:
   AutoInputCellNumberUndo(int increment, int interval, int step, int repeat,
@@ -169,6 +171,16 @@ AutoInputCellNumberUndo::AutoInputCellNumberUndo(int increment, int interval,
           xsh->getCell(m_r0, m_columnIndices.at(c), false, false);
       m_beforeCells[k++] = cell;
     }
+
+    for (int c = 0; c < m_columnIndices.size(); ++c) {
+      TXshColumn *column = xsh->getColumn(m_columnIndices.at(c));
+      if (column) {
+        m_loops.insert(m_columnIndices.at(c), column->getLoops());
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn)
+          m_cellMarks.insert(m_columnIndices.at(c), cellColumn->getCellMarks());
+      }
+    }
   }
 }
 
@@ -200,7 +212,23 @@ void AutoInputCellNumberUndo::undo() const {
         xsh->setCell(m_r0, m_columnIndices.at(c), m_beforeCells[k]);
       k++;
     }
+ 
+    if (m_loops.size()) {
+      foreach (int c, m_loops.keys()) {
+        TXshColumn *column = xsh->getColumn(c);
+        if (column) column->setLoops(m_loops[c]);
+      }
+    }
+    if (m_cellMarks.size()) {
+      foreach (int c, m_cellMarks.keys()) {
+        TXshColumn *column = xsh->getColumn(c);
+        if (!column) continue;
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn) cellColumn->setCellMarks(m_cellMarks[c]);
+      }
+    }
   }
+
   TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();
 }
 

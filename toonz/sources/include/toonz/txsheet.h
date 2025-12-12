@@ -254,7 +254,7 @@ public:
      remaining cells. An update of xsheet's frame count is performed.
           \sa  clearCells(), insertCells()
   */
-  void removeCells(int row, int col, int rowCount = 1);
+  void removeCells(int row, int col, int rowCount = 1, bool keepCellMarks = false);
 
   /*! If column identified by index \b \e col is not empty, is a \b
     TXshCellColumn and is not locked, clear \b \e rowCount cells starting from
@@ -612,6 +612,11 @@ in TXsheetImp.
   int getNewFolderId();
   bool isFolderColumn(int col);
   void openCloseFolder(int folderCol, bool openFolder);
+
+  void shiftLoopMarkers(int row, int col, int rowCount);
+  void shiftCellMarks(int row, int col, int rowCount);
+ 
+  void shiftMarkers(int row, int col, int rowCount);
 
 protected:
   bool checkCircularReferences(TXsheet *childCandidate);

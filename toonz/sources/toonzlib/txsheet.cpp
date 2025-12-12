@@ -484,7 +484,7 @@ void TXsheet::insertCells(int row, int col, int rowCount) {
 
 //-----------------------------------------------------------------------------
 
-void TXsheet::removeCells(int row, int col, int rowCount) {
+void TXsheet::removeCells(int row, int col, int rowCount, bool keepCellMarks) {
   TXshColumnP column = m_imp->m_columnSet.getColumn(col);
   if (!column || column->isLocked()) return;
 
@@ -492,7 +492,7 @@ void TXsheet::removeCells(int row, int col, int rowCount) {
   if (!xshCellColumn) return;
 
   int oldColRowCount = xshCellColumn->getMaxFrame(true) + 1;
-  xshCellColumn->removeCells(row, rowCount);
+  xshCellColumn->removeCells(row, rowCount, keepCellMarks);
 
   // aggiornamento framecount
   if (oldColRowCount == m_imp->m_frameCount) updateFrameCount();
@@ -732,7 +732,10 @@ void TXsheet::swingCells(int r0, int c0, int r1, int c1) {
   int rowCount = r1 - r0;
   if (rowCount < 0 || c1 - c0 < 0) return;
   int r0Mod = r1 + 1;
-  for (int c = c0; c <= c1; ++c) insertCells(r0Mod, c, rowCount);
+  for (int c = c0; c <= c1; ++c) {
+    insertCells(r0Mod, c, rowCount);
+    shiftMarkers(r1, c, rowCount);
+  }
 
   for (int j = c0; j <= c1; j++) {
     for (int i1 = r0Mod, i2 = r1 - 1; i2 >= r0; i1++, i2--) {
@@ -811,7 +814,7 @@ bool TXsheet::incrementCells(int r0, int c0, int r1, int c1,
         TXshCell cell = getCell(CellPosition(i + 1, j), false, false);
         forUndo.push_back(std::pair<TRect, TXshCell>(
             TRect(i + 1, j, i + 1 + numCells - 1, j), cell));
-        removeCells(i + 1, j, numCells);
+        removeCells(i + 1, j, numCells, true);
         r1 -= numCells;
       }
     }
@@ -827,6 +830,8 @@ void TXsheet::duplicateCells(int r0, int c0, int r1, int c1, int upTo) {
 
   for (int j = c0; j <= c1; j++) {
     insertCells(r1 + 1, j, upTo - (r1 + 1) + 1);
+    shiftLoopMarkers(r1, j, upTo - (r1 + 1) + 1);
+    shiftCellMarks(r1 + 1, j, upTo - (r1 + 1) + 1);
     for (int i = r1 + 1; i <= upTo; i++) {
       int row = r0 + ((i - (r1 + 1)) % chunk);
       TXshCell cell = getCell(CellPosition(row, j), false, false);
@@ -866,6 +871,8 @@ void TXsheet::stepCells(int r0, int c0, int r1, int c1, int type) {
         else
           setCell(i + i1, j, cells[k]);
       }
+      shiftLoopMarkers(i, j, (type - 1));
+      shiftCellMarks(i + 1, j, (type - 1));
       i += type;  // dipende dal tipo di step (2 o 3 per ora)
     }
   }
@@ -888,6 +895,8 @@ void TXsheet::increaseStepCells(int r0, int c0, int &r1, int c1) {
           insertCells(r, c);
           setCell(r, c, cell);
         }
+        shiftLoopMarkers(r, c, 1);
+        shiftCellMarks(r + 1, c, 1);
         rEnd++;
         r++;
         while (cell == getCell(CellPosition(r, c), true, false) && r <= rEnd)
@@ -922,6 +931,7 @@ void TXsheet::decreaseStepCells(int r0, int c0, int &r1, int c1) {
           if (!removed) {
             removed = true;
             removeCells(r, c);
+            shiftMarkers(r, c, -1);
             rEnd--;
           } else
             r++;
@@ -959,13 +969,23 @@ void TXsheet::eachCells(int r0, int c0, int r1, int c1, int type) {
        j += type)  // in cells copio il contenuto delle celle che mi interessano
   {
     for (k = c0; k <= c1; k++, i++) {
-      const TXshCell &cell = getCell(CellPosition(j, k), false, false);
+      const TXshCell &cell = getCell(CellPosition(j, k), true, false);
       cells[i] = cell;
     }
   }
 
-  int c;
-  for (c = c0; c <= c1; ++c) removeCells(r0 + newRows, c, nr - newRows);
+  for (int c = c0; c <= c1; ++c) {
+    int deletedRows = nr - newRows;
+    removeCells(r0 + newRows, c, deletedRows);
+
+    for (int r = r0; r < r0 + newRows; r++) {
+      for (int i = 0; i < (type - 1); i++) {
+        if (!deletedRows) break;
+        shiftMarkers(r + 1, c, -1);
+        deletedRows--;
+      }
+    }
+  }
 
   for (i = r0, k = 0; i < r0 + newRows && k < size; i++)
     for (j = c0; j <= c1; j++) {
@@ -989,6 +1009,7 @@ int TXsheet::reframeCells(int r0, int r1, int col, int step, int withBlank) {
   if (nr < 1) return 0;
 
   QVector<TXshCell> cells;
+  QVector<int> cellSpan;
 
   cells.clear();
 
@@ -999,17 +1020,23 @@ int TXsheet::reframeCells(int r0, int r1, int col, int step, int withBlank) {
           cells.last().getFrameId() == TFrameId::STOP_FRAME)
         continue;
       cells.push_back(cell);
-    }
+      cellSpan.push_back(1);
+    } else
+      cellSpan.back()++;
   }
 
   // if withBlank is greater than -1, remove empty cells from cell order
   if (withBlank >= 0) {
-    auto itr = cells.begin();
+    auto itr  = cells.begin();
+    auto itr2 = cellSpan.begin();
     while (itr != cells.end()) {
-      if ((*itr).isEmpty() || (*itr).getFrameId().isStopFrame())
-        itr = cells.erase(itr);
-      else
+      if ((*itr).isEmpty() || (*itr).getFrameId().isStopFrame()) {
+        itr  = cells.erase(itr);
+        itr2 = cellSpan.erase(itr2);
+      } else {
         itr++;
+        itr2++;
+      }
     }
 
     // Convert implicit cell at end of selected range into a populated cell
@@ -1034,7 +1061,7 @@ int TXsheet::reframeCells(int r0, int r1, int col, int step, int withBlank) {
   }
   // if needed, remove cells
   else if (nr > nrows) {
-    removeCells(r0 + nrows, col, nr - nrows);
+    removeCells(r0 + nrows, col, nr - nrows, true);
   }
 
   bool useImplicitHold = Preferences::instance()->isImplicitHoldEnabled();
@@ -1063,6 +1090,15 @@ int TXsheet::reframeCells(int r0, int r1, int col, int step, int withBlank) {
     }
   }
 
+  // Shift loop markers based on expansion/contraction of cells
+  int n = step + (withBlank > 0 ? (withBlank * step) : 0);
+  int r = r0;
+  for (int i = 0; i < cellSpan.size(); i++) {
+    int d = n - cellSpan[i];
+    if (d != 0) shiftMarkers(r + cellSpan[i] - 1, col, d);
+    r += n;
+  }
+
   return nrows;  // return row amount after process
 }
 
@@ -1073,21 +1109,36 @@ void TXsheet::resetStepCells(int r0, int c0, int r1, int c1) {
   for (c = c0; c <= c1; c++) {
     int r = r0, i = 0;
     TXshCell *cells = new TXshCell[size];
+    QVector<int> cellSpan;
     while (r <= r1) {
       // mi prendo le celle che mi servono
       cells[i] = getCell(CellPosition(r, c), true, false);
+      cellSpan.push_back(1);
       r++;
-      while (cells[i] == getCell(CellPosition(r, c), true, false) && r <= r1)
+      while (cells[i] == getCell(CellPosition(r, c), true, false) && r <= r1) {
         r++;
+        cellSpan.back()++;
+      }
       i++;
     }
 
-    size = i;
-    removeCells(r0, c, r1 - r0 + 1);
+    removeCells(r0, c, size, true);
     insertCells(r0, c, i);
-    i = 0;
+    size = i;
+    i    = 0;
     r = r0;
     for (i = 0; i < size; i++, r++) setCell(r, c, cells[i]);
+
+    // Shift loop markers based on expansion/contraction of cells
+    r = r0;
+    for (i = 0; i < cellSpan.size(); i++) {
+      int d = 1 - cellSpan[i];
+      if (d != 0) {
+        shiftLoopMarkers(r, c, d);
+        shiftCellMarks(r + 1, c, d);
+      }
+      r++;
+    }
   }
 }
 
@@ -1107,7 +1158,7 @@ void TXsheet::rollupCells(int r0, int c0, int r1, int c1) {
   for (k          = c0; k <= c1; k++)
     cells[k - c0] = getCell(CellPosition(r0, k), false, false);
 
-  for (k = c0; k <= c1; k++) removeCells(r0, k, 1);
+  for (k = c0; k <= c1; k++) removeCells(r0, k, 1, true);
 
   for (k = c0; k <= c1; k++) {
     insertCells(r1, k, 1);
@@ -1131,7 +1182,7 @@ void TXsheet::rolldownCells(int r0, int c0, int r1, int c1) {
   for (k          = c0; k <= c1; k++)
     cells[k - c0] = getCell(CellPosition(r1, k), false, false);
 
-  for (k = c0; k <= c1; k++) removeCells(r1, k, 1);
+  for (k = c0; k <= c1; k++) removeCells(r1, k, 1, true);
 
   for (k = c0; k <= c1; k++) {
     insertCells(r0, k, 1);
@@ -1144,6 +1195,7 @@ void TXsheet::rolldownCells(int r0, int c0, int r1, int c1) {
                 If nr>r1-r0+1 add cells, otherwise remove cells. */
 void TXsheet::timeStretch(int r0, int c0, int r1, int c1, int nr) {
   int oldNr = r1 - r0 + 1;
+  if (nr == oldNr) return;
   bool useImplicitHold = Preferences::instance()->isImplicitHoldEnabled();
   if (nr > oldNr) /* ingrandisce */
   {
@@ -1153,16 +1205,31 @@ void TXsheet::timeStretch(int r0, int c0, int r1, int c1, int nr) {
       assert(oldNr > 0);
       std::unique_ptr<TXshCell[]> cells(new TXshCell[oldNr]);
       assert(cells);
-      getCells(r0, c, oldNr, cells.get());
+      getCells(r0, c, oldNr, cells.get(), true);
       insertCells(r0 + 1, c, dn);
       int i;
+
+      if (useImplicitHold) {
+        // Set to explicit
+        for (i = 0; i < oldNr; i++) {
+          setCell(i + r0, c, cells[i]);
+        }
+      }
+
       for (i = 0; i < nr; i++) {
         int j = i * double(oldNr) / double(nr);
         if (j < i) {
           int prevj = (i - 1) * double(oldNr) / double(nr);
-          TXshCell cell =
-              (useImplicitHold && j == prevj) ? TXshCell() : cells[j];
-          setCell(i + r0, c, cell);
+          setCell(i + r0, c, cells[j]);
+          if (j == prevj) shiftMarkers(i + r0 - 1, c, 1);
+        }
+      }
+
+      if (useImplicitHold) {
+        // Reset implicit cells
+        for (i = 1; i < nr; i++) {
+          if (getCell(i + r0, c, true) == getCell(i - 1 + r0, c, true))
+            setCell(i + r0, c, TXshCell());
         }
       }
     }
@@ -1171,20 +1238,43 @@ void TXsheet::timeStretch(int r0, int c0, int r1, int c1, int nr) {
     int c;
     for (c = c0; c <= c1; c++) {
       int dn = oldNr - nr;
-      std::unique_ptr<TXshCell[]> cells(new TXshCell[oldNr]);
+      std::unique_ptr<TXshCell[]> cells(new TXshCell[oldNr + 1]);
       assert(cells);
-      getCells(r0, c, oldNr, cells.get());
+      getCells(r0, c, oldNr + 1, cells.get(), true);
       int i;
-      for (i = 0; i < nr; i++) {
-        int j = i * double(oldNr) / double(nr);
-        if (j > i) {
-          int prevj = (i - 1) * double(oldNr) / double(nr);
-          TXshCell cell =
-              (useImplicitHold && j == prevj) ? TXshCell() : cells[j];
-          setCell(i + r0, c, cell);
+
+      if (useImplicitHold) {
+        // Set to explicit
+        for (i = 0; i < (oldNr + 1); i++) {
+          setCell(i + r0, c, cells[i]);
         }
       }
+
+      for (i = 0; i < nr; i++) {
+        int j = i * double(oldNr) / double(nr);
+        if (j > i) setCell(i + r0, c, cells[j]);
+      }
+
+      if (useImplicitHold) {
+        // Reset implicit cells
+        for (i = 1; i < nr; i++) {
+          if (getCell(i + r0, c, true) == getCell(i - 1 + r0, c, true))
+            setCell(i + r0, c, TXshCell());
+        }
+      }
+
       removeCells(r1 - dn + 1, c, dn);
+
+      // Shift loops based on how cells were removed
+      int r = r0;
+      for (i = 0; i < oldNr; i++) {
+        if (cells[i] == getCell(r, c, true)) {
+          r++;
+          continue;
+        }
+        shiftMarkers(r, c, -1);
+      }
+      shiftMarkers(r, c, -1);
     }
   }
 }
@@ -1933,6 +2023,7 @@ void TXsheet::autoInputCellNumbers(int increment, int interval, int step,
         setCell(r0, columnIndex, cell);
       }
       insertCells(r0, columnIndex, rowsCount);
+      shiftMarkers(r0, columnIndex, rowsCount);
     }
 
     // obtain fids to be input
@@ -2235,4 +2326,31 @@ void TXsheet::openCloseFolder(int folderCol, bool openFolder) {
         columnFan->hide(i);
     }
   }
+}
+
+//---------------------------------------------------------
+
+void TXsheet::shiftLoopMarkers(int row, int col, int rowCount) {
+  TXshColumnP column = m_imp->m_columnSet.getColumn(col);
+  if (!column || column->isLocked()) return;
+  TXshCellColumn *xshColumn = column->getCellColumn();
+  if (!xshColumn) return;
+  xshColumn->shiftLoopMarkers(row, rowCount);
+}
+
+//---------------------------------------------------------
+
+void TXsheet::shiftCellMarks(int row, int col, int rowCount) {
+  TXshColumnP column = m_imp->m_columnSet.getColumn(col);
+  if (!column || column->isLocked()) return;
+  TXshCellColumn *xshColumn = column->getCellColumn();
+  if (!xshColumn) return;
+  xshColumn->shiftCellMarks(row, rowCount);
+}
+
+//---------------------------------------------------------
+
+void TXsheet::shiftMarkers(int row, int col, int rowCount) {
+  shiftLoopMarkers(row, col, rowCount);
+  shiftCellMarks(row, col, rowCount);
 }

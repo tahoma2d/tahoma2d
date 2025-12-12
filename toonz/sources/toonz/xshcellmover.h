@@ -27,6 +27,8 @@ class CellsMover {
   std::vector<TXshCell> m_cells, m_oldCells;
   // columns data of the moved cells
   StageObjectsData *m_columnsData;
+  QMap<int, QList<std::pair<int, int>>> m_loops;
+  QMap<int, QMap<int, int>> m_cellMarks;
 
   // bitmask of qualifiers that change the behaviour of the Mover
   int m_qualifiers;

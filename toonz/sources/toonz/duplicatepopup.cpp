@@ -34,6 +34,8 @@ class DuplicateUndo final : public TUndo {
   int m_r0, m_c0;
   int m_r1, m_c1;
   int m_upTo;
+  QMap<int, QList<std::pair<int, int>>> m_loops;
+  QMap<int, QMap<int, int>> m_cellMarks;
 
 public:
   DuplicateUndo(int r0, int c0, int r1, int c1, int upTo);
@@ -52,16 +54,44 @@ public:
 //-----------------------------------------------------------------------------
 
 DuplicateUndo::DuplicateUndo(int r0, int c0, int r1, int c1, int upTo)
-    : m_r0(r0), m_c0(c0), m_r1(r1), m_c1(c1), m_upTo(upTo) {}
+    : m_r0(r0), m_c0(c0), m_r1(r1), m_c1(c1), m_upTo(upTo) {
+
+  TApp *app    = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
+  for (int c = c0; c <= c1; ++c) {
+    TXshColumn *column = xsh->getColumn(c);
+    if (column) {
+      m_loops.insert(c, column->getLoops());
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) m_cellMarks.insert(c, cellColumn->getCellMarks());
+    }
+  }
+}
 
 //-----------------------------------------------------------------------------
 
 void DuplicateUndo::undo() const {
   if (m_r0 == 0 && m_c0 == 0 && m_r1 == -1 && m_c1 == -1) return;
   TApp *app = TApp::instance();
+  TXsheet *xsh = app->getCurrentXsheet()->getXsheet();
   for (int j = m_c0; j <= m_c1; j++)
-    app->getCurrentXsheet()->getXsheet()->removeCells(m_r1 + 1, j,
-                                                      m_upTo - (m_r1 + 1) + 1);
+    xsh->removeCells(m_r1 + 1, j, m_upTo - (m_r1 + 1) + 1);
+
+  if (m_loops.size()) {
+    foreach (int c, m_loops.keys()) {
+      TXshColumn *column = xsh->getColumn(c);
+      if (column) column->setLoops(m_loops[c]);
+    }
+  }
+  if (m_cellMarks.size()) {
+    foreach (int c, m_cellMarks.keys()) {
+      TXshColumn *column = xsh->getColumn(c);
+      if (!column) continue;
+      TXshCellColumn *cellColumn = column->getCellColumn();
+      if (cellColumn) cellColumn->setCellMarks(m_cellMarks[c]);
+    }
+  }
+
   app->getCurrentXsheet()->notifyXsheetChanged();
 
   TCellSelection *cellSelection = dynamic_cast<TCellSelection *>(

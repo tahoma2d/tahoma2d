@@ -322,10 +322,16 @@ Set column color tag to \b colorTag.
 
   bool isLoopedFrame(int row);
   int getLoopedFrame(int row, bool forOnionSkin = false);
+  bool isLoopStart(int row);
+  bool isLoopEnd(int row);
   TXshCell getLoopedCell(int row, bool forOnionSkin = false,
                          bool implicitLookup = true);
   bool loadLoopInfo(std::string tagName, TIStream &is);
   void saveLoopInfo(TOStream &os);
+
+  void shiftStartLoop(int row, int shiftAmount);
+  void shiftEndLoop(int row, int shiftAmount);
+  void shiftLoopMarkers(int row, int shiftAmount);
 };
 
 #ifdef _WIN32
@@ -439,7 +445,7 @@ Insert \b rowCount empty cells from line \b row.
   /*!
 Remove \b rowCount cells from line \b row, with shift.
 */
-  virtual void removeCells(int row, int rowCount = 1);
+  virtual void removeCells(int row, int rowCount = 1, bool keepCellMarks = false);
   /*!
 Clear \b rowCount cells from line \b row, without shift.
 */
@@ -470,7 +476,9 @@ last row with not empty cell of same level.
   void setCellMark(int frame, int id);
   int getCellMark(int frame) const;
   QMap<int, int> getCellMarks() const;
+  void setCellMarks(QMap<int, int> cellMarks) { m_cellMarkIds = cellMarks; }
   void clearCellMarks();
+  void shiftCellMarks(int row, int shiftAmount);
 };
 
 #endif

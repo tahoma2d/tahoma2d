@@ -125,12 +125,16 @@ namespace XshCmd {
 class InsertSceneFrameUndo : public TUndo {
 protected:
   int m_frame;
+  int m_playR0, m_playR1, m_playStep;
 
 public:
-  InsertSceneFrameUndo(int frame) : m_frame(frame) {}
+  InsertSceneFrameUndo(int frame) : m_frame(frame) {
+    XsheetGUI::getPlayRange(m_playR0, m_playR1, m_playStep);
+  }
 
   void undo() const override {
     doRemoveSceneFrame(m_frame);
+    XsheetGUI::setPlayRange(m_playR0, m_playR1, m_playStep, false);
   }
 
   void redo() const override {
@@ -166,6 +170,7 @@ void InsertSceneFrameUndo::doInsertSceneFrame(int frame, bool notify) {
       objectId = TStageObjectId::ColumnId(c);
 
       xsh->insertCells(frame, c);
+      xsh->shiftMarkers(frame, c, 1);
       TXshCell cell;
       if (!Preferences::instance()->isImplicitHoldEnabled() && frame > 0)
         cell = xsh->getCell(frame - 1, c);
@@ -181,6 +186,7 @@ void InsertSceneFrameUndo::doInsertSceneFrame(int frame, bool notify) {
   }
 
   xsh->getNavigationTags()->shiftTags(frame, 1);
+  XsheetGUI::shiftPlayRange(frame, 1);
 
   if (notify) {
     TApp::instance()->getCurrentScene()->setDirtyFlag(true);
@@ -209,6 +215,7 @@ void InsertSceneFrameUndo::doRemoveSceneFrame(int frame, bool notify) {
         updateSound = true;
 
       xsh->removeCells(frame, c);
+      xsh->shiftMarkers(frame, c, -1);
     }
 
     if (!xsh->getColumn(c) || xsh->getColumn(c)->isLocked()) continue;
@@ -219,6 +226,7 @@ void InsertSceneFrameUndo::doRemoveSceneFrame(int frame, bool notify) {
 
   if (xsh->isFrameTagged(frame)) xsh->getNavigationTags()->removeTag(frame);
   xsh->getNavigationTags()->shiftTags(frame, -1);
+  XsheetGUI::shiftPlayRange(frame, -1);
 
   if (notify) {
     TApp::instance()->getCurrentScene()->setDirtyFlag(true);
@@ -339,6 +347,9 @@ public:
 class RemoveSceneFrameUndo final : public InsertSceneFrameUndo {
   std::vector<TXshCell> m_cells;
   std::vector<TStageObject::Keyframe> m_keyframes;
+  std::vector<QList<std::pair<int, int>>> m_loops;
+  std::vector<QMap<int, int>> m_cellMarks;
+
   NavigationTags::Tag m_tag;
 
 public:
@@ -350,6 +361,8 @@ public:
 
     m_cells.resize(colsCount);
     m_keyframes.resize(colsCount + 1);
+    m_loops.resize(colsCount);
+    m_cellMarks.resize(colsCount);
     m_tag = xsh->getNavigationTags()->getTag(frame);
 
     // Inserting the eventual camera keyframe at the end
@@ -361,7 +374,14 @@ public:
     for (int c = 0; c != colsCount; ++c) {
       // Store cell
       const TXshCell &cell = xsh->getCell(m_frame, c, false, false);
-      m_cells[c] = cell;
+      m_cells[c]           = cell;
+
+      TXshColumn *column = xsh->getColumn(c);
+      if (column) {
+        m_loops[c] = column->getLoops();
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn) m_cellMarks[c] = cellColumn->getCellMarks();
+      }
 
       // Store stage object keyframes
       TStageObject *obj = xsh->getStageObject(TStageObjectId::ColumnId(c));
@@ -369,7 +389,7 @@ public:
     }
   }
 
-  void redo() const override { InsertSceneFrameUndo::undo(); }
+  void redo() const override { doRemoveSceneFrame(m_frame); }
 
   void undo() const override {
     TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
@@ -392,8 +412,14 @@ public:
     for (int c = 0; c != cellsCount; ++c) {
       xsh->setCell(m_frame, c, m_cells[c]);
 
-      if (xsh->getColumn(c) && xsh->getColumn(c)->getSoundColumn())
-        updateSound = true;
+      TXshColumn *column = xsh->getColumn(c);
+
+      if (column) {
+        column->setLoops(m_loops[c]);
+        if (column->getSoundColumn()) updateSound = true;
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn) cellColumn->setCellMarks(m_cellMarks[c]);
+      }
 
       if (m_keyframes[c].m_isKeyframe) {
         TStageObject *obj = xsh->getStageObject(TStageObjectId::ColumnId(c));
@@ -404,6 +430,7 @@ public:
     // Restore tag if there was one
     if (m_tag.m_frame != -1)
       xsh->getNavigationTags()->addTag(m_tag.m_frame, m_tag.m_label);
+    XsheetGUI::setPlayRange(m_playR0, m_playR1, m_playStep, false);
 
     TApp::instance()->getCurrentScene()->setDirtyFlag(true);
     TApp::instance()->getCurrentXsheet()->notifyXsheetChanged();

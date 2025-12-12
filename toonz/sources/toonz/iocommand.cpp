@@ -1126,6 +1126,8 @@ class ExposeLevelUndo final : public TUndo {
   TXshSimpleLevelP m_sl;
   std::vector<TXshCell> m_oldCells;
   std::vector<TFrameId> m_fids;
+  QMap<int, QList<std::pair<int, int>>> m_loops;
+  QMap<int, QMap<int, int>> m_cellMarks;
   int m_row;
   int m_col;
   int m_frameCount;
@@ -1142,11 +1144,19 @@ public:
       , m_insertEmptyColumn(insertEmptyColumn)
       , m_fids()
       , m_type(type) {
+    TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
     if (type == eOverWrite) {
-      TXsheet *xsh = TApp::instance()->getCurrentXsheet()->getXsheet();
       int r;
       for (r = row; r < frameCount + row; r++)
         m_oldCells.push_back(xsh->getCell(r, col));
+    }
+    if (type == eShiftCells) {
+      TXshColumn *column = xsh->getColumn(col);
+      if (column) {
+        m_loops.insert(col, column->getLoops());
+        TXshCellColumn *cellColumn = column->getCellColumn();
+        if (cellColumn) m_cellMarks.insert(col, cellColumn->getCellMarks());
+      }
     }
   }
 
@@ -1165,6 +1175,14 @@ public:
         if (!m_oldCells.empty())
           xsh->setCells(m_row, m_col, m_frameCount, &m_oldCells[0]);
       }
+      if (m_type == eShiftCells) {
+        TXshColumn *column = xsh->getColumn(m_col);
+        if (column) {
+          column->setLoops(m_loops[m_col]);
+          TXshCellColumn *cellColumn = column->getCellColumn();
+          if (cellColumn) cellColumn->setCellMarks(m_cellMarks[m_col]);
+        }
+      }
       app->getCurrentXsheet()->notifyXsheetChanged();
     }
   }
@@ -1175,7 +1193,10 @@ public:
     if (m_insertEmptyColumn) xsh->insertColumn(m_col);
     int frameCount = 0;
     if (!m_fids.empty()) {
-      if (m_type == eShiftCells) xsh->insertCells(m_row, m_col, m_frameCount);
+      if (m_type == eShiftCells) {
+        xsh->insertCells(m_row, m_col, m_frameCount);
+        xsh->shiftMarkers(m_row, m_col, m_frameCount);
+      }
       frameCount = (int)m_fids.size();
       std::vector<TFrameId>::const_iterator it;
       int row = m_row;
@@ -2853,6 +2874,7 @@ bool IoCmd::exposeLevel(TXshSimpleLevel *sl, int row, int col,
   ExposeLevelUndo *undo =
       new ExposeLevelUndo(sl, row, col, frameCount, insertEmptyColumn, type);
   xsh->exposeLevel(row, col, sl, fids, overWrite);
+  if (type == eShiftCells) xsh->shiftMarkers(row, col, fids.size());
   undo->setFids(fids);
   TUndoManager::manager()->add(undo);
 
