@@ -157,6 +157,7 @@ void DragChannelTool::leftButtonUp(const TPointD &pos, const TMouseEvent &) {
 
     TTool::Application *app   = TTool::getApplication();
     UndoStageObjectMove *undo = new UndoStageObjectMove(m_before, m_after);
+    undo->setXsheetHandle(app->getCurrentXsheet());
     undo->setObjectHandle(app->getCurrentObject());
     TUndoManager::manager()->add(undo);
     app->getCurrentScene()->setDirtyFlag(true);

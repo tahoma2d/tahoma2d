@@ -8,6 +8,8 @@
 #include "toonzqt/selection.h"
 #include "toonzqt/dvmimedata.h"
 
+#include "toonz/txsheethandle.h"
+
 #include "tdoublekeyframe.h"
 
 #include <QWidget>
@@ -50,6 +52,7 @@ class FunctionSelection final : public QObject, public TSelection {
   // assert(m_selectedSegment<0 || m_selectedKeyframes.size()==1)
 
   TFrameHandle *m_frameHandle;
+  TXsheetHandle *m_xsheetHandle;
   ColumnToCurveMapper *m_columnToCurveMapper;
 
   int getCurveIndex(TDoubleParam *curve) const;
@@ -64,6 +67,9 @@ public:
 
   void setFrameHandle(TFrameHandle *frameHandle) {
     m_frameHandle = frameHandle;
+  }
+  void setXsheetHandle(TXsheetHandle *xsheetHandle) {
+    m_xsheetHandle = xsheetHandle;
   }
 
   // function graph

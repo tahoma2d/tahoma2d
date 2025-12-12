@@ -222,6 +222,7 @@ public:
 
 class DVAPI UndoStageObjectMove final : public TUndo {
   TStageObjectValues m_before, m_after;
+  TXsheetHandle *m_xsheetHandle;
   TObjectHandle
       *m_objectHandle;  // OK: viene usato per notificare i cambiamenti!
 
@@ -229,6 +230,9 @@ public:
   UndoStageObjectMove(const TStageObjectValues &before,
                       const TStageObjectValues &after);
 
+  void setXsheetHandle(TXsheetHandle *xsheetHandle) {
+    m_xsheetHandle = xsheetHandle;
+  }
   void setObjectHandle(TObjectHandle *objectHandle) {
     m_objectHandle = objectHandle;
   }

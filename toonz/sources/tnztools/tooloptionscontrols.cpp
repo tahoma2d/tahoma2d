@@ -1316,6 +1316,7 @@ void PegbarChannelField::onChange(TMeasuredValue *fld, bool addToUndo) {
 
   if (addToUndo) {
     UndoStageObjectMove *undo = new UndoStageObjectMove(m_before, after);
+    undo->setXsheetHandle(m_xshHandle);
     undo->setObjectHandle(m_objHandle);
     TUndoManager::manager()->add(undo);
     TUndoManager::manager()->endBlock();

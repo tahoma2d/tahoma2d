@@ -248,6 +248,7 @@ FunctionPanel::FunctionPanel(QWidget *parent, bool isFloating)
     , m_frameAxisY(50)
     , m_graphViewportY(50)
     , m_frameHandle(0)
+    , m_xsheetHandle(0)
     , m_dragTool(0)
     , m_currentFrameStatus(0)
     , m_selection(0)
@@ -1699,9 +1700,9 @@ void FunctionPanel::openContextMenu(QMouseEvent *e) {
     kf.m_speedOut = -kf.m_speedIn;
     curve->setKeyframe(kf);
   } else if (action == &deleteKeyframeAction) {
-    KeyframeSetter::removeKeyframeAt(curve, kf.m_frame);
+    KeyframeSetter::removeKeyframeAt(curve, kf.m_frame, m_xsheetHandle);
   } else if (action == &insertKeyframeAction) {
-    KeyframeSetter(curve).createKeyframe(tround(frame));
+    KeyframeSetter(curve, m_xsheetHandle).createKeyframe(tround(frame));
   } else if (action == &activateCycleAction) {
     KeyframeSetter::enableCycle(curve, true);
   } else if (action == &deactivateCycleAction) {

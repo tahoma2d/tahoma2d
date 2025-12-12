@@ -245,6 +245,7 @@ FunctionViewer::FunctionViewer(QWidget *parent, Qt::WindowFlags flags)
 FunctionViewer::~FunctionViewer() {
   delete m_selection;
   m_toolbar->setFrameHandle(0);
+  m_toolbar->setXsheetHandle(0);
 }
 
 //-----------------------------------------------------------------------------
@@ -394,6 +395,9 @@ void FunctionViewer::setXsheetHandle(TXsheetHandle *xshHandle) {
   m_segmentViewer->setXsheetHandle(xshHandle);
   m_treeView->setXsheetHandle(xshHandle);
   m_numericalColumns->setXsheetHandle(xshHandle);
+  m_toolbar->setXsheetHandle(m_xshHandle);
+  m_functionGraph->setXsheetHandle(m_xshHandle);
+  m_selection->setXsheetHandle(m_xshHandle);
 
   if (m_xshHandle && isVisible()) {
     TXsheet *xsh = m_xshHandle->getXsheet();

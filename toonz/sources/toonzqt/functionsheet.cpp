@@ -87,6 +87,8 @@ public:
 
     m_sheet->selectCells(m_selectedCells);
 
+    TXsheetHandle *xsheetHandle = m_sheet->getXsheetHandle();
+
     /*---
 シンプルに左のバーをクリックした場合はcolは1つだけ。
 すでに複数Columnが選択されている上でその選択範囲内のセルの左バーをクリックした場合は
@@ -97,7 +99,7 @@ public:
          ++col) {
       TDoubleParam *curve = m_sheet->getCurve(col);
       if (!curve) continue;
-      KeyframeSetter *setter = new KeyframeSetter(curve);
+      KeyframeSetter *setter = new KeyframeSetter(curve, xsheetHandle);
       for (int k = 0; k < curve->getKeyframeCount(); k++) {
         int row = (int)curve->keyframeIndexToFrame(k);
         if (r0 <= row && row <= r1) {
@@ -125,6 +127,7 @@ public:
   void release(int row, int col, QMouseEvent *e) override {
     for (int i = 0; i < (int)m_setters.size(); i++) delete m_setters[i];
     m_setters.clear();
+    m_sheet->getViewer()->getXsheetHandle()->notifyXsheetChanged();
   }
 };
 
@@ -1153,8 +1156,10 @@ void FunctionSheetCellViewer::openContextMenu(QMouseEvent *e) {
   QAction *action = menu.exec(e->globalPos());  // QCursor::pos());
   if (action == &deleteKeyframeAction) {
     KeyframeSetter::removeKeyframeAt(curve, row);
+    m_sheet->getViewer()->getXsheetHandle()->notifyXsheetChanged();
   } else if (action == &insertKeyframeAction) {
     KeyframeSetter(curve).createKeyframe(row);
+    m_sheet->getViewer()->getXsheetHandle()->notifyXsheetChanged();
   } else if (interpActions.contains(action)) {
     selection->setSegmentType((TDoubleKeyframe::Type)action->data().toInt());
   } else if (action == &activateCycleAction)

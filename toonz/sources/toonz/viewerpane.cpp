@@ -798,7 +798,7 @@ void BaseViewerPanel::updateFrameRange() {
   TFrameHandle *fh  = TApp::instance()->getCurrentFrame();
   int frameIndex    = fh->getFrameIndex();
   int maxFrameIndex = fh->getMaxFrameIndex();
-  if (frameIndex > maxFrameIndex) maxFrameIndex = frameIndex;
+//  if (frameIndex > maxFrameIndex) maxFrameIndex = frameIndex;
   m_flipConsole->setFrameRange(1, maxFrameIndex + 1, 1, frameIndex + 1);
 }
 

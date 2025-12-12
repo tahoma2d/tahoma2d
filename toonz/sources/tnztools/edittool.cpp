@@ -252,6 +252,7 @@ public:
 
     TTool::Application *app   = TTool::getApplication();
     UndoStageObjectMove *undo = new UndoStageObjectMove(m_before, m_after);
+    undo->setXsheetHandle(app->getCurrentXsheet());
     undo->setObjectHandle(app->getCurrentObject());
     TUndoManager::manager()->add(undo);
     app->getCurrentScene()->setDirtyFlag(true);
@@ -1003,6 +1004,7 @@ void EditTool::leftButtonUp(const TPointD &pos, const TMouseEvent &e) {
     TUndoManager::manager()->endBlock();
     delete m_dragTool;
     m_dragTool = 0;
+    TTool::getApplication()->getCurrentXsheet()->notifyXsheetChanged();
     TTool::getApplication()->getCurrentObject()->notifyObjectIdChanged(false);
   }
   m_keyFrameAdded = false;

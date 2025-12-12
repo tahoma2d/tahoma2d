@@ -63,6 +63,7 @@ class KeyframesPasteUndo final : public TUndo {
   std::vector<Column> m_columns;
   FunctionKeyframesData *m_data;
   double m_frame;
+  TXsheetHandle *m_xsheetHandle;
 
 public:
   KeyframesPasteUndo(std::vector<TDoubleParam *> &params,
@@ -97,6 +98,10 @@ public:
     delete m_data;
   }
 
+  void setXsheetHandle(TXsheetHandle *xsheetHandle) {
+    m_xsheetHandle = xsheetHandle;
+  }
+
   void undo() const override {
     int columnCount = (int)m_columns.size();
     for (int col = 0; col < columnCount; col++) {
@@ -107,11 +112,13 @@ public:
         param->deleteKeyframe(*it);
       param->setKeyframes(m_columns[col].m_oldKeyframes);
     }
+    if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
   }
   void redo() const override {
     for (int col = 0; col < (int)m_columns.size(); col++) {
       m_data->setData(col, m_columns[col].m_param, m_frame);
     }
+    if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
   }
   int getSize() const override {
     return sizeof(*this) + 100;  // approx
@@ -152,16 +159,22 @@ public:
       m_columns[col].m_param->release();
   }
 
+  void setXsheetHandle(TXsheetHandle *xsheetHandle) {
+    m_xsheetHandle = xsheetHandle;
+  }
+
   void undo() const override {
     for (int col = 0; col < (int)m_columns.size(); col++)
       for (int i = 0; i < (int)m_columns[col].m_keyframes.size(); i++)
         m_columns[col].m_param->setKeyframe(m_columns[col].m_keyframes[i]);
+    if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
   }
   void redo() const override {
     for (int col = 0; col < (int)m_columns.size(); col++)
       for (int i = 0; i < (int)m_columns[col].m_keyframes.size(); i++)
         m_columns[col].m_param->deleteKeyframe(
             m_columns[col].m_keyframes[i].m_frame);
+    if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
   }
   int getSize() const override {
     return sizeof(*this) +
@@ -171,6 +184,7 @@ public:
 
 private:
   std::vector<ColumnKeyframes> m_columns;
+  TXsheetHandle *m_xsheetHandle;
 };
 
 //-----------------------------------------------------------------------------
@@ -189,6 +203,10 @@ public:
     param->addRef();
   }
 
+  void setXsheetHandle(TXsheetHandle *xsheetHandle) {
+    m_xsheetHandle = xsheetHandle;
+  }
+
   void undo() const override {
     for (int i = (int)m_movements.size() - 1; i >= 0; i--) {
       TDoubleKeyframe kf =
@@ -196,6 +214,7 @@ public:
       kf.m_frame -= m_movements[i].m_frameDelta;
       m_movements[i].m_param->setKeyframe(m_movements[i].m_kIndex, kf);
     }
+    if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
   }
   void redo() const override {
     for (int i = 0; i < (int)m_movements.size(); i++) {
@@ -204,6 +223,7 @@ public:
       kf.m_frame += m_movements[i].m_frameDelta;
       m_movements[i].m_param->setKeyframe(m_movements[i].m_kIndex, kf);
     }
+    if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
   }
   int getSize() const override {
     return sizeof(*this) + sizeof(m_movements[0]) * m_movements.size();
@@ -220,6 +240,7 @@ private:
         : m_param(param), m_kIndex(kIndex), m_frameDelta(frameDelta) {}
   };
   std::vector<KeyframeMovement> m_movements;
+  TXsheetHandle *m_xsheetHandle;
 };
 
 //=============================================================================
@@ -508,8 +529,11 @@ void FunctionSelection::doPaste() {
     }
   }
 
-  TUndoManager::manager()->add(new KeyframesPasteUndo(params, data, frame));
+  KeyframesPasteUndo *undo = new KeyframesPasteUndo(params, data, frame);
+  undo->setXsheetHandle(m_xsheetHandle);
+  TUndoManager::manager()->add(undo);
   for (int c = 0; c < columnCount; c++) data->setData(c, params[c], frame);
+  if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
 }
 
 void FunctionSelection::doCut() {
@@ -520,6 +544,7 @@ void FunctionSelection::doCut() {
   int bottomRow       = m_selectedCells.bottom();
 
   KeyframesMoveUndo *moveUndo = new KeyframesMoveUndo();
+  moveUndo->setXsheetHandle(m_xsheetHandle);
   for (int i = 0; i < m_selectedKeyframes.size(); i++) {
     TDoubleParam *curve = m_selectedKeyframes[i].first;
     QSet<int> &kk       = m_selectedKeyframes[i].second;
@@ -550,6 +575,7 @@ void FunctionSelection::doCut() {
 
   TUndoManager::manager()->endBlock();
   selectNone();
+  if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
 }
 
 void FunctionSelection::doDelete() {
@@ -565,9 +591,11 @@ void FunctionSelection::doDelete() {
   }
   if (columns.empty()) return;
   KeyframesDeleteUndo *undo = new KeyframesDeleteUndo(columns);
+  undo->setXsheetHandle(m_xsheetHandle);
   undo->redo();
   TUndoManager::manager()->add(undo);
   selectNone();
+  if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
 }
 
 void FunctionSelection::insertCells() {
@@ -576,6 +604,7 @@ void FunctionSelection::insertCells() {
   int frameDelta          = selectedCells.height();
   int row                 = selectedCells.top();
   KeyframesMoveUndo *undo = new KeyframesMoveUndo();
+  undo->setXsheetHandle(m_xsheetHandle);
   for (int c = selectedCells.left(); c <= selectedCells.right(); c++) {
     TDoubleParam *param = getCurveFromColumn(c);
     if (param && param->hasKeyframes()) {
@@ -588,6 +617,7 @@ void FunctionSelection::insertCells() {
   }
   undo->redo();
   TUndoManager::manager()->add(undo);
+  if (m_xsheetHandle) m_xsheetHandle->notifyXsheetChanged();
 }
 
 void FunctionSelection::setStep(int step, bool inclusive) {

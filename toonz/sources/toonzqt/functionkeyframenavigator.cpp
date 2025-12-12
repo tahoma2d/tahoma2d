@@ -21,7 +21,7 @@
 #include <QIntValidator>
 
 FunctionKeyframeNavigator::FunctionKeyframeNavigator(QWidget *parent)
-    : KeyframeNavigator(parent) {}
+    : KeyframeNavigator(parent), m_xsheetHandle(0) {}
 
 void FunctionKeyframeNavigator::setCurve(TDoubleParam *curve) {
   if (m_curve.getPointer() == curve) return;
@@ -50,9 +50,10 @@ void FunctionKeyframeNavigator::toggle() {
   int frame    = getCurrentFrame();
   double value = m_curve->getValue(frame);
   if (m_curve->isKeyframe(frame))
-    KeyframeSetter::removeKeyframeAt(m_curve.getPointer(), frame);
+    KeyframeSetter::removeKeyframeAt(m_curve.getPointer(), frame,
+                                     m_xsheetHandle);
   else {
-    KeyframeSetter setter(m_curve.getPointer());
+    KeyframeSetter setter(m_curve.getPointer(), m_xsheetHandle);
     setter.createKeyframe(frame);
   }
 }
