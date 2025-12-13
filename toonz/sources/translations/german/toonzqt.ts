@@ -83,6 +83,37 @@
     </message>
 </context>
 <context>
+    <name>BrushTipPopup</name>
+    <message>
+        <source>Spacing:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotation:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Rotate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scatter:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CameraPainter</name>
     <message>
         <source>&amp;Reset Center</source>
@@ -1571,6 +1602,29 @@ Wählen Sie Effekt-Nodes und verwandte Links, die Sie einfügen möchten, bevor 
     </message>
 </context>
 <context>
+    <name>GraphGUIWidget</name>
+    <message>
+        <source>0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>X</source>
+        <translation type="unfinished">X</translation>
+    </message>
+    <message>
+        <source>100</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset Curve</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GroupPainter</name>
     <message>
         <source>&amp;Open Group</source>
@@ -2894,6 +2948,15 @@ Zero is fully transparent.</source>
         <source>Remove Reference in Palette : %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Round</source>
+        <comment>BrushTipChooserFrame</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -3033,6 +3096,18 @@ Zero is fully transparent.</source>
     <message>
         <source>Autopaint for Lines</source>
         <translation type="obsolete">Automatisches Malen für Linien</translation>
+    </message>
+    <message>
+        <source>Reset Style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Dynamic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Dynamic - %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3531,6 +3606,17 @@ anwenden</translation>
     <message>
         <source>Easy Inputs</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StylusConfigPopup</name>
+    <message>
+        <source>Input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="unfinished">Output</translation>
     </message>
 </context>
 <context>

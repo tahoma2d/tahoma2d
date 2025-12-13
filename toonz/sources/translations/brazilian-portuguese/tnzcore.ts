@@ -40,7 +40,7 @@
         <translation>Exceção não resolvida encontrada: Pulando Quadro.</translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tpalette.cpp" line="257"/>
+        <location filename="../../common/tvrender/tpalette.cpp" line="258"/>
         <source>colors</source>
         <translation>cores</translation>
     </message>
@@ -61,25 +61,30 @@
 <context>
     <name>TRasterImagePatternStrokeStyle</name>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1088"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1101"/>
         <source>Distance</source>
         <translation>Distância</translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1090"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1103"/>
         <source>Rotation</source>
         <translation>Rotação</translation>
+    </message>
+    <message>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1105"/>
+        <source>Flip</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>TVectorImagePatternStrokeStyle</name>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1551"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1639"/>
         <source>Distance</source>
         <translation>Distância</translation>
     </message>
     <message>
-        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1553"/>
+        <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1641"/>
         <source>Rotation</source>
         <translation>Rotação</translation>
     </message>

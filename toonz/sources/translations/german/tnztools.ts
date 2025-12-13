@@ -549,10 +549,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Maximum Gap</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Distance:</source>
         <translation type="unfinished">Abstand：</translation>
     </message>
@@ -610,6 +606,10 @@
     </message>
     <message>
         <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Close Gap</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -677,6 +677,26 @@
     <message>
         <source>Smooth:</source>
         <translation type="unfinished">Glätten:</translation>
+    </message>
+    <message>
+        <source>Paint Behind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tilt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Tip</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -866,7 +886,7 @@
     </message>
     <message>
         <source>Selective</source>
-        <translation>Selektiv</translation>
+        <translation type="vanished">Selektiv</translation>
     </message>
     <message>
         <source>Lines</source>
@@ -886,6 +906,10 @@
     </message>
     <message>
         <source>Lock Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paint Behind</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1086,11 +1110,11 @@ Möchten Sie fortfahren?</translation>
     </message>
     <message>
         <source>Copy Skeleton</source>
-        <translation>Skelett kopieren</translation>
+        <translation type="vanished">Skelett kopieren</translation>
     </message>
     <message>
         <source>Paste Skeleton</source>
-        <translation>Skelett einfügen</translation>
+        <translation type="vanished">Skelett einfügen</translation>
     </message>
     <message>
         <source>Delete Vertex</source>
@@ -1098,19 +1122,19 @@ Möchten Sie fortfahren?</translation>
     </message>
     <message>
         <source>Set Key</source>
-        <translation>Taste setzen</translation>
+        <translation type="vanished">Taste setzen</translation>
     </message>
     <message>
         <source>Set Rest Key</source>
-        <translation>Ruhepositions-Key setzen</translation>
+        <translation type="vanished">Ruhepositions-Key setzen</translation>
     </message>
     <message>
         <source>Set Global Key</source>
-        <translation>Globale Taste setzen</translation>
+        <translation type="vanished">Globale Taste setzen</translation>
     </message>
     <message>
         <source>Set Global Rest Key</source>
-        <translation>Globale Rast-Taste setzen</translation>
+        <translation type="vanished">Globale Rast-Taste setzen</translation>
     </message>
     <message>
         <source>Show Mesh</source>
@@ -1604,6 +1628,10 @@ Möchten Sie fortfahren?</translation>
         <source>The selection is not editable.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RGBPickerTool</name>
@@ -1648,6 +1676,26 @@ Möchten Sie fortfahren?</translation>
     <message>
         <source>Modify Savebox</source>
         <translation>Speicher-Box modifizieren</translation>
+    </message>
+    <message>
+        <source>Selective</source>
+        <translation type="unfinished">Selektiv</translation>
+    </message>
+    <message>
+        <source>Mode:</source>
+        <translation type="unfinished">Modus:</translation>
+    </message>
+    <message>
+        <source>Lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Areas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lines &amp; Areas</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2057,6 +2105,17 @@ moved to the end of the first page of the palette.</source>
     </message>
 </context>
 <context>
+    <name>ToolOptionStylusConfigButton</name>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished">Druck</translation>
+    </message>
+    <message>
+        <source>Tilt</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ToonzRasterBrushTool</name>
     <message>
         <source>Size</source>
@@ -2110,6 +2169,18 @@ moved to the end of the first page of the palette.</source>
         <source>Grid</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Tilt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Tip</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ToonzVectorBrushTool</name>
@@ -2139,7 +2210,7 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Pressure</source>
-        <translation>Druck</translation>
+        <translation type="vanished">Druck</translation>
     </message>
     <message>
         <source>Cap</source>
@@ -2231,6 +2302,10 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Size</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -22,12 +22,12 @@
 <context>
     <name>AviWriterProperties</name>
     <message>
-        <location filename="../../image/avi/tiio_avi.cpp" line="1182"/>
+        <location filename="../../image/avi/tiio_avi.cpp" line="1210"/>
         <source>Codec</source>
         <translation>编码器</translation>
     </message>
     <message>
-        <location filename="../../image/avi/tiio_avi.cpp" line="1183"/>
+        <location filename="../../image/avi/tiio_avi.cpp" line="1211"/>
         <source>Uncompressed</source>
         <translation>未压缩</translation>
     </message>
@@ -126,92 +126,92 @@
 <context>
     <name>GifWriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="342"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="359"/>
         <source>Global Palette</source>
         <translation>全局调色板</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="343"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="360"/>
         <source>Global Palette + Sierra Dither</source>
         <translation>全局调色板+Sierra Dither</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="344"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="361"/>
         <source>Global Palette + Bayer2 Dither</source>
         <translation>全局调色板+Bayer2抖动</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="345"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="362"/>
         <source>Global Palette + Bayer1 Dither</source>
         <translation>全局调色板+Bayer1抖动</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="346"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="363"/>
         <source>Diff Palette</source>
         <translation>差异调色板</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="347"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="364"/>
         <source>Diff Palette + Sierra Dither</source>
         <translation>差异调色板+Sierra Dither</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="348"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="365"/>
         <source>Diff Palette + Bayer2 Dither</source>
         <translation>差异调色板+ Bayer2抖动</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="349"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="366"/>
         <source>Diff Palette + Bayer1 Dither</source>
         <translation>差异调色板+ Bayer1抖动</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="350"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="367"/>
         <source>New Pal Per Frame</source>
         <translation>每帧新建PAL</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="351"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="368"/>
         <source>New Pal Per Frame + Sierra Dither</source>
         <translation>每帧新PAL+Sierra Dither</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="352"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="369"/>
         <source>New Pal Per Frame + Bayer2 Dither</source>
         <translation>每帧新PAL+Bayer2抖动</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="353"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="370"/>
         <source>New Pal Per Frame + Bayer1 Dither</source>
         <translation>每帧新PAL+Bayer1抖动</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="354"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="371"/>
         <source>Opaque, Dither, 256 Colors Only</source>
         <translation>不透明，抖动，仅256色</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="367"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="384"/>
         <source>Scale</source>
         <translation>缩放</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="368"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="385"/>
         <source>Looping</source>
         <translation>循环</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="369"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="386"/>
         <source>Generate Palette</source>
         <translation>生成调色板</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="370"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="387"/>
         <source>Mode</source>
         <translation>模式</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="371"/>
+        <location filename="../../image/ffmpeg/tiio_gif.cpp" line="388"/>
         <source>Max Colors</source>
         <translation>最大颜色</translation>
     </message>
@@ -384,37 +384,37 @@ Please try raising the FFmpeg timeout in Preferences.</source>
 <context>
     <name>SvgWriterProperties</name>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2052"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2060"/>
         <source>Stroke Mode</source>
         <translation>描边模式</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2053"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2061"/>
         <source>Outline Quality</source>
         <translation>轮廓质量</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2054"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2062"/>
         <source>Centerline</source>
         <translation>中心线</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2055"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2063"/>
         <source>Outline</source>
         <translation>轮廓</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2056"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2064"/>
         <source>High</source>
         <translation>高</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2057"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2065"/>
         <source>Medium</source>
         <translation>中</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2058"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2066"/>
         <source>Low</source>
         <translation>低</translation>
     </message>
@@ -551,14 +551,103 @@ Please try raising the FFmpeg timeout in Preferences.</source>
 <context>
     <name>WebmWriterProperties</name>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="235"/>
         <source>Quality</source>
-        <translation>质量</translation>
+        <translation type="vanished">质量</translation>
     </message>
     <message>
-        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="236"/>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="309"/>
+        <source>Placebo (Smallest File)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="310"/>
+        <source>Very Slow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="311"/>
+        <source>Slower</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="312"/>
+        <source>Slow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="313"/>
+        <source>Medium</source>
+        <translation type="unfinished">中</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="314"/>
+        <source>Fast</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="315"/>
+        <source>Faster</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="316"/>
+        <source>Very Fast</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="318"/>
+        <source>Ultra Fast (Largest File)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="322"/>
+        <source>Every Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="323"/>
+        <source>Every Second</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="324"/>
+        <source>Every 2 Seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="325"/>
+        <source>Every 5 Seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="326"/>
+        <source>Every 10 Seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="331"/>
         <source>Scale</source>
         <translation>缩放</translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="332"/>
+        <source>Encoding Speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="333"/>
+        <source>Keyframe Interval</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="334"/>
+        <source>Preserve Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../image/ffmpeg/tiio_webm.cpp" line="335"/>
+        <source>Lossless</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

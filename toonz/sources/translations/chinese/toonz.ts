@@ -22,7 +22,7 @@
     <message>
         <source>Tahoma2D ships with FFmpeg.  
 FFmpeg is licensed under the LGPLv2.1</source>
-        <translation>Tahoma2D 包含 FFmpeg.  
+        <translation type="vanished">Tahoma2D 包含 FFmpeg.  
 FFmpeg 采用宽通用公共许可证第2.1版(LGPLv2.1)</translation>
     </message>
     <message>
@@ -38,6 +38,11 @@ Special thanks to:</source>
     <message>
         <source>Please consider sponsoring Tahoma2D developers on GitHub.</source>
         <translation>请考虑在GitHub上赞助 Tahoma2D 开发人员。</translation>
+    </message>
+    <message>
+        <source>Tahoma2D ships with FFmpeg.
+FFmpeg is licensed under the LGPLv2.1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -559,6 +564,10 @@ Right click to adjust.</source>
         <source>Show Perspective Grids</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source> (Rasterized Vector View)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BatchServersViewer</name>
@@ -689,6 +698,100 @@ Stop it or wait for its completion before removing it.</source>
     <message>
         <source>Cancel</source>
         <translation>取消</translation>
+    </message>
+</context>
+<context>
+    <name>BoardButtonBar</name>
+    <message>
+        <source>Create Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">新建</translation>
+    </message>
+    <message>
+        <source>Reset Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation type="unfinished">重置</translation>
+    </message>
+    <message>
+        <source>Clear Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation type="unfinished">清除</translation>
+    </message>
+    <message>
+        <source>Create New Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Scene</source>
+        <translation type="unfinished">创建场景</translation>
+    </message>
+    <message>
+        <source>Save Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">保存</translation>
+    </message>
+    <message>
+        <source>Save Board As</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save As</source>
+        <translation type="unfinished">另存为</translation>
+    </message>
+    <message>
+        <source>Load Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load</source>
+        <translation type="unfinished">加载</translation>
+    </message>
+    <message>
+        <source>Quick Play</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BoardList</name>
+    <message>
+        <source>Toggle Thumbnail Wrap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quick Play</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load As Sub-Scene</source>
+        <translation type="unfinished">加载为子场景</translation>
+    </message>
+    <message>
+        <source>Expand Sequence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collapse Sequence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation type="unfinished">重命名</translation>
+    </message>
+    <message>
+        <source>Drag/Drop to Add Files</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3708,6 +3811,101 @@ Do you want to overwrite it?</source>
         <source>An error occurred.  Please try again.</source>
         <translation>出现错误。请再试一次。</translation>
     </message>
+    <message>
+        <source>A CRITICAL error was encountered with the camera:
+
+&apos;%1&apos;
+
+Camera has been disconnected and may need to be restarted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GPhotoEventLogPopup</name>
+    <message>
+        <source>GPhoto Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capture messages:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished">错误</translation>
+    </message>
+    <message>
+        <source>Debug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>List All Configs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translation type="unfinished">暂停</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation type="unfinished">复制到剪贴板</translation>
+    </message>
+    <message>
+        <source>Clear Log</source>
+        <translation type="unfinished">清除日志</translation>
+    </message>
+    <message>
+        <source>List All Configs: No camera detected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>List All Configs: No configurations retrieved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>========== All Configs ==========</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Label: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Readonly: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Printable: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choice </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bottom: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Top: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step: </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ImageViewer</name>
@@ -4587,6 +4785,29 @@ Please choose a valid lip sync data file to continue.</source>
  Please choose a valid lip sync data file to continue.</source>
         <translation>无效的数据文件。
         请选择一个有效的唇同步数据文件以继续。</translation>
+    </message>
+    <message>
+        <source>Recognizer</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LoadBoardPopup</name>
+    <message>
+        <source>Load Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load</source>
+        <translation type="unfinished">加载</translation>
+    </message>
+    <message>
+        <source> does not exist.</source>
+        <translation type="unfinished"> 不存在。</translation>
+    </message>
+    <message>
+        <source>It is possible to load only TNZBRD files.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8406,6 +8627,70 @@ or you may delete necessary files for it.</source>
         <source>Zoom Out And Fit Floating Panel</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Loop Frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Frame Loop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Tips...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Viewer Event Log</source>
+        <translation type="unfinished">查看器事件日志</translation>
+    </message>
+    <message>
+        <source>GPhoto Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Open Reports Folder...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Set Rest Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Set Global Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Set Global Rest Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Clear All Onion Skin Markers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Copy Skeleton</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Paste Skeleton</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hook Tool: Create reference points to aid in movement or to link other objects by them</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keep Distance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paint Behind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Viewer Scrub</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -11323,7 +11608,7 @@ but a random crash might occur, use at your own risk:</source>
     </message>
     <message>
         <source>Open Viewer Event Log</source>
-        <translation>打开查看器事件日志</translation>
+        <translation type="vanished">打开查看器事件日志</translation>
     </message>
     <message>
         <source>Use %1 to Resize Brush</source>
@@ -11385,6 +11670,26 @@ but a random crash might occur, use at your own risk:</source>
         <source>Inbetween Flip</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Show Tips Window when Tahoma2D Starts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable High DPI Scaling*</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preproduction Board Thumbnail Size*:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rasterize Vector with Anti Aliasing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Images in Cell Tooltips</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup::AdditionalStyleEdit</name>
@@ -11439,6 +11744,67 @@ but a random crash might occur, use at your own risk:</source>
     <message>
         <source>Priority</source>
         <translation>优先级</translation>
+    </message>
+</context>
+<context>
+    <name>PreproductionBoard</name>
+    <message>
+        <source>Are you sure you want to discard your changes?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished">是</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished">否</translation>
+    </message>
+    <message>
+        <source>Create Scene</source>
+        <translation type="unfinished">创建场景</translation>
+    </message>
+    <message>
+        <source>Scene name:</source>
+        <translation type="unfinished">场景名:</translation>
+    </message>
+    <message>
+        <source>The board is empty!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The current board has been modified.
+Doyou want to save your changes?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">保存</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <source>There is nothing in the board to play.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A production board has been modified.
+Do you want to save your changes?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preproduction Board</source>
+        <translation type="unfinished">预生产板</translation>
+    </message>
+    <message>
+        <source>untitled</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12477,7 +12843,7 @@ Some levels have not been loaded because their version is not supported</source>
     </message>
     <message>
         <source>Warning: level %1 already exists; overwrite?</source>
-        <translation>警告: 层级 %1 已经存在，要覆盖它吗？</translation>
+        <translation type="vanished">警告: 层级 %1 已经存在，要覆盖它吗？</translation>
     </message>
     <message>
         <source>It is not possible to paste image on the current cell.</source>
@@ -12541,15 +12907,15 @@ Some levels have not been loaded because their version is not supported</source>
     </message>
     <message>
         <source>The specified name is already assigned to the %1 file.</source>
-        <translation>指定的名字已经分配给了文件 %1。</translation>
+        <translation type="vanished">指定的名字已经分配给了文件 %1。</translation>
     </message>
     <message>
         <source>It is not possible to rename the %1 file.</source>
-        <translation>无法重命名文件 %1。</translation>
+        <translation type="vanished">无法重命名文件 %1。</translation>
     </message>
     <message>
         <source>It is not possible to copy the %1 file.</source>
-        <translation>无法拷贝文件 %1。</translation>
+        <translation type="vanished">无法拷贝文件 %1。</translation>
     </message>
     <message>
         <source>It is not possible to save the curve.</source>
@@ -13510,7 +13876,7 @@ to use the duplicate command in the xsheet / timeline.</source>
     </message>
     <message>
         <source>Clear All Onion Skin Markers</source>
-        <translation>清理全部洋葱皮标记器</translation>
+        <translation type="vanished">清理全部洋葱皮标记器</translation>
     </message>
     <message>
         <source>Clear All Fixed Onion Skin Markers</source>
@@ -14484,7 +14850,7 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Toggle render column mask. </source>
-        <translation>开关渲染列遮罩</translation>
+        <translation type="vanished">开关渲染列遮罩</translation>
     </message>
     <message>
         <source>Onion Skin On All Frames</source>
@@ -14596,10 +14962,6 @@ Visit the Web site for more information.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Switch To Relative Frame Onion Skin</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Vector Inspector</source>
         <translation type="unfinished"></translation>
     </message>
@@ -14625,6 +14987,105 @@ Visit the Web site for more information.
     </message>
     <message>
         <source>New Level Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loop Frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Frames Loop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loop Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Column Loops</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to generate image. Revise resolution.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning: file or level %1 already exists; overwrite?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There were problems loading the scene %1.
+Details:
+
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading brush tips...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot add to Batch Render List.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task added to the Batch Render List.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot add to Batch Cleanup List.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task added to the Batch Cleanup List.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot load scene.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot show in folder.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot show file info.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot duplicate it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot collect assets for it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot import into current project.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot load it into the current scene.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot rename it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot expand it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot add it to the flipbook.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move Loop Start Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move Loop End Marker</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14675,11 +15136,11 @@ Visit the Web site for more information.
     <name>RenameAsToonzPopup</name>
     <message>
         <source>Delete Original Files</source>
-        <translation>删除原文件</translation>
+        <translation type="vanished">删除原文件</translation>
     </message>
     <message>
         <source>Level Name:</source>
-        <translation>层级名称:</translation>
+        <translation type="vanished">层级名称:</translation>
     </message>
     <message>
         <source>Rename</source>
@@ -14691,16 +15152,36 @@ Visit the Web site for more information.
     </message>
     <message>
         <source>Renaming File </source>
-        <translation>正在重命名文件 </translation>
+        <translation type="vanished">正在重命名文件 </translation>
     </message>
     <message>
         <source>Creating an animation level of %1 frames</source>
-        <translation>正在创建 %1 帧动画层级</translation>
+        <translation type="vanished">正在创建 %1 帧动画层级</translation>
     </message>
     <message>
         <source>The file name cannot be empty or contain any of the following characters:(new line)  \ / : * ? &quot;  |</source>
         <translation>文件名不能为空也不能包含如下的任一个字符:
  \ / : * ?  |</translation>
+    </message>
+    <message>
+        <source>Name has not changed. Try something else.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Renaming File &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Renaming File Sequence &apos;%1&apos; [%2 Frame(s)]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create copy and rename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Name:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -15706,6 +16187,17 @@ Please commit or revert changes first.</source>
     <message>
         <source>Updating to their items...</source>
         <translation>正在更新到它们的项目...</translation>
+    </message>
+</context>
+<context>
+    <name>SaveBoardPopup</name>
+    <message>
+        <source>Save Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">保存</translation>
     </message>
 </context>
 <context>
@@ -16832,6 +17324,10 @@ Please commit or revert changes first.</source>
         <source>Advanced</source>
         <translation>高级</translation>
     </message>
+    <message>
+        <source>Special Modifier Keys</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ShortcutViewer</name>
@@ -17246,37 +17742,53 @@ Possibly the preset file has been corrupted</source>
     </message>
     <message>
         <source>Browse...</source>
-        <translation>浏览...</translation>
+        <translation type="vanished">浏览...</translation>
     </message>
     <message>
         <source>Open a different project.</source>
-        <translation>打开另一个项目</translation>
+        <translation type="vanished">打开另一个项目</translation>
     </message>
     <message>
         <source>This is not a valid folder.  Please choose an existing location.</source>
-        <translation>这不是一个有效的文件夹。请选择一个现有位置。</translation>
+        <translation type="vanished">这不是一个有效的文件夹。请选择一个现有位置。</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation>是</translation>
+        <translation type="vanished">是</translation>
     </message>
     <message>
         <source>No</source>
-        <translation>否</translation>
+        <translation type="vanished">否</translation>
     </message>
     <message>
         <source>No project found at this location 
 What would you like to do?</source>
-        <translation>在此位置找不到项目
+        <translation type="vanished">在此位置找不到项目
         你想做什么？</translation>
     </message>
     <message>
         <source>Make a new project</source>
-        <translation>创建新项目</translation>
+        <translation type="vanished">创建新项目</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation type="vanished">取消</translation>
+    </message>
+    <message>
+        <source>Open Project...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Explore Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Existing Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Scene</source>
+        <translation type="unfinished">新建场景</translation>
     </message>
 </context>
 <context>
@@ -17525,6 +18037,10 @@ What would you like to do?</source>
     <message>
         <source>%1%2Intermediate Stroke in Range</source>
         <translation>%1%2范围内的中间描绘</translation>
+    </message>
+    <message>
+        <source>Hook Tool: Create reference points to aid in movement or to link other objects by them</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -18972,6 +19488,21 @@ Click the arrow button to create a new sub-xsheet</source>
     </message>
 </context>
 <context>
+    <name>TipsPopup</name>
+    <message>
+        <source>Tahoma2D Tips</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show this at startup</source>
+        <translation type="unfinished">启动时显示此窗口</translation>
+    </message>
+    <message>
+        <source>Nothing to see here. Keep movin&apos;...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Toolbar</name>
     <message>
         <source>Collapse toolbar</source>
@@ -19067,6 +19598,10 @@ Click the arrow button to create a new sub-xsheet</source>
     <message>
         <source>Inbetween</source>
         <translation type="unfinished">中间画</translation>
+    </message>
+    <message>
+        <source>Troubleshoot</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -19590,7 +20125,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Stylus pressed at X=%1 Y=%2 Pressure=%3%</source>
-        <translation>手写笔在X=%1 Y=%2压力=%3%处受压</translation>
+        <translation type="vanished">手写笔在X=%1 Y=%2压力=%3%处受压</translation>
     </message>
     <message>
         <source>dragged</source>
@@ -19602,7 +20137,7 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Stylus %1 to X=%2 Y=%3 Pressure=%4%</source>
-        <translation>手写笔%1到X=%2 Y=%3压力=%4%</translation>
+        <translation type="vanished">手写笔%1到X=%2 Y=%3压力=%4%</translation>
     </message>
     <message>
         <source>Stylus released</source>
@@ -19678,6 +20213,14 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Gesture encountered (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus pressed at X=%1 Y=%2 Pressure=%3% TiltX=%4 TiltY=%5 Rotation=%6</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus %1 to X=%2 Y=%3 Pressure=%4% TiltX=%5 TiltY=%6 Rotation=%7</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -20087,7 +20630,11 @@ Please refer to the user guide for details.</source>
     </message>
     <message>
         <source>Render Mask</source>
-        <translation>渲染遮罩</translation>
+        <translation type="vanished">渲染遮罩</translation>
+    </message>
+    <message>
+        <source>Alpha Lock</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
