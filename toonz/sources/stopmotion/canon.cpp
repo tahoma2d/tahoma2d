@@ -15,6 +15,11 @@
 #ifdef Q_OS_WIN
 #include <windows.h>  // for Sleep
 #endif
+
+#ifdef LINUX
+#define EVENTTIMER_INTERVAL 40
+#endif
+
 void doSleep(int ms) {
   if (ms <= 0) return;
 
@@ -44,6 +49,11 @@ Canon::Canon() {
   buildImageQualityMap();
   buildPictureStyleMap();
 #endif
+
+#ifdef LINUX
+  m_eventTimer = new QTimer(this);
+  connect(m_eventTimer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+#endif
 }
 
 Canon::~Canon() {}
@@ -55,6 +65,16 @@ void Canon::onImageReady(const bool& status) { m_converterSucceeded = status; }
 //-----------------------------------------------------------------
 
 void Canon::onFinished() { l_quitLoop = true; }
+
+//-----------------------------------------------------------------
+
+#ifdef LINUX
+void Canon::onTimeout() {
+#ifdef WITH_CANON
+    EdsGetEvent();
+#endif
+}
+#endif
 
 //-----------------------------------------------------------------
 
@@ -173,7 +193,12 @@ void Canon::resetCanon(bool liveViewOpen) {
 EdsError Canon::openCameraSession() {
   if (m_camera != NULL) {
     m_error                                  = EdsOpenSession(m_camera);
-    if (m_error == EDS_ERR_OK) m_sessionOpen = true;
+    if (m_error == EDS_ERR_OK) {
+      m_sessionOpen = true;
+#ifdef LINUX
+      m_eventTimer->start(EVENTTIMER_INTERVAL);
+#endif
+    }
   }
   m_error = EdsSetObjectEventHandler(m_camera, kEdsObjectEvent_All,
                                      Canon::handleObjectEvent, (EdsVoid*)this);
@@ -194,6 +219,7 @@ EdsError Canon::openCameraSession() {
                                sizeof(EdsUInt32), &saveto);
   EdsCapacity newCapacity = {0x7FFFFFFF, 0x1000, 1};
   m_error                 = EdsSetCapacity(m_camera, newCapacity);
+
   return m_error;
 }
 
@@ -207,6 +233,9 @@ EdsError Canon::closeCameraSession() {
   if (m_camera != NULL) {
     m_error       = EdsCloseSession(m_camera);
     m_sessionOpen = false;
+#ifdef LINUX
+    m_eventTimer->stop();
+#endif
   }
   return m_error;
 }
@@ -851,12 +880,6 @@ bool Canon::downloadImage(EdsBaseRef object) {
       jpgStream = NULL;
       if (object) EdsRelease(object);
       return err;
-      StopMotion::instance()->m_tempRaw =
-          TApp::instance()
-              ->getCurrentScene()
-              ->getScene()
-              ->decodeFilePath(TFilePath("+stopmotion"))
-              .getQString();
     }
 
     err = EdsCreateImageRef(stream, &imgRef);
@@ -2057,6 +2080,7 @@ void Canon::buildPictureStyleMap() {
       std::pair<EdsUInt32, const char*>(kEdsPictureStyle_Faithful, "Faithful"));
   m_pictureStyleMap.insert(std::pair<EdsUInt32, const char*>(
       kEdsPictureStyle_Monochrome, "Monochrome"));
+
   m_pictureStyleMap.insert(
       std::pair<EdsUInt32, const char*>(kEdsPictureStyle_Auto, "Auto"));
   m_pictureStyleMap.insert(std::pair<EdsUInt32, const char*>(

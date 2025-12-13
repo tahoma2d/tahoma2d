@@ -25,10 +25,10 @@
 class QCamera;
 class QCameraInfo;
 class QDialog;
-class QTimer;
 class QSerialPort;
 
 #include <QThread>
+#include <QTimer>
 
 class Canon : public QObject {
   Q_OBJECT
@@ -72,6 +72,10 @@ private:
   QStringList m_isoOptions, m_shutterSpeedOptions, m_apertureOptions,
       m_exposureOptions, m_whiteBalanceOptions, m_colorTempOptions,
       m_imageQualityOptions, m_pictureStyleOptions;
+
+#ifdef LINUX
+  QTimer* m_eventTimer;
+#endif
 
 public:
   Canon();
@@ -196,6 +200,9 @@ public:
 public slots:
   void onImageReady(const bool&);
   void onFinished();
+#ifdef LINUX
+  void onTimeout();
+#endif
 
 signals:
   // canon signals
