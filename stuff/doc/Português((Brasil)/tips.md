@@ -2,14 +2,9 @@
 
 A Versão 1.5 traz um grande número de novos recursos, aprimoramentos e ainda mais correções que estão listadas [aqui](https://github.com/tahoma2d/tahoma2d/releases/tag/v1.5).
 
-### Alterações na Timeline/Xsheet
+### Compatibility Changes
 
-- Células e Colunas não possuem a barra de arrastar no canto por padrão.
-- Se preferir o antigo comportamento, habilite `Preferências` -> `Cena` -> `Mostrar Barras de Arrastar Colunas e Células`.
-- Clique em uma Célula exposta ou em uma Coluna não vazia para arrastar e movê-la.
-- Selecione uma Célula/Coluna vazia e arraste para iniciar uma seleção de múltiplas Células/Colunas.
-- `ALT` agora substitui `CTRL` para selecionar Quadros e Chaves de animação.
-- `CTRL` agora inicia uma seleção de múltiplas Células/Colunas quando o primeiro clique for em uma Célula/Coluna exposta.
+Palettes with Raster based custom styles (`Style Editor` -> `Vector` tab -> `Custom styles`) will be auto upgraded to new format which will preventing use in prior versions of T2D if the paleette is saved in the latest T2D version.
 
 ### Usuários de Windows
 
@@ -22,6 +17,13 @@ Se estiver tendo problemas com canetas digitais nesta versão, especialmente se 
 ## Atualizando do Tahoma2D 1.2 ou Migrando do OpenToonz
 
 Se estiver migrando do Tahoma2D 1.2 ou do OpenToonz, aqui estão algumas diferenças importantes de se mencionar:
+- Alterações na Timeline/Xsheet
+  - Células e Colunas não possuem a barra de arrastar no canto por padrão.
+  - Se preferir o antigo comportamento, habilite `Preferências` -> `Cena` -> `Mostrar Barras de Arrastar Colunas e Células`.
+  - Clique em uma Célula exposta ou em uma Coluna não vazia para arrastar e movê-la.
+  - Selecione uma Célula/Coluna vazia e arraste para iniciar uma seleção de múltiplas Células/Colunas.
+  - `ALT` agora substitui `CTRL` para selecionar Quadros e Chaves de animação.
+  - `CTRL` agora inicia uma seleção de múltiplas Células/Colunas quando o primeiro clique for em uma Célula/Coluna exposta.
 - Holds Implícitos
   - Não há necessidade para extender o Quadro manualmente. Um Quadro exposto será mostrado até o próximo Quadro exposto.
   - Use `Quadros de Parada` para terminar um hold sem expor outro Quadro.
