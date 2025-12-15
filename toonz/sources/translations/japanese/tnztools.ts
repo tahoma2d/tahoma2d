@@ -641,7 +641,7 @@
     </message>
     <message>
         <source>Maximum Gap</source>
-        <translation>隙間の判定</translation>
+        <translation type="vanished">隙間の判定</translation>
     </message>
     <message>
         <source>Distance:</source>
@@ -701,6 +701,10 @@
     </message>
     <message>
         <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Close Gap</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -768,6 +772,26 @@
     <message>
         <source>Smooth:</source>
         <translation type="unfinished">平滑化：</translation>
+    </message>
+    <message>
+        <source>Paint Behind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tilt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Tip</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -957,7 +981,7 @@
     </message>
     <message>
         <source>Selective</source>
-        <translation>塗りの保護</translation>
+        <translation type="vanished">塗りの保護</translation>
     </message>
     <message>
         <source>Lines</source>
@@ -978,6 +1002,10 @@
     <message>
         <source>Lock Alpha</source>
         <translation type="unfinished">透明部分の保護</translation>
+    </message>
+    <message>
+        <source>Paint Behind</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1177,11 +1205,11 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Copy Skeleton</source>
-        <translation>ボーンをコピー</translation>
+        <translation type="vanished">ボーンをコピー</translation>
     </message>
     <message>
         <source>Paste Skeleton</source>
-        <translation>ボーンを貼り付け</translation>
+        <translation type="vanished">ボーンを貼り付け</translation>
     </message>
     <message>
         <source>Delete Vertex</source>
@@ -1189,19 +1217,19 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Set Key</source>
-        <translation>キーを設定</translation>
+        <translation type="vanished">キーを設定</translation>
     </message>
     <message>
         <source>Set Rest Key</source>
-        <translation>停止キーを設定</translation>
+        <translation type="vanished">停止キーを設定</translation>
     </message>
     <message>
         <source>Set Global Key</source>
-        <translation>グローバルキーを設定</translation>
+        <translation type="vanished">グローバルキーを設定</translation>
     </message>
     <message>
         <source>Set Global Rest Key</source>
-        <translation>グローバル停止キーを設定</translation>
+        <translation type="vanished">グローバル停止キーを設定</translation>
     </message>
     <message>
         <source>Show Mesh</source>
@@ -1695,6 +1723,10 @@ Do you want to proceed?</source>
         <source>The selection is not editable.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RGBPickerTool</name>
@@ -1739,6 +1771,26 @@ Do you want to proceed?</source>
     <message>
         <source>Modify Savebox</source>
         <translation>セーブボックス編集モード</translation>
+    </message>
+    <message>
+        <source>Selective</source>
+        <translation type="unfinished">塗りの保護</translation>
+    </message>
+    <message>
+        <source>Mode:</source>
+        <translation type="unfinished">モード：</translation>
+    </message>
+    <message>
+        <source>Lines</source>
+        <translation type="unfinished">線</translation>
+    </message>
+    <message>
+        <source>Areas</source>
+        <translation type="unfinished">塗り</translation>
+    </message>
+    <message>
+        <source>Lines &amp; Areas</source>
+        <translation type="unfinished">線と塗り</translation>
     </message>
 </context>
 <context>
@@ -2149,6 +2201,17 @@ moved to the end of the first page of the palette.</source>
     </message>
 </context>
 <context>
+    <name>ToolOptionStylusConfigButton</name>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished">圧力感知</translation>
+    </message>
+    <message>
+        <source>Tilt</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ToonzRasterBrushTool</name>
     <message>
         <source>Size</source>
@@ -2202,6 +2265,18 @@ moved to the end of the first page of the palette.</source>
         <source>Grid</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Tilt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Tip</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ToonzVectorBrushTool</name>
@@ -2231,7 +2306,7 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Pressure</source>
-        <translation>圧力感知</translation>
+        <translation type="vanished">圧力感知</translation>
     </message>
     <message>
         <source>Cap</source>
@@ -2335,6 +2410,10 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Size</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -79,6 +79,37 @@
     </message>
 </context>
 <context>
+    <name>BrushTipPopup</name>
+    <message>
+        <source>Spacing:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotation:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Rotate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flip Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scatter:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear Search</source>
+        <translation type="unfinished">Limpiar búsqueda</translation>
+    </message>
+</context>
+<context>
     <name>CameraPainter</name>
     <message>
         <source>&amp;Reset Center</source>
@@ -1650,6 +1681,29 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
     </message>
 </context>
 <context>
+    <name>GraphGUIWidget</name>
+    <message>
+        <source>0</source>
+        <translation type="unfinished">0</translation>
+    </message>
+    <message>
+        <source>X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>100</source>
+        <translation type="unfinished">100</translation>
+    </message>
+    <message>
+        <source>Y</source>
+        <translation type="unfinished">Y</translation>
+    </message>
+    <message>
+        <source>Reset Curve</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GroupPainter</name>
     <message>
         <source>&amp;Open Group</source>
@@ -2989,6 +3043,15 @@ Cero es completamente transparente.</translation>
         <source>Remove Reference in Palette : %1</source>
         <translation>Eliminar referencia a paleta: %1</translation>
     </message>
+    <message>
+        <source>Round</source>
+        <comment>BrushTipChooserFrame</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -3132,6 +3195,18 @@ Cero es completamente transparente.</translation>
     <message>
         <source>Reset to default</source>
         <translation type="obsolete">Restablecer a predefinido</translation>
+    </message>
+    <message>
+        <source>Reset Style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Dynamic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Dynamic - %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3698,6 +3773,17 @@ Autom</translation>
     <message>
         <source>Easy Inputs</source>
         <translation>Nomenclatura</translation>
+    </message>
+</context>
+<context>
+    <name>StylusConfigPopup</name>
+    <message>
+        <source>Input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="unfinished">Salida</translation>
     </message>
 </context>
 <context>

@@ -645,7 +645,7 @@
     </message>
     <message>
         <source>Maximum Gap</source>
-        <translation>最大间隙</translation>
+        <translation type="vanished">最大间隙</translation>
     </message>
     <message>
         <source>Distance:</source>
@@ -706,6 +706,10 @@
     <message>
         <source>Ease In/Out</source>
         <translation type="unfinished">渐入/出</translation>
+    </message>
+    <message>
+        <source>Auto Close Gap</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -772,6 +776,26 @@
     <message>
         <source>Smooth:</source>
         <translation type="unfinished">平滑:</translation>
+    </message>
+    <message>
+        <source>Paint Behind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tilt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Tip</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -961,7 +985,7 @@
     </message>
     <message>
         <source>Selective</source>
-        <translation>选择性</translation>
+        <translation type="vanished">选择性</translation>
     </message>
     <message>
         <source>Lines</source>
@@ -982,6 +1006,10 @@
     <message>
         <source>Lock Alpha</source>
         <translation>锁定透明度</translation>
+    </message>
+    <message>
+        <source>Paint Behind</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1185,11 +1213,11 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Copy Skeleton</source>
-        <translation>拷贝骨架</translation>
+        <translation type="vanished">拷贝骨架</translation>
     </message>
     <message>
         <source>Paste Skeleton</source>
-        <translation>粘贴骨架</translation>
+        <translation type="vanished">粘贴骨架</translation>
     </message>
     <message>
         <source>Delete Vertex</source>
@@ -1197,19 +1225,19 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Set Key</source>
-        <translation>设置关键帧</translation>
+        <translation type="vanished">设置关键帧</translation>
     </message>
     <message>
         <source>Set Rest Key</source>
-        <translation>设置休止关键帧</translation>
+        <translation type="vanished">设置休止关键帧</translation>
     </message>
     <message>
         <source>Set Global Key</source>
-        <translation>设置全局关键帧</translation>
+        <translation type="vanished">设置全局关键帧</translation>
     </message>
     <message>
         <source>Set Global Rest Key</source>
-        <translation>设置全局休止关键帧</translation>
+        <translation type="vanished">设置全局休止关键帧</translation>
     </message>
     <message>
         <source>Show Mesh</source>
@@ -1703,6 +1731,10 @@ Do you want to proceed?</source>
         <source>The selection is not editable.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RGBPickerTool</name>
@@ -1747,6 +1779,26 @@ Do you want to proceed?</source>
     <message>
         <source>Modify Savebox</source>
         <translation>修改保存框</translation>
+    </message>
+    <message>
+        <source>Selective</source>
+        <translation type="unfinished">选择性</translation>
+    </message>
+    <message>
+        <source>Mode:</source>
+        <translation type="unfinished">模式:</translation>
+    </message>
+    <message>
+        <source>Lines</source>
+        <translation type="unfinished">线</translation>
+    </message>
+    <message>
+        <source>Areas</source>
+        <translation type="unfinished">区域</translation>
+    </message>
+    <message>
+        <source>Lines &amp; Areas</source>
+        <translation type="unfinished">线和区域</translation>
     </message>
 </context>
 <context>
@@ -2156,6 +2208,17 @@ moved to the end of the first page of the palette.</source>
     </message>
 </context>
 <context>
+    <name>ToolOptionStylusConfigButton</name>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished">压感</translation>
+    </message>
+    <message>
+        <source>Tilt</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ToonzRasterBrushTool</name>
     <message>
         <source>Size</source>
@@ -2209,6 +2272,18 @@ moved to the end of the first page of the palette.</source>
         <source>Grid</source>
         <translation>网格</translation>
     </message>
+    <message>
+        <source>Tilt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Tip</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ToonzVectorBrushTool</name>
@@ -2238,7 +2313,7 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Pressure</source>
-        <translation>压感</translation>
+        <translation type="vanished">压感</translation>
     </message>
     <message>
         <source>Cap</source>
@@ -2343,6 +2418,10 @@ moved to the end of the first page of the palette.</source>
     <message>
         <source>Ease In/Out</source>
         <translation type="unfinished">渐入/出</translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Size</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

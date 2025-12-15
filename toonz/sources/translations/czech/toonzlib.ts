@@ -236,34 +236,34 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="86"/>
+        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="99"/>
         <source>No restrictions for uncompressed avi video</source>
         <translation>Žádná omezení pro nezabalený obrazový záznam AVI</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="93"/>
+        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="106"/>
         <source>It is not possible to communicate with the codec.
  Probably the codec cannot work correctly.</source>
         <translation>Není možné komunikovat s kodekem.
 Pravděpodobně kodek nemůže pracovat řádně.</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="125"/>
+        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="138"/>
         <source>video width must be a multiple of %1</source>
         <translation>Šířka obrazu musí být násobkem %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="139"/>
+        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="152"/>
         <source>video length must be a multiple of %1</source>
         <translation>Délka obrazu musí být násobkem %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="145"/>
+        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="158"/>
         <source>No restrictions for this codec</source>
         <translation>Žádná omezení pro tento kodek</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="147"/>
+        <location filename="../../toonzlib/avicodecrestrictions.cpp" line="160"/>
         <source>Resolution restrictions:</source>
         <translation>Omezení pro rozlišení:</translation>
     </message>
@@ -373,62 +373,62 @@ Pravděpodobně kodek nemůže pracovat řádně.</translation>
         <translation>Přesunout složku se studiovou paletou: %1 : %2 &gt; %3</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="250"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="262"/>
         <source>Arrange Styles  in Palette %1</source>
         <translation>Uspořádat styly v paletě: %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="321"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="333"/>
         <source>Create Style#%1  in Palette %2</source>
         <translation>Vytvořit styl #%1 v paletě %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="454"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="466"/>
         <source>Add Style  to Palette %1</source>
         <translation>Přidat styl do palety %1</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="671"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="683"/>
         <source>Add Page %1 to Palette %2</source>
         <translation>Přidat stranu %1 do palety %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="736"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="748"/>
         <source>Delete Page %1 from Palette %2</source>
         <translation>Smazat stranu %1 z palety %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="791"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="803"/>
         <source>Load Color Model %1  to Palette %2</source>
         <translation>Nahrát barevný model %1 do palety %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="889"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="901"/>
         <source>color model</source>
         <translation>Barevný model</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="1057"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="1069"/>
         <source>Move Page</source>
         <translation>Přesunout stranu</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="1108"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="1120"/>
         <source>Rename Page  %1 &gt; %2</source>
         <translation>Přejmenovat stranu %1 &gt; %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="1172"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="1184"/>
         <source>Rename Style#%1 in Palette%2  : %3 &gt; %4</source>
         <translation>Přejmenovat styl #%1 v paletě %2 : %3 &gt; %4</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="1237"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="1249"/>
         <source>Set Picked Position of Style#%1 in Palette%2 : %3,%4</source>
         <translation>Nastavit zvolenou polohu stylu #%1 v paletě %2 : %3,%4</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/palettecmd.cpp" line="1316"/>
+        <location filename="../../toonzlib/palettecmd.cpp" line="1328"/>
         <source>Update Colors by Using Picked Positions in Palette %1</source>
         <translation>Obnovit barvy použitím vybraných poloh v paletě %1</translation>
     </message>
@@ -529,17 +529,17 @@ Pravděpodobně kodek nemůže pracovat řádně.</translation>
         <translation>Přejmenovat skupinu: %1 &gt; %2</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/doubleparamcmd.cpp" line="73"/>
+        <location filename="../../toonzlib/doubleparamcmd.cpp" line="79"/>
         <source>Set Keyframe</source>
         <translation>Nastavit klíčový snímek</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/doubleparamcmd.cpp" line="817"/>
+        <location filename="../../toonzlib/doubleparamcmd.cpp" line="844"/>
         <source>Remove Keyframe</source>
         <translation>Odstranit klíčový snímek</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/doubleparamcmd.cpp" line="857"/>
+        <location filename="../../toonzlib/doubleparamcmd.cpp" line="887"/>
         <source>Cycle</source>
         <translation>Koloběh</translation>
     </message>
@@ -637,13 +637,13 @@ Pravděpodobně kodek nemůže pracovat řádně.</translation>
         <translation>Automatické vystředění při nynější kresbě selhalo.</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/stageobjectutil.cpp" line="160"/>
-        <location filename="../../toonzlib/stageobjectutil.cpp" line="197"/>
+        <location filename="../../toonzlib/stageobjectutil.cpp" line="163"/>
+        <location filename="../../toonzlib/stageobjectutil.cpp" line="200"/>
         <source>Move</source>
         <translation>Přesunout</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/stageobjectutil.cpp" line="164"/>
+        <location filename="../../toonzlib/stageobjectutil.cpp" line="167"/>
         <source>Edit Rotation</source>
         <translation>Upravit otočení</translation>
     </message>
@@ -656,57 +656,57 @@ Pravděpodobně kodek nemůže pracovat řádně.</translation>
         <translation type="vanished">Posunout S/J</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/stageobjectutil.cpp" line="167"/>
+        <location filename="../../toonzlib/stageobjectutil.cpp" line="170"/>
         <source>Move X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/stageobjectutil.cpp" line="170"/>
+        <location filename="../../toonzlib/stageobjectutil.cpp" line="173"/>
         <source>Move Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzlib/stageobjectutil.cpp" line="173"/>
+        <location filename="../../toonzlib/stageobjectutil.cpp" line="176"/>
         <source>Move Z</source>
         <translation>Posunout Z</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/stageobjectutil.cpp" line="176"/>
+        <location filename="../../toonzlib/stageobjectutil.cpp" line="179"/>
         <source>Edit Stack Order</source>
         <translation>Upravit pořadí zásobníku</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/stageobjectutil.cpp" line="179"/>
+        <location filename="../../toonzlib/stageobjectutil.cpp" line="182"/>
         <source>Edit Scale W</source>
         <translation>Změnit velikost šířky</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/stageobjectutil.cpp" line="182"/>
+        <location filename="../../toonzlib/stageobjectutil.cpp" line="185"/>
         <source>Edit Scale H</source>
         <translation>Změnit velikost výšky</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/stageobjectutil.cpp" line="185"/>
+        <location filename="../../toonzlib/stageobjectutil.cpp" line="188"/>
         <source>Edit Scale</source>
         <translation>Upravit měřítko</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/stageobjectutil.cpp" line="188"/>
+        <location filename="../../toonzlib/stageobjectutil.cpp" line="191"/>
         <source>Edit PosPath</source>
         <translation>Upravit cestu polohy</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/stageobjectutil.cpp" line="191"/>
+        <location filename="../../toonzlib/stageobjectutil.cpp" line="194"/>
         <source>Edit Shear X</source>
         <translation>Upravit střih X</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/stageobjectutil.cpp" line="194"/>
+        <location filename="../../toonzlib/stageobjectutil.cpp" line="197"/>
         <source>Edit Shear Y</source>
         <translation>Upravit střih Y</translation>
     </message>
     <message>
-        <location filename="../../toonzlib/stageobjectutil.cpp" line="202"/>
+        <location filename="../../toonzlib/stageobjectutil.cpp" line="205"/>
         <source>%1  %2  Frame : %3</source>
         <translation>%1  %2  Snímek: %3</translation>
     </message>

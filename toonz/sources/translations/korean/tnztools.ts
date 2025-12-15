@@ -577,7 +577,7 @@
     </message>
     <message>
         <source>Maximum Gap</source>
-        <translation>최대 간격</translation>
+        <translation type="vanished">최대 간격</translation>
     </message>
     <message>
         <source>Autopaint Lines</source>
@@ -643,6 +643,10 @@
         <source>Ease In/Out</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Auto Close Gap</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FingerTool</name>
@@ -696,6 +700,26 @@
     <message>
         <source>Smooth:</source>
         <translation type="unfinished">부드러운:</translation>
+    </message>
+    <message>
+        <source>Paint Behind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tilt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Tip</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -897,7 +921,7 @@
     </message>
     <message>
         <source>Selective</source>
-        <translation>선택</translation>
+        <translation type="vanished">선택</translation>
     </message>
     <message>
         <source>Pressure</source>
@@ -906,6 +930,10 @@
     <message>
         <source>Lock Alpha</source>
         <translation type="unfinished">알파 잠금</translation>
+    </message>
+    <message>
+        <source>Paint Behind</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1065,19 +1093,19 @@
     </message>
     <message>
         <source>Set Key</source>
-        <translation>키 설정</translation>
+        <translation type="vanished">키 설정</translation>
     </message>
     <message>
         <source>Set Rest Key</source>
-        <translation>나머지 키 설정</translation>
+        <translation type="vanished">나머지 키 설정</translation>
     </message>
     <message>
         <source>Set Global Key</source>
-        <translation>글로벌 키 설정</translation>
+        <translation type="vanished">글로벌 키 설정</translation>
     </message>
     <message>
         <source>Set Global Rest Key</source>
-        <translation>나머지 글로벌 키 설정</translation>
+        <translation type="vanished">나머지 글로벌 키 설정</translation>
     </message>
     <message>
         <source>Mode:</source>
@@ -1153,11 +1181,11 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Copy Skeleton</source>
-        <translation>골격 복사</translation>
+        <translation type="vanished">골격 복사</translation>
     </message>
     <message>
         <source>Paste Skeleton</source>
-        <translation>골격 붙여넣기</translation>
+        <translation type="vanished">골격 붙여넣기</translation>
     </message>
     <message>
         <source>Show Mesh</source>
@@ -1615,6 +1643,10 @@ Do you want to proceed?</source>
         <source>The selection is not editable.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RGBPickerTool</name>
@@ -1659,6 +1691,26 @@ Do you want to proceed?</source>
     <message>
         <source>No Antialiasing</source>
         <translation>앤티 앨리어싱 없음.</translation>
+    </message>
+    <message>
+        <source>Selective</source>
+        <translation type="unfinished">선택</translation>
+    </message>
+    <message>
+        <source>Mode:</source>
+        <translation type="unfinished">모드:</translation>
+    </message>
+    <message>
+        <source>Lines</source>
+        <translation type="unfinished">선</translation>
+    </message>
+    <message>
+        <source>Areas</source>
+        <translation type="unfinished">영역</translation>
+    </message>
+    <message>
+        <source>Lines &amp; Areas</source>
+        <translation type="unfinished">선 &amp; 영역</translation>
     </message>
 </context>
 <context>
@@ -2060,6 +2112,17 @@ moved to the end of the first page of the palette.</source>
     </message>
 </context>
 <context>
+    <name>ToolOptionStylusConfigButton</name>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished">압력</translation>
+    </message>
+    <message>
+        <source>Tilt</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ToonzRasterBrushTool</name>
     <message>
         <source>Size</source>
@@ -2113,6 +2176,18 @@ moved to the end of the first page of the palette.</source>
         <source>Grid</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Tilt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Tip</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ToonzVectorBrushTool</name>
@@ -2142,7 +2217,7 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Pressure</source>
-        <translation>압력</translation>
+        <translation type="vanished">압력</translation>
     </message>
     <message>
         <source>Cap</source>
@@ -2246,6 +2321,10 @@ moved to the end of the first page of the palette.</source>
     </message>
     <message>
         <source>Ease In/Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Size</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

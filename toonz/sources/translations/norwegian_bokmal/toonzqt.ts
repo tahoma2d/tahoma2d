@@ -99,6 +99,44 @@
     </message>
 </context>
 <context>
+    <name>BrushTipPopup</name>
+    <message>
+        <location filename="../../toonzqt/brushtippopup.cpp" line="205"/>
+        <source>Spacing:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/brushtippopup.cpp" line="210"/>
+        <source>Rotation:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/brushtippopup.cpp" line="214"/>
+        <source>Auto Rotate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/brushtippopup.cpp" line="217"/>
+        <source>Flip Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/brushtippopup.cpp" line="219"/>
+        <source>Flip Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/brushtippopup.cpp" line="221"/>
+        <source>Scatter:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/brushtippopup.cpp" line="360"/>
+        <source>Clear Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CameraPainter</name>
     <message>
         <location filename="../../toonzqt/stageschematicnode.cpp" line="518"/>
@@ -515,311 +553,311 @@ Possibly the preset file has been corrupted</source>
 <context>
     <name>FlipConsole</name>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="830"/>
-        <location filename="../../toonzqt/flipconsole.cpp" line="959"/>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1743"/>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1814"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="829"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="958"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1742"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1813"/>
         <source> FPS </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="856"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="855"/>
         <source>This value is different than the scene framerate.
 %1 + Click to reset.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="943"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="942"/>
         <source>Cannot set the scene fps to a negative value.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1242"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1241"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1246"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1245"/>
         <source>Snapshot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1249"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1248"/>
         <source>Define Sub-camera</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1251"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1250"/>
         <source>Define Loading Box</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1253"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1252"/>
         <source>Use Loading Box</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1258"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1257"/>
         <source>Background Colors</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1260"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1259"/>
         <source>Playback Controls</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1264"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1263"/>
         <source>Color Channels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1267"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1266"/>
         <source>Sound</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1270"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1269"/>
         <source>Histogram</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1273"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1272"/>
         <source>Locator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1275"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1274"/>
         <source>Set Key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1278"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1277"/>
         <source>Display Areas as Filled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1285"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1284"/>
         <source>Viewer Controls</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1288"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1287"/>
         <source>Framerate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1291"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1290"/>
         <source>Gain Controls</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1317"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1316"/>
         <source>&amp;Save Images</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1324"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1323"/>
         <source>&amp;Snapshot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1328"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1327"/>
         <source>&amp;Compare to Snapshot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1337"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1336"/>
         <source>&amp;Define Sub-camera</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1342"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1341"/>
         <source>&amp;Define Loading Box</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1346"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1345"/>
         <source>&amp;Use Loading Box</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1355"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1354"/>
         <source>&amp;White Background</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1358"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1357"/>
         <source>&amp;Black Background</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1362"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1361"/>
         <source>&amp;Checkered Background</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1369"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1368"/>
         <source>&amp;First Frame</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1371"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1370"/>
         <source>&amp;Previous Frame</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1373"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1372"/>
         <source>Pause</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1376"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1375"/>
         <source>Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1379"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1378"/>
         <source>Loop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1382"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1381"/>
         <source>Ping Pong</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1386"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1385"/>
         <source>&amp;Next Frame</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1388"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1387"/>
         <source>&amp;Last Frame</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1397"/>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1400"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1396"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1399"/>
         <source>Red Channel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1401"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1400"/>
         <source>Red Channel in Grayscale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1404"/>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1408"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1403"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1407"/>
         <source>Green Channel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1409"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1408"/>
         <source>Green Channel in Grayscale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1412"/>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1415"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1411"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1414"/>
         <source>Blue Channel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1416"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1415"/>
         <source>Blue Channel in Grayscale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1422"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1421"/>
         <source>Alpha Channel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1432"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1431"/>
         <source>&amp;Soundtrack </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1436"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1435"/>
         <source>&amp;Histogram</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1438"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1437"/>
         <source>&amp;Locator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1445"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1444"/>
         <source>&amp;Display Areas as Filled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1459"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1458"/>
         <source>&amp;Zoom In</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1461"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1460"/>
         <source>&amp;Zoom Out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1463"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1462"/>
         <source>&amp;Flip Horizontally</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1465"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1464"/>
         <source>&amp;Flip Vertically</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1467"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1466"/>
         <source>&amp;Reset View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1473"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1472"/>
         <source>&amp;Reduce gain 1/2 stop (divide by sqrt(2))</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1479"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1478"/>
         <source>Toggle gain between 1 and the previous setting.
 Gain is shown as an f-stop and the &quot;neutral&quot; or 1.0 gain f-stop is f/8.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1484"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1483"/>
         <source>&amp;Increase gain 1/2 stop (multiply by sqrt(2))</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1749"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1748"/>
         <source> FPS	</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1969"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1968"/>
         <source>Set the current frame</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="1973"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="1972"/>
         <source>Drag to play the animation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="2036"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="2035"/>
         <source>Set the playback frame rate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/flipconsole.cpp" line="2298"/>
-        <location filename="../../toonzqt/flipconsole.cpp" line="2314"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="2297"/>
+        <location filename="../../toonzqt/flipconsole.cpp" line="2313"/>
         <source> (gain %1)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -872,132 +910,132 @@ Gain is shown as an f-stop and the &quot;neutral&quot; or 1.0 gain f-stop is f/8
 <context>
     <name>FunctionPanel</name>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="256"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="257"/>
         <source>Function Curves</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1574"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1575"/>
         <source>Link Handles</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1575"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1576"/>
         <source>Unlink Handles</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1576"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1577"/>
         <source>Reset Handles</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1577"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1578"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1578"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1579"/>
         <source>Set Key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1579"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1580"/>
         <source>Activate Cycle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1580"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1581"/>
         <source>Deactivate Cycle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1581"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1582"/>
         <source>Linear Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1582"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1583"/>
         <source>Speed In / Speed Out Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1583"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1584"/>
         <source>Ease In / Ease Out Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1584"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1585"/>
         <source>Ease In / Ease Out (%) Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1585"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1586"/>
         <source>Exponential Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1586"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1587"/>
         <source>Expression Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1587"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1588"/>
         <source>File Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1588"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1589"/>
         <source>Constant Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1589"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1590"/>
         <source>Similar Shape Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1590"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1591"/>
         <source>Fit Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1591"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1592"/>
         <source>Fit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1592"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1593"/>
         <source>Step 1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1593"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1594"/>
         <source>Step 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1594"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1595"/>
         <source>Step 3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1595"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1596"/>
         <source>Step 4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1667"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1668"/>
         <source>Smooth</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1668"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1669"/>
         <source>Frame Based</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionpanel.cpp" line="1669"/>
+        <location filename="../../toonzqt/functionpanel.cpp" line="1670"/>
         <source>Curve Shape</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1138,7 +1176,7 @@ Gain is shown as an f-stop and the &quot;neutral&quot; or 1.0 gain f-stop is f/8
 <context>
     <name>FunctionSelection</name>
     <message>
-        <location filename="../../toonzqt/functionselection.cpp" line="505"/>
+        <location filename="../../toonzqt/functionselection.cpp" line="526"/>
         <source>There is a circular reference in the definition of the interpolation.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1146,7 +1184,7 @@ Gain is shown as an f-stop and the &quot;neutral&quot; or 1.0 gain f-stop is f/8
 <context>
     <name>FunctionSheet</name>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1206"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1211"/>
         <source>Function Editor</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1154,7 +1192,7 @@ Gain is shown as an f-stop and the &quot;neutral&quot; or 1.0 gain f-stop is f/8
 <context>
     <name>FunctionSheetButtonArea</name>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="212"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="215"/>
         <source>Toggle synchronizing zoom with xsheet</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1162,87 +1200,87 @@ Gain is shown as an f-stop and the &quot;neutral&quot; or 1.0 gain f-stop is f/8
 <context>
     <name>FunctionSheetCellViewer</name>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1048"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1051"/>
         <source>Delete Key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1049"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1052"/>
         <source>Set Key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1052"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1055"/>
         <source>Constant Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1052"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1055"/>
         <source>Linear Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1053"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1056"/>
         <source>Speed In / Speed Out Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1054"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1057"/>
         <source>Ease In / Ease Out Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1055"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1058"/>
         <source>Ease In / Ease Out (%) Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1056"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1059"/>
         <source>Exponential Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1057"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1060"/>
         <source>Expression Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1057"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1060"/>
         <source>File Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1058"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1061"/>
         <source>Similar Shape Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1059"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1062"/>
         <source>Activate Cycle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1060"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1063"/>
         <source>Deactivate Cycle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1061"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1064"/>
         <source>Show Inbetween Values</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1062"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1065"/>
         <source>Hide Inbetween Values</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1112"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1115"/>
         <source>Change Interpolation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="1127"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="1130"/>
         <source>Change Step</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1250,7 +1288,7 @@ Gain is shown as an f-stop and the &quot;neutral&quot; or 1.0 gain f-stop is f/8
 <context>
     <name>FunctionSheetColumnHeadViewer</name>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="464"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="467"/>
         <source>Some key(s) in this parameter loses original reference in expression.
 Manually changing any keyframe will clear the warning.</source>
         <translation type="unfinished"></translation>
@@ -1259,12 +1297,12 @@ Manually changing any keyframe will clear the warning.</source>
 <context>
     <name>FunctionToolbar</name>
     <message>
-        <location filename="../../toonzqt/functiontoolbar.cpp" line="53"/>
+        <location filename="../../toonzqt/functiontoolbar.cpp" line="57"/>
         <source>Value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functiontoolbar.cpp" line="69"/>
+        <location filename="../../toonzqt/functiontoolbar.cpp" line="73"/>
         <source>&amp;Open Function Curve Editor</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1299,19 +1337,19 @@ Manually changing any keyframe will clear the warning.</source>
 <context>
     <name>FunctionTreeView</name>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="589"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="592"/>
         <location filename="../../toonzqt/functiontreeviewer.cpp" line="1637"/>
         <source>Show Animated Only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="590"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="593"/>
         <location filename="../../toonzqt/functiontreeviewer.cpp" line="1638"/>
         <source>Show All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionsheet.cpp" line="591"/>
+        <location filename="../../toonzqt/functionsheet.cpp" line="594"/>
         <source>Hide Selected</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1372,17 +1410,17 @@ Manually changing any keyframe will clear the warning.</source>
 <context>
     <name>FxOutputPainter</name>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="1117"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="1130"/>
         <source>Output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="1136"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="1149"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="1139"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="1152"/>
         <source>&amp;Activate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1390,77 +1428,77 @@ Manually changing any keyframe will clear the warning.</source>
 <context>
     <name>FxPainter</name>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="747"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="756"/>
         <source>&amp;Open Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="751"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="760"/>
         <source>&amp;Paste Replace</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="755"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="764"/>
         <source>&amp;Paste Add</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="762"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="771"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="767"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="776"/>
         <source>&amp;Disconnect from Scene</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="773"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="782"/>
         <source>&amp;Connect to Scene</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="778"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="787"/>
         <source>&amp;Create Linked FX</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="782"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="791"/>
         <source>&amp;Unlink</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="786"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="795"/>
         <source>&amp;Make Macro FX</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="790"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="799"/>
         <source>&amp;Explode Macro FX</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="795"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="804"/>
         <source>&amp;Open Macro FX</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="799"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="808"/>
         <source>&amp;Save As Preset...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="803"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="812"/>
         <source>&amp;Preview</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="811"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="820"/>
         <source>&amp;Uncache FX</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="811"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="820"/>
         <source>&amp;Cache FX</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1486,12 +1524,12 @@ Manually changing any keyframe will clear the warning.</source>
 <context>
     <name>FxPassThroughPainter</name>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="3924"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="3937"/>
         <source>&amp;Paste Add</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="3928"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="3941"/>
         <source>&amp;Preview</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1499,12 +1537,12 @@ Manually changing any keyframe will clear the warning.</source>
 <context>
     <name>FxSchematicLink</name>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="1185"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="1198"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="1189"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="1202"/>
         <source>&amp;Paste Insert</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1512,7 +1550,7 @@ Manually changing any keyframe will clear the warning.</source>
 <context>
     <name>FxSchematicOutputNode</name>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="2317"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="2330"/>
         <source>Output</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1520,8 +1558,8 @@ Manually changing any keyframe will clear the warning.</source>
 <context>
     <name>FxSchematicPassThroughNode</name>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="3979"/>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="4090"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="3992"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="4103"/>
         <source> (Pass Through)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1529,12 +1567,12 @@ Manually changing any keyframe will clear the warning.</source>
 <context>
     <name>FxSchematicPort</name>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="1656"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="1669"/>
         <source>&amp;Disconnect from Scene</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="1662"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="1675"/>
         <source>&amp;Connect to Scene</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1563,7 +1601,7 @@ Select FX nodes and related links before copying or cutting the selection you wa
 <context>
     <name>FxSchematicXSheetNode</name>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="2394"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="2407"/>
         <source>Scene</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1609,18 +1647,48 @@ Select FX nodes and related links before copying or cutting the selection you wa
 <context>
     <name>FxXSheetPainter</name>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="1011"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="1024"/>
         <source>Scene</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="1046"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="1059"/>
         <source>&amp;Paste Add</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxschematicnode.cpp" line="1050"/>
+        <location filename="../../toonzqt/fxschematicnode.cpp" line="1063"/>
         <source>&amp;Preview</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GraphGUIWidget</name>
+    <message>
+        <location filename="../../toonzqt/graphwidget.cpp" line="1071"/>
+        <location filename="../../toonzqt/graphwidget.cpp" line="1074"/>
+        <source>0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/graphwidget.cpp" line="1072"/>
+        <source>X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/graphwidget.cpp" line="1073"/>
+        <location filename="../../toonzqt/graphwidget.cpp" line="1076"/>
+        <source>100</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/graphwidget.cpp" line="1075"/>
+        <source>Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/graphwidget.cpp" line="1078"/>
+        <source>Reset Curve</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1860,32 +1928,32 @@ Select FX nodes and related links before copying or cutting the selection you wa
 <context>
     <name>NewStyleSetPopup</name>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="7207"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="7457"/>
         <source>New Style Set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="7210"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="7460"/>
         <source>Style Set Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="7212"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="7462"/>
         <source>Create as Favorite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="7215"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="7465"/>
         <source>Style Set Type:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="7241"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="7491"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="7242"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="7492"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1942,50 +2010,48 @@ It can&apos;t be changed.  Ever.</source>
     </message>
     <message>
         <location filename="../../toonzqt/paletteviewer.cpp" line="357"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="662"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="757"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="799"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="755"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="797"/>
         <source>&amp;Save Palette As</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzqt/paletteviewer.cpp" line="358"/>
         <location filename="../../toonzqt/paletteviewer.cpp" line="643"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="656"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="758"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="800"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="756"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="798"/>
         <source>&amp;Save Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzqt/paletteviewer.cpp" line="359"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="761"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="803"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="855"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="759"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="801"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="853"/>
         <source>&amp;Save As Default Vector Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzqt/paletteviewer.cpp" line="360"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="762"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="804"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="858"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="760"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="802"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="856"/>
         <source>&amp;Save As Default Smart Raster Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzqt/paletteviewer.cpp" line="361"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="763"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="805"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="861"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="761"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="803"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="859"/>
         <source>&amp;Save As Default Raster Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzqt/paletteviewer.cpp" line="362"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="764"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="806"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="864"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="762"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="804"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="862"/>
         <source>&amp;Save As Default Palette</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2018,7 +2084,7 @@ It can&apos;t be changed.  Ever.</source>
     </message>
     <message>
         <location filename="../../toonzqt/paletteviewer.cpp" line="552"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1060"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1058"/>
         <source>&amp;Move Palette</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2073,79 +2139,79 @@ It can&apos;t be changed.  Ever.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="725"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="735"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="723"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="733"/>
         <source>&amp;New Style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="759"/>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="801"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="757"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="799"/>
         <source>&amp;Palette Gizmo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="877"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="875"/>
         <source>New Page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="890"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="888"/>
         <source>Delete Page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1272"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1270"/>
         <source>Overwrite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1272"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1270"/>
         <source>Don&apos;t Overwrite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1281"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1279"/>
         <source>Failed to save palette.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1419"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1417"/>
         <source>Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1423"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1421"/>
         <source>Level Palette: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1430"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1428"/>
         <source>Cleanup Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1441"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1439"/>
         <source>Studio Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1448"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1446"/>
         <source>     (Color Model: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1450"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1448"/>
         <source>)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1489"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1487"/>
         <source>Hide New Style Button</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1490"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1488"/>
         <source>Show New Style Button</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2265,9 +2331,9 @@ Are you sure?</source>
         <location filename="../../toonzqt/styleeditor.cpp" line="2037"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="2056"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="2168"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="6653"/>
-        <location filename="../../toonzqt/styleselection.cpp" line="775"/>
-        <location filename="../../toonzqt/styleselection.cpp" line="1078"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6903"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="779"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="1084"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2327,7 +2393,7 @@ Are you sure?</source>
         <location filename="../../toonzqt/styleeditor.cpp" line="2037"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="2056"/>
         <location filename="../../toonzqt/styleeditor.cpp" line="2168"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="6653"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6903"/>
         <source>Ok</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2343,17 +2409,17 @@ Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionselection.cpp" line="120"/>
+        <location filename="../../toonzqt/functionselection.cpp" line="127"/>
         <source>Paste Keyframe  at Frame : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionselection.cpp" line="170"/>
+        <location filename="../../toonzqt/functionselection.cpp" line="183"/>
         <source>Delete Keyframe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/functionselection.cpp" line="212"/>
+        <location filename="../../toonzqt/functionselection.cpp" line="232"/>
         <source>Move Keyframe</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2671,12 +2737,12 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1249"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1247"/>
         <source>Overwrite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/paletteviewer.cpp" line="1250"/>
+        <location filename="../../toonzqt/paletteviewer.cpp" line="1248"/>
         <source>Don&apos;t Overwrite</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2808,43 +2874,43 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1363"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1362"/>
         <source>R</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1363"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1362"/>
         <source>G</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1363"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1362"/>
         <source>B</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1364"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1363"/>
         <source>A</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1364"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1363"/>
         <source>H</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1364"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1363"/>
         <source>S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1365"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1364"/>
         <source>V</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1382"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="1384"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1381"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="1383"/>
         <source>Alpha controls the transparency. 
 Zero is fully transparent.</source>
         <translation type="unfinished"></translation>
@@ -3004,127 +3070,138 @@ Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3894"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3899"/>
+        <source>Brush Dynamics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3912"/>
         <source>Reset to default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="6650"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6900"/>
         <source>Removing the selected Styles will permanently delete style files from their sets. This cannot be undone!
 Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="187"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="190"/>
         <source>It is not possible to delete the style #</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="323"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="327"/>
         <source>Paste Style  in Palette : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="399"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="403"/>
         <source>Delete Style  from Palette : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="468"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="472"/>
         <source>Cut Style  from Palette : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="589"/>
-        <location filename="../../toonzqt/styleselection.cpp" line="661"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="593"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="665"/>
         <source>It is not possible to delete styles #0 and #1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="640"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="644"/>
         <source>Can&apos;t paste styles there</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="761"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="765"/>
         <source>There are no unused styles.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="768"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="772"/>
         <source>and %1 more styles.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="771"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="775"/>
         <source>Erasing unused styles with following indices. Are you sure?
 
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="775"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="779"/>
         <source>Erase</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="1039"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="1045"/>
         <source>  to Palette : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="1042"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="1048"/>
         <source>Paste Color &amp;&amp; Name%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="1044"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="1050"/>
         <source>Paste Name%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="1046"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="1052"/>
         <source>Paste Color%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="1048"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="1054"/>
         <source>Paste%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="1064"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="1070"/>
         <source>Can&apos;t modify color #0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="1074"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="1080"/>
         <source>There are more cut/copied styles than selected. Paste anyway (adding styles)?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="1078"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="1084"/>
         <source>Paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="1319"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="1328"/>
         <source>Blend Colors  in Palette : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="1449"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="1458"/>
         <source>Toggle Link  in Palette : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="1647"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="1656"/>
         <source>Remove Reference in Palette : %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleselection.cpp" line="1777"/>
+        <location filename="../../toonzqt/styleselection.cpp" line="1786"/>
         <source>Get Color from Studio Palette</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/brushtippopup.cpp" line="105"/>
+        <source>Round</source>
+        <comment>BrushTipChooserFrame</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3147,9 +3224,9 @@ Are you sure?</source>
 <context>
     <name>RenameStyleSet</name>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="7403"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="7419"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="7431"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="7653"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="7669"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="7681"/>
         <source> (Favorites)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3277,6 +3354,24 @@ Are you sure?</source>
     <message>
         <location filename="../../toonzqt/schematicgroupeditor.cpp" line="164"/>
         <source>&amp;Close Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SettingsPage</name>
+    <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3927"/>
+        <source>Reset Style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4115"/>
+        <source>Brush Dynamic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4132"/>
+        <source>Brush Dynamic - %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3409,8 +3504,8 @@ in the studio palette has been modified. Do you want to save your changes?</sour
         <location filename="../../toonzqt/studiopaletteviewer.cpp" line="504"/>
         <location filename="../../toonzqt/studiopaletteviewer.cpp" line="602"/>
         <location filename="../../toonzqt/studiopaletteviewer.cpp" line="629"/>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="844"/>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="1164"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="849"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="1169"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3437,97 +3532,97 @@ Are you sure ?</source>
     </message>
     <message>
         <location filename="../../toonzqt/studiopaletteviewer.cpp" line="629"/>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="977"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="982"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="831"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="836"/>
         <source>Replacing all selected palettes with the palette &quot;%1&quot;. 
 Are you sure ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="838"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="843"/>
         <source>Replacing the palette &quot;%1&quot; with the palette &quot;%2&quot;. 
 Are you sure ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="844"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="849"/>
         <source>Replace</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="905"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="910"/>
         <source>New Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="906"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="911"/>
         <source>New Folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="914"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="919"/>
         <source>Delete Folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="918"/>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="969"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="923"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="974"/>
         <source>Load into Current Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="921"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="926"/>
         <source>Adjust Current Level to This Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="924"/>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="971"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="929"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="976"/>
         <source>Merge to Current Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="928"/>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="973"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="933"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="978"/>
         <source>Replace with Current Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="931"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="936"/>
         <source>Delete Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="938"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="943"/>
         <source>Convert to Studio Palette and Overwrite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="945"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="950"/>
         <source>Search for Palettes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="1156"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="1161"/>
         <source>the palette &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="1159"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="1164"/>
         <source>the selected palettes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="1163"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="1168"/>
         <source>Move %1 to &quot;%2&quot;. Are you sure ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="1164"/>
+        <location filename="../../toonzqt/studiopaletteviewer.cpp" line="1169"/>
         <source>Move</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3535,219 +3630,219 @@ Are you sure ?</source>
 <context>
     <name>StyleEditor</name>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4335"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4574"/>
         <source>Wheel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4336"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4575"/>
         <source>HSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4337"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4576"/>
         <source>Alpha</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4338"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4577"/>
         <source>RGB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4384"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4623"/>
         <source>Show or hide parts of the Color Page.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4297"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4536"/>
         <source>Auto</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4300"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4539"/>
         <source>Apply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4306"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4545"/>
         <source>Apply changes to current style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4311"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4550"/>
         <source>Automatically update style changes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4315"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4554"/>
         <source>Return To Previous Style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4320"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4559"/>
         <source>Current Style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="5803"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="7190"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6053"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="7440"/>
         <source>Generated</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4765"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4771"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4773"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5004"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5010"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5012"/>
         <source>Color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4767"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5006"/>
         <source>Texture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4768"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5007"/>
         <source>Vector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4766"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5005"/>
         <source>Raster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4339"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4578"/>
         <source>Hex</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4340"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4579"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4368"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4607"/>
         <source>Toggle Orientation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4372"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="5573"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4611"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5823"/>
         <source>Hide Auto/Apply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4376"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4615"/>
         <source>Hex Color Names...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4390"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4629"/>
         <source>Show or hide style sets.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4499"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4571"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4644"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4738"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4810"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="4883"/>
         <source>Clear Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4769"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="4774"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5008"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5013"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="5044"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5284"/>
         <source>No Style Selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="5061"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5301"/>
         <source>Cleanup </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="5063"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5303"/>
         <source>Studio </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="5065"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5305"/>
         <source>Level </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="5068"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5308"/>
         <source>Palette</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="5082"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5322"/>
         <source>Style Editor - No Valid Style Selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="5574"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="5824"/>
         <source>Show Auto/Apply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="5804"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6054"/>
         <source>My Favorites</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="5807"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="7107"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6057"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="7357"/>
         <source> (Favorites)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="5810"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6060"/>
         <source> (External)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="6085"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="6108"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="6131"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6335"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6358"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6381"/>
         <source>Show All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="6090"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="6113"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="6136"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6340"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6363"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6386"/>
         <source>Hide All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="6095"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="6118"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="6141"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6345"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6368"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6391"/>
         <source>Collapse All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="6100"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="6123"/>
-        <location filename="../../toonzqt/styleeditor.cpp" line="6146"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6350"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6373"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="6396"/>
         <source>Expand All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="7145"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="7395"/>
         <source>Style Set Name cannot be empty or contain any of the following characters:
  \ / : * ? &quot; &lt; &gt; |</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="7192"/>
+        <location filename="../../toonzqt/styleeditor.cpp" line="7442"/>
         <source>Style Set Name already exists. Please try another name.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3796,6 +3891,19 @@ Are you sure ?</source>
     <message>
         <location filename="../../toonzqt/stylenameeditor.cpp" line="477"/>
         <source>Name Editor: # %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StylusConfigPopup</name>
+    <message>
+        <location filename="../../toonzqt/stylusconfigpopup.cpp" line="42"/>
+        <source>Input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/stylusconfigpopup.cpp" line="43"/>
+        <source>Output</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

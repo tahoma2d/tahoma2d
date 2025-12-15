@@ -444,11 +444,83 @@ Please try raising the FFmpeg timeout in Preferences.</source>
     <name>WebmWriterProperties</name>
     <message>
         <source>Quality</source>
-        <translation>품질</translation>
+        <translation type="vanished">품질</translation>
     </message>
     <message>
         <source>Scale</source>
         <translation>비율</translation>
+    </message>
+    <message>
+        <source>Placebo (Smallest File)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Very Slow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Slower</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Slow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation type="unfinished">중간</translation>
+    </message>
+    <message>
+        <source>Fast</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Faster</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Very Fast</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ultra Fast (Largest File)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Every Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Every Second</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Every 2 Seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Every 5 Seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Every 10 Seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Encoding Speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keyframe Interval</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preserve Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lossless</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

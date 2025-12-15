@@ -22,7 +22,7 @@
     <message>
         <source>Tahoma2D ships with FFmpeg.  
 FFmpeg is licensed under the LGPLv2.1</source>
-        <translation>Tahoma2D viene con FFmpeg.  
+        <translation type="vanished">Tahoma2D viene con FFmpeg.  
 FFmpeg está licenciado bajo la licencia LGPLv2.1</translation>
     </message>
     <message>
@@ -38,6 +38,11 @@ Un agradecimiento especial a:</translation>
     <message>
         <source>Please consider sponsoring Tahoma2D developers on GitHub.</source>
         <translation>Por favor considera patrocinar a los desarrolladores de Tahoma2D en GitHub.</translation>
+    </message>
+    <message>
+        <source>Tahoma2D ships with FFmpeg.
+FFmpeg is licensed under the LGPLv2.1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -555,6 +560,10 @@ Menú de la derecha para opciones.</translation>
         <source>Show Perspective Grids</source>
         <translation>Mostrar cuadrículas de perspectiva</translation>
     </message>
+    <message>
+        <source> (Rasterized Vector View)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>BatchServersViewer</name>
@@ -685,6 +694,100 @@ Detenerla o esperar a su finalización antes de eliminarla.</translation>
     <message>
         <source>Cancel</source>
         <translation>Cancelar</translation>
+    </message>
+</context>
+<context>
+    <name>BoardButtonBar</name>
+    <message>
+        <source>Create Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation type="unfinished">Restablecer</translation>
+    </message>
+    <message>
+        <source>Clear Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation type="unfinished">Limpiar</translation>
+    </message>
+    <message>
+        <source>Create New Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Scene</source>
+        <translation type="unfinished">Crear escena</translation>
+    </message>
+    <message>
+        <source>Save Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Guardar</translation>
+    </message>
+    <message>
+        <source>Save Board As</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save As</source>
+        <translation type="unfinished">Guardar como</translation>
+    </message>
+    <message>
+        <source>Load Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load</source>
+        <translation type="unfinished">Cargar</translation>
+    </message>
+    <message>
+        <source>Quick Play</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BoardList</name>
+    <message>
+        <source>Toggle Thumbnail Wrap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quick Play</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load As Sub-Scene</source>
+        <translation type="unfinished">Cargar como sub-escena</translation>
+    </message>
+    <message>
+        <source>Expand Sequence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collapse Sequence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation type="unfinished">Renombrar</translation>
+    </message>
+    <message>
+        <source>Drag/Drop to Add Files</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3685,6 +3788,101 @@ Do you want to overwrite it?</source>
         <source>An error occurred.  Please try again.</source>
         <translation>Ocurrió un error.  Intentar nuevamente.</translation>
     </message>
+    <message>
+        <source>A CRITICAL error was encountered with the camera:
+
+&apos;%1&apos;
+
+Camera has been disconnected and may need to be restarted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GPhotoEventLogPopup</name>
+    <message>
+        <source>GPhoto Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capture messages:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation type="unfinished">Error</translation>
+    </message>
+    <message>
+        <source>Debug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>List All Configs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translation type="unfinished">Pausa</translation>
+    </message>
+    <message>
+        <source>Copy to Clipboard</source>
+        <translation type="unfinished">Copiar al portapapeles</translation>
+    </message>
+    <message>
+        <source>Clear Log</source>
+        <translation type="unfinished">Limpiar registro</translation>
+    </message>
+    <message>
+        <source>List All Configs: No camera detected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>List All Configs: No configurations retrieved.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>========== All Configs ==========</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Label: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Readonly: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Printable: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choice </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bottom: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Top: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Step: </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ImageViewer</name>
@@ -4562,6 +4760,29 @@ Escoger un archivo válido de datos de sincronización de labios para continuar.
  Please choose a valid lip sync data file to continue.</source>
         <translation>Archivo de datos inválido.
  Escoger un archivo válido de datos de sincronización de labios para continuar.</translation>
+    </message>
+    <message>
+        <source>Recognizer</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LoadBoardPopup</name>
+    <message>
+        <source>Load Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load</source>
+        <translation type="unfinished">Cargar</translation>
+    </message>
+    <message>
+        <source> does not exist.</source>
+        <translation type="unfinished"> no existe.</translation>
+    </message>
+    <message>
+        <source>It is possible to load only TNZBRD files.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8400,6 +8621,70 @@ o es posible que se termine borrando algún archivo usado por ésta.</translatio
         <source>Zoom Out And Fit Floating Panel</source>
         <translation>Reducir y ajustar a panel flotante</translation>
     </message>
+    <message>
+        <source>Loop Frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Frame Loop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Tips...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Viewer Event Log</source>
+        <translation type="unfinished">Registro de eventos del visor</translation>
+    </message>
+    <message>
+        <source>GPhoto Event Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Open Reports Folder...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Set Rest Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Set Global Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Set Global Rest Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Clear All Onion Skin Markers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Copy Skeleton</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Paste Skeleton</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hook Tool: Create reference points to aid in movement or to link other objects by them</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keep Distance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paint Behind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Viewer Scrub</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MatchlinesDialog</name>
@@ -11324,7 +11609,7 @@ pero es posible que se produzcan ocasionales cierres inesperados; usar a propio 
     </message>
     <message>
         <source>Open Viewer Event Log</source>
-        <translation>Abrir registro de eventos del visor</translation>
+        <translation type="vanished">Abrir registro de eventos del visor</translation>
     </message>
     <message>
         <source>Use %1 to Resize Brush</source>
@@ -11386,6 +11671,26 @@ pero es posible que se produzcan ocasionales cierres inesperados; usar a propio 
         <source>Inbetween Flip</source>
         <translation>Alternancia de intermedios</translation>
     </message>
+    <message>
+        <source>Show Tips Window when Tahoma2D Starts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable High DPI Scaling*</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preproduction Board Thumbnail Size*:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rasterize Vector with Anti Aliasing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Images in Cell Tooltips</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PreferencesPopup::AdditionalStyleEdit</name>
@@ -11440,6 +11745,67 @@ habrá disponible un dispositivo de 30 bits en la configuración actual.</transl
     <message>
         <source>Priority</source>
         <translation>Prioridad</translation>
+    </message>
+</context>
+<context>
+    <name>PreproductionBoard</name>
+    <message>
+        <source>Are you sure you want to discard your changes?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished">Sí</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished">No</translation>
+    </message>
+    <message>
+        <source>Create Scene</source>
+        <translation type="unfinished">Crear escena</translation>
+    </message>
+    <message>
+        <source>Scene name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The board is empty!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The current board has been modified.
+Doyou want to save your changes?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Guardar</translation>
+    </message>
+    <message>
+        <source>Discard</source>
+        <translation type="unfinished">Descartar</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There is nothing in the board to play.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A production board has been modified.
+Do you want to save your changes?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preproduction Board</source>
+        <translation type="unfinished">Panel de preproducción</translation>
+    </message>
+    <message>
+        <source>untitled</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12284,7 +12650,7 @@ Are you sure you want to revert to previous version?</source>
     </message>
     <message>
         <source>Warning: level %1 already exists; overwrite?</source>
-        <translation>Advertencia: el nivel %1 ya existe; ¿sobrescribirlo?</translation>
+        <translation type="vanished">Advertencia: el nivel %1 ya existe; ¿sobrescribirlo?</translation>
     </message>
     <message>
         <source>Change project</source>
@@ -12536,15 +12902,15 @@ Algunos niveles no han sido cargados porque su versión no es soportada.</transl
     </message>
     <message>
         <source>The specified name is already assigned to the %1 file.</source>
-        <translation>El nombre especificado ya se encuentra asignado al archivo %1.</translation>
+        <translation type="vanished">El nombre especificado ya se encuentra asignado al archivo %1.</translation>
     </message>
     <message>
         <source>It is not possible to rename the %1 file.</source>
-        <translation>No es posible cambiar el nombre al archivo %1.</translation>
+        <translation type="vanished">No es posible cambiar el nombre al archivo %1.</translation>
     </message>
     <message>
         <source>It is not possible to copy the %1 file.</source>
-        <translation>No es posible copiar el archivo %1.</translation>
+        <translation type="vanished">No es posible copiar el archivo %1.</translation>
     </message>
     <message>
         <source>It is not possible to save the curve.</source>
@@ -13498,7 +13864,7 @@ en las Preferencias, para poder usar esta opción en la planilla o línea de tie
     </message>
     <message>
         <source>Clear All Onion Skin Markers</source>
-        <translation>Borrar todos los marcadores de Piel de cebolla</translation>
+        <translation type="vanished">Borrar todos los marcadores de Piel de cebolla</translation>
     </message>
     <message>
         <source>Clear All Fixed Onion Skin Markers</source>
@@ -14469,7 +14835,7 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Toggle render column mask. </source>
-        <translation>Alternar columna de máscara en procesamiento. </translation>
+        <translation type="vanished">Alternar columna de máscara en procesamiento. </translation>
     </message>
     <message>
         <source>Onion Skin On All Frames</source>
@@ -14617,6 +14983,105 @@ Visitar el sitio web para más información.
         <source>New Level Folder</source>
         <translation>Nueva carpeta de nivel</translation>
     </message>
+    <message>
+        <source>Loop Frames</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Frames Loop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loop Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Column Loops</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to generate image. Revise resolution.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning: file or level %1 already exists; overwrite?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>There were problems loading the scene %1.
+Details:
+
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading brush tips...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot add to Batch Render List.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task added to the Batch Render List.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot add to Batch Cleanup List.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Task added to the Batch Cleanup List.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot load scene.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot show in folder.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot show file info.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot duplicate it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot collect assets for it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot import into current project.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot load it into the current scene.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot rename it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot expand it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File %1 does not exist. Cannot add it to the flipbook.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move Loop Start Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move Loop End Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ReframePopup</name>
@@ -14673,19 +15138,19 @@ Visitar el sitio web para más información.
     </message>
     <message>
         <source>Renaming File </source>
-        <translation>Renombrando archivo</translation>
+        <translation type="vanished">Renombrando archivo</translation>
     </message>
     <message>
         <source>Creating an animation level of %1 frames</source>
-        <translation>Creando un nivel de animación de %1 fotogramas</translation>
+        <translation type="vanished">Creando un nivel de animación de %1 fotogramas</translation>
     </message>
     <message>
         <source>Delete Original Files</source>
-        <translation>Borrar archivos originales</translation>
+        <translation type="vanished">Borrar archivos originales</translation>
     </message>
     <message>
         <source>Level Name:</source>
-        <translation>Nombre del nivel:</translation>
+        <translation type="vanished">Nombre del nivel:</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -14694,6 +15159,26 @@ Visitar el sitio web para más información.
     <message>
         <source>The file name cannot be empty or contain any of the following characters:(new line)  \ / : * ? &quot;  |</source>
         <translation>El nombre del archivo no puede estar vacío ni contener ninguno de los siguientes caracteres:(nueva línea)  \ / : * ? &quot;  |</translation>
+    </message>
+    <message>
+        <source>Name has not changed. Try something else.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Renaming File &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Renaming File Sequence &apos;%1&apos; [%2 Frame(s)]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create copy and rename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Name:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -15699,6 +16184,17 @@ Por favor enviar o revertir los cambios antes.</translation>
     <message>
         <source>Updating to their items...</source>
         <translation>Actualizando a sus elementos...</translation>
+    </message>
+</context>
+<context>
+    <name>SaveBoardPopup</name>
+    <message>
+        <source>Save Board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation type="unfinished">Guardar</translation>
     </message>
 </context>
 <context>
@@ -16825,6 +17321,10 @@ Por favor enviar o revertir los cambios antes.</translation>
         <source>Advanced</source>
         <translation>Avanzado</translation>
     </message>
+    <message>
+        <source>Special Modifier Keys</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ShortcutViewer</name>
@@ -17234,37 +17734,53 @@ Es posible que el archivo del preajuste esté corrupto</translation>
     </message>
     <message>
         <source>Browse...</source>
-        <translation>Explorar...</translation>
+        <translation type="vanished">Explorar...</translation>
     </message>
     <message>
         <source>Open a different project.</source>
-        <translation>Abrir otro proyecto.</translation>
+        <translation type="vanished">Abrir otro proyecto.</translation>
     </message>
     <message>
         <source>This is not a valid folder.  Please choose an existing location.</source>
-        <translation>Esta no es una carpeta válida.  Escoger una ubicación existente.</translation>
+        <translation type="vanished">Esta no es una carpeta válida.  Escoger una ubicación existente.</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation>Sí</translation>
+        <translation type="vanished">Sí</translation>
     </message>
     <message>
         <source>No</source>
-        <translation>No</translation>
+        <translation type="vanished">No</translation>
     </message>
     <message>
         <source>No project found at this location 
 What would you like to do?</source>
-        <translation>No se encontró ningún proyecto en esa ubicacion
+        <translation type="vanished">No se encontró ningún proyecto en esa ubicacion
 ¿Qué hacer?</translation>
     </message>
     <message>
         <source>Make a new project</source>
-        <translation>Crear un nuevo proyecto</translation>
+        <translation type="vanished">Crear un nuevo proyecto</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="vanished">Cancelar</translation>
+    </message>
+    <message>
+        <source>Open Project...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Explore Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Existing Scene</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Scene</source>
+        <translation type="unfinished">Nueva escena</translation>
     </message>
 </context>
 <context>
@@ -17514,6 +18030,10 @@ What would you like to do?</source>
     <message>
         <source>%1%2Intermediate Stroke in Range</source>
         <translation>%1%2Trazo intermedio dentro del rango</translation>
+    </message>
+    <message>
+        <source>Hook Tool: Create reference points to aid in movement or to link other objects by them</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -18959,6 +19479,21 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     </message>
 </context>
 <context>
+    <name>TipsPopup</name>
+    <message>
+        <source>Tahoma2D Tips</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show this at startup</source>
+        <translation type="unfinished">Mostrar esto al inicio</translation>
+    </message>
+    <message>
+        <source>Nothing to see here. Keep movin&apos;...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Toolbar</name>
     <message>
         <source>Collapse toolbar</source>
@@ -19054,6 +19589,10 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     <message>
         <source>Inbetween</source>
         <translation>Intermediar</translation>
+    </message>
+    <message>
+        <source>Troubleshoot</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -19589,7 +20128,7 @@ Por favor ver la guía de usuario para obtener más detalles.</translation>
     </message>
     <message>
         <source>Stylus pressed at X=%1 Y=%2 Pressure=%3%</source>
-        <translation>Pluma pulsada en X=%1 Y=%2 Presión=%3%</translation>
+        <translation type="vanished">Pluma pulsada en X=%1 Y=%2 Presión=%3%</translation>
     </message>
     <message>
         <source>dragged</source>
@@ -19601,7 +20140,7 @@ Por favor ver la guía de usuario para obtener más detalles.</translation>
     </message>
     <message>
         <source>Stylus %1 to X=%2 Y=%3 Pressure=%4%</source>
-        <translation>Pluma %1 a X=%2 Y=%3 Presión=%4%</translation>
+        <translation type="vanished">Pluma %1 a X=%2 Y=%3 Presión=%4%</translation>
     </message>
     <message>
         <source>Stylus released</source>
@@ -19670,6 +20209,14 @@ Por favor ver la guía de usuario para obtener más detalles.</translation>
     <message>
         <source>Gesture encountered (%1)</source>
         <translation>Gesto encontrado (%1)</translation>
+    </message>
+    <message>
+        <source>Stylus pressed at X=%1 Y=%2 Pressure=%3% TiltX=%4 TiltY=%5 Rotation=%6</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus %1 to X=%2 Y=%3 Pressure=%4% TiltX=%5 TiltY=%6 Rotation=%7</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -20074,7 +20621,11 @@ Por favor ver la guía de usuario para obtener más detalles.</translation>
     </message>
     <message>
         <source>Render Mask</source>
-        <translation>Procesar máscara</translation>
+        <translation type="vanished">Procesar máscara</translation>
+    </message>
+    <message>
+        <source>Alpha Lock</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

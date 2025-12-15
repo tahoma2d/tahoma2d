@@ -41,6 +41,10 @@
         <source>Rotation</source>
         <translation>Rotation</translation>
     </message>
+    <message>
+        <source>Flip</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TVectorImagePatternStrokeStyle</name>

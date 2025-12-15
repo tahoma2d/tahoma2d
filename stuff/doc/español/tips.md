@@ -2,14 +2,9 @@
 
 La versión 1.5 trae una serie de nuevas características, mejoras y aún más correcciones de errores, que se encuentran listadas [aquí](https://github.com/tahoma2d/tahoma2d/releases/tag/v1.5).
 
-### Cambios en la Línea de tiempo/Planilla
+### Compatibility Changes
 
-- Las celdas y columnas ya no tienen barras de arrastre, de manera predefinida.
-- Hacer clic sobre una celda expuesta o una columna (que no esté vacía) para moverla.
-- Al seleccionar y arrastrar sobre una celda/columna vacía se iniciará una selección de múltiples celdas/columnas.
-- `ALT` ha reemplazado a `CTRL` para la selección de fotogramas y claves de animación.
-- `CTRL` ahora iniciará una selección de múltiples celdas, cuando el primer clic se realice sobre una celda/columna expuesta.
-- En caso de preferirse el comportamiento anterior, activar la opción `Preferencias` -> `Escena` -> `Mostrar barras de arrastre de celdas y columnas`.
+Palettes with Raster based custom styles (`Style Editor` -> `Vector` tab -> `Custom styles`) will be auto upgraded to new format which will preventing use in prior versions of T2D if the paleette is saved in the latest T2D version.
 
 ### Usuarios de Windows
 
@@ -22,6 +17,13 @@ En caso de que se experimentaran problemas con la pluma en esta nueva versión, 
 ## Actualización desde Tahoma2D 1.2 o migración desde OpenToonz
 
 En caso de partir desde Tahoma2D 1.2 u OpenToonz, aquí se mostrarán algunos puntos a tener en cuenta:
+- Cambios en la Línea de tiempo/Planilla
+  - Las celdas y columnas ya no tienen barras de arrastre, de manera predefinida.
+  - Hacer clic sobre una celda expuesta o una columna (que no esté vacía) para moverla.
+  - Al seleccionar y arrastrar sobre una celda/columna vacía se iniciará una selección de múltiples celdas/columnas.
+  - `ALT` ha reemplazado a `CTRL` para la selección de fotogramas y claves de animación.
+  - `CTRL` ahora iniciará una selección de múltiples celdas, cuando el primer clic se realice sobre una celda/columna expuesta.
+  - En caso de preferirse el comportamiento anterior, activar la opción `Preferencias` -> `Escena` -> `Mostrar barras de arrastre de celdas y columnas`.
 - Mantenimiento implícito
   - Ya no habrá necesidad de extender un dibujo manualmente. Se mantendrá la exposición del mismo hacia adelante hasta el siguiente dibujo expuesto.
   - Usar un `Fotograma de detención del mantenimiento` para finalizar la exposición automática, sin necesidad de la aparición de otro dibujo expuesto.

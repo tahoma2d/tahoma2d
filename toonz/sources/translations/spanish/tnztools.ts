@@ -642,7 +642,7 @@
     </message>
     <message>
         <source>Maximum Gap</source>
-        <translation>Hueco máximo</translation>
+        <translation type="vanished">Hueco máximo</translation>
     </message>
     <message>
         <source>Distance:</source>
@@ -703,6 +703,10 @@
     <message>
         <source>Ease In/Out</source>
         <translation>Aceleración y desaceleración suaves</translation>
+    </message>
+    <message>
+        <source>Auto Close Gap</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -769,6 +773,26 @@
     <message>
         <source>Smooth:</source>
         <translation>Estabilidad:</translation>
+    </message>
+    <message>
+        <source>Paint Behind</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tilt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Tip</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -958,7 +982,7 @@
     </message>
     <message>
         <source>Selective</source>
-        <translation>Selectivo</translation>
+        <translation type="vanished">Selectivo</translation>
     </message>
     <message>
         <source>Lines</source>
@@ -979,6 +1003,10 @@
     <message>
         <source>Lock Alpha</source>
         <translation>Preservar alfa</translation>
+    </message>
+    <message>
+        <source>Paint Behind</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1179,11 +1207,11 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Copy Skeleton</source>
-        <translation>Copiar esqueleto</translation>
+        <translation type="vanished">Copiar esqueleto</translation>
     </message>
     <message>
         <source>Paste Skeleton</source>
-        <translation>Pegar esqueleto</translation>
+        <translation type="vanished">Pegar esqueleto</translation>
     </message>
     <message>
         <source>Delete Vertex</source>
@@ -1191,11 +1219,11 @@ Do you want to continue?</source>
     </message>
     <message>
         <source>Set Key</source>
-        <translation>Marcar clave</translation>
+        <translation type="vanished">Marcar clave</translation>
     </message>
     <message>
         <source>Set Rest Key</source>
-        <translation>Marcar clave (en reposo)</translation>
+        <translation type="vanished">Marcar clave (en reposo)</translation>
     </message>
     <message>
         <source>Show Mesh</source>
@@ -1223,11 +1251,11 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Set Global Key</source>
-        <translation>Marcar clave global</translation>
+        <translation type="vanished">Marcar clave global</translation>
     </message>
     <message>
         <source>Set Global Rest Key</source>
-        <translation>Marcar clave global (en reposo)</translation>
+        <translation type="vanished">Marcar clave global (en reposo)</translation>
     </message>
     <message>
         <source>Edit Mesh</source>
@@ -1698,6 +1726,10 @@ Do you want to proceed?</source>
         <source>The selection is not editable.</source>
         <translation>La selección no es editable.</translation>
     </message>
+    <message>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RGBPickerTool</name>
@@ -1742,6 +1774,26 @@ Do you want to proceed?</source>
     <message>
         <source>No Antialiasing</source>
         <translation>Sin suavizado de bordes</translation>
+    </message>
+    <message>
+        <source>Selective</source>
+        <translation type="unfinished">Selectivo</translation>
+    </message>
+    <message>
+        <source>Mode:</source>
+        <translation type="unfinished">Modo:</translation>
+    </message>
+    <message>
+        <source>Lines</source>
+        <translation type="unfinished">Líneas</translation>
+    </message>
+    <message>
+        <source>Areas</source>
+        <translation type="unfinished">Áreas</translation>
+    </message>
+    <message>
+        <source>Lines &amp; Areas</source>
+        <translation type="unfinished">Líneas y áreas</translation>
     </message>
 </context>
 <context>
@@ -2152,6 +2204,17 @@ movido hacia el final de la primera página de la paleta.</translation>
     </message>
 </context>
 <context>
+    <name>ToolOptionStylusConfigButton</name>
+    <message>
+        <source>Pressure</source>
+        <translation type="unfinished">Presión</translation>
+    </message>
+    <message>
+        <source>Tilt</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ToonzRasterBrushTool</name>
     <message>
         <source>Size</source>
@@ -2205,6 +2268,18 @@ movido hacia el final de la primera página de la paleta.</translation>
         <source>Grid</source>
         <translation>Cuadrícula</translation>
     </message>
+    <message>
+        <source>Tilt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brush Tip</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ToonzVectorBrushTool</name>
@@ -2234,7 +2309,7 @@ movido hacia el final de la primera página de la paleta.</translation>
     </message>
     <message>
         <source>Pressure</source>
-        <translation>Presión</translation>
+        <translation type="vanished">Presión</translation>
     </message>
     <message>
         <source>Cap</source>
@@ -2339,6 +2414,10 @@ movido hacia el final de la primera página de la paleta.</translation>
     <message>
         <source>Ease In/Out</source>
         <translation>Aceleración y desaceleración suaves</translation>
+    </message>
+    <message>
+        <source>Stylus Settings - Size</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
