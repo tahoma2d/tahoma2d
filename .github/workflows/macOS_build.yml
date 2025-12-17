@@ -4,7 +4,7 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   macOS:
-    runs-on: macos-15-intel
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
       - name: Setup cmake
