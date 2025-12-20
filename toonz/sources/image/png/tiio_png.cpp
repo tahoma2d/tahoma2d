@@ -290,6 +290,12 @@ public:
     png_bytep row_pointer = m_rowBuffer.get();
     png_read_row(m_png_ptr, row_pointer, NULL);
 
+    if (setjmp(png_jmpbuf(m_png_ptr))) {
+      // If an error is caught in the previous line, execution jumps here.
+      // We'll keep going in order to load whatever we can read.
+      return;
+    }
+
     writeRow(buffer, x0, x1);
 
     if (m_tempBuffer && m_y == ly) {
