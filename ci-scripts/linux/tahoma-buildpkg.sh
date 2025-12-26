@@ -91,6 +91,7 @@ chmod +x ./linuxdeploy-x86_64.AppImage
 chmod +x ./linuxdeploy-plugin-qt-x86_64.AppImage
 
 export LDAI_OUTPUT="Tahoma2D.AppImage"
+export LD_LIBRARY_PATH=appdir/usr/lib/tahoma2d
 
 ./linuxdeploy-x86_64.AppImage --appdir appdir --plugin qt --output appimage
 
