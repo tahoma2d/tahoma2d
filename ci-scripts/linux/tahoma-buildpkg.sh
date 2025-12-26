@@ -90,12 +90,12 @@ wget "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/1-a
 chmod +x ./linuxdeploy-x86_64.AppImage
 chmod +x ./linuxdeploy-plugin-qt-x86_64.AppImage
 
-export DEBUG=1
+#export DEBUG=1
 
 export LDAI_OUTPUT="Tahoma2D.AppImage"
 export LD_LIBRARY_PATH="${PWD}/appdir/usr/lib:${LD_LIBRARY_PATH}"
 
-./linuxdeploy-x86_64.AppImage --appdir appdir --plugin qt --output appimage
+./linuxdeploy-x86_64.AppImage --appdir appdir --plugin qt --custom-apprun "${PWD}/appdir/AppRun" --output appimage
 
 mv Tahoma2D*.AppImage Tahoma2D/Tahoma2D.AppImage
 
