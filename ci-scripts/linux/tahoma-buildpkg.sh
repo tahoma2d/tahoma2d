@@ -88,7 +88,7 @@ wget "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/li
 wget "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/1-alpha-20250213-1/linuxdeploy-plugin-qt-x86_64.AppImage"
 
 chmod +x ./linuxdeploy-x86_64.AppImage
-chmod +x ./1-alpha-20250213-1/linuxdeploy-plugin-qt-x86_64.AppImage
+chmod +x ./linuxdeploy-plugin-qt-x86_64.AppImage
 
 ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage
 
