@@ -81,33 +81,16 @@ find appdir/usr/lib/libgphoto2* -name *.so -exec patchelf --set-rpath '$ORIGIN/.
 
 echo ">>> Creating Tahoma2D/Tahoma2D.AppImage"
 
-if [ -f /usr/lib/qt5/bin/linuxdeployqt ]
-then
-   LINUXDEPLOYQT=/usr/lib/qt5/bin/linuxdeployqt
-else
-if [ ! -f linuxdeployqt*.AppImage ]
-then
-   wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
-   chmod a+x linuxdeployqt*.AppImage
-fi
-   LINUXDEPLOYQT=./linuxdeployqt*.AppImage
-fi
+export EXTRA_QT_PLUGINS="waylandcompositor"
+export EXTRA_PLATFORM_PLUGINS="libqwayland-egl.so;libqwayland-generic.so"
 
-export LD_LIBRARY_PATH=appdir/usr/lib/tahoma2d
-$LINUXDEPLOYQT appdir/usr/bin/Tahoma2D -bundle-non-qt-libs -verbose=0 -always-overwrite -no-strip \
-   -executable=appdir/usr/bin/lzocompress \
-   -executable=appdir/usr/bin/lzodecompress \
-   -executable=appdir/usr/bin/tcleanup \
-   -executable=appdir/usr/bin/tcomposer \
-   -executable=appdir/usr/bin/tconverter \
-   -executable=appdir/usr/bin/tfarmcontroller \
-   -executable=appdir/usr/bin/tfarmserver 
+wget "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+wget "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/1-alpha-20250213-1/linuxdeploy-plugin-qt-x86_64.AppImage"
 
-rm appdir/AppRun
-cp ../sources/scripts/AppRun appdir
-chmod 775 appdir/AppRun
+chmod +x ./linuxdeploy-x86_64.AppImage
+chmod +x ./1-alpha-20250213-1/linuxdeploy-plugin-qt-x86_64.AppImage
 
-$LINUXDEPLOYQT appdir/usr/bin/Tahoma2D -appimage -no-strip 
+./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage
 
 mv Tahoma2D*.AppImage Tahoma2D/Tahoma2D.AppImage
 
