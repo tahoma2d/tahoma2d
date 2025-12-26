@@ -90,7 +90,7 @@ wget "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/1-a
 chmod +x ./linuxdeploy-x86_64.AppImage
 chmod +x ./linuxdeploy-plugin-qt-x86_64.AppImage
 
-./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage
+./linuxdeploy-x86_64.AppImage --appdir appdir --plugin qt --output AppImage
 
 mv Tahoma2D*.AppImage Tahoma2D/Tahoma2D.AppImage
 
