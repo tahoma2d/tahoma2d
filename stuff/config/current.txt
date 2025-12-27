@@ -304,7 +304,7 @@
 
   <item>"STD_bodyHighLightFx" 	"Body Highlight" 		</item>
   <item>"STD_bodyHighLightFx.mode" 	"Mode" 			</item>
-  <item>"STD_bodyHighLightFx.point" 	"Offset X" 		</item>
+  <item>"STD_bodyHighLightFx.point" 	"Offset" 		</item>
   <item>"STD_bodyHighLightFx.transparency" 	"Transparency" 		</item>
   <item>"STD_bodyHighLightFx.blur" 	"Blur" 		</item>
   <item>"STD_bodyHighLightFx.color" 	"Color" 		</item>
@@ -313,14 +313,14 @@
 
  <item>"STD_castShadowFx"			"Cast Shadow"	</item>
   <item>"STD_castShadowFx.distort_type"	"Mode"	</item>
-  <item>"STD_castShadowFx.bottom_left_a"	"Bottom Left  X"	</item>
-  <item>"STD_castShadowFx.bottom_left_b"	"Bottom Left  X"		</item>
-  <item>"STD_castShadowFx.bottom_right_a"	"Bottom Right  X"	</item>
-  <item>"STD_castShadowFx.bottom_right_b"	"Bottom Right  X"		</item>
-  <item>"STD_castShadowFx.top_right_a"	"Top Right  X"	</item>
-  <item>"STD_castShadowFx.top_right_b"	"Top Right  X"		</item>
-  <item>"STD_castShadowFx.top_left_a"	"Top Left  X"	</item>
-  <item>"STD_castShadowFx.top_left_b"	"Top Left  X"		</item>
+  <item>"STD_castShadowFx.bottom_left_a"	"Bottom Left"	</item>
+  <item>"STD_castShadowFx.bottom_left_b"	"Bottom Left"		</item>
+  <item>"STD_castShadowFx.bottom_right_a"	"Bottom Right"	</item>
+  <item>"STD_castShadowFx.bottom_right_b"	"Bottom Right"		</item>
+  <item>"STD_castShadowFx.top_right_a"	"Top Right"	</item>
+  <item>"STD_castShadowFx.top_right_b"	"Top Right"		</item>
+  <item>"STD_castShadowFx.top_left_a"	"Top Left"	</item>
+  <item>"STD_castShadowFx.top_left_b"	"Top Left"		</item>
   <item>"STD_castShadowFx.deactivate"	" Deactivate"	</item>
   <item>"STD_castShadowFx.color"		"Color"		</item>
   <item>"STD_castShadowFx.fade"		"Fade"	</item>
@@ -373,14 +373,14 @@
   <item>"STD_cornerPinFx.mode" "Mode" </item>
   <item>"STD_cornerPinFx.value" "Value" </item>
   <item>"STD_cornerPinFx.keep"		"Action"		</item>
-  <item>"STD_cornerPinFx.bottom_left_a"	"Bottom Left  X"	</item>
-  <item>"STD_cornerPinFx.bottom_left_b"	"Bottom Left  X"		</item>
-  <item>"STD_cornerPinFx.bottom_right_a"	"Bottom Right  X"	</item>
-  <item>"STD_cornerPinFx.bottom_right_b"	"Bottom Right  X"		</item>
-  <item>"STD_cornerPinFx.top_right_a"	"Top Right  X"	</item>
-  <item>"STD_cornerPinFx.top_right_b"	"Top Right  X"		</item>
-  <item>"STD_cornerPinFx.top_left_a"		"Top Left  X"	</item>
-  <item>"STD_cornerPinFx.top_left_b"		"Top Left  X"		</item>
+  <item>"STD_cornerPinFx.bottom_left_a"	"Bottom Left"	</item>
+  <item>"STD_cornerPinFx.bottom_left_b"	"Bottom Left"		</item>
+  <item>"STD_cornerPinFx.bottom_right_a"	"Bottom Right"	</item>
+  <item>"STD_cornerPinFx.bottom_right_b"	"Bottom Right"		</item>
+  <item>"STD_cornerPinFx.top_right_a"	"Top Right"	</item>
+  <item>"STD_cornerPinFx.top_right_b"	"Top Right"		</item>
+  <item>"STD_cornerPinFx.top_left_a"		"Top Left"	</item>
+  <item>"STD_cornerPinFx.top_left_b"		"Top Left"		</item>
   <item>"STD_cornerPinFx.deactivate"		" Deactivate"	</item>
   <item>"STD_cornerPinFx.pattern"		"Pattern"	</item>
 
@@ -404,32 +404,32 @@
   <item>"STD_fadeFx.value"			"Intensity"	</item>
 
   <item>"STD_fourPointsGradientFx"		"Four Points"	</item>
-  <item>"STD_fourPointsGradientFx.Point_1"	"Point 1 X"		</item>
+  <item>"STD_fourPointsGradientFx.Point_1"	"Point 1"		</item>
   <item>"STD_fourPointsGradientFx.Color_1"	"Color 1"		</item>
-  <item>"STD_fourPointsGradientFx.Point_2"	"Point 2 X"		</item>
+  <item>"STD_fourPointsGradientFx.Point_2"	"Point 2"		</item>
   <item>"STD_fourPointsGradientFx.Color_2"	"Color 2"		</item>
-  <item>"STD_fourPointsGradientFx.Point_3"	"Point 3 X"		</item>
+  <item>"STD_fourPointsGradientFx.Point_3"	"Point 3"		</item>
   <item>"STD_fourPointsGradientFx.Color_3"	"Color 3"		</item>
-  <item>"STD_fourPointsGradientFx.Point_4"	"Point 4 X"		</item>
+  <item>"STD_fourPointsGradientFx.Point_4"	"Point 4"		</item>
   <item>"STD_fourPointsGradientFx.Color_4"	"Color 4"		</item>
 
   <item>"STD_freeDistortFx" 			"Free Distort" 	</item>
   <item>"STD_freeDistortFx.distort_type"	"Mode"	</item>
-  <item>"STD_freeDistortFx.bottom_left_a"	"Bottom Left  X"	</item>
-  <item>"STD_freeDistortFx.bottom_left_b"	"Bottom Left  X"		</item>
-  <item>"STD_freeDistortFx.bottom_right_a"	"Bottom Right  X"	</item>
-  <item>"STD_freeDistortFx.bottom_right_b"	"Bottom Right  X"		</item>
-  <item>"STD_freeDistortFx.top_right_a"	"Top Right  X"	</item>
-  <item>"STD_freeDistortFx.top_right_b"	"Top Right  X"		</item>
-  <item>"STD_freeDistortFx.top_left_a"	"Top Left  X"	</item>
-  <item>"STD_freeDistortFx.top_left_b"	"Top Left  X"		</item>
+  <item>"STD_freeDistortFx.bottom_left_a"	"Bottom Left"	</item>
+  <item>"STD_freeDistortFx.bottom_left_b"	"Bottom Left"		</item>
+  <item>"STD_freeDistortFx.bottom_right_a"	"Bottom Right"	</item>
+  <item>"STD_freeDistortFx.bottom_right_b"	"Bottom Right"		</item>
+  <item>"STD_freeDistortFx.top_right_a"	"Top Right"	</item>
+  <item>"STD_freeDistortFx.top_right_b"	"Top Right"		</item>
+  <item>"STD_freeDistortFx.top_left_a"	"Top Left"	</item>
+  <item>"STD_freeDistortFx.top_left_b"	"Top Left"		</item>
   <item>"STD_freeDistortFx.deactivate"	" Deactivate"	</item>
 
   <item>"STD_gammaFx"			"Gamma"		</item>
   <item>"STD_gammaFx.value"		"Value"		</item>
 
   <item>"STD_colorRaylitFx"			"Color Raylit"	</item>
-  <item>"STD_colorRaylitFx.p"			"Center X"	</item>
+  <item>"STD_colorRaylitFx.p"			"Center"	</item>
   <item>"STD_colorRaylitFx.z"			"Distance"	</item>
   <item>"STD_colorRaylitFx.intensity"		"Intensity"	</item>
   <item>"STD_colorRaylitFx.decay"		"Decay"		</item>
@@ -471,7 +471,7 @@
   <item>"STD_hsvScaleFx.value_scale"			"Value Scale"	</item>
 
   <item>"STD_kaleidoFx"			"Kaleido"	</item>
-  <item>"STD_kaleidoFx.center"		"Center X"	</item>
+  <item>"STD_kaleidoFx.center"		"Center"	</item>
   <item>"STD_kaleidoFx.angle"		"Angle"		</item>
   <item>"STD_kaleidoFx.count"		"Count"		</item>
 
@@ -564,7 +564,7 @@
 
 
   <item>"STD_radialBlurFx"		"Radial Blur"	</item>
-  <item>"STD_radialBlurFx.point"		"Center X"		</item>
+  <item>"STD_radialBlurFx.point"		"Center"		</item>
   <item>"STD_radialBlurFx.radius"		"Radius"		</item>
   <item>"STD_radialBlurFx.blur"		"Blur"				</item>
 
@@ -590,7 +590,7 @@
   <item>"STD_rippleFx.period"		"Period"		</item>
   <item>"STD_rippleFx.count"		"Quantity"		</item>
   <item>"STD_rippleFx.cycle"		"Cycle"		</item>
-  <item>"STD_rippleFx.center"		"Center X"		</item>
+  <item>"STD_rippleFx.center"		"Center"		</item>
   <item>"STD_rippleFx.scalex"		"Scale X"		</item>
   <item>"STD_rippleFx.scaley"		"Scale Y"		</item>
   <item>"STD_rippleFx.angle"		"Angle"		</item>
@@ -599,7 +599,7 @@
   <item>"STD_rippleFx.sharpen"	"Sharpen"		</item>
 
   <item>"STD_rotationalBlurFx"		"Spin Blur"	</item>
-  <item>"STD_rotationalBlurFx.point"		"Center X"		</item>
+  <item>"STD_rotationalBlurFx.point"		"Center"		</item>
   <item>"STD_rotationalBlurFx.radius"		"Radius"		</item>
   <item>"STD_rotationalBlurFx.blur"		"Blur"		        </item>
 
@@ -612,7 +612,7 @@
   <item>"STD_multiRadialGradientFx.curveType"		"Type"		</item>
 
   <item>"STD_raylitFx"			"Raylit"	</item>
-  <item>"STD_raylitFx.p"		"Center X"	</item>
+  <item>"STD_raylitFx.p"		"Center"	</item>
   <item>"STD_raylitFx.z"		"Distance"	</item>
   <item>"STD_raylitFx.color"		"Color"		</item>
   <item>"STD_raylitFx.intensity"	"Intensity"	</item>
@@ -998,7 +998,7 @@
   <item>"STD_particlesFx.source_ctrl"			"Control Image"		</item>
   <item>"STD_particlesFx.bright_thres"			"Threshold"		</item>
   <item>"STD_particlesFx.multi_source"			"Multiple Generators in Control Image"		</item>
-  <item>"STD_particlesFx.center"			"Center X"			</item>
+  <item>"STD_particlesFx.center"			"Center"			</item>
   <item>"STD_particlesFx.length"			"Width"			</item>
   <item>"STD_particlesFx.height"			"Height"			</item>
   <item>"STD_particlesFx.animation"			"Animation"		</item>
