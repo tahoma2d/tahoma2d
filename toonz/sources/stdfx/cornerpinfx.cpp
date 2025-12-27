@@ -79,11 +79,11 @@ private:
 //==============================================================================
 
 CornerPinFx::CornerPinFx()
-    : m_distortType(new TIntEnumParam(PERSPECTIVE, "Perspective"))
+    : m_distortType(new TIntEnumParam(PERSPECTIVE, QObject::tr("Perspective").toStdString()))
     , m_deactivate(false)
     , m_string(L"1,2,3")
-    , m_mode(new TIntEnumParam(SUBSTITUTE, "Texture"))
-    , m_keep(new TIntEnumParam(0, "Delete"))
+    , m_mode(new TIntEnumParam(SUBSTITUTE, QObject::tr("Texture").toStdString()))
+    , m_keep(new TIntEnumParam(0, QObject::tr("Delete").toStdString()))
     , m_value(100) {
   double ext = 400.;
   double inn = 400.;
@@ -140,14 +140,14 @@ CornerPinFx::CornerPinFx()
   addInputPort("Texture", m_texture);
 
   m_value->setValueRange(0, 100);
-  m_keep->addItem(1, "Keep");
+  m_keep->addItem(1, QObject::tr("Keep").toStdString());
 
-  m_mode->addItem(PATTERNTYPE, "Pattern");
-  m_mode->addItem(ADD, "Add");
-  m_mode->addItem(SUBTRACT, "Subtract");
-  m_mode->addItem(MULTIPLY, "Multiply");
-  m_mode->addItem(LIGHTEN, "Lighten");
-  m_mode->addItem(DARKEN, "Darken");
+  m_mode->addItem(PATTERNTYPE, QObject::tr("Pattern").toStdString());
+  m_mode->addItem(ADD, QObject::tr("Add").toStdString());
+  m_mode->addItem(SUBTRACT, QObject::tr("Subtract").toStdString());
+  m_mode->addItem(MULTIPLY, QObject::tr("Multiply").toStdString());
+  m_mode->addItem(LIGHTEN, QObject::tr("Lighten").toStdString());
+  m_mode->addItem(DARKEN, QObject::tr("Darken").toStdString());
 
   m_p00_a->getX()->setValueRange(-1000, 1000);
   m_p00_b->getX()->setValueRange(-1000, 1000);
@@ -173,7 +173,7 @@ CornerPinFx::CornerPinFx()
   m_p10_a->getY()->setValueRange(-1000, 1000);
   m_p10_b->getY()->setValueRange(-1000, 1000);
 
-  m_distortType->addItem(BILINEAR, "Bilinear");
+  m_distortType->addItem(BILINEAR, QObject::tr("Bilinear").toStdString());
 }
 
 // ------------------------------------------------------------------------

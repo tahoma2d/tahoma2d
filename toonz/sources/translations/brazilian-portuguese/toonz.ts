@@ -13151,6 +13151,13 @@ O que gostaria de fazer?</translation>
     </message>
     <message>
         <location filename="../../toonz/cellselectioncommand.cpp" line="316"/>
+        <location filename="../../stdfx/iwa_flowpaintbrushfx.cpp" line="263"/>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="53"/>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="75"/>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="200"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="54"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="77"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="181"/>
         <source>Random</source>
         <translation>Aleatório</translation>
     </message>
@@ -13224,6 +13231,9 @@ O que gostaria de fazer?</translation>
         <location filename="../../toonz/fileselection.cpp" line="289"/>
         <location filename="../../toonz/preproductionboard.cpp" line="255"/>
         <location filename="../../toonz/startuppopup.cpp" line="862"/>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="86"/>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="22"/>
+        <location filename="../../stdfx/texturefx.cpp" line="25"/>
         <source>Delete</source>
         <translation>Excluir</translation>
     </message>
@@ -13526,6 +13536,7 @@ por causa da opção de preferência &quot;Unificar os botões de Habilitar/Desa
     <message>
         <location filename="../../toonz/dvitemview.cpp" line="209"/>
         <location filename="../../toonz/dvitemview.cpp" line="242"/>
+        <location filename="../../stdfx/iwa_flowpaintbrushfx.cpp" line="189"/>
         <source>None</source>
         <translation>Nenhum</translation>
     </message>
@@ -16242,6 +16253,908 @@ Gostaria de continuar?</translation>
     <message>
         <source>Toggle render column mask. </source>
         <translation type="vanished">Habilitar/Desabilitar Coluna de Máscara na renderização.</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="66"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="67"/>
+        <source>Younger</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="88"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="90"/>
+        <source>Hold Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="44"/>
+        <source>Basic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="45"/>
+        <source>Block</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="72"/>
+        <source>Turbulent Smooth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="74"/>
+        <source>Turbulent Basic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="76"/>
+        <source>Turbulent Sharp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="77"/>
+        <source>Dynamic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="79"/>
+        <source>Dynamic Twist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="81"/>
+        <source>Rocky</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="83"/>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="164"/>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="221"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="147"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="202"/>
+        <source>Smooth</source>
+        <translation type="unfinished">Suavizar</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="197"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="178"/>
+        <source>Older</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="198"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="179"/>
+        <source>Smaller</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="199"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="180"/>
+        <source>Bigger</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="250"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="231"/>
+        <source>Random Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="251"/>
+        <location filename="../../stdfx/motionawarebasefx.h" line="40"/>
+        <location filename="../../stdfx/motionawarebasefx.h" line="78"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="232"/>
+        <source>Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="253"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="234"/>
+        <source>Column - Random Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="255"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="236"/>
+        <source>Column Swing - Random Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="299"/>
+        <source>Particles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="300"/>
+        <source>Background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="302"/>
+        <source>Illuminated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/bodyhighlightfx.cpp" line="348"/>
+        <source>Over</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/bodyhighlightfx.cpp" line="367"/>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="146"/>
+        <location filename="../../stdfx/texturefx.cpp" line="42"/>
+        <source>Add</source>
+        <translation type="unfinished">Adicionar</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/bodyhighlightfx.cpp" line="368"/>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="147"/>
+        <location filename="../../stdfx/texturefx.cpp" line="43"/>
+        <source>Subtract</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/bodyhighlightfx.cpp" line="369"/>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="148"/>
+        <location filename="../../stdfx/texturefx.cpp" line="44"/>
+        <source>Multiply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/bodyhighlightfx.cpp" line="370"/>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="149"/>
+        <location filename="../../stdfx/texturefx.cpp" line="45"/>
+        <source>Lighten</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/bodyhighlightfx.cpp" line="371"/>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="150"/>
+        <location filename="../../stdfx/texturefx.cpp" line="46"/>
+        <source>Darken</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/cloudsfx.cpp" line="20"/>
+        <location filename="../../stdfx/perlinnoisefx.cpp" line="28"/>
+        <source>Clouds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/cloudsfx.cpp" line="26"/>
+        <location filename="../../stdfx/perlinnoisefx.cpp" line="40"/>
+        <source>Marble/Wood</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="82"/>
+        <location filename="../../stdfx/freedistortfx.cpp" line="102"/>
+        <source>Perspective</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="85"/>
+        <location filename="../../stdfx/iwa_floorbumpfx.cpp" line="315"/>
+        <location filename="../../stdfx/texturefx.cpp" line="28"/>
+        <source>Texture</source>
+        <translation type="unfinished">Textura</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="143"/>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="35"/>
+        <location filename="../../stdfx/texturefx.cpp" line="38"/>
+        <source>Keep</source>
+        <translation type="unfinished">Manter</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="145"/>
+        <location filename="../../stdfx/texturefx.cpp" line="41"/>
+        <source>Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="176"/>
+        <location filename="../../stdfx/freedistortfx.cpp" line="192"/>
+        <source>Bilinear</source>
+        <translation type="unfinished">Bilinear</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/despecklefx.cpp" line="25"/>
+        <source>Transparent Bg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/despecklefx.cpp" line="29"/>
+        <source>White Bg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/erodilatefx.cpp" line="26"/>
+        <location filename="../../stdfx/mosaicfx.cpp" line="189"/>
+        <source>Square</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/erodilatefx.cpp" line="30"/>
+        <source>Circular</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_blur.cpp" line="18"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="34"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="58"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="62"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="66"/>
+        <location filename="../../stdfx/ino_density.cpp" line="19"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="26"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="34"/>
+        <location filename="../../stdfx/ino_hls_adjust.cpp" line="39"/>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="39"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="26"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="34"/>
+        <location filename="../../stdfx/ino_hsv_adjust.cpp" line="39"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="39"/>
+        <location filename="../../stdfx/ino_level_master.cpp" line="30"/>
+        <location filename="../../stdfx/ino_level_rgba.cpp" line="50"/>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="55"/>
+        <location filename="../../stdfx/ino_median.cpp" line="39"/>
+        <location filename="../../stdfx/ino_median.cpp" line="47"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="20"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="21"/>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="63"/>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="42"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="35"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="27"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="28"/>
+        <source>Red</source>
+        <translation type="unfinished">Vermelho</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_blur.cpp" line="28"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="35"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="54"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="63"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="67"/>
+        <location filename="../../stdfx/ino_density.cpp" line="29"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="49"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="64"/>
+        <location filename="../../stdfx/ino_hls_adjust.cpp" line="68"/>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="75"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="49"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="64"/>
+        <location filename="../../stdfx/ino_hsv_adjust.cpp" line="68"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="75"/>
+        <location filename="../../stdfx/ino_level_master.cpp" line="53"/>
+        <location filename="../../stdfx/ino_level_rgba.cpp" line="111"/>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="56"/>
+        <location filename="../../stdfx/ino_median.cpp" line="40"/>
+        <location filename="../../stdfx/ino_median.cpp" line="48"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="30"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="35"/>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="123"/>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="75"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="62"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="49"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="52"/>
+        <source>Green</source>
+        <translation type="unfinished">Verde</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_blur.cpp" line="29"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="36"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="55"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="59"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="68"/>
+        <location filename="../../stdfx/ino_density.cpp" line="30"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="50"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="65"/>
+        <location filename="../../stdfx/ino_hls_adjust.cpp" line="69"/>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="76"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="50"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="65"/>
+        <location filename="../../stdfx/ino_hsv_adjust.cpp" line="69"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="76"/>
+        <location filename="../../stdfx/ino_level_master.cpp" line="54"/>
+        <location filename="../../stdfx/ino_level_rgba.cpp" line="112"/>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="57"/>
+        <location filename="../../stdfx/ino_median.cpp" line="41"/>
+        <location filename="../../stdfx/ino_median.cpp" line="49"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="31"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="36"/>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="124"/>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="76"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="63"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="50"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="53"/>
+        <source>Blue</source>
+        <translation type="unfinished">Azul</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_blur.cpp" line="30"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="38"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="56"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="60"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="64"/>
+        <location filename="../../stdfx/ino_density.cpp" line="31"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="51"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="66"/>
+        <location filename="../../stdfx/ino_hls_adjust.cpp" line="70"/>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="77"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="51"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="66"/>
+        <location filename="../../stdfx/ino_hsv_adjust.cpp" line="70"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="77"/>
+        <location filename="../../stdfx/ino_level_master.cpp" line="55"/>
+        <location filename="../../stdfx/ino_level_rgba.cpp" line="113"/>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="58"/>
+        <location filename="../../stdfx/ino_median.cpp" line="42"/>
+        <location filename="../../stdfx/ino_median.cpp" line="50"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="32"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="37"/>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="125"/>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="77"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="64"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="51"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="54"/>
+        <source>Alpha</source>
+        <translation type="unfinished">Alpha</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_blur.cpp" line="31"/>
+        <location filename="../../stdfx/ino_density.cpp" line="32"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="67"/>
+        <location filename="../../stdfx/ino_hls_adjust.cpp" line="71"/>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="78"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="67"/>
+        <location filename="../../stdfx/ino_hsv_adjust.cpp" line="71"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="78"/>
+        <location filename="../../stdfx/ino_level_master.cpp" line="56"/>
+        <location filename="../../stdfx/ino_level_rgba.cpp" line="114"/>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="59"/>
+        <location filename="../../stdfx/ino_median.cpp" line="51"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="38"/>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="126"/>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="78"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="65"/>
+        <source>Luminance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_blur.cpp" line="32"/>
+        <location filename="../../stdfx/ino_density.cpp" line="33"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="68"/>
+        <location filename="../../stdfx/ino_hls_adjust.cpp" line="72"/>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="79"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="68"/>
+        <location filename="../../stdfx/ino_hsv_adjust.cpp" line="72"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="79"/>
+        <location filename="../../stdfx/ino_level_master.cpp" line="57"/>
+        <location filename="../../stdfx/ino_level_rgba.cpp" line="115"/>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="60"/>
+        <location filename="../../stdfx/ino_median.cpp" line="52"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="39"/>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="127"/>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="79"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="66"/>
+        <source>Nothing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_common.cpp" line="390"/>
+        <location filename="../../stdfx/iwa_motionblurfx.cpp" line="622"/>
+        <location filename="../../stdfx/iwa_motionflowfx.cpp" line="30"/>
+        <source>Auto</source>
+        <translation type="unfinished">Automático</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_common.cpp" line="405"/>
+        <location filename="../../stdfx/iwa_corridorgradientfx.cpp" line="54"/>
+        <location filename="../../stdfx/iwa_directionalblurfx.cpp" line="109"/>
+        <location filename="../../stdfx/iwa_flowblurfx.cpp" line="352"/>
+        <location filename="../../stdfx/iwa_lineargradientfx.cpp" line="26"/>
+        <location filename="../../stdfx/iwa_spingradientfx.cpp" line="32"/>
+        <location filename="../../stdfx/stdfx.cpp" line="200"/>
+        <location filename="../../stdfx/stdfx.cpp" line="279"/>
+        <location filename="../../stdfx/stdfx.cpp" line="459"/>
+        <location filename="../../stdfx/stdfx.cpp" line="522"/>
+        <source>Linear</source>
+        <translation type="unfinished">Linear</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_common.cpp" line="406"/>
+        <source>Nonlinear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="36"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="36"/>
+        <source>Keep Noise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="73"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="73"/>
+        <source>Keep Contrast</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_line_blur.cpp" line="29"/>
+        <source>Blur</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_line_blur.cpp" line="53"/>
+        <source>Smudge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="25"/>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="80"/>
+        <source>Max</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="50"/>
+        <source>Min</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_median.cpp" line="43"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="33"/>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="106"/>
+        <source>All</source>
+        <translation type="unfinished">Todos</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="40"/>
+        <location filename="../../stdfx/iwa_textfx.cpp" line="22"/>
+        <source>Right</source>
+        <translation type="unfinished">Direita</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="94"/>
+        <source>Up</source>
+        <translation type="unfinished">Acima</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="95"/>
+        <location filename="../../stdfx/iwa_textfx.cpp" line="12"/>
+        <source>Left</source>
+        <translation type="unfinished">Esquerda</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="96"/>
+        <source>Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="43"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="32"/>
+        <source>Accelerator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="80"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="61"/>
+        <source>Uniform Length</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="60"/>
+        <source>Uniform Angle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_bloomfx.cpp" line="65"/>
+        <source>No Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_bloomfx.cpp" line="78"/>
+        <source>Light</source>
+        <translation type="unfinished">Luz</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_bloomfx.cpp" line="80"/>
+        <source>Light and Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_bokeh_util.cpp" line="1386"/>
+        <source>Gamma</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_bokeh_util.cpp" line="1396"/>
+        <source>Hardness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_corridorgradientfx.cpp" line="16"/>
+        <source>Quadrangle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_corridorgradientfx.cpp" line="50"/>
+        <source>Circle</source>
+        <translation type="unfinished">Círculo</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_corridorgradientfx.cpp" line="53"/>
+        <location filename="../../stdfx/iwa_lineargradientfx.cpp" line="15"/>
+        <location filename="../../stdfx/iwa_spingradientfx.cpp" line="31"/>
+        <location filename="../../stdfx/stdfx.cpp" line="199"/>
+        <location filename="../../stdfx/stdfx.cpp" line="278"/>
+        <location filename="../../stdfx/stdfx.cpp" line="458"/>
+        <location filename="../../stdfx/stdfx.cpp" line="521"/>
+        <source>Ease In-Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_corridorgradientfx.cpp" line="55"/>
+        <location filename="../../stdfx/iwa_lineargradientfx.cpp" line="27"/>
+        <location filename="../../stdfx/iwa_spingradientfx.cpp" line="33"/>
+        <location filename="../../stdfx/stdfx.cpp" line="201"/>
+        <location filename="../../stdfx/stdfx.cpp" line="280"/>
+        <location filename="../../stdfx/stdfx.cpp" line="460"/>
+        <location filename="../../stdfx/stdfx.cpp" line="523"/>
+        <source>Ease In</source>
+        <translation type="unfinished">Ease In</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_corridorgradientfx.cpp" line="56"/>
+        <location filename="../../stdfx/iwa_lineargradientfx.cpp" line="28"/>
+        <location filename="../../stdfx/iwa_spingradientfx.cpp" line="34"/>
+        <location filename="../../stdfx/stdfx.cpp" line="202"/>
+        <location filename="../../stdfx/stdfx.cpp" line="281"/>
+        <location filename="../../stdfx/stdfx.cpp" line="461"/>
+        <location filename="../../stdfx/stdfx.cpp" line="524"/>
+        <source>Ease Out</source>
+        <translation type="unfinished">Ease Out</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_directionalblurfx.cpp" line="122"/>
+        <location filename="../../stdfx/iwa_flowblurfx.cpp" line="369"/>
+        <source>Gaussian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_directionalblurfx.cpp" line="123"/>
+        <location filename="../../stdfx/iwa_flowblurfx.cpp" line="370"/>
+        <source>Flat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_floorbumpfx.cpp" line="354"/>
+        <source>Diffuse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_floorbumpfx.cpp" line="355"/>
+        <source>Specular</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_floorbumpfx.cpp" line="357"/>
+        <location filename="../../stdfx/iwa_pnperspectivefx.cpp" line="244"/>
+        <source>Fresnel reflectivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_floorbumpfx.cpp" line="359"/>
+        <source>Refraction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_floorbumpfx.cpp" line="361"/>
+        <source>Reflection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_flowblurfx.cpp" line="354"/>
+        <source>Reference Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_flowblurfx.cpp" line="374"/>
+        <source>Blue Channel of Flow Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_flowpaintbrushfx.cpp" line="257"/>
+        <source>Size - Smaller on Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_flowpaintbrushfx.cpp" line="258"/>
+        <source>Size - Larger on Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_flowpaintbrushfx.cpp" line="260"/>
+        <source>Brightness - Darker on Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_flowpaintbrushfx.cpp" line="262"/>
+        <source>Brightness - Brighter on Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="45"/>
+        <source>Filter Preview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="47"/>
+        <source>Input Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="74"/>
+        <source>Render</source>
+        <translation type="unfinished">Renderizar</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="75"/>
+        <source>Iris</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="78"/>
+        <source>4 Streaks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="79"/>
+        <source>6 Streaks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="80"/>
+        <source>8 Streaks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="82"/>
+        <source>Multiple Streaks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="90"/>
+        <source>Thin Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="92"/>
+        <source>Medium Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="94"/>
+        <source>Thick Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="96"/>
+        <source>Filled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_motionblurfx.cpp" line="655"/>
+        <source>Source is premultiplied</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_motionblurfx.cpp" line="658"/>
+        <source>Source is NOT premultiplied</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_motionflowfx.cpp" line="39"/>
+        <source>Manual</source>
+        <translation type="unfinished">Manual</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_pnperspectivefx.cpp" line="200"/>
+        <source>Noise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_pnperspectivefx.cpp" line="202"/>
+        <source>Perlin Noise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_pnperspectivefx.cpp" line="235"/>
+        <source>Simplex Noise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_pnperspectivefx.cpp" line="238"/>
+        <source>Noise (no resampled)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_pnperspectivefx.cpp" line="240"/>
+        <source>Warp HV offset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_pnperspectivefx.cpp" line="242"/>
+        <source>Warp HV offset 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_soapbubblefx.cpp" line="251"/>
+        <source>Bubble</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_soapbubblefx.cpp" line="276"/>
+        <source>Thickness</source>
+        <translation type="unfinished">Espessura</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_soapbubblefx.cpp" line="277"/>
+        <source>Depth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_textfx.cpp" line="23"/>
+        <source>Center</source>
+        <translation type="unfinished">Centro</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_textfx.cpp" line="24"/>
+        <source>Justify</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="63"/>
+        <source>Bounding Box</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="64"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="65"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="66"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="68"/>
+        <source>No Tile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="78"/>
+        <source>Camera Box</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="79"/>
+        <source>Image Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="82"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="87"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="97"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="102"/>
+        <source>1 Tile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="84"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="89"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="99"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="104"/>
+        <source>Multiple Tiles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_timecodefx.cpp" line="21"/>
+        <source>Frame Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/mosaicfx.cpp" line="199"/>
+        <source>Round</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/motionawarebasefx.h" line="34"/>
+        <location filename="../../stdfx/motionawarebasefx.h" line="74"/>
+        <source>Own Motion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/motionawarebasefx.h" line="42"/>
+        <location filename="../../stdfx/motionawarebasefx.h" line="80"/>
+        <source>Pegbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/motionawarebasefx.h" line="44"/>
+        <location filename="../../stdfx/motionawarebasefx.h" line="82"/>
+        <source>Table</source>
+        <translation type="unfinished">Mesa</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/motionawarebasefx.h" line="46"/>
+        <location filename="../../stdfx/motionawarebasefx.h" line="84"/>
+        <source>Camera</source>
+        <translation type="unfinished">Câmera</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="21"/>
+        <source>Lines &amp; Areas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="29"/>
+        <source>Lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="30"/>
+        <source>Areas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="31"/>
+        <source>Lines &amp; Areas (No Gap)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="32"/>
+        <source>Lines (Delete All Areas)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="33"/>
+        <source>Areas (Delete All Lines)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/stdfx.cpp" line="82"/>
+        <source>Archimedean</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/stdfx.cpp" line="105"/>
+        <source>Logarithmic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/tilefx.cpp" line="49"/>
+        <source>Tile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/tilefx.cpp" line="60"/>
+        <source>Tile Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/tilefx.cpp" line="62"/>
+        <source>Tile Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/globalcontrollablefx.h" line="20"/>
+        <source>Fx Intensity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QOpenGLShaderProgram</name>
+    <message>
+        <location filename="../../stdfx/shaderfx.cpp" line="304"/>
+        <source>This system configuration does not support OpenGL Pixel Buffers. Shader Fxs will not be able to render.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/shaderfx.cpp" line="310"/>
+        <source>This system configuration does not support OpenGL Shader Programs. Shader Fxs will not be able to render.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

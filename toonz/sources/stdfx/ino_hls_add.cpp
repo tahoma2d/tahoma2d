@@ -23,7 +23,7 @@ class ino_hls_add final : public GlobalControllableFx {
 
 public:
   ino_hls_add()
-      : m_from_rgba(new TIntEnumParam(0, "Red"))
+      : m_from_rgba(new TIntEnumParam(0, QObject::tr("Red").toStdString()))
       , m_offset(0.5 * ino::param_range())
       , m_hue(0.0 * ino::param_range())
       , m_lig(0.25 * ino::param_range())
@@ -31,7 +31,7 @@ public:
       , m_alp(0.0 * ino::param_range())
 
       , m_anti_alias(true)
-      , m_ref_mode(new TIntEnumParam(0, "Red")) {
+      , m_ref_mode(new TIntEnumParam(0, QObject::tr("Red").toStdString())) {
     addInputPort("Source", this->m_input);
     addInputPort("Noise", this->m_noise);
     addInputPort("Reference", this->m_refer);
@@ -46,9 +46,9 @@ public:
     bindParam(this, "anti_alias", this->m_anti_alias);
     bindParam(this, "reference", this->m_ref_mode);
 
-    this->m_from_rgba->addItem(1, "Green");
-    this->m_from_rgba->addItem(2, "Blue");
-    this->m_from_rgba->addItem(3, "Alpha");
+    this->m_from_rgba->addItem(1, QObject::tr("Green").toStdString());
+    this->m_from_rgba->addItem(2, QObject::tr("Blue").toStdString());
+    this->m_from_rgba->addItem(3, QObject::tr("Alpha").toStdString());
 
     this->m_offset->setValueRange(-1.0 * ino::param_range(),
                                   1.0 * ino::param_range());
@@ -61,11 +61,11 @@ public:
     this->m_alp->setValueRange(-1.0 * ino::param_range(),
                                1.0 * ino::param_range());
 
-    this->m_ref_mode->addItem(1, "Green");
-    this->m_ref_mode->addItem(2, "Blue");
-    this->m_ref_mode->addItem(3, "Alpha");
-    this->m_ref_mode->addItem(4, "Luminance");
-    this->m_ref_mode->addItem(-1, "Nothing");
+    this->m_ref_mode->addItem(1, QObject::tr("Green").toStdString());
+    this->m_ref_mode->addItem(2, QObject::tr("Blue").toStdString());
+    this->m_ref_mode->addItem(3, QObject::tr("Alpha").toStdString());
+    this->m_ref_mode->addItem(4, QObject::tr("Luminance").toStdString());
+    this->m_ref_mode->addItem(-1, QObject::tr("Nothing").toStdString());
 
     enableComputeInFloat(true);
   }

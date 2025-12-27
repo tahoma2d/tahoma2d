@@ -13,7 +13,7 @@
 //------------------------------------------------------------
 
 Iwa_CorridorGradientFx::Iwa_CorridorGradientFx()
-    : m_shape(new TIntEnumParam(0, "Quadrangle"))
+    : m_shape(new TIntEnumParam(0, QObject::tr("Quadrangle").toStdString()))
     , m_innerColor(TPixel32::White)
     , m_outerColor(TPixel32::Black)
     , m_curveType(new TIntEnumParam()) {
@@ -47,13 +47,13 @@ Iwa_CorridorGradientFx::Iwa_CorridorGradientFx()
     }
   }
 
-  m_shape->addItem(1, "Circle");
+  m_shape->addItem(1, QObject::tr("Circle").toStdString());
   bindParam(this, "shape", m_shape);
 
-  m_curveType->addItem(EaseInOut, "Ease In-Out");
-  m_curveType->addItem(Linear, "Linear");
-  m_curveType->addItem(EaseIn, "Ease In");
-  m_curveType->addItem(EaseOut, "Ease Out");
+  m_curveType->addItem(EaseInOut, QObject::tr("Ease In-Out").toStdString());
+  m_curveType->addItem(Linear, QObject::tr("Linear").toStdString());
+  m_curveType->addItem(EaseIn, QObject::tr("Ease In").toStdString());
+  m_curveType->addItem(EaseOut, QObject::tr("Ease Out").toStdString());
   m_curveType->setDefaultValue(Linear);
   m_curveType->setValue(Linear);
   bindParam(this, "curveType", m_curveType);

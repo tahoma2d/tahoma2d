@@ -22,7 +22,7 @@ class ino_maxmin final : public TStandardRasterFx {
 
 public:
   ino_maxmin()
-      : m_max_min_select(new TIntEnumParam(0, "Max"))
+      : m_max_min_select(new TIntEnumParam(0, QObject::tr("Max").toStdString()))
       , m_radius(1.0)
       /*	1mmにしたければ 1.0 * 640. / 12. / 25.4 とする
             0.35    = mm = ユーザ指定の初期値
@@ -47,17 +47,17 @@ public:
 
     bindParam(this, "reference", this->m_ref_mode);
 
-    this->m_max_min_select->addItem(1, "Min");
+    this->m_max_min_select->addItem(1, QObject::tr("Min").toStdString());
     this->m_radius->setValueRange(0.0, 100.0);
     this->m_polygon_number->setValueRange(2.0, 16.0);
     this->m_degree->setValueRange(0.0, std::numeric_limits<double>::max());
 
-    this->m_ref_mode->addItem(0, "Red");
-    this->m_ref_mode->addItem(1, "Green");
-    this->m_ref_mode->addItem(2, "Blue");
-    this->m_ref_mode->addItem(3, "Alpha");
-    this->m_ref_mode->addItem(4, "Luminance");
-    this->m_ref_mode->addItem(-1, "Nothing");
+    this->m_ref_mode->addItem(0, QObject::tr("Red").toStdString());
+    this->m_ref_mode->addItem(1, QObject::tr("Green").toStdString());
+    this->m_ref_mode->addItem(2, QObject::tr("Blue").toStdString());
+    this->m_ref_mode->addItem(3, QObject::tr("Alpha").toStdString());
+    this->m_ref_mode->addItem(4, QObject::tr("Luminance").toStdString());
+    this->m_ref_mode->addItem(-1, QObject::tr("Nothing").toStdString());
     this->m_ref_mode->setDefaultValue(0);
     this->m_ref_mode->setValue(0);
 

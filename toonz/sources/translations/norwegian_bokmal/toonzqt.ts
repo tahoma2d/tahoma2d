@@ -1609,37 +1609,37 @@ Select FX nodes and related links before copying or cutting the selection you wa
 <context>
     <name>FxSettings</name>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1346"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1345"/>
         <source>&amp;Camera Preview</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1352"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1351"/>
         <source>&amp;Preview</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1365"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1364"/>
         <source>&amp;White Background</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1373"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1372"/>
         <source>&amp;Black Background</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1380"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1379"/>
         <source>&amp;Checkered Background</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1465"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1464"/>
         <source>Fx Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1467"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1466"/>
         <source> : </source>
         <translation type="unfinished"></translation>
     </message>
@@ -2247,7 +2247,7 @@ It can&apos;t be changed.  Ever.</source>
 <context>
     <name>ParamViewer</name>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1077"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1076"/>
         <source>Swatch Viewer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2255,12 +2255,12 @@ It can&apos;t be changed.  Ever.</source>
 <context>
     <name>ParamsPageSet</name>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="715"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="714"/>
         <source>View help page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1057"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1056"/>
         <source>This Fx does not support rendering in floating point channel width (32bit).
 The output pixel values from this fx will be clamped to 0.0 - 1.0
 and tone may be slightly discretized.</source>

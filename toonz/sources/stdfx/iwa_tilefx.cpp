@@ -60,11 +60,12 @@ private:
 //------------------------------------------------------------------------------
 
 Iwa_TileFx::Iwa_TileFx()
-    : m_inputSizeMode(new TIntEnumParam(eBoundingBox, "Bounding Box"))
-    , m_leftQuantity(new TIntEnumParam(eNoTile, "No Tile"))
-    , m_rightQuantity(new TIntEnumParam(eNoTile, "No Tile"))
-    , m_topQuantity(new TIntEnumParam(eNoTile, "No Tile"))
-    , m_bottomQuantity(new TIntEnumParam(eNoTile, "No Tile"))
+    : m_inputSizeMode(new TIntEnumParam(eBoundingBox, QObject::tr("Bounding Box").toStdString()))
+    , m_leftQuantity(new TIntEnumParam(eNoTile, QObject::tr("No Tile").toStdString()))
+    , m_rightQuantity(new TIntEnumParam(eNoTile, QObject::tr("No Tile").toStdString()))
+    , m_topQuantity(new TIntEnumParam(eNoTile, QObject::tr("No Tile").toStdString()))
+    , m_bottomQuantity(
+          new TIntEnumParam(eNoTile, QObject::tr("No Tile").toStdString()))
     , m_xMirror(false)
     , m_yMirror(false)
     , m_hmargin(
@@ -74,16 +75,18 @@ Iwa_TileFx::Iwa_TileFx()
   addInputPort("Source", m_input);
 
   bindParam(this, "inputSize", m_inputSizeMode);
-  m_inputSizeMode->addItem(eCameraBox, "Camera Box");
-  m_inputSizeMode->addItem(eImageSize, "Image Size");
+  m_inputSizeMode->addItem(eCameraBox, QObject::tr("Camera Box").toStdString());
+  m_inputSizeMode->addItem(eImageSize, QObject::tr("Image Size").toStdString());
 
   bindParam(this, "leftQuantity", m_leftQuantity);
-  m_leftQuantity->addItem(eOneTile, "1 Tile");
-  m_leftQuantity->addItem(eMultipleTiles, "Multiple Tiles");
+  m_leftQuantity->addItem(eOneTile, QObject::tr("1 Tile").toStdString());
+  m_leftQuantity->addItem(eMultipleTiles,
+                          QObject::tr("Multiple Tiles").toStdString());
 
   bindParam(this, "rightQuantity", m_rightQuantity);
-  m_rightQuantity->addItem(eOneTile, "1 Tile");
-  m_rightQuantity->addItem(eMultipleTiles, "Multiple Tiles");
+  m_rightQuantity->addItem(eOneTile, QObject::tr("1 Tile").toStdString());
+  m_rightQuantity->addItem(eMultipleTiles,
+                           QObject::tr("Multiple Tiles").toStdString());
 
   bindParam(this, "xMirror", m_xMirror);
 
@@ -91,12 +94,14 @@ Iwa_TileFx::Iwa_TileFx()
   m_hmargin->setMeasureName("fxLength");
 
   bindParam(this, "topQuantity", m_topQuantity);
-  m_topQuantity->addItem(eOneTile, "1 Tile");
-  m_topQuantity->addItem(eMultipleTiles, "Multiple Tiles");
+  m_topQuantity->addItem(eOneTile, QObject::tr("1 Tile").toStdString());
+  m_topQuantity->addItem(eMultipleTiles,
+                         QObject::tr("Multiple Tiles").toStdString());
 
   bindParam(this, "bottomQuantity", m_bottomQuantity);
-  m_bottomQuantity->addItem(eOneTile, "1 Tile");
-  m_bottomQuantity->addItem(eMultipleTiles, "Multiple Tiles");
+  m_bottomQuantity->addItem(eOneTile, QObject::tr("1 Tile").toStdString());
+  m_bottomQuantity->addItem(eMultipleTiles,
+                            QObject::tr("Multiple Tiles").toStdString());
 
   bindParam(this, "yMirror", m_yMirror);
 

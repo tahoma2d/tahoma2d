@@ -1383,7 +1383,7 @@ Iwa_BokehCommonFx::Iwa_BokehCommonFx()
     , m_hardness(0.3)
     , m_gamma(2.2)
     , m_gammaAdjust(0.)
-    , m_linearizeMode(new TIntEnumParam(Gamma, "Gamma")) {
+    , m_linearizeMode(new TIntEnumParam(Gamma, QObject::tr("Gamma").toStdString())) {
   addInputPort("Iris", m_iris);
 
   // Set the ranges of common parameters
@@ -1393,7 +1393,7 @@ Iwa_BokehCommonFx::Iwa_BokehCommonFx()
   m_hardness->setValueRange(0.05, 3.0);
   m_gamma->setValueRange(1.0, 10.0);
   m_gammaAdjust->setValueRange(-5., 5.);
-  m_linearizeMode->addItem(Hardness, "Hardness");
+  m_linearizeMode->addItem(Hardness, QObject::tr("Hardness").toStdString());
 }
 
 //--------------------------------------------

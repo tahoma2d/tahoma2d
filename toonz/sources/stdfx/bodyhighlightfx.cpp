@@ -345,7 +345,7 @@ class BodyHighLightFx final : public TStandardRasterFx {
 public:
   BodyHighLightFx()
       : m_point(TPointD(10.0, 10.0))
-      , m_mode(new TIntEnumParam(OVER, "Over"))
+      , m_mode(new TIntEnumParam(OVER, QObject::tr("Over").toStdString()))
       , m_transparency(0.5)
       , m_blur(2.0)
       , m_color(TPixel32::White)
@@ -364,11 +364,11 @@ public:
     m_blur->setValueRange(0, (std::numeric_limits<double>::max)());
     m_color->enableMatte(false);
 
-    m_mode->addItem(ADD, "Add");
-    m_mode->addItem(SUBTRACT, "Subtract");
-    m_mode->addItem(MULTIPLY, "Multiply");
-    m_mode->addItem(LIGHTEN, "Lighten");
-    m_mode->addItem(DARKEN, "Darken");
+    m_mode->addItem(ADD, QObject::tr("Add").toStdString());
+    m_mode->addItem(SUBTRACT, QObject::tr("Subtract").toStdString());
+    m_mode->addItem(MULTIPLY, QObject::tr("Multiply").toStdString());
+    m_mode->addItem(LIGHTEN, QObject::tr("Lighten").toStdString());
+    m_mode->addItem(DARKEN, QObject::tr("Darken").toStdString());
   }
 
   ~BodyHighLightFx(){};

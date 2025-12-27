@@ -42,8 +42,9 @@ inline int getCoord(int i, int j, int lx, int ly) {
 
 Iwa_GlareFx::Iwa_GlareFx()
     : m_renderMode(
-          new TIntEnumParam(RenderMode_FilterPreview, "Filter Preview"))
-    , m_irisMode(new TIntEnumParam(Iris_InputImage, "Input Image"))
+          new TIntEnumParam(RenderMode_FilterPreview, QObject::tr("Filter Preview").toStdString()))
+    , m_irisMode(new TIntEnumParam(Iris_InputImage,
+                                   QObject::tr("Input Image").toStdString()))
     , m_irisScale(0.2)
     , m_irisGearEdgeCount(10)
     , m_irisRandomSeed(0)
@@ -70,24 +71,29 @@ Iwa_GlareFx::Iwa_GlareFx()
   addInputPort("Iris", m_iris);
 
   bindParam(this, "renderMode", m_renderMode);
-  m_renderMode->addItem(RenderMode_Render, "Render");
-  m_renderMode->addItem(RenderMode_Iris, "Iris");
+  m_renderMode->addItem(RenderMode_Render, QObject::tr("Render").toStdString());
+  m_renderMode->addItem(RenderMode_Iris, QObject::tr("Iris").toStdString());
 
   bindParam(this, "irisMode", m_irisMode);
-  m_irisMode->addItem(Iris_Square, "4 Streaks");
-  m_irisMode->addItem(Iris_Hexagon, "6 Streaks");
-  m_irisMode->addItem(Iris_Octagon, "8 Streaks");
-  m_irisMode->addItem(Iris_GearShape, "Multiple Streaks");
+  m_irisMode->addItem(Iris_Square, QObject::tr("4 Streaks").toStdString());
+  m_irisMode->addItem(Iris_Hexagon, QObject::tr("6 Streaks").toStdString());
+  m_irisMode->addItem(Iris_Octagon, QObject::tr("8 Streaks").toStdString());
+  m_irisMode->addItem(Iris_GearShape,
+                      QObject::tr("Multiple Streaks").toStdString());
 
   bindParam(this, "irisScale", m_irisScale);
   bindParam(this, "irisGearEdgeCount", m_irisGearEdgeCount);
   bindParam(this, "irisRandomSeed", m_irisRandomSeed);
   bindParam(this, "irisSymmetry", m_irisSymmetry);
   bindParam(this, "irisAppearance", m_irisAppearance);
-  m_irisAppearance->addItem(Appearance_ThinLine, "Thin Line");
-  m_irisAppearance->addItem(Appearance_MediumLine, "Medium Line");
-  m_irisAppearance->addItem(Appearance_ThickLine, "Thick Line");
-  m_irisAppearance->addItem(Appearance_Fill, "Filled");
+  m_irisAppearance->addItem(Appearance_ThinLine,
+                            QObject::tr("Thin Line").toStdString());
+  m_irisAppearance->addItem(Appearance_MediumLine,
+                            QObject::tr("Medium Line").toStdString());
+  m_irisAppearance->addItem(Appearance_ThickLine,
+                            QObject::tr("Thick Line").toStdString());
+  m_irisAppearance->addItem(Appearance_Fill,
+                            QObject::tr("Filled").toStdString());
   m_irisAppearance->setValue(Appearance_MediumLine);
 
   bindParam(this, "intensity", m_intensity, false);

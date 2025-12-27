@@ -36,20 +36,20 @@ public:
     this->m_radius->setValueRange(0, 100.0 * 640. / 12. / 25.4);
     /* 最小値は0mm,最大値は100mm */
 
-    this->m_channel->addItem(0, "Red");
-    this->m_channel->addItem(1, "Green");
-    this->m_channel->addItem(2, "Blue");
-    this->m_channel->addItem(3, "Alpha");
-    this->m_channel->addItem(4, "All");
+    this->m_channel->addItem(0, QObject::tr("Red").toStdString());
+    this->m_channel->addItem(1, QObject::tr("Green").toStdString());
+    this->m_channel->addItem(2, QObject::tr("Blue").toStdString());
+    this->m_channel->addItem(3, QObject::tr("Alpha").toStdString());
+    this->m_channel->addItem(4, QObject::tr("All").toStdString());
     this->m_channel->setDefaultValue(4);
     this->m_channel->setValue(4);
 
-    this->m_ref_mode->addItem(0, "Red");
-    this->m_ref_mode->addItem(1, "Green");
-    this->m_ref_mode->addItem(2, "Blue");
-    this->m_ref_mode->addItem(3, "Alpha");
-    this->m_ref_mode->addItem(4, "Luminance");
-    this->m_ref_mode->addItem(-1, "Nothing");
+    this->m_ref_mode->addItem(0, QObject::tr("Red").toStdString());
+    this->m_ref_mode->addItem(1, QObject::tr("Green").toStdString());
+    this->m_ref_mode->addItem(2, QObject::tr("Blue").toStdString());
+    this->m_ref_mode->addItem(3, QObject::tr("Alpha").toStdString());
+    this->m_ref_mode->addItem(4, QObject::tr("Luminance").toStdString());
+    this->m_ref_mode->addItem(-1, QObject::tr("Nothing").toStdString());
     this->m_ref_mode->setDefaultValue(0);
     this->m_ref_mode->setValue(0);
   }

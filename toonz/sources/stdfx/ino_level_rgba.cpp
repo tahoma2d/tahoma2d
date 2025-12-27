@@ -47,7 +47,7 @@ public:
       , m_alp_gamma(1.0 * ino::param_range())
 
       , m_anti_alias(true)
-      , m_ref_mode(new TIntEnumParam(0, "Red")) {
+      , m_ref_mode(new TIntEnumParam(0, QObject::tr("Red").toStdString())) {
     addInputPort("Source", this->m_input);
     addInputPort("Reference", this->m_refer);
 
@@ -108,11 +108,11 @@ public:
     this->m_alp_gamma->setValueRange(
         0.1 * ino::param_range(), 10.0 * ino::param_range()); /* alp_gamma値 */
 
-    this->m_ref_mode->addItem(1, "Green");
-    this->m_ref_mode->addItem(2, "Blue");
-    this->m_ref_mode->addItem(3, "Alpha");
-    this->m_ref_mode->addItem(4, "Luminance");
-    this->m_ref_mode->addItem(-1, "Nothing");
+    this->m_ref_mode->addItem(1, QObject::tr("Green").toStdString());
+    this->m_ref_mode->addItem(2, QObject::tr("Blue").toStdString());
+    this->m_ref_mode->addItem(3, QObject::tr("Alpha").toStdString());
+    this->m_ref_mode->addItem(4, QObject::tr("Luminance").toStdString());
+    this->m_ref_mode->addItem(-1, QObject::tr("Nothing").toStdString());
 
     enableComputeInFloat(true);
   }

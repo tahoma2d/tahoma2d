@@ -27,7 +27,7 @@ double getSizePixelAmount(const double val, const TAffine affine) {
 //------------------------------------------------------------
 
 Iwa_MotionFlowFx::Iwa_MotionFlowFx()
-    : m_normalizeType(new TIntEnumParam(NORMALIZE_AUTO, "Auto"))
+    : m_normalizeType(new TIntEnumParam(NORMALIZE_AUTO, QObject::tr("Auto").toStdString()))
     , m_normalizeRange(1.0) {
   bindParam(this, "shutterLength", m_shutterLength);
   bindParam(this, "motionObjectType", m_motionObjectType);
@@ -35,7 +35,8 @@ Iwa_MotionFlowFx::Iwa_MotionFlowFx()
   bindParam(this, "normalizeType", m_normalizeType);
   bindParam(this, "normalizeRange", m_normalizeRange);
 
-  m_normalizeType->addItem(NORMALIZE_MANUAL, "Manual");
+  m_normalizeType->addItem(NORMALIZE_MANUAL,
+                           QObject::tr("Manual").toStdString());
   m_normalizeRange->setMeasureName("fxLength");
   m_normalizeRange->setValueRange(0.01, 1000.0);
 

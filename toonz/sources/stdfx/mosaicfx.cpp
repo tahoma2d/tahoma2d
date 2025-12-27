@@ -186,7 +186,7 @@ public:
       : m_size(10.0)
       , m_distance(10.0)
       , m_bgcolor(TPixel32::Transparent)
-      , m_shape(new TIntEnumParam(0, "Square")) {
+      , m_shape(new TIntEnumParam(0, QObject::tr("Square").toStdString())) {
     m_size->setMeasureName("fxLength");
     m_distance->setMeasureName("fxLength");
     bindParam(this, "size", m_size);
@@ -196,7 +196,7 @@ public:
     addInputPort("Source", m_input);
     m_size->setValueRange(0.0, (std::numeric_limits<double>::max)());
     m_distance->setValueRange(0.0, (std::numeric_limits<double>::max)());
-    m_shape->addItem(1, "Round");
+    m_shape->addItem(1, QObject::tr("Round").toStdString());
   }
 
   ~MosaicFx(){};

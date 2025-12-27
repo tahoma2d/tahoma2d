@@ -15082,6 +15082,553 @@ Details:
         <source>Move Loop End Marker</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Younger</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hold Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation type="unfinished">Cinta - Suavizar</translation>
+    </message>
+    <message>
+        <source>Older</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smaller</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bigger</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Random Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Column - Random Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Column Swing - Random Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Over</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished">Agregar</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Multiply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lighten</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Darken</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clouds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Marble/Wood</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Perspective</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation type="unfinished">Textura</translation>
+    </message>
+    <message>
+        <source>Keep</source>
+        <translation type="unfinished">Mantener</translation>
+    </message>
+    <message>
+        <source>Pattern</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bilinear</source>
+        <translation type="unfinished">Bilineal</translation>
+    </message>
+    <message>
+        <source>Transparent Bg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>White Bg</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Square</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Circular</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation type="unfinished">Rojo</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation type="unfinished">Verde</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation type="unfinished">Azul</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation type="unfinished">Alfa</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto</source>
+        <translation type="unfinished">Auto</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation type="unfinished">Lineal</translation>
+    </message>
+    <message>
+        <source>Nonlinear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keep Noise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keep Contrast</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blur</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smudge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Max</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Min</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Right</source>
+        <translation type="unfinished">Derecha</translation>
+    </message>
+    <message>
+        <source>Up</source>
+        <translation type="unfinished">Arriba</translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation type="unfinished">Izquierda</translation>
+    </message>
+    <message>
+        <source>Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Accelerator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Uniform Length</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Uniform Angle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation type="unfinished">Luz</translation>
+    </message>
+    <message>
+        <source>Light and Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gamma</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hardness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quadrangle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation type="unfinished">Círculo</translation>
+    </message>
+    <message>
+        <source>Ease In-Out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation type="unfinished">Desaceleración suave</translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation type="unfinished">Aceleración suave</translation>
+    </message>
+    <message>
+        <source>Gaussian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Flat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Diffuse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Specular</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fresnel reflectivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refraction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reflection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reference Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blue Channel of Flow Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Size - Smaller on Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Size - Larger on Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brightness - Darker on Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brightness - Brighter on Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Basic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Block</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turbulent Smooth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turbulent Basic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turbulent Sharp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dynamic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dynamic Twist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rocky</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filter Preview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Render</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Iris</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>4 Streaks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>6 Streaks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>8 Streaks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Multiple Streaks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thin Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Medium Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thick Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Source is premultiplied</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Source is NOT premultiplied</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manual</source>
+        <translation type="unfinished">Pellizcar - Manual</translation>
+    </message>
+    <message>
+        <source>Particles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Illuminated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Perlin Noise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Simplex Noise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Noise (no resampled)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warp HV offset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warp HV offset 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bubble</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thickness</source>
+        <translation type="unfinished">Grosor</translation>
+    </message>
+    <message>
+        <source>Depth</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Center</source>
+        <translation type="unfinished">Centro</translation>
+    </message>
+    <message>
+        <source>Justify</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bounding Box</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Tile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera Box</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1 Tile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Multiple Tiles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Frame Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Round</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Own Motion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pegbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Table</source>
+        <translation type="unfinished">Mesa</translation>
+    </message>
+    <message>
+        <source>Camera</source>
+        <translation type="unfinished">Cámara</translation>
+    </message>
+    <message>
+        <source>Lines &amp; Areas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Areas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lines &amp; Areas (No Gap)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lines (Delete All Areas)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Areas (Delete All Lines)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Archimedean</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Logarithmic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tile Horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tile Vertically</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fx Intensity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QOpenGLShaderProgram</name>
+    <message>
+        <source>This system configuration does not support OpenGL Pixel Buffers. Shader Fxs will not be able to render.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This system configuration does not support OpenGL Shader Programs. Shader Fxs will not be able to render.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ReframePopup</name>

@@ -31,15 +31,19 @@ public:
       : m_shutterStart(0.05)
       , m_shutterEnd(0.05)
       , m_traceResolution(4)
-      , m_motionObjectType(new TIntEnumParam(OBJTYPE_OWN, "Own Motion"))
+      , m_motionObjectType(new TIntEnumParam(OBJTYPE_OWN, QObject::tr("Own Motion").toStdString()))
       , m_motionObjectIndex(1) {
     m_shutterStart->setValueRange(0.0, 1.0);
     m_shutterEnd->setValueRange(0.0, 1.0);
     m_traceResolution->setValueRange(1, 20);
-    m_motionObjectType->addItem(OBJTYPE_COLUMN, "Column");
-    m_motionObjectType->addItem(OBJTYPE_PEGBAR, "Pegbar");
-    m_motionObjectType->addItem(OBJTYPE_TABLE, "Table");
-    m_motionObjectType->addItem(OBJTYPE_CAMERA, "Camera");
+    m_motionObjectType->addItem(OBJTYPE_COLUMN,
+                                QObject::tr("Column").toStdString());
+    m_motionObjectType->addItem(OBJTYPE_PEGBAR,
+                                QObject::tr("Pegbar").toStdString());
+    m_motionObjectType->addItem(OBJTYPE_TABLE,
+                                QObject::tr("Table").toStdString());
+    m_motionObjectType->addItem(OBJTYPE_CAMERA,
+                                QObject::tr("Camera").toStdString());
 
     getAttributes()->setIsSpeedAware(true);
   }
@@ -66,13 +70,18 @@ protected:
 public:
   MotionAwareAffineFx()
       : m_shutterLength(0.1)
-      , m_motionObjectType(new TIntEnumParam(OBJTYPE_OWN, "Own Motion"))
+      , m_motionObjectType(new TIntEnumParam(
+            OBJTYPE_OWN, QObject::tr("Own Motion").toStdString()))
       , m_motionObjectIndex(1) {
     m_shutterLength->setValueRange(0.01, 1.0);
-    m_motionObjectType->addItem(OBJTYPE_COLUMN, "Column");
-    m_motionObjectType->addItem(OBJTYPE_PEGBAR, "Pegbar");
-    m_motionObjectType->addItem(OBJTYPE_TABLE, "Table");
-    m_motionObjectType->addItem(OBJTYPE_CAMERA, "Camera");
+    m_motionObjectType->addItem(OBJTYPE_COLUMN,
+                                QObject::tr("Column").toStdString());
+    m_motionObjectType->addItem(OBJTYPE_PEGBAR,
+                                QObject::tr("Pegbar").toStdString());
+    m_motionObjectType->addItem(OBJTYPE_TABLE,
+                                QObject::tr("Table").toStdString());
+    m_motionObjectType->addItem(OBJTYPE_CAMERA,
+                                QObject::tr("Camera").toStdString());
 
     getAttributes()->setIsSpeedAware(true);
   }

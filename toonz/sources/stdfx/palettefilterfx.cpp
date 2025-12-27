@@ -18,21 +18,21 @@ class PaletteFilterFx final : public GlobalControllableFx {
 public:
   PaletteFilterFx()
       : m_string(L"1,2,3")
-      , m_type(new TIntEnumParam(0, "Lines & Areas"))
-      , m_keep(new TIntEnumParam(0, "Delete"))
+      , m_type(new TIntEnumParam(0, QObject::tr("Lines & Areas").toStdString()))
+      , m_keep(new TIntEnumParam(0, QObject::tr("Delete").toStdString()))
 
   {
     addInputPort("Source", m_input);
     bindParam(this, "indexes", m_string);
     bindParam(this, "keep", m_keep);
     bindParam(this, "type", m_type);
-    m_type->addItem(1, "Lines");
-    m_type->addItem(2, "Areas");
-    m_type->addItem(3, "Lines & Areas (No Gap)");
-    m_type->addItem(4, "Lines (Delete All Areas)");
-    m_type->addItem(5, "Areas (Delete All Lines)");
+    m_type->addItem(1, QObject::tr("Lines").toStdString());
+    m_type->addItem(2, QObject::tr("Areas").toStdString());
+    m_type->addItem(3, QObject::tr("Lines & Areas (No Gap)").toStdString());
+    m_type->addItem(4, QObject::tr("Lines (Delete All Areas)").toStdString());
+    m_type->addItem(5, QObject::tr("Areas (Delete All Lines)").toStdString());
 
-    m_keep->addItem(1, "Keep");
+    m_keep->addItem(1, QObject::tr("Keep").toStdString());
   }
 
   ~PaletteFilterFx(){};

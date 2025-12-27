@@ -17,8 +17,8 @@ class ino_median_filter final : public TStandardRasterFx {
 public:
   ino_median_filter()
       : m_radius(1.7)
-      , m_channel(new TIntEnumParam(0, "Red"))
-      , m_ref_mode(new TIntEnumParam(0, "Red")) {
+      , m_channel(new TIntEnumParam(0, QObject::tr("Red").toStdString()))
+      , m_ref_mode(new TIntEnumParam(0, QObject::tr("Red").toStdString())) {
     addInputPort("Source", this->m_input);
     addInputPort("Reference", this->m_refer);
 
@@ -27,16 +27,16 @@ public:
     bindParam(this, "reference", this->m_ref_mode);
 
     this->m_radius->setValueRange(0, 1000.0);
-    this->m_channel->addItem(1, "Green");
-    this->m_channel->addItem(2, "Blue");
-    this->m_channel->addItem(3, "Alpha");
-    this->m_channel->addItem(4, "All");
+    this->m_channel->addItem(1, QObject::tr("Green").toStdString());
+    this->m_channel->addItem(2, QObject::tr("Blue").toStdString());
+    this->m_channel->addItem(3, QObject::tr("Alpha").toStdString());
+    this->m_channel->addItem(4, QObject::tr("All").toStdString());
 
-    this->m_ref_mode->addItem(1, "Green");
-    this->m_ref_mode->addItem(2, "Blue");
-    this->m_ref_mode->addItem(3, "Alpha");
-    this->m_ref_mode->addItem(4, "Luminance");
-    this->m_ref_mode->addItem(-1, "Nothing");
+    this->m_ref_mode->addItem(1, QObject::tr("Green").toStdString());
+    this->m_ref_mode->addItem(2, QObject::tr("Blue").toStdString());
+    this->m_ref_mode->addItem(3, QObject::tr("Alpha").toStdString());
+    this->m_ref_mode->addItem(4, QObject::tr("Luminance").toStdString());
+    this->m_ref_mode->addItem(-1, QObject::tr("Nothing").toStdString());
   }
   bool doGetBBox(double frame, TRectD &bBox,
                  const TRenderSettings &info) override {

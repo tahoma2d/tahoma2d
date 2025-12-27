@@ -9,7 +9,7 @@
 
 Iwa_TextFx::Iwa_TextFx()
     : m_text(L"Lorem ipsum")
-    , m_hAlign(new TIntEnumParam(Qt::AlignLeft, "Left"))
+    , m_hAlign(new TIntEnumParam(Qt::AlignLeft, QObject::tr("Left").toStdString()))
     , m_center(TPointD(0.0, 0.0))
     , m_width(200.0)
     , m_height(60.0)
@@ -19,9 +19,9 @@ Iwa_TextFx::Iwa_TextFx()
     , m_showBorder(false) {
   m_targetType->setValue(INPUT_TEXT);
 
-  m_hAlign->addItem(Qt::AlignRight, "Right");
-  m_hAlign->addItem(Qt::AlignHCenter, "Center");
-  m_hAlign->addItem(Qt::AlignJustify, "Justify");
+  m_hAlign->addItem(Qt::AlignRight, QObject::tr("Right").toStdString());
+  m_hAlign->addItem(Qt::AlignHCenter, QObject::tr("Center").toStdString());
+  m_hAlign->addItem(Qt::AlignJustify, QObject::tr("Justify").toStdString());
 
   m_text->setMultiLineEnabled(true);
 

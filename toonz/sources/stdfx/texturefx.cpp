@@ -22,9 +22,10 @@ class TextureFx final : public TStandardRasterFx {
 public:
   TextureFx()
       : m_string(L"1,2,3")
-      , m_keep(new TIntEnumParam(0, "Delete"))
+      , m_keep(new TIntEnumParam(0, QObject::tr("Delete").toStdString()))
       //, m_type(new TIntEnumParam(0, "Lines & Areas"))
-      , m_mode(new TIntEnumParam(SUBSTITUTE, "Texture"))
+      , m_mode(
+            new TIntEnumParam(SUBSTITUTE, QObject::tr("Texture").toStdString()))
       , m_value(100) {
     addInputPort("Source", m_input);
     addInputPort("Texture", m_texture);
@@ -34,15 +35,15 @@ public:
     // bindParam(this,"type",  m_type);
     bindParam(this, "value", m_value);
     m_value->setValueRange(0, 100);
-    m_keep->addItem(1, "Keep");
+    m_keep->addItem(1, QObject::tr("Keep").toStdString());
     // m_type->addItem(1, "Lines");
     // m_type->addItem(2, "Areas");
-    m_mode->addItem(PATTERNTYPE, "Pattern");
-    m_mode->addItem(ADD, "Add");
-    m_mode->addItem(SUBTRACT, "Subtract");
-    m_mode->addItem(MULTIPLY, "Multiply");
-    m_mode->addItem(LIGHTEN, "Lighten");
-    m_mode->addItem(DARKEN, "Darken");
+    m_mode->addItem(PATTERNTYPE, QObject::tr("Pattern").toStdString());
+    m_mode->addItem(ADD, QObject::tr("Add").toStdString());
+    m_mode->addItem(SUBTRACT, QObject::tr("Subtract").toStdString());
+    m_mode->addItem(MULTIPLY, QObject::tr("Multiply").toStdString());
+    m_mode->addItem(LIGHTEN, QObject::tr("Lighten").toStdString());
+    m_mode->addItem(DARKEN, QObject::tr("Darken").toStdString());
   }
 
   ~TextureFx(){};

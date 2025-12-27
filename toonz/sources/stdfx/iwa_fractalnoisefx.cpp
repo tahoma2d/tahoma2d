@@ -41,8 +41,8 @@ const double evolutionOffsetStepW = 31.1;
 //------------------------------------------------------------------
 
 Iwa_FractalNoiseFx::Iwa_FractalNoiseFx()
-    : m_fractalType(new TIntEnumParam(Basic, "Basic"))
-    , m_noiseType(new TIntEnumParam(Block, "Block"))
+    : m_fractalType(new TIntEnumParam(Basic, QObject::tr("Basic").toStdString()))
+    , m_noiseType(new TIntEnumParam(Block, QObject::tr("Block").toStdString()))
     , m_invert(false)
     , m_rotation(0.0)
     , m_uniformScaling(true)
@@ -68,15 +68,19 @@ Iwa_FractalNoiseFx::Iwa_FractalNoiseFx()
     , m_conicalAngle(60.0)
     , m_cameraFov(60.0)
     , m_zScale(2.0) {
-  m_fractalType->addItem(TurbulentSmooth, "Turbulent Smooth");
-  m_fractalType->addItem(TurbulentBasic, "Turbulent Basic");
-  m_fractalType->addItem(TurbulentSharp, "Turbulent Sharp");
-  m_fractalType->addItem(Dynamic, "Dynamic");
-  m_fractalType->addItem(DynamicTwist, "Dynamic Twist");
-  m_fractalType->addItem(Max, "Max");
-  m_fractalType->addItem(Rocky, "Rocky");
+  m_fractalType->addItem(TurbulentSmooth,
+                         QObject::tr("Turbulent Smooth").toStdString());
+  m_fractalType->addItem(TurbulentBasic,
+                         QObject::tr("Turbulent Basic").toStdString());
+  m_fractalType->addItem(TurbulentSharp,
+                         QObject::tr("Turbulent Sharp").toStdString());
+  m_fractalType->addItem(Dynamic, QObject::tr("Dynamic").toStdString());
+  m_fractalType->addItem(DynamicTwist,
+                         QObject::tr("Dynamic Twist").toStdString());
+  m_fractalType->addItem(Max, QObject::tr("Max").toStdString());
+  m_fractalType->addItem(Rocky, QObject::tr("Rocky").toStdString());
 
-  m_noiseType->addItem(Smooth, "Smooth");
+  m_noiseType->addItem(Smooth, QObject::tr("Smooth").toStdString());
   m_noiseType->setValue(Smooth);
 
   m_rotation->setMeasureName("angle");
