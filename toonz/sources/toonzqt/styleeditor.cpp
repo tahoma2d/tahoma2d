@@ -3924,7 +3924,7 @@ void SettingsPage::setStyle(const TColorStyleP &editedStyle) {
 
     // MyPaint styles, add a reset Style
     if (m_editedStyle->getTagId() == 4001) {
-      QPushButton *pushButton = new QPushButton(tr("Reset Style"));
+      QPushButton *pushButton = new QPushButton(QObject::tr("Reset Style"));
       m_paramsLayout->addWidget(pushButton, p, 0, 1, 4, Qt::AlignHCenter);
       ret = QObject::connect(pushButton, SIGNAL(clicked(bool)), this,
                              SLOT(onResetStyle())) &&

@@ -1865,37 +1865,37 @@ Selecione Nós de Efeitos e conexões relacionadas antes de copiar ou recortar a
 <context>
     <name>FxSettings</name>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1345"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1346"/>
         <source>&amp;Camera Preview</source>
         <translation>&amp;Pré-Visualização da Câmera</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1351"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1352"/>
         <source>&amp;Preview</source>
         <translation>&amp;Pré-Visualização</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1364"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1365"/>
         <source>&amp;White Background</source>
         <translation>&amp;Fundo Branco</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1372"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1373"/>
         <source>&amp;Black Background</source>
         <translation>&amp;Fundo Preto</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1379"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1380"/>
         <source>&amp;Checkered Background</source>
         <translation>&amp;Fundo Quadriculado</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1464"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1465"/>
         <source>Fx Settings</source>
         <translation>Configurações de Efeitos</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1466"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1467"/>
         <source> : </source>
         <translation> : </translation>
     </message>
@@ -2533,7 +2533,7 @@ Isto não pode ser mudado. Jamais.</translation>
 <context>
     <name>ParamViewer</name>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1076"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1077"/>
         <source>Swatch Viewer</source>
         <translation>Visualizador de Godê</translation>
     </message>
@@ -2541,12 +2541,12 @@ Isto não pode ser mudado. Jamais.</translation>
 <context>
     <name>ParamsPageSet</name>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="714"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="715"/>
         <source>View help page</source>
         <translation>Ver Página de Ajuda</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1056"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1057"/>
         <source>This Fx does not support rendering in floating point channel width (32bit).
 The output pixel values from this fx will be clamped to 0.0 - 1.0
 and tone may be slightly discretized.</source>
@@ -3378,6 +3378,11 @@ Tem certeza?</translation>
         <translation>Restaurar para o Padrão</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3927"/>
+        <source>Reset Style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="6900"/>
         <source>Removing the selected Styles will permanently delete style files from their sets. This cannot be undone!
 Are you sure?</source>
@@ -3671,11 +3676,6 @@ Tem certeza?</translation>
     <message>
         <source>Reset to default</source>
         <translation type="vanished">Restaurar para o Padrão</translation>
-    </message>
-    <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3927"/>
-        <source>Reset Style</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="4115"/>

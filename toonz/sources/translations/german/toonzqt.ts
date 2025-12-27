@@ -2957,6 +2957,10 @@ Zero is fully transparent.</source>
         <source>Brush Dynamics</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Reset Style</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -3096,10 +3100,6 @@ Zero is fully transparent.</source>
     <message>
         <source>Autopaint for Lines</source>
         <translation type="obsolete">Automatisches Malen für Linien</translation>
-    </message>
-    <message>
-        <source>Reset Style</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Brush Dynamic</source>

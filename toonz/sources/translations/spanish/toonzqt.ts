@@ -3052,6 +3052,10 @@ Cero es completamente transparente.</translation>
         <source>Brush Dynamics</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Reset Style</source>
+        <translation>Restablecer estilo</translation>
+    </message>
 </context>
 <context>
     <name>QPushButton</name>
@@ -3195,10 +3199,6 @@ Cero es completamente transparente.</translation>
     <message>
         <source>Reset to default</source>
         <translation type="obsolete">Restablecer a predefinido</translation>
-    </message>
-    <message>
-        <source>Reset Style</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Brush Dynamic</source>

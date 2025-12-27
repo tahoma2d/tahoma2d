@@ -1819,37 +1819,37 @@ Vyberte uzly efektů a příbuzné odkazy, jež chcete vložit, před kopírová
 <context>
     <name>FxSettings</name>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1345"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1346"/>
         <source>&amp;Camera Preview</source>
         <translation>&amp;Náhled kamery</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1351"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1352"/>
         <source>&amp;Preview</source>
         <translation>&amp;Náhled</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1364"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1365"/>
         <source>&amp;White Background</source>
         <translation>&amp;Bílé pozadí</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1372"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1373"/>
         <source>&amp;Black Background</source>
         <translation>Č&amp;erné pozadí</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1379"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1380"/>
         <source>&amp;Checkered Background</source>
         <translation>Ša&amp;chovnicové pozadí</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1464"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1465"/>
         <source>Fx Settings</source>
         <translation>Nastavení efektu</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1466"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1467"/>
         <source> : </source>
         <translation>: </translation>
     </message>
@@ -2503,7 +2503,7 @@ It can&apos;t be changed.  Ever.</source>
 <context>
     <name>ParamViewer</name>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1076"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1077"/>
         <source>Swatch Viewer</source>
         <translation>Pohled na vzor</translation>
     </message>
@@ -2515,12 +2515,12 @@ It can&apos;t be changed.  Ever.</source>
         <translation type="vanished">Nápověda</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="714"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="715"/>
         <source>View help page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../toonzqt/fxsettings.cpp" line="1056"/>
+        <location filename="../../toonzqt/fxsettings.cpp" line="1057"/>
         <source>This Fx does not support rendering in floating point channel width (32bit).
 The output pixel values from this fx will be clamped to 0.0 - 1.0
 and tone may be slightly discretized.</source>
@@ -3056,6 +3056,11 @@ Are you sure?</source>
         <location filename="../../toonzqt/styleeditor.cpp" line="3912"/>
         <source>Reset to default</source>
         <translation type="unfinished">Vrátit na výchozí</translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3927"/>
+        <source>Reset Style</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="6900"/>
@@ -3675,11 +3680,6 @@ Jste si jistý?</translation>
     <message>
         <source>Reset to default</source>
         <translation type="obsolete">Vrátit na výchozí</translation>
-    </message>
-    <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3927"/>
-        <source>Reset Style</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="4115"/>
