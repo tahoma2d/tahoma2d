@@ -73,7 +73,7 @@
     </message>
     <message>
         <source>Flip</source>
-        <translation type="unfinished"></translation>
+        <translation>Invertir</translation>
     </message>
 </context>
 <context>

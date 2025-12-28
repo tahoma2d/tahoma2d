@@ -555,72 +555,72 @@ intentar aumentar el tiempo de espera en las Preferencias.</translation>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="309"/>
         <source>Placebo (Smallest File)</source>
-        <translation type="unfinished"></translation>
+        <translation>Placebo (archivo más pequeño)</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="310"/>
         <source>Very Slow</source>
-        <translation type="unfinished"></translation>
+        <translation>La más lenta</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="311"/>
         <source>Slower</source>
-        <translation type="unfinished"></translation>
+        <translation>Más lenta</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="312"/>
         <source>Slow</source>
-        <translation type="unfinished"></translation>
+        <translation>Lenta</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="313"/>
         <source>Medium</source>
-        <translation type="unfinished">Media</translation>
+        <translation>Media</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="314"/>
         <source>Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>Rápida</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="315"/>
         <source>Faster</source>
-        <translation type="unfinished"></translation>
+        <translation>Más rápida</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="316"/>
         <source>Very Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>La más rápida</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="318"/>
         <source>Ultra Fast (Largest File)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ultra rápida (archivo más grande)</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="322"/>
         <source>Every Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Cada fotograma</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="323"/>
         <source>Every Second</source>
-        <translation type="unfinished"></translation>
+        <translation>Cada segundo</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="324"/>
         <source>Every 2 Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Cada 2 segundos</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="325"/>
         <source>Every 5 Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Cada 5 segundos</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="326"/>
         <source>Every 10 Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Cada 10 segundos</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="331"/>
@@ -630,22 +630,22 @@ intentar aumentar el tiempo de espera en las Preferencias.</translation>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="332"/>
         <source>Encoding Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Velocidad de codificación</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="333"/>
         <source>Keyframe Interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervalo de fotogramas clave</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="334"/>
         <source>Preserve Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Preservar alfa</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="335"/>
         <source>Lossless</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin pérdida</translation>
     </message>
 </context>
 </TS>

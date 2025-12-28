@@ -706,7 +706,7 @@
     </message>
     <message>
         <source>Auto Close Gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Cerrar huecos</translation>
     </message>
 </context>
 <context>
@@ -776,23 +776,23 @@
     </message>
     <message>
         <source>Paint Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>Pintar detrás</translation>
     </message>
     <message>
         <source>Tilt</source>
-        <translation type="unfinished"></translation>
+        <translation>Inclinación</translation>
     </message>
     <message>
         <source>Stylus Settings - Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Opciones de la pluma - Tamaño</translation>
     </message>
     <message>
         <source>Stylus Settings - Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Opciones de la pluma - Opacidad</translation>
     </message>
     <message>
         <source>Brush Tip</source>
-        <translation type="unfinished"></translation>
+        <translation>Punta del pincel</translation>
     </message>
 </context>
 <context>
@@ -1006,7 +1006,7 @@
     </message>
     <message>
         <source>Paint Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>Pintar detrás</translation>
     </message>
 </context>
 <context>
@@ -1728,7 +1728,7 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Borrar</translation>
     </message>
 </context>
 <context>
@@ -1769,7 +1769,7 @@ Do you want to proceed?</source>
     <name>RasterSelectionTool</name>
     <message>
         <source>Modify Savebox</source>
-        <translation>Modificar marco delimitador</translation>
+        <translation>Editar marco delimitador</translation>
     </message>
     <message>
         <source>No Antialiasing</source>
@@ -1777,23 +1777,23 @@ Do you want to proceed?</source>
     </message>
     <message>
         <source>Selective</source>
-        <translation type="unfinished">Selectivo</translation>
+        <translation>Selectivo</translation>
     </message>
     <message>
         <source>Mode:</source>
-        <translation type="unfinished">Modo:</translation>
+        <translation>Modo:</translation>
     </message>
     <message>
         <source>Lines</source>
-        <translation type="unfinished">Líneas</translation>
+        <translation>Líneas</translation>
     </message>
     <message>
         <source>Areas</source>
-        <translation type="unfinished">Áreas</translation>
+        <translation>Áreas</translation>
     </message>
     <message>
         <source>Lines &amp; Areas</source>
-        <translation type="unfinished">Líneas y áreas</translation>
+        <translation>Líneas y áreas</translation>
     </message>
 </context>
 <context>
@@ -2207,11 +2207,11 @@ movido hacia el final de la primera página de la paleta.</translation>
     <name>ToolOptionStylusConfigButton</name>
     <message>
         <source>Pressure</source>
-        <translation type="unfinished">Presión</translation>
+        <translation>Presión</translation>
     </message>
     <message>
         <source>Tilt</source>
-        <translation type="unfinished"></translation>
+        <translation>Inclinación</translation>
     </message>
 </context>
 <context>
@@ -2270,15 +2270,15 @@ movido hacia el final de la primera página de la paleta.</translation>
     </message>
     <message>
         <source>Tilt</source>
-        <translation type="unfinished"></translation>
+        <translation>Inclinación</translation>
     </message>
     <message>
         <source>Stylus Settings - Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Opciones de la pluma - Tamaño</translation>
     </message>
     <message>
         <source>Brush Tip</source>
-        <translation type="unfinished"></translation>
+        <translation>Punta del pincel</translation>
     </message>
 </context>
 <context>
@@ -2417,7 +2417,7 @@ movido hacia el final de la primera página de la paleta.</translation>
     </message>
     <message>
         <source>Stylus Settings - Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Opciones de la pluma - Tamaño</translation>
     </message>
 </context>
 <context>

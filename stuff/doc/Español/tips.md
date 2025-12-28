@@ -1,14 +1,14 @@
-# Bienvenidos a Tahoma2D 1.5!
+# ¡Bienvenidos a Tahoma2D 1.5!
 
-La versión 1.5 trae una serie de nuevas características, mejoras y aún más correcciones de errores, que se encuentran listadas [aquí](https://github.com/tahoma2d/tahoma2d/releases/tag/v1.5).
+La versión 1.5 trae una serie de nuevas características, mejoras y aún más correcciones de errores, que se encuentran listadas [aquí](https://github.com/tahoma2d/tahoma2d/releases/tag/v1.6).
 
-### Compatibility Changes
+### Cambios en la compatibilidad
 
-Palettes with Raster based custom styles (`Style Editor` -> `Vector` tab -> `Custom styles`) will be auto upgraded to new format which will preventing use in prior versions of T2D if the paleette is saved in the latest T2D version.
+Las paletas de Imagen con estilos personalizados (pestaña `Editor de estilos` -> `Vectoriales` -> `Estilos personalizados`) serán automáticamente actualizados al nuevo formato, lo que impedirá su uso con versiones anteriores de T2D, en caso de que la paleta fuera guardada usando la versión más reciente de T2D.
 
 ### Usuarios de Windows
 
-En caso de que se experimentaran problemas con la pluma en esta nueva versión, especialmente al usar una tableta-laptop/tableta Surface, intentar una o ambas de las siguientes alternativas:
+En caso de que se experimentaran problemas con la pluma en esta nueva versión, especialmente al usar una notebook con una tableta o una tableta Surface, intentar una o ambas de las siguientes alternativas:
 - Activar `Preferencias` -> `Opciones táctiles/tableta` -> `Usar soporte nativo de Qt para Windows Ink*` y reiniciar Tahoma2D.
 - Mantener activa la opción de arriba e instalar controladores de `WinTab`. Comprobar con el fabricante del dispositivo para obtener los controladores apropiados de WinTab para el mismo.
 

@@ -29,7 +29,7 @@
     </message>
     <message>
         <source>Plugins</source>
-        <translation>Plugins</translation>
+        <translation>Complementos</translation>
     </message>
     <message>
         <source>Macro</source>
@@ -82,31 +82,31 @@
     <name>BrushTipPopup</name>
     <message>
         <source>Spacing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Espaciado:</translation>
     </message>
     <message>
         <source>Rotation:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotación:</translation>
     </message>
     <message>
         <source>Auto Rotate</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotación automática</translation>
     </message>
     <message>
         <source>Flip Horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Invertir horizontalmente</translation>
     </message>
     <message>
         <source>Flip Vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>Invertir verticalmente</translation>
     </message>
     <message>
         <source>Scatter:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dispersión:</translation>
     </message>
     <message>
         <source>Clear Search</source>
-        <translation type="unfinished">Limpiar búsqueda</translation>
+        <translation>Limpiar búsqueda</translation>
     </message>
 </context>
 <context>
@@ -202,7 +202,7 @@ Es posible que el archivo de dicho preajuste se encuentre corrupto.</translation
     </message>
     <message>
         <source>x</source>
-        <translation>x</translation>
+        <translation>×</translation>
     </message>
     <message>
         <source>A/R</source>
@@ -374,7 +374,7 @@ Es posible que el archivo de dicho preajuste se encuentre corrupto.</translation
     </message>
     <message>
         <source>R:</source>
-        <translation></translation>
+        <translation>R:</translation>
     </message>
     <message>
         <source>Paste Color</source>
@@ -1057,19 +1057,19 @@ La ganancia se mostrará en forma de f-stops donde el valor &quot;neutral&quot;,
     </message>
     <message>
         <source>Step 1</source>
-        <translation>Exposición x1</translation>
+        <translation>Exposición ×1</translation>
     </message>
     <message>
         <source>Step 2</source>
-        <translation>Exposición x2</translation>
+        <translation>Exposición ×2</translation>
     </message>
     <message>
         <source>Step 3</source>
-        <translation>Exposición x3</translation>
+        <translation>Exposición ×3</translation>
     </message>
     <message>
         <source>Step 4</source>
-        <translation>Exposición x4</translation>
+        <translation>Exposición ×4</translation>
     </message>
     <message>
         <source>Function Curves</source>
@@ -1684,23 +1684,23 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
     <name>GraphGUIWidget</name>
     <message>
         <source>0</source>
-        <translation type="unfinished">0</translation>
+        <translation>0</translation>
     </message>
     <message>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation>X</translation>
     </message>
     <message>
         <source>100</source>
-        <translation type="unfinished">100</translation>
+        <translation>100</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation type="unfinished">Y</translation>
+        <translation>Y</translation>
     </message>
     <message>
         <source>Reset Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Restablecer curva</translation>
     </message>
 </context>
 <context>
@@ -1839,7 +1839,7 @@ Seleccionar los nodos de efecto y sus vínculos relacionados antes de copiar o c
     </message>
     <message>
         <source>Plugins</source>
-        <translation>Plugins</translation>
+        <translation>Complementos</translation>
     </message>
     <message>
         <source>Macro</source>
@@ -3046,11 +3046,11 @@ Cero es completamente transparente.</translation>
     <message>
         <source>Round</source>
         <comment>BrushTipChooserFrame</comment>
-        <translation type="unfinished"></translation>
+        <translation>Circular</translation>
     </message>
     <message>
         <source>Brush Dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinámica del pincel</translation>
     </message>
     <message>
         <source>Reset Style</source>
@@ -3202,11 +3202,11 @@ Cero es completamente transparente.</translation>
     </message>
     <message>
         <source>Brush Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinámica del pincel</translation>
     </message>
     <message>
         <source>Brush Dynamic - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Dinámica del pincel - %1</translation>
     </message>
 </context>
 <context>
@@ -3779,11 +3779,11 @@ Autom</translation>
     <name>StylusConfigPopup</name>
     <message>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrada</translation>
     </message>
     <message>
         <source>Output</source>
-        <translation type="unfinished">Salida</translation>
+        <translation>Salida</translation>
     </message>
 </context>
 <context>

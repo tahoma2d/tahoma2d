@@ -1,0 +1,1971 @@
+<stringtable>
+<!------------------------------ FX Menu Groups and Subgroups ------------------------------------------->
+<!-- List should match groups found in profiles\layouts\fxs\fxs.lst                                -->
+
+  <item>"Background"		"Fondos"			</item>
+  <item>"Blur"			"Desenfoque"			</item>
+  <item>"Distort"		"Distorsión"			</item>
+  <item>"Gradient"		"Gradientes"			</item>
+  <item>"Image_Adjust"		"Ajuste de imagen"			</item>
+  <item>"Layer_Blending"	"Mezcla de capas"			</item>
+  <item>"Layer_Blending_Ino"	"Mezcla de capas (Ino)"			</item>
+  <item>"Light"			"Iluminación"			</item>
+  <item>"Matte"			"Opacidad"			</item>
+  <item>"Noise"			"Ruido"			</item>
+  <item>"Render"		"Generados"			</item>
+  <item>"Stylize"		"Estilización"			</item>
+  <item>"Toonz_Level"		"Color indizado"			</item>
+  <item>"Shaders"		"Sombreadores"			</item>
+  <item>"Utility"		"Utilidades"			</item>
+
+<!------------------------------ FX Settings tabs/separators ---------------------------------------->
+  <item>"Add Ino"			"Adicionar Ino"			</item>
+  <item>"Add"				"Adicionar"			</item>
+  <item>"Adjust Exposure Iwa"		"Ajustar exposición Iwa"			</item>
+  <item>"Adjust Levels"			"Ajustar niveles"			</item>
+  <item>"Alpha"				"Alfa"			</item>
+  <item>"Angle"				"Ángulo"			</item>
+  <item>"Animation"			"Animación"			</item>
+  <item>"Art Contour"			"Contorno artístico"			</item>
+  <item>"Backlit"			"Resplandor trasero"			</item>
+  <item>"Barrel Distort Iwa"		"Distorsión de barril Iwa"			</item>
+  <item>"Base"				"Base"			</item>
+  <item>"Birth Color"			"Color nacimiento"			</item>
+  <item>"Birth Params"			"Nacimiento"			</item>
+  <item>"Bloom Iwa"			"Brillo Iwa"			</item>
+  <item>"Blue"				"Azul"			</item>
+  <item>"Blur Ino"			"Desenfoque Ino"			</item>
+  <item>"Blur"				"Desenfoque"			</item>
+  <item>"Body Highlight"		"Iluminar cuerpo"			</item>
+  <item>"Bokeh Iwa"			"Bokeh Iwa"			</item>
+  <item>"Bokeh Ref Iwa"			"Bokeh ref Iwa"			</item>
+  <item>"Brush Tip Geometry"		"Geometría de la punta"			</item>
+  <item>"Bubble Color"			"Color burbuja"			</item>
+  <item>"Calligraphic Line"		"Línea caligráfica"			</item>
+  <item>"Cast Shadow"			"Proyectar sombra"			</item>
+  <item>"Caustics"			"Cáusticas"			</item>
+  <item>"Channel Mixer"			"Mezclador de canales"			</item>
+  <item>"Channel Selector Ino"		"Selector de canales Ino"			</item>
+  <item>"Checkerboard"			"Damero"			</item>
+  <item>"Clouds"			"Nubes"			</item>
+  <item>"Color and Shape"		"Color y forma"			</item>
+  <item>"Color Blending"		"Fundir colores"			</item>
+  <item>"Color Burn Ino"		"Subexponer color Ino"			</item>
+  <item>"Color Card"			"Placa de color"			</item>
+  <item>"Color Dodge Ino"		"Sobreexponer color Ino"			</item>
+  <item>"Color Emboss"			"Relieve en color"			</item>
+  <item>"Color Raylit"			"Rayo de luz de color"			</item>
+  <item>"Colors"			"Colores"			</item>
+  <item>"Conical Transform"		"Transformación cónica"			</item>
+  <item>"Contour"			"Contorno"			</item>
+  <item>"Contrast"			"Contraste"			</item>
+  <item>"Corridor Gradient Iwa"		"Gradiente de corredor Iwa"			</item>
+  <item>"Cross Dissolve Ino"		"Fundido cruzado Ino"			</item>
+  <item>"Cross Dissolve"		"Fundido cruzado"			</item>
+  <item>"Curves"			"Curvas"			</item>
+  <item>"Darken Ino"			"Oscurecer Ino"			</item>
+  <item>"Darken"			"Oscurecer"			</item>
+  <item>"Darker Color Ino"		"Color más oscuro Ino"			</item>
+  <item>"Density Ino"			"Densidad Ino"			</item>
+  <item>"Despeckle"			"Quitar manchas"			</item>
+  <item>"Destination"			"Destino"			</item>
+  <item>"Diamond Grad"			"Gradiente de diamante"			</item>
+  <item>"Difference mode"		"Modo de diferencia"			</item>
+  <item>"Directional Blur Iwa"		"Desenfoque direccional Iwa"			</item>
+  <item>"Directional Blur"		"Desenfoque direccional"			</item>
+  <item>"Dissolve"			"Disolver"			</item>
+  <item>"Distortion Wave"		"Distorsión onda"			</item>
+  <item>"Distortion"			"Distorsión"			</item>
+  <item>"Divide Ino"			"Dividir Ino"			</item>
+  <item>"Ellipse"			"Elipse"			</item>
+  <item>"Emboss"			"Relieve"			</item>
+  <item>"End"				"Fin"			</item>
+  <item>"Environment"			"Entorno"			</item>
+  <item>"Erode/Dilate"			"Erosionar/Dilatar"			</item>
+  <item>"Evolution Options"		"Opciones de evolución"			</item>
+  <item>"External Palette"		"Paleta externa"			</item>
+  <item>"Fade-in Color"			"Color de aparición"			</item>
+  <item>"Fade-out Color"		"Color de desvanecimiento"			</item>
+  <item>"Fireball"			"Bola de fuego"			</item>
+  <item>"Flap Behavior"			"Comportamiento de aleteo"			</item>
+  <item>"Floor Bump Iwa"		"Relieve de piso Iwa"			</item>
+  <item>"Flow Blur Iwa"			"Desenfoque de flujo Iwa"			</item>
+  <item>"Flow Paint Brush Iwa"		"Pincel de flujo Iwa"			</item>
+  <item>"Fog Ino"			"Niebla Ino"			</item>
+  <item>"Four Points"			"Cuatro puntos"			</item>
+  <item>"Fractal Noise Iwa"		"Ruido fractal Iwa"			</item>
+  <item>"Free Distort"			"Distorsión libre"			</item>
+  <item>"Friction"			"Fricción"			</item>
+  <item>"Gamma"				"Gama"			</item>
+  <item>"Glare Iwa"			"Resplandor Iwa"			</item>
+  <item>"Glitter"			"Destellos"			</item>
+  <item>"Glow"				"Resplandor"			</item>
+  <item>"GPU HSL Blend"			"Mezclar TSL (GPU)"			</item>
+  <item>"Gradient Warp Iwa"		"Distorsionar con gradiente Iwa"			</item>
+  <item>"Gravity"			"Gravedad"			</item>
+  <item>"Green"				"Verde"			</item>
+  <item>"Hard Light Ino"		"Luz fuerte Ino"			</item>
+  <item>"Hard Mix Ino"			"Mezcla definida Ino"			</item>
+  <item>"HLS Add Ino"			"Adicionar TSL Ino"			</item>
+  <item>"HLS Adjust Ino"		"Ajustar TSL Ino"			</item>
+  <item>"HLS Noise Ino"			"Ruido TSL Ino"			</item>
+  <item>"HSV Add Ino"			"Adicionar TSV Ino"			</item>
+  <item>"HSV Adjust Ino"		"Ajustar TSV Ino"			</item>
+  <item>"HSV Key"			"Recortar por TSV"			</item>
+  <item>"HSV Noise Ino"			"Ruido TSV Ino"			</item>
+  <item>"HSV Scale"			"Escalar TSV"			</item>
+  <item>"Inner Shape"			"Forma interior"			</item>
+  <item>"iwa Bokeh Advanced"		"Bokeh avanzado iwa"			</item>
+  <item>"Kaleido"			"Caleidoscopio"			</item>
+  <item>"Level Auto Ino"		"Niveles automáticos Ino"			</item>
+  <item>"Level Master Ino"		"Niveles generales Ino"			</item>
+  <item>"Level RGBA Ino"		"Niveles RVAα Ino"			</item>
+  <item>"Lifetime"			"Vida"			</item>
+  <item>"Light Direction"		"Dirección de la luz"			</item>
+  <item>"Light Spot"			"Foco"			</item>
+  <item>"Lighten Ino"			"Aclarar Ino"			</item>
+  <item>"Lighter Color Ino"		"Color más claro Ino"			</item>
+  <item>"Limits"			"Límites"			</item>
+  <item>"Line Blur Ino"			"Desenfoque lineal Ino"			</item>
+  <item>"Linear Burn Ino"		"Subexponer lineal Ino"			</item>
+  <item>"Linear Dodge Ino"		"Sobreexponer lineal Ino"			</item>
+  <item>"Linear Gradient (Classic)"	"Gradiente lineal (clásico)"			</item>
+  <item>"Linear Gradient"		"Gradiente lineal"			</item>
+  <item>"Linear Light Ino"		"Luz lineal Ino"			</item>
+  <item>"Linear Wave"			"Onda lineal"			</item>
+  <item>"Local Blur"			"Desenfoque local"			</item>
+  <item>"Local Transp"			"Transp local"			</item>
+  <item>"Max Min Ino"			"Máx mín Ino"			</item>
+  <item>"Median Filter Ino"		"Filtro de medianas Ino"			</item>
+  <item>"Median Ino"			"Mediana Ino"			</item>
+  <item>"Mosaic"			"Mosaico"			</item>
+  <item>"Motion Blur Ino"		"Desenfoque por movimiento Ino"			</item>
+  <item>"Motion Blur Iwa"		"Desenfoque por movimiento Iwa"			</item>
+  <item>"Motion Blur"			"Desenfoque por movimiento"			</item>
+  <item>"Motion Flow Iwa"		"Flujo de movimiento Iwa"			</item>
+  <item>"Motion Wind Ino"		"Viento Ino"			</item>
+  <item>"Multi Linear"			"Multi lineal"			</item>
+  <item>"Multi Radial"			"Multi radial"			</item>
+  <item>"Multiply Ino"			"Multiplicar Ino"			</item>
+  <item>"Multiply"			"Multiplicar"			</item>
+  <item>"Multitone"			"Multitono"			</item>
+  <item>"Negate Ino"			"Negar Ino"			</item>
+  <item>"Noise"				"Ruido"			</item>
+  <item>"Nothing"			"Nada"			</item>
+  <item>"Opacity"			"Opacidad"			</item>
+  <item>"Outer Shape"			"Forma exterior"			</item>
+  <item>"OutLine"			"Contorno"			</item>
+  <item>"Over Ino"			"Normal Ino"			</item>
+  <item>"Overlay Ino"			"Superponer Ino"			</item>
+  <item>"Palette Filter"		"Filtrar por paleta"			</item>
+  <item>"Particle Generation"		"Generación de partículas"			</item>
+  <item>"Particle"			"Partículas"			</item>
+  <item>"Pattern"			"Patrón"			</item>
+  <item>"Perlin Noise"			"Ruido Perlin"			</item>
+  <item>"Perspective Distort Iwa"	"Distorsión en perspectiva Iwa"			</item>
+  <item>"Pin Light Ino"			"Luz focal Ino"			</item>
+  <item>"Pivot"				"Pivote"			</item>
+  <item>"PN Clouds Ino"			"Nubes PN Ino"			</item>
+  <item>"PN Perspective Iwa"		"Perspectiva PN Iwa"			</item>
+  <item>"Posterize"			"Posterizar"			</item>
+  <item>"Radial Blur GPU"		"Desenfoque radial (GPU)"			</item>
+  <item>"Radial Blur Ino"		"Desenfoque radial Ino"			</item>
+  <item>"Radial Blur"			"Desenfoque radial"			</item>
+  <item>"Radial Gradient"		"Gradiente radial"			</item>
+  <item>"Rainbow Iwa"			"Arcoíris Iwa"			</item>
+  <item>"Random Wave"			"Onda aleatoria"			</item>
+  <item>"Raylit"			"Rayo de luz"			</item>
+  <item>"Red"				"Rojo"			</item>
+  <item>"Reference Frame"		"Fotograma de referencia"			</item>
+  <item>"Reflection mode"		"Modo reflexión"			</item>
+  <item>"Refraction mode"		"Modo refracción"			</item>
+  <item>"RGB Fade"			"Fundir RVA"			</item>
+  <item>"RGB Key"			"Recortar RVA"			</item>
+  <item>"RGB"				"RVA"			</item>
+  <item>"RGBA Cut"			"Cortar RVAα"			</item>
+  <item>"RGBA Scale"			"Escalar RVAα"			</item>
+  <item>"Ripple"			"Ondas concéntricas"			</item>
+  <item>"Ripples"			"Ondas"			</item>
+  <item>"Rotation"			"Rotación"			</item>
+  <item>"Salt Pepper Noise"		"Ruido sal y pimienta"			</item>
+  <item>"Scale"				"Escala"			</item>
+  <item>"Scattering"			"Dispersión"			</item>
+  <item>"Screen Ino"			"Trama Ino"			</item>
+  <item>"Shape"				"Forma"			</item>
+  <item>"Sharpen"			"Enfocar"			</item>
+  <item>"Shift"				"Desplazar"			</item>
+  <item>"Size Increase"			"Aumento de tamaño"			</item>
+  <item>"Size, Mass and Orientation"	"Tamaño, masa y orientación"			</item>
+  <item>"Smudge"			"Manchar"			</item>
+  <item>"Soft Light Ino"		"Luz suave Ino"			</item>
+  <item>"Solarize"			"Solarizar"			</item>
+  <item>"Source Area"			"Área de origen"			</item>
+  <item>"Source Image"			"Imagen de origen"			</item>
+  <item>"Source"			"Origen"			</item>
+  <item>"Source1"			"Origen1"			</item>
+  <item>"Source2"			"Origen2"			</item>
+  <item>"Source3"			"Origen3"			</item>
+  <item>"Source4"			"Origen4"			</item>
+  <item>"Source5"			"Origen5"			</item>
+  <item>"Spectrum Iwa"			"Espectro Iwa"			</item>
+  <item>"Speed"				"Velocidad"			</item>
+  <item>"Spin Blur GPU"			"Desenfoque de giro (GPU)"			</item>
+  <item>"Spin Blur Ino"			"Desenfoque de giro Ino"			</item>
+  <item>"Spin Blur"			"Desenfoque de giro"			</item>
+  <item>"Spin Gradient Iwa"		"Gradiente cónico Iwa"			</item>
+  <item>"Spiral"			"Espiral"			</item>
+  <item>"Square Gradient"		"Gradiente cuadrado"			</item>
+  <item>"Starsky"			"Cielo de estrellas"			</item>
+  <item>"Start"				"Inicio"			</item>
+  <item>"Sub Settings"			"Sub opciones"			</item>
+  <item>"Subtract Ino"			"Sustraer Ino"			</item>
+  <item>"Subtract"			"Sustraer"			</item>
+  <item>"Sunflare"			"Resplandor solar"			</item>
+  <item>"Tangent Flow Iwa"		"Flujo tangencial Iwa"			</item>
+  <item>"Target Spot"			"Foco con objetivo"			</item>
+  <item>"Text Iwa"			"Texto Iwa"			</item>
+  <item>"Texture Offset"		"Desplazamiento textura"			</item>
+  <item>"Texture"			"Textura"			</item>
+  <item>"Thickness variation"		"Variación del grosor"			</item>
+  <item>"Tile Horizontally"		"Repetir horizontalmente"			</item>
+  <item>"Tile Iwa"			"Repetir Iwa"			</item>
+  <item>"Tile Vertically"		"Repetir verticalmente"			</item>
+  <item>"Tile"				"Repetir"			</item>
+  <item>"TimeCode Iwa"			"Código de tiempo Iwa"			</item>
+  <item>"Tip Placement"			"Ubicación de la punta"			</item>
+  <item>"Top Layer"			"Orden de composición"			</item>
+  <item>"Trail"				"Estela"			</item>
+  <item>"Transform"			"Transformación"			</item>
+  <item>"Transparency"			"Transparencia"			</item>
+  <item>"Transverse Wave"		"Onda transversal"			</item>
+  <item>"Vector Control"		"Control de vector"			</item>
+  <item>"Vivid Light Ino"		"Luz intensa Ino"			</item>
+  <item>"Warp HV Ino"			"Distorsionar HV Ino"			</item>
+  <item>"Warp"				"Distorsionar"			</item>
+  <item>"Waves"				"Ondas"			</item>
+  <item>"Wavy"				"Ondulado"			</item>
+  <item>"Wind"				"Viento"			</item>
+
+<!------------------------------ FX ------------------------------------------->
+
+  <item>"addFx"			"Adicionar"			</item>
+  <item>"addFx.value"		"Intensidad"			</item>
+  <item>"blendFx"			"Fundido cruzado"		</item>
+  <item>"blendFx.value"		"Intensidad"		</item>
+  <item>"colorBurnFx"		"Subexponer"		</item>
+  <item>"colorDodgeFx"		"Sobreexponer"		</item>
+  <item>"multFx"			"Multiplicar"			</item>
+  <item>"multFx.value"		"Intensidad"			</item>
+  <item>"multFx.matte"		"Alfa"			</item>
+  <item>"screenFx"			"Trama"			</item>
+  <item>"subFx"			"Sustraer"		</item>
+  <item>"subFx.matte"		"Alfa"			</item>
+  <item>"STD_toneCurveFx"	"Curvas"		</item>
+  <item>"STD_toneCurveFx.curve"	""		</item>
+  <item>"STD_adjustLevelsFx"	"Ajustar niveles"		</item>
+  <item>"STD_adjustLevelsFx.in_rgb"	"Entrada de RVA"			</item>
+  <item>"STD_adjustLevelsFx.out_rgb"	"Salida de RVA"			</item>
+  <item>"STD_adjustLevelsFx.in_r"	"Entrada de rojo"			</item>
+  <item>"STD_adjustLevelsFx.out_r"	"Salida de rojo"			</item>
+  <item>"STD_adjustLevelsFx.in_g"	"Entrada de verde"			</item>
+  <item>"STD_adjustLevelsFx.out_g"	"Salida de verde"			</item>
+  <item>"STD_adjustLevelsFx.in_b"	"Entrada de azul"			</item>
+  <item>"STD_adjustLevelsFx.out_b"	"Salida de azul"			</item>
+  <item>"STD_adjustLevelsFx.in_m"	"Entrada de alfa"			</item>
+  <item>"STD_adjustLevelsFx.out_m"	"Salida de alfa"			</item>
+  <item>"STD_adjustLevelsFx.gamma_rgb"	"Gama de RVA"			</item>
+  <item>"STD_adjustLevelsFx.gamma_r"	"Gama de rojo"			</item>
+  <item>"STD_adjustLevelsFx.gamma_g"	"Gama de verde"			</item>
+  <item>"STD_adjustLevelsFx.gamma_b"	"Gama de azul"			</item>
+  <item>"STD_adjustLevelsFx.gamma_m"	"Gama de alfa"			</item>
+  
+  <item>"STD_backlitFx"		"Resplandor trasero"			</item>
+  <item>"STD_backlitFx.value"	"Intensidad"		</item>
+  <item>"STD_backlitFx.color"	"Color"			</item>
+  <item>"STD_backlitFx.fade"		"Fundido"			</item>
+
+ 
+  <item>"STD_blurFx"		"Desenfoque"			</item>
+  <item>"STD_blurFx.value"		"Valor"			</item>
+  <item>"STD_blurFx.spread"		"Dispersar"			</item>
+  <item>"STD_despeckleFx"		"Quitar manchas"		</item>
+  <item>"STD_despeckleFx.size"		"Tamaño"		</item>
+  <item>"STD_despeckleFx.detect_speckles_on"		"Detectar en"		</item>
+
+  <item>"STD_directionalBlurFx"		"Desenfoque direccional"		</item>
+  <item>"STD_directionalBlurFx.angle"		"Ángulo"			</item>
+  <item>"STD_directionalBlurFx.intensity"		"Intensidad"			</item>
+  <item>"STD_directionalBlurFx.bidirectional"	"Bidireccional"		</item>
+  <item>"STD_directionalBlurFx.spread"		"Dispersar"			</item>
+
+  <item>"STD_brightContFx"		"Brillo Contraste"	</item>
+  <item>"STD_brightContFx.brightness""Brillo"		</item>
+  <item>"STD_brightContFx.contrast"	"Contraste"		</item>
+
+  <item>"STD_bodyHighLightFx" 	"Iluminar cuerpo" 		</item>
+  <item>"STD_bodyHighLightFx.mode" 	"Modo" 			</item>
+  <item>"STD_bodyHighLightFx.point" 	"Desplazamiento" 		</item>
+  <item>"STD_bodyHighLightFx.transparency" 	"Transparencia" 		</item>
+  <item>"STD_bodyHighLightFx.blur" 	"Desenfoque" 		</item>
+  <item>"STD_bodyHighLightFx.color" 	"Color" 		</item>
+  <item>"STD_bodyHighLightFx.invert" 	"Invertir" 		</item>
+
+
+ <item>"STD_castShadowFx"			"Proyectar sombra"	</item>
+  <item>"STD_castShadowFx.distort_type"	"Modo"	</item>
+  <item>"STD_castShadowFx.bottom_left_a"	"Abajo izquierda"	</item>
+  <item>"STD_castShadowFx.bottom_left_b"	"Abajo izquierda"		</item>
+  <item>"STD_castShadowFx.bottom_right_a"	"Abajo derecha"	</item>
+  <item>"STD_castShadowFx.bottom_right_b"	"Abajo derecha"		</item>
+  <item>"STD_castShadowFx.top_right_a"	"Arriba derecha"	</item>
+  <item>"STD_castShadowFx.top_right_b"	"Arriba derecha"		</item>
+  <item>"STD_castShadowFx.top_left_a"	"Arriba izquierda"	</item>
+  <item>"STD_castShadowFx.top_left_b"	"Arriba izquierda"		</item>
+  <item>"STD_castShadowFx.deactivate"	" Desactivar"	</item>
+  <item>"STD_castShadowFx.color"		"Color"		</item>
+  <item>"STD_castShadowFx.fade"		"Fundido"	</item>
+  <item>"STD_castShadowFx.up_transp"	"Transp arriba"	</item>
+  <item>"STD_castShadowFx.down_transp"	"Transp abajo"	</item>
+  <item>"STD_castShadowFx.up_blur"		"Desenfoque arriba"		</item>
+  <item>"STD_castShadowFx.down_blur"	"Desenfoque abajo"	</item>
+
+
+  <item>"STD_changeColorFx"	"Cambiar color"		</item>
+  <item>"STD_changeColorFx.range"	"Rango"			</item>
+  <item>"STD_changeColorFx.falloff"	"Decaimiento"			</item>
+  <item>"STD_changeColorFx.from_color"	"Color desde"</item>
+  <item>"STD_changeColorFx.to_color"	"Color hacia"			</item>
+
+  <item>"STD_channelMixerFx"		"Mezclador de canales"	</item>
+  <item>"STD_channelMixerFx.red_to_red"	"Rojo a rojo"	</item>
+  <item>"STD_channelMixerFx.green_to_red"	"Verde a rojo"	</item>
+  <item>"STD_channelMixerFx.blue_to_red"	"Azul a rojo"	</item>
+  <item>"STD_channelMixerFx.matte_to_red"	"Alfa a rojo"	</item>
+  <item>"STD_channelMixerFx.red_to_green"	"Rojo a verde"	</item>
+  <item>"STD_channelMixerFx.green_to_green"	"Verde a verde"	</item>
+  <item>"STD_channelMixerFx.blue_to_green"	"Azul a verde"	</item>
+  <item>"STD_channelMixerFx.matte_to_green"	"Alfa a verde"	</item>
+  <item>"STD_channelMixerFx.red_to_blue"	"Rojo a azul"	</item>
+  <item>"STD_channelMixerFx.green_to_blue"	"Verde a azul"	</item>
+  <item>"STD_channelMixerFx.blue_to_blue"	"Azul a azul"	</item>
+  <item>"STD_channelMixerFx.matte_to_blue"	"Alfa a azul"	</item>
+  <item>"STD_channelMixerFx.red_to_matte"	"Rojo a alfa"	</item>
+  <item>"STD_channelMixerFx.green_to_matte"	"Verde a alfa"	</item>
+  <item>"STD_channelMixerFx.blue_to_matte"	"Azul a alfa"	</item>
+  <item>"STD_channelMixerFx.matte_to_matte"	"Alfa a alfa"	</item>
+
+  <item>"STD_cloudsFx"			"Nubes"		</item>
+  <item>"STD_cloudsFx.type"			"Tipo"		</item>
+  <item>"STD_cloudsFx.size"			"Tamaño"		</item>
+  <item>"STD_cloudsFx.min"			"Mín"		</item>
+  <item>"STD_cloudsFx.max"			"Máx"		</item>
+  <item>"STD_cloudsFx.evolution"		"Evolución"	</item>
+  <item>"STD_cloudsFx.colors"		"Colores"		</item>
+
+  <item>"STD_colorEmbossFx"		"Relieve en color"	</item>
+  <item>"STD_colorEmbossFx.intensity"		"Intensidad"	</item>
+  <item>"STD_colorEmbossFx.elevation"	"Distancia"	</item>
+  <item>"STD_colorEmbossFx.direction"		"Dirección"	</item>
+  <item>"STD_colorEmbossFx.radius"		"Radio"		</item>
+  
+  <item>"STD_cornerPinFx"			"Textura fija"	</item>
+  <item>"STD_cornerPinFx.distort_type"	"Modo"	</item>
+  <item>"STD_cornerPinFx.mode" "Modo" </item>
+  <item>"STD_cornerPinFx.value" "Valor" </item>
+  <item>"STD_cornerPinFx.keep"		"Acción"		</item>
+  <item>"STD_cornerPinFx.bottom_left_a"	"Abajo izquierda"	</item>
+  <item>"STD_cornerPinFx.bottom_left_b"	"Abajo izquierda"		</item>
+  <item>"STD_cornerPinFx.bottom_right_a"	"Abajo derecha"	</item>
+  <item>"STD_cornerPinFx.bottom_right_b"	"Abajo derecha"		</item>
+  <item>"STD_cornerPinFx.top_right_a"	"Arriba derecha"	</item>
+  <item>"STD_cornerPinFx.top_right_b"	"Arriba derecha"		</item>
+  <item>"STD_cornerPinFx.top_left_a"		"Arriba izquierda"	</item>
+  <item>"STD_cornerPinFx.top_left_b"		"Arriba izquierda"		</item>
+  <item>"STD_cornerPinFx.deactivate"		" Desactivar"	</item>
+  <item>"STD_cornerPinFx.pattern"		"Patrón"	</item>
+
+  <item>"STD_diamondGradientFx"		"Gradiente de diamante"	</item>
+  <item>"STD_diamondGradientFx.colors"	"Colores"		</item>
+  <item>"STD_diamondGradientFx.size"		"Tamaño"		</item>
+
+  <item>"STD_dissolveFx"			"Disolver"		</item>
+  <item>"STD_dissolveFx.intensity"		"Intensidad"	</item>
+  <item>"STD_embossFx"			"Relieve"		</item>
+  <item>"STD_embossFx.intensity"		"Intensidad"	</item>
+  <item>"STD_embossFx.elevation"		"Distancia"	</item>
+  <item>"STD_embossFx.direction"		"Dirección"	</item>
+  <item>"STD_embossFx.radius"		"Radio"		</item>
+
+  <item>"STD_sharpenFx"			"Enfocar"		</item>
+  <item>"STD_sharpenFx.intensity"		"Intensidad"	</item>
+  <item>"STD_externalPaletteFx"		"Paleta externa"	</item>
+
+  <item>"STD_fadeFx"			"Transparencia"		</item>
+  <item>"STD_fadeFx.value"			"Intensidad"	</item>
+
+  <item>"STD_fourPointsGradientFx"		"Cuatro puntos"	</item>
+  <item>"STD_fourPointsGradientFx.Point_1"	"Punto 1"		</item>
+  <item>"STD_fourPointsGradientFx.Color_1"	"Color 1"		</item>
+  <item>"STD_fourPointsGradientFx.Point_2"	"Punto 2"		</item>
+  <item>"STD_fourPointsGradientFx.Color_2"	"Color 2"		</item>
+  <item>"STD_fourPointsGradientFx.Point_3"	"Punto 3"		</item>
+  <item>"STD_fourPointsGradientFx.Color_3"	"Color 3"		</item>
+  <item>"STD_fourPointsGradientFx.Point_4"	"Punto 4"		</item>
+  <item>"STD_fourPointsGradientFx.Color_4"	"Color 4"		</item>
+
+  <item>"STD_freeDistortFx" 			"Distorsión libre" 	</item>
+  <item>"STD_freeDistortFx.distort_type"	"Modo"	</item>
+  <item>"STD_freeDistortFx.bottom_left_a"	"Abajo izquierda"	</item>
+  <item>"STD_freeDistortFx.bottom_left_b"	"Abajo izquierda"		</item>
+  <item>"STD_freeDistortFx.bottom_right_a"	"Abajo derecha"	</item>
+  <item>"STD_freeDistortFx.bottom_right_b"	"Abajo derecha"		</item>
+  <item>"STD_freeDistortFx.top_right_a"	"Arriba derecha"	</item>
+  <item>"STD_freeDistortFx.top_right_b"	"Arriba derecha"		</item>
+  <item>"STD_freeDistortFx.top_left_a"	"Arriba izquierda"	</item>
+  <item>"STD_freeDistortFx.top_left_b"	"Arriba izquierda"		</item>
+  <item>"STD_freeDistortFx.deactivate"	" Desactivar"	</item>
+
+  <item>"STD_gammaFx"			"Gama"		</item>
+  <item>"STD_gammaFx.value"		"Valor"		</item>
+
+  <item>"STD_colorRaylitFx"			"Rayo de luz de color"	</item>
+  <item>"STD_colorRaylitFx.p"			"Centro"	</item>
+  <item>"STD_colorRaylitFx.z"			"Distancia"	</item>
+  <item>"STD_colorRaylitFx.intensity"		"Intensidad"	</item>
+  <item>"STD_colorRaylitFx.decay"		"Decaimiento"		</item>
+  <item>"STD_colorRaylitFx.smoothness"		"Suavidad"	</item>
+  <item>"STD_colorRaylitFx.radius"		"Radio"		</item>
+  <item>"STD_colorRaylitFx.includeInput"	"Preservar imagen"	</item>
+
+  <item>"STD_erodeDilateFx"			"Erosionar/Dilatar"	</item>
+  <item>"STD_erodeDilateFx.radius"		"Radio"	</item>
+  <item>"STD_erodeDilateFx.type"		"Tipo"		</item>
+
+  <item>"STD_glowFx"			"Resplandor"		</item>
+  <item>"STD_glowFx.value"			"Desenfoque"		</item>
+  <item>"STD_glowFx.brightness"		"Brillo"	</item>
+  <item>"STD_glowFx.color"			"Color"		</item>
+  <item>"STD_glowFx.fade"			"Fundido"		</item>
+
+  <item>"STD_hsvAdjustFx"			"Ajustar TSV"	</item>
+  <item>"STD_hsvAdjustFx.hue"		"Tono"		</item>
+  <item>"STD_hsvAdjustFx.saturation"		"Saturación"	</item>
+  <item>"STD_hsvAdjustFx.value"		"Valor"		</item>
+
+  <item>"STD_hsvKeyFx" 			"Recortar por TSV" 	</item>
+  <item>"STD_hsvKeyFx.h" 			"Tono" 	</item>
+  <item>"STD_hsvKeyFx.s" 			"Saturación" 	</item>
+  <item>"STD_hsvKeyFx.v" 			"Valor" 	</item>
+  <item>"STD_hsvKeyFx.h_range" 			"Rango T" 	</item>
+  <item>"STD_hsvKeyFx.s_range" 			"Rango S" 	</item>
+  <item>"STD_hsvKeyFx.v_range" 			"Rango V" 	</item>
+  <item>"STD_hsvKeyFx.invert" 			"Invertir" 	</item>
+
+
+  <item>"STD_hsvScaleFx"			"Escalar TSV"	</item>
+  <item>"STD_hsvScaleFx.hue"			"Tono"	</item>
+  <item>"STD_hsvScaleFx.saturation"			"Saturación"	</item>
+  <item>"STD_hsvScaleFx.value"			"Valor"	</item>
+  <item>"STD_hsvScaleFx.hue_scale"			"Escalar tono"	</item>
+  <item>"STD_hsvScaleFx.saturation_scale"			"Escalar saturación"	</item>
+  <item>"STD_hsvScaleFx.value_scale"			"Escalar valor"	</item>
+
+  <item>"STD_kaleidoFx"			"Caleidoscopio"	</item>
+  <item>"STD_kaleidoFx.center"		"Centro"	</item>
+  <item>"STD_kaleidoFx.angle"		"Ángulo"		</item>
+  <item>"STD_kaleidoFx.count"		"Cantidad"		</item>
+
+  <item>"STD_lightSpotFx"			"Foco"	</item>
+  <item>"STD_lightSpotFx.softness"		"Suavidad"	</item>
+  <item>"STD_lightSpotFx.a"			"Ancho"		</item>
+  <item>"STD_lightSpotFx.b"			"Altura"		</item>
+  <item>"STD_lightSpotFx.color"		"Color"		</item>
+
+  <item>"STD_linearGradientFx"		"Gradiente lineal"	</item>
+  <item>"STD_linearGradientFx.period"		"Tamaño"		</item>
+  <item>"STD_linearGradientFx.wave_amplitude"	"Amplitud"	</item>
+  <item>"STD_linearGradientFx.wave_frequency"	"Frecuencia"	</item>
+  <item>"STD_linearGradientFx.wave_phase"		"Fase"		</item>
+  <item>"STD_linearGradientFx.color1"		"Color 1"		</item>
+  <item>"STD_linearGradientFx.color2"		"Color 2"		</item>
+  <item>"STD_linearGradientFx.curveType"		"Tipo"		</item>
+
+  <item>"STD_linearWaveFx"		"Onda lineal"	</item>
+  <item>"STD_linearWaveFx.period"		"Período"		</item>
+  <item>"STD_linearWaveFx.count"		"Cantidad"		</item>
+  <item>"STD_linearWaveFx.cycle"		"Fase"		</item>
+  <item>"STD_linearWaveFx.amplitude"		"Amplitud"		</item>
+  <item>"STD_linearWaveFx.frequency"		"Frecuencia"		</item>
+  <item>"STD_linearWaveFx.phase"		"Ciclo"		</item>
+  <item>"STD_linearWaveFx.angle"		"Ángulo"		</item>
+  <item>"STD_linearWaveFx.intensity"		"Intensidad"		</item>
+  <item>"STD_linearWaveFx.sensitivity"		"Sensibilidad"		</item>
+  <item>"STD_linearWaveFx.sharpen"	"Enfocar"		</item>
+
+  <item>"STD_mosaicFx"				"Mosaico"		</item>
+  <item>"STD_mosaicFx.size"			"Tamaño"		</item>
+  <item>"STD_mosaicFx.distance"		"Distancia"		</item>
+  <item>"STD_mosaicFx.bg_color"		"Color fondo"		</item>
+  <item>"STD_mosaicFx.shape"			"Forma"		</item>
+
+  <item>"STD_multiLinearGradientFx"			"Gradiente lineal múltiple"	</item>
+  <item>"STD_multiLinearGradientFx.period"		"Período"			</item>
+  <item>"STD_multiLinearGradientFx.count"		"Cantidad"		</item>
+  <item>"STD_multiLinearGradientFx.cycle"		"Ciclo"			</item>
+  <item>"STD_multiLinearGradientFx.wave_amplitude"	"Amplitud"		</item>
+  <item>"STD_multiLinearGradientFx.wave_frequency"	"Frecuencia"		</item>
+  <item>"STD_multiLinearGradientFx.wave_phase"	"Fase"			</item>
+  <item>"STD_multiLinearGradientFx.colors"		"Colores"			</item>
+  <item>"STD_multiLinearGradientFx.curveType"		"Tipo"		</item>
+
+  <item>"STD_localBlurFx"		"Desenfoque local"		</item>
+  <item>"STD_localBlurFx.value"		"Intensidad"		</item>
+
+  <item>"STD_localTransparencyFx"		"Transparencia local"	</item>
+  <item>"STD_localTransparencyFx.value"	"Intensidad"		</item>
+
+  <item>"STD_motionBlurFx"			"Desenfoque por movimiento"	</item>
+  <item>"STD_motionBlurFx.intensity"		"Intensidad"	</item>
+  <item>"STD_motionBlurFx.spread"		"Dispersión"		</item>
+  <item>"STD_multiToneFx"			"Multitono"	</item>
+  <item>"STD_multiToneFx.colors"		"Colores"		</item>
+
+  <item>"STD_noiseFx"		"Ruido"		</item>
+  <item>"STD_noiseFx.Intensity"	"Intensidad"	</item>
+  <item>"STD_noiseFx.Red"		"Rojo"		</item>
+  <item>"STD_noiseFx.Green"	"Verde"		</item>
+  <item>"STD_noiseFx.Blue"		"Azul"		</item>
+  <item>"STD_noiseFx.Black_White"	"Blanco y negro"	</item>
+  <item>"STD_noiseFx.Animate"	"Aleatorizar animación"	</item>
+
+  <item>"STD_nothingFx"		"Redirigir"		</item>
+
+  <item>"STD_paletteFilterFx"	"Filtrar por paleta"	</item>
+  <item>"STD_paletteFilterFx.keep"	"Acción"	</item>
+  <item>"STD_paletteFilterFx.type"	"Aplicar a"	</item>
+
+
+
+
+
+  <item>"STD_perlinNoiseFx"			"Ruido Perlin"	</item>
+  <item>"STD_perlinNoiseFx.size"		"Tamaño"		</item>
+  <item>"STD_perlinNoiseFx.type"		"Tipo"		</item>
+  <item>"STD_perlinNoiseFx.evolution"		"Evolución"	</item>
+  <item>"STD_perlinNoiseFx.intensity"		"Intensidad"	</item>
+  <item>"STD_perlinNoiseFx.offsetx"		"Desplazamiento horiz"	</item>
+  <item>"STD_perlinNoiseFx.offsety"		"Desplazamiento vert"	</item>
+  <item>"STD_perlinNoiseFx.matte"		"Alfa"		</item>
+
+  <item>"STD_posterizeFx"			"Posterizar"	</item>
+  <item>"STD_posterizeFx.levels"		"Niveles"		</item>
+
+  <item>"STD_premultiplyFx"			"Premultiplicar"	</item>
+
+
+  <item>"STD_radialBlurFx"		"Desenfoque radial"	</item>
+  <item>"STD_radialBlurFx.point"		"Centro"		</item>
+  <item>"STD_radialBlurFx.radius"		"Radio"		</item>
+  <item>"STD_radialBlurFx.blur"		"Desenfoque"				</item>
+
+
+  <item>"STD_radialGradientFx"		"Gradiente radial"	</item>
+  <item>"STD_radialGradientFx.period"		"Tamaño exterior"		</item>
+  <item>"STD_radialGradientFx.innerperiod"		"Tamaño interior"		</item>
+  <item>"STD_radialGradientFx.color1"		"Color 1"		</item>
+  <item>"STD_radialGradientFx.color2"		"Color 2"		</item>
+  <item>"STD_radialGradientFx.curveType"		"Tipo"		</item>
+
+
+  <item>"STD_randomWaveFx"		"Ondas aleatorias"	</item>
+  <item>"STD_randomWaveFx.evolution"		"Evolución"		</item>
+  <item>"STD_randomWaveFx.positionx"		"Posición X"		</item>
+  <item>"STD_randomWaveFx.positiony"		"Posición Y"		</item>
+  <item>"STD_randomWaveFx.intensity"		"Intensidad"		</item>
+  <item>"STD_randomWaveFx.sensitivity"		"Sensibilidad"		</item>
+  <item>"STD_randomWaveFx.sharpen"	"Enfocar"		</item>
+
+
+  <item>"STD_rippleFx"		"Ondas concéntricas"	</item>
+  <item>"STD_rippleFx.period"		"Período"		</item>
+  <item>"STD_rippleFx.count"		"Cantidad"		</item>
+  <item>"STD_rippleFx.cycle"		"Ciclo"		</item>
+  <item>"STD_rippleFx.center"		"Centro"		</item>
+  <item>"STD_rippleFx.scalex"		"Escala X"		</item>
+  <item>"STD_rippleFx.scaley"		"Escala Y"		</item>
+  <item>"STD_rippleFx.angle"		"Ángulo"		</item>
+  <item>"STD_rippleFx.intensity"		"Intensidad"		</item>
+  <item>"STD_rippleFx.sensitivity"		"Sensibilidad"		</item>
+  <item>"STD_rippleFx.sharpen"	"Enfocar"		</item>
+
+  <item>"STD_rotationalBlurFx"		"Desenfoque de giro"	</item>
+  <item>"STD_rotationalBlurFx.point"		"Centro"		</item>
+  <item>"STD_rotationalBlurFx.radius"		"Radio"		</item>
+  <item>"STD_rotationalBlurFx.blur"		"Desenfoque"		        </item>
+
+
+  <item>"STD_multiRadialGradientFx"		"Gradiente radial múltiple"	</item>
+  <item>"STD_multiRadialGradientFx.period"	"Período"			</item>
+  <item>"STD_multiRadialGradientFx.count"	"Cantidad"		</item>
+  <item>"STD_multiRadialGradientFx.cycle"	"Ciclo"			</item>
+  <item>"STD_multiRadialGradientFx.colors"	"Colores"			</item>
+  <item>"STD_multiRadialGradientFx.curveType"		"Tipo"		</item>
+
+  <item>"STD_raylitFx"			"Rayo de luz"	</item>
+  <item>"STD_raylitFx.p"		"Centro"	</item>
+  <item>"STD_raylitFx.z"		"Distancia"	</item>
+  <item>"STD_raylitFx.color"		"Color"		</item>
+  <item>"STD_raylitFx.intensity"	"Intensidad"	</item>
+  <item>"STD_raylitFx.decay"		"Decaimiento"		</item>
+  <item>"STD_raylitFx.smoothness"	"Suavidad"	</item>
+  <item>"STD_raylitFx.radius"		"Radio"		</item>
+  <item>"STD_raylitFx.includeInput"	"Preservar imagen"	</item>
+  <item>"STD_raylitFx.invert"		"Invertir"	</item>
+
+  <item>"STD_rgbKeyFx" 		"Recortar por RVA" 	</item>
+  <item>"STD_rgbKeyFx.color" 		"Color" 	</item>
+  <item>"STD_rgbKeyFx.r_range" 		"Rango rojo" 	</item>
+  <item>"STD_rgbKeyFx.g_range" 		"Rango verde" 	</item>
+  <item>"STD_rgbKeyFx.b_range" 		"Rango azul" 	</item>
+  <item>"STD_rgbKeyFx.invert" 		"Invertir" 	</item>
+
+  <item>"STD_rgbmCutFx"		"Cortar RVAα"	</item>
+  <item>"STD_rgbmCutFx.r_range"	"Rojo"		</item>
+  <item>"STD_rgbmCutFx.g_range"	"Verde"		</item>
+  <item>"STD_rgbmCutFx.b_range"	"Azul"		</item>
+  <item>"STD_rgbmCutFx.m_range"	"Alfa"		</item>
+
+  <item>"STD_rgbmScaleFx"		"Escalar RVAα"	</item>
+  <item>"STD_rgbmScaleFx.red"	"Rojo"		</item>
+  <item>"STD_rgbmScaleFx.green"	"Verde"		</item>
+  <item>"STD_rgbmScaleFx.blue"	"Azul"		</item>
+  <item>"STD_rgbmScaleFx.matte"	"Alfa"		</item>
+
+  <item>"STD_rgbmFadeFx"		"Fundir RVA"	</item>
+  <item>"STD_rgbmFadeFx.color"	"Color"		</item>
+  <item>"STD_rgbmFadeFx.intensity"	"Intensidad"	</item>
+
+  <item>"STD_saltpepperNoiseFx"		"Ruido sal y pimienta"	</item>
+  <item>"STD_saltpepperNoiseFx.Intensity"	"Intensidad"		</item>
+  <item>"STD_saltpepperNoiseFx.Animate"	"Aleatorizar animación"	</item>
+
+  <item>"STD_solarizeFx"		"Solarizar"		</item>
+  <item>"STD_solarizeFx.maximum"	"Intensidad"	</item>
+  <item>"STD_solarizeFx.peak_edge"	"Borde pico"	</item>
+
+  <item>"STD_spiralFx"		"Espiral"		</item>
+  <item>"STD_spiralFx.type"		"Tipo"	</item>
+  <item>"STD_spiralFx.freq"		"Frecuencia"	</item>
+  <item>"STD_spiralFx.phase"	"Fase"		</item>
+  <item>"STD_spiralFx.colors"	"Colores"		</item>
+
+  <item>"STD_squareGradientFx"		"Gradiente cuadrado"	</item>
+  <item>"STD_squareGradientFx.colors"	"Colores"		</item>
+  <item>"STD_squareGradientFx.size"		"Tamaño"		</item>
+
+  <item>"STD_targetSpotFx"		"Foco con objetivo"	</item>
+  <item>"STD_targetSpotFx.z"	"Distancia"	</item>
+  <item>"STD_targetSpotFx.angle"	"Ángulo"		</item>
+  <item>"STD_targetSpotFx.decay"	"Decaimiento"		</item>
+  <item>"STD_targetSpotFx.sizeX"	"Ancho"		</item>
+  <item>"STD_targetSpotFx.sizeY"	"Altura"		</item>
+  <item>"STD_targetSpotFx.color"	"Color"		</item>
+
+  <item>"STD_textureFx"              "Textura" </item>
+  <item>"STD_textureFx.indexes" "Índices" </item>
+  <item>"STD_textureFx.keep" "Acción" </item>
+  <item>"STD_textureFx.mode" "Modo" </item>
+  <item>"STD_textureFx.value" "Valor" </item>
+  
+  <item>"STD_tileFx" "Repetir" </item>
+  <item>"STD_tileFx.mode" "Modo" </item>
+  <item>"STD_tileFx.xMirror" "Reflejar horizontalmente" </item>
+  <item>"STD_tileFx.yMirror""Reflejar verticalmente" </item>
+  <item>"STD_tileFx.margin" "Margen" </item>
+
+  <item>"STD_unmultiplyFx"	"Desmultiplicar"	</item>
+
+  <item>"STD_warpFx"		"Distorsionar"		</item>
+  <item>"STD_warpFx.intensity"	"Intensidad"		</item>
+  <item>"STD_warpFx.sensitivity"	"Tamaño"		</item>
+  <item>"STD_warpFx.sharpen"	"Enfocar"		</item>
+
+<!------------------------------ Sandor FX ---------------------------------------------->
+
+  <item>"STD_blendTzFx" "Fundir colores" </item>
+  <item>"STD_blendTzFx.Color_Index"			"Índices de color"		</item>
+  <item>"STD_blendTzFx.Smoothness"			"Suavizado"		</item>
+  <item>"STD_blendTzFx.Amount"			"Intensidad"		</item>
+  <item>"STD_blendTzFx.noBlending"			"No fundir a través de otros colores"	</item>
+
+  <item>"STD_calligraphicFx" "Línea caligráfica" </item>
+  <item>"STD_calligraphicFx.Color_Index"		"Índices de color"		</item>
+  <item>"STD_calligraphicFx.Thickness"			"Grosor"		</item>
+  <item>"STD_calligraphicFx.Accuracy"			"Suavizado"		</item>
+  <item>"STD_calligraphicFx.Noise"			"Ruido"			</item>
+  <item>"STD_calligraphicFx.Horizontal"			"Horizontal"		</item>
+  <item>"STD_calligraphicFx.upWDiagonal"		"Diagonal ascendente"	</item>
+  <item>"STD_calligraphicFx.Vertical"			"Vertical"		</item>
+  <item>"STD_calligraphicFx.doWDiagonal"		"Diagonal descendente"	</item>
+
+  <item>"STD_outBorderFx" "Contorno exterior" </item>
+  <item>"STD_outBorderFx.Thickness"			"Grosor"		</item>
+  <item>"STD_outBorderFx.Accuracy"			"Suavidad"		</item>
+  <item>"STD_outBorderFx.Noise"			"Ruido"			</item>
+  <item>"STD_outBorderFx.Horizontal"			"Horizontal"		</item>
+  <item>"STD_outBorderFx.upWDiagonal"		"Diagonal ascendente"	</item>
+  <item>"STD_outBorderFx.Vertical"			"Vertical"		</item>
+  <item>"STD_outBorderFx.doWDiagonal"		"Diagonal descendente"	</item>
+
+  <item>"STD_artContourFx" 			"Contorno artístico" 	</item>
+  <item>"STD_artContourFx.Color_Index"		"Índices de color"		</item>
+  <item>"STD_artContourFx.Keep_color"		"Mantener colores"		</item>
+  <item>"STD_artContourFx.Keep_Line"		"Mantener líneas"		</item>
+  <item>"STD_artContourFx.Include_Alpha"		"Incluir alfa"		</item>
+  <item>"STD_artContourFx.Density"			"Densidad"		</item>
+  <item>"STD_artContourFx.Distance"			"Distancia"		</item>
+  <item>"STD_artContourFx.Randomness"		"Orientación absoluta"		</item>
+  <item>"STD_artContourFx.Orientation"		"Orientación"			</item>
+  <item>"STD_artContourFx.Size"			"Tamaño"				</item>
+
+  <item>"STD_cornerPinFx.indexes"		"Índices de color"		</item>
+  <item>"STD_paletteFilterFx.indexes"	"Índices de color"	</item>
+
+<!------------------------------ Shader FXS ---------------------------------------------->
+
+  <item>"SHADER_caustics"			"Cáusticas"	</item>
+  <item>"SHADER_caustics.color"		"Color del agua"	</item>
+  <item>"SHADER_caustics.time"		"Evolución"	</item>
+  
+  <item>"SHADER_fireball"			"Bola de fuego"	</item>
+  <item>"SHADER_fireball.color1"		"Color 1"	</item>
+  <item>"SHADER_fireball.color2"		"Color 2"	</item>
+  <item>"SHADER_fireball.detail"		"Detalle"	</item>
+  <item>"SHADER_fireball.time"		"Evolución"	</item>
+  
+  <item>"SHADER_glitter"			"Destellos"	</item>
+  <item>"SHADER_glitter.threshold"		"Umbral"	</item>
+  <item>"SHADER_glitter.brightness"		"Brillo"	</item>
+  <item>"SHADER_glitter.radius"		"Radio"	</item>
+  <item>"SHADER_glitter.angle"		"Ángulo"	</item>
+  <item>"SHADER_glitter.halo"		"Halo"	</item>
+  
+  <item>"SHADER_starsky"			"Cielo de estrellas"	</item>
+  <item>"SHADER_starsky.color"		"Color nubes"	</item>
+  <item>"SHADER_starsky.time"		"Evolución"	</item>
+  <item>"SHADER_starsky.brightness"		"Brillo"	</item>
+  
+  <item>"SHADER_sunflare"			"Resplandor solar"	</item>
+  <item>"SHADER_sunflare.color"		"Color"	</item>
+  <item>"SHADER_sunflare.angle"		"Ángulo"	</item>
+  <item>"SHADER_sunflare.blades"		"Rayos"	</item>
+  <item>"SHADER_sunflare.intensity"		"Intensidad"	</item>
+  <item>"SHADER_sunflare.bias"		"Desviación"	</item>
+  <item>"SHADER_sunflare.sharpness"		"Definición"	</item>
+  
+  <item>"SHADER_wavy"			"Ondulado"	</item>
+  <item>"SHADER_wavy.color1"		"Color 1"	</item>
+  <item>"SHADER_wavy.color2"		"Color 2"	</item>
+  <item>"SHADER_wavy.time"		"Evolución"	</item>
+  
+  <item>"SHADER_radialblurGPU"			"Desenfoque radial (GPU)"	</item>
+  <item>"SHADER_radialblurGPU.center"		"Centro"	</item>
+  <item>"SHADER_radialblurGPU.radius"		"Radio seguro"	</item>
+  <item>"SHADER_radialblurGPU.blur"		"Desenfoque"	</item>
+  
+  <item>"SHADER_spinblurGPU"			"Desenfoque de giro (GPU)"	</item>
+  <item>"SHADER_spinblurGPU.center"		"Centro"	</item>
+  <item>"SHADER_spinblurGPU.radius"		"Radio seguro"	</item>
+  <item>"SHADER_spinblurGPU.blur"		"Desenfoque"	</item>
+
+  <item>"SHADER_HSLBlendGPU"			"Mezclar TSL (GPU)"    </item>
+  <item>"SHADER_HSLBlendGPU.bhue"			"Tono"    </item>
+  <item>"SHADER_HSLBlendGPU.bsat"			"Saturación"    </item>
+  <item>"SHADER_HSLBlendGPU.blum"			"Luminosidad"    </item>
+  <item>"SHADER_HSLBlendGPU.balpha"			"Opacidad"    </item>
+  <item>"SHADER_HSLBlendGPU.bmask"			"Máscara de recorte"    </item>
+
+<!---------------------------------------------------------------------------------------->
+
+
+  <item>"T3K_t3kCompositorFx"	"Compositor T3k"</item>
+
+  <item>"ZBASE_drawmaskFx" 	"Dibujar máscara" </item>
+  <item>"ZBASE_drawmaskFx.OutlineOnly" 	"Sólo contorno" </item>
+
+  <item>"ZBASE_masklayer" 	"Enmascarar capa" </item>
+  <item>"ZBASE_masklayer.feather" 	"Esfumado" </item>
+  <item>"ZBASE_masklayer.invert" 	"Invertir" </item>
+  <item>"ZBASE_masklayer.mode" 		"Modo" </item>
+  <item>"ZBASE_masklayer.antialias" 	"Suavizado de bordes" </item>
+
+  <item>"ZBASE_paintFx" 	"Pintar" </item>
+
+  <item>"ZCOMP_TrackerFx"	"Rastreador"</item>
+  <item>"ZCOMP_TrackerFx.inputPoint"	"Punto de entrada"</item>
+  <item>"ZCOMP_TrackerFx.outputPoint"	"Punto de salida"</item>
+
+  <item>"ZCOMP_affineGlFx"	"AfínGL"</item>
+  <item>"ZCOMP_affineGlFx.xPos"	"PosX"</item>
+  <item>"ZCOMP_affineGlFx.yPos"	"PosY"</item>
+  <item>"ZCOMP_affineGlFx.zRot"	"RotZ"</item>
+  <item>"ZCOMP_affineGlFx.xCenter"	"CentroX"</item>
+  <item>"ZCOMP_affineGlFx.yCenter"	"CentroY"</item>
+  <item>"ZCOMP_affineGlFx.xScale"	"EscalaX"</item>
+  <item>"ZCOMP_affineGlFx.yScale"	"EscalaY"</item>
+
+  <item>"ZCOMP_blueGreenKeyer"	"Recortar por croma"</item>
+  <item>"ZCOMP_blueGreenKeyer.outputMode"	"Modo de salida"</item>
+  <item>"ZCOMP_blueGreenKeyer.keyColor"		"Color"</item>
+  <item>"ZCOMP_blueGreenKeyer.fgFilter"		"Filtro frente"</item>
+  <item>"ZCOMP_blueGreenKeyer.bgFilter"		"Filtro fondo"</item>
+  <item>"ZCOMP_blueGreenKeyer.a2"		"a2"</item>
+  <item>"ZCOMP_blueGreenKeyer.dilate"		"Dilatar"</item>
+  <item>"ZCOMP_blueGreenKeyer.fgThreshold"	"Umbral frente"</item>
+  <item>"ZCOMP_blueGreenKeyer.bgThreshold"	"Umbral fondo"</item>
+  <item>"ZCOMP_blueGreenKeyer.blurRadius"	"Desenfocar"</item>
+  <item>"ZCOMP_blueGreenKeyer.erodeRadius"	"Erosionar"</item>
+  <item>"ZCOMP_blueGreenKeyer.accuracy"		"Precisión"</item>
+  <item>"ZCOMP_blueGreenKeyer.spillSuppression"	"Suprimir derrame"</item>
+  <item>"ZCOMP_blueGreenKeyer.showSegmentation"	"Mostrar segmentación"</item>
+  <item>"ZCOMP_blueGreenKeyer.fgCorrection"	"Corrección frente"</item>
+  <item>"ZCOMP_blueGreenKeyer.bgCorrection"	"Corrección fondo"</item>
+  <item>"ZCOMP_blueGreenKeyer.correctionThreshold"	"Umbral corrección"</item>
+  <item>"ZCOMP_blueGreenKeyer.fgRadius"	"Radio frente"</item>
+  <item>"ZCOMP_blueGreenKeyer.bgRadius"	"Radio fondo"</item>
+
+  <item>"ZCOMP_lumaKeyer"	"Recortar por luma"</item>
+  <item>"ZCOMP_lumaKeyer.OpacityLower"	"Opacidad mín"</item>
+  <item>"ZCOMP_lumaKeyer.OpacityUpper"	"Opacidad máx"</item>
+  <item>"ZCOMP_lumaKeyer.TransparencyLower"	"Transparencia mín"</item>
+  <item>"ZCOMP_lumaKeyer.TransparencyUpper"	"Transparencia máx"</item>
+  <item>"ZCOMP_lumaKeyer.blurRadius"	"Desenfocar"</item>
+  <item>"ZCOMP_lumaKeyer.erodeRadius"	"Erosionar"</item>
+
+  <item>"ZCOMP_spillSuppress"	"Suprimir derrame"</item>
+  <item>"ZCOMP_spillSuppress.color"	"Color"</item>
+
+  <item>"ZCOMP_zMultiLayerFx"	"MultiCapa"</item>
+  <item>"ZCOMP_zMultiLayerFx.param0"	"Modo"</item>
+
+  <item>"ZCOMP_zStabilizerFx"	"Estabilizador"</item>
+  <item>"ZCOMP_zStabilizerFx.a"	"a"</item>
+  <item>"ZCOMP_zStabilizerFx.a_w"	"a_an"</item>
+  <item>"ZCOMP_zStabilizerFx.a_h"	"a_al"</item>
+  <item>"ZCOMP_zStabilizerFx.a_status"	"a_estado"</item>
+  <item>"ZCOMP_zStabilizerFx.b"	"b"</item>
+  <item>"ZCOMP_zStabilizerFx.b_w"	"b_an"</item>
+  <item>"ZCOMP_zStabilizerFx.b_h"	"b_al"</item>
+  <item>"ZCOMP_zStabilizerFx.b_status"	"b_estado"</item>
+  <item>"ZCOMP_zStabilizerFx.c"	"c"</item>
+  <item>"ZCOMP_zStabilizerFx.c_w"	"c_an"</item>
+  <item>"ZCOMP_zStabilizerFx.c_al"	""</item>
+  <item>"ZCOMP_zStabilizerFx.c_status"	"c_estado"</item>
+  <item>"ZCOMP_zStabilizerFx.interp_a"	"interp_a"</item>
+  <item>"ZCOMP_zStabilizerFx.interp_b"	"interp_b"</item>
+  <item>"ZCOMP_zStabilizerFx.interp_c"	"interp_c"</item>
+
+  <item>"ZCOMP_degrainFx"		"Quitar grano"</item>
+  <item>"ZCOMP_degrainFx.red"		"Rojo"</item>
+  <item>"ZCOMP_degrainFx.green"		"Verde"</item>
+  <item>"ZCOMP_degrainFx.blue"		"Azul"</item>
+  <item>"ZCOMP_degrainFx.alpha"		"Alfa"</item>
+  <item>"ZCOMP_degrainFx.radius" 	"Radio"</item>
+
+  <item>"ZCOMP_basicKeyerFx"				"Recortar (básico)"</item>
+  <item>"ZCOMP_basicKeyerFx.keyColor"			"Color"</item>
+  <item>"ZCOMP_basicKeyerFx.outputMode"			"Modo de salida"</item>
+  <item>"ZCOMP_basicKeyerFx.lowerBoundThreshold"	"Límite inferior"</item>
+  <item>"ZCOMP_basicKeyerFx.a2"				"Intensidad mate"</item>
+  <item>"ZCOMP_basicKeyerFx.upperBoundThreshold"	"Límite superior"</item>
+  <item>"ZCOMP_basicKeyerFx.blurRadius"			"Desenfocar"</item>
+  <item>"ZCOMP_basicKeyerFx.erodeRadius" 		"Erosionar"</item>
+  <item>"ZCOMP_basicKeyerFx.spillSuppress" 		"Suprimir derrame"</item>
+
+  <item>"ZCOMP_spillRevealFx"				"Revelar derrame"</item>
+  <item>"ZCOMP_spillRevealFx.color"			"Color"</item>
+  <item>"ZCOMP_spillRevealFx.luma"			"Luma"</item>
+  <item>"ZCOMP_spillRevealFx.smoothRadius"		"Suavizado"</item>
+
+  
+
+  <item>"affineFx"			"Mover2D"		</item>
+  <item>"affineFx.xPos"		"PosX"		</item>
+  <item>"affineFx.yPos"		"PosY"		</item>
+  <item>"affineFx.zRot"		"RotZ"		</item>
+  <item>"affineFx.xCenter"		"CentroX"		</item>
+  <item>"affineFx.yCenter"		"CentroY"		</item>
+  <item>"affineFx.xScale"		"EscalaX"		</item>
+  <item>"affineFx.yScale"		"EscalaY"		</item>
+  <item>"affineFx.useMMX"		"usarMMX"		</item>
+  <item>"affineFx.useMotionPath"	"Trayectoria de movimiento"	</item>
+  <item>"affineFx.usePathAim"	"ApuntarATrayectoria"		</item>
+
+  <item>"atopFx"			"Mate interior visible"	</item>
+
+  <item>"checkBoardFx"		"Damero"	</item>
+  <item>"checkBoardFx.color1"	"Color 1"		</item>
+  <item>"checkBoardFx.color2"	"Color 2"		</item>
+  <item>"checkBoardFx.size"		"Tamaño"		</item>
+
+  <item>"colorCardFx"	"Placa de color"	</item>
+  <item>"colorCardFx.color"	"Color"		</item>
+
+  <item>"cropFx"		"Recortar"		</item>
+  <item>"cropFx.left"	"Izquierda"		</item>
+  <item>"cropFx.bottom"	"Abajo"		</item>
+  <item>"cropFx.right"	"Derecha"		</item>
+  <item>"cropFx.top"	"Arriba"		</item>
+
+  <item>"crossFx"		"Fundir"		</item>
+  <item>"crossFx.value"	"Intensidad"	</item>
+
+  <item>"deInterlaceFx"			"Desentrelazar"	</item>
+  <item>"deInterlaceFx.convert"		"Convertir"		</item>
+  <item>"deInterlaceFx.method"		"Método"		</item>
+  <item>"deInterlaceFx.field_separation"	"Separar campos"	</item>
+
+  <item>"fieldFx"			"Campo"		</item>
+  <item>"fieldFx.fieldprevalence"	"Prevalencia de campos"	</item>
+
+  <item>"inFx"			"Mate interior"	</item>
+
+  <item>"interlaceFx"		"Entrelazar"	</item>
+
+  <item>"invertFx"			"Invertir"		</item>
+  <item>"invertFx.red_channel"	"Rojo"		</item>
+  <item>"invertFx.green_channel"	"Verde"		</item>
+  <item>"invertFx.blue_channel"	"Azul"		</item>
+  <item>"invertFx.alpha_channel"	"Alfa"		</item>
+
+  <item>"lightenFx"			"Aclarar"		</item>
+
+  <item>"linearBurnFx"			"Subexponer lineal"		</item>
+  
+  <item>"localTransparencyFx"	"Transparencia local"	</item>
+  <item>"localTransparencyFx.value"	"Intensidad"		</item>
+
+  <item>"markCenterFx"		"Marcar centro"		</item>
+  <item>"markCenterFx.color"	"Color"			</item>
+  <item>"markCenterFx.size"		"Tamaño"			</item>
+
+  <item>"maxFx"			"Aclarar"		</item>
+
+  <item>"minFx"			"Oscurecer"		</item>
+  <item>"minFx.matte"			"Alfa"		</item>
+
+  <item>"moveFx"			"Mover"		</item>
+  <item>"moveFx.dx"		"PanearX"		</item>
+  <item>"moveFx.dy"		"PanearY"		</item>
+
+  <item>"outFx"			"Mate exterior"	</item>
+ 
+  <item>"overFx"			"Normal"		</item>
+
+  <item>"overlayFx"			"Superponer"		</item>
+
+  <item>"readImageFx"		"ImagenEntrada"	</item>
+  <item>"readImageFx.filename"	"RutaArchivo"		</item>
+  <item>"readImageFx.doPremultiply"	"Premultiplicar"	</item>
+  <item>"readImageFx.doInvertAlpha"	"InvertirAlfa"	</item>
+
+  <item>"readLevelFx"		"ClipEntrada"		</item>
+  <item>"readLevelFx.filename"	"RuraArchivo"		</item>
+  <item>"readLevelFx.field_separation"	"SeparaciónCampos"	</item>
+  <item>"readLevelFx.doPremultiply"	"Premultiplicar"	</item>
+  <item>"readLevelFx.doInvertAlpha"	"InvertirAlfa"	</item>
+
+  <item>"scaleFx"			"Escala"		</item>
+  <item>"scaleFx.xScale"		"EscalaX"		</item>
+  <item>"scaleFx.yScale"		"EscalaY"		</item>
+
+  
+
+  <item>"swapFieldsFx"		"Intercambiar campos"	</item>
+
+  <item>"xorFx"			"XOr"		</item>
+
+
+<!----- New Strings 5.0------>
+
+ <item>Selective			"Selectivo" "Selectivo" "Selectivo"	</item>
+ <item>ToolSize			"Tamaño" "Tamaño" "Tamaño"			</item>
+
+
+ <!------------------------------ Particles FX ------------------------------------------->
+
+  <item>STD_particlesFx "Partículas" </item>
+  <item>"STD_particlesFx.source_ctrl"			"Imagen de control"		</item>
+  <item>"STD_particlesFx.bright_thres"			"Umbral"		</item>
+  <item>"STD_particlesFx.multi_source"			"Múltiples generadores en imagen de control"		</item>
+  <item>"STD_particlesFx.center"			"Centro"			</item>
+  <item>"STD_particlesFx.length"			"Ancho"			</item>
+  <item>"STD_particlesFx.height"			"Altura"			</item>
+  <item>"STD_particlesFx.animation"			"Animación"		</item>
+  <item>"STD_particlesFx.step"			"Exposición de animación"		</item>
+  <item>"STD_particlesFx.starting_frame"		"Fotograma inicial"		</item>
+  <item>"STD_particlesFx.birth_rate"			"Tasa de natalidad"		</item>
+  <item>"STD_particlesFx.random_seed"		"Semilla"		</item>
+  <item>"STD_particlesFx.lifetime"			"Vida"			</item>
+  <item>"STD_particlesFx.lifetime_ctrl"			"Imagen de control"			</item>
+  <item>"STD_particlesFx.column_lifetime"			"Duración de la columna define la vida"			</item>
+  <item>"STD_particlesFx.gravity"			"Gravedad"			</item>
+  <item>"STD_particlesFx.gravity_angle"		"Dirección de la gravedad"			</item>
+  <item>"STD_particlesFx.gravity_ctrl"			"Imagen de control"		</item>
+  <item>"STD_particlesFx.friction"			"Fricción"			</item>
+  <item>"STD_particlesFx.friction_ctrl"			"Imagen de control"		</item>
+  <item>"STD_particlesFx.wind"			"Intensidad viento"		</item>
+  <item>"STD_particlesFx.wind_angle"			"Dirección del viento"			</item>
+  <item>"STD_particlesFx.swing_mode"			"Modo de oscilación"		</item>
+  <item>"STD_particlesFx.scattering_x"			"Horizontal"		</item>
+  <item>"STD_particlesFx.scattering_y"			"Vertical"			</item>
+  <item>"STD_particlesFx.scattering_x_ctrl"			"Imagen de control H"		</item>
+  <item>"STD_particlesFx.scattering_y_ctrl"			"Imagen de control V"		</item>
+  <item>"STD_particlesFx.swing"			"Oscilación"			</item>
+  <item>"STD_particlesFx.speed"			"Velocidad"			</item>
+  <item>"STD_particlesFx.speed_ctrl"			"Imagen de control"			</item>
+  <item>"STD_particlesFx.speed_angle"		"Dirección de la velocidad"			</item>
+
+  <item>"STD_particlesFx.speeda_ctrl"			"Imagen de control"			</item>
+  <item>"STD_particlesFx.speeda_use_gradient"	"Usar dirección del gradiente"	</item>
+
+  <item>"STD_particlesFx.speed_size"			"Vincular con la escala"		</item>
+  <item>"STD_particlesFx.top_layer"			"Capa superior"		</item>
+  <item>"STD_particlesFx.mass"			"Masa"			</item>
+  <item>"STD_particlesFx.scale"			"Tamaño"			</item>
+  <item>"STD_particlesFx.scale_ctrl"			"Imagen de control"		</item>
+  <item>"STD_particlesFx.scale_ctrl_all"		"Usar imagen de control para la vida completa"		</item>
+  <item>"STD_particlesFx.rot"			"Orientación"		</item>
+  <item>"STD_particlesFx.rot_ctrl"			"Imagen de control"			</item>
+  <item>"STD_particlesFx.trail"			"Estela"			</item>
+  <item>"STD_particlesFx.trail_step"			"Intervalo"			</item>
+  <item>"STD_particlesFx.spin_swing_mode"		"Modo de oscilación"		</item>
+  <item>"STD_particlesFx.spin_speed"			"Velocidad de rotación"			</item>
+  <item>"STD_particlesFx.spin_random"		"Velocidad adicional"		</item>
+  <item>"STD_particlesFx.spin_swing"			"Oscilación rotación"			</item>
+  <item>"STD_particlesFx.path_aim"			"Acompañar movimiento de partículas"	</item>
+  <item>"STD_particlesFx.opacity"			"Opacidad"			</item>
+  <item>"STD_particlesFx.opacity_ctrl"			"Imagen de control"			</item>
+  <item>"STD_particlesFx.trail_opacity"			"Opacidad estela"		</item>
+  <item>"STD_particlesFx.scale_step"			"Intensidad del tamaño"		</item>
+  <item>"STD_particlesFx.scale_step_ctrl"			"Imagen de control"		</item>
+  <item>"STD_particlesFx.fade_in"			"Fotogramas aparición"		</item>
+  <item>"STD_particlesFx.fade_out"			"Fotogramas desvanecimiento"		</item>
+  <item>"STD_particlesFx.birth_color"			"Color nacimiento"		</item>
+  <item>"STD_particlesFx.birth_color_ctrl"		"Imagen de control"		</item>
+  <item>"STD_particlesFx.birth_color_spread"		"Dispersión nacimiento"		</item>
+  <item>"STD_particlesFx.birth_color_fade"		"Intensidad nacimiento"		</item>
+  <item>"STD_particlesFx.fadein_color"			"Color aparición"		</item>
+  <item>"STD_particlesFx.fadein_color_ctrl"		"Imagen de control"		</item>
+  <item>"STD_particlesFx.fadein_color_spread"		"Dispersión aparición"		</item>
+  <item>"STD_particlesFx.fadein_color_range"		"Rango de fotogramas"		</item>
+  <item>"STD_particlesFx.fadein_color_fade"		"Intensidad aparición"		</item>
+  <item>"STD_particlesFx.fadeout_color"		"Color desvanecimiento"		</item>
+  <item>"STD_particlesFx.fadeout_color_ctrl"		"Imagen de control"		</item>
+  <item>"STD_particlesFx.fadeout_color_spread"		"Dispersión desvanecimiento"		</item>
+  <item>"STD_particlesFx.fadeout_color_range"		"Rango de fotogramas"		</item>
+  <item>"STD_particlesFx.fadeout_color_fade"		"Intensidad desvanecimiento"		</item>
+  <item>"STD_particlesFx.source_gradation"		"Usar graduación con imagen de control"		</item>
+  <item>"STD_particlesFx.pick_color_for_every_frame"	"Colores de imagen de control en cada fotograma"	</item>
+  <item>"STD_particlesFx.perspective_distribution"	"Distribución en perspectiva"	</item>
+  <item>"STD_particlesFx.motion_blur"	"Desenfoque por movimiento"	</item>
+  <item>"STD_particlesFx.motion_blur_gamma_adjust"	"Ajustar gama"	</item>
+
+  
+ <!------------------------------ Function Editor ------------------------------------------->
+ 
+  <item>W_Y		"Y"		</item>
+  <item>W_X		"X"		</item>
+  <item>W_Z		"Z"		</item>
+  <item>W_SO		"Orden"		</item>
+  <item>W_Rotation	"Rotación"	</item>
+  <item>W_ScaleH		"Escala H"		</item>
+  <item>W_ScaleV		"Escala V"		</item>
+  <item>W_ShearH		"Sesgo H"		</item>
+  <item>W_ShearV		"Sesgo V"		</item>
+  <item>W_Scale			"Escala"			</item>
+  
+<!------------------------------ Ino FXs ------------------------------------------->
+
+  <item>"STD_inoAddFx"	"Adicionar Ino"	</item>
+  <item>"STD_inoAddFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoAddFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoAddFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoAddFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoAddFx.gamma"	"Gama"	</item>
+  <item>"STD_inoAddFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoAddFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoColorBurnFx"	"Subexponer color Ino"	</item>
+  <item>"STD_inoColorBurnFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoColorBurnFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoColorBurnFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoColorBurnFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoColorBurnFx.gamma"	"Gama"	</item>
+  <item>"STD_inoColorBurnFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoColorBurnFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoColorDodgeFx"	"Sobreexponer color Ino"	</item>
+  <item>"STD_inoColorDodgeFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoColorDodgeFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoColorDodgeFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoColorDodgeFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoColorDodgeFx.gamma"	"Gama"	</item>
+  <item>"STD_inoColorDodgeFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoColorDodgeFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoCrossDissolveFx"	"Fundido cruzado Ino"	</item>
+  <item>"STD_inoCrossDissolveFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoCrossDissolveFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoCrossDissolveFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoCrossDissolveFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoCrossDissolveFx.gamma"	"Gama"	</item>
+  <item>"STD_inoCrossDissolveFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoCrossDissolveFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoDarkenFx"	"Oscurecer Ino"	</item>
+  <item>"STD_inoDarkenFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoDarkenFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoDarkenFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoDarkenFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoDarkenFx.gamma"	"Gama"	</item>
+  <item>"STD_inoDarkenFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoDarkenFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoDarkerColorFx"	"Color más oscuro Ino"	</item>
+  <item>"STD_inoDarkerColorFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoDarkerColorFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoDarkerColorFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoDarkerColorFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoDarkerColorFx.gamma"	"Gama"	</item>
+  <item>"STD_inoDarkerColorFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoDarkerColorFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoDivideFx"	"Dividir Ino"	</item>
+  <item>"STD_inoDivideFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoDivideFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoDivideFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoDivideFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoDivideFx.gamma"	"Gama"	</item>
+  <item>"STD_inoDivideFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoDivideFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoHardLightFx"	"Luz fuerte Ino"	</item>
+  <item>"STD_inoHardLightFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoHardLightFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoHardLightFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoHardLightFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoHardLightFx.gamma"	"Gama"	</item>
+  <item>"STD_inoHardLightFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoHardLightFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoHardMixFx"	"Mezcla definida Ino"	</item>
+  <item>"STD_inoHardMixFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoHardMixFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoHardMixFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoHardMixFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoHardMixFx.gamma"	"Gama"	</item>
+  <item>"STD_inoHardMixFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoHardMixFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoLightenFx"	"Aclarar Ino"	</item>
+  <item>"STD_inoLightenFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoLightenFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoLightenFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoLightenFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoLightenFx.gamma"	"Gama"	</item>
+  <item>"STD_inoLightenFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoLightenFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoLighterColorFx"	"Color más claro Ino"	</item>
+  <item>"STD_inoLighterColorFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoLighterColorFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoLighterColorFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoLighterColorFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoLighterColorFx.gamma"	"Gama"	</item>
+  <item>"STD_inoLighterColorFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoLighterColorFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoLinearBurnFx"	"Subexponer lineal Ino"	</item>
+  <item>"STD_inoLinearBurnFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoLinearBurnFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoLinearBurnFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoLinearBurnFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoLinearBurnFx.gamma"	"Gama"	</item>
+  <item>"STD_inoLinearBurnFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoLinearBurnFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoLinearDodgeFx"	"Sobreexponer lineal Ino"	</item>
+  <item>"STD_inoLinearDodgeFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoLinearDodgeFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoLinearDodgeFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoLinearDodgeFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoLinearDodgeFx.gamma"	"Gama"	</item>
+  <item>"STD_inoLinearDodgeFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoLinearDodgeFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoLinearLightFx"	"Luz lineal Ino"	</item>
+  <item>"STD_inoLinearLightFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoLinearLightFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoLinearLightFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoLinearLightFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoLinearLightFx.gamma"	"Gama"	</item>
+  <item>"STD_inoLinearLightFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoLinearLightFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoMultiplyFx"	"Multiplicar Ino"	</item>
+  <item>"STD_inoMultiplyFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoMultiplyFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoMultiplyFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoMultiplyFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoMultiplyFx.gamma"	"Gama"	</item>
+  <item>"STD_inoMultiplyFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoMultiplyFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoOverFx"	"Normal Ino"	</item>
+  <item>"STD_inoOverFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoOverFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoOverFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoOverFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoOverFx.gamma"	"Gama"	</item>
+  <item>"STD_inoOverFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoOverFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoOverlayFx"	"Superponer Ino"	</item>
+  <item>"STD_inoOverlayFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoOverlayFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoOverlayFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoOverlayFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoOverlayFx.gamma"	"Gama"	</item>
+  <item>"STD_inoOverlayFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoOverlayFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoPinLightFx"	"Luz focal Ino"	</item>
+  <item>"STD_inoPinLightFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoPinLightFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoPinLightFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoPinLightFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoPinLightFx.gamma"	"Gama"	</item>
+  <item>"STD_inoPinLightFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoPinLightFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoScreenFx"	"Trama Ino"	</item>
+  <item>"STD_inoScreenFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoScreenFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoScreenFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoScreenFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoScreenFx.gamma"	"Gama"	</item>
+  <item>"STD_inoScreenFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoScreenFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoSoftLightFx"	"Luz suave Ino"	</item>
+  <item>"STD_inoSoftLightFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoSoftLightFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoSoftLightFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoSoftLightFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoSoftLightFx.gamma"	"Gama"	</item>
+  <item>"STD_inoSoftLightFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoSoftLightFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoSubtractFx"	"Sustraer Ino"	</item>
+  <item>"STD_inoSubtractFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoSubtractFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoSubtractFx.alpha_rendering"	"Procesar alfa"	</item>
+  <item>"STD_inoSubtractFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoSubtractFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoSubtractFx.gamma"	"Gama"	</item>
+  <item>"STD_inoSubtractFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoSubtractFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoVividLightFx"	"Luz intensa Ino"	</item>
+  <item>"STD_inoVividLightFx.opacity"	"Opacidad"	</item>
+  <item>"STD_inoVividLightFx.clipping_mask"	"Máscara de recorte"	</item>
+  <item>"STD_inoVividLightFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_inoVividLightFx.colorSpaceMode"	"Espacio de color"	</item>
+  <item>"STD_inoVividLightFx.gamma"	"Gama"	</item>
+  <item>"STD_inoVividLightFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_inoVividLightFx.premultiplied"	"Origen premultiplicado"	</item>
+  <item>"STD_inoBlurFx"	"Desenfoque Ino"	</item>
+  <item>"STD_inoBlurFx.radius"	"Radio"	</item>
+  <item>"STD_inoBlurFx.reference"	"Referencia"	</item>
+  <item>"STD_inoChannelSelectorFx"	"Selector de canales Ino"	</item>
+  <item>"STD_inoChannelSelectorFx.red_source"	"Origen rojo"	</item>
+  <item>"STD_inoChannelSelectorFx.red_channel"	"Canal rojo"	</item>
+  <item>"STD_inoChannelSelectorFx.green_source"	"Origen verde"	</item>
+  <item>"STD_inoChannelSelectorFx.green_channel"	"Canal verde"	</item>
+  <item>"STD_inoChannelSelectorFx.blue_source"	"Origen azul"	</item>
+  <item>"STD_inoChannelSelectorFx.blue_channel"	"Canal azul"	</item>
+  <item>"STD_inoChannelSelectorFx.alpha_source"	"Origen alfa"	</item>
+  <item>"STD_inoChannelSelectorFx.alpha_channel"	"Canal alfa"	</item>
+  <item>"STD_inoDensityFx"	"Densidad Ino"	</item>
+  <item>"STD_inoDensityFx.density"	"Densidad"	</item>
+  <item>"STD_inoDensityFx.reference"	"Referencia"	</item>
+  <item>"STD_inoFogFx"	"Niebla Ino"	</item>
+  <item>"STD_inoFogFx.radius"	"Radio"	</item>
+  <item>"STD_inoFogFx.curve"	"Curva"	</item>
+  <item>"STD_inoFogFx.power"	"Intensidad"	</item>
+  <item>"STD_inoFogFx.threshold_min"	"Umbral mín"	</item>
+  <item>"STD_inoFogFx.threshold_max"	"Umbral máx"	</item>
+  <item>"STD_inoFogFx.alpha_rendering"	"Procesar alfa"	</item>
+  <item>"STD_inohlsAddFx"	"Adicionar TSL Ino"	</item>
+  <item>"STD_inohlsAddFx.from_rgba"	"Origen"	</item>
+  <item>"STD_inohlsAddFx.offset"	"Desplazamiento"	</item>
+  <item>"STD_inohlsAddFx.hue"	"Tono"	</item>
+  <item>"STD_inohlsAddFx.lightness"	"Luminosidad"	</item>
+  <item>"STD_inohlsAddFx.saturation"	"Saturación"	</item>
+  <item>"STD_inohlsAddFx.alpha"	"Alfa"	</item>
+  <item>"STD_inohlsAddFx.anti_alias"	"Premultiplicado"	</item>
+  <item>"STD_inohlsAddFx.reference"	"Referencia"	</item>
+  <item>"STD_inohlsAdjustFx"	"Ajustar TSL Ino"	</item>
+  <item>"STD_inohlsAdjustFx.pivot_hue"	"Tono"	</item>
+  <item>"STD_inohlsAdjustFx.pivot_lightness"	"Luminosidad"	</item>
+  <item>"STD_inohlsAdjustFx.pivot_saturation"	"Saturación"	</item>
+  <item>"STD_inohlsAdjustFx.scale_hue"	"Tono"	</item>
+  <item>"STD_inohlsAdjustFx.scale_lightness"	"Luminosidad"	</item>
+  <item>"STD_inohlsAdjustFx.scale_saturation"	"Saturación"	</item>
+  <item>"STD_inohlsAdjustFx.shift_hue"	"Tono"	</item>
+  <item>"STD_inohlsAdjustFx.shift_lightness"	"Luminosidad"	</item>
+  <item>"STD_inohlsAdjustFx.shift_saturation"	"Saturación"	</item>
+  <item>"STD_inohlsAdjustFx.anti_alias"	"Premultiplicado"	</item>
+  <item>"STD_inohlsAdjustFx.reference"	"Referencia"	</item>
+  <item>"STD_inohlsNoiseFx"	"Ruido TSL Ino"	</item>
+  <item>"STD_inohlsNoiseFx.hue"	"Tono"	</item>
+  <item>"STD_inohlsNoiseFx.lightness"	"Luminosidad"	</item>
+  <item>"STD_inohlsNoiseFx.saturation"	"Saturación"	</item>
+  <item>"STD_inohlsNoiseFx.alpha"	"Alfa"	</item>
+  <item>"STD_inohlsNoiseFx.seed"	"Semilla"	</item>
+  <item>"STD_inohlsNoiseFx.nblur"	"Desenfoque ruido"	</item>
+  <item>"STD_inohlsNoiseFx.effective"	"Efectivo"	</item>
+  <item>"STD_inohlsNoiseFx.center"	"Centro"	</item>
+  <item>"STD_inohlsNoiseFx.type"	"Tipo"	</item>
+  <item>"STD_inohlsNoiseFx.anti_alias"	"Premultiplicado"	</item>
+  <item>"STD_inohlsNoiseFx.reference"	"Referencia"	</item>
+  <item>"STD_inohsvAddFx"	"Adicionar TSV Ino"	</item>
+  <item>"STD_inohsvAddFx.from_rgba"	"Origen"	</item>
+  <item>"STD_inohsvAddFx.offset"	"Desplazamiento"	</item>
+  <item>"STD_inohsvAddFx.hue"	"Tono"	</item>
+  <item>"STD_inohsvAddFx.saturation"	"Saturación"	</item>
+  <item>"STD_inohsvAddFx.value"	"Valor"	</item>
+  <item>"STD_inohsvAddFx.alpha"	"Alfa"	</item>
+  <item>"STD_inohsvAddFx.anti_alias"	"Premultiplicado"	</item>
+  <item>"STD_inohsvAddFx.reference"	"Referencia"	</item>
+  <item>"STD_inohsvAdjustFx"	"Ajustar TSV Ino"	</item>
+  <item>"STD_inohsvAdjustFx.pivot_hue"	"Tono"	</item>
+  <item>"STD_inohsvAdjustFx.pivot_saturation"	"Saturación"	</item>
+  <item>"STD_inohsvAdjustFx.pivot_value"	"Valor"	</item>
+  <item>"STD_inohsvAdjustFx.scale_hue"	"Tono"	</item>
+  <item>"STD_inohsvAdjustFx.scale_saturation"	"Saturación"	</item>
+  <item>"STD_inohsvAdjustFx.scale_value"	"Valor"	</item>
+  <item>"STD_inohsvAdjustFx.shift_hue"	"Tono"	</item>
+  <item>"STD_inohsvAdjustFx.shift_saturation"	"Saturación"	</item>
+  <item>"STD_inohsvAdjustFx.shift_value"	"Valor"	</item>
+  <item>"STD_inohsvAdjustFx.anti_alias"	"Premultiplicado"	</item>
+  <item>"STD_inohsvAdjustFx.reference"	"Referencia"	</item>
+  <item>"STD_inohsvNoiseFx"	"Ruido TSV Ino"	</item>
+  <item>"STD_inohsvNoiseFx.hue"	"Tono"	</item>
+  <item>"STD_inohsvNoiseFx.saturation"	"Saturación"	</item>
+  <item>"STD_inohsvNoiseFx.value"	"Valor"	</item>
+  <item>"STD_inohsvNoiseFx.alpha"	"Alfa"	</item>
+  <item>"STD_inohsvNoiseFx.seed"	"Semilla"	</item>
+  <item>"STD_inohsvNoiseFx.nblur"	"Desenfoque ruido"	</item>
+  <item>"STD_inohsvNoiseFx.effective"	"Efectivo"	</item>
+  <item>"STD_inohsvNoiseFx.center"	"Centro"	</item>
+  <item>"STD_inohsvNoiseFx.type"	"Tipo"	</item>
+  <item>"STD_inohsvNoiseFx.anti_alias"	"Premultiplicado"	</item>
+  <item>"STD_inohsvNoiseFx.reference"	"Referencia"	</item>
+  <item>"STD_inoLevelAutoFx"	"Niveles automáticos Ino"	</item>
+  <item>"STD_inoLevelAutoFx.in_min_shift"	"Despl mín entrada"	</item>
+  <item>"STD_inoLevelAutoFx.in_max_shift"	"Despl máx entrada"	</item>
+  <item>"STD_inoLevelAutoFx.out_min"	"Mín salida"	</item>
+  <item>"STD_inoLevelAutoFx.out_max"	"Máx salida"	</item>
+  <item>"STD_inoLevelAutoFx.gamma"	"Gama"	</item>
+  <item>"STD_inoLevelMasterFx"	"Niveles generales Ino"	</item>
+  <item>"STD_inoLevelMasterFx.in"	"Entrada"	</item>
+  <item>"STD_inoLevelMasterFx.out"	"Salida"	</item>
+  <item>"STD_inoLevelMasterFx.gamma"	"Gama"	</item>
+  <item>"STD_inoLevelMasterFx.alpha_rendering"	"Procesar alfa"	</item>
+  <item>"STD_inoLevelMasterFx.anti_alias"	"Premultiplicado"	</item>
+  <item>"STD_inoLevelMasterFx.reference"	"Referencia"	</item>
+  <item>"STD_inoLevelrgbaFx"	"Niveles RVAα Ino"	</item>
+  <item>"STD_inoLevelrgbaFx.red_in"	"Rojo entrada"	</item>
+  <item>"STD_inoLevelrgbaFx.red_out"	"Rojo salida"	</item>
+  <item>"STD_inoLevelrgbaFx.red_gamma"	"Rojo gama"	</item>
+  <item>"STD_inoLevelrgbaFx.gre_in"	"Verde entrada"	</item>
+  <item>"STD_inoLevelrgbaFx.gre_out"	"Verde salida"	</item>
+  <item>"STD_inoLevelrgbaFx.gre_gamma"	"Verde gama"	</item>
+  <item>"STD_inoLevelrgbaFx.blu_in"	"Azul entrada"	</item>
+  <item>"STD_inoLevelrgbaFx.blu_out"	"Azul salida"	</item>
+  <item>"STD_inoLevelrgbaFx.blu_gamma"	"Azul gama"	</item>
+  <item>"STD_inoLevelrgbaFx.alp_in"	"Alfa entrada"	</item>
+  <item>"STD_inoLevelrgbaFx.alp_out"	"Alfa salida"	</item>
+  <item>"STD_inoLevelrgbaFx.alp_gamma"	"Alfa gama"	</item>
+  <item>"STD_inoLevelrgbaFx.anti_alias"	"Premultiplicado"	</item>
+  <item>"STD_inoLevelrgbaFx.reference"	"Referencia"	</item>
+  <item>"STD_inoLineBlurFx"	"Desenfoque lineal Ino"	</item>
+  <item>"STD_inoLineBlurFx.action_mode"	"Modo de acción"	</item>
+  <item>"STD_inoLineBlurFx.blur_count"	"Cantidad desenfoque"	</item>
+  <item>"STD_inoLineBlurFx.blur_power"	"Potencia desenfoque"	</item>
+  <item>"STD_inoLineBlurFx.blur_subpixel"	"Subpíxeles desenfoque"	</item>
+  <item>"STD_inoLineBlurFx.blur_near_ref"	"Ref cercana desenfoque"	</item>
+  <item>"STD_inoLineBlurFx.blur_near_len"	"Long cercana desenfoque"	</item>
+  <item>"STD_inoLineBlurFx.vector_smooth_retry"	"Reintento suave vector"	</item>
+  <item>"STD_inoLineBlurFx.vector_near_ref"	"Ref cercana vector"	</item>
+  <item>"STD_inoLineBlurFx.vector_near_len"	"Long cercana vector"	</item>
+  <item>"STD_inoLineBlurFx.smudge_thick"	"Grosor de manchado"	</item>
+  <item>"STD_inoLineBlurFx.smudge_remain"	"Permanencia manchado"	</item>
+  <item>"STD_inoMaxMinFx"	"Máx mín Ino"	</item>
+  <item>"STD_inoMaxMinFx.max_min_select"	"Modo"	</item>
+  <item>"STD_inoMaxMinFx.radius"	"Radio"	</item>
+  <item>"STD_inoMaxMinFx.polygon_number"	"Lados del polígono"	</item>
+  <item>"STD_inoMaxMinFx.degree"	"Grado"	</item>
+  <item>"STD_inoMaxMinFx.alpha_rendering"	"Procesar alfa"	</item>
+  <item>"STD_inoMaxMinFx.reference"	"Referencia"	</item>
+  <item>"STD_inoMedianFx"	"Mediana Ino"	</item>
+  <item>"STD_inoMedianFx.radius"	"Radio"	</item>
+  <item>"STD_inoMedianFx.channel"	"Canal"	</item>
+  <item>"STD_inoMedianFx.reference"	"Referencia"	</item>
+  <item>"STD_inoMedianFilterFx"	"Filtro de medianas Ino"	</item>
+  <item>"STD_inoMedianFilterFx.radius"	"Radio"	</item>
+  <item>"STD_inoMedianFilterFx.channel"	"Canal"	</item>
+  <item>"STD_inoMedianFilterFx.reference"	"Referencia"	</item>
+  <item>"STD_inoMotionBlurFx"	"Desenfoque por movimiento Ino"	</item>
+  <item>"STD_inoMotionBlurFx.depend_move"	"Movimiento desde"	</item>
+  <item>"STD_inoMotionBlurFx.x1"	"X1"	</item>
+  <item>"STD_inoMotionBlurFx.y1"	"Y1"	</item>
+  <item>"STD_inoMotionBlurFx.x2"	"X2"	</item>
+  <item>"STD_inoMotionBlurFx.y2"	"Y2"	</item>
+  <item>"STD_inoMotionBlurFx.scale"	"Escala"	</item>
+  <item>"STD_inoMotionBlurFx.curve"	"Curva"	</item>
+  <item>"STD_inoMotionBlurFx.zanzo_length"	"Longitud estela"	</item>
+  <item>"STD_inoMotionBlurFx.zanzo_power"	"Intensidad estela"	</item>
+  <item>"STD_inoMotionBlurFx.alpha_rendering"	"Procesar alfa"	</item>
+  <item>"STD_inoMotionWindFx"	"Viento Ino"	</item>
+  <item>"STD_inoMotionWindFx.direction"	"Dirección"	</item>
+  <item>"STD_inoMotionWindFx.dark"	"Oscuro"	</item>
+  <item>"STD_inoMotionWindFx.alpha_rendering"	"Procesar alfa"	</item>
+  <item>"STD_inoMotionWindFx.length_min"	"Longitud mín"	</item>
+  <item>"STD_inoMotionWindFx.length_max"	"Longitud máx"	</item>
+  <item>"STD_inoMotionWindFx.length_bias"	"Longitud: Desviación"	</item>
+  <item>"STD_inoMotionWindFx.length_seed"	"Longitud: Semilla"	</item>
+  <item>"STD_inoMotionWindFx.length_ref"	"Ref longitud"	</item>
+  <item>"STD_inoMotionWindFx.force_min"	"Fuerza mín"	</item>
+  <item>"STD_inoMotionWindFx.force_max"	"Fuerza máx"	</item>
+  <item>"STD_inoMotionWindFx.force_bias"	"Fuerza: DesviaciónBias"	</item>
+  <item>"STD_inoMotionWindFx.force_seed"	"Fuerza: Semilla"	</item>
+  <item>"STD_inoMotionWindFx.force_ref"	"Ref fuerza"	</item>
+  <item>"STD_inoMotionWindFx.density_min"	"Densidad mín"	</item>
+  <item>"STD_inoMotionWindFx.density_max"	"Densidad máx"	</item>
+  <item>"STD_inoMotionWindFx.density_bias"	"Densidad: Desviación"	</item>
+  <item>"STD_inoMotionWindFx.density_seed"	"Densidad: Semilla"	</item>
+  <item>"STD_inoMotionWindFx.density_ref"	"Ref densidad"	</item>
+  <item>"STD_inoMotionWindFx.reference"	"Referencia"	</item>
+  <item>"STD_inoNegateFx"	"Negar Ino"	</item>
+  <item>"STD_inoNegateFx.red"	"Rojo"	</item>
+  <item>"STD_inoNegateFx.green"	"Verde"	</item>
+  <item>"STD_inoNegateFx.blue"	"Azul"	</item>
+  <item>"STD_inoNegateFx.alpha"	"Alfa"	</item>
+  <item>"STD_inopnCloudsFx"	"Nubes PN Ino"	</item>
+  <item>"STD_inopnCloudsFx.size"	"Tamaño"	</item>
+  <item>"STD_inopnCloudsFx.z"	"Z"	</item>
+  <item>"STD_inopnCloudsFx.octaves"	"Octavas"	</item>
+  <item>"STD_inopnCloudsFx.persistance"	"Persistencia"	</item>
+  <item>"STD_inopnCloudsFx.alpha_rendering"	"Procesar alfa"	</item>
+  <item>"STD_inoRadialBlurFx"	"Desenfoque radial Ino"	</item>
+  <item>"STD_inoRadialBlurFx.center"	"Centro"	</item>
+  <item>"STD_inoRadialBlurFx.radius"	"Radio"	</item>
+  <item>"STD_inoRadialBlurFx.blur"	"Desenfoque"	</item>
+  <item>"STD_inoRadialBlurFx.type"	"Tipo"	</item>
+  <item>"STD_inoRadialBlurFx.twist"	"Torsión"	</item>
+  <item>"STD_inoRadialBlurFx.alpha_rendering"	"Procesar alfa"	</item>
+  <item>"STD_inoRadialBlurFx.anti_alias"	"Suavizado de bordes"	</item>
+  <item>"STD_inoRadialBlurFx.reference"	"Referencia"	</item>
+  <item>"STD_inoRadialBlurFx.ellipse_aspect_ratio"	"Proporción elipse"	</item>
+  <item>"STD_inoRadialBlurFx.ellipse_angle"	"Ángulo elipse"	</item>
+  <item>"STD_inoRadialBlurFx.intensity_correlation_with_ellipse"	"Correlación de intensidad"	</item>
+  <item>"STD_inoSpinBlurFx"	"Desenfoque de giro Ino"	</item>
+  <item>"STD_inoSpinBlurFx.center"	"Centro"	</item>
+  <item>"STD_inoSpinBlurFx.radius"	"Radio"	</item>
+  <item>"STD_inoSpinBlurFx.blur"	"Desenfoque"	</item>
+  <item>"STD_inoSpinBlurFx.type"	"Tipo"	</item>
+  <item>"STD_inoSpinBlurFx.alpha_rendering"	"Procesar alfa"	</item>
+  <item>"STD_inoSpinBlurFx.anti_alias"	"Suavizado de bordes"	</item>
+  <item>"STD_inoSpinBlurFx.reference"	"Referencia"	</item>
+  <item>"STD_inoSpinBlurFx.ellipse_aspect_ratio"	"Proporción elipse"	</item>
+  <item>"STD_inoSpinBlurFx.ellipse_angle"	"Ángulo elipse"	</item>
+  <item>"STD_inoWarphvFx"	"Distorsionar HV Ino"	</item>
+  <item>"STD_inoWarphvFx.h_maxlen"	"Longitud máx H"	</item>
+  <item>"STD_inoWarphvFx.v_maxlen"	"Longitud máx V"	</item>
+  <item>"STD_inoWarphvFx.h_ref_mode"	"Referencia H"	</item>
+  <item>"STD_inoWarphvFx.v_ref_mode"	"Referencia V"	</item>
+  <item>"STD_inoWarphvFx.alpha_rendering"	"Procesar alfa"	</item>
+  <item>"STD_inoWarphvFx.anti_aliasing"	"Suavizado de bordes"	</item>
+  
+<!------------------------------ Iwa FXs ------------------------------------------->
+
+  <item>"STD_iwa_AdjustExposureFx"	"Ajustar exposición Iwa"	</item>
+  <item>"STD_iwa_AdjustExposureFx.hardness"	"Definición"	</item>
+  <item>"STD_iwa_AdjustExposureFx.gamma"	"Gama"	</item>
+  <item>"STD_iwa_AdjustExposureFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_iwa_AdjustExposureFx.scale"	"Escala"	</item>
+  <item>"STD_iwa_AdjustExposureFx.offset"	"Desplazamiento"	</item>
+
+  <item>"STD_iwa_DirectionalBlurFx"			"Desenfoque direccional Iwa"</item>
+  <item>"STD_iwa_DirectionalBlurFx.angle"		"Ángulo"</item>
+  <item>"STD_iwa_DirectionalBlurFx.intensity"		"Intensidad"</item>
+  <item>"STD_iwa_DirectionalBlurFx.bidirectional"	"Bidireccional"</item>
+  <item>"STD_iwa_DirectionalBlurFx.filterType"		"Tipo de filtro"</item>
+
+  <item>"STD_iwa_GradientWarpFx"			"Distorsionar con gradiente Iwa"</item>
+  <item>"STD_iwa_GradientWarpFx.h_maxlen"		"Longitud H"</item>
+  <item>"STD_iwa_GradientWarpFx.v_maxlen"		"Longitud V"</item>
+  <item>"STD_iwa_GradientWarpFx.scale"			"Escala"</item>
+  <item>"STD_iwa_GradientWarpFx.sampling_size"			"Tamaño de muestreo"</item>
+
+  <item>"STD_iwa_MotionBlurCompFx"	"Desenfoque por movimiento Iwa"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.hardness"	"Definición"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.gamma"	"Gama"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.gammaAdjust"	"Ajustar gama"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.shutterStart"	"Apertura obturador"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.shutterEnd"	"Cierre obturador"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.traceResolution"	"Resolución de trazado"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.motionObjectType"	"Objeto de referencia"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.motionObjectIndex" "Índice"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.startValue" "Valor apertura"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.startCurve" "Curva apertura"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.endValue" "Valor cierre"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.endCurve" "Curva cierre"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.zanzoMode" "Modo de estela"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.premultiType" "Premultiplicación de origen"	</item>
+
+  <item>"STD_iwa_PerspectiveDistortFx"			"Distorsión en perspectiva Iwa"</item>
+  <item>"STD_iwa_PerspectiveDistortFx.vanishingPoint"	"Punto de fuga"</item>
+  <item>"STD_iwa_PerspectiveDistortFx.anchorPoint"	"Horizonte"</item>
+  <item>"STD_iwa_PerspectiveDistortFx.precision"	"Precisión"</item>
+
+  <item>"STD_iwa_SpectrumFx"	"Espectro Iwa"	</item>
+  <item>"STD_iwa_SpectrumFx.intensity"	"Intensidad"	</item>
+  <item>"STD_iwa_SpectrumFx.refractiveIndex"	"Índice de refracción"	</item>
+  <item>"STD_iwa_SpectrumFx.thickMax"	"Grosor máx"	</item>
+  <item>"STD_iwa_SpectrumFx.thickMin"	"Grosor mín"	</item>
+  <item>"STD_iwa_SpectrumFx.RGamma"	"Gama R"	</item>
+  <item>"STD_iwa_SpectrumFx.GGamma"	"Gama V"	</item>
+  <item>"STD_iwa_SpectrumFx.BGamma"	"Gama A"	</item>
+  <item>"STD_iwa_SpectrumFx.loopSpectrumFadeWidth"	"Ancho fundido repetición espectro"	</item>
+  <item>"STD_iwa_SpectrumFx.spectrumShift"	"Desplazamiento del espectro"	</item>
+  <item>"STD_iwa_SpectrumFx.lensFactor"	"Factor de lente"	</item>
+  <item>"STD_iwa_SpectrumFx.lightThres"	"Umbral de luz"</item>
+  <item>"STD_iwa_SpectrumFx.lightIntensity"	"Intensidad de luz"</item>
+
+  <item>"STD_iwa_TileFx"	"Repetir Iwa"</item>
+  <item>"STD_iwa_TileFx.inputSize"	"Tamaño de entrada"</item>
+  <item>"STD_iwa_TileFx.leftQuantity"	"Cantidad izquierda"</item>
+  <item>"STD_iwa_TileFx.rightQuantity"	"Cantidad derecha"</item>
+  <item>"STD_iwa_TileFx.xMirror"	"Reflejar horizontalmente"</item>
+  <item>"STD_iwa_TileFx.hMargin"	"Margen horizontal"</item>
+  <item>"STD_iwa_TileFx.topQuantity"	"Cantidad arriba"</item>
+  <item>"STD_iwa_TileFx.bottomQuantity"	"Cantidad abajo"</item>
+  <item>"STD_iwa_TileFx.yMirror"	"Reflejar verticalmente"</item>
+  <item>"STD_iwa_TileFx.vMargin"	"Margen vertical"</item>
+
+  <item>"STD_iwa_PNPerspectiveFx"			"Perspectiva PN Iwa"</item>
+  <item>"STD_iwa_PNPerspectiveFx.renderMode"		"Modo"</item>
+  <item>"STD_iwa_PNPerspectiveFx.noiseType"		"Tipo de ruido"</item>
+  <item>"STD_iwa_PNPerspectiveFx.size"			"Tamaño"</item>
+  <item>"STD_iwa_PNPerspectiveFx.evolution"		"Evolución"</item>
+  <item>"STD_iwa_PNPerspectiveFx.octaves"		"Octavas"</item>
+  <item>"STD_iwa_PNPerspectiveFx.offset"		"Desplazamiento"</item>
+  <item>"STD_iwa_PNPerspectiveFx.persistance_intensity"	"Intensidad_p"</item>
+  <item>"STD_iwa_PNPerspectiveFx.persistance_size"	"Tamaño_p"</item>
+  <item>"STD_iwa_PNPerspectiveFx.persistance_evolution"	"Evolución_p"</item>
+  <item>"STD_iwa_PNPerspectiveFx.persistance_offset"	"Desplazamiento_p"</item>
+  <item>"STD_iwa_PNPerspectiveFx.fov"			"FOV"</item>
+  <item>"STD_iwa_PNPerspectiveFx.eyeLevel"		"Nivel de vista"</item>
+  <item>"STD_iwa_PNPerspectiveFx.alpha_rendering"	"Procesar alfa"</item>
+  <item>"STD_iwa_PNPerspectiveFx.waveHeight"		"Altura de ondas"</item>
+  <item>"STD_iwa_PNPerspectiveFx.normalize_fresnel"		"Normalizar intensidad"</item>
+  
+  <item>"STD_iwa_SoapBubbleFx"	"Burbuja de jabón Iwa"	</item>
+  <item>"STD_iwa_SoapBubbleFx.renderMode"	"Modo de procesamiento"	</item>
+  <item>"STD_iwa_SoapBubbleFx.intensity"	"Intensidad"	</item>
+  <item>"STD_iwa_SoapBubbleFx.refractiveIndex"	"Índice de refracción"	</item>
+  <item>"STD_iwa_SoapBubbleFx.thickMax"	"Grosor máx"	</item>
+  <item>"STD_iwa_SoapBubbleFx.thickMin"	"Grosor mín"	</item>
+  <item>"STD_iwa_SoapBubbleFx.RGamma"	"Gama R"	</item>
+  <item>"STD_iwa_SoapBubbleFx.GGamma"	"Gama V"	</item>
+  <item>"STD_iwa_SoapBubbleFx.BGamma"	"Gama A"	</item>
+  <item>"STD_iwa_SoapBubbleFx.loopSpectrumFadeWidth"	"Ancho fundido repetición espectro"	</item>
+  <item>"STD_iwa_SoapBubbleFx.spectrumShift"	"Desplazamiento espectro"	</item>
+  <item>"STD_iwa_SoapBubbleFx.binarizeThresold"	"Umbral"	</item>
+  <item>"STD_iwa_SoapBubbleFx.multiSource"	"Múltiples burbujas en imagen de forma"	</item>
+  <item>"STD_iwa_SoapBubbleFx.maskCenter"	"Centro de máscara de la burbuja"	</item>
+  <item>"STD_iwa_SoapBubbleFx.centerOpacity"	"Opacidad del centro de la burbuja"	</item>
+  <item>"STD_iwa_SoapBubbleFx.fitThickness"	"Ajustar imagen de grosor a cada burbuja"	</item>
+  <item>"STD_iwa_SoapBubbleFx.shapeAspectRatio"	"Proporción de la forma"	</item>
+  <item>"STD_iwa_SoapBubbleFx.blurRadius"	"Radio de desenfoque"	</item>
+  <item>"STD_iwa_SoapBubbleFx.blurPower"	"Potencia"	</item>
+  <item>"STD_iwa_SoapBubbleFx.normalSampleDistance"	"Distancia de muestreo"	</item>
+  <item>"STD_iwa_SoapBubbleFx.noiseSubDepth"	"Sub profundidad"	</item>
+  <item>"STD_iwa_SoapBubbleFx.noiseResolutionS"	"Resolución S"	</item>
+  <item>"STD_iwa_SoapBubbleFx.noiseResolutionT"	"Resolución T"	</item>
+  <item>"STD_iwa_SoapBubbleFx.noiseSubCompositeRatio"	"Tasa de sub amplitud"	</item>
+  <item>"STD_iwa_SoapBubbleFx.noiseEvolution"	"Evolución"	</item>
+  <item>"STD_iwa_SoapBubbleFx.noiseDepthMixRatio"	"Ruido a profundidad"	</item>
+  <item>"STD_iwa_SoapBubbleFx.noiseThicknessMixRatio"	"Ruido a grosor"	</item>
+
+  <item>"STD_iwa_BokehFx"	"Bokeh Iwa"</item>
+  <item>"STD_iwa_BokehFx.on_focus_distance"	"Distancia de enfoque"</item>
+  <item>"STD_iwa_BokehFx.bokeh_amount"	"Intensidad del bokeh"</item>
+  <item>"STD_iwa_BokehFx.hardness"	"Definición"</item>
+  <item>"STD_iwa_BokehFx.gamma"	"Gama"</item>
+  <item>"STD_iwa_BokehFx.gammaAdjust"	"Ajuste de gama"</item>
+  <item>"STD_iwa_BokehFx.linearizeMode"	"Modo de linealización"</item>
+  <item>"STD_iwa_BokehFx.distance1"		"Origen1 Distancia"</item>
+  <item>"STD_iwa_BokehFx.bokeh_adjustment1"	"Origen1 Ajuste bokeh"</item>
+  <item>"STD_iwa_BokehFx.distance2"		"Origen2 Distancia"</item>
+  <item>"STD_iwa_BokehFx.bokeh_adjustment2"	"Origen2 Ajuste bokeh"</item>
+  <item>"STD_iwa_BokehFx.distance3"		"Origen3 Distancia"</item>
+  <item>"STD_iwa_BokehFx.bokeh_adjustment3"	"Origen3 Ajuste bokeh"</item>
+  <item>"STD_iwa_BokehFx.distance4"		"Origen4 Distancia"</item>
+  <item>"STD_iwa_BokehFx.bokeh_adjustment4"	"Origen4 Ajuste bokeh"</item>
+  <item>"STD_iwa_BokehFx.distance5"		"Origen5 Distancia"</item>
+  <item>"STD_iwa_BokehFx.bokeh_adjustment5"	"Origen5 Ajuste bokeh"</item>
+  
+  <item>"STD_iwa_BokehRefFx"	"Bokeh ref Iwa"</item>
+  <item>"STD_iwa_BokehRefFx.on_focus_distance"	"Distancia de enfoque"</item>
+  <item>"STD_iwa_BokehRefFx.bokeh_amount"	"Intensidad del bokeh"</item>
+  <item>"STD_iwa_BokehRefFx.hardness"	"Definición"</item>
+  <item>"STD_iwa_BokehRefFx.gamma"	"Gama"</item>
+  <item>"STD_iwa_BokehRefFx.gammaAdjust"	"Ajuste de gama"</item>
+  <item>"STD_iwa_BokehRefFx.linearizeMode"	"Modo de linealización"</item>
+  <item>"STD_iwa_BokehRefFx.distance_precision"	"Precisión de distancia"</item>
+  <item>"STD_iwa_BokehRefFx.fill_gap"	"Rellenar huecos"</item>
+  <item>"STD_iwa_BokehRefFx.fill_gap_with_median_filter"	"Usar mediana"</item>
+
+  <item>"STD_iwa_BokehAdvancedFx"			"Bokeh avanzado Iwa"</item>
+  <item>"STD_iwa_BokehAdvancedFx.on_focus_distance"	"Distancia de enfoque"</item>
+  <item>"STD_iwa_BokehAdvancedFx.bokeh_amount"		"Intensidad bokeh"</item>
+  <item>"STD_iwa_BokehAdvancedFx.masterHardness"	"Definición general"</item>
+  <item>"STD_iwa_BokehAdvancedFx.masterGamma"	"Gama general"</item>
+  <item>"STD_iwa_BokehAdvancedFx.masterGammaAdjust"	"Ajuste gama general"</item>
+  <item>"STD_iwa_BokehAdvancedFx.linearizeMode"	"Modo linealización"</item>
+  <item>"STD_iwa_BokehAdvancedFx.hardnessPerSource"	"Gama/Definición por origen"</item>
+
+  <item>"STD_iwa_BokehAdvancedFx.distance1"		"Origen1 Distancia"</item>
+  <item>"STD_iwa_BokehAdvancedFx.bokeh_adjustment1"	"Origen1 Ajuste bokeh"</item>
+  <item>"STD_iwa_BokehAdvancedFx.hardness1"		"Origen1 Definición"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gamma1"		"Origen1 Gama"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gammaAdjust1"		"Origen1 Ajuste gama"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depth_ref1"		"Imagen profundidad"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depthRange1"	"Origen1 Rango profundidad"</item>
+  <item>"STD_iwa_BokehAdvancedFx.fillGap1"	"Rellenar huecos"</item>
+  <item>"STD_iwa_BokehAdvancedFx.doMedian1"	"Usar mediana"</item>
+
+  <item>"STD_iwa_BokehAdvancedFx.distance2"		"Origen2 Distancia"</item>
+  <item>"STD_iwa_BokehAdvancedFx.bokeh_adjustment2"	"Origen2 Ajuste bokeh"</item>
+  <item>"STD_iwa_BokehAdvancedFx.hardness2"		"Origen2 Definición"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gamma2"		"Origen2 Gama"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gammaAdjust2"		"Origen2 Ajuste gama"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depth_ref2"		"Imagen profundidad"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depthRange2"	"Origen2 Rango profundidad"</item>
+  <item>"STD_iwa_BokehAdvancedFx.fillGap2"	"Rellenar huecos"</item>
+  <item>"STD_iwa_BokehAdvancedFx.doMedian2"	"Usar mediana"</item>
+
+  <item>"STD_iwa_BokehAdvancedFx.distance3"		"Origen3 Distancia"</item>
+  <item>"STD_iwa_BokehAdvancedFx.bokeh_adjustment3"	"Origen3 Ajuste bokeh"</item>
+  <item>"STD_iwa_BokehAdvancedFx.hardness3"		"Origen3 Definición"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gamma3"		"Origen3 Gama"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gammaAdjust3"		"Origen3 Ajuste gama"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depth_ref3"		"Imagen profundidad"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depthRange3"	"Origen3 Rango profundidad"</item>
+  <item>"STD_iwa_BokehAdvancedFx.fillGap3"	"Rellenar huecos"</item>
+  <item>"STD_iwa_BokehAdvancedFx.doMedian3"	"Usar mediana"</item>
+
+  <item>"STD_iwa_BokehAdvancedFx.distance4"		"Origen4 Distancia"</item>
+  <item>"STD_iwa_BokehAdvancedFx.bokeh_adjustment4"	"Origen4 Ajuste bokeh"</item>
+  <item>"STD_iwa_BokehAdvancedFx.hardness4"		"Origen4 Definición"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gamma4"		"Origen4 Gama"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gammaAdjust4"		"Origen4 Ajuste gama"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depth_ref4"		"Imagen profundidad"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depthRange4"	"Origen4 Rango profundidad"</item>
+  <item>"STD_iwa_BokehAdvancedFx.fillGap4"	"Rellenar huecos"</item>
+  <item>"STD_iwa_BokehAdvancedFx.doMedian4"	"Usar mediana"</item>
+
+  <item>"STD_iwa_BokehAdvancedFx.distance5"		"Origen5 Distancia"</item>
+  <item>"STD_iwa_BokehAdvancedFx.bokeh_adjustment5"	"Origen5 Ajuste bokeh"</item>
+  <item>"STD_iwa_BokehAdvancedFx.hardness5"		"Origen5 Definición"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gamma5"		"Origen5 Gama"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gammaAdjust5"		"Origen5 Ajuste gama"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depth_ref5"		"Imagen profundidad"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depthRange5"	"Origen5 Rango profundidad"</item>
+  <item>"STD_iwa_BokehAdvancedFx.fillGap5"	"Rellenar huecos"</item>
+  <item>"STD_iwa_BokehAdvancedFx.doMedian5"	"Usar mediana"</item>
+
+  <item>"STD_iwa_TimeCodeFx"	"Código de tiempo Iwa"</item>
+  <item>"STD_iwa_TimeCodeFx.displayType"	"Tipo"</item>
+  <item>"STD_iwa_TimeCodeFx.frameRate"	"Velocidad fotogramas"</item>
+  <item>"STD_iwa_TimeCodeFx.startFrame"	"Fotograma inicial"</item>
+  <item>"STD_iwa_TimeCodeFx.position"	"Posición texto"</item>
+  <item>"STD_iwa_TimeCodeFx.size"	"Tamaño texto"</item>
+  <item>"STD_iwa_TimeCodeFx.textColor"	"Color texto"</item>
+  <item>"STD_iwa_TimeCodeFx.showBox"	"Mostrar marco"</item>
+  <item>"STD_iwa_TimeCodeFx.boxColor"	"Color marco"</item>
+
+  <item>"STD_iwa_BarrelDistortFx"	"Distorsión de barril Iwa"</item>
+  <item>"STD_iwa_BarrelDistortFx.center" "Centro"</item>
+  <item>"STD_iwa_BarrelDistortFx.distortion" "Distorsión"</item>
+  <item>"STD_iwa_BarrelDistortFx.distortionAspect" "Proporción de distorsión"</item>
+  <item>"STD_iwa_BarrelDistortFx.precision" "Precisión origen"</item>
+  <item>"STD_iwa_BarrelDistortFx.chromaticAberration" "Aberración cromática"</item>
+  <item>"STD_iwa_BarrelDistortFx.vignetteAmount" "Intensidad viñeta"</item>
+  <item>"STD_iwa_BarrelDistortFx.vignetteGamma" "Gama viñeta"</item>
+  <item>"STD_iwa_BarrelDistortFx.vignetteMidpoint" "Punto medio viñeta"</item>
+  <item>"STD_iwa_BarrelDistortFx.scale" "Escala"</item>
+
+  <item>"STD_iwa_TextFx"	"Texto Iwa"</item>
+  <item>"STD_iwa_TextFx.targetType" "Origen"</item>
+  <item>"STD_iwa_TextFx.columnIndex" "Índice de columna"</item>
+  <item>"STD_iwa_TextFx.hAlign" "Alineación horizontal"</item>
+  <item>"STD_iwa_TextFx.text" "Texto"</item>
+  <item>"STD_iwa_TextFx.center" "Centro"</item>
+  <item>"STD_iwa_TextFx.width" "Ancho"</item>
+  <item>"STD_iwa_TextFx.height" "Altura"</item>
+  <item>"STD_iwa_TextFx.font" "Tipografía"</item>
+  <item>"STD_iwa_TextFx.textColor" "Color texto"</item>
+  <item>"STD_iwa_TextFx.boxColor" "Color marco"</item>
+  <item>"STD_iwa_TextFx.showBorder" "Mostrar contorno"</item>
+
+  <item>"STD_iwa_CorridorGradientFx" 			"Gradiente de corredor Iwa" 	</item>
+  <item>"STD_iwa_CorridorGradientFx.shape"	"Forma"		</item>
+  <item>"STD_iwa_CorridorGradientFx.curveType"	"Tipo"		</item>
+  <item>"STD_iwa_CorridorGradientFx.bottom_left_in"	"Abajo izquierda interior"	</item>
+  <item>"STD_iwa_CorridorGradientFx.bottom_left_out"	"Abajo izquierda exterior"		</item>
+  <item>"STD_iwa_CorridorGradientFx.bottom_right_in"	"Abajo derecha interior"	</item>
+  <item>"STD_iwa_CorridorGradientFx.bottom_right_out"	"Abajo derecha exterior"		</item>
+  <item>"STD_iwa_CorridorGradientFx.top_right_in"	"Arriba derecha interior"	</item>
+  <item>"STD_iwa_CorridorGradientFx.top_right_out"	"Arriba derecha exterior"		</item>
+  <item>"STD_iwa_CorridorGradientFx.top_left_in"	"Arriba izquierda interior"	</item>
+  <item>"STD_iwa_CorridorGradientFx.top_left_out"	"Arriba izquierda exterior"		</item>
+  <item>"STD_iwa_CorridorGradientFx.inner_color"	"Color interior"		</item>
+  <item>"STD_iwa_CorridorGradientFx.outer_color"	"Color exterior"		</item>
+
+  <item>"STD_iwa_SpinGradientFx" 			"Gradiente cónico Iwa" 	</item>
+  <item>"STD_iwa_SpinGradientFx.center"	"Centro"		</item>
+  <item>"STD_iwa_SpinGradientFx.curveType"	"Tipo"		</item>
+  <item>"STD_iwa_SpinGradientFx.startAngle"	"Ángulo inicial"		</item>
+  <item>"STD_iwa_SpinGradientFx.startColor"	"Color inicial"		</item>
+  <item>"STD_iwa_SpinGradientFx.endAngle"	"Ángulo final"		</item>
+  <item>"STD_iwa_SpinGradientFx.endColor"	"Color final"		</item>
+
+  <item>"STD_iwa_LinearGradientFx" 			"Gradiente lineal" 	</item>
+  <item>"STD_iwa_LinearGradientFx.curveType"	"Tipo"		</item>
+  <item>"STD_iwa_LinearGradientFx.startPoint"	"Punto inicial"		</item>
+  <item>"STD_iwa_LinearGradientFx.startColor"	"Color inicial"		</item>
+  <item>"STD_iwa_LinearGradientFx.endPoint"	"Punto final"		</item>
+  <item>"STD_iwa_LinearGradientFx.endColor"	"Color final"		</item>
+  <item>"STD_iwa_LinearGradientFx.wave_amplitude"	"Amplitud"	</item>
+  <item>"STD_iwa_LinearGradientFx.wave_frequency"	"Frecuencia"	</item>
+  <item>"STD_iwa_LinearGradientFx.wave_phase"		"Fase"		</item>
+  
+  <item>"STD_iwa_FloorBumpFx" 			"Relieve de piso Iwa" 	</item>
+  <item>"STD_iwa_FloorBumpFx.renderMode"	"Modo de procesamiento"		</item>
+  <item>"STD_iwa_FloorBumpFx.fov"	"FOV"		</item>
+  <item>"STD_iwa_FloorBumpFx.cameraAltitude"	"Altitud de cámara"		</item>
+  <item>"STD_iwa_FloorBumpFx.eyeLevel"	"Nivel de vista"		</item>
+  <item>"STD_iwa_FloorBumpFx.drawLevel"	"Nivel de dibujo"		</item>
+  <item>"STD_iwa_FloorBumpFx.waveHeight"	"Altura de onda"		</item>
+  <item>"STD_iwa_FloorBumpFx.textureOffsetAmount"	"Cantidad"		</item>
+  <item>"STD_iwa_FloorBumpFx.textureOffsetSpread"	"Dispersión"		</item>
+  <item>"STD_iwa_FloorBumpFx.sourcePrecision"	"Precisión"		</item>
+  <item>"STD_iwa_FloorBumpFx.souceMargin"	"Margen"		</item>
+  <item>"STD_iwa_FloorBumpFx.lightAzimuth"	"Azimut"		</item>
+  <item>"STD_iwa_FloorBumpFx.lightElevation"	"Elevación"		</item>
+  <item>"STD_iwa_FloorBumpFx.depth"	"Profundidad"		</item>
+  <item>"STD_iwa_FloorBumpFx.refractiveIndex"	"Índice de refracción"		</item>
+  <item>"STD_iwa_FloorBumpFx.distanceLevel"	"Nivel de distancia"		</item>
+  <item>"STD_iwa_FloorBumpFx.differenceMode"	"Procesar diferencia con el estado normal"		</item>
+  <item>"STD_iwa_FloorBumpFx.displacement"	"Desplazamiento"		</item>
+  
+  <item>"STD_iwa_GlareFx" 			"Resplandor Iwa" 	</item>
+  <item>"STD_iwa_GlareFx.renderMode"	"Modo de procesamiento"		</item>
+  <item>"STD_iwa_GlareFx.irisMode"	"Forma del iris"		</item>
+  <item>"STD_iwa_GlareFx.irisScale"	"Escala del iris"		</item>
+  <item>"STD_iwa_GlareFx.irisGearEdgeCount"	"Bordes"		</item>
+  <item>"STD_iwa_GlareFx.irisRandomSeed"	"Semilla"		</item>
+  <item>"STD_iwa_GlareFx.irisSymmetry"	"Simetría"		</item>
+  <item>"STD_iwa_GlareFx.irisAppearance"	"Apariencia"		</item>
+  <item>"STD_iwa_GlareFx.intensity"	"Intensidad"		</item>
+  <item>"STD_iwa_GlareFx.size"	"Tamaño filtro"		</item>
+  <item>"STD_iwa_GlareFx.rotation"	"Rotación filtro"		</item>
+  <item>"STD_iwa_GlareFx.aberration"	"Aberración cromática"		</item>
+  <item>"STD_iwa_GlareFx.noise_factor"	"Factor de ruido"		</item>
+  <item>"STD_iwa_GlareFx.noise_size"	"Tamaño del ruido"		</item>
+  <item>"STD_iwa_GlareFx.noise_octave"	"Octavas del ruido"		</item>
+  <item>"STD_iwa_GlareFx.noise_evolution"	"Evolución del ruido"		</item>
+  <item>"STD_iwa_GlareFx.noise_offset"	"Desplazamiento del ruido"		</item>
+
+  <item>"STD_iwa_FractalNoiseFx"	"Ruido fractal Iwa"	</item>
+  <item>"STD_iwa_FractalNoiseFx.fractalType"	"Tipo fractal"	</item>
+  <item>"STD_iwa_FractalNoiseFx.noiseType"	"Tipo de ruido"	</item>
+  <item>"STD_iwa_FractalNoiseFx.invert"	"Invertir"	</item>
+  <item>"STD_iwa_FractalNoiseFx.rotation"	"Rotación"	</item>
+  <item>"STD_iwa_FractalNoiseFx.uniformScaling"	"Escala uniforme"	</item>
+  <item>"STD_iwa_FractalNoiseFx.scale"	"Escala"	</item>
+  <item>"STD_iwa_FractalNoiseFx.scaleW"	"Escala An"	</item>
+  <item>"STD_iwa_FractalNoiseFx.scaleH"	"Escala Al"	</item>
+  <item>"STD_iwa_FractalNoiseFx.offsetTurbulence"	"Desplazamiento turbulencia"	</item>
+  <item>"STD_iwa_FractalNoiseFx.perspectiveOffset"	"Desplazamiento en perspectiva"	</item>
+  <item>"STD_iwa_FractalNoiseFx.complexity"	"Complejidad"	</item>
+  <item>"STD_iwa_FractalNoiseFx.subInfluence"	"Sub influencia"	</item>
+  <item>"STD_iwa_FractalNoiseFx.subScaling"	"Sub escala"	</item>
+  <item>"STD_iwa_FractalNoiseFx.subRotation"	"Sub rotación"	</item>
+  <item>"STD_iwa_FractalNoiseFx.subOffset"	"Sub desplazamiento"	</item>
+  <item>"STD_iwa_FractalNoiseFx.evolution"	"Evolución"	</item>
+  <item>"STD_iwa_FractalNoiseFx.cycleEvolution"	"Evolución cíclica"	</item>
+  <item>"STD_iwa_FractalNoiseFx.cycleEvolutionRange"	"Ciclo (en Evolución)"	</item>
+  <item>"STD_iwa_FractalNoiseFx.dynamicIntensity"	"Intensidad dinámica"	</item>
+  <item>"STD_iwa_FractalNoiseFx.doConical"	"Transformación cónica"	</item>
+  <item>"STD_iwa_FractalNoiseFx.conicalAngle"	"Ángulo cónico"	</item>
+  <item>"STD_iwa_FractalNoiseFx.cameraFov"	"FOV de cámara"	</item>
+  <item>"STD_iwa_FractalNoiseFx.zScale"	"Escala de profundidad"	</item>
+  <item>"STD_iwa_FractalNoiseFx.conicalEvolution"	"Evolución cónica"	</item>
+  <item>"STD_iwa_FractalNoiseFx.alphaRendering"	"Procesar alfa"	</item>
+  
+  <item>"STD_iwa_BloomFx" 			"Brillo Iwa" 	</item>
+  <item>"STD_iwa_BloomFx.gamma"	"Gama"		</item>
+  <item>"STD_iwa_BloomFx.gammaAdjust"	"Ajuste de gama"		</item>
+  <item>"STD_iwa_BloomFx.auto_gain"	"Ganancia automática"		</item>
+  <item>"STD_iwa_BloomFx.gain_adjust"	"Ajuste de ganancia"		</item>
+  <item>"STD_iwa_BloomFx.gain"	"Ganancia"		</item>
+  <item>"STD_iwa_BloomFx.decay"	"Decaimiento"		</item>
+  <item>"STD_iwa_BloomFx.size"	"Tamaño"		</item>
+  <item>"STD_iwa_BloomFx.alpha_mode"	"Modo de alfa"		</item>
+  <item>"STD_iwa_BloomFx.alpha_rendering"	"Procesar alfa"		</item>
+
+  <item>"STD_iwa_RainbowFx" 			"Arcoíris Iwa" 	</item>
+  <item>"STD_iwa_RainbowFx.center"	"Centro"		</item>
+  <item>"STD_iwa_RainbowFx.radius"	"Radio"		</item>
+  <item>"STD_iwa_RainbowFx.intensity"	"Intensidad"		</item>
+  <item>"STD_iwa_RainbowFx.width_scale"	"Escalar ancho"		</item>
+  <item>"STD_iwa_RainbowFx.inside"	"Intensidad interior"		</item>
+  <item>"STD_iwa_RainbowFx.secondary_rainbow"	"Intensidad secundaria"		</item>
+  <item>"STD_iwa_RainbowFx.alpha_rendering"	"Procesar alfa"		</item>
+ 
+  <item>"STD_iwa_TangentFlowFx"	"Flujo tangencial Iwa"	</item>
+  <item>"STD_iwa_TangentFlowFx.iteration"	"Iteraciones"	</item>
+  <item>"STD_iwa_TangentFlowFx.kernelRadius"	"Radio del núcleo"	</item>
+  <item>"STD_iwa_TangentFlowFx.threshold"	"Umbral"	</item>
+  <item>"STD_iwa_TangentFlowFx.alignDirection"	"Alinear dirección"	</item>
+  <item>"STD_iwa_TangentFlowFx.pivotAngle"	"Ángulo de pivote"	</item>
+
+  <item>"STD_iwa_FlowBlurFx"	"Desenfoque de flujo Iwa"	</item>
+  <item>"STD_iwa_FlowBlurFx.length"	"Longitud"	</item>
+  <item>"STD_iwa_FlowBlurFx.filterType"	"Tipo de filtro"	</item>
+  <item>"STD_iwa_FlowBlurFx.linear"	"Espacio de color lineal"	</item>
+  <item>"STD_iwa_FlowBlurFx.gamma"	"Gama"	</item>
+  <item>"STD_iwa_FlowBlurFx.referenceMode"	"Referencia"	</item>
+
+  <item>"STD_iwa_FlowPaintBrushFx"	"Pincel de flujo Iwa"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.h_density"	"Densidad horizontal"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.v_density"	"Densidad vertical"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.pos_randomness"	"Aleatoriedad de posición"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.pos_wobble"	"Bamboleo de posición por fotograma"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.tip_width"	"Ancho de la punta"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.tip_length"	"Longitud de la punta"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.tip_alpha"	"Alfa de la punta"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.tip_joints"	"Uniones de la punta"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.bidirectional"	"Bidireccional"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.width_randomness"	"Aleatoriedad del ancho"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.length_randomness"	"Aleatoriedad de longitud"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.angle_randomness"	"Aleatoriedad del ángulo"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.sustain_width_to_skew"	"Mantener ancho para sesgar"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.anti_jaggy"	"Evitar serruchos en margen de textura"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.origin_pos"	"Origen"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.horizontal_pos"	"Horizontal"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.vertical_pos"	"Vertical"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.curve_point"	"Ancla de la curva"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.fill_gap_size"	"Tamaño de relleno de huecos"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.reference_frame"	"Fotograma de referencia"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.reference_prevalence"	"Prevalencia de la referencia"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.random_seed"	"Semilla"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.sort_by"	"Ordenar por"	</item>
+
+  <item>"STD_iwa_MotionFlowFx"	"Flujo de movimiento Iwa"	</item>
+  <item>"STD_iwa_MotionFlowFx.shutterLength"	"Longitud de obturación"	</item>
+  <item>"STD_iwa_MotionFlowFx.motionObjectType"	"Objeto de referencia"	</item>
+  <item>"STD_iwa_MotionFlowFx.motionObjectIndex" "Índice"	</item>
+  <item>"STD_iwa_MotionFlowFx.normalizeType" "Normalizar"	</item>
+  <item>"STD_iwa_MotionFlowFx.normalizeRange" "Longitud máxima"	</item>
+
+ <!------------------------------ Tiled Particles Iwa ------------------------------------------->
+
+  <item>STD_iwa_TiledParticlesFx "Partículas (mosaico) Iwa" </item>
+  <item>"STD_iwa_TiledParticlesFx.rendermode"		"Modo de procesamiento"		</item>
+
+  <item>"STD_iwa_TiledParticlesFx.base_ctrl"			"Imagen base"		</item>
+  <item>"STD_iwa_TiledParticlesFx.margin"			"Margen"		</item>
+  <item>"STD_iwa_TiledParticlesFx.curl"				"Rulo"				</item>
+  <item>"STD_iwa_TiledParticlesFx.curl_ctrl"			"Imagen de control"		</item>
+  <item>"STD_iwa_TiledParticlesFx.curl_ctrl_2"		"Imagen de control 2"	</item>
+  <item>"STD_iwa_TiledParticlesFx.triangleSize"		"Espaciado de origen"	</item>
+
+  <item>"STD_iwa_TiledParticlesFx.flap_velocity"			"Velocidad de aleteo"	</item>
+  <item>"STD_iwa_TiledParticlesFx.flap_dir_sensitivity"	"Sensibilidad de rotación"	</item>
+  <item>"STD_iwa_TiledParticlesFx.flap_ctrl"				"Imagen de control"	</item>
+
+  <item>"STD_iwa_TiledParticlesFx.light_theta"		"Dirección de la luz"	</item>
+  <item>"STD_iwa_TiledParticlesFx.light_phi"			"Inclinación de la luz"		</item>
+
+  <item>"STD_iwa_TiledParticlesFx.source_ctrl"			"Imagen de control"		</item>
+  <item>"STD_iwa_TiledParticlesFx.bright_thres"			"Umbral"		</item>
+  <item>"STD_iwa_TiledParticlesFx.center"			"Centro"			</item>
+  <item>"STD_iwa_TiledParticlesFx.length"			"Ancho"			</item>
+  <item>"STD_iwa_TiledParticlesFx.height"			"Altura"			</item>
+  <item>"STD_iwa_TiledParticlesFx.animation"			"Animación"		</item>
+  <item>"STD_iwa_TiledParticlesFx.step"			"Exposición de animación"		</item>
+  <item>"STD_iwa_TiledParticlesFx.starting_frame"		"Fotograma inicial"		</item>
+  <item>"STD_iwa_TiledParticlesFx.birth_rate"			"Tasa de natalidad"		</item>
+  <item>"STD_iwa_TiledParticlesFx.random_seed"		"Semilla"		</item>
+  <item>"STD_iwa_TiledParticlesFx.lifetime"			"Vida"			</item>
+  <item>"STD_iwa_TiledParticlesFx.lifetime_ctrl"			"Imagen de control"			</item>
+  <item>"STD_iwa_TiledParticlesFx.column_lifetime"			"Duración de la columna define la vida"			</item>
+  <item>"STD_iwa_TiledParticlesFx.gravity"			"Gravedad"			</item>
+  <item>"STD_iwa_TiledParticlesFx.gravity_angle"		"Dirección de la gravedad"			</item>
+  <item>"STD_iwa_TiledParticlesFx.gravityBufferFrame"		"Fotogramas buffer gravedad"			</item>
+  <item>"STD_iwa_TiledParticlesFx.gravity_ctrl"			"Imagen de control"		</item>
+  <item>"STD_iwa_TiledParticlesFx.friction"			"Fricción"			</item>
+  <item>"STD_iwa_TiledParticlesFx.friction_ctrl"			"Imagen de control"		</item>
+  <item>"STD_iwa_TiledParticlesFx.wind"			"Intensidad viento"		</item>
+  <item>"STD_iwa_TiledParticlesFx.wind_angle"			"Dirección viento"			</item>
+  <item>"STD_iwa_TiledParticlesFx.swing_mode"			"Modo oscilación"		</item>
+  <item>"STD_iwa_TiledParticlesFx.scattering_x"			"Horizontal"		</item>
+  <item>"STD_iwa_TiledParticlesFx.scattering_y"			"Vertical"			</item>
+  <item>"STD_iwa_TiledParticlesFx.scattering_x_ctrl"			"Imagen de control H"		</item>
+  <item>"STD_iwa_TiledParticlesFx.scattering_y_ctrl"			"Imagen de control V"		</item>
+  <item>"STD_iwa_TiledParticlesFx.swing"			"Oscilación"			</item>
+  <item>"STD_iwa_TiledParticlesFx.speed"			"Velocidad"			</item>
+  <item>"STD_iwa_TiledParticlesFx.speed_ctrl"			"Imagen de control"			</item>
+  <item>"STD_iwa_TiledParticlesFx.speed_angle"		"Dirección velocidad"			</item>
+
+  <item>"STD_iwa_TiledParticlesFx.speeda_ctrl"			"Imagen de control"			</item>
+  <item>"STD_iwa_TiledParticlesFx.speeda_use_gradient"	"Usar dirección del gradiente"	</item>
+
+  <item>"STD_iwa_TiledParticlesFx.speed_size"			"Vincular con escala"		</item>
+  <item>"STD_iwa_TiledParticlesFx.top_layer"			"Capa superior"		</item>
+  <item>"STD_iwa_TiledParticlesFx.mass"			"Masa"			</item>
+  <item>"STD_iwa_TiledParticlesFx.scale"			"Tamaño"			</item>
+  <item>"STD_iwa_TiledParticlesFx.scale_ctrl"			"Imagen de control"		</item>
+  <item>"STD_iwa_TiledParticlesFx.scale_ctrl_all"		"Usar imagen de control para la vida completa"		</item>
+  <item>"STD_iwa_TiledParticlesFx.rot"			"Orientación"		</item>
+  <item>"STD_iwa_TiledParticlesFx.rot_ctrl"			"Imagen de control"			</item>
+  <item>"STD_iwa_TiledParticlesFx.trail"			"Estela"			</item>
+  <item>"STD_iwa_TiledParticlesFx.trail_step"			"Intervalo"			</item>
+  <item>"STD_iwa_TiledParticlesFx.spin_swing_mode"		"Modo de oscilación"		</item>
+  <item>"STD_iwa_TiledParticlesFx.spin_speed"			"Velocidad de rotación"			</item>
+  <item>"STD_iwa_TiledParticlesFx.spin_random"		"Velocidad adicional"		</item>
+  <item>"STD_iwa_TiledParticlesFx.spin_swing"			"Oscilación rotación"			</item>
+  <item>"STD_iwa_TiledParticlesFx.path_aim"			"Acompañar movimiento de las partículas"	</item>
+  <item>"STD_iwa_TiledParticlesFx.opacity"			"Opacidad"			</item>
+  <item>"STD_iwa_TiledParticlesFx.opacity_ctrl"			"Imagen de control"			</item>
+  <item>"STD_iwa_TiledParticlesFx.trail_opacity"			"Opacidad estela"		</item>
+  <item>"STD_iwa_TiledParticlesFx.scale_step"			"Intensidad del tamaño"		</item>
+  <item>"STD_iwa_TiledParticlesFx.scale_step_ctrl"			"Imagen de control"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fade_in"			"Fotogramas aparición"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fade_out"			"Fotogramas desvanecimiento"		</item>
+  <item>"STD_iwa_TiledParticlesFx.birth_color"			"Color nacimiento"		</item>
+  <item>"STD_iwa_TiledParticlesFx.birth_color_ctrl"		"Imagen de control"		</item>
+  <item>"STD_iwa_TiledParticlesFx.birth_color_spread"		"Dispersión nacimiento"		</item>
+  <item>"STD_iwa_TiledParticlesFx.birth_color_fade"		"Intensidad nacimiento"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadein_color"			"Color aparición"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadein_color_ctrl"		"Imagen de control"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadein_color_spread"		"Dispersión aparición"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadein_color_range"		"Rango de fotogramas"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadein_color_fade"		"Intensidad aparición"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadeout_color"		"Color desvanecimiento"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadeout_color_ctrl"		"Imagen de control"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadeout_color_spread"		"Dispersión desvanecimiento"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadeout_color_range"		"Rango de fotogramas"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadeout_color_fade"		"Intensidad desvanecimiento"		</item>
+  <item>"STD_iwa_TiledParticlesFx.source_gradation"		"Usar graduación con imagen de control"		</item>
+  <item>"STD_iwa_TiledParticlesFx.pick_color_for_every_frame"	"Colores de imagen de control en cada fotograma"	</item>
+
+</stringtable> 
+

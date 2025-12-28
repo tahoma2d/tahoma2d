@@ -2,17 +2,25 @@
 <html lang="ja">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Bokeh Iwa</title>
+    <title>Bokeh avanzado Iwa</title>
   </head>
   <body text="#220011" bgcolor="#f5f5f5">
-    <h1><img src=".\img\fx_iwa_bokeh.png" width="30" height="30"> Bokeh
-      Iwa</h1>
+    <h1><img src=".\img\fx_iwa_bokeh_advanced.png" width="30"
+        height="30"> Bokeh avanzado Iwa</h1>
     <h4>● Descripción</h4>
     Este efecto reproduce el desenfoque de una lente de cámara. Los
     valores RVA de cada<br>
     capa se convierten en valores de exposición, se desenfocan con la
     forma del diafragma<br>
     y se componen.<br>
+    A diferencia del efecto <a href="./BokehIwa.html">Bokeh Iwa</a>,
+    este efecto es capaz de usar imágenes de referencia de <br>
+    profundidad para dividir una capa en varias sub capas dentro del
+    rango especificado de <br>
+    profundidades.<br>
+    Además, este efecto es capaz de aplicar valores individuales de
+    definición para cada origen<br>
+    para ajustar la luminosidad del bokeh.<br>
     Para lograr una mayor velocidad, se utiliza la transformación de
     Fourier durante el<br>
     procesamiento del filtro.
@@ -30,6 +38,12 @@
         las conexiones aquí no afectará el orden de composición de las
         capas. Si no hubiera<br>
         ninguna imagen conectada, el cálculo no se realizará. </li>
+      <li><b>Depth</b> (Profundidad) <b>[1～]</b> : Permite conectar la
+        imagen de referencia de profundidad<br>
+        para dividir la capa en sub capas.<br>
+        La luminosidad de cada píxel definirá la profundidad. <br>
+        Cuanto mayor sea su valor (más claro), más alejado se encontrará
+        de la cámara.</li>
     </ul>
     <h4>● Opciones</h4>
     Comunes
@@ -46,20 +60,21 @@
         distancia de 1.0 entre sí y la opción Ajuste bokeh sea 1, la
         imagen del diafragma<br>
         se ampliará hasta que el ancho de la misma alcance este valor. </li>
-      <li><b>Definición</b> : Valor del gama de la película. Se utiliza
-        para convertir entre<br>
+      <li><b>Definición general</b> : Valor del gama de la película. Se
+        utiliza para convertir entre<br>
         el valor RVA y la exposición. Esto es equivalente al aumento en
         el valor RVA (0.0 a 1.0)<br>
         cuando la exposición aumenta 10 veces. Cuanto más bajo sea el
         valor, más se<br>
         enfatizarán las áreas iluminadas. (Rango 0.05-3.0) </li>
+      <li><b>Gama/Definición por origen</b> : Permitirá especificar si
+        se usarán valores individuales de<br>
+        gama o definición, en vez de un valor general, al convertir los
+        valores RVA de la capa a <br>
+        valores de exposición. </li>
     </ul>
     De cada Origen
     <ul>
-      <li><b>Premultiplicar</b> : Activar esta opción cuando se conecten
-        imágenes cuyo<br>
-        alfa no se encuentre premultiplicado, como las exportadas desde
-        DigiBook, etc. </li>
       <li><b>Distancia</b> : La distancia a la que se encuentra la capa
         con respecto a la<br>
         cámara. El orden de composición de las capas se basará en este
@@ -72,20 +87,40 @@
         compondrá normalmente, sin<br>
         desenfoque, independientemente de la distancia de la capa.
         (Rango 0.0-2.0) </li>
+      <li><b>Definición</b> : Definición individual para ser usada al
+        convertir los valores RVA de esta capa<br>
+        a valores de exposición. </li>
+      <li><b>Imagen profundidad</b> : Se especifica el número del
+        conector de profundidad (<i>Depth</i>).<br>
+        En caso de especificarse un conector <i>Depth</i> disponible,
+        esta capa será dividida en <br>
+        sub capas a distintas profundidades, dentro del rango
+        especificado. </li>
+      <li><b>Rango profundidad</b> : Permite especificar el rango de
+        profundidades en el que se distribuirán<br>
+        las sub capas. </li>
     </ul>
     <h4>● Notas</h4>
     <ul>
+      <li>Separar una capa en sub capas es igual que al usar el efecto <a
+          href="./BokehRefIwa.html">Bokeh ref Iwa</a> excepto que en<br>
+        este caso los siguientes parámetros estarán fijos:<br>
+        <ul>
+          <li>Precisión de distancia = 10 </li>
+          <li>Rellenar huecos = ACTIVA </li>
+          <li>Usar mediana = INACTIVA </li>
+        </ul>
+      </li>
       <li>Al procesar múltiples fotogramas, deberán existir fotogramas
         para las imágenes usadas<br>
         para el diafragma y las capas, durante todo el rango de
         fotogramas a ser procesados. </li>
       <li>Este efecto hace un uso intensivo de memoria RAM. </li>
     </ul>
-    <h4>● Información de licencia</h4>
+    <h4>● License Information</h4>
     <ul>
-      <li>Este efecto utiliza una biblioteca de código abierto llamada
-        Kiss FFT para la transformación<br>
-        de Fourier.<br>
+      <li>This effect uses an open source library called Kiss FFT for
+        the Fourier transform.<br>
       </li>
     </ul>
     <font size="-1">
