@@ -2,9 +2,9 @@
 
 В версии 1.5 представлено множество новых функций, улучшений и еще больше исправлений, которые перечислены [здесь](https://github.com/tahoma2d/tahoma2d/releases/tag/v1.5).
 
-### Compatibility Changes
+### Изменения совместимости
 
-Palettes with Raster based custom styles (`Style Editor` -> `Vector` tab -> `Custom styles`) will be auto upgraded to new format which will preventing use in prior versions of T2D if the paleette is saved in the latest T2D version.
+Палитры с пользовательскими стилями на основе растровых изображений («Редактор стилей» -> вкладка «Вектор» -> «Пользовательские стили») будут автоматически обновлены до нового формата, что предотвратит их использование в предыдущих версиях T2D, если палитра сохранена в последней версии T2D.
 
 ### Пользователи Windows
 

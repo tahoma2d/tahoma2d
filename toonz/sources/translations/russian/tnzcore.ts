@@ -81,7 +81,7 @@
     <message>
         <location filename="../../common/tvrender/tsimplecolorstyles.cpp" line="1105"/>
         <source>Flip</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевернуть</translation>
     </message>
 </context>
 <context>
