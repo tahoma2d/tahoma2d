@@ -679,6 +679,230 @@ Probablement le codec peut ne pas fonctionner correctement.</translation>
         <source>It is not possible to load file %1.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Opacity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opacity multiply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opacity linearize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Radius</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hardness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pixel feather</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dabs per basic radius</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dabs per actual radius</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dabs per second</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GridMap Scale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GridMap Scale X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GridMap Scale Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Radius by random</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fine speed filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gross speed filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fine speed gamma</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Gross speed gamma</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Jitter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Offset Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Offset X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Angular Offset: Direction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Angular Offset: Ascension</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Angular Offset Mirrored: Direction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Angular Offset Mirrored: Ascension</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Angular Offsets Adjustment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Offsets Multiplier</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Offset by speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Offset by speed filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Slow position tracking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Slow tracking per dab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tracking noise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color hue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color saturation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change color hue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change color lightness (HSL)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change color satur. (HSL)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change color value (HSV)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change color satur. (HSV)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smudge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smudge length</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smudge radius</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Eraser</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stroke threshold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stroke duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stroke hold time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom input filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Elliptical dab: ratio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Elliptical dab: angle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Direction filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lock alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snap to pixel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pressure gain</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>
