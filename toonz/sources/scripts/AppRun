@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export QT_QPA_PLATFORM="wayland;xcb"
 
 DIR="`dirname \"$0\"`" 
 DIR="`( cd \"$DIR\" && readlink -f $(pwd) )`"
