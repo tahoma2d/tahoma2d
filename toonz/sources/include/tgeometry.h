@@ -935,7 +935,7 @@ return *this = *this * b;
 };
 */
   /*!
-          Returns the inverse tansformation as:
+          Returns the inverse transformation as:
           <p>\f$\left(\begin{array}{ccc}\bf{A}^{-1}&-\bf{A}^{-1}&\vec{b}\\\vec{0}&\vec{0}&1\end{array}\right)\f$</p>
   */
 
