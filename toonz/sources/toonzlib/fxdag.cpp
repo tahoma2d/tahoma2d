@@ -340,7 +340,7 @@ void FxDag::loadData(TIStream &is) {
       TPersist *p = 0;
       is >> p;
       TFx *fx = dynamic_cast<TFx *>(p);
-      if (!fx) throw TException("FxDag. unexpeced Fx");
+      if (!fx) throw TException("FxDag. unexpected Fx");
       fx->addRef();
       fx->setNewIdentifier();
       if (tagName == "xsheet") {
@@ -356,7 +356,7 @@ void FxDag::loadData(TIStream &is) {
     } else if (tagName == "grid_dimension") {
       is >> m_dagGridDimension;
     } else
-      throw TException("FxDag. unexpeced tag: " + tagName);
+      throw TException("FxDag. unexpected tag: " + tagName);
     is.closeChild();
   }
 }
