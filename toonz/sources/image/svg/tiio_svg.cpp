@@ -437,10 +437,13 @@ void nsvg__addShape(struct NSVGParser *p) {
   if (shape == NULL) goto error;
   memset(shape, 0, sizeof(struct NSVGshape));
 
-  shape->scale       = nsvg__maxf(fabsf(attr->xform[0]), fabsf(attr->xform[3]));
+  // Determine scale factor to apply to width
+  float scaleFactor = std::sqrt(attr->xform[0] * attr->xform[0] +
+                                attr->xform[1] * attr->xform[1]);
+
   shape->hasFillInfo = attr->hasFillInfo;
   shape->hasStrokeInfo = attr->hasStrokeInfo;
-  shape->strokeWidth   = attr->strokeWidth;
+  shape->strokeWidth   = attr->strokeWidth * scaleFactor;
 
   strcpy(shape->id, attr->id);
   shape->fillColor = attr->fillColor;
@@ -2191,7 +2194,6 @@ TStroke *buildStroke(NSVGpath *path, float width, float scale) {
   }
 
   s->reshape(&tpoints[0], tpoints.size());
-  s->transform(TScale(scale));
 
   return s;
 }
