@@ -324,7 +324,7 @@ struct NSVGParser *nsvg__createParser() {
   p->attr[0].fillColor      = 0;
   p->attr[0].hasFillNone    = 0;
   p->attr[0].strokeColor    = 0;
-  p->attr[0].hasStrokeNone  = 0;
+  p->attr[0].hasStrokeNone  = 1;
   p->attr[0].opacity        = 1;
   p->attr[0].fillOpacity    = 1;
   p->attr[0].strokeOpacity  = 1;
@@ -926,10 +926,9 @@ int nsvg__parseAttr(struct NSVGParser *p, const char *name, const char *value) {
     attr->fillOpacity = nsvg__parseFloat(value);
   } else if (strcmp(name, "stroke") == 0) {
     attr->hasStrokeInfo = 1;
-    if (strcmp(value, "none") == 0) {
-      attr->hasStrokeNone = 1;
-    } else {
+    if (strcmp(value, "none") != 0) {
       attr->hasStrokeInfo = 0;
+      attr->hasStrokeNone = 0;
       attr->strokeColor   = nsvg__parseColor(value);
       if (!attr->strokeWidth) attr->strokeWidth = 1;
     }
