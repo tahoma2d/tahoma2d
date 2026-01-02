@@ -865,7 +865,7 @@ int nsvg__parseRotate(struct NSVGParser *p, const char *str) {
   if (na == 1) args[1] = args[2] = 0.0f;
 
   if (na > 1) {
-    nsvg__xformSetTranslation(t, -args[1], -args[2]);
+    nsvg__xformSetTranslation(t, args[1], args[2]);
     nsvg__xformPremultiply(nsvg__getAttr(p)->xform, t);
   }
 
@@ -873,7 +873,7 @@ int nsvg__parseRotate(struct NSVGParser *p, const char *str) {
   nsvg__xformPremultiply(nsvg__getAttr(p)->xform, t);
 
   if (na > 1) {
-    nsvg__xformSetTranslation(t, args[1], args[2]);
+    nsvg__xformSetTranslation(t, -args[1], -args[2]);
     nsvg__xformPremultiply(nsvg__getAttr(p)->xform, t);
   }
 
