@@ -1363,7 +1363,6 @@ void nsvg__parsePath(struct NSVGParser *p, const char **attr) {
       nargs      = 0;
       prev_m_cpx = 0;
       prev_m_cpy = 0;
-      prev_m_exists = false;
 
       while (*s) {
         s = nsvg__getNextPathItem(s, item);
@@ -1375,17 +1374,10 @@ void nsvg__parsePath(struct NSVGParser *p, const char **attr) {
             case 'm':
             case 'M':
 			 
-              // If moveto is relative it relative to previous moveto point
-              if (cmd == 'm' && !prev_m_exists) {
-                cpx = prev_m_cpx;
-                cpy = prev_m_cpy;
-              }
-              
               nsvg__pathMoveTo(p, &cpx, &cpy, args, cmd == 'm' ? 1 : 0);
               
               prev_m_cpx = cpx;
               prev_m_cpy = cpy;
-              if (cmd == 'M') prev_m_exists = true;
 
               // Moveto can be followed by multiple coordinate pairs,
               // which should be treated as linetos.
@@ -1455,6 +1447,8 @@ void nsvg__parsePath(struct NSVGParser *p, const char **attr) {
             nsvg__resetPath(p);
             closedFlag = 0;
             nargs      = 0;
+            cpx = prev_m_cpx;
+            cpy = prev_m_cpy;
           }
         }
       }
