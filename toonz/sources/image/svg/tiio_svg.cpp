@@ -444,7 +444,7 @@ void nsvg__addShape(struct NSVGParser *p) {
   if (p->plist == NULL) return;
 
   shape = (struct NSVGshape *)malloc(sizeof(struct NSVGshape));
-  if (shape == NULL) goto error;
+  if (shape == NULL) return;
   memset(shape, 0, sizeof(struct NSVGshape));
 
   // Determine scale factor to apply to width
@@ -484,11 +484,6 @@ void nsvg__addShape(struct NSVGParser *p) {
     p->image->shapes = shape;
   else
     prev->next = shape;
-
-  return;
-
-error:
-  if (shape) free(shape);
 }
 
 void nsvg__addPath(struct NSVGParser *p, char closed) {
@@ -505,6 +500,7 @@ void nsvg__addPath(struct NSVGParser *p, char closed) {
   memset(path, 0, sizeof(struct NSVGpath));
 
   path->svgPts = (float *)malloc(p->npts * 2 * sizeof(float));
+  if (path->svgPts == NULL) goto error;
   memcpy(path->svgPts, p->pts, p->npts * 2 * sizeof(float));
 
   path->closed = closed;
@@ -2279,7 +2275,7 @@ TImageP TImageReaderSvg::load() {
     float strokeWidth =
         !shape->hasStrokeNone ? shape->strokeWidth / devPixRatio : 0;
 
-    inkIndex   = !shape->hasStrokeNone ? findColor(plt, shape->strokeColor) : 0;
+    inkIndex   = !shape->hasStrokeNone ? findColor(plt, shape->strokeColor) : 1;
     paintIndex = !shape->hasFillNone ? findColor(plt, shape->fillColor) : 0;
     if (!applyFill && !shape->hasFillNone &&
         (!shape->hasStrokeNone || !strokeWidth)) {
@@ -2302,12 +2298,11 @@ TImageP TImageReaderSvg::load() {
       if (!s->isSelfLoop() && !shape->hasFillNone) {
         int x = 1;
         // Create a connecting line for fill
-        std::vector<TPointD> pts;
-        pts.push_back(s->getControlPoint(0));
-        pts.push_back(s->getControlPoint(s->getControlPointCount()));
+        std::vector<TThickPoint> pts;
+        pts.push_back(TThickPoint(s->getControlPoint(0), 0));
+        pts.push_back(TThickPoint(s->getControlPoint(s->getControlPointCount()), 0));
         if (pts.front() != pts.back()) {
           TStroke *hiddenStroke = new TStroke(pts);
-          hiddenStroke->setStyle(0);
           if (vimage->addStroke(hiddenStroke) >= 0) x++;
         }
         // Immediately group and fill
