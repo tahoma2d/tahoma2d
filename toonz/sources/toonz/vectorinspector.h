@@ -31,6 +31,7 @@ class VectorInspectorPanel final : public QWidget {
   QScrollArea* m_frameArea;
   TVectorImage* m_vectorImage;
   std::vector<int> m_selectedStrokeIndexes;
+  int m_currentImageType;
 
 public:
   VectorInspectorPanel(QWidget* parent       = nullptr,
@@ -64,6 +65,8 @@ public slots:
   void updateSelectToolSelectedRows(const QItemSelection&,
                                     const QItemSelection&);
 
+  void updateStrokeListData();
+
 protected:
   void showEvent(QShowEvent*) override;
   void hideEvent(QHideEvent*) override;
@@ -74,21 +77,21 @@ private slots:
   void sortChanged();
 
 private:
-  MultiColumnSortProxyModel* proxyModel;
-  QFrame* proxyGroupBox;
-  QTreeView* proxyView;
-  QStandardItemModel* sourceModel;
-  QLabel* filterPatternLabel;
-  QLabel* filterSyntaxLabel;
-  QLabel* filterColumnLabel;
-  QLineEdit* filterPatternLineEdit;
-  QComboBox* filterSyntaxComboBox;
-  QComboBox* filterColumnComboBox;
-  bool initiatedByVectorInspector;
-  bool initiatedBySelectTool;
-  bool strokeOrderChangedInProgress;
+  MultiColumnSortProxyModel* m_proxyModel;
+  QFrame* m_proxyGroupBox;
+  QTreeView* m_proxyView;
+  QStandardItemModel* m_sourceModel;
+  QLabel* m_filterPatternLabel;
+  QLabel* m_filterSyntaxLabel;
+  QLabel* m_filterColumnLabel;
+  QLineEdit* m_filterPatternLineEdit;
+  QComboBox* m_filterSyntaxComboBox;
+  QComboBox* m_filterColumnComboBox;
+  bool m_initiatedByVectorInspector;
+  bool m_initiatedBySelectTool;
+  bool m_strokeOrderChangedInProgress;
   bool isSelected(int) const;
-  bool selectingRowsForStroke;
+  bool m_selectingRowsForStroke;
   void changeWindowTitle();
 };
 

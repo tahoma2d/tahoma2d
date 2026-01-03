@@ -2306,7 +2306,7 @@ void TStroke::addChunkRows(QAbstractItemModel *model, int stroke,
   for (std::ptrdiff_t i = groupIds.size() - 1; i > -1; --i) {
     if (currentGroup == groupIdData[i]) {
       groupIdsString = groupIdsString + "(" + std::to_string(groupIdData[i]) +
-                       (i > 0 ? "." : "") + ")";
+                       ")" + (i > 0 ? "." : "");
 
     } else {
       groupIdsString =
