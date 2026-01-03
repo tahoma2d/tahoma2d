@@ -27,6 +27,7 @@ namespace  // svg_parser
 {
 
 struct NSVGpath {
+  float *svgPts;
   float *pts;   // Cubic bezier points: x0,y0, [cpx1,cpx1,cpx2,cpy2,x1,y1], ...
   int npts;     // Total number of bezier points.
   char closed;  // Flag indicating if shapes should be treated as closed.
@@ -43,6 +44,7 @@ struct NSVGshape {
   float scale;               // Stroke scale
   char hasFillInfo;          // Flag indicating if fill exists.
   char hasStrokeInfo;        // Flag indicating id store exists
+  float xform[6];
   struct NSVGpath *paths;    // Linked list of paths in the image.
   struct NSVGshape *next;    // Pointer to next shape, or NULL if last element.
 };
@@ -346,6 +348,7 @@ error:
 void nsvg__deletePaths(struct NSVGpath *path) {
   while (path) {
     struct NSVGpath *next = path->next;
+    if (path->svgPts != NULL) free(path->svgPts);
     if (path->pts != NULL) free(path->pts);
     free(path);
     path = next;
@@ -456,6 +459,8 @@ void nsvg__addShape(struct NSVGParser *p) {
       (unsigned int)(attr->opacity * attr->strokeOpacity * 255) << 24;
   shape->hasStrokeNone = attr->hasStrokeNone;
 
+  memcpy(shape->xform, attr->xform, sizeof(float) * 6);
+
   shape->paths = p->plist;
   p->plist     = NULL;
 
@@ -490,15 +495,11 @@ void nsvg__addPath(struct NSVGParser *p, char closed) {
   if (path == NULL) goto error;
   memset(path, 0, sizeof(struct NSVGpath));
 
-  path->pts = (float *)malloc(p->npts * 2 * sizeof(float));
-  if (path->pts == NULL) goto error;
+  path->svgPts = (float *)malloc(p->npts * 2 * sizeof(float));
+  memcpy(path->svgPts, p->pts, p->npts * 2 * sizeof(float));
+
   path->closed = closed;
   path->npts   = p->npts;
-
-  // Transform path.
-  for (i = 0; i < p->npts; ++i)
-    nsvg__xformPoint(&path->pts[i * 2], &path->pts[i * 2 + 1], p->pts[i * 2],
-                     p->pts[i * 2 + 1], attr->xform);
 
   path->next = p->plist;
   p->plist   = path;
@@ -507,6 +508,7 @@ void nsvg__addPath(struct NSVGParser *p, char closed) {
 
 error:
   if (path != NULL) {
+    if (path->svgPts != NULL) free(path->svgPts);
     if (path->pts != NULL) free(path->pts);
     free(path);
   }
@@ -2137,8 +2139,16 @@ int findColor(TPalette *plt, unsigned int _color) {
 
 //-----------------------------------------------------------------------------
 
-TStroke *buildStroke(NSVGpath *path, float width, float scale) {
+TStroke *buildStroke(NSVGpath *path, float *xform, float width, int lineCap,
+                     int lineJoin, float miterLimit) {
   assert((path->npts - 1) % 3 == 0);
+
+  path->pts = (float *)malloc(path->npts * 2 * sizeof(float));
+
+  // Transform path.
+  for (int i = 0; i < path->npts; ++i)
+    nsvg__xformPoint(&path->pts[i * 2], &path->pts[i * 2 + 1],
+                     path->svgPts[i * 2], path->svgPts[i * 2 + 1], xform);
 
   TThickPoint p0 = TThickPoint(path->pts[0], -path->pts[1], width);
   std::vector<TThickPoint> points;
@@ -2234,7 +2244,8 @@ TImageP TImageReaderSvg::load() {
     int startStrokeIndex = vimage->getStrokeCount();
     int strokeCount      = 0;
     for (; path; path = path->next) {
-      TStroke *s = buildStroke(path, strokeWidth, shape->scale);
+      TStroke *s = buildStroke(path, shape->xform, strokeWidth, shape->lineCap,
+                               shape->lineJoin, shape->miterLimit);
       if (!s) continue;
       s->setStyle(inkIndex);
       int currentIndex = vimage->addStroke(s);
