@@ -41,7 +41,9 @@ struct NSVGshape {
   unsigned int strokeColor;  // Stroke color
   char hasStrokeNone;        // Flag indicating stroke color = none
   float strokeWidth;         // Stroke width
-  float scale;               // Stroke scale
+  int lineJoin;
+  int lineCap;
+  float miterLimit;
   char hasFillInfo;          // Flag indicating if fill exists.
   char hasStrokeInfo;        // Flag indicating id store exists
   float xform[6];
@@ -210,6 +212,9 @@ struct NSVGAttrib {
   char hasFillInfo;
   char hasStrokeInfo;
   char visible;
+  int lineJoin;
+  int lineCap;
+  float miterLimit;
 };
 
 struct NSVGParser {
@@ -331,6 +336,9 @@ struct NSVGParser *nsvg__createParser() {
   p->attr[0].fillOpacity    = 1;
   p->attr[0].strokeOpacity  = 1;
   p->attr[0].strokeWidth    = 0;
+  p->attr[0].lineCap        = TStroke::OutlineOptions::ROUND_CAP;
+  p->attr[0].lineJoin       = TStroke::OutlineOptions::ROUND_JOIN;
+  p->attr[0].miterLimit     = 4.0;
   p->attr[0].hasFillInfo    = 0;
   p->attr[0].hasStrokeInfo  = 0;
   p->attr[0].visible        = 1;
@@ -447,6 +455,9 @@ void nsvg__addShape(struct NSVGParser *p) {
   shape->hasFillInfo = attr->hasFillInfo;
   shape->hasStrokeInfo = attr->hasStrokeInfo;
   shape->strokeWidth   = attr->strokeWidth * scaleFactor;
+  shape->lineCap       = attr->lineCap;
+  shape->lineJoin      = attr->lineJoin;
+  shape->miterLimit    = attr->miterLimit;
 
   strcpy(shape->id, attr->id);
   shape->fillColor = attr->fillColor;
@@ -784,6 +795,28 @@ float nsvg__parseFloat(const char *str) {
   return (float)atof(str);
 }
 
+int nsvg__parseLineCap(const char *str) {
+  while (*str == ' ') ++str;
+
+  if (strcmp("square", str) == 0)
+    return TStroke::OutlineOptions::PROJECTING_CAP;
+  else if (strcmp("butt", str) == 0)
+    return TStroke::OutlineOptions::BUTT_CAP;
+
+  return TStroke::OutlineOptions::ROUND_CAP;
+}
+
+int nsvg__parseLineJoin(const char *str) {
+  while (*str == ' ') ++str;
+
+  if (strcmp("bevel", str) == 0)
+    return TStroke::OutlineOptions::BEVEL_JOIN;
+  else if (strcmp("miter", str) == 0)
+    return TStroke::OutlineOptions::MITER_JOIN;
+
+  return TStroke::OutlineOptions::ROUND_JOIN;
+}
+
 int nsvg__parseTransformArgs(const char *str, float *args, int maxNa, int *na) {
   const char *end;
   const char *ptr;
@@ -945,6 +978,15 @@ int nsvg__parseAttr(struct NSVGParser *p, const char *name, const char *value) {
     attr->strokeOpacity = nsvg__parseFloat(value);
   } else if (strcmp(name, "transform") == 0) {
     nsvg__parseTransform(p, value);
+  } else if (strcmp(name, "stroke-linecap") == 0) {
+    attr->hasStrokeInfo = 1;
+    attr->lineCap       = nsvg__parseLineCap(value);
+  } else if (strcmp(name, "stroke-linejoin") == 0) {
+    attr->hasStrokeInfo = 1;
+    attr->lineJoin      = nsvg__parseLineJoin(value);
+  } else if (strcmp(name, "stroke-miterlimit") == 0) {
+    attr->hasStrokeInfo = 1;
+    attr->miterLimit    = nsvg__parseFloat(value);
   } else {
     return 0;
   }
@@ -2187,6 +2229,12 @@ TStroke *buildStroke(NSVGpath *path, float *xform, float width, int lineCap,
     }
   }
   TStroke *s = new TStroke(points);
+
+  TStroke::OutlineOptions &options = s->outlineOptions();
+
+  options.m_capStyle   = lineCap;
+  options.m_joinStyle  = lineJoin;
+  options.m_miterUpper = miterLimit;
 
   s->setSelfLoop(path->closed);
 
