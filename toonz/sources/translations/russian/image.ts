@@ -243,7 +243,7 @@
 <context>
     <name>PngWriterProperties</name>
     <message>
-        <location filename="../../image/png/tiio_png.cpp" line="775"/>
+        <location filename="../../image/png/tiio_png.cpp" line="781"/>
         <source>Alpha Channel</source>
         <translation>Альфа канал</translation>
     </message>
@@ -745,72 +745,72 @@ Please try raising the FFmpeg timeout in Preferences.</source>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="309"/>
         <source>Placebo (Smallest File)</source>
-        <translation type="unfinished"></translation>
+        <translation>Плацебо (самый маленький файл)</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="310"/>
         <source>Very Slow</source>
-        <translation type="unfinished"></translation>
+        <translation>Очень медленно</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="311"/>
         <source>Slower</source>
-        <translation type="unfinished"></translation>
+        <translation>Помедленнее</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="312"/>
         <source>Slow</source>
-        <translation type="unfinished"></translation>
+        <translation>Медленно</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="313"/>
         <source>Medium</source>
-        <translation type="unfinished">Средняя</translation>
+        <translation>Средняя</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="314"/>
         <source>Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>Быстро</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="315"/>
         <source>Faster</source>
-        <translation type="unfinished"></translation>
+        <translation>Быстрее</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="316"/>
         <source>Very Fast</source>
-        <translation type="unfinished"></translation>
+        <translation>Очень быстро</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="318"/>
         <source>Ultra Fast (Largest File)</source>
-        <translation type="unfinished"></translation>
+        <translation>Сверхбыстро (самый большой файл)</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="322"/>
         <source>Every Frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Каждый кадр</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="323"/>
         <source>Every Second</source>
-        <translation type="unfinished"></translation>
+        <translation>Каждую секунду</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="324"/>
         <source>Every 2 Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Каждые 2 секунды</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="325"/>
         <source>Every 5 Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Каждые 5 секунд</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="326"/>
         <source>Every 10 Seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Каждые 10 секунд</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="331"/>
@@ -820,22 +820,22 @@ Please try raising the FFmpeg timeout in Preferences.</source>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="332"/>
         <source>Encoding Speed</source>
-        <translation type="unfinished"></translation>
+        <translation>Скорость кодирования</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="333"/>
         <source>Keyframe Interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Интервал ключевых кадров</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="334"/>
         <source>Preserve Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранение альфа-канала</translation>
     </message>
     <message>
         <location filename="../../image/ffmpeg/tiio_webm.cpp" line="335"/>
         <source>Lossless</source>
-        <translation type="unfinished"></translation>
+        <translation>Без потерь</translation>
     </message>
 </context>
 </TS>

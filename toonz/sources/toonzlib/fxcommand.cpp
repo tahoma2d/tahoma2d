@@ -851,7 +851,7 @@ void InsertFxUndo::redo() const {
     TStageObjectId columnId = TStageObjectId::ColumnId(m_colIdx);
     std::wstring wname =
         m_insertedColumn->getZeraryColumnFx()->getZeraryFx()->getName();
-    std::string str(wname.begin(), wname.end());
+    std::string str = ::to_string(wname);
 
     TStageObjectCmd::rename(columnId, str, m_app->getCurrentXsheet());
 

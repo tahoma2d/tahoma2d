@@ -3058,6 +3058,11 @@ Are you sure?</source>
         <translation type="unfinished">Vrátit na výchozí</translation>
     </message>
     <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3927"/>
+        <source>Reset Style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="6900"/>
         <source>Removing the selected Styles will permanently delete style files from their sets. This cannot be undone!
 Are you sure?</source>
@@ -3675,11 +3680,6 @@ Jste si jistý?</translation>
     <message>
         <source>Reset to default</source>
         <translation type="obsolete">Vrátit na výchozí</translation>
-    </message>
-    <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3927"/>
-        <source>Reset Style</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="4115"/>

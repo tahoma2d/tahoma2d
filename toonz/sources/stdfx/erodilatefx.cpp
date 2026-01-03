@@ -23,11 +23,11 @@ class ErodeDilateFx final : public TStandardRasterFx {
   TDoubleParamP m_radius;
 
 public:
-  ErodeDilateFx() : m_type(new TIntEnumParam(0, "Square")), m_radius(0.0) {
+  ErodeDilateFx() : m_type(new TIntEnumParam(0, QObject::tr("Square").toStdString())), m_radius(0.0) {
     addInputPort("Source", m_input);
 
     bindParam(this, "type", m_type);
-    m_type->addItem(1, "Circular");
+    m_type->addItem(1, QObject::tr("Circular").toStdString());
 
     m_radius->setMeasureName("fxLength");
     bindParam(this, "radius", m_radius);

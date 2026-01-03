@@ -25,7 +25,7 @@ class PerlinNoiseFx final : public TStandardRasterFx {
 
 public:
   PerlinNoiseFx()
-      : m_type(new TIntEnumParam(PNOISE_CLOUDS, "Clouds"))
+      : m_type(new TIntEnumParam(PNOISE_CLOUDS, QObject::tr("Clouds").toStdString()))
       , m_size(100.0)
       , m_min(0.0)
       , m_max(1.0)
@@ -37,7 +37,7 @@ public:
     m_offsetx->setMeasureName("fxLength");
     m_offsety->setMeasureName("fxLength");
     bindParam(this, "type", m_type);
-    m_type->addItem(PNOISE_WOODS, "Marble/Wood");
+    m_type->addItem(PNOISE_WOODS, QObject::tr("Marble/Wood").toStdString());
     bindParam(this, "size", m_size);
     bindParam(this, "evolution", m_evol);
     bindParam(this, "intensity", m_intensity);

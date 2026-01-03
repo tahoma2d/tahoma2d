@@ -18,7 +18,7 @@ Iwa_TimeCodeFx::Iwa_TimeCodeFx()
     , m_showBox(true)
     , m_boxColor(TPixel32::Black) {
   m_displayType->addItem(TYPE_HHMMSSFF2, "HH:MM:SS:FF");
-  m_displayType->addItem(TYPE_FRAME, "Frame Number");
+  m_displayType->addItem(TYPE_FRAME, QObject::tr("Frame Number").toStdString());
   m_position->getX()->setMeasureName("fxLength");
   m_position->getY()->setMeasureName("fxLength");
   m_size->setMeasureName("fxLength");

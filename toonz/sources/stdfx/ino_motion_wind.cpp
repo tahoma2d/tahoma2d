@@ -37,7 +37,7 @@ class ino_motion_wind final : public TStandardRasterFx {
 
 public:
   ino_motion_wind()
-      : m_direction(new TIntEnumParam(0, "Right"))
+      : m_direction(new TIntEnumParam(0, QObject::tr("Right").toStdString()))
       , m_dark(false)
       , m_alpha_rendering(true)
 
@@ -60,7 +60,7 @@ public:
       , m_density_ref(false)
 
       // , m_spread(true)
-      , m_ref_mode(new TIntEnumParam(0, "Red")) {
+      , m_ref_mode(new TIntEnumParam(0, QObject::tr("Red").toStdString())) {
     this->m_length_min->setMeasureName("fxLength");
     this->m_length_max->setMeasureName("fxLength");
 
@@ -91,9 +91,9 @@ public:
     // bindParam(this,"spread", this->m_spread);
     bindParam(this, "reference", this->m_ref_mode);
 
-    this->m_direction->addItem(1, "Up");
-    this->m_direction->addItem(2, "Left");
-    this->m_direction->addItem(3, "Down");
+    this->m_direction->addItem(1, QObject::tr("Up").toStdString());
+    this->m_direction->addItem(2, QObject::tr("Left").toStdString());
+    this->m_direction->addItem(3, QObject::tr("Down").toStdString());
 
     this->m_length_min->setValueRange(0.0, 1000.0);
     this->m_length_max->setValueRange(0.0, 1000.0);
@@ -120,11 +120,11 @@ public:
     this->m_density_seed->setValueRange(
         0, std::numeric_limits<unsigned long>::max());
 
-    this->m_ref_mode->addItem(1, "Green");
-    this->m_ref_mode->addItem(2, "Blue");
-    this->m_ref_mode->addItem(3, "Alpha");
-    this->m_ref_mode->addItem(4, "Luminance");
-    this->m_ref_mode->addItem(-1, "Nothing");
+    this->m_ref_mode->addItem(1, QObject::tr("Green").toStdString());
+    this->m_ref_mode->addItem(2, QObject::tr("Blue").toStdString());
+    this->m_ref_mode->addItem(3, QObject::tr("Alpha").toStdString());
+    this->m_ref_mode->addItem(4, QObject::tr("Luminance").toStdString());
+    this->m_ref_mode->addItem(-1, QObject::tr("Nothing").toStdString());
   }
   bool doGetBBox(double frame, TRectD &bBox,
                  const TRenderSettings &info) override {

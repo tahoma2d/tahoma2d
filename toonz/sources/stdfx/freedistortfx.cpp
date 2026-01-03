@@ -99,7 +99,7 @@ FreeDistortBaseFx::FreeDistortBaseFx(bool isCastShadow)
     , m_upBlur(0.0)
     , m_downBlur(0.0)
     , m_isCastShadow(isCastShadow)
-    , m_distortType(new TIntEnumParam(PERSPECTIVE, "Perspective")) {
+    , m_distortType(new TIntEnumParam(PERSPECTIVE, QObject::tr("Perspective").toStdString())) {
   m_upBlur->setMeasureName("fxLength");
   m_downBlur->setMeasureName("fxLength");
   double ext = 400.;
@@ -189,7 +189,7 @@ FreeDistortBaseFx::FreeDistortBaseFx(bool isCastShadow)
   m_p10_a->getY()->setValueRange(-1000, 1000);
   m_p10_b->getY()->setValueRange(-1000, 1000);
 
-  m_distortType->addItem(BILINEAR, "Bilinear");
+  m_distortType->addItem(BILINEAR, QObject::tr("Bilinear").toStdString());
 }
 
 //------------------------------------------------------------------------

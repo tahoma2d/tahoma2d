@@ -17,7 +17,7 @@ public:
 
     bindParam(this, "globalIntensity", m_globalIntensity);
     getAttributes()->setHasGlobalControl(true);
-    m_globalIntensity->setUILabel("Fx Intensity");
+    m_globalIntensity->setUILabel(QObject::tr("Fx Intensity").toStdString());
   }
 
   double getGrobalControlValue(double frame) {

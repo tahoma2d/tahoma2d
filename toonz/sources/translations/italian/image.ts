@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="it">
 <context>
     <name>APngWriterProperties</name>
     <message>
@@ -232,7 +232,7 @@
 <context>
     <name>PngWriterProperties</name>
     <message>
-        <location filename="../../image/png/tiio_png.cpp" line="775"/>
+        <location filename="../../image/png/tiio_png.cpp" line="781"/>
         <source>Alpha Channel</source>
         <translation type="unfinished"></translation>
     </message>

@@ -62,7 +62,7 @@ Iwa_BloomFx::Iwa_BloomFx()
     , m_decay(1)
     , m_size(100.0)
     , m_alpha_rendering(false)
-    , m_alpha_mode(new TIntEnumParam(NoAlpha, "No Alpha")) {
+    , m_alpha_mode(new TIntEnumParam(NoAlpha, QObject::tr("No Alpha").toStdString())) {
   addInputPort("Source", m_source);
   bindParam(this, "gamma", m_gamma);
   bindParam(this, "gammaAdjust", m_gammaAdjust);
@@ -75,8 +75,9 @@ Iwa_BloomFx::Iwa_BloomFx()
   bindParam(this, "alpha_rendering", m_alpha_rendering, false,
             true);  // obsolete
 
-  m_alpha_mode->addItem(Light, "Light");
-  m_alpha_mode->addItem(LightAndSource, "Light and Source");
+  m_alpha_mode->addItem(Light, QObject::tr("Light").toStdString());
+  m_alpha_mode->addItem(LightAndSource,
+                        QObject::tr("Light and Source").toStdString());
 
   m_gamma->setValueRange(0.1, 5.0);
   m_gammaAdjust->setValueRange(-5., 5.);

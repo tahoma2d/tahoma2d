@@ -27,7 +27,8 @@
         <location filename="../../toonz/aboutpopup.cpp" line="81"/>
         <source>Tahoma2D ships with FFmpeg.
 FFmpeg is licensed under the LGPLv2.1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tahoma2D поставляется с FFmpeg.
+FFmpeg распространяется под лицензией LGPLv2.1</translation>
     </message>
     <message>
         <source>Tahoma2D ships with FFmpeg.  
@@ -698,7 +699,7 @@ Right click to adjust.</source>
     <message>
         <location filename="../../toonz/viewerpane.cpp" line="784"/>
         <source> (Rasterized Vector View)</source>
-        <translation type="unfinished"></translation>
+        <translation> (Растрированный векторный вид)</translation>
     </message>
 </context>
 <context>
@@ -869,78 +870,78 @@ Do you want to save your changes?</source>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="600"/>
         <source>Create Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать стол</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="601"/>
         <source>New</source>
-        <translation type="unfinished">Новый</translation>
+        <translation>Новая</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="605"/>
         <source>Reset Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить стол</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="606"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Сброс</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="610"/>
         <source>Clear Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить стол</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="611"/>
         <source>Clear</source>
-        <translation type="unfinished">Очистить</translation>
+        <translation>Очистить</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="617"/>
         <source>Create New Scene</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать новую сцену</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="618"/>
         <source>Create Scene</source>
-        <translation type="unfinished">Создать сцену</translation>
+        <translation>Создать сцену</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="624"/>
         <source>Save Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить стол</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="625"/>
         <source>Save</source>
-        <translation type="unfinished">Сохранить</translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="629"/>
         <source>Save Board As</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить стол как</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="630"/>
         <source>Save As</source>
-        <translation type="unfinished">Сохранить как</translation>
+        <translation>Сохранить как</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="634"/>
         <source>Load Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузить стол</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="635"/>
         <source>Load</source>
-        <translation type="unfinished">Загрузить</translation>
+        <translation>Загрузить</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="641"/>
         <location filename="../../toonz/preproductionboard.cpp" line="642"/>
         <source>Quick Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Быстрое проигрывание</translation>
     </message>
 </context>
 <context>
@@ -948,37 +949,37 @@ Do you want to save your changes?</source>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="954"/>
         <source>Toggle Thumbnail Wrap</source>
-        <translation type="unfinished"></translation>
+        <translation>Переключить перенос миниатюр</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="959"/>
         <source>Quick Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Быстрое проигрывание</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1004"/>
         <source>Load As Sub-Scene</source>
-        <translation type="unfinished">Загрузить как суб-сцену</translation>
+        <translation>Загрузить как суб-сцену</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1018"/>
         <source>Expand Sequence</source>
-        <translation type="unfinished"></translation>
+        <translation>Развернуть секвенцию</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1026"/>
         <source>Collapse Sequence</source>
-        <translation type="unfinished"></translation>
+        <translation>Свернуть секвенцию</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1035"/>
         <source>Rename</source>
-        <translation type="unfinished">Переименовать</translation>
+        <translation>Переименовать</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1083"/>
         <source>Drag/Drop to Add Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Перетащите файлы для добавления</translation>
     </message>
 </context>
 <context>
@@ -1756,12 +1757,12 @@ What do you want to do?</source>
     <message>
         <location filename="../../toonz/cleanupsettingspane.cpp" line="121"/>
         <source>Bottom</source>
-        <translation>Вверху</translation>
+        <translation>Низ</translation>
     </message>
     <message>
         <location filename="../../toonz/cleanupsettingspane.cpp" line="121"/>
         <source>Top</source>
-        <translation>Внизу</translation>
+        <translation>Верх</translation>
     </message>
     <message>
         <location filename="../../toonz/cleanupsettingspane.cpp" line="121"/>
@@ -4852,7 +4853,11 @@ Do you want to overwrite it?</source>
 &apos;%1&apos;
 
 Camera has been disconnected and may need to be restarted.</source>
-        <translation type="unfinished"></translation>
+        <translation>С камерой произошла критическая ошибка:
+
+&apos;%1&apos;
+
+Камера отключена и, возможно, потребуется её перезапуск.</translation>
     </message>
     <message>
         <location filename="../../stopmotion/gphotocam.cpp" line="774"/>
@@ -4865,107 +4870,107 @@ Camera has been disconnected and may need to be restarted.</source>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="24"/>
         <source>GPhoto Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Журнал событий GPhoto</translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="31"/>
         <source>Capture messages:</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщения перехвата:</translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="38"/>
         <source>Event</source>
-        <translation type="unfinished"></translation>
+        <translation>Событие</translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="43"/>
         <source>Error</source>
-        <translation type="unfinished">Ошибка</translation>
+        <translation>Ошибка</translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="48"/>
         <source>Debug</source>
-        <translation type="unfinished"></translation>
+        <translation>Отладка</translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="53"/>
         <source>List All Configs</source>
-        <translation type="unfinished"></translation>
+        <translation>Список всех конфигураций</translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="93"/>
         <source>Pause</source>
-        <translation type="unfinished">Пауза</translation>
+        <translation>Пауза</translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="95"/>
         <source>Copy to Clipboard</source>
-        <translation type="unfinished">Копировать в буфер обмена</translation>
+        <translation>Копировать в буфер обмена</translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="97"/>
         <source>Clear Log</source>
-        <translation type="unfinished">Очистить журнал</translation>
+        <translation>Очистить журнал</translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="235"/>
         <source>List All Configs: No camera detected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Список всех конфигураций: Камера не обнаружена.</translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="241"/>
         <source>List All Configs: No configurations retrieved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Список всех конфигураций: Конфигурации не найдены.</translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="245"/>
         <source>========== All Configs ==========</source>
-        <translation type="unfinished"></translation>
+        <translation>======== Все конфигурации =======</translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="254"/>
         <source>Label: </source>
-        <translation type="unfinished"></translation>
+        <translation>Метка: </translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="255"/>
         <source>Readonly: </source>
-        <translation type="unfinished"></translation>
+        <translation>Только для чтения: </translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="256"/>
         <source>Type: </source>
-        <translation type="unfinished"></translation>
+        <translation>Тип: </translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="257"/>
         <source>Current: </source>
-        <translation type="unfinished"></translation>
+        <translation>Текущий: </translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="264"/>
         <source>Printable: </source>
-        <translation type="unfinished"></translation>
+        <translation>Распечатываемый: </translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="268"/>
         <source>Choice </source>
-        <translation type="unfinished"></translation>
+        <translation>Выбор </translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="272"/>
         <source>Bottom: </source>
-        <translation type="unfinished"></translation>
+        <translation>Низ: </translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="275"/>
         <source>Top: </source>
-        <translation type="unfinished"></translation>
+        <translation>Верх: </translation>
     </message>
     <message>
         <location filename="../../toonz/gphotoeventlogpopup.cpp" line="278"/>
         <source>Step: </source>
-        <translation type="unfinished">Шаг: </translation>
+        <translation>Шаг: </translation>
     </message>
 </context>
 <context>
@@ -5856,7 +5861,7 @@ Please choose a different file</source>
     <message>
         <location filename="../../toonz/lipsyncpopup.cpp" line="244"/>
         <source>Recognizer</source>
-        <translation type="unfinished"></translation>
+        <translation>Распознаватель</translation>
     </message>
     <message>
         <location filename="../../toonz/lipsyncpopup.cpp" line="267"/>
@@ -6005,22 +6010,22 @@ Please choose a valid lip sync data file to continue.</source>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1759"/>
         <source>Load Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузить стол</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1761"/>
         <source>Load</source>
-        <translation type="unfinished">Загрузить</translation>
+        <translation>Загрузить</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1772"/>
         <source> does not exist.</source>
-        <translation type="unfinished"> не существует.</translation>
+        <translation> не существует.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1776"/>
         <source>It is possible to load only TNZBRD files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Можно загружать только файлы формата TNZBRD.</translation>
     </message>
 </context>
 <context>
@@ -8162,7 +8167,7 @@ or you may delete necessary files for it.</source>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2552"/>
         <source>&amp;Open Reports Folder...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Открыть папку отчетов...</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2670"/>
@@ -9245,12 +9250,12 @@ Custom rooms will not be touched.</source>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2299"/>
         <source>Loop Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Цикл выбранных кадров</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2300"/>
         <source>Remove Frame Loop</source>
-        <translation type="unfinished"></translation>
+        <translation>Убрать цикл выбранных кадров</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2309"/>
@@ -9390,17 +9395,17 @@ Custom rooms will not be touched.</source>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2538"/>
         <source>&amp;Tips...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Советы...</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2546"/>
         <source>Viewer Event Log</source>
-        <translation type="unfinished">Журнал событий просмотра</translation>
+        <translation>Журнал событий просмотра</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2548"/>
         <source>GPhoto Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Журнал событий GPhoto</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2550"/>
@@ -9499,17 +9504,17 @@ Custom rooms will not be touched.</source>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2616"/>
         <source>&amp;Set Rest Key</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Установить ключ покоя</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2619"/>
         <source>&amp;Set Global Key</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Установить глобальный ключ</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2621"/>
         <source>&amp;Set Global Rest Key</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Установить глобальный ключ покоя</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2631"/>
@@ -9524,7 +9529,7 @@ Custom rooms will not be touched.</source>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2646"/>
         <source>&amp;Clear All Onion Skin Markers</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Убрать все маркеры кальки</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2767"/>
@@ -9539,12 +9544,12 @@ Custom rooms will not be touched.</source>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2773"/>
         <source>&amp;Copy Skeleton</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Копировать скелет</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2775"/>
         <source>&amp;Paste Skeleton</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Вставить скелет</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2784"/>
@@ -9724,7 +9729,7 @@ Custom rooms will not be touched.</source>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2868"/>
         <source>Hook Tool: Create reference points to aid in movement or to link other objects by them</source>
-        <translation type="unfinished"></translation>
+        <translation>Инструмент «Крючок»: создает опорные точки для перемещения или для соединения с другими объектами</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="2871"/>
@@ -10119,7 +10124,7 @@ Custom rooms will not be touched.</source>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="3095"/>
         <source>Keep Distance</source>
-        <translation type="unfinished"></translation>
+        <translation>Держать дистанцию</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="3099"/>
@@ -10389,7 +10394,7 @@ Custom rooms will not be touched.</source>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="3300"/>
         <source>Paint Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>Красить позади</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="3323"/>
@@ -10404,7 +10409,7 @@ Custom rooms will not be touched.</source>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="3428"/>
         <source>Viewer Scrub</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотр</translation>
     </message>
     <message>
         <location filename="../../toonz/mainwindow.cpp" line="3434"/>
@@ -10982,7 +10987,7 @@ What do you want to do?</source>
     <message>
         <location filename="../../toonz/navtageditorpopup.cpp" line="41"/>
         <source>Blue</source>
-        <translation>Глоубой</translation>
+        <translation>Голубой</translation>
     </message>
     <message>
         <location filename="../../toonz/navtageditorpopup.cpp" line="42"/>
@@ -12734,7 +12739,7 @@ Also the initial output destination for new scenes will be set to $scenefolder a
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1272"/>
         <source>Show Tips Window when Tahoma2D Starts</source>
-        <translation type="unfinished"></translation>
+        <translation>Отобразить окно с подсказками при запуске Tahoma2D</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1531"/>
@@ -13382,17 +13387,17 @@ in non alpha-enabled image format.</source>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1319"/>
         <source>Enable High DPI Scaling*</source>
-        <translation type="unfinished"></translation>
+        <translation>Включить масштабирование с высоким разрешением (DPI)*</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1320"/>
         <source>Preproduction Board Thumbnail Size*:</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер иконок монтажного стола*:</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1325"/>
         <source>Rasterize Vector with Anti Aliasing</source>
-        <translation type="unfinished"></translation>
+        <translation>Растрировать вектор со сглаживанием</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1329"/>
@@ -13632,7 +13637,7 @@ in non alpha-enabled image format.</source>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1443"/>
         <source>Show Images in Cell Tooltips</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображения во всплывающих подсказках ячеек</translation>
     </message>
     <message>
         <location filename="../../toonz/preferencespopup.cpp" line="1446"/>
@@ -14069,79 +14074,81 @@ but a random crash might occur, use at your own risk:</source>
         <location filename="../../toonz/preproductionboard.cpp" line="1424"/>
         <location filename="../../toonz/preproductionboard.cpp" line="1442"/>
         <source>Are you sure you want to discard your changes?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы уверены, что хотите отменить внесенные изменения?</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1425"/>
         <location filename="../../toonz/preproductionboard.cpp" line="1443"/>
         <source>Yes</source>
-        <translation type="unfinished">Да</translation>
+        <translation>Да</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1425"/>
         <location filename="../../toonz/preproductionboard.cpp" line="1443"/>
         <source>No</source>
-        <translation type="unfinished">Нет</translation>
+        <translation>Нет</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1475"/>
         <source>Create Scene</source>
-        <translation type="unfinished">Создать сцену</translation>
+        <translation>Создать сцену</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1475"/>
         <source>Scene name:</source>
-        <translation type="unfinished">Название сцены:</translation>
+        <translation>Название сцены:</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1552"/>
         <source>The board is empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>Стол пуст!</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1570"/>
         <source>The current board has been modified.
 Doyou want to save your changes?</source>
-        <translation type="unfinished"></translation>
+        <translation>Текущий стол был изменён.
+Хотите сохранить изменения?</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1572"/>
         <location filename="../../toonz/preproductionboard.cpp" line="1733"/>
         <source>Save</source>
-        <translation type="unfinished">Сохранить</translation>
+        <translation>Сохранить</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1572"/>
         <location filename="../../toonz/preproductionboard.cpp" line="1733"/>
         <source>Discard</source>
-        <translation type="unfinished"></translation>
+        <translation>Сбросить</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1572"/>
         <location filename="../../toonz/preproductionboard.cpp" line="1733"/>
         <source>Cancel</source>
-        <translation type="unfinished">Отмена</translation>
+        <translation>Отмена</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1661"/>
         <source>There is nothing in the board to play.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет ничего для воспроизведения на столе.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1731"/>
         <source>A production board has been modified.
 Do you want to save your changes?</source>
-        <translation type="unfinished"></translation>
+        <translation>Монтажный стол был изменён.
+Сохранить изменения?</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1745"/>
         <source>Preproduction Board</source>
-        <translation type="unfinished">Монтажный стол</translation>
+        <translation>Монтажный стол</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1747"/>
         <source>untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>безымянный</translation>
     </message>
 </context>
 <context>
@@ -14927,7 +14934,7 @@ Save the scene first.</source>
     <message>
         <location filename="../../toonz/exportlevelcommand.cpp" line="312"/>
         <source>Unable to generate image. Revise resolution.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не удалось сгенерировать изображение. Измените разрешение.</translation>
     </message>
     <message>
         <location filename="../../toonz/exportlevelcommand.cpp" line="535"/>
@@ -15043,6 +15050,9 @@ Are you sure ?</source>
         <location filename="../../toonz/fileselection.cpp" line="289"/>
         <location filename="../../toonz/preproductionboard.cpp" line="255"/>
         <location filename="../../toonz/startuppopup.cpp" line="862"/>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="86"/>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="22"/>
+        <location filename="../../stdfx/texturefx.cpp" line="25"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
@@ -15126,6 +15136,7 @@ Are you sure ?</source>
     <message>
         <location filename="../../toonz/dvitemview.cpp" line="209"/>
         <location filename="../../toonz/dvitemview.cpp" line="242"/>
+        <location filename="../../stdfx/iwa_flowpaintbrushfx.cpp" line="189"/>
         <source>None</source>
         <translation>Ничего</translation>
     </message>
@@ -15591,7 +15602,10 @@ Do you wish to continue loading the last good save or stop and try to salvage th
 Details:
 
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Возникли проблемы с загрузкой сцены %1.
+Подробности:
+
+%2</translation>
     </message>
     <message>
         <location filename="../../toonz/iocommand.cpp" line="2212"/>
@@ -16353,12 +16367,12 @@ due to &quot;Unify Preview and Camstand Visibility Toggles&quot; preference opti
     <message>
         <location filename="../../toonz/columncommand.cpp" line="1859"/>
         <source>Loop Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Цикл столбцов</translation>
     </message>
     <message>
         <location filename="../../toonz/columncommand.cpp" line="1955"/>
         <source>Remove Column Loops</source>
-        <translation type="unfinished"></translation>
+        <translation>Убрать цикл столбцов</translation>
     </message>
     <message>
         <location filename="../../toonz/columncommand.cpp" line="2221"/>
@@ -16387,6 +16401,13 @@ due to &quot;Unify Preview and Camstand Visibility Toggles&quot; preference opti
     </message>
     <message>
         <location filename="../../toonz/cellselectioncommand.cpp" line="316"/>
+        <location filename="../../stdfx/iwa_flowpaintbrushfx.cpp" line="263"/>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="53"/>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="75"/>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="200"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="54"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="77"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="181"/>
         <source>Random</source>
         <translation>Случайно</translation>
     </message>
@@ -17231,12 +17252,12 @@ The operation cannot be undone: are you sure?</source>
     <message>
         <location filename="../../toonz/cellselection.cpp" line="1594"/>
         <source>Loop Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Цикл выбранных кадров</translation>
     </message>
     <message>
         <location filename="../../toonz/cellselection.cpp" line="1631"/>
         <source>Remove Frames Loop</source>
-        <translation type="unfinished"></translation>
+        <translation>Убрать цикл выбранных кадров</translation>
     </message>
     <message>
         <location filename="../../toonz/cellselection.cpp" line="1686"/>
@@ -17405,12 +17426,12 @@ to use the duplicate command in the xsheet / timeline.</source>
     <message>
         <location filename="../../toonz/xsheetdragtool.cpp" line="2798"/>
         <source>Move Loop Start Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить начальный маркер цикла</translation>
     </message>
     <message>
         <location filename="../../toonz/xsheetdragtool.cpp" line="2799"/>
         <source>Move Loop End Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить конечный маркер цикла</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcellviewer.cpp" line="570"/>
@@ -17727,7 +17748,7 @@ to use the duplicate command in the xsheet / timeline.</source>
         <location filename="../../toonz/preproductionboard.cpp" line="1175"/>
         <location filename="../../toonz/scenebrowser.cpp" line="1663"/>
         <source>Warning: file or level %1 already exists; overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>Предупреждение: файл или уровень %1 уже существует; перезаписать?</translation>
     </message>
     <message>
         <source>The specified name is already assigned to the %1 file.</source>
@@ -18008,7 +18029,7 @@ Visit the Web site for more information.</source>
     <message>
         <location filename="../../toonz/main.cpp" line="661"/>
         <source>Loading brush tips...</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка кончиков кистей...</translation>
     </message>
     <message>
         <location filename="../../toonz/main.cpp" line="665"/>
@@ -18263,74 +18284,74 @@ Do you want to import them or load from their original location?</source>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="177"/>
         <source>File %1 does not exist. Cannot add to Batch Render List.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл %1 не существует. Невозможно добавить в список пакетного рендера.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="188"/>
         <source>Task added to the Batch Render List.</source>
-        <translation type="unfinished"></translation>
+        <translation>Задача добавлена ​​в список пакетного рендера.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="207"/>
         <source>File %1 does not exist. Cannot add to Batch Cleanup List.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл %1 не существует. Невозможно добавить в список пакетной очистки.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="218"/>
         <source>Task added to the Batch Cleanup List.</source>
-        <translation type="unfinished"></translation>
+        <translation>Задача добавлена ​​в список пакетной очистки.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="230"/>
         <source>File %1 does not exist. Cannot load scene.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл %1 не существует. Невозможно загрузить сцену.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="276"/>
         <source>File %1 does not exist. Cannot show in folder.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл %1 не существует. Не удаётся отобразить в папке.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="305"/>
         <source>File %1 does not exist. Cannot show file info.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл %1 не существует. Невозможно отобразить информацию о файле.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="336"/>
         <source>File %1 does not exist. Cannot duplicate it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл %1 не существует. Воспроизвести его не удаётся.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="385"/>
         <location filename="../../toonz/preproductionboard.cpp" line="401"/>
         <source>File %1 does not exist. Cannot collect assets for it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл %1 не существует. Невозможно получить для него ресурсы.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="468"/>
         <location filename="../../toonz/preproductionboard.cpp" line="491"/>
         <source>File %1 does not exist. Cannot import into current project.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл %1 не существует. Невозможно импортировать в текущий проект.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1114"/>
         <source>File %1 does not exist. Cannot load it into the current scene.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл %1 не существует. Невозможно загрузить его в текущую сцену.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1154"/>
         <source>File %1 does not exist. Cannot rename it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл %1 не существует. Переименовать его невозможно.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1251"/>
         <source>File %1 does not exist. Cannot expand it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл %1 не существует. Невозможно его распаковать.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1685"/>
         <source>File %1 does not exist. Cannot add it to the flipbook.</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл %1 не существует. Невозможно добавить его в Flipbook.</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1807"/>
@@ -18390,6 +18411,908 @@ Do you want to import them or load from their original location?</source>
     <message>
         <source>Toggle render column mask. </source>
         <translation type="vanished">Переключить маску рендеринга столбцов. </translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="66"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="67"/>
+        <source>Younger</source>
+        <translation>Младше</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="88"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="90"/>
+        <source>Hold Frame</source>
+        <translation>Калр удержания</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="44"/>
+        <source>Basic</source>
+        <translation>Основной</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="45"/>
+        <source>Block</source>
+        <translation>Блок</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="72"/>
+        <source>Turbulent Smooth</source>
+        <translation>Турбулентное сглаживание</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="74"/>
+        <source>Turbulent Basic</source>
+        <translation>Турбулентный базис</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="76"/>
+        <source>Turbulent Sharp</source>
+        <translation>Турбулентная резкость</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="77"/>
+        <source>Dynamic</source>
+        <translation>Динамический</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="79"/>
+        <source>Dynamic Twist</source>
+        <translation>Динамическое скручивание</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="81"/>
+        <source>Rocky</source>
+        <translation>Скалистый</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="83"/>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="164"/>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="221"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="147"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="202"/>
+        <source>Smooth</source>
+        <translation>Гладкий</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="197"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="178"/>
+        <source>Older</source>
+        <translation>Старше</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="198"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="179"/>
+        <source>Smaller</source>
+        <translation>Меньший</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="199"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="180"/>
+        <source>Bigger</source>
+        <translation>Больший</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="250"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="231"/>
+        <source>Random Frame</source>
+        <translation>Случайный кадр</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="251"/>
+        <location filename="../../stdfx/motionawarebasefx.h" line="40"/>
+        <location filename="../../stdfx/motionawarebasefx.h" line="78"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="232"/>
+        <source>Column</source>
+        <translation>Столбец</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="253"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="234"/>
+        <source>Column - Random Start</source>
+        <translation>Столбец - Случайное начало</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="255"/>
+        <location filename="../../stdfx/particlesfx.cpp" line="236"/>
+        <source>Column Swing - Random Start</source>
+        <translation>Качание столбца - Случайный старт</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="299"/>
+        <source>Particles</source>
+        <translation>Частицы</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="300"/>
+        <source>Background</source>
+        <translation>Фон</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="302"/>
+        <source>Illuminated</source>
+        <translation>Освещённый</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/bodyhighlightfx.cpp" line="348"/>
+        <source>Over</source>
+        <translation>Перекрытие</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/bodyhighlightfx.cpp" line="367"/>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="146"/>
+        <location filename="../../stdfx/texturefx.cpp" line="42"/>
+        <source>Add</source>
+        <translation>Добавление</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/bodyhighlightfx.cpp" line="368"/>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="147"/>
+        <location filename="../../stdfx/texturefx.cpp" line="43"/>
+        <source>Subtract</source>
+        <translation>Вычитание</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/bodyhighlightfx.cpp" line="369"/>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="148"/>
+        <location filename="../../stdfx/texturefx.cpp" line="44"/>
+        <source>Multiply</source>
+        <translation>Умножение</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/bodyhighlightfx.cpp" line="370"/>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="149"/>
+        <location filename="../../stdfx/texturefx.cpp" line="45"/>
+        <source>Lighten</source>
+        <translation>Осветление</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/bodyhighlightfx.cpp" line="371"/>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="150"/>
+        <location filename="../../stdfx/texturefx.cpp" line="46"/>
+        <source>Darken</source>
+        <translation>Затемнение</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/cloudsfx.cpp" line="20"/>
+        <location filename="../../stdfx/perlinnoisefx.cpp" line="28"/>
+        <source>Clouds</source>
+        <translation>Облака</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/cloudsfx.cpp" line="26"/>
+        <location filename="../../stdfx/perlinnoisefx.cpp" line="40"/>
+        <source>Marble/Wood</source>
+        <translation>Мрамор/Дерево</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="82"/>
+        <location filename="../../stdfx/freedistortfx.cpp" line="102"/>
+        <source>Perspective</source>
+        <translation>Перспектива</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="85"/>
+        <location filename="../../stdfx/iwa_floorbumpfx.cpp" line="315"/>
+        <location filename="../../stdfx/texturefx.cpp" line="28"/>
+        <source>Texture</source>
+        <translation>Текстура</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="143"/>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="35"/>
+        <location filename="../../stdfx/texturefx.cpp" line="38"/>
+        <source>Keep</source>
+        <translation>Держать</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="145"/>
+        <location filename="../../stdfx/texturefx.cpp" line="41"/>
+        <source>Pattern</source>
+        <translation>Паттерн</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/cornerpinfx.cpp" line="176"/>
+        <location filename="../../stdfx/freedistortfx.cpp" line="192"/>
+        <source>Bilinear</source>
+        <translation>Билинейный</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/despecklefx.cpp" line="25"/>
+        <source>Transparent Bg</source>
+        <translation>Прозрачный фон</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/despecklefx.cpp" line="29"/>
+        <source>White Bg</source>
+        <translation>Белый фон</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/erodilatefx.cpp" line="26"/>
+        <location filename="../../stdfx/mosaicfx.cpp" line="189"/>
+        <source>Square</source>
+        <translation>Квадрат</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/erodilatefx.cpp" line="30"/>
+        <source>Circular</source>
+        <translation>Круговой</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_blur.cpp" line="18"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="34"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="58"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="62"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="66"/>
+        <location filename="../../stdfx/ino_density.cpp" line="19"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="26"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="34"/>
+        <location filename="../../stdfx/ino_hls_adjust.cpp" line="39"/>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="39"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="26"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="34"/>
+        <location filename="../../stdfx/ino_hsv_adjust.cpp" line="39"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="39"/>
+        <location filename="../../stdfx/ino_level_master.cpp" line="30"/>
+        <location filename="../../stdfx/ino_level_rgba.cpp" line="50"/>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="55"/>
+        <location filename="../../stdfx/ino_median.cpp" line="39"/>
+        <location filename="../../stdfx/ino_median.cpp" line="47"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="20"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="21"/>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="63"/>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="42"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="35"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="27"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="28"/>
+        <source>Red</source>
+        <translation>Красный</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_blur.cpp" line="28"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="35"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="54"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="63"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="67"/>
+        <location filename="../../stdfx/ino_density.cpp" line="29"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="49"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="64"/>
+        <location filename="../../stdfx/ino_hls_adjust.cpp" line="68"/>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="75"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="49"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="64"/>
+        <location filename="../../stdfx/ino_hsv_adjust.cpp" line="68"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="75"/>
+        <location filename="../../stdfx/ino_level_master.cpp" line="53"/>
+        <location filename="../../stdfx/ino_level_rgba.cpp" line="111"/>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="56"/>
+        <location filename="../../stdfx/ino_median.cpp" line="40"/>
+        <location filename="../../stdfx/ino_median.cpp" line="48"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="30"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="35"/>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="123"/>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="75"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="62"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="49"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="52"/>
+        <source>Green</source>
+        <translation>Зеленый</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_blur.cpp" line="29"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="36"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="55"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="59"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="68"/>
+        <location filename="../../stdfx/ino_density.cpp" line="30"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="50"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="65"/>
+        <location filename="../../stdfx/ino_hls_adjust.cpp" line="69"/>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="76"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="50"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="65"/>
+        <location filename="../../stdfx/ino_hsv_adjust.cpp" line="69"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="76"/>
+        <location filename="../../stdfx/ino_level_master.cpp" line="54"/>
+        <location filename="../../stdfx/ino_level_rgba.cpp" line="112"/>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="57"/>
+        <location filename="../../stdfx/ino_median.cpp" line="41"/>
+        <location filename="../../stdfx/ino_median.cpp" line="49"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="31"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="36"/>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="124"/>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="76"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="63"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="50"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="53"/>
+        <source>Blue</source>
+        <translation>Голубой</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_blur.cpp" line="30"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="38"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="56"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="60"/>
+        <location filename="../../stdfx/ino_channel_selector.cpp" line="64"/>
+        <location filename="../../stdfx/ino_density.cpp" line="31"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="51"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="66"/>
+        <location filename="../../stdfx/ino_hls_adjust.cpp" line="70"/>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="77"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="51"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="66"/>
+        <location filename="../../stdfx/ino_hsv_adjust.cpp" line="70"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="77"/>
+        <location filename="../../stdfx/ino_level_master.cpp" line="55"/>
+        <location filename="../../stdfx/ino_level_rgba.cpp" line="113"/>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="58"/>
+        <location filename="../../stdfx/ino_median.cpp" line="42"/>
+        <location filename="../../stdfx/ino_median.cpp" line="50"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="32"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="37"/>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="125"/>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="77"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="64"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="51"/>
+        <location filename="../../stdfx/ino_warp_hv.cpp" line="54"/>
+        <source>Alpha</source>
+        <translation>Альфа</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_blur.cpp" line="31"/>
+        <location filename="../../stdfx/ino_density.cpp" line="32"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="67"/>
+        <location filename="../../stdfx/ino_hls_adjust.cpp" line="71"/>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="78"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="67"/>
+        <location filename="../../stdfx/ino_hsv_adjust.cpp" line="71"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="78"/>
+        <location filename="../../stdfx/ino_level_master.cpp" line="56"/>
+        <location filename="../../stdfx/ino_level_rgba.cpp" line="114"/>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="59"/>
+        <location filename="../../stdfx/ino_median.cpp" line="51"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="38"/>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="126"/>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="78"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="65"/>
+        <source>Luminance</source>
+        <translation>Яркость</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_blur.cpp" line="32"/>
+        <location filename="../../stdfx/ino_density.cpp" line="33"/>
+        <location filename="../../stdfx/ino_hls_add.cpp" line="68"/>
+        <location filename="../../stdfx/ino_hls_adjust.cpp" line="72"/>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="79"/>
+        <location filename="../../stdfx/ino_hsv_add.cpp" line="68"/>
+        <location filename="../../stdfx/ino_hsv_adjust.cpp" line="72"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="79"/>
+        <location filename="../../stdfx/ino_level_master.cpp" line="57"/>
+        <location filename="../../stdfx/ino_level_rgba.cpp" line="115"/>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="60"/>
+        <location filename="../../stdfx/ino_median.cpp" line="52"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="39"/>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="127"/>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="79"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="66"/>
+        <source>Nothing</source>
+        <translation>Нет</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_common.cpp" line="390"/>
+        <location filename="../../stdfx/iwa_motionblurfx.cpp" line="622"/>
+        <location filename="../../stdfx/iwa_motionflowfx.cpp" line="30"/>
+        <source>Auto</source>
+        <translation>Авто</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_common.cpp" line="405"/>
+        <location filename="../../stdfx/iwa_corridorgradientfx.cpp" line="54"/>
+        <location filename="../../stdfx/iwa_directionalblurfx.cpp" line="109"/>
+        <location filename="../../stdfx/iwa_flowblurfx.cpp" line="352"/>
+        <location filename="../../stdfx/iwa_lineargradientfx.cpp" line="26"/>
+        <location filename="../../stdfx/iwa_spingradientfx.cpp" line="32"/>
+        <location filename="../../stdfx/stdfx.cpp" line="200"/>
+        <location filename="../../stdfx/stdfx.cpp" line="279"/>
+        <location filename="../../stdfx/stdfx.cpp" line="459"/>
+        <location filename="../../stdfx/stdfx.cpp" line="522"/>
+        <source>Linear</source>
+        <translation>Линейный</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_common.cpp" line="406"/>
+        <source>Nonlinear</source>
+        <translation>Нелинейный</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="36"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="36"/>
+        <source>Keep Noise</source>
+        <translation>Держать шум</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_hls_noise.cpp" line="73"/>
+        <location filename="../../stdfx/ino_hsv_noise.cpp" line="73"/>
+        <source>Keep Contrast</source>
+        <translation>Держать контраст</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_line_blur.cpp" line="29"/>
+        <source>Blur</source>
+        <translation>Размытие</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_line_blur.cpp" line="53"/>
+        <source>Smudge</source>
+        <translation>Размазывание</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="25"/>
+        <location filename="../../stdfx/iwa_fractalnoisefx.cpp" line="80"/>
+        <source>Max</source>
+        <translation>Макс</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_maxmin.cpp" line="50"/>
+        <source>Min</source>
+        <translation>Мин</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_median.cpp" line="43"/>
+        <location filename="../../stdfx/ino_median_filter.cpp" line="33"/>
+        <location filename="../../stdfx/iwa_particlesfx.cpp" line="106"/>
+        <source>All</source>
+        <translation>Все</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="40"/>
+        <location filename="../../stdfx/iwa_textfx.cpp" line="22"/>
+        <source>Right</source>
+        <translation>Справа</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="94"/>
+        <source>Up</source>
+        <translation>Вверх</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="95"/>
+        <location filename="../../stdfx/iwa_textfx.cpp" line="12"/>
+        <source>Left</source>
+        <translation>Слева</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_motion_wind.cpp" line="96"/>
+        <source>Down</source>
+        <translation>Вниз</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="43"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="32"/>
+        <source>Accelerator</source>
+        <translation>Ускоритель</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_radial_blur.cpp" line="80"/>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="61"/>
+        <source>Uniform Length</source>
+        <translation>Равномерная длина</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_spin_blur.cpp" line="60"/>
+        <source>Uniform Angle</source>
+        <translation>Равномерный угол</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_bloomfx.cpp" line="65"/>
+        <source>No Alpha</source>
+        <translation>Без альфы</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_bloomfx.cpp" line="78"/>
+        <source>Light</source>
+        <translation>Свет</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_bloomfx.cpp" line="80"/>
+        <source>Light and Source</source>
+        <translation>Свет и Источник</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_bokeh_util.cpp" line="1386"/>
+        <source>Gamma</source>
+        <translation>Гамма</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_bokeh_util.cpp" line="1396"/>
+        <source>Hardness</source>
+        <translation>Твердость</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_corridorgradientfx.cpp" line="16"/>
+        <source>Quadrangle</source>
+        <translation>Четырехугольник</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_corridorgradientfx.cpp" line="50"/>
+        <source>Circle</source>
+        <translation>Круг</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_corridorgradientfx.cpp" line="53"/>
+        <location filename="../../stdfx/iwa_lineargradientfx.cpp" line="15"/>
+        <location filename="../../stdfx/iwa_spingradientfx.cpp" line="31"/>
+        <location filename="../../stdfx/stdfx.cpp" line="199"/>
+        <location filename="../../stdfx/stdfx.cpp" line="278"/>
+        <location filename="../../stdfx/stdfx.cpp" line="458"/>
+        <location filename="../../stdfx/stdfx.cpp" line="521"/>
+        <source>Ease In-Out</source>
+        <translation>Замедл. в нач./ конце</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_corridorgradientfx.cpp" line="55"/>
+        <location filename="../../stdfx/iwa_lineargradientfx.cpp" line="27"/>
+        <location filename="../../stdfx/iwa_spingradientfx.cpp" line="33"/>
+        <location filename="../../stdfx/stdfx.cpp" line="201"/>
+        <location filename="../../stdfx/stdfx.cpp" line="280"/>
+        <location filename="../../stdfx/stdfx.cpp" line="460"/>
+        <location filename="../../stdfx/stdfx.cpp" line="523"/>
+        <source>Ease In</source>
+        <translation>Замедл. в начале</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_corridorgradientfx.cpp" line="56"/>
+        <location filename="../../stdfx/iwa_lineargradientfx.cpp" line="28"/>
+        <location filename="../../stdfx/iwa_spingradientfx.cpp" line="34"/>
+        <location filename="../../stdfx/stdfx.cpp" line="202"/>
+        <location filename="../../stdfx/stdfx.cpp" line="281"/>
+        <location filename="../../stdfx/stdfx.cpp" line="461"/>
+        <location filename="../../stdfx/stdfx.cpp" line="524"/>
+        <source>Ease Out</source>
+        <translation>Замедл. в конце</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_directionalblurfx.cpp" line="122"/>
+        <location filename="../../stdfx/iwa_flowblurfx.cpp" line="369"/>
+        <source>Gaussian</source>
+        <translation>Гауссово</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_directionalblurfx.cpp" line="123"/>
+        <location filename="../../stdfx/iwa_flowblurfx.cpp" line="370"/>
+        <source>Flat</source>
+        <translation>Плоский</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_floorbumpfx.cpp" line="354"/>
+        <source>Diffuse</source>
+        <translation>Диффузный</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_floorbumpfx.cpp" line="355"/>
+        <source>Specular</source>
+        <translation>Зеркальный</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_floorbumpfx.cpp" line="357"/>
+        <location filename="../../stdfx/iwa_pnperspectivefx.cpp" line="244"/>
+        <source>Fresnel reflectivity</source>
+        <translation>Коэффициент отражения Френеля</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_floorbumpfx.cpp" line="359"/>
+        <source>Refraction</source>
+        <translation>Преломление</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_floorbumpfx.cpp" line="361"/>
+        <source>Reflection</source>
+        <translation>Отражение</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_flowblurfx.cpp" line="354"/>
+        <source>Reference Image</source>
+        <translation>Референсный рисунок</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_flowblurfx.cpp" line="374"/>
+        <source>Blue Channel of Flow Image</source>
+        <translation>Синий канал изображения потока</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_flowpaintbrushfx.cpp" line="257"/>
+        <source>Size - Smaller on Top</source>
+        <translation>Размер - меньший сверху</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_flowpaintbrushfx.cpp" line="258"/>
+        <source>Size - Larger on Top</source>
+        <translation>Размер - больший сверху</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_flowpaintbrushfx.cpp" line="260"/>
+        <source>Brightness - Darker on Top</source>
+        <translation>Яркость - темнее сверху</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_flowpaintbrushfx.cpp" line="262"/>
+        <source>Brightness - Brighter on Top</source>
+        <translation>Яркость - Ярче сверху</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="45"/>
+        <source>Filter Preview</source>
+        <translation>Фильтр предпросмотра</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="47"/>
+        <source>Input Image</source>
+        <translation>Вводное изображение</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="74"/>
+        <source>Render</source>
+        <translation>Рендер</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="75"/>
+        <source>Iris</source>
+        <translation>Ирис</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="78"/>
+        <source>4 Streaks</source>
+        <translation>4 полосы</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="79"/>
+        <source>6 Streaks</source>
+        <translation>6 полос</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="80"/>
+        <source>8 Streaks</source>
+        <translation>8 полос</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="82"/>
+        <source>Multiple Streaks</source>
+        <translation>Множественные полосы</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="90"/>
+        <source>Thin Line</source>
+        <translation>Тонкая линия</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="92"/>
+        <source>Medium Line</source>
+        <translation>Средняя линия</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="94"/>
+        <source>Thick Line</source>
+        <translation>Толстая линия</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_glarefx.cpp" line="96"/>
+        <source>Filled</source>
+        <translation>Заполненный</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_motionblurfx.cpp" line="655"/>
+        <source>Source is premultiplied</source>
+        <translation>Источник предварительно умножен</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_motionblurfx.cpp" line="658"/>
+        <source>Source is NOT premultiplied</source>
+        <translation>Источник предварительно НЕ умножен</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_motionflowfx.cpp" line="39"/>
+        <source>Manual</source>
+        <translation>Вручную</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_pnperspectivefx.cpp" line="200"/>
+        <source>Noise</source>
+        <translation>Шум</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_pnperspectivefx.cpp" line="202"/>
+        <source>Perlin Noise</source>
+        <translation>Шум Перлина</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_pnperspectivefx.cpp" line="235"/>
+        <source>Simplex Noise</source>
+        <translation>Простой шум</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_pnperspectivefx.cpp" line="238"/>
+        <source>Noise (no resampled)</source>
+        <translation>Шум (без передискретизации)</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_pnperspectivefx.cpp" line="240"/>
+        <source>Warp HV offset</source>
+        <translation>Смещение HV искажения</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_pnperspectivefx.cpp" line="242"/>
+        <source>Warp HV offset 2</source>
+        <translation>Смещение HV искажения 2</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_soapbubblefx.cpp" line="251"/>
+        <source>Bubble</source>
+        <translation>Пузырь</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_soapbubblefx.cpp" line="276"/>
+        <source>Thickness</source>
+        <translation>Толщина</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_soapbubblefx.cpp" line="277"/>
+        <source>Depth</source>
+        <translation>Глубина</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_textfx.cpp" line="23"/>
+        <source>Center</source>
+        <translation>Центр</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_textfx.cpp" line="24"/>
+        <source>Justify</source>
+        <translation>Оправдать</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="63"/>
+        <source>Bounding Box</source>
+        <translation>Габаритный контейнер</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="64"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="65"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="66"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="68"/>
+        <source>No Tile</source>
+        <translation>Без тайлов</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="78"/>
+        <source>Camera Box</source>
+        <translation>Граница камеры</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="79"/>
+        <source>Image Size</source>
+        <translation>Размер изображения</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="82"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="87"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="97"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="102"/>
+        <source>1 Tile</source>
+        <translation>1 тайл</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="84"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="89"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="99"/>
+        <location filename="../../stdfx/iwa_tilefx.cpp" line="104"/>
+        <source>Multiple Tiles</source>
+        <translation>Множественные тайлы</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/iwa_timecodefx.cpp" line="21"/>
+        <source>Frame Number</source>
+        <translation>Номер кадра</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/mosaicfx.cpp" line="199"/>
+        <source>Round</source>
+        <translation>Круглый</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/motionawarebasefx.h" line="34"/>
+        <location filename="../../stdfx/motionawarebasefx.h" line="74"/>
+        <source>Own Motion</source>
+        <translation>Собственное движение</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/motionawarebasefx.h" line="42"/>
+        <location filename="../../stdfx/motionawarebasefx.h" line="80"/>
+        <source>Pegbar</source>
+        <translation>Штифт</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/motionawarebasefx.h" line="44"/>
+        <location filename="../../stdfx/motionawarebasefx.h" line="82"/>
+        <source>Table</source>
+        <translation>Стол</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/motionawarebasefx.h" line="46"/>
+        <location filename="../../stdfx/motionawarebasefx.h" line="84"/>
+        <source>Camera</source>
+        <translation>Камера</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="21"/>
+        <source>Lines &amp; Areas</source>
+        <translation>Линии и области</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="29"/>
+        <source>Lines</source>
+        <translation>Линии</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="30"/>
+        <source>Areas</source>
+        <translation>Области</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="31"/>
+        <source>Lines &amp; Areas (No Gap)</source>
+        <translation>Линии и области (без щелей)</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="32"/>
+        <source>Lines (Delete All Areas)</source>
+        <translation>Линии (Удалить все области)</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/palettefilterfx.cpp" line="33"/>
+        <source>Areas (Delete All Lines)</source>
+        <translation>Области (Удалить все линии)</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/stdfx.cpp" line="82"/>
+        <source>Archimedean</source>
+        <translation>Архимедово</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/stdfx.cpp" line="105"/>
+        <source>Logarithmic</source>
+        <translation>Логарифмический</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/tilefx.cpp" line="49"/>
+        <source>Tile</source>
+        <translation>Тайл</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/tilefx.cpp" line="60"/>
+        <source>Tile Horizontally</source>
+        <translation>Тайл горизонтально</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/tilefx.cpp" line="62"/>
+        <source>Tile Vertically</source>
+        <translation>Тайл вертикально</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/globalcontrollablefx.h" line="20"/>
+        <source>Fx Intensity</source>
+        <translation>Интенсивность эффекта</translation>
+    </message>
+</context>
+<context>
+    <name>QOpenGLShaderProgram</name>
+    <message>
+        <location filename="../../stdfx/shaderfx.cpp" line="304"/>
+        <source>This system configuration does not support OpenGL Pixel Buffers. Shader Fxs will not be able to render.</source>
+        <translation>Данная конфигурация системы не поддерживает пиксельные буферы OpenGL. Рендеринг шейдерных эффектов будет невозможен.</translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/shaderfx.cpp" line="310"/>
+        <source>This system configuration does not support OpenGL Shader Programs. Shader Fxs will not be able to render.</source>
+        <translation>Данная конфигурация системы не поддерживает шейдерные программы OpenGL. Рендеринг шейдерных эффектов будет невозможен.</translation>
     </message>
 </context>
 <context>
@@ -18465,7 +19388,7 @@ Do you want to import them or load from their original location?</source>
     <message>
         <location filename="../../toonz/filebrowser.cpp" line="1634"/>
         <source>Name has not changed. Try something else.</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя не изменилось. Попробуйте что-нибудь другое.</translation>
     </message>
     <message>
         <location filename="../../toonz/filebrowser.cpp" line="1645"/>
@@ -18476,22 +19399,22 @@ Do you want to import them or load from their original location?</source>
     <message>
         <location filename="../../toonz/filebrowser.cpp" line="1651"/>
         <source>Renaming File &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименование файла &apos;%1&apos;</translation>
     </message>
     <message>
         <location filename="../../toonz/filebrowser.cpp" line="1653"/>
         <source>Renaming File Sequence &apos;%1&apos; [%2 Frame(s)]</source>
-        <translation type="unfinished"></translation>
+        <translation>Переименование файла секвенции &apos;%1&apos; [%2 Кадр(ы)]</translation>
     </message>
     <message>
         <location filename="../../toonz/filebrowser.cpp" line="1664"/>
         <source>Create copy and rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать копию и переименовать</translation>
     </message>
     <message>
         <location filename="../../toonz/filebrowser.cpp" line="1675"/>
         <source>New Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Новое имя:</translation>
     </message>
     <message>
         <source>Renaming File </source>
@@ -19845,12 +20768,12 @@ Please commit or revert changes first.</source>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1787"/>
         <source>Save Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить стол</translation>
     </message>
     <message>
         <location filename="../../toonz/preproductionboard.cpp" line="1789"/>
         <source>Save</source>
-        <translation type="unfinished">Сохранить</translation>
+        <translation>Сохранить</translation>
     </message>
 </context>
 <context>
@@ -20536,7 +21459,7 @@ Please commit or revert changes first.</source>
     <message>
         <location filename="../../toonz/sceneviewercontextmenu.cpp" line="311"/>
         <source>Table</source>
-        <translation>Таблица</translation>
+        <translation>Стол</translation>
     </message>
     <message>
         <location filename="../../toonz/sceneviewercontextmenu.cpp" line="312"/>
@@ -21191,7 +22114,7 @@ Right click to adjust.</source>
     <message>
         <location filename="../../toonz/shortcutpopup.cpp" line="272"/>
         <source>Special Modifier Keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Специальные ключи-модификаторы</translation>
     </message>
     <message>
         <source>Playback Controls</source>
@@ -21556,17 +22479,17 @@ Use anyway?</source>
     <message>
         <location filename="../../toonz/startuppopup.cpp" line="148"/>
         <source>Open Project...</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть проект...</translation>
     </message>
     <message>
         <location filename="../../toonz/startuppopup.cpp" line="150"/>
         <source>Explore Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Проводник папки</translation>
     </message>
     <message>
         <location filename="../../toonz/startuppopup.cpp" line="228"/>
         <source>Open Existing Scene</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть существующую сцену</translation>
     </message>
     <message>
         <location filename="../../toonz/startuppopup.cpp" line="242"/>
@@ -21581,7 +22504,7 @@ Use anyway?</source>
     <message>
         <location filename="../../toonz/startuppopup.cpp" line="624"/>
         <source>New Scene</source>
-        <translation type="unfinished">Новая сцена</translation>
+        <translation>Новая сцена</translation>
     </message>
     <message>
         <location filename="../../toonz/startuppopup.cpp" line="145"/>
@@ -22006,7 +22929,7 @@ Possibly the preset file has been corrupted</source>
     <message>
         <location filename="../../toonz/statusbar.cpp" line="345"/>
         <source>Hook Tool: Create reference points to aid in movement or to link other objects by them</source>
-        <translation type="unfinished"></translation>
+        <translation>Инструмент «Крючок»: создает опорные точки для перемещения или для соединения с другими объектами</translation>
     </message>
     <message>
         <location filename="../../toonz/statusbar.cpp" line="348"/>
@@ -23905,17 +24828,17 @@ Set the output folder path to the subfolder as well.</source>
     <message>
         <location filename="../../toonz/tipspopup.cpp" line="31"/>
         <source>Tahoma2D Tips</source>
-        <translation type="unfinished"></translation>
+        <translation>Tahoma2D Советы</translation>
     </message>
     <message>
         <location filename="../../toonz/tipspopup.cpp" line="56"/>
         <source>Show this at startup</source>
-        <translation type="unfinished">Показывать это окно при запуске</translation>
+        <translation>Показывать это окно при запуске</translation>
     </message>
     <message>
         <location filename="../../toonz/tipspopup.cpp" line="96"/>
         <source>Nothing to see here. Keep movin&apos;...</source>
-        <translation type="unfinished"></translation>
+        <translation>Здесь не на что смотреть. Идите дальше...</translation>
     </message>
 </context>
 <context>
@@ -24025,7 +24948,7 @@ Set the output folder path to the subfolder as well.</source>
     <message>
         <location filename="../../toonz/menubar.cpp" line="714"/>
         <source>Troubleshoot</source>
-        <translation type="unfinished"></translation>
+        <translation>Устранение неполадок</translation>
     </message>
     <message>
         <location filename="../../toonz/menubar.cpp" line="771"/>
@@ -24704,12 +25627,12 @@ Please refer to the user guide for details.</source>
     <message>
         <location filename="../../toonz/viewereventlogpopup.cpp" line="213"/>
         <source>Stylus pressed at X=%1 Y=%2 Pressure=%3% TiltX=%4 TiltY=%5 Rotation=%6</source>
-        <translation type="unfinished"></translation>
+        <translation>Нажатие стилуса по осям X=%1, Y=%2, Давление=%3%, Наклон по оси X=%4, Наклон по оси Y=%5, Вращение=%6</translation>
     </message>
     <message>
         <location filename="../../toonz/viewereventlogpopup.cpp" line="234"/>
         <source>Stylus %1 to X=%2 Y=%3 Pressure=%4% TiltX=%5 TiltY=%6 Rotation=%7</source>
-        <translation type="unfinished"></translation>
+        <translation>Стилус %1 до X=%2 Y=%3 Давление=%4% Наклон по X=%5 Наклон по Y=%6 Вращение=%7</translation>
     </message>
     <message>
         <location filename="../../toonz/viewereventlogpopup.cpp" line="259"/>
@@ -25060,7 +25983,7 @@ Please refer to the user guide for details.</source>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="591"/>
         <source>Table</source>
-        <translation>Таблица</translation>
+        <translation>Стол</translation>
     </message>
 </context>
 <context>
@@ -25311,7 +26234,7 @@ Please refer to the user guide for details.</source>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2455"/>
         <source>Alpha Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>Альфа-блокировка</translation>
     </message>
     <message>
         <location filename="../../toonz/xshcolumnviewer.cpp" line="2475"/>

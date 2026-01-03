@@ -13,6 +13,8 @@
 #include "tbasefx.h"
 #include "tzeraryfx.h"
 
+#include "tw/stringtable.h"
+
 //==================================================================
 
 class ColorCardFx final : public TBaseZeraryFx {
@@ -24,7 +26,7 @@ public:
   ColorCardFx() : m_color(TPixel32::Green) {
     bindParam(this, "color", m_color);
     m_color->setDefaultValue(TPixel32::Green);
-    setName(L"ColorCardFx");
+    setName(TStringTable::translate("Color Card"));
     enableComputeInFloat(true);
   }
 
@@ -89,7 +91,7 @@ public:
     m_color2->setDefaultValue(TPixel32::White);
     m_size->setValueRange(1, 1000);
     m_size->setDefaultValue(50);
-    setName(L"CheckBoardFx");
+    setName(TStringTable::translate("Checkerboard"));
     enableComputeInFloat(true);
   }
 

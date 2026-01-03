@@ -197,8 +197,9 @@ void Iwa_PNPerspectiveFx::getPNParameters(TTile &tile, double frame,
 //------------------------------------------------------------
 
 Iwa_PNPerspectiveFx::Iwa_PNPerspectiveFx()
-    : m_renderMode(new TIntEnumParam(PN_Params::Noise, "Noise"))
-    , m_noiseType(new TIntEnumParam(PN_Params::Perlin, "Perlin Noise"))
+    : m_renderMode(new TIntEnumParam(PN_Params::Noise, QObject::tr("Noise").toStdString()))
+    , m_noiseType(new TIntEnumParam(PN_Params::Perlin,
+                                    QObject::tr("Perlin Noise").toStdString()))
     , m_size(10.0)
     , m_evolution(0.0)
     , m_octaves(new TIntEnumParam(0, "1"))
@@ -230,12 +231,17 @@ Iwa_PNPerspectiveFx::Iwa_PNPerspectiveFx()
   bindParam(this, "normalize_fresnel", m_normalize_fresnel);
   bindParam(this, "normalize_margin", m_normalize_margin);
 
-  m_noiseType->addItem(PN_Params::Simplex, "Simplex Noise");
+  m_noiseType->addItem(PN_Params::Simplex,
+                       QObject::tr("Simplex Noise").toStdString());
 
-  m_renderMode->addItem(PN_Params::Noise_NoResample, "Noise (no resampled)");
-  m_renderMode->addItem(PN_Params::WarpHV, "Warp HV offset");
-  m_renderMode->addItem(PN_Params::WarpHV2, "Warp HV offset 2");
-  m_renderMode->addItem(PN_Params::Fresnel, "Fresnel reflectivity");
+  m_renderMode->addItem(PN_Params::Noise_NoResample,
+                        QObject::tr("Noise (no resampled)").toStdString());
+  m_renderMode->addItem(PN_Params::WarpHV,
+                        QObject::tr("Warp HV offset").toStdString());
+  m_renderMode->addItem(PN_Params::WarpHV2,
+                        QObject::tr("Warp HV offset 2").toStdString());
+  m_renderMode->addItem(PN_Params::Fresnel,
+                        QObject::tr("Fresnel reflectivity").toStdString());
 
   m_size->setMeasureName("fxLength");
   m_size->setValueRange(0.0, 1000.0);

@@ -312,7 +312,7 @@ QList<QPointF> getSubPointsList(int subAmount,
 //------------------------------------
 
 Iwa_FloorBumpFx::Iwa_FloorBumpFx()
-    : m_renderMode(new TIntEnumParam(TextureMode, "Texture"))
+    : m_renderMode(new TIntEnumParam(TextureMode, QObject::tr("Texture").toStdString()))
     , m_eyeLevel(0.0)
     , m_drawLevel(-50.0)
     , m_fov(30)
@@ -351,11 +351,14 @@ Iwa_FloorBumpFx::Iwa_FloorBumpFx()
   bindParam(this, "refractiveIndex", m_refractiveIndex);
   bindParam(this, "distanceLevel", m_distanceLevel);
 
-  m_renderMode->addItem(DiffuseMode, "Diffuse");
-  m_renderMode->addItem(SpecularMode, "Specular");
-  m_renderMode->addItem(FresnelMode, "Fresnel reflectivity");
-  m_renderMode->addItem(RefractionMode, "Refraction");
-  m_renderMode->addItem(ReflectionMode, "Reflection");
+  m_renderMode->addItem(DiffuseMode, QObject::tr("Diffuse").toStdString());
+  m_renderMode->addItem(SpecularMode, QObject::tr("Specular").toStdString());
+  m_renderMode->addItem(FresnelMode,
+                        QObject::tr("Fresnel reflectivity").toStdString());
+  m_renderMode->addItem(RefractionMode,
+                        QObject::tr("Refraction").toStdString());
+  m_renderMode->addItem(ReflectionMode,
+                        QObject::tr("Reflection").toStdString());
 
   m_fov->setValueRange(10, 90);
   m_cameraAltitude->setMeasureName("fxLength");

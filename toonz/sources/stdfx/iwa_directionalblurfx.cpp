@@ -106,7 +106,7 @@ Iwa_DirectionalBlurFx::Iwa_DirectionalBlurFx()
     : m_angle(0.0)
     , m_intensity(10.0)
     , m_bidirectional(false)
-    , m_filterType(new TIntEnumParam(Linear, "Linear")) {
+    , m_filterType(new TIntEnumParam(Linear, QObject::tr("Linear").toStdString())) {
   m_intensity->setMeasureName("fxLength");
   m_angle->setMeasureName("angle");
 
@@ -119,8 +119,8 @@ Iwa_DirectionalBlurFx::Iwa_DirectionalBlurFx()
   addInputPort("Reference", m_reference);
   m_intensity->setValueRange(0, (std::numeric_limits<double>::max)());
 
-  m_filterType->addItem(Gaussian, "Gaussian");
-  m_filterType->addItem(Flat, "Flat");
+  m_filterType->addItem(Gaussian, QObject::tr("Gaussian").toStdString());
+  m_filterType->addItem(Flat, QObject::tr("Flat").toStdString());
 
   enableComputeInFloat(true);
 }

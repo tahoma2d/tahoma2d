@@ -619,7 +619,7 @@ Iwa_MotionBlurCompFx::Iwa_MotionBlurCompFx()
     , m_endValue(1.0)
     , m_endCurve(1.0)
     , m_zanzoMode(false)
-    , m_premultiType(new TIntEnumParam(AUTO, "Auto")) {
+    , m_premultiType(new TIntEnumParam(AUTO, QObject::tr("Auto").toStdString())) {
   /* Bind common parameters */
   addInputPort("Source", m_input);
   addInputPort("Back", m_background);
@@ -651,9 +651,11 @@ Iwa_MotionBlurCompFx::Iwa_MotionBlurCompFx()
   m_endValue->setValueRange(0.0, 1.0);
   m_endCurve->setValueRange(0.1, 10.0);
 
-  m_premultiType->addItem(SOURCE_IS_PREMULTIPLIED, "Source is premultiplied");
-  m_premultiType->addItem(SOURCE_IS_NOT_PREMUTIPLIED,
-                          "Source is NOT premultiplied");
+  m_premultiType->addItem(SOURCE_IS_PREMULTIPLIED,
+                          QObject::tr("Source is premultiplied").toStdString());
+  m_premultiType->addItem(
+      SOURCE_IS_NOT_PREMUTIPLIED,
+      QObject::tr("Source is NOT premultiplied").toStdString());
 
   getAttributes()->setIsSpeedAware(true);
   enableComputeInFloat(true);

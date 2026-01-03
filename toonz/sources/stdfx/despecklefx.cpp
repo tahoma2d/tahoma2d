@@ -22,11 +22,11 @@ class DespeckleFx final : public GlobalControllableFx {
 
 public:
   DespeckleFx()
-      : m_size(1), m_transparenceType(new TIntEnumParam(0, "Transparent Bg")) {
+      : m_size(1), m_transparenceType(new TIntEnumParam(0, QObject::tr("Transparent Bg").toStdString())) {
     bindParam(this, "size", m_size);
     bindParam(this, "detect_speckles_on", m_transparenceType);
 
-    m_transparenceType->addItem(1, "White Bg");
+    m_transparenceType->addItem(1, QObject::tr("White Bg").toStdString());
 
     addInputPort("Source", m_input);
     m_size->setValueRange(1, 1000);

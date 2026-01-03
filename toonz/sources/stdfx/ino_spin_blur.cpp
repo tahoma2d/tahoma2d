@@ -29,10 +29,10 @@ public:
       : m_center(TPointD(0.0, 0.0))
       , m_blur(1)
       , m_radius(0.0)
-      , m_type(new TIntEnumParam(0, "Accelerator"))
+      , m_type(new TIntEnumParam(0, QObject::tr("Accelerator").toStdString()))
       , m_alpha_rendering(true)
       , m_anti_alias(false)
-      , m_ref_mode(new TIntEnumParam(0, "Red"))
+      , m_ref_mode(new TIntEnumParam(0, QObject::tr("Red").toStdString()))
       , m_ellipse_aspect_ratio(1.0)
       , m_ellipse_angle(0.0) {
     this->m_center->getX()->setMeasureName("fxLength");
@@ -57,13 +57,13 @@ public:
     this->m_blur->setValueRange(0.0, 180.0);
     this->m_ellipse_aspect_ratio->setValueRange(0.1, 10.0);
     this->m_ellipse_angle->setValueRange(-180.0, 180.0);
-    this->m_type->addItem(1, "Uniform Angle");
-    this->m_type->addItem(2, "Uniform Length");
-    this->m_ref_mode->addItem(1, "Green");
-    this->m_ref_mode->addItem(2, "Blue");
-    this->m_ref_mode->addItem(3, "Alpha");
-    this->m_ref_mode->addItem(4, "Luminance");
-    this->m_ref_mode->addItem(-1, "Nothing");
+    this->m_type->addItem(1, QObject::tr("Uniform Angle").toStdString());
+    this->m_type->addItem(2, QObject::tr("Uniform Length").toStdString());
+    this->m_ref_mode->addItem(1, QObject::tr("Green").toStdString());
+    this->m_ref_mode->addItem(2, QObject::tr("Blue").toStdString());
+    this->m_ref_mode->addItem(3, QObject::tr("Alpha").toStdString());
+    this->m_ref_mode->addItem(4, QObject::tr("Luminance").toStdString());
+    this->m_ref_mode->addItem(-1, QObject::tr("Nothing").toStdString());
 
     enableComputeInFloat(true);
   }

@@ -33,10 +33,10 @@ public:
       , m_near_blur(1.0 * ino::param_range())
       , m_term_effective(0.0 * ino::param_range())
       , m_term_center(ino::param_range() / 2.0)
-      , m_term_type(new TIntEnumParam(0, "Keep Noise"))
+      , m_term_type(new TIntEnumParam(0, QObject::tr("Keep Noise").toStdString()))
 
       , m_anti_alias(true)
-      , m_ref_mode(new TIntEnumParam(0, "Red")) {
+      , m_ref_mode(new TIntEnumParam(0, QObject::tr("Red").toStdString())) {
     addInputPort("Source", this->m_input);
     addInputPort("Reference", this->m_refer);
 
@@ -70,13 +70,13 @@ public:
                                           1.0 * ino::param_range());
     this->m_term_center->setValueRange(0.0 * ino::param_range(),
                                        1.0 * ino::param_range());
-    this->m_term_type->addItem(1, "Keep Contrast");
+    this->m_term_type->addItem(1, QObject::tr("Keep Contrast").toStdString());
 
-    this->m_ref_mode->addItem(1, "Green");
-    this->m_ref_mode->addItem(2, "Blue");
-    this->m_ref_mode->addItem(3, "Alpha");
-    this->m_ref_mode->addItem(4, "Luminance");
-    this->m_ref_mode->addItem(-1, "Nothing");
+    this->m_ref_mode->addItem(1, QObject::tr("Green").toStdString());
+    this->m_ref_mode->addItem(2, QObject::tr("Blue").toStdString());
+    this->m_ref_mode->addItem(3, QObject::tr("Alpha").toStdString());
+    this->m_ref_mode->addItem(4, QObject::tr("Luminance").toStdString());
+    this->m_ref_mode->addItem(-1, QObject::tr("Nothing").toStdString());
 
     enableComputeInFloat(true);
   }

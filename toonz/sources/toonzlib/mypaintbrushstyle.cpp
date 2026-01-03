@@ -590,8 +590,125 @@ int TMyPaintBrushStyle::getParamCount() const {
 //-----------------------------------------------------------------------------
 
 QString TMyPaintBrushStyle::getParamNames(int index) const {
-  return QString::fromStdWString(TStringTable::translate(
-      mypaint::Setting::byId((MyPaintBrushSetting)index).name.c_str()));
+  switch ((MyPaintBrushSetting)index) {
+  case MYPAINT_BRUSH_SETTING_OPAQUE:
+    return QObject::tr("Opacity");
+  case MYPAINT_BRUSH_SETTING_OPAQUE_MULTIPLY:
+    return QObject::tr("Opacity multiply");
+  case MYPAINT_BRUSH_SETTING_OPAQUE_LINEARIZE:
+    return QObject::tr("Opacity linearize");
+  case MYPAINT_BRUSH_SETTING_RADIUS_LOGARITHMIC:
+    return QObject::tr("Radius");
+  case MYPAINT_BRUSH_SETTING_HARDNESS:
+    return QObject::tr("Hardness");
+  case MYPAINT_BRUSH_SETTING_ANTI_ALIASING:
+    return QObject::tr("Pixel feather");
+  case MYPAINT_BRUSH_SETTING_DABS_PER_BASIC_RADIUS:
+    return QObject::tr("Dabs per basic radius");
+  case MYPAINT_BRUSH_SETTING_DABS_PER_ACTUAL_RADIUS:
+    return QObject::tr("Dabs per actual radius");
+  case MYPAINT_BRUSH_SETTING_DABS_PER_SECOND:
+    return QObject::tr("Dabs per second");
+  case MYPAINT_BRUSH_SETTING_GRIDMAP_SCALE:
+    return QObject::tr("GridMap Scale");
+  case MYPAINT_BRUSH_SETTING_GRIDMAP_SCALE_X:
+    return QObject::tr("GridMap Scale X");
+  case MYPAINT_BRUSH_SETTING_GRIDMAP_SCALE_Y:
+    return QObject::tr("GridMap Scale Y");
+  case MYPAINT_BRUSH_SETTING_RADIUS_BY_RANDOM:
+    return QObject::tr("Radius by random");
+  case MYPAINT_BRUSH_SETTING_SPEED1_SLOWNESS:
+    return QObject::tr("Fine speed filter");
+  case MYPAINT_BRUSH_SETTING_SPEED2_SLOWNESS:
+    return QObject::tr("Gross speed filter");
+  case MYPAINT_BRUSH_SETTING_SPEED1_GAMMA:
+    return QObject::tr("Fine speed gamma");
+  case MYPAINT_BRUSH_SETTING_SPEED2_GAMMA:
+    return QObject::tr("Gross speed gamma");
+  case MYPAINT_BRUSH_SETTING_OFFSET_BY_RANDOM:
+    return QObject::tr("Jitter");
+  case MYPAINT_BRUSH_SETTING_OFFSET_Y:
+    return QObject::tr("Offset Y");
+  case MYPAINT_BRUSH_SETTING_OFFSET_X:
+    return QObject::tr("Offset X");
+  case MYPAINT_BRUSH_SETTING_OFFSET_ANGLE:
+    return QObject::tr("Angular Offset: Direction");
+  case MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_ASC:
+    return QObject::tr("Angular Offset: Ascension");
+  case MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_2:
+    return QObject::tr("Angular Offset Mirrored: Direction");
+  case MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_2_ASC:
+    return QObject::tr("Angular Offset Mirrored: Ascension");
+  case MYPAINT_BRUSH_SETTING_OFFSET_ANGLE_ADJ:
+    return QObject::tr("Angular Offsets Adjustment");
+  case MYPAINT_BRUSH_SETTING_OFFSET_MULTIPLIER:
+    return QObject::tr("Offsets Multiplier");
+  case MYPAINT_BRUSH_SETTING_OFFSET_BY_SPEED:
+    return QObject::tr("Offset by speed");
+  case MYPAINT_BRUSH_SETTING_OFFSET_BY_SPEED_SLOWNESS:
+    return QObject::tr("Offset by speed filter");
+  case MYPAINT_BRUSH_SETTING_SLOW_TRACKING:
+    return QObject::tr("Slow position tracking");
+  case MYPAINT_BRUSH_SETTING_SLOW_TRACKING_PER_DAB:
+    return QObject::tr("Slow tracking per dab");
+  case MYPAINT_BRUSH_SETTING_TRACKING_NOISE:
+    return QObject::tr("Tracking noise");
+  case MYPAINT_BRUSH_SETTING_COLOR_H:
+    return QObject::tr("Color hue");
+  case MYPAINT_BRUSH_SETTING_COLOR_S:
+    return QObject::tr("Color saturation");
+  case MYPAINT_BRUSH_SETTING_COLOR_V:
+    return QObject::tr("Color value");
+  case MYPAINT_BRUSH_SETTING_RESTORE_COLOR:
+    return QObject::tr("Save color");
+  case MYPAINT_BRUSH_SETTING_CHANGE_COLOR_H:
+    return QObject::tr("Change color hue");
+  case MYPAINT_BRUSH_SETTING_CHANGE_COLOR_L:
+    return QObject::tr("Change color lightness (HSL)");
+  case MYPAINT_BRUSH_SETTING_CHANGE_COLOR_HSL_S:
+    return QObject::tr("Change color satur. (HSL)");
+  case MYPAINT_BRUSH_SETTING_CHANGE_COLOR_V:
+    return QObject::tr("Change color value (HSV)");
+  case MYPAINT_BRUSH_SETTING_CHANGE_COLOR_HSV_S:
+    return QObject::tr("Change color satur. (HSV)");
+  case MYPAINT_BRUSH_SETTING_SMUDGE:
+    return QObject::tr("Smudge");
+  case MYPAINT_BRUSH_SETTING_SMUDGE_LENGTH:
+    return QObject::tr("Smudge length");
+  case MYPAINT_BRUSH_SETTING_SMUDGE_RADIUS_LOG:
+    return QObject::tr("Smudge radius");
+  case MYPAINT_BRUSH_SETTING_ERASER:
+    return QObject::tr("Eraser");
+  case MYPAINT_BRUSH_SETTING_STROKE_THRESHOLD:
+    return QObject::tr("Stroke threshold");
+  case MYPAINT_BRUSH_SETTING_STROKE_DURATION_LOGARITHMIC:
+    return QObject::tr("Stroke duration");
+  case MYPAINT_BRUSH_SETTING_STROKE_HOLDTIME:
+    return QObject::tr("Stroke hold time");
+  case MYPAINT_BRUSH_SETTING_CUSTOM_INPUT:
+    return QObject::tr("Custom input");
+  case MYPAINT_BRUSH_SETTING_CUSTOM_INPUT_SLOWNESS:
+    return QObject::tr("Custom input filter");
+  case MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_RATIO:
+    return QObject::tr("Elliptical dab: ratio");
+  case MYPAINT_BRUSH_SETTING_ELLIPTICAL_DAB_ANGLE:
+    return QObject::tr("Elliptical dab: angle");
+  case MYPAINT_BRUSH_SETTING_DIRECTION_FILTER:
+    return QObject::tr("Direction filter");
+  case MYPAINT_BRUSH_SETTING_LOCK_ALPHA:
+    return QObject::tr("Lock alpha");
+  case MYPAINT_BRUSH_SETTING_COLORIZE:
+    return QObject::tr("Colorize");
+  case MYPAINT_BRUSH_SETTING_SNAP_TO_PIXEL:
+    return QObject::tr("Snap to pixel");
+  case MYPAINT_BRUSH_SETTING_PRESSURE_GAIN_LOG:
+    return QObject::tr("Pressure gain");
+  default:
+    break;
+  }
+
+  return QString::fromStdString(
+      mypaint::Setting::byId((MyPaintBrushSetting)index).name);
 }
 
 //-----------------------------------------------------------------------------

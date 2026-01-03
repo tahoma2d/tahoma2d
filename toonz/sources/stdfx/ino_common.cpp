@@ -387,7 +387,7 @@ TBlendForeBackRasterFx::TBlendForeBackRasterFx(bool clipping_mask,
     , m_gamma(2.2)
     , m_gammaAdjust(0.)
     , m_premultiplied(true)
-    , m_colorSpaceMode(new TIntEnumParam(Auto, "Auto")) {
+    , m_colorSpaceMode(new TIntEnumParam(Auto, QObject::tr("Auto").toStdString())) {
   addInputPort("Fore", this->m_up);
   addInputPort("Back", this->m_down);
   bindParam(this, "opacity", this->m_opacity);
@@ -402,8 +402,8 @@ TBlendForeBackRasterFx::TBlendForeBackRasterFx(bool clipping_mask,
 
   this->m_gammaAdjust->setValueRange(-5., 5.);
 
-  m_colorSpaceMode->addItem(Linear, "Linear");
-  m_colorSpaceMode->addItem(Nonlinear, "Nonlinear");
+  m_colorSpaceMode->addItem(Linear, QObject::tr("Linear").toStdString());
+  m_colorSpaceMode->addItem(Nonlinear, QObject::tr("Nonlinear").toStdString());
 
   if (has_alpha_option) {
     m_alpha_rendering = TBoolParamP(true);

@@ -103,37 +103,37 @@
     <message>
         <location filename="../../toonzqt/brushtippopup.cpp" line="205"/>
         <source>Spacing:</source>
-        <translation type="unfinished"></translation>
+        <translation>Расстояние:</translation>
     </message>
     <message>
         <location filename="../../toonzqt/brushtippopup.cpp" line="210"/>
         <source>Rotation:</source>
-        <translation type="unfinished"></translation>
+        <translation>Вращение:</translation>
     </message>
     <message>
         <location filename="../../toonzqt/brushtippopup.cpp" line="214"/>
         <source>Auto Rotate</source>
-        <translation type="unfinished"></translation>
+        <translation>Авто вращение</translation>
     </message>
     <message>
         <location filename="../../toonzqt/brushtippopup.cpp" line="217"/>
         <source>Flip Horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Отразить по горизонтали</translation>
     </message>
     <message>
         <location filename="../../toonzqt/brushtippopup.cpp" line="219"/>
         <source>Flip Vertically</source>
-        <translation type="unfinished"></translation>
+        <translation>Отразить по вертикали</translation>
     </message>
     <message>
         <location filename="../../toonzqt/brushtippopup.cpp" line="221"/>
         <source>Scatter:</source>
-        <translation type="unfinished"></translation>
+        <translation>Рассеивание:</translation>
     </message>
     <message>
         <location filename="../../toonzqt/brushtippopup.cpp" line="360"/>
         <source>Clear Search</source>
-        <translation type="unfinished">Очистить поиск</translation>
+        <translation>Очистить поиск</translation>
     </message>
 </context>
 <context>
@@ -2031,28 +2031,28 @@ Select FX nodes and related links before copying or cutting the selection you wa
         <location filename="../../toonzqt/graphwidget.cpp" line="1071"/>
         <location filename="../../toonzqt/graphwidget.cpp" line="1074"/>
         <source>0</source>
-        <translation type="unfinished">0</translation>
+        <translation>0</translation>
     </message>
     <message>
         <location filename="../../toonzqt/graphwidget.cpp" line="1072"/>
         <source>X</source>
-        <translation type="unfinished">X</translation>
+        <translation>X</translation>
     </message>
     <message>
         <location filename="../../toonzqt/graphwidget.cpp" line="1073"/>
         <location filename="../../toonzqt/graphwidget.cpp" line="1076"/>
         <source>100</source>
-        <translation type="unfinished">100</translation>
+        <translation>100</translation>
     </message>
     <message>
         <location filename="../../toonzqt/graphwidget.cpp" line="1075"/>
         <source>Y</source>
-        <translation type="unfinished">Y</translation>
+        <translation>Y</translation>
     </message>
     <message>
         <location filename="../../toonzqt/graphwidget.cpp" line="1078"/>
         <source>Reset Curve</source>
-        <translation type="unfinished"></translation>
+        <translation>Сброс кривой</translation>
     </message>
 </context>
 <context>
@@ -3168,12 +3168,17 @@ Are you sure?</source>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="3899"/>
         <source>Brush Dynamics</source>
-        <translation type="unfinished"></translation>
+        <translation>Динамика кисти</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="3912"/>
         <source>Reset to default</source>
         <translation>Сбросить по умолчанию</translation>
+    </message>
+    <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3927"/>
+        <source>Reset Style</source>
+        <translation>Сбросить стиль</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="6900"/>
@@ -3704,7 +3709,7 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <location filename="../../toonzqt/brushtippopup.cpp" line="105"/>
         <source>Round</source>
         <comment>BrushTipChooserFrame</comment>
-        <translation type="unfinished"></translation>
+        <translation>Круглый</translation>
     </message>
 </context>
 <context>
@@ -3878,19 +3883,14 @@ The second line should be &quot;Mesh [Input bit depth] [Output bit depth]&quot;<
         <translation type="vanished">Сбросить по умолчанию</translation>
     </message>
     <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3927"/>
-        <source>Reset Style</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="4115"/>
         <source>Brush Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>Динамика кисти</translation>
     </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="4132"/>
         <source>Brush Dynamic - %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Динамика кисти - %1</translation>
     </message>
 </context>
 <context>
@@ -4629,12 +4629,12 @@ Zero is fully transparent.</source>
     <message>
         <location filename="../../toonzqt/stylusconfigpopup.cpp" line="42"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>Ввод</translation>
     </message>
     <message>
         <location filename="../../toonzqt/stylusconfigpopup.cpp" line="43"/>
         <source>Output</source>
-        <translation type="unfinished">Вывод</translation>
+        <translation>Вывод</translation>
     </message>
 </context>
 <context>

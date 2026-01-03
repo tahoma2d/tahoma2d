@@ -31,10 +31,11 @@ public:
       , m_blu_source(1)
       , m_alp_source(1)
 
-      , m_red_channel(new TIntEnumParam(0, "Red"))
-      , m_gre_channel(new TIntEnumParam(1, "Green"))
-      , m_blu_channel(new TIntEnumParam(2, "Blue"))
-      , m_alp_channel(new TIntEnumParam(3, "Alpha")) {
+      , m_red_channel(new TIntEnumParam(0, QObject::tr("Red").toStdString()))
+      , m_gre_channel(new TIntEnumParam(1, QObject::tr("Green").toStdString()))
+      , m_blu_channel(new TIntEnumParam(2, QObject::tr("Blue").toStdString()))
+      , m_alp_channel(
+            new TIntEnumParam(3, QObject::tr("Alpha").toStdString())) {
     addInputPort("Source1", this->m_source1);
     addInputPort("Source2", this->m_source2);
     addInputPort("Source3", this->m_source3);
@@ -50,21 +51,21 @@ public:
     bindParam(this, "blue_channel", this->m_blu_channel);
     bindParam(this, "alpha_channel", this->m_alp_channel);
 
-    this->m_red_channel->addItem(1, "Green");
-    this->m_red_channel->addItem(2, "Blue");
-    this->m_red_channel->addItem(3, "Alpha");
+    this->m_red_channel->addItem(1, QObject::tr("Green").toStdString());
+    this->m_red_channel->addItem(2, QObject::tr("Blue").toStdString());
+    this->m_red_channel->addItem(3, QObject::tr("Alpha").toStdString());
 
-    this->m_gre_channel->addItem(0, "Red");
-    this->m_gre_channel->addItem(2, "Blue");
-    this->m_gre_channel->addItem(3, "Alpha");
+    this->m_gre_channel->addItem(0, QObject::tr("Red").toStdString());
+    this->m_gre_channel->addItem(2, QObject::tr("Blue").toStdString());
+    this->m_gre_channel->addItem(3, QObject::tr("Alpha").toStdString());
 
-    this->m_blu_channel->addItem(0, "Red");
-    this->m_blu_channel->addItem(1, "Green");
-    this->m_blu_channel->addItem(3, "Alpha");
+    this->m_blu_channel->addItem(0, QObject::tr("Red").toStdString());
+    this->m_blu_channel->addItem(1, QObject::tr("Green").toStdString());
+    this->m_blu_channel->addItem(3, QObject::tr("Alpha").toStdString());
 
-    this->m_alp_channel->addItem(0, "Red");
-    this->m_alp_channel->addItem(1, "Green");
-    this->m_alp_channel->addItem(2, "Blue");
+    this->m_alp_channel->addItem(0, QObject::tr("Red").toStdString());
+    this->m_alp_channel->addItem(1, QObject::tr("Green").toStdString());
+    this->m_alp_channel->addItem(2, QObject::tr("Blue").toStdString());
 
     enableComputeInFloat(true);
   }

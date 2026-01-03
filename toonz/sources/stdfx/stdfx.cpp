@@ -79,7 +79,7 @@ class SpiralFx final : public TStandardZeraryFx {
 
 public:
   SpiralFx()
-      : m_type(new TIntEnumParam(Archimedean, "Archimedean"))
+      : m_type(new TIntEnumParam(Archimedean, QObject::tr("Archimedean").toStdString()))
       , m_freq(0.1)   // args, "Freq")
       , m_phase(0.0)  // args, "Phase")
   {
@@ -102,7 +102,7 @@ TPixel32 colors[] = {
         TSpectrum::ColorKey(1, transparent)};
     m_spectrum = TSpectrumParamP(colors);
 
-    m_type->addItem(Logarithmic, "Logarithmic");
+    m_type->addItem(Logarithmic, QObject::tr("Logarithmic").toStdString());
     bindParam(this, "type", m_type);
     bindParam(this, "colors", m_spectrum);
     bindParam(this, "freq", m_freq);
@@ -195,10 +195,11 @@ public:
       , m_wave_freq(0.0)       // args, "Cycle")
       , m_wave_phase(0.0)      // args, "Cycle")
                                //    , m_colors (0) //args, "Colors")
-      , m_curveType(new TIntEnumParam(EaseInOut, "Ease In-Out")) {
-    m_curveType->addItem(Linear, "Linear");
-    m_curveType->addItem(EaseIn, "Ease In");
-    m_curveType->addItem(EaseOut, "Ease Out");
+      , m_curveType(new TIntEnumParam(
+            EaseInOut, QObject::tr("Ease In-Out").toStdString())) {
+    m_curveType->addItem(Linear, QObject::tr("Linear").toStdString());
+    m_curveType->addItem(EaseIn, QObject::tr("Ease In").toStdString());
+    m_curveType->addItem(EaseOut, QObject::tr("Ease Out").toStdString());
 
     std::vector<TSpectrum::ColorKey> colors = {
         TSpectrum::ColorKey(0, TPixel32::White),
@@ -273,10 +274,11 @@ public:
       , m_color1(TPixel32::Black)
       , m_color2(TPixel32::White)
       //    , m_colors (0) //args, "Colors")
-      , m_curveType(new TIntEnumParam(EaseInOut, "Ease In-Out")) {
-    m_curveType->addItem(Linear, "Linear");
-    m_curveType->addItem(EaseIn, "Ease In");
-    m_curveType->addItem(EaseOut, "Ease Out");
+      , m_curveType(new TIntEnumParam(
+            EaseInOut, QObject::tr("Ease In-Out").toStdString())) {
+    m_curveType->addItem(Linear, QObject::tr("Linear").toStdString());
+    m_curveType->addItem(EaseIn, QObject::tr("Ease In").toStdString());
+    m_curveType->addItem(EaseOut, QObject::tr("Ease Out").toStdString());
 
     bindParam(this, "period", m_period);
     bindParam(this, "wave_amplitude", m_wave_amplitude);
@@ -453,10 +455,10 @@ public:
       , m_color2(TPixel32::Transparent)
       //    , m_colors (0) //args, "Colors")
       , m_curveType(new TIntEnumParam()) {
-    m_curveType->addItem(EaseInOut, "Ease In-Out");
-    m_curveType->addItem(Linear, "Linear");
-    m_curveType->addItem(EaseIn, "Ease In");
-    m_curveType->addItem(EaseOut, "Ease Out");
+    m_curveType->addItem(EaseInOut, QObject::tr("Ease In-Out").toStdString());
+    m_curveType->addItem(Linear, QObject::tr("Linear").toStdString());
+    m_curveType->addItem(EaseIn, QObject::tr("Ease In").toStdString());
+    m_curveType->addItem(EaseOut, QObject::tr("Ease Out").toStdString());
     m_curveType->setDefaultValue(Linear);
     m_curveType->setValue(Linear);
 
@@ -516,10 +518,10 @@ public:
       , m_cycle(0.0)   // args, "Count")
                        //    , m_colors (0) //args, "Colors")
       , m_curveType(new TIntEnumParam()) {
-    m_curveType->addItem(EaseInOut, "Ease In-Out");
-    m_curveType->addItem(Linear, "Linear");
-    m_curveType->addItem(EaseIn, "Ease In");
-    m_curveType->addItem(EaseOut, "Ease Out");
+    m_curveType->addItem(EaseInOut, QObject::tr("Ease In-Out").toStdString());
+    m_curveType->addItem(Linear, QObject::tr("Linear").toStdString());
+    m_curveType->addItem(EaseIn, QObject::tr("Ease In").toStdString());
+    m_curveType->addItem(EaseOut, QObject::tr("Ease Out").toStdString());
     m_curveType->setDefaultValue(Linear);
     m_curveType->setValue(Linear);
 

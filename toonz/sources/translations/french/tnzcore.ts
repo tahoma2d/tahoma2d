@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="fr">
 <context>
     <name>BmpWriterProperties</name>
     <message>
         <source>Bits Per Pixel</source>
-        <translation>Bits par pixels</translation>
+        <translation type="vanished">Bits par pixels</translation>
     </message>
     <message>
         <source>24 bits</source>
-        <translation>24 bits</translation>
+        <translation type="vanished">24 bits</translation>
     </message>
     <message>
         <source>8 bits (Greyscale)</source>
-        <translation>8 bits (niveaux de gris)</translation>
+        <translation type="vanished">8 bits (niveaux de gris)</translation>
     </message>
 </context>
 <context>
     <name>JpgWriterProperties</name>
     <message>
         <source>Quality</source>
-        <translation>Qualité</translation>
+        <translation type="vanished">Qualité</translation>
     </message>
     <message>
         <source>Smoothing</source>
-        <translation>Lissage</translation>
+        <translation type="vanished">Lissage</translation>
     </message>
 </context>
 <context>
@@ -35,11 +35,15 @@
     </message>
     <message>
         <source>Unidentified Action</source>
-        <translation>Action non identifiée</translation>
+        <translation type="vanished">Action non identifiée</translation>
     </message>
     <message>
         <source>Skipping frame.</source>
         <translation>Ignorer l&apos;image.</translation>
+    </message>
+    <message>
+        <source>Unhandled exception encountered: Skipping frame.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -63,6 +67,10 @@
         <source>Rotation</source>
         <translation>Angle</translation>
     </message>
+    <message>
+        <source>Flip</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TVectorImagePatternStrokeStyle</name>
@@ -79,26 +87,26 @@
     <name>Tiio::BmpWriterProperties</name>
     <message>
         <source>Bits Per Pixel</source>
-        <translation type="obsolete">Bits par pixels</translation>
+        <translation type="unfinished">Bits par pixels</translation>
     </message>
     <message>
         <source>24 bits</source>
-        <translation type="obsolete">24 bits</translation>
+        <translation type="unfinished">24 bits</translation>
     </message>
     <message>
         <source>8 bits (Greyscale)</source>
-        <translation type="obsolete">8 bits (niveaux de gris)</translation>
+        <translation type="unfinished">8 bits (niveaux de gris)</translation>
     </message>
 </context>
 <context>
     <name>Tiio::JpgWriterProperties</name>
     <message>
         <source>Quality</source>
-        <translation type="obsolete">Qualité</translation>
+        <translation type="unfinished">Qualité</translation>
     </message>
     <message>
         <source>Smoothing</source>
-        <translation type="obsolete">Lissage</translation>
+        <translation type="unfinished">Lissage</translation>
     </message>
 </context>
 </TS>

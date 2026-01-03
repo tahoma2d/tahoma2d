@@ -24,8 +24,8 @@ public:
   ino_warp_hv()
       : m_h_maxlen(0.0 * ino::param_range())
       , m_v_maxlen(0.0 * ino::param_range())
-      , m_h_ref_mode(new TIntEnumParam(2, "Red"))
-      , m_v_ref_mode(new TIntEnumParam(2, "Red"))
+      , m_h_ref_mode(new TIntEnumParam(2, QObject::tr("Red").toStdString()))
+      , m_v_ref_mode(new TIntEnumParam(2, QObject::tr("Red").toStdString()))
       , m_alpha_rendering(true)
       , m_anti_aliasing(true) {
     this->m_h_maxlen->setMeasureName("fxLength");
@@ -46,12 +46,12 @@ public:
                                     100.0 * ino::param_range());
     this->m_v_maxlen->setValueRange(0.0 * ino::param_range(),
                                     100.0 * ino::param_range());
-    this->m_h_ref_mode->addItem(1, "Green");
-    this->m_h_ref_mode->addItem(0, "Blue");
-    this->m_h_ref_mode->addItem(3, "Alpha");
-    this->m_v_ref_mode->addItem(1, "Green");
-    this->m_v_ref_mode->addItem(0, "Blue");
-    this->m_v_ref_mode->addItem(3, "Alpha");
+    this->m_h_ref_mode->addItem(1, QObject::tr("Green").toStdString());
+    this->m_h_ref_mode->addItem(0, QObject::tr("Blue").toStdString());
+    this->m_h_ref_mode->addItem(3, QObject::tr("Alpha").toStdString());
+    this->m_v_ref_mode->addItem(1, QObject::tr("Green").toStdString());
+    this->m_v_ref_mode->addItem(0, QObject::tr("Blue").toStdString());
+    this->m_v_ref_mode->addItem(3, QObject::tr("Alpha").toStdString());
 
     enableComputeInFloat(true);
   }

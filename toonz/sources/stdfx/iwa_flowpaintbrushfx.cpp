@@ -186,7 +186,7 @@ Iwa_FlowPaintBrushFx::Iwa_FlowPaintBrushFx()
     , m_reference_frame(0.0)
     , m_reference_prevalence(0.0)
     , m_random_seed(1)
-    , m_sortBy(new TIntEnumParam(NoSort, "None")) {
+    , m_sortBy(new TIntEnumParam(NoSort, QObject::tr("None").toStdString())) {
   addInputPort("Brush", m_brush);
   addInputPort("Flow", m_flow);
   addInputPort("Area", m_area);
@@ -253,11 +253,14 @@ Iwa_FlowPaintBrushFx::Iwa_FlowPaintBrushFx()
   m_reference_frame->setValueRange(0, (std::numeric_limits<double>::max)());
   m_reference_prevalence->setValueRange(0.0, 1.0);
   m_random_seed->setValueRange(0, (std::numeric_limits<int>::max)());
-  m_sortBy->addItem(Smaller, "Size - Smaller on Top");
-  m_sortBy->addItem(Larger, "Size - Larger on Top");
-  m_sortBy->addItem(Darker, "Brightness - Darker on Top");
-  m_sortBy->addItem(Brighter, "Brightness - Brighter on Top");
-  m_sortBy->addItem(Random, "Random");
+  m_sortBy->addItem(Smaller,
+                    QObject::tr("Size - Smaller on Top").toStdString());
+  m_sortBy->addItem(Larger, QObject::tr("Size - Larger on Top").toStdString());
+  m_sortBy->addItem(Darker,
+                    QObject::tr("Brightness - Darker on Top").toStdString());
+  m_sortBy->addItem(Brighter,
+                    QObject::tr("Brightness - Brighter on Top").toStdString());
+  m_sortBy->addItem(Random, QObject::tr("Random").toStdString());
 
   // Version 1 (development version) : strokes are placed upward direction if
   // there is no Flow input.

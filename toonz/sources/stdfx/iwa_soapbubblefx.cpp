@@ -248,7 +248,7 @@ void Iwa_SoapBubbleFx::convertToRaster<TRasterFP, TPixelF>(
 
 Iwa_SoapBubbleFx::Iwa_SoapBubbleFx()
     : Iwa_SpectrumFx()
-    , m_renderMode(new TIntEnumParam(RENDER_MODE_BUBBLE, "Bubble"))
+    , m_renderMode(new TIntEnumParam(RENDER_MODE_BUBBLE, QObject::tr("Bubble").toStdString()))
     , m_binarize_threshold(0.5)
     , m_shape_aspect_ratio(1.0)
     , m_blur_radius(5.0)
@@ -272,8 +272,9 @@ Iwa_SoapBubbleFx::Iwa_SoapBubbleFx()
   addInputPort("Depth", m_depth);
 
   bindParam(this, "renderMode", m_renderMode);
-  m_renderMode->addItem(RENDER_MODE_THICKNESS, "Thickness");
-  m_renderMode->addItem(RENDER_MODE_DEPTH, "Depth");
+  m_renderMode->addItem(RENDER_MODE_THICKNESS,
+                        QObject::tr("Thickness").toStdString());
+  m_renderMode->addItem(RENDER_MODE_DEPTH, QObject::tr("Depth").toStdString());
 
   bindParam(this, "binarizeThresold", m_binarize_threshold);
   bindParam(this, "shapeAspectRatio", m_shape_aspect_ratio);

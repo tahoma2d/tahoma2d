@@ -39,8 +39,8 @@ public:
       // ,m_twist_radius(0.0)
       , m_alpha_rendering(true)
       , m_anti_alias(false)
-      , m_ref_mode(new TIntEnumParam(0, "Red"))
-      , m_type(new TIntEnumParam(0, "Accelerator"))
+      , m_ref_mode(new TIntEnumParam(0, QObject::tr("Red").toStdString()))
+      , m_type(new TIntEnumParam(0, QObject::tr("Accelerator").toStdString()))
       , m_ellipse_aspect_ratio(1.0)
       , m_ellipse_angle(0.0)
       , m_intensity_correlation_with_ellipse(0.0) {
@@ -72,12 +72,12 @@ public:
     this->m_ellipse_angle->setValueRange(-180.0, 180.0);
     this->m_twist->setValueRange(-180.0, 180.0);
     // this->m_twist_radius->setValueRange(0.0,1000.0);
-    this->m_ref_mode->addItem(1, "Green");
-    this->m_ref_mode->addItem(2, "Blue");
-    this->m_ref_mode->addItem(3, "Alpha");
-    this->m_ref_mode->addItem(4, "Luminance");
-    this->m_ref_mode->addItem(-1, "Nothing");
-    this->m_type->addItem(1, "Uniform Length");
+    this->m_ref_mode->addItem(1, QObject::tr("Green").toStdString());
+    this->m_ref_mode->addItem(2, QObject::tr("Blue").toStdString());
+    this->m_ref_mode->addItem(3, QObject::tr("Alpha").toStdString());
+    this->m_ref_mode->addItem(4, QObject::tr("Luminance").toStdString());
+    this->m_ref_mode->addItem(-1, QObject::tr("Nothing").toStdString());
+    this->m_type->addItem(1, QObject::tr("Uniform Length").toStdString());
     this->m_intensity_correlation_with_ellipse->setValueRange(-1.0, 1.0);
 
     enableComputeInFloat(true);

@@ -785,7 +785,7 @@
     <message>
         <location filename="../../tnztools/filltool.cpp" line="2512"/>
         <source>Auto Close Gap</source>
-        <translation type="unfinished"></translation>
+        <translation>Авто замыкание щелей</translation>
     </message>
     <message>
         <source>Maximum Gap</source>
@@ -896,7 +896,7 @@
     <message>
         <location filename="../../tnztools/fullcolorbrushtool.cpp" line="328"/>
         <source>Paint Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>Красить позади</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorbrushtool.cpp" line="329"/>
@@ -906,22 +906,22 @@
     <message>
         <location filename="../../tnztools/fullcolorbrushtool.cpp" line="331"/>
         <source>Tilt</source>
-        <translation type="unfinished"></translation>
+        <translation>Наклон</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorbrushtool.cpp" line="332"/>
         <source>Stylus Settings - Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки стилуса - Размер</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorbrushtool.cpp" line="333"/>
         <source>Stylus Settings - Opacity</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки стилуса - Непрозрачность</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorbrushtool.cpp" line="334"/>
         <source>Brush Tip</source>
-        <translation type="unfinished"></translation>
+        <translation>Кончик кисти</translation>
     </message>
     <message>
         <location filename="../../tnztools/fullcolorbrushtool.cpp" line="1615"/>
@@ -1173,7 +1173,7 @@
     <message>
         <location filename="../../tnztools/paintbrushtool.cpp" line="406"/>
         <source>Paint Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>Красить позади</translation>
     </message>
     <message>
         <source>Selective</source>
@@ -1814,7 +1814,7 @@ Do you want to proceed?</source>
     <message>
         <location filename="../../tnztools/rasterselection.cpp" line="452"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <location filename="../../tnztools/rasterselection.cpp" line="1223"/>
@@ -2142,27 +2142,27 @@ Do you want to proceed?</source>
     <message>
         <location filename="../../tnztools/rasterselectiontool.cpp" line="1137"/>
         <source>Selective</source>
-        <translation type="unfinished">Избирательно</translation>
+        <translation>Избирательно</translation>
     </message>
     <message>
         <location filename="../../tnztools/rasterselectiontool.cpp" line="1138"/>
         <source>Mode:</source>
-        <translation type="unfinished">Режим:</translation>
+        <translation>Режим:</translation>
     </message>
     <message>
         <location filename="../../tnztools/rasterselectiontool.cpp" line="1139"/>
         <source>Lines</source>
-        <translation type="unfinished">Линии</translation>
+        <translation>Линии</translation>
     </message>
     <message>
         <location filename="../../tnztools/rasterselectiontool.cpp" line="1140"/>
         <source>Areas</source>
-        <translation type="unfinished">Области</translation>
+        <translation>Области</translation>
     </message>
     <message>
         <location filename="../../tnztools/rasterselectiontool.cpp" line="1141"/>
         <source>Lines &amp; Areas</source>
-        <translation type="unfinished">Линии и области</translation>
+        <translation>Линии и области</translation>
     </message>
     <message>
         <location filename="../../tnztools/rasterselectiontool.cpp" line="1144"/>
@@ -2667,12 +2667,12 @@ moved to the end of the first page of the palette.</source>
     <message>
         <location filename="../../tnztools/tooloptionscontrols.cpp" line="536"/>
         <source>Pressure</source>
-        <translation type="unfinished">Нажим</translation>
+        <translation>Нажим</translation>
     </message>
     <message>
         <location filename="../../tnztools/tooloptionscontrols.cpp" line="542"/>
         <source>Tilt</source>
-        <translation type="unfinished"></translation>
+        <translation>Наклон</translation>
     </message>
 </context>
 <context>
@@ -2737,17 +2737,17 @@ moved to the end of the first page of the palette.</source>
     <message>
         <location filename="../../tnztools/toonzrasterbrushtool.cpp" line="1247"/>
         <source>Tilt</source>
-        <translation type="unfinished"></translation>
+        <translation>Наклон</translation>
     </message>
     <message>
         <location filename="../../tnztools/toonzrasterbrushtool.cpp" line="1248"/>
         <source>Stylus Settings - Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки стилуса - Размер</translation>
     </message>
     <message>
         <location filename="../../tnztools/toonzrasterbrushtool.cpp" line="1249"/>
         <source>Brush Tip</source>
-        <translation type="unfinished"></translation>
+        <translation>Кончик кисти</translation>
     </message>
     <message>
         <location filename="../../tnztools/toonzrasterbrushtool.cpp" line="1244"/>
@@ -2825,7 +2825,7 @@ moved to the end of the first page of the palette.</source>
     <message>
         <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="669"/>
         <source>Stylus Settings - Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки стилуса - Размер</translation>
     </message>
     <message>
         <location filename="../../tnztools/toonzvectorbrushtool.cpp" line="671"/>

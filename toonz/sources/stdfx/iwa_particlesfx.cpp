@@ -50,7 +50,7 @@ Iwa_TiledParticlesFx::Iwa_TiledParticlesFx()
     , friction_ctrl_val(0)
     , windint_val(0.0)
     , windangle_val(0.0)
-    , swingmode_val(new TIntEnumParam(SWING_RANDOM, "Random"))
+    , swingmode_val(new TIntEnumParam(SWING_RANDOM, QObject::tr("Random").toStdString()))
     , randomx_val(DoublePair(0., 0.))
     , randomy_val(DoublePair(0., 0.))
     , randomx_ctrl_val(0)
@@ -62,7 +62,8 @@ Iwa_TiledParticlesFx::Iwa_TiledParticlesFx()
     , speeda_ctrl_val(0)
     , speeda_use_gradient_val(false)
     , speedscale_val(false)
-    , toplayer_val(new TIntEnumParam(TOP_YOUNGER, "Younger"))
+    , toplayer_val(
+          new TIntEnumParam(TOP_YOUNGER, QObject::tr("Younger").toStdString()))
     , mass_val(DoublePair(1., 1.))
     , scale_val(DoublePair(100., 100.))
     , scale_ctrl_val(0)
@@ -71,7 +72,7 @@ Iwa_TiledParticlesFx::Iwa_TiledParticlesFx()
     , rot_ctrl_val(0)
     , trail_val(DoublePair(0., 0.))
     , trailstep_val(0.0)
-    , rotswingmode_val(new TIntEnumParam(SWING_RANDOM, "Random"))
+    , rotswingmode_val(new TIntEnumParam(SWING_RANDOM, QObject::tr("Random").toStdString()))
     , rotspeed_val(0.0)
     , rotsca_val(DoublePair(0., 0.))
     , rotswing_val(DoublePair(0., 0.))
@@ -83,7 +84,8 @@ Iwa_TiledParticlesFx::Iwa_TiledParticlesFx()
     , scalestep_ctrl_val(0)
     , fadein_val(0.0)
     , fadeout_val(0.0)
-    , animation_val(new TIntEnumParam(ANIM_HOLD, "Hold Frame"))
+    , animation_val(
+          new TIntEnumParam(ANIM_HOLD, QObject::tr("Hold Frame").toStdString()))
     , step_val(1)
     , gencol_ctrl_val(0)
     , gencol_spread_val(0.0)
@@ -100,7 +102,8 @@ Iwa_TiledParticlesFx::Iwa_TiledParticlesFx()
     , source_gradation_val(false)
     , pick_color_for_every_frame_val(false)
     /*- 計算モード （背景＋粒子／粒子／背景／照明された粒子 -*/
-    , iw_rendermode_val(new TIntEnumParam(REND_ALL, "All"))
+    , iw_rendermode_val(
+          new TIntEnumParam(REND_ALL, QObject::tr("All").toStdString()))
     /*- 粒子に貼られる絵の素材 -*/
     , base_ctrl_val(0)
     /*- カールノイズ的な動きを与える -*/
@@ -158,7 +161,7 @@ Iwa_TiledParticlesFx::Iwa_TiledParticlesFx()
   bindParam(this, "wind_angle", windangle_val);
   windangle_val->setMeasureName("angle");
   bindParam(this, "swing_mode", swingmode_val);
-  swingmode_val->addItem(SWING_SMOOTH, "Smooth");
+  swingmode_val->addItem(SWING_SMOOTH, QObject::tr("Smooth").toStdString());
   bindParam(this, "scattering_x", randomx_val);
   randomx_val->getMin()->setMeasureName("fxLength");
   randomx_val->getMax()->setMeasureName("fxLength");
@@ -191,10 +194,10 @@ Iwa_TiledParticlesFx::Iwa_TiledParticlesFx()
 
   bindParam(this, "speed_size", speedscale_val);
   bindParam(this, "top_layer", toplayer_val);
-  toplayer_val->addItem(TOP_OLDER, "Older");
-  toplayer_val->addItem(TOP_SMALLER, "Smaller");
-  toplayer_val->addItem(TOP_BIGGER, "Bigger");
-  toplayer_val->addItem(TOP_RANDOM, "Random");
+  toplayer_val->addItem(TOP_OLDER, QObject::tr("Older").toStdString());
+  toplayer_val->addItem(TOP_SMALLER, QObject::tr("Smaller").toStdString());
+  toplayer_val->addItem(TOP_BIGGER, QObject::tr("Bigger").toStdString());
+  toplayer_val->addItem(TOP_RANDOM, QObject::tr("Random").toStdString());
   bindParam(this, "mass", mass_val);
   mass_val->getMin()->setValueRange(0., +1000.);
   mass_val->getMax()->setValueRange(0., +1000.);
@@ -215,7 +218,7 @@ Iwa_TiledParticlesFx::Iwa_TiledParticlesFx()
   bindParam(this, "trail_step", trailstep_val);
   trailstep_val->setValueRange(1.0, (std::numeric_limits<double>::max)());
   bindParam(this, "spin_swing_mode", rotswingmode_val);
-  rotswingmode_val->addItem(SWING_SMOOTH, "Smooth");
+  rotswingmode_val->addItem(SWING_SMOOTH, QObject::tr("Smooth").toStdString());
   bindParam(this, "spin_speed", rotspeed_val);
   rotspeed_val->setMeasureName("angle");
   bindParam(this, "spin_random", rotsca_val);
@@ -243,10 +246,13 @@ Iwa_TiledParticlesFx::Iwa_TiledParticlesFx()
   bindParam(this, "fade_in", fadein_val);
   bindParam(this, "fade_out", fadeout_val);
   bindParam(this, "animation", animation_val);
-  animation_val->addItem(ANIM_RANDOM, "Random Frame");
-  animation_val->addItem(ANIM_CYCLE, "Column");
-  animation_val->addItem(ANIM_R_CYCLE, "Column - Random Start");
-  animation_val->addItem(ANIM_SR_CYCLE, "Column Swing - Random Start");
+  animation_val->addItem(ANIM_RANDOM,
+                         QObject::tr("Random Frame").toStdString());
+  animation_val->addItem(ANIM_CYCLE, QObject::tr("Column").toStdString());
+  animation_val->addItem(ANIM_R_CYCLE,
+                         QObject::tr("Column - Random Start").toStdString());
+  animation_val->addItem(
+      ANIM_SR_CYCLE, QObject::tr("Column Swing - Random Start").toStdString());
   bindParam(this, "step", step_val);
   step_val->setValueRange(1, (std::numeric_limits<int>::max)());
   std::vector<TSpectrum::ColorKey> colors = {
@@ -289,9 +295,11 @@ Iwa_TiledParticlesFx::Iwa_TiledParticlesFx()
 
   /*- 計算モード （背景＋粒子／粒子／背景／照明された粒子） -*/
   bindParam(this, "rendermode", iw_rendermode_val);
-  iw_rendermode_val->addItem(REND_PARTICLES, "Particles");
-  iw_rendermode_val->addItem(REND_BG, "Background");
-  iw_rendermode_val->addItem(REND_ILLUMINATED, "Illuminated");
+  iw_rendermode_val->addItem(REND_PARTICLES,
+                             QObject::tr("Particles").toStdString());
+  iw_rendermode_val->addItem(REND_BG, QObject::tr("Background").toStdString());
+  iw_rendermode_val->addItem(REND_ILLUMINATED,
+                             QObject::tr("Illuminated").toStdString());
 
   /*- 粒子に貼られる絵の素材 -*/
   bindParam(this, "base_ctrl", base_ctrl_val);

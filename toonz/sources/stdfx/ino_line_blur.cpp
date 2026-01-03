@@ -26,7 +26,7 @@ class ino_line_blur final : public TStandardRasterFx {
 
 public:
   ino_line_blur()
-      : m_b_action_mode(new TIntEnumParam(0, "Blur"))
+      : m_b_action_mode(new TIntEnumParam(0, QObject::tr("Blur").toStdString()))
       , m_b_blur_count(51)
       , m_b_blur_power(1.0)
       , m_b_blur_subpixel(new TIntEnumParam())
@@ -50,7 +50,7 @@ public:
     bindParam(this, "smudge_thick", this->m_b_smudge_thick);
     bindParam(this, "smudge_remain", this->m_b_smudge_remain);
 
-    this->m_b_action_mode->addItem(1, "Smudge");
+    this->m_b_action_mode->addItem(1, QObject::tr("Smudge").toStdString());
     this->m_b_blur_count->setValueRange(1, 100);
     this->m_b_blur_power->setValueRange(0.1, 10.0);
     this->m_b_blur_subpixel->addItem(1, "1");

@@ -42,7 +42,8 @@ Un agradecimiento especial a:</translation>
     <message>
         <source>Tahoma2D ships with FFmpeg.
 FFmpeg is licensed under the LGPLv2.1</source>
-        <translation type="unfinished"></translation>
+        <translation>Tahoma2D trae incluido a FFmpeg.
+FFmpeg está bajo licencia LGPLv2.1</translation>
     </message>
 </context>
 <context>
@@ -562,7 +563,7 @@ Menú de la derecha para opciones.</translation>
     </message>
     <message>
         <source> (Rasterized Vector View)</source>
-        <translation type="unfinished"></translation>
+        <translation> (Vista vectorial como imagen)</translation>
     </message>
 </context>
 <context>
@@ -700,94 +701,94 @@ Detenerla o esperar a su finalización antes de eliminarla.</translation>
     <name>BoardButtonBar</name>
     <message>
         <source>Create Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear panel</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuevo</translation>
     </message>
     <message>
         <source>Reset Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Restablecer panel</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished">Restablecer</translation>
+        <translation>Restablecer</translation>
     </message>
     <message>
         <source>Clear Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Limpiar panel</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished">Limpiar</translation>
+        <translation>Limpiar</translation>
     </message>
     <message>
         <source>Create New Scene</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear nueva escena</translation>
     </message>
     <message>
         <source>Create Scene</source>
-        <translation type="unfinished">Crear escena</translation>
+        <translation>Crear escena</translation>
     </message>
     <message>
         <source>Save Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar panel</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished">Guardar</translation>
+        <translation>Guardar</translation>
     </message>
     <message>
         <source>Save Board As</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar panel como</translation>
     </message>
     <message>
         <source>Save As</source>
-        <translation type="unfinished">Guardar como</translation>
+        <translation>Guardar como</translation>
     </message>
     <message>
         <source>Load Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargar panel</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="unfinished">Cargar</translation>
+        <translation>Cargar</translation>
     </message>
     <message>
         <source>Quick Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Reproducción rápida</translation>
     </message>
 </context>
 <context>
     <name>BoardList</name>
     <message>
         <source>Toggle Thumbnail Wrap</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternar repetición de miniaturas</translation>
     </message>
     <message>
         <source>Quick Play</source>
-        <translation type="unfinished"></translation>
+        <translation>Reproducción rápida</translation>
     </message>
     <message>
         <source>Load As Sub-Scene</source>
-        <translation type="unfinished">Cargar como sub-escena</translation>
+        <translation>Cargar como sub-escena</translation>
     </message>
     <message>
         <source>Expand Sequence</source>
-        <translation type="unfinished"></translation>
+        <translation>Expandir secuencia</translation>
     </message>
     <message>
         <source>Collapse Sequence</source>
-        <translation type="unfinished"></translation>
+        <translation>Colapsar secuencia</translation>
     </message>
     <message>
         <source>Rename</source>
-        <translation type="unfinished">Renombrar</translation>
+        <translation>Renombrar</translation>
     </message>
     <message>
         <source>Drag/Drop to Add Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrastrar y soltar para agregar archivos</translation>
     </message>
 </context>
 <context>
@@ -3794,94 +3795,98 @@ Do you want to overwrite it?</source>
 &apos;%1&apos;
 
 Camera has been disconnected and may need to be restarted.</source>
-        <translation type="unfinished"></translation>
+        <translation>Se ha encontrado un error CRÍTICO con la cámara:
+
+&apos;%1&apos;
+
+La cámara ha sido desconectada y podría ser necesario reiniciarla.</translation>
     </message>
 </context>
 <context>
     <name>GPhotoEventLogPopup</name>
     <message>
         <source>GPhoto Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Registro de eventos de GPhoto</translation>
     </message>
     <message>
         <source>Capture messages:</source>
-        <translation type="unfinished"></translation>
+        <translation>Capturar mensajes:</translation>
     </message>
     <message>
         <source>Event</source>
-        <translation type="unfinished"></translation>
+        <translation>Evento</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished">Error</translation>
+        <translation>Error</translation>
     </message>
     <message>
         <source>Debug</source>
-        <translation type="unfinished"></translation>
+        <translation>Depuración</translation>
     </message>
     <message>
         <source>List All Configs</source>
-        <translation type="unfinished"></translation>
+        <translation>Listar todas las configs</translation>
     </message>
     <message>
         <source>Pause</source>
-        <translation type="unfinished">Pausa</translation>
+        <translation>Pausa</translation>
     </message>
     <message>
         <source>Copy to Clipboard</source>
-        <translation type="unfinished">Copiar al portapapeles</translation>
+        <translation>Copiar al portapapeles</translation>
     </message>
     <message>
         <source>Clear Log</source>
-        <translation type="unfinished">Limpiar registro</translation>
+        <translation>Limpiar registro</translation>
     </message>
     <message>
         <source>List All Configs: No camera detected.</source>
-        <translation type="unfinished"></translation>
+        <translation>Listar todas las configs: Ninguna cámara detectada.</translation>
     </message>
     <message>
         <source>List All Configs: No configurations retrieved.</source>
-        <translation type="unfinished"></translation>
+        <translation>Listar todas las configs: Ninguna configuración obtenida.</translation>
     </message>
     <message>
         <source>========== All Configs ==========</source>
-        <translation type="unfinished"></translation>
+        <translation>========== Todas las configs ==========</translation>
     </message>
     <message>
         <source>Label: </source>
-        <translation type="unfinished"></translation>
+        <translation>Etiqueta: </translation>
     </message>
     <message>
         <source>Readonly: </source>
-        <translation type="unfinished"></translation>
+        <translation>Sólo lectura: </translation>
     </message>
     <message>
         <source>Type: </source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo: </translation>
     </message>
     <message>
         <source>Current: </source>
-        <translation type="unfinished"></translation>
+        <translation>Actual: </translation>
     </message>
     <message>
         <source>Printable: </source>
-        <translation type="unfinished"></translation>
+        <translation>Imprimible: </translation>
     </message>
     <message>
         <source>Choice </source>
-        <translation type="unfinished"></translation>
+        <translation>Elección</translation>
     </message>
     <message>
         <source>Bottom: </source>
-        <translation type="unfinished"></translation>
+        <translation>Inferior: </translation>
     </message>
     <message>
         <source>Top: </source>
-        <translation type="unfinished"></translation>
+        <translation>Superior: </translation>
     </message>
     <message>
         <source>Step: </source>
-        <translation type="unfinished"></translation>
+        <translation>Intervalo: </translation>
     </message>
 </context>
 <context>
@@ -4763,26 +4768,26 @@ Escoger un archivo válido de datos de sincronización de labios para continuar.
     </message>
     <message>
         <source>Recognizer</source>
-        <translation type="unfinished"></translation>
+        <translation>Reconocedor</translation>
     </message>
 </context>
 <context>
     <name>LoadBoardPopup</name>
     <message>
         <source>Load Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargar panel</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation type="unfinished">Cargar</translation>
+        <translation>Cargar</translation>
     </message>
     <message>
         <source> does not exist.</source>
-        <translation type="unfinished"> no existe.</translation>
+        <translation> no existe.</translation>
     </message>
     <message>
         <source>It is possible to load only TNZBRD files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sólo es posible cargar archivos TNZBRD.</translation>
     </message>
 </context>
 <context>
@@ -5525,7 +5530,7 @@ Escoger un archivo válido de datos de sincronización de labios para continuar.
     </message>
     <message>
         <source>Collapse</source>
-        <translation>Contraer a sub-planilla</translation>
+        <translation>Contraer a sub-escena</translation>
     </message>
     <message>
         <source>&amp;Save Sub-xsheet As...</source>
@@ -5685,7 +5690,7 @@ Escoger un archivo válido de datos de sincronización de labios para continuar.
     </message>
     <message>
         <source>&amp;Camera BG Color</source>
-        <translation>&amp;Color de fondo de la cámara</translation>
+        <translation>&amp;Color de fondo de cámara</translation>
     </message>
     <message>
         <source>&amp;Transparency Check  </source>
@@ -8623,67 +8628,67 @@ o es posible que se termine borrando algún archivo usado por ésta.</translatio
     </message>
     <message>
         <source>Loop Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Repetir fotogramas</translation>
     </message>
     <message>
         <source>Remove Frame Loop</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar repetición de fotogramas</translation>
     </message>
     <message>
         <source>&amp;Tips...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Consejos...</translation>
     </message>
     <message>
         <source>Viewer Event Log</source>
-        <translation type="unfinished">Registro de eventos del visor</translation>
+        <translation>Registro de eventos del visor</translation>
     </message>
     <message>
         <source>GPhoto Event Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Registro de eventos de GPhoto</translation>
     </message>
     <message>
         <source>&amp;Open Reports Folder...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Abrir carpeta de reportes...</translation>
     </message>
     <message>
         <source>&amp;Set Rest Key</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Marcar clave de reposo</translation>
     </message>
     <message>
         <source>&amp;Set Global Key</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Marcar clave global</translation>
     </message>
     <message>
         <source>&amp;Set Global Rest Key</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Marcar clave de reposo global</translation>
     </message>
     <message>
         <source>&amp;Clear All Onion Skin Markers</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Limpiar todos los marcadores de piel de cebolla</translation>
     </message>
     <message>
         <source>&amp;Copy Skeleton</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Copiar esqueleto</translation>
     </message>
     <message>
         <source>&amp;Paste Skeleton</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pegar esqueleto</translation>
     </message>
     <message>
         <source>Hook Tool: Create reference points to aid in movement or to link other objects by them</source>
-        <translation type="unfinished"></translation>
+        <translation>Enganche: Permite crear puntos de referencia para ayudar con el movimiento o para vincular otros objetos a ellos</translation>
     </message>
     <message>
         <source>Keep Distance</source>
-        <translation type="unfinished"></translation>
+        <translation>Mantener distancia</translation>
     </message>
     <message>
         <source>Paint Behind</source>
-        <translation type="unfinished"></translation>
+        <translation>Pintar detrás</translation>
     </message>
     <message>
         <source>Viewer Scrub</source>
-        <translation type="unfinished"></translation>
+        <translation>Arrastrar en visor</translation>
     </message>
 </context>
 <context>
@@ -11581,7 +11586,7 @@ pero es posible que se produzcan ocasionales cierres inesperados; usar a propio 
     </message>
     <message>
         <source>Magnet Tool Size Slider - Non-Linear mode*</source>
-        <translation>Magneto:Tamaño - deslizador no lineal*</translation>
+        <translation>Imantar:Tamaño - deslizador no lineal*</translation>
     </message>
     <message>
         <source>Paste Cells Behaviour:</source>
@@ -11673,23 +11678,23 @@ pero es posible que se produzcan ocasionales cierres inesperados; usar a propio 
     </message>
     <message>
         <source>Show Tips Window when Tahoma2D Starts</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar ventana de consejos al iniciar el programa</translation>
     </message>
     <message>
         <source>Enable High DPI Scaling*</source>
-        <translation type="unfinished"></translation>
+        <translation>Habilitar escalado para altos PPP*</translation>
     </message>
     <message>
         <source>Preproduction Board Thumbnail Size*:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamaño de miniaturas del panel de preproducción*:</translation>
     </message>
     <message>
         <source>Rasterize Vector with Anti Aliasing</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar vectores como imágenes usando suavizado de bordes</translation>
     </message>
     <message>
         <source>Show Images in Cell Tooltips</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar imágenes emergentes en celdas</translation>
     </message>
 </context>
 <context>
@@ -11751,61 +11756,63 @@ habrá disponible un dispositivo de 30 bits en la configuración actual.</transl
     <name>PreproductionBoard</name>
     <message>
         <source>Are you sure you want to discard your changes?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Seguro descartar los cambios?</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation type="unfinished">Sí</translation>
+        <translation>Sí</translation>
     </message>
     <message>
         <source>No</source>
-        <translation type="unfinished">No</translation>
+        <translation>No</translation>
     </message>
     <message>
         <source>Create Scene</source>
-        <translation type="unfinished">Crear escena</translation>
+        <translation>Crear escena</translation>
     </message>
     <message>
         <source>Scene name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre de la escena:</translation>
     </message>
     <message>
         <source>The board is empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>¡El panel está vacío!</translation>
     </message>
     <message>
         <source>The current board has been modified.
 Doyou want to save your changes?</source>
-        <translation type="unfinished"></translation>
+        <translation>El panel actual ha sido modificado.
+¿Guardar los cambios?</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished">Guardar</translation>
+        <translation>Guardar</translation>
     </message>
     <message>
         <source>Discard</source>
-        <translation type="unfinished">Descartar</translation>
+        <translation>Descartar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>There is nothing in the board to play.</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay nada que reproducir en el panel.</translation>
     </message>
     <message>
         <source>A production board has been modified.
 Do you want to save your changes?</source>
-        <translation type="unfinished"></translation>
+        <translation>Un panel de preproducción ha sido modificado.
+¿Guardar los cambios?</translation>
     </message>
     <message>
         <source>Preproduction Board</source>
-        <translation type="unfinished">Panel de preproducción</translation>
+        <translation>Panel de preproducción</translation>
     </message>
     <message>
         <source>untitled</source>
-        <translation type="unfinished"></translation>
+        <translation>sin_título</translation>
     </message>
 </context>
 <context>
@@ -14985,102 +14992,652 @@ Visitar el sitio web para más información.
     </message>
     <message>
         <source>Loop Frames</source>
-        <translation type="unfinished"></translation>
+        <translation>Repetir fotogramas</translation>
     </message>
     <message>
         <source>Remove Frames Loop</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar repetición de fotogramas</translation>
     </message>
     <message>
         <source>Loop Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Repetir columnas</translation>
     </message>
     <message>
         <source>Remove Column Loops</source>
-        <translation type="unfinished"></translation>
+        <translation>Eliminar repeticiones de columnas</translation>
     </message>
     <message>
         <source>Unable to generate image. Revise resolution.</source>
-        <translation type="unfinished"></translation>
+        <translation>No es posible generar la imagen. Revisar la resolución.</translation>
     </message>
     <message>
         <source>Warning: file or level %1 already exists; overwrite?</source>
-        <translation type="unfinished"></translation>
+        <translation>Advertencia: el archivo o nivel %1 ya existe; ¿sobrescribirlo?</translation>
     </message>
     <message>
         <source>There were problems loading the scene %1.
 Details:
 
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Hubo problemas al cargar la escena %1.
+Detalles:
+
+%2</translation>
     </message>
     <message>
         <source>Loading brush tips...</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargando puntas de pincel...</translation>
     </message>
     <message>
         <source>File %1 does not exist. Cannot add to Batch Render List.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo %1 no existe. No fue posible agregarlo a la lista de procesamiento por lotes.</translation>
     </message>
     <message>
         <source>Task added to the Batch Render List.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarea agregada a la lista de procesamiento por lotes.</translation>
     </message>
     <message>
         <source>File %1 does not exist. Cannot add to Batch Cleanup List.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo %1 no existe. No fue posible agregarlo a la lista de limpieza por lotes.</translation>
     </message>
     <message>
         <source>Task added to the Batch Cleanup List.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarea agregada a la lista de limpieza por lotes.</translation>
     </message>
     <message>
         <source>File %1 does not exist. Cannot load scene.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo %1 no existe. No es posible cargar la escena.</translation>
     </message>
     <message>
         <source>File %1 does not exist. Cannot show in folder.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo %1 no existe. No es posible mostrarlo en la carpeta.</translation>
     </message>
     <message>
         <source>File %1 does not exist. Cannot show file info.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo %1 no existe. No es posible mostrar su información.</translation>
     </message>
     <message>
         <source>File %1 does not exist. Cannot duplicate it.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo %1 no existe. No es posible duplicarlo.</translation>
     </message>
     <message>
         <source>File %1 does not exist. Cannot collect assets for it.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo %1 no existe. No es posible recolectar recursos para el mismo.</translation>
     </message>
     <message>
         <source>File %1 does not exist. Cannot import into current project.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo %1 no existe. No es posible importarlo al proyecto actual.</translation>
     </message>
     <message>
         <source>File %1 does not exist. Cannot load it into the current scene.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo %1 no existe. No es posible cargarlo en la escena actual.</translation>
     </message>
     <message>
         <source>File %1 does not exist. Cannot rename it.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo %1 no existe. No es posible renombrarlo.</translation>
     </message>
     <message>
         <source>File %1 does not exist. Cannot expand it.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo %1 no existe. No es posible expandirlo.</translation>
     </message>
     <message>
         <source>File %1 does not exist. Cannot add it to the flipbook.</source>
-        <translation type="unfinished"></translation>
+        <translation>El archivo %1 no existe. No es posible agregarlo al reproductor.</translation>
     </message>
     <message>
         <source>Move Loop Start Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover marcador inicial de repetición</translation>
     </message>
     <message>
         <source>Move Loop End Marker</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover marcador final de repetición</translation>
+    </message>
+    <message>
+        <source>Younger</source>
+        <translation>Más joven</translation>
+    </message>
+    <message>
+        <source>Hold Frame</source>
+        <translation>Fotograma fijo</translation>
+    </message>
+    <message>
+        <source>Smooth</source>
+        <translation>Suave</translation>
+    </message>
+    <message>
+        <source>Older</source>
+        <translation>Más vieja</translation>
+    </message>
+    <message>
+        <source>Smaller</source>
+        <translation>Más pequeña</translation>
+    </message>
+    <message>
+        <source>Bigger</source>
+        <translation>Más grande</translation>
+    </message>
+    <message>
+        <source>Random Frame</source>
+        <translation>Fotograma aleatorio</translation>
+    </message>
+    <message>
+        <source>Column</source>
+        <translation>Columna</translation>
+    </message>
+    <message>
+        <source>Column - Random Start</source>
+        <translation>Columna - Inicio aleatorio</translation>
+    </message>
+    <message>
+        <source>Column Swing - Random Start</source>
+        <translation>Columna oscilante - Inicio aleatorio</translation>
+    </message>
+    <message>
+        <source>Over</source>
+        <translation>Normal</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Adicionar</translation>
+    </message>
+    <message>
+        <source>Subtract</source>
+        <translation>Sustraer</translation>
+    </message>
+    <message>
+        <source>Multiply</source>
+        <translation>Multiplicar</translation>
+    </message>
+    <message>
+        <source>Lighten</source>
+        <translation>Aclarar</translation>
+    </message>
+    <message>
+        <source>Darken</source>
+        <translation>Oscurecer</translation>
+    </message>
+    <message>
+        <source>Clouds</source>
+        <translation>Nubes</translation>
+    </message>
+    <message>
+        <source>Marble/Wood</source>
+        <translation>Mármol/Madera</translation>
+    </message>
+    <message>
+        <source>Perspective</source>
+        <translation>Perspectiva</translation>
+    </message>
+    <message>
+        <source>Texture</source>
+        <translation>Textura</translation>
+    </message>
+    <message>
+        <source>Keep</source>
+        <translation>Mantener</translation>
+    </message>
+    <message>
+        <source>Pattern</source>
+        <translation>Patrón</translation>
+    </message>
+    <message>
+        <source>Bilinear</source>
+        <translation>Bilineal</translation>
+    </message>
+    <message>
+        <source>Transparent Bg</source>
+        <translation>Fondo transparente</translation>
+    </message>
+    <message>
+        <source>White Bg</source>
+        <translation>Fondo blanco</translation>
+    </message>
+    <message>
+        <source>Square</source>
+        <translation>Cuadrado</translation>
+    </message>
+    <message>
+        <source>Circular</source>
+        <translation>Circular</translation>
+    </message>
+    <message>
+        <source>Red</source>
+        <translation>Rojo</translation>
+    </message>
+    <message>
+        <source>Green</source>
+        <translation>Verde</translation>
+    </message>
+    <message>
+        <source>Blue</source>
+        <translation>Azul</translation>
+    </message>
+    <message>
+        <source>Alpha</source>
+        <translation>Alfa</translation>
+    </message>
+    <message>
+        <source>Luminance</source>
+        <translation>Luminancia</translation>
+    </message>
+    <message>
+        <source>Nothing</source>
+        <translation>Ninguna</translation>
+    </message>
+    <message>
+        <source>Auto</source>
+        <translation>Auto</translation>
+    </message>
+    <message>
+        <source>Linear</source>
+        <translation>Lineal</translation>
+    </message>
+    <message>
+        <source>Nonlinear</source>
+        <translation>No lineal</translation>
+    </message>
+    <message>
+        <source>Keep Noise</source>
+        <translation>Mantener ruido</translation>
+    </message>
+    <message>
+        <source>Keep Contrast</source>
+        <translation>Mantener contraste</translation>
+    </message>
+    <message>
+        <source>Blur</source>
+        <translation>Desenfocar</translation>
+    </message>
+    <message>
+        <source>Smudge</source>
+        <translation>Manchar</translation>
+    </message>
+    <message>
+        <source>Max</source>
+        <translation>Máx</translation>
+    </message>
+    <message>
+        <source>Min</source>
+        <translation>Mín</translation>
+    </message>
+    <message>
+        <source>All</source>
+        <translation>Todo</translation>
+    </message>
+    <message>
+        <source>Right</source>
+        <translation>Derecha</translation>
+    </message>
+    <message>
+        <source>Up</source>
+        <translation>Arriba</translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation>Izquierda</translation>
+    </message>
+    <message>
+        <source>Down</source>
+        <translation>Abajo</translation>
+    </message>
+    <message>
+        <source>Accelerator</source>
+        <translation>Acelerador</translation>
+    </message>
+    <message>
+        <source>Uniform Length</source>
+        <translation>Longitud uniforme</translation>
+    </message>
+    <message>
+        <source>Uniform Angle</source>
+        <translation>Ángulo uniforme</translation>
+    </message>
+    <message>
+        <source>No Alpha</source>
+        <translation>Sin alfa</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Brillos</translation>
+    </message>
+    <message>
+        <source>Light and Source</source>
+        <translation>Brillos e imagen</translation>
+    </message>
+    <message>
+        <source>Gamma</source>
+        <translation>Gama</translation>
+    </message>
+    <message>
+        <source>Hardness</source>
+        <translation>Definición</translation>
+    </message>
+    <message>
+        <source>Quadrangle</source>
+        <translation>Cuadrilátero</translation>
+    </message>
+    <message>
+        <source>Circle</source>
+        <translation>Círculo</translation>
+    </message>
+    <message>
+        <source>Ease In-Out</source>
+        <translation>Suavizado inicial y final</translation>
+    </message>
+    <message>
+        <source>Ease In</source>
+        <translation>Suavizado inicial</translation>
+    </message>
+    <message>
+        <source>Ease Out</source>
+        <translation>Suavizado final</translation>
+    </message>
+    <message>
+        <source>Gaussian</source>
+        <translation>Gaussiano</translation>
+    </message>
+    <message>
+        <source>Flat</source>
+        <translation>Plano</translation>
+    </message>
+    <message>
+        <source>Diffuse</source>
+        <translation>Difuso</translation>
+    </message>
+    <message>
+        <source>Specular</source>
+        <translation>Especular</translation>
+    </message>
+    <message>
+        <source>Fresnel reflectivity</source>
+        <translation>Reflectividad Fresnel</translation>
+    </message>
+    <message>
+        <source>Refraction</source>
+        <translation>Refracción</translation>
+    </message>
+    <message>
+        <source>Reflection</source>
+        <translation>Reflexión</translation>
+    </message>
+    <message>
+        <source>Reference Image</source>
+        <translation>Imagen de referencia</translation>
+    </message>
+    <message>
+        <source>Blue Channel of Flow Image</source>
+        <translation>Canal azul de imagen en Flow</translation>
+    </message>
+    <message>
+        <source>Size - Smaller on Top</source>
+        <translation>Tamaño - Más pequeño arriba</translation>
+    </message>
+    <message>
+        <source>Size - Larger on Top</source>
+        <translation>Tamaño - Más grande arriba</translation>
+    </message>
+    <message>
+        <source>Brightness - Darker on Top</source>
+        <translation>Luminosidad - Más oscuro arriba</translation>
+    </message>
+    <message>
+        <source>Brightness - Brighter on Top</source>
+        <translation>Luminosidad - Más claro arriba</translation>
+    </message>
+    <message>
+        <source>Basic</source>
+        <translation>Básico</translation>
+    </message>
+    <message>
+        <source>Block</source>
+        <translation>Bloques</translation>
+    </message>
+    <message>
+        <source>Turbulent Smooth</source>
+        <translation>Turbulento (suave)</translation>
+    </message>
+    <message>
+        <source>Turbulent Basic</source>
+        <translation>Turbulento (básico)</translation>
+    </message>
+    <message>
+        <source>Turbulent Sharp</source>
+        <translation>Turbulento (definido)</translation>
+    </message>
+    <message>
+        <source>Dynamic</source>
+        <translation>Dinámico</translation>
+    </message>
+    <message>
+        <source>Dynamic Twist</source>
+        <translation>Dinámico (torsión)</translation>
+    </message>
+    <message>
+        <source>Rocky</source>
+        <translation>Rocoso</translation>
+    </message>
+    <message>
+        <source>Filter Preview</source>
+        <translation>Previsualización</translation>
+    </message>
+    <message>
+        <source>Input Image</source>
+        <translation>Imagen de entrada</translation>
+    </message>
+    <message>
+        <source>Render</source>
+        <translation>Final</translation>
+    </message>
+    <message>
+        <source>Iris</source>
+        <translation>Iris</translation>
+    </message>
+    <message>
+        <source>4 Streaks</source>
+        <translation>4 haces</translation>
+    </message>
+    <message>
+        <source>6 Streaks</source>
+        <translation>6 haces</translation>
+    </message>
+    <message>
+        <source>8 Streaks</source>
+        <translation>8 haces</translation>
+    </message>
+    <message>
+        <source>Multiple Streaks</source>
+        <translation>Múltiples haces</translation>
+    </message>
+    <message>
+        <source>Thin Line</source>
+        <translation>Línea delgada</translation>
+    </message>
+    <message>
+        <source>Medium Line</source>
+        <translation>Línea media</translation>
+    </message>
+    <message>
+        <source>Thick Line</source>
+        <translation>Línea gruesa</translation>
+    </message>
+    <message>
+        <source>Filled</source>
+        <translation>Relleno</translation>
+    </message>
+    <message>
+        <source>Source is premultiplied</source>
+        <translation>Origen premultiplicado</translation>
+    </message>
+    <message>
+        <source>Source is NOT premultiplied</source>
+        <translation>Origen NO premultiplicado</translation>
+    </message>
+    <message>
+        <source>Manual</source>
+        <translation>Manual</translation>
+    </message>
+    <message>
+        <source>Particles</source>
+        <translation>Partículas</translation>
+    </message>
+    <message>
+        <source>Background</source>
+        <translation>Fondo</translation>
+    </message>
+    <message>
+        <source>Illuminated</source>
+        <translation>Iluminación</translation>
+    </message>
+    <message>
+        <source>Noise</source>
+        <translation>Ruido</translation>
+    </message>
+    <message>
+        <source>Perlin Noise</source>
+        <translation>Ruido Perlin</translation>
+    </message>
+    <message>
+        <source>Simplex Noise</source>
+        <translation>Ruido Simplex</translation>
+    </message>
+    <message>
+        <source>Noise (no resampled)</source>
+        <translation>Ruido (sin remuestreo)</translation>
+    </message>
+    <message>
+        <source>Warp HV offset</source>
+        <translation>Desplazamiento para Distorsionar HV</translation>
+    </message>
+    <message>
+        <source>Warp HV offset 2</source>
+        <translation>Desplazamiento 2 para Distorsionar HV</translation>
+    </message>
+    <message>
+        <source>Bubble</source>
+        <translation>Burbuja</translation>
+    </message>
+    <message>
+        <source>Thickness</source>
+        <translation>Grosor</translation>
+    </message>
+    <message>
+        <source>Depth</source>
+        <translation>Profundidad</translation>
+    </message>
+    <message>
+        <source>Center</source>
+        <translation>Centro</translation>
+    </message>
+    <message>
+        <source>Justify</source>
+        <translation>Justificar</translation>
+    </message>
+    <message>
+        <source>Bounding Box</source>
+        <translation>Marco delimitador</translation>
+    </message>
+    <message>
+        <source>No Tile</source>
+        <translation>No repetir</translation>
+    </message>
+    <message>
+        <source>Camera Box</source>
+        <translation>Encuadre de cámara</translation>
+    </message>
+    <message>
+        <source>Image Size</source>
+        <translation>Tamaño de imagen</translation>
+    </message>
+    <message>
+        <source>1 Tile</source>
+        <translation>1 repetición</translation>
+    </message>
+    <message>
+        <source>Multiple Tiles</source>
+        <translation>Múltiples repeticiones</translation>
+    </message>
+    <message>
+        <source>Frame Number</source>
+        <translation>Número de fotograma</translation>
+    </message>
+    <message>
+        <source>Round</source>
+        <translation>Redondeada</translation>
+    </message>
+    <message>
+        <source>Own Motion</source>
+        <translation>Movimiento propio</translation>
+    </message>
+    <message>
+        <source>Pegbar</source>
+        <translation>Barra de sujeción</translation>
+    </message>
+    <message>
+        <source>Table</source>
+        <translation>Mesa</translation>
+    </message>
+    <message>
+        <source>Camera</source>
+        <translation>Cámara</translation>
+    </message>
+    <message>
+        <source>Lines &amp; Areas</source>
+        <translation>Líneas y áreas</translation>
+    </message>
+    <message>
+        <source>Lines</source>
+        <translation>Líneas</translation>
+    </message>
+    <message>
+        <source>Areas</source>
+        <translation>Áreas</translation>
+    </message>
+    <message>
+        <source>Lines &amp; Areas (No Gap)</source>
+        <translation>Líneas y áreas (sin huecos)</translation>
+    </message>
+    <message>
+        <source>Lines (Delete All Areas)</source>
+        <translation>Líneas (borrar áreas)</translation>
+    </message>
+    <message>
+        <source>Areas (Delete All Lines)</source>
+        <translation>Áreas (borrar líneas)</translation>
+    </message>
+    <message>
+        <source>Archimedean</source>
+        <translation>Arquimediana</translation>
+    </message>
+    <message>
+        <source>Logarithmic</source>
+        <translation>Logarítmica</translation>
+    </message>
+    <message>
+        <source>Tile</source>
+        <translation>Repetir</translation>
+    </message>
+    <message>
+        <source>Tile Horizontally</source>
+        <translation>Repetir horizontalmente</translation>
+    </message>
+    <message>
+        <source>Tile Vertically</source>
+        <translation>Repetir verticalmente</translation>
+    </message>
+    <message>
+        <source>Fx Intensity</source>
+        <translation>Intensidad efecto</translation>
+    </message>
+</context>
+<context>
+    <name>QOpenGLShaderProgram</name>
+    <message>
+        <source>This system configuration does not support OpenGL Pixel Buffers. Shader Fxs will not be able to render.</source>
+        <translation>Esta configuración de sistema no soporta Buffers de Píxeles de OpenGL. Los efectos de tipo sombreador no podrán ser procesados.</translation>
+    </message>
+    <message>
+        <source>This system configuration does not support OpenGL Shader Programs. Shader Fxs will not be able to render.</source>
+        <translation>Esta configuración de sistema no soporta Programas de Sombreado de OpenGL. Los efectos de tipo sombreador no podrán ser procesados.</translation>
     </message>
 </context>
 <context>
@@ -15162,23 +15719,23 @@ Details:
     </message>
     <message>
         <source>Name has not changed. Try something else.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre no modificado. Intentar con algo diferente.</translation>
     </message>
     <message>
         <source>Renaming File &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Renombrando archivo &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Renaming File Sequence &apos;%1&apos; [%2 Frame(s)]</source>
-        <translation type="unfinished"></translation>
+        <translation>Renombrando secuencia de archivos &apos;%1&apos; [%2 fotograma(s)]</translation>
     </message>
     <message>
         <source>Create copy and rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Crear copia y renombrar</translation>
     </message>
     <message>
         <source>New Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nuevo nombre:</translation>
     </message>
 </context>
 <context>
@@ -16190,11 +16747,11 @@ Por favor enviar o revertir los cambios antes.</translation>
     <name>SaveBoardPopup</name>
     <message>
         <source>Save Board</source>
-        <translation type="unfinished"></translation>
+        <translation>Guardar panel</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation type="unfinished">Guardar</translation>
+        <translation>Guardar</translation>
     </message>
 </context>
 <context>
@@ -17323,7 +17880,7 @@ Por favor enviar o revertir los cambios antes.</translation>
     </message>
     <message>
         <source>Special Modifier Keys</source>
-        <translation type="unfinished"></translation>
+        <translation>Teclas modificadoras especiales</translation>
     </message>
 </context>
 <context>
@@ -17768,19 +18325,19 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Open Project...</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir proyecto...</translation>
     </message>
     <message>
         <source>Explore Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Explorar carpeta</translation>
     </message>
     <message>
         <source>Open Existing Scene</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir escena existente</translation>
     </message>
     <message>
         <source>New Scene</source>
-        <translation type="unfinished">Nueva escena</translation>
+        <translation>Nueva escena</translation>
     </message>
 </context>
 <context>
@@ -18033,7 +18590,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Hook Tool: Create reference points to aid in movement or to link other objects by them</source>
-        <translation type="unfinished"></translation>
+        <translation>Enganche: Permite crear puntos de referencia para ayudar con el movimiento o para vincular otros objetos a ellos</translation>
     </message>
 </context>
 <context>
@@ -19482,15 +20039,15 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     <name>TipsPopup</name>
     <message>
         <source>Tahoma2D Tips</source>
-        <translation type="unfinished"></translation>
+        <translation>Consejos de Tahoma2D</translation>
     </message>
     <message>
         <source>Show this at startup</source>
-        <translation type="unfinished">Mostrar esto al inicio</translation>
+        <translation>Mostrar esto al inicio</translation>
     </message>
     <message>
         <source>Nothing to see here. Keep movin&apos;...</source>
-        <translation type="unfinished"></translation>
+        <translation>Nada que ver por aquí. Seguir moviéndose...</translation>
     </message>
 </context>
 <context>
@@ -19592,7 +20149,7 @@ Clic en el botón con la flecha para crear una nueva sub-planilla</translation>
     </message>
     <message>
         <source>Troubleshoot</source>
-        <translation type="unfinished"></translation>
+        <translation>Solución de problemas</translation>
     </message>
 </context>
 <context>
@@ -20212,11 +20769,11 @@ Por favor ver la guía de usuario para obtener más detalles.</translation>
     </message>
     <message>
         <source>Stylus pressed at X=%1 Y=%2 Pressure=%3% TiltX=%4 TiltY=%5 Rotation=%6</source>
-        <translation type="unfinished"></translation>
+        <translation>Pluma presionada en X=%1 Y=%2 Presión=%3% InclinaciónX=%4 InclinaciónY=%5 Rotación=%6</translation>
     </message>
     <message>
         <source>Stylus %1 to X=%2 Y=%3 Pressure=%4% TiltX=%5 TiltY=%6 Rotation=%7</source>
-        <translation type="unfinished"></translation>
+        <translation>Pluma %1 a X=%2 Y=%3 Presión=%4% InclinaciónX=%5 InclinaciónY=%6 Rotación=%7</translation>
     </message>
 </context>
 <context>
@@ -20625,7 +21182,7 @@ Por favor ver la guía de usuario para obtener más detalles.</translation>
     </message>
     <message>
         <source>Alpha Lock</source>
-        <translation type="unfinished"></translation>
+        <translation>Bloquear alfa</translation>
     </message>
 </context>
 <context>

@@ -28,10 +28,10 @@ Iwa_SpinGradientFx::Iwa_SpinGradientFx()
   bindParam(this, "startAngle", m_startAngle);
   bindParam(this, "endAngle", m_endAngle);
 
-  m_curveType->addItem(EaseInOut, "Ease In-Out");
-  m_curveType->addItem(Linear, "Linear");
-  m_curveType->addItem(EaseIn, "Ease In");
-  m_curveType->addItem(EaseOut, "Ease Out");
+  m_curveType->addItem(EaseInOut, QObject::tr("Ease In-Out").toStdString());
+  m_curveType->addItem(Linear, QObject::tr("Linear").toStdString());
+  m_curveType->addItem(EaseIn, QObject::tr("Ease In").toStdString());
+  m_curveType->addItem(EaseOut, QObject::tr("Ease Out").toStdString());
   m_curveType->setDefaultValue(Linear);
   m_curveType->setValue(Linear);
   bindParam(this, "curveType", m_curveType);

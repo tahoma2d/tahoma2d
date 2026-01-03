@@ -46,7 +46,7 @@ private:
 //------------------------------------------------------------------------------
 
 TileFx::TileFx()
-    : m_mode(new TIntEnumParam(eTile, "Tile"))
+    : m_mode(new TIntEnumParam(eTile, QObject::tr("Tile").toStdString()))
     , m_xMirror(false)
     , m_yMirror(false)
     , m_margin(-1.0) {
@@ -56,8 +56,10 @@ TileFx::TileFx()
   bindParam(this, "xMirror", m_xMirror);
   bindParam(this, "yMirror", m_yMirror);
   bindParam(this, "margin", m_margin);
-  m_mode->addItem(eTileHorizontally, "Tile Horizontally");
-  m_mode->addItem(eTileVertically, "Tile Vertically");
+  m_mode->addItem(eTileHorizontally,
+                  QObject::tr("Tile Horizontally").toStdString());
+  m_mode->addItem(eTileVertically,
+                  QObject::tr("Tile Vertically").toStdString());
 
   enableComputeInFloat(true);
 }

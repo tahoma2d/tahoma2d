@@ -349,8 +349,9 @@ Iwa_FlowBlurFx::Iwa_FlowBlurFx()
     : m_length(5.0)
     , m_linear(false)
     , m_gamma(2.2)
-    , m_filterType(new TIntEnumParam(Linear, "Linear"))
-    , m_referenceMode(new TIntEnumParam(REFERENCE, "Reference Image")) {
+    , m_filterType(new TIntEnumParam(Linear, QObject::tr("Linear").toStdString()))
+    , m_referenceMode(new TIntEnumParam(
+          REFERENCE, QObject::tr("Reference Image").toStdString())) {
   addInputPort("Source", m_source);
   addInputPort("Flow", m_flow);
   addInputPort("Reference", m_reference);
@@ -365,10 +366,12 @@ Iwa_FlowBlurFx::Iwa_FlowBlurFx()
   m_length->setValueRange(0., 100.0);
   m_gamma->setValueRange(0.2, 5.0);
 
-  m_filterType->addItem(Gaussian, "Gaussian");
-  m_filterType->addItem(Flat, "Flat");
+  m_filterType->addItem(Gaussian, QObject::tr("Gaussian").toStdString());
+  m_filterType->addItem(Flat, QObject::tr("Flat").toStdString());
 
-  m_referenceMode->addItem(FLOW_BLUE_CHANNEL, "Blue Channel of Flow Image");
+  m_referenceMode->addItem(
+      FLOW_BLUE_CHANNEL,
+      QObject::tr("Blue Channel of Flow Image").toStdString());
 }
 
 void Iwa_FlowBlurFx::doCompute(TTile &tile, double frame,

@@ -701,6 +701,230 @@
         <translatorcomment>No es posible cargar el archivo %1.</translatorcomment>
         <translation></translation>
     </message>
+    <message>
+        <source>Opacity</source>
+        <translation>Opacidad</translation>
+    </message>
+    <message>
+        <source>Opacity multiply</source>
+        <translation>Opacidad: Multiplicador</translation>
+    </message>
+    <message>
+        <source>Opacity linearize</source>
+        <translation>Opacidad: Linealizar</translation>
+    </message>
+    <message>
+        <source>Radius</source>
+        <translation>Radio</translation>
+    </message>
+    <message>
+        <source>Hardness</source>
+        <translation>Definición</translation>
+    </message>
+    <message>
+        <source>Pixel feather</source>
+        <translation>Esfumado (píxeles)</translation>
+    </message>
+    <message>
+        <source>Dabs per basic radius</source>
+        <translation>Pinceladas por radio (nominal)</translation>
+    </message>
+    <message>
+        <source>Dabs per actual radius</source>
+        <translation>Pinceladas por radio (efectivo)</translation>
+    </message>
+    <message>
+        <source>Dabs per second</source>
+        <translation>Pinceladas por segundo</translation>
+    </message>
+    <message>
+        <source>GridMap Scale</source>
+        <translation>Mapa de cuadrícula: Escala</translation>
+    </message>
+    <message>
+        <source>GridMap Scale X</source>
+        <translation>Mapa de cuadrícula: Escala X</translation>
+    </message>
+    <message>
+        <source>GridMap Scale Y</source>
+        <translation>Mapa de cuadrícula: Escala Y</translation>
+    </message>
+    <message>
+        <source>Radius by random</source>
+        <translation>Radio: Aleatoriedad</translation>
+    </message>
+    <message>
+        <source>Fine speed filter</source>
+        <translation>Filtro de velocidad: Fina</translation>
+    </message>
+    <message>
+        <source>Gross speed filter</source>
+        <translation>Filtro de velocidad: Gruesa</translation>
+    </message>
+    <message>
+        <source>Fine speed gamma</source>
+        <translation>Gama de velocidad: Fina</translation>
+    </message>
+    <message>
+        <source>Gross speed gamma</source>
+        <translation>Gama de velocidad: Gruesa</translation>
+    </message>
+    <message>
+        <source>Jitter</source>
+        <translation>Alteración</translation>
+    </message>
+    <message>
+        <source>Offset Y</source>
+        <translation>Desplazamiento Y</translation>
+    </message>
+    <message>
+        <source>Offset X</source>
+        <translation>Desplazamiento X</translation>
+    </message>
+    <message>
+        <source>Angular Offset: Direction</source>
+        <translation>Desplazamiento angular: Dirección</translation>
+    </message>
+    <message>
+        <source>Angular Offset: Ascension</source>
+        <translation>Desplazamiento angular: Ascensión</translation>
+    </message>
+    <message>
+        <source>Angular Offset Mirrored: Direction</source>
+        <translation>Desplazamiento angular reflejado: Dirección</translation>
+    </message>
+    <message>
+        <source>Angular Offset Mirrored: Ascension</source>
+        <translation>Desplazamiento angular reflejado: Ascensión</translation>
+    </message>
+    <message>
+        <source>Angular Offsets Adjustment</source>
+        <translation>Desplazamiento angular: Ajuste</translation>
+    </message>
+    <message>
+        <source>Offsets Multiplier</source>
+        <translation>Desplazamientos: Multiplicador</translation>
+    </message>
+    <message>
+        <source>Offset by speed</source>
+        <translation>Desplazamiento por velocidad</translation>
+    </message>
+    <message>
+        <source>Offset by speed filter</source>
+        <translation>Desplazamiento por velocidad: Filtro</translation>
+    </message>
+    <message>
+        <source>Slow position tracking</source>
+        <translation>Rastreo lento de posición</translation>
+    </message>
+    <message>
+        <source>Slow tracking per dab</source>
+        <translation>Rastreo lento de posición (por pincelada)</translation>
+    </message>
+    <message>
+        <source>Tracking noise</source>
+        <translation>Rastreo: Ruido</translation>
+    </message>
+    <message>
+        <source>Color hue</source>
+        <translation>Color: Tono</translation>
+    </message>
+    <message>
+        <source>Color saturation</source>
+        <translation>Color: Saturación</translation>
+    </message>
+    <message>
+        <source>Color value</source>
+        <translation>Color: Valor</translation>
+    </message>
+    <message>
+        <source>Save color</source>
+        <translation>Guardar color</translation>
+    </message>
+    <message>
+        <source>Change color hue</source>
+        <translation>Cambiar color: Tono</translation>
+    </message>
+    <message>
+        <source>Change color lightness (HSL)</source>
+        <translation>Cambiar color: Luminosidad (TSL)</translation>
+    </message>
+    <message>
+        <source>Change color satur. (HSL)</source>
+        <translation>Cambiar color: Saturación (TSL)</translation>
+    </message>
+    <message>
+        <source>Change color value (HSV)</source>
+        <translation>Cambiar color: Valor (TSV)</translation>
+    </message>
+    <message>
+        <source>Change color satur. (HSV)</source>
+        <translation>Cambiar color: Saturación (TSV)</translation>
+    </message>
+    <message>
+        <source>Smudge</source>
+        <translation>Manchar</translation>
+    </message>
+    <message>
+        <source>Smudge length</source>
+        <translation>Manchar: Longitud</translation>
+    </message>
+    <message>
+        <source>Smudge radius</source>
+        <translation>Manchar: Radio</translation>
+    </message>
+    <message>
+        <source>Eraser</source>
+        <translation>Borrador</translation>
+    </message>
+    <message>
+        <source>Stroke threshold</source>
+        <translation>Trazo: Umbral</translation>
+    </message>
+    <message>
+        <source>Stroke duration</source>
+        <translation>Trazo: Duración</translation>
+    </message>
+    <message>
+        <source>Stroke hold time</source>
+        <translation>Trazo: Tiempo de mantenimiento</translation>
+    </message>
+    <message>
+        <source>Custom input</source>
+        <translation>Entrada personalizada</translation>
+    </message>
+    <message>
+        <source>Custom input filter</source>
+        <translation>Entrada personalizada: Filtro</translation>
+    </message>
+    <message>
+        <source>Elliptical dab: ratio</source>
+        <translation>Pincelada elíptica: Proporción</translation>
+    </message>
+    <message>
+        <source>Elliptical dab: angle</source>
+        <translation>Pincelada elíptica: Ángulo</translation>
+    </message>
+    <message>
+        <source>Direction filter</source>
+        <translation>Dirección: Filtro</translation>
+    </message>
+    <message>
+        <source>Lock alpha</source>
+        <translation>Bloquear alfa</translation>
+    </message>
+    <message>
+        <source>Colorize</source>
+        <translation>Colorear</translation>
+    </message>
+    <message>
+        <source>Snap to pixel</source>
+        <translation>Adhesión a píxeles</translation>
+    </message>
+    <message>
+        <source>Pressure gain</source>
+        <translation>Ganancia de presión</translation>
+    </message>
 </context>
 <context>
     <name>Rasterizer</name>

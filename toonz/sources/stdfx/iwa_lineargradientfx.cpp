@@ -12,7 +12,7 @@ Iwa_LinearGradientFx::Iwa_LinearGradientFx()
     , m_endPoint(TPointD(50.0, 0.0))
     , m_startColor(TPixel32::Black)
     , m_endColor(TPixel32::White)
-    , m_curveType(new TIntEnumParam(EaseInOut, "Ease In-Out"))
+    , m_curveType(new TIntEnumParam(EaseInOut, QObject::tr("Ease In-Out").toStdString()))
     , m_wave_amplitude(0.0)
     , m_wave_freq(0.0)
     , m_wave_phase(0.0) {
@@ -23,9 +23,9 @@ Iwa_LinearGradientFx::Iwa_LinearGradientFx()
   bindParam(this, "startPoint", m_startPoint);
   bindParam(this, "endPoint", m_endPoint);
 
-  m_curveType->addItem(Linear, "Linear");
-  m_curveType->addItem(EaseIn, "Ease In");
-  m_curveType->addItem(EaseOut, "Ease Out");
+  m_curveType->addItem(Linear, QObject::tr("Linear").toStdString());
+  m_curveType->addItem(EaseIn, QObject::tr("Ease In").toStdString());
+  m_curveType->addItem(EaseOut, QObject::tr("Ease Out").toStdString());
   bindParam(this, "curveType", m_curveType);
 
   m_wave_amplitude->setValueRange(0, std::numeric_limits<double>::max());

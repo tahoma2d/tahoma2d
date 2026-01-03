@@ -1,0 +1,1971 @@
+<stringtable>
+<!------------------------------ FX Menu Groups and Subgroups ------------------------------------------->
+<!-- List should match groups found in profiles\layouts\fxs\fxs.lst                                -->
+
+  <item>"Background"		"Фон"			</item>
+  <item>"Blur"			"Размытие"			</item>
+  <item>"Distort"		"Искажение"			</item>
+  <item>"Gradient"		"Градиент"			</item>
+  <item>"Image_Adjust"		"Настройка изображения"			</item>
+  <item>"Layer_Blending"	"Смешивание слоев"			</item>
+  <item>"Layer_Blending_Ino"	"Смешивание слоев (Ino)"			</item>
+  <item>"Light"			"Свет"			</item>
+  <item>"Matte"			"Matte"			</item>
+  <item>"Noise"			"Шум"			</item>
+  <item>"Render"		"Рендер"			</item>
+  <item>"Stylize"		"Стилизовать"			</item>
+  <item>"Toonz_Level"		"Цветовой индекс"			</item>
+  <item>"Shaders"		"Шейдеры"			</item>
+  <item>"Utility"		"Утилиты"			</item>
+
+<!------------------------------ FX Settings tabs/separators ---------------------------------------->
+  <item>"Add Ino"			"Добавление (Ino)"			</item>
+  <item>"Add"				"Добавление"			</item>
+  <item>"Adjust Exposure Iwa"		"Регулировка экспозиции (Iwa)"			</item>
+  <item>"Adjust Levels"			"Регулировка уровней"			</item>
+  <item>"Alpha"				"Альфа"			</item>
+  <item>"Angle"				"Угол"			</item>
+  <item>"Animation"			"Анимация"			</item>
+  <item>"Art Contour"			"Арт-контур"			</item>
+  <item>"Backlit"			"Подсветка"			</item>
+  <item>"Barrel Distort Iwa"		"Бочкообразная дисторсия (Iwa)"			</item>
+  <item>"Base"				"База"			</item>
+  <item>"Birth Color"			"Цвет при рождении"			</item>
+  <item>"Birth Params"			"Параметры рождения"			</item>
+  <item>"Bloom Iwa"			"Свечение (Iwa)"			</item>
+  <item>"Blue"				"Синий"			</item>
+  <item>"Blur Ino"			"Размытие (Ino)"			</item>
+  <item>"Blur"				"Размытие"			</item>
+  <item>"Body Highlight"		"Объёмный блик"			</item>
+  <item>"Bokeh Iwa"			"Боке (Iwa)"			</item>
+  <item>"Bokeh Ref Iwa"			"Боке с картой глубины (Iwa)"			</item>
+  <item>"Brush Tip Geometry"		"Геометрия кончика кисти"			</item>
+  <item>"Bubble Color"			"Цвет пузырей"			</item>
+  <item>"Calligraphic Line"		"Каллиграфическая линия"			</item>
+  <item>"Cast Shadow"			"Падающая тень"			</item>
+  <item>"Caustics"			"Каустика (Iwa)"			</item>
+  <item>"Channel Mixer"			"Микшер каналов"			</item>
+  <item>"Channel Selector Ino"		"Селектор каналов (Ino)"			</item>
+  <item>"Checkerboard"			"Шахматная доска"			</item>
+  <item>"Clouds"			"Облака"			</item>
+  <item>"Color and Shape"		"Цвет и форма"			</item>
+  <item>"Color Blending"		"Смешивание цветов"			</item>
+  <item>"Color Burn Ino"		"Затемнение основы (Ino)"			</item>
+  <item>"Color Card"			"Цветовая карта"			</item>
+  <item>"Color Dodge Ino"		"Осветление основы (Ino)"			</item>
+  <item>"Color Emboss"			"Цветной рельеф"			</item>
+  <item>"Color Raylit"			"Цветные лучи света (Iwa)"			</item>
+  <item>"Colors"			"Цвета"			</item>
+  <item>"Conical Transform"		"Коническая трансформация (Iwa)"			</item>
+  <item>"Contour"			"Контур"			</item>
+  <item>"Contrast"			"Контраст"			</item>
+  <item>"Corridor Gradient Iwa"		"Градиент-коридор (Iwa)"			</item>
+  <item>"Cross Dissolve Ino"		"Перекрестное растворение (Ino)"			</item>
+  <item>"Cross Dissolve"		"Перекрестное растворение"			</item>
+  <item>"Curves"			"Кривые"			</item>
+  <item>"Darken Ino"			"Затемнение (Ino)"			</item>
+  <item>"Darken"			"Затемнение"			</item>
+  <item>"Darker Color Ino"		"Темнее цвет (Ino)"			</item>
+  <item>"Density Ino"			"Плотность (Ino)"			</item>
+  <item>"Despeckle"			"Удаление крапа (Iwa)"			</item>
+  <item>"Destination"			"Назначение"			</item>
+  <item>"Diamond Grad"			"Ромбовидный градиент (Iwa)"			</item>
+  <item>"Difference mode"		"Разница (Ino)"			</item>
+  <item>"Directional Blur Iwa"		"Направленное размытие (Iwa)"			</item>
+  <item>"Directional Blur"		"Направленное размытие"			</item>
+  <item>"Dissolve"			"Растворение (Ino)"			</item>
+  <item>"Distortion Wave"		"Волновое искажение (Iwa)"			</item>
+  <item>"Distortion"			"Дисторсия"			</item>
+  <item>"Divide Ino"			"Деление (Ino)"			</item>
+  <item>"Ellipse"			"Эллипс"			</item>
+  <item>"Emboss"			"Рельеф (Iwa)"			</item>
+  <item>"End"				"Конец"			</item>
+  <item>"Environment"			"Окружение"			</item>
+  <item>"Erode/Dilate"			"Эрозия/Дилатация (Iwa)"			</item>
+  <item>"Evolution Options"		"Параметры эволюции"			</item>
+  <item>"External Palette"		"Внешняя палитра"			</item>
+  <item>"Fade-in Color"			"Цвет появления"			</item>
+  <item>"Fade-out Color"		"Цвет исчезновения"			</item>
+  <item>"Fireball"			"Огненный шар"			</item>
+  <item>"Flap Behavior"			"Махание"			</item>
+  <item>"Floor Bump Iwa"		"Рельеф пола (Iwa)"			</item>
+  <item>"Flow Blur Iwa"			"Размытие по потоку (Iwa)"			</item>
+  <item>"Flow Paint Brush Iwa"		"Кисть потока краски (Iwa)"			</item>
+  <item>"Fog Ino"			"Туман (Ino)"			</item>
+  <item>"Four Points"			"Четыре точки"			</item>
+  <item>"Fractal Noise Iwa"		"Фрактальный шум (Iwa)"			</item>
+  <item>"Free Distort"			"Свободная дисторсия"			</item>
+  <item>"Friction"			"Трение"			</item>
+  <item>"Gamma"				"Гамма"			</item>
+  <item>"Glare Iwa"			"Блик (Iwa)"			</item>
+  <item>"Glitter"			"Блеск"			</item>
+  <item>"Glow"				"Свечение"			</item>
+  <item>"GPU HSL Blend"			"Смешивание HSL (GPU)"			</item>
+  <item>"Gradient Warp Iwa"		"Искажение градиентом (Iwa)"			</item>
+  <item>"Gravity"			"Гравитация"			</item>
+  <item>"Green"				"Зелёный"			</item>
+  <item>"Hard Light Ino"		"Жёсткий свет (Ino)"			</item>
+  <item>"Hard Mix Ino"			"Жёсткое смешивание (Ino)"			</item>
+  <item>"HLS Add Ino"			"Добавление HLS (Ino)"			</item>
+  <item>"HLS Adjust Ino"		"Регулировка HLS (Ino)"			</item>
+  <item>"HLS Noise Ino"			"Шум HLS (Ino)"			</item>
+  <item>"HSV Add Ino"			"Добавление HSV (Ino)"			</item>
+  <item>"HSV Adjust Ino"		"Регулировка HSV (Ino)"			</item>
+  <item>"HSV Key"			"Ключ HSV"			</item>
+  <item>"HSV Noise Ino"			"Шум HSV (Ino)"			</item>
+  <item>"HSV Scale"			"Масштаб HSV"			</item>
+  <item>"Inner Shape"			"Внутренняя форма"			</item>
+  <item>"iwa Bokeh Advanced"		"Расширенное боке (Iwa)"			</item>
+  <item>"Kaleido"			"Калейдоскоп"			</item>
+  <item>"Level Auto Ino"		"Автоуровни (Ino)"			</item>
+  <item>"Level Master Ino"		"Мастер-уровни (Ino)"			</item>
+  <item>"Level RGBA Ino"		"Уровни RGBA (Ino)"			</item>
+  <item>"Lifetime"			"Время жизни"			</item>
+  <item>"Light Direction"		"Направление света"			</item>
+  <item>"Light Spot"			"Световое пятно"			</item>
+  <item>"Lighten Ino"			"Осветление (Ino)"			</item>
+  <item>"Lighter Color Ino"		"Светлее цвет (Ino)"			</item>
+  <item>"Limits"			"Ограничения"			</item>
+  <item>"Line Blur Ino"			"Линейное размытие (Ino)"			</item>
+  <item>"Linear Burn Ino"		"Линейное выжигание (Ino)"			</item>
+  <item>"Linear Dodge Ino"		"Линейное осветление (Ino)"			</item>
+  <item>"Linear Gradient (Classic)"	"Линейный градиент (классический)"			</item>
+  <item>"Linear Gradient"		"Линейный градиент"			</item>
+  <item>"Linear Light Ino"		"Линейный свет (Ino)"			</item>
+  <item>"Linear Wave"			"Линейная волна"			</item>
+  <item>"Local Blur"			"Локальное размытие"			</item>
+  <item>"Local Transp"			"Локальная прозрачность"			</item>
+  <item>"Max Min Ino"			"Максимум/Минимум (Ino)"			</item>
+  <item>"Median Filter Ino"		"Медианный фильтр (Ino)"			</item>
+  <item>"Median Ino"			"Медиана (Ino)"			</item>
+  <item>"Mosaic"			"Мозаика"			</item>
+  <item>"Motion Blur Ino"		"Размытие в движении (Ino)"			</item>
+  <item>"Motion Blur Iwa"		"Размытие в движении (Iwa)"			</item>
+  <item>"Motion Blur"			"Размытие в движении"			</item>
+  <item>"Motion Flow Iwa"		"Поток движения (Iwa)"			</item>
+  <item>"Motion Wind Ino"		"Ветер движения (Ino)"			</item>
+  <item>"Multi Linear"			"Мульти-линейный"			</item>
+  <item>"Multi Radial"			"Мульти-радиальный"			</item>
+  <item>"Multiply Ino"			"Умножение (Ino)"			</item>
+  <item>"Multiply"			"Умножение"			</item>
+  <item>"Multitone"			"Мультитон"			</item>
+  <item>"Negate Ino"			"Негатив (Ino)"			</item>
+  <item>"Noise"				"Шум"			</item>
+  <item>"Nothing"			"Ничего"			</item>
+  <item>"Opacity"			"Непрозрачность"			</item>
+  <item>"Outer Shape"			"Внешняя форма"			</item>
+  <item>"OutLine"			"Контур"			</item>
+  <item>"Over Ino"			"Перекрытие (Ino)"			</item>
+  <item>"Overlay Ino"			"Наложение (Ino)"			</item>
+  <item>"Palette Filter"		"Фильтр палитры"			</item>
+  <item>"Particle Generation"		"Генерация частиц"			</item>
+  <item>"Particle"			"Частица"			</item>
+  <item>"Pattern"			"Узор"			</item>
+  <item>"Perlin Noise"			"Шум Перлина"			</item>
+  <item>"Perspective Distort Iwa"	"Перспективная дисторсия (Iwa)"			</item>
+  <item>"Pin Light Ino"			"Точечный свет (Ino)"			</item>
+  <item>"Pivot"				"Опорная точка"			</item>
+  <item>"PN Clouds Ino"			"Облака Перлина (Ino)"			</item>
+  <item>"PN Perspective Iwa"		"Перспектива Перлина (Iwa)"			</item>
+  <item>"Posterize"			"Постеризация"			</item>
+  <item>"Radial Blur GPU"		"Радиальное размытие (GPU)"			</item>
+  <item>"Radial Blur Ino"		"Радиальное размытие (Ino)"			</item>
+  <item>"Radial Blur"			"Радиальное размытие"			</item>
+  <item>"Radial Gradient"		"Радиальный градиент"			</item>
+  <item>"Rainbow Iwa"			"Радуга (Iwa)"			</item>
+  <item>"Random Wave"			"Случайная волна"			</item>
+  <item>"Raylit"			"Лучи света"			</item>
+  <item>"Red"				"Красный"			</item>
+  <item>"Reference Frame"		"Опорный кадр"			</item>
+  <item>"Reflection mode"		"Режим отражения"			</item>
+  <item>"Refraction mode"		"Режим преломления"			</item>
+  <item>"RGB Fade"			"Затухание RGB"			</item>
+  <item>"RGB Key"			"Ключ RGB"			</item>
+  <item>"RGB"				"RGB"			</item>
+  <item>"RGBA Cut"			"Обрезка RGBA"			</item>
+  <item>"RGBA Scale"			"Масштаб RGBA"			</item>
+  <item>"Ripple"			"Рябь"			</item>
+  <item>"Ripples"			"Волны"			</item>
+  <item>"Rotation"			"Вращение"			</item>
+  <item>"Salt Pepper Noise"		"Шум «соль и перец»"			</item>
+  <item>"Scale"				"Масштаб"			</item>
+  <item>"Scattering"			"Рассеивание"			</item>
+  <item>"Screen Ino"			"Экран (Ino)"			</item>
+  <item>"Shape"				"Форма"			</item>
+  <item>"Sharpen"			"Резкость"			</item>
+  <item>"Shift"				"Сдвиг"			</item>
+  <item>"Size Increase"			"Увеличение размера"			</item>
+  <item>"Size, Mass and Orientation"	"Размер, масса и ориентация"			</item>
+  <item>"Smudge"			"Размазывание"			</item>
+  <item>"Soft Light Ino"		"Мягкий свет (Ino)"			</item>
+  <item>"Solarize"			"Соляризация"			</item>
+  <item>"Source Area"			"Область источника"			</item>
+  <item>"Source Image"			"Изображение-источник"			</item>
+  <item>"Source"			"Источник"			</item>
+  <item>"Source1"			"Источник1"			</item>
+  <item>"Source2"			"Источник2"			</item>
+  <item>"Source3"			"Источник3"			</item>
+  <item>"Source4"			"Источник4"			</item>
+  <item>"Source5"			"Источник5"			</item>
+  <item>"Spectrum Iwa"			"Спектр (Iwa)"			</item>
+  <item>"Speed"				"Скорость"			</item>
+  <item>"Spin Blur GPU"			"Вращательное размытие (GPU)"			</item>
+  <item>"Spin Blur Ino"			"Вращательное размытие (Ino)"			</item>
+  <item>"Spin Blur"			"Вращательное размытие"			</item>
+  <item>"Spin Gradient Iwa"		"Вращательный градиент (Iwa)"			</item>
+  <item>"Spiral"			"Спираль"			</item>
+  <item>"Square Gradient"		"Квадратный градиент"			</item>
+  <item>"Starsky"			"Звёздное небо"			</item>
+  <item>"Start"				"Начало"			</item>
+  <item>"Sub Settings"			"Дополнительные настройки"			</item>
+  <item>"Subtract Ino"			"Вычитание (Ino)"			</item>
+  <item>"Subtract"			"Вычитание"			</item>
+  <item>"Sunflare"			"Солнечная вспышка"			</item>
+  <item>"Tangent Flow Iwa"		"Поток по касательной (Iwa)"			</item>
+  <item>"Target Spot"			"Целевое пятно"			</item>
+  <item>"Text Iwa"			"Текст (Iwa)"			</item>
+  <item>"Texture Offset"		"Смещение текстуры"			</item>
+  <item>"Texture"			"Текстура"			</item>
+  <item>"Thickness variation"		"Вариация толщины"			</item>
+  <item>"Tile Horizontally"		"Мозаика по горизонтали"			</item>
+  <item>"Tile Iwa"			"Мозаика (Iwa)"			</item>
+  <item>"Tile Vertically"		"Мозаика по вертикали"			</item>
+  <item>"Tile"				"Мозаика"			</item>
+  <item>"TimeCode Iwa"			"Тайм-код (Iwa)"			</item>
+  <item>"Tip Placement"			"Размещение кончика"			</item>
+  <item>"Top Layer"			"Верхний слой"			</item>
+  <item>"Trail"				"След"			</item>
+  <item>"Transform"			"Трансформация"			</item>
+  <item>"Transparency"			"Прозрачность"			</item>
+  <item>"Transverse Wave"		"Поперечная волна"			</item>
+  <item>"Vector Control"		"Управление вектором"			</item>
+  <item>"Vivid Light Ino"		"Яркий свет (Ino)"			</item>
+  <item>"Warp HV Ino"			"Искажение HV (Ino)"			</item>
+  <item>"Warp"				"Искажение"			</item>
+  <item>"Waves"				"Волны"			</item>
+  <item>"Wavy"				"Волнистый"			</item>
+  <item>"Wind"				"Ветер"			</item>
+
+<!------------------------------ FX ------------------------------------------->
+
+  <item>"addFx"			"Добавление"			</item>
+  <item>"addFx.value"		"Интенсивность"			</item>
+  <item>"blendFx"			"Перекрестное растворение"		</item>
+  <item>"blendFx.value"		"Интенсивность"		</item>
+  <item>"colorBurnFx"		"Затемнение основы"		</item>
+  <item>"colorDodgeFx"		"Осветление основы"		</item>
+  <item>"multFx"			"Умножение"			</item>
+  <item>"multFx.value"		"Интенсивность"			</item>
+  <item>"multFx.matte"		"Альфа"			</item>
+  <item>"screenFx"			"Экран"			</item>
+  <item>"subFx"			"Вычитание"		</item>
+  <item>"subFx.matte"		"Альфа"			</item>
+  <item>"STD_toneCurveFx"	"Кривые"		</item>
+  <item>"STD_toneCurveFx.curve"		""	</item>
+  <item>"STD_adjustLevelsFx"	"Регулировка уровней"		</item>
+  <item>"STD_adjustLevelsFx.in_rgb"	"Вход RGB"			</item>
+  <item>"STD_adjustLevelsFx.out_rgb"	"Выход RGB"			</item>
+  <item>"STD_adjustLevelsFx.in_r"	"Вход красного"			</item>
+  <item>"STD_adjustLevelsFx.out_r"	"Выход красного"			</item>
+  <item>"STD_adjustLevelsFx.in_g"	"Вход зелёного"			</item>
+  <item>"STD_adjustLevelsFx.out_g"	"Выход зелёного"			</item>
+  <item>"STD_adjustLevelsFx.in_b"	"Вход синего"			</item>
+  <item>"STD_adjustLevelsFx.out_b"	"Выход синего"			</item>
+  <item>"STD_adjustLevelsFx.in_m"	"Вход альфа"			</item>
+  <item>"STD_adjustLevelsFx.out_m"	"Выход альфа"			</item>
+  <item>"STD_adjustLevelsFx.gamma_rgb"	"Гамма RGB"			</item>
+  <item>"STD_adjustLevelsFx.gamma_r"	"Гамма красного"			</item>
+  <item>"STD_adjustLevelsFx.gamma_g"	"Гамма зелёного"			</item>
+  <item>"STD_adjustLevelsFx.gamma_b"	"Гамма синего"			</item>
+  <item>"STD_adjustLevelsFx.gamma_m"	"Гамма альфа"			</item>
+  
+  <item>"STD_backlitFx"		"Подсветка"			</item>
+  <item>"STD_backlitFx.value"	"Интенсивность"		</item>
+  <item>"STD_backlitFx.color"	"Цвет"			</item>
+  <item>"STD_backlitFx.fade"		"Затухание"			</item>
+
+ 
+  <item>"STD_blurFx"		"Размытие"			</item>
+  <item>"STD_blurFx.value"		"Значение"			</item>
+  <item>"STD_blurFx.spread"		"Распространение"			</item>
+  <item>"STD_despeckleFx"		"Удаление крапа"		</item>
+  <item>"STD_despeckleFx.size"		"Размер"		</item>
+  <item>"STD_despeckleFx.detect_speckles_on"		"Обнаружение по"		</item>
+
+  <item>"STD_directionalBlurFx"		"Направленное размытие"		</item>
+  <item>"STD_directionalBlurFx.angle"		"Угол"			</item>
+  <item>"STD_directionalBlurFx.intensity"		"Интенсивность"			</item>
+  <item>"STD_directionalBlurFx.bidirectional"	"Двунаправленное"		</item>
+  <item>"STD_directionalBlurFx.spread"		"Распространение"			</item>
+
+  <item>"STD_brightContFx"		"Яркость и контраст"	</item>
+  <item>"STD_brightContFx.brightness""Яркость"		</item>
+  <item>"STD_brightContFx.contrast"	"Контраст"		</item>
+
+  <item>"STD_bodyHighLightFx" 	"Объёмный блик" 		</item>
+  <item>"STD_bodyHighLightFx.mode" 	"Режим" 			</item>
+  <item>"STD_bodyHighLightFx.point" 	"Смещение" 		</item>
+  <item>"STD_bodyHighLightFx.transparency" 	"Прозрачность" 		</item>
+  <item>"STD_bodyHighLightFx.blur" 	"Размытие" 		</item>
+  <item>"STD_bodyHighLightFx.color" 	"Цвет" 		</item>
+  <item>"STD_bodyHighLightFx.invert" 	"Инвертировать" 		</item>
+
+
+  <item>"STD_castShadowFx"			"Падающая тень"	</item>
+  <item>"STD_castShadowFx.distort_type"	"Режим"	</item>
+  <item>"STD_castShadowFx.bottom_left_a"	"Нижний левый"	</item>
+  <item>"STD_castShadowFx.bottom_left_b"	"Нижний левый"		</item>
+  <item>"STD_castShadowFx.bottom_right_a"	"Нижний правый"	</item>
+  <item>"STD_castShadowFx.bottom_right_b"	"Нижний правый"		</item>
+  <item>"STD_castShadowFx.top_right_a"	"Верхний правый"	</item>
+  <item>"STD_castShadowFx.top_right_b"	"Верхний правый"		</item>
+  <item>"STD_castShadowFx.top_left_a"	"Верхний левый"	</item>
+  <item>"STD_castShadowFx.top_left_b"	"Верхний левый"		</item>
+  <item>"STD_castShadowFx.deactivate"	"Деактивировать"	</item>
+  <item>"STD_castShadowFx.color"		"Цвет"		</item>
+  <item>"STD_castShadowFx.fade"		"Затухание"	</item>
+  <item>"STD_castShadowFx.up_transp"	"Верхняя прозрачность"	</item>
+  <item>"STD_castShadowFx.down_transp"	"Нижняя прозрачность"	</item>
+  <item>"STD_castShadowFx.up_blur"		"Верхнее размытие"		</item>
+  <item>"STD_castShadowFx.down_blur"	"Нижнее размытие"	</item>
+
+
+  <item>"STD_changeColorFx"	"Смена цвета"		</item>
+  <item>"STD_changeColorFx.range"	"Диапазон"			</item>
+  <item>"STD_changeColorFx.falloff"	"Смягчение"			</item>
+  <item>"STD_changeColorFx.from_color"	"Исходный цвет"</item>
+  <item>"STD_changeColorFx.to_color"	"Целевой цвет"			</item>
+
+  <item>"STD_channelMixerFx"		"Микшер каналов"	</item>
+  <item>"STD_channelMixerFx.red_to_red"	"Красный в красный"	</item>
+  <item>"STD_channelMixerFx.green_to_red"	"Зелёный в красный"	</item>
+  <item>"STD_channelMixerFx.blue_to_red"	"Синий в красный"	</item>
+  <item>"STD_channelMixerFx.matte_to_red"	"Альфа в красный"	</item>
+  <item>"STD_channelMixerFx.red_to_green"	"Красный в зелёный"	</item>
+  <item>"STD_channelMixerFx.green_to_green"	"Зелёный в зелёный"	</item>
+  <item>"STD_channelMixerFx.blue_to_green"	"Синий в зелёный"	</item>
+  <item>"STD_channelMixerFx.matte_to_green"	"Альфа в зелёный"	</item>
+  <item>"STD_channelMixerFx.red_to_blue"	"Красный в синий"	</item>
+  <item>"STD_channelMixerFx.green_to_blue"	"Зелёный в синий"	</item>
+  <item>"STD_channelMixerFx.blue_to_blue"	"Синий в синий"	</item>
+  <item>"STD_channelMixerFx.matte_to_blue"	"Альфа в синий"	</item>
+  <item>"STD_channelMixerFx.red_to_matte"	"Красный в альфа"	</item>
+  <item>"STD_channelMixerFx.green_to_matte"	"Зелёный в альфа"	</item>
+  <item>"STD_channelMixerFx.blue_to_matte"	"Синий в альфа"	</item>
+  <item>"STD_channelMixerFx.matte_to_matte"	"Альфа в альфа"	</item>
+
+  <item>"STD_cloudsFx"			"Облака"		</item>
+  <item>"STD_cloudsFx.type"			"Тип"		</item>
+  <item>"STD_cloudsFx.size"			"Размер"		</item>
+  <item>"STD_cloudsFx.min"			"Минимум"		</item>
+  <item>"STD_cloudsFx.max"			"Максимум"		</item>
+  <item>"STD_cloudsFx.evolution"		"Эволюция"	</item>
+  <item>"STD_cloudsFx.colors"		"Цвета"		</item>
+
+  <item>"STD_colorEmbossFx"		"Цветной рельеф"	</item>
+  <item>"STD_colorEmbossFx.intensity"		"Интенсивность"	</item>
+  <item>"STD_colorEmbossFx.elevation"	"Расстояние"	</item>
+  <item>"STD_colorEmbossFx.direction"		"Направление"	</item>
+  <item>"STD_colorEmbossFx.radius"		"Радиус"		</item>
+  
+  <item>"STD_cornerPinFx"			"Закреплённая текстура"	</item>
+  <item>"STD_cornerPinFx.distort_type"	"Режим"	</item>
+  <item>"STD_cornerPinFx.mode" "Режим" </item>
+  <item>"STD_cornerPinFx.value" "Значение" </item>
+  <item>"STD_cornerPinFx.keep"		"Действие"		</item>
+  <item>"STD_cornerPinFx.bottom_left_a"	"Нижний левый"	</item>
+  <item>"STD_cornerPinFx.bottom_left_b"	"Нижний левыйX"		</item>
+  <item>"STD_cornerPinFx.bottom_right_a"	"Нижний правый"	</item>
+  <item>"STD_cornerPinFx.bottom_right_b"	"Нижний правый"		</item>
+  <item>"STD_cornerPinFx.top_right_a"	"Верхний правый"	</item>
+  <item>"STD_cornerPinFx.top_right_b"	"Верхний правый"		</item>
+  <item>"STD_cornerPinFx.top_left_a"		"Верхний левый"	</item>
+  <item>"STD_cornerPinFx.top_left_b"		"Верхний левый"		</item>
+  <item>"STD_cornerPinFx.deactivate"		"Деактивировать"	</item>
+  <item>"STD_cornerPinFx.pattern"		"Узор"	</item>
+
+  <item>"STD_diamondGradientFx"		"Ромбовидный градиент"	</item>
+  <item>"STD_diamondGradientFx.colors"	"Цвета"		</item>
+  <item>"STD_diamondGradientFx.size"		"Размер"		</item>
+
+  <item>"STD_dissolveFx"			"Растворение"		</item>
+  <item>"STD_dissolveFx.intensity"		"Интенсивность"	</item>
+  <item>"STD_embossFx"			"Рельеф"		</item>
+  <item>"STD_embossFx.intensity"		"Интенсивность"	</item>
+  <item>"STD_embossFx.elevation"		"Расстояние"	</item>
+  <item>"STD_embossFx.direction"		"Направление"	</item>
+  <item>"STD_embossFx.radius"		"Радиус"		</item>
+
+  <item>"STD_sharpenFx"			"Резкость"		</item>
+  <item>"STD_sharpenFx.intensity"		"Интенсивность"	</item>
+  <item>"STD_externalPaletteFx"		"Внешняя палитра"	</item>
+
+  <item>"STD_fadeFx"			"Прозрачность"		</item>
+  <item>"STD_fadeFx.value"			"Интенсивность"	</item>
+
+  <item>"STD_fourPointsGradientFx"		"Четыре точки"	</item>
+  <item>"STD_fourPointsGradientFx.Point_1"	"Точка 1"		</item>
+  <item>"STD_fourPointsGradientFx.Color_1"	"Цвет 1"		</item>
+  <item>"STD_fourPointsGradientFx.Point_2"	"Точка 2"		</item>
+  <item>"STD_fourPointsGradientFx.Color_2"	"Цвет 2"		</item>
+  <item>"STD_fourPointsGradientFx.Point_3"	"Точка 3"		</item>
+  <item>"STD_fourPointsGradientFx.Color_3"	"Цвет 3"		</item>
+  <item>"STD_fourPointsGradientFx.Point_4"	"Точка 4"		</item>
+  <item>"STD_fourPointsGradientFx.Color_4"	"Цвет 4"		</item>
+
+  <item>"STD_freeDistortFx" 			"Свободная дисторсия" 	</item>
+  <item>"STD_freeDistortFx.distort_type"	"Режим"	</item>
+  <item>"STD_freeDistortFx.bottom_left_a"	"Нижний левый"	</item>
+  <item>"STD_freeDistortFx.bottom_left_b"	"Нижний левый"		</item>
+  <item>"STD_freeDistortFx.bottom_right_a"	"Нижний правый"	</item>
+  <item>"STD_freeDistortFx.bottom_right_b"	"Нижний правый"		</item>
+  <item>"STD_freeDistortFx.top_right_a"	"Верхний правый"	</item>
+  <item>"STD_freeDistortFx.top_right_b"	"Верхний правый"		</item>
+  <item>"STD_freeDistortFx.top_left_a"	"Верхний левый"	</item>
+  <item>"STD_freeDistortFx.top_left_b"	"Верхний левый"		</item>
+  <item>"STD_freeDistortFx.deactivate"	"Деактивировать"	</item>
+
+  <item>"STD_gammaFx"			"Гамма"		</item>
+  <item>"STD_gammaFx.value"		"Значение"		</item>
+
+  <item>"STD_colorRaylitFx"			"Цветные лучи света"	</item>
+  <item>"STD_colorRaylitFx.p"			"Центр"	</item>
+  <item>"STD_colorRaylitFx.z"			"Расстояние"	</item>
+  <item>"STD_colorRaylitFx.intensity"		"Интенсивность"	</item>
+  <item>"STD_colorRaylitFx.decay"		"Затухание"		</item>
+  <item>"STD_colorRaylitFx.smoothness"		"Сглаженность"	</item>
+  <item>"STD_colorRaylitFx.radius"		"Радиус"		</item>
+  <item>"STD_colorRaylitFx.includeInput"	"Сохранить изображение"	</item>
+
+  <item>"STD_erodeDilateFx"			"Эрозия/Дилатация"	</item>
+  <item>"STD_erodeDilateFx.radius"		"Радиус"	</item>
+  <item>"STD_erodeDilateFx.type"		"Тип"		</item>
+
+  <item>"STD_glowFx"			"Свечение"		</item>
+  <item>"STD_glowFx.value"			"Размытие"		</item>
+  <item>"STD_glowFx.brightness"		"Яркость"	</item>
+  <item>"STD_glowFx.color"			"Цвет"		</item>
+  <item>"STD_glowFx.fade"			"Затухание"		</item>
+
+  <item>"STD_hsvAdjustFx"			"Регулировка HSV"	</item>
+  <item>"STD_hsvAdjustFx.hue"		"Оттенок"		</item>
+  <item>"STD_hsvAdjustFx.saturation"		"Насыщенность"	</item>
+  <item>"STD_hsvAdjustFx.value"		"Значение"		</item>
+
+  <item>"STD_hsvKeyFx" 			"Ключ HSV" 	</item>
+  <item>"STD_hsvKeyFx.h" 			"Оттенок" 	</item>
+  <item>"STD_hsvKeyFx.s" 			"Насыщенность" 	</item>
+  <item>"STD_hsvKeyFx.v" 			"Значение" 	</item>
+  <item>"STD_hsvKeyFx.h_range" 			"Диапазон оттенка" 	</item>
+  <item>"STD_hsvKeyFx.s_range" 			"Диапазон насыщенности" 	</item>
+  <item>"STD_hsvKeyFx.v_range" 			"Диапазон значения" 	</item>
+  <item>"STD_hsvKeyFx.invert" 			"Инвертировать" 	</item>
+
+
+  <item>"STD_hsvScaleFx"			"Масштаб HSV"	</item>
+  <item>"STD_hsvScaleFx.hue"			"Оттенок"	</item>
+  <item>"STD_hsvScaleFx.saturation"			"Насыщенность"	</item>
+  <item>"STD_hsvScaleFx.value"			"Значение"	</item>
+  <item>"STD_hsvScaleFx.hue_scale"			"Масштаб оттенка"	</item>
+  <item>"STD_hsvScaleFx.saturation_scale"			"Масштаб насыщенности"	</item>
+  <item>"STD_hsvScaleFx.value_scale"			"Масштаб значения"	</item>
+
+  <item>"STD_kaleidoFx"			"Калейдоскоп"	</item>
+  <item>"STD_kaleidoFx.center"		"Центр"	</item>
+  <item>"STD_kaleidoFx.angle"		"Угол"		</item>
+  <item>"STD_kaleidoFx.count"		"Количество"		</item>
+
+  <item>"STD_lightSpotFx"			"Световое пятно"	</item>
+  <item>"STD_lightSpotFx.softness"		"Мягкость"	</item>
+  <item>"STD_lightSpotFx.a"			"Ширина"		</item>
+  <item>"STD_lightSpotFx.b"			"Высота"		</item>
+  <item>"STD_lightSpotFx.color"		"Цвет"		</item>
+
+  <item>"STD_linearGradientFx"		"Линейный градиент"	</item>
+  <item>"STD_linearGradientFx.period"		"Размер"		</item>
+  <item>"STD_linearGradientFx.wave_amplitude"	"Амплитуда"	</item>
+  <item>"STD_linearGradientFx.wave_frequency"	"Частота"	</item>
+  <item>"STD_linearGradientFx.wave_phase"		"Фаза"		</item>
+  <item>"STD_linearGradientFx.color1"		"Цвет 1"		</item>
+  <item>"STD_linearGradientFx.color2"		"Цвет 2"		</item>
+  <item>"STD_linearGradientFx.curveType"		"Тип"		</item>
+
+  <item>"STD_linearWaveFx"		"Линейная волна"	</item>
+  <item>"STD_linearWaveFx.period"		"Период"		</item>
+  <item>"STD_linearWaveFx.count"		"Количество"		</item>
+  <item>"STD_linearWaveFx.cycle"		"Фаза"		</item>
+  <item>"STD_linearWaveFx.amplitude"		"Амплитуда"		</item>
+  <item>"STD_linearWaveFx.frequency"		"Частота"		</item>
+  <item>"STD_linearWaveFx.phase"		"Цикл"		</item>
+  <item>"STD_linearWaveFx.angle"		"Угол"		</item>
+  <item>"STD_linearWaveFx.intensity"		"Интенсивность"		</item>
+  <item>"STD_linearWaveFx.sensitivity"		"Чувствительность"		</item>
+  <item>"STD_linearWaveFx.sharpen"	"Резкость"		</item>
+
+  <item>"STD_mosaicFx"				"Мозаика"		</item>
+  <item>"STD_mosaicFx.size"			"Размер"		</item>
+  <item>"STD_mosaicFx.distance"		"Расстояние"		</item>
+  <item>"STD_mosaicFx.bg_color"		"Цвет фона"		</item>
+  <item>"STD_mosaicFx.shape"			"Форма"		</item>
+
+  <item>"STD_multiLinearGradientFx"			"Мульти-линейный градиент"	</item>
+  <item>"STD_multiLinearGradientFx.period"		"Период"			</item>
+  <item>"STD_multiLinearGradientFx.count"		"Количество"		</item>
+  <item>"STD_multiLinearGradientFx.cycle"		"Цикл"			</item>
+  <item>"STD_multiLinearGradientFx.wave_amplitude"	"Амплитуда"		</item>
+  <item>"STD_multiLinearGradientFx.wave_frequency"	"Частота"		</item>
+  <item>"STD_multiLinearGradientFx.wave_phase"	"Фаза"			</item>
+  <item>"STD_multiLinearGradientFx.colors"		"Цвета"			</item>
+  <item>"STD_multiLinearGradientFx.curveType"		"Тип"		</item>
+
+  <item>"STD_localBlurFx"		"Локальное размытие"		</item>
+  <item>"STD_localBlurFx.value"		"Интенсивность"		</item>
+
+  <item>"STD_localTransparencyFx"		"Локальная прозрачность"	</item>
+  <item>"STD_localTransparencyFx.value"	"Интенсивность"		</item>
+
+  <item>"STD_motionBlurFx"			"Размытие в движении"	</item>
+  <item>"STD_motionBlurFx.intensity"		"Интенсивность"	</item>
+  <item>"STD_motionBlurFx.spread"		"Распространение"		</item>
+  <item>"STD_multiToneFx"			"Мультитон"	</item>
+  <item>"STD_multiToneFx.colors"		"Цвета"		</item>
+
+  <item>"STD_noiseFx"		"Шум"		</item>
+  <item>"STD_noiseFx.Intensity"	"Интенсивность"	</item>
+  <item>"STD_noiseFx.Red"		"Красный"		</item>
+  <item>"STD_noiseFx.Green"	"Зелёный"		</item>
+  <item>"STD_noiseFx.Blue"		"Синий"		</item>
+  <item>"STD_noiseFx.Black_White"	"Чёрно-белый"	</item>
+  <item>"STD_noiseFx.Animate"	"Случайная анимация"	</item>
+
+  <item>"STD_nothingFx"		"Пропустить"		</item>
+
+  <item>"STD_paletteFilterFx"	"Фильтр палитры"	</item>
+  <item>"STD_paletteFilterFx.keep"	"Действие"	</item>
+  <item>"STD_paletteFilterFx.type"	"Применить к"	</item>
+
+
+
+
+
+  <item>"STD_perlinNoiseFx"			"Шум Перлина"	</item>
+  <item>"STD_perlinNoiseFx.size"		"Размер"		</item>
+  <item>"STD_perlinNoiseFx.type"		"Тип"		</item>
+  <item>"STD_perlinNoiseFx.evolution"		"Эволюция"	</item>
+  <item>"STD_perlinNoiseFx.intensity"		"Интенсивность"	</item>
+  <item>"STD_perlinNoiseFx.offsetx"		"Смещение по горизонтали"	</item>
+  <item>"STD_perlinNoiseFx.offsety"		"Смещение по вертикали"	</item>
+  <item>"STD_perlinNoiseFx.matte"		"Альфа"		</item>
+
+  <item>"STD_posterizeFx"			"Постеризация"	</item>
+  <item>"STD_posterizeFx.levels"		"Уровни"		</item>
+
+  <item>"STD_premultiplyFx"			"Премножить"	</item>
+
+
+  <item>"STD_radialBlurFx"		"Радиальное размытие"	</item>
+  <item>"STD_radialBlurFx.point"		"Центр"		</item>
+  <item>"STD_radialBlurFx.radius"		"Радиус"		</item>
+  <item>"STD_radialBlurFx.blur"		"Размытие"				</item>
+
+
+  <item>"STD_radialGradientFx"		"Радиальный градиент"	</item>
+  <item>"STD_radialGradientFx.period"		"Внешний размер"		</item>
+  <item>"STD_radialGradientFx.innerperiod"		"Внутренний размер"		</item>
+  <item>"STD_radialGradientFx.color1"		"Цвет 1"		</item>
+  <item>"STD_radialGradientFx.color2"		"Цвет 2"		</item>
+  <item>"STD_radialGradientFx.curveType"		"Тип"		</item>
+
+
+  <item>"STD_randomWaveFx"		"Случайная волна"	</item>
+  <item>"STD_randomWaveFx.evolution"		"Эволюция"		</item>
+  <item>"STD_randomWaveFx.positionx"		"Позиция X"		</item>
+  <item>"STD_randomWaveFx.positiony"		"Позиция Y"		</item>
+  <item>"STD_randomWaveFx.intensity"		"Интенсивность"		</item>
+  <item>"STD_randomWaveFx.sensitivity"		"Чувствительность"		</item>
+  <item>"STD_randomWaveFx.sharpen"	"Резкость"		</item>
+
+
+  <item>"STD_rippleFx"		"Рябь"	</item>
+  <item>"STD_rippleFx.period"		"Период"		</item>
+  <item>"STD_rippleFx.count"		"Количество"		</item>
+  <item>"STD_rippleFx.cycle"		"Цикл"		</item>
+  <item>"STD_rippleFx.center"		"Центр"		</item>
+  <item>"STD_rippleFx.scalex"		"Масштаб X"		</item>
+  <item>"STD_rippleFx.scaley"		"Масштаб Y"		</item>
+  <item>"STD_rippleFx.angle"		"Угол"		</item>
+  <item>"STD_rippleFx.intensity"		"Интенсивность"		</item>
+  <item>"STD_rippleFx.sensitivity"		"Чувствительность"		</item>
+  <item>"STD_rippleFx.sharpen"	"Резкость"		</item>
+
+  <item>"STD_rotationalBlurFx"		"Вращательное размытие"	</item>
+  <item>"STD_rotationalBlurFx.point"		"Центр"		</item>
+  <item>"STD_rotationalBlurFx.radius"		"Радиус"		</item>
+  <item>"STD_rotationalBlurFx.blur"		"Размытие"		        </item>
+
+
+  <item>"STD_multiRadialGradientFx"		"Мульти-радиальный градиент"	</item>
+  <item>"STD_multiRadialGradientFx.period"	"Период"			</item>
+  <item>"STD_multiRadialGradientFx.count"	"Количество"		</item>
+  <item>"STD_multiRadialGradientFx.cycle"	"Цикл"			</item>
+  <item>"STD_multiRadialGradientFx.colors"	"Цвета"			</item>
+  <item>"STD_multiRadialGradientFx.curveType"		"Тип"		</item>
+
+  <item>"STD_raylitFx"			"Лучи света"	</item>
+  <item>"STD_raylitFx.p"		"Центр"	</item>
+  <item>"STD_raylitFx.z"		"Расстояние"	</item>
+  <item>"STD_raylitFx.color"		"Цвет"		</item>
+  <item>"STD_raylitFx.intensity"	"Интенсивность"	</item>
+  <item>"STD_raylitFx.decay"		"Затухание"		</item>
+  <item>"STD_raylitFx.smoothness"	"Сглаженность"	</item>
+  <item>"STD_raylitFx.radius"		"Радиус"		</item>
+  <item>"STD_raylitFx.includeInput"	"Сохранить изображение"	</item>
+  <item>"STD_raylitFx.invert"		"Инвертировать"	</item>
+
+  <item>"STD_rgbKeyFx" 		"Ключ RGB" 	</item>
+  <item>"STD_rgbKeyFx.color" 		"Цвет" 	</item>
+  <item>"STD_rgbKeyFx.r_range" 		"Диапазон красного" 	</item>
+  <item>"STD_rgbKeyFx.g_range" 		"Диапазон зелёного" 	</item>
+  <item>"STD_rgbKeyFx.b_range" 		"Диапазон синего" 	</item>
+  <item>"STD_rgbKeyFx.invert" 		"Инвертировать" 	</item>
+
+  <item>"STD_rgbmCutFx"		"Обрезка RGBA"	</item>
+  <item>"STD_rgbmCutFx.r_range"	"Красный"		</item>
+  <item>"STD_rgbmCutFx.g_range"	"Зелёный"		</item>
+  <item>"STD_rgbmCutFx.b_range"	"Синий"		</item>
+  <item>"STD_rgbmCutFx.m_range"	"Альфа"		</item>
+
+  <item>"STD_rgbmScaleFx"		"Масштаб RGBA"	</item>
+  <item>"STD_rgbmScaleFx.red"	"Красный"		</item>
+  <item>"STD_rgbmScaleFx.green"	"Зелёный"		</item>
+  <item>"STD_rgbmScaleFx.blue"	"Синий"		</item>
+  <item>"STD_rgbmScaleFx.matte"	"Альфа"		</item>
+
+  <item>"STD_rgbmFadeFx"		"Затухание RGB"	</item>
+  <item>"STD_rgbmFadeFx.color"	"Цвет"		</item>
+  <item>"STD_rgbmFadeFx.intensity"	"Интенсивность"	</item>
+
+  <item>"STD_saltpepperNoiseFx"		"Шум «соль и перец»"	</item>
+  <item>"STD_saltpepperNoiseFx.Intensity"	"Интенсивность"		</item>
+  <item>"STD_saltpepperNoiseFx.Animate"	"Случайная анимация"	</item>
+
+  <item>"STD_solarizeFx"		"Соляризация"		</item>
+  <item>"STD_solarizeFx.maximum"	"Интенсивность"	</item>
+  <item>"STD_solarizeFx.peak_edge"	"Край пика"	</item>
+
+  <item>"STD_spiralFx"		"Спираль"		</item>
+  <item>"STD_spiralFx.type"		"Тип"	</item>
+  <item>"STD_spiralFx.freq"		"Частота"	</item>
+  <item>"STD_spiralFx.phase"	"Фаза"		</item>
+  <item>"STD_spiralFx.colors"	"Цвета"		</item>
+
+  <item>"STD_squareGradientFx"		"Квадратный градиент"	</item>
+  <item>"STD_squareGradientFx.colors"	"Цвета"		</item>
+  <item>"STD_squareGradientFx.size"		"Размер"		</item>
+
+  <item>"STD_targetSpotFx"		"Целевое пятно"	</item>
+  <item>"STD_targetSpotFx.z"	"Расстояние"	</item>
+  <item>"STD_targetSpotFx.angle"	"Угол"		</item>
+  <item>"STD_targetSpotFx.decay"	"Затухание"		</item>
+  <item>"STD_targetSpotFx.sizeX"	"Ширина"		</item>
+  <item>"STD_targetSpotFx.sizeY"	"Высота"		</item>
+  <item>"STD_targetSpotFx.color"	"Цвет"		</item>
+
+  <item>"STD_textureFx"              "Текстура" </item>
+  <item>"STD_textureFx.indexes" "Индексы" </item>
+  <item>"STD_textureFx.keep" "Действие" </item>
+  <item>"STD_textureFx.mode" "Режим" </item>
+  <item>"STD_textureFx.value" "Значение" </item>
+  
+  <item>"STD_tileFx" "Мозаика" </item>
+  <item>"STD_tileFx.mode" "Режим" </item>
+  <item>"STD_tileFx.xMirror" "Зеркало по горизонтали" </item>
+  <item>"STD_tileFx.yMirror""Зеркало по вертикали" </item>
+  <item>"STD_tileFx.margin" "Отступ" </item>
+
+  <item>"STD_unmultiplyFx"	"Размножить"	</item>
+
+  <item>"STD_warpFx"		"Искажение"		</item>
+  <item>"STD_warpFx.intensity"	"Интенсивность"		</item>
+  <item>"STD_warpFx.sensitivity"	"Размер"		</item>
+  <item>"STD_warpFx.sharpen"	"Резкость"		</item>
+
+<!------------------------------ Sandor FX ---------------------------------------------->
+
+  <item>"STD_blendTzFx" "Смешивание цветов" </item>
+  <item>"STD_blendTzFx.Color_Index"			"Индексы цветов"		</item>
+  <item>"STD_blendTzFx.Smoothness"			"Сглаженность"		</item>
+  <item>"STD_blendTzFx.Amount"			"Интенсивность"		</item>
+  <item>"STD_blendTzFx.noBlending"			"Без смешивания с другими цветами"	</item>
+
+  <item>"STD_calligraphicFx" "Каллиграфическая линия" </item>
+  <item>"STD_calligraphicFx.Color_Index"		"Индексы цветов"		</item>
+  <item>"STD_calligraphicFx.Thickness"			"Толщина"		</item>
+  <item>"STD_calligraphicFx.Accuracy"			"Сглаженность"		</item>
+  <item>"STD_calligraphicFx.Noise"			"Шум"			</item>
+  <item>"STD_calligraphicFx.Horizontal"			"Горизонталь"		</item>
+  <item>"STD_calligraphicFx.upWDiagonal"		"Восходящая диагональ"	</item>
+  <item>"STD_calligraphicFx.Vertical"			"Вертикаль"		</item>
+  <item>"STD_calligraphicFx.doWDiagonal"		"Нисходящая диагональ"	</item>
+
+  <item>"STD_outBorderFx" "Контур" </item>
+  <item>"STD_outBorderFx.Thickness"			"Толщина"		</item>
+  <item>"STD_outBorderFx.Accuracy"			"Сглаженность"		</item>
+  <item>"STD_outBorderFx.Noise"			"Шум"			</item>
+  <item>"STD_outBorderFx.Horizontal"			"Горизонталь"		</item>
+  <item>"STD_outBorderFx.upWDiagonal"		"Восходящая диагональ"	</item>
+  <item>"STD_outBorderFx.Vertical"			"Вертикаль"		</item>
+  <item>"STD_outBorderFx.doWDiagonal"		"Нисходящая диагональ"	</item>
+
+  <item>"STD_artContourFx" 			"Арт-контур" 	</item>
+  <item>"STD_artContourFx.Color_Index"		"Индексы цветов"		</item>
+  <item>"STD_artContourFx.Keep_color"		"Сохранить цвет"		</item>
+  <item>"STD_artContourFx.Keep_Line"		"Сохранить линию"		</item>
+  <item>"STD_artContourFx.Include_Alpha"		"Включить альфа"		</item>
+  <item>"STD_artContourFx.Density"			"Плотность"		</item>
+  <item>"STD_artContourFx.Distance"			"Расстояние"		</item>
+  <item>"STD_artContourFx.Randomness"		"Абсолютная ориентация"		</item>
+  <item>"STD_artContourFx.Orientation"		"Ориентация"			</item>
+  <item>"STD_artContourFx.Size"			"Размер"				</item>
+
+  <item>"STD_cornerPinFx.indexes"		"Индексы цветов"		</item>
+  <item>"STD_paletteFilterFx.indexes"	"Индексы цветов"	</item>
+
+<!------------------------------ Shader FXS ---------------------------------------------->
+
+  <item>"SHADER_caustics"			"Каустика"	</item>
+  <item>"SHADER_caustics.color"		"Цвет воды"	</item>
+  <item>"SHADER_caustics.time"		"Эволюция"	</item>
+  
+  <item>"SHADER_fireball"			"Огненный шар"	</item>
+  <item>"SHADER_fireball.color1"		"Цвет 1"	</item>
+  <item>"SHADER_fireball.color2"		"Цвет 2"	</item>
+  <item>"SHADER_fireball.detail"		"Детализация"	</item>
+  <item>"SHADER_fireball.time"		"Эволюция"	</item>
+  
+  <item>"SHADER_glitter"			"Блеск"	</item>
+  <item>"SHADER_glitter.threshold"		"Порог"	</item>
+  <item>"SHADER_glitter.brightness"		"Яркость"	</item>
+  <item>"SHADER_glitter.radius"		"Радиус"	</item>
+  <item>"SHADER_glitter.angle"		"Угол"	</item>
+  <item>"SHADER_glitter.halo"		"Ореол"	</item>
+  
+  <item>"SHADER_starsky"			"Звёздное небо"	</item>
+  <item>"SHADER_starsky.color"		"Цвет облаков"	</item>
+  <item>"SHADER_starsky.time"		"Эволюция"	</item>
+  <item>"SHADER_starsky.brightness"		"Яркость"	</item>
+  
+  <item>"SHADER_sunflare"			"Солнечная вспышка"	</item>
+  <item>"SHADER_sunflare.color"		"Цвет"	</item>
+  <item>"SHADER_sunflare.angle"		"Угол"	</item>
+  <item>"SHADER_sunflare.blades"		"Лучи"	</item>
+  <item>"SHADER_sunflare.intensity"		"Интенсивность"	</item>
+  <item>"SHADER_sunflare.bias"		"Смещение"	</item>
+  <item>"SHADER_sunflare.sharpness"		"Резкость"	</item>
+  
+  <item>"SHADER_wavy"			"Волнистый"	</item>
+  <item>"SHADER_wavy.color1"		"Цвет 1"	</item>
+  <item>"SHADER_wavy.color2"		"Цвет 2"	</item>
+  <item>"SHADER_wavy.time"		"Эволюция"	</item>
+  
+  <item>"SHADER_radialblurGPU"			"Радиальное размытие (GPU)"	</item>
+  <item>"SHADER_radialblurGPU.center"		"Центр"	</item>
+  <item>"SHADER_radialblurGPU.radius"		"Безопасный радиус"	</item>
+  <item>"SHADER_radialblurGPU.blur"		"Коэффициент размытия"	</item>
+  
+  <item>"SHADER_spinblurGPU"			"Вращательное размытие (GPU)"	</item>
+  <item>"SHADER_spinblurGPU.center"		"Центр"	</item>
+  <item>"SHADER_spinblurGPU.radius"		"Безопасный радиус"	</item>
+  <item>"SHADER_spinblurGPU.blur"		"Размытие"	</item>
+
+  <item>"SHADER_HSLBlendGPU"			"Смешивание HSL (GPU)"    </item>
+  <item>"SHADER_HSLBlendGPU.bhue"			"Оттенок"    </item>
+  <item>"SHADER_HSLBlendGPU.bsat"			"Насыщенность"    </item>
+  <item>"SHADER_HSLBlendGPU.blum"			"Светлота"    </item>
+  <item>"SHADER_HSLBlendGPU.balpha"			"Непрозрачность"    </item>
+  <item>"SHADER_HSLBlendGPU.bmask"			"Маска обрезки"    </item>
+
+<!---------------------------------------------------------------------------------------->
+
+
+  <item>"T3K_t3kCompositorFx"	"Композитор T3k"</item>
+
+  <item>"ZBASE_drawmaskFx" 	"Рисованная маска" </item>
+  <item>"ZBASE_drawmaskFx.OutlineOnly" 	"Только контур" </item>
+
+  <item>"ZBASE_masklayer" 	"Слой маски" </item>
+  <item>"ZBASE_masklayer.feather" 	"Смягчение" </item>
+  <item>"ZBASE_masklayer.invert" 	"Инвертировать" </item>
+  <item>"ZBASE_masklayer.mode" 		"Режим" </item>
+  <item>"ZBASE_masklayer.antialias" 	"Сглаживание" </item>
+
+  <item>"ZBASE_paintFx" 	"Заливка" </item>
+
+  <item>"ZCOMP_TrackerFx"	"Трекер"</item>
+  <item>"ZCOMP_TrackerFx.inputPoint"	"Входная точка"</item>
+  <item>"ZCOMP_TrackerFx.outputPoint"	"Выходная точка"</item>
+
+  <item>"ZCOMP_affineGlFx"	"Аффинная трансформация GL"</item>
+  <item>"ZCOMP_affineGlFx.xPos"	"Позиция X"</item>
+  <item>"ZCOMP_affineGlFx.yPos"	"Позиция Y"</item>
+  <item>"ZCOMP_affineGlFx.zRot"	"Поворот Z"</item>
+  <item>"ZCOMP_affineGlFx.xCenter"	"Центр X"</item>
+  <item>"ZCOMP_affineGlFx.yCenter"	"Центр Y"</item>
+  <item>"ZCOMP_affineGlFx.xScale"	"Масштаб X"</item>
+  <item>"ZCOMP_affineGlFx.yScale"	"Масштаб Y"</item>
+
+  <item>"ZCOMP_blueGreenKeyer"	"Хромакей"</item>
+  <item>"ZCOMP_blueGreenKeyer.outputMode"	"Режим вывода"</item>
+  <item>"ZCOMP_blueGreenKeyer.keyColor"		"Цвет ключа"</item>
+  <item>"ZCOMP_blueGreenKeyer.fgFilter"		"Фильтр переднего плана"</item>
+  <item>"ZCOMP_blueGreenKeyer.bgFilter"		"Фильтр фона"</item>
+  <item>"ZCOMP_blueGreenKeyer.a2"		"Сила матте"</item>
+  <item>"ZCOMP_blueGreenKeyer.dilate"		"Расширение"</item>
+  <item>"ZCOMP_blueGreenKeyer.fgThreshold"	"Порог переднего плана"</item>
+  <item>"ZCOMP_blueGreenKeyer.bgThreshold"	"Порог фона"</item>
+  <item>"ZCOMP_blueGreenKeyer.blurRadius"	"Размытие"</item>
+  <item>"ZCOMP_blueGreenKeyer.erodeRadius"	"Сужение"</item>
+  <item>"ZCOMP_blueGreenKeyer.accuracy"		"Точность"</item>
+  <item>"ZCOMP_blueGreenKeyer.spillSuppression"	"Подавление ореола"</item>
+  <item>"ZCOMP_blueGreenKeyer.showSegmentation"	"Показать сегментацию"</item>
+  <item>"ZCOMP_blueGreenKeyer.fgCorrection"	"Коррекция переднего плана"</item>
+  <item>"ZCOMP_blueGreenKeyer.bgCorrection"	"Коррекция фона"</item>
+  <item>"ZCOMP_blueGreenKeyer.correctionThreshold"	"Порог коррекции"</item>
+  <item>"ZCOMP_blueGreenKeyer.fgRadius"	"Радиус переднего плана"</item>
+  <item>"ZCOMP_blueGreenKeyer.bgRadius"	"Радиус фона"</item>
+
+  <item>"ZCOMP_lumaKeyer"	"Ключ по яркости"</item>
+  <item>"ZCOMP_lumaKeyer.OpacityLower"	"Мин. непрозрачность"</item>
+  <item>"ZCOMP_lumaKeyer.OpacityUpper"	"Макс. непрозрачность"</item>
+  <item>"ZCOMP_lumaKeyer.TransparencyLower"	"Мин. прозрачность"</item>
+  <item>"ZCOMP_lumaKeyer.TransparencyUpper"	"Макс. прозрачность"</item>
+  <item>"ZCOMP_lumaKeyer.blurRadius"	"Размытие"</item>
+  <item>"ZCOMP_lumaKeyer.erodeRadius"	"Сужение"</item>
+
+  <item>"ZCOMP_spillSuppress"	"Подавление ореола"</item>
+  <item>"ZCOMP_spillSuppress.color"	"Цвет"</item>
+
+  <item>"ZCOMP_zMultiLayerFx"	"Многослойный"</item>
+  <item>"ZCOMP_zMultiLayerFx.param0"	"Режим"</item>
+
+  <item>"ZCOMP_zStabilizerFx"	"Стабилизатор"</item>
+  <item>"ZCOMP_zStabilizerFx.a"	"Точка A"</item>
+  <item>"ZCOMP_zStabilizerFx.a_w"	"Ширина A"</item>
+  <item>"ZCOMP_zStabilizerFx.a_h"	"Высота A"</item>
+  <item>"ZCOMP_zStabilizerFx.a_status"	"Статус A"</item>
+  <item>"ZCOMP_zStabilizerFx.b"	"Точка B"</item>
+  <item>"ZCOMP_zStabilizerFx.b_w"	"Ширина B"</item>
+  <item>"ZCOMP_zStabilizerFx.b_h"	"Высота B"</item>
+  <item>"ZCOMP_zStabilizerFx.b_status"	"Статус B"</item>
+  <item>"ZCOMP_zStabilizerFx.c"	"Точка C"</item>
+  <item>"ZCOMP_zStabilizerFx.c_w"	"Ширина C"</item>
+  <item>"ZCOMP_zStabilizerFx.c_h"	"Высота C"</item>
+  <item>"ZCOMP_zStabilizerFx.c_status"	"Статус C"</item>
+  <item>"ZCOMP_zStabilizerFx.interp_a"	"Интерполяция A"</item>
+  <item>"ZCOMP_zStabilizerFx.interp_b"	"Интерполяция B"</item>
+  <item>"ZCOMP_zStabilizerFx.interp_c"	"Интерполяция C"</item>
+
+  <item>"ZCOMP_degrainFx"		"Удаление зерна"</item>
+  <item>"ZCOMP_degrainFx.red"		"Красный"</item>
+  <item>"ZCOMP_degrainFx.green"		"Зелёный"</item>
+  <item>"ZCOMP_degrainFx.blue"		"Синий"</item>
+  <item>"ZCOMP_degrainFx.alpha"		"Альфа"</item>
+  <item>"ZCOMP_degrainFx.radius" 	"Радиус"</item>
+
+  <item>"ZCOMP_basicKeyerFx"				"Базовый ключ"</item>
+  <item>"ZCOMP_basicKeyerFx.keyColor"			"Цвет ключа"</item>
+  <item>"ZCOMP_basicKeyerFx.outputMode"			"Режим вывода"</item>
+  <item>"ZCOMP_basicKeyerFx.lowerBoundThreshold"	"Нижний порог"</item>
+  <item>"ZCOMP_basicKeyerFx.a2"				"Сила матте"</item>
+  <item>"ZCOMP_basicKeyerFx.upperBoundThreshold"	"Верхний порог"</item>
+  <item>"ZCOMP_basicKeyerFx.blurRadius"			"Размытие"</item>
+  <item>"ZCOMP_basicKeyerFx.erodeRadius" 		"Сужение"</item>
+  <item>"ZCOMP_basicKeyerFx.spillSuppress" 		"Подавление ореола"</item>
+
+  <item>"ZCOMP_spillRevealFx"				"Выявление ореола"</item>
+  <item>"ZCOMP_spillRevealFx.color"			"Цвет"</item>
+  <item>"ZCOMP_spillRevealFx.luma"			"Яркость"</item>
+  <item>"ZCOMP_spillRevealFx.smoothRadius"		"Сглаженность"</item>
+
+  
+
+  <item>"affineFx"			"Перемещение 2D"		</item>
+  <item>"affineFx.xPos"		"Позиция X"		</item>
+  <item>"affineFx.yPos"		"Позиция Y"		</item>
+  <item>"affineFx.zRot"		"Поворот Z"		</item>
+  <item>"affineFx.xCenter"		"Центр X"		</item>
+  <item>"affineFx.yCenter"		"Центр Y"		</item>
+  <item>"affineFx.xScale"		"Масштаб X"		</item>
+  <item>"affineFx.yScale"		"Масштаб Y"		</item>
+  <item>"affineFx.useMMX"		"Использовать MMX"		</item>
+  <item>"affineFx.useMotionPath"	"Траектория движения"	</item>
+  <item>"affineFx.usePathAim"	"Прицеливание по траектории"		</item>
+
+  <item>"atopFx"			"Видимая матте внутрь"	</item>
+
+  <item>"checkBoardFx"		"Шахматная доска"	</item>
+  <item>"checkBoardFx.color1"	"Цвет 1"		</item>
+  <item>"checkBoardFx.color2"	"Цвет 2"		</item>
+  <item>"checkBoardFx.size"		"Размер"		</item>
+
+  <item>"colorCardFx"	"Цветовая карта"	</item>
+  <item>"colorCardFx.color"	"Цвет"		</item>
+
+  <item>"cropFx"		"Обрезка"		</item>
+  <item>"cropFx.left"	"Слева"		</item>
+  <item>"cropFx.bottom"	"Снизу"		</item>
+  <item>"cropFx.right"	"Справа"		</item>
+  <item>"cropFx.top"	"Сверху"		</item>
+
+  <item>"crossFx"		"Смешивание"		</item>
+  <item>"crossFx.value"	"Интенсивность"	</item>
+
+  <item>"deInterlaceFx"			"Деинтерлейсинг"	</item>
+  <item>"deInterlaceFx.convert"		"Конвертировать"		</item>
+  <item>"deInterlaceFx.method"		"Метод"		</item>
+  <item>"deInterlaceFx.field_separation"	"Разделение полей"	</item>
+
+  <item>"fieldFx"			"Поле"		</item>
+  <item>"fieldFx.fieldprevalence"	"Преобладание поля"	</item>
+
+  <item>"inFx"			"Матте внутрь"	</item>
+
+  <item>"interlaceFx"		"Интерлейсинг"	</item>
+
+  <item>"invertFx"			"Инвертировать"		</item>
+  <item>"invertFx.red_channel"	"Красный"		</item>
+  <item>"invertFx.green_channel"	"Зелёный"		</item>
+  <item>"invertFx.blue_channel"	"Синий"		</item>
+  <item>"invertFx.alpha_channel"	"Альфа"		</item>
+
+  <item>"lightenFx"			"Осветление"		</item>
+
+  <item>"linearBurnFx"			"Линейное выжигание"		</item>
+  
+  <item>"localTransparencyFx"	"Локальная прозрачность"	</item>
+  <item>"localTransparencyFx.value"	"Интенсивность"		</item>
+
+  <item>"markCenterFx"		"Отметка центра"		</item>
+  <item>"markCenterFx.color"	"Цвет"			</item>
+  <item>"markCenterFx.size"		"Размер"			</item>
+
+  <item>"maxFx"			"Осветление"		</item>
+
+  <item>"minFx"			"Затемнение"		</item>
+  <item>"minFx.matte"			"Альфа"		</item>
+
+  <item>"moveFx"			"Перемещение"		</item>
+  <item>"moveFx.dx"		"Панорама X"		</item>
+  <item>"moveFx.dy"		"Панорама Y"		</item>
+
+  <item>"outFx"			"Матте наружу"	</item>
+ 
+  <item>"overFx"			"Поверх"		</item>
+
+  <item>"overlayFx"			"Наложение"		</item>
+
+  <item>"readImageFx"		"Статичное изображение"	</item>
+  <item>"readImageFx.filename"	"Путь к файлу"		</item>
+  <item>"readImageFx.doPremultiply"	"Премножить"	</item>
+  <item>"readImageFx.doInvertAlpha"	"Инвертировать альфа"	</item>
+
+  <item>"readLevelFx"		"Вход клипа"		</item>
+  <item>"readLevelFx.filename"	"Путь к файлу"		</item>
+  <item>"readLevelFx.field_separation"	"Разделение полей"	</item>
+  <item>"readLevelFx.doPremultiply"	"Премножить"	</item>
+  <item>"readLevelFx.doInvertAlpha"	"Инвертировать альфа"	</item>
+
+  <item>"scaleFx"			"Масштаб"		</item>
+  <item>"scaleFx.xScale"		"Масштаб X"		</item>
+  <item>"scaleFx.yScale"		"Масштаб Y"		</item>
+
+  
+
+  <item>"swapFieldsFx"		"Смена полей"	</item>
+
+  <item>"xorFx"			"Исключающее ИЛИ"		</item>
+
+
+<!----- New Strings 5.0------>
+
+ <item>Selective			"Селективный"  "Селективный" "Селективный"	</item>
+ <item>ToolSize			"Размер" "Размер" "Размер"			</item>
+
+
+ <!------------------------------ Particles FX ------------------------------------------->
+
+  <item>STD_particlesFx "Частицы" </item>
+  <item>"STD_particlesFx.source_ctrl"			"Управляющее изображение"		</item>
+  <item>"STD_particlesFx.bright_thres"			"Порог яркости"		</item>
+  <item>"STD_particlesFx.multi_source"			"Несколько генераторов в управляющем изображении"		</item>
+  <item>"STD_particlesFx.center"			"Центр"			</item>
+  <item>"STD_particlesFx.length"			"Ширина"			</item>
+  <item>"STD_particlesFx.height"			"Высота"			</item>
+  <item>"STD_particlesFx.animation"			"Анимация"		</item>
+  <item>"STD_particlesFx.step"			"Шаг анимации"		</item>
+  <item>"STD_particlesFx.starting_frame"		"Начальный кадр"		</item>
+  <item>"STD_particlesFx.birth_rate"			"Скорость рождения"		</item>
+  <item>"STD_particlesFx.random_seed"		"Случайное зерно"		</item>
+  <item>"STD_particlesFx.lifetime"			"Время жизни"			</item>
+  <item>"STD_particlesFx.lifetime_ctrl"			"Управляющее изображение"			</item>
+  <item>"STD_particlesFx.column_lifetime"			"Использовать длительность столбца для времени жизни"			</item>
+  <item>"STD_particlesFx.gravity"			"Гравитация"			</item>
+  <item>"STD_particlesFx.gravity_angle"		"Угол гравитации"			</item>
+  <item>"STD_particlesFx.gravity_ctrl"			"Управляющее изображение"		</item>
+  <item>"STD_particlesFx.friction"			"Трение"			</item>
+  <item>"STD_particlesFx.friction_ctrl"			"Управляющее изображение"		</item>
+  <item>"STD_particlesFx.wind"			"Сила ветра"		</item>
+  <item>"STD_particlesFx.wind_angle"			"Угол ветра"			</item>
+  <item>"STD_particlesFx.swing_mode"			"Режим качания"		</item>
+  <item>"STD_particlesFx.scattering_x"			"По горизонтали"		</item>
+  <item>"STD_particlesFx.scattering_y"			"По вертикали"			</item>
+  <item>"STD_particlesFx.scattering_x_ctrl"			"Управляющее изображение Г"		</item>
+  <item>"STD_particlesFx.scattering_y_ctrl"			"Управляющее изображение В"		</item>
+  <item>"STD_particlesFx.swing"			"Качание"			</item>
+  <item>"STD_particlesFx.speed"			"Скорость"			</item>
+  <item>"STD_particlesFx.speed_ctrl"			"Управляющее изображение"			</item>
+  <item>"STD_particlesFx.speed_angle"		"Угол скорости"			</item>
+
+  <item>"STD_particlesFx.speeda_ctrl"			"Управляющее изображение"			</item>
+  <item>"STD_particlesFx.speeda_use_gradient"	"Использовать угол градиента"	</item>
+
+  <item>"STD_particlesFx.speed_size"			"Связать со масштабом"		</item>
+  <item>"STD_particlesFx.top_layer"			"Верхний слой"		</item>
+  <item>"STD_particlesFx.mass"			"Масса"			</item>
+  <item>"STD_particlesFx.scale"			"Размер"			</item>
+  <item>"STD_particlesFx.scale_ctrl"			"Управляющее изображение"		</item>
+  <item>"STD_particlesFx.scale_ctrl_all"		"Использовать управляющее изображение на всём протяжении жизни"		</item>
+  <item>"STD_particlesFx.rot"			"Ориентация"		</item>
+  <item>"STD_particlesFx.rot_ctrl"			"Управляющее изображение"			</item>
+  <item>"STD_particlesFx.trail"			"След"			</item>
+  <item>"STD_particlesFx.trail_step"			"Шаг"			</item>
+  <item>"STD_particlesFx.spin_swing_mode"		"Режим вращательного качания"		</item>
+  <item>"STD_particlesFx.spin_speed"			"Скорость вращения"			</item>
+  <item>"STD_particlesFx.spin_random"		"Дополнительная скорость"		</item>
+  <item>"STD_particlesFx.spin_swing"			"Качание вращения"			</item>
+  <item>"STD_particlesFx.path_aim"			"Следовать движению частиц"	</item>
+  <item>"STD_particlesFx.opacity"			"Непрозрачность"			</item>
+  <item>"STD_particlesFx.opacity_ctrl"			"Управляющее изображение"			</item>
+  <item>"STD_particlesFx.trail_opacity"			"Непрозрачность следа"		</item>
+  <item>"STD_particlesFx.scale_step"			"Интенсивность размера"		</item>
+  <item>"STD_particlesFx.scale_step_ctrl"			"Управляющее изображение"		</item>
+  <item>"STD_particlesFx.fade_in"			"Кадры появления"		</item>
+  <item>"STD_particlesFx.fade_out"			"Кадры исчезновения"		</item>
+  <item>"STD_particlesFx.birth_color"			"Цвет при рождении"		</item>
+  <item>"STD_particlesFx.birth_color_ctrl"		"Управляющее изображение"		</item>
+  <item>"STD_particlesFx.birth_color_spread"		"Разброс при рождении"		</item>
+  <item>"STD_particlesFx.birth_color_fade"		"Интенсивность при рождении"		</item>
+  <item>"STD_particlesFx.fadein_color"			"Цвет появления"		</item>
+  <item>"STD_particlesFx.fadein_color_ctrl"		"Управляющее изображение"		</item>
+  <item>"STD_particlesFx.fadein_color_spread"		"Разброс при появлении"		</item>
+  <item>"STD_particlesFx.fadein_color_range"		"Диапазон кадров"		</item>
+  <item>"STD_particlesFx.fadein_color_fade"		"Интенсивность при появлении"		</item>
+  <item>"STD_particlesFx.fadeout_color"		"Цвет исчезновения"		</item>
+  <item>"STD_particlesFx.fadeout_color_ctrl"		"Управляющее изображение"		</item>
+  <item>"STD_particlesFx.fadeout_color_spread"		"Разброс при исчезновении"		</item>
+  <item>"STD_particlesFx.fadeout_color_range"		"Диапазон кадров"		</item>
+  <item>"STD_particlesFx.fadeout_color_fade"		"Интенсивность при исчезновении"		</item>
+  <item>"STD_particlesFx.source_gradation"		"Использовать градацию управляющего изображения"		</item>
+  <item>"STD_particlesFx.pick_color_for_every_frame"	"Брать цвет управляющего изображения каждый кадр"	</item>
+  <item>"STD_particlesFx.perspective_distribution"	"Перспективное распределение"	</item>
+  <item>"STD_particlesFx.motion_blur"	"Размытие в движении"	</item>
+  <item>"STD_particlesFx.motion_blur_gamma_adjust"	"Коррекция гаммы"	</item>
+
+  
+ <!------------------------------ Function Editor ------------------------------------------->
+ 
+  <item>W_Y		"Y"		</item>
+  <item>W_X		"X"		</item>
+  <item>W_Z		"Z"		</item>
+  <item>W_SO		"SO"		</item>
+  <item>W_Rotation	"Вращение"	</item>
+  <item>W_ScaleH		"Масштаб по горизонтали"		</item>
+  <item>W_ScaleV		"Масштаб по вертикали"		</item>
+  <item>W_ShearH		"Сдвиг по горизонтали"		</item>
+  <item>W_ShearV		"Сдвиг по вертикали"		</item>
+  <item>W_Scale			"Масштаб"			</item>
+  
+<!------------------------------ Ino FXs ------------------------------------------->
+
+  <item>"STD_inoAddFx"	"Добавление (Ino)"	</item>
+  <item>"STD_inoAddFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoAddFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoAddFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoAddFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoAddFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoAddFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoAddFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoColorBurnFx"	"Затемнение основы (Ino)"	</item>
+  <item>"STD_inoColorBurnFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoColorBurnFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoColorBurnFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoColorBurnFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoColorBurnFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoColorBurnFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoColorBurnFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoColorDodgeFx"	"Осветление основы (Ino)"	</item>
+  <item>"STD_inoColorDodgeFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoColorDodgeFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoColorDodgeFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoColorDodgeFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoColorDodgeFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoColorDodgeFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoColorDodgeFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoCrossDissolveFx"	"Перекрестное растворение (Ino)"	</item>
+  <item>"STD_inoCrossDissolveFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoCrossDissolveFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoCrossDissolveFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoCrossDissolveFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoCrossDissolveFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoCrossDissolveFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoCrossDissolveFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoDarkenFx"	"Затемнение (Ino)"	</item>
+  <item>"STD_inoDarkenFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoDarkenFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoDarkenFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoDarkenFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoDarkenFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoDarkenFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoDarkenFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoDarkerColorFx"	"Темнее цвет (Ino)"	</item>
+  <item>"STD_inoDarkerColorFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoDarkerColorFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoDarkerColorFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoDarkerColorFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoDarkerColorFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoDarkerColorFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoDarkerColorFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoDivideFx"	"Деление (Ino)"	</item>
+  <item>"STD_inoDivideFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoDivideFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoDivideFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoDivideFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoDivideFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoDivideFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoDivideFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoHardLightFx"	"Жёсткий свет (Ino)"	</item>
+  <item>"STD_inoHardLightFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoHardLightFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoHardLightFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoHardLightFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoHardLightFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoHardLightFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoHardLightFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoHardMixFx"	"Жёсткое смешивание (Ino)"	</item>
+  <item>"STD_inoHardMixFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoHardMixFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoHardMixFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoHardMixFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoHardMixFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoHardMixFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoHardMixFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoLightenFx"	"Осветление (Ino)"	</item>
+  <item>"STD_inoLightenFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoLightenFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoLightenFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoLightenFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoLightenFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoLightenFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoLightenFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoLighterColorFx"	"Светлее цвет (Ino)"	</item>
+  <item>"STD_inoLighterColorFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoLighterColorFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoLighterColorFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoLighterColorFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoLighterColorFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoLighterColorFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoLighterColorFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoLinearBurnFx"	"Линейное выжигание (Ino)"	</item>
+  <item>"STD_inoLinearBurnFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoLinearBurnFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoLinearBurnFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoLinearBurnFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoLinearBurnFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoLinearBurnFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoLinearBurnFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoLinearDodgeFx"	"Линейное осветление (Ino)"	</item>
+  <item>"STD_inoLinearDodgeFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoLinearDodgeFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoLinearDodgeFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoLinearDodgeFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoLinearDodgeFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoLinearDodgeFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoLinearDodgeFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoLinearLightFx"	"Линейный свет (Ino)"	</item>
+  <item>"STD_inoLinearLightFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoLinearLightFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoLinearLightFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoLinearLightFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoLinearLightFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoLinearLightFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoLinearLightFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoMultiplyFx"	"Умножение (Ino)"	</item>
+  <item>"STD_inoMultiplyFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoMultiplyFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoMultiplyFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoMultiplyFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoMultiplyFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoMultiplyFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoMultiplyFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoOverFx"	"Перекрытие (Ino)"	</item>
+  <item>"STD_inoOverFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoOverFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoOverFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoOverFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoOverFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoOverFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoOverFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoOverlayFx"	"Наложение (Ino)"	</item>
+  <item>"STD_inoOverlayFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoOverlayFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoOverlayFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoOverlayFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoOverlayFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoOverlayFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoOverlayFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoPinLightFx"	"Точечный свет (Ino)"	</item>
+  <item>"STD_inoPinLightFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoPinLightFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoPinLightFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoPinLightFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoPinLightFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoPinLightFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoPinLightFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoScreenFx"	"Экран (Ino)"	</item>
+  <item>"STD_inoScreenFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoScreenFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoScreenFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoScreenFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoScreenFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoScreenFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoScreenFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoSoftLightFx"	"Мягкий свет (Ino)"	</item>
+  <item>"STD_inoSoftLightFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoSoftLightFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoSoftLightFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoSoftLightFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoSoftLightFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoSoftLightFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoSoftLightFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoSubtractFx"	"Вычитание (Ino)"	</item>
+  <item>"STD_inoSubtractFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoSubtractFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoSubtractFx.alpha_rendering"	"Рендеринг альфа"	</item>
+  <item>"STD_inoSubtractFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoSubtractFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoSubtractFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoSubtractFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoSubtractFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoVividLightFx"	"Яркий свет (Ino)"	</item>
+  <item>"STD_inoVividLightFx.opacity"	"Непрозрачность"	</item>
+  <item>"STD_inoVividLightFx.clipping_mask"	"Маска обрезки"	</item>
+  <item>"STD_inoVividLightFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_inoVividLightFx.colorSpaceMode"	"Цветовое пространство"	</item>
+  <item>"STD_inoVividLightFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoVividLightFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_inoVividLightFx.premultiplied"	"Источник премножен"	</item>
+  <item>"STD_inoBlurFx"	"Размытие (Ino)"	</item>
+  <item>"STD_inoBlurFx.radius"	"Радиус"	</item>
+  <item>"STD_inoBlurFx.reference"	"Опорное"	</item>
+  <item>"STD_inoChannelSelectorFx"	"Селектор каналов (Ino)"	</item>
+  <item>"STD_inoChannelSelectorFx.red_source"	"Источник красного"	</item>
+  <item>"STD_inoChannelSelectorFx.red_channel"	"Канал красного"	</item>
+  <item>"STD_inoChannelSelectorFx.green_source"	"Источник зелёного"	</item>
+  <item>"STD_inoChannelSelectorFx.green_channel"	"Канал зелёного"	</item>
+  <item>"STD_inoChannelSelectorFx.blue_source"	"Источник синего"	</item>
+  <item>"STD_inoChannelSelectorFx.blue_channel"	"Канал синего"	</item>
+  <item>"STD_inoChannelSelectorFx.alpha_source"	"Источник альфа"	</item>
+  <item>"STD_inoChannelSelectorFx.alpha_channel"	"Канал альфа"	</item>
+  <item>"STD_inoDensityFx"	"Плотность (Ino)"	</item>
+  <item>"STD_inoDensityFx.density"	"Плотность"	</item>
+  <item>"STD_inoDensityFx.reference"	"Опорное"	</item>
+  <item>"STD_inoFogFx"	"Туман (Ino)"	</item>
+  <item>"STD_inoFogFx.radius"	"Радиус"	</item>
+  <item>"STD_inoFogFx.curve"	"Кривая"	</item>
+  <item>"STD_inoFogFx.power"	"Сила"	</item>
+  <item>"STD_inoFogFx.threshold_min"	"Мин. порог"	</item>
+  <item>"STD_inoFogFx.threshold_max"	"Макс. порог"	</item>
+  <item>"STD_inoFogFx.alpha_rendering"	"Рендеринг альфа"	</item>
+  <item>"STD_inohlsAddFx"	"Добавление HLS (Ino)"	</item>
+  <item>"STD_inohlsAddFx.from_rgba"	"Из RGBA"	</item>
+  <item>"STD_inohlsAddFx.offset"	"Смещение"	</item>
+  <item>"STD_inohlsAddFx.hue"	"Оттенок"	</item>
+  <item>"STD_inohlsAddFx.lightness"	"Светлота"	</item>
+  <item>"STD_inohlsAddFx.saturation"	"Насыщенность"	</item>
+  <item>"STD_inohlsAddFx.alpha"	"Альфа"	</item>
+  <item>"STD_inohlsAddFx.anti_alias"	"Премножено"	</item>
+  <item>"STD_inohlsAddFx.reference"	"Опорное"	</item>
+  <item>"STD_inohlsAdjustFx"	"Регулировка HLS (Ino)"	</item>
+  <item>"STD_inohlsAdjustFx.pivot_hue"	"Оттенок"	</item>
+  <item>"STD_inohlsAdjustFx.pivot_lightness"	"Светлота"	</item>
+  <item>"STD_inohlsAdjustFx.pivot_saturation"	"Насыщенность"	</item>
+  <item>"STD_inohlsAdjustFx.scale_hue"	"Оттенок"	</item>
+  <item>"STD_inohlsAdjustFx.scale_lightness"	"Светлота"	</item>
+  <item>"STD_inohlsAdjustFx.scale_saturation"	"Насыщенность"	</item>
+  <item>"STD_inohlsAdjustFx.shift_hue"	"Оттенок"	</item>
+  <item>"STD_inohlsAdjustFx.shift_lightness"	"Светлота"	</item>
+  <item>"STD_inohlsAdjustFx.shift_saturation"	"Насыщенность"	</item>
+  <item>"STD_inohlsAdjustFx.anti_alias"	"Премножено"	</item>
+  <item>"STD_inohlsAdjustFx.reference"	"Опорное"	</item>
+  <item>"STD_inohlsNoiseFx"	"Шум HLS (Ino)"	</item>
+  <item>"STD_inohlsNoiseFx.hue"	"Оттенок"	</item>
+  <item>"STD_inohlsNoiseFx.lightness"	"Светлота"	</item>
+  <item>"STD_inohlsNoiseFx.saturation"	"Насыщенность"	</item>
+  <item>"STD_inohlsNoiseFx.alpha"	"Альфа"	</item>
+  <item>"STD_inohlsNoiseFx.seed"	"Зерно"	</item>
+  <item>"STD_inohlsNoiseFx.nblur"	"NBlur"	</item>
+  <item>"STD_inohlsNoiseFx.effective"	"Эффективно"	</item>
+  <item>"STD_inohlsNoiseFx.center"	"Центр"	</item>
+  <item>"STD_inohlsNoiseFx.type"	"Тип"	</item>
+  <item>"STD_inohlsNoiseFx.anti_alias"	"Премножено"	</item>
+  <item>"STD_inohlsNoiseFx.reference"	"Опорное"	</item>
+  <item>"STD_inohsvAddFx"	"Добавление HSV (Ino)"	</item>
+  <item>"STD_inohsvAddFx.from_rgba"	"Из RGBA"	</item>
+  <item>"STD_inohsvAddFx.offset"	"Смещение"	</item>
+  <item>"STD_inohsvAddFx.hue"	"Оттенок"	</item>
+  <item>"STD_inohsvAddFx.saturation"	"Насыщенность"	</item>
+  <item>"STD_inohsvAddFx.value"	"Значение"	</item>
+  <item>"STD_inohsvAddFx.alpha"	"Альфа"	</item>
+  <item>"STD_inohsvAddFx.anti_alias"	"Премножено"	</item>
+  <item>"STD_inohsvAddFx.reference"	"Опорное"	</item>
+  <item>"STD_inohsvAdjustFx"	"Регулировка HSV (Ino)"	</item>
+  <item>"STD_inohsvAdjustFx.pivot_hue"	"Оттенок"	</item>
+  <item>"STD_inohsvAdjustFx.pivot_saturation"	"Насыщенность"	</item>
+  <item>"STD_inohsvAdjustFx.pivot_value"	"Значение"	</item>
+  <item>"STD_inohsvAdjustFx.scale_hue"	"Оттенок"	</item>
+  <item>"STD_inohsvAdjustFx.scale_saturation"	"Насыщенность"	</item>
+  <item>"STD_inohsvAdjustFx.scale_value"	"Значение"	</item>
+  <item>"STD_inohsvAdjustFx.shift_hue"	"Оттенок"	</item>
+  <item>"STD_inohsvAdjustFx.shift_saturation"	"Насыщенность"	</item>
+  <item>"STD_inohsvAdjustFx.shift_value"	"Значение"	</item>
+  <item>"STD_inohsvAdjustFx.anti_alias"	"Премножено"	</item>
+  <item>"STD_inohsvAdjustFx.reference"	"Опорное"	</item>
+  <item>"STD_inohsvNoiseFx"	"Шум HSV (Ino)"	</item>
+  <item>"STD_inohsvNoiseFx.hue"	"Оттенок"	</item>
+  <item>"STD_inohsvNoiseFx.saturation"	"Насыщенность"	</item>
+  <item>"STD_inohsvNoiseFx.value"	"Значение"	</item>
+  <item>"STD_inohsvNoiseFx.alpha"	"Альфа"	</item>
+  <item>"STD_inohsvNoiseFx.seed"	"Зерно"	</item>
+  <item>"STD_inohsvNoiseFx.nblur"	"NBlur"	</item>
+  <item>"STD_inohsvNoiseFx.effective"	"Эффективно"	</item>
+  <item>"STD_inohsvNoiseFx.center"	"Центр"	</item>
+  <item>"STD_inohsvNoiseFx.type"	"Тип"	</item>
+  <item>"STD_inohsvNoiseFx.anti_alias"	"Премножено"	</item>
+  <item>"STD_inohsvNoiseFx.reference"	"Опорное"	</item>
+  <item>"STD_inoLevelAutoFx"	"Автоуровни (Ino)"	</item>
+  <item>"STD_inoLevelAutoFx.in_min_shift"	"Смещение мин. входа"	</item>
+  <item>"STD_inoLevelAutoFx.in_max_shift"	"Смещение макс. входа"	</item>
+  <item>"STD_inoLevelAutoFx.out_min"	"Мин. выход"	</item>
+  <item>"STD_inoLevelAutoFx.out_max"	"Макс. выход"	</item>
+  <item>"STD_inoLevelAutoFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoLevelMasterFx"	"Мастер-уровни (Ino)"	</item>
+  <item>"STD_inoLevelMasterFx.in"	"Вход"	</item>
+  <item>"STD_inoLevelMasterFx.out"	"Выход"	</item>
+  <item>"STD_inoLevelMasterFx.gamma"	"Гамма"	</item>
+  <item>"STD_inoLevelMasterFx.alpha_rendering"	"Рендеринг альфа"	</item>
+  <item>"STD_inoLevelMasterFx.anti_alias"	"Премножено"	</item>
+  <item>"STD_inoLevelMasterFx.reference"	"Опорное"	</item>
+  <item>"STD_inoLevelrgbaFx"	"Уровни RGBA (Ino)"	</item>
+  <item>"STD_inoLevelrgbaFx.red_in"	"Красный вход"	</item>
+  <item>"STD_inoLevelrgbaFx.red_out"	"Красный выход"	</item>
+  <item>"STD_inoLevelrgbaFx.red_gamma"	"Гамма красного"	</item>
+  <item>"STD_inoLevelrgbaFx.gre_in"	"Зелёный вход"	</item>
+  <item>"STD_inoLevelrgbaFx.gre_out"	"Зелёный выход"	</item>
+  <item>"STD_inoLevelrgbaFx.gre_gamma"	"Гамма зелёного"	</item>
+  <item>"STD_inoLevelrgbaFx.blu_in"	"Синий вход"	</item>
+  <item>"STD_inoLevelrgbaFx.blu_out"	"Синий выход"	</item>
+  <item>"STD_inoLevelrgbaFx.blu_gamma"	"Гамма синего"	</item>
+  <item>"STD_inoLevelrgbaFx.alp_in"	"Альфа вход"	</item>
+  <item>"STD_inoLevelrgbaFx.alp_out"	"Альфа выход"	</item>
+  <item>"STD_inoLevelrgbaFx.alp_gamma"	"Гамма альфа"	</item>
+  <item>"STD_inoLevelrgbaFx.anti_alias"	"Премножено"	</item>
+  <item>"STD_inoLevelrgbaFx.reference"	"Опорное"	</item>
+  <item>"STD_inoLineBlurFx"	"Линейное размытие (Ino)"	</item>
+  <item>"STD_inoLineBlurFx.action_mode"	"Режим действия"	</item>
+  <item>"STD_inoLineBlurFx.blur_count"	"Количество размытий"	</item>
+  <item>"STD_inoLineBlurFx.blur_power"	"Сила размытия"	</item>
+  <item>"STD_inoLineBlurFx.blur_subpixel"	"Субпиксельное размытие"	</item>
+  <item>"STD_inoLineBlurFx.blur_near_ref"	"Близкое опорное размытие"	</item>
+  <item>"STD_inoLineBlurFx.blur_near_len"	"Длина близкого размытия"	</item>
+  <item>"STD_inoLineBlurFx.vector_smooth_retry"	"Повтор сглаживания вектора"	</item>
+  <item>"STD_inoLineBlurFx.vector_near_ref"	"Близкое опорное вектора"	</item>
+  <item>"STD_inoLineBlurFx.vector_near_len"	"Длина близкого вектора"	</item>
+  <item>"STD_inoLineBlurFx.smudge_thick"	"Толщина размазывания"	</item>
+  <item>"STD_inoLineBlurFx.smudge_remain"	"Остаток размазывания"	</item>
+  <item>"STD_inoMaxMinFx"	"Максимум/Минимум (Ino)"	</item>
+  <item>"STD_inoMaxMinFx.max_min_select"	"Выбор максимум/минимум"	</item>
+  <item>"STD_inoMaxMinFx.radius"	"Радиус"	</item>
+  <item>"STD_inoMaxMinFx.polygon_number"	"Количество полигонов"	</item>
+  <item>"STD_inoMaxMinFx.degree"	"Степень"	</item>
+  <item>"STD_inoMaxMinFx.alpha_rendering"	"Рендеринг альфа"	</item>
+  <item>"STD_inoMaxMinFx.reference"	"Опорное"	</item>
+  <item>"STD_inoMedianFx"	"Медиана (Ino)"	</item>
+  <item>"STD_inoMedianFx.radius"	"Радиус"	</item>
+  <item>"STD_inoMedianFx.channel"	"Канал"	</item>
+  <item>"STD_inoMedianFx.reference"	"Опорное"	</item>
+  <item>"STD_inoMedianFilterFx"	"Медианный фильтр (Ino)"	</item>
+  <item>"STD_inoMedianFilterFx.radius"	"Радиус"	</item>
+  <item>"STD_inoMedianFilterFx.channel"	"Канал"	</item>
+  <item>"STD_inoMedianFilterFx.reference"	"Опорное"	</item>
+  <item>"STD_inoMotionBlurFx"	"Размытие в движении (Ino)"	</item>
+  <item>"STD_inoMotionBlurFx.depend_move"	"Зависит от движения"	</item>
+  <item>"STD_inoMotionBlurFx.x1"	"X1"	</item>
+  <item>"STD_inoMotionBlurFx.y1"	"Y1"	</item>
+  <item>"STD_inoMotionBlurFx.x2"	"X2"	</item>
+  <item>"STD_inoMotionBlurFx.y2"	"Y2"	</item>
+  <item>"STD_inoMotionBlurFx.scale"	"Масштаб"	</item>
+  <item>"STD_inoMotionBlurFx.curve"	"Кривая"	</item>
+  <item>"STD_inoMotionBlurFx.zanzo_length"	"Длина послеобраза"	</item>
+  <item>"STD_inoMotionBlurFx.zanzo_power"	"Сила послеобраза"	</item>
+  <item>"STD_inoMotionBlurFx.alpha_rendering"	"Рендеринг альфа"	</item>
+  <item>"STD_inoMotionWindFx"	"Ветер движения (Ino)"	</item>
+  <item>"STD_inoMotionWindFx.direction"	"Направление"	</item>
+  <item>"STD_inoMotionWindFx.dark"	"Тёмный"	</item>
+  <item>"STD_inoMotionWindFx.alpha_rendering"	"Рендеринг альфа"	</item>
+  <item>"STD_inoMotionWindFx.length_min"	"Мин. длина"	</item>
+  <item>"STD_inoMotionWindFx.length_max"	"Макс. длина"	</item>
+  <item>"STD_inoMotionWindFx.length_bias"	"Смещение длины"	</item>
+  <item>"STD_inoMotionWindFx.length_seed"	"Зерно длины"	</item>
+  <item>"STD_inoMotionWindFx.length_ref"	"Опорное длины"	</item>
+  <item>"STD_inoMotionWindFx.force_min"	"Мин. сила"	</item>
+  <item>"STD_inoMotionWindFx.force_max"	"Макс. сила"	</item>
+  <item>"STD_inoMotionWindFx.force_bias"	"Смещение силы"	</item>
+  <item>"STD_inoMotionWindFx.force_seed"	"Зерно силы"	</item>
+  <item>"STD_inoMotionWindFx.force_ref"	"Опорное силы"	</item>
+  <item>"STD_inoMotionWindFx.density_min"	"Мин. плотность"	</item>
+  <item>"STD_inoMotionWindFx.density_max"	"Макс. плотность"	</item>
+  <item>"STD_inoMotionWindFx.density_bias"	"Смещение плотности"	</item>
+  <item>"STD_inoMotionWindFx.density_seed"	"Зерно плотности"	</item>
+  <item>"STD_inoMotionWindFx.density_ref"	"Опорное плотности"	</item>
+  <item>"STD_inoMotionWindFx.reference"	"Опорное"	</item>
+  <item>"STD_inoNegateFx"	"Негатив (Ino)"	</item>
+  <item>"STD_inoNegateFx.red"	"Красный"	</item>
+  <item>"STD_inoNegateFx.green"	"Зелёный"	</item>
+  <item>"STD_inoNegateFx.blue"	"Синий"	</item>
+  <item>"STD_inoNegateFx.alpha"	"Альфа"	</item>
+  <item>"STD_inopnCloudsFx"	"Облака Перлина (Ino)"	</item>
+  <item>"STD_inopnCloudsFx.size"	"Размер"	</item>
+  <item>"STD_inopnCloudsFx.z"	"Z"	</item>
+  <item>"STD_inopnCloudsFx.octaves"	"Октавы"	</item>
+  <item>"STD_inopnCloudsFx.persistance"	"Постоянство"	</item>
+  <item>"STD_inopnCloudsFx.alpha_rendering"	"Рендеринг альфа"	</item>
+  <item>"STD_inoRadialBlurFx"	"Радиальное размытие (Ino)"	</item>
+  <item>"STD_inoRadialBlurFx.center"	"Центр"	</item>
+  <item>"STD_inoRadialBlurFx.radius"	"Радиус"	</item>
+  <item>"STD_inoRadialBlurFx.blur"	"Размытие"	</item>
+  <item>"STD_inoRadialBlurFx.type"	"Тип"	</item>
+  <item>"STD_inoRadialBlurFx.twist"	"Скручивание"	</item>
+  <item>"STD_inoRadialBlurFx.alpha_rendering"	"Рендеринг альфа"	</item>
+  <item>"STD_inoRadialBlurFx.anti_alias"	"Сглаживание"	</item>
+  <item>"STD_inoRadialBlurFx.reference"	"Опорное"	</item>
+  <item>"STD_inoRadialBlurFx.ellipse_aspect_ratio"	"Соотношение сторон эллипса"	</item>
+  <item>"STD_inoRadialBlurFx.ellipse_angle"	"Угол эллипса"	</item>
+  <item>"STD_inoRadialBlurFx.intensity_correlation_with_ellipse"	"Корреляция интенсивности с эллипсом"	</item>
+  <item>"STD_inoSpinBlurFx"	"Вращательное размытие (Ino)"	</item>
+  <item>"STD_inoSpinBlurFx.center"	"Центр"	</item>
+  <item>"STD_inoSpinBlurFx.radius"	"Радиус"	</item>
+  <item>"STD_inoSpinBlurFx.blur"	"Размытие"	</item>
+  <item>"STD_inoSpinBlurFx.type"	"Тип"	</item>
+  <item>"STD_inoSpinBlurFx.alpha_rendering"	"Рендеринг альфа"	</item>
+  <item>"STD_inoSpinBlurFx.anti_alias"	"Сглаживание"	</item>
+  <item>"STD_inoSpinBlurFx.reference"	"Опорное"	</item>
+  <item>"STD_inoSpinBlurFx.ellipse_aspect_ratio"	"Соотношение сторон эллипса"	</item>
+  <item>"STD_inoSpinBlurFx.ellipse_angle"	"Угол эллипса"	</item>
+  <item>"STD_inoWarphvFx"	"Искажение HV (Ino)"	</item>
+  <item>"STD_inoWarphvFx.h_maxlen"	"Макс. длина Г"	</item>
+  <item>"STD_inoWarphvFx.v_maxlen"	"Макс. длина В"	</item>
+  <item>"STD_inoWarphvFx.h_ref_mode"	"Опорный режим Г"	</item>
+  <item>"STD_inoWarphvFx.v_ref_mode"	"Опорный режим В"	</item>
+  <item>"STD_inoWarphvFx.alpha_rendering"	"Рендеринг альфа"	</item>
+  <item>"STD_inoWarphvFx.anti_aliasing"	"Сглаживание"	</item>
+  
+<!------------------------------ Iwa FXs ------------------------------------------->
+
+  <item>"STD_iwa_AdjustExposureFx"	"Регулировка экспозиции (Iwa)"	</item>
+  <item>"STD_iwa_AdjustExposureFx.hardness"	"Жёсткость"	</item>
+  <item>"STD_iwa_AdjustExposureFx.gamma"	"Гамма"	</item>
+  <item>"STD_iwa_AdjustExposureFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_iwa_AdjustExposureFx.scale"	"Масштаб"	</item>
+  <item>"STD_iwa_AdjustExposureFx.offset"	"Смещение"	</item>
+
+  <item>"STD_iwa_DirectionalBlurFx"			"Направленное размытие (Iwa)"</item>
+  <item>"STD_iwa_DirectionalBlurFx.angle"		"Угол"</item>
+  <item>"STD_iwa_DirectionalBlurFx.intensity"		"Интенсивность"</item>
+  <item>"STD_iwa_DirectionalBlurFx.bidirectional"	"Двунаправленное"</item>
+  <item>"STD_iwa_DirectionalBlurFx.filterType"		"Тип фильтра"</item>
+
+  <item>"STD_iwa_GradientWarpFx"			"Искажение градиентом (Iwa)"</item>
+  <item>"STD_iwa_GradientWarpFx.h_maxlen"		"Длина по горизонтали"</item>
+  <item>"STD_iwa_GradientWarpFx.v_maxlen"		"Длина по вертикали"</item>
+  <item>"STD_iwa_GradientWarpFx.scale"			"Масштаб"</item>
+  <item>"STD_iwa_GradientWarpFx.sampling_size"			"Размер выборки"</item>
+
+  <item>"STD_iwa_MotionBlurCompFx"	"Размытие в движении (Iwa)"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.hardness"	"Жёсткость"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.gamma"	"Гамма"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.gammaAdjust"	"Коррекция гаммы"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.shutterStart"	"Начало затвора"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.shutterEnd"	"Конец затвора"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.traceResolution"	"Разрешение трассировки"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.motionObjectType"	"Опорный объект"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.motionObjectIndex" "Индекс"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.startValue" "Начальное значение"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.startCurve" "Начальная кривая"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.endValue" "Конечное значение"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.endCurve" "Конечная кривая"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.zanzoMode" "Режим послеобраза"	</item>
+  <item>"STD_iwa_MotionBlurCompFx.premultiType" "Тип премножения источника"	</item>
+
+  <item>"STD_iwa_PerspectiveDistortFx"			"Перспективная дисторсия (Iwa)"</item>
+  <item>"STD_iwa_PerspectiveDistortFx.vanishingPoint"	"Точка схода"</item>
+  <item>"STD_iwa_PerspectiveDistortFx.anchorPoint"	"Опорная точка"</item>
+  <item>"STD_iwa_PerspectiveDistortFx.precision"	"Точность"</item>
+
+  <item>"STD_iwa_SpectrumFx"	"Спектр (Iwa)"	</item>
+  <item>"STD_iwa_SpectrumFx.intensity"	"Интенсивность"	</item>
+  <item>"STD_iwa_SpectrumFx.refractiveIndex"	"Коэффициент преломления"	</item>
+  <item>"STD_iwa_SpectrumFx.thickMax"	"Макс. толщина"	</item>
+  <item>"STD_iwa_SpectrumFx.thickMin"	"Мин. толщина"	</item>
+  <item>"STD_iwa_SpectrumFx.RGamma"	"Гамма красного"	</item>
+  <item>"STD_iwa_SpectrumFx.GGamma"	"Гамма зелёного"	</item>
+  <item>"STD_iwa_SpectrumFx.BGamma"	"Гамма синего"	</item>
+  <item>"STD_iwa_SpectrumFx.loopSpectrumFadeWidth"	"Ширина затухания цикла спектра"	</item>
+  <item>"STD_iwa_SpectrumFx.spectrumShift"	"Сдвиг спектра"	</item>
+  <item>"STD_iwa_SpectrumFx.lensFactor"	"Фактор линзы"	</item>
+  <item>"STD_iwa_SpectrumFx.lightThres"	"Порог света"</item>
+  <item>"STD_iwa_SpectrumFx.lightIntensity"	"Интенсивность света"</item>
+
+  <item>"STD_iwa_TileFx"	"Мозаика (Iwa)"</item>
+  <item>"STD_iwa_TileFx.inputSize"	"Размер входа"</item>
+  <item>"STD_iwa_TileFx.leftQuantity"	"Количество слева"</item>
+  <item>"STD_iwa_TileFx.rightQuantity"	"Количество справа"</item>
+  <item>"STD_iwa_TileFx.xMirror"	"Зеркало по горизонтали"</item>
+  <item>"STD_iwa_TileFx.hMargin"	"Отступ по горизонтали"</item>
+  <item>"STD_iwa_TileFx.topQuantity"	"Количество сверху"</item>
+  <item>"STD_iwa_TileFx.bottomQuantity"	"Количество снизу"</item>
+  <item>"STD_iwa_TileFx.yMirror"	"Зеркало по вертикали"</item>
+  <item>"STD_iwa_TileFx.vMargin"	"Отступ по вертикали"</item>
+
+  <item>"STD_iwa_PNPerspectiveFx"			"Перспектива Перлина (Iwa)"</item>
+  <item>"STD_iwa_PNPerspectiveFx.renderMode"		"Режим рендеринга"</item>
+  <item>"STD_iwa_PNPerspectiveFx.noiseType"		"Тип шума"</item>
+  <item>"STD_iwa_PNPerspectiveFx.size"			"Размер"</item>
+  <item>"STD_iwa_PNPerspectiveFx.evolution"		"Эволюция"</item>
+  <item>"STD_iwa_PNPerspectiveFx.octaves"		"Октавы"</item>
+  <item>"STD_iwa_PNPerspectiveFx.offset"		"Смещение"</item>
+  <item>"STD_iwa_PNPerspectiveFx.persistance_intensity"	"Интенсивность постоянства"</item>
+  <item>"STD_iwa_PNPerspectiveFx.persistance_size"	"Размер постоянства"</item>
+  <item>"STD_iwa_PNPerspectiveFx.persistance_evolution"	"Эволюция постоянства"</item>
+  <item>"STD_iwa_PNPerspectiveFx.persistance_offset"	"Смещение постоянства"</item>
+  <item>"STD_iwa_PNPerspectiveFx.fov"			"Угол обзора"</item>
+  <item>"STD_iwa_PNPerspectiveFx.eyeLevel"		"Уровень глаз"</item>
+  <item>"STD_iwa_PNPerspectiveFx.alpha_rendering"	"Рендеринг альфа"</item>
+  <item>"STD_iwa_PNPerspectiveFx.waveHeight"		"Высота волны"</item>
+  <item>"STD_iwa_PNPerspectiveFx.normalize_fresnel"		"Нормализовать интенсивность"</item>
+  
+  <item>"STD_iwa_SoapBubbleFx"	"Мыльный пузырь (Iwa)"	</item>
+  <item>"STD_iwa_SoapBubbleFx.renderMode"	"Режим рендеринга"	</item>
+  <item>"STD_iwa_SoapBubbleFx.intensity"	"Интенсивность"	</item>
+  <item>"STD_iwa_SoapBubbleFx.refractiveIndex"	"Коэффициент преломления"	</item>
+  <item>"STD_iwa_SoapBubbleFx.thickMax"	"Макс. толщина"	</item>
+  <item>"STD_iwa_SoapBubbleFx.thickMin"	"Мин. толщина"	</item>
+  <item>"STD_iwa_SoapBubbleFx.RGamma"	"Гамма красного"	</item>
+  <item>"STD_iwa_SoapBubbleFx.GGamma"	"Гамма зелёного"	</item>
+  <item>"STD_iwa_SoapBubbleFx.BGamma"	"Гамма синего"	</item>
+  <item>"STD_iwa_SoapBubbleFx.loopSpectrumFadeWidth"	"Ширина затухания цикла спектра"	</item>
+  <item>"STD_iwa_SoapBubbleFx.spectrumShift"	"Сдвиг спектра"	</item>
+  <item>"STD_iwa_SoapBubbleFx.binarizeThresold"	"Порог бинаризации"	</item>
+  <item>"STD_iwa_SoapBubbleFx.multiSource"	"Несколько пузырей в изображении формы"	</item>
+  <item>"STD_iwa_SoapBubbleFx.maskCenter"	"Маскировать центр пузыря"	</item>
+  <item>"STD_iwa_SoapBubbleFx.centerOpacity"	"Непрозрачность центра пузыря"	</item>
+  <item>"STD_iwa_SoapBubbleFx.fitThickness"	"Подогнать изображение толщины под каждый пузырь"	</item>
+  <item>"STD_iwa_SoapBubbleFx.shapeAspectRatio"	"Соотношение сторон формы"	</item>
+  <item>"STD_iwa_SoapBubbleFx.blurRadius"	"Радиус размытия"	</item>
+  <item>"STD_iwa_SoapBubbleFx.blurPower"	"Сила размытия"	</item>
+  <item>"STD_iwa_SoapBubbleFx.normalSampleDistance"	"Расстояние выборки нормалей"	</item>
+  <item>"STD_iwa_SoapBubbleFx.noiseSubDepth"	"Подглубина шума"	</item>
+  <item>"STD_iwa_SoapBubbleFx.noiseResolutionS"	"Разрешение шума S"	</item>
+  <item>"STD_iwa_SoapBubbleFx.noiseResolutionT"	"Разрешение шума T"	</item>
+  <item>"STD_iwa_SoapBubbleFx.noiseSubCompositeRatio"	"Соотношение подамплитуды шума"	</item>
+  <item>"STD_iwa_SoapBubbleFx.noiseEvolution"	"Эволюция шума"	</item>
+  <item>"STD_iwa_SoapBubbleFx.noiseDepthMixRatio"	"Смешивание шума с глубиной"	</item>
+  <item>"STD_iwa_SoapBubbleFx.noiseThicknessMixRatio"	"Смешивание шума с толщиной"	</item>
+
+  <item>"STD_iwa_BokehFx"	"Боке (Iwa)"</item>
+  <item>"STD_iwa_BokehFx.on_focus_distance"	"Дистанция фокуса"</item>
+  <item>"STD_iwa_BokehFx.bokeh_amount"	"Сила боке"</item>
+  <item>"STD_iwa_BokehFx.hardness"	"Жёсткость"</item>
+  <item>"STD_iwa_BokehFx.gamma"	"Гамма"</item>
+  <item>"STD_iwa_BokehFx.gammaAdjust"	"Коррекция гаммы"</item>
+  <item>"STD_iwa_BokehFx.linearizeMode"	"Режим линеаризации"</item>
+  <item>"STD_iwa_BokehFx.distance1"		"Дистанция источника 1"</item>
+  <item>"STD_iwa_BokehFx.bokeh_adjustment1"	"Коррекция боке источника 1"</item>
+  <item>"STD_iwa_BokehFx.distance2"		"Дистанция источника 2"</item>
+  <item>"STD_iwa_BokehFx.bokeh_adjustment2"	"Коррекция боке источника 2"</item>
+  <item>"STD_iwa_BokehFx.distance3"		"Дистанция источника 3"</item>
+  <item>"STD_iwa_BokehFx.bokeh_adjustment3"	"Коррекция боке источника 3"</item>
+  <item>"STD_iwa_BokehFx.distance4"		"Дистанция источника 4"</item>
+  <item>"STD_iwa_BokehFx.bokeh_adjustment4"	"Коррекция боке источника 4"</item>
+  <item>"STD_iwa_BokehFx.distance5"		"Дистанция источника 5"</item>
+  <item>"STD_iwa_BokehFx.bokeh_adjustment5"	"Коррекция боке источника 5"</item>
+  
+  <item>"STD_iwa_BokehRefFx"	"Боке с картой глубины (Iwa)"</item>
+  <item>"STD_iwa_BokehRefFx.on_focus_distance"	"Дистанция фокуса"</item>
+  <item>"STD_iwa_BokehRefFx.bokeh_amount"	"Сила боке"</item>
+  <item>"STD_iwa_BokehRefFx.hardness"	"Жёсткость"</item>
+  <item>"STD_iwa_BokehRefFx.gamma"	"Гамма"</item>
+  <item>"STD_iwa_BokehRefFx.gammaAdjust"	"Коррекция гаммы"</item>
+  <item>"STD_iwa_BokehRefFx.linearizeMode"	"Режим линеаризации"</item>
+  <item>"STD_iwa_BokehRefFx.distance_precision"	"Точность дистанции"</item>
+  <item>"STD_iwa_BokehRefFx.fill_gap"	"Заполнить пробелы"</item>
+  <item>"STD_iwa_BokehRefFx.fill_gap_with_median_filter"	"Использовать медианный фильтр"</item>
+
+  <item>"STD_iwa_BokehAdvancedFx"			"Расширенное боке (Iwa)"</item>
+  <item>"STD_iwa_BokehAdvancedFx.on_focus_distance"	"Дистанция фокуса"</item>
+  <item>"STD_iwa_BokehAdvancedFx.bokeh_amount"		"Сила боке"</item>
+  <item>"STD_iwa_BokehAdvancedFx.masterHardness"	"Общая жёсткость"</item>
+  <item>"STD_iwa_BokehAdvancedFx.masterGamma"	"Общая гамма"</item>
+  <item>"STD_iwa_BokehAdvancedFx.masterGammaAdjust"	"Общая коррекция гаммы"</item>
+  <item>"STD_iwa_BokehAdvancedFx.linearizeMode"	"Режим линеаризации"</item>
+  <item>"STD_iwa_BokehAdvancedFx.hardnessPerSource"	"Гамма/Жёсткость по источникам"</item>
+
+  <item>"STD_iwa_BokehAdvancedFx.distance1"		"Дистанция источника 1"</item>
+  <item>"STD_iwa_BokehAdvancedFx.bokeh_adjustment1"	"Коррекция боке источника 1"</item>
+  <item>"STD_iwa_BokehAdvancedFx.hardness1"		"Жёсткость источника 1"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gamma1"		"Гамма источника 1"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gammaAdjust1"		"Коррекция гаммы источника 1"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depth_ref1"		"Изображение глубины"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depthRange1"	"Диапазон глубины источника 1"</item>
+  <item>"STD_iwa_BokehAdvancedFx.fillGap1"	"Заполнить пробелы"</item>
+  <item>"STD_iwa_BokehAdvancedFx.doMedian1"	"Использовать медиану"</item>
+
+  <item>"STD_iwa_BokehAdvancedFx.distance2"		"Дистанция источника 2"</item>
+  <item>"STD_iwa_BokehAdvancedFx.bokeh_adjustment2"	"Коррекция боке источника 2"</item>
+  <item>"STD_iwa_BokehAdvancedFx.hardness2"		"Жёсткость источника 2"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gamma2"		"Гамма источника 2"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gammaAdjust2"		"Коррекция гаммы источника 2"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depth_ref2"		"Изображение глубины"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depthRange2"	"Диапазон глубины источника 2"</item>
+  <item>"STD_iwa_BokehAdvancedFx.fillGap2"	"Заполнить пробелы"</item>
+  <item>"STD_iwa_BokehAdvancedFx.doMedian2"	"Использовать медиану"</item>
+
+  <item>"STD_iwa_BokehAdvancedFx.distance3"		"Дистанция источника 3"</item>
+  <item>"STD_iwa_BokehAdvancedFx.bokeh_adjustment3"	"Коррекция боке источника 3"</item>
+  <item>"STD_iwa_BokehAdvancedFx.hardness3"		"Жёсткость источника 3"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gamma3"		"Гамма источника 3"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gammaAdjust3"		"Коррекция гаммы источника 3"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depth_ref3"		"Изображение глубины"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depthRange3"	"Диапазон глубины источника 3"</item>
+  <item>"STD_iwa_BokehAdvancedFx.fillGap3"	"Заполнить пробелы"</item>
+  <item>"STD_iwa_BokehAdvancedFx.doMedian3"	"Использовать медиану"</item>
+
+  <item>"STD_iwa_BokehAdvancedFx.distance4"		"Дистанция источника 4"</item>
+  <item>"STD_iwa_BokehAdvancedFx.bokeh_adjustment4"	"Коррекция боке источника 4"</item>
+  <item>"STD_iwa_BokehAdvancedFx.hardness4"		"Жёсткость источника 4"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gamma4"		"Гамма источника 4"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gammaAdjust4"		"Коррекция гаммы источника 4"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depth_ref4"		"Изображение глубины"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depthRange4"	"Диапазон глубины источника 4"</item>
+  <item>"STD_iwa_BokehAdvancedFx.fillGap4"	"Заполнить пробелы"</item>
+  <item>"STD_iwa_BokehAdvancedFx.doMedian4"	"Использовать медиану"</item>
+
+  <item>"STD_iwa_BokehAdvancedFx.distance5"		"Дистанция источника 5"</item>
+  <item>"STD_iwa_BokehAdvancedFx.bokeh_adjustment5"	"Коррекция боке источника 5"</item>
+  <item>"STD_iwa_BokehAdvancedFx.hardness5"		"Жёсткость источника 5"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gamma5"		"Гамма источника 5"</item>
+  <item>"STD_iwa_BokehAdvancedFx.gammaAdjust5"		"Коррекция гаммы источника 5"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depth_ref5"		"Изображение глубины"</item>
+  <item>"STD_iwa_BokehAdvancedFx.depthRange5"	"Диапазон глубины источника 5"</item>
+  <item>"STD_iwa_BokehAdvancedFx.fillGap5"	"Заполнить пробелы"</item>
+  <item>"STD_iwa_BokehAdvancedFx.doMedian5"	"Использовать медиану"</item>
+
+  <item>"STD_iwa_TimeCodeFx"	"Тайм-код (Iwa)"</item>
+  <item>"STD_iwa_TimeCodeFx.displayType"	"Тип отображения"</item>
+  <item>"STD_iwa_TimeCodeFx.frameRate"	"Частота кадров"</item>
+  <item>"STD_iwa_TimeCodeFx.startFrame"	"Начальный кадр"</item>
+  <item>"STD_iwa_TimeCodeFx.position"	"Позиция текста"</item>
+  <item>"STD_iwa_TimeCodeFx.size"	"Размер текста"</item>
+  <item>"STD_iwa_TimeCodeFx.textColor"	"Цвет текста"</item>
+  <item>"STD_iwa_TimeCodeFx.showBox"	"Показать рамку"</item>
+  <item>"STD_iwa_TimeCodeFx.boxColor"	"Цвет рамки"</item>
+
+  <item>"STD_iwa_BarrelDistortFx"	"Бочкообразная дисторсия (Iwa)"</item>
+  <item>"STD_iwa_BarrelDistortFx.center" "Центр"</item>
+  <item>"STD_iwa_BarrelDistortFx.distortion" "Дисторсия"</item>
+  <item>"STD_iwa_BarrelDistortFx.distortionAspect" "Соотношение сторон дисторсии"</item>
+  <item>"STD_iwa_BarrelDistortFx.precision" "Точность источника"</item>
+  <item>"STD_iwa_BarrelDistortFx.chromaticAberration" "Хроматическая аберрация"</item>
+  <item>"STD_iwa_BarrelDistortFx.vignetteAmount" "Сила виньетирования"</item>
+  <item>"STD_iwa_BarrelDistortFx.vignetteGamma" "Гамма виньетирования"</item>
+  <item>"STD_iwa_BarrelDistortFx.vignetteMidpoint" "Середина виньетирования"</item>
+  <item>"STD_iwa_BarrelDistortFx.scale" "Масштаб"</item>
+
+  <item>"STD_iwa_TextFx"	"Текст (Iwa)"</item>
+  <item>"STD_iwa_TextFx.targetType" "Источник"</item>
+  <item>"STD_iwa_TextFx.columnIndex" "Индекс столбца"</item>
+  <item>"STD_iwa_TextFx.hAlign" "Горизонтальное выравнивание"</item>
+  <item>"STD_iwa_TextFx.text" "Текст"</item>
+  <item>"STD_iwa_TextFx.center" "Центр"</item>
+  <item>"STD_iwa_TextFx.width" "Ширина"</item>
+  <item>"STD_iwa_TextFx.height" "Высота"</item>
+  <item>"STD_iwa_TextFx.font" "Шрифт"</item>
+  <item>"STD_iwa_TextFx.textColor" "Цвет текста"</item>
+  <item>"STD_iwa_TextFx.boxColor" "Цвет рамки"</item>
+  <item>"STD_iwa_TextFx.showBorder" "Показать границу"</item>
+
+  <item>"STD_iwa_CorridorGradientFx" 			"Градиент-коридор (Iwa)" 	</item>
+  <item>"STD_iwa_CorridorGradientFx.shape"	"Форма"		</item>
+  <item>"STD_iwa_CorridorGradientFx.curveType"	"Тип"		</item>
+  <item>"STD_iwa_CorridorGradientFx.bottom_left_in"	"Нижний левый вход"	</item>
+  <item>"STD_iwa_CorridorGradientFx.bottom_left_out"	"Нижний левый выход"		</item>
+  <item>"STD_iwa_CorridorGradientFx.bottom_right_in"	"Нижний правый вход"	</item>
+  <item>"STD_iwa_CorridorGradientFx.bottom_right_out"	"Нижний правый выход"		</item>
+  <item>"STD_iwa_CorridorGradientFx.top_right_in"	"Верхний правый вход"	</item>
+  <item>"STD_iwa_CorridorGradientFx.top_right_out"	"Верхний правый выход"		</item>
+  <item>"STD_iwa_CorridorGradientFx.top_left_in"	"Верхний левый вход"	</item>
+  <item>"STD_iwa_CorridorGradientFx.top_left_out"	"Верхний левый выход"		</item>
+  <item>"STD_iwa_CorridorGradientFx.inner_color"	"Внутренний цвет"		</item>
+  <item>"STD_iwa_CorridorGradientFx.outer_color"	"Внешний цвет"		</item>
+
+  <item>"STD_iwa_SpinGradientFx" 			"Вращательный градиент (Iwa)" 	</item>
+  <item>"STD_iwa_SpinGradientFx.center"	"Центр"		</item>
+  <item>"STD_iwa_SpinGradientFx.curveType"	"Тип"		</item>
+  <item>"STD_iwa_SpinGradientFx.startAngle"	"Начальный угол"		</item>
+  <item>"STD_iwa_SpinGradientFx.startColor"	"Начальный цвет"		</item>
+  <item>"STD_iwa_SpinGradientFx.endAngle"	"Конечный угол"		</item>
+  <item>"STD_iwa_SpinGradientFx.endColor"	"Конечный цвет"		</item>
+
+  <item>"STD_iwa_LinearGradientFx" 			"Линейный градиент" 	</item>
+  <item>"STD_iwa_LinearGradientFx.curveType"	"Тип"		</item>
+  <item>"STD_iwa_LinearGradientFx.startPoint"	"Начальная точка"		</item>
+  <item>"STD_iwa_LinearGradientFx.startColor"	"Начальный цвет"		</item>
+  <item>"STD_iwa_LinearGradientFx.endPoint"	"Конечная точка"		</item>
+  <item>"STD_iwa_LinearGradientFx.endColor"	"Конечный цвет"		</item>
+  <item>"STD_iwa_LinearGradientFx.wave_amplitude"	"Амплитуда"	</item>
+  <item>"STD_iwa_LinearGradientFx.wave_frequency"	"Частота"	</item>
+  <item>"STD_iwa_LinearGradientFx.wave_phase"		"Фаза"		</item>
+  
+  <item>"STD_iwa_FloorBumpFx" 			"Рельеф пола (Iwa)" 	</item>
+  <item>"STD_iwa_FloorBumpFx.renderMode"	"Режим рендеринга"		</item>
+  <item>"STD_iwa_FloorBumpFx.fov"	"Угол обзора"		</item>
+  <item>"STD_iwa_FloorBumpFx.cameraAltitude"	"Высота камеры"		</item>
+  <item>"STD_iwa_FloorBumpFx.eyeLevel"	"Уровень глаз"		</item>
+  <item>"STD_iwa_FloorBumpFx.drawLevel"	"Уровень рисования"		</item>
+  <item>"STD_iwa_FloorBumpFx.waveHeight"	"Высота волны"		</item>
+  <item>"STD_iwa_FloorBumpFx.textureOffsetAmount"	"Смещение текстуры"		</item>
+  <item>"STD_iwa_FloorBumpFx.textureOffsetSpread"	"Распространение текстуры"		</item>
+  <item>"STD_iwa_FloorBumpFx.sourcePrecision"	"Точность источника"		</item>
+  <item>"STD_iwa_FloorBumpFx.souceMargin"	"Отступ источника"		</item>
+  <item>"STD_iwa_FloorBumpFx.lightAzimuth"	"Азимут света"		</item>
+  <item>"STD_iwa_FloorBumpFx.lightElevation"	"Высота света"		</item>
+  <item>"STD_iwa_FloorBumpFx.depth"	"Глубина"		</item>
+  <item>"STD_iwa_FloorBumpFx.refractiveIndex"	"Коэффициент преломления"		</item>
+  <item>"STD_iwa_FloorBumpFx.distanceLevel"	"Уровень дистанции"		</item>
+  <item>"STD_iwa_FloorBumpFx.differenceMode"	"Рендерить разницу от плоского состояния"		</item>
+  <item>"STD_iwa_FloorBumpFx.displacement"	"Смещение"		</item>
+  
+  <item>"STD_iwa_GlareFx" 			"Блик (Iwa)" 	</item>
+  <item>"STD_iwa_GlareFx.renderMode"	"Режим рендеринга"		</item>
+  <item>"STD_iwa_GlareFx.irisMode"	"Форма диафрагмы"		</item>
+  <item>"STD_iwa_GlareFx.irisScale"	"Масштаб диафрагмы"		</item>
+  <item>"STD_iwa_GlareFx.irisGearEdgeCount"	"Количество граней"		</item>
+  <item>"STD_iwa_GlareFx.irisRandomSeed"	"Случайное зерно"		</item>
+  <item>"STD_iwa_GlareFx.irisSymmetry"	"Симметрия"		</item>
+  <item>"STD_iwa_GlareFx.irisAppearance"	"Внешний вид"		</item>
+  <item>"STD_iwa_GlareFx.intensity"	"Интенсивность"		</item>
+  <item>"STD_iwa_GlareFx.size"	"Размер фильтра"		</item>
+  <item>"STD_iwa_GlareFx.rotation"	"Поворот фильтра"		</item>
+  <item>"STD_iwa_GlareFx.aberration"	"Хроматическая аберрация"		</item>
+  <item>"STD_iwa_GlareFx.noise_factor"	"Фактор шума"		</item>
+  <item>"STD_iwa_GlareFx.noise_size"	"Размер шума"		</item>
+  <item>"STD_iwa_GlareFx.noise_octave"	"Октавы шума"		</item>
+  <item>"STD_iwa_GlareFx.noise_evolution"	"Эволюция шума"		</item>
+  <item>"STD_iwa_GlareFx.noise_offset"	"Смещение шума"		</item>
+
+  <item>"STD_iwa_FractalNoiseFx"	"Фрактальный шум (Iwa)"	</item>
+  <item>"STD_iwa_FractalNoiseFx.fractalType"	"Тип фрактала"	</item>
+  <item>"STD_iwa_FractalNoiseFx.noiseType"	"Тип шума"	</item>
+  <item>"STD_iwa_FractalNoiseFx.invert"	"Инвертировать"	</item>
+  <item>"STD_iwa_FractalNoiseFx.rotation"	"Поворот"	</item>
+  <item>"STD_iwa_FractalNoiseFx.uniformScaling"	"Единый масштаб"	</item>
+  <item>"STD_iwa_FractalNoiseFx.scale"	"Масштаб"	</item>
+  <item>"STD_iwa_FractalNoiseFx.scaleW"	"Масштаб по ширине"	</item>
+  <item>"STD_iwa_FractalNoiseFx.scaleH"	"Масштаб по высоте"	</item>
+  <item>"STD_iwa_FractalNoiseFx.offsetTurbulence"	"Смещение турбулентности"	</item>
+  <item>"STD_iwa_FractalNoiseFx.perspectiveOffset"	"Перспективное смещение"	</item>
+  <item>"STD_iwa_FractalNoiseFx.complexity"	"Сложность"	</item>
+  <item>"STD_iwa_FractalNoiseFx.subInfluence"	"Влияние подуровня"	</item>
+  <item>"STD_iwa_FractalNoiseFx.subScaling"	"Масштаб подуровня"	</item>
+  <item>"STD_iwa_FractalNoiseFx.subRotation"	"Поворот подуровня"	</item>
+  <item>"STD_iwa_FractalNoiseFx.subOffset"	"Смещение подуровня"	</item>
+  <item>"STD_iwa_FractalNoiseFx.evolution"	"Эволюция"	</item>
+  <item>"STD_iwa_FractalNoiseFx.cycleEvolution"	"Циклическая эволюция"	</item>
+  <item>"STD_iwa_FractalNoiseFx.cycleEvolutionRange"	"Цикл (в эволюции)"	</item>
+  <item>"STD_iwa_FractalNoiseFx.dynamicIntensity"	"Динамическая интенсивность"	</item>
+  <item>"STD_iwa_FractalNoiseFx.doConical"	"Коническая трансформация"	</item>
+  <item>"STD_iwa_FractalNoiseFx.conicalAngle"	"Угол конуса"	</item>
+  <item>"STD_iwa_FractalNoiseFx.cameraFov"	"Угол обзора камеры"	</item>
+  <item>"STD_iwa_FractalNoiseFx.zScale"	"Масштаб глубины"	</item>
+  <item>"STD_iwa_FractalNoiseFx.conicalEvolution"	"Коническая эволюция"	</item>
+  <item>"STD_iwa_FractalNoiseFx.alphaRendering"	"Рендеринг альфа"	</item>
+  
+  <item>"STD_iwa_BloomFx" 			"Свечение (Iwa)" 	</item>
+  <item>"STD_iwa_BloomFx.gamma"	"Гамма"		</item>
+  <item>"STD_iwa_BloomFx.gammaAdjust"	"Коррекция гаммы"		</item>
+  <item>"STD_iwa_BloomFx.auto_gain"	"Автоусиление"		</item>
+  <item>"STD_iwa_BloomFx.gain_adjust"	"Коррекция усиления"		</item>
+  <item>"STD_iwa_BloomFx.gain"	"Усиление"		</item>
+  <item>"STD_iwa_BloomFx.decay"	"Затухание"		</item>
+  <item>"STD_iwa_BloomFx.size"	"Размер"		</item>
+  <item>"STD_iwa_BloomFx.alpha_mode"	"Режим альфа"		</item>
+  <item>"STD_iwa_BloomFx.alpha_rendering"	"Рендеринг альфа"		</item>
+
+  <item>"STD_iwa_RainbowFx" 			"Радуга (Iwa)" 	</item>
+  <item>"STD_iwa_RainbowFx.center"	"Центр"		</item>
+  <item>"STD_iwa_RainbowFx.radius"	"Радиус"		</item>
+  <item>"STD_iwa_RainbowFx.intensity"	"Интенсивность"		</item>
+  <item>"STD_iwa_RainbowFx.width_scale"	"Масштаб ширины"		</item>
+  <item>"STD_iwa_RainbowFx.inside"	"Внутренняя интенсивность"		</item>
+  <item>"STD_iwa_RainbowFx.secondary_rainbow"	"Интенсивность вторичной радуги"		</item>
+  <item>"STD_iwa_RainbowFx.alpha_rendering"	"Рендеринг альфа"		</item>
+ 
+  <item>"STD_iwa_TangentFlowFx"	"Поток по касательной (Iwa)"	</item>
+  <item>"STD_iwa_TangentFlowFx.iteration"	"Итерации"	</item>
+  <item>"STD_iwa_TangentFlowFx.kernelRadius"	"Радиус ядра"	</item>
+  <item>"STD_iwa_TangentFlowFx.threshold"	"Порог"	</item>
+  <item>"STD_iwa_TangentFlowFx.alignDirection"	"Выравнивание направления"	</item>
+  <item>"STD_iwa_TangentFlowFx.pivotAngle"	"Опорный угол"	</item>
+
+  <item>"STD_iwa_FlowBlurFx"	"Размытие по потоку (Iwa)"	</item>
+  <item>"STD_iwa_FlowBlurFx.length"	"Длина"	</item>
+  <item>"STD_iwa_FlowBlurFx.filterType"	"Тип фильтра"	</item>
+  <item>"STD_iwa_FlowBlurFx.linear"	"Линейное цветовое пространство"	</item>
+  <item>"STD_iwa_FlowBlurFx.gamma"	"Гамма"	</item>
+  <item>"STD_iwa_FlowBlurFx.referenceMode"	"Опорный режим"	</item>
+
+  <item>"STD_iwa_FlowPaintBrushFx"	"Кисть потока краски (Iwa)"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.h_density"	"Плотность по горизонтали"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.v_density"	"Плотность по вертикали"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.pos_randomness"	"Случайность позиции"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.pos_wobble"	"Колебание позиции по кадрам"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.tip_width"	"Ширина кончика"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.tip_length"	"Длина кончика"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.tip_alpha"	"Альфа кончика"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.tip_joints"	"Соединения кончика"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.bidirectional"	"Двунаправленное"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.width_randomness"	"Случайность ширины"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.length_randomness"	"Случайность длины"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.angle_randomness"	"Случайность угла"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.sustain_width_to_skew"	"Сохранять ширину при наклоне"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.anti_jaggy"	"Предотвращать зазубрины текстурой"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.origin_pos"	"Начало"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.horizontal_pos"	"По горизонтали"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.vertical_pos"	"По вертикали"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.curve_point"	"Якорь кривой"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.fill_gap_size"	"Размер заполнения пробелов"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.reference_frame"	"Опорный кадр"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.reference_prevalence"	"Преобладание опорного"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.random_seed"	"Случайное зерно"	</item>
+  <item>"STD_iwa_FlowPaintBrushFx.sort_by"	"Сортировать по"	</item>
+
+  <item>"STD_iwa_MotionFlowFx"	"Поток движения (Iwa)"	</item>
+  <item>"STD_iwa_MotionFlowFx.shutterLength"	"Длина затвора"	</item>
+  <item>"STD_iwa_MotionFlowFx.motionObjectType"	"Опорный объект"	</item>
+  <item>"STD_iwa_MotionFlowFx.motionObjectIndex" "Индекс"	</item>
+  <item>"STD_iwa_MotionFlowFx.normalizeType" "Нормализация"	</item>
+  <item>"STD_iwa_MotionFlowFx.normalizeRange" "Максимальная длина"	</item>
+
+ <!------------------------------ Tiled Particles Iwa ------------------------------------------->
+
+  <item>STD_iwa_TiledParticlesFx "Мозаичные частицы (Iwa)" </item>
+  <item>"STD_iwa_TiledParticlesFx.rendermode"		"Режим рендеринга"		</item>
+
+  <item>"STD_iwa_TiledParticlesFx.base_ctrl"			"Базовое изображение"		</item>
+  <item>"STD_iwa_TiledParticlesFx.margin"			"Отступ"		</item>
+  <item>"STD_iwa_TiledParticlesFx.curl"				"Завиток"				</item>
+  <item>"STD_iwa_TiledParticlesFx.curl_ctrl"			"Управляющее изображение"		</item>
+  <item>"STD_iwa_TiledParticlesFx.curl_ctrl_2"		"Управляющее изображение 2"	</item>
+  <item>"STD_iwa_TiledParticlesFx.triangleSize"		"Расстояние истоков"	</item>
+
+  <item>"STD_iwa_TiledParticlesFx.flap_velocity"			"Скорость хлопанья"	</item>
+  <item>"STD_iwa_TiledParticlesFx.flap_dir_sensitivity"	"Чувствительность вращения"	</item>
+  <item>"STD_iwa_TiledParticlesFx.flap_ctrl"				"Управляющее изображение"	</item>
+
+  <item>"STD_iwa_TiledParticlesFx.light_theta"		"Направление света"	</item>
+  <item>"STD_iwa_TiledParticlesFx.light_phi"			"Наклон света"		</item>
+
+  <item>"STD_iwa_TiledParticlesFx.source_ctrl"			"Управляющее изображение"		</item>
+  <item>"STD_iwa_TiledParticlesFx.bright_thres"			"Порог яркости"		</item>
+  <item>"STD_iwa_TiledParticlesFx.center"			"Центр"			</item>
+  <item>"STD_iwa_TiledParticlesFx.length"			"Ширина"			</item>
+  <item>"STD_iwa_TiledParticlesFx.height"			"Высота"			</item>
+  <item>"STD_iwa_TiledParticlesFx.animation"			"Анимация"		</item>
+  <item>"STD_iwa_TiledParticlesFx.step"			"Шаг анимации"		</item>
+  <item>"STD_iwa_TiledParticlesFx.starting_frame"		"Начальный кадр"		</item>
+  <item>"STD_iwa_TiledParticlesFx.birth_rate"			"Скорость рождения"		</item>
+  <item>"STD_iwa_TiledParticlesFx.random_seed"		"Случайное зерно"		</item>
+  <item>"STD_iwa_TiledParticlesFx.lifetime"			"Время жизни"			</item>
+  <item>"STD_iwa_TiledParticlesFx.lifetime_ctrl"			"Управляющее изображение"			</item>
+  <item>"STD_iwa_TiledParticlesFx.column_lifetime"			"Использовать длительность столбца для времени жизни"			</item>
+  <item>"STD_iwa_TiledParticlesFx.gravity"			"Гравитация"			</item>
+  <item>"STD_iwa_TiledParticlesFx.gravity_angle"		"Угол гравитации"			</item>
+  <item>"STD_iwa_TiledParticlesFx.gravityBufferFrame"		"Буферный кадр гравитации"			</item>
+  <item>"STD_iwa_TiledParticlesFx.gravity_ctrl"			"Управляющее изображение"		</item>
+  <item>"STD_iwa_TiledParticlesFx.friction"			"Трение"			</item>
+  <item>"STD_iwa_TiledParticlesFx.friction_ctrl"			"Управляющее изображение"		</item>
+  <item>"STD_iwa_TiledParticlesFx.wind"			"Сила ветра"		</item>
+  <item>"STD_iwa_TiledParticlesFx.wind_angle"			"Угол ветра"			</item>
+  <item>"STD_iwa_TiledParticlesFx.swing_mode"			"Режим качания"		</item>
+  <item>"STD_iwa_TiledParticlesFx.scattering_x"			"По горизонтали"		</item>
+  <item>"STD_iwa_TiledParticlesFx.scattering_y"			"По вертикали"			</item>
+  <item>"STD_iwa_TiledParticlesFx.scattering_x_ctrl"			"Управляющее изображение Г"		</item>
+  <item>"STD_iwa_TiledParticlesFx.scattering_y_ctrl"			"Управляющее изображение В"		</item>
+  <item>"STD_iwa_TiledParticlesFx.swing"			"Качание"			</item>
+  <item>"STD_iwa_TiledParticlesFx.speed"			"Скорость"			</item>
+  <item>"STD_iwa_TiledParticlesFx.speed_ctrl"			"Управляющее изображение"			</item>
+  <item>"STD_iwa_TiledParticlesFx.speed_angle"		"Угол скорости"			</item>
+
+  <item>"STD_iwa_TiledParticlesFx.speeda_ctrl"			"Управляющее изображение"			</item>
+  <item>"STD_iwa_TiledParticlesFx.speeda_use_gradient"	"Использовать угол градиента"	</item>
+
+  <item>"STD_iwa_TiledParticlesFx.speed_size"			"Связать со масштабом"		</item>
+  <item>"STD_iwa_TiledParticlesFx.top_layer"			"Верхний слой"		</item>
+  <item>"STD_iwa_TiledParticlesFx.mass"			"Масса"			</item>
+  <item>"STD_iwa_TiledParticlesFx.scale"			"Размер"			</item>
+  <item>"STD_iwa_TiledParticlesFx.scale_ctrl"			"Управляющее изображение"		</item>
+  <item>"STD_iwa_TiledParticlesFx.scale_ctrl_all"		"Использовать управляющее изображение на всём протяжении жизни"		</item>
+  <item>"STD_iwa_TiledParticlesFx.rot"			"Ориентация"		</item>
+  <item>"STD_iwa_TiledParticlesFx.rot_ctrl"			"Управляющее изображение"			</item>
+  <item>"STD_iwa_TiledParticlesFx.trail"			"След"			</item>
+  <item>"STD_iwa_TiledParticlesFx.trail_step"			"Шаг"			</item>
+  <item>"STD_iwa_TiledParticlesFx.spin_swing_mode"		"Режим вращательного качания"		</item>
+  <item>"STD_iwa_TiledParticlesFx.spin_speed"			"Скорость вращения"			</item>
+  <item>"STD_iwa_TiledParticlesFx.spin_random"		"Дополнительная скорость"		</item>
+  <item>"STD_iwa_TiledParticlesFx.spin_swing"			"Качание вращения"			</item>
+  <item>"STD_iwa_TiledParticlesFx.path_aim"			"Следовать движению частиц"	</item>
+  <item>"STD_iwa_TiledParticlesFx.opacity"			"Непрозрачность"			</item>
+  <item>"STD_iwa_TiledParticlesFx.opacity_ctrl"			"Управляющее изображение"			</item>
+  <item>"STD_iwa_TiledParticlesFx.trail_opacity"			"Непрозрачность следа"		</item>
+  <item>"STD_iwa_TiledParticlesFx.scale_step"			"Интенсивность размера"		</item>
+  <item>"STD_iwa_TiledParticlesFx.scale_step_ctrl"			"Управляющее изображение"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fade_in"			"Кадры появления"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fade_out"			"Кадры исчезновения"		</item>
+  <item>"STD_iwa_TiledParticlesFx.birth_color"			"Цвет при рождении"		</item>
+  <item>"STD_iwa_TiledParticlesFx.birth_color_ctrl"		"Управляющее изображение"		</item>
+  <item>"STD_iwa_TiledParticlesFx.birth_color_spread"		"Разброс при рождении"		</item>
+  <item>"STD_iwa_TiledParticlesFx.birth_color_fade"		"Интенсивность при рождении"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadein_color"			"Цвет появления"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadein_color_ctrl"		"Управляющее изображение"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadein_color_spread"		"Разброс при появлении"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadein_color_range"		"Диапазон кадров"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadein_color_fade"		"Интенсивность при появлении"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadeout_color"		"Цвет исчезновения"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadeout_color_ctrl"		"Управляющее изображение"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadeout_color_spread"		"Разброс при исчезновении"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadeout_color_range"		"Диапазон кадров"		</item>
+  <item>"STD_iwa_TiledParticlesFx.fadeout_color_fade"		"Интенсивность при исчезновении"		</item>
+  <item>"STD_iwa_TiledParticlesFx.source_gradation"		"Использовать градацию управляющего изображения"		</item>
+  <item>"STD_iwa_TiledParticlesFx.pick_color_for_every_frame"	"Брать цвет управляющего изображения каждый кадр"	</item>
+
+</stringtable> 
+

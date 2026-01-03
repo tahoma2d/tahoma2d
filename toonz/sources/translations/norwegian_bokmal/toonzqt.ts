@@ -3080,6 +3080,11 @@ Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../toonzqt/styleeditor.cpp" line="3927"/>
+        <source>Reset Style</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="6900"/>
         <source>Removing the selected Styles will permanently delete style files from their sets. This cannot be undone!
 Are you sure?</source>
@@ -3359,11 +3364,6 @@ Are you sure?</source>
 </context>
 <context>
     <name>SettingsPage</name>
-    <message>
-        <location filename="../../toonzqt/styleeditor.cpp" line="3927"/>
-        <source>Reset Style</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <location filename="../../toonzqt/styleeditor.cpp" line="4115"/>
         <source>Brush Dynamic</source>
