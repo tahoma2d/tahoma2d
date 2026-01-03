@@ -2173,7 +2173,7 @@ int findColor(TPalette *plt, unsigned int _color) {
 //-----------------------------------------------------------------------------
 
 TStroke *buildStroke(NSVGpath *path, float *xform, float width, int lineCap,
-                     int lineJoin, float miterLimit) {
+                     int lineJoin, float miterLimit, bool autoclose) {
   assert((path->npts - 1) % 3 == 0);
 
   path->pts = (float *)malloc(path->npts * 2 * sizeof(float));
@@ -2207,14 +2207,20 @@ TStroke *buildStroke(NSVGpath *path, float *xform, float width, int lineCap,
 
   if (points.empty()) return 0;
 
-  if (path->closed) {
+  if (path->closed || autoclose) {
     // Compare front and back points. We'll adjust to compare to 2 decimal
     // places only due to precision difference between absolute and relative
     // calculations
     if (((int)(points.back().x * 100) != (int)(points.front().x * 100)) ||
         (int)(points.back().y * 100) != (int)(points.front().y * 100)) {
+      if (autoclose) {
+        points.push_back(points.back());
+        points.push_back(points.back());
+        points.push_back(points.back());
+      }
       points.push_back(0.5 * (points.back() + points.front()));
       points.push_back(points.front());
+      if (autoclose) points.push_back(points.front());
     } else {
       int gasp = 0;
     }
@@ -2227,7 +2233,7 @@ TStroke *buildStroke(NSVGpath *path, float *xform, float width, int lineCap,
   options.m_joinStyle  = lineJoin;
   options.m_miterUpper = miterLimit;
 
-  s->setSelfLoop(path->closed);
+  s->setSelfLoop(path->closed || autoclose);
 
   std::vector<TThickPoint> tpoints;
   s->getControlPoints(tpoints);
@@ -2268,6 +2274,7 @@ TImageP TImageReaderSvg::load() {
     // vapp->setPalette(appPlt);
 
     bool applyFill = shape->hasFillInfo && !shape->hasFillNone;
+    bool autoclose = applyFill && !path->closed && shape->hasStrokeNone;
 
     float strokeWidth =
         !shape->hasStrokeNone ? shape->strokeWidth / devPixRatio : 0;
@@ -2284,7 +2291,7 @@ TImageP TImageReaderSvg::load() {
     int strokeCount      = 0;
     for (; path; path = path->next) {
       TStroke *s = buildStroke(path, shape->xform, strokeWidth, shape->lineCap,
-                               shape->lineJoin, shape->miterLimit);
+                               shape->lineJoin, shape->miterLimit, autoclose);
       if (!s) continue;
       s->setStyle(inkIndex);
       int currentIndex = vimage->addStroke(s);
