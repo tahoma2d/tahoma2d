@@ -340,7 +340,6 @@ struct NSVGParser *nsvg__createParser() {
   p->attr[0].lineJoin       = TStroke::OutlineOptions::ROUND_JOIN;
   p->attr[0].miterLimit     = 4.0;
   p->attr[0].hasFillInfo    = 0;
-  p->attr[0].hasStrokeInfo  = 0;
   p->attr[0].visible        = 1;
 
   return p;
@@ -453,7 +452,6 @@ void nsvg__addShape(struct NSVGParser *p) {
                                 attr->xform[1] * attr->xform[1]);
 
   shape->hasFillInfo = attr->hasFillInfo;
-  shape->hasStrokeInfo = attr->hasStrokeInfo;
   shape->strokeWidth   = attr->strokeWidth * scaleFactor;
   shape->lineCap       = attr->lineCap;
   shape->lineJoin      = attr->lineJoin;
@@ -963,29 +961,22 @@ int nsvg__parseAttr(struct NSVGParser *p, const char *name, const char *value) {
     attr->hasFillInfo = 1;
     attr->fillOpacity = nsvg__parseFloat(value);
   } else if (strcmp(name, "stroke") == 0) {
-    attr->hasStrokeInfo = 1;
     if (strcmp(value, "none") != 0) {
-      attr->hasStrokeInfo = 0;
       attr->hasStrokeNone = 0;
       attr->strokeColor   = nsvg__parseColor(value);
       if (!attr->strokeWidth) attr->strokeWidth = 1;
     }
   } else if (strcmp(name, "stroke-width") == 0) {
-    attr->hasStrokeInfo = 1;
     attr->strokeWidth   = nsvg__parseFloat(value);
   } else if (strcmp(name, "stroke-opacity") == 0) {
-    attr->hasStrokeInfo = 1;
     attr->strokeOpacity = nsvg__parseFloat(value);
   } else if (strcmp(name, "transform") == 0) {
     nsvg__parseTransform(p, value);
   } else if (strcmp(name, "stroke-linecap") == 0) {
-    attr->hasStrokeInfo = 1;
     attr->lineCap       = nsvg__parseLineCap(value);
   } else if (strcmp(name, "stroke-linejoin") == 0) {
-    attr->hasStrokeInfo = 1;
     attr->lineJoin      = nsvg__parseLineJoin(value);
   } else if (strcmp(name, "stroke-miterlimit") == 0) {
-    attr->hasStrokeInfo = 1;
     attr->miterLimit    = nsvg__parseFloat(value);
   } else {
     return 0;
