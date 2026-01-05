@@ -4637,3 +4637,185 @@ void TMatrioskaStrokeStyle::saveData(TOutputStreamInterface &os) const {
   os << m_parameter;
   os << m_color2;
 }
+
+//=============================================================================
+
+TMarkerStrokeStyle::TMarkerStrokeStyle(const TPixel32 color) : m_color(color) {}
+
+//-----------------------------------------------------------------------------
+
+TColorStyle *TMarkerStrokeStyle::clone() const {
+  return new TMarkerStrokeStyle(*this);
+}
+
+//-----------------------------------------------------------------------------
+
+void TMarkerStrokeStyle::drawStroke(const TColorFunction *cf,
+                                        TStrokeOutline *outline,
+                                        const TStroke *stroke) const {
+  if (cf)
+    tglColor((*cf)(m_color));
+  else
+    tglColor(m_color);
+
+  UINT i;
+  const std::vector<TOutlinePoint> &v = outline->getArray();
+  if (v.empty()) return;
+
+  glBegin(GL_LINE_STRIP);
+  for (i = 0; i < v.size(); i += 2) {
+    glVertex2dv(&v[i].x);
+  }
+  glEnd();
+  
+  glBegin(GL_LINE_STRIP);
+  for (i = 1; i < v.size(); i += 2) {
+    glVertex2dv(&v[i].x);
+  }
+  glEnd();
+
+  glBegin(GL_QUAD_STRIP);
+  for (i = 0; i < v.size(); i += 2) {
+    glVertex2dv(&v[i].x);
+    glVertex2dv(&v[i + 1].x);
+  }
+  glEnd();
+}
+
+//=============================================================================
+
+TSoftRoundStrokeStyle::TSoftRoundStrokeStyle(const TPixel32 color, double hardness, double fade) : m_color(color), m_hardness(hardness), m_fade(fade) {}
+
+//-----------------------------------------------------------------------------
+
+TColorStyle *TSoftRoundStrokeStyle::clone() const {
+  return new TSoftRoundStrokeStyle(*this);
+}
+
+//-----------------------------------------------------------------------------
+
+void TSoftRoundStrokeStyle::computeData(PointsAndDoubles &data, const TStroke *stroke, const TColorFunction *cf) const {
+  //clear data
+  data.clear();
+
+  // get hardness setting
+  double dis = (100 - m_hardness) / 200;
+  
+  // get outline
+  TStrokeOutline outline;
+  TOutlineUtil::OutlineParameter param;
+  TOutlineUtil::makeOutline(*stroke, outline, param);
+  const std::vector<TOutlinePoint> &v = outline.getArray();
+  
+  // get length
+  int s = v.size();
+  double length2 = 0;
+  for (int i = 2; i < s; i += 2) {
+    length2 += tdistance(convert(v[i]), convert(v[i - 2]));
+  }
+
+  // get cap data
+  bool is_loop = stroke->isSelfLoop();
+  double cap1 = stroke->getThickPoint(0).thick * m_fade;
+  double cap2 = stroke->getThickPoint(1).thick * m_fade;
+  double icap1 = cap1 * 0.75;
+  double icap2 = cap2 * 0.75;
+
+  // split shape into four segments based on hardness setting
+  double travel = 0;
+  for (int i = 0; i+1 < s; i += 2) {
+    TPointD a1 = convert(v[i]);
+    TPointD b1 = convert(v[i + 1]);
+    TPointD abdel = b1 - a1;
+    TPointD c1 = a1 + abdel * dis;
+    TPointD d1 = b1 - abdel * dis;
+    TPointD e1 = a1 + abdel * 0.5;
+
+    travel += (i > 0) ? tdistance(a1, convert(v[i - 2])) : 0;
+    double f = (is_loop) ? 1 : (travel < cap1) ? travel / cap1 : (travel > length2 - cap2) ? (length2 - travel) / cap2 : 1;
+    double fi = (is_loop) ? 1 : (travel < icap1) ? travel / icap1 : (travel > length2 - icap2) ? (length2 - travel) / icap2 : 1;
+
+    data.push_back(make_pair(a1, 0));
+    data.push_back(make_pair(c1, f));
+    data.push_back(make_pair(e1, fi));
+    data.push_back(make_pair(d1, f));
+    data.push_back(make_pair(b1, 0));
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void TSoftRoundStrokeStyle::drawStroke(const TColorFunction *cf, PointsAndDoubles &data,
+  const TStroke *stroke) const {
+  //get color
+  TPixel32 color;
+  if (cf)
+    color = (*cf)(m_color);
+  else
+    color = m_color;
+  TPixelD dcolor = toPixelD(color);
+  
+  // draw each segment
+  for (int p = 0; p < 4; p++) {
+    glBegin(GL_QUAD_STRIP);
+    for (int i = 0; p + i + 1 < data.size(); i += 4) {
+      int pi = i + p;
+      glColor4d(dcolor.r, dcolor.g, dcolor.b, dcolor.m * data[pi].second);
+      tglVertex(data[pi].first);
+      glColor4d(dcolor.r, dcolor.g, dcolor.b, dcolor.m * data[pi + 1].second);
+      tglVertex(data[pi + 1].first);
+    }
+    glEnd();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+int TSoftRoundStrokeStyle::getParamCount() const { return 2; }
+
+//-----------------------------------------------------------------------------
+
+TColorStyle::ParamType TSoftRoundStrokeStyle::getParamType(int index) const {
+  assert(0 <= index && index < getParamCount());
+  return index == 0 ? TColorStyle::DOUBLE : TColorStyle::DOUBLE;
+}
+
+//-----------------------------------------------------------------------------
+
+QString TSoftRoundStrokeStyle::getParamNames(int index) const {
+  assert(0 <= index && index < getParamCount());
+  return index == 0 ? QCoreApplication::translate("TSoftRoundStrokeStyle", "Hardness")
+                    : QCoreApplication::translate("TSoftRoundStrokeStyle", "Fade");
+}
+
+//-----------------------------------------------------------------------------
+
+void TSoftRoundStrokeStyle::getParamRange(int index, double &min, double &max) const {
+  assert(0 <= index && index < getParamCount());
+  if (index == 0) {
+    min = 0.1;
+    max = 100.0;
+  } else {
+    min = 0;
+    max = 5;
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+double TSoftRoundStrokeStyle::getParamValue(TColorStyle::double_tag, int index) const {
+  assert(0 <= index && index < getParamCount());
+  return index == 0 ? m_hardness : m_fade;
+}
+
+//-----------------------------------------------------------------------------
+
+void TSoftRoundStrokeStyle::setParamValue(int index, double value) {
+  assert(0 <= index && index < getParamCount());
+  if (index == 0) {
+    m_hardness = value;
+  } else {
+    m_fade = value;
+  }
+  updateVersionNumber();
+}
