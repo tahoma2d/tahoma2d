@@ -949,8 +949,6 @@ void PlasticTool::onChange() {
   TTool::Viewer *viewer = getViewer();
   if (viewer)                 // This goes through paintEvent(),
     viewer->invalidateAll();  // \a unlike TTool::invalidate()
-
-  TTool::m_application->getCurrentXsheet()->notifyXsheetChanged();
 }
 
 //------------------------------------------------------------------------
