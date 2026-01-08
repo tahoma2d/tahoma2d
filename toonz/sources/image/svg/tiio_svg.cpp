@@ -2309,7 +2309,7 @@ TImageP TImageReaderSvg::load() {
         vimage->group(currentIndex, x);
         vimage->enterGroup(startStrokeIndex);
         vimage->selectFill(TRectD(-9999999, -9999999, 9999999, 9999999), 0,
-                           paintIndex, true, true, false);
+                           paintIndex, false, true, false);
         vimage->exitGroup();
       }
       vimage->findRegions();
@@ -2324,10 +2324,10 @@ TImageP TImageReaderSvg::load() {
       if (c > 1) {
         TStroke *s = vimage->getStroke(vimage->getStrokeCount() - 1);
         for (int i = 0; i < s->getControlPointCount(); i++)
-          vimage->fill(s->getControlPoint(i), paintIndex, true);
+          vimage->fill(s->getControlPoint(i), paintIndex, false);
       } else
         vimage->selectFill(TRectD(-9999999, -9999999, 9999999, 9999999), 0,
-                           paintIndex, true, true, false);
+                           paintIndex, false, true, false);
       vimage->exitGroup();
     }
 
