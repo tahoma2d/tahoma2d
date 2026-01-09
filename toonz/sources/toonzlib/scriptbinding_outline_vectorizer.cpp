@@ -172,7 +172,7 @@ void OutlineVectorizer::setTransparentColor(const QString &colorName) {
     m_parameters->m_transparentColor =
         TPixel32(color.red(), color.green(), color.blue(), color.alpha());
   } else {
-    context()->throwError(tr("Invalid color : ").arg(colorName));
+    context()->throwError(tr("Invalid color : %1").arg(colorName));
   }
 }
 

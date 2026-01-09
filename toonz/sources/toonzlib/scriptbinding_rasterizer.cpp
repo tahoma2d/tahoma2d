@@ -84,7 +84,7 @@ Q_INVOKABLE QScriptValue Rasterizer::rasterize(QScriptValue arg) {
         level->getSimpleLevel() ? level->getSimpleLevel()->getPalette() : 0;
   } else {
     return context()->throwError(
-        tr("Argument must be a vector level or image : ").arg(arg.toString()));
+        tr("Argument must be a vector level or image : %1").arg(arg.toString()));
   }
   if (!palette) {
     return context()->throwError(tr("%1 has no palette").arg(arg.toString()));

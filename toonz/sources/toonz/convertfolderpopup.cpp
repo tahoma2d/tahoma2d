@@ -154,7 +154,7 @@ public:
     if (TFileStatus(savePath).doesExist()) {
       int ret = DVGui::MsgBox(
           QObject::tr(
-              "The log file already exists.\n Do you want to overwrite it?")
+              "The log file %1 already exists.\n Do you want to overwrite it?")
               .arg(toQString(savePath.withoutParentDir())),
           QObject::tr("Overwrite"), QObject::tr("Don't Overwrite"), 0);
 

@@ -153,9 +153,7 @@ public:
               "File %1 doesn't belong to the current project.\n"
               "Do you want to import it or load it from its original location?")
               .arg(QString::fromStdWString(path.getWideString()));
-      QString checkBoxLabel =
-          QObject::tr("Always do this action.")
-              .arg(QString::fromStdWString(path.getWideString()));
+      QString checkBoxLabel = QObject::tr("Always do this action.");
       QStringList buttons;
       buttons << QObject::tr("Import") << QObject::tr("Load")
               << QObject::tr("Cancel");
