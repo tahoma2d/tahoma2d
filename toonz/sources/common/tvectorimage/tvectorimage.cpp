@@ -836,10 +836,13 @@ bool TVectorImage::Imp::selectFill(const TRectD &selArea, TStroke *s,
       if (fillAreas)
         for (UINT i = 0; i < m_regions.size(); i++) {
           TRegion *r1 = m_regions[i];
+          int index, j = 0;
 
-          if (m_insideGroup != TGroupId() &&
-              !m_insideGroup.isParentOf(
-                  m_strokes[r1->getEdge(0)->m_index]->m_groupId))
+          do index = m_regions[i]->getEdge(j++)->m_index;
+          while (index < 0 && j < (int)m_regions[i]->getEdgeCount());
+          // if index<0, means that the region is purely of autoclose strokes!
+          if (m_insideGroup != TGroupId() && index >= 0 &&
+              !m_insideGroup.isParentOf(m_strokes[index]->m_groupId))
             continue;
 
           if ((!onlyUnfilled || r1->getStyle() == 0) && r0->contains(*r1)) {
@@ -2696,27 +2699,21 @@ void TVectorImage::Imp::rearrangeMultiGroup() {
   UINT i, j, k;
   if (m_strokes.size() <= 0) return;
   for (i = 0; i < m_strokes.size() - 1; i++) {
+    if (i + 1 == m_strokes.size()) break;
+
     if (m_strokes[i]->m_groupId.isGrouped() &&
         m_strokes[i + 1]->m_groupId.isGrouped() &&
-        m_strokes[i]->m_groupId != m_strokes[i + 1]->m_groupId) {
-      TGroupId &prevId   = m_strokes[i]->m_groupId;
-      TGroupId &idToMove = m_strokes[i + 1]->m_groupId;
-      for (j = i + 1;
-           j < m_strokes.size() && m_strokes[j]->m_groupId == idToMove; j++)
-        ;
-      if (j != m_strokes.size()) {
-        j--;  // now range i+1-j contains the strokes to be moved.
-        // let's compute where to move them (after last
-        for (k = j; k < m_strokes.size() && m_strokes[k]->m_groupId != prevId;
-             k++)
-          ;
-        if (k < m_strokes.size()) {
-          for (; k < m_strokes.size() && m_strokes[k]->m_groupId == prevId; k++)
-            ;
-          moveStrokes(i + 1, j - i, k, false);
-          rearrangeMultiGroup();
-          return;
-        }
+        m_strokes[i]->m_groupId == m_strokes[i + 1]->m_groupId)
+      continue;
+
+    // look for other strokes with same group and move them up to bottom of
+    // current set
+    for (j = i + 1; j < m_strokes.size(); j++) {
+      if (m_strokes[j]->m_groupId.isGrouped() &&
+          m_strokes[j]->m_groupId == m_strokes[i]->m_groupId) {
+        moveStrokes(j, 1, i + 1, false);
+        rearrangeMultiGroup();
+        return;
       }
     }
   }
