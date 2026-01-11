@@ -198,6 +198,9 @@ public:
   int getGroupByStroke(UINT index) const;
   int getGroupByRegion(UINT index) const;
 
+  std::vector<int> getGroupIdsForStroke(UINT index) const;
+  void setGroupIdsForStroke(UINT index, const std::vector<int> &groupIds);
+
   /*!
 get the stroke nearest at point
 \note outw is stroke parameter w in [0,1]
