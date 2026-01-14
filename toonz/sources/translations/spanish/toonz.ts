@@ -15282,7 +15282,7 @@ Detalles:
     </message>
     <message>
         <source>Accelerator</source>
-        <translation>Acelerador</translation>
+        <translation>Aceleración</translation>
     </message>
     <message>
         <source>Uniform Length</source>
@@ -15630,11 +15630,11 @@ Detalles:
     </message>
     <message>
         <source>P1 -&gt; P2</source>
-        <translation type="unfinished"></translation>
+        <translation>P1 -&gt; P2</translation>
     </message>
     <message>
         <source>Motion</source>
-        <translation type="unfinished"></translation>
+        <translation>Movimiento</translation>
     </message>
 </context>
 <context>
