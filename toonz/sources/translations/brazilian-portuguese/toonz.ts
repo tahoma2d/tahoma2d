@@ -17143,6 +17143,16 @@ Gostaria de continuar?</translation>
         <source>Fx Intensity</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../stdfx/ino_motion_blur.cpp" line="25"/>
+        <source>P1 -&gt; P2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../stdfx/ino_motion_blur.cpp" line="57"/>
+        <source>Motion</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QOpenGLShaderProgram</name>
@@ -22385,148 +22395,148 @@ Atribuir o caminho da Pasta de Saída na Subpasta também.</translation>
 <context>
     <name>VectorInspectorPanel</name>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="42"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="43"/>
         <source>&amp;Filter pattern (example 0|1):</source>
         <translation>&amp;Padrão do Filtro (exemplo 0|1):</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="44"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="45"/>
         <source>Filter &amp;syntax:</source>
         <translation>&amp;Sintaxe do Filtro:</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="46"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="47"/>
         <source>Filter &amp;column:</source>
         <translation>Filtrar &amp;Coluna:</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="56"/>
-        <location filename="../../toonz/vectorinspector.cpp" line="91"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="58"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="93"/>
         <source>Stroke Order</source>
         <translation>Ordem da Linha</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="57"/>
-        <location filename="../../toonz/vectorinspector.cpp" line="92"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="59"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="94"/>
         <source>Group Id</source>
         <translation>Id do Grupo</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="58"/>
-        <location filename="../../toonz/vectorinspector.cpp" line="93"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="60"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="95"/>
         <source>Id</source>
         <translation>Id</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="59"/>
-        <location filename="../../toonz/vectorinspector.cpp" line="94"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="61"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="96"/>
         <source>StyleId</source>
         <translation>Id do Estilo</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="60"/>
-        <location filename="../../toonz/vectorinspector.cpp" line="95"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="62"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="97"/>
         <source>Self Loop</source>
         <translation>Loop Próprio</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="61"/>
-        <location filename="../../toonz/vectorinspector.cpp" line="96"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="63"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="98"/>
         <source>Quad</source>
         <translation>Quad</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="62"/>
-        <location filename="../../toonz/vectorinspector.cpp" line="97"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="64"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="99"/>
         <source>P</source>
         <translation>P</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="63"/>
-        <location filename="../../toonz/vectorinspector.cpp" line="98"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="65"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="100"/>
         <source>x</source>
         <translation>x</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="64"/>
-        <location filename="../../toonz/vectorinspector.cpp" line="99"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="66"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="101"/>
         <source>y</source>
         <translation>y</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="65"/>
-        <location filename="../../toonz/vectorinspector.cpp" line="100"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="67"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="102"/>
         <source>Thickness</source>
         <translation>Espessura</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="85"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="87"/>
         <source>Regular expression</source>
         <translation>Expressão Regular</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="86"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="88"/>
         <source>Wildcard</source>
         <translation>Coringa</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="87"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="89"/>
         <source>Fixed string</source>
         <translation>String Fixa</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="176"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="178"/>
         <source>Order of the stroke in the sequence</source>
         <translation>Ordem do Traço na Sequência</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="179"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="181"/>
         <source>Identifier for the group</source>
         <translation>Identificador para o Grupo</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="181"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="183"/>
         <source>Unique identifier for the stroke</source>
         <translation>Identificador único para o Traço</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="184"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="186"/>
         <source>The palette style index assigned to the stroke</source>
         <translation>O índice da Paleta de Estilo atribuído ao Traço</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="187"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="189"/>
         <source>Indicates if the stroke is a closed shape</source>
         <translation>Indica se o Traço é uma forma fechada</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="191"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="193"/>
         <source>Order of the quadratic equation in the sequence per stroke</source>
         <translation>Ordem da equação quadrática na sequência por Traço</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="195"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="197"/>
         <source>This point is parameter P0, P1, or P2 in the Quad equation</source>
         <translation>Esse ponto é o parâmetro P0, P1, ou P2 na equação quadrática</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="198"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="200"/>
         <source>X coordinate of the point</source>
         <translation>Coordenada X do ponto</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="200"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="202"/>
         <source>Y coordinate of the point</source>
         <translation>Coordenada Y do ponto</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="202"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="204"/>
         <source>Thickness of the stroke at this point</source>
         <translation>Espessura do Traço neste ponto</translation>
     </message>
     <message>
-        <location filename="../../toonz/vectorinspector.cpp" line="521"/>
-        <location filename="../../toonz/vectorinspector.cpp" line="532"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="513"/>
+        <location filename="../../toonz/vectorinspector.cpp" line="524"/>
         <source>Copy</source>
         <translation>Copiar</translation>
     </message>

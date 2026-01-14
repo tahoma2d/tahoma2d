@@ -22,7 +22,7 @@ class ino_motion_blur final : public TStandardRasterFx {
   // TBoolParamP m_spread;
 public:
   ino_motion_blur()
-      : m_depend_move(new TIntEnumParam(0, "P1 -> P2"))
+      : m_depend_move(new TIntEnumParam(0, QObject::tr("P1 -> P2").toStdString()))
       , m_x1(0.0)
       , m_y1(0.0)
       , m_x2(1.0)
@@ -54,7 +54,7 @@ public:
     bindParam(this, "alpha_rendering", this->m_alpha_rendering);
     // bindParam(this,"spread", this->m_spread);
 
-    this->m_depend_move->addItem(1, "Motion");
+    this->m_depend_move->addItem(1, QObject::tr("Motion").toStdString());
 
     this->m_curve->setValueRange(0.1 * ino::param_range(),
                                  10.0 * ino::param_range()); /* gamma値 */
