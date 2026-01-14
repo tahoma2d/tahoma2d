@@ -2032,8 +2032,7 @@ void StyleChooserPage::onRemoveStyleFromSet() {
   if (!isMyFavoriteSet()) {
     int ret = DVGui::MsgBox(
         QObject::tr("Removing a Style will permanently delete the style file. "
-                    "This cannot be undone!\nAre you sure?")
-            .arg(getStyleSetName()),
+                    "This cannot be undone!\nAre you sure?"),
         QObject::tr("Ok"), QObject::tr("Cancel"));
     if (ret == 0 || ret == 2) return;
   }

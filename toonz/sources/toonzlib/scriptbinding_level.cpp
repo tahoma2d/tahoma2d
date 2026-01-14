@@ -193,7 +193,7 @@ QScriptValue Level::save(const QScriptValue &fpArg) {
   } else if (fileType & TFileType::CMAPPED_IMAGE) {
     if (m_sl->getType() == TZP_XSHLEVEL) isCompatible = true;
   } else {
-    return context()->throwError(tr("Unrecognized file type :").arg(fpStr));
+    return context()->throwError(tr("Unrecognized file type : %1").arg(fpStr));
   }
   if (!isCompatible) {
     return context()->throwError(

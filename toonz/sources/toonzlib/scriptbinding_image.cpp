@@ -141,7 +141,7 @@ QScriptValue Image::load(const QScriptValue &fpArg) {
     return context()->thisObject();
   } catch (...) {
     return context()->throwError(
-        tr("Unexpected error while reading image").arg(fpStr));
+        tr("Unexpected error while reading image %1").arg(fpStr));
   }
 }
 
@@ -168,7 +168,7 @@ QScriptValue Image::save(const QScriptValue &fpArg) {
   } else if (fileType & TFileType::CMAPPED_IMAGE) {
     if (m_img->getType() == TImage::TOONZ_RASTER) isCompatible = true;
   } else {
-    return context()->throwError(tr("Unrecognized file type :").arg(fpStr));
+    return context()->throwError(tr("Unrecognized file type : %1").arg(fpStr));
   }
   if (!isCompatible) {
     return context()->throwError(
@@ -193,7 +193,7 @@ QScriptValue Image::save(const QScriptValue &fpArg) {
     return context()->thisObject();
   } catch (...) {
     return context()->throwError(
-        tr("Unexpected error while writing image").arg(fpStr));
+        tr("Unexpected error while writing image %1").arg(fpStr));
   }
 }
 
