@@ -382,37 +382,37 @@ zkuste, prosím, zvednout dobu pro vypršení pro FFmpeg v Nastavení.</translat
 <context>
     <name>SvgWriterProperties</name>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2060"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2087"/>
         <source>Stroke Mode</source>
         <translation>Režim tahu</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2061"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2088"/>
         <source>Outline Quality</source>
         <translation>Jakost obrysu</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2062"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2089"/>
         <source>Centerline</source>
         <translation>Středová čára</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2063"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2090"/>
         <source>Outline</source>
         <translation>Obrys</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2064"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2091"/>
         <source>High</source>
         <translation>Vysoká</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2065"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2092"/>
         <source>Medium</source>
         <translation>Střední</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2066"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2093"/>
         <source>Low</source>
         <translation>Nízká</translation>
     </message>

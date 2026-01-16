@@ -384,37 +384,37 @@ Please try raising the FFmpeg timeout in Preferences.</source>
 <context>
     <name>SvgWriterProperties</name>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2060"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2087"/>
         <source>Stroke Mode</source>
         <translation>描边模式</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2061"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2088"/>
         <source>Outline Quality</source>
         <translation>轮廓质量</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2062"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2089"/>
         <source>Centerline</source>
         <translation>中心线</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2063"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2090"/>
         <source>Outline</source>
         <translation>轮廓</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2064"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2091"/>
         <source>High</source>
         <translation>高</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2065"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2092"/>
         <source>Medium</source>
         <translation>中</translation>
     </message>
     <message>
-        <location filename="../../image/svg/tiio_svg.cpp" line="2066"/>
+        <location filename="../../image/svg/tiio_svg.cpp" line="2093"/>
         <source>Low</source>
         <translation>低</translation>
     </message>

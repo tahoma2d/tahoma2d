@@ -14797,6 +14797,14 @@ Details:
         <source>Fx Intensity</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>P1 -&gt; P2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Motion</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QOpenGLShaderProgram</name>

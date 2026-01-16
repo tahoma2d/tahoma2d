@@ -1396,7 +1396,7 @@
   <item>"STD_inoMaxMinFx.max_min_select"	"Modo"	</item>
   <item>"STD_inoMaxMinFx.radius"	"Radio"	</item>
   <item>"STD_inoMaxMinFx.polygon_number"	"Lados del polígono"	</item>
-  <item>"STD_inoMaxMinFx.degree"	"Grado"	</item>
+  <item>"STD_inoMaxMinFx.degree"	"Ángulo"	</item>
   <item>"STD_inoMaxMinFx.alpha_rendering"	"Procesar alfa"	</item>
   <item>"STD_inoMaxMinFx.reference"	"Referencia"	</item>
   <item>"STD_inoMedianFx"	"Mediana Ino"	</item>
@@ -1429,7 +1429,7 @@
   <item>"STD_inoMotionWindFx.length_ref"	"Ref longitud"	</item>
   <item>"STD_inoMotionWindFx.force_min"	"Fuerza mín"	</item>
   <item>"STD_inoMotionWindFx.force_max"	"Fuerza máx"	</item>
-  <item>"STD_inoMotionWindFx.force_bias"	"Fuerza: DesviaciónBias"	</item>
+  <item>"STD_inoMotionWindFx.force_bias"	"Fuerza: Desviación"	</item>
   <item>"STD_inoMotionWindFx.force_seed"	"Fuerza: Semilla"	</item>
   <item>"STD_inoMotionWindFx.force_ref"	"Ref fuerza"	</item>
   <item>"STD_inoMotionWindFx.density_min"	"Densidad mín"	</item>
