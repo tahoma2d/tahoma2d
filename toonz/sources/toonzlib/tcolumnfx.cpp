@@ -1541,11 +1541,16 @@ TFxTimeRegion TLevelColumnFx::getTimeRegion() const {
   int first = m_levelColumn->getFirstRow();
   int last  = m_levelColumn->getRowCount();
 
-  // For implicit hold, if the last frame is not a stop frame, it's held
-  // indefinitely
-  if (Preferences::instance()->isImplicitHoldEnabled() &&
-      !m_levelColumn->getCell(last - 1).getFrameId().isStopFrame())
+  bool isLastAStopFrame =
+      m_levelColumn->getCell(last - 1).getFrameId().isStopFrame() &&
+      !m_levelColumn->isInLoopRange(last - 1);
+
+  // For implicit hold, if the last frame is not a stopframe or the stopframe is
+  // in a loop, it's held indefinitely
+  if (Preferences::instance()->isImplicitHoldEnabled() && !isLastAStopFrame)
     return TFxTimeRegion(0, (std::numeric_limits<double>::max)());
+
+  if (isLastAStopFrame) last--;
 
   return TFxTimeRegion(first, last);
 }

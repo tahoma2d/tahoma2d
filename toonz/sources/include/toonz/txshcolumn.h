@@ -318,7 +318,7 @@ Set column color tag to \b colorTag.
   }
   std::pair<int, int> getLoopForRow(int row);
   std::pair<int, int> getLoopWithRow(int row); 
-  bool isInLoopRange(int row);
+  bool isInLoopRange(int row) const;
 
   bool isLoopedFrame(int row);
   int getLoopedFrame(int row, bool forOnionSkin = false);

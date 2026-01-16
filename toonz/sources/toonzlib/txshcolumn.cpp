@@ -102,8 +102,10 @@ const TXshCell &TXshCellColumn::getCell(int row, bool implicitLookup,
   if (pastEnd) {
     if (!implicitEnabled && !loopsAvailable) return emptyCell;
     r = m_cells.size() - 1;
-    if (implicitEnabled && m_cells[r].getFrameId().isStopFrame())
-      return emptyCell;
+    if (implicitEnabled && m_cells[r].getFrameId().isStopFrame()) {
+      bool insideLoop = loopsAvailable ? isInLoopRange(r) : false;
+      if (!insideLoop) return emptyCell;
+    }
   }
 
   if (m_cells[r].isEmpty() || pastEnd) {
@@ -1167,7 +1169,7 @@ std::pair<int, int> TXshColumn::getLoopWithRow(int row) {
 
 //-----------------------------------------------------------------------------
 
-bool TXshColumn::isInLoopRange(int row) {
+bool TXshColumn::isInLoopRange(int row) const {
   if (!hasLoops()) return false;
 
   for (int i = 0; i < m_loops.size(); i++) {
