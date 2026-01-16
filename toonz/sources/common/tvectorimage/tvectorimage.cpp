@@ -3061,6 +3061,21 @@ int TVectorImage::getGroupByRegion(UINT index) const {
 
 //------------------------------------------------------
 
+std::vector<int> TVectorImage::getGroupIdsForStroke(UINT index) const {
+  VIStroke *viStroke = getVIStroke(index);
+  return viStroke->m_groupId.m_id;
+}
+
+//------------------------------------------------------
+
+void TVectorImage::setGroupIdsForStroke(UINT index,
+                                        const std::vector<int> &groupIds) {
+  VIStroke *viStroke       = getVIStroke(index);
+  viStroke->m_groupId.m_id = groupIds;
+}
+
+//------------------------------------------------------
+
 int TVectorImage::pickGroup(const TPointD &pos, bool onEnteredGroup) const {
   if (onEnteredGroup && isInsideGroup() == 0) return -1;
 

@@ -33,19 +33,25 @@ namespace {
 void groupWithoutUndo(TVectorImage *vimg, StrokeSelection *selection) {
   int count = 0, fromStroke = -1, lastSelected = -1;
 
+  std::vector<int> newIndexes;
+
   for (int i = 0; i < (int)vimg->getStrokeCount(); i++)
     if (selection->isSelected(i)) {
-      if (fromStroke == -1)
+      if (fromStroke == -1) {
         fromStroke = i;
-      else if (lastSelected != i - 1)  // non sono contigui gli stroke
-                                       // selezionati: faccio affiorare quelli
-                                       // sotto
+        newIndexes.push_back(i);
+      } else if (lastSelected != i - 1)  // non sono contigui gli stroke
+                                         // selezionati: faccio affiorare quelli
+                                         // sotto
       {
         int j = 0;
         for (j = 0; j < count; j++) selection->select(fromStroke + j, false);
         vimg->moveStrokes(fromStroke, count, i);
         fromStroke = i - count;
-        for (j = 0; j < count; j++) selection->select(fromStroke + j, true);
+        for (j = 0; j < count; j++) {
+          selection->select(fromStroke + j, true);
+          newIndexes.push_back(fromStroke + j);
+        }
       }
       lastSelected = i;
       count++;
@@ -54,6 +60,13 @@ void groupWithoutUndo(TVectorImage *vimg, StrokeSelection *selection) {
   assert(count > 0);
 
   vimg->group(fromStroke, count);
+
+  // Vector Inspector, when open, causes selection to be lost. Reset it now
+  if (selection->isEmpty()) {
+    for (int i = 0; i < newIndexes.size(); i++)
+      selection->select(newIndexes[i], true);
+  }
+
   TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
 }
 
@@ -126,15 +139,28 @@ public:
 
 class UngroupUndo final : public ToolUtils::TToolUndo {
   std::unique_ptr<StrokeSelection> m_selection;
+  std::map<int, std::vector<int>> m_origGroupStrokes;
 
 public:
   UngroupUndo(TXshSimpleLevel *level, const TFrameId &frameId,
               StrokeSelection *selection)
-      : ToolUtils::TToolUndo(level, frameId), m_selection(selection) {}
+      : ToolUtils::TToolUndo(level, frameId), m_selection(selection) {
+    TVectorImageP image = m_level->getFrame(m_frameId, true);
+    if (!image) return;
+    StrokeSelection::IndexesContainer indexes =
+        m_selection.get()->getSelection();
+    for (int i = 0; i < indexes.size(); i++)
+      m_origGroupStrokes[indexes[i]] = image->getGroupIdsForStroke(indexes[i]);
+  }
 
   void undo() const override {
     TVectorImageP image = m_level->getFrame(m_frameId, true);
-    if (image) groupWithoutUndo(image.getPointer(), m_selection.get());
+
+    std::map<int, std::vector<int>>::const_iterator it =
+        m_origGroupStrokes.begin();
+    for (; it != m_origGroupStrokes.end(); it++)
+      image->setGroupIdsForStroke(it->first, it->second);
+
     TTool::getApplication()->getCurrentTool()->getTool()->notifyImageChanged();
   }
 
@@ -651,12 +677,12 @@ void TGroupCommand::ungroup() {
   for (int i = 0; i < selection.size(); i++)
     if (!vimg->isStrokeGrouped(selection[i])) sel->select(selection[i], false);
 
-  QMutexLocker lock(vimg->getMutex());
-  ungroupWithoutUndo(vimg, sel);
   TXshSimpleLevel *level =
       TTool::getApplication()->getCurrentLevel()->getSimpleLevel();
-  TUndoManager::manager()->add(new UngroupUndo(level, tool->getCurrentFid(),
-                                               new StrokeSelection(*sel)));
+  UngroupUndo *undo =
+      new UngroupUndo(level, tool->getCurrentFid(), new StrokeSelection(*sel));
+  TUndoManager::manager()->add(undo);
+  undo->redo();
 }
 
 //-----------------------------------------------------------------------------
